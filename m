@@ -2,125 +2,106 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC423C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02699C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:06:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B56F214C1
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:06:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAFA22147D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:06:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y/3OJOW+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B56F214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UIx/ilNT";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UIx/ilNT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAFA22147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731663AbeKVClV (ORCPT
+        id S1731679AbeKVCls (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 21:41:21 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33763 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730072AbeKVClU (ORCPT
+        Wed, 21 Nov 2018 21:41:48 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:47816 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730072AbeKVCls (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 21:41:20 -0500
-Received: by mail-pl1-f194.google.com with SMTP id z23so6152465plo.0;
-        Wed, 21 Nov 2018 08:06:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=15CBHc4LfPIPHaj3tA3fI5dNAgKyfqROLgd/vwyWEb8=;
-        b=Y/3OJOW+Vur3T5Zg8W7z+OancXXF5zFQezttVBzWIsq5jjPd9GZS49XFe2PXNJQLYj
-         kD8KOATBi4fCcK1n9LYdlvzKqkZf3pVXKiw8T9DDw9a1SJ0b/e6PE1vcNEbJh1MjtFGx
-         IZ3xalMoYaYJzj/LwYF2/Xb6Fkb5Q8J0sYHk7GZBUFwNwbsZuFcSOhAYqQjBsjKNt7CC
-         MIxLYt7ks3w0lzkAPmcm0sD4eNssH0rvz0Onh7wF7h2mXSnQtm4YHi75Ms1eTiILbv7R
-         h/zO7LF5qqniKdIGmAgzEnl8H3qidXTbbjv+HwOqUjMCtUiL6B8lmBkiFmXaZJ1uiKoX
-         zUPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=15CBHc4LfPIPHaj3tA3fI5dNAgKyfqROLgd/vwyWEb8=;
-        b=iqj88IAEGL2INu4UpLpoBTxfkOnqyB28RnKju7TNzurfeY/9KINO7tajQFjT+rDnWG
-         jnjz7omoikg1uira57Rz/NHky3ANUv7DvBuvkCGk990NHhbHnnOmjSNxzOSQ1SkwDwIo
-         BOWkoO9WajhqIk2WwBuHtJrVPRegkl0mgpguVDZyOkES6RbCP6RaGwcZL0fHSKC92ODV
-         MKe5WBR7sygfyJprpwQHGqZDPDQJ8FE7aPoHoel2I5cSLAXxATlC8ikb+nvAMI4HX99V
-         +9SULMHYs9OVLdmEjPbZ+6LcYzElwYX6Hy+sf/SOiBJ7rMsnsLQMImM/cDro7JdsiIhd
-         GYVQ==
-X-Gm-Message-State: AA+aEWZ2nPnnNm/CoKrYaik9PQ5YReJZ/7ruc5SMq8lnqcB0ieOvYgtV
-        LQ2Js4vBZ8UQM4tRDnmhNiQ=
-X-Google-Smtp-Source: AFSGD/WP1hB94PuTOo1BWEkNQQ/3QL0FL/W5OX2i4p0jaSe634O5DMpqwLj28+uDwzMCa1erSMZ7+Q==
-X-Received: by 2002:a63:af18:: with SMTP id w24mr6545151pge.385.1542816378388;
-        Wed, 21 Nov 2018 08:06:18 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id 85sm63334459pfw.17.2018.11.21.08.06.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 08:06:17 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     davem@davemloft.net, gregkh@linuxfoundation.org, jslaby@suse.com
-Cc:     sparclinux@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] serial/sunsu: add missing of_node_put()
-Date:   Wed, 21 Nov 2018 11:06:15 -0500
-Message-Id: <20181121160615.23666-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 21 Nov 2018 21:41:48 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 885E460A98; Wed, 21 Nov 2018 16:06:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542816405;
+        bh=M86mWa9k/FV/LifoNXbjMM3YEnTRr0KvFQBVS1Bhk2Y=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=UIx/ilNTzT7weIjpLQVylKyfmFOoY7l0zSmO2O6/XyGLvW46i5PgFiSTPaN2SP96p
+         3ET4IccSWSGKbaZkbfr4FJAHW94TuQktSVkgYoSYMmOwPBnHgpTssXfp7f4l/U0d0N
+         LVmi7kjTZ40iI1maMVZdUjbIVSZDKrYSBdesEkCs=
+Received: from [192.168.43.100] (unknown [1.39.174.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9F01E601D4;
+        Wed, 21 Nov 2018 16:06:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542816405;
+        bh=M86mWa9k/FV/LifoNXbjMM3YEnTRr0KvFQBVS1Bhk2Y=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=UIx/ilNTzT7weIjpLQVylKyfmFOoY7l0zSmO2O6/XyGLvW46i5PgFiSTPaN2SP96p
+         3ET4IccSWSGKbaZkbfr4FJAHW94TuQktSVkgYoSYMmOwPBnHgpTssXfp7f4l/U0d0N
+         LVmi7kjTZ40iI1maMVZdUjbIVSZDKrYSBdesEkCs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9F01E601D4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [PATCH v4 0/2] Enable smmu support on sdm845
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     joro@8bytes.org, robh+dt@kernel.org, andy.gross@linaro.org,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, mark.rutland@arm.com,
+        david.brown@linaro.org, linux-kernel@vger.kernel.org,
+        robin.murphy@arm.com, dianders@chromium.org
+References: <20181011094930.17010-1-vivek.gautam@codeaurora.org>
+ <20181121155249.GA24883@arm.com>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <af01e45b-b35c-925c-e1b8-9847482adca5@codeaurora.org>
+Date:   Wed, 21 Nov 2018 21:36:36 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181121155249.GA24883@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_find_node_by_path() acquires a reference to the node
-returned by it and that reference needs to be dropped by its caller.
-This place is not doing this, so fix it.
+Hi Will,
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/tty/serial/sunsu.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/tty/serial/sunsu.c b/drivers/tty/serial/sunsu.c
-index 6cf3e9b0728f..4a27c0114d50 100644
---- a/drivers/tty/serial/sunsu.c
-+++ b/drivers/tty/serial/sunsu.c
-@@ -1394,22 +1394,32 @@ static inline struct console *SUNSU_CONSOLE(void)
- static enum su_type su_get_type(struct device_node *dp)
- {
- 	struct device_node *ap = of_find_node_by_path("/aliases");
-+	enum su_type rc = SU_PORT_PORT;
- 
- 	if (ap) {
-+		struct device_node *tmp;
- 		const char *keyb = of_get_property(ap, "keyboard", NULL);
- 		const char *ms = of_get_property(ap, "mouse", NULL);
- 
- 		if (keyb) {
--			if (dp == of_find_node_by_path(keyb))
--				return SU_PORT_KBD;
-+			tmp = of_find_node_by_path(keyb);
-+			if (tmp && dp == tmp){
-+				rc = SU_PORT_KBD;
-+				goto out;
-+			}
- 		}
- 		if (ms) {
--			if (dp == of_find_node_by_path(ms))
--				return SU_PORT_MS;
-+			tmp = of_find_node_by_path(ms);
-+			if (tmp && dp == tmp){
-+				rc = SU_PORT_MS;
-+				goto out;
-+			}
- 		}
- 	}
- 
--	return SU_PORT_PORT;
-+out:
-+	of_node_put(ap);
-+	return rc;
- }
- 
- static int su_probe(struct platform_device *op)
--- 
-2.17.0
+On 11/21/2018 9:22 PM, Will Deacon wrote:
+> Hi Vivek,
+>
+> On Thu, Oct 11, 2018 at 03:19:28PM +0530, Vivek Gautam wrote:
+>> This series enables apps-smmu, the "arm,mmu-500" instance
+>> on sdm845.
+>> Series tested on SDM845 MTP device with related smmu patch series [1],
+>> and necessary config change, besides one hack to keep LDO14 in LPM mode
+>> to boot things up (see the commit in the test branch).
+>> The tested branch is available at [2].
+> [...]
+>
+>>   .../devicetree/bindings/iommu/arm,smmu.txt         |  4 ++
+>>   arch/arm64/boot/dts/qcom/sdm845.dtsi               | 72 ++++++++++++++++++++++
+>>   2 files changed, 76 insertions(+)
+> Given that this doesn't touch any of the driver code, please take this via
+> the Andy and arm-soc.
+
+Yea, once the driver changes are pulled in your tree, I can ask Andy to 
+pick these.
+Thanks
+
+Best regards
+Vivek
+>
+> Will
 
