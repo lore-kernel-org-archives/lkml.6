@@ -2,1116 +2,509 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A77C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EFA9C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:41:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7251020659
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7BA820659
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:41:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Xshx2//B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7251020659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GvQAwGJI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7BA820659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730647AbeKVFPW (ORCPT
+        id S1730242AbeKVFQh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:15:22 -0500
-Received: from mail.efficios.com ([167.114.142.138]:55672 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbeKVFPV (ORCPT
+        Thu, 22 Nov 2018 00:16:37 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46128 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729066AbeKVFQh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:15:21 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id DEBD2133EB9;
-        Wed, 21 Nov 2018 13:39:49 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id PjIUiAa8dRsj; Wed, 21 Nov 2018 13:39:48 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 5443E133E81;
-        Wed, 21 Nov 2018 13:39:48 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 5443E133E81
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1542825588;
-        bh=RTYRhL43ett+dnmHzpLr0Lxa977yI4ORu2qcIriD7j0=;
-        h=From:To:Date:Message-Id;
-        b=Xshx2//BkI84TL/yGkaX30wt6vtSs/OyKv6+V1zVtCbNJljLFDEwwNzb9YGiVHhjn
-         IJvtAEo4DCG14lKyw76KJOFlGgHNedFk5Mqp0ahRPzc6fC/Yfq9kFXsj9g3uCOn3LR
-         2BadEiT0WY49Jorc4JcGY0eiJJ3/n7vzvB/1TGrCZS1wtFZ3yIiuzo5J2BmnTKgkLB
-         xDvVV9jSpmBDzF89GJuR7bUdmCFIOsQBzmV6UNBPvrOUOevDb6HAEnJyvNrEJH0y2y
-         zndmCqSrOZMyAudU9te4lF0+cTDxS/INtrm8Gehidb00JRKO8OxIEmingX6E5hvvxd
-         pNPbCo5h2gm8Q==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id oFXhXUyrgXeH; Wed, 21 Nov 2018 13:39:48 -0500 (EST)
-Received: from localhost.localdomain (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id ECE62133E7B;
-        Wed, 21 Nov 2018 13:39:47 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Carlos O'Donell <carlos@redhat.com>
-Cc:     Florian Weimer <fweimer@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha@sourceware.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl init and thread creation
-Date:   Wed, 21 Nov 2018 13:39:32 -0500
-Message-Id: <20181121183936.8176-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 22 Nov 2018 00:16:37 -0500
+Received: by mail-pl1-f193.google.com with SMTP id t13so6691259ply.13
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 10:41:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3G3fNXK4Kw4KNtCf6Q7mSvynnpcP5uk32Xztf1TO7A4=;
+        b=GvQAwGJIuhoytYL4JeG1eH5uZ5KdYt7Pex9HKXzN017QAnNP/cE85UpuF13y5VDdRu
+         VcQPhoJMwOqHYaukU4Ja/u+Z7xh3sw6O9tj78IfxKeK8r2gkXl/s7kKq6qdOmUmXVvUR
+         oYkF4b7QolThoavsr0YYdbEhmHq8Q+40Yq7VA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3G3fNXK4Kw4KNtCf6Q7mSvynnpcP5uk32Xztf1TO7A4=;
+        b=s2kYCf0iS28zIuGCisX1+8zAupWKZ8Dp/+e2RPK7TYHhio4fmtthi21wiO8X+F3Js4
+         +/UmrFYvVC2hgzdZYvA1gEiyaqSYkylWsN0ihj94HBajkrQ2lQ6DlTLQXBjpnWZ7Xd6U
+         dsaqwE2NcCRu4ldc/7Dvx+n+Lx+AVqV585ZR688AiJQRu77mWVNBD/t+PXCXZNvUL1/d
+         EEYV3DNLFFCRpVxDXFo8ufVDzq1pI99aM8BAdX+ZLzFiGwaJ/fyhIWNqUtCKlCUF4TVW
+         De+MevEwSmislgV7kv9pD1sGdULqCBIyj4my3WR+BkrBSYgM/RoY54YzED6rmSYOE8h9
+         eamw==
+X-Gm-Message-State: AA+aEWaFDSc9LbgE/QNWgL54Vs/g+K3pRmo0mMR6rl6NgVrTdUEOhUQm
+        QBJKLFjL1yNXSW5+upGcXdbXaA==
+X-Google-Smtp-Source: AFSGD/Vco9DgrL+ar2ybaP07hiOCIgShm9ccK3i1SUXfyZD6p/dxXvK55OYNRAqUBUr9O1NzCtxOeg==
+X-Received: by 2002:a63:d846:: with SMTP id k6mr7153918pgj.251.1542825667833;
+        Wed, 21 Nov 2018 10:41:07 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id f64sm105168085pfh.0.2018.11.21.10.41.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 10:41:07 -0800 (PST)
+Date:   Wed, 21 Nov 2018 10:41:06 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        amit.kucheria@linaro.org, evgreen@google.com
+Subject: Re: [PATCH v10 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq
+ HW driver
+Message-ID: <20181121184106.GT22824@google.com>
+References: <1542796967-5949-1-git-send-email-tdas@codeaurora.org>
+ <1542796967-5949-3-git-send-email-tdas@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1542796967-5949-3-git-send-email-tdas@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Register rseq(2) TLS for each thread (including main), and unregister
-for each thread (excluding main). "rseq" stands for Restartable
-Sequences.
+Hi Taniya,
 
-See the rseq(2) man page proposed here:
-  https://lkml.org/lkml/2018/9/19/647
+thanks for respinning, a few nits inline.
 
-This patch is based on glibc commit a502c5294. The rseq(2) system call
-was merged into Linux 4.18.
+On Wed, Nov 21, 2018 at 04:12:47PM +0530, Taniya Das wrote:
+> The CPUfreq HW present in some QCOM chipsets offloads the steps necessary
+> for changing the frequency of CPUs. The driver implements the cpufreq
+> driver interface for this hardware engine.
+> 
+> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  drivers/cpufreq/Kconfig.arm       |  11 ++
+>  drivers/cpufreq/Makefile          |   1 +
+>  drivers/cpufreq/qcom-cpufreq-hw.c | 346 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 358 insertions(+)
+>  create mode 100644 drivers/cpufreq/qcom-cpufreq-hw.c
+> 
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 4e1131e..688f102 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -114,6 +114,17 @@ config ARM_QCOM_CPUFREQ_KRYO
+> 
+>  	  If in doubt, say N.
+> 
+> +config ARM_QCOM_CPUFREQ_HW
+> +	tristate "QCOM CPUFreq HW driver"
+> +	depends on ARCH_QCOM || COMPILE_TEST
+> +	help
+> +	  Support for the CPUFreq HW driver.
+> +	  Some QCOM chipsets have a HW engine to offload the steps
+> +	  necessary for changing the frequency of the CPUs. Firmware loaded
+> +	  in this engine exposes a programming interface to the OS.
+> +	  The driver implements the cpufreq interface for this HW engine.
+> +	  Say Y if you want to support CPUFreq HW.
+> +
+>  config ARM_S3C_CPUFREQ
+>  	bool
+>  	help
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index d5ee456..789b2e0 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -62,6 +62,7 @@ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
+>  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
+>  obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
+>  obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
+> +obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+= qcom-cpufreq-hw.o
+>  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
+>  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
+>  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
+> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+> new file mode 100644
+> index 0000000..6390e85
+> --- /dev/null
+> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+> @@ -0,0 +1,346 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/cpufreq.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +
+> +#define LUT_MAX_ENTRIES			40U
+> +#define CORE_COUNT_VAL(val)		(((val) & (GENMASK(18, 16))) >> 16)
+> +#define LUT_ROW_SIZE			32
+> +#define CLK_HW_DIV			2
+> +
+> +/* Register offsets */
+> +#define REG_ENABLE			0x0
+> +#define REG_LUT_TABLE			0x110
+> +#define REG_PERF_STATE			0x920
+> +
+> +struct cpufreq_qcom {
+> +	struct cpufreq_frequency_table *table;
+> +	void __iomem *perf_base;
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Carlos O'Donell <carlos@redhat.com>
-CC: Florian Weimer <fweimer@redhat.com>
-CC: Joseph Myers <joseph@codesourcery.com>
-CC: Szabolcs Nagy <szabolcs.nagy@arm.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Ben Maurer <bmaurer@fb.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Boqun Feng <boqun.feng@gmail.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Dave Watson <davejwatson@fb.com>
-CC: Paul Turner <pjt@google.com>
-CC: libc-alpha@sourceware.org
-CC: linux-kernel@vger.kernel.org
-CC: linux-api@vger.kernel.org
----
-Changes since v1:
-- Move __rseq_refcount to an extra field at the end of __rseq_abi to
-  eliminate one symbol.
+nit: is this really a base address? It's the address of the perf state
+register, right? Better name it 'perf_state_reg'/'reg_perf_state' or
+similar (just 'perf_state' might be confusing, I'd expect a variable
+with this name to hold a state, not an address).
 
-  All libraries/programs which try to register rseq (glibc,
-  early-adopter applications, early-adopter libraries) should use the
-  rseq refcount. It becomes part of the ABI within a user-space
-  process, but it's not part of the ABI shared with the kernel per se.
+> +	cpumask_t related_cpus;
+> +	unsigned int max_cores;
+> +	unsigned long xo_rate;
+> +	unsigned long cpu_hw_rate;
+> +};
+> +
+> +static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
+> +
+> +static int
+> +qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
+> +			     unsigned int index)
+> +{
+> +	struct cpufreq_qcom *c = policy->driver_data;
+> +
+> +	writel_relaxed(index, c->perf_base);
+> +
+> +	return 0;
+> +}
+> +
+> +static unsigned int qcom_cpufreq_hw_get(unsigned int cpu)
+> +{
+> +	struct cpufreq_qcom *c;
+> +	struct cpufreq_policy *policy;
+> +	unsigned int index;
+> +
+> +	policy = cpufreq_cpu_get_raw(cpu);
+> +	if (!policy)
+> +		return 0;
+> +
+> +	c = policy->driver_data;
+> +
+> +	index = readl_relaxed(c->perf_base);
+> +	index = min(index, LUT_MAX_ENTRIES - 1);
+> +
+> +	return policy->freq_table[index].frequency;
+> +}
+> +
+> +static unsigned int
+> +qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
+> +			    unsigned int target_freq)
+> +{
+> +	struct cpufreq_qcom *c = policy->driver_data;
+> +	int index;
+> +
+> +	index = policy->cached_resolved_idx;
+> +	if (index < 0)
+> +		return 0;
+> +
+> +	writel_relaxed(index, c->perf_base);
+> +
+> +	return policy->freq_table[index].frequency;
+> +}
+> +
+> +static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
+> +{
+> +	struct cpufreq_qcom *c;
+> +
+> +	c = qcom_freq_domain_map[policy->cpu];
+> +	if (!c) {
+> +		pr_err("No scaling support for CPU%d\n", policy->cpu);
+> +		return -ENODEV;
+> +	}
+> +
+> +	cpumask_copy(policy->cpus, &c->related_cpus);
+> +
+> +	policy->fast_switch_possible = true;
+> +	policy->freq_table = c->table;
+> +	policy->driver_data = c;
+> +
+> +	return 0;
+> +}
+> +
+> +static struct freq_attr *qcom_cpufreq_hw_attr[] = {
+> +	&cpufreq_freq_attr_scaling_available_freqs,
+> +	&cpufreq_freq_attr_scaling_boost_freqs,
+> +	NULL
+> +};
+> +
+> +static struct cpufreq_driver cpufreq_qcom_hw_driver = {
+> +	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
+> +			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
+> +	.verify		= cpufreq_generic_frequency_table_verify,
+> +	.target_index	= qcom_cpufreq_hw_target_index,
+> +	.get		= qcom_cpufreq_hw_get,
+> +	.init		= qcom_cpufreq_hw_cpu_init,
+> +	.fast_switch    = qcom_cpufreq_hw_fast_switch,
+> +	.name		= "qcom-cpufreq-hw",
+> +	.attr		= qcom_cpufreq_hw_attr,
+> +	.boost_enabled	= true,
+> +};
+> +
+> +static int qcom_cpufreq_hw_read_lut(struct platform_device *pdev,
+> +				    struct cpufreq_qcom *c, void __iomem *base)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	u32 data, src, lval, i, core_count, prev_cc, prev_freq, cur_freq;
+> +
+> +	c->table = devm_kcalloc(dev, LUT_MAX_ENTRIES + 1,
+> +				sizeof(*c->table), GFP_KERNEL);
+> +	if (!c->table)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
+> +		data = readl_relaxed(base + REG_LUT_TABLE + i * LUT_ROW_SIZE);
+> +		src = (data & GENMASK(31, 30)) >> 30;
+> +		lval = data & GENMASK(7, 0);
+> +		core_count = CORE_COUNT_VAL(data);
+> +
+> +		if (src)
+> +			c->table[i].frequency = c->xo_rate * lval / 1000;
+> +		else
+> +			c->table[i].frequency = c->cpu_hw_rate / 1000;
+> +
+> +		cur_freq = c->table[i].frequency;
+> +
+> +		dev_dbg(dev, "index=%d freq=%d, core_count %d\n",
+> +			i, c->table[i].frequency, core_count);
+> +
+> +		if (core_count != c->max_cores)
+> +			cur_freq = CPUFREQ_ENTRY_INVALID;
+> +
+> +		/*
+> +		 * Two of the same frequencies with the same core counts means
+> +		 * end of table.
+> +		 */
+> +		if (i > 0 && c->table[i - 1].frequency ==
+> +		   c->table[i].frequency && prev_cc == core_count) {
+> +			struct cpufreq_frequency_table *prev = &c->table[i - 1];
+> +
+> +			if (prev_freq == CPUFREQ_ENTRY_INVALID)
+> +				prev->flags = CPUFREQ_BOOST_FREQ;
+> +			break;
+> +		}
+> +		prev_cc = core_count;
+> +		prev_freq = cur_freq;
+> +	}
+> +
+> +	c->table[i].frequency = CPUFREQ_TABLE_END;
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_get_related_cpus(int index, struct cpumask *m)
+> +{
+> +	struct device_node *cpu_np;
+> +	struct of_phandle_args args;
+> +	int cpu, ret;
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		cpu_np = of_cpu_device_node_get(cpu);
+> +		if (!cpu_np)
+> +			continue;
+> +
+> +		ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
+> +						 "#freq-domain-cells", 0,
+> +						  &args);
+> +		of_node_put(cpu_np);
+> +		if (ret < 0)
+> +			continue;
+> +
+> +		if (index == args.args[0])
+> +			cpumask_set_cpu(cpu, m);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_cpu_resources_init(struct platform_device *pdev,
+> +				   unsigned int cpu, int index,
+> +				   unsigned long xo_rate,
+> +				   unsigned long cpu_hw_rate)
+> +{
+> +	struct cpufreq_qcom *c;
+> +	struct resource *res;
+> +	struct device *dev = &pdev->dev;
+> +	void __iomem *base;
+> +	int ret, cpu_r;
+> +
+> +	if (qcom_freq_domain_map[cpu])
+> +		return 0;
+> +
+> +	c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
+> +	if (!c)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
+> +	base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	/* HW should be in enabled state to proceed */
+> +	if (!(readl_relaxed(base + REG_ENABLE) & 0x1)) {
+> +		dev_err(dev, "Domain-%d cpufreq hardware not enabled\n", index);
+> +		return -ENODEV;
+> +	}
+> +
+> +	ret = qcom_get_related_cpus(index, &c->related_cpus);
+> +	if (ret) {
+> +		dev_err(dev, "Domain-%d failed to get related CPUs\n", index);
+> +		return ret;
+> +	}
+> +
+> +	c->max_cores = cpumask_weight(&c->related_cpus);
+> +	if (!c->max_cores)
+> +		return -ENOENT;
+> +
+> +	c->xo_rate = xo_rate;
+> +	c->cpu_hw_rate = cpu_hw_rate;
+> +	c->perf_base = base + REG_PERF_STATE;
+> +
+> +	ret = qcom_cpufreq_hw_read_lut(pdev, c, base);
+> +	if (ret) {
+> +		dev_err(dev, "Domain-%d failed to read LUT\n", index);
+> +		return ret;
+> +	}
+> +
+> +	for_each_cpu(cpu_r, &c->related_cpus)
+> +		qcom_freq_domain_map[cpu_r] = c;
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_resources_init(struct platform_device *pdev)
+> +{
+> +	struct device_node *cpu_np;
+> +	struct of_phandle_args args;
+> +	struct clk *clk;
+> +	unsigned int cpu;
+> +	unsigned long xo_rate, cpu_hw_rate;
+> +	int ret;
+> +
+> +	clk = clk_get(&pdev->dev, "xo");
+> +	if (IS_ERR(clk))
+> +		return PTR_ERR(clk);
+> +
+> +	xo_rate = clk_get_rate(clk);
+> +
+> +	clk_put(clk);
+> +
+> +	clk = clk_get(&pdev->dev, "gcc_cpuss_gpll0_clk_src");
 
-- Restructure how this code is organized so glibc keeps building on
-  non-Linux targets.
+As commented on the binding patch, I'm not sure if this is the correct
+name for this clock input from the POV of this IP block. Just a doubt
+at this point, I don't have/find the hardware documentation to suggest
+something better.
 
-- Use non-weak symbol for __rseq_abi.
+> +	if (IS_ERR(clk))
+> +		return PTR_ERR(clk);
+> +
+> +	cpu_hw_rate = clk_get_rate(clk) / CLK_HW_DIV;
+> +
+> +	clk_put(clk);
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		cpu_np = of_cpu_device_node_get(cpu);
+> +		if (!cpu_np) {
+> +			dev_dbg(&pdev->dev, "Failed to get cpu %d device\n",
+> +				cpu);
+> +			continue;
+> +		}
+> +
+> +		ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
+> +						 "#freq-domain-cells", 0,
+> +						  &args);
+> +		of_node_put(cpu_np);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		ret = qcom_cpu_resources_init(pdev, cpu, args.args[0],
+> +					      xo_rate, cpu_hw_rate);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_cpufreq_hw_driver_probe(struct platform_device *pdev)
+> +{
+> +	int rc;
+> +
+> +	/* Get the bases of cpufreq for domains */
+> +	rc = qcom_resources_init(pdev);
+> +	if (rc) {
+> +		dev_err(&pdev->dev, "CPUFreq resource init failed\n");
+> +		return rc;
+> +	}
+> +
+> +	rc = cpufreq_register_driver(&cpufreq_qcom_hw_driver);
+> +	if (rc) {
+> +		dev_err(&pdev->dev, "CPUFreq HW driver failed to register\n");
+> +		return rc;
+> +	}
+> +
+> +	dev_dbg(&pdev->dev, "QCOM CPUFreq HW driver initialized\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id qcom_cpufreq_hw_match[] = {
+> +	{ .compatible = "qcom,cpufreq-hw" },
+> +	{}
+> +};
+> +
+> +static struct platform_driver qcom_cpufreq_hw_driver = {
+> +	.probe = qcom_cpufreq_hw_driver_probe,
+> +	.driver = {
+> +		.name = "qcom-cpufreq-hw",
+> +		.of_match_table = qcom_cpufreq_hw_match,
+> +	},
+> +};
+> +
+> +static int __init qcom_cpufreq_hw_init(void)
+> +{
+> +	return platform_driver_register(&qcom_cpufreq_hw_driver);
+> +}
+> +subsys_initcall(qcom_cpufreq_hw_init);
 
-- Move rseq registration/unregistration implementation into its own
-  nptl/rseq.c compile unit.
+I'm still not convinced that a subsys_initcall is needed (instead of
+module_init or device_initcall), as mentioned in the review of v7
+it causes problems when registering CPU cooling devices, but we can
+also fix this when support for cooling devices is added ;-)
 
-- Move __rseq_abi symbol under GLIBC_2.29.
+> +static void __exit qcom_cpufreq_hw_exit(void)
+> +{
+> +	cpufreq_unregister_driver(&cpufreq_qcom_hw_driver);
+> +	platform_driver_unregister(&qcom_cpufreq_hw_driver);
+> +}
+> +module_exit(qcom_cpufreq_hw_exit);
+> +
+> +MODULE_DESCRIPTION("QTI CPUFREQ HW Driver");
 
-Changes since v2:
-- Move __rseq_refcount to its own symbol, which is less ugly than
-  trying to play tricks with the rseq uapi.
-- Move __rseq_abi from nptl to csu (C start up), so it can be used
-  across glibc, including memory allocator and sched_getcpu(). The
-  __rseq_refcount symbol is kept in nptl, because there is no reason
-  to use it elsewhere in glibc.
+nit: make it 'QCOM CPUFreq HW driver' for consistency?
 
-Changes since v3:
-- Use atomic_fetch_add_relaxed to update __rseq_refcount TLS in a
-  async-signal-safe way. This is sufficient for the required atomicity
-  guarantees provided that the refcount is only touched by the current
-  thread and nested signal handlers, but more lightweight than
-  atomic_increment_val and atomic_decrement_val.
-- Add missing abilist items.
-- Rebase on glibc master commit a502c5294.
-- Add NEWS entry.
----
- NEWS                                          |  6 ++
- csu/Makefile                                  |  2 +-
- csu/Versions                                  |  3 +
- csu/rseq.c                                    | 38 ++++++++++
- nptl/Makefile                                 |  2 +-
- nptl/Versions                                 |  4 +
- nptl/nptl-init.c                              |  3 +
- nptl/pthreadP.h                               |  3 +
- nptl/pthread_create.c                         |  8 ++
- nptl/rseq.c                                   | 42 +++++++++++
- sysdeps/nptl/rseq-internal.h                  | 34 +++++++++
- sysdeps/unix/sysv/linux/aarch64/libc.abilist  |  1 +
- .../sysv/linux/aarch64/libpthread.abilist     |  1 +
- sysdeps/unix/sysv/linux/alpha/libc.abilist    |  1 +
- .../unix/sysv/linux/alpha/libpthread.abilist  |  1 +
- sysdeps/unix/sysv/linux/arm/libc.abilist      |  1 +
- .../unix/sysv/linux/arm/libpthread.abilist    |  1 +
- sysdeps/unix/sysv/linux/hppa/libc.abilist     |  1 +
- .../unix/sysv/linux/hppa/libpthread.abilist   |  1 +
- sysdeps/unix/sysv/linux/i386/libc.abilist     |  1 +
- .../unix/sysv/linux/i386/libpthread.abilist   |  1 +
- sysdeps/unix/sysv/linux/ia64/libc.abilist     |  1 +
- .../unix/sysv/linux/ia64/libpthread.abilist   |  1 +
- .../sysv/linux/m68k/coldfire/libc.abilist     |  1 +
- .../linux/m68k/coldfire/libpthread.abilist    |  1 +
- .../unix/sysv/linux/m68k/m680x0/libc.abilist  |  1 +
- .../sysv/linux/m68k/m680x0/libpthread.abilist |  1 +
- .../unix/sysv/linux/microblaze/libc.abilist   |  1 +
- .../sysv/linux/microblaze/libpthread.abilist  |  1 +
- .../sysv/linux/mips/mips32/fpu/libc.abilist   |  1 +
- .../sysv/linux/mips/mips32/libpthread.abilist |  1 +
- .../sysv/linux/mips/mips32/nofpu/libc.abilist |  1 +
- .../sysv/linux/mips/mips64/libpthread.abilist |  1 +
- .../sysv/linux/mips/mips64/n32/libc.abilist   |  1 +
- .../sysv/linux/mips/mips64/n64/libc.abilist   |  1 +
- sysdeps/unix/sysv/linux/nios2/libc.abilist    |  1 +
- .../unix/sysv/linux/nios2/libpthread.abilist  |  1 +
- .../linux/powerpc/powerpc32/fpu/libc.abilist  |  1 +
- .../powerpc/powerpc32/libpthread.abilist      |  1 +
- .../powerpc/powerpc32/nofpu/libc.abilist      |  1 +
- .../linux/powerpc/powerpc64/libc-le.abilist   |  1 +
- .../sysv/linux/powerpc/powerpc64/libc.abilist |  1 +
- .../powerpc/powerpc64/libpthread-le.abilist   |  1 +
- .../powerpc/powerpc64/libpthread.abilist      |  1 +
- .../unix/sysv/linux/riscv/rv64/libc.abilist   |  1 +
- .../sysv/linux/riscv/rv64/libpthread.abilist  |  1 +
- sysdeps/unix/sysv/linux/rseq-internal.h       | 73 +++++++++++++++++++
- .../unix/sysv/linux/s390/s390-32/libc.abilist |  1 +
- .../linux/s390/s390-32/libpthread.abilist     |  1 +
- .../unix/sysv/linux/s390/s390-64/libc.abilist |  1 +
- .../linux/s390/s390-64/libpthread.abilist     |  1 +
- sysdeps/unix/sysv/linux/sh/libc.abilist       |  1 +
- sysdeps/unix/sysv/linux/sh/libpthread.abilist |  1 +
- .../sysv/linux/sparc/sparc32/libc.abilist     |  1 +
- .../linux/sparc/sparc32/libpthread.abilist    |  1 +
- .../sysv/linux/sparc/sparc64/libc.abilist     |  1 +
- .../linux/sparc/sparc64/libpthread.abilist    |  1 +
- .../unix/sysv/linux/x86_64/64/libc.abilist    |  1 +
- .../sysv/linux/x86_64/64/libpthread.abilist   |  1 +
- .../unix/sysv/linux/x86_64/x32/libc.abilist   |  1 +
- .../sysv/linux/x86_64/x32/libpthread.abilist  |  1 +
- 61 files changed, 265 insertions(+), 2 deletions(-)
- create mode 100644 csu/rseq.c
- create mode 100644 nptl/rseq.c
- create mode 100644 sysdeps/nptl/rseq-internal.h
- create mode 100644 sysdeps/unix/sysv/linux/rseq-internal.h
+Cheers
 
-diff --git a/NEWS b/NEWS
-index f488821af1..b238eaa391 100644
---- a/NEWS
-+++ b/NEWS
-@@ -35,6 +35,12 @@ Major new features:
-   different directory.  This is a GNU extension and similar to the
-   Solaris function of the same name.
- 
-+* Support for automatically registering threads with the Linux rseq(2)
-+  system call has been added. This system call is implemented starting
-+  from Linux 4.18. In order to be activated, it requires that glibc is built
-+  against kernel headers that include this system call, and that glibc
-+  detects availability of that system call at runtime.
-+
- Deprecated and removed features, and other changes affecting compatibility:
- 
- * The glibc.tune tunable namespace has been renamed to glibc.cpu and the
-diff --git a/csu/Makefile b/csu/Makefile
-index 88fc77662e..81d471587f 100644
---- a/csu/Makefile
-+++ b/csu/Makefile
-@@ -28,7 +28,7 @@ include ../Makeconfig
- 
- routines = init-first libc-start $(libc-init) sysdep version check_fds \
- 	   libc-tls elf-init dso_handle
--aux	 = errno
-+aux	 = errno rseq
- elide-routines.os = libc-tls
- static-only-routines = elf-init
- csu-dummies = $(filter-out $(start-installed-name),crt1.o Mcrt1.o)
-diff --git a/csu/Versions b/csu/Versions
-index 43010c3443..0f44ebf991 100644
---- a/csu/Versions
-+++ b/csu/Versions
-@@ -7,6 +7,9 @@ libc {
-     # New special glibc functions.
-     gnu_get_libc_release; gnu_get_libc_version;
-   }
-+  GLIBC_2.29 {
-+    __rseq_abi;
-+  }
-   GLIBC_PRIVATE {
-     errno;
-   }
-diff --git a/csu/rseq.c b/csu/rseq.c
-new file mode 100644
-index 0000000000..ccc88e4582
---- /dev/null
-+++ b/csu/rseq.c
-@@ -0,0 +1,38 @@
-+/* Copyright (C) 2018 Free Software Foundation, Inc.
-+   This file is part of the GNU C Library.
-+   Contributed by Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 2018.
-+
-+   The GNU C Library is free software; you can redistribute it and/or
-+   modify it under the terms of the GNU Lesser General Public
-+   License as published by the Free Software Foundation; either
-+   version 2.1 of the License, or (at your option) any later version.
-+
-+   The GNU C Library is distributed in the hope that it will be useful,
-+   but WITHOUT ANY WARRANTY; without even the implied warranty of
-+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+   Lesser General Public License for more details.
-+
-+   You should have received a copy of the GNU Lesser General Public
-+   License along with the GNU C Library; if not, see
-+   <http://www.gnu.org/licenses/>.  */
-+
-+#include <stdint.h>
-+
-+enum libc_rseq_cpu_id_state {
-+  LIBC_RSEQ_CPU_ID_UNINITIALIZED = -1,
-+  LIBC_RSEQ_CPU_ID_REGISTRATION_FAILED = -2,
-+};
-+
-+/* linux/rseq.h defines struct rseq as aligned on 32 bytes. The kernel ABI
-+   size is 20 bytes.  */
-+struct libc_rseq {
-+  uint32_t cpu_id_start;
-+  uint32_t cpu_id;
-+  uint64_t rseq_cs;
-+  uint32_t flags;
-+} __attribute__ ((aligned(4 * sizeof(uint64_t))));
-+
-+__attribute__ ((weak))
-+__thread volatile struct libc_rseq __rseq_abi = {
-+  .cpu_id = LIBC_RSEQ_CPU_ID_UNINITIALIZED,
-+};
-diff --git a/nptl/Makefile b/nptl/Makefile
-index 49b6faa330..3a5dc80c65 100644
---- a/nptl/Makefile
-+++ b/nptl/Makefile
-@@ -145,7 +145,7 @@ libpthread-routines = nptl-init nptlfreeres vars events version pt-interp \
- 		      mtx_destroy mtx_init mtx_lock mtx_timedlock \
- 		      mtx_trylock mtx_unlock call_once cnd_broadcast \
- 		      cnd_destroy cnd_init cnd_signal cnd_timedwait cnd_wait \
--		      tss_create tss_delete tss_get tss_set
-+		      tss_create tss_delete tss_get tss_set rseq
- #		      pthread_setuid pthread_seteuid pthread_setreuid \
- #		      pthread_setresuid \
- #		      pthread_setgid pthread_setegid pthread_setregid \
-diff --git a/nptl/Versions b/nptl/Versions
-index e7f691da7a..f7890f73fc 100644
---- a/nptl/Versions
-+++ b/nptl/Versions
-@@ -277,6 +277,10 @@ libpthread {
-     cnd_timedwait; cnd_wait; tss_create; tss_delete; tss_get; tss_set;
-   }
- 
-+  GLIBC_2.29 {
-+    __rseq_refcount;
-+  }
-+
-   GLIBC_PRIVATE {
-     __pthread_initialize_minimal;
-     __pthread_clock_gettime; __pthread_clock_settime;
-diff --git a/nptl/nptl-init.c b/nptl/nptl-init.c
-index 907411d5bc..ab17bbb6e4 100644
---- a/nptl/nptl-init.c
-+++ b/nptl/nptl-init.c
-@@ -279,6 +279,9 @@ __pthread_initialize_minimal_internal (void)
-   THREAD_SETMEM (pd, cpuclock_offset, GL(dl_cpuclock_offset));
- #endif
- 
-+  /* Register rseq ABI to the kernel. */
-+  (void) __rseq_register_current_thread ();
-+
-   /* Initialize the robust mutex data.  */
-   {
- #if __PTHREAD_MUTEX_HAVE_PREV
-diff --git a/nptl/pthreadP.h b/nptl/pthreadP.h
-index 19efe1e35f..7fb996f12d 100644
---- a/nptl/pthreadP.h
-+++ b/nptl/pthreadP.h
-@@ -609,6 +609,9 @@ extern void __shm_directory_freeres (void) attribute_hidden;
- 
- extern void __wait_lookup_done (void) attribute_hidden;
- 
-+extern int __rseq_register_current_thread (void) attribute_hidden;
-+extern int __rseq_unregister_current_thread (void) attribute_hidden;
-+
- #ifdef SHARED
- # define PTHREAD_STATIC_FN_REQUIRE(name)
- #else
-diff --git a/nptl/pthread_create.c b/nptl/pthread_create.c
-index fe75d04113..a5233cdf2f 100644
---- a/nptl/pthread_create.c
-+++ b/nptl/pthread_create.c
-@@ -378,6 +378,7 @@ __free_tcb (struct pthread *pd)
- START_THREAD_DEFN
- {
-   struct pthread *pd = START_THREAD_SELF;
-+  bool has_rseq = false;
- 
- #if HP_TIMING_AVAIL
-   /* Remember the time when the thread was started.  */
-@@ -396,6 +397,9 @@ START_THREAD_DEFN
-   if (__glibc_unlikely (atomic_exchange_acq (&pd->setxid_futex, 0) == -2))
-     futex_wake (&pd->setxid_futex, 1, FUTEX_PRIVATE);
- 
-+  /* Register rseq TLS to the kernel. */
-+  has_rseq = !__rseq_register_current_thread ();
-+
- #ifdef __NR_set_robust_list
- # ifndef __ASSUME_SET_ROBUST_LIST
-   if (__set_robust_list_avail >= 0)
-@@ -573,6 +577,10 @@ START_THREAD_DEFN
-     }
- #endif
- 
-+  /* Unregister rseq TLS from kernel. */
-+  if (has_rseq && __rseq_unregister_current_thread ())
-+    abort();
-+
-   advise_stack_range (pd->stackblock, pd->stackblock_size, (uintptr_t) pd,
- 		      pd->guardsize);
- 
-diff --git a/nptl/rseq.c b/nptl/rseq.c
-new file mode 100644
-index 0000000000..415674964f
---- /dev/null
-+++ b/nptl/rseq.c
-@@ -0,0 +1,42 @@
-+/* Copyright (C) 2018 Free Software Foundation, Inc.
-+   This file is part of the GNU C Library.
-+   Contributed by Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 2018.
-+
-+   The GNU C Library is free software; you can redistribute it and/or
-+   modify it under the terms of the GNU Lesser General Public
-+   License as published by the Free Software Foundation; either
-+   version 2.1 of the License, or (at your option) any later version.
-+
-+   The GNU C Library is distributed in the hope that it will be useful,
-+   but WITHOUT ANY WARRANTY; without even the implied warranty of
-+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+   Lesser General Public License for more details.
-+
-+   You should have received a copy of the GNU Lesser General Public
-+   License along with the GNU C Library; if not, see
-+   <http://www.gnu.org/licenses/>.  */
-+
-+#include "pthreadP.h"
-+
-+__attribute__((weak))
-+__thread volatile uint32_t __rseq_refcount;
-+
-+#ifdef __NR_rseq
-+#include <sysdeps/unix/sysv/linux/rseq-internal.h>
-+#else
-+#include <sysdeps/nptl/rseq-internal.h>
-+#endif  /* __NR_rseq.  */
-+
-+int
-+attribute_hidden
-+__rseq_register_current_thread (void)
-+{
-+  return sysdep_rseq_register_current_thread ();
-+}
-+
-+int
-+attribute_hidden
-+__rseq_unregister_current_thread (void)
-+{
-+  return sysdep_rseq_register_current_thread ();
-+}
-diff --git a/sysdeps/nptl/rseq-internal.h b/sysdeps/nptl/rseq-internal.h
-new file mode 100644
-index 0000000000..96422ebd57
---- /dev/null
-+++ b/sysdeps/nptl/rseq-internal.h
-@@ -0,0 +1,34 @@
-+/* Copyright (C) 2018 Free Software Foundation, Inc.
-+   This file is part of the GNU C Library.
-+   Contributed by Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 2018.
-+
-+   The GNU C Library is free software; you can redistribute it and/or
-+   modify it under the terms of the GNU Lesser General Public
-+   License as published by the Free Software Foundation; either
-+   version 2.1 of the License, or (at your option) any later version.
-+
-+   The GNU C Library is distributed in the hope that it will be useful,
-+   but WITHOUT ANY WARRANTY; without even the implied warranty of
-+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+   Lesser General Public License for more details.
-+
-+   You should have received a copy of the GNU Lesser General Public
-+   License along with the GNU C Library; if not, see
-+   <http://www.gnu.org/licenses/>.  */
-+
-+#ifndef RSEQ_INTERNAL_H
-+#define RSEQ_INTERNAL_H
-+
-+static inline int
-+sysdep_rseq_register_current_thread (void)
-+{
-+  return -1;
-+}
-+
-+static inline int
-+sysdep_rseq_unregister_current_thread (void)
-+{
-+  return -1;
-+}
-+
-+#endif	/* rseq-internal.h */
-diff --git a/sysdeps/unix/sysv/linux/aarch64/libc.abilist b/sysdeps/unix/sysv/linux/aarch64/libc.abilist
-index e66c741d04..36af4d0e94 100644
---- a/sysdeps/unix/sysv/linux/aarch64/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/aarch64/libc.abilist
-@@ -2138,4 +2138,5 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
-diff --git a/sysdeps/unix/sysv/linux/aarch64/libpthread.abilist b/sysdeps/unix/sysv/linux/aarch64/libpthread.abilist
-index 9a9e4cee85..d5b010eee1 100644
---- a/sysdeps/unix/sysv/linux/aarch64/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/aarch64/libpthread.abilist
-@@ -243,3 +243,4 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
-diff --git a/sysdeps/unix/sysv/linux/alpha/libc.abilist b/sysdeps/unix/sysv/linux/alpha/libc.abilist
-index 8df162fe99..cdf1d53e35 100644
---- a/sysdeps/unix/sysv/linux/alpha/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/alpha/libc.abilist
-@@ -2033,6 +2033,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/alpha/libpthread.abilist b/sysdeps/unix/sysv/linux/alpha/libpthread.abilist
-index b413007ccb..d477af8d10 100644
---- a/sysdeps/unix/sysv/linux/alpha/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/alpha/libpthread.abilist
-@@ -227,6 +227,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.3.2 pthread_cond_broadcast F
- GLIBC_2.3.2 pthread_cond_destroy F
- GLIBC_2.3.2 pthread_cond_init F
-diff --git a/sysdeps/unix/sysv/linux/arm/libc.abilist b/sysdeps/unix/sysv/linux/arm/libc.abilist
-index 43c804f9dc..f11ff5c5cf 100644
---- a/sysdeps/unix/sysv/linux/arm/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/arm/libc.abilist
-@@ -123,6 +123,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.4 _Exit F
- GLIBC_2.4 _IO_2_1_stderr_ D 0xa0
-diff --git a/sysdeps/unix/sysv/linux/arm/libpthread.abilist b/sysdeps/unix/sysv/linux/arm/libpthread.abilist
-index af82a4c632..b49c38114a 100644
---- a/sysdeps/unix/sysv/linux/arm/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/arm/libpthread.abilist
-@@ -27,6 +27,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.4 _IO_flockfile F
- GLIBC_2.4 _IO_ftrylockfile F
- GLIBC_2.4 _IO_funlockfile F
-diff --git a/sysdeps/unix/sysv/linux/hppa/libc.abilist b/sysdeps/unix/sysv/linux/hppa/libc.abilist
-index 88b01c2e75..deb2dd860b 100644
---- a/sysdeps/unix/sysv/linux/hppa/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/hppa/libc.abilist
-@@ -1880,6 +1880,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/hppa/libpthread.abilist b/sysdeps/unix/sysv/linux/hppa/libpthread.abilist
-index bcba07f575..3a307653f4 100644
---- a/sysdeps/unix/sysv/linux/hppa/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/hppa/libpthread.abilist
-@@ -219,6 +219,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.3.2 pthread_cond_broadcast F
- GLIBC_2.3.2 pthread_cond_destroy F
- GLIBC_2.3.2 pthread_cond_init F
-diff --git a/sysdeps/unix/sysv/linux/i386/libc.abilist b/sysdeps/unix/sysv/linux/i386/libc.abilist
-index 6d02f31612..156235898a 100644
---- a/sysdeps/unix/sysv/linux/i386/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/i386/libc.abilist
-@@ -2045,6 +2045,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/i386/libpthread.abilist b/sysdeps/unix/sysv/linux/i386/libpthread.abilist
-index bece86d246..e95ce92103 100644
---- a/sysdeps/unix/sysv/linux/i386/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/i386/libpthread.abilist
-@@ -227,6 +227,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.3.2 pthread_cond_broadcast F
- GLIBC_2.3.2 pthread_cond_destroy F
- GLIBC_2.3.2 pthread_cond_init F
-diff --git a/sysdeps/unix/sysv/linux/ia64/libc.abilist b/sysdeps/unix/sysv/linux/ia64/libc.abilist
-index 4249712611..39f291f97d 100644
---- a/sysdeps/unix/sysv/linux/ia64/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/ia64/libc.abilist
-@@ -1914,6 +1914,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/ia64/libpthread.abilist b/sysdeps/unix/sysv/linux/ia64/libpthread.abilist
-index ccc9449826..6e23c0e62d 100644
---- a/sysdeps/unix/sysv/linux/ia64/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/ia64/libpthread.abilist
-@@ -219,6 +219,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.3.2 pthread_cond_broadcast F
- GLIBC_2.3.2 pthread_cond_destroy F
- GLIBC_2.3.2 pthread_cond_init F
-diff --git a/sysdeps/unix/sysv/linux/m68k/coldfire/libc.abilist b/sysdeps/unix/sysv/linux/m68k/coldfire/libc.abilist
-index d47b808862..a18501e570 100644
---- a/sysdeps/unix/sysv/linux/m68k/coldfire/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/m68k/coldfire/libc.abilist
-@@ -124,6 +124,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.4 _Exit F
- GLIBC_2.4 _IO_2_1_stderr_ D 0x98
-diff --git a/sysdeps/unix/sysv/linux/m68k/coldfire/libpthread.abilist b/sysdeps/unix/sysv/linux/m68k/coldfire/libpthread.abilist
-index af82a4c632..b49c38114a 100644
---- a/sysdeps/unix/sysv/linux/m68k/coldfire/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/m68k/coldfire/libpthread.abilist
-@@ -27,6 +27,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.4 _IO_flockfile F
- GLIBC_2.4 _IO_ftrylockfile F
- GLIBC_2.4 _IO_funlockfile F
-diff --git a/sysdeps/unix/sysv/linux/m68k/m680x0/libc.abilist b/sysdeps/unix/sysv/linux/m68k/m680x0/libc.abilist
-index d5e38308be..cf0f41ec70 100644
---- a/sysdeps/unix/sysv/linux/m68k/m680x0/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/m68k/m680x0/libc.abilist
-@@ -1989,6 +1989,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/m68k/m680x0/libpthread.abilist b/sysdeps/unix/sysv/linux/m68k/m680x0/libpthread.abilist
-index bece86d246..e95ce92103 100644
---- a/sysdeps/unix/sysv/linux/m68k/m680x0/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/m68k/m680x0/libpthread.abilist
-@@ -227,6 +227,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.3.2 pthread_cond_broadcast F
- GLIBC_2.3.2 pthread_cond_destroy F
- GLIBC_2.3.2 pthread_cond_init F
-diff --git a/sysdeps/unix/sysv/linux/microblaze/libc.abilist b/sysdeps/unix/sysv/linux/microblaze/libc.abilist
-index 8596b84399..1405f27555 100644
---- a/sysdeps/unix/sysv/linux/microblaze/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/microblaze/libc.abilist
-@@ -2130,4 +2130,5 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
-diff --git a/sysdeps/unix/sysv/linux/microblaze/libpthread.abilist b/sysdeps/unix/sysv/linux/microblaze/libpthread.abilist
-index 5067375d23..2a94d9e588 100644
---- a/sysdeps/unix/sysv/linux/microblaze/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/microblaze/libpthread.abilist
-@@ -243,3 +243,4 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
-diff --git a/sysdeps/unix/sysv/linux/mips/mips32/fpu/libc.abilist b/sysdeps/unix/sysv/linux/mips/mips32/fpu/libc.abilist
-index 88e0f896d5..7b0144392f 100644
---- a/sysdeps/unix/sysv/linux/mips/mips32/fpu/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/mips/mips32/fpu/libc.abilist
-@@ -1967,6 +1967,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/mips/mips32/libpthread.abilist b/sysdeps/unix/sysv/linux/mips/mips32/libpthread.abilist
-index 02144967c6..e507b677ee 100644
---- a/sysdeps/unix/sysv/linux/mips/mips32/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/mips/mips32/libpthread.abilist
-@@ -227,6 +227,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.3.2 pthread_cond_broadcast F
- GLIBC_2.3.2 pthread_cond_destroy F
- GLIBC_2.3.2 pthread_cond_init F
-diff --git a/sysdeps/unix/sysv/linux/mips/mips32/nofpu/libc.abilist b/sysdeps/unix/sysv/linux/mips/mips32/nofpu/libc.abilist
-index aff7462c34..430426e03e 100644
---- a/sysdeps/unix/sysv/linux/mips/mips32/nofpu/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/mips/mips32/nofpu/libc.abilist
-@@ -1965,6 +1965,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/mips/mips64/libpthread.abilist b/sysdeps/unix/sysv/linux/mips/mips64/libpthread.abilist
-index 02144967c6..e507b677ee 100644
---- a/sysdeps/unix/sysv/linux/mips/mips64/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/mips/mips64/libpthread.abilist
-@@ -227,6 +227,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.3.2 pthread_cond_broadcast F
- GLIBC_2.3.2 pthread_cond_destroy F
- GLIBC_2.3.2 pthread_cond_init F
-diff --git a/sysdeps/unix/sysv/linux/mips/mips64/n32/libc.abilist b/sysdeps/unix/sysv/linux/mips/mips64/n32/libc.abilist
-index 71d82444aa..60915c4d81 100644
---- a/sysdeps/unix/sysv/linux/mips/mips64/n32/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/mips/mips64/n32/libc.abilist
-@@ -1973,6 +1973,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/mips/mips64/n64/libc.abilist b/sysdeps/unix/sysv/linux/mips/mips64/n64/libc.abilist
-index de6c53d293..958488bf19 100644
---- a/sysdeps/unix/sysv/linux/mips/mips64/n64/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/mips/mips64/n64/libc.abilist
-@@ -1968,6 +1968,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/nios2/libc.abilist b/sysdeps/unix/sysv/linux/nios2/libc.abilist
-index e724bab9fb..9f4be44396 100644
---- a/sysdeps/unix/sysv/linux/nios2/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/nios2/libc.abilist
-@@ -2171,4 +2171,5 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
-diff --git a/sysdeps/unix/sysv/linux/nios2/libpthread.abilist b/sysdeps/unix/sysv/linux/nios2/libpthread.abilist
-index 78cac2ae27..79fbbec7bb 100644
---- a/sysdeps/unix/sysv/linux/nios2/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/nios2/libpthread.abilist
-@@ -241,3 +241,4 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
-diff --git a/sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/libc.abilist b/sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/libc.abilist
-index e9ecbccb71..758a88cb40 100644
---- a/sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/libc.abilist
-@@ -1993,6 +1993,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/powerpc/powerpc32/libpthread.abilist b/sysdeps/unix/sysv/linux/powerpc/powerpc32/libpthread.abilist
-index 09e8447b06..2def055dec 100644
---- a/sysdeps/unix/sysv/linux/powerpc/powerpc32/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/powerpc/powerpc32/libpthread.abilist
-@@ -227,6 +227,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.3.2 pthread_cond_broadcast F
- GLIBC_2.3.2 pthread_cond_destroy F
- GLIBC_2.3.2 pthread_cond_init F
-diff --git a/sysdeps/unix/sysv/linux/powerpc/powerpc32/nofpu/libc.abilist b/sysdeps/unix/sysv/linux/powerpc/powerpc32/nofpu/libc.abilist
-index da83ea6028..ab8d68446a 100644
---- a/sysdeps/unix/sysv/linux/powerpc/powerpc32/nofpu/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/powerpc/powerpc32/nofpu/libc.abilist
-@@ -1997,6 +1997,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/powerpc/powerpc64/libc-le.abilist b/sysdeps/unix/sysv/linux/powerpc/powerpc64/libc-le.abilist
-index 4535b40d15..d9dc159d85 100644
---- a/sysdeps/unix/sysv/linux/powerpc/powerpc64/libc-le.abilist
-+++ b/sysdeps/unix/sysv/linux/powerpc/powerpc64/libc-le.abilist
-@@ -2228,4 +2228,5 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
-diff --git a/sysdeps/unix/sysv/linux/powerpc/powerpc64/libc.abilist b/sysdeps/unix/sysv/linux/powerpc/powerpc64/libc.abilist
-index 65725de4f0..cc47390688 100644
---- a/sysdeps/unix/sysv/linux/powerpc/powerpc64/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/powerpc/powerpc64/libc.abilist
-@@ -123,6 +123,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 _Exit F
- GLIBC_2.3 _IO_2_1_stderr_ D 0xe0
-diff --git a/sysdeps/unix/sysv/linux/powerpc/powerpc64/libpthread-le.abilist b/sysdeps/unix/sysv/linux/powerpc/powerpc64/libpthread-le.abilist
-index 9a9e4cee85..d5b010eee1 100644
---- a/sysdeps/unix/sysv/linux/powerpc/powerpc64/libpthread-le.abilist
-+++ b/sysdeps/unix/sysv/linux/powerpc/powerpc64/libpthread-le.abilist
-@@ -243,3 +243,4 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
-diff --git a/sysdeps/unix/sysv/linux/powerpc/powerpc64/libpthread.abilist b/sysdeps/unix/sysv/linux/powerpc/powerpc64/libpthread.abilist
-index 8300958d47..26a5ced7a2 100644
---- a/sysdeps/unix/sysv/linux/powerpc/powerpc64/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/powerpc/powerpc64/libpthread.abilist
-@@ -27,6 +27,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.3 _IO_flockfile F
- GLIBC_2.3 _IO_ftrylockfile F
- GLIBC_2.3 _IO_funlockfile F
-diff --git a/sysdeps/unix/sysv/linux/riscv/rv64/libc.abilist b/sysdeps/unix/sysv/linux/riscv/rv64/libc.abilist
-index bbb3c4a8e7..a59d67aca2 100644
---- a/sysdeps/unix/sysv/linux/riscv/rv64/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/riscv/rv64/libc.abilist
-@@ -2100,4 +2100,5 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
-diff --git a/sysdeps/unix/sysv/linux/riscv/rv64/libpthread.abilist b/sysdeps/unix/sysv/linux/riscv/rv64/libpthread.abilist
-index c370fda73d..9da78d59d2 100644
---- a/sysdeps/unix/sysv/linux/riscv/rv64/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/riscv/rv64/libpthread.abilist
-@@ -235,3 +235,4 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
-diff --git a/sysdeps/unix/sysv/linux/rseq-internal.h b/sysdeps/unix/sysv/linux/rseq-internal.h
-new file mode 100644
-index 0000000000..b6616ef32c
---- /dev/null
-+++ b/sysdeps/unix/sysv/linux/rseq-internal.h
-@@ -0,0 +1,73 @@
-+/* Copyright (C) 2018 Free Software Foundation, Inc.
-+   This file is part of the GNU C Library.
-+   Contributed by Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 2018.
-+
-+   The GNU C Library is free software; you can redistribute it and/or
-+   modify it under the terms of the GNU Lesser General Public
-+   License as published by the Free Software Foundation; either
-+   version 2.1 of the License, or (at your option) any later version.
-+
-+   The GNU C Library is distributed in the hope that it will be useful,
-+   but WITHOUT ANY WARRANTY; without even the implied warranty of
-+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+   Lesser General Public License for more details.
-+
-+   You should have received a copy of the GNU Lesser General Public
-+   License along with the GNU C Library; if not, see
-+   <http://www.gnu.org/licenses/>.  */
-+
-+#ifndef RSEQ_INTERNAL_H
-+#define RSEQ_INTERNAL_H
-+
-+#include <stdint.h>
-+#include <atomic.h>
-+#include <linux/rseq.h>
-+
-+#define RSEQ_SIG 0x53053053
-+
-+extern __thread volatile struct rseq __rseq_abi
-+__attribute__ ((tls_model ("initial-exec")));
-+
-+extern __thread volatile uint32_t __rseq_refcount
-+__attribute__ ((tls_model ("initial-exec")));
-+
-+static inline int
-+sysdep_rseq_register_current_thread (void)
-+{
-+  int rc, ret = 0;
-+  INTERNAL_SYSCALL_DECL (err);
-+
-+  if (__rseq_abi.cpu_id == RSEQ_CPU_ID_REGISTRATION_FAILED)
-+    return -1;
-+  if (atomic_fetch_add_relaxed (&__rseq_refcount, 1))
-+    goto end;
-+  rc = INTERNAL_SYSCALL_CALL (rseq, err, &__rseq_abi, sizeof (struct rseq),
-+                              0, RSEQ_SIG);
-+  if (!rc)
-+    goto end;
-+  if (INTERNAL_SYSCALL_ERRNO (rc, err) != EBUSY)
-+    __rseq_abi.cpu_id = RSEQ_CPU_ID_REGISTRATION_FAILED;
-+  ret = -1;
-+  atomic_decrement (&__rseq_refcount);
-+end:
-+  return ret;
-+}
-+
-+static inline int
-+sysdep_rseq_unregister_current_thread (void)
-+{
-+  int rc, ret = 0;
-+  INTERNAL_SYSCALL_DECL (err);
-+
-+  if (atomic_fetch_add_relaxed (&__rseq_refcount, -1) - 1)
-+    goto end;
-+  rc = INTERNAL_SYSCALL_CALL (rseq, err, &__rseq_abi, sizeof (struct rseq),
-+                              RSEQ_FLAG_UNREGISTER, RSEQ_SIG);
-+  if (!rc)
-+    goto end;
-+  ret = -1;
-+end:
-+  return ret;
-+}
-+
-+#endif	/* rseq-internal.h */
-diff --git a/sysdeps/unix/sysv/linux/s390/s390-32/libc.abilist b/sysdeps/unix/sysv/linux/s390/s390-32/libc.abilist
-index e85ac2a178..fca7f6de8d 100644
---- a/sysdeps/unix/sysv/linux/s390/s390-32/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/s390/s390-32/libc.abilist
-@@ -2002,6 +2002,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/s390/s390-32/libpthread.abilist b/sysdeps/unix/sysv/linux/s390/s390-32/libpthread.abilist
-index d05468f3b2..8876434f46 100644
---- a/sysdeps/unix/sysv/linux/s390/s390-32/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/s390/s390-32/libpthread.abilist
-@@ -229,6 +229,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.3.2 pthread_cond_broadcast F
- GLIBC_2.3.2 pthread_cond_destroy F
- GLIBC_2.3.2 pthread_cond_init F
-diff --git a/sysdeps/unix/sysv/linux/s390/s390-64/libc.abilist b/sysdeps/unix/sysv/linux/s390/s390-64/libc.abilist
-index d56931022c..74eebccbd0 100644
---- a/sysdeps/unix/sysv/linux/s390/s390-64/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/s390/s390-64/libc.abilist
-@@ -1908,6 +1908,7 @@ GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
- GLIBC_2.29 __fentry__ F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/s390/s390-64/libpthread.abilist b/sysdeps/unix/sysv/linux/s390/s390-64/libpthread.abilist
-index e8161aa747..2ae3980aba 100644
---- a/sysdeps/unix/sysv/linux/s390/s390-64/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/s390/s390-64/libpthread.abilist
-@@ -221,6 +221,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.3.2 pthread_cond_broadcast F
- GLIBC_2.3.2 pthread_cond_destroy F
- GLIBC_2.3.2 pthread_cond_init F
-diff --git a/sysdeps/unix/sysv/linux/sh/libc.abilist b/sysdeps/unix/sysv/linux/sh/libc.abilist
-index ff939a15c4..e614aa9f0c 100644
---- a/sysdeps/unix/sysv/linux/sh/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/sh/libc.abilist
-@@ -1884,6 +1884,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/sh/libpthread.abilist b/sysdeps/unix/sysv/linux/sh/libpthread.abilist
-index bcba07f575..3a307653f4 100644
---- a/sysdeps/unix/sysv/linux/sh/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/sh/libpthread.abilist
-@@ -219,6 +219,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.3.2 pthread_cond_broadcast F
- GLIBC_2.3.2 pthread_cond_destroy F
- GLIBC_2.3.2 pthread_cond_init F
-diff --git a/sysdeps/unix/sysv/linux/sparc/sparc32/libc.abilist b/sysdeps/unix/sysv/linux/sparc/sparc32/libc.abilist
-index 64fa9e10a5..03b0c2dc32 100644
---- a/sysdeps/unix/sysv/linux/sparc/sparc32/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/sparc/sparc32/libc.abilist
-@@ -1996,6 +1996,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/sparc/sparc32/libpthread.abilist b/sysdeps/unix/sysv/linux/sparc/sparc32/libpthread.abilist
-index b413007ccb..d477af8d10 100644
---- a/sysdeps/unix/sysv/linux/sparc/sparc32/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/sparc/sparc32/libpthread.abilist
-@@ -227,6 +227,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.3.2 pthread_cond_broadcast F
- GLIBC_2.3.2 pthread_cond_destroy F
- GLIBC_2.3.2 pthread_cond_init F
-diff --git a/sysdeps/unix/sysv/linux/sparc/sparc64/libc.abilist b/sysdeps/unix/sysv/linux/sparc/sparc64/libc.abilist
-index db909d1506..800ea4d98b 100644
---- a/sysdeps/unix/sysv/linux/sparc/sparc64/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/sparc/sparc64/libc.abilist
-@@ -1937,6 +1937,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/sparc/sparc64/libpthread.abilist b/sysdeps/unix/sysv/linux/sparc/sparc64/libpthread.abilist
-index ccc9449826..6e23c0e62d 100644
---- a/sysdeps/unix/sysv/linux/sparc/sparc64/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/sparc/sparc64/libpthread.abilist
-@@ -219,6 +219,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.3.2 pthread_cond_broadcast F
- GLIBC_2.3.2 pthread_cond_destroy F
- GLIBC_2.3.2 pthread_cond_init F
-diff --git a/sysdeps/unix/sysv/linux/x86_64/64/libc.abilist b/sysdeps/unix/sysv/linux/x86_64/64/libc.abilist
-index 3b175f104b..b694817e55 100644
---- a/sysdeps/unix/sysv/linux/x86_64/64/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/x86_64/64/libc.abilist
-@@ -1895,6 +1895,7 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
- GLIBC_2.3 __ctype_b_loc F
- GLIBC_2.3 __ctype_tolower_loc F
-diff --git a/sysdeps/unix/sysv/linux/x86_64/64/libpthread.abilist b/sysdeps/unix/sysv/linux/x86_64/64/libpthread.abilist
-index 931c8277a8..889b71fb92 100644
---- a/sysdeps/unix/sysv/linux/x86_64/64/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/x86_64/64/libpthread.abilist
-@@ -219,6 +219,7 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
- GLIBC_2.3.2 pthread_cond_broadcast F
- GLIBC_2.3.2 pthread_cond_destroy F
- GLIBC_2.3.2 pthread_cond_init F
-diff --git a/sysdeps/unix/sysv/linux/x86_64/x32/libc.abilist b/sysdeps/unix/sysv/linux/x86_64/x32/libc.abilist
-index 1b57710477..e885d3c6eb 100644
---- a/sysdeps/unix/sysv/linux/x86_64/x32/libc.abilist
-+++ b/sysdeps/unix/sysv/linux/x86_64/x32/libc.abilist
-@@ -2146,4 +2146,5 @@ GLIBC_2.28 thrd_current F
- GLIBC_2.28 thrd_equal F
- GLIBC_2.28 thrd_sleep F
- GLIBC_2.28 thrd_yield F
-+GLIBC_2.29 __rseq_abi T 0x20
- GLIBC_2.29 posix_spawn_file_actions_addchdir_np F
-diff --git a/sysdeps/unix/sysv/linux/x86_64/x32/libpthread.abilist b/sysdeps/unix/sysv/linux/x86_64/x32/libpthread.abilist
-index c09c9b015a..68886246a2 100644
---- a/sysdeps/unix/sysv/linux/x86_64/x32/libpthread.abilist
-+++ b/sysdeps/unix/sysv/linux/x86_64/x32/libpthread.abilist
-@@ -243,3 +243,4 @@ GLIBC_2.28 tss_create F
- GLIBC_2.28 tss_delete F
- GLIBC_2.28 tss_get F
- GLIBC_2.28 tss_set F
-+GLIBC_2.29 __rseq_refcount T 0x4
--- 
-2.17.1
-
-
-
+Matthias
