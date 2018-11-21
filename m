@@ -2,119 +2,118 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 051F8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D07EAC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAC3E20878
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:36:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I4QN5yp0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAC3E20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A27E2214E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:36:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A27E2214E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732715AbeKVHM2 (ORCPT
+        id S2389643AbeKVHMr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 02:12:28 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:37066 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730044AbeKVHM0 (ORCPT
+        Thu, 22 Nov 2018 02:12:47 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45600 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730044AbeKVHMr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 02:12:26 -0500
-Received: by mail-it1-f194.google.com with SMTP id b5so10853749iti.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:36:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PSWyxBOlwKkcl1ioDrFGqpS2m3Dvm6IkOsIEY++i27Q=;
-        b=I4QN5yp0wqD6Q6V6wb4E+S+8SwBtTdRh7R1m2DLbih1+A0DJs1TlJZ3K3B33njdkij
-         Y3To/sFL+9ZmLxLYDyvQ0pqlhOMKOPd+DNc/CFEEAS/lAH6+JzBY1Exwb/n1tq7fRWj7
-         ABjQpDsxeu1ZCFqO1bUDY9jp2OKgsZQDYDF8o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PSWyxBOlwKkcl1ioDrFGqpS2m3Dvm6IkOsIEY++i27Q=;
-        b=fXUQRR+2Og63yT9xSmUu0H8n12AsJSp9HcgXzB8YH+THHXB8Y4HDnvh3zbSa+HQE3m
-         Pb5nLB2Xmw+pvuxviKx6EI7dOcSP7Yt4ZWv8fG1yWaS3cCVoGPOC7OeW5Ui5nX18GPtQ
-         jG0noHK9OFen+phcIL4wN7XUhDri0Hiubml48DgNZqjWrJ2epntHEnq0t6iMO7j/Qzk7
-         IRBoguTd/D+y6VF65lPqo7fKFET9CwPk0Zv9MNg4oG5ztcQrFgoV2ZbR0wdH+OLdKC3G
-         zkifqhqF89JHphoE6tQBJdd9CFP+PkCLmljMyP698juNflpUTH/MnV2xn6DQNw0IAQoE
-         1mQg==
-X-Gm-Message-State: AGRZ1gIylfi6Imc7lcaF1AKwMryUYTqhLkIgAU95K/mzx2TqugHRK+r6
-        LtnqPVrDRySXy5f2b2XBNC0/KO7Jh61guZLCNYGh0w==
-X-Google-Smtp-Source: AJdET5ftS7yQmDrTQDYLxNX3P/eaTKZgllp5AsBfM29MFdpBkxTp5EKYiJzEhO6rTXtdk9v6CfcfrY0zODF+0hFjbSE=
-X-Received: by 2002:a02:8449:: with SMTP id l9-v6mr7111833jah.130.1542832592857;
- Wed, 21 Nov 2018 12:36:32 -0800 (PST)
-MIME-Version: 1.0
-References: <20181121131733.14910-1-ard.biesheuvel@linaro.org> <9d7f77959e1be0a9a3ff511a8fc45518068c85a6.camel@intel.com>
-In-Reply-To: <9d7f77959e1be0a9a3ff511a8fc45518068c85a6.camel@intel.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 21 Nov 2018 21:36:22 +0100
-Message-ID: <CAKv+Gu9jrYH_79b11nZgb5NOJrZrRNEz7Sy3OrgVHE+rRsYigg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] bpf: permit JIT allocations to be served outside
- the module region
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        Thu, 22 Nov 2018 02:12:47 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gPZEu-0000oe-2Q; Wed, 21 Nov 2018 21:36:48 +0100
+Date:   Wed, 21 Nov 2018 21:36:47 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>
+cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>,
-        Jessica Yu <jeyu@kernel.org>, Jann Horn <jannh@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+        Tim Chen <tim.c.chen@linux.intel.com>
+Subject: Re: [patch 05/24] x86/speculation: Disable STIBP when enhanced IBRS
+ is in use
+In-Reply-To: <20181121203353.GD27559@zn.tnic>
+Message-ID: <alpine.DEB.2.21.1811212136001.1665@nanos.tec.linutronix.de>
+References: <20181121201430.559770965@linutronix.de> <20181121201722.717439984@linutronix.de> <20181121203353.GD27559@zn.tnic>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Nov 2018 at 20:48, Edgecombe, Rick P
-<rick.p.edgecombe@intel.com> wrote:
->
-> On Wed, 2018-11-21 at 14:17 +0100, Ard Biesheuvel wrote:
-> > On arm64, modules are allocated from a 128 MB window which is close to
-> > the core kernel, so that relative direct branches are guaranteed to be
-> > in range (except in some KASLR configurations). Also, module_alloc()
-> > is in charge of allocating KASAN shadow memory when running with KASAN
-> > enabled.
-> >
-> > This means that the way BPF reuses module_alloc()/module_memfree() is
-> > undesirable on arm64 (and potentially other architectures as well),
-> > and so this series refactors BPF's use of those functions to permit
-> > architectures to change this behavior.
-> >
-> Hi Ard,
->
-> I am looking at adding optional BPF JIT in vmalloc functionality for x86 that
-> would use this refactor. In fact I have done the same thing with just different
-> names.
->
-> My implementation intends to use the module space until a usage limit is reached
-> and then overflow into vmalloc, so it would be an additional knob like
-> "bpf_jit_limit". Wondering if that should be a cross-arch concept that connects
-> to this. Does it fit in with what you are trying to do for arm64 here?
->
+On Wed, 21 Nov 2018, Borislav Petkov wrote:
+> On Wed, Nov 21, 2018 at 09:14:35PM +0100, Thomas Gleixner wrote:
+> > From: Tim Chen <tim.c.chen@linux.intel.com>
+> > 
+> > If enhanced IBRS is active, STIBP is redundant for mitigating Spectre v2
+> > user space exploits from hyperthread sibling.
+> > 
+> > Disable STIBP when enhanced IBRS is used.
+> > 
+> > Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> > 
+> > ---
+> >  arch/x86/kernel/cpu/bugs.c |    7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > --- a/arch/x86/kernel/cpu/bugs.c
+> > +++ b/arch/x86/kernel/cpu/bugs.c
+> > @@ -321,6 +321,10 @@ static bool stibp_needed(void)
+> >  	if (spectre_v2_enabled == SPECTRE_V2_NONE)
+> >  		return false;
+> >  
+> > +	/* Enhanced IBRS makes using STIBP unnecessary. */
+> > +	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
+> > +		return false;
+> > +
+> >  	if (!boot_cpu_has(X86_FEATURE_STIBP))
+> >  		return false;
+> >  
+> > @@ -846,6 +850,9 @@ static ssize_t l1tf_show_state(char *buf
+> >  
+> >  static char *stibp_state(void)
+> >  {
+> > +	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
+> > +		return "";
+> 
+> If
+> 	spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED
+> 
+> then SPEC_CTRL_STIBP should not be set in x86_spec_ctrl_base
+> (stibp_needed() prevents the setting in arch_smt_update()) so the above
+> check should not be needed.
+> 
+> I *think*.
 
-Hi Rick,
+Yes, makes sense.
 
-As I understand it, x86 requires the BPF allocations to be located
-within 2 GB of the core kernel, so that RIP-relative 32-bit jumps are
-in range (I read that in a comment somewhere, or a git commit log
-perhaps)
+Thanks,
 
-That requirement does not exist on arm64: ordinary function calls and
-tail calls emitted by the BPF JIT code have unlimited range, and so
-there is simply no reason to prefer the module region for these
-allocations. I guess we could achieve the same when reusing your
-approach by setting the threshold to zero.
+	tglx
