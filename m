@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF22C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA6BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54E83214D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:07:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2644214D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:07:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktl1MXlI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54E83214D9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zl2UmUQv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2644214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387663AbeKVFmd (ORCPT
+        id S2387679AbeKVFmh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:42:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37000 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:42:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387605AbeKVFmc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:42:32 -0500
+        id S2387605AbeKVFmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:42:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22AEE2151B;
-        Wed, 21 Nov 2018 19:06:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80E12214DB;
+        Wed, 21 Nov 2018 19:07:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827219;
-        bh=RpLPohFC/JG/zuFe8aIw6NsafC9NbH2jutwsRuyUJwo=;
+        s=default; t=1542827222;
+        bh=W8RkR4PrPenyd9GxX33ijPMJuZcUQL2QEtgIoY/d6Zw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ktl1MXlIXpFCi7i+PqvSIKOCRJTiT/5hDizHQIg087UtPbmPIYLF95Sy6lcVXb/ak
-         P+0prV+N0EfX9bagoPJ7uJVBup87xYL3nkfeQARH0bGcSL5H9d8jMw8hIyKd6BoXnO
-         GEKPJUc/eM+2h4SX7NN5eX+A4BHHSttOsWOuPi0U=
+        b=Zl2UmUQvlVaB2gDHhrONTTK+6o3b1fYwl9TB0x+ztDWksqoXd/a85WvVAkIURQcgd
+         XLniR5UHrK7WlDMdse3D3SmhKjiaLR7RcVixj3+f4hbC1F9Z82c3LB4dMQXl4C3pTw
+         CVWdVy/lRo0QycEgO7OcuUPgvKYpyL7oa2Enu6Kc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>,
-        Roi Dayan <roid@mellanox.com>,
+        stable@vger.kernel.org, Yuval Avnery <yuvalav@mellanox.com>,
         Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.19 19/42] net/mlx5e: Claim TC hw offloads support only under a proper build config
-Date:   Wed, 21 Nov 2018 20:05:55 +0100
-Message-Id: <20181121183148.862371599@linuxfoundation.org>
+Subject: [PATCH 4.19 20/42] net/mlx5e: Adjust to max number of channles when re-attaching
+Date:   Wed, 21 Nov 2018 20:05:56 +0100
+Message-Id: <20181121183148.899274407@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183147.869199006@linuxfoundation.org>
 References: <20181121183147.869199006@linuxfoundation.org>
@@ -63,63 +62,131 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Or Gerlitz <ogerlitz@mellanox.com>
+From: Yuval Avnery <yuvalav@mellanox.com>
 
-[ Upstream commit 077ecd785d90c6cbba08d719faa4be8561aa0a1e ]
+[ Upstream commit a1f240f1801721f76bee734c50df2d9529da86e0 ]
 
-Currently, we are only supporting tc hw offloads when the eswitch
-support is compiled in, but we are not gating the adevertizment
-of the NETIF_F_HW_TC feature on this config being set.
+When core driver enters deattach/attach flow after pci reset,
+Number of logical CPUs may have changed.
+As a result we need to update the cpu affiliated resource tables.
+	1. indirect rqt list
+	2. eq table
 
-Fix it, and while doing that, also avoid dealing with the feature
-on ethtool when the config is not set.
+Reproduction (PowerPC):
+	echo 1000 > /sys/kernel/debug/powerpc/eeh_max_freezes
+	ppc64_cpu --smt=on
+	# Restart driver
+	modprobe -r ... ; modprobe ...
+	# Link up
+	ifconfig ...
+	# Only physical CPUs
+	ppc64_cpu --smt=off
+	# Inject PCI errors so PCI will reset - calling the pci error handler
+	echo 0x8000000000000000 > /sys/kernel/debug/powerpc/<PCI BUS>/err_injct_inboundA
 
-Fixes: e8f887ac6a45 ('net/mlx5e: Introduce tc offload support')
-Signed-off-by: Or Gerlitz <ogerlitz@mellanox.com>
-Reviewed-by: Roi Dayan <roid@mellanox.com>
+Call trace when trying to add non-existing rqs to an indirect rqt:
+	mlx5e_redirect_rqt+0x84/0x260 [mlx5_core] (unreliable)
+	mlx5e_redirect_rqts+0x188/0x190 [mlx5_core]
+	mlx5e_activate_priv_channels+0x488/0x570 [mlx5_core]
+	mlx5e_open_locked+0xbc/0x140 [mlx5_core]
+	mlx5e_open+0x50/0x130 [mlx5_core]
+	mlx5e_nic_enable+0x174/0x1b0 [mlx5_core]
+	mlx5e_attach_netdev+0x154/0x290 [mlx5_core]
+	mlx5e_attach+0x88/0xd0 [mlx5_core]
+	mlx5_attach_device+0x168/0x1e0 [mlx5_core]
+	mlx5_load_one+0x1140/0x1210 [mlx5_core]
+	mlx5_pci_resume+0x6c/0xf0 [mlx5_core]
+
+Create cq will fail when trying to use non-existing EQ.
+
+Fixes: 89d44f0a6c73 ("net/mlx5_core: Add pci error handlers to mlx5_core driver")
+Signed-off-by: Yuval Avnery <yuvalav@mellanox.com>
 Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c |   27 +++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
 
 --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
 +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-@@ -3566,6 +3566,7 @@ static int set_feature_cvlan_filter(stru
- 	return 0;
- }
+@@ -1610,13 +1610,15 @@ static int mlx5e_alloc_cq_common(struct
+ 	int err;
+ 	u32 i;
  
-+#ifdef CONFIG_MLX5_ESWITCH
- static int set_feature_tc_num_filters(struct net_device *netdev, bool enable)
++	err = mlx5_vector2eqn(mdev, param->eq_ix, &eqn_not_used, &irqn);
++	if (err)
++		return err;
++
+ 	err = mlx5_cqwq_create(mdev, &param->wq, param->cqc, &cq->wq,
+ 			       &cq->wq_ctrl);
+ 	if (err)
+ 		return err;
+ 
+-	mlx5_vector2eqn(mdev, param->eq_ix, &eqn_not_used, &irqn);
+-
+ 	mcq->cqe_sz     = 64;
+ 	mcq->set_ci_db  = cq->wq_ctrl.db.db;
+ 	mcq->arm_db     = cq->wq_ctrl.db.db + 1;
+@@ -1674,6 +1676,10 @@ static int mlx5e_create_cq(struct mlx5e_
+ 	int eqn;
+ 	int err;
+ 
++	err = mlx5_vector2eqn(mdev, param->eq_ix, &eqn, &irqn_not_used);
++	if (err)
++		return err;
++
+ 	inlen = MLX5_ST_SZ_BYTES(create_cq_in) +
+ 		sizeof(u64) * cq->wq_ctrl.buf.npages;
+ 	in = kvzalloc(inlen, GFP_KERNEL);
+@@ -1687,8 +1693,6 @@ static int mlx5e_create_cq(struct mlx5e_
+ 	mlx5_fill_page_frag_array(&cq->wq_ctrl.buf,
+ 				  (__be64 *)MLX5_ADDR_OF(create_cq_in, in, pas));
+ 
+-	mlx5_vector2eqn(mdev, param->eq_ix, &eqn, &irqn_not_used);
+-
+ 	MLX5_SET(cqc,   cqc, cq_period_mode, param->cq_period_mode);
+ 	MLX5_SET(cqc,   cqc, c_eqn,         eqn);
+ 	MLX5_SET(cqc,   cqc, uar_page,      mdev->priv.uar->index);
+@@ -1908,6 +1912,10 @@ static int mlx5e_open_channel(struct mlx
+ 	int err;
+ 	int eqn;
+ 
++	err = mlx5_vector2eqn(priv->mdev, ix, &eqn, &irq);
++	if (err)
++		return err;
++
+ 	c = kvzalloc_node(sizeof(*c), GFP_KERNEL, cpu_to_node(cpu));
+ 	if (!c)
+ 		return -ENOMEM;
+@@ -1924,7 +1932,6 @@ static int mlx5e_open_channel(struct mlx
+ 	c->xdp      = !!params->xdp_prog;
+ 	c->stats    = &priv->channel_stats[ix].ch;
+ 
+-	mlx5_vector2eqn(priv->mdev, ix, &eqn, &irq);
+ 	c->irq_desc = irq_to_desc(irq);
+ 
+ 	netif_napi_add(netdev, &c->napi, mlx5e_napi_poll, 64);
+@@ -4964,11 +4971,21 @@ int mlx5e_attach_netdev(struct mlx5e_pri
  {
- 	struct mlx5e_priv *priv = netdev_priv(netdev);
-@@ -3578,6 +3579,7 @@ static int set_feature_tc_num_filters(st
+ 	struct mlx5_core_dev *mdev = priv->mdev;
+ 	const struct mlx5e_profile *profile;
++	int max_nch;
+ 	int err;
  
- 	return 0;
- }
-+#endif
+ 	profile = priv->profile;
+ 	clear_bit(MLX5E_STATE_DESTROYING, &priv->state);
  
- static int set_feature_rx_all(struct net_device *netdev, bool enable)
- {
-@@ -3676,7 +3678,9 @@ static int mlx5e_set_features(struct net
- 	err |= MLX5E_HANDLE_FEATURE(NETIF_F_LRO, set_feature_lro);
- 	err |= MLX5E_HANDLE_FEATURE(NETIF_F_HW_VLAN_CTAG_FILTER,
- 				    set_feature_cvlan_filter);
-+#ifdef CONFIG_MLX5_ESWITCH
- 	err |= MLX5E_HANDLE_FEATURE(NETIF_F_HW_TC, set_feature_tc_num_filters);
-+#endif
- 	err |= MLX5E_HANDLE_FEATURE(NETIF_F_RXALL, set_feature_rx_all);
- 	err |= MLX5E_HANDLE_FEATURE(NETIF_F_RXFCS, set_feature_rx_fcs);
- 	err |= MLX5E_HANDLE_FEATURE(NETIF_F_HW_VLAN_CTAG_RX, set_feature_rx_vlan);
-@@ -4685,7 +4689,9 @@ static void mlx5e_build_nic_netdev(struc
- 	    FT_CAP(modify_root) &&
- 	    FT_CAP(identified_miss_table_mode) &&
- 	    FT_CAP(flow_table_modify)) {
-+#ifdef CONFIG_MLX5_ESWITCH
- 		netdev->hw_features      |= NETIF_F_HW_TC;
-+#endif
- #ifdef CONFIG_MLX5_EN_ARFS
- 		netdev->hw_features	 |= NETIF_F_NTUPLE;
- #endif
++	/* max number of channels may have changed */
++	max_nch = mlx5e_get_max_num_channels(priv->mdev);
++	if (priv->channels.params.num_channels > max_nch) {
++		mlx5_core_warn(priv->mdev, "MLX5E: Reducing number of channels to %d\n", max_nch);
++		priv->channels.params.num_channels = max_nch;
++		mlx5e_build_default_indir_rqt(priv->channels.params.indirection_rqt,
++					      MLX5E_INDIR_RQT_SIZE, max_nch);
++	}
++
+ 	err = profile->init_tx(priv);
+ 	if (err)
+ 		goto out;
 
 
