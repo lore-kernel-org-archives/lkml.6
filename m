@@ -2,86 +2,112 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F03C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD44C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EB4220989
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:00:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EB4220989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 504E520989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:01:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504E520989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729334AbeKUVeB (ORCPT
+        id S1729555AbeKUVfB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 16:34:01 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:41006 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726172AbeKUVeA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 16:34:00 -0500
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wALB00cb006730;
-        Wed, 21 Nov 2018 05:00:00 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail3.cirrus.com ([87.246.76.56])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2nth986qsx-1;
-        Wed, 21 Nov 2018 05:00:00 -0600
-Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
-        by mail3.cirrus.com (Postfix) with ESMTP id 9DB2C611C8B3;
-        Wed, 21 Nov 2018 05:02:44 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 21 Nov 2018
- 10:59:59 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wALAxwS4024750; Wed,
- 21 Nov 2018 10:59:59 GMT
-Date:   Wed, 21 Nov 2018 10:59:58 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-CC:     <broonie@kernel.org>, <linus.walleij@linaro.org>,
-        <lgirdwood@gmail.com>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH v2] regulator: wm8994: Don't use devres for enable GPIOs
-Message-ID: <20181121105958.GG16508@imbe.wolfsonmicro.main>
-References: <CGME20181121101410epcas3p27a2a577c3b5a0608f7808ff733fab9d1@epcas3p2.samsung.com>
- <20181121101316.32194-1-ckeepax@opensource.cirrus.com>
- <c0a2d30d-b18e-e72a-f369-c8678f1854ff@samsung.com>
+        Wed, 21 Nov 2018 16:35:01 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:43536 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726172AbeKUVfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 16:35:00 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 243FD20DA8; Wed, 21 Nov 2018 12:01:03 +0100 (CET)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id EC8FB20D72;
+        Wed, 21 Nov 2018 12:00:52 +0100 (CET)
+Date:   Wed, 21 Nov 2018 12:00:52 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Romain Izard <romain.izard.pro@gmail.com>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>, mark.rutland@arm.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: at91: sama5d2: use the divided clock for SMC
+Message-ID: <20181121110052.GK8367@piout.net>
+References: <20181120165737.4998-1-romain.izard.pro@gmail.com>
+ <20181120171612.GF8367@piout.net>
+ <CAGkQfmPHRKqMvm6bNDf8S5qM7uE5T-izij=jm2nob0zrOgOM-w@mail.gmail.com>
+ <20181120204049.GG8367@piout.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <c0a2d30d-b18e-e72a-f369-c8678f1854ff@samsung.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=435 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1811210100
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181120204049.GG8367@piout.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 11:42:06AM +0100, Marek Szyprowski wrote:
-> On 2018-11-21 11:13, Charles Keepax wrote:
-> Linus, Mark: Similar issue is probably in the other regulator drivers,
-> which use enable GPIO allocated by devm_gpio_get*(). This driver is
-> simply the first one, which we observed it. It would be great if one
-> would take a look into regulator_register() error path, because for some
-> cases the GPIO will be freed, for the other - not.
+On 20/11/2018 21:40:49+0100, Alexandre Belloni wrote:
+> On 20/11/2018 19:01:32+0100, Romain Izard wrote:
+> > Le mar. 20 nov. 2018 à 18:16, Alexandre Belloni
+> > <alexandre.belloni@bootlin.com> a écrit :
+> > >
+> > > Hello Romain,
+> > >
+> > > On 20/11/2018 17:57:37+0100, Romain Izard wrote:
+> > > > The SAMA5D2 is different from SAMA5D3 and SAMA5D4, as there are two
+> > > > different clocks for the peripherals in the SoC. The Static Memory
+> > > > controller is connected to the divided master clock.
+> > > >
+> > > > Unfortunately, the device tree does not correctly show this and uses the
+> > > > master clock directly. This clock is then used by the code for the NAND
+> > > > controller to calculate the timings for the controller, and we end up with
+> > > > slow NAND Flash access.
+> > > >
+> > > > Fix the device tree, and the performance of Flash access is improved.
+> > > >
+> > > > Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+> > > > ---
+> > > >  arch/arm/boot/dts/sama5d2.dtsi | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
+> > > > index 61f68e5c48e9..b405992eb601 100644
+> > > > --- a/arch/arm/boot/dts/sama5d2.dtsi
+> > > > +++ b/arch/arm/boot/dts/sama5d2.dtsi
+> > > > @@ -308,7 +308,7 @@
+> > > >                                 0x1 0x0 0x60000000 0x10000000
+> > > >                                 0x2 0x0 0x70000000 0x10000000
+> > > >                                 0x3 0x0 0x80000000 0x10000000>;
+> > > > -                     clocks = <&mck>;
+> > > > +                     clocks = <&h32ck>;
+> > >
+> > > You will have to rebase on top of at91-dt. And if I'm not mistaken, this
+> > > line should be:
+> > >
+> > > +                       clocks = <&pmc PMC_TYPE_CORE PMC_MCK2>;
+> > >
+> > > >                       status = "disabled";
+> > > >
+> > > >                       nand_controller: nand-controller {
+> > 
+> > I guess you're right but this will only reach mainline in 4.21. I get slow
+> > flash access with 4.19 as well...
+> >
+> 
+> Ok, this is super annoying, I'll try to get that as fixes on v4.20 and
+> I'll rebase at91-dt on top of that...
 > 
 
-Yeah I have managed to reproduce the issue on another on of our
-boards now, so it definitely affects other drivers we have. Its a
-bit sneaky since the GPIO core only seems to warn on the additional
-free if you have some additional debug turned on which masks the
-issue most of the time.
+So, I did that just now.
 
-I will have a bit of a look and see what else might be affected.
 
-Thanks,
-Charles
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
