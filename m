@@ -2,114 +2,142 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D198C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C1FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E3121479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:35:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5810521479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:35:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Vg7n7cF2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61E3121479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BrkKxZfz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5810521479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731084AbeKVBJl (ORCPT
+        id S1731114AbeKVBJ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 20:09:41 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:6746 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729658AbeKVBJk (ORCPT
+        Wed, 21 Nov 2018 20:09:57 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34591 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729632AbeKVBJ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 20:09:40 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bf56d150001>; Wed, 21 Nov 2018 06:35:01 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 21 Nov 2018 06:35:00 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 21 Nov 2018 06:35:00 -0800
-Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 21 Nov
- 2018 14:34:59 +0000
-Subject: Re: [PATCH] soc/tegra: refactor soc_is_tegra()
-To:     Yangtao Li <tiny.windzz@gmail.com>, <thierry.reding@gmail.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20181121141204.22819-1-tiny.windzz@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <2d534bbb-7b75-8521-bf88-36b52c918d19@nvidia.com>
-Date:   Wed, 21 Nov 2018 14:34:57 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181121141204.22819-1-tiny.windzz@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1542810901; bh=OmfWy2Wi0lHqfh9vFgp9IB7ly+Cl2AdjxAabsSjCV2w=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Vg7n7cF21S4urS1s+fwoucrdIrUF2EeN48ZBuziKxw+kusrv13oXUE5ufbwRxMfzu
-         KzC10MJKz9U4rRyJ+mBx4ERGw3tbh/Ul8HMRjak976i2jKrSfijELT6TW78YoqQ09k
-         CpytnWwTtVsxZbOc64Mo/+juiyEWAhXRJ6wtM1GE3On7GAKOlOX1uJ0DG4K+/t80gi
-         Oh35BsZFWNbCQrvrkD5shxazgvV5tp7kvPgD0573ryotIJAwqOg8yIR/UUvoBCWEFi
-         XVoNlZmJE5KmQkvyoqYpk7csx2Z4/6pIHYF2sAI5vq+4ym2VCOa82LQC/OjzoLLIoU
-         zc1vVPAAA5btw==
+        Wed, 21 Nov 2018 20:09:57 -0500
+Received: by mail-pl1-f193.google.com with SMTP id f12-v6so5813543plo.1;
+        Wed, 21 Nov 2018 06:35:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=m8MNf0u08jMZjyhxYBeNt5XJ/cMTLb1yQeYolFPkZ/c=;
+        b=BrkKxZfzz9AdmwdBMKt9IrrYUMenxNTYqHCTzrYqIC8DDXd8KHJMlDFca4aPGhuPtw
+         pXYhbvk86Nw+dwonSjX1B4jQsAh0tY1X0Ad6LYtuDwi7XjAlWwK8Tm0L6f0HVtMQ+jxI
+         nRWkADrVzqadbBQP67NIMLN4Fpct6lZ7KynKPmj54g7MtwMlwAFbC7c9B2BLA5Ee1b1v
+         4yLFRH1Yv/mOziegg9m4uEIYeFlrs/DxehYWB2f+nJb6h6R6xl1TwmV35/bGgvDZh6pU
+         4M8V1gaHl/nEVg1Qb2BQtPVGEH3W8LdsxJEKTutel5QNKSqUkxKNCQ6bawH9K80tyTex
+         knPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=m8MNf0u08jMZjyhxYBeNt5XJ/cMTLb1yQeYolFPkZ/c=;
+        b=kLeFS2YiT5DhEvhwnqrQXbasC64xALHOYNfaqqtSNvD3gh4/nU/k6n+NChrJGtcCRJ
+         btVimEHEVkijdiLNV3mX2qL0p5IOocTE8Ipd+QmquWntGIw4Q4mC1DZfmAaYyWPBWpB8
+         f40rbohxK4pkWBekhlr8zKRSLEAgbD5VS3rxW1+kO98tExnmcOFGNInSg/q2jfqNBd5f
+         wZTxYluoKQnFqg7z3D0bLeZkhYvln+doUJ7nn3IAUMuJhzlP2mWqT7WKl/nokeo1jPgG
+         m4WDzPROOneX2Dm8/r8BBwtOTsEY4FUrdrxTht4zGpBHtFkxqBLgrIrJbjFGLNyYgP+n
+         XWyg==
+X-Gm-Message-State: AA+aEWYm1s7op+JwsB/wJKUroduwIp+nCsAF/EHeWdKCbk643ZOdxG6+
+        OJm4d7us9XjSwnc0RpMMRUA=
+X-Google-Smtp-Source: AFSGD/Wyq9L8+TkAo2d0ksTAEcBhJ0B3bi6BnQ+tZB/YxsA3I9ooaduyRQtdPeNRWNqv7cKvIe5DKQ==
+X-Received: by 2002:a63:b4c:: with SMTP id a12mr6293615pgl.131.1542810916640;
+        Wed, 21 Nov 2018 06:35:16 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id b26sm2905246pfe.91.2018.11.21.06.35.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 06:35:15 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     dmitry.torokhov@gmail.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] Input: i8042 add of_node_put()
+Date:   Wed, 21 Nov 2018 09:35:13 -0500
+Message-Id: <20181121143513.22961-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+use of_node_put() to release the refcount.
 
-On 21/11/2018 14:12, Yangtao Li wrote:
-> of_find_node_by_path() acquires a reference to the node returned by
-> it and that reference needs to be dropped by its caller.soc_is_tegra()
-> doesn't do that, so fix it.Call of_machine_is_compatible() to refactor
-> soc_is_tegra() whcih automatically manages the reference count.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/soc/tegra/common.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
-> index cd8f41351add..0b40700b672a 100644
-> --- a/drivers/soc/tegra/common.c
-> +++ b/drivers/soc/tegra/common.c
-> @@ -22,11 +22,13 @@ static const struct of_device_id tegra_machine_match[] = {
->  
->  bool soc_is_tegra(void)
->  {
-> -	struct device_node *root;
-> +	struct of_device_id *match = tegra_machine_match;
->  
-> -	root = of_find_node_by_path("/");
-> -	if (!root)
-> -		return false;
-> +	while(match->compatible){
-> +		if(of_machine_is_compatible(match->compatible))
-> +			return true;
-> +		match++;
-> +	}
->  
-> -	return of_match_node(tegra_machine_match, root) != NULL;
-> +	return false;
->  }
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/input/serio/i8042-sparcio.h | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
-Ugh ... sorry, I thought that of_machine_is_compatible() looped through
-the matches. OK, let's stick with your initial fix.
-
-Cheers
-Jon
-
+diff --git a/drivers/input/serio/i8042-sparcio.h b/drivers/input/serio/i8042-sparcio.h
+index 796289846204..5495bc035518 100644
+--- a/drivers/input/serio/i8042-sparcio.h
++++ b/drivers/input/serio/i8042-sparcio.h
+@@ -108,18 +108,21 @@ static struct platform_driver sparc_i8042_driver = {
+ 
+ static int __init i8042_platform_init(void)
+ {
++	int rc;
+ 	struct device_node *root = of_find_node_by_path("/");
+ 
+ 	if (!strcmp(root->name, "SUNW,JavaStation-1")) {
+ 		/* Hardcoded values for MrCoffee.  */
+ 		i8042_kbd_irq = i8042_aux_irq = 13 | 0x20;
+ 		kbd_iobase = ioremap(0x71300060, 8);
+-		if (!kbd_iobase)
+-			return -ENODEV;
++		if (!kbd_iobase){
++			rc = -ENODEV;
++			goto out;
++		}
+ 	} else {
+-		int err = platform_driver_register(&sparc_i8042_driver);
+-		if (err)
+-			return err;
++		rc = platform_driver_register(&sparc_i8042_driver);
++		if (rc)
++			goto out;
+ 
+ 		if (i8042_kbd_irq == -1 ||
+ 		    i8042_aux_irq == -1) {
+@@ -127,13 +130,18 @@ static int __init i8042_platform_init(void)
+ 				of_iounmap(kbd_res, kbd_iobase, 8);
+ 				kbd_iobase = (void __iomem *) NULL;
+ 			}
+-			return -ENODEV;
++			rc = -ENODEV;
++			goto out;
+ 		}
+ 	}
+ 
+ 	i8042_reset = I8042_RESET_ALWAYS;
+ 
+-	return 0;
++	rc = 0;
++out:
++	of_node_put(root);
++
++	return rc;
+ }
+ 
+ static inline void i8042_platform_exit(void)
+@@ -142,6 +150,8 @@ static inline void i8042_platform_exit(void)
+ 
+ 	if (strcmp(root->name, "SUNW,JavaStation-1"))
+ 		platform_driver_unregister(&sparc_i8042_driver);
++
++	of_node_put(root);
+ }
+ 
+ #else /* !CONFIG_PCI */
 -- 
-nvpublic
+2.17.0
+
