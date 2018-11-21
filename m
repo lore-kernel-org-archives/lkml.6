@@ -2,287 +2,98 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1174C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBA5C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 932C72146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:39:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 932C72146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 5D7822146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:40:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NvnVvtZg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7822146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728238AbeKUUMx (ORCPT
+        id S1728528AbeKUUOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 15:12:53 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:31375 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726001AbeKUUMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 15:12:53 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 430HZt1hbPz9txvp;
-        Wed, 21 Nov 2018 10:39:02 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id amgJ7DFzMjin; Wed, 21 Nov 2018 10:39:02 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 430HZt18htz9txvm;
-        Wed, 21 Nov 2018 10:39:02 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B79318B806;
-        Wed, 21 Nov 2018 10:39:06 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id uvaXN3-5uBzb; Wed, 21 Nov 2018 10:39:06 +0100 (CET)
-Received: from po14163vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 920E18B75F;
-        Wed, 21 Nov 2018 10:39:06 +0100 (CET)
-Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 7E91269AA9; Wed, 21 Nov 2018 09:39:06 +0000 (UTC)
-Message-Id: <50e3ae6c9b5e532f4103e3dc9a59e6b3ebc698a6.1542793018.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2] powerpc/mm: add exec protection on powerpc 603
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Wed, 21 Nov 2018 09:39:06 +0000 (UTC)
+        Wed, 21 Nov 2018 15:14:06 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34039 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726016AbeKUUOF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 15:14:05 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j2so4925938wrw.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 01:40:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=MeZ5z9u9mVL/xjvrUR2DdMqd7NAirflwMhSs//+R1rE=;
+        b=NvnVvtZg1+dRO2tmlnuPVEjZvIN2hvS7Tij+PE8zNsmoEfZw84T+tXn22CgQAza6HI
+         AZ8ZsOgJgOmLBF54OK6ka7kEsYk0dxJSEIxAvPV3GJOLCd0q7XBGC7RxKlcDc63eSdPK
+         jrfS07kvTkJxezFPobdqxfyHFaaOUkYRa0bTHRwMb30gkdJHmS7Wl1NL1k/yWH7vMIi4
+         ru2TmNrBopoCIMtt19YZ6YldWoSEISOGbc2hM6yoWAyeDhVAgBkZxOk1wGTaYzGa77zo
+         6khBF3NtPCzjO5HlrkMyl0AZj6qhbSlc8jhaH6RHyonuBj1JN+kRvJtbyjl2mlTw49Qk
+         9J/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MeZ5z9u9mVL/xjvrUR2DdMqd7NAirflwMhSs//+R1rE=;
+        b=nAW94vMK5kG06566OYNjQ3PQC+dAt71zmOZqlaYNmC+r6KM0GI81aZ0QoC/CW0llQi
+         rOBBkzP5QJJWKtEvQO7QdXiiBtaSyaQ1lubORXfqwVgb4z05gAhYaioIY4Jrfvw99VwN
+         /XivNdEN4/nld/q7a5or48aPZmRPws3cA+LtGXJV5HVyzvpJ3Vu+xLhol5JeJzCEc0UB
+         FrYIWm6GeCdjdloyZj0rqFXsnVNXJrs9WCYwKNhgwLvrR3UhnTTshLKEXJ+mcWuIH12u
+         pl9em8/18HK5NVM8oSjNgBEfWBJLeXKKN/kH0S4pwUIKrggbdf9T1wUYju7AGRCa0Cvt
+         v4Iw==
+X-Gm-Message-State: AA+aEWYwr50gNg8eqcDd3RuWzw+1lorjmtAK+fG4FUAAbn4G/hb4cuzO
+        m/ufb7JvV1FPYRSHJOe9hx8=
+X-Google-Smtp-Source: AFSGD/XrdHv2ssdgXhmwhUHTaCgdiU+eByQ564snOuKoPhOAatw4D0VXWY2Is2ZJH5WbuVdY9/G3qw==
+X-Received: by 2002:a5d:684b:: with SMTP id o11mr4793635wrw.316.1542793219686;
+        Wed, 21 Nov 2018 01:40:19 -0800 (PST)
+Received: from localhost.localdomain ([94.204.252.234])
+        by smtp.gmail.com with ESMTPSA id c4-v6sm33338144wrr.74.2018.11.21.01.40.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 21 Nov 2018 01:40:18 -0800 (PST)
+From:   Christian Hewitt <christianshewitt@gmail.com>
+Cc:     christianshewitt@gmail.com,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        David Airlie <airlied@linux.ie>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/meson: add support for 1080p25 mode
+Date:   Wed, 21 Nov 2018 13:39:29 +0400
+Message-Id: <1542793169-13008-1-git-send-email-christianshewitt@gmail.com>
+X-Mailer: git-send-email 2.7.4
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 603 doesn't have a HASH table, TLB misses are handled by
-software. It is then possible to generate page fault when
-_PAGE_EXEC is not set like in nohash/32.
+This essential mode for PAL users is missing, so add it.
 
-There is one "reserved" PTE bit available, this patch uses
-it for _PAGE_EXEC.
-
-In order to support it, set_pte_filter() and
-set_access_flags_filter() are made common, and the handling
-is made dependent on MMU_FTR_HPTE_TABLE
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
 ---
- v2: Amended commit log and removed #ifdef in pagetable dump
+ drivers/gpu/drm/meson/meson_venc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- arch/powerpc/include/asm/book3s/32/hash.h      |  1 +
- arch/powerpc/include/asm/book3s/32/pgtable.h   | 18 +++++++++---------
- arch/powerpc/include/asm/cputable.h            |  8 ++++----
- arch/powerpc/kernel/head_32.S                  |  2 ++
- arch/powerpc/mm/dump_linuxpagetables-generic.c |  2 --
- arch/powerpc/mm/pgtable.c                      | 20 +++++++++++---------
- 6 files changed, 27 insertions(+), 24 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/book3s/32/hash.h b/arch/powerpc/include/asm/book3s/32/hash.h
-index f2892c7ab73e..2a0a467d2985 100644
---- a/arch/powerpc/include/asm/book3s/32/hash.h
-+++ b/arch/powerpc/include/asm/book3s/32/hash.h
-@@ -26,6 +26,7 @@
- #define _PAGE_WRITETHRU	0x040	/* W: cache write-through */
- #define _PAGE_DIRTY	0x080	/* C: page changed */
- #define _PAGE_ACCESSED	0x100	/* R: page referenced */
-+#define _PAGE_EXEC	0x200	/* software: exec allowed */
- #define _PAGE_RW	0x400	/* software: user write access allowed */
- #define _PAGE_SPECIAL	0x800	/* software: Special page */
- 
-diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
-index b849b45429d5..6accf3e686af 100644
---- a/arch/powerpc/include/asm/book3s/32/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
-@@ -10,9 +10,9 @@
- /* And here we include common definitions */
- 
- #define _PAGE_KERNEL_RO		0
--#define _PAGE_KERNEL_ROX	0
-+#define _PAGE_KERNEL_ROX	(_PAGE_EXEC)
- #define _PAGE_KERNEL_RW		(_PAGE_DIRTY | _PAGE_RW)
--#define _PAGE_KERNEL_RWX	(_PAGE_DIRTY | _PAGE_RW)
-+#define _PAGE_KERNEL_RWX	(_PAGE_DIRTY | _PAGE_RW | _PAGE_EXEC)
- 
- #define _PAGE_HPTEFLAGS _PAGE_HASHPTE
- 
-@@ -66,11 +66,11 @@ static inline bool pte_user(pte_t pte)
-  */
- #define PAGE_NONE	__pgprot(_PAGE_BASE)
- #define PAGE_SHARED	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW)
--#define PAGE_SHARED_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW)
-+#define PAGE_SHARED_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW | _PAGE_EXEC)
- #define PAGE_COPY	__pgprot(_PAGE_BASE | _PAGE_USER)
--#define PAGE_COPY_X	__pgprot(_PAGE_BASE | _PAGE_USER)
-+#define PAGE_COPY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
- #define PAGE_READONLY	__pgprot(_PAGE_BASE | _PAGE_USER)
--#define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER)
-+#define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
- 
- /* Permission masks used for kernel mappings */
- #define PAGE_KERNEL	__pgprot(_PAGE_BASE | _PAGE_KERNEL_RW)
-@@ -318,7 +318,7 @@ static inline void __ptep_set_access_flags(struct vm_area_struct *vma,
- 					   int psize)
- {
- 	unsigned long set = pte_val(entry) &
--		(_PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_RW);
-+		(_PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_RW | _PAGE_EXEC);
- 
- 	pte_update(ptep, 0, set);
- 
-@@ -384,7 +384,7 @@ static inline int pte_dirty(pte_t pte)		{ return !!(pte_val(pte) & _PAGE_DIRTY);
- static inline int pte_young(pte_t pte)		{ return !!(pte_val(pte) & _PAGE_ACCESSED); }
- static inline int pte_special(pte_t pte)	{ return !!(pte_val(pte) & _PAGE_SPECIAL); }
- static inline int pte_none(pte_t pte)		{ return (pte_val(pte) & ~_PTE_NONE_MASK) == 0; }
--static inline bool pte_exec(pte_t pte)		{ return true; }
-+static inline bool pte_exec(pte_t pte)		{ return pte_val(pte) & _PAGE_EXEC; }
- 
- static inline int pte_present(pte_t pte)
- {
-@@ -451,7 +451,7 @@ static inline pte_t pte_wrprotect(pte_t pte)
- 
- static inline pte_t pte_exprotect(pte_t pte)
- {
--	return pte;
-+	return __pte(pte_val(pte) & ~_PAGE_EXEC);
- }
- 
- static inline pte_t pte_mkclean(pte_t pte)
-@@ -466,7 +466,7 @@ static inline pte_t pte_mkold(pte_t pte)
- 
- static inline pte_t pte_mkexec(pte_t pte)
- {
--	return pte;
-+	return __pte(pte_val(pte) | _PAGE_EXEC);
- }
- 
- static inline pte_t pte_mkpte(pte_t pte)
-diff --git a/arch/powerpc/include/asm/cputable.h b/arch/powerpc/include/asm/cputable.h
-index 29f49a35d6ee..a0395ccbbe9e 100644
---- a/arch/powerpc/include/asm/cputable.h
-+++ b/arch/powerpc/include/asm/cputable.h
-@@ -296,7 +296,7 @@ static inline void cpu_feature_keys_init(void) { }
- #define CPU_FTRS_PPC601	(CPU_FTR_COMMON | CPU_FTR_601 | \
- 	CPU_FTR_COHERENT_ICACHE | CPU_FTR_UNIFIED_ID_CACHE | CPU_FTR_USE_RTC)
- #define CPU_FTRS_603	(CPU_FTR_COMMON | CPU_FTR_MAYBE_CAN_DOZE | \
--	    CPU_FTR_MAYBE_CAN_NAP | CPU_FTR_PPC_LE)
-+	    CPU_FTR_MAYBE_CAN_NAP | CPU_FTR_PPC_LE | CPU_FTR_NOEXECUTE)
- #define CPU_FTRS_604	(CPU_FTR_COMMON | CPU_FTR_PPC_LE)
- #define CPU_FTRS_740_NOTAU	(CPU_FTR_COMMON | \
- 	    CPU_FTR_MAYBE_CAN_DOZE | CPU_FTR_L2CR | \
-@@ -367,15 +367,15 @@ static inline void cpu_feature_keys_init(void) { }
- 	    CPU_FTR_MAYBE_CAN_NAP | CPU_FTR_L2CR | CPU_FTR_ALTIVEC_COMP | \
- 	    CPU_FTR_SPEC7450 | CPU_FTR_NAP_DISABLE_L2_PR | \
- 	    CPU_FTR_PPC_LE | CPU_FTR_NEED_PAIRED_STWCX)
--#define CPU_FTRS_82XX	(CPU_FTR_COMMON | CPU_FTR_MAYBE_CAN_DOZE)
-+#define CPU_FTRS_82XX	(CPU_FTR_COMMON | CPU_FTR_MAYBE_CAN_DOZE | CPU_FTR_NOEXECUTE)
- #define CPU_FTRS_G2_LE	(CPU_FTR_COMMON | CPU_FTR_MAYBE_CAN_DOZE | \
- 	    CPU_FTR_MAYBE_CAN_NAP)
- #define CPU_FTRS_E300	(CPU_FTR_MAYBE_CAN_DOZE | \
- 	    CPU_FTR_MAYBE_CAN_NAP | \
--	    CPU_FTR_COMMON)
-+	    CPU_FTR_COMMON  | CPU_FTR_NOEXECUTE)
- #define CPU_FTRS_E300C2	(CPU_FTR_MAYBE_CAN_DOZE | \
- 	    CPU_FTR_MAYBE_CAN_NAP | \
--	    CPU_FTR_COMMON | CPU_FTR_FPU_UNAVAILABLE)
-+	    CPU_FTR_COMMON | CPU_FTR_FPU_UNAVAILABLE  | CPU_FTR_NOEXECUTE)
- #define CPU_FTRS_CLASSIC32	(CPU_FTR_COMMON)
- #define CPU_FTRS_8XX	(CPU_FTR_NOEXECUTE)
- #define CPU_FTRS_40X	(CPU_FTR_NODSISRALIGN | CPU_FTR_NOEXECUTE)
-diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
-index 118c3b216e60..f88436abfc01 100644
---- a/arch/powerpc/kernel/head_32.S
-+++ b/arch/powerpc/kernel/head_32.S
-@@ -515,6 +515,8 @@ InstructionTLBMiss:
- 	lwz	r0,0(r2)		/* get linux-style pte */
- 	andc.	r1,r1,r0		/* check access & ~permission */
- 	bne-	InstructionAddressInvalid /* return if access not permitted */
-+	andi.	r1,r0,_PAGE_EXEC
-+	beq-	InstructionAddressInvalid /* return if not _PAGE_EXEC */
- 	ori	r0,r0,_PAGE_ACCESSED	/* set _PAGE_ACCESSED in pte */
- 	/*
- 	 * NOTE! We are assuming this is not an SMP system, otherwise
-diff --git a/arch/powerpc/mm/dump_linuxpagetables-generic.c b/arch/powerpc/mm/dump_linuxpagetables-generic.c
-index 1e3829ec1348..3fe98a0974c6 100644
---- a/arch/powerpc/mm/dump_linuxpagetables-generic.c
-+++ b/arch/powerpc/mm/dump_linuxpagetables-generic.c
-@@ -21,13 +21,11 @@ static const struct flag_info flag_array[] = {
- 		.set	= "rw",
- 		.clear	= "r ",
- 	}, {
--#ifndef CONFIG_PPC_BOOK3S_32
- 		.mask	= _PAGE_EXEC,
- 		.val	= _PAGE_EXEC,
- 		.set	= " X ",
- 		.clear	= "   ",
- 	}, {
--#endif
- 		.mask	= _PAGE_PRESENT,
- 		.val	= _PAGE_PRESENT,
- 		.set	= "present",
-diff --git a/arch/powerpc/mm/pgtable.c b/arch/powerpc/mm/pgtable.c
-index 010e1c616cb2..3d86fe9d2ff4 100644
---- a/arch/powerpc/mm/pgtable.c
-+++ b/arch/powerpc/mm/pgtable.c
-@@ -74,7 +74,7 @@ static struct page *maybe_pte_to_page(pte_t pte)
-  * support falls into the same category.
-  */
- 
--static pte_t set_pte_filter(pte_t pte)
-+static pte_t set_pte_filter_hash(pte_t pte)
- {
- 	if (radix_enabled())
- 		return pte;
-@@ -93,14 +93,12 @@ static pte_t set_pte_filter(pte_t pte)
- 	return pte;
- }
- 
--static pte_t set_access_flags_filter(pte_t pte, struct vm_area_struct *vma,
--				     int dirty)
--{
--	return pte;
--}
--
- #else /* CONFIG_PPC_BOOK3S */
- 
-+static pte_t set_pte_filter_hash(pte_t pte) { return pte; }
-+
-+#endif /* CONFIG_PPC_BOOK3S */
-+
- /* Embedded type MMU with HW exec support. This is a bit more complicated
-  * as we don't have two bits to spare for _PAGE_EXEC and _PAGE_HWEXEC so
-  * instead we "filter out" the exec permission for non clean pages.
-@@ -109,6 +107,9 @@ static pte_t set_pte_filter(pte_t pte)
- {
- 	struct page *pg;
- 
-+	if (mmu_has_feature(MMU_FTR_HPTE_TABLE))
-+		return set_pte_filter_hash(pte);
-+
- 	/* No exec permission in the first place, move on */
- 	if (!pte_exec(pte) || !pte_looks_normal(pte))
- 		return pte;
-@@ -138,6 +139,9 @@ static pte_t set_access_flags_filter(pte_t pte, struct vm_area_struct *vma,
- {
- 	struct page *pg;
- 
-+	if (mmu_has_feature(MMU_FTR_HPTE_TABLE))
-+		return pte;
-+
- 	/* So here, we only care about exec faults, as we use them
- 	 * to recover lost _PAGE_EXEC and perform I$/D$ coherency
- 	 * if necessary. Also if _PAGE_EXEC is already set, same deal,
-@@ -172,8 +176,6 @@ static pte_t set_access_flags_filter(pte_t pte, struct vm_area_struct *vma,
- 	return pte_mkexec(pte);
- }
- 
--#endif /* CONFIG_PPC_BOOK3S */
--
- /*
-  * set_pte stores a linux PTE into the linux page table.
-  */
+diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
+index acbbad3..ab16046 100644
+--- a/drivers/gpu/drm/meson/meson_venc.c
++++ b/drivers/gpu/drm/meson/meson_venc.c
+@@ -714,6 +714,7 @@ struct meson_hdmi_venc_vic_mode {
+ 	{ 5, &meson_hdmi_encp_mode_1080i60 },
+ 	{ 20, &meson_hdmi_encp_mode_1080i50 },
+ 	{ 32, &meson_hdmi_encp_mode_1080p24 },
++	{ 33, &meson_hdmi_encp_mode_1080p50 },
+ 	{ 34, &meson_hdmi_encp_mode_1080p30 },
+ 	{ 31, &meson_hdmi_encp_mode_1080p50 },
+ 	{ 16, &meson_hdmi_encp_mode_1080p60 },
 -- 
-2.13.3
+2.7.4
 
