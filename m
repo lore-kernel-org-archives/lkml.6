@@ -2,150 +2,126 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E7CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 076C7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:12:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D41E21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:10:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6F1520684
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:12:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XNOK+xxV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D41E21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="X/YYqMUQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6F1520684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389785AbeKVHqF (ORCPT
+        id S2389793AbeKVHsF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 02:46:05 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:47984 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733229AbeKVHqF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 02:46:05 -0500
-Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 929A755E;
-        Wed, 21 Nov 2018 22:10:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1542834602;
-        bh=Y8tgesxlqNSodcmkp7zGFRPdIB+w4p4LsV9lElZGY5o=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=XNOK+xxVDsM9mzDEH8k2ok0jv8Pix99jVp0Uj/fjwTSyam7BplQs7yqwOlImD2lRt
-         xOJoIAQsVqmsNNi5PTUBokxAAWfQnSJozWfAqGsreLAgKoAnyIhDcZf2/Q3W/eWJZB
-         8Lys83Rcm10G28/OPdB6iw2GOghdECkQPLn6p6r0=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH 2/2] drm: rcar-du: Enable alpha property on primary planes
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Alexandru-Cosmin Gheorghe <Alexandru-Cosmin.Gheorghe@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180919155700.10342-1-kieran.bingham+renesas@ideasonboard.com>
- <20180919155700.10342-3-kieran.bingham+renesas@ideasonboard.com>
- <1604918.OXgyMDt7RE@avalon> <3478783.2iBfSyQcgT@avalon>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <e43c48cf-0774-c1f2-24a9-25b32438d3bf@ideasonboard.com>
-Date:   Wed, 21 Nov 2018 21:10:00 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 22 Nov 2018 02:48:05 -0500
+Received: from mail-eopbgr820042.outbound.protection.outlook.com ([40.107.82.42]:20531
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1733229AbeKVHsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 02:48:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=js4KMiad9rcDgdy9eiRANGI9XjtLzl24Xa9tnp3Q2Xs=;
+ b=X/YYqMUQMkWpQ8U7EAw14d0di49sQKx7i/EdEPo4p3F+w7cvzItAK/z/nSfSdII3khi6iBdAfz5BPnpzRlsJHwsLmh6UoOQvfvj7dgrAqavQXpgqkJbbHYl0470J6gxzNumHjUHyt3fJ3huNmDhD1gT9bR7OS9ESo7tOO1r6Jfs=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB4263.namprd05.prod.outlook.com (20.176.252.32) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.9; Wed, 21 Nov 2018 21:12:01 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::a1b8:a948:4c8c:747d]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::a1b8:a948:4c8c:747d%4]) with mapi id 15.20.1361.015; Wed, 21 Nov 2018
+ 21:12:01 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+CC:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Out of tree module build errors since v4.20-rc1
+Thread-Topic: Out of tree module build errors since v4.20-rc1
+Thread-Index: AQHUgdzMTiVodyHxTkqOhap0cKGZo6VaufUA
+Date:   Wed, 21 Nov 2018 21:12:01 +0000
+Message-ID: <5A24CA1A-3059-44BE-A0D5-4E29FC6E5BE9@vmware.com>
+References: <20181121205633.oxksehwjg5a2q6rt@oracle.com>
+In-Reply-To: <20181121205633.oxksehwjg5a2q6rt@oracle.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [66.170.99.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB4263;20:8wwg0GjyzulsYec9+BDEnu0s2B+d568vow1uUNETovCJKdPjXj+pBTmVhhiv9tx6qS88C4GtRQIPl4z5yYLuvzMtAXQHxVKneb/PIALjHzNKFIY5t3PShIz689wxv6MH5FpKbODTSv94rQQkxuSfvFYNw/wkca9LYdMfk1UxsHc=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: e96ce7f6-8a0b-417a-78c7-08d64ff5face
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4263;
+x-ms-traffictypediagnostic: BYAPR05MB4263:
+x-microsoft-antispam-prvs: <BYAPR05MB4263C1830514698C57EA94D4D0DA0@BYAPR05MB4263.namprd05.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231442)(944501410)(52105112)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB4263;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4263;
+x-forefront-prvs: 08635C03D4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(376002)(346002)(396003)(39860400002)(366004)(136003)(199004)(189003)(54906003)(256004)(66066001)(7736002)(81166006)(6512007)(81156014)(229853002)(478600001)(71190400001)(71200400001)(6916009)(53936002)(36756003)(8676002)(316002)(14454004)(33656002)(106356001)(2616005)(105586002)(8936002)(11346002)(2906002)(476003)(446003)(25786009)(68736007)(305945005)(5660300001)(3846002)(6116002)(4326008)(6246003)(186003)(6486002)(6436002)(86362001)(26005)(486006)(2900100001)(76176011)(6506007)(53546011)(82746002)(99286004)(102836004)(97736004)(83716004)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4263;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: uzZ2ouNVzBeEvTvtCtY/QwrdrT3gOKs+zbptC4GAC1n/XSdxOLPozURZsX+UFLRU98kOaJLDkP+TY5Hf8onGRxvuGoPia3G4sg8crCto7OPBUKYtCsAXEvF0OvxyCGUz4vJCTlwlQxrQQWBgIDne3IgfFFUbkdiOyxhug1vW12UjAj4Ncqlu+enEF7nvEkHxijHpkwODmb7+tiHsLXKaG3t2wtl2qsZ6e5Y8MwT36CQb8bOfI8wj0ZwJOfFZeT5P45JcvYrAx6ygOdQYoS4VImOxB2AyUsV/wk/GhKQB9grqayZDWh8DL12LlN50KMeEy/qEmjVv/92CeogfedMLuSNyGm5NTQCuaaR4ressH84=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4700948FEADE224E8982F96357EDEA81@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <3478783.2iBfSyQcgT@avalon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e96ce7f6-8a0b-417a-78c7-08d64ff5face
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2018 21:12:01.1089
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4263
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
-
-On 21/11/2018 18:29, Laurent Pinchart wrote:
-> Hi Kieran,
-> 
-> On Thursday, 20 September 2018 14:22:38 EET Laurent Pinchart wrote:
->> On Wednesday, 19 September 2018 18:56:59 EEST Kieran Bingham wrote:
->>> If the alpha property is not added to a plane, a default value will be
->>> used, which can result in a non-visible layer if the alpha is
->>> initialised as 0.
->>>
->>> Provide an alpha blend property on all planes.
->>>
->>> Fixes: 161ad653d6c9 ("drm: rcar-du: Use __drm_atomic_helper_plane_reset
->>> instead of copying the logic")
->>>
->>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->>> ---
->>>
->>>  drivers/gpu/drm/rcar-du/rcar_du_plane.c | 7 ++++++-
->>>  1 file changed, 6 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
->>> b/drivers/gpu/drm/rcar-du/rcar_du_plane.c index 9e07758a755c..72399a19d8a6
->>> 100644
->>> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
->>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
->>> @@ -783,13 +783,18 @@ int rcar_du_planes_init(struct rcar_du_group *rgrp)
->>>
->>>  		drm_plane_helper_add(&plane->plane,
->>>  		
->>>  				     &rcar_du_plane_helper_funcs);
->>>
->>> +		/*
->>> +		 * The alpha property needs to be initialised on all planes
->>> +		 * to ensure the correct setting at the output.
->>> +		 */
->>> +		drm_plane_create_alpha_property(&plane->plane);
->>> +
->>
->> As mentioned in the cover letter, both patches in this series fix the issue
->> at hand. The first patch is more generic as it will fix it for all drivers,
->> while this patch is specific to the R-Car DU driver. It however makes sense
->> to merge it, as it adds alpha support to the primary plane, which can be
->> useful.
->>
->> Once the first patch gets merged, the above comment won't be correct
->> anymore. I wonder whether we shouldn't change the patch description and
->> comment to focus on usage of the alpha property for primary planes, and not
->> on the bug fix. What's your opinion ?
-
-Aha - sorry this slipped my queue.
-
-
-> I've removed the comment and changed the commit message to
-> 
->   drm: rcar-du: Enable alpha property on primary planes
->   
->   The hardware supports alpha on all planes, and using it on the primary
->   plane can be useful. Don't restrict the alpha property to overlay
->   planes.
-> 
-> With this,
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Perfect, - That reads fine.
-
-Thank you.
-
-
-
-> 
-> and applied to my tree.
-> 
->>>  		if (type == DRM_PLANE_TYPE_PRIMARY)
->>>  			continue;
->>>  		
->>>  		drm_object_attach_property(&plane->plane.base,
->>>  					   rcdu->props.colorkey,
->>>  					   RCAR_DU_COLORKEY_NONE);
->>>
->>> -		drm_plane_create_alpha_property(&plane->plane);
->>>  		drm_plane_create_zpos_property(&plane->plane, 1, 1, 7);
->>>  	}
-> 
-
+PiBPbiBOb3YgMjEsIDIwMTgsIGF0IDEyOjU2IFBNLCBMaWFtIFIuIEhvd2xldHQgPExpYW0uSG93
+bGV0dEBPcmFjbGUuY29tPiB3cm90ZToNCj4gDQo+IA0KPiBNeSBvdXQgb2YgdHJlZSBkcml2ZXIg
+YnVpbGQgaXMgbm93IHJlcG9ydGluZyBpc3N1ZXMgd2l0aCB0aGUganVtcCB0YWJsZToNCj4gDQo+
+IC4vaW5jbHVkZS9saW51eC9qdW1wX2xhYmVsLmg6IEluIGZ1bmN0aW9uIOKAmGp1bXBfZW50cnlf
+Y29kZeKAmToNCj4gLi9pbmNsdWRlL2xpbnV4L2p1bXBfbGFiZWwuaDoxNTM6MTQ6IGVycm9yOiBk
+ZXJlZmVyZW5jaW5nIHBvaW50ZXIgdG8gaW5jb21wbGV0ZSB0eXBlIOKAmGNvbnN0IHN0cnVjdCBq
+dW1wX2VudHJ54oCZDQo+ICByZXR1cm4gZW50cnktPmNvZGU7DQo+ICAgICAgICAgICAgICBefg0K
+PiAuL2luY2x1ZGUvbGludXgvanVtcF9sYWJlbC5oOiBJbiBmdW5jdGlvbiDigJhqdW1wX2VudHJ5
+X3NldF9pbml04oCZOg0KPiAuL2luY2x1ZGUvbGludXgvanVtcF9sYWJlbC5oOjE4MDo3OiBlcnJv
+cjogZGVyZWZlcmVuY2luZyBwb2ludGVyIHRvIGluY29tcGxldGUgdHlwZSDigJhzdHJ1Y3QganVt
+cF9lbnRyeeKAmQ0KPiAgZW50cnktPmtleSB8PSAyOw0KPiAgICAgICBefg0KPiAuL2luY2x1ZGUv
+bGludXgvanVtcF9sYWJlbC5oOiBBdCB0b3AgbGV2ZWw6DQo+IC4vaW5jbHVkZS9saW51eC9qdW1w
+X2xhYmVsLmg6MjEyOjI2OiBlcnJvcjogYXJyYXkgdHlwZSBoYXMgaW5jb21wbGV0ZSBlbGVtZW50
+IHR5cGUg4oCYc3RydWN0IGp1bXBfZW50cnnigJkNCj4gZXh0ZXJuIHN0cnVjdCBqdW1wX2VudHJ5
+IF9fc3RhcnRfX19qdW1wX3RhYmxlW107DQo+ICAgICAgICAgICAgICAgICAgICAgICAgICBefn5+
+fn5+fn5+fn5+fn5+fn5+fg0KPiAuL2luY2x1ZGUvbGludXgvanVtcF9sYWJlbC5oOjIxMzoyNjog
+ZXJyb3I6IGFycmF5IHR5cGUgaGFzIGluY29tcGxldGUgZWxlbWVudCB0eXBlIOKAmHN0cnVjdCBq
+dW1wX2VudHJ54oCZDQo+IGV4dGVybiBzdHJ1Y3QganVtcF9lbnRyeSBfX3N0b3BfX19qdW1wX3Rh
+YmxlW107DQo+ICAgICAgICAgICAgICAgICAgICAgICAgICBefn5+fn5+fn5+fn5+fn5+fn5+DQo+
+IA0KPiANCj4gVGhpcyBoYXBwZW5zIGluIHY0LjIwLXJjMyBhcyB3ZWxsLCBzbyBJIGJpc2VjdGVk
+IGJldHdlZW4gdjQuMTkgdG8NCj4gdjQuMjAtcmMxIHdoaWNoIHJlc3VsdGVkIGluIHRoZSBmb2xs
+b3dpbmcgY29tbWl0Og0KPiANCj4gYjM0MDA2YzQyNThjOWM4NjU5N2I2YjcxMjNkNmE5YTM1MTNk
+NmNkNyBpcyB0aGUgZmlyc3QgYmFkIGNvbW1pdA0KPiBjb21taXQgYjM0MDA2YzQyNThjOWM4NjU5
+N2I2YjcxMjNkNmE5YTM1MTNkNmNkNw0KPiBBdXRob3I6IEFyZCBCaWVzaGV1dmVsIDxhcmQuYmll
+c2hldXZlbEBsaW5hcm8ub3JnPg0KPiBEYXRlOiAgIFR1ZSBTZXAgMTggMjM6NTE6NDEgMjAxOCAt
+MDcwMA0KPiANCj4gICAgeDg2L2p1bXBfdGFibGU6IFVzZSByZWxhdGl2ZSByZWZlcmVuY2VzDQo+
+IA0KPiANCj4gDQo+IA0KPiBJbml0aWFsbHkgSSBhc3N1bWVkIHRoaXMgd2FzIG15IG93biBmYXVs
+dCwgYnV0IG15IG1vZHVsZSBkb2VzIG5vdCBoYXZlDQo+IHRoZXNlIGlzc3VlcyB3aGVuIHVzaW5n
+IHY0LjE5LiAgSXMgdGhlcmUgYW55dGhpbmcgSSBzaG91bGQgdHJ5L2NoYW5nZSBpbg0KPiBteSBt
+b2R1bGUgbWFrZWZpbGUsIGluY2x1ZGVzLCBldGMgdG8gc3VwcG9ydCB0aGlzIHJlbGF0aXZlIHJl
+ZmVyZW5jZQ0KPiBjb2RlPw0KDQpEbyB5b3Ugc2VlIEhBVkVfQVJDSF9KVU1QX0xBQkVMX1JFTEFU
+SVZFIHNldCBpbiB5b3VyIGtlcm5lbCBjb25maWc/DQoNCg==
