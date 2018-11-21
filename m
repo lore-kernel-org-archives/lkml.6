@@ -2,73 +2,70 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B73C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:24:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CCBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:25:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8686C2146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:24:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8686C2146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 92E7B2146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:25:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92E7B2146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730242AbeKUV6p (ORCPT
+        id S1730250AbeKUV7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 16:58:45 -0500
-Received: from mga07.intel.com ([134.134.136.100]:49533 "EHLO mga07.intel.com"
+        Wed, 21 Nov 2018 16:59:34 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:45082 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727874AbeKUV6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 16:58:44 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 03:24:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,261,1539673200"; 
-   d="scan'208";a="110122180"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
-  by orsmga001.jf.intel.com with ESMTP; 21 Nov 2018 03:24:41 -0800
-Subject: Re: [PATCH v2 0/3] Tuning Fixes for sdhci-omap
-To:     Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org
-Cc:     ulf.hansson@linaro.org, kishon@ti.com
-References: <20181121103357.3448-1-faiz_abbas@ti.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <3f64fb93-ecdd-d439-1001-be8117f63990@intel.com>
-Date:   Wed, 21 Nov 2018 13:23:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        id S1727874AbeKUV7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 16:59:34 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 654B0207AB; Wed, 21 Nov 2018 12:25:31 +0100 (CET)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 31F3220736;
+        Wed, 21 Nov 2018 12:25:21 +0100 (CET)
+Date:   Wed, 21 Nov 2018 12:25:21 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: at91: nattis: initialize the BLON pin as
+ output-low early
+Message-ID: <20181121112521.GL8367@piout.net>
+References: <20181120212036.22497-1-peda@axentia.se>
 MIME-Version: 1.0
-In-Reply-To: <20181121103357.3448-1-faiz_abbas@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181120212036.22497-1-peda@axentia.se>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/11/18 12:33 PM, Faiz Abbas wrote:
-> The following patches fix tuning related errors in the
-> sdhci-omap driver.
+On 20/11/2018 21:20:43+0000, Peter Rosin wrote:
+> The pwm-backlight driver initializes BLON (the enable gpio) to
+> output-high if the gpio is input on probe. Initializing the gpio
+> to output-low before the driver probes prevents this action by
+> the pwm-backlight driver and gets rid of a nasty blink of full
+> backlight with an uninitialized panel.
 > 
-> v2:
-> Added Fixes and stable tags for patch 1.
-> Re-enable DCRC in patch 1 only if it was enabled before
-> Squashed patches 2 & 3
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+> ---
+>  arch/arm/boot/dts/at91-nattis-2-natte-2.dts | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> Faiz Abbas (3):
->   mmc: sdhci-omap: Fix DCRC error handling during tuning
->   mmc: sdhci-omap: Add platform specific reset callback
->   mmc: sdhci-omap: Remove redundant structure assignments
-> 
->  drivers/mmc/host/sdhci-omap.c | 36 ++++++++++++++++++++++++++---------
->  1 file changed, 27 insertions(+), 9 deletions(-)
-> 
+Applied, thanks.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
