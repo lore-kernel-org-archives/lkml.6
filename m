@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5816C04EBA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF87C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B0A2206BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C7CE21582
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uudMBs0F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B0A2206BB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2syETwj8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C7CE21582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388362AbeKVFou (ORCPT
+        id S2388375AbeKVFox (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:44:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39488 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:44:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388345AbeKVFot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:44:49 -0500
+        id S1729623AbeKVFov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:44:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E1CB214DB;
-        Wed, 21 Nov 2018 19:09:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E77521527;
+        Wed, 21 Nov 2018 19:09:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827356;
-        bh=I4LySIWhChNwJWPlIpZcIZvJr7Gdh/V64nff2Z0i51g=;
+        s=default; t=1542827359;
+        bh=k0DymU77Tv0RlUkrtqydHHW6sp5kuXtk0gBrILsmXwU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uudMBs0F3ZH3bTrhxEG+jHZ+177TkjAoTK6/RvacAmEgP3LlBtmRbK85FtLwEYNTU
-         j20M2Vdcm65vbBWcnMWhfL8qa2a0hx0yCfuEM8Mu5NunSvMRdnQGoVMbHURxPk+vdG
-         1Nf+cmXix5ZslEIChFkaBdbTa7Dzv/Pfwyerp+8c=
+        b=2syETwj805zMTHlnLKn8CyKOJEnDDSfFeQ6KUq5PX6Rlns0ltGXA1sGgJyfLFtcZH
+         5ACkJZd6oHTQ5Y9xGjKXUg2nRp10HBULGcqhSCp+7NBdtw6JHIuoXH1Ti1B+ivmMXe
+         h3ZbjZO5OQiQwSi8nuhHEFjihVu6TXQ0oeyqXtfw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 02/21] ibmvnic: fix accelerated VLAN handling
-Date:   Wed, 21 Nov 2018 20:06:46 +0100
-Message-Id: <20181121183422.199098595@linuxfoundation.org>
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4.14 20/21] ARM: dts: r8a7791: Correct critical CPU temperature
+Date:   Wed, 21 Nov 2018 20:07:04 +0100
+Message-Id: <20181121183422.969409038@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183422.103826775@linuxfoundation.org>
 References: <20181121183422.103826775@linuxfoundation.org>
@@ -63,29 +64,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
+From: Chris Paterson <chris.paterson2@renesas.com>
 
-[ Upstream commit e84b47941e15e6666afb8ee8b21d1c3fc1a013af ]
+commit e4fdf59bcce3b490bbc7197145bcb9f9d5a18cd3 upstream.
 
-Don't request tag insertion when it isn't present in outgoing skb.
+The R-Car M2W hardware manual states that Tc = –40°C to +105°C. The
+thermal sensor has an accuracy of ±5°C and there can be a temperature
+difference of 1 or 2 degrees between Tjmax and the thermal sensor due
+to the location of the latter.
 
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This means that 95°C is a safer value to use.
+
+Fixes: cac68a56e34b9810 ("ARM: dts: r8a7791: enable to use thermal-zone")
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/ibm/ibmvnic.c |    2 +-
+ arch/arm/boot/dts/r8a7791.dtsi |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -1259,7 +1259,7 @@ static int ibmvnic_xmit(struct sk_buff *
- 	tx_crq.v1.sge_len = cpu_to_be32(skb->len);
- 	tx_crq.v1.ioba = cpu_to_be64(data_dma_addr);
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -91,7 +91,7 @@
  
--	if (adapter->vlan_header_insertion) {
-+	if (adapter->vlan_header_insertion && skb_vlan_tag_present(skb)) {
- 		tx_crq.v1.flags2 |= IBMVNIC_TX_VLAN_INSERT;
- 		tx_crq.v1.vlan_id = cpu_to_be16(skb->vlan_tci);
- 	}
+ 			trips {
+ 				cpu-crit {
+-					temperature	= <115000>;
++					temperature	= <95000>;
+ 					hysteresis	= <0>;
+ 					type		= "critical";
+ 				};
 
 
