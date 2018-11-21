@@ -2,155 +2,343 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38CB8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FFBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:30:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03F8620685
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:27:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03F8620685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 86DFC20685
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:30:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Auynbds0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86DFC20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730005AbeKUWBy (ORCPT
+        id S1730257AbeKUWEQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 17:01:54 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52465 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729576AbeKUWBx (ORCPT
+        Wed, 21 Nov 2018 17:04:16 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44679 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729179AbeKUWEP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 17:01:53 -0500
-Received: by mail-wm1-f66.google.com with SMTP id r11-v6so5116794wmb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 03:27:50 -0800 (PST)
+        Wed, 21 Nov 2018 17:04:15 -0500
+Received: by mail-pl1-f194.google.com with SMTP id s5-v6so5138773plq.11
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 03:30:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=MGmzSFD9yA9B8zvndJgZDTVvOwRl+YrBF/tFuCK8eBs=;
+        b=Auynbds0y+t11pga665KudTb3qzoA0hVnSMQXYHO2LeMWy7KasJBWj0Uc6q3LHhNUa
+         WKDddVr6NHNlAd/F7jpkCBZyl3Toa8rtKC/IzfCdXU1tLXwjl73ym5NxlLm9DiDX9MXg
+         EGxQF9XgO4TxqchQpRA9zefE0BZqUX64246mh2xxaJTaZThzHQUxabVeGQyPGLgxl0qw
+         n+4axQE2QJUs9vzp2+Kn3KhW1jbpoojQK2sawy6IKJtCxxT3S61mBbuED4A/h/+bI/kN
+         ciGqTHbDS3azel7+pCCcdH74aFzigQkbdAamBkUhSYefpjeIjBxNwudMAG8SG/f55NQj
+         YspA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=f3RQOLyXagZXuM7ZmhzNjXL7csrLTG/J53aEBpeQ/uw=;
-        b=WqR/M7Gz/mTOrI10rvcLqGpZ1keywAUrICjY76UddstlEJbyVnESMadE7l8Cgv71ec
-         qhwVAR0fM+ZHgJ3hT2fFR71tnG4gGLGAbbsIwuARM2D4r4EeF9/B0FUCOXDJVuJ4R8MU
-         qPhIfK/NxnIHDDnpBRpSEImGVfgOTr1iEhA8Zkz35DGN6Mr2Kj6trCMgzAmSoEPKfPCC
-         /EKyNc9dmx9Kvl9/TBOFfrYj2TcvnO/Ig+gNhwEVyldey7Eg7xYBmNyVB7M+ttxL0wQA
-         ntL2Y4t2JqM9t+SRXYUH/F4xbyQh+FPDeknlDd2Kc1v2j1FE4LQDjzVMajupyoXYk09W
-         XBsg==
-X-Gm-Message-State: AGRZ1gLMJonF0EaGfMi1w3OJgJVTRWxD5bhjWPnvCGXzoy/fqOcTG1XP
-        IH+fliGgQa3aa0+T5niGrush9bJNJok=
-X-Google-Smtp-Source: AFSGD/VS9guIx3Ype6xyG6EY9FjUfPjW+92GXQ0dqHNgPEd0a96k5Inku88Z2C/s6ZebeopQGlSiPg==
-X-Received: by 2002:a1c:8acf:: with SMTP id m198mr5265877wmd.15.1542799669676;
-        Wed, 21 Nov 2018 03:27:49 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id m65sm1108745wmb.4.2018.11.21.03.27.48
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MGmzSFD9yA9B8zvndJgZDTVvOwRl+YrBF/tFuCK8eBs=;
+        b=jWVS7js8eZeVZI/aL1uvbbXllUpx9WLMVOzrK/mdhl21pQmf9zKahjKR7u/OFEi1qm
+         zZ8hbfmji5m3wqO+H5/ueeCTFjsfZiW5OIb9uZEkJqa74tJmW/zZQxBx7Vv41y7XYjrt
+         c5pFg3I1IPJN4INmZLCjya4HBoB/dgRAeXyhIcfu8s9Q/Yo2T2ufOMAIRAOkXn1Kah2F
+         Icq+lsp9FLiacEmItR19V3GoTUMTvqdlwKRXr2lgyp9suOfvOl+kVL62V05LC4P9lDBE
+         +qd3D4Y/4Mfm5R1kmeY20Cf0VAkq+GwszrqbMm6NkVzIq3wuZZoVOJgbICTowX0XhTLl
+         4kEw==
+X-Gm-Message-State: AGRZ1gKjCNB9Yf46Cd+1bHMM1wDvo7vKjM6Pd47dRnV0/++Qk3MSN29Y
+        +A4VePcbdieeMl+0WQTWf2Q=
+X-Google-Smtp-Source: AJdET5dIEpb8+pe9RniySs3Kdk0Umol4tnScVt18EpzY1bDSlYBZZVLtvPOVnmqoYpxALhxXc09RTA==
+X-Received: by 2002:a62:d148:: with SMTP id t8mr6556778pfl.52.1542799812778;
+        Wed, 21 Nov 2018 03:30:12 -0800 (PST)
+Received: from dest.didichuxing.com ([203.100.54.194])
+        by smtp.gmail.com with ESMTPSA id t13sm90753952pgr.42.2018.11.21.03.30.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 03:27:48 -0800 (PST)
-Subject: Re: [PATCH v1 00/15] i2c-multi-instantiate: Adapt for INT3515 and
- alike
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-i2c@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-References: <20181120155924.10773-1-andriy.shevchenko@linux.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <24f96a15-6b57-c19d-b77d-fdc6c11fddc9@redhat.com>
-Date:   Wed, 21 Nov 2018 12:27:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181120155924.10773-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 21 Nov 2018 03:30:12 -0800 (PST)
+From:   ufo19890607@gmail.com
+To:     akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        yuzhoujian@didichuxing.com
+Subject: [PATCH v15 1/2] Reorganize the oom report in dump_header
+Date:   Wed, 21 Nov 2018 19:29:58 +0800
+Message-Id: <1542799799-36184-1-git-send-email-ufo19890607@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: yuzhoujian <yuzhoujian@didichuxing.com>
 
-On 20-11-18 16:59, Andy Shevchenko wrote:
-> Currently i2c-multi-instantiate driver does not support the case
-> of INT3515 USB PD device, where:
-> 
-> - Interrupt() is used instead of GpioInt()
-> - All slaves may be the same from IP point of view
-> - There can be variadic amount of slaves
-> 
-> This series is addressing all above.
-> 
-> Notes:
-> - series has been smoke tested (Heikki would do BAT or more) on Coffee Lake system
-> - patch for BOSC0200 might be considered as RFC since the modalias potential issue
+OOM report contains several sections. The first one is the allocation
+context that has triggered the OOM. Then we have cpuset context
+followed by the stack trace of the OOM path. The tird one is the OOM
+memory information. Followed by the current memory state of all system
+tasks. At last, we will show oom eligible tasks and the information
+about the chosen oom victim.
 
-Yeah the BOSC0200 patch cannot go upstream as is, that will break the
-orientation quirks in hwdb on:
+One thing that makes parsing more awkward than necessary is that we do
+not have a single and easily parsable line about the oom context. This
+patch is reorganizing the oom report to
+1) who invoked oom and what was the allocation request
+[  515.902945] tuned invoked oom-killer: gfp_mask=0x6200ca(GFP_HIGHUSER_MOVABLE), order=0, oom_score_adj=0
 
-[hans@shalem systemd]$ grep BOSC0200 hwdb/60-sensor.hwdb | wc -l
-17
-[hans@shalem systemd]$
+2) OOM stack trace
+[  515.904273] CPU: 24 PID: 1809 Comm: tuned Not tainted 4.20.0-rc3+ #3
+[  515.905518] Hardware name: Inspur SA5212M4/YZMB-00370-107, BIOS 4.1.10 11/14/2016
+[  515.906821] Call Trace:
+[  515.908062]  dump_stack+0x5a/0x73
+[  515.909311]  dump_header+0x55/0x28c
+[  515.914260]  oom_kill_process+0x2d8/0x300
+[  515.916708]  out_of_memory+0x145/0x4a0
+[  515.917932]  __alloc_pages_slowpath+0x7d2/0xa16
+[  515.919157]  __alloc_pages_nodemask+0x277/0x290
+[  515.920367]  filemap_fault+0x3d0/0x6c0
+[  515.921529]  ? filemap_map_pages+0x2b8/0x420
+[  515.922709]  ext4_filemap_fault+0x2c/0x40 [ext4]
+[  515.923884]  __do_fault+0x20/0x80
+[  515.925032]  __handle_mm_fault+0xbc0/0xe80
+[  515.926195]  handle_mm_fault+0xfa/0x210
+[  515.927357]  __do_page_fault+0x233/0x4c0
+[  515.928506]  do_page_fault+0x32/0x140
+[  515.929646]  ? page_fault+0x8/0x30
+[  515.930770]  page_fault+0x1e/0x30
 
-At least 17 different models laptops / 2-in-1s
+3) OOM memory information
+[  515.958093] Mem-Info:
+[  515.959647] active_anon:26501758 inactive_anon:1179809 isolated_anon:0
+ active_file:4402672 inactive_file:483963 isolated_file:1344
+ unevictable:0 dirty:4886753 writeback:0 unstable:0
+ slab_reclaimable:148442 slab_unreclaimable:18741
+ mapped:1347 shmem:1347 pagetables:58669 bounce:0
+ free:88663 free_pcp:0 free_cma:0
+...
 
-> The idea is to push this either through PDx86 tree (needs Rafael's ACKs) or ACPI.
-> In any case it needs tags from Heikki, Hans, Mika, Wolfram and Jonathan.
+4) current memory state of all system tasks
+[  516.079544] [    744]     0   744     9211     1345   114688       82             0 systemd-journal
+[  516.082034] [    787]     0   787    31764        0   143360       92             0 lvmetad
+[  516.084465] [    792]     0   792    10930        1   110592      208         -1000 systemd-udevd
+[  516.086865] [   1199]     0  1199    13866        0   131072      112         -1000 auditd
+[  516.089190] [   1222]     0  1222    31990        1   110592      157             0 smartd
+[  516.091477] [   1225]     0  1225     4864       85    81920       43             0 irqbalance
+[  516.093712] [   1226]     0  1226    52612        0   258048      426             0 abrtd
+[  516.112128] [   1280]     0  1280   109774       55   299008      400             0 NetworkManager
+[  516.113998] [   1295]     0  1295    28817       37    69632       24             0 ksmtuned
+[  516.144596] [  10718]     0 10718  2622484  1721372 15998976   267219             0 panic
+[  516.145792] [  10719]     0 10719  2622484  1164767  9818112    53576             0 panic
+[  516.146977] [  10720]     0 10720  2622484  1174361  9904128    53709             0 panic
+[  516.148163] [  10721]     0 10721  2622484  1209070 10194944    54824             0 panic
+[  516.149329] [  10722]     0 10722  2622484  1745799 14774272    91138             0 panic
 
-Patches 1-5, 7-13 and 15 are:
+5) oom context (contrains and the chosen victim).
+oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0-1,task=panic,pid=10737,uid=0
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+An admin can easily get the full oom context at a single line which
+makes parsing much easier.
 
-I will send separate replies to:
+Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
+---
+Changes since v14:
+- add the dump_oom_summary for the single line output of oom context.
+- fix the null pointer in the dump_header.
 
-[PATCH v1 06/15] i2c: acpi: Assign fwnode for devices created via i2c_acpi_new_device()
-[PATCH v1 14/15] ACPI / scan: Create platform device for BOSC0200 ACPI nodes
+Changes since v13:
+- remove the spaces for printing pid and uid.
 
-Which are both a NACK from me (in their current state) because they both will
-cause regressions.
+Changes since v12:
+- print the cpuset and memory allocation information after oom victim comm, pid.
 
-Regards,
+Changes since v11:
+- move the array of const char oom_constraint_text to oom_kill.c
+- add the cpuset information in the one line output.
 
-Hans
+Changes since v10:
+- divide the patch v8 into two parts. One part is to add the array of const char and put enum
+  oom_constaint into oom.h; the other adds a new func to print the missing information for the system-
+  wide oom report.
 
+Changes since v9:
+- divide the patch v8 into two parts. One part is to move enum oom_constraint into memcontrol.h; the
+  other refactors the output info in the dump_header.
+- replace orgin_memcg and kill_memcg with oom_memcg and task_memcg resptively.
 
+Changes since v8:
+- add the constraint in the oom_control structure.
+- put enum oom_constraint and constraint array into the oom.h file.
+- simplify the description for mem_cgroup_print_oom_context.
 
+Changes since v7:
+- add the constraint parameter to dump_header and oom_kill_process.
+- remove the static char array in the mem_cgroup_print_oom_context, and
+  invoke pr_cont_cgroup_path to print memcg' name.
+- combine the patchset v6 into one.
 
+Changes since v6:
+- divide the patch v5 into two parts. One part is to add an array of const char and
+  put enum oom_constraint into the memcontrol.h; the other refactors the output
+  in the dump_header.
+- limit the memory usage for the static char array by using NAME_MAX in the mem_cgroup_print_oom_context.
+- eliminate the spurious spaces in the oom's output and fix the spelling of "constrain".
 
+Changes since v5:
+- add an array of const char for each constraint.
+- replace all of the pr_cont with a single line print of the pr_info.
+- put enum oom_constraint into the memcontrol.c file for printing oom constraint.
 
-> 
-> Testing and comments are warmly welcome.
-> 
-> Andy Shevchenko (15):
->    platform/x86: intel_cht_int33fe: Remove duplicate NULL check
->    platform/x86: intel_cht_int33fe: Accept errors of
->      i2c_acpi_new_device()
->    platform/x86: i2c-multi-instantiate: Accept errors of
->      i2c_acpi_new_device()
->    platform/x86: i2c-mutli-instantiate: Defer probe when no adapter found
->    i2c: acpi: Return error pointers from i2c_acpi_new_device()
->    i2c: acpi: Assign fwnode for devices created via i2c_acpi_new_device()
->    i2c: acpi: Use ACPI_FAILURE instead of !ACPI_SUCCESS
->    i2c: acpi: Introduce i2c_acpi_get_i2c_resource() helper
->    platform/x86: i2c-multi-instantiate: Count I2cSerialBus() resources
->    platform/x86: i2c-multi-instantiate: Distinguish IRQ resource type
->    platform/x86: i2c-multi-instantiate: Introduce IOAPIC IRQ support
->    platform/x86: i2c-multi-instantiate: Allow to have same slaves
->    ACPI / scan: Create platform device for INT3515 ACPI nodes
->    ACPI / scan: Create platform device for BOSC0200 ACPI nodes
->    iio: inv_mpu6050: Use i2c_acpi_get_i2c_resource() helper
-> 
->   drivers/acpi/scan.c                          |  2 +
->   drivers/i2c/i2c-core-acpi.c                  | 43 +++++----
->   drivers/iio/accel/bmc150-accel-i2c.c         |  1 -
->   drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c   | 16 ++--
->   drivers/platform/x86/i2c-multi-instantiate.c | 99 ++++++++++++++++----
->   drivers/platform/x86/intel_cht_int33fe.c     | 34 +++++--
->   drivers/usb/typec/tps6598x.c                 |  8 +-
->   include/linux/acpi.h                         | 11 +++
->   8 files changed, 158 insertions(+), 56 deletions(-)
-> 
+Changes since v4:
+- rename the helper's name to mem_cgroup_print_oom_context.
+- rename the mem_cgroup_print_oom_info to mem_cgroup_print_oom_meminfo.
+- add the constrain info in the dump_header.
+
+Changes since v3:
+- rename the helper's name to mem_cgroup_print_oom_memcg_name.
+- add the rcu lock held to the helper.
+- remove the print info of memcg's name in mem_cgroup_print_oom_info.
+
+Changes since v2:
+- add the mem_cgroup_print_memcg_name helper to print the memcg's
+  name which contains the task that will be killed by the oom-killer.
+
+Changes since v1:
+- replace adding mem_cgroup_print_oom_info with printing the memcg's
+  name only.
+
+ include/linux/oom.h    | 10 ++++++++++
+ kernel/cgroup/cpuset.c |  4 ++--
+ mm/oom_kill.c          | 29 ++++++++++++++++++++---------
+ mm/page_alloc.c        |  4 ++--
+ 4 files changed, 34 insertions(+), 13 deletions(-)
+
+diff --git a/include/linux/oom.h b/include/linux/oom.h
+index 69864a5..d079920 100644
+--- a/include/linux/oom.h
++++ b/include/linux/oom.h
+@@ -15,6 +15,13 @@
+ struct mem_cgroup;
+ struct task_struct;
+ 
++enum oom_constraint {
++	CONSTRAINT_NONE,
++	CONSTRAINT_CPUSET,
++	CONSTRAINT_MEMORY_POLICY,
++	CONSTRAINT_MEMCG,
++};
++
+ /*
+  * Details of the page allocation that triggered the oom killer that are used to
+  * determine what should be killed.
+@@ -42,6 +49,9 @@ struct oom_control {
+ 	unsigned long totalpages;
+ 	struct task_struct *chosen;
+ 	unsigned long chosen_points;
++
++	/* Used to print the constraint info. */
++	enum oom_constraint constraint;
+ };
+ 
+ extern struct mutex oom_lock;
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 266f10c..9510a5b 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -2666,9 +2666,9 @@ void cpuset_print_current_mems_allowed(void)
+ 	rcu_read_lock();
+ 
+ 	cgrp = task_cs(current)->css.cgroup;
+-	pr_info("%s cpuset=", current->comm);
++	pr_cont(",cpuset=");
+ 	pr_cont_cgroup_name(cgrp);
+-	pr_cont(" mems_allowed=%*pbl\n",
++	pr_cont(",mems_allowed=%*pbl",
+ 		nodemask_pr_args(&current->mems_allowed));
+ 
+ 	rcu_read_unlock();
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 6589f60..2c686d2 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -245,11 +245,11 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
+ 	return points > 0 ? points : 1;
+ }
+ 
+-enum oom_constraint {
+-	CONSTRAINT_NONE,
+-	CONSTRAINT_CPUSET,
+-	CONSTRAINT_MEMORY_POLICY,
+-	CONSTRAINT_MEMCG,
++static const char * const oom_constraint_text[] = {
++	[CONSTRAINT_NONE] = "CONSTRAINT_NONE",
++	[CONSTRAINT_CPUSET] = "CONSTRAINT_CPUSET",
++	[CONSTRAINT_MEMORY_POLICY] = "CONSTRAINT_MEMORY_POLICY",
++	[CONSTRAINT_MEMCG] = "CONSTRAINT_MEMCG",
+ };
+ 
+ /*
+@@ -428,16 +428,25 @@ static void dump_tasks(struct mem_cgroup *memcg, const nodemask_t *nodemask)
+ 	rcu_read_unlock();
+ }
+ 
++static void dump_oom_summary(struct oom_control *oc, struct task_struct *victim)
++{
++	/* one line summary of the oom killer context. */
++	pr_info("oom-kill:constraint=%s,nodemask=%*pbl",
++			oom_constraint_text[oc->constraint],
++			nodemask_pr_args(oc->nodemask));
++	cpuset_print_current_mems_allowed();
++	pr_cont(",task=%s,pid=%d,uid=%d\n", victim->comm, victim->pid,
++		from_kuid(&init_user_ns, task_uid(victim)));
++}
++
+ static void dump_header(struct oom_control *oc, struct task_struct *p)
+ {
+-	pr_warn("%s invoked oom-killer: gfp_mask=%#x(%pGg), nodemask=%*pbl, order=%d, oom_score_adj=%hd\n",
+-		current->comm, oc->gfp_mask, &oc->gfp_mask,
+-		nodemask_pr_args(oc->nodemask), oc->order,
++	pr_warn("%s invoked oom-killer: gfp_mask=%#x(%pGg), order=%d, oom_score_adj=%hd\n",
++		current->comm, oc->gfp_mask, &oc->gfp_mask, oc->order,
+ 			current->signal->oom_score_adj);
+ 	if (!IS_ENABLED(CONFIG_COMPACTION) && oc->order)
+ 		pr_warn("COMPACTION is disabled!!!\n");
+ 
+-	cpuset_print_current_mems_allowed();
+ 	dump_stack();
+ 	if (is_memcg_oom(oc))
+ 		mem_cgroup_print_oom_info(oc->memcg, p);
+@@ -448,6 +457,8 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
+ 	}
+ 	if (sysctl_oom_dump_tasks)
+ 		dump_tasks(oc->memcg, oc->nodemask);
++	if (p)
++		dump_oom_summary(oc, p);
+ }
+ 
+ /*
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 6847177..e7cff0b 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3413,13 +3413,13 @@ void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...)
+ 	va_start(args, fmt);
+ 	vaf.fmt = fmt;
+ 	vaf.va = &args;
+-	pr_warn("%s: %pV, mode:%#x(%pGg), nodemask=%*pbl\n",
++	pr_warn("%s: %pV, mode:%#x(%pGg), nodemask=%*pbl",
+ 			current->comm, &vaf, gfp_mask, &gfp_mask,
+ 			nodemask_pr_args(nodemask));
+ 	va_end(args);
+ 
+ 	cpuset_print_current_mems_allowed();
+-
++	pr_cont("\n");
+ 	dump_stack();
+ 	warn_alloc_show_mem(gfp_mask, nodemask);
+ }
+-- 
+1.8.3.1
+
