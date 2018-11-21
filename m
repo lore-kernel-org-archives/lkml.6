@@ -2,40 +2,41 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE081C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BD0C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:11:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95C5120870
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:11:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C09DB2087E
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:11:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PviIEOpj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95C5120870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0E+TkrU8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C09DB2087E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387873AbeKVJr6 (ORCPT
+        id S2390477AbeKVJsB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 04:47:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38632 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 04:48:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387822AbeKVJr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 04:47:58 -0500
+        id S2387822AbeKVJr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 04:47:59 -0500
 Received: from localhost (c-71-205-112-160.hsd1.co.comcast.net [71.205.112.160])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E65F8206BB;
-        Wed, 21 Nov 2018 23:11:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39D3D20821;
+        Wed, 21 Nov 2018 23:11:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542841889;
-        bh=qyb70sRe6RjFz/TnM2lS0+RJk7ZLN/MZ76zp3ornU7U=;
-        h=From:To:Cc:Subject:Date:From;
-        b=PviIEOpjpvDcXeKLCaQrkPnSTODPTivpXk7A24W6cVtYtFoYUW2ikw/n1XBzCZLXl
-         jE2H/mPs7Df+MvFcJnGDF6LaK3H+uQIfRu2cReRyU8/RVd5477u8LtwfciEtVOOeFR
-         qi3z2c0zCgOwnv3Sqd1DIvouxp8znnY2qcEhSR4Y=
+        s=default; t=1542841890;
+        bh=CnVJfgBt26DDx5WO4GE01u+TDImPxcrgIzHCq6bSnoQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=0E+TkrU8YnH7Iwolsp6TbjG3C1nuRS1MOA4k0aHaPhSY9byAXsoo2cfG/Rq4cMXlT
+         RhkQxN7K5qcDzuNR9xxgOrO+Il+8B+ezxYx+JMmjghAE7C/ieCsFz39K8oiQHztD40
+         yci92TUhfcf5q7TnEnyO4q+KyMCdmC59ACM1jyIw=
 From:   Andy Lutomirski <luto@kernel.org>
 To:     x86@kernel.org
 Cc:     LKML <linux-kernel@vger.kernel.org>,
@@ -44,44 +45,159 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH v2 0/5] x86/fault: #PF improvements, mostly related to USER bit
-Date:   Wed, 21 Nov 2018 15:11:21 -0800
-Message-Id: <cover.1542841400.git.luto@kernel.org>
+Subject: [PATCH v2 1/5] x86/fault: Remove sw_error_code
+Date:   Wed, 21 Nov 2018 15:11:22 -0800
+Message-Id: <078f5b8ae6e8c79ff8ee7345b5c476c45003e5ac.1542841400.git.luto@kernel.org>
 X-Mailer: git-send-email 2.17.2
+In-Reply-To: <cover.1542841400.git.luto@kernel.org>
+References: <cover.1542841400.git.luto@kernel.org>
+In-Reply-To: <cover.1542841400.git.luto@kernel.org>
+References: <cover.1542841400.git.luto@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series is a whole bunch of page fault cleanups, plus a couple
-of OOPS diagnostic improvements.  The overall goals are to clean up
-handling of the faulting CPL, the USER bit in the error_code, and
-the log messages generated by #PF OOPSes.
+All of the fault handling code now corrently checks user_mode(regs)
+as needed, and nothing depends on the X86_PF_USER bit being munged.
+Get rid of the sw_error code and use hw_error_code everywhere.
 
-This series can also be seen as CET preparation.  CET introduces the
-WRUSS instruction, which is the very first way for CPL 0 code to
-cause a #PF fault with the USER bit set.  Let's get the page fault
-code into shape before we start using WRUSS :)
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+---
+ arch/x86/mm/fault.c | 50 ++++++++++-----------------------------------
+ 1 file changed, 11 insertions(+), 39 deletions(-)
 
-Changes from v1:
-  - Rebase on top of tip:x86/mm, now that a bunch of v1 was applied.
-    The only material changes are that 'x86/fault: Check
-    user_mode(regs) when validating a stack extension' is gone
-    because the code it fixed has been deleted and that 'x86/fault:
-    Remove sw_error_code' lost the hunk that changed the same code.
-
-Andy Lutomirski (5):
-  x86/fault: Remove sw_error_code
-  x86/fault: Don't try to recover from an implicit supervisor access
-  x86/oops: Show the correct CS value in show_regs()
-  x86/fault: Decode page fault OOPSes better
-  x86/vsyscall/64: Use X86_PF constants in the simulated #PF error code
-
- arch/x86/entry/vsyscall/vsyscall_64.c |   2 +-
- arch/x86/kernel/process_64.c          |   5 +-
- arch/x86/mm/fault.c                   | 144 +++++++++++++++++++-------
- 3 files changed, 108 insertions(+), 43 deletions(-)
-
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index b898a38093a3..82881bc5feef 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1217,7 +1217,6 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 			unsigned long hw_error_code,
+ 			unsigned long address)
+ {
+-	unsigned long sw_error_code;
+ 	struct vm_area_struct *vma;
+ 	struct task_struct *tsk;
+ 	struct mm_struct *mm;
+@@ -1262,13 +1261,6 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 		return;
+ 	}
+ 
+-	/*
+-	 * hw_error_code is literally the "page fault error code" passed to
+-	 * the kernel directly from the hardware.  But, we will shortly be
+-	 * modifying it in software, so give it a new name.
+-	 */
+-	sw_error_code = hw_error_code;
+-
+ 	/*
+ 	 * It's safe to allow irq's after cr2 has been saved and the
+ 	 * vmalloc fault has been handled.
+@@ -1278,26 +1270,6 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 	 */
+ 	if (user_mode(regs)) {
+ 		local_irq_enable();
+-		/*
+-		 * Up to this point, X86_PF_USER set in hw_error_code
+-		 * indicated a user-mode access.  But, after this,
+-		 * X86_PF_USER in sw_error_code will indicate either
+-		 * that, *or* an implicit kernel(supervisor)-mode access
+-		 * which originated from user mode.
+-		 */
+-		if (!(hw_error_code & X86_PF_USER)) {
+-			/*
+-			 * The CPU was in user mode, but the CPU says
+-			 * the fault was not a user-mode access.
+-			 * Must be an implicit kernel-mode access,
+-			 * which we do not expect to happen in the
+-			 * user address space.
+-			 */
+-			pr_warn_once("kernel-mode error from user-mode: %lx\n",
+-					hw_error_code);
+-
+-			sw_error_code |= X86_PF_USER;
+-		}
+ 		flags |= FAULT_FLAG_USER;
+ 	} else {
+ 		if (regs->flags & X86_EFLAGS_IF)
+@@ -1306,9 +1278,9 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 
+ 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
+ 
+-	if (sw_error_code & X86_PF_WRITE)
++	if (hw_error_code & X86_PF_WRITE)
+ 		flags |= FAULT_FLAG_WRITE;
+-	if (sw_error_code & X86_PF_INSTR)
++	if (hw_error_code & X86_PF_INSTR)
+ 		flags |= FAULT_FLAG_INSTRUCTION;
+ 
+ #ifdef CONFIG_X86_64
+@@ -1321,7 +1293,7 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 	 * The vsyscall page does not have a "real" VMA, so do this
+ 	 * emulation before we go searching for VMAs.
+ 	 */
+-	if ((sw_error_code & X86_PF_INSTR) && is_vsyscall_vaddr(address)) {
++	if ((hw_error_code & X86_PF_INSTR) && is_vsyscall_vaddr(address)) {
+ 		if (emulate_vsyscall(regs, address))
+ 			return;
+ 	}
+@@ -1345,7 +1317,7 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 			 * Fault from code in kernel from
+ 			 * which we do not expect faults.
+ 			 */
+-			bad_area_nosemaphore(regs, sw_error_code, address);
++			bad_area_nosemaphore(regs, hw_error_code, address);
+ 			return;
+ 		}
+ retry:
+@@ -1361,17 +1333,17 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 
+ 	vma = find_vma(mm, address);
+ 	if (unlikely(!vma)) {
+-		bad_area(regs, sw_error_code, address);
++		bad_area(regs, hw_error_code, address);
+ 		return;
+ 	}
+ 	if (likely(vma->vm_start <= address))
+ 		goto good_area;
+ 	if (unlikely(!(vma->vm_flags & VM_GROWSDOWN))) {
+-		bad_area(regs, sw_error_code, address);
++		bad_area(regs, hw_error_code, address);
+ 		return;
+ 	}
+ 	if (unlikely(expand_stack(vma, address))) {
+-		bad_area(regs, sw_error_code, address);
++		bad_area(regs, hw_error_code, address);
+ 		return;
+ 	}
+ 
+@@ -1380,8 +1352,8 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 	 * we can handle it..
+ 	 */
+ good_area:
+-	if (unlikely(access_error(sw_error_code, vma))) {
+-		bad_area_access_error(regs, sw_error_code, address, vma);
++	if (unlikely(access_error(hw_error_code, vma))) {
++		bad_area_access_error(regs, hw_error_code, address, vma);
+ 		return;
+ 	}
+ 
+@@ -1420,13 +1392,13 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 			return;
+ 
+ 		/* Not returning to user mode? Handle exceptions or die: */
+-		no_context(regs, sw_error_code, address, SIGBUS, BUS_ADRERR);
++		no_context(regs, hw_error_code, address, SIGBUS, BUS_ADRERR);
+ 		return;
+ 	}
+ 
+ 	up_read(&mm->mmap_sem);
+ 	if (unlikely(fault & VM_FAULT_ERROR)) {
+-		mm_fault_error(regs, sw_error_code, address, fault);
++		mm_fault_error(regs, hw_error_code, address, fault);
+ 		return;
+ 	}
+ 
 -- 
 2.17.2
 
