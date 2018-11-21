@@ -2,109 +2,187 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8793C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F48C04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:25:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF49021104
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:15:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EAo0zrcX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF49021104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7BC6B2146D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:25:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BC6B2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbeKUOsL (ORCPT
+        id S1726980AbeKUO6f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 09:48:11 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42409 "EHLO
+        Wed, 21 Nov 2018 09:58:35 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34975 "EHLO
         mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727787AbeKUOsL (ORCPT
+        with ESMTP id S1725939AbeKUO6e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 09:48:11 -0500
-Received: by mail-pl1-f194.google.com with SMTP id x21-v6so3491247pln.9
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 20:15:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7Q4rLs1xwUkJJoCNmd9R+D8EGVqXDXjKKFNZC7DR7zE=;
-        b=EAo0zrcXNNyVw42R/DHkW1K0BNeWGp3sbueBXAGfyEZViuZKuDLXzRhnqKVgIUrrJK
-         O2imOmVoq5HMUiLilwFNzbQNfJ9kLPZSli3JhG21HHTDfZqp0C6NOlKvVqVFuxgbdGcf
-         fTmYKbwDPgCG65eDhbXOSGwcbH8kSEYwe4B18=
+        Wed, 21 Nov 2018 09:58:34 -0500
+Received: by mail-pl1-f194.google.com with SMTP id v1-v6so3546054plo.2;
+        Tue, 20 Nov 2018 20:25:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7Q4rLs1xwUkJJoCNmd9R+D8EGVqXDXjKKFNZC7DR7zE=;
-        b=VzbEIy/FuRRFXy22pQpSrYgrcZZ08So9azdn8skXIQvjATHjxyPS901/VOYQhXTS3Z
-         U0rERnvOEBDmX/jzwOVmk6ZuLpxvD4Wh+AGCRjQIN+FrGARSGTNy/BAA36R3g8nkQa9t
-         iPDvwkUzIsUms6bY3+1NpEIjBTG+4PmX4DYuv3KPFUAb0DcqqVZ8l74/VW8DRi+ypTyD
-         bsWi6kzF9sn0qaNrXCa1oB5qxSAKH122bgm1hm//wYjB7IjrJwQmWCVoP/Jl1kcsZ4K9
-         TDcZ8zAzuaNazAsT6axmcJiNLamQCfW3ihG67xBkh6BIkiJmcLWVqZsgqKFd+bU/Jvx9
-         Hq0A==
-X-Gm-Message-State: AA+aEWZ1TrohICEdL65UCGxKDU3Vk/XEYo+iInitnLmkqOhSxsywr7Hz
-        wk7xBw9zVRhfrhMB+JV7HKidpQ==
-X-Google-Smtp-Source: AJdET5czCNq6jKpuM6nHZQAd4QxFkISL5k54CUNiVfH1bwq14fuQ+atvj62NTSoaZ0tObcCXA/FfPg==
-X-Received: by 2002:a63:2f07:: with SMTP id v7mr4239582pgv.368.1542773728740;
-        Tue, 20 Nov 2018 20:15:28 -0800 (PST)
-Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id v124-v6sm10818712pfb.182.2018.11.20.20.15.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 20 Nov 2018 20:15:28 -0800 (PST)
-From:   Firoz Khan <firoz.khan@linaro.org>
-To:     linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v8 6/6] parisc: syscalls: ignore nfsservctl for other architectures
-Date:   Wed, 21 Nov 2018 09:44:30 +0530
-Message-Id: <1542773670-25460-7-git-send-email-firoz.khan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542773670-25460-1-git-send-email-firoz.khan@linaro.org>
-References: <1542773670-25460-1-git-send-email-firoz.khan@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qlXNnk0fz2zW30JawgPi0MLm0NV117hTjPsSlAiELmg=;
+        b=EuO7JMgv8NoR/UGeyrK9pSGK4Drml396tt0iHO2NqbCSkiSntbMP9Ww6MAlghS/XFA
+         6vD7dkn+34A8qVrv7Jjgjxh/d3OHgtd6Wc8203BBMoHjHqEGGFYxe/sMgG9iH99mZULJ
+         ITjBYf3reQu7Bw1GduRrvvF44YAemA6UpaDsgg5xShircgkS6R9vkd99CXvL4nAu3m3H
+         HuzdROYJO4JMjjD6xrs6wg9bl0JBt5wpH6e+FmITaYfz+7MJAig7LwPaNa0D9CGP2QcI
+         +hALwUitTUaaO4PIWEQND+bPX1cFmdGGUhqzQTxwzTZm/HtO9fkqV3hC5n8ZWRGs1gMd
+         mDJw==
+X-Gm-Message-State: AA+aEWYkmo54NajRX72pdpqVmEKzj0xmH2U0WlMPvbYWDAXCcRxQkVAo
+        Q+WG0KLovudinxS7LJXwts0=
+X-Google-Smtp-Source: AFSGD/UexPBrEp2S/E9R6iYGoOvVqrdynAVs3uJhUpol3pmPd0ri99U0GAHIvhhvRGfjFJdmd/ZyuA==
+X-Received: by 2002:a17:902:aa84:: with SMTP id d4-v6mr5236385plr.25.1542774349548;
+        Tue, 20 Nov 2018 20:25:49 -0800 (PST)
+Received: from ?IPv6:2601:647:4800:973f:8a0:7611:3223:f4db? ([2601:647:4800:973f:8a0:7611:3223:f4db])
+        by smtp.gmail.com with ESMTPSA id t13sm86916556pgr.42.2018.11.20.20.25.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 20:25:48 -0800 (PST)
+Subject: Re: [PATCH V10 09/19] block: introduce bio_bvecs()
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+References: <20181115085306.9910-1-ming.lei@redhat.com>
+ <20181115085306.9910-10-ming.lei@redhat.com> <20181116134541.GH3165@lst.de>
+ <002fe56b-25e4-573e-c09b-bb12c3e8d25a@grimberg.me>
+ <20181120161651.GB2629@lst.de>
+ <53526aae-fb9b-ee38-0a01-e5899e2d4e4d@grimberg.me>
+ <20181121005902.GA31748@ming.t460p>
+ <2d9bee7a-f010-dcf4-1184-094101058584@grimberg.me>
+ <20181121034415.GA8408@ming.t460p>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <2a47d336-c19b-6bf4-c247-d7382871eeea@grimberg.me>
+Date:   Tue, 20 Nov 2018 20:25:46 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181121034415.GA8408@ming.t460p>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds an exception to the syscall table checking script.
 
-nfsservctl entry is only provided on x86, and there is no
-reason to add it elsewhere. However, including it on the
-syscall table caused a warning for most configurations on
-non-x86.
+>> I would like to avoid growing bvec tables and keep everything
+>> preallocated. Plus, a bvec_iter operates on a bvec which means
+>> we'll need a table there as well... Not liking it so far...
+> 
+> In case of bios in one request, we can't know how many bvecs there
+> are except for calling rq_bvecs(), so it may not be suitable to
+> preallocate the table. If you have to send the IO request in one send(),
+> runtime allocation may be inevitable.
 
-<stdin>:696:2: warning: #warning syscall nfsservctl not implemented [-Wcpp]
+I don't want to do that, I want to work on a single bvec at a time like
+the current implementation does.
 
-Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
-Acked-by: Helge Deller <deller@gmx.de>
----
- scripts/checksyscalls.sh | 1 +
- 1 file changed, 1 insertion(+)
+> If you don't require to send the IO request in one send(), you may send
+> one bio in one time, and just uses the bio's bvec table directly,
+> such as the single bio case in lo_rw_aio().
 
-diff --git a/scripts/checksyscalls.sh b/scripts/checksyscalls.sh
-index ee3dfb5..cf93100 100755
---- a/scripts/checksyscalls.sh
-+++ b/scripts/checksyscalls.sh
-@@ -150,6 +150,7 @@ cat << EOF
- #define __IGNORE_uselib
- #define __IGNORE__sysctl
- #define __IGNORE_arch_prctl
-+#define __IGNORE_nfsservctl
- 
- /* ... including the "new" 32-bit uid syscalls */
- #define __IGNORE_lchown32
--- 
-1.9.1
+we'd need some indication that we need to reinit my iter with the
+new bvec, today we do:
 
+static inline void nvme_tcp_advance_req(struct nvme_tcp_request *req,
+                 int len)
+{
+         req->snd.data_sent += len;
+         req->pdu_sent += len;
+         iov_iter_advance(&req->snd.iter, len);
+         if (!iov_iter_count(&req->snd.iter) &&
+             req->snd.data_sent < req->data_len) {
+                 req->snd.curr_bio = req->snd.curr_bio->bi_next;
+                 nvme_tcp_init_send_iter(req);
+         }
+}
+
+and initialize the send iter. I imagine that now I will need to
+switch to the next bvec and only if I'm on the last I need to
+use the next bio...
+
+Do you offer an API for that?
+
+
+>>> can this way avoid your blocking issue? You may see this
+>>> example in branch 'rq->bio != rq->biotail' of lo_rw_aio().
+>>
+>> This is exactly an example of not ignoring the bios...
+> 
+> Yeah, that is the most common example, given merge is enabled
+> in most of cases. If the driver or device doesn't care merge,
+> you can disable it and always get single bio request, then the
+> bio's bvec table can be reused for send().
+
+Does bvec_iter span bvecs with your patches? I didn't see that change?
+
+>> I'm not sure how this helps me either. Unless we can set a bvec_iter to
+>> span bvecs or have an abstract bio crossing when we re-initialize the
+>> bvec_iter I don't see how I can ignore bios completely...
+> 
+> rq_for_each_bvec() will iterate over all bvecs from all bios, so you
+> needn't to see any bio in this req.
+
+But I don't need this iteration, I need a transparent API like;
+bvec2 = rq_bvec_next(rq, bvec)
+
+This way I can simply always reinit my iter without thinking about how
+the request/bios/bvecs are constructed...
+
+> rq_bvecs() will return how many bvecs there are in this request(cover
+> all bios in this req)
+
+Still not very useful given that I don't want to use a table...
+
+>>> So looks nvme-tcp host driver might be the 2nd driver which benefits
+>>> from multi-page bvec directly.
+>>>
+>>> The multi-page bvec V11 has passed my tests and addressed almost
+>>> all the comments during review on V10. I removed bio_vecs() in V11,
+>>> but it won't be big deal, we can introduce them anytime when there
+>>> is the requirement.
+>>
+>> multipage-bvecs and nvme-tcp are going to conflict, so it would be good
+>> to coordinate on this. I think that nvme-tcp host needs some adjustments
+>> as setting a bvec_iter. I'm under the impression that the change is rather
+>> small and self-contained, but I'm not sure I have the full
+>> picture here.
+> 
+> I guess I may not get your exact requirement on block io iterator from nvme-tcp
+> too, :-(
+
+They are pretty much listed above. Today nvme-tcp sets an iterator with:
+
+vec = __bvec_iter_bvec(bio->bi_io_vec, bio->bi_iter);
+nsegs = bio_segments(bio);
+size = bio->bi_iter.bi_size;
+offset = bio->bi_iter.bi_bvec_done;
+iov_iter_bvec(&req->snd.iter, WRITE, vec, nsegs, size);
+
+and when done, iterate to the next bio and do the same.
+
+With multipage bvec it would be great if we can simply have
+something like rq_bvec_next() that would pretty much satisfy
+the requirements from the nvme-tcp side...
