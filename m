@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B60C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E0EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27C1621707
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27C1621707
+	by mail.kernel.org (Postfix) with ESMTP id 2E86521707
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E86521707
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389325AbeKVGyE (ORCPT
+        id S2389338AbeKVGyF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 01:54:04 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45222 "EHLO
+        Thu, 22 Nov 2018 01:54:05 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45249 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731268AbeKVGyC (ORCPT
+        with ESMTP id S1731268AbeKVGyF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 01:54:02 -0500
+        Thu, 22 Nov 2018 01:54:05 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gPYwv-0000G9-6O; Wed, 21 Nov 2018 21:18:13 +0100
-Message-Id: <20181121201723.131491525@linutronix.de>
+        id 1gPYwx-0000Gh-Ms; Wed, 21 Nov 2018 21:18:15 +0100
+Message-Id: <20181121201723.488311856@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Wed, 21 Nov 2018 21:14:39 +0100
+Date:   Wed, 21 Nov 2018 21:14:42 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -50,48 +50,47 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Greg KH <gregkh@linuxfoundation.org>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [patch 09/24] x86/Kconfig: Select SCHED_SMT if SMP enabled
+Subject: [patch 12/24] x86/l1tf: Show actual SMT state
 References: <20181121201430.559770965@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline;
- filename=x86-Kconfig--Select-SCHED_SMT-if-SMP-enabled.patch
+Content-Disposition: inline; filename=x86-l1tf--Show-actual-SMT-state.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CONFIG_SCHED_SMT is enabled by all distros, so there is not a real point to
-have it configurable. The runtime overhead in the core scheduler code is
-minimal because the actual SMT scheduling parts are conditional on a static
-key.
+Use the now exposed real SMT state, not the SMT sysfs control knob
+state. This reflects the state of the system when the mitigation status is
+queried.
 
-This allows to expose the scheduler's SMT state static key to the
-speculation control code. Alternatively the scheduler's static key could be
-made always available when CONFIG_SMP is enabled, but that's just adding an
-unused static key to every other architecture for nothing.
+This does not change the warning in the VMX launch code. There the
+dependency on the control knob makes sense because siblings could be
+brought online anytime after launching the VM.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/Kconfig |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1000,13 +1000,7 @@ config NR_CPUS
- 	  to the kernel image.
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -832,13 +832,14 @@ static ssize_t l1tf_show_state(char *buf
  
- config SCHED_SMT
--	bool "SMT (Hyperthreading) scheduler support"
--	depends on SMP
--	---help---
--	  SMT scheduler support improves the CPU scheduler's decision making
--	  when dealing with Intel Pentium 4 chips with HyperThreading at a
--	  cost of slightly increased overhead in some places. If unsure say
--	  N here.
-+	def_bool y if SMP
+ 	if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_EPT_DISABLED ||
+ 	    (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER &&
+-	     cpu_smt_control == CPU_SMT_ENABLED))
++	     sched_smt_active())) {
+ 		return sprintf(buf, "%s; VMX: %s\n", L1TF_DEFAULT_MSG,
+ 			       l1tf_vmx_states[l1tf_vmx_mitigation]);
++	}
  
- config SCHED_MC
- 	def_bool y
+ 	return sprintf(buf, "%s; VMX: %s, SMT %s\n", L1TF_DEFAULT_MSG,
+ 		       l1tf_vmx_states[l1tf_vmx_mitigation],
+-		       cpu_smt_control == CPU_SMT_ENABLED ? "vulnerable" : "disabled");
++		       sched_smt_active() ? "vulnerable" : "disabled");
+ }
+ #else
+ static ssize_t l1tf_show_state(char *buf)
 
 
