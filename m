@@ -2,128 +2,182 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 076D1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF0FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3A252146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:47:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3A252146F
+	by mail.kernel.org (Postfix) with ESMTP id 51D6720989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:54:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51D6720989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbeKUVVH (ORCPT
+        id S1729023AbeKUV2T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 16:21:07 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52516 "EHLO mx1.redhat.com"
+        Wed, 21 Nov 2018 16:28:19 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41376 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726172AbeKUVVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 16:21:06 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        id S1726172AbeKUV2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 16:28:19 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 89DC9308626A;
-        Wed, 21 Nov 2018 10:47:12 +0000 (UTC)
-Received: from krava (unknown [10.43.17.92])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 0BEF05C221;
-        Wed, 21 Nov 2018 10:47:10 +0000 (UTC)
-Date:   Wed, 21 Nov 2018 11:47:10 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        "acme@kernel.org" <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "wangnan0@huawei.com" <wangnan0@huawei.com>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: perf tools: remove option --tail-synthesize ?
-Message-ID: <20181121104710.GA9402@krava>
-References: <89AC26A9-5A18-4608-8889-9C3C9C1C69D3@fb.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id E018130820F2;
+        Wed, 21 Nov 2018 10:54:23 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-61.pek2.redhat.com [10.72.12.61])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 04D2B604A4;
+        Wed, 21 Nov 2018 10:54:13 +0000 (UTC)
+Subject: Re: [PATCH 1/2 v6] x86/kexec_file: add e820 entry in case e820 type
+ string matches to io resource name
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org, x86@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, akpm@linux-foundation.org, dyoung@redhat.com,
+        bhe@redhat.com
+References: <20181114072926.13312-1-lijiang@redhat.com>
+ <20181114072926.13312-2-lijiang@redhat.com> <20181114112600.GD13926@zn.tnic>
+ <9eb61523-7a08-24c4-ac15-050537bd9203@redhat.com>
+ <20181115103959.GB26448@zn.tnic>
+ <c3347d48-aa32-e8e4-c99b-baf2e6a21dc2@redhat.com>
+ <20181118115251.GB19380@zn.tnic>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <ddeff176-2517-4b58-73b6-3787e84b2a5e@redhat.com>
+Date:   Wed, 21 Nov 2018 18:54:09 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <89AC26A9-5A18-4608-8889-9C3C9C1C69D3@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 21 Nov 2018 10:47:12 +0000 (UTC)
+In-Reply-To: <20181118115251.GB19380@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 21 Nov 2018 10:54:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 07:45:28AM +0000, Song Liu wrote:
-> Hi,
+在 2018年11月18日 19:52, Borislav Petkov 写道:
+> On Fri, Nov 16, 2018 at 11:25:55AM +0800, lijiang wrote:
+>> For the pci mmconfig issue, it should be good enough that the e820 reserved region
+>> [mem 0x0000000078000000-0x000000008fffffff] is only passed to the second kernel, but
+>> the pci mmconfig region is not the same in another machine.
 > 
-> I found perf-record --tail-synthesize without --overwrite breaks symbols
-> for perf-script, perf-report, etc. For example:
+> Yes. And now the question is, *which* reserved regions need to be mapped
+> for the second kernel to function properly? How do we figure that out?
 > 
-> [root@]# ~/perf record -ag --tail-synthesize -- sleep 1
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 1.129 MB perf.data (3531 samples) ]
-> [root@]# ~/perf script | head
-> swapper     0 [000] 1250675.051971:          1 cycles:ppp:
->         ffffffff81009e15 [unknown] ([unknown])
->         ffffffff81196b19 [unknown] ([unknown])
->         ffffffff81196579 [unknown] ([unknown])
->         ffffffff81110ca7 [unknown] ([unknown])
->         ffffffff81a01f4a [unknown] ([unknown])
->         ffffffff81a017bf [unknown] ([unknown])
->         ffffffff8180e17a [unknown] ([unknown])
+>> A simple case, hotplug a pci network card and use the ssh/nfs to dump the vmcore.
+>> If the pci mmconfig region is not reserved in kdump kernel, the pci hotplug device
+>> could not be recognized. So the pci network card won't work.
 > 
-> perf-record with --overwrite does NOT have this issue.
-
-actualy I think that now it works properly, if you turn on
-task and mmap events, you'll see the samples get resolved
-right after aux events are processed:
-
-	[root@krava perf]# ./perf script --show-info --show-task-events --show-mmap-events
-	...
-	swapper     0 [007] 620566.187355:      64821 cycles:ppp:
-		ffffffffab0b4d7c [unknown] ([unknown])
-		ffffffffaba01b1f [unknown] ([unknown])
-		ffffffffab75d567 [unknown] ([unknown])
-		ffffffffab0e1f56 [unknown] ([unknown])
-		ffffffffab0e216f [unknown] ([unknown])
-		ffffffffab050dc7 [unknown] ([unknown])
-		ffffffffab0000d5 [unknown] ([unknown])
-
-	swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffffffffab000000(0x152c8000) @ 0xffffffffab000000]: x [kernel.kallsyms]_text
-	swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffffffffc02c8000(0x4000) @ 0]: x /lib/modules/4.18.17-200.fc28.x86_64/kernel/drivers/thermal/int340x_thermal/int3403_thermal.ko.xz
-	swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffffffffc02cd000(0x4000) @ 0]: x /lib/modules/4.18.17-200.fc28.x86_64/kernel/drivers/thermal/intel_pch_thermal.ko.xz
-	...
-	ext4-rsv-conver     0 [000]     0.000000: PERF_RECORD_COMM: ext4-rsv-conver:989/989
-	perf 20063 [005] 620566.187438:    1056712 cycles:ppp:
-		ffffffffab1f605d filemap_map_pages+0x9d (/usr/lib/debug/lib/modules/4.18.17-200.fc28.x86_64/vmlinux)
-		ffffffffab23aaa8 __handle_mm_fault+0x1018 (/usr/lib/debug/lib/modules/4.18.17-200.fc28.x86_64/vmlinux)
-		ffffffffab23ae7a handle_mm_fault+0xda (/usr/lib/debug/lib/modules/4.18.17-200.fc28.x86_64/vmlinux)
-		ffffffffab06ac90 __do_page_fault+0x240 (/usr/lib/debug/lib/modules/4.18.17-200.fc28.x86_64/vmlinux)
-		ffffffffab06af62 do_page_fault+0x32 (/usr/lib/debug/lib/modules/4.18.17-200.fc28.x86_64/vmlinux)
-		ffffffffaba010ee page_fault+0x1e (/usr/lib/debug/lib/modules/4.18.17-200.fc28.x86_64/vmlinux)
-	...
-
-if you record with --overwrite and --tail-synthesize the aux events
-will go to the top of the perf.data, so all's good
-
+> Yes that's a good example; put *that* example in your commit message.
 > 
-> After digging into this, I found this issue is introduced by commit
-> a73e24d240bc136619d382b1268f34d75c9d25ce.
-
-right, we got rid of that, because it will store the 'current/live'
-server mmaps for report/script, which is not what you want
-
-> Reverting this commit does fix this issue. However, on a second thought,
-> I feel it is probably better just drop --tail-synthesize, as it doesn't
-> make much sense without --overwrite. All we need is to do tail_synthesize
-> when --overwrite is set.
+>> Here, there is an example about SME kdump. Maybe it can help to better understand.
 > 
-> Thoughts?
+> You keep pasting that and I've read it already. And you keep repeating
+> that the reserved regions need to be mapped in the second kernel and I'm
+> asking, how do we determine *which* regions should we pass to the second
+> kernel?
+> 
 
-maybe we should make --tail-synthesize non optionable for --overwrite,
-and get rid of that option completely.. Wang, any idea?
+For the pci mmconfig issue, it is clear according to Dave and Bjorn's comment. So i'd like
+to explain two things:
 
-but definitelly not allow that for non overwrite
+1. why the SME kdump kernel does not work without the reserved ranges.
 
-thanks,
-jirka
+The first kernel can get e820 table's information from BIOS or bootloader, but for kdump
+kernel, it can not use this method to get e820 table. Maybe you have known who should pass
+the e820 ranges to the second kernel, it is just the kexec-tools.
+
+Unfortunately, kernel does not pass the e820 reserved ranges to the kdump kernel, when use
+the kexec_file_load syscall to load the kernel image and initramfs.
+
+At the early boot stage, the caller will use the early_memremap() to remap the address space,
+such as DMI, ACPI and Firmware, etc.
+
+Here, i only use an example to illustrate the issue what the DMI encountered in kdump kernel.
+
+At the early boot stage, the DMI will use the early_memremap() to remap the address ranges
+[0xF0000-0xFFFFF], and then check for the SMBIOS entry point signature.
+
+And when the caller checks the SMBIOS entry point signature, the caller will use the early_memremap()
+to remap another reserved ranges [0x0x6286B000-0x6286EFFF] again, which is reported by firmware(or
+SMBIOS).
+
+Please refer to the code: drivers/firmware/dmi_scan.c
+
+dmi_scan_machine()-> / dmi_early_remap()-> early_memremap()
+                     \ dmi_smbios3_present()->dmi_walk_early()->dmi_early_remap()->early_memremap()
+
+Obviously, the DMI remapped ranges [0xF0000-0xFFFFF] and [0x6286b000-0x6286efff] are not in the e820
+table for the kdump kernel. Therefore, when SME is enabled, these regions will be consider to be
+encrypted according to the following code: arch/x86/mm/ioremap.c. Actually, these regions are still
+decrypted in kdump kernel. It has gone wrong.
+
+Note: 
+When SME is enabled, if the memory regions are decrypted, but the caller marks the memory pages as
+encrypted, the content of pages is unpredictable when read from memory.
+
+early_memremap()->
+early_memremap_pgprot_adjust()->
+memremap_should_map_decrypted()->
+e820__get_entry_type()
+
+static bool memremap_should_map_decrypted(resource_size_t phys_addr,
+                                          unsigned long size)
+{
+        int is_pmem;
+
+        ......
+
+        /* Check if the address is outside kernel usable area */
+        switch (e820__get_entry_type(phys_addr, phys_addr + size - 1)) {
+        case E820_TYPE_RESERVED:
+        case E820_TYPE_ACPI:
+        case E820_TYPE_NVS:
+        case E820_TYPE_UNUSABLE:
+                /* For SEV, these areas are encrypted */
+                if (sev_active())
+                        break;
+                /* Fallthrough */
+
+        case E820_TYPE_PRAM:
+                return true;
+        default:
+                break;
+        }
+
+        return false;
+}
+
+Similarly, for ACPI, firmware, etc. They will also encounter the same problems, eventually, which
+causes the system fails to start. That is the reason why the SME kdump kernel does not work without
+the reserved ranges.
+
+2. why the all reserved ranges are passed to the second kernel(or which regions should we pass to
+   the second kernel?)
+
+As previously mentioned, for the DMI, the reserved regions[0xF0000-0xFFFFF] and [0x0x6286B000-0x6286EFFF]
+are accurately passed to the second kernel, the DMI can work well on my machine. But for the ACPI, firmware,
+etc. How to deal with this?
+
+I think that we have to find all places where to call the early_memremap(), and determine whether these
+reserved regions need be passed to the second kernel, and then add the code for kdump kernel in these code
+paths. It is really too expensive to do this.
+
+Furthermore, i only did a same thing in kernel, just like the kexec-tools pass the all reserved ranges to the
+second kernel.
+
+If you understood this issue, you might ignore it, please.
+
+Thanks.
+Lianbo
+
+> If we should pass *all* reserved regions, why?
+> 
+> IOW, I'm looking for the *why* first.
+> 
+> Thx.
+> 
