@@ -2,265 +2,129 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6251DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5F4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:06:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CF142145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:06:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CF142145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 75D7221479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:06:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="udYjW+l7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75D7221479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728127AbeKUQjn (ORCPT
+        id S1728177AbeKUQjw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 11:39:43 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14692 "EHLO huawei.com"
+        Wed, 21 Nov 2018 11:39:52 -0500
+Received: from mail-eopbgr70134.outbound.protection.outlook.com ([40.107.7.134]:55008
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726195AbeKUQjm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 11:39:42 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D930B6E69D88D;
-        Wed, 21 Nov 2018 14:06:30 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 21 Nov
- 2018 14:06:22 +0800
-Date:   Wed, 21 Nov 2018 14:08:05 +0800
-From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Leon Romanovsky <leon@kernel.org>,
-        Kenneth Lee <nek.in.cn@gmail.com>,
-        "Tim Sell" <timothy.sell@unisys.com>, <linux-doc@vger.kernel.org>,
-        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
-        Zaibo Xu <xuzaibo@huawei.com>, <zhangfei.gao@foxmail.com>,
-        <linuxarm@huawei.com>, <haojian.zhuang@linaro.org>,
-        Christoph Lameter <cl@linux.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Gavin Schenk <g.schenk@eckelmann.de>,
-        "RDMA mailing list" <linux-rdma@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        "Doug Ledford" <dledford@redhat.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        David Kershner <david.kershner@unisys.com>,
-        Johan Hovold <johan@kernel.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Jens Axboe <axboe@kernel.dk>, <guodong.xu@linaro.org>,
-        linux-netdev <netdev@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        <linux-crypto@vger.kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        <linux-accelerators@lists.ozlabs.org>
-Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-Message-ID: <20181121060805.GJ157308@Turing-Arch-b>
-References: <20181112075807.9291-2-nek.in.cn@gmail.com>
- <20181113002354.GO3695@mtr-leonro.mtl.com>
- <95310df4-b32c-42f0-c750-3ad5eb89b3dd@gmail.com>
- <20181114160017.GI3759@mtr-leonro.mtl.com>
- <20181115085109.GD157308@Turing-Arch-b>
- <20181115145455.GN3759@mtr-leonro.mtl.com>
- <20181119091405.GE157308@Turing-Arch-b>
- <20181119184954.GB4890@ziepe.ca>
- <20181120030702.GH157308@Turing-Arch-b>
- <20181120032939.GR4890@ziepe.ca>
+        id S1726195AbeKUQju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 11:39:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U399J07lBHGRdfbieH9Y5OZd8QSZrYtPxuzshxzgBW8=;
+ b=udYjW+l7w6ZTP6Tz5UEVXGTSheLw0BHGxIxxqrSOT+8tGL1PSXwEjNulLvFY/7VOJnrFhehpl2zPodhFBaq33LV9fc8tccc8zPcuS5WRxJAnrOuDsuJBHhbXhHVlxrXXz4aOsIaFEJtbjO2A1bdvWLZPYY6qI4N5u+urzwUICEs=
+Received: from AM5PR0201MB2451.eurprd02.prod.outlook.com (10.169.244.8) by
+ AM5PR0201MB2243.eurprd02.prod.outlook.com (10.169.242.135) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.23; Wed, 21 Nov 2018 06:06:42 +0000
+Received: from AM5PR0201MB2451.eurprd02.prod.outlook.com
+ ([fe80::7d9b:e9c1:14e6:b72a]) by AM5PR0201MB2451.eurprd02.prod.outlook.com
+ ([fe80::7d9b:e9c1:14e6:b72a%3]) with mapi id 15.20.1294.048; Wed, 21 Nov 2018
+ 06:06:41 +0000
+From:   Peter Rosin <peda@axentia.se>
+To:     Guenter Roeck <linux@roeck-us.net>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 2/2] hwmon: (ntc_thermistor): add support for B57891S0103
+ from Epcos
+Thread-Topic: [PATCH 2/2] hwmon: (ntc_thermistor): add support for B57891S0103
+ from Epcos
+Thread-Index: AQHUfm7h4Hg8oMasp0Wh5BsbVRWt06VXV9oAgABWMoD///KbAIACIzUA
+Date:   Wed, 21 Nov 2018 06:06:41 +0000
+Message-ID: <f15d3e1c-1b53-f390-78e2-6a88c77aed05@axentia.se>
+References: <20181117121248.32143-1-peda@axentia.se>
+ <20181117121248.32143-2-peda@axentia.se>
+ <20181119170732.GA27435@roeck-us.net>
+ <f1235661-f8f2-9885-1e7f-491f5c234078@axentia.se>
+ <20181119212806.GC5795@roeck-us.net>
+In-Reply-To: <20181119212806.GC5795@roeck-us.net>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+x-originating-ip: [85.226.244.23]
+x-clientproxiedby: HE1PR06CA0139.eurprd06.prod.outlook.com
+ (2603:10a6:7:16::26) To AM5PR0201MB2451.eurprd02.prod.outlook.com
+ (2603:10a6:203:35::8)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM5PR0201MB2243;6:mvu9n5BXKC1bnezvLZl3W3pGpaMvvVTl7ypxEMp/PXCdNKfmcGrj4/JrHVR8ITfxHrZ5tcSF0hua0qhPHPtL0GXnKQ4tuZOzIhMJbLmySwkCOtPhjFuFYD263054w8AbkFKjruijdir8Do/SgEp2QS4jGmlttd9BC5CaNvEfUbXQo1FH4uy6le4GizVM7hkeJ3099YWnDSvFG6SQ+1l+U7Hv0zp9qQxWrhx4nSri9x6xtV4gq6dJB3BoWdJk9FOCOjmxY74jK1eAJgntlh2q1w2LtVHcPnUYzkf39UEx8AA76XQFX3/MTIi1StEIiIzzi5b52KwX5P4CX2LKHLlac0pAfIs0jmse9gHSBPvz7JJHwvGh943TVVuEFgSNJlParkfdALwaWh+gOiWYzXbzoXe3/2ctAF7eQRaAWxHOZ9Vd/bjIrAg8PkAq6cZgLAltpgINr2XRssJkQSmVNwIFAw==;5:7Z8tsiX7H9tXLXCJyFaYdf3e5zx8ozf02v7I84WHXXP6kNgBAIKE13e381R5mqvcMZy3lKI02bjt4gySZ3PXpXxZ+Ox7FgRIRhSoSgLt7iR8G+SsxfrYenl9oYi/obePBg9LGDC75SXhbVRB75+LqQHUPLog8YOXKflHnEeDwaY=;7:b0poi+OPNnQfVM89HjkBwIomSPQ1Ay4We24njBhuRRmYiSzXoRRlsjN/g77qQgadkiHyeFqQw6jwbwxYZtRIVkFkhr1QNBaN9QTvcdNWQBbwmmylom8jyS3YHdK2d/aN3oBEjv9L4vmmbjIsIyyv4g==
+x-ms-office365-filtering-correlation-id: 9cf7db5c-ebb1-4b28-0f1e-08d64f7780f9
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:AM5PR0201MB2243;
+x-ms-traffictypediagnostic: AM5PR0201MB2243:
+x-microsoft-antispam-prvs: <AM5PR0201MB2243F57F91FA5B276812D527BCDA0@AM5PR0201MB2243.eurprd02.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231442)(944501410)(52105112)(10201501046)(93006095)(93001095)(3002001)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:AM5PR0201MB2243;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0201MB2243;
+x-forefront-prvs: 08635C03D4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(136003)(396003)(39830400003)(366004)(199004)(189003)(2906002)(2616005)(476003)(486006)(68736007)(11346002)(446003)(65826007)(71190400001)(99286004)(256004)(93886005)(52116002)(14444005)(6512007)(76176011)(5660300001)(6436002)(7736002)(71200400001)(53936002)(305945005)(102836004)(25786009)(14454004)(97736004)(26005)(3846002)(65806001)(316002)(386003)(186003)(53546011)(66066001)(31696002)(54906003)(6506007)(65956001)(58126008)(3260700006)(86362001)(2900100001)(74482002)(36756003)(6246003)(4001150100001)(31686004)(105586002)(229853002)(8936002)(6116002)(8676002)(81156014)(6916009)(6486002)(81166006)(508600001)(64126003)(106356001)(4326008)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0201MB2243;H:AM5PR0201MB2451.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: axentia.se does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Yv+PzAaAzCeOUA3kQqvUSVDnM4AOUBwAFY8LnvACP2y4EJQvmGpIHjOoaL3DQGlA5zCNcXaQ8x4oVSzNP02jGdcOkRydKNbEftKCJwqkjxP3GxrDZNx0tN93uYU+a5Tnkrxk44cptckRZmFHotPQ1876VJUqk4p2QDyNh/NqQ0AutMiUBZmXqJNXaMNfvElGrrYLaGEVFPSk++QKCkjCHmbAL74DhCPUGbrUv58MX2IliQqvwZBFrCeYUV8cEbVfG++sAbaUfsf6/wQ9FKynNsjXsk/YV+Qh6uV5IKI6S8wvyQT+67VU4xbxRWJB+lN2xoLFSq9HIJCGwvCIOxG4Fy5rGiY1fvPJG6/XiXZPR/c=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A4B519E5F340654C947F9DC427B2B62A@eurprd02.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181120032939.GR4890@ziepe.ca>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9cf7db5c-ebb1-4b28-0f1e-08d64f7780f9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2018 06:06:41.6683
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0201MB2243
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 08:29:39PM -0700, Jason Gunthorpe wrote:
-> Date: Mon, 19 Nov 2018 20:29:39 -0700
-> From: Jason Gunthorpe <jgg@ziepe.ca>
-> To: Kenneth Lee <liguozhu@hisilicon.com>
-> CC: Leon Romanovsky <leon@kernel.org>, Kenneth Lee <nek.in.cn@gmail.com>,
->  Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org, Alexander
->  Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
->  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
->  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
->  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mailing
->  list <linux-rdma@vger.kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
->  Doug Ledford <dledford@redhat.com>, Uwe Kleine-König
->  <u.kleine-koenig@pengutronix.de>, David Kershner
->  <david.kershner@unisys.com>, Johan Hovold <johan@kernel.org>, Cyrille
->  Pitchen <cyrille.pitchen@free-electrons.com>, Sagar Dharia
->  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
->  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
->  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Vinod Koul
->  <vkoul@kernel.org>, linux-crypto@vger.kernel.org, Philippe Ombredanne
->  <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>, "David S.
->  Miller" <davem@davemloft.net>, linux-accelerators@lists.ozlabs.org
-> Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-> User-Agent: Mutt/1.9.4 (2018-02-28)
-> Message-ID: <20181120032939.GR4890@ziepe.ca>
-> 
-> On Tue, Nov 20, 2018 at 11:07:02AM +0800, Kenneth Lee wrote:
-> > On Mon, Nov 19, 2018 at 11:49:54AM -0700, Jason Gunthorpe wrote:
-> > > Date: Mon, 19 Nov 2018 11:49:54 -0700
-> > > From: Jason Gunthorpe <jgg@ziepe.ca>
-> > > To: Kenneth Lee <liguozhu@hisilicon.com>
-> > > CC: Leon Romanovsky <leon@kernel.org>, Kenneth Lee <nek.in.cn@gmail.com>,
-> > >  Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org, Alexander
-> > >  Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
-> > >  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
-> > >  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
-> > >  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mailing
-> > >  list <linux-rdma@vger.kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
-> > >  Doug Ledford <dledford@redhat.com>, Uwe Kleine-König
-> > >  <u.kleine-koenig@pengutronix.de>, David Kershner
-> > >  <david.kershner@unisys.com>, Johan Hovold <johan@kernel.org>, Cyrille
-> > >  Pitchen <cyrille.pitchen@free-electrons.com>, Sagar Dharia
-> > >  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
-> > >  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
-> > >  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Vinod Koul
-> > >  <vkoul@kernel.org>, linux-crypto@vger.kernel.org, Philippe Ombredanne
-> > >  <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>, "David S.
-> > >  Miller" <davem@davemloft.net>, linux-accelerators@lists.ozlabs.org
-> > > Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-> > > User-Agent: Mutt/1.9.4 (2018-02-28)
-> > > Message-ID: <20181119184954.GB4890@ziepe.ca>
-> > > 
-> > > On Mon, Nov 19, 2018 at 05:14:05PM +0800, Kenneth Lee wrote:
-> > >  
-> > > > If the hardware cannot share page table with the CPU, we then need to have
-> > > > some way to change the device page table. This is what happen in ODP. It
-> > > > invalidates the page table in device upon mmu_notifier call back. But this cannot
-> > > > solve the COW problem: if the user process A share a page P with device, and A 
-> > > > forks a new process B, and it continue to write to the page. By COW, the
-> > > > process B will keep the page P, while A will get a new page P'. But you have
-> > > > no way to let the device know it should use P' rather than P.
-> > > 
-> > > Is this true? I thought mmu_notifiers covered all these cases.
-> > > 
-> > > The mm_notifier for A should fire if B causes the physical address of
-> > > A's pages to change via COW. 
-> > > 
-> > > And this causes the device page tables to re-synchronize.
-> > 
-> > I don't see such code. The current do_cow_fault() implemenation has nothing to
-> > do with mm_notifer.
-> 
-> Well, that sure sounds like it would be a bug in mmu_notifiers..
-
-Yes, it can be taken that way:) But it is going to be a tough bug.
-
-> 
-> But considering Jean's SVA stuff seems based on mmu notifiers, I have
-> a hard time believing that it has any different behavior from RDMA's
-> ODP, and if it does have different behavior, then it is probably just
-> a bug in the ODP implementation.
-
-As Jean has explained, his solution is based on page table sharing. I think ODP
-should also consider this new feature.
-
-> 
-> > > > In WarpDrive/uacce, we make this simple. If you support IOMMU and it support
-> > > > SVM/SVA. Everything will be fine just like ODP implicit mode. And you don't need
-> > > > to write any code for that. Because it has been done by IOMMU framework. If it
-> > > 
-> > > Looks like the IOMMU code uses mmu_notifier, so it is identical to
-> > > IB's ODP. The only difference is that IB tends to have the IOMMU page
-> > > table in the device, not in the CPU.
-> > > 
-> > > The only case I know if that is different is the new-fangled CAPI
-> > > stuff where the IOMMU can directly use the CPU's page table and the
-> > > IOMMU page table (in device or CPU) is eliminated.
-> >
-> > Yes. We are not focusing on the current implementation. As mentioned in the
-> > cover letter. We are expecting Jean Philips' SVA patch:
-> > git://linux-arm.org/linux-jpb.
-> 
-> This SVA stuff does not look comparable to CAPI as it still requires
-> maintaining seperate IOMMU page tables.
-> 
-> Also, those patches from Jean have a lot of references to
-> mmu_notifiers (ie look at iommu_mmu_notifier).
-> 
-> Are you really sure it is actually any different at all?
-> 
-> > > Anyhow, I don't think a single instance of hardware should justify an
-> > > entire new subsystem. Subsystems are hard to make and without multiple
-> > > hardware examples there is no way to expect that it would cover any
-> > > future use cases.
-> > 
-> > Yes. That's our first expectation. We can keep it with our driver. But because
-> > there is no user driver support for any accelerator in mainline kernel. Even the
-> > well known QuickAssit has to be maintained out of tree. So we try to see if
-> > people is interested in working together to solve the problem.
-> 
-> Well, you should come with patches ack'ed by these other groups.
-
-Yes, that is what we are doing.
-
-> 
-> > > If all your driver needs is to mmap some PCI bar space, route
-> > > interrupts and do DMA mapping then mediated VFIO is probably a good
-> > > choice. 
-> > 
-> > Yes. That is what is done in our RFCv1/v2. But we accepted Jerome's opinion and
-> > try not to add complexity to the mm subsystem.
-> 
-> Why would a mediated VFIO driver touch the mm subsystem? Sounds like
-> you don't have a VFIO driver if it needs to do stuff like that...
-
-VFIO has no ODP-like solution, and if we want to solve the fork problem, we have
-to make some change to iommu and the fork procedure. Further, VFIO takes every
-queue as a independent device. This create a lot of trouble on resource
-management. For example, you will need a manager process to withdraw the unused
-device and you need to let the user process know about PASID of the queue, and
-so on.
-
-> 
-> > > If it needs to do a bunch of other stuff, not related to PCI bar
-> > > space, interrupts and DMA mapping (ie special code for compression,
-> > > crypto, AI, whatever) then you should probably do what Jerome said and
-> > > make a drivers/char/hisillicon_foo_bar.c that exposes just what your
-> > > hardware does.
-> > 
-> > Yes. If no other accelerator driver writer is interested. That is the
-> > expectation:)
-> 
-> I don't think it matters what other drivers do. 
-> 
-> If your driver does not need any other kernel code then VFIO is
-> sensible. In this kind of world you will probably have a RDMA-like
-> userspace driver that can bring this to a common user space API, even
-> if one driver use VFIO and a different driver uses something else.
-
-Yes, in some way. But in another way, if they don't have the same address space
-logic. It won't be easy to cooperate. In VFIO, you have to use DMA address for
-device while you cannot direct share RDMA-ODP memory to other device.
-WarpDrive/uacce can solve all these problem.
-
-> 
-> > You create some connections (queues) to NIC, RSA, and AI engine. Then you got
-> > data direct from the NIC and pass the pointer to RSA engine for decryption. The
-> > CPU then finish some data taking or operation and then pass through to the AI
-> > engine for CNN calculation....This will need a place to maintain the same
-> > address space by some means.
-> 
-> How is this any different from what we have today? 
-> 
-> SVA is not something even remotely new, IB has been doing various
-> versions of it for 20 years.
-
-But now we can have them unified to IOMMU framework.
-
-> 
-> Jason
-
--- 
+T24gMjAxOC0xMS0xOSAyMjoyOCwgR3VlbnRlciBSb2VjayB3cm90ZToNCj4gT24gTW9uLCBOb3Yg
+MTksIDIwMTggYXQgMDk6MTY6MTJQTSArMDAwMCwgUGV0ZXIgUm9zaW4gd3JvdGU6DQo+Pj4NCj4+
+PiBHdWVzcyBJIGRlc2VydmUgdGhlIG5vbi1hbHBoYWJldGljIG9yZGVyIGFzIHBlbmFsdHkgZm9y
+IG5vdCBlbmZvcmNpbmcgaXQgDQo+Pj4gZWFybGllci4gSSdsbCBhY2NlcHQgdGhlIHBhdGNoIGFm
+dGVyIERUIGFwcHJvdmFsIGFuZCBzdWJtaXQgYW5vdGhlciBvbmUNCj4+PiBteXNlbGYgYWZ0ZXJ3
+YXJkcyB0byByZXN0b3JlIGFscGhhYmV0aWMgb3JkZXIuDQo+Pg0KPj4gUmlnaHQsIEknbSB0aGlu
+a2luZyBhbm90aGVyIGdvb2QgY2hhbmdlIHdvdWxkIGJlIHRvIGludHJvZHVjZSBhbiBlbnVtDQo+
+PiBpbnRvIHRoZSBudGNfdGhlcm1pc3Rvcl9pZCBhcnJheSwgYmVjYXVzZSB0aGUgaGFyZC1jb2Rl
+ZCBudW1iZXJpbmcgaW4NCj4gDQo+IFllcywgc291bmRzIGxpa2UgYSBnb29kIGlkZWEuDQo+IA0K
+Pj4gdGhlIG50Y19tYXRjaCB2YXJpYWJsZSBpcyBhIGJpdCBmcmFnaWxlIGluIG15IHRhc3RlLCBh
+bmQgdGhhdCBsaXN0IHdvdWxkDQo+PiBhbHNvIGJlbmVmaXQgZnJvbSBiZWluZyBhbHBoYWJldGlj
+LiBDdXJyZW50bHkgdGhlcmUncyBzaW1wbHkgbm8gd2F5IHRvDQo+PiBhZGQgdGhpbmdzIGluIHRo
+ZSBtaWRkbGUgd2l0aG91dCBjYXVzaW5nIG1heWhlbS4gSSB0aG91Z2h0IGFib3V0IGRvaW5nDQo+
+PiB0aGF0LCBidXQgZGlkbid0IHdhbnQgdG8gd2FzdGUgZW5lcmd5IGRvaW5nIGl0IHVwIGZyb250
+IHdpdGhvdXQga25vd2luZw0KPj4gaWYgaXQgd291bGQgYmUgd2VsbCByZWNlaXZlZCAodGhlIGRy
+aXZlciBtaWdodCBoYXZlIGJlZW4gc3VwZXJzZWRlZCBvcg0KPiANCj4gSXQgd291bGQuDQoNClJp
+Z2h0LCBzbyBJIGhhdmUgc29tZSBwYXRjaGVzIHNvcnRpbmcgdGhpbmdzIG91dC4uLiBIb3dldmVy
+LCBvbmUgcXVlc3Rpb24NCmJlZm9yZSBJIHNlbmQgdGhlbTogSXMgaXQgb2sgdG8gc29ydCB0aGUg
+ZW51bSBudGNfdGhlcm1pc3Rvcl90eXBlIGluIHRoZQ0KaW5jbHVkZS9saW51eC9wbGF0Zm9ybV9k
+YXRhL250Y190aGVybWlzdG9yLmggaGVhZGVyIG9yIHdpbGwgdGhhdCBicmVhaw0Kc3R1ZmY/DQoN
+CkNoZWVycywNClBldGVyDQoNCj4gR3VlbnRlcg0KPiANCj4+IHNvbWV0aGluZykuIEknbSBnbGFk
+IHRoYXQgeW91IGhhdmUgdm9sdW50ZWVyZWQgdG8gY2xlYW4gdGhpbmdzIHVwLg0KPj4gSGEhIDot
+KQ0KPj4NCj4+IENoZWVycywNCj4+IFBldGVyDQo+Pg0KPj4+IEd1ZW50ZXINCj4+Pg0KPj4+PiAg
+fTsNCj4+Pj4gIA0KPj4+PiAgc3RydWN0IG50Y190aGVybWlzdG9yX3BsYXRmb3JtX2RhdGEgew0K
+Pj4+PiAtLSANCj4+Pj4gMi4xMS4wDQo+Pj4+DQo+Pg0KDQo=
