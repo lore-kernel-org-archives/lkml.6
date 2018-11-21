@@ -7,51 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12794C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82516C04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:08:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C08EE21527
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:08:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A70421582
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:08:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUbDEdSe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C08EE21527
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y1z0n+kj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A70421582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388093AbeKVFng (ORCPT
+        id S2388109AbeKVFnh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:43:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38386 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:43:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732097AbeKVFnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:43:35 -0500
+        id S1732097AbeKVFnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:43:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8C8A206BB;
-        Wed, 21 Nov 2018 19:08:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D14A214DB;
+        Wed, 21 Nov 2018 19:08:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827282;
-        bh=AzUlGZjz6i49RjCi+Khr0N+xYlYIvgkH4SJOtDxLiYU=;
+        s=default; t=1542827284;
+        bh=IX9e6h9Y2FkHf2T8q1R/mwfUOFwLRBO41GNuV6W4xYE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DUbDEdSeqZqewJUME4fmdGemYJYFmQeBj+8AE8IJMCnn5EJxfQfJd7oHWFE4t66rR
-         ix76MD1lyjezUOiFxPAXOrfpZg7hPrA0UsEawyLwVTCbtUM45Bk+8qSjbkAkQVzipv
-         Lp+4t16i/kbXyyyMD+94Ync9EYtBklcFRsd4W5fA=
+        b=y1z0n+kj24IraQkk1mIQRlOgJ9kgpXPJ5Y1dkmy5lvb3yNZ0UKMCmdJCfBxFgDPbI
+         Xbz45oen4LnWuHsZFaAmvq8KExX7aN2akpFbyRPzufQaWeRXmOhkUknIdOetdFqEAx
+         2TsDP7wC2Tu8RGLGUQdJ38nHJ18KTCtJgf2JPZdQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "WoodhouseDavid" <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "SchauflerCasey" <casey.schaufler@intel.com>
-Subject: [PATCH 4.19 42/42] Revert "x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation"
-Date:   Wed, 21 Nov 2018 20:06:18 +0100
-Message-Id: <20181121183149.785877054@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Siva Reddy Kallam <siva.kallam@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 10/42] tg3: Add PHY reset for 5717/5719/5720 in change ring and flow control paths
+Date:   Wed, 21 Nov 2018 20:05:46 +0100
+Message-Id: <20181121183148.436876267@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183147.869199006@linuxfoundation.org>
 References: <20181121183147.869199006@linuxfoundation.org>
@@ -69,161 +64,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Siva Reddy Kallam <siva.kallam@broadcom.com>
 
-This reverts commit 233b9d7df0e114c7e7c3674559fb0fc41ada3e8f which is
-commit 53c613fe6349994f023245519265999eed75957f upstream.
+[ Upstream commit 59663e42199c93d1d7314d1446f6782fc4b1eb81 ]
 
-It's not ready for the stable trees as there are major slowdowns
-involved with this patch.
+This patch has the fix to avoid PHY lockup with 5717/5719/5720 in change
+ring and flow control paths. This patch solves the RX hang while doing
+continuous ring or flow control parameters with heavy traffic from peer.
 
-Reported-by: Jiri Kosina <jkosina@suse.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc:  "WoodhouseDavid" <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc:  "SchauflerCasey" <casey.schaufler@intel.com>
+Signed-off-by: Siva Reddy Kallam <siva.kallam@broadcom.com>
+Acked-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |   57 ++++-----------------------------------------
- kernel/cpu.c               |   11 --------
- 2 files changed, 7 insertions(+), 61 deletions(-)
+ drivers/net/ethernet/broadcom/tg3.c |   18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -35,10 +35,12 @@ static void __init spectre_v2_select_mit
- static void __init ssb_select_mitigation(void);
- static void __init l1tf_select_mitigation(void);
- 
--/* The base value of the SPEC_CTRL MSR that always has to be preserved. */
--u64 x86_spec_ctrl_base;
-+/*
-+ * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
-+ * writes to SPEC_CTRL contain whatever reserved bits have been set.
-+ */
-+u64 __ro_after_init x86_spec_ctrl_base;
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
--static DEFINE_MUTEX(spec_ctrl_mutex);
- 
- /*
-  * The vendor and possibly platform specific bits which can be modified in
-@@ -323,46 +325,6 @@ static enum spectre_v2_mitigation_cmd __
- 	return cmd;
- }
- 
--static bool stibp_needed(void)
--{
--	if (spectre_v2_enabled == SPECTRE_V2_NONE)
--		return false;
--
--	if (!boot_cpu_has(X86_FEATURE_STIBP))
--		return false;
--
--	return true;
--}
--
--static void update_stibp_msr(void *info)
--{
--	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
--}
--
--void arch_smt_update(void)
--{
--	u64 mask;
--
--	if (!stibp_needed())
--		return;
--
--	mutex_lock(&spec_ctrl_mutex);
--	mask = x86_spec_ctrl_base;
--	if (cpu_smt_control == CPU_SMT_ENABLED)
--		mask |= SPEC_CTRL_STIBP;
--	else
--		mask &= ~SPEC_CTRL_STIBP;
--
--	if (mask != x86_spec_ctrl_base) {
--		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
--				cpu_smt_control == CPU_SMT_ENABLED ?
--				"Enabling" : "Disabling");
--		x86_spec_ctrl_base = mask;
--		on_each_cpu(update_stibp_msr, NULL, 1);
--	}
--	mutex_unlock(&spec_ctrl_mutex);
--}
--
- static void __init spectre_v2_select_mitigation(void)
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -12426,6 +12426,7 @@ static int tg3_set_ringparam(struct net_
  {
- 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
-@@ -462,9 +424,6 @@ specv2_set_mode:
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
+ 	struct tg3 *tp = netdev_priv(dev);
+ 	int i, irq_sync = 0, err = 0;
++	bool reset_phy = false;
+ 
+ 	if ((ering->rx_pending > tp->rx_std_ring_mask) ||
+ 	    (ering->rx_jumbo_pending > tp->rx_jmb_ring_mask) ||
+@@ -12457,7 +12458,13 @@ static int tg3_set_ringparam(struct net_
+ 
+ 	if (netif_running(dev)) {
+ 		tg3_halt(tp, RESET_KIND_SHUTDOWN, 1);
+-		err = tg3_restart_hw(tp, false);
++		/* Reset PHY to avoid PHY lock up */
++		if (tg3_asic_rev(tp) == ASIC_REV_5717 ||
++		    tg3_asic_rev(tp) == ASIC_REV_5719 ||
++		    tg3_asic_rev(tp) == ASIC_REV_5720)
++			reset_phy = true;
++
++		err = tg3_restart_hw(tp, reset_phy);
+ 		if (!err)
+ 			tg3_netif_start(tp);
  	}
--
--	/* Enable STIBP if appropriate */
--	arch_smt_update();
- }
- 
- #undef pr_fmt
-@@ -855,8 +814,6 @@ static ssize_t l1tf_show_state(char *buf
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			       char *buf, unsigned int bug)
+@@ -12491,6 +12498,7 @@ static int tg3_set_pauseparam(struct net
  {
--	int ret;
--
- 	if (!boot_cpu_has_bug(bug))
- 		return sprintf(buf, "Not affected\n");
+ 	struct tg3 *tp = netdev_priv(dev);
+ 	int err = 0;
++	bool reset_phy = false;
  
-@@ -874,12 +831,10 @@ static ssize_t cpu_show_common(struct de
- 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
+ 	if (tp->link_config.autoneg == AUTONEG_ENABLE)
+ 		tg3_warn_mgmt_link_flap(tp);
+@@ -12581,7 +12589,13 @@ static int tg3_set_pauseparam(struct net
  
- 	case X86_BUG_SPECTRE_V2:
--		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
--			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
- 			       spectre_v2_module_string());
--		return ret;
- 
- 	case X86_BUG_SPEC_STORE_BYPASS:
- 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -2026,12 +2026,6 @@ static void cpuhp_online_cpu_device(unsi
- 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
- }
- 
--/*
-- * Architectures that need SMT-specific errata handling during SMT hotplug
-- * should override this.
-- */
--void __weak arch_smt_update(void) { };
--
- static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
- {
- 	int cpu, ret = 0;
-@@ -2058,10 +2052,8 @@ static int cpuhp_smt_disable(enum cpuhp_
- 		 */
- 		cpuhp_offline_cpu_device(cpu);
- 	}
--	if (!ret) {
-+	if (!ret)
- 		cpu_smt_control = ctrlval;
--		arch_smt_update();
--	}
- 	cpu_maps_update_done();
- 	return ret;
- }
-@@ -2072,7 +2064,6 @@ static int cpuhp_smt_enable(void)
- 
- 	cpu_maps_update_begin();
- 	cpu_smt_control = CPU_SMT_ENABLED;
--	arch_smt_update();
- 	for_each_present_cpu(cpu) {
- 		/* Skip online CPUs and CPUs on offline nodes */
- 		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
+ 		if (netif_running(dev)) {
+ 			tg3_halt(tp, RESET_KIND_SHUTDOWN, 1);
+-			err = tg3_restart_hw(tp, false);
++			/* Reset PHY to avoid PHY lock up */
++			if (tg3_asic_rev(tp) == ASIC_REV_5717 ||
++			    tg3_asic_rev(tp) == ASIC_REV_5719 ||
++			    tg3_asic_rev(tp) == ASIC_REV_5720)
++				reset_phy = true;
++
++			err = tg3_restart_hw(tp, reset_phy);
+ 			if (!err)
+ 				tg3_netif_start(tp);
+ 		}
 
 
