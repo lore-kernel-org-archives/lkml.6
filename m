@@ -2,123 +2,147 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E60C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1343AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B910821479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:16:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE2212145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:16:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKpz4O8k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B910821479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="gknSrr6D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE2212145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbeKURtw (ORCPT
+        id S1727733AbeKURuD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 12:49:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725999AbeKURtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 12:49:51 -0500
-Received: from localhost (unknown [77.138.135.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 124B92145D;
-        Wed, 21 Nov 2018 07:16:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542784592;
-        bh=isg4VFayM4ya7r9XPXdOYjxiYWKi6Ez/4YGtjGE1sH0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mKpz4O8kvoP+xwFVxWZqFyUlbw2LiunOu0KWTnLRiAMn8V0Zt4aJoTXmmzwmXeXdG
-         9J9NPrJauBVAp+G/jP7wTL+a/9JzqPCLuR3jmiSbCGHUEpDQT2TStYZSk7/RJhJuGN
-         OVDjgHyEYwZlJxJOgUKEBvlHN/wz3fM3RI4yyKUM=
-Date:   Wed, 21 Nov 2018 09:16:27 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: Re: linux-next: manual merge of the mlx5-next tree with the rdma tree
-Message-ID: <20181121071627.GA7276@mtr-leonro.mtl.com>
-References: <20181121110432.64a379f7@canb.auug.org.au>
+        Wed, 21 Nov 2018 12:50:03 -0500
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:36476 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726090AbeKURuC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 12:50:02 -0500
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 905DD24E108D;
+        Tue, 20 Nov 2018 23:16:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1542784603; bh=Bt8r1GN/ifO2yroBZvvbW3JblDi4fSVwNHfa5lI4bVQ=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=gknSrr6D11HkvbdjHOjaDyPEvwtkOmJTc0KRsRP+4p0217+yTqmUTh1kRPlwSJNl/
+         zAaFA70TtH31fIvv0aQLdrMIYfITHKCxxWMOwNg2Mv2KQ/zQuo/xBlzG5/uB19AO7H
+         bettciqyxvfSuPEFd3EtmiA7IRvhanWqzmkXp/6C4kM22ue80M/TCTUWPdh2XmXxd3
+         XT9r4HUvCYdGZ1yhyYzrY+zx88wYXYbD1TwTZj8ibPNUV4GQRnS29YV2q7OLfrPM80
+         KiV77Z9yqiXKj6Am42IeagPtDLd+5ecbpiWOGH5OfcQwu+85/6GsIHe/vBZaG+u8Va
+         5i09PcXD6amtw==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 74C0258CC;
+        Tue, 20 Nov 2018 23:16:43 -0800 (PST)
+Received: from AM04WEHTCA.internal.synopsys.com (10.116.16.190) by
+ us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 20 Nov 2018 23:16:43 -0800
+Received: from AM04WEMBXA.internal.synopsys.com ([fe80::79c3:55f2:1f20:5bf4])
+ by am04wehtca.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Wed,
+ 21 Nov 2018 11:16:40 +0400
+From:   Minas Harutyunyan <minas.harutyunyan@synopsys.com>
+To:     Doug Anderson <dianders@chromium.org>,
+        Terin Stock <terin@terinstock.com>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        "Minas Harutyunyan" <minas.harutyunyan@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v2] usb: dwc2: host: use hrtimer for NAK retries
+Thread-Topic: [PATCH v2] usb: dwc2: host: use hrtimer for NAK retries
+Thread-Index: AQHUSL4wspCdYjVV40WMJtnEsOwxHQ==
+Date:   Wed, 21 Nov 2018 07:16:39 +0000
+Message-ID: <410670D7E743164D87FA6160E7907A56013A7A9610@am04wembxa.internal.synopsys.com>
+References: <153655347149.19910.4781444209586693527.stgit@Rincon.localdomain>
+ <CAD=FV=Vau3KL=hqbu-jx19VvGZ5FZug+C-sxxdw2hiAtCXgBtg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.70.39]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="AqsLC8rIMeq19msA"
-Content-Disposition: inline
-In-Reply-To: <20181121110432.64a379f7@canb.auug.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---AqsLC8rIMeq19msA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Nov 21, 2018 at 11:04:32AM +1100, Stephen Rothwell wrote:
-> Hi Leon,
->
-> Today's linux-next merge of the mlx5-next tree got a conflict in:
->
->   drivers/infiniband/hw/mlx5/main.c
->
-> between commit:
->
->   9afc97c29b03 ("mlx5: remove support for ib_get_vector_affinity")
->
-> from the rdma tree and commit:
->
->   f2f3df550139 ("net/mlx5: EQ, Privatize eq_table and friends")
->
-> from the mlx5-next tree.
->
-> I fixed it up (the former removed some of the code modified by the latter)
-> and can carry the fix as necessary. This is now fixed as far as linux-next
-> is concerned, but any non trivial conflicts should be mentioned to your
-> upstream maintainer when your tree is submitted for merging.  You may
-> also want to consider cooperating with the maintainer of the conflicting
-> tree to minimise any particularly complex conflicts.
->
-
-Thanks Stephen,
-
-You are absolutely right, the removal is correct.
-
->
->
-> --
-> Cheers,
-> Stephen Rothwell
-
-
-
---AqsLC8rIMeq19msA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJb9QZLAAoJEORje4g2clinzt0P/RLWoZPvwtl5H2/YEPjCiDCu
-K62avmczxvSU67MW5FTE7Ks/0nE9yd+WIWYIydqWxg3dXMbYn8N0vlaN385i20kW
-8DLrOsjILysS81fUHK8wZCc553oUKp+qpwMTY4ly/3JvMo3vofe1VTMUQsAJ160A
-vAFU9vyFea4YfhYnL9bHwNuXjsJLye4zy8Vp8r3tiHfuYk2HNX8R8oniNo9hyy8u
-75oZNegT15fIRqG8zucv+qcyFmuzvNX2LrN3econSKnnE12feqrO7aSTU0nuactO
-WNzRjJjwIazkoOufp/pFYAL+7gvlaQKt+abHA7wlmXuKNF5E/Yk4pndWdtzuCjdK
-3IDoyS9HWGvG1MY/v/wzOTDChOImH8Z8pXlSzMhx0FNcTavn3ELkSXfwlFOFiTpe
-i7JojUWY3wLdRuQMa81Spwwr7qhSmu9A8kOGomPUoagRLmDhNrb421Pj+KeBcHgK
-Jlot/hsdOThFHZB7eFT3Jt1qix+RlqzP0qo0wxFy/196LfHpZemx1hanCXmRjQbz
-kzA3+5ZGe3fREAMf2T1+sW9fiiwh7MJ0ofXIJaMH7hIR/qo2ckH7xDyIrg9cLACd
-aTB3ehdywdgWXmLYXi/g9QsS+NiKai7uox44QSCOajFh1937bgwIQ6IIFurBZjdL
-gnvjr9Av3DtZDrG0l7Wq
-=MGL3
------END PGP SIGNATURE-----
-
---AqsLC8rIMeq19msA--
+On 11/14/2018 3:30 AM, Doug Anderson wrote:=0A=
+> Hi,=0A=
+> =0A=
+> On Sun, Sep 9, 2018 at 9:24 PM Terin Stock <terin@terinstock.com> wrote:=
+=0A=
+>>=0A=
+>> Modify the wait delay utilize the high resolution timer API to allow for=
+=0A=
+>> more precisely scheduled callbacks.=0A=
+>>=0A=
+>> A previous commit added a 1ms retry delay after multiple consecutive=0A=
+>> NAKed transactions using jiffies. On systems with a low timer interrupt=
+=0A=
+>> frequency, this delay may be significantly longer than specified,=0A=
+>> resulting in misbehavior with some USB devices.=0A=
+>>=0A=
+>> This scenario was reached on a Raspberry Pi 3B with a Macally FDD-USB=0A=
+>> floppy drive (identified as 0424:0fdc Standard Microsystems Corp.=0A=
+>> Floppy, based on the USB97CFDC USB FDC). With the relay delay, the drive=
+=0A=
+>> would be unable to mount a disk, replying with NAKs until the device was=
+=0A=
+>> reset.=0A=
+>>=0A=
+>> Using ktime, the delta between starting the timer (in dwc2_hcd_qh_add)=
+=0A=
+>> and the callback function can be determined. With the original delay=0A=
+>> implementation, this value was consistently approximately 12ms. (output=
+=0A=
+>> in us).=0A=
+>>=0A=
+>>      <idle>-0     [000] ..s.  1600.559974: dwc2_wait_timer_fn: wait_time=
+r delta: 11976=0A=
+>>      <idle>-0     [000] ..s.  1600.571974: dwc2_wait_timer_fn: wait_time=
+r delta: 11977=0A=
+>>      <idle>-0     [000] ..s.  1600.583974: dwc2_wait_timer_fn: wait_time=
+r delta: 11976=0A=
+>>      <idle>-0     [000] ..s.  1600.595974: dwc2_wait_timer_fn: wait_time=
+r delta: 11977=0A=
+>>=0A=
+>> After converting the relay delay to using a higher resolution timer, the=
+=0A=
+>> delay was much closer to 1ms.=0A=
+>>=0A=
+>>      <idle>-0     [000] d.h.  1956.553017: dwc2_wait_timer_fn: wait_time=
+r delta: 1002=0A=
+>>      <idle>-0     [000] d.h.  1956.554114: dwc2_wait_timer_fn: wait_time=
+r delta: 1002=0A=
+>>      <idle>-0     [000] d.h.  1957.542660: dwc2_wait_timer_fn: wait_time=
+r delta: 1004=0A=
+>>      <idle>-0     [000] d.h.  1957.543701: dwc2_wait_timer_fn: wait_time=
+r delta: 1002=0A=
+>>=0A=
+>> The floppy drive operates properly with delays up to approximately 5ms,=
+=0A=
+>> and sends NAKs for any delays that are longer.=0A=
+>>=0A=
+>> Fixes: 38d2b5fb75c1 ("usb: dwc2: host: Don't retry NAKed transactions ri=
+ght away")=0A=
+>> Signed-off-by: Terin Stock <terin@terinstock.com>=0A=
+>> ---=0A=
+>>   drivers/usb/dwc2/hcd.h       |    2 +-=0A=
+>>   drivers/usb/dwc2/hcd_queue.c |   19 ++++++++++++-------=0A=
+>>   2 files changed, 13 insertions(+), 8 deletions(-)=0A=
+> =0A=
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>=0A=
+> Cc: stable@vger.kernel.org=0A=
+> =0A=
+Acked-by: Minas Harutyunyan <hminas@synopsys.com>=0A=
+=0A=
