@@ -2,126 +2,73 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D12C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66712C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:38:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 479852147D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:37:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 479852147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 322A1214D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:38:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 322A1214D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730460AbeKUXLz convert rfc822-to-8bit (ORCPT
+        id S1730482AbeKUXMY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 18:11:55 -0500
-Received: from mga01.intel.com ([192.55.52.88]:16645 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729389AbeKUXLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 18:11:55 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 04:37:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,261,1539673200"; 
-   d="scan'208";a="109992510"
-Received: from jlahtine-desk.ger.corp.intel.com (HELO localhost) ([10.251.84.195])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Nov 2018 04:37:40 -0800
-Content-Type: text/plain; charset="utf-8"
+        Wed, 21 Nov 2018 18:12:24 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38236 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729389AbeKUXMY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 18:12:24 -0500
+Received: by mail-ot1-f66.google.com with SMTP id e12so487340otl.5;
+        Wed, 21 Nov 2018 04:38:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QRQr3O2Ggn1hmq3YWJFmpt3YUu/ctQVnm2DUGj3Vq8U=;
+        b=BQnHs0/mSKg2qQ8S/w4Fhoe55sELbR3A/wZu+Tc8L6x4pgB7RdHNs2oaAhya55UQU6
+         FjFE3pEB1i13lOcpv9ypbMyalibmBTBdwf35LTa/P3+4pSW6CJcWDBbZfxMY84ccR2j7
+         5J/qAkShyPZroXrI63zU5FFucejkVvbiQU6In44NMS65NUkMScFbYoyTBhYxIwM/f6wN
+         j5axngMR0zRaSd1m+yMP3GAs8Jl7V/3I2Nie8hI5BsG/UgJYLH0AaaKkuHjLUX4Xf5JK
+         dxwNuSdGl7ycrPnXyCwgyawNlJE5RDWlXA73VjkJbUgVfeT9d0Gwp6WKr9YeomS5dPBg
+         SF/g==
+X-Gm-Message-State: AA+aEWZZh84j/PFX3q7/IBPBhe9namFW1HGNxFSvKy24gXtZxHDFPewk
+        AtCeUj/nSnVmIzzCJFAUh0Lr5qtQxeYEkhdwljI=
+X-Google-Smtp-Source: AFSGD/WhYdNpVe8CaAEIQQeaj9sKsgEoCfBaRy30/+SCwcddfeN79aDiTgf/B/gc7WfXP60rG+3SPjQaeKIyGTxEqLs=
+X-Received: by 2002:a9d:2062:: with SMTP id n89mr3451846ota.244.1542803891448;
+ Wed, 21 Nov 2018 04:38:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Hans Holmberg <hans.ml.holmberg@owltronix.com>
-From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-In-Reply-To: <CANr-nt0jNB1WMYRepHdC_jqmXTX5pKSswvOtCKx73dj=7azRSA@mail.gmail.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gfx@lists.freedesktop.org,
+References: <31b25f3d-f727-a94f-83cc-3258444abf11@kernel.org>
+In-Reply-To: <31b25f3d-f727-a94f-83cc-3258444abf11@kernel.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 21 Nov 2018 13:37:59 +0100
+Message-ID: <CAJZ5v0jwmw2k2B68qj4A09FajDaEArv8b9GBLfthiKJ53vA31w@mail.gmail.com>
+Subject: Re: [GIT PULL] cpupower update for Linux 4.20-rc4
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-References: <20181121095423.20760-1-hans.ml.holmberg@owltronix.com>
- <154279503602.15074.8041259573781223214@jlahtine-desk.ger.corp.intel.com>
- <CANr-nt0jNB1WMYRepHdC_jqmXTX5pKSswvOtCKx73dj=7azRSA@mail.gmail.com>
-Message-ID: <154280385988.24009.6122812249809585812@jlahtine-desk.ger.corp.intel.com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH] drm/i915: avoid rebuilding i915_gpu_error.o on version string
- updates
-Date:   Wed, 21 Nov 2018 14:37:40 +0200
+        Linux PM <linux-pm@vger.kernel.org>,
+        Thomas Renninger <trenn@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Hans Holmberg (2018-11-21 13:35:19)
-> On Wed, Nov 21, 2018 at 11:10 AM Joonas Lahtinen
-> <joonas.lahtinen@linux.intel.com> wrote:
-> >
-> > Quoting Hans Holmberg (2018-11-21 11:54:23)
-> > > From: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> > >
-> > > There is no need to rebuild i915_gpu_error.o when the version string
-> > > changes as the version is available in init_utsname()->release.
-> > >
-> > > Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> >
-> > Seems reasonable to me.
-> >
-> > Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> >
-> > Out of curiosity, are you by any chance hashing the i915_gpu_error.o
-> > file (or the contents elsewhere) for some purpose?
-> 
-> Oh no, I was just moderately annoyed by the file being rebuilt every
-> time the version was updated(I use my current branch name as
-> LOCALVERSION when building).
+On Tue, Nov 20, 2018 at 10:16 PM shuah <shuah@kernel.org> wrote:
+>
+> Hi Rafael,
+>
+> Please pull the following update for Linux 4.20-rc4 or rc5 depending on
+> your pm pull schedule to Linus.
+>
+> This cpupower update for Linux 4.20-rc4 consists of compile fixes to
+> allow use of outside build flags and override of CFLAGS from Jiri Olsa,
+> and fix to compilation with STATIC=true from Konstantin Khlebnikov.
+>
+> diff is attached.
 
-That's a reasonable explanation, too :)
-
-I unblocked the message from moderation queue so that our CI picks this
-up for testing. I will then proceed to merge this once the results are
-back.
-
-Thanks for the patch!
-
-Regards, Joonas
-
-> 
-> Thanks,
-> Hans
-> >
-> > Regards, Joonas
-> >
-> > > ---
-> > >  drivers/gpu/drm/i915/i915_gpu_error.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/i915/i915_gpu_error.c b/drivers/gpu/drm/i915/i915_gpu_error.c
-> > > index 8762d17b6659..958e1484a3dd 100644
-> > > --- a/drivers/gpu/drm/i915/i915_gpu_error.c
-> > > +++ b/drivers/gpu/drm/i915/i915_gpu_error.c
-> > > @@ -27,7 +27,7 @@
-> > >   *
-> > >   */
-> > >
-> > > -#include <generated/utsrelease.h>
-> > > +#include <linux/utsname.h>
-> > >  #include <linux/stop_machine.h>
-> > >  #include <linux/zlib.h>
-> > >  #include <drm/drm_print.h>
-> > > @@ -650,7 +650,7 @@ int i915_error_state_to_str(struct drm_i915_error_state_buf *m,
-> > >
-> > >         if (*error->error_msg)
-> > >                 err_printf(m, "%s\n", error->error_msg);
-> > > -       err_printf(m, "Kernel: " UTS_RELEASE "\n");
-> > > +       err_printf(m, "Kernel: %s\n", init_utsname()->release);
-> > >         ts = ktime_to_timespec64(error->time);
-> > >         err_printf(m, "Time: %lld s %ld us\n",
-> > >                    (s64)ts.tv_sec, ts.tv_nsec / NSEC_PER_USEC);
-> > > --
-> > > 2.17.1
-> > >
+Pulled, thanks!
