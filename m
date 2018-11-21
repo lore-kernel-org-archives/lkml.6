@@ -2,133 +2,142 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A1BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E953C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F0B22146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:35:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6545620851
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:36:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="xxFc2Rdc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F0B22146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3PdbTka/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6545620851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729525AbeKUWJf (ORCPT
+        id S1729740AbeKUWKh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 17:09:35 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:37910 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbeKUWJf (ORCPT
+        Wed, 21 Nov 2018 17:10:37 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:41088 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727628AbeKUWKh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 17:09:35 -0500
-Received: by mail-ua1-f68.google.com with SMTP id p9so1790385uaa.5
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 03:35:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JWLTdLnjGxFNIGXafVQP36uofwcE+NOk64U/yUqhW+c=;
-        b=xxFc2RdcVcm+lLxm0vbzvk6kzc1oeWuigVB7YfrUlhdA/WXZuEcbLEii1HUA+3C7Y7
-         JununLQ/wW7Wh3RdII0QgvFyI9Fvqdh7dLAixMYNGw3m7zYQAvcdJD/yRxNv3lWqtyht
-         qLoIQN87y1x6yypRffvpl0z9V19PiXxDCpswCG+PYymDZoxfmhdcC++IvDEZ+ndECYcl
-         4Rq5eA2gW0cxluUoB0YRRW68+w2Zs5U1HyH3nhJVlnoA6g63UIxDA9TKD4KLpI3wE2hP
-         zScM2Tw+ifFyPmED0AytR23vzLIFXgOGelmxdC8TjkeJqc0fJ+CJaVzPl5oaNRCcIYxP
-         aWfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JWLTdLnjGxFNIGXafVQP36uofwcE+NOk64U/yUqhW+c=;
-        b=ReYFvyrksgzeX9+epZXNsJ8aI0obz6FJciNBqweB0IRwU+hIT6alqV8Ig7Im/ND1uW
-         cuDeABVVtoE0pGNWtKtkke8Ud6WcbP2/Hi1p/7toyZHUCwrfDRHYwx4WDNt5HA9KtYel
-         fjyP5cczaJmKu2MJPmdQHY9U0H/a7BeoGaBhxg2gUQ2P+2iJBeyOKfQ/76dNaQ1bGN7k
-         h8c2/3HJ47AM7FCqlcFtK+zrZrP5POATc+CQRnBLVEROXGGTkk0VpN8PhnPlZ30DT7/x
-         VtzmI2f3yNg87x/ApThrliHOBIR8nRJ9KN4Hkx5cRp/X7exQV93xa6+ccfPXGxZRgrF8
-         mo/g==
-X-Gm-Message-State: AA+aEWbjXL3mcbgwHKjCHcdIwYG/JsuBfYvzrZPJGgCih1HRYXjbc7Li
-        uFdWjmidQPz50xgcXSv6Wm3O7enpjvZBWkW4GTZULg==
-X-Google-Smtp-Source: AFSGD/VDqvB60F4aJ2IM9jRODtpOSO4lCh6m8ozN5ES2ACZyi/uGxT+EE43IK0EZ8VREBWfHxUiC9+5v5YCsM2WqMDk=
-X-Received: by 2002:ab0:49ee:: with SMTP id f43mr2523985uad.29.1542800130866;
- Wed, 21 Nov 2018 03:35:30 -0800 (PST)
-MIME-Version: 1.0
-References: <20181121095423.20760-1-hans.ml.holmberg@owltronix.com> <154279503602.15074.8041259573781223214@jlahtine-desk.ger.corp.intel.com>
-In-Reply-To: <154279503602.15074.8041259573781223214@jlahtine-desk.ger.corp.intel.com>
-From:   Hans Holmberg <hans.ml.holmberg@owltronix.com>
-Date:   Wed, 21 Nov 2018 12:35:19 +0100
-Message-ID: <CANr-nt0jNB1WMYRepHdC_jqmXTX5pKSswvOtCKx73dj=7azRSA@mail.gmail.com>
-Subject: Re: [PATCH] drm/i915: avoid rebuilding i915_gpu_error.o on version
- string updates
-To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gfx@lists.freedesktop.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 21 Nov 2018 17:10:37 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wALBTUkq139414;
+        Wed, 21 Nov 2018 11:35:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=6wqoCmnDUzdss297jnn1NtxeFvkwhaG6Zb/m/Ppwd5E=;
+ b=3PdbTka/uIn9Y3+f9wv9CXw/uOCrzQl9RDfMXKf7Bq4436Yr0fY2jkBXsbO37CoxY4UI
+ K6Jhcx2/Hpm5qYTmVtfiFNRp47gEh0g/q8Kg5Urc3KT20UTCQvykdFzi7MlAY/F4byLy
+ Kv/PI8QoTi5GejIRc/ZhdxBvYbTx8OoKaRxYShDMUXTsdowsq1TejnqIqcX4pxbms/RW
+ QfCVasJWuknBLB+fksCTJHt8Zm7VlGUSrpwW6bjfDWON2qd1ioXPlsvYDRDVVUvpB9rV
+ Q8L9X+jA9rKS2bJL5I2yNbBRxGwWgiXlH9sacYHm7dSbo8+ku5liwl5+eNTE8G/Hx/68 Qw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2ntadu12c0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Nov 2018 11:35:50 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wALBZnk5030137
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Nov 2018 11:35:49 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wALBZm1h005344;
+        Wed, 21 Nov 2018 11:35:48 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 21 Nov 2018 03:35:48 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v1 8/8] PM / Hibernate: exclude all PageOffline() pages
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20181119101616.8901-9-david@redhat.com>
+Date:   Wed, 21 Nov 2018 04:35:46 -0700
+Cc:     Linux-MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, devel@linuxdriverproject.org,
+        linux-fsdevel@vger.kernel.org, linux-pm@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        kexec-ml <kexec@lists.infradead.org>, pv-drivers@vmware.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <11E3C0B0-AEED-42C6-A21C-1820F4B47A68@oracle.com>
+References: <20181119101616.8901-1-david@redhat.com>
+ <20181119101616.8901-9-david@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+X-Mailer: Apple Mail (2.3445.102.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9083 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811210104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 11:10 AM Joonas Lahtinen
-<joonas.lahtinen@linux.intel.com> wrote:
->
-> Quoting Hans Holmberg (2018-11-21 11:54:23)
-> > From: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> >
-> > There is no need to rebuild i915_gpu_error.o when the version string
-> > changes as the version is available in init_utsname()->release.
-> >
-> > Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
->
-> Seems reasonable to me.
->
-> Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
->
-> Out of curiosity, are you by any chance hashing the i915_gpu_error.o
-> file (or the contents elsewhere) for some purpose?
+If you are adding PageOffline(page) to the condition list of the already =
+existing if in
+saveable_highmem_page(), why explicitly add it as a separate statement =
+in saveable_page()?
 
-Oh no, I was just moderately annoyed by the file being rebuilt every
-time the version was updated(I use my current branch name as
-LOCALVERSION when building).
+It would seem more consistent to make the second check:
 
-Thanks,
-Hans
->
-> Regards, Joonas
->
-> > ---
-> >  drivers/gpu/drm/i915/i915_gpu_error.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/i915/i915_gpu_error.c b/drivers/gpu/drm/i915/i915_gpu_error.c
-> > index 8762d17b6659..958e1484a3dd 100644
-> > --- a/drivers/gpu/drm/i915/i915_gpu_error.c
-> > +++ b/drivers/gpu/drm/i915/i915_gpu_error.c
-> > @@ -27,7 +27,7 @@
-> >   *
-> >   */
-> >
-> > -#include <generated/utsrelease.h>
-> > +#include <linux/utsname.h>
-> >  #include <linux/stop_machine.h>
-> >  #include <linux/zlib.h>
-> >  #include <drm/drm_print.h>
-> > @@ -650,7 +650,7 @@ int i915_error_state_to_str(struct drm_i915_error_state_buf *m,
-> >
-> >         if (*error->error_msg)
-> >                 err_printf(m, "%s\n", error->error_msg);
-> > -       err_printf(m, "Kernel: " UTS_RELEASE "\n");
-> > +       err_printf(m, "Kernel: %s\n", init_utsname()->release);
-> >         ts = ktime_to_timespec64(error->time);
-> >         err_printf(m, "Time: %lld s %ld us\n",
-> >                    (s64)ts.tv_sec, ts.tv_nsec / NSEC_PER_USEC);
-> > --
-> > 2.17.1
-> >
+-	if (swsusp_page_is_forbidden(page) || swsusp_page_is_free(page))
++	if (swsusp_page_is_forbidden(page) || swsusp_page_is_free(page) =
+||
++		PageOffline(page))
+
+instead.
+
+It's admittedly a nit but it just seems cleaner to either do that or, if =
+your intention
+was to separate the Page checks from the swsusp checks, to break the =
+calls to
+PageReserved() and PageOffline() into their own check in =
+saveable_highmem_page().
+
+Thanks!
+    -- Bill
+    =20
+
+> On Nov 19, 2018, at 3:16 AM, David Hildenbrand <david@redhat.com> =
+wrote:
+>=20
+> --- a/kernel/power/snapshot.c
+> +++ b/kernel/power/snapshot.c
+> @@ -1222,7 +1222,7 @@ static struct page *saveable_highmem_page(struct =
+zone *zone, unsigned long pfn)
+> 	BUG_ON(!PageHighMem(page));
+>=20
+> 	if (swsusp_page_is_forbidden(page) ||  swsusp_page_is_free(page) =
+||
+> -	    PageReserved(page))
+> +	    PageReserved(page) || PageOffline(page))
+> 		return NULL;
+>=20
+> 	if (page_is_guard(page))
+> @@ -1286,6 +1286,9 @@ static struct page *saveable_page(struct zone =
+*zone, unsigned long pfn)
+> 	if (swsusp_page_is_forbidden(page) || swsusp_page_is_free(page))
+> 		return NULL;
+>=20
+> +	if (PageOffline(page))
+> +		return NULL;
+> +
+> 	if (PageReserved(page)
+> 	    && (!kernel_page_present(page) || pfn_is_nosave(pfn)))
+> 		return NULL;
+> --=20
+> 2.17.2
+>=20
+
