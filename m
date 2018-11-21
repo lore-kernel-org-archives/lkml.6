@@ -2,82 +2,86 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 898A1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C7CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51D13208E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:11:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AEF2206BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:12:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhzgnrTe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51D13208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="EFky02Cc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AEF2206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390529AbeKVJsK (ORCPT
+        id S2390551AbeKVJsk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 04:48:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38932 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390489AbeKVJsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 04:48:04 -0500
-Received: from localhost (c-71-205-112-160.hsd1.co.comcast.net [71.205.112.160])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 824E5214C4;
-        Wed, 21 Nov 2018 23:11:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542841895;
-        bh=Gp5ut8Yvjk0UdEW8rghdryCsZib248qHknetthCXLWU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=DhzgnrTeTtMYEX22GsCPtI+EWk4ti4TBYYc6/nmpgTSKH82u1WMAFmU6myDyp5iBk
-         2sFy0VeDpuNSx8RWgdH0Gt7F5dKcIgDrSxghb+jg18JfhX6S2ID2VZ8f0N2+EOnXlA
-         O8gINzizNul4aS5FHEjZCeXb7f7RwPUg+Lx/bMtI=
-From:   Andy Lutomirski <luto@kernel.org>
-To:     x86@kernel.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH v2 5/5] x86/vsyscall/64: Use X86_PF constants in the simulated #PF error code
-Date:   Wed, 21 Nov 2018 15:11:26 -0800
-Message-Id: <e023f20352b0d05a8b0205629897917262d2ad68.1542841400.git.luto@kernel.org>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <cover.1542841400.git.luto@kernel.org>
-References: <cover.1542841400.git.luto@kernel.org>
-In-Reply-To: <cover.1542841400.git.luto@kernel.org>
-References: <cover.1542841400.git.luto@kernel.org>
+        Thu, 22 Nov 2018 04:48:40 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:51971 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387918AbeKVJsj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 04:48:39 -0500
+Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id wALNBvXO019266;
+        Thu, 22 Nov 2018 08:11:58 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com wALNBvXO019266
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1542841919;
+        bh=pL6iditA2OWMhJElimNUDbGuTxlF6AP+5xjs5DzNhhQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=EFky02CclNUzLI1iJcNk2PQXjT/m7uNOwPXidba+7FAOpHTQWcTBiypJo01R5Keas
+         cGNDwJsLHHOU4Fod1A+4LhaXrGTPTjKg4oDaHvUA/CewNmu+r+dTZ3ETe+r4lNbzw4
+         ZAGGyeHoF0L9c0VTw9WDUmHTT1ePKS8t/o/2qAMUYyOGqmZ5ynZ8BYMDA6Rcwwokt1
+         l6Oe2Y9I62pIup36BKEIYYg2nZRmxt320mrVMPDSsMgN9boB/lw+ckL94n80fk53R9
+         8iZW53FiWBk6J6Jb2BaCDm/I/lwRUzjxad7SYqfEk9JU4uCZzBdsAS9RagaZYeS0lI
+         H04R7hP2C/Kfg==
+X-Nifty-SrcIP: [218.220.227.105]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] kbuild: remove 'scripts' dummy target for external module build
+Date:   Thu, 22 Nov 2018 08:11:55 +0900
+Message-Id: <1542841915-19686-2-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1542841915-19686-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1542841915-19686-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rather than hardcoding 6 with a comment, use the defined constants.
+Make simply skips a missing rule as long as it is marked as PHONY.
+Remove the dummy target.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- arch/x86/entry/vsyscall/vsyscall_64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
-index 85fd85d52ffd..d78bcc03e60e 100644
---- a/arch/x86/entry/vsyscall/vsyscall_64.c
-+++ b/arch/x86/entry/vsyscall/vsyscall_64.c
-@@ -102,7 +102,7 @@ static bool write_ok_or_segv(unsigned long ptr, size_t size)
- 	if (!access_ok(VERIFY_WRITE, (void __user *)ptr, size)) {
- 		struct thread_struct *thread = &current->thread;
+ Makefile | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 36f3f0e..269a9bf 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1604,11 +1604,9 @@ help:
+ 	@echo  '  clean           - remove generated files in module directory only'
+ 	@echo  ''
  
--		thread->error_code	= 6;  /* user fault, no page, write */
-+		thread->error_code	= X86_PF_USER | X86_PF_WRITE;
- 		thread->cr2		= ptr;
- 		thread->trap_nr		= X86_TRAP_PF;
+-# Dummies...
+ PHONY += prepare scripts
+ prepare:
+ 	$(cmd_crmodverdir)
+-scripts: ;
+ endif # KBUILD_EXTMOD
  
+ clean: $(clean-dirs)
 -- 
-2.17.2
+2.7.4
 
