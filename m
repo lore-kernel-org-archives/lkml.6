@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F337C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F93C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 449AD206BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD293214D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="REUjTvm8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 449AD206BB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MRAmT++T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD293214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388656AbeKVFpo (ORCPT
+        id S2388671AbeKVFpo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 22 Nov 2018 00:45:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40618 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:40672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729195AbeKVFpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:45:42 -0500
+        id S1729195AbeKVFpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:45:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05E5C206BB;
-        Wed, 21 Nov 2018 19:10:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C6AC2151B;
+        Wed, 21 Nov 2018 19:10:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827409;
-        bh=QBzofZZFZhmMW4CzHL3uxCdqZm22ResYrRhfmXjkwbY=;
+        s=default; t=1542827411;
+        bh=Vzi33WsWqQZMBafQgO+hlLFgPyTJHP3c4DfrnkbCO9U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=REUjTvm8/rkP7kw7SBfP/ziF0EMEsBF6ZnmmE3toUo8ISg2YQ636CHdVHwCvHRtkN
-         OUlSvhcJh0/wCyhV/fETJZ72ZZdyvbwwBHesAAuEgJGVlqtSgMjx2djyfkrqp509J8
-         gFYZgVcG0kbQjoi3Zry8DH9Ouqc8/086epqhnxSg=
+        b=MRAmT++TUYI7Wy6hwXQGBkjlOYPzoOj0PmPD357I5+DXDEJoKFD6tmPSTNVzaF98I
+         RWJXIIipOfSwP1y1E9+biX8mHQB5Se9H2WH4JbQ51rJMilF8zJGTuNbUMcGB+zMFT2
+         ua++d0S3QskgNhtZAOJMnfJTdDKW3zfVy6eFQQqc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Jessica Yu <jeyu@redhat.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH 4.9 19/59] modules: mark __inittest/__exittest as __maybe_unused
-Date:   Wed, 21 Nov 2018 20:06:34 +0100
-Message-Id: <20181121183509.007071715@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 02/59] ibmvnic: fix accelerated VLAN handling
+Date:   Wed, 21 Nov 2018 20:06:17 +0100
+Message-Id: <20181121183508.356241777@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183508.262873520@linuxfoundation.org>
 References: <20181121183508.262873520@linuxfoundation.org>
@@ -65,45 +63,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
 
-commit 1f318a8bafcfba9f0d623f4870c4e890fd22e659 upstream.
+[ Upstream commit e84b47941e15e6666afb8ee8b21d1c3fc1a013af ]
 
-clang warns about unused inline functions by default:
+Don't request tag insertion when it isn't present in outgoing skb.
 
-arch/arm/crypto/aes-cipher-glue.c:68:1: warning: unused function '__inittest' [-Wunused-function]
-arch/arm/crypto/aes-cipher-glue.c:69:1: warning: unused function '__exittest' [-Wunused-function]
-
-As these appear in every single module, let's just disable the warnings by marking the
-two functions as __maybe_unused.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
-Acked-by: Rusty Russell <rusty@rustcorp.com.au>
-Signed-off-by: Jessica Yu <jeyu@redhat.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/module.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/ibm/ibmvnic.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -127,13 +127,13 @@ extern void cleanup_module(void);
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -786,7 +786,7 @@ static int ibmvnic_xmit(struct sk_buff *
+ 	tx_crq.v1.sge_len = cpu_to_be32(skb->len);
+ 	tx_crq.v1.ioba = cpu_to_be64(data_dma_addr);
  
- /* Each module must use one module_init(). */
- #define module_init(initfn)					\
--	static inline initcall_t __inittest(void)		\
-+	static inline initcall_t __maybe_unused __inittest(void)		\
- 	{ return initfn; }					\
- 	int init_module(void) __attribute__((alias(#initfn)));
- 
- /* This is only required if you want to be unloadable. */
- #define module_exit(exitfn)					\
--	static inline exitcall_t __exittest(void)		\
-+	static inline exitcall_t __maybe_unused __exittest(void)		\
- 	{ return exitfn; }					\
- 	void cleanup_module(void) __attribute__((alias(#exitfn)));
- 
+-	if (adapter->vlan_header_insertion) {
++	if (adapter->vlan_header_insertion && skb_vlan_tag_present(skb)) {
+ 		tx_crq.v1.flags2 |= IBMVNIC_TX_VLAN_INSERT;
+ 		tx_crq.v1.vlan_id = cpu_to_be16(skb->vlan_tci);
+ 	}
 
 
