@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5EEC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8C4C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:11:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93AD521527
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:11:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAB2321707
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:11:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="phXBmO0j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93AD521527
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ji0OWqKA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAB2321707
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388873AbeKVFqc (ORCPT
+        id S2388884AbeKVFqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:46:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41764 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:46:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732198AbeKVFqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:46:30 -0500
+        id S1730770AbeKVFqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:46:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9AA16214DB;
-        Wed, 21 Nov 2018 19:10:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A8E8214D9;
+        Wed, 21 Nov 2018 19:10:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827457;
-        bh=jAGYiL2wiLnZrTCSx3PJTqiMwtkNSpjrTogbPMj2Ilw=;
+        s=default; t=1542827459;
+        bh=ioZkVmXyxvgRbmGBwTNDvsSyRhIXAzMUJUsYKxTIEpU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=phXBmO0jh0AdBEfzdUmQqz+67IgcOBVJMT7q16Zx7eE+ICcjttK60cyoYmLQJuAhn
-         bc/aD/XkyLS65+ZXQLPXbCFV8pa6RjA6al42H4ChnebXsfGh6gRhRXSeQZdfc4EMaG
-         rBz/EiOO1kahqhwmcYsBROhKNkGlYVaP3bix689I=
+        b=ji0OWqKA+njP5GkNHF62qU28OcV0BqYdY3cTZftI1JpUt//2wm+K21CnQMqlWafL6
+         98Qh7dJFVxeXkgLIrxVqg+CvLFHI6QJFrIVgsp8iM//3fEvQmaS994fGJGPeQeBOL3
+         3Myl89/IzazQe59SU0V/fLAAGBQtrknYC2BHQgD4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -45,9 +45,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Tony Lindgren <tony@atomide.com>,
         Marc Zyngier <marc.zyngier@arm.com>,
         "David A. Long" <dave.long@linaro.org>
-Subject: [PATCH 4.9 39/59] ARM: bugs: add support for per-processor bug checking
-Date:   Wed, 21 Nov 2018 20:06:54 +0100
-Message-Id: <20181121183509.786011017@linuxfoundation.org>
+Subject: [PATCH 4.9 40/59] ARM: spectre: add Kconfig symbol for CPUs vulnerable to Spectre
+Date:   Wed, 21 Nov 2018 20:06:55 +0100
+Message-Id: <20181121183509.831297139@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183508.262873520@linuxfoundation.org>
 References: <20181121183508.262873520@linuxfoundation.org>
@@ -67,16 +67,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Russell King <rmk+kernel@armlinux.org.uk>
 
-Commit 9d3a04925deeabb97c8e26d940b501a2873e8af3 upstream.
+Commit c58d237d0852a57fde9bc2c310972e8f4e3d155d upstream.
 
-Add support for per-processor bug checking - each processor function
-descriptor gains a function pointer for this check, which must not be
-an __init function.  If non-NULL, this will be called whenever a CPU
-enters the kernel via which ever path (boot CPU, secondary CPU startup,
-CPU resuming, etc.)
-
-This allows processor specific bug checks to validate that workaround
-bits are properly enabled by firmware via all entry paths to the kernel.
+Add a Kconfig symbol for CPUs which are vulnerable to the Spectre
+attacks.
 
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
@@ -86,54 +80,28 @@ Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: David A. Long <dave.long@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/include/asm/proc-fns.h |    4 ++++
- arch/arm/kernel/bugs.c          |    4 ++++
- arch/arm/mm/proc-macros.S       |    3 ++-
- 3 files changed, 10 insertions(+), 1 deletion(-)
+ arch/arm/mm/Kconfig |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm/include/asm/proc-fns.h
-+++ b/arch/arm/include/asm/proc-fns.h
-@@ -37,6 +37,10 @@ extern struct processor {
- 	 */
- 	void (*_proc_init)(void);
- 	/*
-+	 * Check for processor bugs
-+	 */
-+	void (*check_bugs)(void);
-+	/*
- 	 * Disable any processor specifics
- 	 */
- 	void (*_proc_fin)(void);
---- a/arch/arm/kernel/bugs.c
-+++ b/arch/arm/kernel/bugs.c
-@@ -5,6 +5,10 @@
+--- a/arch/arm/mm/Kconfig
++++ b/arch/arm/mm/Kconfig
+@@ -396,6 +396,7 @@ config CPU_V7
+ 	select CPU_CP15_MPU if !MMU
+ 	select CPU_HAS_ASID if MMU
+ 	select CPU_PABRT_V7
++	select CPU_SPECTRE if MMU
+ 	select CPU_TLB_V7 if MMU
  
- void check_other_bugs(void)
- {
-+#ifdef MULTI_CPU
-+	if (processor.check_bugs)
-+		processor.check_bugs();
-+#endif
- }
+ # ARMv7M
+@@ -800,6 +801,9 @@ config CPU_BPREDICT_DISABLE
+ 	help
+ 	  Say Y here to disable branch prediction.  If unsure, say N.
  
- void __init check_bugs(void)
---- a/arch/arm/mm/proc-macros.S
-+++ b/arch/arm/mm/proc-macros.S
-@@ -274,13 +274,14 @@
- 	mcr	p15, 0, ip, c7, c10, 4		@ data write barrier
- 	.endm
- 
--.macro define_processor_functions name:req, dabort:req, pabort:req, nommu=0, suspend=0
-+.macro define_processor_functions name:req, dabort:req, pabort:req, nommu=0, suspend=0, bugs=0
- 	.type	\name\()_processor_functions, #object
- 	.align 2
- ENTRY(\name\()_processor_functions)
- 	.word	\dabort
- 	.word	\pabort
- 	.word	cpu_\name\()_proc_init
-+	.word	\bugs
- 	.word	cpu_\name\()_proc_fin
- 	.word	cpu_\name\()_reset
- 	.word	cpu_\name\()_do_idle
++config CPU_SPECTRE
++	bool
++
+ config TLS_REG_EMUL
+ 	bool
+ 	select NEED_KUSER_HELPERS
 
 
