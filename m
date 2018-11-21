@@ -2,120 +2,125 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 289C1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC423C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:06:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB1C62174D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:05:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB1C62174D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B56F214C1
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:06:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y/3OJOW+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B56F214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731652AbeKVCkf (ORCPT
+        id S1731663AbeKVClV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 21:40:35 -0500
-Received: from foss.arm.com ([217.140.101.70]:53854 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730072AbeKVCke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 21:40:34 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 97E3F1D70;
-        Wed, 21 Nov 2018 08:05:32 -0800 (PST)
-Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F39E3F5CF;
-        Wed, 21 Nov 2018 08:05:28 -0800 (PST)
-Date:   Wed, 21 Nov 2018 16:05:27 +0000
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v9 13/15] sched/fair: Introduce an energy estimation
- helper function
-Message-ID: <20181121160524.ulj6n3shb2fdwboj@queper01-lin>
-References: <20181119141857.8625-1-quentin.perret@arm.com>
- <20181119141857.8625-14-quentin.perret@arm.com>
- <20181121142803.GF2113@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181121142803.GF2113@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+        Wed, 21 Nov 2018 21:41:21 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33763 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730072AbeKVClU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 21:41:20 -0500
+Received: by mail-pl1-f194.google.com with SMTP id z23so6152465plo.0;
+        Wed, 21 Nov 2018 08:06:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=15CBHc4LfPIPHaj3tA3fI5dNAgKyfqROLgd/vwyWEb8=;
+        b=Y/3OJOW+Vur3T5Zg8W7z+OancXXF5zFQezttVBzWIsq5jjPd9GZS49XFe2PXNJQLYj
+         kD8KOATBi4fCcK1n9LYdlvzKqkZf3pVXKiw8T9DDw9a1SJ0b/e6PE1vcNEbJh1MjtFGx
+         IZ3xalMoYaYJzj/LwYF2/Xb6Fkb5Q8J0sYHk7GZBUFwNwbsZuFcSOhAYqQjBsjKNt7CC
+         MIxLYt7ks3w0lzkAPmcm0sD4eNssH0rvz0Onh7wF7h2mXSnQtm4YHi75Ms1eTiILbv7R
+         h/zO7LF5qqniKdIGmAgzEnl8H3qidXTbbjv+HwOqUjMCtUiL6B8lmBkiFmXaZJ1uiKoX
+         zUPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=15CBHc4LfPIPHaj3tA3fI5dNAgKyfqROLgd/vwyWEb8=;
+        b=iqj88IAEGL2INu4UpLpoBTxfkOnqyB28RnKju7TNzurfeY/9KINO7tajQFjT+rDnWG
+         jnjz7omoikg1uira57Rz/NHky3ANUv7DvBuvkCGk990NHhbHnnOmjSNxzOSQ1SkwDwIo
+         BOWkoO9WajhqIk2WwBuHtJrVPRegkl0mgpguVDZyOkES6RbCP6RaGwcZL0fHSKC92ODV
+         MKe5WBR7sygfyJprpwQHGqZDPDQJ8FE7aPoHoel2I5cSLAXxATlC8ikb+nvAMI4HX99V
+         +9SULMHYs9OVLdmEjPbZ+6LcYzElwYX6Hy+sf/SOiBJ7rMsnsLQMImM/cDro7JdsiIhd
+         GYVQ==
+X-Gm-Message-State: AA+aEWZ2nPnnNm/CoKrYaik9PQ5YReJZ/7ruc5SMq8lnqcB0ieOvYgtV
+        LQ2Js4vBZ8UQM4tRDnmhNiQ=
+X-Google-Smtp-Source: AFSGD/WP1hB94PuTOo1BWEkNQQ/3QL0FL/W5OX2i4p0jaSe634O5DMpqwLj28+uDwzMCa1erSMZ7+Q==
+X-Received: by 2002:a63:af18:: with SMTP id w24mr6545151pge.385.1542816378388;
+        Wed, 21 Nov 2018 08:06:18 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id 85sm63334459pfw.17.2018.11.21.08.06.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 08:06:17 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     davem@davemloft.net, gregkh@linuxfoundation.org, jslaby@suse.com
+Cc:     sparclinux@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] serial/sunsu: add missing of_node_put()
+Date:   Wed, 21 Nov 2018 11:06:15 -0500
+Message-Id: <20181121160615.23666-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday 21 Nov 2018 at 15:28:03 (+0100), Peter Zijlstra wrote:
-> On Mon, Nov 19, 2018 at 02:18:55PM +0000, Quentin Perret wrote:
-> > +static long
-> > +compute_energy(struct task_struct *p, int dst_cpu, struct perf_domain *pd)
-> > +{
-> > +	long util, max_util, sum_util, energy = 0;
-> > +	int cpu;
-> > +
-> > +	for (; pd; pd = pd->next) {
-> > +		max_util = sum_util = 0;
-> > +		/*
-> > +		 * The capacity state of CPUs of the current rd can be driven by
-> > +		 * CPUs of another rd if they belong to the same performance
-> > +		 * domain. So, account for the utilization of these CPUs too
-> > +		 * by masking pd with cpu_online_mask instead of the rd span.
-> > +		 *
-> > +		 * If an entire performance domain is outside of the current rd,
-> > +		 * it will not appear in its pd list and will not be accounted
-> > +		 * by compute_energy().
-> > +		 */
-> > +		for_each_cpu_and(cpu, perf_domain_span(pd), cpu_online_mask) {
-> 
-> Should that not be cpu_active_mask ?
+of_find_node_by_path() acquires a reference to the node
+returned by it and that reference needs to be dropped by its caller.
+This place is not doing this, so fix it.
 
-Hmm, I must admit I'm sometimes a bit confused by the exact difference
-between these masks, so maybe yeah ...
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/tty/serial/sunsu.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-IIUC, cpu_active_mask is basically the set of CPUs on which the
-scheduler is actually allowed to migrate tasks. Is that correct ?
+diff --git a/drivers/tty/serial/sunsu.c b/drivers/tty/serial/sunsu.c
+index 6cf3e9b0728f..4a27c0114d50 100644
+--- a/drivers/tty/serial/sunsu.c
++++ b/drivers/tty/serial/sunsu.c
+@@ -1394,22 +1394,32 @@ static inline struct console *SUNSU_CONSOLE(void)
+ static enum su_type su_get_type(struct device_node *dp)
+ {
+ 	struct device_node *ap = of_find_node_by_path("/aliases");
++	enum su_type rc = SU_PORT_PORT;
+ 
+ 	if (ap) {
++		struct device_node *tmp;
+ 		const char *keyb = of_get_property(ap, "keyboard", NULL);
+ 		const char *ms = of_get_property(ap, "mouse", NULL);
+ 
+ 		if (keyb) {
+-			if (dp == of_find_node_by_path(keyb))
+-				return SU_PORT_KBD;
++			tmp = of_find_node_by_path(keyb);
++			if (tmp && dp == tmp){
++				rc = SU_PORT_KBD;
++				goto out;
++			}
+ 		}
+ 		if (ms) {
+-			if (dp == of_find_node_by_path(ms))
+-				return SU_PORT_MS;
++			tmp = of_find_node_by_path(ms);
++			if (tmp && dp == tmp){
++				rc = SU_PORT_MS;
++				goto out;
++			}
+ 		}
+ 	}
+ 
+-	return SU_PORT_PORT;
++out:
++	of_node_put(ap);
++	return rc;
+ }
+ 
+ static int su_probe(struct platform_device *op)
+-- 
+2.17.0
 
-I have always seen cpu_online_mask as a superset of cpu_active_mask
-which can also include CPUs which are still running 'special' tasks
-(kthreads and things like that I assume) although not allowed for
-migration any more (or not yet) because we're in the process of
-hotplugging that CPU.
-
-So, the thing is, I'm not trying to select a CPU candidate for my task
-here, I'm trying to understand what's the energy impact of a migration.
-That involves all CPUs that are running _something_ in a perf domain
-no matter if they're allowed to run more tasks or not. I mean, raising
-the OPP will make running online && !active CPUs more expensive as well.
-That's why I thought cpu_online_mask was good match here.
-
-Or maybe I'm confused again :-)
-
-> 
-> > +			util = cpu_util_next(cpu, p, dst_cpu);
-> > +			util = schedutil_energy_util(cpu, util);
-> > +			max_util = max(util, max_util);
-> > +			sum_util += util;
-> > +		}
-> > +
-> > +		energy += em_pd_energy(pd->em_pd, max_util, sum_util);
-> > +	}
-> > +
-> > +	return energy;
-> > +}
-
-Thanks,
-Quentin
