@@ -2,84 +2,237 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FBDAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C75C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EBA2214DE
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:55:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EBA2214DE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id A1D3A21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:59:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="gE+Ji3qf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1D3A21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729890AbeKUW3G convert rfc822-to-8bit (ORCPT
+        id S1729389AbeKUWdn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 17:29:06 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:49517 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729391AbeKUW3G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 17:29:06 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-156-3Rosp5WGPzWokpHn58AxCA-1; Wed, 21 Nov 2018 11:54:57 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 21 Nov 2018 11:55:04 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 21 Nov 2018 11:55:04 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Jan Beulich' <JBeulich@suse.com>, "mingo@elte.hu" <mingo@elte.hu>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "hpa@zytor.com" <hpa@zytor.com>
-CC:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] x86: modernize sync_bitops.h
-Thread-Topic: [PATCH v2] x86: modernize sync_bitops.h
-Thread-Index: AQHUgYKYAz8XcFA8pkaOqgSV6G3YUKVaHKgQ
-Date:   Wed, 21 Nov 2018 11:55:04 +0000
-Message-ID: <92f590595593498eaa1f91a17875126f@AcuMS.aculab.com>
-References: <5B30C2C302000078001CD6D1@prv1-mh.provo.novell.com>
- <5B30C2C302000000000FA99B@prv1-mh.provo.novell.com>
- <5B30C2C302000078001FE5A0@prv1-mh.provo.novell.com>
- <5BF52F4D02000078001FE5C1@prv1-mh.provo.novell.com>
-In-Reply-To: <5BF52F4D02000078001FE5C1@prv1-mh.provo.novell.com>
+        Wed, 21 Nov 2018 17:33:43 -0500
+Received: from mail-eopbgr60069.outbound.protection.outlook.com ([40.107.6.69]:2801
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726612AbeKUWdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 17:33:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+He822nmuk7oJUCNg5fn2pz/OgbKwppd1xT9+F0hcMY=;
+ b=gE+Ji3qf2ZMHroCwhGwimvz/7vToBpY5QQUGFzRIhJLVRrUZ6ww3PTQXmPIXLaumer7d3AFrQ/c5kDzARtHXQycexoHlzEN5Xdt90vcyMD9E/TFAA8O0bcL6Kdam40HUN8xTbRXGm9EigKi+9d9zZimDgZppwHJPt1n/yDhGu2o=
+Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com (10.175.20.142) by
+ VI1PR0802MB2461.eurprd08.prod.outlook.com (10.175.26.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.15; Wed, 21 Nov 2018 11:59:31 +0000
+Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com
+ ([fe80::3d5c:5229:b634:b1ac]) by VI1PR0802MB2528.eurprd08.prod.outlook.com
+ ([fe80::3d5c:5229:b634:b1ac%9]) with mapi id 15.20.1339.027; Wed, 21 Nov 2018
+ 11:59:31 +0000
+From:   Dave Rodgman <dave.rodgman@arm.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     nd <nd@arm.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Matt Sealey <Matt.Sealey@arm.com>,
+        "nitingupta910@gmail.com" <nitingupta910@gmail.com>,
+        "rpurdie@openedhand.com" <rpurdie@openedhand.com>,
+        "markus@oberhumer.com" <markus@oberhumer.com>,
+        "minchan@kernel.org" <minchan@kernel.org>,
+        "sergey.senozhatsky.work@gmail.com" 
+        <sergey.senozhatsky.work@gmail.com>
+Subject: [PATCH 1/6] lib/lzo: clean-up by introducing COPY16
+Thread-Topic: [PATCH 1/6] lib/lzo: clean-up by introducing COPY16
+Thread-Index: AQHUgZGph4KjHa6h4kug2oO/copbEA==
+Date:   Wed, 21 Nov 2018 11:59:31 +0000
+Message-ID: <20181121115922.22864-2-dave.rodgman@arm.com>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+x-mailer: git-send-email 2.16.4
+x-originating-ip: [217.140.106.53]
+x-clientproxiedby: LO2P265CA0301.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a5::25) To VI1PR0802MB2528.eurprd08.prod.outlook.com
+ (2603:10a6:800:b0::14)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=dave.rodgman@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0802MB2461;6:Ep2C2a8ex/7M1aI/IRc5JVnwfXiFoijNYIZNtPp0Z5OrXGUpudG6TuYnyEuLhM9u0s7+VEFTRi2jRsVOmXlu0Z7IXoI2eGkJxmb3lAz+n337fJyeQ3j/DbD1Z1DovSIPm9Bbd58yHtGKR5Td0xFcx9qut8N2a6FOqeyQUMMiWqzePRzEQbDvDwDjF2GecxkHNUcbHskJVP7Mi278Fy1ocQHcbhaLR1AY0RtC3XAkIfQILf6tc9wYcKpTjI0kbxVkwvuOvap7gg3QnnxDbH6Dcae/4LpmbPxbkudFJ/0iK9p8kvzCh2pt0XSBy/hP1HC6TEe9BYvopnwVAK8GvYx3L7ZxC5UizSW3MdMEyQY09SzfVTesNU/YplUreJcbVYx7D/MQwJeJiMMu0ys+AzlYuGxBq2hQ+tLVjFC5fnq9Iu6+oFC06yQcO8fFkm3QX4ChtX5b0j5cx9K9jY0Fk5OJsg==;5:F6tXKqh6ZFe3c/cq8M8BJ38GF26OHUzhaA3k5sSQGO4dgYM/WdkU1MKbLwrRMkQca3mhi/YQtryZaGe2S77n3UHHTRmDiJ1t/lSBP5gl9r6nqqGcUh07ZmUwcxdK5sqG7BNwA+NdVLwA42lMyKF9BH5W8mvCuy/CNtyXYWmtJls=;7:jembgd6qtEuu3sTDqicXs0gLvjcZOKcioVPajIJYuRMBAgzPHcK0K+/FQHup252noQ7/ta6yoci6196sjHMah2WGJl7/oFB+I+OGFubvQjPaoCCQoQ4Pyzw/Jq7AU9TYMHu0A21wcf2S7D5u4H5PXg==
+x-ms-office365-filtering-correlation-id: 9331b43d-dd2f-40d8-004d-08d64fa8cbdf
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR0802MB2461;
+x-ms-traffictypediagnostic: VI1PR0802MB2461:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <VI1PR0802MB2461BE6C79ABF2675B6E86BD8FDA0@VI1PR0802MB2461.eurprd08.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231442)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR0802MB2461;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0802MB2461;
+x-forefront-prvs: 08635C03D4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(136003)(39860400002)(376002)(346002)(396003)(366004)(199004)(189003)(6486002)(68736007)(2501003)(316002)(97736004)(186003)(8936002)(478600001)(54906003)(7736002)(39060400002)(305945005)(5660300001)(2900100001)(8676002)(2351001)(99286004)(106356001)(36756003)(102836004)(26005)(25786009)(6916009)(4326008)(6436002)(52116002)(105586002)(81166006)(6506007)(81156014)(486006)(2616005)(66066001)(476003)(86362001)(386003)(3846002)(50226002)(14454004)(44832011)(5640700003)(53936002)(6116002)(71200400001)(1076002)(2906002)(256004)(6512007)(71190400001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0802MB2461;H:VI1PR0802MB2528.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Wb1GhvINfCANCJRreQwaqtu6dZ8n1qizaGOkJndOpjO++vjV8aLbN1OLeDvkDDo3GubDmpqPsSD5WhvMxEfVoqJLH/tgkb8PyCVPGQ2LmByR6BRULOXW6obo51byM4Pny8qU2e2Po2L+QYVOnLZmPx6yP1IUqdIMD1miKO/NRfPxzEo2QmCtq6Q7vxQlfgGamxOvatWCTkRyoZN0wXas9lnXkphQIOLgpSFYaGZRtunEGfam4HXUCG7DOb7LHxkIeVAwaNGOEkj8qEl8lo5MBHjOBh/Lbcp3Dy82YOOcMwHnttkYD8PaLdWnVYglo/jXeZ5sLetXudaom1mbtxTSGBoVCbhO0Kn07sf/sUcBmks=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MC-Unique: 3Rosp5WGPzWokpHn58AxCA-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9331b43d-dd2f-40d8-004d-08d64fa8cbdf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2018 11:59:31.7212
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0802MB2461
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Beulich
-> Sent: 21 November 2018 10:11
-> 
-> Add missing insn suffixes and use rmwcc.h just like was (more or less)
-> recently done for bitops.h as well.
+From: Matt Sealey <matt.sealey@arm.com>
 
-Why? bts (etc) on memory don't really have an 'operand size'.
-IIRC the suffix determines the width of the %cx register that selects the bit number.
-I'd have to look up what the "Ir" constraint means.
+Most compilers should be able to merge adjacent loads/stores of sizes which
+are less than but effect a multiple of a machine word size (in effect a
+memcpy() of a constant amount). However the semantics of the macro are that
+it just does the copy, the pointer increment is in the code, hence we see
 
-IIRC the i386 book just said that the cpu might (aka will) read/write 4 bytes
-surrounding the required byte.
-More recent books say it does an aligned 4 byte read/write.
+    *a =3D *b
+    a +=3D 8
+    b +=3D 8
+    *a =3D *b
+    a +=3D 8
+    b +=3D 8
 
-	David
+This introduces a dependency between the two groups of statements which
+seems to defeat said compiler optimizers and generate some very strange
+sequences of addition and subtraction of address offsets (i.e. it is
+overcomplicated).
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+Since COPY8 is only ever used to copy amounts of 16 bytes (in pairs), just
+define COPY16 as COPY8,COPY8. We leave the definition to preserve the need
+to do unaligned accesses to machine-sized words per the original code
+intent, we just don't use it in the code proper.
+
+COPY16 then gives us code like:
+
+    *a =3D *b
+    *(a+8) =3D *(b+8)
+    a +=3D 16
+    b +=3D 16
+
+This seems to allow compilers to generate much better code by using
+base register writeback or simply positively incrementing offsets which
+seems to positively affect performance. It is, at least, fewer instructions
+to do the same job.
+
+Signed-off-by: Matt Sealey <matt.sealey@arm.com>
+---
+ lib/lzo/lzo1x_compress.c        |  9 +++------
+ lib/lzo/lzo1x_decompress_safe.c | 18 ++++++------------
+ lib/lzo/lzodefs.h               |  3 +++
+ 3 files changed, 12 insertions(+), 18 deletions(-)
+
+diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
+index 236eb21167b5..82fb5571ce5e 100644
+--- a/lib/lzo/lzo1x_compress.c
++++ b/lib/lzo/lzo1x_compress.c
+@@ -60,8 +60,7 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_le=
+n,
+ 				op +=3D t;
+ 			} else if (t <=3D 16) {
+ 				*op++ =3D (t - 3);
+-				COPY8(op, ii);
+-				COPY8(op + 8, ii + 8);
++				COPY16(op, ii);
+ 				op +=3D t;
+ 			} else {
+ 				if (t <=3D 18) {
+@@ -76,8 +75,7 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_le=
+n,
+ 					*op++ =3D tt;
+ 				}
+ 				do {
+-					COPY8(op, ii);
+-					COPY8(op + 8, ii + 8);
++					COPY16(op, ii);
+ 					op +=3D 16;
+ 					ii +=3D 16;
+ 					t -=3D 16;
+@@ -255,8 +253,7 @@ int lzo1x_1_compress(const unsigned char *in, size_t in=
+_len,
+ 			*op++ =3D tt;
+ 		}
+ 		if (t >=3D 16) do {
+-			COPY8(op, ii);
+-			COPY8(op + 8, ii + 8);
++			COPY16(op, ii);
+ 			op +=3D 16;
+ 			ii +=3D 16;
+ 			t -=3D 16;
+diff --git a/lib/lzo/lzo1x_decompress_safe.c b/lib/lzo/lzo1x_decompress_saf=
+e.c
+index a1c387f6afba..aa95d3066b7d 100644
+--- a/lib/lzo/lzo1x_decompress_safe.c
++++ b/lib/lzo/lzo1x_decompress_safe.c
+@@ -86,12 +86,9 @@ int lzo1x_decompress_safe(const unsigned char *in, size_=
+t in_len,
+ 					const unsigned char *ie =3D ip + t;
+ 					unsigned char *oe =3D op + t;
+ 					do {
+-						COPY8(op, ip);
+-						op +=3D 8;
+-						ip +=3D 8;
+-						COPY8(op, ip);
+-						op +=3D 8;
+-						ip +=3D 8;
++						COPY16(op, ip);
++						op +=3D 16;
++						ip +=3D 16;
+ 					} while (ip < ie);
+ 					ip =3D ie;
+ 					op =3D oe;
+@@ -187,12 +184,9 @@ int lzo1x_decompress_safe(const unsigned char *in, siz=
+e_t in_len,
+ 			unsigned char *oe =3D op + t;
+ 			if (likely(HAVE_OP(t + 15))) {
+ 				do {
+-					COPY8(op, m_pos);
+-					op +=3D 8;
+-					m_pos +=3D 8;
+-					COPY8(op, m_pos);
+-					op +=3D 8;
+-					m_pos +=3D 8;
++					COPY16(op, m_pos);
++					op +=3D 16;
++					m_pos +=3D 16;
+ 				} while (op < oe);
+ 				op =3D oe;
+ 				if (HAVE_IP(6)) {
+diff --git a/lib/lzo/lzodefs.h b/lib/lzo/lzodefs.h
+index 4edefd2f540c..9f167eaabb28 100644
+--- a/lib/lzo/lzodefs.h
++++ b/lib/lzo/lzodefs.h
+@@ -23,6 +23,9 @@
+ 		COPY4(dst, src); COPY4((dst) + 4, (src) + 4)
+ #endif
+=20
++#define COPY16(dst, src) \
++	do { COPY8(dst, src); COPY8((dst) + 8, (src) + 8); } while (0)
++
+ #if defined(__BIG_ENDIAN) && defined(__LITTLE_ENDIAN)
+ #error "conflicting endian definitions"
+ #elif defined(__x86_64__)
+--=20
+2.16.4
 
