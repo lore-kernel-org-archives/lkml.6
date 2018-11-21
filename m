@@ -2,74 +2,166 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACEF6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 722EEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:16:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F2E721479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:14:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F2E721479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 223F02148E
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:16:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="PFGCo4YX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 223F02148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728602AbeKUSsQ (ORCPT
+        id S1728524AbeKUSti (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 13:48:16 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46086 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728516AbeKUSsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 13:48:15 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6579287623;
-        Wed, 21 Nov 2018 08:14:44 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-59.ams2.redhat.com [10.36.116.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 56BB91054FD3;
-        Wed, 21 Nov 2018 08:14:41 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 6EB2E24D568; Wed, 21 Nov 2018 09:14:40 +0100 (CET)
-Date:   Wed, 21 Nov 2018 09:14:40 +0100
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>,
-        Thierry Reding <treding@nvidia.com>,
-        Daniel Stone <daniels@collabora.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Adam Jackson <ajax@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] drm/cirrus: Remove set but not used variable 'bo'
-Message-ID: <20181121081440.nmrjsx24niopbimc@sirius.home.kraxel.org>
-References: <1542283836-152176-1-git-send-email-yuehaibing@huawei.com>
+        Wed, 21 Nov 2018 13:49:38 -0500
+Received: from mail-eopbgr790050.outbound.protection.outlook.com ([40.107.79.50]:62816
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726195AbeKUSti (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 13:49:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UmGOUN+fFag6Ro8aKXQdQUmfr/vOKGRKBybJV3EmcOw=;
+ b=PFGCo4YXR2sDEFYgRromPTSrOuaDGOma6Qpad3V6ym/PGH5FHirxsbtCwxabmdwjZ1Dj8OnlgPo9LIbWgNTxwhFZ8A0VlvlpdIBKthNugoZOmdIZefziV598s6hI8xO8eKa32/MKjgdaUEfW4w4oKhZJCtkN/Lm41I8sDMy4nsI=
+Received: from DM5PR12CA0008.namprd12.prod.outlook.com (2603:10b6:4:1::18) by
+ SN1PR12MB0432.namprd12.prod.outlook.com (2a01:111:e400:5865::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1361.15; Wed, 21 Nov
+ 2018 08:16:02 +0000
+Received: from DM3NAM03FT009.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e49::209) by DM5PR12CA0008.outlook.office365.com
+ (2603:10b6:4:1::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1361.14 via Frontend
+ Transport; Wed, 21 Nov 2018 08:16:02 +0000
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=permerror action=none header.from=amd.com;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+Received: from SATLEXCHOV01.amd.com (165.204.84.17) by
+ DM3NAM03FT009.mail.protection.outlook.com (10.152.82.114) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1339.10 via Frontend Transport; Wed, 21 Nov 2018 08:16:02 +0000
+Received: from [10.237.40.91] (10.34.1.3) by SATLEXCHOV01.amd.com
+ (10.181.40.71) with Microsoft SMTP Server (TLS) id 14.3.389.1; Wed, 21 Nov
+ 2018 02:16:00 -0600
+Subject: Re: [PATCH] drm/amd/amdgpu/vce_v3_0.c: Remove duplicate header
+To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>,
+        <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
+        <David1.Zhou@amd.com>, <airlied@linux.ie>, <leo.liu@amd.com>,
+        <andrey.grodzovsky@amd.com>, <Emily.Deng@amd.com>,
+        <Rex.Zhu@amd.com>
+CC:     <jrdr.linux@gmail.com>, <amd-gfx@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <sabyasachi.linux@gmail.com>
+References: <20181121071103.GA2622@hp-pavilion-15-notebook-pc-brajeswar>
+From:   "Zhang, Jerry(Junwei)" <Jerry.Zhang@amd.com>
+Message-ID: <13613dd2-dfef-7a8e-4c27-5b5bed336a89@amd.com>
+Date:   Wed, 21 Nov 2018 16:15:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1542283836-152176-1-git-send-email-yuehaibing@huawei.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 21 Nov 2018 08:14:44 +0000 (UTC)
+In-Reply-To: <20181121071103.GA2622@hp-pavilion-15-notebook-pc-brajeswar>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.34.1.3]
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(376002)(346002)(2980300002)(428003)(189003)(199004)(86362001)(478600001)(336012)(2201001)(229853002)(72206003)(67846002)(2906002)(23676004)(2486003)(64126003)(186003)(26005)(77096007)(16526019)(76176011)(53546011)(68736007)(7736002)(305945005)(36756003)(31696002)(6116002)(3846002)(5660300001)(65826007)(230700001)(426003)(97736004)(104016004)(6246003)(53936002)(4326008)(39060400002)(106466001)(16576012)(316002)(31686004)(54906003)(110136005)(2616005)(81156014)(58126008)(486006)(8676002)(8936002)(105586002)(126002)(476003)(81166006)(6636002)(65956001)(14444005)(50466002)(446003)(6666004)(356004)(65806001)(11346002)(47776003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB0432;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;DM3NAM03FT009;1:0Wf+QTK9O38To4lgrCL+dDEso14Q2Kxo2RCdwCzXUkwa80SBkwVEMmK27JiJazeCVCU1Mua2vSKuGIwtkP2t+7z48KckvPKwL5mih/L4n+4mrdd0CSBOLSWOqvha+Ra4
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 5293661c-f2e7-4799-ae20-08d64f89938f
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB0432;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0432;3:OoAC4bzuZGZeTh/FdKcBR16IZW9qXwd0B8jbSRUE2s5k069qWVnyIvhZxRF79EFeOpE4nPm4UD6r9il7HI367hy/+Q4oCgN6J5r53GvQLHohW1Sbw9DwIQbLL3wA3mW/eos++ruEBUdEawnLpPf0B1TWbvYK4LoWeKSaYnfHYNepyGD2K3P48/2cKuHdzfuzunv9KuNAam0ecFmTOfFzoZ06KBIOZeeWyDFapdqPjy1lNsmZrcl1tOwuur+HUgxUfekt2LZN4UI0b3h7dfr1cX/aPwMZw2mtFW/sMr2Ls9fGcQ1SrTPbvCrE/TriKo+wXz8EZu9dGaiSSBli07Vy3Kl8yzeNZvTsw+yOa/GJ81A=;25:HwiIKvBBCct1Z3Aek3ENDXe7iP0PpMioigTpPQmPqi07l6kGs/pXNrpvfWuWOzIk4eWMHBpBHTS+0t9eyZIalNkfHUddIDYI3xC49rh9K34frHQhUT0oGOyxuZ1nLBjueJfDsL7SJaRGoUW/D4jpYRQcEuLW4KAUOuEvIQKTuYWoVMLbbnUPnsWKsu37aTpXZKDo3i94LBcxFNrnQ0HmJhD1n7Ns/hDqiFXVQHoTgArnNtZ4nYuT/SNL/+2ghMBP3OH/erTz7lxV+pWo8cOfRdt08r7+Dh84ZgmKMQTWNJHCfRFUh/XW523i2grOG/dSkW0fotfEjO/36/vJrbAX0fMurNEuDe43MxF5EZDAIr0=
+X-MS-TrafficTypeDiagnostic: SN1PR12MB0432:
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0432;31:i7pQGaG1B3GafzdVfmt1UqvKpVSgWVUfuH6XgCvawFs1mivW7/v7jx0n6Sud31i1G60dYmvey6ES8YfJbWFRFArQ5bOpn2sErJry3qdpgxMc9Dx0IPljdKF4tugxVZMh6iR4PdJvrlbI4cGE/qCtgklwPws2Pw7DhOSjrBI26RKTrpXQCoGa+gi2iSYmVO+qfIT7NsVRhZetNo7hWHvzbMAmsYxCfEGjiMqknn6AcHI=;20:mMJ3o9xJcu/Dmuh/A2fD27xmweScFFzol0EgG2M/9OL+s+crR3qDvPtFLIC6biBWcCTAdDTfU8GgEvbnWBzDknkeZnFZmPi7Yfzb4ygmdpHiWODabNqv4bE9uQQcthgghXe66mOZSLLgAdYmv8ACN4mjCEsRmGuE0QHlWknvz5YJ9WLoZB0C6rOT1nyqjNgvGvAPJvZVAgWJMaR0d2uGMf91i3OQq6oyLEoIVr1w6+Fn7326gPfgSePnPA/eYo3JQ8FpVcdbhZRSUsAw5ZdBesOgh06oHeqkMmrVaDbGZ3G/tAUlJzlHN+0kPOzTUyF1GSWavgDZu4cs6iiZc7AHvdoxI1jWjT+qoySDMlzBdDHmSC4Z2GobfcDI5zhzC9H3sFWFHcGo6cFEVOxTAPmQLXDXvW5nkyLDJx808fBmNr3VjwgIz1HdjFB9Dm9lKnVF3Q171BWoARlyd+DQh3lGclUZ7L5s0pMiWNn1RtYurFQY/K4AXbCUDLb4hlJWjzXc
+X-Microsoft-Antispam-PRVS: <SN1PR12MB043265F786974AD6A8427860FFDA0@SN1PR12MB0432.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231442)(944501410)(52105112)(93006095)(93003095)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:SN1PR12MB0432;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB0432;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0432;4:kBycEd3VVZdn+Vp5CVKUWsh978zqiF7bdjpYhqZfX8bU3yq5437Xa7NzdGNmjpQWxMyvgc/ZQiO7yZPPJzx6Y3kYGyrmsHOXrCwBbSdjRCE0cdpGQmmBi3cNuRNTP9Rj4hq7Xhdv0UgBeUm+x5o1VjRW5MmO0/ER3mYt8emZXlH9oGkusSnK1sTe2vyhk7wsy21goKUQALTxFkPkZCBMMUbnkbfldC5iTpD6sjTN3PywAIETBYFn1Jy6nQ+SdP/zz2+lAqvuYyySAAy2ywZPvA==
+X-Forefront-PRVS: 08635C03D4
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtTTjFQUjEyTUIwNDMyOzIzOlVrdGNGQW1vN2tlVXAwWHFXaFFQeXRVSHdr?=
+ =?utf-8?B?Wm85bzNvU0NuM1Q3L2FKWERlcDVUOEpGdnMxQ0JmWUpkVTFWaDBTOEkvS2dR?=
+ =?utf-8?B?QXZVcHlzWjF2WG50ZGNVeFE5S2JpU2gyWmJLb0dsb0Rzd0F6Yk43cHpNSjNt?=
+ =?utf-8?B?WFlwNHBXbG1oOFJVL1lYcW1UVS9Ncks5aXRmU1o0SHlxTzZPdlZjSlNkdXRi?=
+ =?utf-8?B?ejliOEVlYVdYcHZkOEt1T2ozbFJHMlU2YmFldEgvbWhRV2JPMjZ0MzIzdFdD?=
+ =?utf-8?B?NGh2QU5EUnBYNXBEN2dTNWF6VHM1WDBrQmRkVjhRdFV4Ymc3cUtPZXhSYUgx?=
+ =?utf-8?B?TXNQeGZPYXhRUnFIby9zMG9aMFZRa0p3ekZSRC9MREN1YlZEZjlhN0FKeHFy?=
+ =?utf-8?B?Q3lyWkV3YmN0bTJoVXpxTUZHM2kyY3owVFhycEFUVENiTG1sOEI3RlBJbHp5?=
+ =?utf-8?B?UEFpYXlEeWZENHBtbjNPK000b05UVWc2Um41MG9rRUhnekg1V2k5Qm5jYzJM?=
+ =?utf-8?B?TkI2amZTbWhDOUVGRmhRNksrNUUxaUR4b29BUWZEbWdQZEhiZ0JtVEhNNlVM?=
+ =?utf-8?B?RVNydzBzWE5zSVQ1OFZUYXB3UGZla1Y1MC9UWW1GNDF6SlB3VHZuZFliNzBo?=
+ =?utf-8?B?MmxoaGdHNytCK29zTVZTbHRjcUVHWFhUMTRXSG9zanJSZmo2ZksrNzVGTVFU?=
+ =?utf-8?B?eUpBUXFqYjlkYUtEMkZjdENPRXc4ZVJEYXNldjF0Zjk0bnJmUXJFL3YwV2FW?=
+ =?utf-8?B?OTYwQldPZkx0MEpTL2tFcFA5UlRjYUVVVy9CRHpZaUhkenEzNVpBL1FmcXFB?=
+ =?utf-8?B?ajIwSzduZWEybE9oWDIvK2lyaUdlWVEzNVFjZ3BEOEcwTW42ajJ0clpDbW9x?=
+ =?utf-8?B?SjhCa1crUnBtSU5idEh3VUZsSjhhUHBvcFZYcE9kMWRqNFJrYkFWbTFMMVhK?=
+ =?utf-8?B?WVVUdjhrMndxK2VPT1NZTFk5MzR3emc0ak9Yc2Q5c3R4MUM2d0tSaWt6WmdN?=
+ =?utf-8?B?ZEhSd3duSDUyTkRidjEvY0c5Q0U0NjY0RGp4VlVSS015eC9kMzJTM3pWVHBl?=
+ =?utf-8?B?V2dGZTlTZlZNU2tldDZaRHNGTU1OWThDTzhJZGVFSmV3M01BVnVLUHZySmxQ?=
+ =?utf-8?B?REFjVWFBSXNTd3JUemNjZ05xS0p6RnJDZXgrckhTRHZXVk8zQkUrZCtiekM1?=
+ =?utf-8?B?ZWVpMEdhTmN3MUVBWEV2d3BPaTVGTDVRR0QwSXNSTDBuZ0lWZXV2OHJvcTd1?=
+ =?utf-8?B?d09Tb3R0QTVrcjhod0xqNTA0dlpBclA0OCs3MHZ4SmxLcFBES1p5UEllNXNS?=
+ =?utf-8?B?RTZmL29nSUR5RVJUdEI2NHB2VDBQQ0kwRkdaeHVOYjRLK05nVjFsWERSSVpL?=
+ =?utf-8?B?b0FkaEs3VlBGOVVDVVY0ZVJXNkYySWNJRFZaeitmcVh6UlU2MVhBWlRwTGhN?=
+ =?utf-8?B?dTdqOXhEb21rQ2VFRnNCZ0xJNGlRR0FoY1NVbEdQWTY3SDljeHZST2czdWcz?=
+ =?utf-8?B?aVlpYUt0VDQrSmJkQ0o3SEY3VnFMTUtZNG9XY1owMGpzc2pEeWx5NXRPN0g0?=
+ =?utf-8?B?MlU1SHhOSDg5VjRhbHNKazhISzNraEE1V3FFNmlwNkRmR0FZOXhvczNWL0Zp?=
+ =?utf-8?B?c3c5WlJ2ZlkzOTJjeUlpSG9jYXFHZ1F2NElRSlY4Vnhpd2MxM0w4WkEvMmNz?=
+ =?utf-8?B?SUhWZzlOZENkZnZ6YlBZdXpidjVGR042SHZGNXhoZXhMM0M5dlRZREdqNTQr?=
+ =?utf-8?B?WVRqZlZlNE9SMHlLNXhmOE1kVkZoNUE2a25aMFhYbWgrSFozcmpEUkZsaDIy?=
+ =?utf-8?B?ZzNVYmV0dTNHTDNsVUJHZENxb0ZQanFqZktvOUM1ZytzZHZwU3JlaWQ1dm92?=
+ =?utf-8?B?NWFlZVdtS3E2WENtMTFiRWhjU25od0dPRCs0aWZjaHo1ZzRscmVGN2V5M3NR?=
+ =?utf-8?B?SEtNN1V4VGhmWUd6N3JMQ0lhQ0RCWi9uRFNGZmtIWkl4bDNaM1czSmQxUW9W?=
+ =?utf-8?B?d09TZWYyN1JMUit5dFhzQ3RnTXlwV0c2SlA5cTJFZFlsMmlhY01UbFVZMm5X?=
+ =?utf-8?Q?SLhg=3D?=
+X-Microsoft-Antispam-Message-Info: IPrEjgTkSuXH4NQ5dUhytln3nAZ/T32rwxNCEh7/uHGuS5shK+5KCVghgTVEU6yDXxajkn73CcAzxpZQs7NPgpnk2zM85lV6wtU0bl3DZ1D+8O5MHHy7KL3y9MUkGlPemS6w3jtAYiDqFNXWp/EqBDrMxcAu7p8nZ+xyLqu+6u2fTYp1z+EqV3AG/EZrWzzLJJro9/j5Mq36MKm2LQ5rF5KNlc3oN8MW2Qvie5HL7frjDPE7mRmb5AxzKVGq5nKC9wreQALgkw8mY6bsr0hpbH2cVOBmhKhJImg12hcEFm4FaTI9qCZrXd29pe7f6FH6Yjvj3ZNTF9pfiuehcwQ4O720Z4507ubJGka/aFBFlzY=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0432;6:UIGmQzBnbtOTFWFd5ro4VkWjCtHjarNGG9mTQYlE0fZX8G0yjT9FKuB34jAQShPttM1rhxGU+4NenjOjDx/ppDsyQ8WMip6cpm/c6V/vUO028C/AOECwR3A6bedP01zwyPu987t3oWVOgF4dwrmoiSUK7FLxRt8krKffwSANIsJIfzlW9jSfv4oJ24WZVaMYEwpk1fVkc2Z/94VhH3221ZhNe7p74UzxPKHOcAqqbO9YHWz0I63br17tc6mFw01rqXiSHyTV926RFI1rnEOh+GT+5ENpPgIMH13mWFDF+crFhXR7SsTtg+iR5Klr18tx//EE52PryiqGPs1n6J4hUNDvQnXhHX/46V0kPkCOJq2X5JwNlnhSii8RxB7X52O/il9R1Si/ovdssMSH72am69FPOGf3Q7fDVDvPtx7bpEldc9PEszZI1xQM94Z9q1MaJ5WA3FGgsfxjly9qJPh5SA==;5:O5zcEAMA9ao6WvkHTTzYDLbhEcXVG2lWkvFhv30IOxKe4gfbbdyG/v2nuKO/iALKWHeVAAvfXcNQSSgMhQSqiVxlncTJFdxFBkxeNX/E0kfrX1beyY6aws3p0D+Ddx6Km4uCjrcbmOYw7sUzhiLrmWVu49q415xPbFXJAycps1A=;7:O9f3JfwrSLVrXz9/uSWTkFmwn7uaxIa/eP2Zo3vRCO9Sd7vTpT40ZlwEFVJ3WLlIyjVrvXzz9cXxu5MPNT/eU/kEs1h6E+UBmL/N5sf0iLZBN9VTJPbhELDuF60Lc2FzpJmkN4VK903Lr7UoNF6HOA==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0432;20:rc4QfobfJ/n81knYG0Y0spc8aHZ/UtCu4kq02BgiMdT8l4+UAT/0lYR6uL3ypZ/dVX3U8phzivrtZibSyQU2dB9DSP1s+P4MY1qlQ3CuMv24TdUB8C9yflgOQYrbR040Zu7ZjVa4NnjHlorRhr1B7Ms4KUEmL1Ad+Eg86ORcKT6BAz/MakHOaAMkINEJEWgsznTrjEkGq8sKjesf+Rq6TQxcXtLX3x2LZ4wcM4HE3neuVe+WoJNaWZ117vy4G/Zn
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2018 08:16:02.0378
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5293661c-f2e7-4799-ae20-08d64f89938f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB0432
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 12:10:36PM +0000, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/gpu/drm/cirrus/cirrus_fbdev.c: In function 'cirrusfb_create':
-> drivers/gpu/drm/cirrus/cirrus_fbdev.c:172:20: warning:
->  variable 'bo' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since introduction in commit
-> f9aa76a85248 ("drm/kms: driver for virtual cirrus under qemu")
+On 11/21/18 3:11 PM, Brajeswar Ghosh wrote:
+> Remove gca/gfx_8_0_d.h which is included more than once
+>
+> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
 
-queued for -next.
-
-thanks,
-  Gerd
+> ---
+>   drivers/gpu/drm/amd/amdgpu/vce_v3_0.c | 1 -
+>   1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c b/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c
+> index 6dbd39730070..4e4289a06a53 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c
+> @@ -37,7 +37,6 @@
+>   #include "gca/gfx_8_0_d.h"
+>   #include "smu/smu_7_1_2_d.h"
+>   #include "smu/smu_7_1_2_sh_mask.h"
+> -#include "gca/gfx_8_0_d.h"
+>   #include "gca/gfx_8_0_sh_mask.h"
+>   #include "ivsrcid/ivsrcid_vislands30.h"
+>   
 
