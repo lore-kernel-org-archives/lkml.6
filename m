@@ -2,269 +2,177 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 744D1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20258C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34BB0213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:01:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34BB0213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id D89CA213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:02:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QCzkQf7H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D89CA213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726149AbeKUNdi (ORCPT
+        id S1726423AbeKUNfK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 08:33:38 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15568 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725926AbeKUNdh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 08:33:37 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id BF0F62A6DDDA3;
-        Wed, 21 Nov 2018 11:01:07 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 21 Nov
- 2018 11:01:01 +0800
-Date:   Wed, 21 Nov 2018 11:02:45 +0800
-From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     Leon Romanovsky <leon@kernel.org>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>, Kenneth Lee <nek.in.cn@gmail.com>,
-        "Tim Sell" <timothy.sell@unisys.com>, <linux-doc@vger.kernel.org>,
-        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
-        Zaibo Xu <xuzaibo@huawei.com>, <zhangfei.gao@foxmail.com>,
-        <linuxarm@huawei.com>, <haojian.zhuang@linaro.org>,
-        Christoph Lameter <cl@linux.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Gavin Schenk <g.schenk@eckelmann.de>,
-        "RDMA mailing list" <linux-rdma@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        "Doug Ledford" <dledford@redhat.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        David Kershner <david.kershner@unisys.com>,
-        Johan Hovold <johan@kernel.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Jens Axboe <axboe@kernel.dk>, <guodong.xu@linaro.org>,
-        linux-netdev <netdev@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        <linux-crypto@vger.kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        <linux-accelerators@lists.ozlabs.org>
-Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-Message-ID: <20181121030245.GI157308@Turing-Arch-b>
-References: <20181112075807.9291-2-nek.in.cn@gmail.com>
- <20181113002354.GO3695@mtr-leonro.mtl.com>
- <95310df4-b32c-42f0-c750-3ad5eb89b3dd@gmail.com>
- <20181114160017.GI3759@mtr-leonro.mtl.com>
- <20181115085109.GD157308@Turing-Arch-b>
- <20181115145455.GN3759@mtr-leonro.mtl.com>
- <20181119091405.GE157308@Turing-Arch-b>
- <20181119184954.GB4890@ziepe.ca>
- <20181120030702.GH157308@Turing-Arch-b>
- <20181120051743.GD25178@mtr-leonro.mtl.com>
+        Wed, 21 Nov 2018 08:35:10 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38471 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725926AbeKUNfK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 08:35:10 -0500
+Received: by mail-ed1-f66.google.com with SMTP id h50so3671058ede.5
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 19:02:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OFqt+td86dq7iDFU+/epHvtt6pV0iZ9bBu0MS+valDI=;
+        b=QCzkQf7HgwMY3q0KLHHlk2/ybwhFbBD5d9QFXt+2ek3rLbKa7VEqLJ9bBpyJQEs1V+
+         hvs3XLPyFgQAbuW5q1ARpwXFfLbZOIIxstRteL8E4+fYkGRIL+2E2ZINPETrf31nrSQZ
+         wyiF3YfxdVUV+ZLvqSrcI1MUg3dABHwix4+mjzuMJ137G+R/jO5JWCaYHS1kdOd1oQMK
+         uHw7Q/IkmhRnQ4AqrQZrUdUMD1/0WIXER0MiHrIPOEOs/+/rXvwB1FWjpJTl/9QibadQ
+         HLwiKgnMvLeW1rw2UMV5OcnHTw9f2paoOJV+bT5oPHGwsa1k7M+8H0Y2t1dmvQ88TC3D
+         DO8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OFqt+td86dq7iDFU+/epHvtt6pV0iZ9bBu0MS+valDI=;
+        b=c8cjqEbV6+DGBrAwoJFyYgxMIOmEmN7oAYBdBtwp3FyaWOqBhii5p7Ty+bk9VJjmVM
+         0M5v00qiN50qjRJF7X1XbE1gbbM1jVIzxDnJ1AGxu429l+9OGCavdywOpJb4XvXzZMWt
+         4l3fHCxokOtv9QfVbx2SX35vb7QLoviunXmdELax8q77aXug68TJPpf+JAmD7bVgEWme
+         ukITPIEZ838AaZJLd7VOjOAxDz40NCtF/6rB7pLwgJhNvPf968yIziG27mTYWt7ylxmS
+         twJHiMm21qitJ6nkJSGvBEykUBujc5QbjW5dDAk9rcW/gr/wR0BkSxf+oM//BwirpvBn
+         3OAQ==
+X-Gm-Message-State: AGRZ1gJZjH/sWoxWEBB3OR79q8nQlP75eMqXbOx3zuGKm3STYEksEZ1i
+        YedH5yHKA84JTmbMi3Fut1k=
+X-Google-Smtp-Source: AJdET5d9t8bm3S9GwADTITz7hh5RfvWD5vBKiqxGV//XT1Qb2w8uYA07c1NEHUS3xuxSE4aNu/b2uA==
+X-Received: by 2002:a17:906:603:: with SMTP id s3-v6mr3543442ejb.81.1542769362411;
+        Tue, 20 Nov 2018 19:02:42 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id x38sm5793849edx.24.2018.11.20.19.02.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 19:02:41 -0800 (PST)
+Date:   Wed, 21 Nov 2018 03:02:41 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Wengang Wang <wen.gang.wang@oracle.com>
+Cc:     Wei Yang <richard.weiyang@gmail.com>, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: use this_cpu_cmpxchg_double in put_cpu_partial
+Message-ID: <20181121030241.h7rgyjtlfcnm3hki@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20181117013335.32220-1-wen.gang.wang@oracle.com>
+ <20181118010229.esa32zk5hpob67y7@master>
+ <d3e91590-adaa-11a5-67f9-0ef15df6b07d@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181120051743.GD25178@mtr-leonro.mtl.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <d3e91590-adaa-11a5-67f9-0ef15df6b07d@oracle.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 07:17:44AM +0200, Leon Romanovsky wrote:
-> Date: Tue, 20 Nov 2018 07:17:44 +0200
-> From: Leon Romanovsky <leon@kernel.org>
-> To: Kenneth Lee <liguozhu@hisilicon.com>
-> CC: Jason Gunthorpe <jgg@ziepe.ca>, Kenneth Lee <nek.in.cn@gmail.com>, Tim
->  Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org, Alexander
->  Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
->  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
->  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
->  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mailing
->  list <linux-rdma@vger.kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
->  Doug Ledford <dledford@redhat.com>, Uwe Kleine-König
->  <u.kleine-koenig@pengutronix.de>, David Kershner
->  <david.kershner@unisys.com>, Johan Hovold <johan@kernel.org>, Cyrille
->  Pitchen <cyrille.pitchen@free-electrons.com>, Sagar Dharia
->  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
->  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
->  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Vinod Koul
->  <vkoul@kernel.org>, linux-crypto@vger.kernel.org, Philippe Ombredanne
->  <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>, "David S.
->  Miller" <davem@davemloft.net>, linux-accelerators@lists.ozlabs.org
-> Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-> User-Agent: Mutt/1.10.1 (2018-07-13)
-> Message-ID: <20181120051743.GD25178@mtr-leonro.mtl.com>
-> 
-> On Tue, Nov 20, 2018 at 11:07:02AM +0800, Kenneth Lee wrote:
-> > On Mon, Nov 19, 2018 at 11:49:54AM -0700, Jason Gunthorpe wrote:
-> > > Date: Mon, 19 Nov 2018 11:49:54 -0700
-> > > From: Jason Gunthorpe <jgg@ziepe.ca>
-> > > To: Kenneth Lee <liguozhu@hisilicon.com>
-> > > CC: Leon Romanovsky <leon@kernel.org>, Kenneth Lee <nek.in.cn@gmail.com>,
-> > >  Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org, Alexander
-> > >  Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
-> > >  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
-> > >  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
-> > >  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mailing
-> > >  list <linux-rdma@vger.kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
-> > >  Doug Ledford <dledford@redhat.com>, Uwe Kleine-König
-> > >  <u.kleine-koenig@pengutronix.de>, David Kershner
-> > >  <david.kershner@unisys.com>, Johan Hovold <johan@kernel.org>, Cyrille
-> > >  Pitchen <cyrille.pitchen@free-electrons.com>, Sagar Dharia
-> > >  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
-> > >  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
-> > >  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Vinod Koul
-> > >  <vkoul@kernel.org>, linux-crypto@vger.kernel.org, Philippe Ombredanne
-> > >  <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>, "David S.
-> > >  Miller" <davem@davemloft.net>, linux-accelerators@lists.ozlabs.org
-> > > Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-> > > User-Agent: Mutt/1.9.4 (2018-02-28)
-> > > Message-ID: <20181119184954.GB4890@ziepe.ca>
-> > >
-> > > On Mon, Nov 19, 2018 at 05:14:05PM +0800, Kenneth Lee wrote:
-> > >
-> > > > If the hardware cannot share page table with the CPU, we then need to have
-> > > > some way to change the device page table. This is what happen in ODP. It
-> > > > invalidates the page table in device upon mmu_notifier call back. But this cannot
-> > > > solve the COW problem: if the user process A share a page P with device, and A
-> > > > forks a new process B, and it continue to write to the page. By COW, the
-> > > > process B will keep the page P, while A will get a new page P'. But you have
-> > > > no way to let the device know it should use P' rather than P.
-> > >
-> > > Is this true? I thought mmu_notifiers covered all these cases.
-> > >
-> > > The mm_notifier for A should fire if B causes the physical address of
-> > > A's pages to change via COW.
-> > >
-> > > And this causes the device page tables to re-synchronize.
-> >
-> > I don't see such code. The current do_cow_fault() implemenation has nothing to
-> > do with mm_notifer.
-> >
-> > >
-> > > > In WarpDrive/uacce, we make this simple. If you support IOMMU and it support
-> > > > SVM/SVA. Everything will be fine just like ODP implicit mode. And you don't need
-> > > > to write any code for that. Because it has been done by IOMMU framework. If it
-> > >
-> > > Looks like the IOMMU code uses mmu_notifier, so it is identical to
-> > > IB's ODP. The only difference is that IB tends to have the IOMMU page
-> > > table in the device, not in the CPU.
-> > >
-> > > The only case I know if that is different is the new-fangled CAPI
-> > > stuff where the IOMMU can directly use the CPU's page table and the
-> > > IOMMU page table (in device or CPU) is eliminated.
-> > >
-> >
-> > Yes. We are not focusing on the current implementation. As mentioned in the
-> > cover letter. We are expecting Jean Philips' SVA patch:
-> > git://linux-arm.org/linux-jpb.
-> >
-> > > Anyhow, I don't think a single instance of hardware should justify an
-> > > entire new subsystem. Subsystems are hard to make and without multiple
-> > > hardware examples there is no way to expect that it would cover any
-> > > future use cases.
-> >
-> > Yes. That's our first expectation. We can keep it with our driver. But because
-> > there is no user driver support for any accelerator in mainline kernel. Even the
-> > well known QuickAssit has to be maintained out of tree. So we try to see if
-> > people is interested in working together to solve the problem.
-> >
-> > >
-> > > If all your driver needs is to mmap some PCI bar space, route
-> > > interrupts and do DMA mapping then mediated VFIO is probably a good
-> > > choice.
-> >
-> > Yes. That is what is done in our RFCv1/v2. But we accepted Jerome's opinion and
-> > try not to add complexity to the mm subsystem.
-> >
-> > >
-> > > If it needs to do a bunch of other stuff, not related to PCI bar
-> > > space, interrupts and DMA mapping (ie special code for compression,
-> > > crypto, AI, whatever) then you should probably do what Jerome said and
-> > > make a drivers/char/hisillicon_foo_bar.c that exposes just what your
-> > > hardware does.
-> >
-> > Yes. If no other accelerator driver writer is interested. That is the
-> > expectation:)
-> >
-> > But we really like to have a public solution here. Consider this scenario:
-> >
-> > You create some connections (queues) to NIC, RSA, and AI engine. Then you got
-> > data direct from the NIC and pass the pointer to RSA engine for decryption. The
-> > CPU then finish some data taking or operation and then pass through to the AI
-> > engine for CNN calculation....This will need a place to maintain the same
-> > address space by some means.
-> 
-> You are using NIC terminology, in the documentation, you wrote that it is needed
-> for DPDK use and I don't really understand, why do we need another shiny new
-> interface for DPDK.
-> 
+On Tue, Nov 20, 2018 at 09:58:58AM -0800, Wengang Wang wrote:
+>Hi Wei,
+>
+>
+>On 2018/11/17 17:02, Wei Yang wrote:
+>> On Fri, Nov 16, 2018 at 05:33:35PM -0800, Wengang Wang wrote:
+>> > The this_cpu_cmpxchg makes the do-while loop pass as long as the
+>> > s->cpu_slab->partial as the same value. It doesn't care what happened to
+>> > that slab. Interrupt is not disabled, and new alloc/free can happen in the
+>> Well, I seems to understand your description.
+>> 
+>> There are two slabs
+>> 
+>>     * one which put_cpu_partial() trying to free an object
+>>     * one which is the first slab in cpu_partial list
+>> 
+>> There is some tricky case, the first slab in cpu_partial list we
+>> reference to will change since interrupt is not disabled.
+>Yes, two slabs involved here just as you said above.
+>And yes, the case is really tricky, but it's there.
+>
+>> > interrupt handlers. Theoretically, after we have a reference to the it,
+>>                                                                   ^^^
+>> 							 one more word?
+>sorry, "the" should not be there.
+>
+>> > stored in _oldpage_, the first slab on the partial list on this CPU can be
+>>                                              ^^^
+>> One little suggestion here, mayby use cpu_partial would be more easy to
+>> understand. I confused this with the partial list in kmem_cache_node at
+>> the first time.  :-)
+>Right, making others understanding easily is very important. I just meant
+>cpu_partial.
+>
+>> > moved to kmem_cache_node and then moved to different kmem_cache_cpu and
+>> > then somehow can be added back as head to partial list of current
+>> > kmem_cache_cpu, though that is a very rare case. If that rare case really
+>> Actually, no matter what happens after the removal of the first slab in
+>> cpu_partial, it would leads to problem.
+>Maybe you are right, what I see is the problem on the page->pobjects.
+>
+>> 
+>> > happened, the reading of oldpage->pobjects may get a 0xdead0000
+>> > unexpectedly, stored in _pobjects_, if the reading happens just after
+>> > another CPU removed the slab from kmem_cache_node, setting lru.prev to
+>> > LIST_POISON2 (0xdead000000000200). The wrong _pobjects_(negative) then
+>> > prevents slabs from being moved to kmem_cache_node and being finally freed.
+>> > 
+>> > We see in a vmcore, there are 375210 slabs kept in the partial list of one
+>> > kmem_cache_cpu, but only 305 in-use objects in the same list for
+>> > kmalloc-2048 cache. We see negative values for page.pobjects, the last page
+>> > with negative _pobjects_ has the value of 0xdead0004, the next page looks
+>> > good (_pobjects is 1).
+>> > 
+>> > For the fix, I wanted to call this_cpu_cmpxchg_double with
+>> > oldpage->pobjects, but failed due to size difference between
+>> > oldpage->pobjects and cpu_slab->partial. So I changed to call
+>> > this_cpu_cmpxchg_double with _tid_. I don't really want no alloc/free
+>> > happen in between, but just want to make sure the first slab did expereince
+>> > a remove and re-add. This patch is more to call for ideas.
+>> Maybe not an exact solution.
+>> 
+>> I took a look into the code and change log.
+>> 
+>> _tid_ is introduced by commit 8a5ec0ba42c4 ('Lockless (and preemptless)
+>> fastpaths for slub'), which is used to guard cpu_freelist. While we don't
+>> modify _tid_ when cpu_partial changes.
+>> 
+>> May need another _tid_ for cpu_partial?
+>Right, _tid_ changes later than cpu_partial changes.
+>
+>As pointed out by Zhong Jiang, the pobjects issue is fixed by commit
 
-I'm not a DPDK expert. But we had some discussion with LNG of Linaro. They were
-considering to create something similar to simplify the user driver. In most of
-case, we use DPDK or ODP (open data plane) just for faster data plane data flow.
-But many logic such as setting the hardware mode, mac address and so on is not
-necessary. So they were looking for a way to keep the driver in the kernel and
-just the ring buffer of some queues to the user space. This may simplified the
-user space design.
+Where you discussed this issue? Any reference I could get a look?
 
-> >
-> > It is not complex, but it is helpful.
-> >
-> > >
-> > > If you have networking involved in here then consider RDMA,
-> > > particularly if this functionality is already part of the same
-> > > hardware that the hns infiniband driver is servicing.
-> > >
-> > > 'computational MRs' are a reasonable approach to a side-car offload of
-> > > already existing RDMA support.
-> >
-> > OK. Thanks. I will spend some time on it. But personally, I really don't like
-> > RDMA's complexity. I cannot even try one single function without a...some
-> > expensive hardwares and complexity connection in the lab. This is not like a
-> > open source way.
-> 
-> It is not very accurate. We have RXE driver which is virtual RDMA device
-> which is implemented purely in SW. It struggles from bad performance and
-> sporadic failures, but it is enough to try RDMA on your laptop in VM.
+>e5d9998f3e09 (not sure if by side effect, see my replay there),
 
-Woo. This will be helpful. Thank you very much.
+I took a look at this commit e5d9998f3e09 ('slub: make ->cpu_partial
+unsigned int'), but not see some relationship between them.
 
-> 
-> Thanks
-> 
-> >
-> > >
-> > > Jason
-> >
+Would you mind show me a link or cc me in case you have further
+discussion?
 
+Thanks.
 
+>I'd skip this patch.?? If we found other problems regarding the change of
+>cpu_partial, let's fix them. What do you think?
+>
+>thanks,
+>wengang
 
 -- 
-			-Kenneth(Hisilicon)
-
-================================================================================
-本邮件及其附件含有华为公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁
-止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中
-的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！
-This e-mail and its attachments contain confidential information from HUAWEI,
-which is intended only for the person or entity whose address is listed above.
-Any use of the 
-information contained herein in any way (including, but not limited to, total or
-partial disclosure, reproduction, or dissemination) by persons other than the
-intended 
-recipient(s) is prohibited. If you receive this e-mail in error, please notify
-the sender by phone or email immediately and delete it!
-
+Wei Yang
+Help you, Help me
