@@ -2,112 +2,190 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD44C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC219C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504E520989
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:01:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504E520989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id A0A7920989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:02:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A7920989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729555AbeKUVfB (ORCPT
+        id S1729757AbeKUVga (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 16:35:01 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:43536 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726172AbeKUVfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 16:35:00 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 243FD20DA8; Wed, 21 Nov 2018 12:01:03 +0100 (CET)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id EC8FB20D72;
-        Wed, 21 Nov 2018 12:00:52 +0100 (CET)
-Date:   Wed, 21 Nov 2018 12:00:52 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Romain Izard <romain.izard.pro@gmail.com>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Rob Herring <robh+dt@kernel.org>, mark.rutland@arm.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ARM: dts: at91: sama5d2: use the divided clock for SMC
-Message-ID: <20181121110052.GK8367@piout.net>
-References: <20181120165737.4998-1-romain.izard.pro@gmail.com>
- <20181120171612.GF8367@piout.net>
- <CAGkQfmPHRKqMvm6bNDf8S5qM7uE5T-izij=jm2nob0zrOgOM-w@mail.gmail.com>
- <20181120204049.GG8367@piout.net>
+        Wed, 21 Nov 2018 16:36:30 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44366 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728367AbeKUVga (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 16:36:30 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wALAwfdD119486
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 06:02:33 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nw59v2vbb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 06:02:32 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <maier@linux.ibm.com>;
+        Wed, 21 Nov 2018 11:02:29 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 21 Nov 2018 11:02:27 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wALB2QK0655702
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 21 Nov 2018 11:02:26 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6E3BFA4053;
+        Wed, 21 Nov 2018 11:02:26 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 04AE4A405D;
+        Wed, 21 Nov 2018 11:02:26 +0000 (GMT)
+Received: from oc4120165700.ibm.com (unknown [9.152.99.75])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 21 Nov 2018 11:02:25 +0000 (GMT)
+Subject: Re: [PATCH 3/4] scsi: hisi_sas: Make sg_tablesize consistent value
+To:     John Garry <john.garry@huawei.com>, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com
+Cc:     linuxarm@huawei.com, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Xiang Chen <chenxiang66@hisilicon.com>
+References: <1542725944-244183-1-git-send-email-john.garry@huawei.com>
+ <1542725944-244183-4-git-send-email-john.garry@huawei.com>
+From:   Steffen Maier <maier@linux.ibm.com>
+Date:   Wed, 21 Nov 2018 12:02:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181120204049.GG8367@piout.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1542725944-244183-4-git-send-email-john.garry@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18112111-0012-0000-0000-000002CDE590
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112111-0013-0000-0000-00002103125F
+Message-Id: <146f7c38-0cd7-a664-31d6-30a27b7a182b@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-21_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811210100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/11/2018 21:40:49+0100, Alexandre Belloni wrote:
-> On 20/11/2018 19:01:32+0100, Romain Izard wrote:
-> > Le mar. 20 nov. 2018 à 18:16, Alexandre Belloni
-> > <alexandre.belloni@bootlin.com> a écrit :
-> > >
-> > > Hello Romain,
-> > >
-> > > On 20/11/2018 17:57:37+0100, Romain Izard wrote:
-> > > > The SAMA5D2 is different from SAMA5D3 and SAMA5D4, as there are two
-> > > > different clocks for the peripherals in the SoC. The Static Memory
-> > > > controller is connected to the divided master clock.
-> > > >
-> > > > Unfortunately, the device tree does not correctly show this and uses the
-> > > > master clock directly. This clock is then used by the code for the NAND
-> > > > controller to calculate the timings for the controller, and we end up with
-> > > > slow NAND Flash access.
-> > > >
-> > > > Fix the device tree, and the performance of Flash access is improved.
-> > > >
-> > > > Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-> > > > ---
-> > > >  arch/arm/boot/dts/sama5d2.dtsi | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-> > > > index 61f68e5c48e9..b405992eb601 100644
-> > > > --- a/arch/arm/boot/dts/sama5d2.dtsi
-> > > > +++ b/arch/arm/boot/dts/sama5d2.dtsi
-> > > > @@ -308,7 +308,7 @@
-> > > >                                 0x1 0x0 0x60000000 0x10000000
-> > > >                                 0x2 0x0 0x70000000 0x10000000
-> > > >                                 0x3 0x0 0x80000000 0x10000000>;
-> > > > -                     clocks = <&mck>;
-> > > > +                     clocks = <&h32ck>;
-> > >
-> > > You will have to rebase on top of at91-dt. And if I'm not mistaken, this
-> > > line should be:
-> > >
-> > > +                       clocks = <&pmc PMC_TYPE_CORE PMC_MCK2>;
-> > >
-> > > >                       status = "disabled";
-> > > >
-> > > >                       nand_controller: nand-controller {
-> > 
-> > I guess you're right but this will only reach mainline in 4.21. I get slow
-> > flash access with 4.19 as well...
-> >
+On 11/20/2018 03:59 PM, John Garry wrote:
+> From: Xiang Chen <chenxiang66@hisilicon.com>
 > 
-> Ok, this is super annoying, I'll try to get that as fixes on v4.20 and
-> I'll rebase at91-dt on top of that...
+> Sht->sg_tablesize is set in the driver, and it will be assigned to
+> shost->sg_tablesize in SCSI mid-layer. So it is not necessary to
+> assign shost->sg_table one more time in the driver.
 > 
+> In addition to the change, change each scsi_host_template.sg_tablesize
+> to HISI_SAS_SGE_PAGE_CNT instead of SG_ALL.
 
-So, I did that just now.
+Might be completely irrelevant, so just as information: I once had 
+problems due to changing (reducing) SHT.sg_tablesize because block queue 
+limits of BSG devices of Scsi_Host and fc_host (not sure if you have an 
+equivalent bsg device for your transport(s)) inherit from SHT, but don't 
+update (automatically) on later updates of shost->sg_tablesize, which in 
+turn affect scsi_devices allocated after the shost update.
+Cf. 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/s390/scsi?id=5fea4291deacd80188b996d2f555fc6a1940e5d4
+("[SCSI] zfcp: block queue limits with data router")
+if you need more details.
+
+> Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+> Signed-off-by: John Garry <john.garry@huawei.com>
+> ---
+>   drivers/scsi/hisi_sas/hisi_sas_main.c  | 1 -
+>   drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 2 +-
+>   drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 2 +-
+>   drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 3 +--
+>   4 files changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+> index d13a662..cbda48e 100644
+> --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
+> +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+> @@ -2410,7 +2410,6 @@ int hisi_sas_probe(struct platform_device *pdev,
+>   	shost->max_lun = ~0;
+>   	shost->max_channel = 1;
+>   	shost->max_cmd_len = 16;
+> -	shost->sg_tablesize = min_t(u16, SG_ALL, HISI_SAS_SGE_PAGE_CNT);
+>   	if (hisi_hba->hw->slot_index_alloc) {
+>   		shost->can_queue = hisi_hba->hw->max_command_entries;
+>   		shost->cmd_per_lun = hisi_hba->hw->max_command_entries;
+> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+> index d24342b..2d035cc 100644
+> --- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+> +++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+> @@ -1815,7 +1815,7 @@ static int hisi_sas_v1_init(struct hisi_hba *hisi_hba)
+>   	.change_queue_depth	= sas_change_queue_depth,
+>   	.bios_param		= sas_bios_param,
+>   	.this_id		= -1,
+> -	.sg_tablesize		= SG_ALL,
+> +	.sg_tablesize		= HISI_SAS_SGE_PAGE_CNT,
+>   	.max_sectors		= SCSI_DEFAULT_MAX_SECTORS,
+>   	.use_clustering		= ENABLE_CLUSTERING,
+>   	.eh_device_reset_handler = sas_eh_device_reset_handler,
+> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+> index e78a97e..79e58a7 100644
+> --- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+> +++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+> @@ -3570,7 +3570,7 @@ struct device_attribute *host_attrs_v2_hw[] = {
+>   	.change_queue_depth	= sas_change_queue_depth,
+>   	.bios_param		= sas_bios_param,
+>   	.this_id		= -1,
+> -	.sg_tablesize		= SG_ALL,
+> +	.sg_tablesize		= HISI_SAS_SGE_PAGE_CNT,
+>   	.max_sectors		= SCSI_DEFAULT_MAX_SECTORS,
+>   	.use_clustering		= ENABLE_CLUSTERING,
+>   	.eh_device_reset_handler = sas_eh_device_reset_handler,
+> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+> index 7e2b020..8a08078 100644
+> --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+> +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+> @@ -2224,7 +2224,7 @@ struct device_attribute *host_attrs_v3_hw[] = {
+>   	.change_queue_depth	= sas_change_queue_depth,
+>   	.bios_param		= sas_bios_param,
+>   	.this_id		= -1,
+> -	.sg_tablesize		= SG_ALL,
+> +	.sg_tablesize		= HISI_SAS_SGE_PAGE_CNT,
+>   	.max_sectors		= SCSI_DEFAULT_MAX_SECTORS,
+>   	.use_clustering		= ENABLE_CLUSTERING,
+>   	.eh_device_reset_handler = sas_eh_device_reset_handler,
+> @@ -2366,7 +2366,6 @@ struct device_attribute *host_attrs_v3_hw[] = {
+>   	shost->max_lun = ~0;
+>   	shost->max_channel = 1;
+>   	shost->max_cmd_len = 16;
+> -	shost->sg_tablesize = min_t(u16, SG_ALL, HISI_SAS_SGE_PAGE_CNT);
+>   	shost->can_queue = hisi_hba->hw->max_command_entries -
+>   		HISI_SAS_RESERVED_IPTT_CNT;
+>   	shost->cmd_per_lun = hisi_hba->hw->max_command_entries -
+> 
 
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Mit freundlichen Gruessen / Kind regards
+Steffen Maier
+
+Linux on IBM Z Development
+
+IBM Deutschland Research & Development GmbH
+Vorsitzende des Aufsichtsrats: Martina Koederitz
+Geschaeftsfuehrung: Dirk Wittkopp
+Sitz der Gesellschaft: Boeblingen
+Registergericht: Amtsgericht Stuttgart, HRB 243294
+
