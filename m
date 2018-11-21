@@ -2,140 +2,109 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A26B1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B532C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62CFF2075B
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:27:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62CFF2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CF153206BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:27:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF153206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390060AbeKVJDT (ORCPT
+        id S2390080AbeKVJDx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 04:03:19 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33460 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731518AbeKVJDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 04:03:19 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72F4A36C2;
-        Wed, 21 Nov 2018 14:27:01 -0800 (PST)
-Received: from [192.168.1.123] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 14E503F5CF;
-        Wed, 21 Nov 2018 14:26:53 -0800 (PST)
-Subject: Re: [PATCH v2 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page
- tables
-To:     Matthew Wilcox <willy@infradead.org>,
-        Christopher Lameter <cl@linux.com>
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Levin Alexander <Alexander.Levin@microsoft.com>,
-        Huaisheng Ye <yehs1@lenovo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com
-References: <20181111090341.120786-1-drinkcat@chromium.org>
- <0100016737801f14-84f1265d-4577-4dcf-ad57-90dbc8e0a78f-000000@email.amazonses.com>
- <20181121213853.GL3065@bombadil.infradead.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <c5ccde1e-a711-ad33-537c-2d5a0bd9edd4@arm.com>
-Date:   Wed, 21 Nov 2018 22:26:26 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 22 Nov 2018 04:03:53 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46114 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731518AbeKVJDw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 04:03:52 -0500
+Received: by mail-pl1-f194.google.com with SMTP id t13so7405253ply.13;
+        Wed, 21 Nov 2018 14:27:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9/mmPtPKqrsZS371CzVCZIeQCBycbWbaT7BE+fZVnK8=;
+        b=bsRT8YrI4JasIplQ3IRkl9rt7gJJ6qTzlfA3U8I8Q6zPhY9w14SchAIDZ9+c8RTStN
+         litwBsYAIbMnNL77GOfn0yYdc/z2yDg7IKRNpHGn7hUl9gkaekJXGTVlMpAT1Tcp0vae
+         Ehp6NQCVoAs0ZiLnWO3gHfR9hkGoId8hZid9m83/Fri3v8i/BshY/7Dp66vlirX3DNQ+
+         MiTpcfGrLc7hgzPdOM4fqZZWNQNAgKzyeZgmvN80oll3B8YqX5pASUtzT/lFGWoGkoUK
+         a0I9ZcE2T7lMgXFM5komTyMM038Cty5dM+0QmYq/2CQqAZVxF0oSllSCexupmLeyeRN6
+         4+nA==
+X-Gm-Message-State: AA+aEWZoIOp5sNx9Jz7xX71Hkj7zIU3da+9Z5OsYG1a+Ua2o/8R4nN/X
+        I1Bxy9Sr5p16a5XJOXYo0d0=
+X-Google-Smtp-Source: AFSGD/U+eknWhPZ5oKCPbPEKJesYw3O9+DeGzYB5Zp67JcjavN5yMARdd7n7e86TQ+HE5KK1FxB66w==
+X-Received: by 2002:a17:902:8346:: with SMTP id z6mr8606578pln.340.1542839254376;
+        Wed, 21 Nov 2018 14:27:34 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id b2sm73540386pfm.3.2018.11.21.14.27.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 14:27:33 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Wed, 21 Nov 2018 14:27:30 -0800
+Date:   Wed, 21 Nov 2018 14:27:30 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Lei Yang <Lei.Yang@windriver.com>
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] sysctl: kselftests: fix test_modprobe issue
+Message-ID: <20181121222730.GA4922@garbanzo.do-not-panic.com>
+References: <1536229374-25699-1-git-send-email-Lei.Yang@windriver.com>
 MIME-Version: 1.0
-In-Reply-To: <20181121213853.GL3065@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1536229374-25699-1-git-send-email-Lei.Yang@windriver.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-11-21 9:38 pm, Matthew Wilcox wrote:
-> On Wed, Nov 21, 2018 at 06:20:02PM +0000, Christopher Lameter wrote:
->> On Sun, 11 Nov 2018, Nicolas Boichat wrote:
->>
->>> This is a follow-up to the discussion in [1], to make sure that the page
->>> tables allocated by iommu/io-pgtable-arm-v7s are contained within 32-bit
->>> physical address space.
->>
->> Page tables? This means you need a page frame? Why go through the slab
->> allocators?
+On Thu, Sep 06, 2018 at 06:22:54PM +0800, Lei Yang wrote:
+> when CONFIG_TEST_SYSCTL=y, there is no "/sys/module/test_sysctl/"
+> when CONFIG_TEST_SYSCTL=m, checking /sys/module/test_sysctl/ is
+> before kernel module loading
 > 
-> Because this particular architecture has sub-page-size PMD page tables.
-> We desperately need to hoist page table allocation out of the architectures;
-> there're a bunch of different implementations and they're mostly bad,
-> one way or another.
+> you'll get below error message
+> root@intel-x86-64:/tmp/sysctl# ./sysctl.sh
+> Checking production write strict setting ... ok
+> ./sysctl.sh: /sys/module/test_sysctl/ not present
+> You must have the following enabled in your kernel:
+> 
+> This patch will fix this issue.
+> when CONFIG_TEST_SYSCTL=y, it has no chance to check "/sys/module/test_sysctl/"
+> when CONFIG_TEST_SYSCTL=m, it will load kernel module first before checking sys
+> interface.
+> 
+> Signed-off-by: Lei Yang <Lei.Yang@windriver.com>
+> ---
+>  tools/testing/selftests/sysctl/sysctl.sh | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
+> index 584eb8e..08dc995 100755
+> --- a/tools/testing/selftests/sysctl/sysctl.sh
+> +++ b/tools/testing/selftests/sysctl/sysctl.sh
+> @@ -120,6 +120,7 @@ test_reqs()
+>  
+>  function load_req_mod()
+>  {
+> +        trap "test_modprobe" EXIT
+>  	if [ ! -d $DIR ]; then
+>  		if ! modprobe -q -n $TEST_DRIVER; then
+>  			echo "$0: module $TEST_DRIVER not found [SKIP]"
+> @@ -770,7 +771,6 @@ function parse_args()
+>  test_reqs
+>  allow_user_defaults
+>  check_production_sysctl_writes_strict
+> -test_modprobe
 
-These are IOMMU page tables, rather than CPU ones, so we're already well 
-outside arch code - indeed the original motivation of io-pgtable was to 
-be entirely independent of the p*d types and arch-specific MM code (this 
-Armv7 short-descriptor format is already "non-native" when used by 
-drivers in an arm64 kernel).
+Better yet, we can just depend on /proc/config stuff for test modules,
+refer to check_mods() on tools/testing/selftests/firmware/fw_lib.sh.
+Feel free to make helpers if you can come up with a generic directory,
+otherwise just duplicate the effort for now.
 
-There are various efficiency reasons for using regular kernel memory 
-instead of coherent DMA allocations - for the most part it works well, 
-we just have the odd corner case like this one where the 32-bit format 
-gets used on 64-bit systems such that the tables themselves still need 
-to be allocated below 4GB (although the final output address can point 
-at higher memory by virtue of the IOMMU in question not implementing 
-permissions and repurposing some of those PTE fields as extra address bits).
-
-TBH, if this DMA32 stuff is going to be contentious we could possibly 
-just rip out the offending kmem_cache - it seemed like good practice for 
-the use-case, but provided kzalloc(SZ_1K, gfp | GFP_DMA32) can be relied 
-upon to give the same 1KB alignment and chance of succeeding as the 
-equivalent kmem_cache_alloc(), then we could quite easily make do with 
-that instead.
-
-Thanks,
-Robin.
-
-> For each level of page table we generally have three cases:
-> 
-> 1. single page
-> 2. sub-page, naturally aligned
-> 3. multiple pages, naturally aligned
-> 
-> for 1 and 3, the page allocator will do just fine.
-> for 2, we should have a per-MM page_frag allocator.  s390 already has
-> something like this, although it's more complicated.  ppc also has
-> something a little more complex for the cases when it's configured with
-> a 64k page size but wants to use a 4k page table entry.
-> 
-> I'd like x86 to be able to simply do:
-> 
-> #define pte_alloc_one(mm, addr)	page_alloc_table(mm, addr, 0)
-> #define pmd_alloc_one(mm, addr)	page_alloc_table(mm, addr, 0)
-> #define pud_alloc_one(mm, addr)	page_alloc_table(mm, addr, 0)
-> #define p4d_alloc_one(mm, addr)	page_alloc_table(mm, addr, 0)
-> 
-> An architecture with 4k page size and needing a 16k PMD would do:
-> 
-> #define pmd_alloc_one(mm, addr) page_alloc_table(mm, addr, 2)
-> 
-> while an architecture with a 64k page size needing a 4k PTE would do:
-> 
-> #define ARCH_PAGE_TABLE_FRAG
-> #define pte_alloc_one(mm, addr) pagefrag_alloc_table(mm, addr, 4096)
-> 
-> I haven't had time to work on this, but perhaps someone with a problem
-> that needs fixing would like to, instead of burying yet another awful
-> implementation away in arch/ somewhere.
-> 
+  Luis
