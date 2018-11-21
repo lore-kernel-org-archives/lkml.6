@@ -2,91 +2,117 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D47C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA27C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C05F920989
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:22:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UECzgACu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C05F920989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id F060A20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:23:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F060A20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729330AbeKUT4D (ORCPT
+        id S1729347AbeKUT4y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 14:56:03 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43363 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbeKUT4C (ORCPT
+        Wed, 21 Nov 2018 14:56:54 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33410 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726001AbeKUT4x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 14:56:02 -0500
-Received: by mail-wr1-f68.google.com with SMTP id r10so4830563wrs.10
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 01:22:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=I8lFzQ3rLFHjEcQyoMIxfUjvyyNZX5Hy/mdr9ilIH6w=;
-        b=UECzgACuRaDAqc3FDgR1DuNNGKKjIGouhEHtPKVT7ylPTUF+UdhrAGQNdv3jGdU4qN
-         VATChHoJsjuYd7Z2GLuwXaa+fqn/t0AelCZbNdLPqFz/K6LMfgIVafo1jKDANqIOBcLV
-         itAFXr+qUbYF4H8JflFFQKu0BLHzgaMA4fOng=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=I8lFzQ3rLFHjEcQyoMIxfUjvyyNZX5Hy/mdr9ilIH6w=;
-        b=kmDFZIZFzx5yPa7ibOYWPYWsv3q8rL3gSLFr1S6HbRr9+iqTpqA77eT13VxDr2aM+o
-         ajeOAYwMsLLbl0O/J6aq8I6FPUztfpfwu8RUnomQP+NsXxkEs4AsjpFCMQFY2G+++Xo8
-         ngsPjxSeh88pqfFrbQtKQczfLnKZOcWIrbXywx3oZzdcU67dR4PAHc4Af5INheI1CvdU
-         Xh42otH+XO8lf/z2cBxLRVgrEUQ6Cr1sTbRVsMqt+OBWLEm6jROkQd//pJpahWSl0Qly
-         QTN4oDl1v631DAFLb5cMgUWobyvA2zZzfZU1ILUjf7ZYb4jMumy/MoJpcMlRDMMJcNlm
-         1c9w==
-X-Gm-Message-State: AA+aEWbUhbeMjNSpWvyMBi1BJOqHjQ08VE3/68xhNS28pcO3p2QJb4vG
-        xZhap5+6f/XHXTfmNdMerGQ+fQ==
-X-Google-Smtp-Source: AFSGD/XEN+EaGSsIM+1xI3J7T45Coc/GO9L7QputjrGv1wcnEj0pmOqrKkZNitUCmOzC7MiiAybjeA==
-X-Received: by 2002:adf:9d4a:: with SMTP id o10-v6mr4639699wre.94.1542792139508;
-        Wed, 21 Nov 2018 01:22:19 -0800 (PST)
-Received: from [192.168.0.19] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id a125-v6sm451563wmf.8.2018.11.21.01.22.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 01:22:18 -0800 (PST)
-Subject: Re: [PATCH 2/2] ASoC: sdm845: Add support for Secondary MI2S
- interface
-To:     Rohit kumar <rohitkr@codeaurora.org>, plai@codeaurora.org,
-        bgoswami@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, rohkumar@qti.qualcomm.com
-References: <1542354118-23360-1-git-send-email-rohitkr@codeaurora.org>
- <1542354118-23360-3-git-send-email-rohitkr@codeaurora.org>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <97e02d38-046b-eef2-82ce-51d231312372@linaro.org>
-Date:   Wed, 21 Nov 2018 09:22:18 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <1542354118-23360-3-git-send-email-rohitkr@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 21 Nov 2018 14:56:53 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAL9J9F2079858
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 04:23:10 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nw1d90wn0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 04:23:10 -0500
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Wed, 21 Nov 2018 09:23:09 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 21 Nov 2018 09:23:06 -0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAL9N5sG27328582
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 21 Nov 2018 09:23:05 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 985BA124053;
+        Wed, 21 Nov 2018 09:23:05 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2D5F3124055;
+        Wed, 21 Nov 2018 09:23:03 +0000 (GMT)
+Received: from skywalker.in.ibm.com (unknown [9.124.31.179])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 21 Nov 2018 09:23:02 +0000 (GMT)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>, mpe@ellerman.id.au,
+        paulus@samba.org, David Gibson <david@gibson.dropbear.id.au>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Subject: [PATCH V4 0/3] * mm/kvm/vfio/ppc64: Migrate compound pages out of CMA region
+Date:   Wed, 21 Nov 2018 14:52:56 +0530
+X-Mailer: git-send-email 2.17.2
+X-TM-AS-GCONF: 00
+x-cbid: 18112109-0060-0000-0000-000002D6575A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010092; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01120588; UDB=6.00581487; IPR=6.00900709;
+ MB=3.00024261; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-21 09:23:09
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112109-0061-0000-0000-0000474465E8
+Message-Id: <20181121092259.16482-1-aneesh.kumar@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-21_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=611 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811210085
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+ppc64 use CMA area for the allocation of guest page table (hash page table). We won't
+be able to start guest if we fail to allocate hash page table. We have observed
+hash table allocation failure because we failed to migrate pages out of CMA region
+because they were pinned. This happen when we are using VFIO. VFIO on ppc64 pins
+the entire guest RAM. If the guest RAM pages get allocated out of CMA region, we
+won't be able to migrate those pages. The pages are also pinned for the lifetime of the
+guest.
 
+Currently we support migration of non-compound pages. With THP and with the addition of
+ hugetlb migration we can end up allocating compound pages from CMA region. This
+patch series add support for migrating compound pages. The first path adds the helper
+get_user_pages_cma_migrate() which pin the page making sure we migrate them out of
+CMA region before incrementing the reference count. 
 
-On 16/11/18 07:41, Rohit kumar wrote:
-> Add support to configure bit clock for secondary MI2S
-> TX interface.
-> 
-> Signed-off-by: Rohit kumar<rohitkr@codeaurora.org>
-> ---
->   sound/soc/qcom/sdm845.c | 18 ++++++++++++++++++
+Changes from V3:
+* Move the hugetlb check before transhuge check
+* Use compound head page when isolating hugetlb page
 
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Aneesh Kumar K.V (3):
+  mm: Add get_user_pages_cma_migrate
+  powerpc/mm/iommu: Allow migration of cma allocated pages during
+    mm_iommu_get
+  powerpc/mm/iommu: Allow large IOMMU page size only for hugetlb backing
+
+ arch/powerpc/mm/mmu_context_iommu.c | 140 ++++++++--------------------
+ include/linux/hugetlb.h             |   2 +
+ include/linux/migrate.h             |   3 +
+ mm/hugetlb.c                        |   4 +-
+ mm/migrate.c                        | 132 ++++++++++++++++++++++++++
+ 5 files changed, 179 insertions(+), 102 deletions(-)
+
+-- 
+2.17.2
+
