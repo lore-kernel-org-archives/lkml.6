@@ -2,88 +2,95 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_REPLYTO_END_DIGIT,
-	HEADER_FROM_DIFFERENT_DOMAINS,LOTS_OF_MONEY,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C38BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2541EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:22:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D16CC206BA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:21:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D16CC206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=archwll.com
+	by mail.kernel.org (Postfix) with ESMTP id E198E204FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:22:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E198E204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389829AbeKVH52 convert rfc822-to-8bit (ORCPT
+        id S2389842AbeKVH6M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 02:57:28 -0500
-Received: from [90.169.27.94] ([90.169.27.94]:52764 "EHLO archwll.com"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726791AbeKVH52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 02:57:28 -0500
-X-Greylist: delayed 67570 seconds by postgrey-1.27 at vger.kernel.org; Thu, 22 Nov 2018 02:57:28 EST
-Reply-To: jamesbenson9003@yahoo.com
-From:   ":COMPENSATION AGENTt" <test@archwll.com>
-To:     linux-kernel@vger.kernel.org
-Subject: International credit settlement
-Date:   21 Nov 2018 22:21:18 +0100
-Message-ID: <20181121222118.7C8C88679635D971@archwll.com>
+        Thu, 22 Nov 2018 02:58:12 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34780 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726791AbeKVH6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 02:58:12 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 6170420D73; Wed, 21 Nov 2018 22:22:07 +0100 (CET)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 387E720510;
+        Wed, 21 Nov 2018 22:21:57 +0100 (CET)
+Date:   Wed, 21 Nov 2018 22:21:57 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     radu_nicolae.pirea@upb.ro,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.co>,
+        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-spi <linux-spi@vger.kernel.org>
+Subject: Re: [PATCH 2/3] dt-bindings: mfd: atmel-usart: add DMA bindings for
+ SPI mode
+Message-ID: <20181121212157.GD12656@piout.net>
+References: <20181121112732.15690-1-radu_nicolae.pirea@upb.ro>
+ <20181121112732.15690-3-radu_nicolae.pirea@upb.ro>
+ <CAL_JsqLNURZTWCb5WOyJvN-trUP9r-ueftwUOGWPnrEaQPBKSw@mail.gmail.com>
+ <20181121164820.GC12656@piout.net>
+ <CAL_JsqLO_L+rTZh70nrpBMU1+CYKct7HhNY0gLGUnU7=JVRuQw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqLO_L+rTZh70nrpBMU1+CYKct7HhNY0gLGUnU7=JVRuQw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-International credit settlement
-Office of the director of operations
-World Bank united state of America.
+On 21/11/2018 14:52:29-0600, Rob Herring wrote:
+> On Wed, Nov 21, 2018 at 10:48 AM Alexandre Belloni
+> <alexandre.belloni@bootlin.com> wrote:
+> >
+> > Hi Rob,
+> >
+> > On 21/11/2018 10:41:01-0600, Rob Herring wrote:
+> > > > +Optional properties in serial and SPI mode:
+> > > > +- dma bindings for dma transfer:
+> > > > +       - dmas: DMA specifier, consisting of a phandle to DMA controller node,
+> > > > +               memory peripheral interface and USART DMA channel ID, FIFO configuration.
+> > > > +               Refer to dma.txt and atmel-dma.txt for details.
+> > > > +       - dma-names: "rx" for RX channel, "tx" for TX channel.
+> > >
+> > > > +               dma-names = "tx", "rx";
+> > >
+> > > The dma-names should have a defined order.
+> > >
+> >
+> > Why is that? Isn't the purpose of names to get rid of any particular
+> > ordering?
+> 
+> Because a fundamental rule of DT is the order is defined and
+> important. The purpose was to allow for cases that had a variable
+> number of entries, but even a variable number still have a defined
+> order.
+> 
+
+Thank you for the clarification!
 
 
-Attention :
-
-This Is To Officially Inform You That We Have Verified Your 
-Contact Inheritance File Presently On My Desk, And I Found Out 
-That You Have Not Received Your Payment Due To Your Lack Of Co-
-Operation And Not Fulfilling The Obligations Giving To You In 
-Respect To Your Contract /Inheritance Payment.
-
-Secondly, You Are Hereby Advice To Stop Dealing With Some Non-
-Officials In The Bank As This Is An Illegal Act And Will Have To 
-Stop If You So Wish To Receive Your Payment Immediately. After 
-The Board Meeting Held At Our Headquarters, We Have Resolved In 
-Finding A Solution To Your Problem, And As You May Know, We Have 
-Arranged Your Payment Through Our Swift Card Payment Center In 
-Europe, America And Asia Pacific, Which Is Then Instruction Given 
-By Our President.
-
-This Card Center Will Send You An ATM Card Which You Will Use To 
-Withdraw Your Money In Any Part Of The World, But The Maximum Is 
-($15,000.00) Fifteen Thousand Us Dollars Per Transaction. So, If 
-You Like To Receive Your Fund This Way, $15,000 Usd For You To 
-Withdraw For A Day And Each Transaction Is $5,000usd Minimum 
-Which You Have To Withdraw $15,000 Usd For One Working Day. Also 
-Be Informed That The Total Amount In The Swift ATM Card Is $14.6 
-Million Usd.
-
-Contact:COMPENSATION AGENT
-Email:DavegibsonEsq@gmail.comcom
-
-(1) Your Full Name:
-(2) Your Address Where You Want the Payment Centre to Send Your 
-ATM Card.:
-(3) Phone and Fax Number:
-(4) Age and Occupation:
-(5) Your Nearest International Air Port in Your City Of 
-Residence:
-
-We Shall Be Expecting To Receive Your Information, You Have To 
-Stop Any Further Communication With Anybody Or Office On This 
-Regards, Do Not Hesitate To Contact Me For More Details And 
-Direction, And Please Do Update Me With Any New Development.
-
-Thanks for Your Co-Operation.
-
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
