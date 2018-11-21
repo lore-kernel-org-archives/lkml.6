@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E31FDC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F9BC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABAD0214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:54:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BC54214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:54:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sb+6rc72"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABAD0214C4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eys4Xlh+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BC54214C4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731276AbeKVB3f (ORCPT
+        id S1731291AbeKVB3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 20:29:35 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42188 "EHLO
+        Wed, 21 Nov 2018 20:29:36 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35284 "EHLO
         mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731262AbeKVB3e (ORCPT
+        with ESMTP id S1731263AbeKVB3f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 20:29:34 -0500
-Received: by mail-ed1-f66.google.com with SMTP id j6so5101519edp.9
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 06:54:48 -0800 (PST)
+        Wed, 21 Nov 2018 20:29:35 -0500
+Received: by mail-ed1-f66.google.com with SMTP id x30so5134426edx.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 06:54:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5PBex8woGQungQQ8B1o/PKC1WPxNLYtAwp4faI4sz6M=;
-        b=Sb+6rc72d1vfZrK4tzNPm3vF+cgDkp53fKsrASvMten2GlXVT5x6jH1PN4y/XphF2G
-         DIUsQPwzI8ORALthWZR4CyuEcg0FTBnswH2StPrMw82ZWWVMaj2seBjn6YdMu5tzXBmw
-         ri0+IvWpqnc+pX8iiU+75KoQ+NQYfhrDbUNQOrBrXsMCfUz7rjXAyIhNb6uBNQwKgsqk
-         HeckMCsp5h/EKEIGYaFlnoiaaX5Zazkj9IH/R6ixMP7xqzBmZbiVQ8AlsS+cSg7tYaz0
-         q14g0Ro5fyk/gVMLiuKbYl4O7xEk6zjv8OqeP+J3gGPXivPN7tDBVcVWvC+d3zeBE+sO
-         eBSg==
+        bh=PzxUjnNAbhwN7r8Fc+mRz4FPenni3nOPBCv/QJaSIwE=;
+        b=eys4Xlh+WPcRKF02gF5sKMa+zrz0wsGdAHMT5jPltLCuVkt+i9nYjkWcxyQcdWnZe7
+         LE3DA4pRW2/vjykQiYAd4AKN2UVEnOoU/Hposubure9ZZtwH9aOdv5w+TaHWnx2QyZoo
+         VxwAYsiaRNkDAnomi5WXYg1mLwFHUtu3xVJQCDEEI1w93jgjDg42Ac4Ps+6CVN6A5+gL
+         NSCH2RJo1vMyfZ3CRAbWkQ1fFlT3d8G8weLa2di915ZhKDjO1LqIldXtrPHqDppT7Bzn
+         j/HM0EQPNYenPYM4o2YZ0YhlaEqSy5ACOzu/bJmr/sTRQ5RWT3bvoCwexbFbF9iNr2XQ
+         5E8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5PBex8woGQungQQ8B1o/PKC1WPxNLYtAwp4faI4sz6M=;
-        b=ndnTCbOMxM+fU6vWPEr5J00wucWM+lkvBEIsY1Xz0MYgOSqEXmZDpJwTifehrj/sbe
-         Titgd0qF24uCb8gGfp8ZCGJG856yxqSWjNsH6umDWEVnxNjaXkYOzW65uAxs3JV+vDoa
-         imzNhB07mb0ltgG4QqPxb9uODyb9X6GkGIdQ4LyqWKtsuq0gnoqY/oZIPK/9tbh9Xdve
-         /U8ufcQa/Axe8eqEUTBQLGwOTp0G0dnHprmGp6juc1pZiEo0+fKwdu5eFZTed0G8hmh5
-         E6DNGyyHvM4f6p9lN2v2QdWduk8c13dBjEgaUxoX+GHNd7lQh8C3KMJHv3fJjGTx1EYU
-         LtwQ==
-X-Gm-Message-State: AA+aEWamkrsuJNJP0ezsV1bdFDuIPQp9Gqe1E1iVIyVxei8xvGZH5YwY
-        qP/1l+lgmgT540WCWUESjlY=
-X-Google-Smtp-Source: AFSGD/VDe3L0hJipQccmYR7IbxHdHLEmWTVCM0Gx+84iTZ6VvIJaRaKPZuSrRoa6inDI6/eHSpqrSQ==
-X-Received: by 2002:a05:6402:1347:: with SMTP id y7mr6042678edw.114.1542812087438;
-        Wed, 21 Nov 2018 06:54:47 -0800 (PST)
+        bh=PzxUjnNAbhwN7r8Fc+mRz4FPenni3nOPBCv/QJaSIwE=;
+        b=S7nAxsff9FDheStuaXSCGCzaMY0/NodOS+ZdshDwe+cMlz26KqaWCB/bOXrzjBhmB+
+         XTH9f8knJEd3JZkAPHHl6Z6vLbB7BROl/JHzd3HL2ncxQsW3qJ2dauhr/yDPJFfyLONg
+         ryY9dO3/rY9K3/gcoeuefYnKZHCShMZK4XgzblHD3YccD6Wa7cU4lVTuay/MlLPM0lYK
+         f4elouu/VnhU2vsgnnosMdgwIyNshQ4qMMMY1UW+SMoIk5EHkCbYHA50gTfyc67qePa5
+         7lI8WlaFDrHMprYKTp/ln0k89Auy6ChZyNdGcowuK08+7+ilNDODtnwZ05jmbVJH9ATw
+         etXg==
+X-Gm-Message-State: AGRZ1gJLKrhc/sA6b9luoIvnkNdHIaJ81lDZSR8QUmO+4Ei1pI1jEDb1
+        IJLuTAkhkbA+azzzZSW3/No=
+X-Google-Smtp-Source: AJdET5c3q+bh+VzBwmmXl8Ne+mnxTI1OnN24e2vH1HFRLtZMkUxn/MzysQmOB8XzYFP1znbhcjWZCQ==
+X-Received: by 2002:a17:906:f04:: with SMTP id z4-v6mr5366870eji.106.1542812088958;
+        Wed, 21 Nov 2018 06:54:48 -0800 (PST)
 Received: from localhost (pD9E511F8.dip0.t-ipconnect.de. [217.229.17.248])
-        by smtp.gmail.com with ESMTPSA id f19-v6sm3832060eje.28.2018.11.21.06.54.46
+        by smtp.gmail.com with ESMTPSA id d15-v6sm3293932ejc.31.2018.11.21.06.54.48
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 06:54:46 -0800 (PST)
+        Wed, 21 Nov 2018 06:54:48 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Jassi Brar <jassisinghbrar@gmail.com>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 11/19] mailbox: xgene-slimpro: Use device-managed registration API
-Date:   Wed, 21 Nov 2018 15:54:21 +0100
-Message-Id: <20181121145429.7582-12-thierry.reding@gmail.com>
+Subject: [PATCH 12/19] mailbox: mtk-cmdq: Use device-managed registration API
+Date:   Wed, 21 Nov 2018 15:54:22 +0100
+Message-Id: <20181121145429.7582-13-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121145429.7582-1-thierry.reding@gmail.com>
 References: <20181121145429.7582-1-thierry.reding@gmail.com>
@@ -83,45 +83,30 @@ device-managed registration API.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/mailbox/mailbox-xgene-slimpro.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ drivers/mailbox/mtk-cmdq-mailbox.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/mailbox/mailbox-xgene-slimpro.c b/drivers/mailbox/mailbox-xgene-slimpro.c
-index b8b2b3533f46..8f397da1150b 100644
---- a/drivers/mailbox/mailbox-xgene-slimpro.c
-+++ b/drivers/mailbox/mailbox-xgene-slimpro.c
-@@ -224,7 +224,7 @@ static int slimpro_mbox_probe(struct platform_device *pdev)
- 	ctx->mb_ctrl.ops = &slimpro_mbox_ops;
- 	ctx->mb_ctrl.num_chans = i;
+diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+index f7cc29c00302..d9c3ec3667a8 100644
+--- a/drivers/mailbox/mtk-cmdq-mailbox.c
++++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+@@ -337,7 +337,6 @@ static int cmdq_remove(struct platform_device *pdev)
+ {
+ 	struct cmdq *cmdq = platform_get_drvdata(pdev);
  
--	rc = mbox_controller_register(&ctx->mb_ctrl);
-+	rc = devm_mbox_controller_register(&pdev->dev, &ctx->mb_ctrl);
- 	if (rc) {
- 		dev_err(&pdev->dev,
- 			"APM X-Gene SLIMpro MailBox register failed:%d\n", rc);
-@@ -235,14 +235,6 @@ static int slimpro_mbox_probe(struct platform_device *pdev)
- 	return 0;
- }
+-	mbox_controller_unregister(&cmdq->mbox);
+ 	clk_unprepare(cmdq->clock);
  
--static int slimpro_mbox_remove(struct platform_device *pdev)
--{
--	struct slimpro_mbox *smb = platform_get_drvdata(pdev);
--
--	mbox_controller_unregister(&smb->mb_ctrl);
--	return 0;
--}
--
- static const struct of_device_id slimpro_of_match[] = {
- 	{.compatible = "apm,xgene-slimpro-mbox" },
- 	{ },
-@@ -259,7 +251,6 @@ MODULE_DEVICE_TABLE(acpi, slimpro_acpi_ids);
+ 	if (cmdq->mbox.chans)
+@@ -524,7 +523,7 @@ static int cmdq_probe(struct platform_device *pdev)
+ 		cmdq->mbox.chans[i].con_priv = (void *)&cmdq->thread[i];
+ 	}
  
- static struct platform_driver slimpro_mbox_driver = {
- 	.probe	= slimpro_mbox_probe,
--	.remove = slimpro_mbox_remove,
- 	.driver	= {
- 		.name = "xgene-slimpro-mbox",
- 		.of_match_table = of_match_ptr(slimpro_of_match),
+-	err = mbox_controller_register(&cmdq->mbox);
++	err = devm_mbox_controller_register(dev, &cmdq->mbox);
+ 	if (err < 0) {
+ 		dev_err(dev, "failed to register mailbox: %d\n", err);
+ 		return err;
 -- 
 2.19.1
 
