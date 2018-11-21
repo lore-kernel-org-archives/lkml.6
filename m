@@ -2,104 +2,87 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DE7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF1DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D68EF20672
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:38:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D68EF20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B1CE520672
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:39:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1CE520672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbeKUSLu (ORCPT
+        id S1727450AbeKUSM3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 13:11:50 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38014 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbeKUSLu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 13:11:50 -0500
-Received: by mail-lj1-f196.google.com with SMTP id c19-v6so3922111lja.5
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 23:38:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3KMozNGj1coHe+3WTAxZcek8Y2kN6Qos9qrVM9zI6c0=;
-        b=Tc5UoYjC69asu8yN1q8P4E1D/j3UskNelWyQziOEh8wjZLN74RZnnBuULES6vkn9JT
-         79X+adwDa/eRne+fPA1F7o19MGjl5zyO0yz1aYa3K70q3PklKALz+Vn2YPM8DG+IBHPC
-         /i6Av1VXWYMT6LHlEoJxCYTUP44h6Pwwa83KHxOR+z4oxcT6lp3IjW2WL4vgckebtqpQ
-         iDVN9hQJdHtjwWFJQbNgcLTLuIYkdYgQ6aEgKAqgxm9G8rAs6HwuXitsL9/GPovJ8x8b
-         VWN+50eDIXNjiS/h1NHYWWkmpkxq/0/KWjXCA2R005PIVDvNQrDsayIbsQl5OVOp6O3C
-         kdAQ==
-X-Gm-Message-State: AA+aEWYhT2XJSro021hTARkC/YiutC4dWix5PqPqxaD+lKqK1M3yLlzI
-        EFXsVwloVYItJg9HgwuUec4dBeVk6mlXXDIXkIcmyg==
-X-Google-Smtp-Source: AJdET5dBG7wzjDlt1ONnNhgnHVqkTXYoHiDldR0zYMy9xq/Fo5ofldPk/+tynu5Rq5X9cWFAeZQ5MA8XcJrRRj2X6jk=
-X-Received: by 2002:a2e:8449:: with SMTP id u9-v6mr3528609ljh.121.1542785905298;
- Tue, 20 Nov 2018 23:38:25 -0800 (PST)
-MIME-Version: 1.0
-References: <1542318469-13699-1-git-send-email-bhsharma@redhat.com> <4AE2DC15AC0B8543882A74EA0D43DBEC03560F84@BPXM09GP.gisp.nec.co.jp>
-In-Reply-To: <4AE2DC15AC0B8543882A74EA0D43DBEC03560F84@BPXM09GP.gisp.nec.co.jp>
-From:   Bhupesh Sharma <bhsharma@redhat.com>
-Date:   Wed, 21 Nov 2018 13:07:57 +0530
-Message-ID: <CACi5LpPestnsByi29X9uOaP04J3LgG4BSj_ODKEDG8S9sLkEsg@mail.gmail.com>
-Subject: Re: [PATCH v2] x86_64, vmcoreinfo: Append 'page_offset_base' to vmcoreinfo
-To:     Kazuhito Hagio <k-hagio@ab.jp.nec.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Baoquan He <bhe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Anderson <anderson@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Omar Sandoval <osandov@fb.com>, x86@kernel.org,
-        kexec mailing list <kexec@lists.infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 21 Nov 2018 13:12:29 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:40754 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbeKUSM3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 13:12:29 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 67A1E3D22F34FBB385B4;
+        Wed, 21 Nov 2018 15:39:01 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wAL7chwE081387;
+        Wed, 21 Nov 2018 15:38:43 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018112115390496-12070875 ;
+          Wed, 21 Nov 2018 15:39:04 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     peterz@infradead.org
+Cc:     mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, adrian.hunter@intel.com, ak@linux.intel.com,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        wang.yi59@zte.com.cn, wen.yang99@zte.com.cn,
+        Julia Lawall <julia.lawall@lip6.fr>
+Subject: [PATCH 1/4] perf intel-pt: fix potential NULL pointer dereference in intel_pt_process_auxtrace_info
+Date:   Wed, 21 Nov 2018 15:40:11 +0800
+Message-Id: <1542786011-18150-1-git-send-email-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-11-21 15:39:05,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-11-21 15:38:34,
+        Serialize complete at 2018-11-21 15:38:34
+X-MAIL: mse01.zte.com.cn wAL7chwE081387
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kazu,
+This patch fixes a possible null pointer dereference in
+intel_pt_process_auxtrace_info, detected by the semantic patch
+deref_null.cocci, with the following warning:
 
-On Tue, Nov 20, 2018 at 2:47 AM Kazuhito Hagio <k-hagio@ab.jp.nec.com> wrote:
->
-> On 11/15/2018 4:47 PM, Bhupesh Sharma wrote:
-> > Adding 'page_offset_base' to the vmcoreinfo can be specially useful for
-> > live-debugging of a running kernel via user-space utilities
-> > like makedumpfile (see [1]).
->
-> I agree.
->
-> > Recently, I saw an issue with the 'makedumpfile' utility (see [2] for
-> > details), whose live debugging feature is broken with newer kernels
-> > (I tested the same with 4.19-rc8+ kernel), as KCORE_REMAP segments were
-> > added to kcore, thus leading to an additional sections in the same, and
-> > makedumpfile is not longer able to determine the start of direct
-> > mapping of all physical memory, as it relies on traversing the PT_LOAD
-> > segments inside kcore and using the last PT_LOAD segment
-> > to determine the start of direct mapping.
->
-> Actually, the KCORE_REMAP segments were already removed from kcore by
-> commit bf904d2762ee ("x86/pti/64: Remove the SYSCALL64 entry trampoline")
-> and kcore's program headers got back to the previous ones, but this
-> fact shows that they are changeable.
->
-> So I think that if we have this NUMBER(page_offset_base) in vmcoreinfo
-> for x86_64, user-space tools (especially makedumpfile) would become
-> more stable against changes in kcore and vmcore, rather than depending
-> on their PT_LOAD values.
+./tools/perf/util/intel-pt.c:2579:32-49: ERROR: session -> itrace_synth_opts is NULL but dereferenced.
 
-Thanks a lot for your review.
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Reviewed-by: Tan Hu <tan.hu@zte.com.cn>
+CC: Julia Lawall <julia.lawall@lip6.fr>
+---
+ tools/perf/util/intel-pt.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Hi x86 maintainers,
+diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+index 149ff36..bac20e8 100644
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -2575,7 +2575,8 @@ int intel_pt_process_auxtrace_info(union perf_event *event,
+ 	if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
+ 		pt->synth_opts = *session->itrace_synth_opts;
+ 	} else {
+-		itrace_synth_opts__set_default(&pt->synth_opts,
++		if (session->itrace_synth_opts)
++			itrace_synth_opts__set_default(&pt->synth_opts,
+ 				session->itrace_synth_opts->default_no_sample);
+ 		if (use_browser != -1) {
+ 			pt->synth_opts.branches = false;
+-- 
+2.9.5
 
-Ping, any comments on this patch. Since it is a useful addition to the
-kernel-userspace ABI (as suggested by the user-space utility
-maintainer as well), can we consider including this in the kernel?
-
-Thanks,
-Bhupesh
