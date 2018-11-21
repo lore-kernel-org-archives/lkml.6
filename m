@@ -2,123 +2,174 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE5B5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 721DBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD81320645
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:39:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="t9Z2iURo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD81320645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 33C862075B
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:39:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33C862075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389885AbeKVIPT (ORCPT
+        id S2389891AbeKVIP4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 03:15:19 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37262 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729727AbeKVIPT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 03:15:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=cRlbueyY+SE79sSVXSDyNFhJoIAEAQgj9H3E386hlQQ=; b=t9Z2iURomCrPF4p9zWq4fzQyX
-        FX59HZ3JZc1A0egL9sKHM22a/0lfmM7FkJ+NDWNMYzN9oyiU1X3VJkw0hxrkrOzFXi3k06X01cFrW
-        t95pv2KdHvxloegBLcS+YEC9Nz8fMQi3+C8LPP//Hg6tP+Nr6+kaT45A/2vV/AnDob73/eJLnAgu7
-        pSM0vQtwJEKPXROU6XK0HPUbEe1RzUZgWGv2l2NIXVfkyIxIbE23pmxOcRG6IYSJ6FZHdttsTG65t
-        1RhOVpUzBnP0NNjLm5NRfBBc20rDjxsBNQcUk6fDk40rFQAxHfx9PjUeqwbaKJT1HokkgfL1gUIb3
-        m/gIyzCqw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPaCz-00019r-PX; Wed, 21 Nov 2018 21:38:53 +0000
-Date:   Wed, 21 Nov 2018 13:38:53 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Thu, 22 Nov 2018 03:15:56 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:49560 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729727AbeKVIPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 03:15:55 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 2336588A; Wed, 21 Nov 2018 15:39:46 -0600 (CST)
+Date:   Wed, 21 Nov 2018 15:39:46 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Daniel Colascione <dancol@google.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Levin Alexander <Alexander.Levin@microsoft.com>,
-        Huaisheng Ye <yehs1@lenovo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com
-Subject: Re: [PATCH v2 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page
- tables
-Message-ID: <20181121213853.GL3065@bombadil.infradead.org>
-References: <20181111090341.120786-1-drinkcat@chromium.org>
- <0100016737801f14-84f1265d-4577-4dcf-ad57-90dbc8e0a78f-000000@email.amazonses.com>
+        Oleg Nesterov <oleg@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
+Message-ID: <20181121213946.GA10795@mail.hallyn.com>
+References: <20181119103241.5229-3-christian@brauner.io>
+ <20181119202857.k5zw742xjfrw677j@yavin>
+ <20181119205518.btew3vxwgva4w3zh@brauner.io>
+ <20181119211810.73ptfhnwdmkngfi4@yavin>
+ <20181119212126.u2nkijmula6wcfqi@brauner.io>
+ <CAKOZuevEx6CbcxrR8eVZrUXDcN5y1GPsXdSoHfQteSQKypx0qw@mail.gmail.com>
+ <20181119213722.z54huio5g4kuldxk@brauner.io>
+ <CAKOZueup5L9Fd=tTK5g1415x0muLP_cPkxf4o26-kCPtH_caqw@mail.gmail.com>
+ <87muq4xs2n.fsf@xmission.com>
+ <20181120103111.etlqp7zop34v6nv4@brauner.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0100016737801f14-84f1265d-4577-4dcf-ad57-90dbc8e0a78f-000000@email.amazonses.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181120103111.etlqp7zop34v6nv4@brauner.io>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 06:20:02PM +0000, Christopher Lameter wrote:
-> On Sun, 11 Nov 2018, Nicolas Boichat wrote:
+On Tue, Nov 20, 2018 at 11:31:13AM +0100, Christian Brauner wrote:
+> On Mon, Nov 19, 2018 at 10:59:12PM -0600, Eric W. Biederman wrote:
+> > Daniel Colascione <dancol@google.com> writes:
+> > 
+> > > On Mon, Nov 19, 2018 at 1:37 PM Christian Brauner <christian@brauner.io> wrote:
+> > >>
+> > >> On Mon, Nov 19, 2018 at 01:26:22PM -0800, Daniel Colascione wrote:
+> > >> > On Mon, Nov 19, 2018 at 1:21 PM, Christian Brauner <christian@brauner.io> wrote:
+> > >> > > That can be done without a loop by comparing the level counter for the
+> > >> > > two pid namespaces.
+> > >> > >
+> > >> > >>
+> > >> > >> And you can rewrite pidns_get_parent to use it. So you would instead be
+> > >> > >> doing:
+> > >> > >>
+> > >> > >>     if (pidns_is_descendant(proc_pid_ns, task_active_pid_ns(current)))
+> > >> > >>         return -EPERM;
+> > >> > >>
+> > >> > >> (Or you can just copy the 5-line loop into procfd_signal -- though I
+> > >> > >> imagine we'll need this for all of the procfd_* APIs.)
+> > >> >
+> > >> > Why is any of this even necessary? Why does the child namespace we're
+> > >> > considering even have a file descriptor to its ancestor's procfs? If
+> > >>
+> > >> Because you can send file descriptors between processes and container
+> > >> runtimes tend to do that.
+> > >
+> > > Right. But why *would* a container runtime send one of these procfs
+> > > FDs to a container?
+> > >
+> > >> > it has one of these FDs, it can already *read* all sorts of
+> > >> > information it really shouldn't be able to acquire, so the additional
+> > >> > ability to send a signal (subject to the usual permission checks)
+> > >> > feels like sticking a finger in a dike that's already well-perforated.
+> > >> > IMHO, we shouldn't bother with this check. The patch would be simpler
+> > >> > without it.
+> > >>
+> > >> We will definitely not allow signaling processes in an ancestor pid
+> > >> namespace! That is a security issue! I can imagine container runtimes
+> > >> killing their monitoring process etc. pp. Not happening, unless someone
+> > >> with deep expertise in signals can convince me otherwise.
+> > >
+> > > If parent namespace procfs FDs or mounts really can leak into child
+> > > namespaces as easily as Aleksa says, then I don't mind adding the
+> > > check. I was under the impression that if you find yourself in this
+> > > situation, you already have a big problem.
+> > 
+> > There is one big reason to have the check, and I have not seen it
+> > mentioned yet in this thread.
+> > 
+> > When SI_USER is set we report the pid of the sender of the signal in
+> > si_pid.  When the signal comes from the kernel si_pid == 0.  When signal
+> > is sent from an ancestor pid namespace si_pid also equals 0 (which is
+> > reasonable).
+> > 
+> > A signal out to a process in a parent pid namespace such as SIGCHLD is
+> > reasonable as we can map the pid.  I really don't see the point of
+> > forbidding that.  From the perspective of the process in the parent pid
+> > namespace it is just another process in it's pid namespace.  So it
+> > should pose no problem from the perspective of the receiving process.
+> > 
+> > A signal to a process in a pid namespace that is neither a parent nor a
+> > descendent pid namespace would be a problem, as there is no well defined
+> > notion of what si_pid should be set to.  So for that case perhaps we
+> > should have something like a noprocess pid that we can set.  Perhaps we
+> > could set si_pid to 0xffffffff.  That would take a small extension to
+> > pid_nr_ns.
+> > 
+> > File descriptors are not namespaced.  It is completely legitimate to use
+> > file descriptors to get around limitations of namespaces.
 > 
-> > This is a follow-up to the discussion in [1], to make sure that the page
-> > tables allocated by iommu/io-pgtable-arm-v7s are contained within 32-bit
-> > physical address space.
+> Frankly, I don't see a good argument for why we would allow that even if
+> safe. I have not heard a legitimate use-case or need for this.
+> At this point I care about very simple semantics. Being able to signal
+> into ancestor pid namespaces and cousin namespaces is interesting but
+> makes the syscall more brittle and harder to understand.
+
+Yeah, I'm with you on that.  We can always open that door later if a good
+use case comes up, but I prefer simple at first.
+
+> Changing pid_nr_ns() might be the solution but this function is called
+> all over the place in the kernel and I'm not going to risk breaking
+> something by changing it for a feature that no one so far has ever
+> asked for.
+> If you are ok with this then we should hold off on this. We can always
+> add this feature later by removing the check when someone has a use-case
+> for it.
+> I'll send a v2 of the patch that keeps the restriction for now. If you
+> insist on it being removed we can make the change in a follow-up
+> iteration.
 > 
-> Page tables? This means you need a page frame? Why go through the slab
-> allocators?
-
-Because this particular architecture has sub-page-size PMD page tables.
-We desperately need to hoist page table allocation out of the architectures;
-there're a bunch of different implementations and they're mostly bad,
-one way or another.
-
-For each level of page table we generally have three cases:
-
-1. single page
-2. sub-page, naturally aligned
-3. multiple pages, naturally aligned
-
-for 1 and 3, the page allocator will do just fine.
-for 2, we should have a per-MM page_frag allocator.  s390 already has
-something like this, although it's more complicated.  ppc also has
-something a little more complex for the cases when it's configured with
-a 64k page size but wants to use a 4k page table entry.
-
-I'd like x86 to be able to simply do:
-
-#define pte_alloc_one(mm, addr)	page_alloc_table(mm, addr, 0)
-#define pmd_alloc_one(mm, addr)	page_alloc_table(mm, addr, 0)
-#define pud_alloc_one(mm, addr)	page_alloc_table(mm, addr, 0)
-#define p4d_alloc_one(mm, addr)	page_alloc_table(mm, addr, 0)
-
-An architecture with 4k page size and needing a 16k PMD would do:
-
-#define pmd_alloc_one(mm, addr) page_alloc_table(mm, addr, 2)
-
-while an architecture with a 64k page size needing a 4k PTE would do:
-
-#define ARCH_PAGE_TABLE_FRAG
-#define pte_alloc_one(mm, addr) pagefrag_alloc_table(mm, addr, 4096)
-
-I haven't had time to work on this, but perhaps someone with a problem
-that needs fixing would like to, instead of burying yet another awful
-implementation away in arch/ somewhere.
+> Christian
+> 
+> > 
+> > Adding limitations to a file descriptor based api because someone else
+> > can't set up their processes in such a way as to get the restrictions
+> > they are looking for seems very sad.
+> > 
+> > Frankly I think it is one of the better features of namespaces that we
+> > have to carefully handle and define these cases so that when the
+> > inevitable leaks happen you are not immediately in a world of hurt.  All
+> > of the other permission checks etc continue to do their job.  Plus you
+> > are prepared for the case when someone wants their containers to have an
+> > interesting communication primitive.
+> > 
+> > Eric
+> > 
+> > 
+> > 
+> > 
