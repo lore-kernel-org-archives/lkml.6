@@ -2,133 +2,78 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73843C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21AC3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34B532148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:05:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34B532148E
+	by mail.kernel.org (Postfix) with ESMTP id E0CF021479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:07:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0CF021479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbeKURiU (ORCPT
+        id S1726612AbeKURkq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 12:38:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58002 "EHLO mx1.suse.de"
+        Wed, 21 Nov 2018 12:40:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58358 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725999AbeKURiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 12:38:20 -0500
+        id S1725999AbeKURkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 12:40:46 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E0D63ACB4;
-        Wed, 21 Nov 2018 07:05:00 +0000 (UTC)
-Date:   Wed, 21 Nov 2018 08:05:00 +0100
+        by mx1.suse.de (Postfix) with ESMTP id 7A023ACB4;
+        Wed, 21 Nov 2018 07:07:27 +0000 (UTC)
+Date:   Wed, 21 Nov 2018 08:07:26 +0100
 From:   Michal Hocko <mhocko@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Linux API <linux-api@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, adobriyan@gmail.com,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, David Rientjes <rientjes@google.com>
-Subject: Re: [RFC PATCH 1/3] mm, proc: be more verbose about unstable VMA
- flags in /proc/<pid>/smaps
-Message-ID: <20181121070500.GB12932@dhcp22.suse.cz>
-References: <20181120103515.25280-1-mhocko@kernel.org>
- <20181120103515.25280-2-mhocko@kernel.org>
- <CAPcyv4j7=Mh9dt3Fv+cEhtYEXXKNDxErv0N9Zt+h+r9QxX_GAw@mail.gmail.com>
+To:     William Kucharski <william.kucharski@oracle.com>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <OSalvador@suse.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        David Hildenbrand <david@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 3/3] mm, fault_around: do not take a reference to a
+ locked page
+Message-ID: <20181121070726.GC12932@dhcp22.suse.cz>
+References: <20181120134323.13007-1-mhocko@kernel.org>
+ <20181120134323.13007-4-mhocko@kernel.org>
+ <20181120140715.mouc7okin3ht5krr@kshutemo-mobl1>
+ <20181120141207.GK22247@dhcp22.suse.cz>
+ <29F15A96-D6EB-450E-B54B-A4CB460ED9B3@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4j7=Mh9dt3Fv+cEhtYEXXKNDxErv0N9Zt+h+r9QxX_GAw@mail.gmail.com>
+In-Reply-To: <29F15A96-D6EB-450E-B54B-A4CB460ED9B3@oracle.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 20-11-18 10:32:07, Dan Williams wrote:
-> On Tue, Nov 20, 2018 at 2:35 AM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > From: Michal Hocko <mhocko@suse.com>
-> >
-> > Even though vma flags exported via /proc/<pid>/smaps are explicitly
-> > documented to be not guaranteed for future compatibility the warning
-> > doesn't go far enough because it doesn't mention semantic changes to
-> > those flags. And they are important as well because these flags are
-> > a deep implementation internal to the MM code and the semantic might
-> > change at any time.
-> >
-> > Let's consider two recent examples:
-> > http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
-> > : commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
-> > : removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
-> > : mean time certain customer of ours started poking into /proc/<pid>/smaps
-> > : and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
-> > : flags, the application just fails to start complaining that DAX support is
-> > : missing in the kernel.
-> >
-> > http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
-> > : Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
-> > : introduced a regression in that userspace cannot always determine the set
-> > : of vmas where thp is ineligible.
-> > : Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
-> > : to determine if a vma is eligible to be backed by hugepages.
-> > : Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
-> > : be disabled and emit "nh" as a flag for the corresponding vmas as part of
-> > : /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
-> > : flag and "nh" is not emitted.
-> > : This causes smaps parsing libraries to assume a vma is eligible for thp
-> > : and ends up puzzling the user on why its memory is not backed by thp.
-> >
-> > In both cases userspace was relying on a semantic of a specific VMA
-> > flag. The primary reason why that happened is a lack of a proper
-> > internface. While this has been worked on and it will be fixed properly,
-> > it seems that our wording could see some refinement and be more vocal
-> > about semantic aspect of these flags as well.
-> >
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: David Rientjes <rientjes@google.com>
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > ---
-> >  Documentation/filesystems/proc.txt | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-> > index 12a5e6e693b6..b1fda309f067 100644
-> > --- a/Documentation/filesystems/proc.txt
-> > +++ b/Documentation/filesystems/proc.txt
-> > @@ -496,7 +496,9 @@ flags associated with the particular virtual memory area in two letter encoded
-> >
-> >  Note that there is no guarantee that every flag and associated mnemonic will
-> >  be present in all further kernel releases. Things get changed, the flags may
-> > -be vanished or the reverse -- new added.
-> > +be vanished or the reverse -- new added. Interpretatation of their meaning
-> > +might change in future as well. So each consumnent of these flags have to
-> > +follow each specific kernel version for the exact semantic.
+On Tue 20-11-18 21:51:39, William Kucharski wrote:
 > 
-> Can we start to claw some of this back? Perhaps with a config option
-> to hide the flags to put applications on notice?
+> 
+> > On Nov 20, 2018, at 7:12 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> > 
+> > +		/*
+> > +		 * Check the locked pages before taking a reference to not
+> > +		 * go in the way of migration.
+> > +		 */
+> 
+> Could you make this a tiny bit more explanative, something like:
+> 
+> +		/*
+> +		 * Check for a locked page first, as a speculative
+> +		 * reference may adversely influence page migration.
+> +		 */
 
-I would love to. My knowledge of CRIU is very minimal, but my
-understanding is that this is the primary consumer of those flags. And
-checkpointing is so close to the specific kernel version that I assume
-that this abuse is somehow justified. We can hide it behind
-CONFIG_CHECKPOINT_RESTORE but does it going to help? I presume that many
-distro kernels will have the config enabled.
+sure
 
-> I recall that when I
-> introduced CONFIG_IO_STRICT_DEVMEM it caused enough regressions that
-> distros did not enable it, but now a few years out I'm finding that it
-> is enabled in more places.
 > 
-> In any event,
-> 
-> Acked-by: Dan Williams <dan.j.williams@intel.com>
+> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 
 Thanks!
 
