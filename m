@@ -2,172 +2,197 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2392C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:35:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF759C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82C742147D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:35:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C742147D
+	by mail.kernel.org (Postfix) with ESMTP id 941FC214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:37:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 941FC214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731505AbeKVCKc (ORCPT
+        id S1731463AbeKVCMv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 21:10:32 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44600 "EHLO mx1.redhat.com"
+        Wed, 21 Nov 2018 21:12:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38888 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730072AbeKVCKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 21:10:32 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1730072AbeKVCMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 21:12:51 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 35E1437E85;
-        Wed, 21 Nov 2018 15:35:37 +0000 (UTC)
-Received: from [10.36.116.121] (ovpn-116-121.ams2.redhat.com [10.36.116.121])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B6E58277B3;
-        Wed, 21 Nov 2018 15:35:33 +0000 (UTC)
-Subject: Re: [PATCH v1] makedumpfile: exclude pages that are logically offline
-To:     Kazuhito Hagio <k-hagio@ab.jp.nec.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        kexec-ml <kexec@lists.infradead.org>,
-        "pv-drivers@vmware.com" <pv-drivers@vmware.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-References: <20181119101616.8901-1-david@redhat.com>
- <20181119101835.9140-1-david@redhat.com>
- <4AE2DC15AC0B8543882A74EA0D43DBEC03561222@BPXM09GP.gisp.nec.co.jp>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <e5ac1f79-cd69-2b8e-41ee-873fea48afdd@redhat.com>
-Date:   Wed, 21 Nov 2018 16:35:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        by mx1.redhat.com (Postfix) with ESMTPS id 87EDC3084297;
+        Wed, 21 Nov 2018 15:37:54 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-20.pek2.redhat.com [10.72.8.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 49A825C21E;
+        Wed, 21 Nov 2018 15:37:31 +0000 (UTC)
+Date:   Wed, 21 Nov 2018 23:37:27 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V11 14/19] block: handle non-cluster bio out of
+ blk_bio_segment_split
+Message-ID: <20181121153726.GC19111@ming.t460p>
+References: <20181121032327.8434-1-ming.lei@redhat.com>
+ <20181121032327.8434-15-ming.lei@redhat.com>
+ <20181121143355.GB2594@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <4AE2DC15AC0B8543882A74EA0D43DBEC03561222@BPXM09GP.gisp.nec.co.jp>
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 21 Nov 2018 15:35:37 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181121143355.GB2594@lst.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 21 Nov 2018 15:37:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.11.18 15:58, Kazuhito Hagio wrote:
-> Hi David,
+On Wed, Nov 21, 2018 at 03:33:55PM +0100, Christoph Hellwig wrote:
+> > +			non-cluster.o
 > 
->> Linux marks pages that are logically offline via a page flag (map count).
->> Such pages e.g. include pages infated as part of a balloon driver or
->> pages that were not actually onlined when onlining the whole section.
->>
->> While the hypervisor usually allows to read such inflated memory, we
->> basically read and dump data that is completely irrelevant. Also, this
->> might result in quite some overhead in the hypervisor. In addition,
->> we saw some problems under Hyper-V, whereby we can crash the kernel by
->> dumping, when reading memory of a partially onlined memory segment
->> (for memory added by the Hyper-V balloon driver).
->>
->> Therefore, don't read and dump pages that are marked as being logically
->> offline.
->>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->>  makedumpfile.c | 34 ++++++++++++++++++++++++++++++----
->>  makedumpfile.h |  1 +
->>  2 files changed, 31 insertions(+), 4 deletions(-)
->>
->> diff --git a/makedumpfile.c b/makedumpfile.c
->> index 8923538..b8bfd4c 100644
->> --- a/makedumpfile.c
->> +++ b/makedumpfile.c
->> @@ -88,6 +88,7 @@ mdf_pfn_t pfn_cache_private;
->>  mdf_pfn_t pfn_user;
->>  mdf_pfn_t pfn_free;
->>  mdf_pfn_t pfn_hwpoison;
->> +mdf_pfn_t pfn_offline;
->>
->>  mdf_pfn_t num_dumped;
->>
->> @@ -249,6 +250,21 @@ isHugetlb(unsigned long dtor)
->>                      && (SYMBOL(free_huge_page) == dtor));
->>  }
->>
->> +static int
->> +isOffline(unsigned long flags, unsigned int _mapcount)
->> +{
->> +	if (NUMBER(PAGE_BUDDY_MAPCOUNT_VALUE) == NOT_FOUND_NUMBER)
->> +		return FALSE;
+> Do we really need a new source file for these few functions?
 > 
-> This is NUMBER(PAGE_OFFLINE_MAPCOUNT_VALUE), isn't it?
-> If so, I will correct it when merging.
+> >  	default:
+> > +		if (!blk_queue_cluster(q)) {
+> > +			blk_queue_non_cluster_bio(q, bio);
+> > +			return;
 > 
-> Otherwise, looks good to me.
+> I'd name this blk_bio_segment_split_singlepage or similar.
+
+OK.
+
 > 
-> Thanks!
-> Kazu
+> > +static __init int init_non_cluster_bioset(void)
+> > +{
+> > +	WARN_ON(bioset_init(&non_cluster_bio_set, BIO_POOL_SIZE, 0,
+> > +			   BIOSET_NEED_BVECS));
+> > +	WARN_ON(bioset_integrity_create(&non_cluster_bio_set, BIO_POOL_SIZE));
+> > +	WARN_ON(bioset_init(&non_cluster_bio_split, BIO_POOL_SIZE, 0, 0));
+> 
+> Please only allocate the resources once a queue without the cluster
+> flag is registered, there are only very few modern drivers that do that.
 
-Indeed,
+OK.
 
-I will most probably resend either way along with a new mm series!
+> 
+> > +static void non_cluster_end_io(struct bio *bio)
+> > +{
+> > +	struct bio *bio_orig = bio->bi_private;
+> > +
+> > +	bio_orig->bi_status = bio->bi_status;
+> > +	bio_endio(bio_orig);
+> > +	bio_put(bio);
+> > +}
+> 
+> Why can't we use bio_chain for the split bios?
 
-Thanks a lot!
+The parent bio is multi-page bvec, we can't submit it for non-cluster.
 
+> 
+> > +	bio_for_each_segment(from, *bio_orig, iter) {
+> > +		if (i++ < max_segs)
+> > +			sectors += from.bv_len >> 9;
+> > +		else
+> > +			break;
+> > +	}
+> 
+> The easy to read way would be:
+> 
+> 	bio_for_each_segment(from, *bio_orig, iter) {
+> 		if (i++ == max_segs)
+> 			break;
+> 		sectors += from.bv_len >> 9;
+> 	}
 
--- 
+OK.
+
+> 
+> > +	if (sectors < bio_sectors(*bio_orig)) {
+> > +		bio = bio_split(*bio_orig, sectors, GFP_NOIO,
+> > +				&non_cluster_bio_split);
+> > +		bio_chain(bio, *bio_orig);
+> > +		generic_make_request(*bio_orig);
+> > +		*bio_orig = bio;
+> 
+> I don't think this is very efficient, as this means we now
+> clone the bio twice, first to split it at the sector boundary,
+> and then again when converting it to single-page bio_vec.
+
+That is exactly what bounce code does. The problem for both bounce
+and non-cluster is same actually because the bvec table itself has
+to be changed.
+
+> 
+> I think this could be something like this (totally untested):
+> 
+> diff --git a/block/non-cluster.c b/block/non-cluster.c
+> index 9c2910be9404..60389f275c43 100644
+> --- a/block/non-cluster.c
+> +++ b/block/non-cluster.c
+> @@ -13,58 +13,59 @@
+>  
+>  #include "blk.h"
+>  
+> -static struct bio_set non_cluster_bio_set, non_cluster_bio_split;
+> +static struct bio_set non_cluster_bio_set;
+>  
+>  static __init int init_non_cluster_bioset(void)
+>  {
+>  	WARN_ON(bioset_init(&non_cluster_bio_set, BIO_POOL_SIZE, 0,
+>  			   BIOSET_NEED_BVECS));
+>  	WARN_ON(bioset_integrity_create(&non_cluster_bio_set, BIO_POOL_SIZE));
+> -	WARN_ON(bioset_init(&non_cluster_bio_split, BIO_POOL_SIZE, 0, 0));
+>  
+>  	return 0;
+>  }
+>  __initcall(init_non_cluster_bioset);
+>  
+> -static void non_cluster_end_io(struct bio *bio)
+> -{
+> -	struct bio *bio_orig = bio->bi_private;
+> -
+> -	bio_orig->bi_status = bio->bi_status;
+> -	bio_endio(bio_orig);
+> -	bio_put(bio);
+> -}
+> -
+>  void blk_queue_non_cluster_bio(struct request_queue *q, struct bio **bio_orig)
+>  {
+> -	struct bio *bio;
+>  	struct bvec_iter iter;
+> -	struct bio_vec from;
+> -	unsigned i = 0;
+> -	unsigned sectors = 0;
+> -	unsigned short max_segs = min_t(unsigned short, BIO_MAX_PAGES,
+> -					queue_max_segments(q));
+> +	struct bio *bio;
+> +	struct bio_vec bv;
+> +	unsigned short max_segs, segs = 0;
+> +
+> +	bio = bio_alloc_bioset(GFP_NOIO, bio_segments(*bio_orig),
+> +			&non_cluster_bio_set);
+
+bio_segments(*bio_orig) may be > 256, so bio_alloc_bioset() may fail.
 
 Thanks,
-
-David / dhildenb
+Ming
