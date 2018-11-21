@@ -2,156 +2,151 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E911AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 574A1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:50:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BD882080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:50:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="iPWWE25C";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="O9YZ/5om"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD882080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B0192075B
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:50:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B0192075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390310AbeKVJ0n (ORCPT
+        id S2390323AbeKVJ1M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 04:26:43 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:50944 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731554AbeKVJ0n (ORCPT
+        Thu, 22 Nov 2018 04:27:12 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38560 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731554AbeKVJ1M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 04:26:43 -0500
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wALMiBQG001729;
-        Wed, 21 Nov 2018 14:49:40 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=tc/CsZ2JZNPNIGjhKyT3KSs7P9ML4pncs3AFTNLHLkI=;
- b=iPWWE25CdAepbWVqvTb64kY/07Azx87ezP9f931Vx3qg6nFmnun/jiWV6havg+bXcBdU
- dIKWP9tTQv/NCQL47dzQ43+a3Wzpyi+RXJNQC0OY4cWQVkjYmDaBjqHW98ysEb2FVJqz
- 1/1qFnqBWcMQmkATBoI6l2eGVnepM6ouUWs= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2nweap0dme-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 21 Nov 2018 14:49:40 -0800
-Received: from frc-mbx06.TheFacebook.com (2620:10d:c0a1:f82::30) by
- frc-hub01.TheFacebook.com (2620:10d:c021:18::171) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Wed, 21 Nov 2018 14:49:39 -0800
-Received: from frc-hub03.TheFacebook.com (2620:10d:c021:18::173) by
- frc-mbx06.TheFacebook.com (2620:10d:c0a1:f82::30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Wed, 21 Nov 2018 14:49:39 -0800
-Received: from NAM01-BY2-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Wed, 21 Nov 2018 14:49:39 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tc/CsZ2JZNPNIGjhKyT3KSs7P9ML4pncs3AFTNLHLkI=;
- b=O9YZ/5omHYm6NE9cYAh0OQKPrJcJVjxqS2rTwRBWu5bmRJ/XCHXgGw6HqHkqCed2Z66YEWY0S78uKzV80+v+GLUUpJa46Pucc0TjeqLR26hyyf3NI61TJE0S0wPFCTrnLt3thVZ7pP7yNFOiEo/SYkCeS087di8ElHUXqtdec8k=
-Received: from BYAPR15MB2501.namprd15.prod.outlook.com (52.135.196.11) by
- BYAPR15MB2328.namprd15.prod.outlook.com (52.135.197.153) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.25; Wed, 21 Nov 2018 22:49:37 +0000
-Received: from BYAPR15MB2501.namprd15.prod.outlook.com
- ([fe80::c50c:be46:74f6:622a]) by BYAPR15MB2501.namprd15.prod.outlook.com
- ([fe80::c50c:be46:74f6:622a%3]) with mapi id 15.20.1339.027; Wed, 21 Nov 2018
- 22:49:37 +0000
-From:   Alexei Starovoitov <ast@fb.com>
-To:     Song Liu <songliubraving@fb.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH perf,bpf 5/5] perf util: generate bpf_prog_info_event for
- short living bpf programs
-Thread-Topic: [PATCH perf,bpf 5/5] perf util: generate bpf_prog_info_event for
- short living bpf programs
-Thread-Index: AQHUgdQ9i/pAXoYS2Eyse+BQV/qwWKVayrqAgAAGp4CAAAPoAA==
-Date:   Wed, 21 Nov 2018 22:49:37 +0000
-Message-ID: <36f98237-30bf-d01d-cff1-de8a9add77b8@fb.com>
-References: <20181121195502.3259930-1-songliubraving@fb.com>
- <20181121195502.3259930-6-songliubraving@fb.com>
- <20181121221145.2cxph7zv27x7lbg6@ast-mbp>
- <67063BF9-6237-4CF4-A0EB-0B14C5CA8A21@fb.com>
-In-Reply-To: <67063BF9-6237-4CF4-A0EB-0B14C5CA8A21@fb.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR17CA0057.namprd17.prod.outlook.com
- (2603:10b6:300:93::19) To BYAPR15MB2501.namprd15.prod.outlook.com
- (2603:10b6:a02:88::11)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:180::1:6a9]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR15MB2328;20:cS2hc6+uYHKVNtC4k5gQkLeA3ICORjvY33hPx25uOdVs/hbsAdUTz+SpmmTxrulpaQrqcPJXYsk/ViNYpEpxl4I3/3ZSMSB6X0o4KIQRY6KMoulryemRAVm8E0JlRpsNF+gCZ9RE+2pIjJdm4jXJmfm0iD5KH2znyYgY1JOsfjQ=
-x-ms-office365-filtering-correlation-id: 798ed311-0b86-44f8-9fc0-08d650039d30
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB2328;
-x-ms-traffictypediagnostic: BYAPR15MB2328:
-x-microsoft-antispam-prvs: <BYAPR15MB23289FEB83FDF601BCE65CD5D7DA0@BYAPR15MB2328.namprd15.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231442)(11241501184)(944501410)(52105112)(10201501046)(3002001)(93006095)(93001095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BYAPR15MB2328;BCL:0;PCL:0;RULEID:;SRVR:BYAPR15MB2328;
-x-forefront-prvs: 08635C03D4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(136003)(39860400002)(366004)(396003)(199004)(189003)(36756003)(99286004)(2900100001)(52116002)(186003)(110136005)(386003)(6506007)(53546011)(54906003)(6486002)(102836004)(6346003)(76176011)(97736004)(7736002)(5660300001)(6116002)(86362001)(8936002)(81166006)(81156014)(305945005)(2906002)(8676002)(71200400001)(71190400001)(316002)(93886005)(31696002)(105586002)(4326008)(6512007)(31686004)(11346002)(39060400002)(446003)(6246003)(106356001)(476003)(46003)(478600001)(25786009)(2616005)(5024004)(256004)(486006)(68736007)(229853002)(6436002)(53936002)(14454004)(142933001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2328;H:BYAPR15MB2501.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 0egy97+VAwJEjj11JFORfKphsWZW8zkp4dwovm1U7YZsEW8XYSMP/1MvR1bPhqFEhWtCYnHJYgxKt8B0ast7foBdBpzD083p4Cxpp1sJm0vCJAvgtTZnvp4BUMXH5Rvi6ZW9L124c1NvQWRrKxqYI9GU1ezc+zykIrJN3YLPOtsbAo+cAzXI5sAsfkRhTtAE2pEkKwsmtNaULHmhYugPOl5mpvp+aFEVjDAIUuC5CTqwy8IsmASOCD3NGDP/k0exX1F7qvE6ZX1o1JPoOEeEM4S8P1CjWEDAoQpYJGngNVCLcUP9mSaoXO+SiXq/8lqkoke1A10+rREzpgvezSDHswOA+BfM8Grtol1P1E/yfsQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <91F82054EB726F498CCC3E692971ED78@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 798ed311-0b86-44f8-9fc0-08d650039d30
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2018 22:49:37.6837
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2328
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-21_16:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+        Thu, 22 Nov 2018 04:27:12 -0500
+Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 66527B5F;
+        Wed, 21 Nov 2018 22:50:44 +0000 (UTC)
+Date:   Wed, 21 Nov 2018 14:50:43 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Primiano Tucci <primiano@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin <guro@fb.com>,
+        Prashant Dhamdhere <pdhamdhe@redhat.com>,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, rostedt@goodmis.org,
+        tglx@linutronix.de, mingo@kernel.org, linux@dominikbrodowski.net,
+        jpoimboe@redhat.com, ard.biesheuvel@linaro.org,
+        Michal Hocko <mhocko@suse.com>, sfr@canb.auug.org.au,
+        ktsanaktsidis@zendesk.com, David Howells <dhowells@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v2] Add /proc/pid_gen
+Message-Id: <20181121145043.fa029f4f91afddc2a10bb81e@linux-foundation.org>
+In-Reply-To: <CAKOZuetW6WMNFdL5_2=UbrEf8mjxYTdz1+4BiRLSgdoKh8FsqQ@mail.gmail.com>
+References: <20181121201452.77173-1-dancol@google.com>
+        <20181121205428.165205-1-dancol@google.com>
+        <20181121141220.0e533c1dcb4792480efbf3ff@linux-foundation.org>
+        <CAKOZuetW6WMNFdL5_2=UbrEf8mjxYTdz1+4BiRLSgdoKh8FsqQ@mail.gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTEvMjEvMTggMjozNSBQTSwgU29uZyBMaXUgd3JvdGU6DQo+IA0KPiANCj4+IE9uIE5vdiAy
-MSwgMjAxOCwgYXQgMjoxMSBQTSwgQWxleGVpIFN0YXJvdm9pdG92IDxhbGV4ZWkuc3Rhcm92b2l0
-b3ZAZ21haWwuY29tPiB3cm90ZToNCj4+DQo+PiBPbiBXZWQsIE5vdiAyMSwgMjAxOCBhdCAxMTo1
-NTowMkFNIC0wODAwLCBTb25nIExpdSB3cm90ZToNCj4+PiBUaGlzIHBhdGNoIGVuYWJsZXMgcGVy
-Zi1yZWNvcmQgdG8gbGlzdGVuIHRvIGJwZl9ldmVudCBhbmQgZ2VuZXJhdGUNCj4+PiBicGZfcHJv
-Z19pbmZvX2V2ZW50IGZvciBicGYgcHJvZ3JhbXMgbG9hZGVkIGFuZCB1bmxvYWRlZCBkdXJpbmcN
-Cj4+PiBwZXJmLXJlY29yZCBydW4uDQo+Pj4NCj4+PiBUbyBtaW5pbWl6ZSBsYXRlbmN5IGJldHdl
-ZW4gYnBmX2V2ZW50IGFuZCBmb2xsb3dpbmcgYnBmIGNhbGxzLCBzZXBhcmF0ZQ0KPj4+IG1tYXAg
-d2l0aCB3YXRlcm1hcmsgb2YgMSBpcyBjcmVhdGVkIHRvIHByb2Nlc3MgdGhlc2UgdmlwIGV2ZW50
-cy4gVGhlbg0KPj4+IGEgc2VwYXJhdGUgZHVtbXkgZXZlbnQgaXMgYXR0YWNoZWQgdG8gdGhlIHNw
-ZWNpYWwgbW1hcC4gQSBzZXBhcmF0ZSB0aHJlYWQNCj4+PiBpcyB1c2VkIHRvIG9ubHkgcG9sbCBi
-cGYgZXZlbnRzLg0KPj4+DQo+Pj4gQnkgZGVmYXVsdCwgcGVyZi1yZWNvcmQgd2lsbCBsaXN0ZW4g
-dG8gYnBmX2V2ZW50LiBPcHRpb24gbm8tYnBmLWV2ZW50IGlzDQo+Pj4gYWRkZWQgaW4gY2FzZSB0
-aGUgdXNlciB3b3VsZCBvcHQgb3V0Lg0KPj4NCj4+IEkgdGhpbmsgb25seSBkZWZhdWx0IHBlcmYt
-cmVjb3JkIGZvciBzYW1wbGluZyBzaG91bGQgaW5jbHVkZSBpdC4NCj4+IHBlcmYgcmVjb3JkIC1l
-IGZvciB0cmFjZXBvaW50cywga3Byb2JlcyBhbmQgYW55dGhpbmcgZWxzZSBzaG91bGQgaW1wbHkg
-bm8tYnBmLWV2ZW50Lg0KPj4NCj4gDQo+IE1heWJlIHNvbWV0aGluZyBsaWtlDQo+ICAgIA0KPiAg
-ICAgaWYgKHNvZnR3YXJlX2V2ZW50ICYmICEgLWcpDQo+ICAgICAgICAgIG5vX2JwZl9ldmVudCA9
-IHRydWU7DQo+IA0KPiA/DQo+IA0KPiBUaGlzIHdpbGwgYWxsb3cgYXR0YWNoaW5nIGtwcm9iZSBv
-biBicGYgaGVscGVyIGFuZCBzZWUgd2hpY2ggYnBmIHByb2dyYW0NCj4gY2FsbHMgaXQuDQoNCnJp
-Z2h0LiBnb29kIHBvaW50IGFib3V0IC1nIChJIGFzc3VtZSB5b3UgbWVhbiBjYWxsZ3JhcGggY29s
-bGVjdGlvbikuDQpJbmRlZWQsIGlmIGJwZiBwcm9ncyB1bmxvYWQgYmVmb3JlIHBlcmYtcmVwb3J0
-IHRoZXkgd29uJ3QgYmUgc2VlbiBpbg0KY2FsbGdyYXBocyB0b28gZXZlbiBmb3Igc3cgZXZlbnRz
-LCBzbyB3ZSBoYXZlIHRvIGVuYWJsZSBicGZfZXZlbnRzDQp0byBzZWUgdGhlbS4NCg==
+On Wed, 21 Nov 2018 14:40:28 -0800 Daniel Colascione <dancol@google.com> wrote:
+
+> On Wed, Nov 21, 2018 at 2:12 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+> >
+> > On Wed, 21 Nov 2018 12:54:20 -0800 Daniel Colascione <dancol@google.com> wrote:
+> >
+> > > Trace analysis code needs a coherent picture of the set of processes
+> > > and threads running on a system. While it's possible to enumerate all
+> > > tasks via /proc, this enumeration is not atomic. If PID numbering
+> > > rolls over during snapshot collection, the resulting snapshot of the
+> > > process and thread state of the system may be incoherent, confusing
+> > > trace analysis tools. The fundamental problem is that if a PID is
+> > > reused during a userspace scan of /proc, it's impossible to tell, in
+> > > post-processing, whether a fact that the userspace /proc scanner
+> > > reports regarding a given PID refers to the old or new task named by
+> > > that PID, as the scan of that PID may or may not have occurred before
+> > > the PID reuse, and there's no way to "stamp" a fact read from the
+> > > kernel with a trace timestamp.
+> > >
+> > > This change adds a per-pid-namespace 64-bit generation number,
+> > > incremented on PID rollover, and exposes it via a new proc file
+> > > /proc/pid_gen. By examining this file before and after /proc
+> > > enumeration, user code can detect the potential reuse of a PID and
+> > > restart the task enumeration process, repeating until it gets a
+> > > coherent snapshot.
+> > >
+> > > PID rollover ought to be rare, so in practice, scan repetitions will
+> > > be rare.
+> >
+> > In general, tracing is a rather specialized thing.  Why is this very
+> > occasional confusion a sufficiently serious problem to warrant addition
+> > of this code?
+> 
+> I wouldn't call tracing a specialized thing: it's important enough to
+> justify its own summit and a whole ecosystem of trace collection and
+> analysis tools. We use it in every day in Android. It's tremendously
+> helpful for understanding system behavior, especially in cases where
+> multiple components interact in ways that we can't readily predict or
+> replicate. Reliability and precision in this area are essential:
+> retrospective analysis of difficult-to-reproduce problems involves
+> puzzling over trace files and testing hypothesis, and when the trace
+> system itself is occasionally unreliable, the set of hypothesis to
+> consider grows. I've tried to keep the amount of kernel infrastructure
+> needed to support this precision and reliability to a minimum, pushing
+> most of the complexity to userspace. But we do need, from the kernel,
+> reliable process disambiguation.
+> 
+> Besides: things like checkpoint and restart are also non-core
+> features, but the kernel has plenty of infrastructure to support them.
+> We're talking about a very lightweight feature in this thread.
+
+I'm still not understanding the seriousness of the problem.  Presumably
+you've hit problems in real-life which were serious and frequent enough
+to justify getting down and writing the code.  Please share some sob stories
+with us!
+
+> > Which userspace tools will be using pid_gen?  Are the developers of
+> > those tools signed up to use pid_gen?
+> 
+> I'll be changing Android tracing tools to capture process snapshots
+> using pid_gen, using the algorithm in the commit message.
+
+Which other tools could use this and what was the feedback from their
+developers?  Those people are the intended audience and the
+best-positioned reviewers so let's hear from them?
+
+> > > +u64 read_pid_generation(struct pid_namespace *ns)
+> > > +{
+> > > +     u64 generation;
+> > > +
+> > > +
+> > > +     spin_lock_irq(&pidmap_lock);
+> > > +     generation = ns->generation;
+> > > +     spin_unlock_irq(&pidmap_lock);
+> > > +     return generation;
+> > > +}
+> >
+> > What is the spinlocking in here for?  afaict the only purpose it serves
+> > is to make the 64-bit read atomic, so it isn't needed on 32-bit?
+> 
+> ITYM the spinlock is necessary *only* on 32-bit, since 64-bit
+> architectures have atomic 64-bit reads, and 64-bit reads on 32-bit
+> architectures can tear. This function isn't a particularly hot path,
+> so I thought consistency across architectures would be more valuable
+> than avoiding the lock on some systems.
+
+OK.
+
+
