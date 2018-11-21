@@ -2,260 +2,141 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA12FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:53:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C47AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D6E22145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:53:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D6E22145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 135A72145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:53:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="cif+df//"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 135A72145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vaga.pv.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731592AbeKVC2G (ORCPT
+        id S1731610AbeKVC2p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 21:28:06 -0500
-Received: from foss.arm.com ([217.140.101.70]:53418 "EHLO foss.arm.com"
+        Wed, 21 Nov 2018 21:28:45 -0500
+Received: from mx.kolabnow.com ([95.128.36.42]:13722 "EHLO mx.kolabnow.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731291AbeKVC2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 21:28:06 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72CF4331A;
-        Wed, 21 Nov 2018 07:53:06 -0800 (PST)
-Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C845C3F5CF;
-        Wed, 21 Nov 2018 07:53:04 -0800 (PST)
-Subject: Re: [PATCH] kvm: arm/arm64 : fix vm's hanging at startup time
-To:     Christoffer Dall <christoffer.dall@arm.com>
-Cc:     peng.hao2@zte.com.cn, marc.zyngier@arm.com, andre.przywara@arm.com,
-        linux-kernel@vger.kernel.org, leif.lindholm@linaro.org,
-        ard.bieshseuvel@linaro.org, kvmarm@lists.cs.columbia.edu,
-        linux-arm-kernel@lists.infradead.org
-References: <01746207-c9bb-dc91-58d7-a66c0d971f88@arm.com>
- <201811211656540883310@zte.com.cn>
- <20181121110620.GC18678@e113682-lin.lund.arm.com>
- <26c4ad81-f808-5a84-c725-72db8de7cd2b@arm.com>
- <20181121152409.GC17441@e113682-lin.lund.arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <84693a4d-34a5-8847-818a-9c05461f0ac8@arm.com>
-Date:   Wed, 21 Nov 2018 15:53:03 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1731131AbeKVC2p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 21:28:45 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by ext-mx-out001.mykolab.com (Postfix) with ESMTP id 29F27A64;
+        Wed, 21 Nov 2018 16:53:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
+        content-type:content-type:content-transfer-encoding:mime-version
+        :references:in-reply-to:message-id:date:date:subject:subject
+        :from:from:received:received:received; s=dkim20160331; t=
+        1542815622; x=1544630023; bh=YdsMC3JWrhMd658gz1ABveCbMekDsMRD/iU
+        EtUYf4s8=; b=cif+df//MKyHjZxDkgmwiCY7WT2kGIJqoIYiK/xyKxbX7J9kotJ
+        oTXNDCNEUhtUa/EM01vXDCcwH8CupT48fFXjC3RMcE16kt6aVVvN5O28X6Bj0Oaa
+        Ecl/ewCkCvR3o1x6M3qT8+L2n2A5Gq8W8owO1/aach2MM9MLcmJef+1xSLEaZfoq
+        r0vRE54D7eQfGCB/Tqg76J1uszumqIjTvRNV2SK286Uq68CeJS86i7FahAwEMMqe
+        kiypnAzjyMMXpe2H30aEW6kfUEeyxHnSNRpvKZ7bS/iON1Y6t7U5w22NFXjhjzpj
+        AvlKCRsZHYFN/hOkpgSw5NeMMTjmyc+KFD0z/kk7LXX1u8lkkNA34yC/mObpk3WA
+        zvPFJM/EklPG/cyx6r8b727j/2nf8/ag784c/chn3lgYiA13VXL1xFdVvJTfKala
+        fQejiRObf5vH2SPDHMYF0JKdGr+N9i9IZnJeX3BGAiXZSi4SuXf5c3bbM69bFbsj
+        +gfTcerhOr4neOzbeFt4GoHZYehyfDLH9SNyMA2aMPvR6lDSi4cd7VkAnAX6X75e
+        qapyOAFLtcvYUT8qr99i4rB0TZugwFywAYsn/EkgRmuBK2go9jar6LajfkOWVpQE
+        s13SJQG+J1sabmIY+UkgsPV74cryFEHwZsntW+PJEBo6c17dQcxsnPrk=
+X-Virus-Scanned: amavisd-new at mykolab.com
+Received: from mx.kolabnow.com ([127.0.0.1])
+        by localhost (ext-mx-out001.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 5cIcBsz10Gza; Wed, 21 Nov 2018 16:53:42 +0100 (CET)
+Received: from int-mx003.mykolab.com (unknown [10.9.13.3])
+        by ext-mx-out001.mykolab.com (Postfix) with ESMTPS id A7825811;
+        Wed, 21 Nov 2018 16:53:42 +0100 (CET)
+Received: from ext-subm003.mykolab.com (unknown [10.9.6.3])
+        by int-mx003.mykolab.com (Postfix) with ESMTPS id 4B997B51;
+        Wed, 21 Nov 2018 16:53:42 +0100 (CET)
+From:   Federico Vaga <federico.vaga@vaga.pv.it>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] doc:process: add links where missing
+Date:   Wed, 21 Nov 2018 16:53:41 +0100
+Message-ID: <2954499.FhAtZrsb9b@pcbe13614>
+In-Reply-To: <20181121132346.GG3065@bombadil.infradead.org>
+References: <20181121003519.12559-1-federico.vaga@vaga.pv.it> <20181121132346.GG3065@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20181121152409.GC17441@e113682-lin.lund.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wednesday, November 21, 2018 2:23:46 PM CET Matthew Wilcox wrote:
+> On Wed, Nov 21, 2018 at 01:35:19AM +0100, Federico Vaga wrote:
+> > Some documents are refering to others without links. With this
+> > patch I add those missing links.
+> 
+> I am a neophyte to ReST, but ...
+> 
+> > +++ b/Documentation/dev-tools/coccinelle.rst
+> > @@ -4,6 +4,8 @@
+> > 
+> >  .. highlight:: none
+> > 
+> > +.. _devtools_coccinelle:
+> > +
+> > 
+> >  Coccinelle
+> >  ==========
+> > 
+> > +++ b/Documentation/process/4.Coding.rst
+> > @@ -315,7 +315,8 @@ variety of potential coding problems; it can also
+> > propose fixes for those> 
+> >  problems.  Quite a few "semantic patches" for the kernel have been
+> >  packaged
+> >  under the scripts/coccinelle directory; running "make coccicheck" will
+> >  run
+> >  through those semantic patches and report on any problems found.  See
+> > 
+> > -Documentation/dev-tools/coccinelle.rst for more information.
+> > +:ref:`Documentation/dev-tools/coccinelle.rst <devtools_coccinelle>`
+> > +for more information.
+> 
+> when I tried to do something like this yesterday, I discovered that
+> doing:
+> 
+> +.. _memory_allocation:
+> 
+> didn't work, and I had to do:
+> 
+> +.. _memory-allocation:
 
+I would say that in principle it should not make a difference. Both '-' and 
+'_' characters are explicitly allowed:
 
-On 21/11/18 15:24, Christoffer Dall wrote:
-> On Wed, Nov 21, 2018 at 12:17:45PM +0000, Julien Thierry wrote:
->>
->>
->> On 21/11/18 11:06, Christoffer Dall wrote:
->>> Hi,
->>>
->>> On Wed, Nov 21, 2018 at 04:56:54PM +0800, peng.hao2@zte.com.cn wrote:
->>>>> On 19/11/2018 09:10, Mark Rutland wrote:
->>>>>> On Sat, Nov 17, 2018 at 10:58:37AM +0800, peng.hao2@zte.com.cn wrote:
->>>>>>>> On 16/11/18 00:23, peng.hao2@zte.com.cn wrote:
->>>>>>>>>> Hi,
->>>>>>>>>>> When virtual machine starts, hang up.
->>>>>>>>>>
->>>>>>>>>> I take it you mean the *guest* hangs? Because it doesn't get a timer
->>>>>>>>>> interrupt?
->>>>>>>>>>
->>>>>>>>>>> The kernel version of guest
->>>>>>>>>>> is 4.16. Host support vgic_v3.
->>>>>>>>>>
->>>>>>>>>> Your host kernel is something recent, I guess?
->>>>>>>>>>
->>>>>>>>>>> It was mainly due to the incorrect vgic_irq's(intid=27) group value
->>>>>>>>>>> during injection interruption. when kvm_vgic_vcpu_init is called,
->>>>>>>>>>> dist is not initialized at this time. Unable to get vgic V3 or V2
->>>>>>>>>>> correctly, so group is not set.
->>>>>>>>>>
->>>>>>>>>> Mmh, that shouldn't happen with (v)GICv3. Do you use QEMU (which
->>>>>>>>>> version?) or some other userland tool?
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>> QEMU emulator version 3.0.50 .
->>>>>>>>>
->>>>>>>>>>> group is setted to 1 when vgic_mmio_write_group is invoked at some
->>>>>>>>>>> time.
->>>>>>>>>>> when irq->group=0 (intid=27), No ICH_LR_GROUP flag was set and
->>>>>>>>>>> interrupt injection failed.
->>>>>>>>>>>
->>>>>>>>>>> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
->>>>>>>>>>> ---
->>>>>>>>>>>    virt/kvm/arm/vgic/vgic-v3.c | 2 +-
->>>>>>>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>>>>>>
->>>>>>>>>>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
->>>>>>>>>>> index 9c0dd23..d101000 100644
->>>>>>>>>>> --- a/virt/kvm/arm/vgic/vgic-v3.c
->>>>>>>>>>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
->>>>>>>>>>> @@ -198,7 +198,7 @@ void vgic_v3_populate_lr(struct kvm_vcpu *vcpu,
->>>>>>>>>>> struct vgic_irq *irq, int lr) if (vgic_irq_is_mapped_level(irq) &&
->>>>>>>>>>> (val & ICH_LR_PENDING_BIT)) irq->line_level = false;
->>>>>>>>>>>
->>>>>>>>>>> -    if (irq->group)
->>>>>>>>>>> +    if (model == KVM_DEV_TYPE_ARM_VGIC_V3)
->>>>>>>>>>
->>>>>>>>>> This is not the right fix, not only because it basically reverts the
->>>>>>>>>> GICv3 part of 87322099052 (KVM: arm/arm64: vgic: Signal IRQs using
->>>>>>>>>> their configured group).
->>>>>>>>>>
->>>>>>>>>> Can you try to work out why kvm_vgic_vcpu_init() is apparently called
->>>>>>>>>> before dist->vgic_model is set, also what value it has?
->>>>>>>>>> If I understand the code correctly, that shouldn't happen for a GICv3.
->>>>>>>>>>
->>>>>>>>> Even if the value of  group is correctly assigned in kvm_vgic_vcpu_init, the group is then written 0 through vgic_mmio_write_group.
->>>>>>>>>    If the interrupt comes at this time, the interrupt injection fails.
->>>>>>>>
->>>>>>>> Does that mean that the guest is configuring its interrupts as Group0?
->>>>>>>> That sounds wrong, Linux should configure all it's interrupts as
->>>>>>>> non-secure group1.
->>>>>>>
->>>>>>> no, I think that uefi dose this, not linux.
->>>>>>> 1. kvm_vgic_vcpu_init
->>>>>>> 2. vgic_create
->>>>>>> 3. kvm_vgic_dist_init
->>>>>>> 4.vgic_mmio_write_group: uefi as guest, write group=0
->>>>>>> 5.vgic_mmio_write_group: linux as guest, write group=1
->>>>>>
->>>>>> Is this the same issue fixed by EDK2 commit:
->>>>>>
->>>>>> 66127011a544b90e ("ArmPkg/ArmGicDxe ARM: fix encoding for GICv3 interrupt acknowledge")
->>>>>>
->>>>>> ... where EDK2 would try to use IAR0 rather than IAR1?
->>>>>>
->>>>>> The commit messages notes this lead to a boot-time hang.
->>>>>
->>>>> I managed to trigger an issue with a really old EFI implementation that
->>>>> doesn't configure its interrupts as Group1, and yet tries to ACK its
->>>>> interrupts using the Group1 accessor. Guess what? It is not going to work.
->>>>>
->>>>> Commit c7fefb690661f2e38afcb8200bd318ecf38ab961 in the edk2 tree seems
->>>>> to be the fix (I only assume it does, I haven't actually checked). A
->>>>> recent build, as found in Debian Buster, works perfectly (tested with
->>>>> both QEMU v2.12 and tip of tree).
->>>>>
->>>>> Now, I really don't get what you're saying about Linux not getting
->>>>> interrupts. How do you get to booting Linux if EFI is not making any
->>>>> forward progress? Are you trying them independently?
->>>>>
->>>> I start linux with bypassing uefi, the print info is the same.
->>>> [507107.748908]  vgic_mmio_write_group:## intid/27 group=0
->>>> [507107.752185]  vgic_mmio_write_group:## intid/27 group=0
->>>> [507107.899566]  vgic_mmio_write_group:## intid/27 group=1
->>>> [507107.907370]  vgic_mmio_write_group:## intid/27 group=1
->>>> the command line is like this:
->>>> /home/qemu-patch/linshi/qemu/aarch64-softmmu/qemu-system-aarch64  -machine virt-3.1,accel=kvm,usb=off,dump-guest-core=off,gic-version=3  -kernel /home/kernelboot/vmlinuz-4.16.0+ -initrd /home/kernelboot/initramfs-4.16.0+.img -append root=/dev/mapper/cla-root ro crashkernel=auto rd.lvm.lv=cla/root rd.lvm.lv=cla/swap.UTF-8  -drive file=/home/centos74-ph/boot.qcow2,format=qcow2,if=none,id=drive-scsi0-0-0-0 -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0,bootindex=1  -vnc 0.0.0.0:0 -k en-us -device virtio-gpu-pci,id=video0,max_outputs=1,bus=pci.3,addr=0x0 -device pvpanic-mmio -msg timestamp=on
->>>>
->>>> This is strange. That's probably the Linux 4.16  kernel setting group to 0, and I'll continue to track in guest.
->>>
->>> Could you try the following patch:
->>>
->>> diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
->>> index c0c0b88af1d5..6fa858c7a5a6 100644
->>> --- a/virt/kvm/arm/vgic/vgic-init.c
->>> +++ b/virt/kvm/arm/vgic/vgic-init.c
->>> @@ -231,13 +231,6 @@ int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu)
->>>   			irq->config = VGIC_CONFIG_LEVEL;
->>>   		}
->>> -		/*
->>> -		 * GICv3 can only be created via the KVM_DEVICE_CREATE API and
->>> -		 * so we always know the emulation type at this point as it's
->>> -		 * either explicitly configured as GICv3, or explicitly
->>> -		 * configured as GICv2, or not configured yet which also
->>> -		 * implies GICv2.
->>> -		 */
->>>   		if (dist->vgic_model == KVM_DEV_TYPE_ARM_VGIC_V3)
->>>   			irq->group = 1;
->>>   		else
->>> @@ -298,6 +291,16 @@ int vgic_init(struct kvm *kvm)
->>>   	if (ret)
->>>   		goto out;
->>> +	/* Initialize groups on CPUs created before the VGIC type was known */
->>> +	kvm_for_each_vcpu(i, vcpu, kvm) {
->>> +		struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
->>> +
->>> +		for (i = 0; i < VGIC_NR_PRIVATE_IRQS; i++) {
->>> +			struct vgic_irq *irq = &vgic_cpu->private_irqs[i];
->>> +			irq->group = 1;
->>> +		}
->>> +	}
->>> +
->>>   	if (vgic_has_its(kvm)) {
->>>   		ret = vgic_v4_init(kvm);
->>>   		if (ret)
->>>
->>>
->>
->> If the value of dist->vgic_model is not properly initialized at the time we
->> call kvm_vgic_vcpu_init is call, won't we still overwrite the irq->group
->> when we get there?
-> 
-> I don't understand this question.  When we get where?
+http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#reference-names
 
-Sorry, I meant when we get to the irq->group initialization in 
-kvm_vgic_vcpu_init.
+> instead.  Also, when doing 'ref', do we want this style of ref, or do we
+> 
+> prefer the plain:
+> :ref:`devtools-coccinelle`
+> 
+> which is what I did yesterday.  
 
-> 
->> (I still haven't seen why we could consider
->> dist->vgic_model is initialized at that point).
-> 
-> Because there is no enforced ordering between creating VCPUs and
-> creating the VGIC.
+The style depends on the situation. In this patch (mine) the objective is to 
+show that there is a file that talk about the topic, it's there (the path is 
+visible), and by the way if you click on it you are able to open it.
 
-Hmmm, I think that's what I am saying, so we shouldn't look at the value 
-of vgic_dist->vgic_model since it could be uninitialized (or 0).
+> Maybe that's why yours works with the underscores and mine didn't?
 
-> 
->>
->> Shouldn't we do the irq->group initialization somewhere in
->> kvm_arch_vcpu_ioctl_vcpu_init? (with some vgic_* function to encapsulate it
->> of course). At that point I believe we know that dist->vgic_model is
->> initialized.
->>
-> 
-> See above.  AFAICT we don't have a single point at which we can do
-> everything because creation of the two components can be interleaved.
-> 
-> We could hook into kvm_vcpu_first_run_init(), but then userspace can
-> observe uninitialized values if it looks at the GIC state prior to
-> running the VCPUs, which is also not great.
-> 
-> In other words, I think the problem is that you can do:
-> 
->    create_vcpu(0);
->    create_vgic(v3);
->    create_vcpu(2);
-> 
-> Now you'll have vcpu0 have its private IRQs set to group 0, and you'll
-> have vcpu1 have its private IRQs set to group 1 (prior to my patch).
-> 
-> 
-> Am I missing something?
-> 
+This, honestly, I do not know. Perhaps it depends on the Sphinx version in use 
+or some other python package? As explained here:
 
-No, I just got confused between create_vgic and vgic_init. So the place 
-looks fine. Sorry for the confusion.
+https://www.kernel.org/doc/html/latest/doc-guide/sphinx.html
 
-The fact that we still check dist->vgic_model in kvm_vgic_vcpu_init 
-(twice actually), however seems dodgy to me since it might not have been 
-initialized.
-
-Thanks,
+Sphinx environment can be fragile.
 
 -- 
-Julien Thierry
+Federico Vaga
+http://www.federicovaga.it/
+
+
