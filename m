@@ -2,95 +2,95 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACCAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D89C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:41:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31CAC21104
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:40:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ul3JgptA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31CAC21104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 4F84021104
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:41:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F84021104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389648AbeKVHPx (ORCPT
+        id S2389659AbeKVHRH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 02:15:53 -0500
-Received: from mail-vk1-f171.google.com ([209.85.221.171]:41268 "EHLO
-        mail-vk1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730074AbeKVHPx (ORCPT
+        Thu, 22 Nov 2018 02:17:07 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45619 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730074AbeKVHRH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 02:15:53 -0500
-Received: by mail-vk1-f171.google.com with SMTP id t127so1525458vke.8
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:39:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e+F96LWG6CIQCL9JWkLiFQjnA+Wkpy27HflA7sP/xqc=;
-        b=Ul3JgptA2hZLguxmzU2TSK07aVbly7umbwg7oz2ejquapKmuVeuZyeBGhXWGRMqJ4X
-         6s9fD7iJ9gGb691FDbiomJYZsFnxJ8VSlkueLqrBhsSYLKVeSMmXAJbCPLzUJrGEUy8O
-         72k2xhaaZO8mxkwhxsfgRJYElwwIilxIYpHqw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e+F96LWG6CIQCL9JWkLiFQjnA+Wkpy27HflA7sP/xqc=;
-        b=bixy1IDroyV4CyMUIYH1hVszdB7A56Zf0Rj1VqFp2HsOkPmtsrkRCdDsQAzvXCwp2I
-         /m4wCbnURzQkoiPTeDHB/i7vaQ8hUjQfbZgQi65dh85k+IBMPnGcPETnNiYgNIM4ajh4
-         cUuoI6m9XS3F8O5c8u0eC4yHyihEyBOKY0Xaozbo3k3wQPb72dZCPKKlMKTDPchpYYNK
-         KvuY3Fk4rn8CK2UY7IfMaFvKSsONUTvE64TMd6iX94W1hXlTHryOqkVDID4t6vFn+xgN
-         z2w5ydKyysl8lQf4jfX9SAhLSJJjUtPTExI/PX4Zc5SZuCz5GySm4YI5OI0tHxmqkhN/
-         Ax9A==
-X-Gm-Message-State: AA+aEWbNXNWxITAzx6VUE1umTdbXxpxN44pd0DuZz5S9e2lHsvy4bseQ
-        s8O52L0O1EE4r7FmOYKbE9BSW/IjFi0=
-X-Google-Smtp-Source: AFSGD/Vof8yL7iOtPIyiFtarbj1vddRWAGS58gAYNz2WOT0TebRd8/X64a9QG1ZaSa5KafCsUQTlIA==
-X-Received: by 2002:a1f:5cc7:: with SMTP id q190mr3262912vkb.91.1542832798208;
-        Wed, 21 Nov 2018 12:39:58 -0800 (PST)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
-        by smtp.gmail.com with ESMTPSA id s185sm9454316vke.11.2018.11.21.12.39.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 12:39:57 -0800 (PST)
-Received: by mail-vk1-f176.google.com with SMTP id h128so1528275vkg.11
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:39:57 -0800 (PST)
-X-Received: by 2002:a1f:e807:: with SMTP id f7mr3337157vkh.16.1542832797010;
- Wed, 21 Nov 2018 12:39:57 -0800 (PST)
+        Thu, 22 Nov 2018 02:17:07 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gPZJ9-0000s1-IZ; Wed, 21 Nov 2018 21:41:11 +0100
+Date:   Wed, 21 Nov 2018 21:41:10 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [patch 10/24] sched/smt: Expose sched_smt_present static key
+In-Reply-To: <20181121201723.248042794@linutronix.de>
+Message-ID: <alpine.DEB.2.21.1811212140110.1665@nanos.tec.linutronix.de>
+References: <20181121201430.559770965@linutronix.de> <20181121201723.248042794@linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20181122072528.11372826@canb.auug.org.au>
-In-Reply-To: <20181122072528.11372826@canb.auug.org.au>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 21 Nov 2018 12:39:45 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WErS73ZLVmnP1o1WYX1VfrhwhCa6yhRC4gS9B=3vPYGg@mail.gmail.com>
-Message-ID: <CAD=FV=WErS73ZLVmnP1o1WYX1VfrhwhCa6yhRC4gS9B=3vPYGg@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the regulator tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Wed, Nov 21, 2018 at 12:25 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Commit
->
->   fe115f7fd44b ("regulator: core: Only count load for enabled consumers")
->
-> is missing a Signed-off-by from its author.
+On Wed, 21 Nov 2018, Thomas Gleixner wrote:
 
-Argh.  When I squashed two commits together I must have clobbered the
-Signed-off-by.  :(  Is there a suggested way that I can fix this?
+> Make the scheduler's 'sched_smt_present' static key globaly available, so
+> it can be used in the x86 speculation control code.
+> 
+> Provide a query function and a stub for the CONFIG_SMP=n case.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  include/linux/sched/topology.h |    9 +++++++++
+>  kernel/sched/sched.h           |    3 ---
+>  2 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> --- a/include/linux/sched/topology.h
+> +++ b/include/linux/sched/topology.h
+> @@ -34,10 +34,19 @@
+>  #define SD_NUMA			0x4000	/* cross-node balancing */
+>  
+>  #ifdef CONFIG_SCHED_SMT
+> +extern struct static_key_false sched_smt_present;
+> +
+> +static __always_inline bool sched_smt_active(void)
+> +{
+> +	return static_branch_likely(&sched_smt_present);
 
--Doug
+0day just told me that this breaks ia64.
+
+/me goes to fix
+
+
