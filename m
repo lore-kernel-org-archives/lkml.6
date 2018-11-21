@@ -2,386 +2,279 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56BA5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E50E0C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:03:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2AA9214D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:01:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D5AF214D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:03:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EG+zEnej"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2AA9214D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UgoYklyx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D5AF214D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731989AbeKVFha (ORCPT
+        id S1732097AbeKVFjX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:37:30 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39191 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730172AbeKVFh3 (ORCPT
+        Thu, 22 Nov 2018 00:39:23 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:39022 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730172AbeKVFjW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:37:29 -0500
-Received: by mail-lj1-f194.google.com with SMTP id t9-v6so5795433ljh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 11:01:55 -0800 (PST)
+        Thu, 22 Nov 2018 00:39:22 -0500
+Received: by mail-yw1-f68.google.com with SMTP id v8-v6so2677252ywh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 11:03:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=iW+O6cr8G21+3mm1pUp8gfGhEMbehWcqYPod31Y3oxA=;
-        b=EG+zEnej2F4znOzNJEHwbAA2qiSd3Xt3LVc8dgBg6k6ObbK37WcfAci0PKMNSxS10y
-         5sI2tXaUBSQKg+2BLh797v2HTk1aOtSj7vZyM2+Qtr41/oPwjouVtvKhanPmK6rp5hK5
-         o1oM0rbCeK6z3YC8QDxEoYq6vAkBRmC6Xrq6k=
+        bh=gNuqrGT/NMd7rncT4KFQR1s78MJuVfw2Ja01pud3yzI=;
+        b=UgoYklyxKkXwWRECLiPNY/uwvuaSuRQDoZ4deZXBLlivntBJcRbApb8MUl+94GU68c
+         j38acEnRbaAWSiIS3yE3ofUvsIteaX4XiFzjwNpw8av6HpMBvMfpWFoVUMFTBvXz7lHl
+         e48r22/6y3m+KK1rMiKQnCTj7UDmVOhmGXLSGRHhcQZcGFUzrsc+W5SkNZbKRrYFfFvD
+         oc2rHZWji753pI4zn+rEB+kg+Fgn4njlzV6ULGD3P7WyPVPG+TQSo9tB5nh/Rfjkm9br
+         mjHLecoXzZE6+GocXgEWLQmJcPZ+k11y9qe6xTJ0V8NjOq8Ge0+/pZac1BzAKqL5s06R
+         Ei/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=iW+O6cr8G21+3mm1pUp8gfGhEMbehWcqYPod31Y3oxA=;
-        b=h9BOcm4hXUxkbN/Ao45y8HMd0naztAURHPc7wWfW/y/1y7HqDe+FB3ZdFTYKeXPjau
-         6bBFPLIKWpozzhAdYoGmgERhNS7bI6YA2FZ0gH8y839Shgmk3Xe6nzVyyZD80XCXx7XB
-         fBURkrEKpp51mLiurwduHVRotQ2BhBNsNPjuuoSRXox4bfeWr4XxabJVYTVEvdmVLdPU
-         +Ceq+8kpcIoF/mXPyTE85wXGlJpg/aAWAZnOKRLnidcZGpdfv6UTEcNv/VnhVEycRMW0
-         wPJ76R8nUx2JcldcmhaywEk9SFWoKDgoaSNW6zu8MToIW4bOw1/vmHhwnFZnUfbIz6rq
-         mjRQ==
-X-Gm-Message-State: AA+aEWZZIsGvf0XCH2Y9LpU2ZsVBGR9oJoDH3hbyJ6oL31B5YlCTpNWu
-        4BNIxQ2k6AW9LnHe5L5Xl+a1JlWxkj4=
-X-Google-Smtp-Source: AJdET5dc5i5Req3Fh0/E/I5eS+7M3/o8ikz3SvQzl65/i5akOq6Xq+/h4NOZfnvs0HRCZ/NkmTO1Sg==
-X-Received: by 2002:a2e:8702:: with SMTP id m2-v6mr4675351lji.132.1542826914546;
-        Wed, 21 Nov 2018 11:01:54 -0800 (PST)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id u21-v6sm6871331lju.46.2018.11.21.11.01.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 11:01:53 -0800 (PST)
-Received: by mail-lj1-f173.google.com with SMTP id n18-v6so5793665lji.7
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 11:01:52 -0800 (PST)
-X-Received: by 2002:a2e:9983:: with SMTP id w3-v6mr5214421lji.133.1542826912252;
- Wed, 21 Nov 2018 11:01:52 -0800 (PST)
+        bh=gNuqrGT/NMd7rncT4KFQR1s78MJuVfw2Ja01pud3yzI=;
+        b=QBO6MB5WLoqrBN/b12zkFBlZf43NG3Zt8PeFF79HRVmjs3DOytRfPalkSz/R2JGiPY
+         ANVtyohIc2mjfMGe6NM/o7XYGYXL1d5lV2dTfS0s/1+2hPv/JkW7Aq6aSP4gewYhfcnB
+         SlrBJq30PfB1p3CNlnY1OJLJdQ3f6Teon1nJ4AQZr5fPAP0b4zDGTm6JiPxuGoVOc8Kg
+         05cWaNB/xquCQR2zohEhbsG/RvT25Elsy0j8q64MBaFdue+EzYdmov8Uw53Ft0X2ITB6
+         cH+W3r73NrB/j6Dqk3ZCCY6o8tMY4DhYuv9H92UEDjA+gZOq5Z+uCrgf4531oM+hBzHi
+         mfNw==
+X-Gm-Message-State: AA+aEWYj04m0ugUf98518LdQf60y8+fSUwKC74nMMamfTgo+mpdjqtyB
+        z31STNW9ir3YRp91Ti6xo90EwT1deathHAWANQxUvQ==
+X-Google-Smtp-Source: AFSGD/XCZPK7Y52V+57pXrP27Si7eZjWlklompPYvAAlnuFnkDBm2gSkaLSxs0uaan4fPm5b21VTDMW5iPgdWWyWnKg=
+X-Received: by 2002:a81:af58:: with SMTP id x24mr3490693ywj.362.1542827029720;
+ Wed, 21 Nov 2018 11:03:49 -0800 (PST)
 MIME-Version: 1.0
-References: <02bfc577-32a5-66be-64bf-d476b7d447d2@kernel.dk>
- <20181121063609.GA109082@gmail.com> <48e27a3a-2bb2-ff41-3512-8aeb3fd59e57@kernel.dk>
- <1c22125bb5d22c2dcd686d0d3b390f115894f746.camel@redhat.com>
- <CAHk-=wgnjB+=o0771=J_YkQzabU5aadh6pN3x9Vk4HPs3MHL3g@mail.gmail.com> <CAHk-=wjweUiVewcnk39mUccEN-SjxHeTZdB3VOXZrvvW4Cs3dw@mail.gmail.com>
-In-Reply-To: <CAHk-=wjweUiVewcnk39mUccEN-SjxHeTZdB3VOXZrvvW4Cs3dw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 21 Nov 2018 11:01:35 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiDLq5CVnTJhFNEEduqYP_VSsQPSNvi=w6a8Y9figuh7g@mail.gmail.com>
-Message-ID: <CAHk-=wiDLq5CVnTJhFNEEduqYP_VSsQPSNvi=w6a8Y9figuh7g@mail.gmail.com>
-Subject: Re: [PATCH] x86: only use ERMS for user copies for larger sizes
-To:     pabeni@redhat.com
-Cc:     Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        Peter Anvin <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>, dvlasenk@redhat.com,
-        brgerst@gmail.com,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="0000000000000e5aef057b316262"
+References: <20181121153444.24747-1-enric.balletbo@collabora.com> <20181121153444.24747-2-enric.balletbo@collabora.com>
+In-Reply-To: <20181121153444.24747-2-enric.balletbo@collabora.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Wed, 21 Nov 2018 11:03:38 -0800
+Message-ID: <CABXOdTfUR3ohK2so3Jb-nXBjv8rW-DD_E2O1jYEXqLYCcT=dAg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] power: supply: cros: allow to set input voltage and
+ current limit.
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-pm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+        Sameer Nanda <snanda@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
+        Benson Leung <bleung@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---0000000000000e5aef057b316262
-Content-Type: text/plain; charset="UTF-8"
+Trying again, this time (hopefully if gmail lets me) in plaintext
+mode. Sorry for the noise.
 
-On Wed, Nov 21, 2018 at 10:16 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Wed, Nov 21, 2018 at 7:34 AM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
 >
-> It might be interesting to just change raw_copy_to/from_user() to
-> handle a lot more cases (in particular, handle cases where 'size' is
-> 8-byte aligned). The special cases we *do* have may not be the right
-> ones (the 10-byte case in particular looks odd).
+> This patch allows reading and writing the input voltage and current
+> limit through the POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT and
+> POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT sysfs properties. This allows
+> userspace to see current values and to re-configure these values at
+> runtime based on system-level knowledge or user input.
 >
-> For example, instead of having a "if constant size is 8 bytes, do one
-> get/put_user()" case, we might have a "if constant size is < 64 just
-> unroll it into get/put_user()" calls.
+> By default there is no limit, this is reported as a -1 when reading from
+> userspace. Writing a value will set the current or voltage limit in uA
+> or uV, and writing any negative value will remove that limit.
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+>
+>  drivers/power/supply/cros_usbpd-charger.c | 117 ++++++++++++++++++++++
+>  1 file changed, 117 insertions(+)
+>
+> diff --git a/drivers/power/supply/cros_usbpd-charger.c b/drivers/power/supply/cros_usbpd-charger.c
+> index 7e9c3984ef6a..f011ce71b30c 100644
+> --- a/drivers/power/supply/cros_usbpd-charger.c
+> +++ b/drivers/power/supply/cros_usbpd-charger.c
+> @@ -53,6 +53,8 @@ struct charger_data {
+>  };
+>
+>  static enum power_supply_property cros_usbpd_charger_props[] = {
+> +       POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
+> +       POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT,
+>         POWER_SUPPLY_PROP_ONLINE,
+>         POWER_SUPPLY_PROP_STATUS,
+>         POWER_SUPPLY_PROP_CURRENT_MAX,
+> @@ -80,6 +82,10 @@ static enum power_supply_usb_type cros_usbpd_charger_usb_types[] = {
+>         POWER_SUPPLY_USB_TYPE_APPLE_BRICK_ID
+>  };
+>
+> +/* Input voltage/current limit in mV/mA. Default to none. */
+> +static u16 input_voltage_limit = EC_POWER_LIMIT_NONE;
+> +static u16 input_current_limit = EC_POWER_LIMIT_NONE;
+> +
+>  static bool cros_usbpd_charger_port_is_dedicated(struct port_data *port)
+>  {
+>         return port->port_number >= port->charger->num_usbpd_ports;
+> @@ -324,6 +330,26 @@ static int cros_usbpd_charger_get_port_status(struct port_data *port,
+>         return ret;
+>  }
+>
+> +static int cros_usbpd_charger_set_ext_power_limit(struct charger_data *charger,
+> +                                                 u16 current_lim,
+> +                                                 u16 voltage_lim)
+> +{
+> +       struct ec_params_external_power_limit_v1 req;
+> +       int ret;
+> +
+> +       req.current_lim = current_lim;
+> +       req.voltage_lim = voltage_lim;
+> +
+> +       ret = cros_usbpd_charger_ec_command(charger, 0,
+> +                                           EC_CMD_EXTERNAL_POWER_LIMIT,
+> +                                           &req, sizeof(req), NULL, 0);
+> +       if (ret < 0)
+> +               dev_err(charger->dev,
+> +                       "Unable to set the 'External Power Limit': %d\n", ret);
+> +
+> +       return ret;
+> +}
+> +
+>  static void cros_usbpd_charger_power_changed(struct power_supply *psy)
+>  {
+>         struct port_data *port = power_supply_get_drvdata(psy);
+> @@ -396,6 +422,18 @@ static int cros_usbpd_charger_get_prop(struct power_supply *psy,
+>         case POWER_SUPPLY_PROP_USB_TYPE:
+>                 val->intval = port->psy_usb_type;
+>                 break;
+> +       case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
+> +               if (input_current_limit == EC_POWER_LIMIT_NONE)
+> +                       val->intval = -1;
+> +               else
+> +                       val->intval = input_current_limit * 1000;
+> +               break;
+> +       case POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT:
+> +               if (input_voltage_limit == EC_POWER_LIMIT_NONE)
+> +                       val->intval = -1;
+> +               else
+> +                       val->intval = input_voltage_limit * 1000;
+> +               break;
+>         case POWER_SUPPLY_PROP_MODEL_NAME:
+>                 val->strval = port->model_name;
+>                 break;
+> @@ -409,6 +447,82 @@ static int cros_usbpd_charger_get_prop(struct power_supply *psy,
+>         return 0;
+>  }
+>
+> +static int cros_usbpd_charger_set_prop(struct power_supply *psy,
+> +                                      enum power_supply_property psp,
+> +                                      const union power_supply_propval *val)
+> +{
+> +       struct port_data *port = power_supply_get_drvdata(psy);
+> +       struct charger_data *charger = port->charger;
+> +       struct device *dev = charger->dev;
+> +       u16 intval;
+> +       int ret;
+> +
+> +       /* U16_MAX in mV/mA is the maximum supported value */
+> +       if (val->intval > U16_MAX * 1000)
 
-Actually, x86 doesn't even set INLINE_COPY_TO_USER, so I don't think
-the constant size cases ever trigger at all the way they are set up
-now.
+The accepted upper limit is 0xffff * 1000, so this can result in an
+intval of 0xffff after the divide
+operation below. At the same time, EC_POWER_LIMIT_NONE is defined as
+0xffff. This means
+that setting a value of 65535000 will be interpreted as
+EC_POWER_LIMIT_NONE and, when
+read, will return -1. This is undesirable, but easy to fix by making
+the above check ">="
+instead of ">".
 
-I do have a random patch that makes "unsafe_put_user()" actually use
-"asm goto" for the error case, and that, together with the attached
-patch seems to generate fairly nice code, but even then it would
-depend on gcc actually unrolling things (which we do *not* want in
-general).
+> +               return -EINVAL;
+> +       else if (val->intval < 0)
 
-But for a 32-byte user copy (cp_old_stat), and that
-INLINE_COPY_TO_USER, it generates this:
+Unnecessary else
 
-        stac
-        movl    $32, %edx       #, size
-        movq    %rsp, %rax      #, src
-.L201:
-        movq    (%rax), %rcx    # MEM[base: src_155, offset: 0B],
-MEM[base: src_155, offset: 0B]
-1:      movq %rcx,0(%rbp)       # MEM[base: src_155, offset: 0B],
-MEM[(struct __large_struct *)dst_156]
-ASM_EXTABLE_HANDLE from=1b to=.L200 handler="ex_handler_uaccess"        #
-
-        addq    $8, %rax        #, src
-        addq    $8, %rbp        #, statbuf
-        subq    $8, %rdx        #, size
-        jne     .L201   #,
-        clac
-
-which is actually fairly close to "optimal".
-
-Random patch (with my "asm goto" hack included) attached, in case
-people want to play with it.
-
-Impressively, it actually removes more lines of code than it adds. But
-I didn't actually check whether the end result *works*, so hey..
-
-                  Linus
-
---0000000000000e5aef057b316262
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jorja5v30>
-X-Attachment-Id: f_jorja5v30
-
-IGFyY2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3MuaCAgICB8ICA5NiArKysrKysrKystLS0tLS0t
-LS0tCiBhcmNoL3g4Ni9pbmNsdWRlL2FzbS91YWNjZXNzXzY0LmggfCAxOTEgKysrKysrKysrKysr
-KysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0KIGZzL3JlYWRkaXIuYyAgICAgICAgICAgICAgICAg
-ICAgICB8ICAyMiArKystLQogMyBmaWxlcyBjaGFuZ2VkLCAxNDkgaW5zZXJ0aW9ucygrKSwgMTYw
-IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3Mu
-aCBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3MuaAppbmRleCBiNWU1OGNjMGM1ZTcuLjNm
-NGM4OWRlYjdhMSAxMDA2NDQKLS0tIGEvYXJjaC94ODYvaW5jbHVkZS9hc20vdWFjY2Vzcy5oCisr
-KyBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL3VhY2Nlc3MuaApAQCAtMTIsNiArMTIsOSBAQAogI2lu
-Y2x1ZGUgPGFzbS9zbWFwLmg+CiAjaW5jbHVkZSA8YXNtL2V4dGFibGUuaD4KIAorI2RlZmluZSBJ
-TkxJTkVfQ09QWV9UT19VU0VSCisjZGVmaW5lIElOTElORV9DT1BZX0ZST01fVVNFUgorCiAvKgog
-ICogVGhlIGZzIHZhbHVlIGRldGVybWluZXMgd2hldGhlciBhcmd1bWVudCB2YWxpZGl0eSBjaGVj
-a2luZyBzaG91bGQgYmUKICAqIHBlcmZvcm1lZCBvciBub3QuICBJZiBnZXRfZnMoKSA9PSBVU0VS
-X0RTLCBjaGVja2luZyBpcyBwZXJmb3JtZWQsIHdpdGgKQEAgLTE4OSwxOSArMTkyLDE0IEBAIF9f
-dHlwZW9mX18oX19idWlsdGluX2Nob29zZV9leHByKHNpemVvZih4KSA+IHNpemVvZigwVUwpLCAw
-VUxMLCAwVUwpKQogCiAKICNpZmRlZiBDT05GSUdfWDg2XzMyCi0jZGVmaW5lIF9fcHV0X3VzZXJf
-YXNtX3U2NCh4LCBhZGRyLCBlcnIsIGVycnJldCkJCQlcCi0JYXNtIHZvbGF0aWxlKCJcbiIJCQkJ
-CQlcCi0JCSAgICAgIjE6CW1vdmwgJSVlYXgsMCglMilcbiIJCQlcCi0JCSAgICAgIjI6CW1vdmwg
-JSVlZHgsNCglMilcbiIJCQlcCi0JCSAgICAgIjM6IgkJCQkJCVwKLQkJICAgICAiLnNlY3Rpb24g
-LmZpeHVwLFwiYXhcIlxuIgkJCQlcCi0JCSAgICAgIjQ6CW1vdmwgJTMsJTBcbiIJCQkJXAotCQkg
-ICAgICIJam1wIDNiXG4iCQkJCQlcCi0JCSAgICAgIi5wcmV2aW91c1xuIgkJCQkJXAotCQkgICAg
-IF9BU01fRVhUQUJMRV9VQSgxYiwgNGIpCQkJCVwKLQkJICAgICBfQVNNX0VYVEFCTEVfVUEoMmIs
-IDRiKQkJCQlcCi0JCSAgICAgOiAiPXIiIChlcnIpCQkJCQlcCi0JCSAgICAgOiAiQSIgKHgpLCAi
-ciIgKGFkZHIpLCAiaSIgKGVycnJldCksICIwIiAoZXJyKSkKKyNkZWZpbmUgX19wdXRfdXNlcl9n
-b3RvX3U2NCh4LCBhZGRyLCBsYWJlbCkJCQlcCisJYXNtIHZvbGF0aWxlKCJcbiIJCQkJCVwKKwkJ
-ICAgICAiMToJbW92bCAlJWVheCwwKCUyKVxuIgkJXAorCQkgICAgICIyOgltb3ZsICUlZWR4LDQo
-JTIpXG4iCQlcCisJCSAgICAgX0FTTV9FWFRBQkxFX1VBKDFiLCAlMmwpCQkJXAorCQkgICAgIF9B
-U01fRVhUQUJMRV9VQSgyYiwgJTJsKQkJCVwKKwkJICAgICA6IDogIkEiICh4KSwgInIiIChhZGRy
-KQkJCVwKKwkJICAgICA6IDogbGFiZWwpCiAKICNkZWZpbmUgX19wdXRfdXNlcl9hc21fZXhfdTY0
-KHgsIGFkZHIpCQkJCQlcCiAJYXNtIHZvbGF0aWxlKCJcbiIJCQkJCQlcCkBAIC0yMTYsOCArMjE0
-LDggQEAgX190eXBlb2ZfXyhfX2J1aWx0aW5fY2hvb3NlX2V4cHIoc2l6ZW9mKHgpID4gc2l6ZW9m
-KDBVTCksIDBVTEwsIDBVTCkpCiAJYXNtIHZvbGF0aWxlKCJjYWxsIF9fcHV0X3VzZXJfOCIgOiAi
-PWEiIChfX3JldF9wdSkJXAogCQkgICAgIDogIkEiICgodHlwZW9mKCoocHRyKSkpKHgpKSwgImMi
-IChwdHIpIDogImVieCIpCiAjZWxzZQotI2RlZmluZSBfX3B1dF91c2VyX2FzbV91NjQoeCwgcHRy
-LCByZXR2YWwsIGVycnJldCkgXAotCV9fcHV0X3VzZXJfYXNtKHgsIHB0ciwgcmV0dmFsLCAicSIs
-ICIiLCAiZXIiLCBlcnJyZXQpCisjZGVmaW5lIF9fcHV0X3VzZXJfZ290b191NjQoeCwgcHRyLCBs
-YWJlbCkgXAorCV9fcHV0X3VzZXJfZ290byh4LCBwdHIsICJxIiwgIiIsICJlciIsIGxhYmVsKQog
-I2RlZmluZSBfX3B1dF91c2VyX2FzbV9leF91NjQoeCwgYWRkcikJXAogCV9fcHV0X3VzZXJfYXNt
-X2V4KHgsIGFkZHIsICJxIiwgIiIsICJlciIpCiAjZGVmaW5lIF9fcHV0X3VzZXJfeDgoeCwgcHRy
-LCBfX3JldF9wdSkgX19wdXRfdXNlcl94KDgsIHgsIHB0ciwgX19yZXRfcHUpCkBAIC0yNzgsMjMg
-KzI3NiwyMSBAQCBleHRlcm4gdm9pZCBfX3B1dF91c2VyXzgodm9pZCk7CiAJX19idWlsdGluX2V4
-cGVjdChfX3JldF9wdSwgMCk7CQkJCVwKIH0pCiAKLSNkZWZpbmUgX19wdXRfdXNlcl9zaXplKHgs
-IHB0ciwgc2l6ZSwgcmV0dmFsLCBlcnJyZXQpCQkJXAorI2RlZmluZSBfX3B1dF91c2VyX3NpemUo
-eCwgcHRyLCBzaXplLCBsYWJlbCkJCQkJXAogZG8gewkJCQkJCQkJCVwKLQlyZXR2YWwgPSAwOwkJ
-CQkJCQlcCiAJX19jaGtfdXNlcl9wdHIocHRyKTsJCQkJCQlcCiAJc3dpdGNoIChzaXplKSB7CQkJ
-CQkJCVwKIAljYXNlIDE6CQkJCQkJCQlcCi0JCV9fcHV0X3VzZXJfYXNtKHgsIHB0ciwgcmV0dmFs
-LCAiYiIsICJiIiwgImlxIiwgZXJycmV0KTsJXAorCQlfX3B1dF91c2VyX2dvdG8oeCwgcHRyLCAi
-YiIsICJiIiwgImlxIiwgbGFiZWwpOwlcCiAJCWJyZWFrOwkJCQkJCQlcCiAJY2FzZSAyOgkJCQkJ
-CQkJXAotCQlfX3B1dF91c2VyX2FzbSh4LCBwdHIsIHJldHZhbCwgInciLCAidyIsICJpciIsIGVy
-cnJldCk7CVwKKwkJX19wdXRfdXNlcl9nb3RvKHgsIHB0ciwgInciLCAidyIsICJpciIsIGxhYmVs
-KTsJCVwKIAkJYnJlYWs7CQkJCQkJCVwKIAljYXNlIDQ6CQkJCQkJCQlcCi0JCV9fcHV0X3VzZXJf
-YXNtKHgsIHB0ciwgcmV0dmFsLCAibCIsICJrIiwgImlyIiwgZXJycmV0KTsJXAorCQlfX3B1dF91
-c2VyX2dvdG8oeCwgcHRyLCAibCIsICJrIiwgImlyIiwgbGFiZWwpOwkJXAogCQlicmVhazsJCQkJ
-CQkJXAogCWNhc2UgODoJCQkJCQkJCVwKLQkJX19wdXRfdXNlcl9hc21fdTY0KChfX3R5cGVvZl9f
-KCpwdHIpKSh4KSwgcHRyLCByZXR2YWwsCVwKLQkJCQkgICBlcnJyZXQpOwkJCQlcCisJCV9fcHV0
-X3VzZXJfZ290b191NjQoKF9fdHlwZW9mX18oKnB0cikpKHgpLCBwdHIsIGxhYmVsKTsJXAogCQli
-cmVhazsJCQkJCQkJXAogCWRlZmF1bHQ6CQkJCQkJCVwKIAkJX19wdXRfdXNlcl9iYWQoKTsJCQkJ
-CVwKQEAgLTQzOSw5ICs0MzUsMTIgQEAgZG8gewkJCQkJCQkJCVwKIAogI2RlZmluZSBfX3B1dF91
-c2VyX25vY2hlY2soeCwgcHRyLCBzaXplKQkJCVwKICh7CQkJCQkJCQlcCi0JaW50IF9fcHVfZXJy
-OwkJCQkJCVwKKwlfX2xhYmVsX18gX19wdV9sYWJlbDsJCQkJCVwKKwlpbnQgX19wdV9lcnIgPSAt
-RUZBVUxUOwkJCQkJXAogCV9fdWFjY2Vzc19iZWdpbigpOwkJCQkJXAotCV9fcHV0X3VzZXJfc2l6
-ZSgoeCksIChwdHIpLCAoc2l6ZSksIF9fcHVfZXJyLCAtRUZBVUxUKTsJXAorCV9fcHV0X3VzZXJf
-c2l6ZSgoeCksIChwdHIpLCAoc2l6ZSksIF9fcHVfbGFiZWwpOwlcCisJX19wdV9lcnIgPSAwOwkJ
-CQkJCVwKK19fcHVfbGFiZWw6CQkJCQkJCVwKIAlfX3VhY2Nlc3NfZW5kKCk7CQkJCQlcCiAJX19i
-dWlsdGluX2V4cGVjdChfX3B1X2VyciwgMCk7CQkJCVwKIH0pCkBAIC00NjYsMTcgKzQ2NSwyMyBA
-QCBzdHJ1Y3QgX19sYXJnZV9zdHJ1Y3QgeyB1bnNpZ25lZCBsb25nIGJ1ZlsxMDBdOyB9OwogICog
-d2UgZG8gbm90IHdyaXRlIHRvIGFueSBtZW1vcnkgZ2NjIGtub3dzIGFib3V0LCBzbyB0aGVyZSBh
-cmUgbm8KICAqIGFsaWFzaW5nIGlzc3Vlcy4KICAqLwotI2RlZmluZSBfX3B1dF91c2VyX2FzbSh4
-LCBhZGRyLCBlcnIsIGl0eXBlLCBydHlwZSwgbHR5cGUsIGVycnJldCkJXAotCWFzbSB2b2xhdGls
-ZSgiXG4iCQkJCQkJXAotCQkgICAgICIxOgltb3YiaXR5cGUiICUicnR5cGUiMSwlMlxuIgkJXAot
-CQkgICAgICIyOlxuIgkJCQkJCVwKLQkJICAgICAiLnNlY3Rpb24gLmZpeHVwLFwiYXhcIlxuIgkJ
-CQlcCi0JCSAgICAgIjM6CW1vdiAlMywlMFxuIgkJCQlcCi0JCSAgICAgIglqbXAgMmJcbiIJCQkJ
-CVwKLQkJICAgICAiLnByZXZpb3VzXG4iCQkJCQlcCi0JCSAgICAgX0FTTV9FWFRBQkxFX1VBKDFi
-LCAzYikJCQkJXAotCQkgICAgIDogIj1yIihlcnIpCQkJCQlcCi0JCSAgICAgOiBsdHlwZSh4KSwg
-Im0iIChfX20oYWRkcikpLCAiaSIgKGVycnJldCksICIwIiAoZXJyKSkKKyNkZWZpbmUgX19wdXRf
-dXNlcl9nb3RvKHgsIGFkZHIsIGl0eXBlLCBydHlwZSwgbHR5cGUsIGxhYmVsKQlcCisJYXNtIHZv
-bGF0aWxlIGdvdG8oIlxuIgkJCQkJCVwKKwkJIjE6CW1vdiJpdHlwZSIgJSJydHlwZSIwLCUxXG4i
-CQkJXAorCQlfQVNNX0VYVEFCTEVfVUEoMWIsICVsMikJCQkJCVwKKwkJOiA6IGx0eXBlKHgpLCAi
-bSIgKF9fbShhZGRyKSkJCQkJXAorCQk6IDogbGFiZWwpCisKKyNkZWZpbmUgX19wdXRfdXNlcl9m
-YWlsZWQoeCwgYWRkciwgaXR5cGUsIHJ0eXBlLCBsdHlwZSwgZXJycmV0KQkJXAorCSh7CV9fbGFi
-ZWxfXyBfX3B1ZmxhYjsJCQkJCVwKKwkJaW50IF9fcHVmcmV0ID0gZXJycmV0OwkJCQkJXAorCQlf
-X3B1dF91c2VyX2dvdG8oeCxhZGRyLGl0eXBlLHJ0eXBlLGx0eXBlLF9fcHVmbGFiKTsJXAorCQlf
-X3B1ZnJldCA9IDA7CQkJCQkJXAorCV9fcHVmbGFiOiBfX3B1ZnJldDsgfSkKKworI2RlZmluZSBf
-X3B1dF91c2VyX2FzbSh4LCBhZGRyLCByZXR2YWwsIGl0eXBlLCBydHlwZSwgbHR5cGUsIGVycnJl
-dCkJZG8gewlcCisJcmV0dmFsID0gX19wdXRfdXNlcl9mYWlsZWQoeCwgYWRkciwgaXR5cGUsIHJ0
-eXBlLCBsdHlwZSwgZXJycmV0KTsJXAorfSB3aGlsZSAoMCkKIAogI2RlZmluZSBfX3B1dF91c2Vy
-X2FzbV9leCh4LCBhZGRyLCBpdHlwZSwgcnR5cGUsIGx0eXBlKQkJCVwKIAlhc20gdm9sYXRpbGUo
-IjE6CW1vdiJpdHlwZSIgJSJydHlwZSIwLCUxXG4iCQlcCkBAIC02ODcsMTIgKzY5Miw2IEBAIGV4
-dGVybiBzdHJ1Y3QgbW92c2xfbWFzayB7CiAKICNkZWZpbmUgQVJDSF9IQVNfTk9DQUNIRV9VQUND
-RVNTIDEKIAotI2lmZGVmIENPTkZJR19YODZfMzIKLSMgaW5jbHVkZSA8YXNtL3VhY2Nlc3NfMzIu
-aD4KLSNlbHNlCi0jIGluY2x1ZGUgPGFzbS91YWNjZXNzXzY0Lmg+Ci0jZW5kaWYKLQogLyoKICAq
-IFdlIHJlbHkgb24gdGhlIG5lc3RlZCBOTUkgd29yayB0byBhbGxvdyBhdG9taWMgZmF1bHRzIGZy
-b20gdGhlIE5NSSBwYXRoOyB0aGUKICAqIG5lc3RlZCBOTUkgcGF0aHMgYXJlIGNhcmVmdWwgdG8g
-cHJlc2VydmUgQ1IyLgpAQCAtNzExLDEzICs3MTAsOCBAQCBleHRlcm4gc3RydWN0IG1vdnNsX21h
-c2sgewogI2RlZmluZSB1c2VyX2FjY2Vzc19iZWdpbigpCV9fdWFjY2Vzc19iZWdpbigpCiAjZGVm
-aW5lIHVzZXJfYWNjZXNzX2VuZCgpCV9fdWFjY2Vzc19lbmQoKQogCi0jZGVmaW5lIHVuc2FmZV9w
-dXRfdXNlcih4LCBwdHIsIGVycl9sYWJlbCkJCQkJCVwKLWRvIHsJCQkJCQkJCQkJXAotCWludCBf
-X3B1X2VycjsJCQkJCQkJCVwKLQlfX3R5cGVvZl9fKCoocHRyKSkgX19wdV92YWwgPSAoeCk7CQkJ
-CQlcCi0JX19wdXRfdXNlcl9zaXplKF9fcHVfdmFsLCAocHRyKSwgc2l6ZW9mKCoocHRyKSksIF9f
-cHVfZXJyLCAtRUZBVUxUKTsJXAotCWlmICh1bmxpa2VseShfX3B1X2VycikpIGdvdG8gZXJyX2xh
-YmVsOwkJCQkJXAotfSB3aGlsZSAoMCkKKyNkZWZpbmUgdW5zYWZlX3B1dF91c2VyKHgsIHB0ciwg
-bGFiZWwpCVwKKwlfX3B1dF91c2VyX3NpemUoKHgpLCAocHRyKSwgc2l6ZW9mKCoocHRyKSksIGxh
-YmVsKQogCiAjZGVmaW5lIHVuc2FmZV9nZXRfdXNlcih4LCBwdHIsIGVycl9sYWJlbCkJCQkJCVwK
-IGRvIHsJCQkJCQkJCQkJXApAQCAtNzI4LDUgKzcyMiwxMSBAQCBkbyB7CQkJCQkJCQkJCVwKIAlp
-ZiAodW5saWtlbHkoX19ndV9lcnIpKSBnb3RvIGVycl9sYWJlbDsJCQkJCVwKIH0gd2hpbGUgKDAp
-CiAKKyNpZmRlZiBDT05GSUdfWDg2XzMyCisjIGluY2x1ZGUgPGFzbS91YWNjZXNzXzMyLmg+Cisj
-ZWxzZQorIyBpbmNsdWRlIDxhc20vdWFjY2Vzc182NC5oPgorI2VuZGlmCisKICNlbmRpZiAvKiBf
-QVNNX1g4Nl9VQUNDRVNTX0ggKi8KIApkaWZmIC0tZ2l0IGEvYXJjaC94ODYvaW5jbHVkZS9hc20v
-dWFjY2Vzc182NC5oIGIvYXJjaC94ODYvaW5jbHVkZS9hc20vdWFjY2Vzc182NC5oCmluZGV4IGE5
-ZDYzN2JjMzAxZC4uOGRkODVkMmZjZTI4IDEwMDY0NAotLS0gYS9hcmNoL3g4Ni9pbmNsdWRlL2Fz
-bS91YWNjZXNzXzY0LmgKKysrIGIvYXJjaC94ODYvaW5jbHVkZS9hc20vdWFjY2Vzc182NC5oCkBA
-IC02NSwxMTcgKzY1LDEwNCBAQCBjb3B5X3RvX3VzZXJfbWNzYWZlKHZvaWQgKnRvLCBjb25zdCB2
-b2lkICpmcm9tLCB1bnNpZ25lZCBsZW4pCiBzdGF0aWMgX19hbHdheXNfaW5saW5lIF9fbXVzdF9j
-aGVjayB1bnNpZ25lZCBsb25nCiByYXdfY29weV9mcm9tX3VzZXIodm9pZCAqZHN0LCBjb25zdCB2
-b2lkIF9fdXNlciAqc3JjLCB1bnNpZ25lZCBsb25nIHNpemUpCiB7Ci0JaW50IHJldCA9IDA7Ci0K
-LQlpZiAoIV9fYnVpbHRpbl9jb25zdGFudF9wKHNpemUpKQotCQlyZXR1cm4gY29weV91c2VyX2dl
-bmVyaWMoZHN0LCAoX19mb3JjZSB2b2lkICopc3JjLCBzaXplKTsKLQlzd2l0Y2ggKHNpemUpIHsK
-LQljYXNlIDE6Ci0JCV9fdWFjY2Vzc19iZWdpbl9ub3NwZWMoKTsKLQkJX19nZXRfdXNlcl9hc21f
-bm96ZXJvKCoodTggKilkc3QsICh1OCBfX3VzZXIgKilzcmMsCi0JCQkgICAgICByZXQsICJiIiwg
-ImIiLCAiPXEiLCAxKTsKLQkJX191YWNjZXNzX2VuZCgpOwotCQlyZXR1cm4gcmV0OwotCWNhc2Ug
-MjoKLQkJX191YWNjZXNzX2JlZ2luX25vc3BlYygpOwotCQlfX2dldF91c2VyX2FzbV9ub3plcm8o
-Kih1MTYgKilkc3QsICh1MTYgX191c2VyICopc3JjLAotCQkJICAgICAgcmV0LCAidyIsICJ3Iiwg
-Ij1yIiwgMik7Ci0JCV9fdWFjY2Vzc19lbmQoKTsKLQkJcmV0dXJuIHJldDsKLQljYXNlIDQ6Ci0J
-CV9fdWFjY2Vzc19iZWdpbl9ub3NwZWMoKTsKLQkJX19nZXRfdXNlcl9hc21fbm96ZXJvKCoodTMy
-ICopZHN0LCAodTMyIF9fdXNlciAqKXNyYywKLQkJCSAgICAgIHJldCwgImwiLCAiayIsICI9ciIs
-IDQpOwotCQlfX3VhY2Nlc3NfZW5kKCk7Ci0JCXJldHVybiByZXQ7Ci0JY2FzZSA4OgotCQlfX3Vh
-Y2Nlc3NfYmVnaW5fbm9zcGVjKCk7Ci0JCV9fZ2V0X3VzZXJfYXNtX25vemVybygqKHU2NCAqKWRz
-dCwgKHU2NCBfX3VzZXIgKilzcmMsCi0JCQkgICAgICByZXQsICJxIiwgIiIsICI9ciIsIDgpOwot
-CQlfX3VhY2Nlc3NfZW5kKCk7Ci0JCXJldHVybiByZXQ7Ci0JY2FzZSAxMDoKLQkJX191YWNjZXNz
-X2JlZ2luX25vc3BlYygpOwotCQlfX2dldF91c2VyX2FzbV9ub3plcm8oKih1NjQgKilkc3QsICh1
-NjQgX191c2VyICopc3JjLAotCQkJICAgICAgIHJldCwgInEiLCAiIiwgIj1yIiwgMTApOwotCQlp
-ZiAobGlrZWx5KCFyZXQpKQotCQkJX19nZXRfdXNlcl9hc21fbm96ZXJvKCoodTE2ICopKDggKyAo
-Y2hhciAqKWRzdCksCi0JCQkJICAgICAgICh1MTYgX191c2VyICopKDggKyAoY2hhciBfX3VzZXIg
-KilzcmMpLAotCQkJCSAgICAgICByZXQsICJ3IiwgInciLCAiPXIiLCAyKTsKLQkJX191YWNjZXNz
-X2VuZCgpOwotCQlyZXR1cm4gcmV0OwotCWNhc2UgMTY6Ci0JCV9fdWFjY2Vzc19iZWdpbl9ub3Nw
-ZWMoKTsKLQkJX19nZXRfdXNlcl9hc21fbm96ZXJvKCoodTY0ICopZHN0LCAodTY0IF9fdXNlciAq
-KXNyYywKLQkJCSAgICAgICByZXQsICJxIiwgIiIsICI9ciIsIDE2KTsKLQkJaWYgKGxpa2VseSgh
-cmV0KSkKLQkJCV9fZ2V0X3VzZXJfYXNtX25vemVybygqKHU2NCAqKSg4ICsgKGNoYXIgKilkc3Qp
-LAotCQkJCSAgICAgICAodTY0IF9fdXNlciAqKSg4ICsgKGNoYXIgX191c2VyICopc3JjKSwKLQkJ
-CQkgICAgICAgcmV0LCAicSIsICIiLCAiPXIiLCA4KTsKLQkJX191YWNjZXNzX2VuZCgpOwotCQly
-ZXR1cm4gcmV0OwotCWRlZmF1bHQ6CisJaWYgKCFfX2J1aWx0aW5fY29uc3RhbnRfcChzaXplKSB8
-fCBzaXplID4gMTI4KQogCQlyZXR1cm4gY29weV91c2VyX2dlbmVyaWMoZHN0LCAoX19mb3JjZSB2
-b2lkICopc3JjLCBzaXplKTsKKworCS8qIFNtYWxsIGNvbnN0YW50IHNpemU6IHVucm9sbCAqLwor
-CXVzZXJfYWNjZXNzX2JlZ2luKCk7CisJd2hpbGUgKHNpemUgPj0gc2l6ZW9mKHVuc2lnbmVkIGxv
-bmcpKSB7CisJCXVuc2lnbmVkIGxvbmcgdmFsOworCQl1bnNhZmVfZ2V0X3VzZXIodmFsLCAoY29u
-c3QgdW5zaWduZWQgbG9uZyBfX3VzZXIgKikgc3JjLCBvdXQpOworCQkqKHVuc2lnbmVkIGxvbmcg
-Kilkc3QgPSB2YWw7CisJCXNpemUgLT0gc2l6ZW9mKHVuc2lnbmVkIGxvbmcpOworCQlzcmMgKz0g
-c2l6ZW9mKHVuc2lnbmVkIGxvbmcpOworCQlkc3QgKz0gc2l6ZW9mKHVuc2lnbmVkIGxvbmcpOwog
-CX0KKworCXdoaWxlIChzaXplID49IHNpemVvZih1bnNpZ25lZCBpbnQpKSB7CisJCXVuc2lnbmVk
-IGludCB2YWw7CisJCXVuc2FmZV9nZXRfdXNlcih2YWwsIChjb25zdCB1bnNpZ25lZCBpbnQgX191
-c2VyICopIHNyYywgb3V0KTsKKwkJKih1bnNpZ25lZCBpbnQgKilkc3QgPSB2YWw7CisJCXNpemUg
-LT0gc2l6ZW9mKHVuc2lnbmVkIGludCk7CisJCXNyYyArPSBzaXplb2YodW5zaWduZWQgaW50KTsK
-KwkJZHN0ICs9IHNpemVvZih1bnNpZ25lZCBpbnQpOworCX0KKworCXdoaWxlIChzaXplID49IHNp
-emVvZih1bnNpZ25lZCBzaG9ydCkpIHsKKwkJdW5zaWduZWQgc2hvcnQgdmFsOworCQl1bnNhZmVf
-Z2V0X3VzZXIodmFsLCAoY29uc3QgdW5zaWduZWQgc2hvcnQgX191c2VyICopIHNyYywgb3V0KTsK
-KwkJKih1bnNpZ25lZCBzaG9ydCAqKWRzdCA9IHZhbDsKKwkJc2l6ZSAtPSBzaXplb2YodW5zaWdu
-ZWQgc2hvcnQpOworCQlzcmMgKz0gc2l6ZW9mKHVuc2lnbmVkIHNob3J0KTsKKwkJZHN0ICs9IHNp
-emVvZih1bnNpZ25lZCBzaG9ydCk7CisJfQorCisJd2hpbGUgKHNpemUgPj0gc2l6ZW9mKHVuc2ln
-bmVkIGNoYXIpKSB7CisJCXVuc2lnbmVkIGNoYXIgdmFsOworCQl1bnNhZmVfZ2V0X3VzZXIodmFs
-LCAoY29uc3QgdW5zaWduZWQgY2hhciBfX3VzZXIgKikgc3JjLCBvdXQpOworCQkqKHVuc2lnbmVk
-IGNoYXIgKilkc3QgPSB2YWw7CisJCXNpemUgLT0gc2l6ZW9mKHVuc2lnbmVkIGNoYXIpOworCQlz
-cmMgKz0gc2l6ZW9mKHVuc2lnbmVkIGNoYXIpOworCQlkc3QgKz0gc2l6ZW9mKHVuc2lnbmVkIGNo
-YXIpOworCX0KKwl1c2VyX2FjY2Vzc19lbmQoKTsKKwlyZXR1cm4gMDsKKworb3V0OgorCXVzZXJf
-YWNjZXNzX2VuZCgpOworCXJldHVybiBzaXplOwogfQogCiBzdGF0aWMgX19hbHdheXNfaW5saW5l
-IF9fbXVzdF9jaGVjayB1bnNpZ25lZCBsb25nCiByYXdfY29weV90b191c2VyKHZvaWQgX191c2Vy
-ICpkc3QsIGNvbnN0IHZvaWQgKnNyYywgdW5zaWduZWQgbG9uZyBzaXplKQogewotCWludCByZXQg
-PSAwOwotCi0JaWYgKCFfX2J1aWx0aW5fY29uc3RhbnRfcChzaXplKSkKLQkJcmV0dXJuIGNvcHlf
-dXNlcl9nZW5lcmljKChfX2ZvcmNlIHZvaWQgKilkc3QsIHNyYywgc2l6ZSk7Ci0Jc3dpdGNoIChz
-aXplKSB7Ci0JY2FzZSAxOgotCQlfX3VhY2Nlc3NfYmVnaW4oKTsKLQkJX19wdXRfdXNlcl9hc20o
-Kih1OCAqKXNyYywgKHU4IF9fdXNlciAqKWRzdCwKLQkJCSAgICAgIHJldCwgImIiLCAiYiIsICJp
-cSIsIDEpOwotCQlfX3VhY2Nlc3NfZW5kKCk7Ci0JCXJldHVybiByZXQ7Ci0JY2FzZSAyOgotCQlf
-X3VhY2Nlc3NfYmVnaW4oKTsKLQkJX19wdXRfdXNlcl9hc20oKih1MTYgKilzcmMsICh1MTYgX191
-c2VyICopZHN0LAotCQkJICAgICAgcmV0LCAidyIsICJ3IiwgImlyIiwgMik7Ci0JCV9fdWFjY2Vz
-c19lbmQoKTsKLQkJcmV0dXJuIHJldDsKLQljYXNlIDQ6Ci0JCV9fdWFjY2Vzc19iZWdpbigpOwot
-CQlfX3B1dF91c2VyX2FzbSgqKHUzMiAqKXNyYywgKHUzMiBfX3VzZXIgKilkc3QsCi0JCQkgICAg
-ICByZXQsICJsIiwgImsiLCAiaXIiLCA0KTsKLQkJX191YWNjZXNzX2VuZCgpOwotCQlyZXR1cm4g
-cmV0OwotCWNhc2UgODoKLQkJX191YWNjZXNzX2JlZ2luKCk7Ci0JCV9fcHV0X3VzZXJfYXNtKCoo
-dTY0ICopc3JjLCAodTY0IF9fdXNlciAqKWRzdCwKLQkJCSAgICAgIHJldCwgInEiLCAiIiwgImVy
-IiwgOCk7Ci0JCV9fdWFjY2Vzc19lbmQoKTsKLQkJcmV0dXJuIHJldDsKLQljYXNlIDEwOgotCQlf
-X3VhY2Nlc3NfYmVnaW4oKTsKLQkJX19wdXRfdXNlcl9hc20oKih1NjQgKilzcmMsICh1NjQgX191
-c2VyICopZHN0LAotCQkJICAgICAgIHJldCwgInEiLCAiIiwgImVyIiwgMTApOwotCQlpZiAobGlr
-ZWx5KCFyZXQpKSB7Ci0JCQlhc20oIiI6OjoibWVtb3J5Iik7Ci0JCQlfX3B1dF91c2VyX2FzbSg0
-Wyh1MTYgKilzcmNdLCA0ICsgKHUxNiBfX3VzZXIgKilkc3QsCi0JCQkJICAgICAgIHJldCwgInci
-LCAidyIsICJpciIsIDIpOwotCQl9Ci0JCV9fdWFjY2Vzc19lbmQoKTsKLQkJcmV0dXJuIHJldDsK
-LQljYXNlIDE2OgotCQlfX3VhY2Nlc3NfYmVnaW4oKTsKLQkJX19wdXRfdXNlcl9hc20oKih1NjQg
-KilzcmMsICh1NjQgX191c2VyICopZHN0LAotCQkJICAgICAgIHJldCwgInEiLCAiIiwgImVyIiwg
-MTYpOwotCQlpZiAobGlrZWx5KCFyZXQpKSB7Ci0JCQlhc20oIiI6OjoibWVtb3J5Iik7Ci0JCQlf
-X3B1dF91c2VyX2FzbSgxWyh1NjQgKilzcmNdLCAxICsgKHU2NCBfX3VzZXIgKilkc3QsCi0JCQkJ
-ICAgICAgIHJldCwgInEiLCAiIiwgImVyIiwgOCk7Ci0JCX0KLQkJX191YWNjZXNzX2VuZCgpOwot
-CQlyZXR1cm4gcmV0OwotCWRlZmF1bHQ6CisJaWYgKCFfX2J1aWx0aW5fY29uc3RhbnRfcChzaXpl
-KSB8fCBzaXplID4gMTI4KQogCQlyZXR1cm4gY29weV91c2VyX2dlbmVyaWMoKF9fZm9yY2Ugdm9p
-ZCAqKWRzdCwgc3JjLCBzaXplKTsKKworCS8qIFNtYWxsIGNvbnN0YW50IHNpemU6IHVucm9sbCAq
-LworCXVzZXJfYWNjZXNzX2JlZ2luKCk7CisJd2hpbGUgKHNpemUgPj0gc2l6ZW9mKHVuc2lnbmVk
-IGxvbmcpKSB7CisJCXVuc2lnbmVkIGxvbmcgdmFsOworCQl2YWwgPSAqKGNvbnN0IHVuc2lnbmVk
-IGxvbmcgKilzcmM7CisJCXVuc2FmZV9wdXRfdXNlcih2YWwsICh1bnNpZ25lZCBsb25nIF9fdXNl
-ciAqKSBkc3QsIG91dCk7CisJCXNpemUgLT0gc2l6ZW9mKHVuc2lnbmVkIGxvbmcpOworCQlzcmMg
-Kz0gc2l6ZW9mKHVuc2lnbmVkIGxvbmcpOworCQlkc3QgKz0gc2l6ZW9mKHVuc2lnbmVkIGxvbmcp
-OworCX0KKworCXdoaWxlIChzaXplID49IHNpemVvZih1bnNpZ25lZCBpbnQpKSB7CisJCXVuc2ln
-bmVkIGludCB2YWw7CisJCXZhbCA9ICooY29uc3QgdW5zaWduZWQgaW50ICopc3JjOworCQl1bnNh
-ZmVfcHV0X3VzZXIodmFsLCAodW5zaWduZWQgaW50IF9fdXNlciAqKSBkc3QsIG91dCk7CisJCXNp
-emUgLT0gc2l6ZW9mKHVuc2lnbmVkIGludCk7CisJCXNyYyArPSBzaXplb2YodW5zaWduZWQgaW50
-KTsKKwkJZHN0ICs9IHNpemVvZih1bnNpZ25lZCBpbnQpOworCX0KKworCXdoaWxlIChzaXplID49
-IHNpemVvZih1bnNpZ25lZCBzaG9ydCkpIHsKKwkJdW5zaWduZWQgc2hvcnQgdmFsOworCQl2YWwg
-PSAqKGNvbnN0IHVuc2lnbmVkIHNob3J0ICopc3JjOworCQl1bnNhZmVfcHV0X3VzZXIodmFsLCAo
-dW5zaWduZWQgc2hvcnQgX191c2VyICopIGRzdCwgb3V0KTsKKwkJc2l6ZSAtPSBzaXplb2YodW5z
-aWduZWQgc2hvcnQpOworCQlzcmMgKz0gc2l6ZW9mKHVuc2lnbmVkIHNob3J0KTsKKwkJZHN0ICs9
-IHNpemVvZih1bnNpZ25lZCBzaG9ydCk7CisJfQorCisJd2hpbGUgKHNpemUgPj0gc2l6ZW9mKHVu
-c2lnbmVkIGNoYXIpKSB7CisJCXVuc2lnbmVkIGNoYXIgdmFsOworCQl2YWwgPSAqKGNvbnN0IHVu
-c2lnbmVkIGNoYXIgKilzcmM7CisJCXVuc2FmZV9wdXRfdXNlcih2YWwsICh1bnNpZ25lZCBjaGFy
-IF9fdXNlciAqKSBkc3QsIG91dCk7CisJCXNpemUgLT0gc2l6ZW9mKHVuc2lnbmVkIGNoYXIpOwor
-CQlzcmMgKz0gc2l6ZW9mKHVuc2lnbmVkIGNoYXIpOworCQlkc3QgKz0gc2l6ZW9mKHVuc2lnbmVk
-IGNoYXIpOwogCX0KKworCXVzZXJfYWNjZXNzX2VuZCgpOworCXJldHVybiAwOworCitvdXQ6CisJ
-dXNlcl9hY2Nlc3NfZW5kKCk7CisJcmV0dXJuIHNpemU7CiB9CiAKIHN0YXRpYyBfX2Fsd2F5c19p
-bmxpbmUgX19tdXN0X2NoZWNrCmRpZmYgLS1naXQgYS9mcy9yZWFkZGlyLmMgYi9mcy9yZWFkZGly
-LmMKaW5kZXggZDk3ZjU0OGU2MzIzLi5mMWUxNTllMTcxMjUgMTAwNjQ0Ci0tLSBhL2ZzL3JlYWRk
-aXIuYworKysgYi9mcy9yZWFkZGlyLmMKQEAgLTE4NSwyNSArMTg1LDI3IEBAIHN0YXRpYyBpbnQg
-ZmlsbGRpcihzdHJ1Y3QgZGlyX2NvbnRleHQgKmN0eCwgY29uc3QgY2hhciAqbmFtZSwgaW50IG5h
-bWxlbiwKIAlpZiAoZGlyZW50KSB7CiAJCWlmIChzaWduYWxfcGVuZGluZyhjdXJyZW50KSkKIAkJ
-CXJldHVybiAtRUlOVFI7Ci0JCWlmIChfX3B1dF91c2VyKG9mZnNldCwgJmRpcmVudC0+ZF9vZmYp
-KQotCQkJZ290byBlZmF1bHQ7CiAJfQorCisJdXNlcl9hY2Nlc3NfYmVnaW4oKTsKKwlpZiAoZGly
-ZW50KQorCQl1bnNhZmVfcHV0X3VzZXIob2Zmc2V0LCAmZGlyZW50LT5kX29mZiwgZWZhdWx0X2Vu
-ZCk7CiAJZGlyZW50ID0gYnVmLT5jdXJyZW50X2RpcjsKLQlpZiAoX19wdXRfdXNlcihkX2lubywg
-JmRpcmVudC0+ZF9pbm8pKQotCQlnb3RvIGVmYXVsdDsKLQlpZiAoX19wdXRfdXNlcihyZWNsZW4s
-ICZkaXJlbnQtPmRfcmVjbGVuKSkKLQkJZ290byBlZmF1bHQ7CisJdW5zYWZlX3B1dF91c2VyKGRf
-aW5vLCAmZGlyZW50LT5kX2lubywgZWZhdWx0X2VuZCk7CisJdW5zYWZlX3B1dF91c2VyKHJlY2xl
-biwgJmRpcmVudC0+ZF9yZWNsZW4sIGVmYXVsdF9lbmQpOworCXVuc2FmZV9wdXRfdXNlcigwLCBk
-aXJlbnQtPmRfbmFtZSArIG5hbWxlbiwgZWZhdWx0X2VuZCk7CisJdW5zYWZlX3B1dF91c2VyKGRf
-dHlwZSwgKGNoYXIgX191c2VyICopIGRpcmVudCArIHJlY2xlbiAtIDEsIGVmYXVsdF9lbmQpOwor
-CXVzZXJfYWNjZXNzX2VuZCgpOworCiAJaWYgKGNvcHlfdG9fdXNlcihkaXJlbnQtPmRfbmFtZSwg
-bmFtZSwgbmFtbGVuKSkKIAkJZ290byBlZmF1bHQ7Ci0JaWYgKF9fcHV0X3VzZXIoMCwgZGlyZW50
-LT5kX25hbWUgKyBuYW1sZW4pKQotCQlnb3RvIGVmYXVsdDsKLQlpZiAoX19wdXRfdXNlcihkX3R5
-cGUsIChjaGFyIF9fdXNlciAqKSBkaXJlbnQgKyByZWNsZW4gLSAxKSkKLQkJZ290byBlZmF1bHQ7
-CiAJYnVmLT5wcmV2aW91cyA9IGRpcmVudDsKIAlkaXJlbnQgPSAodm9pZCBfX3VzZXIgKilkaXJl
-bnQgKyByZWNsZW47CiAJYnVmLT5jdXJyZW50X2RpciA9IGRpcmVudDsKIAlidWYtPmNvdW50IC09
-IHJlY2xlbjsKIAlyZXR1cm4gMDsKK2VmYXVsdF9lbmQ6CisJdXNlcl9hY2Nlc3NfZW5kKCk7CiBl
-ZmF1bHQ6CiAJYnVmLT5lcnJvciA9IC1FRkFVTFQ7CiAJcmV0dXJuIC1FRkFVTFQ7Cg==
---0000000000000e5aef057b316262--
+> +               /* A negative number is used to clear the limit */
+> +               intval = EC_POWER_LIMIT_NONE;
+> +       else
+> +               /* Convert from uA/uV to mA/mV */
+> +               intval = val->intval / 1000;
+> +
+> +       switch (psp) {
+> +       case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
+> +               ret = cros_usbpd_charger_set_ext_power_limit(charger, intval,
+> +                                                       input_voltage_limit);
+> +               if (ret < 0)
+> +                       break;
+> +
+> +               input_current_limit = intval;
+> +               if (input_current_limit == EC_POWER_LIMIT_NONE)
+> +                       dev_info(dev,
+> +                         "External Current Limit cleared for all ports\n");
+> +               else
+> +                       dev_info(dev,
+> +                         "External Current Limit set to %dmA for all ports\n",
+> +                         input_current_limit);
+> +               break;
+> +       case POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT:
+> +               ret = cros_usbpd_charger_set_ext_power_limit(charger,
+> +                                                       input_current_limit,
+> +                                                       intval);
+> +               if (ret < 0)
+> +                       break;
+> +
+> +               input_voltage_limit = intval;
+> +               if (input_voltage_limit == EC_POWER_LIMIT_NONE)
+> +                       dev_info(dev,
+> +                         "External Voltage Limit cleared for all ports\n");
+> +               else
+> +                       dev_info(dev,
+> +                         "External Voltage Limit set to %dmV for all ports\n",
+> +                         input_voltage_limit);
+> +               break;
+> +       default:
+> +               ret = -EINVAL;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static int cros_usbpd_charger_property_is_writeable(struct power_supply *psy,
+> +                                               enum power_supply_property psp)
+> +{
+> +       int ret;
+> +
+> +       switch (psp) {
+> +       case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
+> +       case POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT:
+> +               ret = 1;
+> +               break;
+> +       default:
+> +               ret = 0;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+>  static int cros_usbpd_charger_ec_event(struct notifier_block *nb,
+>                                        unsigned long queued_during_suspend,
+>                                        void *_notify)
+> @@ -525,6 +639,9 @@ static int cros_usbpd_charger_probe(struct platform_device *pd)
+>
+>                 psy_desc = &port->psy_desc;
+>                 psy_desc->get_property = cros_usbpd_charger_get_prop;
+> +               psy_desc->set_property = cros_usbpd_charger_set_prop;
+> +               psy_desc->property_is_writeable =
+> +                               cros_usbpd_charger_property_is_writeable;
+>                 psy_desc->external_power_changed =
+>                                         cros_usbpd_charger_power_changed;
+>                 psy_cfg.drv_data = port;
+> --
+> 2.19.1
+>
