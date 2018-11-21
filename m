@@ -2,191 +2,158 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15AB8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE7EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF9E1214F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:01:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF9E1214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 01EC4214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:02:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="q8pKAgA8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01EC4214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732839AbeKVEhQ (ORCPT
+        id S1732644AbeKVEhY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 23:37:16 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53375 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730780AbeKVEhP (ORCPT
+        Wed, 21 Nov 2018 23:37:24 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38018 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732721AbeKVEhX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 23:37:15 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wALHwvMY139063
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 13:01:51 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nwbjd1rbm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 13:01:51 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 21 Nov 2018 18:01:49 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 21 Nov 2018 18:01:47 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wALI1kqB61276392
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 21 Nov 2018 18:01:46 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0106AA4051;
-        Wed, 21 Nov 2018 18:01:46 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 13EBEA4053;
-        Wed, 21 Nov 2018 18:01:45 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.207.68])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 21 Nov 2018 18:01:44 +0000 (GMT)
-Date:   Wed, 21 Nov 2018 19:01:43 +0100
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, adobriyan@gmail.com,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, David Rientjes <rientjes@google.com>
-Subject: Re: [RFC PATCH 1/3] mm, proc: be more verbose about unstable VMA
- flags in /proc/<pid>/smaps
-References: <20181120103515.25280-1-mhocko@kernel.org>
- <20181120103515.25280-2-mhocko@kernel.org>
- <CAPcyv4j7=Mh9dt3Fv+cEhtYEXXKNDxErv0N9Zt+h+r9QxX_GAw@mail.gmail.com>
- <20181121070500.GB12932@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181121070500.GB12932@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18112118-0016-0000-0000-0000022A9CBF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112118-0017-0000-0000-00003282DE84
-Message-Id: <20181121180142.GC5704@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-21_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811210156
+        Wed, 21 Nov 2018 23:37:23 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181121180159euoutp01118b4eb26679ddad1be593c666f76a9d~pNaJvZupm0920709207euoutp013
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 18:01:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181121180159euoutp01118b4eb26679ddad1be593c666f76a9d~pNaJvZupm0920709207euoutp013
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1542823319;
+        bh=a/CowX5vKU13IthQezO6Fl9mgJO9SUIKP68QR1ULUKM=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=q8pKAgA8Am6g73r1WOi7d5vOmjFDEHXE0BaLLZozofa5eKKkMmRsuZ06cjnC/q7Q5
+         42uvjHEM+6K04GCTXuZnthh+b5N0RqaGbVjLuxktjGS+5sBe522F8yQ6GKimgFKZBx
+         BJHQfXxPGpCXXboDnXX1qM6XKgkWekinR2H+yCrQ=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181121180157eucas1p155f740c6eda22d995a1dbbcab378a27d~pNaIoijWS3115831158eucas1p1L;
+        Wed, 21 Nov 2018 18:01:57 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 94.D7.04441.59D95FB5; Wed, 21
+        Nov 2018 18:01:57 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20181121180156eucas1p225af7f4341a039264ff26f2a9ad9bb12~pNaHqXPXI0124201242eucas1p2y;
+        Wed, 21 Nov 2018 18:01:56 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181121180156eusmtrp27affcc6b055773f999aea646a56d8e88~pNaHany5Z0880108801eusmtrp2G;
+        Wed, 21 Nov 2018 18:01:56 +0000 (GMT)
+X-AuditID: cbfec7f2-5e3ff70000001159-8b-5bf59d95fc0e
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id A9.48.04284.49D95FB5; Wed, 21
+        Nov 2018 18:01:56 +0000 (GMT)
+Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181121180155eusmtip2a471b790e20317cc3098d4630127bcb0~pNaGjpzSA1643316433eusmtip2N;
+        Wed, 21 Nov 2018 18:01:55 +0000 (GMT)
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+To:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, cw00.choi@samsung.com,
+        rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz,
+        gregkh@linuxfoundation.org, keescook@chromium.org,
+        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
+        krzk@kernel.org, m.szyprowski@samsung.com,
+        b.zolnierkie@samsung.com, Lukasz Luba <l.luba@partner.samsung.com>
+Subject: [PATCH 0/6] devfreq: handle suspend/resume
+Date:   Wed, 21 Nov 2018 19:01:35 +0100
+Message-Id: <1542823301-23563-1-git-send-email-l.luba@partner.samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VSeUiTYRz23bfvcDX5WodvZiajUqPshpeMSqj4OqAgCnJ2rPpQ01nt0y7D
+        VpFX6soOhx2WVto2z6aZpaVOrVkei1qWZrAgygOPzQqktfmt+u/5Pcfv+b3wUpikF/ehomLj
+        WGWsPEZKiISVTb9aF1y9aZctUj+Zi+oqglCZpgRHj8pGcWSxfcVRrrEVR+fySwj06oICqa29
+        GGprKyXR67N9JPqg8kU5V2oEqNz6Dkdvqm8QaCTDCJCmrVaAiozdJLpn6RCgj2cKCdRtanTu
+        aDHj6HyNkURJukEc9bV/Eq6BTOWTSpzR39ID5rqqQ8hcVA8DJv/pNwFTrk0lmGc39STz8O5p
+        5ncTydQNPBUwhrfJQibToAVMoe4HyYyU+231ChOtPMDGRB1llQtX7RVF1ibrycM9E45fNptw
+        FXjumQY8KUgvg13DL/A0IKIkdCGAnaV3MH6wAWhocgj5YQRAe54R/xsZTPpM8EIBgLl1nfi/
+        yE+dwalQFEEHwyrtEVdgCp0PoLkqyOXB6BcYrB7KEriEyfRSOJZRAVxYSM+B979bxxvE9EZo
+        +ml2t/nBztbU8ZsgfYmCmekqjBfWwlHDEMHjyfB7s4HksS90PM4V8JiDr1O0bs8pmPyyyu0J
+        gQ3NHbjrUIwOgiXVC3k6FHbUfsBcNKS94Pv+SS4ac8Ksymw3LYYpSRLeHQgN6e3uommwQH/N
+        vZyBmr5P46+S0LvgmK0Xvwj8cv533QZAC7zZeE4RwXKLY9ljwZxcwcXHRgTvP6QoB84v2PK7
+        ebgK2M376gFNAelEceBOu0yCy49yJxT1AFKYdIo4JcxJiQ/IT5xklYf2KONjWK4ezKCEUm9x
+        gsdnmYSOkMex0Sx7mFX+VQWUp48KVJyM6hpzqLd1iVf0ZIcNXmqcvt5nNGRD2lC4rw31+Ntk
+        pebwdRn2gIR0q2pTrYfmS8uWgwGzUj4mbH8MGo/PnhlanFtiIiL9c5bM985aPbVYEtGvC3cU
+        DETvyCMyGzSWIlGZOu+BV/T5cP/Ebe1BA8vDUle9Pde/e9hXvFlnSbRIhVykfPE8TMnJ/wDf
+        dBp3fgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xe7pT5n6NNniwWcXi4FZNi40z1rNa
+        bN/4jdXi+pfnrBbzj5xjtWhevJ7N4kx3rkX/49fMFufPb2C3ONv0ht3iVoOMxawpe5ksNj2+
+        xmpxedccNovPvUcYLWac38dksfbIXXaLpdcvMlncblzBZnH31FGgGacvsVq07j3CbtG2+gOr
+        xZsL91gcJDy27d7G6rFm3hpGj9kNF1k8JvR/YvRYvOclk8emVZ1sHvvnrmH32Lyk3uPfMXaP
+        g+/2MHlsudrO4tG3ZRWjx4rV39k9Pm+SC+CL0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHU
+        MzQ2j7UyMlXSt7NJSc3JLEst0rdL0MvY176GveA+d8XkS6dYGxgPcHYxcnJICJhIfGh7wNbF
+        yMUhJLCUUeJC8wU2iISYxKR929khbGGJP9e6wOJCAp8YJbqv+nQxcnCwCehJ7FhVCNIrIrCc
+        UeL+z9nsIA6zwANmiY7nm1hBGoQFjCX+9G5lBLFZBFQllr16DBbnFfCSOPXjEivEAjmJm+c6
+        mScw8ixgZFjFKJJaWpybnltsqFecmFtcmpeul5yfu4kRGH/bjv3cvIPx0sbgQ4wCHIxKPLwa
+        kV+jhVgTy4orcw8xSnAwK4nwdkQBhXhTEiurUovy44tKc1KLDzGaAi2fyCwlmpwPTA15JfGG
+        pobmFpaG5sbmxmYWSuK85w0qo4QE0hNLUrNTUwtSi2D6mDg4pRoYJXQaz1ubBq/mUn3OY7sx
+        gKunxHWR4rdHorGBV6Oj3/7nMD55fKle6FyPxh/1du0vv85Wrfhf1Wl9xfKA/0Flh+DSs17L
+        lJevyzaJc79ePnWZ7NzQx+unJ/2XVFY7y7vgnK/Oy5ZdN/vufOP3svnmadPBv0xg3uOX/iGb
+        E3dJVpa091UcFopQYinOSDTUYi4qTgQA8pBaYtUCAAA=
+X-CMS-MailID: 20181121180156eucas1p225af7f4341a039264ff26f2a9ad9bb12
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181121180156eucas1p225af7f4341a039264ff26f2a9ad9bb12
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181121180156eucas1p225af7f4341a039264ff26f2a9ad9bb12
+References: <CGME20181121180156eucas1p225af7f4341a039264ff26f2a9ad9bb12@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 08:05:00AM +0100, Michal Hocko wrote:
-> On Tue 20-11-18 10:32:07, Dan Williams wrote:
-> > On Tue, Nov 20, 2018 at 2:35 AM Michal Hocko <mhocko@kernel.org> wrote:
-> > >
-> > > From: Michal Hocko <mhocko@suse.com>
-> > >
-> > > Even though vma flags exported via /proc/<pid>/smaps are explicitly
-> > > documented to be not guaranteed for future compatibility the warning
-> > > doesn't go far enough because it doesn't mention semantic changes to
-> > > those flags. And they are important as well because these flags are
-> > > a deep implementation internal to the MM code and the semantic might
-> > > change at any time.
-> > >
-> > > Let's consider two recent examples:
-> > > http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
-> > > : commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
-> > > : removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
-> > > : mean time certain customer of ours started poking into /proc/<pid>/smaps
-> > > : and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
-> > > : flags, the application just fails to start complaining that DAX support is
-> > > : missing in the kernel.
-> > >
-> > > http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
-> > > : Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
-> > > : introduced a regression in that userspace cannot always determine the set
-> > > : of vmas where thp is ineligible.
-> > > : Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
-> > > : to determine if a vma is eligible to be backed by hugepages.
-> > > : Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
-> > > : be disabled and emit "nh" as a flag for the corresponding vmas as part of
-> > > : /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
-> > > : flag and "nh" is not emitted.
-> > > : This causes smaps parsing libraries to assume a vma is eligible for thp
-> > > : and ends up puzzling the user on why its memory is not backed by thp.
-> > >
-> > > In both cases userspace was relying on a semantic of a specific VMA
-> > > flag. The primary reason why that happened is a lack of a proper
-> > > internface. While this has been worked on and it will be fixed properly,
-> > > it seems that our wording could see some refinement and be more vocal
-> > > about semantic aspect of these flags as well.
-> > >
-> > > Cc: Jan Kara <jack@suse.cz>
-> > > Cc: Dan Williams <dan.j.williams@intel.com>
-> > > Cc: David Rientjes <rientjes@google.com>
-> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > > ---
-> > >  Documentation/filesystems/proc.txt | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-> > > index 12a5e6e693b6..b1fda309f067 100644
-> > > --- a/Documentation/filesystems/proc.txt
-> > > +++ b/Documentation/filesystems/proc.txt
-> > > @@ -496,7 +496,9 @@ flags associated with the particular virtual memory area in two letter encoded
-> > >
-> > >  Note that there is no guarantee that every flag and associated mnemonic will
-> > >  be present in all further kernel releases. Things get changed, the flags may
-> > > -be vanished or the reverse -- new added.
-> > > +be vanished or the reverse -- new added. Interpretatation of their meaning
-> > > +might change in future as well. So each consumnent of these flags have to
-> > > +follow each specific kernel version for the exact semantic.
-> > 
-> > Can we start to claw some of this back? Perhaps with a config option
-> > to hide the flags to put applications on notice?
-> 
-> I would love to. My knowledge of CRIU is very minimal, but my
-> understanding is that this is the primary consumer of those flags. And
-> checkpointing is so close to the specific kernel version that I assume
-> that this abuse is somehow justified.
+Hi all,
 
-CRIU relies on vmflags to recreate exactly the same address space layout at
-restore time.
+This patch set aims to address the issue with devfreq devices' frequency
+during suspend/resume. It extends suspend/resume by calls to Devfreq
+framework. In the devfreq framework there is a small refactoring to avoid
+code duplication in changging frequency (patch 2) and there are extensions
+for suspending devices.
 
-> We can hide it behind CONFIG_CHECKPOINT_RESTORE but does it going to
-> help? I presume that many distro kernels will have the config enabled.
+It has been tested on Odroid u3 with Exynos 4412.
 
-They do :)
- 
-> > I recall that when I
-> > introduced CONFIG_IO_STRICT_DEVMEM it caused enough regressions that
-> > distros did not enable it, but now a few years out I'm finding that it
-> > is enabled in more places.
-> > 
-> > In any event,
-> > 
-> > Acked-by: Dan Williams <dan.j.williams@intel.com>
+The patch set draws on Tobias Jakobi's work posted ~2 years ago, who tried
+to solve issue with devfreq device's frequency during suspend/resume.
+During the discussion on LKML some corner cases and comments appeared
+related to the design. This patch set address them keeping in mind
+suggestions from Chanwoo Choi.
+Tobias's paches:
+https://www.spinics.net/lists/linux-samsung-soc/msg56602.html 
 
-Forgot that in my previous nit-picking e-mail:
+Regards,
+Lukasz Luba
 
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
- 
-> Thanks!
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
+Lukasz Luba (6):
+  devfreq: add basic fileds supporting suspend functionality
+  devfreq: refactor set_target frequency function
+  devfreq: add support for suspend/resume of a devfreq device
+  devfreq: add devfreq_suspend/resume() functions
+  drivers: power: suspend: call devfreq suspend/resume
+  arm: dts: exynos4: set opp-suspend for DMC and leftbus
+
+ arch/arm/boot/dts/exynos4210.dtsi |   2 +
+ arch/arm/boot/dts/exynos4412.dtsi |   2 +
+ drivers/base/power/main.c         |   3 +
+ drivers/devfreq/devfreq.c         | 159 ++++++++++++++++++++++++++++++--------
+ include/linux/devfreq.h           |  11 +++
+ 5 files changed, 146 insertions(+), 31 deletions(-)
 
 -- 
-Sincerely yours,
-Mike.
+2.7.4
 
