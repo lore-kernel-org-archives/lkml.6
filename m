@@ -2,192 +2,110 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D266C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71EA1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9521521479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:14:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="azHCHf4t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9521521479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 431C52145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:15:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431C52145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728014AbeKUQrq (ORCPT
+        id S1728114AbeKUQsH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 11:47:46 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:23129 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeKUQrq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 11:47:46 -0500
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id wAL6EXX9026287;
-        Wed, 21 Nov 2018 15:14:33 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com wAL6EXX9026287
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1542780874;
-        bh=mgpSrIsKXJH6ElVAIqePo1isY/4rmeh1rH2/vKCvkb4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=azHCHf4tK2JDvYq5k3tpoXrK7C9LtMDA3bsbP3q6wkREzn+0it7mDBSHE9K7hYxVb
-         KWRU3tcYjBcTxZspW9IekYBUCxfTz0uYGERo0lEGpAX8hMyTmZJ2JtJaDnCKhIdCoa
-         M727z4SJpszxyp7VBYwCPhMoaa8Uk16QMSOgENytUQOFBdJBLcxEmEI2qWaxiiAPxM
-         N0Z4y4BxM6oOuwEBuTFOMs4rgG5b/7BXxzUO/gMN9uKSuErDcsxrqYjE04tVxBTR2/
-         kHmaMN7CwhrUtfXg45xo8nQHpBJxyQWmyLzuBDjjwHTcIBeMl4bDhmUfeDmMpWqMS3
-         y1cOLwl6P2/Ew==
-X-Nifty-SrcIP: [209.85.222.52]
-Received: by mail-ua1-f52.google.com with SMTP id k10so1527345ual.6;
-        Tue, 20 Nov 2018 22:14:33 -0800 (PST)
-X-Gm-Message-State: AA+aEWY9iI2JinJSJaU1Y9kQcJor39CerbMS70VMzrYvdUJaPSD7xdEQ
-        eVJbGT0QxOUD3hxPKKpCpM54ZPZVzortm4gl9Hw=
-X-Google-Smtp-Source: AFSGD/VU+wvHS1lYoKm83fbye3uYhJV3Adq6YmLBvr0D5B7WEldGAkaCjbOD+bF+yNlZZlkHtmXfCFX/wJbGmSl1erU=
-X-Received: by 2002:ab0:6705:: with SMTP id q5mr2295859uam.89.1542780872554;
- Tue, 20 Nov 2018 22:14:32 -0800 (PST)
+        Wed, 21 Nov 2018 11:48:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53292 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725939AbeKUQsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 11:48:07 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A6611AD02;
+        Wed, 21 Nov 2018 06:14:58 +0000 (UTC)
+Date:   Wed, 21 Nov 2018 07:14:56 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     Tim Chen <tim.c.chen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, thomas.lendacky@amd.com,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>, dave.hansen@intel.com,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        "Mallick, Asit K" <asit.k.mallick@intel.com>,
+        "Van De Ven, Arjan" <arjan@linux.intel.com>, jcm@redhat.com,
+        longman9394@gmail.com, Greg KH <gregkh@linuxfoundation.org>,
+        david.c.stewart@intel.com,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        stable@vger.kernel.org
+Subject: Re: [Patch v6 14/16] x86/speculation: Use STIBP to restrict speculation
+ on non-dumpable task
+In-Reply-To: <CAHk-=wiRh4QVAHV086U02tDCJz9g8MYHegEHbxCZ6-Ap4ow5Lw@mail.gmail.com>
+Message-ID: <nycvar.YFH.7.76.1811210700510.21108@cbobk.fhfr.pm>
+References: <cover.1542757030.git.tim.c.chen@linux.intel.com> <6652faa67f8c4e90c737f9fd9c7e0e2d3cd51cca.1542757030.git.tim.c.chen@linux.intel.com> <CAHk-=wiRh4QVAHV086U02tDCJz9g8MYHegEHbxCZ6-Ap4ow5Lw@mail.gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-References: <20181115005602.30746-1-paul.walmsley@sifive.com> <20181115005602.30746-3-paul.walmsley@sifive.com>
-In-Reply-To: <20181115005602.30746-3-paul.walmsley@sifive.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 21 Nov 2018 15:13:56 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQqpzJcxZBvZY1Bd2sVUwTLg7eD2mq61hDOw6Ek=akdfw@mail.gmail.com>
-Message-ID: <CAK7LNAQqpzJcxZBvZY1Bd2sVUwTLg7eD2mq61hDOw6Ek=akdfw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] modpost: skip ELF local symbols by default during
- section mismatch check
-To:     paul.walmsley@sifive.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>, jimw@sifive.com,
-        Michal Marek <michal.lkml@markovi.net>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Paul Walmsley <paul@pwsan.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+On Tue, 20 Nov 2018, Linus Torvalds wrote:
 
+> > Implements arch_update_spec_restriction() for x86.  Use STIBP to
+> > restrict speculative execution when running a task set to non-dumpable,
+> > or clear the restriction if the task is set to dumpable.
+> 
+> I don't think this necessarily makes sense.
+> 
+> The new "auto" behavior is that we aim to restrict untrusted code (and
+> the loader of such code uses prctrl to set that flag), then this whole
+> "set STIBP for non-dumpable" makes little sense.
+> 
+> A non-dumpable app by definition is *more* trusted, not less trusted.
 
-On Thu, Nov 15, 2018 at 9:57 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
->
-> During development of a serial console driver with a gcc 8.2.0
-> toolchain for RISC-V, the following modpost warning appeared:
->
-> ----
-> WARNING: vmlinux.o(.data+0x19b10): Section mismatch in reference from the variable .LANCHOR1 to the function .init.text:sifive_serial_console_setup()
-> The variable .LANCHOR1 references
-> the function __init sifive_serial_console_setup()
-> If the reference is valid then annotate the
-> variable with __init* or __refdata (see linux/init.h) or name the variable:
-> *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
-> ----
->
-> ".LANCHOR1" is an ELF local symbol, automatically created by gcc's section
-> anchor generation code:
->
-> https://gcc.gnu.org/onlinedocs/gccint/Anchored-Addresses.html
->
-> https://gcc.gnu.org/git/?p=gcc.git;a=blob;f=gcc/varasm.c;h=cd9591a45617464946dcf9a126dde277d9de9804;hb=9fb89fa845c1b2e0a18d85ada0b077c84508ab78#l7473
->
-> This was verified by compiling the kernel with -fno-section-anchors.
-> The serial driver code idiom triggering the warning is standard serial
-> driver practice, and one that has a specific whitelist inclusion in
-> modpost.c.
->
-> I'm neither a modpost nor an ELF expert, but naively, it doesn't seem
-> useful for modpost to report section mismatch warnings caused by ELF
-> local symbols by default.  Local symbols have compiler-generated
-> names, and thus bypass modpost's whitelisting algorithm, which relies
-> on the presence of a non-autogenerated symbol name.  This increases
-> the likelihood that false positive warnings will be generated (as in
-> the above case).
->
-> Thus, disable section mismatch reporting on ELF local symbols.  The
-> rationale here is similar to that of commit 2e3a10a1551d ("ARM: avoid
-> ARM binutils leaking ELF local symbols") and of similar code already
-> present in modpost.c:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/mod/modpost.c?h=v4.19-rc4&id=7876320f88802b22d4e2daf7eb027dd14175a0f8#n1256
->
-> This second version of the patch drops the option to keep section
-> mismatch warnings for local sections, based on feedback from Sam
-> Ravnborg <sam@ravnborg.org>; and clarifies that these warnings
-> appear with gcc 8.2.0.
->
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Jim Wilson <jimw@sifive.com>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Michal Marek <michal.lkml@markovi.net>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: linux-kbuild@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> Signed-off-by: Paul Walmsley <paul@pwsan.com>
-> ---
->  scripts/mod/modpost.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index 85bd93c63180..0fb148171b78 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -1253,6 +1253,17 @@ static inline int is_arm_mapping_symbol(const char *str)
->                && (str[2] == '\0' || str[2] == '.');
->  }
->
-> +/*
-> + * If a symbol name follows the convention for ELF-local symbols (i.e., the
-> + * name begins with a ".L"), return true; otherwise false.  This is used to
-> + * skip section mismatch reporting on ELF-local symbols, due to the risk of
-> + * false positives.
-> + */
-> +static inline int is_local_symbol(const char *str)
-> +{
-> +       return str[0] == '.' && str[1] == 'L';
-> +}
-> +
->  /*
->   * If there's no name there, ignore it; likewise, ignore it if it's
->   * one of the magic symbols emitted used by current ARM tools.
-> @@ -1535,6 +1546,9 @@ static void default_mismatch_handler(const char *modname, struct elf_info *elf,
->         if (strstarts(fromsym, "reference___initcall"))
->                 return;
->
-> +       if (is_local_symbol(fromsym))
-> +               return;
-> +
->         tosec = sec_name(elf, get_secindex(elf, sym));
->         to = find_elf_symbol(elf, r->r_addend, sym);
->         tosym = sym_name(elf, to);
-> --
-> 2.19.1
->
+I understand your argument. I believe actually both ways of protection do 
+make sense in some way (but it doesn't mean we should do it by default). 
+Basically:
 
+- process marks itself "I am loading untrusted code" via that prctl() in 
+  order to avoid its untrusted code to be used as spectrev2 gadgets
 
-I think this is almost good.
-Just a nit.
+- process marks itself "I am loading untrusted code" via that prctl() in
+  order to have its all threads/subprocesses marked the same way, so that
+  one thread can't influence speculative code flow of the other in order
+  to read its memory (the "javascript in one browser tab reads secrets 
+  from another tab")
 
-Maybe, putting this check in secref_whitelist()
-(with a comment "Pattern 6:")
-could look more consistency.
+- non-dumpable tasks have the branch predictor flushed when 
+  context switching to them (IBPB) or when sibling is running untrusted 
+  code (STIBP) in order not guarantee that its speculative code flow can
+  never be influenced by previous / sibling process mistraining branch
+  predictor for it, and therefore do not allow reading its secrets from 
+  memory through gadgets that'd have to be in the process code itself
 
+But I agree there are many reasons why this shouldn't be done by default 
+if we accept 'prctl' as the default mode. Namely:
 
-Also, if you use strstart() helper,
-you can remove is_local_symbol() function.
+- the whole "proper gadgets need to be present in the process' .text" is 
+  dubious by itself
 
+- the unavoidable overhead it'd impose on network daemons that you can't 
+  really get rid of
 
-        /* Check for pattern 6 */
-        if (strstarts(fromsym, ".L"))
-                return 0;
+The distiled patchset that Thomas will be sending around today is not have 
+the dumpability restriction in it.
 
-
-
+Thanks,
 
 -- 
-Best Regards
-Masahiro Yamada
+Jiri Kosina
+SUSE Labs
+
