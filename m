@@ -2,102 +2,74 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8798C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0D7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85CA520C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:54:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68D5B20C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:54:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X84Vump+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85CA520C01
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="DGAhBCUw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68D5B20C01
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730624AbeKUX20 (ORCPT
+        id S1730641AbeKUX2b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 18:28:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47364 "EHLO mail.kernel.org"
+        Wed, 21 Nov 2018 18:28:31 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:51668 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726967AbeKUX20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 18:28:26 -0500
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726967AbeKUX2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 18:28:31 -0500
+Received: from [10.38.211.137] (x59cc8b89.dyn.telefonica.de [89.204.139.137])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53D5D20C01;
-        Wed, 21 Nov 2018 12:54:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542804850;
-        bh=VWKkvrUdEax0KhZuIEuhjxl4JWbuHRg3ePfr/SDu73Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=X84Vump+hleNKyIJIoa2f7pNi0NynKRITt965k/vaKPb7/mw9dI/jq6W/4eIAKMwd
-         rJ1zBwe4kor+d6igWF/SLsef1AemS22spGNC5aG5wq916RTuOaWirlN+FYm2IfYCx7
-         U/WmQgaCGKUTasnsPnz/sst7pqrnRs+ltp0inOvA=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 55E131443D6; Wed, 21 Nov 2018 09:54:08 -0300 (-03)
-Date:   Wed, 21 Nov 2018 09:54:08 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     "Liang, Kan" <kan.liang@linux.intel.com>, mingo@redhat.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, ak@linux.intel.com
-Subject: Re: [PATCH 2/2] perf vendor events: Add JSON metrics for Cascadelake
- server
-Message-ID: <20181121125408.GE6248@kernel.org>
-References: <20181114212416.15665-1-kan.liang@linux.intel.com>
- <20181114212416.15665-2-kan.liang@linux.intel.com>
- <20181115132116.GH9600@krava>
- <3ab97c73-c197-8555-1a35-b54636e667e6@linux.intel.com>
- <20181115151442.GK9600@krava>
- <20181121125130.GD6248@kernel.org>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9C6C11EC0319;
+        Wed, 21 Nov 2018 13:54:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1542804854;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=34oheDHoHhjXqt/7AbaPzcpdfwrHiXjUP/8BghXfeVM=;
+        b=DGAhBCUwFSiwM0y4gvIUVsNo7krCy2GvVLEKj74+76fpFSUPQSY95XuQlmkAXA9CBwVUaa
+        n70WiDjVn5ctEEwdrbEBGxQ73kbMnJgjxHds9l4M8YpRWCN51Titx20wUcA3gWhJyya9Tg
+        LiwCOOzcLrsiQnCb/f0VLWUN9PwbdJg=
+Date:   Wed, 21 Nov 2018 13:54:11 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAMU5Q=5LkypghWA=23YwscaXSx5yBv7LyW1WHbY_J_hQwryNpA@mail.gmail.com>
+References: <20181119160410.ne7oiq2gkwt6jiqg@linutronix.de> <20181120132531.6E80C206BB@mail.kernel.org> <20181120183443.GJ2527@zn.tnic> <CAMU5Q=72mNG4ikXKpLK3=SiDK3dRXtCw7wpHZ2i==awrtvRwdg@mail.gmail.com> <20181121105649.GB27797@zn.tnic> <CAMU5Q=5LkypghWA=23YwscaXSx5yBv7LyW1WHbY_J_hQwryNpA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181121125130.GD6248@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] x86/fpu: Disable BH while while loading FPU registers in __fpu__restore_sig()
+To:     Victoria Anosova <v.s.anosova@gmail.com>
+CC:     sashal@kernel.org, bigeasy@linutronix.de, x86@kernel.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+From:   Boris Petkov <bp@alien8.de>
+Message-ID: <8232626D-EB0F-42CB-B4B9-B1A4AD6D891E@alien8.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Nov 21, 2018 at 09:51:30AM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Thu, Nov 15, 2018 at 04:14:42PM +0100, Jiri Olsa escreveu:
-> > On Thu, Nov 15, 2018 at 08:33:27AM -0500, Liang, Kan wrote:
-> > > 
-> > > 
-> > > On 11/15/2018 8:21 AM, Jiri Olsa wrote:
-> > > > On Wed, Nov 14, 2018 at 01:24:16PM -0800, kan.liang@linux.intel.com wrote:
-> > > > > From: Kan Liang <kan.liang@linux.intel.com>
-> > > > > 
-> > > > > Add JSON metrics (based on event list v1) for Cascadelake server
-> > > > 
-> > > > hum mail server probably crippled the email so it won't apply:
-> > > > 
-> > > > patching file pmu-events/arch/x86/cascadelakex/cache.json
-> > > > patching file pmu-events/arch/x86/cascadelakex/clx-metrics.json
-> > > > patching file pmu-events/arch/x86/cascadelakex/floating-point.json
-> > > > patching file pmu-events/arch/x86/cascadelakex/frontend.json
-> > > > patching file pmu-events/arch/x86/cascadelakex/memory.json
-> > > > patching file pmu-events/arch/x86/cascadelakex/other.json
-> > > > patching file pmu-events/arch/x86/cascadelakex/pipeline.json
-> > > > patch: **** malformed patch at line 29879:  ow status bit and resets the counter to less than MAX. The reset value to the counter is not clocked immediately so the overflow status bit will flip 'high (1)' and generate another PMI (if enabled) after which the reset value gets clocked into the counter. Therefore, software will get the interrupt, read the overflow status bit '1 for bit 34 while the counter value is less than MAX. Software should ignore this case.",
-> > > > 
-> > > > I've similar error before and it was because of the 998 chars size
-> > > > limit for line.. I guess you could either post it as attachment or
-> > > > change the transfer encoding
-> > > > 
-> > > 
-> > > The patch is attached. Can it be applied?
-> > 
-> > yep, that one works
-> 
-> Can I have your reviewed-by for this one as well?
+On November 21, 2018 1:41:37 PM GMT+01:00, Victoria Anosova <v=2Es=2Eanosov=
+a@gmail=2Ecom> wrote:
+>For v4=2E9 your first fix (
+>https://lists=2Eopenwall=2Enet/linux-kernel/2016/02/26/299) helped=2E
 
-I turned the "yep, that one works" into an Acked-by, please let me know
-if that is enough.
+Can you please not top-post? Thx=2E
 
-- Arnaldo
+That old version is not quite right - see the commit message of the curren=
+t fix=2E
+
+HTH=2E
+
+--=20
+Sent from a small device: formatting sux and brevity is inevitable=2E 
