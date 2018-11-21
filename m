@@ -4,46 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AC1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8128C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37002151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80211214DB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MhEcxyJn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A37002151B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OfV2zS3B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80211214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732294AbeKVFpC (ORCPT
+        id S2388463AbeKVFpF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:45:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39726 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:45:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732102AbeKVFpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:45:01 -0500
+        id S1730870AbeKVFpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:45:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B836206BB;
-        Wed, 21 Nov 2018 19:09:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 810CF206BB;
+        Wed, 21 Nov 2018 19:09:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827368;
-        bh=7wRg1cQoSHyUH8t6RqLifDV9MUE0rMfPR3nx1vxQCSs=;
+        s=default; t=1542827372;
+        bh=86hevK6/n3zvLlSkKYo1XhyqQyqoT2UHNyzneMinCrU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MhEcxyJn1ZvdF/Uwjy8rsBcF5+P2XEMNjEuSobnYkSAtY2jP9gOw4Uv6tnu9VbXD+
-         bvO63UpsjDRhhw4CMxt43iqLOZjFcxx3Zy76ktxCWS0OahSbxNwpmshJE7HjGTF/3y
-         qjndRRDYoHSFwUUdb/RJgT+K7VmD65czE4iossok=
+        b=OfV2zS3BcLmYG0+CR28QOXr3iwrgN19O8Y6N9KTwVXy6Gybvm6VAUurXT7ggnegzY
+         UahYgkUKDEoFadx6x9e2/pjV56I/YZuJppDFvhL7xdN6wmVinNZ8GQTva30wTj4GRn
+         4AhCchcLnGfLiNh50V11PKQ1wN4CTxYqIHP9mcrc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Ying Xu <yinxu@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 05/21] net-gro: reset skb->pkt_type in napi_reuse_skb()
-Date:   Wed, 21 Nov 2018 20:06:49 +0100
-Message-Id: <20181121183422.316187694@linuxfoundation.org>
+Subject: [PATCH 4.14 06/21] sctp: not allow to set asoc prsctp_enable by sockopt
+Date:   Wed, 21 Nov 2018 20:06:50 +0100
+Message-Id: <20181121183422.353248315@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183422.103826775@linuxfoundation.org>
 References: <20181121183422.103826775@linuxfoundation.org>
@@ -61,47 +63,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 33d9a2c72f086cbf1087b2fd2d1a15aa9df14a7f ]
+[ Upstream commit cc3ccf26f0649089b3a34a2781977755ea36e72c ]
 
-eth_type_trans() assumes initial value for skb->pkt_type
-is PACKET_HOST.
+As rfc7496#section4.5 says about SCTP_PR_SUPPORTED:
 
-This is indeed the value right after a fresh skb allocation.
+   This socket option allows the enabling or disabling of the
+   negotiation of PR-SCTP support for future associations.  For existing
+   associations, it allows one to query whether or not PR-SCTP support
+   was negotiated on a particular association.
 
-However, it is possible that GRO merged a packet with a different
-value (like PACKET_OTHERHOST in case macvlan is used), so
-we need to make sure napi->skb will have pkt_type set back to
-PACKET_HOST.
+It means only sctp sock's prsctp_enable can be set.
 
-Otherwise, valid packets might be dropped by the stack because
-their pkt_type is not PACKET_HOST.
+Note that for the limitation of SCTP_{CURRENT|ALL}_ASSOC, we will
+add it when introducing SCTP_{FUTURE|CURRENT|ALL}_ASSOC for linux
+sctp in another patchset.
 
-napi_reuse_skb() was added in commit 96e93eab2033 ("gro: Add
-internal interfaces for VLAN"), but this bug always has
-been there.
+v1->v2:
+  - drop the params.assoc_id check as Neil suggested.
 
-Fixes: 96e93eab2033 ("gro: Add internal interfaces for VLAN")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
+Fixes: 28aa4c26fce2 ("sctp: add SCTP_PR_SUPPORTED on sctp sockopt")
+Reported-by: Ying Xu <yinxu@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/dev.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/sctp/socket.c |   26 +++++---------------------
+ 1 file changed, 5 insertions(+), 21 deletions(-)
 
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -4993,6 +4993,10 @@ static void napi_reuse_skb(struct napi_s
- 	skb->vlan_tci = 0;
- 	skb->dev = napi->dev;
- 	skb->skb_iif = 0;
-+
-+	/* eth_type_trans() assumes pkt_type is PACKET_HOST */
-+	skb->pkt_type = PACKET_HOST;
-+
- 	skb->encapsulation = 0;
- 	skb_shinfo(skb)->gso_type = 0;
- 	skb->truesize = SKB_TRUESIZE(skb_end_offset(skb));
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -3750,32 +3750,16 @@ static int sctp_setsockopt_pr_supported(
+ 					unsigned int optlen)
+ {
+ 	struct sctp_assoc_value params;
+-	struct sctp_association *asoc;
+-	int retval = -EINVAL;
+ 
+ 	if (optlen != sizeof(params))
+-		goto out;
++		return -EINVAL;
+ 
+-	if (copy_from_user(&params, optval, optlen)) {
+-		retval = -EFAULT;
+-		goto out;
+-	}
++	if (copy_from_user(&params, optval, optlen))
++		return -EFAULT;
+ 
+-	asoc = sctp_id2assoc(sk, params.assoc_id);
+-	if (asoc) {
+-		asoc->prsctp_enable = !!params.assoc_value;
+-	} else if (!params.assoc_id) {
+-		struct sctp_sock *sp = sctp_sk(sk);
++	sctp_sk(sk)->ep->prsctp_enable = !!params.assoc_value;
+ 
+-		sp->ep->prsctp_enable = !!params.assoc_value;
+-	} else {
+-		goto out;
+-	}
+-
+-	retval = 0;
+-
+-out:
+-	return retval;
++	return 0;
+ }
+ 
+ static int sctp_setsockopt_default_prinfo(struct sock *sk,
 
 
