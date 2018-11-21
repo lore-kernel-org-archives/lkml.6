@@ -2,154 +2,147 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D65C7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:14:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E86C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 957E22087E
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:14:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CB172146D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:16:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="Nl7TIr+N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957E22087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SNTWkuuI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CB172146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbeKUPrM (ORCPT
+        id S1727649AbeKUPtY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 10:47:12 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:38262 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726039AbeKUPrM (ORCPT
+        Wed, 21 Nov 2018 10:49:24 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38764 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbeKUPtY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 10:47:12 -0500
-Received: by mail-vs1-f66.google.com with SMTP id x64so2533415vsa.5
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 21:14:17 -0800 (PST)
+        Wed, 21 Nov 2018 10:49:24 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e5so3708949plb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 21:16:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=yf+TiMjDAOBygPDZIX/LUh2h6lbo1zT2tA93KE961wU=;
-        b=Nl7TIr+Ne5/ulFHdhVmjL6UmYcwlx868a4R3aVJCKuLCZkfFOuniggqwc3sbpoyCfX
-         8nmBXnl2OkAmthGDM6Ia3JiA2RQabV8TfmT6I1IZmM2pRgpn2Fq8iY/63p8zvbH8iywt
-         DAed13w7mn36ZKP3qRy6G+SUVvr1ut+tmTrs0VanlWrIzcwiJv8YUvsF2wKrMa4z2SZn
-         7KVpHJvu79aS804NZwXS9eJyCL75iAOCQewpJs4S+VC5aBJdvG15FoaXW3EdumW5+EKJ
-         jrzsSUNreyMW8B/lDxXdqcR1ZPNFB8r7dWWRKmipajtLNm+sxS1abVDPAuFY10eNYtDs
-         4uNA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=T4XEwnJi7neMSCpZcncwWzn+mvd0Yh7DPPNc9ETmYDc=;
+        b=SNTWkuuIzFj8gR2DGN0DBhfeSGZ26yJHdprSmFGuYqKeI2GiYRxyWX5V763j6zqp6E
+         UqVUlmzHYmthPbD+2zavQDH14L8KOIKiNbHzYy/ikPHknWy0Vk5LN2x5uqz+X1J3AcPa
+         StGsS9Pi/9qAoaK0JNBhvyBFhG2lDd87eRZQU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=yf+TiMjDAOBygPDZIX/LUh2h6lbo1zT2tA93KE961wU=;
-        b=Twmgr+Ys2uuB907IAyDyWsjdAI1g/pRcNlYXMuutwh+8wXAk6mhmooQKdeGdW7Xwhn
-         SYEz4poOZgbfwlKr7ki37FVuW52CB92i0pBfG9ZN8xyc7iMlNgHIr7vhPRBJJI0fFMS1
-         h5dTuqhcz92QHGUnz3FYuMD1AiG4LITABGRLW/FBwzyYGX4Ar9+4ylsguALEnbDa+tNu
-         w/XTulRYgy7W5mcXlwbLch9pnXKx/Es/NGPAgZPuuA6Vd1SLNDRCEueOye2CPnSHOXR9
-         LbWwvE8sqik0pgqpi6ymwbAgc+2/bjUh4S1W2xraSdIiEwRItkW9lVN+E97sostPr8Hv
-         E7zw==
-X-Gm-Message-State: AGRZ1gJz5rrqLFQU1LsYveoz03jaVVvZzXYugvfFuY4nXnXDmEPUTk7C
-        qSBVbUSD4TEQDdCcKnBLg9RlzLkl43r2aOYCCUpU6Q==
-X-Google-Smtp-Source: AJdET5e7vBlKUc+yfCBvQhsSRHpILZHU77ivBekZtkUweqUzRAlsC5DVTF1QkDEl0vvQZa4vcUggOOEoLaPljmwUXhQ=
-X-Received: by 2002:a67:8a81:: with SMTP id m123mr2149000vsd.206.1542777256943;
- Tue, 20 Nov 2018 21:14:16 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=T4XEwnJi7neMSCpZcncwWzn+mvd0Yh7DPPNc9ETmYDc=;
+        b=fOA5wl0QIqPOHlS3E2VVK1weAZUcUvgJrGw9BPykICZepZThx8viN3OkLks6rrnOxy
+         myngWRAiupttSlV05PSC/h1/+zJCXRG2eBCUlzbj4/Mkqd1UD4yxyTY8jiN0bQvPH42N
+         aQ7Bj9edio0durHHIEw/XcaR7SrOV7aQ5G/uicY14c7DFKLELOjWLphwlPABLm94mHjf
+         Ngr7MzAulWkf6rMkKew+AmezJ0RU+YGJ3zjbXY0fYaqj1SUf2hhIMA4fuEd0d9jnStqo
+         dwYdZ4GXLYW1UCkqTqrZvAIqUBXYSTNeo182tTBxgSG/Z36sPPGEUgbNDB5sZgPiRbak
+         V39w==
+X-Gm-Message-State: AGRZ1gIt4ny95ZIroxLBV2bM+wAcQY/UnqVZplZr8nGcjhKIEh0Upt6i
+        PKVXD7OFeIDXV87zAKtLqfoQIA1TBEw=
+X-Google-Smtp-Source: AJdET5ePg51oqf5l7u97ivIgYYFZNuQ5sf0ZH1PnkabD3XES7oMhjjL5YQMMDikES62QSN+N9sHoMw==
+X-Received: by 2002:a62:114c:: with SMTP id z73-v6mr5204278pfi.192.1542777389616;
+        Tue, 20 Nov 2018 21:16:29 -0800 (PST)
+Received: from localhost ([122.172.88.116])
+        by smtp.gmail.com with ESMTPSA id p83sm61698587pfi.85.2018.11.20.21.16.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 21:16:28 -0800 (PST)
+Date:   Wed, 21 Nov 2018 10:46:26 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        niklas.cassel@linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] PM / Domains: Propagate performance state updates
+Message-ID: <20181121051626.izb6dem62zoaf2c4@vireshk-i7>
+References: <cover.1541399301.git.viresh.kumar@linaro.org>
+ <7e1ea283f9eebce081af80ddb8d3ca5c9c76cd3b.1541399301.git.viresh.kumar@linaro.org>
+ <71530b01-eefa-4778-0b17-d7774eb48356@codeaurora.org>
 MIME-Version: 1.0
-References: <20181119061219.14238-1-jian-hong@endlessm.com> <04d0345d6c6c4ac0950ab0676ffd7689@SFHDAG2NODE1.st.com>
-In-Reply-To: <04d0345d6c6c4ac0950ab0676ffd7689@SFHDAG2NODE1.st.com>
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-Date:   Wed, 21 Nov 2018 13:13:40 +0800
-Message-ID: <CAPpJ_ed-A_mkPJieZA4pHaRbY0SGpOEXP04aY4g1b60PzMGQuA@mail.gmail.com>
-Subject: Re: [PATCH] iio: st_sensors: Fix the sleep time for sampling
-To:     denis.ciocca@st.com
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        linux-iio@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>, linux@endlessm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <71530b01-eefa-4778-0b17-d7774eb48356@codeaurora.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Denis CIOCCA <denis.ciocca@st.com> =E6=96=BC 2018=E5=B9=B411=E6=9C=8820=E6=
-=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=883:05=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> Hi Jian,
->
-> Not clear to me why should be + instead of *.
->
-> ODR is expressed in Hz, so (1/Hz) =3D period in seconds (1 sample samplin=
-g time) [s]
-> 1000 * (1/Hz) =3D period in milliseconds (1 sample sampling time) [ms]
-> n * 1000 * (1/Hz) =3D n times period in milliseconds (n times sample samp=
-ling time) [ms]
->
-> In your case you assume bootime is in milliseconds.
+On 21-11-18, 10:33, Rajendra Nayak wrote:
+> Hi Viresh,
+> 
+> On 11/5/2018 12:06 PM, Viresh Kumar wrote:
+> > This commit updates genpd core to start propagating performance state
+> > updates to master domains that have their set_performance_state()
+> > callback set.
+> > 
+> > A genpd handles two type of performance states now. The first one is the
+> > performance state requirement put on the genpd by the devices and
+> > sub-domains under it, which is already represented by
+> > genpd->performance_state. The second type, introduced in this commit, is
+> > the performance state requirement(s) put by the genpd on its master
+> > domain(s). There is a separate value required for each master that the
+> > genpd has and so a new field is added to the struct gpd_link
+> > (link->performance_state), which represents the link between a genpd and
+> > its master. The struct gpd_link also got another field
+> > prev_performance_state, which is used by genpd core as a temporary
+> > variable during transitions.
+> > 
+> > We need to propagate setting performance state while powering-on a genpd
+> > as well, as we ignore performance state requirements from sub-domains
+> > which are powered-off. For this reason _genpd_power_on() also received
+> > the additional parameter, depth, which is used for hierarchical locking
+> > within genpd.
+> > 
+> > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > ---
+> >   drivers/base/power/domain.c | 107 +++++++++++++++++++++++++++++-------
+> >   include/linux/pm_domain.h   |   4 ++
+> >   2 files changed, 92 insertions(+), 19 deletions(-)
+> > 
+> > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> > index 6d2e9b3406f1..81e02c5f753f 100644
+> > --- a/drivers/base/power/domain.c
+> > +++ b/drivers/base/power/domain.c
+> > @@ -239,28 +239,86 @@ static void genpd_update_accounting(struct generic_pm_domain *genpd)
+> >   static inline void genpd_update_accounting(struct generic_pm_domain *genpd) {}
+> >   #endif
+> > +static int _genpd_reeval_performance_state(struct generic_pm_domain *genpd,
+> > +					   unsigned int state, int depth);
+> > +
+> >   static int _genpd_set_performance_state(struct generic_pm_domain *genpd,
+> > -					unsigned int state)
+> > +					unsigned int state, int depth)
+> >   {
+> > +	struct generic_pm_domain *master;
+> > +	struct gpd_link *link;
+> > +	unsigned int mstate;
+> >   	int ret;
+> >   	if (!genpd_status_on(genpd))
+> >   		goto out;
+> 
+> This check here would mean we only propogate performance state
+> to masters if the genpd is ON?
 
-Yes, I assume that according to the original comment.
+Yeah, isn't that what should we do anyway? It is similar to clk-enable
+etc. Why increase the reference count if the device isn't enabled and
+isn't using the clock ?
 
->Maybe we can change the comment and use 'number of samples ...'.
+Also you can see that I have updated the genpd power-on code to start
+propagation to make sure we don't miss anything.
 
-Making the meaning more clear is better.
-
-However, does the bootime of the measurement need as the long time to
-be enabled?
-If the sampling rate is 1Hz and n is 2, then they will do msleep with
-2000 ms for each st_sensors_read_info_raw.
-
-Regards,
-Jian-Hong Pan
-
->
->
-> -----Original Message-----
-> From: linux-iio-owner@vger.kernel.org <linux-iio-owner@vger.kernel.org> O=
-n Behalf Of Jian-Hong Pan
-> Sent: Sunday, November 18, 2018 10:12 PM
-> To: Jonathan Cameron <jic23@kernel.org>; Hartmut Knaack <knaack.h@gmx.de>=
-; Lars-Peter Clausen <lars@metafoo.de>; Peter Meerwald-Stadler <pmeerw@pmee=
-rw.net>; Dominique Martinet <asmadeus@codewreck.org>
-> Cc: linux-iio@vger.kernel.org; linux-kernel@vger.kernel.org; linux@endles=
-sm.com; Jian-Hong Pan <jian-hong@endlessm.com>
-> Subject: [PATCH] iio: st_sensors: Fix the sleep time for sampling
->
-> According to the description of st_sensor_settings and st_sensor_data str=
-uctures' comments:
-> - bootime: samples to discard when sensor passing from power-down to powe=
-r-up.
-> - odr: Output data rate of the sensor [Hz].
->
-> The sleep time should be
-> sdata->sensor_settings->bootime + 1000 / sdata->odr ms.
->
-> Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-> ---
->  drivers/iio/common/st_sensors/st_sensors_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/iio/common/st_sensors/st_sensors_core.c b/drivers/ii=
-o/common/st_sensors/st_sensors_core.c
-> index 26fbd1bd9413..6b87ea657a92 100644
-> --- a/drivers/iio/common/st_sensors/st_sensors_core.c
-> +++ b/drivers/iio/common/st_sensors/st_sensors_core.c
-> @@ -594,7 +594,7 @@ int st_sensors_read_info_raw(struct iio_dev *indio_de=
-v,
->                 if (err < 0)
->                         goto out;
->
-> -               msleep((sdata->sensor_settings->bootime * 1000) / sdata->=
-odr);
-> +               msleep(sdata->sensor_settings->bootime + 1000 / sdata->od=
-r);
->                 err =3D st_sensors_read_axis_data(indio_dev, ch, val);
->                 if (err < 0)
->                         goto out;
-> --
-> 2.11.0
->
+-- 
+viresh
