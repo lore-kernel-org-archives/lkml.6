@@ -2,133 +2,171 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7756C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD74CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7140021479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:59:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="MKp2pPy0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7140021479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7DBF021479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:00:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DBF021479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730113AbeKUWeE (ORCPT
+        id S1730140AbeKUWeS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 17:34:04 -0500
-Received: from mail-eopbgr60069.outbound.protection.outlook.com ([40.107.6.69]:2801
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727874AbeKUWeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 17:34:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0p8lrIZBmri3znAoSdvbPjGmjxqjVnPr8vq/G3AbNC4=;
- b=MKp2pPy09dilwQoPy/BJvYofK7EBFfNxwEfmRLldAj3YtcUQDRWbEPhMTFK+SEeFqeXOiyJJejHG2LCLUAFHd/gO1lUYFCJLhz9R5MU79jHbPh3kwdt8EY/Lla/eI1hB+qSpfnjvQs+P0UTUszS3xd5E3jusMzGfdzfopukyXVc=
-Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com (10.175.20.142) by
- VI1PR0802MB2461.eurprd08.prod.outlook.com (10.175.26.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.15; Wed, 21 Nov 2018 11:59:33 +0000
-Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com
- ([fe80::3d5c:5229:b634:b1ac]) by VI1PR0802MB2528.eurprd08.prod.outlook.com
- ([fe80::3d5c:5229:b634:b1ac%9]) with mapi id 15.20.1339.027; Wed, 21 Nov 2018
- 11:59:33 +0000
-From:   Dave Rodgman <dave.rodgman@arm.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     nd <nd@arm.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Matt Sealey <Matt.Sealey@arm.com>,
-        "nitingupta910@gmail.com" <nitingupta910@gmail.com>,
-        "rpurdie@openedhand.com" <rpurdie@openedhand.com>,
-        "markus@oberhumer.com" <markus@oberhumer.com>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "sergey.senozhatsky.work@gmail.com" 
-        <sergey.senozhatsky.work@gmail.com>
-Subject: [PATCH 3/6] lib/lzo: 64-bit CTZ on Arm aarch64
-Thread-Topic: [PATCH 3/6] lib/lzo: 64-bit CTZ on Arm aarch64
-Thread-Index: AQHUgZGqWJS7jvNfMkSUY9S4JQk9GQ==
-Date:   Wed, 21 Nov 2018 11:59:33 +0000
-Message-ID: <20181121115922.22864-4-dave.rodgman@arm.com>
-References: <20181121115922.22864-2-dave.rodgman@arm.com>
-In-Reply-To: <20181121115922.22864-2-dave.rodgman@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.16.4
-x-originating-ip: [217.140.106.53]
-x-clientproxiedby: LO2P265CA0301.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a5::25) To VI1PR0802MB2528.eurprd08.prod.outlook.com
- (2603:10a6:800:b0::14)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=dave.rodgman@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0802MB2461;6:ovA91Hn4i565m/IsIoaW1nEQc/XbgM82R2CWoZJbk0bOCc6nXWo79LKsY7Tm58uoZQ7cx2JTo8C+v89H0QhXeQYPX3hCyin7n0MUAjJwViyAdbiiUyMDKBX/cZUgTix+ZuSDONxAGB9YLMAtXMEvQMTxJ7W9EbN9h+M/9hDxBTKyZ4dHI+gPWrqfL7y8hTpxNgbFtfJm/VOGVT6pWksLVw1Bk/k8pWQwefHa5wsWmpRnL/3MnSAbQfxN2FvtZVq2sdtg7LEJYJqx0BG9kcBV/FoHU8uGIV4sUAbVu8Ix7g3a70yVUPlcbLe5X+6IjsvYO7crvbNRwaVfnIzYDtQBHthNqZ/mZrFml+swHrap4q1ZN94+90NNqdOClvVuUGrpRBOsEi38AO7EC7xZOtHmeOvQj84z1sk5GUWc+MPpCx8NoXF3CaIVAyuYmIzKmv3D4tHa8S+tXoyooYlBSR7MyA==;5:nXIdRTtnry8v1z3pjlzjOMOvAZ7jdQDkCK7O3yMtRNoPBPH+XDQoIOvxuNd2B8BuXWb/2A+LGyT0jc8oyx4/W3zyTN+Y9VV0gQtUJ0p2fUIK4ZN5liugr0cv3PJRABfd4A+OeVumql+Id6e4fzcJd7m4WvkpQu24kj8GeFZrRR8=;7:kxdQv/WZWczb3VDpe0vEGC+zVSMY0KB+qseWJ3ZnCQZ2bs3SKQtzRN2OzYl5MPvwA/AkWXmhXedJ+leSG4LMuum5UgrmrwSlX8RvWyG42M+9DDsJ6Mb5Sl/d1/wjtxdWYyVe8hMmjPovWqt1VSSk9Q==
-x-ms-office365-filtering-correlation-id: 0ad71a01-e857-4d75-6adb-08d64fa8cccd
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR0802MB2461;
-x-ms-traffictypediagnostic: VI1PR0802MB2461:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <VI1PR0802MB246106AFAE2B9B702FCACAEF8FDA0@VI1PR0802MB2461.eurprd08.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231442)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR0802MB2461;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0802MB2461;
-x-forefront-prvs: 08635C03D4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(346002)(396003)(366004)(199004)(189003)(6486002)(68736007)(2501003)(316002)(97736004)(186003)(8936002)(478600001)(54906003)(7736002)(39060400002)(305945005)(5660300001)(2900100001)(8676002)(2351001)(99286004)(106356001)(36756003)(102836004)(26005)(25786009)(6916009)(4326008)(6436002)(52116002)(105586002)(81166006)(6506007)(81156014)(76176011)(486006)(2616005)(66066001)(476003)(86362001)(386003)(3846002)(50226002)(14454004)(44832011)(5640700003)(53936002)(6116002)(71200400001)(1076002)(2906002)(256004)(6512007)(14444005)(446003)(71190400001)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0802MB2461;H:VI1PR0802MB2528.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Ut35OgW+NIXvTvPUQB7JuNiqxxV9zxSu7fnS2Ams6jAMFeJ78Q2ONUq1QuEYRZesOKPeKKDG0KRXDdRtGkSunNCIheMPdN9TQvVMZCL0UUmP0uWiMRx7BGh1grkwIDEDUp3e8db6/u+zO5zFsFaeb4AspCXWtLt+HjYErbyNNbMYmeRTdBvn10MpBBYesDjI2RRRohss4ejU0ilTIOUcpRJvJio1050tLgY29BVQ+62056I8zltMRUWDcjEjTXWTOUHTt0tChKmBP2ANF9dSq9UCe1MuNtvwCo5Lg4NN+IB2Se4NmejI7IkdkAea5I7YUOQ5ZGt4KPOO/SJqFA3FY55jWzednZ79+sH3RubR3Ww=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 21 Nov 2018 17:34:18 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52708 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730118AbeKUWeS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 17:34:18 -0500
+Received: by mail-wm1-f66.google.com with SMTP id r11-v6so5216179wmb.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 04:00:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PsXj4F1FJjDwUvBqGL4oixqaMXYcUzCcXK7CwxlrjV0=;
+        b=jWEgVfnSqDfNMtBpjux7Pf0nWmWkTsocduGrJkUUNVgTSyIQ5F8XJd04jpxEBzo+RT
+         MxUdO5W/OUmK5hlY6PnBcCS3sLKoT7t4E9DtrTNDzBRXxnOT/lvWHkjHFtOPOxN51p8W
+         EorVslnriww5o43Wot8CSeFWFzj2YbKBC1GNzL/lVcj/yBkTssO3uEDv6EGe+vs1CaPs
+         CHJY0ftnfkdk6/QBRxsKcwn15FjJwDYpXAQD3JkeClpy2HXelp53dgrnGNIXYf/bWHIX
+         rknb7JI2RkZrH2ITqX0cFYaja9nO7FuCm0buzZrujh+OVz4Q2BnWi7dS2P5ZjDTtVEzL
+         hitQ==
+X-Gm-Message-State: AA+aEWY93bmkGwO1pGrEnOk9fPlmXQAC2aZO/zPzaVI7iAu84gr5oZjY
+        zuTca1NuLFChln1HQdpjdqFEXGzgPwg=
+X-Google-Smtp-Source: AJdET5cIJC0DR2rGEESE26HrLxXJY5bJB7TpkhGsPvoLBw5B4eQLMxyXt1ckHquNcj7HGCTfJJwXdw==
+X-Received: by 2002:a1c:7d54:: with SMTP id y81mr5557806wmc.106.1542801609450;
+        Wed, 21 Nov 2018 04:00:09 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id l3sm23583229wru.36.2018.11.21.04.00.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 04:00:08 -0800 (PST)
+Subject: Re: [PATCH v1 00/15] i2c-multi-instantiate: Adapt for INT3515 and
+ alike
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+References: <20181120155924.10773-1-andriy.shevchenko@linux.intel.com>
+ <24f96a15-6b57-c19d-b77d-fdc6c11fddc9@redhat.com>
+Message-ID: <cdb902c7-324c-3f19-6caa-ff78132c593d@redhat.com>
+Date:   Wed, 21 Nov 2018 13:00:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ad71a01-e857-4d75-6adb-08d64fa8cccd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2018 11:59:33.1430
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0802MB2461
+In-Reply-To: <24f96a15-6b57-c19d-b77d-fdc6c11fddc9@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matt Sealey <matt.sealey@arm.com>
+Hi,
 
-LZO leaves some performance on the table by not realising that AArch64 can
-optimize count-trailing-zeros bit operations.
+On 21-11-18 12:27, Hans de Goede wrote:
+> Hi,
+> 
+> On 20-11-18 16:59, Andy Shevchenko wrote:
+>> Currently i2c-multi-instantiate driver does not support the case
+>> of INT3515 USB PD device, where:
+>>
+>> - Interrupt() is used instead of GpioInt()
+>> - All slaves may be the same from IP point of view
+>> - There can be variadic amount of slaves
+>>
+>> This series is addressing all above.
+>>
+>> Notes:
+>> - series has been smoke tested (Heikki would do BAT or more) on Coffee Lake system
+>> - patch for BOSC0200 might be considered as RFC since the modalias potential issue
+> 
+> Yeah the BOSC0200 patch cannot go upstream as is, that will break the
+> orientation quirks in hwdb on:
+> 
+> [hans@shalem systemd]$ grep BOSC0200 hwdb/60-sensor.hwdb | wc -l
+> 17
+> [hans@shalem systemd]$
+> 
+> At least 17 different models laptops / 2-in-1s
+> 
+>> The idea is to push this either through PDx86 tree (needs Rafael's ACKs) or ACPI.
+>> In any case it needs tags from Heikki, Hans, Mika, Wolfram and Jonathan.
+> 
+> Patches 1-5, 7-13 and 15 are: >
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-Add __aarch64__ to the checked definitions alongside __x86_64__ to enable
-the use of rbit/clz instructions on full 64-bit quantities.
+Correction, I also have some small remarks to patch 9:
 
-Signed-off-by: Matt Sealey <matt.sealey@arm.com>
-Signed-off-by: Dave Rodgman <dave.rodgman@arm.com>
----
- lib/lzo/lzodefs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[PATCH v1 09/15] platform/x86: i2c-multi-instantiate: Count I2cSerialBus() resources
 
-diff --git a/lib/lzo/lzodefs.h b/lib/lzo/lzodefs.h
-index a9927bbce21f..d167f8fc6795 100644
---- a/lib/lzo/lzodefs.h
-+++ b/lib/lzo/lzodefs.h
-@@ -28,7 +28,7 @@
-=20
- #if defined(__BIG_ENDIAN) && defined(__LITTLE_ENDIAN)
- #error "conflicting endian definitions"
--#elif defined(__x86_64__)
-+#elif defined(__x86_64__) || defined(__aarch64__)
- #define LZO_USE_CTZ64	1
- #define LZO_USE_CTZ32	1
- #elif defined(__i386__) || defined(__powerpc__)
---=20
-2.16.4
+Which will need to be addressed before you can add my Reviewed-by.
 
+Regards,
+
+Hans
+
+
+
+
+> I will send separate replies to:
+> 
+> [PATCH v1 06/15] i2c: acpi: Assign fwnode for devices created via i2c_acpi_new_device()
+> [PATCH v1 14/15] ACPI / scan: Create platform device for BOSC0200 ACPI nodes
+> 
+> Which are both a NACK from me (in their current state) because they both will
+> cause regressions.
+> 
+> Regards,
+> 
+> Hans
+> 
+> 
+> 
+> 
+> 
+> 
+>>
+>> Testing and comments are warmly welcome.
+>>
+>> Andy Shevchenko (15):
+>>    platform/x86: intel_cht_int33fe: Remove duplicate NULL check
+>>    platform/x86: intel_cht_int33fe: Accept errors of
+>>      i2c_acpi_new_device()
+>>    platform/x86: i2c-multi-instantiate: Accept errors of
+>>      i2c_acpi_new_device()
+>>    platform/x86: i2c-mutli-instantiate: Defer probe when no adapter found
+>>    i2c: acpi: Return error pointers from i2c_acpi_new_device()
+>>    i2c: acpi: Assign fwnode for devices created via i2c_acpi_new_device()
+>>    i2c: acpi: Use ACPI_FAILURE instead of !ACPI_SUCCESS
+>>    i2c: acpi: Introduce i2c_acpi_get_i2c_resource() helper
+>>    platform/x86: i2c-multi-instantiate: Count I2cSerialBus() resources
+>>    platform/x86: i2c-multi-instantiate: Distinguish IRQ resource type
+>>    platform/x86: i2c-multi-instantiate: Introduce IOAPIC IRQ support
+>>    platform/x86: i2c-multi-instantiate: Allow to have same slaves
+>>    ACPI / scan: Create platform device for INT3515 ACPI nodes
+>>    ACPI / scan: Create platform device for BOSC0200 ACPI nodes
+>>    iio: inv_mpu6050: Use i2c_acpi_get_i2c_resource() helper
+>>
+>>   drivers/acpi/scan.c                          |  2 +
+>>   drivers/i2c/i2c-core-acpi.c                  | 43 +++++----
+>>   drivers/iio/accel/bmc150-accel-i2c.c         |  1 -
+>>   drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c   | 16 ++--
+>>   drivers/platform/x86/i2c-multi-instantiate.c | 99 ++++++++++++++++----
+>>   drivers/platform/x86/intel_cht_int33fe.c     | 34 +++++--
+>>   drivers/usb/typec/tps6598x.c                 |  8 +-
+>>   include/linux/acpi.h                         | 11 +++
+>>   8 files changed, 158 insertions(+), 56 deletions(-)
+>>
