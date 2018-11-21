@@ -2,103 +2,126 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AE68C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:36:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D12C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C842214D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:36:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C842214D9
+	by mail.kernel.org (Postfix) with ESMTP id 479852147D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:37:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 479852147D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730430AbeKUXKx (ORCPT
+        id S1730460AbeKUXLz convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 18:10:53 -0500
-Received: from mga04.intel.com ([192.55.52.120]:41291 "EHLO mga04.intel.com"
+        Wed, 21 Nov 2018 18:11:55 -0500
+Received: from mga01.intel.com ([192.55.52.88]:16645 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728428AbeKUXKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 18:10:53 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1729389AbeKUXLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 18:11:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 04:36:41 -0800
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 04:37:42 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,261,1539673200"; 
-   d="scan'208";a="109992326"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 21 Nov 2018 04:36:38 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 21 Nov 2018 14:36:37 +0200
-Date:   Wed, 21 Nov 2018 14:36:37 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] device property: Add fwnode_get_name() helper
-Message-ID: <20181121123637.GB26377@kuha.fi.intel.com>
-References: <20181108165156.60073-1-heikki.krogerus@linux.intel.com>
- <4687553.lNXoFSueqb@aspire.rjw.lan>
+   d="scan'208";a="109992510"
+Received: from jlahtine-desk.ger.corp.intel.com (HELO localhost) ([10.251.84.195])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Nov 2018 04:37:40 -0800
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4687553.lNXoFSueqb@aspire.rjw.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8BIT
+To:     Hans Holmberg <hans.ml.holmberg@owltronix.com>
+From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <CANr-nt0jNB1WMYRepHdC_jqmXTX5pKSswvOtCKx73dj=7azRSA@mail.gmail.com>
+Cc:     David Airlie <airlied@linux.ie>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        intel-gfx@lists.freedesktop.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+References: <20181121095423.20760-1-hans.ml.holmberg@owltronix.com>
+ <154279503602.15074.8041259573781223214@jlahtine-desk.ger.corp.intel.com>
+ <CANr-nt0jNB1WMYRepHdC_jqmXTX5pKSswvOtCKx73dj=7azRSA@mail.gmail.com>
+Message-ID: <154280385988.24009.6122812249809585812@jlahtine-desk.ger.corp.intel.com>
+User-Agent: alot/0.6
+Subject: Re: [PATCH] drm/i915: avoid rebuilding i915_gpu_error.o on version string
+ updates
+Date:   Wed, 21 Nov 2018 14:37:40 +0200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 11:03:45PM +0100, Rafael J. Wysocki wrote:
-> On Thursday, November 8, 2018 5:51:52 PM CET Heikki Krogerus wrote:
-> > Hi,
-> > 
-> > This is the second version of my proposal for this helper. The
-> > first version can be checked here:
-> > https://lkml.org/lkml/2018/11/5/326
-> > 
-> > In order to support also ACPI properly, I decided to change the API.
-> > The function fwnode_name() is now fwnode_get_name(), and instead of
-> > returning pointer to the name, the function copies it to a buffer. I
-> > did that because acpica does not offer a way to get a pointer to the
-> > node name, and the name is clearly expected to be accessed only with
-> > the namespace lock held.
-> > 
-> > I think this is better approach in any case. It will also solve the
-> > problem of getting rid of the unit-address part from DT node names.
-> > 
-> > Let me know what you guys think.
-> > 
-> > --
-> > heikki
-> > 
-> > 
-> > Heikki Krogerus (4):
-> >   device property: Introduce fwnode_get_name()
-> >   ACPI: property: Add acpi_fwnode_name()
-> >   of/property: Add of_fwnode_name()
-> >   device property: Drop get_named_child_node callback
-> > 
-> >  drivers/acpi/property.c  | 43 ++++++++++++++++++++++------------------
-> >  drivers/base/property.c  | 34 ++++++++++++++++++++++++++++++-
-> >  drivers/of/property.c    | 26 ++++++++++--------------
-> >  include/linux/fwnode.h   |  6 +++---
-> >  include/linux/property.h |  2 ++
-> >  5 files changed, 73 insertions(+), 38 deletions(-)
-> > 
-> > 
+Quoting Hans Holmberg (2018-11-21 13:35:19)
+> On Wed, Nov 21, 2018 at 11:10 AM Joonas Lahtinen
+> <joonas.lahtinen@linux.intel.com> wrote:
+> >
+> > Quoting Hans Holmberg (2018-11-21 11:54:23)
+> > > From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+> > >
+> > > There is no need to rebuild i915_gpu_error.o when the version string
+> > > changes as the version is available in init_utsname()->release.
+> > >
+> > > Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+> >
+> > Seems reasonable to me.
+> >
+> > Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+> >
+> > Out of curiosity, are you by any chance hashing the i915_gpu_error.o
+> > file (or the contents elsewhere) for some purpose?
 > 
-> I will be expecting at least one more iteration of this series to address the
-> Rob's comments.
+> Oh no, I was just moderately annoyed by the file being rebuilt every
+> time the version was updated(I use my current branch name as
+> LOCALVERSION when building).
 
-Yes, I'll send a new version soon.
+That's a reasonable explanation, too :)
 
-thanks,
+I unblocked the message from moderation queue so that our CI picks this
+up for testing. I will then proceed to merge this once the results are
+back.
 
--- 
-heikki
+Thanks for the patch!
+
+Regards, Joonas
+
+> 
+> Thanks,
+> Hans
+> >
+> > Regards, Joonas
+> >
+> > > ---
+> > >  drivers/gpu/drm/i915/i915_gpu_error.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/i915/i915_gpu_error.c b/drivers/gpu/drm/i915/i915_gpu_error.c
+> > > index 8762d17b6659..958e1484a3dd 100644
+> > > --- a/drivers/gpu/drm/i915/i915_gpu_error.c
+> > > +++ b/drivers/gpu/drm/i915/i915_gpu_error.c
+> > > @@ -27,7 +27,7 @@
+> > >   *
+> > >   */
+> > >
+> > > -#include <generated/utsrelease.h>
+> > > +#include <linux/utsname.h>
+> > >  #include <linux/stop_machine.h>
+> > >  #include <linux/zlib.h>
+> > >  #include <drm/drm_print.h>
+> > > @@ -650,7 +650,7 @@ int i915_error_state_to_str(struct drm_i915_error_state_buf *m,
+> > >
+> > >         if (*error->error_msg)
+> > >                 err_printf(m, "%s\n", error->error_msg);
+> > > -       err_printf(m, "Kernel: " UTS_RELEASE "\n");
+> > > +       err_printf(m, "Kernel: %s\n", init_utsname()->release);
+> > >         ts = ktime_to_timespec64(error->time);
+> > >         err_printf(m, "Time: %lld s %ld us\n",
+> > >                    (s64)ts.tv_sec, ts.tv_nsec / NSEC_PER_USEC);
+> > > --
+> > > 2.17.1
+> > >
