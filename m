@@ -2,399 +2,229 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05257C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1472AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A12A720C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:39:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C54A820C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:39:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=upb.ro header.i=@upb.ro header.b="GF5VJ8JF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A12A720C01
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=upb.ro
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="fXTpNedP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C54A820C01
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730323AbeKUWNe (ORCPT
+        id S1730328AbeKUWN4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 17:13:34 -0500
-Received: from mail-sender220.upb.ro ([141.85.13.220]:38940 "EHLO mx.upb.ro"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727628AbeKUWNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 17:13:21 -0500
-X-Greylist: delayed 621 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Nov 2018 17:13:18 EST
-Received: from mx.upb.ro (localhost [127.0.0.1])
-        by mx.upb.ro (Postfix) with ESMTPS id EDBBCB560065;
-        Wed, 21 Nov 2018 13:28:53 +0200 (EET)
-Received: from localhost (localhost [127.0.0.1])
-        by mx.upb.ro (Postfix) with ESMTP id D0EE6B560070;
-        Wed, 21 Nov 2018 13:28:53 +0200 (EET)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mx.upb.ro D0EE6B560070
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=upb.ro;
-        s=96342B8A-77E4-11E5-BA93-D93D0963A2DF; t=1542799733;
-        bh=pzEV/otGhqrfXtvwHgR3GL7T2gkpwJyBM09+/rgZ5Yk=;
-        h=From:To:Date:Message-Id:MIME-Version;
-        b=GF5VJ8JF5YdSLmbcnXFEWRQlCyzzh4j8pWl+hmOs9Qk+e99fGnB3Xzqk3KCWRGAHO
-         7WW5QGgKHeS0DvPfTULvpOgKojZuAMeY2wsGaI2AMsbdY8kdu5VyVj2MGjbKp42RCT
-         taEhPZ4IyTpm2MbDvC2J23OhX62teSH+ki+dWOwI=
-Received: from mx.upb.ro ([127.0.0.1])
-        by localhost (mx.upb.ro [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id B7M91qedbv-3; Wed, 21 Nov 2018 13:28:53 +0200 (EET)
-Received: from asus-rog.localdomain (arh.pub.ro [141.85.160.17])
-        by mx.upb.ro (Postfix) with ESMTPSA id A6496B560065;
-        Wed, 21 Nov 2018 13:28:53 +0200 (EET)
-From:   Radu Pirea <radu_nicolae.pirea@upb.ro>
-To:     richard.genoud@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.co,
-        broonie@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Radu Pirea <radu_nicolae.pirea@upb.ro>
-Subject: [PATCH 3/3] spi: at91-usart: add DMA support
-Date:   Wed, 21 Nov 2018 13:27:32 +0200
-Message-Id: <20181121112732.15690-4-radu_nicolae.pirea@upb.ro>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181121112732.15690-1-radu_nicolae.pirea@upb.ro>
-References: <20181121112732.15690-1-radu_nicolae.pirea@upb.ro>
+        Wed, 21 Nov 2018 17:13:56 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:33716 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727069AbeKUWN4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 17:13:56 -0500
+Received: from zn.tnic (p200300EC2BD0AB00883B4D3E2A7F8FA4.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:ab00:883b:4d3e:2a7f:8fa4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 65AFF1EC06CA;
+        Wed, 21 Nov 2018 12:39:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1542800391;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=AcRezZYGqMwpXNPJPWSLvAYug0nAra77fK4kdenDzc0=;
+        b=fXTpNedPb+iE87fonxYZWhubtTGD1IqznpFt/PaUgXVCsH3ROxoN7XfwBuFcGzf28Npjq3
+        mP4e9ZtvgEStpZpOa8AJIjGYgFfpmn5Ybh0hznARaPr8SQdp9/TRhRv6tgmuzVd3PPqdfZ
+        CX6xFHDIepTzpItkLhdY6vK78elqqvc=
+Date:   Wed, 21 Nov 2018 12:39:44 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Bhupesh Sharma <bhsharma@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, bhupesh.linux@gmail.com,
+        Baoquan He <bhe@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
+        Dave Anderson <anderson@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Omar Sandoval <osandov@fb.com>, x86@kernel.org,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2] x86_64, vmcoreinfo: Append 'page_offset_base' to
+ vmcoreinfo
+Message-ID: <20181121113944.GD27797@zn.tnic>
+References: <1542318469-13699-1-git-send-email-bhsharma@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1542318469-13699-1-git-send-email-bhsharma@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for DMA. Transfers are done with dma only if
-they are longer than 16 bytes in order to achieve a better performance.
-DMA setup introduces a little overhead and for transfers shorter than 16
-bytes there is no performance improvement.
++ Kees.
 
-Signed-off-by: Radu Pirea <radu_nicolae.pirea@upb.ro>
----
- drivers/spi/spi-at91-usart.c | 223 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 221 insertions(+), 2 deletions(-)
+On Fri, Nov 16, 2018 at 03:17:49AM +0530, Bhupesh Sharma wrote:
+> x86_64 kernel uses 'page_offset_base' variable to point to the
+> start of direct mapping of all physical memory. This variable
+> is also updated for KASLR boot cases, so this can be exported
+> via vmcoreinfo as a standard ABI between kernel and user-space,
+> to allow user-space utilities to use the same for calculating
+> the start of direct mapping of all physical memory.
+> 
+> 'arch/x86/kernel/head64.c' sets the same as:
+>    unsigned long page_offset_base __ro_after_init = __PAGE_OFFSET_BASE_L4;
+> 
+> and also uses the same to indicate the base of KASLR regions on x86_64:
+>    static __initdata struct kaslr_memory_region {
+> 	    unsigned long *base;
+> 	        unsigned long size_tb;
+>    } kaslr_regions[] = {
+> 	    { &page_offset_base, 0 },
+>    .. snip ..
 
-diff --git a/drivers/spi/spi-at91-usart.c b/drivers/spi/spi-at91-usart.c
-index 0b07c746453d..4d908afeaec9 100644
---- a/drivers/spi/spi-at91-usart.c
-+++ b/drivers/spi/spi-at91-usart.c
-@@ -8,9 +8,12 @@
-=20
- #include <linux/clk.h>
- #include <linux/delay.h>
-+#include <linux/dmaengine.h>
-+#include <linux/dma-direction.h>
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/of_platform.h>
- #include <linux/of_gpio.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-@@ -58,6 +61,8 @@
-=20
- #define US_INIT \
- 	(US_MR_SPI_MASTER | US_MR_CHRL | US_MR_CLKO | US_MR_WRDBT)
-+#define US_DMA_MIN_BYTES       16
-+#define US_DMA_TIMEOUT         (msecs_to_jiffies(1000))
-=20
- /* Register access macros */
- #define at91_usart_spi_readl(port, reg) \
-@@ -71,14 +76,19 @@
- 	writeb_relaxed((value), (port)->regs + US_##reg)
-=20
- struct at91_usart_spi {
-+	struct platform_device  *mpdev;
- 	struct spi_transfer	*current_transfer;
- 	void __iomem		*regs;
- 	struct device		*dev;
- 	struct clk		*clk;
-=20
-+	struct completion	xfer_completion;
-+
- 	/*used in interrupt to protect data reading*/
- 	spinlock_t		lock;
-=20
-+	phys_addr_t		phybase;
-+
- 	int			irq;
- 	unsigned int		current_tx_remaining_bytes;
- 	unsigned int		current_rx_remaining_bytes;
-@@ -87,8 +97,184 @@ struct at91_usart_spi {
- 	u32			status;
-=20
- 	bool			xfer_failed;
-+	bool			use_dma;
- };
-=20
-+static void dma_callback(void *data)
-+{
-+	struct spi_controller   *ctlr =3D data;
-+	struct at91_usart_spi   *aus =3D spi_master_get_devdata(ctlr);
-+
-+	at91_usart_spi_writel(aus, IER, US_IR_RXRDY);
-+	aus->current_rx_remaining_bytes =3D 0;
-+	complete(&aus->xfer_completion);
-+}
-+
-+static bool at91_usart_spi_can_dma(struct spi_controller *ctrl,
-+				   struct spi_device *spi,
-+				   struct spi_transfer *xfer)
-+{
-+	struct at91_usart_spi *aus =3D spi_master_get_devdata(ctrl);
-+
-+	return aus->use_dma && xfer->len >=3D US_DMA_MIN_BYTES;
-+}
-+
-+static int at91_usart_spi_configure_dma(struct spi_controller *ctlr,
-+					struct at91_usart_spi *aus)
-+{
-+	struct dma_slave_config slave_config;
-+	struct device *dev =3D &aus->mpdev->dev;
-+	phys_addr_t phybase =3D aus->phybase;
-+	dma_cap_mask_t mask;
-+	int err =3D 0;
-+
-+	dma_cap_zero(mask);
-+	dma_cap_set(DMA_SLAVE, mask);
-+
-+	ctlr->dma_tx =3D dma_request_slave_channel_reason(dev, "tx");
-+	if (IS_ERR_OR_NULL(ctlr->dma_tx)) {
-+		if (IS_ERR(ctlr->dma_tx)) {
-+			err =3D PTR_ERR(ctlr->dma_tx);
-+			goto at91_usart_spi_error_clear;
-+		}
-+
-+		dev_dbg(dev,
-+			"DMA TX channel not available, SPI unable to use DMA\n");
-+		err =3D -EBUSY;
-+		goto at91_usart_spi_error_clear;
-+	}
-+
-+	ctlr->dma_rx =3D dma_request_slave_channel_reason(dev, "rx");
-+	if (IS_ERR_OR_NULL(ctlr->dma_rx)) {
-+		if (IS_ERR(ctlr->dma_rx)) {
-+			err =3D PTR_ERR(ctlr->dma_rx);
-+			goto at91_usart_spi_error;
-+		}
-+
-+		dev_dbg(dev,
-+			"DMA RX channel not available, SPI unable to use DMA\n");
-+		err =3D -EBUSY;
-+		goto at91_usart_spi_error;
-+	}
-+
-+	slave_config.dst_addr_width =3D DMA_SLAVE_BUSWIDTH_1_BYTE;
-+	slave_config.src_addr_width =3D DMA_SLAVE_BUSWIDTH_1_BYTE;
-+	slave_config.dst_addr =3D (dma_addr_t)phybase + US_THR;
-+	slave_config.src_addr =3D (dma_addr_t)phybase + US_RHR;
-+	slave_config.src_maxburst =3D 1;
-+	slave_config.dst_maxburst =3D 1;
-+	slave_config.device_fc =3D false;
-+
-+	slave_config.direction =3D DMA_DEV_TO_MEM;
-+	if (dmaengine_slave_config(ctlr->dma_rx, &slave_config)) {
-+		dev_err(&ctlr->dev,
-+			"failed to configure rx dma channel\n");
-+		err =3D -EINVAL;
-+		goto at91_usart_spi_error;
-+	}
-+
-+	slave_config.direction =3D DMA_MEM_TO_DEV;
-+	if (dmaengine_slave_config(ctlr->dma_tx, &slave_config)) {
-+		dev_err(&ctlr->dev,
-+			"failed to configure tx dma channel\n");
-+		err =3D -EINVAL;
-+		goto at91_usart_spi_error;
-+	}
-+
-+	aus->use_dma =3D true;
-+	return 0;
-+
-+at91_usart_spi_error:
-+	if (!IS_ERR_OR_NULL(ctlr->dma_tx))
-+		dma_release_channel(ctlr->dma_tx);
-+	if (!IS_ERR_OR_NULL(ctlr->dma_rx))
-+		dma_release_channel(ctlr->dma_rx);
-+	ctlr->dma_tx =3D NULL;
-+	ctlr->dma_rx =3D NULL;
-+
-+at91_usart_spi_error_clear:
-+	return err;
-+}
-+
-+static void at91_usart_spi_release_dma(struct spi_controller *ctlr)
-+{
-+	if (ctlr->dma_rx)
-+		dma_release_channel(ctlr->dma_rx);
-+	if (ctlr->dma_tx)
-+		dma_release_channel(ctlr->dma_tx);
-+}
-+
-+static void at91_usart_spi_stop_dma(struct spi_controller *ctlr)
-+{
-+	if (ctlr->dma_rx)
-+		dmaengine_terminate_all(ctlr->dma_rx);
-+	if (ctlr->dma_tx)
-+		dmaengine_terminate_all(ctlr->dma_tx);
-+}
-+
-+static int at91_usart_spi_dma_transfer(struct spi_controller *ctlr,
-+				       struct spi_transfer *xfer)
-+{
-+	struct at91_usart_spi *aus =3D spi_master_get_devdata(ctlr);
-+	struct dma_chan	 *rxchan =3D ctlr->dma_rx;
-+	struct dma_chan *txchan =3D ctlr->dma_tx;
-+	struct dma_async_tx_descriptor *rxdesc;
-+	struct dma_async_tx_descriptor *txdesc;
-+	dma_cookie_t cookie;
-+
-+	rxdesc =3D dmaengine_prep_slave_sg(rxchan,
-+					 xfer->rx_sg.sgl,
-+					 xfer->rx_sg.nents,
-+					 DMA_FROM_DEVICE,
-+					 DMA_PREP_INTERRUPT |
-+					 DMA_CTRL_ACK);
-+	if (!rxdesc)
-+		goto at91_usart_spi_err_dma;
-+
-+	txdesc =3D dmaengine_prep_slave_sg(txchan,
-+					 xfer->tx_sg.sgl,
-+					 xfer->tx_sg.nents,
-+					 DMA_TO_DEVICE,
-+					 DMA_PREP_INTERRUPT |
-+					 DMA_CTRL_ACK);
-+	if (!txdesc)
-+		goto at91_usart_spi_err_dma;
-+
-+	/* Disable RX interrupt */
-+	at91_usart_spi_writel(aus, IDR, US_IR_RXRDY);
-+
-+	rxdesc->callback =3D dma_callback;
-+	rxdesc->callback_param =3D ctlr;
-+
-+	cookie =3D rxdesc->tx_submit(rxdesc);
-+	if (dma_submit_error(cookie))
-+		goto at91_usart_spi_err_dma;
-+
-+	cookie =3D txdesc->tx_submit(txdesc);
-+	if (dma_submit_error(cookie))
-+		goto at91_usart_spi_err_dma;
-+
-+	rxchan->device->device_issue_pending(rxchan);
-+	txchan->device->device_issue_pending(txchan);
-+
-+	return 0;
-+
-+at91_usart_spi_err_dma:
-+	/* Enable RX interrupt if submission of any of descriptors fails
-+	 * and fallback to PIO
-+	 */
-+	at91_usart_spi_writel(aus, IER, US_IR_RXRDY);
-+	at91_usart_spi_stop_dma(ctlr);
-+
-+	return -ENOMEM;
-+}
-+
-+static unsigned long at91_usart_spi_dma_timeout(struct at91_usart_spi *a=
-us)
-+{
-+	return wait_for_completion_timeout(&aus->xfer_completion,
-+					   US_DMA_TIMEOUT);
-+}
-+
- static inline u32 at91_usart_spi_tx_ready(struct at91_usart_spi *aus)
- {
- 	return aus->status & US_IR_TXRDY;
-@@ -221,6 +407,8 @@ static int at91_usart_spi_transfer_one(struct spi_con=
-troller *ctlr,
- 				       struct spi_transfer *xfer)
- {
- 	struct at91_usart_spi *aus =3D spi_master_get_devdata(ctlr);
-+	unsigned long dma_timeout =3D 0;
-+	int ret =3D 0;
-=20
- 	at91_usart_spi_set_xfer_speed(aus, xfer);
- 	aus->xfer_failed =3D false;
-@@ -230,8 +418,25 @@ static int at91_usart_spi_transfer_one(struct spi_co=
-ntroller *ctlr,
-=20
- 	while ((aus->current_tx_remaining_bytes ||
- 		aus->current_rx_remaining_bytes) && !aus->xfer_failed) {
--		at91_usart_spi_read_status(aus);
--		at91_usart_spi_tx(aus);
-+		reinit_completion(&aus->xfer_completion);
-+		if (at91_usart_spi_can_dma(ctlr, spi, xfer) &&
-+		    !ret) {
-+			ret =3D at91_usart_spi_dma_transfer(ctlr, xfer);
-+			if (ret)
-+				continue;
-+
-+			dma_timeout =3D at91_usart_spi_dma_timeout(aus);
-+
-+			if (WARN_ON(dma_timeout =3D=3D 0)) {
-+				dev_err(&spi->dev, "DMA transfer timeout\n");
-+				return -EIO;
-+			}
-+			aus->current_tx_remaining_bytes =3D 0;
-+		} else {
-+			at91_usart_spi_read_status(aus);
-+			at91_usart_spi_tx(aus);
-+		}
-+
- 		cpu_relax();
- 	}
-=20
-@@ -350,6 +555,7 @@ static int at91_usart_spi_probe(struct platform_devic=
-e *pdev)
- 	controller->transfer_one =3D at91_usart_spi_transfer_one;
- 	controller->prepare_message =3D at91_usart_spi_prepare_message;
- 	controller->unprepare_message =3D at91_usart_spi_unprepare_message;
-+	controller->can_dma =3D at91_usart_spi_can_dma;
- 	controller->cleanup =3D at91_usart_spi_cleanup;
- 	controller->max_speed_hz =3D DIV_ROUND_UP(clk_get_rate(clk),
- 						US_MIN_CLK_DIV);
-@@ -381,7 +587,17 @@ static int at91_usart_spi_probe(struct platform_devi=
-ce *pdev)
- 	aus->spi_clk =3D clk_get_rate(clk);
- 	at91_usart_spi_init(aus);
-=20
-+	aus->phybase =3D regs->start;
-+
-+	aus->mpdev =3D to_platform_device(pdev->dev.parent);
-+
-+	ret =3D at91_usart_spi_configure_dma(controller, aus);
-+	if (ret)
-+		goto at91_usart_fail_dma;
-+
- 	spin_lock_init(&aus->lock);
-+	init_completion(&aus->xfer_completion);
-+
- 	ret =3D devm_spi_register_master(&pdev->dev, controller);
- 	if (ret)
- 		goto at91_usart_fail_register_master;
-@@ -394,6 +610,8 @@ static int at91_usart_spi_probe(struct platform_devic=
-e *pdev)
- 	return 0;
-=20
- at91_usart_fail_register_master:
-+	at91_usart_spi_release_dma(controller);
-+at91_usart_fail_dma:
- 	clk_disable_unprepare(clk);
- at91_usart_spi_probe_fail:
- 	spi_master_put(controller);
-@@ -458,6 +676,7 @@ static int at91_usart_spi_remove(struct platform_devi=
-ce *pdev)
- 	struct spi_controller *ctlr =3D platform_get_drvdata(pdev);
- 	struct at91_usart_spi *aus =3D spi_master_get_devdata(ctlr);
-=20
-+	at91_usart_spi_release_dma(ctlr);
- 	clk_disable_unprepare(aus->clk);
-=20
- 	return 0;
---=20
-2.19.1
+Why is that detail needed in the commit message?
 
+> Adding 'page_offset_base' to the vmcoreinfo can be specially useful for
+> live-debugging of a running kernel via user-space utilities
+> like makedumpfile (see [1]).
+> 
+> Recently, I saw an issue with the 'makedumpfile' utility (see [2] for
+
+Use passive tone in your commit message: no "we" or "I", etc.
+
+Also, pls read section "2) Describe your changes" in
+Documentation/process/submitting-patches.rst.
+
+> details), whose live debugging feature is broken with newer kernels
+> (I tested the same with 4.19-rc8+ kernel), as KCORE_REMAP segments were
+> added to kcore, thus leading to an additional sections in the same, and
+> makedumpfile is not longer able to determine the start of direct
+> mapping of all physical memory, as it relies on traversing the PT_LOAD
+> segments inside kcore and using the last PT_LOAD segment
+> to determine the start of direct mapping.
+> 
+> Such user-space issues can be resolved if the user-space code instead
+> uses a standard ABI to read the kernel exposed machine specific
+> variables. With the kernel commit 23c85094fe1895caefdd
+> ["proc/kcore: add vmcoreinfo note to /proc/kcore"]), it is
+
+ERROR: Please use git commit description style 'commit <12+ chars of sha1> ("<title line>")' - ie: 'commit 23c85094fe18 ("proc/kcore: add vmcoreinfo note to /proc/kcore")'
+#54: 
+variables. With the kernel commit 23c85094fe1895caefdd
+
+> now possible to use the vmcoreinfo present inside kcore as the standard
+> ABI which can be used by the user-space utilities for reading
+> the machine specific information (and hence for debugging a
+> live kernel).
+> 
+> User-space utilities like makedumpfile, kexec-tools and crash
+> are either already using this ABI or are discussing patches
+> which look to add the same feature. This helps in simplifying the
+> overall code and also in reducing code-rewrite across the
+> user-space utilities for getting values of these kernel
+> symbols/variables.
+
+> Accordingly this patch allows appending 'page_offset_base' for
+> x86_64 platforms to vmcoreinfo, so that user-space tools can use the
+> same as a standard interface to determine the start of direct mapping
+> of all physical memory.
+> 
+> Testing:
+> -------
+>  - I tested this patch (rebased on 'linux-next') on a x86_64 machine
+>    using the modified 'makedumpfile' user-space code (see [3] for my
+>    github tree which contains the same) for determining how many pages
+>    are dumpable when different dump_level is specified (which is
+>    one use-case of live-debugging via 'makedumpfile').
+>  - I tested both the KASLR and non-KASLR boot cases with this patch.
+>  - Here is one sample log (for KASLR boot case) on my x86_64 machine:
+> 
+>    < snip..>
+>    The kernel doesn't support mmap(),read() will be used instead.
+> 
+>    TYPE		PAGES			EXCLUDABLE	DESCRIPTION
+>    ----------------------------------------------------------------------
+>    ZERO		21299           	yes		Pages filled
+>    with zero
+>    NON_PRI_CACHE	91785           	yes		Cache
+>    pages without private flag
+>    PRI_CACHE	1               	yes		Cache pages with
+>    private flag
+>    USER		14057           	yes		User process
+>    pages
+>    FREE		740346          	yes		Free pages
+>    KERN_DATA	58152           	no		Dumpable kernel
+>    data
+> 
+>    page size:		4096
+>    Total pages on system:	925640
+>    Total size on system:	3791421440       Byte
+> 
+> [1]. MAN pages -> MAKEDUMPFILE(8) and CRASH(8)
+> [2]. makedumpfile issue with latest kernels -> http://lists.infradead.org/pipermail/kexec/2018-October/021769.html
+> [3]. https://github.com/bhupesh-sharma/makedumpfile/tree/add-page-offset-base-to-vmcore-v1
+> 
+> Cc: Boris Petkov <bp@alien8.de>
+> Cc: Baoquan He <bhe@redhat.com>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Kazuhito Hagio <k-hagio@ab.jp.nec.com>
+> Cc: Dave Anderson <anderson@redhat.com>
+> Cc: James Morse <james.morse@arm.com>
+> Cc: Omar Sandoval <osandov@fb.com>
+> Cc: x86@kernel.org
+> Cc: kexec@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Bhupesh Sharma <bhsharma@redhat.com>
+> ---
+> Changes since v1:
+>  - Fixed the build issue reported by build bot and tested this version
+>    with 'make allmodconfig'.
+>  - Reworded most of the commit log to explain the intent behind the
+>    patch.
+> 
+>  arch/x86/kernel/machine_kexec_64.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+> index 4c8acdfdc5a7..6161d77c5bfb 100644
+> --- a/arch/x86/kernel/machine_kexec_64.c
+> +++ b/arch/x86/kernel/machine_kexec_64.c
+> @@ -356,6 +356,9 @@ void arch_crash_save_vmcoreinfo(void)
+>  	VMCOREINFO_SYMBOL(init_top_pgt);
+>  	vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
+>  			pgtable_l5_enabled());
+> +#ifdef CONFIG_RANDOMIZE_BASE
+> +	VMCOREINFO_NUMBER(page_offset_base);
+> +#endif
+>  
+>  #ifdef CONFIG_NUMA
+>  	VMCOREINFO_SYMBOL(node_data);
+> --
+
+All above are only nitpicks though.
+
+My opinion is this: people are exporting all kinds of kernel-internal
+stuff in vmcoreinfo and frankly, I'm not crazy about this idea.
+
+And AFAICT, this thing basically bypasses KASLR completely but you need
+root for it so it probably doesn't really matter.
+
+Now, on another thread we agreed more or less that what gets exported in
+vmcoreinfo is so tightly coupled to the running kernel so that it is not
+even considered an ABI. I guess that is debatable but whatever.
+
+So my only request right now would be to have all those things being
+exported, documented somewhere and I believe Lianbo is working on that.
+
+But I'm sure others will have more to say about it.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
