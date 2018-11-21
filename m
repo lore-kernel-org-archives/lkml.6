@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5765C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7345C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A441214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A24FF206BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="biL9OUs7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A441214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kB7dcBbo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A24FF206BB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388814AbeKVFqQ (ORCPT
+        id S2388826AbeKVFqT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:46:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41424 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:46:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729285AbeKVFqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:46:15 -0500
+        id S1729285AbeKVFqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:46:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A8A0214DB;
-        Wed, 21 Nov 2018 19:10:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC964206BB;
+        Wed, 21 Nov 2018 19:10:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827442;
-        bh=IQWdaK0x7ru1A3E3usiDFO71Kum2L7hwYF4md8Cgd6s=;
+        s=default; t=1542827445;
+        bh=R3aaHApNAbohXOK2E5hdXGRngEcMO3ID80Y1fHIfBt4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=biL9OUs7/SIOti2LG/llsJ+fp8Hre9dnhsd6fxIDXgQDmYtsvZP2AepDNjkie4PwQ
-         Ugu4uEBQTw+qmPzclr4o6G9IhtjjWCq7z77JsvZ62yuWeXP8rfngbE5AkYCr3k/00a
-         QDu8Toa+XjDOkoN4b0UR5cvbDKL5m75kJlnH7Uio=
+        b=kB7dcBborKjRbxwnsM7mBYpv1RjHlcEw/yfH4EsSOL5PiKiVM4zUKGVWPe6nHfhS9
+         szfgUHK2Apics905q80nglrz6ga1BbXwG7Aa4G2DEg1pffBmlwQNKezqHS5bvuIKFH
+         61TvzblYKxyihOeUntZZsz0ZSo73g5kIApQaMOCg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Raghuram Chary J <RaghuramChary.Jallipalli@microchip.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        =?UTF-8?q?=EB=B0=B0=EC=84=9D=EC=A7=84?= <soukjin.bae@samsung.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 07/59] usbnet: smsc95xx: disable carrier check while suspending
-Date:   Wed, 21 Nov 2018 20:06:22 +0100
-Message-Id: <20181121183508.540993292@linuxfoundation.org>
+Subject: [PATCH 4.9 08/59] inet: frags: better deal with smp races
+Date:   Wed, 21 Nov 2018 20:06:23 +0100
+Message-Id: <20181121183508.577195800@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183508.262873520@linuxfoundation.org>
 References: <20181121183508.262873520@linuxfoundation.org>
@@ -64,46 +63,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 7b900ead6cc66b2ee873cb042dfba169aa68b56c ]
+[ Upstream commit 0d5b9311baf27bb545f187f12ecfd558220c607d ]
 
-We need to make sure, that the carrier check polling is disabled
-while suspending. Otherwise we can end up with usbnet_read_cmd()
-being issued when only usbnet_read_cmd_nopm() is allowed. If this
-happens, read operations lock up.
+Multiple cpus might attempt to insert a new fragment in rhashtable,
+if for example RPS is buggy, as reported by 배석진 in
+https://patchwork.ozlabs.org/patch/994601/
 
-Fixes: d69d169493 ("usbnet: smsc95xx: fix link detection for disabled autonegotiation")
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-Reviewed-by: Raghuram Chary J <RaghuramChary.Jallipalli@microchip.com>
+We use rhashtable_lookup_get_insert_key() instead of
+rhashtable_insert_fast() to let cpus losing the race
+free their own inet_frag_queue and use the one that
+was inserted by another cpu.
+
+Fixes: 648700f76b03 ("inet: frags: use rhashtables for reassembly units")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: 배석진 <soukjin.bae@samsung.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/smsc95xx.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ net/ipv4/inet_fragment.c |   28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
---- a/drivers/net/usb/smsc95xx.c
-+++ b/drivers/net/usb/smsc95xx.c
-@@ -1590,6 +1590,8 @@ static int smsc95xx_suspend(struct usb_i
- 		return ret;
- 	}
- 
-+	cancel_delayed_work_sync(&pdata->carrier_check);
-+
- 	if (pdata->suspend_flags) {
- 		netdev_warn(dev->net, "error during last resume\n");
- 		pdata->suspend_flags = 0;
-@@ -1832,6 +1834,11 @@ done:
- 	 */
- 	if (ret && PMSG_IS_AUTO(message))
- 		usbnet_resume(intf);
-+
-+	if (ret)
-+		schedule_delayed_work(&pdata->carrier_check,
-+				      CARRIER_CHECK_DELAY);
-+
- 	return ret;
+--- a/net/ipv4/inet_fragment.c
++++ b/net/ipv4/inet_fragment.c
+@@ -180,21 +180,22 @@ static struct inet_frag_queue *inet_frag
  }
  
+ static struct inet_frag_queue *inet_frag_create(struct netns_frags *nf,
+-						void *arg)
++						void *arg,
++						struct inet_frag_queue **prev)
+ {
+ 	struct inet_frags *f = nf->f;
+ 	struct inet_frag_queue *q;
+-	int err;
+ 
+ 	q = inet_frag_alloc(nf, f, arg);
+-	if (!q)
++	if (!q) {
++		*prev = ERR_PTR(-ENOMEM);
+ 		return NULL;
+-
++	}
+ 	mod_timer(&q->timer, jiffies + nf->timeout);
+ 
+-	err = rhashtable_insert_fast(&nf->rhashtable, &q->node,
+-				     f->rhash_params);
+-	if (err < 0) {
++	*prev = rhashtable_lookup_get_insert_key(&nf->rhashtable, &q->key,
++						 &q->node, f->rhash_params);
++	if (*prev) {
+ 		q->flags |= INET_FRAG_COMPLETE;
+ 		inet_frag_kill(q);
+ 		inet_frag_destroy(q);
+@@ -207,17 +208,18 @@ EXPORT_SYMBOL(inet_frag_create);
+ /* TODO : call from rcu_read_lock() and no longer use refcount_inc_not_zero() */
+ struct inet_frag_queue *inet_frag_find(struct netns_frags *nf, void *key)
+ {
+-	struct inet_frag_queue *fq;
++	struct inet_frag_queue *fq = NULL, *prev;
+ 
+ 	rcu_read_lock();
+-	fq = rhashtable_lookup(&nf->rhashtable, key, nf->f->rhash_params);
+-	if (fq) {
++	prev = rhashtable_lookup(&nf->rhashtable, key, nf->f->rhash_params);
++	if (!prev)
++		fq = inet_frag_create(nf, key, &prev);
++	if (prev && !IS_ERR(prev)) {
++		fq = prev;
+ 		if (!atomic_inc_not_zero(&fq->refcnt))
+ 			fq = NULL;
+-		rcu_read_unlock();
+-		return fq;
+ 	}
+ 	rcu_read_unlock();
+-	return inet_frag_create(nf, key);
++	return fq;
+ }
+ EXPORT_SYMBOL(inet_frag_find);
 
 
