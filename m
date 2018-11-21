@@ -2,111 +2,115 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B09DFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EADD1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7118021479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:34:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B08A920989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:35:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="G5cHyjwW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7118021479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="zhg4Cbgv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B08A920989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729557AbeKUUID (ORCPT
+        id S1728865AbeKUUJQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 15:08:03 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:34357 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728003AbeKUUID (ORCPT
+        Wed, 21 Nov 2018 15:09:16 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:51910 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727188AbeKUUJP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 15:08:03 -0500
-Received: by mail-ed1-f67.google.com with SMTP id b3so4342624ede.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 01:34:18 -0800 (PST)
+        Wed, 21 Nov 2018 15:09:15 -0500
+Received: by mail-wm1-f65.google.com with SMTP id w7-v6so4772032wmc.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 01:35:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cO6gZrBTYfDfny6KeEvGuD4MD/pF6UV95YdWttosCvE=;
-        b=G5cHyjwWDY/0L4cs6nHCPj+ffofZ1K+O/xdAlMJw93T6n72rOQ9oNqR86Ho1rWwBfv
-         ys+88CEzpvwn20K1+x7ejNUqCBnq9RQwvR8/j11xxiMzSqpLa+xEzZdjwQ30pHxXPmTt
-         Qjl6Z6ZJj7JjURWghP8EaAXIqYRH8JU8rIhm8=
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N0vcnDyDqE+FV7vpL02RiFBkDhawBnHwoXWnuBlTRs0=;
+        b=zhg4Cbgvq8IqnRhaeETGTalwqzt6p/W70hNnBzwfyQlwBP2xmen+jFXV+wmqGwty13
+         YMYLx0RJ0oFkCKrmgZncluLokzUAQoVj28kEB9guCWJ/55mX/XjXjk7xSUhqCAuPsO/E
+         pPIZDinZrnHfAYVu9VD/f0r//hSF6mEjcX5MZYeNsyYrN4yvlpxLGS0NiYP7n/h4yE91
+         m3dQcHt1z6RYWLKCSnZj3Nihglh1lLAjjSb2UqTE6RutXBqNLOjONbUkLREoWdnIb5Md
+         kCHS9bI+wzbwyqLY7fCHaJC62gMCb2aN4VmTtIU/aCbBfGo2DoQwOBjPaoqurX2+B5Ai
+         7r7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=cO6gZrBTYfDfny6KeEvGuD4MD/pF6UV95YdWttosCvE=;
-        b=T+9RGAznPAnpoOtftC0gAsplp6gmbhcDg2xZpFXSfneDC4hh/cde0liL2hsREg/C82
-         0uXc7N9IjHTGWTGVmz9j5iyC2ZhqAHXrnpLECH9Hr18qNStLL5er//2mKChHQR62JAIw
-         9aZ9YkyYcO7TLR8mWGV1vMVHtEUOBGJY92/MiEudNFlb5YCpAB7yhN9p4gjddfDsh4uR
-         ITJv5o/yMryUjv1eUGHAdGrETZCkslC5/GcILsCl+GClrsIurw6sKx5zO34hmRapdfY6
-         dX6/BoXZAkdJk6w+aU6yVnme/eDpDv85PqwZzFi1YzzwtFMPAy+B0gDEZnEsoyOvfTjk
-         2vTA==
-X-Gm-Message-State: AGRZ1gIc68GrFaIeF/3KjHj6mJ6XZvp+dvNHzFR0LZSyovZT6XyGTapR
-        +bdQ82ULHLtAmeeylIhE/aX/yrt9X4c=
-X-Google-Smtp-Source: AJdET5eDwq0W6b5WEJpoGHjN53bxwc+kXYIGBYWPO3KkvXVhbLyPF0l90JMN498la9qc57xdfyR6Aw==
-X-Received: by 2002:a17:906:3603:: with SMTP id q3-v6mr4585841ejb.164.1542792857751;
-        Wed, 21 Nov 2018 01:34:17 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id gy12-v6sm846373ejb.44.2018.11.21.01.34.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 01:34:16 -0800 (PST)
-Date:   Wed, 21 Nov 2018 10:34:14 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     virtio-dev@lists.oasis-open.org, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>
-Subject: Re: [PATCH v4 2/2] drm/virtio: add edid support
-Message-ID: <20181121093414.GK4266@phenom.ffwll.local>
-Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
-        virtio-dev@lists.oasis-open.org, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:VIRTIO GPU DRIVER" <virtualization@lists.linux-foundation.org>
-References: <20181030063206.19528-1-kraxel@redhat.com>
- <20181030063206.19528-3-kraxel@redhat.com>
- <20181030093804.GQ21967@phenom.ffwll.local>
- <20181121085422.mk4ob6vhwbnufqzl@sirius.home.kraxel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=N0vcnDyDqE+FV7vpL02RiFBkDhawBnHwoXWnuBlTRs0=;
+        b=t3+6ci7lTYgMX2bqTxgYKADQ0wc9r9VfuFv5RtYWz2ZEX91Z2O26CrYd8VHcDWFZS+
+         nr+fzPJkryx0Z+l1+Vjvf3weyq2Z98KP0exiYnkpPQRqUce7og/u5hntxeH3DhflkJY2
+         IBS4x6ymnMxEtpVem2H7WLunaV1KbdNDcsU6TUTKSwpP9NQxnlTV7Zi3Gk7DoLk8ikWm
+         G0i0DKxfPakChUKngtIbXwoLNU7QGwrVdGjcE+HYHWEDB34hTaO1o2csNzVugAzM1RWM
+         jW1J+tH7adOg1wYVOJ/zkHRcNc7TQkMw79Si7T0SNz3UKjBUnTI8vIj8EGelgCKhpGcZ
+         Tyhg==
+X-Gm-Message-State: AA+aEWbbmjKOfFHqmvcfItSYlzFHTUVitofVK2v8duOIqe0Dy2FUIT7a
+        tLY33zIv6ljxSaXkhNBKIxDUtw==
+X-Google-Smtp-Source: AFSGD/WKD05mfBXt9M2xw7hnX4BMoa01hnooYKfa5qwn/+sSOy75H7LcyVWCajTTYuyhy8offtD6Kg==
+X-Received: by 2002:a1c:6382:: with SMTP id x124-v6mr5379742wmb.145.1542792930149;
+        Wed, 21 Nov 2018 01:35:30 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id o8sm10443785wrx.15.2018.11.21.01.35.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 01:35:29 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Keerthy <j-keerthy@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 00/12] ARM: davinci: fix GPIO breakage after v4.19
+Date:   Wed, 21 Nov 2018 10:35:11 +0100
+Message-Id: <20181121093523.12503-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181121085422.mk4ob6vhwbnufqzl@sirius.home.kraxel.org>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 09:54:22AM +0100, Gerd Hoffmann wrote:
-> On Tue, Oct 30, 2018 at 10:38:04AM +0100, Daniel Vetter wrote:
-> > On Tue, Oct 30, 2018 at 07:32:06AM +0100, Gerd Hoffmann wrote:
-> > > linux guest driver implementation of the VIRTIO_GPU_F_EDID feature.
-> > > 
-> > > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> > 
-> > Like with bochs, I think drm_do_get_edid() here is overkill and fairly
-> > pointless.
-> 
-> Like with bochs it makes sense to use drm_do_get_edid(), because it
-> handles edid override and other common stuff.  Not that this should
-> actually be needed for virtual devices, but I think it still makes sense
-> for consistency with other drivers, and it might be handy for testing
-> too.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Yeah Jani corrected me here, I forgot that we reworked all this quite a
-bit. I checked the kerneldoc, it's up-to-date, so all good. Ack: me fwiw.
+This is the entire set of changes needed to fix the broken GPIO support
+for DaVinci boards in legacy mode after certain changes made to the
+GPIO driver in 4.19, namely: commits 587f7a694f01 ("gpio: davinci: Use
+dev name for label and automatic base selection") and eb3744a2dd01
+("gpio: davinci: Do not assume continuous IRQ numbering").
 
-Cheers, Daniel
+Bartosz Golaszewski (12):
+  ARM: davinci: da8xx: define gpio interrupts as separate resources
+  ARM: davinci: dm365: define gpio interrupts as separate resources
+  ARM: davinci: dm646x: define gpio interrupts as separate resources
+  ARM: davinci: dm355: define gpio interrupts as separate resources
+  ARM: davinci: dm644x: define gpio interrupts as separate resources
+  gpio: davinci: restore a way to manually specify the GPIO base
+  ARM: davinci: da850: set the GPIO base to 0
+  ARM: davinci: dm365: set the GPIO base to 0
+  ARM: davinci: dm646x: set the GPIO base to 0
+  ARM: davinci: dm355: set the GPIO base to 0
+  ARM: davinci: da830: set the GPIO base to 0
+  ARM: davinci: dm644x: set the GPIO base to 0
+
+ arch/arm/mach-davinci/da830.c              |  4 ++-
+ arch/arm/mach-davinci/da850.c              |  4 ++-
+ arch/arm/mach-davinci/devices-da8xx.c      | 40 ++++++++++++++++++++++
+ arch/arm/mach-davinci/dm355.c              | 32 +++++++++++++++++
+ arch/arm/mach-davinci/dm365.c              | 37 ++++++++++++++++++++
+ arch/arm/mach-davinci/dm644x.c             | 22 ++++++++++++
+ arch/arm/mach-davinci/dm646x.c             | 12 +++++++
+ drivers/gpio/gpio-davinci.c                |  2 +-
+ include/linux/platform_data/gpio-davinci.h |  2 ++
+ 9 files changed, 152 insertions(+), 3 deletions(-)
+
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.19.1
+
