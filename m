@@ -2,414 +2,128 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4707C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85429C04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:41:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D4DB214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:39:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WBVmMREF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D4DB214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 57B2721479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:41:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57B2721479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730499AbeKUXN7 (ORCPT
+        id S1730514AbeKUXPO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 18:13:59 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:35142 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729389AbeKUXN7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 18:13:59 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20181121123942epoutp0234cac05c75b4abb699fd6655126a53ab~pJAxVGWbH1633016330epoutp02V;
-        Wed, 21 Nov 2018 12:39:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20181121123942epoutp0234cac05c75b4abb699fd6655126a53ab~pJAxVGWbH1633016330epoutp02V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1542803982;
-        bh=yQPXJNHOCnm4JWj2jwCRowXJ1qQnGDsxCiTB/sONvVU=;
-        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
-        b=WBVmMREFS6LX/QEzvrxCZ8J9pxPRUN4qVi5CYZTl/2ZzS1zCZR4cAnje5ULs42ptg
-         GDHyZFtUGSqCHyLKV8pE2E0rl1bneE57DEtCiWtroz8dTf8SQdsMZkbZnLkKIOFbyI
-         NP7zKhKb/yXYyavNXmCm1CFaDXoluqaseEmlcpfg=
-Received: from epsmges2p2.samsung.com (unknown [182.195.40.152]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181121123939epcas1p250216a075f1baae1c78e4b26622a047c~pJAuZHi-M2999529995epcas1p25;
-        Wed, 21 Nov 2018 12:39:39 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3F.A0.04060.B0255FB5; Wed, 21 Nov 2018 21:39:39 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20181121123939epcas2p264c308b7134d7cca5f9e4bab95b3e6c7~pJAuA2OA12067520675epcas2p2G;
-        Wed, 21 Nov 2018 12:39:39 +0000 (GMT)
-X-AuditID: b6c32a46-b2dff70000000fdc-0d-5bf5520bd5ab
-Received: from epmmp1.local.host ( [203.254.227.16]) by
-        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        2E.6F.03627.A0255FB5; Wed, 21 Nov 2018 21:39:39 +0900 (KST)
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="utf-8"
-Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PIJ00JKJN62MVA0@mmp1.samsung.com>; Wed, 21 Nov 2018 21:39:38 +0900 (KST)
-Message-id: <5BF5520A.5050500@samsung.com>
-Date:   Wed, 21 Nov 2018 21:39:38 +0900
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To:     Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] clk: samsung: exynos5433: add imem clock
-In-reply-to: <20181121120509.18892-5-k.konieczny@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgk+LIzCtJLcpLzFFi42LZdljTQpc76Gu0wbllUhbzj5xjtejb95/R
-        ov/xa2aL8+c3sFtsenyN1eLyrjlsFjPO72OyWHr9IpNF694j7A6cHmvmrWH02LSqk81j85J6
-        j4Pv9jB5fN4kF8AalW2TkZqYklqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk
-        4hOg65aZA3SPkkJZYk4pUCggsbhYSd/Opii/tCRVISO/uMRWKbUgJafAskCvODG3uDQvXS85
-        P9fK0MDAyBSoMCE7o2H6FPaCg6EVk3/MYmlgbPDsYuTkkBAwkdi2ZTZLFyMXh5DADkaJtg2/
-        mSCc74wSL65vZoKpaj84mxEisZtRouPUKrAEr4CgxI/J94DaOTiYBeQljlzKBgkzC2hKvPgy
-        CWrqXUaJ85uWQNVrSaw6eZMRxGYRUJXoXfeAHcRmA4rvf3GDDcTmF1CUuPrjMViNqECExM75
-        38BqRARMJR6tbmAFGcosMINJYs2xr2ANwgKOEvNO/gKzOQVcJWb/6GYDKZIQuM0m0fx1JjPI
-        dRICLhK/WwwhvhGWeHV8CzuELS3xbNVGRoj6dkaJLy+aWSGcCYwSH07B/G8s8WxhFxPEb3wS
-        HYf/skMM5ZXoaBOCKPGQOPxuNzSILjNKPGrYwziBUXYWUijNQoTSLKRQWsDIvIpRLLWgODc9
-        tdiowAg5/jYxglOfltsOxiXnfA4xCnAwKvHwcgh+iRZiTSwrrsw9xCjBwawkwhtp8zVaiDcl
-        sbIqtSg/vqg0J7X4EKMpMJAnMkuJJucD03JeSbyhqZGxsbGFqbmlsYGlkjjvQ+m50UIC6Ykl
-        qdmpqQWpRTB9TBycUg2MpQmznf5fXPiJ59Hv+lhr6QnPvfsrvzhvXRz/Scp9y7foOsmwW766
-        C2d7tHz5I8f0cDrngbKMi8mnomt/T+zalWHY+2D9Zz2bz02MejNyW7491ZIzT3jqEqTqoZNr
-        l2if3MlvsOVJed/jv2tmM7ULLOXnTdn4ktO/+P3pf0k/zNc///xg7y9uJZbijERDLeai4kQA
-        AuDbRpMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsVy+t9jAV3uoK/RBssXMlvMP3KO1aJv339G
-        i/7Hr5ktzp/fwG6x6fE1VovLu+awWcw4v4/JYun1i0wWrXuPsDtweqyZt4bRY9OqTjaPzUvq
-        PQ6+28Pk8XmTXABrFJdNSmpOZllqkb5dAldGw/Qp7AUHQysm/5jF0sDY4NnFyMkhIWAi0X5w
-        NmMXIxeHkMBORomvN2aygCR4BQQlfky+B2RzcDALyEscuZQNYapLTJmSC1F+n1Hi9cNGZohy
-        LYlVJ28ygtgsAqoSvesesIPYbEDx/S9usIHY/AKKEld/PGYEmSMqECHRfaISJCwiYCrxaHUD
-        K8hMZoEZTBKt55eBzRQWcJSYd/IXG8Syy4wS6x9dBktwCrhKzP7RzTaBUWAWklNnIZw6C+HU
-        BYzMqxglUwuKc9Nzi40KjPJSy/WKE3OLS/PS9ZLzczcxAkN/22Gt/h2Mj5fEH2IU4GBU4uFN
-        EP4SLcSaWFZcmXuIUYKDWUmEN9Lma7QQb0piZVVqUX58UWlOavEhRmkOFiVxXv78Y5FCAumJ
-        JanZqakFqUUwWSYOTqkGxuiLt1n2bcwyC/Tp9p56/6/ENPHX0k9zvq5Ydej2vM4JLvJ5jLY+
-        sofuzojcmGmkeTGJ9YbqEe7+E4E5H4rPvLFVYEvQ8hbhfOxReEWEqef/Um7/VQWfLkj/jNjf
-        MX9l8439XF0ZX12ZvGUmX+RZkFOlY691fMqzVREHVj9LNjiQvmRJ6s9mHyWW4oxEQy3mouJE
-        AMA8BEt5AgAA
-X-CMS-MailID: 20181121123939epcas2p264c308b7134d7cca5f9e4bab95b3e6c7
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20181121120524eucas1p166a26857df78947c9e08f0fb8dbf75e4
-References: <20181121120509.18892-1-k.konieczny@partner.samsung.com>
-        <CGME20181121120524eucas1p166a26857df78947c9e08f0fb8dbf75e4@eucas1p1.samsung.com>
-        <20181121120509.18892-5-k.konieczny@partner.samsung.com>
+        Wed, 21 Nov 2018 18:15:14 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49224 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730407AbeKUXPO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 18:15:14 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1AC10353C;
+        Wed, 21 Nov 2018 04:41:01 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 016493F5A0;
+        Wed, 21 Nov 2018 04:40:57 -0800 (PST)
+Date:   Wed, 21 Nov 2018 12:40:45 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Mario.Limonciello@dell.com, mika.westerberg@linux.intel.com,
+        lukas@wunner.de, iommu@lists.linux-foundation.org, joro@8bytes.org,
+        dwmw2@infradead.org, baolu.lu@linux.intel.com, ashok.raj@intel.com,
+        bhelgaas@google.com, jacob.jun.pan@intel.com,
+        andreas.noever@gmail.com, michael.jamet@intel.com,
+        YehezkelShB@gmail.com, ckellner@redhat.com,
+        anthony.wong@canonical.com, linux-acpi@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
+Message-ID: <20181121124045.GA21385@e107981-ln.cambridge.arm.com>
+References: <20181113112700.GT2500@lahna.fi.intel.com>
+ <372db397d5384efd8e7264ba8e1b9cbd@ausx13mpc120.AMER.DELL.COM>
+ <20181116105738.GA21277@red-moon>
+ <35089177.HEBOdrcs2c@aspire.rjw.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <35089177.HEBOdrcs2c@aspire.rjw.lan>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 2018년 11월 21일 21:05, Kamil Konieczny wrote:
-> Add imem clock for exynos5433.
-
-It is diffcult to understand the meaning of 'imem' without the description.
-Please add more detailed description as the patch2 description.
-
+On Tue, Nov 20, 2018 at 10:43:35PM +0100, Rafael J. Wysocki wrote:
+> On Friday, November 16, 2018 11:57:38 AM CET Lorenzo Pieralisi wrote:
+> > On Thu, Nov 15, 2018 at 07:33:54PM +0000, Mario.Limonciello@dell.com wrote:
+> > > 
+> > > 
+> > > > -----Original Message-----
+> > > > From: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > > > Sent: Thursday, November 15, 2018 1:01 PM
+> > > > To: Lorenzo Pieralisi
+> > > > Cc: Lukas Wunner; iommu@lists.linux-foundation.org; Joerg Roedel; David
+> > > > Woodhouse; Lu Baolu; Ashok Raj; Bjorn Helgaas; Rafael J. Wysocki; Jacob jun Pan;
+> > > > Andreas Noever; Michael Jamet; Yehezkel Bernat; Christian Kellner; Limonciello,
+> > > > Mario; Anthony Wong; linux-acpi@vger.kernel.org; linux-pci@vger.kernel.org; linux-
+> > > > kernel@vger.kernel.org
+> > > > Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
+> > > > 
+> > > > 
+> > > > [EXTERNAL EMAIL]
+> > > > 
+> > > > On Thu, Nov 15, 2018 at 05:46:08PM +0000, Lorenzo Pieralisi wrote:
+> > > > > Do you really need to parse it if the dev->is_thunderbolt check is enough ?
+> > > > 
+> > > > Yes, we need to parse it one way or another. dev->is_thunderbolt is
+> > > > based on heuristics which do not apply anymore when the thing gets
+> > > > integrated in the SoC.
+> > > > 
+> > > > The _DSD is there already (on existing systems) and is being used by
+> > > > Windows so I don't understand why we cannot take advantage of it? Every
+> > > > new system with Thunderbolt ports will have it.
+> > 
+> > We have different opinions on this, there is no point in me reiterating
+> > it over and over, I am against the approach taken to solve this problem
+> > first in defining the bindings outside the ACPI specifications and
+> > second by acquiescing to what has been done so that it will be done
+> > over and over again.
 > 
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c   | 123 +++++++++++++++++++++++++
->  include/dt-bindings/clock/exynos5433.h |  55 +++++++++++
->  2 files changed, 178 insertions(+)
+> Arguably, however, we are on the receiving end of things here and even if
+> we don't use this binding, that won't buy us anything (but it will introduce
+> a fair amount of disappointment among both users and OEMs).
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index 24c3360db65b..db29cbd1fbdc 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -2345,6 +2345,129 @@ static const struct samsung_cmu_info fsys_cmu_info __initconst = {
->  	.clk_name		= "aclk_fsys_200",
->  };
->  
-> +/*
-> + * Register offset definitions for CMU_IMEM
-> + *
-> + */
-> +
-
-Remove unneeded blank line.
-
-> +#define ENABLE_ACLK_IMEM			0x0800
-> +#define ENABLE_ACLK_IMEM_SSS			0x0808
-> +#define ENABLE_ACLK_IMEM_SLIMSSS		0x080c
-> +#define ENABLE_PCLK_IMEM			0x0900
-> +#define ENABLE_PCLK_IMEM_SSS			0x0904
-> +#define ENABLE_PCLK_IMEM_SLIMSSS		0x0908
-
-When I checked the registers of IMEM block, there are more registers as following:
-Why do you implement the clocks for only six registers?
-
-CLK_ENABLE_ACLK_IMEM			0x0800
-
-CLK_ENABLE_ACLK_IMEM_SECURE_INT_MEM	0x0804
-
-CLK_ENABLE_ACLK_IMEM_SECURE_SSS		0x0808
-
-CLK_ENABLE_ACLK_IMEM_SECURE_SLIMSSS	0x080C
-
-CLK_ENABLE_ACLK_IMEM_SECURE_RTIC	0x0810
-
-CLK_ENABLE_ACLK_IMEM_SECURE_SMMU_SSS	0x0814
-
-CLK_ENABLE_ACLK_IMEM_SECURE_SMMU_SLIMSSS 0x0818
-
-CLK_ENABLE_ACLK_IMEM_SECURE_SMMU_RTIC	0x081C
-
-CLK_ENABLE_ACLK_IMEM_SECURE_ARGB_TX	0x0820
-
-CLK_ENABLE_ACLK_IMEM_SECURE_SMMU_ARGB_TX 0x0824
-
-
-
-CLK_ENABLE_PCLK_IMEM 0x0900
-
-CLK_ENABLE_PCLK_IMEM_SECURE_SSS 0x0904
-
-CLK_ENABLE_PCLK_IMEM_SECURE_SLIMSSS 0x0908
-
-CLK_ENABLE_PCLK_IMEM_SECURE_RTIC 0x090C
-
-CLK_ENABLE_PCLK_IMEM_SECURE_SMMU_SSS 0x0910
-
-CLK_ENABLE_PCLK_IMEM_SECURE_SMMU_SLIMSSS 0x0914
-
-CLK_ENABLE_PCLK_IMEM_SECURE_SMMU_RTIC 0x0918
-
-CLK_ENABLE_PCLK_IMEM_SECURE_SMMU_ARGB_TX 0x091C
-
-CLK_ENABLE_IP_IMEM0 0x0B00
-
-CLK_ENABLE_IP_IMEM1 0x0B04
-
-CLK_ENABLE_IP_IMEM_SECURE_INT_MEM 0x0B08
-
-CLK_ENABLE_IP_IMEM_SECURE_SSS 0x0B0C
-
-CLK_ENABLE_IP_IMEM_SECURE_SLIMSSS 0x0B10
-
-CLK_ENABLE_IP_IMEM_SECURE_RTIC 0x0B14
-
-CLK_ENABLE_IP_IMEM_SECURE_SMMU_SSS 0x0B18
-
-CLK_ENABLE_IP_IMEM_SECURE_SMMU_SLIMSSS 0x0B1C
-
-CLK_ENABLE_IP_IMEM_SECURE_SMMU_RTIC 0x0B20
-
-CLK_ENABLE_IP_IMEM_SECURE_ARBG_TX 0x0B24
-
-CLK_ENABLE_IP_IMEM_SECURE_SMMU_ARBG_TX 0x0B28
-
-> +
-> +static const unsigned long imem_clk_regs[] __initconst = {
-> +ENABLE_ACLK_IMEM,
-> +ENABLE_ACLK_IMEM_SSS,
-> +ENABLE_ACLK_IMEM_SLIMSSS,
-> +ENABLE_PCLK_IMEM,
-> +ENABLE_PCLK_IMEM_SSS,
-> +ENABLE_PCLK_IMEM_SLIMSSS,
-
-Add a tab in front of registers.
-
-> +};
-> +
-> +static const struct samsung_gate_clock imem_gate_clks[] __initconst = {
-> +	/* ENABLE_ACLK_IMEM */
-> +	GATE(CLK_ACLK_AXI2AHB_IMEMH, "aclk_axi2ahb_imemh", "aclk_imem_200",
-> +			ENABLE_ACLK_IMEM, 24, 0, 0),
-> +	GATE(CLK_ACLK_AXIDS_SROMC, "aclk_axids_sromc", "aclk_imem_200",
-> +			ENABLE_ACLK_IMEM, 23, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_SROMC, "aclk_sromc", "aclk_imem_200",
-> +			ENABLE_ACLK_IMEM, 22, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_BTS_ARBG_TX, "aclk_bts_arbg_tx", "aclk_imem_266",
-> +			ENABLE_ACLK_IMEM, 21, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_ASYNCAXI_IMEMX, "aclk_asyncaxi_imemx", "aclk_imem_266",
-> +			ENABLE_ACLK_IMEM, 20, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_AXIUS_IMEMX, "aclk_axius_imemx", "aclk_imem_266",
-> +			ENABLE_ACLK_IMEM, 19, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_XIU_IMEMX, "aclk_xiu_imemx", "aclk_imem_266",
-> +			ENABLE_ACLK_IMEM, 18, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_ASYNCAXI_SSSX, "aclk_asyncaxi_sssx", "aclk_imem_sssx_266",
-> +			ENABLE_ACLK_IMEM, 17, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_BTS_SLIMSSS, "aclk_bts_slimsss", "aclk_imem_sssx_266",
-> +			ENABLE_ACLK_IMEM, 15, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_BTS_SSS_DRAM, "aclk_bts_sss_dram", "aclk_imem_sssx_266",
-> +			ENABLE_ACLK_IMEM, 14, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_BTS_SSS_CCI, "aclk_bts_sss_cci", "aclk_imem_sssx_266",
-> +			ENABLE_ACLK_IMEM, 13, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_ALB_IMEM, "aclk_alb_imem", "aclk_imem_266",
-> +			ENABLE_ACLK_IMEM, 12, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_AXIDS_PIMEMX_IMEM1P, "aclk_axids_pimemx_imem1p", "aclk_imem_200",
-> +			ENABLE_ACLK_IMEM, 11, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_AXIDS_PIMEMX_IMEM0P, "aclk_axids_pimemx_imem0p", "aclk_imem_200",
-> +			ENABLE_ACLK_IMEM, 10, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_AXIDS_PIMEMX_GIC, "aclk_axids_pimemx_gic", "aclk_imem_200",
-> +			ENABLE_ACLK_IMEM, 9, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_ASYNCAHBM_SSS_ATLAS, "aclk_asyncahbm_sss_atlas", "aclk_imem_sssx_266",
-> +			ENABLE_ACLK_IMEM, 7, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_ASYNCAXIS_MIF_PIMEMX, "aclk_asyncaxis_mif_pimemx", "aclk_imem_200",
-> +			ENABLE_ACLK_IMEM, 6, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_AXI2APB_IMEM1P, "aclk_axi2apb_imem1p", "aclk_imem_200",
-> +			ENABLE_ACLK_IMEM, 5, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_AXI2APB_IMEM0P, "aclk_axi2apb_imem0p", "aclk_imem_200",
-> +			ENABLE_ACLK_IMEM, 4, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_XIU_SSSX, "aclk_xiu_sssx", "aclk_imem_sssx_266",
-> +			ENABLE_ACLK_IMEM, 3, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_XIU_PIMEMX, "aclk_xiu_pimemx", "aclk_imem_200",
-> +			ENABLE_ACLK_IMEM, 2, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_IMEMND_266, "aclk_imemnd_266", "aclk_imem_266",
-> +			ENABLE_ACLK_IMEM, 1, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_ACLK_GIC, "aclk_gic", "aclk_imem_200",
-> +			ENABLE_ACLK_IMEM, 0, CLK_IGNORE_UNUSED, 0),
-> +
-> +	/* ENABLE_ACLK_IMEM_SSS */
-> +	GATE(CLK_ACLK_SSS, "aclk_sss", "aclk_imem_sssx_266",
-> +			ENABLE_ACLK_IMEM_SSS, 0, CLK_IGNORE_UNUSED, 0),
-> +	/* ENABLE_ACLK_IMEM_SLIMSSS */
-> +	GATE(CLK_ACLK_SLIMSSS, "aclk_slimsss", "aclk_imem_sssx_266",
-> +			ENABLE_ACLK_IMEM_SLIMSSS, 0, CLK_IGNORE_UNUSED, 0),
-> +
-> +	/* ENABLE_PCLK_IMEM */
-> +	GATE(CLK_PCLK_GPIO_IMEM, "pclk_gpio_imem", "aclk_imem_200",
-> +			ENABLE_PCLK_IMEM, 17, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_PCLK_ASYNCAXI_IMEMX, "pclk_asyncaxi_imemx", "aclk_imem_200",
-> +			ENABLE_PCLK_IMEM, 16, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_PCLK_BTS_ARBG_TX, "pclk_bts_arbg_tx", "aclk_imem_200",
-> +			ENABLE_PCLK_IMEM, 15, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_PCLK_ASYNCAPB_ARBG_TX, "pclk_asyncapb_arbg_tx", "aclk_imem_200",
-> +			ENABLE_PCLK_IMEM, 14, CLK_IGNORE_UNUSED, 0),
-> +
-> +	GATE(CLK_PCLK_BTS_SLIMSSS, "pclk_bts_slimsss", "aclk_imem_200",
-> +			ENABLE_PCLK_IMEM, 8, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_PCLK_BTS_SSS_DRAM, "pclk_bts_sss_dram", "aclk_imem_200",
-> +			ENABLE_PCLK_IMEM, 7, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_PCLK_BTS_SSS_CCI, "pclk_bts_sss_cci", "aclk_imem_200",
-> +			ENABLE_PCLK_IMEM, 6, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_PCLK_ALB_IMEM, "pclk_alb_imem", "aclk_imem_200",
-> +			ENABLE_PCLK_IMEM, 5, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_PCLK_PMU_IMEM, "pclk_pmu_imem", "aclk_imem_200",
-> +			ENABLE_PCLK_IMEM, 4, CLK_IGNORE_UNUSED, 0),
-> +	GATE(CLK_PCLK_SYSREG_IMEM, "pclk_sysreg_imem", "aclk_imem_200",
-> +			ENABLE_PCLK_IMEM, 3, CLK_IGNORE_UNUSED, 0),
-> +	/* ENABLE_PCLK_IMEM_SSS */
-> +	GATE(CLK_PCLK_SSS, "pclk_sss", "aclk_imem_200",
-> +			ENABLE_PCLK_IMEM, 0, CLK_IGNORE_UNUSED, 0),
-> +	/* ENABLE_PCLK_IMEM_SLIMSSS */
-> +	GATE(CLK_PCLK_SLIMSSS, "pclk_slimsss", "aclk_imem_200",
-> +			ENABLE_PCLK_IMEM, 0, CLK_IGNORE_UNUSED, 0),
-> +};
-> +
-> +static const struct samsung_cmu_info imem_cmu_info __initconst = {
-> +	.gate_clks		= imem_gate_clks,
-> +	.nr_gate_clks		= ARRAY_SIZE(imem_gate_clks),
-> +	.nr_clk_ids		= IMEM_NR_CLK,
-> +	.clk_regs		= imem_clk_regs,
-> +	.nr_clk_regs		= ARRAY_SIZE(imem_clk_regs),
-> +};
-> +
-> +static void __init exynos5433_cmu_imem_init(struct device_node *np)
-> +{
-> +	samsung_cmu_register_one(np, &imem_cmu_info);
-> +}
-> +
-> +CLK_OF_DECLARE(exynos5433_cmu_imem, "samsung,exynos5433-cmu-imem",
-> +		exynos5433_cmu_imem_init);
-
-Except for "samsmung,exynos5433-cmu-atlas/apollo", the remained clock blocks
-were added to exynos5433_cmu_of_match[] table for power management.
-
-If there is no any h/w issue, add the new entry to exynos5433_cmu_of_match for imem block.
-
-> +
->  /*
->   * Register offset definitions for CMU_G2D
->   */
-> diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-> index 87bb2b017143..312d8810b56d 100644
-> --- a/include/dt-bindings/clock/exynos5433.h
-> +++ b/include/dt-bindings/clock/exynos5433.h
-> @@ -623,6 +623,61 @@
->  
->  #define FSYS_NR_CLK			116
->  
-> +/* CMU_IMEM */
-> +#define CLK_ACLK_SSS			1
-> +#define CLK_ACLK_SLIMSSS		2
-> +#define CLK_ACLK_RTIC			3
-> +#define CLK_ACLK_XIU_SSSX		4
-> +#define CLK_ACLK_ASYNCAHBM_SSS_ATLAS	5
-> +#define CLK_ACLK_ASYNCAXI_SSSX		6
-> +#define CLK_ACLK_BTS_SSS_CCI		7
-> +#define CLK_ACLK_BTS_SSS_DRAM		8
-> +#define CLK_ACLK_BTS_SLIMSSS		9
-> +#define CLK_ACLK_SMMU_SSS_CCI		10
-> +#define CLK_ACLK_SMMU_SSS_DRAM		11
-> +#define CLK_ACLK_SMMU_SLIMSSS		12
-> +#define CLK_ACLK_SMMU_RTIC		13
-> +#define CLK_ACLK_IMEMND_266		14
-> +#define CLK_ACLK_ALB_IMEM		15
-> +#define CLK_ACLK_XIU_IMEMX		16
-> +#define CLK_ACLK_AXIUS_IMEMX		17
-> +#define CLK_ACLK_ASYNCAXI_IMEMX		18
-> +#define CLK_ACLK_ARBG_TX		19
-> +#define CLK_ACLK_BTS_ARBG_TX		20
-> +#define CLK_ACLK_SMMU_ARBG_TX		21
-> +#define CLK_ACLK_GIC			22
-> +#define CLK_ACLK_INT_MEM		23
-> +#define CLK_ACLK_XIU_PIMEMX		24
-> +#define CLK_ACLK_AXI2APB_IMEM0P		25
-> +#define CLK_ACLK_AXI2APB_IMEM1P		26
-> +#define CLK_ACLK_ASYNCAXIS_MIF_PIMEMX	27
-> +#define CLK_ACLK_AXIDS_PIMEMX_GIC	28
-> +#define CLK_ACLK_AXIDS_PIMEMX_IMEM0P	29
-> +#define CLK_ACLK_AXIDS_PIMEMX_IMEM1P	30
-> +#define CLK_ACLK_SROMC			31
-> +#define CLK_ACLK_AXIDS_SROMC		32
-> +#define CLK_ACLK_AXI2AHB_IMEMH		33
-> +#define CLK_PCLK_SSS			34
-> +#define CLK_PCLK_SLIMSSS		35
-> +#define CLK_PCLK_RTIC			36
-> +#define CLK_PCLK_SYSREG_IMEM		37
-> +#define CLK_PCLK_PMU_IMEM		38
-> +#define CLK_PCLK_ALB_IMEM		39
-> +#define CLK_PCLK_BTS_SSS_CCI		40
-> +#define CLK_PCLK_BTS_SSS_DRAM		41
-> +#define CLK_PCLK_BTS_SLIMSSS		42
-> +#define CLK_PCLK_SMMU_SSS_CCI		43
-> +#define CLK_PCLK_SMMU_SSS_DRAM		44
-> +#define CLK_PCLK_SMMU_SLIMSSS		45
-> +#define CLK_PCLK_SMMU_RTIC		46
-> +#define CLK_PCLK_ASYNCAPB_ARBG_TX	47
-> +#define CLK_PCLK_BTS_ARBG_TX		48
-> +#define CLK_PCLK_SMMU_ARBG_TX		49
-> +#define CLK_PCLK_ASYNCAXI_IMEMX		50
-> +#define CLK_PCLK_GPIO_IMEM		51
-> +
-> +#define IMEM_NR_CLK			52
-> +
->  /* CMU_G2D */
->  #define CLK_MUX_ACLK_G2D_266_USER	1
->  #define CLK_MUX_ACLK_G2D_400_USER	2
+> If Windows uses it, then systems will ship with it regardless of what Linux
+> does with it, so your "acquiescing to what has been done" argument leads to
+> nowhere in this particular case.  It's just a matter of whether or not
+> Linux will provide the same level of functionality as Windows with respect
+> to this and IMO it would be impractical to refuse to do that for purely
+> formal reasons.
 > 
+> > I will raise the point in the appropriate forum, it is up to Bjorn
+> > and Rafael to decide on this patch.
+> 
+> For the record, my opinion is that there's a little choice on whether
+> or not to use this extra information that firmware is willing to give
+> us.  It could be defined in a better way and so on, but since it is in
+> use anyway, we really have nothing to gain by refusing to use it.
 
+AFAIK PCI firmware bindings should go into PCI firmware specifications,
+not Microsoft webpages.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+If we deviate from this model there is no way to tell whether that extra
+information is right or wrong, it is not necessarily about this patch,
+it is about changing the way these bindings are deployed in future
+systems.
+
+> Now, where the handling of it belongs to is a separate matter that should be
+> decided on its own.
+
+I think that the way these bindings were deployed is wrong, I agree this
+is not the right forum to discuss that though. What you will do with
+this patch is not my call anyway, I just expressed my opinion.
+
+Thanks,
+Lorenzo
