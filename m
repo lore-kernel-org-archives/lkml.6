@@ -2,238 +2,156 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B896C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F114BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DA052146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:24:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DA052146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A6FF6214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:24:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dZuQbNa8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6FF6214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731237AbeKVB7E (ORCPT
+        id S1731276AbeKVB7M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 20:59:04 -0500
-Received: from foss.arm.com ([217.140.101.70]:52790 "EHLO foss.arm.com"
+        Wed, 21 Nov 2018 20:59:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728289AbeKVB7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 20:59:04 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B507F1DC8;
-        Wed, 21 Nov 2018 07:24:11 -0800 (PST)
-Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25C043F5CF;
-        Wed, 21 Nov 2018 07:24:10 -0800 (PST)
-Date:   Wed, 21 Nov 2018 16:24:09 +0100
-From:   Christoffer Dall <christoffer.dall@arm.com>
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     peng.hao2@zte.com.cn, marc.zyngier@arm.com, andre.przywara@arm.com,
-        linux-kernel@vger.kernel.org, leif.lindholm@linaro.org,
-        ard.bieshseuvel@linaro.org, kvmarm@lists.cs.columbia.edu,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] kvm: arm/arm64 : fix vm's hanging at startup time
-Message-ID: <20181121152409.GC17441@e113682-lin.lund.arm.com>
-References: <01746207-c9bb-dc91-58d7-a66c0d971f88@arm.com>
- <201811211656540883310@zte.com.cn>
- <20181121110620.GC18678@e113682-lin.lund.arm.com>
- <26c4ad81-f808-5a84-c725-72db8de7cd2b@arm.com>
+        id S1728289AbeKVB7M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 20:59:12 -0500
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6877D214F1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 15:24:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542813859;
+        bh=zoGE4NFolTS70Rh8ZjCfP7diJadRHmSYarwzm6AxZ/c=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=dZuQbNa8FPzS1u6JmJ7ealeM4+bPG7ikbbFbPC5sndzVt0XwVt7VlRk2cIzGOpc7f
+         9TlPLHCGCKUV6w1gT7fXOoGCsINorkpJSr4Oq8HuBesLKHDbcPM7qM5rJFUh8cLb+i
+         XVZ2maho4QDvqpY4LdzZ1hUrKHfGYGTs6jinjb8o=
+Received: by mail-wr1-f45.google.com with SMTP id p4so6113316wrt.7
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 07:24:19 -0800 (PST)
+X-Gm-Message-State: AA+aEWbhiV1CDV75sXhS6pgQibzcdn/X52mQ1BWNkmMVt0sE7uaNqDjq
+        XGfdpWEq1JUSqR48KRHJIBWZe7zJmu+xV1al2NQB+Q==
+X-Google-Smtp-Source: AFSGD/WA47FL9rOyCvm/0PjG+mtZNQX72FedjDWikwqn+UsMuZwBW8seFHjQfuqFcuQzAvmRfhDB5MNqhMm+bfSMYS8=
+X-Received: by 2002:adf:ea81:: with SMTP id s1mr6122764wrm.309.1542813857846;
+ Wed, 21 Nov 2018 07:24:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26c4ad81-f808-5a84-c725-72db8de7cd2b@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <5AF03EBD02000078001C1303@prv1-mh.provo.novell.com>
+ <5AF03EBD02000000000F91D6@prv1-mh.provo.novell.com> <5AF03EBD02000078001FE590@prv1-mh.provo.novell.com>
+ <5BF52F0E02000078001FE5BE@prv1-mh.provo.novell.com>
+In-Reply-To: <5BF52F0E02000078001FE5BE@prv1-mh.provo.novell.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 21 Nov 2018 07:24:05 -0800
+X-Gmail-Original-Message-ID: <CALCETrUa4iw+y+EXSqq_ibJQAfR0+U52Q=tO8_bj1YJgtMUP+Q@mail.gmail.com>
+Message-ID: <CALCETrUa4iw+y+EXSqq_ibJQAfR0+U52Q=tO8_bj1YJgtMUP+Q@mail.gmail.com>
+Subject: Re: [PATCH v2] x86-64/Xen: fix stack switching
+To:     Jan Beulich <JBeulich@suse.com>
+Cc:     Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 12:17:45PM +0000, Julien Thierry wrote:
-> 
-> 
-> On 21/11/18 11:06, Christoffer Dall wrote:
-> >Hi,
-> >
-> >On Wed, Nov 21, 2018 at 04:56:54PM +0800, peng.hao2@zte.com.cn wrote:
-> >>>On 19/11/2018 09:10, Mark Rutland wrote:
-> >>>>On Sat, Nov 17, 2018 at 10:58:37AM +0800, peng.hao2@zte.com.cn wrote:
-> >>>>>>On 16/11/18 00:23, peng.hao2@zte.com.cn wrote:
-> >>>>>>>>Hi,
-> >>>>>>>>>When virtual machine starts, hang up.
-> >>>>>>>>
-> >>>>>>>>I take it you mean the *guest* hangs? Because it doesn't get a timer
-> >>>>>>>>interrupt?
-> >>>>>>>>
-> >>>>>>>>>The kernel version of guest
-> >>>>>>>>>is 4.16. Host support vgic_v3.
-> >>>>>>>>
-> >>>>>>>>Your host kernel is something recent, I guess?
-> >>>>>>>>
-> >>>>>>>>>It was mainly due to the incorrect vgic_irq's(intid=27) group value
-> >>>>>>>>>during injection interruption. when kvm_vgic_vcpu_init is called,
-> >>>>>>>>>dist is not initialized at this time. Unable to get vgic V3 or V2
-> >>>>>>>>>correctly, so group is not set.
-> >>>>>>>>
-> >>>>>>>>Mmh, that shouldn't happen with (v)GICv3. Do you use QEMU (which
-> >>>>>>>>version?) or some other userland tool?
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>>QEMU emulator version 3.0.50 .
-> >>>>>>>
-> >>>>>>>>>group is setted to 1 when vgic_mmio_write_group is invoked at some
-> >>>>>>>>>time.
-> >>>>>>>>>when irq->group=0 (intid=27), No ICH_LR_GROUP flag was set and
-> >>>>>>>>>interrupt injection failed.
-> >>>>>>>>>
-> >>>>>>>>>Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> >>>>>>>>>---
-> >>>>>>>>>   virt/kvm/arm/vgic/vgic-v3.c | 2 +-
-> >>>>>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>>>>>>
-> >>>>>>>>>diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-> >>>>>>>>>index 9c0dd23..d101000 100644
-> >>>>>>>>>--- a/virt/kvm/arm/vgic/vgic-v3.c
-> >>>>>>>>>+++ b/virt/kvm/arm/vgic/vgic-v3.c
-> >>>>>>>>>@@ -198,7 +198,7 @@ void vgic_v3_populate_lr(struct kvm_vcpu *vcpu,
-> >>>>>>>>>struct vgic_irq *irq, int lr) if (vgic_irq_is_mapped_level(irq) &&
-> >>>>>>>>>(val & ICH_LR_PENDING_BIT)) irq->line_level = false;
-> >>>>>>>>>
-> >>>>>>>>>-    if (irq->group)
-> >>>>>>>>>+    if (model == KVM_DEV_TYPE_ARM_VGIC_V3)
-> >>>>>>>>
-> >>>>>>>>This is not the right fix, not only because it basically reverts the
-> >>>>>>>>GICv3 part of 87322099052 (KVM: arm/arm64: vgic: Signal IRQs using
-> >>>>>>>>their configured group).
-> >>>>>>>>
-> >>>>>>>>Can you try to work out why kvm_vgic_vcpu_init() is apparently called
-> >>>>>>>>before dist->vgic_model is set, also what value it has?
-> >>>>>>>>If I understand the code correctly, that shouldn't happen for a GICv3.
-> >>>>>>>>
-> >>>>>>>Even if the value of  group is correctly assigned in kvm_vgic_vcpu_init, the group is then written 0 through vgic_mmio_write_group.
-> >>>>>>>   If the interrupt comes at this time, the interrupt injection fails.
-> >>>>>>
-> >>>>>>Does that mean that the guest is configuring its interrupts as Group0?
-> >>>>>>That sounds wrong, Linux should configure all it's interrupts as
-> >>>>>>non-secure group1.
-> >>>>>
-> >>>>>no, I think that uefi dose this, not linux.
-> >>>>>1. kvm_vgic_vcpu_init
-> >>>>>2. vgic_create
-> >>>>>3. kvm_vgic_dist_init
-> >>>>>4.vgic_mmio_write_group: uefi as guest, write group=0
-> >>>>>5.vgic_mmio_write_group: linux as guest, write group=1
-> >>>>
-> >>>>Is this the same issue fixed by EDK2 commit:
-> >>>>
-> >>>>66127011a544b90e ("ArmPkg/ArmGicDxe ARM: fix encoding for GICv3 interrupt acknowledge")
-> >>>>
-> >>>>... where EDK2 would try to use IAR0 rather than IAR1?
-> >>>>
-> >>>>The commit messages notes this lead to a boot-time hang.
-> >>>
-> >>>I managed to trigger an issue with a really old EFI implementation that
-> >>>doesn't configure its interrupts as Group1, and yet tries to ACK its
-> >>>interrupts using the Group1 accessor. Guess what? It is not going to work.
-> >>>
-> >>>Commit c7fefb690661f2e38afcb8200bd318ecf38ab961 in the edk2 tree seems
-> >>>to be the fix (I only assume it does, I haven't actually checked). A
-> >>>recent build, as found in Debian Buster, works perfectly (tested with
-> >>>both QEMU v2.12 and tip of tree).
-> >>>
-> >>>Now, I really don't get what you're saying about Linux not getting
-> >>>interrupts. How do you get to booting Linux if EFI is not making any
-> >>>forward progress? Are you trying them independently?
-> >>>
-> >>I start linux with bypassing uefi, the print info is the same.
-> >>[507107.748908]  vgic_mmio_write_group:## intid/27 group=0
-> >>[507107.752185]  vgic_mmio_write_group:## intid/27 group=0
-> >>[507107.899566]  vgic_mmio_write_group:## intid/27 group=1
-> >>[507107.907370]  vgic_mmio_write_group:## intid/27 group=1
-> >>the command line is like this:
-> >>/home/qemu-patch/linshi/qemu/aarch64-softmmu/qemu-system-aarch64  -machine virt-3.1,accel=kvm,usb=off,dump-guest-core=off,gic-version=3  -kernel /home/kernelboot/vmlinuz-4.16.0+ -initrd /home/kernelboot/initramfs-4.16.0+.img -append root=/dev/mapper/cla-root ro crashkernel=auto rd.lvm.lv=cla/root rd.lvm.lv=cla/swap.UTF-8  -drive file=/home/centos74-ph/boot.qcow2,format=qcow2,if=none,id=drive-scsi0-0-0-0 -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0,bootindex=1  -vnc 0.0.0.0:0 -k en-us -device virtio-gpu-pci,id=video0,max_outputs=1,bus=pci.3,addr=0x0 -device pvpanic-mmio -msg timestamp=on
-> >>
-> >>This is strange. That's probably the Linux 4.16  kernel setting group to 0, and I'll continue to track in guest.
-> >
-> >Could you try the following patch:
-> >
-> >diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
-> >index c0c0b88af1d5..6fa858c7a5a6 100644
-> >--- a/virt/kvm/arm/vgic/vgic-init.c
-> >+++ b/virt/kvm/arm/vgic/vgic-init.c
-> >@@ -231,13 +231,6 @@ int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu)
-> >  			irq->config = VGIC_CONFIG_LEVEL;
-> >  		}
-> >-		/*
-> >-		 * GICv3 can only be created via the KVM_DEVICE_CREATE API and
-> >-		 * so we always know the emulation type at this point as it's
-> >-		 * either explicitly configured as GICv3, or explicitly
-> >-		 * configured as GICv2, or not configured yet which also
-> >-		 * implies GICv2.
-> >-		 */
-> >  		if (dist->vgic_model == KVM_DEV_TYPE_ARM_VGIC_V3)
-> >  			irq->group = 1;
-> >  		else
-> >@@ -298,6 +291,16 @@ int vgic_init(struct kvm *kvm)
-> >  	if (ret)
-> >  		goto out;
-> >+	/* Initialize groups on CPUs created before the VGIC type was known */
-> >+	kvm_for_each_vcpu(i, vcpu, kvm) {
-> >+		struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
-> >+
-> >+		for (i = 0; i < VGIC_NR_PRIVATE_IRQS; i++) {
-> >+			struct vgic_irq *irq = &vgic_cpu->private_irqs[i];
-> >+			irq->group = 1;
-> >+		}
-> >+	}
-> >+
-> >  	if (vgic_has_its(kvm)) {
-> >  		ret = vgic_v4_init(kvm);
-> >  		if (ret)
-> >
-> >
-> 
-> If the value of dist->vgic_model is not properly initialized at the time we
-> call kvm_vgic_vcpu_init is call, won't we still overwrite the irq->group
-> when we get there?
+On Wed, Nov 21, 2018 at 2:10 AM Jan Beulich <JBeulich@suse.com> wrote:
+>
+> While in the native case entry into the kernel happens on the trampoline
+> stack, PV Xen kernels get entered with the current thread stack right
+> away. Hence source and destination stacks are identical in that case,
+> and special care is needed.
+>
+> Other than in sync_regs() the copying done on the INT80 path as well as
+> on the NMI path itself isn't NMI / #MC safe, as either of these events
+> occurring in the middle of the stack copying would clobber data on the
+> (source) stack. (Of course, in the NMI case only #MC could break
+> things.)
+>
+> I'm not altering the similar code in interrupt_entry(), as that code
+> path is unreachable afaict when running PV Xen guests.
+>
+> Fixes: 7f2590a110b837af5679d08fc25c6227c5a8c497
+> Signed-off-by: Jan Beulich <jbeulich@suse.com>
+> Cc: stable@kernel.org
+> ---
+> v2: Correct placement of .Lint80_keep_stack label.
+> ---
+>  arch/x86/entry/entry_64.S        |    8 ++++++++
+>  arch/x86/entry/entry_64_compat.S |   10 ++++++++--
+>  2 files changed, 16 insertions(+), 2 deletions(-)
+>
+> --- 4.20-rc3/arch/x86/entry/entry_64.S
+> +++ 4.20-rc3-x86_64-stack-switch-Xen/arch/x86/entry/entry_64.S
+> @@ -1380,6 +1380,12 @@ ENTRY(nmi)
+>         swapgs
+>         cld
+>         SWITCH_TO_KERNEL_CR3 scratch_reg=%rdx
+> +
+> +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rdx
+> +       subq    $8, %rdx
+> +       xorq    %rsp, %rdx
+> +       shrq    $PAGE_SHIFT, %rdx
+> +       jz      .Lnmi_keep_stack
 
-I don't understand this question.  When we get where?
+This code shouldn't even be reachable on Xen:
 
-> (I still haven't seen why we could consider
-> dist->vgic_model is initialized at that point).
+commit 43e4111086a70c78bedb6ad990bee97f17b27a6e
+Author: Juergen Gross <jgross@suse.com>
+Date:   Thu Nov 2 00:59:07 2017 -0700
 
-Because there is no enforced ordering between creating VCPUs and
-creating the VGIC.
+    xen, x86/entry/64: Add xen NMI trap entry
 
-> 
-> Shouldn't we do the irq->group initialization somewhere in
-> kvm_arch_vcpu_ioctl_vcpu_init? (with some vgic_* function to encapsulate it
-> of course). At that point I believe we know that dist->vgic_model is
-> initialized.
-> 
+    Instead of trying to execute any NMI via the bare metal's NMI trap
+    handler use a Xen specific one for PV domains, like we do for e.g.
+    debug traps. As in a PV domain the NMI is handled via the normal
+    kernel stack this is the correct thing to do.
 
-See above.  AFAICT we don't have a single point at which we can do
-everything because creation of the two components can be interleaved.
-
-We could hook into kvm_vcpu_first_run_init(), but then userspace can
-observe uninitialized values if it looks at the GIC state prior to
-running the VCPUs, which is also not great.
-
-In other words, I think the problem is that you can do:
-
-  create_vcpu(0);
-  create_vgic(v3);
-  create_vcpu(2);
-
-Now you'll have vcpu0 have its private IRQs set to group 0, and you'll
-have vcpu1 have its private IRQs set to group 1 (prior to my patch).
+    This will enable us to get rid of the very fragile and questionable
+    dependencies between the bare metal NMI handler and Xen assumptions
+    believed to be broken anyway.
 
 
-Am I missing something?
+>         movq    %rsp, %rdx
+>         movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+>         UNWIND_HINT_IRET_REGS base=%rdx offset=8
+> @@ -1389,6 +1395,8 @@ ENTRY(nmi)
+>         pushq   2*8(%rdx)       /* pt_regs->cs */
+>         pushq   1*8(%rdx)       /* pt_regs->rip */
+>         UNWIND_HINT_IRET_REGS
+> +.Lnmi_keep_stack:
+> +
+>         pushq   $-1             /* pt_regs->orig_ax */
+>         PUSH_AND_CLEAR_REGS rdx=(%rdx)
+>         ENCODE_FRAME_POINTER
+> --- 4.20-rc3/arch/x86/entry/entry_64_compat.S
+> +++ 4.20-rc3-x86_64-stack-switch-Xen/arch/x86/entry/entry_64_compat.S
+> @@ -361,17 +361,23 @@ ENTRY(entry_INT80_compat)
+>
+>         /* Need to switch before accessing the thread stack. */
+>         SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
+> +
+> +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rdi
+> +       subq    $8, %rdi
+> +       xorq    %rsp, %rdi
+> +       shrq    $PAGE_SHIFT, %rdi
+> +       jz      .Lint80_keep_stack
 
+This comparison is IMO the wrong test entirely.  How about something like:
 
-Thanks,
-
-    Christoffer
+/* On Xen PV, entry_INT80_compat is called on the thread stack, so
+rewinding to the top of the thread stack would allow an NMI to
+overwrite the hardware frame before we copy it. */
+ALTERNATIVE "", "jmp .Lint80_keep_stack", X86_FEATURE_XENPV
