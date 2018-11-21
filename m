@@ -3,128 +3,359 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5F4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BAAC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75D7221479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:06:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6966A2145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:09:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="udYjW+l7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75D7221479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Sp2/9xy+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6966A2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbeKUQjw (ORCPT
+        id S1727946AbeKUQmN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 11:39:52 -0500
-Received: from mail-eopbgr70134.outbound.protection.outlook.com ([40.107.7.134]:55008
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726195AbeKUQju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 11:39:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U399J07lBHGRdfbieH9Y5OZd8QSZrYtPxuzshxzgBW8=;
- b=udYjW+l7w6ZTP6Tz5UEVXGTSheLw0BHGxIxxqrSOT+8tGL1PSXwEjNulLvFY/7VOJnrFhehpl2zPodhFBaq33LV9fc8tccc8zPcuS5WRxJAnrOuDsuJBHhbXhHVlxrXXz4aOsIaFEJtbjO2A1bdvWLZPYY6qI4N5u+urzwUICEs=
-Received: from AM5PR0201MB2451.eurprd02.prod.outlook.com (10.169.244.8) by
- AM5PR0201MB2243.eurprd02.prod.outlook.com (10.169.242.135) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.23; Wed, 21 Nov 2018 06:06:42 +0000
-Received: from AM5PR0201MB2451.eurprd02.prod.outlook.com
- ([fe80::7d9b:e9c1:14e6:b72a]) by AM5PR0201MB2451.eurprd02.prod.outlook.com
- ([fe80::7d9b:e9c1:14e6:b72a%3]) with mapi id 15.20.1294.048; Wed, 21 Nov 2018
- 06:06:41 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     Guenter Roeck <linux@roeck-us.net>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 2/2] hwmon: (ntc_thermistor): add support for B57891S0103
- from Epcos
-Thread-Topic: [PATCH 2/2] hwmon: (ntc_thermistor): add support for B57891S0103
- from Epcos
-Thread-Index: AQHUfm7h4Hg8oMasp0Wh5BsbVRWt06VXV9oAgABWMoD///KbAIACIzUA
-Date:   Wed, 21 Nov 2018 06:06:41 +0000
-Message-ID: <f15d3e1c-1b53-f390-78e2-6a88c77aed05@axentia.se>
-References: <20181117121248.32143-1-peda@axentia.se>
- <20181117121248.32143-2-peda@axentia.se>
- <20181119170732.GA27435@roeck-us.net>
- <f1235661-f8f2-9885-1e7f-491f5c234078@axentia.se>
- <20181119212806.GC5795@roeck-us.net>
-In-Reply-To: <20181119212806.GC5795@roeck-us.net>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-x-originating-ip: [85.226.244.23]
-x-clientproxiedby: HE1PR06CA0139.eurprd06.prod.outlook.com
- (2603:10a6:7:16::26) To AM5PR0201MB2451.eurprd02.prod.outlook.com
- (2603:10a6:203:35::8)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM5PR0201MB2243;6:mvu9n5BXKC1bnezvLZl3W3pGpaMvvVTl7ypxEMp/PXCdNKfmcGrj4/JrHVR8ITfxHrZ5tcSF0hua0qhPHPtL0GXnKQ4tuZOzIhMJbLmySwkCOtPhjFuFYD263054w8AbkFKjruijdir8Do/SgEp2QS4jGmlttd9BC5CaNvEfUbXQo1FH4uy6le4GizVM7hkeJ3099YWnDSvFG6SQ+1l+U7Hv0zp9qQxWrhx4nSri9x6xtV4gq6dJB3BoWdJk9FOCOjmxY74jK1eAJgntlh2q1w2LtVHcPnUYzkf39UEx8AA76XQFX3/MTIi1StEIiIzzi5b52KwX5P4CX2LKHLlac0pAfIs0jmse9gHSBPvz7JJHwvGh943TVVuEFgSNJlParkfdALwaWh+gOiWYzXbzoXe3/2ctAF7eQRaAWxHOZ9Vd/bjIrAg8PkAq6cZgLAltpgINr2XRssJkQSmVNwIFAw==;5:7Z8tsiX7H9tXLXCJyFaYdf3e5zx8ozf02v7I84WHXXP6kNgBAIKE13e381R5mqvcMZy3lKI02bjt4gySZ3PXpXxZ+Ox7FgRIRhSoSgLt7iR8G+SsxfrYenl9oYi/obePBg9LGDC75SXhbVRB75+LqQHUPLog8YOXKflHnEeDwaY=;7:b0poi+OPNnQfVM89HjkBwIomSPQ1Ay4We24njBhuRRmYiSzXoRRlsjN/g77qQgadkiHyeFqQw6jwbwxYZtRIVkFkhr1QNBaN9QTvcdNWQBbwmmylom8jyS3YHdK2d/aN3oBEjv9L4vmmbjIsIyyv4g==
-x-ms-office365-filtering-correlation-id: 9cf7db5c-ebb1-4b28-0f1e-08d64f7780f9
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:AM5PR0201MB2243;
-x-ms-traffictypediagnostic: AM5PR0201MB2243:
-x-microsoft-antispam-prvs: <AM5PR0201MB2243F57F91FA5B276812D527BCDA0@AM5PR0201MB2243.eurprd02.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231442)(944501410)(52105112)(10201501046)(93006095)(93001095)(3002001)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:AM5PR0201MB2243;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0201MB2243;
-x-forefront-prvs: 08635C03D4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(136003)(396003)(39830400003)(366004)(199004)(189003)(2906002)(2616005)(476003)(486006)(68736007)(11346002)(446003)(65826007)(71190400001)(99286004)(256004)(93886005)(52116002)(14444005)(6512007)(76176011)(5660300001)(6436002)(7736002)(71200400001)(53936002)(305945005)(102836004)(25786009)(14454004)(97736004)(26005)(3846002)(65806001)(316002)(386003)(186003)(53546011)(66066001)(31696002)(54906003)(6506007)(65956001)(58126008)(3260700006)(86362001)(2900100001)(74482002)(36756003)(6246003)(4001150100001)(31686004)(105586002)(229853002)(8936002)(6116002)(8676002)(81156014)(6916009)(6486002)(81166006)(508600001)(64126003)(106356001)(4326008)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0201MB2243;H:AM5PR0201MB2451.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: axentia.se does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Yv+PzAaAzCeOUA3kQqvUSVDnM4AOUBwAFY8LnvACP2y4EJQvmGpIHjOoaL3DQGlA5zCNcXaQ8x4oVSzNP02jGdcOkRydKNbEftKCJwqkjxP3GxrDZNx0tN93uYU+a5Tnkrxk44cptckRZmFHotPQ1876VJUqk4p2QDyNh/NqQ0AutMiUBZmXqJNXaMNfvElGrrYLaGEVFPSk++QKCkjCHmbAL74DhCPUGbrUv58MX2IliQqvwZBFrCeYUV8cEbVfG++sAbaUfsf6/wQ9FKynNsjXsk/YV+Qh6uV5IKI6S8wvyQT+67VU4xbxRWJB+lN2xoLFSq9HIJCGwvCIOxG4Fy5rGiY1fvPJG6/XiXZPR/c=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A4B519E5F340654C947F9DC427B2B62A@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 21 Nov 2018 11:42:13 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:10513 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbeKUQmN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 11:42:13 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bf4f6750000>; Tue, 20 Nov 2018 22:08:53 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 20 Nov 2018 22:09:07 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 20 Nov 2018 22:09:07 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 21 Nov
+ 2018 06:09:07 +0000
+Subject: Re: [PATCH v2 0/6] RFC: gup+dma: tracking dma-pinned pages
+To:     Tom Talpey <tom@talpey.com>, <john.hubbard@gmail.com>,
+        <linux-mm@kvack.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20181110085041.10071-1-jhubbard@nvidia.com>
+ <942cb823-9b18-69e7-84aa-557a68f9d7e9@talpey.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <97934904-2754-77e0-5fcb-83f2311362ee@nvidia.com>
+Date:   Tue, 20 Nov 2018 22:09:06 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9cf7db5c-ebb1-4b28-0f1e-08d64f7780f9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2018 06:06:41.6683
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0201MB2243
+In-Reply-To: <942cb823-9b18-69e7-84aa-557a68f9d7e9@talpey.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1542780533; bh=VsYY+pZmJupKW3/8MneAkLYd+1iL+ulPPvbmpYRVJjo=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Sp2/9xy+abdODSiNH3eWwn3W8KtLxfc9HSbN2sQGBI/x9BxqItGkK4nfNvhE5iC+j
+         OwYEjI6jsz+YNFhZEyyRvnVFgHHXR+h3+EB7LDt3j1ibFIfrl6uROdGL1HspnPzcY8
+         WJsAdgMLcBVBSnULcXPVadK3tn4kkjmfe72NEsmFZWH2zChz+qoKxbQKJx0sdpgPTQ
+         psAeMk0ihT+g0Ky2clAoRJ+U6xz+rVL4WtTjPB867sWTBFmEjQCtArtX1si2A+G7dk
+         nMoTx7j9WUoxSNTehuW+7fhc93iA8ENBwhl1r7UsIzyPAFLCCnXHpcEKD7cpMMsUlM
+         LbojghgYR0PGg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOC0xMS0xOSAyMjoyOCwgR3VlbnRlciBSb2VjayB3cm90ZToNCj4gT24gTW9uLCBOb3Yg
-MTksIDIwMTggYXQgMDk6MTY6MTJQTSArMDAwMCwgUGV0ZXIgUm9zaW4gd3JvdGU6DQo+Pj4NCj4+
-PiBHdWVzcyBJIGRlc2VydmUgdGhlIG5vbi1hbHBoYWJldGljIG9yZGVyIGFzIHBlbmFsdHkgZm9y
-IG5vdCBlbmZvcmNpbmcgaXQgDQo+Pj4gZWFybGllci4gSSdsbCBhY2NlcHQgdGhlIHBhdGNoIGFm
-dGVyIERUIGFwcHJvdmFsIGFuZCBzdWJtaXQgYW5vdGhlciBvbmUNCj4+PiBteXNlbGYgYWZ0ZXJ3
-YXJkcyB0byByZXN0b3JlIGFscGhhYmV0aWMgb3JkZXIuDQo+Pg0KPj4gUmlnaHQsIEknbSB0aGlu
-a2luZyBhbm90aGVyIGdvb2QgY2hhbmdlIHdvdWxkIGJlIHRvIGludHJvZHVjZSBhbiBlbnVtDQo+
-PiBpbnRvIHRoZSBudGNfdGhlcm1pc3Rvcl9pZCBhcnJheSwgYmVjYXVzZSB0aGUgaGFyZC1jb2Rl
-ZCBudW1iZXJpbmcgaW4NCj4gDQo+IFllcywgc291bmRzIGxpa2UgYSBnb29kIGlkZWEuDQo+IA0K
-Pj4gdGhlIG50Y19tYXRjaCB2YXJpYWJsZSBpcyBhIGJpdCBmcmFnaWxlIGluIG15IHRhc3RlLCBh
-bmQgdGhhdCBsaXN0IHdvdWxkDQo+PiBhbHNvIGJlbmVmaXQgZnJvbSBiZWluZyBhbHBoYWJldGlj
-LiBDdXJyZW50bHkgdGhlcmUncyBzaW1wbHkgbm8gd2F5IHRvDQo+PiBhZGQgdGhpbmdzIGluIHRo
-ZSBtaWRkbGUgd2l0aG91dCBjYXVzaW5nIG1heWhlbS4gSSB0aG91Z2h0IGFib3V0IGRvaW5nDQo+
-PiB0aGF0LCBidXQgZGlkbid0IHdhbnQgdG8gd2FzdGUgZW5lcmd5IGRvaW5nIGl0IHVwIGZyb250
-IHdpdGhvdXQga25vd2luZw0KPj4gaWYgaXQgd291bGQgYmUgd2VsbCByZWNlaXZlZCAodGhlIGRy
-aXZlciBtaWdodCBoYXZlIGJlZW4gc3VwZXJzZWRlZCBvcg0KPiANCj4gSXQgd291bGQuDQoNClJp
-Z2h0LCBzbyBJIGhhdmUgc29tZSBwYXRjaGVzIHNvcnRpbmcgdGhpbmdzIG91dC4uLiBIb3dldmVy
-LCBvbmUgcXVlc3Rpb24NCmJlZm9yZSBJIHNlbmQgdGhlbTogSXMgaXQgb2sgdG8gc29ydCB0aGUg
-ZW51bSBudGNfdGhlcm1pc3Rvcl90eXBlIGluIHRoZQ0KaW5jbHVkZS9saW51eC9wbGF0Zm9ybV9k
-YXRhL250Y190aGVybWlzdG9yLmggaGVhZGVyIG9yIHdpbGwgdGhhdCBicmVhaw0Kc3R1ZmY/DQoN
-CkNoZWVycywNClBldGVyDQoNCj4gR3VlbnRlcg0KPiANCj4+IHNvbWV0aGluZykuIEknbSBnbGFk
-IHRoYXQgeW91IGhhdmUgdm9sdW50ZWVyZWQgdG8gY2xlYW4gdGhpbmdzIHVwLg0KPj4gSGEhIDot
-KQ0KPj4NCj4+IENoZWVycywNCj4+IFBldGVyDQo+Pg0KPj4+IEd1ZW50ZXINCj4+Pg0KPj4+PiAg
-fTsNCj4+Pj4gIA0KPj4+PiAgc3RydWN0IG50Y190aGVybWlzdG9yX3BsYXRmb3JtX2RhdGEgew0K
-Pj4+PiAtLSANCj4+Pj4gMi4xMS4wDQo+Pj4+DQo+Pg0KDQo=
+On 11/19/18 10:57 AM, Tom Talpey wrote:
+> John, thanks for the discussion at LPC. One of the concerns we
+> raised however was the performance test. The numbers below are
+> rather obviously tainted. I think we need to get a better baseline
+> before concluding anything...
+>=20
+> Here's my main concern:
+>=20
+
+Hi Tom,
+
+Thanks again for looking at this!
+
+
+> On 11/10/2018 3:50 AM, john.hubbard@gmail.com wrote:
+>> From: John Hubbard <jhubbard@nvidia.com>
+>> ...
+>> ------------------------------------------------------
+>> WITHOUT the patch:
+>> ------------------------------------------------------
+>> reader: (g=3D0): rw=3Dread, bs=3D(R) 4096B-4096B, (W) 4096B-4096B, (T) 4=
+096B-4096B, ioengine=3Dlibaio, iodepth=3D64
+>> fio-3.3
+>> Starting 1 process
+>> Jobs: 1 (f=3D1): [R(1)][100.0%][r=3D55.5MiB/s,w=3D0KiB/s][r=3D14.2k,w=3D=
+0 IOPS][eta 00m:00s]
+>> reader: (groupid=3D0, jobs=3D1): err=3D 0: pid=3D1750: Tue Nov=C2=A0 6 2=
+0:18:06 2018
+>> =C2=A0=C2=A0=C2=A0 read: IOPS=3D13.9k, BW=3D54.4MiB/s (57.0MB/s)(1024MiB=
+/18826msec)
+>=20
+> ~14000 4KB read IOPS is really, really low for an NVMe disk.
+
+Yes, but Jan Kara's original config file for fio is *intended* to highlight
+the get_user_pages/put_user_pages changes. It was *not* intended to get max
+performance,  as you can see by the numjobs and direct IO parameters:
+
+cat fio.conf=20
+[reader]
+direct=3D1
+ioengine=3Dlibaio
+blocksize=3D4096
+size=3D1g
+numjobs=3D1
+rw=3Dread
+iodepth=3D64
+
+
+So I'm thinking that this is not a "tainted" test, but rather, we're constr=
+aining
+things a lot with these choices. It's hard to find a good test config to ru=
+n that
+allows decisions, but so far, I'm not really seeing anything that says "thi=
+s
+is so bad that we can't afford to fix the brokenness." I think.
+
+After talking with you and reading this email, I did a bunch more test runs=
+,=20
+varying the following fio parameters:
+
+	-- direct
+	-- numjobs
+	-- iodepth
+
+...with both the baseline 4.20-rc3 kernel, and with my patches applied. (bt=
+w, if
+anyone cares, I'll post a github link that has a complete, testable patchse=
+t--not
+ready for submission as such, but it works cleanly and will allow others to=
+=20
+attempt to reproduce my results).
+
+What I'm seeing is that I can get 10x or better improvements in IOPS and BW=
+,
+just by going to 10 threads and turning off direct IO--as expected. So in t=
+he end,
+I increased the number of threads, and also increased iodepth a bit.=20
+
+
+Test results below...
+
+
+>=20
+>> =C2=A0=C2=A0 cpu=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 :=
+ usr=3D2.39%, sys=3D95.30%, ctx=3D669, majf=3D0, minf=3D72
+>=20
+> CPU is obviously the limiting factor. At these IOPS, it should be far
+> less.
+>> ------------------------------------------------------
+>> OR, here's a better run WITH the patch applied, and you can see that thi=
+s is nearly as good
+>> as the "without" case:
+>> ------------------------------------------------------
+>>
+>> reader: (g=3D0): rw=3Dread, bs=3D(R) 4096B-4096B, (W) 4096B-4096B, (T) 4=
+096B-4096B, ioengine=3Dlibaio, iodepth=3D64
+>> fio-3.3
+>> Starting 1 process
+>> Jobs: 1 (f=3D1): [R(1)][100.0%][r=3D53.2MiB/s,w=3D0KiB/s][r=3D13.6k,w=3D=
+0 IOPS][eta 00m:00s]
+>> reader: (groupid=3D0, jobs=3D1): err=3D 0: pid=3D2521: Tue Nov=C2=A0 6 2=
+0:01:33 2018
+>> =C2=A0=C2=A0=C2=A0 read: IOPS=3D13.4k, BW=3D52.5MiB/s (55.1MB/s)(1024MiB=
+/19499msec)
+>=20
+> Similar low IOPS.
+>=20
+>> =C2=A0=C2=A0 cpu=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 :=
+ usr=3D3.47%, sys=3D94.61%, ctx=3D370, majf=3D0, minf=3D73
+>=20
+> Similar CPU saturation.
+>=20
+>>
+>=20
+> I get nearly 400,000 4KB IOPS on my tiny desktop, which has a 25W
+> i7-7500 and a Samsung PM961 128GB NVMe (stock Bionic 4.15 kernel
+> and fio version 3.1). Even then, the CPU saturates, so it's not
+> necessarily a perfect test. I'd like to see your runs both get to
+> "max" IOPS, i.e. CPU < 100%, and compare the CPU numbers. This would
+> give the best comparison for making a decision.
+
+I can get to CPU < 100% by increasing to 10 or 20 threads, although it
+makes latency ever so much worse.
+
+>=20
+> Can you confirm what type of hardware you're running this test on?
+> CPU, memory speed and capacity, and NVMe device especially?
+>=20
+> Tom.
+
+Yes, it's a nice new system, I don't expect any strange perf problems:
+
+CPU: Intel(R) Core(TM) i7-7800X CPU @ 3.50GHz
+    (Intel X299 chipset)
+Block device: nvme-Samsung_SSD_970_EVO_250GB
+DRAM: 32 GB
+
+So, here's a comparison using 20 threads, direct IO, for the baseline vs.=20
+patched kernel (below). Highlights:
+
+	-- IOPS are similar, around 60k.=20
+	-- BW gets worse, dropping from 290 to 220 MB/s.
+	-- CPU is well under 100%.
+	-- latency is incredibly long, but...20 threads.
+
+Baseline:
+
+$ ./run.sh
+fio configuration:
+[reader]
+ioengine=3Dlibaio
+blocksize=3D4096
+size=3D1g
+rw=3Dread
+group_reporting
+iodepth=3D256
+direct=3D1
+numjobs=3D20
+-------- Running fio:
+reader: (g=3D0): rw=3Dread, bs=3D(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096=
+B-4096B, ioengine=3Dlibaio, iodepth=3D256
+...
+fio-3.3
+Starting 20 processes
+Jobs: 4 (f=3D4): [_(8),R(2),_(2),R(1),_(1),R(1),_(5)][95.9%][r=3D244MiB/s,w=
+=3D0KiB/s][r=3D62.5k,w=3D0 IOPS][eta 00m:03s]
+reader: (groupid=3D0, jobs=3D20): err=3D 0: pid=3D14499: Tue Nov 20 16:20:3=
+5 2018
+   read: IOPS=3D74.2k, BW=3D290MiB/s (304MB/s)(20.0GiB/70644msec)
+    slat (usec): min=3D26, max=3D48167, avg=3D249.27, stdev=3D1200.02
+    clat (usec): min=3D42, max=3D147792, avg=3D67108.56, stdev=3D18062.46
+     lat (usec): min=3D103, max=3D147943, avg=3D67358.10, stdev=3D18109.75
+    clat percentiles (msec):
+     |  1.00th=3D[   21],  5.00th=3D[   40], 10.00th=3D[   41], 20.00th=3D[=
+   47],
+     | 30.00th=3D[   58], 40.00th=3D[   65], 50.00th=3D[   70], 60.00th=3D[=
+   75],
+     | 70.00th=3D[   79], 80.00th=3D[   83], 90.00th=3D[   89], 95.00th=3D[=
+   93],
+     | 99.00th=3D[  104], 99.50th=3D[  109], 99.90th=3D[  121], 99.95th=3D[=
+  125],
+     | 99.99th=3D[  134]
+   bw (  KiB/s): min=3D 9712, max=3D46362, per=3D5.11%, avg=3D15164.99, std=
+ev=3D2242.15, samples=3D2742
+   iops        : min=3D 2428, max=3D11590, avg=3D3790.94, stdev=3D560.53, s=
+amples=3D2742
+  lat (usec)   : 50=3D0.01%, 250=3D0.01%, 500=3D0.01%, 750=3D0.01%, 1000=3D=
+0.01%
+  lat (msec)   : 2=3D0.01%, 4=3D0.01%, 10=3D0.02%, 20=3D0.98%, 50=3D20.44%
+  lat (msec)   : 100=3D76.95%, 250=3D1.61%
+  cpu          : usr=3D1.00%, sys=3D57.65%, ctx=3D158367, majf=3D0, minf=3D=
+5284
+  IO depths    : 1=3D0.1%, 2=3D0.1%, 4=3D0.1%, 8=3D0.1%, 16=3D0.1%, 32=3D0.=
+1%, >=3D64=3D100.0%
+     submit    : 0=3D0.0%, 4=3D100.0%, 8=3D0.0%, 16=3D0.0%, 32=3D0.0%, 64=
+=3D0.0%, >=3D64=3D0.0%
+     complete  : 0=3D0.0%, 4=3D100.0%, 8=3D0.0%, 16=3D0.0%, 32=3D0.0%, 64=
+=3D0.0%, >=3D64=3D0.1%
+     issued rwts: total=3D5242880,0,0,0 short=3D0,0,0,0 dropped=3D0,0,0,0
+     latency   : target=3D0, window=3D0, percentile=3D100.00%, depth=3D256
+
+Run status group 0 (all jobs):
+   READ: bw=3D290MiB/s (304MB/s), 290MiB/s-290MiB/s (304MB/s-304MB/s), io=
+=3D20.0GiB (21.5GB), run=3D70644-70644msec
+
+Disk stats (read/write):
+  nvme0n1: ios=3D5240738/7, merge=3D0/7, ticks=3D1457727/5, in_queue=3D1547=
+139, util=3D100.00%
+
+--------------------------------------------------------------
+Patched:
+
+<redforge> fast_256GB $ ./run.sh=20
+fio configuration:
+[reader]
+ioengine=3Dlibaio
+blocksize=3D4096
+size=3D1g
+rw=3Dread
+group_reporting
+iodepth=3D256
+direct=3D1
+numjobs=3D20
+-------- Running fio:
+reader: (g=3D0): rw=3Dread, bs=3D(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096=
+B-4096B, ioengine=3Dlibaio, iodepth=3D256
+...
+fio-3.3
+Starting 20 processes
+Jobs: 13 (f=3D8): [_(1),R(1),_(1),f(1),R(2),_(1),f(2),_(1),R(1),f(1),R(1),f=
+(1),R(1),_(2),R(1),_(1),R(1)][97.9%][r=3D229MiB/s,w=3D0KiB/s][r=3D58.5k,w=
+=3D0 IOPS][eta 00m:02s]
+reader: (groupid=3D0, jobs=3D20): err=3D 0: pid=3D2104: Tue Nov 20 22:01:58=
+ 2018
+   read: IOPS=3D56.8k, BW=3D222MiB/s (232MB/s)(20.0GiB/92385msec)
+    slat (usec): min=3D26, max=3D50436, avg=3D337.21, stdev=3D1405.14
+    clat (usec): min=3D43, max=3D178839, avg=3D88963.96, stdev=3D21745.31
+     lat (usec): min=3D106, max=3D179041, avg=3D89301.43, stdev=3D21800.43
+    clat percentiles (msec):
+     |  1.00th=3D[   50],  5.00th=3D[   53], 10.00th=3D[   55], 20.00th=3D[=
+   68],
+     | 30.00th=3D[   79], 40.00th=3D[   86], 50.00th=3D[   93], 60.00th=3D[=
+   99],
+     | 70.00th=3D[  103], 80.00th=3D[  108], 90.00th=3D[  114], 95.00th=3D[=
+  121],
+     | 99.00th=3D[  134], 99.50th=3D[  140], 99.90th=3D[  150], 99.95th=3D[=
+  155],
+     | 99.99th=3D[  163]
+   bw (  KiB/s): min=3D 4920, max=3D39733, per=3D5.07%, avg=3D11506.18, std=
+ev=3D1540.18, samples=3D3650
+   iops        : min=3D 1230, max=3D 9933, avg=3D2876.20, stdev=3D385.05, s=
+amples=3D3650
+  lat (usec)   : 50=3D0.01%, 100=3D0.01%, 250=3D0.01%, 500=3D0.01%, 750=3D0=
+.01%
+  lat (usec)   : 1000=3D0.01%
+  lat (msec)   : 2=3D0.01%, 4=3D0.01%, 10=3D0.01%, 20=3D0.23%, 50=3D1.13%
+  lat (msec)   : 100=3D63.04%, 250=3D35.57%
+  cpu          : usr=3D0.65%, sys=3D58.07%, ctx=3D188963, majf=3D0, minf=3D=
+5303
+  IO depths    : 1=3D0.1%, 2=3D0.1%, 4=3D0.1%, 8=3D0.1%, 16=3D0.1%, 32=3D0.=
+1%, >=3D64=3D100.0%
+     submit    : 0=3D0.0%, 4=3D100.0%, 8=3D0.0%, 16=3D0.0%, 32=3D0.0%, 64=
+=3D0.0%, >=3D64=3D0.0%
+     complete  : 0=3D0.0%, 4=3D100.0%, 8=3D0.0%, 16=3D0.0%, 32=3D0.0%, 64=
+=3D0.0%, >=3D64=3D0.1%
+     issued rwts: total=3D5242880,0,0,0 short=3D0,0,0,0 dropped=3D0,0,0,0
+     latency   : target=3D0, window=3D0, percentile=3D100.00%, depth=3D256
+
+Run status group 0 (all jobs):
+   READ: bw=3D222MiB/s (232MB/s), 222MiB/s-222MiB/s (232MB/s-232MB/s), io=
+=3D20.0GiB (21.5GB), run=3D92385-92385msec
+
+Disk stats (read/write):
+  nvme0n1: ios=3D5240550/7, merge=3D0/7, ticks=3D1513681/4, in_queue=3D1636=
+411, util=3D100.00%
+
+
+Thoughts?
+
+
+thanks,
+--=20
+John Hubbard
+NVIDIA
