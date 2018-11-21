@@ -2,88 +2,73 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DECCC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF1AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FFF620989
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:56:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FFF620989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=web.de
+	by mail.kernel.org (Postfix) with ESMTP id 3A82A20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:56:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="dYTA0e/P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A82A20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729239AbeKUVa3 (ORCPT
+        id S1729401AbeKUVax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 16:30:29 -0500
-Received: from mout.web.de ([212.227.17.11]:46735 "EHLO mout.web.de"
+        Wed, 21 Nov 2018 16:30:53 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:55302 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726172AbeKUVa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 16:30:28 -0500
-X-Greylist: delayed 311 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Nov 2018 16:30:28 EST
-Received: from [192.168.0.11] ([87.189.163.28]) by smtp.web.de (mrweb102
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MXYS2-1fu60d1xEk-00WTNM; Wed, 21
- Nov 2018 11:51:05 +0100
-From:   Norbert Jurkeit <norbert.jurkeit@web.de>
-Subject: Issue with RTL8111 NIC after upgrade to kernel 4.19
-To:     nic_swsd@realtek.com, davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     michael.wiktowy@gmail.com, jcline@redhat.com,
-        marc.c.dionne@gmail.com
-Message-ID: <d0a53002-bf14-6cd9-ab0f-5d3f9aa395ce@web.de>
-Date:   Wed, 21 Nov 2018 11:51:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1726172AbeKUVaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 16:30:52 -0500
+Received: from zn.tnic (p200300EC2BD0AB00883B4D3E2A7F8FA4.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:ab00:883b:4d3e:2a7f:8fa4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 682321EC04DA;
+        Wed, 21 Nov 2018 11:56:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1542797816;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=/zraq5vVD806OO6f5dqaANQaX+g2z4si1C3IbP11r34=;
+        b=dYTA0e/PaTj3XOncm5sVqGSvp+0pggT80i/cNyq+nZITTb/jXzzrHZQuhy90G88R0GDdUx
+        JX2/W9QM7zlsIlJvyFbj59fxsi123AtZqDF3ZT5FllMaAKqB8LLOtPQVUIypTbW/D9l4vh
+        EY04+EGnr+N7OSJG9393qfuTo/VyJm4=
+Date:   Wed, 21 Nov 2018 11:56:49 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Victoria Anosova <v.s.anosova@gmail.com>
+Cc:     sashal@kernel.org, bigeasy@linutronix.de, x86@kernel.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2] x86/fpu: Disable BH while while loading FPU registers
+ in __fpu__restore_sig()
+Message-ID: <20181121105649.GB27797@zn.tnic>
+References: <20181119160410.ne7oiq2gkwt6jiqg@linutronix.de>
+ <20181120132531.6E80C206BB@mail.kernel.org>
+ <20181120183443.GJ2527@zn.tnic>
+ <CAMU5Q=72mNG4ikXKpLK3=SiDK3dRXtCw7wpHZ2i==awrtvRwdg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: de-DE
-X-Provags-ID: V03:K1:J0d1NbHHFSGf+KU8mQ8uD3MvMPiW59ry3jFO9y5EfDhl/1Puz+G
- z3c1AiGVHaar7loKfxRKt/q5GeBXRbWrPrz/xTkf/7K3RULu5VStOXn9BDDAEnb4c1/UueX
- aKWG9aDB76t1DPJO7KWWcyaT6gvC9gjWr4ATDxcsjyCmWbrXUzB9GlDGg5L4awFNf+UOEEG
- P++MhgyBNS6ZsFeBZKCrQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Ah9e5xXOoDw=:9lorlu0fQa8VsVt9KA4K0r
- y8ZW+D18g0qbB2Gs0MQlHb1VwZUE+7XfFIZOGXBhNvyh7Gv7jD0PbDkFK4DXPR2EMSPtfpVyz
- 8pDIZBlejDmjwWSdtosbhfSlIv5cHixFZErPlX++FSVZ5MVFVIfMPwoVSB/V2GEW4GHPRuw8t
- pgLJI+N7JMHLQ3T7iQ6cQYiEmLf6oVE/mFwNx8DS5nZ5neTGHf0X0Q71bJDV8rFVJ22SJ2JWY
- K4zhg7aPZuTwlgXGuYir9HV8RdmLXoeHOnFHJLDQNgYe5jkt3ThdEvPd2jynEVoXLi5ZgYNGq
- hjHfPYBAPrBcmF81HZfngRgjDBS9xgEI+eMqCssYk7p+Iv2lY1o4LP18JBUMtxiSi0DVzJrdz
- RhKZ1C3ooEVOMYp6qX7kwee3hfDDqMKHefZrHGCHHEENbBDL+QxEzTjUDnKO76pk1KrDWAuzf
- NSQtKMBvpOMs1OwG9EdBwh5UaYMFBsJZ5kD0xPVOar1jGL0aKmGIODk86qDkKQ+aNYrhtau1s
- qveKQQmgFJL2uEaN172H3QsHRAuEjMEoyv0N8h+KwL9OFrUMa6kdZUbDfkWHl5qvCtZ7pmgVg
- dPh/gaEs9FPht6er4b2b5bYXSWAMtfsRw3YkOtTBb24AZByyjG5ZlMOwmCw7woHDp0sWpCN1f
- Ic1+jnRyR8ngZy48pCvwC5kL9JjHlLtVSk4IqfMKebfCa6qZnhSl5sbDtfKRCTH6hrGi4fMSp
- Ig4sXY1+5p+m47aruac8yOD9uHe0etpuK70z9H9pDt1+zOegG2963DR6++X/UjpMFxCL06hbZ
- ivYJTl5eI3b+O2xDYVR4Z/Kv7O58M66ysu/iVt4HkP3fJ9UIy5RBT585tX5e+B1JGV4LxW2AV
- G/tkkeymVMwgUjqc9iu0IRBCzokJ1PvYX1KUyYlWkzbIFg2fATwseqZTZj1MtL
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMU5Q=72mNG4ikXKpLK3=SiDK3dRXtCw7wpHZ2i==awrtvRwdg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Linux developers,
+On Wed, Nov 21, 2018 at 11:11:18AM +0500, Victoria Anosova wrote:
+> Glad this come to kernel. We've already applied this patch.
 
-after upgrade from distro kernel 4.18.18 to 4.19.2 some Fedora users 
-(including me) encounter issues with RTL8111 based Ethernet interfaces. 
-The interface is not started correctly after boot with kernel 4.19.2 
-(i.e. is reported by ifconfig as up, but not running, the LEDs besides 
-the connector stay off and no data is transferred).
+The current version, with the bottom half toggling or the original one
+with preempt_disable/enable?
 
-At least for me the issue seems to occur only after reboot from a 
-previous session with kernel 4.18.18, but not after power-on, which 
-means the hardware is not fully initialized by the new r8169 driver. 
-Marc Dionne, another affected Fedora user, thinks that module "realtek" 
-needs to be loaded, which does not happen automatically. Please see 
-https://bugzilla.redhat.com/show_bug.cgi?id=1650984 for more details.
+-- 
+Regards/Gruss,
+    Boris.
 
-As Fedora kernel maintainers usually don't apply many changes to the 
-upstream kernel, users of other distros will likely be affected as well. 
-We therefore kindly ask you to investigate the issue and fix it in 
-future upstream kernels.
-
-Many thanks and best regards,
-
-Norbert Jurkeit
-
+Good mailing practices for 400: avoid top-posting and trim the reply.
