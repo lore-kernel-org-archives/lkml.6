@@ -2,157 +2,181 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09171C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBD6C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C179C21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:34:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 024C921479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:34:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="CqzK4RBl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C179C21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEg17h/E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 024C921479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731803AbeKVDJx (ORCPT
+        id S1731828AbeKVDJ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 22:09:53 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37244 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730626AbeKVDJx (ORCPT
+        Wed, 21 Nov 2018 22:09:58 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:47077 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727874AbeKVDJ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 22:09:53 -0500
-Received: by mail-io1-f67.google.com with SMTP id a3so4508868ioc.4
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 08:34:43 -0800 (PST)
+        Wed, 21 Nov 2018 22:09:57 -0500
+Received: by mail-lf1-f68.google.com with SMTP id f23so4425519lfc.13;
+        Wed, 21 Nov 2018 08:34:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=lw7aSLQudTUlj95EBrw2GbSBIKWK7CVyT8TuTdPbfP4=;
-        b=CqzK4RBlI26hDiq7za8yAPgJGjTxP3tkkDjsBIV/A1lKbNq5dLbPH1OHiga+RapN0J
-         tutRAtNQYqRpgjJ3gf2KOHTBtg1UzL64oVL2qVDXL77d6PVCNK/CL1RbkX0/6fOMnzYh
-         JPhb0qXp0TYL6KG6UguCHFR5vMMTXiedEclhddNKwQ3rY8595ZhZguZB8zwXe4FUlUBv
-         nhtMZuj/UdvjJB550/SoB6gVfdXk1zrlI2pIZ+ULzVYH583ExmsQR27Zh5FdqlzFaHII
-         /Dxg1aL1yuI3csPmanZzXC3XZiSeYGBtTds9rvYI7uAnZX9JmweDc0/vX6yOr5FR93dk
-         jjTQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=W47rqKvf2a7T9NXZrvi97XrIaJMvSnnFpWA4cl5Ou2o=;
+        b=DEg17h/E+7MmFUmt8lK0cg8he2VK3t249zzC1DUDHqmwrH37UkOmGic+v6DvpUkZ/b
+         IBZCNRDU5IDqxAEAgIB0b0hkBBMnYFDkJFihfXX2rRTdmfVPF3pC5fkiTBNcAI/b1Xv0
+         bwFphaoG+Z96SKHnDsqF6YAzfs3MqKsczzRyTmK05zsE5XrInzTEZQkEM4Satr4uj1k7
+         rUDvfgnDTEa0YJ5kE3OFNQqonaaBHrzbs++7JGtJM/iBlivSadWzBztT6bheHpPzmSzC
+         tPtHgBuBgjMh1PeILuxb4uqWHJMkrr+lg+Bz4oEUbH9uEKp7UZmWX3StnLTlCXnShnaE
+         mwWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=lw7aSLQudTUlj95EBrw2GbSBIKWK7CVyT8TuTdPbfP4=;
-        b=srH2aKiIvnBKcdfIL/bYW/EaoigyrkhF/tblRAbFr0YqMyGNSzNXS+YdM2pyWdsU6B
-         k2AZS1poOgYtYsLc8b5jnAcdqzrLjKny5LAG2xWh5rgGYNY8J7fR00k34Ar0tvhNhHby
-         3DHOPVAZY8USVY+la5oisUohJ5Z4eH31A2FLJob5MThiyhObpkwZXrdlqMf4k5G13Uze
-         MpSiD59GI+QLPGvrEXT05jUWmwlulvQZCX67jGexBs0FOfBufM5RCBf24ExBXo1HhBwR
-         apvtebjj2IfdH5irfS92qAI31d2VAw8X1IgIGvL06mPwxzHLAW5deB/fXa23ZzPP7pSJ
-         g7DQ==
-X-Gm-Message-State: AA+aEWYuT9X9M4+Li2yOXvlxyGscdJ4V3M6krCEwKz8aJ94Ckw6r4n8H
-        EbjgyySkLMwlnSsXv7Z/t4BNR97UQCe05V6ExBf1L9G5
-X-Google-Smtp-Source: AFSGD/VuqsqDJQzqW7bf9bCwnruAnT/fUf5qVhBh9T2AUeZVBzEsnVr217LYMlUxCaVHz8rFpwHCANled6AdWFH98DE=
-X-Received: by 2002:a5e:8d13:: with SMTP id m19mr5362688ioj.258.1542818083260;
- Wed, 21 Nov 2018 08:34:43 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=W47rqKvf2a7T9NXZrvi97XrIaJMvSnnFpWA4cl5Ou2o=;
+        b=oY1TS5hcvck47/491dLQidi//4eKbrsHeF4t1/lTRTSA78ZLWfQU8F+llTJqanF6Ok
+         G7k5moUWz8W75YYlHEIZrd5eI7sYIxk5IRDTmWTtoFophmQO6Z4HPSCeaV+0MR5NrRtA
+         r7aPUIohYO7e8DRIAvOd7l0wV4+uRWslNZ9EqybPBiuOYQyZyVXsYGCqd5tKmQxY0XK5
+         6744j4uL56eOqelZHMd1kWLc89ei8lBlIZsv0Ag21nilu5SPjdWlgvvmu9Q2xG5LRm/S
+         8bM0Chf9ySpkJiyTMzZ1jqPk/6vo7W8MohuJJSgrejPxTblvss8z/08mKq8ui7HbpzZn
+         4lcg==
+X-Gm-Message-State: AGRZ1gJS+hl9IXew/v1hYWlZEnw003feOX3vras3bq9UqlcxLy/JyBze
+        SO2eoziuaKCNcXuHTL16PlE=
+X-Google-Smtp-Source: AJdET5eQGf+Pvj9MxTPIewttBPD0Og2SxPHsZhpTY3+FH/S001ZF/zNGk5SpZlJuXuvvVgSRe7n2+Q==
+X-Received: by 2002:a19:8f45:: with SMTP id r66mr4605729lfd.9.1542818085369;
+        Wed, 21 Nov 2018 08:34:45 -0800 (PST)
+Received: from ?IPv6:2001:14bb:40:1c40:9d63:5352:fe43:f29c? (dkyrfbjndmqls8t-wxt-4.rev.dnainternet.fi. [2001:14bb:40:1c40:9d63:5352:fe43:f29c])
+        by smtp.gmail.com with ESMTPSA id c2-v6sm5952139ljj.41.2018.11.21.08.34.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 08:34:44 -0800 (PST)
+Subject: Re: [PATCH 10/17] prmem: documentation
+To:     Andy Lutomirski <luto@kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>
+Cc:     Nadav Amit <nadav.amit@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-11-igor.stoppa@huawei.com>
+ <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net>
+ <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net>
+ <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+ <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com>
+ <CALCETrXNckT9W288VXx-6inO5qYn-6dUPocKGcBT0GCO3xi3ZQ@mail.gmail.com>
+ <386C0CB1-C4B1-43E2-A754-DA8DBE4FB3CB@gmail.com>
+ <CALCETrWWcfLK4W3mn0bavzejmMBVKMX29aAUA3+VPQ8m9vmfhw@mail.gmail.com>
+ <9373ccf0-f51b-4bfa-2b16-e03ebf3c670d@huawei.com>
+ <2e52e103-15d0-0c26-275f-894dfd07e8ec@huawei.com>
+ <CALCETrV0sPgf4ZgG1joF_5hM-ycPsWM9DWGO=diQ_LQKin4VuA@mail.gmail.com>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <1166e55c-0c06-195c-a501-383b4055ea46@gmail.com>
+Date:   Wed, 21 Nov 2018 18:34:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181120134032.31645-1-brgl@bgdev.pl> <20181120134032.31645-2-brgl@bgdev.pl>
- <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de>
-In-Reply-To: <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 21 Nov 2018 17:34:32 +0100
-Message-ID: <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CALCETrV0sPgf4ZgG1joF_5hM-ycPsWM9DWGO=diQ_LQKin4VuA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 20 lis 2018 o 18:17 Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
->
-> On Tue, Nov 20, 2018 at 02:40:31PM +0100, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > The irq_sim irqchip doesn't allow to configure the sensitivity so every
-> > call to irq_sim_fire() fires a dummy interrupt. This used to not matter
-> > for gpio-mockup (one of the irq_sim users) until commit fa38869b0161
-> > ("gpiolib: Don't support irq sharing for userspace") which made it
-> > impossible for gpio-mockup to ignore certain events (e.g. only receive
-> > notifications about rising edge events).
-> >
-> > Introduce a specialized variant of irq_sim_fire() which takes another
-> > argument called edge. allowing to specify the trigger type for the
-> > dummy interrupt.
->
-> I wonder if it's worth the effort to fix irq_sim. If you take a look in
-> my gpio-simulator patch, it is trivial to get it right without external
-> help with an amount of code that is usual for a driver that handles
-> irqs.
->
+Hi,
 
-You're basically recommending handcrafting another local piece of code
-for simulating interrupts - something that multiple users may be
-interested in. You did that in your proposed gpio-simulator and I
-still can't understand why you couldn't reuse the existing solution.
-Even if it's broken for your use-case, it's surely easier to fix it
-than to rewrite and duplicate it? There are very few cases where code
-consolidation is not a good thing and I don't think this is one of
-them.
+On 13/11/2018 20:36, Andy Lutomirski wrote:
+> On Tue, Nov 13, 2018 at 10:33 AM Igor Stoppa <igor.stoppa@huawei.com> wrote:
+>>
+>> I forgot one sentence :-(
+>>
+>> On 13/11/2018 20:31, Igor Stoppa wrote:
+>>> On 13/11/2018 19:47, Andy Lutomirski wrote:
+>>>
+>>>> For general rare-writish stuff, I don't think we want IRQs running
+>>>> with them mapped anywhere for write.  For AVC and IMA, I'm less sure.
+>>>
+>>> Why would these be less sensitive?
+>>>
+>>> But I see a big difference between my initial implementation and this one.
+>>>
+>>> In my case, by using a shared mapping, visible to all cores, freezing
+>>> the core that is performing the write would have exposed the writable
+>>> mapping to a potential attack run from another core.
+>>>
+>>> If the mapping is private to the core performing the write, even if it
+>>> is frozen, it's much harder to figure out what it had mapped and where,
+>>> from another core.
+>>>
+>>> To access that mapping, the attack should be performed from the ISR, I
+>>> think.
+>>
+>> Unless the secondary mapping is also available to other cores, through
+>> the shared mm_struct ?
+>>
+> 
+> I don't think this matters much.  The other cores will only be able to
+> use that mapping when they're doing a rare write.
 
-The interrupt simulator exists and is used by two testing drivers
-currently. One of them needs some more flexibility and this is what
-this patch is trying to add. I believe it is worth the effort.
 
-Best regards,
-Bartosz
+I'm still mulling over this.
+There might be other reasons for replicating the mm_struct.
 
-> > @@ -161,12 +171,28 @@ EXPORT_SYMBOL_GPL(devm_irq_sim_init);
-> >   */
-> >  void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
-> >  {
-> > -     if (sim->irqs[offset].enabled) {
-> > +     /* Don't care about the edge. */
-> > +     irq_sim_fire_edge(sim, offset, IRQ_TYPE_EDGE_BOTH);
->
-> Conceptually irq_sim_fire_edge should be defined above irq_sim_fire.
->
-> > +EXPORT_SYMBOL_GPL(irq_sim_fire);
-> > +
-> > +/**
-> > + * irq_sim_fire_edge - Enqueue an interrupt, specify the edge.
-> > + *
-> > + * @sim:        The interrupt simulator object.
-> > + * @offset:     Offset of the simulated interrupt which should be fire=
-d.
-> > + * edge:        Edge of the interrupt (IRQ_TYPE_EDGE_RISING/FALLING).
-> > + */
-> > +void irq_sim_fire_edge(struct irq_sim *sim, unsigned int offset, int e=
-dge)
-> > +{
-> > +     struct irq_sim_irq_ctx *irq =3D &sim->irqs[offset];
-> > +
-> > +     if (irq->enabled && (irq->edge & edge)) {
-> >               set_bit(offset, sim->work_ctx.pending);
-> >               irq_work_queue(&sim->work_ctx.work);
-> >       }
-> >  }
-> > -EXPORT_SYMBOL_GPL(irq_sim_fire);
-> > +EXPORT_SYMBOL_GPL(irq_sim_fire_edge);
->
-> Best regards
-> Uwe
->
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
-     |
-> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
-|
+If I understand correctly how the text patching works, it happens 
+sequentially, because of the text_mutex used by arch_jump_label_transform
+
+Which might be fine for this specific case, but I think I shouldn't 
+introduce a global mutex, when it comes to data.
+Most likely, if two or more cores want to perform a write rare 
+operation, there is no correlation between them, they could proceed in 
+parallel. And if there really is, then the user of the API should 
+introduce own locking, for that specific case.
+
+A bit unrelated question, related to text patching: I see that each 
+patching operation is validated, but wouldn't it be more robust to first 
+validate  all of then, and only after they are all found to be 
+compliant, to proceed with the actual modifications?
+
+And about the actual implementation of the write rare for the statically 
+allocated variables, is it expected that I use Nadav's function?
+Or that I refactor the code?
+
+The name, referring to text would definitely not be ok for data.
+And I would have to also generalize it, to deal with larger amounts of data.
+
+I would find it easier, as first cut, to replicate its behavior and 
+refactor only later, once it has stabilized and possibly Nadav's patches 
+have been acked.
+
+--
+igor
