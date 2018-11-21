@@ -2,186 +2,89 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4148C04EBA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 322FDC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD54B214D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:17:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAD38214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:18:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="iV9aqA7A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD54B214D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alien8.de
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="WAYQm0ly"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAD38214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733080AbeKVExC (ORCPT
+        id S1733087AbeKVExt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 23:53:02 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:53656 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729486AbeKVExC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 23:53:02 -0500
-Received: from zn.tnic (p200300EC2BD0AB00883B4D3E2A7F8FA4.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:ab00:883b:4d3e:2a7f:8fa4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9E6531EC04DA;
-        Wed, 21 Nov 2018 19:17:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1542824255;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uBn5Lp/NIAUXZ/IbISzpsZb7P5e1DZUQOmxj+auHdXk=;
-        b=iV9aqA7A55c/xr49Re2FdryjpJ4T6pMkDN9p23GgVMhVb15ei1AKrkJsl6sBp34jYtR24x
-        dB216zAxIDP+Jbwblp/hG6ce+EZO5xHB+3aAOm9WM8GHcVthjHOfbm2dyNcRwsQnoYdWKt
-        aKNGBIyi+YK488Jpi1BrEf6q0aPQba8=
-Date:   Wed, 21 Nov 2018 19:17:28 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        David Wang <davidwang@zhaoxin.com>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        Jia Zhang <qianyue.zj@alibaba-inc.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 06/23] x86/cpu/intel: Detect SGX support and update
- caps appropriately
-Message-ID: <20181121181728.GA27559@zn.tnic>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-7-jarkko.sakkinen@linux.intel.com>
+        Wed, 21 Nov 2018 23:53:49 -0500
+Received: from a9-35.smtp-out.amazonses.com ([54.240.9.35]:34322 "EHLO
+        a9-35.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729128AbeKVExt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 23:53:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1542824303;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=TDS/KSSAe75SnjHwizG1Vlz0DTA4ie/UQ0Qa1GsDDmM=;
+        b=WAYQm0lyvi/k9f4dHBbDYfMfTF3Do7Smj479B6r1Hq6BAPwU0mgCQBoGFGjOzrty
+        r2uoytJPtyxTUJoSqPiHiXpG2pukBxezPBJ71FD8hZ46M/oLpBhTTnjbFPBQfXWc91v
+        tI+iL+nldwVTJjGWilUO2XPZSVdtDEvi//yiQr5A=
+Date:   Wed, 21 Nov 2018 18:18:23 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Robin Murphy <robin.murphy@arm.com>
+cc:     Will Deacon <will.deacon@arm.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Levin Alexander <Alexander.Levin@microsoft.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com
+Subject: Re: [PATCH v2 3/3] iommu/io-pgtable-arm-v7s: Request DMA32 memory,
+ and improve debugging
+In-Reply-To: <a034e2c3-8933-caba-a113-ca08372da2b9@arm.com>
+Message-ID: <01000167377e99b6-10666044-2e7d-4af3-9cae-9db9c1a9b279-000000@email.amazonses.com>
+References: <20181111090341.120786-1-drinkcat@chromium.org> <20181111090341.120786-4-drinkcat@chromium.org> <20181121164638.GD24883@arm.com> <01000167375a15f8-362aa1e2-cf01-49b5-92b5-f0a4efcca477-000000@email.amazonses.com>
+ <a034e2c3-8933-caba-a113-ca08372da2b9@arm.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181116010412.23967-7-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2018.11.21-54.240.9.35
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 03:01:13AM +0200, Jarkko Sakkinen wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
-> 
-> Similar to other large Intel features such as VMX and TXT, SGX must be
-> explicitly enabled in IA32_FEATURE_CONTROL MSR to be truly usable.
-> Clear all SGX related capabilities if SGX is not fully enabled in
-> IA32_FEATURE_CONTROL or if the SGX1 instruction set isn't supported
-> (impossible on bare metal, theoretically possible in a VM if the VMM is
-> doing something weird).
-> 
-> Like SGX itself, SGX Launch Control must be explicitly enabled via a
-> flag in IA32_FEATURE_CONTROL. Clear the SGX_LC capability if Launch
-> Control is not fully enabled (or obviously if SGX itself is disabled).
-> 
-> Note that clearing X86_FEATURE_SGX_LC creates a bit of a conundrum
-> regarding the SGXLEPUBKEYHASH MSRs, as it may be desirable to read the
-> MSRs even if they are not writable, e.g. to query the configured key,
-> but clearing the capability leaves no breadcrum for discerning whether
-> or not the MSRs exist.  But, such usage will be rare (KVM is the only
-> known case at this time) and not performance critical, so it's not
-> unreasonable to require the use of rdmsr_safe().  Clearing the cap bit
-> eliminates the need for an additional flag to track whether or not
-> Launch Control is truly enabled, which is what we care about the vast
-> majority of the time.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  arch/x86/kernel/cpu/intel.c | 37 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-> index fc3c07fe7df5..8a20a193d399 100644
-> --- a/arch/x86/kernel/cpu/intel.c
-> +++ b/arch/x86/kernel/cpu/intel.c
-> @@ -596,6 +596,40 @@ static void detect_tme(struct cpuinfo_x86 *c)
->  	c->x86_phys_bits -= keyid_bits;
->  }
->  
-> +static void detect_sgx(struct cpuinfo_x86 *c)
-> +{
-> +	unsigned long long fc;
-> +
-> +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
-> +	if (!(fc & FEATURE_CONTROL_LOCKED)) {
-> +		pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
-> +		goto out_unsupported;
-> +	}
-> +
-> +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
-> +		pr_err_once("sgx: not enabled in IA32_FEATURE_CONTROL MSR\n");
+On Wed, 21 Nov 2018, Robin Murphy wrote:
 
-Start those messages with a capital letter: "sgx: SGX is not enabled ...".
+> On 21/11/2018 17:38, Christopher Lameter wrote:
+> > On Wed, 21 Nov 2018, Will Deacon wrote:
+> >
+> > > > +#define ARM_V7S_TABLE_SLAB_CACHE SLAB_CACHE_DMA32
+> >
+> > SLAB_CACHE_DMA32??? WTH is going on here? We are trying to get rid of
+> > the dma slab array.
+>
+> See the previous two patches in this series. If there's already a (better) way
+> to have a kmem_cache which allocates its backing pages with GFP_DMA32, please
+> do let us know.
 
-> +		goto out_unsupported;
-> +	}
-> +
-> +	if (!cpu_has(c, X86_FEATURE_SGX1)) {
-> +		pr_err_once("sgx: SGX1 instruction set not supported\n");
-> +		goto out_unsupported;
-> +	}
-> +
-> +	if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
+Was not cced on the whole patchset. Trying to find it. Its best to
+allocate DMA memory through the page based allocation functions.
+dma_alloc_coherent() and friends.
 
-I see the build failure here has been pointed out already but lemme
-repeat it out for another reason:
-
-It is very important that no patch we merge breaks bisectability -
-please build every patch before sending:
-
-arch/x86/kernel/cpu/intel.c: In function ‘detect_sgx’:
-arch/x86/kernel/cpu/intel.c:619:13: error: ‘FEATURE_CONTROL_SGX_LE_WR’ undeclared (first use in this function); did you mean ‘FEATURE_CONTROL_SGX_ENABLE’?
-  if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
-             ^~~~~~~~~~~~~~~~~~~~~~~~~
-             FEATURE_CONTROL_SGX_ENABLE
-arch/x86/kernel/cpu/intel.c:619:13: note: each undeclared identifier is reported only once for each function it appears in
-make[3]: *** [scripts/Makefile.build:291: arch/x86/kernel/cpu/intel.o] Error 1
-make[3]: *** Waiting for unfinished jobs....
-make[2]: *** [scripts/Makefile.build:516: arch/x86/kernel/cpu] Error 2
-make[1]: *** [scripts/Makefile.build:516: arch/x86/kernel] Error 2
-make: *** [Makefile:1060: arch/x86] Error 2
-make: *** Waiting for unfinished jobs....
-
-
-> +		pr_info_once("sgx: launch control MSRs are not writable\n");
-> +		goto out_msrs_rdonly;
-> +	}
-> +
-> +	return;
-
-<---- newline here.
-
-> +out_unsupported:
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX);
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX1);
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX2);
-
-<---- newline here.
-
-> +out_msrs_rdonly:
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
-> +}
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
