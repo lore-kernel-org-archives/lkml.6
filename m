@@ -2,48 +2,48 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B35C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C800EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C544B20C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:39:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E1E120C01
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:39:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=upb.ro header.i=@upb.ro header.b="m6HaLnY+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C544B20C01
+	dkim=pass (1024-bit key) header.d=upb.ro header.i=@upb.ro header.b="inH/Fp7C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1E120C01
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=upb.ro
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730305AbeKUWNW (ORCPT
+        id S1730280AbeKUWNW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 21 Nov 2018 17:13:22 -0500
-Received: from mail-sender200.upb.ro ([141.85.13.200]:38932 "EHLO mx.upb.ro"
+Received: from mail-sender240.upb.ro ([141.85.13.240]:38946 "EHLO mx.upb.ro"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729525AbeKUWNU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729031AbeKUWNU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 21 Nov 2018 17:13:20 -0500
 Received: from mx.upb.ro (localhost [127.0.0.1])
-        by mx.upb.ro (Postfix) with ESMTPS id BE290B56006C;
+        by mx.upb.ro (Postfix) with ESMTPS id D7C7EB560073;
         Wed, 21 Nov 2018 13:28:53 +0200 (EET)
 Received: from localhost (localhost [127.0.0.1])
-        by mx.upb.ro (Postfix) with ESMTP id 9C292B560073;
+        by mx.upb.ro (Postfix) with ESMTP id B557AB56006E;
         Wed, 21 Nov 2018 13:28:53 +0200 (EET)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mx.upb.ro 9C292B560073
+DKIM-Filter: OpenDKIM Filter v2.10.3 mx.upb.ro B557AB56006E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=upb.ro;
         s=96342B8A-77E4-11E5-BA93-D93D0963A2DF; t=1542799733;
-        bh=6nB+pwI71d1hh9MhycAUzgQkuCuLBlXbSC9Cfv8J7IM=;
+        bh=UARTU5rCrs/F7oPVpIMAN/3yS88WsiHePM4C3sd7yRI=;
         h=From:To:Date:Message-Id:MIME-Version;
-        b=m6HaLnY+37SKoYMSXmEOq/URcv1QHeHSbBYJPjlCXLjmsNApNHSIUDn9ftNIxa7nZ
-         prjN3S0ch8UkefeAcQlAJDvrVzmvk+aKGvkkDdbEJQqdUtgOPRa0DAOQZpWNTWkFSd
-         Sou71sHvpyG20+rmYMpnc7LxSElRl5+NfLoYHJXg=
+        b=inH/Fp7C7YUJgnw2mE3ZY9LezKeZHY99J9QdaHmOnZIK9934m/7ui9s+QQFvCVELw
+         lRYBI6qYm2YiUlqW1E0B9f0nSdGMcsxiPBc+BTEwHGi33NdsU8Rnm9TTXR8NmERePI
+         EjKdLzMxbpUpAkuYp/A/AK4QXxrpm/otDVd+x6FI=
 Received: from mx.upb.ro ([127.0.0.1])
         by localhost (mx.upb.ro [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id jQ31SzndMltp; Wed, 21 Nov 2018 13:28:53 +0200 (EET)
+        with ESMTP id USNASV4Z7DhC; Wed, 21 Nov 2018 13:28:53 +0200 (EET)
 Received: from asus-rog.localdomain (arh.pub.ro [141.85.160.17])
-        by mx.upb.ro (Postfix) with ESMTPSA id 73998B56006C;
+        by mx.upb.ro (Postfix) with ESMTPSA id 8B940B560070;
         Wed, 21 Nov 2018 13:28:53 +0200 (EET)
 From:   Radu Pirea <radu_nicolae.pirea@upb.ro>
 To:     richard.genoud@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org,
@@ -53,9 +53,9 @@ To:     richard.genoud@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org,
 Cc:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Radu Pirea <radu_nicolae.pirea@upb.ro>
-Subject: [PATCH 1/3] spi: at91-usart: add power management support
-Date:   Wed, 21 Nov 2018 13:27:30 +0200
-Message-Id: <20181121112732.15690-2-radu_nicolae.pirea@upb.ro>
+Subject: [PATCH 2/3] dt-bindings: mfd: atmel-usart: add DMA bindings for SPI mode
+Date:   Wed, 21 Nov 2018 13:27:31 +0200
+Message-Id: <20181121112732.15690-3-radu_nicolae.pirea@upb.ro>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121112732.15690-1-radu_nicolae.pirea@upb.ro>
 References: <20181121112732.15690-1-radu_nicolae.pirea@upb.ro>
@@ -66,111 +66,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements power management callback function for USART as
-SPI driver.
+The bindings for DMA are now common for both drivers of the USART
+IP.
+
+The node given as an example for USART in SPI mode has been updated in
+order to include DMA bindings.
 
 Signed-off-by: Radu Pirea <radu_nicolae.pirea@upb.ro>
 ---
- drivers/spi/spi-at91-usart.c | 61 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ .../devicetree/bindings/mfd/atmel-usart.txt       | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/spi/spi-at91-usart.c b/drivers/spi/spi-at91-usart.c
-index a924657642fa..0b07c746453d 100644
---- a/drivers/spi/spi-at91-usart.c
-+++ b/drivers/spi/spi-at91-usart.c
-@@ -13,6 +13,7 @@
- #include <linux/module.h>
- #include <linux/of_gpio.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
+diff --git a/Documentation/devicetree/bindings/mfd/atmel-usart.txt b/Docu=
+mentation/devicetree/bindings/mfd/atmel-usart.txt
+index 7f0cd72f47d2..8ad008175343 100644
+--- a/Documentation/devicetree/bindings/mfd/atmel-usart.txt
++++ b/Documentation/devicetree/bindings/mfd/atmel-usart.txt
+@@ -17,17 +17,19 @@ Required properties for USART in SPI mode:
+ - cs-gpios: chipselects (internal cs not supported)
+ - atmel,usart-mode : Must be <AT91_USART_MODE_SPI> (found in dt-bindings=
+/mfd/at91-usart.h)
 =20
- #include <linux/spi/spi.h>
-=20
-@@ -399,6 +400,59 @@ static int at91_usart_spi_probe(struct platform_devi=
-ce *pdev)
- 	return ret;
- }
-=20
-+__maybe_unused static int at91_usart_spi_runtime_suspend(struct device *=
-dev)
-+{
-+	struct spi_controller *ctlr =3D dev_get_drvdata(dev);
-+	struct at91_usart_spi *aus =3D spi_master_get_devdata(ctlr);
++Optional properties in serial and SPI mode:
++- dma bindings for dma transfer:
++	- dmas: DMA specifier, consisting of a phandle to DMA controller node,
++		memory peripheral interface and USART DMA channel ID, FIFO configurati=
+on.
++		Refer to dma.txt and atmel-dma.txt for details.
++	- dma-names: "rx" for RX channel, "tx" for TX channel.
 +
-+	clk_disable_unprepare(aus->clk);
-+	pinctrl_pm_select_sleep_state(dev);
-+
-+	return 0;
-+}
-+
-+__maybe_unused static int at91_usart_spi_runtime_resume(struct device *d=
-ev)
-+{
-+	struct spi_controller *ctrl =3D dev_get_drvdata(dev);
-+	struct at91_usart_spi *aus =3D spi_master_get_devdata(ctrl);
-+
-+	pinctrl_pm_select_default_state(dev);
-+
-+	return clk_prepare_enable(aus->clk);
-+}
-+
-+__maybe_unused static int at91_usart_spi_suspend(struct device *dev)
-+{
-+	struct spi_controller *ctrl =3D dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret =3D spi_controller_suspend(ctrl);
-+	if (ret)
-+		return ret;
-+
-+	if (!pm_runtime_suspended(dev))
-+		at91_usart_spi_runtime_suspend(dev);
-+
-+	return 0;
-+}
-+
-+__maybe_unused static int at91_usart_spi_resume(struct device *dev)
-+{
-+	struct spi_controller *ctrl =3D dev_get_drvdata(dev);
-+	struct at91_usart_spi *aus =3D spi_master_get_devdata(ctrl);
-+	int ret;
-+
-+	if (!pm_runtime_suspended(dev)) {
-+		ret =3D at91_usart_spi_runtime_resume(dev);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	at91_usart_spi_init(aus);
-+
-+	return spi_controller_resume(ctrl);
-+}
-+
- static int at91_usart_spi_remove(struct platform_device *pdev)
- {
- 	struct spi_controller *ctlr =3D platform_get_drvdata(pdev);
-@@ -409,6 +463,12 @@ static int at91_usart_spi_remove(struct platform_dev=
-ice *pdev)
- 	return 0;
- }
-=20
-+static const struct dev_pm_ops at91_usart_spi_pm_ops =3D {
-+	SET_SYSTEM_SLEEP_PM_OPS(at91_usart_spi_suspend, at91_usart_spi_resume)
-+	SET_RUNTIME_PM_OPS(at91_usart_spi_runtime_suspend,
-+			   at91_usart_spi_runtime_resume, NULL)
-+};
-+
- static const struct of_device_id at91_usart_spi_dt_ids[] =3D {
- 	{ .compatible =3D "microchip,at91sam9g45-usart-spi"},
- 	{ /* sentinel */}
-@@ -419,6 +479,7 @@ MODULE_DEVICE_TABLE(of, at91_usart_spi_dt_ids);
- static struct platform_driver at91_usart_spi_driver =3D {
- 	.driver =3D {
- 		.name =3D "at91_usart_spi",
-+		.pm =3D &at91_usart_spi_pm_ops,
- 	},
- 	.probe =3D at91_usart_spi_probe,
- 	.remove =3D at91_usart_spi_remove,
+ Optional properties in serial mode:
+ - atmel,use-dma-rx: use of PDC or DMA for receiving data
+ - atmel,use-dma-tx: use of PDC or DMA for transmitting data
+ - {rts,cts,dtr,dsr,rng,dcd}-gpios: specify a GPIO for RTS/CTS/DTR/DSR/RI=
+/DCD line respectively.
+   It will use specified PIO instead of the peripheral function pin for t=
+he USART feature.
+   If unsure, don't specify this property.
+-- add dma bindings for dma transfer:
+-	- dmas: DMA specifier, consisting of a phandle to DMA controller node,
+-		memory peripheral interface and USART DMA channel ID, FIFO configurati=
+on.
+-		Refer to dma.txt and atmel-dma.txt for details.
+-	- dma-names: "rx" for RX channel, "tx" for TX channel.
+ - atmel,fifo-size: maximum number of data the RX and TX FIFOs can store =
+for FIFO
+   capable USARTs.
+ - rs485-rts-delay, rs485-rx-during-tx, linux,rs485-enabled-at-boot-time:=
+ see rs485.txt
+@@ -81,5 +83,8 @@ Example:
+ 		interrupts =3D <12 IRQ_TYPE_LEVEL_HIGH 5>;
+ 		clocks =3D <&usart0_clk>;
+ 		clock-names =3D "usart";
++		dmas =3D <&dma0 2 AT91_DMA_CFG_PER_ID(3)>,
++		       <&dma0 2 (AT91_DMA_CFG_PER_ID(4) | AT91_DMA_CFG_FIFOCFG_ASAP)>;
++		dma-names =3D "tx", "rx";
+ 		cs-gpios =3D <&pioB 3 0>;
+ 	};
 --=20
 2.19.1
 
