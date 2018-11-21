@@ -2,111 +2,95 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8068C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACCAC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69C6621104
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:38:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31CAC21104
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:40:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MvzMR9dD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69C6621104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ul3JgptA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31CAC21104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389645AbeKVHO1 (ORCPT
+        id S2389648AbeKVHPx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 02:14:27 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:41217 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730074AbeKVHO1 (ORCPT
+        Thu, 22 Nov 2018 02:15:53 -0500
+Received: from mail-vk1-f171.google.com ([209.85.221.171]:41268 "EHLO
+        mail-vk1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730074AbeKVHPx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 02:14:27 -0500
-Received: by mail-vs1-f66.google.com with SMTP id t17so4068003vsc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:38:33 -0800 (PST)
+        Thu, 22 Nov 2018 02:15:53 -0500
+Received: by mail-vk1-f171.google.com with SMTP id t127so1525458vke.8
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:39:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=bm0cmdW8xHtpvw83SANYUh6MFHRfj/MqEyWJqmXjk1w=;
-        b=MvzMR9dDj7CZG/+mAlO7e9BG7xnEPolUnFhZu5OvKAqWr17r0buX+UZI16KXbm2PWk
-         A9UMWcctar1IJgq1+Xz5SJ7QBFUgVZm3lIU5CpBSlaWNEhCphP2zbnzKFbWdRE+E+zbR
-         u7eaW5Uq2tYvToY2OwypWA5BERtcPAJmhYDEykA2FIEdKOiS21WBbBIYCI2uqKGQZlkj
-         R/HP7D+LNfPlCPVGlNhn9sUkD9iFY0+Y2PPAWjo8DzI5ARu8Oa9JiZquTcvFpyOh5Urf
-         xdW7XUynKpn4HE64/hWr2vbvoi3ojIfsFV5ucxH51AAmO9aiWeCB/ov0GW6jtc269XNE
-         mDXw==
+        bh=e+F96LWG6CIQCL9JWkLiFQjnA+Wkpy27HflA7sP/xqc=;
+        b=Ul3JgptA2hZLguxmzU2TSK07aVbly7umbwg7oz2ejquapKmuVeuZyeBGhXWGRMqJ4X
+         6s9fD7iJ9gGb691FDbiomJYZsFnxJ8VSlkueLqrBhsSYLKVeSMmXAJbCPLzUJrGEUy8O
+         72k2xhaaZO8mxkwhxsfgRJYElwwIilxIYpHqw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=bm0cmdW8xHtpvw83SANYUh6MFHRfj/MqEyWJqmXjk1w=;
-        b=JyYaODfl21/mpKO45uzSCFnhOWwcbUC9aZYqc9y4R/sr4fyRRr5u1XL8GQ9TV8vRnr
-         zvlCkIPfd7wbPaPTe0BmFyrLeO0DX8TsrtlYHxugfOhdgR/b8tWgmOq/h+jifaScwsfi
-         XcwJ3HpZr2244se25Nxbfihng7O4kTtnNpE5kONFqCS5quNALU0X4A5CaFsbjiH0vcOU
-         V8S6F9smDNa3Ia+3agMH5kptwiltyXXR8wXaF8+x/gyXgama8SOfSkr0lowTvud4SqNY
-         U3dep3s5kqFl1mRF6p7ig68vDx3Nv7anuPH7eswuG1IwMuGla9zNngBUrrxginUF1yzq
-         vqyQ==
-X-Gm-Message-State: AGRZ1gJT4CgCDKU7hpN94Bxt3FOEB2iNPgSWnxJuSwURibQ5V86IDUkg
-        thdqfRjAvsQt5IFukaUHAYgy71+6NcgtfZsexYHuNA==
-X-Google-Smtp-Source: AJdET5dRtd2lSrxJi2t49sQUZqBKQepu8B5K395JPeQdkDeEmtDX5hhSXCo3xzLWknDmEVPoPC6Muf8ZJHy8szHRJko=
-X-Received: by 2002:a67:6346:: with SMTP id x67mr3386449vsb.114.1542832712373;
- Wed, 21 Nov 2018 12:38:32 -0800 (PST)
+        bh=e+F96LWG6CIQCL9JWkLiFQjnA+Wkpy27HflA7sP/xqc=;
+        b=bixy1IDroyV4CyMUIYH1hVszdB7A56Zf0Rj1VqFp2HsOkPmtsrkRCdDsQAzvXCwp2I
+         /m4wCbnURzQkoiPTeDHB/i7vaQ8hUjQfbZgQi65dh85k+IBMPnGcPETnNiYgNIM4ajh4
+         cUuoI6m9XS3F8O5c8u0eC4yHyihEyBOKY0Xaozbo3k3wQPb72dZCPKKlMKTDPchpYYNK
+         KvuY3Fk4rn8CK2UY7IfMaFvKSsONUTvE64TMd6iX94W1hXlTHryOqkVDID4t6vFn+xgN
+         z2w5ydKyysl8lQf4jfX9SAhLSJJjUtPTExI/PX4Zc5SZuCz5GySm4YI5OI0tHxmqkhN/
+         Ax9A==
+X-Gm-Message-State: AA+aEWbNXNWxITAzx6VUE1umTdbXxpxN44pd0DuZz5S9e2lHsvy4bseQ
+        s8O52L0O1EE4r7FmOYKbE9BSW/IjFi0=
+X-Google-Smtp-Source: AFSGD/Vof8yL7iOtPIyiFtarbj1vddRWAGS58gAYNz2WOT0TebRd8/X64a9QG1ZaSa5KafCsUQTlIA==
+X-Received: by 2002:a1f:5cc7:: with SMTP id q190mr3262912vkb.91.1542832798208;
+        Wed, 21 Nov 2018 12:39:58 -0800 (PST)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
+        by smtp.gmail.com with ESMTPSA id s185sm9454316vke.11.2018.11.21.12.39.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 12:39:57 -0800 (PST)
+Received: by mail-vk1-f176.google.com with SMTP id h128so1528275vkg.11
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:39:57 -0800 (PST)
+X-Received: by 2002:a1f:e807:: with SMTP id f7mr3337157vkh.16.1542832797010;
+ Wed, 21 Nov 2018 12:39:57 -0800 (PST)
 MIME-Version: 1.0
-References: <20181121201452.77173-1-dancol@google.com> <20181121203150.GK3065@bombadil.infradead.org>
-In-Reply-To: <20181121203150.GK3065@bombadil.infradead.org>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Wed, 21 Nov 2018 12:38:20 -0800
-Message-ID: <CAKOZueuCYOsaHZzoz5nNPr8Jb-fEiHTR4MektaJx8vuUXcrKCQ@mail.gmail.com>
-Subject: Re: [PATCH] Add /proc/pid_generation
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Primiano Tucci <primiano@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
-        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
-        Prashant Dhamdhere <pdhamdhe@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, rostedt@goodmis.org,
-        tglx@linutronix.de, mingo@kernel.org, linux@dominikbrodowski.net,
-        pasha.tatashin@oracle.com, jpoimboe@redhat.com,
-        ard.biesheuvel@linaro.org, Michal Hocko <mhocko@suse.com>,
-        David Howells <dhowells@redhat.com>, ktsanaktsidis@zendesk.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+References: <20181122072528.11372826@canb.auug.org.au>
+In-Reply-To: <20181122072528.11372826@canb.auug.org.au>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 21 Nov 2018 12:39:45 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WErS73ZLVmnP1o1WYX1VfrhwhCa6yhRC4gS9B=3vPYGg@mail.gmail.com>
+Message-ID: <CAD=FV=WErS73ZLVmnP1o1WYX1VfrhwhCa6yhRC4gS9B=3vPYGg@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the regulator tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 12:31 PM Matthew Wilcox <willy@infradead.org> wrote:
+Hi,
+On Wed, Nov 21, 2018 at 12:25 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> On Wed, Nov 21, 2018 at 12:14:44PM -0800, Daniel Colascione wrote:
-> > This change adds a per-pid-namespace 64-bit generation number,
-> > incremented on PID rollover, and exposes it via a new proc file
-> > /proc/pid_generation. By examining this file before and after /proc
-> > enumeration, user code can detect the potential reuse of a PID and
-> > restart the task enumeration process, repeating until it gets a
-> > coherent snapshot.
-> >
-> > PID rollover ought to be rare, so in practice, scan repetitions will
-> > be rare.
+> Hi all,
 >
-> Then why does it need to be 64-bit?
+> Commit
+>
+>   fe115f7fd44b ("regulator: core: Only count load for enabled consumers")
+>
+> is missing a Signed-off-by from its author.
 
-[Resending because of accidental HTML. I really need to switch to a
-better email client.]
+Argh.  When I squashed two commits together I must have clobbered the
+Signed-off-by.  :(  Is there a suggested way that I can fix this?
 
-Because 64 bits is enough for anyone. :-) A u64 is big enough that
-we'll never observe an overflow on a running system, and PID
-namespaces are rare enough that we won't miss the four extra bytes we
-use by upgrading from a u32.  And after reading about some security
-problems caused by too-clever handling of 32-bit rollover, I'd rather
-the code be obviously correct than save a trivial amount of space.
+-Doug
