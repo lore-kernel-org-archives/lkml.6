@@ -2,263 +2,121 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB094C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73421C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8939D2146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:27:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8939D2146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 35EFB2147D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:28:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/iEnQhg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35EFB2147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731467AbeKVCCn (ORCPT
+        id S1731476AbeKVCDo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 21:02:43 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60812 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731213AbeKVCCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 21:02:42 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9FCD23084297;
-        Wed, 21 Nov 2018 15:27:49 +0000 (UTC)
-Received: from plouf.redhat.com (ovpn-204-124.brq.redhat.com [10.40.204.124])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E99551054FD3;
-        Wed, 21 Nov 2018 15:27:46 +0000 (UTC)
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Harry Cutts <hcutts@chromium.org>,
-        Peter Hutterer <peter.hutterer@who-t.net>,
-        torvalds@linux-foundation.org
-Cc:     Nestor Lopez Casado <nlopezcasad@logitech.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 7/7] Revert "Input: Add the `REL_WHEEL_HI_RES` event code"
-Date:   Wed, 21 Nov 2018 16:27:12 +0100
-Message-Id: <20181121152712.6770-8-benjamin.tissoires@redhat.com>
-In-Reply-To: <20181121152712.6770-1-benjamin.tissoires@redhat.com>
-References: <20181121152712.6770-1-benjamin.tissoires@redhat.com>
+        Wed, 21 Nov 2018 21:03:44 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:34963 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731011AbeKVCDo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 21:03:44 -0500
+Received: by mail-ed1-f68.google.com with SMTP id x30so5229834edx.2;
+        Wed, 21 Nov 2018 07:28:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5kujdocbDGXmB5bgSyvjlRBo112EFLVETN+vMC/XpHA=;
+        b=b/iEnQhgjww/Ly7rh3d9Oapxah7p36GFFc2qmHyQJpXJBJn4n11PgIDV2Lvf2ObzVP
+         feiscUF+rv/yBukuJyJ3L0+BmxNN1R878vEpjyPg+rgdrsSdq3MUP8ynAKF+CQ4PEsit
+         n7YUrswovE2vof3VDDNUKhS/+GaL9cEvoSQhqTbswJae+ZI0/Z1sKGs34Px81nHy+gdC
+         yRGer+KabXq2NO2izTDDCVSREa/hX0DBu+Y61kA7QB+scvGSz2wsl1INcTBkBGPgRH6F
+         Qyj4jkvf+xKRNzDdCCInqsdgZ7u36dEEQciAccSgO62RS6EPx1CAfuCuLfzN6Z731B/i
+         gGJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5kujdocbDGXmB5bgSyvjlRBo112EFLVETN+vMC/XpHA=;
+        b=qQ03N03MlYSMWQShETkPQRvsiZtl35r7P5Dav0ykS8L8Qv/bIxSIe3gafUTEX7R9A2
+         rQuw42aL0PQZy2OhrKSoMpCC949SgM5lMEcHNK/MNVfed9GFsA91WTKdN4hY5ksj1tBF
+         /dpQYQJPBAUGwsO7tqpDbzHvjnA2yNJeKTj8eR7hyUU2WW/tlWo5Z3XiA1hC3M/+r7tI
+         gyKe7fWcFVQ3wgv0BeSEnJyFV3/dRtZq4XeFoYpgg1xsI5sj3rcUkfMmR4E4Jty/oQgw
+         LEZn5CG3PT088TCb//NcCu1J/30nfbIcuueYHC450jdCM09NO2Ms5uYoKTRgABFjCdhF
+         nqQQ==
+X-Gm-Message-State: AGRZ1gJd1i/YCYNYlAtJcF3ciBKiZXjc6XDcVN4OgN92W8tpt/HXE0gX
+        hwJgRSu5FE/EJNnf75t36f8=
+X-Google-Smtp-Source: AJdET5db41hpR7Er2QYhgyb84CJO3GDW7cv0psxqJvh4843sq1rAxd9wRBlsDAwnMR2RwpTAVKfyQg==
+X-Received: by 2002:a17:906:6a9b:: with SMTP id p27-v6mr5420608ejr.235.1542814129481;
+        Wed, 21 Nov 2018 07:28:49 -0800 (PST)
+Received: from localhost (pD9E511F8.dip0.t-ipconnect.de. [217.229.17.248])
+        by smtp.gmail.com with ESMTPSA id b49sm11202725edb.73.2018.11.21.07.28.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 07:28:48 -0800 (PST)
+Date:   Wed, 21 Nov 2018 16:28:47 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] soc/tegra: refactor soc_is_tegra()
+Message-ID: <20181121152847.GB7739@ulmo>
+References: <20181121141204.22819-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 21 Nov 2018 15:27:49 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="1UWUbFP1cBYEclgG"
+Content-Disposition: inline
+In-Reply-To: <20181121141204.22819-1-tiny.windzz@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit aaf9978c3c0291ef3beaa97610bc9c3084656a85.
 
-Quoting Peter:
+--1UWUbFP1cBYEclgG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-There is a HID feature report called "Resolution Multiplier"
-Described in the "Enhanced Wheel Support in Windows" doc and
-the "USB HID Usage Tables" page 30.
+On Wed, Nov 21, 2018 at 09:12:04AM -0500, Yangtao Li wrote:
+> of_find_node_by_path() acquires a reference to the node returned by
+> it and that reference needs to be dropped by its caller.soc_is_tegra()
+> doesn't do that, so fix it.Call of_machine_is_compatible() to refactor
+> soc_is_tegra() whcih automatically manages the reference count.
+>=20
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/soc/tegra/common.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
 
-http://download.microsoft.com/download/b/d/1/bd1f7ef4-7d72-419e-bc5c-9f79ad7bb66e/wheel.docx
-https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf
+Applied to for-4.21/soc, thanks.
 
-This was new for Windows Vista, so we're only a decade behind here. I only
-accidentally found this a few days ago while debugging a stuck button on a
-Microsoft mouse.
+Thierry
 
-The docs above describe it like this: a wheel control by default sends
-value 1 per notch. If the resolution multiplier is active, the wheel is
-expected to send a value of $multiplier per notch (e.g. MS Sculpt mouse) or
-just send events more often, i.e. for less physical motion (e.g. MS Comfort
-mouse).
+--1UWUbFP1cBYEclgG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-For the latter, you need the right HW of course. The Sculpt mouse has
-tactile wheel clicks, so nothing really changes. The Comfort mouse has
-continuous motion with no tactile clicks. Similar to the free-wheeling
-Logitech mice but without any inertia.
+-----BEGIN PGP SIGNATURE-----
 
-Note that the doc also says that Vista and onwards *always* enable this
-feature where available.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv1ea0ACgkQ3SOs138+
+s6GJJBAAqLw9PQzOAQwOvTTDIJFN6uCAZ6UBLfOFwDT0jnqGwjh1SWQyfDwHb+EA
+3CXMRu/GaPUxnmbpM6ZtQGtk4na5tbbc2Uvd1Hk2Mqb6esabqBj39nIP8F1ruxiN
+BeDBlWpOBMs1MWM5aWXH1OenPs+fob7qpiQdmH8xI/cFEXpP+ZpapmRV+iJs84in
+MlvGXDR1bB9XK1f6eocdKY9Lbzol6uP6X1TmeboI8PVJSzyanQmhXWJ7bEc+sGAx
+MIWBCjXnzUyzSFIh/7HsKKCq8/yjnVW+aaKOn5ZN9kwHWkttj1z/n0y1C/+KEt5L
+2SdwhxIEodVwmayv9EBxyy9cor6yE06IhaSTAWi0B9LM4qDDsTTp6FYqMJK5JjbM
+Lp+L2hv2S61VTCgOCzlIi0MIBUZde7xvG04pOzcdu/OadXOE9td+TRVSU6FdGzVH
+BxH184rEMTS6O53U7/uPi5E37nGNpfPBBcGWQW9hNAhNQfvK5fW/tS9puXhI0cH/
+4Q2jaReUxjdtU457zayjzL3Rtl7WI3aTCwelmHeo/TGz+3KPmdVigrLpmkubeZHF
+a/4YsUwSyYOBoGHX9MgO2ZiZ62gq1sg3jtog59DePJilx7kCv/YTScWnlsHGNvaQ
+xT/XQbyKUEIx5G8sHmWaYAPR/o6qEP9Dxz6P0Woys2dTzC/aVKs=
+=pOBX
+-----END PGP SIGNATURE-----
 
-An example HID definition looks like this:
-
-       Usage Page Generic Desktop (0x01)
-       Usage Resolution Multiplier (0x48)
-       Logical Minimum 0
-       Logical Maximum 1
-       Physical Minimum 1
-       Physical Maximum 16
-       Report Size 2 # in bits
-       Report Count 1
-       Feature (Data, Var, Abs)
-
-So the actual bits have values 0 or 1 and that reflects real values 1 or 16.
-We've only seen single-bits so far, so there's low-res and hi-res, but
-nothing in between.
-
-The multiplier is available for HID usages "Wheel" and "AC Pan" (horiz wheel).
-Microsoft suggests that
-
-> Vendors should ship their devices with smooth scrolling disabled and allow
-> Windows to enable it. This ensures that the device works like a regular HID
-> device on legacy operating systems that do not support smooth scrolling.
-(see the wheel doc linked above)
-
-The mice that we tested so far do reset on unplug.
-
-Device Support looks to be all (?) Microsoft mice but nothing else
-
-Not supported:
-- Logitech G500s, G303
-- Roccat Kone XTD
-- all the cheap Lenovo, HP, Dell, Logitech USB mice that come with a
-  workstation that I could find don't have it.
-- Etekcity something something
-- Razer Imperator
-
-Supported:
-- Microsoft Comfort Optical Mouse 3000 - yes, physical: 1:4
-- Microsoft Sculpt Ergonomic Mouse - yes, physical: 1:12
-- Microsoft Surface mouse - yes, physical: 1:4
-
-So again, I think this is really just available on Microsoft mice, but
-probably all decent MS mice released over the last decade.
-
-Looking at the hardware itself:
-
-- no noticeable notches in the weel
-- low-res: 18 events per 360deg rotation (click angle 20 deg)
-- high-res: 72 events per 360deg → matches multiplier of 4
-
-- I can feel the notches during wheel turns
-- low-res: 24 events per 360 deg rotation (click angle 15 deg)
-  - horiz wheel is tilt-based, continuous output value 1
-- high-res: 24 events per 360deg with value 12 → matches multiplier of 12
-  - horiz wheel output rate doubles/triples?, values is 3
-
-- It's a touch strip, not a wheel so no notches
-- high-res: events have value 4 instead of 1
-  a bit strange given that it doesn't actually have notches.
-
-Ok, why is this an issue for the current API? First, because the logitech
-multiplier used in Harry's patches looks suspiciously like the Resolution
-Multiplier so I think we should assume it's the same thing. Nestor, can you
-shed some light on that?
-
-- `REL_WHEEL` is defined as the number of notches, emulated where needed.
-- `REL_WHEEL_HI_RES` is the movement of the user's finger in microns.
-- `WM_MOUSEWHEEL` (Windows) is is a multiple of 120, defined as "the threshold
-  for action to be taken and one such action"
-  https://docs.microsoft.com/en-us/windows/desktop/inputdev/wm-mousewheel
-
-If the multiplier is set to M, this means we need an accumulated value of M
-until we can claim there was a wheel click. So after enabling the multiplier
-and setting it to the maximum (like Windows):
-- M units are 15deg rotation → 1 unit is 2620/M micron (see below). This is
-  the `REL_WHEEL_HI_RES` value.
-  - wheel diameter 20mm: 15 deg rotation is 2.62mm, 2620 micron (pi * 20mm /
-    (360deg/15deg))
-- For every M units accumulated, send one `REL_WHEEL` event
-
-The problem here is that we've now hardcoded 20mm/15 deg into the kernel and
-we have no way of getting the size of the wheel or the click angle into the
-kernel.
-
-In userspace we now have to undo the kernel's calculation. If our click angle
-is e.g. 20 degree we have to undo the (lossy) calculation from the kernel and
-calculate the correct angle instead. This also means the 15 is a hardcoded
-option forever and cannot be changed.
-
-In hid-logitech-hidpp.c, the microns per unit is hardcoded per device.
-Harry, did you measure those by hand? We'd need to update the kernel for
-every device and there are 10 years worth of devices from MS alone.
-
-The multiplier default is 8 which is in the right ballpark, so I'm pretty
-sure this is the same as the Resolution Multiplier, just in HID++ lingo. And
-given that the 120 magic factor is what Windows uses in the end, I can't
-imagine Logitech rolling their own thing here. Nestor?
-
-And we're already fairly inaccurate with the microns anyway. The MX Anywhere
-2S has a click angle of 20 degrees (18 stops) and a 17mm wheel, so a wheel
-notch is approximately 2.67mm, one event at multiplier 8 (1/8 of a notch)
-would be 334 micron. That's only 80% of the fallback value of 406 in the
-kernel. Multiplier 6 gives us 445micron (10% off). I'm assuming multiplier 7
-doesn't exist because it's not a factor of 120.
-
-Summary:
-
-Best option may be to simply do what Windows is doing, all the HW manufacturers
-have to use that approach after all. Switch `REL_WHEEL_HI_RES` to report in
-fractions of 120, with 120 being one notch and divide that by the multiplier
-for the actual events. So e.g. the Logitech multiplier 8 would send value 15
-for each event in hi-res mode. This can be converted in userspace to
-whatever userspace needs (combined with a hwdb there that tells you wheel
-size/click angle/...).
-
-Conflicts:
-	include/uapi/linux/input-event-codes.h -> I kept the new
-         reserved event in the code, so I had to adapt the revert
-         slightly
-
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
----
- Documentation/input/event-codes.rst    | 11 +----------
- include/uapi/linux/input-event-codes.h | 10 ----------
- 2 files changed, 1 insertion(+), 20 deletions(-)
-
-diff --git a/Documentation/input/event-codes.rst b/Documentation/input/event-codes.rst
-index cef220c176a4..a8c0873beb95 100644
---- a/Documentation/input/event-codes.rst
-+++ b/Documentation/input/event-codes.rst
-@@ -190,16 +190,7 @@ A few EV_REL codes have special meanings:
- * REL_WHEEL, REL_HWHEEL:
- 
-   - These codes are used for vertical and horizontal scroll wheels,
--    respectively. The value is the number of "notches" moved on the wheel, the
--    physical size of which varies by device. For high-resolution wheels (which
--    report multiple events for each notch of movement, or do not have notches)
--    this may be an approximation based on the high-resolution scroll events.
--
--* REL_WHEEL_HI_RES:
--
--  - If a vertical scroll wheel supports high-resolution scrolling, this code
--    will be emitted in addition to REL_WHEEL. The value is the (approximate)
--    distance travelled by the user's finger, in microns.
-+    respectively.
- 
- EV_ABS
- ------
-diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
-index 6d180cc60a5d..3eb5a4c3d60a 100644
---- a/include/uapi/linux/input-event-codes.h
-+++ b/include/uapi/linux/input-event-codes.h
-@@ -716,7 +716,6 @@
-  * the situation described above.
-  */
- #define REL_RESERVED		0x0a
--#define REL_WHEEL_HI_RES	0x0b
- #define REL_MAX			0x0f
- #define REL_CNT			(REL_MAX+1)
- 
-@@ -753,15 +752,6 @@
- 
- #define ABS_MISC		0x28
- 
--/*
-- * 0x2e is reserved and should not be used in input drivers.
-- * It was used by HID as ABS_MISC+6 and userspace needs to detect if
-- * the next ABS_* event is correct or is just ABS_MISC + n.
-- * We define here ABS_RESERVED so userspace can rely on it and detect
-- * the situation described above.
-- */
--#define ABS_RESERVED		0x2e
--
- #define ABS_MT_SLOT		0x2f	/* MT slot being modified */
- #define ABS_MT_TOUCH_MAJOR	0x30	/* Major axis of touching ellipse */
- #define ABS_MT_TOUCH_MINOR	0x31	/* Minor axis (omit if circular) */
--- 
-2.19.1
-
+--1UWUbFP1cBYEclgG--
