@@ -2,109 +2,127 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1ADEC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63206C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7FB21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:26:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C7FB21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 0FD4421479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:28:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ZpZsnbrQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FD4421479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731747AbeKVDBP convert rfc822-to-8bit (ORCPT
+        id S1731758AbeKVDDS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 22:01:15 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32779 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729727AbeKVDBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 22:01:15 -0500
-Received: from lhreml708-cah.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 51591CA9E518A;
-        Wed, 21 Nov 2018 16:26:04 +0000 (GMT)
-Received: from FRAEMA701-CHM.china.huawei.com (10.206.14.50) by
- lhreml708-cah.china.huawei.com (10.201.108.49) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 21 Nov 2018 16:26:00 +0000
-Received: from FRAEML521-MBX.china.huawei.com ([169.254.1.76]) by
- FRAEMA701-CHM.china.huawei.com ([169.254.1.146]) with mapi id 14.03.0415.000;
- Wed, 21 Nov 2018 17:25:54 +0100
-From:   Salil Mehta <salil.mehta@huawei.com>
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>
-CC:     "davem@davemloft.net" <davem@davemloft.net>,
-        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
-        "lipeng (Y)" <lipeng321@huawei.com>,
-        "mehta.salil@opnsrc.net" <mehta.salil@opnsrc.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>,
-        Liuzhongzhu <liuzhongzhu@huawei.com>
-Subject: RE: [PATCH net-next 3/8] net: hns3: Add "FD flow table" info query
- function
-Thread-Topic: [PATCH net-next 3/8] net: hns3: Add "FD flow table" info query
- function
-Thread-Index: AQHUgE3A88LCBPWoOUeZn/zB+IRylaVXnaeAgALN3fA=
-Date:   Wed, 21 Nov 2018 16:25:54 +0000
-Message-ID: <F4CC6FACFEB3C54C9141D49AD221F7F93BFC86CE@FRAEML521-MBX.china.huawei.com>
-References: <20181119211845.23168-1-salil.mehta@huawei.com>
-        <20181119211845.23168-4-salil.mehta@huawei.com>
- <20181119143045.5a147396@cakuba.netronome.com>
-In-Reply-To: <20181119143045.5a147396@cakuba.netronome.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.226.54]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+        Wed, 21 Nov 2018 22:03:18 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45833 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729727AbeKVDDS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 22:03:18 -0500
+Received: by mail-pl1-f196.google.com with SMTP id a14so6211490plm.12
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 08:28:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FiJirZOKa6myaADfJkWWPvVJZk+uUHJpApLtjnmWJ04=;
+        b=ZpZsnbrQIkGy0yAT8hDURuztVDP4+0szesFbKkNciZGbfx74oc7Eeg45wKXs8R4tRc
+         FZ+QB8Zu7mG73lcuniMYVIECgRd3gJZTlJAiU1deRHG9CkAKjusJb6L35cecs7F/Jx0t
+         HMQYCPcE6BEwk/hUu+qbwBcboe//0bTF4SLhrVzpxFPJw0ycXzM3InK1g/pUhWTEJfFN
+         Tcig49c6Hdiq6WoKkEIpurgVpDLwfQ0nNxPxeFkgRZM4DT7gQ8rD9Sm//KP3tvY86daU
+         iPJYtm0TIx67+Y7Y4uz5CLqp8y22dWneJAqQeIEBfClKSH9H9hzzMyEEre/JS6ynsZWP
+         /Vyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=FiJirZOKa6myaADfJkWWPvVJZk+uUHJpApLtjnmWJ04=;
+        b=drPsFX9K7tny0yjeJI/EgRroFGIvp3NNMP7xGt3Vlvr9d3L18ggCSliR8XPAzeDhHN
+         i312GuXUO86vwaLg0CLFB8yfag/t1IgmnP9P6K5Dx3l39x5uqLiSNWjXoyHQNdWgrP/L
+         l4FYh4W+AilTzqUCMLE/b8kijfDDr1yYaxhgTNyFI8ivEff5bRtbUKtPIuiD69LD3orq
+         i/CPVHd484DdVVkfy2sDRVeT/pvFdVf8TXV8u1l011jDOIM4Oy91hSefxM7TlS3Dbg+Y
+         29DycIuwaApIoe3jJkw7oOswrRNm5peVo2kRN9/5Mu4oO8Tx+VMlFsAw+BKZkW4eCbWj
+         pi5A==
+X-Gm-Message-State: AA+aEWbliV1H7vy3vO9jlbsi8StFFXRsckBmqt/BMIs3yZ8qxVxJdxAD
+        ZWuAMvx56r1Hn+xlrstez74Yg/Q20Bo=
+X-Google-Smtp-Source: AFSGD/WXeOS0KlX1r2RSw2QA0XrwM5Ra4HrOGvAd1oHkvZUp2UX2jEagq2U+kgLgqghDS0f1SiC1DA==
+X-Received: by 2002:a65:448a:: with SMTP id l10mr6599607pgq.387.1542817690651;
+        Wed, 21 Nov 2018 08:28:10 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id f13sm29790412pfa.132.2018.11.21.08.28.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 08:28:09 -0800 (PST)
+Date:   Wed, 21 Nov 2018 08:28:09 -0800 (PST)
+X-Google-Original-Date: Wed, 21 Nov 2018 08:27:47 PST (-0800)
+Subject:     Re: [PATCH] RISC-V: Build flat and compressed kernel images
+In-Reply-To: <CAEUhbmWskEtQR-kAuAYx=SHOJ4-MrCRUchSQ68WwZ62hxsTQyQ@mail.gmail.com>
+CC:     anup@brainfault.org, aou@eecs.berkeley.edu,
+        Christoph Hellwig <hch@infradead.org>, atish.patra@wdc.com,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     bmeng.cn@gmail.com
+Message-ID: <mhng-7be4f47d-bc3a-4073-a6db-dc5588304d2d@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacub,
+On Tue, 20 Nov 2018 21:06:18 PST (-0800), bmeng.cn@gmail.com wrote:
+> On Mon, Nov 12, 2018 at 1:55 PM Anup Patel <anup@brainfault.org> wrote:
+>>
+>> This patch extends Linux RISC-V build system to build and install:
+>> Image - Flat uncompressed kernel image
+>> Image.gz - Flat and GZip compressed kernel image
+>>
+>> Quiet a few bootloaders (such as Uboot, UEFI, etc) are capable of
+>
+> nits: U-Boot
+>
+>> booting flat and compressed kernel images. In case of Uboot, booting
+>
+> nits: U-Boot
 
-> From: Jakub Kicinski [mailto:jakub.kicinski@netronome.com]
-> Sent: Monday, November 19, 2018 10:31 PM
-> To: Salil Mehta <salil.mehta@huawei.com>
-> Cc: davem@davemloft.net; Zhuangyuzeng (Yisen) <yisen.zhuang@huawei.com>;
-> lipeng (Y) <lipeng321@huawei.com>; mehta.salil@opnsrc.net;
-> netdev@vger.kernel.org; linux-kernel@vger.kernel.org; Linuxarm
-> <linuxarm@huawei.com>; Liuzhongzhu <liuzhongzhu@huawei.com>
-> Subject: Re: [PATCH net-next 3/8] net: hns3: Add "FD flow table" info
-> query function
-> 
-> On Mon, 19 Nov 2018 21:18:40 +0000, Salil Mehta wrote:
-> > diff --git
-> a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h.rej
-> b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h.rej
-> > new file mode 100644
-> > index 000000000000..be7d0dea06e7
-> > --- /dev/null
-> > +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h.rej
-> > @@ -0,0 +1,12 @@
-> > +*************** int hclge_set_vlan_filter(struct hnae3_handle
-> *handle, __be16 proto,
-> > +*** 800,803 ****
-> > +  void hclge_reset_vf_queue(struct hclge_vport *vport, u16 queue_id);
-> > +  int hclge_cfg_flowctrl(struct hclge_dev *hdev);
-> > +  int hclge_func_reset_cmd(struct hclge_dev *hdev, int func_id);
-> > +  #endif
-> > +--- 800,804 ----
-> > +  void hclge_reset_vf_queue(struct hclge_vport *vport, u16 queue_id);
-> > +  int hclge_cfg_flowctrl(struct hclge_dev *hdev);
-> > +  int hclge_func_reset_cmd(struct hclge_dev *hdev, int func_id);
-> > ++ int hclge_dbg_run_cmd(struct hnae3_handle *handle, char *cmd_buf);
-> > +  #endif
-> 
-> You probably don't need this.
+Thanks for the review.  The PR has already been tagged, but it's not scheduled 
+to be sent out until later today.  I generally try to avoid rewriting the tags 
+unless there's something major that's wrong, so unless you feel very strongly 
+about this then I think I'll let it stand.
 
-Goodness! I was on a transit while I floated this patch-set, somehow
-missed my quick review. Sorry for this and thanks for catching!
+Let me know if this is a big deal for you, I can rewrite things.
 
-Best regards
-Salil
+>> Image or Image.gz is achieved using bootm command.
+>>
+>> The flat and uncompressed kernel image (i.e. Image) is very useful
+>> in pre-silicon developent and testing because we can create back-door
+>> HEX files for RAM on FPGAs from Image.
+>>
+>> Signed-off-by: Anup Patel <anup@brainfault.org>
+>> ---
+>>  arch/riscv/Makefile             | 15 ++++++++-
+>>  arch/riscv/boot/.gitignore      |  2 ++
+>>  arch/riscv/boot/Makefile        | 33 ++++++++++++++++++
+>>  arch/riscv/boot/install.sh      | 60 +++++++++++++++++++++++++++++++++
+>>  arch/riscv/kernel/head.S        | 10 ++++++
+>>  arch/riscv/kernel/vmlinux.lds.S |  2 +-
+>>  6 files changed, 120 insertions(+), 2 deletions(-)
+>>  create mode 100644 arch/riscv/boot/.gitignore
+>>  create mode 100644 arch/riscv/boot/Makefile
+>>  create mode 100644 arch/riscv/boot/install.sh
+>>
+>
+> Reviewed-by: Bin Meng <bmeng.cn@gmail.com>
+>
+> Tested with U-Boot s-mode on QEMU virt, using bootm to boot the kernel
+> Tested-by: Bin Meng <bmeng.cn@gmail.com>
+
+I also won't include the tags unless I rewrite the tags.
+
+Thanks for the review!
