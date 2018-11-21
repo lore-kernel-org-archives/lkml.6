@@ -2,211 +2,235 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5E9C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D423BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:04:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA6BE21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:02:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F2A7214D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:04:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QxeWXAT/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA6BE21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jp1Pq0IW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F2A7214D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732971AbeKVEiJ (ORCPT
+        id S1732976AbeKVEkQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 23:38:09 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38095 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732870AbeKVEh3 (ORCPT
+        Wed, 21 Nov 2018 23:40:16 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45830 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729828AbeKVEkQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 23:37:29 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181121180206euoutp01b8e9212e75d0e019a80e80ed96f9304e~pNaQPM4IJ1022810228euoutp01B
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 18:02:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181121180206euoutp01b8e9212e75d0e019a80e80ed96f9304e~pNaQPM4IJ1022810228euoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1542823326;
-        bh=TC4iv9GmwSHsehFTeXbZMrcoHrnEKqBkOFvwBCjFgEg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QxeWXAT/PVQVYFbL6LC9XU8+LWZPTzgKGBoL530dShlA27jh2FsUsAQC9T/aOXmQW
-         67PxatvFYT+ixNndCcUqn+gTuyIZImIgaLbHw5AfX8JzxmQRPrfzWP94//5tAmRQHA
-         rt8/yb0FFtPmaDGYwRPWvoxiww+J7p+LUT7cKgL0=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181121180204eucas1p29f01fa667282f71e870be3b662344d1c~pNaPEsQ9i1318113181eucas1p2P;
-        Wed, 21 Nov 2018 18:02:04 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id A9.B3.04806.C9D95FB5; Wed, 21
-        Nov 2018 18:02:04 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382~pNaOXcXWN3115831158eucas1p1T;
-        Wed, 21 Nov 2018 18:02:04 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181121180203eusmtrp205083d871e555b0038b775a845c138bb~pNaOH68rp0880408804eusmtrp26;
-        Wed, 21 Nov 2018 18:02:03 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-d6-5bf59d9c12be
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 4C.48.04284.B9D95FB5; Wed, 21
-        Nov 2018 18:02:03 +0000 (GMT)
-Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181121180202eusmtip2ee65eeaddffccee4e927d3dfba791f47~pNaNPk8pt1293112931eusmtip2W;
-        Wed, 21 Nov 2018 18:02:02 +0000 (GMT)
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-To:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, cw00.choi@samsung.com,
-        rjw@rjwysocki.net, len.brown@intel.com, pavel@ucw.cz,
-        gregkh@linuxfoundation.org, keescook@chromium.org,
-        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
-        krzk@kernel.org, m.szyprowski@samsung.com,
-        b.zolnierkie@samsung.com, Lukasz Luba <l.luba@partner.samsung.com>
-Subject: [PATCH 3/6] devfreq: add support for suspend/resume of a devfreq
- device
-Date:   Wed, 21 Nov 2018 19:01:38 +0100
-Message-Id: <1542823301-23563-4-git-send-email-l.luba@partner.samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542823301-23563-1-git-send-email-l.luba@partner.samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VSaWwMYRj2zezsTJdtxqJ91Zl1RCWKKL4gjiAdRFLXn/YHQ0eJ7padFkVi
-        XN1uL02DNvQgPTNd2q5atbSitq2rt7tRokEUdaxWJE3ZMYt/z/u8z/O87/fmY0hDPxXE7DTH
-        CRYzH2PU6jTOhp8tM3Jy+yJnDSROwreuBOPK7HIKX63sp/CT7+8onO9upvCxgnItfpBiwie7
-        P5C4paWCxk1HP9L4uTQWnz1VQ2BH92MKd7hytNiT5kY4u6WWwBfdL2hc9KSNwJ1HSrX4xb16
-        b8b9dgqfqHHTOLHsC4U/tnZplgLnvO6kOHueHXHnpDYNl3HyG+IKbrwnOIds03I3c+00d7nw
-        MDfYQHO3em8QXNUjq4ZLr5IRV1r2g+Y8jvHh/hG6RVFCzM69gmXm4i26He+LU6ndrw37Hacv
-        Iwl1+ScjhgE2FHJf8clIxxjYUgSDOWWEWnxHcKekhk5Gft7CgyDzfLSCFcOxCptWFZUguJB+
-        ifrnSJE+IyVWy4ZAtbxHMYxkCxC0VwcrGpK9Q4LrayahNEaw6+Hum2akYA07BST7mz9Yz64G
-        OTWdUKeNh2fNNlLBfuwa8MgZSAkCtoiBaxWVSBWtgMxvKT7DCOhprKJVPBZ+Xcv38SI0Jcla
-        FR8C691qn2Yh3G5so5SlSTYYyl0zVXoZNHYqr1dO5A9PPw1XaNILM51ZpErrISnRoKqnQVVq
-        q29QAJTYz/jCObj9UKLV8+QhaOp5q8lAE87+H3YeIRkFCvGiKVoQ55iFfSEibxLjzdEh22JN
-        DuT9jfcHG/uqUe3A1jrEMsg4TC9F9kUaKH6vmGCqQ8CQxpH6pAgvpY/iEw4IltjNlvgYQaxD
-        YxiNMVB/cMirSAMbzccJuwRht2D52yUYvyAJyfkdL1s94QETtqyYnGbDUv/WoeGpC46sCRvt
-        mj8cS5ua50/N2r7x5YF18rDQvPZxYa+Le63J7keJa4utKRtWfl4ff9TTY2VHQSE/fZUj6jjZ
-        ecHxwdg1sFw/tzvXLK+MjVsSNNtdq7NMnOeKdfYedBeljXO6620JpVPNMSciCp8bNeIOfvZ0
-        0iLyvwHadufziQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNIsWRmVeSWpSXmKPExsVy+t/xe7qz536NNji0Rd/i4FZNi40z1rNa
-        bN/4jdXi+pfnrBbzj5xjtWhevJ7N4kx3rkX/49fMFufPb2C3ONv0ht3iVoOMxawpe5ksNj2+
-        xmpxedccNovPvUcYLWac38dksfbIXXaLpdcvMlncblzBZnH31FGgGacvsVq07j3CbtG2+gOr
-        xZsL91gcJDy27d7G6rFm3hpGj9kNF1k8JvR/YvRYvOclk8emVZ1sHvvnrmH32Lyk3uPfMXaP
-        g+/2MHlsudrO4tG3ZRWjx4rV39k9Pm+SC+CL0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHU
-        MzQ2j7UyMlXSt7NJSc3JLEst0rdL0Mt4uayHteCRUMWmqZsZGxjv8XUxcnJICJhING/oZOti
-        5OIQEljKKPF17ydmiISYxKR929khbGGJP9e6oIo+MUp8nvwTKMHBwSagJ7FjVSFIXERgOaPE
-        /Z+z2UEcZoEHzBIdzzexgnQLCwRIvJ3ZBWazCKhKNKx5yghi8wp4Sazq6WOC2CAncfNcJ9hm
-        TgFvic+rJoDVCAHVXJm3kHUCI98CRoZVjCKppcW56bnFhnrFibnFpXnpesn5uZsYgRG77djP
-        zTsYL20MPsQowMGoxMOrEfk1Wog1say4MvcQowQHs5IIb0cUUIg3JbGyKrUoP76oNCe1+BCj
-        KdBRE5mlRJPzgckkryTe0NTQ3MLS0NzY3NjMQkmc97xBZZSQQHpiSWp2ampBahFMHxMHp1QD
-        46z0npwZl9uePOU1eWHlpNnJ1firrIOraca5U99mBFevr/E7YHyGwXtOtkn3hZ3fVP2088oY
-        Y7Z+v7WRrTg3Wu2FsdTLiect9M9fEZMXcaxTqBe1kd874f/CU5nLvys+dd+Zek7894xKBdU1
-        M600Vr3eYCMn99n+HNtXHScXe/PfW1f/+j/PSomlOCPRUIu5qDgRAEGu3tTuAgAA
-X-CMS-MailID: 20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382
-References: <1542823301-23563-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382@eucas1p1.samsung.com>
+        Wed, 21 Nov 2018 23:40:16 -0500
+Received: by mail-qt1-f196.google.com with SMTP id e5so4814616qtr.12;
+        Wed, 21 Nov 2018 10:04:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=jCGPeT4nSIx5YEdLMXCLT7U8HgFLSDA8lE2Af7qAeXQ=;
+        b=Jp1Pq0IWFqeLoayyeTbBuh81N8z15q6TFgG/ZToT77uc44lvr+2CTpALjhkidJs079
+         Dx/CcdqD0c75NkfdMZBoSn/qHmHQr2seoQMD0YDWpiS+JqfZOgvGol1SM5vHzJSkrSTN
+         MAI3xvvpzcOiuxWhe3CuGVOAe4X0Zmx+TX4pKS2xtqH5SpVgNe7A2yECbZrwLILoRYcr
+         iR/iEGcZ8RkS3KMLp9pleCkj/GUfEMFJZOtRZ3EpxChWCvEIBTpvw2EW8fAoXR7gyUAw
+         wV4PzH0oXvJ6xPvqYN+nxx2v23Q8FqKSGjHnE0jOptR22NyGa8m6E3DK9ZJYeBJA33Tf
+         Vqag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=jCGPeT4nSIx5YEdLMXCLT7U8HgFLSDA8lE2Af7qAeXQ=;
+        b=LF6nwwPS+S8IXkMwWtkiAVIk9Zu14L5BP/2f0Xv9JiHAfZxYpbpn9QfBcGSHNkTKxk
+         yfg3IPBkQ2VLmbm9cvL1H9zmTLrsxeAUmzgew21C9HKW81jqJ8NlI94d2qYYxlxG11tL
+         qn//isroh7oOwUfdLNkGIA/3mDLxHpB4aeMF5wY2FmhCIZpOzOGnLSpciIjEwnC3KQ8Y
+         ZHNB6jO64a4gp/Qt8dvio4hf9ht+skChzi06yg3EVKT5SNPolWu7mMuL1ZVZ9BPtgOeS
+         DcG52GO1TeG3g6bPKOdiAq91bsT2Q6YWmsTyEDsXh73P8E74DRtSFyhxLZZc0kj2BezG
+         xyHw==
+X-Gm-Message-State: AA+aEWaNACqb0VPAPrOTTTvuyx7RUk4sWati6YCPTNVKBkDc+E8au+bQ
+        hcYFulbOMRlQ3/52irkF1DA=
+X-Google-Smtp-Source: AFSGD/V70Q3Ao1wqqVo5PkbrKxNT9f+DH/xZ/rYHt/YzCu1WA1LVw7i+OSo82fbEG9lyjQAIqM5O6g==
+X-Received: by 2002:ac8:48c1:: with SMTP id l1mr2640265qtr.71.1542823492004;
+        Wed, 21 Nov 2018 10:04:52 -0800 (PST)
+Received: from smtp.gmail.com ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id o49sm26987800qtf.60.2018.11.21.10.04.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 10:04:51 -0800 (PST)
+From:   Giuliano Belinassi <giuliano.belinassi@gmail.com>
+X-Google-Original-From: Giuliano Belinassi <giuliano.belinassi@usp.br>
+Date:   Wed, 21 Nov 2018 16:04:43 -0200
+To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        alexandru.Ardelean@analog.com, stefan.popa@analog.com
+Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: [PATCH] staging: iio: ad7780: Add gain & filter gpio support
+Message-ID: <20181121180443.tjgcpu2webrq53rh@smtp.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch adds support for handling suspend/resume process.
-It uses atomic variables to make sure no race condition
-affects the process.
+Previously, the AD7780 driver only supported gpio for the 'powerdown'
+pin. This commit adds suppport for the 'gain' and 'filter' pin.
 
-The patch draws on Tobias Jakobi's work posted ~2 years ago, who tried to
-solve issue with devfreq device's frequency during suspend/resume.
-During the discussion on LKML some corner cases and comments appeared
-related to the design. This patch address them keeping in mind suggestions
-from Chanwoo Choi.
-
-Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+Signed-off-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
 ---
- drivers/devfreq/devfreq.c | 45 +++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 39 insertions(+), 6 deletions(-)
+ drivers/staging/iio/adc/ad7780.c       | 61 ++++++++++++++++++++++++--
+ include/linux/iio/adc/ad_sigma_delta.h |  5 +++
+ 2 files changed, 62 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index cf9c643..7e09de8 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -872,14 +872,33 @@ EXPORT_SYMBOL(devm_devfreq_remove_device);
-  */
- int devfreq_suspend_device(struct devfreq *devfreq)
- {
--	if (!devfreq)
--		return -EINVAL;
-+        int ret;
-+        unsigned long prev_freq;
-+        u32 flags = 0;
-+
-+        if (!devfreq)
-+                return -EINVAL;
-+
-+        if (devfreq->governor) {
-+		ret = devfreq->governor->event_handler(devfreq,
-+					DEVFREQ_GOV_SUSPEND, NULL);
-+		if (ret)
-+			return ret;
-+	}
+diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
+index c4a85789c2db..69794f06dbcd 100644
+--- a/drivers/staging/iio/adc/ad7780.c
++++ b/drivers/staging/iio/adc/ad7780.c
+@@ -39,6 +39,9 @@
+ #define AD7170_PATTERN		(AD7780_PAT0 | AD7170_PAT2)
+ #define AD7170_PATTERN_MASK	(AD7780_PAT0 | AD7780_PAT1 | AD7170_PAT2)
  
--	if (!devfreq->governor)
--		return 0;
-+	if (devfreq->suspend_freq) {
-+		if (atomic_inc_return(&devfreq->suspend_count) > 1)
-+			return 0;
++#define AD7780_GAIN_GPIO	0
++#define AD7780_FILTER_GPIO	1
++
+ struct ad7780_chip_info {
+ 	struct iio_chan_spec	channel;
+ 	unsigned int		pattern_mask;
+@@ -50,6 +53,8 @@ struct ad7780_state {
+ 	const struct ad7780_chip_info	*chip_info;
+ 	struct regulator		*reg;
+ 	struct gpio_desc		*powerdown_gpio;
++	struct gpio_desc		*gain_gpio;
++	struct gpio_desc		*filter_gpio;
+ 	unsigned int	gain;
  
--	return devfreq->governor->event_handler(devfreq,
--				DEVFREQ_GOV_SUSPEND, NULL);
-+		ret = devfreq_set_target(devfreq, devfreq->suspend_freq,
-+					 &prev_freq, flags);
-+		if (ret)
-+			return ret;
-+
-+		devfreq->resume_freq = prev_freq;
-+	}
-+
-+        return 0;
+ 	struct ad_sigma_delta sd;
+@@ -115,18 +120,51 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
+ 	return -EINVAL;
  }
- EXPORT_SYMBOL(devfreq_suspend_device);
  
-@@ -893,9 +912,23 @@ EXPORT_SYMBOL(devfreq_suspend_device);
-  */
- int devfreq_resume_device(struct devfreq *devfreq)
- {
-+        int ret;
-+        unsigned long prev_freq;
-+        u32 flags = 0;
++static int ad7780_write_raw(struct iio_dev *indio_dev,
++			    struct iio_chan_spec const *chan,
++			    int val,
++			    int val2,
++			    long m)
++{
++	struct ad7780_state *st = iio_priv(indio_dev);
 +
- 	if (!devfreq)
- 		return -EINVAL;
- 
-+	if (devfreq->suspend_freq) {
-+		if (atomic_dec_return(&devfreq->suspend_count) >= 1)
-+			return 0;
++	if (m != IIO_CHAN_INFO_RAW)
++		return -EINVAL;
 +
-+		ret = devfreq_set_target(devfreq, devfreq->resume_freq,
-+					 &prev_freq, flags);
-+		if (ret)
-+			return ret;
++	if (st->chip_info->is_ad778x) {
++		switch(val) {
++		case AD7780_GAIN_GPIO:
++			gpiod_set_value(st->gain_gpio, val2);
++		break;
++		case AD7780_FILTER_GPIO:
++			gpiod_set_value(st->filter_gpio, val2);
++		break;
++		default:
++			return -EINVAL;
++		}
 +	}
 +
- 	if (!devfreq->governor)
- 		return 0;
++	return 0;
++}
++
+ static int ad7780_postprocess_sample(struct ad_sigma_delta *sigma_delta,
+ 				     unsigned int raw_sample)
+ {
+ 	struct ad7780_state *st = ad_sigma_delta_to_ad7780(sigma_delta);
+ 	const struct ad7780_chip_info *chip_info = st->chip_info;
++	int val;
  
+ 	if ((raw_sample & AD7780_ERR) ||
+ 	    ((raw_sample & chip_info->pattern_mask) != chip_info->pattern))
+ 		return -EIO;
+ 
+ 	if (chip_info->is_ad778x) {
+-		if (raw_sample & AD7780_GAIN)
++		val = raw_sample & AD7780_GAIN;
++
++		if (val != gpiod_get_value(st->gain_gpio))
++			return -EIO;
++
++		if (val)
+ 			st->gain = 1;
+ 		else
+ 			st->gain = 128;
+@@ -141,18 +179,20 @@ static const struct ad_sigma_delta_info ad7780_sigma_delta_info = {
+ 	.has_registers = false,
+ };
+ 
+-#define AD7780_CHANNEL(bits, wordsize) \
++#define AD7170_CHANNEL(bits, wordsize) \
+ 	AD_SD_CHANNEL_NO_SAMP_FREQ(1, 0, 0, bits, 32, wordsize - bits)
++#define AD7780_CHANNEL(bits, wordsize) \
++	AD_SD_CHANNEL_GAIN_FILTER(1, 0, 0, bits, 32, wordsize - bits)
+ 
+ static const struct ad7780_chip_info ad7780_chip_info_tbl[] = {
+ 	[ID_AD7170] = {
+-		.channel = AD7780_CHANNEL(12, 24),
++		.channel = AD7170_CHANNEL(12, 24),
+ 		.pattern = AD7170_PATTERN,
+ 		.pattern_mask = AD7170_PATTERN_MASK,
+ 		.is_ad778x = false,
+ 	},
+ 	[ID_AD7171] = {
+-		.channel = AD7780_CHANNEL(16, 24),
++		.channel = AD7170_CHANNEL(16, 24),
+ 		.pattern = AD7170_PATTERN,
+ 		.pattern_mask = AD7170_PATTERN_MASK,
+ 		.is_ad778x = false,
+@@ -173,6 +213,7 @@ static const struct ad7780_chip_info ad7780_chip_info_tbl[] = {
+ 
+ static const struct iio_info ad7780_info = {
+ 	.read_raw = ad7780_read_raw,
++	.write_raw = ad7780_write_raw,
+ };
+ 
+ static int ad7780_probe(struct spi_device *spi)
+@@ -222,6 +263,18 @@ static int ad7780_probe(struct spi_device *spi)
+ 		goto error_disable_reg;
+ 	}
+ 
++	if (st->chip_info->is_ad778x) {
++		st->gain_gpio = devm_gpiod_get_optional(&spi->dev,
++							"gain",
++							GPIOD_OUT_HIGH);
++		if (IS_ERR(st->gain_gpio)) {
++			ret = PTR_ERR(st->gain_gpio);
++			dev_err(&spi->dev, "Failed to request gain GPIO: %d\n",
++				ret);
++			goto error_disable_reg;
++		}
++	}
++
+ 	ret = ad_sd_setup_buffer_and_trigger(indio_dev);
+ 	if (ret)
+ 		goto error_disable_reg;
+diff --git a/include/linux/iio/adc/ad_sigma_delta.h b/include/linux/iio/adc/ad_sigma_delta.h
+index 730ead1a46df..6cadab6fd5fd 100644
+--- a/include/linux/iio/adc/ad_sigma_delta.h
++++ b/include/linux/iio/adc/ad_sigma_delta.h
+@@ -173,6 +173,11 @@ int ad_sd_validate_trigger(struct iio_dev *indio_dev, struct iio_trigger *trig);
+ 	__AD_SD_CHANNEL(_si, _channel, -1, _address, _bits, \
+ 		_storagebits, _shift, NULL, IIO_VOLTAGE, 0)
+ 
++#define AD_SD_CHANNEL_GAIN_FILTER(_si, _channel, _address, _bits, \
++	_storagebits, _shift) \
++	__AD_SD_CHANNEL(_si, _channel, -1, _address, _bits, \
++		_storagebits, _shift, NULL, IIO_VOLTAGE, BIT(IIO_CHAN_INFO_RAW))
++
+ #define AD_SD_TEMP_CHANNEL(_si, _address, _bits, _storagebits, _shift) \
+ 	__AD_SD_CHANNEL(_si, 0, -1, _address, _bits, \
+ 		_storagebits, _shift, NULL, IIO_TEMP, \
 -- 
-2.7.4
+2.19.1
 
