@@ -2,155 +2,97 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28891C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FA2C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB79121479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:51:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C63C214C1
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:51:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="H5siaQNd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB79121479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNg1q8oE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C63C214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730603AbeKUXZh (ORCPT
+        id S1730619AbeKUXZs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 18:25:37 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33388 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729377AbeKUXZh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 18:25:37 -0500
-Received: by mail-wr1-f66.google.com with SMTP id u9-v6so5588029wrr.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 04:51:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rhFsEeOgeCjEhE6X9BoiZMxIWHOhMf7hfkfvzGQNMh0=;
-        b=H5siaQNdTYAcHr5HOp9va8xhXDXuBmkkENm3gdbdwJlWSodLsXTr1UBzQpW+ceo3ke
-         M5sqxPWdFUqYdp2rshWdLYcbZch7ZjMH53/STbUllhzFzkHklQuWmyaj0hV0heVGbmHU
-         8czqWjIPb5UEm6dIPgNFN95rLCrbnT5i+ns+Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rhFsEeOgeCjEhE6X9BoiZMxIWHOhMf7hfkfvzGQNMh0=;
-        b=LapQo4tX6J2O0APS3cta5HzqVg4imux7zBpNqv7LOJGhX7T+TfjRIfoS3VrHGMOrUL
-         6oj1DaF9NlLBO6Y6Dov2Pi8TibUdDrYvRZlGUorLStp2wXU1waPTpzlMFGQz9fRhQIAt
-         fesjovGRZT5ms/6fbsGljs/Ftye16PKMQ5lM5K0BOy+UutClkViJyw+qWecNinYU/N7G
-         Bf5nv/JqlATwehhxmrZbsMIATieoAXWbyA8mO71H02FFIflsFMoGZknhz08e8FBhJ9bN
-         fp38byxiaS1JHqV2vS/i+PZ5DQdxxFZhQ/r5TzsB9wqL/4/y7Xp8OdGWAUQxztxBqj72
-         hsvg==
-X-Gm-Message-State: AA+aEWZt7swKXUgJ38kRP75lZWNy7wWZVrEdVoW7Jt/DrIZ26Q48K4sz
-        LlBTCevJb4azmLx2ecK9PdDWYYXY/ls=
-X-Google-Smtp-Source: AFSGD/XeGhVoV4NvfSrrgnGROwBsg2hOl02VA+PNq7nzU8bF4VhVi9Ch/ptqEi+FrJKCxYhEah+umg==
-X-Received: by 2002:a5d:4586:: with SMTP id p6mr5501780wrq.69.1542804680219;
-        Wed, 21 Nov 2018 04:51:20 -0800 (PST)
-Received: from [192.168.0.40] (239.22.136.77.rev.sfr.net. [77.136.22.239])
-        by smtp.googlemail.com with ESMTPSA id 21-v6sm1375594wmv.5.2018.11.21.04.51.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 04:51:19 -0800 (PST)
-Subject: Re: [PATCH v2 1/3] thermal: tegra: continue if sensor register fails
-To:     Wei Ni <wni@nvidia.com>, thierry.reding@gmail.com,
-        linux-tegra@vger.kernel.org
-Cc:     rui.zhang@intel.com, edubezval@gmail.com,
-        linux-kernel@vger.kernel.org
-References: <1542103567-5521-1-git-send-email-wni@nvidia.com>
- <1542103567-5521-2-git-send-email-wni@nvidia.com>
- <d212af68-fd18-74d4-d81c-ed8b3c0f136a@linaro.org>
- <70f08208-d04c-c9a4-07e6-d377c33a9386@nvidia.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <d77fe117-3cde-108f-e1d7-2871f3d4c485@linaro.org>
-Date:   Wed, 21 Nov 2018 13:51:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 21 Nov 2018 18:25:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46868 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729377AbeKUXZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 18:25:48 -0500
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A82921479;
+        Wed, 21 Nov 2018 12:51:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542804692;
+        bh=R1xYUQfjOTLiQy0rX0mqeI+N9MWP94mC73W1v83uKc4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jNg1q8oE+wS1gN4N3cAuK7E0S6kJuQr14/yspAaD/IyOS6OlG3V8+Po6+1CmaY138
+         rdcXlLJVbEDdM2N1iNv40HTjt7oPG+LfS6eOJCorXqfmwANou8nZbuDLihQr3kqpPE
+         SJbc9UIL63ilTYjU5QGoye95QWLbpGiusA1hRSeY=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 74FAD1443D6; Wed, 21 Nov 2018 09:51:30 -0300 (-03)
+Date:   Wed, 21 Nov 2018 09:51:30 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     "Liang, Kan" <kan.liang@linux.intel.com>, mingo@redhat.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        namhyung@kernel.org, ak@linux.intel.com
+Subject: Re: [PATCH 2/2] perf vendor events: Add JSON metrics for Cascadelake
+ server
+Message-ID: <20181121125130.GD6248@kernel.org>
+References: <20181114212416.15665-1-kan.liang@linux.intel.com>
+ <20181114212416.15665-2-kan.liang@linux.intel.com>
+ <20181115132116.GH9600@krava>
+ <3ab97c73-c197-8555-1a35-b54636e667e6@linux.intel.com>
+ <20181115151442.GK9600@krava>
 MIME-Version: 1.0
-In-Reply-To: <70f08208-d04c-c9a4-07e6-d377c33a9386@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115151442.GK9600@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/11/2018 11:23, Wei Ni wrote:
+Em Thu, Nov 15, 2018 at 04:14:42PM +0100, Jiri Olsa escreveu:
+> On Thu, Nov 15, 2018 at 08:33:27AM -0500, Liang, Kan wrote:
+> > 
+> > 
+> > On 11/15/2018 8:21 AM, Jiri Olsa wrote:
+> > > On Wed, Nov 14, 2018 at 01:24:16PM -0800, kan.liang@linux.intel.com wrote:
+> > > > From: Kan Liang <kan.liang@linux.intel.com>
+> > > > 
+> > > > Add JSON metrics (based on event list v1) for Cascadelake server
+> > > 
+> > > hum mail server probably crippled the email so it won't apply:
+> > > 
+> > > patching file pmu-events/arch/x86/cascadelakex/cache.json
+> > > patching file pmu-events/arch/x86/cascadelakex/clx-metrics.json
+> > > patching file pmu-events/arch/x86/cascadelakex/floating-point.json
+> > > patching file pmu-events/arch/x86/cascadelakex/frontend.json
+> > > patching file pmu-events/arch/x86/cascadelakex/memory.json
+> > > patching file pmu-events/arch/x86/cascadelakex/other.json
+> > > patching file pmu-events/arch/x86/cascadelakex/pipeline.json
+> > > patch: **** malformed patch at line 29879:  ow status bit and resets the counter to less than MAX. The reset value to the counter is not clocked immediately so the overflow status bit will flip 'high (1)' and generate another PMI (if enabled) after which the reset value gets clocked into the counter. Therefore, software will get the interrupt, read the overflow status bit '1 for bit 34 while the counter value is less than MAX. Software should ignore this case.",
+> > > 
+> > > I've similar error before and it was because of the 998 chars size
+> > > limit for line.. I guess you could either post it as attachment or
+> > > change the transfer encoding
+> > > 
+> > 
+> > The patch is attached. Can it be applied?
 > 
-> 
-> On 21/11/2018 4:55 PM, Daniel Lezcano wrote:
->> On 13/11/2018 11:06, Wei Ni wrote:
->>> Don't bail when a sensor fails to register with the
->>> thermal zone and allow other sensors to register.
->>> This allows other sensors to register with thermal
->>> framework even if one sensor fails registration.
->>
->> I'm not sure if ignoring the error is really safe. Can you describe the
->> real situation you want to overcome ? How do you differentiate critical
->> sensors ?
-> 
-> The driver will always try to register 4 thermal zones, including cpu,
-> gpu, mem and pll, but if the dts file doesn't set the corresponding
-> sensors, then the register will be failed.
-> Normally, the dts file will set all 4 sensors, but there may have some
-> platform doesn't support them all. So we post this patch.
+> yep, that one works
 
-Ignoring errors is not the way to go to support different platforms. Fix
-the DT.
+Can I have your reviewed-by for this one as well?
 
-
-> BTW, what do you mean "critical sensors"? We will set critical trip temp
-> for all sensors.
-
-I meant sensor for thermal zone getting really high temperature.
-
-
->>> Signed-off-by: Wei Ni <wni@nvidia.com>
->>> ---
->>>  drivers/thermal/tegra/soctherm.c | 8 +++++---
->>>  1 file changed, 5 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
->>> index ed28110a3535..a824d2e63af3 100644
->>> --- a/drivers/thermal/tegra/soctherm.c
->>> +++ b/drivers/thermal/tegra/soctherm.c
->>> @@ -1370,9 +1370,9 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
->>>  							 &tegra_of_thermal_ops);
->>>  		if (IS_ERR(z)) {
->>>  			err = PTR_ERR(z);
->>> -			dev_err(&pdev->dev, "failed to register sensor: %d\n",
->>> -				err);
->>> -			goto disable_clocks;
->>> +			dev_warn(&pdev->dev, "failed to register sensor %s: %d\n",
->>> +				 soc->ttgs[i]->name, err);
->>> +			continue;
->>>  		}
->>>  
->>>  		zone->tz = z;
->>> @@ -1434,6 +1434,8 @@ static int __maybe_unused soctherm_resume(struct device *dev)
->>>  		struct thermal_zone_device *tz;
->>>  
->>>  		tz = tegra->thermctl_tzs[soc->ttgs[i]->id];
->>> +		if (!tz)
->>> +			continue;
->>>  		err = tegra_soctherm_set_hwtrips(dev, soc->ttgs[i], tz);
->>>  		if (err) {
->>>  			dev_err(&pdev->dev,
->>>
->>
->>
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+- Arnaldo
