@@ -2,86 +2,91 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC91BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEBB9C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88B592145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:56:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88B592145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A2DF21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:59:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A2DF21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free-electrons.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728431AbeKUSaE (ORCPT
+        id S1728416AbeKUSc0 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 13:30:04 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14693 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725999AbeKUSaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 13:30:04 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 056DDF7936EE1;
-        Wed, 21 Nov 2018 15:56:31 +0800 (CST)
-Received: from [127.0.0.1] (10.210.167.253) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Wed, 21 Nov 2018
- 15:56:32 +0800
-Subject: Re: [PATCH] scsi/lpfc/lpfc_sli.c: Use dma_zalloc_coherent
-To:     James Smart <james.smart@broadcom.com>,
-        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        <dick.kennedy@broadcom.com>, <jejb@linux.vnet.ibm.com>,
-        <martin.petersen@oracle.com>
-References: <5bf1797b.1c69fb81.2368c.1ccc@mx.google.com>
- <16c3b882-6e0e-b712-b4d6-78f68172da65@huawei.com>
- <34556d50-562b-43b2-873f-ba68056e5af5@broadcom.com>
-CC:     <jrdr.linux@gmail.com>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <brajeswar.linux@gmail.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <5229ccbb-e6de-e114-52fb-235ea703a7ef@huawei.com>
-Date:   Wed, 21 Nov 2018 07:56:24 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Wed, 21 Nov 2018 13:32:26 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36792 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbeKUSc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 13:32:26 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4B0F920791; Wed, 21 Nov 2018 08:58:56 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 21B7F20510;
+        Wed, 21 Nov 2018 08:58:56 +0100 (CET)
+Date:   Wed, 21 Nov 2018 08:58:50 +0100
+From:   Antoine Tenart <antoine.tenart@free-electrons.com>
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Antoine Tenart <antoine.tenart@free-electrons.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        netdev@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Tony Lindgren <tony@atomide.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Carlo Caione <carlo@caione.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Manu Gautam <mgautam@codeaurora.org>
+Subject: Re: [PATCH v3 4/5] phy: mvebu-cp110-comphy: convert to use eth phy
+ mode and submode
+Message-ID: <20181121075850.GA6494@kwain>
+References: <20181120012424.11802-1-grygorii.strashko@ti.com>
+ <20181120012424.11802-5-grygorii.strashko@ti.com>
+ <d80901b2-a38a-7abf-23b2-c2b0c84ff321@ti.com>
+ <20181121075220.z6smcpk3y7vab7ix@qschulz>
 MIME-Version: 1.0
-In-Reply-To: <34556d50-562b-43b2-873f-ba68056e5af5@broadcom.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.210.167.253]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20181121075220.z6smcpk3y7vab7ix@qschulz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/11/2018 21:52, James Smart wrote:
-> On 11/20/2018 1:40 AM, John Garry wrote:
->>
->> please ensure that you maintain alignment with opening brackets
->
-> I don't think this is a requirement.  From the rules I've read
-> preference is tabs-only indentation.
+Hi Quentin,
 
-This is the only rule (enforcement) I see:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20181120&id=d1fe9c099cecc6e49324355f1b15573e9dbbe0f9
+On Wed, Nov 21, 2018 at 08:52:20AM +0100, Quentin Schulz wrote:
+> On Wed, Nov 21, 2018 at 01:08:42PM +0530, Kishon Vijay Abraham I wrote:
+> > 
+> > On 20/11/18 6:54 AM, Grygorii Strashko wrote:
+> > > Convert mvebu-cp110-comphy PHY driver to use recently introduced
+> > > PHY_MODE_ETHERNET and phy_set_mode_ext().
+> > 
+> > Care to give ACK for this patch?
+> > 
+> 
+> Acked-by Antoine and Tested-by Maxime given in v2:
+> https://patchwork.kernel.org/patch/10676749/
 
-Spacing (less than a tab), after
-> tabs, for open brace alignment is allowed, thus is coder's choice.
+The Acks were removed from v3 due to changes in the patches.
 
-It seems that alignment was being implemented with tab+space, and now it 
-would be tab+space but no alignment.
+Thanks,
+Antoine
 
-cheers,
-John
-
->
-> -- james
->
->
->
->
->
->
->
-
-
+-- 
+Antoine Ténart, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
