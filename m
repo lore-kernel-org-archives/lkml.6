@@ -2,271 +2,228 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B53C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B199C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 502C8206B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:06:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47DAC206B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:06:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Kh237+rh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 502C8206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="VdV6G1eb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47DAC206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387565AbeKVIm3 (ORCPT
+        id S2389955AbeKVImt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 03:42:29 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43619 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733169AbeKVIm2 (ORCPT
+        Thu, 22 Nov 2018 03:42:49 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:10711 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730599AbeKVImt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 03:42:28 -0500
-Received: by mail-pl1-f196.google.com with SMTP id gn14so7360941plb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 14:06:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xUexkqq2tOCZQRfKBh6/SLZH8FHUlQk5PkXMe7G8w34=;
-        b=Kh237+rhf2qeWDp0MiuKHQEmyUVMI0gSRYJeW3b6VoSJtcndTRZDU2IBYo/ssGuy7D
-         twZyBVw++MGrt3hvFfcg/gRpvljN5wvIXQihDTjbK2Ake7g9cbW0ansR//3dLL73R76H
-         fiU3UerYGJ+X78NEnl7gklAPS5z7YM2Iuxs4I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xUexkqq2tOCZQRfKBh6/SLZH8FHUlQk5PkXMe7G8w34=;
-        b=oIdfofAZgbYB2wKZjM/Ali6WlMtGbkFfyl95aUdbXuDm7PPH1/mW2jMskfSfIbBtRQ
-         Pag1BhJpv04KXi+pkCUzHUyaul3FhKeBzz2O8JWOnOVpAhy2do7L7JYUTTu04eM4eQkT
-         8NMbuZ6e0+b8pYEYIb48x63E1cHpCs0kmdcjxASKw/LQqXjGZb0am9SI+UBngER9iA5I
-         7bJDgE6LJKk59ymgJK3uL90Xw4KIhd/Y+wVAVzRc3OAWSMYuGDR5wBSPHyNkfAMiJ87M
-         eT4ZMjB8UW9F6HENNyMoHanr7aBqJG8IyLEgPHyjIchpqrfu5ephaooNA9VDe9dUaRtU
-         aNHw==
-X-Gm-Message-State: AA+aEWaX1yLYDq1wkDPtucNLt4B2Rbrr1+ZlGOJn9UxLx70EWCZ9zvC8
-        hQb1Pc8tMZ5bz03g6fekZza5Gw==
-X-Google-Smtp-Source: AFSGD/VRkIlLqRe08vAOIlAoiUSCiRDNqMh8AGzbBkcBWg3i5zDQHbXmUv0ajXCY4WPFbqdWG7Uoag==
-X-Received: by 2002:a63:1e56:: with SMTP id p22mr3929905pgm.126.1542837976127;
-        Wed, 21 Nov 2018 14:06:16 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id v124-v6sm14083960pfb.182.2018.11.21.14.06.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 14:06:15 -0800 (PST)
-Date:   Wed, 21 Nov 2018 14:06:14 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        amit.kucheria@linaro.org, evgreen@google.com
-Subject: Re: [PATCH v10 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq
- HW driver
-Message-ID: <20181121220614.GU22824@google.com>
-References: <1542796967-5949-1-git-send-email-tdas@codeaurora.org>
- <1542796967-5949-3-git-send-email-tdas@codeaurora.org>
+        Thu, 22 Nov 2018 03:42:49 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bf5d6ec0000>; Wed, 21 Nov 2018 14:06:36 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 21 Nov 2018 14:06:35 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 21 Nov 2018 14:06:35 -0800
+Received: from [10.2.168.109] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 21 Nov
+ 2018 22:06:35 +0000
+Subject: Re: [PATCH v2 0/6] RFC: gup+dma: tracking dma-pinned pages
+To:     Tom Talpey <tom@talpey.com>, <john.hubbard@gmail.com>,
+        <linux-mm@kvack.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20181110085041.10071-1-jhubbard@nvidia.com>
+ <942cb823-9b18-69e7-84aa-557a68f9d7e9@talpey.com>
+ <97934904-2754-77e0-5fcb-83f2311362ee@nvidia.com>
+ <5159e02f-17f8-df8b-600c-1b09356e46a9@talpey.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <c1ba07d6-ebfa-ddb9-c25e-e5c1bfbecf74@nvidia.com>
+Date:   Wed, 21 Nov 2018 14:06:34 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1542796967-5949-3-git-send-email-tdas@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <5159e02f-17f8-df8b-600c-1b09356e46a9@talpey.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1542837996; bh=fSMDC+isoSwp3Q/l972yCehVhHHVAob7oW4sSby856U=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=VdV6G1eb/KqtCBeeCMx4/PJmie01PCJsG2ad5wo7vF65TjXQjK+rRGjPKMmjqMG4u
+         AcGc5Mlg2hpFW2zFEw8XcoFgt49Q8dXm3P32HQPPTHZ4GSZerl/VDSLRx5ugTLdpKH
+         UHkFJQ5L5WhmtPpnGKhozYbWsKfP66d89KMJw0BX+BqWid5ld1BL9ZlV8i+rNTqVgi
+         wx1WRWbG1idc+rTIoTFltnvefzoRPo8tmfgjWe+Dh50LLbDfmfXcJho3PZ+SfRsWl6
+         qBGZBMHDcMCMhO0GyRyVQV6B9bvJ8RrtUcSLwPRJTw9MEZUlVqa1cVci7LI3A0u3kQ
+         TcOALJWbksoLg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 04:12:47PM +0530, Taniya Das wrote:
-> The CPUfreq HW present in some QCOM chipsets offloads the steps necessary
-> for changing the frequency of CPUs. The driver implements the cpufreq
-> driver interface for this hardware engine.
-> 
-> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  drivers/cpufreq/Kconfig.arm       |  11 ++
->  drivers/cpufreq/Makefile          |   1 +
->  drivers/cpufreq/qcom-cpufreq-hw.c | 346 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 358 insertions(+)
->  create mode 100644 drivers/cpufreq/qcom-cpufreq-hw.c
-> 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 4e1131e..688f102 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -114,6 +114,17 @@ config ARM_QCOM_CPUFREQ_KRYO
-> 
->  	  If in doubt, say N.
-> 
-> +config ARM_QCOM_CPUFREQ_HW
-> +	tristate "QCOM CPUFreq HW driver"
-> +	depends on ARCH_QCOM || COMPILE_TEST
-> +	help
-> +	  Support for the CPUFreq HW driver.
-> +	  Some QCOM chipsets have a HW engine to offload the steps
-> +	  necessary for changing the frequency of the CPUs. Firmware loaded
-> +	  in this engine exposes a programming interface to the OS.
-> +	  The driver implements the cpufreq interface for this HW engine.
-> +	  Say Y if you want to support CPUFreq HW.
-> +
->  config ARM_S3C_CPUFREQ
->  	bool
->  	help
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index d5ee456..789b2e0 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -62,6 +62,7 @@ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
->  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
->  obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
->  obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
-> +obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+= qcom-cpufreq-hw.o
->  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
->  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
->  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+= s3c2416-cpufreq.o
-> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-> new file mode 100644
-> index 0000000..6390e85
-> --- /dev/null
-> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-> @@ -0,0 +1,346 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/cpufreq.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +
-> +#define LUT_MAX_ENTRIES			40U
-> +#define CORE_COUNT_VAL(val)		(((val) & (GENMASK(18, 16))) >> 16)
-> +#define LUT_ROW_SIZE			32
-> +#define CLK_HW_DIV			2
-> +
-> +/* Register offsets */
-> +#define REG_ENABLE			0x0
-> +#define REG_LUT_TABLE			0x110
-> +#define REG_PERF_STATE			0x920
-> +
-> +struct cpufreq_qcom {
-> +	struct cpufreq_frequency_table *table;
-> +	void __iomem *perf_base;
-> +	cpumask_t related_cpus;
-> +	unsigned int max_cores;
-> +	unsigned long xo_rate;
-> +	unsigned long cpu_hw_rate;
-> +};
-> +
-> +static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
-> +
-> +static int
-> +qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
-> +			     unsigned int index)
-> +{
-> +	struct cpufreq_qcom *c = policy->driver_data;
-> +
-> +	writel_relaxed(index, c->perf_base);
-> +
-> +	return 0;
-> +}
-> +
-> +static unsigned int qcom_cpufreq_hw_get(unsigned int cpu)
-> +{
-> +	struct cpufreq_qcom *c;
-> +	struct cpufreq_policy *policy;
-> +	unsigned int index;
-> +
-> +	policy = cpufreq_cpu_get_raw(cpu);
-> +	if (!policy)
-> +		return 0;
-> +
-> +	c = policy->driver_data;
-> +
-> +	index = readl_relaxed(c->perf_base);
-> +	index = min(index, LUT_MAX_ENTRIES - 1);
-> +
-> +	return policy->freq_table[index].frequency;
-> +}
-> +
-> +static unsigned int
-> +qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
-> +			    unsigned int target_freq)
-> +{
-> +	struct cpufreq_qcom *c = policy->driver_data;
-> +	int index;
-> +
-> +	index = policy->cached_resolved_idx;
-> +	if (index < 0)
-> +		return 0;
-> +
-> +	writel_relaxed(index, c->perf_base);
-> +
-> +	return policy->freq_table[index].frequency;
-> +}
-> +
-> +static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
-> +{
-> +	struct cpufreq_qcom *c;
-> +
-> +	c = qcom_freq_domain_map[policy->cpu];
-> +	if (!c) {
-> +		pr_err("No scaling support for CPU%d\n", policy->cpu);
-> +		return -ENODEV;
-> +	}
-> +
-> +	cpumask_copy(policy->cpus, &c->related_cpus);
-> +
-> +	policy->fast_switch_possible = true;
-> +	policy->freq_table = c->table;
-> +	policy->driver_data = c;
-> +
-> +	return 0;
-> +}
-> +
-> +static struct freq_attr *qcom_cpufreq_hw_attr[] = {
-> +	&cpufreq_freq_attr_scaling_available_freqs,
-> +	&cpufreq_freq_attr_scaling_boost_freqs,
-> +	NULL
-> +};
-> +
-> +static struct cpufreq_driver cpufreq_qcom_hw_driver = {
-> +	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-> +			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
-> +	.verify		= cpufreq_generic_frequency_table_verify,
-> +	.target_index	= qcom_cpufreq_hw_target_index,
-> +	.get		= qcom_cpufreq_hw_get,
-> +	.init		= qcom_cpufreq_hw_cpu_init,
-> +	.fast_switch    = qcom_cpufreq_hw_fast_switch,
-> +	.name		= "qcom-cpufreq-hw",
-> +	.attr		= qcom_cpufreq_hw_attr,
-> +	.boost_enabled	= true,
+On 11/21/18 8:49 AM, Tom Talpey wrote:
+> On 11/21/2018 1:09 AM, John Hubbard wrote:
+>> On 11/19/18 10:57 AM, Tom Talpey wrote:
+>>> ~14000 4KB read IOPS is really, really low for an NVMe disk.
+>>
+>> Yes, but Jan Kara's original config file for fio is *intended* to highli=
+ght
+>> the get_user_pages/put_user_pages changes. It was *not* intended to get =
+max
+>> performance,=C2=A0 as you can see by the numjobs and direct IO parameter=
+s:
+>>
+>> cat fio.conf
+>> [reader]
+>> direct=3D1
+>> ioengine=3Dlibaio
+>> blocksize=3D4096
+>> size=3D1g
+>> numjobs=3D1
+>> rw=3Dread
+>> iodepth=3D64
+>=20
+> To be clear - I used those identical parameters, on my lower-spec
+> machine, and got 400,000 4KB read IOPS. Those results are nearly 30x
+> higher than yours!
 
-I have no real expertise with cpufreq boost, but after reading a bit
-through cpufreq code this seems wrong. Boost is enabled statically,
-however the driver has neither a ->set_boost function nor does it call
-cpufreq_enable_boost_support() which would use a default
-implementation for ->set_boost. As a result boost support is
-effectively disabled:
+OK, then something really is wrong here...
 
-static bool cpufreq_boost_supported(void)
-{
-        return likely(cpufreq_driver) && cpufreq_driver->set_boost;
-}
+>=20
+>> So I'm thinking that this is not a "tainted" test, but rather, we're con=
+straining
+>> things a lot with these choices. It's hard to find a good test config to=
+ run that
+>> allows decisions, but so far, I'm not really seeing anything that says "=
+this
+>> is so bad that we can't afford to fix the brokenness." I think.
+>=20
+> I'm not suggesting we tune the benchmark, I'm suggesting the results
+> on your system are not meaningful since they are orders of magnitude
+> low. And without meaningful data it's impossible to see the performance
+> impact of the change...
+>=20
+>>> Can you confirm what type of hardware you're running this test on?
+>>> CPU, memory speed and capacity, and NVMe device especially?
+>>>
+>>> Tom.
+>>
+>> Yes, it's a nice new system, I don't expect any strange perf problems:
+>>
+>> CPU: Intel(R) Core(TM) i7-7800X CPU @ 3.50GHz
+>> =C2=A0=C2=A0=C2=A0=C2=A0 (Intel X299 chipset)
+>> Block device: nvme-Samsung_SSD_970_EVO_250GB
+>> DRAM: 32 GB
+>=20
+> The Samsung Evo 970 250GB is speced to yield 200,000 random read IOPS
+> with a 4KB QD32 workload:
+>=20
+>=20
+> https://www.samsung.com/us/computing/memory-storage/solid-state-drives/ss=
+d-970-evo-nvme-m-2-250gb-mz-v7e250bw/#specs
+>=20
+> And the I7-7800X is a 6-core processor (12 hyperthreads).
+>=20
+>> So, here's a comparison using 20 threads, direct IO, for the baseline vs=
+.
+>> patched kernel (below). Highlights:
+>>
+>> =C2=A0=C2=A0=C2=A0=C2=A0-- IOPS are similar, around 60k.
+>> =C2=A0=C2=A0=C2=A0=C2=A0-- BW gets worse, dropping from 290 to 220 MB/s.
+>> =C2=A0=C2=A0=C2=A0=C2=A0-- CPU is well under 100%.
+>> =C2=A0=C2=A0=C2=A0=C2=A0-- latency is incredibly long, but...20 threads.
+>>
+>> Baseline:
+>>
+>> $ ./run.sh
+>> fio configuration:
+>> [reader]
+>> ioengine=3Dlibaio
+>> blocksize=3D4096
+>> size=3D1g
+>> rw=3Dread
+>> group_reporting
+>> iodepth=3D256
+>> direct=3D1
+>> numjobs=3D20
+>=20
+> Ouch - 20 threads issuing 256 io's each!? Of course latency skyrockets.
+> That's going to cause tremendous queuing, and context switching, far
+> outside of the get_user_pages() change.
+>=20
+> But even so, it only brings IOPS to 74.2K, which is still far short of
+> the device's 200K spec.
+>=20
+> Comparing anyway:
+>=20
+>=20
+>> Patched:
+>>
+>> -------- Running fio:
+>> reader: (g=3D0): rw=3Dread, bs=3D(R) 4096B-4096B, (W) 4096B-4096B, (T) 4=
+096B-4096B, ioengine=3Dlibaio, iodepth=3D256
+>> ...
+>> fio-3.3
+>> Starting 20 processes
+>> Jobs: 13 (f=3D8): [_(1),R(1),_(1),f(1),R(2),_(1),f(2),_(1),R(1),f(1),R(1=
+),f(1),R(1),_(2),R(1),_(1),R(1)][97.9%][r=3D229MiB/s,w=3D0KiB/s][r=3D58.5k,=
+w=3D0 IOPS][eta 00m:02s]
+>> reader: (groupid=3D0, jobs=3D20): err=3D 0: pid=3D2104: Tue Nov 20 22:01=
+:58 2018
+>> =C2=A0=C2=A0=C2=A0 read: IOPS=3D56.8k, BW=3D222MiB/s (232MB/s)(20.0GiB/9=
+2385msec)
+>> ...
+>> Thoughts?
+>=20
+> Concern - the 74.2K IOPS unpatched drops to 56.8K patched!
 
-The driver should probably do the same as cpufreq-dt.c and call
-cpufreq_enable_boost_support() if boost frequencies are available,
-instead of 'enabling' boost statically.
+ACK. :)
 
-Thanks
+>=20
+> What I'd really like to see is to go back to the original fio parameters
+> (1 thread, 64 iodepth) and try to get a result that gets at least close
+> to the speced 200K IOPS of the NVMe device. There seems to be something
+> wrong with yours, currently.
 
-Matthias
+I'll dig into what has gone wrong with the test. I see fio putting data fil=
+es
+in the right place, so the obvious "using the wrong drive" is (probably)
+not it. Even though it really feels like that sort of thing. We'll see.=20
+
+>=20
+> Then of course, the result with the patched get_user_pages, and
+> compare whichever of IOPS or CPU% changes, and how much.
+>=20
+> If these are within a few percent, I agree it's good to go. If it's
+> roughly 25% like the result just above, that's a rocky road.
+>=20
+> I can try this after the holiday on some basic hardware and might
+> be able to scrounge up better. Can you post that github link?
+>=20
+
+Here:
+
+   git@github.com:johnhubbard/linux (branch: gup_dma_testing)
+
+
+--=20
+thanks,
+John Hubbard
+NVIDIA
