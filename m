@@ -2,73 +2,216 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B7EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 978B7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:34:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4878B21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:33:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4878B21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B13621479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:34:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B13621479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730470AbeKVBIe (ORCPT
+        id S1731048AbeKVBIi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 20:08:34 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50879 "EHLO mail.bootlin.com"
+        Wed, 21 Nov 2018 20:08:38 -0500
+Received: from verein.lst.de ([213.95.11.211]:51717 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726778AbeKVBIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 20:08:34 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EAE88207AD; Wed, 21 Nov 2018 15:33:53 +0100 (CET)
-Received: from localhost.localdomain (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A8A2020701;
-        Wed, 21 Nov 2018 15:33:43 +0100 (CET)
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Tudor.Ambarus@microchip.com, marek.vasut@gmail.com,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        boris.brezillon@bootlin.com, richard@nod.at,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [v2] mtd: spi-nor: fix selection of uniform erase type in flexible conf
-Date:   Wed, 21 Nov 2018 15:33:43 +0100
-Message-Id: <20181121143343.11330-1-boris.brezillon@bootlin.com>
-X-Mailer: git-send-email 2.17.1
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: e8828ec1c003727fc001eab06aa19bd2ca9b677e
-In-Reply-To: <20181116174624.10817-1-tudor.ambarus@microchip.com>
+        id S1726778AbeKVBIh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 20:08:37 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id E98EB68C19; Wed, 21 Nov 2018 15:33:55 +0100 (CET)
+Date:   Wed, 21 Nov 2018 15:33:55 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V11 14/19] block: handle non-cluster bio out of
+ blk_bio_segment_split
+Message-ID: <20181121143355.GB2594@lst.de>
+References: <20181121032327.8434-1-ming.lei@redhat.com> <20181121032327.8434-15-ming.lei@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181121032327.8434-15-ming.lei@redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-11-16 at 17:46:37 UTC,  wrote:
-> There are uniform, non-uniform and flexible erase flash configurations.
-> 
-> The non-uniform erase types, are the erase types that can _not_ erase
-> the entire flash by their own.
-> 
-> As the code was, in case flashes had flexible erase capabilities
-> (support both uniform and non-uniform erase types in the same flash
-> configuration) and supported multiple uniform erase type sizes, the
-> code did not sort the uniform erase types, and could select a wrong
-> erase type size.
-> 
-> Sort the uniform erase mask in case of flexible erase flash
-> configurations, in order to select the best uniform erase type size.
-> 
-> Uniform, non-uniform, and flexible configurations with just a valid
-> uniform erase type, are not affected by this change.
-> 
-> Uniform erase tested on mx25l3273fm2i-08g and sst26vf064B-104i/sn.
-> Non uniform erase tested on sst26vf064B-104i/sn.
-> 
-> Fixes: 5390a8df769e ("mtd: spi-nor: add support to non-uniform SFDP SPI NOR flash memories")
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> +			non-cluster.o
 
-Applied to http://git.infradead.org/linux-mtd.git master, thanks.
+Do we really need a new source file for these few functions?
 
-Boris
+>  	default:
+> +		if (!blk_queue_cluster(q)) {
+> +			blk_queue_non_cluster_bio(q, bio);
+> +			return;
+
+I'd name this blk_bio_segment_split_singlepage or similar.
+
+> +static __init int init_non_cluster_bioset(void)
+> +{
+> +	WARN_ON(bioset_init(&non_cluster_bio_set, BIO_POOL_SIZE, 0,
+> +			   BIOSET_NEED_BVECS));
+> +	WARN_ON(bioset_integrity_create(&non_cluster_bio_set, BIO_POOL_SIZE));
+> +	WARN_ON(bioset_init(&non_cluster_bio_split, BIO_POOL_SIZE, 0, 0));
+
+Please only allocate the resources once a queue without the cluster
+flag is registered, there are only very few modern drivers that do that.
+
+> +static void non_cluster_end_io(struct bio *bio)
+> +{
+> +	struct bio *bio_orig = bio->bi_private;
+> +
+> +	bio_orig->bi_status = bio->bi_status;
+> +	bio_endio(bio_orig);
+> +	bio_put(bio);
+> +}
+
+Why can't we use bio_chain for the split bios?
+
+> +	bio_for_each_segment(from, *bio_orig, iter) {
+> +		if (i++ < max_segs)
+> +			sectors += from.bv_len >> 9;
+> +		else
+> +			break;
+> +	}
+
+The easy to read way would be:
+
+	bio_for_each_segment(from, *bio_orig, iter) {
+		if (i++ == max_segs)
+			break;
+		sectors += from.bv_len >> 9;
+	}
+
+> +	if (sectors < bio_sectors(*bio_orig)) {
+> +		bio = bio_split(*bio_orig, sectors, GFP_NOIO,
+> +				&non_cluster_bio_split);
+> +		bio_chain(bio, *bio_orig);
+> +		generic_make_request(*bio_orig);
+> +		*bio_orig = bio;
+
+I don't think this is very efficient, as this means we now
+clone the bio twice, first to split it at the sector boundary,
+and then again when converting it to single-page bio_vec.
+
+I think this could be something like this (totally untested):
+
+diff --git a/block/non-cluster.c b/block/non-cluster.c
+index 9c2910be9404..60389f275c43 100644
+--- a/block/non-cluster.c
++++ b/block/non-cluster.c
+@@ -13,58 +13,59 @@
+ 
+ #include "blk.h"
+ 
+-static struct bio_set non_cluster_bio_set, non_cluster_bio_split;
++static struct bio_set non_cluster_bio_set;
+ 
+ static __init int init_non_cluster_bioset(void)
+ {
+ 	WARN_ON(bioset_init(&non_cluster_bio_set, BIO_POOL_SIZE, 0,
+ 			   BIOSET_NEED_BVECS));
+ 	WARN_ON(bioset_integrity_create(&non_cluster_bio_set, BIO_POOL_SIZE));
+-	WARN_ON(bioset_init(&non_cluster_bio_split, BIO_POOL_SIZE, 0, 0));
+ 
+ 	return 0;
+ }
+ __initcall(init_non_cluster_bioset);
+ 
+-static void non_cluster_end_io(struct bio *bio)
+-{
+-	struct bio *bio_orig = bio->bi_private;
+-
+-	bio_orig->bi_status = bio->bi_status;
+-	bio_endio(bio_orig);
+-	bio_put(bio);
+-}
+-
+ void blk_queue_non_cluster_bio(struct request_queue *q, struct bio **bio_orig)
+ {
+-	struct bio *bio;
+ 	struct bvec_iter iter;
+-	struct bio_vec from;
+-	unsigned i = 0;
+-	unsigned sectors = 0;
+-	unsigned short max_segs = min_t(unsigned short, BIO_MAX_PAGES,
+-					queue_max_segments(q));
++	struct bio *bio;
++	struct bio_vec bv;
++	unsigned short max_segs, segs = 0;
++
++	bio = bio_alloc_bioset(GFP_NOIO, bio_segments(*bio_orig),
++			&non_cluster_bio_set);
++	bio->bi_disk		= (*bio_orig)->bi_disk;
++	bio->bi_partno		= (*bio_orig)->bi_partno;
++	bio_set_flag(bio, BIO_CLONED);
++	if (bio_flagged(*bio_orig, BIO_THROTTLED))
++		bio_set_flag(bio, BIO_THROTTLED);
++	bio->bi_opf		= (*bio_orig)->bi_opf;
++	bio->bi_ioprio		= (*bio_orig)->bi_ioprio;
++	bio->bi_write_hint	= (*bio_orig)->bi_write_hint;
++	bio->bi_iter.bi_sector	= (*bio_orig)->bi_iter.bi_sector;
++	bio->bi_iter.bi_size	= (*bio_orig)->bi_iter.bi_size;
++
++	if (bio_integrity(*bio_orig))
++		bio_integrity_clone(bio, *bio_orig, GFP_NOIO);
+ 
+-	bio_for_each_segment(from, *bio_orig, iter) {
+-		if (i++ < max_segs)
+-			sectors += from.bv_len >> 9;
+-		else
++	bio_clone_blkcg_association(bio, *bio_orig);
++
++	max_segs = min_t(unsigned short, queue_max_segments(q), BIO_MAX_PAGES);
++	bio_for_each_segment(bv, *bio_orig, iter) {
++		bio->bi_io_vec[segs++] = bv;
++		if (segs++ == max_segs)
+ 			break;
+ 	}
+ 
+-	if (sectors < bio_sectors(*bio_orig)) {
+-		bio = bio_split(*bio_orig, sectors, GFP_NOIO,
+-				&non_cluster_bio_split);
+-		bio_chain(bio, *bio_orig);
+-		generic_make_request(*bio_orig);
+-		*bio_orig = bio;
+-	}
+-	bio = bio_clone_bioset(*bio_orig, GFP_NOIO, &non_cluster_bio_set);
++	bio->bi_vcnt = segs;
++	bio->bi_phys_segments = segs;
++	bio_set_flag(bio, BIO_SEG_VALID);
++	bio_chain(bio, *bio_orig);
+ 
+-	bio->bi_phys_segments = bio_segments(bio);
+-        bio_set_flag(bio, BIO_SEG_VALID);
+-	bio->bi_end_io = non_cluster_end_io;
++	if (bio_integrity(bio))
++		bio_integrity_trim(bio);
++	bio_advance(bio, (*bio_orig)->bi_iter.bi_size);
+ 
+-	bio->bi_private = *bio_orig;
++	generic_make_request(*bio_orig);
+ 	*bio_orig = bio;
+ }
