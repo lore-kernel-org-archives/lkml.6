@@ -2,107 +2,112 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDF0C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AA3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D31E2147D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:12:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8904F2147D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:12:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cvip2yWl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D31E2147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=neverware.com header.i=@neverware.com header.b="FBswLSFi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8904F2147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=neverware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730606AbeKVAqn (ORCPT
+        id S1730912AbeKVAqr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 19:46:43 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40222 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbeKVAqn (ORCPT
+        Wed, 21 Nov 2018 19:46:47 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:45984 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbeKVAqq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 19:46:43 -0500
-Received: by mail-pl1-f193.google.com with SMTP id b22-v6so5717902pls.7;
-        Wed, 21 Nov 2018 06:12:09 -0800 (PST)
+        Wed, 21 Nov 2018 19:46:46 -0500
+Received: by mail-qt1-f195.google.com with SMTP id e5so3933066qtr.12
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 06:12:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=neverware.com; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=ahGcy3Aj/ZRD57cpOpenWEgLyfrinUPuHsiGgEeEa8k=;
-        b=Cvip2yWl5E5PelmLiEyAWdgboPr27tjueVg3RWEok8XlYOxNxJ3S7EiAZ2cNXg86pS
-         EKBUD3p6sDWEOfbQQYfhrc1LoMOoHQ80OR1v6zMbOiIPK/a+VQkHjMToDBBcYxKUnDWR
-         jkfMZcEPz871TM3Foy0V94wm58Ckuzg8bNzbJkwq4YvCjmsViV705eoUqXErldmoIlQL
-         xstseTVW7kD0nJH1Q0jqx6pt8MW6+zBy/shqLLG5GxsKVJqmiF9SwGye312QACIP1JIe
-         lxBMsCYkHV6arMcdsESZf50gKw/KWm/MmZzBzb/FiAXDK81b0Cg0MMUnW1jKoomMkMDC
-         Go2w==
+        bh=9OTy1FeoEUtT3/QfIgaCZpwOqhjk5V8Umqd0KxFijhQ=;
+        b=FBswLSFiqXSjG144gvSf9VFOzTTwC+zyNjWSxc0zanxVrJL4ngvxTpakQnXjCfzS4w
+         NZX9KtDmQWK9bE1Wy2Aahj6mfjMEvR2bYHaezvRHAWexC2eUHyrUfss7bqBpGgglf1d6
+         RFTW3KnIxe7Ng6jW5lOraW1ZGvxRomTsGFzWo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ahGcy3Aj/ZRD57cpOpenWEgLyfrinUPuHsiGgEeEa8k=;
-        b=rQ3duZz1feZ/22rpzn+WLrxmvLBWU7WpN15/3I8SFVIRw3UhtJofR2R4xcgjLf4Rul
-         9YPFszoFA07llxi7QSuMBLYHAAI1aTle8hVIL6y+21il0ldJn4HgirTEVFt+XMfW0aqm
-         d1Vz685o948WNM2M92wreOh4JDQw4UPyQa6ZlLppDrRYRnhushHfXx6wuzzMbW+5MXop
-         2LX9fDaPnji7mZqBdjr+ZGZLS6UXdVdpBSjgqSgKIGWSSXRYrvJPACkMWQVMFh/ZTto4
-         3y7zLwp9VnOi4k1zWMa/IUvynIsDcqaEwvgTdujpKo+3ujFi6aiirud8Orf9vpxzxSYS
-         XeIA==
-X-Gm-Message-State: AGRZ1gLQckWckpT30inlGl1EcH3opKqKYe84/v18B3S7/ZOrdd2TULdr
-        IitanQAgJZ7TuGLS67FtEFA=
-X-Google-Smtp-Source: AFSGD/UCCQ3vrrDn8i443NkYRBQUtBhz9Y3m/baFY81Mt6ulyBrChm2F5U3shvqk90RfAdQ6I5AlXA==
-X-Received: by 2002:a63:fd53:: with SMTP id m19mr6212703pgj.340.1542809528901;
-        Wed, 21 Nov 2018 06:12:08 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id t3sm25753543pgv.31.2018.11.21.06.12.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 06:12:08 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] soc/tegra: refactor soc_is_tegra()
-Date:   Wed, 21 Nov 2018 09:12:04 -0500
-Message-Id: <20181121141204.22819-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        bh=9OTy1FeoEUtT3/QfIgaCZpwOqhjk5V8Umqd0KxFijhQ=;
+        b=RAMcdBmhWLkHBUwDZihBPjqjdsojXl6NwhGPyoC3/CzIfZxT6zpnHHtHDl1eo70A/x
+         gte8HsD6kaX4p9bcKpGkS33vkYapXPJakSN9D7JiZrUHf0OA9CnVO2iX0OMFrNU3N9xB
+         +VP91jTCcBw2jXGekZe4Zpg+oBgT0jcigPm9aNRQU180ErjU+tC3FeAa1HbF0eC7nP66
+         Ndh1N5YZfYYDIaAsW5r0JCws2JiijgQXAGrOHWbTmt44Zi88WvfVdFfH+tTFuX/MgBLf
+         FLmiFiqyIAla9f4CRfIk0QPJcpWqBVn9Ip+3eFOmMenGadh7MyzyZ2SNGRMUOtJRF68n
+         E3iQ==
+X-Gm-Message-State: AGRZ1gJHuutpNO1ykg2904RR46xnpPp4l/E5NC/C1gaaQnGfJ2sI2G9Z
+        VIpKN2h2gOVd2xZuhT9QHsdNUw==
+X-Google-Smtp-Source: AFSGD/U3lQHDwP/fsIsfOFu0G+ifEPrsYg4vjN09iFmLsxziViYv5AZl1AdxmmCW17LhQCd+XxCIRw==
+X-Received: by 2002:aed:2fc4:: with SMTP id m62mr5776596qtd.8.1542809530725;
+        Wed, 21 Nov 2018 06:12:10 -0800 (PST)
+Received: from Puget-178128.seaworld.local (rrcs-208-105-51-90.nyc.biz.rr.com. [208.105.51.90])
+        by smtp.googlemail.com with ESMTPSA id u18sm10269648qtj.84.2018.11.21.06.12.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 21 Nov 2018 06:12:10 -0800 (PST)
+From:   Girija Kumar Kasinadhuni <gkumar@neverware.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Cc:     Girija Kumar Kasinadhuni <gkumar@neverware.com>
+Subject: [PATCH] ALSA: hda/realtek - Add disable auto-mute quirk for HP Spectre x360 laptop
+Date:   Wed, 21 Nov 2018 09:11:31 -0500
+Message-Id: <1542809492-54931-1-git-send-email-gkumar@neverware.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_find_node_by_path() acquires a reference to the node returned by
-it and that reference needs to be dropped by its caller.soc_is_tegra()
-doesn't do that, so fix it.Call of_machine_is_compatible() to refactor
-soc_is_tegra() whcih automatically manages the reference count.
+This device makes a loud buzzing sound when a headphone is inserted while
+playing audio at full volume through the speaker.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: Girija Kumar Kasinadhuni <gkumar@neverware.com>
 ---
- drivers/soc/tegra/common.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ sound/pci/hda/patch_realtek.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
-index cd8f41351add..0b40700b672a 100644
---- a/drivers/soc/tegra/common.c
-+++ b/drivers/soc/tegra/common.c
-@@ -22,11 +22,13 @@ static const struct of_device_id tegra_machine_match[] = {
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index fa61674..eeff2ff 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5495,6 +5495,7 @@ enum {
+ 	ALC255_FIXUP_DELL_HEADSET_MIC,
+ 	ALC295_FIXUP_HP_X360,
+ 	ALC221_FIXUP_HP_HEADSET_MIC,
++	ALC295_FIXUP_HP_DISABLE_AUTOMUTE,
+ };
  
- bool soc_is_tegra(void)
- {
--	struct device_node *root;
-+	struct of_device_id *match = tegra_machine_match;
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -6362,6 +6363,10 @@ static const struct hda_fixup alc269_fixups[] = {
+ 		.chained = true,
+ 		.chain_id = ALC269_FIXUP_HEADSET_MIC
+ 	},
++	[ALC295_FIXUP_HP_DISABLE_AUTOMUTE] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc_fixup_auto_mute_via_amp,
++	},
+ };
  
--	root = of_find_node_by_path("/");
--	if (!root)
--		return false;
-+	while(match->compatible){
-+		if(of_machine_is_compatible(match->compatible))
-+			return true;
-+		match++;
-+	}
- 
--	return of_match_node(tegra_machine_match, root) != NULL;
-+	return false;
- }
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -6486,6 +6491,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x82bf, "HP", ALC221_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x82c0, "HP", ALC221_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x83b9, "HP Spectre x360", ALC269_FIXUP_HP_MUTE_LED_MIC3),
++	SND_PCI_QUIRK(0x103c, 0x83b9, "HP Spectre X360 ", ALC295_FIXUP_HP_DISABLE_AUTOMUTE),
+ 	SND_PCI_QUIRK(0x1043, 0x103e, "ASUS X540SA", ALC256_FIXUP_ASUS_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x103f, "ASUS TX300", ALC282_FIXUP_ASUS_TX300),
+ 	SND_PCI_QUIRK(0x1043, 0x106d, "Asus K53BE", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
 -- 
-2.17.0
+2.7.4
 
