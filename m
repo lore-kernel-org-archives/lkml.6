@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9153BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D9E3C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FE292151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FE292151B
+	by mail.kernel.org (Postfix) with ESMTP id 3F11C21527
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F11C21527
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389211AbeKVGx5 (ORCPT
+        id S2389281AbeKVGx7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 01:53:57 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45184 "EHLO
+        Thu, 22 Nov 2018 01:53:59 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45181 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731268AbeKVGx5 (ORCPT
+        with ESMTP id S1730988AbeKVGx5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 22 Nov 2018 01:53:57 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gPYwn-0000FL-Lk; Wed, 21 Nov 2018 21:18:05 +0100
-Message-Id: <20181121201722.337599561@linutronix.de>
+        id 1gPYwq-0000FU-CJ; Wed, 21 Nov 2018 21:18:08 +0100
+Message-Id: <20181121201722.624368839@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Wed, 21 Nov 2018 21:14:31 +0100
+Date:   Wed, 21 Nov 2018 21:14:34 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -51,12 +51,12 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>,
         Tim Chen <tim.c.chen@linux.intel.com>
-Subject: [patch 01/24] x86/speculation: Update the TIF_SSBD comment
+Subject: [patch 04/24] x86/speculation: Reorganize cpu_show_common()
 References: <20181121201430.559770965@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=x86-speculation-Update-comment-on-TIF-SSBD.patch
+ filename=x86-speculation-Reorganize-cpu-show-common-.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,26 +64,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tim Chen <tim.c.chen@linux.intel.com>
 
-"Reduced Data Speculation" is an obsolete term. The correct new name is
-"Speculative store bypass disable" - which is abbreviated into SSBD.
+The Spectre V2 printout in cpu_show_common() handles conditionals for the
+various mitigation methods directly in the sprintf() argument list. That's
+hard to read and will become unreadable if more complex decisions need to
+be made for a particular method.
+
+Move the conditionals for STIBP and IBPB string selection into helper
+functions, so they can be extended later on.
 
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
 ---
- arch/x86/include/asm/thread_info.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/cpu/bugs.c |   20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -79,7 +79,7 @@ struct thread_info {
- #define TIF_SIGPENDING		2	/* signal pending */
- #define TIF_NEED_RESCHED	3	/* rescheduling necessary */
- #define TIF_SINGLESTEP		4	/* reenable singlestep on user return*/
--#define TIF_SSBD			5	/* Reduced data speculation */
-+#define TIF_SSBD		5	/* Speculative store bypass disable */
- #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
- #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
- #define TIF_SECCOMP		8	/* secure computing */
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -844,6 +844,22 @@ static ssize_t l1tf_show_state(char *buf
+ }
+ #endif
+ 
++static char *stibp_state(void)
++{
++	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
++		return ", STIBP";
++	else
++		return "";
++}
++
++static char *ibpb_state(void)
++{
++	if (boot_cpu_has(X86_FEATURE_USE_IBPB))
++		return ", IBPB";
++	else
++		return "";
++}
++
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			       char *buf, unsigned int bug)
+ {
+@@ -865,9 +881,9 @@ static ssize_t cpu_show_common(struct de
+ 
+ 	case X86_BUG_SPECTRE_V2:
+ 		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+-			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
++			       ibpb_state(),
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+-			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
++			       stibp_state(),
+ 			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
+ 			       spectre_v2_module_string());
+ 
 
 
