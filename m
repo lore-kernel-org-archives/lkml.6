@@ -2,93 +2,90 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77058C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:02:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E48E8C04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 413AB2145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:02:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VFzpM/rj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 413AB2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B56052146D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:07:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B56052146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbeKUOeu (ORCPT
+        id S1727128AbeKUOkD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 09:34:50 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36528 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbeKUOet (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 09:34:49 -0500
-Received: by mail-pl1-f194.google.com with SMTP id y6-v6so3460590plt.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 20:02:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jD4EvHrCedZPR1eexDzPL2ORdf7F23ZT49Cve3Do4Jk=;
-        b=VFzpM/rj99cZDp3qxZIIexfY6MTuhoR1JaSE5kx7ieQNUZRAhWc9EBtlpfK12IN8Lw
-         7V8mvks/IQdAw+FBdU6iaLfSsFIu4W5nJ+856AvK6OdGEWtCru/JE79pKqI/7/CG1YHA
-         AV4YQ2peacZ5dmHOxHOjbKpp56Ow6O84Tl734=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jD4EvHrCedZPR1eexDzPL2ORdf7F23ZT49Cve3Do4Jk=;
-        b=rVw/X0fOqIskhGsONpQwB4Z7ypR7U8kwS0k36Dc4PfMeoMAKXF8XNo9XirHprQBWUf
-         uJtVW6AMp8/LuUCxbkScXNTZ0ZBcOWssszWOezGBqhyI8tA9yeCNhFiR2LNnSrYbFOe7
-         US7iFFMIHQ1VXtI0TmoO/P2kr91A2zJKQ8+nD253H/CEDJxDtcVXSGkamdoRCs/MuLWB
-         n23+rB8SwJXByHxXwkjh0JarONAUk3jj7jyPk6tRhmtlGaICeHGizvvxrALsPenOEmdx
-         TjtQs5AyYzoSkJu247R3ZHTEDBhPcDriGHTxsWivOA6wVzQmF43OFr5p0jpM3e4cC1jw
-         YeUw==
-X-Gm-Message-State: AGRZ1gL+NBcMgK/2wWckR1y72DasXrm1FlSwrNU3lNQnjh9YYyhv9KiP
-        7T0pq/d7MB3GNW8XMs6o/vCgQg==
-X-Google-Smtp-Source: AJdET5dSYVv/OYuLZcPm682fOnYbEGXb48aLJ5I+vClFCRu/muv+BzGEIYtFozKmakVA82Owt2SSyQ==
-X-Received: by 2002:a62:d449:: with SMTP id u9-v6mr5181318pfl.116.1542772929966;
-        Tue, 20 Nov 2018 20:02:09 -0800 (PST)
-Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id t78-v6sm80135659pfk.59.2018.11.20.20.02.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 20:02:09 -0800 (PST)
-Date:   Wed, 21 Nov 2018 09:32:04 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     rjw@rjwysocki.net, benh@kernel.crashing.org, paulus@samba.org,
-        mpe@ellerman.id.au, linux-pm@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] cpufreq: powernv: add of_node_put()
-Message-ID: <20181121040204.yjlnxaulet3o5u3r@vireshk-i7>
-References: <20181120160530.21015-1-tiny.windzz@gmail.com>
+        Wed, 21 Nov 2018 09:40:03 -0500
+Received: from mx.socionext.com ([202.248.49.38]:13501 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726877AbeKUOkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 09:40:02 -0500
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 21 Nov 2018 13:07:20 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id CF129180BD6;
+        Wed, 21 Nov 2018 13:07:20 +0900 (JST)
+Received: from 10.213.24.1 (10.213.24.1) by m-FILTER with ESMTP; Wed, 21 Nov 2018 13:07:20 +0900
+Received: from SOC-EX02V.e01.socionext.com (10.213.24.22) by
+ SOC-EX02V.e01.socionext.com (10.213.24.22) with Microsoft SMTP Server (TLS)
+ id 15.0.995.29; Wed, 21 Nov 2018 13:07:20 +0900
+Received: from SOC-EX02V.e01.socionext.com ([10.213.25.22]) by
+ SOC-EX02V.e01.socionext.com ([10.213.25.22]) with mapi id 15.00.0995.028;
+ Wed, 21 Nov 2018 13:07:20 +0900
+From:   <sugaya.taichi@socionext.com>
+To:     <robh+dt@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>,
+        <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
+        <linux@armlinux.org.uk>, <jslaby@suse.com>,
+        <masami.hiramatsu@linaro.org>, <jaswinder.singh@linaro.org>
+Subject: RE: [PATCH 03/14] ARM: milbeaut: Add Milbeaut M10V early printk
+Thread-Topic: [PATCH 03/14] ARM: milbeaut: Add Milbeaut M10V early printk
+Thread-Index: AQHUf6NHu62F4PMl3kuaRfAZNU8J/aVWoOoAgALuGJA=
+Date:   Wed, 21 Nov 2018 04:07:19 +0000
+Message-ID: <7f32b467a1d84987b9d80cdd540e035b@SOC-EX02V.e01.socionext.com>
+References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+ <1542589274-13878-4-git-send-email-sugaya.taichi@socionext.com>
+ <CAL_JsqKMK7nMUxZLu9eV8tpnCXsAr2F4j=xTO8UL0g8V30kYZg@mail.gmail.com>
+In-Reply-To: <CAL_JsqKMK7nMUxZLu9eV8tpnCXsAr2F4j=xTO8UL0g8V30kYZg@mail.gmail.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-securitypolicycheck: OK by SHieldMailChecker v2.3.2
+x-shieldmailcheckerpolicyversion: POLICY180220
+x-originating-ip: [10.213.24.1]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120160530.21015-1-tiny.windzz@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-11-18, 11:05, Yangtao Li wrote:
-> The of_find_node_by_path() returns a node pointer with refcount
-> incremented,but there is the lack of use of the of_node_put() when
-> done.Add the missing of_node_put() to release the refcount.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
-> Changes in v2
-> -update changelog
-> ---
->  drivers/cpufreq/powernv-cpufreq.c | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
-
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
--- 
-viresh
+SGkgUm9iDQoNClRoYW5rIHlvdSBmb3IgeW91ciBjb21tZW50Lg0KDQo+IC0tLS0tT3JpZ2luYWwg
+TWVzc2FnZS0tLS0tDQo+IEZyb206IFJvYiBIZXJyaW5nIFttYWlsdG86cm9iaCtkdEBrZXJuZWwu
+b3JnXQ0KPiBTZW50OiBUdWVzZGF5LCBOb3ZlbWJlciAyMCwgMjAxOCAxMjoyMSBBTQ0KPiBUbzog
+U3VnYXlhLCBUYWljaGkv6I+F6LC3IOWkquS4gA0KPiBDYzogbGludXgtY2xrOyBkZXZpY2V0cmVl
+QHZnZXIua2VybmVsLm9yZzsgbW9kZXJhdGVkIGxpc3Q6QVJNL0ZSRUVTQ0FMRQ0KPiBJTVggLyBN
+WEMgQVJNIEFSQ0hJVEVDVFVSRTsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgb3BlbiBs
+aXN0OlNFUklBTA0KPiBEUklWRVJTOyBNaWNoYWVsIFR1cnF1ZXR0ZTsgU3RlcGhlbiBCb3lkOyBN
+YXJrIFJ1dGxhbmQ7IEdyZWcgS3JvYWgtSGFydG1hbjsNCj4gRGFuaWVsIExlemNhbm87IFRob21h
+cyBHbGVpeG5lcjsgUnVzc2VsbCBLaW5nOyBKaXJpIFNsYWJ5OyBNYXNhbWkgSGlyYW1hdHN1Ow0K
+PiBKYXNzaSBCcmFyDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMDMvMTRdIEFSTTogbWlsYmVhdXQ6
+IEFkZCBNaWxiZWF1dCBNMTBWIGVhcmx5IHByaW50aw0KPiANCj4gT24gU3VuLCBOb3YgMTgsIDIw
+MTggYXQgNzowMCBQTSBTdWdheWEgVGFpY2hpDQo+IDxzdWdheWEudGFpY2hpQHNvY2lvbmV4dC5j
+b20+IHdyb3RlOg0KPiA+DQo+ID4gQWRkIE1pbGJlYXV0IE0xMFYgZWFybHlwcmludGsuDQo+IA0K
+PiBEbyB5b3UgcmVhbGx5IG5lZWQgZWFybHlwcmludGs/IGVhcmx5Y29uIGlzIHByZWZlcnJlZCBp
+bnN0ZWFkLiBJdCdzDQo+IG5vdCBxdWl0ZSBhcyBlYXJseSwgYnV0IGRvZXNuJ3QgcmVxdWlyZSBy
+ZWJ1aWxkaW5nIHRoZSBrZXJuZWwgYW5kDQo+IHN1cHBvcnRzIG1vcmUgdGhhbiAxIGZpeGVkIGRl
+dmljZS4gSWYgeW91IGNyYXNoIGJlZm9yZSBlYXJseWNvbiBpcw0KPiBlbmFibGVkLCB0aGF0IHBy
+ZXR0eSBtdWNoIG1lYW5zIGVpdGhlciBhIGJhZCBkdGIgbWVtb3J5IG5vZGUgb3IganVzdA0KPiBm
+bGFreSBtZW1vcnkuDQpPSy4gSSB1c2UgZWFybHljb24gc2luY2Ugd291bGQgbGlrZSB0byB1c2Ug
+ZmxleGlibGUgZnVuY3Rpb25zLg0KDQpUaGFua3MNClN1Z2F5YSBUYWljaGkNCg0KPiANCj4gUm9i
+DQo=
