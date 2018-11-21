@@ -7,68 +7,72 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3242FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B632C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1CFA21527
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:06:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62644214E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:06:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IuGKi4SA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1CFA21527
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YEyIe/DY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62644214E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388814AbeKVGlr (ORCPT
+        id S2388873AbeKVGmA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 01:41:47 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39994 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388729AbeKVGlr (ORCPT
+        Thu, 22 Nov 2018 01:42:00 -0500
+Received: from mail-wr1-f43.google.com ([209.85.221.43]:41271 "EHLO
+        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388729AbeKVGl7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 01:41:47 -0500
-Received: by mail-wm1-f68.google.com with SMTP id q26so6960154wmf.5
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:06:01 -0800 (PST)
+        Thu, 22 Nov 2018 01:41:59 -0500
+Received: by mail-wr1-f43.google.com with SMTP id x10so6986179wrs.8
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:06:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=86mYLKT9oGNdx98UvpSwk/L4cpWIkqbF2PLCIi0AmOg=;
-        b=IuGKi4SAgOt4W7mB7qvPbiFn1iAZMNlSA13zaYFU2vvGEBD8WSNLpwZ4/HWEQlHD7u
-         XokX8LWNagUYl5A/YoLVmLXcrvVhUKlEKgFs99wB4LNMPAsVdjAlK4h5r/a/p4o/CYg0
-         Kc38/ayuVAhP0qIlnH4bkrnQbX0cHi5Vg9FrAcxNiJPI9S1FucDQTdLiptI8jjXUyO+P
-         FQOMfnd2C0eW2IhtoyCJ4gbhj44EDqY2DKaaPAZHU25uYi1auSWfkoL4j04bsEtKlMLT
-         L0pmuKU5dwSKUZJxMvXvQkqo+fB1ctOVC0VXjOmLN5C2Pol7jV12JdsntHtYBuBgKRGx
-         hWzw==
+        bh=1nUVpsv1jmqy6A3ngstHwab19Gy9/pHRfWv9zW5u6C4=;
+        b=YEyIe/DY+ajUuNlE2SIdLkL8RpCzS+6PzV5ltRN0ydxYlwSQSLSJS8l6e6xacFhRPQ
+         XCfO2eedZskv6uf76LpGMkbWeglRnQUchz9wXSHnCZafCE4867aCFO5Qeaubkg6mGKww
+         LkBo7QqZIUymFFrf6B1kf2Adt8KSsOV7bGGmuNWrX+ulPnO4DJTq4WE5Xnht+hMix9yH
+         yIp4iYFKVk/0Pzw/NvCYKcbzLup3XUYeOleT2bHw8/tYD21xeAF3TB4WUpdNgcioPYzJ
+         muS8NC8CmmqPoBeszv6+d1UZpytpjIBmqIqO+7uI9FVdkhYt8ysfjeHSnd19BQ2/9XDx
+         U6RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=86mYLKT9oGNdx98UvpSwk/L4cpWIkqbF2PLCIi0AmOg=;
-        b=kO02Pm0iC5e5S8rC01A6ztu4ws6Ofd+lVP3+MfsPI2L5mLzcB5CwborJcTJ+rZ1kGw
-         YtHnUR4r1RLPzUgA546ToWvYBiJCbdZjrT0AfX7PYfhTJlzxJR1Jwk4O8Awktwh/DiMc
-         UNEvGFhUn2OEqDTcnleNHIcpgEZR4hhDNBUrJEKA7fdX8WMAjSgQNJEQTM8/Wt+YwEcp
-         5PypFwjYrQAkeTH1zYJjf19VZ592DOSd8hRyqVRAvGKZQyMqwmqaL5KnJE1i09gIFGF0
-         aDIRrRAWJcNDScl9Rr6q+7zTR02TeFGPUIXoWVUGn22CYidvxD6C4ka50kctXs6BEFj+
-         yAyg==
-X-Gm-Message-State: AGRZ1gKJRu8eRW0jhX4TDmDYjRzfHz7rmyPrigIRN57b9t9bV5VlLHUf
-        PtHWxKZSH8fGaFDHnDVhGdquhdk6LQ6M2Px/KkWTfdCDmbc=
-X-Google-Smtp-Source: AJdET5doddrf2C8oPNnDjaC2TRMp0t40dYrpjRoybRkN6uv7vASq/yHaEEJ1E45UVMPw0Nhogp7ljbWvWXlTrwoSKlA=
-X-Received: by 2002:a1c:9d97:: with SMTP id g145mr6886658wme.121.1542830761076;
- Wed, 21 Nov 2018 12:06:01 -0800 (PST)
+        bh=1nUVpsv1jmqy6A3ngstHwab19Gy9/pHRfWv9zW5u6C4=;
+        b=M7geHKzQhMMmhNmcAdFB07/Mni4vHCxGNQptQ1OyDIA3rBYzsiSUEfqx/vcKVIGhRD
+         1grkN+iNBPOpk9kpF/G0FzmtKJ99dXLzVIjiv8ZzNfgUcqDw9I/9BIZh0i9E9Dmv7nA+
+         2qIuD4W3eQqbRdIUvIaJ0frbHypQudkJGIg1pGzodf11cJJG9aCf1hcYJ0pW2tI/DFgn
+         63IE7HMaq49aijsCsKfWP7wlv/Qbo23q7dN31Q/D4ijZHr2aOgyboFSqAVg8RzON04oI
+         VLNrt7HiYUS8SGXn3iYukjtP786Xr+hi2XcDwofHgMiOCCpy8+Peg/woYH5wcR3LajzG
+         tYjg==
+X-Gm-Message-State: AA+aEWbV5c+bHdCpzKaxITDB5Kd9p87dYFtNOBsJd83ZrXxt9Aq0e2zo
+        t2c/kSeOsKYP5Ig7uH7YFYNjf9rCl9hv2EbXFCy69XKH48aBww==
+X-Google-Smtp-Source: AFSGD/X9hZr/lv6KzBhtNt73lk93ZJxC35m+9OiqYJ00Lctb5mQqF/53WTj77f5F6j6pwkLW9QZXxPkEnb+11Ldz3fY=
+X-Received: by 2002:a5d:48c5:: with SMTP id p5-v6mr7149392wrs.15.1542830773149;
+ Wed, 21 Nov 2018 12:06:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20181121135151.GA2536@hp-pavilion-15-notebook-pc-brajeswar>
-In-Reply-To: <20181121135151.GA2536@hp-pavilion-15-notebook-pc-brajeswar>
+References: <20181121120913.GA2289@hp-pavilion-15-notebook-pc-brajeswar>
+In-Reply-To: <20181121120913.GA2289@hp-pavilion-15-notebook-pc-brajeswar>
 From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Wed, 21 Nov 2018 15:05:48 -0500
-Message-ID: <CADnq5_NknpPEDTpx+5h_8N=WTXhgbqxsMPsymPs_K+RTDeYedw@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/amdgpu: Remove duplicate header
+Date:   Wed, 21 Nov 2018 15:06:01 -0500
+Message-ID: <CADnq5_NdkoPuXzJZ=2x0nO5Rfd5BnXgCg5j1+wDF=bUGaatQzQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display/amdgpu_dm/amdgpu_dm.c: Remove duplicate header
 To:     brajeswar.linux@gmail.com
-Cc:     "Deucher, Alexander" <alexander.deucher@amd.com>,
+Cc:     "Wentland, Harry" <harry.wentland@amd.com>,
+        "Leo (Sunpeng) Li" <sunpeng.li@amd.com>,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
         Christian Koenig <christian.koenig@amd.com>,
         Chunming Zhou <David1.Zhou@amd.com>,
         Dave Airlie <airlied@linux.ie>,
-        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
-        Pixel Ding <Pixel.Ding@amd.com>, "monk.liu" <Monk.Liu@amd.com>,
+        "Cheng, Tony" <Tony.Cheng@amd.com>,
+        "S, Shirish" <shirish.s@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        David Francis <David.Francis@amd.com>, Anthony.Koo@amd.com,
         Maling list - DRI developers 
         <dri-devel@lists.freedesktop.org>,
         Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
@@ -82,28 +86,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Applied.  thanks!
-On Wed, Nov 21, 2018 at 9:24 AM Brajeswar Ghosh
+On Wed, Nov 21, 2018 at 9:25 AM Brajeswar Ghosh
 <brajeswar.linux@gmail.com> wrote:
 >
-> Remove gca/gfx_8_0_sh_mask.h which is included more than once
+> Remove dm_services_types.h which is included more than once
 >
 > Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
 > ---
->  drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c | 1 -
+>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 1 -
 >  1 file changed, 1 deletion(-)
 >
-> diff --git a/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c b/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c
-> index 64e875d528dd..6a0fcd67662a 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c
-> @@ -37,7 +37,6 @@
->  #include "gmc/gmc_8_2_sh_mask.h"
->  #include "oss/oss_3_0_d.h"
->  #include "oss/oss_3_0_sh_mask.h"
-> -#include "gca/gfx_8_0_sh_mask.h"
->  #include "dce/dce_10_0_d.h"
->  #include "dce/dce_10_0_sh_mask.h"
->  #include "smu/smu_7_1_3_d.h"
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> index e224f23e2215..62a96c683584 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> @@ -38,7 +38,6 @@
+>  #include "amd_shared.h"
+>  #include "amdgpu_dm_irq.h"
+>  #include "dm_helpers.h"
+> -#include "dm_services_types.h"
+>  #include "amdgpu_dm_mst_types.h"
+>  #if defined(CONFIG_DEBUG_FS)
+>  #include "amdgpu_dm_debugfs.h"
 > --
 > 2.17.1
 >
