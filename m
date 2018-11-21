@@ -2,153 +2,158 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 649C6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CF1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E7C721479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:14:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E7C721479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 5570C21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:15:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="jc3XPI7n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5570C21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732157AbeKVDt4 (ORCPT
+        id S1732174AbeKVDuq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 22:49:56 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33589 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeKVDt4 (ORCPT
+        Wed, 21 Nov 2018 22:50:46 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54580 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732115AbeKVDup (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 22:49:56 -0500
-Received: by mail-qt1-f195.google.com with SMTP id l11so4641684qtp.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 09:14:40 -0800 (PST)
+        Wed, 21 Nov 2018 22:50:45 -0500
+Received: by mail-wm1-f66.google.com with SMTP id r63-v6so6327005wma.4
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 09:15:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5Ba68y4wLR6loGecAWkIYOUD+p3jd3X1twbGoOsozgM=;
+        b=jc3XPI7nR5BAOdABwsPebLOW2uu4H7ZrrlIcjv71CL0b3S8ZdTK4MxVHymEH7b3tnW
+         4s2wO0b77bAKlmLM74lRm+rCbwOqsRUZ4gS6ukWFcaye//bLnMA6zrbK9nMAGpnhOOY9
+         knuPfqCTfoA/dG9M2tM5ILkEw1O1UJ/r6hMhCFECL2P8mJ8OX/chTN6j1OySUhFoECsV
+         dfSxnm03xxvvx/8qGYH+qPjtDIfxZ9AxiC8f1uP8H3BI52iL+nBzc42vLnDoJweKDpw0
+         WP5L6VJbROguOrTiXIGFgHA7lyWgkX6UXxJHR3Ufhu6tjJWhSNMq4aU0ToYgy/5a+0G4
+         FECQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k/nbbnLcoB2UD/mJAsAgrOoPAKxIOgOaJZPIaXY/YOo=;
-        b=mWNRdzDpnKmU415fwZvSDDqkXeSzE14DpmA8vjyZmZmFXuJ0U/hxIP3FDAozN4vuih
-         08mZGwdgdjwbNAKweZHmlm2BvtlDosTKAhy2c85+jy3Favr3Y0q0z3XciuaTlgQZo3qo
-         PvKEdrOMmcQ9qfbT99qgKkYRd4NaeFr4nlhh0bv87gMi2nJtFa+2x7LfeW0w1nQ7hjCF
-         WbrzzmYdUIzYF+AmKxiS9C3aR5Z+K9uUNlwq5rxvN1I70jy/2A4WDHfxQsFBNxBlQZ6p
-         AQ3nS2wXllcnSs2K98P1yhNNy+P7C7EQXoGv5HmFtElXl+8zMjNnbg7HCRuECXzntVht
-         iL1Q==
-X-Gm-Message-State: AGRZ1gKgIV3nscTsvcrhMwxzcLmdXJTDeTFWlODxs8qvTsURlbqhCVyw
-        grQNHNe08ftfTQkRArWHnaUbxBOjHML/PdWBoMHCQmCx
-X-Google-Smtp-Source: AJdET5dOReUZzP5i29xsDu/xS4HE76l9/jsm14iYRyX540HXzjkh81Bq2qVFTQbtv9jT9wr9pmtdyCODHrVLN3CGguY=
-X-Received: by 2002:aed:35c5:: with SMTP id d5mr6717396qte.212.1542820479445;
- Wed, 21 Nov 2018 09:14:39 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5Ba68y4wLR6loGecAWkIYOUD+p3jd3X1twbGoOsozgM=;
+        b=h4/hwk59HAkYcYyPC4JESlTnk5eoTjphIALD5LR8VlUH4JNmIO19M9J/u1FTJru7gS
+         lbjzpsc6aldx/NBCvuVJCXMW0zLeAV1jn/32Kh27LfEBGl5bx0bltFTOB36w+zW0UeFT
+         HQKmfPPte+/Xde0Q3Vm7bKcQDN1Jjm4qkio/Mn+kBnTLiAN3a/M3KfKNsuuO8LwOgyHs
+         2r9V9sS6YKuWI92gRf8uGJJmmGybyQeZyzB9yyIthM5Hm/lHIjPW7D8SAhUzvzz5useP
+         MSRQCWAl29AdS87vp5vcSqSP6MldTcIHq33VQLX9+5Tketq1Xfx09myxDnwxqAw2zmCy
+         CdWg==
+X-Gm-Message-State: AGRZ1gJ+J1NPBB8tQACEWN4LECfrk9Cd7SgSOZvqloGOIC5cXiMTboEt
+        Om2ZDeyTdHLgwjEGnU6m66Kfvw==
+X-Google-Smtp-Source: AFSGD/WtNgiSvKut1Py/FS+efe6xkiehrZ1iDydZKhI+amFHDJcckAnX5gJKk4Bt7XsmS4CLEGtS+w==
+X-Received: by 2002:a1c:307:: with SMTP id 7-v6mr6553392wmd.146.1542820528291;
+        Wed, 21 Nov 2018 09:15:28 -0800 (PST)
+Received: from bender.home (lfbn-nic-1-206-198.w2-15.abo.wanadoo.fr. [2.15.53.198])
+        by smtp.gmail.com with ESMTPSA id 194sm2311398wmn.18.2018.11.21.09.15.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 21 Nov 2018 09:15:27 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     daniel@ffwll.ch
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/meson: Fixes for drm_crtc_vblank_on/off support
+Date:   Wed, 21 Nov 2018 18:15:25 +0100
+Message-Id: <20181121171525.6593-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <CALCETrVPcgKarpTOsdTfODkNA76W04WvW+tNWoOx6+Em0KS04A@mail.gmail.com>
-In-Reply-To: <CALCETrVPcgKarpTOsdTfODkNA76W04WvW+tNWoOx6+Em0KS04A@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 21 Nov 2018 18:14:23 +0100
-Message-ID: <CAK8P3a2E7RAOSUJRbc_0WeQO8vVH+GsZXuo=GMHj0Rvu+_A2ZQ@mail.gmail.com>
-Subject: Re: Cleaning up numbering for new x86 syscalls?
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Daniel Colascione <dancol@google.com>,
-        Florian Weimer <fweimer@redhat.com>, carlos@redhat.com,
-        Rich Felker <dalias@libc.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 1:25 AM Andy Lutomirski <luto@kernel.org> wrote:
->
-> Hi all-
->
-> We currently have some giant turds in the way that syscalls are
-> numbered.  We have the x86_32 table, which is totally sane other than
-> some legacy multiplexers.  Then we have the x86_64 table, which is,
-> um, demented:
->
->  - The numbers don't match x86_32.  I have no idea why.
+Since Linux 4.17, calls to drm_crtc_vblank_on/off are mandatory, and we get
+a warning when ctrc is disabled :
+" driver forgot to call drm_crtc_vblank_off()"
 
-I think it was an early attempt at cleanup up the table, and only
-adding those that were still used. Back in the days, each architecture
-had its own table, and of course they started out as separate
-top-level architectures.
+But, the vsync IRQ was not totally disabled due the transient hardware
+state and specific interrupt line thus adding proper IRQ masking from
+the HHI system control registers.
 
->  - We use bit 30, which triggers in_x32_syscall().  It should have
-> been bit 31, bit I digress.
->
->  - We have this weird set of extra x32 syscalls that start at 512.
-> Who wants to bet whether we have no bugs if someone does syscall with,
-> say, nr == 512 (i.e. not 512 | BIT(30)) or nr == (16 | BIT(30))?  The
-> latter would be non-compat ioctl with in_x32_syscall() set and hence
-> in_compat_syscall() set.
+Finally, due to changed in the atomic_disable code path with the updated
+fbdev emulation, checking the crct state with an atomic_disable call
+leads to warning in further atomic_begin() with a leftover event not cleared.
 
-The comment in the table says it's purely for keeping the calls
-in separate cache lines. I don't know if the cache lines make
-a difference in the end, but it seems that once we start running
-into the x32 syscall numbers, I think we just treat them like any
-others, we just choose to never call them from a 64-bit glibc.
+To Summarize :
+- Make sure that the CRTC code will call the enable/disable_vblank hooks.
+- *Really* mask the Vsync IRQ
+- Allways consume the state event in atomic_disable()
 
-> I propose we consider some subset of the following:
->
-> 1. Introduce restart_syscall_2().  Make its number be 1024.  Maybe
-> someday we could start using it instead of restart_syscall().  The
-> only issue I can see is programs that allow restart_syscall() using
-> seccomp but don't allow the new variant.
->
-> 2. Introduce an outright ban on new syscalls with nr < 1024.
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/meson/meson_crtc.c | 6 +++++-
+ drivers/gpu/drm/meson/meson_venc.c | 3 +++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-This would leave a hole of several hundred numbers if we do it
-for all architectures. Wasting multiple kilobytes for a cosmetic
-cleanup might be considered excessive.
+diff --git a/drivers/gpu/drm/meson/meson_crtc.c b/drivers/gpu/drm/meson/meson_crtc.c
+index d78168f979db..a300556248fe 100644
+--- a/drivers/gpu/drm/meson/meson_crtc.c
++++ b/drivers/gpu/drm/meson/meson_crtc.c
+@@ -107,6 +107,8 @@ static void meson_crtc_atomic_enable(struct drm_crtc *crtc,
+ 			    priv->io_base + _REG(VPP_MISC));
+ 
+ 	priv->viu.osd1_enabled = true;
++
++	drm_crtc_vblank_on(crtc);
+ }
+ 
+ static void meson_crtc_atomic_disable(struct drm_crtc *crtc,
+@@ -117,6 +119,8 @@ static void meson_crtc_atomic_disable(struct drm_crtc *crtc,
+ 
+ 	DRM_DEBUG_DRIVER("\n");
+ 
++	drm_crtc_vblank_off(crtc);
++
+ 	priv->viu.osd1_enabled = false;
+ 	priv->viu.osd1_commit = false;
+ 
+@@ -128,7 +132,7 @@ static void meson_crtc_atomic_disable(struct drm_crtc *crtc,
+ 			    VPP_VD1_PREBLEND | VPP_POSTBLEND_ENABLE, 0,
+ 			    priv->io_base + _REG(VPP_MISC));
+ 
+-	if (crtc->state->event && !crtc->state->active) {
++	if (crtc->state->event) {
+ 		spin_lock_irq(&crtc->dev->event_lock);
+ 		drm_crtc_send_vblank_event(crtc, crtc->state->event);
+ 		spin_unlock_irq(&crtc->dev->event_lock);
+diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
+index 9be0376e0329..ab72ddda242d 100644
+--- a/drivers/gpu/drm/meson/meson_venc.c
++++ b/drivers/gpu/drm/meson/meson_venc.c
+@@ -71,6 +71,7 @@
+  */
+ 
+ /* HHI Registers */
++#define HHI_GCLK_MPEG2		0x148 /* 0x52 offset in data sheet */
+ #define HHI_VDAC_CNTL0		0x2F4 /* 0xbd offset in data sheet */
+ #define HHI_VDAC_CNTL1		0x2F8 /* 0xbe offset in data sheet */
+ #define HHI_HDMI_PHY_CNTL0	0x3a0 /* 0xe8 offset in data sheet */
+@@ -1663,10 +1664,12 @@ unsigned int meson_venci_get_field(struct meson_drm *priv)
+ void meson_venc_enable_vsync(struct meson_drm *priv)
+ {
+ 	writel_relaxed(2, priv->io_base + _REG(VENC_INTCTRL));
++	regmap_update_bits(priv->hhi, HHI_GCLK_MPEG2, BIT(25), BIT(25));
+ }
+ 
+ void meson_venc_disable_vsync(struct meson_drm *priv)
+ {
++	regmap_update_bits(priv->hhi, HHI_GCLK_MPEG2, BIT(25), 0);
+ 	writel_relaxed(0, priv->io_base + _REG(VENC_INTCTRL));
+ }
+ 
+-- 
+2.19.1
 
-> 3. Introduce an outright ban on the addition of new __x32_compat
-> syscalls.  If new compat hacks are needed, they can use
-> in_compat_syscall(), thank you very much.
-
-I would definitely want to keep anything regarding x32 out of the
-common syscall implementation. If you want to add on to that
-pile, please do it in arch/x86, not in kernel/ or fs/.
-
-If we decide that x32 is a failed experiment and we don't keep
-it working in the future, let's just kill it off right away. I'm fairly
-sure nobody depends on it for anything real, the only users I
-could find are either for showing off benchmark results or for
-playing around with it for fun. Most of that fun part has apparently
-ended many years ago, but there is still some work going into
-debian/x32. We probably need to coordinate with them and see
-if they know of actual users before removing it. Popcon lists
-5 active users [1] and a sharp downward trend.
-
-> 4. Modify the wrappers of the __x32_compat entries so that they will
-> return -ENOSYS if in_x32_syscall() returns false.
-
-No objection here, but what would that help?
-
-> 5. Adjust the scripts so that we only have to wire up new syscalls
-> once.  They'll have a nr above 1024, and they'll have the same nr on
-> all x86 variants.
->
-> Thoughts?
-
-I would definitely welcome assigning the same syscall numbers across
-all architectures. It is a needless burden for the libc developers to
-figure out for each syscall which kernel is known to support it.
-When a call gets added, they typically add logic to check for the
-system call at runtime, but for older syscalls, it helps to know when
-all architectures support it once the minimum kernel version for
-a libc has been raised beyond that.
-
-Please see also the work that Firoz Khan has been posting
-for generalizing the tables on all architectures to use the
-format we have on x86, arm and s390. I hope we can merge it
-all for 4.21, and then build on top of that for generalization and
-cleanups.
-
-      Arnd
-
-[1] https://popcon.debian.org/stat/sub-x32.png
