@@ -2,120 +2,128 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1567C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 076D1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:47:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F77F21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:45:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F77F21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id C3A252146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:47:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3A252146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729631AbeKUVTV (ORCPT
+        id S1728670AbeKUVVH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 16:19:21 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:20916 "EHLO pegase1.c-s.fr"
+        Wed, 21 Nov 2018 16:21:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52516 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726729AbeKUVTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 16:19:20 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 430K3P5wcTz9vF7K;
-        Wed, 21 Nov 2018 11:45:21 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id anB1K_LhuOkF; Wed, 21 Nov 2018 11:45:21 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 430K3P5Pw8z9vF7R;
-        Wed, 21 Nov 2018 11:45:21 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 67FAC8B808;
-        Wed, 21 Nov 2018 11:45:26 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id lC8aQVMCjNZT; Wed, 21 Nov 2018 11:45:26 +0100 (CET)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2F26F8B809;
-        Wed, 21 Nov 2018 11:45:26 +0100 (CET)
-Subject: Re: [PATCH 2/4] soc/fsl/qe: fix potential NULL pointer dereference in
- ucc_of_parse_tdm
-To:     Wen Yang <wen.yang99@zte.com.cn>, qiang.zhao@nxp.com
-Cc:     wang.yi59@zte.com.cn, zhong.weidong@zte.com.cn,
-        linux-kernel@vger.kernel.org, leoyang.li@nxp.com,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-References: <1542786111-18648-1-git-send-email-wen.yang99@zte.com.cn>
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <d69e7c77-e9fa-470a-db9f-ff9cd0476334@c-s.fr>
-Date:   Wed, 21 Nov 2018 11:45:26 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        id S1726172AbeKUVVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 16:21:06 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 89DC9308626A;
+        Wed, 21 Nov 2018 10:47:12 +0000 (UTC)
+Received: from krava (unknown [10.43.17.92])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 0BEF05C221;
+        Wed, 21 Nov 2018 10:47:10 +0000 (UTC)
+Date:   Wed, 21 Nov 2018 11:47:10 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        "acme@kernel.org" <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "wangnan0@huawei.com" <wangnan0@huawei.com>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: perf tools: remove option --tail-synthesize ?
+Message-ID: <20181121104710.GA9402@krava>
+References: <89AC26A9-5A18-4608-8889-9C3C9C1C69D3@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <1542786111-18648-1-git-send-email-wen.yang99@zte.com.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <89AC26A9-5A18-4608-8889-9C3C9C1C69D3@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 21 Nov 2018 10:47:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 21/11/2018 à 08:41, Wen Yang a écrit :
-> This patch fixes a possible null pointer dereference in
-> ucc_of_parse_tdm, detected by the semantic patch
-> deref_null.cocci, with the following warning:
+On Wed, Nov 21, 2018 at 07:45:28AM +0000, Song Liu wrote:
+> Hi,
 > 
-> ./drivers/soc/fsl/qe/qe_tdm.c:177:21-24: ERROR: pdev is NULL but dereferenced.
+> I found perf-record --tail-synthesize without --overwrite breaks symbols
+> for perf-script, perf-report, etc. For example:
 > 
-> The following code has potential null pointer references:
->          pdev = of_find_device_by_node(np2);
->          if (!pdev) {
->                  ret = -EINVAL;
->                  pr_err("%pOFn: failed to lookup pdev\n", np2);
->                  of_node_put(np2);
->                  goto err_miss_siram_property;
->          }
-> ...
-> err_miss_siram_property:
->          devm_iounmap(&pdev->dev, utdm->si_regs);
+> [root@]# ~/perf record -ag --tail-synthesize -- sleep 1
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 1.129 MB perf.data (3531 samples) ]
+> [root@]# ~/perf script | head
+> swapper     0 [000] 1250675.051971:          1 cycles:ppp:
+>         ffffffff81009e15 [unknown] ([unknown])
+>         ffffffff81196b19 [unknown] ([unknown])
+>         ffffffff81196579 [unknown] ([unknown])
+>         ffffffff81110ca7 [unknown] ([unknown])
+>         ffffffff81a01f4a [unknown] ([unknown])
+>         ffffffff81a017bf [unknown] ([unknown])
+>         ffffffff8180e17a [unknown] ([unknown])
 > 
-> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> Reviewed-by: Tan Hu <tan.hu@zte.com.cn>
-> CC: Julia Lawall <julia.lawall@lip6.fr>
-> ---
->   drivers/soc/fsl/qe/qe_tdm.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+> perf-record with --overwrite does NOT have this issue.
+
+actualy I think that now it works properly, if you turn on
+task and mmap events, you'll see the samples get resolved
+right after aux events are processed:
+
+	[root@krava perf]# ./perf script --show-info --show-task-events --show-mmap-events
+	...
+	swapper     0 [007] 620566.187355:      64821 cycles:ppp:
+		ffffffffab0b4d7c [unknown] ([unknown])
+		ffffffffaba01b1f [unknown] ([unknown])
+		ffffffffab75d567 [unknown] ([unknown])
+		ffffffffab0e1f56 [unknown] ([unknown])
+		ffffffffab0e216f [unknown] ([unknown])
+		ffffffffab050dc7 [unknown] ([unknown])
+		ffffffffab0000d5 [unknown] ([unknown])
+
+	swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffffffffab000000(0x152c8000) @ 0xffffffffab000000]: x [kernel.kallsyms]_text
+	swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffffffffc02c8000(0x4000) @ 0]: x /lib/modules/4.18.17-200.fc28.x86_64/kernel/drivers/thermal/int340x_thermal/int3403_thermal.ko.xz
+	swapper     0 [000]     0.000000: PERF_RECORD_MMAP -1/0: [0xffffffffc02cd000(0x4000) @ 0]: x /lib/modules/4.18.17-200.fc28.x86_64/kernel/drivers/thermal/intel_pch_thermal.ko.xz
+	...
+	ext4-rsv-conver     0 [000]     0.000000: PERF_RECORD_COMM: ext4-rsv-conver:989/989
+	perf 20063 [005] 620566.187438:    1056712 cycles:ppp:
+		ffffffffab1f605d filemap_map_pages+0x9d (/usr/lib/debug/lib/modules/4.18.17-200.fc28.x86_64/vmlinux)
+		ffffffffab23aaa8 __handle_mm_fault+0x1018 (/usr/lib/debug/lib/modules/4.18.17-200.fc28.x86_64/vmlinux)
+		ffffffffab23ae7a handle_mm_fault+0xda (/usr/lib/debug/lib/modules/4.18.17-200.fc28.x86_64/vmlinux)
+		ffffffffab06ac90 __do_page_fault+0x240 (/usr/lib/debug/lib/modules/4.18.17-200.fc28.x86_64/vmlinux)
+		ffffffffab06af62 do_page_fault+0x32 (/usr/lib/debug/lib/modules/4.18.17-200.fc28.x86_64/vmlinux)
+		ffffffffaba010ee page_fault+0x1e (/usr/lib/debug/lib/modules/4.18.17-200.fc28.x86_64/vmlinux)
+	...
+
+if you record with --overwrite and --tail-synthesize the aux events
+will go to the top of the perf.data, so all's good
+
 > 
-> diff --git a/drivers/soc/fsl/qe/qe_tdm.c b/drivers/soc/fsl/qe/qe_tdm.c
-> index f78c346..166378b 100644
-> --- a/drivers/soc/fsl/qe/qe_tdm.c
-> +++ b/drivers/soc/fsl/qe/qe_tdm.c
-> @@ -174,7 +174,8 @@ int ucc_of_parse_tdm(struct device_node *np, struct ucc_tdm *utdm,
->   	return ret;
->   
->   err_miss_siram_property:
-> -	devm_iounmap(&pdev->dev, utdm->si_regs);
-> +	if (pdev)
-> +		devm_iounmap(&pdev->dev, utdm->si_regs);
+> After digging into this, I found this issue is introduced by commit
+> a73e24d240bc136619d382b1268f34d75c9d25ce.
 
-You are just hiding the issue, not fixing it.
+right, we got rid of that, because it will store the 'current/live'
+server mmaps for report/script, which is not what you want
 
-The problem is that pdev gets modified, so in any case that 
-devm_iounmap() will fail even when the new pdev is valid, because the 
-iomap was done with a different pdev.
-
-Christophe
-
-
-
->   	return ret;
->   }
->   EXPORT_SYMBOL(ucc_of_parse_tdm);
+> Reverting this commit does fix this issue. However, on a second thought,
+> I feel it is probably better just drop --tail-synthesize, as it doesn't
+> make much sense without --overwrite. All we need is to do tail_synthesize
+> when --overwrite is set.
 > 
+> Thoughts?
+
+maybe we should make --tail-synthesize non optionable for --overwrite,
+and get rid of that option completely.. Wang, any idea?
+
+but definitelly not allow that for non overwrite
+
+thanks,
+jirka
