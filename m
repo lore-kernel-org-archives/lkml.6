@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D61C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB094C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:27:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4916214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:27:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4916214DA
+	by mail.kernel.org (Postfix) with ESMTP id 8939D2146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:27:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8939D2146F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731454AbeKVCCk (ORCPT
+        id S1731467AbeKVCCn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 21:02:40 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33278 "EHLO mx1.redhat.com"
+        Wed, 21 Nov 2018 21:02:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60812 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731213AbeKVCCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 21:02:39 -0500
+        id S1731213AbeKVCCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 21:02:42 -0500
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8CD363154866;
-        Wed, 21 Nov 2018 15:27:46 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9FCD23084297;
+        Wed, 21 Nov 2018 15:27:49 +0000 (UTC)
 Received: from plouf.redhat.com (ovpn-204-124.brq.redhat.com [10.40.204.124])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EACF41054FD3;
-        Wed, 21 Nov 2018 15:27:43 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E99551054FD3;
+        Wed, 21 Nov 2018 15:27:46 +0000 (UTC)
 From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Jiri Kosina <jikos@kernel.org>,
@@ -39,123 +39,226 @@ To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
 Cc:     Nestor Lopez Casado <nlopezcasad@logitech.com>,
         linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 6/7] Revert "HID: input: Create a utility class for counting scroll events"
-Date:   Wed, 21 Nov 2018 16:27:11 +0100
-Message-Id: <20181121152712.6770-7-benjamin.tissoires@redhat.com>
+Subject: [PATCH 7/7] Revert "Input: Add the `REL_WHEEL_HI_RES` event code"
+Date:   Wed, 21 Nov 2018 16:27:12 +0100
+Message-Id: <20181121152712.6770-8-benjamin.tissoires@redhat.com>
 In-Reply-To: <20181121152712.6770-1-benjamin.tissoires@redhat.com>
 References: <20181121152712.6770-1-benjamin.tissoires@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 21 Nov 2018 15:27:46 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 21 Nov 2018 15:27:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 1ff2e1a44e02d4bdbb9be67c7d9acc240a67141f.
+This reverts commit aaf9978c3c0291ef3beaa97610bc9c3084656a85.
 
-It turns out the current API is not that compatible with
-some Microsoft mice, so better start again from scratch.
+Quoting Peter:
+
+There is a HID feature report called "Resolution Multiplier"
+Described in the "Enhanced Wheel Support in Windows" doc and
+the "USB HID Usage Tables" page 30.
+
+http://download.microsoft.com/download/b/d/1/bd1f7ef4-7d72-419e-bc5c-9f79ad7bb66e/wheel.docx
+https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf
+
+This was new for Windows Vista, so we're only a decade behind here. I only
+accidentally found this a few days ago while debugging a stuck button on a
+Microsoft mouse.
+
+The docs above describe it like this: a wheel control by default sends
+value 1 per notch. If the resolution multiplier is active, the wheel is
+expected to send a value of $multiplier per notch (e.g. MS Sculpt mouse) or
+just send events more often, i.e. for less physical motion (e.g. MS Comfort
+mouse).
+
+For the latter, you need the right HW of course. The Sculpt mouse has
+tactile wheel clicks, so nothing really changes. The Comfort mouse has
+continuous motion with no tactile clicks. Similar to the free-wheeling
+Logitech mice but without any inertia.
+
+Note that the doc also says that Vista and onwards *always* enable this
+feature where available.
+
+An example HID definition looks like this:
+
+       Usage Page Generic Desktop (0x01)
+       Usage Resolution Multiplier (0x48)
+       Logical Minimum 0
+       Logical Maximum 1
+       Physical Minimum 1
+       Physical Maximum 16
+       Report Size 2 # in bits
+       Report Count 1
+       Feature (Data, Var, Abs)
+
+So the actual bits have values 0 or 1 and that reflects real values 1 or 16.
+We've only seen single-bits so far, so there's low-res and hi-res, but
+nothing in between.
+
+The multiplier is available for HID usages "Wheel" and "AC Pan" (horiz wheel).
+Microsoft suggests that
+
+> Vendors should ship their devices with smooth scrolling disabled and allow
+> Windows to enable it. This ensures that the device works like a regular HID
+> device on legacy operating systems that do not support smooth scrolling.
+(see the wheel doc linked above)
+
+The mice that we tested so far do reset on unplug.
+
+Device Support looks to be all (?) Microsoft mice but nothing else
+
+Not supported:
+- Logitech G500s, G303
+- Roccat Kone XTD
+- all the cheap Lenovo, HP, Dell, Logitech USB mice that come with a
+  workstation that I could find don't have it.
+- Etekcity something something
+- Razer Imperator
+
+Supported:
+- Microsoft Comfort Optical Mouse 3000 - yes, physical: 1:4
+- Microsoft Sculpt Ergonomic Mouse - yes, physical: 1:12
+- Microsoft Surface mouse - yes, physical: 1:4
+
+So again, I think this is really just available on Microsoft mice, but
+probably all decent MS mice released over the last decade.
+
+Looking at the hardware itself:
+
+- no noticeable notches in the weel
+- low-res: 18 events per 360deg rotation (click angle 20 deg)
+- high-res: 72 events per 360deg → matches multiplier of 4
+
+- I can feel the notches during wheel turns
+- low-res: 24 events per 360 deg rotation (click angle 15 deg)
+  - horiz wheel is tilt-based, continuous output value 1
+- high-res: 24 events per 360deg with value 12 → matches multiplier of 12
+  - horiz wheel output rate doubles/triples?, values is 3
+
+- It's a touch strip, not a wheel so no notches
+- high-res: events have value 4 instead of 1
+  a bit strange given that it doesn't actually have notches.
+
+Ok, why is this an issue for the current API? First, because the logitech
+multiplier used in Harry's patches looks suspiciously like the Resolution
+Multiplier so I think we should assume it's the same thing. Nestor, can you
+shed some light on that?
+
+- `REL_WHEEL` is defined as the number of notches, emulated where needed.
+- `REL_WHEEL_HI_RES` is the movement of the user's finger in microns.
+- `WM_MOUSEWHEEL` (Windows) is is a multiple of 120, defined as "the threshold
+  for action to be taken and one such action"
+  https://docs.microsoft.com/en-us/windows/desktop/inputdev/wm-mousewheel
+
+If the multiplier is set to M, this means we need an accumulated value of M
+until we can claim there was a wheel click. So after enabling the multiplier
+and setting it to the maximum (like Windows):
+- M units are 15deg rotation → 1 unit is 2620/M micron (see below). This is
+  the `REL_WHEEL_HI_RES` value.
+  - wheel diameter 20mm: 15 deg rotation is 2.62mm, 2620 micron (pi * 20mm /
+    (360deg/15deg))
+- For every M units accumulated, send one `REL_WHEEL` event
+
+The problem here is that we've now hardcoded 20mm/15 deg into the kernel and
+we have no way of getting the size of the wheel or the click angle into the
+kernel.
+
+In userspace we now have to undo the kernel's calculation. If our click angle
+is e.g. 20 degree we have to undo the (lossy) calculation from the kernel and
+calculate the correct angle instead. This also means the 15 is a hardcoded
+option forever and cannot be changed.
+
+In hid-logitech-hidpp.c, the microns per unit is hardcoded per device.
+Harry, did you measure those by hand? We'd need to update the kernel for
+every device and there are 10 years worth of devices from MS alone.
+
+The multiplier default is 8 which is in the right ballpark, so I'm pretty
+sure this is the same as the Resolution Multiplier, just in HID++ lingo. And
+given that the 120 magic factor is what Windows uses in the end, I can't
+imagine Logitech rolling their own thing here. Nestor?
+
+And we're already fairly inaccurate with the microns anyway. The MX Anywhere
+2S has a click angle of 20 degrees (18 stops) and a 17mm wheel, so a wheel
+notch is approximately 2.67mm, one event at multiplier 8 (1/8 of a notch)
+would be 334 micron. That's only 80% of the fallback value of 406 in the
+kernel. Multiplier 6 gives us 445micron (10% off). I'm assuming multiplier 7
+doesn't exist because it's not a factor of 120.
+
+Summary:
+
+Best option may be to simply do what Windows is doing, all the HW manufacturers
+have to use that approach after all. Switch `REL_WHEEL_HI_RES` to report in
+fractions of 120, with 120 being one notch and divide that by the multiplier
+for the actual events. So e.g. the Logitech multiplier 8 would send value 15
+for each event in hi-res mode. This can be converted in userspace to
+whatever userspace needs (combined with a hwdb there that tells you wheel
+size/click angle/...).
+
+Conflicts:
+	include/uapi/linux/input-event-codes.h -> I kept the new
+         reserved event in the code, so I had to adapt the revert
+         slightly
 
 Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 ---
- drivers/hid/hid-input.c | 45 -----------------------------------------
- include/linux/hid.h     | 28 -------------------------
- 2 files changed, 73 deletions(-)
+ Documentation/input/event-codes.rst    | 11 +----------
+ include/uapi/linux/input-event-codes.h | 10 ----------
+ 2 files changed, 1 insertion(+), 20 deletions(-)
 
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index 28ee2ed88a1a..d6fab5798487 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -1841,48 +1841,3 @@ void hidinput_disconnect(struct hid_device *hid)
- }
- EXPORT_SYMBOL_GPL(hidinput_disconnect);
+diff --git a/Documentation/input/event-codes.rst b/Documentation/input/event-codes.rst
+index cef220c176a4..a8c0873beb95 100644
+--- a/Documentation/input/event-codes.rst
++++ b/Documentation/input/event-codes.rst
+@@ -190,16 +190,7 @@ A few EV_REL codes have special meanings:
+ * REL_WHEEL, REL_HWHEEL:
  
--/**
-- * hid_scroll_counter_handle_scroll() - Send high- and low-resolution scroll
-- *                                      events given a high-resolution wheel
-- *                                      movement.
-- * @counter: a hid_scroll_counter struct describing the wheel.
-- * @hi_res_value: the movement of the wheel, in the mouse's high-resolution
-- *                units.
-- *
-- * Given a high-resolution movement, this function converts the movement into
-- * microns and emits high-resolution scroll events for the input device. It also
-- * uses the multiplier from &struct hid_scroll_counter to emit low-resolution
-- * scroll events when appropriate for backwards-compatibility with userspace
-- * input libraries.
-- */
--void hid_scroll_counter_handle_scroll(struct hid_scroll_counter *counter,
--				      int hi_res_value)
--{
--	int low_res_scroll_amount;
--	/* Some wheels will rest 7/8ths of a notch from the previous notch
--	 * after slow movement, so we want the threshold for low-res events to
--	 * be in the middle of the notches (e.g. after 4/8ths) as opposed to on
--	 * the notches themselves (8/8ths).
--	 */
--	int threshold = counter->resolution_multiplier / 2;
+   - These codes are used for vertical and horizontal scroll wheels,
+-    respectively. The value is the number of "notches" moved on the wheel, the
+-    physical size of which varies by device. For high-resolution wheels (which
+-    report multiple events for each notch of movement, or do not have notches)
+-    this may be an approximation based on the high-resolution scroll events.
 -
--	input_report_rel(counter->dev, REL_WHEEL_HI_RES,
--			 hi_res_value * counter->microns_per_hi_res_unit);
+-* REL_WHEEL_HI_RES:
 -
--	counter->remainder += hi_res_value;
--	if (abs(counter->remainder) >= threshold) {
--		/* Add (or subtract) 1 because we want to trigger when the wheel
--		 * is half-way to the next notch (i.e. scroll 1 notch after a
--		 * 1/2 notch movement, 2 notches after a 1 1/2 notch movement,
--		 * etc.).
--		 */
--		low_res_scroll_amount =
--			counter->remainder / counter->resolution_multiplier
--			+ (hi_res_value > 0 ? 1 : -1);
--		input_report_rel(counter->dev, REL_WHEEL,
--				 low_res_scroll_amount);
--		counter->remainder -=
--			low_res_scroll_amount * counter->resolution_multiplier;
--	}
--}
--EXPORT_SYMBOL_GPL(hid_scroll_counter_handle_scroll);
-diff --git a/include/linux/hid.h b/include/linux/hid.h
-index 387c70df6f29..a355d61940f2 100644
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -1139,34 +1139,6 @@ static inline u32 hid_report_len(struct hid_report *report)
- int hid_report_raw_event(struct hid_device *hid, int type, u8 *data, u32 size,
- 		int interrupt);
+-  - If a vertical scroll wheel supports high-resolution scrolling, this code
+-    will be emitted in addition to REL_WHEEL. The value is the (approximate)
+-    distance travelled by the user's finger, in microns.
++    respectively.
  
--
--/**
-- * struct hid_scroll_counter - Utility class for processing high-resolution
-- *                             scroll events.
-- * @dev: the input device for which events should be reported.
-- * @microns_per_hi_res_unit: the amount moved by the user's finger for each
-- *                           high-resolution unit reported by the mouse, in
-- *                           microns.
-- * @resolution_multiplier: the wheel's resolution in high-resolution mode as a
-- *                         multiple of its lower resolution. For example, if
-- *                         moving the wheel by one "notch" would result in a
-- *                         value of 1 in low-resolution mode but 8 in
-- *                         high-resolution, the multiplier is 8.
-- * @remainder: counts the number of high-resolution units moved since the last
-- *             low-resolution event (REL_WHEEL or REL_HWHEEL) was sent. Should
-- *             only be used by class methods.
+ EV_ABS
+ ------
+diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
+index 6d180cc60a5d..3eb5a4c3d60a 100644
+--- a/include/uapi/linux/input-event-codes.h
++++ b/include/uapi/linux/input-event-codes.h
+@@ -716,7 +716,6 @@
+  * the situation described above.
+  */
+ #define REL_RESERVED		0x0a
+-#define REL_WHEEL_HI_RES	0x0b
+ #define REL_MAX			0x0f
+ #define REL_CNT			(REL_MAX+1)
+ 
+@@ -753,15 +752,6 @@
+ 
+ #define ABS_MISC		0x28
+ 
+-/*
+- * 0x2e is reserved and should not be used in input drivers.
+- * It was used by HID as ABS_MISC+6 and userspace needs to detect if
+- * the next ABS_* event is correct or is just ABS_MISC + n.
+- * We define here ABS_RESERVED so userspace can rely on it and detect
+- * the situation described above.
 - */
--struct hid_scroll_counter {
--	struct input_dev *dev;
--	int microns_per_hi_res_unit;
--	int resolution_multiplier;
+-#define ABS_RESERVED		0x2e
 -
--	int remainder;
--};
--
--void hid_scroll_counter_handle_scroll(struct hid_scroll_counter *counter,
--				      int hi_res_value);
--
- /* HID quirks API */
- unsigned long hid_lookup_quirk(const struct hid_device *hdev);
- int hid_quirks_init(char **quirks_param, __u16 bus, int count);
+ #define ABS_MT_SLOT		0x2f	/* MT slot being modified */
+ #define ABS_MT_TOUCH_MAJOR	0x30	/* Major axis of touching ellipse */
+ #define ABS_MT_TOUCH_MINOR	0x31	/* Minor axis (omit if circular) */
 -- 
 2.19.1
 
