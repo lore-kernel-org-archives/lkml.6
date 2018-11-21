@@ -2,187 +2,188 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F48C04EBA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8582EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BC6B2146D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:25:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BC6B2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+	by mail.kernel.org (Postfix) with ESMTP id 4D07D2087E
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:28:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D07D2087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbeKUO6f (ORCPT
+        id S1727247AbeKUPAt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 09:58:35 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34975 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbeKUO6e (ORCPT
+        Wed, 21 Nov 2018 10:00:49 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:52860 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727010AbeKUPAt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 09:58:34 -0500
-Received: by mail-pl1-f194.google.com with SMTP id v1-v6so3546054plo.2;
-        Tue, 20 Nov 2018 20:25:50 -0800 (PST)
+        Wed, 21 Nov 2018 10:00:49 -0500
+Received: by mail-io1-f69.google.com with SMTP id h7so4144473iof.19
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 20:28:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qlXNnk0fz2zW30JawgPi0MLm0NV117hTjPsSlAiELmg=;
-        b=EuO7JMgv8NoR/UGeyrK9pSGK4Drml396tt0iHO2NqbCSkiSntbMP9Ww6MAlghS/XFA
-         6vD7dkn+34A8qVrv7Jjgjxh/d3OHgtd6Wc8203BBMoHjHqEGGFYxe/sMgG9iH99mZULJ
-         ITjBYf3reQu7Bw1GduRrvvF44YAemA6UpaDsgg5xShircgkS6R9vkd99CXvL4nAu3m3H
-         HuzdROYJO4JMjjD6xrs6wg9bl0JBt5wpH6e+FmITaYfz+7MJAig7LwPaNa0D9CGP2QcI
-         +hALwUitTUaaO4PIWEQND+bPX1cFmdGGUhqzQTxwzTZm/HtO9fkqV3hC5n8ZWRGs1gMd
-         mDJw==
-X-Gm-Message-State: AA+aEWYkmo54NajRX72pdpqVmEKzj0xmH2U0WlMPvbYWDAXCcRxQkVAo
-        Q+WG0KLovudinxS7LJXwts0=
-X-Google-Smtp-Source: AFSGD/UexPBrEp2S/E9R6iYGoOvVqrdynAVs3uJhUpol3pmPd0ri99U0GAHIvhhvRGfjFJdmd/ZyuA==
-X-Received: by 2002:a17:902:aa84:: with SMTP id d4-v6mr5236385plr.25.1542774349548;
-        Tue, 20 Nov 2018 20:25:49 -0800 (PST)
-Received: from ?IPv6:2601:647:4800:973f:8a0:7611:3223:f4db? ([2601:647:4800:973f:8a0:7611:3223:f4db])
-        by smtp.gmail.com with ESMTPSA id t13sm86916556pgr.42.2018.11.20.20.25.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 20:25:48 -0800 (PST)
-Subject: Re: [PATCH V10 09/19] block: introduce bio_bvecs()
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-10-ming.lei@redhat.com> <20181116134541.GH3165@lst.de>
- <002fe56b-25e4-573e-c09b-bb12c3e8d25a@grimberg.me>
- <20181120161651.GB2629@lst.de>
- <53526aae-fb9b-ee38-0a01-e5899e2d4e4d@grimberg.me>
- <20181121005902.GA31748@ming.t460p>
- <2d9bee7a-f010-dcf4-1184-094101058584@grimberg.me>
- <20181121034415.GA8408@ming.t460p>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <2a47d336-c19b-6bf4-c247-d7382871eeea@grimberg.me>
-Date:   Tue, 20 Nov 2018 20:25:46 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=VDLroSLjyPR0DtQ5ZuGtkmT92SznokM22QD+Ag5ejEI=;
+        b=aRhZ8Rb+kt+zCqxIrqxt9SKDZr/THNJpeLkzaAjvzB+Hhppwy4AIV/DSqjIchLQttm
+         h27m02hI47qLdWDLzYJ4iW2MLlItPApRfwaIvIQl/5TLQ8NsdKCuBEiDnMI7hOTJ0c3c
+         yqkNWMjGI5MwlZKJUc07EWMLLwiZOfC3jF1Tnl8Q4v9ofb8RZz4hbBJDLhXb3f2Gq6kh
+         T9QJuYN1w9enCWE/QbeXLVDlo/e3dzcD/4M3q0wpVnGEzaEURU6Cohxwc2eXxPhi/mw3
+         D5fDrb3BKowtQ4PgAS+LhsILGW/fj5+IWQ9qhQZMewSsOc59bh+Qr4A1RNcZfbwlYtLg
+         UAKw==
+X-Gm-Message-State: AA+aEWZOzpnyZmd7MT7yoIAi2eq68Yp70WjSdT9rMTqnAX8NR/u9zSk5
+        zzm2krsMaLqebmIw9Y/J9yS9tojZs+Ep203VVitU5vVZWiRc
+X-Google-Smtp-Source: AJdET5foDGeVwM6kvtLD7lClpFYbJgvJQrLZ8FNAOBKV+udoIBmX7tw4OXMMfzy5iqH/Ujp2lwMfyncY1AF3AtXKasQz2EEXMBS6
 MIME-Version: 1.0
-In-Reply-To: <20181121034415.GA8408@ming.t460p>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a24:59d1:: with SMTP id p200-v6mr3602646itb.10.1542774483891;
+ Tue, 20 Nov 2018 20:28:03 -0800 (PST)
+Date:   Tue, 20 Nov 2018 20:28:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000014c430057b252d70@google.com>
+Subject: general protection fault in sctp_sched_dequeue_common
+From:   syzbot <syzbot+e33a3a138267ca119c7d@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
+        netdev@vger.kernel.org, nhorman@tuxdriver.com,
+        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
->> I would like to avoid growing bvec tables and keep everything
->> preallocated. Plus, a bvec_iter operates on a bvec which means
->> we'll need a table there as well... Not liking it so far...
-> 
-> In case of bios in one request, we can't know how many bvecs there
-> are except for calling rq_bvecs(), so it may not be suitable to
-> preallocate the table. If you have to send the IO request in one send(),
-> runtime allocation may be inevitable.
+syzbot found the following crash on:
 
-I don't want to do that, I want to work on a single bvec at a time like
-the current implementation does.
+HEAD commit:    cfc6731d2f79 Merge branch 'sctp-add-subscribe-per-asoc-and..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=14fc234d400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=73e2bc0cb6463446
+dashboard link: https://syzkaller.appspot.com/bug?extid=e33a3a138267ca119c7d
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-> If you don't require to send the IO request in one send(), you may send
-> one bio in one time, and just uses the bio's bvec table directly,
-> such as the single bio case in lo_rw_aio().
+Unfortunately, I don't have any reproducer for this crash yet.
 
-we'd need some indication that we need to reinit my iter with the
-new bvec, today we do:
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e33a3a138267ca119c7d@syzkaller.appspotmail.com
 
-static inline void nvme_tcp_advance_req(struct nvme_tcp_request *req,
-                 int len)
-{
-         req->snd.data_sent += len;
-         req->pdu_sent += len;
-         iov_iter_advance(&req->snd.iter, len);
-         if (!iov_iter_count(&req->snd.iter) &&
-             req->snd.data_sent < req->data_len) {
-                 req->snd.curr_bio = req->snd.curr_bio->bi_next;
-                 nvme_tcp_init_send_iter(req);
-         }
-}
+netlink: 'syz-executor1': attribute type 39 has an invalid length.
+IPv6: ADDRCONF(NETDEV_CHANGE): lo: link becomes ready
+A link change request failed with some changes committed already. Interface  
+lo may have been left with an inconsistent configuration, please check.
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 4030 Comm: syz-executor5 Not tainted 4.20.0-rc3+ #304
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__list_del_entry_valid+0x84/0x100 lib/list_debug.c:51
+Code: 0f 84 60 01 00 00 48 b8 00 02 00 00 00 00 ad de 49 39 c4 0f 84 39 01  
+00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 75  
+5f 49 8b 14 24 48 39 da 0f 85 4e 01 00 00 49 8d 7d
+RSP: 0018:ffff8881c1bfea48 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffff8881bb175618 RCX: ffffc9001006b000
+RDX: 0000000000000000 RSI: ffffffff8752c823 RDI: ffff8881bb175620
+RBP: ffff8881c1bfea60 R08: ffff88818dc04200 R09: ffff8881c1bff488
+R10: ffffed103837feb6 R11: 0000000000000003 R12: 0000000000000000
+R13: 0000000000000000 R14: ffff8881cb4d8e20 R15: dffffc0000000000
+FS:  00007f34b0944700(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000ae0ed0 CR3: 00000001cb898000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  __list_del_entry include/linux/list.h:117 [inline]
+  list_del_init include/linux/list.h:159 [inline]
+  sctp_sched_dequeue_common+0xab/0x610 net/sctp/stream_sched.c:267
+  sctp_sched_fcfs_dequeue+0x18d/0x280 net/sctp/stream_sched.c:90
+  sctp_outq_dequeue_data net/sctp/outqueue.c:90 [inline]
+  sctp_outq_flush_data net/sctp/outqueue.c:1079 [inline]
+  sctp_outq_flush+0x13e2/0x34f0 net/sctp/outqueue.c:1205
+  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:772
+  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
+  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
+  sctp_do_sm+0x5ff/0x7180 net/sctp/sm_sideeffect.c:1191
+  sctp_primitive_SEND+0xa0/0xd0 net/sctp/primitive.c:178
+  sctp_sendmsg_to_asoc+0xa0b/0x1a10 net/sctp/socket.c:1955
+  sctp_sendmsg+0x13c2/0x1da0 net/sctp/socket.c:2113
+  inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:631
+  sock_write_iter+0x35e/0x5c0 net/socket.c:900
+  call_write_iter include/linux/fs.h:1857 [inline]
+  new_sync_write fs/read_write.c:474 [inline]
+  __vfs_write+0x6b8/0x9f0 fs/read_write.c:487
+  vfs_write+0x1fc/0x560 fs/read_write.c:549
+  ksys_write+0x101/0x260 fs/read_write.c:598
+  __do_sys_write fs/read_write.c:610 [inline]
+  __se_sys_write fs/read_write.c:607 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457569
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f34b0943c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
+RDX: 0000000000034000 RSI: 0000000020000040 RDI: 0000000000000005
+RBP: 000000000072bfa0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f34b09446d4
+R13: 00000000004c5cde R14: 00000000004da090 R15: 00000000ffffffff
+Modules linked in:
+---[ end trace 23757f22491d2e93 ]---
+RIP: 0010:__list_del_entry_valid+0x84/0x100 lib/list_debug.c:51
+Code: 0f 84 60 01 00 00 48 b8 00 02 00 00 00 00 ad de 49 39 c4 0f 84 39 01  
+00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 75  
+5f 49 8b 14 24 48 39 da 0f 85 4e 01 00 00 49 8d 7d
+kobject: 'loop0' (00000000e65c44e1): kobject_uevent_env
+kobject: 'loop0' (00000000e65c44e1): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+RSP: 0018:ffff8881c1bfea48 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffff8881bb175618 RCX: ffffc9001006b000
+kobject: 'rx-0' (000000005994716d): kobject_cleanup, parent 00000000ba7aa131
+RDX: 0000000000000000 RSI: ffffffff8752c823 RDI: ffff8881bb175620
+kobject: 'loop4' (000000004d250bad): kobject_uevent_env
+kobject: 'rx-0' (000000005994716d): auto cleanup 'remove' event
+kobject: 'loop4' (000000004d250bad): fill_kobj_path: path  
+= '/devices/virtual/block/loop4'
+kobject: 'rx-0' (000000005994716d): kobject_uevent_env
+RBP: ffff8881c1bfea60 R08: ffff88818dc04200 R09: ffff8881c1bff488
+R10: ffffed103837feb6 R11: 0000000000000003 R12: 0000000000000000
+kobject: 'rx-0' (000000005994716d): kobject_uevent_env: uevent_suppress  
+caused the event to drop!
+R13: 0000000000000000 R14: ffff8881cb4d8e20 R15: dffffc0000000000
+kobject: 'rx-0' (000000005994716d): auto cleanup kobject_del
+FS:  00007f34b0944700(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
+kobject: 'rx-0' (000000005994716d): calling ktype release
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000072c000 CR3: 00000001cb898000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+kobject: 'rx-0': free name
+kobject: 'loop0' (00000000e65c44e1): kobject_uevent_env
+kobject: 'tx-3' (00000000a24965cd): kobject_cleanup, parent 00000000ba7aa131
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+kobject: 'tx-3' (00000000a24965cd): auto cleanup 'remove' event
+kobject: 'loop0' (00000000e65c44e1): fill_kobj_path: path  
+= '/devices/virtual/block/loop0'
+kobject: 'tx-3' (00000000a24965cd): kobject_uevent_env
+kobject: 'tx-3' (00000000a24965cd): kobject_uevent_env: uevent_suppress  
+caused the event to drop!
+kobject: 'tx-3' (00000000a24965cd): auto cleanup kobject_del
 
-and initialize the send iter. I imagine that now I will need to
-switch to the next bvec and only if I'm on the last I need to
-use the next bio...
 
-Do you offer an API for that?
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-
->>> can this way avoid your blocking issue? You may see this
->>> example in branch 'rq->bio != rq->biotail' of lo_rw_aio().
->>
->> This is exactly an example of not ignoring the bios...
-> 
-> Yeah, that is the most common example, given merge is enabled
-> in most of cases. If the driver or device doesn't care merge,
-> you can disable it and always get single bio request, then the
-> bio's bvec table can be reused for send().
-
-Does bvec_iter span bvecs with your patches? I didn't see that change?
-
->> I'm not sure how this helps me either. Unless we can set a bvec_iter to
->> span bvecs or have an abstract bio crossing when we re-initialize the
->> bvec_iter I don't see how I can ignore bios completely...
-> 
-> rq_for_each_bvec() will iterate over all bvecs from all bios, so you
-> needn't to see any bio in this req.
-
-But I don't need this iteration, I need a transparent API like;
-bvec2 = rq_bvec_next(rq, bvec)
-
-This way I can simply always reinit my iter without thinking about how
-the request/bios/bvecs are constructed...
-
-> rq_bvecs() will return how many bvecs there are in this request(cover
-> all bios in this req)
-
-Still not very useful given that I don't want to use a table...
-
->>> So looks nvme-tcp host driver might be the 2nd driver which benefits
->>> from multi-page bvec directly.
->>>
->>> The multi-page bvec V11 has passed my tests and addressed almost
->>> all the comments during review on V10. I removed bio_vecs() in V11,
->>> but it won't be big deal, we can introduce them anytime when there
->>> is the requirement.
->>
->> multipage-bvecs and nvme-tcp are going to conflict, so it would be good
->> to coordinate on this. I think that nvme-tcp host needs some adjustments
->> as setting a bvec_iter. I'm under the impression that the change is rather
->> small and self-contained, but I'm not sure I have the full
->> picture here.
-> 
-> I guess I may not get your exact requirement on block io iterator from nvme-tcp
-> too, :-(
-
-They are pretty much listed above. Today nvme-tcp sets an iterator with:
-
-vec = __bvec_iter_bvec(bio->bi_io_vec, bio->bi_iter);
-nsegs = bio_segments(bio);
-size = bio->bi_iter.bi_size;
-offset = bio->bi_iter.bi_bvec_done;
-iov_iter_bvec(&req->snd.iter, WRITE, vec, nsegs, size);
-
-and when done, iterate to the next bio and do the same.
-
-With multipage bvec it would be great if we can simply have
-something like rq_bvec_next() that would pretty much satisfy
-the requirements from the nvme-tcp side...
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
