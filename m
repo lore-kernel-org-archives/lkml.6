@@ -2,231 +2,154 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E01C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5B8C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DDE7214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AFE1214D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:01:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="jh6Qqw9D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DDE7214DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="RvimzRj6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AFE1214D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731792AbeKVFgg (ORCPT
+        id S1731883AbeKVFgj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:36:36 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:60800 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730358AbeKVFgg (ORCPT
+        Thu, 22 Nov 2018 00:36:39 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:43339 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730387AbeKVFgg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 22 Nov 2018 00:36:36 -0500
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 89E2924E1561;
+Received: by mail-oi1-f193.google.com with SMTP id u18so5411358oie.10
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 11:01:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=B3qpv5WyX1b+PDKFsBx5kN+PVR72VQ0X3e5CRzUKvKQ=;
+        b=RvimzRj6Vh03YzdaKPH8D1c9tOjh9W/xZ5i7WRfCu0blA+xsrOfDE+AsGy4NUzP3Qu
+         a6NgjUc21bZnNcpsN630H8YqF+Pd/L7SAJGnMEKnnJdF8fi9mdefZYqIfo3GUIKESGff
+         Z70z8J0QqeRMWBcDk+yUcn27qJIYHE15gVto0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=B3qpv5WyX1b+PDKFsBx5kN+PVR72VQ0X3e5CRzUKvKQ=;
+        b=PxYPHh6VtdKeXZKPB1SLqPJRM4LzTayYEX7Z8Zto1JAQ5YmgQ7KWUjx5ryFC9i2Do2
+         oLTFLgrMsTgWoRE6o2C6nFdfUF90T8HQeWnKN0uhq3n8m51btl7qzWDKpZiAZrjTKsnH
+         RcUzoFGMsllsVBmqApWNH2O2ioPSpYo2viBEQAeSyQZg4FN9SUDHlbczDy9EcvjNMyTf
+         EgOLnqNxatVaCVso+7A9wi5MPFwTBUJHH2CqPOs15ypCbdT+845lI2Ls45//c7HOlEAi
+         2PmStwzhHwrUVidP79cz98L+3jLEZ4MuA+7MMQ1RioHe5lzQcj+yAg+Ak2tuy2L3qJJY
+         bYiA==
+X-Gm-Message-State: AGRZ1gKcdcSVuBrfxaYYXzgyR7ywIBtoWOv3vhA4AmLElb10Df1mTZau
+        u1b4bHT/71YOgTpKVhSPVeLaHeRY7iQ=
+X-Google-Smtp-Source: AJdET5djtmLj828z+A7WL4fVlxWgWH3XhcwTW/3kIjxBWxkbXHysbduO1L8LKnYeLJ9b70HQF1pdwA==
+X-Received: by 2002:aca:130a:: with SMTP id e10mr4089434oii.326.1542826864063;
         Wed, 21 Nov 2018 11:01:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1542826864; bh=+oRp3PINiAGC174gNCCo3YVCUwCdQRcVP7apImcIw4w=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=jh6Qqw9DZ/YfWfJbVrykBPvPRrv4edt2pFsaeNyVsr20EWY6BSW2970uPOGF0yEvu
-         0ycuSXRHJCMGmDTigkkCFMQiwZir8S2X1Vxbzy/RiEJ0uIOgE4t3+W7d2yqY1XBUA8
-         TTLZBqhjcNwctVWI+9qh4OaIdr9yKuJgKUueJBQvJ2zQenvrFphcMZPhLQLX7jAD2I
-         /dF8spnsafCL/Sybaj11HJcYP1LxhAgx3THoADj3nYFM+R/eNj2qBgmtiafOyp56QH
-         nAkiNiL8GcA33+r16fdDLzgu+nEz1s/C92c+wGnipCfJJ9RCA4FNsafpFmNBE1QvnZ
-         W04rehtRqThCA==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 71B143DD5;
-        Wed, 21 Nov 2018 11:01:04 -0800 (PST)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 21 Nov 2018 11:01:04 -0800
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Wed,
- 21 Nov 2018 20:01:01 +0100
-From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
-To:     Vineet Gupta <vineet.gupta1@synopsys.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Cupertino Miranda" <cupertino.miranda@synopsys.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-Subject: RE: [PATCH] arc: [devboards] Add support of NFSv3 ACL
-Thread-Topic: [PATCH] arc: [devboards] Add support of NFSv3 ACL
-Thread-Index: AQHUgLwP7OmsFFt/aECSV/Xcjbmt76VagZ1g
-Date:   Wed, 21 Nov 2018 19:01:01 +0000
-Message-ID: <4881796E12491D4BB15146FE0209CE6468198C3B@DE02WEMBXB.internal.synopsys.com>
-References: <20181120103019.12852-1-abrodkin@synopsys.com>
- <C2D7FE5348E1B147BCA15975FBA2307501464156CB@US01WEMBX2.internal.synopsys.com>
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA2307501464156CB@US01WEMBX2.internal.synopsys.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: =?us-ascii?Q?PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYWJyb2RraW5c?=
- =?us-ascii?Q?YXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRi?=
- =?us-ascii?Q?YTI5ZTM1Ylxtc2dzXG1zZy1jN2RlMjY5ZS1lZGJmLTExZTgtYmVhNy04OGIx?=
- =?us-ascii?Q?MTFjZGUyMTdcYW1lLXRlc3RcYzdkZTI2YTAtZWRiZi0xMWU4LWJlYTctODhi?=
- =?us-ascii?Q?MTExY2RlMjE3Ym9keS50eHQiIHN6PSIzNTI0IiB0PSIxMzE4NzMwMDQ1OTI3?=
- =?us-ascii?Q?MTc2NDQiIGg9InNHYjVjcG10VDZtWXlEd0kyMDBCM2FUVXRKYz0iIGlkPSIi?=
- =?us-ascii?Q?IGJsPSIwIiBibz0iMSIgY2k9ImNBQUFBRVJIVTFSU1JVRk5DZ1VBQUJRSkFB?=
- =?us-ascii?Q?Qk1YemFLeklIVUFibmdKOHM1UVJuUnVlQW55emxCR2RFT0FBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFIQUFBQUNrQ0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFFQUFRQUJBQUFBUDhQcGVnQUFBQUFBQUFBQUFBQUFBSjRBQUFCbUFHa0Fi?=
- =?us-ascii?Q?Z0JoQUc0QVl3QmxBRjhBY0FCc0FHRUFiZ0J1QUdrQWJnQm5BRjhBZHdCaEFI?=
- =?us-ascii?Q?UUFaUUJ5QUcwQVlRQnlBR3NBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBR1lBYndCMUFHNEFaQUJ5QUhrQVh3?=
- =?us-ascii?Q?QndBR0VBY2dCMEFHNEFaUUJ5QUhNQVh3Qm5BR1lBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFBQUFBQ0FB?=
- =?us-ascii?Q?QUFBQUNlQUFBQVpnQnZBSFVBYmdCa0FISUFlUUJmQUhBQVlRQnlBSFFBYmdC?=
- =?us-ascii?Q?bEFISUFjd0JmQUhNQVlRQnRBSE1BZFFCdUFHY0FYd0JqQUc4QWJnQm1BQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFKNEFBQUJtQUc4?=
- =?us-ascii?Q?QWRRQnVBR1FBY2dCNUFGOEFjQUJoQUhJQWRBQnVBR1VBY2dCekFGOEFjd0Jo?=
- =?us-ascii?Q?QUcwQWN3QjFBRzRBWndCZkFISUFaUUJ6QUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBRUFBQUFBQUFBQUFnQUFBQUFBbmdBQUFHWUFid0IxQUc0QVpBQnlBSGtB?=
- =?us-ascii?Q?WHdCd0FHRUFjZ0IwQUc0QVpRQnlBSE1BWHdCekFHMEFhUUJqQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVFBQUFBQUFBQUFD?=
- =?us-ascii?Q?QUFBQUFBQ2VBQUFBWmdCdkFIVUFiZ0JrQUhJQWVRQmZBSEFBWVFCeUFIUUFi?=
- =?us-ascii?Q?Z0JsQUhJQWN3QmZBSE1BZEFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUJBQUFBQUFBQUFBSUFBQUFBQUo0QUFBQm1B?=
- =?us-ascii?Q?RzhBZFFCdUFHUUFjZ0I1QUY4QWNBQmhBSElBZEFCdUFHVUFjZ0J6QUY4QWRB?=
- =?us-ascii?Q?QnpBRzBBWXdBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFFQUFBQUFBQUFBQWdBQUFBQUFuZ0FBQUdZQWJ3QjFBRzRBWkFCeUFI?=
- =?us-ascii?Q?a0FYd0J3QUdFQWNnQjBBRzRBWlFCeUFITUFYd0IxQUcwQVl3QUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBUUFBQUFBQUFB?=
- =?us-ascii?Q?QUNBQUFBQUFDZUFBQUFad0IwQUhNQVh3QndBSElBYndCa0FIVUFZd0IwQUY4?=
- =?us-ascii?Q?QWRBQnlBR0VBYVFCdUFHa0FiZ0JuQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQkFBQUFBQUFBQUFJQUFBQUFBSjRBQUFC?=
- =?us-ascii?Q?ekFHRUFiQUJsQUhNQVh3QmhBR01BWXdCdkFIVUFiZ0IwQUY4QWNBQnNBR0VB?=
- =?us-ascii?Q?YmdBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBSE1BWVFCc0FHVUFjd0Jm?=
- =?us-ascii?Q?QUhFQWRRQnZBSFFBWlFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFB?=
- =?us-ascii?Q?QUFBQ0FBQUFBQUNlQUFBQWN3QnVBSEFBY3dCZkFHd0FhUUJqQUdVQWJnQnpB?=
- =?us-ascii?Q?R1VBWHdCMEFHVUFjZ0J0QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFKNEFB?=
- =?us-ascii?Q?QUJ6QUc0QWNBQnpBRjhBYkFCcEFHTUFaUUJ1QUhNQVpRQmZBSFFBWlFCeUFH?=
- =?us-ascii?Q?MEFYd0J6QUhRQWRRQmtBR1VBYmdCMEFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBRUFBQUFBQUFBQUFnQUFBQUFBbmdBQUFIWUFad0JmQUdzQVpR?=
- =?us-ascii?Q?QjVBSGNBYndCeUFHUUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVFBQUFB?=
- =?us-ascii?Q?QUFBQUFDQUFBQUFBQT0iLz48L21ldGE+?=
-x-dg-rorf: 
-x-originating-ip: [10.225.15.19]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Received: from [192.168.1.3] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
+        by smtp.gmail.com with ESMTPSA id 30sm10761844otr.64.2018.11.21.11.00.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 11:01:03 -0800 (PST)
+Subject: Re: [PATCH v2] pwm: kconfig: enable kona pwm to be built for cygnus
+ arch
+To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>
+Cc:     bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181121123508.25119-1-peron.clem@gmail.com>
+From:   Florian Fainelli <florian.fainelli@broadcom.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ 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
+ w0j9Sw==
+Message-ID: <29dc5815-e897-ca7d-0e26-668faa635938@broadcom.com>
+Date:   Wed, 21 Nov 2018 11:00:45 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
+In-Reply-To: <20181121123508.25119-1-peron.clem@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vineet,
 
-> -----Original Message-----
-> From: Vineet Gupta
-> Sent: Wednesday, November 21, 2018 8:40 PM
-> To: Alexey Brodkin <abrodkin@synopsys.com>; linux-snps-arc@lists.infradea=
-d.org
-> Cc: linux-kernel@vger.kernel.org; Cupertino Miranda <cmiranda@synopsys.co=
-m>; stable@vger.kernel.org
-> Subject: Re: [PATCH] arc: [devboards] Add support of NFSv3 ACL
->=20
-> On 11/20/18 2:30 AM, Alexey Brodkin wrote:
-> > By default NFSv3 doesn't support ACL (Access Control Lists)
-> > which might be quite convenient to have so that
-> > mounted NFS behaves exactly as any other local file-system.
-> >
-> > In particular missing support of ACL makes umask useless.
-> > This among other thigs fixes Glibc's "nptl/tst-umask1".
-> >
-> > Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-> > Cc: Cupertino Miranda <cmiranda@synopsys.com>
-> > Cc: stable@vger.kernel.org
->=20
-> What is this fixing in the kernel, for this to be stable backported  ?
 
-It fixing not kernel problem indeed but user-space providing
-complete ACL-enabled NFS share support. IMHO we should have had
-that enabled with basic NFS support back in the day.
+On 11/21/2018 4:35 AM, Clément Péron wrote:
+> The Cygnus architecture use a Kona PWM. This is already present
+> in the device tree but can't be built actually. Hence, allow the
+> Kona PWM to be built for Cygnus arch.
+> 
+> Signed-off-by: Clément Péron <peron.clem@gmail.com>
 
-Part of the problem is ACL is not an essential part of NFSv3 spec and so
-it is implemented as an option though I don't see a lot of sense in having
-incomplete UNIX file-system even though for most of cases it works OK.
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 
-> > ---
-> >  arch/arc/configs/axs101_defconfig          | 1 +
-> >  arch/arc/configs/axs103_defconfig          | 1 +
-> >  arch/arc/configs/axs103_smp_defconfig      | 1 +
-> >  arch/arc/configs/hsdk_defconfig            | 1 +
-> >  arch/arc/configs/nps_defconfig             | 1 +
-> >  arch/arc/configs/nsimosci_defconfig        | 1 +
-> >  arch/arc/configs/nsimosci_hs_defconfig     | 1 +
-> >  arch/arc/configs/nsimosci_hs_smp_defconfig | 1 +
-> >  arch/arc/configs/vdk_hs38_defconfig        | 1 +
-> >  arch/arc/configs/vdk_hs38_smp_defconfig    | 1 +
->=20
-> I understand a sweeping change is easy, more consistent so a good guiding
-> principel in general. But really all these defconfigs need NFS ? We keep =
-on
-> increasing the bloat with this. IMHO we should update only relevant defco=
-nfigs.
+The "default ARCH_BCM_CYGNUS" could arguably cover ARCH_BCM_MOBILE as
+well, but this is not probably worth a respin just to address that.
 
-Well my point is in having similarly equipped platforms so that we may rely=
- on
-results we're getting on all of them. Thus all platforms supporting network=
-ing
-got that update.
+> ---
+>  drivers/pwm/Kconfig | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> index 27e5dd47a01f..982f4059f4e8 100644
+> --- a/drivers/pwm/Kconfig
+> +++ b/drivers/pwm/Kconfig
+> @@ -88,7 +88,9 @@ config PWM_BCM_IPROC
+>  
+>  config PWM_BCM_KONA
+>  	tristate "Kona PWM support"
+> -	depends on ARCH_BCM_MOBILE
+> +	depends on ARCH_BCM_MOBILE || ARCH_BCM_CYGNUS || COMPILE_TEST
+> +	depends on HAVE_CLK && HAS_IOMEM
+> +	default ARCH_BCM_CYGNUS
+>  	help
+>  	  Generic PWM framework driver for Broadcom Kona PWM block.
+>  
+> 
 
-Maybe NPS is not that important as we most probably not going to use it
-for verification of anything so this one could be dropped.
-
-Speaking about bloat...
-------------------------------------->8-----------------------------------
-# git grep NFS torvalds/master arch/arc/configs/ | grep nsim_
-torvalds/master:arch/arc/configs/nsim_700_defconfig:57:CONFIG_NFS_FS=3Dy
-torvalds/master:arch/arc/configs/nsim_hs_defconfig:58:CONFIG_NFS_FS=3Dy
-torvalds/master:arch/arc/configs/nsim_hs_smp_defconfig:57:CONFIG_NFS_FS=3Dy
-------------------------------------->8-----------------------------------
-
-It's a nonsense I guess as obviously there's no way to have networking on
-pure nSIM platforms, right? And that I'm going to clean-up in a separate pa=
-tch.
-
-As for other boards I realize that we add more config options over time
-but that's how we make them more useful and capable.
-Moreover since we're talking about _defconfigs_ here I guess there're
-many other options we don't touch but they still change so over time
-we still cannot compare the same defconfigs as apples vs apples.
-
--Alexey
+-- 
+Florian
