@@ -2,124 +2,259 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD40CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91136C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:16:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 703BA2080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:15:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C5312080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:16:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="eWvfmyeG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 703BA2080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N1Kg7Onf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C5312080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389024AbeKVGvm (ORCPT
+        id S2389174AbeKVGvp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 01:51:42 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:34954 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727787AbeKVGvm (ORCPT
+        Thu, 22 Nov 2018 01:51:45 -0500
+Received: from mail-io1-f73.google.com ([209.85.166.73]:33328 "EHLO
+        mail-io1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389115AbeKVGvo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 01:51:42 -0500
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 60A4324E039E;
-        Wed, 21 Nov 2018 12:15:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1542831355; bh=53N6lv59bHizH+C1e6qoRPcUG/qknSSogLi9WBLdaJ4=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=eWvfmyeGzMa37KTWvvBXKM+tAoJESEm+9FFHhjyvetX9f8RAJXVw1yZKzq0Hu7yKZ
-         VUMpFNK+fhXVtpeRoKwHdJoDVHhClZKrdoaR07PV8Bi8RtP3fnJJMv/ef05JXTrByH
-         mu9+1vHSbIbnZvnAw+loKZT8FDYA/WcQ1V80ehtl0b/VSGOn3JF78wc4/CSTwdO0FI
-         zYbHuBDhnipZHi/pgK8odSuXVeQ1PScA8ymMbIP+sWGaqYVd45UUD2xB927yl9QgsZ
-         2vwNTr/IaMf6OICWUdy7x/CLW9dKjwyVhX3CWA6okc3QBZmchpSfHo5LzvjNFe1Sel
-         WoHoJWRljc6uA==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 4FFD458FE;
-        Wed, 21 Nov 2018 12:15:55 -0800 (PST)
-Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
- by us01wehtc1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Wed,
- 21 Nov 2018 12:15:55 -0800
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Vitor Soares <vitor.soares@synopsys.com>,
-        "alexey.brodkin@synopsys.com" <alexey.brodkin@synopsys.com>,
-        Joao Pinto <joao.pinto@synopsys.com>,
-        "jose.abreu@synopsys.com" <jose.abreu@synopsys.com>,
-        "open list:SYNOPSYS ARC ARCHITECTURE" 
-        <linux-snps-arc@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Misaligned Access
-Thread-Topic: Misaligned Access
-Thread-Index: AQHUa8BEl692JJiolkiUiQERHFjjDw==
-Date:   Wed, 21 Nov 2018 20:15:54 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075014641664A@US01WEMBX2.internal.synopsys.com>
-References: <13D59CF9CEBAF94592A12E8AE55501350113CD10@DE02WEMBXB.internal.synopsys.com>
- <C2D7FE5348E1B147BCA15975FBA23075012B0B4CD5@US01WEMBX2.internal.synopsys.com>
- <9ffd1270-ad92-88b7-eb53-85c65fe971dd@synopsys.com>
- <f8c469e7-9e1d-18d6-4e56-ba4338462048@synopsys.com>
- <ebe7f165-2901-2885-0583-c7be53329372@synopsys.com>
- <4881796E12491D4BB15146FE0209CE6468198AC6@DE02WEMBXB.internal.synopsys.com>
- <C2D7FE5348E1B147BCA15975FBA230750146415496@US01WEMBX2.internal.synopsys.com>
- <661a4323-5768-4977-5434-ab644c5418aa@synopsys.com>
- <C2D7FE5348E1B147BCA15975FBA23075014641580A@US01WEMBX2.internal.synopsys.com>
- <CAK8P3a1Gszsg7Wky+7Z8TuOtAtZR2ia-QjYm01-wWKRmYfdm7Q@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.106]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Thu, 22 Nov 2018 01:51:44 -0500
+Received: by mail-io1-f73.google.com with SMTP id u13-v6so6353272iob.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:15:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=xIMtPBW8a0JPaAEp9wLSnMQUqC2A5vjNXxobCvOXQ3E=;
+        b=N1Kg7OnfSXuDOEDZPe9dwII7GqEoo8PVROF/zyTGpDzWwoyv0qCvfuML8wo4JLkN6X
+         wg/o5RJwV1uiSn7JLevvz6yT6IRLunmNNgyrIGA490tzYKIJoPgWzaszqDVo906MGgPJ
+         gPTCOo1lQnTrDY+8rxY2CF6A1yIRNFzXagGj07ha6bUs7/HYaUklmulx53L57NOpBnRn
+         kwAWbOpgFEQOLm0cPCj79kTXvqA3fgZvBe5KhtkxaK/y7zLr8fG+1phyLpQpFcRcFEIj
+         NGy77dUUHGumbVgj5Lc91i0/pbPp6S9q/d2nMHMFPjelqk5HrHDorzEZ4P+HpoIe1fgH
+         ajJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=xIMtPBW8a0JPaAEp9wLSnMQUqC2A5vjNXxobCvOXQ3E=;
+        b=bzCN5haIrELDtXdoXyJZk2lQkSrUCtU2b7oy6cnDX3ibDjuXryT3BYIXRTqN54LTxP
+         Ktq1w6jWjxuIiFrF17g5Cp1hLW6LO7zCCW4/6PotDYJRSoWm6cprzM6opX5j0IJ4i82K
+         xMDWR7AOR6q+/8eAwnjoX0mThDoKirPHz5G1S5z2b0IWJPGgL2hUUEXkQv+sLZZ2TfEU
+         ldeIZIlq9BZUg262op8sy6XCM0uzMG7Yh6+o+ccmcCBQ7bEt2NgJzQ53GLYAC869uwN3
+         TQ33akOyVHH3Bdnj2cn4cZO8GeVfa6DASoMybs2Uwqy4qIi1et0LuPioPLCHysUY1+mi
+         +W5w==
+X-Gm-Message-State: AA+aEWZaJEiY96deZKlKn2Juc42atH5YnUgivV6InWEBK436U9JjsgE5
+        FFoFZfcOpBVCsO6J4O/unLXs8v0SWQ2AzuZziWcaVILMPwWL87lZT3zK8rn2OC1t0LNhT4V246J
+        LhWmIJxR3gUF/bnRdgju/10kuCPKK5rDMo3PoMIjs5XNdDWdR1ieCgQ03RwJjbKWyWUhRoQ==
+X-Google-Smtp-Source: AFSGD/Vz5mfdEfE8M906XDadAPhakNipUTOMEDEpWIi7jzu2CTxtsptkrPvgmQ16D9vYN4mkTsM3nBe2+RU=
+X-Received: by 2002:a24:2c11:: with SMTP id i17-v6mr5140974iti.21.1542831356162;
+ Wed, 21 Nov 2018 12:15:56 -0800 (PST)
+Date:   Wed, 21 Nov 2018 12:14:44 -0800
+Message-Id: <20181121201452.77173-1-dancol@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.19.1.1215.g8438c0b245-goog
+Subject: [PATCH] Add /proc/pid_generation
+From:   Daniel Colascione <dancol@google.com>
+To:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Cc:     timmurray@google.com, primiano@google.com, joelaf@google.com,
+        Daniel Colascione <dancol@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
+        Prashant Dhamdhere <pdhamdhe@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        KJ Tsanaktsidis <ktsanaktsidis@zendesk.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/21/18 12:12 PM, Arnd Bergmann wrote:=0A=
-> On Wed, Nov 21, 2018 at 8:42 PM Vineet Gupta <vineet.gupta1@synopsys.com>=
- wrote:=0A=
->> +CC lkml, Arnd : subject matter expert=0A=
->>=0A=
->> On 11/21/18 10:06 AM, Vitor Soares wrote:=0A=
->>> I use the follow function to get data from a RX Fifo.=0A=
->>>=0A=
->>>=0A=
->>> static void dw_i3c_master_read_rx_fifo(struct dw_i3c_master *master,=0A=
->>>                         u8 *bytes, int nbytes)=0A=
->>> {=0A=
->>>      readsl(master->regs + RX_TX_DATA_PORT, bytes, nbytes / 4);=0A=
->> So the semantics are reading the same fifo register N times, to get the =
-N words,=0A=
->> hence read*s*l is appropriate. That however expects the buffer to be 4 b=
-ytes=0A=
->> aligned, hence your issue. You can't possibly use the reads*b* as we wan=
-t the=0A=
->>=0A=
->> The obvious but crude hack is to use a temp array for readsl and then co=
-py over=0A=
->> using memcpy, but I'm sure there are better ways, @Arnd ? To summarize i=
-s issue is=0A=
->> a driver triggering unaligned access due to the misinteraction of API (d=
-river get=0A=
->> an unaligned u8 *) which goes against expectations of io accessor readl =
- (needed=0A=
->> since the register contents are 4 bytes)=0A=
-> Is this again on ARC or some other architecture that cannot do unaligned=
-=0A=
-> access to normal RAM? On ARMv7 or x86, you should never see a problem=0A=
-> because the CPU handles misaligned writes. On ARMv4/v5, the readsl()=0A=
-> implementation internally aligns the access to the output buffer so it=0A=
-> will work correctly.=0A=
-=0A=
-This is indeed on ARC: on ARC700 unaligned access to RAM was never supporte=
-d and=0A=
-on HS38x cores, it is configurable, so the API probably needs to support bo=
-th cases.=0A=
-=0A=
-Thx,=0A=
--Vineet=0A=
+Trace analysis code needs a coherent picture of the set of processes
+and threads running on a system. While it's possible to enumerate all
+tasks via /proc, this enumeration is not atomic. If PID numbering
+rolls over during snapshot collection, the resulting snapshot of the
+process and thread state of the system may be incoherent, confusing
+trace analysis tools. The fundamental problem is that if a PID is
+reused during a userspace scan of /proc, it's impossible to tell, in
+post-processing, whether a fact that the userspace /proc scanner
+reports regarding a given PID refers to the old or new task named by
+that PID, as the scan of that PID may or may not have occurred before
+the PID reuse, and there's no way to "stamp" a fact read from the
+kernel with a trace timestamp.
+
+This change adds a per-pid-namespace 64-bit generation number,
+incremented on PID rollover, and exposes it via a new proc file
+/proc/pid_generation. By examining this file before and after /proc
+enumeration, user code can detect the potential reuse of a PID and
+restart the task enumeration process, repeating until it gets a
+coherent snapshot.
+
+PID rollover ought to be rare, so in practice, scan repetitions will
+be rare.
+
+Signed-off-by: Daniel Colascione <dancol@google.com>
+---
+ Documentation/filesystems/proc.txt |  1 +
+ include/linux/pid.h                |  1 +
+ include/linux/pid_namespace.h      |  2 ++
+ init/main.c                        |  1 +
+ kernel/pid.c                       | 36 +++++++++++++++++++++++++++++-
+ 5 files changed, 40 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index 12a5e6e693b6..f58a359f9a2c 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -615,6 +615,7 @@ Table 1-5: Kernel info in /proc
+  partitions  Table of partitions known to the system           
+  pci	     Deprecated info of PCI bus (new way -> /proc/bus/pci/,
+              decoupled by lspci					(2.4)
++ pid_gen     PID rollover count
+  rtc         Real time clock                                   
+  scsi        SCSI info (see text)                              
+  slabinfo    Slab pool info                                    
+diff --git a/include/linux/pid.h b/include/linux/pid.h
+index 14a9a39da9c7..2e4b41a32e86 100644
+--- a/include/linux/pid.h
++++ b/include/linux/pid.h
+@@ -112,6 +112,7 @@ extern struct pid *find_ge_pid(int nr, struct pid_namespace *);
+ int next_pidmap(struct pid_namespace *pid_ns, unsigned int last);
+ 
+ extern struct pid *alloc_pid(struct pid_namespace *ns);
++extern u64 read_pid_generation(struct pid_namespace *ns);
+ extern void free_pid(struct pid *pid);
+ extern void disable_pid_allocation(struct pid_namespace *ns);
+ 
+diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
+index 49538b172483..fa92ae66fb98 100644
+--- a/include/linux/pid_namespace.h
++++ b/include/linux/pid_namespace.h
+@@ -44,6 +44,7 @@ struct pid_namespace {
+ 	kgid_t pid_gid;
+ 	int hide_pid;
+ 	int reboot;	/* group exit code if this pidns was rebooted */
++	u64 generation;  /* incremented on wraparound */
+ 	struct ns_common ns;
+ } __randomize_layout;
+ 
+@@ -99,5 +100,6 @@ static inline int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
+ extern struct pid_namespace *task_active_pid_ns(struct task_struct *tsk);
+ void pidhash_init(void);
+ void pid_idr_init(void);
++void pid_proc_init(void);
+ 
+ #endif /* _LINUX_PID_NS_H */
+diff --git a/init/main.c b/init/main.c
+index ee147103ba1b..20c595e852c6 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -730,6 +730,7 @@ asmlinkage __visible void __init start_kernel(void)
+ 	cgroup_init();
+ 	taskstats_init_early();
+ 	delayacct_init();
++	pid_proc_init();
+ 
+ 	check_bugs();
+ 
+diff --git a/kernel/pid.c b/kernel/pid.c
+index b2f6c506035d..cd5f4aa8eb55 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -174,6 +174,7 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+ 
+ 	for (i = ns->level; i >= 0; i--) {
+ 		int pid_min = 1;
++		unsigned int old_cursor;
+ 
+ 		idr_preload(GFP_KERNEL);
+ 		spin_lock_irq(&pidmap_lock);
+@@ -182,7 +183,8 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+ 		 * init really needs pid 1, but after reaching the maximum
+ 		 * wrap back to RESERVED_PIDS
+ 		 */
+-		if (idr_get_cursor(&tmp->idr) > RESERVED_PIDS)
++		old_cursor = idr_get_cursor(&tmp->idr);
++		if (old_cursor > RESERVED_PIDS)
+ 			pid_min = RESERVED_PIDS;
+ 
+ 		/*
+@@ -191,6 +193,8 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+ 		 */
+ 		nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
+ 				      pid_max, GFP_ATOMIC);
++		if (unlikely(idr_get_cursor(&tmp->idr) <= old_cursor))
++			tmp->generation += 1;
+ 		spin_unlock_irq(&pidmap_lock);
+ 		idr_preload_end();
+ 
+@@ -246,6 +250,16 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+ 	return ERR_PTR(retval);
+ }
+ 
++u64 read_pid_generation(struct pid_namespace *ns)
++{
++	u64 generation;
++
++	spin_lock_irq(&pidmap_lock);
++	generation = ns->generation;
++	spin_unlock_irq(&pidmap_lock);
++	return generation;
++}
++
+ void disable_pid_allocation(struct pid_namespace *ns)
+ {
+ 	spin_lock_irq(&pidmap_lock);
+@@ -449,6 +463,17 @@ struct pid *find_ge_pid(int nr, struct pid_namespace *ns)
+ 	return idr_get_next(&ns->idr, &nr);
+ }
+ 
++#ifdef CONFIG_PROC_FS
++static int pid_generation_show(struct seq_file *m, void *v)
++{
++	u64 generation =
++		read_pid_generation(proc_pid_ns(file_inode(m->file)));
++	seq_printf(m, "%llu\n", generation);
++	return 0;
++
++};
++#endif
++
+ void __init pid_idr_init(void)
+ {
+ 	/* Verify no one has done anything silly: */
+@@ -465,4 +490,13 @@ void __init pid_idr_init(void)
+ 
+ 	init_pid_ns.pid_cachep = KMEM_CACHE(pid,
+ 			SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT);
++
++}
++
++void __init pid_proc_init(void)
++{
++	/* pid_idr_init is too early, so get a separate init function. */
++#ifdef CONFIG_PROC_FS
++	WARN_ON(!proc_create_single("pid_gen", 0, NULL, pid_generation_show));
++#endif
+ }
+-- 
+2.19.1.1215.g8438c0b245-goog
+
