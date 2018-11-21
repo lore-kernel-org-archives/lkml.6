@@ -2,127 +2,116 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63206C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C8AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FD4421479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:28:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C77621479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:32:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ZpZsnbrQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FD4421479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FVFU6g5A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C77621479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731758AbeKVDDS (ORCPT
+        id S1731765AbeKVDHJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 22:03:18 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45833 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729727AbeKVDDS (ORCPT
+        Wed, 21 Nov 2018 22:07:09 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45436 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730523AbeKVDHJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 22:03:18 -0500
-Received: by mail-pl1-f196.google.com with SMTP id a14so6211490plm.12
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 08:28:11 -0800 (PST)
+        Wed, 21 Nov 2018 22:07:09 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v6so6340404wrr.12
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 08:32:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FiJirZOKa6myaADfJkWWPvVJZk+uUHJpApLtjnmWJ04=;
-        b=ZpZsnbrQIkGy0yAT8hDURuztVDP4+0szesFbKkNciZGbfx74oc7Eeg45wKXs8R4tRc
-         FZ+QB8Zu7mG73lcuniMYVIECgRd3gJZTlJAiU1deRHG9CkAKjusJb6L35cecs7F/Jx0t
-         HMQYCPcE6BEwk/hUu+qbwBcboe//0bTF4SLhrVzpxFPJw0ycXzM3InK1g/pUhWTEJfFN
-         Tcig49c6Hdiq6WoKkEIpurgVpDLwfQ0nNxPxeFkgRZM4DT7gQ8rD9Sm//KP3tvY86daU
-         iPJYtm0TIx67+Y7Y4uz5CLqp8y22dWneJAqQeIEBfClKSH9H9hzzMyEEre/JS6ynsZWP
-         /Vyg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tbWi/zS4gRmhuS+TuLe+neCy6A744+6S6a8Gx5sFG3g=;
+        b=FVFU6g5Aoh8HYnzfpw1W3f8QLbUrlpNaO/KXEcv7t7Ba/wpC7DX5eb+cPT0C9ftdb6
+         AsN4aouy9A+/m6e01hWODpOa6VnuGuhtozTZU8i+7odbMVR10j/nq1k4C4u+GkhoZMnj
+         6phDwSkfAI9JzEIQSwu6Ivm+nL7dKWdVSGdXM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=FiJirZOKa6myaADfJkWWPvVJZk+uUHJpApLtjnmWJ04=;
-        b=drPsFX9K7tny0yjeJI/EgRroFGIvp3NNMP7xGt3Vlvr9d3L18ggCSliR8XPAzeDhHN
-         i312GuXUO86vwaLg0CLFB8yfag/t1IgmnP9P6K5Dx3l39x5uqLiSNWjXoyHQNdWgrP/L
-         l4FYh4W+AilTzqUCMLE/b8kijfDDr1yYaxhgTNyFI8ivEff5bRtbUKtPIuiD69LD3orq
-         i/CPVHd484DdVVkfy2sDRVeT/pvFdVf8TXV8u1l011jDOIM4Oy91hSefxM7TlS3Dbg+Y
-         29DycIuwaApIoe3jJkw7oOswrRNm5peVo2kRN9/5Mu4oO8Tx+VMlFsAw+BKZkW4eCbWj
-         pi5A==
-X-Gm-Message-State: AA+aEWbliV1H7vy3vO9jlbsi8StFFXRsckBmqt/BMIs3yZ8qxVxJdxAD
-        ZWuAMvx56r1Hn+xlrstez74Yg/Q20Bo=
-X-Google-Smtp-Source: AFSGD/WXeOS0KlX1r2RSw2QA0XrwM5Ra4HrOGvAd1oHkvZUp2UX2jEagq2U+kgLgqghDS0f1SiC1DA==
-X-Received: by 2002:a65:448a:: with SMTP id l10mr6599607pgq.387.1542817690651;
-        Wed, 21 Nov 2018 08:28:10 -0800 (PST)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id f13sm29790412pfa.132.2018.11.21.08.28.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 08:28:09 -0800 (PST)
-Date:   Wed, 21 Nov 2018 08:28:09 -0800 (PST)
-X-Google-Original-Date: Wed, 21 Nov 2018 08:27:47 PST (-0800)
-Subject:     Re: [PATCH] RISC-V: Build flat and compressed kernel images
-In-Reply-To: <CAEUhbmWskEtQR-kAuAYx=SHOJ4-MrCRUchSQ68WwZ62hxsTQyQ@mail.gmail.com>
-CC:     anup@brainfault.org, aou@eecs.berkeley.edu,
-        Christoph Hellwig <hch@infradead.org>, atish.patra@wdc.com,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     bmeng.cn@gmail.com
-Message-ID: <mhng-7be4f47d-bc3a-4073-a6db-dc5588304d2d@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tbWi/zS4gRmhuS+TuLe+neCy6A744+6S6a8Gx5sFG3g=;
+        b=nk3ehEaJpkqZahphrb6GY96XLB1mgk3yUb/XiQGAihqDt3JgCpqXkxyIDxYvgM4pq2
+         LQQHfJhlMapIbMB8jSzS6q5c+VPjFUmcFpT4jceXaIWtXVlhT1974VGHF0wshM1reEMA
+         zqm3SmtPZ1qUQZga9yhWHmnCQ7pkV2rI4lhIeNEVYk0Z+e9E/aefInGj1WxlQKYRwn5I
+         i0Qwq3mJd0I7AJxd0yg+ferI6dn8iej03C+dh9RwxiGD7b2AnD4a5aUrXFviYY9x49dP
+         Y/3ih3E1/r9+5/mbZMNX+LcXh2gBxY7DkLAxsoOPGxSraWi933jD2uXsoub2AwIFSlRU
+         0HYw==
+X-Gm-Message-State: AA+aEWaOJMD9LeRyix79PmFJuct/puV18xHLsY1ETRuIT2i7Y6WoHZAk
+        BJ9tOwwT/B6PY40+XMFqXpzi1fVfV/b/lUsHlXLfIA==
+X-Google-Smtp-Source: AFSGD/UOFFtcikIYJm3mggBIBtXnFwTuaqntClSXthiI+GY1AFp2UutHQKi+OW+4EPS9D5wDuwkvP+AICfdQT3zYFwU=
+X-Received: by 2002:a5d:43d0:: with SMTP id v16mr6889067wrr.67.1542817919353;
+ Wed, 21 Nov 2018 08:31:59 -0800 (PST)
+MIME-Version: 1.0
+References: <20181030202713.26203-1-semen.protsenko@linaro.org>
+In-Reply-To: <20181030202713.26203-1-semen.protsenko@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Wed, 21 Nov 2018 18:31:47 +0200
+Message-ID: <CAKaJLVu0h5woVtN5=Mh38ajACBZZQ3JHfRhkjNrwMwYXHEG-NQ@mail.gmail.com>
+Subject: Re: [PATCH v2] codafs: Fix build using bare-metal toolchain
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        kernel-janitors@vger.kernel.org, Jan Harkes <jaharkes@cs.cmu.edu>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-scsi@vger.kernel.org, codalist@coda.cs.cmu.edu,
+        coda@cs.cmu.edu, Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Praneeth Bajjuri <praneeth@ti.com>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Nov 2018 21:06:18 PST (-0800), bmeng.cn@gmail.com wrote:
-> On Mon, Nov 12, 2018 at 1:55 PM Anup Patel <anup@brainfault.org> wrote:
->>
->> This patch extends Linux RISC-V build system to build and install:
->> Image - Flat uncompressed kernel image
->> Image.gz - Flat and GZip compressed kernel image
->>
->> Quiet a few bootloaders (such as Uboot, UEFI, etc) are capable of
+On Tue, Oct 30, 2018 at 10:27 PM Sam Protsenko
+<semen.protsenko@linaro.org> wrote:
 >
-> nits: U-Boot
+> The kernel is self-contained project and can be built with bare-metal
+> toolchain. But bare-metal toolchain doesn't define __linux__. Because of
+> this u_quad_t type is not defined when using bare-metal toolchain and
+> codafs build fails. This patch fixes it by defining u_quad_t type
+> unconditionally.
 >
->> booting flat and compressed kernel images. In case of Uboot, booting
+> Cc: Jan Harkes <jaharkes@cs.cmu.edu>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  include/linux/coda.h | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 >
-> nits: U-Boot
-
-Thanks for the review.  The PR has already been tagged, but it's not scheduled 
-to be sent out until later today.  I generally try to avoid rewriting the tags 
-unless there's something major that's wrong, so unless you feel very strongly 
-about this then I think I'll let it stand.
-
-Let me know if this is a big deal for you, I can rewrite things.
-
->> Image or Image.gz is achieved using bootm command.
->>
->> The flat and uncompressed kernel image (i.e. Image) is very useful
->> in pre-silicon developent and testing because we can create back-door
->> HEX files for RAM on FPGAs from Image.
->>
->> Signed-off-by: Anup Patel <anup@brainfault.org>
->> ---
->>  arch/riscv/Makefile             | 15 ++++++++-
->>  arch/riscv/boot/.gitignore      |  2 ++
->>  arch/riscv/boot/Makefile        | 33 ++++++++++++++++++
->>  arch/riscv/boot/install.sh      | 60 +++++++++++++++++++++++++++++++++
->>  arch/riscv/kernel/head.S        | 10 ++++++
->>  arch/riscv/kernel/vmlinux.lds.S |  2 +-
->>  6 files changed, 120 insertions(+), 2 deletions(-)
->>  create mode 100644 arch/riscv/boot/.gitignore
->>  create mode 100644 arch/riscv/boot/Makefile
->>  create mode 100644 arch/riscv/boot/install.sh
->>
+> diff --git a/include/linux/coda.h b/include/linux/coda.h
+> index d30209b9cef8..0ca0c83fdb1c 100644
+> --- a/include/linux/coda.h
+> +++ b/include/linux/coda.h
+> @@ -58,8 +58,7 @@ Mellon the rights to redistribute these changes without encumbrance.
+>  #ifndef _CODA_HEADER_
+>  #define _CODA_HEADER_
 >
-> Reviewed-by: Bin Meng <bmeng.cn@gmail.com>
+> -#if defined(__linux__)
+>  typedef unsigned long long u_quad_t;
+> -#endif
+> +
+>  #include <uapi/linux/coda.h>
+>  #endif
+> --
+> 2.19.1
 >
-> Tested with U-Boot s-mode on QEMU virt, using bootm to boot the kernel
-> Tested-by: Bin Meng <bmeng.cn@gmail.com>
 
-I also won't include the tags unless I rewrite the tags.
++ Jan Harkes, + Ruslan Bilovol
 
-Thanks for the review!
+Hi Jan,
+
+Can you please apply this? Nobody seems to be interested in taking
+this patch, so I'm not sure how to proceed further. Please advice.
+
+Thanks!
