@@ -2,140 +2,157 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D45C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09171C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FC65214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:33:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C179C21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:34:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1KLd4EDn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FC65214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="CqzK4RBl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C179C21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731778AbeKVDI2 (ORCPT
+        id S1731803AbeKVDJx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 22:08:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56464 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727874AbeKVDI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 22:08:28 -0500
-Received: from localhost (lfbn-ncy-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9AA021479;
-        Wed, 21 Nov 2018 16:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542817999;
-        bh=e9kAvRDSgoEijAbzB5bzTfxCfww4at3b0vlYkbfp3ig=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1KLd4EDnGQE/8E0awBsvrIEFq3qPrsz5cwLqKXfWyspGx3IRKVkEQx91urFLVk1Ln
-         dmWjFnkBtcvz9M7E0LAkQe2a0bLflrms9x1SEDyFNjjbCOgs0cj95dKQw1ui7nwokA
-         KKOTepWR6wJzDurC2zBTqw45YZMJpc+hrDSousKg=
-Date:   Wed, 21 Nov 2018 17:33:16 +0100
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Rik van Riel <riel@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH 20/25] sched/kcpustat: Introduce vtime-aware kcpustat
- accessor
-Message-ID: <20181121163314.GA1842@lerouge>
-References: <1542163569-20047-1-git-send-email-frederic@kernel.org>
- <1542163569-20047-21-git-send-email-frederic@kernel.org>
- <20181120142306.GX2131@hirez.programming.kicks-ass.net>
- <20181120224021.GB22332@lerouge>
- <20181121081819.GG2131@hirez.programming.kicks-ass.net>
+        Wed, 21 Nov 2018 22:09:53 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37244 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730626AbeKVDJx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 22:09:53 -0500
+Received: by mail-io1-f67.google.com with SMTP id a3so4508868ioc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 08:34:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=lw7aSLQudTUlj95EBrw2GbSBIKWK7CVyT8TuTdPbfP4=;
+        b=CqzK4RBlI26hDiq7za8yAPgJGjTxP3tkkDjsBIV/A1lKbNq5dLbPH1OHiga+RapN0J
+         tutRAtNQYqRpgjJ3gf2KOHTBtg1UzL64oVL2qVDXL77d6PVCNK/CL1RbkX0/6fOMnzYh
+         JPhb0qXp0TYL6KG6UguCHFR5vMMTXiedEclhddNKwQ3rY8595ZhZguZB8zwXe4FUlUBv
+         nhtMZuj/UdvjJB550/SoB6gVfdXk1zrlI2pIZ+ULzVYH583ExmsQR27Zh5FdqlzFaHII
+         /Dxg1aL1yuI3csPmanZzXC3XZiSeYGBtTds9rvYI7uAnZX9JmweDc0/vX6yOr5FR93dk
+         jjTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=lw7aSLQudTUlj95EBrw2GbSBIKWK7CVyT8TuTdPbfP4=;
+        b=srH2aKiIvnBKcdfIL/bYW/EaoigyrkhF/tblRAbFr0YqMyGNSzNXS+YdM2pyWdsU6B
+         k2AZS1poOgYtYsLc8b5jnAcdqzrLjKny5LAG2xWh5rgGYNY8J7fR00k34Ar0tvhNhHby
+         3DHOPVAZY8USVY+la5oisUohJ5Z4eH31A2FLJob5MThiyhObpkwZXrdlqMf4k5G13Uze
+         MpSiD59GI+QLPGvrEXT05jUWmwlulvQZCX67jGexBs0FOfBufM5RCBf24ExBXo1HhBwR
+         apvtebjj2IfdH5irfS92qAI31d2VAw8X1IgIGvL06mPwxzHLAW5deB/fXa23ZzPP7pSJ
+         g7DQ==
+X-Gm-Message-State: AA+aEWYuT9X9M4+Li2yOXvlxyGscdJ4V3M6krCEwKz8aJ94Ckw6r4n8H
+        EbjgyySkLMwlnSsXv7Z/t4BNR97UQCe05V6ExBf1L9G5
+X-Google-Smtp-Source: AFSGD/VuqsqDJQzqW7bf9bCwnruAnT/fUf5qVhBh9T2AUeZVBzEsnVr217LYMlUxCaVHz8rFpwHCANled6AdWFH98DE=
+X-Received: by 2002:a5e:8d13:: with SMTP id m19mr5362688ioj.258.1542818083260;
+ Wed, 21 Nov 2018 08:34:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181121081819.GG2131@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20181120134032.31645-1-brgl@bgdev.pl> <20181120134032.31645-2-brgl@bgdev.pl>
+ <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de>
+In-Reply-To: <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 21 Nov 2018 17:34:32 +0100
+Message-ID: <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 09:18:19AM +0100, Peter Zijlstra wrote:
-> On Tue, Nov 20, 2018 at 11:40:22PM +0100, Frederic Weisbecker wrote:
-> > On Tue, Nov 20, 2018 at 03:23:06PM +0100, Peter Zijlstra wrote:
-> > > On Wed, Nov 14, 2018 at 03:46:04AM +0100, Frederic Weisbecker wrote:
-> > > 
-> > > > +void kcpustat_cputime(struct kernel_cpustat *kcpustat, int cpu,
-> > > > +		      u64 *user, u64 *nice, u64 *system,
-> > > > +		      u64 *guest, u64 *guest_nice)
-> > > > +{
-> > > > +	struct task_struct *curr;
-> > > > +	struct vtime *vtime;
-> > > > +	int err;
-> > > > +
-> > > > +	if (!vtime_accounting_enabled()) {
-> > > > +		kcpustat_cputime_raw(kcpustat, user, nice,
-> > > > +				     system, guest, guest_nice);
-> > > > +		return;
-> > > > +	}
-> > > > +
-> > > > +	rcu_read_lock();
-> > > > +
-> > > > +	do {
-> > > > +		curr = rcu_dereference(kcpustat->curr);
-> > > 
-> > > Like I explained earlier; I don't think the above is correct.
-> > > task_struct is itself not RCU protected.
-> > 
-> > But there is at least one put_task_struct() that is enqueued as an RCU callback
-> > on release_task(). That patchset (try to) make sure that kcpustat->curr can't
-> > be assigned beyond that point.
-> > 
-> > Or did I misunderstand something?
-> 
-> Yeah; release_task() is not the normal exit path. Oleg can probably
-> remember how all that works, because I always get lost there :-/
-> 
-> In any case, have a look at task_rcu_dereference(), but that still does
-> not explain the rcu_assign_pointer() stuff you use to set
-> kcpustat->curr.
+wt., 20 lis 2018 o 18:17 Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
+>
+> On Tue, Nov 20, 2018 at 02:40:31PM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > The irq_sim irqchip doesn't allow to configure the sensitivity so every
+> > call to irq_sim_fire() fires a dummy interrupt. This used to not matter
+> > for gpio-mockup (one of the irq_sim users) until commit fa38869b0161
+> > ("gpiolib: Don't support irq sharing for userspace") which made it
+> > impossible for gpio-mockup to ignore certain events (e.g. only receive
+> > notifications about rising edge events).
+> >
+> > Introduce a specialized variant of irq_sim_fire() which takes another
+> > argument called edge. allowing to specify the trigger type for the
+> > dummy interrupt.
+>
+> I wonder if it's worth the effort to fix irq_sim. If you take a look in
+> my gpio-simulator patch, it is trivial to get it right without external
+> help with an amount of code that is usual for a driver that handles
+> irqs.
+>
 
-So there are two reasons here.
+You're basically recommending handcrafting another local piece of code
+for simulating interrupts - something that multiple users may be
+interested in. You did that in your proposed gpio-simulator and I
+still can't understand why you couldn't reuse the existing solution.
+Even if it's broken for your use-case, it's surely easier to fix it
+than to rewrite and duplicate it? There are very few cases where code
+consolidation is not a good thing and I don't think this is one of
+them.
 
-One is the ordering. Here is the write side:
+The interrupt simulator exists and is used by two testing drivers
+currently. One of them needs some more flexibility and this is what
+this patch is trying to add. I believe it is worth the effort.
 
+Best regards,
+Bartosz
 
-       schedule() {
-           rq->curr = next;
-	   context_switch() {
-               vtime_task_switch() {
-	           vtime_seqcount_write_lock(prev);
-                   //flush pending vtime
-                   vtime_seqcount_write_unlock(prev);
-
-       	           vtime_seqcount_write_lock(next);
-                   //Init vtime
-                   vtime_seqcount_write_unlock(next);
-
-                   rcu_assign_pointer(this_kcpustat->curr, next);
-               }
-           }
-       }
-
-So now from the read side, if I fetch the task from rq->curr, there is a risk
-that I see the next task but I don't see the vtime flushed by prev task yet.
-If the prev task has run 1 second without being interrupted, I'm going to miss
-that whole time.
-
-Assigning the next task after the prev task has flushed its vtime prevent from
-that kind of race due to the barriers implied by seqcount and even rcu_assign_pointer.
-
-The second reason is that I looked at task_rcu_dereference() and its guts are really
-not appealing. The ordering guarantee is hard to parse there.
-
-At least with kcpustat->curr I can make sure that the pointer is NULL before the
-earliest opportunity for call_rcu(delayed_put_task_struct) to be queued (which is
-exit_notify() in case of autoreap).
+> > @@ -161,12 +171,28 @@ EXPORT_SYMBOL_GPL(devm_irq_sim_init);
+> >   */
+> >  void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
+> >  {
+> > -     if (sim->irqs[offset].enabled) {
+> > +     /* Don't care about the edge. */
+> > +     irq_sim_fire_edge(sim, offset, IRQ_TYPE_EDGE_BOTH);
+>
+> Conceptually irq_sim_fire_edge should be defined above irq_sim_fire.
+>
+> > +EXPORT_SYMBOL_GPL(irq_sim_fire);
+> > +
+> > +/**
+> > + * irq_sim_fire_edge - Enqueue an interrupt, specify the edge.
+> > + *
+> > + * @sim:        The interrupt simulator object.
+> > + * @offset:     Offset of the simulated interrupt which should be fire=
+d.
+> > + * edge:        Edge of the interrupt (IRQ_TYPE_EDGE_RISING/FALLING).
+> > + */
+> > +void irq_sim_fire_edge(struct irq_sim *sim, unsigned int offset, int e=
+dge)
+> > +{
+> > +     struct irq_sim_irq_ctx *irq =3D &sim->irqs[offset];
+> > +
+> > +     if (irq->enabled && (irq->edge & edge)) {
+> >               set_bit(offset, sim->work_ctx.pending);
+> >               irq_work_queue(&sim->work_ctx.work);
+> >       }
+> >  }
+> > -EXPORT_SYMBOL_GPL(irq_sim_fire);
+> > +EXPORT_SYMBOL_GPL(irq_sim_fire_edge);
+>
+> Best regards
+> Uwe
+>
+> --
+> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
+     |
+> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
+|
