@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E030C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35692C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFA0E21707
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFA0E21707
+	by mail.kernel.org (Postfix) with ESMTP id 068A5223C6
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 068A5223C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389412AbeKVGyN (ORCPT
+        id S2389436AbeKVGyQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 01:54:13 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45332 "EHLO
+        Thu, 22 Nov 2018 01:54:16 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45369 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389369AbeKVGyM (ORCPT
+        with ESMTP id S2389399AbeKVGyO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 01:54:12 -0500
+        Thu, 22 Nov 2018 01:54:14 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gPYx4-0000Ij-RO; Wed, 21 Nov 2018 21:18:23 +0100
-Message-Id: <20181121201724.041653473@linutronix.de>
+        id 1gPYx6-0000JR-So; Wed, 21 Nov 2018 21:18:25 +0100
+Message-Id: <20181121201724.227260385@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Wed, 21 Nov 2018 21:14:48 +0100
+Date:   Wed, 21 Nov 2018 21:14:50 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -50,112 +50,89 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Greg KH <gregkh@linuxfoundation.org>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [patch 18/24] x86/speculation: Avoid __switch_to_xtra() calls
+Subject: [patch 20/24] x86/speculation: Split out TIF update
 References: <20181121201430.559770965@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=x86-speculation--Avoid-switch_to_xtra---calls.patch
+ filename=x86-speculation--Split-out-TIF-update.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The TIF_SPEC_IB bit does not need to be evaluated in the decision to invoke
-__switch_to_xtra() when:
+The update of the TIF_SSBD flag and the conditional speculation control MSR
+update is done in the ssb_prctl_set() function directly. The upcoming prctl
+support for controlling indirect branch speculation via STIBP needs the
+same mechanism.
 
- - CONFIG_SMP is disabled
-
- - The conditional STIPB mode is disabled
-
-The TIF_SPEC_IB bit still controls IBPB in both cases.
-
-Optimize it out by masking the bit at compile time for CONFIG_SMP=n and at
-run time when the static key controlling the conditional STIBP mode is
-disabled.
+Split the code out and make it reusable.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/include/asm/spec-ctrl.h   |    5 +++++
- arch/x86/include/asm/thread_info.h |   13 +++++++++++--
- arch/x86/kernel/process_32.c       |    9 +++++++++
- arch/x86/kernel/process_64.c       |    9 +++++++++
- 4 files changed, 34 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
 
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -115,8 +115,13 @@ static inline void switch_to_ibpb(struct
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -703,10 +703,25 @@ static void ssb_select_mitigation(void)
+ #undef pr_fmt
+ #define pr_fmt(fmt)     "Speculation prctl: " fmt
+ 
+-static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
++static void task_update_spec_tif(struct task_struct *tsk, int tifbit, bool on)
+ {
+ 	bool update;
+ 
++	if (on)
++		update = !test_and_set_tsk_thread_flag(tsk, tifbit);
++	else
++		update = test_and_clear_tsk_thread_flag(tsk, tifbit);
++
++	/*
++	 * If being set on non-current task, delay setting the CPU
++	 * mitigation until it is scheduled next.
++	 */
++	if (tsk == current && update)
++		speculation_ctrl_update_current();
++}
++
++static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
++{
+ 	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL &&
+ 	    ssb_mode != SPEC_STORE_BYPASS_SECCOMP)
+ 		return -ENXIO;
+@@ -717,28 +732,20 @@ static int ssb_prctl_set(struct task_str
+ 		if (task_spec_ssb_force_disable(task))
+ 			return -EPERM;
+ 		task_clear_spec_ssb_disable(task);
+-		update = test_and_clear_tsk_thread_flag(task, TIF_SSBD);
++		task_update_spec_tif(task, TIF_SSBD, false);
+ 		break;
+ 	case PR_SPEC_DISABLE:
+ 		task_set_spec_ssb_disable(task);
+-		update = !test_and_set_tsk_thread_flag(task, TIF_SSBD);
++		task_update_spec_tif(task, TIF_SSBD, true);
+ 		break;
+ 	case PR_SPEC_FORCE_DISABLE:
+ 		task_set_spec_ssb_disable(task);
+ 		task_set_spec_ssb_force_disable(task);
+-		update = !test_and_set_tsk_thread_flag(task, TIF_SSBD);
++		task_update_spec_tif(task, TIF_SSBD, true);
+ 		break;
+ 	default:
+ 		return -ERANGE;
+ 	}
+-
+-	/*
+-	 * If being set on non-current task, delay setting the CPU
+-	 * mitigation until it is next scheduled.
+-	 */
+-	if (task == current && update)
+-		speculation_ctrl_update_current();
+-
+ 	return 0;
  }
  
- #ifdef CONFIG_SMP
-+static __always_inline bool switch_to_xtra_needs_spec_ib(void)
-+{
-+	return static_branch_likely(&switch_to_cond_stibp);
-+}
- extern void speculative_store_bypass_ht_init(void);
- #else
-+static inline bool switch_to_xtra_needs_spec_ib(void) { return false; }
- static inline void speculative_store_bypass_ht_init(void) { }
- #endif
- 
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -147,9 +147,18 @@ struct thread_info {
- 	 _TIF_FSCHECK)
- 
- /* flags to check in __switch_to() */
--#define _TIF_WORK_CTXSW							\
-+#define _TIF_WORK_CTXSW_BASE						\
- 	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|		\
--	 _TIF_SSBD|_TIF_SPEC_IB)
-+	 _TIF_SSBD)
-+
-+/*
-+ * Avoid calls to __switch_to_xtra() on UP as STIBP is not evaluated.
-+ */
-+#ifdef CONFIG_SMP
-+# define _TIF_WORK_CTXSW	(_TIF_WORK_CTXSW_BASE | _TIF_SPEC_IB)
-+#else
-+# define _TIF_WORK_CTXSW	(_TIF_WORK_CTXSW_BASE)
-+#endif
- 
- #define _TIF_WORK_CTXSW_PREV (_TIF_WORK_CTXSW|_TIF_USER_RETURN_NOTIFY)
- #define _TIF_WORK_CTXSW_NEXT (_TIF_WORK_CTXSW)
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -272,6 +272,15 @@ EXPORT_SYMBOL_GPL(start_thread);
- 	switch_to_ibpb(next_p, prev_tif, next_tif);
- 
- 	/*
-+	 * Avoid __switch_to_xtra() invocation when conditional stpib is
-+	 * disabled.
-+	 */
-+	if (!switch_to_xtra_needs_spec_ib()) {
-+		prev_tif &= ~_TIF_SPEC_IB;
-+		next_tif &= ~_TIF_SPEC_IB;
-+	}
-+
-+	/*
- 	 * Now maybe handle debug registers and/or IO bitmaps
- 	 */
- 	if (unlikely(next_tif & _TIF_WORK_CTXSW_NEXT ||
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -625,6 +625,15 @@ void compat_start_thread(struct pt_regs
- 	switch_to_ibpb(next_p, prev_tif, next_tif);
- 
- 	/*
-+	 * Avoid __switch_to_xtra() invocation when conditional stpib is
-+	 * disabled.
-+	 */
-+	if (!switch_to_xtra_needs_spec_ib()) {
-+		prev_tif &= ~_TIF_SPEC_IB;
-+		next_tif &= ~_TIF_SPEC_IB;
-+	}
-+
-+	/*
- 	 * Now maybe reload the debug registers and handle I/O bitmaps
- 	 */
- 	if (unlikely(next_tif & _TIF_WORK_CTXSW_NEXT ||
 
 
