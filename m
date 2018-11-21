@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F68C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4333DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5870121527
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:08:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC58C21527
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:08:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R31R3v15"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5870121527
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdZ9GGpR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC58C21527
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388123AbeKVFnl (ORCPT
+        id S2388137AbeKVFno (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:43:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38520 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:43:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732097AbeKVFnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:43:41 -0500
+        id S2388124AbeKVFno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:43:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84CB721527;
-        Wed, 21 Nov 2018 19:08:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4DE0214DB;
+        Wed, 21 Nov 2018 19:08:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827288;
-        bh=86bpagLTLS0C/Qv6BbTqtkfrjobH6t4ntvMmSycc6cI=;
+        s=default; t=1542827290;
+        bh=keMDvZSlW8Q95LYf4POokytH22QnVfaUWj3MwXie9bc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R31R3v159QCQ03KRlZuanDtpjHM2+jBp4jW6KP5qrA8RtjizYjjQCfs4/E4nrsB0U
-         Pq5V8wN7pwxJW2qKzeRVVejH65isS02yHQ5IWr+if56TUOU9MWDoSksUxZpLaCwSyM
-         duKjDzVgLYUgzRAUezQeIgDg8s9/H6zjJuVY7MFQ=
+        b=OdZ9GGpRR5I7erM3ATkQSn/HdLD9PD0rtsCxMOVZs+CXvffzdsUKtAzGWm+pBlQdy
+         /6HXLN10Wsg2EYjYSgJalT56Dhmen7GpMdAcADv8kaw0inIY8hV+Rhow7NMjX1X/QV
+         zCgbYODN6iWv7VROSvwbj69V3NLbOgMAMB1HLBYo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Maloy <jon.maloy@ericsson.com>,
+        stable@vger.kernel.org, Ying Xue <ying.xue@windriver.com>,
+        Jon Maloy <jon.maloy@ericsson.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 11/42] tipc: dont assume linear buffer when reading ancillary data
-Date:   Wed, 21 Nov 2018 20:05:47 +0100
-Message-Id: <20181121183148.469188747@linuxfoundation.org>
+Subject: [PATCH 4.19 12/42] tipc: fix lockdep warning when reinitilaizing sockets
+Date:   Wed, 21 Nov 2018 20:05:48 +0100
+Message-Id: <20181121183148.508759431@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183147.869199006@linuxfoundation.org>
 References: <20181121183147.869199006@linuxfoundation.org>
@@ -64,82 +65,223 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jon Maloy <donmalo99@gmail.com>
 
-[ Upstream commit 1c1274a56999fbdf9cf84e332b28448bb2d55221 ]
+[ Upstream commit adba75be0d23cca92a028749d92c60c8909bbdb3 ]
 
-The code for reading ancillary data from a received buffer is assuming
-the buffer is linear. To make this assumption true we have to linearize
-the buffer before message data is read.
+We get the following warning:
 
+[   47.926140] 32-bit node address hash set to 2010a0a
+[   47.927202]
+[   47.927433] ================================
+[   47.928050] WARNING: inconsistent lock state
+[   47.928661] 4.19.0+ #37 Tainted: G            E
+[   47.929346] --------------------------------
+[   47.929954] inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
+[   47.930116] swapper/3/0 [HC0[0]:SC1[3]:HE1:SE0] takes:
+[   47.930116] 00000000af8bc31e (&(&ht->lock)->rlock){+.?.}, at: rhashtable_walk_enter+0x36/0xb0
+[   47.930116] {SOFTIRQ-ON-W} state was registered at:
+[   47.930116]   _raw_spin_lock+0x29/0x60
+[   47.930116]   rht_deferred_worker+0x556/0x810
+[   47.930116]   process_one_work+0x1f5/0x540
+[   47.930116]   worker_thread+0x64/0x3e0
+[   47.930116]   kthread+0x112/0x150
+[   47.930116]   ret_from_fork+0x3a/0x50
+[   47.930116] irq event stamp: 14044
+[   47.930116] hardirqs last  enabled at (14044): [<ffffffff9a07fbba>] __local_bh_enable_ip+0x7a/0xf0
+[   47.938117] hardirqs last disabled at (14043): [<ffffffff9a07fb81>] __local_bh_enable_ip+0x41/0xf0
+[   47.938117] softirqs last  enabled at (14028): [<ffffffff9a0803ee>] irq_enter+0x5e/0x60
+[   47.938117] softirqs last disabled at (14029): [<ffffffff9a0804a5>] irq_exit+0xb5/0xc0
+[   47.938117]
+[   47.938117] other info that might help us debug this:
+[   47.938117]  Possible unsafe locking scenario:
+[   47.938117]
+[   47.938117]        CPU0
+[   47.938117]        ----
+[   47.938117]   lock(&(&ht->lock)->rlock);
+[   47.938117]   <Interrupt>
+[   47.938117]     lock(&(&ht->lock)->rlock);
+[   47.938117]
+[   47.938117]  *** DEADLOCK ***
+[   47.938117]
+[   47.938117] 2 locks held by swapper/3/0:
+[   47.938117]  #0: 0000000062c64f90 ((&d->timer)){+.-.}, at: call_timer_fn+0x5/0x280
+[   47.938117]  #1: 00000000ee39619c (&(&d->lock)->rlock){+.-.}, at: tipc_disc_timeout+0xc8/0x540 [tipc]
+[   47.938117]
+[   47.938117] stack backtrace:
+[   47.938117] CPU: 3 PID: 0 Comm: swapper/3 Tainted: G            E     4.19.0+ #37
+[   47.938117] Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
+[   47.938117] Call Trace:
+[   47.938117]  <IRQ>
+[   47.938117]  dump_stack+0x5e/0x8b
+[   47.938117]  print_usage_bug+0x1ed/0x1ff
+[   47.938117]  mark_lock+0x5b5/0x630
+[   47.938117]  __lock_acquire+0x4c0/0x18f0
+[   47.938117]  ? lock_acquire+0xa6/0x180
+[   47.938117]  lock_acquire+0xa6/0x180
+[   47.938117]  ? rhashtable_walk_enter+0x36/0xb0
+[   47.938117]  _raw_spin_lock+0x29/0x60
+[   47.938117]  ? rhashtable_walk_enter+0x36/0xb0
+[   47.938117]  rhashtable_walk_enter+0x36/0xb0
+[   47.938117]  tipc_sk_reinit+0xb0/0x410 [tipc]
+[   47.938117]  ? mark_held_locks+0x6f/0x90
+[   47.938117]  ? __local_bh_enable_ip+0x7a/0xf0
+[   47.938117]  ? lockdep_hardirqs_on+0x20/0x1a0
+[   47.938117]  tipc_net_finalize+0xbf/0x180 [tipc]
+[   47.938117]  tipc_disc_timeout+0x509/0x540 [tipc]
+[   47.938117]  ? call_timer_fn+0x5/0x280
+[   47.938117]  ? tipc_disc_msg_xmit.isra.19+0xa0/0xa0 [tipc]
+[   47.938117]  ? tipc_disc_msg_xmit.isra.19+0xa0/0xa0 [tipc]
+[   47.938117]  call_timer_fn+0xa1/0x280
+[   47.938117]  ? tipc_disc_msg_xmit.isra.19+0xa0/0xa0 [tipc]
+[   47.938117]  run_timer_softirq+0x1f2/0x4d0
+[   47.938117]  __do_softirq+0xfc/0x413
+[   47.938117]  irq_exit+0xb5/0xc0
+[   47.938117]  smp_apic_timer_interrupt+0xac/0x210
+[   47.938117]  apic_timer_interrupt+0xf/0x20
+[   47.938117]  </IRQ>
+[   47.938117] RIP: 0010:default_idle+0x1c/0x140
+[   47.938117] Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 41 54 55 53 65 8b 2d d8 2b 74 65 0f 1f 44 00 00 e8 c6 2c 8b ff fb f4 <65> 8b 2d c5 2b 74 65 0f 1f 44 00 00 5b 5d 41 5c c3 65 8b 05 b4 2b
+[   47.938117] RSP: 0018:ffffaf6ac0207ec8 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
+[   47.938117] RAX: ffff8f5b3735e200 RBX: 0000000000000003 RCX: 0000000000000001
+[   47.938117] RDX: 0000000000000001 RSI: 0000000000000001 RDI: ffff8f5b3735e200
+[   47.938117] RBP: 0000000000000003 R08: 0000000000000001 R09: 0000000000000000
+[   47.938117] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+[   47.938117] R13: 0000000000000000 R14: ffff8f5b3735e200 R15: ffff8f5b3735e200
+[   47.938117]  ? default_idle+0x1a/0x140
+[   47.938117]  do_idle+0x1bc/0x280
+[   47.938117]  cpu_startup_entry+0x19/0x20
+[   47.938117]  start_secondary+0x187/0x1c0
+[   47.938117]  secondary_startup_64+0xa4/0xb0
+
+The reason seems to be that tipc_net_finalize()->tipc_sk_reinit() is
+calling the function rhashtable_walk_enter() within a timer interrupt.
+We fix this by executing tipc_net_finalize() in work queue context.
+
+Acked-by: Ying Xue <ying.xue@windriver.com>
 Signed-off-by: Jon Maloy <jon.maloy@ericsson.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tipc/socket.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ net/tipc/discover.c |   19 ++++++++++---------
+ net/tipc/net.c      |   45 +++++++++++++++++++++++++++++++++++++--------
+ net/tipc/net.h      |    2 +-
+ 3 files changed, 48 insertions(+), 18 deletions(-)
 
---- a/net/tipc/socket.c
-+++ b/net/tipc/socket.c
-@@ -1548,16 +1548,17 @@ static void tipc_sk_set_orig_addr(struct
- /**
-  * tipc_sk_anc_data_recv - optionally capture ancillary data for received message
-  * @m: descriptor for message info
-- * @msg: received message header
-+ * @skb: received message buffer
-  * @tsk: TIPC port associated with message
-  *
-  * Note: Ancillary data is not captured if not requested by receiver.
-  *
-  * Returns 0 if successful, otherwise errno
-  */
--static int tipc_sk_anc_data_recv(struct msghdr *m, struct tipc_msg *msg,
-+static int tipc_sk_anc_data_recv(struct msghdr *m, struct sk_buff *skb,
- 				 struct tipc_sock *tsk)
- {
-+	struct tipc_msg *msg;
- 	u32 anc_data[3];
- 	u32 err;
- 	u32 dest_type;
-@@ -1566,6 +1567,7 @@ static int tipc_sk_anc_data_recv(struct
+--- a/net/tipc/discover.c
++++ b/net/tipc/discover.c
+@@ -166,7 +166,8 @@ static bool tipc_disc_addr_trial_msg(str
  
- 	if (likely(m->msg_controllen == 0))
- 		return 0;
-+	msg = buf_msg(skb);
+ 	/* Apply trial address if we just left trial period */
+ 	if (!trial && !self) {
+-		tipc_net_finalize(net, tn->trial_addr);
++		tipc_sched_net_finalize(net, tn->trial_addr);
++		msg_set_prevnode(buf_msg(d->skb), tn->trial_addr);
+ 		msg_set_type(buf_msg(d->skb), DSC_REQ_MSG);
+ 	}
  
- 	/* Optionally capture errored message object(s) */
- 	err = msg ? msg_errcode(msg) : 0;
-@@ -1576,6 +1578,9 @@ static int tipc_sk_anc_data_recv(struct
- 		if (res)
- 			return res;
- 		if (anc_data[1]) {
-+			if (skb_linearize(skb))
-+				return -ENOMEM;
-+			msg = buf_msg(skb);
- 			res = put_cmsg(m, SOL_TIPC, TIPC_RETDATA, anc_data[1],
- 				       msg_data(msg));
- 			if (res)
-@@ -1737,9 +1742,10 @@ static int tipc_recvmsg(struct socket *s
- 
- 	/* Collect msg meta data, including error code and rejected data */
- 	tipc_sk_set_orig_addr(m, skb);
--	rc = tipc_sk_anc_data_recv(m, hdr, tsk);
-+	rc = tipc_sk_anc_data_recv(m, skb, tsk);
- 	if (unlikely(rc))
+@@ -300,14 +301,12 @@ static void tipc_disc_timeout(struct tim
  		goto exit;
-+	hdr = buf_msg(skb);
+ 	}
  
- 	/* Capture data if non-error msg, otherwise just set return value */
- 	if (likely(!err)) {
-@@ -1849,9 +1855,10 @@ static int tipc_recvstream(struct socket
- 		/* Collect msg meta data, incl. error code and rejected data */
- 		if (!copied) {
- 			tipc_sk_set_orig_addr(m, skb);
--			rc = tipc_sk_anc_data_recv(m, hdr, tsk);
-+			rc = tipc_sk_anc_data_recv(m, skb, tsk);
- 			if (rc)
- 				break;
-+			hdr = buf_msg(skb);
- 		}
+-	/* Trial period over ? */
+-	if (!time_before(jiffies, tn->addr_trial_end)) {
+-		/* Did we just leave it ? */
+-		if (!tipc_own_addr(net))
+-			tipc_net_finalize(net, tn->trial_addr);
+-
+-		msg_set_type(buf_msg(d->skb), DSC_REQ_MSG);
+-		msg_set_prevnode(buf_msg(d->skb), tipc_own_addr(net));
++	/* Did we just leave trial period ? */
++	if (!time_before(jiffies, tn->addr_trial_end) && !tipc_own_addr(net)) {
++		mod_timer(&d->timer, jiffies + TIPC_DISC_INIT);
++		spin_unlock_bh(&d->lock);
++		tipc_sched_net_finalize(net, tn->trial_addr);
++		return;
+ 	}
  
- 		/* Copy data if msg ok, otherwise return error/partial data */
+ 	/* Adjust timeout interval according to discovery phase */
+@@ -319,6 +318,8 @@ static void tipc_disc_timeout(struct tim
+ 			d->timer_intv = TIPC_DISC_SLOW;
+ 		else if (!d->num_nodes && d->timer_intv > TIPC_DISC_FAST)
+ 			d->timer_intv = TIPC_DISC_FAST;
++		msg_set_type(buf_msg(d->skb), DSC_REQ_MSG);
++		msg_set_prevnode(buf_msg(d->skb), tn->trial_addr);
+ 	}
+ 
+ 	mod_timer(&d->timer, jiffies + d->timer_intv);
+--- a/net/tipc/net.c
++++ b/net/tipc/net.c
+@@ -104,6 +104,14 @@
+  *     - A local spin_lock protecting the queue of subscriber events.
+ */
+ 
++struct tipc_net_work {
++	struct work_struct work;
++	struct net *net;
++	u32 addr;
++};
++
++static void tipc_net_finalize(struct net *net, u32 addr);
++
+ int tipc_net_init(struct net *net, u8 *node_id, u32 addr)
+ {
+ 	if (tipc_own_id(net)) {
+@@ -119,17 +127,38 @@ int tipc_net_init(struct net *net, u8 *n
+ 	return 0;
+ }
+ 
+-void tipc_net_finalize(struct net *net, u32 addr)
++static void tipc_net_finalize(struct net *net, u32 addr)
+ {
+ 	struct tipc_net *tn = tipc_net(net);
+ 
+-	if (!cmpxchg(&tn->node_addr, 0, addr)) {
+-		tipc_set_node_addr(net, addr);
+-		tipc_named_reinit(net);
+-		tipc_sk_reinit(net);
+-		tipc_nametbl_publish(net, TIPC_CFG_SRV, addr, addr,
+-				     TIPC_CLUSTER_SCOPE, 0, addr);
+-	}
++	if (cmpxchg(&tn->node_addr, 0, addr))
++		return;
++	tipc_set_node_addr(net, addr);
++	tipc_named_reinit(net);
++	tipc_sk_reinit(net);
++	tipc_nametbl_publish(net, TIPC_CFG_SRV, addr, addr,
++			     TIPC_CLUSTER_SCOPE, 0, addr);
++}
++
++static void tipc_net_finalize_work(struct work_struct *work)
++{
++	struct tipc_net_work *fwork;
++
++	fwork = container_of(work, struct tipc_net_work, work);
++	tipc_net_finalize(fwork->net, fwork->addr);
++	kfree(fwork);
++}
++
++void tipc_sched_net_finalize(struct net *net, u32 addr)
++{
++	struct tipc_net_work *fwork = kzalloc(sizeof(*fwork), GFP_ATOMIC);
++
++	if (!fwork)
++		return;
++	INIT_WORK(&fwork->work, tipc_net_finalize_work);
++	fwork->net = net;
++	fwork->addr = addr;
++	schedule_work(&fwork->work);
+ }
+ 
+ void tipc_net_stop(struct net *net)
+--- a/net/tipc/net.h
++++ b/net/tipc/net.h
+@@ -42,7 +42,7 @@
+ extern const struct nla_policy tipc_nl_net_policy[];
+ 
+ int tipc_net_init(struct net *net, u8 *node_id, u32 addr);
+-void tipc_net_finalize(struct net *net, u32 addr);
++void tipc_sched_net_finalize(struct net *net, u32 addr);
+ void tipc_net_stop(struct net *net);
+ int tipc_nl_net_dump(struct sk_buff *skb, struct netlink_callback *cb);
+ int tipc_nl_net_set(struct sk_buff *skb, struct genl_info *info);
 
 
