@@ -2,141 +2,128 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74528C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F8CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:56:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E09E2145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:51:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pSNOkRsI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E09E2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D7B321479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:56:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D7B321479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbeKUMXY (ORCPT
+        id S1726402AbeKUM2d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 07:23:24 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33282 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbeKUMXY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 07:23:24 -0500
-Received: by mail-wr1-f68.google.com with SMTP id u9-v6so3971894wrr.0;
-        Tue, 20 Nov 2018 17:51:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Y2fmDKf5hxF75CTQp/zdiNY8rMfrwOSiIfz3uPF+M8Y=;
-        b=pSNOkRsIARK2oIdnnwfNHEss24IDT1XV4ErQF4LtHQ5QIyllClKThjIpEdmJo79mAX
-         EvEhlEiWotZvVSHRDtHtNMLKsiopGTlH8WbmCs7zVMZrRBuV/xzgmJI5TX0zyz2mrYoU
-         7y9AgcRHdvqO1O39Td1MUwaCTGZwkNJ3kj0eRtC9vyIdKD3z/gGDLBWUrhzEo+Gk1J7E
-         h5k+GDAhL8KI5Bw/qMrDql2cx4OuODju32OUjVaJezdvT6o0xqFkUN1ciG21nVfW90mZ
-         yYc4clafkKcAC3YQUGmsTA8kmQJmdk+2Cc3djwp7WR6vLFZui7+keIKUuf0hUkVIzLes
-         5mTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Y2fmDKf5hxF75CTQp/zdiNY8rMfrwOSiIfz3uPF+M8Y=;
-        b=oiDy7lcLN88SQpR3xsD04coK8FxF6jGxDF7GH18hkAZfghmIWvHCH5qOsqRQlgjvuf
-         zziUcwz+8w01BOQJ9lYj3IGbJ6tKph3VOBxG8Gc0CyNPxsLv4kFd5T6SRsyYbqrcPGja
-         LHSPzT3/j7B6HrlMNs9WCRG01m9qQLBL/wac5fB/9tcPAmdyXaqhrw7rAcOV8II15KhF
-         oJAm+VB2asZr2L85gEpaWodR/Lb9rCuov+Ho2+wZ7bLw1z5/s9QS6vuNJrX8O3NsLzhd
-         k3jwsZSeA9glsfq4HzBoVlO/cVkTMMQpjvOA6iGtdmGDDnyrZaBIPmpPGREqFi8nwejK
-         qh0A==
-X-Gm-Message-State: AA+aEWZ2c9/TYs2gvGgEzME2/bM0b0FEcnrTQR1ZFM4TuA2pMz8WhTTL
-        wVYGQ2J3/mS1NVYBc0utZ5Q=
-X-Google-Smtp-Source: AFSGD/VdbFLlDEph2z7nBp4nKPxxDi6x/gf8euC1qWidwrOjsTkKVyR0jhu5/TQN/rZ8xgqYG1vs0g==
-X-Received: by 2002:adf:dd06:: with SMTP id a6mr4203383wrm.2.1542765070912;
-        Tue, 20 Nov 2018 17:51:10 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id c13sm3481784wrb.38.2018.11.20.17.51.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 17:51:09 -0800 (PST)
-Subject: Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC
- controller bindings
-To:     masonccyang@mxic.com.tw
-Cc:     boris.brezillon@bootlin.com, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, tpiepho@impinj.com,
-        zhengxunli@mxic.com.tw
-References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
- <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
- <629a5d6f-5c13-9b24-1c21-461d09f1aa8a@gmail.com>
- <OFDD04CD59.10199EDD-ON4825834B.001E1390-4825834B.001F65DD@mxic.com.tw>
- <e7fd0653-75a7-249a-462a-18a7bf4616d1@gmail.com>
- <OF26D8352D.B4B02BBE-ON4825834C.00043726-4825834C.0004E2F7@mxic.com.tw>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <163dfc15-71b2-fdbe-f872-f6c6e4c3e14e@gmail.com>
-Date:   Wed, 21 Nov 2018 02:51:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 21 Nov 2018 07:28:33 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54540 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725913AbeKUM2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 07:28:33 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4D8F83154848;
+        Wed, 21 Nov 2018 01:56:20 +0000 (UTC)
+Received: from redhat.com (ovpn-120-136.rdu2.redhat.com [10.10.120.136])
+        by smtp.corp.redhat.com (Postfix) with SMTP id E58DA10021B1;
+        Wed, 21 Nov 2018 01:56:15 +0000 (UTC)
+Date:   Tue, 20 Nov 2018 20:56:14 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, devel@linuxdriverproject.org,
+        linux-fsdevel@vger.kernel.org, linux-pm@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        kexec-ml <kexec@lists.infradead.org>, pv-drivers@vmware.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v1 1/8] mm: balloon: update comment about
+ isolation/migration/compaction
+Message-ID: <20181120204655-mutt-send-email-mst@kernel.org>
+References: <20181119101616.8901-1-david@redhat.com>
+ <20181119101616.8901-2-david@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <OF26D8352D.B4B02BBE-ON4825834C.00043726-4825834C.0004E2F7@mxic.com.tw>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181119101616.8901-2-david@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 21 Nov 2018 01:56:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/21/2018 01:53 AM, masonccyang@mxic.com.tw wrote:
-> Hi Marek,
-
-Hi,
-
->> Marek Vasut <marek.vasut@gmail.com>
->> 2018/11/20 下午 08:57
->>
->> >> > diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-
->> >> rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
->> >> > new file mode 100644
->> >> > index 0000000..8286cc8
->> >> > --- /dev/null
->> >> > +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
->> >> > @@ -0,0 +1,33 @@
->> >> > +Renesas R-Car D3 RPC controller Device Tree Bindings
->> >> > +----------------------------------------------------
->> >> > +
->> >> > +Required properties:
->> >> > +- compatible: should be "renesas,rpc-r8a77995"
->> >> > +- #address-cells: should be 1
->> >> > +- #size-cells: should be 0
->> >> > +- reg: should contain 2 entries, one for the registers and one
->> >> for the direct
->> >> > +       mapping area
->> >> > +- reg-names: should contain "rpc_regs" and "dirmap"
->> >> > +- interrupts: interrupt line connected to the RPC SPI controller
->> >>
->> >> Do you also plan to support the RPC HF mode ? And if so, how would that
->> >> look in the bindings ? I'd like to avoid having to redesign the
-> bindings
->> >> later to handle both the SPI and HF modes.
->> >>
->> >
->> > I patched this RPC SPI/Octa driver is for mx25uw51245g and you may also
->> > refer to Boris's patch. [1][2][3]
->>
->> Does this mean the driver is specific to one particular kind of flash ?
->>
+On Mon, Nov 19, 2018 at 11:16:09AM +0100, David Hildenbrand wrote:
+> Commit b1123ea6d3b3 ("mm: balloon: use general non-lru movable page
+> feature") reworked balloon handling to make use of the general
+> non-lru movable page feature. The big comment block in
+> balloon_compaction.h contains quite some outdated information. Let's fix
+> this.
 > 
-> No, this driver supports all SPI flash, spi, qspi and octa flash.
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: "Michael S. Tsirkin" <mst@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+
+> ---
+>  include/linux/balloon_compaction.h | 26 +++++++++-----------------
+>  1 file changed, 9 insertions(+), 17 deletions(-)
 > 
-> The target is Octa 8-8-8 DDR2 mode once spi-nor layer is merged.[1][2][3]
-
-The HyperFlash must also be supported, cfr my previous comment that I'd
-like to avoid redesigning the bindings again when the HF mode is added.
-
--- 
-Best regards,
-Marek Vasut
+> diff --git a/include/linux/balloon_compaction.h b/include/linux/balloon_compaction.h
+> index 53051f3d8f25..cbe50da5a59d 100644
+> --- a/include/linux/balloon_compaction.h
+> +++ b/include/linux/balloon_compaction.h
+> @@ -4,15 +4,18 @@
+>   *
+>   * Common interface definitions for making balloon pages movable by compaction.
+>   *
+> - * Despite being perfectly possible to perform ballooned pages migration, they
+> - * make a special corner case to compaction scans because balloon pages are not
+> - * enlisted at any LRU list like the other pages we do compact / migrate.
+> + * Balloon page migration makes use of the general non-lru movable page
+> + * feature.
+> + *
+> + * page->private is used to reference the responsible balloon device.
+> + * page->mapping is used in context of non-lru page migration to reference
+> + * the address space operations for page isolation/migration/compaction.
+>   *
+>   * As the page isolation scanning step a compaction thread does is a lockless
+>   * procedure (from a page standpoint), it might bring some racy situations while
+>   * performing balloon page compaction. In order to sort out these racy scenarios
+>   * and safely perform balloon's page compaction and migration we must, always,
+> - * ensure following these three simple rules:
+> + * ensure following these simple rules:
+>   *
+>   *   i. when updating a balloon's page ->mapping element, strictly do it under
+>   *      the following lock order, independently of the far superior
+> @@ -21,19 +24,8 @@
+>   *	      +--spin_lock_irq(&b_dev_info->pages_lock);
+>   *	            ... page->mapping updates here ...
+>   *
+> - *  ii. before isolating or dequeueing a balloon page from the balloon device
+> - *      pages list, the page reference counter must be raised by one and the
+> - *      extra refcount must be dropped when the page is enqueued back into
+> - *      the balloon device page list, thus a balloon page keeps its reference
+> - *      counter raised only while it is under our special handling;
+> - *
+> - * iii. after the lockless scan step have selected a potential balloon page for
+> - *      isolation, re-test the PageBalloon mark and the PagePrivate flag
+> - *      under the proper page lock, to ensure isolating a valid balloon page
+> - *      (not yet isolated, nor under release procedure)
+> - *
+> - *  iv. isolation or dequeueing procedure must clear PagePrivate flag under
+> - *      page lock together with removing page from balloon device page list.
+> + *  ii. isolation or dequeueing procedure must remove the page from balloon
+> + *      device page list under b_dev_info->pages_lock.
+>   *
+>   * The functions provided by this interface are placed to help on coping with
+>   * the aforementioned balloon page corner case, as well as to ensure the simple
+> -- 
+> 2.17.2
