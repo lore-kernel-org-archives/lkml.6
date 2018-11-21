@@ -2,123 +2,123 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D6EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF13C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B18D2145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:20:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hMdTlTN0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B18D2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 9DE112145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:20:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE112145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbeKUNxU (ORCPT
+        id S1727343AbeKUNx0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 08:53:20 -0500
-Received: from mail-pl1-f174.google.com ([209.85.214.174]:43893 "EHLO
-        mail-pl1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726483AbeKUNxT (ORCPT
+        Wed, 21 Nov 2018 08:53:26 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:34198 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbeKUNxZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 08:53:19 -0500
-Received: by mail-pl1-f174.google.com with SMTP id gn14so3323470plb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 19:20:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=TZ1ILf36vluQRmD7+XUbNoBKgZDQAlA/hXOW/yYPvow=;
-        b=hMdTlTN02M98lXyk7Ucwpt/RH5xmd+8WA/v/Jt3jTrFs0BJiYCEs05ZeW0x2farKNt
-         Fd9C1DnZz+vZWHT8b2wmBMRfg8WMCjq+fzFMcVic5v/O/wcZVCUgtKO2oj6vJ1pVZv4b
-         e3LibR8BfHSjVFWDxJ7n/xJDXTUwmJYxoOf/hEXGhGb1ved2rUF+NbW+2f8Nq4xidHpp
-         +NKBTXN8ASjBchCl414x99gAISGePaLhBcx+GMHRgDHF6A+RpM8UPAPbIYIAQ4KfMKt4
-         NJk2UoPwTCnQWg1HgopWoPMwzRRThJCgbT0LV/bY5lLHdH+K4hwIkClzKK7Ik2MiOlmo
-         57fg==
+        Wed, 21 Nov 2018 08:53:25 -0500
+Received: by mail-pl1-f195.google.com with SMTP id f12-v6so3336975plo.1;
+        Tue, 20 Nov 2018 19:20:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=TZ1ILf36vluQRmD7+XUbNoBKgZDQAlA/hXOW/yYPvow=;
-        b=bzO2kFNVCayJHJCMigVIvJ0kWNr28mRJqEwcBmjluc9PPMsKplg0s9kmh6RVNEkIn5
-         4gKq2xrxRYPVHj4/fyyrzY1EOUsTWbl6Rla98D//FRv4B2RwzlMYJTBZaS+lAxnB6oty
-         StQefNkIaiHUTbJFhvmf7ZbHpKkjeeltmZTHPJWe/zfpNIXMEaR9hhfEmbPS5c2I+wKV
-         kpjZGyEFB+VD6liWdUTl/9gsFoAf56cqEYQN5I/Qohx9D9zf503pk5qr2m1G2t1c2BAv
-         DYocYk5AAP4nvJ1R2lm2f54RmcjNe61N1+vgBulKP4PP53eyGSWN76TNi3HgOGHIqSmq
-         ju/A==
-X-Gm-Message-State: AGRZ1gJm6sAoku30A5DAgl4l1fS1aeNGVXwg5je0caNNSPAnFcZk6e10
-        +2hCpDc0ff/dJYAGxABaUMBcww==
-X-Google-Smtp-Source: AJdET5c+OxqqMj0UgKkzjCN0oOuM0t3Gsc4pzY5/JEuvn0VxEf1n4XATouVx0bruhL0HTnGnRsNMeQ==
-X-Received: by 2002:a62:3a04:: with SMTP id h4mr4950852pfa.119.1542770448949;
-        Tue, 20 Nov 2018 19:20:48 -0800 (PST)
-Received: from [100.112.89.103] ([104.133.8.103])
-        by smtp.gmail.com with ESMTPSA id 18sm43687573pgl.50.2018.11.20.19.20.47
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 20 Nov 2018 19:20:48 -0800 (PST)
-Date:   Tue, 20 Nov 2018 19:20:40 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Vlastimil Babka <vbabka@suse.cz>
-cc:     Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        pifang@redhat.com, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, aarcange@redhat.com,
-        Mel Gorman <mgorman@suse.de>
-Subject: Re: Memory hotplug softlock issue
-In-Reply-To: <alpine.LSU.2.11.1811201630360.2061@eggly.anvils>
-Message-ID: <alpine.LSU.2.11.1811201852370.2804@eggly.anvils>
-References: <20181115143204.GV23831@dhcp22.suse.cz> <20181116012433.GU2653@MiWiFi-R3L-srv> <20181116091409.GD14706@dhcp22.suse.cz> <20181119105202.GE18471@MiWiFi-R3L-srv> <20181119124033.GJ22247@dhcp22.suse.cz> <20181119125121.GK22247@dhcp22.suse.cz>
- <20181119141016.GO22247@dhcp22.suse.cz> <20181119173312.GV22247@dhcp22.suse.cz> <alpine.LSU.2.11.1811191215290.15640@eggly.anvils> <20181119205907.GW22247@dhcp22.suse.cz> <20181120015644.GA5727@MiWiFi-R3L-srv> <alpine.LSU.2.11.1811192127130.2848@eggly.anvils>
- <3f1a82a8-f2aa-ac5e-e6a8-057256162321@suse.cz> <alpine.LSU.2.11.1811201630360.2061@eggly.anvils>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YUDK3byES5Clx+gNUxLq8kbY4gy4QnhkCiPin39VMxU=;
+        b=jXyUi5l9NdbIs24pP1OZovAfd2v6oIrojxCkmmIZmnGPBtd9cv5iusJJsZMcAKwE/D
+         +sx8zMVTBKTHhvYqVbmfiD6ZrD60aIBpIK8pLbes71cmZXF6S9HKawMX9gVQgA+L/2F7
+         U+Md3MM8p1udCjHF2eZO9nCuoBDZzx6hDM63nYXdk2fv9DAiSN21YvsSo4WBw4Mtlp09
+         Nj6ugtqp878LkVj1NOD+llU8Ourkjlf+lEv0Isaf0ygzecfz0vrIQUC5HfQgybecFk9S
+         zwXerpnJwyV2NCgyim7aaoSoxfi8k4B/PSlU8H3Ab+ypHVCv/eJvdG884mySGDXRkJpV
+         9l+Q==
+X-Gm-Message-State: AGRZ1gK7INY9GGd9aVsQecyoDR0XYBkBLZYzgtnhB+z5Tcu9IFyY4cbl
+        Xi7LGaUy+QEFINnfKDTOxtA=
+X-Google-Smtp-Source: AJdET5dJiV7FzcfTUZjsrEJPVAyWFsSbjIeiHP2PByBbx+NhoOUpUwU76NXXgVdSoo5Gt6sLjpYIqA==
+X-Received: by 2002:a62:b9a:: with SMTP id 26mr5096104pfl.196.1542770454986;
+        Tue, 20 Nov 2018 19:20:54 -0800 (PST)
+Received: from ?IPv6:2601:647:4800:973f:8a0:7611:3223:f4db? ([2601:647:4800:973f:8a0:7611:3223:f4db])
+        by smtp.gmail.com with ESMTPSA id t90sm36137627pfj.23.2018.11.20.19.20.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 19:20:54 -0800 (PST)
+Subject: Re: [PATCH V10 09/19] block: introduce bio_bvecs()
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+References: <20181115085306.9910-1-ming.lei@redhat.com>
+ <20181115085306.9910-10-ming.lei@redhat.com> <20181116134541.GH3165@lst.de>
+ <002fe56b-25e4-573e-c09b-bb12c3e8d25a@grimberg.me>
+ <20181120161651.GB2629@lst.de>
+ <53526aae-fb9b-ee38-0a01-e5899e2d4e4d@grimberg.me>
+ <20181121005902.GA31748@ming.t460p>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <2d9bee7a-f010-dcf4-1184-094101058584@grimberg.me>
+Date:   Tue, 20 Nov 2018 19:20:45 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20181121005902.GA31748@ming.t460p>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Nov 2018, Hugh Dickins wrote:
-> On Tue, 20 Nov 2018, Vlastimil Babka wrote:
-> > >  
-> > >  	finish_wait(q, wait);
-> > 
-> > ... the code continues by:
-> > 
-> >         if (thrashing) {
-> >                 if (!PageSwapBacked(page))
-> > 
-> > So maybe we should not set 'thrashing' true when lock < 0?
+
+> Not sure I understand the 'blocking' problem in this case.
 > 
-> Very good catch, thank you Vlastimil: as you might have guessed, the
-> patch from a pre-PSI kernel applied cleanly, and I just hadn't reviewed
-> the surrounding context properly before sending out.
+> We can build a bvec table from this req, and send them all
+> in send(),
+
+I would like to avoid growing bvec tables and keep everything
+preallocated. Plus, a bvec_iter operates on a bvec which means
+we'll need a table there as well... Not liking it so far...
+
+> can this way avoid your blocking issue? You may see this
+> example in branch 'rq->bio != rq->biotail' of lo_rw_aio().
+
+This is exactly an example of not ignoring the bios...
+
+> If this way is what you need, I think you are right, even we may
+> introduce the following helpers:
 > 
-> I cannot say immediately what the right answer is, I'll have to do some
-> research first: maybe not enter the block that sets thrashing true when
-> lock < 0, as you suggest, or maybe force lock < 0 to 0 and put_page()
-> afterwards, or... 
+> 	rq_for_each_bvec()
+> 	rq_bvecs()
 
-... I still won't adjust the patch tonight, but the answer is obvious
-now I look closer: as you show in your extract above, the only thing
-it does with "page" at the end is to ask if it was SwapBacked, so we
-just need to set one more bool at the beginning to check at the end
-(or I could make "thrashing" a -1, 0, 1 int like "lock": but my guess
-is that that would not be to other people's taste: acceptable for the
-arg, but stretching your patience for the local variable).
+I'm not sure how this helps me either. Unless we can set a bvec_iter to
+span bvecs or have an abstract bio crossing when we re-initialize the
+bvec_iter I don't see how I can ignore bios completely...
 
-By the way, I do have a further patch to wait_on_page_bit_common(),
-which I could send at the same time, if it sounds right to you
-(but it's a no-op in the put_and_wait page migration case).  That
-__add_wait_queue_entry_tail() is right for the first time into
-the loop, but I maintain that it should use __add_wait_queue()
-for fairness thereafter, to avoid repeatedly sending older waiters
-back to the back of the queue.  I don't have hard numbers for it,
-but it's one of several patches, each of which helped to reduce our
-wait_on_page_bit lockups in some (perhaps unrealistic) stress tests.
+> So looks nvme-tcp host driver might be the 2nd driver which benefits
+> from multi-page bvec directly.
+> 
+> The multi-page bvec V11 has passed my tests and addressed almost
+> all the comments during review on V10. I removed bio_vecs() in V11,
+> but it won't be big deal, we can introduce them anytime when there
+> is the requirement.
 
-Hugh
+multipage-bvecs and nvme-tcp are going to conflict, so it would be good
+to coordinate on this. I think that nvme-tcp host needs some adjustments
+as setting a bvec_iter. I'm under the impression that the change is 
+rather small and self-contained, but I'm not sure I have the full
+picture here.
