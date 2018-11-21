@@ -4,73 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD430C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D47C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:22:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A60D92147D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:22:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C05F920989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:22:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RzwevFhS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A60D92147D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UECzgACu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C05F920989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729303AbeKUTzq (ORCPT
+        id S1729330AbeKUT4D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 14:55:46 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36558 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbeKUTzp (ORCPT
+        Wed, 21 Nov 2018 14:56:03 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43363 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbeKUT4C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 14:55:45 -0500
-Received: by mail-wm1-f68.google.com with SMTP id s11so4993316wmh.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 01:22:02 -0800 (PST)
+        Wed, 21 Nov 2018 14:56:02 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r10so4830563wrs.10
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 01:22:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=XKmh1IIXFSmr5fNZOGb5jyyWn9hMkpJdKJVrQf69U88=;
-        b=RzwevFhSFv3rHOg1ZKmKJ/AuKEEfadAV0o/zkOoWGtceIWL3clYD77Mnb/sp1Fgidh
-         NKbF7UW/lorLiNURflhAPy2UJTujBzAStv0qK3c+avPBmhDJLXK8jj+khXSbWd+WJbJb
-         RzIvTEyYYk4p4+hIH2VvYEjaeD9hP8u7hWCEA=
+        bh=I8lFzQ3rLFHjEcQyoMIxfUjvyyNZX5Hy/mdr9ilIH6w=;
+        b=UECzgACuRaDAqc3FDgR1DuNNGKKjIGouhEHtPKVT7ylPTUF+UdhrAGQNdv3jGdU4qN
+         VATChHoJsjuYd7Z2GLuwXaa+fqn/t0AelCZbNdLPqFz/K6LMfgIVafo1jKDANqIOBcLV
+         itAFXr+qUbYF4H8JflFFQKu0BLHzgaMA4fOng=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=XKmh1IIXFSmr5fNZOGb5jyyWn9hMkpJdKJVrQf69U88=;
-        b=hUA1ANI+qQDhvM5BeVlAxmGZhz69PNSgnRL9l7YsRIRn9xhOSqKpdrzDgH0gYXmUkH
-         YbFKlTYLYZsze6/brYOmu09jI8wjUOBWvcsQOZjdFINhwvA9DYdYepVUlmpmxBL8nmRc
-         cw6kMgH7bCd1wGXLX/GZCTZPit646quxXgRyCrSZNh66L1jFUlqzK1+Td/IWfJGqkmWR
-         cQ5QHSO3HCRqQ1jpSLFbBuQRcIL4n8zPVRs6gs+dk5rcsPNj9NTTGfFpn0gEd9cJDPok
-         serlGZTE17W6yatz090uHWv79kiYHhPICDi6tXhY1a64QbtZczrcreviJn0uNO3pHbeZ
-         NoVA==
-X-Gm-Message-State: AA+aEWaXKFjP6UmOjc0PJWFD0evP62QiOJIZhvaYzNBKm+rdzjaQi5Tl
-        CqMLgS9BniF90OfkK2KElhMl3w==
-X-Google-Smtp-Source: AJdET5d1NQeBQDeNIitmALwz6NpMhXlA/Bx7/5PiJ7wMHmXxcTZ9v+H44jO0dw33Yx+7in4Qi7yEJg==
-X-Received: by 2002:a1c:7e8e:: with SMTP id z136mr5424570wmc.140.1542792121909;
-        Wed, 21 Nov 2018 01:22:01 -0800 (PST)
+        bh=I8lFzQ3rLFHjEcQyoMIxfUjvyyNZX5Hy/mdr9ilIH6w=;
+        b=kmDFZIZFzx5yPa7ibOYWPYWsv3q8rL3gSLFr1S6HbRr9+iqTpqA77eT13VxDr2aM+o
+         ajeOAYwMsLLbl0O/J6aq8I6FPUztfpfwu8RUnomQP+NsXxkEs4AsjpFCMQFY2G+++Xo8
+         ngsPjxSeh88pqfFrbQtKQczfLnKZOcWIrbXywx3oZzdcU67dR4PAHc4Af5INheI1CvdU
+         Xh42otH+XO8lf/z2cBxLRVgrEUQ6Cr1sTbRVsMqt+OBWLEm6jROkQd//pJpahWSl0Qly
+         QTN4oDl1v631DAFLb5cMgUWobyvA2zZzfZU1ILUjf7ZYb4jMumy/MoJpcMlRDMMJcNlm
+         1c9w==
+X-Gm-Message-State: AA+aEWbUhbeMjNSpWvyMBi1BJOqHjQ08VE3/68xhNS28pcO3p2QJb4vG
+        xZhap5+6f/XHXTfmNdMerGQ+fQ==
+X-Google-Smtp-Source: AFSGD/XEN+EaGSsIM+1xI3J7T45Coc/GO9L7QputjrGv1wcnEj0pmOqrKkZNitUCmOzC7MiiAybjeA==
+X-Received: by 2002:adf:9d4a:: with SMTP id o10-v6mr4639699wre.94.1542792139508;
+        Wed, 21 Nov 2018 01:22:19 -0800 (PST)
 Received: from [192.168.0.19] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id l3sm23153734wru.36.2018.11.21.01.22.00
+        by smtp.googlemail.com with ESMTPSA id a125-v6sm451563wmf.8.2018.11.21.01.22.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 01:22:01 -0800 (PST)
-Subject: Re: [PATCH 1/2] ASoC: sdm845: Update slot_width for Quaternary TDM
- port
+        Wed, 21 Nov 2018 01:22:18 -0800 (PST)
+Subject: Re: [PATCH 2/2] ASoC: sdm845: Add support for Secondary MI2S
+ interface
 To:     Rohit kumar <rohitkr@codeaurora.org>, plai@codeaurora.org,
         bgoswami@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
         perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, rohkumar@qti.qualcomm.com
 References: <1542354118-23360-1-git-send-email-rohitkr@codeaurora.org>
- <1542354118-23360-2-git-send-email-rohitkr@codeaurora.org>
+ <1542354118-23360-3-git-send-email-rohitkr@codeaurora.org>
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <15985969-695c-2e5e-88b5-f798395d1319@linaro.org>
-Date:   Wed, 21 Nov 2018 09:22:00 +0000
+Message-ID: <97e02d38-046b-eef2-82ce-51d231312372@linaro.org>
+Date:   Wed, 21 Nov 2018 09:22:18 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <1542354118-23360-2-git-send-email-rohitkr@codeaurora.org>
+In-Reply-To: <1542354118-23360-3-git-send-email-rohitkr@codeaurora.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -82,13 +82,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On 16/11/18 07:41, Rohit kumar wrote:
-> Change slot_width for quaternary TDM port to 16 and
-> update bclk rate for TDM and MI2S interfaces
-> accordingly.
+> Add support to configure bit clock for secondary MI2S
+> TX interface.
 > 
-> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org> > ---
->   sound/soc/qcom/sdm845.c | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
-> 
+> Signed-off-by: Rohit kumar<rohitkr@codeaurora.org>
+> ---
+>   sound/soc/qcom/sdm845.c | 18 ++++++++++++++++++
 
 Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
