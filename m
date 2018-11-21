@@ -2,128 +2,132 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15815C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3163EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D29E2214F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:31:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D29E2214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EABAE214E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:33:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EABAE214E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732296AbeKVEGp (ORCPT
+        id S1730909AbeKVEIT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 23:06:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47122 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729285AbeKVEGp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 23:06:45 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3A9CFB005;
-        Wed, 21 Nov 2018 17:31:25 +0000 (UTC)
-Date:   Wed, 21 Nov 2018 18:31:23 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Baoquan He <bhe@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        pifang@redhat.com, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, aarcange@redhat.com,
-        Mel Gorman <mgorman@suse.de>
-Subject: Re: Memory hotplug softlock issue
-Message-ID: <20181121173123.GS12932@dhcp22.suse.cz>
-References: <20181116091409.GD14706@dhcp22.suse.cz>
- <20181119105202.GE18471@MiWiFi-R3L-srv>
- <20181119124033.GJ22247@dhcp22.suse.cz>
- <20181119125121.GK22247@dhcp22.suse.cz>
- <20181119141016.GO22247@dhcp22.suse.cz>
- <20181119173312.GV22247@dhcp22.suse.cz>
- <alpine.LSU.2.11.1811191215290.15640@eggly.anvils>
- <20181119205907.GW22247@dhcp22.suse.cz>
- <20181120015644.GA5727@MiWiFi-R3L-srv>
- <alpine.LSU.2.11.1811192127130.2848@eggly.anvils>
+        Wed, 21 Nov 2018 23:08:19 -0500
+Received: from mga14.intel.com ([192.55.52.115]:42821 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729140AbeKVEIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 23:08:19 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 09:33:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,261,1539673200"; 
+   d="scan'208";a="88191040"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga008.fm.intel.com with ESMTP; 21 Nov 2018 09:32:59 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gPWMz-0005Ov-Tc; Wed, 21 Nov 2018 19:32:57 +0200
+Date:   Wed, 21 Nov 2018 19:32:57 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de, broonie@kernel.org,
+        vkoul@kernel.org, liam.r.girdwood@linux.intel.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/6] ASoC: Intel: Skylake: stop init/probe if DSP is
+ not present
+Message-ID: <20181121173257.GR10650@smile.fi.intel.com>
+References: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
+ <20181120213644.19103-3-pierre-louis.bossart@linux.intel.com>
+ <20181121142925.GP10650@smile.fi.intel.com>
+ <1d06c878-c69b-a627-b7e6-e9d92be3b08a@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.11.1811192127130.2848@eggly.anvils>
+In-Reply-To: <1d06c878-c69b-a627-b7e6-e9d92be3b08a@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 19-11-18 21:44:41, Hugh Dickins wrote:
-[...]
-> [PATCH] mm: put_and_wait_on_page_locked() while page is migrated
+On Wed, Nov 21, 2018 at 10:48:57AM -0600, Pierre-Louis Bossart wrote:
 > 
-> We have all assumed that it is essential to hold a page reference while
-> waiting on a page lock: partly to guarantee that there is still a struct
-> page when MEMORY_HOTREMOVE is configured, but also to protect against
-> reuse of the struct page going to someone who then holds the page locked
-> indefinitely, when the waiter can reasonably expect timely unlocking.
+> On 11/21/18 8:29 AM, Andy Shevchenko wrote:
+> > On Tue, Nov 20, 2018 at 03:36:40PM -0600, Pierre-Louis Bossart wrote:
+> > > Check immediately if the DSP can be found, bail and avoid doing inits
+> > > to enable legacy fallback without delay.
+> > It does slightly more than described. Please do either remove unrelated changes, or fill the gap in the commit message. In the latter case it may require to split patch to two.
+> ok, maybe I should change the commit message since there are really two test
+> conditions: DSP can be found and DSP streams found. The code really does
+> just that, nothing else.
 
-I would add the following for the "problem statement". Feel free to
-reuse per your preference:
-"
-An elevated reference count, however, stands in the way of migration and
-forces it to fail with a bad timing. This is especially a problem for
-memory offlining which retries for ever (or until the operation is
-terminated from userspace) because a heavy refault workload can trigger
-essentially an endless loop of migration failures. Therefore
-__migration_entry_wait is essentially harmful for the even it is waiting
-for.
-"
+How shuffling DMA mask related to any?
 
-> But in fact, so long as wait_on_page_bit_common() does the put_page(),
-> and is careful not to rely on struct page contents thereafter, there is
-> no need to hold a reference to the page while waiting on it.  That does
-> mean that this case cannot go back through the loop: but that's fine for
-> the page migration case, and even if used more widely, is limited by the
-> "Stop walking if it's locked" optimization in wake_page_function().
+> > > Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> > > ---
+> > >   sound/soc/intel/skylake/skl.c | 26 +++++++++++++++++---------
+> > >   1 file changed, 17 insertions(+), 9 deletions(-)
+> > > 
+> > > diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
+> > > index df36b8fe6d5e..1d7146773d19 100644
+> > > --- a/sound/soc/intel/skylake/skl.c
+> > > +++ b/sound/soc/intel/skylake/skl.c
+> > > @@ -931,6 +931,12 @@ static int skl_first_init(struct hdac_bus *bus)
+> > >   	snd_hdac_bus_parse_capabilities(bus);
+> > > +	/* check if dsp is there */
+> > > +	if (!bus->ppcap) {
+> > > +		dev_err(bus->dev, "bus ppcap not set, DSP not present?\n");
+> > > +		return -ENODEV;
+> > > +	}
+> > > +
+> > >   	if (skl_acquire_irq(bus, 0) < 0)
+> > >   		return -EBUSY;
+> > > @@ -940,23 +946,25 @@ static int skl_first_init(struct hdac_bus *bus)
+> > >   	gcap = snd_hdac_chip_readw(bus, GCAP);
+> > >   	dev_dbg(bus->dev, "chipset global capabilities = 0x%x\n", gcap);
+> > > -	/* allow 64bit DMA address if supported by H/W */
+> > > -	if (!dma_set_mask(bus->dev, DMA_BIT_MASK(64))) {
+> > > -		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(64));
+> > > -	} else {
+> > > -		dma_set_mask(bus->dev, DMA_BIT_MASK(32));
+> > > -		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(32));
+> > > -	}
+> > > -
+> > >   	/* read number of streams from GCAP register */
+> > >   	cp_streams = (gcap >> 8) & 0x0f;
+> > >   	pb_streams = (gcap >> 12) & 0x0f;
+> > > -	if (!pb_streams && !cp_streams)
+> > > +	if (!pb_streams && !cp_streams) {
+> > > +		dev_err(bus->dev, "no streams found in GCAP definitions?\n");
+> > >   		return -EIO;
+> > > +	}
+> > >   	bus->num_streams = cp_streams + pb_streams;
+> > > +	/* allow 64bit DMA address if supported by H/W */
+> > > +	if (!dma_set_mask(bus->dev, DMA_BIT_MASK(64))) {
+> > > +		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(64));
+> > > +	} else {
+> > > +		dma_set_mask(bus->dev, DMA_BIT_MASK(32));
+> > > +		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(32));
+> > > +	}
+> > > +
+> > >   	/* initialize streams */
+> > >   	snd_hdac_ext_stream_init_all
+> > >   		(bus, 0, cp_streams, SNDRV_PCM_STREAM_CAPTURE);
+> > > -- 
+> > > 2.17.1
+> > > 
 
-I would appreciate this would be more explicit about the existence of
-the elevated-ref-count problem but it reduces it to a tiny time window
-compared to the whole time the waiter is blocked. So a great
-improvement.
-
-> Add interface put_and_wait_on_page_locked() to do this, using negative
-> value of the lock arg to wait_on_page_bit_common() to implement it.
-> No interruptible or killable variant needed yet, but they might follow:
-> I have a vague notion that reporting -EINTR should take precedence over
-> return from wait_on_page_bit_common() without knowing the page state,
-> so arrange it accordingly - but that may be nothing but pedantic.
-> 
-> shrink_page_list()'s __ClearPageLocked(): that was a surprise!
-
-and I can imagine a bad one. Do we really have to be so clever here?
-The unlock_page went away in the name of performance (a978d6f521063)
-and I would argue that this is a slow path where this is just not worth
-it.
-
-> this
-> survived a lot of testing before that showed up.  It does raise the
-> question: should is_page_cache_freeable() and __remove_mapping() now
-> treat a PG_waiters page as if an extra reference were held?  Perhaps,
-> but I don't think it matters much, since shrink_page_list() already
-> had to win its trylock_page(), so waiters are not very common there: I
-> noticed no difference when trying the bigger change, and it's surely not
-> needed while put_and_wait_on_page_locked() is only for page migration.
-> 
-> Signed-off-by: Hugh Dickins <hughd@google.com>
-
-The patch looks good to me - quite ugly but it doesn't make the existing
-code much worse.
-
-With the problem described Vlastimil fixed, feel free to add
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-And thanks for a prompt patch. This is something I've been chasing for
-quite some time. __migration_entry_wait came to my radar only recently
-because this is an extremely volatile area.
 -- 
-Michal Hocko
-SUSE Labs
+With Best Regards,
+Andy Shevchenko
+
+
