@@ -2,61 +2,60 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B32C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BECC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:23:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE3C62087E
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:20:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46BC22087E
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:23:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NbULccdh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE3C62087E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dsyye0PM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46BC22087E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbeKUPxw (ORCPT
+        id S1727807AbeKUP4R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 10:53:52 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44277 "EHLO
+        Wed, 21 Nov 2018 10:56:17 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39970 "EHLO
         mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbeKUPxw (ORCPT
+        with ESMTP id S1726149AbeKUP4R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 10:53:52 -0500
-Received: by mail-pl1-f194.google.com with SMTP id s5-v6so3716400plq.11
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 21:20:56 -0800 (PST)
+        Wed, 21 Nov 2018 10:56:17 -0500
+Received: by mail-pl1-f194.google.com with SMTP id b22-v6so3726638pls.7
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 21:23:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=dLEOOOvU1S8wrzusm/vDttLM/caUgFpmaRqEayFjTPU=;
-        b=NbULccdhf7U1wVaS0oyDGykiumtDQCapIiBJOgEZ4EdUZPHAThHJjmaJCmWuh/TRp0
-         DnV7opNPjAQx4h3z6iGDW2iaXYwDNkkZI6/J/USfaoG9RZsaSpbZlD1q4HOfWMoW9epB
-         P9StL3zyCPQGey3OGtihB3sLAhcRHTSn3zSiw=
+        bh=ctP0ZBSoxyr2kkgc9TV+y1f2DaOQ78Hgz26J7km817w=;
+        b=dsyye0PMYRtntBuiDrX0Mg8zosiYpt+JyuOrIXl+V6MVvaaD+QYFquBkbXtF+zmG2k
+         a6KRqzEGWaBav9cHh5YfDJ7VTCxaFZxJKgSMhDhpnlojR7F0wdMTzbRn5ib4JpKpRouD
+         stshEu+dOgb1OmkjG39e5D6ornDp5ogkh/mn4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dLEOOOvU1S8wrzusm/vDttLM/caUgFpmaRqEayFjTPU=;
-        b=Lhy54pzvPs/Y+babiQmDKZivcFHxr9lcK0jmt9cLv+9zBwcWd5FwzaEEbrD9mP5PxT
-         VYsaPvjT1YToNDEYRlAYPGJmTJM9WoYDK7USsFvxPFYip3/t6rugaGeUkRGPLANV//jZ
-         hBiF6G5Bqto008yTdN0Os3gBIhs/nDkoIRQaeqcKmfDNPm93PAdACiHgYa5/E2MGaXLM
-         Bw8Dete2UvyQjwmbP6u4DFL6cII/Nb2ZH1XrqGp8+KM8b1pZhkXKekdxpGrBkUCsKnoK
-         ouIwhyh8VNc2RHQPyJLuSOaIfmzvB4n+T2ugsjlq0M7p9DYtNPL+WODhfSpcMt9ixsqR
-         9mkg==
-X-Gm-Message-State: AA+aEWaBsF83HNWzNYYElXnOEONQ3Q8M2gEU+JX+hoPX68Cz6BN9q6QJ
-        A6O4p8RnK4kx0ogibmEM+4GVdFY7D3U=
-X-Google-Smtp-Source: AFSGD/WsHjxtUMfHoSqd7UbJESWy6TQwMXTEpiaq7gZy+x4v+YuG1roqFGG4kU6djck9bw8E0hHBPw==
-X-Received: by 2002:a63:8043:: with SMTP id j64mr4728492pgd.405.1542777656204;
-        Tue, 20 Nov 2018 21:20:56 -0800 (PST)
+        bh=ctP0ZBSoxyr2kkgc9TV+y1f2DaOQ78Hgz26J7km817w=;
+        b=groYJb5lsjQeIkOvHRIbAOlutogh0qQEW4Ryv2gVjATsaC+R8xAGiXeNXjjckmvr9a
+         SWP4g0KU9Vf66l6WElTefdfATU3UgLZaSrA2Iri2RdRznvVdGAnL3vtjFidNxDzbxzAt
+         oItM4hRSqn5tagE8I4xpabUm8b1B/Ejbu07xcAo26odN/enbngMaaqD1om7s+9cvHoZ7
+         SsqAbUplh/71hsGeu8g0XsBnCqtq0rNEr15VVX7KMj8FEPivgSYY2xasohE22YQ1k6kS
+         CsM9RXQIIO+CnzDZf9x5WB1c8TCseD3XS2Q1ohHlrI59mwyBiL+km5FwvR/S1Nb2kxUz
+         YDSg==
+X-Gm-Message-State: AA+aEWbNy7kAk5psUKFkc/d4D39COdPNzf6x8cyDIpAN4Hmk855ZN1CQ
+        Pb5znIuAzWoEvoeZTVKB32XElw==
+X-Google-Smtp-Source: AFSGD/V5Ih6i/hxmfXYix1OM/GCAacyagWUGJno5ffVupipzdifAPaQnx7BrroNl5xG+CZO73I0j/w==
+X-Received: by 2002:a63:df13:: with SMTP id u19mr4680613pgg.294.1542777801121;
+        Tue, 20 Nov 2018 21:23:21 -0800 (PST)
 Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id x7sm44397354pga.68.2018.11.20.21.20.55
+        by smtp.gmail.com with ESMTPSA id b62-v6sm52891682pfa.159.2018.11.20.21.23.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 21:20:55 -0800 (PST)
-Date:   Wed, 21 Nov 2018 10:50:53 +0530
+        Tue, 20 Nov 2018 21:23:20 -0800 (PST)
+Date:   Wed, 21 Nov 2018 10:53:18 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Anson Huang <anson.huang@nxp.com>
 Cc:     "rui.zhang@intel.com" <rui.zhang@intel.com>,
@@ -67,7 +66,7 @@ Cc:     "rui.zhang@intel.com" <rui.zhang@intel.com>,
         "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
         dl-linux-imx <linux-imx@nxp.com>
 Subject: Re: [PATCH V4] thermal: imx: fix for dependency on cpu-freq
-Message-ID: <20181121052053.hcc3xgfx4dgkydd2@vireshk-i7>
+Message-ID: <20181121052318.ctenjncvdtvneynl@vireshk-i7>
 References: <1542776563-6716-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -80,68 +79,6 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 21-11-18, 05:08, Anson Huang wrote:
-> The thermal driver is a standalone driver for monitoring SoC temperature
-> by enabling thermal sensor, so it can be enabled even when CONFIG_CPU_FREQ
-> is NOT set. So remove the dependency with CPU_THERMAL.
-> 
-> Introduce dummy function of legacy cooling register/unregister to make
-> thermal driver probe successfully when CONFIG_CPU_FREQ is NOT set.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> changes since V3:
-> 	rename the label of "cpufreq_put" with "legacy_cleanup".
->  drivers/thermal/Kconfig       |  2 +-
->  drivers/thermal/imx_thermal.c | 44 +++++++++++++++++++++++++++++++------------
->  2 files changed, 33 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> index 5422523..93bd3bb 100644
-> --- a/drivers/thermal/Kconfig
-> +++ b/drivers/thermal/Kconfig
-> @@ -212,7 +212,7 @@ config HISI_THERMAL
->  
->  config IMX_THERMAL
->  	tristate "Temperature sensor driver for Freescale i.MX SoCs"
-> -	depends on (ARCH_MXC && CPU_THERMAL) || COMPILE_TEST
-> +	depends on ARCH_MXC || COMPILE_TEST
->  	depends on NVMEM || !NVMEM
->  	depends on MFD_SYSCON
->  	depends on OF
-> diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
-> index 1566154..328ee05 100644
-> --- a/drivers/thermal/imx_thermal.c
-> +++ b/drivers/thermal/imx_thermal.c
-> @@ -648,15 +648,24 @@ static const struct of_device_id of_imx_thermal_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, of_imx_thermal_match);
->  
-> +#ifdef CONFIG_CPU_FREQ
->  /*
->   * Create cooling device in case no #cooling-cells property is available in
->   * CPU node
->   */
->  static int imx_thermal_register_legacy_cooling(struct imx_thermal_data *data)
->  {
-> -	struct device_node *np = of_get_cpu_node(data->policy->cpu, NULL);
-> +	struct device_node *np;
->  	int ret;
->  
-> +	data->policy = cpufreq_cpu_get(0);
-> +	if (!data->policy) {
-> +		pr_debug("%s: CPUFreq policy not found\n", __func__);
-> +		return -EPROBE_DEFER;
-> +	}
-> +
-> +	np = of_get_cpu_node(data->policy->cpu, NULL);
-> +
->  	if (!np || !of_find_property(np, "#cooling-cells", NULL)) {
->  		data->cdev = cpufreq_cooling_register(data->policy);
->  		if (IS_ERR(data->cdev)) {
-> @@ -669,6 +678,22 @@ static int imx_thermal_register_legacy_cooling(struct imx_thermal_data *data)
->  	return 0;
->  }
->  
 > +static void imx_thermal_unregister_legacy_cooling(struct imx_thermal_data *data)
 > +{
 > +	cpufreq_cooling_unregister(data->cdev);
@@ -152,78 +89,9 @@ On 21-11-18, 05:08, Anson Huang wrote:
 > +{
 > +	return 0;
 > +}
-> +
-> +static inline void imx_thermal_unregister_legacy_cooling(struct imx_thermal_data *data)
-> +{
-> +}
-> +#endif
-> +
->  static int imx_thermal_probe(struct platform_device *pdev)
->  {
->  	struct imx_thermal_data *data;
-> @@ -743,13 +768,9 @@ static int imx_thermal_probe(struct platform_device *pdev)
->  	regmap_write(map, data->socdata->sensor_ctrl + REG_SET,
->  		     data->socdata->power_down_mask);
->  
-> -	data->policy = cpufreq_cpu_get(0);
-> -	if (!data->policy) {
-> -		pr_debug("%s: CPUFreq policy not found\n", __func__);
-> -		return -EPROBE_DEFER;
-> -	}
-> -
->  	ret = imx_thermal_register_legacy_cooling(data);
-> +	if (ret == -EPROBE_DEFER)
-> +		return ret;
->  	if (ret) {
 
-Sorry for not noticing earlier, but wouldn't it be better to move the
-EPROBE_DEFER check inside of this if block ? Otherwise we will have
-two conditional blocks in the success (normal) case.
-
-Something like this:
-
-if (ret) {
-        if (ret == -EPROBE_DEFER)
-                return ret;
-
-        dev_err(..);
-        ...
-}
-
->  		dev_err(&pdev->dev,
->  			"failed to register cpufreq cooling device: %d\n", ret);
-> @@ -762,7 +783,7 @@ static int imx_thermal_probe(struct platform_device *pdev)
->  		if (ret != -EPROBE_DEFER)
->  			dev_err(&pdev->dev,
->  				"failed to get thermal clk: %d\n", ret);
-> -		goto cpufreq_put;
-> +		goto legacy_cleanup;
->  	}
->  
->  	/*
-> @@ -775,7 +796,7 @@ static int imx_thermal_probe(struct platform_device *pdev)
->  	ret = clk_prepare_enable(data->thermal_clk);
->  	if (ret) {
->  		dev_err(&pdev->dev, "failed to enable thermal clk: %d\n", ret);
-> -		goto cpufreq_put;
-> +		goto legacy_cleanup;
->  	}
->  
->  	data->tz = thermal_zone_device_register("imx_thermal_zone",
-> @@ -829,9 +850,8 @@ static int imx_thermal_probe(struct platform_device *pdev)
->  	thermal_zone_device_unregister(data->tz);
->  clk_disable:
->  	clk_disable_unprepare(data->thermal_clk);
-> -cpufreq_put:
-> -	cpufreq_cooling_unregister(data->cdev);
-> -	cpufreq_cpu_put(data->policy);
-> +legacy_cleanup:
-> +	imx_thermal_unregister_legacy_cooling(data);
->  
->  	return ret;
->  }
-> -- 
-> 2.7.4
+And now that you are going to send V5, please add a blank line before
+and after #else here.
 
 -- 
 viresh
