@@ -2,142 +2,201 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C1FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0F6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5810521479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:35:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BrkKxZfz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5810521479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C2DB2146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:36:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C2DB2146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731114AbeKVBJ5 (ORCPT
+        id S1730806AbeKVBLQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 20:09:57 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34591 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729632AbeKVBJ5 (ORCPT
+        Wed, 21 Nov 2018 20:11:16 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45605 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728843AbeKVBLQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 20:09:57 -0500
-Received: by mail-pl1-f193.google.com with SMTP id f12-v6so5813543plo.1;
-        Wed, 21 Nov 2018 06:35:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=m8MNf0u08jMZjyhxYBeNt5XJ/cMTLb1yQeYolFPkZ/c=;
-        b=BrkKxZfzz9AdmwdBMKt9IrrYUMenxNTYqHCTzrYqIC8DDXd8KHJMlDFca4aPGhuPtw
-         pXYhbvk86Nw+dwonSjX1B4jQsAh0tY1X0Ad6LYtuDwi7XjAlWwK8Tm0L6f0HVtMQ+jxI
-         nRWkADrVzqadbBQP67NIMLN4Fpct6lZ7KynKPmj54g7MtwMlwAFbC7c9B2BLA5Ee1b1v
-         4yLFRH1Yv/mOziegg9m4uEIYeFlrs/DxehYWB2f+nJb6h6R6xl1TwmV35/bGgvDZh6pU
-         4M8V1gaHl/nEVg1Qb2BQtPVGEH3W8LdsxJEKTutel5QNKSqUkxKNCQ6bawH9K80tyTex
-         knPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=m8MNf0u08jMZjyhxYBeNt5XJ/cMTLb1yQeYolFPkZ/c=;
-        b=kLeFS2YiT5DhEvhwnqrQXbasC64xALHOYNfaqqtSNvD3gh4/nU/k6n+NChrJGtcCRJ
-         btVimEHEVkijdiLNV3mX2qL0p5IOocTE8Ipd+QmquWntGIw4Q4mC1DZfmAaYyWPBWpB8
-         f40rbohxK4pkWBekhlr8zKRSLEAgbD5VS3rxW1+kO98tExnmcOFGNInSg/q2jfqNBd5f
-         wZTxYluoKQnFqg7z3D0bLeZkhYvln+doUJ7nn3IAUMuJhzlP2mWqT7WKl/nokeo1jPgG
-         m4WDzPROOneX2Dm8/r8BBwtOTsEY4FUrdrxTht4zGpBHtFkxqBLgrIrJbjFGLNyYgP+n
-         XWyg==
-X-Gm-Message-State: AA+aEWYm1s7op+JwsB/wJKUroduwIp+nCsAF/EHeWdKCbk643ZOdxG6+
-        OJm4d7us9XjSwnc0RpMMRUA=
-X-Google-Smtp-Source: AFSGD/Wyq9L8+TkAo2d0ksTAEcBhJ0B3bi6BnQ+tZB/YxsA3I9ooaduyRQtdPeNRWNqv7cKvIe5DKQ==
-X-Received: by 2002:a63:b4c:: with SMTP id a12mr6293615pgl.131.1542810916640;
-        Wed, 21 Nov 2018 06:35:16 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id b26sm2905246pfe.91.2018.11.21.06.35.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 06:35:15 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     dmitry.torokhov@gmail.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] Input: i8042 add of_node_put()
-Date:   Wed, 21 Nov 2018 09:35:13 -0500
-Message-Id: <20181121143513.22961-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 21 Nov 2018 20:11:16 -0500
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1gPTcA-0002yK-MB; Wed, 21 Nov 2018 15:36:26 +0100
+Received: from [IPv6:2003:c7:71e:febd:c591:f55c:bb67:31f5] (unknown [IPv6:2003:c7:71e:febd:c591:f55c:bb67:31f5])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client CN "mkl@blackshift.org", Issuer "StartCom Class 1 Client CA" (not verified))
+        (Authenticated sender: mkl@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id B59DE391F47;
+        Wed, 21 Nov 2018 14:36:23 +0000 (UTC)
+To:     Joakim Zhang <qiangqing.zhang@nxp.com>,
+        "wg@grandegger.com" <wg@grandegger.com>,
+        "davem@davemloft.net" <davem@davemloft.net>
+Cc:     "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>
+References: <20181019094326.28185-1-qiangqing.zhang@nxp.com>
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mkl@pengutronix.de; prefer-encrypt=mutual; keydata=
+ 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
+Subject: Re: [PATCH] can: flexcan: Implement CAN Runtime PM
+Message-ID: <24a43a20-7302-c449-06b3-5ee8f6c051a0@pengutronix.de>
+Date:   Wed, 21 Nov 2018 15:36:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181019094326.28185-1-qiangqing.zhang@nxp.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="N1L7IZFo3w1vy5ZVSXaomCo97WEV248H6"
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-use of_node_put() to release the refcount.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--N1L7IZFo3w1vy5ZVSXaomCo97WEV248H6
+Content-Type: multipart/mixed; boundary="pwLVP2vQ93tDZ7QegnZmjuh8YZF3IYYuK";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Joakim Zhang <qiangqing.zhang@nxp.com>,
+ "wg@grandegger.com" <wg@grandegger.com>,
+ "davem@davemloft.net" <davem@davemloft.net>
+Cc: "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ dl-linux-imx <linux-imx@nxp.com>, "A.s. Dong" <aisheng.dong@nxp.com>
+Message-ID: <24a43a20-7302-c449-06b3-5ee8f6c051a0@pengutronix.de>
+Subject: Re: [PATCH] can: flexcan: Implement CAN Runtime PM
+References: <20181019094326.28185-1-qiangqing.zhang@nxp.com>
+In-Reply-To: <20181019094326.28185-1-qiangqing.zhang@nxp.com>
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/input/serio/i8042-sparcio.h | 24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+--pwLVP2vQ93tDZ7QegnZmjuh8YZF3IYYuK
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/input/serio/i8042-sparcio.h b/drivers/input/serio/i8042-sparcio.h
-index 796289846204..5495bc035518 100644
---- a/drivers/input/serio/i8042-sparcio.h
-+++ b/drivers/input/serio/i8042-sparcio.h
-@@ -108,18 +108,21 @@ static struct platform_driver sparc_i8042_driver = {
- 
- static int __init i8042_platform_init(void)
- {
-+	int rc;
- 	struct device_node *root = of_find_node_by_path("/");
- 
- 	if (!strcmp(root->name, "SUNW,JavaStation-1")) {
- 		/* Hardcoded values for MrCoffee.  */
- 		i8042_kbd_irq = i8042_aux_irq = 13 | 0x20;
- 		kbd_iobase = ioremap(0x71300060, 8);
--		if (!kbd_iobase)
--			return -ENODEV;
-+		if (!kbd_iobase){
-+			rc = -ENODEV;
-+			goto out;
-+		}
- 	} else {
--		int err = platform_driver_register(&sparc_i8042_driver);
--		if (err)
--			return err;
-+		rc = platform_driver_register(&sparc_i8042_driver);
-+		if (rc)
-+			goto out;
- 
- 		if (i8042_kbd_irq == -1 ||
- 		    i8042_aux_irq == -1) {
-@@ -127,13 +130,18 @@ static int __init i8042_platform_init(void)
- 				of_iounmap(kbd_res, kbd_iobase, 8);
- 				kbd_iobase = (void __iomem *) NULL;
- 			}
--			return -ENODEV;
-+			rc = -ENODEV;
-+			goto out;
- 		}
- 	}
- 
- 	i8042_reset = I8042_RESET_ALWAYS;
- 
--	return 0;
-+	rc = 0;
-+out:
-+	of_node_put(root);
-+
-+	return rc;
- }
- 
- static inline void i8042_platform_exit(void)
-@@ -142,6 +150,8 @@ static inline void i8042_platform_exit(void)
- 
- 	if (strcmp(root->name, "SUNW,JavaStation-1"))
- 		platform_driver_unregister(&sparc_i8042_driver);
-+
-+	of_node_put(root);
- }
- 
- #else /* !CONFIG_PCI */
--- 
-2.17.0
+On 10/19/18 11:45 AM, Joakim Zhang wrote:
+> From: Dong Aisheng <aisheng.dong@nxp.com>
+>=20
+> Flexcan will be disabled during suspend if no wakeup function required
+> and enabled after resume accordingly. During this period, we could
+> explicitly disable clocks.
+>=20
+> Implement Runtime PM which will:
+> 1) Keep device in suspend state (clocks disabled) if it's not openned
+> 2) Make Power Domain framework be able to shutdown the corresponding po=
+wer
+> domain of this device.
 
+Without CONFIG_PM the device fails to probe:
+
+> [  214.420606] flexcan 2090000.flexcan: 2090000.flexcan supply xceiver =
+not found, using dummy regulator
+> [  214.445952] flexcan 2090000.flexcan: Linked as a consumer to regulat=
+or.0
+> [  214.453448] flexcan 2090000.flexcan: registering netdev failed
+> [  214.459666] flexcan 2090000.flexcan: Dropping the link to regulator.=
+0
+> [  214.472066] flexcan: probe of 2090000.flexcan failed with error -110=
+
+
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--pwLVP2vQ93tDZ7QegnZmjuh8YZF3IYYuK--
+
+--N1L7IZFo3w1vy5ZVSXaomCo97WEV248H6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlv1bWMACgkQk9IU1zQo
+ZfHWswgAyHLljeXDdcQ80nVvPc3J/jzTOUqcRBJIP7RwQ3wUJvJH/vWX9H/T77Ht
+LuTcUfz081bJ5Dv4QcdAqQ80dbGtQjRhpmjVgbgDT3/q9hksyE+cq0JYXJ9gzusM
+CEUptfd1umX2fpkwNKuFz3BO34uChKcv0VZjRmuvHzKXJUf06Ho69K3/NcBLTV+O
+dJFMF1vdRg5/usnV5ZbinppaEONhvKmxXJNHpQcyBpSwCHqQySW+Afy7+tugczZ3
+xJ+1PR+6BPdtYOYzFnJyeu6tOxs+dyRwdQtqUfbpxeODHnlPZKqdY5pdVzyuwEGx
+Qr7VSEjhYBARxZRJXSTMZPwaQYzS8g==
+=ImTB
+-----END PGP SIGNATURE-----
+
+--N1L7IZFo3w1vy5ZVSXaomCo97WEV248H6--
