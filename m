@@ -2,80 +2,924 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EF4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5684C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B825214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:21:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B825214DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 679A7214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:23:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XwgFBmC/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 679A7214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733105AbeKVE5A (ORCPT
+        id S1733146AbeKVE7B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 23:57:00 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55132 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729128AbeKVE5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 23:57:00 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4A76AB0AF;
-        Wed, 21 Nov 2018 18:21:33 +0000 (UTC)
-Date:   Wed, 21 Nov 2018 19:21:31 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Tim Chen <tim.c.chen@linux.intel.com>
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        WoodhouseDavid <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        SchauflerCasey <casey.schaufler@intel.com>,
-        Dave Stewart <david.c.stewart@intel.com>
-Subject: Re: [PATCH 4.19 041/361] x86/speculation: Enable cross-hyperthread
- spectre v2 STIBP mitigation
-In-Reply-To: <41234d20-294f-d0f4-336c-64bf9fcb92a7@linux.intel.com>
-Message-ID: <nycvar.YFH.7.76.1811211920570.21108@cbobk.fhfr.pm>
-References: <20181111221619.915519183@linuxfoundation.org> <20181111221625.598298393@linuxfoundation.org> <alpine.LRH.2.00.1811211420130.18805@gjva.wvxbf.pm> <20181121135611.GA26411@kroah.com> <41234d20-294f-d0f4-336c-64bf9fcb92a7@linux.intel.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Wed, 21 Nov 2018 23:59:01 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46768 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731252AbeKVE7A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 23:59:00 -0500
+Received: by mail-pl1-f196.google.com with SMTP id t13so6630809ply.13
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 10:23:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=GLnK9wA19XHNd+BO5fjdB3xQ5Mw8j4/bMkHaLZVM9Xo=;
+        b=XwgFBmC/cSz7Hyt10ODM3Gm6rOiVln9K6srwGY20UEbLuUe0utsoVmEO1rzzLyGXGl
+         4NRA4XUrDPDh9MtjPgwyedRUyfHQlwoEqXWyjC6hEfjzbFfIEOrHWQeGDy80dmngHkqy
+         RPWWU/4nj5YQXv299AQGcKUL4614dzPpDF+hQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=GLnK9wA19XHNd+BO5fjdB3xQ5Mw8j4/bMkHaLZVM9Xo=;
+        b=omCNYZPOmzums+ffWb1i5a0GFWhT/Y7dCm6oMexSJVRSKouVfMIi3YFWWIZpjWX+7P
+         pt7VXH1GhWRBUBNKksQPBvwUHmDgnswLGrMFS1sjhx92hv0Og2yp8xIG/oy9G65aCkne
+         ZrYAsLAp5DwgfpRWPFawfD0PuUfoUeBWDGMsShQOyECetQccstA6E1jhFRKuFwD5GoOX
+         LFk99rtoVg4V2wOz9zENs3ZmXOTVbPVdVBxLZo+SEOI8OUzfbPJM874yQp8EnxpOONpS
+         XZKD4iY7eLAoA2OU0ROv/lBv40/fCp6QX5JH76xM4Uoe8Hil/hpz90kqGN9uvVDp4IH1
+         hQOw==
+X-Gm-Message-State: AA+aEWbPTYepkitpvwxsq9arUovJRAuuPcyCl5PhpcsFQn9LLms1azQt
+        FX9TkyBfn45+VEsgAEHZ2J/EWg==
+X-Google-Smtp-Source: AFSGD/UYsbPf600ZCYX2ZZUsX2rYdNKYSZJAQnnuEXv0wly365alSG6+PhyPE7qagjdWND481JsJZg==
+X-Received: by 2002:a17:902:4623:: with SMTP id o32-v6mr7838596pld.187.1542824613134;
+        Wed, 21 Nov 2018 10:23:33 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
+        by smtp.gmail.com with ESMTPSA id k38sm97992846pgb.33.2018.11.21.10.23.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 10:23:32 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Taniya Das <tdas@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <1542796967-5949-3-git-send-email-tdas@codeaurora.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, skannan@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
+        evgreen@google.com, Taniya Das <tdas@codeaurora.org>
+References: <1542796967-5949-1-git-send-email-tdas@codeaurora.org>
+ <1542796967-5949-3-git-send-email-tdas@codeaurora.org>
+Message-ID: <154282461163.88331.5242491967634867688@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v10 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
+Date:   Wed, 21 Nov 2018 10:23:31 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Nov 2018, Tim Chen wrote:
+Quoting Taniya Das (2018-11-21 02:42:47)
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index d5ee456..789b2e0 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -62,6 +62,7 @@ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)   +=3D omap-cpufreq=
+.o
+>  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)       +=3D pxa2xx-cpufreq.o
+>  obj-$(CONFIG_PXA3xx)                   +=3D pxa3xx-cpufreq.o
+>  obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)    +=3D qcom-cpufreq-kryo.o
+> +obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)      +=3D qcom-cpufreq-hw.o
 
-> > Is it reverted in Linus's tree?  If not, then anything that comes "later
-> > on" will not apply here, right?
-> > 
-> > I see the thread asking about this, but I got really conflicting
-> > messages here, and now it's in all of the latest releases, and no
-> > testing seems to have uncovered issues.  Is it just a "slow down"
-> > problem?
-> 
-> Greg,
-> 
-> It could be a big slow down in excess of 20% for some applications.
-> And cross sibling Spectre v2 attack is quite hard to pull off.
-> 
-> So till we have the accompanying patchset that only apply STIBP on processes
-> that really need it instead of universally, it should be withheld from
-> stable.
+This isn't alphabetically sorted.
 
-Agreed; it will be trivially reintroduced with the rest, once it's ready. 
-It's being built on top of that patch.
+>  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)      +=3D s3c2410-cpufreq.o
+>  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)      +=3D s3c2412-cpufreq.o
+>  obj-$(CONFIG_ARM_S3C2416_CPUFREQ)      +=3D s3c2416-cpufreq.o
+> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpu=
+freq-hw.c
+> new file mode 100644
+> index 0000000..6390e85
+> --- /dev/null
+> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+> @@ -0,0 +1,346 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/cpufreq.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_platform.h>
+> +
+> +#define LUT_MAX_ENTRIES                        40U
+> +#define CORE_COUNT_VAL(val)            (((val) & (GENMASK(18, 16))) >> 1=
+6)
+> +#define LUT_ROW_SIZE                   32
+> +#define CLK_HW_DIV                     2
+> +
+> +/* Register offsets */
+> +#define REG_ENABLE                     0x0
+> +#define REG_LUT_TABLE                  0x110
+> +#define REG_PERF_STATE                 0x920
+> +
+> +struct cpufreq_qcom {
+> +       struct cpufreq_frequency_table *table;
+> +       void __iomem *perf_base;
+> +       cpumask_t related_cpus;
+> +       unsigned int max_cores;
+> +       unsigned long xo_rate;
+> +       unsigned long cpu_hw_rate;
+> +};
+> +
+> +static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
+> +
+> +static int
+> +qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
+> +                            unsigned int index)
+> +{
+> +       struct cpufreq_qcom *c =3D policy->driver_data;
+> +
+> +       writel_relaxed(index, c->perf_base);
+> +
 
-Thanks,
+This isn't using the pointer directly though.
 
--- 
-Jiri Kosina
-SUSE Labs
+> +       return 0;
+> +}
+> +
+> +static unsigned int qcom_cpufreq_hw_get(unsigned int cpu)
+> +{
+> +       struct cpufreq_qcom *c;
+> +       struct cpufreq_policy *policy;
+> +       unsigned int index;
+> +
+> +       policy =3D cpufreq_cpu_get_raw(cpu);
+> +       if (!policy)
+> +               return 0;
+> +
+> +       c =3D policy->driver_data;
+> +
+> +       index =3D readl_relaxed(c->perf_base);
+> +       index =3D min(index, LUT_MAX_ENTRIES - 1);
+> +
+> +       return policy->freq_table[index].frequency;
+> +}
+> +
+> +static unsigned int
+> +qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
+> +                           unsigned int target_freq)
+> +{
+> +       struct cpufreq_qcom *c =3D policy->driver_data;
+> +       int index;
+> +
+> +       index =3D policy->cached_resolved_idx;
+> +       if (index < 0)
+> +               return 0;
+> +
+> +       writel_relaxed(index, c->perf_base);
+> +
+> +       return policy->freq_table[index].frequency;
+> +}
+> +
+> +static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
+> +{
+> +       struct cpufreq_qcom *c;
+> +
+> +       c =3D qcom_freq_domain_map[policy->cpu];
+> +       if (!c) {
+> +               pr_err("No scaling support for CPU%d\n", policy->cpu);
+> +               return -ENODEV;
+> +       }
+> +
+> +       cpumask_copy(policy->cpus, &c->related_cpus);
+> +
+> +       policy->fast_switch_possible =3D true;
+> +       policy->freq_table =3D c->table;
+> +       policy->driver_data =3D c;
+> +
+> +       return 0;
+> +}
+> +
+> +static struct freq_attr *qcom_cpufreq_hw_attr[] =3D {
+> +       &cpufreq_freq_attr_scaling_available_freqs,
+> +       &cpufreq_freq_attr_scaling_boost_freqs,
+> +       NULL
+> +};
+> +
+> +static struct cpufreq_driver cpufreq_qcom_hw_driver =3D {
+> +       .flags          =3D CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CH=
+ECK |
+> +                         CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
+> +       .verify         =3D cpufreq_generic_frequency_table_verify,
+> +       .target_index   =3D qcom_cpufreq_hw_target_index,
+> +       .get            =3D qcom_cpufreq_hw_get,
+> +       .init           =3D qcom_cpufreq_hw_cpu_init,
+> +       .fast_switch    =3D qcom_cpufreq_hw_fast_switch,
+> +       .name           =3D "qcom-cpufreq-hw",
+> +       .attr           =3D qcom_cpufreq_hw_attr,
+> +       .boost_enabled  =3D true,
+> +};
+> +
+> +static int qcom_cpufreq_hw_read_lut(struct platform_device *pdev,
+> +                                   struct cpufreq_qcom *c, void __iomem =
+*base)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       u32 data, src, lval, i, core_count, prev_cc, prev_freq, cur_freq;
+> +
+> +       c->table =3D devm_kcalloc(dev, LUT_MAX_ENTRIES + 1,
+> +                               sizeof(*c->table), GFP_KERNEL);
+> +       if (!c->table)
+> +               return -ENOMEM;
+> +
+> +       for (i =3D 0; i < LUT_MAX_ENTRIES; i++) {
+> +               data =3D readl_relaxed(base + REG_LUT_TABLE + i * LUT_ROW=
+_SIZE);
+> +               src =3D (data & GENMASK(31, 30)) >> 30;
+> +               lval =3D data & GENMASK(7, 0);
+> +               core_count =3D CORE_COUNT_VAL(data);
+
+CORE_COUNT_VAL is used in one place. Just inline it like the src and
+lval ones? Or better yet, use FIELD_GET helpers.
+
+> +
+> +               if (src)
+> +                       c->table[i].frequency =3D c->xo_rate * lval / 100=
+0;
+> +               else
+> +                       c->table[i].frequency =3D c->cpu_hw_rate / 1000;
+> +
+> +               cur_freq =3D c->table[i].frequency;
+
+Write this as:
+
+		if (src)
+			cur_freq =3D c->xo_rate * lval / 1000;
+		else
+			cur_freq =3D c->cpu_hw_rate / 1000;
+		=
+
+		c->table[i].frequency =3D cur_freq;
+
+for shorter lines.
+
+> +
+> +               dev_dbg(dev, "index=3D%d freq=3D%d, core_count %d\n",
+> +                       i, c->table[i].frequency, core_count);
+
+Use cur_freq instead of the long route?
+
+> +
+> +               if (core_count !=3D c->max_cores)
+> +                       cur_freq =3D CPUFREQ_ENTRY_INVALID;
+
+Don't we want to knock out the intermediate frequencies that also don't
+have the max_cores core_count? If so, I would expect there to be
+CPUFREQ_ENTRY_INVALID in the frequency table, but this isn't doing that.
+
+> +
+> +               /*
+> +                * Two of the same frequencies with the same core counts =
+means
+> +                * end of table.
+> +                */
+> +               if (i > 0 && c->table[i - 1].frequency =3D=3D
+> +                  c->table[i].frequency && prev_cc =3D=3D core_count) {
+> +                       struct cpufreq_frequency_table *prev =3D &c->tabl=
+e[i - 1];
+> +
+> +                       if (prev_freq =3D=3D CPUFREQ_ENTRY_INVALID)
+> +                               prev->flags =3D CPUFREQ_BOOST_FREQ;
+> +                       break;
+> +               }
+
+This is really hard to read.
+
+> +               prev_cc =3D core_count;
+> +               prev_freq =3D cur_freq;
+> +       }
+> +
+> +       c->table[i].frequency =3D CPUFREQ_TABLE_END;
+> +
+> +       return 0;
+> +}
+> +
+> +static int qcom_get_related_cpus(int index, struct cpumask *m)
+> +{
+> +       struct device_node *cpu_np;
+> +       struct of_phandle_args args;
+> +       int cpu, ret;
+> +
+> +       for_each_possible_cpu(cpu) {
+> +               cpu_np =3D of_cpu_device_node_get(cpu);
+> +               if (!cpu_np)
+> +                       continue;
+> +
+> +               ret =3D of_parse_phandle_with_args(cpu_np, "qcom,freq-dom=
+ain",
+> +                                                "#freq-domain-cells", 0,
+> +                                                 &args);
+> +               of_node_put(cpu_np);
+> +               if (ret < 0)
+> +                       continue;
+> +
+> +               if (index =3D=3D args.args[0])
+> +                       cpumask_set_cpu(cpu, m);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int qcom_cpu_resources_init(struct platform_device *pdev,
+> +                                  unsigned int cpu, int index,
+> +                                  unsigned long xo_rate,
+> +                                  unsigned long cpu_hw_rate)
+> +{
+> +       struct cpufreq_qcom *c;
+> +       struct resource *res;
+> +       struct device *dev =3D &pdev->dev;
+> +       void __iomem *base;
+> +       int ret, cpu_r;
+> +
+> +       if (qcom_freq_domain_map[cpu])
+> +               return 0;
+> +
+> +       c =3D devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
+> +       if (!c)
+> +               return -ENOMEM;
+> +
+> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, index);
+> +       base =3D devm_ioremap_resource(dev, res);
+> +       if (IS_ERR(base))
+> +               return PTR_ERR(base);
+> +
+> +       /* HW should be in enabled state to proceed */
+> +       if (!(readl_relaxed(base + REG_ENABLE) & 0x1)) {
+> +               dev_err(dev, "Domain-%d cpufreq hardware not enabled\n", =
+index);
+> +               return -ENODEV;
+> +       }
+> +
+> +       ret =3D qcom_get_related_cpus(index, &c->related_cpus);
+> +       if (ret) {
+> +               dev_err(dev, "Domain-%d failed to get related CPUs\n", in=
+dex);
+> +               return ret;
+> +       }
+> +
+> +       c->max_cores =3D cpumask_weight(&c->related_cpus);
+> +       if (!c->max_cores)
+> +               return -ENOENT;
+> +
+> +       c->xo_rate =3D xo_rate;
+> +       c->cpu_hw_rate =3D cpu_hw_rate;
+
+Why do we need to pass around these local variables in the structure?
+
+> +       c->perf_base =3D base + REG_PERF_STATE;
+> +
+> +       ret =3D qcom_cpufreq_hw_read_lut(pdev, c, base);
+> +       if (ret) {
+> +               dev_err(dev, "Domain-%d failed to read LUT\n", index);
+> +               return ret;
+> +       }
+> +
+> +       for_each_cpu(cpu_r, &c->related_cpus)
+> +               qcom_freq_domain_map[cpu_r] =3D c;
+> +
+> +       return 0;
+> +}
+> +
+> +static int qcom_resources_init(struct platform_device *pdev)
+> +{
+> +       struct device_node *cpu_np;
+> +       struct of_phandle_args args;
+> +       struct clk *clk;
+> +       unsigned int cpu;
+> +       unsigned long xo_rate, cpu_hw_rate;
+> +       int ret;
+> +
+> +       clk =3D clk_get(&pdev->dev, "xo");
+> +       if (IS_ERR(clk))
+> +               return PTR_ERR(clk);
+> +
+> +       xo_rate =3D clk_get_rate(clk);
+> +
+> +       clk_put(clk);
+> +
+> +       clk =3D clk_get(&pdev->dev, "gcc_cpuss_gpll0_clk_src");
+
+I didn't see this in the binding. And it doesn't make sense still
+because now it's a global clk name. It can't be called "safe" or
+"backup" or something like that?
+
+> +       if (IS_ERR(clk))
+> +               return PTR_ERR(clk);
+> +
+> +       cpu_hw_rate =3D clk_get_rate(clk) / CLK_HW_DIV;
+> +
+> +       clk_put(clk);
+> +
+> +       for_each_possible_cpu(cpu) {
+> +               cpu_np =3D of_cpu_device_node_get(cpu);
+> +               if (!cpu_np) {
+> +                       dev_dbg(&pdev->dev, "Failed to get cpu %d device\=
+n",
+> +                               cpu);
+> +                       continue;
+> +               }
+> +
+> +               ret =3D of_parse_phandle_with_args(cpu_np, "qcom,freq-dom=
+ain",
+> +                                                "#freq-domain-cells", 0,
+> +                                                 &args);
+> +               of_node_put(cpu_np);
+> +               if (ret < 0)
+> +                       return ret;
+> +
+> +               ret =3D qcom_cpu_resources_init(pdev, cpu, args.args[0],
+> +                                             xo_rate, cpu_hw_rate);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int qcom_cpufreq_hw_driver_probe(struct platform_device *pdev)
+> +{
+> +       int rc;
+> +
+> +       /* Get the bases of cpufreq for domains */
+> +       rc =3D qcom_resources_init(pdev);
+> +       if (rc) {
+> +               dev_err(&pdev->dev, "CPUFreq resource init failed\n");
+> +               return rc;
+> +       }
+
+Not sure why this is split out of the probe function.
+
+> +
+> +       rc =3D cpufreq_register_driver(&cpufreq_qcom_hw_driver);
+> +       if (rc) {
+> +               dev_err(&pdev->dev, "CPUFreq HW driver failed to register=
+\n");
+> +               return rc;
+> +       }
+> +
+> +       dev_dbg(&pdev->dev, "QCOM CPUFreq HW driver initialized\n");
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id qcom_cpufreq_hw_match[] =3D {
+> +       { .compatible =3D "qcom,cpufreq-hw" },
+> +       {}
+> +};
+
+Missing MODULE_DEVICE_TABLE here.
+
+> +
+> +static struct platform_driver qcom_cpufreq_hw_driver =3D {
+> +       .probe =3D qcom_cpufreq_hw_driver_probe,
+> +       .driver =3D {
+> +               .name =3D "qcom-cpufreq-hw",
+> +               .of_match_table =3D qcom_cpufreq_hw_match,
+> +       },
+> +};
+> +
+> +static int __init qcom_cpufreq_hw_init(void)
+> +{
+> +       return platform_driver_register(&qcom_cpufreq_hw_driver);
+> +}
+> +subsys_initcall(qcom_cpufreq_hw_init);
+> +
+> +static void __exit qcom_cpufreq_hw_exit(void)
+> +{
+> +       cpufreq_unregister_driver(&cpufreq_qcom_hw_driver);
+
+Why isn't this done in driver remove?
+
+> +       platform_driver_unregister(&qcom_cpufreq_hw_driver);
+> +}
+> +module_exit(qcom_cpufreq_hw_exit);
+> +
+> +MODULE_DESCRIPTION("QTI CPUFREQ HW Driver");
+> +MODULE_LICENSE("GPL v2");
+
+Here's a patch I tested out to do all this. Simple testing shows it
+works. If you need my sign-off to fold it in here you go.
+
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+
+ drivers/cpufreq/Makefile          |   2 +-
+ drivers/cpufreq/qcom-cpufreq-hw.c | 147 ++++++++++++++++++----------------=
+----
+ 2 files changed, 69 insertions(+), 80 deletions(-)
+
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 789b2e06f3ba..08c071be2491 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -61,8 +61,8 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+=3D mvebu-cpufreq.o
+ obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+=3D omap-cpufreq.o
+ obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+=3D pxa2xx-cpufreq.o
+ obj-$(CONFIG_PXA3xx)			+=3D pxa3xx-cpufreq.o
+-obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+=3D qcom-cpufreq-kryo.o
+ obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+=3D qcom-cpufreq-hw.o
++obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+=3D qcom-cpufreq-kryo.o
+ obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+=3D s3c2410-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+=3D s3c2412-cpufreq.o
+ obj-$(CONFIG_ARM_S3C2416_CPUFREQ)	+=3D s3c2416-cpufreq.o
+diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufr=
+eq-hw.c
+index 6390e85df1b3..105c9fe69a64 100644
+--- a/drivers/cpufreq/qcom-cpufreq-hw.c
++++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+@@ -3,6 +3,7 @@
+  * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+  */
+ =
+
++#include <linux/bitfield.h>
+ #include <linux/cpufreq.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+@@ -11,7 +12,9 @@
+ #include <linux/of_platform.h>
+ =
+
+ #define LUT_MAX_ENTRIES			40U
+-#define CORE_COUNT_VAL(val)		(((val) & (GENMASK(18, 16))) >> 16)
++#define LUT_SRC				GENMASK(31, 30)
++#define LUT_L_VAL			GENMASK(7, 0)
++#define LUT_CORE_COUNT			GENMASK(18, 16)
+ #define LUT_ROW_SIZE			32
+ #define CLK_HW_DIV			2
+ =
+
+@@ -24,27 +27,23 @@ struct cpufreq_qcom {
+ 	struct cpufreq_frequency_table *table;
+ 	void __iomem *perf_base;
+ 	cpumask_t related_cpus;
+-	unsigned int max_cores;
+-	unsigned long xo_rate;
+-	unsigned long cpu_hw_rate;
+ };
+ =
+
+ static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
+ =
+
+-static int
+-qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
+-			     unsigned int index)
++static int qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
++					unsigned int index)
+ {
+-	struct cpufreq_qcom *c =3D policy->driver_data;
++	void __iomem *perf_base =3D policy->driver_data;
+ =
+
+-	writel_relaxed(index, c->perf_base);
++	writel_relaxed(index, perf_base);
+ =
+
+ 	return 0;
+ }
+ =
+
+ static unsigned int qcom_cpufreq_hw_get(unsigned int cpu)
+ {
+-	struct cpufreq_qcom *c;
++	void __iomem *perf_base;
+ 	struct cpufreq_policy *policy;
+ 	unsigned int index;
+ =
+
+@@ -52,26 +51,25 @@ static unsigned int qcom_cpufreq_hw_get(unsigned int cp=
+u)
+ 	if (!policy)
+ 		return 0;
+ =
+
+-	c =3D policy->driver_data;
++	perf_base =3D policy->driver_data;
+ =
+
+-	index =3D readl_relaxed(c->perf_base);
++	index =3D readl_relaxed(perf_base);
+ 	index =3D min(index, LUT_MAX_ENTRIES - 1);
+ =
+
+ 	return policy->freq_table[index].frequency;
+ }
+ =
+
+-static unsigned int
+-qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
+-			    unsigned int target_freq)
++static unsigned int qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *pol=
+icy,
++						unsigned int target_freq)
+ {
+-	struct cpufreq_qcom *c =3D policy->driver_data;
++	void __iomem *perf_base =3D policy->driver_data;
+ 	int index;
+ =
+
+ 	index =3D policy->cached_resolved_idx;
+ 	if (index < 0)
+ 		return 0;
+ =
+
+-	writel_relaxed(index, c->perf_base);
++	writel_relaxed(index, perf_base);
+ =
+
+ 	return policy->freq_table[index].frequency;
+ }
+@@ -90,7 +88,7 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy=
+ *policy)
+ =
+
+ 	policy->fast_switch_possible =3D true;
+ 	policy->freq_table =3D c->table;
+-	policy->driver_data =3D c;
++	policy->driver_data =3D c->perf_base;
+ =
+
+ 	return 0;
+ }
+@@ -114,11 +112,12 @@ static struct cpufreq_driver cpufreq_qcom_hw_driver =
+=3D {
+ 	.boost_enabled	=3D true,
+ };
+ =
+
+-static int qcom_cpufreq_hw_read_lut(struct platform_device *pdev,
+-				    struct cpufreq_qcom *c, void __iomem *base)
++static int qcom_cpufreq_hw_read_lut(struct device *dev, struct cpufreq_qco=
+m *c,
++				    void __iomem *base, unsigned long xo_rate,
++				    unsigned long cpu_hw_rate)
+ {
+-	struct device *dev =3D &pdev->dev;
+-	u32 data, src, lval, i, core_count, prev_cc, prev_freq, cur_freq;
++	u32 data, src, lval, i, core_count, prev_cc, prev_freq, freq;
++	unsigned int max_cores =3D cpumask_weight(&c->related_cpus);
+ =
+
+ 	c->table =3D devm_kcalloc(dev, LUT_MAX_ENTRIES + 1,
+ 				sizeof(*c->table), GFP_KERNEL);
+@@ -127,37 +126,45 @@ static int qcom_cpufreq_hw_read_lut(struct platform_d=
+evice *pdev,
+ =
+
+ 	for (i =3D 0; i < LUT_MAX_ENTRIES; i++) {
+ 		data =3D readl_relaxed(base + REG_LUT_TABLE + i * LUT_ROW_SIZE);
+-		src =3D (data & GENMASK(31, 30)) >> 30;
+-		lval =3D data & GENMASK(7, 0);
+-		core_count =3D CORE_COUNT_VAL(data);
++		src =3D FIELD_GET(LUT_SRC, data);
++		lval =3D FIELD_GET(LUT_L_VAL, data);
++		core_count =3D FIELD_GET(LUT_CORE_COUNT, data);
+ =
+
+ 		if (src)
+-			c->table[i].frequency =3D c->xo_rate * lval / 1000;
++			freq =3D xo_rate * lval / 1000;
+ 		else
+-			c->table[i].frequency =3D c->cpu_hw_rate / 1000;
+-
+-		cur_freq =3D c->table[i].frequency;
+-
+-		dev_dbg(dev, "index=3D%d freq=3D%d, core_count %d\n",
+-			i, c->table[i].frequency, core_count);
+-
+-		if (core_count !=3D c->max_cores)
+-			cur_freq =3D CPUFREQ_ENTRY_INVALID;
++			freq =3D cpu_hw_rate / 1000;
++
++		/* Ignore boosts in the middle of the table */
++		if (core_count !=3D max_cores) {
++			c->table[i].frequency =3D CPUFREQ_ENTRY_INVALID;
++		} else {
++			c->table[i].frequency =3D freq;
++			dev_dbg(dev, "index=3D%d freq=3D%d, core_count %d\n", i,
++				freq, core_count);
++		}
+ =
+
+ 		/*
+ 		 * Two of the same frequencies with the same core counts means
+-		 * end of table.
++		 * end of table
+ 		 */
+-		if (i > 0 && c->table[i - 1].frequency =3D=3D
+-		   c->table[i].frequency && prev_cc =3D=3D core_count) {
++		if (i > 0 && prev_freq =3D=3D freq && prev_cc =3D=3D core_count) {
+ 			struct cpufreq_frequency_table *prev =3D &c->table[i - 1];
+ =
+
+-			if (prev_freq =3D=3D CPUFREQ_ENTRY_INVALID)
++			/*
++			 * Only treat the last frequency that might be a boost
++			 * as the boost frequency
++			 */
++			if (prev_cc !=3D max_cores) {
++				prev->frequency =3D prev_freq;
+ 				prev->flags =3D CPUFREQ_BOOST_FREQ;
++			}
++
+ 			break;
+ 		}
++
+ 		prev_cc =3D core_count;
+-		prev_freq =3D cur_freq;
++		prev_freq =3D freq;
+ 	}
+ =
+
+ 	c->table[i].frequency =3D CPUFREQ_TABLE_END;
+@@ -165,7 +172,7 @@ static int qcom_cpufreq_hw_read_lut(struct platform_dev=
+ice *pdev,
+ 	return 0;
+ }
+ =
+
+-static int qcom_get_related_cpus(int index, struct cpumask *m)
++static void qcom_get_related_cpus(int index, struct cpumask *m)
+ {
+ 	struct device_node *cpu_np;
+ 	struct of_phandle_args args;
+@@ -186,8 +193,6 @@ static int qcom_get_related_cpus(int index, struct cpum=
+ask *m)
+ 		if (index =3D=3D args.args[0])
+ 			cpumask_set_cpu(cpu, m);
+ 	}
+-
+-	return 0;
+ }
+ =
+
+ static int qcom_cpu_resources_init(struct platform_device *pdev,
+@@ -201,9 +206,6 @@ static int qcom_cpu_resources_init(struct platform_devi=
+ce *pdev,
+ 	void __iomem *base;
+ 	int ret, cpu_r;
+ =
+
+-	if (qcom_freq_domain_map[cpu])
+-		return 0;
+-
+ 	c =3D devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
+ 	if (!c)
+ 		return -ENOMEM;
+@@ -219,21 +221,15 @@ static int qcom_cpu_resources_init(struct platform_de=
+vice *pdev,
+ 		return -ENODEV;
+ 	}
+ =
+
+-	ret =3D qcom_get_related_cpus(index, &c->related_cpus);
+-	if (ret) {
++	qcom_get_related_cpus(index, &c->related_cpus);
++	if (!cpumask_weight(&c->related_cpus)) {
+ 		dev_err(dev, "Domain-%d failed to get related CPUs\n", index);
+-		return ret;
+-	}
+-
+-	c->max_cores =3D cpumask_weight(&c->related_cpus);
+-	if (!c->max_cores)
+ 		return -ENOENT;
++	}
+ =
+
+-	c->xo_rate =3D xo_rate;
+-	c->cpu_hw_rate =3D cpu_hw_rate;
+ 	c->perf_base =3D base + REG_PERF_STATE;
+ =
+
+-	ret =3D qcom_cpufreq_hw_read_lut(pdev, c, base);
++	ret =3D qcom_cpufreq_hw_read_lut(dev, c, base, xo_rate, cpu_hw_rate);
+ 	if (ret) {
+ 		dev_err(dev, "Domain-%d failed to read LUT\n", index);
+ 		return ret;
+@@ -245,7 +241,7 @@ static int qcom_cpu_resources_init(struct platform_devi=
+ce *pdev,
+ 	return 0;
+ }
+ =
+
+-static int qcom_resources_init(struct platform_device *pdev)
++static int qcom_cpufreq_hw_driver_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *cpu_np;
+ 	struct of_phandle_args args;
+@@ -259,15 +255,13 @@ static int qcom_resources_init(struct platform_device=
+ *pdev)
+ 		return PTR_ERR(clk);
+ =
+
+ 	xo_rate =3D clk_get_rate(clk);
+-
+ 	clk_put(clk);
+ =
+
+-	clk =3D clk_get(&pdev->dev, "gcc_cpuss_gpll0_clk_src");
++	clk =3D clk_get(&pdev->dev, "alternate");
+ 	if (IS_ERR(clk))
+ 		return PTR_ERR(clk);
+ =
+
+ 	cpu_hw_rate =3D clk_get_rate(clk) / CLK_HW_DIV;
+-
+ 	clk_put(clk);
+ =
+
+ 	for_each_possible_cpu(cpu) {
+@@ -282,33 +276,22 @@ static int qcom_resources_init(struct platform_device=
+ *pdev)
+ 						 "#freq-domain-cells", 0,
+ 						  &args);
+ 		of_node_put(cpu_np);
+-		if (ret < 0)
++		if (ret)
+ 			return ret;
+ =
+
++		if (qcom_freq_domain_map[cpu])
++			continue;
++
+ 		ret =3D qcom_cpu_resources_init(pdev, cpu, args.args[0],
+ 					      xo_rate, cpu_hw_rate);
+ 		if (ret)
+ 			return ret;
+ 	}
+ =
+
+-	return 0;
+-}
+-
+-static int qcom_cpufreq_hw_driver_probe(struct platform_device *pdev)
+-{
+-	int rc;
+-
+-	/* Get the bases of cpufreq for domains */
+-	rc =3D qcom_resources_init(pdev);
+-	if (rc) {
+-		dev_err(&pdev->dev, "CPUFreq resource init failed\n");
+-		return rc;
+-	}
+-
+-	rc =3D cpufreq_register_driver(&cpufreq_qcom_hw_driver);
+-	if (rc) {
++	ret =3D cpufreq_register_driver(&cpufreq_qcom_hw_driver);
++	if (ret) {
+ 		dev_err(&pdev->dev, "CPUFreq HW driver failed to register\n");
+-		return rc;
++		return ret;
+ 	}
+ =
+
+ 	dev_dbg(&pdev->dev, "QCOM CPUFreq HW driver initialized\n");
+@@ -316,13 +299,20 @@ static int qcom_cpufreq_hw_driver_probe(struct platfo=
+rm_device *pdev)
+ 	return 0;
+ }
+ =
+
++static int qcom_cpufreq_hw_driver_remove(struct platform_device *pdev)
++{
++	return cpufreq_unregister_driver(&cpufreq_qcom_hw_driver);
++}
++
+ static const struct of_device_id qcom_cpufreq_hw_match[] =3D {
+ 	{ .compatible =3D "qcom,cpufreq-hw" },
+ 	{}
+ };
++MODULE_DEVICE_TABLE(of, qcom_cpufreq_hw_match);
+ =
+
+ static struct platform_driver qcom_cpufreq_hw_driver =3D {
+ 	.probe =3D qcom_cpufreq_hw_driver_probe,
++	.remove =3D qcom_cpufreq_hw_driver_remove,
+ 	.driver =3D {
+ 		.name =3D "qcom-cpufreq-hw",
+ 		.of_match_table =3D qcom_cpufreq_hw_match,
+@@ -337,7 +327,6 @@ subsys_initcall(qcom_cpufreq_hw_init);
+ =
+
+ static void __exit qcom_cpufreq_hw_exit(void)
+ {
+-	cpufreq_unregister_driver(&cpufreq_qcom_hw_driver);
+ 	platform_driver_unregister(&qcom_cpufreq_hw_driver);
+ }
+ module_exit(qcom_cpufreq_hw_exit);
 
