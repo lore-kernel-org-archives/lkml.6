@@ -2,162 +2,82 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 318D8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B2CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7A902151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:30:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 693A1214E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:31:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="nr4OriOe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7A902151B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dq+rseJy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 693A1214E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732277AbeKVEGJ (ORCPT
+        id S1732284AbeKVEGe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 23:06:09 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44094 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729597AbeKVEGI (ORCPT
+        Wed, 21 Nov 2018 23:06:34 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54216 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729285AbeKVEGe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 23:06:08 -0500
-Received: by mail-pl1-f196.google.com with SMTP id s5-v6so6447015plq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 09:30:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=nwnDx+PEMxV/2jmeERq+DYTiPZfWkL050Jj2d58Vfxk=;
-        b=nr4OriOe9o11hY5rPhOmeYo8gCxcMOVmFVnnHBd61V9duefRkFg6W1Sbe0HYVwnTDr
-         Gs9tZqxnVRP4Pcpa5jtKGOuYO3x/R/6usTTZqbBiDNiHUhq8C5TxxbWq4Wx3gVFF7y4s
-         sskiqcnTrt1kkGUA3ozhOQXdPi/vg7QZdqhaGSD1X1j0K3hHO2IMuBo7va8Dl7UO953g
-         aK8rnqNDqPZ9ypXVAmvuCaW1uDRAcZdqPjQc6gYMEMUWSS3LZHLJzZjUZ0VmuYsWGCAR
-         FBCXzUt2jjQtEJrxTVlwC0TvMf3yOLGXT6d120NKDLm/Js/n5aLc8JpHDNQGnQEVirIo
-         EABg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=nwnDx+PEMxV/2jmeERq+DYTiPZfWkL050Jj2d58Vfxk=;
-        b=HdxiIEW6EnHfQ0Wj2VPKeBnK767IEPfGN8b8WbbQcwt9E0Oiw4eQpI9F3iwH7frZES
-         k/JcAmOcwrRtupMlKWeS+goRI9VYz3cAihBau4IL8l14+vYeHo3Ze47oORJqpFh7tXMZ
-         g2egsbCrXHxwiGaXoAI5k1m/8HeEWwMZx68frQCW0ljVxFgiGhFWc5ifPmmRX5b0abCj
-         Ac9CB1uva//glERBcfG+x3kTbAMDOD3L6egb0f9CSPgcN+tcxLX5lbndYixnd/M/teqv
-         oJtV/SZW9abhjJ3XFi0TCa2Ta8nvZv+7dihENRiFvBFgkqVLwV/SmOFN8ezDdEqpnyE9
-         v34A==
-X-Gm-Message-State: AA+aEWbsyKq6xWWnodN6GK4FxWbB3r7x2aS8A+u8q+Yx668pVL0AbDAq
-        afBLt0ECZBAXWLhcYfyJMIsD6w==
-X-Google-Smtp-Source: AFSGD/Uw65zj+HMqQCDowVwpmF+5iL0kg2FjMa3XVTtvkuEJp5yAvbaRjTcgI9UnCx6K2mLAu5jdVg==
-X-Received: by 2002:a17:902:e207:: with SMTP id ce7-v6mr7423644plb.47.1542821450244;
-        Wed, 21 Nov 2018 09:30:50 -0800 (PST)
-Received: from cakuba.netronome.com ([2601:646:8e00:727e::5])
-        by smtp.gmail.com with ESMTPSA id c13sm21343275pfe.93.2018.11.21.09.30.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 09:30:49 -0800 (PST)
-Date:   Wed, 21 Nov 2018 09:30:44 -0800
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Y Song <ys114321@gmail.com>
-Cc:     wen.yang99@zte.com.cn, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Jiong Wang <jiong.wang@netronome.com>, guro@fb.com,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, zhong.weidong@zte.com.cn,
-        wang.yi59@zte.com.cn, julia.lawall@lip6.fr
-Subject: Re: [PATCH 3/4] tools: bpftool: fix potential NULL pointer
- dereference in do_load
-Message-ID: <20181121093044.3c34b66b@cakuba.netronome.com>
-In-Reply-To: <CAH3MdRVEoJXh1FRJKPiUvvphRLV9=-a8UV4pFUa=kq4qaWYjww@mail.gmail.com>
-References: <1542786192-19164-1-git-send-email-wen.yang99@zte.com.cn>
-        <CAH3MdRVEoJXh1FRJKPiUvvphRLV9=-a8UV4pFUa=kq4qaWYjww@mail.gmail.com>
-Organization: Netronome Systems, Ltd.
+        Wed, 21 Nov 2018 23:06:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zBB4WO6mxheSnm6GfPRs+mXpIzV6EYBADWqUDBzGFUw=; b=dq+rseJyhiDjHHLZ7h3exsJA5
+        1xjEqMYKTldGWnUIb9sdBESBd6ruMfH64q78AWw692QfYqWYdBSAmdrJt6BW0ae6ACS4YzTZql/BL
+        EEoIp3vttngkal4kkYxCFg+fugLLXeHLVOSTe+LVQOVWYPPtfzMP0wlx55Ns+OXHYWs9Q09bo9jg3
+        ZS66u49UhOjxlwHj0KDQl4enREZmyyio1ZE7Dl+QfU1CrCG2k9rhwn8/kzuJm03NFppCYZpnI6pHc
+        1poIk638sxL9ZdGRUwjpTTiY9hT5OQw3WZOaoZRwuFLVpRjYMERluaLJdNV8sE7wuLnsCfBE5wgVp
+        EJzosYmZQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gPWLK-0006WQ-Ia; Wed, 21 Nov 2018 17:31:14 +0000
+Date:   Wed, 21 Nov 2018 09:31:14 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Dave Rodgman <dave.rodgman@arm.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Matt Sealey <Matt.Sealey@arm.com>,
+        "nitingupta910@gmail.com" <nitingupta910@gmail.com>,
+        "rpurdie@openedhand.com" <rpurdie@openedhand.com>,
+        "markus@oberhumer.com" <markus@oberhumer.com>,
+        "minchan@kernel.org" <minchan@kernel.org>,
+        "sergey.senozhatsky.work@gmail.com" 
+        <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [PATCH 2/6] lib/lzo: enable 64-bit CTZ on Arm
+Message-ID: <20181121173114.GA14352@infradead.org>
+References: <20181121115922.22864-2-dave.rodgman@arm.com>
+ <20181121115922.22864-3-dave.rodgman@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181121115922.22864-3-dave.rodgman@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Nov 2018 09:18:06 -0800, Y Song wrote:
-> On Tue, Nov 20, 2018 at 11:42 PM Wen Yang <wen.yang99@zte.com.cn> wrote:
-> >
-> > This patch fixes a possible null pointer dereference in
-> > do_load, detected by the semantic patch
-> > deref_null.cocci, with the following warning:
-> >
-> > ./tools/bpf/bpftool/prog.c:1021:23-25: ERROR: map_replace is NULL but dereferenced.
-> >
-> > The following code has potential null pointer references:
-> >  881             map_replace = reallocarray(map_replace, old_map_fds + 1,
-> >  882                                        sizeof(*map_replace));
-> >  883             if (!map_replace) {
-> >  884                     p_err("mem alloc failed");
-> >  885                     goto err_free_reuse_maps;
-> >  886             }
-> >
-> > ...
-> > 1019 err_free_reuse_maps:
-> > 1020         for (i = 0; i < old_map_fds; i++)
-> > 1021                 close(map_replace[i].fd);
-> > 1022         free(map_replace);  
-> 
-> I did not see any issues here.
-> We have code looks like:
->  867         struct map_replace *map_replace = NULL;
->  868         struct bpf_program *prog = NULL, *pos;
->  869         unsigned int old_map_fds = 0;
-> ...
->  948                         map_replace = reallocarray(map_replace,
-> old_map_fds + 1,
->  949                                                    sizeof(*map_replace));
->  950                         if (!map_replace) {
->  951                                 p_err("mem alloc failed");
->  952                                 goto err_free_reuse_maps;
->  953                         }
->  954                         map_replace[old_map_fds].idx = idx;
->  955                         map_replace[old_map_fds].name = name;
->  956                         map_replace[old_map_fds].fd = fd;
->  957                         old_map_fds++;
-> ...
-> 
-> old_map_fds becomes non zero if and only if map_replace is not NULL.
+>  #define LZO_USE_CTZ32	1
+>  #elif defined(__i386__) || defined(__powerpc__)
+>  #define LZO_USE_CTZ32	1
+> -#elif defined(__arm__) && (__LINUX_ARM_ARCH__ >= 5)
+> +#elif defined(__arm__)
+> +#if (__LINUX_ARM_ARCH__ >= 5)
+>  #define LZO_USE_CTZ32	1
+>  #endif
+> +#if (__LINUX_ARM_ARCH__ >= 6) && (CONFIG_THUMB2_KERNEL)
+> +#define LZO_USE_CTZ64	1
 
-Note that this is a realloc in a loop, and map_replace will become NULL
-again if realloc fails.  We should check the return value of realloc()
-without loosing the pointer to the old value.  No?
-
-> > Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> > Reviewed-by: Tan Hu <tan.hu@zte.com.cn>
-> > CC: Julia Lawall <julia.lawall@lip6.fr>
-> > ---
-> >  tools/bpf/bpftool/prog.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-> > index 5302ee2..de42187 100644
-> > --- a/tools/bpf/bpftool/prog.c
-> > +++ b/tools/bpf/bpftool/prog.c
-> > @@ -1017,8 +1017,9 @@ static int do_load(int argc, char **argv)
-> >  err_close_obj:
-> >         bpf_object__close(obj);
-> >  err_free_reuse_maps:
-> > -       for (i = 0; i < old_map_fds; i++)
-> > -               close(map_replace[i].fd);
-> > +       if (map_replace)
-> > +               for (i = 0; i < old_map_fds; i++)
-> > +                       close(map_replace[i].fd);
-> >         free(map_replace);
-> >         return -1;
-> >  }
-> > --
-> > 2.9.5
-> >  
-
+All of this really needs to be driven by Kconfig symbols that
+the architecture selects instead of magic arch ifdefs here.
