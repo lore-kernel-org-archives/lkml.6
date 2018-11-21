@@ -7,45 +7,51 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB56C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE2AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11936206BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44E78206BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFBbUXFs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11936206BB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jr7Bm6Ve"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44E78206BB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388335AbeKVFop (ORCPT
+        id S2388349AbeKVFot (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:44:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39372 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:44:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732079AbeKVFop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:44:45 -0500
+        id S1732079AbeKVFor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:44:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C080206BB;
-        Wed, 21 Nov 2018 19:09:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4BA1214D9;
+        Wed, 21 Nov 2018 19:09:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827351;
-        bh=i633TxlyqP9zN6D9illH9epcTUgKdRKKmNwNKbGYkjM=;
+        s=default; t=1542827354;
+        bh=ANklPTjvpm0Y4uIBZvLGDMtEqmQi2yUXZcqZJ+uCtaw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CFBbUXFsTs+TLf1V71BQiBRON0egJeiyFOykw5Cl64NksIcTIQF8cSM1DjY7jnHDF
-         g1AXx+DeuTvhLRduaCGtDvGmQh/2aUNBd4h44+B/DKDECSnwzlHFAet2pO8hnAt30N
-         gL1BItT4kjD/S0E21f4dsrQJIaUVu69Eq+OZon3M=
+        b=Jr7Bm6VeWTh/ghusQfIHqoHcusI3oYF6YZUp6yeh4G8uYOX2tQ+vJvmpRombx+15X
+         eA5jJSTOhcOD59sZ5YP63VMWxvfnFZqjwn+/qXS2NoXJUKabOpkVe+NhOsDoZOBgfh
+         ZLso7OKxJ4Tr8R7q3x2yPZxE6ztBa8jWdQw1MdrQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        =?UTF-8?q?=EB=B0=B0=EC=84=9D=EC=A7=84?= <soukjin.bae@samsung.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 18/21] inet: frags: better deal with smp races
-Date:   Wed, 21 Nov 2018 20:07:02 +0100
-Message-Id: <20181121183422.893081945@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "WoodhouseDavid" <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "SchauflerCasey" <casey.schaufler@intel.com>
+Subject: [PATCH 4.14 19/21] Revert "x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation"
+Date:   Wed, 21 Nov 2018 20:07:03 +0100
+Message-Id: <20181121183422.929606585@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183422.103826775@linuxfoundation.org>
 References: <20181121183422.103826775@linuxfoundation.org>
@@ -63,86 +69,161 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-[ Upstream commit 0d5b9311baf27bb545f187f12ecfd558220c607d ]
+This reverts commit 8a13906ae519b3ed95cd0fb73f1098b46362f6c4 which is
+commit 53c613fe6349994f023245519265999eed75957f upstream.
 
-Multiple cpus might attempt to insert a new fragment in rhashtable,
-if for example RPS is buggy, as reported by 배석진 in
-https://patchwork.ozlabs.org/patch/994601/
+It's not ready for the stable trees as there are major slowdowns
+involved with this patch.
 
-We use rhashtable_lookup_get_insert_key() instead of
-rhashtable_insert_fast() to let cpus losing the race
-free their own inet_frag_queue and use the one that
-was inserted by another cpu.
-
-Fixes: 648700f76b03 ("inet: frags: use rhashtables for reassembly units")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: 배석진 <soukjin.bae@samsung.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Jiri Kosina <jkosina@suse.cz>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc:  "WoodhouseDavid" <dwmw@amazon.co.uk>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc:  "SchauflerCasey" <casey.schaufler@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/inet_fragment.c |   28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   57 ++++-----------------------------------------
+ kernel/cpu.c               |   11 --------
+ 2 files changed, 7 insertions(+), 61 deletions(-)
 
---- a/net/ipv4/inet_fragment.c
-+++ b/net/ipv4/inet_fragment.c
-@@ -180,21 +180,22 @@ static struct inet_frag_queue *inet_frag
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -34,10 +34,12 @@ static void __init spectre_v2_select_mit
+ static void __init ssb_select_mitigation(void);
+ static void __init l1tf_select_mitigation(void);
+ 
+-/* The base value of the SPEC_CTRL MSR that always has to be preserved. */
+-u64 x86_spec_ctrl_base;
++/*
++ * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
++ * writes to SPEC_CTRL contain whatever reserved bits have been set.
++ */
++u64 __ro_after_init x86_spec_ctrl_base;
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
+-static DEFINE_MUTEX(spec_ctrl_mutex);
+ 
+ /*
+  * The vendor and possibly platform specific bits which can be modified in
+@@ -321,46 +323,6 @@ static enum spectre_v2_mitigation_cmd __
+ 	return cmd;
  }
  
- static struct inet_frag_queue *inet_frag_create(struct netns_frags *nf,
--						void *arg)
-+						void *arg,
-+						struct inet_frag_queue **prev)
- {
- 	struct inet_frags *f = nf->f;
- 	struct inet_frag_queue *q;
--	int err;
- 
- 	q = inet_frag_alloc(nf, f, arg);
--	if (!q)
-+	if (!q) {
-+		*prev = ERR_PTR(-ENOMEM);
- 		return NULL;
+-static bool stibp_needed(void)
+-{
+-	if (spectre_v2_enabled == SPECTRE_V2_NONE)
+-		return false;
 -
-+	}
- 	mod_timer(&q->timer, jiffies + nf->timeout);
- 
--	err = rhashtable_insert_fast(&nf->rhashtable, &q->node,
--				     f->rhash_params);
--	if (err < 0) {
-+	*prev = rhashtable_lookup_get_insert_key(&nf->rhashtable, &q->key,
-+						 &q->node, f->rhash_params);
-+	if (*prev) {
- 		q->flags |= INET_FRAG_COMPLETE;
- 		inet_frag_kill(q);
- 		inet_frag_destroy(q);
-@@ -206,19 +207,20 @@ static struct inet_frag_queue *inet_frag
- /* TODO : call from rcu_read_lock() and no longer use refcount_inc_not_zero() */
- struct inet_frag_queue *inet_frag_find(struct netns_frags *nf, void *key)
+-	if (!boot_cpu_has(X86_FEATURE_STIBP))
+-		return false;
+-
+-	return true;
+-}
+-
+-static void update_stibp_msr(void *info)
+-{
+-	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
+-}
+-
+-void arch_smt_update(void)
+-{
+-	u64 mask;
+-
+-	if (!stibp_needed())
+-		return;
+-
+-	mutex_lock(&spec_ctrl_mutex);
+-	mask = x86_spec_ctrl_base;
+-	if (cpu_smt_control == CPU_SMT_ENABLED)
+-		mask |= SPEC_CTRL_STIBP;
+-	else
+-		mask &= ~SPEC_CTRL_STIBP;
+-
+-	if (mask != x86_spec_ctrl_base) {
+-		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
+-				cpu_smt_control == CPU_SMT_ENABLED ?
+-				"Enabling" : "Disabling");
+-		x86_spec_ctrl_base = mask;
+-		on_each_cpu(update_stibp_msr, NULL, 1);
+-	}
+-	mutex_unlock(&spec_ctrl_mutex);
+-}
+-
+ static void __init spectre_v2_select_mitigation(void)
  {
--	struct inet_frag_queue *fq;
-+	struct inet_frag_queue *fq = NULL, *prev;
- 
- 	rcu_read_lock();
- 
--	fq = rhashtable_lookup(&nf->rhashtable, key, nf->f->rhash_params);
--	if (fq) {
-+	prev = rhashtable_lookup(&nf->rhashtable, key, nf->f->rhash_params);
-+	if (!prev)
-+		fq = inet_frag_create(nf, key, &prev);
-+	if (prev && !IS_ERR(prev)) {
-+		fq = prev;
- 		if (!refcount_inc_not_zero(&fq->refcnt))
- 			fq = NULL;
--		rcu_read_unlock();
--		return fq;
+ 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
+@@ -460,9 +422,6 @@ specv2_set_mode:
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
+ 		pr_info("Enabling Restricted Speculation for firmware calls\n");
  	}
- 	rcu_read_unlock();
- 
--	return inet_frag_create(nf, key);
-+	return fq;
+-
+-	/* Enable STIBP if appropriate */
+-	arch_smt_update();
  }
- EXPORT_SYMBOL(inet_frag_find);
+ 
+ #undef pr_fmt
+@@ -855,8 +814,6 @@ static ssize_t l1tf_show_state(char *buf
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			       char *buf, unsigned int bug)
+ {
+-	int ret;
+-
+ 	if (!boot_cpu_has_bug(bug))
+ 		return sprintf(buf, "Not affected\n");
+ 
+@@ -871,12 +828,10 @@ static ssize_t cpu_show_common(struct de
+ 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
+ 
+ 	case X86_BUG_SPECTRE_V2:
+-		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+ 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+-			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
+ 			       spectre_v2_module_string());
+-		return ret;
+ 
+ 	case X86_BUG_SPEC_STORE_BYPASS:
+ 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -2045,12 +2045,6 @@ static void cpuhp_online_cpu_device(unsi
+ 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
+ }
+ 
+-/*
+- * Architectures that need SMT-specific errata handling during SMT hotplug
+- * should override this.
+- */
+-void __weak arch_smt_update(void) { };
+-
+ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
+ {
+ 	int cpu, ret = 0;
+@@ -2077,10 +2071,8 @@ static int cpuhp_smt_disable(enum cpuhp_
+ 		 */
+ 		cpuhp_offline_cpu_device(cpu);
+ 	}
+-	if (!ret) {
++	if (!ret)
+ 		cpu_smt_control = ctrlval;
+-		arch_smt_update();
+-	}
+ 	cpu_maps_update_done();
+ 	return ret;
+ }
+@@ -2091,7 +2083,6 @@ static int cpuhp_smt_enable(void)
+ 
+ 	cpu_maps_update_begin();
+ 	cpu_smt_control = CPU_SMT_ENABLED;
+-	arch_smt_update();
+ 	for_each_present_cpu(cpu) {
+ 		/* Skip online CPUs and CPUs on offline nodes */
+ 		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
 
 
