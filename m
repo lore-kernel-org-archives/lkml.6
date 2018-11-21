@@ -2,165 +2,189 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2259EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:08:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9432AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7030214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:08:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FEE9214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:09:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jxYffYbv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7030214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="cY9TbJQb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FEE9214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388976AbeKVGoH (ORCPT
+        id S2389089AbeKVGpW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 01:44:07 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39289 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730156AbeKVGoG (ORCPT
+        Thu, 22 Nov 2018 01:45:22 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55142 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbeKVGpV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 01:44:06 -0500
-Received: by mail-qt1-f193.google.com with SMTP id n21so5216029qtl.6;
-        Wed, 21 Nov 2018 12:08:20 -0800 (PST)
+        Thu, 22 Nov 2018 01:45:21 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r63-v6so6802506wma.4;
+        Wed, 21 Nov 2018 12:09:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bT3fk8KWsBxpBwDBl8XHsS2Td8g+vg+s4Ji6q3aMgD0=;
-        b=jxYffYbvdnKT8HNmMd1rJzvcjZS9kagixnKiWT/pPwleSeqLYPMoPTWXuf7bzlkvYr
-         URIc2c7i2qhrYH6loxPuT00wxR7U7MjDt01ii4cKz5+Bp07f3bp7KRJNu/VoUixlV0Rm
-         NEgQef0kTy3Ym7P/cBuCJXYZfUWE2mb6otjK4yj0fhKEBzINSvmKYWqYTIBc7DUjA2qk
-         tIXzfZiDMAWv8l6T57dUEZCPGesZjlUI+4mTZY3PBna3FltPx9yapjcYzAOJbR+/9frm
-         auOVI5mlK2dU6tawUXBMUan4SJVQ6U+TlQMkyEu27vIlnU2x5/YqY3VMsGsbfsxw7J+6
-         Xq/Q==
+        d=googlemail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Y8d3yGnK1MstfmgGfMiRbo8OlHwuukqT7oNx5bxI1Z8=;
+        b=cY9TbJQb31dT7+PiQq9jRj5wxsaGsFFkhqgiWHeHTc0YKjZtxPv4EYKAvL8gbxrOgJ
+         rlJN74ZjlFeBJhSJ+jiqxxEOH/cp8rHeWZqtXZeLfaG6zZPiBKWP80KxWgTVfuGqE7dA
+         cjhHBB1essERYpUHnpT651I2yk86E8I1jo+OcolGCsu5e1A9RxiS8QgmXSZyN13tUzxV
+         YsubgvnwnpkiC0BX5eqTuSMa90o+TZ860PIK/JbTI7cYw44oo6lsHeid10qImXnsALq9
+         Pgw2wttlMSmb+wRGeKQQYomicqkOa/QMGfAkq7+6TAqsGKZdIkaFeIIUgwdiHXWIlkM0
+         N5rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bT3fk8KWsBxpBwDBl8XHsS2Td8g+vg+s4Ji6q3aMgD0=;
-        b=pwqWPZ42pBMzm5WiBicDSpnulGUZUDtodaNKVk3x1ofsR6VigKa2ITgAOPIdY3o/8K
-         aF3LE5KF5+lQvI4G7cVQktPmVTwstmDUoanCx9OceFiXXGfurd6+ShhodTCsQ6ROKHOl
-         oTFqXIjgIbSHHPF1+hFGu8nOeEbjHk8JO1ayoUlaE1Gizv6NONefah9nszEjkS63cJ9d
-         RU+fEWEthXkNTQis5VwEcexv/gCpYjJjf8lK2z79rrOjBVoYxMUwDBd3ay7E+MyPcIE1
-         j0Nsqm1VxS4JBJhifN/FB/xddlEPNcqXHZV+NXy7UYpxem5qIi2d1lcQVTHZVchXBGuE
-         XJYQ==
-X-Gm-Message-State: AGRZ1gKgC/NzSyRHdhhdRJjkDoIVo6Z6vEQVHFD6GplNq8kXMLU1KlZR
-        aFudhPAQCddAGyr3p+Skkk6Tjz7Q5LXcTH8AXNrfsQ==
-X-Google-Smtp-Source: AJdET5feaC53wW30CNedPX7/E6kvbI22Zn3y+KGUBQCiUAle5mvV2++qtRPB7FMlQfWbpbiRPRms20PejR1fuEcw3aA=
-X-Received: by 2002:aed:310d:: with SMTP id 13mr7420179qtg.356.1542830899564;
- Wed, 21 Nov 2018 12:08:19 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Y8d3yGnK1MstfmgGfMiRbo8OlHwuukqT7oNx5bxI1Z8=;
+        b=cijnCe7nnuS+xDJd82JUF73+ZlY9eQ1lgPuKnIFIZrmqufMo5kcynQikhQIe2858NB
+         g0q3s/ktNIwVSg5m9R/7TzrhBqiFuwUxnliWFt3WxuBTvQQQHkLX1VQoq3n32UCE05uB
+         THBapIEAdTl5ynMKs/gVdliSksTT9WAZDfvkXLbJDbt1RSvnyW503LFPvuL5MOTDGt8C
+         QC0FpfBYSoIukbIew10KOyq/zMV0JqaYF01Y0dyKhflhTMyCERXJkzwwfe/zWcxWHDbZ
+         A9a5+0emDg0KGoHWe2TyHgDOqdELZdlKQ5ntoQhS5LVntGTA3pde3EdxV4QTuboAvCQa
+         lpTQ==
+X-Gm-Message-State: AGRZ1gKZzDd9k4zbg0/Y2v16eddyRLRRuF7ghTw1VhfoRh8EWObCEv8v
+        HcIy6t7KHiKOgx5z8wsUic5TOxCh
+X-Google-Smtp-Source: AJdET5cFQ2vVCYZJiUHg/Kz9tSFam6OA/vke7ao12/8pdOUL/OyK2TcMudbQwS321HaCQHhmvLKCGg==
+X-Received: by 2002:a1c:bc82:: with SMTP id m124-v6mr6875803wmf.47.1542830973531;
+        Wed, 21 Nov 2018 12:09:33 -0800 (PST)
+Received: from jig.fritz.box (p2003005F6E03DA00453B38B3AA0188E8.dip0.t-ipconnect.de. [2003:5f:6e03:da00:453b:38b3:aa01:88e8])
+        by smtp.gmail.com with ESMTPSA id v189-v6sm2370855wmd.40.2018.11.21.12.09.31
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Wed, 21 Nov 2018 12:09:32 -0800 (PST)
+Date:   Wed, 21 Nov 2018 21:09:23 +0100
+From:   Mathias Krause <minipli@googlemail.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Cc:     Pan Bian <bianpan2016@163.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Pan Bian <bianpan2013@163.com>,
+        minipli@googlemail.com
+Subject: Re: [net] xfrm_user: use xfrm_state_put to free xfrm_state_alloc
+ return value
+Message-ID: <20181121200923.GA12460@jig.fritz.box>
+References: <1542783468-67482-1-git-send-email-bianpan2016@163.com>
+ <20181121080045.4vtozqc6eyeyis2n@gondor.apana.org.au>
 MIME-Version: 1.0
-References: <20181113224613.28809-1-lyude@redhat.com>
-In-Reply-To: <20181113224613.28809-1-lyude@redhat.com>
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Thu, 22 Nov 2018 06:08:07 +1000
-Message-ID: <CAPM=9twXpQDRA6s7fP3P49EL0BbrerJGXwsY33t9-bGNh=ASig@mail.gmail.com>
-Subject: Re: [PATCH] drm/dp_mst: Skip validating ports during destruction,
- just ref
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>, sean@poorly.run,
-        LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, Dave Airlie <airlied@linux.ie>,
-        Jerry.Zuo@amd.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181121080045.4vtozqc6eyeyis2n@gondor.apana.org.au>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Nov 2018 at 08:47, Lyude Paul <lyude@redhat.com> wrote:
->
-> Jerry Zuo pointed out a rather obscure hotplugging issue that it seems I
-> accidentally introduced into DRM two years ago.
->
-> Pretend we have a topology like this:
->
-> |- DP-1: mst_primary
->    |- DP-4: active display
->    |- DP-5: disconnected
->    |- DP-6: active hub
->       |- DP-7: active display
->       |- DP-8: disconnected
->       |- DP-9: disconnected
->
-> If we unplug DP-6, the topology starting at DP-7 will be destroyed but
-> it's payloads will live on in DP-1's VCPI allocations and thus require
-> removal. However, this removal currently fails because
-> drm_dp_update_payload_part1() will (rightly so) try to validate the port
-> before accessing it, fail then abort. If we keep going, eventually we
-> run the MST hub out of bandwidth and all new allocations will start to
-> fail (or in my case; all new displays just start flickering a ton).
->
-> We could just teach drm_dp_update_payload_part1() not to drop the port
-> ref in this case, but then we also need to teach
-> drm_dp_destroy_payload_step1() to do the same thing, then hope no one
-> ever adds anything to the that requires a validated port reference in
-> drm_dp_destroy_connector_work(). Kind of sketchy.
->
-> So let's go with a more clever solution: any port that
-> drm_dp_destroy_connector_work() interacts with is guaranteed to still
-> exist in memory until we say so. While said port might not be valid we
-> don't really care: that's the whole reason we're destroying it in the
-> first place! So, teach drm_dp_get_validated_port_ref() to use the all
-> mighty current_work() function to avoid attempting to validate ports
-> from the context of mgr->destroy_connector_work. I can't see any
-> situation where this wouldn't be safe, and this avoids having to play
-> whack-a-mole in the future of trying to work around port validation.
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Fixes: 263efde31f97 ("drm/dp/mst: Get validated port ref in drm_dp_update_payload_part1()")
-> Reported-by: Jerry Zuo <Jerry.Zuo@amd.com>
-> Cc: Jerry Zuo <Jerry.Zuo@amd.com>
-> Cc: Harry Wentland <Harry.Wentland@amd.com>
-> Cc: <stable@vger.kernel.org> # v4.6+
+On Wed, Nov 21, 2018 at 04:00:45PM +0800, Herbert Xu wrote:
+> On Wed, Nov 21, 2018 at 02:57:48PM +0800, Pan Bian wrote:
+> > From: Pan Bian <bianpan2013@163.com>
+> > 
+> > The memory chunk allocated by xfrm_state_alloc() should be released with
+> > xfrm_state_put(), not kfree.
+> > 
+> > Signed-off-by: Pan Bian <bianpan2013@163.com>
+> 
+> This bug was introduced by
+> 
+> 	commit 565f0fa902b64020d5d147ff1708567e9e0b6e49
+> 	Author: Mathias Krause <minipli@googlemail.com>
+> 	Date:   Thu May 3 10:55:07 2018 +0200
+> 
 
-Much as I constantly feel we are missing some better way to do all of
-this, this seems like a reasonable fix.
+Oh, snap. You're totally right. I missed the kfree() in xfrm_user.c.
+Sorry for that!
 
-Reviewed-by: Dave Airlie <airlied@redhat.com>
+> While using xfrm_state_put may work it's certainly not the designed
+> to do this.  We should instead export a function that calls
+> kmem_cache_free on xfrm_state directly and use that here.
 
-> ---
->  drivers/gpu/drm/drm_dp_mst_topology.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-> index 529414556962..08978ad72f33 100644
-> --- a/drivers/gpu/drm/drm_dp_mst_topology.c
-> +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-> @@ -1023,9 +1023,20 @@ static struct drm_dp_mst_port *drm_dp_mst_get_port_ref_locked(struct drm_dp_mst_
->  static struct drm_dp_mst_port *drm_dp_get_validated_port_ref(struct drm_dp_mst_topology_mgr *mgr, struct drm_dp_mst_port *port)
->  {
->         struct drm_dp_mst_port *rport = NULL;
-> +
->         mutex_lock(&mgr->lock);
-> -       if (mgr->mst_primary)
-> -               rport = drm_dp_mst_get_port_ref_locked(mgr->mst_primary, port);
-> +       /*
-> +        * Port may or may not be 'valid' but we don't care about that when
-> +        * destroying the port and we are guaranteed that the port pointer
-> +        * will be valid until we've finished
-> +        */
-> +       if (current_work() == &mgr->destroy_connector_work) {
-> +               kref_get(&port->kref);
-> +               rport = port;
-> +       } else if (mgr->mst_primary) {
-> +               rport = drm_dp_mst_get_port_ref_locked(mgr->mst_primary,
-> +                                                      port);
-> +       }
->         mutex_unlock(&mgr->lock);
->         return rport;
->  }
-> --
-> 2.19.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Maybe something like the below patch? Steffen?
+
+-- >8 --
+
+Subject: [PATCH] xfrm_user: fix freeing of xfrm states on acquire
+
+Commit 565f0fa902b6 ("xfrm: use a dedicated slab cache for struct
+xfrm_state") moved xfrm state objects to use their own slab cache.
+However, it missed to adapt xfrm_user to use this new cache when
+freeing xfrm states.
+
+Fix this by introducing and make use of a new helper for freeing
+xfrm_state objects.
+
+Fixes: 565f0fa902b6 ("xfrm: use a dedicated slab cache for struct xfrm_state")
+Reported-by: Pan Bian <bianpan2016@163.com>
+Cc: <stable@vger.kernel.org> # v4.18+
+Signed-off-by: Mathias Krause <minipli@googlemail.com>
+---
+ include/net/xfrm.h    | 1 +
+ net/xfrm/xfrm_state.c | 8 +++++++-
+ net/xfrm/xfrm_user.c  | 4 ++--
+ 3 files changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+index 0eb390c205af..da588def3c61 100644
+--- a/include/net/xfrm.h
++++ b/include/net/xfrm.h
+@@ -1552,6 +1552,7 @@ int xfrm_state_walk(struct net *net, struct xfrm_state_walk *walk,
+ 		    int (*func)(struct xfrm_state *, int, void*), void *);
+ void xfrm_state_walk_done(struct xfrm_state_walk *walk, struct net *net);
+ struct xfrm_state *xfrm_state_alloc(struct net *net);
++void xfrm_state_free(struct xfrm_state *x);
+ struct xfrm_state *xfrm_state_find(const xfrm_address_t *daddr,
+ 				   const xfrm_address_t *saddr,
+ 				   const struct flowi *fl,
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index dc4a9f1fb941..0a0b01b688d7 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -426,6 +426,12 @@ static void xfrm_put_mode(struct xfrm_mode *mode)
+ 	module_put(mode->owner);
+ }
+ 
++void xfrm_state_free(struct xfrm_state *x)
++{
++	kmem_cache_free(xfrm_state_cache, x);
++}
++EXPORT_SYMBOL(xfrm_state_free);
++
+ static void xfrm_state_gc_destroy(struct xfrm_state *x)
+ {
+ 	tasklet_hrtimer_cancel(&x->mtimer);
+@@ -452,7 +458,7 @@ static void xfrm_state_gc_destroy(struct xfrm_state *x)
+ 	}
+ 	xfrm_dev_state_free(x);
+ 	security_xfrm_state_free(x);
+-	kmem_cache_free(xfrm_state_cache, x);
++	xfrm_state_free(x);
+ }
+ 
+ static void xfrm_state_gc_task(struct work_struct *work)
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index c9a84e22f5d5..277c1c46fe94 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -2288,13 +2288,13 @@ static int xfrm_add_acquire(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 
+ 	}
+ 
+-	kfree(x);
++	xfrm_state_free(x);
+ 	kfree(xp);
+ 
+ 	return 0;
+ 
+ free_state:
+-	kfree(x);
++	xfrm_state_free(x);
+ nomem:
+ 	return err;
+ }
