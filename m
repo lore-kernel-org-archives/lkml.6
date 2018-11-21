@@ -2,91 +2,109 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0828C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C12C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CE25214DE
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:01:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="LJOGeou3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CE25214DE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
+	by mail.kernel.org (Postfix) with ESMTP id CDB3A20684
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:02:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB3A20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729210AbeKUUfe (ORCPT
+        id S1729261AbeKUUgQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 15:35:34 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:41655 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727981AbeKUUfe (ORCPT
+        Wed, 21 Nov 2018 15:36:16 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:35574 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727981AbeKUUgQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 15:35:34 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 7945B25B781;
-        Wed, 21 Nov 2018 21:01:44 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1542794504; bh=wNuD2KgAfDtSUShJl8pKIgtcrP3uMm2VYTjm8cWbXDM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LJOGeou39OWCRA5rXgILLkPmvxgJbfIsCAAHkNQIjZVQJVbs8p2L9Umi3rfbUt2om
-         lebi4O1y6bS3kDfZrnZ82avZTenBy6WvB7hKOB3iPL4iXfaLVEZBxAzZ/bY05y/jFb
-         5hXX7m1LOaGTVXThJ/D6uGOcZMdquj3RsDFOBwRI=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 9978294034F; Wed, 21 Nov 2018 11:01:42 +0100 (CET)
-Date:   Wed, 21 Nov 2018 11:01:42 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: r9a06g032: Correct the GIC DT node name
-Message-ID: <20181121100142.q3wwgcu5pywsdzpx@verge.net.au>
-References: <20181120103427.23950-1-phil.edworthy@renesas.com>
+        Wed, 21 Nov 2018 15:36:16 -0500
+Received: by mail-vs1-f68.google.com with SMTP id e7so2902633vsc.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 02:02:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y12dPRT0FgIiV1LBI8Bf3+h/yCRZUDj82GOHtCzcJGs=;
+        b=OJyj5groDVVMsS3kvx/IroFnj1zqlT1bCJ8a3wTVfK20CnsCiK0yOpNJegBzc6XZb2
+         SEPz1v3tx2ofXNBHu40AtdB53Ltw8h3hM2lXyKnOkEck0cAj/X1TcrqRAl96bZ4PqqK+
+         aq+SDxDDKjuD817SVtDQb0Yac4lGHBrDqZ1DP2kv1gxp0Fsozgn0rzRapJvXktf92UfQ
+         xf+BAKL9fzRq6uKYSW7rArSB1B+wtbJasN5J1itJBfyJdanmOqZUWsabfq27E5Eo51It
+         0PAlHsYORdfsjHBQCipfxqj34pN9VVsP6iypa1i3WrU06sTI/qirX6a4sfnVKn+ZIqD3
+         Iipg==
+X-Gm-Message-State: AGRZ1gIczFGLcQicU9PQcrif2iCIPJJyGZqF8D0om/CRUKNPXBg5kikm
+        5HNp8R+DvewXq6sdXMQE/5o1po3Oha2LlUujPe8=
+X-Google-Smtp-Source: AJdET5e86A1o4NOKDIcHqMWmQyB93vxJlVByW4jL/9cQtIZiLx4roU3bxO69kAa4SpA/xYQoLtEqReU0rWLM0Zd7WNc=
+X-Received: by 2002:a67:f43:: with SMTP id 64mr2481901vsp.166.1542794548022;
+ Wed, 21 Nov 2018 02:02:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120103427.23950-1-phil.edworthy@renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <cover.1542589838.git.fthain@telegraphics.com.au>
+ <eb676d37a8e40b88f6c577b372b6512bc19a3394.1542589838.git.fthain@telegraphics.com.au>
+ <CACz-3rh6Qw7YxeFK41KG_ju-bWHRoCaciWvv7JLeURn7wGVAOg@mail.gmail.com>
+ <alpine.LNX.2.21.1811202034350.258@nippy.intranet> <CAMuHMdVQPSE7+Pe64OybnugCx-pLVfKmNS6_4DEofF3XZPBLsA@mail.gmail.com>
+ <alpine.LNX.2.21.1811211917270.275@nippy.intranet> <CAMuHMdVexpeYVSBMXFwu5cYt3d=w9U48m_fNTuK5awhBNnsW_A@mail.gmail.com>
+ <alpine.LNX.2.21.1811212032550.275@nippy.intranet>
+In-Reply-To: <alpine.LNX.2.21.1811212032550.275@nippy.intranet>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 21 Nov 2018 11:02:14 +0100
+Message-ID: <CAMuHMdVzamshSdhDAnxdzq=YiQMvDhrE03UmJxHJLHr6g=u44Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 09/14] m68k: hp300: Remove hp300_gettimeoffset()
+To:     Finn Thain <fthain@telegraphics.com.au>
+Cc:     Kars de Jong <jongk@linux-m68k.org>,
+        Philip Blundell <philb@gnu.org>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen N Chivers <schivers@csc.com.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 10:34:27AM +0000, Phil Edworthy wrote:
-> Harmless mistake, but it's incorrect.
+Hi Finn,
 
-Hi Phil,
+On Wed, Nov 21, 2018 at 10:47 AM Finn Thain <fthain@telegraphics.com.au> wrote:
+> On Wed, 21 Nov 2018, Geert Uytterhoeven wrote:
+> > The 8520 CIA is almost identical to the 6526 CIA, as used in the C64...
+>
+> The 6526 CIA datasheet says, "In continuous mode, the timer will count
+> from the latched value to zero, generate and interrupt, reload the latched
+> value and repeat the procedure continuously."
 
-please fill-out this changelog with an explanation of "why".
+I stand corrected...
 
-Thanks!
+> This suggests that either 0 or N (the latched value) would result from a
+> read from the counter immediately following an interrupt. Who can say
+> which? Just have to try it. The answer should allow us to avoid the risk
+> of a clocksource that jumps forwards and backwards.
 
-> 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> ---
->  arch/arm/boot/dts/r9a06g032.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-> index 2322268bc862..4c1ab49c7d39 100644
-> --- a/arch/arm/boot/dts/r9a06g032.dtsi
-> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> @@ -173,7 +173,7 @@
->  			status = "okay";
->  		};
->  
-> -		gic: gic@44101000 {
-> +		gic: interrupt-controller@44101000 {
->  			compatible = "arm,cortex-a7-gic", "arm,gic-400";
->  			interrupt-controller;
->  			#interrupt-cells = <3>;
-> -- 
-> 2.17.1
-> 
+The code in amiga_gettimeoffset() does:
+
+        ticks = hi << 8 | lo;
+
+        if (ticks > jiffy_ticks / 2)
+                /* check for pending interrupt */
+                if (cia_set_irq(&ciab_base, 0) & CIA_ICR_TA)
+                        offset = 10000;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
