@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8F8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6670AC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EF77214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EF77214DB
+	by mail.kernel.org (Postfix) with ESMTP id 30B2521527
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30B2521527
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389296AbeKVGyA (ORCPT
+        id S2389309AbeKVGyC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 01:54:00 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45193 "EHLO
+        Thu, 22 Nov 2018 01:54:02 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45202 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731268AbeKVGyA (ORCPT
+        with ESMTP id S2389265AbeKVGyB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 01:54:00 -0500
+        Thu, 22 Nov 2018 01:54:01 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gPYws-0000Fm-75; Wed, 21 Nov 2018 21:18:10 +0100
-Message-Id: <20181121201722.813274992@linutronix.de>
+        id 1gPYwt-0000Fs-6n; Wed, 21 Nov 2018 21:18:11 +0100
+Message-Id: <20181121201722.924191362@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Wed, 21 Nov 2018 21:14:36 +0100
+Date:   Wed, 21 Nov 2018 21:14:37 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -51,12 +51,13 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>,
         Tim Chen <tim.c.chen@linux.intel.com>
-Subject: [patch 06/24] x86/speculation: Rename SSBD update functions
+Subject: [patch 07/24] x86/speculation: Reorganize speculation control MSRs
+ update
 References: <20181121201430.559770965@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=x86-speculation-Rename-SSBD-update-functions.patch
+ filename=x86-speculation-Reorganize-speculation-control-MSRs-update.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,105 +65,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tim Chen <tim.c.chen@linux.intel.com>
 
-During context switch, the SSBD bit in SPEC_CTRL MSR is updated according
-to changes of the TIF_SSBD flag in the current and next running task.
+The logic to detect whether there's a change in the previous and next
+task's flag relevant to update speculation control MSRs are spread out
+across multiple functions.
 
-Currently, only the bit controlling speculative store bypass disable in
-SPEC_CTRL MSR is updated and the related update functions all have
-"speculative_store" or "ssb" in their names.
+Consolidate all checks needed for updating speculation control MSRs into
+the new __speculation_ctrl_update() helper function.
 
-For enhanced mitigation control other bits in SPEC_CTRL MSR need to be
-updated as well, which makes the SSB names inadequate.
+This makes it easy to pick the right speculation control MSR and the bits
+in the MSR that needs updating based on TIF flags changes.
 
-Rename the "speculative_store*" functions to a more generic name.
-
+Originally-by: Thomas Lendacky <Thomas.Lendacky@amd.com>
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
 ---
- arch/x86/include/asm/spec-ctrl.h |    6 +++---
- arch/x86/kernel/cpu/bugs.c       |    4 ++--
- arch/x86/kernel/process.c        |   12 ++++++------
- 3 files changed, 11 insertions(+), 11 deletions(-)
+ arch/x86/kernel/process.c |   42 ++++++++++++++++++++++++++++++++----------
+ 1 file changed, 32 insertions(+), 10 deletions(-)
 
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -70,11 +70,11 @@ extern void speculative_store_bypass_ht_
- static inline void speculative_store_bypass_ht_init(void) { }
- #endif
- 
--extern void speculative_store_bypass_update(unsigned long tif);
-+extern void speculation_ctrl_update(unsigned long tif);
- 
--static inline void speculative_store_bypass_update_current(void)
-+static inline void speculation_ctrl_update_current(void)
- {
--	speculative_store_bypass_update(current_thread_info()->flags);
-+	speculation_ctrl_update(current_thread_info()->flags);
- }
- 
- #endif
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -200,7 +200,7 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl,
- 		tif = setguest ? ssbd_spec_ctrl_to_tif(guestval) :
- 				 ssbd_spec_ctrl_to_tif(hostval);
- 
--		speculative_store_bypass_update(tif);
-+		speculation_ctrl_update(tif);
- 	}
- }
- EXPORT_SYMBOL_GPL(x86_virt_spec_ctrl);
-@@ -632,7 +632,7 @@ static int ssb_prctl_set(struct task_str
- 	 * mitigation until it is next scheduled.
- 	 */
- 	if (task == current && update)
--		speculative_store_bypass_update_current();
-+		speculation_ctrl_update_current();
- 
- 	return 0;
- }
 --- a/arch/x86/kernel/process.c
 +++ b/arch/x86/kernel/process.c
-@@ -395,27 +395,27 @@ static __always_inline void amd_set_ssb_
- 	wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, ssbd_tif_to_spec_ctrl(tifn));
- }
+@@ -397,25 +397,48 @@ static __always_inline void amd_set_ssb_
  
--static __always_inline void intel_set_ssb_state(unsigned long tifn)
-+static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
+ static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
  {
- 	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
+-	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
++	u64 msr = x86_spec_ctrl_base;
++
++	/*
++	 * If X86_FEATURE_SSBD is not set, the SSBD bit is not to be
++	 * touched.
++	 */
++	if (static_cpu_has(X86_FEATURE_SSBD))
++		msr |= ssbd_tif_to_spec_ctrl(tifn);
  
  	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
  }
  
--static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
-+static __always_inline void __speculation_ctrl_update(unsigned long tifn)
+-static __always_inline void __speculation_ctrl_update(unsigned long tifn)
++/*
++ * Update the MSRs managing speculation control, during context switch.
++ *
++ * tifp: Previous task's thread flags
++ * tifn: Next task's thread flags
++ */
++static __always_inline void __speculation_ctrl_update(unsigned long tifp,
++						      unsigned long tifn)
  {
- 	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
- 		amd_set_ssb_virt_state(tifn);
- 	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
- 		amd_set_core_ssb_state(tifn);
- 	else
--		intel_set_ssb_state(tifn);
-+		spec_ctrl_update_msr(tifn);
+-	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
+-		amd_set_ssb_virt_state(tifn);
+-	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
+-		amd_set_core_ssb_state(tifn);
+-	else
++	bool updmsr = false;
++
++	/* If TIF_SSBD is different, select the proper mitigation method */
++	if ((tifp ^ tifn) & _TIF_SSBD) {
++		if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
++			amd_set_ssb_virt_state(tifn);
++		else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
++			amd_set_core_ssb_state(tifn);
++		else if (static_cpu_has(X86_FEATURE_SSBD))
++			updmsr  = true;
++	}
++
++	if (updmsr)
+ 		spec_ctrl_update_msr(tifn);
  }
  
--void speculative_store_bypass_update(unsigned long tif)
-+void speculation_ctrl_update(unsigned long tif)
+ void speculation_ctrl_update(unsigned long tif)
  {
++	/* Forced update. Make sure all relevant TIF flags are different */
  	preempt_disable();
--	__speculative_store_bypass_update(tif);
-+	__speculation_ctrl_update(tif);
+-	__speculation_ctrl_update(tif);
++	__speculation_ctrl_update(~tif, tif);
  	preempt_enable();
  }
  
-@@ -452,7 +452,7 @@ void __switch_to_xtra(struct task_struct
+@@ -451,8 +474,7 @@ void __switch_to_xtra(struct task_struct
+ 	if ((tifp ^ tifn) & _TIF_NOCPUID)
  		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
  
- 	if ((tifp ^ tifn) & _TIF_SSBD)
--		__speculative_store_bypass_update(tifn);
-+		__speculation_ctrl_update(tifn);
+-	if ((tifp ^ tifn) & _TIF_SSBD)
+-		__speculation_ctrl_update(tifn);
++	__speculation_ctrl_update(tifp, tifn);
  }
  
  /*
