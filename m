@@ -2,304 +2,119 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94385C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D12C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38CCF214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:21:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D567214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:21:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDLOxGie"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38CCF214DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ruMqOaah"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D567214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730218AbeKUVzZ (ORCPT
+        id S1730227AbeKUVzf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 16:55:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44406 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729334AbeKUVzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 16:55:24 -0500
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54830214DA;
-        Wed, 21 Nov 2018 11:21:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542799282;
-        bh=JxEM0h0QfTTwAv1cSp+ieojTf/aX8tYPRvL7gUy2uvk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=UDLOxGiejqDhaDVHuei5YdKa08xbfwJDr6xukF6d/DJeOf9UaTtpyFjbCusFuGZB3
-         xLj55WFhLczIYDMYQhCW1tTap54QWeopRlVQRBb164hsW/2S64v3I8jNqs/GKJGElj
-         TiruYIyXQAjHJy6qn3VOqAWjQtiIu00su/gUd3SU=
-Message-ID: <cd0a28f4b699024e611cb464a82a957c41217466.camel@kernel.org>
-Subject: Re: [LKP] [fs/locks]  3c19f2312f:  will-it-scale.per_thread_ops
- -65.2% regression
-From:   Jeff Layton <jlayton@kernel.org>
-To:     kernel test robot <rong.a.chen@intel.com>,
-        NeilBrown <neilb@suse.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, lkp@01.org
-Date:   Wed, 21 Nov 2018 06:21:19 -0500
-In-Reply-To: <20181121004450.GB18977@shao2-debian>
-References: <20181121004450.GB18977@shao2-debian>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 21 Nov 2018 16:55:35 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:48862 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727874AbeKUVzf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 16:55:35 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wALBJR9h091389;
+        Wed, 21 Nov 2018 11:19:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=8fSBUU+GtR5p7EsZYRTlIx8tZVgc1tQj4bfsjgR1qzM=;
+ b=ruMqOaahbVr1YupXgoGJJdgTIVkHfz0fycIMJd/v3AY6toH0SOgMgs38R35jXbeZN7St
+ AlKjliAN+o9a/jMN3Wh1zszYuzeq6HYAue5HkVtW2lzO3lfOBkh9hnEvmnoMb8xHrj7K
+ 93LcqVjg/YpRYgXl7USxIeuTMxMR7wE3I8H2XpuvoOKU+s9ivdgaadYKbrf16e5OVp5V
+ aRkxqa96R4mc6+nd2NjXhQTOSZvtSa75AAnNUodpEZf58Czu6gMYENosXblrd3vn0V+0
+ 1n5HFCBiKzE0dkC7xuxzaF0r//ip41tt0lkRPqh0ljSbWsGVa/5UtWVNXhMyK52fWzLB IA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2ntbmqrv9s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Nov 2018 11:19:27 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wALBJNJn007341
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Nov 2018 11:19:23 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wALBJDAg012549;
+        Wed, 21 Nov 2018 11:19:14 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 21 Nov 2018 03:19:13 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH 1/9] mm: Introduce new vm_insert_range API
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <CAFqt6zbOWX5LUTWwoGDJsGdf+pTR6N1yTPVxyr1W3-6Fte39ww@mail.gmail.com>
+Date:   Wed, 21 Nov 2018 04:19:11 -0700
+Cc:     Matthew Wilcox <willy@infradead.org>, rppt@linux.ibm.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
+        Kees Cook <keescook@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
+        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <833B5050-DEF6-44A0-9832-276F86671212@oracle.com>
+References: <20181115154530.GA27872@jordon-HP-15-Notebook-PC>
+ <20181116182836.GB17088@rapoport-lnx>
+ <CAFqt6zYp0j999WXw9Jus0oZMjADQQkPfso8btv6du6L9CE3PXA@mail.gmail.com>
+ <20181117143742.GB7861@bombadil.infradead.org>
+ <CAFqt6zbOWX5LUTWwoGDJsGdf+pTR6N1yTPVxyr1W3-6Fte39ww@mail.gmail.com>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+X-Mailer: Apple Mail (2.3445.102.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9083 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=954
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811210103
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-11-21 at 08:44 +0800, kernel test robot wrote:
-> Greeting,
-> 
-> FYI, we noticed a -65.2% regression of will-it-scale.per_thread_ops due to commit:
-> 
-> 
-> commit: 3c19f2312f48a3d36a4e13f5072a6a95e755b3d5 ("fs/locks: always delete_block after waiting.")
-> https://git.kernel.org/cgit/linux/kernel/git/jlayton/linux.git locks-4.21
-> 
-> in testcase: will-it-scale
-> on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz with 64G memory
-> with following parameters:
-> 
-> 	nr_task: 100%
-> 	mode: thread
-> 	test: lock1
-> 	ucode: 0xb00002e
-> 	cpufreq_governor: performance
-> 
-> test-description: Will It Scale takes a testcase and runs it from 1 through to n parallel copies to see if the testcase will scale. It builds both a process and threads based test in order to see any differences between the two.
-> test-url: https://github.com/antonblanchard/will-it-scale
-> 
-> 
+Could you add a line to the description explicitly stating that a failure
+to insert any page in the range will fail the entire routine, something
+like:
 
-Looking at the testcase, it just does whole-file exclusive fcntl
-lock/unlock cycles. My gut feeling is that the reduction in wakeups is
-probably worth some extra processing time here, but maybe it's possible
-to do better.
+> * This allows drivers to insert range of kernel pages they've allocated
+> * into a user vma. This is a generic function which drivers can use
+> * rather than using their own way of mapping range of kernel pages into
+> * user vma.
+> *
+> * A failure to insert any page in the range will fail the call as a whole.
 
-If I'm looking at the profile below correctly, it looks like we're
-spending quite a bit more time spinning on spinlocks. That makes some
-sense since we're now taking the blocked_lock_lock in more cases.
+It's obvious when reading the code, but it would be self-documenting to
+state it outright.
 
-I wonder if we could optimize that function away in some cases without
-taking the lock? Maybe if fl_blocked_requests is empty and fl_blocker is
-NULL? How to test those in a race-free way without taking the spinlock
-may not be possible though.
+Thanks!
+    -- Bill
 
-Thoughts?
-
-
-> 
-> Details are as below:
-> -------------------------------------------------------------------------------------------------->
-> 
-> 
-> To reproduce:
-> 
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         bin/lkp install job.yaml  # job file is attached in this email
->         bin/lkp run     job.yaml
-> 
-> =========================================================================================
-> compiler/cpufreq_governor/kconfig/mode/nr_task/rootfs/tbox_group/test/testcase/ucode:
->   gcc-7/performance/x86_64-rhel-7.2/thread/100%/debian-x86_64-2018-04-03.cgz/lkp-bdw-ep3b/lock1/will-it-scale/0xb00002e
-> 
-> commit: 
->   816f2fb5a2 ("fs/locks: allow a lock request to block other requests.")
->   3c19f2312f ("fs/locks: always delete_block after waiting.")
-> 
-> 816f2fb5a2fc678c 3c19f2312f48a3d36a4e13f507 
-> ---------------- -------------------------- 
->          %stddev     %change         %stddev
->              \          |                \  
->      71447           -65.2%      24854        will-it-scale.per_thread_ops
->     138940            -2.9%     134886        will-it-scale.time.involuntary_context_switches
->     279.85           -64.2%     100.29        will-it-scale.time.user_time
->    6287454           -65.2%    2187242        will-it-scale.workload
->       1.09            -0.7        0.42        mpstat.cpu.usr%
->     371230 ±  4%      +9.5%     406403        softirqs.SCHED
->       1803 ± 16%     +48.9%       2685 ±  8%  numa-meminfo.node0.PageTables
->       2784 ± 10%     -30.7%       1928 ± 12%  numa-meminfo.node1.PageTables
->     224.55            -1.8%     220.57        turbostat.PkgWatt
->       7.70            -3.0%       7.47        turbostat.RAMWatt
->     450.50 ± 17%     +49.0%     671.25 ±  8%  numa-vmstat.node0.nr_page_table_pages
->     644147 ± 10%     -19.8%     516646 ± 11%  numa-vmstat.node0.numa_hit
->     639812 ± 10%     -20.6%     508027 ± 12%  numa-vmstat.node0.numa_local
->     696.25 ± 10%     -30.7%     482.50 ± 12%  numa-vmstat.node1.nr_page_table_pages
->       4617            +2.1%       4715        proc-vmstat.nr_inactive_anon
->       7097            +2.0%       7241        proc-vmstat.nr_mapped
->      20507            +7.0%      21934 ±  3%  proc-vmstat.nr_shmem
->       4617            +2.1%       4715        proc-vmstat.nr_zone_inactive_anon
->     690109            +1.0%     696863        proc-vmstat.numa_hit
->     672911            +1.0%     679694        proc-vmstat.numa_local
->      23133 ±  2%      +8.9%      25196 ±  4%  proc-vmstat.pgactivate
->     607.03 ±  6%     -16.0%     509.80 ± 12%  sched_debug.cfs_rq:/.util_est_enqueued.avg
->      24.42 ± 28%     +38.2%      33.75 ± 22%  sched_debug.cpu.cpu_load[2].max
->       2.20 ± 28%     +39.9%       3.08 ± 23%  sched_debug.cpu.cpu_load[2].stddev
->      25.33 ± 12%     +23.2%      31.21 ±  9%  sched_debug.cpu.cpu_load[3].max
->       2.28 ± 21%     +29.6%       2.95 ± 12%  sched_debug.cpu.cpu_load[3].stddev
->      52140 ± 23%     +37.1%      71510 ±  3%  sched_debug.cpu.nr_switches.max
->      53379 ± 24%     +46.4%      78158 ± 11%  sched_debug.cpu.sched_count.max
->       7132 ± 12%     +32.3%       9436 ± 15%  sched_debug.cpu.sched_count.stddev
->  4.587e+12            -7.5%  4.245e+12        perf-stat.branch-instructions
->       0.24            -0.1        0.15        perf-stat.branch-miss-rate%
->  1.107e+10           -43.0%  6.312e+09        perf-stat.branch-misses
->      40.04            -2.0       38.01        perf-stat.cache-miss-rate%
->  8.415e+09 ±  2%     -19.4%  6.782e+09 ±  6%  perf-stat.cache-misses
->  2.101e+10           -15.1%  1.783e+10 ±  5%  perf-stat.cache-references
->       3.85           +10.7%       4.26        perf-stat.cpi
->       0.00 ±  2%      +0.0        0.00 ±  4%  perf-stat.dTLB-load-miss-rate%
->   90399109 ±  2%      +6.6%   96381582 ±  4%  perf-stat.dTLB-load-misses
->  4.956e+12           -11.6%   4.38e+12        perf-stat.dTLB-loads
->       0.00 ±  8%      +0.0        0.01 ± 24%  perf-stat.dTLB-store-miss-rate%
->  8.789e+11           -61.0%  3.427e+11        perf-stat.dTLB-stores
->      80.76           -10.8       69.98        perf-stat.iTLB-load-miss-rate%
->  3.901e+09           -63.3%   1.43e+09        perf-stat.iTLB-load-misses
->    9.3e+08 ±  6%     -34.0%  6.135e+08 ±  2%  perf-stat.iTLB-loads
->  1.912e+13            -9.6%  1.728e+13        perf-stat.instructions
->       4901          +146.5%      12081        perf-stat.instructions-per-iTLB-miss
->       0.26            -9.6%       0.23        perf-stat.ipc
->      82.36            -3.7       78.70        perf-stat.node-store-miss-rate%
->  2.319e+09           -20.6%  1.842e+09        perf-stat.node-store-misses
->    3041599          +159.7%    7898884        perf-stat.path-length
->      61.02 ± 10%     -61.0        0.00        perf-profile.calltrace.cycles-pp._raw_spin_lock.fcntl_setlk.do_fcntl.__x64_sys_fcntl.do_syscall_64
->      60.64 ± 10%     -60.6        0.00        perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock.fcntl_setlk.do_fcntl.__x64_sys_fcntl
->      98.79            +0.7       99.50        perf-profile.calltrace.cycles-pp.entry_SYSCALL_64_after_hwframe
->      98.76            +0.7       99.49        perf-profile.calltrace.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe
->      98.64            +0.8       99.44        perf-profile.calltrace.cycles-pp.__x64_sys_fcntl.do_syscall_64.entry_SYSCALL_64_after_hwframe
->      97.70            +1.5       99.16        perf-profile.calltrace.cycles-pp.do_fcntl.__x64_sys_fcntl.do_syscall_64.entry_SYSCALL_64_after_hwframe
->      97.41            +1.6       99.05        perf-profile.calltrace.cycles-pp.fcntl_setlk.do_fcntl.__x64_sys_fcntl.do_syscall_64.entry_SYSCALL_64_after_hwframe
->      35.73 ± 18%     +62.7       98.45        perf-profile.calltrace.cycles-pp.do_lock_file_wait.fcntl_setlk.do_fcntl.__x64_sys_fcntl.do_syscall_64
->       0.00           +65.1       65.07        perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock.locks_delete_block.do_lock_file_wait.fcntl_setlk
->       0.00           +65.3       65.28        perf-profile.calltrace.cycles-pp._raw_spin_lock.locks_delete_block.do_lock_file_wait.fcntl_setlk.do_fcntl
->       0.00           +65.3       65.31        perf-profile.calltrace.cycles-pp.locks_delete_block.do_lock_file_wait.fcntl_setlk.do_fcntl.__x64_sys_fcntl
->       1.13 ±  2%      -0.7        0.43        perf-profile.children.cycles-pp.locks_alloc_lock
->       0.98 ±  2%      -0.6        0.38        perf-profile.children.cycles-pp.kmem_cache_alloc
->       0.59            -0.4        0.23 ±  2%  perf-profile.children.cycles-pp.syscall_return_via_sysret
->       0.53            -0.3        0.20 ±  2%  perf-profile.children.cycles-pp.entry_SYSCALL_64
->       0.35 ± 11%      -0.3        0.06 ±  9%  perf-profile.children.cycles-pp.fput
->       0.41 ±  2%      -0.3        0.15 ±  3%  perf-profile.children.cycles-pp.file_has_perm
->       0.33 ±  2%      -0.2        0.12 ±  6%  perf-profile.children.cycles-pp.memset_erms
->       0.30 ±  3%      -0.2        0.11 ±  3%  perf-profile.children.cycles-pp.security_file_lock
->       0.25 ±  3%      -0.2        0.10 ±  5%  perf-profile.children.cycles-pp.security_file_fcntl
->       0.24 ±  2%      -0.1        0.10 ±  4%  perf-profile.children.cycles-pp._copy_from_user
->       0.22 ± 12%      -0.1        0.07 ±  5%  perf-profile.children.cycles-pp.__fget_light
->       0.21 ±  3%      -0.1        0.08 ±  6%  perf-profile.children.cycles-pp.avc_has_perm
->       0.20 ±  5%      -0.1        0.08        perf-profile.children.cycles-pp.___might_sleep
->       0.16 ±  5%      -0.1        0.06        perf-profile.children.cycles-pp.__fget
->       0.24 ±  3%      -0.1        0.17 ±  2%  perf-profile.children.cycles-pp.kmem_cache_free
->       0.12 ±  5%      -0.1        0.05        perf-profile.children.cycles-pp.__might_sleep
->       0.24 ± 15%      -0.1        0.18        perf-profile.children.cycles-pp.locks_insert_lock_ctx
->       0.11 ±  3%      -0.0        0.10 ±  4%  perf-profile.children.cycles-pp.locks_free_lock
->      98.83            +0.7       99.54        perf-profile.children.cycles-pp.entry_SYSCALL_64_after_hwframe
->      98.79            +0.7       99.52        perf-profile.children.cycles-pp.do_syscall_64
->      98.65            +0.8       99.44        perf-profile.children.cycles-pp.__x64_sys_fcntl
->      97.71            +1.5       99.17        perf-profile.children.cycles-pp.do_fcntl
->      97.42            +1.6       99.05        perf-profile.children.cycles-pp.fcntl_setlk
->      94.97            +3.0       97.98        perf-profile.children.cycles-pp._raw_spin_lock
->      93.97            +3.3       97.24        perf-profile.children.cycles-pp.native_queued_spin_lock_slowpath
->      35.74 ± 18%     +62.7       98.46        perf-profile.children.cycles-pp.do_lock_file_wait
->       0.00           +65.3       65.31        perf-profile.children.cycles-pp.locks_delete_block
->       0.59            -0.4        0.23 ±  2%  perf-profile.self.cycles-pp.syscall_return_via_sysret
->       0.53            -0.3        0.20 ±  2%  perf-profile.self.cycles-pp.entry_SYSCALL_64
->       0.35 ± 10%      -0.3        0.06 ±  9%  perf-profile.self.cycles-pp.fput
->       1.00 ±  2%      -0.3        0.74        perf-profile.self.cycles-pp._raw_spin_lock
->       0.38 ±  3%      -0.2        0.14        perf-profile.self.cycles-pp.kmem_cache_alloc
->       0.32 ±  2%      -0.2        0.12 ±  3%  perf-profile.self.cycles-pp.memset_erms
->       0.20 ±  3%      -0.1        0.08 ±  6%  perf-profile.self.cycles-pp.avc_has_perm
->       0.20 ±  2%      -0.1        0.08 ±  6%  perf-profile.self.cycles-pp.posix_lock_inode
->       0.20 ±  6%      -0.1        0.08        perf-profile.self.cycles-pp.___might_sleep
->       0.16 ±  4%      -0.1        0.05 ±  9%  perf-profile.self.cycles-pp.__fget
->       0.15 ±  8%      -0.1        0.06        perf-profile.self.cycles-pp.fcntl_setlk
->       0.24            -0.1        0.15 ±  2%  perf-profile.self.cycles-pp.kmem_cache_free
->       0.11            -0.1        0.03 ±100%  perf-profile.self.cycles-pp.__x64_sys_fcntl
->       0.11 ±  4%      -0.1        0.03 ±100%  perf-profile.self.cycles-pp.__might_sleep
->       0.13            -0.1        0.05        perf-profile.self.cycles-pp.locks_alloc_lock
->       0.13 ±  5%      -0.1        0.05        perf-profile.self.cycles-pp.file_has_perm
->       0.07 ±  7%      -0.0        0.05        perf-profile.self.cycles-pp.locks_free_lock
->      93.64            +3.3       96.89        perf-profile.self.cycles-pp.native_queued_spin_lock_slowpath
-> 
-> 
->                                                                                 
->                             will-it-scale.per_thread_ops                        
->                                                                                 
->   75000 +-+-----------------------------------------------------------------+   
->   70000 +-+.. .+.+.+..+.+.+.+..        .+. .+.. .+.+.  .+. .+.+..+.+.+.+..+.|   
->         |    +                 +. .+.+.   +    +     +.   +                 |   
->   65000 +-+                      +                                          |   
->   60000 +-+                                                                 |   
->   55000 +-+                                                                 |   
->   50000 +-+                                                                 |   
->         |                                                                   |   
->   45000 +-+                                                                 |   
->   40000 +-+                                                                 |   
->   35000 +-+                                                                 |   
->   30000 +-+                                                                 |   
->         |                                                                   |   
->   25000 O-O  O O O O  O O O O  O O O O  O O O  O O O O  O O                 |   
->   20000 +-+-----------------------------------------------------------------+   
->                                                                                 
->                                                                                                                                                                 
->                                 will-it-scale.workload                          
->                                                                                 
->   6.5e+06 +-+---------------------------------------------------------------+   
->           |.+.  .+.+.+.+    +   +.      .+. .+.  .+.+. .+.  .+.+   +.+..+.+ |   
->     6e+06 +-+ +.                  +.+..+   +   +.     +   +.                |   
->   5.5e+06 +-+                                                               |   
->           |                                                                 |   
->     5e+06 +-+                                                               |   
->   4.5e+06 +-+                                                               |   
->           |                                                                 |   
->     4e+06 +-+                                                               |   
->   3.5e+06 +-+                                                               |   
->           |                                                                 |   
->     3e+06 +-+                                                               |   
->   2.5e+06 +-+                                                               |   
->           O O O  O O     O  O O O O O  O O O O O  O O O O O                 |   
->     2e+06 +-+--------O-O----------------------------------------------------+   
->                                                                                 
->                                                                                                                                                                 
->                            will-it-scale.time.user_time                         
->                                                                                 
->   300 +-+-------------------------------------------------------------------+   
->   280 +-+            .+.. .+.                                  .+.. .+.  .+.|   
->       |.+..+.+.+..+.+    +   +..      .+.+.+..+.+.+..+.+.+..+.+    +   +.   |   
->   260 +-+                       +.+.+.                                      |   
->   240 +-+                                                                   |   
->   220 +-+                                                                   |   
->   200 +-+                                                                   |   
->       |                                                                     |   
->   180 +-+                                                                   |   
->   160 +-+                                                                   |   
->   140 +-+  O                                                                |   
->   120 +-+                                                                   |   
->       O O    O O                  O                                         |   
->   100 +-+         O O O  O O O  O   O  O O O  O O O  O O O                  |   
->    80 +-+-------------------------------------------------------------------+   
->                                                                                 
->                                                                                 
-> [*] bisect-good sample
-> [O] bisect-bad  sample
-> 
-> 
-> 
-> Disclaimer:
-> Results have been estimated based on internal Intel analysis and are provided
-> for informational purposes only. Any difference in system hardware or software
-> design or configuration may affect actual performance.
-> 
-> 
-> Thanks,
-> Rong Chen
-
--- 
-Jeff Layton <jlayton@kernel.org>
 
