@@ -2,121 +2,99 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F648C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C520C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:41:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 448C6214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:41:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Olxlz1mT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 448C6214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F61B2148E
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:41:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F61B2148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731127AbeKVBQL (ORCPT
+        id S1731137AbeKVBQ2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 20:16:11 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:7074 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727723AbeKVBQL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 20:16:11 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bf56e9a0000>; Wed, 21 Nov 2018 06:41:30 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 21 Nov 2018 06:41:29 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 21 Nov 2018 06:41:29 -0800
-Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 21 Nov
- 2018 14:41:28 +0000
-Subject: Re: [PATCH] soc/tegra: add of_node_put()
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Yangtao Li <tiny.windzz@gmail.com>, <thierry.reding@gmail.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20181121124912.22074-1-tiny.windzz@gmail.com>
- <f38e8b29-d1db-f915-6699-aec9013bfe7e@nvidia.com>
-Message-ID: <0299646d-3f54-09fc-fea1-ddc9fbe5c8cc@nvidia.com>
-Date:   Wed, 21 Nov 2018 14:41:26 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <f38e8b29-d1db-f915-6699-aec9013bfe7e@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1542811290; bh=/eV1g6Misi7hG0/VNi8XbF41+ywLsmxZav+MNps1mCU=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Olxlz1mTxHPBq07oOEf0zWPEXOz2e7b3KCWO97wRkDSmMW9/8DZEqSsJMj8m/9tRE
-         D9IFx9hXvdRxpLuEKtdrI/B+csjwxSjHd5ppblI4EkXMJWH2qiR1U69BkC2sUvkRo4
-         QLZNdjcdpBw5GlrAWVPqQq00hOwvCZSynhPtzIYqJkq9h7n72BLYXY7jtctwZDdB9x
-         K4QtKTEQ/w9w+vR9gI+O2uGOZ3qJ2U5huUxRuOpQCT3KJY2O9oBkFOsdWtQdLOSnwI
-         OdX787llEfliAneID0ZiYm6qwTUKm0LyFxPSPCmTGz8obkxYlBQfSyhBAuthCiGih7
-         839RMv/ugABxQ==
+        Wed, 21 Nov 2018 20:16:28 -0500
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:46008 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726064AbeKVBQ2 (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:6:1>);
+        Wed, 21 Nov 2018 20:16:28 -0500
+Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
+        with Novell_GroupWise; Wed, 21 Nov 2018 07:41:43 -0700
+Message-Id: <5BF56EA502000078001FE90E@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.1.0 
+Date:   Wed, 21 Nov 2018 07:41:41 -0700
+From:   "Jan Beulich" <JBeulich@suse.com>
+To:     "David Laight" <David.Laight@ACULAB.COM>
+Cc:     <mingo@elte.hu>, <tglx@linutronix.de>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
+        <hpa@zytor.com>
+Subject: RE: [PATCH v2] x86: modernize sync_bitops.h
+References: <5B30C2C302000078001CD6D1@prv1-mh.provo.novell.com>
+ <5B30C2C302000000000FA99B@prv1-mh.provo.novell.com>
+ <5B30C2C302000078001FE5A0@prv1-mh.provo.novell.com>
+ <5BF52F4D02000078001FE5C1@prv1-mh.provo.novell.com>
+ <92f590595593498eaa1f91a17875126f@AcuMS.aculab.com>
+ <5BF5577202000078001FE7AC@prv1-mh.provo.novell.com>
+ <47f7dfd9b32f4425ac8466c8b0065c6e@AcuMS.aculab.com>
+In-Reply-To: <47f7dfd9b32f4425ac8466c8b0065c6e@AcuMS.aculab.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 21/11/2018 13:31, Jon Hunter wrote:
+>>> On 21.11.18 at 14:49, <David.Laight@ACULAB.COM> wrote:
+> From: Jan Beulich
+>> Sent: 21 November 2018 13:03
+>> 
+>> >>> On 21.11.18 at 12:55, <David.Laight@ACULAB.COM> wrote:
+>> > From: Jan Beulich
+>> >> Sent: 21 November 2018 10:11
+>> >>
+>> >> Add missing insn suffixes and use rmwcc.h just like was (more or less)
+>> >> recently done for bitops.h as well.
+>> >
+>> > Why? bts (etc) on memory don't really have an 'operand size'.
+>> 
+>> Of course they do - depending on operand size they operate on
+>> 2-, 4-, or 8-byte quantities. When the second operand is a
+>> register, the suffix is redundant (but doesn't hurt), but when
+>> the second operand is an immediate, the assembler (in AT&T
+>> syntax) has no way of knowing what operand size you mean.
 > 
-> On 21/11/2018 12:49, Yangtao Li wrote:
->> of_find_node_by_path() acquires a reference to the node
->> returned by it and that reference needs to be dropped by its caller.
->> bl_idle_init() doesn't do that, so fix it.
+> You need to RTFM.
 
-The bl_idle_init() looks like a typo here.
+Excuse me? How about you look at this table from the SDM
+(format of course comes out better in the .pdf):
 
->>
->> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
->> ---
->>  drivers/soc/tegra/common.c | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
->> index cd8f41351add..2e30604c9658 100644
->> --- a/drivers/soc/tegra/common.c
->> +++ b/drivers/soc/tegra/common.c
->> @@ -23,10 +23,13 @@ static const struct of_device_id tegra_machine_match[] = {
->>  bool soc_is_tegra(void)
->>  {
->>  	struct device_node *root;
->> +	bool rc;
->>  
->>  	root = of_find_node_by_path("/");
->>  	if (!root)
->>  		return false;
->>  
->> -	return of_match_node(tegra_machine_match, root) != NULL;
->> +	rc = of_match_node(tegra_machine_match, root) != NULL;
->> +	of_node_put(root);
->> +	return rc;
->>  }
+0F AB /r BTS r/m16, r16 MR Valid Valid Store selected bit in CF flag and set.
+0F AB /r BTS r/m32, r32 MR Valid Valid Store selected bit in CF flag and set.
+REX.W + 0F AB /r BTS r/m64, r64 MR Valid N.E. Store selected bit in CF flag and set.
+0F BA /5 ib BTS r/m16, imm8 MI Valid Valid Store selected bit in CF flag and set.
+0F BA /5 ib BTS r/m32, imm8 MI Valid Valid Store selected bit in CF flag and set.
+REX.W + 0F BA /5 ib BTS r/m64, imm8 MI Valid N.E. Store selected bit in CF flag and set.
+
+Please read manuals yourself before making such statements.
+
+> Regardless of the 'operand size' the 'bit' instructions do a 32 bit aligned
+> 32 bit wide read/modify/write cycle.
 > 
-> Thanks for the fix, however, I think it would be even simpler just to
-> call of_machine_is_compatible() here instead.
+> The 'operand size' does affect whether the bit number (which is signed)
+> comes from %cl (8 bits), %cx (16 bits), %rcx (32 bits) or (%ecx) 64 bits.
+> But that is implicit in the register name used.
 
-Right so I was wrong above about using of_machine_is_compatible, so with
-the typo above fixed ...
+There is no form with %cl as operand. Instead there are forms with
+an immediate operand. 
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Jan
 
-Cheers
-Jon
 
--- 
-nvpublic
