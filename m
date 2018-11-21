@@ -2,98 +2,114 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E346CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FFC8C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:27:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3EEE214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:25:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYEjCh3o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3EEE214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2132F21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:27:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2132F21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731031AbeKVBAN (ORCPT
+        id S1730173AbeKVBCD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 20:00:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58286 "EHLO mail.kernel.org"
+        Wed, 21 Nov 2018 20:02:03 -0500
+Received: from mga01.intel.com ([192.55.52.88]:25118 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726172AbeKVBAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 20:00:13 -0500
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3442214C4;
-        Wed, 21 Nov 2018 14:25:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542810335;
-        bh=mJ1SD6+IPpLG5GebZNXRJ/bL043WDKvCTRokggi3v8M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PYEjCh3oup2NhdrO8iXZ4W+ayAjULcn3Pqh1tJ1W1oz6RkR241AMLKvAqs3fWoc/I
-         PzUOE4FM8buuIAASs2lzvy9yDwNg70NtFlHX5tkdK8Ug3yv89Q6uvls8dg1knu/4w8
-         I6yUaH6tro+qj49a0mv7WQOaGQ+bAjQpgnVCHCpo=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 7/7] perf tools beauty ioctl: Support new ISO7816 commands
-Date:   Wed, 21 Nov 2018 11:25:05 -0300
-Message-Id: <20181121142505.27379-8-acme@kernel.org>
-X-Mailer: git-send-email 2.14.5
-In-Reply-To: <20181121142505.27379-1-acme@kernel.org>
-References: <20181121142505.27379-1-acme@kernel.org>
+        id S1726849AbeKVBCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 20:02:03 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 06:27:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,261,1539673200"; 
+   d="scan'208";a="102050657"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga003.jf.intel.com with ESMTP; 21 Nov 2018 06:27:22 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gPTTN-0004GY-Ao; Wed, 21 Nov 2018 16:27:21 +0200
+Date:   Wed, 21 Nov 2018 16:27:21 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de, broonie@kernel.org,
+        vkoul@kernel.org, liam.r.girdwood@linux.intel.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/6] ASoC: Intel: Skylake: Add CFL-S support
+Message-ID: <20181121142721.GO10650@smile.fi.intel.com>
+References: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
+ <20181120213644.19103-2-pierre-louis.bossart@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181120213644.19103-2-pierre-louis.bossart@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+On Tue, Nov 20, 2018 at 03:36:39PM -0600, Pierre-Louis Bossart wrote:
+> From: Takashi Iwai <tiwai@suse.de>
+> 
+> It's with CNP, supposed to be equivalent with CNL entry.
+> 
 
-Introduced in:
+May you consider to switch to PCI_DEVICE_DATA() first?
 
-  ad8c0eaa0a41 ("tty/serial_core: add ISO7816 infrastructure")
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> ---
+>  sound/soc/intel/skylake/skl-messages.c | 8 ++++++++
+>  sound/soc/intel/skylake/skl.c          | 3 +++
+>  2 files changed, 11 insertions(+)
+> 
+> diff --git a/sound/soc/intel/skylake/skl-messages.c b/sound/soc/intel/skylake/skl-messages.c
+> index 8bfb8b0fa3d5..b0e6fb93eaf8 100644
+> --- a/sound/soc/intel/skylake/skl-messages.c
+> +++ b/sound/soc/intel/skylake/skl-messages.c
+> @@ -247,6 +247,14 @@ static const struct skl_dsp_ops dsp_ops[] = {
+>  		.init_fw = cnl_sst_init_fw,
+>  		.cleanup = cnl_sst_dsp_cleanup
+>  	},
+> +	{
+> +		.id = 0xa348,
+> +		.num_cores = 4,
+> +		.loader_ops = bxt_get_loader_ops,
+> +		.init = cnl_sst_dsp_init,
+> +		.init_fw = cnl_sst_init_fw,
+> +		.cleanup = cnl_sst_dsp_cleanup
+> +	},
+>  };
+>  
+>  const struct skl_dsp_ops *skl_get_dsp_ops(int pci_id)
+> diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
+> index 3f0ac1312982..df36b8fe6d5e 100644
+> --- a/sound/soc/intel/skylake/skl.c
+> +++ b/sound/soc/intel/skylake/skl.c
+> @@ -1121,6 +1121,9 @@ static const struct pci_device_id skl_ids[] = {
+>  	/* CNL */
+>  	{ PCI_DEVICE(0x8086, 0x9dc8),
+>  		.driver_data = (unsigned long)&snd_soc_acpi_intel_cnl_machines},
+> +	/* CFL */
+> +	{ PCI_DEVICE(0x8086, 0xa348),
+> +		.driver_data = (unsigned long)&snd_soc_acpi_intel_cnl_machines},
+>  	{ 0, }
+>  };
+>  MODULE_DEVICE_TABLE(pci, skl_ids);
+> -- 
+> 2.17.1
+> 
 
-Now 'perf trace' will be able to pretty-print the 'cmd' ioctl arg when
-used in capable systems with software emitting those commands.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-7bds48dhckfnleie08mit314@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/trace/beauty/ioctl.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/perf/trace/beauty/ioctl.c b/tools/perf/trace/beauty/ioctl.c
-index 5d2a7fd8d407..eae59ad15ce3 100644
---- a/tools/perf/trace/beauty/ioctl.c
-+++ b/tools/perf/trace/beauty/ioctl.c
-@@ -31,6 +31,7 @@ static size_t ioctl__scnprintf_tty_cmd(int nr, int dir, char *bf, size_t size)
- 	"TCSETSW2", "TCSETSF2", "TIOCGRS48", "TIOCSRS485", "TIOCGPTN", "TIOCSPTLCK",
- 	"TIOCGDEV", "TCSETX", "TCSETXF", "TCSETXW", "TIOCSIG", "TIOCVHANGUP", "TIOCGPKT",
- 	"TIOCGPTLCK", [_IOC_NR(TIOCGEXCL)] = "TIOCGEXCL", "TIOCGPTPEER",
-+	"TIOCGISO7816", "TIOCSISO7816",
- 	[_IOC_NR(FIONCLEX)] = "FIONCLEX", "FIOCLEX", "FIOASYNC", "TIOCSERCONFIG",
- 	"TIOCSERGWILD", "TIOCSERSWILD", "TIOCGLCKTRMIOS", "TIOCSLCKTRMIOS",
- 	"TIOCSERGSTRUCT", "TIOCSERGETLSR", "TIOCSERGETMULTI", "TIOCSERSETMULTI",
 -- 
-2.14.5
+With Best Regards,
+Andy Shevchenko
+
 
