@@ -3,173 +3,136 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E78C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CE4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:21:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEDD820870
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:20:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEDD820870
+	by mail.kernel.org (Postfix) with ESMTP id 1326420878
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:21:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1326420878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730228AbeKUWyo (ORCPT
+        id S1730267AbeKUWzv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 17:54:44 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57116 "EHLO mx1.redhat.com"
+        Wed, 21 Nov 2018 17:55:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39622 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729233AbeKUWyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 17:54:44 -0500
+        id S1729530AbeKUWzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 17:55:51 -0500
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B8F1A309706B;
-        Wed, 21 Nov 2018 12:20:34 +0000 (UTC)
-Received: from redhat.com (ovpn-120-136.rdu2.redhat.com [10.10.120.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 9453760923;
-        Wed, 21 Nov 2018 12:20:27 +0000 (UTC)
-Date:   Wed, 21 Nov 2018 07:20:27 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Tiwei Bie <tiwei.bie@intel.com>
-Cc:     jasowang@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com, maxime.coquelin@redhat.com
-Subject: Re: [PATCH net-next v3 00/13] virtio: support packed ring
-Message-ID: <20181121071308-mutt-send-email-mst@kernel.org>
-References: <20181121100330.24846-1-tiwei.bie@intel.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 79AD8394D45;
+        Wed, 21 Nov 2018 12:21:41 +0000 (UTC)
+Received: from [10.36.117.167] (ovpn-117-167.ams2.redhat.com [10.36.117.167])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 44B5D5F7D9;
+        Wed, 21 Nov 2018 12:21:15 +0000 (UTC)
+Subject: Re: [PATCH v1 8/8] PM / Hibernate: exclude all PageOffline() pages
+To:     William Kucharski <william.kucharski@oracle.com>
+Cc:     Linux-MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, devel@linuxdriverproject.org,
+        linux-fsdevel@vger.kernel.org, linux-pm@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        kexec-ml <kexec@lists.infradead.org>, pv-drivers@vmware.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+References: <20181119101616.8901-1-david@redhat.com>
+ <20181119101616.8901-9-david@redhat.com>
+ <11E3C0B0-AEED-42C6-A21C-1820F4B47A68@oracle.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <88f19102-9830-1ed0-1f46-56e11316ca09@redhat.com>
+Date:   Wed, 21 Nov 2018 13:21:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181121100330.24846-1-tiwei.bie@intel.com>
+In-Reply-To: <11E3C0B0-AEED-42C6-A21C-1820F4B47A68@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 21 Nov 2018 12:20:34 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 21 Nov 2018 12:21:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 06:03:17PM +0800, Tiwei Bie wrote:
-> Hi,
+On 21.11.18 12:35, William Kucharski wrote:
+> If you are adding PageOffline(page) to the condition list of the already existing if in
+> saveable_highmem_page(), why explicitly add it as a separate statement in saveable_page()?
 > 
-> This patch set implements packed ring support in virtio driver.
+> It would seem more consistent to make the second check:
 > 
-> A performance test between pktgen (pktgen_sample03_burst_single_flow.sh)
-> and DPDK vhost (testpmd/rxonly/vhost-PMD) has been done, I saw
-> ~30% performance gain in packed ring in this case.
+> -	if (swsusp_page_is_forbidden(page) || swsusp_page_is_free(page))
+> +	if (swsusp_page_is_forbidden(page) || swsusp_page_is_free(page) ||
+> +		PageOffline(page))
+> 
+> instead.
+> 
+> It's admittedly a nit but it just seems cleaner to either do that or, if your intention
+> was to separate the Page checks from the swsusp checks, to break the calls to
+> PageReserved() and PageOffline() into their own check in saveable_highmem_page().
 
-Thanks a lot, this is very exciting!
-Dave, given the holiday, attempts to wrap up the 1.1 spec and the
-patchset size I would very much appreciate a bit more time for
-review. Say until Nov 28?
+I'll split PageReserved() and PageOffline() off from the swsusp checks,
+thanks for your comment!
 
-> To make this patch set work with below patch set for vhost,
-> some hacks are needed to set the _F_NEXT flag in indirect
-> descriptors (this should be fixed in vhost):
 > 
-> https://lkml.org/lkml/2018/7/3/33
+> Thanks!
+>     -- Bill
 
-Could you pls clarify - do you mean it doesn't yet work with vhost
-because of a vhost bug, and to test it with the linked patches
-you had to hack in _F_NEXT? Because I do not see _F_NEXT
-in indirect descriptors in this patch (which is fine).
-Or did I miss it?
 
-> v2 -> v3:
-> - Use leXX instead of virtioXX (MST);
-> - Refactor split ring first (MST);
-> - Add debug helpers (MST);
-> - Put split/packed ring specific fields in sub structures (MST);
-> - Handle normal descriptors and indirect descriptors differently (MST);
-> - Track the DMA addr/len related info in a separate structure (MST);
-> - Calculate AVAIL/USED flags only when wrap counter wraps (MST);
-> - Define a struct/union to read event structure (MST);
-> - Define a macro for wrap counter bit in uapi (MST);
-> - Define the AVAIL/USED bits as shifts instead of values (MST);
-> - s/_F_/_FLAG_/ in VRING_PACKED_EVENT_* as they are values (MST);
-> - Drop the notify workaround for QEMU's tx-timer in packed ring (MST);
-> 
-> v1 -> v2:
-> - Use READ_ONCE() to read event off_wrap and flags together (Jason);
-> - Add comments related to ccw (Jason);
-> 
-> RFC v6 -> v1:
-> - Avoid extra virtio_wmb() in virtqueue_enable_cb_delayed_packed()
->   when event idx is off (Jason);
-> - Fix bufs calculation in virtqueue_enable_cb_delayed_packed() (Jason);
-> - Test the state of the desc at used_idx instead of last_used_idx
->   in virtqueue_enable_cb_delayed_packed() (Jason);
-> - Save wrap counter (as part of queue state) in the return value
->   of virtqueue_enable_cb_prepare_packed();
-> - Refine the packed ring definitions in uapi;
-> - Rebase on the net-next tree;
-> 
-> RFC v5 -> RFC v6:
-> - Avoid tracking addr/len/flags when DMA API isn't used (MST/Jason);
-> - Define wrap counter as bool (Jason);
-> - Use ALIGN() in vring_init_packed() (Jason);
-> - Avoid using pointer to track `next` in detach_buf_packed() (Jason);
-> - Add comments for barriers (Jason);
-> - Don't enable RING_PACKED on ccw for now (noticed by Jason);
-> - Refine the memory barrier in virtqueue_poll();
-> - Add a missing memory barrier in virtqueue_enable_cb_delayed_packed();
-> - Remove the hacks in virtqueue_enable_cb_prepare_packed();
-> 
-> RFC v4 -> RFC v5:
-> - Save DMA addr, etc in desc state (Jason);
-> - Track used wrap counter;
-> 
-> RFC v3 -> RFC v4:
-> - Make ID allocation support out-of-order (Jason);
-> - Various fixes for EVENT_IDX support;
-> 
-> RFC v2 -> RFC v3:
-> - Split into small patches (Jason);
-> - Add helper virtqueue_use_indirect() (Jason);
-> - Just set id for the last descriptor of a list (Jason);
-> - Calculate the prev in virtqueue_add_packed() (Jason);
-> - Fix/improve desc suppression code (Jason/MST);
-> - Refine the code layout for XXX_split/packed and wrappers (MST);
-> - Fix the comments and API in uapi (MST);
-> - Remove the BUG_ON() for indirect (Jason);
-> - Some other refinements and bug fixes;
-> 
-> RFC v1 -> RFC v2:
-> - Add indirect descriptor support - compile test only;
-> - Add event suppression supprt - compile test only;
-> - Move vring_packed_init() out of uapi (Jason, MST);
-> - Merge two loops into one in virtqueue_add_packed() (Jason);
-> - Split vring_unmap_one() for packed ring and split ring (Jason);
-> - Avoid using '%' operator (Jason);
-> - Rename free_head -> next_avail_idx (Jason);
-> - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
-> - Some other refinements and bug fixes;
-> 
-> 
-> Tiwei Bie (13):
->   virtio: add packed ring types and macros
->   virtio_ring: add _split suffix for split ring functions
->   virtio_ring: put split ring functions together
->   virtio_ring: put split ring fields in a sub struct
->   virtio_ring: introduce debug helpers
->   virtio_ring: introduce helper for indirect feature
->   virtio_ring: allocate desc state for split ring separately
->   virtio_ring: extract split ring handling from ring creation
->   virtio_ring: cache whether we will use DMA API
->   virtio_ring: introduce packed ring support
->   virtio_ring: leverage event idx in packed ring
->   virtio_ring: disable packed ring on unsupported transports
->   virtio_ring: advertize packed ring layout
-> 
->  drivers/misc/mic/vop/vop_main.c        |   13 +
->  drivers/remoteproc/remoteproc_virtio.c |   13 +
->  drivers/s390/virtio/virtio_ccw.c       |   14 +
->  drivers/virtio/virtio_ring.c           | 1811 +++++++++++++++++++++++++-------
->  include/uapi/linux/virtio_config.h     |    3 +
->  include/uapi/linux/virtio_ring.h       |   52 +
->  6 files changed, 1530 insertions(+), 376 deletions(-)
-> 
-> -- 
-> 2.14.5
+-- 
+
+Thanks,
+
+David / dhildenb
