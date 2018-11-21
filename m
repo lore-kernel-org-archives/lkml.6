@@ -2,131 +2,123 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3312C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0937C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A90321104
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:51:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZugJB7K8";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SReTCA0i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A90321104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id BA4A221104
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:57:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA4A221104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbeKURYk (ORCPT
+        id S1727946AbeKURaP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 12:24:40 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:43300 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726773AbeKURYj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 12:24:39 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9FAFC60B0D; Wed, 21 Nov 2018 06:51:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542783084;
-        bh=zTwqJGp2VMfcTdsau9v3/UuTejjkYII1F00I5Uz2JQg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZugJB7K8tvyqCTFiqVi1VUJpYUrWA7w473HZZ+TeJ7V8RxzeDF/5zU54hVlWYGZg0
-         idAjQDl1nSXbOv7YifZH7YKjI8vWZ/MIDweueyW8IXuyC4HcAoLLaW5HJ6SXJFsVjl
-         2NwPQ5D7bd8axdBey3BfShCSh1IfMffjLjYwhMTo=
-Received: from [10.79.128.198] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 82DE860227;
-        Wed, 21 Nov 2018 06:51:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542783083;
-        bh=zTwqJGp2VMfcTdsau9v3/UuTejjkYII1F00I5Uz2JQg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=SReTCA0item2JQ2KorUhi97gyVgEYG0rzgxGgC1BcgI5ightkpgvoQvCcymWi1SF5
-         +fBqN4Aw3H+Iphg4kdpbKTyn0D2MipXr9BfChdCqUVvg/6CM7cho0d0SPrYMh3cGL1
-         PY9rBpFqjtOnZKVlf1BAkp0TByxlp4S09YEZh7t4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 82DE860227
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH 4/4] PM / Domains: Propagate performance state updates
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        niklas.cassel@linaro.org, linux-kernel@vger.kernel.org
-References: <cover.1541399301.git.viresh.kumar@linaro.org>
- <7e1ea283f9eebce081af80ddb8d3ca5c9c76cd3b.1541399301.git.viresh.kumar@linaro.org>
- <71530b01-eefa-4778-0b17-d7774eb48356@codeaurora.org>
- <20181121051626.izb6dem62zoaf2c4@vireshk-i7>
- <68a3294f-5556-4b5f-f8c7-79c20b5c70fb@codeaurora.org>
- <5efc76bb-7732-52b6-4684-82b35ad52343@codeaurora.org>
- <20181121063646.37bha3vomxvzazzn@vireshk-i7>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <bd5b94fb-ed9a-7745-a0cd-cfc3b81d676f@codeaurora.org>
-Date:   Wed, 21 Nov 2018 12:21:18 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 21 Nov 2018 12:30:15 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56924 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726039AbeKURaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 12:30:15 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0F077B037;
+        Wed, 21 Nov 2018 06:56:58 +0000 (UTC)
+Date:   Wed, 21 Nov 2018 07:56:56 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-api@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [RFC PATCH 1/3] mm, proc: be more verbose about unstable VMA
+ flags in /proc/<pid>/smaps
+Message-ID: <20181121065656.GA12932@dhcp22.suse.cz>
+References: <20181120103515.25280-1-mhocko@kernel.org>
+ <20181120103515.25280-2-mhocko@kernel.org>
+ <20181120105135.GF8842@quack2.suse.cz>
+ <alpine.DEB.2.21.1811201558060.89573@chino.kir.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20181121063646.37bha3vomxvzazzn@vireshk-i7>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1811201558060.89573@chino.kir.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/21/2018 12:06 PM, Viresh Kumar wrote:
-> On 21-11-18, 11:12, Rajendra Nayak wrote:
->> And the reason for that seems to be that we update the genpd status to GPD_STATE_ACTIVE
->> *after* we try to set the performance state, so we always hit this check which bails out
->> thinking the genpd is not ON.
+On Tue 20-11-18 16:01:47, David Rientjes wrote:
+> On Tue, 20 Nov 2018, Jan Kara wrote:
 > 
-> Thanks for looking at it. Here is the (untested) fix, please try it
-> out.
-
-Thanks, yes, this does seem to work.
-
+> > > Even though vma flags exported via /proc/<pid>/smaps are explicitly
+> > > documented to be not guaranteed for future compatibility the warning
+> > > doesn't go far enough because it doesn't mention semantic changes to
+> > > those flags. And they are important as well because these flags are
+> > > a deep implementation internal to the MM code and the semantic might
+> > > change at any time.
+> > > 
+> > > Let's consider two recent examples:
+> > > http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
+> > > : commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
+> > > : removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
+> > > : mean time certain customer of ours started poking into /proc/<pid>/smaps
+> > > : and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
+> > > : flags, the application just fails to start complaining that DAX support is
+> > > : missing in the kernel.
+> > > 
+> > > http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+> > > : Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+> > > : introduced a regression in that userspace cannot always determine the set
+> > > : of vmas where thp is ineligible.
+> > > : Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
+> > > : to determine if a vma is eligible to be backed by hugepages.
+> > > : Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
+> > > : be disabled and emit "nh" as a flag for the corresponding vmas as part of
+> > > : /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
+> > > : flag and "nh" is not emitted.
+> > > : This causes smaps parsing libraries to assume a vma is eligible for thp
+> > > : and ends up puzzling the user on why its memory is not backed by thp.
+> > > 
+> > > In both cases userspace was relying on a semantic of a specific VMA
+> > > flag. The primary reason why that happened is a lack of a proper
+> > > internface. While this has been worked on and it will be fixed properly,
+> > > it seems that our wording could see some refinement and be more vocal
+> > > about semantic aspect of these flags as well.
+> > > 
+> > > Cc: Jan Kara <jack@suse.cz>
+> > > Cc: Dan Williams <dan.j.williams@intel.com>
+> > > Cc: David Rientjes <rientjes@google.com>
+> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > 
+> > Honestly, it just shows that no amount of documentation is going to stop
+> > userspace from abusing API that's exposing too much if there's no better
+> > alternative. But this is a good clarification regardless. So feel free to
+> > add:
+> > 
+> > Acked-by: Jan Kara <jack@suse.cz>
+> > 
 > 
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 84c13695af65..92be4a224b45 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -250,9 +250,6 @@ static int _genpd_set_performance_state(struct generic_pm_domain *genpd,
->          unsigned int mstate;
->          int ret;
->   
-> -       if (!genpd_status_on(genpd))
-> -               goto out;
-> -
->          /* Propagate to masters of genpd */
->          list_for_each_entry(link, &genpd->slave_links, slave_node) {
->                  master = link->master;
-> @@ -286,7 +283,6 @@ static int _genpd_set_performance_state(struct generic_pm_domain *genpd,
->          if (ret)
->                  goto err;
->   
-> -out:
->          genpd->performance_state = state;
->          return 0;
->   
-> @@ -361,6 +357,11 @@ static int _genpd_reeval_performance_state(struct generic_pm_domain *genpd,
->                  return 0;
->   
->   update_state:
-> +       if (!genpd_status_on(genpd)) {
-> +               genpd->performance_state = state;
-> +               return 0;
-> +       }
-> +
->          return _genpd_set_performance_state(genpd, state, depth);
->   }
+> I'm not sure what is expected of a userspace developer who finds they have 
+> a single way to determine if something is enabled/disabled.  Should they 
+> refer to the documentation and see that the flag may be unstable so they 
+> write a kernel patch and have it merged upstream before using it?  What to 
+> do when they don't control the kernel version they are running on?
+
+Well, I would treat it as any standard feature request. Ask for the
+feature upstream and work with the comunity to come up with a reasonable
+and a stable API.
+
+> Anyway, mentioning that the vm flags here only have meaning depending on 
+> the kernel version seems like a worthwhile addition:
 > 
+> Acked-by: David Rientjes <rientjes@google.com>
+
+Thanks!
+
+-- 
+Michal Hocko
+SUSE Labs
