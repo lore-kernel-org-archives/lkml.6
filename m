@@ -2,56 +2,61 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDED3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7908C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6920214D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:06:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F6C1214F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:06:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EccsMljW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6920214D9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="onHFuLNG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F6C1214F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387551AbeKVFmS (ORCPT
+        id S2387564AbeKVFmV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:42:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36624 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:42:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730172AbeKVFmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:42:17 -0500
+        id S1730172AbeKVFmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:42:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B67A8206BB;
-        Wed, 21 Nov 2018 19:06:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29357206BB;
+        Wed, 21 Nov 2018 19:06:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827205;
-        bh=jmcIPeiOKCmsbv8djiWdfBY9AoI+X13MrYsY2LBY+zc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EccsMljWVYi3OkSbTH4xoIgGvjypGFleN92Hiyib5B8nnv7TtKenklVfkts7+3sd+
-         zxBpnHeAdkiIt1gJxaifZkcqVKeGsxpkGjZV1VCTvmbC4BZm8m9W5JsHZjB7FMKQHK
-         eUOAnyYwlcPMICPBcz+cjgJijqipUp35fG7cOxw0=
+        s=default; t=1542827207;
+        bh=IG6+8tdUYO4dIuHyGIcmjoYb6yxnmvFuv2yqN04OOVc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=onHFuLNGmumtNotcpTW5LRSqhma39ZNm4//+aG9JZCMoSvzIyBBqpOm0Ub3DVPzUF
+         OXCHrO/70727888AR78zjveY6bDACLDOtO9/01cVJN4GpFqKQV7nZhSpLTPw9/2PLa
+         0mx+YqOfhhuXbMYdjUm8FyEsZ3mkJZot+fe4+Ow8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Preethi Ramachandra <preethir@juniper.net>,
-        David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 05/42] ipv6: Fix PMTU updates for UDP/raw sockets in presence of VRF
-Date:   Wed, 21 Nov 2018 20:05:41 +0100
-Message-Id: <20181121183148.183175728@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.19 00/42] 4.19.4-stable review
+Date:   Wed, 21 Nov 2018 20:05:36 +0100
+Message-Id: <20181121183147.869199006@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181121183147.869199006@linuxfoundation.org>
-References: <20181121183147.869199006@linuxfoundation.org>
+MIME-Version: 1.0
 User-Agent: quilt/0.65
 X-stable: review
-MIME-Version: 1.0
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.4-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.19.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.19.4-rc1
+X-KernelTest-Deadline: 2018-11-23T18:31+00:00
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,46 +64,210 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.19.4 release.
+There are 42 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Fri Nov 23 18:31:31 UTC 2018.
+Anything received after that time might be too late.
 
-From: David Ahern <dsahern@gmail.com>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.4-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+and the diffstat can be found below.
 
-[ Upstream commit 7ddacfa564870cdd97275fd87decb6174abc6380 ]
+thanks,
 
-Preethi reported that PMTU discovery for UDP/raw applications is not
-working in the presence of VRF when the socket is not bound to a device.
-The problem is that ip6_sk_update_pmtu does not consider the L3 domain
-of the skb device if the socket is not bound. Update the function to
-set oif to the L3 master device if relevant.
+greg k-h
 
-Fixes: ca254490c8df ("net: Add VRF support to IPv6 stack")
-Reported-by: Preethi Ramachandra <preethir@juniper.net>
-Signed-off-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/route.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+-------------
+Pseudo-Shortlog of commits:
 
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -2391,10 +2391,13 @@ EXPORT_SYMBOL_GPL(ip6_update_pmtu);
- 
- void ip6_sk_update_pmtu(struct sk_buff *skb, struct sock *sk, __be32 mtu)
- {
-+	int oif = sk->sk_bound_dev_if;
- 	struct dst_entry *dst;
- 
--	ip6_update_pmtu(skb, sock_net(sk), mtu,
--			sk->sk_bound_dev_if, sk->sk_mark, sk->sk_uid);
-+	if (!oif && skb->dev)
-+		oif = l3mdev_master_ifindex(skb->dev);
-+
-+	ip6_update_pmtu(skb, sock_net(sk), mtu, oif, sk->sk_mark, sk->sk_uid);
- 
- 	dst = __sk_dst_get(sk);
- 	if (!dst || !dst->obsolete ||
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.19.4-rc1
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Revert "x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation"
+
+Frieder Schrempf <frieder.schrempf@kontron.de>
+    usbnet: smsc95xx: disable carrier check while suspending
+
+David Howells <dhowells@redhat.com>
+    rxrpc: Fix lockup due to no error backoff after ack transmit error
+
+Stefan Wahren <stefan.wahren@i2se.com>
+    net: smsc95xx: Fix MTU range
+
+Shalom Toledo <shalomt@mellanox.com>
+    mlxsw: spectrum: Fix IP2ME CPU policer configuration
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: not increase stream's incnt before sending addstrm_in request
+
+Martin Schiller <ms@dev.tdt.de>
+    net: phy: mdio-gpio: Fix working over slow can_sleep GPIOs
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: fix strchange_flags name for Stream Change Event
+
+Tristram Ha <Tristram.Ha@microchip.com>
+    net: dsa: microchip: initialize mutex before use
+
+Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+    net: qualcomm: rmnet: Fix incorrect assignment of real_dev
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: define SCTP_SS_DEFAULT for Stream schedulers
+
+Holger Hoffstätte <holger@applied-asynchrony.com>
+    net: phy: realtek: fix RTL8201F sysfs name
+
+Andrew Lunn <andrew@lunn.ch>
+    net: dsa: mv88e6xxx: Fix clearing of stats counters
+
+Denis Drozdov <denisd@mellanox.com>
+    net/mlx5e: IPoIB, Reset QP after channels are closed
+
+Raed Salem <raeds@mellanox.com>
+    net/mlx5: IPSec, Fix the SA context hash key
+
+Xin Long <lucien.xin@gmail.com>
+    l2tp: fix a sock refcnt leak in l2tp_tunnel_register
+
+Eric Dumazet <edumazet@google.com>
+    inet: frags: better deal with smp races
+
+Shay Agroskin <shayag@mellanox.com>
+    net/mlx5e: Removed unnecessary warnings in FEC caps query
+
+Valentine Fatiev <valentinef@mellanox.com>
+    net/mlx5e: Fix selftest for small MTUs
+
+Or Gerlitz <ogerlitz@mellanox.com>
+    net/mlx5e: Always use the match level enum when parsing TC rule match
+
+Xin Long <lucien.xin@gmail.com>
+    Revert "sctp: remove sctp_transport_pmtu_check"
+
+Moshe Shemesh <moshe@mellanox.com>
+    net/mlx5e: RX, verify received packet size in Linear Striding RQ
+
+Yuval Avnery <yuvalav@mellanox.com>
+    net/mlx5e: Adjust to max number of channles when re-attaching
+
+Or Gerlitz <ogerlitz@mellanox.com>
+    net/mlx5e: Claim TC hw offloads support only under a proper build config
+
+Or Gerlitz <ogerlitz@mellanox.com>
+    net/mlx5e: Don't match on vlan non-existence if ethertype is wildcarded
+
+Jon Maloy <donmalo99@gmail.com>
+    tipc: fix link re-establish failure
+
+Jakub Kicinski <jakub.kicinski@netronome.com>
+    net: sched: cls_flower: validate nested enc_opts_policy to avoid warning
+
+Davide Caratti <dcaratti@redhat.com>
+    net/sched: act_pedit: fix memory leak when IDR allocation fails
+
+Florian Fainelli <f.fainelli@gmail.com>
+    net: systemport: Protect stop from timeout
+
+Matthew Cover <werekraken@gmail.com>
+    tuntap: fix multiqueue rx
+
+Jon Maloy <donmalo99@gmail.com>
+    tipc: fix lockdep warning when reinitilaizing sockets
+
+Jon Maloy <donmalo99@gmail.com>
+    tipc: don't assume linear buffer when reading ancillary data
+
+Siva Reddy Kallam <siva.kallam@broadcom.com>
+    tg3: Add PHY reset for 5717/5719/5720 in change ring and flow control paths
+
+Stephen Mallon <stephen.mallon@sydney.edu.au>
+    tcp: Fix SOF_TIMESTAMPING_RX_HARDWARE to use the latest timestamp during TCP coalescing
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: not allow to set asoc prsctp_enable by sockopt
+
+Eric Dumazet <edumazet@google.com>
+    net-gro: reset skb->pkt_type in napi_reuse_skb()
+
+Doug Berger <opendmb@gmail.com>
+    net: bcmgenet: protect stop from timeout
+
+David Ahern <dsahern@gmail.com>
+    ipv6: Fix PMTU updates for UDP/raw sockets in presence of VRF
+
+Xin Long <lucien.xin@gmail.com>
+    ipv6: fix a dst leak when removing its exception
+
+Sabrina Dubroca <sd@queasysnail.net>
+    ip_tunnel: don't force DF when MTU is locked
+
+Michał Mirosław <mirq-linux@rere.qmqm.pl>
+    ibmvnic: fix accelerated VLAN handling
+
+배석진 <soukjin.bae@samsung.com>
+    flow_dissector: do not dissect l4 ports for fragments
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |  4 +-
+ arch/x86/kernel/cpu/bugs.c                         | 57 ++----------------
+ drivers/net/dsa/microchip/ksz_common.c             | 10 ++--
+ drivers/net/dsa/mv88e6xxx/global1.c                |  2 +
+ drivers/net/ethernet/broadcom/bcmsysport.c         | 15 +++--
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c     | 13 +++--
+ drivers/net/ethernet/broadcom/tg3.c                | 18 +++++-
+ drivers/net/ethernet/ibm/ibmvnic.c                 |  2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en.h       |  1 +
+ drivers/net/ethernet/mellanox/mlx5/core/en/port.c  |  4 +-
+ .../ethernet/mellanox/mlx5/core/en/port_buffer.c   |  4 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c  | 37 ++++++++++--
+ drivers/net/ethernet/mellanox/mlx5/core/en_rx.c    |  6 ++
+ .../net/ethernet/mellanox/mlx5/core/en_selftest.c  | 26 ++++-----
+ drivers/net/ethernet/mellanox/mlx5/core/en_stats.c |  3 +
+ drivers/net/ethernet/mellanox/mlx5/core/en_stats.h |  2 +
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c    | 67 +++++++++++-----------
+ .../net/ethernet/mellanox/mlx5/core/fpga/ipsec.c   | 10 +++-
+ .../net/ethernet/mellanox/mlx5/core/ipoib/ipoib.c  |  2 +-
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c     |  1 -
+ drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c    |  6 +-
+ drivers/net/phy/mdio-gpio.c                        | 10 ++--
+ drivers/net/phy/realtek.c                          |  2 +-
+ drivers/net/tun.c                                  |  6 +-
+ drivers/net/usb/smsc95xx.c                         |  9 +++
+ include/net/sctp/sctp.h                            | 12 ++++
+ include/uapi/linux/sctp.h                          |  3 +
+ kernel/cpu.c                                       | 11 +---
+ net/core/dev.c                                     |  4 ++
+ net/core/flow_dissector.c                          |  4 +-
+ net/ipv4/inet_fragment.c                           | 29 +++++-----
+ net/ipv4/ip_tunnel_core.c                          |  2 +-
+ net/ipv4/tcp_input.c                               |  1 +
+ net/ipv6/route.c                                   | 14 +++--
+ net/l2tp/l2tp_core.c                               |  9 ++-
+ net/rxrpc/ar-internal.h                            |  1 +
+ net/rxrpc/call_event.c                             | 18 ++++--
+ net/rxrpc/output.c                                 | 35 +++++++++--
+ net/sched/act_pedit.c                              |  3 +-
+ net/sched/cls_flower.c                             | 14 ++++-
+ net/sctp/output.c                                  |  3 +
+ net/sctp/outqueue.c                                |  2 +-
+ net/sctp/socket.c                                  | 26 ++-------
+ net/sctp/stream.c                                  |  1 -
+ net/tipc/discover.c                                | 19 +++---
+ net/tipc/link.c                                    | 11 ++--
+ net/tipc/net.c                                     | 45 ++++++++++++---
+ net/tipc/net.h                                     |  2 +-
+ net/tipc/socket.c                                  | 15 +++--
+ 49 files changed, 356 insertions(+), 245 deletions(-)
 
 
