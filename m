@@ -2,43 +2,52 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9CFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF111C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:34:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 708D820821
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:33:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 708D820821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BA2ED20878
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:34:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="hHCSokx4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA2ED20878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728654AbeKVHJl (ORCPT
+        id S1730040AbeKVHKA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 02:09:41 -0500
-Received: from mga03.intel.com ([134.134.136.65]:35635 "EHLO mga03.intel.com"
+        Thu, 22 Nov 2018 02:10:00 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:47058 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbeKVHJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 02:09:41 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 12:33:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,262,1539673200"; 
-   d="scan'208";a="108251962"
-Received: from skl-02.jf.intel.com ([10.54.74.62])
-  by fmsmga004.fm.intel.com with ESMTP; 21 Nov 2018 12:33:48 -0800
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
+        id S1726200AbeKVHKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 02:10:00 -0500
+Received: from zn.tnic (p200300EC2BD0AB00883B4D3E2A7F8FA4.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:ab00:883b:4d3e:2a7f:8fa4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 20AB11EC09F7;
+        Wed, 21 Nov 2018 21:34:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1542832447;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=dJyFdZhd9sk7G8zixcYXBXLbCsUOG199CJpARPBJlKk=;
+        b=hHCSokx4io0WlcJ35xcWU41yY/Cdl+1Ef9BOq7MLiBMYew4i0x/bDK2MbHVVrRR5ZuPBNM
+        43hbEBDWotwdUYiFHpL6LxTKngu4zUL66LIhHl2QzFCZGiaVf/BfywdCYkHIeul3RVC0Df
+        sIyEcK6mWAS2aGc1yepQn3PuW/Rje58=
+Date:   Wed, 21 Nov 2018 21:33:53 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         Andrea Arcangeli <aarcange@redhat.com>,
         David Woodhouse <dwmw@amazon.co.uk>,
@@ -51,50 +60,69 @@ Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
         Waiman Long <longman9394@gmail.com>,
         Greg KH <gregkh@linuxfoundation.org>,
         Dave Stewart <david.c.stewart@intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        stable@vger.kernel.org
-Subject: [PATCH] x86/speculation: Revert turning on STIBP all the time
-Date:   Wed, 21 Nov 2018 12:00:49 -0800
-Message-Id: <0693f05ac4b041ee2f988dfec31ebc81f4f28f17.1542830344.git.tim.c.chen@linux.intel.com>
-X-Mailer: git-send-email 2.9.4
+        Kees Cook <keescook@chromium.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Subject: Re: [patch 05/24] x86/speculation: Disable STIBP when enhanced IBRS
+ is in use
+Message-ID: <20181121203353.GD27559@zn.tnic>
+References: <20181121201430.559770965@linutronix.de>
+ <20181121201722.717439984@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181121201722.717439984@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 53c613fe "x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation"
-turns on STIBP all the time.
+On Wed, Nov 21, 2018 at 09:14:35PM +0100, Thomas Gleixner wrote:
+> From: Tim Chen <tim.c.chen@linux.intel.com>
+> 
+> If enhanced IBRS is active, STIBP is redundant for mitigating Spectre v2
+> user space exploits from hyperthread sibling.
+> 
+> Disable STIBP when enhanced IBRS is used.
+> 
+> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> 
+> ---
+>  arch/x86/kernel/cpu/bugs.c |    7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -321,6 +321,10 @@ static bool stibp_needed(void)
+>  	if (spectre_v2_enabled == SPECTRE_V2_NONE)
+>  		return false;
+>  
+> +	/* Enhanced IBRS makes using STIBP unnecessary. */
+> +	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
+> +		return false;
+> +
+>  	if (!boot_cpu_has(X86_FEATURE_STIBP))
+>  		return false;
+>  
+> @@ -846,6 +850,9 @@ static ssize_t l1tf_show_state(char *buf
+>  
+>  static char *stibp_state(void)
+>  {
+> +	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
+> +		return "";
 
-This causes large performance regression in many workloads.
+If
+	spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED
 
-One case is perlbench in the SpecInt Rate 2006 test suite which shows a
-21% reduction in throughput.
-There're also other reports of drop in performance on Python and PHP benchmarks:
-https://www.phoronix.com/scan.php?page=article&item=linux-420-bisect&num=2
+then SPEC_CTRL_STIBP should not be set in x86_spec_ctrl_base
+(stibp_needed() prevents the setting in arch_smt_update()) so the above
+check should not be needed.
 
-STIBP on all the time should not be the default option.
+I *think*.
 
-Turn off STIBP all the time for now till STIBP can be applied on
-a per task basis.
-
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
----
- arch/x86/kernel/cpu/bugs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index c37e66e..21a8f39 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -332,7 +332,7 @@ static bool stibp_needed(void)
- 	if (!boot_cpu_has(X86_FEATURE_STIBP))
- 		return false;
- 
--	return true;
-+	return false;
- }
- 
- static void update_stibp_msr(void *info)
 -- 
-2.9.4
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
