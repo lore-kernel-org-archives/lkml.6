@@ -2,355 +2,159 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F41C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA4FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:05:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C539820684
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:05:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C539820684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by mail.kernel.org (Postfix) with ESMTP id F2BD420684
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:05:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2BD420684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729323AbeKUUjI (ORCPT
+        id S1729365AbeKUUjN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 15:39:08 -0500
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:49582 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbeKUUjI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 15:39:08 -0500
-Received: from [109.168.11.45] (port=57890 helo=[192.168.101.125])
-        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1gPPNU-00DuM2-AQ; Wed, 21 Nov 2018 11:05:00 +0100
-Subject: Re: [PATCH v4 3/4] media: i2c: Add MAX9286 driver
-To:     jacopo mondi <jacopo@jmondi.org>
-Cc:     kieran.bingham@ideasonboard.com, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        sakari.ailus@iki.fi,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-kernel@vger.kernel.org,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-References: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
- <20181102154723.23662-4-kieran.bingham@ideasonboard.com>
- <5238fa80-7678-97a8-47ee-6a26970d862d@lucaceresoli.net>
- <07ee8a2c-81a8-ca32-96cf-67d6a883e3f5@ideasonboard.com>
- <e6143de9-f253-1a89-21e0-d1e2c0444e7b@lucaceresoli.net>
- <417f5bc8-533d-2c2f-2325-3e728d53329b@ideasonboard.com>
- <6729cf7d-bd5d-d762-3f4a-f53a8791a397@lucaceresoli.net>
- <20181120174425.GF28299@w540>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <f1e40fda-1e71-7b8c-adf3-ffc72897db44@lucaceresoli.net>
-Date:   Wed, 21 Nov 2018 11:05:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181120174425.GF28299@w540>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Wed, 21 Nov 2018 15:39:13 -0500
+Received: from mga18.intel.com ([134.134.136.126]:14789 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727046AbeKUUjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 15:39:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 02:05:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,260,1539673200"; 
+   d="scan'208";a="275726999"
+Received: from btwcube1.sh.intel.com ([10.67.104.173])
+  by orsmga005.jf.intel.com with ESMTP; 21 Nov 2018 02:05:21 -0800
+From:   Tiwei Bie <tiwei.bie@intel.com>
+To:     mst@redhat.com, jasowang@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org
+Cc:     wexu@redhat.com, jfreimann@redhat.com, maxime.coquelin@redhat.com,
+        tiwei.bie@intel.com
+Subject: [PATCH net-next v3 00/13] virtio: support packed ring
+Date:   Wed, 21 Nov 2018 18:03:17 +0800
+Message-Id: <20181121100330.24846-1-tiwei.bie@intel.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+Hi,
 
-On 20/11/18 18:44, jacopo mondi wrote:
-> Hi Luca,
-> 
-> On Tue, Nov 20, 2018 at 11:51:37AM +0100, Luca Ceresoli wrote:
->> Hi Kieran,
->>
->> On 20/11/18 01:32, Kieran Bingham wrote:
->>> Hi Luca,
->>>
->>> My apologies for my travel induced delay in responding here,
->>
->> No problem.
->>
->>> On 14/11/2018 02:04, Luca Ceresoli wrote:
->> [...]
->>>>>>> +static int max9286_probe(struct i2c_client *client,
->>>>>>> +			 const struct i2c_device_id *did)
->>>>>>> +{
->>>>>>> +	struct max9286_device *dev;
->>>>>>> +	unsigned int i;
->>>>>>> +	int ret;
->>>>>>> +
->>>>>>> +	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
->>>>>>> +	if (!dev)
->>>>>>> +		return -ENOMEM;
->>>>>>> +
->>>>>>> +	dev->client = client;
->>>>>>> +	i2c_set_clientdata(client, dev);
->>>>>>> +
->>>>>>> +	for (i = 0; i < MAX9286_N_SINKS; i++)
->>>>>>> +		max9286_init_format(&dev->fmt[i]);
->>>>>>> +
->>>>>>> +	ret = max9286_parse_dt(dev);
->>>>>>> +	if (ret)
->>>>>>> +		return ret;
->>>>>>> +
->>>>>>> +	dev->regulator = regulator_get(&client->dev, "poc");
->>>>>>> +	if (IS_ERR(dev->regulator)) {
->>>>>>> +		if (PTR_ERR(dev->regulator) != -EPROBE_DEFER)
->>>>>>> +			dev_err(&client->dev,
->>>>>>> +				"Unable to get PoC regulator (%ld)\n",
->>>>>>> +				PTR_ERR(dev->regulator));
->>>>>>> +		ret = PTR_ERR(dev->regulator);
->>>>>>> +		goto err_free;
->>>>>>> +	}
->>>>>>> +
->>>>>>> +	/*
->>>>>>> +	 * We can have multiple MAX9286 instances on the same physical I2C
->>>>>>> +	 * bus, and I2C children behind ports of separate MAX9286 instances
->>>>>>> +	 * having the same I2C address. As the MAX9286 starts by default with
->>>>>>> +	 * all ports enabled, we need to disable all ports on all MAX9286
->>>>>>> +	 * instances before proceeding to further initialize the devices and
->>>>>>> +	 * instantiate children.
->>>>>>> +	 *
->>>>>>> +	 * Start by just disabling all channels on the current device. Then,
->>>>>>> +	 * if all other MAX9286 on the parent bus have been probed, proceed
->>>>>>> +	 * to initialize them all, including the current one.
->>>>>>> +	 */
->>>>>>> +	max9286_i2c_mux_close(dev);
->>>>>>> +
->>>>>>> +	/*
->>>>>>> +	 * The MAX9286 initialises with auto-acknowledge enabled by default.
->>>>>>> +	 * This means that if multiple MAX9286 devices are connected to an I2C
->>>>>>> +	 * bus, another MAX9286 could ack I2C transfers meant for a device on
->>>>>>> +	 * the other side of the GMSL links for this MAX9286 (such as a
->>>>>>> +	 * MAX9271). To prevent that disable auto-acknowledge early on; it
->>>>>>> +	 * will be enabled later as needed.
->>>>>>> +	 */
->>>>>>> +	max9286_configure_i2c(dev, false);
->>>>>>> +
->>>>>>> +	ret = device_for_each_child(client->dev.parent, &client->dev,
->>>>>>> +				    max9286_is_bound);
->>>>>>> +	if (ret)
->>>>>>> +		return 0;
->>>>>>> +
->>>>>>> +	dev_dbg(&client->dev,
->>>>>>> +		"All max9286 probed: start initialization sequence\n");
->>>>>>> +	ret = device_for_each_child(client->dev.parent, NULL,
->>>>>>> +				    max9286_init);
->>>>>>
->>>>>> I can't manage to like this initialization sequence, sorry. If at all
->>>>>> possible, each max9286 should initialize itself independently from each
->>>>>> other, like any normal driver.
->>>>>
->>>>> Yes, I think we're in agreement here, but unfortunately this section is
->>>>> a workaround for the fact that our devices share a common address space.
->>>>>
->>>>> We (currently) *must* disable both devices before we start the
->>>>> initialisation process for either on our platform currently...
->>>>
->>>> The model I proposed in my review to patch 1/4 (split remote physical
->>>> address from local address pool) allows to avoid this workaround.
->>>
->>>
->>> Having just talked this through with Jacopo I think I see that we have
->>> two topics getting intertwined here too.
->>>
->>>  - Address translation so that we can separate the camera addressing
->>>
->>>  - our 'device_is_bound/device_for_each_child()' workaround which lets
->>>    us make sure the buses are closed before we power on any camera
->>>    device.
->>>
->>>
->>> For the upstream process of this driver - I will remove the
->>> 'device_is_bound()/device_for_each_child()' workarounds.
->>>
->>>
->>> It is /ugly/ and needs more consideration, but I believe we do still
->>> need it (or something similar) for our platform currently.
->>>
->>>
->>>
->>> The other side of that is the address translation. I think I was wrong
->>> earlier and may have said we have address translation on both sides.
->>>
->>>
->>> I think I now see that we only have some minimal translation for two
->>> addresses on the remote (max9271) side, not the local (max9286) side.
->>
->> Can the remote (max9271) translate addresses for transactions
->> originating from the local side? This would make it possible to do a
->> proper address translation, although 2 addresses is a quite small amount.
->>
-> 
-> Yes, that's true for systems with a single max9286 [1]
-> 
-> We have a system with 2 de-serializers, and what happens is the
-> following:
-> 
-> The system starts with the following configuration:
-> 
-> 1)
->                     +------- max9271@40
->                     +------- max9271@40
-> Soc ----> max9286 --+------- max9271@40
->                     +------- max9271@40
-> 
-> with a single max9286 it would be easy. We operate on one channel at
-> the time, do the reprogramming (or set up the translation, for the TI
-> chip use case) when adding the adapter for the channel, and then we
-> can talk with all remotes, which now have a different address
-> 
-> 2)
->                     +-------- max9271@50
->                     +--- / -- max9271@40
-> Soc ----> max9286 --+--- / -- max9271@40
->                     +--- / -- max9271@40
-> 
-> 
->                     +--- / -- max9271@50
->                     +-------- max9271@51
-> Soc ----> max9286 --+--- / -- max9271@40
->                     +--- / -- max9271@40
-> 
->                     +--- / -- max9271@50
->                     +--- / -- max9271@51
-> Soc ----> max9286 --+-------- max9271@52
->                     +--- / -- max9271@40
-> 
->                     +--- / -- max9271@50
->                     +--- / -- max9271@51
-> Soc ----> max9286 --+--- / -- max9271@52
->                     +-------- max9271@53
-> 
-> Of course, to do the reprogramming, we need to initially send messages
-> to the default 0x40 address each max9271 boots with. If we don't close
-> all channels but the one we intend to reprogram, all remotes would
-> receive the same message, and thus will be re-programmed to the same
-> address (not nice). [2]
-> 
-> Now, if you have two max9286, installed on the same i2c bus, then you
-> need to make sure all channels of the 'others' are closed, before you
-> can reprogram your remotes, otherwise, you would end up reprogramming
-> all the remotes of the 'others' when trying to reprogram yours, as our
-> local de-serializers, bounces everything they receives, not directed
-> to them, to their remote sides.
+This patch set implements packed ring support in virtio driver.
 
-This last sentence is the one point that makes things so hard on the
-GMSL chips. In my previous email(s) I partially forgot about this, so I
-was hoping  a better implementation could be possible. Thanks for
-re-focusing me.
+A performance test between pktgen (pktgen_sample03_burst_single_flow.sh)
+and DPDK vhost (testpmd/rxonly/vhost-PMD) has been done, I saw
+~30% performance gain in packed ring in this case.
 
-It would have been lovely if the hardware designers had at least put an
-i2c mux between the soc and those chatty deserializers... :-\
+To make this patch set work with below patch set for vhost,
+some hacks are needed to set the _F_NEXT flag in indirect
+descriptors (this should be fixed in vhost):
 
-> 3)
->                        +-------- max9271@50
->                        +--- / -- max9271@40
-> Soc --+-> max9286@4c --+--- / -- max9271@40
->       |                +--- / -- max9271@40
->       |
->       |-> max9286@6c --+-------- max9271@50  <-- not nice
->                        +-------- max9271@50
->                        +-------- max9271@50
->                        +-------- max9271@50
-> 
->                        +--- / -- max9271@50
->                        +-------- max9271@51
-> Soc --+-> max9286@4c --+--- / -- max9271@40
->       |                +--- / -- max9271@40
->       |
->       |-> max9286@6c --+-------- max9271@51 <-- not nice
->                        +-------- max9271@51
->                        +-------- max9271@51
->                        +-------- max9271@51
-> 
-> ....
-> 
-> With the (not nice) 'max9286_is_bound()' we make sure we close all
-> channels on all max9286 first
-> 
-> 4)
->                        +--- / -- max9271@40
->                        +--- / -- max9271@40
-> Soc --+-> max9286@4c --+--- / -- max9271@40
->       |                +--- / -- max9271@40
->       |
->       |-> max9286@6c --+--- / -- max9271@40
->                        +--- / -- max9271@40
->                        +--- / -- max9271@40
->                        +--- / -- max9271@40
-> 
-> And then only the last one to probe calls the re-programming
-> phase for all its fellows de-serializers on the bus.
-> 
-> 5)
->                        +-------- max9271@50
->                        +--- / -- max9271@40
-> Soc --+-> max9286@4c --+--- / -- max9271@40
->       |                +--- / -- max9271@40
->       |
->       |-> max9286@6c --+--- / -- max9271@40
->                        +--- / -- max9271@40
->                        +--- / -- max9271@40
->                        +--- / -- max9271@40
->     ....
-> 
-> 
->                        +--- / -- max9271@50
->                        +--- / -- max9271@51
-> Soc --+-> max9286@4c --+--- / -- max9271@52
->       |                +--- / -- max9271@53
->       |
->       |-> max9286@6c --+-------- max9271@54
->                        +--- / -- max9271@40
->                        +--- / -- max9271@40
->                        +--- / -- max9271@40
-> 
-> When addr reprogramming is done, we enter the image streaming phase,
-> with all channels open, as now, all remotes, have a different i2c
-> address assigned.
-> 
-> Suggestions on how to better handle this are very welcome. The point
-> here is that, to me, this is a gmsl-specific implementation thing.
-> 
-> Do you think for your chips, if they do translations, can you easy mask
-> them with the i2c address you want (being that specified in the remote
-> node or selected from an i2c-addr-pool, or something else) without
-> having to care about others remotes to be accidentally programmed to
-> an i2c address they're not intended to be assigned to.
+https://lkml.org/lkml/2018/7/3/33
 
-Yes. The TI chips have a "passthrough-all" option to propagate all
-transactions with an unknown address, but it's mostly meant for
-debugging. In normal usage the local chip will propagate (with addresses
-translated) only transactions coming with a known slave address,
-including its own address(es), the remote (de)ser aliases and the remote
-chip aliases. All aliases are disabled until programmed.
+v2 -> v3:
+- Use leXX instead of virtioXX (MST);
+- Refactor split ring first (MST);
+- Add debug helpers (MST);
+- Put split/packed ring specific fields in sub structures (MST);
+- Handle normal descriptors and indirect descriptors differently (MST);
+- Track the DMA addr/len related info in a separate structure (MST);
+- Calculate AVAIL/USED flags only when wrap counter wraps (MST);
+- Define a struct/union to read event structure (MST);
+- Define a macro for wrap counter bit in uapi (MST);
+- Define the AVAIL/USED bits as shifts instead of values (MST);
+- s/_F_/_FLAG_/ in VRING_PACKED_EVENT_* as they are values (MST);
+- Drop the notify workaround for QEMU's tx-timer in packed ring (MST);
 
-> Hope this helps clarify your concerns, and I think the actual issue
-> to discuss, at least on bindings, would be the i2c-address assignment
-> method, as this impacts GMSL, as well as other implementation that
-> would use the same binding style as this patches.
+v1 -> v2:
+- Use READ_ONCE() to read event off_wrap and flags together (Jason);
+- Add comments related to ccw (Jason);
 
-Absolutely.
+RFC v6 -> v1:
+- Avoid extra virtio_wmb() in virtqueue_enable_cb_delayed_packed()
+  when event idx is off (Jason);
+- Fix bufs calculation in virtqueue_enable_cb_delayed_packed() (Jason);
+- Test the state of the desc at used_idx instead of last_used_idx
+  in virtqueue_enable_cb_delayed_packed() (Jason);
+- Save wrap counter (as part of queue state) in the return value
+  of virtqueue_enable_cb_prepare_packed();
+- Refine the packed ring definitions in uapi;
+- Rebase on the net-next tree;
 
-Bye,
+RFC v5 -> RFC v6:
+- Avoid tracking addr/len/flags when DMA API isn't used (MST/Jason);
+- Define wrap counter as bool (Jason);
+- Use ALIGN() in vring_init_packed() (Jason);
+- Avoid using pointer to track `next` in detach_buf_packed() (Jason);
+- Add comments for barriers (Jason);
+- Don't enable RING_PACKED on ccw for now (noticed by Jason);
+- Refine the memory barrier in virtqueue_poll();
+- Add a missing memory barrier in virtqueue_enable_cb_delayed_packed();
+- Remove the hacks in virtqueue_enable_cb_prepare_packed();
+
+RFC v4 -> RFC v5:
+- Save DMA addr, etc in desc state (Jason);
+- Track used wrap counter;
+
+RFC v3 -> RFC v4:
+- Make ID allocation support out-of-order (Jason);
+- Various fixes for EVENT_IDX support;
+
+RFC v2 -> RFC v3:
+- Split into small patches (Jason);
+- Add helper virtqueue_use_indirect() (Jason);
+- Just set id for the last descriptor of a list (Jason);
+- Calculate the prev in virtqueue_add_packed() (Jason);
+- Fix/improve desc suppression code (Jason/MST);
+- Refine the code layout for XXX_split/packed and wrappers (MST);
+- Fix the comments and API in uapi (MST);
+- Remove the BUG_ON() for indirect (Jason);
+- Some other refinements and bug fixes;
+
+RFC v1 -> RFC v2:
+- Add indirect descriptor support - compile test only;
+- Add event suppression supprt - compile test only;
+- Move vring_packed_init() out of uapi (Jason, MST);
+- Merge two loops into one in virtqueue_add_packed() (Jason);
+- Split vring_unmap_one() for packed ring and split ring (Jason);
+- Avoid using '%' operator (Jason);
+- Rename free_head -> next_avail_idx (Jason);
+- Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
+- Some other refinements and bug fixes;
+
+
+Tiwei Bie (13):
+  virtio: add packed ring types and macros
+  virtio_ring: add _split suffix for split ring functions
+  virtio_ring: put split ring functions together
+  virtio_ring: put split ring fields in a sub struct
+  virtio_ring: introduce debug helpers
+  virtio_ring: introduce helper for indirect feature
+  virtio_ring: allocate desc state for split ring separately
+  virtio_ring: extract split ring handling from ring creation
+  virtio_ring: cache whether we will use DMA API
+  virtio_ring: introduce packed ring support
+  virtio_ring: leverage event idx in packed ring
+  virtio_ring: disable packed ring on unsupported transports
+  virtio_ring: advertize packed ring layout
+
+ drivers/misc/mic/vop/vop_main.c        |   13 +
+ drivers/remoteproc/remoteproc_virtio.c |   13 +
+ drivers/s390/virtio/virtio_ccw.c       |   14 +
+ drivers/virtio/virtio_ring.c           | 1811 +++++++++++++++++++++++++-------
+ include/uapi/linux/virtio_config.h     |    3 +
+ include/uapi/linux/virtio_ring.h       |   52 +
+ 6 files changed, 1530 insertions(+), 376 deletions(-)
+
 -- 
-Luca
+2.14.5
+
