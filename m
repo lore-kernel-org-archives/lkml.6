@@ -2,181 +2,162 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3BA2C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6887CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:42:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7F32214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:41:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7F32214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 34E2721731
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:42:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34E2721731
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732486AbeKVEQv (ORCPT
+        id S1732525AbeKVESF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 23:16:51 -0500
-Received: from mga04.intel.com ([192.55.52.120]:1603 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732342AbeKVEQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 23:16:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 09:41:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,262,1539673200"; 
-   d="scan'208";a="91099612"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
-  by orsmga007.jf.intel.com with ESMTP; 21 Nov 2018 09:41:31 -0800
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, thomas.lendacky@amd.com,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Wed, 21 Nov 2018 23:18:05 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34532 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729279AbeKVESE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 23:18:04 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wALHdLWX065416
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:42:44 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nwae2ccsv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:42:43 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Wed, 21 Nov 2018 17:42:42 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 21 Nov 2018 17:42:40 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wALHgdrR786864
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 21 Nov 2018 17:42:39 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 38F904203F;
+        Wed, 21 Nov 2018 17:42:39 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A20124204B;
+        Wed, 21 Nov 2018 17:42:38 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.207.68])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 21 Nov 2018 17:42:38 +0000 (GMT)
+Date:   Wed, 21 Nov 2018 18:42:36 +0100
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
         Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>, dave.hansen@intel.com,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        "Mallick, Asit K" <asit.k.mallick@intel.com>,
-        "Van De Ven, Arjan" <arjan@linux.intel.com>, jcm@redhat.com,
-        longman9394@gmail.com, Greg KH <gregkh@linuxfoundation.org>,
-        david.c.stewart@intel.com,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        stable@vger.kernel.org
-References: <cover.1542757030.git.tim.c.chen@linux.intel.com>
- <6652faa67f8c4e90c737f9fd9c7e0e2d3cd51cca.1542757030.git.tim.c.chen@linux.intel.com>
- <CAHk-=wiRh4QVAHV086U02tDCJz9g8MYHegEHbxCZ6-Ap4ow5Lw@mail.gmail.com>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- xsFNBE6ONugBEAC1c8laQ2QrezbYFetwrzD0v8rOqanj5X1jkySQr3hm/rqVcDJudcfdSMv0
- BNCCjt2dofFxVfRL0G8eQR4qoSgzDGDzoFva3NjTJ/34TlK9MMouLY7X5x3sXdZtrV4zhKGv
- 3Rt2osfARdH3QDoTUHujhQxlcPk7cwjTXe4o3aHIFbcIBUmxhqPaz3AMfdCqbhd7uWe9MAZX
- 7M9vk6PboyO4PgZRAs5lWRoD4ZfROtSViX49KEkO7BDClacVsODITpiaWtZVDxkYUX/D9OxG
- AkxmqrCxZxxZHDQos1SnS08aKD0QITm/LWQtwx1y0P4GGMXRlIAQE4rK69BDvzSaLB45ppOw
- AO7kw8aR3eu/sW8p016dx34bUFFTwbILJFvazpvRImdjmZGcTcvRd8QgmhNV5INyGwtfA8sn
- L4V13aZNZA9eWd+iuB8qZfoFiyAeHNWzLX/Moi8hB7LxFuEGnvbxYByRS83jsxjH2Bd49bTi
- XOsAY/YyGj6gl8KkjSbKOkj0IRy28nLisFdGBvgeQrvaLaA06VexptmrLjp1Qtyesw6zIJeP
- oHUImJltjPjFvyfkuIPfVIB87kukpB78bhSRA5mC365LsLRl+nrX7SauEo8b7MX0qbW9pg0f
- wsiyCCK0ioTTm4IWL2wiDB7PeiJSsViBORNKoxA093B42BWFJQARAQABzTRUaW0gQ2hlbiAo
- d29yayByZWxhdGVkKSA8dGltLmMuY2hlbkBsaW51eC5pbnRlbC5jb20+wsF+BBMBAgAoAhsD
- BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCWfPBPgUJDyfxUQAKCRCiZ7WKota4SReFEACa
- 5ruzJM/hXJguHJY8i95rxHfLOgE7QoDgsR2aK2C1BSu84StTcT9BMikndQ0em28mpd1zROCs
- FvJ8Dzpp923699FU7s70+bFG9zIWtAOLWt2QyIMYImILzKkzkyLZo2RTcLNdUWS5fkAtjspQ
- QPg29W+kcbX1NhB6WDdbvk2HNeZoDh4A5ucOzKjEPqbSFIbw2Wt3RUmXxezjH1NzZG3fMkEN
- cT7JezYhUxvi2PrJlD+mo26q2/PQmFgF49tneRJXmYyie5o2+ClfFVO9I6Rd1k7hS9uXQLg3
- udpnDKobNYZ7/+O5+ucp0Y/MwzTfBYmtJ5fBjUTi2L1RMDJee8WqCNY1VU6cQ8MD4KstxUp2
- bxlSRAYaDtNa1Omr61E7BA1Cc2E3cIt/O1mMfudWUjCND8qrAtEnugqKjk5tJJZzmzIKSHPY
- dCiJtOBQaVAYYchXF2hwOKhpFS43V4FdWLlM1CnFXsmbk48hGbiA8XHU85JBCXmG0i4qUlKn
- x2ilChvq4A102ahnlGbEmFaSwxuqR/5lhai6lOkwHXDFUT6jblaSs24L3MTn/vXtvwaLEEKh
- SPzNaj7yFvEhrJoLiZmDm0SZuPbQ+wrmPWUbzyf5te2Oq0JyrHTQJoQqn+CwGqwF/JaUq60f
- VuUD3T0icgsfljsOA4apyH7kyfxXGP0hOM7BTQROjjboARAAx+LxKhznLH0RFvuBEGTcntrC
- 3S0tpYmVsuWbdWr2ZL9VqZmXh6UWb0K7w7OpPNW1FiaWtVLnG1nuMmBJhE5jpYsi+yU8sbMA
- 5BEiQn2hUo0k5eww5/oiyNI9H7vql9h628JhYd9T1CcDMghTNOKfCPNGzQ8Js33cFnszqL4I
- N9jh+qdg5FnMHs/+oBNtlvNjD1dQdM6gm8WLhFttXNPn7nRUPuLQxTqbuoPgoTmxUxR3/M5A
- KDjntKEdYZziBYfQJkvfLJdnRZnuHvXhO2EU1/7bAhdz7nULZktw9j1Sp9zRYfKRnQdIvXXa
- jHkOn3N41n0zjoKV1J1KpAH3UcVfOmnTj+u6iVMW5dkxLo07CddJDaayXtCBSmmd90OG0Odx
- cq9VaIu/DOQJ8OZU3JORiuuq40jlFsF1fy7nZSvQFsJlSmHkb+cDMZDc1yk0ko65girmNjMF
- hsAdVYfVsqS1TJrnengBgbPgesYO5eY0Tm3+0pa07EkONsxnzyWJDn4fh/eA6IEUo2JrOrex
- O6cRBNv9dwrUfJbMgzFeKdoyq/Zwe9QmdStkFpoh9036iWsj6Nt58NhXP8WDHOfBg9o86z9O
- VMZMC2Q0r6pGm7L0yHmPiixrxWdW0dGKvTHu/DH/ORUrjBYYeMsCc4jWoUt4Xq49LX98KDGN
- dhkZDGwKnAUAEQEAAcLBZQQYAQIADwIbDAUCVEAL2AUJC1VvawAKCRCiZ7WKota4SWWrD/9L
- 4H3kHUR9qPTfSpwFBV0+PspkpMQmRQ9cQauIRXL+qIqCYfx48Jz/WZkq47COhY4d1tAvX4qv
- lviIoCwShAHhVkxD2rWFpa6Yang7cyPDjS6sNChsZ9aTAP0zX4LLHN8ub5LwCcU9JA4Avwdy
- NDSeeSeqNq9QOvVd2bDmyHxgVv4zRgLTNPH28hXAnDODy0wCJWg53PWvlp35XfWdIsC0ZAPK
- vgA1Bh+FYYKfT8Uzj8J/SYH+chmeYMt+8Y+FZa+NybivWJg6+UaJ2fCTuKCc7TgqLneBudox
- izWQMnBso0tHOT6+ju+L+ewPWc0OrJdKJeadrE2T1E949vMup5jG0lJLeSpBNmELODNL0xz6
- Erjs/pwX7cYGKUbJfBaQcC9frPfpWfSqnK5X+12HFDxAxquXKC4ejBJOhbo3xx0sziiPTC3m
- 4LvLkEa9evQNtMvRcnWY5qIC4YdT5waC0stYNpyCiBXpYArKYCmlra3xpgAe0MRL94PHU4UW
- yxxdxRubFYna9LeNcWL7C0w2ngg1jd0tjRjLnimrOL8rSVUzwjNSQOV37tWTueTr40M/SfjU
- B6bifflZQpeSY8IpqzKqB0vvxo2xD0rU7JqUh7rW8U6rg2JEzVgYiHS4cf/vJMHuauHAjH7a
- ys7DYlLhlOVo3o0jOor4xuZPrWbSp4w51sLBZQQYAQIADwIbDAUCWfPBJQUJDyfxOAAKCRCi
- Z7WKota4SZKQD/wLu3j8kgATic+wF3ekngjwPcW3JhbQJeHxUZwsb9OgVMHumlrZHGoltKQu
- FfAhG/sOfuAh5f7QMzzA1M+2JD1Q6lr74vUHNBu+xBFMgZstE6hpkKmn0pNZ5JS3iZRVRLBx
- dWw63DYr0GM80vmbHjAhwxoF2PsO2/PkWTc68+pFyl3Dy0heZSJii81hkzh8FnF8CaMH0VXu
- MJoWyuYgnC058hHj0QqXvlNx9LzMtmrsskTmPvwqXTgG/dTEfTkQ4RfX3enrBy55cg9tMc88
- BEQ/0/JV1bCDwyWXKRpz6FsHbICGQ4G9TTD4pS5QJ+oRQccMjfiDM3rFTcG1RYP2lHXjSm9c
- 0VnimpQBz3LarrdHJilmTHbAWf5KLmtWfYXHrlncnhnCtw2nfwBBdy8cQW4tUyniSVRLOwGm
- eJziyuPJ5SVVZcil2oN5/o7js7BYAeAV/WVF2Sk/blnXaaObIYIVqnDhV4N0oUz1KXq1Leem
- Uvjo5rljmmhOBdgl6D0scXCWICbuuWN9eW2fZl38hBSI3M0MX0jnV2e+0FY+76iNmKadpTDw
- gY3OaQAZ/UlJVI+pRV4JtRrajtpo9Vb38SBPXwp9moWmwVQyIdFUXjCTQARvxjRsUoPVu9oA
- SCd9W74oOgrqC1hadvVU867d07PlWksfYwCeYP4bs+4GSLzI1w==
-Subject: Re: [Patch v6 14/16] x86/speculation: Use STIBP to restrict
- speculation on non-dumpable task
-Message-ID: <aeeab5d3-c2cf-e6a5-9da3-d14d30e79011@linux.intel.com>
-Date:   Wed, 21 Nov 2018 09:41:31 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] userfaultfd: convert userfaultfd_ctx::refcount to
+ refcount_t
+References: <20181115003916.63381-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wiRh4QVAHV086U02tDCJz9g8MYHegEHbxCZ6-Ap4ow5Lw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115003916.63381-1-ebiggers@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18112117-4275-0000-0000-000002E4A2CC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112117-4276-0000-0000-000037F1CF55
+Message-Id: <20181121174236.GA5704@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-21_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811210153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/20/2018 05:27 PM, Linus Torvalds wrote:
-> On Tue, Nov 20, 2018 at 4:33 PM Tim Chen <tim.c.chen@linux.intel.com> wrote:
->>
->> Implements arch_update_spec_restriction() for x86.  Use STIBP to
->> restrict speculative execution when running a task set to non-dumpable,
->> or clear the restriction if the task is set to dumpable.
+On Wed, Nov 14, 2018 at 04:39:16PM -0800, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> I don't think this necessarily makes sense.
+> Reference counters should use refcount_t rather than atomic_t, since the
+> refcount_t implementation can prevent overflows, reducing the
+> exploitability of reference leak bugs.  userfaultfd_ctx::refcount is a
+> reference counter with the usual semantics, so convert it to refcount_t.
 > 
-> The new "auto" behavior is that we aim to restrict untrusted code (and
-> the loader of such code uses prctrl to set that flag), then this whole
-> "set STIBP for non-dumpable" makes little sense.
-
-When STIBP is on, it will prevent not only untrusted code from attacking,
-but also trusted code from getting attacked.  So non-dumpable task running
-with STIBP will protect itself from attacks from code running on sibling CPU.
-
-From software guidance:
-"Setting ... STIBP ... on a logical processor prevents the predicted
-targets of indirect branches on any logical processor of that core
-from being controlled by software that executes (or executed
-previously) on another logical processor of the same core."
-
-The intention was to put TIF_SPEC_INDIR_BRANCH flag on
-non-dumpable task, so it runs with STIBP and prevent
-itself from getting attacked from code running in sibling CPU.  
-And when we context switch to non-dumpable task,
-IBPB will be issued to prevent attack from anything running
-on the same cpu based on TIF_SPEC_INDIR_BRANCH.
-
+> Note: I replaced the BUG() on incrementing a 0 refcount with just
+> refcount_inc(), since part of the semantics of refcount_t is that that
+> incrementing a 0 refcount is not allowed; with CONFIG_REFCOUNT_FULL,
+> refcount_inc() already checks for it and warns.
 > 
-> A non-dumpable app by definition is *more* trusted, not less trusted.
-> 
-> So this model of "let's disable prediction for system processes" not
-> only doesn't make sense, but it also unnecessarily penalizes those
-> potentially very important system processes.
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-It is a trade off of extra protection for non-dumpable app with
-extra overhead. :(
+Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
 
-Here it is the default behavior but that can be changed.
+> ---
+>  fs/userfaultfd.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index 356d2b8568c14..8375faac2790d 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -53,7 +53,7 @@ struct userfaultfd_ctx {
+>  	/* a refile sequence protected by fault_pending_wqh lock */
+>  	struct seqcount refile_seq;
+>  	/* pseudo fd refcounting */
+> -	atomic_t refcount;
+> +	refcount_t refcount;
+>  	/* userfaultfd syscall flags */
+>  	unsigned int flags;
+>  	/* features requested from the userspace */
+> @@ -140,8 +140,7 @@ static int userfaultfd_wake_function(wait_queue_entry_t *wq, unsigned mode,
+>   */
+>  static void userfaultfd_ctx_get(struct userfaultfd_ctx *ctx)
+>  {
+> -	if (!atomic_inc_not_zero(&ctx->refcount))
+> -		BUG();
+> +	refcount_inc(&ctx->refcount);
+>  }
+> 
+>  /**
+> @@ -154,7 +153,7 @@ static void userfaultfd_ctx_get(struct userfaultfd_ctx *ctx)
+>   */
+>  static void userfaultfd_ctx_put(struct userfaultfd_ctx *ctx)
+>  {
+> -	if (atomic_dec_and_test(&ctx->refcount)) {
+> +	if (refcount_dec_and_test(&ctx->refcount)) {
+>  		VM_BUG_ON(spin_is_locked(&ctx->fault_pending_wqh.lock));
+>  		VM_BUG_ON(waitqueue_active(&ctx->fault_pending_wqh));
+>  		VM_BUG_ON(spin_is_locked(&ctx->fault_wqh.lock));
+> @@ -686,7 +685,7 @@ int dup_userfaultfd(struct vm_area_struct *vma, struct list_head *fcs)
+>  			return -ENOMEM;
+>  		}
+> 
+> -		atomic_set(&ctx->refcount, 1);
+> +		refcount_set(&ctx->refcount, 1);
+>  		ctx->flags = octx->flags;
+>  		ctx->state = UFFD_STATE_RUNNING;
+>  		ctx->features = octx->features;
+> @@ -1911,7 +1910,7 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
+>  	if (!ctx)
+>  		return -ENOMEM;
+> 
+> -	atomic_set(&ctx->refcount, 1);
+> +	refcount_set(&ctx->refcount, 1);
+>  	ctx->flags = flags;
+>  	ctx->features = 0;
+>  	ctx->state = UFFD_STATE_WAIT_API;
+> -- 
+> 2.19.1.930.g4563a0d9d0-goog
+> 
 
-If we don't erect STIBP for non-dumpable tasks as default, we should still do IBPB
-before switching to them.  So the STIBP behavior and IBPB behavior will
-then be untied for non-dumpable default.
+-- 
+Sincerely yours,
+Mike.
 
-> 
-> Also, "dumpable" in general is pretty oddly defined to be used for this.
-> 
-> The same (privileged) process can be dumpable or not depending on how
-> it was started (ie if it was started by a regular user and became
-> trusted through suid, it's not dumpable, but if it was started from a
-> root process it remains dumpable.
-> 
-> So I'm just not convinced "dumpability" is meaningful for STIBP.
-> 
-
-Tim
