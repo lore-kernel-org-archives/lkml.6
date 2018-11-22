@@ -2,79 +2,109 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B883BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 428BEC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37E6C20820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:29:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0888620820
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:30:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="CyeWGYtL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E6C20820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SE59Qf8G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0888620820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392562AbeKVSHb (ORCPT
+        id S2392598AbeKVSI5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 13:07:31 -0500
-Received: from m12-14.163.com ([220.181.12.14]:44645 "EHLO m12-14.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728352AbeKVSHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 13:07:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=Z9V4SWJuxMzXS08SK2
-        TY5KGlBC+wofk1r/EfrwgsdVE=; b=CyeWGYtLPdty4KwvXwe5wYenS6g2KJtD8x
-        uOr3JKJHAISH8KJcEm92HFnk+rlJpu29HXNAy5LjeelYeMwzU+A/57SgG8FJrLxX
-        Ajo7t21A0ONr04+E0+23Pn36soAagDosNvpk0dde3pLCFIZLEm+G2cBGhr3s+LAb
-        0M5SrIEjo=
-Received: from bp.localdomain (unknown [106.120.213.96])
-        by smtp10 (Coremail) with SMTP id DsCowAAXl87MWvZb_HgvBQ--.62410S3;
-        Thu, 22 Nov 2018 15:29:18 +0800 (CST)
-From:   Pan Bian <bianpan2016@163.com>
-To:     linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers/memstick/host/jmb38x_ms: fixes incorrect error handling
-Date:   Thu, 22 Nov 2018 15:29:20 +0800
-Message-Id: <1542871760-48125-1-git-send-email-bianpan2016@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: DsCowAAXl87MWvZb_HgvBQ--.62410S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XF17ZFyfXF1kZr4DCw4xtFb_yoW3Cwc_CF
-        93Zr4fKrZ5ur1UGw15Zay3ur9rtw4vvrn2yw1rtws3X348ur1xGws2vry3urZxWFWUC3s8
-        CrW7X3WS9ryjqjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUeSD7DUUUUU==
-X-Originating-IP: [106.120.213.96]
-X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/1tbiNg4HclWBcSPgbAAAsH
+        Thu, 22 Nov 2018 13:08:57 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34319 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729282AbeKVSI5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 13:08:57 -0500
+Received: by mail-pf1-f193.google.com with SMTP id h3so1522639pfg.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 23:30:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jy8/H7P+CzbH2lthHSGT0pJzwCSE4ehdyZ5BAVj91yU=;
+        b=SE59Qf8G8ZPCFSneReVIYD6aHxrxstiSZxHl3ST6MLxHI/MsWjbg/d8Pig7Ei0/sIF
+         /aDWkG9lbrxwiRyopz3QQgyyLhlclM5CzsRHknm0YNkVtCSCav3RBR1Q1FxICWukJQ14
+         Tbz3VzebtCdspRCqyrCyf4CLJ2Yc84zCTJRSw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jy8/H7P+CzbH2lthHSGT0pJzwCSE4ehdyZ5BAVj91yU=;
+        b=IChDQKyjAGSbtEBfgP5WpbTYmZRDZtBD2HkTHRTF9uYSvku9pq9vZVfpg/vonzLbBq
+         L60PmB9Tf3mN93aZCwOPXBF0lXu+39coJhZVT7zcOSBHRBG2lpk1R0WWCfRZxo1KPmyb
+         mEXjuzefA+dyGp3T3NqljKivFiqhXjM3ulC9LwL3mHsQpdfL7eUvKClIxnMDk34nHP5Y
+         EgYqrcKTovPUSJLvrcdnqjazGZfK1N8JOvUEG+Rwu4VVx55MPhXTgrXXAzP++HKvNJWD
+         OyMRqYr+37cwDLCwxbZeAh3JsvVmo4eSeP29tevbrEMhMao96LKLEzQt97CD6uE0zJMK
+         Y2kQ==
+X-Gm-Message-State: AGRZ1gKxfl1E87C4pIzKXIQeEYXNxE8OdVIRrnaCvjKj+wwvjvVaJw0x
+        YipCP5agKAAMf2SJx3Gs2MJmhA==
+X-Google-Smtp-Source: AJdET5fQb/fG+/+qY5vR/j+rzdZlO1mwAMvSkQ/GUGGY7dvxhlO66eOSInWdnb5GaJeuHbWZyymymw==
+X-Received: by 2002:a62:2b17:: with SMTP id r23-v6mr10535587pfr.251.1542871846262;
+        Wed, 21 Nov 2018 23:30:46 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id n13-v6sm73272145pfk.19.2018.11.21.23.30.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 23:30:45 -0800 (PST)
+Date:   Wed, 21 Nov 2018 23:30:43 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: sdm845-mtp: Mark protected gcc clocks
+Message-ID: <20181122073043.GN2225@minitux>
+References: <20181106055013.11271-1-bjorn.andersson@linaro.org>
+ <154279089454.88331.1059903104788594574@swboyd.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154279089454.88331.1059903104788594574@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kfree() is incorrectly used to free the memory chunk allocated by
-memstick_alloc_host(). Instead, memstick_free_host() should be used.
+On Wed 21 Nov 01:01 PST 2018, Stephen Boyd wrote:
 
-Fixes: 60fdd931d577("memstick: add support for JMicron jmb38x ...")
-Signed-off-by: Pan Bian <bianpan2016@163.com>
----
- drivers/memstick/host/jmb38x_ms.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Quoting Bjorn Andersson (2018-11-05 21:50:13)
+> > As of v4.20-rc1 probing the GCC driver on a SDM845 device with the
+> > standard security implementation causes an access violation and an
+> > immediate system restart. Use the protected-clocks property to mark the
+> > offending clocks protected for the MTP, in order to allow it to boot.
+> > 
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> > 
+> > This depends on the acceptance of
+> > https://lore.kernel.org/lkml/20181105194011.43770-1-swboyd@chromium.org/
+> 
+> Do you need me to merge this into clk-fixes so that Andy can send this
+> up for v4.20 final? I thought you may have other boot blocking issues so
+> this wouldn't be a critical fix.
+> 
 
-diff --git a/drivers/memstick/host/jmb38x_ms.c b/drivers/memstick/host/jmb38x_ms.c
-index bcdca9f..637409c 100644
---- a/drivers/memstick/host/jmb38x_ms.c
-+++ b/drivers/memstick/host/jmb38x_ms.c
-@@ -907,7 +907,7 @@ static struct memstick_host *jmb38x_ms_alloc_host(struct jmb38x_ms *jm, int cnt)
- 
- 	iounmap(host->addr);
- err_out_free:
--	kfree(msh);
-+	memstick_free_host(msh);
- 	return NULL;
- }
- 
--- 
-2.7.4
+We resolved the gpio-related issues, so iirc this is the only other item
+preventing the MTP from booting. So yes please.
 
+Unless you enable USB support, because configuring the first USB
+controller in host currently crashes the device - I've not yet found the
+cause for this though.
 
+Regards,
+Bjorn
