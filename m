@@ -2,111 +2,150 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74454C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 00:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1939DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 00:42:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43E9A20663
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 00:37:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43E9A20663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id C91972080F
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 00:42:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ml+T4EN0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C91972080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391127AbeKVLOE (ORCPT
+        id S2391137AbeKVLTl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 06:14:04 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44942 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732226AbeKVLOD (ORCPT
+        Thu, 22 Nov 2018 06:19:41 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:53739 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730678AbeKVLTl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 06:14:03 -0500
-Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 87B8588D;
-        Thu, 22 Nov 2018 00:37:13 +0000 (UTC)
-Date:   Wed, 21 Nov 2018 16:37:11 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Enke Chen <enkechen@cisco.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>
-Subject: Re: [PATCH v5] kernel/signal: Signal-based pre-coredump
- notification
-Message-Id: <20181121163711.2c00316784d221eb1750edb0@linux-foundation.org>
-In-Reply-To: <20181030164628.GD7643@redhat.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
-        <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
-        <7741efa7-a3f8-62a1-ba52-613883164643@cisco.com>
-        <84460a77-a111-404e-4bad-88104a6e246e@cisco.com>
-        <20181026082812.GA10581@redhat.com>
-        <21f678a8-4001-df36-c26e-e96cf203b1b1@cisco.com>
-        <20181029111804.GA24820@redhat.com>
-        <0c197608-3b7e-ffd1-8943-801a60beb917@cisco.com>
-        <20181030164628.GD7643@redhat.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 22 Nov 2018 06:19:41 -0500
+Received: by mail-it1-f194.google.com with SMTP id g85so11725936ita.3;
+        Wed, 21 Nov 2018 16:42:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=76/Amvklb00NGf7+I4aPGPSZxEYvci+Q3+NpUryRK6w=;
+        b=Ml+T4EN0TIhw3aGbo3fQLygEdJDABRTBVfZDXji1+/Ft2fXNOYCu0ug+2R/MdQUGUb
+         vwvk3CSvda0YQutMvaYci9f7g7f2gzZbVjDdrM0s79l9Y5/UQy49J9VSIwLvPb8k1w2r
+         xirGM0zYzY9iEU9oQ+TE9pJvSDCCSetu/6psjoWv9PF6y7SlYBHBJB5dm9yhr21HEcc/
+         fDtpyqhLKlgqseBaYywIuBb1lifRLHwi8t0RXfOEtIemn4rMeeW6EX19C/603BydIJpF
+         lZ+o+XOInHu/L5WUGIDhjhdPl8OgtOwNE3YA7ncpIM3KduGAhs8V0UfHpX7Hvei2XKCN
+         Y1lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=76/Amvklb00NGf7+I4aPGPSZxEYvci+Q3+NpUryRK6w=;
+        b=imBZ1rFMhxUkSPG5AwjQbXL138dkMZFoowMfNNRmW+CX3hVJnx6VjYrRkQc3oHnN1S
+         JMca6q4+emAYmRaPdT5UMXycODQRBzkNQggsc7/RFW9thPcBFcywKVYFiFC+uIrTFEWU
+         +kGGLfsLYQFZkKtBVCNFvMJ9WEwb1Gd7DqCcUOeSqUm4lh6M8a/ek0wXeTtT+bo3PUHp
+         976h+iC5tsy31ibF/iUnaQZd7a/IKBNRW73vND4V2ZZalKuTbpbcOXz9eJXuhumovAOc
+         Zy0bWoecDwkxAL/CSNCjlrMRdqWfYUZIBVmyI7VJsc29/coJTtFU8Ay5Tz00HrQNbL8x
+         9OeA==
+X-Gm-Message-State: AA+aEWZlb+TmUUp7UsWbXnMeSqNzDwdGx4GNb8Q42vy5UpGBvQsT1mP5
+        i8OrEBAazEwipHHac63i02kcIUjn1HhaOvMxKZg=
+X-Google-Smtp-Source: AFSGD/XbCrNB9zDSibHW09GUpuSCj7piaQrX1E6Dh1axH7o/YWk8bc/3XrQtAaXkMK+JYNbZ/VEZ9DB1GRHunJCdNIU=
+X-Received: by 2002:a02:5184:: with SMTP id s126mr3274908jaa.12.1542847372999;
+ Wed, 21 Nov 2018 16:42:52 -0800 (PST)
+MIME-Version: 1.0
+References: <20181121123138.21870-1-tiny.windzz@gmail.com> <82ef58c4-1d18-9dd6-71ec-42f799370f33@gmail.com>
+In-Reply-To: <82ef58c4-1d18-9dd6-71ec-42f799370f33@gmail.com>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Thu, 22 Nov 2018 08:42:05 +0800
+Message-ID: <CAEExFWsc8ong3rRi7dhhuB+6C2H3LnH98SWR7v_snMMV2qYViA@mail.gmail.com>
+Subject: Re: [PATCH] leds: powernv: add of_node_put()
+To:     jacek.anaszewski@gmail.com
+Cc:     pavel@ucw.cz, benh@kernel.crashing.org, paulus@samba.org,
+        mpe@ellerman.id.au, linux-leds@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 30 Oct 2018 17:46:29 +0100 Oleg Nesterov <oleg@redhat.com> wrote:
-
-> On 10/29, Enke Chen wrote:
+On Thu, Nov 22, 2018 at 4:45 AM Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+>
+> Hi Yangtao,
+>
+> Thank you for the patch.
+>
+> On 11/21/2018 01:31 PM, Yangtao Li wrote:
+> > of_find_node_by_path() acquires a reference to the node returned by
+> > it and that reference needs to be dropped by its caller.bl_idle_init()
+> > doesn't do that, so fix it.
+>
+> s/bl_idle_init/powernv_led_probe/
+>
+> I suppose that you adopted the commit message from a fix
+> for drivers/cpuidle/cpuidle-big_little.c.
+>
+> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > ---
+> >  drivers/leds/leds-powernv.c | 12 +++++++++---
+> >  1 file changed, 9 insertions(+), 3 deletions(-)
 > >
-> > Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-> 
-> Hmm. I didn't say this ;)
-> 
-> But OK, feel free to keep this tag.
-> 
-> I do not like this feauture.
+> > diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
+> > index b1adbd70ce2e..0b1540029034 100644
+> > --- a/drivers/leds/leds-powernv.c
+> > +++ b/drivers/leds/leds-powernv.c
+> > @@ -285,6 +285,7 @@ static int powernv_led_probe(struct platform_device *pdev)
+> >       struct device_node *led_node;
+> >       struct powernv_led_common *powernv_led_common;
+> >       struct device *dev = &pdev->dev;
+> > +     int rc;
+> >
+> >       led_node = of_find_node_by_path("/ibm,opal/leds");
+> >       if (!led_node) {
+> > @@ -295,15 +296,20 @@ static int powernv_led_probe(struct platform_device *pdev)
+> >
+> >       powernv_led_common = devm_kzalloc(dev, sizeof(*powernv_led_common),
+> >                                         GFP_KERNEL);
+> > -     if (!powernv_led_common)
+> > -             return -ENOMEM;
+> > +     if (!powernv_led_common){
+>
+> missing space:
+>
+> s/){/) {/
+>
+> > +             rc = -ENOMEM;
+> > +             goto out;
+> > +     }
+> >
+> >       mutex_init(&powernv_led_common->lock);
+> >       powernv_led_common->max_led_type = cpu_to_be64(OPAL_SLOT_LED_TYPE_MAX);
+> >
+> >       platform_set_drvdata(pdev, powernv_led_common);
+> >
+> > -     return powernv_led_classdev(pdev, led_node, powernv_led_common);
+> > +     rc = powernv_led_classdev(pdev, led_node, powernv_led_common);
+> > +out:
+> > +     of_node_put(led_node);
+> > +     return rc;
+> >  }
+> >
+> >  /* Platform driver remove */
+> >
+>
+> I've fixed those trivial problems and applied the patch
+> to the for-next branch of linux-leds.git.
+>
+> --
+> Best regards,
+> Jacek Anaszewski
+Jacek,
 
-Why is that?
+Yeah,I forget to modify the changlog.
 
-> But I see no technical problems in this version
-> and I never pretented I understand the user-space needs, so I won't argue.
-
-The changelog appears to spell this all out quite well?  Unusually
-well, in my experience ;)
-
-A couple of things...
-
-- We'll be looking for a manpage update please.  (Search MAINTAINERS
-  for "manpage")
-
-- As it's a linux-specific feature, a test under
-  tools/testing/selftests would be appropriate.  I don't know how much
-  that work will be.  Do we have other linux-specific signal extensions
-  which could piggyback onto that?
-
+Thanks,
+    Yangtao
