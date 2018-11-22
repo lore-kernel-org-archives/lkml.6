@@ -2,90 +2,345 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BDFC04EBB
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 23:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 593BAC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 23:09:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A11E720820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 23:06:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A11E720820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 01A8620818
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 23:09:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="e1Effspf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01A8620818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407860AbeKWJqD (ORCPT
+        id S2392559AbeKWJuu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 04:46:03 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:49182 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392559AbeKWJqD (ORCPT
+        Fri, 23 Nov 2018 04:50:50 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37359 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731444AbeKWJut (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 04:46:03 -0500
-Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gPy1G-0005vV-Nt; Fri, 23 Nov 2018 00:04:22 +0100
-Date:   Fri, 23 Nov 2018 00:04:22 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Ingo Molnar <mingo@kernel.org>
-cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [patch 20/24] x86/speculation: Split out TIF update
-In-Reply-To: <20181122074322.GE41788@gmail.com>
-Message-ID: <alpine.DEB.2.21.1811230000590.1665@nanos.tec.linutronix.de>
-References: <20181121201430.559770965@linutronix.de> <20181121201724.227260385@linutronix.de> <20181122074322.GE41788@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 23 Nov 2018 04:50:49 -0500
+Received: by mail-pl1-f194.google.com with SMTP id b5so9795133plr.4
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 15:09:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9AAcwSETEnz0ffX8XhpMxl7g2fG/fKhLppB+2Cd8nXY=;
+        b=e1EffspfsSUx/fSISq+LMgmRZYpRtMo3L2ae8L0+rP2Jc38zm3U5fB6Sd0WIZp03tw
+         ZVoC2lpu/rLZwjvZhjPy3BxnEcLFibdh47167fwkPfvep3TQzG5XCnnvsKFrPOdkXE6I
+         Q0amMv2B/6c+yPtj+Ire/9BlX6a8ZS6TBaFAU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9AAcwSETEnz0ffX8XhpMxl7g2fG/fKhLppB+2Cd8nXY=;
+        b=Wt27ahY3gZFwaoc0vbwwvMS3VG6ZOU9b04oisazsLLmO3fsfM67vA+jJDA3x7fsJ2d
+         mGhzOePNVxN15k9rLNL0Gj5olQZRmECqozszecFbtmoFH+LZGxajgrGumoQBFy9CoDbM
+         ZPIOxcOUYK4QT05Gdmy4CII1JW7/1t3XZsYdNm2FGhZzN68aUFr9ghvuSkO59WgU1tHD
+         clPtU1w+KDfgLkSgRFuTOHEBLLsX+C0SWfyNZj5lZs6PuR50bxyJgOyvPHERJpa6IJ9B
+         e4Hq+jPQAtBiJnwqhqwLEOQuDhm6Fip0EVg8lmPrJqHpmG4j+aZEgxeNJJWcDYCi3WLs
+         PMBw==
+X-Gm-Message-State: AA+aEWaGsald6C8XKF1rXjktwd0JtNTh3DbMPfTb0QMb/2vEW6Kq/5Lb
+        fEudVupgHWdFsvvtovARSxFMCw==
+X-Google-Smtp-Source: AFSGD/XoIyItf+SW5NLYBQ7ZwFY+fD0nlSf3rp2wSJ8noFTPHK1Bpqj4Fj1IrT7xPxOvChDi5qE8BA==
+X-Received: by 2002:a17:902:20c6:: with SMTP id v6mr12650647plg.156.1542928148980;
+        Thu, 22 Nov 2018 15:09:08 -0800 (PST)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id f6sm25619514pfg.188.2018.11.22.15.09.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 22 Nov 2018 15:09:07 -0800 (PST)
+Date:   Thu, 22 Nov 2018 15:09:06 -0800
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        marcandre.lureau@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH -next 1/2] mm/memfd: make F_SEAL_FUTURE_WRITE seal more
+ robust
+Message-ID: <20181122230906.GA198127@google.com>
+References: <20181120052137.74317-1-joel@joelfernandes.org>
+ <CALCETrXgBENat=5=7EuU-ttQ-YSXT+ifjLGc=hpJ=unRgSsndw@mail.gmail.com>
+ <20181120183926.GA124387@google.com>
+ <20181121070658.011d576d@canb.auug.org.au>
+ <469B80CB-D982-4802-A81D-95AC493D7E87@amacapital.net>
+ <20181120204710.GB22801@google.com>
+ <F8E28229-C99E-4711-982B-5B5DE0F70F16@amacapital.net>
+ <20181120211335.GC22801@google.com>
+ <20181121182701.0d8a775fda6af1f8d2be8f25@linux-foundation.org>
+ <CALCETrUGyhqi+M3cTdqJNNOPfTWn-R-ekM_R5heq2mbdVqPUAw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrUGyhqi+M3cTdqJNNOPfTWn-R-ekM_R5heq2mbdVqPUAw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Nov 2018, Ingo Molnar wrote:
-> * Thomas Gleixner <tglx@linutronix.de> wrote:
-> 
-> Had to read this twice, because the comment and the code are both correct 
-> but deal with the inverse case. This might have helped:
-> 
-> 	/*
-> 	 * Immediately update the speculation MSRs on the current task,
-> 	 * but for non-current tasks delay setting the CPU mitigation 
-> 	 * until it is scheduled next.
-> 	 */
-> 	if (tsk == current && update)
-> 		speculation_ctrl_update_current();
-> 
-> But can the target task ever be non-current here? I don't think so: the 
-> two callers are prctl and seccomp, and both are passing in the current 
-> task pointer.
+On Wed, Nov 21, 2018 at 07:25:26PM -0800, Andy Lutomirski wrote:
+> On Wed, Nov 21, 2018 at 6:27 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+> >
+> > On Tue, 20 Nov 2018 13:13:35 -0800 Joel Fernandes <joel@joelfernandes.org> wrote:
+> >
+> > > > > I am Ok with whatever Andrew wants to do, if it is better to squash it with
+> > > > > the original, then I can do that and send another patch.
+> > > > >
+> > > > >
+> > > >
+> > > > From experience, Andrew will food in fixups on request :)
+> > >
+> > > Andrew, could you squash this patch into the one titled ("mm: Add an
+> > > F_SEAL_FUTURE_WRITE seal to memfd")?
+> >
+> > Sure.
+> >
+> > I could of course queue them separately but I rarely do so - I don't
+> > think that the intermediate development states are useful in the
+> > infinite-term, and I make them available via additional Link: tags in
+> > the changelog footers anyway.
+> >
+> > I think that the magnitude of these patches is such that John Stultz's
+> > Reviewed-by is invalidated, so this series is now in the "unreviewed"
+> > state.
+> >
+> > So can we have a re-review please?  For convenience, here's the
+> > folded-together [1/1] patch, as it will go to Linus.
 
-See te other mail. Yes, seccomp passes non current task pointers. Will
-update the comment.
+Sure, I removed the old tags and also provide an updated patch below inline.
 
-Thanks,
+> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> > Subject: mm: Add an F_SEAL_FUTURE_WRITE seal to memfd
+> >
+> > Android uses ashmem for sharing memory regions.  We are looking forward to
+> > migrating all usecases of ashmem to memfd so that we can possibly remove
+> > the ashmem driver in the future from staging while also benefiting from
+> > using memfd and contributing to it.  Note staging drivers are also not ABI
+> > and generally can be removed at anytime.
+[...]
+> > --- a/include/uapi/linux/fcntl.h~mm-add-an-f_seal_future_write-seal-to-memfd
+> > +++ a/include/uapi/linux/fcntl.h
+> > @@ -41,6 +41,7 @@
+> >  #define F_SEAL_SHRINK  0x0002  /* prevent file from shrinking */
+> >  #define F_SEAL_GROW    0x0004  /* prevent file from growing */
+> >  #define F_SEAL_WRITE   0x0008  /* prevent writes */
+> > +#define F_SEAL_FUTURE_WRITE    0x0010  /* prevent future writes while mapped */
+> >  /* (1U << 31) is reserved for signed error codes */
+> >
+> >  /*
+> > --- a/mm/memfd.c~mm-add-an-f_seal_future_write-seal-to-memfd
+> > +++ a/mm/memfd.c
+> > @@ -131,7 +131,8 @@ static unsigned int *memfd_file_seals_pt
+> >  #define F_ALL_SEALS (F_SEAL_SEAL | \
+> >                      F_SEAL_SHRINK | \
+> >                      F_SEAL_GROW | \
+> > -                    F_SEAL_WRITE)
+> > +                    F_SEAL_WRITE | \
+> > +                    F_SEAL_FUTURE_WRITE)
+> >
+> >  static int memfd_add_seals(struct file *file, unsigned int seals)
+> >  {
+> > --- a/fs/hugetlbfs/inode.c~mm-add-an-f_seal_future_write-seal-to-memfd
+> > +++ a/fs/hugetlbfs/inode.c
+> > @@ -530,7 +530,7 @@ static long hugetlbfs_punch_hole(struct
+> >                 inode_lock(inode);
+> >
+> >                 /* protected by i_mutex */
+> > -               if (info->seals & F_SEAL_WRITE) {
+> > +               if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE)) {
+> >                         inode_unlock(inode);
+> >                         return -EPERM;
+> >                 }
+> > --- a/mm/shmem.c~mm-add-an-f_seal_future_write-seal-to-memfd
+> > +++ a/mm/shmem.c
+> > @@ -2119,6 +2119,23 @@ out_nomem:
+> >
+> >  static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
+> >  {
+> > +       struct shmem_inode_info *info = SHMEM_I(file_inode(file));
+> > +
+> > +       /*
+> > +        * New PROT_READ and MAP_SHARED mmaps are not allowed when "future
+> 
+> PROT_WRITE, perhaps?
 
-	tglx
+Yes, fixed.
+
+> > +        * write" seal active.
+> > +        */
+> > +       if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_WRITE) &&
+> > +           (info->seals & F_SEAL_FUTURE_WRITE))
+> > +               return -EPERM;
+> > +
+> > +       /*
+> > +        * Since the F_SEAL_FUTURE_WRITE seals allow for a MAP_SHARED read-only
+> > +        * mapping, take care to not allow mprotect to revert protections.
+> > +        */
+> > +       if (info->seals & F_SEAL_FUTURE_WRITE)
+> > +               vma->vm_flags &= ~(VM_MAYWRITE);
+> > +
+> 
+> This might all be clearer as:
+> 
+> if (info->seals & F_SEAL_FUTURE_WRITE) {
+>   if (vma->vm_flags ...)
+>     return -EPERM;
+>   vma->vm_flags &= ~VM_MAYWRITE;
+> }
+> 
+> with appropriate comments inserted.
+
+Agreed, its simpler. Updated patch is below. I squashed it with all the
+earlier ones. Andy, could you provide Acks and/or Reviewed-by tag as well?
+
+---8<-----------------------
+
+From b5a4960e755af67e9f6f9e65db5113e712cf338e Mon Sep 17 00:00:00 2001
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Date: Sat, 10 Nov 2018 22:21:31 -0800
+Subject: [PATCH v4] mm/memfd: Add an F_SEAL_FUTURE_WRITE seal to memfd
+
+Android uses ashmem for sharing memory regions.  We are looking forward to
+migrating all usecases of ashmem to memfd so that we can possibly remove
+the ashmem driver in the future from staging while also benefiting from
+using memfd and contributing to it.  Note staging drivers are also not ABI
+and generally can be removed at anytime.
+
+One of the main usecases Android has is the ability to create a region and
+mmap it as writeable, then add protection against making any "future"
+writes while keeping the existing already mmap'ed writeable-region active.
+This allows us to implement a usecase where receivers of the shared
+memory buffer can get a read-only view, while the sender continues to
+write to the buffer.  See CursorWindow documentation in Android for more
+details:
+https://developer.android.com/reference/android/database/CursorWindow
+
+This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
+To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE seal
+which prevents any future mmap and write syscalls from succeeding while
+keeping the existing mmap active.
+
+A better way to do F_SEAL_FUTURE_WRITE seal was discussed [1] last week
+where we don't need to modify core VFS structures to get the same
+behavior of the seal. This solves several side-effects pointed by Andy.
+self-tests are provided in later patch to verify the expected semantics.
+
+[1] https://lore.kernel.org/lkml/20181111173650.GA256781@google.com/
+
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ fs/hugetlbfs/inode.c       |  2 +-
+ include/uapi/linux/fcntl.h |  1 +
+ mm/memfd.c                 |  3 ++-
+ mm/shmem.c                 | 26 +++++++++++++++++++++++---
+ 4 files changed, 27 insertions(+), 5 deletions(-)
+
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 762028994f47..5b54bf893a67 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -558,7 +558,7 @@ static long hugetlbfs_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+ 		inode_lock(inode);
+ 
+ 		/* protected by i_mutex */
+-		if (info->seals & F_SEAL_WRITE) {
++		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE)) {
+ 			inode_unlock(inode);
+ 			return -EPERM;
+ 		}
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index 594b85f7cb86..1d338357df8a 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -41,6 +41,7 @@
+ #define F_SEAL_SHRINK	0x0002	/* prevent file from shrinking */
+ #define F_SEAL_GROW	0x0004	/* prevent file from growing */
+ #define F_SEAL_WRITE	0x0008	/* prevent writes */
++#define F_SEAL_FUTURE_WRITE	0x0010  /* prevent future writes while mapped */
+ /* (1U << 31) is reserved for signed error codes */
+ 
+ /*
+diff --git a/mm/memfd.c b/mm/memfd.c
+index 97264c79d2cd..650e65a46b9c 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -131,7 +131,8 @@ static unsigned int *memfd_file_seals_ptr(struct file *file)
+ #define F_ALL_SEALS (F_SEAL_SEAL | \
+ 		     F_SEAL_SHRINK | \
+ 		     F_SEAL_GROW | \
+-		     F_SEAL_WRITE)
++		     F_SEAL_WRITE | \
++		     F_SEAL_FUTURE_WRITE)
+ 
+ static int memfd_add_seals(struct file *file, unsigned int seals)
+ {
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 32eb29bd72c6..f5069e8225cc 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2121,6 +2121,25 @@ int shmem_lock(struct file *file, int lock, struct user_struct *user)
+ 
+ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
+ {
++	struct shmem_inode_info *info = SHMEM_I(file_inode(file));
++
++
++	if (info->seals & F_SEAL_FUTURE_WRITE) {
++		/*
++		 * New PROT_WRITE and MAP_SHARED mmaps are not allowed when
++		 * "future write" seal active.
++		 */
++		if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_WRITE))
++			return -EPERM;
++
++		/*
++		 * Since the F_SEAL_FUTURE_WRITE seals allow for a MAP_SHARED
++		 * read-only mapping, take care to not allow mprotect to revert
++		 * protections.
++		 */
++		vma->vm_flags &= ~(VM_MAYWRITE);
++	}
++
+ 	file_accessed(file);
+ 	vma->vm_ops = &shmem_vm_ops;
+ 	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGE_PAGECACHE) &&
+@@ -2346,8 +2365,9 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
+ 	pgoff_t index = pos >> PAGE_SHIFT;
+ 
+ 	/* i_mutex is held by caller */
+-	if (unlikely(info->seals & (F_SEAL_WRITE | F_SEAL_GROW))) {
+-		if (info->seals & F_SEAL_WRITE)
++	if (unlikely(info->seals & (F_SEAL_GROW |
++				   F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))) {
++		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))
+ 			return -EPERM;
+ 		if ((info->seals & F_SEAL_GROW) && pos + len > inode->i_size)
+ 			return -EPERM;
+@@ -2610,7 +2630,7 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+ 		DECLARE_WAIT_QUEUE_HEAD_ONSTACK(shmem_falloc_waitq);
+ 
+ 		/* protected by i_mutex */
+-		if (info->seals & F_SEAL_WRITE) {
++		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE)) {
+ 			error = -EPERM;
+ 			goto out;
+ 		}
+-- 
+2.19.1.1215.g8438c0b245-goog
+
