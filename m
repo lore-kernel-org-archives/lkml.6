@@ -2,47 +2,56 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,UPPERCASE_50_75,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EB2C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FCCC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08C4520864
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:56:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B378120878
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:56:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BAp7/d1e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08C4520864
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TN9n1jDu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B378120878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407236AbeKWGhg (ORCPT
+        id S2438729AbeKWGhm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 01:37:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36250 "EHLO mail.kernel.org"
+        Fri, 23 Nov 2018 01:37:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728657AbeKWGhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 01:37:35 -0500
+        id S1728657AbeKWGhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 01:37:41 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07F0920864;
-        Thu, 22 Nov 2018 19:56:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66B1D20870;
+        Thu, 22 Nov 2018 19:56:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542916602;
-        bh=l484zn/e9H0LAUWt6xxdKgVRR7pKTYBMeDt4bXOm1eY=;
+        s=default; t=1542916607;
+        bh=lkDgE5xW6XOSSOViRXLE1wo4exByULKGqOHTAjRxdH8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BAp7/d1eMuu64EsGj7P01hldExvVKoo+tb/wIAgisnZ1zUtlHapJaFgx6A8+9tOCF
-         qA63apAVvyswfEd0R8vpQk4JxylUcBLZdBivYMsoia3EgiGdn3uhrqxpF8kMCUzRts
-         n50CuxS/jl5KgqGmn53HagMCPjQXgeuDnK/JIrRA=
+        b=TN9n1jDuu/Vd8suiT8F1ttYOmXYRGJgDFLi2BUAp5jUNj8snYs4BQZo5stYnzeeEO
+         CuCm8fTuj2lG+DG2Jux7LHZVUIK9solIHl2VysxBDHSw1R2wAH9rFyR7FtW8HsY65x
+         AXGTc7QjhKYH6bHW0zplsP5ZmXyAlAl2Qz6724Dc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.9 07/15] powerpc/io: Fix the IO workarounds code to work with Radix
-Date:   Thu, 22 Nov 2018 14:56:13 -0500
-Message-Id: <20181122195621.13776-7-sashal@kernel.org>
+Cc:     Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 08/15] perf/x86/intel/uncore: Add more IMC PCI IDs for KabyLake and CoffeeLake CPUs
+Date:   Thu, 22 Nov 2018 14:56:14 -0500
+Message-Id: <20181122195621.13776-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181122195621.13776-1-sashal@kernel.org>
 References: <20181122195621.13776-1-sashal@kernel.org>
@@ -51,120 +60,172 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-[ Upstream commit 43c6494fa1499912c8177e71450c0279041152a6 ]
+[ Upstream commit c10a8de0d32e95b0b8c7c17b6dc09baea5a5a899 ]
 
-Back in 2006 Ben added some workarounds for a misbehaviour in the
-Spider IO bridge used on early Cell machines, see commit
-014da7ff47b5 ("[POWERPC] Cell "Spider" MMIO workarounds"). Later these
-were made to be generic, ie. not tied specifically to Spider.
+KabyLake and CoffeeLake CPUs have the same client uncore events as SkyLake.
 
-The code stashes a token in the high bits (59-48) of virtual addresses
-used for IO (eg. returned from ioremap()). This works fine when using
-the Hash MMU, but when we're using the Radix MMU the bits used for the
-token overlap with some of the bits of the virtual address.
+Add the PCI IDs for the KabyLake Y, U, S processor lines and CoffeeLake U,
+H, S processor lines.
 
-This is because the maximum virtual address is larger with Radix, up
-to c00fffffffffffff, and in fact we use that high part of the address
-range for ioremap(), see RADIX_KERN_IO_START.
-
-As it happens the bits that are used overlap with the bits that
-differentiate an IO address vs a linear map address. If the resulting
-address lies outside the linear mapping we will crash (see below), if
-not we just corrupt memory.
-
-  virtio-pci 0000:00:00.0: Using 64-bit direct DMA at offset 800000000000000
-  Unable to handle kernel paging request for data at address 0xc000000080000014
-  ...
-  CFAR: c000000000626b98 DAR: c000000080000014 DSISR: 42000000 IRQMASK: 0
-  GPR00: c0000000006c54fc c00000003e523378 c0000000016de600 0000000000000000
-  GPR04: c00c000080000014 0000000000000007 0fffffff000affff 0000000000000030
-         ^^^^
-  ...
-  NIP [c000000000626c5c] .iowrite8+0xec/0x100
-  LR [c0000000006c992c] .vp_reset+0x2c/0x90
-  Call Trace:
-    .pci_bus_read_config_dword+0xc4/0x120 (unreliable)
-    .register_virtio_device+0x13c/0x1c0
-    .virtio_pci_probe+0x148/0x1f0
-    .local_pci_probe+0x68/0x140
-    .pci_device_probe+0x164/0x220
-    .really_probe+0x274/0x3b0
-    .driver_probe_device+0x80/0x170
-    .__driver_attach+0x14c/0x150
-    .bus_for_each_dev+0xb8/0x130
-    .driver_attach+0x34/0x50
-    .bus_add_driver+0x178/0x2f0
-    .driver_register+0x90/0x1a0
-    .__pci_register_driver+0x6c/0x90
-    .virtio_pci_driver_init+0x2c/0x40
-    .do_one_initcall+0x64/0x280
-    .kernel_init_freeable+0x36c/0x474
-    .kernel_init+0x24/0x160
-    .ret_from_kernel_thread+0x58/0x7c
-
-This hasn't been a problem because CONFIG_PPC_IO_WORKAROUNDS which
-enables this code is usually not enabled. It is only enabled when it's
-selected by PPC_CELL_NATIVE which is only selected by
-PPC_IBM_CELL_BLADE and that in turn depends on BIG_ENDIAN. So in order
-to hit the bug you need to build a big endian kernel, with IBM Cell
-Blade support enabled, as well as Radix MMU support, and then boot
-that on Power9 using Radix MMU.
-
-Still we can fix the bug, so let's do that. We simply use fewer bits
-for the token, taking the union of the restrictions on the address
-from both Hash and Radix, we end up with 8 bits we can use for the
-token. The only user of the token is iowa_mem_find_bus() which only
-supports 8 token values, so 8 bits is plenty for that.
-
-Fixes: 566ca99af026 ("powerpc/mm/radix: Add dummy radix_enabled()")
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Link: http://lkml.kernel.org/r/20181019170419.378-1-kan.liang@linux.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/include/asm/io.h | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+ arch/x86/events/intel/uncore_snb.c | 115 ++++++++++++++++++++++++++++-
+ 1 file changed, 114 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
-index f6fda8482f60..3b10f532c28e 100644
---- a/arch/powerpc/include/asm/io.h
-+++ b/arch/powerpc/include/asm/io.h
-@@ -333,19 +333,13 @@ extern void _memcpy_toio(volatile void __iomem *dest, const void *src,
-  * their hooks, a bitfield is reserved for use by the platform near the
-  * top of MMIO addresses (not PIO, those have to cope the hard way).
-  *
-- * This bit field is 12 bits and is at the top of the IO virtual
-- * addresses PCI_IO_INDIRECT_TOKEN_MASK.
-+ * The highest address in the kernel virtual space are:
-  *
-- * The kernel virtual space is thus:
-+ *  d0003fffffffffff	# with Hash MMU
-+ *  c00fffffffffffff	# with Radix MMU
-  *
-- *  0xD000000000000000		: vmalloc
-- *  0xD000080000000000		: PCI PHB IO space
-- *  0xD000080080000000		: ioremap
-- *  0xD0000fffffffffff		: end of ioremap region
-- *
-- * Since the top 4 bits are reserved as the region ID, we use thus
-- * the next 12 bits and keep 4 bits available for the future if the
-- * virtual address space is ever to be extended.
-+ * The top 4 bits are reserved as the region ID on hash, leaving us 8 bits
-+ * that can be used for the field.
-  *
-  * The direct IO mapping operations will then mask off those bits
-  * before doing the actual access, though that only happen when
-@@ -357,8 +351,8 @@ extern void _memcpy_toio(volatile void __iomem *dest, const void *src,
-  */
+diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
+index a3dcc12bef4a..8c700069060b 100644
+--- a/arch/x86/events/intel/uncore_snb.c
++++ b/arch/x86/events/intel/uncore_snb.c
+@@ -14,6 +14,25 @@
+ #define PCI_DEVICE_ID_INTEL_SKL_HQ_IMC	0x1910
+ #define PCI_DEVICE_ID_INTEL_SKL_SD_IMC	0x190f
+ #define PCI_DEVICE_ID_INTEL_SKL_SQ_IMC	0x191f
++#define PCI_DEVICE_ID_INTEL_KBL_Y_IMC	0x590c
++#define PCI_DEVICE_ID_INTEL_KBL_U_IMC	0x5904
++#define PCI_DEVICE_ID_INTEL_KBL_UQ_IMC	0x5914
++#define PCI_DEVICE_ID_INTEL_KBL_SD_IMC	0x590f
++#define PCI_DEVICE_ID_INTEL_KBL_SQ_IMC	0x591f
++#define PCI_DEVICE_ID_INTEL_CFL_2U_IMC	0x3ecc
++#define PCI_DEVICE_ID_INTEL_CFL_4U_IMC	0x3ed0
++#define PCI_DEVICE_ID_INTEL_CFL_4H_IMC	0x3e10
++#define PCI_DEVICE_ID_INTEL_CFL_6H_IMC	0x3ec4
++#define PCI_DEVICE_ID_INTEL_CFL_2S_D_IMC	0x3e0f
++#define PCI_DEVICE_ID_INTEL_CFL_4S_D_IMC	0x3e1f
++#define PCI_DEVICE_ID_INTEL_CFL_6S_D_IMC	0x3ec2
++#define PCI_DEVICE_ID_INTEL_CFL_8S_D_IMC	0x3e30
++#define PCI_DEVICE_ID_INTEL_CFL_4S_W_IMC	0x3e18
++#define PCI_DEVICE_ID_INTEL_CFL_6S_W_IMC	0x3ec6
++#define PCI_DEVICE_ID_INTEL_CFL_8S_W_IMC	0x3e31
++#define PCI_DEVICE_ID_INTEL_CFL_4S_S_IMC	0x3e33
++#define PCI_DEVICE_ID_INTEL_CFL_6S_S_IMC	0x3eca
++#define PCI_DEVICE_ID_INTEL_CFL_8S_S_IMC	0x3e32
  
- #ifdef CONFIG_PPC_INDIRECT_MMIO
--#define PCI_IO_IND_TOKEN_MASK	0x0fff000000000000ul
--#define PCI_IO_IND_TOKEN_SHIFT	48
-+#define PCI_IO_IND_TOKEN_SHIFT	52
-+#define PCI_IO_IND_TOKEN_MASK	(0xfful << PCI_IO_IND_TOKEN_SHIFT)
- #define PCI_FIX_ADDR(addr)						\
- 	((PCI_IO_ADDR)(((unsigned long)(addr)) & ~PCI_IO_IND_TOKEN_MASK))
- #define PCI_GET_ADDR_TOKEN(addr)					\
+ /* SNB event control */
+ #define SNB_UNC_CTL_EV_SEL_MASK			0x000000ff
+@@ -631,7 +650,82 @@ static const struct pci_device_id skl_uncore_pci_ids[] = {
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_SKL_SQ_IMC),
+ 		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
+ 	},
+-
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_Y_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_U_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_UQ_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_SD_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_SQ_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_2U_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4U_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4H_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6H_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_2S_D_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4S_D_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6S_D_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_8S_D_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4S_W_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6S_W_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_8S_W_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4S_S_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6S_S_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
++	{ /* IMC */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_8S_S_IMC),
++		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
++	},
+ 	{ /* end: all zeroes */ },
+ };
+ 
+@@ -680,6 +774,25 @@ static const struct imc_uncore_pci_dev desktop_imc_pci_ids[] = {
+ 	IMC_DEV(SKL_HQ_IMC, &skl_uncore_pci_driver),  /* 6th Gen Core H Quad Core */
+ 	IMC_DEV(SKL_SD_IMC, &skl_uncore_pci_driver),  /* 6th Gen Core S Dual Core */
+ 	IMC_DEV(SKL_SQ_IMC, &skl_uncore_pci_driver),  /* 6th Gen Core S Quad Core */
++	IMC_DEV(KBL_Y_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core Y */
++	IMC_DEV(KBL_U_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core U */
++	IMC_DEV(KBL_UQ_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core U Quad Core */
++	IMC_DEV(KBL_SD_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core S Dual Core */
++	IMC_DEV(KBL_SQ_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core S Quad Core */
++	IMC_DEV(CFL_2U_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core U 2 Cores */
++	IMC_DEV(CFL_4U_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core U 4 Cores */
++	IMC_DEV(CFL_4H_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core H 4 Cores */
++	IMC_DEV(CFL_6H_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core H 6 Cores */
++	IMC_DEV(CFL_2S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 2 Cores Desktop */
++	IMC_DEV(CFL_4S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 4 Cores Desktop */
++	IMC_DEV(CFL_6S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 6 Cores Desktop */
++	IMC_DEV(CFL_8S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 8 Cores Desktop */
++	IMC_DEV(CFL_4S_W_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 4 Cores Work Station */
++	IMC_DEV(CFL_6S_W_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 6 Cores Work Station */
++	IMC_DEV(CFL_8S_W_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 8 Cores Work Station */
++	IMC_DEV(CFL_4S_S_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 4 Cores Server */
++	IMC_DEV(CFL_6S_S_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 6 Cores Server */
++	IMC_DEV(CFL_8S_S_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 8 Cores Server */
+ 	{  /* end marker */ }
+ };
+ 
 -- 
 2.17.1
 
