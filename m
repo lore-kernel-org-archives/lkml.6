@@ -2,113 +2,103 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A395C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC6FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46FD12081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:59:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46FD12081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D4A4E20684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:01:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3Ou/Vhi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4A4E20684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395298AbeKWAjX convert rfc822-to-8bit (ORCPT
+        id S2391643AbeKWAk7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:39:23 -0500
-Received: from mga09.intel.com ([134.134.136.24]:16564 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388851AbeKWAjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:39:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2018 05:59:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,266,1539673200"; 
-   d="scan'208";a="98256393"
-Received: from jlahtine-desk.ger.corp.intel.com (HELO localhost) ([10.251.82.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 22 Nov 2018 05:59:51 -0800
-Content-Type: text/plain; charset="utf-8"
+        Thu, 22 Nov 2018 19:40:59 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38234 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388851AbeKWAk7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 19:40:59 -0500
+Received: by mail-pl1-f195.google.com with SMTP id e5so9316390plb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 06:01:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=lcyTXcwG8IW93lclxLqw2h+G8hESlcBlbKfmLy6kdQs=;
+        b=Z3Ou/VhiDkMKYrFzQ9FwUg08Wvz5Uf+fV7FdMDgpYMdjO+qtrVER6C4KZbE5UlB9Y3
+         5ED7xV8LZG6t4k4WF45xLdFi/qVxdNXYDJh69XVT2P2v1nCLx6xQMTMWRJuSxNJSHL8b
+         FEWt7mURK0dQj2mUtomzC8B0HXRvzn9CdMgJMh8dUsrs0Wb7U3gFHGkjGzhzouxGfW96
+         8JjvBzAWNzRZTpgQ+nnN6DB+gVPwXcpGF8edDhsrWHlMlqlYFnxJdt2DAttwyD9HkUq0
+         mBZxhyRZSHnGCWqgXObqNKlbQWTN7NW4C1mluo48zEZNKGlhXflVvuVq3JoYoJtEjWIR
+         6qeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=lcyTXcwG8IW93lclxLqw2h+G8hESlcBlbKfmLy6kdQs=;
+        b=HXCx2T86oybQiMoBzlnqheGvxVM2m16Ly2MGecVGCt3MpVDVvoUrJTcAMm+nAlePz8
+         ir+QLHZ9BXSsLMNal6aeB+BANHFfvQERU80zFw1i2TQArMjWfQh9QVlseVaoaue2rwHV
+         nnp4F9wuDNuqh8PcDLSq2BaoVxet90B/nDp1E4FMnarftMmHbmz3Oo0dtAu5vf5n7VSA
+         plgkaIpUsahggROix+OdOr+YVo0YR3Ojz4LBOfzX7iAfBFTt9ExYyJZkxlQ5PluFrSuJ
+         QKEAo2Xfa6kNv5qy2qs7EduemRBBTUdgPogbiVMj80/wZvsNKJvJ0KOme59X1yaBzE7Z
+         gaiA==
+X-Gm-Message-State: AA+aEWZuRhW7o9T6p1rv9tBWSlWcaKQiJXIaJnWpse2MbEj2HQOK5Ar4
+        0c6CRjjEXmSAWS+8n84C8Ts=
+X-Google-Smtp-Source: AFSGD/UkSW5niOZTh4WyzIwmTj1FjYJOoLVrJ1T6cxnPY7EJQRAvSB0dEVNuBruwze8FWu3jsq4+2Q==
+X-Received: by 2002:a17:902:4025:: with SMTP id b34mr11476554pld.181.1542895290205;
+        Thu, 22 Nov 2018 06:01:30 -0800 (PST)
+Received: from hp-pavilion-15-notebook-pc-brajeswar ([45.251.61.83])
+        by smtp.gmail.com with ESMTPSA id m11sm39923623pgh.51.2018.11.22.06.01.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 22 Nov 2018 06:01:29 -0800 (PST)
+Date:   Thu, 22 Nov 2018 19:31:26 +0530
+From:   Brajeswar Ghosh <brajeswar.linux@gmail.com>
+To:     harry.wentland@amd.com, sunpeng.li@amd.com,
+        alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, airlied@linux.ie, Tony.Cheng@amd.com,
+        Bhawanpreet.Lakha@amd.com, David.Francis@amd.com,
+        hersenxs.wu@amd.com
+Cc:     jrdr.linux@gmail.com, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        sabyasachi.linux@gmail.com
+Subject: [PATCH] drm/amd/display: Remove duplicate header
+Message-ID: <20181122140126.GA3124@hp-pavilion-15-notebook-pc-brajeswar>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     jglisse@redhat.com, linux-kernel@vger.kernel.org
-From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-In-Reply-To: <20180910005736.5805-3-jglisse@redhat.com>
-Cc:     =?utf-8?b?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        intel-gfx@lists.freedesktop.org
-References: <20180910005736.5805-1-jglisse@redhat.com>
- <20180910005736.5805-3-jglisse@redhat.com>
-Message-ID: <154289518994.19402.3481838548028068213@jlahtine-desk.ger.corp.intel.com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH 2/2] gpu/i915: use HMM mirror for userptr buffer object.
-Date:   Thu, 22 Nov 2018 15:59:50 +0200
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome,
+Remove dce/dce_mem_input.h which is included more than once
 
-Bit late reply, but here goes :)
+Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+---
+ drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-We're working quite hard to avoid pinning any pages unless they're in
-the GPU page tables. And when they are in the GPU page tables, they must
-be pinned for whole of that duration, for the reason that our GPUs can
-not take a fault. And to avoid thrashing GPU page tables, we do leave
-objects in page tables with the expectation that smart userspace
-recycles buffers.
+diff --git a/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c b/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c
+index d68f951f9869..c41408c3eaf1 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c
+@@ -40,7 +40,6 @@
+ #include "dce/dce_mem_input.h"
+ #include "dce/dce_link_encoder.h"
+ #include "dce/dce_stream_encoder.h"
+-#include "dce/dce_mem_input.h"
+ #include "dce/dce_ipp.h"
+ #include "dce/dce_transform.h"
+ #include "dce/dce_opp.h"
+-- 
+2.17.1
 
-So what I understand of your proposal, it wouldn't really make a
-difference for us in the amount of pinned pages (which I agree,
-we'd love to see going down). When we're unable to take a fault,
-the first use effectively forces us to pin any pages and keep them
-pinned to avoid thrashing GPU page tables.
-
-So from i915 perspective, it just seems to be mostly an exchange of
-an API to an another for getting the pages. You already mentioned
-the fast path is being worked on, which is an obvious difference.
-But is there some other improvement one would be expecting, beyond
-the page pinning?
-
-Also, is the requirement for a single non-file-backed VMA in the
-plans of being eliminated or is that inherent restriction of the
-HMM_MIRROR feature? We're currently not imposing such a limitation.
-
-Regards, Joonas
-
-Quoting jglisse@redhat.com (2018-09-10 03:57:36)
-> From: Jérôme Glisse <jglisse@redhat.com>
-> 
-> This replace existing code that rely on get_user_page() aka GUP with
-> code that now use HMM mirror to mirror a range of virtual address as
-> a buffer object accessible by the GPU. There is no functional changes
-> from userspace point of view.
-> 
-> From kernel point of view we no longer pin pages for userptr buffer
-> object which is a welcome change (i am assuming that everyone dislike
-> page pin as i do).
-> 
-> Another change, from kernel point of view, is that it does no longer
-> have a fast path with get_user_pages_fast() this can eventually added
-> back through HMM.
-> 
-> Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Chris Wilson <chris@chris-wilson.co.uk>
-> Cc: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Cc: intel-gfx@lists.freedesktop.org
