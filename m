@@ -6,79 +6,159 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F5FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FB3C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C48E820865
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:36:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C48E820865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BF748206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:43:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF748206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392275AbeKVROt (ORCPT
+        id S1731175AbeKVRVb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 12:14:49 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38878 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729835AbeKVROs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 12:14:48 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6B5DA81F13;
-        Thu, 22 Nov 2018 06:36:49 +0000 (UTC)
-Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-16.pek2.redhat.com [10.72.12.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BC145608F4;
-        Thu, 22 Nov 2018 06:36:44 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     mst@redhat.com, jasowang@redhat.com, davem@davemloft.net,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Jesper Dangaard Brouer <brouer@redhat.com>,
-        Pavel Popa <pashinho1990@gmail.com>,
-        David Ahern <dsahern@gmail.com>
-Subject: [PATCH net 2/2] virtio-net: fail XDP set if guest csum is negotiated
-Date:   Thu, 22 Nov 2018 14:36:31 +0800
-Message-Id: <20181122063631.14452-2-jasowang@redhat.com>
-In-Reply-To: <20181122063631.14452-1-jasowang@redhat.com>
-References: <20181122063631.14452-1-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 22 Nov 2018 06:36:49 +0000 (UTC)
+        Thu, 22 Nov 2018 12:21:31 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45974 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726958AbeKVRVb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 12:21:31 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAM6dAx7078764
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 01:43:29 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nwq670kmh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 01:43:29 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Thu, 22 Nov 2018 06:43:27 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 22 Nov 2018 06:43:23 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAM6hMN24981112
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 22 Nov 2018 06:43:22 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 11F4742045;
+        Thu, 22 Nov 2018 06:43:22 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 73CD042041;
+        Thu, 22 Nov 2018 06:43:21 +0000 (GMT)
+Received: from mschwideX1 (unknown [9.145.69.7])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 22 Nov 2018 06:43:21 +0000 (GMT)
+Date:   Thu, 22 Nov 2018 07:43:19 +0100
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-arch@vger.kernel.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Julian Wiedmann <jwi@linux.ibm.com>,
+        linux-s390@vger.kernel.org, stable@kernel.org
+Subject: Re: [for-next][PATCH 11/18] s390/function_graph: Simplify with
+ function_graph_entry()
+In-Reply-To: <20181122003332.940703297@goodmis.org>
+References: <20181122002801.501220343@goodmis.org>
+        <20181122003332.940703297@goodmis.org>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+X-TM-AS-GCONF: 00
+x-cbid: 18112206-0012-0000-0000-000002CE5E2C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112206-0013-0000-0000-000021038E0F
+Message-Id: <20181122074319.54d62bc3@mschwideX1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-22_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811220063
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't support partial csumed packet since its metadata will be lost
-or incorrect during XDP processing. So fail the XDP set if guest_csum
-feature is negotiated.
+On Wed, 21 Nov 2018 19:28:12 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Fixes: f600b6905015 ("virtio_net: Add XDP support")
-Reported-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: Jesper Dangaard Brouer <brouer@redhat.com>
-Cc: Pavel Popa <pashinho1990@gmail.com>
-Cc: David Ahern <dsahern@gmail.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/net/virtio_net.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> 
+> The function_graph_entry() function does the work of calling the function
+> graph hook function and the management of the shadow stack, simplifying the
+> work done in the architecture dependent prepare_ftrace_return().
+> 
+> Have s390 use the new code, and remove the shadow stack management as well as
+> having to set up the trace structure.
+> 
+> This is needed to prepare for a fix of a design bug on how the curr_ret_stack
+> is used.
+> 
+> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Cc: Julian Wiedmann <jwi@linux.ibm.com>
+> Cc: linux-s390@vger.kernel.org
+> Cc: stable@kernel.org
+> Fixes: 03274a3ffb449 ("tracing/fgraph: Adjust fgraph depth before calling trace return callback")
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 9b5ace538824..cecfd77c9f3c 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -2361,8 +2361,9 @@ static int virtnet_xdp_set(struct net_device *dev, struct bpf_prog *prog,
- 	    && (virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_TSO4) ||
- 	        virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_TSO6) ||
- 	        virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_ECN) ||
--		virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_UFO))) {
--		NL_SET_ERR_MSG_MOD(extack, "Can't set XDP while host is implementing LRO, disable LRO first");
-+		virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_UFO) ||
-+		virtio_has_feature(vi->vdev, VIRTIO_NET_F_GUEST_CSUM))) {
-+		NL_SET_ERR_MSG_MOD(extack, "Can't set XDP while host is implementing LRO/CSUM, disable LRO/CSUM first");
- 		return -EOPNOTSUPP;
- 	}
- 
+A quick test showed that the patch series works fine on s390.
+Acked-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+
+> ---
+>  arch/s390/kernel/ftrace.c | 13 ++-----------
+>  1 file changed, 2 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/s390/kernel/ftrace.c b/arch/s390/kernel/ftrace.c
+> index 84be7f02d0c2..39b13d71a8fe 100644
+> --- a/arch/s390/kernel/ftrace.c
+> +++ b/arch/s390/kernel/ftrace.c
+> @@ -203,22 +203,13 @@ device_initcall(ftrace_plt_init);
+>   */
+>  unsigned long prepare_ftrace_return(unsigned long parent, unsigned long ip)
+>  {
+> -	struct ftrace_graph_ent trace;
+> -
+>  	if (unlikely(ftrace_graph_is_dead()))
+>  		goto out;
+>  	if (unlikely(atomic_read(&current->tracing_graph_pause)))
+>  		goto out;
+>  	ip -= MCOUNT_INSN_SIZE;
+> -	trace.func = ip;
+> -	trace.depth = current->curr_ret_stack + 1;
+> -	/* Only trace if the calling function expects to. */
+> -	if (!ftrace_graph_entry(&trace))
+> -		goto out;
+> -	if (ftrace_push_return_trace(parent, ip, &trace.depth, 0,
+> -				     NULL) == -EBUSY)
+> -		goto out;
+> -	parent = (unsigned long) return_to_handler;
+> +	if (!function_graph_enter(parent, ip, 0, NULL))
+> +		parent = (unsigned long) return_to_handler;
+>  out:
+>  	return parent;
+>  }
+
+
 -- 
-2.17.1
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
 
