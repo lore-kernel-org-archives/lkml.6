@@ -5,162 +5,775 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3A4C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E09AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 617C420831
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 344F120866
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:02:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="pPsv0b2k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 617C420831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WYs/XhXa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 344F120866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393651AbeKVUjx (ORCPT
+        id S2393656AbeKVUl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 15:39:53 -0500
-Received: from m12-14.163.com ([220.181.12.14]:49933 "EHLO m12-14.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390330AbeKVUjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:39:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=AvYeQh1yeGK7rPhdeT
-        ptzjlRCeoXDMojg/A8aa/hvys=; b=pPsv0b2k7CX8TIhSbUSi9pjsq5gl0Ypw1e
-        rHbVEel5zzEgxeYI+Ueo29c/jDnNIeRoB3IMRIFY0u9p1/VCUcNp9wN7GAiOPnDE
-        WlMbpoWzYXtNrDcX2lwrK3+qVElgaC/AAzIoliZBT2xth0FORrwmvSjRamiSDUII
-        F9++VVZIM=
-Received: from bp.localdomain (unknown [106.120.213.96])
-        by smtp10 (Coremail) with SMTP id DsCowAAnpdFWfvZbdqJJBQ--.64751S3;
-        Thu, 22 Nov 2018 18:00:57 +0800 (CST)
-From:   Pan Bian <bianpan2016@163.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Pan Bian <bianpan2016@163.com>
-Subject: [PATCH] crypto: do not free algorithm before using
-Date:   Thu, 22 Nov 2018 18:00:16 +0800
-Message-Id: <1542880816-63838-1-git-send-email-bianpan2016@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: DsCowAAnpdFWfvZbdqJJBQ--.64751S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAFyrCF4fXFW3Zw1kCrWUtwb_yoW5Zr1Dpr
-        Z5KrWktFn5Jrs8urZ7GFs5XrykWrW09a43WrW8Kw4ayrs2qw18JrWIyry5AF4j9FWkJa43
-        GFWvkr1F9a1UJaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jDa9-UUUUU=
-X-Originating-IP: [106.120.213.96]
-X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/xtbBZxoHcletsFUyfQAAsY
+        Thu, 22 Nov 2018 15:41:26 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39657 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731622AbeKVUlZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 15:41:25 -0500
+Received: by mail-lj1-f195.google.com with SMTP id t9-v6so7445275ljh.6
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 02:02:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HbZG9f3kjGlmpIBqEDEGpN+dHfzdnySvvjiRdUf59L4=;
+        b=WYs/XhXaKhXtlbb4drk/ENI08PYFynxi0twR0qEZTMIv66VYK12M8vtN4xwWwHJ7Hn
+         g2tIYyIllqz3GgQyoLL9SdYX6SpAgqyHV9KO/0XMDbXEk9SpYn1SOuHjxrr+cBo+ErEU
+         35Jkl0gbidhqFdlthZWr4xOLOv5FPryu9qBaniFAQmd9Q+x/MtD4VFl++xlza0bT7afS
+         oWZjHRrU5t+QbCsne7ZyMmiyqd3mDD1G+7N8Ckk5EEXZrs++9QgGcYAHgyD6rg6H7GP8
+         03ksAndY35JpmsaUMHcXUXxGYx7tqybn913b6DPE0/Og4bcp18wzKzsglBxH1WnK+Cuy
+         aPEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HbZG9f3kjGlmpIBqEDEGpN+dHfzdnySvvjiRdUf59L4=;
+        b=TV6akg63xES7pMjnkengQ+9kPdXIhTamDkKZfpo0V6OiCOPCqYuIl3oxEbFtSwxhv+
+         4XEKvbZn35OC5W/7YjGn+nJNonKWDAnzAhzBuYZyrAx7rVXOY9KkVFWqQFVj6sBTWVpq
+         El1rTmgU57h3LbW1VzwbfD7n4X/TXR1yDF7Og6fz1/Cce6Yll4Cfm0CeSlLxRcWTwcmm
+         59r+EhbpMJHQEFR7iG56stnTsI9IDKwthhegoAZsXhTwWbq1Liu79s7GlwzhzpH5g9ad
+         fj47aUzT3EWMMr6OY2C5J3fP1HmRawi5VnTdgFZQgdE1suBwi1YFXWDSNwtczCQ4WPsD
+         q7Kw==
+X-Gm-Message-State: AA+aEWZnVngn7TxbTP9Hr/ykrkd1sXmam3aMqUQOZrHgeFNujwn7Kbiw
+        2FiKhQmr3fdHgE3URea1Nmg=
+X-Google-Smtp-Source: AFSGD/Wnb4j/fvgilJf3PFplG/VrUCPU2kvaVayygP/cJVCJmSbTxkH7b8ula8BOsEaU1xtH0QK0cQ==
+X-Received: by 2002:a2e:3603:: with SMTP id d3-v6mr6290087lja.46.1542880957486;
+        Thu, 22 Nov 2018 02:02:37 -0800 (PST)
+Received: from a2k-HP-ProDesk-600-G2-SFF.kyiv.epam.com (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
+        by smtp.gmail.com with ESMTPSA id v19sm2043421lfe.69.2018.11.22.02.02.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 22 Nov 2018 02:02:36 -0800 (PST)
+From:   Oleksandr Andrushchenko <andr2000@gmail.com>
+To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com
+Cc:     andr2000@gmail.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [Xen-devel][PATCH 1/3] xen: Introduce shared buffer helpers for page directory...
+Date:   Thu, 22 Nov 2018 12:02:28 +0200
+Message-Id: <20181122100230.14976-1-andr2000@gmail.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In multiple functions, the algorithm fields are read after its reference
-is dropped through crypto_mod_put. In this case, the algorithm memory
-may be freed, resulting in use-after-free bugs. This patch delays the
-put operation until the algorithm is never used.
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
+based frontends. Currently the frontends which implement
+similar code for sharing big buffers between frontend and
+backend are para-virtualized DRM and sound drivers.
+Both define the same way to share grant references of a
+data buffer with the corresponding backend with little
+differences.
+
+Move shared code into a helper module, so there is a single
+implementation of the same functionality for all.
+
+Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 ---
- crypto/cbc.c  | 6 ++++--
- crypto/cfb.c  | 6 ++++--
- crypto/pcbc.c | 6 ++++--
- 3 files changed, 12 insertions(+), 6 deletions(-)
+ drivers/xen/Kconfig                 |   3 +
+ drivers/xen/Makefile                |   1 +
+ drivers/xen/xen-front-pgdir-shbuf.c | 553 ++++++++++++++++++++++++++++
+ include/xen/xen-front-pgdir-shbuf.h |  89 +++++
+ 4 files changed, 646 insertions(+)
+ create mode 100644 drivers/xen/xen-front-pgdir-shbuf.c
+ create mode 100644 include/xen/xen-front-pgdir-shbuf.h
 
-diff --git a/crypto/cbc.c b/crypto/cbc.c
-index b761b1f..dd5f332 100644
---- a/crypto/cbc.c
-+++ b/crypto/cbc.c
-@@ -140,9 +140,8 @@ static int crypto_cbc_create(struct crypto_template *tmpl, struct rtattr **tb)
- 	spawn = skcipher_instance_ctx(inst);
- 	err = crypto_init_spawn(spawn, alg, skcipher_crypto_instance(inst),
- 				CRYPTO_ALG_TYPE_MASK);
--	crypto_mod_put(alg);
- 	if (err)
--		goto err_free_inst;
-+		goto err_put_alg;
+diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
+index 815b9e9bb975..838b66a9a0e7 100644
+--- a/drivers/xen/Kconfig
++++ b/drivers/xen/Kconfig
+@@ -340,4 +340,7 @@ config XEN_SYMS
+ config XEN_HAVE_VPMU
+        bool
  
- 	err = crypto_inst_setname(skcipher_crypto_instance(inst), "cbc", alg);
- 	if (err)
-@@ -174,12 +173,15 @@ static int crypto_cbc_create(struct crypto_template *tmpl, struct rtattr **tb)
- 	err = skcipher_register_instance(tmpl, inst);
- 	if (err)
- 		goto err_drop_spawn;
-+	crypto_mod_put(alg);
- 
- out:
- 	return err;
- 
- err_drop_spawn:
- 	crypto_drop_spawn(spawn);
-+err_put_alg:
-+	crypto_mod_put(alg);
- err_free_inst:
- 	kfree(inst);
- 	goto out;
-diff --git a/crypto/cfb.c b/crypto/cfb.c
-index a0d68c0..20987d0 100644
---- a/crypto/cfb.c
-+++ b/crypto/cfb.c
-@@ -286,9 +286,8 @@ static int crypto_cfb_create(struct crypto_template *tmpl, struct rtattr **tb)
- 	spawn = skcipher_instance_ctx(inst);
- 	err = crypto_init_spawn(spawn, alg, skcipher_crypto_instance(inst),
- 				CRYPTO_ALG_TYPE_MASK);
--	crypto_mod_put(alg);
- 	if (err)
--		goto err_free_inst;
-+		goto err_put_alg;
- 
- 	err = crypto_inst_setname(skcipher_crypto_instance(inst), "cfb", alg);
- 	if (err)
-@@ -317,12 +316,15 @@ static int crypto_cfb_create(struct crypto_template *tmpl, struct rtattr **tb)
- 	err = skcipher_register_instance(tmpl, inst);
- 	if (err)
- 		goto err_drop_spawn;
-+	crypto_mod_put(alg);
- 
- out:
- 	return err;
- 
- err_drop_spawn:
- 	crypto_drop_spawn(spawn);
-+err_put_alg:
-+	crypto_mod_put(alg);
- err_free_inst:
- 	kfree(inst);
- 	goto out;
-diff --git a/crypto/pcbc.c b/crypto/pcbc.c
-index ef802f6..8aa1014 100644
---- a/crypto/pcbc.c
-+++ b/crypto/pcbc.c
-@@ -244,9 +244,8 @@ static int crypto_pcbc_create(struct crypto_template *tmpl, struct rtattr **tb)
- 	spawn = skcipher_instance_ctx(inst);
- 	err = crypto_init_spawn(spawn, alg, skcipher_crypto_instance(inst),
- 				CRYPTO_ALG_TYPE_MASK);
--	crypto_mod_put(alg);
- 	if (err)
--		goto err_free_inst;
-+		goto err_put_alg;
- 
- 	err = crypto_inst_setname(skcipher_crypto_instance(inst), "pcbc", alg);
- 	if (err)
-@@ -275,12 +274,15 @@ static int crypto_pcbc_create(struct crypto_template *tmpl, struct rtattr **tb)
- 	err = skcipher_register_instance(tmpl, inst);
- 	if (err)
- 		goto err_drop_spawn;
-+	crypto_mod_put(alg);
- 
- out:
- 	return err;
- 
- err_drop_spawn:
- 	crypto_drop_spawn(spawn);
-+err_put_alg:
-+	crypto_mod_put(alg);
- err_free_inst:
- 	kfree(inst);
- 	goto out;
++config XEN_FRONT_PGDIR_SHBUF
++	tristate
++
+ endmenu
+diff --git a/drivers/xen/Makefile b/drivers/xen/Makefile
+index 3e542f60f29f..c48927a58e10 100644
+--- a/drivers/xen/Makefile
++++ b/drivers/xen/Makefile
+@@ -44,3 +44,4 @@ xen-gntdev-y				:= gntdev.o
+ xen-gntdev-$(CONFIG_XEN_GNTDEV_DMABUF)	+= gntdev-dmabuf.o
+ xen-gntalloc-y				:= gntalloc.o
+ xen-privcmd-y				:= privcmd.o privcmd-buf.o
++obj-$(CONFIG_XEN_FRONT_PGDIR_SHBUF)	+= xen-front-pgdir-shbuf.o
+diff --git a/drivers/xen/xen-front-pgdir-shbuf.c b/drivers/xen/xen-front-pgdir-shbuf.c
+new file mode 100644
+index 000000000000..48a658dc7ccf
+--- /dev/null
++++ b/drivers/xen/xen-front-pgdir-shbuf.c
+@@ -0,0 +1,553 @@
++// SPDX-License-Identifier: GPL-2.0 OR MIT
++
++/*
++ * Xen frontend/backend page directory based shared buffer
++ * helper module.
++ *
++ * Copyright (C) 2018 EPAM Systems Inc.
++ *
++ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
++ */
++
++#include <linux/module.h>
++#include <linux/errno.h>
++#include <linux/mm.h>
++
++#include <asm/xen/hypervisor.h>
++#include <xen/balloon.h>
++#include <xen/xen.h>
++#include <xen/xenbus.h>
++#include <xen/interface/io/ring.h>
++
++#include <xen/xen-front-pgdir-shbuf.h>
++
++#ifndef GRANT_INVALID_REF
++/*
++ * FIXME: usage of grant reference 0 as invalid grant reference:
++ * grant reference 0 is valid, but never exposed to a PV driver,
++ * because of the fact it is already in use/reserved by the PV console.
++ */
++#define GRANT_INVALID_REF	0
++#endif
++
++/**
++ * This structure represents the structure of a shared page
++ * that contains grant references to the pages of the shared
++ * buffer. This structure is common to many Xen para-virtualized
++ * protocols at include/xen/interface/io/
++ */
++struct xen_page_directory {
++	grant_ref_t gref_dir_next_page;
++	grant_ref_t gref[1]; /* Variable length */
++};
++
++/**
++ * Shared buffer ops which are differently implemented
++ * depending on the allocation mode, e.g. if the buffer
++ * is allocated by the corresponding backend or frontend.
++ * Some of the operations.
++ */
++struct xen_front_pgdir_shbuf_ops {
++	/*
++	 * Calculate number of grefs required to handle this buffer,
++	 * e.g. if grefs are required for page directory only or the buffer
++	 * pages as well.
++	 */
++	void (*calc_num_grefs)(struct xen_front_pgdir_shbuf *buf);
++
++	/* Fill page directory according to para-virtual display protocol. */
++	void (*fill_page_dir)(struct xen_front_pgdir_shbuf *buf);
++
++	/* Claim grant references for the pages of the buffer. */
++	int (*grant_refs_for_buffer)(struct xen_front_pgdir_shbuf *buf,
++				     grant_ref_t *priv_gref_head, int gref_idx);
++
++	/* Map grant references of the buffer. */
++	int (*map)(struct xen_front_pgdir_shbuf *buf);
++
++	/* Unmap grant references of the buffer. */
++	int (*unmap)(struct xen_front_pgdir_shbuf *buf);
++};
++
++/**
++ * Get granted reference to the very first page of the
++ * page directory. Usually this is passed to the backend,
++ * so it can find/fill the grant references to the buffer's
++ * pages.
++ *
++ * \param buf shared buffer which page directory is of interest.
++ * \return granted reference to the very first page of the
++ * page directory.
++ */
++grant_ref_t
++xen_front_pgdir_shbuf_get_dir_start(struct xen_front_pgdir_shbuf *buf)
++{
++	if (!buf->grefs)
++		return GRANT_INVALID_REF;
++
++	return buf->grefs[0];
++}
++EXPORT_SYMBOL_GPL(xen_front_pgdir_shbuf_get_dir_start);
++
++/**
++ * Map granted references of the shared buffer.
++ *
++ * Depending on the shared buffer mode of allocation
++ * (be_alloc flag) this can either do nothing (for buffers
++ * shared by the frontend itself) or map the provided granted
++ * references onto the backing storage (buf->pages).
++ *
++ * \param buf shared buffer which grants to be maped.
++ * \return zero on success or a negative number on failure.
++ */
++int xen_front_pgdir_shbuf_map(struct xen_front_pgdir_shbuf *buf)
++{
++	if (buf->ops && buf->ops->map)
++		return buf->ops->map(buf);
++
++	/* No need to map own grant references. */
++	return 0;
++}
++EXPORT_SYMBOL_GPL(xen_front_pgdir_shbuf_map);
++
++/**
++ * Unmap granted references of the shared buffer.
++ *
++ * Depending on the shared buffer mode of allocation
++ * (be_alloc flag) this can either do nothing (for buffers
++ * shared by the frontend itself) or unmap the provided granted
++ * references.
++ *
++ * \param buf shared buffer which grants to be unmaped.
++ * \return zero on success or a negative number on failure.
++ */
++int xen_front_pgdir_shbuf_unmap(struct xen_front_pgdir_shbuf *buf)
++{
++	if (buf->ops && buf->ops->unmap)
++		return buf->ops->unmap(buf);
++
++	/* No need to unmap own grant references. */
++	return 0;
++}
++EXPORT_SYMBOL_GPL(xen_front_pgdir_shbuf_unmap);
++
++/**
++ * Free all the resources of the shared buffer.
++ *
++ * \param buf shared buffer which resources to be freed.
++ */
++void xen_front_pgdir_shbuf_free(struct xen_front_pgdir_shbuf *buf)
++{
++	if (buf->grefs) {
++		int i;
++
++		for (i = 0; i < buf->num_grefs; i++)
++			if (buf->grefs[i] != GRANT_INVALID_REF)
++				gnttab_end_foreign_access(buf->grefs[i],
++							  0, 0UL);
++	}
++	kfree(buf->grefs);
++	kfree(buf->directory);
++}
++EXPORT_SYMBOL_GPL(xen_front_pgdir_shbuf_free);
++
++/*
++ * Number of grefs a page can hold with respect to the
++ * struct xen_page_directory header.
++ */
++#define XEN_NUM_GREFS_PER_PAGE ((PAGE_SIZE - \
++				 offsetof(struct xen_page_directory, \
++					  gref)) / sizeof(grant_ref_t))
++
++/**
++ * Get the number of pages the page directory consumes itself.
++ *
++ * \param buf shared buffer.
++ */
++static int get_num_pages_dir(struct xen_front_pgdir_shbuf *buf)
++{
++	return DIV_ROUND_UP(buf->num_pages, XEN_NUM_GREFS_PER_PAGE);
++}
++
++/**
++ * Calculate the number of grant references needed to share the buffer
++ * and its pages when backend allocates the buffer.
++ *
++ * \param buf shared buffer.
++ */
++static void backend_calc_num_grefs(struct xen_front_pgdir_shbuf *buf)
++{
++	/* Only for pages the page directory consumes itself. */
++	buf->num_grefs = get_num_pages_dir(buf);
++}
++
++/**
++ * Calculate the number of grant references needed to share the buffer
++ * and its pages when frontend allocates the buffer.
++ *
++ * \param buf shared buffer.
++ */
++static void guest_calc_num_grefs(struct xen_front_pgdir_shbuf *buf)
++{
++	/*
++	 * Number of pages the page directory consumes itself
++	 * plus grefs for the buffer pages.
++	 */
++	buf->num_grefs = get_num_pages_dir(buf) + buf->num_pages;
++}
++
++#define xen_page_to_vaddr(page) \
++	((uintptr_t)pfn_to_kaddr(page_to_xen_pfn(page)))
++
++/**
++ * Unmap the buffer previously mapped with grant references
++ * provided by the backend.
++ *
++ * \param buf shared buffer.
++ * \return zero on success or a negative number on failure.
++ */
++static int backend_unmap(struct xen_front_pgdir_shbuf *buf)
++{
++	struct gnttab_unmap_grant_ref *unmap_ops;
++	int i, ret;
++
++	if (!buf->pages || !buf->backend_map_handles || !buf->grefs)
++		return 0;
++
++	unmap_ops = kcalloc(buf->num_pages, sizeof(*unmap_ops),
++			    GFP_KERNEL);
++	if (!unmap_ops)
++		return -ENOMEM;
++
++	for (i = 0; i < buf->num_pages; i++) {
++		phys_addr_t addr;
++
++		addr = xen_page_to_vaddr(buf->pages[i]);
++		gnttab_set_unmap_op(&unmap_ops[i], addr, GNTMAP_host_map,
++				    buf->backend_map_handles[i]);
++	}
++
++	ret = gnttab_unmap_refs(unmap_ops, NULL, buf->pages,
++				buf->num_pages);
++
++	for (i = 0; i < buf->num_pages; i++) {
++		if (unlikely(unmap_ops[i].status != GNTST_okay))
++			dev_err(&buf->xb_dev->dev,
++				"Failed to unmap page %d: %d\n",
++				i, unmap_ops[i].status);
++	}
++
++	if (ret)
++		dev_err(&buf->xb_dev->dev,
++			"Failed to unmap grant references, ret %d", ret);
++
++	kfree(unmap_ops);
++	kfree(buf->backend_map_handles);
++	buf->backend_map_handles = NULL;
++	return ret;
++}
++
++/**
++ * Map the buffer with grant references provided by the backend.
++ *
++ * \param buf shared buffer.
++ * \return zero on success or a negative number on failure.
++ */
++static int backend_map(struct xen_front_pgdir_shbuf *buf)
++{
++	struct gnttab_map_grant_ref *map_ops = NULL;
++	unsigned char *ptr;
++	int ret, cur_gref, cur_dir_page, cur_page, grefs_left;
++
++	map_ops = kcalloc(buf->num_pages, sizeof(*map_ops), GFP_KERNEL);
++	if (!map_ops)
++		return -ENOMEM;
++
++	buf->backend_map_handles = kcalloc(buf->num_pages,
++					   sizeof(*buf->backend_map_handles),
++					   GFP_KERNEL);
++	if (!buf->backend_map_handles) {
++		kfree(map_ops);
++		return -ENOMEM;
++	}
++
++	/*
++	 * Read page directory to get grefs from the backend: for external
++	 * buffer we only allocate buf->grefs for the page directory,
++	 * so buf->num_grefs has number of pages in the page directory itself.
++	 */
++	ptr = buf->directory;
++	grefs_left = buf->num_pages;
++	cur_page = 0;
++	for (cur_dir_page = 0; cur_dir_page < buf->num_grefs; cur_dir_page++) {
++		struct xen_page_directory *page_dir =
++			(struct xen_page_directory *)ptr;
++		int to_copy = XEN_NUM_GREFS_PER_PAGE;
++
++		if (to_copy > grefs_left)
++			to_copy = grefs_left;
++
++		for (cur_gref = 0; cur_gref < to_copy; cur_gref++) {
++			phys_addr_t addr;
++
++			addr = xen_page_to_vaddr(buf->pages[cur_page]);
++			gnttab_set_map_op(&map_ops[cur_page], addr,
++					  GNTMAP_host_map,
++					  page_dir->gref[cur_gref],
++					  buf->xb_dev->otherend_id);
++			cur_page++;
++		}
++
++		grefs_left -= to_copy;
++		ptr += PAGE_SIZE;
++	}
++	ret = gnttab_map_refs(map_ops, NULL, buf->pages, buf->num_pages);
++
++	/* Save handles even if error, so we can unmap. */
++	for (cur_page = 0; cur_page < buf->num_pages; cur_page++) {
++		buf->backend_map_handles[cur_page] = map_ops[cur_page].handle;
++		if (unlikely(map_ops[cur_page].status != GNTST_okay))
++			dev_err(&buf->xb_dev->dev,
++				"Failed to map page %d: %d\n",
++				cur_page, map_ops[cur_page].status);
++	}
++
++	if (ret) {
++		dev_err(&buf->xb_dev->dev,
++			"Failed to map grant references, ret %d", ret);
++		backend_unmap(buf);
++	}
++
++	kfree(map_ops);
++	return ret;
++}
++
++/**
++ * Fill page directory with grant references to the pages of the
++ * page directory itself.
++ *
++ * The grant references to the buffer pages are provided by the
++ * backend in this case.
++ *
++ * \param buf shared buffer.
++ */
++static void backend_fill_page_dir(struct xen_front_pgdir_shbuf *buf)
++{
++	struct xen_page_directory *page_dir;
++	unsigned char *ptr;
++	int i, num_pages_dir;
++
++	ptr = buf->directory;
++	num_pages_dir = get_num_pages_dir(buf);
++
++	/* Fill only grefs for the page directory itself. */
++	for (i = 0; i < num_pages_dir - 1; i++) {
++		page_dir = (struct xen_page_directory *)ptr;
++
++		page_dir->gref_dir_next_page = buf->grefs[i + 1];
++		ptr += PAGE_SIZE;
++	}
++	/* Last page must say there is no more pages. */
++	page_dir = (struct xen_page_directory *)ptr;
++	page_dir->gref_dir_next_page = GRANT_INVALID_REF;
++}
++
++/**
++ * Fill page directory with grant references to the pages of the
++ * page directory and the buffer we share with the backend.
++ *
++ * \param buf shared buffer.
++ */
++static void guest_fill_page_dir(struct xen_front_pgdir_shbuf *buf)
++{
++	unsigned char *ptr;
++	int cur_gref, grefs_left, to_copy, i, num_pages_dir;
++
++	ptr = buf->directory;
++	num_pages_dir = get_num_pages_dir(buf);
++
++	/*
++	 * While copying, skip grefs at start, they are for pages
++	 * granted for the page directory itself.
++	 */
++	cur_gref = num_pages_dir;
++	grefs_left = buf->num_pages;
++	for (i = 0; i < num_pages_dir; i++) {
++		struct xen_page_directory *page_dir =
++			(struct xen_page_directory *)ptr;
++
++		if (grefs_left <= XEN_NUM_GREFS_PER_PAGE) {
++			to_copy = grefs_left;
++			page_dir->gref_dir_next_page = GRANT_INVALID_REF;
++		} else {
++			to_copy = XEN_NUM_GREFS_PER_PAGE;
++			page_dir->gref_dir_next_page = buf->grefs[i + 1];
++		}
++		memcpy(&page_dir->gref, &buf->grefs[cur_gref],
++		       to_copy * sizeof(grant_ref_t));
++		ptr += PAGE_SIZE;
++		grefs_left -= to_copy;
++		cur_gref += to_copy;
++	}
++}
++
++/**
++ * Grant references to the frontend's buffer pages.
++ *
++ * These will be shared with the backend, so it can
++ * access the buffer's data.
++ *
++ * \param buf shared buffer.
++ * \return zero on success or a negative number on failure.
++ */
++static int guest_grant_refs_for_buffer(struct xen_front_pgdir_shbuf *buf,
++				       grant_ref_t *priv_gref_head,
++				       int gref_idx)
++{
++	int i, cur_ref, otherend_id;
++
++	otherend_id = buf->xb_dev->otherend_id;
++	for (i = 0; i < buf->num_pages; i++) {
++		cur_ref = gnttab_claim_grant_reference(priv_gref_head);
++		if (cur_ref < 0)
++			return cur_ref;
++
++		gnttab_grant_foreign_access_ref(cur_ref, otherend_id,
++						xen_page_to_gfn(buf->pages[i]),
++						0);
++		buf->grefs[gref_idx++] = cur_ref;
++	}
++	return 0;
++}
++
++/**
++ * Grant all the references needed to share the buffer.
++ *
++ * Grant references to the page directory pages and, if
++ * needed, also to the pages of the shared buffer data.
++ *
++ * \param buf shared buffer.
++ * \return zero on success or a negative number on failure.
++ */
++static int grant_references(struct xen_front_pgdir_shbuf *buf)
++{
++	grant_ref_t priv_gref_head;
++	int ret, i, j, cur_ref;
++	int otherend_id, num_pages_dir;
++
++	ret = gnttab_alloc_grant_references(buf->num_grefs, &priv_gref_head);
++	if (ret < 0) {
++		dev_err(&buf->xb_dev->dev,
++			"Cannot allocate grant references\n");
++		return ret;
++	}
++
++	otherend_id = buf->xb_dev->otherend_id;
++	j = 0;
++	num_pages_dir = get_num_pages_dir(buf);
++	for (i = 0; i < num_pages_dir; i++) {
++		unsigned long frame;
++
++		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
++		if (cur_ref < 0)
++			return cur_ref;
++
++		frame = xen_page_to_gfn(virt_to_page(buf->directory +
++						     PAGE_SIZE * i));
++		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
++		buf->grefs[j++] = cur_ref;
++	}
++
++	if (buf->ops->grant_refs_for_buffer) {
++		ret = buf->ops->grant_refs_for_buffer(buf, &priv_gref_head, j);
++		if (ret)
++			return ret;
++	}
++
++	gnttab_free_grant_references(priv_gref_head);
++	return 0;
++}
++
++/**
++ * Allocate all required structures to mange shared buffer.
++ *
++ * \param buf shared buffer.
++ * \return zero on success or a negative number on failure.
++ */
++static int alloc_storage(struct xen_front_pgdir_shbuf *buf)
++{
++	buf->grefs = kcalloc(buf->num_grefs, sizeof(*buf->grefs), GFP_KERNEL);
++	if (!buf->grefs)
++		return -ENOMEM;
++
++	buf->directory = kcalloc(get_num_pages_dir(buf), PAGE_SIZE, GFP_KERNEL);
++	if (!buf->directory)
++		return -ENOMEM;
++
++	return 0;
++}
++
++/*
++ * For backend allocated buffers we don't need grant_refs_for_buffer
++ * as those grant references are allocated at backend side.
++ */
++static const struct xen_front_pgdir_shbuf_ops backend_ops = {
++	.calc_num_grefs = backend_calc_num_grefs,
++	.fill_page_dir = backend_fill_page_dir,
++	.map = backend_map,
++	.unmap = backend_unmap
++};
++
++/*
++ * For locally granted references we do not need to map/unmap
++ * the references.
++ */
++static const struct xen_front_pgdir_shbuf_ops local_ops = {
++	.calc_num_grefs = guest_calc_num_grefs,
++	.fill_page_dir = guest_fill_page_dir,
++	.grant_refs_for_buffer = guest_grant_refs_for_buffer,
++};
++
++/**
++ * Allocate a new instance of a shared buffer.
++ *
++ * \param cfg configuration to be used while allocating a new shared buffer.
++ * \return zero on success or a negative number on failure.
++ */
++int xen_front_pgdir_shbuf_alloc(struct xen_front_pgdir_shbuf_cfg *cfg)
++{
++	struct xen_front_pgdir_shbuf *buf = cfg->pgdir;
++	int ret;
++
++	if (cfg->be_alloc)
++		buf->ops = &backend_ops;
++	else
++		buf->ops = &local_ops;
++	buf->xb_dev = cfg->xb_dev;
++	buf->num_pages = cfg->num_pages;
++	buf->pages = cfg->pages;
++
++	buf->ops->calc_num_grefs(buf);
++
++	ret = alloc_storage(buf);
++	if (ret)
++		goto fail;
++
++	ret = grant_references(buf);
++	if (ret)
++		goto fail;
++
++	buf->ops->fill_page_dir(buf);
++
++	return 0;
++
++fail:
++	xen_front_pgdir_shbuf_free(buf);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(xen_front_pgdir_shbuf_alloc);
++
++MODULE_DESCRIPTION("Xen frontend/backend page directory based "
++		   "shared buffer handling");
++MODULE_AUTHOR("Oleksandr Andrushchenko");
++MODULE_LICENSE("GPL");
+diff --git a/include/xen/xen-front-pgdir-shbuf.h b/include/xen/xen-front-pgdir-shbuf.h
+new file mode 100644
+index 000000000000..150ef7ec51ec
+--- /dev/null
++++ b/include/xen/xen-front-pgdir-shbuf.h
+@@ -0,0 +1,89 @@
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
++
++/*
++ * Xen frontend/backend page directory based shared buffer
++ * helper module.
++ *
++ * Copyright (C) 2018 EPAM Systems Inc.
++ *
++ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
++ */
++
++#ifndef __XEN_FRONT_PGDIR_SHBUF_H_
++#define __XEN_FRONT_PGDIR_SHBUF_H_
++
++#include <linux/kernel.h>
++
++#include <xen/grant_table.h>
++
++struct xen_front_pgdir_shbuf_ops;
++
++struct xen_front_pgdir_shbuf {
++	/*
++	 * Number of references granted for the backend use:
++	 *
++	 *  - for frontend allocated/imported buffers this holds the number
++	 *    of grant references for the page directory and the pages
++	 *    of the buffer
++	 *
++	 *  - for the buffer provided by the backend this only holds the number
++	 *    of grant references for the page directory itself as grant
++	 *    references for the buffer will be provided by the backend.
++	 */
++	int num_grefs;
++	grant_ref_t *grefs;
++	/* Page directory backing storage. */
++	u8 *directory;
++
++	/*
++	 * Number of pages for the shared buffer itself (excluding the page
++	 * directory).
++	 */
++	int num_pages;
++	/*
++	 * Backing storage of the shared buffer: these are the pages being
++	 * shared.
++	 */
++	struct page **pages;
++
++	struct xenbus_device *xb_dev;
++
++	/* These are the ops used internally depending on be_alloc mode. */
++	const struct xen_front_pgdir_shbuf_ops *ops;
++
++	/* Xen map handles for the buffer allocated by the backend. */
++	grant_handle_t *backend_map_handles;
++};
++
++struct xen_front_pgdir_shbuf_cfg {
++	struct xenbus_device *xb_dev;
++
++	/* Number of pages of the buffer backing storage. */
++	int num_pages;
++	/* Pages of the buffer to be shared. */
++	struct page **pages;
++
++	/*
++	 * This is allocated outside because there are use-cases when
++	 * the buffer structure is allocated as a part of a bigger one.
++	 */
++	struct xen_front_pgdir_shbuf *pgdir;
++	/*
++	 * Mode of grant reference sharing: if set then backend will share
++	 * grant references to the buffer with the frontend.
++	 */
++	int be_alloc;
++};
++
++int xen_front_pgdir_shbuf_alloc(struct xen_front_pgdir_shbuf_cfg *cfg);
++
++grant_ref_t
++xen_front_pgdir_shbuf_get_dir_start(struct xen_front_pgdir_shbuf *buf);
++
++int xen_front_pgdir_shbuf_map(struct xen_front_pgdir_shbuf *buf);
++
++int xen_front_pgdir_shbuf_unmap(struct xen_front_pgdir_shbuf *buf);
++
++void xen_front_pgdir_shbuf_free(struct xen_front_pgdir_shbuf *buf);
++
++#endif /* __XEN_FRONT_PGDIR_SHBUF_H_ */
 -- 
-2.7.4
-
+2.19.1
 
