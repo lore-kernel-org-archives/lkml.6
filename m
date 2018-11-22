@@ -2,115 +2,158 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A7BDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70212C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 424F32075B
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:14:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SXgHBtNF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 424F32075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 329F22075B
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:16:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 329F22075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732076AbeKVMv4 (ORCPT
+        id S1732523AbeKVMxH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 07:51:56 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40917 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731733AbeKVMv4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 07:51:56 -0500
-Received: by mail-pl1-f196.google.com with SMTP id b22-v6so8103073pls.7
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 18:14:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ASXW2aBNxikJdFrHoVJ0ICyUK293AgPjvojixI5CG/k=;
-        b=SXgHBtNFgWzrSjiTtXcRM5sdGJTXoNiKvlcAfn0JxYTWz5pqooJvoi7Vva9H1oCFq7
-         CVG9TsNty/GESiOizP+NZbm4pFziQDze37G+r1+nKVK8/Kwokbh2SAjzR8Ml9t/JdwJF
-         /YbCpV01xLrH15ipeO04Q27HiFl9Z+Qb4vZZXJ3a3RM44R3rY6Yce5ykHexQQBFwik3m
-         JjFoVt3nLp2xROT0tvtLg7qilOlwOOcT3xxpAqQuNWPBaWb7GNoMnj+dJUJ7SBLVtyLc
-         WZzYEFiJJ+4WSHnGURSEFCZAlkyIRdgS7aHUuRAoil0uB/DCgB2h2PScp1wiaoB7+qaC
-         P9ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ASXW2aBNxikJdFrHoVJ0ICyUK293AgPjvojixI5CG/k=;
-        b=aG1Do7c6Nai3Hnh1L134Y9hiWVzdgb7W1+1H+APLK/rZQ4NnSDt4aevWT2rx1yRRsJ
-         PdIgvUUbwfqiBKDwmnZQllFgPHSfqF8Hm19HHmPOKRD4Gkh6+DaJG4HVNLxkfpmiXPwD
-         BgwxiM/5EIAS2pGaOQdR5kTILCDy56VRO3e1xbOiAANhOX1vNrBVlXndvMYFNSbR2MyL
-         Xbae05qybJRf7BEon20IMeFIgqV+6b6TuWiBP5Ffn/XBed9OV8V3NJ9N9t+6kdCQQ27h
-         ERdQyx3g6gvYyw/ab9vVSENH+s8HBX4rh4H8ITcswqgdtJpLGrUKQSsaPU+kAZLonpsU
-         r/nA==
-X-Gm-Message-State: AGRZ1gJ5o+bPnUNAWyorN3WfpqJ9/LqXuinduJQutcFq5nmIh5AS7PPY
-        cux3iyFhHqQPGWRUYHm98UYd/NtI
-X-Google-Smtp-Source: AJdET5fisx/iuNV4/W3+X6T5pVvWu3u0oS1/wuJZObFnYx/i8v1exv7inlGwCezemW2OPgqvmxElzg==
-X-Received: by 2002:a62:3501:: with SMTP id c1-v6mr9326814pfa.173.1542852887940;
-        Wed, 21 Nov 2018 18:14:47 -0800 (PST)
-Received: from localhost ([175.223.27.1])
-        by smtp.gmail.com with ESMTPSA id g11sm25678849pfo.139.2018.11.21.18.14.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 18:14:46 -0800 (PST)
-Date:   Thu, 22 Nov 2018 11:14:43 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Thu, 22 Nov 2018 07:53:07 -0500
+Received: from mga01.intel.com ([192.55.52.88]:16841 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727713AbeKVMxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 07:53:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 18:13:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,263,1539673200"; 
+   d="scan'208";a="91197522"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
+  by orsmga007.jf.intel.com with ESMTP; 21 Nov 2018 18:13:56 -0800
+Subject: Re: [patch 20/24] x86/speculation: Split out TIF update
+To:     Thomas Gleixner <tglx@linutronix.de>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/6] zram: support idle page writeback
-Message-ID: <20181122021442.GB3441@jagdpanzerIV>
-References: <20181116072035.155108-1-minchan@kernel.org>
- <20181116072035.155108-5-minchan@kernel.org>
- <20181121045551.GC599@jagdpanzerIV>
- <20181121133408.GA103278@google.com>
+Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+References: <20181121201430.559770965@linutronix.de>
+ <20181121201724.227260385@linutronix.de>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <f976eb35-5dcd-387e-eb29-f7c6636fd17b@linux.intel.com>
+Date:   Wed, 21 Nov 2018 18:13:56 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181121133408.GA103278@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181121201724.227260385@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (11/21/18 05:34), Minchan Kim wrote:
-> > 
-> > Just a thought,
-> > 
-> > I wonder if it will make sense (and if it will be possible) to writeback
-> > idle _compressed_ objects. Right now we decompress, say, a perfectly
-> > fine 400-byte compressed object to a PAGE_SIZE-d object and then push
-> > it to the WB device. In this particular case it has a x10 bigger IO
-> > pressure on flash. If we can write/read compressed object then we
-> > will write and read 400-bytes, instead of PAGE_SIZE.
-> 
-> Although it has pros/cons, that's the my final goal although it would
-> add much complicated stuffs. Sometime, we should have the feature.
+On Wed, Nov 21, 2018 at 09:14:50PM +0100, Thomas Gleixner wrote:
+> +static void task_update_spec_tif(struct task_struct *tsk, int tifbit, bool on)
+>  {
+>       bool update;
+>
+> +     if (on)
+> +             update = !test_and_set_tsk_thread_flag(tsk, tifbit);
+> +     else
+> +             update = test_and_clear_tsk_thread_flag(tsk, tifbit);
+> +
+> +     /*
+> +      * If being set on non-current task, delay setting the CPU
+> +	 * mitigation until it is scheduled next.
+> +	 */
+> +     if (tsk == current && update)
+> +             speculation_ctrl_update_current();
 
-So you plan to switch to "compressed objects" writeback?
+I think all the call paths from prctl and seccomp coming here
+has tsk == current.
 
-> However, I want to go simple one first which is very valuable, too.
+But if task_update_spec_tif gets used in the future
+where tsk is running on a remote CPU, this could lead to the MSR
+getting out of sync with the running task's TIF flag. This will break
+either performance or security.
 
-Flash wearout is a serious problem; maybe less of a problem on smart
-phones, but much bigger on TVs and on other embedded devices that have
-lifespans of 5+ years. With "writeback idle compressed" we can remove
-the existing "writeback incompressible pages" and writeback only
-"idle, compressed" pages.
+Should we add a
+        WARN_ON(smp_processor_id() != task_cpu(tsk));
 
-The existing incompressible writeback is way too aggressive, and,
-additionally, it's too simple. It writes-back pages which can be
-swapped in immediately; which basically means that we do pointless
-PAGE_SIZE writes to a device which doesn't really like pointless
-writes.
+in case the assumption breaks that task is
+on local CPU, or document this assumption?
 
-It's a whole different story with idle, compressible pages writeback.
+Thanks.
 
-	-ss
+Tim
+
