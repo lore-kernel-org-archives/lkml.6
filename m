@@ -2,62 +2,64 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E0CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 00:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC81C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 00:13:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 338B62075B
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 00:12:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 137822075B
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 00:13:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="H6LuWrhB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 338B62075B
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="M7jsvJjL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 137822075B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388427AbeKVKsu (ORCPT
+        id S2390604AbeKVKss (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 05:48:50 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:36594 "EHLO
+        Thu, 22 Nov 2018 05:48:48 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:36606 "EHLO
         gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388450AbeKVKst (ORCPT
+        with ESMTP id S2388056AbeKVKss (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 05:48:49 -0500
+        Thu, 22 Nov 2018 05:48:48 -0500
 Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 5257E8365A;
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A0704886BC;
         Thu, 22 Nov 2018 13:12:05 +1300 (NZDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
         s=mail181024; t=1542845525;
-        bh=kYBflEaqCViIATbPoUT7Qcmh1CYF3yDA8Hzlo/yMh20=;
+        bh=rae9SLKCduqQ6QEiCm4DhgneloNg8AcReqsB9OpXNK0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=H6LuWrhBMD5iItOjZRqds+ACNWCpYhuxPIGOaGyiiuZbGPQOr3ijBvVhOFq+/MA60
-         N0PK6wMxxpdIVKQ77fMeiXtz/tV/UsUekiy5jV66guu8NEF90T9zOVtZK6tXXPujWo
-         2f9UlEwFrSVXE1k0pN3hW7rlqbc9Olxul8oz5fvBRw+f/Y/qHurgN6j/eqf55IXfN3
-         oPtHPDEQOOaSTeGBrvrCAnu0+bs1yXlDRNwyYStqv1mY65YkxNdgfRVJD2jpFC9wVb
-         q/AJewqoPt85NKjHPHwOveFlAXqz4Ssevy60vwZDq+fhc1w6sp2SZclBLiI9lGE6r9
-         HMPkjVGFhs43w==
+        b=M7jsvJjLd60VdFtabvc1kMoGy2/Ykg2Dk1SCxb8mLyZ7VJauP9VzuXHOeC6C4NSTf
+         NhyQ22LgL+tmAcKXYvEI0QhmEdfgGHprptL9RtGzsrXwD4ZH51k1nQ8xc9S3AB3dU2
+         f1xnHr9Wsyj8HSoyxmGgqnxUVria/K0oivMqLIV49KhkFfWEbSirVZ7GdYNk7HC7ri
+         KOcIQ25dnrWkLnUFteiSQj7HNSAZksPuKmpvC9hDr46JUQCNsMoMykSbaxT8Hkcqb9
+         nLEPgsxV101wo8RF0eUHk9DKlTq3dYNXYDxBbfx3ZOfrttET8TKXFSCVdCEL+NZydV
+         A9TLz+oDmsi3A==
 Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5bf5f4550000>; Thu, 22 Nov 2018 13:12:05 +1300
+        id <B5bf5f4550003>; Thu, 22 Nov 2018 13:12:05 +1300
 Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id C8BF313EEFA;
-        Thu, 22 Nov 2018 13:12:07 +1300 (NZDT)
+        by smtp (Postfix) with ESMTP id 0D19813EEFC;
+        Thu, 22 Nov 2018 13:12:08 +1300 (NZDT)
 Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 610881E08D9; Thu, 22 Nov 2018 13:12:02 +1300 (NZDT)
+        id 995041E08D9; Thu, 22 Nov 2018 13:12:02 +1300 (NZDT)
 From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
 To:     linux@armlinux.org.uk, bp@alien8.de, arnd@arndb.de,
         jlu@pengutronix.de, gregory.clement@bootlin.com,
         linux-arm-kernel@lists.infradead.org
 Cc:     devicetree@vger.kernel.org, linux-edac@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v7 3/9] ARM: aurora-l2: add defines for parity and ECC registers
-Date:   Thu, 22 Nov 2018 13:11:36 +1300
-Message-Id: <20181122001142.19187-4-chris.packham@alliedtelesis.co.nz>
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v7 5/9] dt-bindings: ARM: document marvell,ecc-enable binding
+Date:   Thu, 22 Nov 2018 13:11:38 +1300
+Message-Id: <20181122001142.19187-6-chris.packham@alliedtelesis.co.nz>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181122001142.19187-1-chris.packham@alliedtelesis.co.nz>
 References: <20181122001142.19187-1-chris.packham@alliedtelesis.co.nz>
@@ -69,85 +71,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Luebbe <jlu@pengutronix.de>
+Add documentation for the marvell,ecc-enable properties which can be
+used to enable ECC on the Marvell aurora cache.
 
-These defines will be used by subsequent patches to add support for the
-parity check and error correction functionality in the Aurora L2 cache
-controller.
-
-Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
 Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-=20.../include/asm/hardware/cache-aurora-l2.h    | 48 +++++++++++++++++++=
 
-=201 file changed, 48 insertions(+)
+Notes:
+=20   Changes in v7:
+=20   - remove marvell,ecc-disable
+=20   Changes in v6:
+=20   - new (split binding doc from implementation).
 
-diff --git a/arch/arm/include/asm/hardware/cache-aurora-l2.h b/arch/arm/i=
-nclude/asm/hardware/cache-aurora-l2.h
-index dc5c479ec4c3..39769ffa0051 100644
---- a/arch/arm/include/asm/hardware/cache-aurora-l2.h
-+++ b/arch/arm/include/asm/hardware/cache-aurora-l2.h
-@@ -31,6 +31,9 @@
-=20#define AURORA_ACR_REPLACEMENT_TYPE_SEMIPLRU \
-=20	(3 << AURORA_ACR_REPLACEMENT_OFFSET)
-=20
-+#define AURORA_ACR_PARITY_EN	(1 << 21)
-+#define AURORA_ACR_ECC_EN	(1 << 20)
-+
-=20#define AURORA_ACR_FORCE_WRITE_POLICY_OFFSET	0
-=20#define AURORA_ACR_FORCE_WRITE_POLICY_MASK	\
-=20	(0x3 << AURORA_ACR_FORCE_WRITE_POLICY_OFFSET)
-@@ -41,6 +44,51 @@
-=20#define AURORA_ACR_FORCE_WRITE_THRO_POLICY	\
-=20	(2 << AURORA_ACR_FORCE_WRITE_POLICY_OFFSET)
-=20
-+#define AURORA_ERR_CNT_REG          0x600
-+#define AURORA_ERR_ATTR_CAP_REG     0x608
-+#define AURORA_ERR_ADDR_CAP_REG     0x60c
-+#define AURORA_ERR_WAY_CAP_REG      0x610
-+#define AURORA_ERR_INJECT_CTL_REG   0x614
-+#define AURORA_ERR_INJECT_MASK_REG  0x618
-+
-+#define AURORA_ERR_CNT_CLR_OFFSET         31
-+#define AURORA_ERR_CNT_CLR		   \
-+	(0x1 << AURORA_ERR_CNT_CLR_OFFSET)
-+#define AURORA_ERR_CNT_UE_OFFSET          16
-+#define AURORA_ERR_CNT_UE_MASK             \
-+	(0x7fff << AURORA_ERR_CNT_UE_OFFSET)
-+#define AURORA_ERR_CNT_CE_OFFSET           0
-+#define AURORA_ERR_CNT_CE_MASK             \
-+	(0xffff << AURORA_ERR_CNT_CE_OFFSET)
-+
-+#define AURORA_ERR_ATTR_SRC_OFF           16
-+#define AURORA_ERR_ATTR_SRC_MSK            \
-+	(0x7 << AURORA_ERR_ATTR_SRC_OFF)
-+#define AURORA_ERR_ATTR_TXN_OFF           12
-+#define AURORA_ERR_ATTR_TXN_MSK            \
-+	(0xf << AURORA_ERR_ATTR_TXN_OFF)
-+#define AURORA_ERR_ATTR_ERR_OFF            8
-+#define AURORA_ERR_ATTR_ERR_MSK            \
-+	(0x3 << AURORA_ERR_ATTR_ERR_OFF)
-+#define AURORA_ERR_ATTR_CAP_VALID_OFF      0
-+#define AURORA_ERR_ATTR_CAP_VALID          \
-+	(0x1 << AURORA_ERR_ATTR_CAP_VALID_OFF)
-+
-+#define AURORA_ERR_ADDR_CAP_ADDR_MASK 0xffffffe0
-+
-+#define AURORA_ERR_WAY_IDX_OFF             8
-+#define AURORA_ERR_WAY_IDX_MSK             \
-+	(0xfff << AURORA_ERR_WAY_IDX_OFF)
-+#define AURORA_ERR_WAY_CAP_WAY_OFFSET      1
-+#define AURORA_ERR_WAY_CAP_WAY_MASK        \
-+	(0xf << AURORA_ERR_WAY_CAP_WAY_OFFSET)
-+
-+#define AURORA_ERR_INJECT_CTL_ADDR_MASK 0xfffffff0
-+#define AURORA_ERR_ATTR_TXN_OFF   12
-+#define AURORA_ERR_INJECT_CTL_EN_MASK          0x3
-+#define AURORA_ERR_INJECT_CTL_EN_PARITY        0x2
-+#define AURORA_ERR_INJECT_CTL_EN_ECC           0x1
-+
-=20#define AURORA_MAX_RANGE_SIZE	1024
-=20
-=20#define AURORA_WAY_SIZE_SHIFT	2
+=20Documentation/devicetree/bindings/arm/l2c2x0.txt | 1 +
+=201 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/l2c2x0.txt b/Documenta=
+tion/devicetree/bindings/arm/l2c2x0.txt
+index fbe6cb21f4cf..69e890d56392 100644
+--- a/Documentation/devicetree/bindings/arm/l2c2x0.txt
++++ b/Documentation/devicetree/bindings/arm/l2c2x0.txt
+@@ -76,6 +76,7 @@ Optional properties:
+=20  specified to indicate that such transforms are precluded.
+=20- arm,parity-enable : enable parity checking on the L2 cache (L220 or =
+PL310).
+=20- arm,parity-disable : disable parity checking on the L2 cache (L220 o=
+r PL310).
++- marvell,ecc-enable : enable ECC protection on the L2 cache
+=20- arm,outer-sync-disable : disable the outer sync operation on the L2 =
+cache.
+=20  Some core tiles, especially ARM PB11MPCore have a faulty L220 cache =
+that
+=20  will randomly hang unless outer sync operations are disabled.
 --=20
 2.19.1
