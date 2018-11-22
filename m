@@ -2,89 +2,86 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C174C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D13C8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 392FD2081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:33:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 392FD2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 7451E206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:35:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7451E206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436911AbeKWAM2 (ORCPT
+        id S2391432AbeKWAOe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:12:28 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15134 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388648AbeKWAM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:12:27 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0200994C7911E;
-        Thu, 22 Nov 2018 21:33:01 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Thu, 22 Nov 2018
- 21:32:55 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <richardcochran@gmail.com>,
-        <dmitry.torokhov@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] ptp: Fix pass zero to ERR_PTR() in ptp_clock_register
-Date:   Thu, 22 Nov 2018 21:32:02 +0800
-Message-ID: <20181122133202.21908-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Thu, 22 Nov 2018 19:14:34 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48612 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388648AbeKWAOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 19:14:33 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D2A513622;
+        Thu, 22 Nov 2018 05:35:10 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A1DE33F5AF;
+        Thu, 22 Nov 2018 05:35:10 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id B14A71AE100B; Thu, 22 Nov 2018 13:35:26 +0000 (GMT)
+Date:   Thu, 22 Nov 2018 13:35:26 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Yong Wu <yong.wu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tomasz Figa <tfiga@google.com>,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, arnd@arndb.de,
+        yingjoe.chen@mediatek.com, youlin.pei@mediatek.com,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: Re: [PATCH v3 00/15] MT8183 IOMMU SUPPORT
+Message-ID: <20181122133526.GA13896@arm.com>
+References: <1542422142-30688-1-git-send-email-yong.wu@mediatek.com>
+ <20181122125931.GC1586@8bytes.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181122125931.GC1586@8bytes.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix smatch warning:
+On Thu, Nov 22, 2018 at 01:59:31PM +0100, Joerg Roedel wrote:
+> On Sat, Nov 17, 2018 at 10:35:27AM +0800, Yong Wu wrote:
+> > Yong Wu (14):
+> >   dt-bindings: mediatek: Add binding for mt8183 IOMMU and SMI
+> >   iommu/mediatek: Use a struct as the platform data
+> >   memory: mtk-smi: Use a general config_port interface
+> >   iommu/io-pgtable-arm-v7s: Add paddr_to_iopte and iopte_to_paddr
+> >     helpers
+> >   iommu/io-pgtable-arm-v7s: Extend MediaTek 4GB Mode
+> >   iommu/mediatek: Add mt8183 IOMMU support
+> >   iommu/mediatek: Add mmu1 support
+> >   memory: mtk-smi: Invoke pm runtime_callback to enable clocks
+> >   memory: mtk-smi: Use a struct for the platform data for smi-common
+> >   memory: mtk-smi: Add bus_sel for mt8183
+> >   iommu/mediatek: Add VLD_PA_RANGE register backup when suspend
+> >   iommu/mediatek: Add shutdown callback
+> >   memory: mtk-smi: Get rid of need_larbid
+> >   iommu/mediatek: Switch to SPDX license identifier
+> 
+> This should probably go through the IOMMU tree. For that I'd like to
+> have Acks (reviews are even better) for the io-pgtable parts from Robin
+> and for the memory parts from Matthias first.
 
-drivers/ptp/ptp_clock.c:298 ptp_clock_register() warn:
- passing zero to 'ERR_PTR'
+Robin already reviewed the pgtable bits, I think.
 
-'err' should be set while device_create_with_groups or
-pps_register_source fails
-
-Fixes: 85a66e550195 ("ptp: create "pins" together with the rest of attributes")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/ptp/ptp_clock.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
-index 40fda23..6811f85 100644
---- a/drivers/ptp/ptp_clock.c
-+++ b/drivers/ptp/ptp_clock.c
-@@ -252,8 +252,10 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
- 	ptp->dev = device_create_with_groups(ptp_class, parent, ptp->devid,
- 					     ptp, ptp->pin_attr_groups,
- 					     "ptp%d", ptp->index);
--	if (IS_ERR(ptp->dev))
-+	if (IS_ERR(ptp->dev)) {
-+		err = PTR_ERR(ptp->dev);
- 		goto no_device;
-+	}
- 
- 	/* Register a new PPS source. */
- 	if (info->pps) {
-@@ -264,6 +266,7 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
- 		pps.owner = info->owner;
- 		ptp->pps_source = pps_register_source(&pps, PTP_PPS_DEFAULTS);
- 		if (!ptp->pps_source) {
-+			err = PTR_ERR(-EINVAL);
- 			pr_err("failed to register pps source\n");
- 			goto no_pps;
- 		}
--- 
-2.7.0
-
-
+Will
