@@ -2,159 +2,150 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 481D6C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CB7C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:34:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07F1D2075B
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:33:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="SFMRT9Jq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07F1D2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D1C72075B
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:34:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D1C72075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391541AbeKVMKD (ORCPT
+        id S2391556AbeKVMLV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 07:10:03 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:46922 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732502AbeKVMKC (ORCPT
+        Thu, 22 Nov 2018 07:11:21 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49822 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727253AbeKVMLV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 07:10:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1542850384; x=1574386384;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=oLQT0GYVT35cr6JKZjSsUjHwzJHgOxZfW3U3a4fVL8I=;
-  b=SFMRT9Jqg1KARXF0raxttU6P2LH0jTV9t0IRnge2DeqIM4KGYkiRKKxP
-   CrL974++YNZ69wqvUhJbgz6rjbEbFjtCdwR8fMY70+k7H2cqP1uwkOjoj
-   3cdajy1m79aVYOm/MdXHSRySPVzcnSWkVA6LFAzu75Fge9CLB8uTEhHbC
-   LYnEKwmaczNokLiU3IQqTtr2R4/Nk6NJfhKRxB9uRRqGxT6n7sxZdLdmZ
-   RGDtN7Gmn33LG64t9ExquL5gt6i47ko9XDMMuqHLBBiQzBkcTzxfQFt4/
-   hSjIGix5qjoI6fLor4T/AR3BPfFl3V5Tb8iO7C/ovc4Bx8W8l5YeaUPjU
-   g==;
-X-IronPort-AV: E=Sophos;i="5.56,263,1539619200"; 
-   d="scan'208";a="94857728"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Nov 2018 09:33:04 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP; 21 Nov 2018 17:15:48 -0800
-Received: from usa005005.ad.shared (HELO [10.86.56.42]) ([10.86.56.42])
-  by uls-op-cesaip02.wdc.com with ESMTP; 21 Nov 2018 17:33:03 -0800
-Subject: Re: [PATCH] dt-bindings: sifive: describe sifive-blocks versioning
-To:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        "paul@pwsan.com" <paul@pwsan.com>, Megan Wachs <megan@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Wesley Terpstra <wesley@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-References: <alpine.DEB.2.21.9999.1811211704520.16271@viisi.sifive.com>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <eda63b4a-4371-7d34-38a0-d7136dfc417f@wdc.com>
-Date:   Wed, 21 Nov 2018 17:33:02 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.9999.1811211704520.16271@viisi.sifive.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Thu, 22 Nov 2018 07:11:21 -0500
+Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E97A49B;
+        Thu, 22 Nov 2018 01:33:43 +0000 (UTC)
+Date:   Wed, 21 Nov 2018 17:33:41 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Enke Chen <enkechen@cisco.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>
+Subject: Re: [PATCH v5] kernel/signal: Signal-based pre-coredump
+ notification
+Message-Id: <20181121173341.707a0a869bf16b85f09d75b5@linux-foundation.org>
+In-Reply-To: <ae3b48ef-6bb0-2bc2-eca6-651fdb2dce37@cisco.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+        <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
+        <7741efa7-a3f8-62a1-ba52-613883164643@cisco.com>
+        <84460a77-a111-404e-4bad-88104a6e246e@cisco.com>
+        <20181026082812.GA10581@redhat.com>
+        <21f678a8-4001-df36-c26e-e96cf203b1b1@cisco.com>
+        <20181029111804.GA24820@redhat.com>
+        <0c197608-3b7e-ffd1-8943-801a60beb917@cisco.com>
+        <20181030164628.GD7643@redhat.com>
+        <20181121163711.2c00316784d221eb1750edb0@linux-foundation.org>
+        <ae3b48ef-6bb0-2bc2-eca6-651fdb2dce37@cisco.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/21/18 5:07 PM, Paul Walmsley wrote:
+On Wed, 21 Nov 2018 17:09:50 -0800 Enke Chen <enkechen@cisco.com> wrote:
+
+> Hi, Andrew:
 > 
-> For IP blocks that are generated from the public, open-source
-> sifive-blocks repository, describe the version numbering policy
-> that its maintainers intend to use, upon request from Rob
-> Herring <robh@kernel.org>.
+> On 11/21/18 4:37 PM, Andrew Morton wrote:
+> > On Tue, 30 Oct 2018 17:46:29 +0100 Oleg Nesterov <oleg@redhat.com> wrote:
+> > 
+> >> On 10/29, Enke Chen wrote:
+> >>>
+> >>> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> >>
+> >> Hmm. I didn't say this ;)
+> >>
+> >> But OK, feel free to keep this tag.
+> >>
+> >> I do not like this feauture.
+> > 
+> > Why is that?
+> > 
+> >> But I see no technical problems in this version
+> >> and I never pretented I understand the user-space needs, so I won't argue.
+> > 
+> > The changelog appears to spell this all out quite well?  Unusually
+> > well, in my experience ;)
 > 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Palmer Dabbelt <palmer@sifive.com>
-> Cc: Megan Wachs <megan@sifive.com>
-> Cc: Wesley Terpstra <wesley@sifive.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-riscv@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> Signed-off-by: Paul Walmsley <paul@pwsan.com>
+> I also followed up with a little more explanation in the email thread on
+> 10/30/2018:
+> 
+> ---
+> As I explained earlier, the primary application is in the area of network
+> high-availability / non-stop-forwarding where early fault notification and
+> early action can help maintain BFD sessions and thus avoid unnecessary
+> disruption to forwarding while the control-plane is recovering.
 > ---
 > 
-> Hi Rob, please let me know if this document works with your
-> requirements, or if some changes are needed.  - Paul
+> BTW, I probably should have pointed out this earlier:
 > 
->   .../sifive/sifive-blocks-ip-versioning.txt    | 38 +++++++++++++++++++
->   1 file changed, 38 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
+> BFD stands for "RFC 5880: Bi-directional forwarding detection".
+
+I saw that.  My point is that your above followup wasn't necessary -
+the changelog is clear!
+
+> > 
+> > - As it's a linux-specific feature, a test under
+> >   tools/testing/selftests would be appropriate.  I don't know how much
+> >   that work will be. 
 > 
-> diff --git a/Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt b/Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
-> new file mode 100644
-> index 000000000000..b899e5c6e00c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
+> The selftest code was submitted on 10/25/2018:
+> 
+>    [PATCH] selftests/prctl: selftest for pre-coredump signal notification
 
-It should be be under 
-Documentation/devicetree/bindings/riscv/sifive/sifive-blocks-ip-versioning.txt 
-?
+OK, please prepare these as a patch series.
 
-> @@ -0,0 +1,38 @@
-> +DT compatible string versioning for SiFive open-source IP blocks
-> +
-> +This document describes the version specification for DT "compatible"
-> +strings for open-source SiFive IP blocks.  HDL for these IP blocks
-> +can be found in this public repository:
-> +
-> +https://github.com/sifive/sifive-blocks
-> +
-> +IP block-specific DT compatible strings are contained within the HDL,
-> +in the form "sifive,<ip-block-name><integer version number>".
-> +
-> +An example is "sifive,uart0" from:
-> +
-> +https://github.com/sifive/sifive-blocks/blob/master/src/main/scala/devices/uart/UART.scala#L43
-> +
-> +Until these IP blocks (or IP integration) support version
-> +autodiscovery, the maintainers of these IP blocks intend to increment
-
-/s/autodiscovery/auto discovery
-
-> +the suffixed number in the compatible string whenever the software
-> +interface to these IP blocks changes, or when the functionality of the
-> +underlying IP blocks changes in a way that software should be aware of.
-> +
-> +Driver developers can use compatible string "match" values such as
-> +"sifive,uart0" to indicate that their driver is compatible with the
-> +register interface and functionality associated with the relevant
-> +upstream sifive-blocks commits.  It is expected that most drivers will
-> +match on these IP block-specific compatible strings.
-> +
-> +DT data authors, when writing data for a particular SoC, should
-> +continue to specify an SoC-specific compatible string value, such as
-> +"sifive,fu540-c000-uart".  This way, if SoC-specific
-> +integration-specific bug fixes or workarounds are needed, the kernel
-> +or other system software can match on this string to apply them.  The
-> +IP block-specific compatible string (such as "sifive,uart0") should
-> +then be specified as a subsequent value.
-> +
-> +An example of this style:
-> +
-> +    compatible = "sifive,fu540-c000-uart", "sifive,uart0";
+> > Do we have other linux-specific signal extensions which could piggyback onto that?
+> 
+> No. There are enough existing signals that an application can choose for this
+> purpose, such as SIGUSR1, SIGUSR1, and any of the RT signals.
 > 
 
-Just for the sake of completion, should this document also specify what 
-should be the style of any possible closed IP as well?
+My point is that if we have previously added any linux-specific signal
+expensions then your selftest patch would be an appropriate place where
+we could add tests for those features.  I'm not saying that you should
+add such tests at this time, but please do prepare the selftest as a
+thing which tests linux-specific signal extensions in general, not as a
+thing which tests pre-coredump signals only.
 
-Regards,
-Atish
