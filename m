@@ -2,130 +2,155 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1F1C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 16:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18630C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:00:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7296820818
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 16:56:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="deuALv8O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7296820818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+	by mail.kernel.org (Postfix) with ESMTP id C839D20684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:00:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C839D20684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405647AbeKWDgQ (ORCPT
+        id S2406089AbeKWDkM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 22:36:16 -0500
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:10540 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388150AbeKWDgQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 22:36:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1542905763; x=1574441763;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=SjTMBqqbFlJCxb/Fk+mY8As3c/foiQuyX9sw0WYSkV0=;
-  b=deuALv8OW4LI2AUD38uH3cEqxZ8kZ/yillCSEVKrD3mO4tBuF6PyX436
-   EoqsLrsRoFlivmDCT+T7Yr+Oqd49EyY6K0X6eWxRkFuL4NLBUt4/oJBMQ
-   FxiFQ59ka5N5LbT4ykMn3D6x4ao+UI+cP7+Kcl8Xw1NIyDxjhZSRi/fyV
-   A=;
-X-IronPort-AV: E=Sophos;i="5.56,253,1539648000"; 
-   d="scan'208";a="746878404"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-53356bf6.us-west-2.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 22 Nov 2018 16:50:00 +0000
-Received: from u54ee758033e858cfa736.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
-        by email-inbound-relay-2a-53356bf6.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id wAMGntUa083738
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 22 Nov 2018 16:49:57 GMT
-Received: from u54ee758033e858cfa736.ant.amazon.com (localhost [127.0.0.1])
-        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id wAMGnrpJ008102;
-        Thu, 22 Nov 2018 17:49:54 +0100
-Received: (from jsteckli@localhost)
-        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Submit) id wAMGnqJH008101;
-        Thu, 22 Nov 2018 17:49:52 +0100
-From:   Julian Stecklina <jsteckli@amazon.de>
-To:     kernel-hardening@lists.openwall.com
-Cc:     Julian Stecklina <jsteckli@amazon.de>,
-        Liran Alon <liran.alon@oracle.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Jonathan Adams <jwadams@google.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC RESEND PATCH 0/6] Process-local memory allocations
-Date:   Thu, 22 Nov 2018 17:49:33 +0100
-Message-Id: <cover.1542905228.git.jsteckli@amazon.de>
-X-Mailer: git-send-email 2.7.4
+        Thu, 22 Nov 2018 22:40:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57796 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388150AbeKWDkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 22:40:12 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0455361D07;
+        Thu, 22 Nov 2018 16:59:58 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (ovpn-116-170.ams2.redhat.com [10.36.116.170])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 172D4103BAB8;
+        Thu, 22 Nov 2018 16:59:51 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Rich Felker <dalias@libc.org>, carlos <carlos@redhat.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl init and thread creation
+References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com>
+        <20181122143603.GD23599@brightrain.aerifal.cx>
+        <782067422.9852.1542899056778.JavaMail.zimbra@efficios.com>
+        <20181122151444.GE23599@brightrain.aerifal.cx>
+        <686626451.10113.1542901620250.JavaMail.zimbra@efficios.com>
+        <87wop5xeit.fsf@oldenburg.str.redhat.com>
+        <1045257294.10291.1542905262086.JavaMail.zimbra@efficios.com>
+Date:   Thu, 22 Nov 2018 17:59:44 +0100
+In-Reply-To: <1045257294.10291.1542905262086.JavaMail.zimbra@efficios.com>
+        (Mathieu Desnoyers's message of "Thu, 22 Nov 2018 11:47:42 -0500
+        (EST)")
+Message-ID: <87k1l5xd33.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 22 Nov 2018 16:59:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In a world with processor information leak vulnerabilities, having a treasure
-trove of information available for leaking in the global kernel address space is
-starting to be a liability. The biggest offender is the linear mapping of all
-physical memory and there are already efforts (XPFO) to start addressing this.
-In this patch series, I'd like to propose breaking up the kernel address space
-further and introduce process-local mappings in the kernel.
+* Mathieu Desnoyers:
 
-The rationale is that there are allocations in the kernel containing data that
-should only be accessible when the kernel is executing in the context of a
-specific process. A prime example is KVM vCPU state. This patch series
-introduces process-local memory in the kernel address space by claiming a PGD
-entry for this specific purpose. Then it converts KVM on x86 to use these new
-primitives to store GPR and FPU registers of vCPUs. KVM is a good testing
-ground, because it makes sure userspace can only interact with a VM from a
-single process.
+> ----- On Nov 22, 2018, at 11:28 AM, Florian Weimer fweimer@redhat.com wrote:
+>
+>> * Mathieu Desnoyers:
+>> 
+>>> Here is one scenario: we have 2 early adopter libraries using rseq which
+>>> are deployed in an environment with an older glibc (which does not
+>>> support rseq).
+>>>
+>>> Of course, none of those libraries can be dlclose'd unless they somehow
+>>> track all registered threads.
+>> 
+>> Well, you can always make them NODELETE so that dlclose is not an issue.
+>> If the library is small enough, that shouldn't be a problem.
+>
+> That's indeed what I do with lttng-ust, mainly due to use of pthread_key.
+>
+>> 
+>>> But let's focus on how exactly those libraries can handle lazily
+>>> registering rseq. They can use pthread_key, and pthread_setspecific on
+>>> first use by the thread to setup a destructor function to be invoked
+>>> at thread exit. But each early adopter library is unaware of the
+>>> other, so if we just use a "is_initialized" flag, the first destructor
+>>> to run will unregister rseq while the second library may still be
+>>> using it.
+>> 
+>> I don't think you need unregistering if the memory is initial-exec TLS
+>> memory.  Initial-exec TLS memory is tied directly to the TCB and cannot
+>> be freed while the thread is running, so it should be safe to put the
+>> rseq area there even if glibc knows nothing about it.
+>
+> Is it true for user-supplied stacks as well ?
 
-Process-local allocations in the kernel can be part of a robust L1TF mitigation
-strategy that works even with SMT enabled. The specific goal here is to make it
-harder for a random thread using cache load gadget (usually a bounds check of a
-system call argument plus array access suffices) to prefetch interesting data
-into the L1 cache and use L1TF to leak this data.
+I'm not entirely sure because the glibc terminology is confusing, but I
+think it places intial-exec TLS into the static TLS area (so that it has
+a fixed offset from the TCB).  The static TLS area is placed on the
+user-supplied stack.
 
-The patch set applies to kvm/next [1]. Feedback is very welcome, both about the
-general approach and the actual implementation. As far as testing goes, the KVM
-unit tests seem happy on Intel. AMD is only compile tested at the moment.
+>> Then you'll only need a mechanism to find the address of the actually
+>> active rseq area (which you probably have to store in a TLS variable
+>> for performance reasons).  And that part you need whether you have
+>> reference counter or not.
+>
+> I'm not sure I follow your thoughts here. Currently, the __rseq_abi
+> TLS symbol identifies a structure registered to the kernel. The
+> "currently active" rseq critical section is identified by the field
+> "rseq_cs" within the __rseq_abi structure.
+>
+> So here when you say "actually active rseq area", do you mean the
+> currently registered struct rseq (__rseq_abi) or the currently running
+> rseq critical section ? (pointed to by __rseq_abi.rseq_cs)
 
-[1] git://git.kernel.org/pub/scm/virt/kvm/kvm.git
+__rseq_abi.
 
-Julian Stecklina (6):
-  kvm, vmx: move CR2 context switch out of assembly path
-  kvm, vmx: move register clearing out of assembly path
-  mm, x86: make __kernel_map_pages always available
-  x86/speculation, mm: add process local virtual memory region
-  x86/speculation, kvm: move guest FPU state into process local memory
-  x86/speculation, kvm: move gprs to process local storage
+> One issue here is that early adopter libraries cannot always use
+> the IE model. I tried using it for other TLS variables in lttng-ust, and
+> it ended up hanging our CI tests when tracing a sample application with
+> lttng-ust under a Java virtual machine: being dlopen'd in a process that
+> possibly already exhausts the number of available backup TLS IE entries
+> seems to have odd effects. This is why I'm worried about using the IE model
+> within lttng-ust.
 
- arch/x86/Kconfig                        |   1 +
- arch/x86/include/asm/kvm_host.h         |  13 +-
- arch/x86/include/asm/pgtable_64_types.h |   6 +
- arch/x86/include/asm/proclocal.h        |  44 ++++
- arch/x86/kvm/kvm_cache_regs.h           |   4 +-
- arch/x86/kvm/svm.c                      | 132 +++++++-----
- arch/x86/kvm/vmx.c                      | 203 ++++++++++--------
- arch/x86/kvm/x86.c                      |  45 ++--
- arch/x86/mm/Makefile                    |   2 +
- arch/x86/mm/dump_pagetables.c           |   3 +
- arch/x86/mm/fault.c                     |  14 ++
- arch/x86/mm/pageattr.c                  |   3 +-
- arch/x86/mm/proclocal.c                 | 269 ++++++++++++++++++++++++
- include/linux/mm.h                      |   3 +-
- include/linux/mm_types.h                |   7 +
- security/Kconfig                        |  16 ++
- 16 files changed, 596 insertions(+), 169 deletions(-)
- create mode 100644 arch/x86/include/asm/proclocal.h
- create mode 100644 arch/x86/mm/proclocal.c
+You can work around this by preloading the library.  I'm not sure if
+this is a compelling reason not to use initial-exec TLS memory.
 
--- 
-2.17.1
+>>> The same problem arises if we have an application early adopter which
+>>> explicitly deal with rseq, with a library early adopter. The issue is
+>>> similar, except that the application will explicitly want to unregister
+>>> rseq before exiting the thread, which leaves a race window where rseq
+>>> is unregistered, but the library may still need to use it.
+>>>
+>>> The reference counter solves this: only the last rseq user for a thread
+>>> performs unregistration.
+>> 
+>> If you do explicit unregistration, you will run into issues related to
+>> destructor ordering.  You should really find a way to avoid that.
+>
+> The per-thread reference counter is a way to avoid issues that arise from
+> lack of destructor ordering. Is it an acceptable approach for you, or
+> you have something else in mind ?
 
+Only for the involved libraries.  It will not help if other TLS
+destructors run and use these libraries.
+
+Thanks,
+Florian
