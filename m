@@ -2,178 +2,152 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD9DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A1CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEBAA20659
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:06:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEBAA20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id 86C4320818
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:08:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jeSPhr/Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86C4320818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407299AbeKWHr3 (ORCPT
+        id S2407394AbeKWHtM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 02:47:29 -0500
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:38912 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727838AbeKWHr3 (ORCPT
+        Fri, 23 Nov 2018 02:49:12 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39448 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389465AbeKWHtM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 02:47:29 -0500
-Received: from relay7-d.mail.gandi.net (unknown [217.70.183.200])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id E27043A719A
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 21:08:20 +0100 (CET)
-X-Originating-IP: 2.224.242.101
-Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 8BD6F2000B;
-        Thu, 22 Nov 2018 20:08:14 +0000 (UTC)
-Date:   Thu, 22 Nov 2018 21:08:08 +0100
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
+        Fri, 23 Nov 2018 02:49:12 -0500
+Received: by mail-wr1-f65.google.com with SMTP id t27so2492514wra.6
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 13:08:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=3fwIi1HS+B7IqHTnxe4GTaBPBU0ZPbNlR7rFtZhpXrc=;
+        b=jeSPhr/YrQkmBYIUxP336rNiADqHILN1LHSlMWcRRSAoU7ZyDMMx+38FWmGQITz3du
+         7fG9O4zR6mEp6XTqKeSn93s4WYy3d6TN2O/09zVAwdFGNJimbJdLdrej6kg/dhhd3XhB
+         pvXU1GgHDXr94XKPb801kwMxMS8M+LgnJo8l8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=3fwIi1HS+B7IqHTnxe4GTaBPBU0ZPbNlR7rFtZhpXrc=;
+        b=c7vo23XCc7zXbCIi4ZffYugV0KGfQPtZuGvmcRb2TVRJrK7MoVPfoPrmWOdL2mG7NC
+         MSJ+g7o7a37EFrU91Y0yd0xxKzLlMi5tZW3eQSH4HOcsXyu2M9k2lqeigK/OURmvz/43
+         W4hyZPevnGduH7EoOql94Z+U7jX34uo7TFiqZH2QMkdTVwJlcanBqDQeHSRlnBI0Wy4f
+         h119zaOig7OlQWxw67CT6Fy1tZP9Hi8teutvuvAUV+kezTulXPaj7uUHmEiOvOlviCJQ
+         dCUqVtzb7DS9RxqBJVZHiAQ4uM+nXJlnzyRZx+sJefNVUwjkyTQ4D0mx3qySLWuhSUso
+         tv9A==
+X-Gm-Message-State: AA+aEWaO6OHT9oN9ARS0bsYKgIgtzqRpuPmeBwwmKhulXhHW7n4W1tZI
+        h1cdPiGx0p/cKw09WN4nO41BMQ==
+X-Google-Smtp-Source: AFSGD/UnbNFGx3Xr1bxXeiHfwJN0Qq8HUi5bRAnMjW+VuCRJS/h2Egi8LR5ObpHXdM9ELyRsYTUzyQ==
+X-Received: by 2002:a5d:6b09:: with SMTP id v9mr3230402wrw.304.1542920882556;
+        Thu, 22 Nov 2018 13:08:02 -0800 (PST)
+Received: from [192.168.1.54] (33.153.69.91.rev.sfr.net. [91.69.153.33])
+        by smtp.gmail.com with ESMTPSA id 60sm26154756wrb.81.2018.11.22.13.08.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 13:08:01 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2 1/2] bpf: add __weak hook for allocating executable memory
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+X-Mailer: iPhone Mail (16A366)
+In-Reply-To: <201811230404.yavKPUOn%fengguang.wu@intel.com>
+Date:   Thu, 22 Nov 2018 22:08:00 +0100
+Cc:     kbuild-all@01.org, linux-arm-kernel@lists.infradead.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
-        Libin Yang <lbyang@marvell.com>,
-        Albert Wang <twang13@marvell.com>
-Subject: Re: [PATCH v3 05/14] media: dt-bindings: marvell,mmp2-ccic: Add
- Marvell MMP2 camera
-Message-ID: <20181122200341.GA8279@w540>
-References: <20181120100318.367987-1-lkundrak@v3.sk>
- <20181120100318.367987-6-lkundrak@v3.sk>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="WYTEVAkct0FjGQmd"
-Content-Disposition: inline
-In-Reply-To: <20181120100318.367987-6-lkundrak@v3.sk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <800264DE-658A-46B4-8FA1-CD1CF314AA7A@linaro.org>
+References: <20181121131733.14910-2-ard.biesheuvel@linaro.org> <201811230404.yavKPUOn%fengguang.wu@intel.com>
+To:     kbuild test robot <lkp@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---WYTEVAkct0FjGQmd
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 
-Hi Lubomir,
+> On 22 Nov 2018, at 21:01, kbuild test robot <lkp@intel.com> wrote:
+>=20
+> Hi Ard,
+>=20
+> I love your patch! Yet something to improve:
+>=20
 
-On Tue, Nov 20, 2018 at 11:03:10AM +0100, Lubomir Rintel wrote:
-> Add Marvell MMP2 camera host interface.
->
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
->
+Ugh, apologies for this. I=E2=80=99m sure i build tested /something/ but cle=
+arly not what i should have tested.
+
+In any case, following up on the discussion I=E2=80=99ll have to respin this=
+ in any case. I=E2=80=99ll triple check next time that what i send out was t=
+ested properly.
+
+
+> [auto build test ERROR on bpf-next/master]
+> [also build test ERROR on v4.20-rc3 next-20181122]
+> [if your patch is applied to the wrong git tree, please drop us a note to h=
+elp improve the system]
+>=20
+> url:    https://github.com/0day-ci/linux/commits/Ard-Biesheuvel/bpf-permit=
+-JIT-allocations-to-be-served-outside-the-module-region/20181123-033144
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git m=
+aster
+> config: x86_64-randconfig-x002-201846 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>        # save the attached .config to linux build tree
+>        make ARCH=3Dx86_64=20
+>=20
+> All error/warnings (new ones prefixed by >>):
+>=20
+>   kernel//bpf/core.c: In function 'bpf_jit_free_exec':
+>>> kernel//bpf/core.c:632:24: error: 'size' undeclared (first use in this f=
+unction); did you mean 'ksize'?
+>     return module_memfree(size);
+>                           ^~~~
+>                           ksize
+>   kernel//bpf/core.c:632:24: note: each undeclared identifier is reported o=
+nly once for each function it appears in
+>>> kernel//bpf/core.c:632:9: warning: 'return' with a value, in function re=
+turning void
+>     return module_memfree(size);
+>            ^~~~~~~~~~~~~~
+>   kernel//bpf/core.c:630:13: note: declared here
+>    void __weak bpf_jit_free_exec(const void *addr)
+>                ^~~~~~~~~~~~~~~~~
+>=20
+> vim +632 kernel//bpf/core.c
+>=20
+>   629   =20
+>   630    void __weak bpf_jit_free_exec(const void *addr)
+>   631    {
+>> 632        return module_memfree(size);
+>   633    }
+>   634   =20
+>=20
 > ---
-> Changes since v2:
-> - Added #clock-cells, clock-names, port
->
->  .../bindings/media/marvell,mmp2-ccic.txt      | 37 +++++++++++++++++++
->  1 file changed, 37 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
->
-> diff --git a/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
-> new file mode 100644
-> index 000000000000..e5e8ca90e7f7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
-> @@ -0,0 +1,37 @@
-> +Marvell MMP2 camera host interface
-> +
-> +Required properties:
-> + - compatible: Should be "marvell,mmp2-ccic"
-> + - reg: register base and size
-> + - interrupts: the interrupt number
-> + - #clock-cells: must be 0
-> + - any required generic properties defined in video-interfaces.txt
-
-I don't think video-interfaces applies here. It described bindings to
-be used for endpoint and port nodes.
-
-> +
-> +Optional properties:
-> + - clocks: input clock (see clock-bindings.txt)
-
-What do you think of:
-"reference to the input clock as specified by clock-bindings.txt"
-
-> + - clock-names: names of the clocks used, may include "axi", "func" and
-> +                "phy"
-
-"may include" is abit vague. Which clock should the interface be
-powered from, and in which case?
-
-> + - clock-output-names: should contain the name of the clock driving the
-> +                       sensor master clock MCLK
-
-This is a property for the clock provider part, and I will just list
-the only clock this interfaces provides here:
-
-    - clock-output-names: Optional clock source for sensors. Shall be "mclk".
-
-See a comment on patch 14 on the use of the clock provider part.
-
-> +
-> +Required subnodes:
-> + - port: the parallel bus interface port with a single endpoint linked to
-> +         the sensor's endpoint as described in video-interfaces.txt
-> +
-> +Example:
-> +
-> +	camera0: camera@d420a000 {
-> +		compatible = "marvell,mmp2-ccic";
-> +		reg = <0xd420a000 0x800>;
-> +		interrupts = <42>;
-> +		clocks = <&soc_clocks MMP2_CLK_CCIC0>;
-> +		clock-names = "axi";
-> +		#clock-cells = <0>;
-> +		clock-output-names = "mclk";
-> +
-> +		port {
-> +			camera0_0: endpoint {
-> +				remote-endpoint = <&ov7670_0>;
-
-I'm debated, your sensor does not support configuring the parallel bus,
-that's fine, but as "bindings describe hardware" shouldn't you list
-here the bus configurations the HW interface supports and list their default
-values? Or there are none for real in this platform?
-
-Thanks
-  j
-
-
-> +			};
-> +		};
-> +	};
-> --
-> 2.19.1
->
-
---WYTEVAkct0FjGQmd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJb9wyoAAoJEHI0Bo8WoVY8kNsQAMWdo1PGvEDT/0hXiQpdwfVn
-ZRcLhIGbHMEWIhOO0brNQ01jGKgK2rthDmEL71J/GNraq9bKWE1HKMovALc1n7Il
-QxHrjF82R4bB8zxc8LyMgTVd0Ak/YJ9MiGtqdkPK0Rsl/XorGdtIe690aEbghJ3e
-4IFn7viugujDOsUFNoT5d61nkFe2mRtdgk+qMaZ+dWYQsRZtUKiqAkuZsJyeYgwD
-L9MPwc9iVKHhS3cPMucQJtlcKKZ3VfCPm7QSPuZiOe5cEQ2VkUU8oejJ/mN4RBtM
-WziB1B9OMVkd2d1JcyiLWMoTEqxyWSLO1xgKHwNvyumwQwDDQGIvi1Am2Uf7ni2r
-1ooeECUrRGiKpSzAZ4zRfvYH52LYdJGy4sxy7VCtWkOL5ClvCzF0+rvYTGSgv/FA
-+sRsDOwarGJAbDWzUNCHwIAhbE9vlO/xypO5wANdQgFil39K6pUmRhrCiytW5vlT
-uR2l3E7Jp78B3/OuDdqM3HwMH8BNYnXvYCNFw5sTdom3OmkKadWmFXIEeRm5EKIY
-TkAzIQ9NT7bGcxzGLC0ixts54SviFBI6+ULaQGd6YM9S1HuZ5GhNJYFgnU+5/y8O
-dOE8JP+N8Mbkfida18JqXlbLLQBjgvR1uScqoIAndHiOc94YvZQNI/sDyaHtjy86
-kSr2PJZTjspEOFreYT0s
-=7rOK
------END PGP SIGNATURE-----
-
---WYTEVAkct0FjGQmd--
+> 0-DAY kernel test infrastructure                Open Source Technology Cen=
+ter
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporat=
+ion
+> <.config.gz>
