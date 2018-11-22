@@ -2,147 +2,130 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D413C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:55:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 872B9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBD1D20821
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:55:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBD1D20821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BC9920645
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:55:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="M146U05d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BC9920645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403922AbeKVMcc (ORCPT
+        id S2403938AbeKVMcf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 07:32:32 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:8369 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730718AbeKVMcb (ORCPT
+        Thu, 22 Nov 2018 07:32:35 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:37974 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403923AbeKVMce (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 07:32:31 -0500
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="48531308"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 22 Nov 2018 09:55:26 +0800
-Received: from G08CNEXCHPEKD03.g08.fujitsu.local (unknown [10.167.33.85])
-        by cn.fujitsu.com (Postfix) with ESMTP id 1098D4B714DF;
-        Thu, 22 Nov 2018 09:55:26 +0800 (CST)
-Received: from [10.167.226.45] (10.167.226.45) by
- G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- id 14.3.408.0; Thu, 22 Nov 2018 09:55:32 +0800
-Subject: Re: [PATCH] initramfs: clean old path before creating a hardlink
-To:     <linux-kernel@vger.kernel.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     <zhijianx.li@intel.com>, Philip Li <philip.li@intel.com>
-References: <1542352368-13299-1-git-send-email-lizhijian@cn.fujitsu.com>
-From:   Li Zhijian <lizhijian@cn.fujitsu.com>
-Organization: fnst-ulinux
-Message-ID: <2ac09b0f-2c26-3e19-1a33-f2d5ea1ae3ad@cn.fujitsu.com>
-Date:   Thu, 22 Nov 2018 09:55:22 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1542352368-13299-1-git-send-email-lizhijian@cn.fujitsu.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.167.226.45]
-X-yoursite-MailScanner-ID: 1098D4B714DF.AF756
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: lizhijian@cn.fujitsu.com
+        Thu, 22 Nov 2018 07:32:34 -0500
+Received: by mail-qt1-f193.google.com with SMTP id p17so5980159qtl.5
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 17:55:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=marek-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=bMwKQsPkRI/cPJXwXm3wYhKIDjDUhHJjXHdcgorxaAU=;
+        b=M146U05dS1W6ab8p8FDpjUuW0Ac4Aorm6XQ++Q5OVr7OJQlUp1lbc0zcFb/qxQkz8d
+         BVQbs3X02FtoSSqwxPpvMvqvZwfOu06dNSw4XvBevfL46sewRDBROTt6flHinaxtzP2w
+         5MfKDcmm0Ano5yghyFoK3IngdmCS+lE1EwW3b4EcRbaExXn6QpnNFp6AeGF/xMzDdH/o
+         BXsKl/xHNFrauOV9QiHUViWgJsrVeYam4PxOTy9PH16IGRuN6fXFuOElkzuy+yWoAMPq
+         5W+n8HB1V5b2EXaIovtVxGRaK7N3uv/NTV+MEM4FqI5RTpVUYtWuawfNPG43kDs0H3Vh
+         K+wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=bMwKQsPkRI/cPJXwXm3wYhKIDjDUhHJjXHdcgorxaAU=;
+        b=UYnyIQWfxizf1elw10WhO2vErA6c0IIlzI7Y9TNrUtGLhr104L9+2EhkmruIRaewFo
+         8BQPvPpctE82O8CSpvVxu7fgXHrwaXi3w6MZngwSwYv6GfhC6XqiTkyDPhgH1vWdAzpJ
+         nL4vMElhcXg6veU+ngYKJUcp2S7GIs/DA6e5hzSEJEktL7ioK+Lx/hUsii6v3Hk1FD0G
+         J7dIjbGddH/kZwjXGHjq+LzBaggmmnuJapfRn7ji4K8FcnulqjuAA2T52k5+RNv5VjvL
+         rZfEYddwF2uEfJ6btfzH3FYGyDSac5/QpbF5/CDUVb2G7X+A3UTzYdH1MqUtWEAJJ8AS
+         +lrQ==
+X-Gm-Message-State: AGRZ1gKf2Ccbr+b2vzkoRGU2xqHa3x022RaY5EpzNm1Cm0+bmzYMxwQr
+        AHLWjsxWrgelkzIfBMtIclVYaQ==
+X-Google-Smtp-Source: AJdET5eTZPpxllvlX0XVv9Hpc0qkwc5gdo2s3QZT6jQRlk3pdjFcpjOwZe+qLRee5/pUL+wobqLpHg==
+X-Received: by 2002:ac8:231a:: with SMTP id a26mr8604020qta.40.1542851730793;
+        Wed, 21 Nov 2018 17:55:30 -0800 (PST)
+Received: from localhost.localdomain (modemcable014.247-57-74.mc.videotron.ca. [74.57.247.14])
+        by smtp.gmail.com with ESMTPSA id q15sm25297721qkl.81.2018.11.21.17.55.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 17:55:30 -0800 (PST)
+From:   Jonathan Marek <jonathan@marek.ca>
+To:     freedreno@lists.freedesktop.org
+Cc:     Chris.Healy@zii.aero, festevam@gmail.com,
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
+        GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 3/9] drm/msm/mdp4: add lcdc-align-lsb flag to control lane alignment
+Date:   Wed, 21 Nov 2018 20:52:29 -0500
+Message-Id: <20181122015237.14534-3-jonathan@marek.ca>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181122015237.14534-1-jonathan@marek.ca>
+References: <20181122015237.14534-1-jonathan@marek.ca>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping
+Controls which of the 8 lanes are used for 6 bit color.
 
-This patch is to fix initrd cannot be extracted properly in some cases.
+Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+---
+ .../gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c | 22 ++++++++++++-------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-
-Thanks
-
-
-On 11/16/2018 03:12 PM, Li Zhijian wrote:
-> Previously, sys_link() will fail due to the new path is already existed.
-> this case ofen appears when we use a concated initrd, below is an
-> sample:
->
-> 1) prepare a basic rootfs, it contains a regular files rc.local
-> lizhijian@:~/yocto-tiny-i386-2016-04-22$ cat etc/rc.local
->   #!/bin/sh
->   echo "Running /etc/rc.local..."
-> yocto-tiny-i386-2016-04-22$ find . | sed 's,^\./,,' | cpio -o -H newc | gzip -n -9 >../rootfs.cgz
->
-> 2) create a extra initrd which also includes a etc/rc.local
-> lizhijian@:~/lkp-x86_64/etc$ echo "append initrd" >rc.local
-> lizhijian@:~/lkp/lkp-x86_64/etc$ cat rc.local
-> append initrd
-> lizhijian@:~/lkp/lkp-x86_64/etc$ ln rc.local rc.local.hardlink
-> append initrd
-> lizhijian@:~/lkp/lkp-x86_64/etc$ stat rc.local rc.local.hardlink
->    File: 'rc.local'
->    Size: 14        	Blocks: 8          IO Block: 4096   regular file
-> Device: 801h/2049d	Inode: 11296086    Links: 2
-> Access: (0664/-rw-rw-r--)  Uid: ( 1002/lizhijian)   Gid: ( 1002/lizhijian)
-> Access: 2018-11-15 16:08:28.654464815 +0800
-> Modify: 2018-11-15 16:07:57.514903210 +0800
-> Change: 2018-11-15 16:08:24.180228872 +0800
->   Birth: -
->    File: 'rc.local.hardlink'
->    Size: 14        	Blocks: 8          IO Block: 4096   regular file
-> Device: 801h/2049d	Inode: 11296086    Links: 2
-> Access: (0664/-rw-rw-r--)  Uid: ( 1002/lizhijian)   Gid: ( 1002/lizhijian)
-> Access: 2018-11-15 16:08:28.654464815 +0800
-> Modify: 2018-11-15 16:07:57.514903210 +0800
-> Change: 2018-11-15 16:08:24.180228872 +0800
->   Birth: -
->
-> lizhijian@:~/lkp/lkp-x86_64$ find . | sed 's,^\./,,' | cpio -o -H newc | gzip -n -9 >../rc-local.cgz
-> lizhijian@:~/lkp/lkp-x86_64$ gzip -dc ../rc-local.cgz | cpio -t
-> .
-> etc
-> etc/rc.local.hardlink <<< it will be extracted first at this initrd
-> etc/rc.local
->
-> 3) concate 2 initrds and boot
-> lizhijian@:~/lkp$ cat rootfs.cgz rc-local.cgz >concate-initrd.cgz
-> lizhijian@:~/lkp$ qemu-system-x86_64 -nographic -enable-kvm -cpu host -smp 1 -m 1024 -kernel ~/lkp/linux/arch/x86/boot/bzImage -append "console=ttyS0 earlyprint=ttyS0 ignore_loglevel" -initrd ./concate-initr.cgz -serial stdio -nodefaults
->
-> In this case, sys_link(2) will fail and return -EEXIST, so we can only
-> get the rc.local at rootfs.cgz instead of rc-local.cgz
->
-> CC: Philip Li <philip.li@intel.com>
-> Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
-> ---
->   init/initramfs.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/init/initramfs.c b/init/initramfs.c
-> index 6405577..381fd4c 100644
-> --- a/init/initramfs.c
-> +++ b/init/initramfs.c
-> @@ -291,12 +291,16 @@ static int __init do_reset(void)
->   	return 1;
->   }
->   
-> +static void __init clean_path(char *path, umode_t fmode);
-> +
->   static int __init maybe_link(void)
->   {
->   	if (nlink >= 2) {
->   		char *old = find_link(major, minor, ino, mode, collected);
-> -		if (old)
-> +		if (old) {
-> +			clean_path(collected, 0);
->   			return (ksys_link(old, collected) < 0) ? -1 : 1;
-> +		}
->   	}
->   	return 0;
->   }
-
+diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
+index e19ab2ab63f7..7d8d11c8150a 100644
+--- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
++++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
+@@ -377,20 +377,26 @@ static void mdp4_lcdc_encoder_enable(struct drm_encoder *encoder)
+ 	unsigned long pc = mdp4_lcdc_encoder->pixclock;
+ 	struct mdp4_kms *mdp4_kms = get_kms(encoder);
+ 	struct drm_panel *panel;
++	uint32_t config;
+ 	int i, ret;
+ 
+ 	if (WARN_ON(mdp4_lcdc_encoder->enabled))
+ 		return;
+ 
+ 	/* TODO: hard-coded for 18bpp: */
+-	mdp4_crtc_set_config(encoder->crtc,
+-			MDP4_DMA_CONFIG_R_BPC(BPC6) |
+-			MDP4_DMA_CONFIG_G_BPC(BPC6) |
+-			MDP4_DMA_CONFIG_B_BPC(BPC6) |
+-			MDP4_DMA_CONFIG_PACK_ALIGN_MSB |
+-			MDP4_DMA_CONFIG_PACK(0x21) |
+-			MDP4_DMA_CONFIG_DEFLKR_EN |
+-			MDP4_DMA_CONFIG_DITHER_EN);
++	config =
++		MDP4_DMA_CONFIG_R_BPC(BPC6) |
++		MDP4_DMA_CONFIG_G_BPC(BPC6) |
++		MDP4_DMA_CONFIG_B_BPC(BPC6) |
++		MDP4_DMA_CONFIG_PACK(0x21) |
++		MDP4_DMA_CONFIG_DEFLKR_EN |
++		MDP4_DMA_CONFIG_DITHER_EN;
++
++	if (!of_find_property(dev->dev->of_node, "lcdc-align-lsb", NULL))
++		config |= MDP4_DMA_CONFIG_PACK_ALIGN_MSB;
++
++
++	mdp4_crtc_set_config(encoder->crtc, config);
+ 	mdp4_crtc_set_intf(encoder->crtc, INTF_LCDC_DTV, 0);
+ 
+ 	bs_set(mdp4_lcdc_encoder, 1);
+-- 
+2.17.1
 
