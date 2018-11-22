@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F4DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4033C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 834E020820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:04:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CB1920866
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:04:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="opXri71v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 834E020820
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ag/Tt/DZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB1920866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437333AbeKWAn4 (ORCPT
+        id S2437350AbeKWAoA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:43:56 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60872 "EHLO
+        Thu, 22 Nov 2018 19:44:00 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60992 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731458AbeKWAnz (ORCPT
+        with ESMTP id S1731458AbeKWAn7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:43:55 -0500
+        Thu, 22 Nov 2018 19:43:59 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=UCBzcSNstlTImrqRsKjur3SJmugPcDMxlHw2DAWEj2s=; b=opXri71vNUMfd5qdcSsTUotgJs
-        3e7Ib3jbAglhBOKY5dpsk5hJl7iPHt1pFo+YVIPQk4v9CMyqEtQkcbLXalgYd1veYsWH/MHRkAr2g
-        R52KW2Ktqpxw+iEo28hnQjcNdv1Wz+HGjZesJZpCFWEpPV1hb2cAEGNRdi+PAa5b11wfxwM0TH/WL
-        TcI22DuSCULc0r72obvK2x6iGq56hdSbi+aIQG8KbD+NYBQ5WTcJZYvGXzzJnPjwDeCqnw0HdfDc6
-        RAYRV0nJKIBCrEDYjTu8vRIhrDNHIEL5i8550DlWtNVRWLYWY3Ach1jD29SpkE23IK7HvLYT/G9/b
-        dKeeG/bA==;
+        bh=e4mMgcXXcvLyz2AomeJXNZybJ85R0dp/1VHd9R03wIo=; b=ag/Tt/DZ3d0+moru1Xsqqp/4HU
+        xrrMDjWfiN1sUb5u78XYyyy/mvK/W9j/w8hf/qKGN3VPREPdbCQYhyDULly8aZWL1TEjY0jZ6SE2F
+        oZBWKwsyOhCtiBx43hJpWOAuVyIqRsAWILEujX9i2xj+NCLAssXEwHrsJqFjvTn3gcJVDR7j5+4yR
+        LjLfz7ftCXt8iHcvlNCa1iyOUScgPqj3W6RHXpb6tGXNZSOClsDFhf1/FTpSo2F6KMJcbqnXu31Zo
+        YvFOeXHKSATnqAUDxlil1vUN6I8OVII/Dp9svqbtsmdE9u25v6gfAWGgWQ/fZMPwQk+t3UkDJnt32
+        TsL0fDEQ==;
 Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPpac-0000KC-Sw; Thu, 22 Nov 2018 14:04:19 +0000
+        id 1gPpaf-0000Md-HF; Thu, 22 Nov 2018 14:04:22 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     iommu@lists.linux-foundation.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -52,9 +52,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org,
         xen-devel@lists.xenproject.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 18/24] x86/calgary: remove the mapping_error dma_map_ops method
-Date:   Thu, 22 Nov 2018 15:03:14 +0100
-Message-Id: <20181122140320.24080-19-hch@lst.de>
+Subject: [PATCH 19/24] iommu: remove the mapping_error dma_map_ops method
+Date:   Thu, 22 Nov 2018 15:03:15 +0100
+Message-Id: <20181122140320.24080-20-hch@lst.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181122140320.24080-1-hch@lst.de>
 References: <20181122140320.24080-1-hch@lst.de>
@@ -66,128 +66,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Return DMA_MAPPING_ERROR instead of the magic bad_dma_addr on a dma
-mapping failure and let the core dma-mapping code handle the rest.
+Return DMA_MAPPING_ERROR instead of 0 on a dma mapping failure and let
+the core dma-mapping code handle the rest.
 
-Remove the magic EMERGENCY_PAGES that the bad_dma_addr gets redirected to.
+Note that the existing code used AMD_IOMMU_MAPPING_ERROR to check from
+a 0 return from the IOVA allocator, which is replaced with an explicit
+0 as in the implementation and other users of that interface.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/x86/kernel/pci-calgary_64.c | 29 +++++++----------------------
- 1 file changed, 7 insertions(+), 22 deletions(-)
+ drivers/iommu/amd_iommu.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/kernel/pci-calgary_64.c b/arch/x86/kernel/pci-calgary_64.c
-index bbfc8b1e9104..e76ec1b8ed1f 100644
---- a/arch/x86/kernel/pci-calgary_64.c
-+++ b/arch/x86/kernel/pci-calgary_64.c
-@@ -51,8 +51,6 @@
- #include <asm/x86_init.h>
- #include <asm/iommu_table.h>
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index 1167ff0416cf..c5d6c7c42b0a 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -55,8 +55,6 @@
+ #include "amd_iommu_types.h"
+ #include "irq_remapping.h"
  
--#define CALGARY_MAPPING_ERROR	0
+-#define AMD_IOMMU_MAPPING_ERROR	0
 -
- #ifdef CONFIG_CALGARY_IOMMU_ENABLED_BY_DEFAULT
- int use_calgary __read_mostly = 1;
- #else
-@@ -157,8 +155,6 @@ static const unsigned long phb_debug_offsets[] = {
+ #define CMD_SET_TYPE(cmd, t) ((cmd)->data[1] |= ((t) << 28))
  
- #define PHB_DEBUG_STUFF_OFFSET	0x0020
+ #define LOOP_TIMEOUT	100000
+@@ -2339,7 +2337,7 @@ static dma_addr_t __map_single(struct device *dev,
+ 	paddr &= PAGE_MASK;
  
--#define EMERGENCY_PAGES 32 /* = 128KB */
--
- unsigned int specified_table_size = TCE_TABLE_SIZE_UNSPECIFIED;
- static int translate_empty_slots __read_mostly = 0;
- static int calgary_detected __read_mostly = 0;
-@@ -255,7 +251,7 @@ static unsigned long iommu_range_alloc(struct device *dev,
- 			if (panic_on_overflow)
- 				panic("Calgary: fix the allocator.\n");
- 			else
--				return CALGARY_MAPPING_ERROR;
-+				return DMA_MAPPING_ERROR;
- 		}
- 	}
+ 	address = dma_ops_alloc_iova(dev, dma_dom, pages, dma_mask);
+-	if (address == AMD_IOMMU_MAPPING_ERROR)
++	if (!address)
+ 		goto out;
  
-@@ -274,11 +270,10 @@ static dma_addr_t iommu_alloc(struct device *dev, struct iommu_table *tbl,
- 	dma_addr_t ret;
+ 	prot = dir2prot(direction);
+@@ -2376,7 +2374,7 @@ static dma_addr_t __map_single(struct device *dev,
  
- 	entry = iommu_range_alloc(dev, tbl, npages);
--
--	if (unlikely(entry == CALGARY_MAPPING_ERROR)) {
-+	if (unlikely(entry == DMA_MAPPING_ERROR)) {
- 		pr_warn("failed to allocate %u pages in iommu %p\n",
- 			npages, tbl);
--		return CALGARY_MAPPING_ERROR;
-+		return DMA_MAPPING_ERROR;
- 	}
+ 	dma_ops_free_iova(dma_dom, address, pages);
  
- 	/* set the return dma address */
-@@ -298,8 +293,7 @@ static void iommu_free(struct iommu_table *tbl, dma_addr_t dma_addr,
- 	unsigned long flags;
- 
- 	/* were we called with bad_dma_address? */
--	badend = CALGARY_MAPPING_ERROR + (EMERGENCY_PAGES * PAGE_SIZE);
--	if (unlikely(dma_addr < badend)) {
-+	if (unlikely(dma_addr == DMA_MAPPING_ERROR)) {
- 		WARN(1, KERN_ERR "Calgary: driver tried unmapping bad DMA "
- 		       "address 0x%Lx\n", dma_addr);
- 		return;
-@@ -383,7 +377,7 @@ static int calgary_map_sg(struct device *dev, struct scatterlist *sg,
- 		npages = iommu_num_pages(vaddr, s->length, PAGE_SIZE);
- 
- 		entry = iommu_range_alloc(dev, tbl, npages);
--		if (entry == CALGARY_MAPPING_ERROR) {
-+		if (entry == DMA_MAPPING_ERROR) {
- 			/* makes sure unmap knows to stop */
- 			s->dma_length = 0;
- 			goto error;
-@@ -401,7 +395,7 @@ static int calgary_map_sg(struct device *dev, struct scatterlist *sg,
- error:
- 	calgary_unmap_sg(dev, sg, nelems, dir, 0);
- 	for_each_sg(sg, s, nelems, i) {
--		sg->dma_address = CALGARY_MAPPING_ERROR;
-+		sg->dma_address = DMA_MAPPING_ERROR;
- 		sg->dma_length = 0;
- 	}
- 	return 0;
-@@ -454,7 +448,7 @@ static void* calgary_alloc_coherent(struct device *dev, size_t size,
- 
- 	/* set up tces to cover the allocated range */
- 	mapping = iommu_alloc(dev, tbl, ret, npages, DMA_BIDIRECTIONAL);
--	if (mapping == CALGARY_MAPPING_ERROR)
-+	if (mapping == DMA_MAPPING_ERROR)
- 		goto free;
- 	*dma_handle = mapping;
- 	return ret;
-@@ -479,11 +473,6 @@ static void calgary_free_coherent(struct device *dev, size_t size,
- 	free_pages((unsigned long)vaddr, get_order(size));
+-	return AMD_IOMMU_MAPPING_ERROR;
++	return DMA_MAPPING_ERROR;
  }
  
--static int calgary_mapping_error(struct device *dev, dma_addr_t dma_addr)
+ /*
+@@ -2427,7 +2425,7 @@ static dma_addr_t map_page(struct device *dev, struct page *page,
+ 	if (PTR_ERR(domain) == -EINVAL)
+ 		return (dma_addr_t)paddr;
+ 	else if (IS_ERR(domain))
+-		return AMD_IOMMU_MAPPING_ERROR;
++		return DMA_MAPPING_ERROR;
+ 
+ 	dma_mask = *dev->dma_mask;
+ 	dma_dom = to_dma_ops_domain(domain);
+@@ -2504,7 +2502,7 @@ static int map_sg(struct device *dev, struct scatterlist *sglist,
+ 	npages = sg_num_pages(dev, sglist, nelems);
+ 
+ 	address = dma_ops_alloc_iova(dev, dma_dom, npages, dma_mask);
+-	if (address == AMD_IOMMU_MAPPING_ERROR)
++	if (address == DMA_MAPPING_ERROR)
+ 		goto out_err;
+ 
+ 	prot = dir2prot(direction);
+@@ -2627,7 +2625,7 @@ static void *alloc_coherent(struct device *dev, size_t size,
+ 	*dma_addr = __map_single(dev, dma_dom, page_to_phys(page),
+ 				 size, DMA_BIDIRECTIONAL, dma_mask);
+ 
+-	if (*dma_addr == AMD_IOMMU_MAPPING_ERROR)
++	if (*dma_addr == DMA_MAPPING_ERROR)
+ 		goto out_free;
+ 
+ 	return page_address(page);
+@@ -2678,11 +2676,6 @@ static int amd_iommu_dma_supported(struct device *dev, u64 mask)
+ 	return check_device(dev);
+ }
+ 
+-static int amd_iommu_mapping_error(struct device *dev, dma_addr_t dma_addr)
 -{
--	return dma_addr == CALGARY_MAPPING_ERROR;
+-	return dma_addr == AMD_IOMMU_MAPPING_ERROR;
 -}
 -
- static const struct dma_map_ops calgary_dma_ops = {
- 	.alloc = calgary_alloc_coherent,
- 	.free = calgary_free_coherent,
-@@ -491,7 +480,6 @@ static const struct dma_map_ops calgary_dma_ops = {
- 	.unmap_sg = calgary_unmap_sg,
- 	.map_page = calgary_map_page,
- 	.unmap_page = calgary_unmap_page,
--	.mapping_error = calgary_mapping_error,
- 	.dma_supported = dma_direct_supported,
+ static const struct dma_map_ops amd_iommu_dma_ops = {
+ 	.alloc		= alloc_coherent,
+ 	.free		= free_coherent,
+@@ -2691,7 +2684,6 @@ static const struct dma_map_ops amd_iommu_dma_ops = {
+ 	.map_sg		= map_sg,
+ 	.unmap_sg	= unmap_sg,
+ 	.dma_supported	= amd_iommu_dma_supported,
+-	.mapping_error	= amd_iommu_mapping_error,
  };
  
-@@ -739,9 +727,6 @@ static void __init calgary_reserve_regions(struct pci_dev *dev)
- 	u64 start;
- 	struct iommu_table *tbl = pci_iommu(dev->bus);
- 
--	/* reserve EMERGENCY_PAGES from bad_dma_address and up */
--	iommu_range_reserve(tbl, CALGARY_MAPPING_ERROR, EMERGENCY_PAGES);
--
- 	/* avoid the BIOS/VGA first 640KB-1MB region */
- 	/* for CalIOC2 - avoid the entire first MB */
- 	if (is_calgary(dev->device)) {
+ static int init_reserved_iova_ranges(void)
 -- 
 2.19.1
 
