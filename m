@@ -2,209 +2,161 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B56C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BD3C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:10:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD02020831
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD02020831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id DFA9D20831
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:10:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="pQxBup/p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFA9D20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405008AbeKVRrw (ORCPT
+        id S2392419AbeKVRs2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 12:47:52 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:47959 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389674AbeKVRrw (ORCPT
+        Thu, 22 Nov 2018 12:48:28 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:17973 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389708AbeKVRs1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 12:47:52 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAM78rmJ3691449
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 21 Nov 2018 23:08:53 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAM78r6w3691446;
-        Wed, 21 Nov 2018 23:08:53 -0800
-Date:   Wed, 21 Nov 2018 23:08:53 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-yjzhak8asumz9e9hts2dgplp@git.kernel.org>
-Cc:     yhs@fb.com, mingo@kernel.org, tglx@linutronix.de,
-        namhyung@kernel.org, daniel@iogearbox.net, adrian.hunter@intel.com,
-        linux-kernel@vger.kernel.org, acme@redhat.com, wangnan0@huawei.com,
-        hpa@zytor.com, jolsa@kernel.org, ast@kernel.org,
-        ecree@solarflare.com, kafai@fb.com, dsahern@gmail.com
-Reply-To: linux-kernel@vger.kernel.org, jolsa@kernel.org,
-          ecree@solarflare.com, ast@kernel.org, wangnan0@huawei.com,
-          hpa@zytor.com, acme@redhat.com, dsahern@gmail.com, kafai@fb.com,
-          mingo@kernel.org, tglx@linutronix.de, yhs@fb.com,
-          namhyung@kernel.org, adrian.hunter@intel.com,
-          daniel@iogearbox.net
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf bpf: Reduce the hardcoded .max_entries for
- pid_maps
-Git-Commit-ID: 0f7c2de5dd3f5c0ed9603e4ccfb6a3ddc55f46df
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 22 Nov 2018 12:48:27 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bf656660000>; Wed, 21 Nov 2018 23:10:30 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 21 Nov 2018 23:10:21 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 21 Nov 2018 23:10:21 -0800
+Received: from [10.19.225.182] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 22 Nov
+ 2018 07:10:19 +0000
+Subject: Re: [PATCH v2 1/3] thermal: tegra: continue if sensor register fails
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        <thierry.reding@gmail.com>, <linux-tegra@vger.kernel.org>
+CC:     <rui.zhang@intel.com>, <edubezval@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1542103567-5521-1-git-send-email-wni@nvidia.com>
+ <1542103567-5521-2-git-send-email-wni@nvidia.com>
+ <d212af68-fd18-74d4-d81c-ed8b3c0f136a@linaro.org>
+ <70f08208-d04c-c9a4-07e6-d377c33a9386@nvidia.com>
+ <d77fe117-3cde-108f-e1d7-2871f3d4c485@linaro.org>
+From:   Wei Ni <wni@nvidia.com>
+Message-ID: <5e09bc13-7880-40f2-3f90-01d2cc3510ba@nvidia.com>
+Date:   Thu, 22 Nov 2018 15:10:17 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <d77fe117-3cde-108f-e1d7-2871f3d4c485@linaro.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1542870630; bh=Du9MJS4qQXf4v0qEAzhaup2aQTsbzBn44tw8rBbCihw=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=pQxBup/psB25IWKG/FutYAANGDjLl7r5gVIN7a4dTk4ek/ZDq1tEZgnXeoSOTslOG
+         o0jV0Pb26s55HoMcXqzkMnG5A7KtGA9QO57736+lCFWG3GyDoVI1hNOk45aJg1975V
+         yd9aOm/JwprNWKni/+W8TX3Nb2g9NoANXRrj6QjOo7yz8kevROSgIUju2booc2MfU9
+         NJfMKm32uYuql6adAYflgmuHe3iXc9DSKTTVwStWoeolMitjd4njgz7L/8QehHJM3x
+         LJF3z5Kc2tvsKnHmY2+bhirmu3y5ZTw6RtpnsN+hyaNfLKJlPmFOJkwoeYqSsPKlp8
+         USj3h3pCMFmAQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0f7c2de5dd3f5c0ed9603e4ccfb6a3ddc55f46df
-Gitweb:     https://git.kernel.org/tip/0f7c2de5dd3f5c0ed9603e4ccfb6a3ddc55f46df
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 7 Nov 2018 14:49:27 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 21 Nov 2018 12:00:32 -0300
 
-perf bpf: Reduce the hardcoded .max_entries for pid_maps
 
-While working on augmented syscalls I got into this error:
+On 21/11/2018 8:51 PM, Daniel Lezcano wrote:
+> On 21/11/2018 11:23, Wei Ni wrote:
+>>
+>>
+>> On 21/11/2018 4:55 PM, Daniel Lezcano wrote:
+>>> On 13/11/2018 11:06, Wei Ni wrote:
+>>>> Don't bail when a sensor fails to register with the
+>>>> thermal zone and allow other sensors to register.
+>>>> This allows other sensors to register with thermal
+>>>> framework even if one sensor fails registration.
+>>>
+>>> I'm not sure if ignoring the error is really safe. Can you describe the
+>>> real situation you want to overcome ? How do you differentiate critical
+>>> sensors ?
+>>
+>> The driver will always try to register 4 thermal zones, including cpu,
+>> gpu, mem and pll, but if the dts file doesn't set the corresponding
+>> sensors, then the register will be failed.
+>> Normally, the dts file will set all 4 sensors, but there may have some
+>> platform doesn't support them all. So we post this patch.
+> 
+> Ignoring errors is not the way to go to support different platforms. Fix
+> the DT.
 
-  # trace -vv --filter-pids 2469,1663 -e tools/perf/examples/bpf/augmented_raw_syscalls.c sleep 1
-  <SNIP>
-  libbpf: map 0 is "__augmented_syscalls__"
-  libbpf: map 1 is "__bpf_stdout__"
-  libbpf: map 2 is "pids_filtered"
-  libbpf: map 3 is "syscalls"
-  libbpf: collecting relocating info for: '.text'
-  libbpf: relo for 13 value 84 name 133
-  libbpf: relocation: insn_idx=3
-  libbpf: relocation: find map 3 (pids_filtered) for insn 3
-  libbpf: collecting relocating info for: 'raw_syscalls:sys_enter'
-  libbpf: relo for 8 value 0 name 0
-  libbpf: relocation: insn_idx=1
-  libbpf: relo for 8 value 0 name 0
-  libbpf: relocation: insn_idx=3
-  libbpf: relo for 9 value 28 name 178
-  libbpf: relocation: insn_idx=36
-  libbpf: relocation: find map 1 (__augmented_syscalls__) for insn 36
-  libbpf: collecting relocating info for: 'raw_syscalls:sys_exit'
-  libbpf: relo for 8 value 0 name 0
-  libbpf: relocation: insn_idx=0
-  libbpf: relo for 8 value 0 name 0
-  libbpf: relocation: insn_idx=2
-  bpf: config program 'raw_syscalls:sys_enter'
-  bpf: config program 'raw_syscalls:sys_exit'
-  libbpf: create map __bpf_stdout__: fd=3
-  libbpf: create map __augmented_syscalls__: fd=4
-  libbpf: create map syscalls: fd=5
-  libbpf: create map pids_filtered: fd=6
-  libbpf: added 13 insn from .text to prog raw_syscalls:sys_enter
-  libbpf: added 13 insn from .text to prog raw_syscalls:sys_exit
-  libbpf: load bpf program failed: Operation not permitted
-  libbpf: failed to load program 'raw_syscalls:sys_exit'
-  libbpf: failed to load object 'tools/perf/examples/bpf/augmented_raw_syscalls.c'
-  bpf: load objects failed: err=-4009: (Incorrect kernel version)
-  event syntax error: 'tools/perf/examples/bpf/augmented_raw_syscalls.c'
-                       \___ Failed to load program for unknown reason
+The issue isn't in DT file. The Tegra soc thermal include 4 sensors:
+cpu, gpu, mem, pll. But in some platforms, for example, we may only need
+to support 2 sensors, such as cpu and gpu, so we only configure these
+two senors in DT file. But the driver will always try to register 4
+sensors, cpu/gpu/mem/pll, so mem and pll will be registered failed. So
+in this case we need to ignoring the failure, and continue to enable the
+driver.
 
-  (add -v to see detail)
-  Run 'perf list' for a list of valid events
+> 
+> 
+>> BTW, what do you mean "critical sensors"? We will set critical trip temp
+>> for all sensors.
+> 
+> I meant sensor for thermal zone getting really high temperature.
 
-   Usage: perf trace [<options>] [<command>]
-      or: perf trace [<options>] -- <command> [<options>]
-      or: perf trace record [<options>] [<command>]
-      or: perf trace record [<options>] -- <command> [<options>]
+We doesn't have the critical sensors. We set the critical trip temp for
+all registered sensors. And these trip temp is set to the Tegra
+hardware. So it mean if the temperature reached the critical trip point,
+then the system will be shutdown directly.
 
-      -e, --event <event>   event/syscall selector. use 'perf list' to list available events
-
-If I then try to use strace (perf trace'ing 'perf trace' needs some more work
-before its possible) to get a bit more info I get:
-
-  # strace -e bpf trace --filter-pids 2469,1663 -e tools/perf/examples/bpf/augmented_raw_syscalls.c sleep 1
-  bpf(BPF_MAP_CREATE, {map_type=BPF_MAP_TYPE_PERF_EVENT_ARRAY, key_size=4, value_size=4, max_entries=4, map_flags=0, inner_map_fd=0, map_name="__bpf_stdout__", map_ifindex=0}, 72) = 3
-  bpf(BPF_MAP_CREATE, {map_type=BPF_MAP_TYPE_PERF_EVENT_ARRAY, key_size=4, value_size=4, max_entries=4, map_flags=0, inner_map_fd=0, map_name="__augmented_sys", map_ifindex=0}, 72) = 4
-  bpf(BPF_MAP_CREATE, {map_type=BPF_MAP_TYPE_ARRAY, key_size=4, value_size=1, max_entries=500, map_flags=0, inner_map_fd=0, map_name="syscalls", map_ifindex=0}, 72) = 5
-  bpf(BPF_MAP_CREATE, {map_type=BPF_MAP_TYPE_HASH, key_size=4, value_size=1, max_entries=512, map_flags=0, inner_map_fd=0, map_name="pids_filtered", map_ifindex=0}, 72) = 6
-  bpf(BPF_PROG_LOAD, {prog_type=BPF_PROG_TYPE_TRACEPOINT, insn_cnt=57, insns=0x1223f50, license="GPL", log_level=0, log_size=0, log_buf=NULL, kern_version=KERNEL_VERSION(4, 18, 10), prog_flags=0, prog_name="sys_enter", prog_ifindex=0, expected_attach_type=BPF_CGROUP_INET_INGRESS}, 72) = 7
-  bpf(BPF_PROG_LOAD, {prog_type=BPF_PROG_TYPE_TRACEPOINT, insn_cnt=18, insns=0x1224120, license="GPL", log_level=0, log_size=0, log_buf=NULL, kern_version=KERNEL_VERSION(4, 18, 10), prog_flags=0, prog_name="sys_exit", prog_ifindex=0, expected_attach_type=BPF_CGROUP_INET_INGRESS}, 72) = -1 EPERM (Operation not permitted)
-  bpf(BPF_PROG_LOAD, {prog_type=BPF_PROG_TYPE_TRACEPOINT, insn_cnt=18, insns=0x1224120, license="GPL", log_level=1, log_size=262144, log_buf="", kern_version=KERNEL_VERSION(4, 18, 10), prog_flags=0, prog_name="sys_exit", prog_ifindex=0, expected_attach_type=BPF_CGROUP_INET_INGRESS}, 72) = -1 EPERM (Operation not permitted)
-  bpf(BPF_PROG_LOAD, {prog_type=BPF_PROG_TYPE_KPROBE, insn_cnt=18, insns=0x1224120, license="GPL", log_level=0, log_size=0, log_buf=NULL, kern_version=KERNEL_VERSION(4, 18, 10), prog_flags=0, prog_name="sys_exit", prog_ifindex=0, expected_attach_type=BPF_CGROUP_INET_INGRESS}, 72) = -1 EPERM (Operation not permitted)
-  event syntax error: 'tools/perf/examples/bpf/augmented_raw_syscalls.c'
-                       \___ Failed to load program for unknown reason
-  <SNIP similar output as without 'strace'>
-  #
-
-I managed to create the maps, etc, but then installing the "sys_exit" hook into
-the "raw_syscalls:sys_exit" tracepoint somehow gets -EPERMed...
-
-I then go and try reducing the size of this new table:
-
-  +++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-  @@ -47,6 +47,17 @@ struct augmented_filename {
-   #define SYS_OPEN 2
-   #define SYS_OPENAT 257
-
-  +struct syscall {
-  +       bool    filtered;
-  +};
-  +
-  +struct bpf_map SEC("maps") syscalls = {
-  +       .type        = BPF_MAP_TYPE_ARRAY,
-  +       .key_size    = sizeof(int),
-  +       .value_size  = sizeof(struct syscall),
-  +       .max_entries = 500,
-  +};
-
-And after reducing that .max_entries a tad, it works. So yeah, the "unknown
-reason" should be related to the number of bytes all this is taking, reduce the
-default for pid_map()s so that we can have a "syscalls" map with enough slots
-for all syscalls in most arches. And take notes about this error message,
-improve it :-)
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Edward Cree <ecree@solarflare.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Martin KaFai Lau <kafai@fb.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Cc: Yonghong Song <yhs@fb.com>
-Link: https://lkml.kernel.org/n/tip-yjzhak8asumz9e9hts2dgplp@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/include/bpf/bpf.h | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/include/bpf/bpf.h b/tools/perf/include/bpf/bpf.h
-index 04ecd425a237..bd5d7b4d7760 100644
---- a/tools/perf/include/bpf/bpf.h
-+++ b/tools/perf/include/bpf/bpf.h
-@@ -18,12 +18,20 @@ struct bpf_map {
-         unsigned int numa_node;
- };
- 
-+/*
-+ * FIXME: this should receive .max_entries as a parameter, as careful
-+ *	  tuning of these limits is needed to avoid hitting limits that
-+ *	  prevents other BPF constructs, such as tracepoint handlers,
-+ *	  to get installed, with cryptic messages from libbpf, etc.
-+ *	  For the current need, 'perf trace --filter-pids', 64 should
-+ *	  be good enough, but this surely needs to be revisited.
-+ */
- #define pid_map(name, value_type)		\
- struct bpf_map SEC("maps") name = {		\
- 	.type	     = BPF_MAP_TYPE_HASH,	\
- 	.key_size    = sizeof(pid_t),		\
- 	.value_size  = sizeof(value_type),	\
--	.max_entries = 512,			\
-+	.max_entries = 64,			\
- }
- 
- static int (*bpf_map_update_elem)(struct bpf_map *map, void *key, void *value, u64 flags) = (void *)BPF_FUNC_map_update_elem;
+> 
+> 
+>>>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>>>> ---
+>>>>  drivers/thermal/tegra/soctherm.c | 8 +++++---
+>>>>  1 file changed, 5 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+>>>> index ed28110a3535..a824d2e63af3 100644
+>>>> --- a/drivers/thermal/tegra/soctherm.c
+>>>> +++ b/drivers/thermal/tegra/soctherm.c
+>>>> @@ -1370,9 +1370,9 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+>>>>  							 &tegra_of_thermal_ops);
+>>>>  		if (IS_ERR(z)) {
+>>>>  			err = PTR_ERR(z);
+>>>> -			dev_err(&pdev->dev, "failed to register sensor: %d\n",
+>>>> -				err);
+>>>> -			goto disable_clocks;
+>>>> +			dev_warn(&pdev->dev, "failed to register sensor %s: %d\n",
+>>>> +				 soc->ttgs[i]->name, err);
+>>>> +			continue;
+>>>>  		}
+>>>>  
+>>>>  		zone->tz = z;
+>>>> @@ -1434,6 +1434,8 @@ static int __maybe_unused soctherm_resume(struct device *dev)
+>>>>  		struct thermal_zone_device *tz;
+>>>>  
+>>>>  		tz = tegra->thermctl_tzs[soc->ttgs[i]->id];
+>>>> +		if (!tz)
+>>>> +			continue;
+>>>>  		err = tegra_soctherm_set_hwtrips(dev, soc->ttgs[i], tz);
+>>>>  		if (err) {
+>>>>  			dev_err(&pdev->dev,
+>>>>
+>>>
+>>>
+> 
+> 
