@@ -2,129 +2,111 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8830C04EBB
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 918BDC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CF8F20672
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:47:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E2E720684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:52:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="W271uKsA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CF8F20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=javigon.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tm1uolxs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E2E720684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437048AbeKWA0k (ORCPT
+        id S2437060AbeKWAcB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:26:40 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:39277 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391372AbeKWA0i (ORCPT
+        Thu, 22 Nov 2018 19:32:01 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37280 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405602AbeKWAcB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:26:38 -0500
-Received: by mail-ed1-f67.google.com with SMTP id b14so7765822edt.6
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 05:47:12 -0800 (PST)
+        Thu, 22 Nov 2018 19:32:01 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p2-v6so9170813wmc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 05:52:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rWHtLTMGvL6s4MAnpD1kuO8lAzOkIuYD/LB+c3dyEeU=;
-        b=W271uKsAdCGxoKSawAdcUCr4T6amic75JAKC6+EbnIyBAfUeq1Y0yAtJvb3g8Nlx8X
-         vKOF8o6VTay+T8gSgC3KK0CNhHrVQJ5fBolZ1XjDtw1GwN06Ve6GqBOmR1vNEu5eUkjA
-         4YntVcwySShSm5C7RQhLj/QGbrtRC+/22wFNeHfAdpNLSWVna3HXrdJLvVg2i3YheCsO
-         X6cYVyYcne6fywmEoB2JBlqKR6s3rhAkvxW1vswFG7zVC/TuPYKpgXIXlAWpdrgy/jwQ
-         Oh9GxkZlh2DJC7mlffzznRZ0oUOx5Xo0WSDFnbCx+dNreFVHqsQoUCI3HOP+N70qAXzB
-         nW2w==
+        bh=8QZANr9kBlX/znyFbCnlYFHsCDpT6DJXSmJ4rkSx1cs=;
+        b=Tm1uolxspgRfh+hhRtyxzfkKRzrdOjgZska2G9YzE+cdr3eWJRQLCr2hl051zE7tEL
+         nhpk2ASopX5FCuoIW7PGcp7lniGigCnt0wJKuO2cKlaXzw2F6E08IsVMn9XyNlHOZRPD
+         huWmyFkLaqXkqoEKhoD2QeYa+hvhM5syIG2DUII23LUwFXVa1DEJWso6ggvKZb6EhD67
+         1N4VYJarbGzrbWnyMPRhWCGLCb2PYBBK8AQBFxsmG0DhEaA5ZlG2oosw5PLFsLb/NxDV
+         wfiA6F3pDO6Hi27i20nao2Nz1uQhN0x7DR8IxHPU1haeI+r2qcPQGDE1qqjZQUWWinTV
+         kW5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rWHtLTMGvL6s4MAnpD1kuO8lAzOkIuYD/LB+c3dyEeU=;
-        b=PRKNRQeBnXE7DM2wBKXeDqnZbJUQeXRMD3ii1itMS2kX3y+mvTiBVcG8sfinPYdCfb
-         qa/RlQoS1ZYLIDXIsOUw2KnZmWfx1yxSu7a3+1IRDemcsxGORao0IAA1wFUGYuMckXg4
-         hY1CFNKC8NIEbTxxhPLhcLKzuSpK/ojhu+D2fyiE6YJ4g+54UnTHq65RC+rcLwtlj2sM
-         T1kItvhRVMpfMupnJ2+YxKLUnkVti8N7Llu+fxfnilTp51bPdATXlS8ryG89DDDRFEnT
-         9EAQ1agyg+PZXqJ+3q/mU+hs3RUwRwV9XOn+f8ZB8XalQPPvfn3vst8wq4W92YDFsJrq
-         oY+Q==
-X-Gm-Message-State: AA+aEWY5thMbExYVZMOUyNL66Vd5nZNqqmlSY9s7/nmbpTqSUY/dRprs
-        TkNptTN3eI24g1VGz94EBNQ54A==
-X-Google-Smtp-Source: AFSGD/W1MsrKTwBJ/DtpAzHbRHE88osLRK+CDTYvQHiVz2ENwt1fm3+Y+0EeTCTGwUJfkwK71cf3jA==
-X-Received: by 2002:a50:b4b3:: with SMTP id w48mr9483874edd.233.1542894431731;
-        Thu, 22 Nov 2018 05:47:11 -0800 (PST)
-Received: from ch-wrk-javier.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
-        by smtp.gmail.com with ESMTPSA id s6-v6sm14246263edh.89.2018.11.22.05.47.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 22 Nov 2018 05:47:10 -0800 (PST)
-From:   "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
-X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-To:     mb@lightnvm.io
-Cc:     hans.holmberg@cnexlabs.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH] lightnvm: pblk: avoid ref warning on cache creation
-Date:   Thu, 22 Nov 2018 14:46:50 +0100
-Message-Id: <1542894410-14047-2-git-send-email-javier@cnexlabs.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542894410-14047-1-git-send-email-javier@cnexlabs.com>
-References: <1542894410-14047-1-git-send-email-javier@cnexlabs.com>
+        bh=8QZANr9kBlX/znyFbCnlYFHsCDpT6DJXSmJ4rkSx1cs=;
+        b=YiTvXYa8dUSsZQ8BSyHNL6Pq/MELqq/L76cJanQ44KwJivSxF0KKiptvvl3TXHW5+p
+         EZUOoY3gwmftJixqsajlZfKDKXTQvNPIWgIAeHmdqls2TFhW+sJVu6FJoaMAWY5uaTaS
+         085HcK6SoaFXWu3f0tkNdAvzkhqMN+g/dVlnMARbQhwmXsJxDZjlYydCEJ4jK2UtQoAh
+         KF9M6LtBOiZSrBvAZ8JfZj86AINFn1F3TOZosXwVc+re6vF0M9E4+FXCNq0pfV570LFd
+         U7GJD6rV1IRCkTRHKDg8dBlYaevN8PSEGFxfiTQwXixlg1ZOmOR6Hj+/x8irwTx3ge+t
+         lOcg==
+X-Gm-Message-State: AGRZ1gIlsfCoEYVbhNCDKY8Jc4XtZ1yyzPEnap5xNpKB+5Hh8P8Ynbp+
+        3WEWQ5cHm5d0SQzJxE+d6d/0ZEcq
+X-Google-Smtp-Source: AFSGD/X/bwQMSITL4wOQyKpbCbCMtw6yQtaBwzT64SSO/XywHwwHcwqZBisJFxF1KN3s7NPgRfYJ2A==
+X-Received: by 2002:a1c:1286:: with SMTP id 128mr10225243wms.70.1542894753316;
+        Thu, 22 Nov 2018 05:52:33 -0800 (PST)
+Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
+        by smtp.gmail.com with ESMTPSA id c188-v6sm2393285wma.39.2018.11.22.05.52.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 05:52:32 -0800 (PST)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 2/8] staging: rtl8188eu: cleanup line ending with a '('
+Date:   Thu, 22 Nov 2018 14:52:12 +0100
+Message-Id: <20181122135218.1703-2-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181122135218.1703-1-straube.linux@gmail.com>
+References: <20181122135218.1703-1-straube.linux@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current kref implementation around pblk global caches triggers a
-false positive on refcount_inc_checked() (when called) as the kref is
-initialized to 0. Instead of usint kref_inc() on a 0 reference, which is
-in principle correct, use kref_init() to avoid the check. This is also
-more explicit about what actually happens on cache creation.
+Cleanup line ending with a '(' to follow kernel coding style.
+Reported by checkpatch.
 
-In the process, do a small refactoring to use kref helpers.
-
-Signed-off-by: Javier González <javier@cnexlabs.com>
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/lightnvm/pblk-init.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-index 13822594647c..e225bd60cbb4 100644
---- a/drivers/lightnvm/pblk-init.c
-+++ b/drivers/lightnvm/pblk-init.c
-@@ -350,23 +350,19 @@ static int pblk_create_global_caches(void)
- 
- static int pblk_get_global_caches(void)
- {
--	int ret;
-+	int ret = 0;
- 
- 	mutex_lock(&pblk_caches.mutex);
- 
--	if (kref_read(&pblk_caches.kref) > 0) {
--		kref_get(&pblk_caches.kref);
--		mutex_unlock(&pblk_caches.mutex);
--		return 0;
--	}
-+	if (kref_get_unless_zero(&pblk_caches.kref))
-+		goto out;
- 
- 	ret = pblk_create_global_caches();
--
- 	if (!ret)
--		kref_get(&pblk_caches.kref);
-+		kref_init(&pblk_caches.kref);
- 
-+out:
- 	mutex_unlock(&pblk_caches.mutex);
--
- 	return ret;
- }
- 
+diff --git a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
+index f8d2b141a6c6..d792301a5ac2 100644
+--- a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
+@@ -155,13 +155,11 @@ static int recvbuf2recvframe(struct adapter *adapt, struct sk_buff *pskb)
+ 			handle_txrpt_ccx_88e(adapt, precvframe->pkt->data);
+ 			rtw_free_recvframe(precvframe, pfree_recv_queue);
+ 		} else if (pattrib->pkt_rpt_type == TX_REPORT2) {
+-			ODM_RA_TxRPT2Handle_8188E(
+-						&haldata->odmpriv,
+-						precvframe->pkt->data,
+-						pattrib->pkt_len,
+-						pattrib->MacIDValidEntry[0],
+-						pattrib->MacIDValidEntry[1]
+-						);
++			ODM_RA_TxRPT2Handle_8188E(&haldata->odmpriv,
++						  precvframe->pkt->data,
++						  pattrib->pkt_len,
++						  pattrib->MacIDValidEntry[0],
++						  pattrib->MacIDValidEntry[1]);
+ 			rtw_free_recvframe(precvframe, pfree_recv_queue);
+ 		} else if (pattrib->pkt_rpt_type == HIS_REPORT) {
+ 			interrupt_handler_8188eu(adapt, pattrib->pkt_len, precvframe->pkt->data);
 -- 
-2.7.4
+2.19.1
 
