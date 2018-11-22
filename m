@@ -2,90 +2,165 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1329EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3A4C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFCAF20663
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:56:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFCAF20663
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 617C420831
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:01:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="pPsv0b2k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 617C420831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393641AbeKVUe7 (ORCPT
+        id S2393651AbeKVUjx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 15:34:59 -0500
-Received: from mga07.intel.com ([134.134.136.100]:38621 "EHLO mga07.intel.com"
+        Thu, 22 Nov 2018 15:39:53 -0500
+Received: from m12-14.163.com ([220.181.12.14]:49933 "EHLO m12-14.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390158AbeKVUe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:34:58 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2018 01:56:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,265,1539673200"; 
-   d="scan'208";a="110627573"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga002.jf.intel.com with ESMTP; 22 Nov 2018 01:56:12 -0800
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gPliV-0002cp-4h; Thu, 22 Nov 2018 11:56:11 +0200
-Date:   Thu, 22 Nov 2018 11:56:11 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        alsa-devel@alsa-project.org, broonie@kernel.org, vkoul@kernel.org,
-        liam.r.girdwood@linux.intel.com, arnd@arndb.de,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/6] ASoC: Intel: Skylake: Add CFL-S support
-Message-ID: <20181122095611.GV10650@smile.fi.intel.com>
-References: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
- <20181120213644.19103-2-pierre-louis.bossart@linux.intel.com>
- <20181121142721.GO10650@smile.fi.intel.com>
- <414b4c3a-7e04-2775-7d87-16a236b5b4e8@linux.intel.com>
- <20181121173841.GS10650@smile.fi.intel.com>
- <s5hh8gaaxdm.wl-tiwai@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <s5hh8gaaxdm.wl-tiwai@suse.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2390330AbeKVUjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 15:39:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=AvYeQh1yeGK7rPhdeT
+        ptzjlRCeoXDMojg/A8aa/hvys=; b=pPsv0b2k7CX8TIhSbUSi9pjsq5gl0Ypw1e
+        rHbVEel5zzEgxeYI+Ueo29c/jDnNIeRoB3IMRIFY0u9p1/VCUcNp9wN7GAiOPnDE
+        WlMbpoWzYXtNrDcX2lwrK3+qVElgaC/AAzIoliZBT2xth0FORrwmvSjRamiSDUII
+        F9++VVZIM=
+Received: from bp.localdomain (unknown [106.120.213.96])
+        by smtp10 (Coremail) with SMTP id DsCowAAnpdFWfvZbdqJJBQ--.64751S3;
+        Thu, 22 Nov 2018 18:00:57 +0800 (CST)
+From:   Pan Bian <bianpan2016@163.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Pan Bian <bianpan2016@163.com>
+Subject: [PATCH] crypto: do not free algorithm before using
+Date:   Thu, 22 Nov 2018 18:00:16 +0800
+Message-Id: <1542880816-63838-1-git-send-email-bianpan2016@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: DsCowAAnpdFWfvZbdqJJBQ--.64751S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAFyrCF4fXFW3Zw1kCrWUtwb_yoW5Zr1Dpr
+        Z5KrWktFn5Jrs8urZ7GFs5XrykWrW09a43WrW8Kw4ayrs2qw18JrWIyry5AF4j9FWkJa43
+        GFWvkr1F9a1UJaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jDa9-UUUUU=
+X-Originating-IP: [106.120.213.96]
+X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/xtbBZxoHcletsFUyfQAAsY
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 11:17:41PM +0100, Takashi Iwai wrote:
-> On Wed, 21 Nov 2018 18:38:41 +0100, Andy Shevchenko wrote:
+In multiple functions, the algorithm fields are read after its reference
+is dropped through crypto_mod_put. In this case, the algorithm memory
+may be freed, resulting in use-after-free bugs. This patch delays the
+put operation until the algorithm is never used.
 
-> > Compare:
-> > 
-> > 	/* CFL */
-> > 	{ PCI_DEVICE(0x8086, 0xa348),
-> > 		.driver_data = (unsigned long)&snd_soc_acpi_intel_cnl_machines},
-> > 
-> > to something like:
-> > 
-> > #define PCI_DEVICE_ID_INTEL_AUDIO_CFL	0xa348
-> > ...
-> > 
-> > 	{PCI_DEVICE_DATA(INTEL, AUDIO_CFL, &snd_soc_acpi_intel_cnl_machines)},
-> 
-> The former gives a better grep-ability, though.
-> 
-> I have no big preference over two, just want to mention that both have
-> merits and demerits.
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+---
+ crypto/cbc.c  | 6 ++++--
+ crypto/cfb.c  | 6 ++++--
+ crypto/pcbc.c | 6 ++++--
+ 3 files changed, 12 insertions(+), 6 deletions(-)
 
-True.
-So, up to you, guys, what to choose.
-
+diff --git a/crypto/cbc.c b/crypto/cbc.c
+index b761b1f..dd5f332 100644
+--- a/crypto/cbc.c
++++ b/crypto/cbc.c
+@@ -140,9 +140,8 @@ static int crypto_cbc_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 	spawn = skcipher_instance_ctx(inst);
+ 	err = crypto_init_spawn(spawn, alg, skcipher_crypto_instance(inst),
+ 				CRYPTO_ALG_TYPE_MASK);
+-	crypto_mod_put(alg);
+ 	if (err)
+-		goto err_free_inst;
++		goto err_put_alg;
+ 
+ 	err = crypto_inst_setname(skcipher_crypto_instance(inst), "cbc", alg);
+ 	if (err)
+@@ -174,12 +173,15 @@ static int crypto_cbc_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 	err = skcipher_register_instance(tmpl, inst);
+ 	if (err)
+ 		goto err_drop_spawn;
++	crypto_mod_put(alg);
+ 
+ out:
+ 	return err;
+ 
+ err_drop_spawn:
+ 	crypto_drop_spawn(spawn);
++err_put_alg:
++	crypto_mod_put(alg);
+ err_free_inst:
+ 	kfree(inst);
+ 	goto out;
+diff --git a/crypto/cfb.c b/crypto/cfb.c
+index a0d68c0..20987d0 100644
+--- a/crypto/cfb.c
++++ b/crypto/cfb.c
+@@ -286,9 +286,8 @@ static int crypto_cfb_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 	spawn = skcipher_instance_ctx(inst);
+ 	err = crypto_init_spawn(spawn, alg, skcipher_crypto_instance(inst),
+ 				CRYPTO_ALG_TYPE_MASK);
+-	crypto_mod_put(alg);
+ 	if (err)
+-		goto err_free_inst;
++		goto err_put_alg;
+ 
+ 	err = crypto_inst_setname(skcipher_crypto_instance(inst), "cfb", alg);
+ 	if (err)
+@@ -317,12 +316,15 @@ static int crypto_cfb_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 	err = skcipher_register_instance(tmpl, inst);
+ 	if (err)
+ 		goto err_drop_spawn;
++	crypto_mod_put(alg);
+ 
+ out:
+ 	return err;
+ 
+ err_drop_spawn:
+ 	crypto_drop_spawn(spawn);
++err_put_alg:
++	crypto_mod_put(alg);
+ err_free_inst:
+ 	kfree(inst);
+ 	goto out;
+diff --git a/crypto/pcbc.c b/crypto/pcbc.c
+index ef802f6..8aa1014 100644
+--- a/crypto/pcbc.c
++++ b/crypto/pcbc.c
+@@ -244,9 +244,8 @@ static int crypto_pcbc_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 	spawn = skcipher_instance_ctx(inst);
+ 	err = crypto_init_spawn(spawn, alg, skcipher_crypto_instance(inst),
+ 				CRYPTO_ALG_TYPE_MASK);
+-	crypto_mod_put(alg);
+ 	if (err)
+-		goto err_free_inst;
++		goto err_put_alg;
+ 
+ 	err = crypto_inst_setname(skcipher_crypto_instance(inst), "pcbc", alg);
+ 	if (err)
+@@ -275,12 +274,15 @@ static int crypto_pcbc_create(struct crypto_template *tmpl, struct rtattr **tb)
+ 	err = skcipher_register_instance(tmpl, inst);
+ 	if (err)
+ 		goto err_drop_spawn;
++	crypto_mod_put(alg);
+ 
+ out:
+ 	return err;
+ 
+ err_drop_spawn:
+ 	crypto_drop_spawn(spawn);
++err_put_alg:
++	crypto_mod_put(alg);
+ err_free_inst:
+ 	kfree(inst);
+ 	goto out;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.7.4
 
 
