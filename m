@@ -2,120 +2,79 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14ABFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32371C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC93420685
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:20:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC93420685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E025B20685
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:23:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HX5wwkvk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E025B20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395487AbeKWBA0 (ORCPT
+        id S2395488AbeKWBCh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 20:00:26 -0500
-Received: from foss.arm.com ([217.140.101.70]:50258 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389042AbeKWBAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 20:00:25 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B03C36B4;
-        Thu, 22 Nov 2018 06:20:51 -0800 (PST)
-Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6A4F43F5AF;
-        Thu, 22 Nov 2018 06:20:48 -0800 (PST)
-Date:   Thu, 22 Nov 2018 14:20:45 +0000
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v5 04/15] sched/core: uclamp: add CPU's clamp groups
- refcounting
-Message-ID: <20181122142045.GM14309@e110439-lin>
-References: <20181029183311.29175-1-patrick.bellasi@arm.com>
- <20181029183311.29175-6-patrick.bellasi@arm.com>
- <20181111164754.GA3038@worktop>
- <20181113151127.GA7681@darkstar>
+        Thu, 22 Nov 2018 20:02:37 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35455 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388795AbeKWBCh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 20:02:37 -0500
+Received: by mail-lj1-f195.google.com with SMTP id x85-v6so8153054ljb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 06:23:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6ym3cHuSkDQ5w2VoEvvYejK1J7B3F0dwtxBj8LV0mhA=;
+        b=HX5wwkvkSjiIW3teUJG0FwLR9bKi5x4kWnB0n0ZpXgwvb+QICq/F9ruQAYjkMDOpfQ
+         +oqEyg7BAZonGlFYBPd/GrAW5/uYhJM2rkg0WCywSoXBcw3968qXJkOay7CZ4zIRseEQ
+         /izjf1WuQDaNuuum2PfJ5t6Kb+oTDPGqrQs/w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6ym3cHuSkDQ5w2VoEvvYejK1J7B3F0dwtxBj8LV0mhA=;
+        b=IzmJ1etEN7mh2nCYBSOX159KfLL43XXlRKZ3EZJXw00OD2St6LMDznLC3aRZo46LIC
+         KYQ78jt+GFyt+3ppT5VfEK5MtadxJErqo/lUdBzLvkwdcz0YB30Jy3SYFr1QnysgGll3
+         jQDmPyOHz9ValtThhc5d0aL4qTuP461IIvSP4FI6AePHtmCggdtJn31zl1A+5j2dfo0+
+         DcGnSgPP/6jJ7XDjW+3TbvsV4Moz/OZzPT46HWmNqbI8d2zNU9iLTgsFitTgpIJZYSJX
+         K7yszIhK4yCjMzGDJvO6Ofl0TOI6r9e4PHsfzGzWHbizEF4vXVs9OC4O0Dc628+Rqrow
+         0WJQ==
+X-Gm-Message-State: AA+aEWaEDblzFlX++4fzYAR9p21z5C8m6nAb4g8AccHw3MujL3lzKl1f
+        b+fIyhrkk6/jgs146gkRmNavq1wm9ED3VV8SbmiNIA==
+X-Google-Smtp-Source: AFSGD/W9PY8tS4CB0BhUeaeYN6F0+4rZRNd8ZNWEofRM7WpB751EiRIPiSHcabI9rR7TSaTFrjf1UP8p6yyglAO2BPk=
+X-Received: by 2002:a2e:994:: with SMTP id 142-v6mr6348533ljj.120.1542896581236;
+ Thu, 22 Nov 2018 06:23:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181113151127.GA7681@darkstar>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20181120131853.19710-1-tiny.windzz@gmail.com>
+In-Reply-To: <20181120131853.19710-1-tiny.windzz@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 22 Nov 2018 15:22:49 +0100
+Message-ID: <CACRpkdbk_b2PbEPRQN2R=FJekLQ59Jv3-7DBBULYuM=FCWMz4g@mail.gmail.com>
+Subject: Re: [PATCH] clocksource/drivers/integrator-ap: add of_node_put()
+To:     tiny.windzz@gmail.com
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-Nov 07:11, Patrick Bellasi wrote:
-> On 11-Nov 17:47, Peter Zijlstra wrote:
-> > On Mon, Oct 29, 2018 at 06:32:59PM +0000, Patrick Bellasi wrote:
+On Tue, Nov 20, 2018 at 2:19 PM Yangtao Li <tiny.windzz@gmail.com> wrote:
 
-[...]
+> use of_node_put() to release the refcount.
+>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 
-> > > +		/* Both min and max clamps are MAX aggregated */
-> > > +		if (max_value < rq->uclamp.group[clamp_id][group_id].value)
-> > > +			max_value = rq->uclamp.group[clamp_id][group_id].value;
-> > 
-> > 		max_value = max(max_value, rq->uclamp.group[clamp_id][group_id].value);
-> 
-> Right, I get used to this pattern to avoid write instructions.
-> I guess that here, being just a function local variable, we don't
-> really care much...
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-The above does not work also because we now use bitfields:
-
-In file included from ./include/linux/list.h:9:0,
-                 from ./include/linux/rculist.h:10,
-                 from ./include/linux/pid.h:5,
-                 from ./include/linux/sched.h:14,
-                 from kernel/sched/sched.h:5,
-                 from kernel/sched/core.c:8:
-   kernel/sched/core.c: In function ‘uclamp_cpu_update’:
-   kernel/sched/core.c:867:5: error: ‘typeof’ applied to a bit-field
-           rq->uclamp.group[clamp_id][group_id].value);
-           ^
-
-[...]
-
-> > > +	if (rq->uclamp.value[clamp_id] < p->uclamp[clamp_id].value)
-> > > +		rq->uclamp.value[clamp_id] = p->uclamp[clamp_id].value;
-> > 
-> > 	rq->uclamp.value[clamp_id] = max(rq->uclamp.value[clamp_id],
-> > 					 p->uclamp[clamp_id].value);
-> 
-> In this case instead, since we are updating a variable visible from
-> other CPUs, should not be preferred to avoid assignment when not
-> required ?
-
-And what about this ?
-
-> Is the compiler is smart enough to optimize the code above?
-> ... will check better.
-
-Did not really checked what the compiler does in the two cases but,
-given also the above, for consistency I would probably prefer to keep
-both max aggregation as originally defined.
-
-What do you think ?
-
--- 
-#include <best/regards.h>
-
-Patrick Bellasi
+Yours,
+Linus Walleij
