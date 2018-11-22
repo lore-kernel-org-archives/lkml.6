@@ -2,143 +2,155 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E03B0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB73C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8333206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:27:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N7uPMlf9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8333206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id ABF8E2080F
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:28:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABF8E2080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389074AbeKVNEY (ORCPT
+        id S2389097AbeKVNFq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 08:04:24 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45021 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729117AbeKVNEY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 08:04:24 -0500
-Received: by mail-pl1-f195.google.com with SMTP id s5-v6so8131571plq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 18:27:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=YV+ChlavE1QLyyBY5kNZjpAtat0aYc/ZGSq2+CHYRpA=;
-        b=N7uPMlf9jCd5KgD4SbilYmGVdkx88YYaza8jhcx/7d+HEqjZAEzbjkSvg2dFS2YkHN
-         4+Ip7kQ8riqxFxf90n5qvBdO5HPNd8u609w/D3+fCkgu5DZSAdaA2Q/MYVAmKdtcpV56
-         RidOcmU/iJkSXuC6veK9q8FD/QyCWzG956zUuJj0WRfXIhsjKlB0QsugeIEp5q1kdlB/
-         J/2nyStrWG0eSKwrP4gq6wKcEIiOk3t6/iZfkmnbWt9yRGGHzlD0vxkQLBdSH9p1mE8D
-         Mq66V7tIBZP5fcXH01L2UkNMhm8PQa73jxBJPzMsVk4b+TGK6ibVhPiZ+C25RDc++ecX
-         IGSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=YV+ChlavE1QLyyBY5kNZjpAtat0aYc/ZGSq2+CHYRpA=;
-        b=N5nd0F69eB1A527Os+QkjngGLlYAnhvrta40ZDJO9o/mYjCje7HgOV4h+tbNbMFJcz
-         ycZ012z61/KDSuoagFC9urPOkee/2g3d+O+pQRv0PCFCai/YOpKD9e8FCv2ZEPt5b86h
-         AVx0M8b/1rVA730flwlnCvwD1yJvkX2kXEHL2L+JqK+kViG1zZY2lMQSeGxcB04dY5Cu
-         JQjq2CdJ+QdAFyYmflFYIVoYb3j/Yj2bf2lNvrpznGTYlveM8g/eEXWVPdhM2Yj85uIH
-         6/8fOexETL4+V31l5GYPPdLvO79gbEDdgdwWpzO/4AlXS9boLUXeggyGb6VZ+ard6g1i
-         FvMQ==
-X-Gm-Message-State: AA+aEWYge/DDCfBn16R96dGC7sMu5SGUPyFcCp2xvBAVPA8o7idzyODe
-        rem3V8LYq4ALKOSv2RcAuS2RyszdRiQ=
-X-Google-Smtp-Source: AFSGD/WXGiU2eKRYKXB655s5FXF8Jb5illhGs6swhMvT9fYglNiDS4P+B7JwZtaJZB7T3eyHIvOA6g==
-X-Received: by 2002:a17:902:209:: with SMTP id 9mr8320755plc.288.1542853633187;
-        Wed, 21 Nov 2018 18:27:13 -0800 (PST)
-Received: from [100.112.89.103] ([104.133.8.103])
-        by smtp.gmail.com with ESMTPSA id z186sm6939811pfz.119.2018.11.21.18.27.11
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 21 Nov 2018 18:27:12 -0800 (PST)
-Date:   Wed, 21 Nov 2018 18:27:11 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <OSalvador@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        David Hildenbrand <david@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Subject: Re: [RFC PATCH 3/3] mm, fault_around: do not take a reference to a
- locked page
-In-Reply-To: <20181121071132.GD12932@dhcp22.suse.cz>
-Message-ID: <alpine.LSU.2.11.1811211757070.5557@eggly.anvils>
-References: <20181120134323.13007-1-mhocko@kernel.org> <20181120134323.13007-4-mhocko@kernel.org> <alpine.LSU.2.11.1811201721470.2061@eggly.anvils> <20181121071132.GD12932@dhcp22.suse.cz>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Thu, 22 Nov 2018 08:05:46 -0500
+Received: from mga14.intel.com ([192.55.52.115]:18786 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732781AbeKVNFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 08:05:46 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 18:24:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,263,1539673200"; 
+   d="scan'208";a="91199096"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
+  by orsmga007.jf.intel.com with ESMTP; 21 Nov 2018 18:24:32 -0800
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+References: <20181121201430.559770965@linutronix.de>
+ <20181121201724.602740969@linutronix.de>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+Subject: Re: [patch 24/24] x86/speculation: Add seccomp Spectre v2 app to app
+ protection mode
+Message-ID: <595bf211-3b56-4618-b6ad-cd1ca790c772@linux.intel.com>
+Date:   Wed, 21 Nov 2018 18:24:32 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20181121201724.602740969@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Nov 2018, Michal Hocko wrote:
-> On Tue 20-11-18 17:47:21, Hugh Dickins wrote:
-> > On Tue, 20 Nov 2018, Michal Hocko wrote:
-> > 
-> > > From: Michal Hocko <mhocko@suse.com>
-> > > 
-> > > filemap_map_pages takes a speculative reference to each page in the
-> > > range before it tries to lock that page. While this is correct it
-> > > also can influence page migration which will bail out when seeing
-> > > an elevated reference count. The faultaround code would bail on
-> > > seeing a locked page so we can pro-actively check the PageLocked
-> > > bit before page_cache_get_speculative and prevent from pointless
-> > > reference count churn.
-> > > 
-> > > Cc: "Kirill A. Shutemov" <kirill@shutemov.name>
-> > > Suggested-by: Jan Kara <jack@suse.cz>
-> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > 
-> > Acked-by: Hugh Dickins <hughd@google.com>
+On Wed, Nov 21, 2018 at 09:14:54PM +0100, Thomas Gleixner wrote:
+> From: Jiri Kosina <jkosina@suse.cz>
 > 
-> Thanks!
+> If 'prctl' mode of app2app protection from spectre v2 is selected on the
+> kernel command-line, STIBP and IBPB are applied on tasks which restrict
+> their indirect branch speculation via prctl.
 > 
-> > though I think this patch is more useful to the avoid atomic ops,
-> > and unnecessary dirtying of the cacheline, than to avoid the very
-> > transient elevation of refcount, which will not affect page migration
-> > very much.
-> 
-> Are you sure it would really be transient? In other words is it possible
-> that the fault around can block migration repeatedly under refault heavy
-> workload? I just couldn't convince myself, to be honest.
+> SECCOMP enables the SSBD mitigation for sandboxed tasks already, so it
+> makes sense to prevent spectre v2 application to application attacks as
+> well.
 
-I don't deny that it is possible: I expect that, using fork() (which does
-not copy the ptes in a shared file vma), you can construct a test case
-where each child faults one or another page near a page of no interest,
-and that page of no interest is a target of migration perpetually
-frustrated by filemap_map_pages()'s briefly raised refcount.
+Will need to add this chunk.
 
-But I suggest that's a third-order effect: well worth fixing because
-it's easily and uncontroversially dealt with, as you have; but not of
-great importance.
+Thanks.
 
-The first-order effect is migration conspiring to defeat itself: that's
-what my put_and_wait_on_page_locked() patch, in other thread, is about.
+Tim
 
-The second order effect is when a page that is really wanted is waited
-on - the target of a fault, for which page refcount is raised maybe
-long before it finally gets into the page table (whereupon it becomes
-visible to try_to_unmap(), and its mapcount matches refcount so that
-migration can fully account for the page).  One class of that can be
-well dealt with by using put_and_wait_on_page_locked_killable() in
-lock_page_or_retry(), but I was keeping that as a future instalment.
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index c4d010d..d070e84 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -275,6 +275,7 @@ enum spectre_v2_app2app_cmd {
+ 	{ "off",	SPECTRE_V2_APP2APP_CMD_NONE,	false },
+ 	{ "on",		SPECTRE_V2_APP2APP_CMD_FORCE,	true  },
+ 	{ "prctl",	SPECTRE_V2_APP2APP_CMD_PRCTL,	false },
++	{ "seccomp",	SPECTRE_V2_APP2APP_CMD_SECCOMP,	false },
+ };
+ 
+ static void __init spec_v2_app_print_cond(const char *reason, bool secure)
 
-But I shouldn't denigrate the transient case by referring so lightly
-to migrate_pages()' 10 attempts: each of those failed attempts can
-be very expensive, unmapping and TLB flushing (including IPIs) and
-remapping. It may well be that 2 or 3 would be a more cost-effective
-number of attempts, at least when the page is mapped.
-
-Hugh
