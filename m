@@ -2,207 +2,194 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA65C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BF9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:39:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE9F020672
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:39:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE9F020672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3221020672
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:39:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3221020672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390977AbeKVWR7 (ORCPT
+        id S2403786AbeKVWS0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 17:17:59 -0500
-Received: from foss.arm.com ([217.140.101.70]:46264 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732166AbeKVWR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 17:17:59 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E64AF361A;
-        Thu, 22 Nov 2018 03:38:58 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 448B43F5A0;
-        Thu, 22 Nov 2018 03:38:56 -0800 (PST)
-Date:   Thu, 22 Nov 2018 11:38:53 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH v2] PCI: imx: Add imx6sx suspend/resume support
-Message-ID: <20181122113853.GB11952@e107981-ln.cambridge.arm.com>
-References: <984fcef6d928632241a4a3bce41e2645a304d335.1541598751.git.leonard.crestez@nxp.com>
+        Thu, 22 Nov 2018 17:18:26 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:58368 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732166AbeKVWS0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 17:18:26 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAMBdKre008338;
+        Thu, 22 Nov 2018 05:39:20 -0600
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAMBdKi3076698
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 22 Nov 2018 05:39:20 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 22
+ Nov 2018 05:39:18 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 22 Nov 2018 05:39:18 -0600
+Received: from dlelxv97.itg.ti.com (dlelxv97.itg.ti.com [172.17.2.193])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAMBdIVa027052;
+        Thu, 22 Nov 2018 05:39:18 -0600
+Received: from localhost.localdomain (vboxa0400828d.dhcp.ti.com [172.22.239.63])
+        by dlelxv97.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAMBdDex013203;
+        Thu, 22 Nov 2018 05:39:14 -0600
+From:   Roger Quadros <rogerq@ti.com>
+To:     <tony@atomide.com>
+CC:     <robh+dt@kernel.org>, <bcousson@baylibre.com>,
+        <ssantosh@kernel.org>, <ohad@wizery.com>,
+        <bjorn.andersson@linaro.org>, <s-anna@ti.com>, <nsekhar@ti.com>,
+        <t-kristo@ti.com>, <nsaulnier@ti.com>, <jreeder@ti.com>,
+        <m-karicheri2@ti.com>, <woods.technical@gmail.com>,
+        <linux-omap@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <rogerq@ti.com>
+Subject: [PATCH 00/17] Add support for TI PRU ICSS
+Date:   Thu, 22 Nov 2018 13:38:56 +0200
+Message-ID: <1542886753-17625-1-git-send-email-rogerq@ti.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <984fcef6d928632241a4a3bce41e2645a304d335.1541598751.git.leonard.crestez@nxp.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 01:57:03PM +0000, Leonard Crestez wrote:
-> Enable PCI suspend/resume support on imx6sx socs. This is similar to
-> imx7d with a few differences:
-> 
-> * The PM_Turn_Off bit is exposed through an IOMUX GPR, like all other
-> pcie control bits on 6sx.
-> * The pcie_inbound_axi clk needs to be turned off in suspend. On resume
-> it is restored via resume -> deassert_core_reset -> enable_ref_clk.
-> 
-> Most of the resume logic is shared with the initial reset after probe.
-> 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> 
-> ---
-> Changes since v1:
-> * Use a switch statement in imx6_pcie_pm_turnoff. The DT-based turnoff
-> path is still an if statement.
-> * Did not split imx6_pcie_clk_disable or call it from other paths, this
-> would bring complications and is somewhat unrelated.
-> * See v1 comments: https://lore.kernel.org/patchwork/patch/996806/
-> 
->  drivers/pci/controller/dwc/pci-imx6.c       | 44 ++++++++++++++++++---
->  include/linux/mfd/syscon/imx6q-iomuxc-gpr.h |  1 +
->  2 files changed, 40 insertions(+), 5 deletions(-)
+Hi,
 
-I request Richard/Lucas ACK in order to merge this patch.
+The Programmable Real-Time Unit and Industrial Communication Subsystem
+(PRU-ICSS) is present on various TI SoCs such as AM335x, AM437x, AM57x,
+Keystone 66AK2G, etc. A PRUSS consists of dual 32-bit RISC cores (Programmable
+Real-Time Units, or PRUs), data and instruction RAMs, shard RAM, and
+interrupt controller and some internal peripheral modules to facilitate
+industrial communication. The programmable nature of the PRUs provide
+flexibility to implement custom peripheral interfaces, fast real-time
+responses, or specialized data handling. The common peripheral modules
+include the following,
+  - an MII_RT module with two MII ports for Ethernet
+  - an MDIO port for external Ethernet PHYs
+  - an Industrial Ethernet Peripheral (IEP) to manage/generate Industrial
+    Ethernet functions
+  - an Enhanced Capture Module (eCAP)
+  - an Industrial Ethernet Timer with 7/9 capture and 16 compare events
+  - a 16550-compatible UART to support PROFIBUS
 
-Thanks,
-Lorenzo
+A typical usage scenario would be to load the application firmware into
+one or more of the PRU cores, initialize one or more of the peripherals
+and perform I/O through shared RAM (or MSMC RAM) from either a Kernel driver
+or directly from userspace.
 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 2cbef2d7c207..54625569d0bc 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -771,41 +771,75 @@ static void imx6_pcie_ltssm_disable(struct device *dev)
->  	}
->  }
->  
->  static void imx6_pcie_pm_turnoff(struct imx6_pcie *imx6_pcie)
->  {
-> -	reset_control_assert(imx6_pcie->turnoff_reset);
-> -	reset_control_deassert(imx6_pcie->turnoff_reset);
-> +	struct device *dev = imx6_pcie->pci->dev;
-> +
-> +	/* Some variants have a turnoff reset in DT */
-> +	if (imx6_pcie->turnoff_reset) {
-> +		reset_control_assert(imx6_pcie->turnoff_reset);
-> +		reset_control_deassert(imx6_pcie->turnoff_reset);
-> +		goto pm_turnoff_sleep;
-> +	}
-> +
-> +	/* Others poke directly at IOMUXC registers */
-> +	switch (imx6_pcie->variant) {
-> +	case IMX6SX:
-> +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> +				IMX6SX_GPR12_PCIE_PM_TURN_OFF,
-> +				IMX6SX_GPR12_PCIE_PM_TURN_OFF);
-> +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
-> +				IMX6SX_GPR12_PCIE_PM_TURN_OFF, 0);
-> +		break;
-> +	default:
-> +		dev_err(dev, "PME_Turn_Off not implemented\n");
-> +		return;
-> +	}
->  
->  	/*
->  	 * Components with an upstream port must respond to
->  	 * PME_Turn_Off with PME_TO_Ack but we can't check.
->  	 *
->  	 * The standard recommends a 1-10ms timeout after which to
->  	 * proceed anyway as if acks were received.
->  	 */
-> +pm_turnoff_sleep:
->  	usleep_range(1000, 10000);
->  }
->  
->  static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
->  {
->  	clk_disable_unprepare(imx6_pcie->pcie);
->  	clk_disable_unprepare(imx6_pcie->pcie_phy);
->  	clk_disable_unprepare(imx6_pcie->pcie_bus);
->  
-> -	if (imx6_pcie->variant == IMX7D) {
-> +	switch (imx6_pcie->variant) {
-> +	case IMX6SX:
-> +		clk_disable_unprepare(imx6_pcie->pcie_inbound_axi);
-> +		break;
-> +	case IMX7D:
->  		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
->  				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL,
->  				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL);
-> +		break;
-> +	default:
-> +		break;
->  	}
->  }
->  
-> +static inline bool imx6_pcie_supports_suspend(struct imx6_pcie *imx6_pcie)
-> +{
-> +	return (imx6_pcie->variant == IMX7D ||
-> +		imx6_pcie->variant == IMX6SX);
-> +}
-> +
->  static int imx6_pcie_suspend_noirq(struct device *dev)
->  {
->  	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
->  
-> -	if (imx6_pcie->variant != IMX7D)
-> +	if (!imx6_pcie_supports_suspend(imx6_pcie))
->  		return 0;
->  
->  	imx6_pcie_pm_turnoff(imx6_pcie);
->  	imx6_pcie_clk_disable(imx6_pcie);
->  	imx6_pcie_ltssm_disable(dev);
-> @@ -817,11 +851,11 @@ static int imx6_pcie_resume_noirq(struct device *dev)
->  {
->  	int ret;
->  	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
->  	struct pcie_port *pp = &imx6_pcie->pci->pp;
->  
-> -	if (imx6_pcie->variant != IMX7D)
-> +	if (!imx6_pcie_supports_suspend(imx6_pcie))
->  		return 0;
->  
->  	imx6_pcie_assert_core_reset(imx6_pcie);
->  	imx6_pcie_init_phy(imx6_pcie);
->  	imx6_pcie_deassert_core_reset(imx6_pcie);
-> diff --git a/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h b/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
-> index 6c1ad160ed87..c1b25f5e386d 100644
-> --- a/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
-> +++ b/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
-> @@ -438,10 +438,11 @@
->  #define IMX6SX_GPR5_DISP_MUX_DCIC1_LCDIF1		(0x0 << 1)
->  #define IMX6SX_GPR5_DISP_MUX_DCIC1_LVDS			(0x1 << 1)
->  #define IMX6SX_GPR5_DISP_MUX_DCIC1_MASK			(0x1 << 1)
->  
->  #define IMX6SX_GPR12_PCIE_TEST_POWERDOWN		BIT(30)
-> +#define IMX6SX_GPR12_PCIE_PM_TURN_OFF			BIT(16)
->  #define IMX6SX_GPR12_PCIE_RX_EQ_MASK			(0x7 << 0)
->  #define IMX6SX_GPR12_PCIE_RX_EQ_2			(0x2 << 0)
->  
->  /* For imx6ul iomux gpr register field define */
->  #define IMX6UL_GPR1_ENET1_CLK_DIR		(0x1 << 17)
-> -- 
-> 2.17.1
-> 
+With this two-part series we should be able to use the kernel RPMSG driver
+along with firmware and user-space examples in the
+pru-software-support-package [1].
+
+We will also be able to get Dual Ethernet functionality using a kernel driver
+which will be posted later.
+
+The kernel code will be split into the following sections
+
+1) soc: pruss_soc_bus: The sole purpose of this driver is to handle platform
+specific Power management quirks and allow the child node (i.e entire PRUSS)
+to be unbound from the default kernel driver and bound to something else. e.g. uio_pruss,
+while allowing to manage PM in the kernel.
+
+2) soc: pruss: This is the driver for the entire ICSS. Its main purpose is
+to populate the different modules and handle platform specific quirks.
+It will also manage the interrupt controller and provide kernel APIs to
+change ICSS specific knobs in the CFG space e.g. GP_MUX.
+
+3) remoteproc: pru: This provides a remoteproc interface for the PRU cores.
+With this we can load firmware, start/stop PRU from kernel or userspace.
+It adds support for virtio RPMSG. It also provides some kernel APIs
+(e.g. pru_rproc_set_ctable()) that are PRU specific and required for
+in-kernel applications (e.g. ethernet)
+
+4) ARM: OMAP: DTS:
+Platform data and device tree files.
+
+Due to the large number of patches patches are  split this into 2 email threads.
+This thread covers (1), (3) and (4).
+
+A second thread will cover the remoteproc driver (3).
+
+The series only adds platform support for AM335x to keep patch count small.
+Support for other platforms (AM43x, AM57x, K2G) will be added later.
+
+Testing:
+To test the code with example firmware you can try the LAB5 tutorial
+http://processors.wiki.ti.com/index.php/PRU_Training:_Hands-on_Labs#LAB_5:_RPMsg_Communication_between_ARM_and_PRU
+with the pru-software-support package at [2] and the sample rpmsg-client driver.
+NOTE: you no longer need to build and run PRU_Halt example as shown in the tutorial.
+
+cheers,
+-roger
+
+[1] https://git.ti.com/pru-software-support-package
+	NOTE: The repo needs update to the INTC resource data structures
+	The updates that are required are listed in the below repo with one example fixed.
+[2] https://github.com/rogerq/pru-software-support-package/commits/upstream/pruss
+
+Andrew F. Davis (1):
+  soc: ti: pruss: add pruss_{request,release}_mem_region() API
+
+Roger Quadros (2):
+  soc: ti: pruss: add pruss_cfg_read()/update() API
+  soc: ti: pruss: export pruss_intc_configure/unconfigure APIs
+
+Suman Anna (13):
+  dt-bindings: remoteproc: Add TI PRUSS bindings
+  soc: ti: pruss: Define platform data for PRUSS bus driver
+  soc: ti: pruss: Add pruss_soc_bus platform driver
+  soc: ti: pruss: Fix system suspend/MStandby config issues
+  soc: ti: pruss: Configure SYSCFG properly during probe/remove
+  soc: ti: pruss: Add a platform driver for PRUSS in TI SoCs
+  soc: ti: pruss: enable OCP master ports in SYSCFG always
+  soc: ti: pruss: Add a PRUSS irqchip driver for PRUSS interrupts
+  soc: ti: pruss_intc: Add API to trigger a PRU sysevent
+  ARM: OMAP2+: use pdata quirks for PRUSS reset lines on AM335x
+  ARM: dts: AM33xx: Add the PRU-ICSS DT nodes
+  ARM: dts: AM33xx: Add PRU system events for virtio
+  ARM: dts: am335x-*: Enable PRU-ICSS nodes
+
+Tero Kristo (1):
+  soc: ti: pruss: add pruss_get()/put() API
+
+ .../devicetree/bindings/soc/ti/ti,pruss.txt        | 360 ++++++++++++
+ arch/arm/boot/dts/am335x-bone-common.dtsi          |   8 +
+ arch/arm/boot/dts/am335x-evm.dts                   |   8 +
+ arch/arm/boot/dts/am335x-evmsk.dts                 |   8 +
+ arch/arm/boot/dts/am335x-icev2.dts                 |   8 +
+ arch/arm/boot/dts/am33xx.dtsi                      |  78 +++
+ arch/arm/mach-omap2/pdata-quirks.c                 |  11 +
+ drivers/soc/ti/Kconfig                             |  12 +
+ drivers/soc/ti/Makefile                            |   1 +
+ drivers/soc/ti/pruss.c                             | 306 +++++++++++
+ drivers/soc/ti/pruss.h                             |  36 ++
+ drivers/soc/ti/pruss_intc.c                        | 604 +++++++++++++++++++++
+ drivers/soc/ti/pruss_soc_bus.c                     | 279 ++++++++++
+ include/linux/platform_data/ti-pruss.h             |  25 +
+ include/linux/pruss.h                              | 235 ++++++++
+ 15 files changed, 1979 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+ create mode 100644 drivers/soc/ti/pruss.c
+ create mode 100644 drivers/soc/ti/pruss.h
+ create mode 100644 drivers/soc/ti/pruss_intc.c
+ create mode 100644 drivers/soc/ti/pruss_soc_bus.c
+ create mode 100644 include/linux/platform_data/ti-pruss.h
+ create mode 100644 include/linux/pruss.h
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
