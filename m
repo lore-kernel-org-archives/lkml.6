@@ -2,381 +2,211 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2601C04EBB
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF81AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 769F620831
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:22:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A37C20820
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:26:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KYu7Rcbw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 769F620831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2VfsaLb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A37C20820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392593AbeKVSAS (ORCPT
+        id S2392490AbeKVSEe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 13:00:18 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37593 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731372AbeKVSAS (ORCPT
+        Thu, 22 Nov 2018 13:04:34 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39702 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733188AbeKVSEe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 13:00:18 -0500
-Received: by mail-pl1-f194.google.com with SMTP id b5so8847564plr.4
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 23:22:09 -0800 (PST)
+        Thu, 22 Nov 2018 13:04:34 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t27so194945wra.6
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 23:26:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=OsIO4UP9KjBgGnjyV4iAMQYULVZOvfAt2Rc/ehdnlGE=;
-        b=KYu7Rcbw09LJGiTu4ks/uipryU1jq5f5jKPbhu+mAThS4rODdFGgDt1mv0JkmUqLdo
-         DGm07raj2JQzQJKjFPm0Iq3IEF7+9CLV7gKCoMdeLFXFjH3w7ZRD1HOKQAEdB/zOSoX1
-         F+ltnIsdfEypDr2cMah9MUwD2EqXIqo4yE430=
+        bh=aLE5UwajChPAHaQK1nrBaSAKZvzXm0mq+ohFJvBp+nM=;
+        b=Z2VfsaLbvgZ7+/+TyCzLYNtPkbI6hhqzVVKHC3+dGTh/ozUGirt/xioRcrdYXCpTHn
+         kmHmR4hbXCc66SuSbKvGJfrbIdYmzVkSodRS6LgqZA38qAA8OOKVI16P/WmYdmiQJVrm
+         Yn0Lilupzsd3bOpjpvpZLPvYobAPnO5wpLIOjLuv5vZns7cyV53tH6OCbYj8lCh1AhNn
+         pxcXcl/5fM2aKMdOp86f1682pG2eqzjjFrj1Jwsqgs2jb7YsetxFG3DirlioHRDwO4J2
+         K47TU1RyQDaCF7CtWIExnfOoBau+fc3MrvO9he8VQCyGIVW6iSi/t3fa18BSm1kklt6h
+         /XvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OsIO4UP9KjBgGnjyV4iAMQYULVZOvfAt2Rc/ehdnlGE=;
-        b=fs9F9h8YkREUc7qvujyQ7lrokgKgEgL7N+II3IijfBbtAmPWNihb8HpRUwsGYmsmoD
-         8VIryMffJEljDnPIYFMVwwO1ECdKyPleNCot5esDHpKt0d8CXRW6LwxCv+47yEB5nAB7
-         fnf42L2YsqEUj8gbz2x4I5YkJcZm6LXpnFzoh/9n0ZKkvwlZCmytNgQyR4/wZTYWeOOb
-         zq5c8onN/hGGAqMXhKsZA2jACLcD3AYtRsfL6h1b7oAEB2XNAyRJqs3hhj3CHmKcJALI
-         9zzXLQTALjGBleanFMmaaloNacWamuK/4EB/TlrxebxIJor/ooEL0MbvfTore0Odv9Za
-         CaAA==
-X-Gm-Message-State: AA+aEWYfFPT6agakkm1dXZYA/Hi76jWGoH1yTUkZQ4BsckQpVgq/wWUf
-        PCscRO3n9aDBOXuj5oKdGRhU7A==
-X-Google-Smtp-Source: AFSGD/V7vTpIzXvGoHGNVH43Ge8A1ziT08WXj5zKvvkImT3iWUiJtI/DpiuYyzg/8ZNYFdRGqblOXQ==
-X-Received: by 2002:a17:902:598e:: with SMTP id p14mr10085566pli.260.1542871328662;
-        Wed, 21 Nov 2018 23:22:08 -0800 (PST)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id h8sm25500783pfo.162.2018.11.21.23.22.07
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aLE5UwajChPAHaQK1nrBaSAKZvzXm0mq+ohFJvBp+nM=;
+        b=jbqpatMhPgVkrEcAERY8QAxmZA9rGsEldv9swrpkiWKfOhToGD+klqa+zZegZq8P8A
+         Brl7PdmaRgb+YABFOXWN8nsKt/6zakUCb4oAXBq7H0Y6tSG2Ga2a3cxglX05VpX/eO56
+         GfxdC54noN14cNvnpVjc4gL3gNJGlmX2Iw3817E7PqidAdFLdvx+g0I9CuNRtrpXZikw
+         O/DsL9n4/b1gurN/M0jusUa4Q01zVMKVLygxpQEzOYGMclZei/8XvNY3XuKeJ42p3U1C
+         6XZGDWUhDAqe3dqRGh10hlf3dWZiqzgVrlbAHWyGw/Q7uL5dkLNghPOfjrw4rEFf6cOG
+         d2GQ==
+X-Gm-Message-State: AA+aEWaHu1YbVPp/gww2bigNWmwuuONfZ+J5gS26NH75+F4oztmIu5U9
+        OYKAfnhGvqHidhgPSCcyiHw=
+X-Google-Smtp-Source: AFSGD/VtCx5LPWd4nCPZtJApXqwFTrPA5+UQgg8GkFRU8cZzUbxr2ZA1mPVe6cID49RgusZ1dUr1Kg==
+X-Received: by 2002:adf:fc89:: with SMTP id g9mr8249915wrr.96.1542871582410;
+        Wed, 21 Nov 2018 23:26:22 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id t5sm4813523wmd.15.2018.11.21.23.26.20
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 23:22:07 -0800 (PST)
-Date:   Wed, 21 Nov 2018 23:22:05 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH] clk: qcom: Move to menuconfig and reduce lines
-Message-ID: <20181122072205.GM2225@minitux>
-References: <20181121210122.114859-1-sboyd@kernel.org>
+        Wed, 21 Nov 2018 23:26:21 -0800 (PST)
+Date:   Thu, 22 Nov 2018 08:26:19 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [patch 24/24] x86/speculation: Add seccomp Spectre v2 app to app
+ protection mode
+Message-ID: <20181122072619.GC41788@gmail.com>
+References: <20181121201430.559770965@linutronix.de>
+ <20181121201724.602740969@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181121210122.114859-1-sboyd@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181121201724.602740969@linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 21 Nov 13:01 PST 2018, Stephen Boyd wrote:
 
-> We duplicate the 'depends on' in almost every Kconfig here, and it's
-> getting out of hand now that we have tens of options for various SoC
-> drivers here. Let's clean it up a little by making a menuconfig for a
-> submenu and adding an if wrapper around the driver section.
+* Thomas Gleixner <tglx@linutronix.de> wrote:
+
+> From: Jiri Kosina <jkosina@suse.cz>
 > 
-> Cc: Taniya Das <tdas@codeaurora.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
+> If 'prctl' mode of app2app protection from spectre v2 is selected on the
+> kernel command-line, STIBP and IBPB are applied on tasks which restrict
+> their indirect branch speculation via prctl.
+> 
+> SECCOMP enables the SSBD mitigation for sandboxed tasks already, so it
+> makes sense to prevent spectre v2 application to application attacks as
+> well.
+> 
+> The mitigation guide documents how STIPB works:
+>     
+>    Setting bit 1 (STIBP) of the IA32_SPEC_CTRL MSR on a logical processor
+>    prevents the predicted targets of indirect branches on any logical
+>    processor of that core from being controlled by software that executes
+>    (or executed previously) on another logical processor of the same core.
+>     
+> Ergo setting STIBP protects the task itself from being attacked from a task
+> running on a different hyper-thread and protects the tasks running on
+> different hyper-threads from being attacked.
+>     
+> IBPB is issued when the task switches out, so malicious sandbox code cannot
+> mistrain the branch predictor for the next user space task on the same
+> logical processor.
+> 
+> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> 
 > ---
->  drivers/clk/qcom/Kconfig | 39 +++++----------------------------------
->  1 file changed, 5 insertions(+), 34 deletions(-)
+>  Documentation/admin-guide/kernel-parameters.txt |    7 +++++-
+>  arch/x86/include/asm/nospec-branch.h            |    1 
+>  arch/x86/kernel/cpu/bugs.c                      |   27 +++++++++++++++++++-----
+>  3 files changed, 29 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index a611531df115..1977f40f4bec 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -9,16 +9,17 @@ config QCOM_GDSC
->  config QCOM_RPMCC
->  	bool
->  
-> -config COMMON_CLK_QCOM
-> +menuconfig COMMON_CLK_QCOM
->  	tristate "Support for Qualcomm's clock controllers"
->  	depends on OF
->  	depends on ARCH_QCOM || COMPILE_TEST
->  	select REGMAP_MMIO
->  	select RESET_CONTROLLER
->  
-> +if COMMON_CLK_QCOM
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4228,10 +4228,15 @@
+>  				  by spectre_v2=off
+>  			auto    - Kernel selects the mitigation depending on
+>  				  the available CPU features and vulnerability.
+> -				  Default is prctl.
+>  			prctl   - Indirect branch speculation is enabled, but
+>  				  mitigation can be enabled via prctl per thread.
+>  				  The mitigation control state is inherited on fork.
+> +			seccomp - Same as "prctl" above, but all seccomp threads
+> +				  will enable the mitigation unless they explicitly
+> +				  opt out.
 > +
->  config QCOM_A53PLL
->  	tristate "MSM8916 A53 PLL"
-> -	depends on COMMON_CLK_QCOM
->  	default ARCH_QCOM
->  	help
->  	  Support for the A53 PLL on MSM8916 devices. It provides
-> @@ -28,7 +29,6 @@ config QCOM_A53PLL
+> +			Default mitigation:
+> +			If CONFIG_SECCOMP=y "seccomp", otherwise "prctl"
 >  
->  config QCOM_CLK_APCS_MSM8916
->  	tristate "MSM8916 APCS Clock Controller"
-> -	depends on COMMON_CLK_QCOM
->  	depends on QCOM_APCS_IPC || COMPILE_TEST
->  	default ARCH_QCOM
->  	help
-> @@ -39,7 +39,6 @@ config QCOM_CLK_APCS_MSM8916
+>  			Not specifying this option is equivalent to
+>  			spectre_v2_app2app=auto.
+> --- a/arch/x86/include/asm/nospec-branch.h
+> +++ b/arch/x86/include/asm/nospec-branch.h
+> @@ -233,6 +233,7 @@ enum spectre_v2_app2app_mitigation {
+>  	SPECTRE_V2_APP2APP_NONE,
+>  	SPECTRE_V2_APP2APP_STRICT,
+>  	SPECTRE_V2_APP2APP_PRCTL,
+> +	SPECTRE_V2_APP2APP_SECCOMP,
+>  };
 >  
->  config QCOM_CLK_RPM
->  	tristate "RPM based Clock Controller"
-> -	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
->  	select QCOM_RPMCC
->  	help
->  	  The RPM (Resource Power Manager) is a dedicated hardware engine for
-> @@ -52,7 +51,6 @@ config QCOM_CLK_RPM
+>  /* The Speculative Store Bypass disable variants */
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -256,12 +256,14 @@ enum spectre_v2_app2app_cmd {
+>  	SPECTRE_V2_APP2APP_CMD_AUTO,
+>  	SPECTRE_V2_APP2APP_CMD_FORCE,
+>  	SPECTRE_V2_APP2APP_CMD_PRCTL,
+> +	SPECTRE_V2_APP2APP_CMD_SECCOMP,
+>  };
 >  
->  config QCOM_CLK_SMD_RPM
->  	tristate "RPM over SMD based Clock Controller"
-> -	depends on COMMON_CLK_QCOM && QCOM_SMD_RPM
->  	select QCOM_RPMCC
->  	help
->  	  The RPM (Resource Power Manager) is a dedicated hardware engine for
-> @@ -65,7 +63,6 @@ config QCOM_CLK_SMD_RPM
->  
->  config QCOM_CLK_RPMH
->  	tristate "RPMh Clock Driver"
-> -	depends on COMMON_CLK_QCOM && QCOM_RPMH
->  	help
->  	 RPMh manages shared resources on some Qualcomm Technologies, Inc.
->  	 SoCs. It accepts requests from other hardware subsystems via RSC.
-> @@ -75,7 +72,6 @@ config QCOM_CLK_RPMH
->  config APQ_GCC_8084
->  	tristate "APQ8084 Global Clock Controller"
->  	select QCOM_GDSC
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the global clock controller on apq8084 devices.
->  	  Say Y if you want to use peripheral devices such as UART, SPI,
-> @@ -85,7 +81,6 @@ config APQ_MMCC_8084
->  	tristate "APQ8084 Multimedia Clock Controller"
->  	select APQ_GCC_8084
->  	select QCOM_GDSC
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the multimedia clock controller on apq8084 devices.
->  	  Say Y if you want to support multimedia devices such as display,
-> @@ -93,7 +88,6 @@ config APQ_MMCC_8084
->  
->  config IPQ_GCC_4019
->  	tristate "IPQ4019 Global Clock Controller"
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the global clock controller on ipq4019 devices.
->  	  Say Y if you want to use peripheral devices such as UART, SPI,
-> @@ -101,7 +95,6 @@ config IPQ_GCC_4019
->  
->  config IPQ_GCC_806X
->  	tristate "IPQ806x Global Clock Controller"
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the global clock controller on ipq806x devices.
->  	  Say Y if you want to use peripheral devices such as UART, SPI,
-> @@ -110,7 +103,6 @@ config IPQ_GCC_806X
->  config IPQ_LCC_806X
->  	tristate "IPQ806x LPASS Clock Controller"
->  	select IPQ_GCC_806X
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the LPASS clock controller on ipq806x devices.
->  	  Say Y if you want to use audio devices such as i2s, pcm,
-> @@ -118,7 +110,6 @@ config IPQ_LCC_806X
->  
->  config IPQ_GCC_8074
->  	tristate "IPQ8074 Global Clock Controller"
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for global clock controller on ipq8074 devices.
->  	  Say Y if you want to use peripheral devices such as UART, SPI,
-> @@ -127,7 +118,6 @@ config IPQ_GCC_8074
->  
->  config MSM_GCC_8660
->  	tristate "MSM8660 Global Clock Controller"
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the global clock controller on msm8660 devices.
->  	  Say Y if you want to use peripheral devices such as UART, SPI,
-> @@ -136,7 +126,6 @@ config MSM_GCC_8660
->  config MSM_GCC_8916
->  	tristate "MSM8916 Global Clock Controller"
->  	select QCOM_GDSC
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the global clock controller on msm8916 devices.
->  	  Say Y if you want to use devices such as UART, SPI i2c, USB,
-> @@ -144,7 +133,6 @@ config MSM_GCC_8916
->  
->  config MSM_GCC_8960
->  	tristate "APQ8064/MSM8960 Global Clock Controller"
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the global clock controller on apq8064/msm8960 devices.
->  	  Say Y if you want to use peripheral devices such as UART, SPI,
-> @@ -153,7 +141,6 @@ config MSM_GCC_8960
->  config MSM_LCC_8960
->  	tristate "APQ8064/MSM8960 LPASS Clock Controller"
->  	select MSM_GCC_8960
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the LPASS clock controller on apq8064/msm8960 devices.
->  	  Say Y if you want to use audio devices such as i2s, pcm,
-> @@ -161,7 +148,6 @@ config MSM_LCC_8960
->  
->  config MDM_GCC_9615
->  	tristate "MDM9615 Global Clock Controller"
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the global clock controller on mdm9615 devices.
->  	  Say Y if you want to use peripheral devices such as UART, SPI,
-> @@ -170,7 +156,6 @@ config MDM_GCC_9615
->  config MDM_LCC_9615
->  	tristate "MDM9615 LPASS Clock Controller"
->  	select MDM_GCC_9615
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the LPASS clock controller on mdm9615 devices.
->  	  Say Y if you want to use audio devices such as i2s, pcm,
-> @@ -179,7 +164,6 @@ config MDM_LCC_9615
->  config MSM_MMCC_8960
->  	tristate "MSM8960 Multimedia Clock Controller"
->  	select MSM_GCC_8960
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the multimedia clock controller on msm8960 devices.
->  	  Say Y if you want to support multimedia devices such as display,
-> @@ -188,7 +172,6 @@ config MSM_MMCC_8960
->  config MSM_GCC_8974
->  	tristate "MSM8974 Global Clock Controller"
->  	select QCOM_GDSC
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the global clock controller on msm8974 devices.
->  	  Say Y if you want to use peripheral devices such as UART, SPI,
-> @@ -198,7 +181,6 @@ config MSM_MMCC_8974
->  	tristate "MSM8974 Multimedia Clock Controller"
->  	select MSM_GCC_8974
->  	select QCOM_GDSC
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the multimedia clock controller on msm8974 devices.
->  	  Say Y if you want to support multimedia devices such as display,
-> @@ -206,7 +188,6 @@ config MSM_MMCC_8974
->  
->  config MSM_GCC_8994
->  	tristate "MSM8994 Global Clock Controller"
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the global clock controller on msm8994 devices.
->  	  Say Y if you want to use peripheral devices such as UART, SPI,
-> @@ -215,7 +196,6 @@ config MSM_GCC_8994
->  config MSM_GCC_8996
->  	tristate "MSM8996 Global Clock Controller"
->  	select QCOM_GDSC
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the global clock controller on msm8996 devices.
->  	  Say Y if you want to use peripheral devices such as UART, SPI,
-> @@ -225,7 +205,6 @@ config MSM_MMCC_8996
->  	tristate "MSM8996 Multimedia Clock Controller"
->  	select MSM_GCC_8996
->  	select QCOM_GDSC
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the multimedia clock controller on msm8996 devices.
->  	  Say Y if you want to support multimedia devices such as display,
-> @@ -233,7 +212,6 @@ config MSM_MMCC_8996
->  
->  config MSM_GCC_8998
->  	tristate "MSM8998 Global Clock Controller"
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the global clock controller on msm8998 devices.
->  	  Say Y if you want to use peripheral devices such as UART, SPI,
-> @@ -241,7 +219,6 @@ config MSM_GCC_8998
->  
->  config QCS_GCC_404
->  	tristate "QCS404 Global Clock Controller"
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the global clock controller on QCS404 devices.
->  	  Say Y if you want to use multimedia devices or peripheral
-> @@ -249,7 +226,6 @@ config QCS_GCC_404
->  
->  config SDM_CAMCC_845
->  	tristate "SDM845 Camera Clock Controller"
-> -	depends on COMMON_CLK_QCOM
->  	select SDM_GCC_845
->  	help
->  	  Support for the camera clock controller on SDM845 devices.
-> @@ -258,7 +234,6 @@ config SDM_CAMCC_845
->  config SDM_GCC_660
->  	tristate "SDM660 Global Clock Controller"
->  	select QCOM_GDSC
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the global clock controller on SDM660 devices.
->  	  Say Y if you want to use peripheral devices such as UART, SPI,
-> @@ -267,7 +242,6 @@ config SDM_GCC_660
->  config SDM_GCC_845
->  	tristate "SDM845 Global Clock Controller"
->  	select QCOM_GDSC
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the global clock controller on SDM845 devices.
->  	  Say Y if you want to use peripheral devices such as UART, SPI,
-> @@ -275,7 +249,6 @@ config SDM_GCC_845
->  
->  config SDM_VIDEOCC_845
->  	tristate "SDM845 Video Clock Controller"
-> -	depends on COMMON_CLK_QCOM
->  	select SDM_GCC_845
->  	select QCOM_GDSC
->  	help
-> @@ -286,7 +259,6 @@ config SDM_VIDEOCC_845
->  config SDM_DISPCC_845
->  	tristate "SDM845 Display Clock Controller"
->  	select SDM_GCC_845
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the display clock controller on Qualcomm Technologies, Inc
->  	  SDM845 devices.
-> @@ -304,7 +276,6 @@ config SPMI_PMIC_CLKDIV
->  
->  config QCOM_HFPLL
->  	tristate "High-Frequency PLL (HFPLL) Clock Controller"
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the high-frequency PLLs present on Qualcomm devices.
->  	  Say Y if you want to support CPU frequency scaling on devices
-> @@ -312,7 +283,6 @@ config QCOM_HFPLL
->  
->  config KPSS_XCC
->  	tristate "KPSS Clock Controller"
-> -	depends on COMMON_CLK_QCOM
->  	help
->  	  Support for the Krait ACC and GCC clock controllers. Say Y
->  	  if you want to support CPU frequency scaling on devices such
-> @@ -320,8 +290,9 @@ config KPSS_XCC
->  
->  config KRAITCC
->  	tristate "Krait Clock Controller"
-> -	depends on COMMON_CLK_QCOM && ARM
->  	select KRAIT_CLOCKS
->  	help
->  	  Support for the Krait CPU clocks on Qualcomm devices.
->  	  Say Y if you want to support CPU frequency scaling.
-> +
-> +endif
-> -- 
-> Sent by a computer through tubes
-> 
+>  static const char *spectre_v2_app2app_strings[] = {
+>  	[SPECTRE_V2_APP2APP_NONE]	= "App-App Vulnerable",
+> -	[SPECTRE_V2_APP2APP_STRICT]	= "App-App Mitigation: STIBP protection",
+> -	[SPECTRE_V2_APP2APP_PRCTL]	= "App-App Mitigation: STIBP via prctl",
+> +	[SPECTRE_V2_APP2APP_STRICT]	= "App-App Mitigation: forced protection",
+> +	[SPECTRE_V2_APP2APP_PRCTL]	= "App-App Mitigation: prctl opt-in",
+> +	[SPECTRE_V2_APP2APP_SECCOMP]	= "App-App Mitigation: seccomp and prctl opt-in",
+
+This description is not accurate: it's not a 'seccomp and prctl opt-in', 
+the seccomp functionality is opt-out, the prctl is opt-in.
+
+So something like:
+
+> +	[SPECTRE_V2_APP2APP_SECCOMP]	= "App-App Mitigation: seccomp by default and prctl opt-in",
+
+or so?
+
+>  void arch_seccomp_spec_mitigate(struct task_struct *task)
+>  {
+>  	if (ssb_mode == SPEC_STORE_BYPASS_SECCOMP)
+>  		ssb_prctl_set(task, PR_SPEC_FORCE_DISABLE);
+> +	if (spectre_v2_app2app == SPECTRE_V2_APP2APP_SECCOMP)
+> +		indir_branch_prctl_set(task, PR_SPEC_FORCE_DISABLE);
+>  }
+>  #endif
+
+Hm, so isn't arch_seccomp_spec_mitigate() called right before untrusted 
+seccomp code is executed? So why are we disabling the mitigation here?
+
+> +	case SPECTRE_V2_APP2APP_SECCOMP:
+> +		return ", STIBP: seccomp and prctl opt-in";
+> +	case SPECTRE_V2_APP2APP_SECCOMP:
+> +		return ", IBPB: seccomp and prctl opt-in";
+
+Same feedback wrt. potentially confusing use of 'opt-in' here, while 
+seccomp is more like an opt-out mechanism.
+
+Thanks,
+
+	Ingo
