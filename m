@@ -4,51 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA151C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:13:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A811FC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:14:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D32F20831
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:13:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D32F20831
+	by mail.kernel.org (Postfix) with ESMTP id 6D45520831
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:14:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D45520831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392490AbeKVRve (ORCPT
+        id S2392500AbeKVRwG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 12:51:34 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:37023 "EHLO
+        Thu, 22 Nov 2018 12:52:06 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:41505 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733047AbeKVRvd (ORCPT
+        with ESMTP id S1733310AbeKVRwF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 12:51:33 -0500
+        Thu, 22 Nov 2018 12:52:05 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAM7D3uw3692286
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAM7DbNM3692333
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 21 Nov 2018 23:13:03 -0800
+        Wed, 21 Nov 2018 23:13:37 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAM7D2M73692283;
-        Wed, 21 Nov 2018 23:13:02 -0800
-Date:   Wed, 21 Nov 2018 23:13:02 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAM7DaKu3692330;
+        Wed, 21 Nov 2018 23:13:36 -0800
+Date:   Wed, 21 Nov 2018 23:13:36 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Ben Hutchings <tipbot@zytor.com>
-Message-ID: <tip-11a64a05dc649815670b1be9fe63d205cb076401@git.kernel.org>
-Cc:     ben@decadent.org.uk, acme@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        jolsa@redhat.com, mingo@kernel.org, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com, hpa@zytor.com
-Reply-To: hpa@zytor.com, jolsa@redhat.com, tglx@linutronix.de,
-          alexander.shishkin@linux.intel.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, peterz@infradead.org,
-          ben@decadent.org.uk, namhyung@kernel.org, acme@redhat.com
-In-Reply-To: <20181111184524.fux4taownc6ndbx6@decadent.org.uk>
-References: <20181111184524.fux4taownc6ndbx6@decadent.org.uk>
+From:   tip-bot for Ravi Bangoria <tipbot@zytor.com>
+Message-ID: <tip-eb08d006054e7e374592068919e32579988602d4@git.kernel.org>
+Cc:     acme@redhat.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+        ravi.bangoria@linux.ibm.com, yao.jin@linux.intel.com,
+        hpa@zytor.com, tmricht@linux.vnet.ibm.com, anton@samba.org,
+        namhyung@kernel.org, mingo@kernel.org
+Reply-To: anton@samba.org, tmricht@linux.vnet.ibm.com, hpa@zytor.com,
+          mingo@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
+          alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+          linux-kernel@vger.kernel.org, acme@redhat.com,
+          yao.jin@linux.intel.com, ravi.bangoria@linux.ibm.com
+In-Reply-To: <20181115095533.16930-1-ravi.bangoria@linux.ibm.com>
+References: <20181115095533.16930-1-ravi.bangoria@linux.ibm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf pmu: Suppress potential format-truncation
- warning
-Git-Commit-ID: 11a64a05dc649815670b1be9fe63d205cb076401
+Subject: [tip:perf/core] perf stat: Use perf_evsel__is_clocki() for clock
+ events
+Git-Commit-ID: eb08d006054e7e374592068919e32579988602d4
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -62,79 +64,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  11a64a05dc649815670b1be9fe63d205cb076401
-Gitweb:     https://git.kernel.org/tip/11a64a05dc649815670b1be9fe63d205cb076401
-Author:     Ben Hutchings <ben@decadent.org.uk>
-AuthorDate: Sun, 11 Nov 2018 18:45:24 +0000
+Commit-ID:  eb08d006054e7e374592068919e32579988602d4
+Gitweb:     https://git.kernel.org/tip/eb08d006054e7e374592068919e32579988602d4
+Author:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+AuthorDate: Thu, 15 Nov 2018 15:25:32 +0530
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 21 Nov 2018 22:39:56 -0300
+CommitDate: Wed, 21 Nov 2018 22:39:57 -0300
 
-perf pmu: Suppress potential format-truncation warning
+perf stat: Use perf_evsel__is_clocki() for clock events
 
-Depending on which functions are inlined in util/pmu.c, the snprintf()
-calls in perf_pmu__parse_{scale,unit,per_pkg,snapshot}() might trigger a
-warning:
+We already have function to check if a given event is either
+SW_CPU_CLOCK or SW_TASK_CLOCK. Utilize it.
 
-  util/pmu.c: In function 'pmu_aliases':
-  util/pmu.c:178:31: error: '%s' directive output may be truncated writing up to 255 bytes into a region of size between 0 and 4095 [-Werror=format-truncation=]
-    snprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
-                               ^~
-
-I found this when trying to build perf from Linux 3.16 with gcc 8.
-However I can reproduce the problem in mainline if I force
-__perf_pmu__new_alias() to be inlined.
-
-Suppress this by using scnprintf() as has been done elsewhere in perf.
-
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Anton Blanchard <anton@samba.org>
+Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181111184524.fux4taownc6ndbx6@decadent.org.uk
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: yuzhoujian@didichuxing.com
+Link: http://lkml.kernel.org/r/20181115095533.16930-1-ravi.bangoria@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/pmu.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ tools/perf/util/stat-shadow.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 7e49baad304d..7348eea0248f 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -145,7 +145,7 @@ static int perf_pmu__parse_scale(struct perf_pmu_alias *alias, char *dir, char *
- 	int fd, ret = -1;
- 	char path[PATH_MAX];
+diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
+index 8ad32763cfff..f0a8cec55c47 100644
+--- a/tools/perf/util/stat-shadow.c
++++ b/tools/perf/util/stat-shadow.c
+@@ -212,8 +212,7 @@ void perf_stat__update_shadow_stats(struct perf_evsel *counter, u64 count,
  
--	snprintf(path, PATH_MAX, "%s/%s.scale", dir, name);
-+	scnprintf(path, PATH_MAX, "%s/%s.scale", dir, name);
+ 	count *= counter->scale;
  
- 	fd = open(path, O_RDONLY);
- 	if (fd == -1)
-@@ -175,7 +175,7 @@ static int perf_pmu__parse_unit(struct perf_pmu_alias *alias, char *dir, char *n
- 	ssize_t sret;
- 	int fd;
- 
--	snprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
-+	scnprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
- 
- 	fd = open(path, O_RDONLY);
- 	if (fd == -1)
-@@ -205,7 +205,7 @@ perf_pmu__parse_per_pkg(struct perf_pmu_alias *alias, char *dir, char *name)
- 	char path[PATH_MAX];
- 	int fd;
- 
--	snprintf(path, PATH_MAX, "%s/%s.per-pkg", dir, name);
-+	scnprintf(path, PATH_MAX, "%s/%s.per-pkg", dir, name);
- 
- 	fd = open(path, O_RDONLY);
- 	if (fd == -1)
-@@ -223,7 +223,7 @@ static int perf_pmu__parse_snapshot(struct perf_pmu_alias *alias,
- 	char path[PATH_MAX];
- 	int fd;
- 
--	snprintf(path, PATH_MAX, "%s/%s.snapshot", dir, name);
-+	scnprintf(path, PATH_MAX, "%s/%s.snapshot", dir, name);
- 
- 	fd = open(path, O_RDONLY);
- 	if (fd == -1)
+-	if (perf_evsel__match(counter, SOFTWARE, SW_TASK_CLOCK) ||
+-	    perf_evsel__match(counter, SOFTWARE, SW_CPU_CLOCK))
++	if (perf_evsel__is_clock(counter))
+ 		update_runtime_stat(st, STAT_NSECS, 0, cpu, count);
+ 	else if (perf_evsel__match(counter, HARDWARE, HW_CPU_CYCLES))
+ 		update_runtime_stat(st, STAT_CYCLES, ctx, cpu, count);
