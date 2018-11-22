@@ -2,136 +2,101 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FECC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:31:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B716C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:32:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEAA1204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:31:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEAA1204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5537F204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:32:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2j009Bd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5537F204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394752AbeKVWKM (ORCPT
+        id S2394769AbeKVWLW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 17:10:12 -0500
-Received: from mga02.intel.com ([134.134.136.20]:65279 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732238AbeKVWKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 17:10:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2018 03:31:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,265,1539673200"; 
-   d="scan'208";a="276024968"
-Received: from ahunter-desktop.fi.intel.com ([10.237.72.130])
-  by orsmga005.jf.intel.com with ESMTP; 22 Nov 2018 03:31:10 -0800
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
-        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] tools lib traceevent: Fix compile warnings in tools/lib/traceevent/event-parse.c
-Date:   Thu, 22 Nov 2018 13:29:37 +0200
-Message-Id: <20181122112937.10582-1-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.17.1
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        Thu, 22 Nov 2018 17:11:22 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:39919 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387910AbeKVWLV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 17:11:21 -0500
+Received: by mail-qt1-f193.google.com with SMTP id n21so7070434qtl.6;
+        Thu, 22 Nov 2018 03:32:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=IdRUlzepGVP794x2pG8/yBQBYE/Pwsou7Ugr3tNBFLw=;
+        b=m2j009Bdw8tQXnVJdFacgNyreVw0SrzBMxEsts8DjEIgoK4PMU9cJRVx1jnAYpYzFS
+         auDDrR06Psuu5Wx82y+kXng3RITryJ/8MlWM6zkrpHDyrnCQuMUFSSDALXw1BYGuCeXX
+         fczvIymy3fsHKeONg/l9iGI/arf5QNoJkpXexAnnWKd7cRCISSkKDv2HHX8u2JNYXa24
+         evJ6Tu1ykcL9zVZ/Wth2SKqeH7cp1pDS7+xF8rxvk6CcrlhZVq9HnvbyHIg0KMil2Td2
+         45ggRxGarenIf8sVdLCPpq/LrE9uXsk2kZ91+ba83baaA3xDNTgN0qXulSnGFiFdRLVa
+         utjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=IdRUlzepGVP794x2pG8/yBQBYE/Pwsou7Ugr3tNBFLw=;
+        b=L/Y3/+QT2YpFSM7a1317jCYTL+gCYydiSLb6AdWHDSOMZbvejBH2hFlruXFNa4jVu2
+         bEKAPNLvL6pYk5GbCjRRHc27Uge1oIamAxtcHzt8XqKrW1yCWpQlY38Uij3+baaVgbzS
+         qZOSm87cpXy1qxAHyS0uQKXOSaX9A9br5NL5bjjRz2fGp8Q1rdmqW/+AJZywUJ3QRWsd
+         UMPafWZiHdxpTIpZaAhng1wU9eInHFIJHHQVO6pGHNSI+6nWUOXBOS77wObXHmRyA9b6
+         KXudhWUEsfSGzTrLTL4mMSuwrfnuytnM9rM80PBniCAU5yQL9ICsSdcvT/AaEApNl3f0
+         aOAg==
+X-Gm-Message-State: AA+aEWYqvrt+4b48ELXQjmE+RAC3vv4uUEH6y9Lva2QRWrWY2hA0iBsT
+        jep8zZ9VVnGJuYFN8/6xoeVuwxkgpQ1dgYreOQo=
+X-Google-Smtp-Source: AFSGD/WLDOys+b5eg5clnEXPkjd5mYxWRXWH83rlXXtxU+yjR4PhtZ5iE/HhxtDb3U3iFkkA7TavjlH9aCBkSLLL9io=
+X-Received: by 2002:a0c:f74c:: with SMTP id e12mr9780724qvo.26.1542886342512;
+ Thu, 22 Nov 2018 03:32:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20181030202713.26203-1-semen.protsenko@linaro.org>
+ <CAKaJLVu0h5woVtN5=Mh38ajACBZZQ3JHfRhkjNrwMwYXHEG-NQ@mail.gmail.com>
+ <CAHp75Vd-ydncUWQtc8ziLpCMJRFCvjV=ueKB0wRgn7W-pnV09Q@mail.gmail.com> <20181121181042.4gzuniz2vzjikpwc@cs.cmu.edu>
+In-Reply-To: <20181121181042.4gzuniz2vzjikpwc@cs.cmu.edu>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 22 Nov 2018 13:32:11 +0200
+Message-ID: <CAHp75VfZ1bRjPGC2_Czu1iTxvMsyb6gCBn=og2j4z3=7JdUkmQ@mail.gmail.com>
+Subject: Re: [PATCH v2] codafs: Fix build using bare-metal toolchain
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Praneeth Bajjuri <praneeth@ti.com>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix following warnings:
+On Wed, Nov 21, 2018 at 8:10 PM Jan Harkes <jaharkes@cs.cmu.edu> wrote:
+>
+> On Wed, Nov 21, 2018 at 06:41:13PM +0200, Andy Shevchenko wrote:
+> > I'm not sure how you managed to miss people in this list (perhaps by
+> > default you have suppress all Cc in your Git configuration), but I
+> > guess we may gently ask Christoph to apply this in case Jan will not
+> > appear.
+>
+> You have got to give me a little more than 10 minutes to respond before
+> assuming that I would not appear...
 
-event-parse.c: In function ‘tep_find_event_by_name’:
-event-parse.c:3521:21: warning: ‘event’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-  pevent->last_event = event;
-  ~~~~~~~~~~~~~~~~~~~^~~~~~~
-  CC       ui/gtk/hists.o
-  LINK     plugin_mac80211.so
-  CC       nlattr.o
-event-parse.c: In function ‘tep_data_lat_fmt’:
-event-parse.c:5200:4: warning: ‘migrate_disable’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-    trace_seq_printf(s, "%d", migrate_disable);
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-event-parse.c:5207:4: warning: ‘lock_depth’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-    trace_seq_printf(s, "%d", lock_depth);
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  LINK     plugin_sched_switch.so
-  LINK     plugin_function.so
-  LINK     plugin_xen.so
-event-parse.c: In function ‘tep_event_info’:
-event-parse.c:5047:7: warning: ‘len_arg’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-       trace_seq_printf(s, format, len_arg, (char)val);
-       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-event-parse.c:4884:6: note: ‘len_arg’ was declared here
-  int len_arg;
-      ^~~~~~~
-event-parse.c:4338:11: warning: ‘vsize’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-     val = tep_read_number(pevent, bptr, vsize);
-           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-event-parse.c:4224:6: note: ‘vsize’ was declared here
-  int vsize;
-      ^~~~~
+Problem is, AFAICS, Sam's initial Cc list was not fulfilled. As I
+guessed it might be configuration issue on his side.
 
-$ gcc --version
-  gcc (Clear Linux OS for Intel Architecture) 8.2.1 20180502
+> I don't think I've ignored any
+> previous emails on this subject and the only issues has been some people
+> not receiving my responses for unknown reasons (agressive spam filter?).
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- tools/lib/traceevent/event-parse.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Personally I didn't get this one (Gmail "clever" spam filtering).
 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index 3692f29fee46..fbd6d6813fab 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -3498,7 +3498,7 @@ struct tep_event_format *
- tep_find_event_by_name(struct tep_handle *pevent,
- 		       const char *sys, const char *name)
- {
--	struct tep_event_format *event;
-+	struct tep_event_format *event = NULL;
- 	int i;
- 
- 	if (pevent->last_event &&
-@@ -4221,7 +4221,7 @@ static struct tep_print_arg *make_bprint_args(char *fmt, void *data, int size, s
- 	unsigned long long ip, val;
- 	char *ptr;
- 	void *bptr;
--	int vsize;
-+	int vsize = 0;
- 
- 	field = pevent->bprint_buf_field;
- 	ip_field = pevent->bprint_ip_field;
-@@ -4881,7 +4881,7 @@ static void pretty_print(struct trace_seq *s, void *data, int size, struct tep_e
- 	char format[32];
- 	int show_func;
- 	int len_as_arg;
--	int len_arg;
-+	int len_arg = 0;
- 	int len;
- 	int ls;
- 
-@@ -5146,8 +5146,8 @@ void tep_data_lat_fmt(struct tep_handle *pevent,
- 	static int migrate_disable_exists;
- 	unsigned int lat_flags;
- 	unsigned int pc;
--	int lock_depth;
--	int migrate_disable;
-+	int lock_depth = 0;
-+	int migrate_disable = 0;
- 	int hardirq;
- 	int softirq;
- 	void *data = record->data;
 -- 
-2.17.1
-
+With Best Regards,
+Andy Shevchenko
