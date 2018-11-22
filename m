@@ -2,308 +2,102 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E3DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E30C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:14:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AE612081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:12:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AE612081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A5E2206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:14:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A5E2206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391729AbeKWAum (ORCPT
+        id S2388949AbeKWAyT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:50:42 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15137 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391665AbeKWAul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:50:41 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 538E964416B0A;
-        Thu, 22 Nov 2018 22:11:03 +0800 (CST)
-Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 22 Nov 2018 22:10:55 +0800
-From:   Salil Mehta <salil.mehta@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, liuzhongzhu <liuzhongzhu@huawei.com>
-Subject: [PATCH V2 net-next 1/8] net: hns3: Add debugfs framework registration
-Date:   Thu, 22 Nov 2018 14:09:41 +0000
-Message-ID: <20181122140948.23504-2-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20181122140948.23504-1-salil.mehta@huawei.com>
-References: <20181122140948.23504-1-salil.mehta@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.202.226.54]
-X-CFilter-Loop: Reflected
+        Thu, 22 Nov 2018 19:54:19 -0500
+Received: from foss.arm.com ([217.140.101.70]:50090 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732939AbeKWAyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 19:54:19 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1216536B4;
+        Thu, 22 Nov 2018 06:14:46 -0800 (PST)
+Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.39.198])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B59E3F5AF;
+        Thu, 22 Nov 2018 06:14:36 -0800 (PST)
+Date:   Thu, 22 Nov 2018 14:14:29 +0000
+Message-ID: <86lg5lrygq.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc:     Will Deacon <will.deacon@arm.com>, catalin.marinas@arm.com,
+        akpm@linux-foundation.org, rppt@linux.vnet.ibm.com,
+        mhocko@suse.com, ard.biesheuvel@linaro.org, andrew.murray@arm.com,
+        james.morse@arm.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] arm64: Early boot time stamps
+In-Reply-To: <20181121175841.if3vyumzvw3yoovi@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
+References: <20181120144340.30201-1-pasha.tatashin@soleen.com>
+        <20181120144340.30201-2-pasha.tatashin@soleen.com>
+        <20181121174706.GC9801@arm.com>
+        <20181121175841.if3vyumzvw3yoovi@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: liuzhongzhu <liuzhongzhu@huawei.com>
+On Wed, 21 Nov 2018 17:58:41 +0000,
+Pavel Tatashin <pasha.tatashin@soleen.com> wrote:
+> 
+> On 18-11-21 17:47:07, Will Deacon wrote:
+> > > +	/*
+> > > +	 * The arm64 boot protocol mandates that CNTFRQ_EL0 reflects
+> > > +	 * the timer frequency. To avoid breakage on misconfigured
+> > > +	 * systems, do not register the early sched_clock if the
+> > > +	 * programmed value if zero. Other random values will just
+> > > +	 * result in random output.
+> > > +	 */
+> > > +	if (!freq)
+> > > +		return;
+> > > +
+> > > +	arch_timer_read_counter = arch_counter_get_cntvct;
+> > 
+> > Why do you need to assign this here?
+> > 
+> > > +	sched_clock_register(arch_timer_read_counter, ARCH_TIMER_NBITS, freq);
+> > 
+> > arch_timer_read_counter can be reassigned once the arm_arch_timer driver
+> > has probed; what stops this from being unused as the sched_clock after that
+> > has happened? I worry that toggling the function pointer could lead to
+> > sched_clock() going backwards.
+> 
+> No reason, I will revert it back to use a local variable.
 
-Add the debugfs framework to the driver and create a debugfs
-command interface for each device.
+I think the issue is that you are doing an assignment for something
+that the kernel has already statically initialized.
 
-example command:
-"echo queue info > cmd" Query the packet forwarding queue information.
+> I agree, time can go backward for a period of time while we switch
+> to permanent clock later, if that clock is different.
 
-Signed-off-by: liuzhongzhu <liuzhongzhu@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/Makefile       |   2 +-
- drivers/net/ethernet/hisilicon/hns3/hnae3.h        |   1 +
- drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c | 136 +++++++++++++++++++++
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  17 ++-
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |   4 +
- 5 files changed, 157 insertions(+), 3 deletions(-)
- create mode 100644 drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
+It is worse than that. You're setting up sched_clock with an
+unreliable clock source which can go backward at any point, not just
+at handover time.
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/Makefile b/drivers/net/ethernet/hisilicon/hns3/Makefile
-index 002534f..d01bf53 100644
---- a/drivers/net/ethernet/hisilicon/hns3/Makefile
-+++ b/drivers/net/ethernet/hisilicon/hns3/Makefile
-@@ -9,6 +9,6 @@ obj-$(CONFIG_HNS3) += hns3vf/
- obj-$(CONFIG_HNS3) += hnae3.o
- 
- obj-$(CONFIG_HNS3_ENET) += hns3.o
--hns3-objs = hns3_enet.o hns3_ethtool.o
-+hns3-objs = hns3_enet.o hns3_ethtool.o hns3_debugfs.o
- 
- hns3-$(CONFIG_HNS3_DCB) += hns3_dcbnl.o
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-index 4a39fea..f32f075 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-@@ -566,6 +566,7 @@ struct hnae3_handle {
- 	u32 numa_node_mask;	/* for multi-chip support */
- 
- 	u8 netdev_flags;
-+	struct dentry *hnae3_dbgfs;
- };
- 
- #define hnae3_set_field(origin, mask, shift, val) \
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-new file mode 100644
-index 0000000..9d9ad11
---- /dev/null
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-@@ -0,0 +1,136 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/* Copyright (c) 2018-2019 Hisilicon Limited. */
-+
-+#include <linux/debugfs.h>
-+#include <linux/device.h>
-+
-+#include "hnae3.h"
-+#include "hns3_enet.h"
-+
-+#define HNS3_DBG_READ_LEN 256
-+
-+static struct dentry *hns3_dbgfs_root;
-+
-+static void hns3_dbg_help(struct hnae3_handle *h)
-+{
-+	dev_info(&h->pdev->dev, "available commands\n");
-+	dev_info(&h->pdev->dev, "queue info [number]\n");
-+	dev_info(&h->pdev->dev, "dump fd tcam\n");
-+}
-+
-+static ssize_t hns3_dbg_cmd_read(struct file *filp, char __user *buffer,
-+				 size_t count, loff_t *ppos)
-+{
-+	int uncopy_bytes;
-+	char *buf;
-+	int len;
-+
-+	if (*ppos != 0)
-+		return 0;
-+
-+	if (count < HNS3_DBG_READ_LEN)
-+		return -ENOSPC;
-+
-+	buf = kzalloc(HNS3_DBG_READ_LEN, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	len = snprintf(buf, HNS3_DBG_READ_LEN, "%s\n",
-+		       "Please echo help to cmd to get help information");
-+	uncopy_bytes = copy_to_user(buffer, buf, len);
-+
-+	kfree(buf);
-+
-+	if (uncopy_bytes)
-+		return -EFAULT;
-+
-+	return (*ppos = len);
-+}
-+
-+static ssize_t hns3_dbg_cmd_write(struct file *filp, const char __user *buffer,
-+				  size_t count, loff_t *ppos)
-+{
-+	struct hnae3_handle *handle = filp->private_data;
-+	char *cmd_buf, *cmd_buf_tmp;
-+	int uncopied_bytes;
-+	int ret = 0;
-+
-+	if (*ppos != 0)
-+		return 0;
-+
-+	cmd_buf = kzalloc(count + 1, GFP_KERNEL);
-+	if (!cmd_buf)
-+		return count;
-+
-+	uncopied_bytes = copy_from_user(cmd_buf, buffer, count);
-+	if (uncopied_bytes) {
-+		kfree(cmd_buf);
-+		return -EFAULT;
-+	}
-+
-+	cmd_buf[count] = '\0';
-+
-+	cmd_buf_tmp = strchr(cmd_buf, '\n');
-+	if (cmd_buf_tmp) {
-+		*cmd_buf_tmp = '\0';
-+		count = cmd_buf_tmp - cmd_buf + 1;
-+	}
-+
-+	if (strncmp(cmd_buf, "help", 4) == 0)
-+		hns3_dbg_help(handle);
-+
-+	if (ret)
-+		hns3_dbg_help(handle);
-+
-+	kfree(cmd_buf);
-+	cmd_buf = NULL;
-+
-+	return count;
-+}
-+
-+static const struct file_operations hns3_dbg_cmd_fops = {
-+	.owner = THIS_MODULE,
-+	.open  = simple_open,
-+	.read  = hns3_dbg_cmd_read,
-+	.write = hns3_dbg_cmd_write,
-+};
-+
-+void hns3_dbg_init(struct hnae3_handle *handle)
-+{
-+	const char *name = pci_name(handle->pdev);
-+	struct dentry *pfile;
-+
-+	handle->hnae3_dbgfs = debugfs_create_dir(name, hns3_dbgfs_root);
-+	if (!handle->hnae3_dbgfs)
-+		return;
-+
-+	pfile = debugfs_create_file("cmd", 0600, handle->hnae3_dbgfs, handle,
-+				    &hns3_dbg_cmd_fops);
-+	if (!pfile) {
-+		debugfs_remove_recursive(handle->hnae3_dbgfs);
-+		handle->hnae3_dbgfs = NULL;
-+		dev_warn(&handle->pdev->dev, "create file for %s fail\n",
-+			 name);
-+	}
-+}
-+
-+void hns3_dbg_uninit(struct hnae3_handle *handle)
-+{
-+	debugfs_remove_recursive(handle->hnae3_dbgfs);
-+	handle->hnae3_dbgfs = NULL;
-+}
-+
-+void hns3_dbg_register_debugfs(const char *debugfs_dir_name)
-+{
-+	hns3_dbgfs_root = debugfs_create_dir(debugfs_dir_name, NULL);
-+	if (!hns3_dbgfs_root) {
-+		pr_warn("Register debugfs for %s fail\n", debugfs_dir_name);
-+		return;
-+	}
-+}
-+
-+void hns3_dbg_unregister_debugfs(void)
-+{
-+	debugfs_remove_recursive(hns3_dbgfs_root);
-+	hns3_dbgfs_root = NULL;
-+}
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 7f81db3..d1b2de2 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -3620,6 +3620,8 @@ static int hns3_client_init(struct hnae3_handle *handle)
- 
- 	hns3_dcbnl_setup(handle);
- 
-+	hns3_dbg_init(handle);
-+
- 	/* MTU range: (ETH_MIN_MTU(kernel default) - 9702) */
- 	netdev->max_mtu = HNS3_MAX_MTU;
- 
-@@ -3676,6 +3678,8 @@ static void hns3_client_uninit(struct hnae3_handle *handle, bool reset)
- 
- 	hns3_put_ring_config(priv);
- 
-+	hns3_dbg_uninit(handle);
-+
- 	priv->ring_data = NULL;
- 
- out_netdev_free:
-@@ -4245,15 +4249,23 @@ static int __init hns3_init_module(void)
- 
- 	INIT_LIST_HEAD(&client.node);
- 
-+	hns3_dbg_register_debugfs(hns3_driver_name);
-+
- 	ret = hnae3_register_client(&client);
- 	if (ret)
--		return ret;
-+		goto err_reg_client;
- 
- 	ret = pci_register_driver(&hns3_driver);
- 	if (ret)
--		hnae3_unregister_client(&client);
-+		goto err_reg_driver;
- 
- 	return ret;
-+
-+err_reg_driver:
-+	hnae3_unregister_client(&client);
-+err_reg_client:
-+	hns3_dbg_unregister_debugfs();
-+	return ret;
- }
- module_init(hns3_init_module);
- 
-@@ -4265,6 +4277,7 @@ static void __exit hns3_exit_module(void)
- {
- 	pci_unregister_driver(&hns3_driver);
- 	hnae3_unregister_client(&client);
-+	hns3_dbg_unregister_debugfs();
- }
- module_exit(hns3_exit_module);
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-index bbf227b..4e4b48b 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-@@ -683,4 +683,8 @@ void hns3_dcbnl_setup(struct hnae3_handle *handle);
- static inline void hns3_dcbnl_setup(struct hnae3_handle *handle) {}
- #endif
- 
-+void hns3_dbg_init(struct hnae3_handle *handle);
-+void hns3_dbg_uninit(struct hnae3_handle *handle);
-+void hns3_dbg_register_debugfs(const char *debugfs_dir_name);
-+void hns3_dbg_unregister_debugfs(void);
- #endif
+I'd rather we have the timestamping code be able to use another souce
+than sched_clock, and eventually switch to it once sched_clock is
+registered (and properly corrected.
+
+Thanks,
+
+	M.
+
 -- 
-2.7.4
-
-
+Jazz is not dead, it just smell funny.
