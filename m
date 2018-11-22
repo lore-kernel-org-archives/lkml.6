@@ -2,59 +2,105 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54191C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5129AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2091D20866
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:16:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2091D20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 1266D20866
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:17:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCeSDnKk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1266D20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394110AbeKVUzI convert rfc822-to-8bit (ORCPT
+        id S2394123AbeKVU4D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 15:55:08 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:47190 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390727AbeKVUzH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:55:07 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gPm1s-0002aZ-8K; Thu, 22 Nov 2018 11:16:12 +0100
-Date:   Thu, 22 Nov 2018 11:16:12 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     zhe.he@windriver.com
-Cc:     catalin.marinas@arm.com, tglx@linutronix.de, rostedt@goodmis.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v2] kmemleak: Turn kmemleak_lock to raw spinlock on RT
-Message-ID: <20181122101611.tmbmylbshd4mrnxi@linutronix.de>
-References: <1542877459-144382-1-git-send-email-zhe.he@windriver.com>
+        Thu, 22 Nov 2018 15:56:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51796 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388046AbeKVU4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 15:56:02 -0500
+Received: from localhost (unknown [95.99.132.93])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE9FB20684;
+        Thu, 22 Nov 2018 10:17:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542881835;
+        bh=4qEpFH3jL3XoPlqUH+hNrkZzqtVYQsVVcZTCBxHiqT4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hCeSDnKkpCmUOVAbhKmcBZtWMzKxTUP//b0sIR+oaD7l17adobcY6wE0vgEvYY4VH
+         fLxoKMIZEUhRQNA5LHXCiDsdDVENo9HBL6mFhYkmB7bjf6i2gAlRjT82EaYVAYk8Wx
+         6Thkq4EWlzd2mxF78q/XCEFsqigiZaOFuJqulVDM=
+Date:   Thu, 22 Nov 2018 11:17:11 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org,
+        Chao Yu <yuchao0@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>, weidu.du@huawei.com,
+        Miao Xie <miaoxie@huawei.com>
+Subject: Re: [PATCH 02/10] staging: erofs: fix race when the managed cache is
+ enabled
+Message-ID: <20181122101711.GA3189@kroah.com>
+References: <20181120143425.43637-1-gaoxiang25@huawei.com>
+ <20181120143425.43637-3-gaoxiang25@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <1542877459-144382-1-git-send-email-zhe.he@windriver.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181120143425.43637-3-gaoxiang25@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-11-22 17:04:19 [+0800], zhe.he@windriver.com wrote:
-> From: He Zhe <zhe.he@windriver.com>
+On Tue, Nov 20, 2018 at 10:34:17PM +0800, Gao Xiang wrote:
+> When the managed cache is enabled, the last reference count
+> of a workgroup must be used for its workstation.
 > 
-> kmemleak_lock, as a rwlock on RT, can possibly be held in atomic context and
-> causes the follow BUG.
+> Otherwise, it could lead to incorrect (un)freezes in
+> the reclaim path, and it would be harmful.
+> 
+> A typical race as follows:
+> 
+> Thread 1 (In the reclaim path)  Thread 2
+> workgroup_freeze(grp, 1)                                refcnt = 1
+> ...
+> workgroup_unfreeze(grp, 1)                              refcnt = 1
+>                                 workgroup_get(grp)      refcnt = 2 (x)
+> workgroup_put(grp)                                      refcnt = 1 (x)
+>                                 ...unexpected behaviors
+> 
+> * grp is detached but still used, which violates cache-managed
+>   freeze constraint.
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+> ---
+>  drivers/staging/erofs/internal.h |   1 +
+>  drivers/staging/erofs/utils.c    | 131 +++++++++++++++++++++++++++------------
+>  2 files changed, 93 insertions(+), 39 deletions(-)
+> 
+> diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
+> index 57575c7f5635..89dbd0888e53 100644
+> --- a/drivers/staging/erofs/internal.h
+> +++ b/drivers/staging/erofs/internal.h
+> @@ -250,6 +250,7 @@ static inline bool erofs_workgroup_get(struct erofs_workgroup *grp, int *ocnt)
+>  }
+>  
+>  #define __erofs_workgroup_get(grp)	atomic_inc(&(grp)->refcount)
+> +#define __erofs_workgroup_put(grp)	atomic_dec(&(grp)->refcount)
 
-please use
- [PATCH RT … ]
+Any specific reason why you are not using the refcount.h api instead of
+"doing it yourself" with atomic_inc/dec()?
 
-in future while posting for RT. And this was (and is) on my TODO list.
+I'm not rejecting this, just curious.
 
-Sebastian
+thanks,
+
+greg k-h
