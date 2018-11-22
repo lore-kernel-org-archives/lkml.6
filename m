@@ -2,139 +2,198 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D1EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F7BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:21:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 542CD206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:21:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 542CD206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 529FC205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:21:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 529FC205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391084AbeKVXAz (ORCPT
+        id S2391164AbeKVXA6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 18:00:55 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47114 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731683AbeKVXAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 18:00:54 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A6D93804;
-        Thu, 22 Nov 2018 04:21:45 -0800 (PST)
-Received: from localhost (unknown [10.37.6.11])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E4B8D3F5A0;
-        Thu, 22 Nov 2018 04:21:44 -0800 (PST)
-Date:   Thu, 22 Nov 2018 12:21:43 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
+        Thu, 22 Nov 2018 18:00:58 -0500
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:57056 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731683AbeKVXA6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 18:00:58 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 910D7634C92;
+        Thu, 22 Nov 2018 14:21:46 +0200 (EET)
+Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1gPnzO-00017y-CB; Thu, 22 Nov 2018 14:21:46 +0200
+Date:   Thu, 22 Nov 2018 14:21:46 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/10] perf/core: Generalise event exclusion checking
-Message-ID: <20181122122142.GI42987@e119886-lin.cambridge.arm.com>
-References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
- <20181119130800.GE9761@hirez.programming.kicks-ass.net>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
+        Libin Yang <lbyang@marvell.com>,
+        Albert Wang <twang13@marvell.com>
+Subject: Re: [PATCH v3 03/14] media: ov7670: hook s_power onto v4l2 core
+Message-ID: <20181122122146.a6wydozsg676i3w7@valkosipuli.retiisi.org.uk>
+References: <20181120100318.367987-1-lkundrak@v3.sk>
+ <20181120100318.367987-4-lkundrak@v3.sk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181119130800.GE9761@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <20181120100318.367987-4-lkundrak@v3.sk>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 02:08:00PM +0100, Peter Zijlstra wrote:
-> On Fri, Nov 16, 2018 at 10:24:03AM +0000, Andrew Murray wrote:
-> > Many PMU drivers do not have the capability to exclude counting events
-> > that occur in specific contexts such as idle, kernel, guest, etc. These
-> > drivers indicate this by returning an error in their event_init upon
-> > testing the events attribute flags.
-> > 
-> > However this approach requires that each time a new event modifier is
-> > added to perf, all the perf drivers need to be modified to indicate that
-> > they don't support the attribute. This results in additional boiler-plate
-> > code common to many drivers that needs to be maintained. An example of
-> > this is the addition of exclude_host and exclude_guest in 2011 yet many
-> > PMU drivers do not support this or indicate an error on events that make
-> > use of it.
-> > 
-> > This patch generalises the test for exclusion and updates PMU drivers to
-> > use it. This is a functional change as some PMU drivers will now correctly
-> > report that they don't support certain events whereas they previously did.
-> 
-> Right, I like that idea, and yes, there's a lot of fail around there :/
-> 
-> > A longer term approach may instead be for PMU's to advertise their
-> > capabilities on registration.
-> 
-> This I think is the better approach. We already have the
-> PERF_PMU_CAP_flags that can be used to advertise various PMU
-> capabilities.
+Hi Lubomir,
 
-OK I'll respin my series to take this approach.
-
+On Tue, Nov 20, 2018 at 11:03:08AM +0100, Lubomir Rintel wrote:
+> The commit 71862f63f351 ("media: ov7670: Add the ov7670_s_power function")
+> added a power control routing. However, it was not good enough to use as
+> a s_power() callback: it merely flipped on the power GPIOs without
+> restoring the register settings.
 > 
-> Something along these lines I suppose; then every PMU that actually
-> checks the flags, needs to set the flag, otherwise it'll fail.
+> Fix this now and register an actual power callback.
 > 
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index 53c500f0ca79..de15723ea52a 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -244,6 +244,7 @@ struct perf_event;
->  #define PERF_PMU_CAP_EXCLUSIVE			0x10
->  #define PERF_PMU_CAP_ITRACE			0x20
->  #define PERF_PMU_CAP_HETEROGENEOUS_CPUS		0x40
-> +#define PERF_PMU_CAP_EXCLUDE			0x80
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> 
+> ---
+> Changes since v2:
+> - Restore the controls, format and frame rate on power on
+> 
+>  drivers/media/i2c/ov7670.c | 50 +++++++++++++++++++++++++++++++++-----
+>  1 file changed, 44 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
+> index ead0c360df33..cbaab60aaaac 100644
+> --- a/drivers/media/i2c/ov7670.c
+> +++ b/drivers/media/i2c/ov7670.c
+> @@ -242,6 +242,7 @@ struct ov7670_info {
+>  	struct ov7670_format_struct *fmt;  /* Current format */
+>  	struct ov7670_win_size *wsize;
+>  	struct clk *clk;
+> +	int on;
+>  	struct gpio_desc *resetb_gpio;
+>  	struct gpio_desc *pwdn_gpio;
+>  	unsigned int mbus_config;	/* Media bus configuration flags */
+> @@ -1615,19 +1616,54 @@ static int ov7670_s_register(struct v4l2_subdev *sd, const struct v4l2_dbg_regis
+>  }
+>  #endif
 >  
->  /**
->   * struct pmu - generic performance monitoring unit
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 84530ab358c3..d76b724177b9 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -9772,6 +9772,14 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
->  	if (ctx)
->  		perf_event_ctx_unlock(event->group_leader, ctx);
+> -static int ov7670_s_power(struct v4l2_subdev *sd, int on)
+> +static void ov7670_power_on(struct v4l2_subdev *sd)
+>  {
+>  	struct ov7670_info *info = to_state(sd);
 >  
-> +	if (!ret) {
-> +		if ((pmu->capabilities & PERF_PMU_CAP_EXCLUDE) ||
-> +		    event_has_exclude_flags(event)) {
-> +			event->destroy(event);
-> +			ret = -EINVAL;
-> +		}
+> +	if (info->on)
+> +		return;
+> +
+>  	if (info->pwdn_gpio)
+> -		gpiod_set_value(info->pwdn_gpio, !on);
+> -	if (on && info->resetb_gpio) {
+> +		gpiod_set_value(info->pwdn_gpio, 0);
+> +	if (info->resetb_gpio) {
+>  		gpiod_set_value(info->resetb_gpio, 1);
+>  		usleep_range(500, 1000);
+>  		gpiod_set_value(info->resetb_gpio, 0);
+>  		usleep_range(3000, 5000);
+>  	}
+>  
+> +	info->on = true;
+> +}
+> +
+> +static void ov7670_power_off(struct v4l2_subdev *sd)
+> +{
+> +	struct ov7670_info *info = to_state(sd);
+> +
+> +	if (!info->on)
+> +		return;
+> +
+> +	if (info->pwdn_gpio)
+> +		gpiod_set_value(info->pwdn_gpio, 1);
+> +
+> +	info->on = false;
+> +}
+> +
+> +static int ov7670_s_power(struct v4l2_subdev *sd, int on)
+> +{
+> +	struct ov7670_info *info = to_state(sd);
+> +
+> +	if (info->on == on)
+> +		return 0;
+> +
+> +	if (on) {
+> +		ov7670_power_on (sd);
+> +		ov7670_apply_fmt(sd);
+> +		ov7675_apply_framerate(sd);
+> +		v4l2_ctrl_handler_setup(&info->hdl);
+> +	} else {
+> +		ov7670_power_off (sd);
 > +	}
 > +
-
-I don't quite follow this logic. Should that not have been:
-
-if (!(pmu->capabilities & PERF_PMU_CAP_EXCLUDE) &&
-     event_has_exclude_flags(event)) {
-
-Meaning that if an event has any exclude flags but the pmu doesn't
-have the capability to handle them then error.
-
-If you're happy with my proposed logic, then would it also make
-sense to move this before the call to the pmu->event_init ?
-
-Thanks,
-
-Andrew Murray
-
->  	if (ret)
->  		module_put(pmu->module);
+>  	return 0;
+>  }
 >  
-> 
+> @@ -1660,6 +1696,7 @@ static int ov7670_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
+>  static const struct v4l2_subdev_core_ops ov7670_core_ops = {
+>  	.reset = ov7670_reset,
+>  	.init = ov7670_init,
+> +	.s_power = ov7670_s_power,
+>  #ifdef CONFIG_VIDEO_ADV_DEBUG
+>  	.g_register = ov7670_g_register,
+>  	.s_register = ov7670_s_register,
+> @@ -1825,6 +1862,7 @@ static int ov7670_probe(struct i2c_client *client,
+>  		else
+>  			return ret;
+>  	}
+> +
+>  	if (info->clk) {
+>  		ret = clk_prepare_enable(info->clk);
+>  		if (ret)
+> @@ -1841,7 +1879,7 @@ static int ov7670_probe(struct i2c_client *client,
+>  	if (ret)
+>  		goto clk_disable;
+>  
+> -	ov7670_s_power(sd, 1);
+> +	ov7670_power_on(sd);
+>  
+>  	/* Make sure it's an ov7670 */
+>  	ret = ov7670_detect(sd);
+> @@ -1929,7 +1967,7 @@ static int ov7670_probe(struct i2c_client *client,
+>  hdl_free:
+>  	v4l2_ctrl_handler_free(&info->hdl);
+>  power_off:
+> -	ov7670_s_power(sd, 0);
+> +	ov7670_power_off(sd);
+>  clk_disable:
+>  	clk_disable_unprepare(info->clk);
+>  	return ret;
+> @@ -1945,7 +1983,7 @@ static int ov7670_remove(struct i2c_client *client)
+>  	v4l2_ctrl_handler_free(&info->hdl);
+>  	clk_disable_unprepare(info->clk);
+>  	media_entity_cleanup(&info->sd.entity);
+> -	ov7670_s_power(sd, 0);
+> +	ov7670_power_off(sd);
+>  	return 0;
+>  }
+>  
+
+Could you consider instead switching to runtime PM? A few drivers such as
+the ov2685 driver does that already.
+
+-- 
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
