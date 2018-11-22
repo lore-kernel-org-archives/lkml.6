@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D03C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6011AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B9C620672
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:55:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17E7420866
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:55:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LvGvBgG8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B9C620672
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zr7xiGDl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E7420866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407043AbeKWGgF (ORCPT
+        id S2407057AbeKWGgH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 01:36:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35008 "EHLO mail.kernel.org"
+        Fri, 23 Nov 2018 01:36:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733189AbeKWGgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 01:36:04 -0500
+        id S1733189AbeKWGgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 01:36:07 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD18A20672;
-        Thu, 22 Nov 2018 19:55:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BBED20864;
+        Thu, 22 Nov 2018 19:55:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542916512;
-        bh=9qd1Ftiv9e8SPIBQg6VCgYe4qsENaZtytXLajQXqohc=;
+        s=default; t=1542916514;
+        bh=au5fx61beQbA5Hm8RawIWe8NEBGCph35MQbJKO//hFw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LvGvBgG85p64P3y515BEmWkIjRD10PBK37FaT7B20BDBafYMt7lyIrZPcZCRDEpcN
-         8PPKjzF1AgiwXXx5HxTCwMa4jfgfXD070MrfeuXu8shvZVA5ROxY/zeMo+lkgxQrGt
-         0SQuNNxTU9DGfmXyrorQ8MGS4istfIZOdOcfdhVI=
+        b=zr7xiGDljYIbiaJcMmIvw8nI5cEs0UQC9sbn1HsETaelteyEJ4JK6xMuygW5CcXp4
+         HyexuD69yLw3nnHhIU/Ts4mh7+zEQ3pQEOH0b7q3Sby2uT0bi+JjS4plpUcRZgvOdp
+         SAiJK14ENiXxbGPOc03WlAI6W+z3+Ppp0Aw5Ucvk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 06/21] crypto: simd - correctly take reqsize of wrapped skcipher into account
-Date:   Thu, 22 Nov 2018 14:54:37 -0500
-Message-Id: <20181122195452.13520-6-sashal@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 07/21] floppy: fix race condition in __floppy_read_block_0()
+Date:   Thu, 22 Nov 2018 14:54:38 -0500
+Message-Id: <20181122195452.13520-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181122195452.13520-1-sashal@kernel.org>
 References: <20181122195452.13520-1-sashal@kernel.org>
@@ -52,42 +52,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit 508a1c4df085a547187eed346f1bfe5e381797f1 ]
+[ Upstream commit de7b75d82f70c5469675b99ad632983c50b6f7e7 ]
 
-The simd wrapper's skcipher request context structure consists
-of a single subrequest whose size is taken from the subordinate
-skcipher. However, in simd_skcipher_init(), the reqsize that is
-retrieved is not from the subordinate skcipher but from the
-cryptd request structure, whose size is completely unrelated to
-the actual wrapped skcipher.
+LKP recently reported a hang at bootup in the floppy code:
 
-Reported-by: Qian Cai <cai@gmx.us>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Tested-by: Qian Cai <cai@gmx.us>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+[  245.678853] INFO: task mount:580 blocked for more than 120 seconds.
+[  245.679906]       Tainted: G                T 4.19.0-rc6-00172-ga9f38e1 #1
+[  245.680959] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  245.682181] mount           D 6372   580      1 0x00000004
+[  245.683023] Call Trace:
+[  245.683425]  __schedule+0x2df/0x570
+[  245.683975]  schedule+0x2d/0x80
+[  245.684476]  schedule_timeout+0x19d/0x330
+[  245.685090]  ? wait_for_common+0xa5/0x170
+[  245.685735]  wait_for_common+0xac/0x170
+[  245.686339]  ? do_sched_yield+0x90/0x90
+[  245.686935]  wait_for_completion+0x12/0x20
+[  245.687571]  __floppy_read_block_0+0xfb/0x150
+[  245.688244]  ? floppy_resume+0x40/0x40
+[  245.688844]  floppy_revalidate+0x20f/0x240
+[  245.689486]  check_disk_change+0x43/0x60
+[  245.690087]  floppy_open+0x1ea/0x360
+[  245.690653]  __blkdev_get+0xb4/0x4d0
+[  245.691212]  ? blkdev_get+0x1db/0x370
+[  245.691777]  blkdev_get+0x1f3/0x370
+[  245.692351]  ? path_put+0x15/0x20
+[  245.692871]  ? lookup_bdev+0x4b/0x90
+[  245.693539]  blkdev_get_by_path+0x3d/0x80
+[  245.694165]  mount_bdev+0x2a/0x190
+[  245.694695]  squashfs_mount+0x10/0x20
+[  245.695271]  ? squashfs_alloc_inode+0x30/0x30
+[  245.695960]  mount_fs+0xf/0x90
+[  245.696451]  vfs_kern_mount+0x43/0x130
+[  245.697036]  do_mount+0x187/0xc40
+[  245.697563]  ? memdup_user+0x28/0x50
+[  245.698124]  ksys_mount+0x60/0xc0
+[  245.698639]  sys_mount+0x19/0x20
+[  245.699167]  do_int80_syscall_32+0x61/0x130
+[  245.699813]  entry_INT80_32+0xc7/0xc7
+
+showing that we never complete that read request. The reason is that
+the completion setup is racy - it initializes the completion event
+AFTER submitting the IO, which means that the IO could complete
+before/during the init. If it does, we are passing garbage to
+complete() and we may sleep forever waiting for the event to
+occur.
+
+Fixes: 7b7b68bba5ef ("floppy: bail out in open() if drive is not responding to block0 read")
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/simd.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/block/floppy.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/crypto/simd.c b/crypto/simd.c
-index 88203370a62f..894c62944106 100644
---- a/crypto/simd.c
-+++ b/crypto/simd.c
-@@ -126,8 +126,9 @@ static int simd_skcipher_init(struct crypto_skcipher *tfm)
+diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
+index 3d0287e212fe..a7f212ea17bf 100644
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -4146,10 +4146,11 @@ static int __floppy_read_block_0(struct block_device *bdev, int drive)
+ 	bio.bi_end_io = floppy_rb0_cb;
+ 	bio_set_op_attrs(&bio, REQ_OP_READ, 0);
  
- 	ctx->cryptd_tfm = cryptd_tfm;
++	init_completion(&cbdata.complete);
++
+ 	submit_bio(&bio);
+ 	process_fd_request();
  
--	reqsize = sizeof(struct skcipher_request);
--	reqsize += crypto_skcipher_reqsize(&cryptd_tfm->base);
-+	reqsize = crypto_skcipher_reqsize(cryptd_skcipher_child(cryptd_tfm));
-+	reqsize = max(reqsize, crypto_skcipher_reqsize(&cryptd_tfm->base));
-+	reqsize += sizeof(struct skcipher_request);
+-	init_completion(&cbdata.complete);
+ 	wait_for_completion(&cbdata.complete);
  
- 	crypto_skcipher_set_reqsize(tfm, reqsize);
- 
+ 	__free_page(page);
 -- 
 2.17.1
 
