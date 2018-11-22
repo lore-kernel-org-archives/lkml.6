@@ -2,91 +2,91 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7369DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD01EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3650D2081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:26:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D3272081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:31:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lgc03b/+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3650D2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uXhWTROb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D3272081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395537AbeKWBGT (ORCPT
+        id S2395544AbeKWBKg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 20:06:19 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39919 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388795AbeKWBGT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 20:06:19 -0500
-Received: by mail-wm1-f66.google.com with SMTP id u13-v6so9329202wmc.4
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 06:26:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Tldtn2RJ0zk4GMwH1e+zkp94u0Tc4YdrU+VsSXeOlX0=;
-        b=Lgc03b/+627DpgtouN7mvnpK9lxuv21k38RP4NQmdqKNtfS9Fr1y5dMvxmAUEeXDdt
-         je56jZ+y5A5k+sEntJ/Da3ll+f4YzyKYw5o5btDFlLz8FnRND1IfmC9DoO2bYHSQH4O+
-         060RgSGdijz6d8sktaHlCxy2FE8VkhziBITws=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Tldtn2RJ0zk4GMwH1e+zkp94u0Tc4YdrU+VsSXeOlX0=;
-        b=VlduUGTpqVF3RJk0iPuH1g06FFf0qVCHMK4Fi/Qpb+ZmzZ4H/oLSra8+T47BFwwlaC
-         PRjs7AhOrxpnoajfnS/yl+3jztcQZND5mZraPysL8pH/mvUaulPDdkKcFtybmazNkwaU
-         lMC0JPOL16XJQbgV8IRPrNom9sm0Sn87vfnjk4Pfl3f7Z2AuZAgb8sP8bL8pRlFGHVkH
-         uW+/Y+H+xpufd9YJI6GfYn+CrFa0azFWuBACOeg4LxvtLzW/b3Bd0KZQxeI/ya8fIC3d
-         KnQu69nlucsBHkI+wQwSoKb6Gpp0OuPBVlEGA9rcyOwyzzlpoDJVwdr+N6cukLgAnJuF
-         VD5w==
-X-Gm-Message-State: AGRZ1gI7b+cHHDxrtQtqP4ZBxtC1krAB3cm6VRd6l2D7gtNwKl9UARO6
-        IMuDgzb6vzVCdeR8Pqrm+DjuBeX4ztU=
-X-Google-Smtp-Source: AFSGD/XRwUywCijkQWNGdyGvI2wAyXDvC+pDfGhdRi35h0cHXdCvSYQvkiYy0lGIWunmJohA4+JimA==
-X-Received: by 2002:a1c:8acf:: with SMTP id m198mr9699412wmd.15.1542896801806;
-        Thu, 22 Nov 2018 06:26:41 -0800 (PST)
-Received: from [192.168.0.40] (44.65.136.77.rev.sfr.net. [77.136.65.44])
-        by smtp.googlemail.com with ESMTPSA id 125-v6sm4994492wmm.25.2018.11.22.06.26.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 06:26:41 -0800 (PST)
-Subject: Re: [PATCH] clocksource/drivers/integrator-ap: add of_node_put()
-To:     Yangtao Li <tiny.windzz@gmail.com>, tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org
-References: <20181120131853.19710-1-tiny.windzz@gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <5ea4da1e-65de-ddc3-5ca6-eb83c2347930@linaro.org>
-Date:   Thu, 22 Nov 2018 15:26:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 22 Nov 2018 20:10:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41816 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388795AbeKWBKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 20:10:36 -0500
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2673B2081C
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 14:30:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542897059;
+        bh=WrGUn0fxfSQ2mN56S7rSgwTWITWbwB/PeweoQG01Z70=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=uXhWTRObUDwx49Zi3HygeWtOQE+PoVALiB/n/6dRMwTgT5XvFD4/OpTVhUr/onogd
+         YwarLDe4RL4TG5fS84hEN/ag3t6093tEVIfBxmg2YR+jHC+7Dv5xdvNPpF+XOW+ziL
+         gKhQJ0cZzIHvZO2kCj+9EXWLbcFtl7FIWF7ky25w=
+Received: by mail-wr1-f45.google.com with SMTP id v13so6000109wrw.5
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 06:30:59 -0800 (PST)
+X-Gm-Message-State: AA+aEWbax8nA3z6K+eOuFSLZMVv8WqTO3r8FKkjtXwWkbb7E0umGnl1m
+        ZDtTOmXBU3YLcYflAk1DaOLd3V5YwnM3r3WE+vV84Q==
+X-Google-Smtp-Source: AFSGD/VKgjMBj9ndZrjnWValdGZR7+wLFSGhE0Q9lvknNaA1W20pj7k0sJzKh+hsrcJV9PUqCaz/DdGIjiJQ3ckRuXE=
+X-Received: by 2002:adf:ea81:: with SMTP id s1mr9769861wrm.309.1542897057685;
+ Thu, 22 Nov 2018 06:30:57 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181120131853.19710-1-tiny.windzz@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <tip-a2aa52ab16efbee40ad118ebac4a5e438f5b43ee@git.kernel.org>
+In-Reply-To: <tip-a2aa52ab16efbee40ad118ebac4a5e438f5b43ee@git.kernel.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 22 Nov 2018 06:30:45 -0800
+X-Gmail-Original-Message-ID: <CALCETrUY9vp21JJGwErvHwrQAfc1nL4iyJZJb2GvnS1pe8H1MQ@mail.gmail.com>
+Message-ID: <CALCETrUY9vp21JJGwErvHwrQAfc1nL4iyJZJb2GvnS1pe8H1MQ@mail.gmail.com>
+Subject: Re: [tip:x86/mm] x86/fault: Clean up the page fault oops decoder a bit
+To:     Rik van Riel <riel@surriel.com>, Borislav Petkov <bp@alien8.de>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     linux-tip-commits@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/11/2018 14:18, Yangtao Li wrote:
-> use of_node_put() to release the refcount.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+On Thu, Nov 22, 2018 at 2:13 AM tip-bot for Ingo Molnar
+<tipbot@zytor.com> wrote:
+>
+> Commit-ID:  a2aa52ab16efbee40ad118ebac4a5e438f5b43ee
+> Gitweb:     https://git.kernel.org/tip/a2aa52ab16efbee40ad118ebac4a5e438f5b43ee
+> Author:     Ingo Molnar <mingo@kernel.org>
+> AuthorDate: Thu, 22 Nov 2018 09:34:03 +0100
+> Committer:  Ingo Molnar <mingo@kernel.org>
+> CommitDate: Thu, 22 Nov 2018 09:38:13 +0100
+>
+> x86/fault: Clean up the page fault oops decoder a bit
 
-Applied, thanks!
+Thanks!
 
+>
+>  - Make the oops messages a bit less scary (don't mention 'HW errors')
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+I thought the goal was to divert bug reports to the hardware vendors.
+"My Linux laptop crashed.  It said that hardware was WRITE PROT.  Fix
+it!!!!!!!1111!"  :)
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+--Andy
