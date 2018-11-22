@@ -7,81 +7,175 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9ADDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB44C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BFC020870
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38B9B20878
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="19YzL01c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BFC020870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZeApIplC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38B9B20878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407345AbeKWGi3 (ORCPT
+        id S2407358AbeKWGig (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 01:38:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36970 "EHLO mail.kernel.org"
+        Fri, 23 Nov 2018 01:38:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732978AbeKWGi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 01:38:28 -0500
+        id S1732978AbeKWGif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 01:38:35 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCF3E20818;
-        Thu, 22 Nov 2018 19:57:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE6B720818;
+        Thu, 22 Nov 2018 19:57:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542916655;
-        bh=bGMkQJGSTc8DSj3KudXce/lH6be35Xf0rSftWjr+IYY=;
+        s=default; t=1542916662;
+        bh=F1TsrZSVBUkmqM2/3UGu4d470xLlJAxIJuyUOSZbSok=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=19YzL01cY8I4zuMgBeaLBck0y+sGkUxAFmtN43+jWXBMXN4lYEvVGxyLuo9Q/GN3e
-         mADGZKeEApDa9UqIxdP7osqAtitkfip4CrH+VGL5TW43+Pk7rQ86WPwycJop4No8mc
-         Kokm0RlbQn9HoTOIL3mU8pekQGA5afT9t438mQjo=
+        b=ZeApIplCyMI15/Zj3phn/NNUW9YD7l9yfi1lxBEoPHCUo/5itZ6SR2x6KOlzQO6O2
+         YO/6xROHemRYgIv7ASUvfj12os5vrtpwH1jaVm1668PfXbZI1MlTMpcajRMn2tGMp8
+         X8KiiT6kw69KPxI+giGjKYWh1SwMAIPANYMpCT5w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 5/8] SUNRPC: Fix a bogus get/put in generic_key_to_expire()
-Date:   Thu, 22 Nov 2018 14:57:12 -0500
-Message-Id: <20181122195716.13961-5-sashal@kernel.org>
+Cc:     Prarit Bhargava <prarit@redhat.com>,
+        Jonathan Toppins <jtoppins@redhat.com>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        kgdb-bugreport@lists.sourceforge.net,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 6/8] kdb: Use strscpy with destination buffer size
+Date:   Thu, 22 Nov 2018 14:57:13 -0500
+Message-Id: <20181122195716.13961-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181122195716.13961-1-sashal@kernel.org>
 References: <20181122195716.13961-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Prarit Bhargava <prarit@redhat.com>
 
-[ Upstream commit e3d5e573a54dabdc0f9f3cb039d799323372b251 ]
+[ Upstream commit c2b94c72d93d0929f48157eef128c4f9d2e603ce ]
 
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+gcc 8.1.0 warns with:
+
+kernel/debug/kdb/kdb_support.c: In function ‘kallsyms_symbol_next’:
+kernel/debug/kdb/kdb_support.c:239:4: warning: ‘strncpy’ specified bound depends on the length of the source argument [-Wstringop-overflow=]
+     strncpy(prefix_name, name, strlen(name)+1);
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+kernel/debug/kdb/kdb_support.c:239:31: note: length computed here
+
+Use strscpy() with the destination buffer size, and use ellipses when
+displaying truncated symbols.
+
+v2: Use strscpy()
+
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Cc: Jonathan Toppins <jtoppins@redhat.com>
+Cc: Jason Wessel <jason.wessel@windriver.com>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: kgdb-bugreport@lists.sourceforge.net
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sunrpc/auth_generic.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ kernel/debug/kdb/kdb_io.c      | 15 +++++++++------
+ kernel/debug/kdb/kdb_private.h |  2 +-
+ kernel/debug/kdb/kdb_support.c | 10 +++++-----
+ 3 files changed, 15 insertions(+), 12 deletions(-)
 
-diff --git a/net/sunrpc/auth_generic.c b/net/sunrpc/auth_generic.c
-index 41248b1820c7..cc27e38392ea 100644
---- a/net/sunrpc/auth_generic.c
-+++ b/net/sunrpc/auth_generic.c
-@@ -272,13 +272,7 @@ static bool generic_key_to_expire(struct rpc_cred *cred)
- {
- 	struct auth_cred *acred = &container_of(cred, struct generic_cred,
- 						gc_base)->acred;
--	bool ret;
--
--	get_rpccred(cred);
--	ret = test_bit(RPC_CRED_KEY_EXPIRE_SOON, &acred->ac_flags);
--	put_rpccred(cred);
--
--	return ret;
-+	return test_bit(RPC_CRED_KEY_EXPIRE_SOON, &acred->ac_flags);
- }
+diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
+index 77777d918676..cc892a9e109d 100644
+--- a/kernel/debug/kdb/kdb_io.c
++++ b/kernel/debug/kdb/kdb_io.c
+@@ -215,7 +215,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
+ 	int count;
+ 	int i;
+ 	int diag, dtab_count;
+-	int key;
++	int key, buf_size, ret;
  
- static const struct rpc_credops generic_credops = {
+ 
+ 	diag = kdbgetintenv("DTABCOUNT", &dtab_count);
+@@ -335,9 +335,8 @@ static char *kdb_read(char *buffer, size_t bufsize)
+ 		else
+ 			p_tmp = tmpbuffer;
+ 		len = strlen(p_tmp);
+-		count = kallsyms_symbol_complete(p_tmp,
+-						 sizeof(tmpbuffer) -
+-						 (p_tmp - tmpbuffer));
++		buf_size = sizeof(tmpbuffer) - (p_tmp - tmpbuffer);
++		count = kallsyms_symbol_complete(p_tmp, buf_size);
+ 		if (tab == 2 && count > 0) {
+ 			kdb_printf("\n%d symbols are found.", count);
+ 			if (count > dtab_count) {
+@@ -349,9 +348,13 @@ static char *kdb_read(char *buffer, size_t bufsize)
+ 			}
+ 			kdb_printf("\n");
+ 			for (i = 0; i < count; i++) {
+-				if (WARN_ON(!kallsyms_symbol_next(p_tmp, i)))
++				ret = kallsyms_symbol_next(p_tmp, i, buf_size);
++				if (WARN_ON(!ret))
+ 					break;
+-				kdb_printf("%s ", p_tmp);
++				if (ret != -E2BIG)
++					kdb_printf("%s ", p_tmp);
++				else
++					kdb_printf("%s... ", p_tmp);
+ 				*(p_tmp + len) = '\0';
+ 			}
+ 			if (i >= dtab_count)
+diff --git a/kernel/debug/kdb/kdb_private.h b/kernel/debug/kdb/kdb_private.h
+index 75014d7f4568..533e04e75a9c 100644
+--- a/kernel/debug/kdb/kdb_private.h
++++ b/kernel/debug/kdb/kdb_private.h
+@@ -83,7 +83,7 @@ typedef struct __ksymtab {
+ 		unsigned long sym_start;
+ 		unsigned long sym_end;
+ 		} kdb_symtab_t;
+-extern int kallsyms_symbol_next(char *prefix_name, int flag);
++extern int kallsyms_symbol_next(char *prefix_name, int flag, int buf_size);
+ extern int kallsyms_symbol_complete(char *prefix_name, int max_len);
+ 
+ /* Exported Symbols for kernel loadable modules to use. */
+diff --git a/kernel/debug/kdb/kdb_support.c b/kernel/debug/kdb/kdb_support.c
+index d35cc2d3a4cc..2aed4a33521b 100644
+--- a/kernel/debug/kdb/kdb_support.c
++++ b/kernel/debug/kdb/kdb_support.c
+@@ -221,11 +221,13 @@ int kallsyms_symbol_complete(char *prefix_name, int max_len)
+  * Parameters:
+  *	prefix_name	prefix of a symbol name to lookup
+  *	flag	0 means search from the head, 1 means continue search.
++ *	buf_size	maximum length that can be written to prefix_name
++ *			buffer
+  * Returns:
+  *	1 if a symbol matches the given prefix.
+  *	0 if no string found
+  */
+-int kallsyms_symbol_next(char *prefix_name, int flag)
++int kallsyms_symbol_next(char *prefix_name, int flag, int buf_size)
+ {
+ 	int prefix_len = strlen(prefix_name);
+ 	static loff_t pos;
+@@ -235,10 +237,8 @@ int kallsyms_symbol_next(char *prefix_name, int flag)
+ 		pos = 0;
+ 
+ 	while ((name = kdb_walk_kallsyms(&pos))) {
+-		if (strncmp(name, prefix_name, prefix_len) == 0) {
+-			strncpy(prefix_name, name, strlen(name)+1);
+-			return 1;
+-		}
++		if (!strncmp(name, prefix_name, prefix_len))
++			return strscpy(prefix_name, name, buf_size);
+ 	}
+ 	return 0;
+ }
 -- 
 2.17.1
 
