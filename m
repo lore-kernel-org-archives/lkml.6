@@ -2,139 +2,90 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E46C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D58AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95A0C2081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:16:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AC92206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:20:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jLUufkg0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A0C2081C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XfQaXUqE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AC92206B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389235AbeKWAz5 (ORCPT
+        id S2395452AbeKWA7d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:55:57 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36542 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389042AbeKWAz5 (ORCPT
+        Thu, 22 Nov 2018 19:59:33 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37335 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389042AbeKWA7c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:55:57 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t3so9428750wrr.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 06:16:23 -0800 (PST)
+        Thu, 22 Nov 2018 19:59:32 -0500
+Received: by mail-lj1-f194.google.com with SMTP id e5-v6so8118016lja.4
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 06:19:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JsRedvYYJzklUvBCfuxegwXJCVCC9ujxfs6i8Z41kB8=;
-        b=jLUufkg0cxxtzRKEAO5gZNJ0/S0oFGU1Ryqcu12gM9nFDHHX4pEJ4pyPXccA8gLzHt
-         ekYOKOYvC1u2PAjJhAb+1Opeolto+73SUs0Fy+wpewXN9FTNW50bMblSdwu6iNBi2S8l
-         +zJaNC+iVKLF3K4h2JLtQO2znS9X79BsczSHU=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Fdfbxp8ZYXz9BLwKPvPsi+OXUy6+lXMgduIhtbUdGlE=;
+        b=XfQaXUqEi32qYQ+xF/zMsF4T3bDJO3Zz7JACxg0DNLeWEVjIieCpJpG7T2SCDq42W+
+         8b4RFacDX/bXR3haIQ+J+RdcR0tNNsFLAni+301KV4PJS+nGVcCP2Yzb1VA+9+H1SVzs
+         m5LDVtqRa7UrasyQ/fMVqcAXdzBbAGetuhVy8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JsRedvYYJzklUvBCfuxegwXJCVCC9ujxfs6i8Z41kB8=;
-        b=TPR8P5t7sW5MirlI7ufsRB4OGq7R7alviknGkSpDTH/MCAjh7ba2dXA7Fk7HDT8TKG
-         lUCggoGnWcrtSZKI7wQXhUW6dvFvUJlxNzL6ifVUQuZBu+JJOx+lvKLIkOgzW0jmgAt8
-         6elLkLQEpEHNhfkP/NJYQOX6uCGu8gEs+qPhjYCdBOb69SDIiL2eTn66PJOgpnNnr56v
-         PACXqyzTW9TzqOx3g7Oz+Mq2nTBbt0I/PNXZp9bAR9jwSAJ333l+S3D7SeP+qeKg1UVy
-         wL8pg04urNYrtqXS5cFE5jU304TWQFKGHRG8CcbGzQOuAIJAXqFNUrPfsUXO/ZFU6WwJ
-         PzqQ==
-X-Gm-Message-State: AA+aEWbpYHouBHG5C1tTwHos1VgTQm6m5FWakGa8m0nRA0nUovsF5wH1
-        bldaU/1RoSA/fva4UqYY0I+dyw==
-X-Google-Smtp-Source: AFSGD/XDrXsoVu68fDZ2H7XzT2Y7L7RM/G7dh7fZbJFP5jGw3DfD9a3731gtAJ4RI+y/K1heVtM84A==
-X-Received: by 2002:adf:e488:: with SMTP id i8mr10318376wrm.10.1542896182756;
-        Thu, 22 Nov 2018 06:16:22 -0800 (PST)
-Received: from [192.168.0.40] (44.65.136.77.rev.sfr.net. [77.136.65.44])
-        by smtp.googlemail.com with ESMTPSA id t131sm2554427wmt.1.2018.11.22.06.16.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 06:16:22 -0800 (PST)
-Subject: Re: [PATCH] clocksource/drivers/integrator-ap: add of_node_put()
-To:     Yangtao Li <tiny.windzz@gmail.com>, tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-References: <20181120131853.19710-1-tiny.windzz@gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <55576bf9-4514-a4df-d632-07af6e170fdf@linaro.org>
-Date:   Thu, 22 Nov 2018 15:16:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Fdfbxp8ZYXz9BLwKPvPsi+OXUy6+lXMgduIhtbUdGlE=;
+        b=faLWYxgrbiSGI21BRhyCpAlRMDkFbzsZuaiVdF07Rj6TkdvhaphXWbT8w8mmP4ssqy
+         rMgZBrtlSffCHmVS8HqwxXI4KtcZT1QWzKQ8MMB+jCn/SmVGQxoWU1Bf3Hyajf0UiZgO
+         LtwQL6cn/KMi4jDEDLvXFpIMSZdLCdDaThpWlwIqBFr3u/0ICiRBOGKPuVE9OHCN+rIz
+         DtjP+l155KlRDefOlWFThBy4jUJwNiIEqj06knk7HOjFF0631U8jmRujMFSy0fVpqRjj
+         mYnUwPqdInuTd2VEF+KTKgWxvbPsG5MLSit57Z8AzsKL+blFbvwimzh15KNbdNE6XgX4
+         80eA==
+X-Gm-Message-State: AA+aEWZH2g/f5zWz8wkeGa25miLipSsrTsIjqCZROH/YIeoKz/cCoajM
+        CwvjmNzBYRT6FcHV8E35dXKMxVOgzVXlcs9701oeZA==
+X-Google-Smtp-Source: AJdET5dUdiQidEqDpCl0U9cJgKYQp8GXw6P/Mv3SQQXKETSnhprGa0ernBSS7+AMKdTPAE1A2pbKs/oKUSTHtnMRp5M=
+X-Received: by 2002:a2e:7403:: with SMTP id p3-v6mr7094975ljc.97.1542896397192;
+ Thu, 22 Nov 2018 06:19:57 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181120131853.19710-1-tiny.windzz@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20181121101316.32194-1-ckeepax@opensource.cirrus.com>
+In-Reply-To: <20181121101316.32194-1-ckeepax@opensource.cirrus.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 22 Nov 2018 15:19:45 +0100
+Message-ID: <CACRpkdb3HSQ_h1+9RvBUEDRDSCih7bv7kcf+=cc3-c0Hn6A0bg@mail.gmail.com>
+Subject: Re: [PATCH v2] regulator: wm8994: Don't use devres for enable GPIOs
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Nov 21, 2018 at 11:13 AM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
 
-Hi Yangtao,
+> The regulator core takes over managing the lifetime of the enable GPIO
+> once the regulator is registered. As such we shouldn't register the
+> enable GPIO using devm, or it will be freed twice.
+>
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-On 20/11/2018 14:18, Yangtao Li wrote:
-> use of_node_put() to release the refcount.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-In future please give a better description.
+Thanks for fixing everything I break, I owe you big time Charles!
 
-No need to resend, I'll do the change.
+Now as Marek points out, I need to discern the pattern in this so
+I can see if I broke something else the same way.
 
-Linus? I'm about to take this patch. Is it fine for you?
-
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/clocksource/timer-integrator-ap.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clocksource/timer-integrator-ap.c b/drivers/clocksource/timer-integrator-ap.c
-> index 76e526f58620..50e0a9166f66 100644
-> --- a/drivers/clocksource/timer-integrator-ap.c
-> +++ b/drivers/clocksource/timer-integrator-ap.c
-> @@ -204,8 +204,6 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
->  		return err;
->  	}
->  
-> -	pri_node = of_find_node_by_path(path);
-> -
->  	err = of_property_read_string(of_aliases,
->  				"arm,timer-secondary", &path);
->  	if (err) {
-> @@ -213,14 +211,18 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
->  		return err;
->  	}
->  
-> +	pri_node = of_find_node_by_path(path);
-> +	if (node == pri_node){
-> +		of_node_put(pri_node);
->  
-> -	sec_node = of_find_node_by_path(path);
-> -
-> -	if (node == pri_node)
->  		/* The primary timer lacks IRQ, use as clocksource */
->  		return integrator_clocksource_init(rate, base);
-> +	}
->  
-> +	sec_node = of_find_node_by_path(path);
->  	if (node == sec_node) {
-> +		of_node_put(sec_node);
-> +
->  		/* The secondary timer will drive the clock event */
->  		irq = irq_of_parse_and_map(node, 0);
->  		return integrator_clockevent_init(rate, base, irq);
-> 
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Yours,
+Linus Walleij
