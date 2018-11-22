@@ -2,125 +2,127 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92801C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 00:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FDEC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 00:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 581FF206BA
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 00:35:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 581FF206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 71CF9206BA
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 00:36:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i5YIYZTI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71CF9206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391099AbeKVLME (ORCPT
+        id S2391104AbeKVLNf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 06:12:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47472 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729105AbeKVLKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 06:10:18 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FA4B206BA;
-        Thu, 22 Nov 2018 00:33:32 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.91)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1gPcvz-0004PO-Ix; Wed, 21 Nov 2018 19:33:31 -0500
-Message-Id: <20181122003331.479176746@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Wed, 21 Nov 2018 19:28:02 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
+        Thu, 22 Nov 2018 06:13:35 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42280 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732226AbeKVLNf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 06:13:35 -0500
+Received: by mail-pl1-f193.google.com with SMTP id x21-v6so7788368pln.9
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 16:36:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=ADKGYDHn6fLUM+W3Um9nZZcc/gDZN2CQmr/xArmZh2A=;
+        b=i5YIYZTIybnReyjAaRthrVbSgSDEkAz5q/AzgQf962JVVBRuK1geeeiUU2WdlxkNit
+         jzS5aFG2M6lZW+eVkLB9KTJBnLJoLHE7fnC3gM/gQkCtbyvhaze7gadi9p728P/TSNhr
+         7zo3tkLYdrsfKWiv1ur9IpxVto0eEJtDkPHUJKxnlbiTRTbh1tX0vVlBgq2i4gK9fGpL
+         TDjlXLem38WBTAs9dToQh5Kz/0mXywUyRocXRSOsxtKHblVDhwXwV8O/bOnkeDqB0rBx
+         e4fvUMdyhLLZ0Pu8G4fPMllvSGS5OLR09Ienjzcg3o9nfJPYO+MRxfAj/adOwCW56G+q
+         BK2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=ADKGYDHn6fLUM+W3Um9nZZcc/gDZN2CQmr/xArmZh2A=;
+        b=Je/ehu4apGgWjRlkwgs9Fy+C4RO5o13kfL5B6tx8LKhT3YLMR84rc1OyzF2p1CIByj
+         6n1RuCarQ7x9q/lTigltEfnkHddoQ2vepwHWanGLAsAKke8Cbai6/uGyYQwIE1ebc21x
+         F6sG+6HydqdJx4NDFd5GKVKa9vrvZatahQmI1VEhgTNYx60tThBKUN2QaW3L/8s61ORl
+         bs3vqi3Zz2brNniOEuUDJVaxYe07lhGy7W97zifwMWmfJ8ObrzR7V5eTkwZKTE0aeaQw
+         oeBGbrK3bzka/Gz4SgMFrsnQyYvzQiuNU/kDC/ZvH4eoziLwE39/H57/y14tOMM3Hna7
+         tcrQ==
+X-Gm-Message-State: AA+aEWZUws+dNG0zHWA1xHPTaG9VGaJHdEJMIR+kyET3qAVRr4r8KKgk
+        g0dMBG6ALhxw4hEBLZLSJzUljA==
+X-Google-Smtp-Source: AFSGD/V9e0MKJF6rdHfhijqLbWstdbcJUq7u7/dbad0DbQk87pCZGwfILilim250xJHwZqktHGvFlA==
+X-Received: by 2002:a17:902:9a91:: with SMTP id w17-v6mr8632479plp.274.1542847007755;
+        Wed, 21 Nov 2018 16:36:47 -0800 (PST)
+Received: from [100.112.89.103] ([104.133.8.103])
+        by smtp.gmail.com with ESMTPSA id t66sm28256192pfd.54.2018.11.21.16.36.46
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 21 Nov 2018 16:36:46 -0800 (PST)
+Date:   Wed, 21 Nov 2018 16:36:37 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Yu Zhao <yuzhao@google.com>
+cc:     Hugh Dickins <hughd@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-arch@vger.kernel.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>, stable@kernel.org
-Subject: [for-next][PATCH 01/18] function_graph: Create function_graph_enter() to consolidate
- architecture code
-References: <20181122002801.501220343@goodmis.org>
+        Matthew Wilcox <willy@infradead.org>, stable@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] mm: use swp_offset as key in shmem_replace_page()
+In-Reply-To: <20181121215442.138545-1-yuzhao@google.com>
+Message-ID: <alpine.LSU.2.11.1811211634040.5557@eggly.anvils>
+References: <20181119010924.177177-1-yuzhao@google.com> <20181121215442.138545-1-yuzhao@google.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On Wed, 21 Nov 2018, Yu Zhao wrote:
 
-Currently all the architectures do basically the same thing in preparing the
-function graph tracer on entry to a function. This code can be pulled into a
-generic location and then this will allow the function graph tracer to be
-fixed, as well as extended.
+> We changed key of swap cache tree from swp_entry_t.val to
+> swp_offset. Need to do so in shmem_replace_page() as well.
+> 
+> Fixes: f6ab1f7f6b2d ("mm, swap: use offset of swap entry as key of swap cache")
+> Cc: stable@vger.kernel.org # v4.9+
+> Signed-off-by: Yu Zhao <yuzhao@google.com>
 
-Create a new function graph helper function_graph_enter() that will call the
-hook function (ftrace_graph_entry) and the shadow stack operation
-(ftrace_push_return_trace), and remove the need of the architecture code to
-manage the shadow stack.
+Acked-by: Hugh Dickins <hughd@google.com>
 
-This is needed to prepare for a fix of a design bug on how the curr_ret_stack
-is used.
+Thanks!
 
-Cc: stable@kernel.org
-Fixes: 03274a3ffb449 ("tracing/fgraph: Adjust fgraph depth before calling trace return callback")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- include/linux/ftrace.h               |  3 +++
- kernel/trace/trace_functions_graph.c | 16 ++++++++++++++++
- 2 files changed, 19 insertions(+)
-
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index a397907e8d72..5717e8f81c59 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -779,6 +779,9 @@ extern void return_to_handler(void);
- extern int
- ftrace_push_return_trace(unsigned long ret, unsigned long func, int *depth,
- 			 unsigned long frame_pointer, unsigned long *retp);
-+extern int
-+function_graph_enter(unsigned long ret, unsigned long func,
-+		     unsigned long frame_pointer, unsigned long *retp);
- 
- unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
- 				    unsigned long ret, unsigned long *retp);
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index 169b3c44ee97..28f2602435d0 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -182,6 +182,22 @@ ftrace_push_return_trace(unsigned long ret, unsigned long func, int *depth,
- 	return 0;
- }
- 
-+int function_graph_enter(unsigned long ret, unsigned long func,
-+			 unsigned long frame_pointer, unsigned long *retp)
-+{
-+	struct ftrace_graph_ent trace;
-+
-+	trace.func = func;
-+	trace.depth = current->curr_ret_stack + 1;
-+
-+	/* Only trace if the calling function expects to */
-+	if (!ftrace_graph_entry(&trace))
-+		return -EBUSY;
-+
-+	return ftrace_push_return_trace(ret, func, &trace.depth,
-+					frame_pointer, retp);
-+}
-+
- /* Retrieve a function return address to the trace stack on thread info.*/
- static void
- ftrace_pop_return_trace(struct ftrace_graph_ret *trace, unsigned long *ret,
--- 
-2.19.1
-
-
+> ---
+>  mm/shmem.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index d44991ea5ed4..42b70978e814 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1509,11 +1509,13 @@ static int shmem_replace_page(struct page **pagep, gfp_t gfp,
+>  {
+>  	struct page *oldpage, *newpage;
+>  	struct address_space *swap_mapping;
+> +	swp_entry_t entry;
+>  	pgoff_t swap_index;
+>  	int error;
+>  
+>  	oldpage = *pagep;
+> -	swap_index = page_private(oldpage);
+> +	entry.val = page_private(oldpage);
+> +	swap_index = swp_offset(entry);
+>  	swap_mapping = page_mapping(oldpage);
+>  
+>  	/*
+> @@ -1532,7 +1534,7 @@ static int shmem_replace_page(struct page **pagep, gfp_t gfp,
+>  	__SetPageLocked(newpage);
+>  	__SetPageSwapBacked(newpage);
+>  	SetPageUptodate(newpage);
+> -	set_page_private(newpage, swap_index);
+> +	set_page_private(newpage, entry.val);
+>  	SetPageSwapCache(newpage);
+>  
+>  	/*
+> -- 
+> 2.19.1.1215.g8438c0b245-goog
