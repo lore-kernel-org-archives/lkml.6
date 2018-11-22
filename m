@@ -2,78 +2,85 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 398D0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD400C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:44:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF58A2081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:43:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF58A2081C
+	by mail.kernel.org (Postfix) with ESMTP id 804F220684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:44:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 804F220684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405617AbeKWBXP (ORCPT
+        id S2405627AbeKWBYZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 20:23:15 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:42728 "EHLO
+        Thu, 22 Nov 2018 20:24:25 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:42740 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbeKWBXP (ORCPT
+        with ESMTP id S1726556AbeKWBYZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 20:23:15 -0500
+        Thu, 22 Nov 2018 20:24:25 -0500
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gPqCT-0001Bm-HX; Thu, 22 Nov 2018 22:43:25 +0800
+        id 1gPqDi-0001DX-Lb; Thu, 22 Nov 2018 22:44:42 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gPqCP-0002vI-8H; Thu, 22 Nov 2018 22:43:21 +0800
-Date:   Thu, 22 Nov 2018 22:43:21 +0800
+        id 1gPqDh-0002wP-W7; Thu, 22 Nov 2018 22:44:42 +0800
+Date:   Thu, 22 Nov 2018 22:44:41 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Mathias Krause <minipli@googlemail.com>
-Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
-        Pan Bian <bianpan2016@163.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Pan Bian <bianpan2013@163.com>
-Subject: Re: [net] xfrm_user: use xfrm_state_put to free xfrm_state_alloc
- return value
-Message-ID: <20181122144321.5gmyynui254qfeoq@gondor.apana.org.au>
-References: <1542783468-67482-1-git-send-email-bianpan2016@163.com>
- <20181121080045.4vtozqc6eyeyis2n@gondor.apana.org.au>
- <20181121200923.GA12460@jig.fritz.box>
+To:     Pan Bian <bianpan2016@163.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: do not free algorithm before using
+Message-ID: <20181122144441.tkfmrq3lzibq2g3y@gondor.apana.org.au>
+References: <1542880816-63838-1-git-send-email-bianpan2016@163.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181121200923.GA12460@jig.fritz.box>
+In-Reply-To: <1542880816-63838-1-git-send-email-bianpan2016@163.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 09:09:23PM +0100, Mathias Krause wrote:
+On Thu, Nov 22, 2018 at 06:00:16PM +0800, Pan Bian wrote:
+> In multiple functions, the algorithm fields are read after its reference
+> is dropped through crypto_mod_put. In this case, the algorithm memory
+> may be freed, resulting in use-after-free bugs. This patch delays the
+> put operation until the algorithm is never used.
 > 
-> -- >8 --
-> 
-> Subject: [PATCH] xfrm_user: fix freeing of xfrm states on acquire
-> 
-> Commit 565f0fa902b6 ("xfrm: use a dedicated slab cache for struct
-> xfrm_state") moved xfrm state objects to use their own slab cache.
-> However, it missed to adapt xfrm_user to use this new cache when
-> freeing xfrm states.
-> 
-> Fix this by introducing and make use of a new helper for freeing
-> xfrm_state objects.
-> 
-> Fixes: 565f0fa902b6 ("xfrm: use a dedicated slab cache for struct xfrm_state")
-> Reported-by: Pan Bian <bianpan2016@163.com>
-> Cc: <stable@vger.kernel.org> # v4.18+
-> Signed-off-by: Mathias Krause <minipli@googlemail.com>
+> Signed-off-by: Pan Bian <bianpan2016@163.com>
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+I don't think this patch is needed.
 
-Looks good to me.  Thanks!
+> ---
+>  crypto/cbc.c  | 6 ++++--
+>  crypto/cfb.c  | 6 ++++--
+>  crypto/pcbc.c | 6 ++++--
+>  3 files changed, 12 insertions(+), 6 deletions(-)
+> 
+> diff --git a/crypto/cbc.c b/crypto/cbc.c
+> index b761b1f..dd5f332 100644
+> --- a/crypto/cbc.c
+> +++ b/crypto/cbc.c
+> @@ -140,9 +140,8 @@ static int crypto_cbc_create(struct crypto_template *tmpl, struct rtattr **tb)
+>  	spawn = skcipher_instance_ctx(inst);
+>  	err = crypto_init_spawn(spawn, alg, skcipher_crypto_instance(inst),
+>  				CRYPTO_ALG_TYPE_MASK);
+> -	crypto_mod_put(alg);
+>  	if (err)
+> -		goto err_free_inst;
+> +		goto err_put_alg;
+
+We can safely drop the reference to the algorithm because the spawn
+is now meant to hold a reference to it.  As long as the spawn is
+alive so will the algorithm.
+
+Cheers,
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
