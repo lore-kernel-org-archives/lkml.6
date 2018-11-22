@@ -2,250 +2,164 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 969FDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E62FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:46:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DC4B20645
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:37:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DC4B20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id E822820824
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:46:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="LKR+57LM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E822820824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729646AbeKWFSM (ORCPT
+        id S2388304AbeKWF13 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 00:18:12 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:38283 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729121AbeKWFSM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 00:18:12 -0500
-X-Originating-IP: 2.224.242.101
-Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 55682240005;
-        Thu, 22 Nov 2018 18:37:31 +0000 (UTC)
-Date:   Thu, 22 Nov 2018 19:37:30 +0100
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
-        Libin Yang <lbyang@marvell.com>,
-        Albert Wang <twang13@marvell.com>
-Subject: Re: [PATCH v3 01/14] media: ov7670: split register setting from
- set_fmt() logic
-Message-ID: <20181122183730.GE3808@w540>
-References: <20181120100318.367987-1-lkundrak@v3.sk>
- <20181120100318.367987-2-lkundrak@v3.sk>
+        Fri, 23 Nov 2018 00:27:29 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:59684 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729748AbeKWF13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 00:27:29 -0500
+Received: from zn.tnic (p200300EC2BDC9100898E5A1DF8FAB135.dip0.t-ipconnect.de [IPv6:2003:ec:2bdc:9100:898e:5a1d:f8fa:b135])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BF6A91EC06CA;
+        Thu, 22 Nov 2018 19:46:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1542912410;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=mAkOzn0kYsUOQ71qgrcvEiL38sVGUGg/ymftslkkTQY=;
+        b=LKR+57LMDux2pFVP5r21RKgfXnVIqeb7lSXz3TTkklUS4Sc7Xm+uQF5s0+C0/+i1/PTZ8S
+        Bu+6RRaJHYKMPyOtz6ffhyje0/NqG8DuyiPRtKeTyrupktKi4a11A40MOfks0q3LotjrW+
+        yVZGm7TXaYsKlPbnhrLrzsuOOdeSql8=
+Date:   Thu, 22 Nov 2018 19:46:44 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Moger, Babu" <Babu.Moger@amd.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v9 08/13] x86/resctrl: Rename config parameter INTEL_RDT
+ to RESCTRL
+Message-ID: <20181122184644.GF10365@zn.tnic>
+References: <20181121202811.4492-1-babu.moger@amd.com>
+ <20181121202811.4492-9-babu.moger@amd.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pY3vCvL1qV+PayAL"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181120100318.367987-2-lkundrak@v3.sk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181121202811.4492-9-babu.moger@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---pY3vCvL1qV+PayAL
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Hi Lubomir,
-
-On Tue, Nov 20, 2018 at 11:03:06AM +0100, Lubomir Rintel wrote:
-> This will allow us to restore the last set format after the device returns
-> from a power off.
->
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
->
+On Wed, Nov 21, 2018 at 08:28:39PM +0000, Moger, Babu wrote:
+> Resource control feature is supported by both Intel and AMD.
+> So, rename the INTEL_RDT to vendor neutral RESCTRL.
+> 
+> Now CONFIG_RESCTRL will be used for both Intel and AMD to enable
+> Resource Control support. Update the texts in config and condition
+> accordingly.
+> 
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
 > ---
-> Changes since v2:
-> - This patch was added to the series
->
->  drivers/media/i2c/ov7670.c | 80 ++++++++++++++++++++++----------------
->  1 file changed, 46 insertions(+), 34 deletions(-)
->
-> diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-> index bc68a3a5b4ec..ee2302fbdeee 100644
-> --- a/drivers/media/i2c/ov7670.c
-> +++ b/drivers/media/i2c/ov7670.c
-> @@ -240,6 +240,7 @@ struct ov7670_info {
->  	};
->  	struct v4l2_mbus_framefmt format;
->  	struct ov7670_format_struct *fmt;  /* Current format */
-> +	struct ov7670_win_size *wsize;
->  	struct clk *clk;
->  	struct gpio_desc *resetb_gpio;
->  	struct gpio_desc *pwdn_gpio;
-> @@ -1003,48 +1004,20 @@ static int ov7670_try_fmt_internal(struct v4l2_subdev *sd,
->  	return 0;
->  }
->
-> -/*
-> - * Set a format.
-> - */
-> -static int ov7670_set_fmt(struct v4l2_subdev *sd,
-> -		struct v4l2_subdev_pad_config *cfg,
-> -		struct v4l2_subdev_format *format)
-> +static int ov7670_apply_fmt(struct v4l2_subdev *sd)
->  {
-> -	struct ov7670_format_struct *ovfmt;
-> -	struct ov7670_win_size *wsize;
->  	struct ov7670_info *info = to_state(sd);
-> -#ifdef CONFIG_VIDEO_V4L2_SUBDEV_API
-> -	struct v4l2_mbus_framefmt *mbus_fmt;
-> -#endif
-> +	struct ov7670_win_size *wsize = info->wsize;
->  	unsigned char com7, com10 = 0;
->  	int ret;
->
-> -	if (format->pad)
-> -		return -EINVAL;
-> -
-> -	if (format->which == V4L2_SUBDEV_FORMAT_TRY) {
-> -		ret = ov7670_try_fmt_internal(sd, &format->format, NULL, NULL);
-> -		if (ret)
-> -			return ret;
-> -#ifdef CONFIG_VIDEO_V4L2_SUBDEV_API
-> -		mbus_fmt = v4l2_subdev_get_try_format(sd, cfg, format->pad);
-> -		*mbus_fmt = format->format;
-> -		return 0;
-> -#else
-> -		return -ENOTTY;
-> -#endif
-> -	}
-> -
-> -	ret = ov7670_try_fmt_internal(sd, &format->format, &ovfmt, &wsize);
-> -	if (ret)
-> -		return ret;
->  	/*
->  	 * COM7 is a pain in the ass, it doesn't like to be read then
->  	 * quickly written afterward.  But we have everything we need
->  	 * to set it absolutely here, as long as the format-specific
->  	 * register sets list it first.
->  	 */
-> -	com7 = ovfmt->regs[0].value;
-> +	com7 = info->fmt->regs[0].value;
->  	com7 |= wsize->com7_bit;
->  	ret = ov7670_write(sd, REG_COM7, com7);
->  	if (ret)
-> @@ -1066,7 +1039,7 @@ static int ov7670_set_fmt(struct v4l2_subdev *sd,
->  	/*
->  	 * Now write the rest of the array.  Also store start/stops
->  	 */
-> -	ret = ov7670_write_array(sd, ovfmt->regs + 1);
-> +	ret = ov7670_write_array(sd, info->fmt->regs + 1);
->  	if (ret)
->  		return ret;
->
-> @@ -1081,8 +1054,6 @@ static int ov7670_set_fmt(struct v4l2_subdev *sd,
->  			return ret;
->  	}
->
-> -	info->fmt = ovfmt;
-> -
->  	/*
->  	 * If we're running RGB565, we must rewrite clkrc after setting
->  	 * the other parameters or the image looks poor.  If we're *not*
-> @@ -1100,6 +1071,46 @@ static int ov7670_set_fmt(struct v4l2_subdev *sd,
->  	return 0;
->  }
->
-> +/*
-> + * Set a format.
-> + */
-> +static int ov7670_set_fmt(struct v4l2_subdev *sd,
-> +		struct v4l2_subdev_pad_config *cfg,
-> +		struct v4l2_subdev_format *format)
-> +{
-> +	struct ov7670_info *info = to_state(sd);
-> +#ifdef CONFIG_VIDEO_V4L2_SUBDEV_API
-> +	struct v4l2_mbus_framefmt *mbus_fmt;
-> +#endif
-> +	int ret;
+>  arch/x86/Kconfig                     | 23 ++++++++++++++++-------
+>  arch/x86/include/asm/resctrl_sched.h |  4 ++--
+>  arch/x86/kernel/cpu/Makefile         |  2 +-
+>  arch/x86/kernel/cpu/resctrl/Makefile |  4 ++--
+>  include/linux/sched.h                |  2 +-
+>  5 files changed, 22 insertions(+), 13 deletions(-)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 1a0be022f91d..36aad997caf8 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -445,16 +445,25 @@ config RETPOLINE
+>  	  code are eliminated. Since this includes the syscall entry path,
+>  	  it is not entirely pointless.
+>  
+> -config INTEL_RDT
+> -	bool "Intel Resource Director Technology support"
+> +config RESCTRL
+> +	bool "Resource Control support"
+>  	default n
+> -	depends on X86 && CPU_SUP_INTEL
+> +	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
+>  	select KERNFS
+>  	help
+> -	  Select to enable resource allocation and monitoring which are
+> -	  sub-features of Intel Resource Director Technology(RDT). More
+> -	  information about RDT can be found in the Intel x86
+> -	  Architecture Software Developer Manual.
+> +	  Select to enable Resource Control feature support.
 > +
-> +	if (format->pad)
-> +		return -EINVAL;
+> +	  These features are intended to provide the support for the allocation
+> +	  and monitoring of the usage of certain system resources by one or more
+> +	  processors.
 > +
-> +	if (format->which == V4L2_SUBDEV_FORMAT_TRY) {
-> +		ret = ov7670_try_fmt_internal(sd, &format->format, NULL, NULL);
-> +		if (ret)
-> +			return ret;
-> +#ifdef CONFIG_VIDEO_V4L2_SUBDEV_API
-> +		mbus_fmt = v4l2_subdev_get_try_format(sd, cfg, format->pad);
-
-This #ifdef CONFIG_VIDEO_V4L2_SUBDEV_API seems to be quite in some
-drivers... Maybe stubs should be defined in v4l2-subdev.h.
-
-Anway, that's unrealted, the patch seems fine to me:
-Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
-
-Thanks
-  j
-
-
-> +		*mbus_fmt = format->format;
-> +		return 0;
-> +#else
-> +		return -ENOTTY;
-> +#endif
-> +	}
+> +	  Intel refers to this feature as Intel Resource Director Technology
+> +	  (Intel(R) RDT). More information about RDT can be found in the
+> +	  Intel x86 Architecture Software Developer Manual.
 > +
-> +	ret = ov7670_try_fmt_internal(sd, &format->format, &info->fmt, &info->wsize);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ov7670_apply_fmt(sd);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
->  static int ov7670_get_fmt(struct v4l2_subdev *sd,
->  			  struct v4l2_subdev_pad_config *cfg,
->  			  struct v4l2_subdev_format *format)
-> @@ -1847,6 +1858,7 @@ static int ov7670_probe(struct i2c_client *client,
->
->  	info->devtype = &ov7670_devdata[id->driver_data];
->  	info->fmt = &ov7670_formats[0];
-> +	info->wsize = &info->devtype->win_sizes[0];
->
->  	ov7670_get_default_format(sd, &info->format);
->
-> --
-> 2.19.1
->
+> +	  AMD refers to this feature as AMD Platform Quality of Service(AMD QoS).
+> +	  More information about AMD QoS can be found in AMD64 Technology
+> +	  Platform Quality of Service Extensions manual.
 
---pY3vCvL1qV+PayAL
-Content-Type: application/pgp-signature; name="signature.asc"
+I've simplified this to:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+          Enable Resource Control support.
 
-iQIcBAABCAAGBQJb9vdqAAoJEHI0Bo8WoVY8HesP/RYmxydVq8sxBz/PBKcGfn2A
-b6u8wRoG6ZmZk0eAch04lWcRqA0XNqoVoTKzlf3B9ab2oaY9lxz/lVCxuLTQooq0
-TZD+qIKB23hs+59aNRWhSQWzNvxCUHyBKQS8gnb4RmKFh9QfmhhGrqJ7RS3ABITY
-cAFRaJPX6VpS+MlXMWRjUfee/HR5vX4FDVVURM75wBL/jwXRn1qrd9TJSsW+IgaN
-XhZtjOjROI4TRdG7z8adIsYitrXW1Amwjt5+KgSNSHp9sryv9cYQ4JxCDJBaKBzJ
-uJ7O+Ha+IOMkl+L5M33tVtzoNa90Rdc6hNG5KXov4ZkaN/h7NZ+hRDeMlAwu64t2
-UHz3bq3bJV+WuD475Yawl5KPDoeuY3lUgFt6MmWnzHYWSaxSVkqxRuOSL9Arz1Pq
-bi7FaMUiJOUp1cCGz3YeydqBvSCbxc4PYqgJdFSqW857F6wgIeqJH71KAzC8Movb
-LA9MIjw9JnijHyx9o6JOhiAR7aPTXSHrI/5oy5NruphUi4rBmKYvDcqcCagwsfAF
-d71PFlu+MfJ4Qd+tw5k92E6IX6pntbT5w1Sf5RH9mOwF+pHrnIkyl3j5lpTdtU8d
-/hXdwkV+q+eNQccvU4dt+t6jOeVRCVvh+I+ufZ2hhmn7cqG1+zF+Vemz6VF4MpqJ
-UkOh8EBrUPd0tYeO/G+P
-=4D55
------END PGP SIGNATURE-----
+          Provide support for the allocation and monitoring of system resources 
+          usage by the CPU.
 
---pY3vCvL1qV+PayAL--
+          Intel calls this Intel Resource Director Technology
+          (Intel(R) RDT). More information about RDT can be found in the
+          Intel x86 Architecture Software Developer Manual.
+
+          AMD calls this AMD Platform Quality of Service (AMD QoS).
+          More information about AMD QoS can be found in the AMD64 Technology
+          Platform Quality of Service Extensions manual.
+
+          Say N if unsure.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
