@@ -3,40 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BBB0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 04:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E12DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 04:36:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C561F20865
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 04:36:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C561F20865
+	by mail.kernel.org (Postfix) with ESMTP id 0DED020820
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 04:36:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DED020820
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403825AbeKVPNq (ORCPT
+        id S2403964AbeKVPNy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 10:13:46 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:53078 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732270AbeKVPNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 10:13:46 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wAM4ZEm4012268
+        Thu, 22 Nov 2018 10:13:54 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:55097 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730552AbeKVPNy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 10:13:54 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wAM4aIVh009651
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Wed, 21 Nov 2018 20:35:25 -0800
+        Wed, 21 Nov 2018 20:36:18 -0800 (PST)
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Wed, 21 Nov 2018
- 20:35:04 -0800
+ 20:36:17 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 06/11] mfd: rc5t583: Make it explicitly non-modular
-Date:   Wed, 21 Nov 2018 23:32:54 -0500
-Message-ID: <1542861179-8941-7-git-send-email-paul.gortmaker@windriver.com>
+        <patches@opensource.cirrus.com>
+Subject: [PATCH 10/11] mfd: wm831x-core: drop unused MODULE_ tags from non-modular code
+Date:   Wed, 21 Nov 2018 23:32:58 -0500
+Message-ID: <1542861179-8941-11-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1542861179-8941-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1542861179-8941-1-git-send-email-paul.gortmaker@windriver.com>
@@ -49,65 +50,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config MFD_RC5T583
-drivers/mfd/Kconfig:    bool "Ricoh RC5T583 Power Management system device"
+drivers/mfd/Kconfig:config MFD_WM831X
+drivers/mfd/Kconfig:    bool
 
 ...meaning that it currently is not being built as a module by anyone.
 
-Lets remove the modular code that is essentially orphaned, so that
+Lets remove the couple traces of modular infrastructure use, so that
 when reading the driver there is no doubt it is builtin-only.
 
-Since module_init was not in use by this code, the init ordering
-remains unchanged with this commit.
-
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
+We delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
 Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: patches@opensource.cirrus.com
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/rc5t583.c | 14 --------------
- 1 file changed, 14 deletions(-)
+ drivers/mfd/wm831x-core.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mfd/rc5t583.c b/drivers/mfd/rc5t583.c
-index fd46de02b715..c5cc5cb3dde7 100644
---- a/drivers/mfd/rc5t583.c
-+++ b/drivers/mfd/rc5t583.c
-@@ -23,7 +23,6 @@
- #include <linux/interrupt.h>
- #include <linux/irq.h>
+diff --git a/drivers/mfd/wm831x-core.c b/drivers/mfd/wm831x-core.c
+index e70d35ef5c6d..d64214c78cba 100644
+--- a/drivers/mfd/wm831x-core.c
++++ b/drivers/mfd/wm831x-core.c
+@@ -13,7 +13,8 @@
+  */
+ 
  #include <linux/kernel.h>
 -#include <linux/module.h>
- #include <linux/init.h>
- #include <linux/err.h>
- #include <linux/slab.h>
-@@ -298,8 +297,6 @@ static const struct i2c_device_id rc5t583_i2c_id[] = {
- 	{}
- };
- 
--MODULE_DEVICE_TABLE(i2c, rc5t583_i2c_id);
--
- static struct i2c_driver rc5t583_i2c_driver = {
- 	.driver = {
- 		   .name = "rc5t583",
-@@ -313,14 +310,3 @@ static int __init rc5t583_i2c_init(void)
- 	return i2c_add_driver(&rc5t583_i2c_driver);
++#include <linux/init.h>
++#include <linux/export.h>
+ #include <linux/bcd.h>
+ #include <linux/delay.h>
+ #include <linux/mfd/core.h>
+@@ -1944,7 +1945,3 @@ void wm831x_device_shutdown(struct wm831x *wm831x)
+ 	}
  }
- subsys_initcall(rc5t583_i2c_init);
+ EXPORT_SYMBOL_GPL(wm831x_device_shutdown);
 -
--static void __exit rc5t583_i2c_exit(void)
--{
--	i2c_del_driver(&rc5t583_i2c_driver);
--}
--
--module_exit(rc5t583_i2c_exit);
--
--MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
--MODULE_DESCRIPTION("RICOH RC5T583 power management system device driver");
--MODULE_LICENSE("GPL v2");
+-MODULE_DESCRIPTION("Core support for the WM831X AudioPlus PMIC");
+-MODULE_LICENSE("GPL");
+-MODULE_AUTHOR("Mark Brown");
 -- 
 2.7.4
 
