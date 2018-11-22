@@ -2,82 +2,90 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A0FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6352DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB8B620865
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:44:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB8B620865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A46220685
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:45:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YcQr8cvb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A46220685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392257AbeKVQWf (ORCPT
+        id S2404592AbeKVQXA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 11:22:35 -0500
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:45373 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389389AbeKVQWf (ORCPT
+        Thu, 22 Nov 2018 11:23:00 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41107 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392258AbeKVQXA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 11:22:35 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07688008|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e01534;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=3;RT=3;SR=0;TI=SMTPD_---.DMQddPA_1542865480;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.DMQddPA_1542865480)
-          by smtp.aliyun-inc.com(10.147.41.199);
-          Thu, 22 Nov 2018 13:44:40 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Cc:     Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH 1/2] csky: bugfix tlb_get_pgd error.
-Date:   Thu, 22 Nov 2018 13:44:39 +0800
-Message-Id: <1542865479-5796-1-git-send-email-ren_guo@c-sky.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 22 Nov 2018 11:23:00 -0500
+Received: by mail-pl1-f196.google.com with SMTP id u6so8715525plm.8
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 21:45:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fDZpJWnWMtcQ4doGOjeZw8Y2ex+G/7boRgov0990UkI=;
+        b=YcQr8cvbDL6N/LfWqDoG/Wp6xi7QG1gYZnwXKh+8Ou/n+xSOYxH9Py62q1DNLB/gPI
+         GpeELpvYbqW0I+CVBGcE1DdEE1+8awcDJzAChLmHA+tKgwAeFf/6L59/Jp+HdQJnddkn
+         ub9sPuxiRnBWhkjg6Du5NKMa65F2k4kP38xvIyfOfs5B9gid3UR9kO+PhwhI4n8pG728
+         uH6euE/aeOYTCkoexMy/zDYYbuxxw0SvTXDXSaEuOOuVrojzRMb7x5S5ConIOqXgcUMV
+         Ke5Q6tWbQz/A3csflDtkouqVXzfHC57+gBfRxjx1LVBJhnM2oZ9G7vCPmuYebBCbiQcK
+         mxig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fDZpJWnWMtcQ4doGOjeZw8Y2ex+G/7boRgov0990UkI=;
+        b=lcNGFrLGhZ8PdbmSzJGxCDD9noH/Fl4rE8Itxe+7ZNHpxUstivoiuDJSuirdVJf/pn
+         dQ4yHD5BaqMoQbtDlMW42/JH/EMYDDr9AIaruFQLWLZmcnl126t1KAfKmSiYhC/Oc3RE
+         tSSDkQ0buakzIG3NjbHongD0A0qfG+wDty5w60WVggLZNRVAN3kuQcch6MnoW5P+bvNU
+         1KdrnPQPy8SIi6m3RIZojwQomWbrccJdVJ3B8c57b9ArRY0BR6IrFQwOBQYe9Nct6iVF
+         ie8CCTs+iiXUWLWpfNXKAwxRhqljm5dDnLrVXKd3gT+zBjY1iy9hkHWHWa1KZCTVJv2X
+         +etQ==
+X-Gm-Message-State: AA+aEWaqwQW0y9NehKHs0o8Spi4Y0n1zRsLbJIfOT2fDlSJFfyqWM/NW
+        uH6JEGd6sHrdtFs+StcZC08=
+X-Google-Smtp-Source: AFSGD/UpaweB16nSfqtOWF3qhcgPpbQYZCMB1cAXcsDJ/TVm4KDB3w7+FnSZtRiSp1MEur8uNDSDpw==
+X-Received: by 2002:a17:902:f83:: with SMTP id 3-v6mr9995888plz.254.1542865510625;
+        Wed, 21 Nov 2018 21:45:10 -0800 (PST)
+Received: from localhost ([175.223.27.1])
+        by smtp.gmail.com with ESMTPSA id y184sm50038911pgd.71.2018.11.21.21.45.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 21:45:09 -0800 (PST)
+Date:   Thu, 22 Nov 2018 14:45:05 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/6] zram: introduce ZRAM_IDLE flag
+Message-ID: <20181122054505.GF3441@jagdpanzerIV>
+References: <20181116072035.155108-1-minchan@kernel.org>
+ <20181116072035.155108-4-minchan@kernel.org>
+ <20181120024659.GC4231@jagdpanzerIV>
+ <20181122051156.GB182024@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181122051156.GB182024@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's wrong to mask/unmask highest bit in addr to translate the vaddr
-to paddr. We should use PAGE_OFFSET and PHYS_OFFSET.
+On (11/22/18 14:11), Minchan Kim wrote:
+> 
+> It was a option when I imagined this idea first but problem from product
+> division was memory waste of ac_time for every zram table.
 
-Wrong implement:
-  return ((get_pgd()|(1<<31)) - PHYS_OFFSET) & ~1;
+OK, I see.
 
-When PHYS_OFFSET=0xc0000000 and get_pgd() return 0xe0000000, it'll
-return 0x60000000. It's wrong and should be 0xa0000000.
-
-Now correct it to:
-  return ((get_pgd() - PHYS_OFFSET) & ~1) + PAGE_OFFSET;
-
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
----
- arch/csky/include/asm/mmu_context.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/csky/include/asm/mmu_context.h b/arch/csky/include/asm/mmu_context.h
-index c410aa4..b2905c0 100644
---- a/arch/csky/include/asm/mmu_context.h
-+++ b/arch/csky/include/asm/mmu_context.h
-@@ -16,7 +16,7 @@
- 
- static inline void tlbmiss_handler_setup_pgd(unsigned long pgd, bool kernel)
- {
--	pgd &= ~(1<<31);
-+	pgd -= PAGE_OFFSET;
- 	pgd += PHYS_OFFSET;
- 	pgd |= 1;
- 	setup_pgd(pgd, kernel);
-@@ -29,7 +29,7 @@ static inline void tlbmiss_handler_setup_pgd(unsigned long pgd, bool kernel)
- 
- static inline unsigned long tlb_get_pgd(void)
- {
--	return ((get_pgd()|(1<<31)) - PHYS_OFFSET) & ~1;
-+	return ((get_pgd() - PHYS_OFFSET) & ~1) + PAGE_OFFSET;
- }
- 
- #define cpu_context(cpu, mm)	((mm)->context.asid[cpu])
--- 
-2.7.4
-
+	-ss
