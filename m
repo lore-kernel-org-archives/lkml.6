@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 705A0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A03C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34EDE20865
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:34:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19D0E20866
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:35:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="Je6/lt2H";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="t4D/FzN8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34EDE20865
+	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="NQBADYNu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VLyj8fyk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19D0E20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=who-t.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404719AbeKVRMy (ORCPT
+        id S2404732AbeKVRM4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 12:12:54 -0500
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:52187 "EHLO
+        Thu, 22 Nov 2018 12:12:56 -0500
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:43355 "EHLO
         out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732955AbeKVRMx (ORCPT
+        by vger.kernel.org with ESMTP id S1732955AbeKVRMz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 12:12:53 -0500
+        Thu, 22 Nov 2018 12:12:55 -0500
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 56EDF221CB;
-        Thu, 22 Nov 2018 01:34:53 -0500 (EST)
+        by mailout.nyi.internal (Postfix) with ESMTP id 57A5021F6E;
+        Thu, 22 Nov 2018 01:34:56 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Thu, 22 Nov 2018 01:34:53 -0500
+  by compute3.internal (MEProxy); Thu, 22 Nov 2018 01:34:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=43Mnox5bB+Skb
-        hDE/lCawN4GL6A3tAvydhv4FyW2C3k=; b=Je6/lt2HagR5Q+9XTrM2vG2VQeGrK
-        PAub4Z9+iXXZJkKinNBBw/EOS7xCJhX0VkCNcwDFCvvLsaE7zJ8d8R8fRqaMF0CO
-        YV2YGQQM0ROPoN1jhUHuQGLN2yoQD25BaLCG7UtuZppnVZGrywIepcy0ZF2O687r
-        wdwCKFE5guQgkWipDTyisUq95jIrNrL3zhDVAzv47sXubqsRodLel9N8J5cMB8Lc
-        MHCKMSlpBMdfU5igrIMY0zwaooewMwtreLmPzykqq31kVBta6h82jmVyzMBC6AcU
-        78Si1yGzb0Z7/eVPODW05sYo4S2m51/y7NfGzotJ0ROqQwUua72drdE7A==
+        :mime-version:content-transfer-encoding; s=fm1; bh=7YaYxM3zwhxAd
+        S2G9qdRSd9LLkUOArdQ0uT0AOMl/P4=; b=NQBADYNuq66+bizkD+PsogwK//5XK
+        XaplCH/ogqORUBAT9y0qZlWB1Z1B7O1jc9W8ZAdUnJPaTEqQaZuN5fOqTnBQQYSM
+        dVHW7DHW+UJ8ymg20oxgeG5D1uyu9YzafPFw6kzRbJmasmdvBSOjvIqyy7sch7KO
+        nthmqYIb/v8aEUVoJd/w2vmQNfjkh5/x/Jm4J32HZD7oD9ryO1CP9lq1CHsHnbVD
+        p6caGlG7muwekiKVf/70+o2u89jqz5IJ9mbUBhq2jCG4BB5ZM0JODi37OV6BRCyO
+        qyvyB+TMvxZzLVrIZPRv++dQTOLJTAL1cv/9t45XwldVUr+Fogxl9S3iA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=43Mnox5bB+SkbhDE/lCawN4GL6A3tAvydhv4FyW2C3k=; b=t4D/FzN8
-        +fYwczNLmg7mtjWp5xnbnZGaMsd9ctOr462AuxvCuR+6DGlW5FEKTNHpqm1P4SOe
-        ANgVXDQseAGLAkZ61Dw6y5GRio5H6+ruf8iZ4enlYop0ML34QleWRxh5V4rIxnd7
-        sPOOjQVIlNkjK+iYRenyYk4gk8Wkc2Jdo9ofe/iXISR3n/HJ6aDlYlJPJ3n+7nr1
-        11oZGY5ZZ5Y2wKoYsCAaFZUJbdUWrjY/vbtT55sbmWifu29w8TqNEuCW43ER+M//
-        KsryzOjcOrZy7RY4Ky+MkYAV4ODrV2k/+hcdLvyKwaY64+ONl61kZntupADRpZ8S
-        XDMDtDimplTDdw==
-X-ME-Sender: <xms:DU72W64bhHN3mWQOqPPW3YX5hMvHPKKWmhx8gGUlW7H0lfjQPCfQog>
-X-ME-Proxy: <xmx:DU72W10V_VSm-h-2MIVXXxaLi5x6AjG7_W3pdoCCR9tKb6gRG2AvJw>
-    <xmx:DU72W4gnP8xMWPLzOiaPWdrUbfO4vEvN93g21sN89v37pXhnxgyBxw>
-    <xmx:DU72W9JPpiDn4LJBwO1uNa5suLBKm1_UOO5f7d1MyS0Qv0rdFzu-_Q>
-    <xmx:DU72W5XEc8Hny93mN5Ozx71WVmKMp0CutQAxjGlJm7QFCPSe5ML_EQ>
-    <xmx:DU72W4X2JySoj1REqq9gZXtOOHd0F9Arx1M6DKZ9fWmRZqpT6VwR5g>
-    <xmx:DU72WzaWhHbCGno6eqTf5QDXwrdVdOfwTMi8fDarjmmxS3YUL3NPRg>
+        fm1; bh=7YaYxM3zwhxAdS2G9qdRSd9LLkUOArdQ0uT0AOMl/P4=; b=VLyj8fyk
+        VN91hNwrmLJMwubdd2dCw+HpDJttioQp2ZUPoofEzO8AL0TUk1PwXeqIdMvPdpaM
+        ZsKsouRfLyfkXNVlYXuJBT/FjPVEaNIatUv4Q2S8f/UwxMsKsi5hCOw2lyGoGk7N
+        uf6oar+cwT0A9KKBz2H7WDeJAykWUG+JvxcDAte2a0iOTzopsSX3S9t5jq/YMuhX
+        2BzxBl/s8Eh8VQ0vGE4Oj9/J9LDA6JatJ8IpyOEP5qOHYtfBnt6jDOzFQSFtU93j
+        JWxm89pWGUYhQzQYORrK0dy961+aXkb0FI85ufV+uzA1qUsWiE75vzbPSRL45g4o
+        QV383Qt2H5CfTQ==
+X-ME-Sender: <xms:EE72W0fH92gVD5qqkQ7AeooBL4zenfrUjvatUSnLtO_IXy7rm9xwbA>
+X-ME-Proxy: <xmx:EE72W3vEImvLen2tmC-CZ8DtNCuACdVViOb233kp0EENvWborMB4KQ>
+    <xmx:EE72Wyvdd7KEw7yAZX59NGpgJ8nZ_Z0y1w2zc8MDqrPv7-sc1sapmQ>
+    <xmx:EE72WwNpiniB7WWtNZAE3SRlyAKBTDfti28ZYiVDNFGCOHUUpb93Mw>
+    <xmx:EE72W8eHqmAXiGTroHFU6Qn9b6ssS7vupqXKO_MUU4Y1W95VfnHwqw>
+    <xmx:EE72W_kwJ37joUbQl042aURm5TAZKFalzZ84rQatCTUAhIhgpzt6Yg>
+    <xmx:EE72W3t891S9oTz0qo1MaVogocuEFlGRQfvzda5GO_nDBMauwu9zQg>
 Received: from jelly.home.gateway (167-179-166-29.a7b3a6.bne.nbn.aussiebb.net [167.179.166.29])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 6A6BE10304;
-        Thu, 22 Nov 2018 01:34:50 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 6A6E5102EE;
+        Thu, 22 Nov 2018 01:34:53 -0500 (EST)
 From:   Peter Hutterer <peter.hutterer@who-t.net>
 To:     linux-input@vger.kernel.org
 Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -71,9 +71,9 @@ Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Nestor Lopez Casado <nlopezcasad@logitech.com>,
         linux-kernel@vger.kernel.org,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 1/8] Input: add `REL_WHEEL_HI_RES` and `REL_HWHEEL_HI_RES`
-Date:   Thu, 22 Nov 2018 16:34:02 +1000
-Message-Id: <20181122063409.15816-2-peter.hutterer@who-t.net>
+Subject: [PATCH 2/8] HID: core: store the collections as a basic tree
+Date:   Thu, 22 Nov 2018 16:34:03 +1000
+Message-Id: <20181122063409.15816-3-peter.hutterer@who-t.net>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181122063409.15816-1-peter.hutterer@who-t.net>
 References: <20181122063409.15816-1-peter.hutterer@who-t.net>
@@ -84,71 +84,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This event code represents scroll reports from high-resolution wheels and
-is modelled after the approach Windows uses. The value 120 is one detent
-(wheel click) of movement. Mice with higher-resolution scrolling can send
-fractions of 120 to be accumulate in userspace. Userspace can either wait
-for 120 to accumulate or scroll by fractions of one logical scroll movement
-as the events come in.
-
-For more information see
-https://docs.microsoft.com/en-us/previous-versions/windows/hardware/design/dn613912(v=vs.85)
-
-These new axes obsolete REL_WHEEL and REL_HWHEEL. The legacy axes are
-emulated but the most accurate (and most granular) data is available
-through the new axes.
+For each collection parsed, store a pointer to the parent collection
+(if any). This makes it a lot easier to look up which collection(s)
+any given item is part of
 
 Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
 ---
- Documentation/input/event-codes.rst    | 21 ++++++++++++++++++++-
- include/uapi/linux/input-event-codes.h |  2 ++
- 2 files changed, 22 insertions(+), 1 deletion(-)
+ drivers/hid/hid-core.c | 4 ++++
+ include/linux/hid.h    | 2 ++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/Documentation/input/event-codes.rst b/Documentation/input/event-codes.rst
-index a8c0873beb95..b24b5343f5eb 100644
---- a/Documentation/input/event-codes.rst
-+++ b/Documentation/input/event-codes.rst
-@@ -190,7 +190,26 @@ A few EV_REL codes have special meanings:
- * REL_WHEEL, REL_HWHEEL:
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 5bec9244c45b..43d488a45120 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -172,6 +172,8 @@ static int open_collection(struct hid_parser *parser, unsigned type)
+ 	collection->type = type;
+ 	collection->usage = usage;
+ 	collection->level = parser->collection_stack_ptr - 1;
++	collection->parent = parser->active_collection;
++	parser->active_collection = collection;
  
-   - These codes are used for vertical and horizontal scroll wheels,
--    respectively.
-+    respectively. The value is the number of detents moved on the wheel, the
-+    physical size of which varies by device. For high-resolution wheels
-+    this may be an approximation based on the high-resolution scroll events,
-+    see REL_WHEEL_HI_RES. These event codes are legacy codes and
-+    REL_WHEEL_HI_RES and REL_HWHEEL_HI_RES should be preferred where
-+    available.
-+
-+* REL_WHEEL_HI_RES, REL_HWHEEL_HI_RES:
-+
-+  - High-resolution scroll wheel data. The accumulated value 120 represents
-+    movement by one detent. For devices that do not provide high-resolution
-+    scrolling, the value is always a multiple of 120. For devices with
-+    high-resolution scrolling, the value may be a fraction of 120.
-+
-+    If a vertical scroll wheel supports high-resolution scrolling, this code
-+    will be emitted in addition to REL_WHEEL or REL_HWHEEL. The REL_WHEEL
-+    and REL_HWHEEL may be an approximation based on the high-resolution
-+    scroll events. There is no guarantee that the high-resolution data
-+    is a multiple of 120 at the time of an emulated REL_WHEEL or REL_HWHEEL
-+    event.
+ 	if (type == HID_COLLECTION_APPLICATION)
+ 		parser->device->maxapplication++;
+@@ -190,6 +192,8 @@ static int close_collection(struct hid_parser *parser)
+ 		return -EINVAL;
+ 	}
+ 	parser->collection_stack_ptr--;
++	if (parser->active_collection)
++		parser->active_collection = parser->active_collection->parent;
+ 	return 0;
+ }
  
- EV_ABS
- ------
-diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
-index ae366b87426a..7f14d4a66c28 100644
---- a/include/uapi/linux/input-event-codes.h
-+++ b/include/uapi/linux/input-event-codes.h
-@@ -716,6 +716,8 @@
-  * the situation described above.
+diff --git a/include/linux/hid.h b/include/linux/hid.h
+index a355d61940f2..fdfda898656c 100644
+--- a/include/linux/hid.h
++++ b/include/linux/hid.h
+@@ -427,6 +427,7 @@ struct hid_local {
   */
- #define REL_RESERVED		0x0a
-+#define REL_WHEEL_HI_RES	0x0b
-+#define REL_HWHEEL_HI_RES	0x0c
- #define REL_MAX			0x0f
- #define REL_CNT			(REL_MAX+1)
  
+ struct hid_collection {
++	struct hid_collection *parent;
+ 	unsigned type;
+ 	unsigned usage;
+ 	unsigned level;
+@@ -650,6 +651,7 @@ struct hid_parser {
+ 	unsigned int         *collection_stack;
+ 	unsigned int          collection_stack_ptr;
+ 	unsigned int          collection_stack_size;
++	struct hid_collection *active_collection;
+ 	struct hid_device    *device;
+ 	unsigned int          scan_flags;
+ };
 -- 
 2.19.1
 
