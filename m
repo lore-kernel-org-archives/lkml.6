@@ -2,218 +2,117 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 287B6C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A6CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:53:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D629920989
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:52:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09B2520831
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:53:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mBu2xk7B";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="M7DDN7v9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D629920989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F+UMGM8P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09B2520831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405074AbeKVSbK (ORCPT
+        id S2405085AbeKVSbk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 13:31:10 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48256 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732609AbeKVSbJ (ORCPT
+        Thu, 22 Nov 2018 13:31:40 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36709 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729128AbeKVSbk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 13:31:09 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id EA2716081E; Thu, 22 Nov 2018 07:52:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542873172;
-        bh=Fpf2uq39QupzKbu4Si6obbyVeujEVhi6AdF1ORvd2lM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mBu2xk7BKVuIrNYVpgUc8wWIm12d+jWjTBsfXB+vV/1Nub3Jtm8NDBBfe6AoQehsj
-         3k4XUzW/Amg4CJc8pyVohwlJ20+xbYvIE+ClpfGnTUC6lWIf2oOoTZJj0+dRZAWjC1
-         6yWv5dFRJZIuyscIGQlNSmZHkSrd6/siH4cIh52U=
-Received: from [192.168.225.247] (unknown [49.33.186.246])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5FEBF604BE;
-        Thu, 22 Nov 2018 07:52:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542873171;
-        bh=Fpf2uq39QupzKbu4Si6obbyVeujEVhi6AdF1ORvd2lM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=M7DDN7v94baotnk2467+MakoqIdMti3ZzB4MLPjyXWOz8Evz7UQLwswVjfPbrvRZ1
-         OafJLAIuquj5PPQknUaqjy3kr9ALvoGhcbGN9braO6CLCJ1jVgfA19/qXqbYnJTtaM
-         TIwrxPY3gyDIeGQs/Us2m7GgLUXmDsslRTX6A770=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5FEBF604BE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v9 1/2] dt-bindings: clock: Introduce QCOM LPASS clock
- bindings
-To:     Rob Herring <robh@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <1541814256-23254-1-git-send-email-tdas@codeaurora.org>
- <1541814256-23254-2-git-send-email-tdas@codeaurora.org>
- <20181113001952.GA2556@bogus>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <a341cbcd-b5e1-35f2-6f80-1de3ccc66d72@codeaurora.org>
-Date:   Thu, 22 Nov 2018 13:22:44 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 22 Nov 2018 13:31:40 -0500
+Received: by mail-wr1-f65.google.com with SMTP id t3so8220765wrr.3;
+        Wed, 21 Nov 2018 23:53:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fMG+pNlEYtF07TcwzI+qeuxLo7IKGlHTCP2l1xVSpE4=;
+        b=F+UMGM8P6UTHCdTI1Ctuxtsq8gkKqT2vx2fWbOnesvWYBBNgrY710qLcjdgxkTk2X+
+         xAuo7r8/FJ6xYJTyBZSYdi/G161+bYzDzBhF2J4O7dwvzuoc0JKvL6MrTmUunw0ZfTJG
+         j7To/Di2j2MxZ9QaLVlx/OrWGvcB6ITAaqO8d+GBNulHc9gDxNTrYo2LnzJ5d3cyTklv
+         vbwU0z0w2ksKjC/SykbeweDLfmTsQLX4JCbiTlaXOALMFh2JfyKshqdgsgHOmamdlxPf
+         pTooGtjoEWZbQiBDK+kscgFLRwDFPqKP/frr5ZcI8jpWSg63cfV4OEbXrgtJISDt0wx3
+         HBTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fMG+pNlEYtF07TcwzI+qeuxLo7IKGlHTCP2l1xVSpE4=;
+        b=mGNgF0aWajy9PtM+H7nWT9dt8lXaJB6u5+xSo/Mv6ZgnFWRB3MqoNkmfGCqhoL0KtW
+         IRBB5qKgDQz+GRyXzo8hsZM7Y2muOog+yh2N/a3nj+DDjlAHPOxEpd/7+A+JekvaCXwL
+         NLMKPA379P1NHjrupv6sXFO18hzDHynVWYDxK3azA4ve/Ayvu4tKmjsI2+Ejuk8z/tc2
+         p3hvO0IHN5l0ptdJCBVKFMbVt6XsNEL35eMN2OJagaK+M3SGsg1CzI8JcOrA3CKVaMr/
+         UZ7Clt7wEYst+vdlt9oAezRP2CB3HEWOI8BFPaZL/zu1inAhuzhtqYRb/mjMyCzXAg0C
+         dBsw==
+X-Gm-Message-State: AA+aEWa38OivvcydPyZEm64FWRJWfA3RFp58UTZFedmol6zubwRrJ4ug
+        MI7q93gS+HkogkvfY3oSWI8=
+X-Google-Smtp-Source: AFSGD/VmwvvBd0YWIDktkogXTrwX3WSxM+77X+moM3etwa8XnfQgRJXxmfkWGSt2netd5iQlYK2N1A==
+X-Received: by 2002:a5d:494a:: with SMTP id r10mr8842655wrs.272.1542873202416;
+        Wed, 21 Nov 2018 23:53:22 -0800 (PST)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id f2sm6734816wru.14.2018.11.21.23.53.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 23:53:21 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] soc/tegra: Fix terminating condition
+Date:   Thu, 22 Nov 2018 00:52:44 -0700
+Message-Id: <20181122075244.3909-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.20.0.rc1
 MIME-Version: 1.0
-In-Reply-To: <20181113001952.GA2556@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Rob,
+Clang warns:
 
-On 11/13/2018 5:49 AM, Rob Herring wrote:
-> On Sat, Nov 10, 2018 at 07:14:15AM +0530, Taniya Das wrote:
->> Add device tree bindings for Low Power Audio subsystem clock controller for
->> Qualcomm Technology Inc's SDM845 SoCs.
->>
->> Signed-off-by: Taniya Das <tdas@codeaurora.org>
->> ---
->>   .../devicetree/bindings/clock/qcom,gcc.txt         | 16 +++++++++++++
-> 
-> Seems like a separate change?
-> 
+drivers/soc/tegra/common.c:27:16: error: address of array
+'match->compatible' will always evaluate to 'true'
+[-Werror,-Wpointer-bool-conversion]
+        while (match->compatible) {
+        ~~~~~  ~~~~~~~^~~~~~~~~~
+1 error generated.
 
-Sure, would spilt it in the next patch.
+Whoops, we have an infinite loop and QEMU no longer boots...
 
->>   .../devicetree/bindings/clock/qcom,lpasscc.txt     | 26 ++++++++++++++++++++++
->>   include/dt-bindings/clock/qcom,gcc-sdm845.h        |  2 ++
->>   include/dt-bindings/clock/qcom,lpass-sdm845.h      | 16 +++++++++++++
->>   4 files changed, 60 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
->>   create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
->> index 52d9345..8661c3c 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
->> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
->> @@ -35,6 +35,8 @@ be part of GCC and hence the TSENS properties can also be
->>   part of the GCC/clock-controller node.
->>   For more details on the TSENS properties please refer
->>   Documentation/devicetree/bindings/thermal/qcom-tsens.txt
->> +- protected-clocks : Protected clock specifier list as per common clock
->> + binding.
->>
->>   Example:
->>   	clock-controller@900000 {
->> @@ -55,3 +57,17 @@ Example of GCC with TSENS properties:
->>   		#reset-cells = <1>;
->>   		#thermal-sensor-cells = <1>;
->>   	};
->> +
->> +Example of GCC with protected-clocks properties:
->> +	clock-controller@100000 {
->> +		compatible = "qcom,gcc-sdm845";
->> +		reg = <0x100000 0x1f0000>;
->> +		#clock-cells = <1>;
->> +		#reset-cells = <1>;
->> +		#power-domain-cells = <1>;
->> +		protected-clocks = <GCC_QSPI_CORE_CLK>,
->> +				   <GCC_QSPI_CORE_CLK_SRC>,
->> +				   <GCC_QSPI_CNOC_PERIPH_AHB_CLK>,
->> +				   <GCC_LPASS_Q6_AXI_CLK>,
->> +				   <GCC_LPASS_SWAY_CLK>;
->> +	};
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
->> new file mode 100644
->> index 0000000..b9e9787
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
->> @@ -0,0 +1,26 @@
->> +Qualcomm LPASS Clock Controller Binding
->> +-----------------------------------------------
->> +
->> +Required properties :
->> +- compatible		: shall contain "qcom,sdm845-lpasscc"
->> +- #clock-cells		: from common clock binding, shall contain 1.
->> +- reg			: shall contain base register address and size,
->> +			  in the order
->> +			Index-0 maps to LPASS_CC register region
->> +			Index-1 maps to LPASS_QDSP6SS register region
-> 
-> No input clocks?
-> 
+https://travis-ci.com/ClangBuiltLinux/continuous-integration/jobs/160242918
 
-There are no input clocks required.
+Check that the first character of the string isn't null so that the loop
+properly terminates.
 
->> +
->> +Optional properties :
->> +- reg-names	: register names of LPASS domain
->> +		 "cc", "qdsp6ss".
->> +
->> +Example:
->> +
->> +The below node has to be defined in the cases where the LPASS peripheral loader
->> +would bring the subsystem out of reset.
->> +
->> +	lpasscc: clock-controller@17014000 {
->> +		compatible = "qcom,sdm845-lpasscc";
->> +		reg = <0x17014000 0x1f004>, <0x17300000 0x200>;
->> +		reg-names = "cc", "qdsp6ss";
->> +		#clock-cells = <1>;
->> +	};
->> diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bindings/clock/qcom,gcc-sdm845.h
->> index b8eae5a..968fa65 100644
->> --- a/include/dt-bindings/clock/qcom,gcc-sdm845.h
->> +++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
->> @@ -197,6 +197,8 @@
->>   #define GCC_QSPI_CORE_CLK_SRC					187
->>   #define GCC_QSPI_CORE_CLK					188
->>   #define GCC_QSPI_CNOC_PERIPH_AHB_CLK				189
->> +#define GCC_LPASS_Q6_AXI_CLK					190
->> +#define GCC_LPASS_SWAY_CLK					191
->>
->>   /* GCC Resets */
->>   #define GCC_MMSS_BCR						0
->> diff --git a/include/dt-bindings/clock/qcom,lpass-sdm845.h b/include/dt-bindings/clock/qcom,lpass-sdm845.h
->> new file mode 100644
->> index 0000000..015968e
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/qcom,lpass-sdm845.h
->> @@ -0,0 +1,16 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#ifndef _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
->> +#define _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
->> +
->> +#define LPASS_AUDIO_WRAPPER_AON_CLK			0
->> +#define LPASS_Q6SS_AHBM_AON_CLK				1
->> +#define LPASS_Q6SS_AHBS_AON_CLK				2
->> +#define LPASS_QDSP6SS_XO_CLK				3
->> +#define LPASS_QDSP6SS_SLEEP_CLK				4
->> +#define LPASS_QDSP6SS_CORE_CLK				5
->> +
->> +#endif
->> --
->> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
->> of the Code Aurora Forum, hosted by the  Linux Foundation.
->>
+Fixes: c57eff9503a5 ("soc/tegra: refactor soc_is_tegra()")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/soc/tegra/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
+index 8a538b968fe9..54627ca957e8 100644
+--- a/drivers/soc/tegra/common.c
++++ b/drivers/soc/tegra/common.c
+@@ -24,7 +24,7 @@ bool soc_is_tegra(void)
+ {
+ 	const struct of_device_id *match = tegra_machine_match;
+ 
+-	while (match->compatible) {
++	while (match->compatible[0]) {
+ 		if (of_machine_is_compatible(match->compatible))
+ 			return true;
+ 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+2.20.0.rc1
 
---
