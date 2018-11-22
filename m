@@ -2,84 +2,175 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6631C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08EC6C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:15:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC36620685
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:15:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC36620685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id C954C20685
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:15:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C954C20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391938AbeKVNwg (ORCPT
+        id S2391950AbeKVNwi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 08:52:36 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54772 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729224AbeKVNwe (ORCPT
+        Thu, 22 Nov 2018 08:52:38 -0500
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:10219 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2391929AbeKVNwh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 08:52:34 -0500
-Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 95674721;
-        Thu, 22 Nov 2018 03:15:12 +0000 (UTC)
-Date:   Wed, 21 Nov 2018 19:15:11 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Aaron Lu <aaron.lu@intel.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org,
-        =?UTF-8?Q?Pawe=C5=82?= Staszewski <pstaszewski@itcare.pl>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Yoel Caspersen <yoel@kviknet.dk>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Ian Kumlien <ian.kumlien@gmail.com>
-Subject: Re: [PATCH v2 RESEND update 1/2] mm/page_alloc: free order-0 pages
- through PCP in page_frag_free()
-Message-Id: <20181121191511.658e0d41504e146edd88af53@linux-foundation.org>
-In-Reply-To: <20181120014544.GB10657@intel.com>
-References: <20181119134834.17765-1-aaron.lu@intel.com>
-        <20181119134834.17765-2-aaron.lu@intel.com>
-        <20181120014544.GB10657@intel.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 22 Nov 2018 08:52:37 -0500
+Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
+        by ATCSQR.andestech.com with ESMTP id wAM3EJS0012569;
+        Thu, 22 Nov 2018 11:14:19 +0800 (GMT-8)
+        (envelope-from vincentc@andestech.com)
+Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Thu, 22 Nov 2018
+ 11:15:03 +0800
+From:   Vincent Chen <vincentc@andestech.com>
+To:     <green.hu@gmail.com>, <arnd@arndb.de>
+CC:     <linux-kernel@vger.kernel.org>, <vincentc@andestech.com>
+Subject: [PATCH v4 4/5] math-emu/op-2.h: Use statement expressions to prevent negative constant shift
+Date:   Thu, 22 Nov 2018 11:14:37 +0800
+Message-ID: <1542856478-795-5-git-send-email-vincentc@andestech.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1542856478-795-1-git-send-email-vincentc@andestech.com>
+References: <1542856478-795-1-git-send-email-vincentc@andestech.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.0.15.65]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com wAM3EJS0012569
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Nov 2018 09:45:44 +0800 Aaron Lu <aaron.lu@intel.com> wrote:
+This modification is quoted from glibc 'commit <
+sysdeps/unix/sysv/linux/sparc/sparc64/dl-procinfo.c: Moved to>
+(fe0b1e854ad32a69b260)'
 
-> page_frag_free() calls __free_pages_ok() to free the page back to
-> Buddy. This is OK for high order page, but for order-0 pages, it
-> misses the optimization opportunity of using Per-Cpu-Pages and can
-> cause zone lock contention when called frequently.
-> 
+Signed-off-by: Vincent Chen <vincentc@andestech.com>
+---
+ include/math-emu/op-2.h |   97 ++++++++++++++++++++++------------------------
+ 1 files changed, 46 insertions(+), 51 deletions(-)
 
-Looks nice to me.  Let's tell our readers why we're doing this.
-
---- a/mm/page_alloc.c~mm-page_alloc-free-order-0-pages-through-pcp-in-page_frag_free-fix
-+++ a/mm/page_alloc.c
-@@ -4684,7 +4684,7 @@ void page_frag_free(void *addr)
- 	if (unlikely(put_page_testzero(page))) {
- 		unsigned int order = compound_order(page);
+diff --git a/include/math-emu/op-2.h b/include/math-emu/op-2.h
+index 4f26ecc..13a374f 100644
+--- a/include/math-emu/op-2.h
++++ b/include/math-emu/op-2.h
+@@ -31,61 +31,56 @@
+ #define _FP_FRAC_HIGH_2(X)	(X##_f1)
+ #define _FP_FRAC_LOW_2(X)	(X##_f0)
+ #define _FP_FRAC_WORD_2(X,w)	(X##_f##w)
++#define _FP_FRAC_SLL_2(X, N) (						       \
++	(void) (((N) < _FP_W_TYPE_SIZE)					       \
++	  ? ({								       \
++		if (__builtin_constant_p(N) && (N) == 1) {		       \
++			X##_f1 = X##_f1 + X##_f1 +			       \
++				(((_FP_WS_TYPE) (X##_f0)) < 0);		       \
++			X##_f0 += X##_f0;				       \
++		} else {						       \
++			X##_f1 = X##_f1 << (N) | X##_f0 >>		       \
++						(_FP_W_TYPE_SIZE - (N));       \
++			X##_f0 <<= (N);					       \
++		}							       \
++		0;							       \
++	    })								       \
++	  : ({								       \
++	      X##_f1 = X##_f0 << ((N) - _FP_W_TYPE_SIZE);		       \
++	      X##_f0 = 0;						       \
++	  })))
++
++
++#define _FP_FRAC_SRL_2(X, N) (						       \
++	(void) (((N) < _FP_W_TYPE_SIZE)					       \
++	  ? ({								       \
++	      X##_f0 = X##_f0 >> (N) | X##_f1 << (_FP_W_TYPE_SIZE - (N));      \
++	      X##_f1 >>= (N);						       \
++	    })								       \
++	  : ({								       \
++	      X##_f0 = X##_f1 >> ((N) - _FP_W_TYPE_SIZE);		       \
++	      X##_f1 = 0;						       \
++	    })))
  
--		if (order == 0)
-+		if (order == 0)		/* Via pcp? */
- 			free_unref_page(page);
- 		else
- 			__free_pages_ok(page, order);
-_
+-#define _FP_FRAC_SLL_2(X,N)						\
+-  do {									\
+-    if ((N) < _FP_W_TYPE_SIZE)						\
+-      {									\
+-	if (__builtin_constant_p(N) && (N) == 1) 			\
+-	  {								\
+-	    X##_f1 = X##_f1 + X##_f1 + (((_FP_WS_TYPE)(X##_f0)) < 0);	\
+-	    X##_f0 += X##_f0;						\
+-	  }								\
+-	else								\
+-	  {								\
+-	    X##_f1 = X##_f1 << (N) | X##_f0 >> (_FP_W_TYPE_SIZE - (N));	\
+-	    X##_f0 <<= (N);						\
+-	  }								\
+-      }									\
+-    else								\
+-      {									\
+-	X##_f1 = X##_f0 << ((N) - _FP_W_TYPE_SIZE);			\
+-	X##_f0 = 0;							\
+-      }									\
+-  } while (0)
+-
+-#define _FP_FRAC_SRL_2(X,N)						\
+-  do {									\
+-    if ((N) < _FP_W_TYPE_SIZE)						\
+-      {									\
+-	X##_f0 = X##_f0 >> (N) | X##_f1 << (_FP_W_TYPE_SIZE - (N));	\
+-	X##_f1 >>= (N);							\
+-      }									\
+-    else								\
+-      {									\
+-	X##_f0 = X##_f1 >> ((N) - _FP_W_TYPE_SIZE);			\
+-	X##_f1 = 0;							\
+-      }									\
+-  } while (0)
+ 
+ /* Right shift with sticky-lsb.  */
+-#define _FP_FRAC_SRS_2(X,N,sz)						\
+-  do {									\
+-    if ((N) < _FP_W_TYPE_SIZE)						\
+-      {									\
+-	X##_f0 = (X##_f1 << (_FP_W_TYPE_SIZE - (N)) | X##_f0 >> (N) |	\
+-		  (__builtin_constant_p(N) && (N) == 1			\
+-		   ? X##_f0 & 1						\
+-		   : (X##_f0 << (_FP_W_TYPE_SIZE - (N))) != 0));	\
+-	X##_f1 >>= (N);							\
+-      }									\
+-    else								\
+-      {									\
+-	X##_f0 = (X##_f1 >> ((N) - _FP_W_TYPE_SIZE) |			\
+-		(((X##_f1 << (2*_FP_W_TYPE_SIZE - (N))) | X##_f0) != 0)); \
+-	X##_f1 = 0;							\
+-      }									\
+-  } while (0)
++#define _FP_FRAC_SRS_2(X, N, sz) (					       \
++	(void) (((N) < _FP_W_TYPE_SIZE)					       \
++	  ? ({								       \
++	      X##_f0 = (X##_f1 << (_FP_W_TYPE_SIZE - (N)) | X##_f0 >> (N)      \
++			| (__builtin_constant_p(N) && (N) == 1		       \
++			   ? X##_f0 & 1					       \
++			   : (X##_f0 << (_FP_W_TYPE_SIZE - (N))) != 0));       \
++		X##_f1 >>= (N);						       \
++	    })								       \
++	  : ({								       \
++	      X##_f0 = (X##_f1 >> ((N) - _FP_W_TYPE_SIZE)		       \
++			| ((((N) == _FP_W_TYPE_SIZE			       \
++			     ? 0					       \
++			     : (X##_f1 << (2*_FP_W_TYPE_SIZE - (N))))          \
++			    | X##_f0) != 0));				       \
++	      X##_f1 = 0;						       \
++	    })))
+ 
+ #define _FP_FRAC_ADDI_2(X,I)	\
+   __FP_FRAC_ADDI_2(X##_f1, X##_f0, I)
+-- 
+1.7.1
 
