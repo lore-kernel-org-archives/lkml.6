@@ -2,98 +2,146 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE25C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE59BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 687AF20663
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:08:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 687AF20663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id AE52C20865
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:08:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE52C20865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393429AbeKVTrI (ORCPT
+        id S2393438AbeKVTrN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 14:47:08 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:46782 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730412AbeKVTrI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 14:47:08 -0500
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gPkyN-0001DY-3v; Thu, 22 Nov 2018 10:08:31 +0100
-Date:   Thu, 22 Nov 2018 10:08:30 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: Re: [patch 22/24] x86/speculation: Create PRCTL interface to restrict
- indirect branch speculation
-In-Reply-To: <20181122090321.GI2131@hirez.programming.kicks-ass.net>
-Message-ID: <alpine.DEB.2.21.1811221008140.1571@nanos.tec.linutronix.de>
-References: <20181121201430.559770965@linutronix.de> <20181121201724.414692525@linutronix.de> <20181122090321.GI2131@hirez.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 22 Nov 2018 14:47:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42991 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730412AbeKVTrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 14:47:13 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 72FB888314;
+        Thu, 22 Nov 2018 09:08:38 +0000 (UTC)
+Received: from krava (unknown [10.43.17.92])
+        by smtp.corp.redhat.com (Postfix) with SMTP id BB8355C21E;
+        Thu, 22 Nov 2018 09:08:36 +0000 (UTC)
+Date:   Thu, 22 Nov 2018 10:08:35 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc:     Stephane Eranian <eranian@google.com>,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@elte.hu,
+        acme@kernel.org
+Subject: Re: [PATCH] perf stat: fix csv mode column output for non-cgroup
+ events
+Message-ID: <20181122090835.GB15953@krava>
+References: <1541587845-9150-1-git-send-email-eranian@google.com>
+ <20181122035811.GD5468@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181122035811.GD5468@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 22 Nov 2018 09:08:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Nov 2018, Peter Zijlstra wrote:
-
-> On Wed, Nov 21, 2018 at 09:14:52PM +0100, Thomas Gleixner wrote:
-> > @@ -1453,6 +1453,8 @@ static inline bool is_percpu_thread(void
-> >  #define PFA_SPREAD_SLAB			2	/* Spread some slab caches over cpuset */
-> >  #define PFA_SPEC_SSB_DISABLE		3	/* Speculative Store Bypass disabled */
-> >  #define PFA_SPEC_SSB_FORCE_DISABLE	4	/* Speculative Store Bypass force disabled*/
-> > +#define PFA_SPEC_INDIR_BRANCH_DISABLE	5	/* Indirect branch speculation restricted */
-> > +#define PFA_SPEC_INDIR_BRANCH_FORCE_DISABLE 6	/* Indirect branch speculation permanentely restricted */
-> >  
-> >  #define TASK_PFA_TEST(name, func)					\
-> >  	static inline bool task_##func(struct task_struct *p)		\
-> > @@ -1484,6 +1486,13 @@ TASK_PFA_CLEAR(SPEC_SSB_DISABLE, spec_ss
-> >  TASK_PFA_TEST(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
-> >  TASK_PFA_SET(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
-> >  
-> > +TASK_PFA_TEST(SPEC_INDIR_BRANCH_DISABLE, spec_indir_branch_disable)
-> > +TASK_PFA_SET(SPEC_INDIR_BRANCH_DISABLE, spec_indir_branch_disable)
-> > +TASK_PFA_CLEAR(SPEC_INDIR_BRANCH_DISABLE, spec_indir_branch_disable)
-> > +
-> > +TASK_PFA_TEST(SPEC_INDIR_BRANCH_FORCE_DISABLE, spec_indir_branch_force_disable)
-> > +TASK_PFA_SET(SPEC_INDIR_BRANCH_FORCE_DISABLE, spec_indir_branch_force_disable)
-> > +
-> >  static inline void
-> >  current_restore_flags(unsigned long orig_flags, unsigned long flags)
-> >  {
+On Thu, Nov 22, 2018 at 01:58:11AM -0200, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Nov 07, 2018 at 02:50:45AM -0800, Stephane Eranian escreveu:
+> > When using the -x option, perf stat prints csv-style output
+> > with one event per line.  For each event, it prints the count,
+> > the unit, the event name, the cgroup, and a bunch of other event
+> > specific fields (such as insn per cycles).
+> > 
+> > When you use csv-style mode, you expect a normalized output where
+> > each event is printed with the same number of fields regardless of
+> > what it is so it can easily be imported into a spreadsheet or parsed.
+> > For instance, if an event does not have a unit, then print an empty field
+> > for it. Although this approach was implemented for the unit, it was not
+> > for the cgroup.  When mixing cgroup and non-cgroup events, then non-cgroup
+> > events would not show an empty field, instead the next field was printed,
+> > make columns not line up correctly.
+> > 
+> > This patch fixes the cgroup output issues by forcing an empty field
+> > for non-cgroup events as soon as one event has cgroup.
 > 
-> s/INDIR_BRANCH/IB/ would be consistent here with the SSB case.
+> Looks sane, that nr_cgroups global variable at some point has to go to
+> the evlist, but that is not introduced by this patch, Jiri, are you ok
+> with it as well?
 
-Good point.
+yep, looks good, sry I missed it
 
-Thanks,
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-	tglx
+jirka
 
+> 
+> - Arnaldo
+>  
+> > Before:
+> > <not counted> @ @cycles @foo    @ 0    @100.00@@
+> > 2531614       @ @cycles @6420922@100.00@    @
+> > 
+> > foo cgroup lines up with time_running!
+> > 
+> > After:
+> > <not counted> @ @cycles @foo @0       @100.00@@
+> > 2594834       @ @cycles @    @5287372 @100.00@@
+> > 
+> > Fields line up.
+> > 
+> > Signed-off-by: Stephane Eranian <eranian@google.com>
+> > ---
+> >  tools/perf/util/stat-display.c | 16 +++++++++++-----
+> >  1 file changed, 11 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+> > index e7b4c44ebb62..665ee374fc01 100644
+> > --- a/tools/perf/util/stat-display.c
+> > +++ b/tools/perf/util/stat-display.c
+> > @@ -59,6 +59,15 @@ static void print_noise(struct perf_stat_config *config,
+> >  	print_noise_pct(config, stddev_stats(&ps->res_stats[0]), avg);
+> >  }
+> >  
+> > +static void print_cgroup(struct perf_stat_config *config, struct perf_evsel *evsel)
+> > +{
+> > +	if (nr_cgroups) {
+> > +		const char *cgrp_name = evsel->cgrp ? evsel->cgrp->name  : "";
+> > +		fprintf(config->output, "%s%s", config->csv_sep, cgrp_name);
+> > +	}
+> > +}
+> > +
+> > +
+> >  static void aggr_printout(struct perf_stat_config *config,
+> >  			  struct perf_evsel *evsel, int id, int nr)
+> >  {
+> > @@ -336,8 +345,7 @@ static void abs_printout(struct perf_stat_config *config,
+> >  
+> >  	fprintf(output, "%-*s", config->csv_output ? 0 : 25, perf_evsel__name(evsel));
+> >  
+> > -	if (evsel->cgrp)
+> > -		fprintf(output, "%s%s", config->csv_sep, evsel->cgrp->name);
+> > +	print_cgroup(config, evsel);
+> >  }
+> >  
+> >  static bool is_mixed_hw_group(struct perf_evsel *counter)
+> > @@ -431,9 +439,7 @@ static void printout(struct perf_stat_config *config, int id, int nr,
+> >  			config->csv_output ? 0 : -25,
+> >  			perf_evsel__name(counter));
+> >  
+> > -		if (counter->cgrp)
+> > -			fprintf(config->output, "%s%s",
+> > -				config->csv_sep, counter->cgrp->name);
+> > +		print_cgroup(config, counter);
+> >  
+> >  		if (!config->csv_output)
+> >  			pm(config, &os, NULL, NULL, "", 0);
+> > -- 
+> > 2.7.4
