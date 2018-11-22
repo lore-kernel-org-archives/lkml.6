@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-15.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99594C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6128C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6013C20878
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:36:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F1C520821
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:36:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UoDQSJAl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6013C20878
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jK7HCj1J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F1C520821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404325AbeKVOOU (ORCPT
+        id S2404339AbeKVOOX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 09:14:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55830 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 09:14:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404284AbeKVOOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 09:14:19 -0500
+        id S2404284AbeKVOOW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 09:14:22 -0500
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 662BE20821;
-        Thu, 22 Nov 2018 03:36:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 473592080F;
+        Thu, 22 Nov 2018 03:36:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542857813;
-        bh=k4wf8aqsoGwWJafDWSWi1NlJ9G7lMHs4kuZTwuMSn9I=;
+        s=default; t=1542857816;
+        bh=8+rEe+HClOE3869VdrL6vRWFVrgu9FUiMM0Ey60x/zQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UoDQSJAlcQm/939iM8A7LAx1QA/CyFRHOyzZz9uQHZOYOTr1lfjct32IW7U1s5Jdk
-         tBmZEw3M6OmN/ztI/xXj8PdfOECy2u09XqeiwFe5J8wrNl8j/utr2PWa/XqREJoJhC
-         uWbm3nMYLPDymUY2bXdKIIw2r6U+ZkLbDhrNkBIQ=
+        b=jK7HCj1J62PFL2Lm2gRJT7fTmfQCpOUEE82TjnNZ8EC3a/v6Y7Lm16OeyJD6/wnmw
+         a8OsTO2CWXDt4ujdmJvqFvmIDSidNxGG/m4a4Prc6Vrivu7Lt0QwrGK2bYkLZpvvdf
+         ynDwCxldWKC3153zLOGsPnAv4ICmlLJ1xWx8cRTg=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 10/28] perf trace: See if there is a map named "filtered_pids"
-Date:   Thu, 22 Nov 2018 00:35:53 -0300
-Message-Id: <20181122033611.15890-11-acme@kernel.org>
+Subject: [PATCH 11/28] perf trace: Fill in BPF "filtered_pids" map when present
+Date:   Thu, 22 Nov 2018 00:35:54 -0300
+Message-Id: <20181122033611.15890-12-acme@kernel.org>
 X-Mailer: git-send-email 2.14.5
 In-Reply-To: <20181122033611.15890-1-acme@kernel.org>
 References: <20181122033611.15890-1-acme@kernel.org>
@@ -59,84 +59,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Lookup for the first map named "filtered_pids" and, if augmenting
-syscalls, i.e. if a BPF event is present and the
-"__augmented_syscalls__" is present, then fill in that map with the pids
-to filter, be it feedback loop ones (perf trace's pid, its father if it
-is "sshd", more auto-filtered in the future) or the ones explicitely
-stated in the tool command line via --filter-pids.
-
-The code to actually fill in the map comes next.
+This makes the augmented_syscalls support the --filter-pids and
+auto-filtered feedback loop pids just like when working without BPF,
+i.e. with just raw_syscalls:sys_{enter,exit} and tracepoint filters.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-rhzytmw7qpe6lqyjxi1ded9t@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-zc5n453sxxm0tz1zfwwelyti@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+ tools/perf/builtin-trace.c | 61 ++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 48 insertions(+), 13 deletions(-)
 
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 8f966c7a7d0d..c423a78b5ecd 100644
+index c423a78b5ecd..8e3c3f74a3a4 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -18,6 +18,7 @@
- 
- #include <traceevent/event-parse.h>
- #include <api/fs/tracing_path.h>
-+#include <bpf/bpf.h>
- #include "builtin.h"
- #include "util/cgroup.h"
- #include "util/color.h"
-@@ -99,6 +100,7 @@ struct trace {
- 	struct {
- 		size_t		nr;
- 		pid_t		*entries;
-+		struct bpf_map  *map;
- 	}			filter_pids;
- 	double			duration_filter;
- 	double			runtime_ms;
-@@ -3315,6 +3317,25 @@ static int trace__parse_cgroups(const struct option *opt, const char *str, int u
- 	return 0;
+@@ -2567,9 +2567,27 @@ static int trace__set_ev_qualifier_filter(struct trace *trace)
+ 	goto out;
  }
  
-+static struct bpf_map *bpf__find_map_by_name(const char *name)
++static int bpf_map__set_filter_pids(struct bpf_map *map __maybe_unused,
++				    size_t npids __maybe_unused, pid_t *pids __maybe_unused)
 +{
-+	struct bpf_object *obj, *tmp;
++	int err = 0;
++#ifdef HAVE_LIBBPF_SUPPORT
++	bool value = true;
++	int map_fd = bpf_map__fd(map);
++	size_t i;
 +
-+	bpf_object__for_each_safe(obj, tmp) {
-+		struct bpf_map *map = bpf_object__find_map_by_name(obj, name);
-+		if (map)
-+			return map;
-+
++	for (i = 0; i < npids; ++i) {
++		err = bpf_map_update_elem(map_fd, &pids[i], &value, BPF_ANY);
++		if (err)
++			break;
 +	}
-+
-+	return NULL;
++#endif
++	return err;
 +}
 +
-+static void trace__set_bpf_map_filtered_pids(struct trace *trace)
-+{
-+	trace->filter_pids.map = bpf__find_map_by_name("pids_filtered");
-+}
-+
- int cmd_trace(int argc, const char **argv)
+ static int trace__set_filter_loop_pids(struct trace *trace)
  {
- 	const char *trace_usage[] = {
-@@ -3451,8 +3472,10 @@ int cmd_trace(int argc, const char **argv)
- 		goto out;
+-	unsigned int nr = 1;
++	unsigned int nr = 1, err;
+ 	pid_t pids[32] = {
+ 		getpid(),
+ 	};
+@@ -2588,7 +2606,34 @@ static int trace__set_filter_loop_pids(struct trace *trace)
+ 		thread = parent;
  	}
  
--	if (evsel)
-+	if (evsel) {
- 		trace.syscalls.events.augmented = evsel;
-+		trace__set_bpf_map_filtered_pids(&trace);
+-	return perf_evlist__set_tp_filter_pids(trace->evlist, nr, pids);
++	err = perf_evlist__set_tp_filter_pids(trace->evlist, nr, pids);
++	if (!err && trace->filter_pids.map)
++		err = bpf_map__set_filter_pids(trace->filter_pids.map, nr, pids);
++
++	return err;
++}
++
++static int trace__set_filter_pids(struct trace *trace)
++{
++	int err = 0;
++	/*
++	 * Better not use !target__has_task() here because we need to cover the
++	 * case where no threads were specified in the command line, but a
++	 * workload was, and in that case we will fill in the thread_map when
++	 * we fork the workload in perf_evlist__prepare_workload.
++	 */
++	if (trace->filter_pids.nr > 0) {
++		err = perf_evlist__set_tp_filter_pids(trace->evlist, trace->filter_pids.nr,
++						      trace->filter_pids.entries);
++		if (!err && trace->filter_pids.map) {
++			err = bpf_map__set_filter_pids(trace->filter_pids.map, trace->filter_pids.nr,
++						       trace->filter_pids.entries);
++		}
++	} else if (thread_map__pid(trace->evlist->threads, 0) == -1) {
++		err = trace__set_filter_loop_pids(trace);
 +	}
++
++	return err;
+ }
  
- 	err = bpf__setup_stdout(trace.evlist);
- 	if (err) {
+ static int trace__run(struct trace *trace, int argc, const char **argv)
+@@ -2697,17 +2742,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 		goto out_error_open;
+ 	}
+ 
+-	/*
+-	 * Better not use !target__has_task() here because we need to cover the
+-	 * case where no threads were specified in the command line, but a
+-	 * workload was, and in that case we will fill in the thread_map when
+-	 * we fork the workload in perf_evlist__prepare_workload.
+-	 */
+-	if (trace->filter_pids.nr > 0)
+-		err = perf_evlist__set_tp_filter_pids(evlist, trace->filter_pids.nr, trace->filter_pids.entries);
+-	else if (thread_map__pid(evlist->threads, 0) == -1)
+-		err = trace__set_filter_loop_pids(trace);
+-
++	err = trace__set_filter_pids(trace);
+ 	if (err < 0)
+ 		goto out_error_mem;
+ 
 -- 
 2.14.5
 
