@@ -2,151 +2,161 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAEFEC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FEEAC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:27:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A743B20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:25:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A743B20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BD95E20831
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:27:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="DriWMKxg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD95E20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437713AbeKWCFj (ORCPT
+        id S2437718AbeKWCHM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 21:05:39 -0500
-Received: from foss.arm.com ([217.140.101.70]:52110 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731109AbeKWCFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 21:05:38 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E1BDA78;
-        Thu, 22 Nov 2018 07:25:49 -0800 (PST)
-Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 853F13F575;
-        Thu, 22 Nov 2018 07:25:45 -0800 (PST)
-Date:   Thu, 22 Nov 2018 15:25:40 +0000
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v9 09/15] sched: Introduce sched_energy_present static key
-Message-ID: <20181122152538.jvgh3uvuo5a6lfs7@queper01-lin>
-References: <20181119141857.8625-1-quentin.perret@arm.com>
- <20181119141857.8625-10-quentin.perret@arm.com>
- <20181121130822.GE2113@hirez.programming.kicks-ass.net>
- <20181121151444.t3zye5l5iycfni2s@queper01-lin>
- <20181122091715.6kvhcbgoqrd54nbs@queper01-lin>
- <20181122093237.goxmr4p5l4h2izid@queper01-lin>
- <20181122102545.GQ2131@hirez.programming.kicks-ass.net>
+        Thu, 22 Nov 2018 21:07:12 -0500
+Received: from mail.efficios.com ([167.114.142.138]:39868 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437703AbeKWCHM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 21:07:12 -0500
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id EE7CA250B34;
+        Thu, 22 Nov 2018 10:27:20 -0500 (EST)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id j-X7tUyjBKv0; Thu, 22 Nov 2018 10:27:20 -0500 (EST)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 757C3250B21;
+        Thu, 22 Nov 2018 10:27:20 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 757C3250B21
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1542900440;
+        bh=AgnIwdAK236VoKYA3hUes3qnopMWQ3Gm0U+9TZRlV2I=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=DriWMKxgdzeiKD6BaJdfXr0Acyt8Y4bi0gPwuKuiB4dCyyTG5kB6awePQlAEEL1Qh
+         q5sw4qcWSIb3LfxJ2dkqzecGTQ9E8sCSzT6EdSwnZQ+YLUo55qi9fCyh1GgBSkkLL6
+         44cvS1/4q6HYUnGUsuXvMtzoyDUKY1TNQXzvoE+Rl7QemiIdocOb2ldcQxd1zML9NQ
+         pmijPjYS+wcfGDvs++J2yJUEb2vlqXLmem+8BFlOK30defGGcHjbpir+8Ca5rFc4Ln
+         0BjgYU1Xhk2cfsd0YzIu1tVu7VpBaRPYl2Z2GtqyMdGsBfUxW45lRKBW9jbXAanz+7
+         1ADnmXphDlAOw==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id lb2uKHMi9GYY; Thu, 22 Nov 2018 10:27:20 -0500 (EST)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 4F350250B1B;
+        Thu, 22 Nov 2018 10:27:20 -0500 (EST)
+Date:   Thu, 22 Nov 2018 10:27:20 -0500 (EST)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Primiano Tucci <primiano@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin <guro@fb.com>,
+        Prashant Dhamdhere <pdhamdhe@redhat.com>,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, linux@dominikbrodowski.net,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        ktsanaktsidis@zendesk.com, David Howells <dhowells@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Message-ID: <1320611605.10033.1542900440206.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CAKOZueuV=X4eqc+-8Jh3Z-2iQO+4fp2otEOs03yQoaa88C9zUA@mail.gmail.com>
+References: <20181121201452.77173-1-dancol@google.com> <20181121141220.0e533c1dcb4792480efbf3ff@linux-foundation.org> <CAKOZuetW6WMNFdL5_2=UbrEf8mjxYTdz1+4BiRLSgdoKh8FsqQ@mail.gmail.com> <20181121145043.fa029f4f91afddc2a10bb81e@linux-foundation.org> <CAKOZuesF5zi9mpEE6No7oq0hDnM8KFhQFU=NM7qUF635s0r3-A@mail.gmail.com> <20181121162247.467fcab6c0aca0819a822286@linux-foundation.org> <CAKOZuet7ipw8zoXCDQUB5PKs3kdSye-zesBbEv7jVDSByhXgkw@mail.gmail.com> <CAKOZueuV=X4eqc+-8Jh3Z-2iQO+4fp2otEOs03yQoaa88C9zUA@mail.gmail.com>
+Subject: Re: [PATCH v2] Add /proc/pid_gen
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181122102545.GQ2131@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.10_GA_3047 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
+Thread-Topic: Add /proc/pid_gen
+Thread-Index: jO0zrNcB96YX4gIU2FfZ/D9op3CHfA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 22 Nov 2018 at 11:25:45 (+0100), Peter Zijlstra wrote:
-> On Thu, Nov 22, 2018 at 09:32:39AM +0000, Quentin Perret wrote:
-> > Hmm, I went too fast, that's totally broken. But there's still something
-> > we can do with static_branch_{inc,dec} I think. I'll come back later
-> > with a better solution.
-> 
-> Right; if you count the rd's that have pd set, it should work-ish. Yes,
-> much cleaner if you can get it to work.
+----- On Nov 21, 2018, at 7:30 PM, Daniel Colascione dancol@google.com wrote:
+[...]
+>> > >
+>> > > The problem here is the possibility of confusion, even if it's rare.
+>> > > Does the naive approach of just walking /proc and ignoring the
+>> > > possibility of PID reuse races work most of the time? Sure. But "most
+>> > > of the time" isn't good enough. It's not that there are tons of sob
+>> > > stories: it's that without completely robust reporting, we can't rule
+>> > > out of the possibility that weirdness we observe in a given trace is
+>> > > actually just an artifact from a kinda-sort-working best-effort trace
+>> > > collection system instead of a real anomaly in behavior. Tracing,
+>> > > essentially, gives us deltas for system state, and without an accurate
+>> > > baseline, collected via some kind of scan on trace startup, it's
+>> > > impossible to use these deltas to robustly reconstruct total system
+>> > > state at a given time. And this matters, because errors in
+>> > > reconstruction (e.g., assigning a thread to the wrong process because
+>> > > the IDs happen to be reused) can affect processing of the whole trace.
+>> > > If it's 3am and I'm analyzing the lone trace from a dogfooder
+>> > > demonstrating a particularly nasty problem, I don't want to find out
+>> > > that the trace I'm analyzing ended up being useless because the
+>> > > kernel's trace system is merely best effort. It's very cheap to be
+>> > > 100% reliable here, so let's be reliable and rule out sources of
+>> > > error.
+>> >
 
-So, I came up with the following code which seems to work OK. It's not
-as I clean as I'd like, though. The fact that free_pd() can be called in
-softirq context is annoying to manipulate the static key ...
+[...]
 
-An alternative to this work item workaround is to do static_branch_dec()
-from build_perf_domains() and next to the three call sites of
-free_rootdomain() in order to avoid the call_rcu() context. Not very
-pretty either.
+I've just been CC'd on this thread for some reason, so I'll add my 2 cents.
 
-Or we can just stick with your original suggestion to carry a boolean
-around.
+WHIW, I think using /proc to add stateful information to a time-based
+trace is the wrong way to do things. Here, the fact that you need to
+add a generation counter struct pid_namespace and expose it via /proc
+just highlights its limitations when it comes to dealing with state
+that changes over time. Your current issue is with PID re-use, but
+you will eventually face the same issue for re-use of all other resources
+you are trying to model. For instance, a file descriptor may be associated
+to a path as some point in time, but that is not true anymore after a
+sequence of close/open which re-uses that file descriptor. Does that
+mean we will eventually end up needing per-file-descriptor generation
+counters as well ?
 
-Any preference ?
+LTTng solves this by dumping the system state as events within the
+trace [1], which associates time-stamps with the state being dumped.
+It is recorded while the rest of the system is being traced, so tools
+can reconstruct full system state by combining this statedump with the
+rest of the events recording state transitions.
+
+So while I agree that it's important to have a way to reconstruct
+system state that is aware of PID re-use, I think trying to extend
+/proc for this is the wrong approach. It adds extra fields to struct
+pid_namespace that seem to be only useful for tracing, whereas using
+the time-stamp at which the thread/process was first seen in the trace
+(either fork or statedump) as secondary key should suffice to uniquely
+identify a thread/process. I would recommend extending tracing
+facilities to dump the data you need rather than /proc.
 
 Thanks,
-Quentin
 
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -232,7 +232,7 @@ int sched_energy_aware_handler(struct ctl_table *table, int write,
- }
- #endif
+Mathieu
 
--static void free_pd(struct perf_domain *pd)
-+static void _free_pd(struct perf_domain *pd)
- {
-        struct perf_domain *tmp;
-
-@@ -243,6 +243,24 @@ static void free_pd(struct perf_domain *pd)
-        }
- }
-
-+static void dec_sched_energy_workfn(struct work_struct *work)
-+{
-+       static_branch_dec(&sched_energy_present);
-+}
-+static DECLARE_WORK(dec_sched_energy_work, dec_sched_energy_workfn);
-+
-+static void free_pd(struct perf_domain *pd)
-+{
-+       if (pd) {
-+               /*
-+                * XXX: The static key can't be modified from SOFTIRQ context,
-+                * so do it using a work item.
-+                */
-+               schedule_work(&dec_sched_energy_work);
-+               _free_pd(pd);
-+       }
-+}
-+
- static struct perf_domain *find_pd(struct perf_domain *pd, int cpu)
- {
-        while (pd) {
-@@ -421,13 +410,14 @@ static void build_perf_domains(const struct cpumask *cpu_map)
-        /* Attach the new list of performance domains to the root domain. */
-        tmp = rd->pd;
-        rcu_assign_pointer(rd->pd, pd);
-+       static_branch_inc_cpuslocked(&sched_energy_present);
-        if (tmp)
-                call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
-
-        return;
-
- free:
--       free_pd(pd);
-+       _free_pd(pd);
-        tmp = rd->pd;
-        rcu_assign_pointer(rd->pd, NULL);
-        if (tmp)
-@@ -2246,7 +2236,6 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
- match3:
-                ;
-        }
--       sched_energy_start(ndoms_new, doms_new);
- #endif
-
-        /* Remember the new sched domains: */
+[1] http://git.lttng.org/?p=lttng-modules.git;a=blob;f=lttng-statedump-impl.c;h=dc037508c055b7f61b8c758d581bd0178e26552a;hb=HEAD
 
 
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
