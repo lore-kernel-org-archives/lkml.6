@@ -2,231 +2,93 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A744C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5F3C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43F4420820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:44:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43F4420820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=eclipso.eu
+	by mail.kernel.org (Postfix) with ESMTP id 0ADE620820
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:45:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="lb9oXBOt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ADE620820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407581AbeKWIZy convert rfc822-to-8bit (ORCPT
+        id S2407588AbeKWI0W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 03:25:54 -0500
-Received: from mail.eclipso.de ([217.69.254.104]:52910 "EHLO mail.eclipso.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404988AbeKWIZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 03:25:54 -0500
-Received: from roadrunner.suse (p5B318127.dip0.t-ipconnect.de [91.49.129.39])
-        by mail.eclipso.de with ESMTPS id 7AA2BF5F
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 22:44:37 +0100 (CET)
-X-ESMTP-Authenticated-User: 0001F234
-From:   stakanov <stakanov@eclipso.eu>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Takashi Iwai <tiwai@suse.de>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: DVB-S PCI card regression on 4.19 / 4.20
-Date:   Thu, 22 Nov 2018 22:44:34 +0100
-Message-ID: <2248241.AKzUZ5aokr@roadrunner.suse>
-In-Reply-To: <20181122183549.331ecbc4@coco.lan>
-References: <4e0356d6303c128a3e6d0bcc453ba1be@mail.eclipso.de> <12757009.r0OKxgvFl0@roadrunner.suse> <20181122183549.331ecbc4@coco.lan>
+        Fri, 23 Nov 2018 03:26:22 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37111 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404988AbeKWI0V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 03:26:21 -0500
+Received: by mail-oi1-f196.google.com with SMTP id y23so8471410oia.4;
+        Thu, 22 Nov 2018 13:45:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2CLIN8puokknbxrAj+/ZjxfShLAif/OcRoWopnz99GQ=;
+        b=lb9oXBOtfGJAcyJIe4QJyd8RJ1pt94PmxyzAxC05Lb7UjDW6pGi9MjMQnbuf/dRIkX
+         Vh0rzapNXAVJ43fQbR5o61PjeJQW3k61P0T5gvK4ERKzlpSXHUhIXWW9STramYFYkRBk
+         sP5hyB10KAboa7LxmPeQjX1izsjeHWWrHkWurHrN0fkysv+vBJPo5OdlDcvsi2sgYwTO
+         s8zy2LUiVXiM8Yj9XHOZymtW7Q9dEljPZ50bcemqx8iSZX9Q5n4W3L2p/G+EQfjmlSIX
+         ZGt4uheven64G6mxUq/wMcaQQ+BZ3ox5e3nWqq+j210ZQmdsc3IngZRrvbtrOMoopVzm
+         N5GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2CLIN8puokknbxrAj+/ZjxfShLAif/OcRoWopnz99GQ=;
+        b=oDUTzgs/9z+WmUty/+p23JCRmQsVrH/EcomaMXvmrCq+Kos0hfpYIAIr7wPcOKLkqy
+         a5YP0TqdfJwGJysy9tCBMnKILbvgf+M7H7CdaLqkcILZB/00FBi3V2a53szh3QJt2lEt
+         tXnZuUIASUBb7H/dDtc1Pu6lnRaRuzF4Rlsk1cwgopaRVw1NHyA/W9HQXGI3vu7tGv4Q
+         3KWL25RLEjixBWFuvZGWnhNS8IJ4gg9JbR6UBX4Qji+3kidqzr2+w1Jwh38W8dGtaukG
+         tS2y3X4uYSHWTD9zXq9p5Xgg/lfFat6Ab9+B5RBfYnMgtIj6Qyo7r14KQtOuyMJYIYNO
+         EW/g==
+X-Gm-Message-State: AGRZ1gLxS+FsfNRddSVcryNl/iYBtpFz7oZqwWj18VqaibZl6vJSbQY3
+        YQ9sf+G+WE5/re7INVxWIJUY4C17sr/bwWT6Ioo=
+X-Google-Smtp-Source: AJdET5fXe5gUCxbKq3ZtpCuk7YUEdys0SSgX2Tepo4h89isC8eYm5hZoTFR6eh805vGzdw9SwZ6nCK/9trivvunlT40=
+X-Received: by 2002:aca:bdc1:: with SMTP id n184-v6mr7364843oif.321.1542923106072;
+ Thu, 22 Nov 2018 13:45:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+References: <1542872803-29060-1-git-send-email-hofrat@osadl.org>
+In-Reply-To: <1542872803-29060-1-git-send-email-hofrat@osadl.org>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 22 Nov 2018 22:44:55 +0100
+Message-ID: <CAFBinCAXt1GPFMptVXrGYi-TsgSxSyNqeWFuz=B=vWV3c1+zwA@mail.gmail.com>
+Subject: Re: [PATCH] iio: adc: meson-saradc: check for devm_kasprintf failure
+To:     hofrat@osadl.org, jic23@kernel.org
+Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        carlo@caione.org, khilman@baylibre.com, yixun.lan@amlogic.com,
+        xingyu.chen@amlogic.com, gregkh@linuxfoundation.org,
+        dan.carpenter@oracle.com, linux-iio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In data giovedì 22 novembre 2018 21:35:49 CET, Mauro Carvalho Chehab ha 
-scritto:
-> Em Thu, 22 Nov 2018 21:19:49 +0100
-> 
-> stakanov <stakanov@eclipso.eu> escreveu:
-> > Hello Mauro.
-> > 
-> > Thank you so much, for this fast reply and especially for the detailed
-> > indications. I expected to have a lack of knowledge.
-> > 
-> > Well,  I am replying to the question as of below: (for convenience I did
-> > cut the before text, if you deem it useful for the list I can then
-> > correct that in the next posts).
-> > 
-> > In data giovedì 22 novembre 2018 21:06:11 CET, Mauro Carvalho Chehab ha
-> > 
-> > scritto:
-> > > Are you sure that the difference is just the Kernel version? Perhaps you
-> > > also updated some other package.
-> > 
-> > To be clear: I had the same system(!) with all three kernel 4.18.15-1,
-> > 4.19.1 (when the problem did arise) and 4.20.2 rc3 from Takashi's repo)
-> > installed.
-> Ok, so rebooting to 4.18.15-1 solves the issue?
-> 
-> Also, what GPU driver are you using?
-> 
-> In any case, by using the old "Universal" LNBf, you're likely missing some
-> transponders, and missing several channels.
-> 
-> > In this very configuration: if one booted in 4.18 (that is in perfect
-> > parity with all other packages) the card worked. 4.19.1 no. And the last
-> > kernel the same. So whatever might be different, forcefully it has to be
-> > in the kernel. (Which is not really a problem if I manage to make it
-> > work, so settings will be known to others or, if not, we will find out
-> > what is different, and all will be happy. As you see I am still
-> > optimist).
-> 
-> Well, we don't want regressions in Kernel. If there's an issue there,
-> it should be fixed. However, I can't think on any other changes since
-> 4.18 that would be causing troubles for b2c2 driver.
-> 
-> See, the only change at the driver itself is just a simple API
-> replacement that wouldn't cause this kind of problems:
-> 
-> 	$ git log --oneline v4.18.. drivers/media/common/b2c2/
-> 	c0decac19da3 media: use strscpy() instead of strlcpy()
-> 
-> There were a few changes at the DVB core:
-> 
-> 	$ git log --no-merges --oneline v4.18.. drivers/media/dvb-core/
-> 	f3efe15a2f05 media: dvb: use signal types to discover pads
-> 	b5d3206112dd media: dvb: dmxdev: move compat_ioctl handling to dmxdev.c
-> 	cc1e6315e83d media: replace strcpy() by strscpy()
-> 	c0decac19da3 media: use strscpy() instead of strlcpy()
-> 	fd89e0bb6ebf media: videobuf2-core: integrate with media requests
-> 	db6e8d57e2cd media: vb2: store userspace data in vb2_v4l2_buffer
-> 	6a2a1ca34ca6 media: dvb_frontend: ensure that the step is ok for both FE
-> and tuner f1b1eabff0eb media: dvb: represent min/max/step/tolerance freqs
-> in Hz a3f90c75b833 media: dvb: convert tuner_info frequencies to Hz
-> 	6706fe55af6f media: dvb_ca_en50221: off by one in
-> dvb_ca_en50221_io_do_ioctl() 4d1e4545a659 media: mark entity-intf links as
-> IMMUTABLE
-> 
-> But, on a first glance, the only ones that has potential to cause issues
-> were the ones addressed that the patch I wrote (merged by Takashi).
-> 
-> If you're really receiving data from EPG (you may just have it
-> cached), it means that the DVB driver is doing the right thing.
-> 
-> Btw, to be sure that you're not just seeing the old EPG data, you
-> should move or remove this file:
-> 
-> 	~/.local/share/kaffeine/epgdata.dvb
-> 
-> Kaffeine will generate a new one again once it tunes into a TV channel.
-> 
-> > I will proceed as indicated and report back here tomorrow.
-> 
-> Ok.
-> 
-> Thanks,
-> Mauro
+On Thu, Nov 22, 2018 at 8:52 AM Nicholas Mc Guire <hofrat@osadl.org> wrote:
+>
+> devm_kasprintf() may return NULL on failure of internal allocation thus
+> the assignments to  init.name  are not safe if not checked. On error
+> meson_sar_adc_clk_init() returns negative values so -ENOMEM in the
+> (unlikely) failure case of devm_kasprintf() should be fine here.
+>
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Fixes: 3adbf3427330 ("iio: adc: add a driver for the SAR ADC found in Amlogic Meson SoCs")
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Further the question:
->Also, what GPU driver are you using?
-Hope that this responding to what you ask for:
+thank you for the patch!
+I tested the non-error case on my Odroid-C1 and it still works fine.
 
 
-silversurfer:~ # lspci | grep VGA
-
-01:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] 
-Cedar [Radeon HD 5000/6000/7350/8350 Series]
-silversurfer:~ # lsmod | grep "kms\|drm"
-drm_kms_helper        204800  1 radeon
-syscopyarea            16384  1 drm_kms_helper
-sysfillrect            16384  1 drm_kms_helper
-sysimgblt              16384  1 drm_kms_helper
-fb_sys_fops            16384  1 drm_kms_helper
-drm                   491520  16 drm_kms_helper,radeon,ttm
-
-
-silversurfer:~ # find /dev -group video
-/dev/dvb/adapter2/net0
-/dev/dvb/adapter2/dvr0
-/dev/dvb/adapter2/demux0
-/dev/dvb/adapter2/frontend0
-/dev/dvb/adapter1/net0
-/dev/dvb/adapter1/dvr0
-/dev/dvb/adapter1/demux0
-/dev/dvb/adapter1/frontend0
-/dev/dvb/adapter0/frontend0
-/dev/dvb/adapter0/net0
-/dev/dvb/adapter0/dvr0
-/dev/dvb/adapter0/demux0
-/dev/fb0
-/dev/dri/card0
-
-
-silversurfer:~ # cat /proc/cmdline
-BOOT_IMAGE=/vmlinuz-4.20.0-rc3-2.gfe5d771-default 
-root=UUID=30e41f49-6c35-4381-9274-10491d5004ef resume=/dev/disk/by-uuid/
-e20f311b-d45c-49ea-846f-8eac8aaa0d85 splash=silent quiet showopts iommu=soft
-
-
-silversurfer:~ # find /etc/modprobe.d/
-/etc/modprobe.d/
-/etc/modprobe.d/firewalld-sysctls.conf
-/etc/modprobe.d/truescale.conf
-/etc/modprobe.d/50-ipw2200.conf
-/etc/modprobe.d/50-yast.conf
-/etc/modprobe.d/50-yast.conf.YaST2save
-/etc/modprobe.d/tuned.conf
-/etc/modprobe.d/50-alsa.conf
-/etc/modprobe.d/50-iwl3945.conf
-/etc/modprobe.d/50-bluetooth.conf
-/etc/modprobe.d/00-system.conf
-/etc/modprobe.d/50-blacklist.conf
-/etc/modprobe.d/50-prism54.conf
-/etc/modprobe.d/99-local.conf
-/etc/modprobe.d/mlx4.conf
-/etc/modprobe.d/10-unsupported-modules.conf
-/etc/modprobe.d/50-libmlx4.conf
-
-
-silversurfer:~ # cat /etc/modprobe.d/*kms*
-cat: '/etc/modprobe.d/*kms*': No such file or directory
-
-
-silversurfer:~ # ls /etc/X11/xorg.conf.d
-00-keyboard.conf  10-evdev.conf   10-quirks.conf  40-libinput.conf  50-
-elotouch.conf    50-monitor.conf  70-synaptics.conf  70-wacom.conf
-10-amdgpu.conf    10-libvnc.conf  11-evdev.conf   50-device.conf    50-
-extensions.conf  50-screen.conf   70-vmmouse.conf
-
-
-silversurfer:~ # glxinfo | grep -i "vendor\|rendering"
-direct rendering: Yes
-server glx vendor string: SGI
-client glx vendor string: Mesa Project and SGI
-    Vendor: X.Org (0x1002)
-OpenGL vendor string: X.Org
-
-
-silversurfer:~ # grep LoadModule /var/log/Xorg.0.log
-[    43.342] (II) LoadModule: "glx"
-[    43.357] (II) LoadModule: "radeon"
-[    43.362] (II) LoadModule: "ati"
-[    43.426] (II) LoadModule: "modesetting"
-[    43.427] (II) LoadModule: "fbdev"
-[    43.428] (II) LoadModule: "vesa"
-[    43.443] (II) LoadModule: "fbdevhw"
-[    43.444] (II) LoadModule: "fb"
-[    43.445] (II) LoadModule: "dri2"
-[    43.638] (II) LoadModule: "glamoregl"
-[    43.808] (II) LoadModule: "ramdac"
-[    43.951] (II) LoadModule: "libinput"
-[    44.276] (II) LoadModule: "wacom"
-
-
-
-
-_________________________________________________________________
-________________________________________________________
-Ihre E-Mail-Postfächer sicher & zentral an einem Ort. Jetzt wechseln und alte E-Mail-Adresse mitnehmen! https://www.eclipso.de
-
-
+Regards
+Martin
