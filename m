@@ -2,131 +2,349 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6254C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87346C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1E6220824
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:51:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C2B520838
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:52:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KjSPL9x1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1E6220824
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CrS+LEnZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C2B520838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406402AbeKWFbr (ORCPT
+        id S2406571AbeKWFcm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 00:31:47 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35405 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729748AbeKWFbr (ORCPT
+        Fri, 23 Nov 2018 00:32:42 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39072 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404536AbeKWFcm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 00:31:47 -0500
-Received: by mail-ed1-f66.google.com with SMTP id x30so8484264edx.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 10:51:08 -0800 (PST)
+        Fri, 23 Nov 2018 00:32:42 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c72so2279832pfc.6
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 10:52:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=MQYlOI5IN7jfm84tWq4wo6pHzU2JRJvXRvwwg84DDcQ=;
-        b=KjSPL9x1riWy3Il2X78+kxVkYI6MWZ4jIs1zF9I0kryavBaYkm11VBzL6MLrbYNBPS
-         BQ+wdnMvDJj8uan2SxvbAT7InJSDysYBU86pcmqZPutdNcByWGHmjKdwhoCkdul/VB/T
-         m1jDEa2eLgu+05jHnjJzpz7yGCcXgAMBB6BQg=
+        bh=O0vfx+uyRQqAcdBqfEuTqQctH1f5rEonNvzSVKeNXKo=;
+        b=CrS+LEnZKxJq0lekl2KIGTyI04LfSGEbHmK54YFOx/vuqsGyS3GPXjZVotvA1sFXo4
+         7WoMhY7u0Q9m/Wc77bQVAGGJarLKnRX1+QDJiS6HGokyNh6ybXlFKQsnvD8O8plNVtMl
+         RGeJTWoFK88FNcvr+zXmnuujzVmMHzhgCceQTH9EiuyRAiUIlfTSLeqaskG+m08y+lY2
+         xNILgBp7KANCNUJczPefhO6E2R76ynEmHVTxDiaFSPSntPXEo9/Nt1T1rV1j7rSvnaLr
+         LmKcLWJNrXLIOu1UwVcjYZ4uvaT1wEZl8QPYvl0qM2kRsQ/ZyrrLm9AwsLWBbjrw5WdT
+         h3Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MQYlOI5IN7jfm84tWq4wo6pHzU2JRJvXRvwwg84DDcQ=;
-        b=Pu8K8zmfuVsm/4AS+kaz4+bL7BOEvNWbf4PNkdI8IdjjaOxnHMTiAaHcHrwM10nQmp
-         ZsQQNrrMlfe96ZZskrM3EQTu+nWH4M7aGDa4ejn5XXFRrsgwNwIHSm0MdLz1WUT7N4s9
-         M6YTKwGN4kjUxnw1Snvog5XTQLaYh46ZRPbnXTXZT7/DnfRS+sZvMx6J+dIEj4IwD4q4
-         Jao2+d6VwgwF+1voEE/YCFOz7yL6SVZW20XiF56lQOSrzKGp+RpFkHuE4yNXa1n7Xlxe
-         dDqgsH/VwEhLQUh1dZZMgDsxa7wD0S5ZbsnJDi2SxGRLOpWO5L7gedIAj9fWN6Gdatbc
-         XVuw==
-X-Gm-Message-State: AGRZ1gLd4Jq9xiaXuXXZ4gsUjV1q2QcaWyYa43loX6YAvaO8bULh3Ds3
-        5J3rUwdxI0wizvWYikdvsmGmMQ==
-X-Google-Smtp-Source: AJdET5fU7ewCwnuVn43K4fAkAFTPGLqrsw7xUMiSWgXfHe0dsaUhftXqK6GHyfyql534RJ1+1KCkBQ==
-X-Received: by 2002:a17:906:b799:: with SMTP id dt25-v6mr9137280ejb.217.1542912667999;
-        Thu, 22 Nov 2018 10:51:07 -0800 (PST)
-Received: from andrea (dynamic-2a00-1028-8386-da8a-eacb-c188-78b9-634c.ipv6.broadband.iol.cz. [2a00:1028:8386:da8a:eacb:c188:78b9:634c])
-        by smtp.gmail.com with ESMTPSA id bq26-v6sm8208926ejb.3.2018.11.22.10.51.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 22 Nov 2018 10:51:06 -0800 (PST)
-Date:   Thu, 22 Nov 2018 19:50:58 +0100
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org,
-        Chao Yu <yuchao0@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>, weidu.du@huawei.com,
-        Miao Xie <miaoxie@huawei.com>
-Subject: Re: [PATCH 05/10] staging: erofs: add a full barrier in
- erofs_workgroup_unfreeze
-Message-ID: <20181122185058.GA3466@andrea>
-References: <20181120143425.43637-1-gaoxiang25@huawei.com>
- <20181120143425.43637-6-gaoxiang25@huawei.com>
- <20181122102230.GF3189@kroah.com>
- <1d1fd688-0cb5-cbac-9213-f56f7e356bca@huawei.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=O0vfx+uyRQqAcdBqfEuTqQctH1f5rEonNvzSVKeNXKo=;
+        b=SAWHhGCf7OBE0WxlrPJx80Tb9Gh1beDy8NoatY+sdIgTNqWCPbd7qg5xDSeAHIyZx4
+         4bLBVvr1lQ0K+qCt4k/Oy2iKuo0GPUNdluvzSR+Lgtk17NFmOQeUBxY48HcC+Lp3sFFI
+         XMX/6KbNJN4xZAUYGeg3joMmMRS1rPHgwUfNJoVEXqYCchJ3qlAyzntt4bf1pZ+mWNTs
+         5OfbZobENw9373a0K/5b+P9INihUTLCFfzrs5g0ZSTDULeXBkLzoTON58FltRRyOtG7t
+         w6VucRSKRHZhvIXHabg+FYPlz8fEYBMNOlnr/tEIGDLtBsp6cC7jbzL0mrMWlO7Ru6EH
+         o5ZA==
+X-Gm-Message-State: AA+aEWZ6/qnQpq1u1lTKO0PlJ2XQ7OvqfRoyu+VYFVMmIQNizEyF9mbM
+        JySHENg/yjtN9xBrSRb+spc=
+X-Google-Smtp-Source: AFSGD/U3qGba1lAXmM55a23sTczXbxoHBb+m/0La8MMsiEpQy1L+fY/TvoHYuo46dATUqMB8WrJesw==
+X-Received: by 2002:a63:d818:: with SMTP id b24mr10882985pgh.174.1542912723318;
+        Thu, 22 Nov 2018 10:52:03 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id l87sm47098358pfj.179.2018.11.22.10.52.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 10:52:02 -0800 (PST)
+Date:   Thu, 22 Nov 2018 10:52:00 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     lee.jones@linaro.org, gwendal@chromium.org, drinkcat@chromium.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, bleung@chromium.org,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 4/7] mfd / platform: cros_ec: move debugfs attributes to
+ its own driver.
+Message-ID: <20181122185200.GA809@roeck-us.net>
+References: <20181122113356.23610-1-enric.balletbo@collabora.com>
+ <20181122113356.23610-5-enric.balletbo@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1d1fd688-0cb5-cbac-9213-f56f7e356bca@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181122113356.23610-5-enric.balletbo@collabora.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 06:56:32PM +0800, Gao Xiang wrote:
-> Hi Greg,
+On Thu, Nov 22, 2018 at 12:33:53PM +0100, Enric Balletbo i Serra wrote:
+> The entire way how cros debugfs attibutes are created is broken.
+> cros_ec_debugfs should be its own driver and its attributes should be
+> associated with a debugfs driver not the mfd driver.
 > 
-> On 2018/11/22 18:22, Greg Kroah-Hartman wrote:
-> > Please document this memory barrier.  It does not make much sense to
-> > me...
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
 > 
-> Because we need to make the other observers noticing the latest values modified
-> in this locking period before unfreezing the whole workgroup, one way is to use
-> a memory barrier and the other way is to use ACQUIRE and RELEASE. we selected
-> the first one.
+>  drivers/mfd/cros_ec_dev.c                 | 41 +------------------
+>  drivers/platform/chrome/Kconfig           | 10 +++++
+>  drivers/platform/chrome/Makefile          |  4 +-
+>  drivers/platform/chrome/cros_ec_debugfs.c | 49 ++++++++++++++++++-----
+>  include/linux/mfd/cros_ec.h               |  6 ---
+>  5 files changed, 53 insertions(+), 57 deletions(-)
 > 
-> Hmmm...ok, I will add a simple message to explain this, but I think that is
-> plain enough for a lock...
+> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+> index 790dc28b93f0..8c7ee2a0b50a 100644
+> --- a/drivers/mfd/cros_ec_dev.c
+> +++ b/drivers/mfd/cros_ec_dev.c
+> @@ -403,6 +403,7 @@ static const struct mfd_cell cros_usbpd_charger_cells[] = {
+>  };
+>  
+>  static const struct mfd_cell cros_ec_platform_cells[] = {
+> +	{ .name = "cros-ec-debugfs" },
+>  	{ .name = "cros-ec-lightbar" },
+>  	{ .name = "cros-ec-vbc" },
+>  };
+> @@ -496,9 +497,6 @@ static int ec_device_probe(struct platform_device *pdev)
+>  		dev_err(ec->dev,
+>  			"failed to add cros-ec platform devices: %d\n", retval);
+>  
+> -	if (cros_ec_debugfs_init(ec))
+> -		dev_warn(dev, "failed to create debugfs directory\n");
+> -
+>  	return 0;
+>  
+>  failed:
+> @@ -510,61 +508,24 @@ static int ec_device_remove(struct platform_device *pdev)
+>  {
+>  	struct cros_ec_dev *ec = dev_get_drvdata(&pdev->dev);
+>  
+> -	cros_ec_debugfs_remove(ec);
+> -
+>  	cdev_del(&ec->cdev);
+>  	device_unregister(&ec->class_dev);
+>  	return 0;
+>  }
+>  
+> -static void ec_device_shutdown(struct platform_device *pdev)
+> -{
+> -	struct cros_ec_dev *ec = dev_get_drvdata(&pdev->dev);
+> -
+> -	/* Be sure to clear up debugfs delayed works */
+> -	cros_ec_debugfs_remove(ec);
+> -}
+> -
+>  static const struct platform_device_id cros_ec_id[] = {
+>  	{ DRV_NAME, 0 },
+>  	{ /* sentinel */ }
+>  };
+>  MODULE_DEVICE_TABLE(platform, cros_ec_id);
+>  
+> -static __maybe_unused int ec_device_suspend(struct device *dev)
+> -{
+> -	struct cros_ec_dev *ec = dev_get_drvdata(dev);
+> -
+> -	cros_ec_debugfs_suspend(ec);
+> -
+> -	return 0;
+> -}
+> -
+> -static __maybe_unused int ec_device_resume(struct device *dev)
+> -{
+> -	struct cros_ec_dev *ec = dev_get_drvdata(dev);
+> -
+> -	cros_ec_debugfs_resume(ec);
+> -
+> -	return 0;
+> -}
+> -
+> -static const struct dev_pm_ops cros_ec_dev_pm_ops = {
+> -#ifdef CONFIG_PM_SLEEP
+> -	.suspend = ec_device_suspend,
+> -	.resume = ec_device_resume,
+> -#endif
+> -};
+> -
+>  static struct platform_driver cros_ec_dev_driver = {
+>  	.driver = {
+>  		.name = DRV_NAME,
+> -		.pm = &cros_ec_dev_pm_ops,
+>  	},
+>  	.id_table = cros_ec_id,
+>  	.probe = ec_device_probe,
+>  	.remove = ec_device_remove,
+> -	.shutdown = ec_device_shutdown,
+>  };
+>  
+>  static int __init cros_ec_dev_init(void)
+> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+> index 29bd9837d520..a1239d48c46f 100644
+> --- a/drivers/platform/chrome/Kconfig
+> +++ b/drivers/platform/chrome/Kconfig
+> @@ -131,4 +131,14 @@ config CROS_EC_VBC
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called cros_ec_vbc.
+>  
+> +config CROS_EC_DEBUGFS
+> +	tristate "Export ChromeOS EC internals in DebugFS"
+> +	depends on MFD_CROS_EC_CHARDEV && DEBUG_FS
 
-Sympathizing with Greg's request, let me add some specific suggestions:
+Maybe "default MFD_CROS_EC_CHARDEV" ?
 
-  1. It wouldn't hurt to indicate a pair of memory accesses which are
-     intended to be "ordered" by the memory barrier in question (yes,
-     this pair might not be unique, but you should be able to provide
-     an example).
+> +	help
+> +	  This option exposes the ChromeOS EC device internals to
+> +	  userspace.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called cros_ec_debugfs.
+> +
+>  endif # CHROMEOS_PLATFORMS
+> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+> index 4081b7179df7..12a5c4d18c17 100644
+> --- a/drivers/platform/chrome/Makefile
+> +++ b/drivers/platform/chrome/Makefile
+> @@ -3,8 +3,7 @@
+>  obj-$(CONFIG_CHROMEOS_LAPTOP)		+= chromeos_laptop.o
+>  obj-$(CONFIG_CHROMEOS_PSTORE)		+= chromeos_pstore.o
+>  obj-$(CONFIG_CHROMEOS_TBMC)		+= chromeos_tbmc.o
+> -cros_ec_ctl-objs			:= cros_ec_sysfs.o \
+> -					   cros_ec_debugfs.o
+> +cros_ec_ctl-objs			:= cros_ec_sysfs.o
+>  obj-$(CONFIG_CROS_EC_CTL)		+= cros_ec_ctl.o
+>  obj-$(CONFIG_CROS_EC_I2C)		+= cros_ec_i2c.o
+>  obj-$(CONFIG_CROS_EC_SPI)		+= cros_ec_spi.o
+> @@ -15,3 +14,4 @@ obj-$(CONFIG_CROS_EC_PROTO)		+= cros_ec_proto.o
+>  obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)	+= cros_kbd_led_backlight.o
+>  obj-$(CONFIG_CROS_EC_LIGHTBAR)		+= cros_ec_lightbar.o
+>  obj-$(CONFIG_CROS_EC_VBC)		+= cros_ec_vbc.o
+> +obj-$(CONFIG_CROS_EC_DEBUGFS)		+= cros_ec_debugfs.o
+> diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
+> index c62ee8e610a0..2ae385a27a1d 100644
+> --- a/drivers/platform/chrome/cros_ec_debugfs.c
+> +++ b/drivers/platform/chrome/cros_ec_debugfs.c
+> @@ -23,12 +23,16 @@
+>  #include <linux/fs.h>
+>  #include <linux/mfd/cros_ec.h>
+>  #include <linux/mfd/cros_ec_commands.h>
+> +#include <linux/module.h>
+>  #include <linux/mutex.h>
+> +#include <linux/platform_device.h>
+>  #include <linux/poll.h>
+>  #include <linux/sched.h>
+>  #include <linux/slab.h>
+>  #include <linux/wait.h>
+>  
+> +#define DRV_NAME "cros-ec-debugfs"
+> +
+>  #define LOG_SHIFT		14
+>  #define LOG_SIZE		(1 << LOG_SHIFT)
+>  #define LOG_POLL_SEC		10
+> @@ -423,8 +427,9 @@ static int cros_ec_create_pdinfo(struct cros_ec_debugfs *debug_info)
+>  	return 0;
+>  }
+>  
+> -int cros_ec_debugfs_init(struct cros_ec_dev *ec)
+> +static int cros_ec_debugfs_probe(struct platform_device *pd)
+>  {
+> +	struct cros_ec_dev *ec = dev_get_drvdata(pd->dev.parent);
+>  	struct cros_ec_platform *ec_platform = dev_get_platdata(ec->dev);
+>  	const char *name = ec_platform->ec_name;
+>  	struct cros_ec_debugfs *debug_info;
+> @@ -459,20 +464,24 @@ int cros_ec_debugfs_init(struct cros_ec_dev *ec)
+>  	debugfs_remove_recursive(debug_info->dir);
+>  	return ret;
+>  }
+> -EXPORT_SYMBOL(cros_ec_debugfs_init);
+>  
+> -void cros_ec_debugfs_remove(struct cros_ec_dev *ec)
+> +static int cros_ec_debugfs_remove(struct platform_device *pd)
+>  {
+> +	struct cros_ec_dev *ec = dev_get_drvdata(pd->dev.parent);
+> +
+>  	if (!ec->debug_info)
+> -		return;
+> +		return 0;
 
-  2. Memory barriers always come matched by other memory barriers, or
-     dependencies (it really does not make sense to talk about a full
-     barrier "in isolation"): please also indicate (an instance of) a
-     matching barrier or the matching barriers.
+This should no long be necessary.
 
-  3. How do the hardware threads communicate?  In the acquire/release
-     pattern you mentioned above, the load-acquire *reads from* a/the
-     previous store-release, a memory access that follows the acquire
-     somehow communicate with a memory access preceding the release...
+>  
+>  	debugfs_remove_recursive(ec->debug_info->dir);
+>  	cros_ec_cleanup_console_log(ec->debug_info);
+> +
+> +	return 0;
+>  }
+> -EXPORT_SYMBOL(cros_ec_debugfs_remove);
+>  
+> -void cros_ec_debugfs_suspend(struct cros_ec_dev *ec)
+> +static int __maybe_unused cros_ec_debugfs_suspend(struct device *dev)
+>  {
+> +	struct cros_ec_dev *ec = dev_get_drvdata(dev);
+> +
+>  	/*
+>  	 * cros_ec_debugfs_init() failures are non-fatal; it's also possible
+>  	 * that we initted things but decided that console log wasn't supported.
 
-  4. It is a good practice to include the above information within an
-     (inline) comment accompanying the added memory barrier (in fact,
-     IIRC, checkpatch.pl gives you a "memory barrier without comment"
-     warning when you omit to do so); not just in the commit message.
+The above comment no longer applies. Also, since this is now its own driver,
+the if statement should not be necessary anymore.
 
-Hope this helps.  Please let me know if something I wrote is unclear,
+> @@ -481,12 +490,34 @@ void cros_ec_debugfs_suspend(struct cros_ec_dev *ec)
+>  	 */
+>  	if (ec->debug_info && ec->debug_info->log_buffer.buf)
+>  		cancel_delayed_work_sync(&ec->debug_info->log_poll_work);
+> +
+> +	return 0;
+>  }
+> -EXPORT_SYMBOL(cros_ec_debugfs_suspend);
+>  
+> -void cros_ec_debugfs_resume(struct cros_ec_dev *ec)
+> +static int __maybe_unused cros_ec_debugfs_resume(struct device *dev)
+>  {
+> +	struct cros_ec_dev *ec = dev_get_drvdata(dev);
+> +
+>  	if (ec->debug_info && ec->debug_info->log_buffer.buf)
+>  		schedule_delayed_work(&ec->debug_info->log_poll_work, 0);
 
-  Andrea
+As aabove, the if statement should not be necessary anymore.
 
-
-> 
-> Thanks,
-> Gao Xiang
-> 
-> > 
-> > thanks,
-> > 
-> > greg k-h
+> +
+> +	return 0;
+>  }
+> -EXPORT_SYMBOL(cros_ec_debugfs_resume);
+> +
+> +static SIMPLE_DEV_PM_OPS(cros_ec_debugfs_pm_ops,
+> +			 cros_ec_debugfs_suspend, cros_ec_debugfs_resume);
+> +
+> +static struct platform_driver cros_ec_debugfs_driver = {
+> +	.driver = {
+> +		.name = DRV_NAME,
+> +		.pm = &cros_ec_debugfs_pm_ops,
+> +	},
+> +	.probe = cros_ec_debugfs_probe,
+> +	.remove = cros_ec_debugfs_remove,
+> +};
+> +
+> +module_platform_driver(cros_ec_debugfs_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("Debug logs for ChromeOS EC");
+> +MODULE_ALIAS("platform:" DRV_NAME);
+> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+> index ddbb7e18a530..1722c2c26143 100644
+> --- a/include/linux/mfd/cros_ec.h
+> +++ b/include/linux/mfd/cros_ec.h
+> @@ -336,12 +336,6 @@ u32 cros_ec_get_host_event(struct cros_ec_device *ec_dev);
+>  /* sysfs stuff */
+>  extern struct attribute_group cros_ec_attr_group;
+>  
+> -/* debugfs stuff */
+> -int cros_ec_debugfs_init(struct cros_ec_dev *ec);
+> -void cros_ec_debugfs_remove(struct cros_ec_dev *ec);
+> -void cros_ec_debugfs_suspend(struct cros_ec_dev *ec);
+> -void cros_ec_debugfs_resume(struct cros_ec_dev *ec);
+> -
+>  /* Attach/detach attributes to the cros_class */
+>  extern int cros_ec_attach_attribute_group(struct cros_ec_dev *ec,
+>  					  struct attribute_group *attrs);
