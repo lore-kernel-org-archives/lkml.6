@@ -2,102 +2,194 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A33C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D2E6C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60C4C20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:21:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60C4C20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D38B320684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:21:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kb7I+zM1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D38B320684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437665AbeKWCBE (ORCPT
+        id S2437680AbeKWCBO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 21:01:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42594 "EHLO mx1.redhat.com"
+        Thu, 22 Nov 2018 21:01:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730517AbeKWCBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 21:01:04 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2437666AbeKWCBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 21:01:14 -0500
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D093E31256BE;
-        Thu, 22 Nov 2018 15:21:15 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (ovpn-116-170.ams2.redhat.com [10.36.116.170])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 507F85C21E;
-        Thu, 22 Nov 2018 15:21:10 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Rich Felker <dalias@libc.org>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        carlos <carlos@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl init and thread creation
-References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com>
-        <20181122143603.GD23599@brightrain.aerifal.cx>
-        <782067422.9852.1542899056778.JavaMail.zimbra@efficios.com>
-        <87a7m1ywni.fsf@oldenburg.str.redhat.com>
-        <20181122151710.GF23599@brightrain.aerifal.cx>
-Date:   Thu, 22 Nov 2018 16:21:02 +0100
-In-Reply-To: <20181122151710.GF23599@brightrain.aerifal.cx> (Rich Felker's
-        message of "Thu, 22 Nov 2018 10:17:10 -0500")
-Message-ID: <875zwpyw81.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD08120684
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 15:21:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542900085;
+        bh=PrAXY+uvMxQxYzDIlCv87TRxKZFwsa+PgJBBd1NJU6k=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Kb7I+zM12qQonncwjrvDvyC7GCQwuDwh71KAGP65um8BjW21oAAFE5yHOIz+62neV
+         GPk9NLYSB6326G9tC+iNQ0mJ2amDqTtA/rUHqHJOQ7nXxImzNhU5tsbwNCclu++cQ9
+         hea55gXbgKLong7ftu7upGdRLqKqc/vus7++SV+U=
+Received: by mail-wm1-f51.google.com with SMTP id k198so9507572wmd.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 07:21:24 -0800 (PST)
+X-Gm-Message-State: AA+aEWYhfc2MjRMvp10NtR1yB4hk+O8QknDsWMJ0cinc9QjZthDkIf4Y
+        othqP6w5nnhZKmmS0u27Okq2vIE7Kq0eR4FmjBgNgA==
+X-Google-Smtp-Source: AFSGD/XfxMe9HPcOV+K9UgrWgR505Pt6dffhPVquS7r4WTvr7u1z/k023djUte3ft5gJtow1OG13S/ckBJTC9POm6Dk=
+X-Received: by 2002:a7b:ce11:: with SMTP id m17mr3561460wmc.74.1542900081182;
+ Thu, 22 Nov 2018 07:21:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 22 Nov 2018 15:21:16 +0000 (UTC)
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
+ <20181119161917.GF13298@linux.intel.com> <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
+ <20181120120442.GA22172@linux.intel.com> <20181122111253.GA31150@wind.enjellic.com>
+In-Reply-To: <20181122111253.GA31150@wind.enjellic.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 22 Nov 2018 07:21:08 -0800
+X-Gmail-Original-Message-ID: <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com>
+Message-ID: <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+To:     "Dr. Greg Wettstein" <greg@enjellic.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Rich Felker:
-
-> On Thu, Nov 22, 2018 at 04:11:45PM +0100, Florian Weimer wrote:
->> * Mathieu Desnoyers:
->> 
->> > Thoughts ?
->> >
->> >   /* Unregister rseq TLS from kernel. */
->> >   if (has_rseq && __rseq_unregister_current_thread ())
->> >     abort();
->> >
->> >   advise_stack_range (pd->stackblock, pd->stackblock_size, (uintptr_t) pd,
->> >                       pd->guardsize);
->> >
->> >   /* If the thread is detached free the TCB.  */
->> >   if (IS_DETACHED (pd))
->> >     /* Free the TCB.  */
->> >     __free_tcb (pd);
->> 
->> Considering that we proceed to free the TCB, I really hope that all
->> signals are blocked at this point.  (I have not checked this, though.)
->> 
->> Wouldn't this address your concern about access to the rseq area?
+On Thu, Nov 22, 2018 at 3:12 AM Dr. Greg <greg@enjellic.com> wrote:
 >
-> I'm not familiar with glibc's logic here, but for other reasons, I
-> don't think freeing it is safe until the kernel task exit futex (set
-> via clone or set_tid_address) has fired. I would guess __free_tcb just
-> sets up for it to be reclaimable when this happens rather than
-> immediately freeing it for reuse.
+> On Tue, Nov 20, 2018 at 02:04:42PM +0200, Jarkko Sakkinen wrote:
+>
+> Good morning to everyone, Happy Thanksgiving to those who are
+> celebrating the holiday.
+>
+> > On Mon, Nov 19, 2018 at 08:59:24AM -0800, Andy Lutomirski wrote:
+> > > The idea here is that, under normal circumstances, provisioning only
+> > > runs once, or at least only runs rarely.  So, rather than the SDK
+> > > running provisioning whenever it feels like doing so (which is the
+> > > current behavior, I imagine, although I haven't looked), there would
+> > > be a privileged program, perhaps a systemd unit that runs when needed,
+> > > that produces the key material needed for remote attestation, and
+> > > non-root users that need attestation would get the keying material
+> > > from the provisioning service.  And the provisioning service could
+> > > implement its own policy.  Ideally, the service wouldn't give the
+> > > sealed keys to users at all but would, instead, just provide the
+> > > entire attestation service over a UNIX socket, which would make
+> > > provisioning capabilities revocable.
+> > >
+> > > Does this make sense?
+>
+> > Yes, it does for me at least now that you brought some context.
+>
+> Let me see if I can add a bit of additional context to the above to
+> frame further discussion regarding two major needs of the driver
+> before it lands.
+>
+> What Andy is describing is how the current system already works.  The
+> driver is at the root of a fairly complex eco-system of code,
+> cryptography and protocols that implement SGX functionality.  This
+> software stack is known as the SGX Platform SoftWare (PSW) or SGX
+> runtime.
+>
+> The Intel provided runtime is implemented in C++ and, depending on how
+> you count it, clocks in at around 50+ KLOC.  All of this ends up as a
+> single 1.8 megabyte binary named aesm_service that links against 35
+> shared libraries and is run by systemd.
+>
+> This binary implements the functionality needed to load, initialize,
+> run and attest enclaves.  It also implements communications with the
+> Intel provisioning and attestation services which is needed to
+> provision a private EPID key to the platform and to verify the status
+> of an enclave attestation quote from a remote platform.
+>
+> In order to achieve the SGX/IAGO security model, a lot of this
+> functionality is implemented by choreographing exchanges between six
+> Intel supplied and signed enclaves.  Intel supplies source code to
+> these enclaves and understanding how all of this works requires an
+> understanding of that codebase as well.  To top if off there is also a
+> 50K hunk of signed Java bytecode that gets stuffed into the Management
+> Engine if you are interested in platform services.
+>
 
-Right, but in case of user-supplied stacks, we actually free TLS memory
-at this point, so signals need to be blocked because the TCB is
-(partially) gone after that.
+It's very nice of Intel to supply source. Also, yikes, they wrote
+their ME blob in Java?
 
-Thanks,
-Florian
+> All of the above is what we wrote an independent implementation of, in
+> straight C, that is capable of linking against the MUSL C library with
+> only libelf and OpenSSL as dependencies.  We developed all of this to
+> support a reasonably sophisticated multi-enclave SGX security
+> application that implements modeling the runtime behavior of
+> applications running on the Linux kernel.  That application uses an
+> alternate enclave attestation and communications architecture that we
+> independently developed.
+
+How do you generate your root of trust for attestation if you don't
+use Intel's service?  If I understand right, Intel's mechanism boils
+down to Intel possessing something that is functionally equivalent to
+a list of valid provisioning keys associated with genuine Intel chips.
+(It could be literal provisioning keys, or keying material from which
+the provisioning keys are derived, or even public keys for which the
+private parts are derived from the provisioning keys.  But all of this
+boils down to the CPU, via some enclaves, proving knowledge of the
+provisioning key that is available when MRSIGNER is Intel.
+
+I could imagine replacing this by running Intel's mechanism once to
+generate a new root of trust for your own mechanism, or even by buying
+a bunch of CPUs, determining their provisioning keys with MRSIGNER=Dr.
+Greg, and enrolling those.  But I don't see any way to bootstrap an
+attestation service on a CPU you've never physically possessed without
+running *something* with MRSIGNER=Intel.
+
+> Based on this experience, if the proposed driver lands in its current
+> state, Linux mainline will have, at least from a privacy perspective,
+> an inferior implementation of SGX.  In addition, we are not confident
+> the driver will be useful to anything other then server class hardware
+> and will be incapable of supporting virtually all of the existing SGX
+> hardware in the field.
+
+I'm a little bit puzzled by your privacy claims.  If an attacker
+controls the kernel, then the secrets in your enclave may still be
+secure, but you have very little privacy in terms of trying to prevent
+the attacker from tying your communication to your physical machine.
+
+> At a high level, addressing these issues is straight forward.  First,
+> the driver needs to support authorization equivalent to that which is
+> implemented in the current Intel Launch Enclave, ie. control over the
+> SGX_FLAGS_PROVISION_KEY attribute.
+
+I agree, hence my email :)
+
+> Secondly, the driver needs to drop
+> its prohibition against launch enclaves, ie. returning EINVAL when a
+> request is made to initialize enclaves which have the
+> SGX_FLAGS_EINITTOKEN_KEY attribute set.
+>
+
+Can you explain your use case for a launch enclave?  The current
+driver won't allow you to supply an EINITTOKEN, so I'm not immediately
+seeing what you would do with a launch token.  If you really do need
+it, I suppose we could have 'unprivileged', 'provisioning', and
+'launch' nodes, and maybe even 'launch_and_provision', but that's
+starting to have some combinatorial issues.
