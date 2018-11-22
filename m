@@ -2,639 +2,107 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B2BC43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE573C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C15E20831
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:02:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8953B20831
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:03:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOTMC282"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C15E20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qMrIWzf8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8953B20831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393680AbeKVUla (ORCPT
+        id S2393691AbeKVUmU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 15:41:30 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33971 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387721AbeKVUl3 (ORCPT
+        Thu, 22 Nov 2018 15:42:20 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:58302 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731866AbeKVUmU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:41:29 -0500
-Received: by mail-lj1-f196.google.com with SMTP id u6-v6so7452824ljd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 02:02:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dRQ1Sf8pPkvYF49fBUyyUb4KpUjCpxuckPEMO2XA0zo=;
-        b=aOTMC282DdY/TXt3G6YWZ3YK6xuSt7vlBPHk0gb2JVATdjp4xDWH7opniGwzwgZw+h
-         bwIITjCbLbedleydWABytDSU4UOl8upZ/E1/lGKmz9HiOBZLTolqZqzo6lMvgbZp3yoI
-         5ZQLTF0CKAgLjzz7/AtbAcvquSihmHLOENw+dZKSanZOZ4kiEE/wu5tiaoLEKl+qnVRB
-         wspJQZwUNstWVCyW+2n7ztQDObgIkPUJh9TMdYRjpVPpu/v5CiofjQxkXmdGHfE8Yio9
-         ZQaRUmMJUgy5CNp3YYy27nAMOECzoHCYBbFOlV4srb7S4jphgpOfjtLhq2aJ4lQN2Kdo
-         8V/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dRQ1Sf8pPkvYF49fBUyyUb4KpUjCpxuckPEMO2XA0zo=;
-        b=ZsYiK60oyVeAyLfbV0gPcWxGFi8MIWVHv3d1a9D4Rigk0pLvMVmXn0zmGxUDszwomj
-         ohFY9ow224etSE+rfjonDZdxp86f9mKppSoQY8WtX9seF47NXJAEUekjZTofnMSH3PTn
-         EiAgfiAHaXJXHmJpQREHAgnBYMuekAx3f65HMgyUEIXBx53Z3B6sL8qqpnNF1V9H5rZX
-         8kjHjwIdB8quoU/I0HvyEskjqGPUgV6EmTMN/zT9F9J8rRhHNVOUUcCxrTInZzwq4/d4
-         QxKJHUURe502Ogq9JiGb/XtsTgJN65Iu44PE9rkxFszONKl8p8mT2WGQUHpzuy7xOqja
-         vqEQ==
-X-Gm-Message-State: AA+aEWb4SF3QNvKTs2hrjWpv5aMLSLowu+0AMx/p87ia9k4x2jolQXp6
-        u4V+V7/ScpFXmhBckrTMmDo=
-X-Google-Smtp-Source: AFSGD/WZaMm4ia7nPskbJMxC616zQiNClDHAEjSFPFuG1P/FgCHq/xmy4u6RPYMPtgqX3nCJC27iug==
-X-Received: by 2002:a2e:4503:: with SMTP id s3-v6mr4635765lja.44.1542880960252;
-        Thu, 22 Nov 2018 02:02:40 -0800 (PST)
-Received: from a2k-HP-ProDesk-600-G2-SFF.kyiv.epam.com (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
-        by smtp.gmail.com with ESMTPSA id v19sm2043421lfe.69.2018.11.22.02.02.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 22 Nov 2018 02:02:39 -0800 (PST)
-From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com
-Cc:     andr2000@gmail.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [Xen-devel][PATCH 3/3] ALSA: xen-front: Use Xen common shared buffer implementation
-Date:   Thu, 22 Nov 2018 12:02:30 +0200
-Message-Id: <20181122100230.14976-3-andr2000@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181122100230.14976-1-andr2000@gmail.com>
-References: <20181122100230.14976-1-andr2000@gmail.com>
+        Thu, 22 Nov 2018 15:42:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=y+21ZkLfbrWzf9aEyQJB9VO+jjn3O4nwsFzDvOeUV4Y=; b=qMrIWzf87MfzuzV6wOaXsB9vE
+        jjTD1Id1lLVAkEvw4MlJdZzMRWYZNsjRsz2JNbCeEWfVNCaTxnusVS5IXSLsYs7KUTet9YaPrt3r4
+        kONs6PCc7wD3e4Fx2HLc548IPj6ZHSTLlqs8Cq2P29SLb1KMzzhkMbhc/qt3Vu6uSXGY1lBGCD4tH
+        e5YYp3zSVfa4ouF/yjQPbOBkvV7lnqAt62MVtGiNKVV3khdpMt1Oz/JnXT/JuqdRdUdcxPhVqVekr
+        oj9lWZvyMenWR7PC53IlVf3IyUHfDhGtIbfK5eS4yRB/fjJENhzZECUKGigdyX1LZXMgvP++e/LZf
+        UD7Visv3Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gPlpb-0003Cf-Tb; Thu, 22 Nov 2018 10:03:32 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5EDD32029FD58; Thu, 22 Nov 2018 11:03:22 +0100 (CET)
+Date:   Thu, 22 Nov 2018 11:03:22 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arch@vger.kernel.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>, stable@kernel.org
+Subject: Re: [for-next][PATCH 15/18] function_graph: Use new curr_ret_depth
+ to manage depth instead of curr_ret_stack
+Message-ID: <20181122100322.GN2131@hirez.programming.kicks-ass.net>
+References: <20181122002801.501220343@goodmis.org>
+ <20181122003333.592319701@goodmis.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181122003333.592319701@goodmis.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+On Wed, Nov 21, 2018 at 07:28:16PM -0500, Steven Rostedt wrote:
+> @@ -188,14 +186,20 @@ int function_graph_enter(unsigned long ret, unsigned long func,
+>  	struct ftrace_graph_ent trace;
+>  
+>  	trace.func = func;
+> -	trace.depth = current->curr_ret_stack + 1;
+> +	trace.depth = ++current->curr_ret_depth;
+>  
+>  	/* Only trace if the calling function expects to */
+>  	if (!ftrace_graph_entry(&trace))
+> -		return -EBUSY;
+> +		goto out;
+>  
+> -	return ftrace_push_return_trace(ret, func, &trace.depth,
+> -					frame_pointer, retp);
+> +	if (ftrace_push_return_trace(ret, func,
+> +				     frame_pointer, retp))
 
-Use page directory based shared buffer implementation
-now available as common code for Xen frontend drivers.
+You can unwrap that line, by my counting that's at 69 chars, so unless
+you're editing on a C64 it should fit your screen.
 
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
----
- sound/xen/Kconfig               |   1 +
- sound/xen/Makefile              |   1 -
- sound/xen/xen_snd_front.c       |   7 +-
- sound/xen/xen_snd_front.h       |   4 +-
- sound/xen/xen_snd_front_alsa.c  | 101 +++++++++++++----
- sound/xen/xen_snd_front_shbuf.c | 194 --------------------------------
- sound/xen/xen_snd_front_shbuf.h |  36 ------
- 7 files changed, 83 insertions(+), 261 deletions(-)
- delete mode 100644 sound/xen/xen_snd_front_shbuf.c
- delete mode 100644 sound/xen/xen_snd_front_shbuf.h
+> +		goto out;
+> +
+> +	return 0;
+> + out:
+> +	current->curr_ret_depth--;
+> +	return -EBUSY;
+>  }
 
-diff --git a/sound/xen/Kconfig b/sound/xen/Kconfig
-index 4f1fceea82d2..e4d7beb4df1c 100644
---- a/sound/xen/Kconfig
-+++ b/sound/xen/Kconfig
-@@ -5,6 +5,7 @@ config SND_XEN_FRONTEND
- 	depends on XEN
- 	select SND_PCM
- 	select XEN_XENBUS_FRONTEND
-+	select XEN_FRONT_PGDIR_SHBUF
- 	help
- 	  Choose this option if you want to enable a para-virtualized
- 	  frontend sound driver for Xen guest OSes.
-diff --git a/sound/xen/Makefile b/sound/xen/Makefile
-index 1e6470ecc2f2..24031775b715 100644
---- a/sound/xen/Makefile
-+++ b/sound/xen/Makefile
-@@ -3,7 +3,6 @@
- snd_xen_front-objs := xen_snd_front.o \
- 		      xen_snd_front_cfg.o \
- 		      xen_snd_front_evtchnl.o \
--		      xen_snd_front_shbuf.o \
- 		      xen_snd_front_alsa.o
- 
- obj-$(CONFIG_SND_XEN_FRONTEND) += snd_xen_front.o
-diff --git a/sound/xen/xen_snd_front.c b/sound/xen/xen_snd_front.c
-index b089b13b5160..a9e5c2cd7698 100644
---- a/sound/xen/xen_snd_front.c
-+++ b/sound/xen/xen_snd_front.c
-@@ -16,12 +16,12 @@
- #include <xen/xen.h>
- #include <xen/xenbus.h>
- 
-+#include <xen/xen-front-pgdir-shbuf.h>
- #include <xen/interface/io/sndif.h>
- 
- #include "xen_snd_front.h"
- #include "xen_snd_front_alsa.h"
- #include "xen_snd_front_evtchnl.h"
--#include "xen_snd_front_shbuf.h"
- 
- static struct xensnd_req *
- be_stream_prepare_req(struct xen_snd_front_evtchnl *evtchnl, u8 operation)
-@@ -82,7 +82,7 @@ int xen_snd_front_stream_query_hw_param(struct xen_snd_front_evtchnl *evtchnl,
- }
- 
- int xen_snd_front_stream_prepare(struct xen_snd_front_evtchnl *evtchnl,
--				 struct xen_snd_front_shbuf *sh_buf,
-+				 struct xen_front_pgdir_shbuf *shbuf,
- 				 u8 format, unsigned int channels,
- 				 unsigned int rate, u32 buffer_sz,
- 				 u32 period_sz)
-@@ -99,7 +99,8 @@ int xen_snd_front_stream_prepare(struct xen_snd_front_evtchnl *evtchnl,
- 	req->op.open.pcm_rate = rate;
- 	req->op.open.buffer_sz = buffer_sz;
- 	req->op.open.period_sz = period_sz;
--	req->op.open.gref_directory = xen_snd_front_shbuf_get_dir_start(sh_buf);
-+	req->op.open.gref_directory =
-+		xen_front_pgdir_shbuf_get_dir_start(shbuf);
- 	mutex_unlock(&evtchnl->ring_io_lock);
- 
- 	ret = be_stream_do_io(evtchnl);
-diff --git a/sound/xen/xen_snd_front.h b/sound/xen/xen_snd_front.h
-index a2ea2463bcc5..05611f113b94 100644
---- a/sound/xen/xen_snd_front.h
-+++ b/sound/xen/xen_snd_front.h
-@@ -16,7 +16,7 @@
- struct xen_snd_front_card_info;
- struct xen_snd_front_evtchnl;
- struct xen_snd_front_evtchnl_pair;
--struct xen_snd_front_shbuf;
-+struct xen_front_pgdir_shbuf;
- struct xensnd_query_hw_param;
- 
- struct xen_snd_front_info {
-@@ -35,7 +35,7 @@ int xen_snd_front_stream_query_hw_param(struct xen_snd_front_evtchnl *evtchnl,
- 					struct xensnd_query_hw_param *hw_param_resp);
- 
- int xen_snd_front_stream_prepare(struct xen_snd_front_evtchnl *evtchnl,
--				 struct xen_snd_front_shbuf *sh_buf,
-+				 struct xen_front_pgdir_shbuf *shbuf,
- 				 u8 format, unsigned int channels,
- 				 unsigned int rate, u32 buffer_sz,
- 				 u32 period_sz);
-diff --git a/sound/xen/xen_snd_front_alsa.c b/sound/xen/xen_snd_front_alsa.c
-index 129180e17db1..5b874a7014e0 100644
---- a/sound/xen/xen_snd_front_alsa.c
-+++ b/sound/xen/xen_snd_front_alsa.c
-@@ -15,17 +15,24 @@
- #include <sound/pcm_params.h>
- 
- #include <xen/xenbus.h>
-+#include <xen/xen-front-pgdir-shbuf.h>
- 
- #include "xen_snd_front.h"
- #include "xen_snd_front_alsa.h"
- #include "xen_snd_front_cfg.h"
- #include "xen_snd_front_evtchnl.h"
--#include "xen_snd_front_shbuf.h"
- 
- struct xen_snd_front_pcm_stream_info {
- 	struct xen_snd_front_info *front_info;
- 	struct xen_snd_front_evtchnl_pair *evt_pair;
--	struct xen_snd_front_shbuf sh_buf;
-+
-+	/* This is the shared buffer with its backing storage. */
-+	struct xen_front_pgdir_shbuf shbuf;
-+	u8 *buffer;
-+	size_t buffer_sz;
-+	int num_pages;
-+	struct page **pages;
-+
- 	int index;
- 
- 	bool is_open;
-@@ -214,12 +221,19 @@ static void stream_clear(struct xen_snd_front_pcm_stream_info *stream)
- 	stream->out_frames = 0;
- 	atomic_set(&stream->hw_ptr, 0);
- 	xen_snd_front_evtchnl_pair_clear(stream->evt_pair);
--	xen_snd_front_shbuf_clear(&stream->sh_buf);
-+	memset(&stream->shbuf, 0, sizeof(stream->shbuf));
-+	stream->buffer = NULL;
-+	stream->buffer_sz = 0;
-+	stream->pages = NULL;
-+	stream->num_pages = 0;
- }
- 
- static void stream_free(struct xen_snd_front_pcm_stream_info *stream)
- {
--	xen_snd_front_shbuf_free(&stream->sh_buf);
-+	xen_front_pgdir_shbuf_unmap(&stream->shbuf);
-+	xen_front_pgdir_shbuf_free(&stream->shbuf);
-+	free_pages_exact(stream->buffer, stream->buffer_sz);
-+	kfree(stream->pages);
- 	stream_clear(stream);
- }
- 
-@@ -421,10 +435,34 @@ static int alsa_close(struct snd_pcm_substream *substream)
- 	return 0;
- }
- 
-+static int shbuf_setup_backstore(struct xen_snd_front_pcm_stream_info *stream,
-+				 size_t buffer_sz)
-+{
-+	int i;
-+
-+	stream->buffer_sz = buffer_sz;
-+	stream->buffer = alloc_pages_exact(stream->buffer_sz, GFP_KERNEL);
-+	if (!stream->buffer)
-+		return -ENOMEM;
-+
-+	stream->num_pages = DIV_ROUND_UP(stream->buffer_sz, PAGE_SIZE);
-+	stream->pages = kcalloc(stream->num_pages, sizeof(struct page *),
-+				GFP_KERNEL);
-+	if (!stream->pages)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < stream->num_pages; i++)
-+		stream->pages[i] = virt_to_page(stream->buffer + i * PAGE_SIZE);
-+
-+	return 0;
-+}
-+
- static int alsa_hw_params(struct snd_pcm_substream *substream,
- 			  struct snd_pcm_hw_params *params)
- {
- 	struct xen_snd_front_pcm_stream_info *stream = stream_get(substream);
-+	struct xen_snd_front_info *front_info = stream->front_info;
-+	struct xen_front_pgdir_shbuf_cfg buf_cfg;
- 	int ret;
- 
- 	/*
-@@ -432,19 +470,32 @@ static int alsa_hw_params(struct snd_pcm_substream *substream,
- 	 * so free the previously allocated shared buffer if any.
- 	 */
- 	stream_free(stream);
-+	ret = shbuf_setup_backstore(stream, params_buffer_bytes(params));
-+	if (ret < 0)
-+		goto fail;
- 
--	ret = xen_snd_front_shbuf_alloc(stream->front_info->xb_dev,
--					&stream->sh_buf,
--					params_buffer_bytes(params));
--	if (ret < 0) {
--		stream_free(stream);
--		dev_err(&stream->front_info->xb_dev->dev,
--			"Failed to allocate buffers for stream with index %d\n",
--			stream->index);
--		return ret;
--	}
-+	memset(&buf_cfg, 0, sizeof(buf_cfg));
-+	buf_cfg.xb_dev = front_info->xb_dev;
-+	buf_cfg.pgdir = &stream->shbuf;
-+	buf_cfg.num_pages = stream->num_pages;
-+	buf_cfg.pages = stream->pages;
-+
-+	ret = xen_front_pgdir_shbuf_alloc(&buf_cfg);
-+	if (ret < 0)
-+		goto fail;
-+
-+	ret = xen_front_pgdir_shbuf_map(&stream->shbuf);
-+	if (ret < 0)
-+		goto fail;
- 
- 	return 0;
-+
-+fail:
-+	stream_free(stream);
-+	dev_err(&front_info->xb_dev->dev,
-+		"Failed to allocate buffers for stream with index %d\n",
-+		stream->index);
-+	return ret;
- }
- 
- static int alsa_hw_free(struct snd_pcm_substream *substream)
-@@ -476,7 +527,7 @@ static int alsa_prepare(struct snd_pcm_substream *substream)
- 		sndif_format = ret;
- 
- 		ret = xen_snd_front_stream_prepare(&stream->evt_pair->req,
--						   &stream->sh_buf,
-+						   &stream->shbuf,
- 						   sndif_format,
- 						   runtime->channels,
- 						   runtime->rate,
-@@ -556,10 +607,10 @@ static int alsa_pb_copy_user(struct snd_pcm_substream *substream,
- {
- 	struct xen_snd_front_pcm_stream_info *stream = stream_get(substream);
- 
--	if (unlikely(pos + count > stream->sh_buf.buffer_sz))
-+	if (unlikely(pos + count > stream->buffer_sz))
- 		return -EINVAL;
- 
--	if (copy_from_user(stream->sh_buf.buffer + pos, src, count))
-+	if (copy_from_user(stream->buffer + pos, src, count))
- 		return -EFAULT;
- 
- 	return xen_snd_front_stream_write(&stream->evt_pair->req, pos, count);
-@@ -571,10 +622,10 @@ static int alsa_pb_copy_kernel(struct snd_pcm_substream *substream,
- {
- 	struct xen_snd_front_pcm_stream_info *stream = stream_get(substream);
- 
--	if (unlikely(pos + count > stream->sh_buf.buffer_sz))
-+	if (unlikely(pos + count > stream->buffer_sz))
- 		return -EINVAL;
- 
--	memcpy(stream->sh_buf.buffer + pos, src, count);
-+	memcpy(stream->buffer + pos, src, count);
- 
- 	return xen_snd_front_stream_write(&stream->evt_pair->req, pos, count);
- }
-@@ -586,14 +637,14 @@ static int alsa_cap_copy_user(struct snd_pcm_substream *substream,
- 	struct xen_snd_front_pcm_stream_info *stream = stream_get(substream);
- 	int ret;
- 
--	if (unlikely(pos + count > stream->sh_buf.buffer_sz))
-+	if (unlikely(pos + count > stream->buffer_sz))
- 		return -EINVAL;
- 
- 	ret = xen_snd_front_stream_read(&stream->evt_pair->req, pos, count);
- 	if (ret < 0)
- 		return ret;
- 
--	return copy_to_user(dst, stream->sh_buf.buffer + pos, count) ?
-+	return copy_to_user(dst, stream->buffer + pos, count) ?
- 		-EFAULT : 0;
- }
- 
-@@ -604,14 +655,14 @@ static int alsa_cap_copy_kernel(struct snd_pcm_substream *substream,
- 	struct xen_snd_front_pcm_stream_info *stream = stream_get(substream);
- 	int ret;
- 
--	if (unlikely(pos + count > stream->sh_buf.buffer_sz))
-+	if (unlikely(pos + count > stream->buffer_sz))
- 		return -EINVAL;
- 
- 	ret = xen_snd_front_stream_read(&stream->evt_pair->req, pos, count);
- 	if (ret < 0)
- 		return ret;
- 
--	memcpy(dst, stream->sh_buf.buffer + pos, count);
-+	memcpy(dst, stream->buffer + pos, count);
- 
- 	return 0;
- }
-@@ -622,10 +673,10 @@ static int alsa_pb_fill_silence(struct snd_pcm_substream *substream,
- {
- 	struct xen_snd_front_pcm_stream_info *stream = stream_get(substream);
- 
--	if (unlikely(pos + count > stream->sh_buf.buffer_sz))
-+	if (unlikely(pos + count > stream->buffer_sz))
- 		return -EINVAL;
- 
--	memset(stream->sh_buf.buffer + pos, 0, count);
-+	memset(stream->buffer + pos, 0, count);
- 
- 	return xen_snd_front_stream_write(&stream->evt_pair->req, pos, count);
- }
-diff --git a/sound/xen/xen_snd_front_shbuf.c b/sound/xen/xen_snd_front_shbuf.c
-deleted file mode 100644
-index 07ac176a41ba..000000000000
---- a/sound/xen/xen_snd_front_shbuf.c
-+++ /dev/null
-@@ -1,194 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0 OR MIT
--
--/*
-- * Xen para-virtual sound device
-- *
-- * Copyright (C) 2016-2018 EPAM Systems Inc.
-- *
-- * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-- */
--
--#include <linux/kernel.h>
--#include <xen/xen.h>
--#include <xen/xenbus.h>
--
--#include "xen_snd_front_shbuf.h"
--
--grant_ref_t xen_snd_front_shbuf_get_dir_start(struct xen_snd_front_shbuf *buf)
--{
--	if (!buf->grefs)
--		return GRANT_INVALID_REF;
--
--	return buf->grefs[0];
--}
--
--void xen_snd_front_shbuf_clear(struct xen_snd_front_shbuf *buf)
--{
--	memset(buf, 0, sizeof(*buf));
--}
--
--void xen_snd_front_shbuf_free(struct xen_snd_front_shbuf *buf)
--{
--	int i;
--
--	if (buf->grefs) {
--		for (i = 0; i < buf->num_grefs; i++)
--			if (buf->grefs[i] != GRANT_INVALID_REF)
--				gnttab_end_foreign_access(buf->grefs[i],
--							  0, 0UL);
--		kfree(buf->grefs);
--	}
--	kfree(buf->directory);
--	free_pages_exact(buf->buffer, buf->buffer_sz);
--	xen_snd_front_shbuf_clear(buf);
--}
--
--/*
-- * number of grant references a page can hold with respect to the
-- * xensnd_page_directory header
-- */
--#define XENSND_NUM_GREFS_PER_PAGE ((XEN_PAGE_SIZE - \
--		offsetof(struct xensnd_page_directory, gref)) / \
--		sizeof(grant_ref_t))
--
--static void fill_page_dir(struct xen_snd_front_shbuf *buf,
--			  int num_pages_dir)
--{
--	struct xensnd_page_directory *page_dir;
--	unsigned char *ptr;
--	int i, cur_gref, grefs_left, to_copy;
--
--	ptr = buf->directory;
--	grefs_left = buf->num_grefs - num_pages_dir;
--	/*
--	 * skip grant references at the beginning, they are for pages granted
--	 * for the page directory itself
--	 */
--	cur_gref = num_pages_dir;
--	for (i = 0; i < num_pages_dir; i++) {
--		page_dir = (struct xensnd_page_directory *)ptr;
--		if (grefs_left <= XENSND_NUM_GREFS_PER_PAGE) {
--			to_copy = grefs_left;
--			page_dir->gref_dir_next_page = GRANT_INVALID_REF;
--		} else {
--			to_copy = XENSND_NUM_GREFS_PER_PAGE;
--			page_dir->gref_dir_next_page = buf->grefs[i + 1];
--		}
--
--		memcpy(&page_dir->gref, &buf->grefs[cur_gref],
--		       to_copy * sizeof(grant_ref_t));
--
--		ptr += XEN_PAGE_SIZE;
--		grefs_left -= to_copy;
--		cur_gref += to_copy;
--	}
--}
--
--static int grant_references(struct xenbus_device *xb_dev,
--			    struct xen_snd_front_shbuf *buf,
--			    int num_pages_dir, int num_pages_buffer,
--			    int num_grefs)
--{
--	grant_ref_t priv_gref_head;
--	unsigned long frame;
--	int ret, i, j, cur_ref;
--	int otherend_id;
--
--	ret = gnttab_alloc_grant_references(num_grefs, &priv_gref_head);
--	if (ret)
--		return ret;
--
--	buf->num_grefs = num_grefs;
--	otherend_id = xb_dev->otherend_id;
--	j = 0;
--
--	for (i = 0; i < num_pages_dir; i++) {
--		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
--		if (cur_ref < 0) {
--			ret = cur_ref;
--			goto fail;
--		}
--
--		frame = xen_page_to_gfn(virt_to_page(buf->directory +
--						     XEN_PAGE_SIZE * i));
--		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
--		buf->grefs[j++] = cur_ref;
--	}
--
--	for (i = 0; i < num_pages_buffer; i++) {
--		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
--		if (cur_ref < 0) {
--			ret = cur_ref;
--			goto fail;
--		}
--
--		frame = xen_page_to_gfn(virt_to_page(buf->buffer +
--						     XEN_PAGE_SIZE * i));
--		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
--		buf->grefs[j++] = cur_ref;
--	}
--
--	gnttab_free_grant_references(priv_gref_head);
--	fill_page_dir(buf, num_pages_dir);
--	return 0;
--
--fail:
--	gnttab_free_grant_references(priv_gref_head);
--	return ret;
--}
--
--static int alloc_int_buffers(struct xen_snd_front_shbuf *buf,
--			     int num_pages_dir, int num_pages_buffer,
--			     int num_grefs)
--{
--	buf->grefs = kcalloc(num_grefs, sizeof(*buf->grefs), GFP_KERNEL);
--	if (!buf->grefs)
--		return -ENOMEM;
--
--	buf->directory = kcalloc(num_pages_dir, XEN_PAGE_SIZE, GFP_KERNEL);
--	if (!buf->directory)
--		goto fail;
--
--	buf->buffer_sz = num_pages_buffer * XEN_PAGE_SIZE;
--	buf->buffer = alloc_pages_exact(buf->buffer_sz, GFP_KERNEL);
--	if (!buf->buffer)
--		goto fail;
--
--	return 0;
--
--fail:
--	kfree(buf->grefs);
--	buf->grefs = NULL;
--	kfree(buf->directory);
--	buf->directory = NULL;
--	return -ENOMEM;
--}
--
--int xen_snd_front_shbuf_alloc(struct xenbus_device *xb_dev,
--			      struct xen_snd_front_shbuf *buf,
--			      unsigned int buffer_sz)
--{
--	int num_pages_buffer, num_pages_dir, num_grefs;
--	int ret;
--
--	xen_snd_front_shbuf_clear(buf);
--
--	num_pages_buffer = DIV_ROUND_UP(buffer_sz, XEN_PAGE_SIZE);
--	/* number of pages the page directory consumes itself */
--	num_pages_dir = DIV_ROUND_UP(num_pages_buffer,
--				     XENSND_NUM_GREFS_PER_PAGE);
--	num_grefs = num_pages_buffer + num_pages_dir;
--
--	ret = alloc_int_buffers(buf, num_pages_dir,
--				num_pages_buffer, num_grefs);
--	if (ret < 0)
--		return ret;
--
--	ret = grant_references(xb_dev, buf, num_pages_dir, num_pages_buffer,
--			       num_grefs);
--	if (ret < 0)
--		return ret;
--
--	fill_page_dir(buf, num_pages_dir);
--	return 0;
--}
-diff --git a/sound/xen/xen_snd_front_shbuf.h b/sound/xen/xen_snd_front_shbuf.h
-deleted file mode 100644
-index d28e97c47b2c..000000000000
---- a/sound/xen/xen_snd_front_shbuf.h
-+++ /dev/null
-@@ -1,36 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 OR MIT */
--
--/*
-- * Xen para-virtual sound device
-- *
-- * Copyright (C) 2016-2018 EPAM Systems Inc.
-- *
-- * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-- */
--
--#ifndef __XEN_SND_FRONT_SHBUF_H
--#define __XEN_SND_FRONT_SHBUF_H
--
--#include <xen/grant_table.h>
--
--#include "xen_snd_front_evtchnl.h"
--
--struct xen_snd_front_shbuf {
--	int num_grefs;
--	grant_ref_t *grefs;
--	u8 *directory;
--	u8 *buffer;
--	size_t buffer_sz;
--};
--
--grant_ref_t xen_snd_front_shbuf_get_dir_start(struct xen_snd_front_shbuf *buf);
--
--int xen_snd_front_shbuf_alloc(struct xenbus_device *xb_dev,
--			      struct xen_snd_front_shbuf *buf,
--			      unsigned int buffer_sz);
--
--void xen_snd_front_shbuf_clear(struct xen_snd_front_shbuf *buf);
--
--void xen_snd_front_shbuf_free(struct xen_snd_front_shbuf *buf);
--
--#endif /* __XEN_SND_FRONT_SHBUF_H */
--- 
-2.19.1
+[diff "default"]
+	xfuncname = "^[[:alpha:]$_].*[^:]$"
 
+avoids the need for that ludicrous label indenting.
+
+Also, "error" might be a better label name.
