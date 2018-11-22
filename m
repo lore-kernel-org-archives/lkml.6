@@ -2,176 +2,118 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AACF9C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6D8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 686B720831
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:34:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E2FF20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:40:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="okMBy550"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 686B720831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XEfcpJ/M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E2FF20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391718AbeKVQMC (ORCPT
+        id S2392126AbeKVQSe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 11:12:02 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:34524 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389300AbeKVQMC (ORCPT
+        Thu, 22 Nov 2018 11:18:34 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38983 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731310AbeKVQSd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 11:12:02 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 22E588EE2C9;
-        Wed, 21 Nov 2018 21:34:15 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id VpPCkg13_YRK; Wed, 21 Nov 2018 21:34:14 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 981948EE0C8;
-        Wed, 21 Nov 2018 21:34:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1542864854;
-        bh=ZBcMSY4Erz3zTyrNxvKZ/mlKHlUdmHoYKOszqJ6isX0=;
-        h=Subject:From:To:Cc:Date:From;
-        b=okMBy550dUMoEfM48VPqVVCgaUj2tPh5ZIDZKMrwDqycNn5edKBYdpWIjd/gWU9F9
-         pZNA6DNPpT+NAyI218OBB4ka6qyTTqphlTooC0+MZA4zvoGqXcGinUHoClLw4WSjGT
-         LxQlqYjPy7/rdvSZR/dW4gj8lYX+j8NO+ogwZQoo=
-Message-ID: <1542864853.23253.6.camel@HansenPartnership.com>
-Subject: [GIT PULL] SCSI fixes for 4.20-rc3
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Wed, 21 Nov 2018 21:34:13 -0800
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 22 Nov 2018 11:18:33 -0500
+Received: by mail-pf1-f196.google.com with SMTP id c72so1373231pfc.6
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 21:40:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FRbX1DFw1UWGoclFmcWoaS4OzeGGPFi/dFVuUs6GsQk=;
+        b=XEfcpJ/MMaAuKLBlb6ifsgPM4DCRFrohvfhtthK+4Ioq3ug2gZlvjkR3+Yynt760s3
+         CfcNe6XlNk3TOHlRW6Vc4rP6n4DqvwDV18ADLiZOjS8eDGr24ZghJcfz6p7IPjHiwZ1N
+         qJYJVLWZlhmkvVcaKkwXlWCpydRM3zAwuxFuoSF/+N59p5RQE+n/31PL1V21abEuJ2lD
+         bjsEqg8ABYDlHnOoO4AgkcZkuyyxVktm1E6vnl5AeNgyd2A87j4M6uZYmrgEAwDBpa0i
+         mVmUXhkr5jmzHek0xohWaskojHUf43vynWPsyrPWbZ5deVvPKBXGtD0/urkvBpIY/N3S
+         HTmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FRbX1DFw1UWGoclFmcWoaS4OzeGGPFi/dFVuUs6GsQk=;
+        b=IJ51nyvjVJq05wmbwNKxcbHrgapJIfzCEcQdJXGzjB4nF+3FMGCZsXfK8Lt0h643rk
+         8Fj5VaNGsnR7BNmUldZrxuKF/JvEO/DrD9zvPGi9800YYJMizMtZysAeRJHEvnVEjUq7
+         QdNiYmr/CgkSYV50+O4XvZOdnYYW6PwVK0vQ+RbRdEk319sQX9DuRjrH4FCFpeCFYJWb
+         m6F4ZyGkyDbnuNby2LC4hNPRR/TcipRlHqaV6Y58sAuMC1GRVk/NiDlN37+QfeD3/RIy
+         9KNIoafviZQDL2u3x4uUlN0DrazmFuTcuMGLXX57HaZZOFuQdOh1KyHtxAKtxakdldHN
+         U7Yw==
+X-Gm-Message-State: AA+aEWb+o3o0DZyMYmoyk+MTxhdmftPDwAHQF7fgcn3xEOs6CozvnEJ+
+        22A26pnnEEGD5ZlHNYakcTY=
+X-Google-Smtp-Source: AFSGD/VDzWCaMOR4bVxZGaXMZMCCaJO5yTYvATHBNKY0026X08gf3+7r+N/SlYyQgHTc3/WI75ybAA==
+X-Received: by 2002:a63:b30f:: with SMTP id i15mr8835001pgf.240.1542865244410;
+        Wed, 21 Nov 2018 21:40:44 -0800 (PST)
+Received: from localhost ([175.223.27.1])
+        by smtp.gmail.com with ESMTPSA id b26sm7862486pfe.91.2018.11.21.21.40.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 21:40:43 -0800 (PST)
+Date:   Thu, 22 Nov 2018 14:40:40 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/6] zram: support idle page writeback
+Message-ID: <20181122054040.GE3441@jagdpanzerIV>
+References: <20181116072035.155108-1-minchan@kernel.org>
+ <20181116072035.155108-5-minchan@kernel.org>
+ <20181121045551.GC599@jagdpanzerIV>
+ <20181121133408.GA103278@google.com>
+ <20181122021442.GB3441@jagdpanzerIV>
+ <20181122050437.GA182024@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181122050437.GA182024@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Two small fixes.  The qla2xxx is a regression from 4.18 and the ufs one
-is a device enablement fix.
+On (11/22/18 14:04), Minchan Kim wrote:
+> 
+> > additionally, it's too simple. It writes-back pages which can be
+> > swapped in immediately; which basically means that we do pointless
+> > PAGE_SIZE writes to a device which doesn't really like pointless
+> > writes.
+> 
+> This patchset aims for *IDLE page* writeback and you can define
+> what is IDLE page by yourself. It doesn't do pointless writeback.
+> > 
+> > It's a whole different story with idle, compressible pages writeback.
+> 
+> I don't understand your point.
 
-The patch is available here:
+Seems you misunderstood me. I'm not saying that IDLE writeback is bad.
+On the contrary, I think IDLE writeback is x100 better than writeback
+which we currently have.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+The "pointless writeback" comment was about the existing writeback,
+when we WB pages which we couldn't compress. We can have a relative
+huge percentage of incompressible pages, and not all of them will end
+up being IDLE:
+ - we swap out page
+ - can't compress it
+ - writeback PAGE_SIZE
+ - swap it in two seconds later
 
-The short changelog is:
+// as example //
 
-Bill Kuzeja (1):
-      scsi: qla2xxx: Timeouts occur on surprise removal of QLogic adapter
+IDLE page writeback (this patch set) looks to me like a really
+significant improvement. Especially if we can writeback compressed
+objects and do, e.g., 300-bytes writes instead of PAGE_SIZE writes.
 
-Wei Li (1):
-      scsi: ufs: Fix hynix ufs bug with quirk on hi36xx SoC
-
-And the diffstat:
-
- drivers/scsi/qla2xxx/qla_os.c | 10 ++++++++--
- drivers/scsi/ufs/ufs-hisi.c   |  9 +++++++++
- drivers/scsi/ufs/ufs_quirks.h |  6 ++++++
- drivers/scsi/ufs/ufshcd.c     |  2 ++
- 4 files changed, 25 insertions(+), 2 deletions(-)
-
-With full diff below.
-
-James
-
----
-
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 20c85eed1a75..b658b9a5eb1e 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -1749,7 +1749,7 @@ qla2x00_loop_reset(scsi_qla_host_t *vha)
- static void
- __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
- {
--	int cnt;
-+	int cnt, status;
- 	unsigned long flags;
- 	srb_t *sp;
- 	scsi_qla_host_t *vha = qp->vha;
-@@ -1799,10 +1799,16 @@ __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
- 					if (!sp_get(sp)) {
- 						spin_unlock_irqrestore
- 							(qp->qp_lock_ptr, flags);
--						qla2xxx_eh_abort(
-+						status = qla2xxx_eh_abort(
- 							GET_CMD_SP(sp));
- 						spin_lock_irqsave
- 							(qp->qp_lock_ptr, flags);
-+						/*
-+						 * Get rid of extra reference caused
-+						 * by early exit from qla2xxx_eh_abort
-+						 */
-+						if (status == FAST_IO_FAIL)
-+							atomic_dec(&sp->ref_count);
- 					}
- 				}
- 				sp->done(sp, res);
-diff --git a/drivers/scsi/ufs/ufs-hisi.c b/drivers/scsi/ufs/ufs-hisi.c
-index 46df707e6f2c..452e19f8fb47 100644
---- a/drivers/scsi/ufs/ufs-hisi.c
-+++ b/drivers/scsi/ufs/ufs-hisi.c
-@@ -20,6 +20,7 @@
- #include "unipro.h"
- #include "ufs-hisi.h"
- #include "ufshci.h"
-+#include "ufs_quirks.h"
- 
- static int ufs_hisi_check_hibern8(struct ufs_hba *hba)
- {
-@@ -390,6 +391,14 @@ static void ufs_hisi_set_dev_cap(struct ufs_hisi_dev_params *hisi_param)
- 
- static void ufs_hisi_pwr_change_pre_change(struct ufs_hba *hba)
- {
-+	if (hba->dev_quirks & UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME) {
-+		pr_info("ufs flash device must set VS_DebugSaveConfigTime 0x10\n");
-+		/* VS_DebugSaveConfigTime */
-+		ufshcd_dme_set(hba, UIC_ARG_MIB(0xD0A0), 0x10);
-+		/* sync length */
-+		ufshcd_dme_set(hba, UIC_ARG_MIB(0x1556), 0x48);
-+	}
-+
- 	/* update */
- 	ufshcd_dme_set(hba, UIC_ARG_MIB(0x15A8), 0x1);
- 	/* PA_TxSkip */
-diff --git a/drivers/scsi/ufs/ufs_quirks.h b/drivers/scsi/ufs/ufs_quirks.h
-index 71f73d1d1ad1..5d2dfdb41a6f 100644
---- a/drivers/scsi/ufs/ufs_quirks.h
-+++ b/drivers/scsi/ufs/ufs_quirks.h
-@@ -131,4 +131,10 @@ struct ufs_dev_fix {
-  */
- #define UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME	(1 << 8)
- 
-+/*
-+ * Some UFS devices require VS_DebugSaveConfigTime is 0x10,
-+ * enabling this quirk ensure this.
-+ */
-+#define UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME	(1 << 9)
-+
- #endif /* UFS_QUIRKS_H_ */
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 27db55b0ca7f..f1c57cd33b5b 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -231,6 +231,8 @@ static struct ufs_dev_fix ufs_fixups[] = {
- 	UFS_FIX(UFS_VENDOR_SKHYNIX, UFS_ANY_MODEL, UFS_DEVICE_NO_VCCQ),
- 	UFS_FIX(UFS_VENDOR_SKHYNIX, UFS_ANY_MODEL,
- 		UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME),
-+	UFS_FIX(UFS_VENDOR_SKHYNIX, "hB8aL1" /*H28U62301AMR*/,
-+		UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME),
- 
- 	END_FIX
- };
+	-ss
