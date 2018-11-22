@@ -7,85 +7,89 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1308C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E0BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED2420870
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE6DA20892
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:58:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKY6vZa+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED2420870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NoUHayQG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE6DA20892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407394AbeKWGis (ORCPT
+        id S2407407AbeKWGiw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 01:38:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37212 "EHLO mail.kernel.org"
+        Fri, 23 Nov 2018 01:38:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389557AbeKWGir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 01:38:47 -0500
+        id S2389557AbeKWGiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 01:38:50 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8017620892;
-        Thu, 22 Nov 2018 19:57:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 677A220818;
+        Thu, 22 Nov 2018 19:57:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542916674;
-        bh=zrJzTwYBBEvRfmHIPJmfN9B59d1o5AsPeffcqFCWFOc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=AKY6vZa+I+WN8Ids7xfv7IGp8M0RvZNozhU6h33WUZcLsl6+lkGSYB/RP0P/ipWtS
-         2BHKNQ1NXpZZm6BVOvM7JOg9qEtRaT3/0kavVJEBvxUgQvpoF7wXHj0c9lieRfDNm0
-         NDgxiKD2lGppmpuLhKAS5H/E1tR3Zv/9g10M+Iys=
+        s=default; t=1542916677;
+        bh=P+neFih8nIH274WU8ltSYpRFaqsaur4PjSzVZiBhUxI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NoUHayQGOTUlLEE96RSEz6H+hcd5mvV4R+MOaKF/071fI04dEdaqC7wF/cN3NjSLq
+         fqSJMIj+iSTlEo4CzQ17jfxAf53DX2721KGGJAGhGYc4Q0MKBZnF3E0bBt+u1/oXam
+         d4/S0uRb3vE1jiI9wwemrpUN2qOm+UT7GkFC/UsY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Anson Huang <anson.huang@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 1/7] cpufreq: imx6q: add return value check for voltage scale
-Date:   Thu, 22 Nov 2018 14:57:43 -0500
-Message-Id: <20181122195749.14086-1-sashal@kernel.org>
+Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 2/7] ARM: make lookup_processor_type() non-__init
+Date:   Thu, 22 Nov 2018 14:57:44 -0500
+Message-Id: <20181122195749.14086-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181122195749.14086-1-sashal@kernel.org>
+References: <20181122195749.14086-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <anson.huang@nxp.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 6ef28a04d1ccf718eee069b72132ce4aa1e52ab9 ]
+[ Upstream commit 899a42f836678a595f7d2bc36a5a0c2b03d08cbc ]
 
-Add return value check for voltage scale when ARM clock
-rate change fail.
+Move lookup_processor_type() out of the __init section so it is callable
+from (eg) the secondary startup code during hotplug.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/imx6q-cpufreq.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm/kernel/head-common.S | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
-index c2d30765bf3d..a4ede00483d1 100644
---- a/drivers/cpufreq/imx6q-cpufreq.c
-+++ b/drivers/cpufreq/imx6q-cpufreq.c
-@@ -105,8 +105,13 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
- 	/* Ensure the arm clock divider is what we expect */
- 	ret = clk_set_rate(arm_clk, new_freq * 1000);
- 	if (ret) {
-+		int ret1;
-+
- 		dev_err(cpu_dev, "failed to set clock rate: %d\n", ret);
--		regulator_set_voltage_tol(arm_reg, volt_old, 0);
-+		ret1 = regulator_set_voltage_tol(arm_reg, volt_old, 0);
-+		if (ret1)
-+			dev_warn(cpu_dev,
-+				 "failed to restore vddarm voltage: %d\n", ret1);
- 		return ret;
- 	}
+diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
+index 8733012d231f..7e662bdd5cb3 100644
+--- a/arch/arm/kernel/head-common.S
++++ b/arch/arm/kernel/head-common.S
+@@ -122,6 +122,9 @@ __mmap_switched_data:
+ 	.long	init_thread_union + THREAD_START_SP @ sp
+ 	.size	__mmap_switched_data, . - __mmap_switched_data
  
++	__FINIT
++	.text
++
+ /*
+  * This provides a C-API version of __lookup_processor_type
+  */
+@@ -133,9 +136,6 @@ ENTRY(lookup_processor_type)
+ 	ldmfd	sp!, {r4 - r6, r9, pc}
+ ENDPROC(lookup_processor_type)
+ 
+-	__FINIT
+-	.text
+-
+ /*
+  * Read processor ID register (CP#15, CR0), and look up in the linker-built
+  * supported processor list.  Note that we can't use the absolute addresses
 -- 
 2.17.1
 
