@@ -2,135 +2,145 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA0FAC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3455C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:55:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CB1E206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:52:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B43020831
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:55:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CP/f+nZS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CB1E206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PCI3mcv7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B43020831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405660AbeKWBcF (ORCPT
+        id S2405673AbeKWBf0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 20:32:05 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45429 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbeKWBcE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 20:32:04 -0500
-Received: by mail-io1-f66.google.com with SMTP id w7so6768114iom.12
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 06:52:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=sl6MnUjiOMYUoENfsq/jEjGAoBqRZz4ixAv9A/YHCSU=;
-        b=CP/f+nZSkFHEWimlsJ/nEZQ1P1a8EVit/CfKcLY4fzfDkDf/l+H/nhoj+Mban6B/2F
-         Nlva4A0+UwdsKKGDA/3ZD8naUNwTrVvAzCNA+GrmKtZefuR5Hq6RtSWKdmyYRiy1KAo1
-         pmG6RM3mUI2ZJdjF7+9csAYM58z5xYD7zB0JDb762zr3INHVUEHOeUZ4SriqClNsu3DY
-         oCMeU3KG2SIfEvW1BPF2f4hOfXWLTx30oiV+o436PQWbdBGeWHZ9+EAWSa3eM7rTA84q
-         h1OZHS/UQT1YHzmdZ4cDNLogl5GZ0jtqrKd9zso130E1LDDnJkJhjZQXqGO78QdbSrtb
-         770Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=sl6MnUjiOMYUoENfsq/jEjGAoBqRZz4ixAv9A/YHCSU=;
-        b=KG/7uZuMvW0kJh494QcdzSlJa8ax9igthjWjkl5mV1JJ73BnP/EeBFYdP3+a0gmzEE
-         WNEWcuVZJQNjG6m0Mrdowmwi/Iv/q0hx/NUKPfzf/gawSB0mCXXPV3l84X6YjGf8zRJF
-         EwOpLLgdeAp/zHx1odQIpUaFz2CiiW5g8iGFFRFk0mDkZfwwgcB56katcRsqEoqiFee5
-         0ztjRKn6Gsdgm+oHzQe845CJl9hfqEo/5k9QwqUCBfEOgxFYtFXvinPLdI5EB6sbo3BA
-         DR6e/UKep9A4p4+tXURuh7/Vcrc5C6vQLCYPyv2Sz6qSbLgAPHtMIPrzHuoAxxB8BNOL
-         OHMA==
-X-Gm-Message-State: AA+aEWYv9Uc7AnovpAXa5D0zEH9Hd6KTNshZfS3DOVU/yfJcR/wYkrrX
-        Rkb8fCjYMLzaPxk9YNEo0gXZGoemRRBrYQK5rbg=
-X-Google-Smtp-Source: AFSGD/UIllH0h3w6V4lbUqs2B+9elAUmRete1zTRDTbCtUjaziXSX5ixs+EH5qMsVIDUlg+8+IUljh0iNg1pvSQqjPc=
-X-Received: by 2002:a6b:ba0a:: with SMTP id k10mr8756736iof.40.1542898342664;
- Thu, 22 Nov 2018 06:52:22 -0800 (PST)
+        Thu, 22 Nov 2018 20:35:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50898 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388992AbeKWBf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 20:35:26 -0500
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49B7320824
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 14:55:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542898543;
+        bh=Mt8CSRGr88p5g1+8PO5LBDynX39LxAaEk0DyOXdk0gk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=PCI3mcv7f7+ddzePXUPWGfMPEcNjN7BdLc5B5nKkCs6T0BXL5ztChAE+C718SFUEm
+         Ww48tBOHoghqGKjDULyNz5gcu4UxilblZw6g/IbVhPfcCXP+9AOS5LjDZV0Um5wxvf
+         Q2egpAWUsEa5Z7S0gMGT1qljcXLVl00eI0Dp6N8Y=
+Received: by mail-wr1-f50.google.com with SMTP id j10so9540896wru.4
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 06:55:43 -0800 (PST)
+X-Gm-Message-State: AA+aEWYyi1yjmw8eVzm5Hm6x9rJA9uhuOo0eFgL1CZK08ngE6bm6YUB4
+        e7H+dow8tEncCVazL/cE40E1iDUsm0HhGN67bbwCww==
+X-Google-Smtp-Source: AFSGD/WkgYduilHO5MmZqtORQ+NJZlp+KKXtQg31SFhnuXBYUiYlwtgzARc9sCi9YVRO/v5XGVhWcvTgRdm/7+pvwRY=
+X-Received: by 2002:a5d:5541:: with SMTP id g1mr10378526wrw.330.1542898541768;
+ Thu, 22 Nov 2018 06:55:41 -0800 (PST)
 MIME-Version: 1.0
-References: <20181120131853.19710-1-tiny.windzz@gmail.com> <5ea4da1e-65de-ddc3-5ca6-eb83c2347930@linaro.org>
- <CAEExFWsOh1gixoC4bbSkbawC-ybz1YUA-tmw5FW5W-GFyFGs7Q@mail.gmail.com>
- <54a66dbf-df0a-8cec-cb60-0603a52dad99@linaro.org> <CAEExFWvTCJ-k+54PGv7Ov5FRMpD1C2ZzzUxi4=Kbn_hrkmBmqw@mail.gmail.com>
- <2cbc73df-e1b4-21bc-c226-38b69ebe9f08@linaro.org> <CAEExFWvOG9YmUdJjJ-d-acHLU9DrS9ccRWs-u1wMOJocQhXZSw@mail.gmail.com>
- <b6c8bdc9-d43a-5884-0678-b34176292909@linaro.org>
-In-Reply-To: <b6c8bdc9-d43a-5884-0678-b34176292909@linaro.org>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Thu, 22 Nov 2018 22:52:00 +0800
-Message-ID: <CAEExFWu+xP1qOz4Ymoiz2AkDhSt_wfdu-gmPS9wkLSCbje16qQ@mail.gmail.com>
-Subject: Re: [PATCH] clocksource/drivers/integrator-ap: add of_node_put()
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org
+References: <20181121165806.07da7c98@akathisia> <CALCETrV3TPCkYyhoLLcikXVeF-RdZUuLTCvKReK3Qb9LSS9Csw@mail.gmail.com>
+ <20181121235634.GA14146@altlinux.org>
+In-Reply-To: <20181121235634.GA14146@altlinux.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 22 Nov 2018 06:55:29 -0800
+X-Gmail-Original-Message-ID: <CALCETrXea_uRAqw_srW5CWgOzeM=RubaDbjnxZ=cUMy5Zv1TsA@mail.gmail.com>
+Message-ID: <CALCETrXea_uRAqw_srW5CWgOzeM=RubaDbjnxZ=cUMy5Zv1TsA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] ptrace: add PTRACE_GET_SYSCALL_INFO request
+To:     "Dmitry V. Levin" <ldv@altlinux.org>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        Kees Cook <keescook@chromium.org>,
+        Sasha Levin <sasha.levin@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        strace-devel@lists.strace.io
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 10:51 PM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
+On Wed, Nov 21, 2018 at 3:56 PM Dmitry V. Levin <ldv@altlinux.org> wrote:
 >
-> On 22/11/2018 15:48, Frank Lee wrote:
-> > On Thu, Nov 22, 2018 at 10:43 PM Daniel Lezcano
-> > <daniel.lezcano@linaro.org> wrote:
-> >>
-> >> On 22/11/2018 15:39, Frank Lee wrote:
-> >>> On Thu, Nov 22, 2018 at 10:37 PM Daniel Lezcano
-> >>> <daniel.lezcano@linaro.org> wrote:
-> >>>>
-> >>>> On 22/11/2018 15:33, Frank Lee wrote:
-> >>>>> On Thu, Nov 22, 2018 at 10:26 PM Daniel Lezcano
-> >>>>> <daniel.lezcano@linaro.org> wrote:
-> >>>>>>
-> >>>>>> On 20/11/2018 14:18, Yangtao Li wrote:
-> >>>>>>> use of_node_put() to release the refcount.
-> >>>>>>>
-> >>>>>>> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> >>>>>>
-> >>>>>> Applied, thanks!
-> >>>>> Hi Daniel=EF=BC=9A
-> >>>>>
-> >>>>> This patch is a bit small, I will resend=E3=80=82
-> >>>>
-> >>>> What do you mean by 'small' ?
-> >>>         pri_node =3D of_find_node_by_path(path);
-> >>>         if (node =3D=3D pri_node){
-> >>>                 of_node_put(pri_node);
-> >>>
-> >>>                 /* The primary timer lacks IRQ, use as clocksource */
-> >>>                 return integrator_clocksource_init(rate, base);
-> >>>         }
-> >>>
-> >>>         sec_node =3D of_find_node_by_path(path);
-> >>>
-> >>> Under my revision, pri_node and sec_nodeare the same thing.
-> >>
-> >> Oh, right. Missed it :/
-> > Daniel ,
+> On Wed, Nov 21, 2018 at 02:56:57PM -0800, Andy Lutomirski wrote:
+> > Please cc linux-api@vger.kernel.org for future versions.
 > >
-> > Have you mde the patch merged?
-> > Which git is the patch in?
-> > I hope that you can revert it and I=E2=80=98ll resend new one
-> > or I'll resend patch based on the modify.
+> > On Wed, Nov 21, 2018 at 7:58 AM Elvira Khabirova wrote:
+> > >
+> > > struct ptrace_syscall_info {
+> > >         __u8 op; /* 0 for entry, 1 for exit */
+> >
+> > Can you add proper defines, like:
+> >
+> > #define PTRACE_SYSCALL_ENTRY 0
+> > #define PTRACE_SYSCALL_EXIT 1
+> > #define PTRACE_SYSCALL_SECCOMP 2
+> >
+> > and make seccomp work from the start?  I'd rather we don't merge an
+> > implementation that doesn't work for seccomp and then have to rework
+> > it later.
 >
-> I can drop it, resend a new one.
-Thanks,
-Yangtao
+> What's the difference between PTRACE_EVENT_SECCOMP and syscall-entry-stop
+> with regards to PTRACE_GET_SYSCALL_INFO request?  At least they have the
+> same entry_info to return.
+
+I'm not sure there's any material difference.
+
 >
+> As long as implementation (ab)uses ptrace_message to tell one kind of stop
+> from another, it can distinguish syscall-entry-stop and syscall-exit-stop
+> from each other and from many other kinds of stops, but it cannot
+> distinguish PTRACE_EVENT_SECCOMP from e.g. PTRACE_EVENT_EXIT.
+
+Hmm.  PTRACE_GET_SYSCALL_INFO should fail for PTRACE_EVENT_EXIT, I think.
+
 >
-> --
->  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
-RM SoCs
+> > >         __u8 __pad0[7];
+> > >         union {
+> > >                 struct {
+> > >                         __s32 nr;
+> >
+> > __u64 please.  Syscall numbers are, as a practical matter, 64 bits.
+> > Admittedly, the actual effects of setting the high bits are unclear,
+> > and seccomp has issues with it, but let's not perpetuate the problem.
 >
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
+> I agree.  Although the implementation uses syscall_get_nr()
+> which returns int, this could potentially be fixed in the future.
+
+Agreed.  Although if we ever start using those high bits, things will
+get confusing.
+
 >
+> > >                         __u32 arch;
+> > >                         __u64 instruction_pointer;
+> > >                         __u64 args[6];
+> > >                 } entry_info;
+> > >                 struct {
+> > >                         __s64 rval;
+> > >                         __u8 is_error;
+> > >                         __u8 __pad1[7];
+> > >                 } exit_info;
+> > >         };
+> > > };
+> >
+> > Should seccomp events use entry_info or should they just literally
+> > supply seccomp_data?
+>
+> It certainly can use entry_info.
+> I'd prefer to avoid using in uapi/linux/ptrace.h those types
+> that are defined in uapi/linux/seccomp.h.
+
+Makes sense to me.  Also, it's possible in principle to extend
+seccomp_data with other fields that are only generated if they're
+read, so passing struct seccomp_data to userspace as a struct may be
+the wrong thing to do.
