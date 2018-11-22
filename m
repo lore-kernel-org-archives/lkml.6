@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-17.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A8EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C26C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:47:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C99820831
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:47:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60DF520870
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:47:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0Bb2tezo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C99820831
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cEACnIOn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60DF520870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393220AbeKVTZf (ORCPT
+        id S2393233AbeKVTZk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 14:25:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37024 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 14:25:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730451AbeKVTZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 14:25:34 -0500
+        id S1730451AbeKVTZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 14:25:40 -0500
 Received: from localhost (unknown [95.99.132.93])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7DEC20831;
-        Thu, 22 Nov 2018 08:47:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2333220831;
+        Thu, 22 Nov 2018 08:47:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542876425;
-        bh=UZ0qp2/vjt/pu52gAySsVB7qhnE3R0MtJuA1x1E/5+o=;
+        s=default; t=1542876430;
+        bh=phiqRKFtxVvWuaXIZMuX/bSxSUiinIcvfUs9ZoSJ3Js=;
         h=Date:From:To:Cc:Subject:From;
-        b=0Bb2tezo3LzsjZ5tQusyAMOCVRFComb7/AOq36cO6NYaQq1HmYsB417F2v6BzzkWR
-         wBWNiY3LMVMNaytdnbEmE82N0XeSmEBoDKpJuXcWGNZZCrcD5GtSYWMmXUspiACm9l
-         IdunkpcfSisNHo83JLHdN7UHg2QtGvwAb9rpImmQ=
-Date:   Thu, 22 Nov 2018 09:45:39 +0100
+        b=cEACnIOntLogOpOu43RE1CcPlC17pDcVKLRofVv+/yp3jZWuRnsHglS7GcaJpPXEj
+         HMskqHRUCnam5B3Yo5Aws23r4vLt2sF/xI+nwswmOfxwNLZxY6FpO0nbapcNpfFdBu
+         O9AvXJLtkYT8v4rN+318n5M+xzlE1w1i/S/EbGDw=
+Date:   Thu, 22 Nov 2018 09:46:02 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB driver fixes for 4.20-rc4
-Message-ID: <20181122084539.GA22578@kroah.com>
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Char/Misc driver fixes for 4.20-rc4
+Message-ID: <20181122084602.GA22673@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -53,102 +53,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+The following changes since commit ccda4af0f4b92f7b4c308d3acc262f4a7e3affad:
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+  Linux 4.20-rc2 (2018-11-11 17:12:31 -0600)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-4.20-rc4
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-4.20-rc4
 
-for you to fetch changes up to 63529eaa6164ef7ab4b907b25ac3648177e5e78f:
+for you to fetch changes up to 544b03da39e2d7b4961d3163976ed4bfb1fac509:
 
-  usb: cdc-acm: add entry for Hiro (Conexant) modem (2018-11-20 12:12:06 +0100)
+  Documentation/security-bugs: Postpone fix publication in exceptional cases (2018-11-20 18:02:45 +0100)
 
 ----------------------------------------------------------------
-USB fixes for 4.20-rc4
+Char/Misc driver fixes for 4.20-rc4
 
-Here are a number of small USB fixes for 4.20-rc4.
+Here are some small char/misc driver fixes for issues that have been
+reported.
 
-There's the usual xhci and dwc2/3 fixes as well as a few minor other
-issues resolved for problems that have been reported.  Full details are
-in the shortlog.
+Nothing major, highlights include:
+	- gnss sync write fixes
+	- uio oops fix
+	- nvmem fixes
+	- other minor fixes and some documentation/maintainers updates
 
-All have been in linux-next for a while with no reported issues.
+Full details are in the shortlog.
+
+All of these have been in linux-next for a while with no reported
+issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Aaron Ma (2):
-      usb: xhci: fix uninitialized completion when USB3 port got wrong status
-      usb: xhci: fix timeout for transition from RExit to U0
-
-Andy Shevchenko (1):
-      usb: dwc3: core: Clean up ULPI device
-
-Cherian, George (1):
-      xhci: Add quirk to workaround the errata seen on Cavium Thunder-X2 Soc
+Colin Ian King (1):
+      test_firmware: fix error return getting clobbered
 
 Dan Carpenter (1):
-      usb: dwc2: pci: Fix an error code in probe
+      uio: Fix an Oops on load
 
-Dennis Wassenberg (1):
-      usb: core: Fix hub port connection events lost
+Dexuan Cui (1):
+      Drivers: hv: kvp: Fix the recent regression caused by incorrect clean-up
 
-Emmanuel Pescosta (1):
-      usb: quirks: Add delay-init quirk for Corsair K70 LUX RGB
+Greg Kroah-Hartman (2):
+      Merge tag 'gnss-4.20-rc3' of https://git.kernel.org/.../johan/gnss into char-misc-linus
+      MAINTAINERS: Add Sasha as a stable branch maintainer
 
-Felipe Balbi (1):
-      usb: dwc3: gadget: fix ISOC TRB type on unaligned transfers
+Gustavo A. R. Silva (1):
+      drivers/misc/sgi-gru: fix Spectre v1 vulnerability
 
-Greg Kroah-Hartman (1):
-      Merge tag 'fixes-for-v4.20-rc2' of git://git.kernel.org/.../balbi/usb into usb-linus
+Johan Hovold (2):
+      gnss: serial: fix synchronous write timeout
+      gnss: sirf: fix synchronous write timeout
 
-Kai-Heng Feng (2):
-      USB: Wait for extra delay time after USB_PORT_FEAT_RESET for quirky hub
-      USB: quirks: Add no-lpm quirk for Raydium touchscreens
+Nathan Chancellor (1):
+      misc: atmel-ssc: Fix section annotation on atmel_ssc_get_driver_data
 
-Kuppuswamy Sathyanarayanan (1):
-      usb: dwc3: Fix NULL pointer exception in dwc3_pci_remove()
+Srinivas Kandagatla (2):
+      slimbus: ngd: remove unnecessary check
+      nvmem: core: fix regression in of_nvmem_cell_get()
 
-Maarten Jacobs (1):
-      usb: cdc-acm: add entry for Hiro (Conexant) modem
+Will Deacon (1):
+      Documentation/security-bugs: Postpone fix publication in exceptional cases
 
-Mathias Nyman (3):
-      xhci: Fix leaking USB3 shared_hcd at xhci removal
-      xhci: handle port status events for removed USB3 hcd
-      usb: xhci: Prevent bus suspend if a port connect change or polling state is detected
-
-Mattias Jacobsson (1):
-      USB: misc: appledisplay: add 20" Apple Cinema Display
-
-Sandeep Singh (1):
-      xhci: Add check for invalid byte size error when UAS devices are connected.
-
-Shen Jing (1):
-      Revert "usb: gadget: ffs: Fix BUG when userland exits with submitted AIO transfers"
-
-Thinh Nguyen (1):
-      usb: dwc3: gadget: Properly check last unaligned/zero chain TRB
-
- Documentation/admin-guide/kernel-parameters.txt |  2 +
- drivers/usb/class/cdc-acm.c                     |  3 ++
- drivers/usb/core/hub.c                          | 18 +++++--
- drivers/usb/core/quirks.c                       | 14 ++++++
- drivers/usb/dwc2/pci.c                          |  1 +
- drivers/usb/dwc3/core.c                         |  1 +
- drivers/usb/dwc3/dwc3-pci.c                     |  4 +-
- drivers/usb/dwc3/gadget.c                       |  8 +--
- drivers/usb/gadget/function/f_fs.c              | 26 +++-------
- drivers/usb/host/xhci-histb.c                   |  6 ++-
- drivers/usb/host/xhci-hub.c                     | 66 ++++++++++++++++++-------
- drivers/usb/host/xhci-mtk.c                     |  6 ++-
- drivers/usb/host/xhci-pci.c                     |  6 +++
- drivers/usb/host/xhci-plat.c                    |  6 ++-
- drivers/usb/host/xhci-ring.c                    | 45 ++++++++++++++++-
- drivers/usb/host/xhci-tegra.c                   |  1 +
- drivers/usb/host/xhci.c                         |  2 -
- drivers/usb/host/xhci.h                         |  3 +-
- drivers/usb/misc/appledisplay.c                 |  1 +
- include/linux/usb/quirks.h                      |  3 ++
- 20 files changed, 167 insertions(+), 55 deletions(-)
+ Documentation/admin-guide/security-bugs.rst | 21 +++++++++++----------
+ MAINTAINERS                                 |  1 +
+ drivers/gnss/serial.c                       |  3 ++-
+ drivers/gnss/sirf.c                         |  3 ++-
+ drivers/hv/hv_kvp.c                         | 26 ++++++++++++++++++++++----
+ drivers/misc/atmel-ssc.c                    |  2 +-
+ drivers/misc/sgi-gru/grukdump.c             |  4 ++++
+ drivers/nvmem/core.c                        | 10 ++++++----
+ drivers/slimbus/qcom-ngd-ctrl.c             |  3 ---
+ drivers/slimbus/slimbus.h                   |  6 ------
+ drivers/uio/uio.c                           |  7 +++++--
+ lib/test_firmware.c                         |  1 +
+ 12 files changed, 55 insertions(+), 32 deletions(-)
