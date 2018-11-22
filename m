@@ -2,85 +2,96 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA92C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 350A1C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D76A20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:26:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UIs2m1c7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D76A20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id EE14820684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:26:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE14820684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390529AbeKVVEs (ORCPT
+        id S2394317AbeKVVFb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 16:04:48 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53010 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387916AbeKVVEs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 16:04:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=O39YNV2aymG2VkpZWNgmZTwTXceMdVz/pXsat3CB6tU=; b=UIs2m1c78ciJr9mFHasCToI+g
-        QaTTJMk8wiSYEM69vXYzz2AQHkjv+rnquRDd99yjpHYWZI0BRUrPPbEQ9akKQwIurGa7ND5zk8Y97
-        u68kQVJgy3uoUv1fEWufwb1XT4dgqY6I6OBdEPgwG+iFzP9Sb++CMi5sNBWSzBziJ57w8HmYF1pvv
-        u+w4rABbEJ5U4G6N9P/8EsES8KLThmjy+WNBukj9OVHMK/SPfhNHEN6rw2xuGSVeQd3+31k916gW3
-        iXK4sJAV2rEBU2p/SPXMF98VdDyUCbkfTLe8H4bSMh/Fhs+nQrglXVsTf4p39D+Tc0fL/ApHedE8Y
-        DSiA2HWhA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPmBD-0005zP-0S; Thu, 22 Nov 2018 10:25:51 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D1A672029FD58; Thu, 22 Nov 2018 11:25:45 +0100 (CET)
-Date:   Thu, 22 Nov 2018 11:25:45 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v9 09/15] sched: Introduce sched_energy_present static key
-Message-ID: <20181122102545.GQ2131@hirez.programming.kicks-ass.net>
-References: <20181119141857.8625-1-quentin.perret@arm.com>
- <20181119141857.8625-10-quentin.perret@arm.com>
- <20181121130822.GE2113@hirez.programming.kicks-ass.net>
- <20181121151444.t3zye5l5iycfni2s@queper01-lin>
- <20181122091715.6kvhcbgoqrd54nbs@queper01-lin>
- <20181122093237.goxmr4p5l4h2izid@queper01-lin>
+        Thu, 22 Nov 2018 16:05:31 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59852 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731891AbeKVVFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 16:05:30 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5E2FD58E27;
+        Thu, 22 Nov 2018 10:26:41 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-23.pek2.redhat.com [10.72.8.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EDAE45D772;
+        Thu, 22 Nov 2018 10:26:21 +0000 (UTC)
+Date:   Thu, 22 Nov 2018 18:26:17 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V11 14/19] block: handle non-cluster bio out of
+ blk_bio_segment_split
+Message-ID: <20181122102616.GC27273@ming.t460p>
+References: <20181121032327.8434-1-ming.lei@redhat.com>
+ <20181121032327.8434-15-ming.lei@redhat.com>
+ <20181121143355.GB2594@lst.de>
+ <20181121153726.GC19111@ming.t460p>
+ <20181121174621.GA6961@lst.de>
+ <20181122093259.GA27007@ming.t460p>
+ <20181122100427.GA28871@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181122093237.goxmr4p5l4h2izid@queper01-lin>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181122100427.GA28871@lst.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 22 Nov 2018 10:26:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 09:32:39AM +0000, Quentin Perret wrote:
-> Hmm, I went too fast, that's totally broken. But there's still something
-> we can do with static_branch_{inc,dec} I think. I'll come back later
-> with a better solution.
+On Thu, Nov 22, 2018 at 11:04:28AM +0100, Christoph Hellwig wrote:
+> On Thu, Nov 22, 2018 at 05:33:00PM +0800, Ming Lei wrote:
+> > However, using virt boundary limit on non-cluster seems over-kill,
+> > because the bio will be over-split(each small bvec may be split as one bio)
+> > if it includes lots of small segment.
+> 
+> The combination of the virt boundary of PAGE_SIZE - 1 and a
+> max_segment_size of PAGE_SIZE will only split if the to me merged
+> segment is in a different page than the previous one, which is exactly
+> what we need here.  Multiple small bvec inside the same page (e.g.
+> 512 byte buffer_heads) will still be merged.
 
-Right; if you count the rd's that have pd set, it should work-ish. Yes,
-much cleaner if you can get it to work.
+Suppose one bio includes (pg0, 0, 512) and (pg1, 512, 512):
 
+The split is introduced by the following code in blk_bio_segment_split():
 
+      if (bvprvp && bvec_gap_to_prev(q, bvprvp, bv.bv_offset))
+		  	goto split;
+
+Without this patch, for non-cluster, the two bvecs are just in different
+segment, but still handled by one same bio. Now you convert into two bios.
+
+Thanks,
+Ming
