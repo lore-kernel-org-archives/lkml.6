@@ -2,134 +2,250 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC53C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 969FDC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE37020684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:35:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="fPWiUwy2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE37020684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 4DC4B20645
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:37:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DC4B20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbeKWFQV (ORCPT
+        id S1729646AbeKWFSM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 00:16:21 -0500
-Received: from mail.efficios.com ([167.114.142.138]:51184 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbeKWFQV (ORCPT
+        Fri, 23 Nov 2018 00:18:12 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:38283 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729121AbeKWFSM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 00:16:21 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 47D51F192;
-        Thu, 22 Nov 2018 13:35:45 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id IczP71d2Hqk2; Thu, 22 Nov 2018 13:35:44 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id A6E58F18D;
-        Thu, 22 Nov 2018 13:35:44 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com A6E58F18D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1542911744;
-        bh=AKB1Quamzgrzad6pOHpLJ5UIN4zU/qAKHRcXBDCRDIU=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=fPWiUwy25qfS+VWijvv/5euofWLZWj/srL61ulMi+BvjTaoJhDobrDfszM1pSy4jb
-         vEOuePCrER4T/PZQnf5Q8iHXGVq1Vac15TypGxjgAO0FBoPodNe5lQ8W26tmnYniXU
-         By3TKFtkRBketZS9D8hH1FiV1okhFo4C0xSazv7okD0sL0OPALxAOs93cG/4Oxl2d4
-         cta+R4Mvi82Wg36nFWa2Iar0yqXvPNfpdEN7RUf1kfhlM7l3Z5s1Z64kiwTK1+A/ka
-         BQ3JTintF9X2bD5/R2Yb/d0dd2oIEJC78YMnYH6wogTOwpRcbMEoIRDfxWxdMgT8cX
-         rz0sjZdopBEoA==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id bmFeqodnYCvu; Thu, 22 Nov 2018 13:35:44 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 85C5DF17D;
-        Thu, 22 Nov 2018 13:35:44 -0500 (EST)
-Date:   Thu, 22 Nov 2018 13:35:44 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Cc:     Florian Weimer <fweimer@redhat.com>, nd <nd@arm.com>,
-        Rich Felker <dalias@libc.org>, carlos <carlos@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <1602745030.10426.1542911744479.JavaMail.zimbra@efficios.com>
-In-Reply-To: <7032ab45-8314-b85d-5b4d-f83b41dab5b6@arm.com>
-References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com> <20181122143603.GD23599@brightrain.aerifal.cx> <782067422.9852.1542899056778.JavaMail.zimbra@efficios.com> <87a7m1ywni.fsf@oldenburg.str.redhat.com> <20181122151710.GF23599@brightrain.aerifal.cx> <875zwpyw81.fsf@oldenburg.str.redhat.com> <1306224240.10055.1542900799576.JavaMail.zimbra@efficios.com> <7032ab45-8314-b85d-5b4d-f83b41dab5b6@arm.com>
-Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl
- init and thread creation
+        Fri, 23 Nov 2018 00:18:12 -0500
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 55682240005;
+        Thu, 22 Nov 2018 18:37:31 +0000 (UTC)
+Date:   Thu, 22 Nov 2018 19:37:30 +0100
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
+        Libin Yang <lbyang@marvell.com>,
+        Albert Wang <twang13@marvell.com>
+Subject: Re: [PATCH v3 01/14] media: ov7670: split register setting from
+ set_fmt() logic
+Message-ID: <20181122183730.GE3808@w540>
+References: <20181120100318.367987-1-lkundrak@v3.sk>
+ <20181120100318.367987-2-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3047 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
-Thread-Topic: glibc: Perform rseq(2) registration at nptl init and thread creation
-Thread-Index: AQHUgcmYxLh54Hb0r0GDFIJAvPiE/6Vb3dCAgAAH4gCAAAIt+4AAAW4AgAABKRSAAANagIAADmkAT4+EF7I=
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pY3vCvL1qV+PayAL"
+Content-Disposition: inline
+In-Reply-To: <20181120100318.367987-2-lkundrak@v3.sk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Nov 22, 2018, at 11:24 AM, Szabolcs Nagy Szabolcs.Nagy@arm.com wrote:
 
-> On 22/11/18 15:33, Mathieu Desnoyers wrote:
->> ----- On Nov 22, 2018, at 10:21 AM, Florian Weimer fweimer@redhat.com wrote:
->>> Right, but in case of user-supplied stacks, we actually free TLS memory
->>> at this point, so signals need to be blocked because the TCB is
->>> (partially) gone after that.
->> 
->> Unfortuntately, disabling signals is not enough.
->> 
->> With rseq registered, the kernel accesses the rseq TLS area when returning to
->> user-space after _preemption_ of user-space, which can be triggered at any
->> point by an interrupt or a fault, even if signals are blocked.
->> 
->> So if there are cases where the TLS memory is freed while the thread is still
->> running, we _need_ to explicitly unregister rseq beforehand.
-> 
-> i think the man page should point this out.
+--pY3vCvL1qV+PayAL
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Yes, I should add this to the proposed rseq(2) man page.
+Hi Lubomir,
 
-> 
-> the memory of a registered rseq object must not be freed
-> before thread exit. (either unregister it or free later)
-> 
-> and ideally also point out that c language thread storage
-> duration does not provide this guarantee: it may be freed
-> by the implementation before thread exit (which is currently
-> not observable, but with the rseq syscall it is).
+On Tue, Nov 20, 2018 at 11:03:06AM +0100, Lubomir Rintel wrote:
+> This will allow us to restore the last set format after the device returns
+> from a power off.
+>
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+>
+> ---
+> Changes since v2:
+> - This patch was added to the series
+>
+>  drivers/media/i2c/ov7670.c | 80 ++++++++++++++++++++++----------------
+>  1 file changed, 46 insertions(+), 34 deletions(-)
+>
+> diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
+> index bc68a3a5b4ec..ee2302fbdeee 100644
+> --- a/drivers/media/i2c/ov7670.c
+> +++ b/drivers/media/i2c/ov7670.c
+> @@ -240,6 +240,7 @@ struct ov7670_info {
+>  	};
+>  	struct v4l2_mbus_framefmt format;
+>  	struct ov7670_format_struct *fmt;  /* Current format */
+> +	struct ov7670_win_size *wsize;
+>  	struct clk *clk;
+>  	struct gpio_desc *resetb_gpio;
+>  	struct gpio_desc *pwdn_gpio;
+> @@ -1003,48 +1004,20 @@ static int ov7670_try_fmt_internal(struct v4l2_subdev *sd,
+>  	return 0;
+>  }
+>
+> -/*
+> - * Set a format.
+> - */
+> -static int ov7670_set_fmt(struct v4l2_subdev *sd,
+> -		struct v4l2_subdev_pad_config *cfg,
+> -		struct v4l2_subdev_format *format)
+> +static int ov7670_apply_fmt(struct v4l2_subdev *sd)
+>  {
+> -	struct ov7670_format_struct *ovfmt;
+> -	struct ov7670_win_size *wsize;
+>  	struct ov7670_info *info = to_state(sd);
+> -#ifdef CONFIG_VIDEO_V4L2_SUBDEV_API
+> -	struct v4l2_mbus_framefmt *mbus_fmt;
+> -#endif
+> +	struct ov7670_win_size *wsize = info->wsize;
+>  	unsigned char com7, com10 = 0;
+>  	int ret;
+>
+> -	if (format->pad)
+> -		return -EINVAL;
+> -
+> -	if (format->which == V4L2_SUBDEV_FORMAT_TRY) {
+> -		ret = ov7670_try_fmt_internal(sd, &format->format, NULL, NULL);
+> -		if (ret)
+> -			return ret;
+> -#ifdef CONFIG_VIDEO_V4L2_SUBDEV_API
+> -		mbus_fmt = v4l2_subdev_get_try_format(sd, cfg, format->pad);
+> -		*mbus_fmt = format->format;
+> -		return 0;
+> -#else
+> -		return -ENOTTY;
+> -#endif
+> -	}
+> -
+> -	ret = ov7670_try_fmt_internal(sd, &format->format, &ovfmt, &wsize);
+> -	if (ret)
+> -		return ret;
+>  	/*
+>  	 * COM7 is a pain in the ass, it doesn't like to be read then
+>  	 * quickly written afterward.  But we have everything we need
+>  	 * to set it absolutely here, as long as the format-specific
+>  	 * register sets list it first.
+>  	 */
+> -	com7 = ovfmt->regs[0].value;
+> +	com7 = info->fmt->regs[0].value;
+>  	com7 |= wsize->com7_bit;
+>  	ret = ov7670_write(sd, REG_COM7, com7);
+>  	if (ret)
+> @@ -1066,7 +1039,7 @@ static int ov7670_set_fmt(struct v4l2_subdev *sd,
+>  	/*
+>  	 * Now write the rest of the array.  Also store start/stops
+>  	 */
+> -	ret = ov7670_write_array(sd, ovfmt->regs + 1);
+> +	ret = ov7670_write_array(sd, info->fmt->regs + 1);
+>  	if (ret)
+>  		return ret;
+>
+> @@ -1081,8 +1054,6 @@ static int ov7670_set_fmt(struct v4l2_subdev *sd,
+>  			return ret;
+>  	}
+>
+> -	info->fmt = ovfmt;
+> -
+>  	/*
+>  	 * If we're running RGB565, we must rewrite clkrc after setting
+>  	 * the other parameters or the image looks poor.  If we're *not*
+> @@ -1100,6 +1071,46 @@ static int ov7670_set_fmt(struct v4l2_subdev *sd,
+>  	return 0;
+>  }
+>
+> +/*
+> + * Set a format.
+> + */
+> +static int ov7670_set_fmt(struct v4l2_subdev *sd,
+> +		struct v4l2_subdev_pad_config *cfg,
+> +		struct v4l2_subdev_format *format)
+> +{
+> +	struct ov7670_info *info = to_state(sd);
+> +#ifdef CONFIG_VIDEO_V4L2_SUBDEV_API
+> +	struct v4l2_mbus_framefmt *mbus_fmt;
+> +#endif
+> +	int ret;
+> +
+> +	if (format->pad)
+> +		return -EINVAL;
+> +
+> +	if (format->which == V4L2_SUBDEV_FORMAT_TRY) {
+> +		ret = ov7670_try_fmt_internal(sd, &format->format, NULL, NULL);
+> +		if (ret)
+> +			return ret;
+> +#ifdef CONFIG_VIDEO_V4L2_SUBDEV_API
+> +		mbus_fmt = v4l2_subdev_get_try_format(sd, cfg, format->pad);
 
-How about the following wording ?
+This #ifdef CONFIG_VIDEO_V4L2_SUBDEV_API seems to be quite in some
+drivers... Maybe stubs should be defined in v4l2-subdev.h.
 
-  Memory of a registered rseq object must not be freed before the
-  thread exits. Reclaim of rseq object's memory must only be
-  done after either an explicit rseq unregistration is performed
-  or after the thread exit. Keep in mind that the implementation
-  of the Thread-Local Storage (C language __thread) lifetime does
-  not guarantee existence of the TLS area up until the thread exits.
+Anway, that's unrealted, the patch seems fine to me:
+Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
 
-Thanks,
-
-Mathieu
+Thanks
+  j
 
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+> +		*mbus_fmt = format->format;
+> +		return 0;
+> +#else
+> +		return -ENOTTY;
+> +#endif
+> +	}
+> +
+> +	ret = ov7670_try_fmt_internal(sd, &format->format, &info->fmt, &info->wsize);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ov7670_apply_fmt(sd);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+>  static int ov7670_get_fmt(struct v4l2_subdev *sd,
+>  			  struct v4l2_subdev_pad_config *cfg,
+>  			  struct v4l2_subdev_format *format)
+> @@ -1847,6 +1858,7 @@ static int ov7670_probe(struct i2c_client *client,
+>
+>  	info->devtype = &ov7670_devdata[id->driver_data];
+>  	info->fmt = &ov7670_formats[0];
+> +	info->wsize = &info->devtype->win_sizes[0];
+>
+>  	ov7670_get_default_format(sd, &info->format);
+>
+> --
+> 2.19.1
+>
+
+--pY3vCvL1qV+PayAL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJb9vdqAAoJEHI0Bo8WoVY8HesP/RYmxydVq8sxBz/PBKcGfn2A
+b6u8wRoG6ZmZk0eAch04lWcRqA0XNqoVoTKzlf3B9ab2oaY9lxz/lVCxuLTQooq0
+TZD+qIKB23hs+59aNRWhSQWzNvxCUHyBKQS8gnb4RmKFh9QfmhhGrqJ7RS3ABITY
+cAFRaJPX6VpS+MlXMWRjUfee/HR5vX4FDVVURM75wBL/jwXRn1qrd9TJSsW+IgaN
+XhZtjOjROI4TRdG7z8adIsYitrXW1Amwjt5+KgSNSHp9sryv9cYQ4JxCDJBaKBzJ
+uJ7O+Ha+IOMkl+L5M33tVtzoNa90Rdc6hNG5KXov4ZkaN/h7NZ+hRDeMlAwu64t2
+UHz3bq3bJV+WuD475Yawl5KPDoeuY3lUgFt6MmWnzHYWSaxSVkqxRuOSL9Arz1Pq
+bi7FaMUiJOUp1cCGz3YeydqBvSCbxc4PYqgJdFSqW857F6wgIeqJH71KAzC8Movb
+LA9MIjw9JnijHyx9o6JOhiAR7aPTXSHrI/5oy5NruphUi4rBmKYvDcqcCagwsfAF
+d71PFlu+MfJ4Qd+tw5k92E6IX6pntbT5w1Sf5RH9mOwF+pHrnIkyl3j5lpTdtU8d
+/hXdwkV+q+eNQccvU4dt+t6jOeVRCVvh+I+ufZ2hhmn7cqG1+zF+Vemz6VF4MpqJ
+UkOh8EBrUPd0tYeO/G+P
+=4D55
+-----END PGP SIGNATURE-----
+
+--pY3vCvL1qV+PayAL--
