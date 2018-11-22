@@ -4,43 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1307FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:04:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12858C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:04:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C99E520684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:03:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC91B20831
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:04:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WFTGG4iX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C99E520684
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cr1wkshh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC91B20831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437157AbeKWAn2 (ORCPT
+        id S2437170AbeKWAnb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:43:28 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57516 "EHLO
+        Thu, 22 Nov 2018 19:43:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57854 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391646AbeKWAn0 (ORCPT
+        with ESMTP id S1732590AbeKWAn3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:43:26 -0500
+        Thu, 22 Nov 2018 19:43:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ddSc0GEXTciULelNE8dEV/Abh7889SvikaXoFrcrdpo=; b=WFTGG4iXQnXhmYXV0fS89aw1Ji
-        wpoi3FyQfZERrWk5YYIAohdZfj6iZlI7ZmcRs2z+bfgnIsvTcv/T/d4m56ORGKsDoXCWoT4BgAIXr
-        VoKZ+5cttlWu7z6szNWL2ksWAoB6cnvwe95PuA+y6blxOlJLFGSkQ132y/KD4cLCOPzbgnGjdA8FA
-        V76OZCUOOxHgteuZ/E1vbCUJLthECQ18brpUP2VFP4amEbZY+aDbi/BR8R9esy9TXPm5DRIttuGkz
-        +ipXstlftvFU32dkoRwpm8iLMosgAANejBoaWrVjVBfp170QATBBQsbY/7vIgXH1UVBiZTwj4k4ff
-        t9GmmgbA==;
+        bh=d9JpAhPkajo8247Fbaz7IQ+E4cfLUOsbaKmSdSNZxls=; b=cr1wkshh9Cx7bdY52FgJ9lG0DW
+        3dQxYV8OrYX3GOu2RO08gA/o9AcIJ5CXmsLMfVZ2eigiCNNNy3azN2H8yFWVOJXZLBeR27ujJiLbZ
+        Ll9Urm0UOQrv3emjEWeK8m9RrCI5bPRPb2pVEn4bmMhcI7NgA8ExGlTLRDYvgAyRFwn9V1TmmVmw5
+        P7UhnvCvdOiUyaESNrvOAeNEeD0sHOVppHAQUdqPpMdJMloTr+9kBcJsOifBZGUyd1gD/DMfXEFVx
+        0tWskH7oSMjMuC1PGe9TO/Wn2QVfFbYQf5gTpOfKPZhyjbsT1GLuFws6BXwsF3NLhBBLt5GyLjyoG
+        HLFRO7pA==;
 Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPpa5-0007w1-7s; Thu, 22 Nov 2018 14:03:45 +0000
+        id 1gPpa8-000817-52; Thu, 22 Nov 2018 14:03:48 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     iommu@lists.linux-foundation.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -52,9 +51,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org,
         xen-devel@lists.xenproject.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 07/24] mips/jazz: remove the mapping_error dma_map_ops method
-Date:   Thu, 22 Nov 2018 15:03:03 +0100
-Message-Id: <20181122140320.24080-8-hch@lst.de>
+Subject: [PATCH 08/24] s390: remove the mapping_error dma_map_ops method
+Date:   Thu, 22 Nov 2018 15:03:04 +0100
+Message-Id: <20181122140320.24080-9-hch@lst.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181122140320.24080-1-hch@lst.de>
 References: <20181122140320.24080-1-hch@lst.de>
@@ -66,98 +65,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Jazz iommu code already returns (~(dma_addr_t)0x0) on mapping
-failures, so we can switch over to returning DMA_MAPPING_ERROR and
-let the core dma-mapping code handle the rest.
+S390 already returns (~(dma_addr_t)0x0) on mapping failures, so we can
+switch over to returning DMA_MAPPING_ERROR and let the core dma-mapping
+code handle the rest.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/mips/include/asm/jazzdma.h |  6 ------
- arch/mips/jazz/jazzdma.c        | 16 +++++-----------
- 2 files changed, 5 insertions(+), 17 deletions(-)
+ arch/s390/pci/pci_dma.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
-diff --git a/arch/mips/include/asm/jazzdma.h b/arch/mips/include/asm/jazzdma.h
-index d913439c738c..d13f940022d5 100644
---- a/arch/mips/include/asm/jazzdma.h
-+++ b/arch/mips/include/asm/jazzdma.h
-@@ -39,12 +39,6 @@ extern int vdma_get_enable(int channel);
- #define VDMA_PAGE(a)		((unsigned int)(a) >> 12)
- #define VDMA_OFFSET(a)		((unsigned int)(a) & (VDMA_PAGESIZE-1))
+diff --git a/arch/s390/pci/pci_dma.c b/arch/s390/pci/pci_dma.c
+index d387a0fbdd7e..346ba382193a 100644
+--- a/arch/s390/pci/pci_dma.c
++++ b/arch/s390/pci/pci_dma.c
+@@ -15,8 +15,6 @@
+ #include <linux/pci.h>
+ #include <asm/pci_dma.h>
  
--/*
-- * error code returned by vdma_alloc()
-- * (See also arch/mips/kernel/jazzdma.c)
-- */
--#define VDMA_ERROR		0xffffffff
+-#define S390_MAPPING_ERROR		(~(dma_addr_t) 0x0)
 -
- /*
-  * VDMA pagetable entry description
-  */
-diff --git a/arch/mips/jazz/jazzdma.c b/arch/mips/jazz/jazzdma.c
-index 4c41ed0a637e..6256d35dbf4d 100644
---- a/arch/mips/jazz/jazzdma.c
-+++ b/arch/mips/jazz/jazzdma.c
-@@ -104,12 +104,12 @@ unsigned long vdma_alloc(unsigned long paddr, unsigned long size)
- 		if (vdma_debug)
- 			printk("vdma_alloc: Invalid physical address: %08lx\n",
- 			       paddr);
--		return VDMA_ERROR;	/* invalid physical address */
-+		return DMA_MAPPING_ERROR;	/* invalid physical address */
- 	}
- 	if (size > 0x400000 || size == 0) {
- 		if (vdma_debug)
- 			printk("vdma_alloc: Invalid size: %08lx\n", size);
--		return VDMA_ERROR;	/* invalid physical address */
-+		return DMA_MAPPING_ERROR;	/* invalid physical address */
- 	}
+ static struct kmem_cache *dma_region_table_cache;
+ static struct kmem_cache *dma_page_table_cache;
+ static int s390_iommu_strict;
+@@ -301,7 +299,7 @@ static dma_addr_t dma_alloc_address(struct device *dev, int size)
  
- 	spin_lock_irqsave(&vdma_lock, flags);
-@@ -123,7 +123,7 @@ unsigned long vdma_alloc(unsigned long paddr, unsigned long size)
- 		       first < VDMA_PGTBL_ENTRIES) first++;
- 		if (first + pages > VDMA_PGTBL_ENTRIES) {	/* nothing free */
- 			spin_unlock_irqrestore(&vdma_lock, flags);
--			return VDMA_ERROR;
-+			return DMA_MAPPING_ERROR;
- 		}
- 
- 		last = first + 1;
-@@ -569,7 +569,7 @@ static void *jazz_dma_alloc(struct device *dev, size_t size,
- 		return NULL;
- 
- 	*dma_handle = vdma_alloc(virt_to_phys(ret), size);
--	if (*dma_handle == VDMA_ERROR) {
-+	if (*dma_handle == DMA_MAPPING_ERROR) {
- 		dma_direct_free_pages(dev, size, ret, *dma_handle, attrs);
- 		return NULL;
- 	}
-@@ -620,7 +620,7 @@ static int jazz_dma_map_sg(struct device *dev, struct scatterlist *sglist,
- 			arch_sync_dma_for_device(dev, sg_phys(sg), sg->length,
- 				dir);
- 		sg->dma_address = vdma_alloc(sg_phys(sg), sg->length);
--		if (sg->dma_address == VDMA_ERROR)
-+		if (sg->dma_address == DMA_MAPPING_ERROR)
- 			return 0;
- 		sg_dma_len(sg) = sg->length;
- 	}
-@@ -674,11 +674,6 @@ static void jazz_dma_sync_sg_for_cpu(struct device *dev,
- 		arch_sync_dma_for_cpu(dev, sg_phys(sg), sg->length, dir);
+ out_error:
+ 	spin_unlock_irqrestore(&zdev->iommu_bitmap_lock, flags);
+-	return S390_MAPPING_ERROR;
++	return DMA_MAPPING_ERROR;
  }
  
--static int jazz_dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
+ static void dma_free_address(struct device *dev, dma_addr_t dma_addr, int size)
+@@ -349,7 +347,7 @@ static dma_addr_t s390_dma_map_pages(struct device *dev, struct page *page,
+ 	/* This rounds up number of pages based on size and offset */
+ 	nr_pages = iommu_num_pages(pa, size, PAGE_SIZE);
+ 	dma_addr = dma_alloc_address(dev, nr_pages);
+-	if (dma_addr == S390_MAPPING_ERROR) {
++	if (dma_addr == DMA_MAPPING_ERROR) {
+ 		ret = -ENOSPC;
+ 		goto out_err;
+ 	}
+@@ -372,7 +370,7 @@ static dma_addr_t s390_dma_map_pages(struct device *dev, struct page *page,
+ out_err:
+ 	zpci_err("map error:\n");
+ 	zpci_err_dma(ret, pa);
+-	return S390_MAPPING_ERROR;
++	return DMA_MAPPING_ERROR;
+ }
+ 
+ static void s390_dma_unmap_pages(struct device *dev, dma_addr_t dma_addr,
+@@ -449,7 +447,7 @@ static int __s390_dma_map_sg(struct device *dev, struct scatterlist *sg,
+ 	int ret;
+ 
+ 	dma_addr_base = dma_alloc_address(dev, nr_pages);
+-	if (dma_addr_base == S390_MAPPING_ERROR)
++	if (dma_addr_base == DMA_MAPPING_ERROR)
+ 		return -ENOMEM;
+ 
+ 	dma_addr = dma_addr_base;
+@@ -496,7 +494,7 @@ static int s390_dma_map_sg(struct device *dev, struct scatterlist *sg,
+ 	for (i = 1; i < nr_elements; i++) {
+ 		s = sg_next(s);
+ 
+-		s->dma_address = S390_MAPPING_ERROR;
++		s->dma_address = DMA_MAPPING_ERROR;
+ 		s->dma_length = 0;
+ 
+ 		if (s->offset || (size & ~PAGE_MASK) ||
+@@ -546,11 +544,6 @@ static void s390_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
+ 	}
+ }
+ 	
+-static int s390_mapping_error(struct device *dev, dma_addr_t dma_addr)
 -{
--	return dma_addr == VDMA_ERROR;
+-	return dma_addr == S390_MAPPING_ERROR;
 -}
 -
- const struct dma_map_ops jazz_dma_ops = {
- 	.alloc			= jazz_dma_alloc,
- 	.free			= jazz_dma_free,
-@@ -692,6 +687,5 @@ const struct dma_map_ops jazz_dma_ops = {
- 	.sync_sg_for_device	= jazz_dma_sync_sg_for_device,
- 	.dma_supported		= dma_direct_supported,
- 	.cache_sync		= arch_dma_cache_sync,
--	.mapping_error		= jazz_dma_mapping_error,
+ int zpci_dma_init_device(struct zpci_dev *zdev)
+ {
+ 	int rc;
+@@ -675,7 +668,6 @@ const struct dma_map_ops s390_pci_dma_ops = {
+ 	.unmap_sg	= s390_dma_unmap_sg,
+ 	.map_page	= s390_dma_map_pages,
+ 	.unmap_page	= s390_dma_unmap_pages,
+-	.mapping_error	= s390_mapping_error,
+ 	/* dma_supported is unconditionally true without a callback */
  };
- EXPORT_SYMBOL(jazz_dma_ops);
+ EXPORT_SYMBOL_GPL(s390_pci_dma_ops);
 -- 
 2.19.1
 
