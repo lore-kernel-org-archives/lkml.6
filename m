@@ -2,179 +2,139 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51AFEC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD988C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B15220878
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:37:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PwPqy0nn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B15220878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6B72F20831
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:58:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B72F20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404532AbeKVOPO (ORCPT
+        id S2387737AbeKVOfo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 09:15:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56824 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 09:35:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33736 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404518AbeKVOPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 09:15:13 -0500
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1732535AbeKVOfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 09:35:44 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 323ED20878;
-        Thu, 22 Nov 2018 03:37:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542857867;
-        bh=h4YfUUmSHIHlZFvm/WsaAAU5SXxmuAjYguXdanLlja4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PwPqy0nnFbxJ1cgOHymE5nyVFUIvCgcOBZax3I0/Qv9VEbe0giNH7LLcMAvPcyWYZ
-         DENHa/298PN5SiDOyZOQ/JKG1pJ/vTc9xJQWrgLJeP9htFmmsyEVVEaxVhJu6DPyj2
-         sw2vcAtE0xWvUHzveLVxgbhJpDybyDq+gus41oZo=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 28/28] perf pmu: Move *_cpuid_str() weak functions to header.c
-Date:   Thu, 22 Nov 2018 00:36:11 -0300
-Message-Id: <20181122033611.15890-29-acme@kernel.org>
-X-Mailer: git-send-email 2.14.5
-In-Reply-To: <20181122033611.15890-1-acme@kernel.org>
-References: <20181122033611.15890-1-acme@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id B2A7F394D52;
+        Thu, 22 Nov 2018 03:58:14 +0000 (UTC)
+Received: from sandy.ghostprotocols.net (ovpn-112-2.gru2.redhat.com [10.97.112.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5C78919741;
+        Thu, 22 Nov 2018 03:58:14 +0000 (UTC)
+Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
+        id DA6571C24; Thu, 22 Nov 2018 01:58:11 -0200 (BRST)
+Date:   Thu, 22 Nov 2018 01:58:11 -0200
+From:   Arnaldo Carvalho de Melo <acme@redhat.com>
+To:     Stephane Eranian <eranian@google.com>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@elte.hu,
+        jolsa@redhat.com, acme@kernel.org
+Subject: Re: [PATCH] perf stat: fix csv mode column output for non-cgroup
+ events
+Message-ID: <20181122035811.GD5468@redhat.com>
+References: <1541587845-9150-1-git-send-email-eranian@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541587845-9150-1-git-send-email-eranian@google.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 22 Nov 2018 03:58:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+Em Wed, Nov 07, 2018 at 02:50:45AM -0800, Stephane Eranian escreveu:
+> When using the -x option, perf stat prints csv-style output
+> with one event per line.  For each event, it prints the count,
+> the unit, the event name, the cgroup, and a bunch of other event
+> specific fields (such as insn per cycles).
+> 
+> When you use csv-style mode, you expect a normalized output where
+> each event is printed with the same number of fields regardless of
+> what it is so it can easily be imported into a spreadsheet or parsed.
+> For instance, if an event does not have a unit, then print an empty field
+> for it. Although this approach was implemented for the unit, it was not
+> for the cgroup.  When mixing cgroup and non-cgroup events, then non-cgroup
+> events would not show an empty field, instead the next field was printed,
+> make columns not line up correctly.
+> 
+> This patch fixes the cgroup output issues by forcing an empty field
+> for non-cgroup events as soon as one event has cgroup.
 
-The weak functions, strcmp_cpuid_str() and get_cpuid_str(), are defined
-in pmu.c.
+Looks sane, that nr_cgroups global variable at some point has to go to
+the evlist, but that is not introduced by this patch, Jiri, are you ok
+with it as well?
 
-Most of the cpuid related functions, including *_cpuid_str()'s
-declaration and platform specific definition, are in header.c/h.
-
-To make the declaration and definition of all cpuid related functions in
-a consistent place, move the weak functions to header.c.
-
-There is no functional change.
-
-Suggested-by: Jiri Olsa <jolsa@kernel.org>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Link: http://lkml.kernel.org/r/20181121164939.13482-1-kan.liang@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/header.c | 39 +++++++++++++++++++++++++++++++++++++++
- tools/perf/util/pmu.c    | 39 ---------------------------------------
- 2 files changed, 39 insertions(+), 39 deletions(-)
-
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 4fd45be95a43..e31f52845e77 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -987,6 +987,45 @@ static int write_group_desc(struct feat_fd *ff,
- 	return 0;
- }
+- Arnaldo
  
-+/*
-+ * Return the CPU id as a raw string.
-+ *
-+ * Each architecture should provide a more precise id string that
-+ * can be use to match the architecture's "mapfile".
-+ */
-+char * __weak get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
-+{
-+	return NULL;
-+}
-+
-+/* Return zero when the cpuid from the mapfile.csv matches the
-+ * cpuid string generated on this platform.
-+ * Otherwise return non-zero.
-+ */
-+int __weak strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
-+{
-+	regex_t re;
-+	regmatch_t pmatch[1];
-+	int match;
-+
-+	if (regcomp(&re, mapcpuid, REG_EXTENDED) != 0) {
-+		/* Warn unable to generate match particular string. */
-+		pr_info("Invalid regular expression %s\n", mapcpuid);
-+		return 1;
-+	}
-+
-+	match = !regexec(&re, cpuid, 1, pmatch, 0);
-+	regfree(&re);
-+	if (match) {
-+		size_t match_len = (pmatch[0].rm_eo - pmatch[0].rm_so);
-+
-+		/* Verify the entire string matched. */
-+		if (match_len == strlen(cpuid))
-+			return 0;
-+	}
-+	return 1;
-+}
-+
- /*
-  * default get_cpuid(): nothing gets recorded
-  * actual implementation must be in arch/$(SRCARCH)/util/header.c
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index c660625d7d4b..11a234740632 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -655,45 +655,6 @@ static int is_arm_pmu_core(const char *name)
- 	return 0;
- }
- 
--/*
-- * Return the CPU id as a raw string.
-- *
-- * Each architecture should provide a more precise id string that
-- * can be use to match the architecture's "mapfile".
-- */
--char * __weak get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
--{
--	return NULL;
--}
--
--/* Return zero when the cpuid from the mapfile.csv matches the
-- * cpuid string generated on this platform.
-- * Otherwise return non-zero.
-- */
--int __weak strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
--{
--	regex_t re;
--	regmatch_t pmatch[1];
--	int match;
--
--	if (regcomp(&re, mapcpuid, REG_EXTENDED) != 0) {
--		/* Warn unable to generate match particular string. */
--		pr_info("Invalid regular expression %s\n", mapcpuid);
--		return 1;
--	}
--
--	match = !regexec(&re, cpuid, 1, pmatch, 0);
--	regfree(&re);
--	if (match) {
--		size_t match_len = (pmatch[0].rm_eo - pmatch[0].rm_so);
--
--		/* Verify the entire string matched. */
--		if (match_len == strlen(cpuid))
--			return 0;
--	}
--	return 1;
--}
--
- static char *perf_pmu__getcpuid(struct perf_pmu *pmu)
- {
- 	char *cpuid;
--- 
-2.14.5
-
+> Before:
+> <not counted> @ @cycles @foo    @ 0    @100.00@@
+> 2531614       @ @cycles @6420922@100.00@    @
+> 
+> foo cgroup lines up with time_running!
+> 
+> After:
+> <not counted> @ @cycles @foo @0       @100.00@@
+> 2594834       @ @cycles @    @5287372 @100.00@@
+> 
+> Fields line up.
+> 
+> Signed-off-by: Stephane Eranian <eranian@google.com>
+> ---
+>  tools/perf/util/stat-display.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+> index e7b4c44ebb62..665ee374fc01 100644
+> --- a/tools/perf/util/stat-display.c
+> +++ b/tools/perf/util/stat-display.c
+> @@ -59,6 +59,15 @@ static void print_noise(struct perf_stat_config *config,
+>  	print_noise_pct(config, stddev_stats(&ps->res_stats[0]), avg);
+>  }
+>  
+> +static void print_cgroup(struct perf_stat_config *config, struct perf_evsel *evsel)
+> +{
+> +	if (nr_cgroups) {
+> +		const char *cgrp_name = evsel->cgrp ? evsel->cgrp->name  : "";
+> +		fprintf(config->output, "%s%s", config->csv_sep, cgrp_name);
+> +	}
+> +}
+> +
+> +
+>  static void aggr_printout(struct perf_stat_config *config,
+>  			  struct perf_evsel *evsel, int id, int nr)
+>  {
+> @@ -336,8 +345,7 @@ static void abs_printout(struct perf_stat_config *config,
+>  
+>  	fprintf(output, "%-*s", config->csv_output ? 0 : 25, perf_evsel__name(evsel));
+>  
+> -	if (evsel->cgrp)
+> -		fprintf(output, "%s%s", config->csv_sep, evsel->cgrp->name);
+> +	print_cgroup(config, evsel);
+>  }
+>  
+>  static bool is_mixed_hw_group(struct perf_evsel *counter)
+> @@ -431,9 +439,7 @@ static void printout(struct perf_stat_config *config, int id, int nr,
+>  			config->csv_output ? 0 : -25,
+>  			perf_evsel__name(counter));
+>  
+> -		if (counter->cgrp)
+> -			fprintf(config->output, "%s%s",
+> -				config->csv_sep, counter->cgrp->name);
+> +		print_cgroup(config, counter);
+>  
+>  		if (!config->csv_output)
+>  			pm(config, &os, NULL, NULL, "", 0);
+> -- 
+> 2.7.4
