@@ -2,88 +2,135 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2469FC43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 532BDC43610
 	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC513206BA
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:10:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Iaw7rEX4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC513206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 2043E20821
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:10:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2043E20821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391838AbeKVNrh (ORCPT
+        id S2391850AbeKVNrh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 22 Nov 2018 08:47:37 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:34656 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726505AbeKVNrg (ORCPT
+Received: from a2nlsmtp01-05.prod.iad2.secureserver.net ([198.71.225.49]:33078
+        "EHLO a2nlsmtp01-05.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732413AbeKVNrh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 08:47:36 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAM34m7v018020;
-        Thu, 22 Nov 2018 03:10:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=6HT+I2Lgpnw+XZbuGlzRIeIgXitk1Y4qAO96+O7qWCY=;
- b=Iaw7rEX4yvR8ckDHM2baLmQ7oDxiIVsJC9p/R6NctfB3DRsw6FGuEMgWnLAegtTjVkd4
- 8pZuAr0YTYw8XspwE4i+crZQAInzpuUiwmE2SrVqROscOxNRPERQLINQhBizC6FeQGcR
- 4klUz3GZTzxfhjpDgmQX5D+MBdnLq3Zw/Z0evrv1XVYK2B7rJUKbRiU/BBQ2HHZ73MCk
- bn5EMEyzKlPa3jP/voBeDLui947HW49KMPHZUeh1yS6ICwBl6BmiKKHI3jeTxAwb3Dli
- 34GIMGAIpD4GMwmU2wjTnGKHsNPspfvvtfiaJkJC+ArZ33LL29A4dbEmHKT0OOwxzAWn Ow== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2ntaxqcjdt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Nov 2018 03:10:02 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAM3A1m4030248
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Nov 2018 03:10:01 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAM3A0Gp014096;
-        Thu, 22 Nov 2018 03:10:00 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 21 Nov 2018 19:10:00 -0800
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Karen Xie <kxie@chelsio.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cxgb4i: fix thermal configuration dependencies
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20181102153531.1583478-1-arnd@arndb.de>
-Date:   Wed, 21 Nov 2018 22:09:57 -0500
-In-Reply-To: <20181102153531.1583478-1-arnd@arndb.de> (Arnd Bergmann's message
-        of "Fri, 2 Nov 2018 16:35:23 +0100")
-Message-ID: <yq14lc995a2.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Thu, 22 Nov 2018 08:47:37 -0500
+Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
+        by : HOSTING RELAY : with ESMTP
+        id PfMigqyEMse9VPfMigyvBh; Wed, 21 Nov 2018 20:09:16 -0700
+x-originating-ip: 107.180.71.197
+Received: from kys by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
+        (envelope-from <kys@linuxonhyperv2.linuxonhyperv.com>)
+        id 1gPfMi-0004FB-5J; Wed, 21 Nov 2018 20:09:16 -0700
+From:   kys@linuxonhyperv.com
+To:     will.deacon@arm.com, catalin.marinas@armm.com,
+        mark.rutland@arm.com, marc.zyngier@arm.com,
+        linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
+        olaf@aepfle.de, apw@canonical.com, jasowang@redhat.com,
+        sthemmin@microsoft.com, Michael.H.Kelley@microsoft.com,
+        vkuznets@redhat.com
+Cc:     "K. Y. Srinivasan" <kys@microsoft.com>
+Subject: [PATCH 0/4] Hyper-V: Enable Linux guests on Hyper-V on ARM64 
+Date:   Thu, 22 Nov 2018 03:09:14 +0000
+Message-Id: <20181122030914.16274-1-kys@linuxonhyperv.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9084 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=611
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811220027
+Reply-To: kys@microsoft.com
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfO4UCel2TN4PKno+wg36SaJV57cKu0LDwil6qRUUtef/Xrc6Yqd7kX9O0wJZN0YsEY9XZQDgkS4nwryBHsNwz6xnUsNtXfqaEiHDkSQV2e/tU2DoTkqB
+ 5xPUZY6AIfiWs6kBzvuW4a/MQJu0sz5sLZZSnPispnVOeabZ181VPPeSEdnGApmoDetPSomci3piApl8g4PT1kJQZsRyri0/Xto3U6CteauxWrO3JbLVycrv
+ BSBTS9yMRsbpUtl/kaJei7qfczLavU6qmjoYBtmJUWsIoO0iBddHvmUXOWnaFKCwwU1DmFJTGRIFTiP0yj3tXT7CEMW2gSIGV3jQzXifUn9qYqK0CoEbCbN2
+ +ZY48Mm3smnEbWx6JTZPWycbdCOU1XDjjzqJpkJuDQU8eXG4BCv3EFkK5i1x25CTsn6Jr38vxlp34ps5uuCbSH0kWMd0DqAM9H2OuEtT3Vc4Lt6ed6ZK/JwS
+ bB3YIZn7eeZNHfyYKUtK2ZIxDmEVWWay5KnGlirjIkHYXtRuXC3/V2PDv7x+8dnMZrd36ZWr79pdQeSu3uY5AHdObEGjUhvJLCNT+UiIITIDyCXfigrULr/O
+ GtZ5iomojHfGd//OVuMReuZGlIkb4fH4vwKfSior1KcyBF9U/yH/WM9X5rNyUVtLHnZ5lQBYETOO/1tGI54nOLtODeRBCtOZMqde3dZNt1fPqNzlQtD4e2mm
+ 9ELboxxOqtA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: "K. Y. Srinivasan" <kys@microsoft.com>
 
-Arnd,
+This series enables Linux guests running on Hyper-V on ARM64
+hardware. New ARM64-specific code in arch/arm64/hyperv initializes
+Hyper-V, including its synthetic clocks and hypercall mechanism.
+Existing architecture independent drivers for Hyper-V's VMbus and
+synthetic devices just work when built for ARM64. Hyper-V code is
+built and included in the image and modules only if CONFIG_HYPERV
+is enabled.
 
-> I fixed a bug by adding a dependency in the network driver, but that
-> fix caused a related bug in the SCSI driver:
+The four patches are organized as follows:
+1) Add include files that define the Hyper-V interface as
+   described in the Hyper-V Top Level Functional Spec (TLFS), plus
+   additional definitions specific to Linux running on Hyper-V.
 
-Applied to 4.21/scsi-queue, thanks!
+2) Add core Hyper-V support on ARM64, including hypercalls,
+   synthetic clock initialization, and interrupt handlers.
+
+3) Update the existing VMbus driver to generalize interrupt
+   management across x86/x64 and ARM64.
+
+4) Make CONFIG_HYPERV selectable on ARM64 in addition to x86/x64.
+
+Some areas of Linux guests on Hyper-V on ARM64 are a work-
+in-progress, primarily due to work still being done in Hyper-V:
+
+* Hyper-V on ARM64 currently runs with a 4 Kbyte page size, and only
+  supports guests with a 4 Kbyte page size. Because Hyper-V uses
+  shared pages to communicate between the guest and the hypervisor,
+  there are open design decisions on the page size to use when
+  the guest is using 16K/64K pages.  Once those issues are
+  resolved and Hyper-V fully supports 16K/64K guest pages, changes
+  may be needed in the Linux drivers for Hyper-V synthetic devices.
+
+* Hyper-V on ARM64 does not currently support mapping PCI devices
+  into the guest address space. The Hyper-V PCI driver at
+  drivers/pci/host/pci-hyperv.c has x86/x64-specific code and is
+  not being built for ARM64.
+
+In a few cases, terminology from the x86/x64 world has been carried
+over into the ARM64 code ("MSR", "TSC").  Hyper-V still uses the
+x86/x64 terminology and has not replaced it with something more
+generic, so the code uses the Hyper-V terminology.  This will be
+fixed when Hyper-V updates the usage in the TLFS.
+
+
+Michael Kelley (4):
+  arm64: hyperv: Add core Hyper-V include files
+  arm64: hyperv: Add support for Hyper-V as a hypervisor
+  Drivers: hv: vmbus: Add hooks for per-CPU IRQ
+  Drivers: hv: Enable CONFIG_HYPERV on ARM64
+
+ MAINTAINERS                          |   4 +
+ arch/arm64/Makefile                  |   1 +
+ arch/arm64/hyperv/Makefile           |   2 +
+ arch/arm64/hyperv/hv_hvc.S           |  54 ++++
+ arch/arm64/hyperv/hv_init.c          | 441 +++++++++++++++++++++++++++
+ arch/arm64/hyperv/mshyperv.c         | 178 +++++++++++
+ arch/arm64/include/asm/hyperv-tlfs.h | 338 ++++++++++++++++++++
+ arch/arm64/include/asm/mshyperv.h    | 116 +++++++
+ arch/x86/include/asm/mshyperv.h      |   4 +
+ drivers/hv/Kconfig                   |   3 +-
+ drivers/hv/hv.c                      |   2 +
+ include/asm-generic/mshyperv.h       | 240 +++++++++++++++
+ 12 files changed, 1382 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/hyperv/Makefile
+ create mode 100644 arch/arm64/hyperv/hv_hvc.S
+ create mode 100644 arch/arm64/hyperv/hv_init.c
+ create mode 100644 arch/arm64/hyperv/mshyperv.c
+ create mode 100644 arch/arm64/include/asm/hyperv-tlfs.h
+ create mode 100644 arch/arm64/include/asm/mshyperv.h
+ create mode 100644 include/asm-generic/mshyperv.h
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.19.1
+
