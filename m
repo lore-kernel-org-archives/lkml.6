@@ -2,121 +2,112 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8218DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDDEC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4709120820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:01:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4709120820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 51A7B20824
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:01:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51A7B20824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lio96.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407759AbeKWImj (ORCPT
+        id S2407773AbeKWImn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 03:42:39 -0500
-Received: from emh04.mail.saunalahti.fi ([62.142.5.110]:49120 "EHLO
-        emh04.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730054AbeKWImi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 03:42:38 -0500
-Received: from darkstar.musicnaut.iki.fi (85-76-84-147-nat.elisa-mobile.fi [85.76.84.147])
-        by emh04.mail.saunalahti.fi (Postfix) with ESMTP id 22D7E300CF;
-        Fri, 23 Nov 2018 00:01:15 +0200 (EET)
-Date:   Fri, 23 Nov 2018 00:01:14 +0200
-From:   Aaro Koskinen <aaro.koskinen@iki.fi>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     vkoul@kernel.org, dan.j.williams@intel.com,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tony@atomide.com, linux-omap@vger.kernel.org,
-        rmk+kernel@armlinux.org.uk,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
-Message-ID: <20181122220114.GB11423@darkstar.musicnaut.iki.fi>
-References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
- <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
- <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
- <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
- <4eb3b03e-0a97-6195-f162-e03e32705fe0@ti.com>
+        Fri, 23 Nov 2018 03:42:43 -0500
+Received: from er-systems.de ([148.251.68.21]:50634 "EHLO er-systems.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730054AbeKWImn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 03:42:43 -0500
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by er-systems.de (Postfix) with ESMTP id 24C25D6006F;
+        Thu, 22 Nov 2018 23:01:19 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by er-systems.de (Postfix) with ESMTPS id 06655D6006C;
+        Thu, 22 Nov 2018 23:01:19 +0100 (CET)
+Date:   Thu, 22 Nov 2018 23:01:18 +0100 (CET)
+From:   Thomas Voegtle <tv@lio96.de>
+X-X-Sender: thomas@er-systems.de
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
+        Chris Wilson <chris@chris-wilson.co.uk>
+Subject: Re: [PATCH 4.19 00/42] 4.19.4-stable review
+In-Reply-To: <alpine.LSU.2.21.1811222148260.12239@er-systems.de>
+Message-ID: <alpine.LSU.2.21.1811222259160.22493@er-systems.de>
+References: <20181121183147.869199006@linuxfoundation.org> <alpine.LSU.2.21.1811222148260.12239@er-systems.de>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4eb3b03e-0a97-6195-f162-e03e32705fe0@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: multipart/mixed; boundary="-74181308-616663799-1542924079=:22493"
+X-Virus-Status: No
+X-Virus-Checker-Version: clamassassin 1.2.4 with clamdscan / ClamAV 0.100.2/25143/Thu Nov 22 15:14:45 2018 signatures 58.
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Thu, Nov 22, 2018 at 10:31:31AM +0200, Peter Ujfalusi wrote:
-> On 20/11/2018 23.04, Aaro Koskinen wrote:
-> > On Tue, Nov 20, 2018 at 09:28:37AM +0200, Peter Ujfalusi wrote:
-> >> On 19/11/2018 20.46, Aaro Koskinen wrote:
-> >>> On Mon, Nov 19, 2018 at 12:40:40PM +0200, Peter Ujfalusi wrote:
-> >>>> When the channel is configured for slave operation the LCH_TYPE needs to be
-> >>>> set to LCh-P. For memcpy channels the LCH_TYPE must be set to LCh-2D.
-> >>>>
-> >>>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> >>>
-> >>> I don't have the documentation, but based on what omap_udc driver (still
-> >>> using the legacy OMAP DMA API) does this seems to be correct.
-> >>
-> >> They are hard to fine, true. From the omap1710 TRM:
-> >>
-> >> Logical channel types (LCh types) supported are:
-> >> - LCh-2D for nonsynchronized transfers (memory transfers, 1D and 2D)
-> >> - LCh-P for synchronized transfers (mostly peripheral transfers)
-> >> - LCh-PD similar to LCh-P but runs on a dedicated physical channel
-> >> - LCh-G for graphical transfers/operations
-> >> - LCh-D for display transfers
-> > 
-> > (I found a public document "OMAP5912 Multimedia Processor Direct
-> > Memory Access (DMA) Support Reference Guide", documenting these; easy
-> > to confuse with "OMAP5910 Dual-Core Processor System DMA Controller
-> > Reference Guide".)
-> > 
-> >> Looking at other part it looks like hat LCH-2D channel mode can happily
-> >> service a peripheral. LCH-P supports the same features as LCH-2D, but it
-> >> lacks support for Single/Double-indexed addressing mode on the
-> >> peripheral port side.
-> >>
-> >> So, this patch might not be needed at all. Can you test the omap_udc
-> >> with s/OMAP_DMA_LCH_P/OMAP_DMA_LCH_2D
-> >>
-> >> If USB works, then we can just drop this patch.
-> > 
-> > Unfortunately omap_udc does not seem to work at all anymore with DMA on
-> > my 770 setup. :-(
-> > 
-> > I had switched to PIO mode in 2015 since the WARNs about legacy DMA
-> > API were too annoying and flooding the console. And now that I tried
-> > using DMA again with g_ether, it doesn't work anymore. The device get's
-> > recognized on host side, but no traffic goes through. Switching back to
-> > PIO makes it to work again.
-> 
-> After some tinkering I got omap_udc working with DMA (not DMAengine,
-> yet) on 770 - using nfsroot. Configuring the channels to OMAP_DMA_LCH_2D
-> works as expected.
+---74181308-616663799-1542924079=:22493
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8BIT
 
-Would be interesting to know how you got it working with DMA. Which
-gadget driver were you using?
+On Thu, 22 Nov 2018, Thomas Voegtle wrote:
 
-I bisected my issue, and got:
+>
+> Doesn't compile for me on OpenSuSE 15.0 (gcc 7.3.1):
+>
+>   CALL    scripts/checksyscalls.sh
+>   DESCEND  objtool
+>   CHK     include/generated/compile.h
+>   CC [M]  drivers/gpu/drm/i915/i915_gem_gtt.o
+> drivers/gpu/drm/i915/i915_gem_gtt.c: In function ‘gen6_dump_ppgtt’:
+> drivers/gpu/drm/i915/i915_gem_gtt.c:1771:41: error: format ‘%llx’ expects
+> argument of type ‘long long unsigned int’, but argument 5 has type ‘long
+> unsigned int’ [-Werror=format=]
+>    seq_printf(m, "\t\t(%03d, %04d) %08llx: ",
+>                                    ~~~~~ ^
+>                                    %08lx
+> cc1: all warnings being treated as errors
+> make[4]: *** [scripts/Makefile.build:306:
+> drivers/gpu/drm/i915/i915_gem_gtt.o] Error 1
+> make[3]: *** [scripts/Makefile.build:546: drivers/gpu/drm/i915] Error 2
+> make[2]: *** [scripts/Makefile.build:546: drivers/gpu/drm] Error 2
+> make[1]: *** [scripts/Makefile.build:546: drivers/gpu] Error 2
+> make: *** [Makefile:1052: drivers] Error 2
+>
+>
+>
+> 4.19.3 is broken for me, too. 4.19.2 is works.
+> 4.20-rc tree works.
+>
+> Config attached.
 
-commit 387f869d2579e379ee343f5493dcd360be60f5c6 (refs/bisect/bad)
-Author: Felipe Balbi <felipe.balbi@linux.intel.com>
-Date:   Wed Mar 22 13:25:18 2017 +0200
 
-    usb: gadget: u_ether: conditionally align transfer size
+quick bisect shows problem is:
 
-With that reverted, the DMA works OK (and I can also now confirm that
-OMAP_DMA_LCH_2D works). I haven't yet checked if we actually need that
-quirk in OMAP UDC, or if this is related to RMK's findings of potential
-bugs in the driver. Anyway, there is clearly yet another regression.
+commit 1a25e1a1be71a49ee7f34fb14b5a26191e6cf501
+Author: Chris Wilson <chris@chris-wilson.co.uk>
+Date:   Thu Oct 25 10:18:22 2018 +0100
 
-A.
+     drm/i915: Mark up GTT sizes as u64
+
+     commit c58281056a8b26d5d9dc15c19859a7880835ef44 upstream.
+
+
+reverted on 4.19.4-rc1 it compiles for me. I guess something is missing 
+here?
+
+
+    Thomas
+
+---74181308-616663799-1542924079=:22493--
+
