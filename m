@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94938C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44797C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:24:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F93220684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:24:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F93220684
+	by mail.kernel.org (Postfix) with ESMTP id 10F5820684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:24:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10F5820684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394307AbeKVVDH (ORCPT
+        id S2394221AbeKVVCg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 16:03:07 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:48328 "EHLO
+        Thu, 22 Nov 2018 16:02:36 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:48298 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394191AbeKVVCh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 16:02:37 -0500
+        id S2394192AbeKVVCg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 16:02:36 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id 526A25FD5D; Thu, 22 Nov 2018 18:23:46 +0800 (CST)
+        id 43CE95FCA9; Thu, 22 Nov 2018 18:23:46 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Mark Brown <broonie@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Vasily Khoruzhick <anarsoul@gmail.com>, devicetree@vger.kernel.org,
+Cc:     Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
         alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH v9 4/8] ASoC: simple-amplifier: add VCC regulator widget
-Date:   Thu, 22 Nov 2018 18:23:21 +0800
-Message-Id: <20181122102325.29495-5-wens@csie.org>
+        Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: [PATCH v9 2/8] ASoC: sunxi: sun50i-codec-analog: Add support for cpvdd regulator supply
+Date:   Thu, 22 Nov 2018 18:23:19 +0800
+Message-Id: <20181122102325.29495-3-wens@csie.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181122102325.29495-1-wens@csie.org>
 References: <20181122102325.29495-1-wens@csie.org>
@@ -47,44 +47,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Khoruzhick <anarsoul@gmail.com>
+On the Allwinner A64 SoCs, the audio codec has a built-in headphone
+amplifier. This amplifier has a power supply separate from the rest of
+the analog audio circuitry, labeled cpvdd.
 
-Amplifier may have assosicated regulator, so add a widget for it
-and appropriate route.
+This patch adds a DAPM widget for this supply, and ties it to the
+headphone amp widget.
 
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- sound/soc/codecs/simple-amplifier.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ sound/soc/sunxi/sun50i-codec-analog.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/sound/soc/codecs/simple-amplifier.c b/sound/soc/codecs/simple-amplifier.c
-index 85524acf3e9c..c07e8a80b4b7 100644
---- a/sound/soc/codecs/simple-amplifier.c
-+++ b/sound/soc/codecs/simple-amplifier.c
-@@ -19,6 +19,7 @@
+diff --git a/sound/soc/sunxi/sun50i-codec-analog.c b/sound/soc/sunxi/sun50i-codec-analog.c
+index 8f5f999df631..df1fed0aa001 100644
+--- a/sound/soc/sunxi/sun50i-codec-analog.c
++++ b/sound/soc/sunxi/sun50i-codec-analog.c
+@@ -274,6 +274,7 @@ static const struct snd_soc_dapm_widget sun50i_a64_codec_widgets[] = {
+ 	 * stream widgets at the card level.
+ 	 */
  
- #include <linux/gpio/consumer.h>
- #include <linux/module.h>
-+#include <linux/regulator/consumer.h>
- #include <sound/soc.h>
++	SND_SOC_DAPM_REGULATOR_SUPPLY("hpvcc", 0, 0),
+ 	SND_SOC_DAPM_MUX("Headphone Source Playback Route",
+ 			 SND_SOC_NOPM, 0, 0, sun50i_codec_hp_src),
+ 	SND_SOC_DAPM_OUT_DRV("Headphone Amp", SUN50I_ADDA_HP_CTRL,
+@@ -361,6 +362,7 @@ static const struct snd_soc_dapm_route sun50i_a64_codec_routes[] = {
+ 	{ "Headphone Source Playback Route", "Mixer", "Left Mixer" },
+ 	{ "Headphone Source Playback Route", "Mixer", "Right Mixer" },
+ 	{ "Headphone Amp", NULL, "Headphone Source Playback Route" },
++	{ "Headphone Amp", NULL, "hpvcc" },
+ 	{ "HP", NULL, "Headphone Amp" },
  
- #define DRV_NAME "simple-amplifier"
-@@ -58,11 +59,14 @@ static const struct snd_soc_dapm_widget simple_amp_dapm_widgets[] = {
- 			       (SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD)),
- 	SND_SOC_DAPM_OUTPUT("OUTL"),
- 	SND_SOC_DAPM_OUTPUT("OUTR"),
-+	SND_SOC_DAPM_REGULATOR_SUPPLY("VCC", 20, 0),
- };
- 
- static const struct snd_soc_dapm_route simple_amp_dapm_routes[] = {
- 	{ "DRV", NULL, "INL" },
- 	{ "DRV", NULL, "INR" },
-+	{ "OUTL", NULL, "VCC" },
-+	{ "OUTR", NULL, "VCC" },
- 	{ "OUTL", NULL, "DRV" },
- 	{ "OUTR", NULL, "DRV" },
- };
+ 	/* Microphone Routes */
 -- 
 2.19.1
 
