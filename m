@@ -2,99 +2,275 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C0DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:03:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C3F5C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:04:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94FDE20820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:03:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94FDE20820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BE8120866
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:04:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BE8120866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393335AbeKVTmM (ORCPT
+        id S2393341AbeKVTnS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 14:42:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53630 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731655AbeKVTmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 14:42:11 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3E7AE80F79;
-        Thu, 22 Nov 2018 09:03:38 +0000 (UTC)
-Received: from krava (unknown [10.43.17.92])
-        by smtp.corp.redhat.com (Postfix) with SMTP id B08D663F88;
-        Thu, 22 Nov 2018 09:03:36 +0000 (UTC)
-Date:   Thu, 22 Nov 2018 10:03:35 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     "Wangnan (F)" <wangnan0@huawei.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: perf tools: remove option --tail-synthesize ?
-Message-ID: <20181122090335.GA15953@krava>
-References: <89AC26A9-5A18-4608-8889-9C3C9C1C69D3@fb.com>
- <20181121131156.GG6248@kernel.org>
- <da87afd6-c291-2049-5e0b-a02512122806@huawei.com>
+        Thu, 22 Nov 2018 14:43:18 -0500
+Received: from mail.windriver.com ([147.11.1.11]:44448 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731655AbeKVTnS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 14:43:18 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id wAM94Ms8014583
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Thu, 22 Nov 2018 01:04:22 -0800 (PST)
+Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
+ ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 22 Nov 2018 01:04:21 -0800
+From:   <zhe.he@windriver.com>
+To:     <catalin.marinas@arm.com>, <bigeasy@linutronix.de>,
+        <tglx@linutronix.de>, <rostedt@goodmis.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <linux-rt-users@vger.kernel.org>
+Subject: [PATCH v2] kmemleak: Turn kmemleak_lock to raw spinlock on RT
+Date:   Thu, 22 Nov 2018 17:04:19 +0800
+Message-ID: <1542877459-144382-1-git-send-email-zhe.he@windriver.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <da87afd6-c291-2049-5e0b-a02512122806@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 22 Nov 2018 09:03:38 +0000 (UTC)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 09:50:15AM +0800, Wangnan (F) wrote:
-> 
-> 
-> On 2018/11/21 21:11, Arnaldo Carvalho de Melo wrote:
-> > Em Wed, Nov 21, 2018 at 07:45:28AM +0000, Song Liu escreveu:
-> >> Hi,
-> >>
-> >> I found perf-record --tail-synthesize without --overwrite breaks symbols
-> >> for perf-script, perf-report, etc. For example:
-> >>
-> >> [root@]# ~/perf record -ag --tail-synthesize -- sleep 1
-> >> [ perf record: Woken up 1 times to write data ]
-> >> [ perf record: Captured and wrote 1.129 MB perf.data (3531 samples) ]
-> >> [root@]# ~/perf script | head
-> >> swapper     0 [000] 1250675.051971:          1 cycles:ppp:
-> >>         ffffffff81009e15 [unknown] ([unknown])
-> >>         ffffffff81196b19 [unknown] ([unknown])
-> >>         ffffffff81196579 [unknown] ([unknown])
-> >>         ffffffff81110ca7 [unknown] ([unknown])
-> >>         ffffffff81a01f4a [unknown] ([unknown])
-> >>         ffffffff81a017bf [unknown] ([unknown])
-> >>         ffffffff8180e17a [unknown] ([unknown])
-> >>
-> >> perf-record with --overwrite does NOT have this issue.
-> >>
-> >> After digging into this, I found this issue is introduced by commit
-> >> a73e24d240bc136619d382b1268f34d75c9d25ce.
-> >>
-> >> Reverting this commit does fix this issue. However, on a second thought,
-> >> I feel it is probably better just drop --tail-synthesize, as it doesn't
-> >> make much sense without --overwrite. All we need is to do tail_synthesize
-> >> when --overwrite is set.
-> >>
-> 
-> Some cases we use --overwrite without --tail-synthesize. How about setting
-> --tail-synthesize when selecting --overwrite by default, throw a warning
-> when --overwrite is not set and leave a --no-tail-synthesize option?
+From: He Zhe <zhe.he@windriver.com>
 
-sounds good to me
+kmemleak_lock, as a rwlock on RT, can possibly be held in atomic context and
+causes the follow BUG.
 
-thanks,
-jirka
+BUG: scheduling while atomic: migration/15/132/0x00000002
+Modules linked in: iTCO_wdt iTCO_vendor_support intel_rapl pcc_cpufreq
+pnd2_edac intel_powerclamp coretemp crct10dif_pclmul crct10dif_common
+aesni_intel matroxfb_base aes_x86_64 matroxfb_g450 matroxfb_accel
+crypto_simd matroxfb_DAC1064 cryptd glue_helper g450_pll matroxfb_misc
+i2c_ismt i2c_i801 acpi_cpufreq
+Preemption disabled at:
+[<ffffffff8c927c11>] cpu_stopper_thread+0x71/0x100
+CPU: 15 PID: 132 Comm: migration/15 Not tainted 4.19.0-rt1-preempt-rt #1
+Hardware name: Intel Corp. Harcuvar/Server, BIOS HAVLCRB1.X64.0015.D62.1708310404 08/31/2017
+Call Trace:
+ dump_stack+0x4f/0x6a
+ ? cpu_stopper_thread+0x71/0x100
+ __schedule_bug.cold.16+0x38/0x55
+ __schedule+0x484/0x6c0
+ schedule+0x3d/0xe0
+ rt_spin_lock_slowlock_locked+0x118/0x2a0
+ rt_spin_lock_slowlock+0x57/0x90
+ __rt_spin_lock+0x26/0x30
+ __write_rt_lock+0x23/0x1a0
+ ? intel_pmu_cpu_dying+0x67/0x70
+ rt_write_lock+0x2a/0x30
+ find_and_remove_object+0x1e/0x80
+ delete_object_full+0x10/0x20
+ kmemleak_free+0x32/0x50
+ kfree+0x104/0x1f0
+ ? x86_pmu_starting_cpu+0x30/0x30
+ intel_pmu_cpu_dying+0x67/0x70
+ x86_pmu_dying_cpu+0x1a/0x30
+ cpuhp_invoke_callback+0x92/0x700
+ take_cpu_down+0x70/0xa0
+ multi_cpu_stop+0x62/0xc0
+ ? cpu_stop_queue_work+0x130/0x130
+ cpu_stopper_thread+0x79/0x100
+ smpboot_thread_fn+0x20f/0x2d0
+ kthread+0x121/0x140
+ ? sort_range+0x30/0x30
+ ? kthread_park+0x90/0x90
+ ret_from_fork+0x35/0x40
+
+And on v4.18 stable tree the following call trace, caused by grabbing
+kmemleak_lock again, is also observed.
+
+kernel BUG at kernel/locking/rtmutex.c:1048! 
+invalid opcode: 0000 [#1] PREEMPT SMP PTI 
+CPU: 5 PID: 689 Comm: mkfs.ext4 Not tainted 4.18.16-rt9-preempt-rt #1 
+Hardware name: Intel Corp. Harcuvar/Server, BIOS HAVLCRB1.X64.0015.D62.1708310404 08/31/2017 
+RIP: 0010:rt_spin_lock_slowlock_locked+0x277/0x2a0 
+Code: e8 5e 64 61 ff e9 bc fe ff ff e8 54 64 61 ff e9 b7 fe ff ff 0f 0b e8 98 57 53 ff e9 43 fe ff ff e8 8e 57 53 ff e9 74 ff ff ff <0f> 0b 0f 0b 0f 0b 48 8b 43 10 48 85 c0 74 06 48 3b 58 38 75 0b 49 
+RSP: 0018:ffff936846d4f3b0 EFLAGS: 00010046 
+RAX: ffff8e3680361e00 RBX: ffffffff83a8b240 RCX: 0000000000000001 
+RDX: 0000000000000000 RSI: ffff8e3680361e00 RDI: ffffffff83a8b258 
+RBP: ffff936846d4f3e8 R08: ffff8e3680361e01 R09: ffffffff82adfdf0 
+R10: ffffffff827ede18 R11: 0000000000000000 R12: ffff936846d4f3f8 
+R13: ffff8e3680361e00 R14: ffff936846d4f3f8 R15: 0000000000000246 
+FS: 00007fc8b6bfd780(0000) GS:ffff8e369f340000(0000) knlGS:0000000000000000 
+CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033 
+CR2: 000055fb5659e000 CR3: 00000007fdd14000 CR4: 00000000003406e0 
+Call Trace: 
+ ? preempt_count_add+0x74/0xc0 
+ rt_spin_lock_slowlock+0x57/0x90 
+ ? __kernel_text_address+0x12/0x40 
+ ? __save_stack_trace+0x75/0x100 
+ __rt_spin_lock+0x26/0x30 
+ __write_rt_lock+0x23/0x1a0 
+ rt_write_lock+0x2a/0x30 
+ create_object+0x17d/0x2b0 
+ kmemleak_alloc+0x34/0x50 
+ kmem_cache_alloc+0x146/0x220 
+ ? mempool_alloc_slab+0x15/0x20 
+ mempool_alloc_slab+0x15/0x20 
+ mempool_alloc+0x65/0x170 
+ sg_pool_alloc+0x21/0x60 
+ __sg_alloc_table+0x101/0x160 
+ ? sg_free_table_chained+0x30/0x30 
+ sg_alloc_table_chained+0x8b/0xb0 
+ scsi_init_sgtable+0x31/0x90 
+ scsi_init_io+0x44/0x130 
+ sd_setup_write_same16_cmnd+0xef/0x150 
+ sd_init_command+0x6bf/0xaa0 
+ ? cgroup_base_stat_cputime_account_end.isra.0+0x26/0x60 
+ ? elv_rb_del+0x2a/0x40 
+ scsi_setup_cmnd+0x8e/0x140 
+ scsi_prep_fn+0x5d/0x140 
+ blk_peek_request+0xda/0x2f0 
+ scsi_request_fn+0x33/0x550 
+ ? cfq_rb_erase+0x23/0x40 
+ __blk_run_queue+0x43/0x60 
+ cfq_insert_request+0x2f3/0x5d0 
+ __elv_add_request+0x160/0x290 
+ blk_flush_plug_list+0x204/0x230 
+ schedule+0x87/0xe0 
+ __write_rt_lock+0x18b/0x1a0 
+ rt_write_lock+0x2a/0x30 
+ create_object+0x17d/0x2b0 
+ kmemleak_alloc+0x34/0x50 
+ __kmalloc_node+0x1cd/0x340 
+ alloc_request_size+0x30/0x70 
+ mempool_alloc+0x65/0x170 
+ ? ioc_lookup_icq+0x54/0x70 
+ get_request+0x4e3/0x8d0 
+ ? wait_woken+0x80/0x80 
+ blk_queue_bio+0x153/0x470 
+ generic_make_request+0x1dc/0x3f0 
+ submit_bio+0x49/0x140 
+ ? next_bio+0x38/0x40 
+ submit_bio_wait+0x59/0x90 
+ blkdev_issue_discard+0x7a/0xd0 
+ ? _raw_spin_unlock_irqrestore+0x18/0x50 
+ blk_ioctl_discard+0xc7/0x110 
+ blkdev_ioctl+0x57e/0x960 
+ ? __wake_up+0x13/0x20 
+ block_ioctl+0x3d/0x50 
+ do_vfs_ioctl+0xa8/0x610 
+ ? vfs_write+0x166/0x1b0 
+ ksys_ioctl+0x67/0x90 
+ __x64_sys_ioctl+0x1a/0x20 
+ do_syscall_64+0x4d/0xf0 
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+kmemleak is an error detecting feature. We would not expect as good performance
+as without it. As there is no raw rwlock defining helpers, we turn kmemleak_lock
+to a raw spinlock.
+
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Cc: catalin.marinas@arm.com
+Cc: bigeasy@linutronix.de
+Cc: tglx@linutronix.de
+Cc: rostedt@goodmis.org
+---
+v2: Remove stable tag as this is only for preempt-rt patchset
+
+ mm/kmemleak.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 17dd883..b68a3d0 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -26,7 +26,7 @@
+  *
+  * The following locks and mutexes are used by kmemleak:
+  *
+- * - kmemleak_lock (rwlock): protects the object_list modifications and
++ * - kmemleak_lock (raw spinlock): protects the object_list modifications and
+  *   accesses to the object_tree_root. The object_list is the main list
+  *   holding the metadata (struct kmemleak_object) for the allocated memory
+  *   blocks. The object_tree_root is a red black tree used to look-up
+@@ -197,7 +197,7 @@ static LIST_HEAD(gray_list);
+ /* search tree for object boundaries */
+ static struct rb_root object_tree_root = RB_ROOT;
+ /* rw_lock protecting the access to object_list and object_tree_root */
+-static DEFINE_RWLOCK(kmemleak_lock);
++static DEFINE_RAW_SPINLOCK(kmemleak_lock);
+ 
+ /* allocation caches for kmemleak internal data */
+ static struct kmem_cache *object_cache;
+@@ -491,9 +491,9 @@ static struct kmemleak_object *find_and_get_object(unsigned long ptr, int alias)
+ 	struct kmemleak_object *object;
+ 
+ 	rcu_read_lock();
+-	read_lock_irqsave(&kmemleak_lock, flags);
++	raw_spin_lock_irqsave(&kmemleak_lock, flags);
+ 	object = lookup_object(ptr, alias);
+-	read_unlock_irqrestore(&kmemleak_lock, flags);
++	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
+ 
+ 	/* check whether the object is still available */
+ 	if (object && !get_object(object))
+@@ -513,13 +513,13 @@ static struct kmemleak_object *find_and_remove_object(unsigned long ptr, int ali
+ 	unsigned long flags;
+ 	struct kmemleak_object *object;
+ 
+-	write_lock_irqsave(&kmemleak_lock, flags);
++	raw_spin_lock_irqsave(&kmemleak_lock, flags);
+ 	object = lookup_object(ptr, alias);
+ 	if (object) {
+ 		rb_erase(&object->rb_node, &object_tree_root);
+ 		list_del_rcu(&object->object_list);
+ 	}
+-	write_unlock_irqrestore(&kmemleak_lock, flags);
++	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
+ 
+ 	return object;
+ }
+@@ -593,7 +593,7 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+ 	/* kernel backtrace */
+ 	object->trace_len = __save_stack_trace(object->trace);
+ 
+-	write_lock_irqsave(&kmemleak_lock, flags);
++	raw_spin_lock_irqsave(&kmemleak_lock, flags);
+ 
+ 	min_addr = min(min_addr, ptr);
+ 	max_addr = max(max_addr, ptr + size);
+@@ -624,7 +624,7 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+ 
+ 	list_add_tail_rcu(&object->object_list, &object_list);
+ out:
+-	write_unlock_irqrestore(&kmemleak_lock, flags);
++	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
+ 	return object;
+ }
+ 
+@@ -1310,7 +1310,7 @@ static void scan_block(void *_start, void *_end,
+ 	unsigned long *end = _end - (BYTES_PER_POINTER - 1);
+ 	unsigned long flags;
+ 
+-	read_lock_irqsave(&kmemleak_lock, flags);
++	raw_spin_lock_irqsave(&kmemleak_lock, flags);
+ 	for (ptr = start; ptr < end; ptr++) {
+ 		struct kmemleak_object *object;
+ 		unsigned long pointer;
+@@ -1367,7 +1367,7 @@ static void scan_block(void *_start, void *_end,
+ 			spin_unlock(&object->lock);
+ 		}
+ 	}
+-	read_unlock_irqrestore(&kmemleak_lock, flags);
++	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
+ }
+ 
+ /*
+-- 
+2.7.4
+
