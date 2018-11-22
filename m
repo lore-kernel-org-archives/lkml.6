@@ -2,186 +2,114 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C150FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B406C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:07:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F0A020831
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:03:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F0A020831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id E75E420820
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:07:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E75E420820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405074AbeKVSlj (ORCPT
+        id S2392835AbeKVSp1 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 13:41:39 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:10843 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2405059AbeKVSlj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 13:41:39 -0500
-X-UUID: 8690c9a23a9348ae915345c2360d0c41-20181122
-X-UUID: 8690c9a23a9348ae915345c2360d0c41-20181122
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <jjian.zhou@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1431872322; Thu, 22 Nov 2018 16:03:07 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 22 Nov 2018 16:03:06 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 22 Nov 2018 16:03:06 +0800
-From:   Jjian Zhou <jjian.zhou@mediatek.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Chaotian Jing <chaotian.jing@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        jjian zhou <jjian.zhou@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        Yong Mao <yong.mao@mediatek.com>
-Subject: [PATCH v2] mmc: mediatek: add MT8183 SDIO driver support
-Date:   Thu, 22 Nov 2018 16:03:00 +0800
-Message-ID: <1542873780-13911-1-git-send-email-jjian.zhou@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 4A6B6A803630491E520DBC22AE4429F339643FA8D0D173FA04D3CC91F55638B82000:8
-X-MTK:  N
+        Thu, 22 Nov 2018 13:45:27 -0500
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:47718 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733146AbeKVSp1 (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:7:1>);
+        Thu, 22 Nov 2018 13:45:27 -0500
+Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
+        with Novell_GroupWise; Thu, 22 Nov 2018 01:07:07 -0700
+Message-Id: <5BF663A902000078001FEBB6@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.1.0 
+Date:   Thu, 22 Nov 2018 01:07:05 -0700
+From:   "Jan Beulich" <JBeulich@suse.com>
+To:     "Andrew Lutomirski" <luto@kernel.org>
+Cc:     <mingo@elte.hu>, <tglx@linutronix.de>,
+        "xen-devel" <xen-devel@lists.xenproject.org>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
+        <hpa@zytor.com>
+Subject: Re: [PATCH v2] x86-64/Xen: fix stack switching
+References: <5AF03EBD02000078001C1303@prv1-mh.provo.novell.com>
+ <5AF03EBD02000000000F91D6@prv1-mh.provo.novell.com>
+ <5AF03EBD02000078001FE590@prv1-mh.provo.novell.com>
+ <5BF52F0E02000078001FE5BE@prv1-mh.provo.novell.com>
+ <CALCETrUa4iw+y+EXSqq_ibJQAfR0+U52Q=tO8_bj1YJgtMUP+Q@mail.gmail.com>
+In-Reply-To: <CALCETrUa4iw+y+EXSqq_ibJQAfR0+U52Q=tO8_bj1YJgtMUP+Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MT8183 need SDIO driver. So it need add new code
-to support it.
+>>> On 21.11.18 at 16:24, <luto@kernel.org> wrote:
+> On Wed, Nov 21, 2018 at 2:10 AM Jan Beulich <JBeulich@suse.com> wrote:
+>> --- 4.20-rc3/arch/x86/entry/entry_64.S
+>> +++ 4.20-rc3-x86_64-stack-switch-Xen/arch/x86/entry/entry_64.S
+>> @@ -1380,6 +1380,12 @@ ENTRY(nmi)
+>>         swapgs
+>>         cld
+>>         SWITCH_TO_KERNEL_CR3 scratch_reg=%rdx
+>> +
+>> +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rdx
+>> +       subq    $8, %rdx
+>> +       xorq    %rsp, %rdx
+>> +       shrq    $PAGE_SHIFT, %rdx
+>> +       jz      .Lnmi_keep_stack
+> 
+> This code shouldn't even be reachable on Xen:
+> 
+> commit 43e4111086a70c78bedb6ad990bee97f17b27a6e
+> Author: Juergen Gross <jgross@suse.com>
+> Date:   Thu Nov 2 00:59:07 2017 -0700
+> 
+>     xen, x86/entry/64: Add xen NMI trap entry
+> 
+>     Instead of trying to execute any NMI via the bare metal's NMI trap
+>     handler use a Xen specific one for PV domains, like we do for e.g.
+>     debug traps. As in a PV domain the NMI is handled via the normal
+>     kernel stack this is the correct thing to do.
+> 
+>     This will enable us to get rid of the very fragile and questionable
+>     dependencies between the bare metal NMI handler and Xen assumptions
+>     believed to be broken anyway.
 
-Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
-Signed-off-by: Yong mao <yong.mao@mediatek.com>
-Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
----
- drivers/mmc/host/mtk-sd.c | 51 ++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 48 insertions(+), 3 deletions(-)
+Oh, I didn't notice this. The beginnings of the patch here pre-date
+this, though, and then I didn't notice the addition. Thanks for
+pointing this out.
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index 6334cc7..da2a047 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -1114,6 +1114,7 @@ static void msdc_start_command(struct msdc_host *host,
- 		struct mmc_request *mrq, struct mmc_command *cmd)
- {
- 	u32 rawcmd;
-+	unsigned long flags;
+>> --- 4.20-rc3/arch/x86/entry/entry_64_compat.S
+>> +++ 4.20-rc3-x86_64-stack-switch-Xen/arch/x86/entry/entry_64_compat.S
+>> @@ -361,17 +361,23 @@ ENTRY(entry_INT80_compat)
+>>
+>>         /* Need to switch before accessing the thread stack. */
+>>         SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
+>> +
+>> +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rdi
+>> +       subq    $8, %rdi
+>> +       xorq    %rsp, %rdi
+>> +       shrq    $PAGE_SHIFT, %rdi
+>> +       jz      .Lint80_keep_stack
+> 
+> This comparison is IMO the wrong test entirely.  How about something like:
+> 
+> /* On Xen PV, entry_INT80_compat is called on the thread stack, so
+> rewinding to the top of the thread stack would allow an NMI to
+> overwrite the hardware frame before we copy it. */
+> ALTERNATIVE "", "jmp .Lint80_keep_stack", X86_FEATURE_XENPV
 
- 	WARN_ON(host->cmd);
- 	host->cmd = cmd;
-@@ -1131,7 +1132,12 @@ static void msdc_start_command(struct msdc_host *host,
- 	cmd->error = 0;
- 	rawcmd = msdc_cmd_prepare_raw_cmd(host, mrq, cmd);
+Indeed I had noted this as an alternative option in v1, but
+didn't get respective feedback. If that's the preferred route, I'll
+certainly switch.
 
-+	if (host->mmc->caps & MMC_CAP_SDIO_IRQ)
-+		spin_lock_irqsave(&host->lock, flags);
- 	sdr_set_bits(host->base + MSDC_INTEN, cmd_ints_mask);
-+	if (host->mmc->caps & MMC_CAP_SDIO_IRQ)
-+		spin_unlock_irqrestore(&host->lock, flags);
-+
- 	writel(cmd->arg, host->base + SDC_ARG);
- 	writel(rawcmd, host->base + SDC_CMD);
- }
-@@ -1351,6 +1357,27 @@ static void msdc_request_timeout(struct work_struct *work)
- 	}
- }
+Jan
 
-+static void msdc_enable_sdio_irq(struct mmc_host *mmc, int enb)
-+{
-+	unsigned long flags;
-+	struct msdc_host *host = mmc_priv(mmc);
-+
-+	if (enb)
-+		pm_runtime_get_sync(host->dev);
-+
-+	spin_lock_irqsave(&host->lock, flags);
-+	if (enb)
-+		sdr_set_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
-+	else
-+		sdr_clr_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
-+	spin_unlock_irqrestore(&host->lock, flags);
-+
-+	if (!enb) {
-+		pm_runtime_mark_last_busy(host->dev);
-+		pm_runtime_put_autosuspend(host->dev);
-+	}
-+}
-+
- static irqreturn_t msdc_irq(int irq, void *dev_id)
- {
- 	struct msdc_host *host = (struct msdc_host *) dev_id;
-@@ -1373,7 +1400,12 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
- 		data = host->data;
- 		spin_unlock_irqrestore(&host->lock, flags);
-
--		if (!(events & event_mask))
-+		if ((events & event_mask) & MSDC_INT_SDIOIRQ) {
-+			msdc_enable_sdio_irq(host->mmc, 0);
-+			sdio_signal_irq(host->mmc);
-+		}
-+
-+		if (!(events & (event_mask & ~MSDC_INT_SDIOIRQ)))
- 			break;
-
- 		if (!mrq) {
-@@ -1493,8 +1525,11 @@ static void msdc_init_hw(struct msdc_host *host)
- 	 */
- 	sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIO);
-
--	/* disable detect SDIO device interrupt function */
--	sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
-+	/* Config SDIO device detect interrupt function */
-+	if (host->mmc->caps & MMC_CAP_SDIO_IRQ)
-+		sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
-+	else
-+		sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
-
- 	/* Configure to default data timeout */
- 	sdr_set_field(host->base + SDC_CFG, SDC_CFG_DTOC, 3);
-@@ -2013,6 +2048,11 @@ static void msdc_hw_reset(struct mmc_host *mmc)
- 	sdr_clr_bits(host->base + EMMC_IOCON, 1);
- }
-
-+static void msdc_ack_sdio_irq(struct mmc_host *mmc)
-+{
-+	msdc_enable_sdio_irq(mmc, 1);
-+}
-+
- static const struct mmc_host_ops mt_msdc_ops = {
- 	.post_req = msdc_post_req,
- 	.pre_req = msdc_pre_req,
-@@ -2020,6 +2060,8 @@ static void msdc_hw_reset(struct mmc_host *mmc)
- 	.set_ios = msdc_ops_set_ios,
- 	.get_ro = mmc_gpio_get_ro,
- 	.get_cd = mmc_gpio_get_cd,
-+	.enable_sdio_irq = msdc_enable_sdio_irq,
-+	.ack_sdio_irq = msdc_ack_sdio_irq,
- 	.start_signal_voltage_switch = msdc_ops_switch_volt,
- 	.card_busy = msdc_card_busy,
- 	.execute_tuning = msdc_execute_tuning,
-@@ -2147,6 +2189,9 @@ static int msdc_drv_probe(struct platform_device *pdev)
- 	else
- 		mmc->f_min = DIV_ROUND_UP(host->src_clk_freq, 4 * 4095);
-
-+	if (mmc->caps & MMC_CAP_SDIO_IRQ)
-+		mmc->caps2 |= MMC_CAP2_SDIO_IRQ_NOTHREAD;
-+
- 	mmc->caps |= MMC_CAP_ERASE | MMC_CAP_CMD23;
- 	/* MMC core transfer sizes tunable parameters */
- 	mmc->max_segs = MAX_BD_NUM;
---
-1.9.1
 
