@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DAB0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA40C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:54:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4840120672
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 493EF20672
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:54:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y43ongOJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4840120672
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rijGVNO5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 493EF20672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438604AbeKWGe7 (ORCPT
+        id S2406906AbeKWGfC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 01:34:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33790 "EHLO mail.kernel.org"
+        Fri, 23 Nov 2018 01:35:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438569AbeKWGe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 01:34:58 -0500
+        id S2438569AbeKWGfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 01:35:00 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F48020645;
-        Thu, 22 Nov 2018 19:54:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DCC920865;
+        Thu, 22 Nov 2018 19:54:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542916446;
-        bh=XTV9/j21EpeL8uJr8Ft0rDOANnR47N0I4SGgBEiodJE=;
+        s=default; t=1542916448;
+        bh=jbzllQEYNymsMfX2vnIAR7wuaoxJBbiPJJ9RJ4u4SXA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y43ongOJijXvoMRnKtjEhkahBB9qkI7geGpteRdz6/ojxJAMsY6l0ygh02zUcXpxF
-         LGDE/avEb8gRztLDeieW5hkNJa/kZcWc9AUDorD7K9gyXiprxOY39j6N9QkCYzLi3P
-         kcq2rh3KO5fApA/pXB8441Dfjl0an64SiK8TleBo=
+        b=rijGVNO52pvD2fWHh4mIzN4Cu5b8UvNSjG2f3BZlsGPU1FMXbjCXogbjZKC3cuXRD
+         ci9VA03OJMUpx5g2VSVPhY72QnPM7y8wYEBpiZk7NwyhLBnwsN9Bdn7OT7U90sl5NZ
+         hIzf3lRKc4GEOrg8vWOitGCoirTZCqOgbbqysMNA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 25/36] SUNRPC: Fix a bogus get/put in generic_key_to_expire()
-Date:   Thu, 22 Nov 2018 14:52:29 -0500
-Message-Id: <20181122195240.13123-25-sashal@kernel.org>
+Cc:     David Abdurachmanov <david.abdurachmanov@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-riscv@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 26/36] riscv: add missing vdso_install target
+Date:   Thu, 22 Nov 2018 14:52:30 -0500
+Message-Id: <20181122195240.13123-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181122195240.13123-1-sashal@kernel.org>
 References: <20181122195240.13123-1-sashal@kernel.org>
@@ -53,35 +54,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: David Abdurachmanov <david.abdurachmanov@gmail.com>
 
-[ Upstream commit e3d5e573a54dabdc0f9f3cb039d799323372b251 ]
+[ Upstream commit f157d411a9eb170d2ee6b766da7a381962017cc9 ]
 
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Building kernel 4.20 for Fedora as RPM fails, because riscv is missing
+vdso_install target in arch/riscv/Makefile.
+
+Signed-off-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sunrpc/auth_generic.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ arch/riscv/Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/net/sunrpc/auth_generic.c b/net/sunrpc/auth_generic.c
-index f1df9837f1ac..1ac08dcbf85d 100644
---- a/net/sunrpc/auth_generic.c
-+++ b/net/sunrpc/auth_generic.c
-@@ -281,13 +281,7 @@ static bool generic_key_to_expire(struct rpc_cred *cred)
- {
- 	struct auth_cred *acred = &container_of(cred, struct generic_cred,
- 						gc_base)->acred;
--	bool ret;
--
--	get_rpccred(cred);
--	ret = test_bit(RPC_CRED_KEY_EXPIRE_SOON, &acred->ac_flags);
--	put_rpccred(cred);
--
--	return ret;
-+	return test_bit(RPC_CRED_KEY_EXPIRE_SOON, &acred->ac_flags);
- }
+diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+index 61ec42405ec9..110be14e6122 100644
+--- a/arch/riscv/Makefile
++++ b/arch/riscv/Makefile
+@@ -82,4 +82,8 @@ core-y += arch/riscv/kernel/ arch/riscv/mm/
  
- static const struct rpc_credops generic_credops = {
+ libs-y += arch/riscv/lib/
+ 
++PHONY += vdso_install
++vdso_install:
++	$(Q)$(MAKE) $(build)=arch/riscv/kernel/vdso $@
++
+ all: vmlinux
 -- 
 2.17.1
 
