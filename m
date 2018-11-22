@@ -2,77 +2,178 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06419C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD9DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF3C920659
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:05:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF3C920659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id AEBAA20659
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:06:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEBAA20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438845AbeKWHpd (ORCPT
+        id S2407299AbeKWHr3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 02:45:33 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:39395 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438828AbeKWHpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 02:45:32 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E00C020DBE; Thu, 22 Nov 2018 22:04:23 +0100 (CET)
-Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 42B70207A8;
-        Thu, 22 Nov 2018 22:04:23 +0100 (CET)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Fri, 23 Nov 2018 02:47:29 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:38912 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbeKWHr3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 02:47:29 -0500
+Received: from relay7-d.mail.gandi.net (unknown [217.70.183.200])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id E27043A719A
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 21:08:20 +0100 (CET)
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 8BD6F2000B;
+        Thu, 22 Nov 2018 20:08:14 +0000 (UTC)
+Date:   Thu, 22 Nov 2018 21:08:08 +0100
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 1/6] phy: enumerate SATA PHY mode
-Date:   Thu, 22 Nov 2018 22:04:15 +0100
-Message-Id: <20181122210420.14861-2-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181122210420.14861-1-miquel.raynal@bootlin.com>
-References: <20181122210420.14861-1-miquel.raynal@bootlin.com>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
+        Libin Yang <lbyang@marvell.com>,
+        Albert Wang <twang13@marvell.com>
+Subject: Re: [PATCH v3 05/14] media: dt-bindings: marvell,mmp2-ccic: Add
+ Marvell MMP2 camera
+Message-ID: <20181122200341.GA8279@w540>
+References: <20181120100318.367987-1-lkundrak@v3.sk>
+ <20181120100318.367987-6-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="WYTEVAkct0FjGQmd"
+Content-Disposition: inline
+In-Reply-To: <20181120100318.367987-6-lkundrak@v3.sk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add SATA mode to the PHY framework in preparation of upcoming PHYs
-that will handle it. For instance, SATA mode will be used by the
-Armada3700 COMPHY driver, which supports configuring SERDES lanes to
-be used by various controllers: Ethernet, USB3, SATA and PCIe.
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- include/linux/phy/phy.h | 1 +
- 1 file changed, 1 insertion(+)
+--WYTEVAkct0FjGQmd
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-index 03b319f89a34..553d8520e37f 100644
---- a/include/linux/phy/phy.h
-+++ b/include/linux/phy/phy.h
-@@ -42,6 +42,7 @@ enum phy_mode {
- 	PHY_MODE_UFS_HS_A,
- 	PHY_MODE_UFS_HS_B,
- 	PHY_MODE_PCIE,
-+	PHY_MODE_SATA,
- };
- 
- /**
--- 
-2.19.1
+Hi Lubomir,
 
+On Tue, Nov 20, 2018 at 11:03:10AM +0100, Lubomir Rintel wrote:
+> Add Marvell MMP2 camera host interface.
+>
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+>
+> ---
+> Changes since v2:
+> - Added #clock-cells, clock-names, port
+>
+>  .../bindings/media/marvell,mmp2-ccic.txt      | 37 +++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
+>
+> diff --git a/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
+> new file mode 100644
+> index 000000000000..e5e8ca90e7f7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
+> @@ -0,0 +1,37 @@
+> +Marvell MMP2 camera host interface
+> +
+> +Required properties:
+> + - compatible: Should be "marvell,mmp2-ccic"
+> + - reg: register base and size
+> + - interrupts: the interrupt number
+> + - #clock-cells: must be 0
+> + - any required generic properties defined in video-interfaces.txt
+
+I don't think video-interfaces applies here. It described bindings to
+be used for endpoint and port nodes.
+
+> +
+> +Optional properties:
+> + - clocks: input clock (see clock-bindings.txt)
+
+What do you think of:
+"reference to the input clock as specified by clock-bindings.txt"
+
+> + - clock-names: names of the clocks used, may include "axi", "func" and
+> +                "phy"
+
+"may include" is abit vague. Which clock should the interface be
+powered from, and in which case?
+
+> + - clock-output-names: should contain the name of the clock driving the
+> +                       sensor master clock MCLK
+
+This is a property for the clock provider part, and I will just list
+the only clock this interfaces provides here:
+
+    - clock-output-names: Optional clock source for sensors. Shall be "mclk".
+
+See a comment on patch 14 on the use of the clock provider part.
+
+> +
+> +Required subnodes:
+> + - port: the parallel bus interface port with a single endpoint linked to
+> +         the sensor's endpoint as described in video-interfaces.txt
+> +
+> +Example:
+> +
+> +	camera0: camera@d420a000 {
+> +		compatible = "marvell,mmp2-ccic";
+> +		reg = <0xd420a000 0x800>;
+> +		interrupts = <42>;
+> +		clocks = <&soc_clocks MMP2_CLK_CCIC0>;
+> +		clock-names = "axi";
+> +		#clock-cells = <0>;
+> +		clock-output-names = "mclk";
+> +
+> +		port {
+> +			camera0_0: endpoint {
+> +				remote-endpoint = <&ov7670_0>;
+
+I'm debated, your sensor does not support configuring the parallel bus,
+that's fine, but as "bindings describe hardware" shouldn't you list
+here the bus configurations the HW interface supports and list their default
+values? Or there are none for real in this platform?
+
+Thanks
+  j
+
+
+> +			};
+> +		};
+> +	};
+> --
+> 2.19.1
+>
+
+--WYTEVAkct0FjGQmd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJb9wyoAAoJEHI0Bo8WoVY8kNsQAMWdo1PGvEDT/0hXiQpdwfVn
+ZRcLhIGbHMEWIhOO0brNQ01jGKgK2rthDmEL71J/GNraq9bKWE1HKMovALc1n7Il
+QxHrjF82R4bB8zxc8LyMgTVd0Ak/YJ9MiGtqdkPK0Rsl/XorGdtIe690aEbghJ3e
+4IFn7viugujDOsUFNoT5d61nkFe2mRtdgk+qMaZ+dWYQsRZtUKiqAkuZsJyeYgwD
+L9MPwc9iVKHhS3cPMucQJtlcKKZ3VfCPm7QSPuZiOe5cEQ2VkUU8oejJ/mN4RBtM
+WziB1B9OMVkd2d1JcyiLWMoTEqxyWSLO1xgKHwNvyumwQwDDQGIvi1Am2Uf7ni2r
+1ooeECUrRGiKpSzAZ4zRfvYH52LYdJGy4sxy7VCtWkOL5ClvCzF0+rvYTGSgv/FA
++sRsDOwarGJAbDWzUNCHwIAhbE9vlO/xypO5wANdQgFil39K6pUmRhrCiytW5vlT
+uR2l3E7Jp78B3/OuDdqM3HwMH8BNYnXvYCNFw5sTdom3OmkKadWmFXIEeRm5EKIY
+TkAzIQ9NT7bGcxzGLC0ixts54SviFBI6+ULaQGd6YM9S1HuZ5GhNJYFgnU+5/y8O
+dOE8JP+N8Mbkfida18JqXlbLLQBjgvR1uScqoIAndHiOc94YvZQNI/sDyaHtjy86
+kSr2PJZTjspEOFreYT0s
+=7rOK
+-----END PGP SIGNATURE-----
+
+--WYTEVAkct0FjGQmd--
