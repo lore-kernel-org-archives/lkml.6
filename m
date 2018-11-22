@@ -2,192 +2,152 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DATE_IN_PAST_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BE9C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF95DC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B2F020684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:03:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="KPrYRujg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B2F020684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id A5D3F20684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:04:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5D3F20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391829AbeKVNkQ (ORCPT
+        id S2404060AbeKVNlj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 08:40:16 -0500
-Received: from mail-eopbgr710112.outbound.protection.outlook.com ([40.107.71.112]:57888
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Thu, 22 Nov 2018 08:41:39 -0500
+Received: from mail-eopbgr750047.outbound.protection.outlook.com ([40.107.75.47]:12768
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729872AbeKVNkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 08:40:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I2VbNX2HZ8e1h78WmvCJMmfuMkgylkq4dJYE2kHa+co=;
- b=KPrYRujgC1e0ksbrex1E29p3lZPpyuyv3ElUtIoRfyjZTHrmJYaODNXt+PNLot/IdzRbWtP4HK2j5lGUrPKMGsib/eHLFk8PpvCuqdKlvP0jnWYf049B9Fq0hBXDYPrsD2jwli1Lp59QhEwd7pPJPyFAoY5nfDJaqXAGeYAEAa4=
-Received: from SN4PR2101MB0815.namprd21.prod.outlook.com (10.167.151.157) by
- SN4PR2101MB0814.namprd21.prod.outlook.com (10.167.151.156) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.2; Thu, 22 Nov 2018 03:02:55 +0000
-Received: from SN4PR2101MB0815.namprd21.prod.outlook.com
- ([fe80::e5f0:373d:dc4a:c451]) by SN4PR2101MB0815.namprd21.prod.outlook.com
- ([fe80::e5f0:373d:dc4a:c451%5]) with mapi id 15.20.1382.007; Thu, 22 Nov 2018
- 03:02:55 +0000
-From:   KY Srinivasan <kys@microsoft.com>
-To:     KY Srinivasan <kys@microsoft.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        vkuznets <vkuznets@redhat.com>
-Subject: RE: [PATCH 0/4] Hyper-V: Enable Linux guests on Hyper-V on ARM64 
-Thread-Topic: [PATCH 0/4] Hyper-V: Enable Linux guests on Hyper-V on ARM64 
-Thread-Index: AQHUgg5Z5cqBHZNo7EqbMwQ9zGVns6VbGy5w
-Date:   Thu, 22 Nov 2018 03:02:55 +0000
-Message-ID: <SN4PR2101MB08153E5BF002C1F88BC294FEA0DB0@SN4PR2101MB0815.namprd21.prod.outlook.com>
-References: <20181122025051.15886-1-kys@linuxonhyperv.com>
-In-Reply-To: <20181122025051.15886-1-kys@linuxonhyperv.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2601:600:a280:b50:e851:5dd9:1039:49f6]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN4PR2101MB0814;6:RzXTOGiaP3PC45lQsjmrftV9Na1eRwT8Oj/trW79ogAlVaLEQTyXbk+sUkEIz31/8MnvFjWkOzeoTHCi7xWW8zOGWBgFo6DR8vs+40S8vn27cf4GAg7JMq5FJIbRBVnx2ArjFFNBK4dJB7pVrKm1udbyzM5HOWIAL1wf5a2HQZoFtw8TPzc3SvtlkZkflbG4amJ3dqWcQOKSUQUJAoOjyJRChTJ+5WtfODI5pnzIDsV1rxpIFKupl0zm6YTE5aeMOBrH4xgdq3QWaxWpnlUfgIVBBzQRMZzB82+5HPRKQuSB0KSjjYfayVn5AgL/W8GmtI4humK644KnBwAPjHoDwXeNTX7/V7bTiLDfjul43I27osBab466rXIi2bGwChEagF68dVJSWCcOSgEQiapna5d/4PFvqEREUdKCawziWDXrEm/UqC2KDnETdaa3Qz53d9lrjs1T7r23970u2vD7Ew==;5:wrQsQT/2xYkaWHxButw7CkYvdYVOO1tx2LQdaRPo+b6ugaQ+lXUlBntz3eLcwDC1CCiIeKFnUJYWbzFylsBTymk+IIuDXBddVFekgnILbhRo7Ydyq6BPjJvzD+0HcFBNA014maYTD1WN/tSlQ2J/IYAsEIyeL6SICHaQjO45awA=;7:BXBVEp/w5M8RrA9lFFdQOqIMHfhCzYqeVcuuUzhTisnatols2k5XmrPNxKVXOfaKz/+wT3kdJP6h53LYueC00oWP3laWg8fIatDQ7V7H3cc8x5HDIqJRWHSV0OZz93eJ1fOXuc7CeLLKu4DPU9HJJQ==
-x-ms-office365-filtering-correlation-id: 6402cf5d-c642-4f44-7f9c-08d65027005c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:SN4PR2101MB0814;
-x-ms-traffictypediagnostic: SN4PR2101MB0814:
-x-ms-exchange-purlcount: -3
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=kys@microsoft.com; 
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <SN4PR2101MB0814D72A153B12F55673B911A0DB0@SN4PR2101MB0814.namprd21.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(8220035)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231442)(944501421)(2018427008)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:SN4PR2101MB0814;BCL:0;PCL:0;RULEID:;SRVR:SN4PR2101MB0814;
-x-forefront-prvs: 0864A36BBF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(396003)(346002)(376002)(189003)(199004)(13464003)(9686003)(305945005)(106356001)(6436002)(1511001)(6116002)(105586002)(55016002)(74316002)(5660300001)(478600001)(8936002)(81156014)(8676002)(81166006)(14444005)(4743002)(256004)(71190400001)(71200400001)(53936002)(7736002)(86362001)(6246003)(97736004)(33656002)(6506007)(53546011)(102836004)(2501003)(186003)(68736007)(2201001)(8990500004)(2906002)(76176011)(99286004)(7696005)(2900100001)(10090500001)(14454004)(229853002)(10290500003)(316002)(22452003)(11346002)(446003)(486006)(86612001)(25786009)(476003)(110136005)(46003)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:SN4PR2101MB0814;H:SN4PR2101MB0815.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: byemJWjfn8tL9FXJXBaofKpFKOtVac72Cv8JlVCzO1/+/xySJInXhw1hxqyEUhOf7R7mJdsW6pj5qrVu2XIzfQkTGhDZOBgAoIl6Xf/SfJvDVtaSt5wrqBZuWWUcs3VmqW8c7I1Z51j4Z9ThAORlJ/xe56QO16EA7PcEs5KfvZLE956hoeGb1aClyT80gNxLov2JBhJ8ynIIn1H9sXdQ/6GK/6ggEKhhJJu+tVtNTerI/skVMPnwAPWwC8aJGoRV3SX3YGnAN03QIA9yexLb7w669LVTmRVOQh+rx8J0+IgVtUpVVrV9PLrrOlOwKVFrvVCLJd4q0HWxwKtx5IzkwiFFZw6BEHTY27KxDLRLrnE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1729872AbeKVNli (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 08:41:38 -0500
+Received: from BL2PR19CA0037.namprd19.prod.outlook.com (2603:10b6:201:f::47)
+ by BY2PR19MB0392.namprd19.prod.outlook.com (2a01:111:e400:5a2d::29) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1361.15; Thu, 22 Nov
+ 2018 03:04:13 +0000
+Received: from BL2FFO11FD005.protection.gbl (2a01:111:f400:7c09::157) by
+ BL2PR19CA0037.outlook.office365.com (2603:10b6:201:f::47) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1361.14 via Frontend Transport; Thu, 22 Nov 2018 03:04:13 +0000
+Authentication-Results: spf=softfail (sender IP is 208.19.99.221)
+ smtp.mailfrom=microchip.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none
+ header.from=microchip.com;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ microchip.com discourages use of 208.19.99.221 as permitted sender)
+Received: from AUSMBX1.microsemi.net (208.19.99.221) by
+ BL2FFO11FD005.mail.protection.outlook.com (10.173.161.1) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.20.1339.12 via Frontend Transport; Thu, 22 Nov 2018 03:04:13 +0000
+Received: from AUSMBX1.microsemi.net (10.201.34.31) by AUSMBX1.microsemi.net
+ (10.201.34.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1531.3; Wed, 21 Nov
+ 2018 20:04:01 -0600
+Received: from server1.microsemi.net (10.188.116.209) by ausmbx1.microsemi.net
+ (10.201.34.31) with Microsoft SMTP Server id 15.1.1531.3 via Frontend
+ Transport; Wed, 21 Nov 2018 20:03:59 -0600
+From:   Wesley Sheng <wesley.sheng@microchip.com>
+To:     <kurt.schwemmer@microsemi.com>, <logang@deltatee.com>,
+        <jdmason@kudzu.us>, <dave.jiang@intel.com>, <allenbh@gmail.com>,
+        <linux-pci@vger.kernel.org>, <linux-ntb@googlegroups.com>,
+        <linux-kernel@vger.kernel.org>
+CC:     <wesleyshenggit@sina.com>, <wesley.sheng@microchip.com>
+Subject: [PATCH 0/3] ntb_hw_switchtec: Added support of >=4G memory windows
+Date:   Thu, 22 Nov 2018 17:01:59 +0800
+Message-ID: <1542877322-24548-1-git-send-email-wesley.sheng@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6402cf5d-c642-4f44-7f9c-08d65027005c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Nov 2018 03:02:55.8221
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-Matching-Connectors: 131873294531878880;(5a93feec-e11d-4f7b-166a-08d09f1f276b);()
+X-Forefront-Antispam-Report: CIP:208.19.99.221;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(136003)(376002)(396003)(39860400002)(2980300002)(189003)(199004)(498600001)(105596002)(2616005)(356004)(110136005)(69596002)(97736004)(126002)(48376002)(50466002)(476003)(2906002)(44832011)(53416004)(336012)(50226002)(305945005)(81156014)(81166006)(26005)(8936002)(54906003)(77096007)(16586007)(36756003)(8676002)(2201001)(86362001)(486006)(68736007)(316002)(51416003)(107886003)(5660300001)(47776003)(966005)(4326008)(450100002)(53936002)(6306002)(106466001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR19MB0392;H:AUSMBX1.microsemi.net;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11FD005;1:07KB+mPYugB1ZpLuZo0bAg1GrXmQPs78SI1famD5xaVDK7SiQyf8mgqQD1a79ZTovX3ik1gApt7cWTSSi4xMIfPSyJ5eZ+BRXdSvNWigL3pNEHU1aDWL7bKsrAnOYiE6
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e2e154a5-c0b9-4f44-5986-08d650272e5c
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(5600074)(711020)(2017052603328);SRVR:BY2PR19MB0392;
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR19MB0392;3:osYTREHhMjBFS9EPl+XJI2Wn92Ya1+Cm92ROj+vhA2rSujnxVt+ra2Q+XiL/ppbInKFKelCCvxDu/Mwat6S7jhv89NDHgBzsZW0/cPZA8SosPPS/Qckyo19uirdoh6dGbSsIEKgkn3BvNuIpRzQNAyJtX8dmdzqFCmJessbdmgMC84ny1ZZByBdO6jEu1ihdbpQLtx/OTDV/Ssaa/XK0lpnA9TyiJ96l9eKB5+ybuooMcEX/+PkMyQayvK7JhR8sTzbOPoLqzF3rmLKUdspfHVmMaQwju5ZVaHcsSmTE6wLQ7SDvAPor2O3DMMkhbOwo0leedN5akUdkTFmbiGAtJFKglUZQGsh0Qme9Yt46T/k=;25:YxJscvYPvmkgzTr1jpYEljAjcP3hhPC4hs43nDm9rogDZSpCuKJ78/NMyaDIp4k682jcCSe9tPWrsz9INqrH8Ks/JQngJw6+IiM7/7Oh7WvRNOm0C/Nt9u3+JelKEo42NzbUHJM9VQpTjDZdhK9MHU+1+pBJsMhCeGLlsCvZuxa6TSUl0gqEBka/WEeUGyaS03ISLbLG04JYH3q3L9Y38HASXGgMYofCimyuJoL6dsaIodhkHPd7JPH/iOQojDMtOTtfZngrgBUZHXP6+Pj+0YTm0j+ojoNGkSc/i7prVNLQIut591PwOAW/eZUafsE/aWShHFud1AgtLfR95ljrig==
+X-MS-TrafficTypeDiagnostic: BY2PR19MB0392:
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR19MB0392;31:1WV3eRuv2fZ9gm3Sa8W3Wt57qAIt4RLcynkioTJhM8LyvxCRKGx3AlA4cPdiFe64FJAOqZvBvhRXmh5MNn/djZAtGH+x3NZ9i4wj4VJKe1qQv6LTnObLqFs9LRFFoGmo8u0rNtvCDMU44QYCy7g5PVlsOJZASIt0I0c1CX7CkAaef0TH0y6Twb7MWRe8+7cKU2+KpR3pTW4rKvQ+xvwhM9QcicwRCstVa/TSSkiSx+A=;4:b7xLw8HuynAE7k9ioGsAbmGN+w0ZO8DH1JjGyCRhotBKVukO0c4mlpfKH/7VGr3k+nMcAx4es7zd8ulu9pOTuoWNQGr8ZKxWMUlZUyc0EU+f0JsXmpfeFP+gdUxQxg/B02hGtywmKBl/sHaJUQlrIMItyYx5eWldr9dYwBKitXB+R14zhOCdqMEK/DRTKkgJC2SwD+aQ7VJz2kEKdRsbdwiCrol6zGm4Zn+KQB9uZ9Zbc0wx9IZsmQgmq5RrKGVii9rFbEAIoOyOTWVbVA4yxw==
+X-Microsoft-Antispam-PRVS: <BY2PR19MB03920461B4C5BB11B4A69BA395DB0@BY2PR19MB0392.namprd19.prod.outlook.com>
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231442)(944501410)(52105112)(3002001)(6055026)(148016)(6096035)(20161123563025)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123561025)(20161123565025)(20161123559100)(20161123556025)(201708071742011)(7699051)(76991095);SRVR:BY2PR19MB0392;BCL:0;PCL:0;RULEID:(400006);SRVR:BY2PR19MB0392;
+X-Forefront-PRVS: 0864A36BBF
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY2PR19MB0392;23:FeK/hB5s0+tLpKBjpFpsVCbBQ+D7RKQMmZ0lH5SNK?=
+ =?us-ascii?Q?tq7/1Of9t1+xCw71ltp2L8ZWwdYCMl/VsSgveu33i9QNtv2QGTm8mueEFMaF?=
+ =?us-ascii?Q?KnhvDkTS26kffjiKnZvLOlLEcjY2f7ZMyX5GuAGWJdg0sTSL5HIGT6nnXZWP?=
+ =?us-ascii?Q?ks3H0i5n3xTo57T3CqxiZAr3tM8tFIGSIfQV76kBveljkNPSkT2/eKCjc2xu?=
+ =?us-ascii?Q?NKjd66BXendo1AbwJ4cmgMRCjmx2xqWzgH77eizCos+sg+p/aeUw0gDezBwA?=
+ =?us-ascii?Q?gOJzAHtbMyp81ghT14rfusdmjTUYtNdF6ZtuBAmIHq7pVV/tSKdKalmkEJ34?=
+ =?us-ascii?Q?Mvyhskmjq6Ykt9Z+CpEr19HBwqiWcKulumxT5VsJzfCXXaK528d/euzZAbnH?=
+ =?us-ascii?Q?r6Xwnb84dDPqVIMvzCnaQ18AxUSxMT8bp5uj9Ejsyu5iZu0GVMkbaooQQbdm?=
+ =?us-ascii?Q?sNQKZG7IAz1JTGrS1LD/X7DFCJ3477BfTUuTAvQrKPTxShlVyCQ0E83fDG9R?=
+ =?us-ascii?Q?91d4OP3cgEnYjxTUiOnte8N2LgvF9VbuPADyQa0nXZ69s7eNM7k4DUlhtw1z?=
+ =?us-ascii?Q?aX3NkulzTVbbQWju067ODX6zbANHrqtaUTpBH9Wnhjo/uNRMQwv635LtOzfH?=
+ =?us-ascii?Q?DFoBpE/AdRtQTxwIjbN1WoPNE/YbDMh5jBk5zEJPogVNzKZjUMhNZ/gpkEY4?=
+ =?us-ascii?Q?Qf3+if794Xg42/OpGPZ0+9Yf53vyagEGJoiySC7r6wzfgwwR/wRiXKtx7W3z?=
+ =?us-ascii?Q?Lk0JpTo7rUUkiTJx1CCv+THaUktYzsJMZn1n5UPmLDX9rAK62r+RQEK9y9uH?=
+ =?us-ascii?Q?dCkwWSZ5CUsLoiincGa7hz/KHMXI3XiUOYhgz6YMrKjEwZVeYcTU/8yr/sxi?=
+ =?us-ascii?Q?LIQlJpiq0gZQXoIchDtbXWfAXIpJf2iScVucmFJRuiGCP2Mk230xPSL4SzHp?=
+ =?us-ascii?Q?MTxw9xLTVj17RpfXgU+O/YJkzyNHRhsa/5UGs3/DjIf4r6PTBQ5W+ecGAnkM?=
+ =?us-ascii?Q?9NsHXYySr/cXDENRa5mN60opfaRVDLndjVCuBfrWnY2WcBZvzndzb0e4N0vD?=
+ =?us-ascii?Q?PYg7hHqMt2x2zMgykAThFOlrkKvKMMz2ubdzANXsCaA7kg+NW1yds/xGSio7?=
+ =?us-ascii?Q?AhM/yJdPz2qH/UiEGyncOYF3qrJcMbq?=
+X-Microsoft-Antispam-Message-Info: xaKC3CY/HfpwEPhAvrdLs26NQuNlc2J/BrWTDrGtvsqVPTtp8JWtBChPy8Z0NlNesVQ/SEVBKUOW0OKJ3RIaMX6+90YEirYOwJEU/kNuTYbDuk5jn3fWVQquVrFjqZUJSxL7mD1JVMNh1RnIqBGSUZMCSWzf2fNXzlS91CvxzpvI75NLcue8bow9f89P1+j+sq0mJT+UDE7cQY/sx+QfO2oW1tsSaCZ7Pg8EsWgnthBSLBLICBC9O6aoda0bjf3PshR9klcPPS4/MNmXIAtA1Z8Vp3TuQmy6lUPVkOcaa5Og/Y+8geO91rzEMCeli/GPAfdmKm/SQhrLOIoT1RN9XQ==
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR19MB0392;6:5Kydu7BiqZuk3gMX1eJmlgQ4g2tyGWFS/tcVkJGUhsMwptPEX8TNDt+kzBpb4KEfSskXq3SRAx0HB3sWeUQT7PJxZOdYCs0Wwlr+jGEva0PxR6yhx1gX2t5qEB4xAxKuOGv6fEddVY8tSM8gsC6mBWOl0FZAyHpMAKI4foghKobOlisj2gSqX7owSfhnwG4e9vMySVbeoqpSoQp/85MSyagj0XAc+r8t5cxyAaOPwktw1DjO04B5BUvjcqhT2mA+Yh4pibTI500ILKLpjkO4X+HTnKE1C4C4DZQEdF3LY79U/giZ7YzD+k0SVE5e7yozBtPKusyeLu3FLQ4OE66IXCGWOSzCB4bTQ7XUw3z2n+1C4R6FDYmHv4SihOypBRUKHMrNyjC76m4JFo1iDORRC8LlyfT3TJA1zZLX4D0oXn9S+2I0qZ/8qV0FLL61ImSZmwVpARqz9bT+Dae5TQk9uA==;5:0U6VVTT30EeAxA6+qatsTM/iQr7iTwD9bSOpuIt2a2JPFpBgqGOKN9PPEFfRapMKBg5SMkf9k/odIMYEn1muAjNZK97l9luoZJCy0g1sW8ReXZBLPZPopE86PxAAaGIP5/P6/G5sKCAanTpsfdGiQw7HCE+glashUBvOI4MJlaU=;7:miZl7knG2w2nb2RFnnxhK9a7VdL8zWmQ8ge7GakJX2NdMvoIjoRbw2rFpOB8YWdL92OpciQK06OcPG0gTMVHkkQxhF34pmA3IwxIUfIAL/9cvO1Df9p95AgY8kGjhCehmTVTWMy4DQeNPjBqsT8vmQ==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2018 03:04:13.0003
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR2101MB0814
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2e154a5-c0b9-4f44-5986-08d650272e5c
+X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[208.19.99.221];Helo=[AUSMBX1.microsemi.net]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR19MB0392
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, Everyone,
+
+This patch series adds support of >=4G memory windows.
+
+Current Switchtec's BAR setup registers are limited to 32bits,
+corresponding to the maximum MW (memory window) size is <4G.
+Increase the MW sizes with the addition of the BAR Setup Extension
+Register for the upper 32bits of a 64bits MW size. This increases the MW
+range to between 4K and 2^63.
+
+Additionally, we've made the following changes:
+
+* debug print 64bit aligned crosslink BAR numbers
+* Fix the array size of NT req id mapping table
+
+Tested with ntb_test.sh successfully based on NTB fixes series from
+Logan Gunthorpe <logang@deltatee.com> at 
+https://github.com/sbates130272/linux-p2pmem on branch of
+ntb_multiport_fixes
+
+Regards,
+Wesley
 
 
-> -----Original Message-----
-> From: kys@linuxonhyperv.com <kys@linuxonhyperv.com>
-> Sent: Wednesday, November 21, 2018 6:51 PM
-> To: gregkh@linuxfoundation.org; linux-kernel@vger.kernel.org;
-> devel@linuxdriverproject.org; olaf@aepfle.de; apw@canonical.com;
-> jasowang@redhat.com; Stephen Hemminger <sthemmin@microsoft.com>;
-> Michael Kelley <mikelley@microsoft.com>; vkuznets
-> <vkuznets@redhat.com>
-> Cc: KY Srinivasan <kys@microsoft.com>
-> Subject: [PATCH 0/4] Hyper-V: Enable Linux guests on Hyper-V on ARM64
->=20
-> From: "K. Y. Srinivasan" <kys@microsoft.com>
->=20
-> This series enables Linux guests running on Hyper-V on ARM64
-> hardware. New ARM64-specific code in arch/arm64/hyperv initializes
-> Hyper-V, including its synthetic clocks and hypercall mechanism.
-> Existing architecture independent drivers for Hyper-V's VMbus and
-> synthetic devices just work when built for ARM64. Hyper-V code is
-> built and included in the image and modules only if CONFIG_HYPERV
-> is enabled.
->=20
-> The four patches are organized as follows:
-> 1) Add include files that define the Hyper-V interface as
->    described in the Hyper-V Top Level Functional Spec (TLFS), plus
->    additional definitions specific to Linux running on Hyper-V.
->=20
-> 2) Add core Hyper-V support on ARM64, including hypercalls,
->    synthetic clock initialization, and interrupt handlers.
->=20
-> 3) Update the existing VMbus driver to generalize interrupt
->    management across x86/x64 and ARM64.
->=20
-> 4) Make CONFIG_HYPERV selectable on ARM64 in addition to x86/x64.
->=20
-> Some areas of Linux guests on Hyper-V on ARM64 are a work-
-> in-progress, primarily due to work still being done in Hyper-V:
->=20
-> * Hyper-V on ARM64 currently runs with a 4 Kbyte page size, and only
->   supports guests with a 4 Kbyte page size. Because Hyper-V uses
->   shared pages to communicate between the guest and the hypervisor,
->   there are open design decisions on the page size to use when
->   the guest is using 16K/64K pages.  Once those issues are
->   resolved and Hyper-V fully supports 16K/64K guest pages, changes
->   may be needed in the Linux drivers for Hyper-V synthetic devices.
->=20
-> * Hyper-V on ARM64 does not currently support mapping PCI devices
->   into the guest address space. The Hyper-V PCI driver at
->   drivers/pci/host/pci-hyperv.c has x86/x64-specific code and is
->   not being built for ARM64.
->=20
-> In a few cases, terminology from the x86/x64 world has been carried
-> over into the ARM64 code ("MSR", "TSC").  Hyper-V still uses the
-> x86/x64 terminology and has not replaced it with something more
-> generic, so the code uses the Hyper-V terminology.  This will be
-> fixed when Hyper-V updates the usage in the TLFS.
->=20
->=20
-> Michael Kelley (4):
->   arm64: hyperv: Add core Hyper-V include files
->   arm64: hyperv: Add support for Hyper-V as a hypervisor
->   Drivers: hv: vmbus: Add hooks for per-CPU IRQ
->   Drivers: hv: Enable CONFIG_HYPERV on ARM64
->=20
->  MAINTAINERS                          |   4 +
->  arch/arm64/Makefile                  |   1 +
->  arch/arm64/hyperv/Makefile           |   2 +
->  arch/arm64/hyperv/hv_hvc.S           |  54 ++++
->  arch/arm64/hyperv/hv_init.c          | 441 +++++++++++++++++++++++++++
->  arch/arm64/hyperv/mshyperv.c         | 178 +++++++++++
->  arch/arm64/include/asm/hyperv-tlfs.h | 338 ++++++++++++++++++++
->  arch/arm64/include/asm/mshyperv.h    | 116 +++++++
->  arch/x86/include/asm/mshyperv.h      |   4 +
->  drivers/hv/Kconfig                   |   3 +-
->  drivers/hv/hv.c                      |   2 +
->  include/asm-generic/mshyperv.h       | 240 +++++++++++++++
->  12 files changed, 1382 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm64/hyperv/Makefile
->  create mode 100644 arch/arm64/hyperv/hv_hvc.S
->  create mode 100644 arch/arm64/hyperv/hv_init.c
->  create mode 100644 arch/arm64/hyperv/mshyperv.c
->  create mode 100644 arch/arm64/include/asm/hyperv-tlfs.h
->  create mode 100644 arch/arm64/include/asm/mshyperv.h
->  create mode 100644 include/asm-generic/mshyperv.h
->=20
 
-Greg,
+Paul Selles (2):
+  ntb_hw_switchtec: debug print 64bit aligned crosslink BAR Numbers
+  ntb_hw_switchtec: Added support of >=4G memory windows
 
-Please drop this. I will be resending shortly.
+Wesley Sheng (1):
+  ntb_hw_switchtec: NT req id mapping table register entry number should
+    be 512
 
-K. Y
-> --
-> 2.19.1
+ drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 11 ++++++++---
+ include/linux/switchtec.h              | 10 +++++++---
+ 2 files changed, 15 insertions(+), 6 deletions(-)
+
+-- 
+2.7.4
 
