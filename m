@@ -2,302 +2,167 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 595AFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C25C6C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:55:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B39720820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:55:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DCF820866
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:55:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AH1oKCIj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B39720820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="iZpcjNUB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DCF820866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389922AbeKVTeC (ORCPT
+        id S2393274AbeKVTe0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 14:34:02 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35907 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731706AbeKVTeC (ORCPT
+        Thu, 22 Nov 2018 14:34:26 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:34289 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733171AbeKVTe0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 14:34:02 -0500
-Received: by mail-it1-f196.google.com with SMTP id c9so12834028itj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 00:55:30 -0800 (PST)
+        Thu, 22 Nov 2018 14:34:26 -0500
+Received: by mail-ed1-f68.google.com with SMTP id b3so7070654ede.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 00:55:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=QUTvpgJrS8L+IA2wq7JwWDafJ+iU2B32UsdVCezpGlA=;
-        b=AH1oKCIjGnpP4iY6NLTyLW6KSNgBW1/C15IwOEEntL9CkoRg4qgaswGQB8h3K5qS/3
-         mAjaPPqXpClp0rbBya6FAajaOEVz0TmGcn9FMqHwMYXSPNg7q+GNoZ2IAWNK/bGyGpCI
-         4jiESvB5PFqziIprel5ODFIk9W/rPFTyAsMS8=
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bXnYE1APjd1iQLoGDe6cvTAiLMQqWdlXEVV06KVqXvc=;
+        b=iZpcjNUBjqVfz6kaD3joNZ2rKJDojWZrnYrXpGEMuagkdqSqD8v45SNugOu74xNRE/
+         +ZaN+cZLIcZQv3/PDVkAxp3sG40PnleJ0yjCvDccFHJRh5WhVcZ2b2ww1BskbOxkxl2P
+         UR02Z5519nozqIHarR42SRQcNa+d25yThpAN0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=QUTvpgJrS8L+IA2wq7JwWDafJ+iU2B32UsdVCezpGlA=;
-        b=f9N7hnJcAaF5KooxMwfAPl5xKYYHW8k6VyeztXteAPNfFN4isAfPj0ntLIquX34i6r
-         8piQr7czdf93Q+ARFhYFnLjM+ym0U3I6fa0WDC0abP3Ch+q0e0LPxMl68Mv9LqegFmJa
-         36qMXz+CHfOfCbgcF6rPLyAjJAHWLKkYNK6dLRCrV9QpP/h6gTNtE4Xi9mI2h6P/YG28
-         gPzsV0k8Fo9NKawiNbIB/pDsTKr4Z8bquO1FU/jvhb8PQYE98xzG4FyrzW8Cu02Qy+PA
-         wWDloj8gup/WKp/BIV+yl5HzFDZFfLhigGRfA7Saz6PBk0OuEKhEg5srSS4ngiRI84Uw
-         wb3Q==
-X-Gm-Message-State: AGRZ1gLRF3eMyxogpG/expJ7YFPhNI42xMRYV+owtAXYwKPZcNt9Anm9
-        YMnPs4srU28iNNZYb30iJZIGByQ+M9XlfkPuuR4KqA==
-X-Google-Smtp-Source: AFSGD/UZAYufP7FAJWyk5iRpMWcExtiTIVzmHk40FbvRjYpv4sDxl71jLh1Z2FpL6g1SZpVLYz7+hXK3IV6c7SXb3/w=
-X-Received: by 2002:a24:edc4:: with SMTP id r187mr9681080ith.158.1542876929973;
- Thu, 22 Nov 2018 00:55:29 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=bXnYE1APjd1iQLoGDe6cvTAiLMQqWdlXEVV06KVqXvc=;
+        b=j/zg1iFJ21zDGteh0bBWgz8zgYrIZOiD0+l4G0VEEw2JDWYjK3l3FzlEXcLPdw8ZvT
+         6ln+tnWvfrqTzPKoacM6Xnz5vJkRZCM0VBBjZFnXTlz5PC5ChI4wTjMw663OgCFJcf4U
+         0sHdP4hOSoIeJgzMN3uVzgFqV6mFWoljiwybYMh0qZsc7LPFU1Mrmweg3bZGjLTI+km0
+         dMspJWYWjPJGPxyq30fn5DVgL0tItykjE9f5DI6Icu9XgAm0pPuLjt9eeOmQqIEizKOQ
+         GTPQ496vXEzuZ5q+oFMATQEBeSo8DpVxcHVho8jPpN/UKAp4PY741Cn9AXBQU26ePguf
+         CZFw==
+X-Gm-Message-State: AA+aEWbPJ9BGS7keQq8sOpHZrsUlYMuNjsGKGPk4E9QbQPdsFjnZ2CC7
+        mhEY/g6YB7kM6aIz8xFGpO74JLH8lVU=
+X-Google-Smtp-Source: AFSGD/V2TAFl8vvyJQ3YvxF+olUzPJBkXlBHYy+tIG7IeQFyOdeas0Rclfy3WwEJA6PmbWMo1LtA2A==
+X-Received: by 2002:a50:ce0f:: with SMTP id y15mr7867485edi.207.1542876953045;
+        Thu, 22 Nov 2018 00:55:53 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id c11-v6sm6159456ejm.67.2018.11.22.00.55.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 22 Nov 2018 00:55:51 -0800 (PST)
+Date:   Thu, 22 Nov 2018 09:55:49 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        greenfoo@gluegarage.com,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>, sean@poorly.run,
+        Dave Airlie <airlied@linux.ie>,
+        Jonathan Corbet <corbet@lwn.net>, abrodkin@synopsys.com,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux+etnaviv@armlinux.org.uk,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
+        kieran.bingham+renesas@ideasonboard.com,
+        Shawn Guo <shawnguo@kernel.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>, michal.lkml@markovi.net,
+        hamohammed.sa@gmail.com, linux-doc@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        virtualization@lists.linux-foundation.org,
+        etnaviv@lists.freedesktop.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        cocci@systeme.lip6.fr
+Subject: Re: [PATCH 0/9] drm: remove deprecated functions
+Message-ID: <20181122085549.GX4266@phenom.ffwll.local>
+Mail-Followup-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>, greenfoo@gluegarage.com,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>, sean@poorly.run,
+        Dave Airlie <airlied@linux.ie>, Jonathan Corbet <corbet@lwn.net>,
+        abrodkin@synopsys.com,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Lucas Stach <l.stach@pengutronix.de>, linux+etnaviv@armlinux.org.uk,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
+        kieran.bingham+renesas@ideasonboard.com,
+        Shawn Guo <shawnguo@kernel.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>, michal.lkml@markovi.net,
+        hamohammed.sa@gmail.com, linux-doc@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        virtualization@lists.linux-foundation.org,
+        etnaviv@lists.freedesktop.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        cocci@systeme.lip6.fr
+References: <20181115221634.22715-1-greenfoo@gluegarage.com>
+ <CACRpkdZmTSo02yQeU=qe9WyJMXEq76CNmc2kkFEHuwdo=HKPJw@mail.gmail.com>
+ <20181121094233.GN4266@phenom.ffwll.local>
+ <22044302.7aKok9czXB@avalon>
 MIME-Version: 1.0
-References: <0DF8AA8C9CD0FB4ABF4E83674055F7E2D7FFCC@dggemi508-mbx.china.huawei.com>
-In-Reply-To: <0DF8AA8C9CD0FB4ABF4E83674055F7E2D7FFCC@dggemi508-mbx.china.huawei.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 22 Nov 2018 09:55:18 +0100
-Message-ID: <CAKv+Gu_fvcmAKMdj9RyR43ZWC7KQdqo4m=fwAHfN+7u-KXyEWw@mail.gmail.com>
-Subject: Re: Re: [PATCH] arm64: crc: accelerated-crc32-by-64bytes
-To:     sunrui26@huawei.com
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22044302.7aKok9czXB@avalon>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Nov 2018 at 02:50, sunrui <sunrui26@huawei.com> wrote:
->
->
->
-> On Sun, 18 Nov 2018 at 23:30, Rui Sun <sunrui26@huawei.com> wrote:
->
-> >
->
-> > add 64 bytes loop to acceleration calculation
->
-> >
->
->
->
-> Can you share some performance numbers please?
->
->
->
-> Also, we don't need 64 byte, 32 byte and 16 byte code paths: just make th=
-e 8 byte one a loop as well, and drop the 32 byte and 16 byte ones.
->
->
->
-> --
->
->
->
-> Consider of some processor has instruction N-way parallel function, with =
-the increase of the data buf=E2=80=99s size, 64B loop will performance bett=
-er than 16B loop.
->
->
->
-> On the other hand, in the same environment I tested the 8B loop, which is=
- worse than the 16-byte loop.
->
->
->
-> The test result is shown in the fellow excel(crc test result.xlsx) sheet1=
-(64B loop) and sheet2(8B loop)
->
+On Wed, Nov 21, 2018 at 08:21:29PM +0200, Laurent Pinchart wrote:
+> Hi Daniel,
+> 
+> On Wednesday, 21 November 2018 11:42:33 EET Daniel Vetter wrote:
+> > On Thu, Nov 15, 2018 at 11:38:35PM +0100, Linus Walleij wrote:
+> > > On Thu, Nov 15, 2018 at 11:17 PM Fernando Ramos wrote:
+> > >> One of the things in the DRM TODO list ("Documentation/gpu/todo.rst")
+> > >> was to "switch from reference/unreference to get/put". That's what this
+> > >> patch series is about.
+> > > 
+> > > The series:
+> > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> > 
+> > Since your reviewed it all, and there's a pile of acks for the driver
+> > parts too: Want to go ahead and apply it too?
+> 
+> Please remember to give at least a week to reviewers, especially with LPC last 
+> week.
 
-Maybe I phrased that wrong: if we add the 64-byte loop, there is no
-need for a 32-byte block, a 16 byte block and a 8 byte block, since
-they all use the same crc32x instruction. After the 64-byte loop, just
-loop in the 8-byte sequence until the remaining data is less than 8
-bytes.
+I think for this undisputed cocci series waiting for everyone is not
+needed. There's really not much the driver-specific reviewer perspective
+would help here.
 
-
->
->
-> --
->
->
->
-> > Signed-off-by: Rui Sun <sunrui26@huawei.com>
->
-> > ---
->
-> >  arch/arm64/lib/crc32.S | 54
->
-> > ++++++++++++++++++++++++++++++++++++++++++++++----
->
-> >  1 file changed, 50 insertions(+), 4 deletions(-)
->
-> >
->
-> > diff --git a/arch/arm64/lib/crc32.S b/arch/arm64/lib/crc32.S index
->
-> > 5bc1e85..2b37009 100644
->
-> > --- a/arch/arm64/lib/crc32.S
->
-> > +++ b/arch/arm64/lib/crc32.S
->
-> > @@ -15,15 +15,61 @@
->
-> >         .cpu            generic+crc
->
-> >
->
-> >         .macro          __crc32, c
->
-> > -0:     subs            x2, x2, #16
->
-> > -       b.mi            8f
->
-> > +
->
-> > +64: cmp     x2, #64
->
-> > +    b.lt    32f
->
-> > +
->
-> > +    adds    x11, x1, #16
->
-> > +    adds    x12, x1, #32
->
-> > +    adds    x13, x1, #48
->
-> > +
->
-> > +0 : subs    x2, x2, #64
->
-> > +    b.mi    32f
->
-> > +
->
-> > +    ldp     x3, x4, [x1], #64
->
-> > +    ldp     x5, x6, [x11], #64
->
-> > +    ldp     x7, x8, [x12], #64
->
-> > +    ldp     x9, x10,[x13], #64
->
-> > +
->
->
->
-> Can we do this instead, and get rid of the temp variables?
->
->
->
->     ldp     x3, x4, [x1], #64
->
->     ldp     x5, x6, [x1, #-48]
->
->     ldp     x7, x8, [x1, #-32]
->
->     ldp     x9, x10,[x1, #-16]
->
->
->
-> > + CPU_BE( rev     x3, x3      )
->
-> > + CPU_BE( rev     x4, x4      )
->
-> > + CPU_BE( rev     x5, x5      )
->
-> > + CPU_BE( rev     x6, x6      )
->
-> > + CPU_BE( rev     x7, x7      )
->
-> > + CPU_BE( rev     x8, x8      )
->
-> > + CPU_BE( rev     x9, x9      )
->
-> > + CPU_BE( rev     x10,x10     )
->
-> > +
->
-> > +    crc32\c\()x w0, w0, x3
->
-> > +    crc32\c\()x w0, w0, x4
->
-> > +    crc32\c\()x w0, w0, x5
->
-> > +    crc32\c\()x w0, w0, x6
->
-> > +    crc32\c\()x w0, w0, x7
->
-> > +    crc32\c\()x w0, w0, x8
->
-> > +    crc32\c\()x w0, w0, x9
->
-> > +    crc32\c\()x w0, w0, x10
->
-> > +
->
-> > +    b.ne       0b
->
-> > +    ret
->
-> > +
->
-> > +32: tbz     x2, #5, 16f
->
-> > +    ldp     x3, x4, [x1], #16
->
-> > +    ldp     x5, x6, [x1], #16
->
-> > +CPU_BE( rev     x3, x3      )
->
-> > +CPU_BE( rev     x4, x4      )
->
-> > +CPU_BE( rev     x5, x5      )
->
-> > +CPU_BE( rev     x6, x6      )
->
-> > +    crc32\c\()x w0, w0, x3
->
-> > +    crc32\c\()x w0, w0, x4
->
-> > +    crc32\c\()x w0, w0, x5
->
-> > +    crc32\c\()x w0, w0, x6
->
-> > +
->
-> > +16: tbz     x2, #4, 8f
->
-> >         ldp             x3, x4, [x1], #16
->
-> >  CPU_BE(        rev             x3, x3          )
->
-> >  CPU_BE(        rev             x4, x4          )
->
-> >         crc32\c\()x     w0, w0, x3
->
-> >         crc32\c\()x     w0, w0, x4
->
-> > -       b.ne            0b
->
-> > -       ret
->
-> >
->
-> >  8:     tbz             x2, #3, 4f
->
-> >         ldr             x3, [x1], #8
->
-> > --
->
-> > 1.8.3.1
->
-> >
->
->
+In general I do agree though, if there's something driver maintainers can
+have better insight on.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
