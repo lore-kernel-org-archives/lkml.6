@@ -2,267 +2,127 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 115D4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B751C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB7B720838
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:58:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB7B720838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=eclipso.eu
+	by mail.kernel.org (Postfix) with ESMTP id 3AE1820838
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:58:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OZozpBIQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AE1820838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406619AbeKWFjG convert rfc822-to-8bit (ORCPT
+        id S2406631AbeKWFjL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 00:39:06 -0500
-Received: from mail.eclipso.de ([217.69.254.104]:44814 "EHLO mail.eclipso.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392160AbeKWFjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 00:39:05 -0500
-Received: from roadrunner.suse (p5B318127.dip0.t-ipconnect.de [91.49.129.39])
-        by mail.eclipso.de with ESMTPS id 32B4D9CB
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 19:58:22 +0100 (CET)
-X-ESMTP-Authenticated-User: 0001F234
-From:   stakanov <stakanov@eclipso.eu>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Takashi Iwai <tiwai@suse.de>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: DVB-S PCI card regression on 4.19 / 4.20
-Date:   Thu, 22 Nov 2018 19:58:19 +0100
-Message-ID: <2836654.gWKGMNFOG2@roadrunner.suse>
-In-Reply-To: <20181122141908.1ef2bcae@coco.lan>
-References: <4e0356d6303c128a3e6d0bcc453ba1be@mail.eclipso.de> <20181120140855.29f5dc3f@coco.lan> <20181122141908.1ef2bcae@coco.lan>
+        Fri, 23 Nov 2018 00:39:11 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44818 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389115AbeKWFjL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 00:39:11 -0500
+Received: by mail-lf1-f65.google.com with SMTP id z13so7155444lfe.11
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 10:58:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DSxidHE7NLxIc9ha7B0C1HJsye3M8kQFLccGGw1sBls=;
+        b=OZozpBIQS4Du4H6DwVqL8gPDs17uGGGupUknz39FCOoRVVxgimxFRM3mcl7WtgAcdK
+         D8pQyGj5vNx9JfOHh+nFAjmIe1yxVWS8Qcgs6S0/fhkvcXqLevA0qzp1HXx4kRS1gIqC
+         PCuIWVdy7ZOJ//yYGxCzGEnDO04ilaP3H47Pc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DSxidHE7NLxIc9ha7B0C1HJsye3M8kQFLccGGw1sBls=;
+        b=bYKEq/WlNFe548RUxEkcu+QYeKK47lvuAJ3fdI9FTp9oQgRTysp57o8fOjUAOmjXXe
+         KkiNnBs7HZ9lX3IE1k+1su6iJqsc/EhLdpi2CSVUCN+URnnQXh6zhww3cjyHvKRcmsHy
+         5PUYb6geYUX9IYz4VwV/szuWwLwTGG6+4oqjC1uD7ry9gvg+xG2vr2WFlij1vDC2e/3M
+         wyGJUij2Mra6hHDoY6HOJ+PEyvM9YIMJuS7R+xjkcJv4q+2o75lm/wfryqza9ZUWemEN
+         Dy5Puuu1sW0MRojX2uupiFSl6Jdb5A/pg7JvRDWeCZG9SGrxbAOfAs8sgr0j2PHoRsvQ
+         gSwQ==
+X-Gm-Message-State: AGRZ1gLs8tmp4k+dhnMPBuJg27iFl0+dWEYeVzpToq0sTXEfiFQuKoFP
+        Ica61Xvh8/k5bx0iCzGkZptrDaHa6Ef53g==
+X-Google-Smtp-Source: AJdET5fkoMeaSbQPkH6xpb07H+dzbAbyuTfXPj7BECHCS+MR+pMjicGEuWUSHXQao/JRCllO27f60w==
+X-Received: by 2002:a19:4345:: with SMTP id m5mr7023564lfj.142.1542913108795;
+        Thu, 22 Nov 2018 10:58:28 -0800 (PST)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id s127sm7459282lfe.8.2018.11.22.10.58.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 10:58:27 -0800 (PST)
+Received: by mail-lj1-f178.google.com with SMTP id e5-v6so8759744lja.4
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 10:58:27 -0800 (PST)
+X-Received: by 2002:a2e:9983:: with SMTP id w3-v6mr8375271lji.133.1542913106673;
+ Thu, 22 Nov 2018 10:58:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+References: <02bfc577-32a5-66be-64bf-d476b7d447d2@kernel.dk>
+ <20181121063609.GA109082@gmail.com> <48e27a3a-2bb2-ff41-3512-8aeb3fd59e57@kernel.dk>
+ <26eff539-7de7-784c-0c88-f1d30753299d@redhat.com> <7ea44458b90b4d41a08ba9012818d273@AcuMS.aculab.com>
+ <CAHk-=wjLNuNpHRfuVTb6awstC9OOmSb3S8aP51ufep-Th4dXKw@mail.gmail.com> <CALCETrW=hMZLUM_nPEEgUW9x9Bmhm2LZ6ZRDiRRguxVT=-_BWA@mail.gmail.com>
+In-Reply-To: <CALCETrW=hMZLUM_nPEEgUW9x9Bmhm2LZ6ZRDiRRguxVT=-_BWA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 22 Nov 2018 10:58:10 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiEUVpSU-GxpKDvN9wnH2yDxkJgE7Vqh46A+fmnvhubyw@mail.gmail.com>
+Message-ID: <CAHk-=wiEUVpSU-GxpKDvN9wnH2yDxkJgE7Vqh46A+fmnvhubyw@mail.gmail.com>
+Subject: Re: [PATCH] x86: only use ERMS for user copies for larger sizes
+To:     Andrew Lutomirski <luto@kernel.org>
+Cc:     David.Laight@aculab.com, dvlasenk@redhat.com,
+        Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
+        Peter Anvin <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, brgerst@gmail.com,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        pabeni@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mauro!
+On Thu, Nov 22, 2018 at 10:07 AM Andy Lutomirski <luto@kernel.org> wrote:
+>
+> I'm not personally volunteering, but I suspect we can do much better
+> than we do now:
+>
+>  - The new MOVDIRI and MOVDIR64B instructions can do big writes to WC
+> and UC memory.
+>
+>  - MOVNTDQA can, I think, do 64-byte loads, but only from WC memory.
 
-In data giovedì 22 novembre 2018 17:19:08 CET, Mauro Carvalho Chehab ha 
-scritto:
-> Stakanov,
-> 
-> Em Tue, 20 Nov 2018 14:08:55 -0200
-> 
-> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> escreveu:
-> > Em Tue, 20 Nov 2018 14:20:01 +0100
-> > 
-> > stakanov <stakanov@eclipso.eu> escreveu:
-> > > In data martedì 20 novembre 2018 13:42:17 CET, Mauro Carvalho Chehab ha
-> > > 
-> > > scritto:
-> > > > Em Tue, 20 Nov 2018 13:11:58 +0100
-> > > > 
-> > > > "Stakanov Schufter" <stakanov@eclipso.eu> escreveu:
-> > > > > Sorry for the delay. Apparently my smtp exits are blocking me (for
-> > > > > whatever reason). I am trying now via web mailer.
-> > > > > 
-> > > > > 
-> > > > > In short, no it does not work. Only EPG, no pic no sound.
-> > > > > But the error message in dmesg is gone I think.
-> > > > > 
-> > > > > uname -a
-> > > > > Linux silversurfer 4.20.0-rc3-2.gfe5d771-default #1 SMP PREEMPT Tue
-> > > > > Nov 20
-> > > > > 09:35:04 UTC 2018 (fe5d771) x86_64 x86_64 x86_64 GNU
-> > > > > 
-> > > > > dmesg:
-> > > > > 
-> > > > > [    6.412792] b2c2-flexcop: B2C2 FlexcopII/II(b)/III digital TV
-> > > > > receiver
-> > > > > chip loaded successfully
-> > > > > [    6.416645] flexcop-pci: will use the HW PID filter.
-> > > > > [    6.416648] flexcop-pci: card revision 2
-> > > > > [    6.423749] scsi host10: usb-storage 9-3.1:1.0
-> > > > > [    6.423842] usbcore: registered new interface driver usb-storage
-> > > > > [    6.426029] usbcore: registered new interface driver uas
-> > > > > [    6.439251] dvbdev: DVB: registering new adapter (FlexCop Digital
-> > > > > TV
-> > > > > device)
-> > > > > [    6.440845] b2c2-flexcop: MAC address = 00:d0:d7:11:8b:58
-> > > > > 
-> > > > > [    6.694999] dvb_pll_attach: delsys: 0, frequency range:
-> > > > > 950000000..2150000000
-> > > > > [    6.695001] b2c2-flexcop: found 'ST STV0299 DVB-S' .
-> > > > > [    6.695004] b2c2_flexcop_pci 0000:06:06.0: DVB: registering
-> > > > > adapter 0
-> > > > > frontend 0 (ST STV0299 DVB-S)...
-> > > > > [    6.695050] b2c2-flexcop: initialization of 'Sky2PC/SkyStar 2
-> > > > > DVB-S rev
-> > > > > 2.6' at the 'PCI' bus controlled by a 'FlexCopIIb' complete
-> > > > 
-> > > > Well, the Kernel bug is probably gone. I don't see any other recent
-> > > > changes that would be affecting the b2c2 flexcop driver.
-> > > > 
-> > > > If you're successfully getting EPG data from the transponders, then it
-> > > > should also be receiving audio and video channels too, as, for the
-> > > > Kernel,
-> > > > there's no difference if a given program ID (PID) contains EPG, audio
-> > > > or
-> > > > video.
-> > > > 
-> > > > At the BZ, you're saying that you're using Kaffeine, right?
-> > > > 
-> > > > There are a few reasons why you can't watch audio/video, but you're
-> > > > 
-> > > > able to get EPG tables:
-> > > > 	- the audio/video PID had changed;
-> > > > 	- the audio/video is now encrypted;
-> > > > 	- too weak signal (or bad cabling).
-> > > > 
-> > > > The EPG data comes several times per second on well known PIDs, via a
-> > > > low
-> > > > bandwidth PID and it is not encrypted. So, it is usually trivial to
-> > > > get
-> > > > it.
-> > > > 
-> > > > I suggest you to re-scan your channels on Kaffeine, in order to force
-> > > > it to get the new PIDs. Also, please check that the channels you're
-> > > > trying to use are Free to the Air (FTA).
-> > > > 
-> > > > You can also use libdvbv5 tools in order to check if you're not
-> > > > losing data due to weak signal/bad cabling. The newer versions
-> > > > of dvbv5-zap have a logic with detects and report data loses, when
-> > > > started on monitor mode (-m command line option). It also prints
-> > > > the transponder bandwidth, and check what PIDs are received.
-> > > > 
-> > > > It is very useful to debug problems.
-> > > > 
-> > > > Thanks,
-> > > > Mauro
-> > > 
-> > > I checked again and:
-> > > [sudo] password di root:
-> > > [    6.412792] b2c2-flexcop: B2C2 FlexcopII/II(b)/III digital TV
-> > > receiver chip loaded successfully
-> > > [    6.440845] b2c2-flexcop: MAC address = 00:d0:d7:11:8b:58
-> > > [    6.695001] b2c2-flexcop: found 'ST STV0299 DVB-S' .
-> > > [    6.695004] b2c2_flexcop_pci 0000:06:06.0: DVB: registering adapter 0
-> > > frontend 0 (ST STV0299 DVB-S)...
-> > > [    6.695050] b2c2-flexcop: initialization of 'Sky2PC/SkyStar 2 DVB-S
-> > > rev
-> > > 2.6' at the 'PCI' bus controlled by a 'FlexCopIIb' complete
-> > > [ 6265.403360] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0
-> > > frequency 10719000 out of range (950000..2150000)
-> > > [ 6265.405702] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0
-> > > frequency 10723000 out of range (950000..2150000)
-> > > [ 6265.407120] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0
-> > > frequency 10757000 out of range (950000..2150000)
-> > > [ 6265.408556] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0
-> > > frequency 10775000 out of range (950000..2150000)
-> > > [ 6265.409754] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0
-> > > frequency 10795000 out of range (950000..2150000)
-> > > [ 6399.837806] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0
-> > > frequency 12713000 out of range (950000..2150000)
-> > > [ 6399.839144] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0
-> > > frequency 12731000 out of range (950000..2150000)
-> > 
-> > Ok. Now, min/max frequencies are at the same scale. For DVB-S,
-> > dvb_frontend_get_frequency_limits() returns both in kHz, so the frequency
-> > range is now OK.
-> > 
-> > The tuning frequency is wrong through. 10,719,000 kHz - e. g. 10,719 MHz
-> > seems to be the transponder frequency you're trying to tune, and not the
-> > intermediate frequency used at the DVB-S board.
-> > 
-> > That sounds to me either a wrong LNBf setting or a bug at libdvbv5 or
-> > at Kaffeine's side. What happens is that the typical European LNBFs are:
-> > 
-> > 1) the "old" universal one:
-> > 
-> > UNIVERSAL
-> > 
-> > 	Universal, Europe
-> > 	Freqs     : 10800 to 11800 MHz, LO: 9750 MHz
-> > 	Freqs     : 11600 to 12700 MHz, LO: 10600 MHz
-> > 
-> > 2) the "new" universal one, with seems to be used by most modern
-> > satellite dishes in Europe nowadays:
-> > 
-> > EXTENDED
-> > 
-> > 	Astra 1E, European Universal Ku (extended)
-> > 	Freqs     : 10700 to 11700 MHz, LO: 9750 MHz
-> > 	Freqs     : 11700 to 12750 MHz, LO: 10600 MHz
-> > 
-> > Assuming that your satellite dish is equipped with an Astra-1E compatible
-> > LNBf, as you're trying to tune 10,719 MHz, you need to setup Kaffeine
-> > to use the EXTENDED LNBf, with covers the extended frequency range.
-> > 
-> > Kaffeine/libdvbv5 will subtract this value from the LO frequency:
-> > 	10719 MHz - 9750 MHz = 969 MHz
-> > 
-> > And pass the 969 MHz frequency for the Kernel to tune. As this
-> > is between the 950MHz..2150MHz limit, it won't produce any Kernel
-> > messages.
-> > 
-> > Please notice that there were some bugs at v4l-utils and DVB-S/S2,
-> > so be sure to check the v4l-utils version you're using. The last
-> > one is 1.14.2 (released on Feb, 10 2018). I recommend you to have
-> > at least version 1.12.4 (released on May, 6 2017).
-> 
-> Did it work after using the EXTENDED LNBf on Kaffeine?
-> 
-> 
-> Thanks,
-> Mauro
+No, performance isn't the _primary_ issue. Nobody uses MMIO and
+expects high performance from the generic functions (but people may
+then tweak individual drivers to do tricks).
 
+And we've historically had various broken hardware that cares deeply
+about access size. Trying to be clever and do big accesses could
+easily break something.
 
+The fact that nobody has complained about the generic memcpy routines
+probably means that the broken hardware isn't in use any more, or it
+just works anyway. And nobody has complained about performance either,
+so it's clearly not a huge issue. "rep movs" probably works ok on WC
+memory writes anyway, it's the UC case that is bad, but I don't think
+anybody uses UC and then does the "memcp_to/fromio()" things. If you
+have UC memory, you tend to do the accesses properly.
 
-I am not sure to tell the truth.
-I am using Italian language on my machines. So the only setting I have is 
-LNBf "alta tensione". Now this is like "high tension LNBf if this does tell 
-you something.
-There are three settings (that are not well documented to tell the truth. 
-First is:
-selection square empty
-then 
-half empty
-then 
-full
+So I suspect we should just write memcpy_{to,from}io() in terms of writel/readl.
 
-Now, I did not find an explanation on the web for the third position. One 
-should use no reinforcement of the signal. One should offer support by 
-reinforcing the signal (via low tension on the antenna cable?). The middle 
-position I do not know. Maybe it is the degree of reinforcement?
-Now, I tried all three in a sequence. I did not encounter any change. 
-I have however a doubt that I am going to verify today. I am thinking that up 
-to 4.18.15-1 for some reasons you did not use the firmware that Linux TV org 
-does advice for the card. While it could be that it is needed now, I am going 
-to download and verify today. The only rational explanation that I could have 
-is that before it did inadvertently another firmware that comes with TW (there 
-are several) or that TW did take out the firmware but I would have been asked 
-before removal... 
-Anyway, that is the last experiment at least if you do not tell me that up to 
-now I did not do the right thing (in that case be very verbose to be sure I do 
-understand well were to change settings). 
-BTW the only other choice is between "disecq and rotor" and as we do not have 
-a rotor on the roof....
+Oh, and I just noticed that on x86 we expressly use our old "safe and
+sane" functions: see __inline_memcpy(), and its use in
+__memcpy_{from,to}io().
 
-Comparison: I have in the machine in parallel a Hauppauge Card 5525 HD and so 
-I can confirm the signal is good. However this card too stayed black only EPG, 
-so I did download the firmware to /lib/firmware. I did reboot and it works now 
-perfectly. I will try the same with the Technisat. But the question remains 
-why it did work without firmware with the previous kernel. I am puzzled. 
+So the "falls back to memcpy" was always a red herring. We don't
+actually do that.
 
-I will update you tomorrow. Be patient if you should have found out that I did 
-not check for the right thing. I really appreciate your help given and 
-ignorance is, so to say, never intentional. ;-) 
+Which explains why things work.
 
-Thank you, 
-Stak. 
-
-
-
-_________________________________________________________________
-________________________________________________________
-Ihre E-Mail-Postfächer sicher & zentral an einem Ort. Jetzt wechseln und alte E-Mail-Adresse mitnehmen! https://www.eclipso.de
-
-
+            Linus
