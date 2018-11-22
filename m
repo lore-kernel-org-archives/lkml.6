@@ -2,85 +2,96 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59217C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E4F6C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:19:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F399820685
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:19:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E51F920824
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:19:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="tZOFAEH7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F399820685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F5M5491b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E51F920824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437607AbeKWB7e (ORCPT
+        id S2437621AbeKWB7l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 20:59:34 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:45713 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731279AbeKWB7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 20:59:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=t4lJXZS95oUH104pGtmd//yuZEh99+M7Tq15NPLR90c=;
-        b=tZOFAEH7vac0PvgCod69bwYwvyIZo6yWcL3ndZpPjkSdVXP94gAlPsEtQJxgeqE60PBMpir6lXB2Roe0CA/qmni4UCys+NT4+B5IyfHAAlpRJlBqhLXoGRgLKwnx/FD7U74cjybm8cSgMIwJ6PNgOVv43EmXqTWaRKFspnpqJUA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gPqlQ-0000Xp-Vp; Thu, 22 Nov 2018 16:19:33 +0100
-Date:   Thu, 22 Nov 2018 16:19:32 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Biao Huang <biao.huang@mediatek.com>
-Cc:     davem@davemloft.net, robh+dt@kernel.org,
-        honghui.zhang@mediatek.com, yt.shen@mediatek.com,
-        liguo.zhang@mediatek.com, mark.rutland@arm.com,
-        nelson.chang@mediatek.com, matthias.bgg@gmail.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, joabreu@synopsys.com
-Subject: Re: [v5, PATCH 2/2] dt-binding: mediatek-dwmac: add binding document
- for MediaTek MT2712 DWMAC
-Message-ID: <20181122151932.GD15403@lunn.ch>
-References: <1542882521-18874-1-git-send-email-biao.huang@mediatek.com>
- <1542882521-18874-3-git-send-email-biao.huang@mediatek.com>
+        Thu, 22 Nov 2018 20:59:41 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41922 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730517AbeKWB7k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 20:59:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=4PmuZ+BvucwdqnJ7cMjJm7ggtSvmkj6s3xiw/bvz428=; b=F5M5491bpKB4z/QaPUULu0BPp
+        ScSIEfR2o7ZWXddMLAfJVvpcyd/VtOcd73HMocLqTfx3pexUPHd5dqggnQcV6m7qjTweoqQDXzxfJ
+        OLqFSdKfiL1vDE+S85hdTDmepYc2rOkzm7CoOvSFMy6h69xO9VIBQScUGVT8QoK6wD/Jp+M6Aboe8
+        /vGpjQW6+s+2HMWpRY0r6yzsyVWBD3a2CBzFN/WLMBB9TLw1u47lD+UJQwxoJiWVm+HaO7ZSy0cSa
+        fuJzeqq1VdnaDbv6PB0Tmb86FLgEucD+gZFHwhfbdazPHYcWhbIiq7Ot85lVD3C9SXNQkc7axVDVb
+        FJnJE6GFA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gPqlZ-0000kx-9D; Thu, 22 Nov 2018 15:19:41 +0000
+Date:   Thu, 22 Nov 2018 07:19:41 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Levin Alexander <Alexander.Levin@microsoft.com>,
+        linux-mm@kvack.org, Christopher Lameter <cl@linux.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        David Rientjes <rientjes@google.com>,
+        yingjoe.chen@mediatek.com, Vlastimil Babka <vbabka@suse.cz>,
+        Tomasz Figa <tfiga@google.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Pekka Enberg <penberg@kernel.org>,
+        iommu@lists.linux-foundation.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: Re: [PATCH v2 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page
+ tables
+Message-ID: <20181122151941.GA2681@infradead.org>
+References: <20181111090341.120786-1-drinkcat@chromium.org>
+ <0100016737801f14-84f1265d-4577-4dcf-ad57-90dbc8e0a78f-000000@email.amazonses.com>
+ <20181121213853.GL3065@bombadil.infradead.org>
+ <c5ccde1e-a711-ad33-537c-2d5a0bd9edd4@arm.com>
+ <20181122023558.GO3065@bombadil.infradead.org>
+ <20181122082602.GB2049@infradead.org>
+ <20181122151632.GP3065@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1542882521-18874-3-git-send-email-biao.huang@mediatek.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181122151632.GP3065@bombadil.infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 06:28:41PM +0800, Biao Huang wrote:
-> The commit adds the device tree binding documentation for the MediaTek DWMAC
-> found on MediaTek MT2712.
-> 
-> Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+On Thu, Nov 22, 2018 at 07:16:32AM -0800, Matthew Wilcox wrote:
+> Yes, your allocations from the page_frag allocator have to have similar
+> lifetimes.  I thought that would be ideal for XFS though; as I understood
+> the problem, these were per-IO allocations, and IOs to the same filesystem
+> tend to take roughly the same amount of time.  Sure, in an error case,
+> some IOs will take a long time before timing out, but it should be OK
+> to have pages unavailable during that time in these rare situations.
+> What am I missing?
 
-> +Optional properties:
-> +- mediatek,tx-delay: TX clock delay macro value. Range is 0~31. Default is 0.
-> +	It should be defined for rgmii/rgmii-rxid/mii interface.
-> +- mediatek,rx-delay: RX clock delay macro value. Range is 0~31. Default is 0.
-> +	It should be defined for rgmii/rgmii-txid/mii/rmii interface.
-
-You have received the same feedback at least twice now, from two
-different maintainers, that the delay should be specified in pS, and
-the driver should figure out what values to place into registers.
-
-You should not ignore feedback like that. If you don't understand the
-feedback, please ask us to explain it. If you don't agree with the
-feedback, you need to argue why you think it is wrong, or why what you
-are doing is better, etc.
-
-We are here to help, but just ignoring us won't get you anywhere.
-
-For the moment:
-
-NACK
-
-	Andrew
+No, thee are allocations for meatada buffers, which can stay around
+for a long time.  Worse still that depends on usage, so one buffer
+allocated from ma page might basically stay around forever, while
+another one might get reclaimed very quickly.
