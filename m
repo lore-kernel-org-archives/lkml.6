@@ -2,120 +2,123 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDDAC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1ACC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 742EC20820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:16:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D+7jlmBf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 742EC20820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F1CBC20820
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:19:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1CBC20820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389818AbeKVSzR (ORCPT
+        id S2392889AbeKVS5n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 13:55:17 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:50637 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731445AbeKVSzR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 13:55:17 -0500
-Received: by mail-it1-f195.google.com with SMTP id a185so12963266itc.0;
-        Thu, 22 Nov 2018 00:16:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vyXNPxu8L8ze5U2HEzq2fbQLiBW4MGAl72blE9d0FWA=;
-        b=D+7jlmBf9kAEAc9x9awDOBbl7qs9NNTHOYv1DsKk/NBkA3/aYi60vIihX0GyCxJN0Q
-         QxYXyiGxj9+GQE0ZwG42SuF3McvT2OKZ4OQzNyeBgRvjoBTn1+K8vqhe6O+XGKlsyQ04
-         yBJdbMZwNgV+rQqy52/c+g0ojf0Z/v2xWlM94RAGklag7bnvlsyPZLXJdSO6rsm87loA
-         qYhcprHycJb+u6culAa0FFDJVX5+BKwYd7GuJw7CyrnnimVMqIbXlq1WVaV0+lF3vm3R
-         qrPi47nbCjLMGICyhMAzNGS6HcuYPlQ5Ip47LOQYgA5xf3CtON54dm2KSjtYGlqjV50Z
-         JCbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vyXNPxu8L8ze5U2HEzq2fbQLiBW4MGAl72blE9d0FWA=;
-        b=VGnZawXgS+V0cMxZwPJDb3BctOBqnIk5FLojq2ujB7ST+aDkFP9a+AqISmcK7vHj2d
-         boRXGGzyp9Gm3wfnTsrvEMxgJ2E5hWn1YLcGnJMlpc+f8VOGOxJ4yrmDTuIu3Nu6FzIl
-         cuhe5T/dbQz/BU245mWWebQB7ofMpUH9DDIRBMhA7A02pyhpIp4rk41csMqBqxjleCk0
-         NI/dyQYU28YiAgK2sy6GsCrppuSjAcq/136VJhf6D7lh/d5XDVrBUrz/HPqehuEpCeqx
-         kD+S9r/hpQnfq60zTb1w8pf5kZMyeKWzDttS5qtBijAVyerb97C7ZpWoqxRriJKjIj0w
-         SOfg==
-X-Gm-Message-State: AA+aEWY0EDJOV3Fhkfnhg61/3MV4ojGnQ4RaGC1Qs40Yp/oKB2BLWaRr
-        p5xyVzK/bzxZFszwrf/M+fJ8JYt1bZX3BWkkPIw=
-X-Google-Smtp-Source: AFSGD/WbNUODZyWlnoLchbGnqUw+LOSScHFHuwY78IlyM6MxKigRoNeIZt68czvehQBRVMSUcbbWALjlr+N9p69Zud0=
-X-Received: by 2002:a02:6c90:: with SMTP id w138mr8534428jab.60.1542874615379;
- Thu, 22 Nov 2018 00:16:55 -0800 (PST)
+        Thu, 22 Nov 2018 13:57:43 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:44947 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727486AbeKVS5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 13:57:43 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D595220DA7; Thu, 22 Nov 2018 09:19:19 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A5CBC20510;
+        Thu, 22 Nov 2018 09:19:09 +0100 (CET)
+Date:   Thu, 22 Nov 2018 09:19:09 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Hao Zhang <hao5781286@gmail.com>
+Cc:     robh+dt@kernel.org, wens@csie.org, icenowy@aosc.io,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v1 1/2] ARM: dts: sun8i: Add board dts file for
+ t3-cqa3t-bv3.
+Message-ID: <20181122081909.2u3kt3ih5ma2dl2y@flea>
+References: <20181121154356.GA4359@arx-s1>
 MIME-Version: 1.0
-References: <20181122075244.3909-1-natechancellor@gmail.com>
-In-Reply-To: <20181122075244.3909-1-natechancellor@gmail.com>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Thu, 22 Nov 2018 16:16:07 +0800
-Message-ID: <CAEExFWuEQ3G-U_-MwovgKFwMGcX3xxdXkkxG1J-xCBNDuUWPCw@mail.gmail.com>
-Subject: Re: [PATCH] soc/tegra: Fix terminating condition
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ndesaulniers@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="twq3molfx3dmoi2t"
+Content-Disposition: inline
+In-Reply-To: <20181121154356.GA4359@arx-s1>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 3:53 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns:
->
-> drivers/soc/tegra/common.c:27:16: error: address of array
-> 'match->compatible' will always evaluate to 'true'
-> [-Werror,-Wpointer-bool-conversion]
->         while (match->compatible) {
->         ~~~~~  ~~~~~~~^~~~~~~~~~
-> 1 error generated.
->
-> Whoops, we have an infinite loop and QEMU no longer boots...
->
-> https://travis-ci.com/ClangBuiltLinux/continuous-integration/jobs/1602429=
-18
->
-> Check that the first character of the string isn't null so that the loop
-> properly terminates.
->
-> Fixes: c57eff9503a5 ("soc/tegra: refactor soc_is_tegra()")
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/soc/tegra/common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
-> index 8a538b968fe9..54627ca957e8 100644
-> --- a/drivers/soc/tegra/common.c
-> +++ b/drivers/soc/tegra/common.c
-> @@ -24,7 +24,7 @@ bool soc_is_tegra(void)
->  {
->         const struct of_device_id *match =3D tegra_machine_match;
->
-> -       while (match->compatible) {
-> +       while (match->compatible[0]) {
-How about this?
-            while (*match->compatible) {
-=EF=BC=9A-=EF=BC=89
-Acked-by: Yangtao Li <tiny.windzz@gmail.com>
->                 if (of_machine_is_compatible(match->compatible))
->                         return true;
->
-> --
-> 2.20.0.rc1
->
+
+--twq3molfx3dmoi2t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Nov 21, 2018 at 11:43:57PM +0800, Hao Zhang wrote:
+> The T3/R40/V40 using the same sdk and config file in allwinner
+> sdk, it seem they are the same SOC just with different name, so
+> compatible with R40.
+>=20
+> The t3-cqa3t-bv3 based on Allwinner T3 SoC, it has various connectors,
+> leds, buttons, and sell on:
+> https://item.taobao.com/item.htm?spm=3D2013.1.w4023-4203040713.25.62704cc=
+e7UCgLS&id=3D557154455330
+>=20
+> It features:
+>  - X-Powers AXP221s PMIC connected to i2c0
+>  - 1/2 GB DDR3 DRAM
+>  - 8 GB eMMC
+>  - 2x USB 2.0 hosts
+>  - 1x USB 2.0 OTG
+>  - 2 LVDS connectors
+>  - 24 bit RGB LCD connector
+>  - HDMI output
+>  - DVP camera interface (support 500w cmos camera)
+>  - GPIO connectors
+>  - 5 TTL uarts and 2 RS232 uarts
+>  - 1 RS485 connector
+>  - support i2c capacitive tp and usb infrared tp
+>  - boot control, reset and user buttons
+>  - 3.5mm headphone and 3.5mm mic jack
+>  - 100M RJ45
+>  - micro SD card slot
+>  - DC power jack
+>  - RCT power slot
+>  - 1 CVBS TVIN
+>  - 1 CVBS TVOUT
+>  - 2 customer leds
+>  - 1 buzzer
+>  - 1 minipcie
+>  - I2C output
+>  - SPI output
+>  - PCM output
+>  - wifi and bt connector reserved.
+>=20
+> Board info can find here:
+> https://github.com/Axl-zhang/Allwinner-V40-T3-R40-manual
+>=20
+> Signed-off-by: Hao Zhang <hao5781286@gmail.com>
+
+Applied both patches, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--twq3molfx3dmoi2t
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/ZmfQAKCRDj7w1vZxhR
+xa6DAP4sp8sY/XXSN4qWLdHs41eBFO/p3gmW3bsc8NYx/ruhVAD+NUtOtxWkL4D/
+hwyorMZuxpCFUm/1eC7+RbngPPNzzg4=
+=4bRA
+-----END PGP SIGNATURE-----
+
+--twq3molfx3dmoi2t--
