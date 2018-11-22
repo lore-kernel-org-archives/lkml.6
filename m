@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AD23C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B56C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:09:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6E5620831
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:09:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6E5620831
+	by mail.kernel.org (Postfix) with ESMTP id CD02020831
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:09:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD02020831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404997AbeKVRrp (ORCPT
+        id S2405008AbeKVRrw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 12:47:45 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41531 "EHLO
+        Thu, 22 Nov 2018 12:47:52 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47959 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392407AbeKVRro (ORCPT
+        with ESMTP id S2389674AbeKVRrw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 12:47:44 -0500
+        Thu, 22 Nov 2018 12:47:52 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAM79Rhh3691689
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAM78rmJ3691449
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 21 Nov 2018 23:09:27 -0800
+        Wed, 21 Nov 2018 23:08:53 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAM79RKp3691686;
-        Wed, 21 Nov 2018 23:09:27 -0800
-Date:   Wed, 21 Nov 2018 23:09:27 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAM78r6w3691446;
+        Wed, 21 Nov 2018 23:08:53 -0800
+Date:   Wed, 21 Nov 2018 23:08:53 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Milian Wolff <tipbot@zytor.com>
-Message-ID: <tip-9add8fe8e6f63db47e40e65173530dcb68cd7a07@git.kernel.org>
-Cc:     jolsa@kernel.org, acme@redhat.com, hpa@zytor.com,
-        milian.wolff@kdab.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-Reply-To: mingo@kernel.org, milian.wolff@kdab.com, hpa@zytor.com,
-          jolsa@kernel.org, acme@redhat.com, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20181107223437.9071-1-milian.wolff@kdab.com>
-References: <20181107223437.9071-1-milian.wolff@kdab.com>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-yjzhak8asumz9e9hts2dgplp@git.kernel.org>
+Cc:     yhs@fb.com, mingo@kernel.org, tglx@linutronix.de,
+        namhyung@kernel.org, daniel@iogearbox.net, adrian.hunter@intel.com,
+        linux-kernel@vger.kernel.org, acme@redhat.com, wangnan0@huawei.com,
+        hpa@zytor.com, jolsa@kernel.org, ast@kernel.org,
+        ecree@solarflare.com, kafai@fb.com, dsahern@gmail.com
+Reply-To: linux-kernel@vger.kernel.org, jolsa@kernel.org,
+          ecree@solarflare.com, ast@kernel.org, wangnan0@huawei.com,
+          hpa@zytor.com, acme@redhat.com, dsahern@gmail.com, kafai@fb.com,
+          mingo@kernel.org, tglx@linutronix.de, yhs@fb.com,
+          namhyung@kernel.org, adrian.hunter@intel.com,
+          daniel@iogearbox.net
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf script: Share code and output format for uregs
- and iregs output
-Git-Commit-ID: 9add8fe8e6f63db47e40e65173530dcb68cd7a07
+Subject: [tip:perf/core] perf bpf: Reduce the hardcoded .max_entries for
+ pid_maps
+Git-Commit-ID: 0f7c2de5dd3f5c0ed9603e4ccfb6a3ddc55f46df
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,119 +63,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9add8fe8e6f63db47e40e65173530dcb68cd7a07
-Gitweb:     https://git.kernel.org/tip/9add8fe8e6f63db47e40e65173530dcb68cd7a07
-Author:     Milian Wolff <milian.wolff@kdab.com>
-AuthorDate: Wed, 7 Nov 2018 23:34:37 +0100
+Commit-ID:  0f7c2de5dd3f5c0ed9603e4ccfb6a3ddc55f46df
+Gitweb:     https://git.kernel.org/tip/0f7c2de5dd3f5c0ed9603e4ccfb6a3ddc55f46df
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Wed, 7 Nov 2018 14:49:27 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 21 Nov 2018 12:00:32 -0300
 
-perf script: Share code and output format for uregs and iregs output
+perf bpf: Reduce the hardcoded .max_entries for pid_maps
 
-The iregs output was missing the newline at end as well as the leading
-ABI output. This made it hard to compare the iregs and uregs values.
-Instead, use a single function to output the register values and use it
-for both, iregs and uregs, to ensure the output is consistent.
+While working on augmented syscalls I got into this error:
 
-Before:
+  # trace -vv --filter-pids 2469,1663 -e tools/perf/examples/bpf/augmented_raw_syscalls.c sleep 1
+  <SNIP>
+  libbpf: map 0 is "__augmented_syscalls__"
+  libbpf: map 1 is "__bpf_stdout__"
+  libbpf: map 2 is "pids_filtered"
+  libbpf: map 3 is "syscalls"
+  libbpf: collecting relocating info for: '.text'
+  libbpf: relo for 13 value 84 name 133
+  libbpf: relocation: insn_idx=3
+  libbpf: relocation: find map 3 (pids_filtered) for insn 3
+  libbpf: collecting relocating info for: 'raw_syscalls:sys_enter'
+  libbpf: relo for 8 value 0 name 0
+  libbpf: relocation: insn_idx=1
+  libbpf: relo for 8 value 0 name 0
+  libbpf: relocation: insn_idx=3
+  libbpf: relo for 9 value 28 name 178
+  libbpf: relocation: insn_idx=36
+  libbpf: relocation: find map 1 (__augmented_syscalls__) for insn 36
+  libbpf: collecting relocating info for: 'raw_syscalls:sys_exit'
+  libbpf: relo for 8 value 0 name 0
+  libbpf: relocation: insn_idx=0
+  libbpf: relo for 8 value 0 name 0
+  libbpf: relocation: insn_idx=2
+  bpf: config program 'raw_syscalls:sys_enter'
+  bpf: config program 'raw_syscalls:sys_exit'
+  libbpf: create map __bpf_stdout__: fd=3
+  libbpf: create map __augmented_syscalls__: fd=4
+  libbpf: create map syscalls: fd=5
+  libbpf: create map pids_filtered: fd=6
+  libbpf: added 13 insn from .text to prog raw_syscalls:sys_enter
+  libbpf: added 13 insn from .text to prog raw_syscalls:sys_exit
+  libbpf: load bpf program failed: Operation not permitted
+  libbpf: failed to load program 'raw_syscalls:sys_exit'
+  libbpf: failed to load object 'tools/perf/examples/bpf/augmented_raw_syscalls.c'
+  bpf: load objects failed: err=-4009: (Incorrect kernel version)
+  event syntax error: 'tools/perf/examples/bpf/augmented_raw_syscalls.c'
+                       \___ Failed to load program for unknown reason
 
-  perf  7049 [-01]  1343.354347:          1 cycles:ppp:
-        ffffffffa7bc21ce perf_event_exec+0x18e (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa7c7ead3 setup_new_exec+0xf3 (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa7cd7be5 load_elf_binary+0x395 (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa7c7e540 search_binary_handler+0x80 (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa7c7f1aa __do_execve_file.isra.13+0x58a (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa7c7f561 do_execve+0x21 (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa7c7f596 __x64_sys_execve+0x26 (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa7a041cb do_syscall_64+0x5b (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa840008c entry_SYSCALL_64+0x7c (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-    AX:0x80000000    BX:0x0    CX:0x0    DX:0x7    SI:0xf    DI:0x286    BP:0xffff95bc8213a460    SP:0xffffacbf0ba97d18    IP:0xffffffffa7bc21cd FLAGS:0x28e    CS:0x10    SS:0x18    R8:0x2    R9:0x21440   R10:0x33816fb3b8c   R11:0x1   R12:0xffff95bc8213a460   R13:0xffff95bc8213a400   R14:0xffff95bc8213a400   R15:0x1  ABI:2    AX:0xffffffffffffffda    BX:0xffffffffffffffff    CX:0x7f84ad85798b    DX:0x560209699d50    SI:0x7ffe2c7a6820    DI:0x7ffe2c7a8c9b    BP:0x7ffe2c7a20d0    SP:0x7ffe2c7a2058    IP:0x7f84ad85798b FLAGS:0x206    CS:0x33    SS:0x2b    R8:0x7ffe2c7a2030    R9:0x7f84ae55f010   R10:0x8   R11:0x206   R12:0xffffffffffffffff   R13:0xffffffffffffffff   R14:0xffffffffffffffff   R15:0xffffffffffffffff
+  (add -v to see detail)
+  Run 'perf list' for a list of valid events
 
-  perf  7049 [-01]  1343.354363:          1 cycles:ppp:
-        ...
+   Usage: perf trace [<options>] [<command>]
+      or: perf trace [<options>] -- <command> [<options>]
+      or: perf trace record [<options>] [<command>]
+      or: perf trace record [<options>] -- <command> [<options>]
 
-After:
+      -e, --event <event>   event/syscall selector. use 'perf list' to list available events
 
-  perf  7049 [-01]  1343.354347:          1 cycles:ppp:
-        ffffffffa7bc21ce perf_event_exec+0x18e (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa7c7ead3 setup_new_exec+0xf3 (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa7cd7be5 load_elf_binary+0x395 (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa7c7e540 search_binary_handler+0x80 (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa7c7f1aa __do_execve_file.isra.13+0x58a (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa7c7f561 do_execve+0x21 (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa7c7f596 __x64_sys_execve+0x26 (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa7a041cb do_syscall_64+0x5b (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-        ffffffffa840008c entry_SYSCALL_64+0x7c (/lib/modules/4.20.0-rc1perf-devel-05115-gc0bc98f76e39-dirty/build/vmlinux)
-    ABI:2    AX:0x80000000    BX:0x0    CX:0x0    DX:0x7    SI:0xf    DI:0x286    BP:0xffff95bc8213a460    SP:0xffffacbf0ba97d18    IP:0xffffffffa7bc21cd FLAGS:0x28e    CS:0x10    SS:0x18    R8:0x2    R9:0x21440   R10:0x33816fb3b8c   R11:0x1   R12:0xffff95bc8213a460   R13:0xffff95bc8213a400   R14:0xffff95bc8213a400   R15:0x1
-    ABI:2    AX:0xffffffffffffffda    BX:0xffffffffffffffff    CX:0x7f84ad85798b    DX:0x560209699d50    SI:0x7ffe2c7a6820    DI:0x7ffe2c7a8c9b    BP:0x7ffe2c7a20d0    SP:0x7ffe2c7a2058    IP:0x7f84ad85798b FLAGS:0x206    CS:0x33    SS:0x2b    R8:0x7ffe2c7a2030    R9:0x7f84ae55f010   R10:0x8   R11:0x206   R12:0xffffffffffffffff   R13:0xffffffffffffffff   R14:0xffffffffffffffff   R15:0xffffffffffffffff
+If I then try to use strace (perf trace'ing 'perf trace' needs some more work
+before its possible) to get a bit more info I get:
 
-  perf  7049 [-01]  1343.354363:          1 cycles:ppp:
-        ...
+  # strace -e bpf trace --filter-pids 2469,1663 -e tools/perf/examples/bpf/augmented_raw_syscalls.c sleep 1
+  bpf(BPF_MAP_CREATE, {map_type=BPF_MAP_TYPE_PERF_EVENT_ARRAY, key_size=4, value_size=4, max_entries=4, map_flags=0, inner_map_fd=0, map_name="__bpf_stdout__", map_ifindex=0}, 72) = 3
+  bpf(BPF_MAP_CREATE, {map_type=BPF_MAP_TYPE_PERF_EVENT_ARRAY, key_size=4, value_size=4, max_entries=4, map_flags=0, inner_map_fd=0, map_name="__augmented_sys", map_ifindex=0}, 72) = 4
+  bpf(BPF_MAP_CREATE, {map_type=BPF_MAP_TYPE_ARRAY, key_size=4, value_size=1, max_entries=500, map_flags=0, inner_map_fd=0, map_name="syscalls", map_ifindex=0}, 72) = 5
+  bpf(BPF_MAP_CREATE, {map_type=BPF_MAP_TYPE_HASH, key_size=4, value_size=1, max_entries=512, map_flags=0, inner_map_fd=0, map_name="pids_filtered", map_ifindex=0}, 72) = 6
+  bpf(BPF_PROG_LOAD, {prog_type=BPF_PROG_TYPE_TRACEPOINT, insn_cnt=57, insns=0x1223f50, license="GPL", log_level=0, log_size=0, log_buf=NULL, kern_version=KERNEL_VERSION(4, 18, 10), prog_flags=0, prog_name="sys_enter", prog_ifindex=0, expected_attach_type=BPF_CGROUP_INET_INGRESS}, 72) = 7
+  bpf(BPF_PROG_LOAD, {prog_type=BPF_PROG_TYPE_TRACEPOINT, insn_cnt=18, insns=0x1224120, license="GPL", log_level=0, log_size=0, log_buf=NULL, kern_version=KERNEL_VERSION(4, 18, 10), prog_flags=0, prog_name="sys_exit", prog_ifindex=0, expected_attach_type=BPF_CGROUP_INET_INGRESS}, 72) = -1 EPERM (Operation not permitted)
+  bpf(BPF_PROG_LOAD, {prog_type=BPF_PROG_TYPE_TRACEPOINT, insn_cnt=18, insns=0x1224120, license="GPL", log_level=1, log_size=262144, log_buf="", kern_version=KERNEL_VERSION(4, 18, 10), prog_flags=0, prog_name="sys_exit", prog_ifindex=0, expected_attach_type=BPF_CGROUP_INET_INGRESS}, 72) = -1 EPERM (Operation not permitted)
+  bpf(BPF_PROG_LOAD, {prog_type=BPF_PROG_TYPE_KPROBE, insn_cnt=18, insns=0x1224120, license="GPL", log_level=0, log_size=0, log_buf=NULL, kern_version=KERNEL_VERSION(4, 18, 10), prog_flags=0, prog_name="sys_exit", prog_ifindex=0, expected_attach_type=BPF_CGROUP_INET_INGRESS}, 72) = -1 EPERM (Operation not permitted)
+  event syntax error: 'tools/perf/examples/bpf/augmented_raw_syscalls.c'
+                       \___ Failed to load program for unknown reason
+  <SNIP similar output as without 'strace'>
+  #
 
-Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Link: http://lkml.kernel.org/r/20181107223437.9071-1-milian.wolff@kdab.com
+I managed to create the maps, etc, but then installing the "sys_exit" hook into
+the "raw_syscalls:sys_exit" tracepoint somehow gets -EPERMed...
+
+I then go and try reducing the size of this new table:
+
+  +++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
+  @@ -47,6 +47,17 @@ struct augmented_filename {
+   #define SYS_OPEN 2
+   #define SYS_OPENAT 257
+
+  +struct syscall {
+  +       bool    filtered;
+  +};
+  +
+  +struct bpf_map SEC("maps") syscalls = {
+  +       .type        = BPF_MAP_TYPE_ARRAY,
+  +       .key_size    = sizeof(int),
+  +       .value_size  = sizeof(struct syscall),
+  +       .max_entries = 500,
+  +};
+
+And after reducing that .max_entries a tad, it works. So yeah, the "unknown
+reason" should be related to the number of bytes all this is taking, reduce the
+default for pid_map()s so that we can have a "syscalls" map with enough slots
+for all syscalls in most arches. And take notes about this error message,
+improve it :-)
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Edward Cree <ecree@solarflare.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Martin KaFai Lau <kafai@fb.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: Yonghong Song <yhs@fb.com>
+Link: https://lkml.kernel.org/n/tip-yjzhak8asumz9e9hts2dgplp@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-script.c | 40 +++++++++++++++++-----------------------
- 1 file changed, 17 insertions(+), 23 deletions(-)
+ tools/perf/include/bpf/bpf.h | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index daf73832743e..04913136bac9 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -566,30 +566,10 @@ out:
- 	return 0;
+diff --git a/tools/perf/include/bpf/bpf.h b/tools/perf/include/bpf/bpf.h
+index 04ecd425a237..bd5d7b4d7760 100644
+--- a/tools/perf/include/bpf/bpf.h
++++ b/tools/perf/include/bpf/bpf.h
+@@ -18,12 +18,20 @@ struct bpf_map {
+         unsigned int numa_node;
+ };
+ 
++/*
++ * FIXME: this should receive .max_entries as a parameter, as careful
++ *	  tuning of these limits is needed to avoid hitting limits that
++ *	  prevents other BPF constructs, such as tracepoint handlers,
++ *	  to get installed, with cryptic messages from libbpf, etc.
++ *	  For the current need, 'perf trace --filter-pids', 64 should
++ *	  be good enough, but this surely needs to be revisited.
++ */
+ #define pid_map(name, value_type)		\
+ struct bpf_map SEC("maps") name = {		\
+ 	.type	     = BPF_MAP_TYPE_HASH,	\
+ 	.key_size    = sizeof(pid_t),		\
+ 	.value_size  = sizeof(value_type),	\
+-	.max_entries = 512,			\
++	.max_entries = 64,			\
  }
  
--static int perf_sample__fprintf_iregs(struct perf_sample *sample,
--				      struct perf_event_attr *attr, FILE *fp)
--{
--	struct regs_dump *regs = &sample->intr_regs;
--	uint64_t mask = attr->sample_regs_intr;
--	unsigned i = 0, r;
--	int printed = 0;
--
--	if (!regs)
--		return 0;
--
--	for_each_set_bit(r, (unsigned long *) &mask, sizeof(mask) * 8) {
--		u64 val = regs->regs[i++];
--		printed += fprintf(fp, "%5s:0x%"PRIx64" ", perf_reg_name(r), val);
--	}
--
--	return printed;
--}
--
--static int perf_sample__fprintf_uregs(struct perf_sample *sample,
--				      struct perf_event_attr *attr, FILE *fp)
-+static int perf_sample__fprintf_regs(struct regs_dump *regs, uint64_t mask,
-+				     FILE *fp
-+)
- {
--	struct regs_dump *regs = &sample->user_regs;
--	uint64_t mask = attr->sample_regs_user;
- 	unsigned i = 0, r;
- 	int printed = 0;
- 
-@@ -608,6 +588,20 @@ static int perf_sample__fprintf_uregs(struct perf_sample *sample,
- 	return printed;
- }
- 
-+static int perf_sample__fprintf_iregs(struct perf_sample *sample,
-+				      struct perf_event_attr *attr, FILE *fp)
-+{
-+	return perf_sample__fprintf_regs(&sample->intr_regs,
-+					 attr->sample_regs_intr, fp);
-+}
-+
-+static int perf_sample__fprintf_uregs(struct perf_sample *sample,
-+				      struct perf_event_attr *attr, FILE *fp)
-+{
-+	return perf_sample__fprintf_regs(&sample->user_regs,
-+					 attr->sample_regs_user, fp);
-+}
-+
- static int perf_sample__fprintf_start(struct perf_sample *sample,
- 				      struct thread *thread,
- 				      struct perf_evsel *evsel,
+ static int (*bpf_map_update_elem)(struct bpf_map *map, void *key, void *value, u64 flags) = (void *)BPF_FUNC_map_update_elem;
