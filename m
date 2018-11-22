@@ -2,139 +2,532 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C3C0C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:15:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF31C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:15:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D30D820866
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:15:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="sfUVZuFe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D30D820866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id AC16320684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:15:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC16320684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394055AbeKVUyN (ORCPT
+        id S2394067AbeKVUyQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 15:54:13 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42166 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390613AbeKVUyM (ORCPT
+        Thu, 22 Nov 2018 15:54:16 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:43253 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390613AbeKVUyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:54:12 -0500
-Received: by mail-wr1-f66.google.com with SMTP id q18so8640680wrx.9
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 02:15:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=pSwTBihn04Dewman2rEm9moNWy0qXtRfIk4dG0T6jpo=;
-        b=sfUVZuFeICGS/4m3FNzeUkm85cfXlg+VzcwlCzInhkb8tjoRY2QQsGoi+lkl2h4SVl
-         F7f5KvsasOGN3zay1twYFd0vpbupnBgmD8o4RghXYx7v9QH1Y9qw+cRub+oVgMsxKg9B
-         M8cmDDG51HKcVxjl5wrotX/QfbTckbbsozsFCeHpDt9QjNex18HAQNRINwbItgaFeb/+
-         YyJMUAtX0RocriHWoSOCXM/YRW+j0lq/PFVwy+Kxj5nQ8t+kx1qBLYl9cM3EbuRVzehr
-         b8GsW8tz8RRV/Njzx/yYHNWVBO2OzHGFwdF6TagBRdVP0h6vow4vk9ddvq6oM3m+OrdS
-         68dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=pSwTBihn04Dewman2rEm9moNWy0qXtRfIk4dG0T6jpo=;
-        b=EPgEPB9RjKDXExEscOdL6xNX5qBWoKBHxHpKP/sEShxGvFeNcm0QTPc/1s49Z/SqRG
-         zVVIg1VtUKakiGu6wuHyha9V01942Syq9bTrnSEUyG9B79e1GzYfPd3b8oSY+XuXAobd
-         nKaPjKuVKmkYj8RtzmAKK50BIs70OQ4IvBerbtbXlSxUhjLLMy6xAxy6aJ0/UNjsPqYN
-         38Jl0PfgO2DrxK/HoxLukMCOJ71qhZvgCF5ca2VWhpy4MImxPkPjfiw40ytAQClQT/O2
-         2Cpvd3XrZC2Wgbwb5X4v5eea0vl+j9JG4IhZTWPjWI0OtQgla1Xsy0LGparPTxkMdfJr
-         4ZDw==
-X-Gm-Message-State: AA+aEWbbc+7pdHMkg+qnT8dNRTZlzxn133p6fvKwckR/K89Jcyd4115W
-        aH9hRDlUG4Te4NbBZi6LNAND9n9B+mMHEQ==
-X-Google-Smtp-Source: AFSGD/W+6ThNCftTV0cVayDrUvWEAPOpLyKNdWbFAYV9WHs3LJi6fRbBAsY/fYpJ87eIJcoS6K1xng==
-X-Received: by 2002:adf:bc91:: with SMTP id g17-v6mr1347035wrh.250.1542881723294;
-        Thu, 22 Nov 2018 02:15:23 -0800 (PST)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id f192sm3382329wmd.12.2018.11.22.02.15.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 02:15:22 -0800 (PST)
-Subject: Re: [PATCH] drm/meson: Fixes for drm_crtc_vblank_on/off support
-To:     daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20181121171525.6593-1-narmstrong@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <f8cd32d4-6475-ae07-edf8-9f458279d0e0@baylibre.com>
-Date:   Thu, 22 Nov 2018 11:15:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 22 Nov 2018 15:54:15 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAMAF6v73744546
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 22 Nov 2018 02:15:06 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAMAF5n53744541;
+        Thu, 22 Nov 2018 02:15:05 -0800
+Date:   Thu, 22 Nov 2018 02:15:05 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Yi Wang <tipbot@zytor.com>
+Message-ID: <tip-d37904c5b14317a2c76efec6b9e4dbcaa17380e5@git.kernel.org>
+Cc:     peterz@infradead.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        mingo@kernel.org, wang.yi59@zte.com.cn
+Reply-To: wang.yi59@zte.com.cn, torvalds@linux-foundation.org,
+          mingo@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, peterz@infradead.org
+In-Reply-To: <1542852249-19820-1-git-send-email-wang.yi59@zte.com.cn>
+References: <1542852249-19820-1-git-send-email-wang.yi59@zte.com.cn>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cleanups] x86/headers: Fix -Wmissing-prototypes warning
+Git-Commit-ID: d37904c5b14317a2c76efec6b9e4dbcaa17380e5
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20181121171525.6593-1-narmstrong@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/11/2018 18:15, Neil Armstrong wrote:
-> Since Linux 4.17, calls to drm_crtc_vblank_on/off are mandatory, and we get
-> a warning when ctrc is disabled :
-> " driver forgot to call drm_crtc_vblank_off()"
-> 
-> But, the vsync IRQ was not totally disabled due the transient hardware
-> state and specific interrupt line thus adding proper IRQ masking from
-> the HHI system control registers.
-> 
-> Finally, due to changed in the atomic_disable code path with the updated
-> fbdev emulation, checking the crct state with an atomic_disable call
-> leads to warning in further atomic_begin() with a leftover event not cleared.
-> 
-> To Summarize :
-> - Make sure that the CRTC code will call the enable/disable_vblank hooks.
-> - *Really* mask the Vsync IRQ
-> - Allways consume the state event in atomic_disable()
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  drivers/gpu/drm/meson/meson_crtc.c | 6 +++++-
->  drivers/gpu/drm/meson/meson_venc.c | 3 +++
->  2 files changed, 8 insertions(+), 1 deletion(-)
-> 
+Commit-ID:  d37904c5b14317a2c76efec6b9e4dbcaa17380e5
+Gitweb:     https://git.kernel.org/tip/d37904c5b14317a2c76efec6b9e4dbcaa17380e5
+Author:     Yi Wang <wang.yi59@zte.com.cn>
+AuthorDate: Thu, 22 Nov 2018 10:04:09 +0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 22 Nov 2018 09:52:28 +0100
 
-[...]
+x86/headers: Fix -Wmissing-prototypes warning
 
-Well it doesn't totally solve the issue....
+When building the kernel with W=1 we get a lot of -Wmissing-prototypes
+warnings, which are trivial in nature and easy to fix - and which may
+mask some real future bugs if the prototypes get out of sync with
+the function definition.
 
-Will resend a fixed version..
+This patch fixes most of -Wmissing-prototypes warnings which
+are in the root directory of arch/x86/kernel, not including
+the subdirectories.
 
-Neil
+These are the warnings fixed in this patch:
+
+  arch/x86/kernel/signal.c:865:17: warning: no previous prototype for ‘sys32_x32_rt_sigreturn’ [-Wmissing-prototypes]
+  arch/x86/kernel/signal_compat.c:164:6: warning: no previous prototype for ‘sigaction_compat_abi’ [-Wmissing-prototypes]
+  arch/x86/kernel/traps.c:625:46: warning: no previous prototype for ‘sync_regs’ [-Wmissing-prototypes]
+  arch/x86/kernel/traps.c:640:24: warning: no previous prototype for ‘fixup_bad_iret’ [-Wmissing-prototypes]
+  arch/x86/kernel/traps.c:929:13: warning: no previous prototype for ‘trap_init’ [-Wmissing-prototypes]
+  arch/x86/kernel/irq.c:270:28: warning: no previous prototype for ‘smp_x86_platform_ipi’ [-Wmissing-prototypes]
+  arch/x86/kernel/irq.c:301:16: warning: no previous prototype for ‘smp_kvm_posted_intr_ipi’ [-Wmissing-prototypes]
+  arch/x86/kernel/irq.c:314:16: warning: no previous prototype for ‘smp_kvm_posted_intr_wakeup_ipi’ [-Wmissing-prototypes]
+  arch/x86/kernel/irq.c:328:16: warning: no previous prototype for ‘smp_kvm_posted_intr_nested_ipi’ [-Wmissing-prototypes]
+  arch/x86/kernel/irq_work.c:16:28: warning: no previous prototype for ‘smp_irq_work_interrupt’ [-Wmissing-prototypes]
+  arch/x86/kernel/irqinit.c:79:13: warning: no previous prototype for ‘init_IRQ’ [-Wmissing-prototypes]
+  arch/x86/kernel/quirks.c:672:13: warning: no previous prototype for ‘early_platform_quirks’ [-Wmissing-prototypes]
+  arch/x86/kernel/tsc.c:1499:15: warning: no previous prototype for ‘calibrate_delay_is_known’ [-Wmissing-prototypes]
+  arch/x86/kernel/process.c:653:13: warning: no previous prototype for ‘arch_post_acpi_subsys_init’ [-Wmissing-prototypes]
+  arch/x86/kernel/process.c:717:15: warning: no previous prototype for ‘arch_randomize_brk’ [-Wmissing-prototypes]
+  arch/x86/kernel/process.c:784:6: warning: no previous prototype for ‘do_arch_prctl_common’ [-Wmissing-prototypes]
+  arch/x86/kernel/reboot.c:869:6: warning: no previous prototype for ‘nmi_panic_self_stop’ [-Wmissing-prototypes]
+  arch/x86/kernel/smp.c:176:27: warning: no previous prototype for ‘smp_reboot_interrupt’ [-Wmissing-prototypes]
+  arch/x86/kernel/smp.c:260:28: warning: no previous prototype for ‘smp_reschedule_interrupt’ [-Wmissing-prototypes]
+  arch/x86/kernel/smp.c:281:28: warning: no previous prototype for ‘smp_call_function_interrupt’ [-Wmissing-prototypes]
+  arch/x86/kernel/smp.c:291:28: warning: no previous prototype for ‘smp_call_function_single_interrupt’ [-Wmissing-prototypes]
+  arch/x86/kernel/ftrace.c:840:6: warning: no previous prototype for ‘arch_ftrace_update_trampoline’ [-Wmissing-prototypes]
+  arch/x86/kernel/ftrace.c:934:7: warning: no previous prototype for ‘arch_ftrace_trampoline_func’ [-Wmissing-prototypes]
+  arch/x86/kernel/ftrace.c:946:6: warning: no previous prototype for ‘arch_ftrace_trampoline_free’ [-Wmissing-prototypes]
+  arch/x86/kernel/crash.c:114:6: warning: no previous prototype for ‘crash_smp_send_stop’ [-Wmissing-prototypes]
+  arch/x86/kernel/crash.c:351:5: warning: no previous prototype for ‘crash_setup_memmap_entries’ [-Wmissing-prototypes]
+  arch/x86/kernel/crash.c:424:5: warning: no previous prototype for ‘crash_load_segments’ [-Wmissing-prototypes]
+  arch/x86/kernel/machine_kexec_64.c:372:7: warning: no previous prototype for ‘arch_kexec_kernel_image_load’ [-Wmissing-prototypes]
+  arch/x86/kernel/paravirt-spinlocks.c:12:16: warning: no previous prototype for ‘__native_queued_spin_unlock’ [-Wmissing-prototypes]
+  arch/x86/kernel/paravirt-spinlocks.c:18:6: warning: no previous prototype for ‘pv_is_native_spin_unlock’ [-Wmissing-prototypes]
+  arch/x86/kernel/paravirt-spinlocks.c:24:16: warning: no previous prototype for ‘__native_vcpu_is_preempted’ [-Wmissing-prototypes]
+  arch/x86/kernel/paravirt-spinlocks.c:30:6: warning: no previous prototype for ‘pv_is_native_vcpu_is_preempted’ [-Wmissing-prototypes]
+  arch/x86/kernel/kvm.c:258:1: warning: no previous prototype for ‘do_async_page_fault’ [-Wmissing-prototypes]
+  arch/x86/kernel/jailhouse.c:200:6: warning: no previous prototype for ‘jailhouse_paravirt’ [-Wmissing-prototypes]
+  arch/x86/kernel/check.c:91:13: warning: no previous prototype for ‘setup_bios_corruption_check’ [-Wmissing-prototypes]
+  arch/x86/kernel/check.c:139:6: warning: no previous prototype for ‘check_for_bios_corruption’ [-Wmissing-prototypes]
+  arch/x86/kernel/devicetree.c:32:13: warning: no previous prototype for ‘early_init_dt_scan_chosen_arch’ [-Wmissing-prototypes]
+  arch/x86/kernel/devicetree.c:42:13: warning: no previous prototype for ‘add_dtb’ [-Wmissing-prototypes]
+  arch/x86/kernel/devicetree.c:108:6: warning: no previous prototype for ‘x86_of_pci_init’ [-Wmissing-prototypes]
+  arch/x86/kernel/devicetree.c:314:13: warning: no previous prototype for ‘x86_dtb_init’ [-Wmissing-prototypes]
+  arch/x86/kernel/tracepoint.c:16:5: warning: no previous prototype for ‘trace_pagefault_reg’ [-Wmissing-prototypes]
+  arch/x86/kernel/tracepoint.c:22:6: warning: no previous prototype for ‘trace_pagefault_unreg’ [-Wmissing-prototypes]
+  arch/x86/kernel/head64.c:113:22: warning: no previous prototype for ‘__startup_64’ [-Wmissing-prototypes]
+  arch/x86/kernel/head64.c:262:15: warning: no previous prototype for ‘__startup_secondary_64’ [-Wmissing-prototypes]
+  arch/x86/kernel/head64.c:350:12: warning: no previous prototype for ‘early_make_pgtable’ [-Wmissing-prototypes]
+
+[ mingo: rewrote the changelog, fixed build errors. ]
+
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: akataria@vmware.com
+Cc: akpm@linux-foundation.org
+Cc: andy.shevchenko@gmail.com
+Cc: anton@enomsg.org
+Cc: ard.biesheuvel@linaro.org
+Cc: bhe@redhat.com
+Cc: bhelgaas@google.com
+Cc: bp@alien8.de
+Cc: ccross@android.com
+Cc: devicetree@vger.kernel.org
+Cc: douly.fnst@cn.fujitsu.com
+Cc: dwmw@amazon.co.uk
+Cc: dyoung@redhat.com
+Cc: ebiederm@xmission.com
+Cc: frank.rowand@sony.com
+Cc: frowand.list@gmail.com
+Cc: ivan.gorinov@intel.com
+Cc: jailhouse-dev@googlegroups.com
+Cc: jan.kiszka@siemens.com
+Cc: jgross@suse.com
+Cc: jroedel@suse.de
+Cc: keescook@chromium.org
+Cc: kexec@lists.infradead.org
+Cc: konrad.wilk@oracle.com
+Cc: kvm@vger.kernel.org
+Cc: linux-efi@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+Cc: luto@kernel.org
+Cc: m.mizuma@jp.fujitsu.com
+Cc: namit@vmware.com
+Cc: oleg@redhat.com
+Cc: pasha.tatashin@oracle.com
+Cc: pbonzini@redhat.com
+Cc: prarit@redhat.com
+Cc: pravin.shedge4linux@gmail.com
+Cc: rajvi.jingar@intel.com
+Cc: rkrcmar@redhat.com
+Cc: robh+dt@kernel.org
+Cc: robh@kernel.org
+Cc: rostedt@goodmis.org
+Cc: takahiro.akashi@linaro.org
+Cc: thomas.lendacky@amd.com
+Cc: tony.luck@intel.com
+Cc: up2wing@gmail.com
+Cc: virtualization@lists.linux-foundation.org
+Cc: zhe.he@windriver.com
+Cc: zhong.weidong@zte.com.cn
+Link: http://lkml.kernel.org/r/1542852249-19820-1-git-send-email-wang.yi59@zte.com.cn
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/crash.h       | 1 +
+ arch/x86/include/asm/efi.h         | 2 --
+ arch/x86/include/asm/irq.h         | 7 +++++++
+ arch/x86/include/asm/irq_work.h    | 1 +
+ arch/x86/include/asm/kvm_para.h    | 1 +
+ arch/x86/include/asm/paravirt.h    | 5 +++++
+ arch/x86/include/asm/reboot.h      | 1 +
+ arch/x86/include/asm/sighandling.h | 5 +++++
+ arch/x86/include/asm/smp.h         | 6 ++++++
+ arch/x86/include/asm/traps.h       | 4 ++++
+ arch/x86/include/asm/tsc.h         | 1 +
+ arch/x86/kernel/check.c            | 3 ++-
+ arch/x86/kernel/crash.c            | 1 +
+ arch/x86/kernel/devicetree.c       | 1 +
+ arch/x86/kernel/jailhouse.c        | 1 +
+ arch/x86/kernel/process.c          | 3 +++
+ arch/x86/kernel/quirks.c           | 1 +
+ arch/x86/kernel/tracepoint.c       | 1 +
+ include/linux/efi.h                | 2 ++
+ include/linux/ftrace.h             | 3 +++
+ include/linux/kexec.h              | 1 +
+ include/linux/of_fdt.h             | 1 +
+ include/linux/ptrace.h             | 1 +
+ 23 files changed, 50 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/include/asm/crash.h b/arch/x86/include/asm/crash.h
+index a7adb2bfbf0b..0acf5ee45a21 100644
+--- a/arch/x86/include/asm/crash.h
++++ b/arch/x86/include/asm/crash.h
+@@ -6,5 +6,6 @@ int crash_load_segments(struct kimage *image);
+ int crash_copy_backup_region(struct kimage *image);
+ int crash_setup_memmap_entries(struct kimage *image,
+ 		struct boot_params *params);
++void crash_smp_send_stop(void);
+ 
+ #endif /* _ASM_X86_CRASH_H */
+diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
+index eea40d52ca78..063f1d4d698e 100644
+--- a/arch/x86/include/asm/efi.h
++++ b/arch/x86/include/asm/efi.h
+@@ -173,8 +173,6 @@ static inline bool efi_runtime_supported(void)
+ extern struct console early_efi_console;
+ extern void parse_efi_setup(u64 phys_addr, u32 data_len);
+ 
+-extern void efifb_setup_from_dmi(struct screen_info *si, const char *opt);
+-
+ #ifdef CONFIG_EFI_MIXED
+ extern void efi_thunk_runtime_setup(void);
+ extern efi_status_t efi_thunk_set_virtual_address_map(
+diff --git a/arch/x86/include/asm/irq.h b/arch/x86/include/asm/irq.h
+index 2395bb794c7b..fbb16e6b6c18 100644
+--- a/arch/x86/include/asm/irq.h
++++ b/arch/x86/include/asm/irq.h
+@@ -30,6 +30,9 @@ extern void fixup_irqs(void);
+ 
+ #ifdef CONFIG_HAVE_KVM
+ extern void kvm_set_posted_intr_wakeup_handler(void (*handler)(void));
++extern __visible void smp_kvm_posted_intr_ipi(struct pt_regs *regs);
++extern __visible void smp_kvm_posted_intr_wakeup_ipi(struct pt_regs *regs);
++extern __visible void smp_kvm_posted_intr_nested_ipi(struct pt_regs *regs);
+ #endif
+ 
+ extern void (*x86_platform_ipi_callback)(void);
+@@ -41,9 +44,13 @@ extern __visible unsigned int do_IRQ(struct pt_regs *regs);
+ 
+ extern void init_ISA_irqs(void);
+ 
++extern void __init init_IRQ(void);
++
+ #ifdef CONFIG_X86_LOCAL_APIC
+ void arch_trigger_cpumask_backtrace(const struct cpumask *mask,
+ 				    bool exclude_self);
++
++extern __visible void smp_x86_platform_ipi(struct pt_regs *regs);
+ #define arch_trigger_cpumask_backtrace arch_trigger_cpumask_backtrace
+ #endif
+ 
+diff --git a/arch/x86/include/asm/irq_work.h b/arch/x86/include/asm/irq_work.h
+index 800ffce0db29..80b35e3adf03 100644
+--- a/arch/x86/include/asm/irq_work.h
++++ b/arch/x86/include/asm/irq_work.h
+@@ -10,6 +10,7 @@ static inline bool arch_irq_work_has_interrupt(void)
+ 	return boot_cpu_has(X86_FEATURE_APIC);
+ }
+ extern void arch_irq_work_raise(void);
++extern __visible void smp_irq_work_interrupt(struct pt_regs *regs);
+ #else
+ static inline bool arch_irq_work_has_interrupt(void)
+ {
+diff --git a/arch/x86/include/asm/kvm_para.h b/arch/x86/include/asm/kvm_para.h
+index 4c723632c036..5ed3cf1c3934 100644
+--- a/arch/x86/include/asm/kvm_para.h
++++ b/arch/x86/include/asm/kvm_para.h
+@@ -92,6 +92,7 @@ void kvm_async_pf_task_wait(u32 token, int interrupt_kernel);
+ void kvm_async_pf_task_wake(u32 token);
+ u32 kvm_read_and_reset_pf_reason(void);
+ extern void kvm_disable_steal_time(void);
++void do_async_page_fault(struct pt_regs *regs, unsigned long error_code);
+ 
+ #ifdef CONFIG_PARAVIRT_SPINLOCKS
+ void __init kvm_spinlock_init(void);
+diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
+index 4bf42f9e4eea..a97f28d914d5 100644
+--- a/arch/x86/include/asm/paravirt.h
++++ b/arch/x86/include/asm/paravirt.h
+@@ -26,6 +26,11 @@ struct static_key;
+ extern struct static_key paravirt_steal_enabled;
+ extern struct static_key paravirt_steal_rq_enabled;
+ 
++__visible void __native_queued_spin_unlock(struct qspinlock *lock);
++bool pv_is_native_spin_unlock(void);
++__visible bool __native_vcpu_is_preempted(long cpu);
++bool pv_is_native_vcpu_is_preempted(void);
++
+ static inline u64 paravirt_steal_clock(int cpu)
+ {
+ 	return PVOP_CALL1(u64, time.steal_clock, cpu);
+diff --git a/arch/x86/include/asm/reboot.h b/arch/x86/include/asm/reboot.h
+index a671a1145906..04c17be9b5fd 100644
+--- a/arch/x86/include/asm/reboot.h
++++ b/arch/x86/include/asm/reboot.h
+@@ -26,6 +26,7 @@ void __noreturn machine_real_restart(unsigned int type);
+ #define MRR_APM		1
+ 
+ typedef void (*nmi_shootdown_cb)(int, struct pt_regs*);
++void nmi_panic_self_stop(struct pt_regs *regs);
+ void nmi_shootdown_cpus(nmi_shootdown_cb callback);
+ void run_crash_ipi_callback(struct pt_regs *regs);
+ 
+diff --git a/arch/x86/include/asm/sighandling.h b/arch/x86/include/asm/sighandling.h
+index bd26834724e5..2fcbd6f33ef7 100644
+--- a/arch/x86/include/asm/sighandling.h
++++ b/arch/x86/include/asm/sighandling.h
+@@ -17,4 +17,9 @@ void signal_fault(struct pt_regs *regs, void __user *frame, char *where);
+ int setup_sigcontext(struct sigcontext __user *sc, void __user *fpstate,
+ 		     struct pt_regs *regs, unsigned long mask);
+ 
++
++#ifdef CONFIG_X86_X32_ABI
++asmlinkage long sys32_x32_rt_sigreturn(void);
++#endif
++
+ #endif /* _ASM_X86_SIGHANDLING_H */
+diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
+index 547c4fe50711..2e95b6c1bca3 100644
+--- a/arch/x86/include/asm/smp.h
++++ b/arch/x86/include/asm/smp.h
+@@ -148,6 +148,12 @@ void x86_idle_thread_init(unsigned int cpu, struct task_struct *idle);
+ 
+ void smp_store_boot_cpu_info(void);
+ void smp_store_cpu_info(int id);
++
++asmlinkage __visible void smp_reboot_interrupt(void);
++__visible void smp_reschedule_interrupt(struct pt_regs *regs);
++__visible void smp_call_function_interrupt(struct pt_regs *regs);
++__visible void smp_call_function_single_interrupt(struct pt_regs *r);
++
+ #define cpu_physical_id(cpu)	per_cpu(x86_cpu_to_apicid, cpu)
+ #define cpu_acpi_id(cpu)	per_cpu(x86_cpu_to_acpiid, cpu)
+ 
+diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
+index 877afdedbbc5..5fcdf5687406 100644
+--- a/arch/x86/include/asm/traps.h
++++ b/arch/x86/include/asm/traps.h
+@@ -75,6 +75,10 @@ dotraplinkage void do_segment_not_present(struct pt_regs *regs, long error_code)
+ dotraplinkage void do_stack_segment(struct pt_regs *regs, long error_code);
+ #ifdef CONFIG_X86_64
+ dotraplinkage void do_double_fault(struct pt_regs *regs, long error_code);
++asmlinkage __visible notrace struct pt_regs *sync_regs(struct pt_regs *eregs);
++asmlinkage __visible notrace
++struct bad_iret_stack *fixup_bad_iret(struct bad_iret_stack *s);
++void __init trap_init(void);
+ #endif
+ dotraplinkage void do_general_protection(struct pt_regs *regs, long error_code);
+ dotraplinkage void do_page_fault(struct pt_regs *regs, unsigned long error_code);
+diff --git a/arch/x86/include/asm/tsc.h b/arch/x86/include/asm/tsc.h
+index eb5bbfeccb66..8a0c25c6bf09 100644
+--- a/arch/x86/include/asm/tsc.h
++++ b/arch/x86/include/asm/tsc.h
+@@ -35,6 +35,7 @@ extern struct system_counterval_t convert_art_ns_to_tsc(u64 art_ns);
+ 
+ extern void tsc_early_init(void);
+ extern void tsc_init(void);
++extern unsigned long calibrate_delay_is_known(void);
+ extern void mark_tsc_unstable(char *reason);
+ extern int unsynchronized_tsc(void);
+ extern int check_tsc_unstable(void);
+diff --git a/arch/x86/kernel/check.c b/arch/x86/kernel/check.c
+index 1979a76bfadd..5136e6818da8 100644
+--- a/arch/x86/kernel/check.c
++++ b/arch/x86/kernel/check.c
+@@ -9,6 +9,7 @@
+ #include <linux/memblock.h>
+ 
+ #include <asm/proto.h>
++#include <asm/setup.h>
+ 
+ /*
+  * Some BIOSes seem to corrupt the low 64k of memory during events
+@@ -136,7 +137,7 @@ void __init setup_bios_corruption_check(void)
+ }
+ 
+ 
+-void check_for_bios_corruption(void)
++static void check_for_bios_corruption(void)
+ {
+ 	int i;
+ 	int corruption = 0;
+diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+index f631a3f15587..c8b07d8ea5a2 100644
+--- a/arch/x86/kernel/crash.c
++++ b/arch/x86/kernel/crash.c
+@@ -37,6 +37,7 @@
+ #include <asm/reboot.h>
+ #include <asm/virtext.h>
+ #include <asm/intel_pt.h>
++#include <asm/crash.h>
+ 
+ /* Used while preparing memory map entries for second kernel */
+ struct crash_memmap_data {
+diff --git a/arch/x86/kernel/devicetree.c b/arch/x86/kernel/devicetree.c
+index 7299dcbf8e85..8d85e00bb40a 100644
+--- a/arch/x86/kernel/devicetree.c
++++ b/arch/x86/kernel/devicetree.c
+@@ -23,6 +23,7 @@
+ #include <asm/pci_x86.h>
+ #include <asm/setup.h>
+ #include <asm/i8259.h>
++#include <asm/prom.h>
+ 
+ __initdata u64 initial_dtb;
+ char __initdata cmd_line[COMMAND_LINE_SIZE];
+diff --git a/arch/x86/kernel/jailhouse.c b/arch/x86/kernel/jailhouse.c
+index 108c48d0d40e..1b2ee55a2dfb 100644
+--- a/arch/x86/kernel/jailhouse.c
++++ b/arch/x86/kernel/jailhouse.c
+@@ -19,6 +19,7 @@
+ #include <asm/pci_x86.h>
+ #include <asm/reboot.h>
+ #include <asm/setup.h>
++#include <asm/jailhouse_para.h>
+ 
+ static __initdata struct jailhouse_setup_data setup_data;
+ static unsigned int precalibrated_tsc_khz;
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index c93fcfdf1673..8a33d4ad9661 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -22,6 +22,8 @@
+ #include <linux/utsname.h>
+ #include <linux/stackprotector.h>
+ #include <linux/cpuidle.h>
++#include <linux/acpi.h>
++#include <linux/elf-randomize.h>
+ #include <trace/events/power.h>
+ #include <linux/hw_breakpoint.h>
+ #include <asm/cpu.h>
+@@ -39,6 +41,7 @@
+ #include <asm/desc.h>
+ #include <asm/prctl.h>
+ #include <asm/spec-ctrl.h>
++#include <asm/proto.h>
+ 
+ /*
+  * per-CPU TSS segments. Threads are completely 'soft' on Linux,
+diff --git a/arch/x86/kernel/quirks.c b/arch/x86/kernel/quirks.c
+index 736348ead421..8451f38ad399 100644
+--- a/arch/x86/kernel/quirks.c
++++ b/arch/x86/kernel/quirks.c
+@@ -7,6 +7,7 @@
+ #include <linux/irq.h>
+ 
+ #include <asm/hpet.h>
++#include <asm/setup.h>
+ 
+ #if defined(CONFIG_X86_IO_APIC) && defined(CONFIG_SMP) && defined(CONFIG_PCI)
+ 
+diff --git a/arch/x86/kernel/tracepoint.c b/arch/x86/kernel/tracepoint.c
+index 5bd30c442794..2e85f4dcf77b 100644
+--- a/arch/x86/kernel/tracepoint.c
++++ b/arch/x86/kernel/tracepoint.c
+@@ -10,6 +10,7 @@
+ 
+ #include <asm/hw_irq.h>
+ #include <asm/desc.h>
++#include <asm/trace/exceptions.h>
+ 
+ DEFINE_STATIC_KEY_FALSE(trace_pagefault_key);
+ 
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 845174e113ce..890c4cb37502 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1053,6 +1053,8 @@ extern struct kobject *efi_kobj;
+ extern int efi_reboot_quirk_mode;
+ extern bool efi_poweroff_required(void);
+ 
++extern void efifb_setup_from_dmi(struct screen_info *si, const char *opt);
++
+ #ifdef CONFIG_EFI_FAKE_MEMMAP
+ extern void __init efi_fake_memmap(void);
+ #else
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index a397907e8d72..182d669cc918 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -420,6 +420,9 @@ enum {
+ };
+ 
+ void arch_ftrace_update_code(int command);
++void arch_ftrace_update_trampoline(struct ftrace_ops *ops);
++void *arch_ftrace_trampoline_func(struct ftrace_ops *ops, struct dyn_ftrace *rec);
++void arch_ftrace_trampoline_free(struct ftrace_ops *ops);
+ 
+ struct ftrace_rec_iter;
+ 
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index 9e4e638fb505..53efedae3d5b 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -174,6 +174,7 @@ int kexec_purgatory_get_set_symbol(struct kimage *image, const char *name,
+ 				   bool get_value);
+ void *kexec_purgatory_get_symbol_addr(struct kimage *image, const char *name);
+ 
++void * __weak arch_kexec_kernel_image_load(struct kimage *image);
+ int __weak arch_kexec_apply_relocations_add(struct purgatory_info *pi,
+ 					    Elf_Shdr *section,
+ 					    const Elf_Shdr *relsec,
+diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
+index b9cd9ebdf9b9..a713e5d156d8 100644
+--- a/include/linux/of_fdt.h
++++ b/include/linux/of_fdt.h
+@@ -76,6 +76,7 @@ extern int early_init_dt_scan_memory(unsigned long node, const char *uname,
+ extern int early_init_dt_scan_chosen_stdout(void);
+ extern void early_init_fdt_scan_reserved_mem(void);
+ extern void early_init_fdt_reserve_self(void);
++extern void __init early_init_dt_scan_chosen_arch(unsigned long node);
+ extern void early_init_dt_add_memory_arch(u64 base, u64 size);
+ extern int early_init_dt_mark_hotplug_memory_arch(u64 base, u64 size);
+ extern int early_init_dt_reserve_memory_arch(phys_addr_t base, phys_addr_t size,
+diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
+index 6c2ffed907f5..a37d7c00da65 100644
+--- a/include/linux/ptrace.h
++++ b/include/linux/ptrace.h
+@@ -428,4 +428,5 @@ extern int task_current_syscall(struct task_struct *target, long *callno,
+ 				unsigned long args[6], unsigned int maxargs,
+ 				unsigned long *sp, unsigned long *pc);
+ 
++extern void sigaction_compat_abi(struct k_sigaction *act, struct k_sigaction *oact);
+ #endif
