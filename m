@@ -2,158 +2,209 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C101C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF4BFC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:11:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB3EF2087E
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:02:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7817C206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:11:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FhLaD3xp";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bhrVgwiJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB3EF2087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="siO4EqhB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7817C206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436590AbeKVWlr (ORCPT
+        id S2395018AbeKVWuQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 17:41:47 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:52034 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730337AbeKVWlr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 17:41:47 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id F141360710; Thu, 22 Nov 2018 12:02:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542888161;
-        bh=gmZwPK792OsEBQCLpAfUmDtrynLU/JgtlXthlx+rVnA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=FhLaD3xptDI0Ox/F9T2T8f1Hj/dTKrrrveKVcr8Ro0JkBtbiqhBCSISgrGgW2OHj9
-         9iRyM7HM0DUQB1O0vfi1gtLg3jYZkHD/WKVToMyCM2M9J/CysZ5t+7mAfy3Au2xHA9
-         GI5iebdhH6KU1C5U78M9L9xAjOztJOw9v1BI6OKw=
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 22 Nov 2018 17:50:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38406 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388214AbeKVWuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 17:50:16 -0500
+Received: from localhost (c-98-234-55-98.hsd1.ca.comcast.net [98.234.55.98])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B3132607B5;
-        Thu, 22 Nov 2018 12:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542888159;
-        bh=gmZwPK792OsEBQCLpAfUmDtrynLU/JgtlXthlx+rVnA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=bhrVgwiJ1OHG3i2jj9f2nW9uDlNqzlhSv97pTgJFYxZSCgR4ZlO1mHsLttaKnYRo6
-         7Ax3q1v5YVF6MFgHdDnPZetehfpSvj88pp6wMx5evN8Zqvrqq7H4ZKJHElTaskWxxY
-         YiVTdVcxrKNAyA2THvGelPyCYoyVMotzFiYR+u7w=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B3132607B5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qt1-f169.google.com with SMTP id n21so7154640qtl.6;
-        Thu, 22 Nov 2018 04:02:38 -0800 (PST)
-X-Gm-Message-State: AGRZ1gLqTAuZ05mv5HepWnleop74dJHZca+xxMCLcn/c8vO32ZGFLHcq
-        I51m6TXd8HY1d9R1pwLpta6pWI1uqaGYtgEkXiw=
-X-Google-Smtp-Source: AJdET5dr+NTEKeDNB1z7etXIndT/pmWGR6myJpgl/EAIw7gYQN08bY26/1daCdZSZo9FaCSBjOF7kvujSZmYXmiqkTg=
-X-Received: by 2002:ac8:7353:: with SMTP id q19mr9514802qtp.265.1542888157373;
- Thu, 22 Nov 2018 04:02:37 -0800 (PST)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58063204FD;
+        Thu, 22 Nov 2018 12:11:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542888668;
+        bh=wCNzlx4HXb2NoB+xLttMCQ8zCs8NS483xZz5Ut4B0+A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=siO4EqhBIgiEYEnXSeBHHCowMtqL17OS7X3jbwqBiCR+yLQPkdTbSymd6StVsemU2
+         7VAdlJbWGuDoWDYZWJzj+KJigrUSEMuCDbiPoMYdOQeGBrfMwLq4LB+uGF8lHi+Io8
+         uOAa7U3ZL3S/wsYUSZMnfLSFdIhAsYLyZc5lJokc=
+Date:   Thu, 22 Nov 2018 04:11:07 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Sahitya Tummala <stummala@codeaurora.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] f2fs: fix sbi->extent_list corruption issue
+Message-ID: <20181122121107.GB52295@jaegeuk-macbookpro.roam.corp.google.com>
+References: <1542884360-19470-1-git-send-email-stummala@codeaurora.org>
+ <a1e799ad-a559-12cc-9f2d-a6f037640a35@huawei.com>
 MIME-Version: 1.0
-References: <20181116112430.31248-1-vivek.gautam@codeaurora.org>
- <20181116112430.31248-3-vivek.gautam@codeaurora.org> <20181121173757.GA9801@arm.com>
-In-Reply-To: <20181121173757.GA9801@arm.com>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Thu, 22 Nov 2018 17:32:24 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iEH7_XEcZNsbZfn6iBF5_o-ZKBj=DpturH7N85LU289qg@mail.gmail.com>
-Message-ID: <CAFp+6iEH7_XEcZNsbZfn6iBF5_o-ZKBj=DpturH7N85LU289qg@mail.gmail.com>
-Subject: Re: [RESEND PATCH v17 2/5] iommu/arm-smmu: Invoke pm_runtime during
- probe, add/remove device
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, alex.williamson@redhat.com,
-        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
-        freedreno <freedreno@lists.freedesktop.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "robh+dt" <robh+dt@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a1e799ad-a559-12cc-9f2d-a6f037640a35@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+On 11/22, Chao Yu wrote:
+> On 2018/11/22 18:59, Sahitya Tummala wrote:
+> > When there is a failure in f2fs_fill_super() after/during
+> > the recovery of fsync'd nodes, it frees the current sbi and
+> > retries again. This time the mount is successful, but the files
+> > that got recovered before retry, still holds the extent tree,
+> > whose extent nodes list is corrupted since sbi and sbi->extent_list
+> > is freed up. The list_del corruption issue is observed when the
+> > file system is getting unmounted and when those recoverd files extent
+> > node is being freed up in the below context.
+> > 
+> > list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
+> > <...>
+> > kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
+> > task: fffffff1f46f2280 task.stack: ffffff8008068000
+> > lr : __list_del_entry_valid+0x94/0xb4
+> > pc : __list_del_entry_valid+0x94/0xb4
+> > <...>
+> > Call trace:
+> > __list_del_entry_valid+0x94/0xb4
+> > __release_extent_node+0xb0/0x114
+> > __free_extent_tree+0x58/0x7c
+> > f2fs_shrink_extent_tree+0xdc/0x3b0
+> > f2fs_leave_shrinker+0x28/0x7c
+> > f2fs_put_super+0xfc/0x1e0
+> > generic_shutdown_super+0x70/0xf4
+> > kill_block_super+0x2c/0x5c
+> > kill_f2fs_super+0x44/0x50
+> > deactivate_locked_super+0x60/0x8c
+> > deactivate_super+0x68/0x74
+> > cleanup_mnt+0x40/0x78
+> > __cleanup_mnt+0x1c/0x28
+> > task_work_run+0x48/0xd0
+> > do_notify_resume+0x678/0xe98
+> > work_pending+0x8/0x14
+> > 
+> > Fix this by cleaning up the extent tree of those recovered files
+> > before freeing up sbi and before next retry.
+> 
+> Would it be more clear to call shrink_dcache_sb earlier to invalid all
+> inodes and call f2fs_shrink_extent_tree release cached entries and trees in
+> error path?
 
-On Wed, Nov 21, 2018 at 11:09 PM Will Deacon <will.deacon@arm.com> wrote:
->
-> On Fri, Nov 16, 2018 at 04:54:27PM +0530, Vivek Gautam wrote:
-> > From: Sricharan R <sricharan@codeaurora.org>
-> >
-> > The smmu device probe/remove and add/remove master device callbacks
-> > gets called when the smmu is not linked to its master, that is without
-> > the context of the master device. So calling runtime apis in those places
-> > separately.
-> > Global locks are also initialized before enabling runtime pm as the
-> > runtime_resume() calls device_reset() which does tlb_sync_global()
-> > that ultimately requires locks to be initialized.
-> >
-> > Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> > [vivek: Cleanup pm runtime calls]
-> > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> > Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> > Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Agreed.
+
+> 
+> BTW, I don't see any benefit of retry flow in fill_super, I guess we can
+> avoid it to simply fill_super flow?
+
+I expect it can avoid another mount failure.
+
+> 
+> To Jaegeuk, how do you think?
+> 
+> Thanks,
+> 
+> > 
+> > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 > > ---
-> >  drivers/iommu/arm-smmu.c | 101 ++++++++++++++++++++++++++++++++++++++++++-----
-> >  1 file changed, 91 insertions(+), 10 deletions(-)
->
-> Given that you're doing the get/put in the TLBI ops unconditionally:
->
-> >  static void arm_smmu_flush_iotlb_all(struct iommu_domain *domain)
-> >  {
-> >       struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-> > +     struct arm_smmu_device *smmu = smmu_domain->smmu;
-> >
-> > -     if (smmu_domain->tlb_ops)
-> > +     if (smmu_domain->tlb_ops) {
-> > +             arm_smmu_rpm_get(smmu);
-> >               smmu_domain->tlb_ops->tlb_flush_all(smmu_domain);
-> > +             arm_smmu_rpm_put(smmu);
-> > +     }
+> >  fs/f2fs/extent_cache.c |  6 +++++-
+> >  fs/f2fs/f2fs.h         |  2 +-
+> >  fs/f2fs/inode.c        |  2 +-
+> >  fs/f2fs/super.c        | 10 ++++++++++
+> >  4 files changed, 17 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+> > index 1cb0fcc..763ba83 100644
+> > --- a/fs/f2fs/extent_cache.c
+> > +++ b/fs/f2fs/extent_cache.c
+> > @@ -743,7 +743,7 @@ void f2fs_drop_extent_tree(struct inode *inode)
+> >  		f2fs_mark_inode_dirty_sync(inode, true);
 > >  }
-> >
-> >  static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
+> >  
+> > -void f2fs_destroy_extent_tree(struct inode *inode)
+> > +void f2fs_destroy_extent_tree(struct inode *inode, bool force)
 > >  {
-> >       struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-> > +     struct arm_smmu_device *smmu = smmu_domain->smmu;
-> >
-> > -     if (smmu_domain->tlb_ops)
-> > +     if (smmu_domain->tlb_ops) {
-> > +             arm_smmu_rpm_get(smmu);
-> >               smmu_domain->tlb_ops->tlb_sync(smmu_domain);
-> > +             arm_smmu_rpm_put(smmu);
-> > +     }
->
-> Why do you need them around the map/unmap calls as well?
-
-We still have .tlb_add_flush path?
-
-Thanks
-Vivek
->
-> Will
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
-
-
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+> >  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+> >  	struct extent_tree *et = F2FS_I(inode)->extent_tree;
+> > @@ -752,6 +752,9 @@ void f2fs_destroy_extent_tree(struct inode *inode)
+> >  	if (!et)
+> >  		return;
+> >  
+> > +	if (force)
+> > +		goto destroy_et;
+> > +
+> >  	if (inode->i_nlink && !is_bad_inode(inode) &&
+> >  					atomic_read(&et->node_cnt)) {
+> >  		mutex_lock(&sbi->extent_tree_lock);
+> > @@ -761,6 +764,7 @@ void f2fs_destroy_extent_tree(struct inode *inode)
+> >  		return;
+> >  	}
+> >  
+> > +destroy_et:
+> >  	/* free all extent info belong to this extent tree */
+> >  	node_cnt = f2fs_destroy_extent_node(inode);
+> >  
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 1e03197..db8a919 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -3410,7 +3410,7 @@ bool f2fs_check_rb_tree_consistence(struct f2fs_sb_info *sbi,
+> >  bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext);
+> >  void f2fs_drop_extent_tree(struct inode *inode);
+> >  unsigned int f2fs_destroy_extent_node(struct inode *inode);
+> > -void f2fs_destroy_extent_tree(struct inode *inode);
+> > +void f2fs_destroy_extent_tree(struct inode *inode, bool force);
+> >  bool f2fs_lookup_extent_cache(struct inode *inode, pgoff_t pgofs,
+> >  			struct extent_info *ei);
+> >  void f2fs_update_extent_cache(struct dnode_of_data *dn);
+> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > index 91ceee0..39e3ade3 100644
+> > --- a/fs/f2fs/inode.c
+> > +++ b/fs/f2fs/inode.c
+> > @@ -649,7 +649,7 @@ void f2fs_evict_inode(struct inode *inode)
+> >  	f2fs_bug_on(sbi, get_dirty_pages(inode));
+> >  	f2fs_remove_dirty_inode(inode);
+> >  
+> > -	f2fs_destroy_extent_tree(inode);
+> > +	f2fs_destroy_extent_tree(inode, false);
+> >  
+> >  	if (inode->i_nlink || is_bad_inode(inode))
+> >  		goto no_delete;
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index af58b2c..f41ac43 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -3016,6 +3016,15 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
+> >  	sbi->readdir_ra = 1;
+> >  }
+> >  
+> > +void f2fs_cleanup_extent_cache(struct f2fs_sb_info *sbi)
+> > +{
+> > +	struct super_block *sb = sbi->sb;
+> > +	struct inode *inode, *next;
+> > +
+> > +	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list)
+> > +		f2fs_destroy_extent_tree(inode, true);
+> > +}
+> > +
+> >  static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >  {
+> >  	struct f2fs_sb_info *sbi;
+> > @@ -3402,6 +3411,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >  	 * falls into an infinite loop in f2fs_sync_meta_pages().
+> >  	 */
+> >  	truncate_inode_pages_final(META_MAPPING(sbi));
+> > +	f2fs_cleanup_extent_cache(sbi);
+> >  	f2fs_unregister_sysfs(sbi);
+> >  free_root_inode:
+> >  	dput(sb->s_root);
+> > 
