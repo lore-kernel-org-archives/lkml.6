@@ -2,135 +2,206 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A541C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:23:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 857F5C04EBB
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:24:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E5B220684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:23:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BzcH0a1G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E5B220684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4AF1220684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:24:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF1220684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437651AbeKWCDY (ORCPT
+        id S2437663AbeKWCE3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 21:03:24 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33140 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437635AbeKWCDY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 21:03:24 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c123so1392833pfb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 07:23:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=e9QZYbEbVJk+LhLGR3uqFlqIoOsuAlQF7p66rYaEtfI=;
-        b=BzcH0a1GklJlwwrqPLnpi2GwBSYkdxi/r2+sSXLpC0To7HZts13Yqb1EY9CKAz5lD4
-         XAEtw9PR8RT/zCp8VvcTaOfgFziMQxRkGflw5fK9M0Kq0OzXVGv6c0WsI0N1O9GMQhwM
-         Lna+REsjHEi+R4o/k/zIHVNhr5pzjTpxgQinBoVi0z4dxCymAVaz5XxrOVZn4H/1v+Lk
-         pQuBtH6SXVyq0narU5DMHJ6yC1tK/7IrvfiMLgG6hUc7GOoXLiFBjJFm5DdnO81FZdrw
-         N+tVhAvBuAiXayRFMo0a/gmzQZQaomOSnSNlDq3KN0RyttZ496wYxsix91FNrzSI/yY7
-         3+tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=e9QZYbEbVJk+LhLGR3uqFlqIoOsuAlQF7p66rYaEtfI=;
-        b=KG7nktBImNf8CK6emu8kRYNxTFqoM5CxtSfMccjzd6SeKTAtVEwsQ5LNMdAiKz1e/f
-         111fe5ZJjYy8WGl0GZXtHsvuJ6lPWnGzYDQOFX5LPSuV5rBu4qL5mHA4uAAthzSVH7Rd
-         CBZph2kx7TTfBAH5zcY4IKnf+tRhwJM+Y3zWekPPVYYobGmZNiTf842gP74As2ZIb9Cb
-         7fcPQNZRPcudY0l7yR6IC0Ij00yXiY0KsbeTTzE8PQXf1trsuQHgkDHohh+tqvF5Rt0a
-         VoK9uZy7WvNFAzi7yM5ljns+RjOqDk3fE2/j9u0olKucekr5+19ZWJryYI0i0Q+cFmpz
-         RWlQ==
-X-Gm-Message-State: AA+aEWYxuok1het96IkUlWs8mHj42UoB4nqADftudb+oMOOBY9K1tVj7
-        KMiy8BmqRSVNYPZLPXMl+k0=
-X-Google-Smtp-Source: AFSGD/XtBZwZDGuV5XcefUogfXxACDPLuEuyRB5q1tMKAjKPieCxGk9Wr9DJ11WrmXcr2p/uQO0URw==
-X-Received: by 2002:a63:b30f:: with SMTP id i15mr10535015pgf.240.1542900215023;
-        Thu, 22 Nov 2018 07:23:35 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id x184-v6sm44394918pfx.42.2018.11.22.07.23.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 22 Nov 2018 07:23:34 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     daniel.lezcano@linaro.org, tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] clocksource/drivers/integrator-ap: add missing of_node_put()
-Date:   Thu, 22 Nov 2018 10:23:31 -0500
-Message-Id: <20181122152331.25739-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 22 Nov 2018 21:04:29 -0500
+Received: from foss.arm.com ([217.140.101.70]:52056 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389173AbeKWCE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 21:04:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D1BDA78;
+        Thu, 22 Nov 2018 07:24:40 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 90A4F3F575;
+        Thu, 22 Nov 2018 07:24:37 -0800 (PST)
+Date:   Thu, 22 Nov 2018 15:24:34 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH v2] PCI: imx: Add imx6sx suspend/resume support
+Message-ID: <20181122152434.GB16857@e107981-ln.cambridge.arm.com>
+References: <984fcef6d928632241a4a3bce41e2645a304d335.1541598751.git.leonard.crestez@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <984fcef6d928632241a4a3bce41e2645a304d335.1541598751.git.leonard.crestez@nxp.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_find_node_by_path() acquires a reference to the node
-returned by it and that reference needs to be dropped by its caller.
-integrator_ap_timer_init_of() doesn't do that, so fix it.
+On Wed, Nov 07, 2018 at 01:57:03PM +0000, Leonard Crestez wrote:
+> Enable PCI suspend/resume support on imx6sx socs. This is similar to
+> imx7d with a few differences:
+> 
+> * The PM_Turn_Off bit is exposed through an IOMUX GPR, like all other
+> pcie control bits on 6sx.
+> * The pcie_inbound_axi clk needs to be turned off in suspend. On resume
+> it is restored via resume -> deassert_core_reset -> enable_ref_clk.
+> 
+> Most of the resume logic is shared with the initial reset after probe.
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> 
+> ---
+> Changes since v1:
+> * Use a switch statement in imx6_pcie_pm_turnoff. The DT-based turnoff
+> path is still an if statement.
+> * Did not split imx6_pcie_clk_disable or call it from other paths, this
+> would bring complications and is somewhat unrelated.
+> * See v1 comments: https://lore.kernel.org/patchwork/patch/996806/
+> 
+>  drivers/pci/controller/dwc/pci-imx6.c       | 44 ++++++++++++++++++---
+>  include/linux/mfd/syscon/imx6q-iomuxc-gpr.h |  1 +
+>  2 files changed, 40 insertions(+), 5 deletions(-)
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/clocksource/timer-integrator-ap.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+Applied to pci/dwc for v4.21, thanks.
 
-diff --git a/drivers/clocksource/timer-integrator-ap.c b/drivers/clocksource/timer-integrator-ap.c
-index 76e526f58620..1f04069470bb 100644
---- a/drivers/clocksource/timer-integrator-ap.c
-+++ b/drivers/clocksource/timer-integrator-ap.c
-@@ -177,7 +177,7 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
- {
- 	const char *path;
- 	void __iomem *base;
--	int err;
-+	int err,rc = 0;
- 	int irq;
- 	struct clk *clk;
- 	unsigned long rate;
-@@ -210,26 +210,34 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
- 				"arm,timer-secondary", &path);
- 	if (err) {
- 		pr_warn("Failed to read property\n");
--		return err;
-+		rc = err;
-+		goto out_put_pri_node;
- 	}
- 
- 
- 	sec_node = of_find_node_by_path(path);
- 
--	if (node == pri_node)
-+	if (node == pri_node){
- 		/* The primary timer lacks IRQ, use as clocksource */
--		return integrator_clocksource_init(rate, base);
-+		rc = integrator_clocksource_init(rate, base);
-+		goto out;
-+	}
- 
- 	if (node == sec_node) {
- 		/* The secondary timer will drive the clock event */
- 		irq = irq_of_parse_and_map(node, 0);
--		return integrator_clockevent_init(rate, base, irq);
-+		rc = integrator_clockevent_init(rate, base, irq);
-+		goto out;
- 	}
- 
- 	pr_info("Timer @%p unused\n", base);
- 	clk_disable_unprepare(clk);
-+out:
-+	of_node_put(sec_node);
-+out_put_pri_node:
-+	of_node_put(pri_node);
- 
--	return 0;
-+	return rc;
- }
- 
- TIMER_OF_DECLARE(integrator_ap_timer, "arm,integrator-timer",
--- 
-2.17.0
+Lorenzo
 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 2cbef2d7c207..54625569d0bc 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -771,41 +771,75 @@ static void imx6_pcie_ltssm_disable(struct device *dev)
+>  	}
+>  }
+>  
+>  static void imx6_pcie_pm_turnoff(struct imx6_pcie *imx6_pcie)
+>  {
+> -	reset_control_assert(imx6_pcie->turnoff_reset);
+> -	reset_control_deassert(imx6_pcie->turnoff_reset);
+> +	struct device *dev = imx6_pcie->pci->dev;
+> +
+> +	/* Some variants have a turnoff reset in DT */
+> +	if (imx6_pcie->turnoff_reset) {
+> +		reset_control_assert(imx6_pcie->turnoff_reset);
+> +		reset_control_deassert(imx6_pcie->turnoff_reset);
+> +		goto pm_turnoff_sleep;
+> +	}
+> +
+> +	/* Others poke directly at IOMUXC registers */
+> +	switch (imx6_pcie->variant) {
+> +	case IMX6SX:
+> +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> +				IMX6SX_GPR12_PCIE_PM_TURN_OFF,
+> +				IMX6SX_GPR12_PCIE_PM_TURN_OFF);
+> +		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> +				IMX6SX_GPR12_PCIE_PM_TURN_OFF, 0);
+> +		break;
+> +	default:
+> +		dev_err(dev, "PME_Turn_Off not implemented\n");
+> +		return;
+> +	}
+>  
+>  	/*
+>  	 * Components with an upstream port must respond to
+>  	 * PME_Turn_Off with PME_TO_Ack but we can't check.
+>  	 *
+>  	 * The standard recommends a 1-10ms timeout after which to
+>  	 * proceed anyway as if acks were received.
+>  	 */
+> +pm_turnoff_sleep:
+>  	usleep_range(1000, 10000);
+>  }
+>  
+>  static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
+>  {
+>  	clk_disable_unprepare(imx6_pcie->pcie);
+>  	clk_disable_unprepare(imx6_pcie->pcie_phy);
+>  	clk_disable_unprepare(imx6_pcie->pcie_bus);
+>  
+> -	if (imx6_pcie->variant == IMX7D) {
+> +	switch (imx6_pcie->variant) {
+> +	case IMX6SX:
+> +		clk_disable_unprepare(imx6_pcie->pcie_inbound_axi);
+> +		break;
+> +	case IMX7D:
+>  		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+>  				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL,
+>  				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL);
+> +		break;
+> +	default:
+> +		break;
+>  	}
+>  }
+>  
+> +static inline bool imx6_pcie_supports_suspend(struct imx6_pcie *imx6_pcie)
+> +{
+> +	return (imx6_pcie->variant == IMX7D ||
+> +		imx6_pcie->variant == IMX6SX);
+> +}
+> +
+>  static int imx6_pcie_suspend_noirq(struct device *dev)
+>  {
+>  	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+>  
+> -	if (imx6_pcie->variant != IMX7D)
+> +	if (!imx6_pcie_supports_suspend(imx6_pcie))
+>  		return 0;
+>  
+>  	imx6_pcie_pm_turnoff(imx6_pcie);
+>  	imx6_pcie_clk_disable(imx6_pcie);
+>  	imx6_pcie_ltssm_disable(dev);
+> @@ -817,11 +851,11 @@ static int imx6_pcie_resume_noirq(struct device *dev)
+>  {
+>  	int ret;
+>  	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+>  	struct pcie_port *pp = &imx6_pcie->pci->pp;
+>  
+> -	if (imx6_pcie->variant != IMX7D)
+> +	if (!imx6_pcie_supports_suspend(imx6_pcie))
+>  		return 0;
+>  
+>  	imx6_pcie_assert_core_reset(imx6_pcie);
+>  	imx6_pcie_init_phy(imx6_pcie);
+>  	imx6_pcie_deassert_core_reset(imx6_pcie);
+> diff --git a/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h b/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
+> index 6c1ad160ed87..c1b25f5e386d 100644
+> --- a/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
+> +++ b/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
+> @@ -438,10 +438,11 @@
+>  #define IMX6SX_GPR5_DISP_MUX_DCIC1_LCDIF1		(0x0 << 1)
+>  #define IMX6SX_GPR5_DISP_MUX_DCIC1_LVDS			(0x1 << 1)
+>  #define IMX6SX_GPR5_DISP_MUX_DCIC1_MASK			(0x1 << 1)
+>  
+>  #define IMX6SX_GPR12_PCIE_TEST_POWERDOWN		BIT(30)
+> +#define IMX6SX_GPR12_PCIE_PM_TURN_OFF			BIT(16)
+>  #define IMX6SX_GPR12_PCIE_RX_EQ_MASK			(0x7 << 0)
+>  #define IMX6SX_GPR12_PCIE_RX_EQ_2			(0x2 << 0)
+>  
+>  /* For imx6ul iomux gpr register field define */
+>  #define IMX6UL_GPR1_ENET1_CLK_DIR		(0x1 << 17)
+> -- 
+> 2.17.1
+> 
