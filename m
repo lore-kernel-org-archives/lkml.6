@@ -4,35 +4,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_03_06,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCA2C04EBA
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E15C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38A5920684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:04:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38A5920684
+	by mail.kernel.org (Postfix) with ESMTP id AAAC220684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:04:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAAC220684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404089AbeKVNlo (ORCPT
+        id S2404104AbeKVNls (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 08:41:44 -0500
-Received: from mail-eopbgr740040.outbound.protection.outlook.com ([40.107.74.40]:39519
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        Thu, 22 Nov 2018 08:41:48 -0500
+Received: from mail-eopbgr770042.outbound.protection.outlook.com ([40.107.77.42]:31984
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729872AbeKVNlo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 08:41:44 -0500
-Received: from BN6PR19CA0053.namprd19.prod.outlook.com (2603:10b6:404:e3::15)
- by DM3PR19MB0794.namprd19.prod.outlook.com (2603:10b6:0:1a::16) with
+        id S1729872AbeKVNlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 08:41:47 -0500
+Received: from CY4PR19CA0036.namprd19.prod.outlook.com (2603:10b6:903:103::22)
+ by SN2PR19MB0735.namprd19.prod.outlook.com (2603:10b6:804:29::23) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1339.26; Thu, 22 Nov
- 2018 03:04:24 +0000
-Received: from BL2FFO11FD026.protection.gbl (2a01:111:f400:7c09::124) by
- BN6PR19CA0053.outlook.office365.com (2603:10b6:404:e3::15) with Microsoft
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1361.15; Thu, 22 Nov
+ 2018 03:04:27 +0000
+Received: from BL2FFO11FD014.protection.gbl (2a01:111:f400:7c09::192) by
+ CY4PR19CA0036.outlook.office365.com (2603:10b6:903:103::22) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1361.16 via Frontend Transport; Thu, 22 Nov 2018 03:04:24 +0000
+ 15.20.1361.14 via Frontend Transport; Thu, 22 Nov 2018 03:04:27 +0000
 Authentication-Results: spf=softfail (sender IP is 208.19.99.221)
  smtp.mailfrom=microchip.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=none action=none
@@ -40,74 +39,76 @@ Authentication-Results: spf=softfail (sender IP is 208.19.99.221)
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  microchip.com discourages use of 208.19.99.221 as permitted sender)
 Received: from AUSMBX1.microsemi.net (208.19.99.221) by
- BL2FFO11FD026.mail.protection.outlook.com (10.173.161.105) with Microsoft
+ BL2FFO11FD014.mail.protection.outlook.com (10.173.160.222) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.20.1339.12 via Frontend Transport; Thu, 22 Nov 2018 03:04:23 +0000
+ 15.20.1339.12 via Frontend Transport; Thu, 22 Nov 2018 03:04:26 +0000
 Received: from AUSMBX1.microsemi.net (10.201.34.31) by AUSMBX1.microsemi.net
  (10.201.34.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1531.3; Wed, 21 Nov
- 2018 20:04:06 -0600
+ 2018 20:04:10 -0600
 Received: from server1.microsemi.net (10.188.116.209) by ausmbx1.microsemi.net
  (10.201.34.31) with Microsoft SMTP Server id 15.1.1531.3 via Frontend
- Transport; Wed, 21 Nov 2018 20:04:03 -0600
+ Transport; Wed, 21 Nov 2018 20:04:07 -0600
 From:   Wesley Sheng <wesley.sheng@microchip.com>
 To:     <kurt.schwemmer@microsemi.com>, <logang@deltatee.com>,
         <jdmason@kudzu.us>, <dave.jiang@intel.com>, <allenbh@gmail.com>,
         <linux-pci@vger.kernel.org>, <linux-ntb@googlegroups.com>,
         <linux-kernel@vger.kernel.org>
 CC:     <wesleyshenggit@sina.com>, <wesley.sheng@microchip.com>
-Subject: [PATCH 1/3] ntb_hw_switchtec: debug print 64bit aligned crosslink BAR Numbers
-Date:   Thu, 22 Nov 2018 17:02:00 +0800
-Message-ID: <1542877322-24548-2-git-send-email-wesley.sheng@microchip.com>
+Subject: [PATCH 2/3] ntb_hw_switchtec: Added support of >=4G memory windows
+Date:   Thu, 22 Nov 2018 17:02:01 +0800
+Message-ID: <1542877322-24548-3-git-send-email-wesley.sheng@microchip.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1542877322-24548-1-git-send-email-wesley.sheng@microchip.com>
 References: <1542877322-24548-1-git-send-email-wesley.sheng@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
-X-Matching-Connectors: 131873294640308226;(5a93feec-e11d-4f7b-166a-08d09f1f276b);()
-X-Forefront-Antispam-Report: CIP:208.19.99.221;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(346002)(39850400004)(396003)(136003)(2980300002)(199004)(189003)(2906002)(2616005)(476003)(50466002)(126002)(11346002)(446003)(4326008)(450100002)(76176011)(77096007)(26005)(336012)(69596002)(107886003)(53936002)(36756003)(51416003)(97736004)(16586007)(316002)(305945005)(106466001)(105596002)(53416004)(50226002)(48376002)(8936002)(44832011)(47776003)(486006)(498600001)(81156014)(81166006)(8676002)(110136005)(54906003)(86362001)(2201001)(356004)(5660300001)(68736007)(14444005)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM3PR19MB0794;H:AUSMBX1.microsemi.net;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11FD026;1:RovE4JWbmG8JwN/ydYJGzjxcUbA+hHKZjh2o3/bwFX6LSK4MZh/2+7GfiGqZ8dssc5S1lIP7jFq3nScYbOuGO1iMt9xceHb0y5vlxYp0IrydJLLTvZcx7e4/afyKhu4J
+X-Matching-Connectors: 131873294671628129;(5a93feec-e11d-4f7b-166a-08d09f1f276b);()
+X-Forefront-Antispam-Report: CIP:208.19.99.221;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(979002)(136003)(346002)(376002)(39860400002)(396003)(2980300002)(199004)(189003)(68736007)(110136005)(54906003)(316002)(16586007)(77096007)(76176011)(6666004)(51416003)(356004)(26005)(4326008)(81156014)(81166006)(8936002)(50226002)(305945005)(53936002)(69596002)(107886003)(36756003)(105596002)(2906002)(498600001)(86362001)(2201001)(106466001)(5660300001)(48376002)(450100002)(47776003)(336012)(44832011)(50466002)(8676002)(53416004)(2616005)(97736004)(486006)(476003)(446003)(126002)(11346002)(2101003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN2PR19MB0735;H:AUSMBX1.microsemi.net;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11FD014;1:kKw+i+JHj7NciZJHXRcXFadBfK3s8tprtCgRnWk3C9aV8Ht9K/GOOTJ5mahj3G0CLuZ3BOt0u9AG11NbAWW1i3+h0Br5GdmnZ/ybmPv8ROFvZrB6wRZoXTBV7KD4TK+W
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7365d1b4-483e-416d-d67b-08d6502734d2
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(5600074)(711020)(2017052603328);SRVR:DM3PR19MB0794;
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR19MB0794;3:69NGlueq0w3BBOvukg7a7qK+egzp3G3Ai8FiZaMGuuux1SirAt9Tb+m6PKpZU1W6OLxjqlFBHbdtmf8XPgUhb7kaqPpwRCZztg60hxLHi4PG24D1+IRWltTkaZKuVBhjCtwW3KL6ijUDzkUW8CpLwaG/cX9GgmbpUf+6W+B0z5vNwp5mkrRdIxJufPdtyDtm/Ll7BnXQ7EF3X2E3BXgnOPBNNbwbxbi6spio63rBxEdtx2mjllICHRQkvfSPUuIOYzFDAExYkkS3U1VEDVY3WR9fLzrR8Q9IjFkC3sTwN7gz40AZyTgB4JXg5TdZc+r0tiMznbwZDDSq/uvVUUo8V7Q53MSpOptq6BXwNSocWhM=;25:vTNhfnpNq3fHPfE2slwxXHFnr9NNGCi/8TwSFyGWTzeBMm3UPzOJVedZUkGfHKkoG4pqYrqifg1BVc0D3Qk4CVEi/D2iPdt/QOwqmbWQIEvjIQBHqw1I5DxD9tM+F2+ZIu7jxBXCeZFR2ZrkItAx1iGuhN31ThmH4SK7NxpqMMGG9BOdBHPgZ0J/qeh0VPZttIWM3eYp7n8Ad4mCNfIDPwM4+RnK73oJ14dxSE3xKIIb52uPwW0U8qgtY2fBNhoBa0JTmFWKlYqIC/X5JSV51tcjRKB2aGEa46jHWAnbRLfEHyTUkjbSzB0z5cgrV5oI2XCKrakQPsQ9UTGmT4PW1w==;31:+PWqiRHTgw8ovh0bYfm2aP8OEaldYfPQ3sG3y9yBbEAnLxHiT/bhuO0iC60+BHxFc8JMPwiEM050LSraPnRIl0u9MB7Z/OkT3+aU1aS9xdeXzrYeVE5KNBXqgIWhpFAtbLGExCiBnpeKDM9dZez7MNOhDaNbCLLpBmu2OgkTtQV0Y/VJHICeUId6jWOOs0VrPWtKMBJrsTcRU1JN8ozGYQ==
-X-MS-TrafficTypeDiagnostic: DM3PR19MB0794:
-X-Microsoft-Antispam-PRVS: <DM3PR19MB07947CCA778526D62DC4EEA695DB0@DM3PR19MB0794.namprd19.prod.outlook.com>
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231442)(944501410)(52105112)(6055026)(148016)(6096035)(20161123556025)(20161123565025)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123559100)(20161123563025)(20161123561025)(201708071742011)(7699051)(76991095);SRVR:DM3PR19MB0794;BCL:0;PCL:0;RULEID:(400006);SRVR:DM3PR19MB0794;
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR19MB0794;4:9vQKv0xk28zGp1PFhrr7TYno0vizzvO7v+qo296ZB726g3fKntQbNJlEqX/a3Yl4PXgmeyq/Fb8RG5EUJtXmBpbulAGgapOA7Y53K5qLmi0Uayq+1X6b8YBMTxY7VUqZJ1O0muf/dp9HAT3mhurEGZU/FrvmVa04CG+n8gThdMcqfsBjkYHOGs0F6daxGdEdfULKltM3dukaPyWdtuRvDcRsiqpXVWR9jBKt6X9E125hQMcS7kZofI9TVrdV3Y00jmrwn9QUjq4F6AJuWMHJxg==
+X-MS-Office365-Filtering-Correlation-Id: 9c699c02-f49b-471a-beac-08d6502736b0
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(5600074)(711020)(2017052603328);SRVR:SN2PR19MB0735;
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR19MB0735;3:bLBXgYzBHYOLpEUAkM2oKU1phus7BJxfcRfEUfrySNP8sr1Vv0FVBYUxig2AiT1/1Eqje3emAD0MxCQj1ZRBeN/dLv7DJ7q1aXMm27R4A5BCoHF/FZN5x2VoEaDeYdD6wSUfDpev0nm40YoRH2w4bPTm5oq0wgBGMW8C+zQ9irzlJC1RrstAUwDcbIyOO1Wo0z9TFGn7CQHfKA5jYlLbImY9D36BUtWjAfjo6wdrxW2AtbNKiRNm2h2RXdieey5f2tAgOsiVEhQHUxgNLDE84TpwdUPLU97s6e19fcJpoGlVChbNdXnA6B8HnRwtVaJ3QrR9I7GOJr1gTdVFSqqifnoUpoCFm7k09OsK+jWLR8c=;25:O5NE8n1+hTM8dLpLeC0iHb2y6KNJBqf/EHHUu7ZUNJaNccE0AXe7ncJyWz3cYm0NYaeZMMSYJeZifnQElFxpM2TVm3GwQExxlaifumusSkbWRfuG+7OWrmUSfgqXz/usMKmeMJDlUuxLLBLlcNkn9cK8y7i2wZIxS5d05AhABk2UO8i+6obh6z8OLnFz/WrKtYtG4hkbI4yiLcv8WY/DI1Le0KT+OFB0gV7XX+D/3wIOA+4tk2ev7DiPRv/C2YZS9laUik0ZVj8YUadrNYBANtEEg0D/xdl1bhEUoStO7zjGbcoJbfBz7a1iou1IPuk/u0zEQzHFDcYyrSSpm26ZWA==
+X-MS-TrafficTypeDiagnostic: SN2PR19MB0735:
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR19MB0735;31:o0ms+dV0/0XRPskJMtGpLVB7r4vRpgcb4F6GSQV3AfjVF15mmDlCdHMyiOS/QPCgHrCOxFaLHQ0AOHWzm/ezl7dAX+k5KYEs5MmnkjQscOc/0+kWRTwVE/ph5LyIEizFvpECnulDIM5Riq8ii0DTv2XIYbAOfHS6m9d8jQCTJIu7bT7y1XKC3qzOMHJ5Afuu15NC6ezKymxqLaNaa8j9dTu5eDojDkHro+XUQbtO45c=;4:Jo9IvVVBdEC2+N7hv2uprspAlkxjOPoNPR/lgqVfHmthTLIIoWqwx0pVSuiXWTwGp6t9VyA2PhZC5kJ/4le7ZBnD+N5MQ8x5hBSf/IXASQrD7Ydp/JHpcyIPTAHShnYXo3Bw0VEBukTJcdGMemvakxD3YEcnbiT2H+WYdVxcRaRrRjmiEb8NEbIfZkKKL/zP0lp8CgDDg7yoFYXMuhak+nuNB/QyqOo7sE053xxEPmcldEDKbfiZdBjdJE4Tz1Ar7Z2AgzwcOosbrXTWjjsfug==
+X-Microsoft-Antispam-PRVS: <SN2PR19MB0735D915402FA5B57B31F88195DB0@SN2PR19MB0735.namprd19.prod.outlook.com>
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(5005006)(8121501046)(10201501046)(3231442)(944501410)(52105112)(3002001)(93006095)(93001095)(6055026)(148016)(6096035)(20161123565025)(20161123563025)(20161123559100)(20161123556025)(20161123561025)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(201708071742011)(7699051)(76991095);SRVR:SN2PR19MB0735;BCL:0;PCL:0;RULEID:(400006);SRVR:SN2PR19MB0735;
 X-Forefront-PRVS: 0864A36BBF
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM3PR19MB0794;23:CS5mQzBxKsAZ60TwLH7augSuv8lwE58haxjl5JH/Z?=
- =?us-ascii?Q?M0qJSTfs/E6yhrDdqPvD07R8Ik7dBTNHYlIDnT//2ICnPB+PfcGTWqOvIPer?=
- =?us-ascii?Q?inR7KAWuWh4koqHmSVrnu8nE/vyfeELqDSOPbP3SMVT22IcGcm4LZ3R001Sa?=
- =?us-ascii?Q?OIhI3256X7ujQsrIbm0xzbjTu7okzlb9CZSv77PIEiPnm2CKgTAo76bMB4CC?=
- =?us-ascii?Q?/Jh3pdhuGND6vzaCgwoYq6s6XGltE9PwgaV/FUXNjARUdqeDKNlDfmtG0AJP?=
- =?us-ascii?Q?2PAzSLaXK0JdPiwc4s7RnlPAZPqZCqiv4dImSJhJmUyzcotU+ebraChM20LC?=
- =?us-ascii?Q?shyZhNe124DjYZxGBYd6rqRYj659tp6D20bbHx5soEemPmAoQtQbHNuwuDL8?=
- =?us-ascii?Q?X63c3Ryc6jpBMUAQzwtosmIRW/PR2VJYQoEraU3Wtg8d55IKgE+APxsnzSPn?=
- =?us-ascii?Q?RFNXkpUXZZzAHNzx+NEmey2Q22zzlAqKZtT5SlltMP86rmSqrO5FSmAgDUFn?=
- =?us-ascii?Q?9tX2acU7zz1QJilu8GC2pj/ZMbzcLve3uAK1JwE5CeiBdxWWdWRTcXj5o9VV?=
- =?us-ascii?Q?N9/309dXyHOPjej5C1tAPuoOeQWDqXmaKfhjDEIiBZK2lB5+bO97RsAsDSZK?=
- =?us-ascii?Q?43eEdXPWPh5LYU0pRWBbP3Mgfnn1b8XCTW8AKq+/h04jkYCRhErZ9a8Yg5JD?=
- =?us-ascii?Q?XpSz1BreHmiFjRNI05BwHTKqi1R8YHRB0jYYz+ar7Jh+0qIJQTfxF18w7pHV?=
- =?us-ascii?Q?bxdKeapdpZpPdizt7q3aYxltupm16aD/7f+tKWd5VbRc8MDXIkvAPbWihfPU?=
- =?us-ascii?Q?iWfU9QrLtYGFNgYu4XhqrR2HTybr8GmKPZ7++rXKtFl25TOLFXGrbgXwXvl0?=
- =?us-ascii?Q?U5KMlJ7o+qheIblf2CvAXI3ZHSaFBKffIzELc9b76TAyEt0OGX8AL9sZhJge?=
- =?us-ascii?Q?7mX5W/oqzjIhmfCJka+EM0hzwIFT+O9SfBz9szsYVOlv/s5ddPhuOj90hQIK?=
- =?us-ascii?Q?O57AynZmlvV2IlRZSwHpM1tVtPiwX2v635d3jMMDV6Vb2muigabD3Zv9WuYW?=
- =?us-ascii?Q?lyEBxeafhXPGHnVn6849K+kKI5OYuTRUhcpS+8QJmTXzIk5DdjCQP8EKIYnB?=
- =?us-ascii?Q?txEjOvE1vlNtcwDVebL4mnfxdg2kNxNSm9ARkt8BootXnW5q7rWSg=3D=3D?=
-X-Microsoft-Antispam-Message-Info: rXegAt8aERdy6Zx9IyNgYs24vO9dlp1Gk5uZU1Y+YuIgLjJRzELNb0Tb16UFtba8p9CBYiv8c9tGxbWPlsTrbT6PkutO99DdxtfYyJnbpo37rjmXypLwfzEydhMjfLB/fbFcFTQr+7v01wE2J2S5KmiuJnfKgn4/TazfxUf0LPhlZY4U9unfeJMvBtG6t3LOFg+Q6pJCKioThDWN4RHdPIgd6qpGF2SKUTRsrFA870CJ8qf9E+TvwX9OZi0IarO9bDuUPPwbKJCnKfSWnN1PY4p91xuJxVND3BKAizoWgahhtcsi9rh65qG3r/BCnYwAM0RkN76MJLXC1gIHMUEIIA==
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR19MB0794;6:qzK4jYFnRhFFb4mfTZ8yAa0enLullvPfOuFfRo1lUlt/1SKkb50ZvCXvT0lWy6RoxIEy/KBRDYnSVLeYT20Wmrzz0gRmBn9fuyCr92uatN2A2ZrrlxBBGsLBrj8wJcA0lI/OEJIQOJgcUm0/ZUxwjbQzFTSNHukFpyXSoIb/JE8sxjPKa8UpvV883fetxTAhmG2ZC7FTNpB5y8QPnZdScZ1ET0AODDelIS4IZIdbkst816RrXFDvGaXfxKA0XDLGWIKQOPZJdL4f4VLr3dxWLPLRCcf4ZUprfc20VArFxjMFRqMhcxO9dk6HVz3hVOZCrob+X2G0YpaKXXxSzAOrS+yKcPlTcA9IPb8h4BfK0GyP2lb1Uw1MJ44fCdEuLMGpvHG2jSi6VZ84lT08+g3BOeGBs+wtyfgdXop7RC7snaHntJSSiMoK3FPL1pcRj+h4lKjOhqcRLcoy/Ytnem3UPg==;5:icB6CK66pcZF4Lj1DoaNeBRGEq/e8tMXY0WuPKtRQAZgwBBhvq4ZYKp+vRr176FRX4kJ+Ij0XyXQpz/fP5ABvuXjfesR0HQ93riO87I4j2WMKqYnFYDyOXuv0yg56Au6AAzv4l6TBNnrVl2jQi7xtZET3mHxh9yfhzKWySjJTug=;7:4ASmoUEmqsMVnUWm7pbmv5QmAtwe6JgjttPCmI86VCibrlU8Q86bjFlApnLBaY2mekewEA4TfQCaWd6jC7fgDbu77E7k5qle6aJw2Egy5wFsatsYPB4agAC0ySbnrrYKb2v5KHPXSsx3LXMf2Blt/A==
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN2PR19MB0735;23:RmkzxWrbd68vDd5Sxfci4dgv8HMMYKWkWuVrJ8Vuk?=
+ =?us-ascii?Q?wxZ+WHpl/Wy3kJEdSurPWNZiGG2QSkoDdvP53H9ilwFqFd0ad6Xjj1+EBN2b?=
+ =?us-ascii?Q?fALlLxFOuFjh6KCWbuTIQZoBlPrP5iETonwc2uykp6GSqJ36Z0RzIDSQbqr1?=
+ =?us-ascii?Q?lApYu2Joa6hI0CTRTkHfD2mpneydMDeg7jrqdWbqEIlfhTC2McZhsZFlafMf?=
+ =?us-ascii?Q?O0EYVb98N6EaJLVVV+dJpPu/wjCsA0qhUvBJhSzm6lySuIrnfuoZwDWTc81m?=
+ =?us-ascii?Q?Sk/f7qH3sFt7rKnfBQjusAv5aIp46jGA9nvfFDhJ0TeX+btIda2bMA6lOGdp?=
+ =?us-ascii?Q?wotDW3zB0gF8DuA4F8uK93CinfBU8rDZyUTygoBbwLedZDI4PoLrSkBWcBNq?=
+ =?us-ascii?Q?B7zHzeTKw+RqhZqoWKLG4uFnhb+bB5vwCOEawmpo7sTSWiS8HQ4RJrC1g7KA?=
+ =?us-ascii?Q?lE9//UQ3InTCbf6VlFMnzVpgvH5Zwzv719rkrv4lxoRk5qNpNf0iPU9GxZLk?=
+ =?us-ascii?Q?LzgAGO8TM+51j7wYBwGDhMAQhGvdiaH2T9M6NA2971ucrYly7KdzS3ooWJ3j?=
+ =?us-ascii?Q?YJi0oAKrSdBRrzXwvkBy+FXhhL/uNFVZiXwbJVIr79MEUzDURXi8UkZb0ATg?=
+ =?us-ascii?Q?TLeCozCU2VvPidyTBjQ+xfqOAuXU64m96sJiNjM1mOORM2HXROUfwMQLsqPj?=
+ =?us-ascii?Q?hEQ3h3d7Yw8IGjZSC3eCQ2KQEqFbxqpq4JzSpSjUnNbPf8R9gBpdxFGkgbWc?=
+ =?us-ascii?Q?KouW5fYkQBQo9pTpeX2SgLMS8vNHooE7RZHjOZ40XMZAIoz/xaRHmIf5aM2f?=
+ =?us-ascii?Q?iqv5DsI22gVKCcNbSUOGqOEXpRo+B+YWng3juM8dDwlNBb4Oe9LdbfiCheZd?=
+ =?us-ascii?Q?F+LtKjbAKVSwQJ+7GGx0AjLJFVxjTXq26u96+whR9nPoHRK7InNO4UHdXhjD?=
+ =?us-ascii?Q?KQ40bmBmK3qDyhav0zA1JkfffdY+aCr/Xgazb3UvM9nENbMnO7++ZmQr1rEg?=
+ =?us-ascii?Q?sCLzODFdx2BgJ5aX7fMhfuIFQmWF+7/tRElGrcyfqCz6QLOW2h0BsZ7Qx3pO?=
+ =?us-ascii?Q?DaF19RtOAqxa2S4mDC5/jSAHlwog22hIukwKHZ05UPcG5LDHBvaUY3+jymw0?=
+ =?us-ascii?Q?rWY5MiBhvhzE3FuSDFoOLY5jvIq2iU0c0unTs+22DcVO5xNf7HxF76Q8khE1?=
+ =?us-ascii?Q?8Q80pPJeh8Hm485i26AR6M6FzAE+Et3ZtyXFJJ25AVt9bwgU5enfcKixrMDu?=
+ =?us-ascii?Q?KFsptyFjbtsw/VPzBK1hjybAfMlGaXq82shILb1?=
+X-Microsoft-Antispam-Message-Info: 16wch/MsrJkfF6RLQrLw5SXekquf3LSX32ME9omj1vO5UHRxnOG8jonmje7BN4gg5lyQh/V5+ggyvVnPcj/eJa89ZFb4BC1QdBSgmiQxGLlQx6wFw2uf251lYuP5Xh40XUxWxk6CDOpFLEyuRl0cEqUks9n53oYB7apJtHmuk6q1kcJe1z0MevfVdAfzrE2Yj8rrCOOLx9t7vSQScpW9L74x8Yt1p0U35zIp5yS0BRqOZ0FoUy9aZb1jWOU50ezl1KrElXirS6OhwBdgT+mEPPx+N+bDRf0VjhIOhDp3euTJkOUAok0aQ5prxLhs0alFW/OZ1TIHVRshrJUekfFY8xBskVMJjN9Xk/ypLXdY54Q=
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR19MB0735;6:yUA7Z29QbsEXEuUTDSUKENJgwkaZ8Xow4ZKeKeZfsQEeQWPYAU84eQkOOHdD15vfWV+aW6Ot+IZRiwSM8/hSP8Qx4VYSNffiO/ZTM4NcCYYKP/3hBWL6GPIrBHxbvT8JA4/+/d7D+fgGXLFYNmoYkvmfmRRB2asoUgfoVjVxC7YZ7MNxSn1ICo2tidD3JrOFvBu5ojRfcvbDuE/US9bhIi8168N3PfEcDIQ6eDz1vUdU85MzeAqmikKl0tYwxyDVoaobS4Y9dx/J/UaE0K0qqThfoaiQTp/c/dJW6oI+2xYNX1SpYY7I2bE5EPBrZWTR5um2xSdifpMT023dx0z+3LKlO512lp4hwayTnf4Zi9yL7SdupQc1eEalFVEgv6ItbHMAzSyFq/wSb9R1yEy54ldjXOpgACqiJ8TjA2I2STcZeT8V5unIYeCY+YY+Kj8P7kUvwIhp/cEZ/6fo8W2INw==;5:8dXOwHusOqHEcC9WuAVYKsUYSmJhnaZSdezZhSZGimF+7cWllImQ1WFndoR9+kA+BEQmkxjW0dMVRS73Vlf/eJfp9SOEAIJko3RQO3Lkiimf8WgEGFabc8PkhK1fCfI1XHhPAaWPxagKp44Qq9kKyJAo6M8P++apAYuRyDR6Xhw=;7:aHE6nVm58pXOJRwXa+HPg/C+tWu3ZSPJs9nGsy/Orcf3RQYuXaQUMqynnm2IqtCrNfEQSxEBPys32nuWIgvq4U6xRZRnw+7PSeOWXpYbw3BXLTQr/iWasCuTQ+ucOXuwBnZga2yrjyVv7d4gQw0H3g==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2018 03:04:23.8433
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2018 03:04:26.9753
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7365d1b4-483e-416d-d67b-08d6502734d2
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c699c02-f49b-471a-beac-08d6502736b0
 X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[208.19.99.221];Helo=[AUSMBX1.microsemi.net]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR19MB0794
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN2PR19MB0735
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -115,29 +116,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Paul Selles <paul.selles@microchip.com>
 
-Switchtec NTB crosslink BARs are 64bit addressed but they are printed as
-32bit addressed BARs. Fix debug log to increment the BAR numbers by 2 to
-reflect the 64bit address alignment.
+Current Switchtec's BAR setup registers are limited to 32bits,
+corresponding to the maximum MW (memory window) size is <4G.
 
+Increase the MW sizes with the addition of the BAR Setup Extension
+Register for the upper 32bits of a 64bits MW size. This increases the MW
+range to between 4K and 2^63.
+
+Reported-by: Boris Glimcher <boris.glimcher@emc.com>
 Signed-off-by: Paul Selles <paul.selles@microchip.com>
 Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
 ---
- drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 9 +++++++--
+ include/linux/switchtec.h              | 6 +++++-
+ 2 files changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-index 5ee5f40..9916bc5 100644
+index 9916bc5..32850fb 100644
 --- a/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
 +++ b/drivers/ntb/hw/mscc/ntb_hw_switchtec.c
-@@ -1120,7 +1120,7 @@ static int crosslink_enum_partition(struct switchtec_ntb *sndev,
+@@ -264,6 +264,7 @@ static void switchtec_ntb_mw_clr_direct(struct switchtec_ntb *sndev, int idx)
+ 	ctl_val &= ~NTB_CTRL_BAR_DIR_WIN_EN;
+ 	iowrite32(ctl_val, &ctl->bar_entry[bar].ctl);
+ 	iowrite32(0, &ctl->bar_entry[bar].win_size);
++	iowrite32(0, &ctl->bar_ext_entry[bar].win_size);
+ 	iowrite64(sndev->self_partition, &ctl->bar_entry[bar].xlate_addr);
+ }
  
- 		dev_dbg(&sndev->stdev->dev,
- 			"Crosslink BAR%d addr: %llx\n",
--			i, bar_addr);
-+			i*2, bar_addr);
+@@ -286,7 +287,9 @@ static void switchtec_ntb_mw_set_direct(struct switchtec_ntb *sndev, int idx,
+ 	ctl_val |= NTB_CTRL_BAR_DIR_WIN_EN;
  
- 		if (bar_addr != bar_space * i)
- 			continue;
+ 	iowrite32(ctl_val, &ctl->bar_entry[bar].ctl);
+-	iowrite32(xlate_pos | size, &ctl->bar_entry[bar].win_size);
++	iowrite32(xlate_pos | (size & 0xFFFFF000),
++		  &ctl->bar_entry[bar].win_size);
++	iowrite32(size >> 32, &ctl->bar_ext_entry[bar].win_size);
+ 	iowrite64(sndev->self_partition | addr,
+ 		  &ctl->bar_entry[bar].xlate_addr);
+ }
+@@ -1053,7 +1056,9 @@ static int crosslink_setup_mws(struct switchtec_ntb *sndev, int ntb_lut_idx,
+ 		ctl_val |= NTB_CTRL_BAR_DIR_WIN_EN;
+ 
+ 		iowrite32(ctl_val, &ctl->bar_entry[bar].ctl);
+-		iowrite32(xlate_pos | size, &ctl->bar_entry[bar].win_size);
++		iowrite32(xlate_pos | (size & 0xFFFFF000),
++			  &ctl->bar_entry[bar].win_size);
++		iowrite32(size >> 32, &ctl->bar_ext_entry[bar].win_size);
+ 		iowrite64(sndev->peer_partition | addr,
+ 			  &ctl->bar_entry[bar].xlate_addr);
+ 	}
+diff --git a/include/linux/switchtec.h b/include/linux/switchtec.h
+index eee0412..1e6e333 100644
+--- a/include/linux/switchtec.h
++++ b/include/linux/switchtec.h
+@@ -248,7 +248,11 @@ struct ntb_ctrl_regs {
+ 		u32 win_size;
+ 		u64 xlate_addr;
+ 	} bar_entry[6];
+-	u32 reserved2[216];
++	struct {
++		u32 win_size;
++		u32 reserved[3];
++	} bar_ext_entry[6];
++	u32 reserved2[192];
+ 	u32 req_id_table[256];
+ 	u32 reserved3[512];
+ 	u64 lut_entry[512];
 -- 
 2.7.4
 
