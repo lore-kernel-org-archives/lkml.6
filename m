@@ -2,103 +2,93 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7ECC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51325C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:15:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A003C20820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:11:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A003C20820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1340020865
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:14:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1340020865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392861AbeKVStY (ORCPT
+        id S2389778AbeKVSxS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 13:49:24 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:44765 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733146AbeKVStY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 13:49:24 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6F00420D29; Thu, 22 Nov 2018 09:11:02 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1EEB920510;
-        Thu, 22 Nov 2018 09:10:52 +0100 (CET)
-Date:   Thu, 22 Nov 2018 09:10:51 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Marek Vasut <marex@denx.de>
-Subject: [GIT PULL] mtd: Fixes for 4.20-rc4
-Message-ID: <20181122091051.70407bcd@bbrezillon>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 22 Nov 2018 13:53:18 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:46613 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733142AbeKVSxS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 13:53:18 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gPk8O-0008RQ-6c; Thu, 22 Nov 2018 09:14:48 +0100
+Date:   Thu, 22 Nov 2018 09:14:47 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>
+cc:     Tom Lendacky <thomas.lendacky@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [patch 15/24] x86/speculation: Add command line control for
+ indirect branch speculation
+In-Reply-To: <20181121234312.GI27559@zn.tnic>
+Message-ID: <alpine.DEB.2.21.1811220048080.1665@nanos.tec.linutronix.de>
+References: <20181121201430.559770965@linutronix.de> <20181121201723.764150349@linutronix.de> <20181121234312.GI27559@zn.tnic>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
+On Thu, 22 Nov 2018, Borislav Petkov wrote:
+> > +
+> > +	/* Initialize Indirect Branch Prediction Barrier */
+> > +	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+> > +		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
+> > +		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
+> > +	}
+> 
+> So AFAICT, if coming in here with AUTO, we won't enable IBPB and I
+> *think* AMD wants IBPB enabled. At least the whitepaper says:
+> 
+> "IBPB combined with Reptoline software support is the AMD recommended
+> setting for Linux mitigation of Google Project Zero Variant 2
+> (Spectre)."
 
-Here is the MTD fixes PR for 4.20-rc4.
+Ok. That's indeed a step backwards, because we don't do IBPB in KVM
+anymore. I'll fix that tomorrow morning when brain is more awake.
 
-Regards,
+IBPB on context switch is controlled separately anyway now, so that's a
+nobrainer to sort out.
 
-Boris
+Though I wait for Toms answer whether we really want IBPB on context switch
+for AMD by default.
 
-The following changes since commit ccda4af0f4b92f7b4c308d3acc262f4a7e3affad:
+Thanks,
 
-  Linux 4.20-rc2 (2018-11-11 17:12:31 -0600)
-
-are available in the Git repository at:
-
-  git://git.infradead.org/linux-mtd.git tags/mtd/fixes-for-4.20-rc4
-
-for you to fetch changes up to e8828ec1c003727fc001eab06aa19bd2ca9b677e:
-
-  mtd: spi-nor: fix selection of uniform erase type in flexible conf (2018-11-20 14:26:59 +0100)
-
-----------------------------------------------------------------
-SPI NOR fixes:
-- Various fixes related to the SFDP parsing code merged in 4.20
-- Fix for a page fault in the cadence-qspi
-
-NAND fixes:
-- Fix a macro name conflict between the QCOM NAND controller driver
-  and the RISC-V asm headers
-- Fix of-node handling in the atmel driver
-
-----------------------------------------------------------------
-Johan Hovold (1):
-      mtd: rawnand: atmel: fix OF child-node lookup
-
-Olof Johansson (1):
-      mtd: rawnand: qcom: Namespace prefix some commands
-
-Thor Thayer (1):
-      mtd: spi-nor: Fix Cadence QSPI page fault kernel panic
-
-Tudor.Ambarus@microchip.com (5):
-      mtd: spi-nor: don't drop sfdp data if optional parsers fail
-      mtd: spi-nor: fix iteration over smpt array
-      mtd: spi-nor: don't overwrite errno in spi_nor_get_map_in_use()
-      mtd: spi_nor: pass DMA-able buffer to spi_nor_read_raw()
-      mtd: spi-nor: fix selection of uniform erase type in flexible conf
-
- drivers/mtd/nand/raw/atmel/nand-controller.c |  11 +++--
- drivers/mtd/nand/raw/qcom_nandc.c            |  32 ++++++-------
- drivers/mtd/spi-nor/cadence-quadspi.c        |  19 ++++++--
- drivers/mtd/spi-nor/spi-nor.c                | 130 +++++++++++++++++++++++++++++++++++++++-------------
- 4 files changed, 137 insertions(+), 55 deletions(-)
+	tglx
