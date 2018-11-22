@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33DEDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C5F4C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF32C20864
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:02:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF32C20864
+	by mail.kernel.org (Postfix) with ESMTP id 3674220864
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:03:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3674220864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404825AbeKVRkt (ORCPT
+        id S2404840AbeKVRl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 12:40:49 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:36771 "EHLO
+        Thu, 22 Nov 2018 12:41:26 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49643 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732578AbeKVRkt (ORCPT
+        with ESMTP id S1726958AbeKVRl0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 12:40:49 -0500
+        Thu, 22 Nov 2018 12:41:26 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAM72aOn3689053
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAM73Bse3689284
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 21 Nov 2018 23:02:36 -0800
+        Wed, 21 Nov 2018 23:03:11 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAM72alx3689050;
-        Wed, 21 Nov 2018 23:02:36 -0800
-Date:   Wed, 21 Nov 2018 23:02:36 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAM73BTl3689281;
+        Wed, 21 Nov 2018 23:03:11 -0800
+Date:   Wed, 21 Nov 2018 23:03:11 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-gdwvq53wltvq6b3g5tdmh0cw@git.kernel.org>
-Cc:     hpa@zytor.com, tglx@linutronix.de, acme@redhat.com,
-        adrian.hunter@intel.com, jolsa@kernel.org, dsahern@gmail.com,
-        namhyung@kernel.org, mingo@kernel.org, wangnan0@huawei.com,
-        linux-kernel@vger.kernel.org
-Reply-To: linux-kernel@vger.kernel.org, wangnan0@huawei.com,
-          mingo@kernel.org, dsahern@gmail.com, namhyung@kernel.org,
-          jolsa@kernel.org, adrian.hunter@intel.com, tglx@linutronix.de,
-          hpa@zytor.com, acme@redhat.com
+Message-ID: <tip-9sybmz4vchlbpqwx2am13h9e@git.kernel.org>
+Cc:     namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, adrian.hunter@intel.com, acme@redhat.com,
+        wangnan0@huawei.com, dsahern@gmail.com, jolsa@kernel.org,
+        hpa@zytor.com, tglx@linutronix.de
+Reply-To: hpa@zytor.com, tglx@linutronix.de, dsahern@gmail.com,
+          jolsa@kernel.org, wangnan0@huawei.com, acme@redhat.com,
+          adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, namhyung@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf bpf: Add defines for map insertion/lookup
-Git-Commit-ID: 382b55dbef6b68e3fef2fd8a438fbaff57695308
+Subject: [tip:perf/core] perf bpf: Add simple pid_filter class accessible to
+ BPF proggies
+Git-Commit-ID: 8008aab0962ea68cc00d15e8d7b0637b48837a40
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,48 +60,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  382b55dbef6b68e3fef2fd8a438fbaff57695308
-Gitweb:     https://git.kernel.org/tip/382b55dbef6b68e3fef2fd8a438fbaff57695308
+Commit-ID:  8008aab0962ea68cc00d15e8d7b0637b48837a40
+Gitweb:     https://git.kernel.org/tip/8008aab0962ea68cc00d15e8d7b0637b48837a40
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 6 Nov 2018 15:46:27 -0300
+AuthorDate: Tue, 6 Nov 2018 15:50:36 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 21 Nov 2018 12:00:31 -0300
 
-perf bpf: Add defines for map insertion/lookup
+perf bpf: Add simple pid_filter class accessible to BPF proggies
 
-Starting with a helper for a basic pid_map(), a hash using a pid as a
-key.
+Will be used in the augmented_raw_syscalls.c to implement 'perf trace
+--filter-pids'.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-gdwvq53wltvq6b3g5tdmh0cw@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-9sybmz4vchlbpqwx2am13h9e@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/include/bpf/bpf.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ tools/perf/include/bpf/pid_filter.h | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/tools/perf/include/bpf/bpf.h b/tools/perf/include/bpf/bpf.h
-index 52b6d87fe822..04ecd425a237 100644
---- a/tools/perf/include/bpf/bpf.h
-+++ b/tools/perf/include/bpf/bpf.h
-@@ -18,6 +18,17 @@ struct bpf_map {
-         unsigned int numa_node;
- };
- 
-+#define pid_map(name, value_type)		\
-+struct bpf_map SEC("maps") name = {		\
-+	.type	     = BPF_MAP_TYPE_HASH,	\
-+	.key_size    = sizeof(pid_t),		\
-+	.value_size  = sizeof(value_type),	\
-+	.max_entries = 512,			\
+diff --git a/tools/perf/include/bpf/pid_filter.h b/tools/perf/include/bpf/pid_filter.h
+new file mode 100644
+index 000000000000..6e61c4bdf548
+--- /dev/null
++++ b/tools/perf/include/bpf/pid_filter.h
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: LGPL-2.1
++
++#ifndef _PERF_BPF_PID_FILTER_
++#define _PERF_BPF_PID_FILTER_
++
++#include <bpf.h>
++
++#define pid_filter(name) pid_map(name, bool)
++
++static int pid_filter__add(struct bpf_map *pids, pid_t pid)
++{
++	bool value = true;
++	return bpf_map_update_elem(pids, &pid, &value, BPF_NOEXIST);
 +}
 +
-+static int (*bpf_map_update_elem)(struct bpf_map *map, void *key, void *value, u64 flags) = (void *)BPF_FUNC_map_update_elem;
-+static void *(*bpf_map_lookup_elem)(struct bpf_map *map, void *key) = (void *)BPF_FUNC_map_lookup_elem;
++static bool pid_filter__has(struct bpf_map *pids, pid_t pid)
++{
++	return bpf_map_lookup_elem(pids, &pid) != NULL;
++}
 +
- #define SEC(NAME) __attribute__((section(NAME),  used))
- 
- #define probe(function, vars) \
++#endif // _PERF_BPF_PID_FILTER_
