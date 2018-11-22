@@ -2,135 +2,168 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C68C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 242EEC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:50:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6588720818
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:31:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZlK5YlZE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6588720818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id D095920663
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:50:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D095920663
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439009AbeKWJMa (ORCPT
+        id S2407836AbeKWJbi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 04:12:30 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45833 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730540AbeKWJMa (ORCPT
+        Fri, 23 Nov 2018 04:31:38 -0500
+Received: from www62.your-server.de ([213.133.104.62]:57700 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730540AbeKWJbh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 04:12:30 -0500
-Received: by mail-pg1-f194.google.com with SMTP id y4so2204910pgc.12;
-        Thu, 22 Nov 2018 14:31:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YJfyDBolJ+U3xXev1xBbjbMoiaxZBi7gHynOnanFRDU=;
-        b=ZlK5YlZEzBOKF6I6aHb+0k7cBNibikgtvNjyL1PHm3b4bgOEv3Yhy+I8EX3tk1TMB0
-         byVxHkhuQcDgHYQ0idBVwc56DswrT37t/s6erkuWlXJ4rw3k7N3WXGbUyJWdFzbD+n10
-         L1pirFcXSrudmjxNh2IdE7pc6EZhDzc1hM92SIClPG+oX+LLvIaBPF5iTsDI/mZlM7T1
-         NN1M84dZaCy+rQ2OZ+3CuoRiKo0kbbbwe/sDvCDuq8h7HMNhAIQ6btcaYDoYONQCVnr3
-         T+ysFhvcAoVUUMur1tv2ng7Pjg1owHwXNrW7LXeme8lah7Tx/wPO+C+KboFWwXdHs6fW
-         3+CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YJfyDBolJ+U3xXev1xBbjbMoiaxZBi7gHynOnanFRDU=;
-        b=Jju56kjg14jGQC4dXomxEEOVa4EFnMo6h0HQxiq7zX17LkdRWWj5wYaq6lWQF0HMVa
-         BFvQYbRaKd8lbDwIhkZGY18He+DWbogVfcbYGnHlgsc1t0jMKS5kXJL7EHVILdsmheB9
-         8aXki9jmOi2BSp9qguIfR5ZoFrtB4X62Fw4XHCEqD73n+CyddVprqsYSZs5fd9qPnv4I
-         h6NlUx83XQsXzH1i6LLdplYYI39MAzjtl+ywRLfJwDO7sWDjbVOLOzcc1UMHH0306aAk
-         wrLNyWX3qL8vHxQWdlOWXqf37cgNPO5TOjhu2ZsbB5ixCrKQ00Hk+Th1PsOmfCAE2WW+
-         uEcA==
-X-Gm-Message-State: AGRZ1gJyNlqx1huxo5Hb8nROjURqOOVWVPLMedHmC92FeZS3ppoM57SK
-        C+k/JGyZLI2qcOYmk9T1hLg=
-X-Google-Smtp-Source: AJdET5enjKbH3nibcumQTPrKMtUVQBG+eYuEZPcB8j/+FPBBbBg4KYNKix3F4kNXEf4DDb9HCDIvSg==
-X-Received: by 2002:a62:8145:: with SMTP id t66mr13372512pfd.55.1542925861785;
-        Thu, 22 Nov 2018 14:31:01 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id h74sm2189763pfd.35.2018.11.22.14.30.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 14:31:00 -0800 (PST)
-Subject: Re: [PATCH 4.19 00/42] 4.19.4-stable review
-To:     Thomas Voegtle <tv@lio96.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>
-References: <20181121183147.869199006@linuxfoundation.org>
- <alpine.LSU.2.21.1811222148260.12239@er-systems.de>
- <alpine.LSU.2.21.1811222259160.22493@er-systems.de>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <259dad79-9bed-0b6b-3723-82bf4a0a9603@roeck-us.net>
-Date:   Thu, 22 Nov 2018 14:30:58 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 23 Nov 2018 04:31:37 -0500
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gPxn2-0002lF-9x; Thu, 22 Nov 2018 23:49:40 +0100
+Received: from [178.197.248.22] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gPxn2-0000K4-3H; Thu, 22 Nov 2018 23:49:40 +0100
+Subject: Re: [PATCH v2 2/2] arm64/bpf: don't allocate BPF JIT programs in
+ module memory
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>
+References: <20181121131733.14910-1-ard.biesheuvel@linaro.org>
+ <20181121131733.14910-3-ard.biesheuvel@linaro.org>
+ <945415e1-0ff8-65ce-15fa-33cea0a7d1c9@iogearbox.net>
+ <CAKv+Gu-UE0hR-iEkhUieGn+UO_PFs+cD535W1Rq9iyRkgEj=qA@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <37f48c6a-e760-87eb-6559-afdd2f116ed6@iogearbox.net>
+Date:   Thu, 22 Nov 2018 23:49:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.LSU.2.21.1811222259160.22493@er-systems.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAKv+Gu-UE0hR-iEkhUieGn+UO_PFs+cD535W1Rq9iyRkgEj=qA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25143/Thu Nov 22 15:14:45 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/22/18 2:01 PM, Thomas Voegtle wrote:
-> On Thu, 22 Nov 2018, Thomas Voegtle wrote:
-> 
+On 11/22/2018 09:02 AM, Ard Biesheuvel wrote:
+> On Thu, 22 Nov 2018 at 00:20, Daniel Borkmann <daniel@iogearbox.net> wrote:
+>> On 11/21/2018 02:17 PM, Ard Biesheuvel wrote:
+>>> The arm64 module region is a 128 MB region that is kept close to
+>>> the core kernel, in order to ensure that relative branches are
+>>> always in range. So using the same region for programs that do
+>>> not have this restriction is wasteful, and preferably avoided.
+>>>
+>>> Now that the core BPF JIT code permits the alloc/free routines to
+>>> be overridden, implement them by simple vmalloc_exec()/vfree()
+>>> calls, which can be served from anywere. This also solves an
+>>> issue under KASAN, where shadow memory is needlessly allocated for
+>>> all BPF programs (which don't require KASAN shadow pages since
+>>> they are not KASAN instrumented)
+>>>
+>>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>> ---
+>>>  arch/arm64/net/bpf_jit_comp.c | 10 ++++++++++
+>>>  1 file changed, 10 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+>>> index a6fdaea07c63..f91b7c157841 100644
+>>> --- a/arch/arm64/net/bpf_jit_comp.c
+>>> +++ b/arch/arm64/net/bpf_jit_comp.c
+>>> @@ -940,3 +940,13 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+>>>                                          tmp : orig_prog);
+>>>       return prog;
+>>>  }
+>>> +
+>>> +void *bpf_jit_alloc_exec(unsigned long size)
+>>> +{
+>>> +     return vmalloc_exec(size);
+>>> +}
+>>> +
+>>> +void bpf_jit_free_exec(const void *addr)
+>>> +{
+>>> +     return vfree(size);
+>>> +}
 >>
->> Doesn't compile for me on OpenSuSE 15.0 (gcc 7.3.1):
->>
->>   CALL    scripts/checksyscalls.sh
->>   DESCEND  objtool
->>   CHK     include/generated/compile.h
->>   CC [M]  drivers/gpu/drm/i915/i915_gem_gtt.o
->> drivers/gpu/drm/i915/i915_gem_gtt.c: In function ‘gen6_dump_ppgtt’:
->> drivers/gpu/drm/i915/i915_gem_gtt.c:1771:41: error: format ‘%llx’ expects
->> argument of type ‘long long unsigned int’, but argument 5 has type ‘long
->> unsigned int’ [-Werror=format=]
->>    seq_printf(m, "\t\t(%03d, %04d) %08llx: ",
->>                                    ~~~~~ ^
->>                                    %08lx
->> cc1: all warnings being treated as errors
->> make[4]: *** [scripts/Makefile.build:306:
->> drivers/gpu/drm/i915/i915_gem_gtt.o] Error 1
->> make[3]: *** [scripts/Makefile.build:546: drivers/gpu/drm/i915] Error 2
->> make[2]: *** [scripts/Makefile.build:546: drivers/gpu/drm] Error 2
->> make[1]: *** [scripts/Makefile.build:546: drivers/gpu] Error 2
->> make: *** [Makefile:1052: drivers] Error 2
->>
->>
->>
->> 4.19.3 is broken for me, too. 4.19.2 is works.
->> 4.20-rc tree works.
->>
->> Config attached.
+>> Hmm, could you elaborate in the commit log on the potential performance
+>> regression for JITed progs on arm64 after this change?
 > 
-> 
-> quick bisect shows problem is:
-> 
-> commit 1a25e1a1be71a49ee7f34fb14b5a26191e6cf501
-> Author: Chris Wilson <chris@chris-wilson.co.uk>
-> Date:   Thu Oct 25 10:18:22 2018 +0100
-> 
->      drm/i915: Mark up GTT sizes as u64
-> 
->      commit c58281056a8b26d5d9dc15c19859a7880835ef44 upstream.
-> 
-> 
-> reverted on 4.19.4-rc1 it compiles for me. I guess something is missing here?
-> 
-AFAICS someone was not careful with the backport. Upstream doesn't have %llx
-at that place.
+> This does not affect the generated code, so I don't anticipate a
+> performance hit. Did you have anything in particular in mind?
 
-Guenter
+We do optimize immediate emission in the JIT, I was mostly wondering that
+once the code is much further away from core kernel how much more insns we
+might need to emit in some worst case for each BPF helper call, but then
+unlike some other archs we always use absolute addresses so nothing would
+change here, so never mind. (And BPF to BPF calls emits unoptimized 64
+immediates since this is needed as we pass through the JIT several times
+so we need this as place holder for later once the address is actually
+known.)
+
+>> I think this change would also break JITing of BPF to BPF calls. You might
+>> have the same issue as ppc64 folks where the offset might not fit into imm
+>> anymore and would have to transfer it via fp->aux->func[off]->bpf_func
+>> instead.
+> 
+> If we are relying on BPF programs to remain within 128 MB of each
+> other, then we already have a potential problem, given that the
+> module_alloc() spills over into a 4 GB window if the 128 MB window is
+> exhausted. Perhaps we should do something like
+
+Hmm, good point, presumably you mean this one here fd045f6cd98e ("arm64:
+add support for module PLTs"). Agree that this needs fixing.
+
+> void *bpf_jit_alloc_exec(unsigned long size) {
+>   return __vmalloc_node_range(size, MODULE_ALIGN,
+>     BPF_REGION_START, BPF_REGION_END,
+>     GFP_KERNEL, PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
+>     __builtin_return_address(0));
+> }
+> 
+> and make [BPF_REGION_START, BPF_REGION_END) a separate 128 MB window
+> at the top of the vmalloc space. That way, it is guaranteed that BPF
+> programs are within branching range of each other, and we still solve
+> the original problem. I also like that it becomes impossible to infer
+> anything about the state of the vmalloc space, placement of the kernel
+> and modules etc from the placement of the BPF programs (in case it
+> leaks this information in one way or the other)
+> 
+> That would only give you space for 128M/4K == 32768 programs (or
+> 128M/64K == 2048 on 64k pages kernels). So I guess we'd still need a
+
+Note that it's 4k BPF insns which do not map 1:1, if possible I'd actually
+prefer if we could enlarge this space a bit.
+
+> spillover window as well, in which case we'd need a fix for the
+> BPF-to-BPF branching issue (but we need that at the moment anyway)
+
+Yeah, or spillover window instead. I think as a fix starting out with
+its own region without the spillover window would be less complex and
+better suited for stable?
+
+Thanks,
+Daniel
