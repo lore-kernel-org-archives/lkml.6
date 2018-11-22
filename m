@@ -2,78 +2,89 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8850AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47AA8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D95020820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:24:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D95020820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id F331820818
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:25:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="d1S+X2SK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F331820818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438996AbeKWJFy (ORCPT
+        id S2392548AbeKWJHW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 04:05:54 -0500
-Received: from emh01.mail.saunalahti.fi ([62.142.5.107]:58832 "EHLO
-        emh01.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728441AbeKWJFy (ORCPT
+        Fri, 23 Nov 2018 04:07:22 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44186 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728441AbeKWJHV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 04:05:54 -0500
-Received: from darkstar.musicnaut.iki.fi (85-76-84-147-nat.elisa-mobile.fi [85.76.84.147])
-        by emh01.mail.saunalahti.fi (Postfix) with ESMTP id 08877200F3;
-        Fri, 23 Nov 2018 00:24:26 +0200 (EET)
-Date:   Fri, 23 Nov 2018 00:24:26 +0200
-From:   Aaro Koskinen <aaro.koskinen@iki.fi>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org,
-        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tony@atomide.com,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
-Message-ID: <20181122222426.GC11423@darkstar.musicnaut.iki.fi>
-References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
- <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
- <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
- <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
- <20181122102948.GN6920@n2100.armlinux.org.uk>
- <20181122151236.GA9611@n2100.armlinux.org.uk>
+        Fri, 23 Nov 2018 04:07:21 -0500
+Received: by mail-lf1-f65.google.com with SMTP id z13so7433922lfe.11
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 14:25:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HxIYaTGqvQBVuSugUZbn7UqbBfMYjreMVHeSBj0RSKM=;
+        b=d1S+X2SKTFfnr+NaQjUQVYnI04JMqqb1TviNCflm/PNgXHA2NAD2TYPvWdh01soj/w
+         fPnBvA803hagD0EFi+ADY6zVWQaoqWQEBkJSqo8rXfB6GZnmbyEHNCpNvZPJbVQ3aw+7
+         cc0pMdPBr6qHVrZ/JMxzrnU30DVW2bUstufGI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HxIYaTGqvQBVuSugUZbn7UqbBfMYjreMVHeSBj0RSKM=;
+        b=UrN9YXnZRFUJPq3urTFdl/DSny6Mj88y7VQDv4KnmGMXKh3RCK4pdpUgbjL2+ilOYx
+         GKm2t47lvWlxj6il67qmckAiFZKrramEdFfTsNzbriBVZHl1tXx6C4Kr+4MUEMyWBf0G
+         qHGg64bfiXEVei8BhI5zRX7duqccPsRnert4a6p6MuW08DN/w4O04MKoR/kJauJi1lSX
+         uXkJRI+9tSChdMokAh12ttekj7OBRgh5pheCjXeLCcamUUkNmcfglSsWCtVOcROKx9UM
+         a+XRidZwvtL9W/wvdnu85H7kXm2k8aKny85hnyFvIG/YwynPb4FzGfxT+9NGhpOP4JrP
+         4dYQ==
+X-Gm-Message-State: AGRZ1gJknMs0RFN41hZ7d+yytfub5hPnf4mN/ClP51d227l7nkcrhaOh
+        dOI8SLTJPBBmP632tDaodZEkd+AqnVOH274Y2n9npg==
+X-Google-Smtp-Source: AJdET5ddTiBevyjp+73fEEoDYA4M+9p7oZxK/nDUhS12JSrQzQ3cmG9sBBtjeOM4b1GloHrKy+5iBYTQm5sV57gAT9Q=
+X-Received: by 2002:a19:5154:: with SMTP id f81mr8068411lfb.96.1542925554312;
+ Thu, 22 Nov 2018 14:25:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181122151236.GA9611@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20181122173015.23905-1-ckeepax@opensource.cirrus.com> <20181122173015.23905-2-ckeepax@opensource.cirrus.com>
+In-Reply-To: <20181122173015.23905-2-ckeepax@opensource.cirrus.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 22 Nov 2018 23:25:42 +0100
+Message-ID: <CACRpkdYVT1Qgr5TzL0AMBWft-5airB+vmKJ4DRJR7Fcznfm0Cw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] regulator: Only free GPIOs if the core requested them
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Nov 22, 2018 at 6:30 PM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
 
-On Thu, Nov 22, 2018 at 03:12:36PM +0000, Russell King - ARM Linux wrote:
-> On Thu, Nov 22, 2018 at 10:29:48AM +0000, Russell King - ARM Linux wrote:
-> > On Tue, Nov 20, 2018 at 11:04:06PM +0200, Aaro Koskinen wrote:
-> > > I had switched to PIO mode in 2015 since the WARNs about legacy DMA
-> > > API were too annoying and flooding the console. And now that I tried
-> > > using DMA again with g_ether, it doesn't work anymore. The device get's
-> > > recognized on host side, but no traffic goes through. Switching back to
-> > > PIO makes it to work again.
-> > 
-> > A solution to that would be to do what the warning message says, and
-> > update the driver to the DMAengine API.
+> Currently, the regulator core will take ownership of any GPIO passed
+> into it. Makes end driver code fairly error prone as the normal devm_
+> patterns of allocation don't work. Update the regulator core to only
+> free the GPIO if it requested it, this allows the drivers to manage the
+> GPIO lifetime as they normally would.
+>
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Fully agreed, but I was busy debugging other more serious issues, and
-just wanted to get a reliable ssh or USB serial access to the device
-without any extra noise, so switching to PIO using a module parameter
-is probably what most users do in such situations.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-> Here's a partial conversion (not even build tested) - it only supports
-> OUT transfers with dmaengine at the moment.
+This patch is slightly prettier than mine.
 
-Thanks, I'll take a closer look and try to do some testing hopefully
-during the weekend.
-
-A.
+Thanks!
+Linus Walleij
