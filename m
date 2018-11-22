@@ -4,74 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3270CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB9A7C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:53:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A16A920820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:52:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A16A920820
+	by mail.kernel.org (Postfix) with ESMTP id 564B520659
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:53:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 564B520659
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438942AbeKWId5 (ORCPT
+        id S2407722AbeKWIeV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 03:33:57 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:54859 "EHLO
+        Fri, 23 Nov 2018 03:34:21 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:42059 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730054AbeKWId5 (ORCPT
+        with ESMTP id S1730054AbeKWIeV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 03:33:57 -0500
+        Fri, 23 Nov 2018 03:34:21 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAMLpefr3948138
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAMLp6eI3948076
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 22 Nov 2018 13:51:40 -0800
+        Thu, 22 Nov 2018 13:51:06 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAMLpejk3948134;
-        Thu, 22 Nov 2018 13:51:40 -0800
-Date:   Thu, 22 Nov 2018 13:51:40 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAMLp58e3948072;
+        Thu, 22 Nov 2018 13:51:05 -0800
+Date:   Thu, 22 Nov 2018 13:51:05 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Babu Moger <tipbot@zytor.com>
-Message-ID: <tip-4d05bf71f157d756932e77cdee16dc99e235d636@git.kernel.org>
-Cc:     mchehab+samsung@kernel.org, luto@kernel.org,
-        akpm@linux-foundation.org, puwen@hygon.cn, bp@suse.de,
-        suravee.suthikulpanit@amd.com, rafael@kernel.org,
-        sherry.hurwitz@amd.com, linux-kernel@vger.kernel.org,
-        rian@alum.mit.edu, jannh@google.com, arnd@arndb.de,
-        davem@davemloft.net, corbet@lwn.net, kstewart@linuxfoundation.org,
-        vkuznets@redhat.com, jpoimboe@redhat.com,
-        gregkh@linuxfoundation.org, kirill.shutemov@linux.intel.com,
-        dima@arista.com, mingo@redhat.com, qianyue.zj@alibaba-inc.com,
-        peterz@infradead.org, Babu.Moger@amd.com, xiaochen.shen@intel.com,
-        Thomas.Lendacky@amd.com, jroedel@suse.de, tglx@linutronix.de,
-        tony.luck@intel.com, pombredanne@nexb.com,
-        chang.seok.bae@intel.com, hpa@zytor.com, reinette.chatre@intel.com,
-        linux-doc@vger.kernel.org, fenghua.yu@intel.com,
-        babu.moger@amd.com, dwmw2@infradead.org, pbonzini@redhat.com,
-        mingo@kernel.org, brijesh.singh@amd.com
-Reply-To: dwmw2@infradead.org, pbonzini@redhat.com, mingo@kernel.org,
-          brijesh.singh@amd.com, fenghua.yu@intel.com, babu.moger@amd.com,
-          linux-doc@vger.kernel.org, reinette.chatre@intel.com,
-          tony.luck@intel.com, pombredanne@nexb.com, hpa@zytor.com,
-          chang.seok.bae@intel.com, Thomas.Lendacky@amd.com,
-          jroedel@suse.de, tglx@linutronix.de, xiaochen.shen@intel.com,
-          peterz@infradead.org, Babu.Moger@amd.com,
-          kirill.shutemov@linux.intel.com, dima@arista.com,
-          mingo@redhat.com, qianyue.zj@alibaba-inc.com,
-          kstewart@linuxfoundation.org, vkuznets@redhat.com,
-          jpoimboe@redhat.com, gregkh@linuxfoundation.org, corbet@lwn.net,
-          rian@alum.mit.edu, jannh@google.com, arnd@arndb.de,
-          davem@davemloft.net, sherry.hurwitz@amd.com,
-          linux-kernel@vger.kernel.org, mchehab+samsung@kernel.org,
-          akpm@linux-foundation.org, luto@kernel.org, bp@suse.de,
-          puwen@hygon.cn, rafael@kernel.org, suravee.suthikulpanit@amd.com
-In-Reply-To: <20181121202811.4492-12-babu.moger@amd.com>
-References: <20181121202811.4492-12-babu.moger@amd.com>
+Message-ID: <tip-723f1a0dd8e26a7523ba068204bee11c95ded38d@git.kernel.org>
+Cc:     kstewart@linuxfoundation.org, puwen@hygon.cn,
+        qianyue.zj@alibaba-inc.com, rafael@kernel.org, tglx@linutronix.de,
+        jroedel@suse.de, mingo@kernel.org, arnd@arndb.de,
+        suravee.suthikulpanit@amd.com, gregkh@linuxfoundation.org,
+        pombredanne@nexb.com, chang.seok.bae@intel.com, corbet@lwn.net,
+        bp@suse.de, xiaochen.shen@intel.com,
+        kirill.shutemov@linux.intel.com, davem@davemloft.net,
+        akpm@linux-foundation.org, pbonzini@redhat.com,
+        linux-kernel@vger.kernel.org, babu.moger@amd.com,
+        Thomas.Lendacky@amd.com, luto@kernel.org,
+        linux-doc@vger.kernel.org, fenghua.yu@intel.com, hpa@zytor.com,
+        tony.luck@intel.com, sherry.hurwitz@amd.com,
+        mchehab+samsung@kernel.org, jannh@google.com, dwmw2@infradead.org,
+        Babu.Moger@amd.com, jpoimboe@redhat.com, mingo@redhat.com,
+        vkuznets@redhat.com, reinette.chatre@intel.com, rian@alum.mit.edu,
+        brijesh.singh@amd.com, peterz@infradead.org, dima@arista.com
+Reply-To: dima@arista.com, brijesh.singh@amd.com, rian@alum.mit.edu,
+          peterz@infradead.org, reinette.chatre@intel.com,
+          jpoimboe@redhat.com, mingo@redhat.com, vkuznets@redhat.com,
+          jannh@google.com, sherry.hurwitz@amd.com,
+          mchehab+samsung@kernel.org, dwmw2@infradead.org,
+          Babu.Moger@amd.com, fenghua.yu@intel.com,
+          linux-doc@vger.kernel.org, tony.luck@intel.com, hpa@zytor.com,
+          luto@kernel.org, linux-kernel@vger.kernel.org,
+          babu.moger@amd.com, Thomas.Lendacky@amd.com,
+          kirill.shutemov@linux.intel.com, davem@davemloft.net,
+          akpm@linux-foundation.org, pbonzini@redhat.com, bp@suse.de,
+          corbet@lwn.net, xiaochen.shen@intel.com, arnd@arndb.de,
+          gregkh@linuxfoundation.org, suravee.suthikulpanit@amd.com,
+          pombredanne@nexb.com, chang.seok.bae@intel.com,
+          tglx@linutronix.de, jroedel@suse.de, mingo@kernel.org,
+          rafael@kernel.org, puwen@hygon.cn, qianyue.zj@alibaba-inc.com,
+          kstewart@linuxfoundation.org
+In-Reply-To: <20181121202811.4492-11-babu.moger@amd.com>
+References: <20181121202811.4492-11-babu.moger@amd.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/resctrl: Introduce AMD QOS feature
-Git-Commit-ID: 4d05bf71f157d756932e77cdee16dc99e235d636
+Subject: [tip:x86/cache] x86/resctrl: Fixup the user-visible strings
+Git-Commit-ID: 723f1a0dd8e26a7523ba068204bee11c95ded38d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -85,37 +86,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4d05bf71f157d756932e77cdee16dc99e235d636
-Gitweb:     https://git.kernel.org/tip/4d05bf71f157d756932e77cdee16dc99e235d636
+Commit-ID:  723f1a0dd8e26a7523ba068204bee11c95ded38d
+Gitweb:     https://git.kernel.org/tip/723f1a0dd8e26a7523ba068204bee11c95ded38d
 Author:     Babu Moger <Babu.Moger@amd.com>
-AuthorDate: Wed, 21 Nov 2018 20:28:45 +0000
+AuthorDate: Wed, 21 Nov 2018 20:28:43 +0000
 Committer:  Borislav Petkov <bp@suse.de>
 CommitDate: Thu, 22 Nov 2018 20:16:20 +0100
 
-x86/resctrl: Introduce AMD QOS feature
+x86/resctrl: Fixup the user-visible strings
 
-Enable QOS feature on AMD.
+Fix the messages in rdt_last_cmd_printf() and rdt_last_cmd_puts() to
+make them more meaningful and consistent.
 
-Following QoS sub-features are supported on AMD if the underlying
-hardware supports it:
-
- - L3 Cache allocation enforcement
- - L3 Cache occupancy monitoring
- - L3 Code-Data Prioritization support
- - Memory Bandwidth Enforcement (Allocation)
-
-The specification is available at:
-https://developer.amd.com/wp-content/resources/56375.pdf
-
-There are differences in the way some of the features are implemented.
-Separate those functions and add those as vendor specific functions.
-
-The major difference is in MBA feature:
-
- - AMD uses CPUID leaf 0x80000020 to initialize the MBA features.
- - AMD uses direct bandwidth value instead of delay based on bandwidth values.
- - MSR register base addresses are different for MBA.
- - AMD allows non-contiguous L3 cache bit masks.
+ [ bp: s/cpu/CPU/; s/mem\W/memory ]
 
 Signed-off-by: Babu Moger <babu.moger@amd.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
@@ -154,254 +137,416 @@ Cc: Thomas Lendacky <Thomas.Lendacky@amd.com>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
 Cc: <xiaochen.shen@intel.com>
-Link: https://lkml.kernel.org/r/20181121202811.4492-12-babu.moger@amd.com
+Link: https://lkml.kernel.org/r/20181121202811.4492-11-babu.moger@amd.com
 ---
- arch/x86/kernel/cpu/resctrl/core.c        | 69 ++++++++++++++++++++++++++++--
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 71 +++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/resctrl/internal.h    |  5 +++
- 3 files changed, 142 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 22 +++++++++----------
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 34 ++++++++++++++---------------
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 36 +++++++++++++++----------------
+ 3 files changed, 46 insertions(+), 46 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index ba5a5b8c4681..2ec252be4ed9 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -61,6 +61,9 @@ mba_wrmsr_intel(struct rdt_domain *d, struct msr_param *m,
- 		struct rdt_resource *r);
- static void
- cat_wrmsr(struct rdt_domain *d, struct msr_param *m, struct rdt_resource *r);
-+static void
-+mba_wrmsr_amd(struct rdt_domain *d, struct msr_param *m,
-+	      struct rdt_resource *r);
- 
- #define domain_init(id) LIST_HEAD_INIT(rdt_resources_all[id].domains)
- 
-@@ -255,7 +258,7 @@ static inline bool rdt_get_mb_table(struct rdt_resource *r)
- 	return false;
- }
- 
--static bool __get_mem_config(struct rdt_resource *r)
-+static bool __get_mem_config_intel(struct rdt_resource *r)
- {
- 	union cpuid_0x10_3_eax eax;
- 	union cpuid_0x10_x_edx edx;
-@@ -281,6 +284,30 @@ static bool __get_mem_config(struct rdt_resource *r)
- 	return true;
- }
- 
-+static bool __rdt_get_mem_config_amd(struct rdt_resource *r)
-+{
-+	union cpuid_0x10_3_eax eax;
-+	union cpuid_0x10_x_edx edx;
-+	u32 ebx, ecx;
-+
-+	cpuid_count(0x80000020, 1, &eax.full, &ebx, &ecx, &edx.full);
-+	r->num_closid = edx.split.cos_max + 1;
-+	r->default_ctrl = MAX_MBA_BW_AMD;
-+
-+	/* AMD does not use delay */
-+	r->membw.delay_linear = false;
-+
-+	r->membw.min_bw = 0;
-+	r->membw.bw_gran = 1;
-+	/* Max value is 2048, Data width should be 4 in decimal */
-+	r->data_width = 4;
-+
-+	r->alloc_capable = true;
-+	r->alloc_enabled = true;
-+
-+	return true;
-+}
-+
- static void rdt_get_cache_alloc_cfg(int idx, struct rdt_resource *r)
- {
- 	union cpuid_0x10_1_eax eax;
-@@ -340,6 +367,15 @@ static int get_cache_id(int cpu, int level)
- 	return -1;
- }
- 
-+static void
-+mba_wrmsr_amd(struct rdt_domain *d, struct msr_param *m, struct rdt_resource *r)
-+{
-+	unsigned int i;
-+
-+	for (i = m->low; i < m->high; i++)
-+		wrmsrl(r->msr_base + i, d->ctrl_val[i]);
-+}
-+
- /*
-  * Map the memory b/w percentage value to delay values
-  * that can be written to QOS_MSRs.
-@@ -793,8 +829,13 @@ static bool __init rdt_cpu_has(int flag)
- 
- static __init bool get_mem_config(void)
- {
--	if (rdt_cpu_has(X86_FEATURE_MBA))
--		return __get_mem_config(&rdt_resources_all[RDT_RESOURCE_MBA]);
-+	if (!rdt_cpu_has(X86_FEATURE_MBA))
-+		return false;
-+
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
-+		return __get_mem_config_intel(&rdt_resources_all[RDT_RESOURCE_MBA]);
-+	else if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+		return __rdt_get_mem_config_amd(&rdt_resources_all[RDT_RESOURCE_MBA]);
- 
- 	return false;
- }
-@@ -893,10 +934,32 @@ static __init void rdt_init_res_defs_intel(void)
- 	}
- }
- 
-+static __init void rdt_init_res_defs_amd(void)
-+{
-+	struct rdt_resource *r;
-+
-+	for_each_rdt_resource(r) {
-+		if (r->rid == RDT_RESOURCE_L3 ||
-+		    r->rid == RDT_RESOURCE_L3DATA ||
-+		    r->rid == RDT_RESOURCE_L3CODE ||
-+		    r->rid == RDT_RESOURCE_L2 ||
-+		    r->rid == RDT_RESOURCE_L2DATA ||
-+		    r->rid == RDT_RESOURCE_L2CODE)
-+			r->cbm_validate = cbm_validate_amd;
-+		else if (r->rid == RDT_RESOURCE_MBA) {
-+			r->msr_base = MSR_IA32_MBA_BW_BASE;
-+			r->msr_update = mba_wrmsr_amd;
-+			r->parse_ctrlval = parse_bw_amd;
-+		}
-+	}
-+}
-+
- static __init void rdt_init_res_defs(void)
- {
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
- 		rdt_init_res_defs_intel();
-+	else if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
-+		rdt_init_res_defs_amd();
- }
- 
- static enum cpuhp_state rdt_online;
 diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-index bfd7bdf8a156..43ee3cee6494 100644
+index d2e0b99d453f..bfd7bdf8a156 100644
 --- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
 +++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-@@ -28,6 +28,53 @@
- #include <linux/slab.h>
- #include "internal.h"
+@@ -70,7 +70,7 @@ int parse_bw_intel(struct rdt_parse_data *data, struct rdt_resource *r,
+ 	unsigned long bw_val;
  
-+/*
-+ * Check whether MBA bandwidth percentage value is correct. The value is
-+ * checked against the minimum and maximum bandwidth values specified by
-+ * the hardware. The allocated bandwidth percentage is rounded to the next
-+ * control step available on the hardware.
-+ */
-+static bool bw_validate_amd(char *buf, unsigned long *data,
-+			    struct rdt_resource *r)
-+{
-+	unsigned long bw;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 10, &bw);
-+	if (ret) {
-+		rdt_last_cmd_printf("Non-decimal digit in MB value %s\n", buf);
-+		return false;
-+	}
-+
-+	if (bw < r->membw.min_bw || bw > r->default_ctrl) {
-+		rdt_last_cmd_printf("MB value %ld out of range [%d,%d]\n", bw,
-+				    r->membw.min_bw, r->default_ctrl);
-+		return false;
-+	}
-+
-+	*data = roundup(bw, (unsigned long)r->membw.bw_gran);
-+	return true;
-+}
-+
-+int parse_bw_amd(struct rdt_parse_data *data, struct rdt_resource *r,
-+		 struct rdt_domain *d)
-+{
-+	unsigned long bw_val;
-+
-+	if (d->have_new_ctrl) {
+ 	if (d->have_new_ctrl) {
+-		rdt_last_cmd_printf("duplicate domain %d\n", d->id);
 +		rdt_last_cmd_printf("Duplicate domain %d\n", d->id);
-+		return -EINVAL;
-+	}
-+
-+	if (!bw_validate_amd(data->buf, &bw_val, r))
-+		return -EINVAL;
-+
-+	d->new_ctrl = bw_val;
-+	d->have_new_ctrl = true;
-+
-+	return 0;
-+}
-+
- /*
-  * Check whether MBA bandwidth percentage value is correct. The value is
-  * checked against the minimum and max bandwidth values specified by the
-@@ -123,6 +170,30 @@ bool cbm_validate_intel(char *buf, u32 *data, struct rdt_resource *r)
- 	return true;
+ 		return -EINVAL;
+ 	}
+ 
+@@ -96,12 +96,12 @@ bool cbm_validate_intel(char *buf, u32 *data, struct rdt_resource *r)
+ 
+ 	ret = kstrtoul(buf, 16, &val);
+ 	if (ret) {
+-		rdt_last_cmd_printf("non-hex character in mask %s\n", buf);
++		rdt_last_cmd_printf("Non-hex character in the mask %s\n", buf);
+ 		return false;
+ 	}
+ 
+ 	if (val == 0 || val > r->default_ctrl) {
+-		rdt_last_cmd_puts("mask out of range\n");
++		rdt_last_cmd_puts("Mask out of range\n");
+ 		return false;
+ 	}
+ 
+@@ -109,12 +109,12 @@ bool cbm_validate_intel(char *buf, u32 *data, struct rdt_resource *r)
+ 	zero_bit = find_next_zero_bit(&val, cbm_len, first_bit);
+ 
+ 	if (find_next_bit(&val, cbm_len, zero_bit) < cbm_len) {
+-		rdt_last_cmd_printf("mask %lx has non-consecutive 1-bits\n", val);
++		rdt_last_cmd_printf("The mask %lx has non-consecutive 1-bits\n", val);
+ 		return false;
+ 	}
+ 
+ 	if ((zero_bit - first_bit) < r->cache.min_cbm_bits) {
+-		rdt_last_cmd_printf("Need at least %d bits in mask\n",
++		rdt_last_cmd_printf("Need at least %d bits in the mask\n",
+ 				    r->cache.min_cbm_bits);
+ 		return false;
+ 	}
+@@ -134,7 +134,7 @@ int parse_cbm(struct rdt_parse_data *data, struct rdt_resource *r,
+ 	u32 cbm_val;
+ 
+ 	if (d->have_new_ctrl) {
+-		rdt_last_cmd_printf("duplicate domain %d\n", d->id);
++		rdt_last_cmd_printf("Duplicate domain %d\n", d->id);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -144,7 +144,7 @@ int parse_cbm(struct rdt_parse_data *data, struct rdt_resource *r,
+ 	 */
+ 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP &&
+ 	    rdtgroup_pseudo_locked_in_hierarchy(d)) {
+-		rdt_last_cmd_printf("pseudo-locked region in hierarchy\n");
++		rdt_last_cmd_printf("Pseudo-locked region in hierarchy\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -163,14 +163,14 @@ int parse_cbm(struct rdt_parse_data *data, struct rdt_resource *r,
+ 	 * either is exclusive.
+ 	 */
+ 	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, true)) {
+-		rdt_last_cmd_printf("overlaps with exclusive group\n");
++		rdt_last_cmd_printf("Overlaps with exclusive group\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, false)) {
+ 		if (rdtgrp->mode == RDT_MODE_EXCLUSIVE ||
+ 		    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
+-			rdt_last_cmd_printf("overlaps with other group\n");
++			rdt_last_cmd_printf("0verlaps with other group\n");
+ 			return -EINVAL;
+ 		}
+ 	}
+@@ -292,7 +292,7 @@ static int rdtgroup_parse_resource(char *resname, char *tok,
+ 		if (!strcmp(resname, r->name) && rdtgrp->closid < r->num_closid)
+ 			return parse_line(tok, r, rdtgrp);
+ 	}
+-	rdt_last_cmd_printf("unknown/unsupported resource name '%s'\n", resname);
++	rdt_last_cmd_printf("Unknown or unsupported resource name '%s'\n", resname);
+ 	return -EINVAL;
  }
  
-+/*
-+ * Check whether a cache bit mask is valid. AMD allows non-contiguous
-+ * bitmasks
-+ */
-+bool cbm_validate_amd(char *buf, u32 *data, struct rdt_resource *r)
-+{
-+	unsigned long val;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 16, &val);
-+	if (ret) {
-+		rdt_last_cmd_printf("Non-hex character in the mask %s\n", buf);
-+		return false;
-+	}
-+
-+	if (val > r->default_ctrl) {
-+		rdt_last_cmd_puts("Mask out of range\n");
-+		return false;
-+	}
-+
-+	*data = val;
-+	return true;
-+}
-+
- /*
-  * Read one cache bit mask (hex). Check that it is valid for the current
-  * resource type.
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 599cad34a6a8..822b7db634ee 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -11,6 +11,7 @@
- #define MSR_IA32_L3_CBM_BASE		0xc90
- #define MSR_IA32_L2_CBM_BASE		0xd10
- #define MSR_IA32_MBA_THRTL_BASE		0xd50
-+#define MSR_IA32_MBA_BW_BASE		0xc0000200
+@@ -323,7 +323,7 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
+ 	 */
+ 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
+ 		ret = -EINVAL;
+-		rdt_last_cmd_puts("resource group is pseudo-locked\n");
++		rdt_last_cmd_puts("Resource group is pseudo-locked\n");
+ 		goto out;
+ 	}
  
- #define MSR_IA32_QM_CTR			0x0c8e
- #define MSR_IA32_QM_EVTSEL		0x0c8d
-@@ -34,6 +35,7 @@
- #define MAX_MBA_BW			100u
- #define MBA_IS_LINEAR			0x4
- #define MBA_MAX_MBPS			U32_MAX
-+#define MAX_MBA_BW_AMD			0x800
+diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
+index ffb7ebe69d33..14bed6af8377 100644
+--- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
++++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
+@@ -213,7 +213,7 @@ static int pseudo_lock_cstates_constrain(struct pseudo_lock_region *plr)
+ 	for_each_cpu(cpu, &plr->d->cpu_mask) {
+ 		pm_req = kzalloc(sizeof(*pm_req), GFP_KERNEL);
+ 		if (!pm_req) {
+-			rdt_last_cmd_puts("fail allocating mem for PM QoS\n");
++			rdt_last_cmd_puts("Failure to allocate memory for PM QoS\n");
+ 			ret = -ENOMEM;
+ 			goto out_err;
+ 		}
+@@ -222,7 +222,7 @@ static int pseudo_lock_cstates_constrain(struct pseudo_lock_region *plr)
+ 					     DEV_PM_QOS_RESUME_LATENCY,
+ 					     30);
+ 		if (ret < 0) {
+-			rdt_last_cmd_printf("fail to add latency req cpu%d\n",
++			rdt_last_cmd_printf("Failed to add latency req CPU%d\n",
+ 					    cpu);
+ 			kfree(pm_req);
+ 			ret = -1;
+@@ -289,7 +289,7 @@ static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
+ 	plr->cpu = cpumask_first(&plr->d->cpu_mask);
  
- #define RMID_VAL_ERROR			BIT_ULL(63)
- #define RMID_VAL_UNAVAIL		BIT_ULL(62)
-@@ -448,6 +450,8 @@ int parse_cbm(struct rdt_parse_data *data, struct rdt_resource *r,
- 	      struct rdt_domain *d);
- int parse_bw_intel(struct rdt_parse_data *data, struct rdt_resource *r,
- 		   struct rdt_domain *d);
-+int parse_bw_amd(struct rdt_parse_data *data, struct rdt_resource *r,
-+		 struct rdt_domain *d);
+ 	if (!cpu_online(plr->cpu)) {
+-		rdt_last_cmd_printf("cpu %u associated with cache not online\n",
++		rdt_last_cmd_printf("CPU %u associated with cache not online\n",
+ 				    plr->cpu);
+ 		ret = -ENODEV;
+ 		goto out_region;
+@@ -307,7 +307,7 @@ static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
+ 	}
  
- extern struct mutex rdtgroup_mutex;
+ 	ret = -1;
+-	rdt_last_cmd_puts("unable to determine cache line size\n");
++	rdt_last_cmd_puts("Unable to determine cache line size\n");
+ out_region:
+ 	pseudo_lock_region_clear(plr);
+ 	return ret;
+@@ -361,14 +361,14 @@ static int pseudo_lock_region_alloc(struct pseudo_lock_region *plr)
+ 	 * KMALLOC_MAX_SIZE.
+ 	 */
+ 	if (plr->size > KMALLOC_MAX_SIZE) {
+-		rdt_last_cmd_puts("requested region exceeds maximum size\n");
++		rdt_last_cmd_puts("Requested region exceeds maximum size\n");
+ 		ret = -E2BIG;
+ 		goto out_region;
+ 	}
  
-@@ -579,5 +583,6 @@ void cqm_handle_limbo(struct work_struct *work);
- bool has_busy_rmid(struct rdt_resource *r, struct rdt_domain *d);
- void __check_limbo(struct rdt_domain *d, bool force_free);
- bool cbm_validate_intel(char *buf, u32 *data, struct rdt_resource *r);
-+bool cbm_validate_amd(char *buf, u32 *data, struct rdt_resource *r);
+ 	plr->kmem = kzalloc(plr->size, GFP_KERNEL);
+ 	if (!plr->kmem) {
+-		rdt_last_cmd_puts("unable to allocate memory\n");
++		rdt_last_cmd_puts("Unable to allocate memory\n");
+ 		ret = -ENOMEM;
+ 		goto out_region;
+ 	}
+@@ -665,7 +665,7 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
+ 	 * default closid associated with it.
+ 	 */
+ 	if (rdtgrp == &rdtgroup_default) {
+-		rdt_last_cmd_puts("cannot pseudo-lock default group\n");
++		rdt_last_cmd_puts("Cannot pseudo-lock default group\n");
+ 		return -EINVAL;
+ 	}
  
- #endif /* _ASM_X86_RESCTRL_INTERNAL_H */
+@@ -707,17 +707,17 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
+ 	 */
+ 	prefetch_disable_bits = get_prefetch_disable_bits();
+ 	if (prefetch_disable_bits == 0) {
+-		rdt_last_cmd_puts("pseudo-locking not supported\n");
++		rdt_last_cmd_puts("Pseudo-locking not supported\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	if (rdtgroup_monitor_in_progress(rdtgrp)) {
+-		rdt_last_cmd_puts("monitoring in progress\n");
++		rdt_last_cmd_puts("Monitoring in progress\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	if (rdtgroup_tasks_assigned(rdtgrp)) {
+-		rdt_last_cmd_puts("tasks assigned to resource group\n");
++		rdt_last_cmd_puts("Tasks assigned to resource group\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -727,13 +727,13 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
+ 	}
+ 
+ 	if (rdtgroup_locksetup_user_restrict(rdtgrp)) {
+-		rdt_last_cmd_puts("unable to modify resctrl permissions\n");
++		rdt_last_cmd_puts("Unable to modify resctrl permissions\n");
+ 		return -EIO;
+ 	}
+ 
+ 	ret = pseudo_lock_init(rdtgrp);
+ 	if (ret) {
+-		rdt_last_cmd_puts("unable to init pseudo-lock region\n");
++		rdt_last_cmd_puts("Unable to init pseudo-lock region\n");
+ 		goto out_release;
+ 	}
+ 
+@@ -770,7 +770,7 @@ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp)
+ 	if (rdt_mon_capable) {
+ 		ret = alloc_rmid();
+ 		if (ret < 0) {
+-			rdt_last_cmd_puts("out of RMIDs\n");
++			rdt_last_cmd_puts("Out of RMIDs\n");
+ 			return ret;
+ 		}
+ 		rdtgrp->mon.rmid = ret;
+@@ -1304,7 +1304,7 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 					"pseudo_lock/%u", plr->cpu);
+ 	if (IS_ERR(thread)) {
+ 		ret = PTR_ERR(thread);
+-		rdt_last_cmd_printf("locking thread returned error %d\n", ret);
++		rdt_last_cmd_printf("Locking thread returned error %d\n", ret);
+ 		goto out_cstates;
+ 	}
+ 
+@@ -1322,13 +1322,13 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 		 * the cleared, but not freed, plr struct resulting in an
+ 		 * empty pseudo-locking loop.
+ 		 */
+-		rdt_last_cmd_puts("locking thread interrupted\n");
++		rdt_last_cmd_puts("Locking thread interrupted\n");
+ 		goto out_cstates;
+ 	}
+ 
+ 	ret = pseudo_lock_minor_get(&new_minor);
+ 	if (ret < 0) {
+-		rdt_last_cmd_puts("unable to obtain a new minor number\n");
++		rdt_last_cmd_puts("Unable to obtain a new minor number\n");
+ 		goto out_cstates;
+ 	}
+ 
+@@ -1360,7 +1360,7 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 
+ 	if (IS_ERR(dev)) {
+ 		ret = PTR_ERR(dev);
+-		rdt_last_cmd_printf("failed to create character device: %d\n",
++		rdt_last_cmd_printf("Failed to create character device: %d\n",
+ 				    ret);
+ 		goto out_debugfs;
+ 	}
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index fada488069cb..61b102dd51a5 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -345,7 +345,7 @@ static int cpus_mon_write(struct rdtgroup *rdtgrp, cpumask_var_t newmask,
+ 	/* Check whether cpus belong to parent ctrl group */
+ 	cpumask_andnot(tmpmask, newmask, &prgrp->cpu_mask);
+ 	if (cpumask_weight(tmpmask)) {
+-		rdt_last_cmd_puts("can only add CPUs to mongroup that belong to parent\n");
++		rdt_last_cmd_puts("Can only add CPUs to mongroup that belong to parent\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -470,14 +470,14 @@ static ssize_t rdtgroup_cpus_write(struct kernfs_open_file *of,
+ 	rdt_last_cmd_clear();
+ 	if (!rdtgrp) {
+ 		ret = -ENOENT;
+-		rdt_last_cmd_puts("directory was removed\n");
++		rdt_last_cmd_puts("Directory was removed\n");
+ 		goto unlock;
+ 	}
+ 
+ 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED ||
+ 	    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
+ 		ret = -EINVAL;
+-		rdt_last_cmd_puts("pseudo-locking in progress\n");
++		rdt_last_cmd_puts("Pseudo-locking in progress\n");
+ 		goto unlock;
+ 	}
+ 
+@@ -487,7 +487,7 @@ static ssize_t rdtgroup_cpus_write(struct kernfs_open_file *of,
+ 		ret = cpumask_parse(buf, newmask);
+ 
+ 	if (ret) {
+-		rdt_last_cmd_puts("bad cpu list/mask\n");
++		rdt_last_cmd_puts("Bad CPU list/mask\n");
+ 		goto unlock;
+ 	}
+ 
+@@ -495,7 +495,7 @@ static ssize_t rdtgroup_cpus_write(struct kernfs_open_file *of,
+ 	cpumask_andnot(tmpmask, newmask, cpu_online_mask);
+ 	if (cpumask_weight(tmpmask)) {
+ 		ret = -EINVAL;
+-		rdt_last_cmd_puts("can only assign online cpus\n");
++		rdt_last_cmd_puts("Can only assign online CPUs\n");
+ 		goto unlock;
+ 	}
+ 
+@@ -574,7 +574,7 @@ static int __rdtgroup_move_task(struct task_struct *tsk,
+ 		 */
+ 		atomic_dec(&rdtgrp->waitcount);
+ 		kfree(callback);
+-		rdt_last_cmd_puts("task exited\n");
++		rdt_last_cmd_puts("Task exited\n");
+ 	} else {
+ 		/*
+ 		 * For ctrl_mon groups move both closid and rmid.
+@@ -692,7 +692,7 @@ static ssize_t rdtgroup_tasks_write(struct kernfs_open_file *of,
+ 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED ||
+ 	    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
+ 		ret = -EINVAL;
+-		rdt_last_cmd_puts("pseudo-locking in progress\n");
++		rdt_last_cmd_puts("Pseudo-locking in progress\n");
+ 		goto unlock;
+ 	}
+ 
+@@ -1158,14 +1158,14 @@ static bool rdtgroup_mode_test_exclusive(struct rdtgroup *rdtgrp)
+ 		list_for_each_entry(d, &r->domains, list) {
+ 			if (rdtgroup_cbm_overlaps(r, d, d->ctrl_val[closid],
+ 						  rdtgrp->closid, false)) {
+-				rdt_last_cmd_puts("schemata overlaps\n");
++				rdt_last_cmd_puts("Schemata overlaps\n");
+ 				return false;
+ 			}
+ 		}
+ 	}
+ 
+ 	if (!has_cache) {
+-		rdt_last_cmd_puts("cannot be exclusive without CAT/CDP\n");
++		rdt_last_cmd_puts("Cannot be exclusive without CAT/CDP\n");
+ 		return false;
+ 	}
+ 
+@@ -1206,7 +1206,7 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
+ 		goto out;
+ 
+ 	if (mode == RDT_MODE_PSEUDO_LOCKED) {
+-		rdt_last_cmd_printf("cannot change pseudo-locked group\n");
++		rdt_last_cmd_printf("Cannot change pseudo-locked group\n");
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+@@ -1235,7 +1235,7 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
+ 			goto out;
+ 		rdtgrp->mode = RDT_MODE_PSEUDO_LOCKSETUP;
+ 	} else {
+-		rdt_last_cmd_printf("unknown/unsupported mode\n");
++		rdt_last_cmd_printf("Unknown orunsupported mode\n");
+ 		ret = -EINVAL;
+ 	}
+ 
+@@ -2543,7 +2543,7 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 			tmp_cbm = d->new_ctrl;
+ 			if (bitmap_weight(&tmp_cbm, r->cache.cbm_len) <
+ 			    r->cache.min_cbm_bits) {
+-				rdt_last_cmd_printf("no space on %s:%d\n",
++				rdt_last_cmd_printf("No space on %s:%d\n",
+ 						    r->name, d->id);
+ 				return -ENOSPC;
+ 			}
+@@ -2560,7 +2560,7 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
+ 			continue;
+ 		ret = update_domains(r, rdtgrp->closid);
+ 		if (ret < 0) {
+-			rdt_last_cmd_puts("failed to initialize allocations\n");
++			rdt_last_cmd_puts("Failed to initialize allocations\n");
+ 			return ret;
+ 		}
+ 		rdtgrp->mode = RDT_MODE_SHAREABLE;
+@@ -2583,7 +2583,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 	rdt_last_cmd_clear();
+ 	if (!prdtgrp) {
+ 		ret = -ENODEV;
+-		rdt_last_cmd_puts("directory was removed\n");
++		rdt_last_cmd_puts("Directory was removed\n");
+ 		goto out_unlock;
+ 	}
+ 
+@@ -2591,7 +2591,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 	    (prdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP ||
+ 	     prdtgrp->mode == RDT_MODE_PSEUDO_LOCKED)) {
+ 		ret = -EINVAL;
+-		rdt_last_cmd_puts("pseudo-locking in progress\n");
++		rdt_last_cmd_puts("Pseudo-locking in progress\n");
+ 		goto out_unlock;
+ 	}
+ 
+@@ -2599,7 +2599,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 	rdtgrp = kzalloc(sizeof(*rdtgrp), GFP_KERNEL);
+ 	if (!rdtgrp) {
+ 		ret = -ENOSPC;
+-		rdt_last_cmd_puts("kernel out of memory\n");
++		rdt_last_cmd_puts("Kernel out of memory\n");
+ 		goto out_unlock;
+ 	}
+ 	*r = rdtgrp;
+@@ -2640,7 +2640,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
+ 	if (rdt_mon_capable) {
+ 		ret = alloc_rmid();
+ 		if (ret < 0) {
+-			rdt_last_cmd_puts("out of RMIDs\n");
++			rdt_last_cmd_puts("Out of RMIDs\n");
+ 			goto out_destroy;
+ 		}
+ 		rdtgrp->mon.rmid = ret;
+@@ -2728,7 +2728,7 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+ 	kn = rdtgrp->kn;
+ 	ret = closid_alloc();
+ 	if (ret < 0) {
+-		rdt_last_cmd_puts("out of CLOSIDs\n");
++		rdt_last_cmd_puts("Out of CLOSIDs\n");
+ 		goto out_common_fail;
+ 	}
+ 	closid = ret;
