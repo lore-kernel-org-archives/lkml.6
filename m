@@ -2,167 +2,179 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C25C6C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 835DDC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:56:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DCF820866
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:55:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46AB520820
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:56:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="iZpcjNUB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DCF820866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=slimlogic.co.uk header.i=@slimlogic.co.uk header.b="rFI+KvXj";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="o6qhpygC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46AB520820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=slimlogic.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393274AbeKVTe0 (ORCPT
+        id S2393285AbeKVTer (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 14:34:26 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34289 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733171AbeKVTe0 (ORCPT
+        Thu, 22 Nov 2018 14:34:47 -0500
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:54749 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731714AbeKVTer (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 14:34:26 -0500
-Received: by mail-ed1-f68.google.com with SMTP id b3so7070654ede.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 00:55:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bXnYE1APjd1iQLoGDe6cvTAiLMQqWdlXEVV06KVqXvc=;
-        b=iZpcjNUBjqVfz6kaD3joNZ2rKJDojWZrnYrXpGEMuagkdqSqD8v45SNugOu74xNRE/
-         +ZaN+cZLIcZQv3/PDVkAxp3sG40PnleJ0yjCvDccFHJRh5WhVcZ2b2ww1BskbOxkxl2P
-         UR02Z5519nozqIHarR42SRQcNa+d25yThpAN0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=bXnYE1APjd1iQLoGDe6cvTAiLMQqWdlXEVV06KVqXvc=;
-        b=j/zg1iFJ21zDGteh0bBWgz8zgYrIZOiD0+l4G0VEEw2JDWYjK3l3FzlEXcLPdw8ZvT
-         6ln+tnWvfrqTzPKoacM6Xnz5vJkRZCM0VBBjZFnXTlz5PC5ChI4wTjMw663OgCFJcf4U
-         0sHdP4hOSoIeJgzMN3uVzgFqV6mFWoljiwybYMh0qZsc7LPFU1Mrmweg3bZGjLTI+km0
-         dMspJWYWjPJGPxyq30fn5DVgL0tItykjE9f5DI6Icu9XgAm0pPuLjt9eeOmQqIEizKOQ
-         GTPQ496vXEzuZ5q+oFMATQEBeSo8DpVxcHVho8jPpN/UKAp4PY741Cn9AXBQU26ePguf
-         CZFw==
-X-Gm-Message-State: AA+aEWbPJ9BGS7keQq8sOpHZrsUlYMuNjsGKGPk4E9QbQPdsFjnZ2CC7
-        mhEY/g6YB7kM6aIz8xFGpO74JLH8lVU=
-X-Google-Smtp-Source: AFSGD/V2TAFl8vvyJQ3YvxF+olUzPJBkXlBHYy+tIG7IeQFyOdeas0Rclfy3WwEJA6PmbWMo1LtA2A==
-X-Received: by 2002:a50:ce0f:: with SMTP id y15mr7867485edi.207.1542876953045;
-        Thu, 22 Nov 2018 00:55:53 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id c11-v6sm6159456ejm.67.2018.11.22.00.55.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 22 Nov 2018 00:55:51 -0800 (PST)
-Date:   Thu, 22 Nov 2018 09:55:49 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        greenfoo@gluegarage.com,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>, sean@poorly.run,
-        Dave Airlie <airlied@linux.ie>,
-        Jonathan Corbet <corbet@lwn.net>, abrodkin@synopsys.com,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        linux+etnaviv@armlinux.org.uk,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        kieran.bingham+renesas@ideasonboard.com,
-        Shawn Guo <shawnguo@kernel.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>, michal.lkml@markovi.net,
-        hamohammed.sa@gmail.com, linux-doc@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        virtualization@lists.linux-foundation.org,
-        etnaviv@lists.freedesktop.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        cocci@systeme.lip6.fr
-Subject: Re: [PATCH 0/9] drm: remove deprecated functions
-Message-ID: <20181122085549.GX4266@phenom.ffwll.local>
-Mail-Followup-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>, greenfoo@gluegarage.com,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>, sean@poorly.run,
-        Dave Airlie <airlied@linux.ie>, Jonathan Corbet <corbet@lwn.net>,
-        abrodkin@synopsys.com,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Lucas Stach <l.stach@pengutronix.de>, linux+etnaviv@armlinux.org.uk,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        kieran.bingham+renesas@ideasonboard.com,
-        Shawn Guo <shawnguo@kernel.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>, michal.lkml@markovi.net,
-        hamohammed.sa@gmail.com, linux-doc@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        virtualization@lists.linux-foundation.org,
-        etnaviv@lists.freedesktop.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        cocci@systeme.lip6.fr
-References: <20181115221634.22715-1-greenfoo@gluegarage.com>
- <CACRpkdZmTSo02yQeU=qe9WyJMXEq76CNmc2kkFEHuwdo=HKPJw@mail.gmail.com>
- <20181121094233.GN4266@phenom.ffwll.local>
- <22044302.7aKok9czXB@avalon>
+        Thu, 22 Nov 2018 14:34:47 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4AD9E228F1;
+        Thu, 22 Nov 2018 03:56:15 -0500 (EST)
+Received: from web4 ([10.202.2.214])
+  by compute6.internal (MEProxy); Thu, 22 Nov 2018 03:56:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=slimlogic.co.uk;
+         h=message-id:from:to:cc:mime-version:content-transfer-encoding
+        :content-type:in-reply-to:date:references:subject; s=fm1; bh=mhh
+        WAt9m3BcOFh7Z7sVRFf0ZeOaTRktGCxTzbk0QATE=; b=rFI+KvXj0ksPUkSUvZ5
+        Vl8vwTrjbkZEigDI1QcQ7rR6KhEXcusYi2/0unRY4S2RMno1JZ25Nv+rMlqzRtUH
+        vSOwCUbtSljXjdC/zMCw55wehH7/Y8bWQlX7nt3xD2BX5++y2TDpVsEECVPugWMa
+        fl3l2OzIVjVJJG+OjPuAf3l9C4sRvMq/C+zhvncHN7GopMeJltKsnSm419odHR/y
+        cHLjagZcXMc50NFrZNg9axUBGHWcAJQ3KYZa+Po9NrrPj8umkceZgs2vV5IB1acX
+        LrZmNcK3uiuEQTCNGon+MuhbNyUter7Eh0oixh/IcHrI7fcM5a8YcvHpYpEhJ6J+
+        bFA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=mhhWAt9m3BcOFh7Z7sVRFf0ZeOaTRktGCxTzbk0QA
+        TE=; b=o6qhpygCdKoxa5wqNGHURLf/UY3/x7ZpacTrUCJAsY6Rk1SM8n7w9D2OZ
+        OxMZBzbDD22G9BGP4C53p5GX8tZ/8LIijaewS4LmT5XvybiNHlenllQvJlhqFm6O
+        8xO1CnE/M0KaNVANywQTyBOfqsTIgGkHHYoJcVsPwssQ5DQuoqHgzaIFxwUZCcyN
+        94h7BxkUi7IesolBehPprgMZN13Tl0TlQUjZ3q7U+DSfbiClCyFbCyl5afwXnBbY
+        aY/W2lq12RUF+Ek5/tygYd+5F4ZHwEeos487pohORX/SzRc6+o6gVGlj9ceIPCBw
+        Wdek37YYA754gW/Ix2jlEnRS3n29A==
+X-ME-Sender: <xms:Lm_2W8K18JBl_fMKMForHYywbWTtKXswBnLPzAdzPWAbQwikYR7DdA>
+X-ME-Proxy: <xmx:Lm_2W8VwtlVbYzTEX5jgIbjIhyf0bUa7bj-7Q5J0cHF_6d2NoaCj5g>
+    <xmx:Lm_2W-0xDwtZucmwlMpB2nX90ilvKcQiomZ0KwtITT-Ru92Sp-AfRg>
+    <xmx:Lm_2W5gnmIdE0n8FZZBk_s8LVtpj-fb0luOAaL4mpBstrGDZoUvj8g>
+    <xmx:Lm_2W8iVEE0V3nSnvf5dcHv0sc_h8FSBGr1iKQBo285aKYW2vdWbuw>
+    <xmx:Lm_2Wz6dcT6ipHTr_W0KFSXJvgJDVj2g0fttP6s2UJvXzFQ6Rf25_Q>
+    <xmx:L2_2W5h8lhusQE59twte-VZPqUsxqJiFdaRqq_5kcQPDI2RREWCUqg>
+Received: by mailuser.nyi.internal (Postfix, from userid 99)
+        id DD778BA7C4; Thu, 22 Nov 2018 03:56:13 -0500 (EST)
+Message-Id: <1542876973.660187.1585411488.20C3DE15@webmail.messagingengine.com>
+From:   Graeme Gregory <gg@slimlogic.co.uk>
+To:     Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>,
+        linux-omap@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <22044302.7aKok9czXB@avalon>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: MessagingEngine.com Webmail Interface - ajax-3449945b
+In-Reply-To: <1542861179-8941-10-git-send-email-paul.gortmaker@windriver.com>
+Date:   Thu, 22 Nov 2018 08:56:13 +0000
+References: <1542861179-8941-1-git-send-email-paul.gortmaker@windriver.com>
+ <1542861179-8941-10-git-send-email-paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 09/11] mfd: tps65910: Make it explicitly non-modular
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 08:21:29PM +0200, Laurent Pinchart wrote:
-> Hi Daniel,
-> 
-> On Wednesday, 21 November 2018 11:42:33 EET Daniel Vetter wrote:
-> > On Thu, Nov 15, 2018 at 11:38:35PM +0100, Linus Walleij wrote:
-> > > On Thu, Nov 15, 2018 at 11:17 PM Fernando Ramos wrote:
-> > >> One of the things in the DRM TODO list ("Documentation/gpu/todo.rst")
-> > >> was to "switch from reference/unreference to get/put". That's what this
-> > >> patch series is about.
-> > > 
-> > > The series:
-> > > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > 
-> > Since your reviewed it all, and there's a pile of acks for the driver
-> > parts too: Want to go ahead and apply it too?
-> 
-> Please remember to give at least a week to reviewers, especially with LPC last 
-> week.
 
-I think for this undisputed cocci series waiting for everyone is not
-needed. There's really not much the driver-specific reviewer perspective
-would help here.
 
-In general I do agree though, if there's something driver maintainers can
-have better insight on.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+On Thu, 22 Nov 2018, at 4:32 AM, Paul Gortmaker wrote:
+> The Kconfig currently controlling compilation of this code is:
+> 
+> drivers/mfd/Kconfig:config MFD_TPS65910
+> drivers/mfd/Kconfig-    bool "TI TPS65910 Power Management chip"
+> 
+> ...meaning that it currently is not being built as a module by anyone.
+> 
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+> 
+> Since module_init was not in use by this code, the init ordering
+> remains unchanged with this commit.
+> 
+> We don't replace module.h with init.h since the file already has that.
+> We do delete an unused moduleparam.h include though.
+> 
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> 
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> was (or is now) contained at the top of the file in the comments.
+> 
+This is all fine with me.
+
+Acked-by: Graeme Gregory <gg@slimlogic.co.uk>
+
+Thanks
+
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Graeme Gregory <gg@slimlogic.co.uk>
+> Cc: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
+> Cc: linux-omap@vger.kernel.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
+>  drivers/mfd/tps65910.c | 18 +-----------------
+>  1 file changed, 1 insertion(+), 17 deletions(-)
+> 
+> diff --git a/drivers/mfd/tps65910.c b/drivers/mfd/tps65910.c
+> index bf16cbe6fd88..aa3d472a10ff 100644
+> --- a/drivers/mfd/tps65910.c
+> +++ b/drivers/mfd/tps65910.c
+> @@ -1,5 +1,5 @@
+>  /*
+> - * tps65910.c  --  TI TPS6591x
+> + * tps65910.c  --  TI TPS6591x chip family multi-function driver
+>   *
+>   * Copyright 2010 Texas Instruments Inc.
+>   *
+> @@ -13,8 +13,6 @@
+>   *
+>   */
+>  
+> -#include <linux/module.h>
+> -#include <linux/moduleparam.h>
+>  #include <linux/init.h>
+>  #include <linux/err.h>
+>  #include <linux/slab.h>
+> @@ -374,7 +372,6 @@ static const struct of_device_id tps65910_of_match[] = {
+>  	{ .compatible = "ti,tps65911", .data = (void *)TPS65911},
+>  	{ },
+>  };
+> -MODULE_DEVICE_TABLE(of, tps65910_of_match);
+>  
+>  static struct tps65910_board *tps65910_parse_dt(struct i2c_client *client,
+>  						unsigned long *chip_id)
+> @@ -527,8 +524,6 @@ static const struct i2c_device_id tps65910_i2c_id[] = {
+>         { "tps65911", TPS65911 },
+>         { }
+>  };
+> -MODULE_DEVICE_TABLE(i2c, tps65910_i2c_id);
+> -
+>  
+>  static struct i2c_driver tps65910_i2c_driver = {
+>  	.driver = {
+> @@ -545,14 +540,3 @@ static int __init tps65910_i2c_init(void)
+>  }
+>  /* init early so consumer devices can complete system boot */
+>  subsys_initcall(tps65910_i2c_init);
+> -
+> -static void __exit tps65910_i2c_exit(void)
+> -{
+> -	i2c_del_driver(&tps65910_i2c_driver);
+> -}
+> -module_exit(tps65910_i2c_exit);
+> -
+> -MODULE_AUTHOR("Graeme Gregory <gg@slimlogic.co.uk>");
+> -MODULE_AUTHOR("Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>");
+> -MODULE_DESCRIPTION("TPS6591x chip family multi-function driver");
+> -MODULE_LICENSE("GPL");
+> -- 
+> 2.7.4
+> 
