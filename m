@@ -2,78 +2,77 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7343DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:48:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77CFAC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35A4520818
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:48:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35A4520818
+	by mail.kernel.org (Postfix) with ESMTP id 2A70320818
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:48:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A70320818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407632AbeKWI3X (ORCPT
+        id S2407639AbeKWI37 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 03:29:23 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:47869 "EHLO
+        Fri, 23 Nov 2018 03:29:59 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:48687 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404865AbeKWI3W (ORCPT
+        with ESMTP id S2392384AbeKWI37 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 03:29:22 -0500
+        Fri, 23 Nov 2018 03:29:59 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAMLl7e23947114
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAMLlfBX3947149
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 22 Nov 2018 13:47:07 -0800
+        Thu, 22 Nov 2018 13:47:41 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAMLl71P3947110;
-        Thu, 22 Nov 2018 13:47:07 -0800
-Date:   Thu, 22 Nov 2018 13:47:07 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAMLlfho3947145;
+        Thu, 22 Nov 2018 13:47:41 -0800
+Date:   Thu, 22 Nov 2018 13:47:41 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Babu Moger <tipbot@zytor.com>
-Message-ID: <tip-0f00717ecce4b366b3f530153e982cb2eeadafd1@git.kernel.org>
-Cc:     x86@kernel.org, mingo@redhat.com, arnd@arndb.de,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, bp@suse.de,
-        davem@davemloft.net, linux-doc@vger.kernel.org,
-        kstewart@linuxfoundation.org, dwmw2@infradead.org, hpa@zytor.com,
-        babu.moger@amd.com, Thomas.Lendacky@amd.com,
-        gregkh@linuxfoundation.org, jpoimboe@redhat.com,
-        reinette.chatre@intel.com, brijesh.singh@amd.com,
-        tglx@linutronix.de, qianyue.zj@alibaba-inc.com,
-        kirill.shutemov@linux.intel.com, tony.luck@intel.com,
-        dima@arista.com, rafael@kernel.org, chang.seok.bae@intel.com,
-        xiaochen.shen@intel.com, puwen@hygon.cn, pbonzini@redhat.com,
-        sherry.hurwitz@amd.com, fenghua.yu@intel.com, rian@alum.mit.edu,
-        jroedel@suse.de, akpm@linux-foundation.org, peterz@infradead.org,
-        jannh@google.com, Babu.Moger@amd.com, corbet@lwn.net,
-        luto@kernel.org, vkuznets@redhat.com,
-        suravee.suthikulpanit@amd.com, pombredanne@nexb.com,
-        mchehab+samsung@kernel.org
-Reply-To: tony.luck@intel.com, kirill.shutemov@linux.intel.com,
-          puwen@hygon.cn, xiaochen.shen@intel.com,
-          chang.seok.bae@intel.com, dima@arista.com, rafael@kernel.org,
-          pbonzini@redhat.com, sherry.hurwitz@amd.com,
-          fenghua.yu@intel.com, jroedel@suse.de, rian@alum.mit.edu,
-          akpm@linux-foundation.org, jannh@google.com,
-          peterz@infradead.org, mchehab+samsung@kernel.org,
-          pombredanne@nexb.com, suravee.suthikulpanit@amd.com,
-          vkuznets@redhat.com, luto@kernel.org, corbet@lwn.net,
-          Babu.Moger@amd.com, x86@kernel.org, mingo@redhat.com,
-          arnd@arndb.de, linux-kernel@vger.kernel.org, bp@suse.de,
-          mingo@kernel.org, linux-doc@vger.kernel.org, dwmw2@infradead.org,
-          kstewart@linuxfoundation.org, davem@davemloft.net,
-          Thomas.Lendacky@amd.com, gregkh@linuxfoundation.org,
-          babu.moger@amd.com, hpa@zytor.com, tglx@linutronix.de,
-          brijesh.singh@amd.com, reinette.chatre@intel.com,
-          jpoimboe@redhat.com, qianyue.zj@alibaba-inc.com
-In-Reply-To: <20181121202811.4492-4-babu.moger@amd.com>
-References: <20181121202811.4492-4-babu.moger@amd.com>
+Message-ID: <tip-aa50453a448ad645ea05788505680aa403934aa8@git.kernel.org>
+Cc:     pbonzini@redhat.com, chang.seok.bae@intel.com, hpa@zytor.com,
+        jpoimboe@redhat.com, jannh@google.com, tony.luck@intel.com,
+        babu.moger@amd.com, linux-kernel@vger.kernel.org, arnd@arndb.de,
+        tglx@linutronix.de, reinette.chatre@intel.com,
+        xiaochen.shen@intel.com, davem@davemloft.net, peterz@infradead.org,
+        bp@suse.de, kstewart@linuxfoundation.org, sherry.hurwitz@amd.com,
+        akpm@linux-foundation.org, linux-doc@vger.kernel.org,
+        mingo@redhat.com, mchehab+samsung@kernel.org, corbet@lwn.net,
+        dima@arista.com, pombredanne@nexb.com, Babu.Moger@amd.com,
+        mingo@kernel.org, brijesh.singh@amd.com, fenghua.yu@intel.com,
+        dwmw2@infradead.org, suravee.suthikulpanit@amd.com,
+        luto@kernel.org, jroedel@suse.de, Thomas.Lendacky@amd.com,
+        vkuznets@redhat.com, puwen@hygon.cn, gregkh@linuxfoundation.org,
+        kirill.shutemov@linux.intel.com, qianyue.zj@alibaba-inc.com,
+        rian@alum.mit.edu, rafael@kernel.org
+Reply-To: pbonzini@redhat.com, jannh@google.com, jpoimboe@redhat.com,
+          hpa@zytor.com, chang.seok.bae@intel.com,
+          linux-kernel@vger.kernel.org, babu.moger@amd.com,
+          tony.luck@intel.com, xiaochen.shen@intel.com,
+          reinette.chatre@intel.com, arnd@arndb.de, tglx@linutronix.de,
+          bp@suse.de, peterz@infradead.org, davem@davemloft.net,
+          kstewart@linuxfoundation.org, corbet@lwn.net,
+          mchehab+samsung@kernel.org, akpm@linux-foundation.org,
+          mingo@redhat.com, linux-doc@vger.kernel.org,
+          sherry.hurwitz@amd.com, pombredanne@nexb.com, dima@arista.com,
+          Babu.Moger@amd.com, dwmw2@infradead.org, fenghua.yu@intel.com,
+          mingo@kernel.org, brijesh.singh@amd.com, Thomas.Lendacky@amd.com,
+          vkuznets@redhat.com, suravee.suthikulpanit@amd.com,
+          jroedel@suse.de, luto@kernel.org, puwen@hygon.cn,
+          rian@alum.mit.edu, qianyue.zj@alibaba-inc.com,
+          gregkh@linuxfoundation.org, kirill.shutemov@linux.intel.com,
+          rafael@kernel.org
+In-Reply-To: <20181121202811.4492-5-babu.moger@amd.com>
+References: <20181121202811.4492-5-babu.moger@amd.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/resctrl: Re-arrange the RDT init code
-Git-Commit-ID: 0f00717ecce4b366b3f530153e982cb2eeadafd1
+Subject: [tip:x86/cache] x86/resctrl: Move all the macros to
+ resctrl/internal.h
+Git-Commit-ID: aa50453a448ad645ea05788505680aa403934aa8
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -87,18 +86,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0f00717ecce4b366b3f530153e982cb2eeadafd1
-Gitweb:     https://git.kernel.org/tip/0f00717ecce4b366b3f530153e982cb2eeadafd1
+Commit-ID:  aa50453a448ad645ea05788505680aa403934aa8
+Gitweb:     https://git.kernel.org/tip/aa50453a448ad645ea05788505680aa403934aa8
 Author:     Babu Moger <Babu.Moger@amd.com>
-AuthorDate: Wed, 21 Nov 2018 20:28:29 +0000
+AuthorDate: Wed, 21 Nov 2018 20:28:31 +0000
 Committer:  Borislav Petkov <bp@suse.de>
 CommitDate: Thu, 22 Nov 2018 20:16:19 +0100
 
-x86/resctrl: Re-arrange the RDT init code
+x86/resctrl: Move all the macros to resctrl/internal.h
 
-Separate the call sequence for rdt_quirks and MBA feature. This is in
-preparation to handle vendor differences in these call sequences. Rename
-the functions to make the flow a bit more meaningful.
+Move all the macros to resctrl/internal.h and rename the registers with
+MSR_ prefix for consistency.
+
+ [bp: align MSR definitions vertically ]
 
 Signed-off-by: Babu Moger <babu.moger@amd.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
@@ -137,85 +137,175 @@ Cc: Thomas Lendacky <Thomas.Lendacky@amd.com>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
 Cc: <xiaochen.shen@intel.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20181121202811.4492-4-babu.moger@amd.com
+Link: https://lkml.kernel.org/r/20181121202811.4492-5-babu.moger@amd.com
 ---
- arch/x86/kernel/cpu/resctrl/core.c | 28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+ arch/x86/kernel/cpu/resctrl/core.c     | 22 ++++++++++------------
+ arch/x86/kernel/cpu/resctrl/internal.h | 19 ++++++++++++-------
+ arch/x86/kernel/cpu/resctrl/monitor.c  |  3 ---
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c |  4 ++--
+ 4 files changed, 24 insertions(+), 24 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 0cf890ae0de2..40380731c588 100644
+index 40380731c588..cf6491eeadc6 100644
 --- a/arch/x86/kernel/cpu/resctrl/core.c
 +++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -259,7 +259,7 @@ static inline bool rdt_get_mb_table(struct rdt_resource *r)
- 	return false;
- }
+@@ -33,9 +33,6 @@
+ #include <asm/resctrl_sched.h>
+ #include "internal.h"
  
--static bool rdt_get_mem_config(struct rdt_resource *r)
-+static bool __get_mem_config(struct rdt_resource *r)
+-#define MBA_IS_LINEAR	0x4
+-#define MBA_MAX_MBPS	U32_MAX
+-
+ /* Mutex to protect rdtgroup access. */
+ DEFINE_MUTEX(rdtgroup_mutex);
+ 
+@@ -72,7 +69,7 @@ struct rdt_resource rdt_resources_all[] = {
+ 		.rid			= RDT_RESOURCE_L3,
+ 		.name			= "L3",
+ 		.domains		= domain_init(RDT_RESOURCE_L3),
+-		.msr_base		= IA32_L3_CBM_BASE,
++		.msr_base		= MSR_IA32_L3_CBM_BASE,
+ 		.msr_update		= cat_wrmsr,
+ 		.cache_level		= 3,
+ 		.cache = {
+@@ -89,7 +86,7 @@ struct rdt_resource rdt_resources_all[] = {
+ 		.rid			= RDT_RESOURCE_L3DATA,
+ 		.name			= "L3DATA",
+ 		.domains		= domain_init(RDT_RESOURCE_L3DATA),
+-		.msr_base		= IA32_L3_CBM_BASE,
++		.msr_base		= MSR_IA32_L3_CBM_BASE,
+ 		.msr_update		= cat_wrmsr,
+ 		.cache_level		= 3,
+ 		.cache = {
+@@ -106,7 +103,7 @@ struct rdt_resource rdt_resources_all[] = {
+ 		.rid			= RDT_RESOURCE_L3CODE,
+ 		.name			= "L3CODE",
+ 		.domains		= domain_init(RDT_RESOURCE_L3CODE),
+-		.msr_base		= IA32_L3_CBM_BASE,
++		.msr_base		= MSR_IA32_L3_CBM_BASE,
+ 		.msr_update		= cat_wrmsr,
+ 		.cache_level		= 3,
+ 		.cache = {
+@@ -123,7 +120,7 @@ struct rdt_resource rdt_resources_all[] = {
+ 		.rid			= RDT_RESOURCE_L2,
+ 		.name			= "L2",
+ 		.domains		= domain_init(RDT_RESOURCE_L2),
+-		.msr_base		= IA32_L2_CBM_BASE,
++		.msr_base		= MSR_IA32_L2_CBM_BASE,
+ 		.msr_update		= cat_wrmsr,
+ 		.cache_level		= 2,
+ 		.cache = {
+@@ -140,7 +137,7 @@ struct rdt_resource rdt_resources_all[] = {
+ 		.rid			= RDT_RESOURCE_L2DATA,
+ 		.name			= "L2DATA",
+ 		.domains		= domain_init(RDT_RESOURCE_L2DATA),
+-		.msr_base		= IA32_L2_CBM_BASE,
++		.msr_base		= MSR_IA32_L2_CBM_BASE,
+ 		.msr_update		= cat_wrmsr,
+ 		.cache_level		= 2,
+ 		.cache = {
+@@ -157,7 +154,7 @@ struct rdt_resource rdt_resources_all[] = {
+ 		.rid			= RDT_RESOURCE_L2CODE,
+ 		.name			= "L2CODE",
+ 		.domains		= domain_init(RDT_RESOURCE_L2CODE),
+-		.msr_base		= IA32_L2_CBM_BASE,
++		.msr_base		= MSR_IA32_L2_CBM_BASE,
+ 		.msr_update		= cat_wrmsr,
+ 		.cache_level		= 2,
+ 		.cache = {
+@@ -174,7 +171,7 @@ struct rdt_resource rdt_resources_all[] = {
+ 		.rid			= RDT_RESOURCE_MBA,
+ 		.name			= "MB",
+ 		.domains		= domain_init(RDT_RESOURCE_MBA),
+-		.msr_base		= IA32_MBA_THRTL_BASE,
++		.msr_base		= MSR_IA32_MBA_THRTL_BASE,
+ 		.msr_update		= mba_wrmsr,
+ 		.cache_level		= 3,
+ 		.parse_ctrlval		= parse_bw,
+@@ -211,9 +208,10 @@ static inline void cache_alloc_hsw_probe(void)
+ 	struct rdt_resource *r  = &rdt_resources_all[RDT_RESOURCE_L3];
+ 	u32 l, h, max_cbm = BIT_MASK(20) - 1;
+ 
+-	if (wrmsr_safe(IA32_L3_CBM_BASE, max_cbm, 0))
++	if (wrmsr_safe(MSR_IA32_L3_CBM_BASE, max_cbm, 0))
+ 		return;
+-	rdmsr(IA32_L3_CBM_BASE, l, h);
++
++	rdmsr(MSR_IA32_L3_CBM_BASE, l, h);
+ 
+ 	/* If all the bits were set in MSR, return success */
+ 	if (l != max_cbm)
+diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+index eeaee05522b5..fb26d347ae6c 100644
+--- a/arch/x86/kernel/cpu/resctrl/internal.h
++++ b/arch/x86/kernel/cpu/resctrl/internal.h
+@@ -6,15 +6,18 @@
+ #include <linux/kernfs.h>
+ #include <linux/jump_label.h>
+ 
+-#define IA32_L3_QOS_CFG		0xc81
+-#define IA32_L2_QOS_CFG		0xc82
+-#define IA32_L3_CBM_BASE	0xc90
+-#define IA32_L2_CBM_BASE	0xd10
+-#define IA32_MBA_THRTL_BASE	0xd50
++#define MSR_IA32_L3_QOS_CFG		0xc81
++#define MSR_IA32_L2_QOS_CFG		0xc82
++#define MSR_IA32_L3_CBM_BASE		0xc90
++#define MSR_IA32_L2_CBM_BASE		0xd10
++#define MSR_IA32_MBA_THRTL_BASE		0xd50
+ 
+-#define L3_QOS_CDP_ENABLE	0x01ULL
++#define MSR_IA32_QM_CTR			0x0c8e
++#define MSR_IA32_QM_EVTSEL		0x0c8d
+ 
+-#define L2_QOS_CDP_ENABLE	0x01ULL
++#define L3_QOS_CDP_ENABLE		0x01ULL
++
++#define L2_QOS_CDP_ENABLE		0x01ULL
+ 
+ /*
+  * Event IDs are used to program IA32_QM_EVTSEL before reading event
+@@ -29,6 +32,8 @@
+ #define MBM_CNTR_WIDTH			24
+ #define MBM_OVERFLOW_INTERVAL		1000
+ #define MAX_MBA_BW			100u
++#define MBA_IS_LINEAR			0x4
++#define MBA_MAX_MBPS			U32_MAX
+ 
+ #define RMID_VAL_ERROR			BIT_ULL(63)
+ #define RMID_VAL_UNAVAIL		BIT_ULL(62)
+diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+index ebf408db8191..f33f11f69078 100644
+--- a/arch/x86/kernel/cpu/resctrl/monitor.c
++++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+@@ -28,9 +28,6 @@
+ #include <asm/cpu_device_id.h>
+ #include "internal.h"
+ 
+-#define MSR_IA32_QM_CTR		0x0c8e
+-#define MSR_IA32_QM_EVTSEL		0x0c8d
+-
+ struct rmid_entry {
+ 	u32				rmid;
+ 	int				busy;
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 2bf1f3227afa..cf159095b612 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -1722,14 +1722,14 @@ static void l3_qos_cfg_update(void *arg)
  {
- 	union cpuid_0x10_3_eax eax;
- 	union cpuid_0x10_x_edx edx;
-@@ -794,6 +794,14 @@ static bool __init rdt_cpu_has(int flag)
- 	return ret;
+ 	bool *enable = arg;
+ 
+-	wrmsrl(IA32_L3_QOS_CFG, *enable ? L3_QOS_CDP_ENABLE : 0ULL);
++	wrmsrl(MSR_IA32_L3_QOS_CFG, *enable ? L3_QOS_CDP_ENABLE : 0ULL);
  }
  
-+static __init bool get_mem_config(void)
-+{
-+	if (rdt_cpu_has(X86_FEATURE_MBA))
-+		return __get_mem_config(&rdt_resources_all[RDT_RESOURCE_MBA]);
-+
-+	return false;
-+}
-+
- static __init bool get_rdt_alloc_resources(void)
+ static void l2_qos_cfg_update(void *arg)
  {
- 	bool ret = false;
-@@ -818,10 +826,9 @@ static __init bool get_rdt_alloc_resources(void)
- 		ret = true;
- 	}
+ 	bool *enable = arg;
  
--	if (rdt_cpu_has(X86_FEATURE_MBA)) {
--		if (rdt_get_mem_config(&rdt_resources_all[RDT_RESOURCE_MBA]))
--			ret = true;
--	}
-+	if (get_mem_config())
-+		ret = true;
-+
- 	return ret;
+-	wrmsrl(IA32_L2_QOS_CFG, *enable ? L2_QOS_CDP_ENABLE : 0ULL);
++	wrmsrl(MSR_IA32_L2_QOS_CFG, *enable ? L2_QOS_CDP_ENABLE : 0ULL);
  }
  
-@@ -840,7 +847,7 @@ static __init bool get_rdt_mon_resources(void)
- 	return !rdt_get_mon_l3_config(&rdt_resources_all[RDT_RESOURCE_L3]);
- }
- 
--static __init void rdt_quirks(void)
-+static __init void __check_quirks_intel(void)
- {
- 	switch (boot_cpu_data.x86_model) {
- 	case INTEL_FAM6_HASWELL_X:
-@@ -855,9 +862,14 @@ static __init void rdt_quirks(void)
- 	}
- }
- 
-+static __init void check_quirks(void)
-+{
-+	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
-+		__check_quirks_intel();
-+}
-+
- static __init bool get_rdt_resources(void)
- {
--	rdt_quirks();
- 	rdt_alloc_capable = get_rdt_alloc_resources();
- 	rdt_mon_capable = get_rdt_mon_resources();
- 
-@@ -871,6 +883,8 @@ static int __init resctrl_late_init(void)
- 	struct rdt_resource *r;
- 	int state, ret;
- 
-+	check_quirks();
-+
- 	if (!get_rdt_resources())
- 		return -ENODEV;
- 
+ static inline bool is_mba_linear(void)
