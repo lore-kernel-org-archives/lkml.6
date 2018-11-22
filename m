@@ -2,170 +2,94 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E90EDC04EBB
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC4BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5FE520870
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:30:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5FE520870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id CB1A720684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:31:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z7FC+6v2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB1A720684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405215AbeKVVJZ (ORCPT
+        id S2394402AbeKVVKH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 16:09:25 -0500
-Received: from verein.lst.de ([213.95.11.211]:57488 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388270AbeKVVJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 16:09:25 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 07FD668BC7; Thu, 22 Nov 2018 11:30:34 +0100 (CET)
-Date:   Thu, 22 Nov 2018 11:30:33 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
-        Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
-        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V11 03/19] block: introduce bio_for_each_bvec()
-Message-ID: <20181122103033.GA29418@lst.de>
-References: <20181121032327.8434-1-ming.lei@redhat.com> <20181121032327.8434-4-ming.lei@redhat.com> <20181121133244.GB1640@lst.de> <20181121153135.GB19111@ming.t460p> <20181121161025.GB4977@lst.de> <20181121171217.GA6259@lst.de> <20181122101527.GB27273@ming.t460p> <20181122102309.GA29295@lst.de>
+        Thu, 22 Nov 2018 16:10:07 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33115 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388144AbeKVVKH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 16:10:07 -0500
+Received: by mail-pl1-f194.google.com with SMTP id z23so9089100plo.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 02:31:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3Ipo4Ypedi2KS6xt9+ZzOVJRgi9LSYD3F8v6Tac958A=;
+        b=Z7FC+6v2TM3+c03OU+LDOp4LRxnHOX1qNQHtJYstrkK5npEIogshXejpUE6iqs144P
+         opRJDtFpQn/J3iuB4q4Zfanh3lXHIcL/KpzCCPpe7YsGEgO/ZLk3BigFFOctrEPpqfMe
+         npPcjTUEB27CRQhcD3ANGdv4ipikTfYnyCyMQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3Ipo4Ypedi2KS6xt9+ZzOVJRgi9LSYD3F8v6Tac958A=;
+        b=baO1FNBaQSbvaeYoQz5qTNwFckhI5sDEDNhp61LgkJWbizHkO/SjeDIa1EpHOlJY92
+         AyOAHqx0VbRTF+R85d+EypGioVFdVKnO3+k4BXjuh3cp1n6yin0UWNpgbegDEvzKJWra
+         p/ZhvJJ7gJRVkL6QkBn+h5IMWa+bp3qSW+2iYPSt4b6ELRnk9AvScooRtrkY8LKOymdm
+         4YpHTMDZbGCzH8JJOuuzhB0iad8G37RqPo4EAYlRLpz3RHQjXPFJlglGmBiwbiwmaLQ/
+         kbWFZv+pEHF0pGhaRgZeWel5hsqIwyApZ9gWGGWdwrt3YoHWbzoVQER/cpMB4PyxlEFV
+         IM1g==
+X-Gm-Message-State: AA+aEWZ/+2jq6aMIVdSm3epCowr9aK4T7UEZgOdXGeBkTIhUT5Bbq4Ln
+        Nba9FxvMRhmcaNxKZ2R4kw/iJQ==
+X-Google-Smtp-Source: AFSGD/UVsb/npHZPw5KSuaydvR1kSD+C/hfiL7eGetruG6EhvExGQqliezJVNXC/NcZI+vASeLK1Mw==
+X-Received: by 2002:a17:902:780c:: with SMTP id p12mr10486742pll.197.1542882677680;
+        Thu, 22 Nov 2018 02:31:17 -0800 (PST)
+Received: from localhost ([122.172.88.116])
+        by smtp.gmail.com with ESMTPSA id w80-v6sm79686744pfk.11.2018.11.22.02.31.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 02:31:17 -0800 (PST)
+Date:   Thu, 22 Nov 2018 16:01:14 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     rjw@rjwysocki.net, vincent.guittot@linaro.org,
+        linux-kernel@vger.kernel.org,
+        Chris Redpath <chris.redpath@linaro.org>,
+        Quentin Perret <quentin.perret@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH 4/4] base/drivers/topology: Default dmpis-mhz if they are
+ not set in DT
+Message-ID: <20181122103114.epqwwta5ug7v5l55@vireshk-i7>
+References: <1540830201-2947-1-git-send-email-daniel.lezcano@linaro.org>
+ <1540830201-2947-4-git-send-email-daniel.lezcano@linaro.org>
+ <20181030085845.az2dstibnrcl7im4@vireshk-i7>
+ <3c3890d2-8b46-797d-328f-bd5dee11b22d@linaro.org>
+ <20181122042900.u6eefkbw32vvi6xm@vireshk-i7>
+ <b507cf16-aa78-303e-7459-ad380266317e@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181122102309.GA29295@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <b507cf16-aa78-303e-7459-ad380266317e@linaro.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Btw, this patch instead of the plain rever might make it a little
-more clear what is going on by skipping the confusing helper altogher
-and operating on the raw bvec array:
+On 22-11-18, 11:29, Daniel Lezcano wrote:
+> Oh ... actually raw_capacity is not needed at all!
 
+It is required as another routine writes some values to it I believe :)
 
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index e5b975fa0558..926550ce2d21 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -137,24 +137,18 @@ static inline bool bio_full(struct bio *bio)
- 	for (i = 0, iter_all.idx = 0; iter_all.idx < (bio)->bi_vcnt; iter_all.idx++)	\
- 		bvec_for_each_segment(bvl, &((bio)->bi_io_vec[iter_all.idx]), i, iter_all)
- 
--static inline void __bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
--				      unsigned bytes, unsigned max_seg_len)
-+static inline void bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
-+				    unsigned bytes)
- {
- 	iter->bi_sector += bytes >> 9;
- 
- 	if (bio_no_advance_iter(bio))
- 		iter->bi_size -= bytes;
- 	else
--		__bvec_iter_advance(bio->bi_io_vec, iter, bytes, max_seg_len);
-+		bvec_iter_advance(bio->bi_io_vec, iter, bytes);
- 		/* TODO: It is reasonable to complete bio with error here. */
- }
- 
--static inline void bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
--				    unsigned bytes)
--{
--	__bio_advance_iter(bio, iter, bytes, PAGE_SIZE);
--}
--
- #define __bio_for_each_segment(bvl, bio, iter, start)			\
- 	for (iter = (start);						\
- 	     (iter).bi_size &&						\
-@@ -168,7 +162,7 @@ static inline void bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
- 	for (iter = (start);						\
- 	     (iter).bi_size &&						\
- 		((bvl = bio_iter_mp_iovec((bio), (iter))), 1);	\
--	     __bio_advance_iter((bio), &(iter), (bvl).bv_len, BVEC_MAX_LEN))
-+	     bio_advance_iter((bio), &(iter), (bvl).bv_len))
- 
- /* returns one real segment(multi-page bvec) each time */
- #define bio_for_each_bvec(bvl, bio, iter)			\
-diff --git a/include/linux/bvec.h b/include/linux/bvec.h
-index cab36d838ed0..7d0f9bdb6f05 100644
---- a/include/linux/bvec.h
-+++ b/include/linux/bvec.h
-@@ -25,8 +25,6 @@
- #include <linux/errno.h>
- #include <linux/mm.h>
- 
--#define BVEC_MAX_LEN  ((unsigned int)-1)
--
- /*
-  * was unsigned short, but we might as well be ready for > 64kB I/O pages
-  */
-@@ -102,8 +100,8 @@ struct bvec_iter_all {
- 	.bv_offset	= segment_iter_offset((bvec), (iter)),	\
- })
- 
--static inline bool __bvec_iter_advance(const struct bio_vec *bv,
--		struct bvec_iter *iter, unsigned bytes, unsigned max_seg_len)
-+static inline bool bvec_iter_advance(const struct bio_vec *bv,
-+		struct bvec_iter *iter, unsigned bytes)
- {
- 	if (WARN_ONCE(bytes > iter->bi_size,
- 		     "Attempted to advance past end of bvec iter\n")) {
-@@ -112,20 +110,15 @@ static inline bool __bvec_iter_advance(const struct bio_vec *bv,
- 	}
- 
- 	while (bytes) {
--		unsigned segment_len = segment_iter_len(bv, *iter);
--
--		if (max_seg_len < BVEC_MAX_LEN)
--			segment_len = min_t(unsigned, segment_len,
--					    max_seg_len -
--					    bvec_iter_offset(bv, *iter));
-+		const struct bio_vec *cur = bv + iter->bi_idx;
-+		unsigned len = min3(bytes, iter->bi_size,
-+				    cur->bv_len - iter->bi_bvec_done);
- 
--		segment_len = min(bytes, segment_len);
--
--		bytes -= segment_len;
--		iter->bi_size -= segment_len;
--		iter->bi_bvec_done += segment_len;
-+		bytes -= len;
-+		iter->bi_size -= len;
-+		iter->bi_bvec_done += len;
- 
--		if (iter->bi_bvec_done == __bvec_iter_bvec(bv, *iter)->bv_len) {
-+		if (iter->bi_bvec_done == cur->bv_len) {
- 			iter->bi_bvec_done = 0;
- 			iter->bi_idx++;
- 		}
-@@ -157,13 +150,6 @@ static inline bool bvec_iter_rewind(const struct bio_vec *bv,
- 	return true;
- }
- 
--static inline bool bvec_iter_advance(const struct bio_vec *bv,
--				     struct bvec_iter *iter,
--				     unsigned bytes)
--{
--	return __bvec_iter_advance(bv, iter, bytes, PAGE_SIZE);
--}
--
- #define for_each_bvec(bvl, bio_vec, iter, start)			\
- 	for (iter = (start);						\
- 	     (iter).bi_size &&						\
+-- 
+viresh
