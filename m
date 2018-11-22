@@ -2,159 +2,161 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 529DEC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECA3C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F39CE20659
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:55:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F39CE20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id DA4C920659
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:56:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA4C920659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404998AbeKWIhJ (ORCPT
+        id S2407748AbeKWIiN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 03:37:09 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:37651 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730054AbeKWIhJ (ORCPT
+        Fri, 23 Nov 2018 03:38:13 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:49108 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730054AbeKWIiN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 03:37:09 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAMLqrSf3948247
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 22 Nov 2018 13:52:53 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAMLqrU33948243;
-        Thu, 22 Nov 2018 13:52:53 -0800
-Date:   Thu, 22 Nov 2018 13:52:53 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Babu Moger <tipbot@zytor.com>
-Message-ID: <tip-1f8251d3bfadf42357cf6c3eebb5cda6cd3987b5@git.kernel.org>
-Cc:     rafael@kernel.org, linux-doc@vger.kernel.org, arnd@arndb.de,
-        dima@arista.com, hpa@zytor.com, chang.seok.bae@intel.com,
-        jpoimboe@redhat.com, gregkh@linuxfoundation.org,
-        dwmw2@infradead.org, mchehab+samsung@kernel.org,
-        pombredanne@nexb.com, vkuznets@redhat.com, peterz@infradead.org,
-        sherry.hurwitz@amd.com, mingo@redhat.com, jroedel@suse.de,
-        mingo@kernel.org, reinette.chatre@intel.com,
-        suravee.suthikulpanit@amd.com, xiaochen.shen@intel.com,
-        akpm@linux-foundation.org, corbet@lwn.net, pbonzini@redhat.com,
-        kstewart@linuxfoundation.org, Thomas.Lendacky@amd.com,
-        kirill.shutemov@linux.intel.com, luto@kernel.org,
-        Babu.Moger@amd.com, babu.moger@amd.com, tglx@linutronix.de,
-        fenghua.yu@intel.com, linux-kernel@vger.kernel.org, bp@suse.de,
-        puwen@hygon.cn, jannh@google.com, qianyue.zj@alibaba-inc.com,
-        rian@alum.mit.edu, davem@davemloft.net, tony.luck@intel.com,
-        brijesh.singh@amd.com
-Reply-To: mingo@kernel.org, jroedel@suse.de, mingo@redhat.com,
-          sherry.hurwitz@amd.com, peterz@infradead.org,
-          vkuznets@redhat.com, mchehab+samsung@kernel.org,
-          pombredanne@nexb.com, gregkh@linuxfoundation.org,
-          dwmw2@infradead.org, jpoimboe@redhat.com,
-          chang.seok.bae@intel.com, hpa@zytor.com, dima@arista.com,
-          linux-doc@vger.kernel.org, arnd@arndb.de, rafael@kernel.org,
-          davem@davemloft.net, tony.luck@intel.com, brijesh.singh@amd.com,
-          qianyue.zj@alibaba-inc.com, rian@alum.mit.edu, bp@suse.de,
-          puwen@hygon.cn, jannh@google.com, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, fenghua.yu@intel.com,
-          Babu.Moger@amd.com, babu.moger@amd.com,
-          kirill.shutemov@linux.intel.com, luto@kernel.org,
-          Thomas.Lendacky@amd.com, kstewart@linuxfoundation.org,
-          corbet@lwn.net, akpm@linux-foundation.org, pbonzini@redhat.com,
-          xiaochen.shen@intel.com, suravee.suthikulpanit@amd.com,
-          reinette.chatre@intel.com
-In-Reply-To: <20181121202811.4492-14-babu.moger@amd.com>
-References: <20181121202811.4492-14-babu.moger@amd.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] MAINTAINERS: Update resctrl filename patterns
-Git-Commit-ID: 1f8251d3bfadf42357cf6c3eebb5cda6cd3987b5
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 23 Nov 2018 03:38:13 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gPwxs-0005Wq-0h; Thu, 22 Nov 2018 22:56:48 +0100
+Date:   Thu, 22 Nov 2018 22:56:47 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Qian Cai <cai@gmx.us>
+cc:     akpm@linux-foundation.org, longman@redhat.com,
+        yang.shi@linux.alibaba.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] debugobjects: scale the static pool size
+In-Reply-To: <20181121021157.3061-1-cai@gmx.us>
+Message-ID: <alpine.DEB.2.21.1811222238270.1665@nanos.tec.linutronix.de>
+References: <20181120232810.2503-1-cai@gmx.us> <20181121021157.3061-1-cai@gmx.us>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1f8251d3bfadf42357cf6c3eebb5cda6cd3987b5
-Gitweb:     https://git.kernel.org/tip/1f8251d3bfadf42357cf6c3eebb5cda6cd3987b5
-Author:     Babu Moger <Babu.Moger@amd.com>
-AuthorDate: Wed, 21 Nov 2018 20:28:49 +0000
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Thu, 22 Nov 2018 20:16:20 +0100
+On Tue, 20 Nov 2018, Qian Cai wrote:
 
-MAINTAINERS: Update resctrl filename patterns
+Looking deeper at that.
 
-The file nameswith intel_rdt* have been moved to the new directory
-arch/x86/kernel/cpu/resctrl/. Update to reflect the changed files and
-documentation.
+> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+> index 70935ed91125..140571aa483c 100644
+> --- a/lib/debugobjects.c
+> +++ b/lib/debugobjects.c
+> @@ -23,9 +23,81 @@
+>  #define ODEBUG_HASH_BITS	14
+>  #define ODEBUG_HASH_SIZE	(1 << ODEBUG_HASH_BITS)
+>  
+> -#define ODEBUG_POOL_SIZE	1024
+> +#define ODEBUG_DEFAULT_POOL	512
+>  #define ODEBUG_POOL_MIN_LEVEL	256
+>  
+> +/*
+> + * Some debug objects are allocated during the early boot. Enabling some options
+> + * like timers or workqueue objects may increase the size required significantly
+> + * with large number of CPUs. For example (as today, 20 Nov. 2018),
+> + *
+> + * No. CPUs x 2 (worker pool) objects:
+> + *
+> + * start_kernel
+> + *   workqueue_init_early
+> + *     init_worker_pool
+> + *       init_timer_key
+> + *         debug_object_init
+> + *
+> + * No. CPUs objects (CONFIG_HIGH_RES_TIMERS):
+> + *
+> + * sched_init
+> + *   hrtick_rq_init
+> + *     hrtimer_init
+> + *
+> + * CONFIG_DEBUG_OBJECTS_WORK:
+> + * No. CPUs x 6 (workqueue) objects:
+> + *
+> + * workqueue_init_early
+> + *   alloc_workqueue
+> + *     __alloc_workqueue_key
+> + *       alloc_and_link_pwqs
+> + *         init_pwq
+> + *
+> + * Also, plus No. CPUs objects:
+> + *
+> + * perf_event_init
+> + *    __init_srcu_struct
+> + *      init_srcu_struct_fields
+> + *        init_srcu_struct_nodes
+> + *          __init_work
 
-Signed-off-by: Babu Moger <babu.moger@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Brijesh Singh <brijesh.singh@amd.com>
-Cc: "Chang S. Bae" <chang.seok.bae@intel.com>
-Cc: David Miller <davem@davemloft.net>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Dmitry Safonov <dima@arista.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Pu Wen <puwen@hygon.cn>
-Cc: <qianyue.zj@alibaba-inc.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Rian Hunter <rian@alum.mit.edu>
-Cc: Sherry Hurwitz <sherry.hurwitz@amd.com>
-Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thomas Lendacky <Thomas.Lendacky@amd.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: <xiaochen.shen@intel.com>
-Link: https://lkml.kernel.org/r/20181121202811.4492-14-babu.moger@amd.com
----
- MAINTAINERS | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+None of the things are actually used or required _BEFORE_
+debug_objects_mem_init() is invoked.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b755a89fa325..b7d596e66ae6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12545,9 +12545,9 @@ M:	Fenghua Yu <fenghua.yu@intel.com>
- M:	Reinette Chatre <reinette.chatre@intel.com>
- L:	linux-kernel@vger.kernel.org
- S:	Supported
--F:	arch/x86/kernel/cpu/intel_rdt*
--F:	arch/x86/include/asm/intel_rdt_sched.h
--F:	Documentation/x86/intel_rdt*
-+F:	arch/x86/kernel/cpu/resctrl/
-+F:	arch/x86/include/asm/resctrl_sched.h
-+F:	Documentation/x86/resctrl*
- 
- READ-COPY UPDATE (RCU)
- M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+The reason why the call is at this place in start_kernel() is
+historical. It's because back in the days when debugobjects were added the
+memory allocator was enabled way later than today. So we can just move the
+debug_objects_mem_init() call right before sched_init() I think.
+
+> + * Increase the number a bit more in case the implmentatins are changed in the
+> + * future, as it is better to avoid OOM than spending a bit more kernel memory
+> + * that will/can be freed.
+> + *
+> + * With all debug objects config options selected except the workqueue and the
+> + * timers, kernel reports,
+> + * 64-CPU:  ODEBUG: 4 of 4 active objects replaced
+> + * 256-CPU: ODEBUG: 4 of 4 active objects replaced
+> + *
+> + * all the options except the workqueue:
+> + * 64-CPU:  ODEBUG: 466 of 466 active objects replaced
+> + * 256-CPU: ODEBUG: 1810 of 1810 active objects replaced
+> + *
+> + * all the options except the timers:
+> + * 64-CPU:  ODEBUG: 652 of 652 active objects replaced
+> + * 256-CPU: ODEBUG: 2572 of 2572 active objects replaced
+> + *
+> + * all the options:
+> + * 64-CPU:  ODEBUG: 1114 of 1114 active objects replaced
+> + * 256-CPU: ODEBUG: 4378 of 4378 active objects replaced
+> + */
+> +#ifdef CONFIG_DEBUG_OBJECTS_WORK
+> +#define ODEBUG_WORK_PCPU_CNT	10
+> +#else
+> +#define ODEBUG_WORK_PCPU_CNT	0
+> +#endif /* CONFIG_DEBUG_OBJECTS_WORK */
+> +
+> +#ifdef CONFIG_DEBUG_OBJECTS_TIMERS
+> +#define ODEBUG_TIMERS_PCPU_CNT	10
+> +#else
+> +#define ODEBUG_TIMERS_PCPU_CNT	0
+> +#endif /* CONFIG_DEBUG_OBJECTS_TIMERS */
+
+Btw, the scaling here is way off.
+
+> +#define ODEBUG_POOL_SIZE	(ODEBUG_DEFAULT_POOL + CONFIG_NR_CPUS * \
+> +				(ODEBUG_TIMERS_PCPU_CNT + ODEBUG_WORK_PCPU_CNT))
+
+CONFIG_NR_CPUS	Pool size		Storage size
+
+256		256512			4M
+		
+According to your list above it uses 4378 object for 256 CPUs. That's off
+by an factor of ~58.
+
+But we can spare all that and just move the init call.
+
+Thanks,
+
+	tglx
+
