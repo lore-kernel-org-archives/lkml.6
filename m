@@ -2,97 +2,80 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3947C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1846AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E81320866
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:52:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ocWKrd4S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E81320866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id BFA3E20866
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:55:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFA3E20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393579AbeKVUbZ (ORCPT
+        id S2393608AbeKVUdw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 15:31:25 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57090 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732073AbeKVUbY (ORCPT
+        Thu, 22 Nov 2018 15:33:52 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:47101 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390158AbeKVUdw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:31:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2wBjh3OTAiH/HnJZgYwvPM5MOtvS2cSpiPoVJU00roE=; b=ocWKrd4SP5yfVp/wIwG4p5c8x
-        mhEISuTOUzXRVz5nO+6g5cqiu9L+XkbGYDFDA5XHXPUyG6OtVxNT1UyRqcmyWNrcElQSEdhMC5myJ
-        ZQ8QxlXnUsIoJ3rSXKYwgcpL+1hMSHSfwz1mj5IO355Cp9Mizoj/6L42SzE+qdaVzWVmu0sfrpWVw
-        6MCpFvvRTUUZJcMKZmX2nhozbgpnzW3IliWsjQSok4mV482aQZd1LqfvngZSmHW8b4ywje7duOkwb
-        Rl9JzXTQzo4t3/MH35+9U23OZi8nR2pO8UiJHOpy9i0Fsd0+FLvu+E7KD+h7r+p6/XeDiU6GfXzwK
-        Fplodaw9g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPlf5-0007yH-Nc; Thu, 22 Nov 2018 09:52:40 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3FFB22029FD58; Thu, 22 Nov 2018 10:52:33 +0100 (CET)
-Date:   Thu, 22 Nov 2018 10:52:33 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH v2 0/5] x86/fault: #PF improvements, mostly related to
- USER bit
-Message-ID: <20181122095233.GM2131@hirez.programming.kicks-ass.net>
-References: <cover.1542841400.git.luto@kernel.org>
+        Thu, 22 Nov 2018 15:33:52 -0500
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gPlhN-000275-PQ; Thu, 22 Nov 2018 10:55:01 +0100
+Date:   Thu, 22 Nov 2018 10:55:01 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [patch 00/24] x86/speculation: Remedy the STIBP/IBPB overhead
+In-Reply-To: <47a9c3da-de77-071a-c5fb-237f07c6892f@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1811221054250.1571@nanos.tec.linutronix.de>
+References: <20181121201430.559770965@linutronix.de> <47a9c3da-de77-071a-c5fb-237f07c6892f@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1542841400.git.luto@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 03:11:21PM -0800, Andy Lutomirski wrote:
-> This series is a whole bunch of page fault cleanups, plus a couple
-> of OOPS diagnostic improvements.  The overall goals are to clean up
-> handling of the faulting CPL, the USER bit in the error_code, and
-> the log messages generated by #PF OOPSes.
+On Wed, 21 Nov 2018, Tim Chen wrote:
+> On 11/21/2018 12:14 PM, Thomas Gleixner wrote:
+> > This is based on Tim Chen's V5 patch series. The following changes have
+> > been made:
+> > 
+> ...
+> > 
+> > TODO: Write documentation
+> > 
 > 
-> This series can also be seen as CET preparation.  CET introduces the
-> WRUSS instruction, which is the very first way for CPL 0 code to
-> cause a #PF fault with the USER bit set.  Let's get the page fault
-> code into shape before we start using WRUSS :)
-> 
-> Changes from v1:
->   - Rebase on top of tip:x86/mm, now that a bunch of v1 was applied.
->     The only material changes are that 'x86/fault: Check
->     user_mode(regs) when validating a stack extension' is gone
->     because the code it fixed has been deleted and that 'x86/fault:
->     Remove sw_error_code' lost the hunk that changed the same code.
-> 
-> Andy Lutomirski (5):
->   x86/fault: Remove sw_error_code
->   x86/fault: Don't try to recover from an implicit supervisor access
->   x86/oops: Show the correct CS value in show_regs()
->   x86/fault: Decode page fault OOPSes better
->   x86/vsyscall/64: Use X86_PF constants in the simulated #PF error code
-> 
->  arch/x86/entry/vsyscall/vsyscall_64.c |   2 +-
->  arch/x86/kernel/process_64.c          |   5 +-
->  arch/x86/mm/fault.c                   | 144 +++++++++++++++++++-------
->  3 files changed, 108 insertions(+), 43 deletions(-)
+> Andi took a crack at the document.  I made some 
+> modifications on top.  It can be used as a
+> starting point for the final document.
 
-All looks good to me,
+Nice. Thanks a lot for starting this. I'll go through it later.
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+      Thomas
