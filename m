@@ -2,211 +2,108 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F257C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:26:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86566C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FEA820684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:26:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 407D120684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:27:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="GKJK6TOz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FEA820684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alien8.de
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gN8XvJOL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 407D120684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395043AbeKVXF4 (ORCPT
+        id S2395057AbeKVXGZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 18:05:56 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:55660 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394865AbeKVXFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 18:05:55 -0500
-Received: from zn.tnic (p200300EC2BDC9100898E5A1DF8FAB135.dip0.t-ipconnect.de [IPv6:2003:ec:2bdc:9100:898e:5a1d:f8fa:b135])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9622B1EC06CA;
-        Thu, 22 Nov 2018 13:26:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1542889604;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=2nkS/vyfMpcXqPrRDlywSEwnWD2aQO5tYYcJsd0LxZg=;
-        b=GKJK6TOzv6XPBTNqnHlaHEEUu2NKm0cIORN12NVsdaViYtcC4u9anDG3M+ZXcMyxRmgDqZ
-        oYTQpVO9wN1KnaCa2P082cgOSsQyBvXbwAl0PC4A9AcCnQ8slqaTQ0PCNoWBVxhO3XKHKB
-        R/NVvrlZeFpNCG993o6mWAqsDFiW+H8=
-Date:   Thu, 22 Nov 2018 13:26:38 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: Re: [patch 22/24] x86/speculation: Create PRCTL interface to
- restrict indirect branch speculation
-Message-ID: <20181122122638.GC10365@zn.tnic>
-References: <20181121201430.559770965@linutronix.de>
- <20181121201724.414692525@linutronix.de>
+        Thu, 22 Nov 2018 18:06:25 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:39662 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394865AbeKVXGY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 18:06:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=6GoQshdtTCtgMebtwlHObzPjr944dMKihJzDk8JnA+E=; b=gN8XvJOLSMf9Ga/u/ly10Llmm
+        d94ZfD94B0B6/m6mCzv91TIyY3eHgeFCJL9dj5fuS93nGq7DX+i8Y/H/a3UzqrpyuLk6nLAbUoibz
+        jFwPpe1WGtzIzPWssrpuIWEWzsayQsj2a9+m+cSKL3e8BQ6v8073C2AsmNS4QxtsSb8E44vmMhFcu
+        au6wPlvaM6ksRF/BkswOOa1rYEsi/HVInl7A0PNOie2KYXkxJxLYQSrNnaKoKFBIZUkaZ3rktsycV
+        iaKN4IdixwWgG7LgClwd5g0QSrNQ4FVwLAyV1IPpvfzP031JzYzlPfPl+O5p3oaes5Qa76i3cweT+
+        2vWyx7Lvw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gPo4E-0001H5-NY; Thu, 22 Nov 2018 12:26:49 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1753B2029FD58; Thu, 22 Nov 2018 13:26:37 +0100 (CET)
+Date:   Thu, 22 Nov 2018 13:26:37 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/10] perf/core: Generalise event exclusion checking
+Message-ID: <20181122122637.GS2131@hirez.programming.kicks-ass.net>
+References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
+ <20181119130800.GE9761@hirez.programming.kicks-ass.net>
+ <20181122122142.GI42987@e119886-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181121201724.414692525@linutronix.de>
+In-Reply-To: <20181122122142.GI42987@e119886-lin.cambridge.arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 09:14:52PM +0100, Thomas Gleixner wrote:
-> From: Tim Chen <tim.c.chen@linux.intel.com>
-> 
-> Add the PR_SPEC_INDIR_BRANCH option for the PR_GET_SPECULATION_CTRL and
-> PR_SET_SPECULATION_CTRL prctls to allow fine grained per task control of
-> indirect branch speculation via STIBP.
-> 
-> Invocations:
->  Check indirect branch speculation status with
->  - prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, 0, 0, 0);
-> 
->  Enable indirect branch speculation with
->  - prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, PR_SPEC_ENABLE, 0, 0);
-> 
->  Disable indirect branch speculation with
->  - prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, PR_SPEC_DISABLE, 0, 0);
-> 
->  Force disable indirect branch speculation with
->  - prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, PR_SPEC_FORCE_DISABLE, 0, 0);
-> 
-> See Documentation/userspace-api/spec_ctrl.rst.
-> 
-> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> 
-> ---
->  Documentation/userspace-api/spec_ctrl.rst |    9 +++
->  arch/x86/include/asm/nospec-branch.h      |    1 
->  arch/x86/kernel/cpu/bugs.c                |   71 ++++++++++++++++++++++++++++++
->  include/linux/sched.h                     |    9 +++
->  include/uapi/linux/prctl.h                |    1 
->  tools/include/uapi/linux/prctl.h          |    1 
->  6 files changed, 92 insertions(+)
+On Thu, Nov 22, 2018 at 12:21:43PM +0000, Andrew Murray wrote:
+> On Mon, Nov 19, 2018 at 02:08:00PM +0100, Peter Zijlstra wrote:
 
-> @@ -753,12 +755,56 @@ static int ssb_prctl_set(struct task_str
->  	return 0;
->  }
->  
-> +static int indir_branch_prctl_set(struct task_struct *task, unsigned long ctrl)
-> +{
-> +	switch (ctrl) {
-> +	case PR_SPEC_ENABLE:
-> +		if (spectre_v2_app2app == SPECTRE_V2_APP2APP_NONE)
-> +			return 0;
-> +		/*
-> +		 * Indirect branch speculation is always disabled in strict
-> +		 * mode.
-> +		 */
-> +		if (spectre_v2_app2app == SPECTRE_V2_APP2APP_STRICT)
-> +			return -EPERM;
-> +		task_clear_spec_indir_branch_disable(task);
-> +		task_update_spec_tif(task, TIF_SPEC_IB, false);
-> +		break;
-> +	case PR_SPEC_DISABLE:
-> +		/*
-> +		 * Indirect branch speculation is always allowed when
-> +		 * mitigation is force disabled.
-> +		 */
-> +		if (spectre_v2_app2app == SPECTRE_V2_APP2APP_NONE)
-> +			return -EPERM;
-> +		if (spectre_v2_app2app == SPECTRE_V2_APP2APP_STRICT)
-> +			return 0;
-> +		task_set_spec_indir_branch_disable(task);
-> +		task_update_spec_tif(task, TIF_SPEC_IB, true);
-> +		break;
-> +	case PR_SPEC_FORCE_DISABLE:
-> +		if (spectre_v2_app2app == SPECTRE_V2_APP2APP_NONE)
-> +			return -EPERM;
-> +		if (spectre_v2_app2app == SPECTRE_V2_APP2APP_STRICT)
-> +			return 0;
-> +		task_set_spec_indir_branch_disable(task);
-> +		task_set_spec_indir_branch_force_disable(task);
-> +		task_update_spec_tif(task, TIF_SPEC_IB, true);
-> +		break;
-> +	default:
-> +		return -ERANGE;
-> +	}
-> +	return 0;
-> +}
+> > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > index 84530ab358c3..d76b724177b9 100644
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
+> > @@ -9772,6 +9772,14 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
+> >  	if (ctx)
+> >  		perf_event_ctx_unlock(event->group_leader, ctx);
+> >  
+> > +	if (!ret) {
+> > +		if ((pmu->capabilities & PERF_PMU_CAP_EXCLUDE) ||
+> > +		    event_has_exclude_flags(event)) {
+> > +			event->destroy(event);
+> > +			ret = -EINVAL;
+> > +		}
+> > +	}
+> > +
+> 
+> I don't quite follow this logic. Should that not have been:
+> 
+> if (!(pmu->capabilities & PERF_PMU_CAP_EXCLUDE) &&
+>      event_has_exclude_flags(event)) {
+> 
+> Meaning that if an event has any exclude flags but the pmu doesn't
+> have the capability to handle them then error.
 
-Perhaps merge the two DISABLE branches to make it obvious what the
-difference between them is:
+Uhm, yes. Brainfart on my side that.
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 6eac074e3935..28cece3a067b 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -769,7 +769,9 @@ static int indir_branch_prctl_set(struct task_struct *task, unsigned long ctrl)
- 		task_clear_spec_indir_branch_disable(task);
- 		task_update_spec_tif(task, TIF_SPEC_IB, false);
- 		break;
-+
- 	case PR_SPEC_DISABLE:
-+	case PR_SPEC_FORCE_DISABLE:
- 		/*
- 		 * Indirect branch speculation is always allowed when
- 		 * mitigation is force disabled.
-@@ -780,16 +782,11 @@ static int indir_branch_prctl_set(struct task_struct *task, unsigned long ctrl)
- 			return 0;
- 		task_set_spec_indir_branch_disable(task);
- 		task_update_spec_tif(task, TIF_SPEC_IB, true);
-+
-+		if (ctrl == PR_SPEC_FORCE_DISABLE)
-+			task_set_spec_indir_branch_force_disable(task);
- 		break;
--	case PR_SPEC_FORCE_DISABLE:
--		if (spectre_v2_app2app == SPECTRE_V2_APP2APP_NONE)
--			return -EPERM;
--		if (spectre_v2_app2app == SPECTRE_V2_APP2APP_STRICT)
--			return 0;
--		task_set_spec_indir_branch_disable(task);
--		task_set_spec_indir_branch_force_disable(task);
--		task_update_spec_tif(task, TIF_SPEC_IB, true);
--		break;
-+
- 	default:
- 		return -ERANGE;
- 	}
+> If you're happy with my proposed logic, then would it also make
+> sense to move this before the call to the pmu->event_init ?
 
-> @@ -1453,6 +1453,8 @@ static inline bool is_percpu_thread(void
->  #define PFA_SPREAD_SLAB			2	/* Spread some slab caches over cpuset */
->  #define PFA_SPEC_SSB_DISABLE		3	/* Speculative Store Bypass disabled */
->  #define PFA_SPEC_SSB_FORCE_DISABLE	4	/* Speculative Store Bypass force disabled*/
-> +#define PFA_SPEC_INDIR_BRANCH_DISABLE	5	/* Indirect branch speculation restricted */
-> +#define PFA_SPEC_INDIR_BRANCH_FORCE_DISABLE 6	/* Indirect branch speculation permanentely restricted */
-
-permanently
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+I'm not sure that can work; I think we need ->event_init() first such
+that it can -ENOENT. Only after ->event_init() returns success can we be
+certain of @pmu.
