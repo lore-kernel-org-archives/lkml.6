@@ -5,44 +5,45 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A013C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 455D1C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02AD620685
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:50:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02AD620685
+	by mail.kernel.org (Postfix) with ESMTP id 0837C20820
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:56:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0837C20820
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405404AbeKVV27 (ORCPT
+        id S2394383AbeKVVfn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 16:28:59 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:45305 "EHLO huawei.com"
+        Thu, 22 Nov 2018 16:35:43 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47772 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732079AbeKVV26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 16:28:58 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5141A2DE26B08;
-        Thu, 22 Nov 2018 18:49:59 +0800 (CST)
+        id S1732079AbeKVVfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 16:35:43 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6A828D19FE95E;
+        Thu, 22 Nov 2018 18:56:40 +0800 (CST)
 Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 22 Nov
- 2018 18:49:52 +0800
-Subject: Re: [PATCH 01/10] staging: erofs: fix `trace_erofs_readpage' position
+ (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 22 Nov
+ 2018 18:56:31 +0800
+Subject: Re: [PATCH 05/10] staging: erofs: add a full barrier in
+ erofs_workgroup_unfreeze
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 CC:     <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
         Chao Yu <yuchao0@huawei.com>,
         LKML <linux-kernel@vger.kernel.org>, <weidu.du@huawei.com>,
         Miao Xie <miaoxie@huawei.com>
 References: <20181120143425.43637-1-gaoxiang25@huawei.com>
- <20181120143425.43637-2-gaoxiang25@huawei.com>
- <20181122101941.GC3189@kroah.com>
+ <20181120143425.43637-6-gaoxiang25@huawei.com>
+ <20181122102230.GF3189@kroah.com>
 From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <fcf5c088-6025-171f-bc24-0e698c68bbb7@huawei.com>
-Date:   Thu, 22 Nov 2018 18:49:53 +0800
+Message-ID: <1d1fd688-0cb5-cbac-9213-f56f7e356bca@huawei.com>
+Date:   Thu, 22 Nov 2018 18:56:32 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181122101941.GC3189@kroah.com>
+In-Reply-To: <20181122102230.GF3189@kroah.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.151.23.176]
@@ -54,20 +55,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Greg,
 
-On 2018/11/22 18:19, Greg Kroah-Hartman wrote:
-> On Tue, Nov 20, 2018 at 10:34:16PM +0800, Gao Xiang wrote:
->> `trace_erofs_readpage' should be placed in .readpage()
->> rather than in the internal `z_erofs_do_read_page'.
-> Why?  What happens with the code today?
-trace_erofs_readpage is used to trace .readpage() interface (it represents sync read)
-hook rather than its internal implementation z_erofs_do_read_page (which both .readpage()
-and .readpages() uses it). Chen Gong places the tracepoint to a wrong place by mistake.
-And we found it by our internal test using this tracepoint.
+On 2018/11/22 18:22, Greg Kroah-Hartman wrote:
+> Please document this memory barrier.  It does not make much sense to
+> me...
 
-> 
->> Fixes: 284db12cfda3 ("staging: erofs: add trace points for reading zipped data")
-> Should this get into 4.20-final?
-I think so, which is not very important but I think it should be fixed...
+Because we need to make the other observers noticing the latest values modified
+in this locking period before unfreezing the whole workgroup, one way is to use
+a memory barrier and the other way is to use ACQUIRE and RELEASE. we selected
+the first one.
+
+Hmmm...ok, I will add a simple message to explain this, but I think that is
+plain enough for a lock...
 
 Thanks,
 Gao Xiang
