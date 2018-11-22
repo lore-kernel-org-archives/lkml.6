@@ -2,178 +2,107 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5134BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7E8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:29:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E4EF20672
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:22:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E4EF20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9912D20685
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:29:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="BZxpOxQe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9912D20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438968AbeKWIDh (ORCPT
+        id S2406719AbeKWIKZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 03:03:37 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:40155 "EHLO mail.bootlin.com"
+        Fri, 23 Nov 2018 03:10:25 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:55674 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732941AbeKWIDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 03:03:35 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3AD9C20DBE; Thu, 22 Nov 2018 22:22:23 +0100 (CET)
-Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7D87C2072F;
-        Thu, 22 Nov 2018 22:22:22 +0100 (CET)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 2/2] clk: core: link consumer with clock driver
-Date:   Thu, 22 Nov 2018 22:22:12 +0100
-Message-Id: <20181122212212.16039-3-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181122212212.16039-1-miquel.raynal@bootlin.com>
-References: <20181122212212.16039-1-miquel.raynal@bootlin.com>
+        id S1732619AbeKWIKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 03:10:25 -0500
+Received: from zn.tnic (p200300EC2BDC9100898E5A1DF8FAB135.dip0.t-ipconnect.de [IPv6:2003:ec:2bdc:9100:898e:5a1d:f8fa:b135])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B8E9F1EC0946;
+        Thu, 22 Nov 2018 22:29:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1542922151;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=5/hiFA00dLJmnEYPJ4d6aJqIQTQEqNitlD2cEPKjV3s=;
+        b=BZxpOxQeWva+WSlAEbHeSSuXCaKps61JTuHxkuwgsXetBccOXZOj+btFZBg2xiBcucTGZe
+        XNbtrEoGIRqNhWDRBN0QsHcgJKiwwLdyLdc48lCqSjcS0CqU5v1DCUFMCKo1U8YjsPrKKy
+        5i/AYccBn1Q3vdY4khQerIh1lZQcNt8=
+Date:   Thu, 22 Nov 2018 22:29:05 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Vasily Khoruzhick <anarsoul@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        arm-linux <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: sunxi: rename SND_SUN8I_ADDA_PR_REGMAP
+Message-ID: <20181122212905.GA13187@zn.tnic>
+References: <20181102153406.1528053-1-arnd@arndb.de>
+ <13542843.KjxkD9786N@anarsoul-thinkpad>
+ <CAK8P3a3A-mq2HLZjp7-5miL2Pk71=FqP5QKUxxda_y5ywCa7TA@mail.gmail.com>
+ <CA+E=qVfnkH-e6hoHA1eZ7rCJvJH02zgBSF=y30R6AEGwLpssXA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CA+E=qVfnkH-e6hoHA1eZ7rCJvJH02zgBSF=y30R6AEGwLpssXA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One major concern when, for instance, suspending/resuming a platform
-is to never access registers before the underlying clock has been
-resumed, otherwise most of the time the kernel will just crash. One
-solution is to use syscore operations when registering clock drivers
-suspend/resume callbacks. One problem of using syscore_ops is that the
-suspend/resume scheduling will depend on the order of the
-registrations, which brings (unacceptable) randomness in the process.
+On Fri, Nov 02, 2018 at 03:06:59PM -0700, Vasily Khoruzhick wrote:
+> On Fri, Nov 2, 2018 at 3:04 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > On 11/2/18, Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+> > > On Friday, November 2, 2018 8:33:40 AM PDT Arnd Bergmann wrote:
+> > >> The newly added SND_SUN50I_CODEC_ANALOG driver selects a nonexisting
+> > >> symbol SND_SUNXI_ADDA_PR_REGMAP, which was evidently intended to replace
+> > >> SND_SUN8I_ADDA_PR_REGMAP, but since they are now mismatched, we can run
+> > >> into link errors for some configurations:
+> > >>
+> > >> sound/soc/sunxi/sun50i-codec-analog.o: In function
+> > >> `sun50i_codec_analog_probe': sun50i-codec-analog.c:(.text+0x62):
+> > >> undefined
+> > >> reference to `sun8i_adda_pr_regmap_init'
+> > >>
+> > >> The new name appears to be more sensible, and as the symbol is hidden,
+> > >> there are no downsides in the rename, so use that consistently now.
+> > >
+> > > Maxime asked it to be SND_SUN8I_ADDA_PR_REGMAP, and also it would be easier
+> > > to
+> > > fix it my renaming last remaining SND_SUNXI_ADDA_PR_REGMAP to
+> > > SND_SUN8I_ADDA_PR_REGMAP.
+> >
+> > Sure, I don't care either way. Please send a patch to do that then.
+> 
+> Will do tonight.
 
-A feature called device links has been introduced to handle such
-situation. It creates dependencies between consumers and providers,
-enforcing e.g. the suspend/resume order when needed. Such feature is
-already in use for regulators.
+Is that patch coming up or on its way somewhere?
 
-Add device links support in the clock subsystem by creating/deleting
-the links at get/put time.
+I still hit randconfig build failures:
 
-Example of a boot (ESPRESSObin, A3700 SoC) with devices linked to clocks:
-ahci-mvebu d00e0000.sata: Linked as a consumer to d0013000.nb-periph-clk
-mvneta d0030000.ethernet: Linked as a consumer to d0018000.sb-periph-clk
-xhci-hcd d0058000.usb: Linked as a consumer to d0018000.sb-periph-clk
-xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
-xenon-sdhci d00d0000.sdhci: Dropping the link to d0013000.nb-periph-clk
-advk-pcie d0070000.pcie: Linked as a consumer to d0018000.sb-periph-clk
-xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
-xenon-sdhci d00d0000.sdhci: Linked as a consumer to regulator.1
-cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
-cpu cpu0: Dropping the link to d0013000.nb-periph-clk
-cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
+ERROR: "sun8i_adda_pr_regmap_init" [sound/soc/sunxi/sun50i-codec-analog.ko] undefined!
+make[1]: *** [__modpost] Error 1
+make: *** [modules] Error 2
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- drivers/clk/clk.c            | 20 ++++++++++++++++++++
- drivers/clk/clkdev.c         | 13 ++++++++++---
- include/linux/clk-provider.h |  2 ++
- 3 files changed, 32 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b799347c5fd6..33a0f2b0533a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -90,6 +90,7 @@ struct clk {
- 	unsigned long max_rate;
- 	unsigned int exclusive_count;
- 	struct hlist_node clks_node;
-+	struct device_link *link;
- };
- 
- /***           runtime pm          ***/
-@@ -262,6 +263,25 @@ struct clk_hw *__clk_get_hw(struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(__clk_get_hw);
- 
-+void __clk_device_link(struct device *consumer, struct clk *clk)
-+{
-+	if (!consumer || !clk || !clk->core)
-+		return;
-+
-+	clk->link = device_link_add(consumer, clk->core->dev,
-+				    DL_FLAG_STATELESS);
-+}
-+EXPORT_SYMBOL_GPL(__clk_device_link);
-+
-+void __clk_device_unlink(struct clk *clk)
-+{
-+	if (!clk || !clk->link)
-+		return;
-+
-+	device_link_del(clk->link);
-+}
-+EXPORT_SYMBOL_GPL(__clk_device_unlink);
-+
- unsigned int clk_hw_get_num_parents(const struct clk_hw *hw)
- {
- 	return hw->core->num_parents;
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 9ab3db8b3988..fccfd4c01457 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -194,20 +194,27 @@ EXPORT_SYMBOL(clk_get_sys);
- struct clk *clk_get(struct device *dev, const char *con_id)
- {
- 	const char *dev_id = dev ? dev_name(dev) : NULL;
--	struct clk *clk;
-+	struct clk *clk = NULL;
- 
- 	if (dev && dev->of_node) {
- 		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id);
--		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
-+		if (PTR_ERR(clk) == -EPROBE_DEFER)
- 			return clk;
- 	}
- 
--	return clk_get_sys(dev_id, con_id);
-+	if (IS_ERR_OR_NULL(clk))
-+		clk = clk_get_sys(dev_id, con_id);
-+
-+	if (!IS_ERR(clk))
-+		__clk_device_link(dev, clk);
-+
-+	return clk;
- }
- EXPORT_SYMBOL(clk_get);
- 
- void clk_put(struct clk *clk)
- {
-+	__clk_device_unlink(clk);
- 	__clk_put(clk);
- }
- EXPORT_SYMBOL(clk_put);
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 60c51871b04b..c7ba8098f854 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -781,6 +781,8 @@ void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw);
- const char *__clk_get_name(const struct clk *clk);
- const char *clk_hw_get_name(const struct clk_hw *hw);
- struct clk_hw *__clk_get_hw(struct clk *clk);
-+void __clk_device_link(struct device *consumer, struct clk *clk);
-+void __clk_device_unlink(struct clk *clk);
- unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
- struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
- struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
 -- 
-2.19.1
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
