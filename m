@@ -2,111 +2,116 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A457CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8054EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 719C920866
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:30:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 719C920866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4346B20684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:32:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DW9xtphq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4346B20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393472AbeKVUIy (ORCPT
+        id S2393495AbeKVULR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 15:08:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42210 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387669AbeKVUIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:08:54 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AA07746233;
-        Thu, 22 Nov 2018 09:30:14 +0000 (UTC)
-Received: from krava (unknown [10.43.17.92])
-        by smtp.corp.redhat.com (Postfix) with SMTP id B3CBC282CE;
-        Thu, 22 Nov 2018 09:30:07 +0000 (UTC)
-Date:   Thu, 22 Nov 2018 10:30:06 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
-        "Herton R. Krzesinski" <herton@redhat.com>
-Subject: Re: [PATCHv2 01/10] tools lib traceevent: Use LDFLAGS in the build
- commands
-Message-ID: <20181122093006.GD15953@krava>
-References: <20181016150614.21260-1-jolsa@kernel.org>
- <20181016150614.21260-2-jolsa@kernel.org>
- <20181016112136.3a72a452@gandalf.local.home>
- <20181016154526.GC6631@krava>
- <20181017102341.53412998@gandalf.local.home>
- <20181116130158.GA30583@krava>
+        Thu, 22 Nov 2018 15:11:17 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:37090 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387669AbeKVULQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 15:11:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Uroc4STou8Rt8PF72AReZCmVPgM2zJxM5RyxZsLix1I=; b=DW9xtphq0zZPwWwIYgpWFPG9Z
+        HODM3TFnANT7jZHZR9487YM73Cd/e5W58xuLp1IO3gHUzZxPT8Xdzcub/drERJZWlcfiV4Biq7uFj
+        rFgqf6aJ/rDvggm4rCGGnSfVO85Q8ZkzOsWFqH20uKuYUAgBzApf1BVBVLYGvaFSbqGxCpWuNC/96
+        SKAvF80YWD9JzwNcjPhaPBvxV0TxZKuV6sHZmylda6Mt8yHWzrKP5F1xiZ6VT6/k3G8TFNi00btaB
+        JU0Dq8W3FGvJ80myViZEW+GqX8t3BP6T/B5jdGt4n1tY/F5SR2Qz2l7JcGMk3qzzp+x8m8VDLFdye
+        J8wvX2T1A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gPlLb-0008Mc-0m; Thu, 22 Nov 2018 09:32:31 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B81832029FD58; Thu, 22 Nov 2018 10:32:19 +0100 (CET)
+Date:   Thu, 22 Nov 2018 10:32:19 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, acme@kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH perf,bpf 0/5] reveal invisible bpf programs
+Message-ID: <20181122093219.GK2131@hirez.programming.kicks-ass.net>
+References: <20181121195502.3259930-1-songliubraving@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181116130158.GA30583@krava>
+In-Reply-To: <20181121195502.3259930-1-songliubraving@fb.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 22 Nov 2018 09:30:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 02:01:58PM +0100, Jiri Olsa wrote:
-> On Wed, Oct 17, 2018 at 10:23:41AM -0400, Steven Rostedt wrote:
-> > On Tue, 16 Oct 2018 17:45:26 +0200
-> > Jiri Olsa <jolsa@redhat.com> wrote:
-> > 
-> > > On Tue, Oct 16, 2018 at 11:21:36AM -0400, Steven Rostedt wrote:
-> > > > On Tue, 16 Oct 2018 17:06:06 +0200
-> > > > Jiri Olsa <jolsa@kernel.org> wrote:
-> > > >   
-> > > > > So user could specify outside LDFLAGS values.
-> > > > > 
-> > > > > Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
-> > > > > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > > > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > > > > ---
-> > > > >  tools/lib/traceevent/Makefile | 4 ++--
-> > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > > 
-> > > > > diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
-> > > > > index 0b4e833088a4..e535073c94ce 100644
-> > > > > --- a/tools/lib/traceevent/Makefile
-> > > > > +++ b/tools/lib/traceevent/Makefile
-> > > > > @@ -174,7 +174,7 @@ $(TE_IN): force
-> > > > >  	$(Q)$(MAKE) $(build)=libtraceevent
-> > > > >  
-> > > > >  $(OUTPUT)libtraceevent.so.$(EVENT_PARSE_VERSION): $(TE_IN)
-> > > > > -	$(QUIET_LINK)$(CC) --shared $^ -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
-> > > > > +	$(QUIET_LINK)$(CC) --shared $(LDFLAGS) $^ -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
-> > > > >  	@ln -sf $(@F) $(OUTPUT)libtraceevent.so
-> > > > >  	@ln -sf $(@F) $(OUTPUT)libtraceevent.so.$(EP_VERSION)
-> > > > >  
-> > > > > @@ -193,7 +193,7 @@ $(PLUGINS_IN): force
-> > > > >  	$(Q)$(MAKE) $(build)=$(plugin_obj)
-> > > > >  
-> > > > >  $(OUTPUT)%.so: $(OUTPUT)%-in.o
-> > > > > -	$(QUIET_LINK)$(CC) $(CFLAGS) -shared -nostartfiles -o $@ $^
-> > > > > +	$(QUIET_LINK)$(CC) -shared $(LDFLAGS) -nostartfiles -o $@ $^  
-> > > > 
-> > > > 
-> > > > I'm guessing that the CFLAGS are not needed here, but shouldn't that
-> > > > also be mentioned in the change log?  
-> > > 
-> > > yep, sry.. v2 attached
-> > > 
-> > 
-> > Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+On Wed, Nov 21, 2018 at 11:54:57AM -0800, Song Liu wrote:
+> Changes RFC -> PATCH v1:
 > 
-> Arnaldo,
-> could you pull in this one?
+> 1. In perf-record, poll vip events in a separate thread;
+> 2. Add tag to bpf prog name;
+> 3. Small refactorings.
+> 
+> Original cover letter (with minor revisions):
+> 
+> This is to follow up Alexei's early effort to show bpf programs
+> 
+>    https://www.spinics.net/lists/netdev/msg524232.html
+> 
+> In this version, PERF_RECORD_BPF_EVENT is introduced to send real time BPF
+> load/unload events to user space. In user space, perf-record is modified
+> to listen to these events (through a dedicated ring buffer) and generate
+> detailed information about the program (struct bpf_prog_info_event). Then,
+> perf-report translates these events into proper symbols.
+> 
+> With this set, perf-report will show bpf program as:
+> 
+>    18.49%     0.16%  test  [kernel.vmlinux]    [k] ksys_write
+>    18.01%     0.47%  test  [kernel.vmlinux]    [k] vfs_write
+>    17.02%     0.40%  test  bpf_prog            [k] bpf_prog_07367f7ba80df72b_
+>    16.97%     0.10%  test  [kernel.vmlinux]    [k] __vfs_write
+>    16.86%     0.12%  test  [kernel.vmlinux]    [k] comm_write
+>    16.67%     0.39%  test  [kernel.vmlinux]    [k] bpf_probe_read
+> 
+> Note that, the program name is still work in progress, it will be cleaner
+> with function types in BTF.
+> 
+> Please share your comments on this.
 
-ping, thanks
+So I see:
 
-jirka
+  kernel/bpf/core.c:void bpf_prog_kallsyms_add(struct bpf_prog *fp)
+
+which should already provide basic symbol information for extant eBPF
+programs, right?
+
+And (AFAIK) perf uses /proc/kcore for annotate on the current running
+kernel (if not, it really should, given alternatives, jump_labels and
+all other other self-modifying code).
+
+So this fancy new stuff is only for the case where your profile spans
+eBPF load/unload events (which should be relatively rare in the normal
+case, right), or when you want source annotated asm output (I normally
+don't bother with that).
+
+That is; I would really like this fancy stuff to be an optional extra
+that is typically not needed.
+
+Does that make sense?
+
