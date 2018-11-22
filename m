@@ -2,90 +2,101 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3DA4C04EBB
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC96C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8396920831
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:37:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8396920831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 8DD1F20831
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:37:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="CoXKcTai"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DD1F20831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731634AbeKVTPi (ORCPT
+        id S2393101AbeKVTPo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 14:15:38 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:46212 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728601AbeKVTPh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 14:15:37 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9F3B920DBF; Thu, 22 Nov 2018 09:37:09 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 08A1A2072F;
-        Thu, 22 Nov 2018 09:36:30 +0100 (CET)
-Date:   Thu, 22 Nov 2018 09:36:29 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Mesih Kilinc <mesihkilinc@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Rob Herring <robh+dt@kernel.org>,
-        Julian Calaby <julian.calaby@gmail.com>
-Subject: Re: [RFC PATCH v3 08/17] dt-bindings: pinctrl: Add Allwinner suniv
- F1C100s pinctrl
-Message-ID: <20181122083629.dyjidbak4prwsj3l@flea>
-References: <cover.1542824904.git.mesihkilinc@gmail.com>
- <70ac024bf3b6623dc41021ac4893c37adb85a97d.1542824904.git.mesihkilinc@gmail.com>
+        Thu, 22 Nov 2018 14:15:44 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42866 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731827AbeKVTPn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 14:15:43 -0500
+Received: by mail-lj1-f196.google.com with SMTP id l15-v6so7224818lja.9
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 00:37:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=awBduW+I+k1eHWtyBEHp985gPcRm7mSShv7UqrXW244=;
+        b=CoXKcTainBwLhuGc+sLt9KYZ4ZPlgirF5Ttw3n0j+A3AHYLBYWnmnIhZsF2+G4H4es
+         TR73J3oO/SxYRsXMZ1lyA/DbhykPEm9dSGFqqQ6SZK+ST8GJU+tFAx3iLnfDdNvV7z1T
+         C2dqtCj198slG1uZove0jlB5FtXbWt686g2/KNr3Ne3WFjSpsb9iFJT+y35t5OB3I+cw
+         /VsHwCpUVaDWiHv0MPB+u/kukazygjHK2jxKtdEXJuHCUjR78Aiw6Bb5dgUIRANXFqS+
+         pl9/fvGmIhHPtS2FhctzUQ05PLR0qodifueHfskVFCFlFFwSlYAneJvpPaucPSA4NWmj
+         BjjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=awBduW+I+k1eHWtyBEHp985gPcRm7mSShv7UqrXW244=;
+        b=oBfzw1cZ6/4gIOglzYQSZidZaEhacQpZVBZrjLiCiICRyC4Gu9nmYab7boTLxBhwg9
+         Ir4PDHVsAu0/zRaBKKR+bdod3ysfDB5oK1pgMjrF2etBzVz+oKLFUsKARJg1IuR8Ul1e
+         cXIhVmgyq0HKotjMvDhLaFGWDebFVxdnOBIkTZCv1YPxd3ZPg6I26lGeLSu7aZok2uSt
+         SlRp4zAg2qun5NQZpgNTqjMKrml+BtFrtT6SH6x5o5wh1WGMiRFa5hbmYFwLuts4XOa/
+         vpI5r2fW8DCTGVRjx8uIj9lNJqp35TfDU0wwX2woxcAhQSxA/E1g8rNTN8ZgZNsDAnSj
+         WbUg==
+X-Gm-Message-State: AA+aEWadwH5FeQt7ap8um/M9xTI6EDVQGRAas6B3r9rMYEbGAIXBXGhj
+        lEV9wKmNQMbuwLOHF7NR9D/L0AOE914=
+X-Google-Smtp-Source: AFSGD/VyrAECM2PjWuL9q2ZSQHSHRVmYIU2vCJIpuSncy9IYxmPdCJ9pNATjc6Les2LHYPPAEIZsFg==
+X-Received: by 2002:a2e:5b1d:: with SMTP id p29-v6mr6254505ljb.176.1542875834955;
+        Thu, 22 Nov 2018 00:37:14 -0800 (PST)
+Received: from [192.168.0.200] ([31.173.80.84])
+        by smtp.gmail.com with ESMTPSA id f11sm7186796lfi.12.2018.11.22.00.37.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 00:37:14 -0800 (PST)
+Subject: Re: [PATCH] ata: pata_macio: add of_node_put()
+To:     Frank Lee <tiny.windzz@gmail.com>
+Cc:     b.zolnierkie@samsung.com, axboe@kernel.dk,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181121130439.22255-1-tiny.windzz@gmail.com>
+ <e45f832b-ef98-e419-6082-27dd7ced71d2@cogentembedded.com>
+ <CAEExFWvw1tw-AWbp1beajZNCRLYQXdiC6ifMvGc5_po64i_GtQ@mail.gmail.com>
+ <CAEExFWsLP0oJVDV1KBENwsFKZ52ygZ18DQp1g1ah4a1ZmxeJLw@mail.gmail.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <dabed310-3b2a-49b9-9297-625bf34a7f48@cogentembedded.com>
+Date:   Thu, 22 Nov 2018 11:36:51 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hzi7oo4tcysagbcb"
-Content-Disposition: inline
-In-Reply-To: <70ac024bf3b6623dc41021ac4893c37adb85a97d.1542824904.git.mesihkilinc@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAEExFWsLP0oJVDV1KBENwsFKZ52ygZ18DQp1g1ah4a1ZmxeJLw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 21.11.2018 18:33, Frank Lee wrote:
 
---hzi7oo4tcysagbcb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>>>> of_find_node_by_path() acquires a reference to the node
+>>>> returned by it and that reference needs to be dropped by its caller.
+>>>> bl_idle_init() doesn't do that, so fix it.
+>>>
+>>>     I thought we're inside pata_macio_cable_detect()?
+> Hi Sergei：
+> 
+> Yeah,this is a typo.
+> Need me to resend a patch?
 
-On Wed, Nov 21, 2018 at 09:30:41PM +0300, Mesih Kilinc wrote:
-> Add compatible string for Allwinner suniv F1C100s SoC's pinctrl.
->=20
-> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+    This is more of a question for the libata maintainers (but I would resend).
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> Thanks，
+> Yangtao
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---hzi7oo4tcysagbcb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/ZqjQAKCRDj7w1vZxhR
-xdi5AQD3FfqYQm63rDPgI0pfERkx0sAqBv3I9FvRjCvak7YS+wD8CwpPH/Gf52Z0
-I7cMSOqsmGZnQQ6JRiGjGU0YIa66rgg=
-=Oa5M
------END PGP SIGNATURE-----
-
---hzi7oo4tcysagbcb--
+MBR, Sergei
