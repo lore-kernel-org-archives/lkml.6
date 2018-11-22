@@ -1,182 +1,199 @@
 Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A51A7C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF498C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 644642081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:13:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 644642081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+	by mail.kernel.org (Postfix) with ESMTP id 9718420663
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:13:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VAeOpClr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9718420663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390720AbeKVVwg (ORCPT
+        id S2394628AbeKVVwm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 16:52:36 -0500
-Received: from wind.enjellic.com ([76.10.64.91]:58450 "EHLO wind.enjellic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732060AbeKVVwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 16:52:36 -0500
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.14.3/8.14.3) with ESMTP id wAMBCrYk032663;
-        Thu, 22 Nov 2018 05:12:53 -0600
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.14.3/8.14.3/Submit) id wAMBCrso032662;
-        Thu, 22 Nov 2018 05:12:53 -0600
-Date:   Thu, 22 Nov 2018 05:12:53 -0600
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>, X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        haitao.huang@linux.intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thu, 22 Nov 2018 16:52:42 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34454 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732060AbeKVVwm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 16:52:42 -0500
+Received: by mail-wr1-f68.google.com with SMTP id j2so8871284wrw.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 03:13:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=H1a/enDQ+EYjA4JQtNCBwGiLZKIAqipP5Ygu5oYRf0A=;
+        b=VAeOpClrhXd27NhgWnpMRdbhQ2jRTKB47s+pEGnuXHjGEMCgci27C7WQJHWxNrSR8q
+         FQhJZBuiklC1JnHYBO/jQxGZJYT66QOx5laueF1/WcmS4Rwy56WIWVJgwh9xQDMCg8vx
+         q/0Y9VvTtXtVCw8PSWJZLyq0oosuXqSLUuPuvs7vlpGzIYCiw8ps+uFhCs16O+YpT5Jv
+         NTfPDA5OGWtrMdqFKgHXlnFae2kaUlTcNKmbOSom+7YCwF1BA7jXnPs/hp8Xjd9ECTOu
+         I//SS/I6CDRS5j7hLv4YX9UyrckjQY8QHsUI/cNvoZilk8YY/O+gKHxLDOS4Qj5zAzee
+         YP2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=H1a/enDQ+EYjA4JQtNCBwGiLZKIAqipP5Ygu5oYRf0A=;
+        b=YdOSODNfnHKXFTBqUAXl+ldGMWGjNaQ1uGyxYgckrxfWkJL1loPP94vIC7fGnaKLsB
+         267iOvjdCphW0Zp6JT0ivfFaKQFqZIe9mFkPUVoRWAjr0iB79j8c6QQJrH076uoDrVWO
+         4obAUVwlYClQiI7lsy+HqmmrYaArBtaRnJZHAZk/gxWevATn422IrCyPhoZq7sCy1yWS
+         hk8QFfNXa8aEiSOqfTeoJrKxbkrfIWQEgr6GpT3AdlCR3npf43M9ddwc398A7ZubVzb6
+         OsXJiruEZZcTVNnWXzLxLPRLLN//T37ksJMdm0Gfd+0+u5j0ZokGtiaZzEbyy+ZrvDhz
+         mIAg==
+X-Gm-Message-State: AA+aEWbUxxvPhu34GDapQhZJO34MXc3YnrfRnR1ce1nhKxVCnmi7GRJo
+        Spz2fvGtpoP2Fsjr+Uz80QY=
+X-Google-Smtp-Source: AFSGD/VAp3ca33P0W5wMBQZ+m0DRlDjte7MFzpSqsiqpnQJoRXY1bRFGVCRC1ms/1MKQgd8NoWbwAw==
+X-Received: by 2002:adf:b201:: with SMTP id u1mr1088809wra.165.1542885224504;
+        Thu, 22 Nov 2018 03:13:44 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id v133sm5098944wmd.4.2018.11.22.03.13.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 22 Nov 2018 03:13:43 -0800 (PST)
+Date:   Thu, 22 Nov 2018 12:13:41 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     pabeni@redhat.com, Jens Axboe <axboe@kernel.dk>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>, andy@infradead.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181122111253.GA31150@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com> <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com> <20181119161917.GF13298@linux.intel.com> <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com> <20181120120442.GA22172@linux.intel.com>
-Mime-Version: 1.0
+        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
+        Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, dvlasenk@redhat.com,
+        brgerst@gmail.com,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86: only use ERMS for user copies for larger sizes
+Message-ID: <20181122111341.GA107459@gmail.com>
+References: <02bfc577-32a5-66be-64bf-d476b7d447d2@kernel.dk>
+ <20181121063609.GA109082@gmail.com>
+ <48e27a3a-2bb2-ff41-3512-8aeb3fd59e57@kernel.dk>
+ <1c22125bb5d22c2dcd686d0d3b390f115894f746.camel@redhat.com>
+ <CAHk-=wgnjB+=o0771=J_YkQzabU5aadh6pN3x9Vk4HPs3MHL3g@mail.gmail.com>
+ <CAHk-=wjweUiVewcnk39mUccEN-SjxHeTZdB3VOXZrvvW4Cs3dw@mail.gmail.com>
+ <CAHk-=wiDLq5CVnTJhFNEEduqYP_VSsQPSNvi=w6a8Y9figuh7g@mail.gmail.com>
+ <20181122103231.GA102790@gmail.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181120120442.GA22172@linux.intel.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [0.0.0.0]); Thu, 22 Nov 2018 05:12:53 -0600 (CST)
+In-Reply-To: <20181122103231.GA102790@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 02:04:42PM +0200, Jarkko Sakkinen wrote:
 
-Good morning to everyone, Happy Thanksgiving to those who are
-celebrating the holiday.
+* Ingo Molnar <mingo@kernel.org> wrote:
 
-> On Mon, Nov 19, 2018 at 08:59:24AM -0800, Andy Lutomirski wrote:
-> > The idea here is that, under normal circumstances, provisioning only
-> > runs once, or at least only runs rarely.  So, rather than the SDK
-> > running provisioning whenever it feels like doing so (which is the
-> > current behavior, I imagine, although I haven't looked), there would
-> > be a privileged program, perhaps a systemd unit that runs when needed,
-> > that produces the key material needed for remote attestation, and
-> > non-root users that need attestation would get the keying material
-> > from the provisioning service.  And the provisioning service could
-> > implement its own policy.  Ideally, the service wouldn't give the
-> > sealed keys to users at all but would, instead, just provide the
-> > entire attestation service over a UNIX socket, which would make
-> > provisioning capabilities revocable.
-> > 
-> > Does this make sense?
+> The kernel text size reduction with Jen's patch is small but real:
+> 
+>  text		data		bss		dec		hex	filename
+>  19572694	11516934	19873888	50963516	309a43c	vmlinux.before
+>  19572468	11516934	19873888	50963290	309a35a	vmlinux.after
+> 
+> But I checked the disassembly, and it's not a real win, the new code is 
+> actually more complex than the old one, as expected, but GCC (7.3.0) does 
+> some particularly stupid things which bloats the generated code.
 
-> Yes, it does for me at least now that you brought some context.
+So I dug into this some more:
 
-Let me see if I can add a bit of additional context to the above to
-frame further discussion regarding two major needs of the driver
-before it lands.
+1)
 
-What Andy is describing is how the current system already works.  The
-driver is at the root of a fairly complex eco-system of code,
-cryptography and protocols that implement SGX functionality.  This
-software stack is known as the SGX Platform SoftWare (PSW) or SGX
-runtime.
+Firstly I tracked down GCC bloating the might_fault() checks and the 
+related out-of-line code exception handling which bloats the full 
+generated function.
 
-The Intel provided runtime is implemented in C++ and, depending on how
-you count it, clocks in at around 50+ KLOC.  All of this ends up as a
-single 1.8 megabyte binary named aesm_service that links against 35
-shared libraries and is run by systemd.
+2)
 
-This binary implements the functionality needed to load, initialize,
-run and attest enclaves.  It also implements communications with the
-Intel provisioning and attestation services which is needed to
-provision a private EPID key to the platform and to verify the status
-of an enclave attestation quote from a remote platform.
+But with even that complication eliminated, there's a size reduction when 
+Jen's patch is applied, which is puzzling:
 
-In order to achieve the SGX/IAGO security model, a lot of this
-functionality is implemented by choreographing exchanges between six
-Intel supplied and signed enclaves.  Intel supplies source code to
-these enclaves and understanding how all of this works requires an
-understanding of that codebase as well.  To top if off there is also a
-50K hunk of signed Java bytecode that gets stuffed into the Management
-Engine if you are interested in platform services.
+19563640	11516790	19882080	50962510	309a04e	vmlinux.before
+19563274	11516790	19882080	50962144	3099ee0	vmlinux.after
 
-All of the above is what we wrote an independent implementation of, in
-straight C, that is capable of linking against the MUSL C library with
-only libelf and OpenSSL as dependencies.  We developed all of this to
-support a reasonably sophisticated multi-enclave SGX security
-application that implements modeling the runtime behavior of
-applications running on the Linux kernel.  That application uses an
-alternate enclave attestation and communications architecture that we
-independently developed.
+but this is entirely due to the .altinstructions section being counted as 
+'text' part of the vmlinux - while in reality it's not:
 
-I don't describe the above to hype or promote what we do.  Everyone
-discussing these issues is a professional software engineer or
-architect.  As such, you will know that by the time you get done doing
-all of the above, to the point where you are willing to take it to
-Washington, DC to do live technology demonstrations to government
-agencies with seven minutes of setup time, you are going to have to be
-pretty confident that you know how all of the pieces are supposed to
-go together.
+3)
 
-Based on this experience, if the proposed driver lands in its current
-state, Linux mainline will have, at least from a privacy perspective,
-an inferior implementation of SGX.  In addition, we are not confident
-the driver will be useful to anything other then server class hardware
-and will be incapable of supporting virtually all of the existing SGX
-hardware in the field.
+The _real_ part of the vmlinux gets bloated by Jen's patch:
 
-This is NOT a criticism of Jarkko's work or the overall technical
-implementation and quality of the driver.  We actually use and test a
-modified version of the proposed driver, along with the out of tree
-driver in our platforms.
+ ffffffff81000000 <_stext>:
 
-At a high level, addressing these issues is straight forward.  First,
-the driver needs to support authorization equivalent to that which is
-implemented in the current Intel Launch Enclave, ie. control over the
-SGX_FLAGS_PROVISION_KEY attribute.  Secondly, the driver needs to drop
-its prohibition against launch enclaves, ie. returning EINVAL when a
-request is made to initialize enclaves which have the
-SGX_FLAGS_EINITTOKEN_KEY attribute set.
+ before:  ffffffff81b0e5e0 <__clear_user>
+ after:   ffffffff81b0e670 <__clear_user>:
 
-There will be some devil in the details with respect to both of these
-issues, but those discussions can follow later.  Addressing these two
-issues will at least create an environment where the proposed in-tree
-driver is equivalent in privacy and functionality to the out of tree
-driver.
+I.e. we get a e5e0 => e670 bloat, as expected.
 
-SGX is a remarkably complex piece of machinery.  Producing a useful
-driver requires the consideration of a lot of issues which, in our
-opinion, have not been fully represented in the discussions to date.
+In the config I tested a later section of the kernel image first aligns 
+away the bloat:
 
-> /Jarkko
+ before: ffffffff82fa6321 <.altinstr_aux>:
+ after:  ffffffff82fa6321 <.altinstr_aux>:
 
-I hope the above is useful for framing future discussions.
+and then artificially debloats the modified kernel via the 
+altinstructions section:
 
-Have a good remainder of the week.
+  before: Disassembly of section .exit.text: ffffffff83160798 <intel_uncore_exit>
+  after:  Disassembly of section .exit.text: ffffffff83160608 <intel_uncore_exit>
 
-Dr. Greg
+Note that there's a third level of obfuscation here: Jen's patch actually 
+*adds* a new altinstructions statement:
 
-As always,
-Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
-4206 N. 19th Ave.           Specializing in information infra-structure
-Fargo, ND  58102            development.
-PH: 701-281-1686
-FAX: 701-281-3949           EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"I suppose that could could happen but he wouldn't know a Galois Field
- if it kicked him in the nuts."
-                                -- Anonymous mathematician
-                                   Resurrection.
++       /*
++        * For smaller copies, don't use ERMS as it's slower.
++        */
++       if (len < 128) {
++               alternative_call(copy_user_generic_unrolled,
++                                copy_user_generic_string, X86_FEATURE_REP_GOOD,
++                                ASM_OUTPUT2("=a" (ret), "=D" (to), "=S" (from),
++                                            "=d" (len)),
++                                "1" (to), "2" (from), "3" (len)
++                                : "memory", "rcx", "r8", "r9", "r10", "r11");
++               return ret;
++       }
++
+        /*
+         * If CPU has ERMS feature, use copy_user_enhanced_fast_string.
+         * Otherwise, if CPU has rep_good feature, use copy_user_generic_string.
+         * Otherwise, use copy_user_generic_unrolled.
+         */
+        alternative_call_2(copy_user_generic_unrolled,
+-                        copy_user_generic_string,
+-                        X86_FEATURE_REP_GOOD,
+-                        copy_user_enhanced_fast_string,
+-                        X86_FEATURE_ERMS,
++                        copy_user_generic_string, X86_FEATURE_REP_GOOD,
++                        copy_user_enhanced_fast_string, X86_FEATURE_ERMS,
+                         ASM_OUTPUT2("=a" (ret), "=D" (to), "=S" (from),
+                                     "=d" (len)),
+                         "1" (to), "2" (from), "3" (len)
+
+So how can this change possibly result in a *small* altinstructions 
+section?
+
+4)
+
+The reason is GCC's somewhat broken __builtin_constant() logic, which 
+leaves ~10% of the constant call sites actually active, but which are 
+then optimized by GCC's later stages, and the alternative_call_2() gets 
+optimized out and replaced with the alternative_call() call.
+
+This is where Jens's patch 'debloats' the vmlinux and confuses the 'size' 
+utility and gains its code reduction street cred.
+
+Note to self: watch out for patches that change altinstructions and don't 
+make premature vmlinux size impact assumptions. :-)
+
+Thanks,
+
+	Ingo
