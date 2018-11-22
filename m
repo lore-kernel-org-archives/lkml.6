@@ -2,198 +2,112 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C058BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA495C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:58:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DC2F20878
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:58:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C76F20820
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:58:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="kYelYdBo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DC2F20878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sP0zwAKx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C76F20820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393297AbeKVTgk (ORCPT
+        id S2393310AbeKVThU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 14:36:40 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35836 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731714AbeKVTgk (ORCPT
+        Thu, 22 Nov 2018 14:37:20 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:35243 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731714AbeKVThU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 14:36:40 -0500
-Received: by mail-ed1-f65.google.com with SMTP id x30so7069184edx.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 00:58:06 -0800 (PST)
+        Thu, 22 Nov 2018 14:37:20 -0500
+Received: by mail-it1-f195.google.com with SMTP id v11so12864997itj.0;
+        Thu, 22 Nov 2018 00:58:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=33etLeajEHXvkNVEmv39nGkadXBAz4Li5wgPTA44nwA=;
-        b=kYelYdBoGFTCWPj0jxDxt32I5yF/SicwqYyVJwr25rob3usSUP+q7taVUy6SAbcFrq
-         bH95qBCS/11BNSn2zQGRVy56p2RUZxsKqCVVf3w8zZ0oGOLcyXoCfACMS1G3sHAp6yvJ
-         yLJxoPXpYQp9pKbxi36fSf1Jl4QI8nhow7TJE=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6iavgR0IRdLJNomelpZ/PgKMGSqHGkmd/sowLwzntb4=;
+        b=sP0zwAKxndEpMYdCciL7PUxY+PyWFAzPzCyGmL0w+4a6MvXvrjQPH8KhTJJsJnbXFS
+         KDepHJcVYYFxfmQNM1AQQGCRowidzZ9MGBLtkiUUA68MOgAvSoqFmS1IJ0GuZ0MG6tJX
+         03vW/duSmTX5qsNMYt/E8THJMpaOeNZe0hvg5swQqslciE8rCvaqnADVYPaWyehCtoY5
+         FtiszBXb+miZ3pKKcgnRJBhQ8XjYTuMnK7ComQbY4VOnHUOcqILVUZiXTGx1J4kYamlr
+         tHLDX67X0HuiUzJ42XCQSePf2YZojakMyWUkXpSm8cIzDdfXPWk5gTHo/5HeKUWd855e
+         dLCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=33etLeajEHXvkNVEmv39nGkadXBAz4Li5wgPTA44nwA=;
-        b=Xn4Ctb5JZAGgWNwUBW9dBTt6pceNzuJP0zLY4LS9LTc+5S7GR6x91+jywxy8x9mhgX
-         K5oPlCvJrpazpwx9FzA/14O+PuNZlSsxqIknMKfIVL3nVoYXl/mYdl5dxEOQq0pOvLhq
-         pPe9/PHmB7YFwfRmqyaHLO510kJCgMquKuDSg5sISZai0l+EbKiw/Jf/1oWcB4OC3X3l
-         kFhmqzQ3JatjZaGlPPhqUkKMQflu59UuXPMV9WAHUPfrvckt3+3BO1JmWl+d7pj3TB2U
-         l6drlyAjDRMQ8au1/MtMg342hD7KoJQLH44mwZtHewwqoOmG3Vqx5Xhe32NLD62aEhEL
-         TyBg==
-X-Gm-Message-State: AA+aEWaBFM+/YW4CbDdrnR9tPedvZmtEUQBmY2krEORv4DmNktrwJJK+
-        s5X6crlG42AHSB2VtlQjMS5opQ==
-X-Google-Smtp-Source: AFSGD/W7CK7qfvGsQGZFDbkvrtOgh+w1exyULfdG2UAm31aBfxfYa7vco9NxhqqJo3UdipovXmHdxA==
-X-Received: by 2002:a50:ae8f:: with SMTP id e15mr8793449edd.250.1542877086202;
-        Thu, 22 Nov 2018 00:58:06 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id l51sm12336661edb.36.2018.11.22.00.58.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 22 Nov 2018 00:58:05 -0800 (PST)
-Date:   Thu, 22 Nov 2018 09:58:03 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Sergio Correia <sergio@correia.cc>
-Cc:     maarten.lankhorst@linux.intel.com, maxime.ripard@bootlin.com,
-        sean@poorly.run, airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, daniel@ffwll.ch
-Subject: Re: [PATCH v2] drm: set is_master to 0 upon drm_new_set_master()
- failure
-Message-ID: <20181122085803.GY4266@phenom.ffwll.local>
-Mail-Followup-To: Sergio Correia <sergio@correia.cc>,
-        maarten.lankhorst@linux.intel.com, maxime.ripard@bootlin.com,
-        sean@poorly.run, airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20181118235720.3150-1-sergio@correia.cc>
- <20181122053329.2692-1-sergio@correia.cc>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6iavgR0IRdLJNomelpZ/PgKMGSqHGkmd/sowLwzntb4=;
+        b=DjhaOPN/dsCyiiqM5VN8OQblQuRDD/stx/nhSpGgbKdEnxv4rys1nPCx5Jo0HZPgEs
+         +6igVf+j7npV+FUiRv2UWw3bvCRP7C9+S5LL8HwN8bNDqd3txfATfvHui6P1Uing8wdH
+         NKD3kQOk7nCgGPLwGiUreY+mqQSqD5JbxE+vXor5066EV74EVHRZflNlO01lny1ue2+G
+         Gj65RSkjp7KEs0y1iw0M1nslgIlBw/LKDB4P6uNnCAHDXpnmbDvZ16lfTVi7Spnit0yx
+         T2pA70SFbOmEXG7DYvqW46gXuID+dqJfzcIgF5Pq8Mhw//eT+Lh2BxAhGk0QuzEioMNd
+         5vkg==
+X-Gm-Message-State: AA+aEWboJPh6SmnhHfL8Sp55lm+vzjfQBd+C6LedG+/M5bT3LWCYpNq6
+        U/+RengXo+BcPCan7tLKbJP3MrmeYHT4PcfqRxbm1uVf7h0=
+X-Google-Smtp-Source: AJdET5dcT9UIyepycFJv/V1HnzmIRg4lCoF/ZCYLEhh872A1DAc9wKavHnEe+Mtcp8LMCufJIHNWpR+xM+BhAcqrjX4=
+X-Received: by 2002:a05:660c:681:: with SMTP id n1mr8535364itk.37.1542877127937;
+ Thu, 22 Nov 2018 00:58:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181122053329.2692-1-sergio@correia.cc>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181122075244.3909-1-natechancellor@gmail.com> <20181122085022.GB5741@ulmo>
+In-Reply-To: <20181122085022.GB5741@ulmo>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Thu, 22 Nov 2018 16:58:00 +0800
+Message-ID: <CAEExFWsLSm5oN+avMS1+HSWjrGNwLhGCm3u_TLDbv+YTRt8+ew@mail.gmail.com>
+Subject: Re: [PATCH] soc/tegra: Fix terminating condition
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ndesaulniers@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 02:33:29AM -0300, Sergio Correia wrote:
-> When drm_new_set_master() fails, set is_master to 0, to prevent a
-> possible NULL pointer deref.
-> 
-> Here is a problematic flow: we check is_master in drm_is_current_master(),
-> then proceed to call drm_lease_owner() passing master. If we do not restore
-> is_master status when drm_new_set_master() fails, we may have a situation
-> in which is_master will be 1 and master itself, NULL, leading to the deref
-> of a NULL pointer in drm_lease_owner().
-> 
-> This fixes the following OOPS, observed on an ArchLinux running a 4.19.2
-> kernel:
-> 
-> [   97.804282] BUG: unable to handle kernel NULL pointer dereference at 0000000000000080
-> [   97.807224] PGD 0 P4D 0
-> [   97.807224] Oops: 0000 [#1] PREEMPT SMP NOPTI
-> [   97.807224] CPU: 0 PID: 1348 Comm: xfwm4 Tainted: P           OE     4.19.2-arch1-1-ARCH #1
-> [   97.807224] Hardware name: To Be Filled By O.E.M. To Be Filled By O.E.M./AB350 Pro4, BIOS P5.10 10/16/2018
-> [   97.807224] RIP: 0010:drm_lease_owner+0xd/0x20 [drm]
-> [   97.807224] Code: 83 c4 18 5b 5d c3 b8 ea ff ff ff eb e2 b8 ed ff ff ff eb db e8 b4 ca 68 fb 0f 1f 40 00 0f 1f 44 00 00 48 89 f8 eb 03 48 89 d0 <48> 8b 90 80 00 00 00 48 85 d2 75 f1 c3 66 0f 1f 44 00 00 0f 1f 44
-> [   97.807224] RSP: 0018:ffffb8cf08e07bb0 EFLAGS: 00010202
-> [   97.807224] RAX: 0000000000000000 RBX: ffff9cf0f2586c00 RCX: ffff9cf0f2586c88
-> [   97.807224] RDX: ffff9cf0ddbd8000 RSI: 0000000000000000 RDI: 0000000000000000
-> [   97.807224] RBP: ffff9cf1040e9800 R08: 0000000000000000 R09: 0000000000000000
-> [   97.807224] R10: ffffdeb30fd5d680 R11: ffffdeb30f5d6808 R12: ffff9cf1040e9888
-> [   97.807224] R13: 0000000000000000 R14: dead000000000200 R15: ffff9cf0f2586cc8
-> [   97.807224] FS:  00007f4145513180(0000) GS:ffff9cf10ea00000(0000) knlGS:0000000000000000
-> [   97.807224] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   97.807224] CR2: 0000000000000080 CR3: 00000003d7548000 CR4: 00000000003406f0
-> [   97.807224] Call Trace:
-> [   97.807224]  drm_is_current_master+0x1a/0x30 [drm]
-> [   97.807224]  drm_master_release+0x3e/0x130 [drm]
-> [   97.807224]  drm_file_free.part.0+0x2be/0x2d0 [drm]
-> [   97.807224]  drm_open+0x1ba/0x1e0 [drm]
-> [   97.807224]  drm_stub_open+0xaf/0xe0 [drm]
-> [   97.807224]  chrdev_open+0xa3/0x1b0
-> [   97.807224]  ? cdev_put.part.0+0x20/0x20
-> [   97.807224]  do_dentry_open+0x132/0x340
-> [   97.807224]  path_openat+0x2d1/0x14e0
-> [   97.807224]  ? mem_cgroup_commit_charge+0x7a/0x520
-> [   97.807224]  do_filp_open+0x93/0x100
-> [   97.807224]  ? __check_object_size+0x102/0x189
-> [   97.807224]  ? _raw_spin_unlock+0x16/0x30
-> [   97.807224]  do_sys_open+0x186/0x210
-> [   97.807224]  do_syscall_64+0x5b/0x170
-> [   97.807224]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [   97.807224] RIP: 0033:0x7f4147b07976
-> [   97.807224] Code: 89 54 24 08 e8 7b f4 ff ff 8b 74 24 0c 48 8b 3c 24 41 89 c0 44 8b 54 24 08 b8 01 01 00 00 89 f2 48 89 fe bf 9c ff ff ff 0f 05 <48> 3d 00 f0 ff ff 77 30 44 89 c7 89 44 24 08 e8 a6 f4 ff ff 8b 44
-> [   97.807224] RSP: 002b:00007ffcced96ca0 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
-> [   97.807224] RAX: ffffffffffffffda RBX: 00005619d5037f80 RCX: 00007f4147b07976
-> [   97.807224] RDX: 0000000000000002 RSI: 00005619d46b969c RDI: 00000000ffffff9c
-> [   98.040039] RBP: 0000000000000024 R08: 0000000000000000 R09: 0000000000000000
-> [   98.040039] R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000024
-> [   98.040039] R13: 0000000000000012 R14: 00005619d5035950 R15: 0000000000000012
-> [   98.040039] Modules linked in: nct6775 hwmon_vid algif_skcipher af_alg nls_iso8859_1 nls_cp437 vfat fat uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common arc4 videodev media snd_usb_audio snd_hda_codec_hdmi snd_usbmidi_lib snd_rawmidi snd_seq_device mousedev input_leds iwlmvm mac80211 snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_hda_codec edac_mce_amd kvm_amd snd_hda_core kvm iwlwifi snd_hwdep r8169 wmi_bmof cfg80211 snd_pcm irqbypass snd_timer snd libphy soundcore pinctrl_amd rfkill pcspkr sp5100_tco evdev gpio_amdpt k10temp mac_hid i2c_piix4 wmi pcc_cpufreq acpi_cpufreq vboxnetflt(OE) vboxnetadp(OE) vboxpci(OE) vboxdrv(OE) msr sg crypto_user ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto uas usb_storage dm_crypt hid_generic usbhid hid
-> [   98.040039]  dm_mod raid1 md_mod sd_mod crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel pcbc ahci libahci aesni_intel aes_x86_64 libata crypto_simd cryptd glue_helper ccp xhci_pci rng_core scsi_mod xhci_hcd nvidia_drm(POE) drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops drm agpgart nvidia_uvm(POE) nvidia_modeset(POE) nvidia(POE) ipmi_devintf ipmi_msghandler
-> [   98.040039] CR2: 0000000000000080
-> [   98.040039] ---[ end trace 3b65093b6fe62b2f ]---
-> [   98.040039] RIP: 0010:drm_lease_owner+0xd/0x20 [drm]
-> [   98.040039] Code: 83 c4 18 5b 5d c3 b8 ea ff ff ff eb e2 b8 ed ff ff ff eb db e8 b4 ca 68 fb 0f 1f 40 00 0f 1f 44 00 00 48 89 f8 eb 03 48 89 d0 <48> 8b 90 80 00 00 00 48 85 d2 75 f1 c3 66 0f 1f 44 00 00 0f 1f 44
-> [   98.040039] RSP: 0018:ffffb8cf08e07bb0 EFLAGS: 00010202
-> [   98.040039] RAX: 0000000000000000 RBX: ffff9cf0f2586c00 RCX: ffff9cf0f2586c88
-> [   98.040039] RDX: ffff9cf0ddbd8000 RSI: 0000000000000000 RDI: 0000000000000000
-> [   98.040039] RBP: ffff9cf1040e9800 R08: 0000000000000000 R09: 0000000000000000
-> [   98.040039] R10: ffffdeb30fd5d680 R11: ffffdeb30f5d6808 R12: ffff9cf1040e9888
-> [   98.040039] R13: 0000000000000000 R14: dead000000000200 R15: ffff9cf0f2586cc8
-> [   98.040039] FS:  00007f4145513180(0000) GS:ffff9cf10ea00000(0000) knlGS:0000000000000000
-> [   98.040039] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   98.040039] CR2: 0000000000000080 CR3: 00000003d7548000 CR4: 00000000003406f0
-> 
-> Signed-off-by: Sergio Correia <sergio@correia.cc>
-> ---
-> v1 -> v2:
-> 1) former title: drm: restore is_master upon failure in
-> drm_new_set_master()
-> 2) add WARN_ON at the beginning of drm_new_set_master()
-> 3) set is_master unconditionally to 0, upon failure in
-> drm_new_set_master()
+Hi Thierry:
 
-Thanks for respinning, merged to drm-misc-fixes with a cc: stable.
--Daniel
+How about change it to this?
+            while (*match->compatible) {
+This is more beautiful.    :-)
 
-> 
->  drivers/gpu/drm/drm_auth.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_auth.c b/drivers/gpu/drm/drm_auth.c
-> index d9c0f7573905..1669c42c40ed 100644
-> --- a/drivers/gpu/drm/drm_auth.c
-> +++ b/drivers/gpu/drm/drm_auth.c
-> @@ -142,6 +142,7 @@ static int drm_new_set_master(struct drm_device *dev, struct drm_file *fpriv)
->  
->  	lockdep_assert_held_once(&dev->master_mutex);
->  
-> +	WARN_ON(fpriv->is_master);
->  	old_master = fpriv->master;
->  	fpriv->master = drm_master_create(dev);
->  	if (!fpriv->master) {
-> @@ -170,6 +171,7 @@ static int drm_new_set_master(struct drm_device *dev, struct drm_file *fpriv)
->  	/* drop references and restore old master on failure */
->  	drm_master_put(&fpriv->master);
->  	fpriv->master = old_master;
-> +	fpriv->is_master = 0;
->  
->  	return ret;
->  }
-> -- 
-> 2.19.1
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Thanks,
+Yangtao
+On Thu, Nov 22, 2018 at 4:50 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> On Thu, Nov 22, 2018 at 12:52:44AM -0700, Nathan Chancellor wrote:
+> > Clang warns:
+> >
+> > drivers/soc/tegra/common.c:27:16: error: address of array
+> > 'match->compatible' will always evaluate to 'true'
+> > [-Werror,-Wpointer-bool-conversion]
+> >         while (match->compatible) {
+> >         ~~~~~  ~~~~~~~^~~~~~~~~~
+> > 1 error generated.
+> >
+> > Whoops, we have an infinite loop and QEMU no longer boots...
+> >
+> > https://travis-ci.com/ClangBuiltLinux/continuous-integration/jobs/160242918
+> >
+> > Check that the first character of the string isn't null so that the loop
+> > properly terminates.
+> >
+> > Fixes: c57eff9503a5 ("soc/tegra: refactor soc_is_tegra()")
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
+> >  drivers/soc/tegra/common.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Wow... that's what I get from not testing this properly. Apologies for
+> the inconvenience.
+>
+> Applied, thanks.
+>
+> Thierry
