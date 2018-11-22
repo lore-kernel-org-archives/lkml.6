@@ -6,107 +6,148 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FBFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63679C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A6FF20865
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:32:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A6FF20865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 21B0220864
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:34:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21B0220864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404410AbeKWEMw (ORCPT
+        id S2404550AbeKWEPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 23:12:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57058 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732076AbeKWEMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 23:12:52 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E2E7430D34E5;
-        Thu, 22 Nov 2018 17:32:31 +0000 (UTC)
-Received: from asgard.redhat.com (ovpn-200-33.brq.redhat.com [10.40.200.33])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C08307E3BF;
-        Thu, 22 Nov 2018 17:32:28 +0000 (UTC)
-Date:   Thu, 22 Nov 2018 18:32:45 +0100
-From:   Eugene Syromiatnikov <esyr@redhat.com>
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     linux-man <linux-man@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ben Woodard <woodard@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-Subject: Re: [PATCH] execve.2: document an effect of BINPRM_BUF_SIZE increase
- to 256
-Message-ID: <20181122173245.GF20018@asgard.redhat.com>
-References: <20181116174911.6fcff580@alans-desktop>
- <20181121160753.GA32685@asgard.redhat.com>
- <CAKgNAkhFikJXeOx3W3yL3EUKa9ruXtAw93m4M=N+3Kg-bXbPDQ@mail.gmail.com>
+        Thu, 22 Nov 2018 23:15:02 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:51026 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727522AbeKWEPB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 23:15:01 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAMHYaqA019131;
+        Thu, 22 Nov 2018 11:34:36 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2nth9891j3-1;
+        Thu, 22 Nov 2018 11:34:36 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 674B2612A760;
+        Thu, 22 Nov 2018 11:34:35 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 22 Nov 2018
+ 17:34:34 +0000
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wAMHYYrJ029760; Thu,
+ 22 Nov 2018 17:34:34 GMT
+Date:   Thu, 22 Nov 2018 17:34:34 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] regulator: core: do not put managed GPIOd:s
+Message-ID: <20181122173434.GK16508@imbe.wolfsonmicro.main>
+References: <20181122160421.9658-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAKgNAkhFikJXeOx3W3yL3EUKa9ruXtAw93m4M=N+3Kg-bXbPDQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 22 Nov 2018 17:32:32 +0000 (UTC)
+In-Reply-To: <20181122160421.9658-1-linus.walleij@linaro.org>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=937 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1811220156
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 04:59:24PM +0100, Michael Kerrisk (man-pages) wrote:
-> Hi Eugene,
+On Thu, Nov 22, 2018 at 05:04:21PM +0100, Linus Walleij wrote:
+> Some drivers have been converted to pass GPIO descriptors
+> rather than GPIO numbers to the regulator core. We should
+> not issue gpiod_put() on those descriptors, but rather
+> let the driver reference count it with devm_* if they so
+> desire.
 > 
-> On Wed, 21 Nov 2018 at 17:07, Eugene Syromiatnikov <esyr@redhat.com> wrote:
-> >
-> > Increase of BINPRM_BUF_SIZE to 256 increases the limit on the possible
-> > interpreter line length for scripts to 255.
+> Currently the regulator core issues gpiod_put() on all
+> descriptors as it assumes it was obtained with the
+> sequence gpio_request_one()/gpio_to_desc(), as
+> gpio_request_one() will be equivalent to gpiod_get().
 > 
-> I don't see this in the kernel source tree? Could you point me at the
-> right source file / git commit?
+> We introduce a helper bool that deal with this situation
+> by making sure the core only issue gpiod_put() if the
+> GPIO was requested from within the core itself.
+> 
+> A subsequent patch set will delete legacy GPIO handling
+> and get rid of this ugliness, so it is a stepgap patch.
+> 
+> Fixes: e45e290a882e ("regulator: core: Support passing an initialized GPIO enable descriptor")
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reported-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Mark: I will rebase my v7 series for removing legacy
+> GPIO on this if it solves Marek's probel, it can be applied
+> for fixes if need be but I don't know how big this problem is.
+> ---
 
-Sorry, it's a corresponding man page update for a proposed kernel
-change[1][2], and I failed to Cc: all the related parties properly.
+Sent my patch chain anyway although the middle patch is basically
+identical to this one, I really don't mind which one we use.
 
-[1] https://lkml.org/lkml/2018/11/12/2330
-[2] https://lkml.org/lkml/2018/11/12/2328
+I think we also want to add some additional handling into the
+GPIO core as well. Since whilst this patch will resolve the
+situation for wm8994 here, it doesn't cover the case of actually
+shared GPIOs. This patch means the drivers will still own their
+GPIOs so if two drivers requested the same GPIO both will call a
+gpiod_put for that GPIO, causing the same issue. In my chain I
+add some very primitive reference counting to the GPIO core.
 
-> Thanks,
+>  drivers/regulator/core.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> Michael
-> 
-> > Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
-> > ---
-> >  man2/execve.2 | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/man2/execve.2 b/man2/execve.2
-> > index d2bb861..f4e37d6 100644
-> > --- a/man2/execve.2
-> > +++ b/man2/execve.2
-> > @@ -633,8 +633,9 @@ prototype:
-> >  .in
-> >  .\"
-> >  .SS Interpreter scripts
-> > -A maximum line length of 127 characters is allowed for the first line in
-> > -an interpreter script.
-> > +Before Linux 4.20, a maximum line length of 127 characters was allowed
-> > +for the first line in an interpreter script.
-> > +In Linux 4.20 onwards, this limit was increased up to 255 characters.
-> >  .PP
-> >  The semantics of the
-> >  .I optional-arg
-> > --
-> > 2.1.4
-> >
-> 
-> 
+> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+> index 03a03763457c..05bb2db6cff5 100644
+> --- a/drivers/regulator/core.c
+> +++ b/drivers/regulator/core.c
+> @@ -80,6 +80,7 @@ struct regulator_map {
+>  struct regulator_enable_gpio {
+>  	struct list_head list;
+>  	struct gpio_desc *gpiod;
+> +	bool gpiod_needs_put;
+
+I went with locally_requested here seemed better to be
+descriptive of the situation rather than the required action,
+also a bit flag at the end with the other bit flags.
+
+>  	u32 enable_count;	/* a number of enabled shared GPIO */
+>  	u32 request_count;	/* a number of requested shared GPIO */
+>  	unsigned int ena_gpio_invert:1;
+> @@ -2247,6 +2248,8 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
+>  	}
+>  
+>  	pin->gpiod = gpiod;
+> +	if (!config->ena_gpiod)
+> +		pin->gpiod_needs_put = true;
+>  	pin->ena_gpio_invert = config->ena_gpio_invert;
+>  	list_add(&pin->list, &regulator_ena_gpio_list);
+>  
+> @@ -2268,7 +2271,8 @@ static void regulator_ena_gpio_free(struct regulator_dev *rdev)
+>  		if (pin->gpiod == rdev->ena_pin->gpiod) {
+>  			if (pin->request_count <= 1) {
+>  				pin->request_count = 0;
+> -				gpiod_put(pin->gpiod);
+> +				if (pin->gpiod_needs_put)
+> +					gpiod_put(pin->gpiod);
+>  				list_del(&pin->list);
+>  				kfree(pin);
+>  				rdev->ena_pin = NULL;
 > -- 
-> Michael Kerrisk
-> Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-> Linux/UNIX System Programming Training: http://man7.org/training/
+> 2.19.1
+
+Thanks,
+Charles
