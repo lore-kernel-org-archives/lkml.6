@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09586C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15866C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B60E220870
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3D9C20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEXE/aBT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B60E220870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kYYEW3i+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3D9C20870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407260AbeKWGiF (ORCPT
+        id S2407273AbeKWGiI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 01:38:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36620 "EHLO mail.kernel.org"
+        Fri, 23 Nov 2018 01:38:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726692AbeKWGiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 01:38:04 -0500
+        id S1726692AbeKWGiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 01:38:07 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB72D2087E;
-        Thu, 22 Nov 2018 19:57:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4716820864;
+        Thu, 22 Nov 2018 19:57:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542916631;
-        bh=3xvdYav5oGXysngb01YZn4iNK2XINh11ZzNZWNUTt6s=;
+        s=default; t=1542916635;
+        bh=D7lVgAjF7h4m1elLmSI9Xu9HGyU9iX40zBv6A43c6bo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tEXE/aBTTbSKOQwbS909MwUpr9hLxai/l3gUNClYwxmWkjpW5Mn6tRl9WncYN4VjF
-         PXI81d0NNkliZALs17MCz9q0FJJD+e4mGajVMbTiMD3DVG5cUcwsnN0BDQMlYHwmCD
-         FTv2FCA0nljGD24htSWJbOx/ew9M1qEFCaarHp50=
+        b=kYYEW3i+3E7qJXJUhThAAcdHBAP54v3MiFyl3HS0MGS4W4ethhI770LEtdLHoRid0
+         jg82xtnkTnxxbQU1S72QhWHt+R5Rh5RIIzj6oN6/HOKGPDf5D658C+nGVwqTeHHlsi
+         DMAe42EM8zCK7UfMXwtkov8abjuCGeqUjOV22YtM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+Cc:     Yufen Yu <yuyufen@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Hugh Dickins <hughd@google.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 14/15] efi/arm: Revert deferred unmap of early memmap mapping
-Date:   Thu, 22 Nov 2018 14:56:20 -0500
-Message-Id: <20181122195621.13776-14-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.9 15/15] tmpfs: make lseek(SEEK_DATA/SEK_HOLE) return ENXIO with a negative offset
+Date:   Thu, 22 Nov 2018 14:56:21 -0500
+Message-Id: <20181122195621.13776-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181122195621.13776-1-sashal@kernel.org>
 References: <20181122195621.13776-1-sashal@kernel.org>
@@ -55,81 +55,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Yufen Yu <yuyufen@huawei.com>
 
-[ Upstream commit 33412b8673135b18ea42beb7f5117ed0091798b6 ]
+[ Upstream commit 1a413646931cb14442065cfc17561e50f5b5bb44 ]
 
-Commit:
+Other filesystems such as ext4, f2fs and ubifs all return ENXIO when
+lseek (SEEK_DATA or SEEK_HOLE) requests a negative offset.
 
-  3ea86495aef2 ("efi/arm: preserve early mapping of UEFI memory map longer for BGRT")
+man 2 lseek says
 
-deferred the unmap of the early mapping of the UEFI memory map to
-accommodate the ACPI BGRT code, which looks up the memory type that
-backs the BGRT table to validate it against the requirements of the UEFI spec.
+:      EINVAL whence  is  not  valid.   Or: the resulting file offset would be
+:             negative, or beyond the end of a seekable device.
+:
+:      ENXIO  whence is SEEK_DATA or SEEK_HOLE, and the file offset is  beyond
+:             the end of the file.
 
-Unfortunately, this causes problems on ARM, which does not permit
-early mappings to persist after paging_init() is called, resulting
-in a WARN() splat. Since we don't support the BGRT table on ARM anway,
-let's revert ARM to the old behaviour, which is to take down the
-early mapping at the end of efi_init().
+Make tmpfs return ENXIO under these circumstances as well.  After this,
+tmpfs also passes xfstests's generic/448.
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Fixes: 3ea86495aef2 ("efi/arm: preserve early mapping of UEFI memory ...")
-Link: http://lkml.kernel.org/r/20181114175544.12860-3-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[akpm@linux-foundation.org: rewrite changelog]
+Link: http://lkml.kernel.org/r/1540434176-14349-1-git-send-email-yuyufen@huawei.com
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: William Kucharski <william.kucharski@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/efi/arm-init.c    | 4 ++++
- drivers/firmware/efi/arm-runtime.c | 2 +-
- drivers/firmware/efi/memmap.c      | 3 +++
- 3 files changed, 8 insertions(+), 1 deletion(-)
+ mm/shmem.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/firmware/efi/arm-init.c b/drivers/firmware/efi/arm-init.c
-index 1d1c9693ebfb..8ee91777abce 100644
---- a/drivers/firmware/efi/arm-init.c
-+++ b/drivers/firmware/efi/arm-init.c
-@@ -256,6 +256,10 @@ void __init efi_init(void)
- 				    (params.mmap & ~PAGE_MASK)));
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 4b5cca167baf..358a92be43eb 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2414,9 +2414,7 @@ static loff_t shmem_file_llseek(struct file *file, loff_t offset, int whence)
+ 	inode_lock(inode);
+ 	/* We're holding i_mutex so we can access i_size directly */
  
- 	init_screen_info();
-+
-+	/* ARM does not permit early mappings to persist across paging_init() */
-+	if (IS_ENABLED(CONFIG_ARM))
-+		efi_memmap_unmap();
- }
- 
- static int __init register_gop_device(void)
-diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
-index 4d788e0debfe..069c5a4479e6 100644
---- a/drivers/firmware/efi/arm-runtime.c
-+++ b/drivers/firmware/efi/arm-runtime.c
-@@ -118,7 +118,7 @@ static int __init arm_enable_runtime_services(void)
- {
- 	u64 mapsize;
- 
--	if (!efi_enabled(EFI_BOOT) || !efi_enabled(EFI_MEMMAP)) {
-+	if (!efi_enabled(EFI_BOOT)) {
- 		pr_info("EFI services will not be available.\n");
- 		return 0;
- 	}
-diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
-index 78686443cb37..3fd2b450c649 100644
---- a/drivers/firmware/efi/memmap.c
-+++ b/drivers/firmware/efi/memmap.c
-@@ -117,6 +117,9 @@ int __init efi_memmap_init_early(struct efi_memory_map_data *data)
- 
- void __init efi_memmap_unmap(void)
- {
-+	if (!efi_enabled(EFI_MEMMAP))
-+		return;
-+
- 	if (!efi.memmap.late) {
- 		unsigned long size;
- 
+-	if (offset < 0)
+-		offset = -EINVAL;
+-	else if (offset >= inode->i_size)
++	if (offset < 0 || offset >= inode->i_size)
+ 		offset = -ENXIO;
+ 	else {
+ 		start = offset >> PAGE_SHIFT;
 -- 
 2.17.1
 
