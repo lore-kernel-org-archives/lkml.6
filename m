@@ -2,402 +2,100 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEC4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5CBC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A7C920659
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:40:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Q2DJps37"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A7C920659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id F282A20659
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:43:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F282A20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407522AbeKWIVr (ORCPT
+        id S2404983AbeKWIY2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 03:21:47 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51814 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407528AbeKWIVq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 03:21:46 -0500
-Received: by mail-wm1-f68.google.com with SMTP id j207so3084118wmj.1;
-        Thu, 22 Nov 2018 13:40:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rGh4QbPuYTPW3FvrsH804kl5tNx9LwtHRU+kr/q7GIM=;
-        b=Q2DJps37hy7WjoEErW0XJcf4iIzGRl2uAaCE4v7UaJm/nvgLNDDR/0lgKhFNh1aG1N
-         PrqRt27Ni8HT09GMoqv2cwXTERMTABvfC5gOBXVmXGr6aoIKWWd/ByF1EEQrBBtvjYbX
-         rmC6miBQRwDbDHrsLbFY9SPj6l9rDBfvSly9vNQB4DiTU4C9IeuOpqzQju/RKYNQxBX4
-         4TIoXlxkhoiUFcVMi3Ozi2ckUpX8wTOw+00k5dkJ4mGKnR0ctNrlbo/UsP4uFzB+pXip
-         VDgTNlcKKkSCeaLOfCWhVt2D59qIfx4hanY/QgsAtRwWI+Y7VbVpSJ6mumqYhUP3B972
-         Zx/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rGh4QbPuYTPW3FvrsH804kl5tNx9LwtHRU+kr/q7GIM=;
-        b=tDlTqIyEZDeypMuTZ4jv/UXrpiSRcuy85v/DBxw5BpAaoIC1GdhzKRGO1MRTEB4KGE
-         iHB7SVDcpGRTbOMhvcN6ShM+kyCj8uZXDvGzPRFkbgumn2GQOb2oSfFpjjULvrOLmhDR
-         OQnGobYBcLFgG6rkdVUoW+eRsO7zqtPltiR3Dkt5uOylWy3f49f0rLi5Qj/RoL6+ZIhC
-         XKzpKmJ0BAjoP2YVfnboeSy7a5h9LtdPN/c04R2zMje9HAcIUot1Mx4xmmlBWU7VW4vp
-         W1W/8Lbcn02EpsGnY+I/DDPgWnL9qS3UgBIHNGFj55/QHAydncUfehkoL5hxfm90qqC7
-         q+nw==
-X-Gm-Message-State: AA+aEWZ1l0+HUCycEAgQNeK9em47MCjff00FicozDi1F74CP764WzzzY
-        O53smX6p3kLq+2niD8w9ZB4=
-X-Google-Smtp-Source: AFSGD/VTQom2P9O2sne/gr/qWzCRne8tewG5H328nWR+8TbCKI7D2JqiIvBu05t7p7dTrVfTXXCT4g==
-X-Received: by 2002:a1c:2807:: with SMTP id o7-v6mr10885369wmo.138.1542922829606;
-        Thu, 22 Nov 2018 13:40:29 -0800 (PST)
-Received: from blackbox.darklights.net (p200300DCD732F5007DE18DA1F72FF8D9.dip0.t-ipconnect.de. [2003:dc:d732:f500:7de1:8da1:f72f:f8d9])
-        by smtp.googlemail.com with ESMTPSA id x14sm29755554wrm.65.2018.11.22.13.40.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 13:40:29 -0800 (PST)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-amlogic@lists.infradead.org, narmstrong@baylibre.com,
-        jbrunet@baylibre.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 4/4] clk: meson: meson8b: add the CPU clock post divider clocks
-Date:   Thu, 22 Nov 2018 22:40:17 +0100
-Message-Id: <20181122214017.25643-5-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181122214017.25643-1-martin.blumenstingl@googlemail.com>
-References: <20181122214017.25643-1-martin.blumenstingl@googlemail.com>
+        Fri, 23 Nov 2018 03:24:28 -0500
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:52397 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726958AbeKWIY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 03:24:28 -0500
+Received: from [192.168.0.3] (ip5f5bf24c.dynamic.kabel-deutschland.de [95.91.242.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 891452012BAC03;
+        Thu, 22 Nov 2018 22:43:11 +0100 (CET)
+Subject: Re: Logitech QuickCam USB detected by Linux, but not user space
+ applications
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <b9140bbf-1537-1431-1250-da0a21208992@molgen.mpg.de>
+ <20181115033813.6ff626d5@silica.lan>
+ <53bce637-985e-2c74-1d6b-151ba81550db@molgen.mpg.de>
+ <dd498a43-75cd-eec1-415f-f9d4569a302e@xs4all.nl>
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+Message-ID: <90a7e0e2-ddbb-7762-3eb6-51db0570ffff@molgen.mpg.de>
+Date:   Thu, 22 Nov 2018 22:43:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <dd498a43-75cd-eec1-415f-f9d4569a302e@xs4all.nl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are four CPU clock post dividers:
-- ABP
-- PERIPH (used for the ARM global timer and ARM TWD timer)
-- AXI
-- L2 DRAM
+Dear Hans,
 
-Each of these clocks consists of two clocks:
-- a mux to select between "cpu_clk" divided by 2, 3, 4, 5, 6, 7 or 8
-- a "_clk_dis" gate. The public S805 datasheet states that this should
-  be set to 1 to disable the clock, the default value is 0. There is
-  also a hint that these are "just in case" bits which only exist in
-  case the corresponding mux implementation does not allow glitch-free
-  parent changes (the muxes are designed in a way that the clock can
-  stay enabled when changing the mux). It's still good practise to
-  describe this clock even if we're not supposed to modify it. Thus
-  this uses the read-only gate ops.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/meson8b.c | 244 ++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/meson8b.h |  13 +-
- 2 files changed, 256 insertions(+), 1 deletion(-)
+Am 22.11.18 um 13:43 schrieb Hans Verkuil:
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 010dccc86b5d..f906a9f0eefd 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -704,6 +704,227 @@ static struct clk_regmap meson8b_nand_clk_gate = {
- 	},
- };
- 
-+static struct clk_fixed_factor meson8b_cpu_clk_div2 = {
-+	.mult = 1,
-+	.div = 2,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_div2",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_names = (const char *[]){ "cpu_clk" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_fixed_factor meson8b_cpu_clk_div3 = {
-+	.mult = 1,
-+	.div = 3,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_div3",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_names = (const char *[]){ "cpu_clk" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_fixed_factor meson8b_cpu_clk_div4 = {
-+	.mult = 1,
-+	.div = 4,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_div4",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_names = (const char *[]){ "cpu_clk" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_fixed_factor meson8b_cpu_clk_div5 = {
-+	.mult = 1,
-+	.div = 5,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_div5",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_names = (const char *[]){ "cpu_clk" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_fixed_factor meson8b_cpu_clk_div6 = {
-+	.mult = 1,
-+	.div = 6,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_div6",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_names = (const char *[]){ "cpu_clk" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_fixed_factor meson8b_cpu_clk_div7 = {
-+	.mult = 1,
-+	.div = 7,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_div7",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_names = (const char *[]){ "cpu_clk" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_fixed_factor meson8b_cpu_clk_div8 = {
-+	.mult = 1,
-+	.div = 8,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_div8",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_names = (const char *[]){ "cpu_clk" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static u32 mux_table_abp[] = { 1, 2, 3, 4, 5, 6, 7 };
-+static struct clk_regmap meson8b_abp_clk_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.mask = 0x7,
-+		.shift = 3,
-+		.table = mux_table_abp,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "abp_clk_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_names = (const char *[]){ "cpu_clk_div2",
-+						  "cpu_clk_div3",
-+						  "cpu_clk_div4",
-+						  "cpu_clk_div5",
-+						  "cpu_clk_div6",
-+						  "cpu_clk_div7",
-+						  "cpu_clk_div8", },
-+		.num_parents = 7,
-+	},
-+};
-+
-+static struct clk_regmap meson8b_abp_clk_gate = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.bit_idx = 16,
-+		.flags = CLK_GATE_SET_TO_DISABLE,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "abp_clk_dis",
-+		.ops = &clk_regmap_gate_ro_ops,
-+		.parent_names = (const char *[]){ "abp_clk_sel" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap meson8b_periph_clk_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.mask = 0x7,
-+		.shift = 6,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "periph_clk_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_names = (const char *[]){ "cpu_clk_div2",
-+						  "cpu_clk_div3",
-+						  "cpu_clk_div4",
-+						  "cpu_clk_div5",
-+						  "cpu_clk_div6",
-+						  "cpu_clk_div7",
-+						  "cpu_clk_div8", },
-+		.num_parents = 7,
-+	},
-+};
-+
-+static struct clk_regmap meson8b_periph_clk_gate = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.bit_idx = 17,
-+		.flags = CLK_GATE_SET_TO_DISABLE,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "periph_clk_dis",
-+		.ops = &clk_regmap_gate_ro_ops,
-+		.parent_names = (const char *[]){ "periph_clk_sel" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static u32 mux_table_axi[] = { 1, 2, 3, 4, 5, 6, 7 };
-+static struct clk_regmap meson8b_axi_clk_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.mask = 0x7,
-+		.shift = 9,
-+		.table = mux_table_axi,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "axi_clk_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_names = (const char *[]){ "cpu_clk_div2",
-+						  "cpu_clk_div3",
-+						  "cpu_clk_div4",
-+						  "cpu_clk_div5",
-+						  "cpu_clk_div6",
-+						  "cpu_clk_div7",
-+						  "cpu_clk_div8", },
-+		.num_parents = 7,
-+	},
-+};
-+
-+static struct clk_regmap meson8b_axi_clk_gate = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.bit_idx = 18,
-+		.flags = CLK_GATE_SET_TO_DISABLE,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "axi_clk_dis",
-+		.ops = &clk_regmap_gate_ro_ops,
-+		.parent_names = (const char *[]){ "axi_clk_sel" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap meson8b_l2_dram_clk_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.mask = 0x7,
-+		.shift = 12,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "l2_dram_clk_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_names = (const char *[]){ "cpu_clk_div2",
-+						  "cpu_clk_div3",
-+						  "cpu_clk_div4",
-+						  "cpu_clk_div5",
-+						  "cpu_clk_div6",
-+						  "cpu_clk_div7",
-+						  "cpu_clk_div8", },
-+		.num_parents = 7,
-+	},
-+};
-+
-+static struct clk_regmap meson8b_l2_dram_clk_gate = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL1,
-+		.bit_idx = 19,
-+		.flags = CLK_GATE_SET_TO_DISABLE,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "l2_dram_clk_dis",
-+		.ops = &clk_regmap_gate_ro_ops,
-+		.parent_names = (const char *[]){ "l2_dram_clk_sel" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- /* Everything Else (EE) domain gates */
- 
- static MESON_GATE(meson8b_ddr, HHI_GCLK_MPEG0, 0);
-@@ -905,6 +1126,21 @@ static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
- 		[CLKID_PLL_FIXED_DCO]	    = &meson8b_fixed_pll_dco.hw,
- 		[CLKID_PLL_VID_DCO]	    = &meson8b_vid_pll_dco.hw,
- 		[CLKID_PLL_SYS_DCO]	    = &meson8b_sys_pll_dco.hw,
-+		[CLKID_CPU_CLK_DIV2]	    = &meson8b_cpu_clk_div2.hw,
-+		[CLKID_CPU_CLK_DIV3]	    = &meson8b_cpu_clk_div3.hw,
-+		[CLKID_CPU_CLK_DIV4]	    = &meson8b_cpu_clk_div4.hw,
-+		[CLKID_CPU_CLK_DIV5]	    = &meson8b_cpu_clk_div5.hw,
-+		[CLKID_CPU_CLK_DIV6]	    = &meson8b_cpu_clk_div6.hw,
-+		[CLKID_CPU_CLK_DIV7]	    = &meson8b_cpu_clk_div7.hw,
-+		[CLKID_CPU_CLK_DIV8]	    = &meson8b_cpu_clk_div8.hw,
-+		[CLKID_ABP_SEL]		    = &meson8b_abp_clk_sel.hw,
-+		[CLKID_ABP]		    = &meson8b_abp_clk_gate.hw,
-+		[CLKID_PERIPH_SEL]	    = &meson8b_periph_clk_sel.hw,
-+		[CLKID_PERIPH]		    = &meson8b_periph_clk_gate.hw,
-+		[CLKID_AXI_SEL]		    = &meson8b_axi_clk_sel.hw,
-+		[CLKID_AXI]		    = &meson8b_axi_clk_gate.hw,
-+		[CLKID_L2_DRAM_SEL]	    = &meson8b_l2_dram_clk_sel.hw,
-+		[CLKID_L2_DRAM]		    = &meson8b_l2_dram_clk_gate.hw,
- 		[CLK_NR_CLKS]		    = NULL,
- 	},
- 	.num = CLK_NR_CLKS,
-@@ -1016,6 +1252,14 @@ static struct clk_regmap *const meson8b_clk_regmaps[] = {
- 	&meson8b_fixed_pll_dco,
- 	&meson8b_vid_pll_dco,
- 	&meson8b_sys_pll_dco,
-+	&meson8b_abp_clk_sel,
-+	&meson8b_abp_clk_gate,
-+	&meson8b_periph_clk_sel,
-+	&meson8b_periph_clk_gate,
-+	&meson8b_axi_clk_sel,
-+	&meson8b_axi_clk_gate,
-+	&meson8b_l2_dram_clk_sel,
-+	&meson8b_l2_dram_clk_gate,
- };
- 
- static const struct meson8b_clk_reset_line {
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-index 9cba34c6cb92..0abb331162ab 100644
---- a/drivers/clk/meson/meson8b.h
-+++ b/drivers/clk/meson/meson8b.h
-@@ -78,8 +78,19 @@
- #define CLKID_PLL_FIXED_DCO	113
- #define CLKID_PLL_VID_DCO	114
- #define CLKID_PLL_SYS_DCO	115
-+#define CLKID_CPU_CLK_DIV2	116
-+#define CLKID_CPU_CLK_DIV3	117
-+#define CLKID_CPU_CLK_DIV4	118
-+#define CLKID_CPU_CLK_DIV5	119
-+#define CLKID_CPU_CLK_DIV6	120
-+#define CLKID_CPU_CLK_DIV7	121
-+#define CLKID_CPU_CLK_DIV8	122
-+#define CLKID_ABP_SEL		123
-+#define CLKID_PERIPH_SEL	125
-+#define CLKID_AXI_SEL		127
-+#define CLKID_L2_DRAM_SEL	129
- 
--#define CLK_NR_CLKS		116
-+#define CLK_NR_CLKS		131
- 
- /*
-  * include the CLKID and RESETID that have
--- 
-2.19.1
+> On 11/16/2018 03:39 PM, Paul Menzel wrote:
 
+>> On 11/15/18 12:38, Mauro Carvalho Chehab wrote:
+>>> Em Thu, 15 Nov 2018 11:42:32 +0100 Paul Menzel escreveu:
+>>
+>>>> I tried to get a Logitech QuickCam USB camera working, but unfortunately, it is
+>>>> not detected by user space (Cheese, MPlayer).
+>>>
+>>> Could you please try it with Camorama?
+>>>
+>>> 	https://github.com/alessio/camorama
+>>
+>> Thank you for the suggestion. At first, I only saw a black image, but changing the
+>> resolution made it work. See the status below.
+>>
+>> 1.  does *not* work
+>>
+>>      a)  160x120
+>>      b)  176x144
+>>
+>> 2.  works
+>>
+>>      a)  320x240
+>>      b)  352x288
+> 
+> Try this patch:
+> 
+> https://patchwork.linuxtv.org/patch/53043/
+> 
+> It probably fixes the same problem you are experiencing.
+
+It indeed does. I cherry picked it to Linus’ master branch, and it fixed 
+the problem.
+
+Tested-by: Paul Menzel <pmenzel@molgen.mpg.de> (Logitech QuickCam 046d:092e)
+
+[…]
+
+
+Kind regards,
+
+Paul
