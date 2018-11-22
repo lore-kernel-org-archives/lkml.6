@@ -2,317 +2,123 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E11C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F1CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EBE820684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:21:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="da6EXoqc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EBE820684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id AFDA5206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:22:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFDA5206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436782AbeKWAAl (ORCPT
+        id S2436795AbeKWACF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:00:41 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37729 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727034AbeKWAAl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:00:41 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j10so9246138wru.4
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 05:21:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+Bk8fqwx+vwpKrFa9BEYtiZKtKYoJ100RWpAY0SA3pE=;
-        b=da6EXoqc7UZhFlGU7rOvQ0plK9+KnepG7/AaFUMpV/+ldJZeQiPY8xkIXPPBBOk2bg
-         FqVAlwBG3O9CGkbsCkuQKZypVmxvt+Nkr3FYtx3ewS2sQaXKZtt2X7Y/mUY4uD3YyLoa
-         BvVvY50g3Khj7TYBWutCItIKXZ5eZ+Y4GPgb8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+Bk8fqwx+vwpKrFa9BEYtiZKtKYoJ100RWpAY0SA3pE=;
-        b=XskBCqspQGGFNnJzMs16UfM1Uvaje1ooxTndgjuiCeqEyRi8b8R+rHJ7gYmi0QkPiz
-         e0KSvQ2/X+1F/t5S+c2zSudpcdcqX84cWrytkmfuAkTx0XjS+fjwdJSyX2xHCrbXHQEg
-         IwAfh/1MyH5KG2U9XvQH7iiYFWY9XA+Y5Nrv3yYrpsaThzRwB7sYPUU+c78qMnucVxsM
-         teFsrSFUL6VAMnVhC1jTox4hpEHc/k7egPLVYJrFaRXUGLUQyVNiIqOkc8fJQHH/PEk5
-         e0VZTtEZZ+ENfYhOtRfi3q7LtH1sYVbtHYiBWngCyoK+KV9W87OMetU9uKnwsi7bg56H
-         CUmw==
-X-Gm-Message-State: AA+aEWYDYTfla4fGTJErkwCVYcLZZyC0/2JQkmasgSa93b68fH1/Pa94
-        /Z53OloOksjo/NjZkuY/Jmd2eA==
-X-Google-Smtp-Source: AFSGD/WrRK9+7/ZOfqufYHdZivNUZ3BE/+nuj4vq8d1xA00PB3oRpfbvV3vaIRmkOgNLxJgSMFvdtQ==
-X-Received: by 2002:adf:9dd2:: with SMTP id q18mr9734146wre.12.1542892879753;
-        Thu, 22 Nov 2018 05:21:19 -0800 (PST)
-Received: from [192.168.0.40] (189.35.136.77.rev.sfr.net. [77.136.35.189])
-        by smtp.googlemail.com with ESMTPSA id m65sm6227145wmb.4.2018.11.22.05.21.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 05:21:19 -0800 (PST)
-Subject: Re: [PATCH] clocksource/drivers/timer-imx-tpm: convert the driver to
- timer-of
-To:     Anson Huang <anson.huang@nxp.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-References: <1541481054-25186-1-git-send-email-Anson.Huang@nxp.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <ce65714b-8145-ca77-f019-d189184dffdd@linaro.org>
-Date:   Thu, 22 Nov 2018 14:21:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 22 Nov 2018 19:02:05 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48340 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732181AbeKWACF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 19:02:05 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BB303622;
+        Thu, 22 Nov 2018 05:22:45 -0800 (PST)
+Received: from [10.1.26.189] (p8cg001049571a15.cambridge.arm.com [10.1.26.189])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 09F9E3F5AF;
+        Thu, 22 Nov 2018 05:22:43 -0800 (PST)
+Subject: Re: [PATCH 2/7] node: Add heterogenous memory performance
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20181114224921.12123-2-keith.busch@intel.com>
+ <20181114224921.12123-3-keith.busch@intel.com>
+ <91369e94-d389-7cb9-6274-f46c9ec779d3@arm.com>
+ <20181119154604.GC23062@localhost.localdomain>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <2482fbdf-e672-8d46-edcb-021f7af8d9b7@arm.com>
+Date:   Thu, 22 Nov 2018 18:52:43 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1541481054-25186-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <20181119154604.GC23062@localhost.localdomain>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Hi Anson,
 
-
-On 06/11/2018 06:15, Anson Huang wrote:
-> Convert the driver to use the timer_of helpers.
-> This allows to handle timer base, clock and irq using
-> common timer_of driver and it simplifies the code.
-
-Can you do an extra move by passing the timer_of structure around for:
- - tpm_timer_disable
- - tpm_timer_enable
- - tpm_irq_acknowledge
-
-and use to_timer_of(clkevt) to retrieve the timer_base value for other
-clockevent callbacks ?
-
-The clockevent code will be self-encapsulated.
-
-
-
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  drivers/clocksource/timer-imx-tpm.c | 136 +++++++++++++++---------------------
->  1 file changed, 55 insertions(+), 81 deletions(-)
+On 11/19/2018 09:16 PM, Keith Busch wrote:
+> On Mon, Nov 19, 2018 at 09:05:07AM +0530, Anshuman Khandual wrote:
+>> On 11/15/2018 04:19 AM, Keith Busch wrote:
+>>> Heterogeneous memory systems provide memory nodes with latency
+>>> and bandwidth performance attributes that are different from other
+>>> nodes. Create an interface for the kernel to register these attributes
+>>
+>> There are other properties like power consumption, reliability which can
+>> be associated with a particular PA range. Also the set of properties has
+>> to be extensible for the future.
 > 
-> diff --git a/drivers/clocksource/timer-imx-tpm.c b/drivers/clocksource/timer-imx-tpm.c
-> index b7aa2b8..c3dd4d2 100644
-> --- a/drivers/clocksource/timer-imx-tpm.c
-> +++ b/drivers/clocksource/timer-imx-tpm.c
-> @@ -12,6 +12,8 @@
->  #include <linux/of_irq.h>
->  #include <linux/sched_clock.h>
+> Sure, I'm just starting with the attributes available from HMAT, 
+> If there are additional possible attributes that make sense to add, I
+> don't see why we can't continue appending them if this patch is okay.
+
+As I mentioned on the other thread
+
+1) The interface needs to be compact to avoid large number of files
+2) Single U64 will be able to handle 8 attributes with 8 bit values
+3) 8 bit value needs needs to be arch independent and abstracted out
+
+I guess 8 attributes should be good enough for all type of memory in
+foreseeable future.
+
 >  
-> +#include "timer-of.h"
-> +
->  #define TPM_PARAM			0x4
->  #define TPM_PARAM_WIDTH_SHIFT		16
->  #define TPM_PARAM_WIDTH_MASK		(0xff << 16)
-> @@ -33,9 +35,7 @@
->  #define TPM_C0V				0x24
->  
->  static int counter_width;
-> -static int rating;
->  static void __iomem *timer_base;
-> -static struct clock_event_device clockevent_tpm;
->  
->  static inline void tpm_timer_disable(void)
->  {
-> @@ -80,19 +80,6 @@ static u64 notrace tpm_read_sched_clock(void)
->  	return tpm_read_counter();
->  }
->  
-> -static int __init tpm_clocksource_init(unsigned long rate)
-> -{
-> -	tpm_delay_timer.read_current_timer = &tpm_read_current_timer;
-> -	tpm_delay_timer.freq = rate;
-> -	register_current_timer_delay(&tpm_delay_timer);
-> -
-> -	sched_clock_register(tpm_read_sched_clock, counter_width, rate);
-> -
-> -	return clocksource_mmio_init(timer_base + TPM_CNT, "imx-tpm",
-> -				     rate, rating, counter_width,
-> -				     clocksource_mmio_readl_up);
-> -}
-> -
->  static int tpm_set_next_event(unsigned long delta,
->  				struct clock_event_device *evt)
->  {
-> @@ -137,74 +124,77 @@ static irqreturn_t tpm_timer_interrupt(int irq, void *dev_id)
->  	return IRQ_HANDLED;
->  }
->  
-> -static struct clock_event_device clockevent_tpm = {
-> -	.name			= "i.MX7ULP TPM Timer",
-> -	.features		= CLOCK_EVT_FEAT_ONESHOT,
-> -	.set_state_oneshot	= tpm_set_state_oneshot,
-> -	.set_next_event		= tpm_set_next_event,
-> -	.set_state_shutdown	= tpm_set_state_shutdown,
-> +static struct timer_of to_tpm = {
-> +	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
-> +	.clkevt = {
-> +		.name			= "i.MX7ULP TPM Timer",
-> +		.rating			= 200,
-> +		.features		= CLOCK_EVT_FEAT_ONESHOT,
-> +		.set_state_shutdown	= tpm_set_state_shutdown,
-> +		.set_state_oneshot	= tpm_set_state_oneshot,
-> +		.set_next_event		= tpm_set_next_event,
-> +		.cpumask		= cpu_possible_mask,
-> +	},
-> +	.of_irq = {
-> +		.handler		= tpm_timer_interrupt,
-> +		.flags			= IRQF_TIMER | IRQF_IRQPOLL,
-> +	},
->  };
->  
-> -static int __init tpm_clockevent_init(unsigned long rate, int irq)
-> +static int __init tpm_clocksource_init(void)
->  {
-> -	int ret;
-> +	tpm_delay_timer.read_current_timer = &tpm_read_current_timer;
-> +	tpm_delay_timer.freq = timer_of_rate(&to_tpm) >> 3;
-> +	register_current_timer_delay(&tpm_delay_timer);
->  
-> -	ret = request_irq(irq, tpm_timer_interrupt, IRQF_TIMER | IRQF_IRQPOLL,
-> -			  "i.MX7ULP TPM Timer", &clockevent_tpm);
-> +	sched_clock_register(tpm_read_sched_clock, counter_width,
-> +			     timer_of_rate(&to_tpm) >> 3);
->  
-> -	clockevent_tpm.rating = rating;
-> -	clockevent_tpm.cpumask = cpumask_of(0);
-> -	clockevent_tpm.irq = irq;
-> -	clockevents_config_and_register(&clockevent_tpm, rate, 300,
-> -					GENMASK(counter_width - 1, 1));
-> +	return clocksource_mmio_init(timer_base + TPM_CNT,
-> +				     "imx-tpm",
-> +				     timer_of_rate(&to_tpm) >> 3,
-> +				     to_tpm.clkevt.rating,
-> +				     counter_width,
-> +				     clocksource_mmio_readl_up);
-> +}
->  
-> -	return ret;
-> +static void __init tpm_clockevent_init(void)
-> +{
-> +	clockevents_config_and_register(&to_tpm.clkevt,
-> +					timer_of_rate(&to_tpm) >> 3,
-> +					300,
-> +					GENMASK(counter_width - 1,
-> +					1));
->  }
->  
->  static int __init tpm_timer_init(struct device_node *np)
->  {
-> -	struct clk *ipg, *per;
-> -	int irq, ret;
-> -	u32 rate;
-> -
-> -	timer_base = of_iomap(np, 0);
-> -	if (!timer_base) {
-> -		pr_err("tpm: failed to get base address\n");
-> -		return -ENXIO;
-> -	}
-> -
-> -	irq = irq_of_parse_and_map(np, 0);
-> -	if (!irq) {
-> -		pr_err("tpm: failed to get irq\n");
-> -		ret = -ENOENT;
-> -		goto err_iomap;
-> -	}
-> +	struct clk *ipg;
-> +	int ret;
->  
->  	ipg = of_clk_get_by_name(np, "ipg");
-> -	per = of_clk_get_by_name(np, "per");
-> -	if (IS_ERR(ipg) || IS_ERR(per)) {
-> -		pr_err("tpm: failed to get ipg or per clk\n");
-> -		ret = -ENODEV;
-> -		goto err_clk_get;
-> +	if (IS_ERR(ipg)) {
-> +		pr_err("tpm: failed to get ipg clk\n");
-> +		return -ENODEV;
->  	}
-> -
->  	/* enable clk before accessing registers */
->  	ret = clk_prepare_enable(ipg);
->  	if (ret) {
->  		pr_err("tpm: ipg clock enable failed (%d)\n", ret);
-> -		goto err_clk_get;
-> +		clk_put(ipg);
-> +		return ret;
->  	}
->  
-> -	ret = clk_prepare_enable(per);
-> -	if (ret) {
-> -		pr_err("tpm: per clock enable failed (%d)\n", ret);
-> -		goto err_per_clk_enable;
-> -	}
-> +	ret = timer_of_init(np, &to_tpm);
-> +	if (ret)
-> +		return ret;
-> +
-> +	timer_base = timer_of_base(&to_tpm);
->  
-> -	counter_width = (readl(timer_base + TPM_PARAM) & TPM_PARAM_WIDTH_MASK)
-> -		>> TPM_PARAM_WIDTH_SHIFT;
-> +	counter_width = (readl(timer_base + TPM_PARAM)
-> +		& TPM_PARAM_WIDTH_MASK) >> TPM_PARAM_WIDTH_SHIFT;
->  	/* use rating 200 for 32-bit counter and 150 for 16-bit counter */
-> -	rating = counter_width == 0x20 ? 200 : 150;
-> +	to_tpm.clkevt.rating = counter_width == 0x20 ? 200 : 150;
->  
->  	/*
->  	 * Initialize tpm module to a known state
-> @@ -229,29 +219,13 @@ static int __init tpm_timer_init(struct device_node *np)
->  	writel(TPM_SC_CMOD_INC_PER_CNT |
->  		(counter_width == 0x20 ?
->  		TPM_SC_CMOD_DIV_DEFAULT : TPM_SC_CMOD_DIV_MAX),
-> -		     timer_base + TPM_SC);
-> +		timer_base + TPM_SC);
->  
->  	/* set MOD register to maximum for free running mode */
->  	writel(GENMASK(counter_width - 1, 0), timer_base + TPM_MOD);
->  
-> -	rate = clk_get_rate(per) >> 3;
-> -	ret = tpm_clocksource_init(rate);
-> -	if (ret)
-> -		goto err_per_clk_enable;
-> -
-> -	ret = tpm_clockevent_init(rate, irq);
-> -	if (ret)
-> -		goto err_per_clk_enable;
-> -
-> -	return 0;
-> +	tpm_clockevent_init();
->  
-> -err_per_clk_enable:
-> -	clk_disable_unprepare(ipg);
-> -err_clk_get:
-> -	clk_put(per);
-> -	clk_put(ipg);
-> -err_iomap:
-> -	iounmap(timer_base);
-> -	return ret;
-> +	return tpm_clocksource_init();
->  }
->  TIMER_OF_DECLARE(imx7ulp, "fsl,imx7ulp-tpm", tpm_timer_init);
+>>> under the node that provides the memory. If the system provides this
+>>> information, applications can query the node attributes when deciding
+>>> which node to request memory.
+>>
+>> Right but each (memory initiator, memory target) should have these above
+>> mentioned properties enumerated to have an 'property as seen' from kind
+>> of semantics.
+>>
+>>>
+>>> When multiple memory initiators exist, accessing the same memory target
+>>> from each may not perform the same as the other. The highest performing
+>>> initiator to a given target is considered to be a local initiator for
+>>> that target. The kernel provides performance attributes only for the
+>>> local initiators.
+>>
+>> As mentioned above the interface must enumerate a future extensible set
+>> of properties for each (memory initiator, memory target) pair available
+>> on the system.
 > 
+> That seems less friendly to use if forces the application to figure out
+> which CPU is the best for a given memory node rather than just provide
+> that answer directly.
 
+Why ? The application would just have to scan all possible values out
+there and decide for itself. A complete set of attribute values for
+each pair makes the sysfs more comprehensive and gives the application
+more control over it's choices.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+> 
+>>> The memory's compute node should be symlinked in sysfs as one of the
+>>> node's initiators.
+>>
+>> Right. IIUC the first patch skips the linking process of for two nodes A
+>> and B if (A == B) preventing association to local memory initiator.
+> 
+> Right, CPUs and memory sharing a proximity domain are assumed to be
+> local to each other, so not going to set up those links to itself.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+But this will be required for applications to evaluate correctly between
+possible values from all node pairs.
 
