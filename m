@@ -2,136 +2,129 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC2BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 031D6C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:58:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E984020831
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:57:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E984020831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B565820684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:58:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DALXly6r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B565820684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437963AbeKWChM (ORCPT
+        id S2438013AbeKWCic (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 21:37:12 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:33307 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732326AbeKWChM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 21:37:12 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 73AFD2072F; Thu, 22 Nov 2018 16:57:13 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4A2DF20712;
-        Thu, 22 Nov 2018 16:57:03 +0100 (CET)
-Date:   Thu, 22 Nov 2018 16:57:03 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Mesih Kilinc <mesihkilinc@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Rob Herring <robh+dt@kernel.org>,
-        Julian Calaby <julian.calaby@gmail.com>
-Subject: Re: [RFC PATCH v3 01/17] ARM: add CONFIG_ARCH_SUNXI_V7 for
- differentiate ARMv5/v7 Allwinner SoCs
-Message-ID: <20181122155703.wsziwzybqwcmn25w@flea>
-References: <cover.1542824904.git.mesihkilinc@gmail.com>
- <267ffcf3b91930a82f20d93e1fad1fceaf8b9b0e.1542824904.git.mesihkilinc@gmail.com>
- <20181122082635.br5n33owxxpenv62@flea>
- <20181122150751.n26pvywmvnuglly5@ThinkPad>
+        Thu, 22 Nov 2018 21:38:32 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39832 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391889AbeKWCib (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 21:38:31 -0500
+Received: by mail-wm1-f66.google.com with SMTP id u13-v6so9602978wmc.4;
+        Thu, 22 Nov 2018 07:58:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:references:user-agent:in-reply-to:date
+         :message-id:mime-version;
+        bh=KxXVsiTwhT+Sl2mN0fwtbcSfNM4w1wCbGd/a/zne9n8=;
+        b=DALXly6rwcjqQH5b50tFZf8gxOLN8RvlWjO2Tiz8RBQyGdd8AXAMsxQMlJsV1BCSWZ
+         61teEMfNSKGWMOSF06Qx/y5Lb7YZBvOBHYHhOQjFD4Ge/mPNYeGQ0aBfuManZf3pWD1H
+         nmshGK26EEj+OH5ubKZV/t1WF65pIMY+4fZZIpOjxj5ak0DeP3EENhRav5hC61uYkc3H
+         gKDKrFiq+pQFCYN2ooHIg5XJ4bppelwg8rVyX929cJSXkezhJI8VKKkWjVGQertvvwSo
+         ZSk3PLcErbgdj0RjuDYOOdmuOrCZ4nbHobs84LfUgyHKmvB3klXXwhLqfkmhTBGi1sD9
+         J3uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:references:user-agent
+         :in-reply-to:date:message-id:mime-version;
+        bh=KxXVsiTwhT+Sl2mN0fwtbcSfNM4w1wCbGd/a/zne9n8=;
+        b=Js+p9AxzWgghnAnfnBGyCCkEWmtvBa6+UJA+z/8CQm2NYQAm4mv+7qlhqw2yugXUf/
+         2DFbG8JBzI127yEmPnTEFtQlWJM/Pg3tABngzNA653nStgGdWOLzlr438SdX+GzEzrG7
+         fLAsFmQEOOTz/yqvn8KP3INTBmlpC59N5uRgBUnFXO2hIeBCeMHcUPPwctj5EJQJI6Em
+         lLq3UnyCu4s6MBs9nq4MOyrm4PcYicd+kl9yVW/K8LcLTXpdenL11eBUvqREiv3qeR65
+         1M6wDUzD+SEewV5AUKVwZCqH6eutMNgeqc1jYGLyG/wXIc2os9Eig7mJm5fYBJvv/2er
+         EOOw==
+X-Gm-Message-State: AA+aEWbNyv40BJ++ibDWNR4ASaketAIxyKeYK0O6SSWCA5+Dq7sflx/l
+        au5pApTupM5BbSYVndr5o97JgzoaQ9g=
+X-Google-Smtp-Source: AFSGD/U0KATFdzC9jp/w4jAwNoX7X7vV3gdG54z3UkU26v2U2A/LPM4ocbvXc35G8Zq6AQqWU5xAiw==
+X-Received: by 2002:a1c:c7cd:: with SMTP id x196mr1998245wmf.12.1542902312798;
+        Thu, 22 Nov 2018 07:58:32 -0800 (PST)
+Received: from evledraar (proxy-gw-a.booking.com. [5.57.21.8])
+        by smtp.gmail.com with ESMTPSA id e8-v6sm3383226wmf.22.2018.11.22.07.58.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 22 Nov 2018 07:58:32 -0800 (PST)
+From:   =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
+To:     Junio C Hamano <gitster@pobox.com>
+Cc:     git@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>,
+        git-packagers@googlegroups.com,
+        Eric Sunshine <sunshine@sunshineco.com>
+Subject: Re: [ANNOUNCE] Git v2.20.0-rc1
+References: <xmqqmuq25ufc.fsf@gitster-ct.c.googlers.com>
+User-agent: Debian GNU/Linux testing (buster); Emacs 25.2.2; mu4e 1.1.0
+In-reply-to: <xmqqmuq25ufc.fsf@gitster-ct.c.googlers.com>
+Date:   Thu, 22 Nov 2018 16:58:31 +0100
+Message-ID: <87ftvt14uw.fsf@evledraar.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="flmo5uucax4cgdii"
-Content-Disposition: inline
-In-Reply-To: <20181122150751.n26pvywmvnuglly5@ThinkPad>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---flmo5uucax4cgdii
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Nov 21 2018, Junio C Hamano wrote:
 
-On Thu, Nov 22, 2018 at 06:07:51PM +0300, Mesih Kilinc wrote:
-> On 18/11/22 09:26, Maxime Ripard wrote:
-> > On Wed, Nov 21, 2018 at 09:30:34PM +0300, Mesih Kilinc wrote:
-> > > Allwinner also has some ARMv5 SoCs.
-> > >=20
-> > > In order to add support for them, add a CONFIG_ARCH_SUNXI_V7 bool con=
-fig
-> > > which is selected when a ARMv7 soc is selected, and make CONFIG_ARCH_=
-SUNXI
-> > > a common option which is selected by both V7 and V5 sunxi option.
-> > >=20
-> > > Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-> > > ---
-> > >  arch/arm/mach-sunxi/Kconfig | 23 ++++++++++++++++-------
-> > >  1 file changed, 16 insertions(+), 7 deletions(-)
-> > >=20
-> > > diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
-> > > index d9c8ecf..7e5f173 100644
-> > > --- a/arch/arm/mach-sunxi/Kconfig
-> > > +++ b/arch/arm/mach-sunxi/Kconfig
-> > > @@ -6,31 +6,38 @@ menuconfig ARCH_SUNXI
-> > >  	select GENERIC_IRQ_CHIP
-> > >  	select GPIOLIB
-> > >  	select PINCTRL
-> > > -	select PM_OPP
-> > >  	select SUN4I_TIMER
-> > >  	select RESET_CONTROLLER
-> > > +	help
-> > > +	  Support for Allwinner ARM-based family of processors
-> > > =20
-> > >  if ARCH_SUNXI
-> > > =20
-> > > +if ARCH_MULTI_V7
-> > > +
-> > > +config ARCH_SUNXI_V7
-> > > +	bool
-> > > +	select PM_OPP
-> > > +
-> >=20
-> > Actually, thinking more about this, I don't see why the PM_OPP config
-> > option should be made specific to the ARMv7 sunxi SoCs, you will have
-> > things cpufreq enabled at some point as well on the armv5 support.
-> >=20
-> OK. I was basing this code to the first patch series.=20
-> So there will be no need for ARCH_SUNXI_VX configs. Should I drop them
-> and differantiate IC's by only ARCH_MULTI_VX?
+>  * The "--no-patch" option, which can be used to get a high-level
+>    overview without the actual line-by-line patch difference shown, of
+>    the "range-diff" command was earlier broken, which has been
+>    corrected.
 
-Yeah, that's probably enough for now, and we can always merge some
-patch along those lines if we ever need it later.
+There's a regression related to this that I wanted to send a headsup
+for, but don't have time to fix today. Now range-diff in format-patch
+includes --stat output. See e.g. my
+https://public-inbox.org/git/20181122132823.9883-1-avarab@gmail.com/
 
-Thanks!
-Maxime
+Preliminary patch:
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+ builtin/log.c         | 3 +++
+ t/t3206-range-diff.sh | 2 ++
+ 2 files changed, 5 insertions(+)
 
---flmo5uucax4cgdii
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/builtin/log.c b/builtin/log.c
+index 0fe6f9ba1e..fdaba480d2 100644
+--- a/builtin/log.c
++++ b/builtin/log.c
+@@ -1094,9 +1094,12 @@ static void make_cover_letter(struct rev_info *rev, int use_stdout,
+ 	}
 
------BEGIN PGP SIGNATURE-----
+ 	if (rev->rdiff1) {
++		const int oldfmt = rev->diffopt.output_format;
+ 		fprintf_ln(rev->diffopt.file, "%s", rev->rdiff_title);
++		rev->diffopt.output_format &= ~(DIFF_FORMAT_DIFFSTAT | DIFF_FORMAT_SUMMARY);
+ 		show_range_diff(rev->rdiff1, rev->rdiff2,
+ 				rev->creation_factor, 1, &rev->diffopt);
++		rev->diffopt.output_format = oldfmt;
+ 	}
+ }
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/bRzwAKCRDj7w1vZxhR
-xQIQAQDIbdeo2bMJcBp7aRe7q+1h7ETMBDGYXYKr+sBSJygGWQD/Y329IDLTYSzP
-jCyMWo01jtQefNDk69lMkGXlZuuOOAQ=
-=FveE
------END PGP SIGNATURE-----
-
---flmo5uucax4cgdii--
+diff --git a/t/t3206-range-diff.sh b/t/t3206-range-diff.sh
+index e497c1358f..2e913542f3 100755
+--- a/t/t3206-range-diff.sh
++++ b/t/t3206-range-diff.sh
+@@ -248,8 +248,10 @@ test_expect_success 'dual-coloring' '
+ for prev in topic master..topic
+ do
+ 	test_expect_success "format-patch --range-diff=$prev" '
++		cat actual &&
+ 		git format-patch --stdout --cover-letter --range-diff=$prev \
+ 			master..unmodified >actual &&
++		! grep "a => b" actual &&
+ 		grep "= 1: .* s/5/A" actual &&
+ 		grep "= 2: .* s/4/A" actual &&
+ 		grep "= 3: .* s/11/B" actual &&
