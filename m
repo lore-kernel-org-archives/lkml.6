@@ -2,114 +2,103 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B406C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7ECC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E75E420820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:07:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E75E420820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id A003C20820
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:11:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A003C20820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392835AbeKVSp1 convert rfc822-to-8bit (ORCPT
+        id S2392861AbeKVStY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 13:45:27 -0500
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:47718 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733146AbeKVSp1 (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:7:1>);
-        Thu, 22 Nov 2018 13:45:27 -0500
-Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
-        with Novell_GroupWise; Thu, 22 Nov 2018 01:07:07 -0700
-Message-Id: <5BF663A902000078001FEBB6@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.1.0 
-Date:   Thu, 22 Nov 2018 01:07:05 -0700
-From:   "Jan Beulich" <JBeulich@suse.com>
-To:     "Andrew Lutomirski" <luto@kernel.org>
-Cc:     <mingo@elte.hu>, <tglx@linutronix.de>,
-        "xen-devel" <xen-devel@lists.xenproject.org>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
-        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
-        <hpa@zytor.com>
-Subject: Re: [PATCH v2] x86-64/Xen: fix stack switching
-References: <5AF03EBD02000078001C1303@prv1-mh.provo.novell.com>
- <5AF03EBD02000000000F91D6@prv1-mh.provo.novell.com>
- <5AF03EBD02000078001FE590@prv1-mh.provo.novell.com>
- <5BF52F0E02000078001FE5BE@prv1-mh.provo.novell.com>
- <CALCETrUa4iw+y+EXSqq_ibJQAfR0+U52Q=tO8_bj1YJgtMUP+Q@mail.gmail.com>
-In-Reply-To: <CALCETrUa4iw+y+EXSqq_ibJQAfR0+U52Q=tO8_bj1YJgtMUP+Q@mail.gmail.com>
-Mime-Version: 1.0
+        Thu, 22 Nov 2018 13:49:24 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:44765 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733146AbeKVStY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 13:49:24 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 6F00420D29; Thu, 22 Nov 2018 09:11:02 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1EEB920510;
+        Thu, 22 Nov 2018 09:10:52 +0100 (CET)
+Date:   Thu, 22 Nov 2018 09:10:51 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Marek Vasut <marex@denx.de>
+Subject: [GIT PULL] mtd: Fixes for 4.20-rc4
+Message-ID: <20181122091051.70407bcd@bbrezillon>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>> On 21.11.18 at 16:24, <luto@kernel.org> wrote:
-> On Wed, Nov 21, 2018 at 2:10 AM Jan Beulich <JBeulich@suse.com> wrote:
->> --- 4.20-rc3/arch/x86/entry/entry_64.S
->> +++ 4.20-rc3-x86_64-stack-switch-Xen/arch/x86/entry/entry_64.S
->> @@ -1380,6 +1380,12 @@ ENTRY(nmi)
->>         swapgs
->>         cld
->>         SWITCH_TO_KERNEL_CR3 scratch_reg=%rdx
->> +
->> +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rdx
->> +       subq    $8, %rdx
->> +       xorq    %rsp, %rdx
->> +       shrq    $PAGE_SHIFT, %rdx
->> +       jz      .Lnmi_keep_stack
-> 
-> This code shouldn't even be reachable on Xen:
-> 
-> commit 43e4111086a70c78bedb6ad990bee97f17b27a6e
-> Author: Juergen Gross <jgross@suse.com>
-> Date:   Thu Nov 2 00:59:07 2017 -0700
-> 
->     xen, x86/entry/64: Add xen NMI trap entry
-> 
->     Instead of trying to execute any NMI via the bare metal's NMI trap
->     handler use a Xen specific one for PV domains, like we do for e.g.
->     debug traps. As in a PV domain the NMI is handled via the normal
->     kernel stack this is the correct thing to do.
-> 
->     This will enable us to get rid of the very fragile and questionable
->     dependencies between the bare metal NMI handler and Xen assumptions
->     believed to be broken anyway.
+Hello Linus,
 
-Oh, I didn't notice this. The beginnings of the patch here pre-date
-this, though, and then I didn't notice the addition. Thanks for
-pointing this out.
+Here is the MTD fixes PR for 4.20-rc4.
 
->> --- 4.20-rc3/arch/x86/entry/entry_64_compat.S
->> +++ 4.20-rc3-x86_64-stack-switch-Xen/arch/x86/entry/entry_64_compat.S
->> @@ -361,17 +361,23 @@ ENTRY(entry_INT80_compat)
->>
->>         /* Need to switch before accessing the thread stack. */
->>         SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
->> +
->> +       movq    PER_CPU_VAR(cpu_current_top_of_stack), %rdi
->> +       subq    $8, %rdi
->> +       xorq    %rsp, %rdi
->> +       shrq    $PAGE_SHIFT, %rdi
->> +       jz      .Lint80_keep_stack
-> 
-> This comparison is IMO the wrong test entirely.  How about something like:
-> 
-> /* On Xen PV, entry_INT80_compat is called on the thread stack, so
-> rewinding to the top of the thread stack would allow an NMI to
-> overwrite the hardware frame before we copy it. */
-> ALTERNATIVE "", "jmp .Lint80_keep_stack", X86_FEATURE_XENPV
+Regards,
 
-Indeed I had noted this as an alternative option in v1, but
-didn't get respective feedback. If that's the preferred route, I'll
-certainly switch.
+Boris
 
-Jan
+The following changes since commit ccda4af0f4b92f7b4c308d3acc262f4a7e3affad:
 
+  Linux 4.20-rc2 (2018-11-11 17:12:31 -0600)
 
+are available in the Git repository at:
+
+  git://git.infradead.org/linux-mtd.git tags/mtd/fixes-for-4.20-rc4
+
+for you to fetch changes up to e8828ec1c003727fc001eab06aa19bd2ca9b677e:
+
+  mtd: spi-nor: fix selection of uniform erase type in flexible conf (2018-11-20 14:26:59 +0100)
+
+----------------------------------------------------------------
+SPI NOR fixes:
+- Various fixes related to the SFDP parsing code merged in 4.20
+- Fix for a page fault in the cadence-qspi
+
+NAND fixes:
+- Fix a macro name conflict between the QCOM NAND controller driver
+  and the RISC-V asm headers
+- Fix of-node handling in the atmel driver
+
+----------------------------------------------------------------
+Johan Hovold (1):
+      mtd: rawnand: atmel: fix OF child-node lookup
+
+Olof Johansson (1):
+      mtd: rawnand: qcom: Namespace prefix some commands
+
+Thor Thayer (1):
+      mtd: spi-nor: Fix Cadence QSPI page fault kernel panic
+
+Tudor.Ambarus@microchip.com (5):
+      mtd: spi-nor: don't drop sfdp data if optional parsers fail
+      mtd: spi-nor: fix iteration over smpt array
+      mtd: spi-nor: don't overwrite errno in spi_nor_get_map_in_use()
+      mtd: spi_nor: pass DMA-able buffer to spi_nor_read_raw()
+      mtd: spi-nor: fix selection of uniform erase type in flexible conf
+
+ drivers/mtd/nand/raw/atmel/nand-controller.c |  11 +++--
+ drivers/mtd/nand/raw/qcom_nandc.c            |  32 ++++++-------
+ drivers/mtd/spi-nor/cadence-quadspi.c        |  19 ++++++--
+ drivers/mtd/spi-nor/spi-nor.c                | 130 +++++++++++++++++++++++++++++++++++++++-------------
+ 4 files changed, 137 insertions(+), 55 deletions(-)
