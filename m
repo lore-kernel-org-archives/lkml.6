@@ -2,349 +2,141 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87346C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:52:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 974E6C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C2B520838
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:52:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C96D20838
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:55:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CrS+LEnZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C2B520838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="rFO9QDt8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C96D20838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406571AbeKWFcm (ORCPT
+        id S2406583AbeKWFgC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 00:32:42 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39072 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404536AbeKWFcm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 00:32:42 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c72so2279832pfc.6
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 10:52:03 -0800 (PST)
+        Fri, 23 Nov 2018 00:36:02 -0500
+Received: from mail-eopbgr810040.outbound.protection.outlook.com ([40.107.81.40]:57848
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2392136AbeKWFgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 00:36:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=O0vfx+uyRQqAcdBqfEuTqQctH1f5rEonNvzSVKeNXKo=;
-        b=CrS+LEnZKxJq0lekl2KIGTyI04LfSGEbHmK54YFOx/vuqsGyS3GPXjZVotvA1sFXo4
-         7WoMhY7u0Q9m/Wc77bQVAGGJarLKnRX1+QDJiS6HGokyNh6ybXlFKQsnvD8O8plNVtMl
-         RGeJTWoFK88FNcvr+zXmnuujzVmMHzhgCceQTH9EiuyRAiUIlfTSLeqaskG+m08y+lY2
-         xNILgBp7KANCNUJczPefhO6E2R76ynEmHVTxDiaFSPSntPXEo9/Nt1T1rV1j7rSvnaLr
-         LmKcLWJNrXLIOu1UwVcjYZ4uvaT1wEZl8QPYvl0qM2kRsQ/ZyrrLm9AwsLWBbjrw5WdT
-         h3Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=O0vfx+uyRQqAcdBqfEuTqQctH1f5rEonNvzSVKeNXKo=;
-        b=SAWHhGCf7OBE0WxlrPJx80Tb9Gh1beDy8NoatY+sdIgTNqWCPbd7qg5xDSeAHIyZx4
-         4bLBVvr1lQ0K+qCt4k/Oy2iKuo0GPUNdluvzSR+Lgtk17NFmOQeUBxY48HcC+Lp3sFFI
-         XMX/6KbNJN4xZAUYGeg3joMmMRS1rPHgwUfNJoVEXqYCchJ3qlAyzntt4bf1pZ+mWNTs
-         5OfbZobENw9373a0K/5b+P9INihUTLCFfzrs5g0ZSTDULeXBkLzoTON58FltRRyOtG7t
-         w6VucRSKRHZhvIXHabg+FYPlz8fEYBMNOlnr/tEIGDLtBsp6cC7jbzL0mrMWlO7Ru6EH
-         o5ZA==
-X-Gm-Message-State: AA+aEWZ6/qnQpq1u1lTKO0PlJ2XQ7OvqfRoyu+VYFVMmIQNizEyF9mbM
-        JySHENg/yjtN9xBrSRb+spc=
-X-Google-Smtp-Source: AFSGD/U3qGba1lAXmM55a23sTczXbxoHBb+m/0La8MMsiEpQy1L+fY/TvoHYuo46dATUqMB8WrJesw==
-X-Received: by 2002:a63:d818:: with SMTP id b24mr10882985pgh.174.1542912723318;
-        Thu, 22 Nov 2018 10:52:03 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id l87sm47098358pfj.179.2018.11.22.10.52.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 10:52:02 -0800 (PST)
-Date:   Thu, 22 Nov 2018 10:52:00 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     lee.jones@linaro.org, gwendal@chromium.org, drinkcat@chromium.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, bleung@chromium.org,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 4/7] mfd / platform: cros_ec: move debugfs attributes to
- its own driver.
-Message-ID: <20181122185200.GA809@roeck-us.net>
-References: <20181122113356.23610-1-enric.balletbo@collabora.com>
- <20181122113356.23610-5-enric.balletbo@collabora.com>
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qRIIqtxIJDEZPKh2wm3qfuJ99ekfCYeRUDkJY+VyuR4=;
+ b=rFO9QDt8JBw5vU2qcgoGgig7BOHUu6E8yEEPiEL9YoOOdM/YIV88pF2NCBs4z1pwbmFeupopTijD0OVD6lJG8ru/p9NFKk9vvlEso/VCeG3AUw0FGYRPa5YELQAklOFLvATGr5Kpv7u3vpK1+DNxRuMyeZTZb9HeXNPy46SjMKE=
+Received: from BN6PR12MB1714.namprd12.prod.outlook.com (10.175.101.11) by
+ BN6PR12MB1393.namprd12.prod.outlook.com (10.168.228.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.23; Thu, 22 Nov 2018 18:55:17 +0000
+Received: from BN6PR12MB1714.namprd12.prod.outlook.com
+ ([fe80::f8a7:157:6224:34ee]) by BN6PR12MB1714.namprd12.prod.outlook.com
+ ([fe80::f8a7:157:6224:34ee%2]) with mapi id 15.20.1339.027; Thu, 22 Nov 2018
+ 18:55:17 +0000
+From:   "Koenig, Christian" <Christian.Koenig@amd.com>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        LKML <linux-kernel@vger.kernel.org>
+CC:     Linux MM <linux-mm@kvack.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        =?utf-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 2/3] mm, notifier: Catch sleeping/blocking for !blockable
+Thread-Topic: [PATCH 2/3] mm, notifier: Catch sleeping/blocking for !blockable
+Thread-Index: AQHUgoOXn35FlQ7VOUGIwFoSriypUaVcJMKA
+Date:   Thu, 22 Nov 2018 18:55:17 +0000
+Message-ID: <f9c39a9a-5afd-4aed-c9ad-0c3fef34a449@amd.com>
+References: <20181122165106.18238-1-daniel.vetter@ffwll.ch>
+ <20181122165106.18238-3-daniel.vetter@ffwll.ch>
+In-Reply-To: <20181122165106.18238-3-daniel.vetter@ffwll.ch>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+x-originating-ip: [2a02:908:125b:9a00:a142:2be6:b7be:5a3a]
+x-clientproxiedby: AM5PR0701CA0053.eurprd07.prod.outlook.com
+ (2603:10a6:203:2::15) To BN6PR12MB1714.namprd12.prod.outlook.com
+ (2603:10b6:404:106::11)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Christian.Koenig@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR12MB1393;20:PbxAU93wa0J3u3SJvCDE26lAneccqyXv72Pyy8Fjk8zjFYas0WDuc+hL/OBOQpwnI8GI/OQhIH4/de4UkZwar/cyGUyhsmQoilOjC1VsRApUMSNffBaGdUIJwXUeyLuMvL5AUxfeEMqIm7SMPdEHuyw7hMLKmryCLMYtdZoOAwrzWAypg9wVdOZ7O/zJ02WC27a87bSagwrkCYJAf19w9WC8ktASvzxP/NTV7jh699PCkwDt3477DOjDTfyc4EYP
+x-ms-office365-filtering-correlation-id: 2adeea86-f9ab-4555-7e97-08d650ac0b31
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN6PR12MB1393;
+x-ms-traffictypediagnostic: BN6PR12MB1393:
+x-microsoft-antispam-prvs: <BN6PR12MB1393E1BC027FB348434154A483DB0@BN6PR12MB1393.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231442)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BN6PR12MB1393;BCL:0;PCL:0;RULEID:;SRVR:BN6PR12MB1393;
+x-forefront-prvs: 0864A36BBF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(39860400002)(376002)(346002)(136003)(199004)(189003)(25786009)(72206003)(64126003)(65956001)(65806001)(97736004)(68736007)(478600001)(316002)(76176011)(52116002)(6486002)(6436002)(99286004)(54906003)(2900100001)(14454004)(58126008)(110136005)(81156014)(81166006)(31686004)(186003)(6506007)(386003)(229853002)(102836004)(86362001)(106356001)(105586002)(36756003)(2906002)(7736002)(65826007)(6116002)(446003)(8936002)(6246003)(4326008)(486006)(46003)(14444005)(476003)(6512007)(2616005)(305945005)(53936002)(11346002)(8676002)(256004)(31696002)(66574009)(71190400001)(7416002)(71200400001)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1393;H:BN6PR12MB1714.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: OV/aOhVst5pC58OVOJfIyOVnHJ2ViumnRO/ah8r4iu5kBGpZjvIRZv5fOQnixQvYvbJeNDQHE19jqgYNkcgKFv9BfyJ19ZYix0a1ci1y0FB5wPgCuTxrWpN/quEaPsRDcVMBML+7qsGL3QZmgxrwxqRCjIgqUdg+60gk6sg41BUNbEJ7tlde1J/wByFkAofEeRA+2HJTv3L5SyPugAhmKEM3WT5YYffV0ZOqJXJaXBHf02pLEESCwZgbfdQQ0059hjKyVf4ZMGfnklJ2lV3lBbpqjzMIYecKQFvEl8gZ9qfyBilBupId8zVmiyBR3GBRYctABHDzuiB3saSeBf9HLdm8M4fwDKs9SmaIF9lsiwY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4EC4BF4399C95F4382DBAFADB9310725@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181122113356.23610-5-enric.balletbo@collabora.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2adeea86-f9ab-4555-7e97-08d650ac0b31
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Nov 2018 18:55:17.5175
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1393
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 12:33:53PM +0100, Enric Balletbo i Serra wrote:
-> The entire way how cros debugfs attibutes are created is broken.
-> cros_ec_debugfs should be its own driver and its attributes should be
-> associated with a debugfs driver not the mfd driver.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> 
->  drivers/mfd/cros_ec_dev.c                 | 41 +------------------
->  drivers/platform/chrome/Kconfig           | 10 +++++
->  drivers/platform/chrome/Makefile          |  4 +-
->  drivers/platform/chrome/cros_ec_debugfs.c | 49 ++++++++++++++++++-----
->  include/linux/mfd/cros_ec.h               |  6 ---
->  5 files changed, 53 insertions(+), 57 deletions(-)
-> 
-> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> index 790dc28b93f0..8c7ee2a0b50a 100644
-> --- a/drivers/mfd/cros_ec_dev.c
-> +++ b/drivers/mfd/cros_ec_dev.c
-> @@ -403,6 +403,7 @@ static const struct mfd_cell cros_usbpd_charger_cells[] = {
->  };
->  
->  static const struct mfd_cell cros_ec_platform_cells[] = {
-> +	{ .name = "cros-ec-debugfs" },
->  	{ .name = "cros-ec-lightbar" },
->  	{ .name = "cros-ec-vbc" },
->  };
-> @@ -496,9 +497,6 @@ static int ec_device_probe(struct platform_device *pdev)
->  		dev_err(ec->dev,
->  			"failed to add cros-ec platform devices: %d\n", retval);
->  
-> -	if (cros_ec_debugfs_init(ec))
-> -		dev_warn(dev, "failed to create debugfs directory\n");
-> -
->  	return 0;
->  
->  failed:
-> @@ -510,61 +508,24 @@ static int ec_device_remove(struct platform_device *pdev)
->  {
->  	struct cros_ec_dev *ec = dev_get_drvdata(&pdev->dev);
->  
-> -	cros_ec_debugfs_remove(ec);
-> -
->  	cdev_del(&ec->cdev);
->  	device_unregister(&ec->class_dev);
->  	return 0;
->  }
->  
-> -static void ec_device_shutdown(struct platform_device *pdev)
-> -{
-> -	struct cros_ec_dev *ec = dev_get_drvdata(&pdev->dev);
-> -
-> -	/* Be sure to clear up debugfs delayed works */
-> -	cros_ec_debugfs_remove(ec);
-> -}
-> -
->  static const struct platform_device_id cros_ec_id[] = {
->  	{ DRV_NAME, 0 },
->  	{ /* sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(platform, cros_ec_id);
->  
-> -static __maybe_unused int ec_device_suspend(struct device *dev)
-> -{
-> -	struct cros_ec_dev *ec = dev_get_drvdata(dev);
-> -
-> -	cros_ec_debugfs_suspend(ec);
-> -
-> -	return 0;
-> -}
-> -
-> -static __maybe_unused int ec_device_resume(struct device *dev)
-> -{
-> -	struct cros_ec_dev *ec = dev_get_drvdata(dev);
-> -
-> -	cros_ec_debugfs_resume(ec);
-> -
-> -	return 0;
-> -}
-> -
-> -static const struct dev_pm_ops cros_ec_dev_pm_ops = {
-> -#ifdef CONFIG_PM_SLEEP
-> -	.suspend = ec_device_suspend,
-> -	.resume = ec_device_resume,
-> -#endif
-> -};
-> -
->  static struct platform_driver cros_ec_dev_driver = {
->  	.driver = {
->  		.name = DRV_NAME,
-> -		.pm = &cros_ec_dev_pm_ops,
->  	},
->  	.id_table = cros_ec_id,
->  	.probe = ec_device_probe,
->  	.remove = ec_device_remove,
-> -	.shutdown = ec_device_shutdown,
->  };
->  
->  static int __init cros_ec_dev_init(void)
-> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
-> index 29bd9837d520..a1239d48c46f 100644
-> --- a/drivers/platform/chrome/Kconfig
-> +++ b/drivers/platform/chrome/Kconfig
-> @@ -131,4 +131,14 @@ config CROS_EC_VBC
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called cros_ec_vbc.
->  
-> +config CROS_EC_DEBUGFS
-> +	tristate "Export ChromeOS EC internals in DebugFS"
-> +	depends on MFD_CROS_EC_CHARDEV && DEBUG_FS
-
-Maybe "default MFD_CROS_EC_CHARDEV" ?
-
-> +	help
-> +	  This option exposes the ChromeOS EC device internals to
-> +	  userspace.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called cros_ec_debugfs.
-> +
->  endif # CHROMEOS_PLATFORMS
-> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
-> index 4081b7179df7..12a5c4d18c17 100644
-> --- a/drivers/platform/chrome/Makefile
-> +++ b/drivers/platform/chrome/Makefile
-> @@ -3,8 +3,7 @@
->  obj-$(CONFIG_CHROMEOS_LAPTOP)		+= chromeos_laptop.o
->  obj-$(CONFIG_CHROMEOS_PSTORE)		+= chromeos_pstore.o
->  obj-$(CONFIG_CHROMEOS_TBMC)		+= chromeos_tbmc.o
-> -cros_ec_ctl-objs			:= cros_ec_sysfs.o \
-> -					   cros_ec_debugfs.o
-> +cros_ec_ctl-objs			:= cros_ec_sysfs.o
->  obj-$(CONFIG_CROS_EC_CTL)		+= cros_ec_ctl.o
->  obj-$(CONFIG_CROS_EC_I2C)		+= cros_ec_i2c.o
->  obj-$(CONFIG_CROS_EC_SPI)		+= cros_ec_spi.o
-> @@ -15,3 +14,4 @@ obj-$(CONFIG_CROS_EC_PROTO)		+= cros_ec_proto.o
->  obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)	+= cros_kbd_led_backlight.o
->  obj-$(CONFIG_CROS_EC_LIGHTBAR)		+= cros_ec_lightbar.o
->  obj-$(CONFIG_CROS_EC_VBC)		+= cros_ec_vbc.o
-> +obj-$(CONFIG_CROS_EC_DEBUGFS)		+= cros_ec_debugfs.o
-> diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
-> index c62ee8e610a0..2ae385a27a1d 100644
-> --- a/drivers/platform/chrome/cros_ec_debugfs.c
-> +++ b/drivers/platform/chrome/cros_ec_debugfs.c
-> @@ -23,12 +23,16 @@
->  #include <linux/fs.h>
->  #include <linux/mfd/cros_ec.h>
->  #include <linux/mfd/cros_ec_commands.h>
-> +#include <linux/module.h>
->  #include <linux/mutex.h>
-> +#include <linux/platform_device.h>
->  #include <linux/poll.h>
->  #include <linux/sched.h>
->  #include <linux/slab.h>
->  #include <linux/wait.h>
->  
-> +#define DRV_NAME "cros-ec-debugfs"
-> +
->  #define LOG_SHIFT		14
->  #define LOG_SIZE		(1 << LOG_SHIFT)
->  #define LOG_POLL_SEC		10
-> @@ -423,8 +427,9 @@ static int cros_ec_create_pdinfo(struct cros_ec_debugfs *debug_info)
->  	return 0;
->  }
->  
-> -int cros_ec_debugfs_init(struct cros_ec_dev *ec)
-> +static int cros_ec_debugfs_probe(struct platform_device *pd)
->  {
-> +	struct cros_ec_dev *ec = dev_get_drvdata(pd->dev.parent);
->  	struct cros_ec_platform *ec_platform = dev_get_platdata(ec->dev);
->  	const char *name = ec_platform->ec_name;
->  	struct cros_ec_debugfs *debug_info;
-> @@ -459,20 +464,24 @@ int cros_ec_debugfs_init(struct cros_ec_dev *ec)
->  	debugfs_remove_recursive(debug_info->dir);
->  	return ret;
->  }
-> -EXPORT_SYMBOL(cros_ec_debugfs_init);
->  
-> -void cros_ec_debugfs_remove(struct cros_ec_dev *ec)
-> +static int cros_ec_debugfs_remove(struct platform_device *pd)
->  {
-> +	struct cros_ec_dev *ec = dev_get_drvdata(pd->dev.parent);
-> +
->  	if (!ec->debug_info)
-> -		return;
-> +		return 0;
-
-This should no long be necessary.
-
->  
->  	debugfs_remove_recursive(ec->debug_info->dir);
->  	cros_ec_cleanup_console_log(ec->debug_info);
-> +
-> +	return 0;
->  }
-> -EXPORT_SYMBOL(cros_ec_debugfs_remove);
->  
-> -void cros_ec_debugfs_suspend(struct cros_ec_dev *ec)
-> +static int __maybe_unused cros_ec_debugfs_suspend(struct device *dev)
->  {
-> +	struct cros_ec_dev *ec = dev_get_drvdata(dev);
-> +
->  	/*
->  	 * cros_ec_debugfs_init() failures are non-fatal; it's also possible
->  	 * that we initted things but decided that console log wasn't supported.
-
-The above comment no longer applies. Also, since this is now its own driver,
-the if statement should not be necessary anymore.
-
-> @@ -481,12 +490,34 @@ void cros_ec_debugfs_suspend(struct cros_ec_dev *ec)
->  	 */
->  	if (ec->debug_info && ec->debug_info->log_buffer.buf)
->  		cancel_delayed_work_sync(&ec->debug_info->log_poll_work);
-> +
-> +	return 0;
->  }
-> -EXPORT_SYMBOL(cros_ec_debugfs_suspend);
->  
-> -void cros_ec_debugfs_resume(struct cros_ec_dev *ec)
-> +static int __maybe_unused cros_ec_debugfs_resume(struct device *dev)
->  {
-> +	struct cros_ec_dev *ec = dev_get_drvdata(dev);
-> +
->  	if (ec->debug_info && ec->debug_info->log_buffer.buf)
->  		schedule_delayed_work(&ec->debug_info->log_poll_work, 0);
-
-As aabove, the if statement should not be necessary anymore.
-
-> +
-> +	return 0;
->  }
-> -EXPORT_SYMBOL(cros_ec_debugfs_resume);
-> +
-> +static SIMPLE_DEV_PM_OPS(cros_ec_debugfs_pm_ops,
-> +			 cros_ec_debugfs_suspend, cros_ec_debugfs_resume);
-> +
-> +static struct platform_driver cros_ec_debugfs_driver = {
-> +	.driver = {
-> +		.name = DRV_NAME,
-> +		.pm = &cros_ec_debugfs_pm_ops,
-> +	},
-> +	.probe = cros_ec_debugfs_probe,
-> +	.remove = cros_ec_debugfs_remove,
-> +};
-> +
-> +module_platform_driver(cros_ec_debugfs_driver);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("Debug logs for ChromeOS EC");
-> +MODULE_ALIAS("platform:" DRV_NAME);
-> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-> index ddbb7e18a530..1722c2c26143 100644
-> --- a/include/linux/mfd/cros_ec.h
-> +++ b/include/linux/mfd/cros_ec.h
-> @@ -336,12 +336,6 @@ u32 cros_ec_get_host_event(struct cros_ec_device *ec_dev);
->  /* sysfs stuff */
->  extern struct attribute_group cros_ec_attr_group;
->  
-> -/* debugfs stuff */
-> -int cros_ec_debugfs_init(struct cros_ec_dev *ec);
-> -void cros_ec_debugfs_remove(struct cros_ec_dev *ec);
-> -void cros_ec_debugfs_suspend(struct cros_ec_dev *ec);
-> -void cros_ec_debugfs_resume(struct cros_ec_dev *ec);
-> -
->  /* Attach/detach attributes to the cros_class */
->  extern int cros_ec_attach_attribute_group(struct cros_ec_dev *ec,
->  					  struct attribute_group *attrs);
+QW0gMjIuMTEuMTggdW0gMTc6NTEgc2NocmllYiBEYW5pZWwgVmV0dGVyOg0KPiBXZSBuZWVkIHRv
+IG1ha2Ugc3VyZSBpbXBsZW1lbnRhdGlvbnMgZG9uJ3QgY2hlYXQgYW5kIGRvbid0IGhhdmUgYQ0K
+PiBwb3NzaWJsZSBzY2hlZHVsZS9ibG9ja2luZyBwb2ludCBkZWVwbHkgYnVycmllZCB3aGVyZSBy
+ZXZpZXcgY2FuJ3QNCj4gY2F0Y2ggaXQuDQo+DQo+IEknbSBub3Qgc3VyZSB3aGV0aGVyIHRoaXMg
+aXMgdGhlIGJlc3Qgd2F5IHRvIG1ha2Ugc3VyZSBhbGwgdGhlDQo+IG1pZ2h0X3NsZWVwKCkgY2Fs
+bHNpdGVzIHRyaWdnZXIsIGFuZCBpdCdzIGEgYml0IHVnbHkgaW4gdGhlIGNvZGUgZmxvdy4NCj4g
+QnV0IGl0IGdldHMgdGhlIGpvYiBkb25lLg0KPg0KPiBDYzogQW5kcmV3IE1vcnRvbiA8YWtwbUBs
+aW51eC1mb3VuZGF0aW9uLm9yZz4NCj4gQ2M6IE1pY2hhbCBIb2NrbyA8bWhvY2tvQHN1c2UuY29t
+Pg0KPiBDYzogRGF2aWQgUmllbnRqZXMgPHJpZW50amVzQGdvb2dsZS5jb20+DQo+IENjOiAiQ2hy
+aXN0aWFuIEvDtm5pZyIgPGNocmlzdGlhbi5rb2VuaWdAYW1kLmNvbT4NCj4gQ2M6IERhbmllbCBW
+ZXR0ZXIgPGRhbmllbC52ZXR0ZXJAZmZ3bGwuY2g+DQo+IENjOiAiSsOpcsO0bWUgR2xpc3NlIiA8
+amdsaXNzZUByZWRoYXQuY29tPg0KPiBDYzogbGludXgtbW1Aa3ZhY2sub3JnDQo+IFNpZ25lZC1v
+ZmYtYnk6IERhbmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0ZXJAaW50ZWwuY29tPg0KPiAtLS0NCj4g
+ICBtbS9tbXVfbm90aWZpZXIuYyB8IDggKysrKysrKy0NCj4gICAxIGZpbGUgY2hhbmdlZCwgNyBp
+bnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+DQo+IGRpZmYgLS1naXQgYS9tbS9tbXVfbm90
+aWZpZXIuYyBiL21tL21tdV9ub3RpZmllci5jDQo+IGluZGV4IDU5ZTEwMjU4OWEyNS4uNGQyODJj
+ZmIyOTZlIDEwMDY0NA0KPiAtLS0gYS9tbS9tbXVfbm90aWZpZXIuYw0KPiArKysgYi9tbS9tbXVf
+bm90aWZpZXIuYw0KPiBAQCAtMTg1LDcgKzE4NSwxMyBAQCBpbnQgX19tbXVfbm90aWZpZXJfaW52
+YWxpZGF0ZV9yYW5nZV9zdGFydChzdHJ1Y3QgbW1fc3RydWN0ICptbSwNCj4gICAJaWQgPSBzcmN1
+X3JlYWRfbG9jaygmc3JjdSk7DQo+ICAgCWhsaXN0X2Zvcl9lYWNoX2VudHJ5X3JjdShtbiwgJm1t
+LT5tbXVfbm90aWZpZXJfbW0tPmxpc3QsIGhsaXN0KSB7DQo+ICAgCQlpZiAobW4tPm9wcy0+aW52
+YWxpZGF0ZV9yYW5nZV9zdGFydCkgew0KPiAtCQkJaW50IF9yZXQgPSBtbi0+b3BzLT5pbnZhbGlk
+YXRlX3JhbmdlX3N0YXJ0KG1uLCBtbSwgc3RhcnQsIGVuZCwgYmxvY2thYmxlKTsNCj4gKwkJCWlu
+dCBfcmV0Ow0KPiArDQo+ICsJCQlpZiAoSVNfRU5BQkxFRChDT05GSUdfREVCVUdfQVRPTUlDX1NM
+RUVQKSAmJiAhYmxvY2thYmxlKQ0KPiArCQkJCXByZWVtcHRfZGlzYWJsZSgpOw0KPiArCQkJX3Jl
+dCA9IG1uLT5vcHMtPmludmFsaWRhdGVfcmFuZ2Vfc3RhcnQobW4sIG1tLCBzdGFydCwgZW5kLCBi
+bG9ja2FibGUpOw0KPiArCQkJaWYgKElTX0VOQUJMRUQoQ09ORklHX0RFQlVHX0FUT01JQ19TTEVF
+UCkgJiYgIWJsb2NrYWJsZSkNCj4gKwkJCQlwcmVlbXB0X2VuYWJsZSgpOw0KDQpKdXN0IGZvciB0
+aGUgc2FrZSBvZiBiZXR0ZXIgZG9jdW1lbnRpbmcgdGhpcyBob3cgYWJvdXQgYWRkaW5nIHRoaXMg
+dG8gDQppbmNsdWRlL2xpbnV4L2tlcm5lbC5oIHJpZ2h0IG5leHQgdG8gbWlnaHRfc2xlZXAoKToN
+Cg0KI2RlZmluZSBkaXNhbGxvd19zbGVlcGluZ19pZihjb25kKcKgwqDCoCBmb3IoKGNvbmQpID8g
+cHJlZW1wdF9kaXNhYmxlKCkgOiANCih2b2lkKTA7IChjb25kKTsgcHJlZW1wdF9kaXNhYmxlKCkp
+DQoNCihKdXN0IGZyb20gdGhlIGJhY2sgb2YgbXkgaGVhZCwgbWlnaHQgY29udGFpbiBwZWFudXRz
+IGFuZC9vciBoaW50cyBvZiANCmVycm9ycykuDQoNCkNocmlzdGlhbi4NCg0KPiAgIAkJCWlmIChf
+cmV0KSB7DQo+ICAgCQkJCXByX2luZm8oIiVwUyBjYWxsYmFjayBmYWlsZWQgd2l0aCAlZCBpbiAl
+c2Jsb2NrYWJsZSBjb250ZXh0LlxuIiwNCj4gICAJCQkJCQltbi0+b3BzLT5pbnZhbGlkYXRlX3Jh
+bmdlX3N0YXJ0LCBfcmV0LA0KDQo=
