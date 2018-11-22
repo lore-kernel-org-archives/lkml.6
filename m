@@ -2,119 +2,95 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45041C04EBB
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAA9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:28:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D7BB20824
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:27:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D7BB20824
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sunshineco.com
+	by mail.kernel.org (Postfix) with ESMTP id A9F3F20824
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:28:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="amVvzpmK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9F3F20824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406705AbeKWGID convert rfc822-to-8bit (ORCPT
+        id S2406718AbeKWGJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 01:08:03 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:44575 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406680AbeKWGIC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 01:08:02 -0500
-Received: by mail-qt1-f195.google.com with SMTP id n32so8434396qte.11;
-        Thu, 22 Nov 2018 11:27:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=JsDlE/EqQePVWStVSMhHbBccsjkCk4KTZ9ga2/SndPE=;
-        b=O8hvCiS9lMxh9vSvBojbh0HYLj37hOLk48NqxW0XTvyROqZ6xF2G/Dt0bEN0kPrWnO
-         4ULBSkHu9a32Z66sPuXaTJK9CyI2NiLIKNDODmG6fSwAm/Rnd5duDphWOMCwvNXP/OUt
-         NwrooxZum82HMKKCAy7wFdEoI0HKYU7sEFQeJC2Vxp3hBNt2q0E84g7/KBIKsS0C6ejW
-         Go7fDn7MC6Es6+/ws0m9Ic2c6hkCWk4RGZ+mzRrfq3HAnBsDG1X0bHFAa2Af4rM/y2eI
-         CEa6jclN4XydzFy5Q61moEqNmH2jCABvpxrJYFoWSssEamFvNY2G5lFb9LkvNyFYbTLD
-         xGcw==
-X-Gm-Message-State: AA+aEWY4CTGQhEqhm7cN65L03Cqzts7CYcwBKD/NubbXxBlLvvNuzrYb
-        KKxQF9kmpAkqHihXKOd12e0p5Mqz4MW9S66v/j8=
-X-Google-Smtp-Source: AFSGD/Xr94qlX3JyZ56O5sGzpGoOLYHIsU9O77iNKRkSna5B4UHGNMAZyY4uAWZxQwKBdE5vP5Ftp8dH2i8vf/H8dLM=
-X-Received: by 2002:a0c:d29b:: with SMTP id q27mr11517297qvh.62.1542914835946;
- Thu, 22 Nov 2018 11:27:15 -0800 (PST)
+        Fri, 23 Nov 2018 01:09:27 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:46006 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732651AbeKWGJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 01:09:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=m+UpwmIhRWhshYeTyDn5f7FIt6lniILPSIWuW7kciMg=;
+        b=amVvzpmKUFiQyyKAz4KdM/gY2mO9AnPqfLE+IDhwK3LYGqXd5JSTax0o4bKgizqr701o8L9NTSV3PjiFsNw0Egt++xsLmy2mNnxIcqSlYKxlNlJ7j3QMjqlgFIK3f6Pd9xKuYmEs9pUz6luYwg/91J7JsUMHodF4A05OsntV0ag=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gPueT-0002tZ-4R; Thu, 22 Nov 2018 20:28:37 +0100
+Date:   Thu, 22 Nov 2018 20:28:37 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     davem@davemloft.net, f.fainelli@gmail.com,
+        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        alexandre.belloni@bootlin.com
+Subject: Re: [PATCH net] net: phy: mscc: fix deadlock in
+ vsc85xx_default_config
+Message-ID: <20181122192837.GH10697@lunn.ch>
+References: <20181122131232.32032-1-quentin.schulz@bootlin.com>
 MIME-Version: 1.0
-References: <xmqqmuq25ufc.fsf@gitster-ct.c.googlers.com> <87ftvt14uw.fsf@evledraar.gmail.com>
-In-Reply-To: <87ftvt14uw.fsf@evledraar.gmail.com>
-From:   Eric Sunshine <sunshine@sunshineco.com>
-Date:   Thu, 22 Nov 2018 14:27:04 -0500
-Message-ID: <CAPig+cSzyT5N5=YeX+VgRq1t0VbWqXLHSB=g=V=O-nLdCWrE9g@mail.gmail.com>
-Subject: Re: [ANNOUNCE] Git v2.20.0-rc1
-To:     =?UTF-8?B?w4Z2YXIgQXJuZmrDtnLDsCBCamFybWFzb24=?= <avarab@gmail.com>
-Cc:     Junio C Hamano <gitster@pobox.com>, Git List <git@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        git-packagers@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181122131232.32032-1-quentin.schulz@bootlin.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 10:58 AM Ævar Arnfjörð Bjarmason
-<avarab@gmail.com> wrote:
-> There's a regression related to this that I wanted to send a headsup
-> for, but don't have time to fix today. Now range-diff in format-patch
-> includes --stat output. See e.g. my
-> https://public-inbox.org/git/20181122132823.9883-1-avarab@gmail.com/
+On Thu, Nov 22, 2018 at 02:12:32PM +0100, Quentin Schulz wrote:
+> The vsc85xx_default_config function called in the vsc85xx_config_init
+> function which is used by VSC8530, VSC8531, VSC8540 and VSC8541 PHYs
+> mistakenly calls phy_read and phy_write in-between phy_select_page and
+> phy_restore_page.
+> 
+> phy_select_page and phy_restore_page actually take and release the MDIO
+> bus lock so __phy_write and __phy_read (which assume that you already
+> have the MDIO bus lock unlike phy_write and phy_read) should be used for
+> any call in between the two said functions.
+> 
+> Let's fix this deadlock.
+> 
+> Fixes: 6a0bfbbe20b0 ("net: phy: mscc: migrate to phy_select/restore_page functions")
+> 
+> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> ---
+>  drivers/net/phy/mscc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
+> index 62269e578718..6856fe4d1a60 100644
+> --- a/drivers/net/phy/mscc.c
+> +++ b/drivers/net/phy/mscc.c
+> @@ -814,10 +814,10 @@ static int vsc85xx_default_config(struct phy_device *phydev)
+>  	if (rc < 0)
+>  		goto out_unlock;
+>  
+> -	reg_val = phy_read(phydev, MSCC_PHY_RGMII_CNTL);
+> +	reg_val = __phy_read(phydev, MSCC_PHY_RGMII_CNTL);
+>  	reg_val &= ~(RGMII_RX_CLK_DELAY_MASK);
+>  	reg_val |= (RGMII_RX_CLK_DELAY_1_1_NS << RGMII_RX_CLK_DELAY_POS);
+> -	phy_write(phydev, MSCC_PHY_RGMII_CNTL, reg_val);
+> +	__phy_write(phydev, MSCC_PHY_RGMII_CNTL, reg_val);
 
-Umf. Unfortunate fallout from [1].
+Hi Quentin
 
-> diff --git a/builtin/log.c b/builtin/log.c
-> @@ -1094,9 +1094,12 @@ static void make_cover_letter(struct rev_info *rev, int use_stdout,
->         if (rev->rdiff1) {
-> +               const int oldfmt = rev->diffopt.output_format;
->                 fprintf_ln(rev->diffopt.file, "%s", rev->rdiff_title);
-> +               rev->diffopt.output_format &= ~(DIFF_FORMAT_DIFFSTAT | DIFF_FORMAT_SUMMARY);
->                 show_range_diff(rev->rdiff1, rev->rdiff2,
->                                 rev->creation_factor, 1, &rev->diffopt);
-> +               rev->diffopt.output_format = oldfmt;
->         }
->  }
+You appear to be only accessing a single register, read/modify/write.
+I think you can use phy_modify_paged(), which will take care of all
+the locking for you.
 
-A few questions/observations:
-
-Does this same "fix" need to be applied to the --interdiff case just
-above this --range-diff block?
-
-Does the same "fix" need to be applied to the --interdiff and
---range-diff cases in log-tree.c:show_log()?
-
-Aside from fixing the broken --no-patches option[2], a goal of the
-series was to some day make --stat do something useful. Doesn't this
-"fix" go against that goal?
-
-The way this change needs to be spread around at various locations is
-making it feel like a BandAid "fix" rather than a proper solution. It
-seems like it should be fixed at a different level, though I'm not
-sure yet if that level is higher (where the options get set) or lower
-(where they actually affect the operation).
-
-Until we figure out the answers to these questions, I wonder if a more
-sensible short-term solution would be to back out [1] and just keep
-[2], which fixed the --no-patches regression.
-
-> diff --git a/t/t3206-range-diff.sh b/t/t3206-range-diff.sh
-> @@ -248,8 +248,10 @@ test_expect_success 'dual-coloring' '
->  for prev in topic master..topic
->  do
->         test_expect_success "format-patch --range-diff=$prev" '
-> +               cat actual &&
-
-Debugging session gunk?
-
->                 git format-patch --stdout --cover-letter --range-diff=$prev \
->                         master..unmodified >actual &&
-> +               ! grep "a => b" actual &&
->                 grep "= 1: .* s/5/A" actual &&
-
-[1]: https://public-inbox.org/git/20181113185558.23438-4-avarab@gmail.com/
-[2]: https://public-inbox.org/git/20181113185558.23438-3-avarab@gmail.com/
+    Andrew
