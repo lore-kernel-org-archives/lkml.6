@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57803C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6869C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1326520685
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:15:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EE2320685
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:15:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="hjyuNNvk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1326520685
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Yafmn75o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EE2320685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391982AbeKVNw7 (ORCPT
+        id S2391998AbeKVNxH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 08:52:59 -0500
-Received: from conuserg-09.nifty.com ([210.131.2.76]:51145 "EHLO
+        Thu, 22 Nov 2018 08:53:07 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:51398 "EHLO
         conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732521AbeKVNw6 (ORCPT
+        with ESMTP id S1732521AbeKVNxH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 08:52:58 -0500
+        Thu, 22 Nov 2018 08:53:07 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id wAM3EZ3F004964;
-        Thu, 22 Nov 2018 12:14:36 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com wAM3EZ3F004964
+        by conuserg-09.nifty.com with ESMTP id wAM3EZ3E004964;
+        Thu, 22 Nov 2018 12:14:35 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com wAM3EZ3E004964
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
         s=dec2015msa; t=1542856476;
-        bh=EC6OrDl+Pe6xGCqyh6yaEOjJ/Vdp3qzeTiZNHyrNG5o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hjyuNNvk1c0hopbgMPdWHghO38rHW7Rz523ZlAlLjuR/jZmbg6xv4y+/rflnb9sBg
-         6EDX192L0HhoEauJNDUcu0HY4X1StRdrXVGIRdAxerPOq5wIG17vsHbOuigF5eSbAi
-         o58qT/ZTRPQpS6dNngbRbYl+ZWg1kjqbVZsWroUPWRL5RXRinTVQaGp8JYesvWJL9v
-         s+8LZpxlVughcuzhgj5Idqpxj8zbbHJ649AZb/+LbG9/cOVISpDnlafXPVmeccpXUA
-         pqDBojJ/khiBqbo0COGx6FPXoa1/bJ9mPvIfZ9J936PmSR7mUQui0u+4BupNKBceoy
-         s6cDpCfY/vHbg==
+        bh=9OSyc5/6h79up3LZctr0MsZesAr0KVm6SQ4LlSnW5bY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Yafmn75oaOyr5NJXB53AXKyKEQ82YStVfgyWMUh75FHve14O2bMsA5BjYpzudQMbY
+         zkeRiHteRqa3gn1Wjhu34jbQdOR2LsEjo1KY0ii3hZvpKa9F9MbX24ZDOfT6g93uRr
+         ISZLKNlsMEbC3lCjGenOi875bafdv0twO7Ema2m0VabWiqc3G0E/INYb6737S++9bs
+         dJnf3+9ZRoAuAM55XWUKbGPUYr981WISiRuMgXnl2U3xpbrcsQBBqg68GeRHn7vpdc
+         hjiLt8NR7DW0uKc2ZJJ7PKGIalBNr9YOM9qUlU4FfreESbPi6S7OSdyXKYBrXjNUwK
+         ZV236b42ZavRQ==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
@@ -48,67 +48,94 @@ Cc:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
         Kees Cook <keescook@chromium.org>,
         Josh Triplett <josh@joshtriplett.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/3] build_bug.h: remove negative-array fallback for BUILD_BUG_ON()
-Date:   Thu, 22 Nov 2018 12:14:21 +0900
-Message-Id: <1542856462-18836-2-git-send-email-yamada.masahiro@socionext.com>
+        Alexei Starovoitov <ast@kernel.org>,
+        linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Crt Mori <cmo@melexis.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH v4 1/3] kernel.h: disable type-checks in container_of() for Sparse
+Date:   Thu, 22 Nov 2018 12:14:20 +0900
+Message-Id: <1542856462-18836-1-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542856462-18836-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1542856462-18836-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel can only be compiled with an optimization option (-O2, -Os,
-or the currently proposed -Og). Hence, __OPTIMIZE__ is always defined
-in the kernel source.
+When I tried to enable BUILD_BUG_ON for Sparse, the kbuild test robot
+reported lots of "unknown expression" warnings from container_of(),
+which seemed false positive.
 
-The fallback for the -O0 case is just hypothetical and pointless.
-Moreover, commit 0bb95f80a38f ("Makefile: Globally enable VLA warning")
-enabled -Wvla warning. The use of variable length arrays is banned.
+I addressed this in [1], but fixing Sparse is the right thing to do.
+
+The issue was fixed by Sparse commit 0eb8175d3e9c ("fix expansion of
+function designator"), but it will take time until the fixed version
+of Sparse is widely available.
+
+Disable the container_of() type checks for Sparse for now.
+
+[1] https://lore.kernel.org/lkml/1542623503-3755-1-git-send-email-yamada.masahiro@socionext.com/
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
 ---
 
-Changes in v4: None
+Changes in v4:
+  - New patch
+
 Changes in v3: None
 Changes in v2: None
 
- include/linux/build_bug.h | 14 --------------
- 1 file changed, 14 deletions(-)
+ include/linux/kernel.h | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/build_bug.h b/include/linux/build_bug.h
-index 43d1fd5..d415c64 100644
---- a/include/linux/build_bug.h
-+++ b/include/linux/build_bug.h
-@@ -51,23 +51,9 @@
-  * If you have some code which relies on certain constants being equal, or
-  * some other compile-time-evaluated condition, you should use BUILD_BUG_ON to
-  * detect if someone changes it.
-- *
-- * The implementation uses gcc's reluctance to create a negative array, but gcc
-- * (as of 4.4) only emits that error for obvious cases (e.g. not arguments to
-- * inline functions).  Luckily, in 4.3 they added the "error" function
-- * attribute just for this type of case.  Thus, we use a negative sized array
-- * (should always create an error on gcc versions older than 4.4) and then call
-- * an undefined function with the error attribute (should always create an
-- * error on gcc 4.3 and later).  If for some reason, neither creates a
-- * compile-time error, we'll still have a link-time error, which is harder to
-- * track down.
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index d6aac75..d8c4adb 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -985,6 +985,21 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
+ #define __CONCAT(a, b) a ## b
+ #define CONCATENATE(a, b) __CONCAT(a, b)
+ 
++/*
++ * TODO:
++ * Sparse emits "unknown expression" warnings.
++ * It was fixed by commit 0eb8175d3e9c0d20354763d07ce3d4c0e543d988 in Sparse.
++ * Remove the following workaround when the fixed Sparse is widely available.
++ */
++#ifdef __CHECKER__
++#define TYPE_CHECK_CONTAINER_OF(ptr, type, member)	do {} while (0)
++#else
++#define TYPE_CHECK_CONTAINER_OF(ptr, type, member) \
++	BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) &&	\
++			 !__same_type(*(ptr), void),			\
++			 "pointer type mismatch in container_of()")
++#endif
++
+ /**
+  * container_of - cast a member of a structure out to the containing structure
+  * @ptr:	the pointer to the member.
+@@ -994,9 +1009,7 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
   */
--#ifndef __OPTIMIZE__
--#define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
--#else
- #define BUILD_BUG_ON(condition) \
- 	BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
--#endif
+ #define container_of(ptr, type, member) ({				\
+ 	void *__mptr = (void *)(ptr);					\
+-	BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) &&	\
+-			 !__same_type(*(ptr), void),			\
+-			 "pointer type mismatch in container_of()");	\
++	TYPE_CHECK_CONTAINER_OF(ptr, type, member);			\
+ 	((type *)(__mptr - offsetof(type, member))); })
  
  /**
-  * BUILD_BUG - break compile if used.
+@@ -1009,9 +1022,7 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
+  */
+ #define container_of_safe(ptr, type, member) ({				\
+ 	void *__mptr = (void *)(ptr);					\
+-	BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) &&	\
+-			 !__same_type(*(ptr), void),			\
+-			 "pointer type mismatch in container_of()");	\
++	TYPE_CHECK_CONTAINER_OF(ptr, type, member);			\
+ 	IS_ERR_OR_NULL(__mptr) ? ERR_CAST(__mptr) :			\
+ 		((type *)(__mptr - offsetof(type, member))); })
+ 
 -- 
 2.7.4
 
