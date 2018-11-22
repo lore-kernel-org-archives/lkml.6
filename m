@@ -1,134 +1,158 @@
 Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C71C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDB2C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E60F20865
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:31:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E92AF20685
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:34:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y1VinB0X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E60F20865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="jzLxzvuW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ok6Y3jwN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E92AF20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=who-t.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404692AbeKVRJH (ORCPT
+        id S2404706AbeKVRMv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 12:09:07 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43066 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732806AbeKVRJH (ORCPT
+        Thu, 22 Nov 2018 12:12:51 -0500
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:47687 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732955AbeKVRMv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 12:09:07 -0500
-Received: by mail-pg1-f194.google.com with SMTP id v28so1243518pgk.10
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 22:31:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1NSYT83YZoZy4QAmHqqOPq78XYg/52X5pJej9J1FOp8=;
-        b=Y1VinB0XFVA+hjmImym8p0a16vye/7XAPD6Zk0Z/W+k0WhuMT7a8ZC7LQckINudiWW
-         CFSe62DJxPopHJKNBGDK69iHI7P9S1aSgppQYqc/mWHiy9Uf7PMfDV5yPfrBLmryOIQ+
-         dL8Kxr5/S+pNuv+v+CbsnoV4M7ELVLbAOz23KkUVl3/7/hSgrCFbDo6Ui4DwotaTDbW1
-         bn4y43EDiCZ7C3GXK9+1odoYTmfaYaiKsWZegVYfmqMhpZ/aHGoy0cxKgEKeowuve/PA
-         uhijN+IfpcewXUHESlfhzlJneZP2S1Ww52BtdE6JvHH31Qh8Q9+2m1oVbv4xX37ZozgG
-         TGbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1NSYT83YZoZy4QAmHqqOPq78XYg/52X5pJej9J1FOp8=;
-        b=brExeVtoUvNVn9nc5npMVn5EJ5VjkC7OufPrgaK+QTTAFe1xRKu7iKC0sxqEX03t5w
-         H1nt4bK+7AzsrjfpirfmoTkjaeEtstnxNvKY6npr7iHwzVdCRN1TWjW0+6B16N6Kc5BR
-         5GWCJJxErK01tBswZCdzH+MVeAO93c6jrGhrWazeDgbSxy8TINO/RlPFBYoDv9z3XYSF
-         f92jBLDcP1vX2W/q4L7QMbvUoCZ/LiUXNXT1yx+cln/pwTxwUrZBuOdnCq7p521jaAha
-         MLfD2sEEKU6Mds29q1CGUmlskqv+ndE6oQvytqvcki89agN4xJQK92ylT2JPGcVm3d0I
-         do6Q==
-X-Gm-Message-State: AA+aEWZUup2zkGUu2ufh6aCO0pDL/zRCiYhmrSEQ3PfQdewXCkMMrF8K
-        iBGiXk3o0e6P8eE2Jv1JaeVcPQjnZxM=
-X-Google-Smtp-Source: AFSGD/VgZbEoV7eGAwA1KM3dj/ixg71h6QJKK4EtKAUe7cHwDL/7vjXxjiJSGeF1V1u5tNVcu5NcDA==
-X-Received: by 2002:a63:5f41:: with SMTP id t62mr8905151pgb.76.1542868268641;
-        Wed, 21 Nov 2018 22:31:08 -0800 (PST)
-Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id l62-v6sm62641581pfl.28.2018.11.21.22.31.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 22:31:07 -0800 (PST)
-Date:   Thu, 22 Nov 2018 15:31:03 +0900
-From:   Minchan Kim <minchan@kernel.org>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/6] zram: support idle page writeback
-Message-ID: <20181122063103.GB211816@google.com>
-References: <20181116072035.155108-1-minchan@kernel.org>
- <20181116072035.155108-5-minchan@kernel.org>
- <20181121045551.GC599@jagdpanzerIV>
- <20181121133408.GA103278@google.com>
- <20181122021442.GB3441@jagdpanzerIV>
- <20181122050437.GA182024@google.com>
- <20181122054040.GE3441@jagdpanzerIV>
- <20181122061542.GA211816@google.com>
+        Thu, 22 Nov 2018 12:12:51 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id B5424220F9;
+        Thu, 22 Nov 2018 01:34:50 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Thu, 22 Nov 2018 01:34:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm1; bh=QK0hoZ+iI1WORsPvq9qi4QNw4I
+        TM745+jMNHANZTDf4=; b=jzLxzvuW2RVexMtYZuFm3lRpWbghnEdjX/N4VpCSNY
+        pJoN7uxA03/wpShVUMC/BJAOhxR2z/gyvnFDmIEj3WJxAH578Wj9OcOzyDDoV/RP
+        9tNs0AGBB4lxMsRGVYH8jUA1+Ho7LM+JrNb4Z8Ise26blFXSt7oZbiIdl4tRavEm
+        IYEB8PeuC2GroiVs1q6bDaiVJmqXBYHy7u8pTylVzIkF/WoydFya3Q3gKO4NOm0H
+        /XSH5XMgNPm143gBX2oU/DmKZ7ojpOgZKB2S/odOAf0rmoXomsUjNMh59X9TtFBr
+        SSqqNylS+Kq2vlfIvx/3h6CB+iZjt4SfNv7y3gwF3iyg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=QK0hoZ+iI1WORsPvq
+        9qi4QNw4ITM745+jMNHANZTDf4=; b=Ok6Y3jwNKVxvXwfxjGCyLKOsQ7voe9Zk7
+        TWSzBSegl+chY3Y33VxZEULPomS6JGxZHAn+17p2sYoX3TU7ILJfKp3eYHwqUe9F
+        QUcg/Sky6AEOp4nv2dbEcOBTh88m1NlULvG2N+Q3l2aGShYa9pBfBPebN16G8kd8
+        KPqH7KGQTgY/a4B7okoIcxWkZ5n8jHlZEotmYKfYaREnLsP4NQUQg9PlpXYsZ4gm
+        8fK6fCIzTMzhvcNjyME2CXb0kpmDnus59tkMQfeovrNkgvJAMPuTbqpxwgIjvQaJ
+        6m2STK8/u2SZTl+EwytAdkrAA9MPPwGPBMJijGTfW9YxuplDovekw==
+X-ME-Sender: <xms:Ck72WyM1eSMXhkJo-mb2ji2zQ_D1cdwafWoUVKo2bdcecjxKjf2WRw>
+X-ME-Proxy: <xmx:Ck72W3mJRlyCFLSZH7RhUqzTHk3hOTyn4TMptc8S5VAZsDQKjC4tsw>
+    <xmx:Ck72WzCR3yH9WTGck4Qbp-998WueFegr3UeW1cecgaxF0bgnia89fA>
+    <xmx:Ck72W08DK8AbAaEM8UNOGJ_iOglq5w52JaYqu4GwUmfD27xIC-b1XQ>
+    <xmx:Ck72W9SIDlYIPOKX-8q0f0-tmQ-sqMV4XiylyDz3spcY6hgorbE4eQ>
+    <xmx:Ck72Wy7pMAczkII8weEv1UEJh8csa-4vKDxeVGZg52fZGByde4jmHQ>
+    <xmx:Ck72W_L2v5DFWzm7QHbgPsyP86pqLj0Uch4jbraQQScyywrQS1bBWg>
+Received: from jelly.home.gateway (167-179-166-29.a7b3a6.bne.nbn.aussiebb.net [167.179.166.29])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5B3F5102EE;
+        Thu, 22 Nov 2018 01:34:47 -0500 (EST)
+From:   Peter Hutterer <peter.hutterer@who-t.net>
+To:     linux-input@vger.kernel.org
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Harry Cutts <hcutts@chromium.org>,
+        torvalds@linux-foundation.org,
+        Nestor Lopez Casado <nlopezcasad@logitech.com>,
+        linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH 0/8] HID: MS and Logitech high-resolution scroll wheel support
+Date:   Thu, 22 Nov 2018 16:34:01 +1000
+Message-Id: <20181122063409.15816-1-peter.hutterer@who-t.net>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181122061542.GA211816@google.com>
-User-Agent: Mutt/1.10.1+60 (6df12dc1) (2018-08-07)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 03:15:42PM +0900, Minchan Kim wrote:
-> On Thu, Nov 22, 2018 at 02:40:40PM +0900, Sergey Senozhatsky wrote:
-> > On (11/22/18 14:04), Minchan Kim wrote:
-> > > 
-> > > > additionally, it's too simple. It writes-back pages which can be
-> > > > swapped in immediately; which basically means that we do pointless
-> > > > PAGE_SIZE writes to a device which doesn't really like pointless
-> > > > writes.
-> > > 
-> > > This patchset aims for *IDLE page* writeback and you can define
-> > > what is IDLE page by yourself. It doesn't do pointless writeback.
-> > > > 
-> > > > It's a whole different story with idle, compressible pages writeback.
-> > > 
-> > > I don't understand your point.
-> > 
-> > Seems you misunderstood me. I'm not saying that IDLE writeback is bad.
-> > On the contrary, I think IDLE writeback is x100 better than writeback
-> > which we currently have.
-> > 
-> > The "pointless writeback" comment was about the existing writeback,
-> > when we WB pages which we couldn't compress. We can have a relative
-> > huge percentage of incompressible pages, and not all of them will end
-> > up being IDLE:
-> >  - we swap out page
-> >  - can't compress it
-> >  - writeback PAGE_SIZE
-> >  - swap it in two seconds later
-> 
-> I got what you mean now. Let's call it as "incompressible page wrieback"
-> to prevent confusing.
-> 
-> "incompressible page writeback" would be orthgonal feature. The goal is
-> "let's save memory at the cost of *latency*". If the page is swapped-in
-> soon, it's unfortunate. However, the design expects once it's swapped out,
-> it means it's non-workingset so soonish swappined-in would be rather not
-> many, theoritically compared to other workingset.
-> If's it's too frequent, it means system were heavily overcommitted.
 
-Havid said, I agree it's not a good idea to enable incompressible page
-writeback with idle page writeback. If you don't oppose, I want to add
-new knob to "enable incompressible page writeback" so by default,
-although we enable CONFIG_ZRAM_WRITEBACK, incompressible page writeback
-is off until we enable the knob.
-It would make some regressison if someone have used the feature but
-I guess we are not too late.
+This series enables high-resolution scrolling on some or many Microsoft mice
+of the last decade and Logitech mice with the required feature support.
 
-What do you think?
+High resolution scrolling is exposed to userspace as REL_WHEEL_HI_RES and
+REL_HWHEEL_HI_RES. An accumulated value of 120 signals one wheel click, mice
+with higher granularity can send multiple values that are fractions of 120.
+REL_WHEEL and REL_HWHEEL are emulated for backwards compatibility.
+The 120 magic number comes from Windows and affects how hardware vendors
+build their shiny (and the use of a multiplier in the hw that is a whole
+fraction of 120).
+
+This series adds implementations for generic HID and for Logitech's HID++.
+
+Windows Vista added the Resolution Multiplier HID feature which gives
+us a multiplier that is applied (in hardware) to the wheel data. For the
+same physical motion and an example multiplier of 8, the hardware may: 
+- send 8 events of value 1, or
+- send 1 event of value 8, or
+- send 8/n events of value 1 * n
+The multiplier is a HID Feature and should default to an effective 1 in the
+hardware. Windows Vista and newer set this to the logical maximum, we do the
+same now. It's an approved HID Feature but so far, this feature has only
+been found on some Microsoft mice.
+
+Logitech mice do not seem to use it and have their own HID++ protocol to
+apply that multiplier. Harry's patchset had previously been merged, the
+exact implementation was incompatible with the Microsoft bits though so it
+was reverted. Harry's patches in this series are adjusted accordingly but
+are by and large the same.
+
+Notable: The Logitech REL_WHEEL emulation cannot just hook into the HID
+bits. The firmware drops some events so the point when we get the REL_WHEEL
+event moves around. This is worked around by directional resets and a
+timeout-based reset.
+
+Devices tested:
+- Microsoft Comfort Optical Mouse 3000
+- Microsoft Sculpt Ergonomic Mouse
+- Microsoft Surface mouse
+- Logitech MX Anywhere 2S
+
+The following devices were tested for the HID feature and didn't have it:
+- Logitech G500s, G303
+- Roccat Kone XTD
+- all the cheap Lenovo, HP, Dell, Logitech USB mice that come with a
+  workstation that I could find in the local office
+- Etekcity something something
+- Razer Imperator
+- Microsoft Classic IntelliMouse
+- Microsoft Surface Mobile Mouse
+
+Cheers,
+  Peter
+
+Harry Cutts (3):
+      HID: logitech: Use LDJ_DEVICE macro for existing Logitech mice
+      HID: logitech: Add function to enable HID++ 1.0 "scrolling acceleration"
+      HID: logitech: Enable high-resolution scrolling on Logitech mice
+
+Peter Hutterer (5):
+      Input: add `REL_WHEEL_HI_RES` and `REL_HWHEEL_HI_RES`
+      HID: core: store the collections as a basic tree
+      HID: core: process the Resolution Multiplier
+      HID: input: use the Resolution Multiplier for high-resolution scrolling
+      HID: logitech-hidpp: fix typo, hiddpp to hidpp
+
+ Documentation/input/event-codes.rst    |  21 +++-
+ drivers/hid/hid-core.c                 | 174 ++++++++++++++++++++++++++++++++
+ drivers/hid/hid-input.c                | 137 ++++++++++++++++++++++++-
+ drivers/hid/hid-logitech-hidpp.c       | 384 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------
+ include/linux/hid.h                    |  10 ++
+ include/uapi/linux/input-event-codes.h |   2 +
+ 6 files changed, 690 insertions(+), 38 deletions(-)
+
 
