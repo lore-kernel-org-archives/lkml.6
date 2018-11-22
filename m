@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A10C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69658C04EBB
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B3A5206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:11:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B3A5206B2
+	by mail.kernel.org (Postfix) with ESMTP id 30834206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:11:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30834206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391926AbeKWAuu (ORCPT
+        id S2391980AbeKWAuw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:50:50 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52077 "EHLO huawei.com"
+        Thu, 22 Nov 2018 19:50:52 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15138 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729224AbeKWAut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:50:49 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id A2B0D43084EF8;
-        Thu, 22 Nov 2018 22:11:08 +0800 (CST)
+        id S2391738AbeKWAuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 19:50:51 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A50517CF92798;
+        Thu, 22 Nov 2018 22:11:13 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 22 Nov 2018 22:11:01 +0800
+ 14.3.408.0; Thu, 22 Nov 2018 22:11:06 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, liuzhongzhu <liuzhongzhu@huawei.com>
-Subject: [PATCH V2 net-next 3/8] net: hns3: Add "FD flow table" info query function
-Date:   Thu, 22 Nov 2018 14:09:43 +0000
-Message-ID: <20181122140948.23504-4-salil.mehta@huawei.com>
+Subject: [PATCH V2 net-next 5/8] net: hns3: Add "tm config" info query function
+Date:   Thu, 22 Nov 2018 14:09:45 +0000
+Message-ID: <20181122140948.23504-6-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20181122140948.23504-1-salil.mehta@huawei.com>
 References: <20181122140948.23504-1-salil.mehta@huawei.com>
@@ -51,199 +51,281 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: liuzhongzhu <liuzhongzhu@huawei.com>
 
-All the Flow Director rules are stored in tcam blocks.
-For each bit of tcam entry, the match value
-depends on two input value(x, y).
+This patch prints Transmit Module's Traffic sched
+related config information.
 
 debugfs command:
-echo dump fd tcam > cmd
+echo dump tm > cmd
 
 Sample output:
-root@(none)# echo dump fd tcam > cmd
-hns3 0000:7d:00.0: read result tcam key x(31):
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 08000000
-hns3 0000:7d:00.0: 00000600
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: read result tcam key y(31):
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: f7ff0000
-hns3 0000:7d:00.0: 0000f900
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 00000000
-hns3 0000:7d:00.0: 0000fff8
+root@(none)# echo dump tm > cmd
+hns3 0000:7d:00.0: dump tm
+hns3 0000:7d:00.0: PG_TO_PRI gp_id: 0
+hns3 0000:7d:00.0: PG_TO_PRI map: 0x1
+hns3 0000:7d:00.0: QS_TO_PRI qs_id: 0
+hns3 0000:7d:00.0: QS_TO_PRI priority: 0
+hns3 0000:7d:00.0: QS_TO_PRI link_vld: 1
+hns3 0000:7d:00.0: NQ_TO_QS nq_id: 0
+hns3 0000:7d:00.0: NQ_TO_QS qset_id: 1024
+hns3 0000:7d:00.0: PG pg_id: 0
+hns3 0000:7d:00.0: PG dwrr: 100
+hns3 0000:7d:00.0: QS qs_id: 0
+hns3 0000:7d:00.0: QS dwrr: 100
+hns3 0000:7d:00.0: PRI pri_id: 0
+hns3 0000:7d:00.0: PRI dwrr: 100
+hns3 0000:7d:00.0: PRI_C pri_id: 0
+hns3 0000:7d:00.0: PRI_C pri_shapping: 0x2850000
+hns3 0000:7d:00.0: PRI_P pri_id: 0
+hns3 0000:7d:00.0: PRI_P pri_shapping: 0x2850796
+hns3 0000:7d:00.0: PG_C pg_id: 0
+hns3 0000:7d:00.0: PG_C pg_shapping: 0x2850000
+hns3 0000:7d:00.0: PG_P pg_id: 0
+hns3 0000:7d:00.0: PG_P pg_shapping: 0x2850496
+hns3 0000:7d:00.0: PORT port_shapping: 0x2850296
+hns3 0000:7d:00.0: PG_SCH pg_id: 0
+hns3 0000:7d:00.0: PRI_SCH pg_id: 0
+hns3 0000:7d:00.0: QS_SCH pg_id: 0
+hns3 0000:7d:00.0: BP_TO_QSET pg_id: 0
+hns3 0000:7d:00.0: BP_TO_QSET pg_shapping: 0x0
+hns3 0000:7d:00.0: BP_TO_QSET qs_bit_map: 0x0
 root@(none)#
 
 Signed-off-by: liuzhongzhu <liuzhongzhu@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hnae3.h        |  1 +
- drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c |  2 +
- .../net/ethernet/hisilicon/hns3/hns3pf/Makefile    |  2 +-
- .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 77 ++++++++++++++++++++++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    |  1 +
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  1 +
- 6 files changed, 83 insertions(+), 1 deletion(-)
- create mode 100644 drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
+ drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c |   1 +
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 199 +++++++++++++++++++++
+ 2 files changed, 200 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-index f32f075..a1707b7 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-@@ -453,6 +453,7 @@ struct hnae3_ae_ops {
- 				struct ethtool_rxnfc *cmd, u32 *rule_locs);
- 	int (*restore_fd_rules)(struct hnae3_handle *handle);
- 	void (*enable_fd)(struct hnae3_handle *handle, bool enable);
-+	int (*dbg_run_cmd)(struct hnae3_handle *handle, char *cmd_buf);
- 	pci_ers_result_t (*process_hw_error)(struct hnae3_ae_dev *ae_dev);
- 	bool (*get_hw_reset_stat)(struct hnae3_handle *handle);
- 	bool (*ae_dev_resetting)(struct hnae3_handle *handle);
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-index c0685b3..82fe7b9 100644
+index 8acccfb..478c133 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-@@ -200,6 +200,8 @@ static ssize_t hns3_dbg_cmd_write(struct file *filp, const char __user *buffer,
- 		hns3_dbg_help(handle);
- 	else if (strncmp(cmd_buf, "queue info", 10) == 0)
- 		ret = hns3_dbg_queue_info(handle, cmd_buf);
-+	else if (handle->ae_algo->ops->dbg_run_cmd)
-+		ret = handle->ae_algo->ops->dbg_run_cmd(handle, cmd_buf);
+@@ -131,6 +131,7 @@ static void hns3_dbg_help(struct hnae3_handle *h)
+ 	dev_info(&h->pdev->dev, "queue info [number]\n");
+ 	dev_info(&h->pdev->dev, "dump fd tcam\n");
+ 	dev_info(&h->pdev->dev, "dump tc\n");
++	dev_info(&h->pdev->dev, "dump tm\n");
+ }
  
- 	if (ret)
- 		hns3_dbg_help(handle);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/Makefile b/drivers/net/ethernet/hisilicon/hns3/hns3pf/Makefile
-index 580e817..fffe8c1 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/Makefile
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/Makefile
-@@ -6,6 +6,6 @@
- ccflags-y := -Idrivers/net/ethernet/hisilicon/hns3
- 
- obj-$(CONFIG_HNS3_HCLGE) += hclge.o
--hclge-objs = hclge_main.o hclge_cmd.o hclge_mdio.o hclge_tm.o hclge_mbx.o hclge_err.o
-+hclge-objs = hclge_main.o hclge_cmd.o hclge_mdio.o hclge_tm.o hclge_mbx.o hclge_err.o  hclge_debugfs.o
- 
- hclge-$(CONFIG_HNS3_DCB) += hclge_dcb.o
+ static ssize_t hns3_dbg_cmd_read(struct file *filp, char __user *buffer,
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-new file mode 100644
-index 0000000..cf1355b
---- /dev/null
+index 050b90e..e8f1233 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-@@ -0,0 +1,77 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/* Copyright (c) 2018-2019 Hisilicon Limited. */
-+
-+#include <linux/device.h>
-+
-+#include "hclge_cmd.h"
-+#include "hclge_main.h"
-+#include "hnae3.h"
-+
-+static void hclge_dbg_fd_tcam_read(struct hclge_dev *hdev, u8 stage,
-+				   bool sel_x, u32 loc)
+@@ -45,6 +45,203 @@ static void hclge_dbg_dump_tc(struct hclge_dev *hdev)
+ 				      "tc", "no sp mode", "sp mode");
+ }
+ 
++static void hclge_dbg_dump_tm_pg(struct hclge_dev *hdev)
 +{
-+	struct hclge_fd_tcam_config_1_cmd *req1;
-+	struct hclge_fd_tcam_config_2_cmd *req2;
-+	struct hclge_fd_tcam_config_3_cmd *req3;
-+	struct hclge_desc desc[3];
-+	int ret, i;
-+	u32 *req;
++	struct hclge_port_shapping_cmd *port_shap_cfg_cmd;
++	struct hclge_bp_to_qs_map_cmd *bp_to_qs_map_cmd;
++	struct hclge_pg_shapping_cmd *pg_shap_cfg_cmd;
++	enum hclge_opcode_type cmd;
++	struct hclge_desc desc;
++	int ret;
 +
-+	hclge_cmd_setup_basic_desc(&desc[0], HCLGE_OPC_FD_TCAM_OP, true);
-+	desc[0].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
-+	hclge_cmd_setup_basic_desc(&desc[1], HCLGE_OPC_FD_TCAM_OP, true);
-+	desc[1].flag |= cpu_to_le16(HCLGE_CMD_FLAG_NEXT);
-+	hclge_cmd_setup_basic_desc(&desc[2], HCLGE_OPC_FD_TCAM_OP, true);
-+
-+	req1 = (struct hclge_fd_tcam_config_1_cmd *)desc[0].data;
-+	req2 = (struct hclge_fd_tcam_config_2_cmd *)desc[1].data;
-+	req3 = (struct hclge_fd_tcam_config_3_cmd *)desc[2].data;
-+
-+	req1->stage  = stage;
-+	req1->xy_sel = sel_x ? 1 : 0;
-+	req1->index  = cpu_to_le32(loc);
-+
-+	ret = hclge_cmd_send(&hdev->hw, desc, 3);
++	cmd = HCLGE_OPC_TM_PG_C_SHAPPING;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
 +	if (ret)
-+		return;
++		goto err_tm_pg_cmd_send;
 +
-+	dev_info(&hdev->pdev->dev, " read result tcam key %s(%u):\n",
-+		 sel_x ? "x" : "y", loc);
++	pg_shap_cfg_cmd = (struct hclge_pg_shapping_cmd *)desc.data;
++	dev_info(&hdev->pdev->dev, "PG_C pg_id: %u\n", pg_shap_cfg_cmd->pg_id);
++	dev_info(&hdev->pdev->dev, "PG_C pg_shapping: 0x%x\n",
++		 pg_shap_cfg_cmd->pg_shapping_para);
 +
-+	req = (u32 *)req1->tcam_data;
-+	for (i = 0; i < 2; i++)
-+		dev_info(&hdev->pdev->dev, "%08x\n", *req++);
++	cmd = HCLGE_OPC_TM_PG_P_SHAPPING;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_pg_cmd_send;
 +
-+	req = (u32 *)req2->tcam_data;
-+	for (i = 0; i < 6; i++)
-+		dev_info(&hdev->pdev->dev, "%08x\n", *req++);
++	pg_shap_cfg_cmd = (struct hclge_pg_shapping_cmd *)desc.data;
++	dev_info(&hdev->pdev->dev, "PG_P pg_id: %u\n", pg_shap_cfg_cmd->pg_id);
++	dev_info(&hdev->pdev->dev, "PG_P pg_shapping: 0x%x\n",
++		 pg_shap_cfg_cmd->pg_shapping_para);
 +
-+	req = (u32 *)req3->tcam_data;
-+	for (i = 0; i < 5; i++)
-+		dev_info(&hdev->pdev->dev, "%08x\n", *req++);
++	cmd = HCLGE_OPC_TM_PORT_SHAPPING;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_pg_cmd_send;
++
++	port_shap_cfg_cmd = (struct hclge_port_shapping_cmd *)desc.data;
++	dev_info(&hdev->pdev->dev, "PORT port_shapping: 0x%x\n",
++		 port_shap_cfg_cmd->port_shapping_para);
++
++	cmd = HCLGE_OPC_TM_PG_SCH_MODE_CFG;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_pg_cmd_send;
++
++	dev_info(&hdev->pdev->dev, "PG_SCH pg_id: %u\n", desc.data[0]);
++
++	cmd = HCLGE_OPC_TM_PRI_SCH_MODE_CFG;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_pg_cmd_send;
++
++	dev_info(&hdev->pdev->dev, "PRI_SCH pg_id: %u\n", desc.data[0]);
++
++	cmd = HCLGE_OPC_TM_QS_SCH_MODE_CFG;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_pg_cmd_send;
++
++	dev_info(&hdev->pdev->dev, "QS_SCH pg_id: %u\n", desc.data[0]);
++
++	cmd = HCLGE_OPC_TM_BP_TO_QSET_MAPPING;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_pg_cmd_send;
++
++	bp_to_qs_map_cmd = (struct hclge_bp_to_qs_map_cmd *)desc.data;
++	dev_info(&hdev->pdev->dev, "BP_TO_QSET pg_id: %u\n",
++		 bp_to_qs_map_cmd->tc_id);
++	dev_info(&hdev->pdev->dev, "BP_TO_QSET pg_shapping: 0x%x\n",
++		 bp_to_qs_map_cmd->qs_group_id);
++	dev_info(&hdev->pdev->dev, "BP_TO_QSET qs_bit_map: 0x%x\n",
++		 bp_to_qs_map_cmd->qs_bit_map);
++	return;
++
++err_tm_pg_cmd_send:
++	dev_err(&hdev->pdev->dev, "dump tm_pg fail(0x%x), status is %d\n",
++		cmd, ret);
 +}
 +
-+static void hclge_dbg_fd_tcam(struct hclge_dev *hdev)
++static void hclge_dbg_dump_tm(struct hclge_dev *hdev)
 +{
-+	u32 i;
++	struct hclge_priority_weight_cmd *priority_weight;
++	struct hclge_pg_to_pri_link_cmd *pg_to_pri_map;
++	struct hclge_qs_to_pri_link_cmd *qs_to_pri_map;
++	struct hclge_nq_to_qs_link_cmd *nq_to_qs_map;
++	struct hclge_pri_shapping_cmd *shap_cfg_cmd;
++	struct hclge_pg_weight_cmd *pg_weight;
++	struct hclge_qs_weight_cmd *qs_weight;
++	enum hclge_opcode_type cmd;
++	struct hclge_desc desc;
++	int ret;
 +
-+	for (i = 0; i < hdev->fd_cfg.rule_num[0]; i++) {
-+		hclge_dbg_fd_tcam_read(hdev, 0, true, i);
-+		hclge_dbg_fd_tcam_read(hdev, 0, false, i);
-+	}
++	cmd = HCLGE_OPC_TM_PG_TO_PRI_LINK;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_cmd_send;
++
++	pg_to_pri_map = (struct hclge_pg_to_pri_link_cmd *)desc.data;
++	dev_info(&hdev->pdev->dev, "dump tm\n");
++	dev_info(&hdev->pdev->dev, "PG_TO_PRI gp_id: %u\n",
++		 pg_to_pri_map->pg_id);
++	dev_info(&hdev->pdev->dev, "PG_TO_PRI map: 0x%x\n",
++		 pg_to_pri_map->pri_bit_map);
++
++	cmd = HCLGE_OPC_TM_QS_TO_PRI_LINK;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_cmd_send;
++
++	qs_to_pri_map = (struct hclge_qs_to_pri_link_cmd *)desc.data;
++	dev_info(&hdev->pdev->dev, "QS_TO_PRI qs_id: %u\n",
++		 qs_to_pri_map->qs_id);
++	dev_info(&hdev->pdev->dev, "QS_TO_PRI priority: %u\n",
++		 qs_to_pri_map->priority);
++	dev_info(&hdev->pdev->dev, "QS_TO_PRI link_vld: %u\n",
++		 qs_to_pri_map->link_vld);
++
++	cmd = HCLGE_OPC_TM_NQ_TO_QS_LINK;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_cmd_send;
++
++	nq_to_qs_map = (struct hclge_nq_to_qs_link_cmd *)desc.data;
++	dev_info(&hdev->pdev->dev, "NQ_TO_QS nq_id: %u\n", nq_to_qs_map->nq_id);
++	dev_info(&hdev->pdev->dev, "NQ_TO_QS qset_id: %u\n",
++		 nq_to_qs_map->qset_id);
++
++	cmd = HCLGE_OPC_TM_PG_WEIGHT;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_cmd_send;
++
++	pg_weight = (struct hclge_pg_weight_cmd *)desc.data;
++	dev_info(&hdev->pdev->dev, "PG pg_id: %u\n", pg_weight->pg_id);
++	dev_info(&hdev->pdev->dev, "PG dwrr: %u\n", pg_weight->dwrr);
++
++	cmd = HCLGE_OPC_TM_QS_WEIGHT;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_cmd_send;
++
++	qs_weight = (struct hclge_qs_weight_cmd *)desc.data;
++	dev_info(&hdev->pdev->dev, "QS qs_id: %u\n", qs_weight->qs_id);
++	dev_info(&hdev->pdev->dev, "QS dwrr: %u\n", qs_weight->dwrr);
++
++	cmd = HCLGE_OPC_TM_PRI_WEIGHT;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_cmd_send;
++
++	priority_weight = (struct hclge_priority_weight_cmd *)desc.data;
++	dev_info(&hdev->pdev->dev, "PRI pri_id: %u\n", priority_weight->pri_id);
++	dev_info(&hdev->pdev->dev, "PRI dwrr: %u\n", priority_weight->dwrr);
++
++	cmd = HCLGE_OPC_TM_PRI_C_SHAPPING;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_cmd_send;
++
++	shap_cfg_cmd = (struct hclge_pri_shapping_cmd *)desc.data;
++	dev_info(&hdev->pdev->dev, "PRI_C pri_id: %u\n", shap_cfg_cmd->pri_id);
++	dev_info(&hdev->pdev->dev, "PRI_C pri_shapping: 0x%x\n",
++		 shap_cfg_cmd->pri_shapping_para);
++
++	cmd = HCLGE_OPC_TM_PRI_P_SHAPPING;
++	hclge_cmd_setup_basic_desc(&desc, cmd, true);
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret)
++		goto err_tm_cmd_send;
++
++	shap_cfg_cmd = (struct hclge_pri_shapping_cmd *)desc.data;
++	dev_info(&hdev->pdev->dev, "PRI_P pri_id: %u\n", shap_cfg_cmd->pri_id);
++	dev_info(&hdev->pdev->dev, "PRI_P pri_shapping: 0x%x\n",
++		 shap_cfg_cmd->pri_shapping_para);
++
++	hclge_dbg_dump_tm_pg(hdev);
++
++	return;
++
++err_tm_cmd_send:
++	dev_err(&hdev->pdev->dev, "dump tm fail(0x%x), status is %d\n",
++		cmd, ret);
 +}
 +
-+int hclge_dbg_run_cmd(struct hnae3_handle *handle, char *cmd_buf)
-+{
-+	struct hclge_vport *vport = hclge_get_vport(handle);
-+	struct hclge_dev *hdev = vport->back;
-+
-+	if (strncmp(cmd_buf, "dump fd tcam", 12) == 0) {
-+		hclge_dbg_fd_tcam(hdev);
-+	} else {
-+		dev_info(&hdev->pdev->dev, "unknown command\n");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index f78b8e1..696cb53 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -7826,6 +7826,7 @@ static const struct hnae3_ae_ops hclge_ops = {
- 	.get_fd_all_rules = hclge_get_all_rules,
- 	.restore_fd_rules = hclge_restore_fd_entries,
- 	.enable_fd = hclge_enable_fd,
-+	.dbg_run_cmd = hclge_dbg_run_cmd,
- 	.process_hw_error = hclge_process_ras_hw_error,
- 	.get_hw_reset_stat = hclge_get_hw_reset_stat,
- 	.ae_dev_resetting = hclge_ae_dev_resetting,
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index 5f24dd4..4122ad1 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -814,4 +814,5 @@ int hclge_func_reset_cmd(struct hclge_dev *hdev, int func_id);
- int hclge_vport_start(struct hclge_vport *vport);
- void hclge_vport_stop(struct hclge_vport *vport);
- int hclge_set_vport_mtu(struct hclge_vport *vport, int new_mtu);
-+int hclge_dbg_run_cmd(struct hnae3_handle *handle, char *cmd_buf);
- #endif
+ static void hclge_dbg_fd_tcam_read(struct hclge_dev *hdev, u8 stage,
+ 				   bool sel_x, u32 loc)
+ {
+@@ -108,6 +305,8 @@ int hclge_dbg_run_cmd(struct hnae3_handle *handle, char *cmd_buf)
+ 		hclge_dbg_fd_tcam(hdev);
+ 	} else if (strncmp(cmd_buf, "dump tc", 7) == 0) {
+ 		hclge_dbg_dump_tc(hdev);
++	} else if (strncmp(cmd_buf, "dump tm", 7) == 0) {
++		hclge_dbg_dump_tm(hdev);
+ 	} else {
+ 		dev_info(&hdev->pdev->dev, "unknown command\n");
+ 		return -EINVAL;
 -- 
 2.7.4
 
