@@ -2,116 +2,196 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8054EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66641C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4346B20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:32:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DW9xtphq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4346B20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 3177220684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:32:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3177220684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393495AbeKVULR (ORCPT
+        id S2393509AbeKVULZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 15:11:17 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:37090 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387669AbeKVULQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:11:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Uroc4STou8Rt8PF72AReZCmVPgM2zJxM5RyxZsLix1I=; b=DW9xtphq0zZPwWwIYgpWFPG9Z
-        HODM3TFnANT7jZHZR9487YM73Cd/e5W58xuLp1IO3gHUzZxPT8Xdzcub/drERJZWlcfiV4Biq7uFj
-        rFgqf6aJ/rDvggm4rCGGnSfVO85Q8ZkzOsWFqH20uKuYUAgBzApf1BVBVLYGvaFSbqGxCpWuNC/96
-        SKAvF80YWD9JzwNcjPhaPBvxV0TxZKuV6sHZmylda6Mt8yHWzrKP5F1xiZ6VT6/k3G8TFNi00btaB
-        JU0Dq8W3FGvJ80myViZEW+GqX8t3BP6T/B5jdGt4n1tY/F5SR2Qz2l7JcGMk3qzzp+x8m8VDLFdye
-        J8wvX2T1A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPlLb-0008Mc-0m; Thu, 22 Nov 2018 09:32:31 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B81832029FD58; Thu, 22 Nov 2018 10:32:19 +0100 (CET)
-Date:   Thu, 22 Nov 2018 10:32:19 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, acme@kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH perf,bpf 0/5] reveal invisible bpf programs
-Message-ID: <20181122093219.GK2131@hirez.programming.kicks-ass.net>
-References: <20181121195502.3259930-1-songliubraving@fb.com>
+        Thu, 22 Nov 2018 15:11:25 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43576 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387669AbeKVULZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 15:11:25 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E11AB3622;
+        Thu, 22 Nov 2018 01:32:44 -0800 (PST)
+Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E701D3F5CF;
+        Thu, 22 Nov 2018 01:32:40 -0800 (PST)
+Date:   Thu, 22 Nov 2018 09:32:39 +0000
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@codeaurora.org,
+        skannan@codeaurora.org, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+Subject: Re: [PATCH v9 09/15] sched: Introduce sched_energy_present static key
+Message-ID: <20181122093237.goxmr4p5l4h2izid@queper01-lin>
+References: <20181119141857.8625-1-quentin.perret@arm.com>
+ <20181119141857.8625-10-quentin.perret@arm.com>
+ <20181121130822.GE2113@hirez.programming.kicks-ass.net>
+ <20181121151444.t3zye5l5iycfni2s@queper01-lin>
+ <20181122091715.6kvhcbgoqrd54nbs@queper01-lin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181121195502.3259930-1-songliubraving@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181122091715.6kvhcbgoqrd54nbs@queper01-lin>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 11:54:57AM -0800, Song Liu wrote:
-> Changes RFC -> PATCH v1:
+On Thursday 22 Nov 2018 at 09:17:16 (+0000), Quentin Perret wrote:
+> On Wednesday 21 Nov 2018 at 15:14:45 (+0000), Quentin Perret wrote:
+> > Hi Peter,
+> > 
+> > On Wednesday 21 Nov 2018 at 14:08:22 (+0100), Peter Zijlstra wrote:
+> > > On Mon, Nov 19, 2018 at 02:18:51PM +0000, Quentin Perret wrote:
+> > > 
+> > > > +static void sched_energy_start(int ndoms_new, cpumask_var_t doms_new[])
+> > > > +{
+> > > > +	/*
+> > > > +	 * The conditions for EAS to start are checked during the creation of
+> > > > +	 * root domains. If one of them meets all conditions, it will have a
+> > > > +	 * non-null list of performance domains.
+> > > > +	 */
+> > > > +	while (ndoms_new) {
+> > > > +		if (cpu_rq(cpumask_first(doms_new[ndoms_new - 1]))->rd->pd)
+> > > > +			goto enable;
+> > > > +		ndoms_new--;
+> > > > +	}
+> > > 
+> > > That seems quite ugly; can't you simply return a bool from
+> > > build_perf_domains() ?
+> > > 
+> > > Something like the below, but less fugly ;-)
+> > > 
+> > > --- a/kernel/sched/topology.c
+> > > +++ b/kernel/sched/topology.c
+> > > @@ -299,7 +299,7 @@ static void destroy_perf_domain_rcu(stru
+> > >  #define EM_MAX_COMPLEXITY 2048
+> > >  
+> > >  extern struct cpufreq_governor schedutil_gov;
+> > > -static void build_perf_domains(const struct cpumask *cpu_map)
+> > > +static bool build_perf_domains(const struct cpumask *cpu_map)
+> > >  {
+> > >  	int i, nr_pd = 0, nr_cs = 0, nr_cpus = cpumask_weight(cpu_map);
+> > >  	struct perf_domain *pd = NULL, *tmp;
+> > > @@ -365,7 +365,7 @@ static void build_perf_domains(const str
+> > >  	if (tmp)
+> > >  		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
+> > >  
+> > > -	return;
+> > > +	return !!pd;
+> > >  
+> > >  free:
+> > >  	free_pd(pd);
+> > > @@ -373,6 +373,8 @@ static void build_perf_domains(const str
+> > >  	rcu_assign_pointer(rd->pd, NULL);
+> > >  	if (tmp)
+> > >  		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
+> > > +
+> > > +	return false;
+> > >  }
+> > >  #else
+> > >  static void free_pd(struct perf_domain *pd) { }
+> > > @@ -2173,6 +2175,9 @@ void partition_sched_domains(int ndoms_n
+> > >  	}
+> > >  
+> > >  #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+> > > +	{
+> > > +	bool has_eas = false;
+> > 
+> > That one wants to be declared '__maybe_unused' at the top of
+> > partition_sched_domains() perhaps ? Just to avoid the { } section.
+> > Hopefully the compiler will be smart enough to not use stack space for
+> > it if not needed.
+> > 
+> > > +
+> > >  	/* Build perf. domains: */
+> > >  	for (i = 0; i < ndoms_new; i++) {
+> > >  		for (j = 0; j < n && !sched_energy_update; j++) {
+> > > @@ -2181,10 +2186,13 @@ void partition_sched_domains(int ndoms_n
+> > >  				goto match3;
+> > 
+> > And we want to do 'has_eas = true' just before 'goto match3' here.
+> > Otherwise we'll end up disabling EAS if we hit 'goto match3' for all
+> > root domains.
+> > 
+> > >  		}
+> > >  		/* No match - add perf. domains for a new rd */
+> > > -		build_perf_domains(doms_new[i]);
+> > > +		has_eas |= build_perf_domains(doms_new[i]);
+> > >  match3:
+> > >  		;
+> > >  	}
+> > > +
+> > > +	sched_energy_set(has_eas);
+> > > +	}
+> > >  #endif
+> > >  
+> > >  	/* Remember the new sched domains: */
+> > 
+> > Other than that I guess that should work OK :-)
 > 
-> 1. In perf-record, poll vip events in a separate thread;
-> 2. Add tag to bpf prog name;
-> 3. Small refactorings.
+> So I actually just came across your patch that does
+> static_branch_{inc,dec} on sched_smt_present. Maybe I could do something
+> similar here ?
 > 
-> Original cover letter (with minor revisions):
+> How about something like the below (totally untested):
 > 
-> This is to follow up Alexei's early effort to show bpf programs
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index 8f9dfea60344..10ac32a0dc2e 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -298,6 +298,7 @@ static void destroy_perf_domain_rcu(struct rcu_head *rp)
+>  
+>         pd = container_of(rp, struct perf_domain, rcu);
+>         free_pd(pd);
+> +       static_branch_dec_cpuslocked(&sched_energy_present);
+>  }
+>  
+>  static void sched_energy_start(int ndoms_new, cpumask_var_t doms_new[])
+> @@ -421,6 +422,8 @@ static void build_perf_domains(const struct cpumask *cpu_map)
+>         /* Attach the new list of performance domains to the root domain. */
+>         tmp = rd->pd;
+>         rcu_assign_pointer(rd->pd, pd);
+> +       static_branch_inc_cpuslocked(&sched_energy_present);
+> +
+>         if (tmp)
+>                 call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
+>  
+> @@ -2246,7 +2249,6 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+>  match3:
+>                 ;
+>         }
+> -       sched_energy_start(ndoms_new, doms_new);
+>  #endif
+>  
+>         /* Remember the new sched domains: */
 > 
->    https://www.spinics.net/lists/netdev/msg524232.html
-> 
-> In this version, PERF_RECORD_BPF_EVENT is introduced to send real time BPF
-> load/unload events to user space. In user space, perf-record is modified
-> to listen to these events (through a dedicated ring buffer) and generate
-> detailed information about the program (struct bpf_prog_info_event). Then,
-> perf-report translates these events into proper symbols.
-> 
-> With this set, perf-report will show bpf program as:
-> 
->    18.49%     0.16%  test  [kernel.vmlinux]    [k] ksys_write
->    18.01%     0.47%  test  [kernel.vmlinux]    [k] vfs_write
->    17.02%     0.40%  test  bpf_prog            [k] bpf_prog_07367f7ba80df72b_
->    16.97%     0.10%  test  [kernel.vmlinux]    [k] __vfs_write
->    16.86%     0.12%  test  [kernel.vmlinux]    [k] comm_write
->    16.67%     0.39%  test  [kernel.vmlinux]    [k] bpf_probe_read
-> 
-> Note that, the program name is still work in progress, it will be cleaner
-> with function types in BTF.
-> 
-> Please share your comments on this.
 
-So I see:
+Hmm, I went too fast, that's totally broken. But there's still something
+we can do with static_branch_{inc,dec} I think. I'll come back later
+with a better solution.
 
-  kernel/bpf/core.c:void bpf_prog_kallsyms_add(struct bpf_prog *fp)
-
-which should already provide basic symbol information for extant eBPF
-programs, right?
-
-And (AFAIK) perf uses /proc/kcore for annotate on the current running
-kernel (if not, it really should, given alternatives, jump_labels and
-all other other self-modifying code).
-
-So this fancy new stuff is only for the case where your profile spans
-eBPF load/unload events (which should be relatively rare in the normal
-case, right), or when you want source annotated asm output (I normally
-don't bother with that).
-
-That is; I would really like this fancy stuff to be an optional extra
-that is typically not needed.
-
-Does that make sense?
-
+Sorry for the noise :/
