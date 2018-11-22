@@ -2,101 +2,93 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FEE1C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E792C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D820206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:49:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D820206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 31C3320866
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:51:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31C3320866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437844AbeKWC3H (ORCPT
+        id S2437895AbeKWCb3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 21:29:07 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33259 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391763AbeKWC3H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 21:29:07 -0500
-Received: by mail-ot1-f65.google.com with SMTP id i20so8441029otl.0;
-        Thu, 22 Nov 2018 07:49:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zPiXjaMvWT6hSfJG40umWuN/SCk3uLLZ1OnKEp2w92I=;
-        b=lMhokUpQREQdpmeBIRbEbi9F+swgS94v/qXXnAOwNf4OdqGgZGC5aEcR3rynxOUll4
-         oYKFAFoJBCV/sQNCq/P1kV2rAufKxBtC/ss6RBkxHMI9e/qEKB58S138JIgX31lyQBe5
-         WyzMo6VSB9Skr+8R7IDOWFZIknfBQNf7Fhh+oe3B11t1RLehZIvGwfFwYHzMTvUUbZh+
-         i0wQRTLkjX2XzEPq8O/d1+xVXaeasnCAKq37G8wWiU+o9IIl3f/pzR0Q+MUCJUEKwPDd
-         E75+lSgzI769J4xmkb5vXsin+iRN2bkkQeq06HE4kzmMgdaOO10EOZugLAgUu7TPcqZ9
-         X1sQ==
-X-Gm-Message-State: AA+aEWboGw1ik3Z3NOlM5Q37RiAvITTq9Nsj6ELUucUtVfJJ9YgafFoV
-        RsZ7/7HyTUq7W1pP5p1NpMGIYLd0IbvN8409OFI=
-X-Google-Smtp-Source: AFSGD/UYldQTocsV5ElpvranFvnL0a6lmhbfliZ+ZvoUfKSQ1eOUc4o118/pK/veKSEagQC108eSRKDJUTooSbk55FM=
-X-Received: by 2002:a9d:2062:: with SMTP id n89mr6322444ota.244.1542901752370;
- Thu, 22 Nov 2018 07:49:12 -0800 (PST)
+        Thu, 22 Nov 2018 21:31:29 -0500
+Received: from mx1.emlix.com ([46.4.235.150]:43380 "EHLO mx1.emlix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729559AbeKWCb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 21:31:28 -0500
+X-Greylist: delayed 383 seconds by postgrey-1.27 at vger.kernel.org; Thu, 22 Nov 2018 21:31:27 EST
+Received: from mailer.emlix.com (unknown [81.20.119.6])
+        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1.emlix.com (Postfix) with ESMTPS id 29F3725F628;
+        Thu, 22 Nov 2018 16:45:10 +0100 (CET)
+From:   Rolf Eike Beer <eb@emlix.com>
+To:     Linux Kernel Developers List <linux-kernel@vger.kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, keyrings@vger.kernel.org
+Subject: [PATCH] scripts: use pkg-config to locate libcrypto
+Date:   Thu, 22 Nov 2018 16:45:09 +0100
+Message-ID: <3861016.XCek94Sdvs@devpool21>
+Organization: emlix GmbH
 MIME-Version: 1.0
-References: <20181119141857.8625-1-quentin.perret@arm.com> <20181119141857.8625-9-quentin.perret@arm.com>
- <20181122140432.GH2113@hirez.programming.kicks-ass.net>
-In-Reply-To: <20181122140432.GH2113@hirez.programming.kicks-ass.net>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 22 Nov 2018 16:49:04 +0100
-Message-ID: <CAJZ5v0g0cca+wuZocwwt5y+a7FS6Y8qDDf27KftRQ_1Dy6-7XQ@mail.gmail.com>
-Subject: Re: [PATCH v9 08/15] sched/topology: Make Energy Aware Scheduling
- depend on schedutil
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Quentin Perret <quentin.perret@arm.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steve Muckle <smuckle@google.com>, adharmap@codeaurora.org,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
+Content-Transfer-Encoding: 8BIT
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 3:05 PM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Mon, Nov 19, 2018 at 02:18:50PM +0000, Quentin Perret wrote:
-> > +                     if (rd->pd)
-> > +                             pr_warn("rd %*pbl: Disabling EAS, schedutil is mandatory\n",
-> > +                                             cpumask_pr_args(cpu_map));
-> > +                     goto free;
->
-> I would have preferred just not allowing the governor to change at all,
-> but if you want to allow that, this is, I suppose, the best you can do.
->
-> Rafael, are you otherwise OK with the grubbing inside cpufreq?
+Otherwise build fails if the headers are not in the default location. While at
+it also ask pkg-config for the libs, with fallback to the existing value.
 
-Sort of. :-)
+Signed-off-by: Rolf Eike Beer <eb@emlix.com>
+Cc: stable@vger.kernel.org
+---
+ scripts/Makefile | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-I would put the sched_cpufreq_governor_change() header (and the static
-inline stub of it) into linux/cpufreq.h (instead of
-linux/sched/cpufreq.h) so that cpufreq.c doesn't have to include
-linux/sched/cpufreq.h which is kind of confusing.
+diff --git a/scripts/Makefile b/scripts/Makefile
+index ece52ff20171..a303f478a65b 100644
+--- a/scripts/Makefile
++++ b/scripts/Makefile
+@@ -8,6 +8,8 @@
+ # conmakehash:   Create chartable
+ # conmakehash:	 Create arrays for initializing the kernel console tables
+ 
++PKG_CONFIG?= pkg-config
++
+ HOST_EXTRACFLAGS += -I$(srctree)/tools/include
+ 
+ hostprogs-$(CONFIG_BUILD_BIN2C)  += bin2c
+@@ -23,8 +25,9 @@ hostprogs-$(CONFIG_SYSTEM_EXTRA_CERTIFICATE) += insert-sys-cert
+ 
+ HOSTCFLAGS_sortextable.o = -I$(srctree)/tools/include
+ HOSTCFLAGS_asn1_compiler.o = -I$(srctree)/include
+-HOSTLDLIBS_sign-file = -lcrypto
+-HOSTLDLIBS_extract-cert = -lcrypto
++HOSTLDLIBS_sign-file = $(shell $(PKG_CONFIG) --libs libcrypto 2> /dev/null || -lcrypto)
++HOSTCFLAGS_extract-cert.o = $(shell $(PKG_CONFIG) --cflags libcrypto 2> /dev/null)
++HOSTLDLIBS_extract-cert = $(shell $(PKG_CONFIG) --libs libcrypto 2> /dev/null || -lcrypto)
+ 
+ always		:= $(hostprogs-y) $(hostprogs-m)
+ 
+-- 
+2.19.1
 
-Apart from that the changes are fine by me.
+
+-- 
+Rolf Eike Beer, emlix GmbH, http://www.emlix.com
+Fon +49 551 30664-0, Fax +49 551 30664-11
+Gothaer Platz 3, 37083 Göttingen, Germany
+Sitz der Gesellschaft: Göttingen, Amtsgericht Göttingen HR B 3160
+Geschäftsführung: Heike Jordan, Dr. Uwe Kracke – Ust-IdNr.: DE 205 198 055
+
+emlix - smart embedded open source
+
+
