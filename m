@@ -2,125 +2,143 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0438C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F073C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:08:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A089920831
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:57:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C21420820
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:08:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jQraFxVb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A089920831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FgzM4365"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C21420820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404623AbeKVQew (ORCPT
+        id S2404643AbeKVQqi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 11:34:52 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41026 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731512AbeKVQev (ORCPT
+        Thu, 22 Nov 2018 11:46:38 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37724 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404630AbeKVQqh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 11:34:51 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b7so1389648pfi.8
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 21:56:59 -0800 (PST)
+        Thu, 22 Nov 2018 11:46:37 -0500
+Received: by mail-pf1-f193.google.com with SMTP id u3-v6so1415752pfm.4
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 22:08:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YrZXzotn0Tvsd23WJeb0DHM4K95e7RT6B2jqKEtwu00=;
-        b=jQraFxVbMqZcP6TpRxJrNLkbOt448O6pOdI82iDORaiJZTopAzHF6BgbgJW4C3nt3d
-         l16bM/icrk+3BEzSlerLMLg14b9DoLhUofViVNJTxliVWzMOpZn01d8+kC0lTUKmOz7l
-         9wuDw8pe21OyemQFzVsPz5z2Q3x/YpjuyQ7jY=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+ONbX0FrbhgwcMg2omFldL10GwV+uxHdg9W1ySf3ZmQ=;
+        b=FgzM4365KRdnbyxxnfbMzZu3RmBfZlYCrEOHvd6zgPtsuSIiT407kXumV11zBtSiU+
+         y8ZIheKl2XNPZryxSQbZru5NnNtEWAmkV0Si0xbcqZOJ24LDcM16VUwQVGgaobntWHFn
+         CQYozxR0zsrWUGW0rIlyVo7I1GAdcBFfwzg+E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YrZXzotn0Tvsd23WJeb0DHM4K95e7RT6B2jqKEtwu00=;
-        b=jFU6630PQLYdT2YHXgelrPrj36H/upB1y2gWPojgwOI2W9LKdvw8ZSh4BVSizE/nu4
-         JnT563zIp6VbkHBdhAhJc8WZBpcrYG3VlkGmDUNDNhwgqBxpn2VIR2SCPy3UqLP55Ix5
-         QJWlyWA7KOdMMV8pwEluHmuL22V/Am/RkfwZyi83+42yIMeWdTYtl0b9zlF5Nqp+9n0C
-         RY0SIMsOpA1nI0BZ4cRg5H4eC3krNZtjF5UItENWdx9n9neWhqMx7KCysk/qgY32cP22
-         srMXTZTASy8H3Wpos0q66iy2epCgXygK0mrzdaC8i96G/GNBfY/pBl1QPQamghNUTWDg
-         GJtA==
-X-Gm-Message-State: AA+aEWYGoKPjphhlIXpdJeUGleG+U+AFRecMqDskHXGAAmSu3FRxSSA+
-        kQab/YshZUEUsvQsVNWoJM76gyknvTIpkvCnf/6u8w==
-X-Google-Smtp-Source: AFSGD/XpTp0JGJukbNqwmi6Q9y+muAUgU72TnSdFAclZ2rY1MTtByt/Sf69m7tLrlRvUWmBcT5sewk1tp6kkf983Vjs=
-X-Received: by 2002:a63:fb46:: with SMTP id w6mr8877025pgj.321.1542866219107;
- Wed, 21 Nov 2018 21:56:59 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+ONbX0FrbhgwcMg2omFldL10GwV+uxHdg9W1ySf3ZmQ=;
+        b=d5o1yOAQpj+6I40hF4nGq49KKTgxeGQByIZYj4mlRrs0MAU8AA9UlP5kPcLtDJ/rUa
+         H92bIhBxpvcwl3/FWSjQEsYi7v6dUQGt073orRTNRCU8QwIwzPOeVQchT8hottiFoEfT
+         FufYGTN1kTTEUxY/2kzgfEaOV3Gl6VsN7DuUfR9yvkazPKBEe646AJ6Avj0j2lTz2zsQ
+         lm7So8mptp6i/B4JpUXMIfdAAMeQg4IHRUekkutCq3zBDSrsENg/sMYrJoYiEXbCn2ET
+         /ff2n6jfB73YBG8uS4GURW0anmEc6r6EWD8u+sbIvmNC4/WwURqQv0QCzYoJQtYHHTyA
+         KYDQ==
+X-Gm-Message-State: AA+aEWagouD25k4TUJ2IGUDRKr99mnDuaipw1yzvWiPilRGW/PqEbsCi
+        njo6wkGh1TA3O/nxBWpjhY2F1w==
+X-Google-Smtp-Source: AFSGD/VSbzhpyTI9lsVrVxaDaBRgMhZ4I7NoiXOX0gGI0UHz6VJQlUmR1DPzZeweenzbgHDIXtj4Cw==
+X-Received: by 2002:a65:448a:: with SMTP id l10mr8842699pgq.387.1542866923321;
+        Wed, 21 Nov 2018 22:08:43 -0800 (PST)
+Received: from localhost ([122.172.88.116])
+        by smtp.gmail.com with ESMTPSA id y12sm235133pfk.70.2018.11.21.22.08.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 22:08:41 -0800 (PST)
+Date:   Thu, 22 Nov 2018 11:38:39 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     ulf.hansson@linaro.org, Viresh Kumar <vireshk@kernel.org>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        niklas.cassel@linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] OPP: Add dev_pm_opp_xlate_performance_state() helper
+Message-ID: <20181122060839.socq3vuaa4ycftzn@vireshk-i7>
+References: <cover.1541399301.git.viresh.kumar@linaro.org>
+ <cedbfc3a7fffc4c400908c4c3af518bea408d318.1541399301.git.viresh.kumar@linaro.org>
+ <45c19ad3-6039-9152-6e5a-51a5c062bdf4@codeaurora.org>
+ <20181121051718.a5yo3ibhaihgrwra@vireshk-i7>
+ <20181121060622.blnlvydbc4wo5y3y@vireshk-i7>
+ <0b40a76d-f779-391a-2770-4a3d368679a9@codeaurora.org>
 MIME-Version: 1.0
-References: <20181111090341.120786-1-drinkcat@chromium.org>
- <0100016737801f14-84f1265d-4577-4dcf-ad57-90dbc8e0a78f-000000@email.amazonses.com>
- <20181121213853.GL3065@bombadil.infradead.org> <c5ccde1e-a711-ad33-537c-2d5a0bd9edd4@arm.com>
- <20181122023558.GO3065@bombadil.infradead.org>
-In-Reply-To: <20181122023558.GO3065@bombadil.infradead.org>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Thu, 22 Nov 2018 13:56:47 +0800
-Message-ID: <CANMq1KA0rQ9uvEOFV3K9Cvb3kX8riY8qJXfoH6ENyjgNiyNjpw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page tables
-To:     willy@infradead.org
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Levin Alexander <Alexander.Levin@microsoft.com>,
-        Huaisheng Ye <yehs1@lenovo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        iommu@lists.linux-foundation.org,
-        lkml <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0b40a76d-f779-391a-2770-4a3d368679a9@codeaurora.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 10:36 AM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Wed, Nov 21, 2018 at 10:26:26PM +0000, Robin Murphy wrote:
-> > These are IOMMU page tables, rather than CPU ones, so we're already well
-> > outside arch code - indeed the original motivation of io-pgtable was to be
-> > entirely independent of the p*d types and arch-specific MM code (this Armv7
-> > short-descriptor format is already "non-native" when used by drivers in an
-> > arm64 kernel).
->
-> There was quite a lot of explanation missing from this patch description!
+On 21-11-18, 11:48, Rajendra Nayak wrote:
+> 
+> 
+> On 11/21/2018 11:36 AM, Viresh Kumar wrote:
+> > On 21-11-18, 10:47, Viresh Kumar wrote:
+> > > On 21-11-18, 10:34, Rajendra Nayak wrote:
+> > > > 
+> > > > 
+> > > > On 11/5/2018 12:06 PM, Viresh Kumar wrote:
+> > > > > Introduce a new helper dev_pm_opp_xlate_performance_state() which will
+> > > > > be used to translate from pstate of a device to another one.
+> > > > > 
+> > > > > Initially this will be used by genpd to find pstate of a master domain
+> > > > > using its sub-domain's pstate.
+> > > > > 
+> > > > > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > > > > ---
+> > > > >    drivers/opp/core.c     | 49 ++++++++++++++++++++++++++++++++++++++++++
+> > > > >    include/linux/pm_opp.h |  7 ++++++
+> > > > >    2 files changed, 56 insertions(+)
+> > > > > 
+> > > > > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> > > > > index 0eaa954b3f6c..010a4268e8dd 100644
+> > > > > --- a/drivers/opp/core.c
+> > > > > +++ b/drivers/opp/core.c
+> > > > > @@ -1707,6 +1707,55 @@ void dev_pm_opp_put_genpd_virt_dev(struct opp_table *opp_table,
+> > > > >    		dev_err(virt_dev, "Failed to find required device entry\n");
+> > > > >    }
+> > > > > +/**
+> > > > > + * dev_pm_opp_xlate_performance_state() - Find required OPP's pstate for src_table.
+> > > > > + * @src_table: OPP table which has dst_table as one of its required OPP table.
+> > > > 
+> > > > So I have a case where the src_table and dst_table are shared/same. Can you explain how would
+> > > > it work in such a case?
+> > > 
+> > > Can you give the example, as I am finding some issues with such shared
+> > > tables. Though the code may work just fine btw.
+> > 
+> > I may have found the problem you are facing here. Please try this diff
+> > and tell me if you hitting it, check this in dmesg.
+> 
+> Yes, I do seem to be hitting this.
 
-I totally agree ,-) I'm not familiar at all with either iommu or
-mm/... Looks like the patchset triggered a helpful discussion, and I
-understand the problem better now. I'll improve the description in the
-next revision.
+So there are few complexities in the case where an OPP table points to itself in
+the required-opp field. I looked at solving it up in the opp core but that gets
+more and more messy.
 
-> > There are various efficiency reasons for using regular kernel memory instead
-> > of coherent DMA allocations - for the most part it works well, we just have
-> > the odd corner case like this one where the 32-bit format gets used on
-> > 64-bit systems such that the tables themselves still need to be allocated
-> > below 4GB (although the final output address can point at higher memory by
-> > virtue of the IOMMU in question not implementing permissions and repurposing
-> > some of those PTE fields as extra address bits).
-> >
-> > TBH, if this DMA32 stuff is going to be contentious we could possibly just
-> > rip out the offending kmem_cache - it seemed like good practice for the
-> > use-case, but provided kzalloc(SZ_1K, gfp | GFP_DMA32) can be relied upon to
-> > give the same 1KB alignment and chance of succeeding as the equivalent
-> > kmem_cache_alloc(), then we could quite easily make do with that instead.
->
-> I think you should look at using the page_frag allocator here.  You can
-> use whatever GFP_DMA flags you like.
+Now there is actually a assumption within the OPP core. Your Mx domain should
+get initialized before the Cx domain, as that is when the OPP tables are created
+as well. This is because Cx's OPP table will point to Mx's OPP table (doesn't
+matter if they share the same table or not) and so Mx's OPP table should come
+first.
 
-I'll try that.
+Can you check if that is already the case for you? If not, please try doing it
+and lemme know if it works. It should.
 
-Thanks!
+I just want to avoid too much complexity in OPP core without much use.
+
+-- 
+viresh
