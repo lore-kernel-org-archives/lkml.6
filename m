@@ -2,119 +2,134 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD18C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC53C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8723E20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:32:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE37020684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:35:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VvA7xev2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8723E20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="fPWiUwy2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE37020684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbeKWFMu (ORCPT
+        id S1729019AbeKWFQV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 00:12:50 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39725 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbeKWFMt (ORCPT
+        Fri, 23 Nov 2018 00:16:21 -0500
+Received: from mail.efficios.com ([167.114.142.138]:51184 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbeKWFQV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 00:12:49 -0500
-Received: by mail-wr1-f67.google.com with SMTP id t27so2181475wra.6
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 10:32:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uiT7mql3LrIBSapvTsOqHQS+ZJhwkLcsbyLxK1A1yks=;
-        b=VvA7xev20L3m+TpF2gwnYyh3BlgayVedZzAVjvWYZxBDpgNWpTIkBbZtnIaKFIZ3jS
-         e/2mzDiU4QMqFKDqXzzCWm0Xu00JVbRJiKLvUYYC5vZh/2b+zVTm3NfZQOlAQjXIAAi4
-         5wsm8hbExqTe5z0Q53yNqzXJaH/W9Rg+KvJfk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=uiT7mql3LrIBSapvTsOqHQS+ZJhwkLcsbyLxK1A1yks=;
-        b=sMFqMXSqpKa1bhlXb8GhT3gXwptIARqnsekNUSAp1YgzmQqKJwysnktDwEkROqG3uf
-         tBAHIX/906EcBAZ284mWKcT1bWo/S2IQaBc0cUPAsMFVaXmLJlUJjNveNjJloRaWEpVP
-         4J31Z16Bq+Rx4oJNcJHp6H+Y8nLUWgKd4wtSgk5Rfv4HzlgoVDtK3KxSUTypneHN++01
-         1IO105LM7Gg8MMb8fFGEENoyUpg0x+k15iZySAoANnGyh3oCsGPtqxMxa7Ayn8FjX3cp
-         2GH6jFNl1iusrqH1hxrPQzidJkE9Pgsz2wJmZroYACsYDJG7HPx/o2xrkl1GIDIZl3yi
-         upBw==
-X-Gm-Message-State: AA+aEWbnRR5drtGX2y6SmTx4emPrMfeu+PMTkm6ye5LcpZmLYK1d2T8j
-        TE/CU8yfNWKp/dt3E7buv0vdsOZIDAQ=
-X-Google-Smtp-Source: AFSGD/V+QI8VoxQ+e1iN4UXGb7hqzVbzBfu2Irm+gdhfdMZ09qDxBvFeBYaIS/MGLY5j8xqg4LqCoQ==
-X-Received: by 2002:adf:f984:: with SMTP id f4mr10916793wrr.234.1542911533683;
-        Thu, 22 Nov 2018 10:32:13 -0800 (PST)
-Received: from localhost ([103.8.150.191])
-        by smtp.gmail.com with ESMTPSA id f2sm8562778wru.14.2018.11.22.10.32.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 22 Nov 2018 10:32:13 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        bjorn.andersson@linaro.org, edubezval@gmail.com,
-        andy.gross@linaro.org, David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v1] arm64: dts: msm8998: thermal: split address space into two
-Date:   Fri, 23 Nov 2018 00:02:04 +0530
-Message-Id: <565873e4dd152df24c86d091327687f4aa3505e2.1542911304.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1542911304.git.amit.kucheria@linaro.org>
-References: <cover.1542911304.git.amit.kucheria@linaro.org>
+        Fri, 23 Nov 2018 00:16:21 -0500
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 47D51F192;
+        Thu, 22 Nov 2018 13:35:45 -0500 (EST)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id IczP71d2Hqk2; Thu, 22 Nov 2018 13:35:44 -0500 (EST)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id A6E58F18D;
+        Thu, 22 Nov 2018 13:35:44 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com A6E58F18D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1542911744;
+        bh=AKB1Quamzgrzad6pOHpLJ5UIN4zU/qAKHRcXBDCRDIU=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=fPWiUwy25qfS+VWijvv/5euofWLZWj/srL61ulMi+BvjTaoJhDobrDfszM1pSy4jb
+         vEOuePCrER4T/PZQnf5Q8iHXGVq1Vac15TypGxjgAO0FBoPodNe5lQ8W26tmnYniXU
+         By3TKFtkRBketZS9D8hH1FiV1okhFo4C0xSazv7okD0sL0OPALxAOs93cG/4Oxl2d4
+         cta+R4Mvi82Wg36nFWa2Iar0yqXvPNfpdEN7RUf1kfhlM7l3Z5s1Z64kiwTK1+A/ka
+         BQ3JTintF9X2bD5/R2Yb/d0dd2oIEJC78YMnYH6wogTOwpRcbMEoIRDfxWxdMgT8cX
+         rz0sjZdopBEoA==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id bmFeqodnYCvu; Thu, 22 Nov 2018 13:35:44 -0500 (EST)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 85C5DF17D;
+        Thu, 22 Nov 2018 13:35:44 -0500 (EST)
+Date:   Thu, 22 Nov 2018 13:35:44 -0500 (EST)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+Cc:     Florian Weimer <fweimer@redhat.com>, nd <nd@arm.com>,
+        Rich Felker <dalias@libc.org>, carlos <carlos@redhat.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>
+Message-ID: <1602745030.10426.1542911744479.JavaMail.zimbra@efficios.com>
+In-Reply-To: <7032ab45-8314-b85d-5b4d-f83b41dab5b6@arm.com>
+References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com> <20181122143603.GD23599@brightrain.aerifal.cx> <782067422.9852.1542899056778.JavaMail.zimbra@efficios.com> <87a7m1ywni.fsf@oldenburg.str.redhat.com> <20181122151710.GF23599@brightrain.aerifal.cx> <875zwpyw81.fsf@oldenburg.str.redhat.com> <1306224240.10055.1542900799576.JavaMail.zimbra@efficios.com> <7032ab45-8314-b85d-5b4d-f83b41dab5b6@arm.com>
+Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl
+ init and thread creation
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.10_GA_3047 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
+Thread-Topic: glibc: Perform rseq(2) registration at nptl init and thread creation
+Thread-Index: AQHUgcmYxLh54Hb0r0GDFIJAvPiE/6Vb3dCAgAAH4gCAAAIt+4AAAW4AgAABKRSAAANagIAADmkAT4+EF7I=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We added support to split the register address space for
-tsens into TM and SROT regions in 'Commit 5b1283984fa3 ("thermal: tsens:
-Add support to split up register address space into two")'.
+----- On Nov 22, 2018, at 11:24 AM, Szabolcs Nagy Szabolcs.Nagy@arm.com wrote:
 
-Split up the tsens address space for msm8998 since it has a similar
-register layout to other versions of the IP to allow for better code
-sharing.
+> On 22/11/18 15:33, Mathieu Desnoyers wrote:
+>> ----- On Nov 22, 2018, at 10:21 AM, Florian Weimer fweimer@redhat.com wrote:
+>>> Right, but in case of user-supplied stacks, we actually free TLS memory
+>>> at this point, so signals need to be blocked because the TCB is
+>>> (partially) gone after that.
+>> 
+>> Unfortuntately, disabling signals is not enough.
+>> 
+>> With rseq registered, the kernel accesses the rseq TLS area when returning to
+>> user-space after _preemption_ of user-space, which can be triggered at any
+>> point by an interrupt or a fault, even if signals are blocked.
+>> 
+>> So if there are cases where the TLS memory is freed while the thread is still
+>> running, we _need_ to explicitly unregister rseq beforehand.
+> 
+> i think the man page should point this out.
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
----
-(Compile-tested only, since I don't have the hardware)
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Yes, I should add this to the proposed rseq(2) man page.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 78227cce16db..eb4f6f77969f 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -577,17 +577,18 @@
- 			cell-index = <0>;
- 		};
- 
--		tsens0: thermal@10aa000 {
-+		tsens0: thermal@10ab000 {
- 			compatible = "qcom,msm8998-tsens", "qcom,tsens-v2";
--			reg = <0x10aa000 0x2000>;
--
-+			reg = <0x10ab000 0x1000>, /* TM */
-+			      <0x10aa000 0x1000>; /* SROT */
- 			#qcom,sensors = <12>;
- 			#thermal-sensor-cells = <1>;
- 		};
- 
--		tsens1: thermal@10ad000 {
-+		tsens1: thermal@10ae000 {
- 			compatible = "qcom,msm8998-tsens", "qcom,tsens-v2";
--			reg = <0x10ad000 0x2000>;
-+			reg = <0x10ae000 0x1000>, /* TM */
-+			      <0x10ad000 0x1000>; /* SROT */
- 
- 			#qcom,sensors = <8>;
- 			#thermal-sensor-cells = <1>;
+> 
+> the memory of a registered rseq object must not be freed
+> before thread exit. (either unregister it or free later)
+> 
+> and ideally also point out that c language thread storage
+> duration does not provide this guarantee: it may be freed
+> by the implementation before thread exit (which is currently
+> not observable, but with the rseq syscall it is).
+
+How about the following wording ?
+
+  Memory of a registered rseq object must not be freed before the
+  thread exits. Reclaim of rseq object's memory must only be
+  done after either an explicit rseq unregistration is performed
+  or after the thread exit. Keep in mind that the implementation
+  of the Thread-Local Storage (C language __thread) lifetime does
+  not guarantee existence of the TLS area up until the thread exits.
+
+Thanks,
+
+Mathieu
+
+
 -- 
-2.17.1
-
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
