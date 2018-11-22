@@ -2,131 +2,105 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C9BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA30C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2771A20685
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:12:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="omir/kKq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2771A20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id E72C920685
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:20:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E72C920685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407809AbeKWIxx (ORCPT
+        id S2392502AbeKWJBa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 03:53:53 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:34647 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392442AbeKWIxx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 03:53:53 -0500
-Received: by mail-ot1-f66.google.com with SMTP id t5so9182810otk.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 14:12:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FNVnkyBUgZpbeX/f5pQRJIGAzpoNCBSjXqfSggAVv+M=;
-        b=omir/kKqp8lVsm1YFAAUz21lrBURJ+0TKhphM8TkmZn2lLLU6lY/00mMO6sJJlXHHv
-         iHtRKitba3yf6vebDMwRLghhkMgwQetUccYvXnviYnJSNuTOZVrSEW1/M475lO7ulrxH
-         Ss1DeKUi/i6d7QrkyT0Xunvl8/iJw02Z46BtA4A37Y1i3xxTvIX6GRm9OFf3Y3FvZ5/d
-         0YbZ6XK14m0YuLe012YAXWbNZL+9+1YTttTWpswFfExysN7bEWnl07WdGpfVey25ZW+3
-         BVy+ZYm18loEK6B90LLiy3v/F//FyF9s5zvSPqxx0HGCcv7/qp3cTpoHwn7R5I6zISjx
-         BpFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FNVnkyBUgZpbeX/f5pQRJIGAzpoNCBSjXqfSggAVv+M=;
-        b=qnKpRd2D2fLXg6cnCTYcMNci1Sv+rebMMjbiz9+eUW5vkBOu5qZVJ6nBWscjJrbqMN
-         WpmhDkms/+f9XUwQp7t3XfDNNtWr1fE/OVkK7piFTiAujHEK7ayXeyCyDEfUD/YLorLZ
-         cQECdZED3DRBIGhbRIZgNIM1RhEMUyTq/ycTGH+rtKnRL4YHyyTXC3InUErggK38bMJB
-         MVA0meXxhwuCtMF1GYVocVVOSzc8p5bBRjwMdvnG2fQKhusHVfVeWXI0u/iFHprf7zHc
-         8Xz3e39c/oBgjLxuMd9iqPMmoq4tf93HWysaKyt6HfLJglTFgcfcuIegvg3cHZXEA02W
-         qoXg==
-X-Gm-Message-State: AA+aEWYUzqxeuJ+j/SGiLCj5A02P+cwC9MrnXXh6yezwaqN5lSRyKCJX
-        jatsZv0SRu6N/Ak4Wvc3tN4qlMaR9FhE97y25EkGVB+x
-X-Google-Smtp-Source: AFSGD/XcHuxtDnZt8HJRKzh8OEN+lPAiGk42do+OXMkXyLjWTMsL1OplP4MRmWC0cS65qYNSNwQ9x2kNI2kcxfl4ZFA=
-X-Received: by 2002:a9d:715d:: with SMTP id y29mr7573525otj.148.1542924750797;
- Thu, 22 Nov 2018 14:12:30 -0800 (PST)
-MIME-Version: 1.0
-References: <20181115224657.14736-1-martin.blumenstingl@googlemail.com> <5ff1a888-cce2-8fd8-a98e-14c3d7c33acf@linaro.org>
-In-Reply-To: <5ff1a888-cce2-8fd8-a98e-14c3d7c33acf@linaro.org>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 22 Nov 2018 23:12:08 +0100
-Message-ID: <CAFBinCDSLEAzJVVgFxKhN3LCUwgC3Rrr=4ZhtHCdvqEPBLWbJA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] clocksource/meson6_timer: implement ARM delay timer
-To:     daniel.lezcano@linaro.org
-Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 23 Nov 2018 04:01:30 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51408 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1733200AbeKWJB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 04:01:29 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D1878AF62;
+        Thu, 22 Nov 2018 22:20:04 +0000 (UTC)
+Date:   Thu, 22 Nov 2018 23:20:04 +0100
+Message-ID: <s5h5zwoah63.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Borislav Petkov" <bp@alien8.de>
+Cc:     "Vasily Khoruzhick" <anarsoul@gmail.com>,
+        "Linux-ALSA" <alsa-devel@alsa-project.org>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        "Maxime Ripard" <maxime.ripard@bootlin.com>,
+        "Chen-Yu Tsai" <wens@csie.org>,
+        "Liam Girdwood" <lgirdwood@gmail.com>,
+        "Mark Brown" <broonie@kernel.org>,
+        "arm-linux" <linux-arm-kernel@lists.infradead.org>,
+        "Jaroslav Kysela" <perex@perex.cz>,
+        "linux-kernel" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: sunxi: rename SND_SUN8I_ADDA_PR_REGMAP
+In-Reply-To: <20181122212905.GA13187@zn.tnic>
+References: <20181102153406.1528053-1-arnd@arndb.de>
+        <13542843.KjxkD9786N@anarsoul-thinkpad>
+        <CAK8P3a3A-mq2HLZjp7-5miL2Pk71=FqP5QKUxxda_y5ywCa7TA@mail.gmail.com>
+        <CA+E=qVfnkH-e6hoHA1eZ7rCJvJH02zgBSF=y30R6AEGwLpssXA@mail.gmail.com>
+        <20181122212905.GA13187@zn.tnic>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+On Thu, 22 Nov 2018 22:29:05 +0100,
+Borislav Petkov wrote:
+> 
+> On Fri, Nov 02, 2018 at 03:06:59PM -0700, Vasily Khoruzhick wrote:
+> > On Fri, Nov 2, 2018 at 3:04 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > On 11/2/18, Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+> > > > On Friday, November 2, 2018 8:33:40 AM PDT Arnd Bergmann wrote:
+> > > >> The newly added SND_SUN50I_CODEC_ANALOG driver selects a nonexisting
+> > > >> symbol SND_SUNXI_ADDA_PR_REGMAP, which was evidently intended to replace
+> > > >> SND_SUN8I_ADDA_PR_REGMAP, but since they are now mismatched, we can run
+> > > >> into link errors for some configurations:
+> > > >>
+> > > >> sound/soc/sunxi/sun50i-codec-analog.o: In function
+> > > >> `sun50i_codec_analog_probe': sun50i-codec-analog.c:(.text+0x62):
+> > > >> undefined
+> > > >> reference to `sun8i_adda_pr_regmap_init'
+> > > >>
+> > > >> The new name appears to be more sensible, and as the symbol is hidden,
+> > > >> there are no downsides in the rename, so use that consistently now.
+> > > >
+> > > > Maxime asked it to be SND_SUN8I_ADDA_PR_REGMAP, and also it would be easier
+> > > > to
+> > > > fix it my renaming last remaining SND_SUNXI_ADDA_PR_REGMAP to
+> > > > SND_SUN8I_ADDA_PR_REGMAP.
+> > >
+> > > Sure, I don't care either way. Please send a patch to do that then.
+> > 
+> > Will do tonight.
+> 
+> Is that patch coming up or on its way somewhere?
+> 
+> I still hit randconfig build failures:
+> 
+> ERROR: "sun8i_adda_pr_regmap_init" [sound/soc/sunxi/sun50i-codec-analog.ko] undefined!
+> make[1]: *** [__modpost] Error 1
+> make: *** [modules] Error 2
 
-On Sun, Nov 18, 2018 at 2:27 AM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 15/11/2018 23:46, Martin Blumenstingl wrote:
-> > While trying to add support for the ARM TWD Timer and the ARM Global
-> > Timer on Meson8, Meson8b and Meson8m2 (ARM Cortex-A5 and Cortex-A9 SoCs)
-> > I did a review of the existing driver.
-> > Unfortunately I found it hard to review because the pre-processor
-> > #defines did not match the names from the public S805 datasheet. Thus
-> > patch #1 adjusts these. No functional changes here, this is just
-> > preparation work for patch #2.
-> >
-> > Using the ARM Global Timer (drivers/clocksource/arm_global_timer.c)
-> > would have given us a timer-based delay implementation (so udelay() and
-> > friends would use the timer instead of using a loop-based delay
-> > implementation). Unfortunately we can't use the ARM Global Timer yet
-> > because it's input clock is derived from the CPU clock (which can change
-> > once we enable CPU frequency scaling on these SoCs, for which I will be
-> > sending patches in the near future).
-> > Amlogic's 3.10 kernel uses Timer E as delay timer which (with the
-> > current configuration) has a resolution of 1us. So patch #2 uses
-> > register_current_timer_delay() to register Timer E as ARM delay timer
-> > (which will be especially useful as we have to use udelay() when
-> > changing the CPU clocks during DVFS).
-> >
-> >
-> > Changes since v1 at [0]:
-> > - convert the enums for the input clock (meson6_timera_input_clock and
-> >   meson6_timere_input_clock) to simple #defines as these are register
-> >   values and not something driver-internal. All other register values
-> >   are #defines so it makes sense that these are #defines as well.
-> >
-> >
-> > [0] https://patchwork.kernel.org/cover/10658591/
-> >
-> >
-> > Martin Blumenstingl (2):
-> >   clocksource: meson6_timer: use register names from the datasheet
-> >   clocksource: meson6_timer: implement ARM delay timer
-> >
-> >  drivers/clocksource/meson6_timer.c | 128 +++++++++++++++++++----------
-> >  1 file changed, 85 insertions(+), 43 deletions(-)
->
-> Both applied, thanks!
-thank you for taking my patches
+It's been in Mark's asoc tree.
 
-I have one question more: can you please push these patches to a
-repository/branch which is included in -next?
-I'm asking because I'd like to send patches that enable CPU frequency
-scaling on Meson8, Meson8b and Meson8m2. The code to change the CPU
-clock calls udelay(), which (in this special case) needs a delay timer
-to work properly (we can't use jiffies as we're using udelay() *while*
-changing the CPU clock).
+Mark, could you send a pull request?  It might be too late for rc4,
+but sooner, better.
 
 
-Regards
-Martin
+thanks,
+
+Takashi
