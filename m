@@ -2,475 +2,98 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8468DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 23:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1F9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 23:45:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 202FB20820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 23:31:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 202FB20820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id A0EB120838
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 23:45:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0EB120838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439140AbeKWKMp (ORCPT
+        id S2439155AbeKWK1Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 05:12:45 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56566 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731347AbeKWKMo (ORCPT
+        Fri, 23 Nov 2018 05:27:16 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:49249 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2439142AbeKWK1Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 05:12:44 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: koike)
-        with ESMTPSA id AB46A26C2F8
-From:   Helen Koike <helen.koike@collabora.com>
-Subject: [PATCH v3] drm/rockchip: update cursors asynchronously through
- atomic.
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
-        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@google.com>
-References: <20181119190805.19139-1-helen.koike@collabora.com>
- <CAAFQd5DDZwhdMDbrHthQwm2bQ3+NoZNcemAktVTxkR3=LfnnTg@mail.gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=helen.koike@collabora.com; keydata=
- xsFNBFmOMD4BEADb2nC8Oeyvklh+ataw2u/3mrl+hIHL4WSWtii4VxCapl9+zILuxFDrxw1p
- XgF3cfx7g9taWBrmLE9VEPwJA6MxaVnQuDL3GXxTxO/gqnOFgT3jT+skAt6qMvoWnhgurMGH
- wRaA3dO4cFrDlLsZIdDywTYcy7V2bou81ItR5Ed6c5UVX7uTTzeiD/tUi8oIf0XN4takyFuV
- Rf09nOhi24bn9fFN5xWHJooFaFf/k2Y+5UTkofANUp8nn4jhBUrIr6glOtmE0VT4pZMMLT63
- hyRB+/s7b1zkOofUGW5LxUg+wqJXZcOAvjocqSq3VVHcgyxdm+Nv0g9Hdqo8bQHC2KBK86VK
- vB+R7tfv7NxVhG1sTW3CQ4gZb0ZugIWS32Mnr+V+0pxci7QpV3jrtVp5W2GA5HlXkOyC6C7H
- Ao7YhogtvFehnlUdG8NrkC3HhCTF8+nb08yGMVI4mMZ9v/KoIXKC6vT0Ykz434ed9Oc9pDow
- VUqaKi3ey96QczfE4NI029bmtCY4b5fucaB/aVqWYRH98Jh8oIQVwbt+pY7cL5PxS7dQ/Zuz
- 6yheqDsUGLev1O3E4R8RZ8jPcfCermL0txvoXXIA56t4ZjuHVcWEe2ERhLHFGq5Zw7KC6u12
- kJoiZ6WDBYo4Dp+Gd7a81/WsA33Po0j3tk/8BWoiJCrjXzhtRwARAQABzR5IZWxlbiBLb2lr
- ZSA8aGVsZW5Aa29pa2Vjby5kZT7CwZcEEwEKAEECGwEFCQLEsxQFCwkIBwMFFQoJCAsFFgID
- AQACHgECF4AWIQSofQA6zrItXEgHWTzAfqwo9yFiXQUCWw2ZAAIZAQAKCRDAfqwo9yFiXajh
- D/9npW1VeySvAQmnmN4syxEbn+EaHOwFTJKSw6vXx9AX/GToCP+5ULeBjHwR/6e5PAwKcDoB
- DSFmV2WWpKvHQqC8AEJX6Aq0lXH4Ub5k8F31UIO+0hyTNc/qnL9LSevVhTK/ugtyPoiyJm+y
- HVkLxlQCZzMZdr7yNHSHXSOGw5NJzL0f0Ttrc9RPSyMYoZKt8Bm/T/Btql1x34T+PjNUwBiH
- saCotMPft6fZyG3pW9hNrNHKU+5lH3vIf8REsCEec/IG7hXW41ETlqZrZB++IlXhUvy7mqwS
- KuT/E72s5aIxEs6YjEDJTqFbOAt3CGMI6GOE8xU0oQSL9wLMW9aG6916oUMMvcx3DD9EhhTN
- G1cRqNJd2Tsnde+nQJvc5GnBZ+7FK/0xRkF8fYCdhdZYuaxk47+KteTAmR/yrxs/9dQ2VI5g
- SMGJb1ZD4C8P9XhRiNCGvBg68JtmjvkUCDh1nTnZj1PB7CiT6N3fTFl83WAohLDdG9n7wM3f
- 5k4zBLmWQlBbPdlIzr01SV9dSGC+yhPNZop2hXcNZyPxLJIxpTATtIqHgpIRyA2GkzRJYpGQ
- AhafHBfvhHrHLVaTqTWaDcZyt9e736RjkK8QYnv1hEa7br9OQglGbBbQATr5t7sHv9+gY/sr
- njBiD7iJanr6gtNu3riKXsvJbvlRO0J6gRtJc87BTQRZjjDJARAAxWnRTfwt7t3zQy7oBP7V
- 0x6zzuIqffRN0y4u9KDa5ionVPauJEEXvNTq7vgcXrOmzSs9C+IFc6ChK4prWGdLo7AVv3HJ
- A+WTvotj3pJQHmM9Ynd87vxkZLCRVskW4b2CkP/jWfxSefWFeANvaBRrEPShe//vbcSZNgK9
- KjfPpjwDZoFA2v4/KFAA8NrO9VD4/u+dlirWgrTD4PtoiLH8GniajhVuAB4B4zFdZJmzw3k1
- C1d5MGAHsOqt8k/nBbCAKxE5952zoSh11xiCqEbTNVT0TngLwlw84DTApWz736C3Z7JE23HR
- SEVtqHupe4kaFbL/QIte9WgKhL7uqlbPTvRMECU9muD0PSjaA7DTW2tCCgoBgEoqAmHFpf/i
- DOL7kJybfctgf2UBVN3N2it6O5XXFZ2yc3Jzw4A96hcF/1EghZ9BWZuFVcGnYMA+NXr+QgkS
- aXsw0l8S+qNX3MqxYX0AWWyoNZkMLJR2pH3pqFNIPfilHBvpr0f338auN6jAppov3kMhVlML
- pJO8M0vqSnKziw57YAyZAa/YwxwkHdpgvMfx/WwRD1LRQxfv/oKJ8Qbomh0bpj9b+UujVW8P
- F4MD67guCrqrGWSynwzvwWNybEVWV/hykKLa5xtnG6uGUGSO1lnwxUAR17eGWqNwGXYCHpAP
- zboVPGxw4aUcR80AEQEAAcLBfAQYAQoAJhYhBKh9ADrOsi1cSAdZPMB+rCj3IWJdBQJZjjDJ
- AhsMBQkCxLJmAAoJEMB+rCj3IWJdY34QAMVy70677f9vXJsYVndP1xmnMYqnI5CEViQ3GP9W
- k8I2q8nUN3NHyjWe5Ro/UKlj03REymVdtSq7xBRAINQmfgVELvOBEJY6cO8JAujPl4EiJ0kL
- Y7D0+WfRrMvs/pR9jG7h3e3oG080ezRIkh9amGi1rj/uG39vpBc5avNpvOqqdwyCIyAQuG/Z
- 00CcD92WMQH3LmZkHJ0A5amZmVp/2NhWFIXnzMGCG+pnenYkYTs+nPwpEeF9aURlT3RQ6MEX
- te5bno0pQAZmJGlfxzPeId4BXGIlyCBGa8AYVcAH4byD/Lj1CWMuF/n+PQOloCMTUQsWuHJG
- WAFfICCspjVwzVDZMr3W3dKesrufYdXM0yVlXc39Zvx2sI94tMPaaFGvk758TQohg28OlPFD
- AxxgkCTrLa8OeJxNJFAz4cmmCWiZbm3SSYLzVFkNozQujL8c3y2U5yM3Tq7RmU9Djxh4s10p
- OoTFbIyky1af/kDLOBTNMXSNJ95+CDyH4g6rHhYJcjUribIgChGr7eLiSdQCpoyjcOe6n7ua
- NDLkOLQPocgjJb/AE46aMq67SVffqOTtLZZNPrSKnw/RVt7kbpRrcz5a45oX1x2kwYBBa//G
- cNC+diAifR6fnbn0lFc5oop99E0SCa0F4V/PYh6myRcqYH8huntTFLvBSYnG/tBYAeu1
-Message-ID: <d3fb3b21-6c3d-6b01-727b-dbd66540ce92@collabora.com>
-Date:   Thu, 22 Nov 2018 21:30:49 -0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 23 Nov 2018 05:27:16 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gPyeu-0006Fr-3S; Fri, 23 Nov 2018 00:45:20 +0100
+Date:   Fri, 23 Nov 2018 00:45:19 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ingo Molnar <mingo@kernel.org>
+cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [patch 24/24] x86/speculation: Add seccomp Spectre v2 app to
+ app protection mode
+In-Reply-To: <20181122072619.GC41788@gmail.com>
+Message-ID: <alpine.DEB.2.21.1811230042360.1665@nanos.tec.linutronix.de>
+References: <20181121201430.559770965@linutronix.de> <20181121201724.602740969@linutronix.de> <20181122072619.GC41788@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5DDZwhdMDbrHthQwm2bQ3+NoZNcemAktVTxkR3=LfnnTg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
-
-On 11/20/18 4:48 AM, Tomasz Figa wrote:
-> Hi Helen,
+On Thu, 22 Nov 2018, Ingo Molnar wrote:
+> > +	[SPECTRE_V2_APP2APP_SECCOMP]	= "App-App Mitigation: seccomp and prctl opt-in",
 > 
-> On Tue, Nov 20, 2018 at 4:08 AM Helen Koike <helen.koike@collabora.com> wrote:
->>
->> From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->>
->> Add support to async updates of cursors by using the new atomic
->> interface for that.
->>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> [updated for upstream]
->> Signed-off-by: Helen Koike <helen.koike@collabora.com>
->>
->> ---
->> Hello,
->>
->> This is the third version of the async-plane update suport to the
->> Rockchip driver.
->>
+> This description is not accurate: it's not a 'seccomp and prctl opt-in', 
+> the seccomp functionality is opt-out, the prctl is opt-in.
 > 
-> Thanks for a quick respin. Please see my comments inline. (I'll try to
-> be better at responding from now on...)
+> So something like:
 > 
->> I tested running igt kms_cursor_legacy and kms_atomic tests using a 96Boards Ficus.
->>
->> Note that before the patch, the following igt tests failed:
->>
->>         basic-flip-before-cursor-atomic
->>         basic-flip-before-cursor-legacy
->>         cursor-vs-flip-atomic
->>         cursor-vs-flip-legacy
->>         cursor-vs-flip-toggle
->>         flip-vs-cursor-atomic
->>         flip-vs-cursor-busy-crc-atomic
->>         flip-vs-cursor-busy-crc-legacy
->>         flip-vs-cursor-crc-atomic
->>         flip-vs-cursor-crc-legacy
->>         flip-vs-cursor-legacy
->>
->> Full log: https://people.collabora.com/~koike/results-4.20/html/
->>
->> Now with the patch applied the following were fixed:
->>         basic-flip-before-cursor-atomic
->>         basic-flip-before-cursor-legacy
->>         flip-vs-cursor-atomic
->>         flip-vs-cursor-legacy
->>
->> Full log: https://people.collabora.com/~koike/results-4.20-async/html/
+> > +	[SPECTRE_V2_APP2APP_SECCOMP]	= "App-App Mitigation: seccomp by default and prctl opt-in",
+
+Na. I just make it: "prctl" and "seccomp + prctl" 
+
+> >  void arch_seccomp_spec_mitigate(struct task_struct *task)
+> >  {
+> >  	if (ssb_mode == SPEC_STORE_BYPASS_SECCOMP)
+> >  		ssb_prctl_set(task, PR_SPEC_FORCE_DISABLE);
+> > +	if (spectre_v2_app2app == SPECTRE_V2_APP2APP_SECCOMP)
+> > +		indir_branch_prctl_set(task, PR_SPEC_FORCE_DISABLE);
+> >  }
+> >  #endif
 > 
-> Could you also test modetest, with the -C switch to test the legacy
-> cursor API? I remember it triggering crashes due to synchronization
-> issues easily.
+> Hm, so isn't arch_seccomp_spec_mitigate() called right before untrusted 
+> seccomp code is executed? So why are we disabling the mitigation here?
 
-Sure. I tested with
-$ modetest -M rockchip -s 37:1920x1080 -C
+It disables the CPU speculation misfeature not the mitigation. And no, we
+are not going to change it because the constants are user space ABI today.
 
-I also vary the mode but I couldn't trigger any crashes.
+Thanks,
 
-> 
->>
->> Tomasz, as you mentined in v2 about waiting the hardware before updating
->> the framebuffer, now I call the loop you pointed out in the async path,
->> was that what you had in mind? Or do you think I would make sense to
->> call the vop_crtc_atomic_flush() instead of just exposing that loop?
->>
->> Thanks
->> Helen
->>
->> Changes in v3:
->> - Rebased on top of drm-misc
->> - Fix missing include in rockchip_drm_vop.c
->> - New function vop_crtc_atomic_commit_flush
->>
->> Changes in v2:
->> - v2: https://patchwork.freedesktop.org/patch/254180/
->> - Change the framebuffer as well to cover jumpy cursor when hovering
->>   text boxes or hyperlink. (Tomasz)
->> - Use the PSR inhibit mechanism when accessing VOP hardware instead of
->>   PSR flushing (Tomasz)
->>
->> Changes in v1:
->> - Rebased on top of drm-misc
->> - In async_check call drm_atomic_helper_check_plane_state to check that
->>   the desired plane is valid and update various bits of derived state
->>   (clipped coordinates etc.)
->> - In async_check allow to configure new scaling in the fast path.
->> - In async_update force to flush all registered PSR encoders.
->> - In async_update call atomic_update directly.
->> - In async_update call vop_cfg_done needed to set the vop registers and take effect.
->>
->>  drivers/gpu/drm/rockchip/rockchip_drm_fb.c  |  36 -------
->>  drivers/gpu/drm/rockchip/rockchip_drm_psr.c |  37 +++++++
->>  drivers/gpu/drm/rockchip/rockchip_drm_psr.h |   3 +
->>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 108 +++++++++++++++++---
->>  4 files changed, 131 insertions(+), 53 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
->> index ea18cb2a76c0..08bec50d9c5d 100644
->> --- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
->> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
->> @@ -127,42 +127,6 @@ rockchip_user_fb_create(struct drm_device *dev, struct drm_file *file_priv,
->>         return ERR_PTR(ret);
->>  }
->>
->> -static void
->> -rockchip_drm_psr_inhibit_get_state(struct drm_atomic_state *state)
->> -{
->> -       struct drm_crtc *crtc;
->> -       struct drm_crtc_state *crtc_state;
->> -       struct drm_encoder *encoder;
->> -       u32 encoder_mask = 0;
->> -       int i;
->> -
->> -       for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
->> -               encoder_mask |= crtc_state->encoder_mask;
->> -               encoder_mask |= crtc->state->encoder_mask;
->> -       }
->> -
->> -       drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
->> -               rockchip_drm_psr_inhibit_get(encoder);
->> -}
->> -
->> -static void
->> -rockchip_drm_psr_inhibit_put_state(struct drm_atomic_state *state)
->> -{
->> -       struct drm_crtc *crtc;
->> -       struct drm_crtc_state *crtc_state;
->> -       struct drm_encoder *encoder;
->> -       u32 encoder_mask = 0;
->> -       int i;
->> -
->> -       for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
->> -               encoder_mask |= crtc_state->encoder_mask;
->> -               encoder_mask |= crtc->state->encoder_mask;
->> -       }
->> -
->> -       drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
->> -               rockchip_drm_psr_inhibit_put(encoder);
->> -}
->> -
->>  static void
->>  rockchip_atomic_helper_commit_tail_rpm(struct drm_atomic_state *old_state)
->>  {
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
->> index 01ff3c858875..22a70ab6e214 100644
->> --- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
->> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
->> @@ -13,6 +13,7 @@
->>   */
->>
->>  #include <drm/drmP.h>
->> +#include <drm/drm_atomic.h>
->>  #include <drm/drm_crtc_helper.h>
->>
->>  #include "rockchip_drm_drv.h"
->> @@ -109,6 +110,42 @@ int rockchip_drm_psr_inhibit_put(struct drm_encoder *encoder)
->>  }
->>  EXPORT_SYMBOL(rockchip_drm_psr_inhibit_put);
->>
->> +void rockchip_drm_psr_inhibit_get_state(struct drm_atomic_state *state)
->> +{
->> +       struct drm_crtc *crtc;
->> +       struct drm_crtc_state *crtc_state;
->> +       struct drm_encoder *encoder;
->> +       u32 encoder_mask = 0;
->> +       int i;
->> +
->> +       for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
->> +               encoder_mask |= crtc_state->encoder_mask;
->> +               encoder_mask |= crtc->state->encoder_mask;
->> +       }
->> +
->> +       drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
->> +               rockchip_drm_psr_inhibit_get(encoder);
->> +}
->> +EXPORT_SYMBOL(rockchip_drm_psr_inhibit_get_state);
->> +
->> +void rockchip_drm_psr_inhibit_put_state(struct drm_atomic_state *state)
->> +{
->> +       struct drm_crtc *crtc;
->> +       struct drm_crtc_state *crtc_state;
->> +       struct drm_encoder *encoder;
->> +       u32 encoder_mask = 0;
->> +       int i;
->> +
->> +       for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
->> +               encoder_mask |= crtc_state->encoder_mask;
->> +               encoder_mask |= crtc->state->encoder_mask;
->> +       }
->> +
->> +       drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
->> +               rockchip_drm_psr_inhibit_put(encoder);
->> +}
->> +EXPORT_SYMBOL(rockchip_drm_psr_inhibit_put_state);
->> +
->>  /**
->>   * rockchip_drm_psr_inhibit_get - acquire PSR inhibit on given encoder
->>   * @encoder: encoder to obtain the PSR encoder
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
->> index 860c62494496..25350ba3237b 100644
->> --- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
->> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
->> @@ -20,6 +20,9 @@ void rockchip_drm_psr_flush_all(struct drm_device *dev);
->>  int rockchip_drm_psr_inhibit_put(struct drm_encoder *encoder);
->>  int rockchip_drm_psr_inhibit_get(struct drm_encoder *encoder);
->>
->> +void rockchip_drm_psr_inhibit_get_state(struct drm_atomic_state *state);
->> +void rockchip_drm_psr_inhibit_put_state(struct drm_atomic_state *state);
->> +
->>  int rockchip_drm_psr_register(struct drm_encoder *encoder,
->>                         int (*psr_set)(struct drm_encoder *, bool enable));
->>  void rockchip_drm_psr_unregister(struct drm_encoder *encoder);
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
->> index fb70fb486fbf..176d6e8207ed 100644
->> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
->> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
->> @@ -15,6 +15,7 @@
->>  #include <drm/drm.h>
->>  #include <drm/drmP.h>
->>  #include <drm/drm_atomic.h>
->> +#include <drm/drm_atomic_uapi.h>
->>  #include <drm/drm_crtc.h>
->>  #include <drm/drm_crtc_helper.h>
->>  #include <drm/drm_flip_work.h>
->> @@ -819,10 +820,99 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
->>         spin_unlock(&vop->reg_lock);
->>  }
->>
->> +static int vop_plane_atomic_async_check(struct drm_plane *plane,
->> +                                       struct drm_plane_state *state)
->> +{
->> +       struct vop_win *vop_win = to_vop_win(plane);
->> +       const struct vop_win_data *win = vop_win->data;
->> +       int min_scale = win->phy->scl ? FRAC_16_16(1, 8) :
->> +                                       DRM_PLANE_HELPER_NO_SCALING;
->> +       int max_scale = win->phy->scl ? FRAC_16_16(8, 1) :
->> +                                       DRM_PLANE_HELPER_NO_SCALING;
->> +       struct drm_crtc_state *crtc_state;
->> +       int ret;
->> +
->> +       if (plane != state->crtc->cursor)
->> +               return -EINVAL;
->> +
->> +       if (!plane->state)
->> +               return -EINVAL;
->> +
->> +       if (!plane->state->fb)
->> +               return -EINVAL;
->> +
->> +       if (state->state)
->> +               crtc_state = drm_atomic_get_existing_crtc_state(state->state,
->> +                                                               state->crtc);
->> +       else /* Special case for asynchronous cursor updates. */
->> +               crtc_state = plane->crtc->state;
->> +
->> +       ret = drm_atomic_helper_check_plane_state(plane->state,
->> +                                                 crtc_state,
->> +                                                 min_scale, max_scale,
->> +                                                 true, true);
->> +       return ret;
->> +}
->> +
->> +static void vop_crtc_atomic_commit_flush(struct drm_crtc *crtc,
->> +                                        struct drm_crtc_state *old_crtc_state)
->> +{
->> +       struct drm_atomic_state *old_state = old_crtc_state->state;
->> +       struct drm_plane_state *old_plane_state, *new_plane_state;
->> +       struct vop *vop = to_vop(crtc);
->> +       struct drm_plane *plane;
->> +       int i;
->> +
->> +       for_each_oldnew_plane_in_state(old_state, plane, old_plane_state,
->> +                                      new_plane_state, i) {
-> 
-> Hmm, from what I can see, we're not going through the full atomic
-> commit sequence, with state flip, so I'm not sure where we would get
-> the new state here from.
-> 
->> +               if (!old_plane_state->fb)
->> +                       continue;
->> +
->> +               if (old_plane_state->fb == new_plane_state->fb)
->> +                       continue;
->> +
->> +               drm_framebuffer_get(old_plane_state->fb);
->> +               WARN_ON(drm_crtc_vblank_get(crtc) != 0);
->> +               drm_flip_work_queue(&vop->fb_unref_work, old_plane_state->fb);
->> +               set_bit(VOP_PENDING_FB_UNREF, &vop->pending);
->> +       }
->> +}
->> +
->> +static void vop_plane_atomic_async_update(struct drm_plane *plane,
->> +                                         struct drm_plane_state *new_state)
->> +{
->> +       struct vop *vop = to_vop(plane->state->crtc);
->> +
->> +       if (vop->crtc.state->state)
->> +               vop_crtc_atomic_commit_flush(&vop->crtc, vop->crtc.state);
-> 
-> Since we just operate on one plane here, we could just do like this:
-> 
-> if (plane->state->fb && plane->state->fb != new_state->fb) {
->                drm_framebuffer_get(plane->state->fb);
->                WARN_ON(drm_crtc_vblank_get(crtc) != 0);
->                drm_flip_work_queue(&vop->fb_unref_work, plane->state->fb);
->                set_bit(VOP_PENDING_FB_UNREF, &vop->pending);
-> }
-> 
-> However, we cannot simply to this here, because it races with the
-> vblank interrupt. We need to program the hw plane with the new fb
-> first and trigger the update. This needs all the careful handling that
-> is done in vop_crtc_atomic_flush() and so my original suggestion to
-> just call it.
-
-vop_crtc_atomic_flush() also updates the crtc->state->event, I don't
-think we want that.
-
-And actually I don't think we have this race condition, please see below
-
-> 
-> Of course to call it in its current shape, one needs to have a full
-> atomic state from a commit, after a flip, but we only have the new
-> plane state here. Perhaps you could duplicate existing state, update
-> the desired plane state, flip and then call vop_crtc_atomic_flush()?
-
-Could you please clarify your proposal? You mean duplicating
-plane->state ? I'm trying to see how this would fit it in the code.
-The drm_atomic_state structure at plate->state->state is actually always
-NULL (as an async update is applied right away).
-
-
-> 
-> Best regards,
-> Tomasz
-> 
-
-From your comment in v2:
-
-> Isn't this going to drop the old fb reference on the floor without
-> waiting for the hardware to actually stop scanning out from it?
-
-I've been trying to analyze this better, I also got some help from
-Gustavo Padovan, and I think there is no problem here as the
-configuration we are doing here will just be taken into consideration by
-the hardware in the next vblank, so I guess we can set and re-set
-plane->fb as much as we want.
-
-From the async_update docs:
-
-     *  - Some hw might still scan out the old buffer until the next
-     *    vblank, however we let go of the fb references as soon as
-     *    we run this hook. For now drivers must implement their own workers
-     *    for deferring if needed, until a common solution is created.
-
-So the idea is to let the reference go asap, then we shouldn't need an
-extra drm_framebuffer_get() as done by vop_crtc_atomic_flush().
-
-Does it make sense to you?
-
-Unless I am missing something, the patch v2 is essentially correct, if
-not, then vc4 driver is also broken.
-
-Please, let me know what you think and I'll send the v4.
-
-Regards,
-Helen
+	tglx
 
 
