@@ -3,178 +3,175 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8336AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AACF9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2871B20865
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:34:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 686B720831
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:34:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=correia.cc header.i=@correia.cc header.b="NeXn/Fq+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2871B20865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=correia.cc
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="okMBy550"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 686B720831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389479AbeKVQLp (ORCPT
+        id S2391718AbeKVQMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 11:11:45 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:39714 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389300AbeKVQLo (ORCPT
+        Thu, 22 Nov 2018 11:12:02 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:34524 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389300AbeKVQMC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 11:11:44 -0500
-Received: by mail-qk1-f193.google.com with SMTP id q70so6232499qkh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 21:33:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=correia.cc; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=j5eYpOii00Yp+lqkn7vDJSCZ8zL0+Wrn7/f4YZbRXUI=;
-        b=NeXn/Fq+8yZxNdiRqZ/y1l0fxqFbg6fXN+f/vxX8HnG2BQsqCdH9OmA5R+2Oazvcmv
-         DpdkyREoGgIH2Ys4kUFZTaiCIRDPrkCdfExvTbQ4Bom9F3iwaQBsogsqpW/wN4e0aCWO
-         tHikhRXUkcNW2cQB2iVF742/wUFLWtjB3VZlk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=j5eYpOii00Yp+lqkn7vDJSCZ8zL0+Wrn7/f4YZbRXUI=;
-        b=C9N0Vbg1aYcNrWDHPUxNu2IFU2Uvp33RzbUhdKDNjSDw401Jas9mNyhtUnDbIn5d4R
-         U9hPBaXSNY4DwzKKdTPpioVsnwpX8mwKaNCT9gR28YDY7LMgEchzsQ/4tliGQX5fKNqU
-         +/BOtpBhKPCMnWJj3h5Bv0mrS9MwFB/I6/hG5Yhrp+7kzVNTd+bYqM6ZwCaXTaIFwSaj
-         z3lPx91QWRVFzxbulIdgy4T04M3ebXma5+Br3RgIXxAvo2MuAmCZ+StvHkW+QDIgTXbH
-         KAXY5p/aXSdd2TUgjaBwbCiVDhTQfgc5lDObMrAtGlG7/9B6l9WMcupY5539I9X54duZ
-         JGaw==
-X-Gm-Message-State: AA+aEWbrTdPsufI9gWTb2GBW1KJttn39Az2rbWg6iVxyBtLre4TkYJij
-        aMOvmTSQGp67llj7Kmt3/2Tvyg==
-X-Google-Smtp-Source: AFSGD/WApYczIz0gAxGhrmGt9N+LCJt0hYIDYbUmgcYL9T52+NzM8BRkdSJ4YuhQ8FqD0e/vtbARtQ==
-X-Received: by 2002:ae9:eb96:: with SMTP id b144mr8267423qkg.127.1542864836472;
-        Wed, 21 Nov 2018 21:33:56 -0800 (PST)
-Received: from localhost.localdomain ([177.19.68.176])
-        by smtp.googlemail.com with ESMTPSA id y14sm21600585qkb.2.2018.11.21.21.33.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 21:33:55 -0800 (PST)
-From:   Sergio Correia <sergio@correia.cc>
-To:     maarten.lankhorst@linux.intel.com
-Cc:     maxime.ripard@bootlin.com, sean@poorly.run, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        sergio@correia.cc, daniel@ffwll.ch
-Subject: [PATCH v2] drm: set is_master to 0 upon drm_new_set_master() failure
-Date:   Thu, 22 Nov 2018 02:33:29 -0300
-Message-Id: <20181122053329.2692-1-sergio@correia.cc>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181118235720.3150-1-sergio@correia.cc>
-References: <20181118235720.3150-1-sergio@correia.cc>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 22 Nov 2018 11:12:02 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 22E588EE2C9;
+        Wed, 21 Nov 2018 21:34:15 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id VpPCkg13_YRK; Wed, 21 Nov 2018 21:34:14 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 981948EE0C8;
+        Wed, 21 Nov 2018 21:34:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1542864854;
+        bh=ZBcMSY4Erz3zTyrNxvKZ/mlKHlUdmHoYKOszqJ6isX0=;
+        h=Subject:From:To:Cc:Date:From;
+        b=okMBy550dUMoEfM48VPqVVCgaUj2tPh5ZIDZKMrwDqycNn5edKBYdpWIjd/gWU9F9
+         pZNA6DNPpT+NAyI218OBB4ka6qyTTqphlTooC0+MZA4zvoGqXcGinUHoClLw4WSjGT
+         LxQlqYjPy7/rdvSZR/dW4gj8lYX+j8NO+ogwZQoo=
+Message-ID: <1542864853.23253.6.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 4.20-rc3
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Wed, 21 Nov 2018 21:34:13 -0800
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When drm_new_set_master() fails, set is_master to 0, to prevent a
-possible NULL pointer deref.
+Two small fixes.  The qla2xxx is a regression from 4.18 and the ufs one
+is a device enablement fix.
 
-Here is a problematic flow: we check is_master in drm_is_current_master(),
-then proceed to call drm_lease_owner() passing master. If we do not restore
-is_master status when drm_new_set_master() fails, we may have a situation
-in which is_master will be 1 and master itself, NULL, leading to the deref
-of a NULL pointer in drm_lease_owner().
+The patch is available here:
 
-This fixes the following OOPS, observed on an ArchLinux running a 4.19.2
-kernel:
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-[   97.804282] BUG: unable to handle kernel NULL pointer dereference at 0000000000000080
-[   97.807224] PGD 0 P4D 0
-[   97.807224] Oops: 0000 [#1] PREEMPT SMP NOPTI
-[   97.807224] CPU: 0 PID: 1348 Comm: xfwm4 Tainted: P           OE     4.19.2-arch1-1-ARCH #1
-[   97.807224] Hardware name: To Be Filled By O.E.M. To Be Filled By O.E.M./AB350 Pro4, BIOS P5.10 10/16/2018
-[   97.807224] RIP: 0010:drm_lease_owner+0xd/0x20 [drm]
-[   97.807224] Code: 83 c4 18 5b 5d c3 b8 ea ff ff ff eb e2 b8 ed ff ff ff eb db e8 b4 ca 68 fb 0f 1f 40 00 0f 1f 44 00 00 48 89 f8 eb 03 48 89 d0 <48> 8b 90 80 00 00 00 48 85 d2 75 f1 c3 66 0f 1f 44 00 00 0f 1f 44
-[   97.807224] RSP: 0018:ffffb8cf08e07bb0 EFLAGS: 00010202
-[   97.807224] RAX: 0000000000000000 RBX: ffff9cf0f2586c00 RCX: ffff9cf0f2586c88
-[   97.807224] RDX: ffff9cf0ddbd8000 RSI: 0000000000000000 RDI: 0000000000000000
-[   97.807224] RBP: ffff9cf1040e9800 R08: 0000000000000000 R09: 0000000000000000
-[   97.807224] R10: ffffdeb30fd5d680 R11: ffffdeb30f5d6808 R12: ffff9cf1040e9888
-[   97.807224] R13: 0000000000000000 R14: dead000000000200 R15: ffff9cf0f2586cc8
-[   97.807224] FS:  00007f4145513180(0000) GS:ffff9cf10ea00000(0000) knlGS:0000000000000000
-[   97.807224] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   97.807224] CR2: 0000000000000080 CR3: 00000003d7548000 CR4: 00000000003406f0
-[   97.807224] Call Trace:
-[   97.807224]  drm_is_current_master+0x1a/0x30 [drm]
-[   97.807224]  drm_master_release+0x3e/0x130 [drm]
-[   97.807224]  drm_file_free.part.0+0x2be/0x2d0 [drm]
-[   97.807224]  drm_open+0x1ba/0x1e0 [drm]
-[   97.807224]  drm_stub_open+0xaf/0xe0 [drm]
-[   97.807224]  chrdev_open+0xa3/0x1b0
-[   97.807224]  ? cdev_put.part.0+0x20/0x20
-[   97.807224]  do_dentry_open+0x132/0x340
-[   97.807224]  path_openat+0x2d1/0x14e0
-[   97.807224]  ? mem_cgroup_commit_charge+0x7a/0x520
-[   97.807224]  do_filp_open+0x93/0x100
-[   97.807224]  ? __check_object_size+0x102/0x189
-[   97.807224]  ? _raw_spin_unlock+0x16/0x30
-[   97.807224]  do_sys_open+0x186/0x210
-[   97.807224]  do_syscall_64+0x5b/0x170
-[   97.807224]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   97.807224] RIP: 0033:0x7f4147b07976
-[   97.807224] Code: 89 54 24 08 e8 7b f4 ff ff 8b 74 24 0c 48 8b 3c 24 41 89 c0 44 8b 54 24 08 b8 01 01 00 00 89 f2 48 89 fe bf 9c ff ff ff 0f 05 <48> 3d 00 f0 ff ff 77 30 44 89 c7 89 44 24 08 e8 a6 f4 ff ff 8b 44
-[   97.807224] RSP: 002b:00007ffcced96ca0 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
-[   97.807224] RAX: ffffffffffffffda RBX: 00005619d5037f80 RCX: 00007f4147b07976
-[   97.807224] RDX: 0000000000000002 RSI: 00005619d46b969c RDI: 00000000ffffff9c
-[   98.040039] RBP: 0000000000000024 R08: 0000000000000000 R09: 0000000000000000
-[   98.040039] R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000024
-[   98.040039] R13: 0000000000000012 R14: 00005619d5035950 R15: 0000000000000012
-[   98.040039] Modules linked in: nct6775 hwmon_vid algif_skcipher af_alg nls_iso8859_1 nls_cp437 vfat fat uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common arc4 videodev media snd_usb_audio snd_hda_codec_hdmi snd_usbmidi_lib snd_rawmidi snd_seq_device mousedev input_leds iwlmvm mac80211 snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_hda_codec edac_mce_amd kvm_amd snd_hda_core kvm iwlwifi snd_hwdep r8169 wmi_bmof cfg80211 snd_pcm irqbypass snd_timer snd libphy soundcore pinctrl_amd rfkill pcspkr sp5100_tco evdev gpio_amdpt k10temp mac_hid i2c_piix4 wmi pcc_cpufreq acpi_cpufreq vboxnetflt(OE) vboxnetadp(OE) vboxpci(OE) vboxdrv(OE) msr sg crypto_user ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto uas usb_storage dm_crypt hid_generic usbhid hid
-[   98.040039]  dm_mod raid1 md_mod sd_mod crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel pcbc ahci libahci aesni_intel aes_x86_64 libata crypto_simd cryptd glue_helper ccp xhci_pci rng_core scsi_mod xhci_hcd nvidia_drm(POE) drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops drm agpgart nvidia_uvm(POE) nvidia_modeset(POE) nvidia(POE) ipmi_devintf ipmi_msghandler
-[   98.040039] CR2: 0000000000000080
-[   98.040039] ---[ end trace 3b65093b6fe62b2f ]---
-[   98.040039] RIP: 0010:drm_lease_owner+0xd/0x20 [drm]
-[   98.040039] Code: 83 c4 18 5b 5d c3 b8 ea ff ff ff eb e2 b8 ed ff ff ff eb db e8 b4 ca 68 fb 0f 1f 40 00 0f 1f 44 00 00 48 89 f8 eb 03 48 89 d0 <48> 8b 90 80 00 00 00 48 85 d2 75 f1 c3 66 0f 1f 44 00 00 0f 1f 44
-[   98.040039] RSP: 0018:ffffb8cf08e07bb0 EFLAGS: 00010202
-[   98.040039] RAX: 0000000000000000 RBX: ffff9cf0f2586c00 RCX: ffff9cf0f2586c88
-[   98.040039] RDX: ffff9cf0ddbd8000 RSI: 0000000000000000 RDI: 0000000000000000
-[   98.040039] RBP: ffff9cf1040e9800 R08: 0000000000000000 R09: 0000000000000000
-[   98.040039] R10: ffffdeb30fd5d680 R11: ffffdeb30f5d6808 R12: ffff9cf1040e9888
-[   98.040039] R13: 0000000000000000 R14: dead000000000200 R15: ffff9cf0f2586cc8
-[   98.040039] FS:  00007f4145513180(0000) GS:ffff9cf10ea00000(0000) knlGS:0000000000000000
-[   98.040039] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   98.040039] CR2: 0000000000000080 CR3: 00000003d7548000 CR4: 00000000003406f0
+The short changelog is:
 
-Signed-off-by: Sergio Correia <sergio@correia.cc>
+Bill Kuzeja (1):
+      scsi: qla2xxx: Timeouts occur on surprise removal of QLogic adapter
+
+Wei Li (1):
+      scsi: ufs: Fix hynix ufs bug with quirk on hi36xx SoC
+
+And the diffstat:
+
+ drivers/scsi/qla2xxx/qla_os.c | 10 ++++++++--
+ drivers/scsi/ufs/ufs-hisi.c   |  9 +++++++++
+ drivers/scsi/ufs/ufs_quirks.h |  6 ++++++
+ drivers/scsi/ufs/ufshcd.c     |  2 ++
+ 4 files changed, 25 insertions(+), 2 deletions(-)
+
+With full diff below.
+
+James
+
 ---
-v1 -> v2:
-1) former title: drm: restore is_master upon failure in
-drm_new_set_master()
-2) add WARN_ON at the beginning of drm_new_set_master()
-3) set is_master unconditionally to 0, upon failure in
-drm_new_set_master()
 
- drivers/gpu/drm/drm_auth.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpu/drm/drm_auth.c b/drivers/gpu/drm/drm_auth.c
-index d9c0f7573905..1669c42c40ed 100644
---- a/drivers/gpu/drm/drm_auth.c
-+++ b/drivers/gpu/drm/drm_auth.c
-@@ -142,6 +142,7 @@ static int drm_new_set_master(struct drm_device *dev, struct drm_file *fpriv)
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 20c85eed1a75..b658b9a5eb1e 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -1749,7 +1749,7 @@ qla2x00_loop_reset(scsi_qla_host_t *vha)
+ static void
+ __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
+ {
+-	int cnt;
++	int cnt, status;
+ 	unsigned long flags;
+ 	srb_t *sp;
+ 	scsi_qla_host_t *vha = qp->vha;
+@@ -1799,10 +1799,16 @@ __qla2x00_abort_all_cmds(struct qla_qpair *qp, int res)
+ 					if (!sp_get(sp)) {
+ 						spin_unlock_irqrestore
+ 							(qp->qp_lock_ptr, flags);
+-						qla2xxx_eh_abort(
++						status = qla2xxx_eh_abort(
+ 							GET_CMD_SP(sp));
+ 						spin_lock_irqsave
+ 							(qp->qp_lock_ptr, flags);
++						/*
++						 * Get rid of extra reference caused
++						 * by early exit from qla2xxx_eh_abort
++						 */
++						if (status == FAST_IO_FAIL)
++							atomic_dec(&sp->ref_count);
+ 					}
+ 				}
+ 				sp->done(sp, res);
+diff --git a/drivers/scsi/ufs/ufs-hisi.c b/drivers/scsi/ufs/ufs-hisi.c
+index 46df707e6f2c..452e19f8fb47 100644
+--- a/drivers/scsi/ufs/ufs-hisi.c
++++ b/drivers/scsi/ufs/ufs-hisi.c
+@@ -20,6 +20,7 @@
+ #include "unipro.h"
+ #include "ufs-hisi.h"
+ #include "ufshci.h"
++#include "ufs_quirks.h"
  
- 	lockdep_assert_held_once(&dev->master_mutex);
+ static int ufs_hisi_check_hibern8(struct ufs_hba *hba)
+ {
+@@ -390,6 +391,14 @@ static void ufs_hisi_set_dev_cap(struct ufs_hisi_dev_params *hisi_param)
  
-+	WARN_ON(fpriv->is_master);
- 	old_master = fpriv->master;
- 	fpriv->master = drm_master_create(dev);
- 	if (!fpriv->master) {
-@@ -170,6 +171,7 @@ static int drm_new_set_master(struct drm_device *dev, struct drm_file *fpriv)
- 	/* drop references and restore old master on failure */
- 	drm_master_put(&fpriv->master);
- 	fpriv->master = old_master;
-+	fpriv->is_master = 0;
+ static void ufs_hisi_pwr_change_pre_change(struct ufs_hba *hba)
+ {
++	if (hba->dev_quirks & UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME) {
++		pr_info("ufs flash device must set VS_DebugSaveConfigTime 0x10\n");
++		/* VS_DebugSaveConfigTime */
++		ufshcd_dme_set(hba, UIC_ARG_MIB(0xD0A0), 0x10);
++		/* sync length */
++		ufshcd_dme_set(hba, UIC_ARG_MIB(0x1556), 0x48);
++	}
++
+ 	/* update */
+ 	ufshcd_dme_set(hba, UIC_ARG_MIB(0x15A8), 0x1);
+ 	/* PA_TxSkip */
+diff --git a/drivers/scsi/ufs/ufs_quirks.h b/drivers/scsi/ufs/ufs_quirks.h
+index 71f73d1d1ad1..5d2dfdb41a6f 100644
+--- a/drivers/scsi/ufs/ufs_quirks.h
++++ b/drivers/scsi/ufs/ufs_quirks.h
+@@ -131,4 +131,10 @@ struct ufs_dev_fix {
+  */
+ #define UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME	(1 << 8)
  
- 	return ret;
- }
--- 
-2.19.1
-
++/*
++ * Some UFS devices require VS_DebugSaveConfigTime is 0x10,
++ * enabling this quirk ensure this.
++ */
++#define UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME	(1 << 9)
++
+ #endif /* UFS_QUIRKS_H_ */
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 27db55b0ca7f..f1c57cd33b5b 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -231,6 +231,8 @@ static struct ufs_dev_fix ufs_fixups[] = {
+ 	UFS_FIX(UFS_VENDOR_SKHYNIX, UFS_ANY_MODEL, UFS_DEVICE_NO_VCCQ),
+ 	UFS_FIX(UFS_VENDOR_SKHYNIX, UFS_ANY_MODEL,
+ 		UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME),
++	UFS_FIX(UFS_VENDOR_SKHYNIX, "hB8aL1" /*H28U62301AMR*/,
++		UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME),
+ 
+ 	END_FIX
+ };
