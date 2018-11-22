@@ -2,384 +2,120 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F2F7C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC23CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D42E320820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:12:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAF6320685
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:13:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ide9l5SM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D42E320820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qZBC+d6k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAF6320685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405769AbeKWBwl (ORCPT
+        id S2405771AbeKWBxO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 20:52:41 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:36482 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726758AbeKWBwk (ORCPT
+        Thu, 22 Nov 2018 20:53:14 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35007 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726172AbeKWBxO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 20:52:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Rs3WOtH+MutufIT9Q0jsj53sh9J1xB46dA7ai4Z+Mu4=; b=ide9l5SM6UdwWfmLvx79s5fwm
-        +rnqmQiPrZG5Rz1cZe7zP2geLPP5eAU2WQG4DA/FL/xFH4PdNXy+vVEeNedg6UHBMczQl7GEI/NNv
-        i2zDu2wM22YjeqilbnLjS5tZm6+P7zVMKEVXQW1R7Lx+tQZzs6JEDgqDQO1IDqQ2eaxbk=;
-Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:39355)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gPqen-0002es-6m; Thu, 22 Nov 2018 15:12:41 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gPqek-0002fU-9j; Thu, 22 Nov 2018 15:12:38 +0000
-Date:   Thu, 22 Nov 2018 15:12:36 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org,
-        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tony@atomide.com,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
-Message-ID: <20181122151236.GA9611@n2100.armlinux.org.uk>
-References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
- <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
- <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
- <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
- <20181122102948.GN6920@n2100.armlinux.org.uk>
+        Thu, 22 Nov 2018 20:53:14 -0500
+Received: by mail-ed1-f67.google.com with SMTP id x30so8002750edx.2;
+        Thu, 22 Nov 2018 07:13:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9jHz7DcSu13eqYZujy8RCSOiwrR4fLp27d6XMDqSrB4=;
+        b=qZBC+d6kB/pi35FZ34VEDqr3RXb0oMXUhqQJq2uv6Y0ZQldi9DlHaAYTbvLPAtvMVq
+         KDOo2P/dw/tolAdVgq7KVVDbCaMihDHCmGpIxD8F5LoxVavtV0a44JQxwujmdWd51NCV
+         j0J21Bu0e6Ftr6xeAG1om/5xG5WXMX2objD9e5GbceekhIxyzO36HiQJXZONhGbM5QHS
+         z+dHMXZ3fz9dzcQihaMR1YfJI1bd1mHo9EXspsjehMO5/f4Vcb3rcm2Q6kKf0QjPkQb4
+         gwHJs24MNktsK8zMap0QdEhSRzYirZQLo4zuYmXD9QmOAISRD1xBnsPplaYxxuIXiq2g
+         sQkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9jHz7DcSu13eqYZujy8RCSOiwrR4fLp27d6XMDqSrB4=;
+        b=ATjGjkObR6lvUAptQ3ScvMaZHSAnVMX8lOwr8tWc4SIoO7oy7VzZBtKaUyTo0MpqX0
+         8FOrX+gPBfRCESLzIkppv7hpIcsbEYDCGGnDqS3px9tDlDvtL+8+puwG5huMBXmSuLx8
+         FVvRwUQE2mvj24GjeCLi5ImexvPs0q3pRohqDZNp4XG17ZISP/U1LiU8uJfZq2Dx6Cku
+         Mnhi8R/DPmgjcThxvRkVymGoKJ9KbA0LdlbYinxOUlH+GTfDyC3VFMmlkhNhWiXWajZw
+         IKIjCjj7koVPoIhlo9wuCT9DD/OfWTao+TSYsj3xnjt/hg7OC3qslIqjety/M8fnxwg4
+         4BPg==
+X-Gm-Message-State: AA+aEWbfDcB/fvdOtDa4Wqyjjytq2L2WQ2QaWRbLmFGWM32RCxK0u1zJ
+        wiJjy1vLrGV5K5wKdNoY7ZM=
+X-Google-Smtp-Source: AFSGD/XTXWAW2JKkg23lkKMcF5eMmycD46atfu+xPkv7nTPecSvt0pxucrUE2flJqRIsnFMyWZR1EQ==
+X-Received: by 2002:a50:a741:: with SMTP id h59mr9268401edc.106.1542899606569;
+        Thu, 22 Nov 2018 07:13:26 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id v14sm1967081edq.74.2018.11.22.07.13.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 22 Nov 2018 07:13:25 -0800 (PST)
+Date:   Thu, 22 Nov 2018 16:13:24 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     jonathanh@nvidia.com, avienamo@nvidia.com, mperttunen@nvidia.com,
+        andy.gross@linaro.org, robh@kernel.org,
+        vivek.gautam@codeaurora.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] soc/tegra: pmc: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Message-ID: <20181122151324.GB24661@ulmo>
+References: <20181122131207.24791-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rS8CxjVDS/+yyDmU"
 Content-Disposition: inline
-In-Reply-To: <20181122102948.GN6920@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181122131207.24791-1-tiny.windzz@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 10:29:48AM +0000, Russell King - ARM Linux wrote:
-> On Tue, Nov 20, 2018 at 11:04:06PM +0200, Aaro Koskinen wrote:
-> > I had switched to PIO mode in 2015 since the WARNs about legacy DMA
-> > API were too annoying and flooding the console. And now that I tried
-> > using DMA again with g_ether, it doesn't work anymore. The device get's
-> > recognized on host side, but no traffic goes through. Switching back to
-> > PIO makes it to work again.
-> 
-> A solution to that would be to do what the warning message says, and
-> update the driver to the DMAengine API.
 
-Here's a partial conversion (not even build tested) - it only supports
-OUT transfers with dmaengine at the moment.
+--rS8CxjVDS/+yyDmU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-There's at least one thing that doesn't make sense - the driver
-apparently can transfer more than req->length bytes, surely if it does
-that, it's a serious problem - shouldn't it be noisy about that?
+On Thu, Nov 22, 2018 at 08:12:07AM -0500, Yangtao Li wrote:
+> Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+>=20
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 12 +-----------
+>  1 file changed, 1 insertion(+), 11 deletions(-)
 
-Also we can't deal with the omap_set_dma_dest_burst_mode() setting -
-DMAengine always uses a 64 byte burst, but udc wants a smaller burst
-setting.  Does this matter?
+Applied, thanks.
 
-I've kept the old code for reference (and the driver will fall back if
-we can't get a dmaengine channel.)  I haven't been through and checked
-that we result in the channel setup largely the same either.
+Thierry
 
-There will be one major difference - UDC uses element sync, where
-an element is 16bits, ep->ep.maxpacket/2 in a frame, and "packets"
-frames.  DMAengine is using frame sync, with a 16bit element, one
-element in a frame, and packets*ep->ep.maxpacket/2 frames.  This
-should be functionally equivalent but I'd like confirmation of that.
+--rS8CxjVDS/+yyDmU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I'm also not sure about this:
+-----BEGIN PGP SIGNATURE-----
 
-        if (cpu_is_omap15xx())
-                end++;
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv2x5QACgkQ3SOs138+
+s6GkzQ//RaryhEBFGRe9jmHJiJ8je0gbceK1g5Xx5OEGU3X04hhnsTUalDoAhc1H
+7UeffL49eTwl+69nETWmt2bkQpngtAurDm1IA9kg6NlKCpzOPTXbe+Jk6BMAAqv/
+GlMvMFMpABcv7CB1JQpfI84ifucFOYrDKWBhDzJYToCxG1AKzwxvH7qgMXsT9DZE
+tvoEvoLRu6EFES0G6sz8vlz5JNJp1JPPs+iT29lkhxoMVKra4hVSCnbQ+xqf+L3+
+OkKV6vijIyZpcWntwwh03ZdB+C9xtgOdCccYL2KoiJDq/c1Pj1B+zOhpmwPQG2ey
+YFvFdwqPJV43uhbPxwcrp70ykKxMgyUT0idYndZKKjVpTNm/LnxQu1tAtgTRlPTK
+xdp610kB1KD8CO14q9iinP2vjK5G0jTrT9Errki0sDgsMaQZXNfIFdUWEms2LMuV
+fCyRDgxpwI9u4MEWJb+hUahfHYQxWSznBZTSORMOpu7joWhH1cOKoetV7xri26TM
+YZ0xL0bn/XUfsIuBFn9R04YSLknUc0yys+Ogh7/QGlm8PO8vfWXwzTlUHjVgrg6H
+h9xunlRJyf2WUaLuK/YoPs/WUh5U/ELF6gWtbJUSyCU3vI+xTF+6yKmoL60XW9pW
+5l/ZKVpb3MVUxHTVgZ803lBeeBZAJ0YPn+IH1aQDfDNTr1Z3+mo=
+=Gp6n
+-----END PGP SIGNATURE-----
 
-in dma_dest_len() - is that missing from the omap-dma driver?  It looks
-like a work-around for some problem on OMAP15xx, but I can't make sense
-about why it's in the UDC driver rather than the legacy DMA driver.
-
-I'm also confused by:
-
-        end |= start & (0xffff << 16);
-
-also in dma_dest_len() - omap_get_dma_dst_pos() returns in the high 16
-bits the full address:
-
-        if (dma_omap1())
-                offset |= (p->dma_read(CDSA, lch) & 0xFFFF0000);
-
-so if the address crosses a 64k physical address boundary, surely orring
-in the start address is wrong?  The more I look at dma_dest_len(), the
-more I wonder whether that and dma_src_len() are anywhere near correct,
-and whether that is a source of breakage for Aaro.
-
-As I've already said, I've no way to test this on hardware.
-
-Please review and let me know whether I missed anything on the OUT
-handling path.
-
-Fixing the IN path is going to be a bit more head-scratching.
-
- drivers/usb/gadget/udc/omap_udc.c | 154 +++++++++++++++++++++++++++++---------
- drivers/usb/gadget/udc/omap_udc.h |   2 +
- 2 files changed, 120 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
-index 3a16431da321..a37e1d2f0f3e 100644
---- a/drivers/usb/gadget/udc/omap_udc.c
-+++ b/drivers/usb/gadget/udc/omap_udc.c
-@@ -204,6 +204,7 @@ static int omap_ep_enable(struct usb_ep *_ep,
- 	ep->dma_channel = 0;
- 	ep->has_dma = 0;
- 	ep->lch = -1;
-+	ep->dma = NULL;
- 	use_ep(ep, UDC_EP_SEL);
- 	omap_writew(udc->clr_halt, UDC_CTRL);
- 	ep->ackwait = 0;
-@@ -576,21 +577,49 @@ static void finish_in_dma(struct omap_ep *ep, struct omap_req *req, int status)
- static void next_out_dma(struct omap_ep *ep, struct omap_req *req)
- {
- 	unsigned packets = req->req.length - req->req.actual;
--	int dma_trigger = 0;
-+	struct dma_async_tx_descriptor *tx;
-+	struct dma_chan *dma = ep->dma;
-+	dma_cookie_t cookie;
- 	u16 w;
- 
--	/* set up this DMA transfer, enable the fifo, start */
--	packets /= ep->ep.maxpacket;
--	packets = min(packets, (unsigned)UDC_RXN_TC + 1);
-+	packets = min_t(unsigned, packets / ep->ep.maxpacket, UDC_RXN_TC + 1);
- 	req->dma_bytes = packets * ep->ep.maxpacket;
--	omap_set_dma_transfer_params(ep->lch, OMAP_DMA_DATA_TYPE_S16,
--			ep->ep.maxpacket >> 1, packets,
--			OMAP_DMA_SYNC_ELEMENT,
--			dma_trigger, 0);
--	omap_set_dma_dest_params(ep->lch, OMAP_DMA_PORT_EMIFF,
--		OMAP_DMA_AMODE_POST_INC, req->req.dma + req->req.actual,
--		0, 0);
--	ep->dma_counter = omap_get_dma_dst_pos(ep->lch);
-+
-+	if (dma) {
-+		struct dma_slave_config cfg = {
-+			.direction = DMA_DEV_TO_MEM,
-+			.src_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTE,
-+			/*
-+			 * DMAengine uses frame sync mode, setting maxburst=1
-+			 * is equivalent to element sync mode.
-+			 */
-+			.src_maxburst = 1,
-+			.src_addr = UDC_DATA_DMA,
-+		};
-+
-+		if (WARN_ON(dmaengine_slave_config(dma, &cfg)))
-+			return;
-+
-+		tx = dmaengine_prep_slave_single(dma,
-+						 req->req.dma + req->req.actual,
-+						 req->dma_bytes,
-+						 DMA_DEV_TO_MEM, 0);
-+		if (WARN_ON(!tx))
-+			return;
-+	} else {
-+		int dma_trigger = 0;
-+
-+		/* set up this DMA transfer, enable the fifo, start */
-+		/* dt = S16, cen = ep->ep.maxpacket / 2, cfn = packets */
-+		omap_set_dma_transfer_params(ep->lch, OMAP_DMA_DATA_TYPE_S16,
-+				ep->ep.maxpacket >> 1, packets,
-+				OMAP_DMA_SYNC_ELEMENT,
-+				dma_trigger, 0);
-+		omap_set_dma_dest_params(ep->lch, OMAP_DMA_PORT_EMIFF,
-+			OMAP_DMA_AMODE_POST_INC, req->req.dma + req->req.actual,
-+			0, 0);
-+		ep->dma_counter = omap_get_dma_dst_pos(ep->lch);
-+	}
- 
- 	omap_writew(UDC_RXN_STOP | (packets - 1), UDC_RXDMA(ep->dma_channel));
- 	w = omap_readw(UDC_DMA_IRQ_EN);
-@@ -599,7 +628,15 @@ static void next_out_dma(struct omap_ep *ep, struct omap_req *req)
- 	omap_writew(ep->bEndpointAddress & 0xf, UDC_EP_NUM);
- 	omap_writew(UDC_SET_FIFO_EN, UDC_CTRL);
- 
--	omap_start_dma(ep->lch);
-+	if (dma) {
-+		cookie = dmaengine_submit(tx);
-+		if (WARN_ON(dma_submit_error(cookie)))
-+			return;
-+		ep->dma_cookie = cookie;
-+		dma_async_issue_pending(dma);
-+	} else {
-+		omap_start_dma(ep->lch);
-+	}
- }
- 
- static void
-@@ -607,21 +644,39 @@ finish_out_dma(struct omap_ep *ep, struct omap_req *req, int status, int one)
- {
- 	u16	count, w;
- 
--	if (status == 0)
--		ep->dma_counter = (u16) (req->req.dma + req->req.actual);
--	count = dma_dest_len(ep, req->req.dma + req->req.actual);
-+	if (ep->dma) {
-+		struct dma_tx_state state;
-+
-+		dmaengine_tx_status(ep->dma, ep->dma_cookie, &state);
-+
-+		count = req->dma_bytes - state.residual;
-+	} else {
-+		if (status == 0)
-+			ep->dma_counter = (u16) (req->req.dma + req->req.actual);
-+		count = dma_dest_len(ep, req->req.dma + req->req.actual);
-+	}
-+
- 	count += req->req.actual;
- 	if (one)
- 		count--;
-+
-+	/*
-+	 * FIXME: Surely if count > req->req.length, something has gone
-+	 * seriously wrong and we've scribbled over memory we should not...
-+	 * so surely we should be a WARN_ON() at the very least?
-+	 */
- 	if (count <= req->req.length)
- 		req->req.actual = count;
- 
--	if (count != req->dma_bytes || status)
--		omap_stop_dma(ep->lch);
--
-+	if (count != req->dma_bytes || status) {
-+		if (ep->dma)
-+			dmaengine_terminate_async(ep->dma);
-+		else
-+			omap_stop_dma(ep->lch);
- 	/* if this wasn't short, request may need another transfer */
--	else if (req->req.actual < req->req.length)
-+	} else if (req->req.actual < req->req.length) {
- 		return;
-+	}
- 
- 	/* rx completion */
- 	w = omap_readw(UDC_DMA_IRQ_EN);
-@@ -709,6 +764,7 @@ static void dma_channel_claim(struct omap_ep *ep, unsigned channel)
- 
- 	ep->dma_channel = 0;
- 	ep->lch = -1;
-+	ep->dma = NULL;
- 	if (channel == 0 || channel > 3) {
- 		if ((reg & 0x0f00) == 0)
- 			channel = 3;
-@@ -742,26 +798,44 @@ static void dma_channel_claim(struct omap_ep *ep, unsigned channel)
- 				0, 0);
- 		}
- 	} else {
-+		struct dma_chan *dma;
-+
- 		dma_channel = OMAP_DMA_USB_W2FC_RX0 - 1 + channel;
--		status = omap_request_dma(dma_channel,
--			ep->ep.name, dma_error, ep, &ep->lch);
--		if (status == 0) {
-+
-+		dma = __dma_request_channel(&mask, omap_dma_filter_fn,
-+					    (void *)dma_channel);
-+		if (dma) {
-+			ep->dma = dma;
- 			omap_writew(reg, UDC_RXDMA_CFG);
--			/* TIPB */
--			omap_set_dma_src_params(ep->lch,
--				OMAP_DMA_PORT_TIPB,
--				OMAP_DMA_AMODE_CONSTANT,
--				UDC_DATA_DMA,
--				0, 0);
--			/* EMIFF or SDRC */
--			omap_set_dma_dest_burst_mode(ep->lch,
--						OMAP_DMA_DATA_BURST_4);
--			omap_set_dma_dest_data_pack(ep->lch, 1);
-+		} else {
-+			status = omap_request_dma(dma_channel,
-+				ep->ep.name, dma_error, ep, &ep->lch);
-+			if (status == 0) {
-+				omap_writew(reg, UDC_RXDMA_CFG);
-+				/* TIPB */
-+				omap_set_dma_src_params(ep->lch,
-+					OMAP_DMA_PORT_TIPB,
-+					OMAP_DMA_AMODE_CONSTANT,
-+					UDC_DATA_DMA,
-+					0, 0);
-+				/* EMIFF or SDRC */
-+				/*
-+				 * not ok - CSDP_DST_BURST_64 selected, but this selects
-+				 * CSDP_DST_BURST_16 on omap2+ and CSDP_DST_BURST_32 on
-+				 * omap1.
-+				 */
-+				omap_set_dma_dest_burst_mode(ep->lch,
-+							OMAP_DMA_DATA_BURST_4);
-+				/* ok - CSDP_DST_PACKED set for dmaengine */
-+				omap_set_dma_dest_data_pack(ep->lch, 1);
-+			}
- 		}
- 	}
--	if (status)
-+	if (d->dma) {
-+		ep->has_dma = 1;
-+	} else if (status) {
- 		ep->dma_channel = 0;
--	else {
-+	} else {
- 		ep->has_dma = 1;
- 		omap_disable_dma_irq(ep->lch, OMAP_DMA_BLOCK_IRQ);
- 
-@@ -777,6 +851,10 @@ static void dma_channel_claim(struct omap_ep *ep, unsigned channel)
- 	if (status)
- 		DBG("%s no dma channel: %d%s\n", ep->ep.name, status,
- 			restart ? " (restart)" : "");
-+	else if (d->dma)
-+		DBG("%s claimed %cxdma%d dmaengine %s%s\n", ep->ep.name,
-+			is_in ? 't' : 'r', ep->dma_channel - 1,
-+			dma_chan_name(d->dma), restart ? " (restart)" : "");
- 	else
- 		DBG("%s claimed %cxdma%d lch %d%s\n", ep->ep.name,
- 			is_in ? 't' : 'r',
-@@ -850,9 +928,13 @@ static void dma_channel_release(struct omap_ep *ep)
- 		if (req)
- 			finish_out_dma(ep, req, -ECONNRESET, 0);
- 	}
--	omap_free_dma(ep->lch);
-+	if (ep->dma)
-+		dma_release_channel(ep->dma);
-+	else
-+		omap_free_dma(ep->lch);
- 	ep->dma_channel = 0;
- 	ep->lch = -1;
-+	ep->dma = NULL;
- 	/* has_dma still set, till endpoint is fully quiesced */
- }
- 
-diff --git a/drivers/usb/gadget/udc/omap_udc.h b/drivers/usb/gadget/udc/omap_udc.h
-index 00f9e608e755..68857ae8d763 100644
---- a/drivers/usb/gadget/udc/omap_udc.h
-+++ b/drivers/usb/gadget/udc/omap_udc.h
-@@ -153,6 +153,8 @@ struct omap_ep {
- 	u8				dma_channel;
- 	u16				dma_counter;
- 	int				lch;
-+	struct dma_chan			*dma;
-+	dma_cookie_t			dma_cookie;
- 	struct omap_udc			*udc;
- 	struct timer_list		timer;
- };
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+--rS8CxjVDS/+yyDmU--
