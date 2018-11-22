@@ -2,112 +2,123 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B302C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55796C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:08:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 149FC20838
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:07:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vF25Zz6E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 149FC20838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 25A3720838
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:08:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25A3720838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438205AbeKWErl (ORCPT
+        id S2406545AbeKWEsb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 23:47:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730604AbeKWErl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 23:47:41 -0500
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EBC6213A2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 18:07:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542910032;
-        bh=NLEjE+Lb8hSmXXek1PLb2TbjWwn8mr/hUyikcOoFyD0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=vF25Zz6EGi9X0EuE0YKJERyiegnzoDzQwkqEnB3PTd2naTr+PRk5f1HxFYYXqp2Ad
-         7yoB13O2R/OervGwi1tDKIVCi19WSsz3W1GEzkDTpZfeuhULAyiiekcDIauGiqdFlC
-         9YSMS0VJ0TL32HhQ1AQXB3zvQPuMx2uk/ESkt5RQ=
-Received: by mail-wr1-f44.google.com with SMTP id v13so6610470wrw.5
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 10:07:12 -0800 (PST)
-X-Gm-Message-State: AA+aEWZVoQ4kxTUlSn1TZ6ljd5OV1/jBGPcNk8crvg3DKGcvIPVM7ctO
-        XV9GzF7HLCP5BW5dA0kTFtPyxL9WbhOP7Y9fKowlew==
-X-Google-Smtp-Source: AFSGD/X7FqXK+MTnhG+lNPL191xc97f/2aY84IZUO9SJQZCiQ2rXyZejXTHnH4w4n1pLEacteK6AUrywE6xGf+59BTk=
-X-Received: by 2002:adf:90af:: with SMTP id i44-v6mr10168899wri.77.1542910030740;
- Thu, 22 Nov 2018 10:07:10 -0800 (PST)
+        Thu, 22 Nov 2018 23:48:31 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55490 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729679AbeKWEsb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 23:48:31 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAMHwetF044765
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 13:08:01 -0500
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nwya8560m-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 13:08:01 -0500
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <muvic@linux.ibm.com>;
+        Thu, 22 Nov 2018 18:08:00 -0000
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 22 Nov 2018 18:07:56 -0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAMI7t1e11730984
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 22 Nov 2018 18:07:55 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 62628BE051;
+        Thu, 22 Nov 2018 18:07:55 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5CED9BE053;
+        Thu, 22 Nov 2018 18:07:52 +0000 (GMT)
+Received: from Murilos-MBP.home (unknown [9.85.169.113])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 22 Nov 2018 18:07:52 +0000 (GMT)
+Subject: Re: [PATCH 4.9 00/59] 4.9.139-stable review
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org,
+        Murilo Fossa Vicentini <muvic@linux.vnet.ibm.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+References: <20181121183508.262873520@linuxfoundation.org>
+ <b642656d-4b0d-cb68-f862-9d90bacc88cc@roeck-us.net>
+From:   Murilo Fossa Vicentini <muvic@linux.ibm.com>
+Date:   Thu, 22 Nov 2018 16:07:50 -0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <02bfc577-32a5-66be-64bf-d476b7d447d2@kernel.dk>
- <20181121063609.GA109082@gmail.com> <48e27a3a-2bb2-ff41-3512-8aeb3fd59e57@kernel.dk>
- <26eff539-7de7-784c-0c88-f1d30753299d@redhat.com> <7ea44458b90b4d41a08ba9012818d273@AcuMS.aculab.com>
- <CAHk-=wjLNuNpHRfuVTb6awstC9OOmSb3S8aP51ufep-Th4dXKw@mail.gmail.com>
-In-Reply-To: <CAHk-=wjLNuNpHRfuVTb6awstC9OOmSb3S8aP51ufep-Th4dXKw@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 22 Nov 2018 10:06:58 -0800
-X-Gmail-Original-Message-ID: <CALCETrW=hMZLUM_nPEEgUW9x9Bmhm2LZ6ZRDiRRguxVT=-_BWA@mail.gmail.com>
-Message-ID: <CALCETrW=hMZLUM_nPEEgUW9x9Bmhm2LZ6ZRDiRRguxVT=-_BWA@mail.gmail.com>
-Subject: Re: [PATCH] x86: only use ERMS for user copies for larger sizes
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Brian Gerst <brgerst@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, pabeni@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b642656d-4b0d-cb68-f862-9d90bacc88cc@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18112218-0004-0000-0000-000014B6DDE5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010101; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01121210; UDB=6.00581861; IPR=6.00901329;
+ MB=3.00024281; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-22 18:07:59
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112218-0005-0000-0000-000089994B27
+Message-Id: <bf811213-e1ad-d70e-cf9e-57735e359377@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-22_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=795 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811220161
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 9:53 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Thu, Nov 22, 2018 at 9:36 AM David Laight <David.Laight@aculab.com> wrote:
-> >
-> > The other problem with the ERMS copy is that it gets used
-> > for copy_to/from_io() - and the 'rep movsb' on uncached
-> > locations has to do byte copies.
->
-> Ugh. I thought we changed that *long* ago, because even our non-ERMS
-> copy is broken for PCI (it does overlapping stores for the small tail
-> cases).
->
-> But looking at "memcpy_{from,to}io()", I don't see x86 overriding it
-> with anything better.
->
-> I suspect nobody uses those functions for anything critical any more.
-> The fbcon people have their own copy functions, iirc.
->
-> But we definitely should fix this. *NONE* of the regular memcpy
-> functions actually work right for PCI space any more, and haven't for
-> a long time.
+On 22/11/18 14:33, Guenter Roeck wrote:
+> drivers/net/ethernet/ibm/ibmvnic.c: In function 'ibmvnic_xmit':
+> drivers/net/ethernet/ibm/ibmvnic.c:789:40: error: implicit declaration 
+> of function 'skb_vlan_tag_present'
+> 
+> Caused by 5f51bb855fa1 ("ibmvnic: fix accelerated VLAN handling").
+> Problem is missing include of linux/if_vlan.h, which was added upstream
+> with commit 6052d5e2a1961b ("ibmvnic: Insert header on VLAN tagged
+> received frame").
+> 
+> I have no idea if the offending patch fixes 6052d5e2a1961b, if both are
+> independent, if both are needed, or if none is needed.
+> Copying the authors of both patches.
 
-I'm not personally volunteering, but I suspect we can do much better
-than we do now:
+Both address different parts of the code within the same VLAN 
+functionality, patch 5f51bb855fa1 (or upstream e84b47941e15) is making a 
+change on the transmit side, and the patch I sent upstream 
+(6052d5e2a196) addresses an issue when the system firmware strips the 
+VLAN tag on the receive side.
 
- - The new MOVDIRI and MOVDIR64B instructions can do big writes to WC
-and UC memory.  I assume those would be safe to use in ...toio()
-functions, unless there are quirky devices out there that blow up if
-their MMIO space is written in 64-byte chunks.
+In the context of having proper VLAN support for the ibmvnic driver I 
+would say both are needed, although potentially there are other patches 
+needed for this functionality to work properly, for example upstream 
+commit da75e3b6a029 (ibmvnic: Account for VLAN tag in L2 Header 
+descriptor) and upstream commit 8dff66cc4195 (ibmvnic: Account for VLAN 
+tag in L2 Header descriptor).
 
- - MOVNTDQA can, I think, do 64-byte loads, but only from WC memory.
-For sufficiently large copies, it could plausibly be faster to create
-a WC alias and use MOVNTDQA than it is to copy in 8- for 16-byte
-chunks.  The i915 driver has a copy implementation using MOVNTDQA --
-maybe this should get promoted to something in arch/x86 called
-memcpy_from_wc().
+Best regards,
+Murilo Vicentini
 
---Andy
