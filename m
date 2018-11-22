@@ -2,194 +2,135 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D2E6C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A541C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D38B320684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:21:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E5B220684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:23:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kb7I+zM1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D38B320684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BzcH0a1G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E5B220684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437680AbeKWCBO (ORCPT
+        id S2437651AbeKWCDY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 21:01:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59528 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437666AbeKWCBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 21:01:14 -0500
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD08120684
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 15:21:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542900085;
-        bh=PrAXY+uvMxQxYzDIlCv87TRxKZFwsa+PgJBBd1NJU6k=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Kb7I+zM12qQonncwjrvDvyC7GCQwuDwh71KAGP65um8BjW21oAAFE5yHOIz+62neV
-         GPk9NLYSB6326G9tC+iNQ0mJ2amDqTtA/rUHqHJOQ7nXxImzNhU5tsbwNCclu++cQ9
-         hea55gXbgKLong7ftu7upGdRLqKqc/vus7++SV+U=
-Received: by mail-wm1-f51.google.com with SMTP id k198so9507572wmd.3
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 07:21:24 -0800 (PST)
-X-Gm-Message-State: AA+aEWYhfc2MjRMvp10NtR1yB4hk+O8QknDsWMJ0cinc9QjZthDkIf4Y
-        othqP6w5nnhZKmmS0u27Okq2vIE7Kq0eR4FmjBgNgA==
-X-Google-Smtp-Source: AFSGD/XfxMe9HPcOV+K9UgrWgR505Pt6dffhPVquS7r4WTvr7u1z/k023djUte3ft5gJtow1OG13S/ckBJTC9POm6Dk=
-X-Received: by 2002:a7b:ce11:: with SMTP id m17mr3561460wmc.74.1542900081182;
- Thu, 22 Nov 2018 07:21:21 -0800 (PST)
-MIME-Version: 1.0
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
- <20181119161917.GF13298@linux.intel.com> <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
- <20181120120442.GA22172@linux.intel.com> <20181122111253.GA31150@wind.enjellic.com>
-In-Reply-To: <20181122111253.GA31150@wind.enjellic.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 22 Nov 2018 07:21:08 -0800
-X-Gmail-Original-Message-ID: <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com>
-Message-ID: <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-To:     "Dr. Greg Wettstein" <greg@enjellic.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        haitao.huang@linux.intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 22 Nov 2018 21:03:24 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33140 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437635AbeKWCDY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 21:03:24 -0500
+Received: by mail-pf1-f196.google.com with SMTP id c123so1392833pfb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 07:23:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=e9QZYbEbVJk+LhLGR3uqFlqIoOsuAlQF7p66rYaEtfI=;
+        b=BzcH0a1GklJlwwrqPLnpi2GwBSYkdxi/r2+sSXLpC0To7HZts13Yqb1EY9CKAz5lD4
+         XAEtw9PR8RT/zCp8VvcTaOfgFziMQxRkGflw5fK9M0Kq0OzXVGv6c0WsI0N1O9GMQhwM
+         Lna+REsjHEi+R4o/k/zIHVNhr5pzjTpxgQinBoVi0z4dxCymAVaz5XxrOVZn4H/1v+Lk
+         pQuBtH6SXVyq0narU5DMHJ6yC1tK/7IrvfiMLgG6hUc7GOoXLiFBjJFm5DdnO81FZdrw
+         N+tVhAvBuAiXayRFMo0a/gmzQZQaomOSnSNlDq3KN0RyttZ496wYxsix91FNrzSI/yY7
+         3+tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=e9QZYbEbVJk+LhLGR3uqFlqIoOsuAlQF7p66rYaEtfI=;
+        b=KG7nktBImNf8CK6emu8kRYNxTFqoM5CxtSfMccjzd6SeKTAtVEwsQ5LNMdAiKz1e/f
+         111fe5ZJjYy8WGl0GZXtHsvuJ6lPWnGzYDQOFX5LPSuV5rBu4qL5mHA4uAAthzSVH7Rd
+         CBZph2kx7TTfBAH5zcY4IKnf+tRhwJM+Y3zWekPPVYYobGmZNiTf842gP74As2ZIb9Cb
+         7fcPQNZRPcudY0l7yR6IC0Ij00yXiY0KsbeTTzE8PQXf1trsuQHgkDHohh+tqvF5Rt0a
+         VoK9uZy7WvNFAzi7yM5ljns+RjOqDk3fE2/j9u0olKucekr5+19ZWJryYI0i0Q+cFmpz
+         RWlQ==
+X-Gm-Message-State: AA+aEWYxuok1het96IkUlWs8mHj42UoB4nqADftudb+oMOOBY9K1tVj7
+        KMiy8BmqRSVNYPZLPXMl+k0=
+X-Google-Smtp-Source: AFSGD/XtBZwZDGuV5XcefUogfXxACDPLuEuyRB5q1tMKAjKPieCxGk9Wr9DJ11WrmXcr2p/uQO0URw==
+X-Received: by 2002:a63:b30f:: with SMTP id i15mr10535015pgf.240.1542900215023;
+        Thu, 22 Nov 2018 07:23:35 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id x184-v6sm44394918pfx.42.2018.11.22.07.23.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 22 Nov 2018 07:23:34 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     daniel.lezcano@linaro.org, tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] clocksource/drivers/integrator-ap: add missing of_node_put()
+Date:   Thu, 22 Nov 2018 10:23:31 -0500
+Message-Id: <20181122152331.25739-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 3:12 AM Dr. Greg <greg@enjellic.com> wrote:
->
-> On Tue, Nov 20, 2018 at 02:04:42PM +0200, Jarkko Sakkinen wrote:
->
-> Good morning to everyone, Happy Thanksgiving to those who are
-> celebrating the holiday.
->
-> > On Mon, Nov 19, 2018 at 08:59:24AM -0800, Andy Lutomirski wrote:
-> > > The idea here is that, under normal circumstances, provisioning only
-> > > runs once, or at least only runs rarely.  So, rather than the SDK
-> > > running provisioning whenever it feels like doing so (which is the
-> > > current behavior, I imagine, although I haven't looked), there would
-> > > be a privileged program, perhaps a systemd unit that runs when needed,
-> > > that produces the key material needed for remote attestation, and
-> > > non-root users that need attestation would get the keying material
-> > > from the provisioning service.  And the provisioning service could
-> > > implement its own policy.  Ideally, the service wouldn't give the
-> > > sealed keys to users at all but would, instead, just provide the
-> > > entire attestation service over a UNIX socket, which would make
-> > > provisioning capabilities revocable.
-> > >
-> > > Does this make sense?
->
-> > Yes, it does for me at least now that you brought some context.
->
-> Let me see if I can add a bit of additional context to the above to
-> frame further discussion regarding two major needs of the driver
-> before it lands.
->
-> What Andy is describing is how the current system already works.  The
-> driver is at the root of a fairly complex eco-system of code,
-> cryptography and protocols that implement SGX functionality.  This
-> software stack is known as the SGX Platform SoftWare (PSW) or SGX
-> runtime.
->
-> The Intel provided runtime is implemented in C++ and, depending on how
-> you count it, clocks in at around 50+ KLOC.  All of this ends up as a
-> single 1.8 megabyte binary named aesm_service that links against 35
-> shared libraries and is run by systemd.
->
-> This binary implements the functionality needed to load, initialize,
-> run and attest enclaves.  It also implements communications with the
-> Intel provisioning and attestation services which is needed to
-> provision a private EPID key to the platform and to verify the status
-> of an enclave attestation quote from a remote platform.
->
-> In order to achieve the SGX/IAGO security model, a lot of this
-> functionality is implemented by choreographing exchanges between six
-> Intel supplied and signed enclaves.  Intel supplies source code to
-> these enclaves and understanding how all of this works requires an
-> understanding of that codebase as well.  To top if off there is also a
-> 50K hunk of signed Java bytecode that gets stuffed into the Management
-> Engine if you are interested in platform services.
->
+of_find_node_by_path() acquires a reference to the node
+returned by it and that reference needs to be dropped by its caller.
+integrator_ap_timer_init_of() doesn't do that, so fix it.
 
-It's very nice of Intel to supply source. Also, yikes, they wrote
-their ME blob in Java?
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/clocksource/timer-integrator-ap.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-> All of the above is what we wrote an independent implementation of, in
-> straight C, that is capable of linking against the MUSL C library with
-> only libelf and OpenSSL as dependencies.  We developed all of this to
-> support a reasonably sophisticated multi-enclave SGX security
-> application that implements modeling the runtime behavior of
-> applications running on the Linux kernel.  That application uses an
-> alternate enclave attestation and communications architecture that we
-> independently developed.
+diff --git a/drivers/clocksource/timer-integrator-ap.c b/drivers/clocksource/timer-integrator-ap.c
+index 76e526f58620..1f04069470bb 100644
+--- a/drivers/clocksource/timer-integrator-ap.c
++++ b/drivers/clocksource/timer-integrator-ap.c
+@@ -177,7 +177,7 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
+ {
+ 	const char *path;
+ 	void __iomem *base;
+-	int err;
++	int err,rc = 0;
+ 	int irq;
+ 	struct clk *clk;
+ 	unsigned long rate;
+@@ -210,26 +210,34 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
+ 				"arm,timer-secondary", &path);
+ 	if (err) {
+ 		pr_warn("Failed to read property\n");
+-		return err;
++		rc = err;
++		goto out_put_pri_node;
+ 	}
+ 
+ 
+ 	sec_node = of_find_node_by_path(path);
+ 
+-	if (node == pri_node)
++	if (node == pri_node){
+ 		/* The primary timer lacks IRQ, use as clocksource */
+-		return integrator_clocksource_init(rate, base);
++		rc = integrator_clocksource_init(rate, base);
++		goto out;
++	}
+ 
+ 	if (node == sec_node) {
+ 		/* The secondary timer will drive the clock event */
+ 		irq = irq_of_parse_and_map(node, 0);
+-		return integrator_clockevent_init(rate, base, irq);
++		rc = integrator_clockevent_init(rate, base, irq);
++		goto out;
+ 	}
+ 
+ 	pr_info("Timer @%p unused\n", base);
+ 	clk_disable_unprepare(clk);
++out:
++	of_node_put(sec_node);
++out_put_pri_node:
++	of_node_put(pri_node);
+ 
+-	return 0;
++	return rc;
+ }
+ 
+ TIMER_OF_DECLARE(integrator_ap_timer, "arm,integrator-timer",
+-- 
+2.17.0
 
-How do you generate your root of trust for attestation if you don't
-use Intel's service?  If I understand right, Intel's mechanism boils
-down to Intel possessing something that is functionally equivalent to
-a list of valid provisioning keys associated with genuine Intel chips.
-(It could be literal provisioning keys, or keying material from which
-the provisioning keys are derived, or even public keys for which the
-private parts are derived from the provisioning keys.  But all of this
-boils down to the CPU, via some enclaves, proving knowledge of the
-provisioning key that is available when MRSIGNER is Intel.
-
-I could imagine replacing this by running Intel's mechanism once to
-generate a new root of trust for your own mechanism, or even by buying
-a bunch of CPUs, determining their provisioning keys with MRSIGNER=Dr.
-Greg, and enrolling those.  But I don't see any way to bootstrap an
-attestation service on a CPU you've never physically possessed without
-running *something* with MRSIGNER=Intel.
-
-> Based on this experience, if the proposed driver lands in its current
-> state, Linux mainline will have, at least from a privacy perspective,
-> an inferior implementation of SGX.  In addition, we are not confident
-> the driver will be useful to anything other then server class hardware
-> and will be incapable of supporting virtually all of the existing SGX
-> hardware in the field.
-
-I'm a little bit puzzled by your privacy claims.  If an attacker
-controls the kernel, then the secrets in your enclave may still be
-secure, but you have very little privacy in terms of trying to prevent
-the attacker from tying your communication to your physical machine.
-
-> At a high level, addressing these issues is straight forward.  First,
-> the driver needs to support authorization equivalent to that which is
-> implemented in the current Intel Launch Enclave, ie. control over the
-> SGX_FLAGS_PROVISION_KEY attribute.
-
-I agree, hence my email :)
-
-> Secondly, the driver needs to drop
-> its prohibition against launch enclaves, ie. returning EINVAL when a
-> request is made to initialize enclaves which have the
-> SGX_FLAGS_EINITTOKEN_KEY attribute set.
->
-
-Can you explain your use case for a launch enclave?  The current
-driver won't allow you to supply an EINITTOKEN, so I'm not immediately
-seeing what you would do with a launch token.  If you really do need
-it, I suppose we could have 'unprivileged', 'provisioning', and
-'launch' nodes, and maybe even 'launch_and_provision', but that's
-starting to have some combinatorial issues.
