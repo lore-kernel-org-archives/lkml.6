@@ -2,203 +2,159 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAD7C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 481D6C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67DB02075B
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:29:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67DB02075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 07F1D2075B
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:33:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="SFMRT9Jq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07F1D2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391529AbeKVMGa (ORCPT
+        id S2391541AbeKVMKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 07:06:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48072 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391361AbeKVMFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 07:05:02 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E491B20892;
-        Thu, 22 Nov 2018 01:28:04 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.91)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1gPdml-0005MG-UN; Wed, 21 Nov 2018 20:28:03 -0500
-Message-Id: <20181122012803.843285508@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Wed, 21 Nov 2018 20:27:17 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [RFC][PATCH 09/14] function_graph: Move ftrace_graph_get_addr() to fgraph.c
-References: <20181122012708.491151844@goodmis.org>
+        Thu, 22 Nov 2018 07:10:03 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:46922 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732502AbeKVMKC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 07:10:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1542850384; x=1574386384;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=oLQT0GYVT35cr6JKZjSsUjHwzJHgOxZfW3U3a4fVL8I=;
+  b=SFMRT9Jqg1KARXF0raxttU6P2LH0jTV9t0IRnge2DeqIM4KGYkiRKKxP
+   CrL974++YNZ69wqvUhJbgz6rjbEbFjtCdwR8fMY70+k7H2cqP1uwkOjoj
+   3cdajy1m79aVYOm/MdXHSRySPVzcnSWkVA6LFAzu75Fge9CLB8uTEhHbC
+   LYnEKwmaczNokLiU3IQqTtr2R4/Nk6NJfhKRxB9uRRqGxT6n7sxZdLdmZ
+   RGDtN7Gmn33LG64t9ExquL5gt6i47ko9XDMMuqHLBBiQzBkcTzxfQFt4/
+   hSjIGix5qjoI6fLor4T/AR3BPfFl3V5Tb8iO7C/ovc4Bx8W8l5YeaUPjU
+   g==;
+X-IronPort-AV: E=Sophos;i="5.56,263,1539619200"; 
+   d="scan'208";a="94857728"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 22 Nov 2018 09:33:04 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP; 21 Nov 2018 17:15:48 -0800
+Received: from usa005005.ad.shared (HELO [10.86.56.42]) ([10.86.56.42])
+  by uls-op-cesaip02.wdc.com with ESMTP; 21 Nov 2018 17:33:03 -0800
+Subject: Re: [PATCH] dt-bindings: sifive: describe sifive-blocks versioning
+To:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        "paul@pwsan.com" <paul@pwsan.com>, Megan Wachs <megan@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Wesley Terpstra <wesley@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+References: <alpine.DEB.2.21.9999.1811211704520.16271@viisi.sifive.com>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <eda63b4a-4371-7d34-38a0-d7136dfc417f@wdc.com>
+Date:   Wed, 21 Nov 2018 17:33:02 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+In-Reply-To: <alpine.DEB.2.21.9999.1811211704520.16271@viisi.sifive.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On 11/21/18 5:07 PM, Paul Walmsley wrote:
+> 
+> For IP blocks that are generated from the public, open-source
+> sifive-blocks repository, describe the version numbering policy
+> that its maintainers intend to use, upon request from Rob
+> Herring <robh@kernel.org>.
+> 
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Palmer Dabbelt <palmer@sifive.com>
+> Cc: Megan Wachs <megan@sifive.com>
+> Cc: Wesley Terpstra <wesley@sifive.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> Signed-off-by: Paul Walmsley <paul@pwsan.com>
+> ---
+> 
+> Hi Rob, please let me know if this document works with your
+> requirements, or if some changes are needed.  - Paul
+> 
+>   .../sifive/sifive-blocks-ip-versioning.txt    | 38 +++++++++++++++++++
+>   1 file changed, 38 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt b/Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
+> new file mode 100644
+> index 000000000000..b899e5c6e00c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
 
-Move the function function_graph_get_addr() to fgraph.c, as the management
-of the curr_ret_stack is going to change, and all the accesses to ret_stack
-needs to be done in fgraph.c.
+It should be be under 
+Documentation/devicetree/bindings/riscv/sifive/sifive-blocks-ip-versioning.txt 
+?
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/fgraph.c                | 55 ++++++++++++++++++++++++++++
- kernel/trace/trace_functions_graph.c | 55 ----------------------------
- 2 files changed, 55 insertions(+), 55 deletions(-)
+> @@ -0,0 +1,38 @@
+> +DT compatible string versioning for SiFive open-source IP blocks
+> +
+> +This document describes the version specification for DT "compatible"
+> +strings for open-source SiFive IP blocks.  HDL for these IP blocks
+> +can be found in this public repository:
+> +
+> +https://github.com/sifive/sifive-blocks
+> +
+> +IP block-specific DT compatible strings are contained within the HDL,
+> +in the form "sifive,<ip-block-name><integer version number>".
+> +
+> +An example is "sifive,uart0" from:
+> +
+> +https://github.com/sifive/sifive-blocks/blob/master/src/main/scala/devices/uart/UART.scala#L43
+> +
+> +Until these IP blocks (or IP integration) support version
+> +autodiscovery, the maintainers of these IP blocks intend to increment
 
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index f3a89ecac671..c7d612897e33 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -233,6 +233,61 @@ unsigned long ftrace_return_to_handler(unsigned long frame_pointer)
- 	return ret;
- }
- 
-+/**
-+ * ftrace_graph_ret_addr - convert a potentially modified stack return address
-+ *			   to its original value
-+ *
-+ * This function can be called by stack unwinding code to convert a found stack
-+ * return address ('ret') to its original value, in case the function graph
-+ * tracer has modified it to be 'return_to_handler'.  If the address hasn't
-+ * been modified, the unchanged value of 'ret' is returned.
-+ *
-+ * 'idx' is a state variable which should be initialized by the caller to zero
-+ * before the first call.
-+ *
-+ * 'retp' is a pointer to the return address on the stack.  It's ignored if
-+ * the arch doesn't have HAVE_FUNCTION_GRAPH_RET_ADDR_PTR defined.
-+ */
-+#ifdef HAVE_FUNCTION_GRAPH_RET_ADDR_PTR
-+unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
-+				    unsigned long ret, unsigned long *retp)
-+{
-+	int index = task->curr_ret_stack;
-+	int i;
-+
-+	if (ret != (unsigned long)return_to_handler)
-+		return ret;
-+
-+	if (index < 0)
-+		return ret;
-+
-+	for (i = 0; i <= index; i++)
-+		if (task->ret_stack[i].retp == retp)
-+			return task->ret_stack[i].ret;
-+
-+	return ret;
-+}
-+#else /* !HAVE_FUNCTION_GRAPH_RET_ADDR_PTR */
-+unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
-+				    unsigned long ret, unsigned long *retp)
-+{
-+	int task_idx;
-+
-+	if (ret != (unsigned long)return_to_handler)
-+		return ret;
-+
-+	task_idx = task->curr_ret_stack;
-+
-+	if (!task->ret_stack || task_idx < *idx)
-+		return ret;
-+
-+	task_idx -= *idx;
-+	(*idx)++;
-+
-+	return task->ret_stack[task_idx].ret;
-+}
-+#endif /* HAVE_FUNCTION_GRAPH_RET_ADDR_PTR */
-+
- static struct ftrace_ops graph_ops = {
- 	.func			= ftrace_stub,
- 	.flags			= FTRACE_OPS_FL_RECURSION_SAFE |
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index 7c7fd13d2373..0f9cbc30645d 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -90,61 +90,6 @@ static void
- print_graph_duration(struct trace_array *tr, unsigned long long duration,
- 		     struct trace_seq *s, u32 flags);
- 
--/**
-- * ftrace_graph_ret_addr - convert a potentially modified stack return address
-- *			   to its original value
-- *
-- * This function can be called by stack unwinding code to convert a found stack
-- * return address ('ret') to its original value, in case the function graph
-- * tracer has modified it to be 'return_to_handler'.  If the address hasn't
-- * been modified, the unchanged value of 'ret' is returned.
-- *
-- * 'idx' is a state variable which should be initialized by the caller to zero
-- * before the first call.
-- *
-- * 'retp' is a pointer to the return address on the stack.  It's ignored if
-- * the arch doesn't have HAVE_FUNCTION_GRAPH_RET_ADDR_PTR defined.
-- */
--#ifdef HAVE_FUNCTION_GRAPH_RET_ADDR_PTR
--unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
--				    unsigned long ret, unsigned long *retp)
--{
--	int index = task->curr_ret_stack;
--	int i;
--
--	if (ret != (unsigned long)return_to_handler)
--		return ret;
--
--	if (index < 0)
--		return ret;
--
--	for (i = 0; i <= index; i++)
--		if (task->ret_stack[i].retp == retp)
--			return task->ret_stack[i].ret;
--
--	return ret;
--}
--#else /* !HAVE_FUNCTION_GRAPH_RET_ADDR_PTR */
--unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
--				    unsigned long ret, unsigned long *retp)
--{
--	int task_idx;
--
--	if (ret != (unsigned long)return_to_handler)
--		return ret;
--
--	task_idx = task->curr_ret_stack;
--
--	if (!task->ret_stack || task_idx < *idx)
--		return ret;
--
--	task_idx -= *idx;
--	(*idx)++;
--
--	return task->ret_stack[task_idx].ret;
--}
--#endif /* HAVE_FUNCTION_GRAPH_RET_ADDR_PTR */
--
- int __trace_graph_entry(struct trace_array *tr,
- 				struct ftrace_graph_ent *trace,
- 				unsigned long flags,
--- 
-2.19.1
+/s/autodiscovery/auto discovery
 
+> +the suffixed number in the compatible string whenever the software
+> +interface to these IP blocks changes, or when the functionality of the
+> +underlying IP blocks changes in a way that software should be aware of.
+> +
+> +Driver developers can use compatible string "match" values such as
+> +"sifive,uart0" to indicate that their driver is compatible with the
+> +register interface and functionality associated with the relevant
+> +upstream sifive-blocks commits.  It is expected that most drivers will
+> +match on these IP block-specific compatible strings.
+> +
+> +DT data authors, when writing data for a particular SoC, should
+> +continue to specify an SoC-specific compatible string value, such as
+> +"sifive,fu540-c000-uart".  This way, if SoC-specific
+> +integration-specific bug fixes or workarounds are needed, the kernel
+> +or other system software can match on this string to apply them.  The
+> +IP block-specific compatible string (such as "sifive,uart0") should
+> +then be specified as a subsequent value.
+> +
+> +An example of this style:
+> +
+> +    compatible = "sifive,fu540-c000-uart", "sifive,uart0";
+> 
 
+Just for the sake of completion, should this document also specify what 
+should be the style of any possible closed IP as well?
+
+Regards,
+Atish
