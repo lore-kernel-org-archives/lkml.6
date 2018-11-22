@@ -2,201 +2,177 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,GUARANTEED_100_PERCENT,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F7AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEABC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1AB2206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:17:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A68C220838
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:18:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PgTt5Rsy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1AB2206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="JA+idckZ";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="IfTiOmvB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A68C220838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438228AbeKWE6A (ORCPT
+        id S2438240AbeKWE7V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 23:58:00 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36934 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727787AbeKWE57 (ORCPT
+        Thu, 22 Nov 2018 23:59:21 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:57918 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727787AbeKWE7V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 23:57:59 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p2-v6so9921875wmc.2;
-        Thu, 22 Nov 2018 10:17:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9NcZ1mQmJqAhwC9FiCdmn0qreBttSANTFtMFgxlu92Y=;
-        b=PgTt5RsywP7maaaH+f0uWZoOgNjpYXE2L3oNvmyYl2w5yxav7MiiEfbaKsn+TQgGtx
-         2oU/i6mfJerC1a4+aoKyy4Qymxzi+HwqC2CmeGxeTkQJla02IaH2Ae6lytk1XJAlnsm2
-         1soGbITFjszVgMi1e1symNrxIm1l7gz7VnUuzRI1JZK/TUvSI9nb50PfP7AcQ/8C34X6
-         /s7i45cPQ7MmlXX2MVHmSLtXhT0aYGkHqkhM6Ilqq8kmwtrqppp3o+szxseYGwTV4RxB
-         ocOHHZp+pmapYts2WCyswAr9bazFYKQP2xUFDJ84eM748FKv6TJo1zZBDv32yEeI3H6Z
-         Mbbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9NcZ1mQmJqAhwC9FiCdmn0qreBttSANTFtMFgxlu92Y=;
-        b=XtUp3oGJge05KXcsWsgacqZ4HlY6cbdwExPZoc6ofObPKH79Xoos2CacWU+rdmCkEy
-         wo4hYsgaJZzfPrBYT3Xh8zeB3WL9mdonvkf5G6sLMnBUW16RuZGCRQXI8sWEJpq3R7Rt
-         Qgq5ZIjjUhDUoKrx87w6OTBumQqf/m0L+/gkvJX6jmaJxEWhwmB/l2z9MMex5tu8JaM8
-         pQasx2MQOePZIqTvv1p6lfVRAI3plNcPrhDhG6if+QAothp0I1hLTz9ZDv7WbpVJkrNr
-         sh9YHxd0difeJskFUIwTegK9gxIUFYfOChX8V+dyDHCso9iGFZ80VoeWLjPx//HRMK38
-         Q5Gw==
-X-Gm-Message-State: AA+aEWaLPnzoDc+ld3iEpOrB2jjFtowPlXcSOCFF7w95a4k+WHu9rh/H
-        g/BSgeSHdxooIxqaehsaTOc=
-X-Google-Smtp-Source: AFSGD/XzHzfvjADgXP9pbzD47boxeht7VkseQkn6rfmFJqJfM+Sh5if9VxibSQV92gADJb+vziNVag==
-X-Received: by 2002:a1c:e1d5:: with SMTP id y204mr10518668wmg.65.1542910646666;
-        Thu, 22 Nov 2018 10:17:26 -0800 (PST)
-Received: from ?IPv6:2003:ea:8bcf:e300:8cae:5d18:de41:45b6? (p200300EA8BCFE3008CAE5D18DE4145B6.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:8cae:5d18:de41:45b6])
-        by smtp.googlemail.com with ESMTPSA id w8sm15707544wrv.7.2018.11.22.10.17.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 10:17:25 -0800 (PST)
-Subject: Re: Issue with RTL8111 NIC after upgrade to kernel 4.19
-To:     Marc Dionne <marc.c.dionne@gmail.com>
-Cc:     andrew@lunn.ch, norbert.jurkeit@web.de, nic_swsd@realtek.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        David Miller <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        michael.wiktowy@gmail.com, jcline@redhat.com
-References: <d0a53002-bf14-6cd9-ab0f-5d3f9aa395ce@web.de>
- <38dad61b-bc7f-7038-6d1b-f5c4afe3841c@gmail.com>
- <20181121202034.GA10697@lunn.ch>
- <eda84d0b-2d9f-07ae-34a1-767bc5200964@gmail.com>
- <6aeba3d6-2292-1221-9be7-1c0bb7cbc203@gmail.com>
- <7d6362e1-e197-d338-d6b0-9036c3802e2c@gmail.com>
- <CAB9dFdvw8QqzaVYV3bOMGtACyvqWnE9uy96m1tu2C+jjzQR9_Q@mail.gmail.com>
- <a995b6f6-c5b1-877c-581c-39c0897e7703@gmail.com>
- <CAB9dFdsq7EBNm1Y1nK2tqOvg5ikyTm4ZGTQddsNAp1BaA0J_XQ@mail.gmail.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <d38a9ed9-b801-5622-1d3a-1b9620ed9d8d@gmail.com>
-Date:   Thu, 22 Nov 2018 19:17:19 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <CAB9dFdsq7EBNm1Y1nK2tqOvg5ikyTm4ZGTQddsNAp1BaA0J_XQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Thu, 22 Nov 2018 23:59:21 -0500
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAMIEpD3020902;
+        Thu, 22 Nov 2018 10:18:21 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=ciKWqANtvDn/xvFa5tLyLxTlXpoZcJY8qNkd+iHcNIQ=;
+ b=JA+idckZhUG0sxX1wkikg8jy5E6vthCG57rYA+hiNTT91QVjpyL//eWFNj85Bx8EJPLL
+ zmV6owvN6/zCcoNHCCY1AijaZusX+iF9BfqX0/zcgVe1U9msUmg58xR1GhAlrl9Htc1w
+ mUn3JDLkffIUdB77Pz2wzosNN6VMlSLtXPA= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2nx0g005vx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 22 Nov 2018 10:18:21 -0800
+Received: from prn-mbx06.TheFacebook.com (2620:10d:c081:6::20) by
+ prn-hub05.TheFacebook.com (2620:10d:c081:35::129) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Thu, 22 Nov 2018 10:18:20 -0800
+Received: from prn-hub05.TheFacebook.com (2620:10d:c081:35::129) by
+ prn-mbx06.TheFacebook.com (2620:10d:c081:6::20) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Thu, 22 Nov 2018 10:18:20 -0800
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.29) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Thu, 22 Nov 2018 10:18:20 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ciKWqANtvDn/xvFa5tLyLxTlXpoZcJY8qNkd+iHcNIQ=;
+ b=IfTiOmvBImGi2igcOvi9/QX7faenc3XyXjcg59DgE01iLqYXUnKUOG71bGVf4w+3phHMY8FAlfCv8eNlBJ9/q0MxkOTN4hOfhN36OOQ04Pdhm+08EmhW+du6AyQByIL0WFTY7MYU3c6R0pN67/yO/Sea+lNMlnSh2mqNjTIZNdk=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.2.19) by
+ MWHPR15MB1134.namprd15.prod.outlook.com (10.175.2.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.23; Thu, 22 Nov 2018 18:18:16 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::6d1e:3274:a367:a55c]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::6d1e:3274:a367:a55c%3]) with mapi id 15.20.1361.016; Thu, 22 Nov 2018
+ 18:18:16 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     "Wangnan (F)" <wangnan0@huawei.com>
+CC:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: perf tools: remove option --tail-synthesize ? 
+Thread-Topic: perf tools: remove option --tail-synthesize ? 
+Thread-Index: AQHUgW4siyZx02jtZEikk8vk0I6CCqVaNLEAgADT34CAARQMgA==
+Date:   Thu, 22 Nov 2018 18:18:15 +0000
+Message-ID: <65755121-AC25-424E-8218-A755A084A1AF@fb.com>
+References: <89AC26A9-5A18-4608-8889-9C3C9C1C69D3@fb.com>
+ <20181121131156.GG6248@kernel.org>
+ <da87afd6-c291-2049-5e0b-a02512122806@huawei.com>
+In-Reply-To: <da87afd6-c291-2049-5e0b-a02512122806@huawei.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.101.1)
+x-originating-ip: [2620:10d:c090:180::1:34c]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR15MB1134;20:sHK/6J/u1nUORTnP1/CNGi5RVGPj4MEzyIV90MyPkeEvbLrMx1wr/2P8JcTzproDCLFwI8Bu2uLPmfQAsZdD2vcZZliYFH9QznsQUblXhL1ArZqFn052ryL/U0ra6hkb0j67FRrok/+Cb+WSt5Pgc6JP054rX/igKMBHHPff2dE=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: dbb3b891-1831-4813-1f06-08d650a6df56
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1134;
+x-ms-traffictypediagnostic: MWHPR15MB1134:
+x-microsoft-antispam-prvs: <MWHPR15MB1134A5E318DD6B653C8E8EC9B3DB0@MWHPR15MB1134.namprd15.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(93006095)(93001095)(10201501046)(3002001)(3231442)(11241501184)(944501410)(52105112)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:MWHPR15MB1134;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1134;
+x-forefront-prvs: 0864A36BBF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(346002)(396003)(366004)(39860400002)(189003)(199004)(11346002)(36756003)(6116002)(82746002)(446003)(57306001)(6916009)(6512007)(106356001)(33656002)(5660300001)(71190400001)(14454004)(2900100001)(2616005)(2906002)(53546011)(476003)(6436002)(46003)(102836004)(4326008)(8936002)(478600001)(14444005)(50226002)(256004)(8676002)(7736002)(81166006)(105586002)(97736004)(486006)(6246003)(6506007)(53936002)(81156014)(305945005)(229853002)(4743002)(316002)(71200400001)(99286004)(6486002)(186003)(76176011)(68736007)(54906003)(25786009)(83716004)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1134;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: TH4xMCtX0+z224K3sUNNYtTE+l+0rF2ChesLN1yAS1LTd+GQG9LgWasq0M9nAlK35Yd6f9Z6oIgdnLdhjovUXpavLxOBbjSCPslxJuOK/+TQyNGSTfcHdRX3F1uCsxkEfu6MRsSV8utICezpjxgpOHRqkaU8AI5K0TbTgGhKFcEX1Y1RC5v6UYdlWIyA+wk2lPndC+t/4T3WEhkO+FQN/lRUauY/0iNIa04MKCw66awZZ86Yw1NFhPLGwcJmG2jYpl/0Ry1x2L1hXXBqLG34xyo+z4kLwOwnS44jjNl0q15dF8BG8MbOTV7mhD450aBACh1so7z5yrBAJHtdclxQI61/QY5alImrvuCV6wooTjI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <E8FC0D040B117B468BD8945E88A88351@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: dbb3b891-1831-4813-1f06-08d650a6df56
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Nov 2018 18:18:15.9541
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1134
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-22_11:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22.11.2018 00:13, Marc Dionne wrote:
-> On Wed, Nov 21, 2018 at 6:28 PM Heiner Kallweit <hkallweit1@gmail.com> wrote:
->>
->> On 21.11.2018 22:53, Marc Dionne wrote:
->>> On Wed, Nov 21, 2018 at 4:52 PM Heiner Kallweit <hkallweit1@gmail.com> wrote:
->>>>
->>>> On 21.11.2018 21:49, Heiner Kallweit wrote:
->>>>> On 21.11.2018 21:32, Heiner Kallweit wrote:
->>>>>> On 21.11.2018 21:20, Andrew Lunn wrote:
->>>>>>>> request_module() is supposed to be synchronous, however after some
->>>>>>>> reading this may not be 100% guaranteed. Maybe the module init
->>>>>>>> function on some systems isn't finished yet when request_module()
->>>>>>>> returns. As a result the genphy driver may be used instead of
->>>>>>>> the PHY version-specific driver.
->>>>>>>
->>>>>>> Hi Heiner
->>>>>>>
->>>>>>> That would be true for all PHYs i think. We would of noticed this
->>>>>>> problem with other systems using other PHY drivers.
->>>>>>>
->>>>>>>     Andrew
->>>>>>>
->>>>>> It could be a timing issue affecting certain systems only. At least
->>>>>> for now I don't have a good explanation why loading the module via
->>>>>> request_module() and loading it upfront manually makes a difference.
->>>>>>
->>>>>> One affected user just reported the PHY to be a RTL8211B. This is
->>>>>> what I expected, because this PHY crashes when writing to the MMD
->>>>>> registers (the MMD registers are used otherwise by this PHY).
->>>>>> See also commit 0231b1a074c6 ("net: phy: realtek: Use the dummy
->>>>>> stubs for MMD register access for rtl8211b").
->>>>>>
->>>>>> Let's see whether the other affected systems use the same PHY
->>>>>> version.
->>>>>>
->>>>> Next report is also about a RTL8211B and as I assumed:
->>>>> - W/o manually loading the realtek module the genphy driver is used
->>>>>   and network fails.
->>>>> - W/ manually loading the realtek module the proper RTL8211B PHY
->>>>>   driver is used and network works.
->>>>>
->>>>> So it seems that even after request_module() the PHY driver isn't
->>>>> yet available when device and driver are matched.
->>>>>
->>>>> If further reports support this (pre-)analysis, then indeed it
->>>>> seems to be a timing issue and a proper fix most likely is
->>>>> difficult. As a workaround I could imagine to add a delay loop
->>>>> after request_module() checking for a Realtek PHY driver via
->>>>> driver_find(). When adding one small delay after this we should
->>>>> be sufficiently sure that all Realtek PHY drivers are registered.
->>>>>
->>>> Uups, no. We talk about phylib here, not about the r8169 driver.
->>>> So we need a different solution.
->>>>
->>>>>> Heiner
->>>
->>> Thanks for the explanation, better than my crude attempt at
->>> understanding what was going on.
->>>
->>> If you have any proposed fixes or diagnostic patches based on current
->>> mainline I can quickly compile and test them here on an affected
->>> system.  It doesn't fail consistently for me (as others have
->>> reported), but that could be because it depends on the timing.
->>>
->>
->> Thanks for the offer. Can you try the following diagnostic patch
->> and check whether it helps?
->>
->> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
->> index 55202a0ac..84f417f8b 100644
->> --- a/drivers/net/phy/phy_device.c
->> +++ b/drivers/net/phy/phy_device.c
->> @@ -607,6 +607,8 @@ struct phy_device *phy_device_create(struct mii_bus *bus, int addr, int phy_id,
->>          */
->>         request_module(MDIO_MODULE_PREFIX MDIO_ID_FMT, MDIO_ID_ARGS(phy_id));
->>
->> +       msleep(1000);
->> +
->>         device_initialize(&mdiodev->dev);
->>
->>         return dev;
-> 
-> I was not able to get it to fail with that extra delay; hard to be
-> 100% sure but the network starts even when switching over from the
-> distro kernel after a boot where network failed to start.
-> 
-Thanks a lot for testing. Could you please test also the following
-as an alternative to the delay?
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 55202a0ac..aeccb2323 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -2254,6 +2254,7 @@ int phy_driver_register(struct phy_driver *new_driver, struct module *owner)
-        new_driver->mdiodrv.driver.probe = phy_probe;
-        new_driver->mdiodrv.driver.remove = phy_remove;
-        new_driver->mdiodrv.driver.owner = owner;
-+       new_driver->mdiodrv.driver.probe_type = PROBE_FORCE_SYNCHRONOUS;
 
-        retval = driver_register(&new_driver->mdiodrv.driver);
-        if (retval) {
+> On Nov 21, 2018, at 5:50 PM, Wangnan (F) <wangnan0@huawei.com> wrote:
+>=20
+>=20
+>=20
+> On 2018/11/21 21:11, Arnaldo Carvalho de Melo wrote:
+>> Em Wed, Nov 21, 2018 at 07:45:28AM +0000, Song Liu escreveu:
+>>> Hi,
+>>>=20
+>>> I found perf-record --tail-synthesize without --overwrite breaks symbol=
+s
+>>> for perf-script, perf-report, etc. For example:
+>>>=20
+>>> [root@]# ~/perf record -ag --tail-synthesize -- sleep 1
+>>> [ perf record: Woken up 1 times to write data ]
+>>> [ perf record: Captured and wrote 1.129 MB perf.data (3531 samples) ]
+>>> [root@]# ~/perf script | head
+>>> swapper     0 [000] 1250675.051971:          1 cycles:ppp:
+>>>        ffffffff81009e15 [unknown] ([unknown])
+>>>        ffffffff81196b19 [unknown] ([unknown])
+>>>        ffffffff81196579 [unknown] ([unknown])
+>>>        ffffffff81110ca7 [unknown] ([unknown])
+>>>        ffffffff81a01f4a [unknown] ([unknown])
+>>>        ffffffff81a017bf [unknown] ([unknown])
+>>>        ffffffff8180e17a [unknown] ([unknown])
+>>>=20
+>>> perf-record with --overwrite does NOT have this issue.
+>>>=20
+>>> After digging into this, I found this issue is introduced by commit
+>>> a73e24d240bc136619d382b1268f34d75c9d25ce.
+>>>=20
+>>> Reverting this commit does fix this issue. However, on a second thought=
+,
+>>> I feel it is probably better just drop --tail-synthesize, as it doesn't
+>>> make much sense without --overwrite. All we need is to do tail_synthesi=
+ze
+>>> when --overwrite is set.
+>>>=20
+>=20
+> Some cases we use --overwrite without --tail-synthesize. How about settin=
+g
+> --tail-synthesize when selecting --overwrite by default, throw a warning
+> when --overwrite is not set and leave a --no-tail-synthesize option?
+>=20
 
-> There's a side issue that network startup is taking a full minute
-> longer than it should, but that's possibly unrelated.
-> 
-> Marc
-> 
-Thanks, Heiner
+--overwrite implies --tail-synthesize. So with --overwrite, it is always
+tail-synthesize. Do we really need --overwrite and --no-tail-synthesize?=20
+If not, we can probably just drop --tail-synthesize (or mark it as=20
+deprecated)?=20
+
+Thanks,
+Song
