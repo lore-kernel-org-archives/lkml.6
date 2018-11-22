@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C12EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C22C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:15:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB022204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:15:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1628C204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:15:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="g+4PBeaQ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="g+4PBeaQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB022204FD
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IkVCKDv8";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RXLmEeLu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1628C204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436691AbeKVWyj (ORCPT
+        id S2436708AbeKVWyp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 17:54:39 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:59462 "EHLO
+        Thu, 22 Nov 2018 17:54:45 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59616 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436604AbeKVWyi (ORCPT
+        with ESMTP id S2436692AbeKVWyo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 17:54:38 -0500
+        Thu, 22 Nov 2018 17:54:44 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DB16C60791; Thu, 22 Nov 2018 12:15:29 +0000 (UTC)
+        id 78D1460B13; Thu, 22 Nov 2018 12:15:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542888929;
-        bh=yoiGZNkf2VEQwlTtZsSeCOg4juHyQik5+O2IiPM16E4=;
+        s=default; t=1542888935;
+        bh=ummrbkW7gK9wkni6KWJibZdGIJj+teUd32V7Q3uG1Es=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g+4PBeaQNNL3lgzPYgT5SaZQvUpRMJjcYKvSQBF4JFwpfkrldk/K30jy5n7iG2YuV
-         iSEAc/qgHN7hy90D1Lb+rsXzH+dG6mwcvKItB/qSbVkJ4WR/MzWZqlJwihULwVY/Sp
-         lI7sBRQffWuFmlrVN2c5yN1traxYdCwJMVXgzLwA=
+        b=IkVCKDv8Ym7eQIy6FumTbFYddoBG7GsevQWiSwxgl1YPDHw4To/fvfndPg84YLrlN
+         WIqQpvVB2J9V2IvFnV31VEUDRFFDSGZ+Kj/tKtZ3Hl7qdS9q64DptMSbb6jIZWziU8
+         bdThXBc5KWKrBH9QVnqo+yKqY3pW9NlKVZfmRvTA=
 Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: bgodavar@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 85D7460B11;
-        Thu, 22 Nov 2018 12:15:26 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0D0D460BDE;
+        Thu, 22 Nov 2018 12:15:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542888929;
-        bh=yoiGZNkf2VEQwlTtZsSeCOg4juHyQik5+O2IiPM16E4=;
+        s=default; t=1542888933;
+        bh=ummrbkW7gK9wkni6KWJibZdGIJj+teUd32V7Q3uG1Es=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g+4PBeaQNNL3lgzPYgT5SaZQvUpRMJjcYKvSQBF4JFwpfkrldk/K30jy5n7iG2YuV
-         iSEAc/qgHN7hy90D1Lb+rsXzH+dG6mwcvKItB/qSbVkJ4WR/MzWZqlJwihULwVY/Sp
-         lI7sBRQffWuFmlrVN2c5yN1traxYdCwJMVXgzLwA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 85D7460B11
+        b=RXLmEeLu5sPc5eu7DehX5LVbDMj5vhwNqdjgq6ZpiRi5SQMBk7uh13iJcysfqeI2p
+         CrA1dKX0y0Bxa7XedMHRu51W258VDlwF0je8osNherMqz0Owdf7vaK9UJOfQXqBbgv
+         XzZ7glDAC/sIu7KbIeCKn5O5FkFN09TPYLwSTUNQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0D0D460BDE
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
 From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
@@ -58,9 +58,9 @@ Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
         linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
         linux-arm-msm@vger.kernel.org,
         Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Subject: [PATCH v2 2/3] Bluetooth: hci_qca: Deassert RTS while baudrate change command
-Date:   Thu, 22 Nov 2018 17:45:11 +0530
-Message-Id: <20181122121512.13136-3-bgodavar@codeaurora.org>
+Subject: [PATCH v2 3/3] Bluetooth: hci_qca: Fix frame reassembly errors for wcn3990
+Date:   Thu, 22 Nov 2018 17:45:12 +0530
+Message-Id: <20181122121512.13136-4-bgodavar@codeaurora.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181122121512.13136-1-bgodavar@codeaurora.org>
 References: <20181122121512.13136-1-bgodavar@codeaurora.org>
@@ -71,95 +71,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch will help to stop frame reassembly errors while changing
-the baudrate. This is because host send a change baudrate request
-command to the chip with 115200 bps, Whereas chip will change their
-UART clocks to the enable for new baudrate and sends the response
-for the change request command with newer baudrate, On host side
-we are still operating in 115200 bps which results of reading garbage
-data. Here we are pulling RTS line, so that chip we will wait to send data
-to host until host change its baudrate.
+During initalization of wcn3990, we observed UART is reading some
+stray bytes on the Rx line. This is logging Frame reassembly errors
+on the serial console. This could be because of tristate of Tx line
+of wcn3990 during boot up.
+
+[  176.929612] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
+[  176.945734] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
+[  176.953298] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
+[  177.010660] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
+[  177.067633] Bluetooth: hci_qca.c:qca_recv() hci0: Frame reassembly failed (-84)
+
+Now we enable a flag during bootup to stop executing proto receive
+function and clear it back once the initialization is done.
 
 Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
 Tested-by: Matthias Kaehlcke <mka@chromium.org>
 ---
 v2:
- * updated commit text and comments.
-v1:
+ * Updated commit text & comments.
+v1: 
  * initial patch
 ---
- drivers/bluetooth/hci_qca.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ drivers/bluetooth/hci_qca.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
 diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index f5dd323c1967..ed905ea1c58a 100644
+index ed905ea1c58a..2f3d9e16ba5a 100644
 --- a/drivers/bluetooth/hci_qca.c
 +++ b/drivers/bluetooth/hci_qca.c
-@@ -963,7 +963,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
- 	struct hci_uart *hu = hci_get_drvdata(hdev);
- 	struct qca_data *qca = hu->priv;
- 	struct sk_buff *skb;
--	struct qca_serdev *qcadev;
- 	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
+@@ -56,6 +56,7 @@
  
- 	if (baudrate > QCA_BAUDRATE_3200000)
-@@ -977,13 +976,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
- 		return -ENOMEM;
- 	}
+ /* Controller states */
+ #define STATE_IN_BAND_SLEEP_ENABLED	1
++#define STATE_DISCARD_RX		2
  
--	/* Disabling hardware flow control is mandatory while
--	 * sending change baudrate request to wcn3990 SoC.
--	 */
--	qcadev = serdev_device_get_drvdata(hu->serdev);
--	if (qcadev->btsoc_type == QCA_WCN3990)
--		hci_uart_set_flow_control(hu, true);
--
- 	/* Assign commands to change baudrate and packet type. */
- 	skb_put_data(skb, cmd, sizeof(cmd));
- 	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
-@@ -999,9 +991,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
- 	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
- 	set_current_state(TASK_RUNNING);
+ #define IBS_WAKE_RETRANS_TIMEOUT_MS	100
+ #define IBS_TX_IDLE_TIMEOUT_MS		2000
+@@ -511,6 +512,7 @@ static int qca_open(struct hci_uart *hu)
+ 		} else {
+ 			hu->init_speed = qcadev->init_speed;
+ 			hu->oper_speed = qcadev->oper_speed;
++			set_bit(STATE_DISCARD_RX, &qca->flags);
+ 			ret = qca_power_setup(hu, true);
+ 			if (ret) {
+ 				destroy_workqueue(qca->workqueue);
+@@ -903,6 +905,13 @@ static int qca_recv(struct hci_uart *hu, const void *data, int count)
+ 	if (!test_bit(HCI_UART_REGISTERED, &hu->flags))
+ 		return -EUNATCH;
  
--	if (qcadev->btsoc_type == QCA_WCN3990)
--		hci_uart_set_flow_control(hu, false);
--
- 	return 0;
- }
- 
-@@ -1086,6 +1075,7 @@ static int qca_check_speeds(struct hci_uart *hu)
- static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
- {
- 	unsigned int speed, qca_baudrate;
-+	struct qca_serdev *qcadev;
- 	int ret;
- 
- 	if (speed_type == QCA_INIT_SPEED) {
-@@ -1097,6 +1087,14 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
- 		if (!speed)
- 			return 0;
- 
-+		/* Deassert RTS while changing the baudrate of chip and host.
-+		 * This will stop chip to transmit it response with an newer
-+		 * baudrate until we change the baudarte.
-+		 */
-+		qcadev = serdev_device_get_drvdata(hu->serdev);
-+		if (qcadev->btsoc_type == QCA_WCN3990)
-+			serdev_device_set_rts(hu->serdev, false);
++	/* We discard Rx data received while device is in booting
++	 * stage, This is because of BT chip Tx line is in tristate.
++	 * Due to this we read some garbage data on UART Rx.
++	 */
++	if (test_bit(STATE_DISCARD_RX, &qca->flags))
++		return 0;
 +
- 		qca_baudrate = qca_get_baudrate_value(speed);
- 		bt_dev_dbg(hu->hdev, "Set UART speed to %d", speed);
- 		ret = qca_set_baudrate(hu->hdev, qca_baudrate);
-@@ -1104,6 +1102,9 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+ 	qca->rx_skb = h4_recv_buf(hu->hdev, qca->rx_skb, data, count,
+ 				  qca_recv_pkts, ARRAY_SIZE(qca_recv_pkts));
+ 	if (IS_ERR(qca->rx_skb)) {
+@@ -1193,6 +1202,7 @@ static int qca_setup(struct hci_uart *hu)
+ 		if (ret)
  			return ret;
  
- 		host_set_baudrate(hu, speed);
-+
-+		if (qcadev->btsoc_type == QCA_WCN3990)
-+			serdev_device_set_rts(hu->serdev, true);
- 	}
++		clear_bit(STATE_DISCARD_RX, &qca->flags);
+ 		ret = qca_read_soc_version(hdev, &soc_ver);
+ 		if (ret)
+ 			return ret;
+@@ -1269,6 +1279,14 @@ static const struct qca_vreg_data qca_soc_data = {
  
- 	return 0;
+ static void qca_power_shutdown(struct hci_uart *hu)
+ {
++	struct qca_data *qca = hu->priv;
++
++	/* From this point we go into power off state,
++	 * disable IBS and discard all the queued data.
++	 */
++	clear_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
++	set_bit(STATE_DISCARD_RX, &qca->flags);
++	qca_flush(hu);
+ 	host_set_baudrate(hu, 2400);
+ 	qca_send_power_pulse(hu, QCA_WCN3990_POWEROFF_PULSE);
+ 	qca_power_setup(hu, false);
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
