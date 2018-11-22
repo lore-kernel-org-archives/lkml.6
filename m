@@ -2,113 +2,138 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F01C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E71C04EBB
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3D9220820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:23:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DAA42081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:23:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPv5DUjA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3D9220820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MZPqD6Gp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DAA42081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390743AbeKWACd (ORCPT
+        id S2436801AbeKWADG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:02:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44786 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729623AbeKWACd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:02:33 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F919206B2;
-        Thu, 22 Nov 2018 13:23:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542892993;
-        bh=wWElmhBGNcg4k0S0jwGc61FcO0Npxo5y14inY/loU1Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GPv5DUjAwlJESRM/H4dxSa7R4AcZVzC5ON+JkqJT7FBw/ZNkb6gwy0TKnfS90hqos
-         8eKiqu4BLT8sFkQ6X+U3CCDC9IlCZjGxR6WYQkyTpYNKNHN4xaGKfMD9ed0op3maua
-         1vyr0gXnFoTe3X92FxHC/sWHBiFy0T9Hhj6h+Z5I=
-Date:   Thu, 22 Nov 2018 14:23:11 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     devel@driverdev.osuosl.org, weidu.du@huawei.com,
-        Miao Xie <miaoxie@huawei.com>, linux-erofs@lists.ozlabs.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 07/10] staging: erofs: separate into init_once / always
-Message-ID: <20181122132311.GB14300@kroah.com>
-References: <20181120143425.43637-1-gaoxiang25@huawei.com>
- <20181120143425.43637-8-gaoxiang25@huawei.com>
- <20181122102339.GG3189@kroah.com>
- <66b90226-5d0e-7344-5220-908aa243b014@huawei.com>
- <20181122110500.GC5287@kroah.com>
- <ef49bf11-b937-46b4-1b9a-c068182aa7d9@huawei.com>
- <20181122112645.GA7527@kroah.com>
- <448b2d41-8156-3fe8-a037-29a31771721e@huawei.com>
- <c6ec315b-6f80-911f-3abe-ee056e730fc9@huawei.com>
+        Thu, 22 Nov 2018 19:03:06 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35550 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388885AbeKWADF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 19:03:05 -0500
+Received: by mail-wm1-f67.google.com with SMTP id c126so9093070wmh.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 05:23:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4w0MIK4419v8QaqU3k3Um9A+0am0yvH61l+/nftgpcY=;
+        b=MZPqD6Gp8Y5+2NvcXP8TLr/LWIW5nSzKvkb+ljA0P2Qg5vq0ym5P6snUQVCllfjqsM
+         /6ulI+WZQIOhvGs61/mTurJf6i2h0h3sYEULf+eSy5uoFjeOVaavOhrNxHWNrvb+6lvU
+         X/1K36zTbhq45+DyDX5/wa1UP4jEoRrtgMtLk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4w0MIK4419v8QaqU3k3Um9A+0am0yvH61l+/nftgpcY=;
+        b=TBx7nSR7osl+mfWEJuOvMjfNcVcEoRAohTe1nyCSlGl9XO8yfjpX2nd0+RE+BAdjlt
+         6F98nWVX4K1NDurYd0W+yuTcfMh6WhG9kfq4jDyn0c3fzbkzf8sYykjbI3LlWwA5q4e/
+         H3p2SazHa5krdJIHSE44wq8lOFlAGXKYZc5Ni0xdwV/tAZ32FxYlIJYSTUGpwaOyNHXu
+         feuFGs5Jbh+8C+5BGDtLwPxtKM1V8NzK16qUboDt/k4Jm4rHITHY9BA9Ivsi4dyRQSFf
+         6mL0SQSA7Mr03Sm2ENx8k0+De4zIArFx+ZgcivW0cUrWe7f6vRW9TMkftsP5cr/J5tTV
+         eTMw==
+X-Gm-Message-State: AGRZ1gLaaWHsqIIvIdQj0sME03oo1zHwluVdzhr6PvuCX5GV65mNmBJR
+        R/ov5jaIr5aLFv+QBqF31Sqw6w==
+X-Google-Smtp-Source: AJdET5efw2jP3yCuEX3araxDIGMpqJwUZO2onQ/qLt/X4b6NJvv5aAXRdkgyWi7ytZQxcMHXT+tZiA==
+X-Received: by 2002:a1c:4108:: with SMTP id o8mr9283584wma.91.1542893024427;
+        Thu, 22 Nov 2018 05:23:44 -0800 (PST)
+Received: from [192.168.0.40] (189.35.136.77.rev.sfr.net. [77.136.35.189])
+        by smtp.googlemail.com with ESMTPSA id 134-v6sm5450488wmp.6.2018.11.22.05.23.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 05:23:43 -0800 (PST)
+Subject: Re: [RFC PATCH v3 07/17] clocksource: sun4i: add a compatible for
+ suniv
+To:     Mesih Kilinc <mesihkilinc@gmail.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Rob Herring <robh+dt@kernel.org>,
+        Julian Calaby <julian.calaby@gmail.com>
+References: <cover.1542824904.git.mesihkilinc@gmail.com>
+ <60bc70fc43743f664de76abf3ab0a01cd7924458.1542824904.git.mesihkilinc@gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <a732f908-c70e-ce30-ad18-ddbb6879995f@linaro.org>
+Date:   Thu, 22 Nov 2018 14:23:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6ec315b-6f80-911f-3abe-ee056e730fc9@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <60bc70fc43743f664de76abf3ab0a01cd7924458.1542824904.git.mesihkilinc@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 09:01:31PM +0800, Gao Xiang wrote:
-> Hi Greg,
+On 21/11/2018 19:30, Mesih Kilinc wrote:
+> The suniv (new F-series) chip has a timer with less functionality than
+> the A10 timer, e.g. it has only 3 channels.
 > 
-> On 2018/11/22 20:00, Gao Xiang wrote:
-> > Hi Greg,
-> > 
-> > On 2018/11/22 19:26, Greg Kroah-Hartman wrote:
-> >> Don't make people rebuild your code with different options for
-> >> debugging.  That will never work in the 'real world' when people start
-> >> using the code.  You need to have things enabled for people all the
-> >> time, which is why we have dynamic debugging in the kernel now, and not
-> >> a zillion different "DRIVER_DEBUG" build options anymore.
-> > Actually, current erofs handle differently for beta users (in eng mode)
-> > and commercial users.
-> > 
-> > CONFIG_EROFS_FS_DEBUG is enable for all beta users, after an observed
-> > expression is false, we could get the whole memorydump as early as possible.
-> > But for commercial users, there are no such observing points to promise
-> > the kernel stability and performance.
-> > 
-> > It has helped us to find several bug, and I cannot find some alternative way
-> > to get the the first scene of the accident...
+> Add a new compatible for it. As we didn't use the extra channels on A10
+> either now, the code needn't to be changed.
 > 
-> I'm about to send v2 of this patchset... I need to get your opinion...
+> The suniv chip is based on ARM926EJ-S CPU, thus it has no architecture timer.
 > 
-> I think for the current erofs development state, I tend to leave such a
-> developping switch because the code could be modified frequently,
-> many potential bugs could be avoid when this debugging mode is on and
-> it will be dropped after erofs becomes more stable...
+> Register sun4i_timer as sched_clock on it.
+> 
+> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 
-You have two competing issues here.  You need to have some sort of debug
-build that allows you to get feedback from users, and you need to
-provide a solid, reliable system for those not wanting to debug
-anything.
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-If you use a kernel build option, then you can do what you are doing
-now, just that do not expect for any user that has problems with the
-filesystem, they will rebuild the code just to try to help debug it.
-That is going to require run-time debugging to be enabled as they will
-not usually have built their own kernel/module at all.
+> ---
+>  drivers/clocksource/sun4i_timer.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clocksource/sun4i_timer.c b/drivers/clocksource/sun4i_timer.c
+> index 6e0180a..65f38f6 100644
+> --- a/drivers/clocksource/sun4i_timer.c
+> +++ b/drivers/clocksource/sun4i_timer.c
+> @@ -186,7 +186,8 @@ static int __init sun4i_timer_init(struct device_node *node)
+>  	 */
+>  	if (of_machine_is_compatible("allwinner,sun4i-a10") ||
+>  	    of_machine_is_compatible("allwinner,sun5i-a13") ||
+> -	    of_machine_is_compatible("allwinner,sun5i-a10s"))
+> +	    of_machine_is_compatible("allwinner,sun5i-a10s") ||
+> +	    of_machine_is_compatible("allwinner,suniv-f1c100s"))
+>  		sched_clock_register(sun4i_timer_sched_read, 32,
+>  				     timer_of_rate(&to));
+>  
+> @@ -218,3 +219,5 @@ static int __init sun4i_timer_init(struct device_node *node)
+>  }
+>  TIMER_OF_DECLARE(sun4i, "allwinner,sun4i-a10-timer",
+>  		       sun4i_timer_init);
+> +TIMER_OF_DECLARE(suniv, "allwinner,suniv-f1c100s-timer",
+> +		       sun4i_timer_init);
+> 
 
-For now, keep doing what you are doing, I just started to worry when I
-saw the initial BUG_ON() as we had just talked about these at the
-Maintainers summit a few weeks ago, and how we need to get rid of them
-from the kernel as they are a crutch that we need to solve.
 
-thanks, and sorry for the noise.  Please resend this series again,
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-greg k-h
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
