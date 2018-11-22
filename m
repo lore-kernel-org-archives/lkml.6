@@ -2,132 +2,183 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D3C2C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB49C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:25:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31C4F20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:15:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31C4F20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id C126820824
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:25:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rfjTyIAu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C126820824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406669AbeKWFzv (ORCPT
+        id S2406679AbeKWGGc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 00:55:51 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:33018 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbeKWFzv (ORCPT
+        Fri, 23 Nov 2018 01:06:32 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41128 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726009AbeKWGGb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 00:55:51 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id BD6F772CC61;
-        Thu, 22 Nov 2018 22:15:04 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id AB9ED7CD20A; Thu, 22 Nov 2018 22:15:04 +0300 (MSK)
-Date:   Thu, 22 Nov 2018 22:15:04 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        strace-devel@lists.strace.io
-Subject: Re: [RFC PATCH v2] ptrace: add PTRACE_GET_SYSCALL_INFO request
-Message-ID: <20181122191504.GB27204@altlinux.org>
-References: <20181121165806.07da7c98@akathisia>
- <CALCETrV3TPCkYyhoLLcikXVeF-RdZUuLTCvKReK3Qb9LSS9Csw@mail.gmail.com>
- <20181121235634.GA14146@altlinux.org>
- <CALCETrXea_uRAqw_srW5CWgOzeM=RubaDbjnxZ=cUMy5Zv1TsA@mail.gmail.com>
+        Fri, 23 Nov 2018 01:06:31 -0500
+Received: by mail-pl1-f196.google.com with SMTP id u6so9615288plm.8
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 11:25:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CtFQov3diMWmzCH/eueIdqic6nbQK8XnAWHttr7Ta4k=;
+        b=rfjTyIAuFoq7fgtYVO1LHU8IvPITBUeNCWSx2O9vEstWzhBeYp+AilPjlv6nGb/jLT
+         hsLWvW/m2vaGdkLBh7CojIii+DgboZZXkeQ8737rXVQRiB+cuCBb/b0+h5MBWgMgX+G3
+         kjYgwQOnjCGWil6ml9aiSdY5eTiDkoHDD9jg0WHZovIu7sJKy7jAT8uOQVNrJMNj80wV
+         xsLZI0nxauZYoybE4EByJprOZAXC6VOmOIBOgemSdYwNyvV2AxOCd6x2TLcWQTr5vtDQ
+         y5w+zbfDK2HNOz93wUic+zeFIe+oUWpi2XDmE3LOhEpE5kh0LXvPJepqvCfJ0hMnWSg+
+         GqkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CtFQov3diMWmzCH/eueIdqic6nbQK8XnAWHttr7Ta4k=;
+        b=brY22Rzjr6dAHhwAmx5sn2RhOZlF6/L1V+ecMtH1Tqs7SbDl73NJ6rxWNxqhkhZPE6
+         MGRNgdJY6GZpMfMp7hASEi85feJ0MSLc80I238iK4tg09++YaX1dX21NI4v6RpkDT2dU
+         lWAbUEWly9uWMg7hLlVqsyeOSlBzFlISbOZOmuSH63Hm+jBZhTtoPTJuKjO82UbmyPBw
+         Quvq6u+77BfZdTHHDGZNFRF3tzzk9Mfhk9UFhrc6EnxtWvrwpD8BamGuhbbQIUmBYN/c
+         cRBU6wRSGdgX/BM71GYiufuACFiMWGXNbUGsFd4x9fEJFNCkdJThHeQFnizIXOU0SdUA
+         ixCw==
+X-Gm-Message-State: AA+aEWakvyHPfbaSyztGtkV4HbSnD46YGf6xenMbnz8cuj2Bi36EPjvB
+        rSk2dgqx9Jf1vRUvRlJtM8o=
+X-Google-Smtp-Source: AFSGD/Wlrud1i8/wGshb64Zrz/yqbExQpn/q5Y3fzae9Y9SdbJaSVn6cHpYX8LVhdgXDKN/Alz1u+w==
+X-Received: by 2002:a17:902:14e:: with SMTP id 72-v6mr12071244plb.299.1542914746466;
+        Thu, 22 Nov 2018 11:25:46 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id e64-v6sm37453747pfc.122.2018.11.22.11.25.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 11:25:45 -0800 (PST)
+Date:   Thu, 22 Nov 2018 11:25:44 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     lee.jones@linaro.org, gwendal@chromium.org, drinkcat@chromium.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, bleung@chromium.org,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 7/7] platform/chrome: cros_ec_lightbar: instantiate only
+ if the EC has a lightbar.
+Message-ID: <20181122192544.GA2410@roeck-us.net>
+References: <20181122113356.23610-1-enric.balletbo@collabora.com>
+ <20181122113356.23610-8-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Nq2Wo0NMKNjxTN9z"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrXea_uRAqw_srW5CWgOzeM=RubaDbjnxZ=cUMy5Zv1TsA@mail.gmail.com>
+In-Reply-To: <20181122113356.23610-8-enric.balletbo@collabora.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 22, 2018 at 12:33:56PM +0100, Enric Balletbo i Serra wrote:
+> Due to the way attribute groups visibility work, the function
+> cros_ec_lightbar_attrs_are_visible is called multiple times, once per
+> attribute, and each of these calls makes an EC transaction. For what is
+> worth the EC log reports multiple errors on boot when the lightbar is
+> not available. Instead, check if the EC has a lightbar in the probe
+> function and only instantiate the device.
+> 
+> Ideally we should have instantiate the driver only if the
+> EC_FEATURE_LIGHTBAR is defined, but that's not possible because that flag
+> is not in the very first Pixel Chromebook (Link), only on Samus. So, the
+> driver is instantiated by his parent always.
+> 
+> This patch changes a bit the actual behaviour. Before the patch if an EC
+> doesn't have a lightbar an empty lightbar folder is created in
+> /sys/class/chromeos/<ec device>, after the patch the empty folder is not
+> created, so, the folder is only created if the lightbar exists.
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
---Nq2Wo0NMKNjxTN9z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Guess this is the answer to the suggestion I had before. Maybe the two patches
+should be merged together ? Or do  others think that they should be kept
+separate ?
 
-On Thu, Nov 22, 2018 at 06:55:29AM -0800, Andy Lutomirski wrote:
-> On Wed, Nov 21, 2018 at 3:56 PM Dmitry V. Levin wrote:
-> > On Wed, Nov 21, 2018 at 02:56:57PM -0800, Andy Lutomirski wrote:
-> > > Please cc linux-api@vger.kernel.org for future versions.
-> > >
-> > > On Wed, Nov 21, 2018 at 7:58 AM Elvira Khabirova wrote:
-> > > >
-> > > > struct ptrace_syscall_info {
-> > > >         __u8 op; /* 0 for entry, 1 for exit */
-> > >
-> > > Can you add proper defines, like:
-> > >
-> > > #define PTRACE_SYSCALL_ENTRY 0
-> > > #define PTRACE_SYSCALL_EXIT 1
-> > > #define PTRACE_SYSCALL_SECCOMP 2
-> > >
-> > > and make seccomp work from the start?  I'd rather we don't merge an
-> > > implementation that doesn't work for seccomp and then have to rework
-> > > it later.
-> >
-> > What's the difference between PTRACE_EVENT_SECCOMP and syscall-entry-st=
-op
-> > with regards to PTRACE_GET_SYSCALL_INFO request?  At least they have the
-> > same entry_info to return.
->=20
-> I'm not sure there's any material difference.
+Additional comment below.
 
-In that case we don't really need PTRACE_SYSCALL_SECCOMP: op field
-describes the structure inside the union to use, not the ptrace stop.
+Thanks,
+Guenter
 
-> > As long as implementation (ab)uses ptrace_message to tell one kind of s=
-top
-> > from another, it can distinguish syscall-entry-stop and syscall-exit-st=
-op
-> > from each other and from many other kinds of stops, but it cannot
-> > distinguish PTRACE_EVENT_SECCOMP from e.g. PTRACE_EVENT_EXIT.
->=20
-> Hmm.  PTRACE_GET_SYSCALL_INFO should fail for PTRACE_EVENT_EXIT, I think.
+> ---
+> 
+>  drivers/platform/chrome/cros_ec_lightbar.c | 29 +++++++++-------------
+>  1 file changed, 12 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
+> index 31d22f594fac..d255264eb082 100644
+> --- a/drivers/platform/chrome/cros_ec_lightbar.c
+> +++ b/drivers/platform/chrome/cros_ec_lightbar.c
+> @@ -567,37 +567,28 @@ static struct attribute *__lb_cmds_attrs[] = {
+>  	NULL,
+>  };
+>  
+> -static bool ec_has_lightbar(struct cros_ec_dev *ec)
+> +static bool cros_ec_has_lightbar(struct cros_ec_dev *ec_dev)
+>  {
+> -	return !!get_lightbar_version(ec, NULL, NULL);
+> -}
+> -
+> -static umode_t cros_ec_lightbar_attrs_are_visible(struct kobject *kobj,
+> -						  struct attribute *a, int n)
+> -{
+> -	struct device *dev = container_of(kobj, struct device, kobj);
+> -	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+> -	struct platform_device *pdev = to_platform_device(ec->dev);
+> +	struct platform_device *pdev = to_platform_device(ec_dev->dev);
+>  	struct cros_ec_platform *pdata = pdev->dev.platform_data;
+>  	int is_cros_ec;
+>  
+>  	is_cros_ec = strcmp(pdata->ec_name, CROS_EC_DEV_NAME);
+>  
+Can this now ever be false ?
 
-Unless we can change PTRACE_EVENT_SECCOMP to set some higher bits of
-ptrace_message (beyond SECCOMP_RET_DATA) which is very unlikely because
-it would qualify as an ABI change, this would require an additional field
-in struct task_struct because ptrace_message wouldn't be enough
-to distinguish PTRACE_EVENT_SECCOMP from PTRACE_EVENT_EXIT.
+>  	if (is_cros_ec != 0)
+> -		return 0;
+> +		return false;
+>  
+> -	/* Only instantiate this stuff if the EC has a lightbar */
+> -	if (ec_has_lightbar(ec)) {
+> -		ec_with_lightbar = ec;
+> -		return a->mode;
+> +	if (!!get_lightbar_version(ec_dev, NULL, NULL)) {
+> +		ec_with_lightbar = ec_dev;
 
+Is this variable (and the associated check in lb_manual_suspend_ctrl)
+still necessary ?
 
---=20
-ldv
-
---Nq2Wo0NMKNjxTN9z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJb9wA4AAoJEAVFT+BVnCUIVLMP/icSrrhNzO/EyX/hEjQCpTbX
-OIG34L3Q21JqPle06kSa08WKJ0xsCsOcnnpEqhEOkdgLiYr78im4j0bY+QZEpWRK
-jNcGizVI7DCuELvY23SspHxSEHkPaTpZZT5YyYhH2q00Jzlq1z4rQsT3MngJt7KC
-a3W7N/VqyhLASqXUAvxpwBfqzeGb/AoYpsEyON8Yr67MOTeLR3Sh5xY9+NMpMCQx
-QWexSPWGcsysbY9P4Om2VUjQpdtX41emK9h202PoLyDz4EDOc7RzwoGXPyhD8BAX
-RzUV+/7va5uvBvzCF8VXGtTbEQ7QJREjjE10T1tUlnbXTvC1pEq5oS0im8MQfITB
-6xlBdFB5xCIMyNoY6yQLOb3ZZX27a9M02xrDam21t2OopB4Mvb9ul0T8azX792g1
-fvTovioaCgE7ZYf+CN9caNhcJx4BKg2NXb/Y0T+nv2QRc053UgrJSYXnDM8+QIA8
-gB4/KSV1wKJLsErmCtDuK6BoWfQSo2mY2CpgxilZKfOYw/EdtPzs7FgbiyEgnZ1Q
-XpQou0maYn8MXPge1uxerBm4JvXsRm22MvbZe0UZCtmBesvhR2dsyAxpitnkVW6z
-s+6myE2pFXIZGY2AlrcKa3ffA9GpYBkbMSEHih4moi27f4C5IPPk0nqtB1KiQXu/
-qGGm+zLYM3ZbaeyA2qWp
-=grzk
------END PGP SIGNATURE-----
-
---Nq2Wo0NMKNjxTN9z--
+> +		return true;
+>  	}
+> -	return 0;
+> +
+> +	return false;
+>  }
+>  
+>  struct attribute_group cros_ec_lightbar_attr_group = {
+>  	.name = "lightbar",
+>  	.attrs = __lb_cmds_attrs,
+> -	.is_visible = cros_ec_lightbar_attrs_are_visible,
+>  };
+>  
+>  static int cros_ec_lightbar_probe(struct platform_device *pd)
+> @@ -611,6 +602,10 @@ static int cros_ec_lightbar_probe(struct platform_device *pd)
+>  		return -EINVAL;
+>  	}
+>  
+> +	/* Only instantiate this stuff if the EC has a lightbar */
+> +	if (!cros_ec_has_lightbar(ec_dev))
+> +		return -ENODEV;
+> +
+>  	/* Take control of the lightbar from the EC. */
+>  	lb_manual_suspend_ctrl(ec_dev, 1);
+>  
