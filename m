@@ -2,106 +2,116 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7ADFC04EBB
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD78C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:52:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E7CF206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:52:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E7CF206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id F308320659
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:52:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="TfgQNI4y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F308320659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406512AbeKWEcp (ORCPT
+        id S2406516AbeKWEdD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 23:32:45 -0500
-Received: from foss.arm.com ([217.140.101.70]:54956 "EHLO foss.arm.com"
+        Thu, 22 Nov 2018 23:33:03 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:51460 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404497AbeKWEcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 23:32:45 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E90CB1DC8;
-        Thu, 22 Nov 2018 09:52:19 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 671553F5A0;
-        Thu, 22 Nov 2018 09:52:17 -0800 (PST)
-Subject: Re: remove the ->mapping_error method from dma_map_ops V2
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux@armlinux.org.uk
-Cc:     Christoph Hellwig <hch@lst.de>, linux-arch@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-parisc@vger.kernel.org,
-        David Woodhouse <dwmw2@infradead.org>, joro@8bytes.org,
-        the arch/x86 maintainers <x86@kernel.org>,
+        id S2391864AbeKWEdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 23:33:02 -0500
+Received: from zn.tnic (p200300EC2BDC9100898E5A1DF8FAB135.dip0.t-ipconnect.de [IPv6:2003:ec:2bdc:9100:898e:5a1d:f8fa:b135])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CD9801EC05C4;
+        Thu, 22 Nov 2018 18:52:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1542909156;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=CyHVfmn16kBFn8JlFe2Q/uztou1CSxx1shdX393Avx4=;
+        b=TfgQNI4ytRZieMJ0BE1GGtvyG0eZTZhj6aPFqMYrrw/yzL1GkBwYOqpz1KrSCG6LpBz6H0
+        HJgdJvZVREJ1sdu3QuAnWjby8+zs+yUQV5sRV6zgtFmFlR48whhFfkdrYXfnG5N5gpifHB
+        K4NML8WgS26Ynwovdkyl2sLS0b6sF3E=
+Date:   Thu, 22 Nov 2018 18:52:29 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, jdmason@kudzu.us,
-        xen-devel@lists.xenproject.org,
-        linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
-References: <20181122140320.24080-1-hch@lst.de>
- <CAHk-=wh=_T=A53+o4zLNbKio43LGqVDb0KCbWPDvAg54bRDmWw@mail.gmail.com>
- <20181122170715.GI30658@n2100.armlinux.org.uk>
- <CAHk-=wgfGzXuDAKFQPdzMib3QCRHfSTsy5=gLU-WCoya+Ym+1A@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <11829e3c-7302-f821-cf5c-863e5267a17b@arm.com>
-Date:   Thu, 22 Nov 2018 17:52:15 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        the arch/x86 maintainers <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jiri Kosina <jkosina@suse.cz>, thomas.lendacky@amd.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>, dave.hansen@intel.com,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        "Mallick, Asit K" <asit.k.mallick@intel.com>,
+        "Van De Ven, Arjan" <arjan@linux.intel.com>, jcm@redhat.com,
+        longman9394@gmail.com, Greg KH <gregkh@linuxfoundation.org>,
+        david.c.stewart@intel.com, Kees Cook <keescook@chromium.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Subject: Re: [patch 01/24] x86/speculation: Update the TIF_SSBD comment
+Message-ID: <20181122175229.GD10365@zn.tnic>
+References: <20181121201430.559770965@linutronix.de>
+ <20181121201722.337599561@linutronix.de>
+ <CAHk-=wgLZkKDLeNN818VG0wC6B_kCUJqKPLdW+KDVocU6_DvtA@mail.gmail.com>
+ <CAHk-=wj6fZpcad+1O5Ou0HZb0NEv1RM_BweyM0XBGtzE87YXXg@mail.gmail.com>
+ <alpine.DEB.2.21.1811212345180.1665@nanos.tec.linutronix.de>
+ <20181121230450.k75e4ipdag73dayz@treble>
+ <20181121230854.GH27559@zn.tnic>
+ <20181122173004.fn4tqoclhcyibxff@treble>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgfGzXuDAKFQPdzMib3QCRHfSTsy5=gLU-WCoya+Ym+1A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181122173004.fn4tqoclhcyibxff@treble>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/11/2018 17:09, Linus Torvalds wrote:
-> On Thu, Nov 22, 2018 at 9:07 AM Russell King - ARM Linux
-> <linux@armlinux.org.uk> wrote:
->>
->> I'm afraid that won't work very well - 32 bit platforms with 64-bit
->> addresses (LPAE) would have dma_addr_t as a 64-bit value, which
->> wouldn't fit into an unsigned long.
-> 
-> Good point. So we'd have to have a special IS_DMA_ERR() function that
-> takes a dma_addr_t and checks the same "is it the top 4095 values".
-> 
-> Because I'd still prefer to allow people to return the _actual_ error,
-> and to have "return -Exyz" as the error case. That part still DTRT
-> even with dma_addr_t.
+On Thu, Nov 22, 2018 at 11:30:04AM -0600, Josh Poimboeuf wrote:
+> But it does describe its purpose, especially in relation to the
+> 'spectre_v2=' option.
 
-Unfortunately, with things like the top-down IOVA allocator, and 32-bit 
-systems in general, "the top 4095" values may well still be valid 
-addresses - we're relying on a 1-byte mapping of the very top byte of 
-memory/IOVA space being sufficiently ridiculous that no real code would 
-ever do that, but even a 4-byte mapping of the top 4 bytes is within the 
-realms of the plausible (I've definitely seen the USB layer make 8-byte 
-mappings from any old offset within a page, for example).
+Sure, but the thing I'm proposing
 
-Thus we'd have to go with the extra complication of detecting and 
-carving out problematic memory maps in those corner cases as Russell 
-alluded to, for the sake of better error reporting in places where, in 
-the majority of cases, there's not really all that many ways to go 
-wrong. Off the top of my head, I guess:
+spectre_v2_task_isol=
 
--EINVAL if the address is outside the device's DMA mask (and there is no 
-IOMMU or bounce buffer).
+describes it more precisely, IMHO. :)
 
--ENOSPC if there is an IOMMU or bounce buffer, but no free IOVA/buffer 
-space currently.
+I.e., "enable/disable spectre v2 task isolation".
 
--ESOMETHINGWENTWRONGWITHIOMMUPAGETABLES or similar, because it's not 
-like the caller can treat that as anything other than an opaque failure 
-anyway.
+> Previously 'spectre_v2=' might have been more appropriately named
+> 'spectre_v2_kernel=' because it only protected the kernel from Spectre
+> v2 attacks.  Now with these new patches, 'spectre_v2=on' will protect
+> the entire system.
 
-The only immediate benefit I can see is that we could distinguish cases 
-like the first which can never possibly succeed, and thus callers could 
-actually give up instead of doing what various subsystems currently do 
-and retry the exact same mapping indefinitely on the apparent assumption 
-that errors must be transient.
+Hmmm, crazy idea: can we extend the options of spectre_v2= nstead?
 
-Robin.
+spectre_v2=user_isolation,...
+spectre_v2=kernel,...
+spectre_v2=task_isolation,...
+
+and so on?
+
+This way we can do a couple of option switches in one go.
+
+Hmmm?
+
+> Now off to eat a giant turkey.
+
+Try not to fall into a turkey coma. :-P
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
