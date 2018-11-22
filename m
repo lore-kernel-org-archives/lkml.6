@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C54C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 16:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 660D3C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 16:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5600220824
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 16:50:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C1CF20838
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 16:50:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="Jb7U4Vgc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5600220824
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="nV17SHRi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C1CF20838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405786AbeKWDaV (ORCPT
+        id S2405999AbeKWDaX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 22:30:21 -0500
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:39554 "EHLO
+        Thu, 22 Nov 2018 22:30:23 -0500
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:39565 "EHLO
         smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404359AbeKWDaT (ORCPT
+        with ESMTP id S2404359AbeKWDaX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 22:30:19 -0500
+        Thu, 22 Nov 2018 22:30:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1542905409; x=1574441409;
+  t=1542905411; x=1574441411;
   h=from:to:cc:subject:date:message-id;
-  bh=uR6OTfqyfPgXr8jCjIYnLfUKlOkELfypdLaRrHbGp7k=;
-  b=Jb7U4Vgc2aOiFq1mQt1RwVEePPj5cMccmPF0CKdBLnGH0EFZE7dLTBzI
-   lQnCT5ahkSYRUSxiaxSVcvtClGYWOp2tIOEFE/UA+N4OPo5zTX7DDc221
-   kGYfCkiCJIrrd3q2KTnQ5ueWRztCefH3zleoRWeTKfmZJbdHxyn0obgxC
-   Y=;
+  bh=HPgIZQKZrYaysE0I6hPLeVIB9cTT1aK3/gzMyh66vww=;
+  b=nV17SHRiq7uVFr1sjv13soLphsfoxl0tZVaUIpIdmUu+lWcDAGhIVFy7
+   GnDW17/Nk45yuAC25Hi+1x5bQsBC8+IzzqLAe7Axwp998ln8kcXZllvQ4
+   gsnVM2JrldjETz0QJoNOqE+RiSoa1y2kBOz1Sxy9KUvDe6oD8MX8FfWH2
+   0=;
 X-IronPort-AV: E=Sophos;i="5.56,253,1539648000"; 
-   d="scan'208";a="771919559"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2b-4e24fd92.us-west-2.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 22 Nov 2018 16:50:08 +0000
+   d="scan'208";a="771919563"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2a-8549039f.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 22 Nov 2018 16:50:11 +0000
 Received: from u54ee758033e858cfa736.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
-        by email-inbound-relay-2b-4e24fd92.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id wAMGo1Kw110559
+        by email-inbound-relay-2a-8549039f.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id wAMGo48P104633
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 22 Nov 2018 16:50:03 GMT
+        Thu, 22 Nov 2018 16:50:06 GMT
 Received: from u54ee758033e858cfa736.ant.amazon.com (localhost [127.0.0.1])
-        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id wAMGo0iD008119;
-        Thu, 22 Nov 2018 17:50:00 +0100
+        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id wAMGo3Rp008148;
+        Thu, 22 Nov 2018 17:50:03 +0100
 Received: (from jsteckli@localhost)
-        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Submit) id wAMGnx9l008117;
-        Thu, 22 Nov 2018 17:49:59 +0100
+        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Submit) id wAMGo2Zr008135;
+        Thu, 22 Nov 2018 17:50:02 +0100
 From:   Julian Stecklina <jsteckli@amazon.de>
 To:     kernel-hardening@lists.openwall.com
 Cc:     Julian Stecklina <jsteckli@amazon.de>,
@@ -57,9 +57,9 @@ Cc:     Julian Stecklina <jsteckli@amazon.de>,
         Jonathan Adams <jwadams@google.com>,
         David Woodhouse <dwmw2@infradead.org>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [RFC RESEND PATCH 4/6] x86/speculation, mm: add process local virtual memory region
-Date:   Thu, 22 Nov 2018 17:49:37 +0100
-Message-Id: <717f82f41dd541512edb0eb60afde8983377340d.1542905228.git.jsteckli@amazon.de>
+Subject: [RFC RESEND PATCH 6/6] x86/speculation, kvm: move gprs to process local storage
+Date:   Thu, 22 Nov 2018 17:49:39 +0100
+Message-Id: <a262873a233b9918e63d57cf20bd9a303d356add.1542905228.git.jsteckli@amazon.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1542905228.git.jsteckli@amazon.de>
 References: <cover.1542905228.git.jsteckli@amazon.de>
@@ -70,514 +70,546 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Linux kernel has a global address space that is the same for any
-kernel code. This address space becomes a liability in a world with
-processor information leak vulnerabilities, such as L1TF. With the right
-cache load gadget, an attacker-controlled hyperthread pair can leak
-arbitrary data via L1TF. The upstream Linux kernel currently suggests
-disabling hyperthread, but this comes with a large performance hit for a
-wide range of workloads.
+General-purpose registers (GPRs) contain guest data and must be protected
+from information leak vulnerabilities in the kernel.
 
-An alternative mitigation is to not make certain data in the kernel
-globally visible, but only when the kernel executes in the context of
-the process where this data belongs to.
+Move GPRs into process local memory and change the VMX and SVM world
+switch and related code accordingly.
 
-This patch adds the initial plumbing for allocating process-local
-memory. By grabbing one entry in the PML4 of each set of page tables and
-start treating it as process-local memory. We currently only support 2MB
-of process-local allocations, but this is an arbitrary limitation and
-can be lifted by working on the page table allocation code.
-
-While memory is used for process-local allocations, it is unmapped from
-the linear mapping of physical memory.
-
-The code has some limitations that are spelled out in
-arch/x86/mm/proclocal.c.
+Note: Only Intel VMX support is tested.
 
 Signed-off-by: Julian Stecklina <jsteckli@amazon.de>
 ---
- arch/x86/Kconfig                        |   1 +
- arch/x86/include/asm/pgtable_64_types.h |   6 +
- arch/x86/include/asm/proclocal.h        |  44 ++++
- arch/x86/mm/Makefile                    |   2 +
- arch/x86/mm/dump_pagetables.c           |   3 +
- arch/x86/mm/fault.c                     |  14 ++
- arch/x86/mm/proclocal.c                 | 269 ++++++++++++++++++++++++
- include/linux/mm_types.h                |   7 +
- security/Kconfig                        |  16 ++
- 9 files changed, 362 insertions(+)
- create mode 100644 arch/x86/include/asm/proclocal.h
- create mode 100644 arch/x86/mm/proclocal.c
+ arch/x86/include/asm/kvm_host.h |  11 +--
+ arch/x86/kvm/kvm_cache_regs.h   |   4 +-
+ arch/x86/kvm/svm.c              | 132 ++++++++++++++++-------------
+ arch/x86/kvm/vmx.c              | 142 ++++++++++++++++++--------------
+ arch/x86/kvm/x86.c              |   3 +-
+ 5 files changed, 164 insertions(+), 128 deletions(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1a0be022f91d..f701e68482a5 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -32,6 +32,7 @@ config X86_64
- 	select SWIOTLB
- 	select X86_DEV_DMA_OPS
- 	select ARCH_HAS_SYSCALL_WRAPPER
-+	select ARCH_SUPPORTS_PROCLOCAL
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 5dd29bfef77f..bffd3e35232c 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -532,17 +532,18 @@ struct kvm_vcpu_hv {
+ };
  
- #
- # Arch settings
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 04edd2d58211..6c4912a85cef 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -138,6 +138,12 @@ extern unsigned int ptrs_per_p4d;
+ struct kvm_vcpu_arch_hidden {
++	/*
++	 * rip and regs accesses must go through
++	 * kvm_{register,rip}_{read,write} functions.
++	 */
++	unsigned long regs[NR_VCPU_REGS];
++
+ 	struct fpu guest_fpu;
+ };
  
- #define VMALLOC_END		(VMALLOC_START + (VMALLOC_SIZE_TB << 40) - 1)
+ struct kvm_vcpu_arch {
+ 	struct proclocal hidden;
  
-+#ifdef CONFIG_PROCLOCAL
-+/* TODO: Make this generic instead of hardcoded */
-+#define PROCLOCAL_START		_AC(0xffffeb0000000000, UL)
-+#define PROCLOCAL_END		_AC(0xffffebffffffffff, UL)
-+#endif
-+
- #define MODULES_VADDR		(__START_KERNEL_map + KERNEL_IMAGE_SIZE)
- /* The module sections ends with the start of the fixmap */
- #define MODULES_END		_AC(0xffffffffff000000, UL)
-diff --git a/arch/x86/include/asm/proclocal.h b/arch/x86/include/asm/proclocal.h
-new file mode 100644
-index 000000000000..d322ddc42152
---- /dev/null
-+++ b/arch/x86/include/asm/proclocal.h
-@@ -0,0 +1,44 @@
-+#ifndef _ASM_X86_PROCLOCAL_H
-+#define _ASM_X86_PROCLOCAL_H
-+
-+#include <linux/types.h>
-+
-+#ifdef CONFIG_PROCLOCAL
-+
-+struct mm_struct;
-+
-+struct proclocal {
-+	void *alloc;
-+	struct mm_struct *mm;
-+	int order;
-+};
-+
-+int kalloc_proclocal(struct proclocal *pl, size_t len);
-+void kfree_proclocal(struct proclocal *pl);
-+
-+#else  /* !CONFIG_PROCLOCAL */
-+
-+#include <linux/slab.h>
-+
-+struct proclocal {
-+	void *alloc;
-+};
-+
-+static inline int kalloc_proclocal(struct proclocal *pl, size_t len)
-+{
-+	pl->alloc = kzalloc(len, GFP_KERNEL);
-+
-+	return -!pl->alloc;
-+}
-+
-+static inline void kfree_proclocal(struct proclocal *pl)
-+{
-+	kfree(pl->alloc);
-+	pl->alloc = NULL;
-+}
-+
-+#endif
-+
-+#define proclocal_get(pl, type) ((type *)(pl)->alloc)
-+
-+#endif	/* _ASM_X86_PROCLOCAL_H */
-diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-index 4b101dd6e52f..94f99494544a 100644
---- a/arch/x86/mm/Makefile
-+++ b/arch/x86/mm/Makefile
-@@ -53,3 +53,5 @@ obj-$(CONFIG_PAGE_TABLE_ISOLATION)		+= pti.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_identity.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_boot.o
-+
-+obj-$(CONFIG_PROCLOCAL)		+= proclocal.o
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index a12afff146d1..64976db507f6 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -59,6 +59,7 @@ enum address_markers_idx {
- #endif
- 	VMALLOC_START_NR,
- 	VMEMMAP_START_NR,
-+	PROCLOCAL_START_NR,
- #ifdef CONFIG_KASAN
- 	KASAN_SHADOW_START_NR,
- 	KASAN_SHADOW_END_NR,
-@@ -86,6 +87,7 @@ static struct addr_marker address_markers[] = {
- 	[LOW_KERNEL_NR]		= { 0UL,		"Low Kernel Mapping" },
- 	[VMALLOC_START_NR]	= { 0UL,		"vmalloc() Area" },
- 	[VMEMMAP_START_NR]	= { 0UL,		"Vmemmap" },
-+	[PROCLOCAL_START_NR]    = { 0UL,                "Process local" },
- #ifdef CONFIG_KASAN
- 	/*
- 	 * These fields get initialized with the (dynamic)
-@@ -606,6 +608,7 @@ static int __init pt_dump_init(void)
- 	address_markers[KASAN_SHADOW_START_NR].start_address = KASAN_SHADOW_START;
- 	address_markers[KASAN_SHADOW_END_NR].start_address = KASAN_SHADOW_END;
- #endif
-+	address_markers[PROCLOCAL_START_NR].start_address = PROCLOCAL_START;
- #endif
- #ifdef CONFIG_X86_32
- 	address_markers[VMALLOC_START_NR].start_address = VMALLOC_START;
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 47bebfe6efa7..0590eed9941b 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -1185,6 +1185,15 @@ static int fault_in_kernel_space(unsigned long address)
- 	return address >= TASK_SIZE_MAX;
+-	/*
+-	 * rip and regs accesses must go through
+-	 * kvm_{register,rip}_{read,write} functions.
+-	 */
+-	unsigned long regs[NR_VCPU_REGS];
+ 	u32 regs_avail;
+ 	u32 regs_dirty;
+ 
+diff --git a/arch/x86/kvm/kvm_cache_regs.h b/arch/x86/kvm/kvm_cache_regs.h
+index 9619dcc2b325..b270e38abb5f 100644
+--- a/arch/x86/kvm/kvm_cache_regs.h
++++ b/arch/x86/kvm/kvm_cache_regs.h
+@@ -13,14 +13,14 @@ static inline unsigned long kvm_register_read(struct kvm_vcpu *vcpu,
+ 	if (!test_bit(reg, (unsigned long *)&vcpu->arch.regs_avail))
+ 		kvm_x86_ops->cache_reg(vcpu, reg);
+ 
+-	return vcpu->arch.regs[reg];
++	return kvm_arch_vcpu_hidden_get(vcpu)->regs[reg];
  }
  
-+static int fault_in_process_local(unsigned long address)
-+{
-+#ifdef CONFIG_PROCLOCAL
-+	return address >= PROCLOCAL_START && address <= PROCLOCAL_END;
-+#else
-+	return false;
-+#endif
-+}
-+
- static inline bool smap_violation(int error_code, struct pt_regs *regs)
+ static inline void kvm_register_write(struct kvm_vcpu *vcpu,
+ 				      enum kvm_reg reg,
+ 				      unsigned long val)
  {
- 	if (!IS_ENABLED(CONFIG_X86_SMAP))
-@@ -1240,6 +1249,11 @@ __do_page_fault(struct pt_regs *regs, unsigned long error_code,
- 	 * protection error (error_code & 9) == 0.
- 	 */
- 	if (unlikely(fault_in_kernel_space(address))) {
-+
-+		if (unlikely(fault_in_process_local(address))) {
-+			BUG();
-+		}
-+
- 		if (!(error_code & (X86_PF_RSVD | X86_PF_USER | X86_PF_PROT))) {
- 			if (vmalloc_fault(address) >= 0)
- 				return;
-diff --git a/arch/x86/mm/proclocal.c b/arch/x86/mm/proclocal.c
-new file mode 100644
-index 000000000000..5b382796a5bf
---- /dev/null
-+++ b/arch/x86/mm/proclocal.c
-@@ -0,0 +1,269 @@
-+#include <linux/bitmap.h>
-+#include <linux/mm.h>
-+#include <linux/sched.h>
-+#include <linux/sched/mm.h>
-+
-+#include <asm/pgtable.h>
-+#include <asm/pgalloc.h>
-+#include <asm/tlb.h>
-+
-+#include <asm/proclocal.h>
-+
-+/*
-+ * The code in this file implements process-local mappings in the Linux kernel
-+ * address space. This memory is only usable in the process context. With memory
-+ * not globally visible in the kernel, it cannot easily be prefetched and leaked
-+ * via L1TF.
-+ *
-+ * We claim one PGD entry for this purpose, but currently use a single page
-+ * table for actual mappings. Metainformation is stored in mm_struct, including
-+ * the bitmap to keep track of unused address space.
-+ *
-+ * Issues:
-+ *
-+ * - Is holding the write part of mmap_sem the right kind of synchronization?
-+ * - Should this code move out of x86?
-+ */
-+
-+#define PRL_DBG(...) do { } while (0);
-+//#define PRL_DBG(msg, ...) pr_debug("%s: " msg, __func__, __VA_ARGS__)
-+
-+/* We only maintain a single page table for now. */
-+#define MAX_PROCLOCAL_PAGES 512
-+
-+/*
-+ * Initialize process-local kernel mappings by creating the relevant page
-+ * tables.
-+ */
-+static int proclocal_init_page_tables(struct mm_struct *mm)
-+{
-+	pgd_t *pgd = pgd_offset(mm, PROCLOCAL_START);
-+	p4d_t *p4d;
-+	pud_t *pud;
-+	pmd_t *pmd;
-+	pte_t *pte;
-+
-+	PRL_DBG("pgd=%lx %lx\n", (unsigned long)pgd, pgd_val(*pgd));
-+
-+	BUG_ON(pgd_val(*pgd));
-+
-+	p4d = p4d_alloc(mm, pgd, PROCLOCAL_START);
-+	if (!p4d)
-+		goto fail;
-+
-+	pud = pud_alloc(mm, p4d, PROCLOCAL_START);
-+	if (!pud)
-+		goto free_p4d;
-+
-+	pmd = pmd_alloc(mm, pud, PROCLOCAL_START);
-+	if (!pmd)
-+		goto free_pud;
-+
-+	pte = pte_alloc_map(mm, pmd, PROCLOCAL_START);
-+	if (!pte)
-+		goto free_pmd;
-+
-+	return 0;
-+free_pmd:
-+	pmd_free(mm, pmd);
-+free_pud:
-+	pud_free(mm, pud);
-+free_p4d:
-+	p4d_free(mm, p4d);
-+fail:
-+	return -1;
-+}
-+
-+/*
-+ * Cleanup page table structures previously allocated with
-+ * proclocal_init_page_tables.
-+ */
-+static void proclocal_cleanup_page_tables(struct mm_struct *mm)
-+{
-+	struct mmu_gather tlb;
-+	unsigned long start = PROCLOCAL_START;
-+	unsigned long end = PROCLOCAL_END + 1; /* exclusive */
-+
-+	tlb_gather_mmu(&tlb, mm, start, end);
-+	free_pgd_range(&tlb, start, end, start, end);
-+	tlb_finish_mmu(&tlb, start, end);
-+}
-+
-+static int proclocal_init(struct mm_struct *mm)
-+{
-+	int rc;
-+
-+	rc = proclocal_init_page_tables(mm);
-+	if (rc)
-+		goto fail;
-+
-+	mm->proclocal_bitmap = bitmap_zalloc(MAX_PROCLOCAL_PAGES, GFP_KERNEL);
-+	if (!mm->proclocal_bitmap) {
-+		goto free_page_tables;
-+	}
-+
-+	BUG_ON(mm->proclocal_in_use_pages != 0);
-+
-+	return 0;
-+
-+free_page_tables:
-+	proclocal_cleanup_page_tables(mm);
-+fail:
-+	return -1;
-+}
-+
-+static void proclocal_cleanup(struct mm_struct *mm)
-+{
-+	BUG_ON(mm->proclocal_in_use_pages != 0);
-+
-+	proclocal_cleanup_page_tables(mm);
-+	bitmap_free(mm->proclocal_bitmap);
-+}
-+
-+static pte_t *pte_lookup(struct mm_struct *mm, unsigned long vaddr)
-+{
-+	pgd_t *pgd = pgd_offset(mm, vaddr);
-+	p4d_t *p4d = p4d_offset(pgd, vaddr);
-+	pud_t *pud = pud_offset(p4d, vaddr);
-+	pmd_t *pmd = pmd_offset(pud, vaddr);
-+
-+	return pte_offset_map(pmd, vaddr);
-+}
-+
-+static int proclocal_map(struct mm_struct *mm, unsigned long vaddr)
-+{
-+	struct page *page;
-+	pte_t *pte = pte_lookup(mm, vaddr);
-+
-+	page = alloc_page(GFP_KERNEL | __GFP_ZERO);
-+	if (!page)
-+		goto fail;
-+
-+	PRL_DBG("allocated %p\n", page);
-+	set_pte(pte, mk_pte(page, kmap_prot));
-+
-+	/*
-+	 * Remove mapping from direct mapping. This also flushes the TLB.
-+	 */
-+	__kernel_map_pages(page, 1, false);
-+
-+	return 0;
-+fail:
-+	return 1;
-+}
-+
-+static int proclocal_unmap(struct mm_struct *mm, unsigned long vaddr)
-+{
-+	pte_t *ptep = pte_lookup(mm, vaddr);
-+	pte_t pte = ptep_get_and_clear(mm, vaddr, ptep);
-+	struct page *page = pfn_to_page(pte_pfn(pte));
-+
-+	/* Restore direct mapping and flush TLB. */
-+	__kernel_map_pages(page, 1, true);
-+
-+	PRL_DBG("freeing %p\n", page);
-+	__free_pages(page, 0);
-+
-+	return 0;
-+}
-+
-+int kalloc_proclocal(struct proclocal *pl, size_t len)
-+{
-+	struct mm_struct *mm = current->mm;
-+	size_t nr_pages = round_up(len, PAGE_SIZE) / PAGE_SIZE;
-+	int order, free_page_off;
-+	unsigned long vaddr;
-+	size_t i;
-+	
-+	PRL_DBG("%s: mm=%lx len=%zu -> nr_pages=%zu\n",
-+		(unsigned long)mm, len, nr_pages);
-+
-+	might_sleep();
-+	BUG_ON(!mm);
-+
-+	if (len == 0)
-+		goto fail;
-+
-+	down_write(&mm->mmap_sem);
-+
-+	if (mm->proclocal_in_use_pages == 0 && proclocal_init(mm))
-+		goto fail_unlock;
-+
-+	order = get_count_order(nr_pages);
-+	nr_pages = 1U << order;
-+
-+	free_page_off = bitmap_find_free_region(mm->proclocal_bitmap, MAX_PROCLOCAL_PAGES, order);
-+	if (free_page_off < 0) {
-+		goto fail_unlock;
-+	}
-+
-+	vaddr = PROCLOCAL_START + free_page_off * PAGE_SIZE;
-+
-+	for (i = 0; i < nr_pages; i++) {
-+		if (proclocal_map(mm, vaddr + i*PAGE_SIZE)) {
-+			/* TODO Cleanup */
-+			BUG();
-+		}
-+	}
-+
-+	up_write(&mm->mmap_sem);
-+
-+	mm->proclocal_in_use_pages += nr_pages;
-+
-+	pl->alloc = (void *)vaddr;
-+	pl->order = order;
-+	pl->mm = mm;
-+
-+	/* Keep the mm_struct around as long as there are mappings in it. */
-+	mmgrab(mm);
-+
-+	return 0;
-+fail_unlock:
-+	up_write(&mm->mmap_sem);
-+fail:
-+	return -1;
-+}
-+EXPORT_SYMBOL_GPL(kalloc_proclocal);
-+
-+void kfree_proclocal(struct proclocal *pl)
-+{
-+	unsigned long vaddr = (unsigned long)pl->alloc;
-+	size_t nr_pages = 1U << pl->order;
-+	size_t i;
-+
-+	PRL_DBG("vaddr=%lx mm=%lx nr_pages=%zu\n",
-+		vaddr, (unsigned long)pl->mm, nr_pages);
-+
-+	BUG_ON(!vaddr);
-+	BUG_ON(!pl->mm);
-+
-+	BUG_ON(vaddr < PROCLOCAL_START);
-+	BUG_ON(vaddr + nr_pages*PAGE_SIZE >= PROCLOCAL_END);
-+
-+	might_sleep();
-+
-+	/*
-+	 * TODO mm_users may already be 0 here. Is it still safe to take the
-+	 * mmap_sem?
-+	 */
-+	down_write(&pl->mm->mmap_sem);
-+
-+	for (i = 0; i < nr_pages; i++) {
-+		if (proclocal_unmap(pl->mm, vaddr + i*PAGE_SIZE)) {
-+			/* TODO Cleanup */
-+			BUG();
-+		}
-+	}
-+
-+	bitmap_release_region(pl->mm->proclocal_bitmap,
-+			      (vaddr - PROCLOCAL_START) >> PAGE_SHIFT, pl->order);
-+	pl->mm->proclocal_in_use_pages -= nr_pages;
-+
-+	if (pl->mm->proclocal_in_use_pages == 0) {
-+		proclocal_cleanup(pl->mm);
-+	}
-+
-+	up_write(&pl->mm->mmap_sem);
-+	mmdrop(pl->mm);
-+}
-+EXPORT_SYMBOL_GPL(kfree_proclocal);
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 5ed8f6292a53..ca92328cd442 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -491,6 +491,13 @@ struct mm_struct {
- 		/* HMM needs to track a few things per mm */
- 		struct hmm *hmm;
- #endif
-+
-+#ifdef CONFIG_PROCLOCAL
-+		/* Number of pages still in use */
-+		size_t proclocal_in_use_pages;
-+
-+		unsigned long *proclocal_bitmap;
-+#endif
- 	} __randomize_layout;
+-	vcpu->arch.regs[reg] = val;
++	kvm_arch_vcpu_hidden_get(vcpu)->regs[reg] = val;
+ 	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_dirty);
+ 	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+ }
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index f416f5c7f2ae..ca86efcdfc49 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -1568,7 +1568,7 @@ static void init_vmcb(struct vcpu_svm *svm)
+ 	save->dr6 = 0xffff0ff0;
+ 	kvm_set_rflags(&svm->vcpu, 2);
+ 	save->rip = 0x0000fff0;
+-	svm->vcpu.arch.regs[VCPU_REGS_RIP] = save->rip;
++	kvm_arch_vcpu_hidden_get(&svm->vcpu)->regs[VCPU_REGS_RIP] = save->rip;
  
  	/*
-diff --git a/security/Kconfig b/security/Kconfig
-index d9aa521b5206..db8149a083e1 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -6,6 +6,22 @@ menu "Security options"
+ 	 * svm_set_cr0() sets PG and WP and clears NW and CD on save->cr0.
+@@ -3094,7 +3094,7 @@ static int nested_svm_exit_handled_msr(struct vcpu_svm *svm)
+ 	if (!(svm->nested.intercept & (1ULL << INTERCEPT_MSR_PROT)))
+ 		return NESTED_EXIT_HOST;
  
- source security/keys/Kconfig
+-	msr    = svm->vcpu.arch.regs[VCPU_REGS_RCX];
++	msr    = kvm_arch_vcpu_hidden_get(&svm->vcpu)->regs[VCPU_REGS_RCX];
+ 	offset = svm_msrpm_offset(msr);
+ 	write  = svm->vmcb->control.exit_info_1 & 1;
+ 	mask   = 1 << ((2 * (msr & 0xf)) + write);
+@@ -5548,10 +5548,11 @@ static void svm_cancel_injection(struct kvm_vcpu *vcpu)
+ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
+ {
+ 	struct vcpu_svm *svm = to_svm(vcpu);
++	unsigned long *regs = kvm_arch_vcpu_hidden_get(vcpu)->regs;
  
-+config ARCH_SUPPORTS_PROCLOCAL
-+	bool
+-	svm->vmcb->save.rax = vcpu->arch.regs[VCPU_REGS_RAX];
+-	svm->vmcb->save.rsp = vcpu->arch.regs[VCPU_REGS_RSP];
+-	svm->vmcb->save.rip = vcpu->arch.regs[VCPU_REGS_RIP];
++	svm->vmcb->save.rax = regs[VCPU_REGS_RAX];
++	svm->vmcb->save.rsp = regs[VCPU_REGS_RSP];
++	svm->vmcb->save.rip = regs[VCPU_REGS_RIP];
+ 
+ 	/*
+ 	 * A vmexit emulation is required before the vcpu can be executed
+@@ -5595,23 +5596,24 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
+ 	local_irq_enable();
+ 
+ 	asm volatile (
+-		"push %%" _ASM_BP "; \n\t"
+-		"mov %c[rbx](%[svm]), %%" _ASM_BX " \n\t"
+-		"mov %c[rcx](%[svm]), %%" _ASM_CX " \n\t"
+-		"mov %c[rdx](%[svm]), %%" _ASM_DX " \n\t"
+-		"mov %c[rsi](%[svm]), %%" _ASM_SI " \n\t"
+-		"mov %c[rdi](%[svm]), %%" _ASM_DI " \n\t"
+-		"mov %c[rbp](%[svm]), %%" _ASM_BP " \n\t"
++		"push %%" _ASM_BP "; push %%" _ASM_CX "; \n\t"
++		"push $0 \n\t"	/* placeholder for guest rcx */
++		"mov %c[rbx](%[regs]), %%" _ASM_BX " \n\t"
++		"mov %c[rdx](%[regs]), %%" _ASM_DX " \n\t"
++		"mov %c[rsi](%[regs]), %%" _ASM_SI " \n\t"
++		"mov %c[rdi](%[regs]), %%" _ASM_DI " \n\t"
++		"mov %c[rbp](%[regs]), %%" _ASM_BP " \n\t"
+ #ifdef CONFIG_X86_64
+-		"mov %c[r8](%[svm]),  %%r8  \n\t"
+-		"mov %c[r9](%[svm]),  %%r9  \n\t"
+-		"mov %c[r10](%[svm]), %%r10 \n\t"
+-		"mov %c[r11](%[svm]), %%r11 \n\t"
+-		"mov %c[r12](%[svm]), %%r12 \n\t"
+-		"mov %c[r13](%[svm]), %%r13 \n\t"
+-		"mov %c[r14](%[svm]), %%r14 \n\t"
+-		"mov %c[r15](%[svm]), %%r15 \n\t"
++		"mov %c[r8](%[regs]),  %%r8  \n\t"
++		"mov %c[r9](%[regs]),  %%r9  \n\t"
++		"mov %c[r10](%[regs]), %%r10 \n\t"
++		"mov %c[r11](%[regs]), %%r11 \n\t"
++		"mov %c[r12](%[regs]), %%r12 \n\t"
++		"mov %c[r13](%[regs]), %%r13 \n\t"
++		"mov %c[r14](%[regs]), %%r14 \n\t"
++		"mov %c[r15](%[regs]), %%r15 \n\t"
+ #endif
++		"mov %c[rcx](%[regs]), %%" _ASM_CX " \n\t" /* destroys %[regs] */
+ 
+ 		/* Enter guest mode */
+ 		"push %%" _ASM_AX " \n\t"
+@@ -5621,22 +5623,34 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
+ 		__ex(SVM_VMSAVE) "\n\t"
+ 		"pop %%" _ASM_AX " \n\t"
+ 
++		/*
++		 * Stack layout at this point (x86_64)
++		 *
++		 * [RSP + 16] = RBP
++		 * [RSP +  8] = vcpu_hidden pointer
++		 * [RSP +  0] = Space for guest RCX
++		 */
 +
-+config PROCLOCAL
-+	bool "Support process-local allocations in the kernel"
-+	depends on ARCH_SUPPORTS_PROCLOCAL
-+	default n
-+	help
-+	  This feature allows subsystems in the kernel to allocate memory that
-+	  is only visible in the context of a specific process. This hardens the
-+	  kernel against information leak vulnerabilities.
++		"mov %[regs], (%%" _ASM_SP ") \n\t" /* save guest RCX */
++		"mov %c[wordsize](%%" _ASM_SP"), %[regs] \n\t"
 +
-+	  There is a slight performance impact when this option is enabled.
+ 		/* Save guest registers, load host registers */
+-		"mov %%" _ASM_BX ", %c[rbx](%[svm]) \n\t"
+-		"mov %%" _ASM_CX ", %c[rcx](%[svm]) \n\t"
+-		"mov %%" _ASM_DX ", %c[rdx](%[svm]) \n\t"
+-		"mov %%" _ASM_SI ", %c[rsi](%[svm]) \n\t"
+-		"mov %%" _ASM_DI ", %c[rdi](%[svm]) \n\t"
+-		"mov %%" _ASM_BP ", %c[rbp](%[svm]) \n\t"
++		"mov %%" _ASM_BX ", %c[rbx](%[regs]) \n\t"
++		__ASM_SIZE(pop)  "  %c[rcx](%[regs]) \n\t"
++		"mov %%" _ASM_CX ", %c[rcx](%[regs]) \n\t"
++		"mov %%" _ASM_DX ", %c[rdx](%[regs]) \n\t"
++		"mov %%" _ASM_SI ", %c[rsi](%[regs]) \n\t"
++		"mov %%" _ASM_DI ", %c[rdi](%[regs]) \n\t"
++		"mov %%" _ASM_BP ", %c[rbp](%[regs]) \n\t"
+ #ifdef CONFIG_X86_64
+-		"mov %%r8,  %c[r8](%[svm]) \n\t"
+-		"mov %%r9,  %c[r9](%[svm]) \n\t"
+-		"mov %%r10, %c[r10](%[svm]) \n\t"
+-		"mov %%r11, %c[r11](%[svm]) \n\t"
+-		"mov %%r12, %c[r12](%[svm]) \n\t"
+-		"mov %%r13, %c[r13](%[svm]) \n\t"
+-		"mov %%r14, %c[r14](%[svm]) \n\t"
+-		"mov %%r15, %c[r15](%[svm]) \n\t"
++		"mov %%r8,  %c[r8](%[regs]) \n\t"
++		"mov %%r9,  %c[r9](%[regs]) \n\t"
++		"mov %%r10, %c[r10](%[regs]) \n\t"
++		"mov %%r11, %c[r11](%[regs]) \n\t"
++		"mov %%r12, %c[r12](%[regs]) \n\t"
++		"mov %%r13, %c[r13](%[regs]) \n\t"
++		"mov %%r14, %c[r14](%[regs]) \n\t"
++		"mov %%r15, %c[r15](%[regs]) \n\t"
+ 		/*
+ 		* Clear host registers marked as clobbered to prevent
+ 		* speculative use.
+@@ -5655,29 +5669,31 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
+ 		"xor %%edx, %%edx \n\t"
+ 		"xor %%esi, %%esi \n\t"
+ 		"xor %%edi, %%edi \n\t"
+-		"pop %%" _ASM_BP
++		"pop %%" _ASM_CX " \n\t"
++		"pop %%" _ASM_BP " \n\t"
+ 		:
+-		: [svm]"a"(svm),
++		: [svm]"a"(svm), [regs]"c"(regs),
+ 		  [vmcb]"i"(offsetof(struct vcpu_svm, vmcb_pa)),
+-		  [rbx]"i"(offsetof(struct vcpu_svm, vcpu.arch.regs[VCPU_REGS_RBX])),
+-		  [rcx]"i"(offsetof(struct vcpu_svm, vcpu.arch.regs[VCPU_REGS_RCX])),
+-		  [rdx]"i"(offsetof(struct vcpu_svm, vcpu.arch.regs[VCPU_REGS_RDX])),
+-		  [rsi]"i"(offsetof(struct vcpu_svm, vcpu.arch.regs[VCPU_REGS_RSI])),
+-		  [rdi]"i"(offsetof(struct vcpu_svm, vcpu.arch.regs[VCPU_REGS_RDI])),
+-		  [rbp]"i"(offsetof(struct vcpu_svm, vcpu.arch.regs[VCPU_REGS_RBP]))
++		  [rbx]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_RBX])),
++		  [rcx]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_RCX])),
++		  [rdx]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_RDX])),
++		  [rsi]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_RSI])),
++		  [rdi]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_RDI])),
++		  [rbp]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_RBP]))
+ #ifdef CONFIG_X86_64
+-		  , [r8]"i"(offsetof(struct vcpu_svm, vcpu.arch.regs[VCPU_REGS_R8])),
+-		  [r9]"i"(offsetof(struct vcpu_svm, vcpu.arch.regs[VCPU_REGS_R9])),
+-		  [r10]"i"(offsetof(struct vcpu_svm, vcpu.arch.regs[VCPU_REGS_R10])),
+-		  [r11]"i"(offsetof(struct vcpu_svm, vcpu.arch.regs[VCPU_REGS_R11])),
+-		  [r12]"i"(offsetof(struct vcpu_svm, vcpu.arch.regs[VCPU_REGS_R12])),
+-		  [r13]"i"(offsetof(struct vcpu_svm, vcpu.arch.regs[VCPU_REGS_R13])),
+-		  [r14]"i"(offsetof(struct vcpu_svm, vcpu.arch.regs[VCPU_REGS_R14])),
+-		  [r15]"i"(offsetof(struct vcpu_svm, vcpu.arch.regs[VCPU_REGS_R15]))
++		  , [r8]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R8])),
++		  [r9]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R9])),
++		  [r10]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R10])),
++		  [r11]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R11])),
++		  [r12]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R12])),
++		  [r13]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R13])),
++		  [r14]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R14])),
++		  [r15]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R15])),
++		  [wordsize]"i"(sizeof(ulong))
+ #endif
+ 		: "cc", "memory"
+ #ifdef CONFIG_X86_64
+-		, "rbx", "rcx", "rdx", "rsi", "rdi"
++		, "rbx", "rdx", "rsi", "rdi"
+ 		, "r8", "r9", "r10", "r11" , "r12", "r13", "r14", "r15"
+ #else
+ 		, "ebx", "ecx", "edx", "esi", "edi"
+@@ -5721,9 +5737,9 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
+ 	x86_spec_ctrl_restore_host(svm->spec_ctrl, svm->virt_spec_ctrl);
+ 
+ 	vcpu->arch.cr2 = svm->vmcb->save.cr2;
+-	vcpu->arch.regs[VCPU_REGS_RAX] = svm->vmcb->save.rax;
+-	vcpu->arch.regs[VCPU_REGS_RSP] = svm->vmcb->save.rsp;
+-	vcpu->arch.regs[VCPU_REGS_RIP] = svm->vmcb->save.rip;
++	regs[VCPU_REGS_RAX] = svm->vmcb->save.rax;
++	regs[VCPU_REGS_RSP] = svm->vmcb->save.rsp;
++	regs[VCPU_REGS_RIP] = svm->vmcb->save.rip;
+ 
+ 	if (unlikely(svm->vmcb->control.exit_code == SVM_EXIT_NMI))
+ 		kvm_before_interrupt(&svm->vcpu);
+@@ -6150,14 +6166,16 @@ static int svm_pre_enter_smm(struct kvm_vcpu *vcpu, char *smstate)
+ 	int ret;
+ 
+ 	if (is_guest_mode(vcpu)) {
++		unsigned long *regs = kvm_arch_vcpu_hidden_get(vcpu)->regs;
 +
-+	  If you are unsure how to answer this question, answer N.
+ 		/* FED8h - SVM Guest */
+ 		put_smstate(u64, smstate, 0x7ed8, 1);
+ 		/* FEE0h - SVM Guest VMCB Physical Address */
+ 		put_smstate(u64, smstate, 0x7ee0, svm->nested.vmcb);
+ 
+-		svm->vmcb->save.rax = vcpu->arch.regs[VCPU_REGS_RAX];
+-		svm->vmcb->save.rsp = vcpu->arch.regs[VCPU_REGS_RSP];
+-		svm->vmcb->save.rip = vcpu->arch.regs[VCPU_REGS_RIP];
++		svm->vmcb->save.rax = regs[VCPU_REGS_RAX];
++		svm->vmcb->save.rsp = regs[VCPU_REGS_RSP];
++		svm->vmcb->save.rip = regs[VCPU_REGS_RIP];
+ 
+ 		ret = nested_svm_vmexit(svm);
+ 		if (ret)
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 8ebd41d935b8..21959e0a9588 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -4364,10 +4364,10 @@ static void vmx_cache_reg(struct kvm_vcpu *vcpu, enum kvm_reg reg)
+ 	__set_bit(reg, (unsigned long *)&vcpu->arch.regs_avail);
+ 	switch (reg) {
+ 	case VCPU_REGS_RSP:
+-		vcpu->arch.regs[VCPU_REGS_RSP] = vmcs_readl(GUEST_RSP);
++		kvm_arch_vcpu_hidden_get(vcpu)->regs[VCPU_REGS_RSP] = vmcs_readl(GUEST_RSP);
+ 		break;
+ 	case VCPU_REGS_RIP:
+-		vcpu->arch.regs[VCPU_REGS_RIP] = vmcs_readl(GUEST_RIP);
++		kvm_arch_vcpu_hidden_get(vcpu)->regs[VCPU_REGS_RIP] = vmcs_readl(GUEST_RIP);
+ 		break;
+ 	case VCPU_EXREG_PDPTR:
+ 		if (enable_ept)
+@@ -6704,7 +6704,7 @@ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ 	vmx->spec_ctrl = 0;
+ 
+ 	vcpu->arch.microcode_version = 0x100000000ULL;
+-	vmx->vcpu.arch.regs[VCPU_REGS_RDX] = get_rdx_init_val();
++	kvm_arch_vcpu_hidden_get(vcpu)->regs[VCPU_REGS_RDX] = get_rdx_init_val();
+ 	kvm_set_cr8(vcpu, 0);
+ 
+ 	if (!init_event) {
+@@ -7440,7 +7440,7 @@ static int handle_cpuid(struct kvm_vcpu *vcpu)
+ 
+ static int handle_rdmsr(struct kvm_vcpu *vcpu)
+ {
+-	u32 ecx = vcpu->arch.regs[VCPU_REGS_RCX];
++	u32 ecx = kvm_arch_vcpu_hidden_get(vcpu)->regs[VCPU_REGS_RCX];
+ 	struct msr_data msr_info;
+ 
+ 	msr_info.index = ecx;
+@@ -7454,17 +7454,17 @@ static int handle_rdmsr(struct kvm_vcpu *vcpu)
+ 	trace_kvm_msr_read(ecx, msr_info.data);
+ 
+ 	/* FIXME: handling of bits 32:63 of rax, rdx */
+-	vcpu->arch.regs[VCPU_REGS_RAX] = msr_info.data & -1u;
+-	vcpu->arch.regs[VCPU_REGS_RDX] = (msr_info.data >> 32) & -1u;
++	kvm_arch_vcpu_hidden_get(vcpu)->regs[VCPU_REGS_RAX] = msr_info.data & -1u;
++	kvm_arch_vcpu_hidden_get(vcpu)->regs[VCPU_REGS_RDX] = (msr_info.data >> 32) & -1u;
+ 	return kvm_skip_emulated_instruction(vcpu);
+ }
+ 
+ static int handle_wrmsr(struct kvm_vcpu *vcpu)
+ {
+ 	struct msr_data msr;
+-	u32 ecx = vcpu->arch.regs[VCPU_REGS_RCX];
+-	u64 data = (vcpu->arch.regs[VCPU_REGS_RAX] & -1u)
+-		| ((u64)(vcpu->arch.regs[VCPU_REGS_RDX] & -1u) << 32);
++	u32 ecx = kvm_arch_vcpu_hidden_get(vcpu)->regs[VCPU_REGS_RCX];
++	u64 data = (kvm_arch_vcpu_hidden_get(vcpu)->regs[VCPU_REGS_RAX] & -1u)
++		| ((u64)(kvm_arch_vcpu_hidden_get(vcpu)->regs[VCPU_REGS_RDX] & -1u) << 32);
+ 
+ 	msr.data = data;
+ 	msr.index = ecx;
+@@ -9735,7 +9735,7 @@ static bool valid_ept_address(struct kvm_vcpu *vcpu, u64 address)
+ static int nested_vmx_eptp_switching(struct kvm_vcpu *vcpu,
+ 				     struct vmcs12 *vmcs12)
+ {
+-	u32 index = vcpu->arch.regs[VCPU_REGS_RCX];
++	u32 index = kvm_arch_vcpu_hidden_get(vcpu)->regs[VCPU_REGS_RCX];
+ 	u64 address;
+ 	bool accessed_dirty;
+ 	struct kvm_mmu *mmu = vcpu->arch.walk_mmu;
+@@ -9781,7 +9781,7 @@ static int handle_vmfunc(struct kvm_vcpu *vcpu)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	struct vmcs12 *vmcs12;
+-	u32 function = vcpu->arch.regs[VCPU_REGS_RAX];
++	u32 function = kvm_arch_vcpu_hidden_get(vcpu)->regs[VCPU_REGS_RAX];
+ 
+ 	/*
+ 	 * VMFUNC is only supported for nested guests, but we always enable the
+@@ -9940,7 +9940,7 @@ static bool nested_vmx_exit_handled_io(struct kvm_vcpu *vcpu,
+ static bool nested_vmx_exit_handled_msr(struct kvm_vcpu *vcpu,
+ 	struct vmcs12 *vmcs12, u32 exit_reason)
+ {
+-	u32 msr_index = vcpu->arch.regs[VCPU_REGS_RCX];
++	u32 msr_index = kvm_arch_vcpu_hidden_get(vcpu)->regs[VCPU_REGS_RCX];
+ 	gpa_t bitmap;
+ 
+ 	if (!nested_cpu_has(vmcs12, CPU_BASED_USE_MSR_BITMAPS))
+@@ -11166,9 +11166,9 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 	}
+ 
+ 	if (test_bit(VCPU_REGS_RSP, (unsigned long *)&vcpu->arch.regs_dirty))
+-		vmcs_writel(GUEST_RSP, vcpu->arch.regs[VCPU_REGS_RSP]);
++		vmcs_writel(GUEST_RSP, kvm_arch_vcpu_hidden_get(vcpu)->regs[VCPU_REGS_RSP]);
+ 	if (test_bit(VCPU_REGS_RIP, (unsigned long *)&vcpu->arch.regs_dirty))
+-		vmcs_writel(GUEST_RIP, vcpu->arch.regs[VCPU_REGS_RIP]);
++		vmcs_writel(GUEST_RIP, kvm_arch_vcpu_hidden_get(vcpu)->regs[VCPU_REGS_RIP]);
+ 
+ 	cr3 = __get_current_cr3_fast();
+ 	if (unlikely(cr3 != vmx->loaded_vmcs->host_state.cr3)) {
+@@ -11221,7 +11221,9 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 	asm(
+ 		/* Store host registers */
+ 		"push %%" _ASM_DX "; push %%" _ASM_BP ";"
+-		"push %%" _ASM_CX " \n\t" /* placeholder for guest rcx */
++		"push $0\n\t" /* placeholder for guest rbx */
++		"push $0\n\t" /* placeholder for guest rcx */
++		"push %%" _ASM_BX " \n\t"
+ 		"push %%" _ASM_CX " \n\t"
+ 		"cmp %%" _ASM_SP ", %c[host_rsp](%0) \n\t"
+ 		"je 1f \n\t"
+@@ -11237,23 +11239,23 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 		/* Check if vmlaunch of vmresume is needed */
+ 		"cmpl $0, %c[launched](%0) \n\t"
+ 		/* Load guest registers.  Don't clobber flags. */
+-		"mov %c[rax](%0), %%" _ASM_AX " \n\t"
+-		"mov %c[rbx](%0), %%" _ASM_BX " \n\t"
+-		"mov %c[rdx](%0), %%" _ASM_DX " \n\t"
+-		"mov %c[rsi](%0), %%" _ASM_SI " \n\t"
+-		"mov %c[rdi](%0), %%" _ASM_DI " \n\t"
+-		"mov %c[rbp](%0), %%" _ASM_BP " \n\t"
++		"mov %c[rax](%1), %%" _ASM_AX " \n\t"
++		"mov %c[rcx](%1), %%" _ASM_CX " \n\t" /* kills %0 (ecx) */
++		"mov %c[rdx](%1), %%" _ASM_DX " \n\t"
++		"mov %c[rsi](%1), %%" _ASM_SI " \n\t"
++		"mov %c[rdi](%1), %%" _ASM_DI " \n\t"
++		"mov %c[rbp](%1), %%" _ASM_BP " \n\t"
+ #ifdef CONFIG_X86_64
+-		"mov %c[r8](%0),  %%r8  \n\t"
+-		"mov %c[r9](%0),  %%r9  \n\t"
+-		"mov %c[r10](%0), %%r10 \n\t"
+-		"mov %c[r11](%0), %%r11 \n\t"
+-		"mov %c[r12](%0), %%r12 \n\t"
+-		"mov %c[r13](%0), %%r13 \n\t"
+-		"mov %c[r14](%0), %%r14 \n\t"
+-		"mov %c[r15](%0), %%r15 \n\t"
++		"mov %c[r8](%1),  %%r8  \n\t"
++		"mov %c[r9](%1),  %%r9  \n\t"
++		"mov %c[r10](%1), %%r10 \n\t"
++		"mov %c[r11](%1), %%r11 \n\t"
++		"mov %c[r12](%1), %%r12 \n\t"
++		"mov %c[r13](%1), %%r13 \n\t"
++		"mov %c[r14](%1), %%r14 \n\t"
++		"mov %c[r15](%1), %%r15 \n\t"
+ #endif
+-		"mov %c[rcx](%0), %%" _ASM_CX " \n\t" /* kills %0 (ecx) */
++		"mov %c[rbx](%1), %%" _ASM_BX " \n\t" /* kills %1 (ebx) */
+ 
+ 		/* Enter guest mode */
+ 		"jne 1f \n\t"
+@@ -11261,57 +11263,71 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 		"jmp 2f \n\t"
+ 		"1: " __ex("vmresume") "\n\t"
+ 		"2: "
 +
- config SECURITY_DMESG_RESTRICT
- 	bool "Restrict unprivileged access to the kernel syslog"
- 	default n
++		/*
++		 * Stack layout at this point (x86_64):
++		 *
++		 * [RSP + 40] = RDX
++		 * [RSP + 32] = RBP
++		 * [RSP + 24] = Space for guest RBX
++		 * [RSP + 16] = Space for guest RCX
++		 * [RSP +  8] = vcpu_hidden pointer
++		 * [RSP +  0] = vmx pointer
++		 */
++
+ 		/* Save guest registers, load host registers, keep flags */
+-		"mov %0, %c[wordsize](%%" _ASM_SP ") \n\t"
++		"mov %0, 2*%c[wordsize](%%" _ASM_SP ") \n\t"
++		"mov %1, 3*%c[wordsize](%%" _ASM_SP ") \n\t"
+ 		"pop %0 \n\t"
++		"pop %1 \n\t"
+ 		"setbe %c[fail](%0)\n\t"
+-		"mov %%" _ASM_AX ", %c[rax](%0) \n\t"
+-		"mov %%" _ASM_BX ", %c[rbx](%0) \n\t"
+-		__ASM_SIZE(pop) " %c[rcx](%0) \n\t"
+-		"mov %%" _ASM_DX ", %c[rdx](%0) \n\t"
+-		"mov %%" _ASM_SI ", %c[rsi](%0) \n\t"
+-		"mov %%" _ASM_DI ", %c[rdi](%0) \n\t"
+-		"mov %%" _ASM_BP ", %c[rbp](%0) \n\t"
++		"mov %%" _ASM_AX ", %c[rax](%1) \n\t"
++		__ASM_SIZE(pop) " %c[rcx](%1) \n\t"
++		__ASM_SIZE(pop) " %c[rbx](%1) \n\t"
++		"mov %%" _ASM_DX ", %c[rdx](%1) \n\t"
++		"mov %%" _ASM_SI ", %c[rsi](%1) \n\t"
++		"mov %%" _ASM_DI ", %c[rdi](%1) \n\t"
++		"mov %%" _ASM_BP ", %c[rbp](%1) \n\t"
+ #ifdef CONFIG_X86_64
+-		"mov %%r8,  %c[r8](%0) \n\t"
+-		"mov %%r9,  %c[r9](%0) \n\t"
+-		"mov %%r10, %c[r10](%0) \n\t"
+-		"mov %%r11, %c[r11](%0) \n\t"
+-		"mov %%r12, %c[r12](%0) \n\t"
+-		"mov %%r13, %c[r13](%0) \n\t"
+-		"mov %%r14, %c[r14](%0) \n\t"
+-		"mov %%r15, %c[r15](%0) \n\t"
++		"mov %%r8,  %c[r8](%1) \n\t"
++		"mov %%r9,  %c[r9](%1) \n\t"
++		"mov %%r10, %c[r10](%1) \n\t"
++		"mov %%r11, %c[r11](%1) \n\t"
++		"mov %%r12, %c[r12](%1) \n\t"
++		"mov %%r13, %c[r13](%1) \n\t"
++		"mov %%r14, %c[r14](%1) \n\t"
++		"mov %%r15, %c[r15](%1) \n\t"
+ #endif
+ 		"pop  %%" _ASM_BP "; pop  %%" _ASM_DX " \n\t"
+ 		".pushsection .rodata \n\t"
+ 		".global vmx_return \n\t"
+ 		"vmx_return: " _ASM_PTR " 2b \n\t"
+ 		".popsection"
+-	      : : "c"(vmx), "d"((unsigned long)HOST_RSP), "S"(evmcs_rsp),
++		: : "c"(vmx), "b" (kvm_arch_vcpu_hidden_get(vcpu)), "d"((unsigned long)HOST_RSP), "S"(evmcs_rsp),
+ 		[launched]"i"(offsetof(struct vcpu_vmx, __launched)),
+ 		[fail]"i"(offsetof(struct vcpu_vmx, fail)),
+ 		[host_rsp]"i"(offsetof(struct vcpu_vmx, host_rsp)),
+-		[rax]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_RAX])),
+-		[rbx]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_RBX])),
+-		[rcx]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_RCX])),
+-		[rdx]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_RDX])),
+-		[rsi]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_RSI])),
+-		[rdi]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_RDI])),
+-		[rbp]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_RBP])),
++		[rax]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_RAX])),
++		[rbx]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_RBX])),
++		[rcx]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_RCX])),
++		[rdx]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_RDX])),
++		[rsi]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_RSI])),
++		[rdi]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_RDI])),
++		[rbp]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_RBP])),
+ #ifdef CONFIG_X86_64
+-		[r8]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_R8])),
+-		[r9]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_R9])),
+-		[r10]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_R10])),
+-		[r11]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_R11])),
+-		[r12]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_R12])),
+-		[r13]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_R13])),
+-		[r14]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_R14])),
+-		[r15]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_R15])),
++		[r8]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R8])),
++		[r9]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R9])),
++		[r10]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R10])),
++		[r11]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R11])),
++		[r12]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R12])),
++		[r13]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R13])),
++		[r14]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R14])),
++		[r15]"i"(offsetof(struct kvm_vcpu_arch_hidden, regs[VCPU_REGS_R15])),
+ #endif
+ 		[wordsize]"i"(sizeof(ulong))
+ 	      : "cc", "memory"
+ #ifdef CONFIG_X86_64
+-		, "rax", "rbx", "rdi"
++		, "rax", "rdi"
+ 		, "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15"
+ #else
+ 		, "eax", "ebx", "edi"
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 941fa3209607..9c5fc8e13b17 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -8726,7 +8726,8 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ 		vcpu->arch.xcr0 = XFEATURE_MASK_FP;
+ 	}
+ 
+-	memset(vcpu->arch.regs, 0, sizeof(vcpu->arch.regs));
++	memset(kvm_arch_vcpu_hidden_get(vcpu)->regs, 0,
++	       sizeof(kvm_arch_vcpu_hidden_get(vcpu)->regs));
+ 	vcpu->arch.regs_avail = ~0;
+ 	vcpu->arch.regs_dirty = ~0;
+ 
 -- 
 2.17.1
 
