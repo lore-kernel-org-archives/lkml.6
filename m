@@ -2,108 +2,186 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5624C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C725C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A381D20864
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:05:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A381D20864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 50D8720864
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:05:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50D8720864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404909AbeKVRno (ORCPT
+        id S2404923AbeKVRns (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 12:43:44 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:48013 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730054AbeKVRnn (ORCPT
+        Thu, 22 Nov 2018 12:43:48 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:17179 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730054AbeKVRnr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 12:43:43 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAM75TH33690994
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 21 Nov 2018 23:05:29 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAM75Ts73690991;
-        Wed, 21 Nov 2018 23:05:29 -0800
-Date:   Wed, 21 Nov 2018 23:05:29 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-mdkck6hf3fnd21rz2766280q@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
-        namhyung@kernel.org, mingo@kernel.org, acme@redhat.com,
-        tglx@linutronix.de, wangnan0@huawei.com, jolsa@kernel.org,
-        dsahern@gmail.com, hpa@zytor.com
-Reply-To: mingo@kernel.org, namhyung@kernel.org, adrian.hunter@intel.com,
-          linux-kernel@vger.kernel.org, dsahern@gmail.com, hpa@zytor.com,
-          jolsa@kernel.org, wangnan0@huawei.com, acme@redhat.com,
-          tglx@linutronix.de
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf trace: Add "_from_option" suffix to
- trace__set_filter()
-Git-Commit-ID: 6a0b3abad9decb3c20e19baa3c442e1e5518546e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 22 Nov 2018 12:43:47 -0500
+X-UUID: 235587800baa4b9ba7f00eccf8b2fc1a-20181122
+X-UUID: 235587800baa4b9ba7f00eccf8b2fc1a-20181122
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <jjian.zhou@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1439778236; Thu, 22 Nov 2018 15:05:30 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 22 Nov 2018 15:05:21 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 22 Nov 2018 15:05:21 +0800
+From:   Jjian Zhou <jjian.zhou@mediatek.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        jjian zhou <jjian.zhou@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        <linux-mmc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        Yong Mao <yong.mao@mediatek.com>
+Subject: [PATCH] mmc: mediatek: add MT8183 SDIO driver support
+Date:   Thu, 22 Nov 2018 15:05:18 +0800
+Message-ID: <1542870318-10731-1-git-send-email-jjian.zhou@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 8CE51FAAB255305789E716B2BA393E97AD07E0DCD907FFA2A934F103F7E9EE2A2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6a0b3abad9decb3c20e19baa3c442e1e5518546e
-Gitweb:     https://git.kernel.org/tip/6a0b3abad9decb3c20e19baa3c442e1e5518546e
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 7 Nov 2018 09:38:49 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 21 Nov 2018 12:00:31 -0300
+From: jjian zhou <jjian.zhou@mediatek.com>
 
-perf trace: Add "_from_option" suffix to trace__set_filter()
+MT8183 need SDIO driver. So it need add new code
+to support it.
 
-As we'll need that name for a new function to set filters for both
-tracepoints and BPF maps for filtering pids.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-mdkck6hf3fnd21rz2766280q@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
 ---
- tools/perf/builtin-trace.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/mmc/host/mtk-sd.c | 51 ++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 48 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index d86ba17fcf44..8f966c7a7d0d 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -3104,8 +3104,8 @@ static int trace__set_duration(const struct option *opt, const char *str,
- 	return 0;
- }
- 
--static int trace__set_filter_pids(const struct option *opt, const char *str,
--				  int unset __maybe_unused)
-+static int trace__set_filter_pids_from_option(const struct option *opt, const char *str,
-+					      int unset __maybe_unused)
+diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+index 6334cc7..3128ee7 100644
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -1114,6 +1114,7 @@ static void msdc_start_command(struct msdc_host *host,
+ 		struct mmc_request *mrq, struct mmc_command *cmd)
  {
- 	int ret = -1;
- 	size_t i;
-@@ -3363,7 +3363,7 @@ int cmd_trace(int argc, const char **argv)
- 	OPT_STRING('t', "tid", &trace.opts.target.tid, "tid",
- 		    "trace events on existing thread id"),
- 	OPT_CALLBACK(0, "filter-pids", &trace, "CSV list of pids",
--		     "pids to filter (by the kernel)", trace__set_filter_pids),
-+		     "pids to filter (by the kernel)", trace__set_filter_pids_from_option),
- 	OPT_BOOLEAN('a', "all-cpus", &trace.opts.target.system_wide,
- 		    "system-wide collection from all CPUs"),
- 	OPT_STRING('C', "cpu", &trace.opts.target.cpu_list, "cpu",
+ 	u32 rawcmd;
++	unsigned long flags;
+
+ 	WARN_ON(host->cmd);
+ 	host->cmd = cmd;
+@@ -1131,7 +1132,12 @@ static void msdc_start_command(struct msdc_host *host,
+ 	cmd->error = 0;
+ 	rawcmd = msdc_cmd_prepare_raw_cmd(host, mrq, cmd);
+
++	if (host->mmc->caps & MMC_CAP_SDIO_IRQ)
++		spin_lock_irqsave(&host->lock, flags);
+ 	sdr_set_bits(host->base + MSDC_INTEN, cmd_ints_mask);
++	if (host->mmc->caps & MMC_CAP_SDIO_IRQ)
++		spin_unlock_irqrestore(&host->lock, flags);
++
+ 	writel(cmd->arg, host->base + SDC_ARG);
+ 	writel(rawcmd, host->base + SDC_CMD);
+ }
+@@ -1351,6 +1357,27 @@ static void msdc_request_timeout(struct work_struct *work)
+ 	}
+ }
+
++static void msdc_enable_sdio_irq(struct mmc_host *mmc, int enb)
++{
++	unsigned long flags;
++	struct msdc_host *host = mmc_priv(mmc);
++
++	if (enb)
++		pm_runtime_get_sync(host->dev);
++
++	spin_lock_irqsave(&host->lock, flags);
++	if (enb)
++		sdr_set_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
++	else
++		sdr_clr_bits(host->base + MSDC_INTEN, MSDC_INTEN_SDIOIRQ);
++	spin_unlock_irqrestore(&host->lock, flags);
++
++	if (!enb) {
++		pm_runtime_mark_last_busy(host->dev);
++		pm_runtime_put_autosuspend(host->dev);
++	}
++}
++
+ static irqreturn_t msdc_irq(int irq, void *dev_id)
+ {
+ 	struct msdc_host *host = (struct msdc_host *) dev_id;
+@@ -1373,7 +1400,12 @@ static irqreturn_t msdc_irq(int irq, void *dev_id)
+ 		data = host->data;
+ 		spin_unlock_irqrestore(&host->lock, flags);
+
+-		if (!(events & event_mask))
++		if ((events & event_mask) & MSDC_INT_SDIOIRQ) {
++			msdc_enable_sdio_irq(host->mmc, 0);
++			sdio_signal_irq(host->mmc);
++		}
++
++		if (!(events & (event_mask & ~MSDC_INT_SDIOIRQ)))
+ 			break;
+
+ 		if (!mrq) {
+@@ -1493,8 +1525,11 @@ static void msdc_init_hw(struct msdc_host *host)
+ 	 */
+ 	sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIO);
+
+-	/* disable detect SDIO device interrupt function */
+-	sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
++	/* Config SDIO device detect interrupt function */
++	if (host->mmc->caps & MMC_CAP_SDIO_IRQ)
++		sdr_set_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
++	else
++		sdr_clr_bits(host->base + SDC_CFG, SDC_CFG_SDIOIDE);
+
+ 	/* Configure to default data timeout */
+ 	sdr_set_field(host->base + SDC_CFG, SDC_CFG_DTOC, 3);
+@@ -2013,6 +2048,11 @@ static void msdc_hw_reset(struct mmc_host *mmc)
+ 	sdr_clr_bits(host->base + EMMC_IOCON, 1);
+ }
+
++static void msdc_ack_sdio_irq(struct mmc_host *mmc)
++{
++	msdc_enable_sdio_irq(mmc, 1);
++}
++
+ static const struct mmc_host_ops mt_msdc_ops = {
+ 	.post_req = msdc_post_req,
+ 	.pre_req = msdc_pre_req,
+@@ -2020,6 +2060,8 @@ static void msdc_hw_reset(struct mmc_host *mmc)
+ 	.set_ios = msdc_ops_set_ios,
+ 	.get_ro = mmc_gpio_get_ro,
+ 	.get_cd = mmc_gpio_get_cd,
++	.enable_sdio_irq = msdc_enable_sdio_irq,
++	.ack_sdio_irq = msdc_ack_sdio_irq,
+ 	.start_signal_voltage_switch = msdc_ops_switch_volt,
+ 	.card_busy = msdc_card_busy,
+ 	.execute_tuning = msdc_execute_tuning,
+@@ -2147,6 +2189,9 @@ static int msdc_drv_probe(struct platform_device *pdev)
+ 	else
+ 		mmc->f_min = DIV_ROUND_UP(host->src_clk_freq, 4 * 4095);
+
++	if (mmc->caps & MMC_CAP_SDIO_IRQ) {
++		mmc->caps2 |= MMC_CAP2_SDIO_IRQ_NOTHREAD;
++
+ 	mmc->caps |= MMC_CAP_ERASE | MMC_CAP_CMD23;
+ 	/* MMC core transfer sizes tunable parameters */
+ 	mmc->max_segs = MAX_BD_NUM;
+--
+1.9.1
+
