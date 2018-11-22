@@ -2,93 +2,100 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D1FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE87C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EA5C20685
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:48:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EA5C20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 08B0C20685
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:48:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08B0C20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394406AbeKVV1W (ORCPT
+        id S2394421AbeKVV1j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 16:27:22 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:47301 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732079AbeKVV1W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 16:27:22 -0500
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gPmWy-0003R4-Ed; Thu, 22 Nov 2018 11:48:20 +0100
-Date:   Thu, 22 Nov 2018 11:48:14 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Borislav Petkov <bp@alien8.de>
-cc:     Peter Zijlstra <peterz@infradead.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [patch 15/24] x86/speculation: Add command line control for
- indirect branch speculation
-In-Reply-To: <20181122101007.GB10365@zn.tnic>
-Message-ID: <alpine.DEB.2.21.1811221145210.1531@nanos.tec.linutronix.de>
-References: <20181121201430.559770965@linutronix.de> <20181121201723.764150349@linutronix.de> <20181121234312.GI27559@zn.tnic> <alpine.DEB.2.21.1811220048080.1665@nanos.tec.linutronix.de> <20181122091858.GJ2131@hirez.programming.kicks-ass.net>
- <20181122101007.GB10365@zn.tnic>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 22 Nov 2018 16:27:39 -0500
+Received: from mga09.intel.com ([134.134.136.24]:2144 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732079AbeKVV1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 16:27:38 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2018 02:48:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,265,1539673200"; 
+   d="scan'208";a="87872248"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga007.fm.intel.com with SMTP; 22 Nov 2018 02:48:41 -0800
+Received: by lahna (sSMTP sendmail emulation); Thu, 22 Nov 2018 12:48:40 +0200
+Date:   Thu, 22 Nov 2018 12:48:40 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Yehezkel Bernat <yehezkelshb@gmail.com>, ashok.raj@intel.com,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        michael.jamet@intel.com, Christian Kellner <ckellner@redhat.com>,
+        rjw@rjwysocki.net, Anthony Wong <anthony.wong@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        iommu@lists.linux-foundation.org, lukas@wunner.de,
+        jacob.jun.pan@intel.com, linux-pci@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-acpi@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
+Message-ID: <20181122104840.GO4179@lahna.fi.intel.com>
+References: <20181115102239.GU2500@lahna.fi.intel.com>
+ <20181115111356.GA599@e107981-ln.cambridge.arm.com>
+ <20181115113737.GW2500@lahna.fi.intel.com>
+ <20181115120736.pscly6zwd3k2tvd2@wunner.de>
+ <20181115121627.GA2500@lahna.fi.intel.com>
+ <20181115174608.GA17691@e107981-ln.cambridge.arm.com>
+ <CA+CmpXv9yM6nFdb0mcMPGHS-B_uGbQHYoO6iuefZC8gWoZYD3Q@mail.gmail.com>
+ <20181115191026.GE4179@lahna.fi.intel.com>
+ <20181116091804.GA4548@infradead.org>
+ <20181116093210.GK4179@lahna.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181116093210.GK4179@lahna.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Nov 2018, Borislav Petkov wrote:
-> On Thu, Nov 22, 2018 at 10:18:58AM +0100, Peter Zijlstra wrote:
-> > Right; that retpoline + IBPB case is one that came up earlier when we
-> > talked about this stuff. The IBPB also helps against app2app BTB ASLR
-> > attacks. So even if you have userspace retpoline, you might still want
-> > IBPB.
+On Fri, Nov 16, 2018 at 11:32:10AM +0200, Mika Westerberg wrote:
+> On Fri, Nov 16, 2018 at 01:18:04AM -0800, Christoph Hellwig wrote:
+> > On Thu, Nov 15, 2018 at 09:10:26PM +0200, Mika Westerberg wrote:
+> > > FireWire is kind of different but there are connectors such as
+> > > ExpressCard and NVMe (over U.2 connector) which carry PCIe and are
+> > > relatively easy to access without need for a screwdriver. AFAIK some
+> > > eGPUs are also using some other proprietary (non-TBT) connector that
+> > > carries PCIe.
 > > 
-> > But yes, this should be relatively straight forward to allow/fix with
-> > the proposed code.
+> > U.2 is a data center internal form factor with hot plug capability. If
+> > you enable an iommu for that by default you will make a lot of people
+> > very unhappy.
 > 
-> So I got some feedback from AMD that IBPB on context switch has a
-> small perf impact and they wouldn't mind it being enabled by default
-> considering that it provides protection against a lot of attack
-> scenarios. Basically, what the recommendation says.
+> Well, it needs the other bit in ACPI DMAR table to be enabled by default
+> so I don't think anyone in data center domain will notice ;-)
 > 
-> But if we go and do opt-in, then they're fine with it being off by
-> default if we decide to do it so in the kernel.
+> > More importantly NVMe is now used for the current/next generation
+> > Compact Flash and SD cards, which contain full PCIe gen 3 links.
+> 
+> OK, thanks for the information - I did not know that. I guess those
+> belong to the "external" category as well.
 
-So one way to do this would be to have additional options:
+We had an internal discussion regarding this and it was suggested that
+the new flag is called "is_untrusted" instead of "is_external". This
+covers Thunderbolt devices currently but can be extend to any other PCIe
+device such as "SD express" ones. When IOMMU is turned on it will then
+make sure devices with "is_untrusted" set are always using full IOMMU
+protection.
 
-   prctl,ibpb and seccomp,ibpb
-
-which then would keep the STIBP stuff as proposed and switch ibpb to always
-mode. Adding the back to back optimization for the always ibpb mode is not
-rocket science.
-
-Thanks,
-
-	tglx
+Any comments, objections? I was going to send v2 with this change
+included.
