@@ -2,162 +2,196 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC857C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8308C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1F8920663
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:48:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58AAD20663
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:48:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="zAV9wHoF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1F8920663
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OReEh0yd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58AAD20663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393238AbeKVT02 (ORCPT
+        id S2393251AbeKVT0w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 14:26:28 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:51732 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729305AbeKVT02 (ORCPT
+        Thu, 22 Nov 2018 14:26:52 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37824 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729305AbeKVT0w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 14:26:28 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAM8l66f017896;
-        Thu, 22 Nov 2018 02:47:06 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1542876426;
-        bh=qV+3756y+SRkMlQtdQG4JGIAiysFzHpm6q7U3aM2JxY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=zAV9wHoFkEtMiq5fGy7PzH+vvj9p9QixuR3QBz/h6wgIQC0D6iGcoRgdzEacyy2j5
-         aaYrZniCCAGq1WirQpeT3Jzx0ee9oC8ACf8EmWiYSLWLI2NOoeUfc6lBEPalsJsCnF
-         suRQwJ7Bi98iF5Gmr5Q9Yo6DmtvGq/ZZRg1qYM3k=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAM8l6kg058837
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 22 Nov 2018 02:47:06 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 22
- Nov 2018 02:47:05 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 22 Nov 2018 02:47:06 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAM8l1vi029675;
-        Thu, 22 Nov 2018 02:47:02 -0600
-Subject: Re: [PATCH v2 8/9] phy: Add Cadence D-PHY support
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        <linux-media@vger.kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-References: <cover.c2c2ae47383b9dbbdee6b69cafdd7391c06dde4f.1541516029.git-series.maxime.ripard@bootlin.com>
- <4ec9e47fb5aa9794f69a8e75a04108055094c056.1541516029.git-series.maxime.ripard@bootlin.com>
- <5f5bcc06-51b2-d565-56a0-083c66c1f01a@ti.com>
- <8536050b-40ab-1ec4-d325-e59bb3a92e73@ti.com>
- <20181121101121.7rhe2hz2mnmc72cu@flea>
- <20c0fd85-95f6-9849-c10b-998a1e0f527d@ti.com>
- <20181121134756.aoj6otdcl4stpd6p@flea>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <69c49e08-97d2-650e-d201-466835d45ccd@ti.com>
-Date:   Thu, 22 Nov 2018 14:16:58 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 22 Nov 2018 14:26:52 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j10so8372568wru.4;
+        Thu, 22 Nov 2018 00:48:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=DOYMijtaJDziVSb7Zv8psIw4n/bqDFgT46BevDmNv9E=;
+        b=OReEh0ydQqJ99Eo4W1ohfEeiFObE8fEuYEx0XmICEUH8X1WCGXmwwnTUCNysWYKXE3
+         NsaIAObcAs9B8sR2w5mhgSqXSSVYPTX/ncB3VfIrCJxqEDlYb7lUR2w9IDysf7rnR1Ze
+         AiHCFaftRti0sK1yQtpA4lLgKZCPRX8JgVX05gMpfRwK9y8R7PmR/lZE4Pb/gSqJnTeJ
+         ZCLUm1j0AwUA8xYayDTxPw7gv87hcWbuKF2az+dngQGzfRVkYz3IJKzVdJ/vH/zGeh12
+         t2vzx5Ek3L6zGKMUb7eeeBzRjwbOzcQ32Zdh95/JnL1TpxzVFAI33nqVF3hZnxAWZeZi
+         eaCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=DOYMijtaJDziVSb7Zv8psIw4n/bqDFgT46BevDmNv9E=;
+        b=Ocmn9ZRYKgv6jPAjaG1bDEdFZQTi2TB2t/QPuwINis/ic04df0Oj/VuxV7Et4gwSio
+         9xeAFxfKe+GtjRXPrF+HBAEjN9CbnQV4S7eoZGbE8laeEzQNeX4yMV4wRkpARXcx/gyP
+         1AHQPua+Z2CoPcsNpFZYp38m1awLXWB0At0KM2A/17sUJULkGQJ3F/vrYueyFARxynZ0
+         AbLJLjKijBloMu/Xmtn/n9nK7Yxv8j6s3HY0rrnYbDVQxBwGnwTZeJcfo8qDfZJEr2QI
+         adm+wZbP4AU1nE7oxlx7dILCYJm74S6nnN+agW/G974S0uAxL3H6/mgiZkVd70ryMBFT
+         qdnA==
+X-Gm-Message-State: AA+aEWbiBrG03dVhTi5TFaJgd2Zezcjv4/bYRCUQr8Trrf4Kb5b88O5Z
+        GaWL4RueyWShBTzx9NiwDIQ=
+X-Google-Smtp-Source: AFSGD/W3z8lqLSw90N5u8GTXFFAiw5jkJ8szU7oFFEhYPNtcQmUv4I/DFbQlhQM+iG427TiwYbz0UA==
+X-Received: by 2002:adf:8101:: with SMTP id 1-v6mr1486285wrm.18.1542876500189;
+        Thu, 22 Nov 2018 00:48:20 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id y9sm13832755wrq.55.2018.11.22.00.48.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 22 Nov 2018 00:48:19 -0800 (PST)
+Date:   Thu, 22 Nov 2018 09:48:15 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Yi Wang <wang.yi59@zte.com.cn>
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        ard.biesheuvel@linaro.org, linux-efi@vger.kernel.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com, kvm@vger.kernel.org,
+        jgross@suse.com, akataria@vmware.com,
+        virtualization@lists.linux-foundation.org, m.mizuma@jp.fujitsu.com,
+        peterz@infradead.org, prarit@redhat.com, douly.fnst@cn.fujitsu.com,
+        dwmw@amazon.co.uk, luto@kernel.org, pasha.tatashin@oracle.com,
+        rajvi.jingar@intel.com, zhe.he@windriver.com,
+        akpm@linux-foundation.org, dyoung@redhat.com,
+        takahiro.akashi@linaro.org, ebiederm@xmission.com, bhe@redhat.com,
+        ivan.gorinov@intel.com, robh@kernel.org, andy.shevchenko@gmail.com,
+        frank.rowand@sony.com, jan.kiszka@siemens.com,
+        jailhouse-dev@googlegroups.com, konrad.wilk@oracle.com,
+        thomas.lendacky@amd.com, pravin.shedge4linux@gmail.com,
+        namit@vmware.com, jroedel@suse.de, bhelgaas@google.com,
+        linux-pci@vger.kernel.org, keescook@chromium.org, anton@enomsg.org,
+        ccross@android.com, tony.luck@intel.com, rostedt@goodmis.org,
+        kexec@lists.infradead.org, robh+dt@kernel.org,
+        frowand.list@gmail.com, devicetree@vger.kernel.org,
+        oleg@redhat.com, zhong.weidong@zte.com.cn, up2wing@gmail.com
+Subject: Re: [PATCH] x86: fix -Wmissing-prototypes warning
+Message-ID: <20181122084815.GA84118@gmail.com>
+References: <1542852249-19820-1-git-send-email-wang.yi59@zte.com.cn>
 MIME-Version: 1.0
-In-Reply-To: <20181121134756.aoj6otdcl4stpd6p@flea>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1542852249-19820-1-git-send-email-wang.yi59@zte.com.cn>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 21/11/18 7:17 PM, Maxime Ripard wrote:
-> Hi Kishon,
-> 
-> On Wed, Nov 21, 2018 at 03:59:43PM +0530, Kishon Vijay Abraham I wrote:
->> On 21/11/18 3:41 PM, Maxime Ripard wrote:
->>> Hi Kishon,
->>>
->>> On Tue, Nov 20, 2018 at 11:02:34AM +0530, Kishon Vijay Abraham I wrote:
->>>>>> +static int cdns_dphy_config_from_opts(struct phy *phy,
->>>>>> +				      struct phy_configure_opts_mipi_dphy *opts,
->>>>>> +				      struct cdns_dphy_cfg *cfg)
->>>>>> +{
->>>>>> +	struct cdns_dphy *dphy = phy_get_drvdata(phy);
->>>>>> +	unsigned int dsi_hfp_ext = 0;
->>>>>> +	int ret;
->>>>>> +
->>>>>> +	ret = phy_mipi_dphy_config_validate(opts);
->>>>>> +	if (ret)
->>>>>> +		return ret;
->>>>>> +
->>>>>> +	ret = cdns_dsi_get_dphy_pll_cfg(dphy, cfg,
->>>>>> +					opts, &dsi_hfp_ext);
->>>>>> +	if (ret)
->>>>>> +		return ret;
->>>>>> +
->>>>>> +	opts->wakeup = cdns_dphy_get_wakeup_time_ns(dphy);
->>>>
->>>> Is the wakeup populated here used by the consumer driver?
->>>
->>> It's supposed to, if it can yes.
->>
->> But I guess right now it's not using. I'm thinking the usefulness of validate
->> callback (only from this series point of view). Why should a consumer driver
->> invoke validate if it doesn't intend to configure the PHY?
->>
->> The 3 steps required are
->> 	* The consumer driver gets the default config
->> 	* The consumer driver changes some of the configuration and
->> 	* The consumer driver invokes phy configure callback.
->>
->> phy_configure anyways can validate the config before actually configuring the phy.
-> 
-> If you only want to configure the PHY, then yes, sure.
-> 
-> However, the point here is that validate helps negotiating what the
-> source device (DSI controller for example) and what the sink device
-> (say a panel) are capable of.
-> 
-> A panel for example might very well have multiple resolutions that it
-> supports, and the DSI controller will have some as well. And the PHY
-> will only be able to operate within certain boundaries too. However,
-> they don't necessarily match, since there's so many panels, and so
-> many SoCs.
-> 
-> Let's say our (very weird) panel is able to do 640x480, 1024x768 and
-> 1280x800. Our DSI driver can only operate with 1024 pixels in both
-> dimensions, and the PHY can only reach the bus frequency needed for
-> around 800x600.
-> 
-> We'll want to filter out 1280x800 (because the DSI controller can't
-> provide that) and 1024x768 (because the PHY can go fast enough), to
-> only provide the 640x480 option to the user.
-> 
-> That's what validate bring you. The option to test whether a given
-> configuration *would* work, without actually wanting to apply it right
-> now.
-> 
-> Does that make sense?
+* Yi Wang <wang.yi59@zte.com.cn> wrote:
 
-Thank you for the explanation. It's clear now.
+> We may get -Wmissing-prototypes warnings when building
+> kernel with W=1, it's better to fix them as global function
+> signature can be changed and caller who use the old unchanged
+> prototypes will be hosed.
+> 
+> This patch fixes most of -Wmissing-prototypes warnings which
+> are in the root directory of arch/x86/kernel, not including
+> the subdirectories.
+> 
+> These are the warnings fixed in this patch:
+> arch/x86/kernel/signal.c:865:17: warning: no previous prototype for ‘sys32_x32_rt_sigreturn’ [-Wmissing-prototypes]
+> arch/x86/kernel/signal_compat.c:164:6: warning: no previous prototype for ‘sigaction_compat_abi’ [-Wmissing-prototypes]
+> arch/x86/kernel/traps.c:625:46: warning: no previous prototype for ‘sync_regs’ [-Wmissing-prototypes]
+> arch/x86/kernel/traps.c:640:24: warning: no previous prototype for ‘fixup_bad_iret’ [-Wmissing-prototypes]
+> arch/x86/kernel/traps.c:929:13: warning: no previous prototype for ‘trap_init’ [-Wmissing-prototypes]
+> arch/x86/kernel/irq.c:270:28: warning: no previous prototype for ‘smp_x86_platform_ipi’ [-Wmissing-prototypes]
+> arch/x86/kernel/irq.c:301:16: warning: no previous prototype for ‘smp_kvm_posted_intr_ipi’ [-Wmissing-prototypes]
+> arch/x86/kernel/irq.c:314:16: warning: no previous prototype for ‘smp_kvm_posted_intr_wakeup_ipi’ [-Wmissing-prototypes]
+> arch/x86/kernel/irq.c:328:16: warning: no previous prototype for ‘smp_kvm_posted_intr_nested_ipi’ [-Wmissing-prototypes]
+> arch/x86/kernel/irq_work.c:16:28: warning: no previous prototype for ‘smp_irq_work_interrupt’ [-Wmissing-prototypes]
+> arch/x86/kernel/irqinit.c:79:13: warning: no previous prototype for ‘init_IRQ’ [-Wmissing-prototypes]
+> arch/x86/kernel/quirks.c:672:13: warning: no previous prototype for ‘early_platform_quirks’ [-Wmissing-prototypes]
+> arch/x86/kernel/tsc.c:1499:15: warning: no previous prototype for ‘calibrate_delay_is_known’ [-Wmissing-prototypes]
+> arch/x86/kernel/process.c:653:13: warning: no previous prototype for ‘arch_post_acpi_subsys_init’ [-Wmissing-prototypes]
+> arch/x86/kernel/process.c:717:15: warning: no previous prototype for ‘arch_randomize_brk’ [-Wmissing-prototypes]
+> arch/x86/kernel/process.c:784:6: warning: no previous prototype for ‘do_arch_prctl_common’ [-Wmissing-prototypes]
+> arch/x86/kernel/reboot.c:869:6: warning: no previous prototype for ‘nmi_panic_self_stop’ [-Wmissing-prototypes]
+> arch/x86/kernel/smp.c:176:27: warning: no previous prototype for ‘smp_reboot_interrupt’ [-Wmissing-prototypes]
+> arch/x86/kernel/smp.c:260:28: warning: no previous prototype for ‘smp_reschedule_interrupt’ [-Wmissing-prototypes]
+> arch/x86/kernel/smp.c:281:28: warning: no previous prototype for ‘smp_call_function_interrupt’ [-Wmissing-prototypes]
+> arch/x86/kernel/smp.c:291:28: warning: no previous prototype for ‘smp_call_function_single_interrupt’ [-Wmissing-prototypes]
+> arch/x86/kernel/ftrace.c:840:6: warning: no previous prototype for ‘arch_ftrace_update_trampoline’ [-Wmissing-prototypes]
+> arch/x86/kernel/ftrace.c:934:7: warning: no previous prototype for ‘arch_ftrace_trampoline_func’ [-Wmissing-prototypes]
+> arch/x86/kernel/ftrace.c:946:6: warning: no previous prototype for ‘arch_ftrace_trampoline_free’ [-Wmissing-prototypes]
+> arch/x86/kernel/crash.c:114:6: warning: no previous prototype for ‘crash_smp_send_stop’ [-Wmissing-prototypes]
+> arch/x86/kernel/crash.c:351:5: warning: no previous prototype for ‘crash_setup_memmap_entries’ [-Wmissing-prototypes]
+> arch/x86/kernel/crash.c:424:5: warning: no previous prototype for ‘crash_load_segments’ [-Wmissing-prototypes]
+> arch/x86/kernel/machine_kexec_64.c:372:7: warning: no previous prototype for ‘arch_kexec_kernel_image_load’ [-Wmissing-prototypes]
+> arch/x86/kernel/paravirt-spinlocks.c:12:16: warning: no previous prototype for ‘__native_queued_spin_unlock’ [-Wmissing-prototypes]
+> arch/x86/kernel/paravirt-spinlocks.c:18:6: warning: no previous prototype for ‘pv_is_native_spin_unlock’ [-Wmissing-prototypes]
+> arch/x86/kernel/paravirt-spinlocks.c:24:16: warning: no previous prototype for ‘__native_vcpu_is_preempted’ [-Wmissing-prototypes]
+> arch/x86/kernel/paravirt-spinlocks.c:30:6: warning: no previous prototype for ‘pv_is_native_vcpu_is_preempted’ [-Wmissing-prototypes]
+> arch/x86/kernel/kvm.c:258:1: warning: no previous prototype for ‘do_async_page_fault’ [-Wmissing-prototypes]
+> arch/x86/kernel/jailhouse.c:200:6: warning: no previous prototype for ‘jailhouse_paravirt’ [-Wmissing-prototypes]
+> arch/x86/kernel/check.c:91:13: warning: no previous prototype for ‘setup_bios_corruption_check’ [-Wmissing-prototypes]
+> arch/x86/kernel/check.c:139:6: warning: no previous prototype for ‘check_for_bios_corruption’ [-Wmissing-prototypes]
+> arch/x86/kernel/devicetree.c:32:13: warning: no previous prototype for ‘early_init_dt_scan_chosen_arch’ [-Wmissing-prototypes]
+> arch/x86/kernel/devicetree.c:42:13: warning: no previous prototype for ‘add_dtb’ [-Wmissing-prototypes]
+> arch/x86/kernel/devicetree.c:108:6: warning: no previous prototype for ‘x86_of_pci_init’ [-Wmissing-prototypes]
+> arch/x86/kernel/devicetree.c:314:13: warning: no previous prototype for ‘x86_dtb_init’ [-Wmissing-prototypes]
+> arch/x86/kernel/tracepoint.c:16:5: warning: no previous prototype for ‘trace_pagefault_reg’ [-Wmissing-prototypes]
+> arch/x86/kernel/tracepoint.c:22:6: warning: no previous prototype for ‘trace_pagefault_unreg’ [-Wmissing-prototypes]
+> arch/x86/kernel/head64.c:113:22: warning: no previous prototype for ‘__startup_64’ [-Wmissing-prototypes]
+> arch/x86/kernel/head64.c:262:15: warning: no previous prototype for ‘__startup_secondary_64’ [-Wmissing-prototypes]
+> arch/x86/kernel/head64.c:350:12: warning: no previous prototype for ‘early_make_pgtable’ [-Wmissing-prototypes]
+> 
+> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+> ---
+>  arch/x86/include/asm/crash.h       | 1 +
+>  arch/x86/include/asm/efi.h         | 2 --
+>  arch/x86/include/asm/irq.h         | 7 +++++++
+>  arch/x86/include/asm/irq_work.h    | 1 +
+>  arch/x86/include/asm/kvm_para.h    | 1 +
+>  arch/x86/include/asm/paravirt.h    | 5 +++++
+>  arch/x86/include/asm/reboot.h      | 1 +
+>  arch/x86/include/asm/setup.h       | 5 +++++
+>  arch/x86/include/asm/sighandling.h | 5 +++++
+>  arch/x86/include/asm/smp.h         | 6 ++++++
+>  arch/x86/include/asm/traps.h       | 4 ++++
+>  arch/x86/include/asm/tsc.h         | 1 +
+>  arch/x86/kernel/check.c            | 3 ++-
+>  arch/x86/kernel/crash.c            | 1 +
+>  arch/x86/kernel/devicetree.c       | 1 +
+>  arch/x86/kernel/jailhouse.c        | 1 +
+>  arch/x86/kernel/process.c          | 3 +++
+>  arch/x86/kernel/quirks.c           | 1 +
+>  arch/x86/kernel/tracepoint.c       | 1 +
+>  include/linux/efi.h                | 2 ++
+>  include/linux/ftrace.h             | 3 +++
+>  include/linux/kexec.h              | 1 +
+>  include/linux/of_fdt.h             | 1 +
+>  include/linux/ptrace.h             | 1 +
+>  24 files changed, 55 insertions(+), 3 deletions(-)
 
-Thanks
-Kishon
+Breaks 32-bit compilation:
+
+./arch/x86/include/asm/setup.h: Assembler messages:
+./arch/x86/include/asm/setup.h:30: Error: no such instruction: `unsigned long __startup_64(unsigned long physaddr,struct boot_params *bp)'
+
+I'll skip the setup.h bits - let's hope that's the only bug.
+
+Thanks,
+
+	Ingo
