@@ -2,170 +2,127 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31813C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 16:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E35A9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 16:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D991120684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 16:47:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D02820824
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 16:49:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="jHTiVEEb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D991120684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vFXHUT21"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D02820824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391885AbeKWD1y (ORCPT
+        id S2403935AbeKWD3f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 22:27:54 -0500
-Received: from mail.efficios.com ([167.114.142.138]:35804 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732442AbeKWD1x (ORCPT
+        Thu, 22 Nov 2018 22:29:35 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45453 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732770AbeKWD3f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 22:27:53 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id D95CE7B342;
-        Thu, 22 Nov 2018 11:47:42 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id WWjduBERekzg; Thu, 22 Nov 2018 11:47:42 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 6CEEE7B33D;
-        Thu, 22 Nov 2018 11:47:42 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 6CEEE7B33D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1542905262;
-        bh=zEUD2cv3m9QoBxqFrRcnLu6dRfjO+JYa50ASikZlxrY=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=jHTiVEEbmNQBBlZPisA4639XmLuEEFGzX2ziBILLaPdDpqLwIUR6fhtMABv6CiNeV
-         MHy2Of2dJqc2KvJ9JdABYjhyVhrXmAJLtRt1mGa1cRGrRdR07s7qf7jmk55GLPuZis
-         EUjPVdLUJJzP1hsQSN1UjU3UDkU96WNWa5sZJT8/89rpjoZDnG2X7m5TDFwRPX17Vh
-         QD7X9WcSrKEtZZqlLvcdxZA7BrbDEpNM0Be1X1ViJlGcpVAPsq/vKpMElNHaOajB5l
-         yYtSuqajiJYjRTpwfPM8RUeWl0UnV0aKTqEBUKgLxdtx0w3nwM/18Cnh3Nd30R8gq8
-         8KjPAVqQzrDrA==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 2zCcVB0wB0Oc; Thu, 22 Nov 2018 11:47:42 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 4EB217B331;
-        Thu, 22 Nov 2018 11:47:42 -0500 (EST)
-Date:   Thu, 22 Nov 2018 11:47:42 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Rich Felker <dalias@libc.org>, carlos <carlos@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <1045257294.10291.1542905262086.JavaMail.zimbra@efficios.com>
-In-Reply-To: <87wop5xeit.fsf@oldenburg.str.redhat.com>
-References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com> <20181122143603.GD23599@brightrain.aerifal.cx> <782067422.9852.1542899056778.JavaMail.zimbra@efficios.com> <20181122151444.GE23599@brightrain.aerifal.cx> <686626451.10113.1542901620250.JavaMail.zimbra@efficios.com> <87wop5xeit.fsf@oldenburg.str.redhat.com>
-Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl
- init and thread creation
+        Thu, 22 Nov 2018 22:29:35 -0500
+Received: by mail-pf1-f194.google.com with SMTP id g62so2158497pfd.12
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 08:49:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kC4sLiWuy0LyCSyiHS0PVP02yjUvLp/5peK2DM8t9IM=;
+        b=vFXHUT21nzBrfkeKxK8o+WAJNkorIXbY3/PXZ+h4pekMr79nmUuooLLebnF+XD34a8
+         lh0+9IiCIz54zVAaxey8jd2CptraQFaqN2Ui3MeM0UxJRC6IoUKeQ/y4ifjKg0nJmsCt
+         zenOMENL/7Jt3eypEWErX7TpYc6AXwArQiH2UzgBzOlOEFl/sJ1z96AAaTuhU12wgFXv
+         DpPLypQ8Yk4js4drbbPapwgjbHCQO0q8SpUd+w5S0gFzvAtG2B47An79CfgQGnQzXKAF
+         sVAVIx3p03Oo5x0ePbvd8NdUkQoCIp27VxVQ0R/JXwwjTJnRKLlKvetnTWotPAOmomiK
+         uTHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kC4sLiWuy0LyCSyiHS0PVP02yjUvLp/5peK2DM8t9IM=;
+        b=QQ8d1xIHMnxS4kU33AURxjedDCzixFtpwUMkc5kVvl+vma5zuaLQmElneeI2UStoCv
+         z2KIZLDs8qmrBHW0+hlZ4fjRXP8nN+xKuY/GWtbr7L74/1S7PIWo5ralw66nd7eXfOmB
+         e3Y1yBTk6o7u6gupkv0BZR2exd0sp+ug4vYNaKW5ewM7Vi5pg41IvI+MHg0g5BkEWaPz
+         tL9z5qJLQaVQQy97LwcBzRzbeevMi9pNMSodg/qZDrfU8qNoUqKyL7fTkkPexk1ihDG2
+         fRnYT+pxE7QHQtync1iQ6nu+/2Y+ofaRHhq6O/jCcEd22i+igE++b6av3XgFcUNo28xS
+         kJLQ==
+X-Gm-Message-State: AGRZ1gKgAZyyori+It/z2srhbgSsOc7ip5IkDO3OjPGZkYkSPwwEjzrB
+        YMe/CqrqQX8Tx1IywXpq9eogVX4hKwAClw==
+X-Google-Smtp-Source: AJdET5eKKLbgW9ERbHXfwHy4QgRYibMNEe2u6ZTyT24KabmUyJ3UweSxNCRzxpQYirKBIi1JUiDuBA==
+X-Received: by 2002:a62:8a51:: with SMTP id y78mr12019341pfd.35.1542905364574;
+        Thu, 22 Nov 2018 08:49:24 -0800 (PST)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id h134sm33933041pfe.27.2018.11.22.08.49.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 22 Nov 2018 08:49:24 -0800 (PST)
+Date:   Thu, 22 Nov 2018 22:19:18 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: greybus: arche-platform: Switch to the gpio
+ descriptor interface
+Message-ID: <20181122164916.GA18733@nishad>
+References: <20181116151740.GA12250@nishad>
+ <20181116160622.GQ19900@localhost>
+ <20181117071109.GA14187@nishad>
+ <20181117154027.GV19900@localhost>
+ <20181120094954.GC8089@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3047 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
-Thread-Topic: glibc: Perform rseq(2) registration at nptl init and thread creation
-Thread-Index: daNrSODWQpbUGqf0EEqpOD2sZf2NSQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181120094954.GC8089@kroah.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Nov 22, 2018, at 11:28 AM, Florian Weimer fweimer@redhat.com wrote:
-
-> * Mathieu Desnoyers:
+On Tue, Nov 20, 2018 at 10:49:54AM +0100, Greg Kroah-Hartman wrote:
+> On Sat, Nov 17, 2018 at 04:40:27PM +0100, Johan Hovold wrote:
+> > On Sat, Nov 17, 2018 at 12:41:11PM +0530, Nishad Kamdar wrote:
+> > > On Fri, Nov 16, 2018 at 05:06:22PM +0100, Johan Hovold wrote:
+> > > > On Fri, Nov 16, 2018 at 08:47:44PM +0530, Nishad Kamdar wrote:
+> > > > > Use the gpiod interface instead of the deprecated
+> > > > > old non-descriptor interface.
+> > > > > 
+> > > > > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> > > > > ---
+> > > > 
+> > > > Always include a change log here after the cut-off line so we know what
+> > > > changed since previous versions.
+> > > > 
+> > > > Also include the patch revision in the Subject (e.g. "[PATCH v3]
+> > > > staging: greybus: ...").
+> > > > 
+> > > 
+> > > Ok, but this is the first patch version that I submitted
+> > > for greybus: arche-platform.
+> > 
+> > Ah, sorry. I thought this was an update of the arche-apb-ctrl patch.
 > 
->> Here is one scenario: we have 2 early adopter libraries using rseq which
->> are deployed in an environment with an older glibc (which does not
->> support rseq).
->>
->> Of course, none of those libraries can be dlclose'd unless they somehow
->> track all registered threads.
+> Me too.
 > 
-> Well, you can always make them NODELETE so that dlclose is not an issue.
-> If the library is small enough, that shouldn't be a problem.
-
-That's indeed what I do with lttng-ust, mainly due to use of pthread_key.
-
+> I am totally confused as to what is, and is not, the latest versions of
+> all of these patches :(
 > 
->> But let's focus on how exactly those libraries can handle lazily
->> registering rseq. They can use pthread_key, and pthread_setspecific on
->> first use by the thread to setup a destructor function to be invoked
->> at thread exit. But each early adopter library is unaware of the
->> other, so if we just use a "is_initialized" flag, the first destructor
->> to run will unregister rseq while the second library may still be
->> using it.
+> Nishad, can you resend all of your pending greybus patches, as a patch
+> series, as "v3" so that I know which to properly review?  I've dropped
+> all of your others from my review queue now.
 > 
-> I don't think you need unregistering if the memory is initial-exec TLS
-> memory.  Initial-exec TLS memory is tied directly to the TCB and cannot
-> be freed while the thread is running, so it should be safe to put the
-> rseq area there even if glibc knows nothing about it.
-
-Is it true for user-supplied stacks as well ?
-
-> Then you'll only
-> need a mechanism to find the address of the actually active rseq area
-> (which you probably have to store in a TLS variable for performance
-> reasons).  And that part you need whether you have reference counter or
-> not.
-
-I'm not sure I follow your thoughts here. Currently, the __rseq_abi
-TLS symbol identifies a structure registered to the kernel. The
-"currently active" rseq critical section is identified by the field
-"rseq_cs" within the __rseq_abi structure.
-
-So here when you say "actually active rseq area", do you mean the
-currently registered struct rseq (__rseq_abi) or the currently running
-rseq critical section ? (pointed to by __rseq_abi.rseq_cs)
-
-One issue here is that early adopter libraries cannot always use
-the IE model. I tried using it for other TLS variables in lttng-ust, and
-it ended up hanging our CI tests when tracing a sample application with
-lttng-ust under a Java virtual machine: being dlopen'd in a process that
-possibly already exhausts the number of available backup TLS IE entries
-seems to have odd effects. This is why I'm worried about using the IE model
-within lttng-ust.
-
-So using the IE model for glibc makes sense, because nobody dlopen
-glibc AFAIK. But it's not so simple for early adopter libraries which
-can be dlopen'd.
-
+> thanks,
 > 
->> The same problem arises if we have an application early adopter which
->> explicitly deal with rseq, with a library early adopter. The issue is
->> similar, except that the application will explicitly want to unregister
->> rseq before exiting the thread, which leaves a race window where rseq
->> is unregistered, but the library may still need to use it.
->>
->> The reference counter solves this: only the last rseq user for a thread
->> performs unregistration.
-> 
-> If you do explicit unregistration, you will run into issues related to
-> destructor ordering.  You should really find a way to avoid that.
+> greg k-h
 
-The per-thread reference counter is a way to avoid issues that arise from
-lack of destructor ordering. Is it an acceptable approach for you, or
-you have something else in mind ?
+Ok, I'll do that.
 
-Thanks,
+Thanks for the review.
 
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Regards,
+Nishad
