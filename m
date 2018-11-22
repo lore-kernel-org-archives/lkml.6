@@ -2,90 +2,220 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EDD2C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42452C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:07:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD02F20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:06:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wc7zpghU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD02F20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id D118C20684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:07:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D118C20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405477AbeKVVpl (ORCPT
+        id S2394519AbeKVVqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 16:45:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42268 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388478AbeKVVpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 16:45:41 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DC3620820;
-        Thu, 22 Nov 2018 11:06:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542884806;
-        bh=SMIg++zaY+IyXYtdl6FokJtICJoz0vXF9/f3pAGgnJE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wc7zpghU0yLT+PrLvaxlNHLXOvBQ/cI2wSIrZNnAt3pMoexypCdkyS4CXp1uzhB4d
-         5Rz7bxWg16b9tJws9jESTsCDHBbe7169ejE6OZVFd9gb2acb7KPRxx8ZaMxo2LtRPI
-         6xW2AX5/+R5zFZbKp2H22T9AWBJIuB9HBs2EB6Ek=
-Date:   Thu, 22 Nov 2018 12:06:42 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org,
-        Chao Yu <yuchao0@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>, weidu.du@huawei.com,
-        Miao Xie <miaoxie@huawei.com>
-Subject: Re: [PATCH 02/10] staging: erofs: fix race when the managed cache is
- enabled
-Message-ID: <20181122110642.GE5287@kroah.com>
-References: <20181120143425.43637-1-gaoxiang25@huawei.com>
- <20181120143425.43637-3-gaoxiang25@huawei.com>
- <20181122101711.GA3189@kroah.com>
- <55aed87f-196e-9048-6aae-db09bc497664@huawei.com>
+        Thu, 22 Nov 2018 16:46:18 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:59225 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388478AbeKVVqR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 16:46:17 -0500
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=bjornoya.blackshift.org)
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <mkl@pengutronix.de>)
+        id 1gPmpK-0002cn-HF; Thu, 22 Nov 2018 12:07:18 +0100
+Received: from [IPv6:2a03:f580:87bc:d400:e586:a438:6bdb:ffff] (unknown [IPv6:2a03:f580:87bc:d400:e586:a438:6bdb:ffff])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client CN "mkl@blackshift.org", Issuer "StartCom Class 1 Client CA" (not verified))
+        (Authenticated sender: mkl@blackshift.org)
+        by smtp.blackshift.org (Postfix) with ESMTPSA id BACCB39317A;
+        Thu, 22 Nov 2018 11:07:17 +0000 (UTC)
+Subject: Re: [PATCH V3 1/1] can: flexcan: Add self wakeup support
+To:     Aisheng DONG <aisheng.dong@nxp.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>
+Cc:     "wg@grandegger.com" <wg@grandegger.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+References: <20181112015047.4252-1-qiangqing.zhang@nxp.com>
+ <20181112015047.4252-2-qiangqing.zhang@nxp.com>
+ <AM0PR04MB4211BE08EADBACBEC809067E80DA0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <af4e2030-c54d-d613-972a-25769bdff199@pengutronix.de>
+ <AM0PR04MB4211E93B707BEBADD5E5B63E80DB0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+From:   Marc Kleine-Budde <mkl@pengutronix.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mkl@pengutronix.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <c5a6da81-74d1-b336-8ad7-60050496ae22@pengutronix.de>
+Date:   Thu, 22 Nov 2018 12:07:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <55aed87f-196e-9048-6aae-db09bc497664@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <AM0PR04MB4211E93B707BEBADD5E5B63E80DB0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="ERpgqWgxr5VJrbcpFct8L5phrDYn1I1t7"
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 06:42:52PM +0800, Gao Xiang wrote:
-> Hi Greg,
-> 
-> On 2018/11/22 18:17, Greg Kroah-Hartman wrote:
-> > Any specific reason why you are not using the refcount.h api instead of
-> > "doing it yourself" with atomic_inc/dec()?
-> > 
-> > I'm not rejecting this, just curious.
-> 
-> As I explained in the previous email,
-> Re: [PATCH 04/10] staging: erofs: fix `erofs_workgroup_{try_to_freeze, unfreeze}'
-> 
-> we need such a function when the value is >= 0, it plays as a refcount,
-> but when the refcount == EROFS_LOCKED_MAGIC (<0, but not 0 as refcount.h),
-> and actually there is no need to introduce a seperate spinlock_t because
-> we don't actually care about its performance (rarely locked). and
-> the corresponding struct is too large for now, we need to decrease its size.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--ERpgqWgxr5VJrbcpFct8L5phrDYn1I1t7
+Content-Type: multipart/mixed; boundary="SZWQNOERS4WQ2YBukapsjK00Qji2kUZFi";
+ protected-headers="v1"
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Aisheng DONG <aisheng.dong@nxp.com>,
+ Joakim Zhang <qiangqing.zhang@nxp.com>,
+ "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>
+Cc: "wg@grandegger.com" <wg@grandegger.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ dl-linux-imx <linux-imx@nxp.com>
+Message-ID: <c5a6da81-74d1-b336-8ad7-60050496ae22@pengutronix.de>
+Subject: Re: [PATCH V3 1/1] can: flexcan: Add self wakeup support
+References: <20181112015047.4252-1-qiangqing.zhang@nxp.com>
+ <20181112015047.4252-2-qiangqing.zhang@nxp.com>
+ <AM0PR04MB4211BE08EADBACBEC809067E80DA0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <af4e2030-c54d-d613-972a-25769bdff199@pengutronix.de>
+ <AM0PR04MB4211E93B707BEBADD5E5B63E80DB0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB4211E93B707BEBADD5E5B63E80DB0@AM0PR04MB4211.eurprd04.prod.outlook.com>
 
-Why do you need to decrease the size?  How many of these structures are
-created?
+--SZWQNOERS4WQ2YBukapsjK00Qji2kUZFi
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
 
-And you will care about the performance when a lock is being held, as is
-evident by your logic to try to fix those issues in this patch series.
-Using a "real" lock will solve all of that and keep you from having to
-implement it all "by hand".
+On 11/22/18 12:01 PM, Aisheng DONG wrote:
+> [...]
+>>>> @@
+>>>> -1437,10 +1552,18 @@ static int __maybe_unused flexcan_suspend(struc=
+t
+>>>> device *device)
+>>>>  	int err =3D 0;
+>>>>
+>>>>  	if (netif_running(dev)) {
+>>>> -		err =3D flexcan_chip_disable(priv);
+>>>> -		if (err)
+>>>> -			return err;
+>>>> -		err =3D pm_runtime_force_suspend(device);
+>>>> +		/* if wakeup is enabled, enter stop mode
+>>>> +		 * else enter disabled mode.
+>>>> +		 */
+>>>> +		if (device_may_wakeup(device)) {
+>>>> +			enable_irq_wake(dev->irq);
+>>>> +			flexcan_enter_stop_mode(priv);
+>>>> +		} else {
+>>>> +			err =3D flexcan_chip_disable(priv);
+>>>> +			if (err)
+>>>> +				return err;
+>>>> +			err =3D pm_runtime_force_suspend(device);
+>>>
+>>> This is mixed with runtime pm.
+>>> I would suggestion you first upstream wakeup support.
+>>> Then runtime pm later separately.
+>>
+>> In fact this patch is based on the patch "can: flexcan: Implement CAN =
+Runtime
+>> PM", which is still under review, too.
+>=20
+> Yes, please ignore rpm patch first.
+> This patch will be re-made and not depends on rpm for easy review.
+> After wakeup is ready, rpm patch will rebase on it.
 
-thanks,
+ok.
 
-greg k-h
+Marc
+
+--=20
+Pengutronix e.K.                  | Marc Kleine-Budde           |
+Industrial Linux Solutions        | Phone: +49-231-2826-924     |
+Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
+Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+
+
+--SZWQNOERS4WQ2YBukapsjK00Qji2kUZFi--
+
+--ERpgqWgxr5VJrbcpFct8L5phrDYn1I1t7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlv2jeIACgkQk9IU1zQo
+ZfG6CwgAk/KEnW95PtS6qzdZj9BVGHNpacvvRgeKAj1FzxW7pgRTw4iw2ucwQ/cL
+xIcGufK68ZfonoSXVn1Fz1209yfobVbWhh5o0PYwMdnZcrpSSdC3PNmhACy5Rvin
+hhi61uuGVgmOcoruwAeiuZCRxekOXl0QVIoZIFVrUgmT4lHvo/QmnwGnpA+Erykv
+ROW/t6o8jbfUX7TtBJxG48cri2DXvRKE8acX6OJM1RnIt8HJ5gpo0SG5LoOrQhIz
+4wnWhmmELhvScyn1iPKUMFoX+ZFOez7Dw3C165IIPaQozr3pjqhMjv8LaSELOhI4
+G17cYTkQGUMznRivDHR6Monc6j2Lng==
+=M2RZ
+-----END PGP SIGNATURE-----
+
+--ERpgqWgxr5VJrbcpFct8L5phrDYn1I1t7--
