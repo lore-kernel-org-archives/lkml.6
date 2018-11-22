@@ -3,197 +3,148 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F7BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FFBC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 529FC205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:21:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 529FC205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 56BEC20684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:24:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56BEC20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391164AbeKVXA6 (ORCPT
+        id S2391080AbeKVXDY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 18:00:58 -0500
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:57056 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731683AbeKVXA6 (ORCPT
+        Thu, 22 Nov 2018 18:03:24 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:44152 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731683AbeKVXDX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 18:00:58 -0500
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 910D7634C92;
-        Thu, 22 Nov 2018 14:21:46 +0200 (EET)
-Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1gPnzO-00017y-CB; Thu, 22 Nov 2018 14:21:46 +0200
-Date:   Thu, 22 Nov 2018 14:21:46 +0200
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
-        Libin Yang <lbyang@marvell.com>,
-        Albert Wang <twang13@marvell.com>
-Subject: Re: [PATCH v3 03/14] media: ov7670: hook s_power onto v4l2 core
-Message-ID: <20181122122146.a6wydozsg676i3w7@valkosipuli.retiisi.org.uk>
-References: <20181120100318.367987-1-lkundrak@v3.sk>
- <20181120100318.367987-4-lkundrak@v3.sk>
+        Thu, 22 Nov 2018 18:03:23 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bastet.se.axis.com (Postfix) with ESMTP id E7A3B1858F;
+        Thu, 22 Nov 2018 13:24:12 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
+        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id x5ukQAmojBPZ; Thu, 22 Nov 2018 13:24:11 +0100 (CET)
+Received: from boulder02.se.axis.com (boulder02.se.axis.com [10.0.8.16])
+        by bastet.se.axis.com (Postfix) with ESMTPS id B40C518558;
+        Thu, 22 Nov 2018 13:24:11 +0100 (CET)
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A1DCB1A070;
+        Thu, 22 Nov 2018 13:24:11 +0100 (CET)
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 918531A05D;
+        Thu, 22 Nov 2018 13:24:11 +0100 (CET)
+Received: from thoth.se.axis.com (unknown [10.0.2.173])
+        by boulder02.se.axis.com (Postfix) with ESMTP;
+        Thu, 22 Nov 2018 13:24:11 +0100 (CET)
+Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
+        by thoth.se.axis.com (Postfix) with ESMTP id 89A5F1CFE;
+        Thu, 22 Nov 2018 13:24:11 +0100 (CET)
+Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
+        id 8177C80C5B; Thu, 22 Nov 2018 13:24:11 +0100 (CET)
+Date:   Thu, 22 Nov 2018 13:24:11 +0100
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     linux@armlinux.org.uk, jeyu@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] module: Overwrite st_size instead of st_info
+Message-ID: <20181122122411.6ydftk7bjlrefwa5@axis.com>
+References: <20181119162513.16562-1-vincent.whitchurch@axis.com>
+ <20181122120154.GH3505@e103592.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181120100318.367987-4-lkundrak@v3.sk>
+In-Reply-To: <20181122120154.GH3505@e103592.cambridge.arm.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lubomir,
+On Thu, Nov 22, 2018 at 12:01:54PM +0000, Dave Martin wrote:
+> On Mon, Nov 19, 2018 at 05:25:12PM +0100, Vincent Whitchurch wrote:
+> > st_info is currently overwritten after relocation and used to store the
+> > elf_type().  However, we're going to need it fix kallsyms on ARM's
+> > Thumb-2 kernels, so preserve st_info and overwrite the st_size field
+> > instead.  st_size is neither used by the module core nor by any
+> > architecture.
+> > 
+> > Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+> > ---
+> > v4: Split out to separate patch.  Use st_size instead of st_other.
+> > v1-v3: See PATCH 2/2
+> > 
+> >  kernel/module.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/module.c b/kernel/module.c
+> > index 49a405891587..3d86a38b580c 100644
+> > --- a/kernel/module.c
+> > +++ b/kernel/module.c
+> > @@ -2682,7 +2682,7 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
+> >  
+> >  	/* Set types up while we still have access to sections. */
+> >  	for (i = 0; i < mod->kallsyms->num_symtab; i++)
+> > -		mod->kallsyms->symtab[i].st_info
+> > +		mod->kallsyms->symtab[i].st_size
+> >  			= elf_type(&mod->kallsyms->symtab[i], info);
+> >  
+> >  	/* Now populate the cut down core kallsyms for after init. */
+> > @@ -4061,7 +4061,7 @@ int module_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
+> >  		kallsyms = rcu_dereference_sched(mod->kallsyms);
+> >  		if (symnum < kallsyms->num_symtab) {
+> >  			*value = kallsyms->symtab[symnum].st_value;
+> > -			*type = kallsyms->symtab[symnum].st_info;
+> > +			*type = kallsyms->symtab[symnum].st_size;
+> >  			strlcpy(name, symname(kallsyms, symnum), KSYM_NAME_LEN);
+> >  			strlcpy(module_name, mod->name, MODULE_NAME_LEN);
+> >  			*exported = is_exported(name, *value, mod);
+> 
+> This is fine if st_size is really unused, but how sure are you of that?
+> 
+> grepping for st_size throws up some hits that appear ELF-related, but
+> I've not investigated them in detail.
+> 
+> (The fact that struct stat has an identically named field throws up
+> a load of false positives too.)
 
-On Tue, Nov 20, 2018 at 11:03:08AM +0100, Lubomir Rintel wrote:
-> The commit 71862f63f351 ("media: ov7670: Add the ov7670_s_power function")
-> added a power control routing. However, it was not good enough to use as
-> a s_power() callback: it merely flipped on the power GPIOs without
-> restoring the register settings.
-> 
-> Fix this now and register an actual power callback.
-> 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> 
-> ---
-> Changes since v2:
-> - Restore the controls, format and frame rate on power on
-> 
->  drivers/media/i2c/ov7670.c | 50 +++++++++++++++++++++++++++++++++-----
->  1 file changed, 44 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-> index ead0c360df33..cbaab60aaaac 100644
-> --- a/drivers/media/i2c/ov7670.c
-> +++ b/drivers/media/i2c/ov7670.c
-> @@ -242,6 +242,7 @@ struct ov7670_info {
->  	struct ov7670_format_struct *fmt;  /* Current format */
->  	struct ov7670_win_size *wsize;
->  	struct clk *clk;
-> +	int on;
->  	struct gpio_desc *resetb_gpio;
->  	struct gpio_desc *pwdn_gpio;
->  	unsigned int mbus_config;	/* Media bus configuration flags */
-> @@ -1615,19 +1616,54 @@ static int ov7670_s_register(struct v4l2_subdev *sd, const struct v4l2_dbg_regis
->  }
->  #endif
->  
-> -static int ov7670_s_power(struct v4l2_subdev *sd, int on)
-> +static void ov7670_power_on(struct v4l2_subdev *sd)
->  {
->  	struct ov7670_info *info = to_state(sd);
->  
-> +	if (info->on)
-> +		return;
-> +
->  	if (info->pwdn_gpio)
-> -		gpiod_set_value(info->pwdn_gpio, !on);
-> -	if (on && info->resetb_gpio) {
-> +		gpiod_set_value(info->pwdn_gpio, 0);
-> +	if (info->resetb_gpio) {
->  		gpiod_set_value(info->resetb_gpio, 1);
->  		usleep_range(500, 1000);
->  		gpiod_set_value(info->resetb_gpio, 0);
->  		usleep_range(3000, 5000);
->  	}
->  
-> +	info->on = true;
-> +}
-> +
-> +static void ov7670_power_off(struct v4l2_subdev *sd)
-> +{
-> +	struct ov7670_info *info = to_state(sd);
-> +
-> +	if (!info->on)
-> +		return;
-> +
-> +	if (info->pwdn_gpio)
-> +		gpiod_set_value(info->pwdn_gpio, 1);
-> +
-> +	info->on = false;
-> +}
-> +
-> +static int ov7670_s_power(struct v4l2_subdev *sd, int on)
-> +{
-> +	struct ov7670_info *info = to_state(sd);
-> +
-> +	if (info->on == on)
-> +		return 0;
-> +
-> +	if (on) {
-> +		ov7670_power_on (sd);
-> +		ov7670_apply_fmt(sd);
-> +		ov7675_apply_framerate(sd);
-> +		v4l2_ctrl_handler_setup(&info->hdl);
-> +	} else {
-> +		ov7670_power_off (sd);
-> +	}
-> +
->  	return 0;
->  }
->  
-> @@ -1660,6 +1696,7 @@ static int ov7670_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
->  static const struct v4l2_subdev_core_ops ov7670_core_ops = {
->  	.reset = ov7670_reset,
->  	.init = ov7670_init,
-> +	.s_power = ov7670_s_power,
->  #ifdef CONFIG_VIDEO_ADV_DEBUG
->  	.g_register = ov7670_g_register,
->  	.s_register = ov7670_s_register,
-> @@ -1825,6 +1862,7 @@ static int ov7670_probe(struct i2c_client *client,
->  		else
->  			return ret;
->  	}
-> +
->  	if (info->clk) {
->  		ret = clk_prepare_enable(info->clk);
->  		if (ret)
-> @@ -1841,7 +1879,7 @@ static int ov7670_probe(struct i2c_client *client,
->  	if (ret)
->  		goto clk_disable;
->  
-> -	ov7670_s_power(sd, 1);
-> +	ov7670_power_on(sd);
->  
->  	/* Make sure it's an ov7670 */
->  	ret = ov7670_detect(sd);
-> @@ -1929,7 +1967,7 @@ static int ov7670_probe(struct i2c_client *client,
->  hdl_free:
->  	v4l2_ctrl_handler_free(&info->hdl);
->  power_off:
-> -	ov7670_s_power(sd, 0);
-> +	ov7670_power_off(sd);
->  clk_disable:
->  	clk_disable_unprepare(info->clk);
->  	return ret;
-> @@ -1945,7 +1983,7 @@ static int ov7670_remove(struct i2c_client *client)
->  	v4l2_ctrl_handler_free(&info->hdl);
->  	clk_disable_unprepare(info->clk);
->  	media_entity_cleanup(&info->sd.entity);
-> -	ov7670_s_power(sd, 0);
-> +	ov7670_power_off(sd);
->  	return 0;
->  }
->  
+$ git describe --tags
+v4.20-rc3-93-g92b419289cee
+ 
+$ rg -m1 '[\.>]st_size'  --iglob '!**/tools/**' --iglob '!**/vdso*' --iglob '!**/scripts/**' --iglob '!**/usr/**' --iglob '!**/samples/**' | cat
+| kernel/kexec_file.c:	if (sym->st_size != size) {
 
-Could you consider instead switching to runtime PM? A few drivers such as
-the ov2685 driver does that already.
+Symbols in kexec kernel.
 
--- 
-Kind regards,
+| fs/stat.c:	tmp.st_size = stat->size;
+| Documentation/networking/tls.txt:  sendfile(sock, file, &offset, stat.st_size);
+| net/9p/client.c:		ret->st_rdev, ret->st_size, ret->st_blksize,
+| net/9p/protocol.c:					&stbuf->st_rdev, &stbuf->st_size,
+| fs/9p/vfs_inode_dotl.c:		i_size_write(inode, stat->st_size);
+| fs/hostfs/hostfs_user.c:	p->size = buf->st_size;
+| arch/powerpc/boot/mktree.c:	nblks = (st.st_size + IMGBLK) / IMGBLK;
+| arch/alpha/kernel/osf_sys.c:	tmp.st_size	= lstat->size;
+| arch/x86/ia32/sys_ia32.c:	    __put_user(stat->size, &ubuf->st_size) ||
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Not Elf_Sym.
+
+| arch/x86/kernel/machine_kexec_64.c:			 sym->st_size);
+
+Symbols in kexec kernel.
+
+| arch/sparc/boot/piggyback.c:	st4(buffer + 12, s.st_size);
+| arch/sparc/kernel/sys_sparc32.c:	err |= put_user(stat->size, &statbuf->st_size);
+| arch/um/os-Linux/file.c:		.ust_size    = src->st_size,    /* total size, in bytes */
+| arch/um/os-Linux/start_up.c:	size = (buf.st_size + UM_KERN_PAGE_SIZE) & ~(UM_KERN_PAGE_SIZE - 1);
+| arch/s390/kernel/compat_linux.c:	tmp.st_size = stat->size;
+| arch/arm/kernel/sys_oabi-compat.c:	tmp.st_size = stat->size;
+| arch/mips/boot/compressed/calc_vmlinuz_load_addr.c:	vmlinux_size = (uint64_t)sb.st_size;
+| drivers/net/ethernet/marvell/sky2.c:		hw->st_idx = RING_NEXT(hw->st_idx, hw->st_size);
+
+Not Elf_Sym.
