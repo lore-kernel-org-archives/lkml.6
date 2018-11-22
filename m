@@ -2,145 +2,214 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CFD1C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C71DBC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FEE220684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:54:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOcZfZ6o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FEE220684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8668420684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:56:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8668420684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389011AbeKWAeP (ORCPT
+        id S2391512AbeKWAfd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:34:15 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41233 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730633AbeKWAeP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:34:15 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 70so1782923pgh.8
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 05:54:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=tGUK+AlFl6F39kEclhyUYHbcEKwa14d1ysu53ZktSlY=;
-        b=XOcZfZ6orBCkJeZWYFUgyAITiGh4swlaSUvjbG+uieutCrz20dZMpJLEHX51kRnvTN
-         S2Jzflr1C593zRqsQ8QZw3mSQPvjGDpxFjtAdPPGfdCypeTz90FDJ/6ILjehEsZ3QbDn
-         shiYua7EUPPlGsXjCz7FHxKtHYxAM/U4t7Li29m99H/iTFG73zCYOODGJeYbQVDCZnoz
-         Hl9Smp/rUY9wkjAPe/5jHNDtGfgp3kfSQJ9hbjB/REI0pEBFq6talEY1WiKHwsCKhqHF
-         oe874xMaFxZHwd9wDXv8jgykQmMTcnVqhwW8SNvEam7rcNiOUQA+RZqZb73pGo2EYW7P
-         27Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=tGUK+AlFl6F39kEclhyUYHbcEKwa14d1ysu53ZktSlY=;
-        b=jk9lTKXR7JE+n21/fXK14FLvNeeaAMlV4hTbbGlCR1iy3u6FxevauP6wwFWGh29bAU
-         MiHw7WPvZbpdNoMw8iTDqXT7xgkdELB8imFUSrtWckPYvpBAOjlDaUBcK+0Ov+vnsgrr
-         JRYrhqsoPMQb5uEjlpCuZBhZUyLCfR0jNirOCKYo7IHE3t6WjNgJWEPS1OIN2HQKOfj1
-         BJjjM9OuyZen3lcQhv1ZcjoqGbQwX9wGveC4uIdKMX4Y6hdapqStUbNVvGJ+JxHv9zWt
-         rI9gkdzxAfyd/XsBzppZq69g68A1GYeNtxL7gC7XN3rx18DYYYyHuiLpWYV/9QIB/5dR
-         PMJg==
-X-Gm-Message-State: AGRZ1gLOflOZz+ZYV2YPAUJXVz7G4hueHxQTC6ZbgiOeRkSgC6hnzEje
-        6QVvncqM1j2Yg2kh9J74k1w=
-X-Google-Smtp-Source: AFSGD/VRREkcAx77cOOgeWPM+BvFvjEQe0CmlGqLfZ7vibAeMiUuRtXaPaJT/AtcyXG+PX3a1WKSLA==
-X-Received: by 2002:a63:5907:: with SMTP id n7mr10083555pgb.435.1542894887724;
-        Thu, 22 Nov 2018 05:54:47 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id t4-v6sm52472830pfh.21.2018.11.22.05.54.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 22 Nov 2018 05:54:46 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     joro@8bytes.org
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] iommu/omap: remove DEBUG_SEQ_FOPS_RO()
-Date:   Thu, 22 Nov 2018 08:54:43 -0500
-Message-Id: <20181122135443.25035-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 22 Nov 2018 19:35:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57364 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730633AbeKWAfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 19:35:33 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 99F74AC3B;
+        Thu, 22 Nov 2018 13:56:02 +0000 (UTC)
+Subject: Re: [PATCH 3/4] mm: Reclaim small amounts of memory when an external
+ fragmentation event occurs
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Linux-MM <linux-mm@kvack.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Michal Hocko <mhocko@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181121101414.21301-1-mgorman@techsingularity.net>
+ <20181121101414.21301-4-mgorman@techsingularity.net>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <cc8ec820-1526-d753-4619-dedaa227a179@suse.cz>
+Date:   Thu, 22 Nov 2018 14:53:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <20181121101414.21301-4-mgorman@techsingularity.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because we already have the DEFINE_SHOW_ATTRIBUTE,there is no need
-to define such a macro.So remove DEBUG_SEQ_FOPS_RO.
+On 11/21/18 11:14 AM, Mel Gorman wrote:
+> An external fragmentation event was previously described as
+> 
+>     When the page allocator fragments memory, it records the event using
+>     the mm_page_alloc_extfrag event. If the fallback_order is smaller
+>     than a pageblock order (order-9 on 64-bit x86) then it's considered
+>     an event that will cause external fragmentation issues in the future.
+> 
+> The kernel reduces the probability of such events by increasing the
+> watermark sizes by calling set_recommended_min_free_kbytes early in the
+> lifetime of the system. This works reasonably well in general but if there
+> are enough sparsely populated pageblocks then the problem can still occur
+> as enough memory is free overall and kswapd stays asleep.
+> 
+> This patch introduces a watermark_boost_factor sysctl that allows a
+> zone watermark to be temporarily boosted when an external fragmentation
+> causing events occurs. The boosting will stall allocations that would
+> decrease free memory below the boosted low watermark and kswapd is woken
+> unconditionally to reclaim an amount of memory relative to the size
+> of the high watermark and the watermark_boost_factor until the boost
+> is cleared. When kswapd finishes, it wakes kcompactd at the pageblock
+> order to clean some of the pageblocks that may have been affected by the
+> fragmentation event. kswapd avoids any writeback or swap from reclaim
+> context during this operation to avoid excessive system disruption in
+> the name of fragmentation avoidance. Care is taken so that kswapd will
+> do normal reclaim work if the system is really low on memory.
+> 
+> This was evaluated using the same workloads as "mm, page_alloc: Spread
+> allocations across zones before introducing fragmentation".
+> 
+> 1-socket Skylake machine
+> config-global-dhp__workload_thpfioscale XFS (no special madvise)
+> 4 fio threads, 1 THP allocating thread
+> --------------------------------------
+> 
+> 4.20-rc1 extfrag events < order 9:  1023463
+> 4.20-rc1+patch:                      358574 (65% reduction)
+> 4.20-rc1+patch1-3:                    19274 (98% reduction)
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/iommu/omap-iommu-debug.c | 25 ++++++-------------------
- 1 file changed, 6 insertions(+), 19 deletions(-)
+So the reason I was wondering about movable vs unmovable fallbacks here
+is that movable fallbacks are ok as they can be migrated later, but the
+unmovable/reclaimable not, which is bad if they fallback to movable
+pageblock. Movable fallbacks can however fill the unmovable pageblocks
+and increase change of the unmovable fallback, but that would depend on
+the workload. So hypothetically if the test workload was such that
+movable fallbacks did not cause unmovable fallbacks, and a patch would
+thus only decrease the movable fallbacks (at the cost of e.g. higher
+reclaim, as this patch) with unmovable fallbacks unchanged, then it
+would be useful to know that for better evaluation of the pros vs cons,
+imho.
 
-diff --git a/drivers/iommu/omap-iommu-debug.c b/drivers/iommu/omap-iommu-debug.c
-index 50217548c3b8..4abc0ef522a8 100644
---- a/drivers/iommu/omap-iommu-debug.c
-+++ b/drivers/iommu/omap-iommu-debug.c
-@@ -159,7 +159,7 @@ static size_t omap_dump_tlb_entries(struct omap_iommu *obj, struct seq_file *s)
- 	return 0;
- }
- 
--static int debug_read_tlb(struct seq_file *s, void *data)
-+static int tlb_show(struct seq_file *s, void *data)
- {
- 	struct omap_iommu *obj = s->private;
- 
-@@ -210,7 +210,7 @@ static void dump_ioptable(struct seq_file *s)
- 	spin_unlock(&obj->page_table_lock);
- }
- 
--static int debug_read_pagetable(struct seq_file *s, void *data)
-+static int pagetable_show(struct seq_file *s, void *data)
- {
- 	struct omap_iommu *obj = s->private;
- 
-@@ -228,35 +228,22 @@ static int debug_read_pagetable(struct seq_file *s, void *data)
- 	return 0;
- }
- 
--#define DEBUG_SEQ_FOPS_RO(name)						       \
--	static int debug_open_##name(struct inode *inode, struct file *file)   \
--	{								       \
--		return single_open(file, debug_read_##name, inode->i_private); \
--	}								       \
--									       \
--	static const struct file_operations debug_##name##_fops = {	       \
--		.open		= debug_open_##name,			       \
--		.read		= seq_read,				       \
--		.llseek		= seq_lseek,				       \
--		.release	= single_release,			       \
--	}
--
- #define DEBUG_FOPS_RO(name)						\
--	static const struct file_operations debug_##name##_fops = {	\
-+	static const struct file_operations name##_fops = {	        \
- 		.open = simple_open,					\
- 		.read = debug_read_##name,				\
- 		.llseek = generic_file_llseek,				\
- 	}
- 
- DEBUG_FOPS_RO(regs);
--DEBUG_SEQ_FOPS_RO(tlb);
--DEBUG_SEQ_FOPS_RO(pagetable);
-+DEFINE_SHOW_ATTRIBUTE(tlb);
-+DEFINE_SHOW_ATTRIBUTE(pagetable);
- 
- #define __DEBUG_ADD_FILE(attr, mode)					\
- 	{								\
- 		struct dentry *dent;					\
- 		dent = debugfs_create_file(#attr, mode, obj->debug_dir,	\
--					   obj, &debug_##attr##_fops);	\
-+					   obj, &attr##_fops);	        \
- 		if (!dent)						\
- 			goto err;					\
- 	}
--- 
-2.17.0
+> +static inline void boost_watermark(struct zone *zone)
+> +{
+> +	unsigned long max_boost;
+> +
+> +	if (!watermark_boost_factor)
+> +		return;
+> +
+> +	max_boost = mult_frac(wmark_pages(zone, WMARK_HIGH),
+> +			watermark_boost_factor, 10000);
 
+Hmm I assume you didn't use high_wmark_pages() because the calculation
+should start with high watermark not including existing boost. But then,
+wmark_pages() also includes existing boost, so the limit won't work and
+each invocation of boost_watermark() will simply add pageblock_nr_pages?
+I.e. this should use zone->_watermark[] instead of wmark_pages()?
+
+> +	max_boost = max(pageblock_nr_pages, max_boost);
+> +
+> +	zone->watermark_boost = min(zone->watermark_boost + pageblock_nr_pages,
+> +		max_boost);
+> +}
+> +
+>  /*
+>   * This function implements actual steal behaviour. If order is large enough,
+>   * we can steal whole pageblock. If not, we first move freepages in this
+> @@ -2160,6 +2176,14 @@ static void steal_suitable_fallback(struct zone *zone, struct page *page,
+>  		goto single_page;
+>  	}
+>  
+> +	/*
+> +	 * Boost watermarks to increase reclaim pressure to reduce the
+> +	 * likelihood of future fallbacks. Wake kswapd now as the node
+> +	 * may be balanced overall and kswapd will not wake naturally.
+> +	 */
+> +	boost_watermark(zone);
+> +	wakeup_kswapd(zone, 0, 0, zone_idx(zone));
+> +
+>  	/* We are not allowed to try stealing from the whole block */
+>  	if (!whole_block)
+>  		goto single_page;
+> @@ -3277,11 +3301,19 @@ static bool zone_allows_reclaim(struct zone *local_zone, struct zone *zone)
+>   * probably too small. It only makes sense to spread allocations to avoid
+>   * fragmentation between the Normal and DMA32 zones.
+>   */
+> -static inline unsigned int alloc_flags_nofragment(struct zone *zone)
+> +static inline unsigned int
+> +alloc_flags_nofragment(struct zone *zone, gfp_t gfp_mask)
+>  {
+>  	if (zone_idx(zone) != ZONE_NORMAL)
+>  		return 0;
+>  
+> +	/*
+> +	 * A fragmenting fallback will try waking kswapd. ALLOC_NOFRAGMENT
+> +	 * may break that so such callers can introduce fragmentation.
+> +	 */
+
+I think I don't understand this comment :( Do you want to avoid waking
+up kswapd from steal_suitable_fallback() (introduced above) for
+allocations without __GFP_KSWAPD_RECLAIM? But returning 0 here means
+actually allowing the allocation go through steal_suitable_fallback()?
+So should it return ALLOC_NOFRAGMENT below, or was the intent different?
+
+> +	if (!(gfp_mask & __GFP_KSWAPD_RECLAIM))
+> +		return 0;
+> +
+>  	/*
+>  	 * If ZONE_DMA32 exists, assume it is the one after ZONE_NORMAL and
+>  	 * the pointer is within zone->zone_pgdat->node_zones[]
+
+.
