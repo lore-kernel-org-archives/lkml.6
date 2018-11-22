@@ -2,191 +2,94 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92427C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DF5C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:30:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4580120684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:29:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7DB520684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:30:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GUjWeAD7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4580120684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="HMny3uil"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7DB520684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394383AbeKVVIi (ORCPT
+        id S2405201AbeKVVIz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 16:08:38 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42773 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388128AbeKVVIi (ORCPT
+        Thu, 22 Nov 2018 16:08:55 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:33076 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390585AbeKVVIz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 16:08:38 -0500
-Received: by mail-wr1-f68.google.com with SMTP id q18so8689763wrx.9
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 02:29:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WgADzFuztU/jpbgxvaE/Ff+Zq6oJhaw7yNyuV7si1Xs=;
-        b=GUjWeAD7ipMKc261ZYJxU6muuIrjyAzDUvGuZRRpg9Mx07cb8tlJYuCgnqd3XkH8s3
-         efggvURTVyC4pD40IXdRhv7BfcwFzZpMv46aT0k0lYojVqiYzofNajeCbwm56KcNOGb8
-         +n1DuWdVldLdVjXi7aw0otUdP38K9C5mLEfAs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WgADzFuztU/jpbgxvaE/Ff+Zq6oJhaw7yNyuV7si1Xs=;
-        b=ukoCLJZnHRPT0I5UsK4tuXkEt5siE5/qNwq5ZqGlQORO3kR7XbfRuCzO/mO9zwAQWq
-         k5/T7Bwh8k5fdc45kCZwrmfl3oIDyKyXWc22SbL60XqD4y0Z1N1pLN0tYYPcLe3W6o/P
-         U1lyWi3tG3+BfyfcxSHTNWX+BIRb1sBCjSc9T8aHOWZ6Vyqcj3epGtgKOK7psKaU0eRV
-         LmaPf7EVZKACoEv/vV+rEFSvJ4VpxdP6D3QUuO9UTaX/WMGCjDoRXklnuKB02UL02/uJ
-         nTjpvJmpkWqGvJUbvvaKCIiMdd5TBLzEnz/dkQEvJnOMKAGyd0mjrGp38yVRh5WI9Son
-         1FXg==
-X-Gm-Message-State: AA+aEWaA8jwpjspE6MxPBrF4lHQN7mhSQ3ggKLELoH/ju7qu1SPVyq5e
-        +E1EJzHz+s4s3uSKbJm7RSd/Gg==
-X-Google-Smtp-Source: AFSGD/W0N7u5DVrLT//9o7RWf8P6/HQSn93fXDXz83vNb+IUngjcRzrpsKn2NnbK2p0FYxaOQCY2Pg==
-X-Received: by 2002:adf:9123:: with SMTP id j32-v6mr8803925wrj.0.1542882586905;
-        Thu, 22 Nov 2018 02:29:46 -0800 (PST)
-Received: from [192.168.0.40] (189.35.136.77.rev.sfr.net. [77.136.35.189])
-        by smtp.googlemail.com with ESMTPSA id y7-v6sm4253653wmy.27.2018.11.22.02.29.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 02:29:46 -0800 (PST)
-Subject: Re: [PATCH 4/4] base/drivers/topology: Default dmpis-mhz if they are
- not set in DT
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     rjw@rjwysocki.net, vincent.guittot@linaro.org,
-        linux-kernel@vger.kernel.org,
-        Chris Redpath <chris.redpath@linaro.org>,
-        Quentin Perret <quentin.perret@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-References: <1540830201-2947-1-git-send-email-daniel.lezcano@linaro.org>
- <1540830201-2947-4-git-send-email-daniel.lezcano@linaro.org>
- <20181030085845.az2dstibnrcl7im4@vireshk-i7>
- <3c3890d2-8b46-797d-328f-bd5dee11b22d@linaro.org>
- <20181122042900.u6eefkbw32vvi6xm@vireshk-i7>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <b507cf16-aa78-303e-7459-ad380266317e@linaro.org>
-Date:   Thu, 22 Nov 2018 11:29:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 22 Nov 2018 16:08:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=6x2MxDkHB6qpj5hyItW86b8z8/JLPKx7NNxTtyvEZF4=; b=HMny3uilNNBrwK5jyYJGpduUD
+        K+GdeQtte1lRl8SFPdmYacBdaX2ydhKddcjXHPpvCdJvGL7ljrkkPkSj0AZVWB0KaYaV4jIWXg3rQ
+        AtiHK3iDnJ+8CiUv2o8uNNETzYr2uKeDagdOglmSK+y8Ar+cVUcDIIdDXAnrtNPl9yO7E=;
+Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:48885)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gPmF6-0001U6-7s; Thu, 22 Nov 2018 10:29:52 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gPmF3-0008AK-KY; Thu, 22 Nov 2018 10:29:49 +0000
+Date:   Thu, 22 Nov 2018 10:29:48 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org,
+        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tony@atomide.com,
+        linux-omap@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
+Message-ID: <20181122102948.GN6920@n2100.armlinux.org.uk>
+References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
+ <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
+ <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
+ <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
 MIME-Version: 1.0
-In-Reply-To: <20181122042900.u6eefkbw32vvi6xm@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/11/2018 05:29, Viresh Kumar wrote:
-> On 21-11-18, 23:12, Daniel Lezcano wrote:
->> On 30/10/2018 09:58, Viresh Kumar wrote:
->>> s/dmpis/dmips/ in $subject
->>>
->>> On 29-10-18, 17:23, Daniel Lezcano wrote:
->>>> In the case of assymetric SoC with the same micro-architecture, we
->>>
->>>                  asymmetric ?
->>>
->>>> have a group of CPUs with smaller OPPs than the other group. One
->>>> example is the 96boards dragonboard 820c. There is no dmips/MHz
->>>> difference between both groups, so no need to specify the values in
->>>> the DT. Unfortunately, without these defined, there is no scaling
->>>> capacity comutation triggered, so we need to write
->>>
->>>            computation
->>>
->>>> 'capacity-dmips-mhz' for each CPU with the same value in order to
->>>> force the scaled capacity computation.
->>>>
->>>> Fix this by setting a default capacity to SCHED_CAPACITY_SCALE, if no
->>>> 'capacity-dmips-mhz' is defined in the DT.
->>>>
->>>> This was tested on db820c:
->>>>  - specified values in the DT (correct results)
->>>>  - partial values defined in the DT (error + fallback to defaults)
->>>>  - no specified values in the DT (correct results)
->>>>
->>>> correct results are:
->>>>   cat /sys/devices/system/cpu/cpu*/cpu_capacity
->>>>    758
->>>>    758
->>>>   1024
->>>>   1024
->>>>
->>>>   ... respectively for CPU0, CPU1, CPU2 and CPU3.
->>>>
->>>> That reflects the capacity for the max frequencies 1593600 and 2150400.
->>>>
->>>> Cc: Chris Redpath <chris.redpath@linaro.org>
->>>> Cc: Quentin Perret <quentin.perret@linaro.org>
->>>> Cc: Viresh Kumar <viresh.kumar@linaro.org>
->>>> Cc: Amit Kucheria <amit.kucheria@linaro.org>
->>>> Cc: Nicolas Dechesne <nicolas.dechesne@linaro.org>
->>>> Cc: Niklas Cassel <niklas.cassel@linaro.org>
->>>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->>>> ---
->>>>  drivers/base/arch_topology.c | 27 ++++++++++++++++++++++++++-
->>>>  1 file changed, 26 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
->>>> index 7311641..7d594a6 100644
->>>> --- a/drivers/base/arch_topology.c
->>>> +++ b/drivers/base/arch_topology.c
->>>> @@ -205,6 +205,21 @@ static struct notifier_block init_cpu_capacity_notifier = {
->>>>  	.notifier_call = init_cpu_capacity_callback,
->>>>  };
->>>>  
->>>> +static int topology_set_default_capacity(void)
->>>> +{
->>>> +	int cpu;
->>>> +
->>>> +	raw_capacity = kzalloc(num_possible_cpus() * sizeof(*raw_capacity),
->>>> +			       GFP_KERNEL);
->>>> +	if (!raw_capacity)
->>>> +		return -ENOMEM;
->>>> +
->>>> +	for_each_possible_cpu(cpu)
->>>> +		raw_capacity[cpu] = SCHED_CAPACITY_SCALE;
->>>
->>> This isn't actually required as the value of raw_capacity isn't used
->>> anymore after this point in code. Rather it is forcefully updated in
->>> init_cpu_capacity_callback():
->>>
->>> raw_capacity[cpu] = topology_get_cpu_scale(NULL, cpu) *
->>>                     policy->cpuinfo.max_freq / 1000UL;
->>>
->>> Maybe it is better to allocate raw_capacity once at boot and use
->>> another global variable as flag (raw_capacity is used as a flag right
->>> now at many places).
->>
->> Can we keep the proposed change as is to simply fix the default value?
->>
->> I want to do a separate change with a raw_capacity rewrite and remove
->> the workqueue freeing it.
-> 
-> Sure. But you still don't need to update raw_capacity[cpu] above as I pointed
-> out earlier. You can drop those lines at least.
+On Tue, Nov 20, 2018 at 11:04:06PM +0200, Aaro Koskinen wrote:
+> I had switched to PIO mode in 2015 since the WARNs about legacy DMA
+> API were too annoying and flooding the console. And now that I tried
+> using DMA again with g_ether, it doesn't work anymore. The device get's
+> recognized on host side, but no traffic goes through. Switching back to
+> PIO makes it to work again.
 
-Oh ... actually raw_capacity is not needed at all!
+A solution to that would be to do what the warning message says, and
+update the driver to the DMAengine API.
 
+The reason it didn't get updated when the DMAengine conversion happened
+is because I don't have hardware for it, so had no way to test, and no
+one seemed to know that anyone was using it.  Eventually, the WARN_ON()
+was added to try and root out any users and generate interest in
+updating the drivers.  Obviously that didn't happen, because people
+just worked around the warning rather than saying anything.
 
+I'm afraid we're long past the time that I'd be willing to update the
+omap_udc driver now as I've dropped most of my knowledge on that as
+it's been four years, and Peter has been looking after OMAP DMAengine
+issues since.
+
+Sorry.
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
