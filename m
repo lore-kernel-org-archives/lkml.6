@@ -7,175 +7,118 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8367BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:54:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7294BC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DEEE20645
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:54:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A74D20865
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:54:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mlJ0R8We"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DEEE20645
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mjGOQjFw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A74D20865
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406923AbeKWGfT (ORCPT
+        id S2406936AbeKWGfT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 23 Nov 2018 01:35:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34034 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:34062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732755AbeKWGfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 01:35:18 -0500
+        id S2406918AbeKWGfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 01:35:19 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DAD0220672;
-        Thu, 22 Nov 2018 19:54:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECFF220645;
+        Thu, 22 Nov 2018 19:54:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542916465;
-        bh=5Gjw9ATxBGfUtDz33Kqx1d2d/pMZqkOaYsH35+HvvGU=;
+        s=default; t=1542916467;
+        bh=aTwI4/pfPbMTBfDQJjCinFDCd4jXV+d48YvFlJDMYP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mlJ0R8We6iHyf69px8JONXvkWuPshuATj9mtw3odZDDIiI0OmYABDbFRnDBcGjsoh
-         tOofll9SxkQ6YSfwxL7yDV6EG+Y4Vjza+V7LqLeBo7MICARpxVm1xdiFncdi+BVZTi
-         xNagFBBLte1FslDUY0RxMT2PZ0WXiyD53eZVFfl4=
+        b=mjGOQjFwfe4/FfHDX6DWobU2cQxOCiFWukVrjazb42TxEoMBM2j/KO6LF4XbNSJq0
+         1jkWCbRmqMjv2VggS7+Nmk3yEGSW6RqtImCbT4NUIrLRUoLvNDkI2gEexkDFkAOvTg
+         ooEnIbb8h145NwpR7aGB17thTu4ytfOiA1WDlgdM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Prarit Bhargava <prarit@redhat.com>,
-        Jonathan Toppins <jtoppins@redhat.com>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        kgdb-bugreport@lists.sourceforge.net,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 29/36] kdb: Use strscpy with destination buffer size
-Date:   Thu, 22 Nov 2018 14:52:33 -0500
-Message-Id: <20181122195240.13123-29-sashal@kernel.org>
+Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 30/36] NFSv4: Fix an Oops during delegation callbacks
+Date:   Thu, 22 Nov 2018 14:52:34 -0500
+Message-Id: <20181122195240.13123-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181122195240.13123-1-sashal@kernel.org>
 References: <20181122195240.13123-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Prarit Bhargava <prarit@redhat.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-[ Upstream commit c2b94c72d93d0929f48157eef128c4f9d2e603ce ]
+[ Upstream commit e39d8a186ed002854196668cb7562ffdfbc6d379 ]
 
-gcc 8.1.0 warns with:
+If the server sends a CB_GETATTR or a CB_RECALL while the filesystem is
+being unmounted, then we can Oops when releasing the inode in
+nfs4_callback_getattr() and nfs4_callback_recall().
 
-kernel/debug/kdb/kdb_support.c: In function ‘kallsyms_symbol_next’:
-kernel/debug/kdb/kdb_support.c:239:4: warning: ‘strncpy’ specified bound depends on the length of the source argument [-Wstringop-overflow=]
-     strncpy(prefix_name, name, strlen(name)+1);
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-kernel/debug/kdb/kdb_support.c:239:31: note: length computed here
-
-Use strscpy() with the destination buffer size, and use ellipses when
-displaying truncated symbols.
-
-v2: Use strscpy()
-
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Cc: Jonathan Toppins <jtoppins@redhat.com>
-Cc: Jason Wessel <jason.wessel@windriver.com>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: kgdb-bugreport@lists.sourceforge.net
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/debug/kdb/kdb_io.c      | 15 +++++++++------
- kernel/debug/kdb/kdb_private.h |  2 +-
- kernel/debug/kdb/kdb_support.c | 10 +++++-----
- 3 files changed, 15 insertions(+), 12 deletions(-)
+ fs/nfs/callback_proc.c |  4 ++--
+ fs/nfs/delegation.c    | 11 +++++++++--
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/debug/kdb/kdb_io.c b/kernel/debug/kdb/kdb_io.c
-index ed5d34925ad0..6a4b41484afe 100644
---- a/kernel/debug/kdb/kdb_io.c
-+++ b/kernel/debug/kdb/kdb_io.c
-@@ -216,7 +216,7 @@ static char *kdb_read(char *buffer, size_t bufsize)
- 	int count;
- 	int i;
- 	int diag, dtab_count;
--	int key;
-+	int key, buf_size, ret;
- 
- 
- 	diag = kdbgetintenv("DTABCOUNT", &dtab_count);
-@@ -336,9 +336,8 @@ static char *kdb_read(char *buffer, size_t bufsize)
- 		else
- 			p_tmp = tmpbuffer;
- 		len = strlen(p_tmp);
--		count = kallsyms_symbol_complete(p_tmp,
--						 sizeof(tmpbuffer) -
--						 (p_tmp - tmpbuffer));
-+		buf_size = sizeof(tmpbuffer) - (p_tmp - tmpbuffer);
-+		count = kallsyms_symbol_complete(p_tmp, buf_size);
- 		if (tab == 2 && count > 0) {
- 			kdb_printf("\n%d symbols are found.", count);
- 			if (count > dtab_count) {
-@@ -350,9 +349,13 @@ static char *kdb_read(char *buffer, size_t bufsize)
- 			}
- 			kdb_printf("\n");
- 			for (i = 0; i < count; i++) {
--				if (WARN_ON(!kallsyms_symbol_next(p_tmp, i)))
-+				ret = kallsyms_symbol_next(p_tmp, i, buf_size);
-+				if (WARN_ON(!ret))
- 					break;
--				kdb_printf("%s ", p_tmp);
-+				if (ret != -E2BIG)
-+					kdb_printf("%s ", p_tmp);
-+				else
-+					kdb_printf("%s... ", p_tmp);
- 				*(p_tmp + len) = '\0';
- 			}
- 			if (i >= dtab_count)
-diff --git a/kernel/debug/kdb/kdb_private.h b/kernel/debug/kdb/kdb_private.h
-index 1e5a502ba4a7..2118d8258b7c 100644
---- a/kernel/debug/kdb/kdb_private.h
-+++ b/kernel/debug/kdb/kdb_private.h
-@@ -83,7 +83,7 @@ typedef struct __ksymtab {
- 		unsigned long sym_start;
- 		unsigned long sym_end;
- 		} kdb_symtab_t;
--extern int kallsyms_symbol_next(char *prefix_name, int flag);
-+extern int kallsyms_symbol_next(char *prefix_name, int flag, int buf_size);
- extern int kallsyms_symbol_complete(char *prefix_name, int max_len);
- 
- /* Exported Symbols for kernel loadable modules to use. */
-diff --git a/kernel/debug/kdb/kdb_support.c b/kernel/debug/kdb/kdb_support.c
-index 990b3cc526c8..61cd704a21c8 100644
---- a/kernel/debug/kdb/kdb_support.c
-+++ b/kernel/debug/kdb/kdb_support.c
-@@ -221,11 +221,13 @@ int kallsyms_symbol_complete(char *prefix_name, int max_len)
-  * Parameters:
-  *	prefix_name	prefix of a symbol name to lookup
-  *	flag	0 means search from the head, 1 means continue search.
-+ *	buf_size	maximum length that can be written to prefix_name
-+ *			buffer
-  * Returns:
-  *	1 if a symbol matches the given prefix.
-  *	0 if no string found
-  */
--int kallsyms_symbol_next(char *prefix_name, int flag)
-+int kallsyms_symbol_next(char *prefix_name, int flag, int buf_size)
- {
- 	int prefix_len = strlen(prefix_name);
- 	static loff_t pos;
-@@ -235,10 +237,8 @@ int kallsyms_symbol_next(char *prefix_name, int flag)
- 		pos = 0;
- 
- 	while ((name = kdb_walk_kallsyms(&pos))) {
--		if (strncmp(name, prefix_name, prefix_len) == 0) {
--			strncpy(prefix_name, name, strlen(name)+1);
--			return 1;
--		}
-+		if (!strncmp(name, prefix_name, prefix_len))
-+			return strscpy(prefix_name, name, buf_size);
+diff --git a/fs/nfs/callback_proc.c b/fs/nfs/callback_proc.c
+index fa515d5ea5ba..7b861bbc0b43 100644
+--- a/fs/nfs/callback_proc.c
++++ b/fs/nfs/callback_proc.c
+@@ -66,7 +66,7 @@ __be32 nfs4_callback_getattr(void *argp, void *resp,
+ out_iput:
+ 	rcu_read_unlock();
+ 	trace_nfs4_cb_getattr(cps->clp, &args->fh, inode, -ntohl(res->status));
+-	iput(inode);
++	nfs_iput_and_deactive(inode);
+ out:
+ 	dprintk("%s: exit with status = %d\n", __func__, ntohl(res->status));
+ 	return res->status;
+@@ -108,7 +108,7 @@ __be32 nfs4_callback_recall(void *argp, void *resp,
  	}
- 	return 0;
- }
+ 	trace_nfs4_cb_recall(cps->clp, &args->fh, inode,
+ 			&args->stateid, -ntohl(res));
+-	iput(inode);
++	nfs_iput_and_deactive(inode);
+ out:
+ 	dprintk("%s: exit with status = %d\n", __func__, ntohl(res));
+ 	return res;
+diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
+index f033f3a69a3b..75fe92eaa681 100644
+--- a/fs/nfs/delegation.c
++++ b/fs/nfs/delegation.c
+@@ -849,16 +849,23 @@ nfs_delegation_find_inode_server(struct nfs_server *server,
+ 				 const struct nfs_fh *fhandle)
+ {
+ 	struct nfs_delegation *delegation;
+-	struct inode *res = NULL;
++	struct inode *freeme, *res = NULL;
+ 
+ 	list_for_each_entry_rcu(delegation, &server->delegations, super_list) {
+ 		spin_lock(&delegation->lock);
+ 		if (delegation->inode != NULL &&
+ 		    nfs_compare_fh(fhandle, &NFS_I(delegation->inode)->fh) == 0) {
+-			res = igrab(delegation->inode);
++			freeme = igrab(delegation->inode);
++			if (freeme && nfs_sb_active(freeme->i_sb))
++				res = freeme;
+ 			spin_unlock(&delegation->lock);
+ 			if (res != NULL)
+ 				return res;
++			if (freeme) {
++				rcu_read_unlock();
++				iput(freeme);
++				rcu_read_lock();
++			}
+ 			return ERR_PTR(-EAGAIN);
+ 		}
+ 		spin_unlock(&delegation->lock);
 -- 
 2.17.1
 
