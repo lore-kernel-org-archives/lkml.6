@@ -5,69 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906D6C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B2BC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DD1820870
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:02:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C15E20831
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:02:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JW5XZ3p5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DD1820870
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOTMC282"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C15E20831
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393668AbeKVUl3 (ORCPT
+        id S2393680AbeKVUla (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 15:41:29 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33059 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387696AbeKVUl1 (ORCPT
+        Thu, 22 Nov 2018 15:41:30 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33971 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387721AbeKVUl3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:41:27 -0500
-Received: by mail-lf1-f68.google.com with SMTP id i26so6111307lfc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 02:02:40 -0800 (PST)
+        Thu, 22 Nov 2018 15:41:29 -0500
+Received: by mail-lj1-f196.google.com with SMTP id u6-v6so7452824ljd.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 02:02:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=5zMQAknV/Qz4WNaNnfcNRspiV5epxmLtB5P1y4HuZk8=;
-        b=JW5XZ3p5Xet12XxXreDTnw7D64DnMsIxelxUpGGigBIK8vb61e6cua6Ol6GPdMuDkV
-         tkcyNxnsF9T+whJFyuUXF/WRBZhGIG5tyhmKn734t0KinvlnC260HBMAT2kcJPJBepKn
-         DiId3Sxhs/BLBigF6atpQyIYpO5zqrCDjg9doQc7HQJJWpH2orePWGVoxjy+2W+dedVQ
-         C/u8/ftD5LEwwx9aF8OQeqo/MQP3Qn65rCAIRB81TZcKVroeE9XvBDnE0Tw0RDZDF5Wb
-         D0G6/v5xB4r0uYr+kXLDdDThyTQANDZbCNavLY6wViff1ED9ZDhYWEJMlcvyvtZh8Rg7
-         xfqw==
+        bh=dRQ1Sf8pPkvYF49fBUyyUb4KpUjCpxuckPEMO2XA0zo=;
+        b=aOTMC282DdY/TXt3G6YWZ3YK6xuSt7vlBPHk0gb2JVATdjp4xDWH7opniGwzwgZw+h
+         bwIITjCbLbedleydWABytDSU4UOl8upZ/E1/lGKmz9HiOBZLTolqZqzo6lMvgbZp3yoI
+         5ZQLTF0CKAgLjzz7/AtbAcvquSihmHLOENw+dZKSanZOZ4kiEE/wu5tiaoLEKl+qnVRB
+         wspJQZwUNstWVCyW+2n7ztQDObgIkPUJh9TMdYRjpVPpu/v5CiofjQxkXmdGHfE8Yio9
+         ZQaRUmMJUgy5CNp3YYy27nAMOECzoHCYBbFOlV4srb7S4jphgpOfjtLhq2aJ4lQN2Kdo
+         8V/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=5zMQAknV/Qz4WNaNnfcNRspiV5epxmLtB5P1y4HuZk8=;
-        b=O8sU2CbRWGjuQXsFq0aaqBuzp4rdntGMLhJ7dSkav228tzqbJzex4KyILs7x12bX6J
-         /0sXYV7np5xi2utGbGfii8YiKTuDti/aA7OpfNXK8xsIyq59Ks2NNnAWGOYadPfL8xdO
-         aEgV+3INurdWjnycbkcxKb1fqb/s+uuxIh8Cjp4BW9tlyCcLlQSI9ZszxsHx9sHtK+nI
-         jct/rUs7WvTXOUdYzms0UpOTAmt6CnsryE54QLXA+bjAzozv7xlPgyo3hC5eb4JVrj/S
-         eOgIKFael/cGt6xah4jYZxsxbJhRvjnHsPNddlqz0yyEMXST4c5rBk3cyU95RWmwXWLp
-         8NRg==
-X-Gm-Message-State: AGRZ1gJEcZpT3oRzTwfcQiwCq5KFlb+5c8r1rKG/W5dsc0sscwz94RVg
-        TMYUG4jPUyI7OJJGJPBy88c=
-X-Google-Smtp-Source: AJdET5c7Hnyn2AULxNpWbKE/h40eWeL3JZzWrPaaGzLv2zAAakkMcMA93HrIwceozH99P6lh1xN03Q==
-X-Received: by 2002:a19:1cb:: with SMTP id 194mr5943668lfb.61.1542880958944;
-        Thu, 22 Nov 2018 02:02:38 -0800 (PST)
+        bh=dRQ1Sf8pPkvYF49fBUyyUb4KpUjCpxuckPEMO2XA0zo=;
+        b=ZsYiK60oyVeAyLfbV0gPcWxGFi8MIWVHv3d1a9D4Rigk0pLvMVmXn0zmGxUDszwomj
+         ohFY9ow224etSE+rfjonDZdxp86f9mKppSoQY8WtX9seF47NXJAEUekjZTofnMSH3PTn
+         EiAgfiAHaXJXHmJpQREHAgnBYMuekAx3f65HMgyUEIXBx53Z3B6sL8qqpnNF1V9H5rZX
+         8kjHjwIdB8quoU/I0HvyEskjqGPUgV6EmTMN/zT9F9J8rRhHNVOUUcCxrTInZzwq4/d4
+         QxKJHUURe502Ogq9JiGb/XtsTgJN65Iu44PE9rkxFszONKl8p8mT2WGQUHpzuy7xOqja
+         vqEQ==
+X-Gm-Message-State: AA+aEWb4SF3QNvKTs2hrjWpv5aMLSLowu+0AMx/p87ia9k4x2jolQXp6
+        u4V+V7/ScpFXmhBckrTMmDo=
+X-Google-Smtp-Source: AFSGD/WZaMm4ia7nPskbJMxC616zQiNClDHAEjSFPFuG1P/FgCHq/xmy4u6RPYMPtgqX3nCJC27iug==
+X-Received: by 2002:a2e:4503:: with SMTP id s3-v6mr4635765lja.44.1542880960252;
+        Thu, 22 Nov 2018 02:02:40 -0800 (PST)
 Received: from a2k-HP-ProDesk-600-G2-SFF.kyiv.epam.com (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
-        by smtp.gmail.com with ESMTPSA id v19sm2043421lfe.69.2018.11.22.02.02.37
+        by smtp.gmail.com with ESMTPSA id v19sm2043421lfe.69.2018.11.22.02.02.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 22 Nov 2018 02:02:38 -0800 (PST)
+        Thu, 22 Nov 2018 02:02:39 -0800 (PST)
 From:   Oleksandr Andrushchenko <andr2000@gmail.com>
 To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
         jgross@suse.com, boris.ostrovsky@oracle.com
 Cc:     andr2000@gmail.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [Xen-devel][PATCH 2/3] drm/xen-front: Use Xen common shared buffer implementation
-Date:   Thu, 22 Nov 2018 12:02:29 +0200
-Message-Id: <20181122100230.14976-2-andr2000@gmail.com>
+Subject: [Xen-devel][PATCH 3/3] ALSA: xen-front: Use Xen common shared buffer implementation
+Date:   Thu, 22 Nov 2018 12:02:30 +0200
+Message-Id: <20181122100230.14976-3-andr2000@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181122100230.14976-1-andr2000@gmail.com>
 References: <20181122100230.14976-1-andr2000@gmail.com>
@@ -85,258 +86,336 @@ now available as common code for Xen frontend drivers.
 
 Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 ---
- drivers/gpu/drm/xen/Kconfig               |   1 +
- drivers/gpu/drm/xen/Makefile              |   1 -
- drivers/gpu/drm/xen/xen_drm_front.c       |  60 ++--
- drivers/gpu/drm/xen/xen_drm_front_gem.c   |   1 -
- drivers/gpu/drm/xen/xen_drm_front_shbuf.c | 414 ----------------------
- drivers/gpu/drm/xen/xen_drm_front_shbuf.h |  64 ----
- 6 files changed, 30 insertions(+), 511 deletions(-)
- delete mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.c
- delete mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.h
+ sound/xen/Kconfig               |   1 +
+ sound/xen/Makefile              |   1 -
+ sound/xen/xen_snd_front.c       |   7 +-
+ sound/xen/xen_snd_front.h       |   4 +-
+ sound/xen/xen_snd_front_alsa.c  | 101 +++++++++++++----
+ sound/xen/xen_snd_front_shbuf.c | 194 --------------------------------
+ sound/xen/xen_snd_front_shbuf.h |  36 ------
+ 7 files changed, 83 insertions(+), 261 deletions(-)
+ delete mode 100644 sound/xen/xen_snd_front_shbuf.c
+ delete mode 100644 sound/xen/xen_snd_front_shbuf.h
 
-diff --git a/drivers/gpu/drm/xen/Kconfig b/drivers/gpu/drm/xen/Kconfig
-index 4cca160782ab..f969d486855d 100644
---- a/drivers/gpu/drm/xen/Kconfig
-+++ b/drivers/gpu/drm/xen/Kconfig
-@@ -12,6 +12,7 @@ config DRM_XEN_FRONTEND
- 	select DRM_KMS_HELPER
- 	select VIDEOMODE_HELPERS
+diff --git a/sound/xen/Kconfig b/sound/xen/Kconfig
+index 4f1fceea82d2..e4d7beb4df1c 100644
+--- a/sound/xen/Kconfig
++++ b/sound/xen/Kconfig
+@@ -5,6 +5,7 @@ config SND_XEN_FRONTEND
+ 	depends on XEN
+ 	select SND_PCM
  	select XEN_XENBUS_FRONTEND
 +	select XEN_FRONT_PGDIR_SHBUF
  	help
  	  Choose this option if you want to enable a para-virtualized
- 	  frontend DRM/KMS driver for Xen guest OSes.
-diff --git a/drivers/gpu/drm/xen/Makefile b/drivers/gpu/drm/xen/Makefile
-index 712afff5ffc3..825905f67faa 100644
---- a/drivers/gpu/drm/xen/Makefile
-+++ b/drivers/gpu/drm/xen/Makefile
-@@ -4,7 +4,6 @@ drm_xen_front-objs := xen_drm_front.o \
- 		      xen_drm_front_kms.o \
- 		      xen_drm_front_conn.o \
- 		      xen_drm_front_evtchnl.o \
--		      xen_drm_front_shbuf.o \
- 		      xen_drm_front_cfg.o \
- 		      xen_drm_front_gem.o
+ 	  frontend sound driver for Xen guest OSes.
+diff --git a/sound/xen/Makefile b/sound/xen/Makefile
+index 1e6470ecc2f2..24031775b715 100644
+--- a/sound/xen/Makefile
++++ b/sound/xen/Makefile
+@@ -3,7 +3,6 @@
+ snd_xen_front-objs := xen_snd_front.o \
+ 		      xen_snd_front_cfg.o \
+ 		      xen_snd_front_evtchnl.o \
+-		      xen_snd_front_shbuf.o \
+ 		      xen_snd_front_alsa.o
  
-diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_drm_front.c
-index 6b6d5ab82ec3..9597544fecc1 100644
---- a/drivers/gpu/drm/xen/xen_drm_front.c
-+++ b/drivers/gpu/drm/xen/xen_drm_front.c
-@@ -19,6 +19,7 @@
+ obj-$(CONFIG_SND_XEN_FRONTEND) += snd_xen_front.o
+diff --git a/sound/xen/xen_snd_front.c b/sound/xen/xen_snd_front.c
+index b089b13b5160..a9e5c2cd7698 100644
+--- a/sound/xen/xen_snd_front.c
++++ b/sound/xen/xen_snd_front.c
+@@ -16,12 +16,12 @@
  #include <xen/xen.h>
  #include <xen/xenbus.h>
  
 +#include <xen/xen-front-pgdir-shbuf.h>
- #include <xen/interface/io/displif.h>
+ #include <xen/interface/io/sndif.h>
  
- #include "xen_drm_front.h"
-@@ -26,28 +27,20 @@
- #include "xen_drm_front_evtchnl.h"
- #include "xen_drm_front_gem.h"
- #include "xen_drm_front_kms.h"
--#include "xen_drm_front_shbuf.h"
+ #include "xen_snd_front.h"
+ #include "xen_snd_front_alsa.h"
+ #include "xen_snd_front_evtchnl.h"
+-#include "xen_snd_front_shbuf.h"
  
- struct xen_drm_front_dbuf {
- 	struct list_head list;
- 	u64 dbuf_cookie;
- 	u64 fb_cookie;
--	struct xen_drm_front_shbuf *shbuf;
+ static struct xensnd_req *
+ be_stream_prepare_req(struct xen_snd_front_evtchnl *evtchnl, u8 operation)
+@@ -82,7 +82,7 @@ int xen_snd_front_stream_query_hw_param(struct xen_snd_front_evtchnl *evtchnl,
+ }
+ 
+ int xen_snd_front_stream_prepare(struct xen_snd_front_evtchnl *evtchnl,
+-				 struct xen_snd_front_shbuf *sh_buf,
++				 struct xen_front_pgdir_shbuf *shbuf,
+ 				 u8 format, unsigned int channels,
+ 				 unsigned int rate, u32 buffer_sz,
+ 				 u32 period_sz)
+@@ -99,7 +99,8 @@ int xen_snd_front_stream_prepare(struct xen_snd_front_evtchnl *evtchnl,
+ 	req->op.open.pcm_rate = rate;
+ 	req->op.open.buffer_sz = buffer_sz;
+ 	req->op.open.period_sz = period_sz;
+-	req->op.open.gref_directory = xen_snd_front_shbuf_get_dir_start(sh_buf);
++	req->op.open.gref_directory =
++		xen_front_pgdir_shbuf_get_dir_start(shbuf);
+ 	mutex_unlock(&evtchnl->ring_io_lock);
+ 
+ 	ret = be_stream_do_io(evtchnl);
+diff --git a/sound/xen/xen_snd_front.h b/sound/xen/xen_snd_front.h
+index a2ea2463bcc5..05611f113b94 100644
+--- a/sound/xen/xen_snd_front.h
++++ b/sound/xen/xen_snd_front.h
+@@ -16,7 +16,7 @@
+ struct xen_snd_front_card_info;
+ struct xen_snd_front_evtchnl;
+ struct xen_snd_front_evtchnl_pair;
+-struct xen_snd_front_shbuf;
++struct xen_front_pgdir_shbuf;
+ struct xensnd_query_hw_param;
+ 
+ struct xen_snd_front_info {
+@@ -35,7 +35,7 @@ int xen_snd_front_stream_query_hw_param(struct xen_snd_front_evtchnl *evtchnl,
+ 					struct xensnd_query_hw_param *hw_param_resp);
+ 
+ int xen_snd_front_stream_prepare(struct xen_snd_front_evtchnl *evtchnl,
+-				 struct xen_snd_front_shbuf *sh_buf,
++				 struct xen_front_pgdir_shbuf *shbuf,
+ 				 u8 format, unsigned int channels,
+ 				 unsigned int rate, u32 buffer_sz,
+ 				 u32 period_sz);
+diff --git a/sound/xen/xen_snd_front_alsa.c b/sound/xen/xen_snd_front_alsa.c
+index 129180e17db1..5b874a7014e0 100644
+--- a/sound/xen/xen_snd_front_alsa.c
++++ b/sound/xen/xen_snd_front_alsa.c
+@@ -15,17 +15,24 @@
+ #include <sound/pcm_params.h>
+ 
+ #include <xen/xenbus.h>
++#include <xen/xen-front-pgdir-shbuf.h>
+ 
+ #include "xen_snd_front.h"
+ #include "xen_snd_front_alsa.h"
+ #include "xen_snd_front_cfg.h"
+ #include "xen_snd_front_evtchnl.h"
+-#include "xen_snd_front_shbuf.h"
+ 
+ struct xen_snd_front_pcm_stream_info {
+ 	struct xen_snd_front_info *front_info;
+ 	struct xen_snd_front_evtchnl_pair *evt_pair;
+-	struct xen_snd_front_shbuf sh_buf;
 +
++	/* This is the shared buffer with its backing storage. */
 +	struct xen_front_pgdir_shbuf shbuf;
- };
++	u8 *buffer;
++	size_t buffer_sz;
++	int num_pages;
++	struct page **pages;
++
+ 	int index;
  
--static int dbuf_add_to_list(struct xen_drm_front_info *front_info,
--			    struct xen_drm_front_shbuf *shbuf, u64 dbuf_cookie)
-+static void dbuf_add_to_list(struct xen_drm_front_info *front_info,
-+			     struct xen_drm_front_dbuf *dbuf, u64 dbuf_cookie)
- {
--	struct xen_drm_front_dbuf *dbuf;
--
--	dbuf = kzalloc(sizeof(*dbuf), GFP_KERNEL);
--	if (!dbuf)
--		return -ENOMEM;
--
- 	dbuf->dbuf_cookie = dbuf_cookie;
--	dbuf->shbuf = shbuf;
- 	list_add(&dbuf->list, &front_info->dbuf_list);
--	return 0;
+ 	bool is_open;
+@@ -214,12 +221,19 @@ static void stream_clear(struct xen_snd_front_pcm_stream_info *stream)
+ 	stream->out_frames = 0;
+ 	atomic_set(&stream->hw_ptr, 0);
+ 	xen_snd_front_evtchnl_pair_clear(stream->evt_pair);
+-	xen_snd_front_shbuf_clear(&stream->sh_buf);
++	memset(&stream->shbuf, 0, sizeof(stream->shbuf));
++	stream->buffer = NULL;
++	stream->buffer_sz = 0;
++	stream->pages = NULL;
++	stream->num_pages = 0;
  }
  
- static struct xen_drm_front_dbuf *dbuf_get(struct list_head *dbuf_list,
-@@ -64,11 +57,14 @@ static struct xen_drm_front_dbuf *dbuf_get(struct list_head *dbuf_list,
- 
- static void dbuf_flush_fb(struct list_head *dbuf_list, u64 fb_cookie)
+ static void stream_free(struct xen_snd_front_pcm_stream_info *stream)
  {
-+#if IS_ENABLED(CONFIG_X86)
- 	struct xen_drm_front_dbuf *buf, *q;
- 
- 	list_for_each_entry_safe(buf, q, dbuf_list, list)
- 		if (buf->fb_cookie == fb_cookie)
--			xen_drm_front_shbuf_flush(buf->shbuf);
-+			drm_clflush_pages(buf->shbuf.pages,
-+					  buf->shbuf.num_pages);
-+#endif
+-	xen_snd_front_shbuf_free(&stream->sh_buf);
++	xen_front_pgdir_shbuf_unmap(&stream->shbuf);
++	xen_front_pgdir_shbuf_free(&stream->shbuf);
++	free_pages_exact(stream->buffer, stream->buffer_sz);
++	kfree(stream->pages);
+ 	stream_clear(stream);
  }
  
- static void dbuf_free(struct list_head *dbuf_list, u64 dbuf_cookie)
-@@ -78,8 +74,8 @@ static void dbuf_free(struct list_head *dbuf_list, u64 dbuf_cookie)
- 	list_for_each_entry_safe(buf, q, dbuf_list, list)
- 		if (buf->dbuf_cookie == dbuf_cookie) {
- 			list_del(&buf->list);
--			xen_drm_front_shbuf_unmap(buf->shbuf);
--			xen_drm_front_shbuf_free(buf->shbuf);
-+			xen_front_pgdir_shbuf_unmap(&buf->shbuf);
-+			xen_front_pgdir_shbuf_free(&buf->shbuf);
- 			kfree(buf);
- 			break;
- 		}
-@@ -91,8 +87,8 @@ static void dbuf_free_all(struct list_head *dbuf_list)
- 
- 	list_for_each_entry_safe(buf, q, dbuf_list, list) {
- 		list_del(&buf->list);
--		xen_drm_front_shbuf_unmap(buf->shbuf);
--		xen_drm_front_shbuf_free(buf->shbuf);
-+		xen_front_pgdir_shbuf_unmap(&buf->shbuf);
-+		xen_front_pgdir_shbuf_free(&buf->shbuf);
- 		kfree(buf);
- 	}
+@@ -421,10 +435,34 @@ static int alsa_close(struct snd_pcm_substream *substream)
+ 	return 0;
  }
-@@ -171,9 +167,9 @@ int xen_drm_front_dbuf_create(struct xen_drm_front_info *front_info,
- 			      u32 bpp, u64 size, struct page **pages)
- {
- 	struct xen_drm_front_evtchnl *evtchnl;
--	struct xen_drm_front_shbuf *shbuf;
-+	struct xen_drm_front_dbuf *dbuf;
- 	struct xendispl_req *req;
--	struct xen_drm_front_shbuf_cfg buf_cfg;
-+	struct xen_front_pgdir_shbuf_cfg buf_cfg;
- 	unsigned long flags;
- 	int ret;
  
-@@ -181,28 +177,29 @@ int xen_drm_front_dbuf_create(struct xen_drm_front_info *front_info,
- 	if (unlikely(!evtchnl))
- 		return -EIO;
- 
-+	dbuf = kzalloc(sizeof(*dbuf), GFP_KERNEL);
-+	if (!dbuf)
++static int shbuf_setup_backstore(struct xen_snd_front_pcm_stream_info *stream,
++				 size_t buffer_sz)
++{
++	int i;
++
++	stream->buffer_sz = buffer_sz;
++	stream->buffer = alloc_pages_exact(stream->buffer_sz, GFP_KERNEL);
++	if (!stream->buffer)
 +		return -ENOMEM;
 +
-+	dbuf_add_to_list(front_info, dbuf, dbuf_cookie);
++	stream->num_pages = DIV_ROUND_UP(stream->buffer_sz, PAGE_SIZE);
++	stream->pages = kcalloc(stream->num_pages, sizeof(struct page *),
++				GFP_KERNEL);
++	if (!stream->pages)
++		return -ENOMEM;
 +
- 	memset(&buf_cfg, 0, sizeof(buf_cfg));
- 	buf_cfg.xb_dev = front_info->xb_dev;
-+	buf_cfg.num_pages = DIV_ROUND_UP(size, PAGE_SIZE);
- 	buf_cfg.pages = pages;
--	buf_cfg.size = size;
-+	buf_cfg.pgdir = &dbuf->shbuf;
- 	buf_cfg.be_alloc = front_info->cfg.be_alloc;
++	for (i = 0; i < stream->num_pages; i++)
++		stream->pages[i] = virt_to_page(stream->buffer + i * PAGE_SIZE);
++
++	return 0;
++}
++
+ static int alsa_hw_params(struct snd_pcm_substream *substream,
+ 			  struct snd_pcm_hw_params *params)
+ {
+ 	struct xen_snd_front_pcm_stream_info *stream = stream_get(substream);
++	struct xen_snd_front_info *front_info = stream->front_info;
++	struct xen_front_pgdir_shbuf_cfg buf_cfg;
+ 	int ret;
  
--	shbuf = xen_drm_front_shbuf_alloc(&buf_cfg);
--	if (IS_ERR(shbuf))
--		return PTR_ERR(shbuf);
--
--	ret = dbuf_add_to_list(front_info, shbuf, dbuf_cookie);
+ 	/*
+@@ -432,19 +470,32 @@ static int alsa_hw_params(struct snd_pcm_substream *substream,
+ 	 * so free the previously allocated shared buffer if any.
+ 	 */
+ 	stream_free(stream);
++	ret = shbuf_setup_backstore(stream, params_buffer_bytes(params));
++	if (ret < 0)
++		goto fail;
+ 
+-	ret = xen_snd_front_shbuf_alloc(stream->front_info->xb_dev,
+-					&stream->sh_buf,
+-					params_buffer_bytes(params));
 -	if (ret < 0) {
--		xen_drm_front_shbuf_free(shbuf);
+-		stream_free(stream);
+-		dev_err(&stream->front_info->xb_dev->dev,
+-			"Failed to allocate buffers for stream with index %d\n",
+-			stream->index);
 -		return ret;
 -	}
++	memset(&buf_cfg, 0, sizeof(buf_cfg));
++	buf_cfg.xb_dev = front_info->xb_dev;
++	buf_cfg.pgdir = &stream->shbuf;
++	buf_cfg.num_pages = stream->num_pages;
++	buf_cfg.pages = stream->pages;
++
 +	ret = xen_front_pgdir_shbuf_alloc(&buf_cfg);
 +	if (ret < 0)
-+		goto fail_shbuf_alloc;
++		goto fail;
++
++	ret = xen_front_pgdir_shbuf_map(&stream->shbuf);
++	if (ret < 0)
++		goto fail;
  
- 	mutex_lock(&evtchnl->u.req.req_io_lock);
- 
- 	spin_lock_irqsave(&front_info->io_lock, flags);
- 	req = be_prepare_req(evtchnl, XENDISPL_OP_DBUF_CREATE);
- 	req->op.dbuf_create.gref_directory =
--			xen_drm_front_shbuf_get_dir_start(shbuf);
-+			xen_front_pgdir_shbuf_get_dir_start(&dbuf->shbuf);
- 	req->op.dbuf_create.buffer_sz = size;
- 	req->op.dbuf_create.dbuf_cookie = dbuf_cookie;
- 	req->op.dbuf_create.width = width;
-@@ -221,7 +218,7 @@ int xen_drm_front_dbuf_create(struct xen_drm_front_info *front_info,
- 	if (ret < 0)
- 		goto fail;
- 
--	ret = xen_drm_front_shbuf_map(shbuf);
-+	ret = xen_front_pgdir_shbuf_map(&dbuf->shbuf);
- 	if (ret < 0)
- 		goto fail;
- 
-@@ -230,6 +227,7 @@ int xen_drm_front_dbuf_create(struct xen_drm_front_info *front_info,
- 
- fail:
- 	mutex_unlock(&evtchnl->u.req.req_io_lock);
-+fail_shbuf_alloc:
- 	dbuf_free(&front_info->dbuf_list, dbuf_cookie);
- 	return ret;
+ 	return 0;
++
++fail:
++	stream_free(stream);
++	dev_err(&front_info->xb_dev->dev,
++		"Failed to allocate buffers for stream with index %d\n",
++		stream->index);
++	return ret;
  }
-diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
-index c85bfe7571cb..53be4c7dc0a4 100644
---- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
-+++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
-@@ -22,7 +22,6 @@
- #include <xen/balloon.h>
  
- #include "xen_drm_front.h"
--#include "xen_drm_front_shbuf.h"
+ static int alsa_hw_free(struct snd_pcm_substream *substream)
+@@ -476,7 +527,7 @@ static int alsa_prepare(struct snd_pcm_substream *substream)
+ 		sndif_format = ret;
  
- struct xen_gem_object {
- 	struct drm_gem_object base;
-diff --git a/drivers/gpu/drm/xen/xen_drm_front_shbuf.c b/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+ 		ret = xen_snd_front_stream_prepare(&stream->evt_pair->req,
+-						   &stream->sh_buf,
++						   &stream->shbuf,
+ 						   sndif_format,
+ 						   runtime->channels,
+ 						   runtime->rate,
+@@ -556,10 +607,10 @@ static int alsa_pb_copy_user(struct snd_pcm_substream *substream,
+ {
+ 	struct xen_snd_front_pcm_stream_info *stream = stream_get(substream);
+ 
+-	if (unlikely(pos + count > stream->sh_buf.buffer_sz))
++	if (unlikely(pos + count > stream->buffer_sz))
+ 		return -EINVAL;
+ 
+-	if (copy_from_user(stream->sh_buf.buffer + pos, src, count))
++	if (copy_from_user(stream->buffer + pos, src, count))
+ 		return -EFAULT;
+ 
+ 	return xen_snd_front_stream_write(&stream->evt_pair->req, pos, count);
+@@ -571,10 +622,10 @@ static int alsa_pb_copy_kernel(struct snd_pcm_substream *substream,
+ {
+ 	struct xen_snd_front_pcm_stream_info *stream = stream_get(substream);
+ 
+-	if (unlikely(pos + count > stream->sh_buf.buffer_sz))
++	if (unlikely(pos + count > stream->buffer_sz))
+ 		return -EINVAL;
+ 
+-	memcpy(stream->sh_buf.buffer + pos, src, count);
++	memcpy(stream->buffer + pos, src, count);
+ 
+ 	return xen_snd_front_stream_write(&stream->evt_pair->req, pos, count);
+ }
+@@ -586,14 +637,14 @@ static int alsa_cap_copy_user(struct snd_pcm_substream *substream,
+ 	struct xen_snd_front_pcm_stream_info *stream = stream_get(substream);
+ 	int ret;
+ 
+-	if (unlikely(pos + count > stream->sh_buf.buffer_sz))
++	if (unlikely(pos + count > stream->buffer_sz))
+ 		return -EINVAL;
+ 
+ 	ret = xen_snd_front_stream_read(&stream->evt_pair->req, pos, count);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	return copy_to_user(dst, stream->sh_buf.buffer + pos, count) ?
++	return copy_to_user(dst, stream->buffer + pos, count) ?
+ 		-EFAULT : 0;
+ }
+ 
+@@ -604,14 +655,14 @@ static int alsa_cap_copy_kernel(struct snd_pcm_substream *substream,
+ 	struct xen_snd_front_pcm_stream_info *stream = stream_get(substream);
+ 	int ret;
+ 
+-	if (unlikely(pos + count > stream->sh_buf.buffer_sz))
++	if (unlikely(pos + count > stream->buffer_sz))
+ 		return -EINVAL;
+ 
+ 	ret = xen_snd_front_stream_read(&stream->evt_pair->req, pos, count);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	memcpy(dst, stream->sh_buf.buffer + pos, count);
++	memcpy(dst, stream->buffer + pos, count);
+ 
+ 	return 0;
+ }
+@@ -622,10 +673,10 @@ static int alsa_pb_fill_silence(struct snd_pcm_substream *substream,
+ {
+ 	struct xen_snd_front_pcm_stream_info *stream = stream_get(substream);
+ 
+-	if (unlikely(pos + count > stream->sh_buf.buffer_sz))
++	if (unlikely(pos + count > stream->buffer_sz))
+ 		return -EINVAL;
+ 
+-	memset(stream->sh_buf.buffer + pos, 0, count);
++	memset(stream->buffer + pos, 0, count);
+ 
+ 	return xen_snd_front_stream_write(&stream->evt_pair->req, pos, count);
+ }
+diff --git a/sound/xen/xen_snd_front_shbuf.c b/sound/xen/xen_snd_front_shbuf.c
 deleted file mode 100644
-index d333b67cc1a0..000000000000
---- a/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+index 07ac176a41ba..000000000000
+--- a/sound/xen/xen_snd_front_shbuf.c
 +++ /dev/null
-@@ -1,414 +0,0 @@
+@@ -1,194 +0,0 @@
 -// SPDX-License-Identifier: GPL-2.0 OR MIT
 -
 -/*
-- *  Xen para-virtual DRM device
+- * Xen para-virtual sound device
 - *
 - * Copyright (C) 2016-2018 EPAM Systems Inc.
 - *
 - * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 - */
 -
--#include <drm/drmP.h>
--
--#if defined(CONFIG_X86)
--#include <drm/drm_cache.h>
--#endif
--#include <linux/errno.h>
--#include <linux/mm.h>
--
--#include <asm/xen/hypervisor.h>
--#include <xen/balloon.h>
+-#include <linux/kernel.h>
 -#include <xen/xen.h>
 -#include <xen/xenbus.h>
--#include <xen/interface/io/ring.h>
--#include <xen/interface/io/displif.h>
 -
--#include "xen_drm_front.h"
--#include "xen_drm_front_shbuf.h"
+-#include "xen_snd_front_shbuf.h"
 -
--struct xen_drm_front_shbuf_ops {
--	/*
--	 * Calculate number of grefs required to handle this buffer,
--	 * e.g. if grefs are required for page directory only or the buffer
--	 * pages as well.
--	 */
--	void (*calc_num_grefs)(struct xen_drm_front_shbuf *buf);
--	/* Fill page directory according to para-virtual display protocol. */
--	void (*fill_page_dir)(struct xen_drm_front_shbuf *buf);
--	/* Claim grant references for the pages of the buffer. */
--	int (*grant_refs_for_buffer)(struct xen_drm_front_shbuf *buf,
--				     grant_ref_t *priv_gref_head, int gref_idx);
--	/* Map grant references of the buffer. */
--	int (*map)(struct xen_drm_front_shbuf *buf);
--	/* Unmap grant references of the buffer. */
--	int (*unmap)(struct xen_drm_front_shbuf *buf);
--};
--
--grant_ref_t xen_drm_front_shbuf_get_dir_start(struct xen_drm_front_shbuf *buf)
+-grant_ref_t xen_snd_front_shbuf_get_dir_start(struct xen_snd_front_shbuf *buf)
 -{
 -	if (!buf->grefs)
 -		return GRANT_INVALID_REF;
@@ -344,436 +423,218 @@ index d333b67cc1a0..000000000000
 -	return buf->grefs[0];
 -}
 -
--int xen_drm_front_shbuf_map(struct xen_drm_front_shbuf *buf)
+-void xen_snd_front_shbuf_clear(struct xen_snd_front_shbuf *buf)
 -{
--	if (buf->ops->map)
--		return buf->ops->map(buf);
--
--	/* no need to map own grant references */
--	return 0;
+-	memset(buf, 0, sizeof(*buf));
 -}
 -
--int xen_drm_front_shbuf_unmap(struct xen_drm_front_shbuf *buf)
+-void xen_snd_front_shbuf_free(struct xen_snd_front_shbuf *buf)
 -{
--	if (buf->ops->unmap)
--		return buf->ops->unmap(buf);
+-	int i;
 -
--	/* no need to unmap own grant references */
--	return 0;
--}
--
--void xen_drm_front_shbuf_flush(struct xen_drm_front_shbuf *buf)
--{
--#if defined(CONFIG_X86)
--	drm_clflush_pages(buf->pages, buf->num_pages);
--#endif
--}
--
--void xen_drm_front_shbuf_free(struct xen_drm_front_shbuf *buf)
--{
 -	if (buf->grefs) {
--		int i;
--
 -		for (i = 0; i < buf->num_grefs; i++)
 -			if (buf->grefs[i] != GRANT_INVALID_REF)
 -				gnttab_end_foreign_access(buf->grefs[i],
 -							  0, 0UL);
+-		kfree(buf->grefs);
 -	}
--	kfree(buf->grefs);
 -	kfree(buf->directory);
--	kfree(buf);
+-	free_pages_exact(buf->buffer, buf->buffer_sz);
+-	xen_snd_front_shbuf_clear(buf);
 -}
 -
 -/*
-- * number of grefs a page can hold with respect to the
-- * struct xendispl_page_directory header
+- * number of grant references a page can hold with respect to the
+- * xensnd_page_directory header
 - */
--#define XEN_DRM_NUM_GREFS_PER_PAGE ((PAGE_SIZE - \
--		offsetof(struct xendispl_page_directory, gref)) / \
+-#define XENSND_NUM_GREFS_PER_PAGE ((XEN_PAGE_SIZE - \
+-		offsetof(struct xensnd_page_directory, gref)) / \
 -		sizeof(grant_ref_t))
 -
--static int get_num_pages_dir(struct xen_drm_front_shbuf *buf)
+-static void fill_page_dir(struct xen_snd_front_shbuf *buf,
+-			  int num_pages_dir)
 -{
--	/* number of pages the page directory consumes itself */
--	return DIV_ROUND_UP(buf->num_pages, XEN_DRM_NUM_GREFS_PER_PAGE);
--}
--
--static void backend_calc_num_grefs(struct xen_drm_front_shbuf *buf)
--{
--	/* only for pages the page directory consumes itself */
--	buf->num_grefs = get_num_pages_dir(buf);
--}
--
--static void guest_calc_num_grefs(struct xen_drm_front_shbuf *buf)
--{
--	/*
--	 * number of pages the page directory consumes itself
--	 * plus grefs for the buffer pages
--	 */
--	buf->num_grefs = get_num_pages_dir(buf) + buf->num_pages;
--}
--
--#define xen_page_to_vaddr(page) \
--		((uintptr_t)pfn_to_kaddr(page_to_xen_pfn(page)))
--
--static int backend_unmap(struct xen_drm_front_shbuf *buf)
--{
--	struct gnttab_unmap_grant_ref *unmap_ops;
--	int i, ret;
--
--	if (!buf->pages || !buf->backend_map_handles || !buf->grefs)
--		return 0;
--
--	unmap_ops = kcalloc(buf->num_pages, sizeof(*unmap_ops),
--			    GFP_KERNEL);
--	if (!unmap_ops) {
--		DRM_ERROR("Failed to get memory while unmapping\n");
--		return -ENOMEM;
--	}
--
--	for (i = 0; i < buf->num_pages; i++) {
--		phys_addr_t addr;
--
--		addr = xen_page_to_vaddr(buf->pages[i]);
--		gnttab_set_unmap_op(&unmap_ops[i], addr, GNTMAP_host_map,
--				    buf->backend_map_handles[i]);
--	}
--
--	ret = gnttab_unmap_refs(unmap_ops, NULL, buf->pages,
--				buf->num_pages);
--
--	for (i = 0; i < buf->num_pages; i++) {
--		if (unlikely(unmap_ops[i].status != GNTST_okay))
--			DRM_ERROR("Failed to unmap page %d: %d\n",
--				  i, unmap_ops[i].status);
--	}
--
--	if (ret)
--		DRM_ERROR("Failed to unmap grant references, ret %d", ret);
--
--	kfree(unmap_ops);
--	kfree(buf->backend_map_handles);
--	buf->backend_map_handles = NULL;
--	return ret;
--}
--
--static int backend_map(struct xen_drm_front_shbuf *buf)
--{
--	struct gnttab_map_grant_ref *map_ops = NULL;
+-	struct xensnd_page_directory *page_dir;
 -	unsigned char *ptr;
--	int ret, cur_gref, cur_dir_page, cur_page, grefs_left;
--
--	map_ops = kcalloc(buf->num_pages, sizeof(*map_ops), GFP_KERNEL);
--	if (!map_ops)
--		return -ENOMEM;
--
--	buf->backend_map_handles = kcalloc(buf->num_pages,
--					   sizeof(*buf->backend_map_handles),
--					   GFP_KERNEL);
--	if (!buf->backend_map_handles) {
--		kfree(map_ops);
--		return -ENOMEM;
--	}
--
--	/*
--	 * read page directory to get grefs from the backend: for external
--	 * buffer we only allocate buf->grefs for the page directory,
--	 * so buf->num_grefs has number of pages in the page directory itself
--	 */
--	ptr = buf->directory;
--	grefs_left = buf->num_pages;
--	cur_page = 0;
--	for (cur_dir_page = 0; cur_dir_page < buf->num_grefs; cur_dir_page++) {
--		struct xendispl_page_directory *page_dir =
--				(struct xendispl_page_directory *)ptr;
--		int to_copy = XEN_DRM_NUM_GREFS_PER_PAGE;
--
--		if (to_copy > grefs_left)
--			to_copy = grefs_left;
--
--		for (cur_gref = 0; cur_gref < to_copy; cur_gref++) {
--			phys_addr_t addr;
--
--			addr = xen_page_to_vaddr(buf->pages[cur_page]);
--			gnttab_set_map_op(&map_ops[cur_page], addr,
--					  GNTMAP_host_map,
--					  page_dir->gref[cur_gref],
--					  buf->xb_dev->otherend_id);
--			cur_page++;
--		}
--
--		grefs_left -= to_copy;
--		ptr += PAGE_SIZE;
--	}
--	ret = gnttab_map_refs(map_ops, NULL, buf->pages, buf->num_pages);
--
--	/* save handles even if error, so we can unmap */
--	for (cur_page = 0; cur_page < buf->num_pages; cur_page++) {
--		buf->backend_map_handles[cur_page] = map_ops[cur_page].handle;
--		if (unlikely(map_ops[cur_page].status != GNTST_okay))
--			DRM_ERROR("Failed to map page %d: %d\n",
--				  cur_page, map_ops[cur_page].status);
--	}
--
--	if (ret) {
--		DRM_ERROR("Failed to map grant references, ret %d", ret);
--		backend_unmap(buf);
--	}
--
--	kfree(map_ops);
--	return ret;
--}
--
--static void backend_fill_page_dir(struct xen_drm_front_shbuf *buf)
--{
--	struct xendispl_page_directory *page_dir;
--	unsigned char *ptr;
--	int i, num_pages_dir;
+-	int i, cur_gref, grefs_left, to_copy;
 -
 -	ptr = buf->directory;
--	num_pages_dir = get_num_pages_dir(buf);
--
--	/* fill only grefs for the page directory itself */
--	for (i = 0; i < num_pages_dir - 1; i++) {
--		page_dir = (struct xendispl_page_directory *)ptr;
--
--		page_dir->gref_dir_next_page = buf->grefs[i + 1];
--		ptr += PAGE_SIZE;
--	}
--	/* last page must say there is no more pages */
--	page_dir = (struct xendispl_page_directory *)ptr;
--	page_dir->gref_dir_next_page = GRANT_INVALID_REF;
--}
--
--static void guest_fill_page_dir(struct xen_drm_front_shbuf *buf)
--{
--	unsigned char *ptr;
--	int cur_gref, grefs_left, to_copy, i, num_pages_dir;
--
--	ptr = buf->directory;
--	num_pages_dir = get_num_pages_dir(buf);
--
+-	grefs_left = buf->num_grefs - num_pages_dir;
 -	/*
--	 * while copying, skip grefs at start, they are for pages
--	 * granted for the page directory itself
+-	 * skip grant references at the beginning, they are for pages granted
+-	 * for the page directory itself
 -	 */
 -	cur_gref = num_pages_dir;
--	grefs_left = buf->num_pages;
 -	for (i = 0; i < num_pages_dir; i++) {
--		struct xendispl_page_directory *page_dir =
--				(struct xendispl_page_directory *)ptr;
--
--		if (grefs_left <= XEN_DRM_NUM_GREFS_PER_PAGE) {
+-		page_dir = (struct xensnd_page_directory *)ptr;
+-		if (grefs_left <= XENSND_NUM_GREFS_PER_PAGE) {
 -			to_copy = grefs_left;
 -			page_dir->gref_dir_next_page = GRANT_INVALID_REF;
 -		} else {
--			to_copy = XEN_DRM_NUM_GREFS_PER_PAGE;
+-			to_copy = XENSND_NUM_GREFS_PER_PAGE;
 -			page_dir->gref_dir_next_page = buf->grefs[i + 1];
 -		}
+-
 -		memcpy(&page_dir->gref, &buf->grefs[cur_gref],
 -		       to_copy * sizeof(grant_ref_t));
--		ptr += PAGE_SIZE;
+-
+-		ptr += XEN_PAGE_SIZE;
 -		grefs_left -= to_copy;
 -		cur_gref += to_copy;
 -	}
 -}
 -
--static int guest_grant_refs_for_buffer(struct xen_drm_front_shbuf *buf,
--				       grant_ref_t *priv_gref_head,
--				       int gref_idx)
--{
--	int i, cur_ref, otherend_id;
--
--	otherend_id = buf->xb_dev->otherend_id;
--	for (i = 0; i < buf->num_pages; i++) {
--		cur_ref = gnttab_claim_grant_reference(priv_gref_head);
--		if (cur_ref < 0)
--			return cur_ref;
--
--		gnttab_grant_foreign_access_ref(cur_ref, otherend_id,
--						xen_page_to_gfn(buf->pages[i]),
--						0);
--		buf->grefs[gref_idx++] = cur_ref;
--	}
--	return 0;
--}
--
--static int grant_references(struct xen_drm_front_shbuf *buf)
+-static int grant_references(struct xenbus_device *xb_dev,
+-			    struct xen_snd_front_shbuf *buf,
+-			    int num_pages_dir, int num_pages_buffer,
+-			    int num_grefs)
 -{
 -	grant_ref_t priv_gref_head;
+-	unsigned long frame;
 -	int ret, i, j, cur_ref;
--	int otherend_id, num_pages_dir;
+-	int otherend_id;
 -
--	ret = gnttab_alloc_grant_references(buf->num_grefs, &priv_gref_head);
--	if (ret < 0) {
--		DRM_ERROR("Cannot allocate grant references\n");
+-	ret = gnttab_alloc_grant_references(num_grefs, &priv_gref_head);
+-	if (ret)
 -		return ret;
--	}
 -
--	otherend_id = buf->xb_dev->otherend_id;
+-	buf->num_grefs = num_grefs;
+-	otherend_id = xb_dev->otherend_id;
 -	j = 0;
--	num_pages_dir = get_num_pages_dir(buf);
--	for (i = 0; i < num_pages_dir; i++) {
--		unsigned long frame;
 -
+-	for (i = 0; i < num_pages_dir; i++) {
 -		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
--		if (cur_ref < 0)
--			return cur_ref;
+-		if (cur_ref < 0) {
+-			ret = cur_ref;
+-			goto fail;
+-		}
 -
 -		frame = xen_page_to_gfn(virt_to_page(buf->directory +
--					PAGE_SIZE * i));
+-						     XEN_PAGE_SIZE * i));
 -		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
 -		buf->grefs[j++] = cur_ref;
 -	}
 -
--	if (buf->ops->grant_refs_for_buffer) {
--		ret = buf->ops->grant_refs_for_buffer(buf, &priv_gref_head, j);
--		if (ret)
--			return ret;
+-	for (i = 0; i < num_pages_buffer; i++) {
+-		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
+-		if (cur_ref < 0) {
+-			ret = cur_ref;
+-			goto fail;
+-		}
+-
+-		frame = xen_page_to_gfn(virt_to_page(buf->buffer +
+-						     XEN_PAGE_SIZE * i));
+-		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
+-		buf->grefs[j++] = cur_ref;
 -	}
 -
 -	gnttab_free_grant_references(priv_gref_head);
+-	fill_page_dir(buf, num_pages_dir);
 -	return 0;
+-
+-fail:
+-	gnttab_free_grant_references(priv_gref_head);
+-	return ret;
 -}
 -
--static int alloc_storage(struct xen_drm_front_shbuf *buf)
+-static int alloc_int_buffers(struct xen_snd_front_shbuf *buf,
+-			     int num_pages_dir, int num_pages_buffer,
+-			     int num_grefs)
 -{
--	buf->grefs = kcalloc(buf->num_grefs, sizeof(*buf->grefs), GFP_KERNEL);
+-	buf->grefs = kcalloc(num_grefs, sizeof(*buf->grefs), GFP_KERNEL);
 -	if (!buf->grefs)
 -		return -ENOMEM;
 -
--	buf->directory = kcalloc(get_num_pages_dir(buf), PAGE_SIZE, GFP_KERNEL);
+-	buf->directory = kcalloc(num_pages_dir, XEN_PAGE_SIZE, GFP_KERNEL);
 -	if (!buf->directory)
--		return -ENOMEM;
+-		goto fail;
+-
+-	buf->buffer_sz = num_pages_buffer * XEN_PAGE_SIZE;
+-	buf->buffer = alloc_pages_exact(buf->buffer_sz, GFP_KERNEL);
+-	if (!buf->buffer)
+-		goto fail;
 -
 -	return 0;
--}
--
--/*
-- * For be allocated buffers we don't need grant_refs_for_buffer as those
-- * grant references are allocated at backend side
-- */
--static const struct xen_drm_front_shbuf_ops backend_ops = {
--	.calc_num_grefs = backend_calc_num_grefs,
--	.fill_page_dir = backend_fill_page_dir,
--	.map = backend_map,
--	.unmap = backend_unmap
--};
--
--/* For locally granted references we do not need to map/unmap the references */
--static const struct xen_drm_front_shbuf_ops local_ops = {
--	.calc_num_grefs = guest_calc_num_grefs,
--	.fill_page_dir = guest_fill_page_dir,
--	.grant_refs_for_buffer = guest_grant_refs_for_buffer,
--};
--
--struct xen_drm_front_shbuf *
--xen_drm_front_shbuf_alloc(struct xen_drm_front_shbuf_cfg *cfg)
--{
--	struct xen_drm_front_shbuf *buf;
--	int ret;
--
--	buf = kzalloc(sizeof(*buf), GFP_KERNEL);
--	if (!buf)
--		return ERR_PTR(-ENOMEM);
--
--	if (cfg->be_alloc)
--		buf->ops = &backend_ops;
--	else
--		buf->ops = &local_ops;
--
--	buf->xb_dev = cfg->xb_dev;
--	buf->num_pages = DIV_ROUND_UP(cfg->size, PAGE_SIZE);
--	buf->pages = cfg->pages;
--
--	buf->ops->calc_num_grefs(buf);
--
--	ret = alloc_storage(buf);
--	if (ret)
--		goto fail;
--
--	ret = grant_references(buf);
--	if (ret)
--		goto fail;
--
--	buf->ops->fill_page_dir(buf);
--
--	return buf;
 -
 -fail:
--	xen_drm_front_shbuf_free(buf);
--	return ERR_PTR(ret);
+-	kfree(buf->grefs);
+-	buf->grefs = NULL;
+-	kfree(buf->directory);
+-	buf->directory = NULL;
+-	return -ENOMEM;
 -}
-diff --git a/drivers/gpu/drm/xen/xen_drm_front_shbuf.h b/drivers/gpu/drm/xen/xen_drm_front_shbuf.h
+-
+-int xen_snd_front_shbuf_alloc(struct xenbus_device *xb_dev,
+-			      struct xen_snd_front_shbuf *buf,
+-			      unsigned int buffer_sz)
+-{
+-	int num_pages_buffer, num_pages_dir, num_grefs;
+-	int ret;
+-
+-	xen_snd_front_shbuf_clear(buf);
+-
+-	num_pages_buffer = DIV_ROUND_UP(buffer_sz, XEN_PAGE_SIZE);
+-	/* number of pages the page directory consumes itself */
+-	num_pages_dir = DIV_ROUND_UP(num_pages_buffer,
+-				     XENSND_NUM_GREFS_PER_PAGE);
+-	num_grefs = num_pages_buffer + num_pages_dir;
+-
+-	ret = alloc_int_buffers(buf, num_pages_dir,
+-				num_pages_buffer, num_grefs);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = grant_references(xb_dev, buf, num_pages_dir, num_pages_buffer,
+-			       num_grefs);
+-	if (ret < 0)
+-		return ret;
+-
+-	fill_page_dir(buf, num_pages_dir);
+-	return 0;
+-}
+diff --git a/sound/xen/xen_snd_front_shbuf.h b/sound/xen/xen_snd_front_shbuf.h
 deleted file mode 100644
-index 7545c692539e..000000000000
---- a/drivers/gpu/drm/xen/xen_drm_front_shbuf.h
+index d28e97c47b2c..000000000000
+--- a/sound/xen/xen_snd_front_shbuf.h
 +++ /dev/null
-@@ -1,64 +0,0 @@
+@@ -1,36 +0,0 @@
 -/* SPDX-License-Identifier: GPL-2.0 OR MIT */
 -
 -/*
-- *  Xen para-virtual DRM device
+- * Xen para-virtual sound device
 - *
 - * Copyright (C) 2016-2018 EPAM Systems Inc.
 - *
 - * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 - */
 -
--#ifndef __XEN_DRM_FRONT_SHBUF_H_
--#define __XEN_DRM_FRONT_SHBUF_H_
--
--#include <linux/kernel.h>
--#include <linux/scatterlist.h>
+-#ifndef __XEN_SND_FRONT_SHBUF_H
+-#define __XEN_SND_FRONT_SHBUF_H
 -
 -#include <xen/grant_table.h>
 -
--struct xen_drm_front_shbuf {
--	/*
--	 * number of references granted for the backend use:
--	 *  - for allocated/imported dma-buf's this holds number of grant
--	 *    references for the page directory and pages of the buffer
--	 *  - for the buffer provided by the backend this holds number of
--	 *    grant references for the page directory as grant references for
--	 *    the buffer will be provided by the backend
--	 */
+-#include "xen_snd_front_evtchnl.h"
+-
+-struct xen_snd_front_shbuf {
 -	int num_grefs;
 -	grant_ref_t *grefs;
--	unsigned char *directory;
--
--	int num_pages;
--	struct page **pages;
--
--	struct xenbus_device *xb_dev;
--
--	/* these are the ops used internally depending on be_alloc mode */
--	const struct xen_drm_front_shbuf_ops *ops;
--
--	/* Xen map handles for the buffer allocated by the backend */
--	grant_handle_t *backend_map_handles;
+-	u8 *directory;
+-	u8 *buffer;
+-	size_t buffer_sz;
 -};
 -
--struct xen_drm_front_shbuf_cfg {
--	struct xenbus_device *xb_dev;
--	size_t size;
--	struct page **pages;
--	bool be_alloc;
--};
+-grant_ref_t xen_snd_front_shbuf_get_dir_start(struct xen_snd_front_shbuf *buf);
 -
--struct xen_drm_front_shbuf *
--xen_drm_front_shbuf_alloc(struct xen_drm_front_shbuf_cfg *cfg);
+-int xen_snd_front_shbuf_alloc(struct xenbus_device *xb_dev,
+-			      struct xen_snd_front_shbuf *buf,
+-			      unsigned int buffer_sz);
 -
--grant_ref_t xen_drm_front_shbuf_get_dir_start(struct xen_drm_front_shbuf *buf);
+-void xen_snd_front_shbuf_clear(struct xen_snd_front_shbuf *buf);
 -
--int xen_drm_front_shbuf_map(struct xen_drm_front_shbuf *buf);
+-void xen_snd_front_shbuf_free(struct xen_snd_front_shbuf *buf);
 -
--int xen_drm_front_shbuf_unmap(struct xen_drm_front_shbuf *buf);
--
--void xen_drm_front_shbuf_flush(struct xen_drm_front_shbuf *buf);
--
--void xen_drm_front_shbuf_free(struct xen_drm_front_shbuf *buf);
--
--#endif /* __XEN_DRM_FRONT_SHBUF_H_ */
+-#endif /* __XEN_SND_FRONT_SHBUF_H */
 -- 
 2.19.1
 
