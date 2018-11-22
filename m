@@ -2,255 +2,179 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A102FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:30:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8336AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:34:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4897F20831
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:30:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2871B20865
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:34:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KfsDWlf4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4897F20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=correia.cc header.i=@correia.cc header.b="NeXn/Fq+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2871B20865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=correia.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389463AbeKVQIU (ORCPT
+        id S2389479AbeKVQLp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 11:08:20 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:34463 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389370AbeKVQIU (ORCPT
+        Thu, 22 Nov 2018 11:11:45 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:39714 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389300AbeKVQLo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 11:08:20 -0500
-Received: by mail-vk1-f194.google.com with SMTP id y14so1761189vkd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 21:30:33 -0800 (PST)
+        Thu, 22 Nov 2018 11:11:44 -0500
+Received: by mail-qk1-f193.google.com with SMTP id q70so6232499qkh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 21:33:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=flGNHi2fwXRrjYvR+3lhbrIYMgZ7DZh9nBj93zWpqzA=;
-        b=KfsDWlf4LLq6WkPpAU9/C/STpdoFZVcEWkM4zxCyjK9a5bU0w7u/sczMqgShoS7HyU
-         8+qKUmJIpopo7IfueYz1lv8ozHSkHvFEOyNCPbIG5XFy8ExmbCKC6Au27bGkSLJ5RYwQ
-         gi5SGV/lMyjUpow4xvj39lDteK6ioKu1Gsm7jTdsWNt3A9mUHlkhXRJFPen8yhb0N9pq
-         oXMDac+zDRprIZQ2LOYOx6j+NNs6vJFMiE7JuYvDfK2Pml0gg3HiQMbNl6zkBkXyDdLH
-         4np1sEwwqenBKBwMgwXkTc2s6NJIQZ/HYxd4X9niSTFDZj20kfwfvDVKRPUbnUXj+iFv
-         Adiw==
+        d=correia.cc; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=j5eYpOii00Yp+lqkn7vDJSCZ8zL0+Wrn7/f4YZbRXUI=;
+        b=NeXn/Fq+8yZxNdiRqZ/y1l0fxqFbg6fXN+f/vxX8HnG2BQsqCdH9OmA5R+2Oazvcmv
+         DpdkyREoGgIH2Ys4kUFZTaiCIRDPrkCdfExvTbQ4Bom9F3iwaQBsogsqpW/wN4e0aCWO
+         tHikhRXUkcNW2cQB2iVF742/wUFLWtjB3VZlk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=flGNHi2fwXRrjYvR+3lhbrIYMgZ7DZh9nBj93zWpqzA=;
-        b=WErtxvy+upJ7A6o5oOGIS6Ev/H7naxrurOEgNzezlfRuiNK7YDMQwmpZEwfQYbj37m
-         5bqBaUFuGvk12dfhXqNQAmgAdXqZB8x4HfPcSmptO1y1PjxE9UvyhYELDvtaiYnVlm3H
-         u+mP2iRxIHVmx8qlmp9OstlMSAQmbggQAgextEfsjibNL2BoXnoz9XBF6wgJGX2YPlEL
-         YOZYARFmZgdNum5xKkXjicoxNe6QajC25Nl7BF5c7eAeb1HREzA973pnD/NLs+ZKnEyl
-         VJ3o1p7XDSamcyrw+Uicyi6DACZhMS1zeabOkcHyaYodtWmJdvcP3/ekp1DcgUw8DcnF
-         f6FQ==
-X-Gm-Message-State: AA+aEWbGmVmOdE3eGKwwj2oWth4gewxyHobrmM2WQw1b0d8UIYSHpQK8
-        uM1NnC/kaHCEMAqlJ2wYQ1ZVVPxCLFqbwDKoOt+pfA==
-X-Google-Smtp-Source: AFSGD/VVIG98KNQCaLR+Iz/N3qAmEiA+/hSLCDqkZ+TfFlwCX7UDNjRTIDoovuZfwnjT6soCoWtEfT3V5x910hvkJTw=
-X-Received: by 2002:a1f:c4d:: with SMTP id 74mr3879678vkm.50.1542864632740;
- Wed, 21 Nov 2018 21:30:32 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=j5eYpOii00Yp+lqkn7vDJSCZ8zL0+Wrn7/f4YZbRXUI=;
+        b=C9N0Vbg1aYcNrWDHPUxNu2IFU2Uvp33RzbUhdKDNjSDw401Jas9mNyhtUnDbIn5d4R
+         U9hPBaXSNY4DwzKKdTPpioVsnwpX8mwKaNCT9gR28YDY7LMgEchzsQ/4tliGQX5fKNqU
+         +/BOtpBhKPCMnWJj3h5Bv0mrS9MwFB/I6/hG5Yhrp+7kzVNTd+bYqM6ZwCaXTaIFwSaj
+         z3lPx91QWRVFzxbulIdgy4T04M3ebXma5+Br3RgIXxAvo2MuAmCZ+StvHkW+QDIgTXbH
+         KAXY5p/aXSdd2TUgjaBwbCiVDhTQfgc5lDObMrAtGlG7/9B6l9WMcupY5539I9X54duZ
+         JGaw==
+X-Gm-Message-State: AA+aEWbrTdPsufI9gWTb2GBW1KJttn39Az2rbWg6iVxyBtLre4TkYJij
+        aMOvmTSQGp67llj7Kmt3/2Tvyg==
+X-Google-Smtp-Source: AFSGD/WApYczIz0gAxGhrmGt9N+LCJt0hYIDYbUmgcYL9T52+NzM8BRkdSJ4YuhQ8FqD0e/vtbARtQ==
+X-Received: by 2002:ae9:eb96:: with SMTP id b144mr8267423qkg.127.1542864836472;
+        Wed, 21 Nov 2018 21:33:56 -0800 (PST)
+Received: from localhost.localdomain ([177.19.68.176])
+        by smtp.googlemail.com with ESMTPSA id y14sm21600585qkb.2.2018.11.21.21.33.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 21:33:55 -0800 (PST)
+From:   Sergio Correia <sergio@correia.cc>
+To:     maarten.lankhorst@linux.intel.com
+Cc:     maxime.ripard@bootlin.com, sean@poorly.run, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        sergio@correia.cc, daniel@ffwll.ch
+Subject: [PATCH v2] drm: set is_master to 0 upon drm_new_set_master() failure
+Date:   Thu, 22 Nov 2018 02:33:29 -0300
+Message-Id: <20181122053329.2692-1-sergio@correia.cc>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181118235720.3150-1-sergio@correia.cc>
+References: <20181118235720.3150-1-sergio@correia.cc>
 MIME-Version: 1.0
-References: <20181121201452.77173-1-dancol@google.com> <20181121205428.165205-1-dancol@google.com>
- <20181121141220.0e533c1dcb4792480efbf3ff@linux-foundation.org>
- <CAKOZuetW6WMNFdL5_2=UbrEf8mjxYTdz1+4BiRLSgdoKh8FsqQ@mail.gmail.com>
- <20181121145043.fa029f4f91afddc2a10bb81e@linux-foundation.org>
- <CAKOZuesF5zi9mpEE6No7oq0hDnM8KFhQFU=NM7qUF635s0r3-A@mail.gmail.com>
- <20181121162247.467fcab6c0aca0819a822286@linux-foundation.org>
- <CAKOZuet7ipw8zoXCDQUB5PKs3kdSye-zesBbEv7jVDSByhXgkw@mail.gmail.com>
- <20181121165741.ef089df784482632c4a66370@linux-foundation.org>
- <CAKOZuessQgmPuiReEO0caNqkss=r44o-XXnem12TOXSn=y6xkw@mail.gmail.com>
- <20181121172919.1b6585e17770d0be7dd8c4d9@linux-foundation.org> <CAEe=SxmNVHR_1ge6hM5636CNi4BZhLvyxoKW_28L9-XDV7x6aQ@mail.gmail.com>
-In-Reply-To: <CAEe=SxmNVHR_1ge6hM5636CNi4BZhLvyxoKW_28L9-XDV7x6aQ@mail.gmail.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Wed, 21 Nov 2018 21:30:20 -0800
-Message-ID: <CAKOZues6ZwrJ3Y-iLGC5HVgg6snLsMeHuPjDsK9=pooUmQswhQ@mail.gmail.com>
-Subject: Re: [PATCH v2] Add /proc/pid_gen
-To:     Tim Murray <timmurray@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Primiano Tucci <primiano@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin <guro@fb.com>,
-        Prashant Dhamdhere <pdhamdhe@redhat.com>,
-        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, rostedt@goodmis.org,
-        tglx@linutronix.de, mingo@kernel.org, linux@dominikbrodowski.net,
-        jpoimboe@redhat.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        ktsanaktsidis@zendesk.com, David Howells <dhowells@redhat.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 6:36 PM Tim Murray <timmurray@google.com> wrote:
->
-> On Wed, Nov 21, 2018 at 5:29 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > On Wed, 21 Nov 2018 17:08:08 -0800 Daniel Colascione <dancol@google.com> wrote:
-> >
-> > > Have you done much
-> > > retrospective long trace analysis?
-> >
-> > No.  Have you?
-> >
-> > Of course you have, which is why I and others are dependent upon you to
-> > explain why this change is worth adding to Linux.  If this thing solves
-> > a problem which we expect will not occur for anyone between now and the
-> > heat death of the universe then this impacts our decisions.
->
-> I use ftrace the most on Android, so let me take a shot.
->
-> In addition to the normal "debug a slow thing" use cases for ftrace,
-> Android has started exploring two other ways of using ftrace:
->
-> 1. "Flight recorder" mode: trigger ftrace for some amount of time when
-> a particular anomaly is detected to make debugging those cases easier.
->
-> 2. Long traces: let a trace stream to disk for hours or days, then
-> postprocess it to get some deeper insights about system behavior.
-> We've used this very successfully to debug and optimize power
-> consumption.
->
-> Knowing the initial state of the system is a pain for both of these
-> cases. For example, one of the things I'd like to know in some of my
-> current use cases for long traces is the current oom_score_adj of
-> every process in the system, but similar to PID reuse, that can change
-> very quickly due to userspace behavior. There's also a race between
-> reading that value in userspace and writing it to trace_marker:
->
-> 1. Userspace daemon X reads oom_score_adj for a process Y.
-> 2. Process Y gets a new oom_score_adj value, triggering the
-> oom/oom_score_adj_update tracepoint.
-> 3. Daemon X writes the old oom_score_adj value to trace_marker.
->
-> As I was writing this, though, I realized that the race doesn't matter
-> so long as our tools follow the same basic practice (for PID reuse,
-> oom_score_adj, or anything else we need):
->
-> 1. Daemon enables all requested tracepoints and resets the trace clock.
-> 2. Daemon enables tracing
-> 3. Daemon dumps initial state for any tracepoint we care about.
-> 4. When postprocessing, a tool must consider the initial state of a
-> value (eg, oom_score_adj of pid X) to be either the initial state as
-> reported by the daemon or the first ftrace event reporting that value.
-> If there is an ftrace event in the trace before the report from the
-> daemon, the report from the daemon should be ignored.
+When drm_new_set_master() fails, set is_master to 0, to prevent a
+possible NULL pointer deref.
 
-I was imagining periodic scans being the moral equivalent of I-frames
-in an MPEG stream: known-good synchronization points that bound the
-propagation of errors. To prevent loss of events in the *middle* of
-one of these samples affecting the validity of the sample, I wanted
-each one to be atomic and self-contained. I was initially imagining a
-single proc file containing a mapping from thread ID list and a TGID
-mapping for each one (as well as assorted other information),
-generated atomically under task_list_lock and stamped with the trace
-timestamp. The /proc/pid_gen thing was an effort to do most of that in
-userspace. But maybe that's not really that important.
+Here is a problematic flow: we check is_master in drm_is_current_master(),
+then proceed to call drm_lease_owner() passing master. If we do not restore
+is_master status when drm_new_set_master() fails, we may have a situation
+in which is_master will be 1 and master itself, NULL, leading to the deref
+of a NULL pointer in drm_lease_owner().
 
-Another thing to consider: there are some properties which we can
-enumerate *only* through /proc and that we can't yet receive in a
-streaming, event-driven fashion. We read those by periodic sampling,
-but the sampling isn't atomic. And as Tim notes, even properties that
-we ordinarily receive in streaming form via trace event must be
-sampled at trace start. But trace start isn't the only case where it
-matters.
+This fixes the following OOPS, observed on an ArchLinux running a 4.19.2
+kernel:
 
-Suppose at T+50 we have a TID 601 (which we'll call TID 601_1) with
-steady-state resource-consumption $COUNTER 100MB. Now suppose we start
-sampling at T+50. At T+55, TID 601_1 dies. At T+60, due to unlikely be
-possible TID reuse, we see a new task with TID 601, which we'll call
-TID 601_2. At T+65, the sample reads TID 601_2's $COUNTER as 1GB. At
-T+70, we finish the sample. From the perspective of trace analysis,
-all the sample tells us is "at some point between T+50 and T+70, TID
-601's $COUNTER was 1GB". We also know when TID 601_1 died and when TID
-601_2 started. We don't know whether the sample's "TID 601" refers to
-TID 601_1 or TID 601_2. So what do we do?
+[   97.804282] BUG: unable to handle kernel NULL pointer dereference at 0000000000000080
+[   97.807224] PGD 0 P4D 0
+[   97.807224] Oops: 0000 [#1] PREEMPT SMP NOPTI
+[   97.807224] CPU: 0 PID: 1348 Comm: xfwm4 Tainted: P           OE     4.19.2-arch1-1-ARCH #1
+[   97.807224] Hardware name: To Be Filled By O.E.M. To Be Filled By O.E.M./AB350 Pro4, BIOS P5.10 10/16/2018
+[   97.807224] RIP: 0010:drm_lease_owner+0xd/0x20 [drm]
+[   97.807224] Code: 83 c4 18 5b 5d c3 b8 ea ff ff ff eb e2 b8 ed ff ff ff eb db e8 b4 ca 68 fb 0f 1f 40 00 0f 1f 44 00 00 48 89 f8 eb 03 48 89 d0 <48> 8b 90 80 00 00 00 48 85 d2 75 f1 c3 66 0f 1f 44 00 00 0f 1f 44
+[   97.807224] RSP: 0018:ffffb8cf08e07bb0 EFLAGS: 00010202
+[   97.807224] RAX: 0000000000000000 RBX: ffff9cf0f2586c00 RCX: ffff9cf0f2586c88
+[   97.807224] RDX: ffff9cf0ddbd8000 RSI: 0000000000000000 RDI: 0000000000000000
+[   97.807224] RBP: ffff9cf1040e9800 R08: 0000000000000000 R09: 0000000000000000
+[   97.807224] R10: ffffdeb30fd5d680 R11: ffffdeb30f5d6808 R12: ffff9cf1040e9888
+[   97.807224] R13: 0000000000000000 R14: dead000000000200 R15: ffff9cf0f2586cc8
+[   97.807224] FS:  00007f4145513180(0000) GS:ffff9cf10ea00000(0000) knlGS:0000000000000000
+[   97.807224] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   97.807224] CR2: 0000000000000080 CR3: 00000003d7548000 CR4: 00000000003406f0
+[   97.807224] Call Trace:
+[   97.807224]  drm_is_current_master+0x1a/0x30 [drm]
+[   97.807224]  drm_master_release+0x3e/0x130 [drm]
+[   97.807224]  drm_file_free.part.0+0x2be/0x2d0 [drm]
+[   97.807224]  drm_open+0x1ba/0x1e0 [drm]
+[   97.807224]  drm_stub_open+0xaf/0xe0 [drm]
+[   97.807224]  chrdev_open+0xa3/0x1b0
+[   97.807224]  ? cdev_put.part.0+0x20/0x20
+[   97.807224]  do_dentry_open+0x132/0x340
+[   97.807224]  path_openat+0x2d1/0x14e0
+[   97.807224]  ? mem_cgroup_commit_charge+0x7a/0x520
+[   97.807224]  do_filp_open+0x93/0x100
+[   97.807224]  ? __check_object_size+0x102/0x189
+[   97.807224]  ? _raw_spin_unlock+0x16/0x30
+[   97.807224]  do_sys_open+0x186/0x210
+[   97.807224]  do_syscall_64+0x5b/0x170
+[   97.807224]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   97.807224] RIP: 0033:0x7f4147b07976
+[   97.807224] Code: 89 54 24 08 e8 7b f4 ff ff 8b 74 24 0c 48 8b 3c 24 41 89 c0 44 8b 54 24 08 b8 01 01 00 00 89 f2 48 89 fe bf 9c ff ff ff 0f 05 <48> 3d 00 f0 ff ff 77 30 44 89 c7 89 44 24 08 e8 a6 f4 ff ff 8b 44
+[   97.807224] RSP: 002b:00007ffcced96ca0 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
+[   97.807224] RAX: ffffffffffffffda RBX: 00005619d5037f80 RCX: 00007f4147b07976
+[   97.807224] RDX: 0000000000000002 RSI: 00005619d46b969c RDI: 00000000ffffff9c
+[   98.040039] RBP: 0000000000000024 R08: 0000000000000000 R09: 0000000000000000
+[   98.040039] R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000024
+[   98.040039] R13: 0000000000000012 R14: 00005619d5035950 R15: 0000000000000012
+[   98.040039] Modules linked in: nct6775 hwmon_vid algif_skcipher af_alg nls_iso8859_1 nls_cp437 vfat fat uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common arc4 videodev media snd_usb_audio snd_hda_codec_hdmi snd_usbmidi_lib snd_rawmidi snd_seq_device mousedev input_leds iwlmvm mac80211 snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_hda_codec edac_mce_amd kvm_amd snd_hda_core kvm iwlwifi snd_hwdep r8169 wmi_bmof cfg80211 snd_pcm irqbypass snd_timer snd libphy soundcore pinctrl_amd rfkill pcspkr sp5100_tco evdev gpio_amdpt k10temp mac_hid i2c_piix4 wmi pcc_cpufreq acpi_cpufreq vboxnetflt(OE) vboxnetadp(OE) vboxpci(OE) vboxdrv(OE) msr sg crypto_user ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto uas usb_storage dm_crypt hid_generic usbhid hid
+[   98.040039]  dm_mod raid1 md_mod sd_mod crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel pcbc ahci libahci aesni_intel aes_x86_64 libata crypto_simd cryptd glue_helper ccp xhci_pci rng_core scsi_mod xhci_hcd nvidia_drm(POE) drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops drm agpgart nvidia_uvm(POE) nvidia_modeset(POE) nvidia(POE) ipmi_devintf ipmi_msghandler
+[   98.040039] CR2: 0000000000000080
+[   98.040039] ---[ end trace 3b65093b6fe62b2f ]---
+[   98.040039] RIP: 0010:drm_lease_owner+0xd/0x20 [drm]
+[   98.040039] Code: 83 c4 18 5b 5d c3 b8 ea ff ff ff eb e2 b8 ed ff ff ff eb db e8 b4 ca 68 fb 0f 1f 40 00 0f 1f 44 00 00 48 89 f8 eb 03 48 89 d0 <48> 8b 90 80 00 00 00 48 85 d2 75 f1 c3 66 0f 1f 44 00 00 0f 1f 44
+[   98.040039] RSP: 0018:ffffb8cf08e07bb0 EFLAGS: 00010202
+[   98.040039] RAX: 0000000000000000 RBX: ffff9cf0f2586c00 RCX: ffff9cf0f2586c88
+[   98.040039] RDX: ffff9cf0ddbd8000 RSI: 0000000000000000 RDI: 0000000000000000
+[   98.040039] RBP: ffff9cf1040e9800 R08: 0000000000000000 R09: 0000000000000000
+[   98.040039] R10: ffffdeb30fd5d680 R11: ffffdeb30f5d6808 R12: ffff9cf1040e9888
+[   98.040039] R13: 0000000000000000 R14: dead000000000200 R15: ffff9cf0f2586cc8
+[   98.040039] FS:  00007f4145513180(0000) GS:ffff9cf10ea00000(0000) knlGS:0000000000000000
+[   98.040039] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   98.040039] CR2: 0000000000000080 CR3: 00000003d7548000 CR4: 00000000003406f0
 
-1) We could attribute the 1GB value of $COUNTER to TID 601_1, which is
-what would happen by default if we deemed the sample to be a virtual
-event with timestamp T+50, the time we started the sampling process.
-But that would be incorrect here. In analysis, we'd see this
-attribution as a mysterious spike in TID 601_1's resource consumption
-immediately before its death. (The spike would be to a level
-suspiciously similar to TID 601_2's next sample.) Imagine spending
-hours trying to track down a mystery death-rattle resource spike
-(something that could plausibly happen in the real world) that ended
-up being a tracing artifact.
+Signed-off-by: Sergio Correia <sergio@correia.cc>
+---
+v1 -> v2:
+1) former title: drm: restore is_master upon failure in
+drm_new_set_master()
+2) add WARN_ON at the beginning of drm_new_set_master()
+3) set is_master unconditionally to 0, upon failure in
+drm_new_set_master()
 
-2) We could attribute the 1GB read of $COUNTER to TID 601_2. In the
-timeline I gave above, this attribution would be correct. But what if
-TID 601_1's $COUNTER really _had_ spiked to 1GB immediately before its
-death? (What if its death had been caused by that spike?) Then, under
-the "tag last" approach, we'd falsely tag TID 601_2 with TID 601_1's
-excessive resource use, and this false attribution would last until
-the next sample of TID 601_2, which might be quite far in the future.
-And we might find ourselves wondering why TID 601_1 died, since (if we
-blame 601_2 for the new $COUNTER value) TID 601_1 would have done
-nothing wrong. And in the meantime, we'd see 1GB of $COUNTER
-consumption that would appear to come out of nowhere.
+ drivers/gpu/drm/drm_auth.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-3) We could discard the ambiguous sample. But in this case, we'd leave
-TID 601_2's $COUNTER value completely unknown until the next sample,
-which could be quite far in the future. And, if TID 601_2's $COUNTER
-value really were 1GB, we might leave significant resource consumption
-unaccounted-for until that next sample.
+diff --git a/drivers/gpu/drm/drm_auth.c b/drivers/gpu/drm/drm_auth.c
+index d9c0f7573905..1669c42c40ed 100644
+--- a/drivers/gpu/drm/drm_auth.c
++++ b/drivers/gpu/drm/drm_auth.c
+@@ -142,6 +142,7 @@ static int drm_new_set_master(struct drm_device *dev, struct drm_file *fpriv)
+ 
+ 	lockdep_assert_held_once(&dev->master_mutex);
+ 
++	WARN_ON(fpriv->is_master);
+ 	old_master = fpriv->master;
+ 	fpriv->master = drm_master_create(dev);
+ 	if (!fpriv->master) {
+@@ -170,6 +171,7 @@ static int drm_new_set_master(struct drm_device *dev, struct drm_file *fpriv)
+ 	/* drop references and restore old master on failure */
+ 	drm_master_put(&fpriv->master);
+ 	fpriv->master = old_master;
++	fpriv->is_master = 0;
+ 
+ 	return ret;
+ }
+-- 
+2.19.1
 
-With my pid_gen patch, we could have used strategy #3 without having
-to wait for the system to get around to sampling TID 601_2 again on
-its own, because we'd have been able to detect the ambiguity and
-collect a new, hopefully-unambiguous sample on the spot. Yes, we do
-wait a sampling period between samples anyway, and it's possible for a
-process to start, run, and die without having ever been sampled with
-or without pid_gen, but at least we wouldn't have missed a perfectly
-good sampling opportunity due to PID ambiguity.
-
-You might say, "dancol@, you sound excessively fussy here. That's
-never going to really matter under any realistic workload." And maybe
-that'd be right. But like I said above, I think it's important to be
-able to have deterministic bounds on uncertainty even in the case of
-pathological behavior, and I'd rather guarantee correctness
-structurally than wonder whether unlikely events are one-in-a-trace
-unlikely or heat-death-of-the-universe unlikely.
-
-To improve on the sampling model, we could have the kernel stamp
-$COUNTER reads with the current trace timestamp. Then, the sample
-would tell us, instead of "TID 601's $COUNTER was 1GB between T+50 and
-T+70", it'd tell us "TID 601's $COUNTER was 1GB at exactly T+65". (The
-sampling program itself might get around to logging this bit of
-information at T+70 or T+700, but the embedded timestamp would be
-accurate.) We could then look up the inferred process table at T+65
-and attribute that 1GB to TID 601_2.
-
-Ideally, we wouldn't bother with this sort of sampling at all, instead
-relying on streaming $COUNTER updates as events. But we're not quite
-there yet. I have a larger proposal in the works for that one. Under
-that proposal, we wouldn't log every change to $COUNTER, but we would
-log $COUNTER at process death (as well as at other times ---
-basically, after large changes and after a maximum time after any
-change), so trace analysis would still be able to correctly determine
-TID 601_1's time-of-death resource use.
-
-In another approach, the trace system *itself* would generate the
-"I-frames" by automatically generating synthetic trace events at trace
-startup in order to reflect pre-trace system state. (For example, if
-you enabled sched_switch and started tracing, the ftrace ring buffer
-would begin life with one synthetic sched_switch per CPU describing
-each CPU's running task at the instant of trace startup, maybe
-collected with on_all_cpus.)
-
-But anyway, I didn't expect the pid_gen change to be controversial.
-Given that we can eventually do something different altogether and
-that it probably *is* excessively fussy, consider the patch withdrawn.
