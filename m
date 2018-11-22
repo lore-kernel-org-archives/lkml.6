@@ -2,106 +2,124 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D07BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB60C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:12:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D83FD20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:12:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHoqAuh5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D83FD20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7712F2081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:12:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7712F2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732560AbeKVXv2 (ORCPT
+        id S2388571AbeKVXvg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 18:51:28 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46152 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727034AbeKVXv1 (ORCPT
+        Thu, 22 Nov 2018 18:51:36 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:42987 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727034AbeKVXvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 18:51:27 -0500
-Received: by mail-pg1-f194.google.com with SMTP id w7so1726375pgp.13;
-        Thu, 22 Nov 2018 05:12:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=fXhGYmuE8qiW7lSzkIhnjvOvbNI7+RUcOO/wpOBun4E=;
-        b=jHoqAuh5byooGNSt+uUBOD9EI3QVj7lUd+dz/iwRUxczAkddsDMc+Plvxy1VeehkML
-         fJDbqyMJg30lkNgg3qC3A1DGLFee7K9HomyzVm+qVIReOyZ6ZbIgzohQXOj6yDu+fAd8
-         ivbja13QhVpsOr9kw6yZGuknQ1w4Eq6AVgzgbzq4PHjl56P6SLq6WC3O8f1cbDwd0D0p
-         GPUCaseol36l7nbsEBjW3Y1WLT0sfrhSODKrojrNVrpacr5lyvdmRz/NVaoPbV0eOKCZ
-         KUrGm7vtTSv9sAZuR4Ap9wl1/vLDbY7knQmDrRDWYN5RQsbqg9tbPWpefTJcTG+HpCJJ
-         XpHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=fXhGYmuE8qiW7lSzkIhnjvOvbNI7+RUcOO/wpOBun4E=;
-        b=ZRZ+wsbGRm2thR5K/RFLI01Wnw4hk9pCmBNZlTRuC9M8ZZOjrKJVqt2Bo1NyP2svuk
-         5B31iGKt69gUt7j6Kvp5WDhewi5q/4knaadelUoyYiBhoZi2xSRpK/5UxFFFiiPQW7lq
-         2bhxYcV3/5VkiUawprJGcnJN2pknmJXIxkVREchqdEprCuDmeSYlfvAJbyNQdHYxaAUR
-         4kla4L7GlTRh3ny9o047jkECalOjqNXSy1HMrOCamIiNlysmlhZPd5jVnz8fXchqHcrO
-         jTerUZLVQkGLtNCXgtbusS8mOGYw4zJU6oEoChQ0RKF5R31trcoc58HyPuCheacwcwFW
-         6jYA==
-X-Gm-Message-State: AA+aEWZT0e2aI1FuStsKfxhJvrI6EVwa40RhluAFV9A2f/U3SG07JjuE
-        Bscm14aKDlWwqZ8rJ4Ie1fY=
-X-Google-Smtp-Source: AFSGD/XfcFDkxDdpy9cYwEPlpa/+MLWZuYEdqnz+DvvxOtMrSn5d3Zdv3nd5bB9sjV9GkFTAz1mz2Q==
-X-Received: by 2002:a63:c0f:: with SMTP id b15mr10161892pgl.314.1542892330862;
-        Thu, 22 Nov 2018 05:12:10 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id y1-v6sm50526282pfb.81.2018.11.22.05.12.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 22 Nov 2018 05:12:10 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        avienamo@nvidia.com, mperttunen@nvidia.com, andy.gross@linaro.org,
-        robh@kernel.org, vivek.gautam@codeaurora.org
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] soc/tegra: pmc: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Date:   Thu, 22 Nov 2018 08:12:07 -0500
-Message-Id: <20181122131207.24791-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 22 Nov 2018 18:51:35 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 6639F807A9; Thu, 22 Nov 2018 14:12:13 +0100 (CET)
+Date:   Thu, 22 Nov 2018 14:12:16 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Ayman Bagabas <ayman.bagabas@gmail.com>,
+        alsa-devel@alsa-project.org, Hui Wang <hui.wang@canonical.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Kailang Yang <kailang@realtek.com>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] ALSA: hda: add support for Huawei WMI micmute LED
+Message-ID: <20181122131216.GA13339@amd>
+References: <20181108171701.4444-1-ayman.bagabas@gmail.com>
+ <20181108171701.4444-4-ayman.bagabas@gmail.com>
+ <20181119235713.GB7367@amd>
+ <s5hr2fgfcrm.wl-tiwai@suse.de>
+ <20181120091039.GA16916@amd>
+ <s5hbm6kf6gi.wl-tiwai@suse.de>
+ <20181120093610.GF16916@amd>
+ <s5h4lccf58f.wl-tiwai@suse.de>
+ <20181120115159.GG16916@amd>
+ <s5hzhu4c569.wl-tiwai@suse.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
+Content-Disposition: inline
+In-Reply-To: <s5hzhu4c569.wl-tiwai@suse.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/soc/tegra/pmc.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+--d6Gm4EdcadzBjdND
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 1fa840e3d930..d42a1f5ced82 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -717,17 +717,7 @@ static int powergate_show(struct seq_file *s, void *data)
- 	return 0;
- }
- 
--static int powergate_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, powergate_show, inode->i_private);
--}
--
--static const struct file_operations powergate_fops = {
--	.open = powergate_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(powergate);
- 
- static int tegra_powergate_debugfs_init(void)
- {
--- 
-2.17.0
+On Tue 2018-11-20 13:19:26, Takashi Iwai wrote:
+> On Tue, 20 Nov 2018 12:51:59 +0100,
+> Pavel Machek wrote:
+> >=20
+> > Hi!
+> >=20
+> > > > You have general-purpose LED, yet you are treating it as "something
+> > > > special". That means ugly code (quoted above) and lack of flexibili=
+ty.
+> > > >=20
+> > > > For example, if my notebook lacks HDD LED, I can use scrollock LED =
+for
+> > > > that instead. Or, in reverse way, maybe "mic mute" LED is not useful
+> > > > for me, and I'd like to use it for notifications instead.
+> > >=20
+> > > I'm not against adding the LEDs device implementation for any exotic
+> > > usage.
+> > >=20
+> > > But for the audio mute LED features, you'll need really lots of other
+> > > works if it were implemented via leds device.  That's the hardest
+> > > part, and a few lines of hooks solves it easily in the kernel side.
+> > > That's all about it.
+> > >=20
+> > > If you are ready for submitting the real solutions in user-space side
+> > > (patching PulseAudio and whatever all existing sound daemons, and
+> > > creating yet another daemon for non-PA systems (another footprint,
+> > > lovely), and so on), we can happily delete such in-kernel hooks :)
+> >=20
+> > I'm not saying we should move it to the userspace.
+> >=20
+> > I'm saying this should be "normal" led. drivers/leds/led-huawei-acpi.c,
+> > or something. Perhaps this acpi stuff is so similar you don't really
+> > need .c code.
+> >=20
+> > And then there should be a "mic muted" trigger. Similar to
+> > drivers/leds/trigger/ledtrig-disk.c.
+>=20
+> And who will trigger this, e.g. when the mixer is muted?
 
+Same code that does it now.
+							Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--d6Gm4EdcadzBjdND
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlv2qzAACgkQMOfwapXb+vLwoACeKq3VduycyIiw3wbuLotckmV6
+b2IAn1VSvUMQE3tqN5RVxbjY1WyVfnCq
+=+D6u
+-----END PGP SIGNATURE-----
+
+--d6Gm4EdcadzBjdND--
