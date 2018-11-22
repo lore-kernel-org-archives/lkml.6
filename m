@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3452C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 522BCC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:40:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BA6620672
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:40:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 077F720672
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:40:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FcqJGu17"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BA6620672
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gjH5dsPE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 077F720672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394911AbeKVWTL (ORCPT
+        id S2394926AbeKVWTQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 17:19:11 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:50456 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391015AbeKVWTK (ORCPT
+        Thu, 22 Nov 2018 17:19:16 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:42074 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391015AbeKVWTP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 17:19:10 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAMBe71D075888;
-        Thu, 22 Nov 2018 05:40:07 -0600
+        Thu, 22 Nov 2018 17:19:15 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAMBeBfs022738;
+        Thu, 22 Nov 2018 05:40:11 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1542886807;
-        bh=f5QWpg9K78nrvKyK44+R/q5gP4r0NZpzVIuRi3xm0hs=;
+        s=ti-com-17Q1; t=1542886811;
+        bh=Ln0fJdBQ/2H23W8baBsSHB73EdERozHgYF1vFWlnGT8=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=FcqJGu17OYDsrydQgBHrIKLZoc5GnbTJBEHb6bt958uTHPYOT4zdhoIeP111H9fFn
-         VgFXVFqbb6eLs+eHLit48zn9//yl2PY4j/qzPiGR0PK6vv6FqkJAM3CBCYSzOaV9k6
-         tBJAxkd4S/d5AQU1UJDP3osaGIfbw9nJRnKa1sBU=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAMBe7Ht077299
+        b=gjH5dsPEGR1IDE8HFHmkS1ZA/BQknSLubXStXPdyyquP8VpgrAZNdt8MetKdY8O7o
+         vGXB9M5R7Ev/2z25ORuhNYpGzYvPTu6LEEh1oXmu9fvG5t3elbFGI42P9VmvaOg149
+         ey0a7880VlEV4Bv6qqROjXfnuugHIdpdT06Avkps=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAMBeBJw107692
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 22 Nov 2018 05:40:07 -0600
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 22 Nov 2018 05:40:11 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 22
- Nov 2018 05:40:07 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
+ Nov 2018 05:40:11 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 22 Nov 2018 05:40:07 -0600
+ Thu, 22 Nov 2018 05:40:11 -0600
 Received: from dlelxv97.itg.ti.com (dlelxv97.itg.ti.com [172.17.2.193])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAMBe61H011830;
-        Thu, 22 Nov 2018 05:40:07 -0600
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAMBeBWc018314;
+        Thu, 22 Nov 2018 05:40:11 -0600
 Received: from localhost.localdomain (vboxa0400828d.dhcp.ti.com [172.22.239.63])
-        by dlelxv97.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAMBdDfB013203;
-        Thu, 22 Nov 2018 05:40:03 -0600
+        by dlelxv97.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAMBdDfC013203;
+        Thu, 22 Nov 2018 05:40:07 -0600
 From:   Roger Quadros <rogerq@ti.com>
 To:     <tony@atomide.com>
 CC:     <robh+dt@kernel.org>, <bcousson@baylibre.com>,
@@ -64,9 +64,9 @@ CC:     <robh+dt@kernel.org>, <bcousson@baylibre.com>,
         <linux-omap@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <rogerq@ti.com>
-Subject: [PATCH 12/17] soc: ti: pruss: add pruss_cfg_read()/update() API
-Date:   Thu, 22 Nov 2018 13:39:08 +0200
-Message-ID: <1542886753-17625-13-git-send-email-rogerq@ti.com>
+Subject: [PATCH 13/17] soc: ti: pruss: export pruss_intc_configure/unconfigure APIs
+Date:   Thu, 22 Nov 2018 13:39:09 +0200
+Message-ID: <1542886753-17625-14-git-send-email-rogerq@ti.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1542886753-17625-1-git-send-email-rogerq@ti.com>
 References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
@@ -78,255 +78,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add two new APIs pruss_cfg_read() and pruss_cfg_update()
-to the PRUSS platform driver to allow other drivers to read and
-update the registers in the CFG submodule within the PRUSS.
+The PRU remoteproc driver will need to configure the
+Interrupt controller based on the application specific
+interrupt map.
 
-This interface provides a simple way for client drivers
-without having them to include and parse these syscon nodes within
-their respective device nodes.
-
-The register definitions for the CFG registors have also been added.
+Export pruss_intc_configure() and pruss_intc_unconfigure()
+to linux/pruss.h
 
 Signed-off-by: Roger Quadros <rogerq@ti.com>
 ---
- drivers/soc/ti/Kconfig |   1 +
- drivers/soc/ti/pruss.c |  52 +++++++++++++++++++++++++
- drivers/soc/ti/pruss.h |   2 +
- include/linux/pruss.h  | 101 +++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 156 insertions(+)
+ drivers/soc/ti/pruss.h | 21 -------------------
+ include/linux/pruss.h  | 56 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 56 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
-index d1ea6da..d239996 100644
---- a/drivers/soc/ti/Kconfig
-+++ b/drivers/soc/ti/Kconfig
-@@ -76,6 +76,7 @@ config TI_SCI_PM_DOMAINS
- config TI_PRUSS
- 	tristate "TI PRU-ICSS Subsystem Platform drivers"
- 	depends on SOC_AM33XX
-+	select MFD_SYSCON
- 	default n
- 	help
- 	  TI PRU-ICSS Subsystem platform specific support.
-diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
-index 90ee5b9..63c7d8c 100644
---- a/drivers/soc/ti/pruss.c
-+++ b/drivers/soc/ti/pruss.c
-@@ -10,9 +10,11 @@
- #include <linux/dma-mapping.h>
- #include <linux/module.h>
- #include <linux/io.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/pruss.h>
-+#include <linux/regmap.h>
- #include <linux/remoteproc.h>
- 
- #include "pruss.h"
-@@ -152,6 +154,47 @@ int pruss_release_mem_region(struct pruss *pruss,
- }
- EXPORT_SYMBOL_GPL(pruss_release_mem_region);
- 
-+/**
-+ * pruss_cfg_read() - read a PRUSS CFG register
-+ * @pruss: the pruss instance handle
-+ * @reg: register offset within the CFG sub-module
-+ * @val: pointer to return the value in
-+ *
-+ * Reads a given register within CFG module of PRUSS
-+ * and returns it through the passed-in @val pointer
-+ *
-+ * Returns 0 on success, or an error code otherwise
-+ */
-+int pruss_cfg_read(struct pruss *pruss, unsigned int reg, unsigned int *val)
-+{
-+	if (IS_ERR_OR_NULL(pruss))
-+		return -EINVAL;
-+
-+	return regmap_read(pruss->cfg, reg, val);
-+}
-+EXPORT_SYMBOL_GPL(pruss_cfg_read);
-+
-+/**
-+ * pruss_cfg_update() - update a PRUSS CFG register
-+ * @pruss: the pruss instance handle
-+ * @reg: register offset within the CFG sub-module
-+ * @mask: bit mask to use for programming the @val
-+ * @val: value to write
-+ *
-+ * Updates a given register within CFG sub-module of PRUSS
-+ *
-+ * Returns 0 on success, or an error code otherwise
-+ */
-+int pruss_cfg_update(struct pruss *pruss, unsigned int reg,
-+		     unsigned int mask, unsigned int val)
-+{
-+	if (IS_ERR_OR_NULL(pruss))
-+		return -EINVAL;
-+
-+	return regmap_update_bits(pruss->cfg, reg, mask, val);
-+}
-+EXPORT_SYMBOL_GPL(pruss_cfg_update);
-+
- static int pruss_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -180,6 +223,15 @@ static int pruss_probe(struct platform_device *pdev)
- 	pruss->dev = dev;
- 	mutex_init(&pruss->lock);
- 
-+	np = of_get_child_by_name(node, "cfg");
-+	if (!np)
-+		return -ENODEV;
-+
-+	pruss->cfg = syscon_node_to_regmap(np);
-+	of_node_put(np);
-+	if (IS_ERR(pruss->cfg))
-+		return -ENODEV;
-+
- 	np = of_get_child_by_name(node, "memories");
- 	if (!np)
- 		return -ENODEV;
 diff --git a/drivers/soc/ti/pruss.h b/drivers/soc/ti/pruss.h
-index f8878c2..45de1be 100644
+index 45de1be..ce3f96a 100644
 --- a/drivers/soc/ti/pruss.h
 +++ b/drivers/soc/ti/pruss.h
-@@ -34,6 +34,7 @@ struct pruss_intc_config {
+@@ -9,12 +9,6 @@
+ #ifndef _PRUSS_H_
+ #define _PRUSS_H_
+ 
+-/* maximum number of system events */
+-#define MAX_PRU_SYS_EVENTS	64
+-
+-/* maximum number of interrupt channels */
+-#define MAX_PRU_CHANNELS	10
+-
+ /* minimum starting host interrupt number for MPU */
+ #define MIN_PRU_HOST_INT	2
+ 
+@@ -22,16 +16,6 @@
+ #define MAX_PRU_HOST_INT	10
+ 
  /**
+- * struct pruss_intc_config - INTC configuration info
+- * @sysev_to_ch: system events to channel mapping information
+- * @ch_to_host: interrupt channel to host interrupt information
+- */
+-struct pruss_intc_config {
+-	s8 sysev_to_ch[MAX_PRU_SYS_EVENTS];
+-	s8 ch_to_host[MAX_PRU_CHANNELS];
+-};
+-
+-/**
   * struct pruss - PRUSS parent structure
   * @dev: pruss device pointer
-+ * @cfg: regmap for config region
-  * @mem_regions: data for each of the PRUSS memory regions
-  * @mem_in_use: to indicate if memory resource is in use
-  * @host_mask: indicate which HOST IRQs are enabled
-@@ -41,6 +42,7 @@ struct pruss_intc_config {
-  */
- struct pruss {
- 	struct device *dev;
-+	struct regmap *cfg;
- 	struct pruss_mem_region mem_regions[PRUSS_MEM_MAX];
- 	struct pruss_mem_region *mem_in_use[PRUSS_MEM_MAX];
- 	u32 host_mask;
+  * @cfg: regmap for config region
+@@ -49,9 +33,4 @@ struct pruss {
+ 	struct mutex lock; /* PRU resource lock */
+ };
+ 
+-int pruss_intc_configure(struct pruss *pruss,
+-			 struct pruss_intc_config *intc_config);
+-int pruss_intc_unconfigure(struct pruss *pruss,
+-			   struct pruss_intc_config *intc_config);
+-
+ #endif	/* _PRUSS_H_ */
 diff --git a/include/linux/pruss.h b/include/linux/pruss.h
-index b9135d6..3ed175a 100644
+index 3ed175a..c797fb1 100644
 --- a/include/linux/pruss.h
 +++ b/include/linux/pruss.h
-@@ -10,6 +10,92 @@
- #ifndef __LINUX_PRUSS_H
- #define __LINUX_PRUSS_H
+@@ -118,6 +118,22 @@ struct pruss_mem_region {
+ 	size_t size;
+ };
  
-+/*
-+ * PRU_ICSS_CFG registers
-+ * SYSCFG, ISRP, ISP, IESP, IECP, SCRP applicable on AMxxxx devices only
-+ */
-+#define PRUSS_CFG_REVID		0x00
-+#define PRUSS_CFG_SYSCFG	0x04
-+#define PRUSS_CFG_GPCFG(x)	(0x08 + (x) * 4)
-+#define PRUSS_CFG_CGR		0x10
-+#define PRUSS_CFG_ISRP		0x14
-+#define PRUSS_CFG_ISP		0x18
-+#define PRUSS_CFG_IESP		0x1C
-+#define PRUSS_CFG_IECP		0x20
-+#define PRUSS_CFG_SCRP		0x24
-+#define PRUSS_CFG_PMAO		0x28
-+#define PRUSS_CFG_MII_RT	0x2C
-+#define PRUSS_CFG_IEPCLK	0x30
-+#define PRUSS_CFG_SPP		0x34
-+#define PRUSS_CFG_PIN_MX	0x40
++/* maximum number of system events */
++#define MAX_PRU_SYS_EVENTS	64
 +
-+/* PRUSS_GPCFG register bits */
-+#define PRUSS_GPCFG_PRU_GPO_SH_SEL		BIT(25)
-+
-+#define PRUSS_GPCFG_PRU_DIV1_SHIFT		20
-+#define PRUSS_GPCFG_PRU_DIV1_MASK		GENMASK(24, 20)
-+
-+#define PRUSS_GPCFG_PRU_DIV0_SHIFT		15
-+#define PRUSS_GPCFG_PRU_DIV0_MASK		GENMASK(15, 19)
-+
-+#define PRUSS_GPCFG_PRU_GPO_MODE		BIT(14)
-+#define PRUSS_GPCFG_PRU_GPO_MODE_DIRECT		0
-+#define PRUSS_GPCFG_PRU_GPO_MODE_SERIAL		BIT(14)
-+
-+#define PRUSS_GPCFG_PRU_GPI_SB			BIT(13)
-+
-+#define PRUSS_GPCFG_PRU_GPI_DIV1_SHIFT		8
-+#define PRUSS_GPCFG_PRU_GPI_DIV1_MASK		GENMASK(12, 8)
-+
-+#define PRUSS_GPCFG_PRU_GPI_DIV0_SHIFT		3
-+#define PRUSS_GPCFG_PRU_GPI_DIV0_MASK		GENMASK(7, 3)
-+
-+#define PRUSS_GPCFG_PRU_GPI_CLK_MODE_POSITIVE	0
-+#define PRUSS_GPCFG_PRU_GPI_CLK_MODE_NEGATIVE	BIT(2)
-+#define PRUSS_GPCFG_PRU_GPI_CLK_MODE		BIT(2)
-+
-+#define PRUSS_GPCFG_PRU_GPI_MODE_MASK		GENMASK(1, 0)
-+#define PRUSS_GPCFG_PRU_GPI_MODE_SHIFT		0
-+
-+#define PRUSS_GPCFG_PRU_MUX_SEL_SHIFT		26
-+#define PRUSS_GPCFG_PRU_MUX_SEL_MASK		GENMASK(29, 26)
-+
-+/* PRUSS_MII_RT register bits */
-+#define PRUSS_MII_RT_EVENT_EN			BIT(0)
-+
-+/* PRUSS_SPP register bits */
-+#define PRUSS_SPP_XFER_SHIFT_EN			BIT(1)
-+#define PRUSS_SPP_PRU1_PAD_HP_EN		BIT(0)
++/* maximum number of interrupt channels */
++#define MAX_PRU_CHANNELS	10
 +
 +/**
-+ * enum pruss_gp_mux_sel - PRUSS GPI/O Mux modes for the
-+ * PRUSS_GPCFG0/1 registers
++ * struct pruss_intc_config - INTC configuration info
++ * @sysev_to_ch: system events to channel mapping information
++ * @ch_to_host: interrupt channel to host interrupt information
++ */
++struct pruss_intc_config {
++	s8 sysev_to_ch[MAX_PRU_SYS_EVENTS];
++	s8 ch_to_host[MAX_PRU_CHANNELS];
++};
++
+ struct pruss;
+ 
+ #if IS_ENABLED(CONFIG_TI_PRUSS)
+@@ -136,6 +152,34 @@ int pruss_cfg_read(struct pruss *pruss, unsigned int reg, unsigned int *val);
+ int pruss_cfg_update(struct pruss *pruss, unsigned int reg,
+ 		     unsigned int mask, unsigned int val);
+ 
++/**
++ * pruss_intc_configure() - configure the PRUSS INTC
++ * @pruss: the pruss instance
++ * @intc_config: PRU core-specific INTC configuration
 + *
-+ * NOTE: The below defines are the most common values, but there
-+ * are some exceptions like on 66AK2G, where the RESERVED and MII2
-+ * values are interchanged. Also, this bit-field does not exist on
-+ * AM335x SoCs
++ * Configures the PRUSS INTC with the provided configuration from
++ * a PRU core. Any existing event to channel mappings or channel to
++ * host interrupt mappings are checked to make sure there are no
++ * conflicting configuration between both the PRU cores. The function
++ * is intended to be used only by the PRU remoteproc driver.
++ *
++ * Returns 0 on success, or a suitable error code otherwise
 + */
-+enum pruss_gp_mux_sel {
-+	PRUSS_GP_MUX_SEL_GP = 0,
-+	PRUSS_GP_MUX_SEL_ENDAT,
-+	PRUSS_GP_MUX_SEL_RESERVED,
-+	PRUSS_GP_MUX_SEL_SD,
-+	PRUSS_GP_MUX_SEL_MII2,
-+	PRUSS_GP_MUX_SEL_MAX,
-+};
++int pruss_intc_configure(struct pruss *pruss,
++			 struct pruss_intc_config *intc_config);
 +
 +/**
-+ * enum pruss_gpi_mode - PRUSS GPI configuration modes, used
-+ *			 to program the PRUSS_GPCFG0/1 registers
++ * pruss_intc_unconfigure() - unconfigure the PRUSS INTC
++ * @pruss: the pruss instance
++ * @intc_config: PRU core specific INTC configuration
++ *
++ * Undo whatever was done in pruss_intc_configure() for a PRU core.
++ * It should be sufficient to just mark the resources free in the
++ * global map and disable the host interrupts and sysevents.
 + */
-+enum pruss_gpi_mode {
-+	PRUSS_GPI_MODE_DIRECT = 0,
-+	PRUSS_GPI_MODE_PARALLEL,
-+	PRUSS_GPI_MODE_28BIT_SHIFT,
-+	PRUSS_GPI_MODE_MII,
-+};
-+
- /**
-  * enum pruss_mem - PRUSS memory range identifiers
-  */
-@@ -46,6 +132,10 @@ int pruss_release_mem_region(struct pruss *pruss,
- 
- int pruss_intc_trigger(unsigned int irq);
- 
-+int pruss_cfg_read(struct pruss *pruss, unsigned int reg, unsigned int *val);
-+int pruss_cfg_update(struct pruss *pruss, unsigned int reg,
-+		     unsigned int mask, unsigned int val);
++int pruss_intc_unconfigure(struct pruss *pruss,
++			   struct pruss_intc_config *intc_config);
 +
  #else
  
  static inline struct pruss *pruss_get(struct rproc *rproc)
-@@ -73,6 +163,17 @@ static inline int pruss_intc_trigger(unsigned int irq)
+@@ -174,6 +218,18 @@ int pruss_cfg_update(struct pruss *pruss, unsigned int reg,
  	return -ENOTSUPP;
  }
  
-+int pruss_cfg_read(struct pruss *pruss, unsigned int reg, unsigned int *val)
++int pruss_intc_configure(struct pruss *pruss,
++			 struct pruss_intc_config *intc_config)
 +{
 +	return -ENOTSUPP;
 +}
 +
-+int pruss_cfg_update(struct pruss *pruss, unsigned int reg,
-+		     unsigned int mask, unsigned int val)
++int pruss_intc_unconfigure(struct pruss *pruss,
++			   struct pruss_intc_config *intc_config)
 +{
 +	return -ENOTSUPP;
 +}
