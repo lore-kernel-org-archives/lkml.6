@@ -2,155 +2,143 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB73C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC7D8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABF8E2080F
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:28:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABF8E2080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 73016206BA
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:30:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ihu6qH4p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73016206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389097AbeKVNFq (ORCPT
+        id S2389160AbeKVNIC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 08:05:46 -0500
-Received: from mga14.intel.com ([192.55.52.115]:18786 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732781AbeKVNFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 08:05:46 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 18:24:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,263,1539673200"; 
-   d="scan'208";a="91199096"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
-  by orsmga007.jf.intel.com with ESMTP; 21 Nov 2018 18:24:32 -0800
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-References: <20181121201430.559770965@linutronix.de>
- <20181121201724.602740969@linutronix.de>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
-Subject: Re: [patch 24/24] x86/speculation: Add seccomp Spectre v2 app to app
- protection mode
-Message-ID: <595bf211-3b56-4618-b6ad-cd1ca790c772@linux.intel.com>
-Date:   Wed, 21 Nov 2018 18:24:32 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
-MIME-Version: 1.0
-In-Reply-To: <20181121201724.602740969@linutronix.de>
-Content-Type: text/plain; charset=utf-8
+        Thu, 22 Nov 2018 08:08:02 -0500
+Received: from mail-eopbgr50080.outbound.protection.outlook.com ([40.107.5.80]:41664
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729785AbeKVNIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 08:08:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MfiWertVcQncuXvdAogs5lUKOfokvfWK14OC/jCOVzw=;
+ b=Ihu6qH4p2rbyrzZQ/gJ5/tILZicHSQMwKOUksuvV3YE5vl+Q7zR5x8+8W8pr4RqkU41PrF9tH6v6dkjn+piNvJvwrFwcKqIbKG73A/mloYU6AdGgszmPEt1jvwWQXjsXJTgWpXcaDh3u7TDhjQKr2LuvBZL1uNecsU2VLpYFtxE=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB5009.eurprd04.prod.outlook.com (20.177.40.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.25; Thu, 22 Nov 2018 02:30:46 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::31e3:2aa6:8d93:9927]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::31e3:2aa6:8d93:9927%2]) with mapi id 15.20.1339.029; Thu, 22 Nov 2018
+ 02:30:46 +0000
+From:   Aisheng DONG <aisheng.dong@nxp.com>
+To:     Joakim Zhang <qiangqing.zhang@nxp.com>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "mkl@pengutronix.de" <mkl@pengutronix.de>
+CC:     "wg@grandegger.com" <wg@grandegger.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH V4 1/1] can: flexcan: add self wakeup support
+Thread-Topic: [PATCH V4 1/1] can: flexcan: add self wakeup support
+Thread-Index: AQHUgZY4VvHZKYhbxkiYG7EMB9VSQaVbEb1A
+Date:   Thu, 22 Nov 2018 02:30:46 +0000
+Message-ID: <AM0PR04MB4211B8283948F8DB63115DD580DB0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20181121122957.2684-1-qiangqing.zhang@nxp.com>
+ <20181121122957.2684-2-qiangqing.zhang@nxp.com>
+In-Reply-To: <20181121122957.2684-2-qiangqing.zhang@nxp.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [92.121.36.198]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5009;6:pFO24+NML7r7+J3v9pqS1T9U+o/Xc5IYur2/GbB8j6+9fjka+LcsaqUZw4o77EOZ6ZCe5RPaj3RujZXvK00kNtH5TUi3UZcBlfJ4bZ95leZN6TkaUaBH3lpB0Wprsz9yEuR2r9PsF9LH2CGov71QWKHLwKYkWcGnb2XZPNAKLlxeiEa+z9cxTvBPsayzw6fvFetjYY/o9V0MCg1xlMzrKrnmSWL0v7C2xlYcPHHEtsqs7yQYI9p+ppCt6BL7KCw4GTuIDU9t8ugN1YSPPhxuL8fcMIv0T4puUs/xkUbiHlYzZ6T8ijRELknzGYCH6pO5YdeSi38008x5Wrf+1HdMxgviY9nbFpOOE37/Ivm/jqN0ZAwzzSfYa5i5R7Ds1hq4YCeMyd6kN5qrGQ/m4HTn56hjdvTe9txzHHBe5+DFloor/4Fda0SuST9kuU+n1GK/bIyvgCVvb4BnrxFfXnqYiQ==;5:YG4rBcUASU7BwxtqvUPpiFxHHu29fLJF4Qnwi4L++/oDxbWpdc995YMY4xFyON0XIyioHd4o+Za+BK6zgdipVjdPv56tn8fBuqkJrxkKq1MD0hEXV9ftgSsezA+7MO5wuon9EhMEgWWRVNkYVCAj4WL2pwlyrjd8SavyfC7yIH8=;7:vzSIrJLhgnrl4vH7CX7HKwFvrJoql2npI2TVdgz4FVZ8ode/zGC3WZ6FPHjhjRj3KyglnIF3eY2rdF67lL7m72NtZRkD4OlC10o1qpevGPm9Eydwp8dV1qTKKVOCOVMyrl8qTM7fPLvnCHvDhyGjng==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: c91836f4-a376-4a6d-f764-08d650228283
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5009;
+x-ms-traffictypediagnostic: AM0PR04MB5009:
+x-microsoft-antispam-prvs: <AM0PR04MB5009C6947753FF0F0B5D9C8F80DB0@AM0PR04MB5009.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231442)(944501410)(52105112)(10201501046)(93006095)(93001095)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5009;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5009;
+x-forefront-prvs: 0864A36BBF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(396003)(376002)(346002)(39860400002)(189003)(199004)(446003)(2501003)(11346002)(2900100001)(66066001)(68736007)(6436002)(3846002)(81156014)(478600001)(81166006)(25786009)(4326008)(486006)(97736004)(6116002)(2906002)(476003)(71190400001)(71200400001)(74316002)(14454004)(186003)(55016002)(305945005)(2201001)(86362001)(6246003)(8676002)(7736002)(105586002)(229853002)(26005)(14444005)(110136005)(316002)(102836004)(5660300001)(33656002)(106356001)(99286004)(256004)(53936002)(9686003)(6506007)(7696005)(8936002)(76176011)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5009;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: R4q/WP67KU+IncV8GX0jm7k5uX/hBg6Ym0JwP5hxBBGvTpSAR6MN8lTUYRB2EMdgaHZnR7x0VTdJO+yBAkCyTDaIsaOsOkJDaws8nPU37vm2tEQBE8V56f/cZu/CObX62qsbgXuf8cRlAY8jRFHlY3fLCOc1Oqcu11yXlHgjypzEosgJvchZzdTojymwUNh+B66qNjJQvVpiVgxPmNCik2NL3YatAwnc/ddRLWGWRPo2ndfQmb/sdzfE+0q3JLSlRE+0dFa464I2ORqYFuPzixinxLaoMPABDT5tcZ1uX8ZKTB3Vq7KIV6z9FFhzP04E1QXZJp5umWrynhvrJvsIPSBouy+LVg7QKaJbqeWz3k0=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c91836f4-a376-4a6d-f764-08d650228283
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Nov 2018 02:30:46.7519
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5009
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 09:14:54PM +0100, Thomas Gleixner wrote:
-> From: Jiri Kosina <jkosina@suse.cz>
-> 
-> If 'prctl' mode of app2app protection from spectre v2 is selected on the
-> kernel command-line, STIBP and IBPB are applied on tasks which restrict
-> their indirect branch speculation via prctl.
-> 
-> SECCOMP enables the SSBD mitigation for sandboxed tasks already, so it
-> makes sense to prevent spectre v2 application to application attacks as
-> well.
+[...]
 
-Will need to add this chunk.
+> +
+> +static int __maybe_unused flexcan_noirq_suspend(struct device *device)
+> +{
+> +	struct net_device *dev =3D dev_get_drvdata(device);
+> +	struct flexcan_priv *priv =3D netdev_priv(dev);
+> +
+> +	if (netif_running(dev) && device_may_wakeup(device))
+> +		flexcan_enable_wakeup_irq(priv, true);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused flexcan_noirq_resume(struct device *device) {
+> +	struct net_device *dev =3D dev_get_drvdata(device);
+> +	struct flexcan_priv *priv =3D netdev_priv(dev);
+> +
+> +	if (netif_running(dev) && device_may_wakeup(device)) {
+> +		disable_irq_wake(dev->irq);
 
-Thanks.
+A bit more thinking:
+Can we put flexcan_enable_wakeup_irq(priv, false) here and move disable_irq=
+_wake
+to resume function?
+Then it looks better on pairs for those functions.
 
-Tim
+I'm not sure if irq will be lost or we may even not need wakeup irq.
+Please help check it.
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index c4d010d..d070e84 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -275,6 +275,7 @@ enum spectre_v2_app2app_cmd {
- 	{ "off",	SPECTRE_V2_APP2APP_CMD_NONE,	false },
- 	{ "on",		SPECTRE_V2_APP2APP_CMD_FORCE,	true  },
- 	{ "prctl",	SPECTRE_V2_APP2APP_CMD_PRCTL,	false },
-+	{ "seccomp",	SPECTRE_V2_APP2APP_CMD_SECCOMP,	false },
- };
- 
- static void __init spec_v2_app_print_cond(const char *reason, bool secure)
+Regards
+Dong Aisheng
+
+> +		flexcan_exit_stop_mode(priv);
+>  	}
+> +
+>  	return 0;
+>  }
+>=20
+> -static SIMPLE_DEV_PM_OPS(flexcan_pm_ops, flexcan_suspend,
+> flexcan_resume);
+> +static const struct dev_pm_ops flexcan_pm_ops =3D {
+> +	SET_SYSTEM_SLEEP_PM_OPS(flexcan_suspend, flexcan_resume)
+> +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(flexcan_noirq_suspend,
+> +flexcan_noirq_resume) };
+>=20
+>  static struct platform_driver flexcan_driver =3D {
+>  	.driver =3D {
+> --
+> 2.17.1
 
