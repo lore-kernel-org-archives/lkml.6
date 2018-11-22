@@ -2,208 +2,251 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D0E3C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B671C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:52:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3EB020864
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:50:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E90DA20831
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:52:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bcHph/oO";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V0RmQZpG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3EB020864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qMybYely"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E90DA20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392705AbeKVS3H (ORCPT
+        id S2392716AbeKVSa1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 13:29:07 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46956 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732609AbeKVS3H (ORCPT
+        Thu, 22 Nov 2018 13:30:27 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45744 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732609AbeKVSa1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 13:29:07 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5F51260B11; Thu, 22 Nov 2018 07:50:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542873051;
-        bh=DL/rLUi8S+WT9gcHLql2HFGK3HLTNw5thi8Hy2t89mQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=bcHph/oO1A1ePdw0l9XPcSmRx0TejK3BqroDXh9T71ilUXTGeBgnCbLWP04b1PVV1
-         JXeDT6OfePskMea630eQ81eZc5Gth9ruvxiZFqo7XdysOVGVKSYu/a23q/RXiyxDXk
-         cd9hz+0nfhW5idjUWOwj4KpM1oKJ9E2PQiv2gFvE=
-Received: from [192.168.225.247] (unknown [49.33.186.246])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2DFC86022B;
-        Thu, 22 Nov 2018 07:50:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542873050;
-        bh=DL/rLUi8S+WT9gcHLql2HFGK3HLTNw5thi8Hy2t89mQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=V0RmQZpG0SrMM3+N0mbc9Ng2lynRbnVSRk60uOzs27ckZpyD9Id01rjzpw48QPg0E
-         Y3oTNgrVHK5vjGltUQRUtTibENFqrONAuiP2bmSVGwjUN8ulNyDPA67Dmd5KirrEvP
-         zpPWHc55NtPlZTlbTV1141SceVDnmYXP2X4bLpMk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2DFC86022B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v9 2/2] clk: qcom: Add lpass clock controller driver for
- SDM845
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org
-References: <1541814256-23254-1-git-send-email-tdas@codeaurora.org>
- <1541814256-23254-3-git-send-email-tdas@codeaurora.org>
- <154282725690.88331.797718066164707366@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <b95df0d3-8504-0eef-c0f3-0ff2e4176b69@codeaurora.org>
-Date:   Thu, 22 Nov 2018 13:20:43 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 22 Nov 2018 13:30:27 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v6so8199651wrr.12
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 23:52:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9fziplyvQipdpzmlHAiUXg6x4YQz1+OmVF0FMVvNNZA=;
+        b=qMybYely/4JAcnDmpDk4IJnw6BhUKBgrHtBDXMVKMCOC4gd4jVhy7vM+RYG8o9iMhe
+         TzEe6ityhPyur5BIj5UT50HVhmfhZuAcTFQp2OrWR7aL4pW51gOGkbkpdsCNx6FTHzGW
+         ZY53goH2j1PyYZ5Te2qkt/59NY8QyuY5AVgzl0n2Kmz9h64y/w15B0GRjP2GahGsLVqd
+         2lgPuq6vwXSbyQQqPzzS9o5K4jEk9Mbdoduf+W9lB7B4HOsMcH6Sf9PY21ViisCL6LIo
+         jVjUJ4LI+wVcYUdHm7TasfAvo7kRR0M6k94xZmD+NOGC16ykCJCjdvPwyDJO1w5bUbTY
+         K9gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9fziplyvQipdpzmlHAiUXg6x4YQz1+OmVF0FMVvNNZA=;
+        b=Q/3fyE1NBKevrLHN7/GtLkJo0acduciVStLZ4Cj0sSVpG7xzARZ50egxlxzSlaLevB
+         8xcJwLHnrk8ccv4qIgbhl1NnW3cVQ2DPpf7ndjCueajzSIGJv/Rb8EJsYA7maPFkkmwQ
+         PDI8+WF7pUKlEZmaaeLDmFBvcl2hpI+qcug4y9wDYfrXyiu9Kx44rB1Sya4xnmGquRdQ
+         Zn9E3ca5K9q+B2Ins7OPvht4ufeFE6Kf3eoM9rHAAEY0aUm2Lp8//oKVF4q/fPj9Km58
+         1izll6ZlXX6odM86V2lTrYRoSbZQELrslTWpgEtXcrwqVc5hMtEESRMA+C7ivFJS+nhk
+         swBg==
+X-Gm-Message-State: AA+aEWbyEN2daMU50W+oxGFM2Vbh6pSBhJjhNREx6S2llmU455RovZw3
+        30sfYlFqgsn7wsbFZT0JRAE=
+X-Google-Smtp-Source: AFSGD/WavFJFXubumSx0vFc68H0NjGaGekIWbn1vp0Kf5Pc2l3lNcXwaAQ1DDazJvdLiiGIzxTvpjA==
+X-Received: by 2002:a5d:5089:: with SMTP id a9mr8836832wrt.327.1542873129995;
+        Wed, 21 Nov 2018 23:52:09 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id w9sm4250351wme.47.2018.11.21.23.52.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 23:52:09 -0800 (PST)
+Date:   Thu, 22 Nov 2018 08:52:06 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [patch 17/24] x86/speculation: Move IBPB control out of
+ switch_mm()
+Message-ID: <20181122075206.GG41788@gmail.com>
+References: <20181121201430.559770965@linutronix.de>
+ <20181121201723.948990148@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <154282725690.88331.797718066164707366@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181121201723.948990148@linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stephen,
 
-On 11/22/2018 12:37 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-11-09 17:44:16)
->> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
->> index f133b7f..ba8ff99 100644
->> --- a/drivers/clk/qcom/gcc-sdm845.c
->> +++ b/drivers/clk/qcom/gcc-sdm845.c
->> @@ -3153,6 +3153,34 @@ enum {
->>          },
->>   };
->>
->> +static struct clk_branch gcc_lpass_q6_axi_clk = {
->> +       .halt_reg = 0x47000,
->> +       .halt_check = BRANCH_HALT,
->> +       .clkr = {
->> +               .enable_reg = 0x47000,
->> +               .enable_mask = BIT(0),
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "gcc_lpass_q6_axi_clk",
->> +                       .flags = CLK_IS_CRITICAL,
->> +                       .ops = &clk_branch2_ops,
->> +               },
->> +       },
->> +};
->> +
->> +static struct clk_branch gcc_lpass_sway_clk = {
->> +       .halt_reg = 0x47008,
->> +       .halt_check = BRANCH_HALT,
->> +       .clkr = {
->> +               .enable_reg = 0x47008,
->> +               .enable_mask = BIT(0),
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "gcc_lpass_sway_clk",
->> +                       .flags = CLK_IS_CRITICAL,
->> +                       .ops = &clk_branch2_ops,
->> +               },
->> +       },
->> +};
->> +
->>   static struct gdsc pcie_0_gdsc = {
->>          .gdscr = 0x6b004,
->>          .pd = {
->> @@ -3453,6 +3481,8 @@ enum {
->>          [GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
->>          [GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
->>          [GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
->> +       [GCC_LPASS_Q6_AXI_CLK] = &gcc_lpass_q6_axi_clk.clkr,
->> +       [GCC_LPASS_SWAY_CLK] = &gcc_lpass_sway_clk.clkr,
-> 
-> Sigh, more coordination with sdm845 mtp problems here due to the
-> clks being protected by firmware. I guess I can just merge this and the
-> mtp dts bits will land in Andy's tree during the same merge window? Or I
-> may need to take the dts bits for this into clk tree so that the broken
-> time is only between two commits.
-> 
->>   };
->>
->>   static const struct qcom_reset_map gcc_sdm845_resets[] = {
->> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
->> new file mode 100644
->> index 0000000..2ef7f2a
->> --- /dev/null
->> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
->> @@ -0,0 +1,192 @@
-> [...]
->> +
->> +static const struct of_device_id lpass_cc_sdm845_match_table[] = {
->> +       { .compatible = "qcom,sdm845-lpasscc" },
->> +       { }
->> +};
->> +MODULE_DEVICE_TABLE(of, lpass_cc_sdm845_match_table);
-> 
-> Move this down to the before the driver structure please.
-> 
+* Thomas Gleixner <tglx@linutronix.de> wrote:
 
-Would do it in the next patch.
-
->> +
->> +static int lpass_cc_sdm845_probe(struct platform_device *pdev)
->> +{
->> +       const struct qcom_cc_desc *desc;
->> +       int ret;
->> +
->> +       lpass_regmap_config.name = "cc";
->> +       desc = &lpass_cc_sdm845_desc;
->> +
->> +       ret = lpass_clocks_sdm845_probe(pdev, 0, desc);
->> +       if (ret)
->> +               return ret;
->> +
->> +       lpass_regmap_config.name = "qdsp6ss";
->> +       desc = &lpass_qdsp6ss_sdm845_desc;
->> +
->> +       return lpass_clocks_sdm845_probe(pdev, 1, desc);
->> +}
->> +
->> +static struct platform_driver lpass_cc_sdm845_driver = {
->> +       .probe          = lpass_cc_sdm845_probe,
->> +       .driver         = {
->> +               .name   = "sdm845-lpasscc",
->> +               .of_match_table = lpass_cc_sdm845_match_table,
->> +       },
->> +};
->> +
->> +static int __init lpass_cc_sdm845_init(void)
->> +{
->> +       return platform_driver_register(&lpass_cc_sdm845_driver);
->> +}
->> +subsys_initcall(lpass_cc_sdm845_init);
->> +
->> +static void __exit lpass_cc_sdm845_exit(void)
->> +{
->> +       platform_driver_unregister(&lpass_cc_sdm845_driver);
->> +}
->> +module_exit(lpass_cc_sdm845_exit);
->> +
->> +MODULE_LICENSE("GPL v2");
+> IBPB control is currently in switch_mm() to avoid issuing IBPB when
+> switching between tasks of the same process.
 > 
-> MODULE_DESCRIPTION?
+> But that's not covering the case of sandboxed tasks which get the
+> TIF_SPEC_IB flag set via seccomp. There the barrier is required when the
+> potentially malicious task is switched out because the task which is
+> switched in might have it not set and would still be attackable.
 > 
-Would add it in the next patch.
+> For tasks which mark themself with TIF_SPEC_IB via the prctl, the barrier
+> needs to be when the tasks switches in because the previous one might be an
+> attacker.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+s/themself
+ /themselves
+> 
+> Move the code out of switch_mm() and evaluate the TIF bit in
+> switch_to(). Make it an inline function so it can be used both in 32bit and
+> 64bit code.
 
---
+s/32bit
+ /32-bit
+
+s/64bit
+ /64-bit
+
+> 
+> This loses the optimization of switching back to the same process, but
+> that's wrong in the context of seccomp anyway as it does not protect tasks
+> of the same process against each other.
+> 
+> This could be optimized by keeping track of the last user task per cpu and
+> avoiding the barrier when the task is immediately scheduled back and the
+> thread inbetween was a kernel thread. It's dubious whether that'd be worth
+> the extra load/store and conditional operations. Keep it optimized for the
+> common case where the TIF bit is not set.
+
+s/cpu/CPU
+
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  arch/x86/include/asm/nospec-branch.h |    2 +
+>  arch/x86/include/asm/spec-ctrl.h     |   46 +++++++++++++++++++++++++++++++++++
+>  arch/x86/include/asm/tlbflush.h      |    2 -
+>  arch/x86/kernel/cpu/bugs.c           |   16 +++++++++++-
+>  arch/x86/kernel/process_32.c         |   11 ++++++--
+>  arch/x86/kernel/process_64.c         |   11 ++++++--
+>  arch/x86/mm/tlb.c                    |   39 -----------------------------
+>  7 files changed, 81 insertions(+), 46 deletions(-)
+> 
+> --- a/arch/x86/include/asm/nospec-branch.h
+> +++ b/arch/x86/include/asm/nospec-branch.h
+> @@ -312,6 +312,8 @@ do {									\
+>  } while (0)
+>  
+>  DECLARE_STATIC_KEY_FALSE(switch_to_cond_stibp);
+> +DECLARE_STATIC_KEY_FALSE(switch_to_cond_ibpb);
+> +DECLARE_STATIC_KEY_FALSE(switch_to_always_ibpb);
+>  
+>  #endif /* __ASSEMBLY__ */
+>  
+> --- a/arch/x86/include/asm/spec-ctrl.h
+> +++ b/arch/x86/include/asm/spec-ctrl.h
+> @@ -76,6 +76,52 @@ static inline u64 ssbd_tif_to_amd_ls_cfg
+>  	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
+>  }
+>  
+> +/**
+> + * switch_to_ibpb - Issue IBPB on task switch
+> + * @next:	Pointer to the next task
+> + * @prev_tif:	Threadinfo flags of the previous task
+> + * @next_tif:	Threadinfo flags of the next task
+> + *
+> + * IBPB flushes the branch predictor, which stops Spectre-v2 attacks
+> + * between user space tasks. Depending on the mode the flush is made
+> + * conditional.
+> + */
+> +static inline void switch_to_ibpb(struct task_struct *next,
+> +				  unsigned long prev_tif,
+> +				  unsigned long next_tif)
+> +{
+> +	if (static_branch_unlikely(&switch_to_always_ibpb)) {
+> +		/* Only flush when switching to a user task. */
+> +		if (next->mm)
+> +			indirect_branch_prediction_barrier();
+> +	}
+> +
+> +	if (static_branch_unlikely(&switch_to_cond_ibpb)) {
+> +		/*
+> +		 * Both tasks' threadinfo flags are checked for TIF_SPEC_IB.
+> +		 *
+> +		 * For an outgoing sandboxed task which has TIF_SPEC_IB set
+> +		 * via seccomp this is needed because it might be malicious
+> +		 * and the next user task switching in might not have it
+> +		 * set.
+> +		 *
+> +		 * For an incoming task which has set TIF_SPEC_IB itself
+> +		 * via prctl() this is needed because the previous user
+> +		 * task might be malicious and have the flag unset.
+> +		 *
+> +		 * This could be optimized by keeping track of the last
+> +		 * user task per cpu and avoiding the barrier when the task
+> +		 * is immediately scheduled back and the thread inbetween
+> +		 * was a kernel thread. It's dubious whether that'd be
+> +		 * worth the extra load/store and conditional operations.
+> +		 * Keep it optimized for the common case where the TIF bit
+> +		 * is not set.
+> +		 */
+> +		if ((prev_tif | next_tif) & _TIF_SPEC_IB)
+> +			indirect_branch_prediction_barrier();
+
+s/cpu/CPU
+
+> +
+> +		switch (mode) {
+> +		case SPECTRE_V2_APP2APP_STRICT:
+> +			static_branch_enable(&switch_to_always_ibpb);
+> +			break;
+> +		default:
+> +			break;
+> +		}
+> +
+> +		pr_info("mitigation: Enabling %s Indirect Branch Prediction Barrier\n",
+> +			mode == SPECTRE_V2_APP2APP_STRICT ? "forced" : "conditional");
+
+Maybe s/forced/always-on, to better match the code?
+
+> @@ -617,11 +619,16 @@ void compat_start_thread(struct pt_regs
+>  	/* Reload sp0. */
+>  	update_task_stack(next_p);
+>  
+> +	prev_tif = task_thread_info(prev_p)->flags;
+> +	next_tif = task_thread_info(next_p)->flags;
+> +	/* Indirect branch prediction barrier control */
+> +	switch_to_ibpb(next_p, prev_tif, next_tif);
+> +
+>  	/*
+>  	 * Now maybe reload the debug registers and handle I/O bitmaps
+>  	 */
+> -	if (unlikely(task_thread_info(next_p)->flags & _TIF_WORK_CTXSW_NEXT ||
+> -		     task_thread_info(prev_p)->flags & _TIF_WORK_CTXSW_PREV))
+> +	if (unlikely(next_tif & _TIF_WORK_CTXSW_NEXT ||
+> +		     prev_tif & _TIF_WORK_CTXSW_PREV))
+>  		__switch_to_xtra(prev_p, next_p, tss);
+
+Hm, the repetition between process_32.c and process_64.c is getting 
+stronger - could some of this be unified into process.c? (in later 
+patches)
+
+Thanks,
+
+	Ingo
