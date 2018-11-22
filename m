@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F6AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F241C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D70220864
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:55:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A61920672
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:55:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fP/MVITJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D70220864
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LC6wGMjB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A61920672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407098AbeKWGgX (ORCPT
+        id S2407108AbeKWGg2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 01:36:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35302 "EHLO mail.kernel.org"
+        Fri, 23 Nov 2018 01:36:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733223AbeKWGgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 01:36:23 -0500
+        id S1731154AbeKWGg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 01:36:28 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5F9F20864;
-        Thu, 22 Nov 2018 19:55:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E75D20866;
+        Thu, 22 Nov 2018 19:55:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542916531;
-        bh=tDQGx5vcR0ig+uktw1SWDvpVtdal8Q3B+rji1UeWE4s=;
+        s=default; t=1542916536;
+        bh=KzVp3Ea34DhuerOnRm82VzEtpBAgnObqSUERm64vgoE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fP/MVITJXHanWRZVsD4Tz4GIXmaOogdXS0OJW6dJYJcfshSz96UUQojXdA4MDyrWq
-         b/9hencW9Enkm42PxsY2mldzg2od8UTG43WhYZMiiTr27TOikcLKtCZgg5ukyLeV3Z
-         c7DkD5Aqv6jtQXPnrSAYJzzGVToP7hQBHuVDAKyc=
+        b=LC6wGMjB8fMaIQ/zIooMiGmyaGRwwoQxQse99p5/5Mjz1sKNG/aM8BYZbqp9Mzs/f
+         ZfGGhZGgq4fPWp0quDJEl3fntymmV3XG1kb+vgclCu+6DjXteb1DzQqEHM2HIhyk8+
+         Vbo2qfZNK+kDIXgJvLZy/kYwcaOJSz6y9P3+88Ws=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 11/21] ARM: split out processor lookup
-Date:   Thu, 22 Nov 2018 14:54:42 -0500
-Message-Id: <20181122195452.13520-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 12/21] ARM: clean up per-processor check_bugs method call
+Date:   Thu, 22 Nov 2018 14:54:43 -0500
+Message-Id: <20181122195452.13520-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181122195452.13520-1-sashal@kernel.org>
 References: <20181122195452.13520-1-sashal@kernel.org>
@@ -54,86 +54,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 65987a8553061515b5851b472081aedb9837a391 ]
+[ Upstream commit 945aceb1db8885d3a35790cf2e810f681db52756 ]
 
-Split out the lookup of the processor type and associated error handling
-from the rest of setup_processor() - we will need to use this in the
-secondary CPU bringup path for big.Little Spectre variant 2 mitigation.
+Call the per-processor type check_bugs() method in the same way as we
+do other per-processor functions - move the "processor." detail into
+proc-fns.h.
 
 Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/include/asm/cputype.h |  1 +
- arch/arm/kernel/setup.c        | 31 +++++++++++++++++++------------
- 2 files changed, 20 insertions(+), 12 deletions(-)
+ arch/arm/include/asm/proc-fns.h | 1 +
+ arch/arm/kernel/bugs.c          | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/include/asm/cputype.h b/arch/arm/include/asm/cputype.h
-index 3379c2c684c2..25d523185c6a 100644
---- a/arch/arm/include/asm/cputype.h
-+++ b/arch/arm/include/asm/cputype.h
-@@ -107,6 +107,7 @@
- #define ARM_CPU_PART_SCORPION		0x510002d0
- 
- extern unsigned int processor_id;
-+struct proc_info_list *lookup_processor(u32 midr);
- 
- #ifdef CONFIG_CPU_CP15
- #define read_cpuid(reg)							\
-diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index 8e9a3e40d949..1a041ad4881e 100644
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -667,22 +667,29 @@ static void __init smp_build_mpidr_hash(void)
- }
- #endif
- 
--static void __init setup_processor(void)
-+/*
-+ * locate processor in the list of supported processor types.  The linker
-+ * builds this table for us from the entries in arch/arm/mm/proc-*.S
-+ */
-+struct proc_info_list *lookup_processor(u32 midr)
+diff --git a/arch/arm/include/asm/proc-fns.h b/arch/arm/include/asm/proc-fns.h
+index e25f4392e1b2..30c499146320 100644
+--- a/arch/arm/include/asm/proc-fns.h
++++ b/arch/arm/include/asm/proc-fns.h
+@@ -99,6 +99,7 @@ extern void cpu_do_suspend(void *);
+ extern void cpu_do_resume(void *);
+ #else
+ #define cpu_proc_init			processor._proc_init
++#define cpu_check_bugs			processor.check_bugs
+ #define cpu_proc_fin			processor._proc_fin
+ #define cpu_reset			processor.reset
+ #define cpu_do_idle			processor._do_idle
+diff --git a/arch/arm/kernel/bugs.c b/arch/arm/kernel/bugs.c
+index 7be511310191..d41d3598e5e5 100644
+--- a/arch/arm/kernel/bugs.c
++++ b/arch/arm/kernel/bugs.c
+@@ -6,8 +6,8 @@
+ void check_other_bugs(void)
  {
--	struct proc_info_list *list;
-+	struct proc_info_list *list = lookup_processor_type(midr);
- 
--	/*
--	 * locate processor in the list of supported processor
--	 * types.  The linker builds this table for us from the
--	 * entries in arch/arm/mm/proc-*.S
--	 */
--	list = lookup_processor_type(read_cpuid_id());
- 	if (!list) {
--		pr_err("CPU configuration botched (ID %08x), unable to continue.\n",
--		       read_cpuid_id());
--		while (1);
-+		pr_err("CPU%u: configuration botched (ID %08x), CPU halted\n",
-+		       smp_processor_id(), midr);
-+		while (1)
-+		/* can't use cpu_relax() here as it may require MMU setup */;
- 	}
- 
-+	return list;
-+}
-+
-+static void __init setup_processor(void)
-+{
-+	unsigned int midr = read_cpuid_id();
-+	struct proc_info_list *list = lookup_processor(midr);
-+
- 	cpu_name = list->cpu_name;
- 	__cpu_architecture = __get_cpu_architecture();
- 
-@@ -700,7 +707,7 @@ static void __init setup_processor(void)
+ #ifdef MULTI_CPU
+-	if (processor.check_bugs)
+-		processor.check_bugs();
++	if (cpu_check_bugs)
++		cpu_check_bugs();
  #endif
+ }
  
- 	pr_info("CPU: %s [%08x] revision %d (ARMv%s), cr=%08lx\n",
--		cpu_name, read_cpuid_id(), read_cpuid_id() & 15,
-+		list->cpu_name, midr, midr & 15,
- 		proc_arch[cpu_architecture()], get_cr());
- 
- 	snprintf(init_utsname()->machine, __NEW_UTS_LEN + 1, "%s%c",
 -- 
 2.17.1
 
