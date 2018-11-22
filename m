@@ -2,101 +2,152 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_03_06,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_TVD_FUZZY_SECTOR,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E985FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 20:35:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25877C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 20:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99B93208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 20:35:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D377E208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 20:36:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkdjVSh4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99B93208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QHY9cqEg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D377E208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405031AbeKWHQc (ORCPT
+        id S2405113AbeKWHQ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 02:16:32 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38720 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730632AbeKWHQb (ORCPT
+        Fri, 23 Nov 2018 02:16:57 -0500
+Received: from casper.infradead.org ([85.118.1.10]:47932 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730632AbeKWHQ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 02:16:31 -0500
-Received: by mail-qk1-f193.google.com with SMTP id d19so7465259qkg.5;
-        Thu, 22 Nov 2018 12:35:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E8txJ2Mr/1Nx5BwIcNhMC7arKTkTIfGbDpJ7btoKNbE=;
-        b=DkdjVSh4taAkdlxDHU9wK7qjhClGiuoCKCXZuu9HrdzVYuztbadWnhgYXziCo5hS6B
-         1XiaB/29ROoE4tOh4vZBL7fFUM6tR/rDHD6WGVabhQ2cNZ17dAXV7NvSqa+D0NBi0Xt/
-         kqq+ywUfJ/1ClNFZfQMQeFv+w4b4ku6E4DwkM/DGdREUCoB2dTE2y0WmuJYWUjY8ALbd
-         ihx7UjU7etvqdcRSZGx2NeUjwjF0tYuGKbgCKcDL+wee5zLZSk3mGTFDfVr1AdSIktJM
-         s7BzXaBUyWF+I7PcUe46+GmZFgeGb+f85dC0j38V9iVtIxYwOSdNHF81LmlvLhtvRzcF
-         99NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E8txJ2Mr/1Nx5BwIcNhMC7arKTkTIfGbDpJ7btoKNbE=;
-        b=JLfcajXX2L+Gt+dFqE/6aLqHPEFwOf20i36srVFCLT0oHpitONr14qfNKLr9zkRE2r
-         bikympPS6sq4H4TiJFsQo0lPsAmrMX+QF/fbuGQjVqZamqL166n6uzoDEeO8t4YkoKvd
-         57EhXL1zZfJPNKbAbV40GSyuWmHd3Lct0xG+RI6jN+hyTbCxCqnd3UWHor21UF/NT7XB
-         8e0ecXIFwl1HlG5jxAcG53XIhyRZKcXHOzT7EBmifSBdJZl64x+xiAfwckaFGgL740cq
-         /mK9qERd1oJa5x7rs00Vr8s/jNm11G+89gjrsmvRO6sizBAZMpKv94EviNqIZENipHrE
-         vqJg==
-X-Gm-Message-State: AA+aEWYR50+DREOWY1WnyXyafHfLh4CavdRVySs48f8XlJgwKOv+W6Ve
-        wtlvklG9zt8gHwhUW4OAdl8=
-X-Google-Smtp-Source: AFSGD/XrJHxZU0wJZZ5gct9iSktRBeDdxnllf4kqLhokDxDrejcrIIk6Jt0W2D/uoQB8zPWGhmr6iA==
-X-Received: by 2002:a37:6a84:: with SMTP id f126mr11206687qkc.342.1542918930251;
-        Thu, 22 Nov 2018 12:35:30 -0800 (PST)
-Received: from infosect0r.umd.edu (129-2-181-223.wireless.umd.edu. [129.2.181.223])
-        by smtp.gmail.com with ESMTPSA id v53sm27629674qtb.6.2018.11.22.12.35.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 12:35:29 -0800 (PST)
-From:   Shreyans Devendra Doshi <0xinfosect0r@gmail.com>
-To:     corbet@lwn.net
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shreyans Devendra Doshi <0xinfosect0r@gmail.com>
-Subject: [PATCH] Documentation: dev-tools: Fix typos in index.rst
-Date:   Thu, 22 Nov 2018 10:34:56 -0500
-Message-Id: <20181122153456.24413-1-0xinfosect0r@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 23 Nov 2018 02:16:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=gPXhfSh7YtHd0eTt0Kr8G0AH7JX63P7S4BhOWRASTMQ=; b=QHY9cqEghBCLztan5bmkurShFY
+        zu0pvKoxPRsL+564kj8vMCvcgL3b+fRF/7Nqo97A6TsGQcemS7/brna66F9KCFzPmcmZA8h3vskYJ
+        WJoFZ05RMn0LVldqqy3LZcDi7EWP+i039wwz4EZLHB9qYqZ/9/5v6J/7JU2acbCa+ArusMmnjt2yw
+        XMKh4F037IUZFNWHODKulpxVMJTpaD7Ojp5E7ohNI0Jr571wCYLZJqCWxqE8D8oyvPC0NqBd8Oycl
+        tdo8ZRP4aTLYQBnN13acYeQbiXTLEp5/J9lvjEA8VXqFpgCwAos5bBYIweOQhkOIVNsgWMIw1oWHO
+        iBLtSeJQ==;
+Received: from 201.47.163.210.dynamic.adsl.gvt.net.br ([201.47.163.210] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gPvhZ-0006L0-BM; Thu, 22 Nov 2018 20:35:53 +0000
+Date:   Thu, 22 Nov 2018 18:35:49 -0200
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     stakanov <stakanov@eclipso.eu>
+Cc:     Takashi Iwai <tiwai@suse.de>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: DVB-S PCI card regression on 4.19 / 4.20
+Message-ID: <20181122183549.331ecbc4@coco.lan>
+In-Reply-To: <12757009.r0OKxgvFl0@roadrunner.suse>
+References: <4e0356d6303c128a3e6d0bcc453ba1be@mail.eclipso.de>
+        <2836654.gWKGMNFOG2@roadrunner.suse>
+        <20181122180611.2e7f1123@coco.lan>
+        <12757009.r0OKxgvFl0@roadrunner.suse>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes a spelling error and removes an extra whitespace character.
+Em Thu, 22 Nov 2018 21:19:49 +0100
+stakanov <stakanov@eclipso.eu> escreveu:
 
-Signed-off-by: Shreyans Devendra Doshi <0xinfosect0r@gmail.com>
----
- Documentation/dev-tools/index.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Hello Mauro.=20
+>=20
+> Thank you so much, for this fast reply and especially for the detailed=20
+> indications. I expected to have a lack of knowledge.=20
+>=20
+> Well,  I am replying to the question as of below: (for convenience I did =
+cut=20
+> the before text, if you deem it useful for the list I can then correct th=
+at in=20
+> the next posts).
+>=20
+> In data gioved=C3=AC 22 novembre 2018 21:06:11 CET, Mauro Carvalho Chehab=
+ ha=20
+> scritto:
+> > Are you sure that the difference is just the Kernel version? Perhaps you
+> > also updated some other package. =20
+>=20
+> To be clear: I had the same system(!) with all three kernel 4.18.15-1, 4.=
+19.1 =20
+> (when the problem did arise) and 4.20.2 rc3 from Takashi's repo) installe=
+d.=20
 
-diff --git a/Documentation/dev-tools/index.rst b/Documentation/dev-tools/index.rst
-index e313925fb0fa..b0522a4dd107 100644
---- a/Documentation/dev-tools/index.rst
-+++ b/Documentation/dev-tools/index.rst
-@@ -3,8 +3,8 @@ Development tools for the kernel
- ================================
- 
- This document is a collection of documents about development tools that can
--be used to work on the kernel.  For now, the documents have been pulled
--together without any significant effot to integrate them into a coherent
-+be used to work on the kernel. For now, the documents have been pulled
-+together without any significant effort to integrate them into a coherent
- whole; patches welcome!
- 
- .. class:: toc-title
--- 
-2.19.1
+Ok, so rebooting to 4.18.15-1 solves the issue?
 
+Also, what GPU driver are you using?
+
+In any case, by using the old "Universal" LNBf, you're likely missing some
+transponders, and missing several channels.
+
+> In this very configuration: if one booted in 4.18 (that is in perfect par=
+ity=20
+> with all other packages) the card worked. 4.19.1 no. And the last kernel =
+the=20
+> same. So whatever might be different, forcefully it has to be in the kern=
+el.=20
+> (Which is not really a problem if I manage to make it work, so settings w=
+ill=20
+> be known to others or, if not, we will find out what is different, and al=
+l=20
+> will be happy. As you see I am still optimist). =20
+
+Well, we don't want regressions in Kernel. If there's an issue there,
+it should be fixed. However, I can't think on any other changes since
+4.18 that would be causing troubles for b2c2 driver.
+
+See, the only change at the driver itself is just a simple API
+replacement that wouldn't cause this kind of problems:
+
+	$ git log --oneline v4.18.. drivers/media/common/b2c2/
+	c0decac19da3 media: use strscpy() instead of strlcpy()
+
+There were a few changes at the DVB core:
+
+	$ git log --no-merges --oneline v4.18.. drivers/media/dvb-core/
+	f3efe15a2f05 media: dvb: use signal types to discover pads
+	b5d3206112dd media: dvb: dmxdev: move compat_ioctl handling to dmxdev.c
+	cc1e6315e83d media: replace strcpy() by strscpy()
+	c0decac19da3 media: use strscpy() instead of strlcpy()
+	fd89e0bb6ebf media: videobuf2-core: integrate with media requests
+	db6e8d57e2cd media: vb2: store userspace data in vb2_v4l2_buffer
+	6a2a1ca34ca6 media: dvb_frontend: ensure that the step is ok for both FE a=
+nd tuner
+	f1b1eabff0eb media: dvb: represent min/max/step/tolerance freqs in Hz
+	a3f90c75b833 media: dvb: convert tuner_info frequencies to Hz
+	6706fe55af6f media: dvb_ca_en50221: off by one in dvb_ca_en50221_io_do_ioc=
+tl()
+	4d1e4545a659 media: mark entity-intf links as IMMUTABLE
+
+But, on a first glance, the only ones that has potential to cause issues
+were the ones addressed that the patch I wrote (merged by Takashi).
+
+If you're really receiving data from EPG (you may just have it
+cached), it means that the DVB driver is doing the right thing.
+
+Btw, to be sure that you're not just seeing the old EPG data, you
+should move or remove this file:
+
+	~/.local/share/kaffeine/epgdata.dvb
+
+Kaffeine will generate a new one again once it tunes into a TV channel.
+
+> I will proceed as indicated and report back here tomorrow.=20
+
+Ok.
+
+Thanks,
+Mauro
