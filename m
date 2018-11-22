@@ -2,88 +2,115 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D1DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E952C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:21:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40FF520864
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:15:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="FJPfyhRq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40FF520864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 2B2F020824
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:21:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B2F020824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406352AbeKWDzP (ORCPT
+        id S2404795AbeKWECH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 22:55:15 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:37948 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404684AbeKWDzP (ORCPT
+        Thu, 22 Nov 2018 23:02:07 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:50202 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1733155AbeKWECH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 22:55:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hoO6/bnacYC8/MkzPcJd6G3v7999DnuUioAiONoYoGw=; b=FJPfyhRqAyGtK5kPHw/CRDtFd
-        8H3Zi1PvyPi1IMz6fZYCAFdqInQ0cd2p1H+1dMQnOw9ce1VnO+x8QuFfAwy0j9L1Zx5dX3nEBNJwP
-        K62KQwHm9bad2c9T5xIdjRyCRtHZBQEsfFjthZFlSDrOnN+faek2wzrfqIwDo9gQ2BOl4=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:35707)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gPsZ2-000396-2o; Thu, 22 Nov 2018 17:14:52 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gPsYz-0003q7-5L; Thu, 22 Nov 2018 17:14:49 +0000
-Date:   Thu, 22 Nov 2018 17:14:47 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-arch@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-parisc@vger.kernel.org,
-        David Woodhouse <dwmw2@infradead.org>, joro@8bytes.org,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, jdmason@kudzu.us,
-        xen-devel@lists.xenproject.org, robin.murphy@arm.com,
-        linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
-Subject: Re: remove the ->mapping_error method from dma_map_ops V2
-Message-ID: <20181122171446.GJ30658@n2100.armlinux.org.uk>
-References: <20181122140320.24080-1-hch@lst.de>
- <CAHk-=wh=_T=A53+o4zLNbKio43LGqVDb0KCbWPDvAg54bRDmWw@mail.gmail.com>
- <20181122170715.GI30658@n2100.armlinux.org.uk>
- <CAHk-=wgfGzXuDAKFQPdzMib3QCRHfSTsy5=gLU-WCoya+Ym+1A@mail.gmail.com>
+        Thu, 22 Nov 2018 23:02:07 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAMHLhBP009817;
+        Thu, 22 Nov 2018 11:21:44 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2nth98913p-1;
+        Thu, 22 Nov 2018 11:21:43 -0600
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id 0E405611C8B2;
+        Thu, 22 Nov 2018 11:24:29 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 22 Nov 2018
+ 17:21:43 +0000
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wAMHLf5F029236; Thu,
+ 22 Nov 2018 17:21:41 GMT
+Date:   Thu, 22 Nov 2018 17:21:41 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+CC:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH v2] regulator: wm8994: Don't use devres for enable GPIOs
+Message-ID: <20181122172141.GJ16508@imbe.wolfsonmicro.main>
+References: <20181121101316.32194-1-ckeepax@opensource.cirrus.com>
+ <CACRpkdb3HSQ_h1+9RvBUEDRDSCih7bv7kcf+=cc3-c0Hn6A0bg@mail.gmail.com>
+ <CACRpkdb9KStEkMigDX2kA4Q-tr6DuuWqqTuF6jXZK67Zp+DxmA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgfGzXuDAKFQPdzMib3QCRHfSTsy5=gLU-WCoya+Ym+1A@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CACRpkdb9KStEkMigDX2kA4Q-tr6DuuWqqTuF6jXZK67Zp+DxmA@mail.gmail.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=600 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1811220154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 09:09:47AM -0800, Linus Torvalds wrote:
-> On Thu, Nov 22, 2018 at 9:07 AM Russell King - ARM Linux
-> <linux@armlinux.org.uk> wrote:
+On Thu, Nov 22, 2018 at 04:47:20PM +0100, Linus Walleij wrote:
+> On Thu, Nov 22, 2018 at 3:19 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Wed, Nov 21, 2018 at 11:13 AM Charles Keepax
+> > <ckeepax@opensource.cirrus.com> wrote:
 > >
-> > I'm afraid that won't work very well - 32 bit platforms with 64-bit
-> > addresses (LPAE) would have dma_addr_t as a 64-bit value, which
-> > wouldn't fit into an unsigned long.
+> > > The regulator core takes over managing the lifetime of the enable GPIO
+> > > once the regulator is registered. As such we shouldn't register the
+> > > enable GPIO using devm, or it will be freed twice.
+> > >
+> > > Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> >
+> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 > 
-> Good point. So we'd have to have a special IS_DMA_ERR() function that
-> takes a dma_addr_t and checks the same "is it the top 4095 values".
+> Oh no this is not the right solution I think.
+> 
 
-No problem with that.
+Yes I agree I actually am just about to send another series, I
+guess I will send that and we can look at that and any
+suggestions you have.
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+> All drivers passing a descriptor (config->ena_gpiod) do their
+> own refcounting, including some using a function that has no
+> non-devm* counterpart.
+> 
+> It is better if we teach the core to not gpiod_put() those.
+> 
+
+Yeah that is exactly what my patch chain is doing.
+
+> The other patch series I am floating to get rid of the legacy
+> GPIO handling from the core will do away with all the
+> legacy GPIO handling anyway, so let me introduce a bit
+> of ugliness (that can be backported) and then delete that
+> ugliness with an updated series v8 of my legacy GPIO
+> cleanup.
+> 
+> Sorry for the inconvenience.
+> 
+> Will send a patch soon.
+> 
+> Yours,
+> Linus Walleij
+
+Thanks,
+Charles
