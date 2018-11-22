@@ -1,144 +1,121 @@
 Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F073C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F67C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:15:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C21420820
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:08:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3D0D20864
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 06:15:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FgzM4365"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C21420820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nZFUjJG5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3D0D20864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404643AbeKVQqi (ORCPT
+        id S2404650AbeKVQxn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 11:46:38 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37724 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404630AbeKVQqh (ORCPT
+        Thu, 22 Nov 2018 11:53:43 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43130 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731512AbeKVQxm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 11:46:37 -0500
-Received: by mail-pf1-f193.google.com with SMTP id u3-v6so1415752pfm.4
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 22:08:44 -0800 (PST)
+        Thu, 22 Nov 2018 11:53:42 -0500
+Received: by mail-pl1-f196.google.com with SMTP id gn14so8752974plb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 22:15:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=+ONbX0FrbhgwcMg2omFldL10GwV+uxHdg9W1ySf3ZmQ=;
-        b=FgzM4365KRdnbyxxnfbMzZu3RmBfZlYCrEOHvd6zgPtsuSIiT407kXumV11zBtSiU+
-         y8ZIheKl2XNPZryxSQbZru5NnNtEWAmkV0Si0xbcqZOJ24LDcM16VUwQVGgaobntWHFn
-         CQYozxR0zsrWUGW0rIlyVo7I1GAdcBFfwzg+E=
+        bh=kKvFcV8GXe5sfwl54XYN3WvaxSKT99J5HiXdICjfEKk=;
+        b=nZFUjJG5myh3f6OaSvNYJK+wAO7L3PrPP6sxWnk1dncHjKC3jEFaUfLfmgHw7rcThD
+         vhHbkzvpp1FXOQlZX5A9c0R3scib2c2X/IW5VBMNzx8/P5QK+cAbPGpkkpvqnw7GXR9y
+         9xLU6isVsxZ/5a9597rcFAI/kI5bRZU2KOf1cWBzozsbzYNlscvUZ5lNTi3pEai89Ik/
+         /7YAgvEOODG74dZU5FlxlcfduCMRZoT3Oavt+wApKbcibUHP+6SKajlFY8bmFm0aD7CS
+         5HF30sT10v24Xx8HtB978WJC7fqzPJT/a7Qg+rBVFnqg09WhNW+n3E9UunzEb26J80Pv
+         /Elw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+ONbX0FrbhgwcMg2omFldL10GwV+uxHdg9W1ySf3ZmQ=;
-        b=d5o1yOAQpj+6I40hF4nGq49KKTgxeGQByIZYj4mlRrs0MAU8AA9UlP5kPcLtDJ/rUa
-         H92bIhBxpvcwl3/FWSjQEsYi7v6dUQGt073orRTNRCU8QwIwzPOeVQchT8hottiFoEfT
-         FufYGTN1kTTEUxY/2kzgfEaOV3Gl6VsN7DuUfR9yvkazPKBEe646AJ6Avj0j2lTz2zsQ
-         lm7So8mptp6i/B4JpUXMIfdAAMeQg4IHRUekkutCq3zBDSrsENg/sMYrJoYiEXbCn2ET
-         /ff2n6jfB73YBG8uS4GURW0anmEc6r6EWD8u+sbIvmNC4/WwURqQv0QCzYoJQtYHHTyA
-         KYDQ==
-X-Gm-Message-State: AA+aEWagouD25k4TUJ2IGUDRKr99mnDuaipw1yzvWiPilRGW/PqEbsCi
-        njo6wkGh1TA3O/nxBWpjhY2F1w==
-X-Google-Smtp-Source: AFSGD/VSbzhpyTI9lsVrVxaDaBRgMhZ4I7NoiXOX0gGI0UHz6VJQlUmR1DPzZeweenzbgHDIXtj4Cw==
-X-Received: by 2002:a65:448a:: with SMTP id l10mr8842699pgq.387.1542866923321;
-        Wed, 21 Nov 2018 22:08:43 -0800 (PST)
-Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id y12sm235133pfk.70.2018.11.21.22.08.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 22:08:41 -0800 (PST)
-Date:   Thu, 22 Nov 2018 11:38:39 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     ulf.hansson@linaro.org, Viresh Kumar <vireshk@kernel.org>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        niklas.cassel@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] OPP: Add dev_pm_opp_xlate_performance_state() helper
-Message-ID: <20181122060839.socq3vuaa4ycftzn@vireshk-i7>
-References: <cover.1541399301.git.viresh.kumar@linaro.org>
- <cedbfc3a7fffc4c400908c4c3af518bea408d318.1541399301.git.viresh.kumar@linaro.org>
- <45c19ad3-6039-9152-6e5a-51a5c062bdf4@codeaurora.org>
- <20181121051718.a5yo3ibhaihgrwra@vireshk-i7>
- <20181121060622.blnlvydbc4wo5y3y@vireshk-i7>
- <0b40a76d-f779-391a-2770-4a3d368679a9@codeaurora.org>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kKvFcV8GXe5sfwl54XYN3WvaxSKT99J5HiXdICjfEKk=;
+        b=WkCyqEs4iXZp32fCeepmxjdjSegnT3Oj7nM7ZCwbK3UYhIZnghJbUeQ4WvUSrIb5tf
+         pZ3EVM5eRGY+r1GMRTKbdnlJimTCVDzp3ZovydiqwhNTG4gzS+pDqwYOyBuOXSWjgtKy
+         jq19zwmHZsNjg+zWl0nC+ITJxKxLxDQ4KsGRb4uwVWMUxsMHW2nkWWGZOL9e9LejrA/l
+         MaRiluiN+tqCTUwhonugLHxSci7OxKmCeO4lGgRr3JbAGkoPwHykYCqT28RelrCf2VAP
+         2x1AS1IAQHApn4o63P9rgLkd6bqqnmpRBXUH+v8pyOZAsk8/gS/6OL31O5me+LKhk60I
+         sMSg==
+X-Gm-Message-State: AA+aEWZQKWhRhiBMCBD//wdE7td2Ah07Z1ewndAWrbBUp3/C4v3luitQ
+        zJjA5IcsXZkPgCSyNFcUjMg=
+X-Google-Smtp-Source: AFSGD/XU9DKxLRh5eZJRRtEnV8MWDd9FF5/5blzcfAtXyBZUbDbl69079DFbArXerl+1K18L7J2qsQ==
+X-Received: by 2002:a17:902:6b03:: with SMTP id o3-v6mr9942159plk.208.1542867347055;
+        Wed, 21 Nov 2018 22:15:47 -0800 (PST)
+Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
+        by smtp.gmail.com with ESMTPSA id r26-v6sm21649132pfk.157.2018.11.21.22.15.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 22:15:45 -0800 (PST)
+Date:   Thu, 22 Nov 2018 15:15:42 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/6] zram: support idle page writeback
+Message-ID: <20181122061542.GA211816@google.com>
+References: <20181116072035.155108-1-minchan@kernel.org>
+ <20181116072035.155108-5-minchan@kernel.org>
+ <20181121045551.GC599@jagdpanzerIV>
+ <20181121133408.GA103278@google.com>
+ <20181122021442.GB3441@jagdpanzerIV>
+ <20181122050437.GA182024@google.com>
+ <20181122054040.GE3441@jagdpanzerIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0b40a76d-f779-391a-2770-4a3d368679a9@codeaurora.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20181122054040.GE3441@jagdpanzerIV>
+User-Agent: Mutt/1.10.1+60 (6df12dc1) (2018-08-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21-11-18, 11:48, Rajendra Nayak wrote:
-> 
-> 
-> On 11/21/2018 11:36 AM, Viresh Kumar wrote:
-> > On 21-11-18, 10:47, Viresh Kumar wrote:
-> > > On 21-11-18, 10:34, Rajendra Nayak wrote:
-> > > > 
-> > > > 
-> > > > On 11/5/2018 12:06 PM, Viresh Kumar wrote:
-> > > > > Introduce a new helper dev_pm_opp_xlate_performance_state() which will
-> > > > > be used to translate from pstate of a device to another one.
-> > > > > 
-> > > > > Initially this will be used by genpd to find pstate of a master domain
-> > > > > using its sub-domain's pstate.
-> > > > > 
-> > > > > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > > > > ---
-> > > > >    drivers/opp/core.c     | 49 ++++++++++++++++++++++++++++++++++++++++++
-> > > > >    include/linux/pm_opp.h |  7 ++++++
-> > > > >    2 files changed, 56 insertions(+)
-> > > > > 
-> > > > > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> > > > > index 0eaa954b3f6c..010a4268e8dd 100644
-> > > > > --- a/drivers/opp/core.c
-> > > > > +++ b/drivers/opp/core.c
-> > > > > @@ -1707,6 +1707,55 @@ void dev_pm_opp_put_genpd_virt_dev(struct opp_table *opp_table,
-> > > > >    		dev_err(virt_dev, "Failed to find required device entry\n");
-> > > > >    }
-> > > > > +/**
-> > > > > + * dev_pm_opp_xlate_performance_state() - Find required OPP's pstate for src_table.
-> > > > > + * @src_table: OPP table which has dst_table as one of its required OPP table.
-> > > > 
-> > > > So I have a case where the src_table and dst_table are shared/same. Can you explain how would
-> > > > it work in such a case?
-> > > 
-> > > Can you give the example, as I am finding some issues with such shared
-> > > tables. Though the code may work just fine btw.
+On Thu, Nov 22, 2018 at 02:40:40PM +0900, Sergey Senozhatsky wrote:
+> On (11/22/18 14:04), Minchan Kim wrote:
 > > 
-> > I may have found the problem you are facing here. Please try this diff
-> > and tell me if you hitting it, check this in dmesg.
+> > > additionally, it's too simple. It writes-back pages which can be
+> > > swapped in immediately; which basically means that we do pointless
+> > > PAGE_SIZE writes to a device which doesn't really like pointless
+> > > writes.
+> > 
+> > This patchset aims for *IDLE page* writeback and you can define
+> > what is IDLE page by yourself. It doesn't do pointless writeback.
+> > > 
+> > > It's a whole different story with idle, compressible pages writeback.
+> > 
+> > I don't understand your point.
 > 
-> Yes, I do seem to be hitting this.
+> Seems you misunderstood me. I'm not saying that IDLE writeback is bad.
+> On the contrary, I think IDLE writeback is x100 better than writeback
+> which we currently have.
+> 
+> The "pointless writeback" comment was about the existing writeback,
+> when we WB pages which we couldn't compress. We can have a relative
+> huge percentage of incompressible pages, and not all of them will end
+> up being IDLE:
+>  - we swap out page
+>  - can't compress it
+>  - writeback PAGE_SIZE
+>  - swap it in two seconds later
 
-So there are few complexities in the case where an OPP table points to itself in
-the required-opp field. I looked at solving it up in the opp core but that gets
-more and more messy.
+I got what you mean now. Let's call it as "incompressible page wrieback"
+to prevent confusing.
 
-Now there is actually a assumption within the OPP core. Your Mx domain should
-get initialized before the Cx domain, as that is when the OPP tables are created
-as well. This is because Cx's OPP table will point to Mx's OPP table (doesn't
-matter if they share the same table or not) and so Mx's OPP table should come
-first.
-
-Can you check if that is already the case for you? If not, please try doing it
-and lemme know if it works. It should.
-
-I just want to avoid too much complexity in OPP core without much use.
-
--- 
-viresh
+"incompressible page writeback" would be orthgonal feature. The goal is
+"let's save memory at the cost of *latency*". If the page is swapped-in
+soon, it's unfortunate. However, the design expects once it's swapped out,
+it means it's non-workingset so soonish swappined-in would be rather not
+many, theoritically compared to other workingset.
+If's it's too frequent, it means system were heavily overcommitted.
