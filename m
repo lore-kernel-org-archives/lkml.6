@@ -2,123 +2,128 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55796C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4645CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25A3720838
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:08:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25A3720838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E7B820865
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:08:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="Bq4lwPW4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E7B820865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406545AbeKWEsb (ORCPT
+        id S2438216AbeKWEsm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 23:48:31 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55490 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729679AbeKWEsb (ORCPT
+        Thu, 22 Nov 2018 23:48:42 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:41712 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406546AbeKWEsm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 23:48:31 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAMHwetF044765
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 13:08:01 -0500
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nwya8560m-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 13:08:01 -0500
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <muvic@linux.ibm.com>;
-        Thu, 22 Nov 2018 18:08:00 -0000
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 22 Nov 2018 18:07:56 -0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAMI7t1e11730984
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 22 Nov 2018 18:07:55 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 62628BE051;
-        Thu, 22 Nov 2018 18:07:55 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5CED9BE053;
-        Thu, 22 Nov 2018 18:07:52 +0000 (GMT)
-Received: from Murilos-MBP.home (unknown [9.85.169.113])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 22 Nov 2018 18:07:52 +0000 (GMT)
-Subject: Re: [PATCH 4.9 00/59] 4.9.139-stable review
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org,
-        Murilo Fossa Vicentini <muvic@linux.vnet.ibm.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-References: <20181121183508.262873520@linuxfoundation.org>
- <b642656d-4b0d-cb68-f862-9d90bacc88cc@roeck-us.net>
-From:   Murilo Fossa Vicentini <muvic@linux.ibm.com>
-Date:   Thu, 22 Nov 2018 16:07:50 -0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Thu, 22 Nov 2018 23:48:42 -0500
+Received: by mail-oi1-f193.google.com with SMTP id j21so8075389oii.8
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 10:08:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gVjy3aJbCQo9yde6c5YZxEFpJx7Xqg8PvcbSbvskKHg=;
+        b=Bq4lwPW42iQ7LJvKlvAavsKDKo4HuGKXedSOa9gcqHdQcLNWuhmXwgqEKIpRpMrSOK
+         xYy6NBj3HJvSJpZS8MtMUhcc37x0MCeBsSjANEor9KF/Iyq+dfcIbMuAd6vGL8I2HHSZ
+         q6d7SDrYnUSyVinBWwJNMnzOFyJduQTMb9N98uq2lRThATJ6HShCtlQVCwAev0d6iUtX
+         zzvCurmKW5hxd7Mzd43ozzCWO1gw5Q9ZBzmysW1Fj+5CUoMVsfAcli+bHd9v3r/HXx/z
+         udEJF48oGFACqtirQDnyWuI4k1tq3sFid+uKNw+YyrkwwqbiUx5JuPawnIvZG9McK02u
+         4uNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gVjy3aJbCQo9yde6c5YZxEFpJx7Xqg8PvcbSbvskKHg=;
+        b=ioLrvF9dH3Csp8hM4hhfuFM1FLPhJjtQJsQg75Bmyr3AelGVh1+stVzXT3blnY7B16
+         +uRnnrwCDmaBvWI2uWBvYNDgQXXMnfjAuknOsSUC1SSAliWUfW05X4O6tZHnYKTde8BV
+         OPJSlbIBtYzQoYyHvwdtmtt77+A2qpu+67MM8EBl/wSXsaav9NLPkn3ZgHkXAnfgHgUu
+         Sgm35lkpXc2NV/AHi7T13ZMFJQH9hxKV0uWlHF0fXSN4iya+CIJbAiVXqPeVDc8Wduyc
+         odEQd7E+2cXjPuOUVwzbjQJljIFl78fOAEluUDTTMhLetXRmM0FEzCbPqTkuEeMTGEQ+
+         b6iQ==
+X-Gm-Message-State: AGRZ1gIlBuCv6b5GkSgGGP1UHhxOmazrTrYVmTx505BlFVhcTtdJq4Lb
+        2eHamVyIaRL84HZQ9WbqdwwOH/bVr1rNLg3IVqaRFw==
+X-Google-Smtp-Source: AJdET5dH1fFFp/xwZenSPEFabRBBb2wKGLmjBQtnnP/dkAmQbn7Q9Jon3MLUSdhDe8KBqcgJpn0Jj6iBrtl/Ucekq9k=
+X-Received: by 2002:aca:f4c2:: with SMTP id s185mr6964032oih.244.1542910092489;
+ Thu, 22 Nov 2018 10:08:12 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <b642656d-4b0d-cb68-f862-9d90bacc88cc@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18112218-0004-0000-0000-000014B6DDE5
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010101; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01121210; UDB=6.00581861; IPR=6.00901329;
- MB=3.00024281; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-22 18:07:59
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112218-0005-0000-0000-000089994B27
-Message-Id: <bf811213-e1ad-d70e-cf9e-57735e359377@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-22_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=795 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811220161
+References: <20181114224902.12082-1-keith.busch@intel.com> <1ed406b2-b85f-8e02-1df0-7c39aa21eca9@arm.com>
+ <4ea6e80f-80ba-6992-8aa0-5c2d88996af7@intel.com> <b79804b0-32ee-03f9-fa62-a89684d46be6@arm.com>
+ <c6abb754-0d82-8739-fe08-24e9402bae75@intel.com> <aae34dde-fa70-870a-9b74-fff9e385bfc9@arm.com>
+In-Reply-To: <aae34dde-fa70-870a-9b74-fff9e385bfc9@arm.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 22 Nov 2018 10:08:01 -0800
+Message-ID: <CAPcyv4hj61o+TDTSGxYSMMXMn7YiOGP0fj6R-cquPodN4VeT9A@mail.gmail.com>
+Subject: Re: [PATCH 0/7] ACPI HMAT memory sysfs representation
+To:     anshuman.khandual@arm.com
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/11/18 14:33, Guenter Roeck wrote:
-> drivers/net/ethernet/ibm/ibmvnic.c: In function 'ibmvnic_xmit':
-> drivers/net/ethernet/ibm/ibmvnic.c:789:40: error: implicit declaration 
-> of function 'skb_vlan_tag_present'
-> 
-> Caused by 5f51bb855fa1 ("ibmvnic: fix accelerated VLAN handling").
-> Problem is missing include of linux/if_vlan.h, which was added upstream
-> with commit 6052d5e2a1961b ("ibmvnic: Insert header on VLAN tagged
-> received frame").
-> 
-> I have no idea if the offending patch fixes 6052d5e2a1961b, if both are
-> independent, if both are needed, or if none is needed.
-> Copying the authors of both patches.
+On Thu, Nov 22, 2018 at 3:52 AM Anshuman Khandual
+<anshuman.khandual@arm.com> wrote:
+>
+>
+>
+> On 11/19/2018 11:07 PM, Dave Hansen wrote:
+> > On 11/18/18 9:44 PM, Anshuman Khandual wrote:
+> >> IIUC NUMA re-work in principle involves these functional changes
+> >>
+> >> 1. Enumerating compute and memory nodes in heterogeneous environment (short/medium term)
+> >
+> > This patch set _does_ that, though.
+> >
+> >> 2. Enumerating memory node attributes as seen from the compute nodes (short/medium term)
+> >
+> > It does that as well (a subset at least).
+> >
+> > It sounds like the subset that's being exposed is insufficient for yo
+> > We did that because we think doing anything but a subset in sysfs will
+> > just blow up sysfs:  MAX_NUMNODES is as high as 1024, so if we have 4
+> > attributes, that's at _least_ 1024*1024*4 files if we expose *all*
+> > combinations.
+> Each permutation need not be a separate file inside all possible NODE X
+> (/sys/devices/system/node/nodeX) directories. It can be a top level file
+> enumerating various attribute values for a given (X, Y) node pair based
+> on an offset something like /proc/pid/pagemap.
+>
+> >
+> > Do we agree that sysfs is unsuitable for exposing attributes in this manner?
+> >
+>
+> Yes, for individual files. But this can be worked around with an offset
+> based access from a top level global attributes file as mentioned above.
+> Is there any particular advantage of using individual files for each
+> given attribute ? I was wondering that a single unsigned long (u64) will
+> be able to pack 8 different attributes where each individual attribute
+> values can be abstracted out in 8 bits.
 
-Both address different parts of the code within the same VLAN 
-functionality, patch 5f51bb855fa1 (or upstream e84b47941e15) is making a 
-change on the transmit side, and the patch I sent upstream 
-(6052d5e2a196) addresses an issue when the system firmware strips the 
-VLAN tag on the receive side.
-
-In the context of having proper VLAN support for the ibmvnic driver I 
-would say both are needed, although potentially there are other patches 
-needed for this functionality to work properly, for example upstream 
-commit da75e3b6a029 (ibmvnic: Account for VLAN tag in L2 Header 
-descriptor) and upstream commit 8dff66cc4195 (ibmvnic: Account for VLAN 
-tag in L2 Header descriptor).
-
-Best regards,
-Murilo Vicentini
-
+sysfs has a 4K limit, and in general I don't think there is much
+incremental value to go describe the entirety of the system from sysfs
+or anywhere else in the kernel for that matter. It's simply too much
+information to reasonably consume. Instead the kernel can describe the
+coarse boundaries and some semblance of "best" access initiator for a
+given target. That should cover the "80%" case of what applications
+want to discover, for the other "20%" we likely need some userspace
+library that can go parse these platform specific information sources
+and supplement the kernel view. I also think a simpler kernel starting
+point gives us room to go pull in more commonly used attributes if it
+turns out they are useful, and avoid going down the path of exporting
+attributes that have questionable value in practice.
