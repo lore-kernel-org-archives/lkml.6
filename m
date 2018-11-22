@@ -2,98 +2,87 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71847C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:06:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F55BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38E8F20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:06:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 178702080F
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:06:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=oberhumer.com header.i=@oberhumer.com header.b="NLj+94fg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38E8F20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=oberhumer.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ls1eybPq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 178702080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733289AbeKVNnk (ORCPT
+        id S1733122AbeKVNoD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 08:43:40 -0500
-Received: from mail.servus.at ([193.170.194.20]:60420 "EHLO mail.servus.at"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732940AbeKVNnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 08:43:39 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.servus.at (Postfix) with ESMTP id 4EE6B3000678;
-        Thu, 22 Nov 2018 04:06:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=oberhumer.com; h=
-        content-transfer-encoding:content-type:content-type:in-reply-to
-        :mime-version:user-agent:date:date:message-id:organization:from
-        :from:references:subject:subject:received:received; s=main; t=
-        1542855977; x=1544670378; bh=MnMbhMpp3wARe2LlEPgoT48y6WtcvAhykbZ
-        K1qAgYco=; b=NLj+94fgnB2KhkZj70XuQDpKeymcCcc9Ix+PRJoRnQ3oZ+6nJJi
-        CZV5W2Zbk4CUCNaUx0P9bX/qOMBtgV6Gu2+kr1Q5y/5FofaZPVGOLhu3WMUALyaV
-        mFBqp3TuPtN8RlUCIOBztm/9yNm8PJPWg1ck8I4TWrShYnaXvfQ8mH0s=
-X-Virus-Scanned: amavisd-new at servus.at
-Received: from mail.servus.at ([127.0.0.1])
-        by localhost (mail.servus.at [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 5QtV7LLd4d4v; Thu, 22 Nov 2018 04:06:17 +0100 (CET)
-Received: from [192.168.216.53] (unknown [81.10.228.128])
-        (Authenticated sender: oh_markus)
-        by mail.servus.at (Postfix) with ESMTPSA id 1D48F3000676;
-        Thu, 22 Nov 2018 04:06:16 +0100 (CET)
-Subject: Re: [PATCH 2/6] lib/lzo: enable 64-bit CTZ on Arm
-To:     Christoph Hellwig <hch@infradead.org>,
-        Dave Rodgman <dave.rodgman@arm.com>
-References: <20181121115922.22864-2-dave.rodgman@arm.com>
- <20181121115922.22864-3-dave.rodgman@arm.com>
- <20181121173114.GA14352@infradead.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Matt Sealey <Matt.Sealey@arm.com>,
-        "nitingupta910@gmail.com" <nitingupta910@gmail.com>,
-        "rpurdie@openedhand.com" <rpurdie@openedhand.com>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "sergey.senozhatsky.work@gmail.com" 
-        <sergey.senozhatsky.work@gmail.com>
-From:   "Markus F.X.J. Oberhumer" <markus@oberhumer.com>
-Organization: oberhumer.com
-Message-ID: <5BF61D27.5000002@oberhumer.com>
-Date:   Thu, 22 Nov 2018 04:06:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.3.0
+        Thu, 22 Nov 2018 08:44:03 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:33704 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729295AbeKVNoC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 08:44:02 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAM33pak012203;
+        Thu, 22 Nov 2018 03:06:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=MyR65N5n8GpF1N4QqeAEqiH7549dfC5F9a9TFlm4rUE=;
+ b=ls1eybPqT7bqLwVgIUHyacTzZSmFWhpXsS+xPPqfny0lILZUCYATzASwwFKuZJVJ31pl
+ ESwqGUgghtfTgYltFjZ/PtAp4W4F0CIpyjseWjpdSk3u/tWEyt/X8SK9t5eU7A9omJ4x
+ 0RXhCKn8fYuIAAu73WLyu5Mbk+FHjsmCGQvwo0l/JBlYgBQROCbHH7xGGclZgb4USah2
+ zuWVe5mrO7RVCz+vjQnq0Dss1HVxozydHCk81sowtO4SfVe88TP4EmmeSc7OtCYVp3S3
+ TzbyufRj1LZvVG7ZkcAiJo4wPj8jt0ptPaM5nv3fqJlXTwpv399aopjgpnNXRV/CvY7x Ng== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2ntbmqvfyc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Nov 2018 03:06:40 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAM36Yg9020046
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Nov 2018 03:06:34 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAM36Xia014525;
+        Thu, 22 Nov 2018 03:06:34 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 21 Nov 2018 19:06:33 -0800
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        keescook@chromium.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com,
+        sabyasachi.linux@gmail.com
+Subject: Re: [PATCH] scsi/aic94xx/aic94xx_hwi.c: Use dma_pool_zalloc
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20181101041909.GA3241@jordon-HP-15-Notebook-PC>
+Date:   Wed, 21 Nov 2018 22:06:29 -0500
+In-Reply-To: <20181101041909.GA3241@jordon-HP-15-Notebook-PC> (Souptick
+        Joarder's message of "Thu, 1 Nov 2018 09:49:09 +0530")
+Message-ID: <yq18t1l95fu.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20181121173114.GA14352@infradead.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9084 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=564
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811220027
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-11-21 18:31, Christoph Hellwig wrote:
->>  #define LZO_USE_CTZ32	1
->>  #elif defined(__i386__) || defined(__powerpc__)
->>  #define LZO_USE_CTZ32	1
->> -#elif defined(__arm__) && (__LINUX_ARM_ARCH__ >= 5)
->> +#elif defined(__arm__)
->> +#if (__LINUX_ARM_ARCH__ >= 5)
->>  #define LZO_USE_CTZ32	1
->>  #endif
->> +#if (__LINUX_ARM_ARCH__ >= 6) && (CONFIG_THUMB2_KERNEL)
->> +#define LZO_USE_CTZ64	1
-> 
-> All of this really needs to be driven by Kconfig symbols that
-> the architecture selects instead of magic arch ifdefs here.
 
-LZO_USE_CTZ32 and LZO_USE_CTZ64 should only be defined if there
-is a *fast* hardware instruction.
+Souptick,
 
-It would be nice if there exists a kernel #define we could
-use for detecting that.
+> Replaced dma_pool_alloc + memset with dma_pool_zalloc
+
+Applied to 4.21/scsi-queue, thanks.
 
 -- 
-Markus Oberhumer, <markus@oberhumer.com>, http://www.oberhumer.com/
+Martin K. Petersen	Oracle Linux Engineering
