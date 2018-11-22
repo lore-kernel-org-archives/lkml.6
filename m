@@ -2,158 +2,110 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9FEC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2382AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:37:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52CED2081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:37:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D989820684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:37:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="Z/J7rMiZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52CED2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hQfPrGyt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D989820684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437490AbeKWBQk (ORCPT
+        id S2437503AbeKWBQs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 20:16:40 -0500
-Received: from mail-eopbgr1410100.outbound.protection.outlook.com ([40.107.141.100]:29462
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2395565AbeKWBQk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 20:16:40 -0500
+        Thu, 22 Nov 2018 20:16:48 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36632 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395565AbeKWBQq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 20:16:46 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t3so9493602wrr.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 06:37:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=coS/fMQPkR23/A7HbbtJM6cBr8oyoId0NSvzlbF8quo=;
- b=Z/J7rMiZLhRC6IZRg5j20VGbuq8X2Hu3h2+xtJ6RZL+7R/Nu34yFqHxlQ3kHTcHDLPazdyxQl+HQRii2QcclqPi18uFoYCpjHseYBYzAnecdRtWZWhtf5m0kVqwupjMSsxl14MNvFVeu25q1FPnaqPdb4I7TJsWp3EYjw/jlwVQ=
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com (52.133.163.146) by
- TY1PR01MB1802.jpnprd01.prod.outlook.com (52.133.164.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.15; Thu, 22 Nov 2018 14:36:59 +0000
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::7484:f2b6:9b32:2c6]) by TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::7484:f2b6:9b32:2c6%5]) with mapi id 15.20.1294.048; Thu, 22 Nov 2018
- 14:36:59 +0000
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Simon Horman <horms@verge.net.au>
-CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
-Thread-Topic: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
-Thread-Index: AQHUgCOKwJ2xop+DoEaLvwVyl7+lsaVb2W2AgAAF5bA=
-Date:   Thu, 22 Nov 2018 14:36:59 +0000
-Message-ID: <TY1PR01MB176930707EE4A5F730F1BF99F5DB0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <20181119161838.10610-1-phil.edworthy@renesas.com>
- <20181122140832.qcrhmmybdzbvfv6s@verge.net.au>
-In-Reply-To: <20181122140832.qcrhmmybdzbvfv6s@verge.net.au>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=phil.edworthy@renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB1802;20:ncttgdXO2oS71JB6Dvv0r24hhrh4RGhDDu2rjKq7R2UfQsg7U1HxVmgqC+s7PMcy7QvGGp9B7npb6HMSPw4lagAjBAfc3W4XFnieUUdxlaFnSRVLm/gIXKg7pMxqw+2FGtL2ZcQXGxOOCy5OoIJbVt6kUldYhi9zKIixbPnCzws=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 280ba10c-672b-4779-d508-08d65087f5ca
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1802;
-x-ms-traffictypediagnostic: TY1PR01MB1802:
-x-microsoft-antispam-prvs: <TY1PR01MB18020EEBDCB2F32AAF4CE5BBF5DB0@TY1PR01MB1802.jpnprd01.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231442)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:TY1PR01MB1802;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1802;
-x-forefront-prvs: 0864A36BBF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(346002)(39860400002)(376002)(136003)(199004)(189003)(105586002)(575784001)(2906002)(486006)(86362001)(14454004)(476003)(102836004)(53936002)(316002)(76176011)(7696005)(256004)(14444005)(6436002)(446003)(71200400001)(71190400001)(44832011)(11346002)(68736007)(2900100001)(106356001)(478600001)(8676002)(6116002)(186003)(25786009)(97736004)(229853002)(55016002)(4326008)(54906003)(9686003)(3846002)(6916009)(26005)(5660300001)(53546011)(7736002)(33656002)(66066001)(6506007)(8936002)(74316002)(99286004)(305945005)(6246003)(81156014)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1802;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Ql1bbQ9NmILJK8DfbNO5v8fsyMNllMr4NIwJQVUKi72BehijYAFuJwjflKdmB9iKx5ZtSf2GQb5ILjlHVweYz1r8o9aLavIu0QPsaeBWU5o2TT3bvt+FE8n3nCRJqt2m/OZXVPXZmKVZ5gtWyrUN/D2GHbefLP7gxzpeBBc9aVdS+o8WF0fsPAcopLyUzsz5AkRrWHGYYU/rqaHBBtkciPtOcML7JGFizK+wY954L5ZjLrBlCU8XhRCo4raDy0j56vLdSJFUIYltspFYFaGomlZYTGfjbo+3Uhl7wbyulHRHAQV+jsMC0/w/xVYbBLPz/xDkWzJvyCcMsQ6vmQzrun3/A6DmRxUPpz/0spLsqQg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1YRFiyvEsEFnRxZMcNpvmnGLAbo2St3c1P1NYx+nhYU=;
+        b=hQfPrGytI4s4blVwdrClsyVTrL2F8NzvQNmSBz8210K7cHOlyAT1NOfKsMJC2FAlbO
+         6yHe4YdtsBZlZ7zDU9eA8PMj5n8Rg/1Kj/+SJ+AV3v/TIgQ/Osk6Tn/OBmnUNNC1ZFHv
+         WDIng+ZQKN0f+TlRu7BOenYPgD0jLwDcofPwU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1YRFiyvEsEFnRxZMcNpvmnGLAbo2St3c1P1NYx+nhYU=;
+        b=pYyH0ER5ZRhukNFmuLCPo9MECEJ7F8vBNC31bdw4/hDQtOHw7FWWt/V3UUoe5LtY5A
+         r4YtPMDm2sJ6oKTgig6e/QVVkKpTQFjE4L4o/qwHkEsbJlmSMx8vXpXSOKQHj2/7Z8Ff
+         W96pKrllMdwmtxcpVOPKZ8lq+ENJ6kHwFfVZy+iEpG2tAsGp4UAbGdWaytzuGZSlAH8q
+         Z4YaDPN3eULCUrJGsN0Nnu6Q5AlUOys2FyCEKVRpaUaP96BlHp6DK0UIkpKyaQ8AR8mj
+         MPO/vzVlJOeuZ6rZ6sq2OqHH9Kj53qFxcYYhFUgrpdBcfmVTisedd228SZVH8sHVGaNS
+         j9fw==
+X-Gm-Message-State: AA+aEWbHrU1RfbDwz3VkT0zxHgkE3jEy/fGvX76Xjg+6aNXmotTiIraR
+        g/t5V6/a0CmzwlgeuDaxWLJVI2Emat0=
+X-Google-Smtp-Source: AFSGD/UJ0hs+/yMuC2IeY+C3t6OB3EwKl/rmLqgowuK7N3ZU200VnywyOLKaaqXRk2Tq2+WgAK9BvA==
+X-Received: by 2002:adf:891a:: with SMTP id s26mr9867964wrs.44.1542897426853;
+        Thu, 22 Nov 2018 06:37:06 -0800 (PST)
+Received: from [192.168.0.40] (44.65.136.77.rev.sfr.net. [77.136.65.44])
+        by smtp.googlemail.com with ESMTPSA id b18sm22694511wrw.83.2018.11.22.06.37.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 06:37:06 -0800 (PST)
+Subject: Re: [PATCH] clocksource/drivers/integrator-ap: add of_node_put()
+To:     Frank Lee <tiny.windzz@gmail.com>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org
+References: <20181120131853.19710-1-tiny.windzz@gmail.com>
+ <5ea4da1e-65de-ddc3-5ca6-eb83c2347930@linaro.org>
+ <CAEExFWsOh1gixoC4bbSkbawC-ybz1YUA-tmw5FW5W-GFyFGs7Q@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <54a66dbf-df0a-8cec-cb60-0603a52dad99@linaro.org>
+Date:   Thu, 22 Nov 2018 15:37:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 280ba10c-672b-4779-d508-08d65087f5ca
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Nov 2018 14:36:59.2200
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1802
+In-Reply-To: <CAEExFWsOh1gixoC4bbSkbawC-ybz1YUA-tmw5FW5W-GFyFGs7Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Simon,
+On 22/11/2018 15:33, Frank Lee wrote:
+> On Thu, Nov 22, 2018 at 10:26 PM Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>>
+>> On 20/11/2018 14:18, Yangtao Li wrote:
+>>> use of_node_put() to release the refcount.
+>>>
+>>> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+>>
+>> Applied, thanks!
+> Hi Daniel：
+> 
+> This patch is a bit small, I will resend。
 
-On 22 November 2018 14:09 Simon Horman wrote:
-> On Mon, Nov 19, 2018 at 04:18:38PM +0000, Phil Edworthy wrote:
-> > This fixes the check for unused mdio bus setting and the following
-> > static checker warning:
-> >  drivers/pinctrl/pinctrl-rzn1.c:198 rzn1_pinctrl_mdio_select()
-> >  warn: always true condition '(ipctl->mdio_func[mdio] >=3D 0) =3D> (0-u=
-32max
-> >=3D 0)'
-> >
-> > It also fixes the return var when calling of_get_child_count()
-> >
-> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> > ---
-> > v2:
-> >  - Don't rely on rely on the implicit typecast from -1 to uint
-> > ---
-> >  drivers/pinctrl/pinctrl-rzn1.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/pinctrl/pinctrl-rzn1.c
-> > b/drivers/pinctrl/pinctrl-rzn1.c index 57886dcff53d..cc0e5aa9128a
-> > 100644
-> > --- a/drivers/pinctrl/pinctrl-rzn1.c
-> > +++ b/drivers/pinctrl/pinctrl-rzn1.c
-> > @@ -112,7 +112,7 @@ struct rzn1_pinctrl {
-> >  	struct rzn1_pinctrl_regs __iomem *lev2;
-> >  	u32 lev1_protect_phys;
-> >  	u32 lev2_protect_phys;
-> > -	u32 mdio_func[2];
-> > +	int mdio_func[2];
->=20
-> Hi Phil,
->=20
-> rzn1_pinctrl_mdio_select() assigns values of type u32 to elements of
-> mdio_func. Perhaps that warrants cleaning up too?
-The source of the 'u32 func' arg is ultimately u32 values read from DT.
-The code already ensures that these cannot be bigger than 7, so is fine
-I think.
+What do you mean by 'small' ?
 
-Thanks
-Phil
+>> --
+>>  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+>>
+>> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+>> <http://twitter.com/#!/linaroorg> Twitter |
+>> <http://www.linaro.org/linaro-blog/> Blog
+>>
 
 
-> >  	struct rzn1_pin_group *groups;
-> >  	unsigned int ngroups;
-> > @@ -810,8 +810,8 @@ static int rzn1_pinctrl_probe_dt(struct
-> platform_device *pdev,
-> >  	struct device_node *np =3D pdev->dev.of_node;
-> >  	struct device_node *child;
-> >  	unsigned int maxgroups =3D 0;
-> > -	unsigned int nfuncs =3D 0;
-> >  	unsigned int i =3D 0;
-> > +	int nfuncs =3D 0;
-> >  	int ret;
-> >
-> >  	nfuncs =3D of_get_child_count(np);
-> > --
-> > 2.17.1
-> >
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
