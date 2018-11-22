@@ -2,97 +2,136 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB5CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC2BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFA6F20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:56:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFA6F20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E984020831
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:57:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E984020831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437957AbeKWCgH (ORCPT
+        id S2437963AbeKWChM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 21:36:07 -0500
-Received: from foss.arm.com ([217.140.101.70]:52790 "EHLO foss.arm.com"
+        Thu, 22 Nov 2018 21:37:12 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:33307 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437944AbeKWCgG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 21:36:06 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 495C8168F;
-        Thu, 22 Nov 2018 07:56:09 -0800 (PST)
-Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2E28E3F575;
-        Thu, 22 Nov 2018 07:56:05 -0800 (PST)
-Date:   Thu, 22 Nov 2018 15:56:03 +0000
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Chris Redpath <chris.redpath@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Thara Gopinath <thara.gopinath@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Steve Muckle <smuckle@google.com>, adharmap@codeaurora.org,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        currojerez@riseup.net, Javi Merino <javi.merino@kernel.org>
-Subject: Re: [PATCH v9 08/15] sched/topology: Make Energy Aware Scheduling
- depend on schedutil
-Message-ID: <20181122155601.nf6egzo3aicqv33y@queper01-lin>
-References: <20181119141857.8625-1-quentin.perret@arm.com>
- <20181119141857.8625-9-quentin.perret@arm.com>
- <20181122140432.GH2113@hirez.programming.kicks-ass.net>
- <CAJZ5v0g0cca+wuZocwwt5y+a7FS6Y8qDDf27KftRQ_1Dy6-7XQ@mail.gmail.com>
+        id S1732326AbeKWChM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 21:37:12 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 73AFD2072F; Thu, 22 Nov 2018 16:57:13 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4A2DF20712;
+        Thu, 22 Nov 2018 16:57:03 +0100 (CET)
+Date:   Thu, 22 Nov 2018 16:57:03 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Mesih Kilinc <mesihkilinc@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Rob Herring <robh+dt@kernel.org>,
+        Julian Calaby <julian.calaby@gmail.com>
+Subject: Re: [RFC PATCH v3 01/17] ARM: add CONFIG_ARCH_SUNXI_V7 for
+ differentiate ARMv5/v7 Allwinner SoCs
+Message-ID: <20181122155703.wsziwzybqwcmn25w@flea>
+References: <cover.1542824904.git.mesihkilinc@gmail.com>
+ <267ffcf3b91930a82f20d93e1fad1fceaf8b9b0e.1542824904.git.mesihkilinc@gmail.com>
+ <20181122082635.br5n33owxxpenv62@flea>
+ <20181122150751.n26pvywmvnuglly5@ThinkPad>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="flmo5uucax4cgdii"
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0g0cca+wuZocwwt5y+a7FS6Y8qDDf27KftRQ_1Dy6-7XQ@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20181122150751.n26pvywmvnuglly5@ThinkPad>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 22 Nov 2018 at 16:49:04 (+0100), Rafael J. Wysocki wrote:
-> On Thu, Nov 22, 2018 at 3:05 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Mon, Nov 19, 2018 at 02:18:50PM +0000, Quentin Perret wrote:
-> > > +                     if (rd->pd)
-> > > +                             pr_warn("rd %*pbl: Disabling EAS, schedutil is mandatory\n",
-> > > +                                             cpumask_pr_args(cpu_map));
-> > > +                     goto free;
-> >
-> > I would have preferred just not allowing the governor to change at all,
-> > but if you want to allow that, this is, I suppose, the best you can do.
-> >
-> > Rafael, are you otherwise OK with the grubbing inside cpufreq?
-> 
-> Sort of. :-)
-> 
-> I would put the sched_cpufreq_governor_change() header (and the static
-> inline stub of it) into linux/cpufreq.h (instead of
-> linux/sched/cpufreq.h) so that cpufreq.c doesn't have to include
-> linux/sched/cpufreq.h which is kind of confusing.
 
-That works for me.
+--flmo5uucax4cgdii
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Quentin
+On Thu, Nov 22, 2018 at 06:07:51PM +0300, Mesih Kilinc wrote:
+> On 18/11/22 09:26, Maxime Ripard wrote:
+> > On Wed, Nov 21, 2018 at 09:30:34PM +0300, Mesih Kilinc wrote:
+> > > Allwinner also has some ARMv5 SoCs.
+> > >=20
+> > > In order to add support for them, add a CONFIG_ARCH_SUNXI_V7 bool con=
+fig
+> > > which is selected when a ARMv7 soc is selected, and make CONFIG_ARCH_=
+SUNXI
+> > > a common option which is selected by both V7 and V5 sunxi option.
+> > >=20
+> > > Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+> > > ---
+> > >  arch/arm/mach-sunxi/Kconfig | 23 ++++++++++++++++-------
+> > >  1 file changed, 16 insertions(+), 7 deletions(-)
+> > >=20
+> > > diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
+> > > index d9c8ecf..7e5f173 100644
+> > > --- a/arch/arm/mach-sunxi/Kconfig
+> > > +++ b/arch/arm/mach-sunxi/Kconfig
+> > > @@ -6,31 +6,38 @@ menuconfig ARCH_SUNXI
+> > >  	select GENERIC_IRQ_CHIP
+> > >  	select GPIOLIB
+> > >  	select PINCTRL
+> > > -	select PM_OPP
+> > >  	select SUN4I_TIMER
+> > >  	select RESET_CONTROLLER
+> > > +	help
+> > > +	  Support for Allwinner ARM-based family of processors
+> > > =20
+> > >  if ARCH_SUNXI
+> > > =20
+> > > +if ARCH_MULTI_V7
+> > > +
+> > > +config ARCH_SUNXI_V7
+> > > +	bool
+> > > +	select PM_OPP
+> > > +
+> >=20
+> > Actually, thinking more about this, I don't see why the PM_OPP config
+> > option should be made specific to the ARMv7 sunxi SoCs, you will have
+> > things cpufreq enabled at some point as well on the armv5 support.
+> >=20
+> OK. I was basing this code to the first patch series.=20
+> So there will be no need for ARCH_SUNXI_VX configs. Should I drop them
+> and differantiate IC's by only ARCH_MULTI_VX?
+
+Yeah, that's probably enough for now, and we can always merge some
+patch along those lines if we ever need it later.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--flmo5uucax4cgdii
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/bRzwAKCRDj7w1vZxhR
+xQIQAQDIbdeo2bMJcBp7aRe7q+1h7ETMBDGYXYKr+sBSJygGWQD/Y329IDLTYSzP
+jCyMWo01jtQefNDk69lMkGXlZuuOOAQ=
+=FveE
+-----END PGP SIGNATURE-----
+
+--flmo5uucax4cgdii--
