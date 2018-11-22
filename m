@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5F5C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1881C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81EE220684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:52:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A202220892
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:52:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ghev7q5O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81EE220684
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKqzT4Pn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A202220892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437103AbeKWAcH (ORCPT
+        id S2437127AbeKWAcJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:32:07 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36031 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437076AbeKWAcG (ORCPT
+        Thu, 22 Nov 2018 19:32:09 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36867 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437061AbeKWAcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:32:06 -0500
-Received: by mail-wm1-f67.google.com with SMTP id s11so9237861wmh.1
+        Thu, 22 Nov 2018 19:32:07 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j10so9342236wru.4
         for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 05:52:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=/EcXHX2qsOwyLUgkC2dAd+0XZzGI2xxxDyTZR6xw/SA=;
-        b=Ghev7q5OsLA7kbAL2PnQdNFfjoE6HAiPgVSLjOlQqGvtaWfHfgkqSoSp6Tq400V5Xc
-         lcDGP1iK670VYyg9vx4xHKVrmi7M9IF53SoLkOdAheW0aIN9vz1quyjwifBQUPHnHPeT
-         UK28qhAYRyR1Wjh41LUnUzEfnwew2EwuYyD9h9V2sAfH1GrFzIM8q3LsmxwgzW0+3aVd
-         221RClt6/r/kWt0d/TF0WYr9fx/7/m6L0oD8V208xHNYcYenp2gwZP3Cari0By4O52/T
-         EH5KM8doHWSMk3CY2Ljy5qBJRClRcMgRoNqYPCJAYqnCdJQMml2EfUj9CK1cuCRZ/jIi
-         epXw==
+        bh=tkjpCXJtTxG2iy23KggkSQUxzqdVmjVeFeq9szw5joQ=;
+        b=TKqzT4Pnka72l6hCEwLm6T8eqAKk5/fYqglNuIkYfK9x2vvru9VXBIQpyuoe+guv7Y
+         PlM+qW4SoynEMVnYJoK/lCyd+I5g90zKybFVroU6BJvwkzNYGqPRVNLLhHD275FhZyi3
+         8aCEVnzEQtbDWFH6gBPQumjH+6ZhVuEgjA43p9YlR9jvAiv9Ed7CkoMurI9kXmz7UUsh
+         PI5NUwvjt9gq1irimorHyfyFYlsvZb5lN7ZcoQ1rjmZLxCPUn1LqltDNWsRxJdMuSET+
+         uWB9lErLkzfEDtPVRrS/fsvCTNX4hmwVd9NSE3zxpG+VjdMvIWPuam1iFD8RHiRqJUmt
+         IbGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=/EcXHX2qsOwyLUgkC2dAd+0XZzGI2xxxDyTZR6xw/SA=;
-        b=TH0u/c1baqkZDcCoALAO+CBI28OMzXDzVG3DYoc4R5w3OKVnT7690mcnsS+zZ+1+HY
-         iOindPC1K9SKhcv3EQMihX5gkVrY8MUXgZ+QJS//x6K1Fa1I56nXozGofCp18SfGOsUr
-         ipSkSpEzFjDlLB641pekAvFgCJnr+w6DN5NWlwW7+cJ2tGA/GInsAltPVXpg9gPSzTme
-         dqCHfz4gv18bx/QZY2k8J9NpC5DNb1f+iUEH8NPlNuPYSbDgXtOd4SQVL9/wjQlLQfsF
-         Inr65rcd5CpBTv5rzG7o6VXS90xkPuyN32Q44CzsxCGOnsvuOKqWJMoYzV6wUpeapqF9
-         6/Uw==
-X-Gm-Message-State: AGRZ1gLSaODDPLlaVJJxUWE883ImIzYjrPcP5ehWp4fBbppj1i/iV1wu
-        CQsNjdUDucVyd4Hl8uiWmT0=
-X-Google-Smtp-Source: AJdET5fKfjOohoaMzl+M9B8Br0uEoZii8R+IsDxexV5O05gNvoNVWLkhQMqcvpeR3+TlSg/3ZIWWww==
-X-Received: by 2002:a1c:af89:: with SMTP id y131mr9608164wme.137.1542894757340;
-        Thu, 22 Nov 2018 05:52:37 -0800 (PST)
+        bh=tkjpCXJtTxG2iy23KggkSQUxzqdVmjVeFeq9szw5joQ=;
+        b=QvdSvF2mF0Vh194OX5T5NGOJihQPQ+CNUcwSR/W1ay6gws1rgIsgF8aJ3pSgKE+0PW
+         qvHTjN/1Ja8nsDHxo+3VifYyCAEtyXmHH0WvwVrPNVS4+6xYKgJEsnYmE7nkbH/+6ICc
+         30SiCQY82Sz4jmX7/+ishy6IfT64nLFxX56DTIiNzsAUD4EHXLE2HmObQisqNjr0DUIM
+         BcT3ih2Vppt7VMUXl8caczsJ4AlmpBt9tJWtUFWJEUjrJH17QjjjgjGGsP1/KagY1zdX
+         jnbgPAGRghihI/mN4QOlWbQ/DyGxfcOeS7vzKtixaZkOAmTYDOW3Ph+JlYACNhMXmn/G
+         +lGg==
+X-Gm-Message-State: AA+aEWYc6ymI43IyC1NM9pVAXyUJy8BBdpcsLqiJDBE78Bqx9B24Q1l8
+        MJ5POz84+l8A5ngqU8z94nY=
+X-Google-Smtp-Source: AFSGD/XDJukJylQNLY8wjyw7bHJer55CadLoh8mINUFz2ybR3cQaYJDKjBa5D8PqRU62rxAFJFgHug==
+X-Received: by 2002:adf:d089:: with SMTP id y9mr9993195wrh.22.1542894758227;
+        Thu, 22 Nov 2018 05:52:38 -0800 (PST)
 Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
-        by smtp.gmail.com with ESMTPSA id c188-v6sm2393285wma.39.2018.11.22.05.52.36
+        by smtp.gmail.com with ESMTPSA id c188-v6sm2393285wma.39.2018.11.22.05.52.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 05:52:36 -0800 (PST)
+        Thu, 22 Nov 2018 05:52:37 -0800 (PST)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 6/8] staging: rtl8188eu: add spaces around '>>' and '&'
-Date:   Thu, 22 Nov 2018 14:52:16 +0100
-Message-Id: <20181122135218.1703-6-straube.linux@gmail.com>
+Subject: [PATCH 7/8] staging: rtl8188eu: cleanup declarations in usb_ops_linux.c
+Date:   Thu, 22 Nov 2018 14:52:17 +0100
+Message-Id: <20181122135218.1703-7-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181122135218.1703-1-straube.linux@gmail.com>
 References: <20181122135218.1703-1-straube.linux@gmail.com>
@@ -76,85 +76,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add spaces around '>>' and '&' to follow kernel coding style.
-Reported by checkpatch.
+Replace tabs with spaces and/or remove spaces in declarations
+to cleanup whitespace.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ .../staging/rtl8188eu/os_dep/usb_ops_linux.c  | 40 +++++++++----------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-index 73d2d312e8ab..4821ce2fa762 100644
+index 4821ce2fa762..9a732adbf1b1 100644
 --- a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
 +++ b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
-@@ -173,7 +173,7 @@ static int recvbuf2recvframe(struct adapter *adapt, struct sk_buff *pskb)
- 		pkt_copy = NULL;
+@@ -31,18 +31,18 @@ static void interrupt_handler_8188eu(struct adapter *adapt, u16 pkt_len, u8 *pbu
  
- 		if (transfer_len > 0 && pkt_cnt == 0)
--			pkt_cnt = (le32_to_cpu(prxstat->rxdw2)>>16) & 0xff;
-+			pkt_cnt = (le32_to_cpu(prxstat->rxdw2) >> 16) & 0xff;
+ static int recvbuf2recvframe(struct adapter *adapt, struct sk_buff *pskb)
+ {
+-	u8	*pbuf;
+-	u8	shift_sz = 0;
+-	u16	pkt_cnt;
+-	u32	pkt_offset, skb_len, alloc_sz;
+-	s32	transfer_len;
+-	struct recv_stat	*prxstat;
+-	struct phy_stat	*pphy_status = NULL;
++	u8 *pbuf;
++	u8 shift_sz = 0;
++	u16 pkt_cnt;
++	u32 pkt_offset, skb_len, alloc_sz;
++	s32 transfer_len;
++	struct recv_stat *prxstat;
++	struct phy_stat *pphy_status = NULL;
+ 	struct sk_buff *pkt_copy = NULL;
+-	struct recv_frame	*precvframe = NULL;
+-	struct rx_pkt_attrib	*pattrib = NULL;
++	struct recv_frame *precvframe = NULL;
++	struct rx_pkt_attrib *pattrib = NULL;
+ 	struct hal_data_8188e *haldata = adapt->HalData;
+-	struct recv_priv	*precvpriv = &adapt->recvpriv;
++	struct recv_priv *precvpriv = &adapt->recvpriv;
+ 	struct __queue *pfree_recv_queue = &precvpriv->free_recv_queue;
  
- 	} while ((transfer_len > 0) && (pkt_cnt > 0));
+ 	transfer_len = (s32)pskb->len;
+@@ -201,7 +201,7 @@ unsigned int ffaddr2pipehdl(struct dvobj_priv *pdvobj, u32 addr)
  
-@@ -299,7 +299,7 @@ u8 usb_read8(struct adapter *adapter, u32 addr)
- 	requesttype = 0x01;/* read_in */
- 	index = 0;/* n/a */
+ static int usbctrl_vendorreq(struct adapter *adapt, u8 request, u16 value, u16 index, void *pdata, u16 len, u8 requesttype)
+ {
+-	struct dvobj_priv  *dvobjpriv = adapter_to_dvobj(adapt);
++	struct dvobj_priv *dvobjpriv = adapter_to_dvobj(adapt);
+ 	struct usb_device *udev = dvobjpriv->pusbdev;
+ 	unsigned int pipe;
+ 	int status = 0;
+@@ -349,8 +349,8 @@ u32 usb_read32(struct adapter *adapter, u32 addr)
  
--	wvalue = (u16)(addr&0x0000ffff);
-+	wvalue = (u16)(addr & 0x0000ffff);
- 	len = 1;
+ static void usb_read_port_complete(struct urb *purb, struct pt_regs *regs)
+ {
+-	struct recv_buf	*precvbuf = (struct recv_buf *)purb->context;
+-	struct adapter	*adapt = (struct adapter *)precvbuf->adapter;
++	struct recv_buf *precvbuf = (struct recv_buf *)purb->context;
++	struct adapter *adapt = (struct adapter *)precvbuf->adapter;
+ 	struct recv_priv *precvpriv = &adapt->recvpriv;
  
- 	usbctrl_vendorreq(adapter, request, wvalue, index, &data, len, requesttype);
-@@ -319,11 +319,11 @@ u16 usb_read16(struct adapter *adapter, u32 addr)
- 	request = 0x05;
- 	requesttype = 0x01;/* read_in */
- 	index = 0;/* n/a */
--	wvalue = (u16)(addr&0x0000ffff);
-+	wvalue = (u16)(addr & 0x0000ffff);
- 	len = 2;
- 	usbctrl_vendorreq(adapter, request, wvalue, index, &data, len, requesttype);
+ 	RT_TRACE(_module_hci_ops_os_c_, _drv_err_, ("%s!!!\n", __func__));
+@@ -426,9 +426,9 @@ static void usb_read_port_complete(struct urb *purb, struct pt_regs *regs)
+ u32 usb_read_port(struct adapter *adapter, u32 addr, struct recv_buf *precvbuf)
+ {
+ 	struct urb *purb = NULL;
+-	struct dvobj_priv	*pdvobj = adapter_to_dvobj(adapter);
+-	struct recv_priv	*precvpriv = &adapter->recvpriv;
+-	struct usb_device	*pusbd = pdvobj->pusbdev;
++	struct dvobj_priv *pdvobj = adapter_to_dvobj(adapter);
++	struct recv_priv *precvpriv = &adapter->recvpriv;
++	struct usb_device *pusbd = pdvobj->pusbdev;
+ 	int err;
+ 	unsigned int pipe;
+ 	u32 ret = _SUCCESS;
+@@ -573,8 +573,8 @@ int usb_write32(struct adapter *adapter, u32 addr, u32 val)
+ static void usb_write_port_complete(struct urb *purb, struct pt_regs *regs)
+ {
+ 	struct xmit_buf *pxmitbuf = (struct xmit_buf *)purb->context;
+-	struct adapter	*padapter = pxmitbuf->padapter;
+-	struct xmit_priv	*pxmitpriv = &padapter->xmitpriv;
++	struct adapter *padapter = pxmitbuf->padapter;
++	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
  
--	return (u16)(le32_to_cpu(data)&0xffff);
-+	return (u16)(le32_to_cpu(data) & 0xffff);
- }
- 
- u32 usb_read32(struct adapter *adapter, u32 addr)
-@@ -339,7 +339,7 @@ u32 usb_read32(struct adapter *adapter, u32 addr)
- 	requesttype = 0x01;/* read_in */
- 	index = 0;/* n/a */
- 
--	wvalue = (u16)(addr&0x0000ffff);
-+	wvalue = (u16)(addr & 0x0000ffff);
- 	len = 4;
- 
- 	usbctrl_vendorreq(adapter, request, wvalue, index, &data, len, requesttype);
-@@ -520,7 +520,7 @@ int usb_write8(struct adapter *adapter, u32 addr, u8 val)
- 	request = 0x05;
- 	requesttype = 0x00;/* write_out */
- 	index = 0;/* n/a */
--	wvalue = (u16)(addr&0x0000ffff);
-+	wvalue = (u16)(addr & 0x0000ffff);
- 	len = 1;
- 	data = val;
- 	return usbctrl_vendorreq(adapter, request, wvalue,
-@@ -540,7 +540,7 @@ int usb_write16(struct adapter *adapter, u32 addr, u16 val)
- 	requesttype = 0x00;/* write_out */
- 	index = 0;/* n/a */
- 
--	wvalue = (u16)(addr&0x0000ffff);
-+	wvalue = (u16)(addr & 0x0000ffff);
- 	len = 2;
- 
- 	data = cpu_to_le32(val & 0x0000ffff);
-@@ -562,7 +562,7 @@ int usb_write32(struct adapter *adapter, u32 addr, u32 val)
- 	requesttype = 0x00;/* write_out */
- 	index = 0;/* n/a */
- 
--	wvalue = (u16)(addr&0x0000ffff);
-+	wvalue = (u16)(addr & 0x0000ffff);
- 	len = 4;
- 	data = cpu_to_le32(val);
+ 	switch (pxmitbuf->flags) {
+ 	case VO_QUEUE_INX:
+@@ -662,8 +662,8 @@ u32 usb_write_port(struct adapter *padapter, u32 addr, u32 cnt, struct xmit_buf
+ 	int status;
+ 	u32 ret = _FAIL;
+ 	struct urb *purb = NULL;
+-	struct dvobj_priv	*pdvobj = adapter_to_dvobj(padapter);
+-	struct xmit_priv	*pxmitpriv = &padapter->xmitpriv;
++	struct dvobj_priv *pdvobj = adapter_to_dvobj(padapter);
++	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
+ 	struct xmit_frame *pxmitframe = (struct xmit_frame *)xmitbuf->priv_data;
+ 	struct usb_device *pusbd = pdvobj->pusbdev;
  
 -- 
 2.19.1
