@@ -2,330 +2,305 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1193DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A901FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC942206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:24:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC942206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 689B4206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:27:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 689B4206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732897AbeKVNBI (ORCPT
+        id S2389030AbeKVNEP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 08:01:08 -0500
-Received: from mx.socionext.com ([202.248.49.38]:26315 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732781AbeKVNBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 08:01:08 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 22 Nov 2018 11:23:56 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 97CDE60062;
-        Thu, 22 Nov 2018 11:23:56 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 22 Nov 2018 11:23:56 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id E650E40361;
-        Thu, 22 Nov 2018 11:23:55 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.119.83])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id C271B120304;
-        Thu, 22 Nov 2018 11:23:55 +0900 (JST)
-Subject: Re: [PATCH 05/14] clocksource/drivers/timer-milbeaut: Add Milbeaut
- M10V timer
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
- <1542589274-13878-6-git-send-email-sugaya.taichi@socionext.com>
- <c6b7ddb0-064a-8f09-bbb4-9754f3d63ecb@linaro.org>
-From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
-Message-ID: <07d26609-e10c-70f1-1360-63ed0e214d7e@socionext.com>
-Date:   Thu, 22 Nov 2018 11:23:54 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <c6b7ddb0-064a-8f09-bbb4-9754f3d63ecb@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Thu, 22 Nov 2018 08:04:15 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53150 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729117AbeKVNEO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 08:04:14 -0500
+Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7AEE721;
+        Thu, 22 Nov 2018 02:27:02 +0000 (UTC)
+Date:   Wed, 21 Nov 2018 18:27:01 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        marcandre.lureau@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH -next 1/2] mm/memfd: make F_SEAL_FUTURE_WRITE seal more
+ robust
+Message-Id: <20181121182701.0d8a775fda6af1f8d2be8f25@linux-foundation.org>
+In-Reply-To: <20181120211335.GC22801@google.com>
+References: <20181120052137.74317-1-joel@joelfernandes.org>
+        <CALCETrXgBENat=5=7EuU-ttQ-YSXT+ifjLGc=hpJ=unRgSsndw@mail.gmail.com>
+        <20181120183926.GA124387@google.com>
+        <20181121070658.011d576d@canb.auug.org.au>
+        <469B80CB-D982-4802-A81D-95AC493D7E87@amacapital.net>
+        <20181120204710.GB22801@google.com>
+        <F8E28229-C99E-4711-982B-5B5DE0F70F16@amacapital.net>
+        <20181120211335.GC22801@google.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel
+On Tue, 20 Nov 2018 13:13:35 -0800 Joel Fernandes <joel@joelfernandes.org> wrote:
 
-Thank you for your comments.
+> > > I am Ok with whatever Andrew wants to do, if it is better to squash it with
+> > > the original, then I can do that and send another patch.
+> > > 
+> > > 
+> > 
+> > From experience, Andrew will food in fixups on request :)
+> 
+> Andrew, could you squash this patch into the one titled ("mm: Add an
+> F_SEAL_FUTURE_WRITE seal to memfd")? 
 
-On 2018/11/21 19:08, Daniel Lezcano wrote:
-> Hi Sugaya,
->
->
-> On 19/11/2018 02:01, Sugaya Taichi wrote:
->> Add Milbeaut M10V timer using 32bit timer in peripheral.
-> Give a better description of the timer as it is new timer introduced.
+Sure.
 
-I got it. Add more description.
+I could of course queue them separately but I rarely do so - I don't
+think that the intermediate development states are useful in the
+infinite-term, and I make them available via additional Link: tags in
+the changelog footers anyway.
 
+I think that the magnitude of these patches is such that John Stultz's
+Reviewed-by is invalidated, so this series is now in the "unreviewed"
+state.
 
->> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
->> ---
->>   drivers/clocksource/Kconfig      |   8 +++
->>   drivers/clocksource/Makefile     |   1 +
->>   drivers/clocksource/timer-m10v.c | 146 +++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 155 insertions(+)
->>   create mode 100644 drivers/clocksource/timer-m10v.c
->>
->> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->> index 55c77e4..a278d72 100644
->> --- a/drivers/clocksource/Kconfig
->> +++ b/drivers/clocksource/Kconfig
->> @@ -638,4 +638,12 @@ config GX6605S_TIMER
->>   	help
->>   	  This option enables support for gx6605s SOC's timer.
->>   
->> +config M10V_TIMER
->> +	bool "Milbeaut M10V timer driver" if COMPILE_TEST
->> +	depends on OF
->> +	depends on ARM
->> +	select TIMER_OF
->> +	help
->> +	  Enables the support for Milbeaut M10V timer driver.
->> +
->>   endmenu
->> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
->> index dd91381..8e908b4 100644
->> --- a/drivers/clocksource/Makefile
->> +++ b/drivers/clocksource/Makefile
->> @@ -55,6 +55,7 @@ obj-$(CONFIG_CLKSRC_TI_32K)	+= timer-ti-32k.o
->>   obj-$(CONFIG_CLKSRC_NPS)	+= timer-nps.o
->>   obj-$(CONFIG_OXNAS_RPS_TIMER)	+= timer-oxnas-rps.o
->>   obj-$(CONFIG_OWL_TIMER)		+= timer-owl.o
->> +obj-$(CONFIG_M10V_TIMER)	+= timer-m10v.o
->>   obj-$(CONFIG_SPRD_TIMER)	+= timer-sprd.o
->>   obj-$(CONFIG_NPCM7XX_TIMER)	+= timer-npcm7xx.o
->>   
->> diff --git a/drivers/clocksource/timer-m10v.c b/drivers/clocksource/timer-m10v.c
->> new file mode 100644
->> index 0000000..ff97c23
->> --- /dev/null
->> +++ b/drivers/clocksource/timer-m10v.c
->> @@ -0,0 +1,146 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2018 Socionext Inc.
->> + */
->> +
->> +#include <linux/clk.h>
-> ------->
->
->> +#include <linux/clockchips.h>
-> It is included from timer-of.h
->
-> <-------
-
-OK. Remove it.
+So can we have a re-review please?  For convenience, here's the
+folded-together [1/1] patch, as it will go to Linus.
 
 
->
->> +#include <linux/interrupt.h>
->> +#include <linux/irq.h>
->> +#include <linux/irqreturn.h>
-> ------->
->
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_irq.h>
->> +#include <linux/slab.h>
-> Those are not needed IMO.
->
-> <---------
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Subject: mm: Add an F_SEAL_FUTURE_WRITE seal to memfd
 
-OK, remove these.
+Android uses ashmem for sharing memory regions.  We are looking forward to
+migrating all usecases of ashmem to memfd so that we can possibly remove
+the ashmem driver in the future from staging while also benefiting from
+using memfd and contributing to it.  Note staging drivers are also not ABI
+and generally can be removed at anytime.
 
+One of the main usecases Android has is the ability to create a region and
+mmap it as writeable, then add protection against making any "future"
+writes while keeping the existing already mmap'ed writeable-region active.
+This allows us to implement a usecase where receivers of the shared
+memory buffer can get a read-only view, while the sender continues to
+write to the buffer.  See CursorWindow documentation in Android for more
+details:
+https://developer.android.com/reference/android/database/CursorWindow
 
->
->
->> +#include "timer-of.h"
->> +
->> +#define FSL_TMR_TMCSR_OFS	0x0
->> +#define FSL_TMR_TMR_OFS		0x4
->> +#define FSL_TMR_TMRLR1_OFS	0x8
->> +#define FSL_TMR_TMRLR2_OFS	0xc
->> +#define FSL_RMT_REGSZPCH	0x10
->> +
->> +#define FSL_TMR_TMCSR_OUTL	BIT(5)
->> +#define FSL_TMR_TMCSR_RELD	BIT(4)
->> +#define FSL_TMR_TMCSR_INTE	BIT(3)
->> +#define FSL_TMR_TMCSR_UF	BIT(2)
->> +#define FSL_TMR_TMCSR_CNTE	BIT(1)
->> +#define FSL_TMR_TMCSR_TRG	BIT(0)
->> +
->> +#define FSL_TMR_TMCSR_CSL_DIV2	0
->> +#define FSL_TMR_TMCSR_CSL	BIT(10)
->> +
->> +#define M10V_TIMER_RATING	500
->> +
->> +static irqreturn_t m10v_timer_interrupt(int irq, void *dev_id)
->> +{
->> +	struct clock_event_device *clk = dev_id;
->> +	struct timer_of *to = to_timer_of(clk);
->> +	u32 val;
->> +
->> +	val = readl_relaxed(timer_of_base(to) + FSL_TMR_TMCSR_OFS);
->> +	val &= ~FSL_TMR_TMCSR_UF;
->> +	writel_relaxed(val, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
->> +
->> +	clk->event_handler(clk);
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static int m10v_set_state_periodic(struct clock_event_device *clk)
->> +{
->> +	struct timer_of *to = to_timer_of(clk);
->> +	u32 val = (FSL_TMR_TMCSR_CSL_DIV2 * FSL_TMR_TMCSR_CSL);
-> 	FSL_TMR_TMCSR_CSL_DIV2 is zero, so val is always zero.
-Ah, yes.
-The FSL_TMR_TMCSR is the 10th bit field of the register, so it would be 
-better
-to bit-shift.
-I will use it as simply 0.
+This usecase cannot be implemented with the existing F_SEAL_WRITE seal. 
+To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE seal
+which prevents any future mmap and write syscalls from succeeding while
+keeping the existing mmap active.  The following program shows the seal
+working in action:
 
-> 	
->> +	writel_relaxed(val, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
->> +
->> +	writel_relaxed(to->of_clk.period, timer_of_base(to) +
->> +				FSL_TMR_TMRLR1_OFS);
->> +	val |= FSL_TMR_TMCSR_RELD | FSL_TMR_TMCSR_CNTE |
->> +		FSL_TMR_TMCSR_TRG | FSL_TMR_TMCSR_INTE;
->> +	writel_relaxed(val, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
->> +	return 0;
->> +}
->> +
->> +static int m10v_set_state_oneshot(struct clock_event_device *clk)
->> +{
->> +	struct timer_of *to = to_timer_of(clk);
->> +	u32 val = (FSL_TMR_TMCSR_CSL_DIV2 * FSL_TMR_TMCSR_CSL);
->> +
->> +	writel_relaxed(val, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
->> +	return 0;
->> +}
->> +
->> +static int m10v_clkevt_next_event(unsigned long event,
->> +				   struct clock_event_device *clk)
->> +{
->> +	struct timer_of *to = to_timer_of(clk);
->> +
->> +	writel_relaxed(event, timer_of_base(to) + FSL_TMR_TMRLR1_OFS);
->> +	writel_relaxed((FSL_TMR_TMCSR_CSL_DIV2 * FSL_TMR_TMCSR_CSL) |
-> Same comment here.
+ #include <stdio.h>
+ #include <errno.h>
+ #include <sys/mman.h>
+ #include <linux/memfd.h>
+ #include <linux/fcntl.h>
+ #include <asm/unistd.h>
+ #include <unistd.h>
+ #define F_SEAL_FUTURE_WRITE 0x0010
+ #define REGION_SIZE (5 * 1024 * 1024)
 
-I got it.
+int memfd_create_region(const char *name, size_t size)
+{
+    int ret;
+    int fd = syscall(__NR_memfd_create, name, MFD_ALLOW_SEALING);
+    if (fd < 0) return fd;
+    ret = ftruncate(fd, size);
+    if (ret < 0) { close(fd); return ret; }
+    return fd;
+}
 
+int main() {
+    int ret, fd;
+    void *addr, *addr2, *addr3, *addr1;
+    ret = memfd_create_region("test_region", REGION_SIZE);
+    printf("ret=%d\n", ret);
+    fd = ret;
 
->> +			FSL_TMR_TMCSR_CNTE | FSL_TMR_TMCSR_INTE |
->> +			FSL_TMR_TMCSR_TRG, timer_of_base(to) +
->> +			FSL_TMR_TMCSR_OFS);
->> +	return 0;
->> +}
->> +
->> +static int m10v_config_clock_source(struct timer_of *to)
->> +{
->> +	writel_relaxed(0, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
->> +	writel_relaxed(~0, timer_of_base(to) + FSL_TMR_TMR_OFS);
->> +	writel_relaxed(~0, timer_of_base(to) + FSL_TMR_TMRLR1_OFS);
->> +	writel_relaxed(~0, timer_of_base(to) + FSL_TMR_TMRLR2_OFS);
->> +	writel_relaxed(BIT(4) | BIT(1) | BIT(0), timer_of_base(to) +
->> +		FSL_TMR_TMCSR_OFS);
->> +	return 0;
->> +}
->> +
->> +static int m10v_config_clock_event(struct timer_of *to)
->> +{
->> +	writel_relaxed(0, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
->> +	return 0;
->> +}
->> +
->> +static struct timer_of to = {
->> +	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
->> +
->> +	.clkevt = {
->> +		.name = "m10v-clkevt",
->> +		.rating = M10V_TIMER_RATING,
->> +		.cpumask = cpu_possible_mask,
->> +	},
->> +
->> +	.of_irq = {
->> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
->> +	},
->> +};
->> +
->> +static int __init m10v_timer_init(struct device_node *node)
->> +{
->> +	int ret;
->> +
->> +	to.clkevt.features = CLOCK_EVT_FEAT_DYNIRQ | CLOCK_EVT_FEAT_ONESHOT;
->> +	to.clkevt.set_state_oneshot = m10v_set_state_oneshot;
->> +	to.clkevt.set_state_periodic = m10v_set_state_periodic;
->> +	to.clkevt.set_next_event = m10v_clkevt_next_event;
->> +	to.of_irq.handler = m10v_timer_interrupt;
-> Move the initialization in the timer_of structure above.
+    // Create map
+    addr = mmap(0, REGION_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+    if (addr == MAP_FAILED)
+	    printf("map 0 failed\n");
+    else
+	    printf("map 0 passed\n");
 
-Okay.
+    if ((ret = write(fd, "test", 4)) != 4)
+	    printf("write failed even though no future-write seal "
+		   "(ret=%d errno =%d)\n", ret, errno);
+    else
+	    printf("write passed\n");
+
+    addr1 = mmap(0, REGION_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+    if (addr1 == MAP_FAILED)
+	    perror("map 1 prot-write failed even though no seal\n");
+    else
+	    printf("map 1 prot-write passed as expected\n");
+
+    ret = fcntl(fd, F_ADD_SEALS, F_SEAL_FUTURE_WRITE |
+				 F_SEAL_GROW |
+				 F_SEAL_SHRINK);
+    if (ret == -1)
+	    printf("fcntl failed, errno: %d\n", errno);
+    else
+	    printf("future-write seal now active\n");
+
+    if ((ret = write(fd, "test", 4)) != 4)
+	    printf("write failed as expected due to future-write seal\n");
+    else
+	    printf("write passed (unexpected)\n");
+
+    addr2 = mmap(0, REGION_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+    if (addr2 == MAP_FAILED)
+	    perror("map 2 prot-write failed as expected due to seal\n");
+    else
+	    printf("map 2 passed\n");
+
+    addr3 = mmap(0, REGION_SIZE, PROT_READ, MAP_SHARED, fd, 0);
+    if (addr3 == MAP_FAILED)
+	    perror("map 3 failed\n");
+    else
+	    printf("map 3 prot-read passed as expected\n");
+}
+
+The output of running this program is as follows:
+ret=3
+map 0 passed
+write passed
+map 1 prot-write passed as expected
+future-write seal now active
+write failed as expected due to future-write seal
+map 2 prot-write failed as expected due to seal
+: Permission denied
+map 3 prot-read passed as expected
+
+[joel@joelfernandes.org: make F_SEAL_FUTURE_WRITE seal more robust]
+  Link: http://lkml.kernel.org/r/20181120052137.74317-1-joel@joelfernandes.org
+Link: http://lkml.kernel.org/r/20181108041537.39694-1-joel@joelfernandes.org
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: John Reck <jreck@google.com>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Daniel Colascione <dancol@google.com>
+Cc: J. Bruce Fields <bfields@fieldses.org>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: Khalid Aziz <khalid.aziz@oracle.com>
+Cc: Lei Yang <Lei.Yang@windriver.com>
+Cc: Marc-Andr Lureau <marcandre.lureau@redhat.com>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Jann Horn <jannh@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
 
 
->
->> +	ret = timer_of_init(node, &to);
->> +	if (ret)
->> +		goto err;
-> You should return directly, rollback is done in the timer_of_init().
-
-OK.
-
-
->
->> +
->> +	m10v_config_clock_source(&to);
->> +	clocksource_mmio_init(timer_of_base(&to) + FSL_TMR_TMR_OFS,
->> +		node->name, timer_of_rate(&to), M10V_TIMER_RATING, 32,
->> +		clocksource_mmio_readl_down);
-> May be you can add the sched_clock also ?
-
-OK. Add it and confirm.
-
-
-Thanks
-Sugaya Taichi
-
-
->
->> +	m10v_config_clock_event(&to);
->> +	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to),
->> +				15, 0xffffffff);
->> +
->> +	return 0;
->> +err:
->> +	timer_of_cleanup(&to);
->> +	return ret;
->> +}
->> +TIMER_OF_DECLARE(m10v_peritimer, "socionext,milbeaut-m10v-timer",
->> +		m10v_timer_init);
->>
->
+--- a/include/uapi/linux/fcntl.h~mm-add-an-f_seal_future_write-seal-to-memfd
++++ a/include/uapi/linux/fcntl.h
+@@ -41,6 +41,7 @@
+ #define F_SEAL_SHRINK	0x0002	/* prevent file from shrinking */
+ #define F_SEAL_GROW	0x0004	/* prevent file from growing */
+ #define F_SEAL_WRITE	0x0008	/* prevent writes */
++#define F_SEAL_FUTURE_WRITE	0x0010  /* prevent future writes while mapped */
+ /* (1U << 31) is reserved for signed error codes */
+ 
+ /*
+--- a/mm/memfd.c~mm-add-an-f_seal_future_write-seal-to-memfd
++++ a/mm/memfd.c
+@@ -131,7 +131,8 @@ static unsigned int *memfd_file_seals_pt
+ #define F_ALL_SEALS (F_SEAL_SEAL | \
+ 		     F_SEAL_SHRINK | \
+ 		     F_SEAL_GROW | \
+-		     F_SEAL_WRITE)
++		     F_SEAL_WRITE | \
++		     F_SEAL_FUTURE_WRITE)
+ 
+ static int memfd_add_seals(struct file *file, unsigned int seals)
+ {
+--- a/fs/hugetlbfs/inode.c~mm-add-an-f_seal_future_write-seal-to-memfd
++++ a/fs/hugetlbfs/inode.c
+@@ -530,7 +530,7 @@ static long hugetlbfs_punch_hole(struct
+ 		inode_lock(inode);
+ 
+ 		/* protected by i_mutex */
+-		if (info->seals & F_SEAL_WRITE) {
++		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE)) {
+ 			inode_unlock(inode);
+ 			return -EPERM;
+ 		}
+--- a/mm/shmem.c~mm-add-an-f_seal_future_write-seal-to-memfd
++++ a/mm/shmem.c
+@@ -2119,6 +2119,23 @@ out_nomem:
+ 
+ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
+ {
++	struct shmem_inode_info *info = SHMEM_I(file_inode(file));
++
++	/*
++	 * New PROT_READ and MAP_SHARED mmaps are not allowed when "future
++	 * write" seal active.
++	 */
++	if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_WRITE) &&
++	    (info->seals & F_SEAL_FUTURE_WRITE))
++		return -EPERM;
++
++	/*
++	 * Since the F_SEAL_FUTURE_WRITE seals allow for a MAP_SHARED read-only
++	 * mapping, take care to not allow mprotect to revert protections.
++	 */
++	if (info->seals & F_SEAL_FUTURE_WRITE)
++		vma->vm_flags &= ~(VM_MAYWRITE);
++
+ 	file_accessed(file);
+ 	vma->vm_ops = &shmem_vm_ops;
+ 	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGE_PAGECACHE) &&
+@@ -2344,8 +2361,9 @@ shmem_write_begin(struct file *file, str
+ 	pgoff_t index = pos >> PAGE_SHIFT;
+ 
+ 	/* i_mutex is held by caller */
+-	if (unlikely(info->seals & (F_SEAL_WRITE | F_SEAL_GROW))) {
+-		if (info->seals & F_SEAL_WRITE)
++	if (unlikely(info->seals & (F_SEAL_GROW |
++				   F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))) {
++		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))
+ 			return -EPERM;
+ 		if ((info->seals & F_SEAL_GROW) && pos + len > inode->i_size)
+ 			return -EPERM;
+@@ -2608,7 +2626,7 @@ static long shmem_fallocate(struct file
+ 		DECLARE_WAIT_QUEUE_HEAD_ONSTACK(shmem_falloc_waitq);
+ 
+ 		/* protected by i_mutex */
+-		if (info->seals & F_SEAL_WRITE) {
++		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE)) {
+ 			error = -EPERM;
+ 			goto out;
+ 		}
+_
 
