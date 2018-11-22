@@ -2,127 +2,125 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DD0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 128F9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:37:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4106320672
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:36:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKJ1qkK8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4106320672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8FC7D20672
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:37:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FC7D20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390866AbeKVWPz (ORCPT
+        id S2390927AbeKVWQ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 17:15:55 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38599 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388099AbeKVWPz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 17:15:55 -0500
-Received: by mail-qt1-f195.google.com with SMTP id p17so7091040qtl.5;
-        Thu, 22 Nov 2018 03:36:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bQ10AyWF9HXxhEkpoNVZ9YkeZJW+jbPPHiLHpcqfSNU=;
-        b=VKJ1qkK8DbRk5ShD/u6Y15AH81/mHrfthpq6d8lx/iQyVL9PVi8LDKj1wZqRgarWh6
-         SUl25tD8l5GL9rOWVreFav3wYix4YG7oAkpI6uM3a7CRvCDNx/iMibcayJ0yENuTse9H
-         9SR/6z6gKxVAmqn2LGVjPy+lWHWIJHpVamwZC+4vTo9gGLjOUkCGc9X9N8mii3OCdcRS
-         drsdTcROyzjwT0hEPMb3psHXCA88ZTnFYEOk1+DCc1xIpLVaGGQipuNTEinBSBnYHnKX
-         LaRJulVZy7agTSD52Gj1Lr5bg7kWO0/nunlmjxMxUcjU5iJZ/S5IMgB24JafzxGVqYDN
-         89wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bQ10AyWF9HXxhEkpoNVZ9YkeZJW+jbPPHiLHpcqfSNU=;
-        b=l8YiDdjSTyxbRriNBmxIRbo9kdKfN3/ZHk0XUTnXZjTTKbYSvAVlhps3jcF7n2IDXq
-         hoxrWbycUTePLQWRv2Di8ojSOWH8ZyajCaw+VJjUZXvF6UYd81VZq26WfUrXVPjtVS7h
-         j7vcztXfgVl/XYUHo1S3n5usocLgb8tKgznoM7w0h8iRNSytpaskxR6w7snZXACyOwr8
-         QLUinEe6PDOfzuwt5/RcgzxRPxUQfb+DabV2KF068mM7pyPdPhYXKomIFrqSWdehECfr
-         A23UIriaZXmmNpQmmJYKccuFEHIOHFySNsSXUDqVZqvniiaG+wBb4zfz2pw1LtgWStXo
-         oLQw==
-X-Gm-Message-State: AGRZ1gIjvNPxE6ClscEm1tyxzY4G7DuPkfyRt5NDuVPUEP1VAfJdt66H
-        YGYLs7Qv/CZLxKzCeLjqsMjwLTVpCVv/eAUh7nmEzOrf
-X-Google-Smtp-Source: AJdET5chPQjLtRp3Ia1WkNC/Ua1HVbelagNeRUiZjbPbuqBaOrLCfmvF2HSs7mYYouZ9zD3fXtYWKzTfFVSoWOzwXEg=
-X-Received: by 2002:aed:2d26:: with SMTP id h35mr9759147qtd.373.1542886614484;
- Thu, 22 Nov 2018 03:36:54 -0800 (PST)
+        Thu, 22 Nov 2018 17:16:27 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15575 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390867AbeKVWQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 17:16:27 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 85DDC6127E7B6;
+        Thu, 22 Nov 2018 19:37:23 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 22 Nov
+ 2018 19:37:15 +0800
+Subject: Re: [PATCH 07/10] staging: erofs: separate into init_once / always
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>, <weidu.du@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>
+References: <20181120143425.43637-1-gaoxiang25@huawei.com>
+ <20181120143425.43637-8-gaoxiang25@huawei.com>
+ <20181122102339.GG3189@kroah.com>
+ <66b90226-5d0e-7344-5220-908aa243b014@huawei.com>
+ <20181122110500.GC5287@kroah.com>
+ <ef49bf11-b937-46b4-1b9a-c068182aa7d9@huawei.com>
+ <20181122112645.GA7527@kroah.com>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <4a501e48-e2a9-45ea-554b-8dc1163721fb@huawei.com>
+Date:   Thu, 22 Nov 2018 19:37:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-References: <20181108171701.4444-1-ayman.bagabas@gmail.com>
- <20181108171701.4444-4-ayman.bagabas@gmail.com> <20181119235713.GB7367@amd>
- <s5hr2fgfcrm.wl-tiwai@suse.de> <20181120091039.GA16916@amd>
- <s5hbm6kf6gi.wl-tiwai@suse.de> <20181120093610.GF16916@amd>
- <s5h4lccf58f.wl-tiwai@suse.de> <20181120115159.GG16916@amd> <s5hzhu4c569.wl-tiwai@suse.de>
-In-Reply-To: <s5hzhu4c569.wl-tiwai@suse.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 22 Nov 2018 13:36:43 +0200
-Message-ID: <CAHp75VddanEB-7qQutSWkbSZW4srRzGXkigCMxEP7zJ=KC6iKw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] ALSA: hda: add support for Huawei WMI micmute LED
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Ayman Bagabas <ayman.bagabas@gmail.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Hui Wang <hui.wang@canonical.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Kailang Yang <kailang@realtek.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181122112645.GA7527@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 2:19 PM Takashi Iwai <tiwai@suse.de> wrote:
->
-> On Tue, 20 Nov 2018 12:51:59 +0100,
-> Pavel Machek wrote:
-> >
-> > Hi!
-> >
-> > > > You have general-purpose LED, yet you are treating it as "something
-> > > > special". That means ugly code (quoted above) and lack of flexibility.
-> > > >
-> > > > For example, if my notebook lacks HDD LED, I can use scrollock LED for
-> > > > that instead. Or, in reverse way, maybe "mic mute" LED is not useful
-> > > > for me, and I'd like to use it for notifications instead.
-> > >
-> > > I'm not against adding the LEDs device implementation for any exotic
-> > > usage.
-> > >
-> > > But for the audio mute LED features, you'll need really lots of other
-> > > works if it were implemented via leds device.  That's the hardest
-> > > part, and a few lines of hooks solves it easily in the kernel side.
-> > > That's all about it.
-> > >
-> > > If you are ready for submitting the real solutions in user-space side
-> > > (patching PulseAudio and whatever all existing sound daemons, and
-> > > creating yet another daemon for non-PA systems (another footprint,
-> > > lovely), and so on), we can happily delete such in-kernel hooks :)
-> >
-> > I'm not saying we should move it to the userspace.
-> >
-> > I'm saying this should be "normal" led. drivers/leds/led-huawei-acpi.c,
-> > or something. Perhaps this acpi stuff is so similar you don't really
-> > need .c code.
-> >
-> > And then there should be a "mic muted" trigger. Similar to
-> > drivers/leds/trigger/ledtrig-disk.c.
->
-> And who will trigger this, e.g. when the mixer is muted?
+Hi Greg,
 
-Is this settled? I'm encouraged to promote this series to our for-next branch.
+On 2018/11/22 19:26, Greg Kroah-Hartman wrote:
+> On Thu, Nov 22, 2018 at 07:11:08PM +0800, Gao Xiang wrote:
+>> Hi Greg,
+>>
+>> On 2018/11/22 19:05, Greg Kroah-Hartman wrote:
+>>> On Thu, Nov 22, 2018 at 06:34:10PM +0800, Gao Xiang wrote:
+>>>> Hi Greg,
+>>>>
+>>>> On 2018/11/22 18:23, Greg Kroah-Hartman wrote:
+>>>>>> +
+>>>>>> +	DBG_BUGON(work->nr_pages);
+>>>>>> +	DBG_BUGON(work->vcnt);
+>>>>> How can these ever be triggered?  I understand the need for debugging
+>>>>> code when you are writing code, but at this point it shouldn't be needed
+>>>>> anymore, right?
+>>>>
+>>>> I need to avoid some fields is not 0 when the new workgroup is created (because
+>>>> work->nr_pages and work->vcnt == 0 usually after the previous workgroup is freed).
+>>>> But that is not obvious, it is promised by the current logic.
+>>>
+>>> Then delete these lines if they can never happen :)
+>>
+>> I don't know how to observe such a race in our beta test and community users.
+> 
+> 	/*
+> 	 * Let developers know something went really wrong with their
+> 	 * initialization code
+> 	 */
+> 	if (!work->nr_pages) {
+> 		pr_err("nr_pages == NULL!");
+> 		WARN_ON(1);
+> 	}
+> 	if (!work->vcnt) {
+> 		pr_err("vcnt == NULL!");
+> 		WARN_ON(1);
+> 	}
+> 
+> or something like that.
+> 
+> Don't make people rebuild your code with different options for
+> debugging.  That will never work in the 'real world' when people start
+> using the code.  You need to have things enabled for people all the
+> time, which is why we have dynamic debugging in the kernel now, and not
+> a zillion different "DRIVER_DEBUG" build options anymore.
+> 
+>> Because if the kernel is crashed, we could collect the whole kernel dump to observe the memory
+>> and all registers, if we only have some warning, it will be not easy to get the state as early as possible.
+> 
+> When the kernel crashes, geting a dump is hard on almost all hardware.
+> It is only rare systems that you can get a kernel dump.
 
--- 
-With Best Regards,
-Andy Shevchenko
+This piece of code is already used in our hisilicon beta test, all memorydump,
+registers, stack can be collected.
+
+Apart from that, I observed many f2fs bugs are observed in this way and
+many erofs bugs are collected in that way...sigh...
+
+Thanks,
+Gao Xiang
+
+
+> 
+> thanks,
+> 
+> greg k-h
+> 
