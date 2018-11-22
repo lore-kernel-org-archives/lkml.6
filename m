@@ -2,150 +2,162 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E37C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 803C4C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BDED206BA
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:07:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38B17206BA
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:08:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="X976QnPF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BDED206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nUFbTesD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38B17206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391235AbeKVLnv (ORCPT
+        id S2391276AbeKVLpP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 06:43:51 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39780 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388633AbeKVLnv (ORCPT
+        Thu, 22 Nov 2018 06:45:15 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:35800 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388700AbeKVLpP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 06:43:51 -0500
-Received: by mail-pl1-f196.google.com with SMTP id 101so1596306pld.6
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 17:06:58 -0800 (PST)
+        Thu, 22 Nov 2018 06:45:15 -0500
+Received: by mail-vs1-f67.google.com with SMTP id e7so4418258vsc.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 17:08:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:date:to:cc:subject:message-id:user-agent:mime-version;
-        bh=mmYitqJ/Zox8bJAkxiDoh3xH7YY9MHO4cNepwjP4x0A=;
-        b=X976QnPFfIpL3DIJAb1vzf1c+/eGCHKL1ONtI2Dgrx2PVp6HM1SZcwBc36D3vl0CBo
-         F5OpdQX653N1Wzhr/4JHMYdwEOvL8/uunqLGuA21TeV4P34+ySZvpKTu5aAKLEtbzb6+
-         pm2pFhk+n9vUDUr1fX9plh0Ado/+VIHgACeMG/EpfXH6e3K1JZ3ZrignwzQcr3WFUhpv
-         +Yi9jJgLARznTcps0O8PlhFrnuHSGMeIfzfrnPTOd1oT8Tr3eGiUG8z0P7qFTNK53+kP
-         WASIU38xRVMDECc0Kwaxi9CkqiNOzsvQFev2AYwA7zdg/eYWI/2MVi5uLsHDalopolSr
-         E8Ng==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=N6qHFZS1KIfFer1ewUcyMvg7ks+nyu8tahEJCT4JhaE=;
+        b=nUFbTesDhF7wMjoe1BfoiNbdkl7v1Y0m7uW6Akf+4EvOtqUMQ1/oXLHzxxWBb3NFQE
+         XfVs4+KXPTFctOm4MFJmGD1IS1QaWNa9DXsQRFDqyJSfQSaDS9cBHctNN/GarzbvMFM1
+         poWZhHgzq0DcV0egplpK+RMUUXaDvRIAmbgIMnKI8xo6szmrqHhpPd67D7U0vniQRvfu
+         s+xqPV4hBiiBuM/0NvadQjw9bp0JItitr0I6wq6sIaKK/AQTBTkRhCaeheEOekpSv3ed
+         NcDb2VqQ8+MiLFCh6adWGOYQUN2KTZpW0nWgJFdQ/qdAFvoVNx2HiMAaujklT4UBE5eO
+         HP3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:user-agent
-         :mime-version;
-        bh=mmYitqJ/Zox8bJAkxiDoh3xH7YY9MHO4cNepwjP4x0A=;
-        b=sijEtoNYO3l82IkrZcxazUucARidoBJtdcExNlcDxlXpa83rZjbP+9UA9smtZJjGtv
-         +ongaSOHTUGxpsPjUFg7fXojb674Wq8BlD3WdeE42uNamSVHuNhJpVK2W2g1SJPl7wXc
-         TTkDOAoESx1p8ZjqteVUbxGXBrWbC9qS/+C0FIg0cIRTQfsSE/7jJC4XvHx34bodQOjO
-         f9xqd+a37SaIcBf7u6nKrnkaVD8+RT+blU8v2UCe5Z3Rj6rfhT/40kygxFXlobqeElzH
-         E35c9xYDVPfTZO0pff9PND6YG1Hpbx+3CuWOtpHEw5QJ2yFVoy2LhO2Al9WZUy2zHx9M
-         bJjg==
-X-Gm-Message-State: AA+aEWZ0PL4WcLWGXPAKUb5ZkyU1dTomD7pII9vL57aVomfiq/ozKRkP
-        r9tr6JRQMxMyMEsaIxyqjpEAMw==
-X-Google-Smtp-Source: AFSGD/Xqt6mZlf4jp353uPu8viMDnnN9heXTh6lHKIrscPrGtlQDaXICdn6Lj3mz9tYli5ps5sETNw==
-X-Received: by 2002:a17:902:4c08:: with SMTP id a8mr9219265ple.74.1542848818261;
-        Wed, 21 Nov 2018 17:06:58 -0800 (PST)
-Received: from localhost (97-120-243-143.ptld.qwest.net. [97.120.243.143])
-        by smtp.gmail.com with ESMTPSA id m9sm43230248pgd.32.2018.11.21.17.06.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 17:06:57 -0800 (PST)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-Google-Original-From: Paul Walmsley <paulw@sifive.com>
-Date:   Wed, 21 Nov 2018 17:06:56 -0800 (PST)
-To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-cc:     Palmer Dabbelt <palmer@sifive.com>, Megan Wachs <megan@sifive.com>,
-        Wesley Terpstra <wesley@sifive.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, paul@pwsan.com
-Subject: [PATCH] dt-bindings: sifive: describe sifive-blocks versioning
-Message-ID: <alpine.DEB.2.21.9999.1811211704520.16271@viisi.sifive.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N6qHFZS1KIfFer1ewUcyMvg7ks+nyu8tahEJCT4JhaE=;
+        b=peIWkGPDrZsBdo4KRgRBgsYElwPDyLzxO2N/JscXphlI6hwlgQXtJLvwzP+hZRxoDq
+         tR7hDJcypn7cwGE2lXnsK33HtKyi29//QLHl4ltg5Lx/QoUHBu0y1X+RWTMHm0OU9mMq
+         FYldLcx7Vu1yYXYBfX4V3ZC5gJexuTR8GBLQHWMCd6ZVWSKnNBkTgNApkVvrDjCumxPZ
+         TNnt8mMe3Tkum1dkioigYU+QyeblI/0zDv0O81/YLO8jjfQivK5aE/uJz50idyu4p7GT
+         5C/DU9JoCUkBBo+hnevdh+Jy0/K2UL+2Am+lVL5x59pJCEUIoj3Pw0ezTkxR4/S/oiNC
+         41eQ==
+X-Gm-Message-State: AGRZ1gLlhDN3SbNbhLRlz2G+CJ4855mLb6x/fSDalbgalbyDlACNZXjU
+        yIrKRDRL9xy7ffVo4BzxaCFlm7D3W+lWPugFMCTtSA==
+X-Google-Smtp-Source: AJdET5dhdH2dnDSFimYSYNuY8TgdC08Ld346Rj+qcjrfgviMlW18AFXKUmGXsepjvaiP0/qEHVOnP03uP3gntYSfWbc=
+X-Received: by 2002:a67:6346:: with SMTP id x67mr3708473vsb.114.1542848900313;
+ Wed, 21 Nov 2018 17:08:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20181121201452.77173-1-dancol@google.com> <20181121205428.165205-1-dancol@google.com>
+ <20181121141220.0e533c1dcb4792480efbf3ff@linux-foundation.org>
+ <CAKOZuetW6WMNFdL5_2=UbrEf8mjxYTdz1+4BiRLSgdoKh8FsqQ@mail.gmail.com>
+ <20181121145043.fa029f4f91afddc2a10bb81e@linux-foundation.org>
+ <CAKOZuesF5zi9mpEE6No7oq0hDnM8KFhQFU=NM7qUF635s0r3-A@mail.gmail.com>
+ <20181121162247.467fcab6c0aca0819a822286@linux-foundation.org>
+ <CAKOZuet7ipw8zoXCDQUB5PKs3kdSye-zesBbEv7jVDSByhXgkw@mail.gmail.com> <20181121165741.ef089df784482632c4a66370@linux-foundation.org>
+In-Reply-To: <20181121165741.ef089df784482632c4a66370@linux-foundation.org>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Wed, 21 Nov 2018 17:08:08 -0800
+Message-ID: <CAKOZuessQgmPuiReEO0caNqkss=r44o-XXnem12TOXSn=y6xkw@mail.gmail.com>
+Subject: Re: [PATCH v2] Add /proc/pid_gen
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Primiano Tucci <primiano@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin <guro@fb.com>,
+        Prashant Dhamdhere <pdhamdhe@redhat.com>,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, rostedt@goodmis.org,
+        tglx@linutronix.de, mingo@kernel.org, linux@dominikbrodowski.net,
+        jpoimboe@redhat.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        ktsanaktsidis@zendesk.com, David Howells <dhowells@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Nov 21, 2018 at 4:57 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Wed, 21 Nov 2018 16:28:56 -0800 Daniel Colascione <dancol@google.com> wrote:
+>
+> > > > The problem here is the possibility of confusion, even if it's rare.
+> > > > Does the naive approach of just walking /proc and ignoring the
+> > > > possibility of PID reuse races work most of the time? Sure. But "most
+> > > > of the time" isn't good enough. It's not that there are tons of sob
+> > > > stories: it's that without completely robust reporting, we can't rule
+> > > > out of the possibility that weirdness we observe in a given trace is
+> > > > actually just an artifact from a kinda-sort-working best-effort trace
+> > > > collection system instead of a real anomaly in behavior. Tracing,
+> > > > essentially, gives us deltas for system state, and without an accurate
+> > > > baseline, collected via some kind of scan on trace startup, it's
+> > > > impossible to use these deltas to robustly reconstruct total system
+> > > > state at a given time. And this matters, because errors in
+> > > > reconstruction (e.g., assigning a thread to the wrong process because
+> > > > the IDs happen to be reused) can affect processing of the whole trace.
+> > > > If it's 3am and I'm analyzing the lone trace from a dogfooder
+> > > > demonstrating a particularly nasty problem, I don't want to find out
+> > > > that the trace I'm analyzing ended up being useless because the
+> > > > kernel's trace system is merely best effort. It's very cheap to be
+> > > > 100% reliable here, so let's be reliable and rule out sources of
+> > > > error.
+> > >
+> > > So we're solving a problem which isn't known to occur, but solving it
+> > > provides some peace-of-mind?  Sounds thin!
+> >
+> > So you want to reject a cheap fix for a problem that you know occurs
+> > at some non-zero frequency? There's a big difference between "may or
+> > may not occur" and "will occur eventually, given enough time, and so
+> > must be taken into account in analysis". Would you fix a refcount race
+> > that you knew was possible, but didn't observe? What, exactly, is your
+> > threshold for accepting a fix that makes tracing more reliable?
+>
+> Well for a start I'm looking for a complete patch changelog.  One which
+> permits readers to fully understand the user-visible impact of the
+> problem.
 
-For IP blocks that are generated from the public, open-source
-sifive-blocks repository, describe the version numbering policy
-that its maintainers intend to use, upon request from Rob
-Herring <robh@kernel.org>.
+The patch already describes the problem, the solution, and the way in
+which this solution is provided. What more information do you want?
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Palmer Dabbelt <palmer@sifive.com>
-Cc: Megan Wachs <megan@sifive.com>
-Cc: Wesley Terpstra <wesley@sifive.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org
-Cc: linux-riscv@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-Signed-off-by: Paul Walmsley <paul@pwsan.com>
----
+> If it is revealed that is a theoretical problem which has negligible
+> end-user impact then sure, it is rational to leave things as they are.
+> That's what "negligible" means!
 
-Hi Rob, please let me know if this document works with your
-requirements, or if some changes are needed.  - Paul
+I don't think the problem is negligible. There's a huge difference
+between 99% and 100% reliability! The possibility of a theoretical
+problem is a real problem when, in retrospective analysis, the
+possibility of theoretical problems must be taken into account when
+trying to figure out how the system got into whatever state it was
+observed to be in.
 
- .../sifive/sifive-blocks-ip-versioning.txt    | 38 +++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
+Look, if I were proposing some expensive new bit of infrastructure,
+that would be one thing. But this is trivial. What form of patch
+*would* you take here? Would you take a tracepoint, as I discussed in
+your other message? Is there *any* snapshot approach here that you
+would take? Is your position that providing an atomic process tree
+hierarchy snapshot is just not a capable the kernel should provide?
 
-diff --git a/Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt b/Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
-new file mode 100644
-index 000000000000..b899e5c6e00c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
-@@ -0,0 +1,38 @@
-+DT compatible string versioning for SiFive open-source IP blocks
-+
-+This document describes the version specification for DT "compatible"
-+strings for open-source SiFive IP blocks.  HDL for these IP blocks
-+can be found in this public repository:
-+
-+https://github.com/sifive/sifive-blocks
-+
-+IP block-specific DT compatible strings are contained within the HDL,
-+in the form "sifive,<ip-block-name><integer version number>".
-+
-+An example is "sifive,uart0" from:
-+
-+https://github.com/sifive/sifive-blocks/blob/master/src/main/scala/devices/uart/UART.scala#L43
-+
-+Until these IP blocks (or IP integration) support version
-+autodiscovery, the maintainers of these IP blocks intend to increment
-+the suffixed number in the compatible string whenever the software
-+interface to these IP blocks changes, or when the functionality of the
-+underlying IP blocks changes in a way that software should be aware of.
-+
-+Driver developers can use compatible string "match" values such as
-+"sifive,uart0" to indicate that their driver is compatible with the
-+register interface and functionality associated with the relevant
-+upstream sifive-blocks commits.  It is expected that most drivers will
-+match on these IP block-specific compatible strings.
-+
-+DT data authors, when writing data for a particular SoC, should
-+continue to specify an SoC-specific compatible string value, such as
-+"sifive,fu540-c000-uart".  This way, if SoC-specific
-+integration-specific bug fixes or workarounds are needed, the kernel
-+or other system software can match on this string to apply them.  The
-+IP block-specific compatible string (such as "sifive,uart0") should
-+then be specified as a subsequent value.
-+
-+An example of this style:
-+
-+    compatible = "sifive,fu540-c000-uart", "sifive,uart0";
--- 
-2.19.1
-
+I'm writing trace analysis tools, and I'm saying that in order to be
+confident in the results of the analysis, we need a way to be certain
+about baseline system state, and without added robustness, there's
+always going to be some doubt as to whether any particular observation
+is real or an artifact. I'm open to various technical options for
+providing this information, but I think it's reasonable to ask the
+system "what is your state?" and somehow get back an answer that's
+guaranteed not to be self-contradictory. Have you done much
+retrospective long trace analysis?
