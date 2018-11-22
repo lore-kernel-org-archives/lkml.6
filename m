@@ -2,161 +2,121 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECA3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8218DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA4C920659
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:56:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA4C920659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 4709120820
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 22:01:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4709120820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407748AbeKWIiN (ORCPT
+        id S2407759AbeKWImj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 03:38:13 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:49108 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730054AbeKWIiN (ORCPT
+        Fri, 23 Nov 2018 03:42:39 -0500
+Received: from emh04.mail.saunalahti.fi ([62.142.5.110]:49120 "EHLO
+        emh04.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730054AbeKWImi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 03:38:13 -0500
-Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gPwxs-0005Wq-0h; Thu, 22 Nov 2018 22:56:48 +0100
-Date:   Thu, 22 Nov 2018 22:56:47 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Qian Cai <cai@gmx.us>
-cc:     akpm@linux-foundation.org, longman@redhat.com,
-        yang.shi@linux.alibaba.com, arnd@arndb.de,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] debugobjects: scale the static pool size
-In-Reply-To: <20181121021157.3061-1-cai@gmx.us>
-Message-ID: <alpine.DEB.2.21.1811222238270.1665@nanos.tec.linutronix.de>
-References: <20181120232810.2503-1-cai@gmx.us> <20181121021157.3061-1-cai@gmx.us>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 23 Nov 2018 03:42:38 -0500
+Received: from darkstar.musicnaut.iki.fi (85-76-84-147-nat.elisa-mobile.fi [85.76.84.147])
+        by emh04.mail.saunalahti.fi (Postfix) with ESMTP id 22D7E300CF;
+        Fri, 23 Nov 2018 00:01:15 +0200 (EET)
+Date:   Fri, 23 Nov 2018 00:01:14 +0200
+From:   Aaro Koskinen <aaro.koskinen@iki.fi>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     vkoul@kernel.org, dan.j.williams@intel.com,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tony@atomide.com, linux-omap@vger.kernel.org,
+        rmk+kernel@armlinux.org.uk,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
+Message-ID: <20181122220114.GB11423@darkstar.musicnaut.iki.fi>
+References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
+ <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
+ <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
+ <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
+ <4eb3b03e-0a97-6195-f162-e03e32705fe0@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4eb3b03e-0a97-6195-f162-e03e32705fe0@ti.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Nov 2018, Qian Cai wrote:
+Hi,
 
-Looking deeper at that.
+On Thu, Nov 22, 2018 at 10:31:31AM +0200, Peter Ujfalusi wrote:
+> On 20/11/2018 23.04, Aaro Koskinen wrote:
+> > On Tue, Nov 20, 2018 at 09:28:37AM +0200, Peter Ujfalusi wrote:
+> >> On 19/11/2018 20.46, Aaro Koskinen wrote:
+> >>> On Mon, Nov 19, 2018 at 12:40:40PM +0200, Peter Ujfalusi wrote:
+> >>>> When the channel is configured for slave operation the LCH_TYPE needs to be
+> >>>> set to LCh-P. For memcpy channels the LCH_TYPE must be set to LCh-2D.
+> >>>>
+> >>>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> >>>
+> >>> I don't have the documentation, but based on what omap_udc driver (still
+> >>> using the legacy OMAP DMA API) does this seems to be correct.
+> >>
+> >> They are hard to fine, true. From the omap1710 TRM:
+> >>
+> >> Logical channel types (LCh types) supported are:
+> >> - LCh-2D for nonsynchronized transfers (memory transfers, 1D and 2D)
+> >> - LCh-P for synchronized transfers (mostly peripheral transfers)
+> >> - LCh-PD similar to LCh-P but runs on a dedicated physical channel
+> >> - LCh-G for graphical transfers/operations
+> >> - LCh-D for display transfers
+> > 
+> > (I found a public document "OMAP5912 Multimedia Processor Direct
+> > Memory Access (DMA) Support Reference Guide", documenting these; easy
+> > to confuse with "OMAP5910 Dual-Core Processor System DMA Controller
+> > Reference Guide".)
+> > 
+> >> Looking at other part it looks like hat LCH-2D channel mode can happily
+> >> service a peripheral. LCH-P supports the same features as LCH-2D, but it
+> >> lacks support for Single/Double-indexed addressing mode on the
+> >> peripheral port side.
+> >>
+> >> So, this patch might not be needed at all. Can you test the omap_udc
+> >> with s/OMAP_DMA_LCH_P/OMAP_DMA_LCH_2D
+> >>
+> >> If USB works, then we can just drop this patch.
+> > 
+> > Unfortunately omap_udc does not seem to work at all anymore with DMA on
+> > my 770 setup. :-(
+> > 
+> > I had switched to PIO mode in 2015 since the WARNs about legacy DMA
+> > API were too annoying and flooding the console. And now that I tried
+> > using DMA again with g_ether, it doesn't work anymore. The device get's
+> > recognized on host side, but no traffic goes through. Switching back to
+> > PIO makes it to work again.
+> 
+> After some tinkering I got omap_udc working with DMA (not DMAengine,
+> yet) on 770 - using nfsroot. Configuring the channels to OMAP_DMA_LCH_2D
+> works as expected.
 
-> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-> index 70935ed91125..140571aa483c 100644
-> --- a/lib/debugobjects.c
-> +++ b/lib/debugobjects.c
-> @@ -23,9 +23,81 @@
->  #define ODEBUG_HASH_BITS	14
->  #define ODEBUG_HASH_SIZE	(1 << ODEBUG_HASH_BITS)
->  
-> -#define ODEBUG_POOL_SIZE	1024
-> +#define ODEBUG_DEFAULT_POOL	512
->  #define ODEBUG_POOL_MIN_LEVEL	256
->  
-> +/*
-> + * Some debug objects are allocated during the early boot. Enabling some options
-> + * like timers or workqueue objects may increase the size required significantly
-> + * with large number of CPUs. For example (as today, 20 Nov. 2018),
-> + *
-> + * No. CPUs x 2 (worker pool) objects:
-> + *
-> + * start_kernel
-> + *   workqueue_init_early
-> + *     init_worker_pool
-> + *       init_timer_key
-> + *         debug_object_init
-> + *
-> + * No. CPUs objects (CONFIG_HIGH_RES_TIMERS):
-> + *
-> + * sched_init
-> + *   hrtick_rq_init
-> + *     hrtimer_init
-> + *
-> + * CONFIG_DEBUG_OBJECTS_WORK:
-> + * No. CPUs x 6 (workqueue) objects:
-> + *
-> + * workqueue_init_early
-> + *   alloc_workqueue
-> + *     __alloc_workqueue_key
-> + *       alloc_and_link_pwqs
-> + *         init_pwq
-> + *
-> + * Also, plus No. CPUs objects:
-> + *
-> + * perf_event_init
-> + *    __init_srcu_struct
-> + *      init_srcu_struct_fields
-> + *        init_srcu_struct_nodes
-> + *          __init_work
+Would be interesting to know how you got it working with DMA. Which
+gadget driver were you using?
 
-None of the things are actually used or required _BEFORE_
-debug_objects_mem_init() is invoked.
+I bisected my issue, and got:
 
-The reason why the call is at this place in start_kernel() is
-historical. It's because back in the days when debugobjects were added the
-memory allocator was enabled way later than today. So we can just move the
-debug_objects_mem_init() call right before sched_init() I think.
+commit 387f869d2579e379ee343f5493dcd360be60f5c6 (refs/bisect/bad)
+Author: Felipe Balbi <felipe.balbi@linux.intel.com>
+Date:   Wed Mar 22 13:25:18 2017 +0200
 
-> + * Increase the number a bit more in case the implmentatins are changed in the
-> + * future, as it is better to avoid OOM than spending a bit more kernel memory
-> + * that will/can be freed.
-> + *
-> + * With all debug objects config options selected except the workqueue and the
-> + * timers, kernel reports,
-> + * 64-CPU:  ODEBUG: 4 of 4 active objects replaced
-> + * 256-CPU: ODEBUG: 4 of 4 active objects replaced
-> + *
-> + * all the options except the workqueue:
-> + * 64-CPU:  ODEBUG: 466 of 466 active objects replaced
-> + * 256-CPU: ODEBUG: 1810 of 1810 active objects replaced
-> + *
-> + * all the options except the timers:
-> + * 64-CPU:  ODEBUG: 652 of 652 active objects replaced
-> + * 256-CPU: ODEBUG: 2572 of 2572 active objects replaced
-> + *
-> + * all the options:
-> + * 64-CPU:  ODEBUG: 1114 of 1114 active objects replaced
-> + * 256-CPU: ODEBUG: 4378 of 4378 active objects replaced
-> + */
-> +#ifdef CONFIG_DEBUG_OBJECTS_WORK
-> +#define ODEBUG_WORK_PCPU_CNT	10
-> +#else
-> +#define ODEBUG_WORK_PCPU_CNT	0
-> +#endif /* CONFIG_DEBUG_OBJECTS_WORK */
-> +
-> +#ifdef CONFIG_DEBUG_OBJECTS_TIMERS
-> +#define ODEBUG_TIMERS_PCPU_CNT	10
-> +#else
-> +#define ODEBUG_TIMERS_PCPU_CNT	0
-> +#endif /* CONFIG_DEBUG_OBJECTS_TIMERS */
+    usb: gadget: u_ether: conditionally align transfer size
 
-Btw, the scaling here is way off.
+With that reverted, the DMA works OK (and I can also now confirm that
+OMAP_DMA_LCH_2D works). I haven't yet checked if we actually need that
+quirk in OMAP UDC, or if this is related to RMK's findings of potential
+bugs in the driver. Anyway, there is clearly yet another regression.
 
-> +#define ODEBUG_POOL_SIZE	(ODEBUG_DEFAULT_POOL + CONFIG_NR_CPUS * \
-> +				(ODEBUG_TIMERS_PCPU_CNT + ODEBUG_WORK_PCPU_CNT))
-
-CONFIG_NR_CPUS	Pool size		Storage size
-
-256		256512			4M
-		
-According to your list above it uses 4378 object for 256 CPUs. That's off
-by an factor of ~58.
-
-But we can spare all that and just move the init call.
-
-Thanks,
-
-	tglx
-
+A.
