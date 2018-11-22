@@ -2,109 +2,142 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07849C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB31C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:03:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4AC520824
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:02:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="g+uuLfDx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4AC520824
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 680F420824
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:03:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 680F420824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437115AbeKWEmw (ORCPT
+        id S2437680AbeKWEnb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 23:42:52 -0500
-Received: from mail-lj1-f178.google.com ([209.85.208.178]:45881 "EHLO
-        mail-lj1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732278AbeKWEmw (ORCPT
+        Thu, 22 Nov 2018 23:43:31 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:32954 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732278AbeKWEnb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 23:42:52 -0500
-Received: by mail-lj1-f178.google.com with SMTP id s5-v6so8640610ljd.12
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 10:02:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5llXmL071LkoV9+aZVNLiRsd4DJMg8wkITczzEgG/F0=;
-        b=g+uuLfDx2wldsmmD9aQBaFnNOrTxJ8CGiOBWl2x/49BhgGlDHh+7yoIP/SswWyEjJx
-         zXr7BvAuf7azuVPMWkGbxXvo+WzqyjAIGq3FgDBNmck3iEaRyOWuorZ10H6kr/k+T2CV
-         7mUJ7deyjFqM5w+985my6PEzgY+WBc2lxqorE=
+        Thu, 22 Nov 2018 23:43:31 -0500
+Received: by mail-io1-f70.google.com with SMTP id u13-v6so9179484iob.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 10:03:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5llXmL071LkoV9+aZVNLiRsd4DJMg8wkITczzEgG/F0=;
-        b=cFD6Y9uMysNpLCYhW4vqA9Aj1ZcR0CVyVX3jCSnmSlL33ngQZ3iUWkPuxJ/egaNCzv
-         FY0o/USsro6bJQ3mVlfjXaPxquPUu0jzSFwfUGQk0JY9EEgdSl2+IJFqfCFao7gboHWe
-         q41r0bOmEDQIaoOg62QVTWo58V9aO+p+kJWY5JhCfmPurfsM/KpEpkXxDXlcpAqsS3Ab
-         uSVX6xrJyVrIwL8XVopetRUkfFheV3seqvqmwFnd31zwUtb1rlp2BA5IKyeSreIOgvHB
-         jr9qIcSL1jBM2tnksVIpV6nxslo6ojt+ukZgxB4uzXYx2ZZkMZ42fUzdTKbS7vixxPeE
-         TS1w==
-X-Gm-Message-State: AA+aEWaZvilPhqnDEJt/IuHQBADcbJBawoL8SDe/RhgCxSdM2wsEQkKw
-        ozPjE4tmCtsn9v2a/okK/+PddJgAmYoJFA==
-X-Google-Smtp-Source: AFSGD/XK4pF55DTYribh1987zlfBWXXsqggrEVgC2vPN1jg/PtGJXTj/KLC/RGq9v/OhpHDR5umCaA==
-X-Received: by 2002:a2e:99d7:: with SMTP id l23-v6mr7330887ljj.165.1542909742552;
-        Thu, 22 Nov 2018 10:02:22 -0800 (PST)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id u21-v6sm7502960lju.46.2018.11.22.10.02.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 10:02:22 -0800 (PST)
-Received: by mail-lf1-f53.google.com with SMTP id p86so7092941lfg.5
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 10:02:22 -0800 (PST)
-X-Received: by 2002:a19:4287:: with SMTP id p129mr7439565lfa.135.1542909341735;
- Thu, 22 Nov 2018 09:55:41 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=+NdZJj1V8I9MZkQ0QUMQVfLUIOadmpfUNODSzGWGvG4=;
+        b=YGRV0L6b1KXiaOgY7249+eRw1p7BseGaY7mWut2hHEVBTDr/2RlRoMyi0i+wTF/Rn2
+         jSDiLwPiHOu7TrDL3Kd2kZZ6a08ld4Gk03Clu2ub13SlHCQPda7xfI34CZAzqiPnOlbd
+         jbpFoZLLIaKiIPkII0/xCqY4fNf5ZLy1/O5qkbPdMXn7v34Iv4hVCGaHBhHzPT/BW+lf
+         ecR5Alsd6SNsnVFP9b3NSHysUZuGPqEpTgH1Vbnm8Ok8cr8KbFHV6zvk89jlXmWrZj/k
+         NPLBQ8mfDZ270mone/U+4eu0Q3EDVZUaRNwegWLr0vlW+xGEmMwRizXpKhsIvRIX1NJn
+         foEw==
+X-Gm-Message-State: AGRZ1gIlzWOBke2nZsF7/wHg3A4mN/l32rYPEPPplEu70GXzPkMyfA2e
+        YQ8k0eSmxYlz6YbnvN8oQoeS+nl0f5A3B8dh3BwuxoiUh6yi
+X-Google-Smtp-Source: AJdET5eTdxQ19G47zBVCE76KRCsw7ZkZsyWJRyVQcPdhOCs+VagPVJnkJNcJPa+tVyf/aSOWgx+O6ciMiVoysuIgEaR+SBOu8Ir/
 MIME-Version: 1.0
-References: <20181122140320.24080-1-hch@lst.de> <CAHk-=wh=_T=A53+o4zLNbKio43LGqVDb0KCbWPDvAg54bRDmWw@mail.gmail.com>
- <20181122170715.GI30658@n2100.armlinux.org.uk> <CAHk-=wgfGzXuDAKFQPdzMib3QCRHfSTsy5=gLU-WCoya+Ym+1A@mail.gmail.com>
- <11829e3c-7302-f821-cf5c-863e5267a17b@arm.com>
-In-Reply-To: <11829e3c-7302-f821-cf5c-863e5267a17b@arm.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 22 Nov 2018 09:55:25 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whxf0zqutExPr_j1A625Z3gcL6k_ABzKo1BtzN4F93hkA@mail.gmail.com>
-Message-ID: <CAHk-=whxf0zqutExPr_j1A625Z3gcL6k_ABzKo1BtzN4F93hkA@mail.gmail.com>
-Subject: Re: remove the ->mapping_error method from dma_map_ops V2
-To:     robin.murphy@arm.com
-Cc:     linux@armlinux.org.uk, Christoph Hellwig <hch@lst.de>,
-        linux-arch@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org,
-        David Woodhouse <dwmw2@infradead.org>, joro@8bytes.org,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, jdmason@kudzu.us,
-        xen-devel@lists.xenproject.org,
-        linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a24:5dd4:: with SMTP id w203mr7719185ita.8.1542909782760;
+ Thu, 22 Nov 2018 10:03:02 -0800 (PST)
+Date:   Thu, 22 Nov 2018 10:03:02 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000085abf7057b44ad08@google.com>
+Subject: invalid opcode in ip_do_fragment
+From:   syzbot <syzbot+865704dc4f7ff5d1a04b@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 9:52 AM Robin Murphy <robin.murphy@arm.com> wrote:
->
-> Unfortunately, with things like the top-down IOVA allocator, and 32-bit
-> systems in general, "the top 4095" values may well still be valid
-> addresses -
+Hello,
 
-Ugh.
+syzbot found the following crash on:
 
-> The only immediate benefit I can see is that we could distinguish cases
-> like the first which can never possibly succeed, and thus callers could
-> actually give up instead of doing what various subsystems currently do
-> and retry the exact same mapping indefinitely on the apparent assumption
-> that errors must be transient.
+HEAD commit:    92b419289cee Merge tag 'riscv-for-linus-4.20-rc4' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12243093400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=73e2bc0cb6463446
+dashboard link: https://syzkaller.appspot.com/bug?extid=865704dc4f7ff5d1a04b
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-No, the big immediate benefit of allowing "return -EINVAL" etc is
-simply legibility and error avoidance.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-It's basically how pretty much all the rest of the kernel returns
-errors, so not only is it very obvious, it's also what people do
-without even thinking.. So it would be good to work.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+865704dc4f7ff5d1a04b@syzkaller.appspotmail.com
 
-                       Linus
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 21078 Comm: syz-executor1 Not tainted 4.20.0-rc3+ #344
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:ip_do_fragment+0x2447/0x2ad0 net/ipv4/ip_output.c:776
+Code: ff 48 89 cf e8 2a 36 23 fb e9 dc ea ff ff 48 89 df e8 5d 36 23 fb e9  
+02 e7 ff ff e8 b3 36 23 fb e9 97 e6 ff ff e8 29 e7 df fa <0f> 0b 4c 89 f7  
+e8 ff 35 23 fb e9 2f e6 ff ff 4c 89 e7 e8 f2 35 23
+RSP: 0018:ffff88818232e7b8 EFLAGS: 00010246
+RAX: 0000000000040000 RBX: ffff8881d3af0800 RCX: ffffc9000c0db000
+RDX: 0000000000040000 RSI: ffffffff869fa3c7 RDI: 0000000000000005
+RBP: ffff88818232e990 R08: ffff88816ba06580 R09: ffffed10342f86ca
+R10: ffffed10342f86cc R11: ffff8881a17c3663 R12: ffff8881d3af08c4
+R13: 00000000fffffff2 R14: ffff8881d3af08d0 R15: dffffc0000000000
+FS:  00007fa003fcd700(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004ccd10 CR3: 0000000199f89000 CR4: 00000000001426f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  ip_fragment.constprop.50+0x179/0x240 net/ipv4/ip_output.c:549
+  ip_finish_output+0x6b4/0xfa0 net/ipv4/ip_output.c:315
+  NF_HOOK_COND include/linux/netfilter.h:278 [inline]
+  ip_output+0x21d/0x8d0 net/ipv4/ip_output.c:405
+  dst_output include/net/dst.h:444 [inline]
+  ip_local_out+0xc5/0x1b0 net/ipv4/ip_output.c:124
+  iptunnel_xmit+0x63b/0x9c0 net/ipv4/ip_tunnel_core.c:91
+  ip_tunnel_xmit+0x15b8/0x3c04 net/ipv4/ip_tunnel.c:787
+  __gre_xmit+0x5e1/0x980 net/ipv4/ip_gre.c:451
+  ipgre_xmit+0x3e7/0xba0 net/ipv4/ip_gre.c:705
+  __netdev_start_xmit include/linux/netdevice.h:4356 [inline]
+  netdev_start_xmit include/linux/netdevice.h:4365 [inline]
+  xmit_one net/core/dev.c:3252 [inline]
+  dev_hard_start_xmit+0x295/0xc80 net/core/dev.c:3268
+  __dev_queue_xmit+0x2f71/0x3ad0 net/core/dev.c:3838
+  dev_queue_xmit+0x17/0x20 net/core/dev.c:3871
+  __bpf_tx_skb net/core/filter.c:2017 [inline]
+  __bpf_redirect_common net/core/filter.c:2055 [inline]
+  __bpf_redirect+0x5cf/0xb20 net/core/filter.c:2062
+  ____bpf_clone_redirect net/core/filter.c:2095 [inline]
+  bpf_clone_redirect+0x2f6/0x490 net/core/filter.c:2067
+  bpf_prog_bebbfe2050753572+0x7dd/0x1000
+Modules linked in:
+---[ end trace 0d51d2ed64b21356 ]---
+RIP: 0010:ip_do_fragment+0x2447/0x2ad0 net/ipv4/ip_output.c:776
+Code: ff 48 89 cf e8 2a 36 23 fb e9 dc ea ff ff 48 89 df e8 5d 36 23 fb e9  
+02 e7 ff ff e8 b3 36 23 fb e9 97 e6 ff ff e8 29 e7 df fa <0f> 0b 4c 89 f7  
+e8 ff 35 23 fb e9 2f e6 ff ff 4c 89 e7 e8 f2 35 23
+RSP: 0018:ffff88818232e7b8 EFLAGS: 00010246
+RAX: 0000000000040000 RBX: ffff8881d3af0800 RCX: ffffc9000c0db000
+RDX: 0000000000040000 RSI: ffffffff869fa3c7 RDI: 0000000000000005
+RBP: ffff88818232e990 R08: ffff88816ba06580 R09: ffffed10342f86ca
+R10: ffffed10342f86cc R11: ffff8881a17c3663 R12: ffff8881d3af08c4
+R13: 00000000fffffff2 R14: ffff8881d3af08d0 R15: dffffc0000000000
+FS:  00007fa003fcd700(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004ccd10 CR3: 0000000199f89000 CR4: 00000000001426f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
