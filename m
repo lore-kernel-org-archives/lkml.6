@@ -2,109 +2,104 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7C1C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65599C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:11:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 739842081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:08:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="pyxZ3Oeo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 739842081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
+	by mail.kernel.org (Postfix) with ESMTP id 1B4062081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:11:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B4062081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732415AbeKWAsI (ORCPT
+        id S2391657AbeKWAuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:48:08 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:37900 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730414AbeKWAsI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:48:08 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 1735025BDFD;
-        Fri, 23 Nov 2018 01:08:35 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1542895715; bh=saPfczYdxwFdiYA7nifJ+WLbmpTcdXhH54nNaj87G/E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pyxZ3Oeo7sqyDDWnsrW5ORuZNP7DiJmJBrepgeIUj62h/7/AzgYbXRZMiKSl9NiTT
-         y9lH+jR6OV1KRr+fKB1ZbqcBK2ipFqRMo7xA+cIyojuw0Z6ncwlp0ie6ngM52a2tEc
-         M24ET2bSFRp9n3WCYcfALst+XqNZSIfJI0MCIHcY=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 26099940370; Thu, 22 Nov 2018 15:08:33 +0100 (CET)
-Date:   Thu, 22 Nov 2018 15:08:33 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
-Message-ID: <20181122140832.qcrhmmybdzbvfv6s@verge.net.au>
-References: <20181119161838.10610-1-phil.edworthy@renesas.com>
+        Thu, 22 Nov 2018 19:50:35 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:52175 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729224AbeKWAuf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 19:50:35 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 24FE8F9E1AF31;
+        Thu, 22 Nov 2018 22:10:59 +0800 (CST)
+Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 22 Nov 2018 22:10:53 +0800
+From:   Salil Mehta <salil.mehta@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>
+Subject: [PATCH V2 net-next 0/8] net: hns3: Adds support of debugfs to HNS3 driver
+Date:   Thu, 22 Nov 2018 14:09:40 +0000
+Message-ID: <20181122140948.23504-1-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181119161838.10610-1-phil.edworthy@renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Originating-IP: [10.202.226.54]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 04:18:38PM +0000, Phil Edworthy wrote:
-> This fixes the check for unused mdio bus setting and the following static
-> checker warning:
->  drivers/pinctrl/pinctrl-rzn1.c:198 rzn1_pinctrl_mdio_select()
->  warn: always true condition '(ipctl->mdio_func[mdio] >= 0) => (0-u32max >= 0)'
-> 
-> It also fixes the return var when calling of_get_child_count()
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> ---
-> v2:
->  - Don't rely on rely on the implicit typecast from -1 to uint
-> ---
->  drivers/pinctrl/pinctrl-rzn1.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-rzn1.c b/drivers/pinctrl/pinctrl-rzn1.c
-> index 57886dcff53d..cc0e5aa9128a 100644
-> --- a/drivers/pinctrl/pinctrl-rzn1.c
-> +++ b/drivers/pinctrl/pinctrl-rzn1.c
-> @@ -112,7 +112,7 @@ struct rzn1_pinctrl {
->  	struct rzn1_pinctrl_regs __iomem *lev2;
->  	u32 lev1_protect_phys;
->  	u32 lev2_protect_phys;
-> -	u32 mdio_func[2];
-> +	int mdio_func[2];
+This patchset adds support of debugfs to the HNS3 driver. 
 
-Hi Phil,
+Support has been added to query info related to below items:
+1. Queue related ("echo queue info [queue no] > cmd")
+2. Flow Director ("echo dump fd tcam > cmd")
+3. TC config ("echo dump tc > cmd")
+4. Transmit Module/Scheduler ("echo dump tm > cmd")
+5. QoS pause ("echo dump qos pause cfg > cmd")
+6. QoS buffer ("echo dump qos pri map > cmd")
+7. QoS prio map ("echo dump qos buf cfg > cmd")
 
-rzn1_pinctrl_mdio_select() assigns values of type u32 to elements
-of mdio_func. Perhaps that warrants cleaning up too?
+NOTE: Above commands are *read-only* and are only intended to
+query the information from the SoC(and dump inside the kernel,
+for now) and in no way tries to perform write operations for
+the purpose of configuration etc.
 
->  
->  	struct rzn1_pin_group *groups;
->  	unsigned int ngroups;
-> @@ -810,8 +810,8 @@ static int rzn1_pinctrl_probe_dt(struct platform_device *pdev,
->  	struct device_node *np = pdev->dev.of_node;
->  	struct device_node *child;
->  	unsigned int maxgroups = 0;
-> -	unsigned int nfuncs = 0;
->  	unsigned int i = 0;
-> +	int nfuncs = 0;
->  	int ret;
->  
->  	nfuncs = of_get_child_count(np);
-> -- 
-> 2.17.1
-> 
+Change Log
+----------
+V1-->V2:
+   * Addressed the comments provided by Jakub Kicinski. 
+     1. Removed the .rej files mistakenly made part of Flow Director patch.
+        Link: https://lkml.org/lkml/2018/11/20/249
+     2. Added command summary in the cover letter
+        Link: https://lkml.org/lkml/2018/11/22/1 
+
+liuzhongzhu (8):
+  net: hns3: Add debugfs framework registration
+  net: hns3: Add "queue info" query function
+  net: hns3: Add "FD flow table" info query function
+  net: hns3: Add "tc config" info query function
+  net: hns3: Add "tm config" info query function
+  net: hns3: Add "qos pause" config info query function
+  net: hns3: Add "qos prio map" info query function
+  net: hns3: Add "qos buffer" config info query function
+
+ drivers/net/ethernet/hisilicon/hns3/Makefile       |   2 +-
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |   2 +
+ drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c | 265 +++++++++++
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  17 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |   4 +
+ .../net/ethernet/hisilicon/hns3/hns3pf/Makefile    |   2 +-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |   1 +
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 487 +++++++++++++++++++++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.h |  23 +
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    |   1 +
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |   1 +
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |   6 +
+ 12 files changed, 807 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
+ create mode 100644 drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.h
+
+-- 
+2.7.4
+
+
