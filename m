@@ -2,164 +2,157 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E62FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1E3C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:47:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E822820824
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:46:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32DD920824
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:47:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="LKR+57LM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E822820824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alien8.de
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LSm+SKvX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32DD920824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388304AbeKWF13 (ORCPT
+        id S2392063AbeKWF1w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 00:27:29 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:59684 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729748AbeKWF13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 00:27:29 -0500
-Received: from zn.tnic (p200300EC2BDC9100898E5A1DF8FAB135.dip0.t-ipconnect.de [IPv6:2003:ec:2bdc:9100:898e:5a1d:f8fa:b135])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BF6A91EC06CA;
-        Thu, 22 Nov 2018 19:46:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1542912410;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=mAkOzn0kYsUOQ71qgrcvEiL38sVGUGg/ymftslkkTQY=;
-        b=LKR+57LMDux2pFVP5r21RKgfXnVIqeb7lSXz3TTkklUS4Sc7Xm+uQF5s0+C0/+i1/PTZ8S
-        Bu+6RRaJHYKMPyOtz6ffhyje0/NqG8DuyiPRtKeTyrupktKi4a11A40MOfks0q3LotjrW+
-        yVZGm7TXaYsKlPbnhrLrzsuOOdeSql8=
-Date:   Thu, 22 Nov 2018 19:46:44 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Moger, Babu" <Babu.Moger@amd.com>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "rian@alum.mit.edu" <rian@alum.mit.edu>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v9 08/13] x86/resctrl: Rename config parameter INTEL_RDT
- to RESCTRL
-Message-ID: <20181122184644.GF10365@zn.tnic>
-References: <20181121202811.4492-1-babu.moger@amd.com>
- <20181121202811.4492-9-babu.moger@amd.com>
+        Fri, 23 Nov 2018 00:27:52 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:40935 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388462AbeKWF1w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 00:27:52 -0500
+Received: by mail-vk1-f194.google.com with SMTP id v70so2196759vkv.7
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 10:47:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=t2nP8A6I/eolmd/qXMVHJb3nfTW/doYGd5QZ5izzC4M=;
+        b=LSm+SKvXUVeCky077rxfup7q4qaz1QS4D4jf2FNIfcHlkDiFH+5j9UjL73eg6VNnK9
+         2jkCkr8slO4BuBmC3VfNu1v5sultI7pj15KIwtiNoohqcbmMVFCnQwJFl0KscqqgHtnD
+         kvVK62p+9Eu5e9Os6CAyux9LBa3ol92Ll0mPA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=t2nP8A6I/eolmd/qXMVHJb3nfTW/doYGd5QZ5izzC4M=;
+        b=I13VPQGkye7SulJKn4ef9t3nleGGQSJdi+BOWWaO887c41OfrISz020JKTNgOIWRd8
+         XjPXSNqzYFXZl+bCfwy70BNbj2/fFEDYEnt7FmjIrtWDZhCfvplCBTQ19Ml4rBBlmZ1B
+         AMUAf/HHTu6iEwduyub0G64Rj6R9sz1ax3qsGoisbxdQHYeGrBt6au68quZ5KsuJepqC
+         E/CkTCgjgacgcjjTTPyuEXOop3Gsqz6H6MG6lsJ0N6HOQpEyBaKZdMFY8ap+NUS41cxl
+         7KociR9W2J2J0zr4hTGjf3ZSwj5sJTrRDAk+9e4NGXB1QGUiJq0vJsPfX0VmN4I0C2tE
+         2kSA==
+X-Gm-Message-State: AA+aEWZu1EsE+GWJhUzO7AkXhqfWLNcjUwLgkG8tRzPa28tFGsRwyCig
+        8uyp4GmuMQ2i3hPWRDesw6ysX8AB0p4HP7zDoWdG7oyo
+X-Google-Smtp-Source: AFSGD/VPbOyx9RTf4XXpo4Omwgqpe6AgDLn7aY5CiaLXIBwls9CB0blwBJwtlL1zAo2eshDXB/NkyzxhR5Z2hvEfgk0=
+X-Received: by 2002:a1f:a8c5:: with SMTP id r188mr5026173vke.44.1542912434070;
+ Thu, 22 Nov 2018 10:47:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181121202811.4492-9-babu.moger@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1538638640.git.amit.kucheria@linaro.org> <CAHLCerMaJKaXD0pTdtMCK6C__WW-pXQ0AfY9L26dDT56szvz6A@mail.gmail.com>
+In-Reply-To: <CAHLCerMaJKaXD0pTdtMCK6C__WW-pXQ0AfY9L26dDT56szvz6A@mail.gmail.com>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Fri, 23 Nov 2018 00:17:02 +0530
+Message-ID: <CAHLCerNFabr5-+b8U=ouLBidGJo+e+aDVW9ZyOQy9edJB3cERw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] driver: thermal: Move some drivers into subdirs
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 08:28:39PM +0000, Moger, Babu wrote:
-> Resource control feature is supported by both Intel and AMD.
-> So, rename the INTEL_RDT to vendor neutral RESCTRL.
-> 
-> Now CONFIG_RESCTRL will be used for both Intel and AMD to enable
-> Resource Control support. Update the texts in config and condition
-> accordingly.
-> 
-> Signed-off-by: Babu Moger <babu.moger@amd.com>
-> ---
->  arch/x86/Kconfig                     | 23 ++++++++++++++++-------
->  arch/x86/include/asm/resctrl_sched.h |  4 ++--
->  arch/x86/kernel/cpu/Makefile         |  2 +-
->  arch/x86/kernel/cpu/resctrl/Makefile |  4 ++--
->  include/linux/sched.h                |  2 +-
->  5 files changed, 22 insertions(+), 13 deletions(-)
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 1a0be022f91d..36aad997caf8 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -445,16 +445,25 @@ config RETPOLINE
->  	  code are eliminated. Since this includes the syscall entry path,
->  	  it is not entirely pointless.
->  
-> -config INTEL_RDT
-> -	bool "Intel Resource Director Technology support"
-> +config RESCTRL
-> +	bool "Resource Control support"
->  	default n
-> -	depends on X86 && CPU_SUP_INTEL
-> +	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
->  	select KERNFS
->  	help
-> -	  Select to enable resource allocation and monitoring which are
-> -	  sub-features of Intel Resource Director Technology(RDT). More
-> -	  information about RDT can be found in the Intel x86
-> -	  Architecture Software Developer Manual.
-> +	  Select to enable Resource Control feature support.
-> +
-> +	  These features are intended to provide the support for the allocation
-> +	  and monitoring of the usage of certain system resources by one or more
-> +	  processors.
-> +
-> +	  Intel refers to this feature as Intel Resource Director Technology
-> +	  (Intel(R) RDT). More information about RDT can be found in the
-> +	  Intel x86 Architecture Software Developer Manual.
-> +
-> +	  AMD refers to this feature as AMD Platform Quality of Service(AMD QoS).
-> +	  More information about AMD QoS can be found in AMD64 Technology
-> +	  Platform Quality of Service Extensions manual.
+On Fri, Oct 26, 2018 at 2:21 PM Amit Kucheria <amit.kucheria@linaro.org> wrote:
+>
+> Hi Rui,
+>
+> On Thu, Oct 4, 2018 at 1:22 PM Amit Kucheria <amit.kucheria@linaro.org> wrote:
+> >
+> > Move the various drivers for Intel platforms into their own subdir. Also
+> > consolidate Qualcomm drivers into the qcom subdir.
+> >
+> > This cleans up the directory making it easier to find things.
+>
+> Any comments on these changes?
 
-I've simplified this to:
+Rui? Eduardo?
 
-          Enable Resource Control support.
-
-          Provide support for the allocation and monitoring of system resources 
-          usage by the CPU.
-
-          Intel calls this Intel Resource Director Technology
-          (Intel(R) RDT). More information about RDT can be found in the
-          Intel x86 Architecture Software Developer Manual.
-
-          AMD calls this AMD Platform Quality of Service (AMD QoS).
-          More information about AMD QoS can be found in the AMD64 Technology
-          Platform Quality of Service Extensions manual.
-
-          Say N if unsure.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> > There is no great time to send patches that move files around, but I'm told
+> > that towards the end of the merge window is nicer. So here's an attempt to
+> > sneak it into 4.20 after everything else and hoping that these files won't
+> > change after 4.19-rc6. :-)
+> >
+> > This was generated and compile-tested against 4.19-rc6. If you would like
+> > me to try again a bit later, I'm happy to do so.
+> >
+> > Changes since v1:
+> > - Removed a stray character that snuck into the Makefile
+> > - Added Acks
+> > - Rebased to v4.19-rc6
+> >
+> > Amit Kucheria (2):
+> >   drivers: thermal: Move various drivers for intel platforms into a
+> >     subdir
+> >   drivers: thermal: Move QCOM_SPMI_TEMP_ALARM into the qcom subdir
+> >
+> >  drivers/thermal/Kconfig                       | 94 +------------------
+> >  drivers/thermal/Makefile                      | 10 +-
+> >  drivers/thermal/intel/Kconfig                 | 77 +++++++++++++++
+> >  drivers/thermal/intel/Makefile                | 12 +++
+> >  .../{ => intel}/int340x_thermal/Kconfig       |  0
+> >  .../{ => intel}/int340x_thermal/Makefile      |  0
+> >  .../int340x_thermal/acpi_thermal_rel.c        |  0
+> >  .../int340x_thermal/acpi_thermal_rel.h        |  0
+> >  .../int340x_thermal/int3400_thermal.c         |  0
+> >  .../int340x_thermal/int3402_thermal.c         |  0
+> >  .../int340x_thermal/int3403_thermal.c         |  0
+> >  .../int340x_thermal/int3406_thermal.c         |  0
+> >  .../int340x_thermal/int340x_thermal_zone.c    |  0
+> >  .../int340x_thermal/int340x_thermal_zone.h    |  0
+> >  .../processor_thermal_device.c                |  0
+> >  .../{ => intel}/intel_bxt_pmic_thermal.c      |  0
+> >  .../thermal/{ => intel}/intel_pch_thermal.c   |  0
+> >  .../thermal/{ => intel}/intel_powerclamp.c    |  0
+> >  .../{ => intel}/intel_quark_dts_thermal.c     |  0
+> >  .../thermal/{ => intel}/intel_soc_dts_iosf.c  |  0
+> >  .../thermal/{ => intel}/intel_soc_dts_iosf.h  |  0
+> >  .../{ => intel}/intel_soc_dts_thermal.c       |  0
+> >  .../{ => intel}/x86_pkg_temp_thermal.c        |  0
+> >  drivers/thermal/qcom/Kconfig                  | 11 +++
+> >  drivers/thermal/qcom/Makefile                 |  1 +
+> >  .../thermal/{ => qcom}/qcom-spmi-temp-alarm.c |  0
+> >  26 files changed, 107 insertions(+), 98 deletions(-)
+> >  create mode 100644 drivers/thermal/intel/Kconfig
+> >  create mode 100644 drivers/thermal/intel/Makefile
+> >  rename drivers/thermal/{ => intel}/int340x_thermal/Kconfig (100%)
+> >  rename drivers/thermal/{ => intel}/int340x_thermal/Makefile (100%)
+> >  rename drivers/thermal/{ => intel}/int340x_thermal/acpi_thermal_rel.c (100%)
+> >  rename drivers/thermal/{ => intel}/int340x_thermal/acpi_thermal_rel.h (100%)
+> >  rename drivers/thermal/{ => intel}/int340x_thermal/int3400_thermal.c (100%)
+> >  rename drivers/thermal/{ => intel}/int340x_thermal/int3402_thermal.c (100%)
+> >  rename drivers/thermal/{ => intel}/int340x_thermal/int3403_thermal.c (100%)
+> >  rename drivers/thermal/{ => intel}/int340x_thermal/int3406_thermal.c (100%)
+> >  rename drivers/thermal/{ => intel}/int340x_thermal/int340x_thermal_zone.c (100%)
+> >  rename drivers/thermal/{ => intel}/int340x_thermal/int340x_thermal_zone.h (100%)
+> >  rename drivers/thermal/{ => intel}/int340x_thermal/processor_thermal_device.c (100%)
+> >  rename drivers/thermal/{ => intel}/intel_bxt_pmic_thermal.c (100%)
+> >  rename drivers/thermal/{ => intel}/intel_pch_thermal.c (100%)
+> >  rename drivers/thermal/{ => intel}/intel_powerclamp.c (100%)
+> >  rename drivers/thermal/{ => intel}/intel_quark_dts_thermal.c (100%)
+> >  rename drivers/thermal/{ => intel}/intel_soc_dts_iosf.c (100%)
+> >  rename drivers/thermal/{ => intel}/intel_soc_dts_iosf.h (100%)
+> >  rename drivers/thermal/{ => intel}/intel_soc_dts_thermal.c (100%)
+> >  rename drivers/thermal/{ => intel}/x86_pkg_temp_thermal.c (100%)
+> >  rename drivers/thermal/{ => qcom}/qcom-spmi-temp-alarm.c (100%)
+> >
+> > --
+> > 2.17.1
+> >
