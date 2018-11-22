@@ -2,186 +2,200 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 989A7C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1940C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DEF520684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:10:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DEF520684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id 8FA2B20684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:14:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U+V+cfq+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FA2B20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406632AbeKWFvA (ORCPT
+        id S2406649AbeKWFyq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 00:51:00 -0500
-Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:35864 "EHLO
-        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726009AbeKWFvA (ORCPT
+        Fri, 23 Nov 2018 00:54:46 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37763 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726009AbeKWFyq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 00:51:00 -0500
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp04.blacknight.com (Postfix) with ESMTPS id 30F4B98B5A
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 19:10:16 +0000 (UTC)
-Received: (qmail 8975 invoked from network); 22 Nov 2018 19:10:16 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.69])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 22 Nov 2018 19:10:16 -0000
-Date:   Thu, 22 Nov 2018 19:10:14 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Michal Hocko <mhocko@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] mm: Stall movable allocations until kswapd
- progresses during serious external fragmentation event
-Message-ID: <20181122191014.GM23260@techsingularity.net>
-References: <20181121101414.21301-1-mgorman@techsingularity.net>
- <20181121101414.21301-5-mgorman@techsingularity.net>
- <35ea6691-e819-5581-7d32-39c1abfbe775@suse.cz>
+        Fri, 23 Nov 2018 00:54:46 -0500
+Received: by mail-pf1-f195.google.com with SMTP id u3-v6so2305683pfm.4
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 11:14:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uqYI9VCBr4NaR1JV4t+8oryutpf7YY4uvo9zto+A2wg=;
+        b=U+V+cfq+RUJ89kecPOtQ+Nzk86z0on9LnKh6F4auQ7TvJ7gA7xtq+D1KKcy/tI/lWy
+         ZdTYoJb31TqziYODfQwq3D11d9iNboKfE2MUXKG1S4+iRy/0krdjuxQR29zzjw0ZwkFs
+         B2ACrVaGzv1tOmmV8MidOwBLGR+FZxbJvfYm5n98WiwhvSMqJMxXL96s0GQLYjre6Pzz
+         HNYdzUZoQ2rBY63YTi5osTR99HouxpLBPEy+r/SmnbQoO4Ydh5eQu4gDzfUn4qwxN1ln
+         4SSsoIF+dyZiOZPF8P+R5etc0BSTENsm0kJ09+vvsVDSK1XnKb0ht2jbwX8T/emKtXw9
+         BzJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uqYI9VCBr4NaR1JV4t+8oryutpf7YY4uvo9zto+A2wg=;
+        b=eQ298ZOYwbKl99w5OQZm+uJcvmSSFZFGmAG/uGokiwaVoWcm9npupXYxHaq7CeaVSs
+         HzOXnb88DQBYojGtJc/eYXNtTeKpabXYrDIV1U7J8Bc4rEac2GKWcgow4rxgpRINcinL
+         ggvQHtLLnaqHTwyOgt2dlhwRCOENuW3kT+EwdO0F6YzZu8s+rhyheyI0SmWg2yU7ESI4
+         eWFjeQfzqAJbW4DbS5IwZUYUr4ghX34SCRbnZC+JD0CJu8HDjVSaxp1S9zA4EssDw3Z+
+         rrBa+RurFIUoR4Ud5oVxC/Z6IG3eWSAKzxuOhBI8BswpHxNH2UkZq1jZifJYqvv1WJUa
+         8WRQ==
+X-Gm-Message-State: AGRZ1gIl+EN/2RVhGnKsoccXvshogaSeggYxIGg30tPw+omskotQchuB
+        yi771cc1rmTxXWlmE/HB1vw=
+X-Google-Smtp-Source: AJdET5fmeT3FVDqPzK/sLSr/J1/udyyEEqfD1SDHX8GbbsTFPraev7YowkElSU5mvRNWUQZ/XhiA5A==
+X-Received: by 2002:a62:7892:: with SMTP id t140mr12665683pfc.237.1542914042818;
+        Thu, 22 Nov 2018 11:14:02 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 11-v6sm78544803pfr.55.2018.11.22.11.14.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 11:14:02 -0800 (PST)
+Date:   Thu, 22 Nov 2018 11:14:01 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     lee.jones@linaro.org, gwendal@chromium.org, drinkcat@chromium.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, bleung@chromium.org,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 6/7] mfd / platform: cros_ec: instantiate only if th EC
+ has a VBC NVRAM.
+Message-ID: <20181122191401.GA2106@roeck-us.net>
+References: <20181122113356.23610-1-enric.balletbo@collabora.com>
+ <20181122113356.23610-7-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <35ea6691-e819-5581-7d32-39c1abfbe775@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181122113356.23610-7-enric.balletbo@collabora.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 06:02:10PM +0100, Vlastimil Babka wrote:
-> On 11/21/18 11:14 AM, Mel Gorman wrote:
-> > An event that potentially causes external fragmentation problems has
-> > already been described but there are degrees of severity.  A "serious"
-> > event is defined as one that steals a contiguous range of pages of an order
-> > lower than fragment_stall_order (PAGE_ALLOC_COSTLY_ORDER by default). If a
-> > movable allocation request that is allowed to sleep needs to steal a small
-> > block then it schedules until kswapd makes progress or a timeout passes.
-> > The watermarks are also boosted slightly faster so that kswapd makes
-> > greater effort to reclaim enough pages to avoid the fragmentation event.
-> > 
-> > This stall is not guaranteed to avoid serious fragmentation events.
-> > If memory pressure is high enough, the pages freed by kswapd may be
-> > reallocated or the free pages may not be in pageblocks that contain
-> > only movable pages. Furthermore an allocation request that cannot stall
-> > (e.g. atomic allocations) or unmovable/reclaimable allocations will still
-> > proceed without stalling.
+On Thu, Nov 22, 2018 at 12:33:55PM +0100, Enric Balletbo i Serra wrote:
+> The cros-ec-vbc driver is DT-only and there is a DT property that
+> indicates if the EC has the VCB NVRAM, in such case instantiate the
+> driver but don't instantiate on the other cases.
 > 
-> Not doing this for unmovable/reclaimable allocations is kinda disadvantage?
+> To do this move the check code to its parent instead of play with the
+> attribute group visibility. This changes a bit the actual behaviour.
+> Before the patch if an EC doesn't have a VBC NVRAM an empty vbc folder
+> is created in /sys/class/chromeos/<ec device>, after the patch the empty
+> folder is not created, so, the folder is only created if the vbc is set.
 > 
-
-Yes, but this series is primarily aimed at when movable allocations are
-causing the fragmentation. We stall so that there are compaction targets
-due to reclaimed pages. The same does not apply to unmovable and
-reclaimable pages because they cannot compact so sure, we can stall, but
-I cannot see how it would help.
-
-> >  ==============================================================
-> >  
-> > +fragment_stall_order
-> > +
-> > +External fragmentation control is managed on a pageblock level where the
-> > +page allocator tries to avoid mixing pages of different mobility within page
-> > +blocks (e.g. order 9 on 64-bit x86). If external fragmentation is perfectly
-> > +controlled then a THP allocation will often succeed up to the number of
-> > +movable pageblocks in the system as reported by /proc/pagetypeinfo.
-> > +
-> > +When memory is low, the system may have to mix pageblocks and will wake
-> > +kswapd to try control future fragmentation. fragment_stall_order controls if
-> > +the allocating task will stall if possible until kswapd makes some progress
-> > +in preference to fragmenting the system. This incurs a small stall penalty
-> > +in exchange for future success at allocating huge pages. If the stalls
-> > +are undesirable and high-order allocations are irrelevant then this can
-> > +be disabled by writing 0 to the tunable. Writing the pageblock order will
-> > +strongly (but not perfectly) control external fragmentation.
-> > +
-> > +The default will stall for fragmenting allocations smaller than the
-> > +PAGE_ALLOC_COSTLY_ORDER (defined as order-3 at the time of writing).
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
 > 
-> Perhaps be more explicit that steals of orders strictly lower than given
-> value will stall? So for the default order-3, the sysctl value is 4,
-> which might confuse somebody.
+>  drivers/mfd/cros_ec_dev.c             | 24 +++++++++++++++++++++++-
+>  drivers/platform/chrome/cros_ec_vbc.c | 16 ----------------
+>  2 files changed, 23 insertions(+), 17 deletions(-)
 > 
+> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+> index fc235af6da65..a63588953760 100644
+> --- a/drivers/mfd/cros_ec_dev.c
+> +++ b/drivers/mfd/cros_ec_dev.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/mfd/core.h>
+>  #include <linux/module.h>
+>  #include <linux/mod_devicetable.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm.h>
+>  #include <linux/slab.h>
+> @@ -400,7 +401,10 @@ static const struct mfd_cell cros_ec_platform_cells[] = {
+>  	{ .name = "cros-ec-debugfs" },
+>  	{ .name = "cros-ec-lightbar" },
+>  	{ .name = "cros-ec-sysfs" },
+> -	{ .name = "cros-ec-vbc" },
+> +};
+> +
+> +static const struct mfd_cell cros_ec_vbc_cells[] = {
+> +	{ .name = "cros-ec-vbc" }
+>  };
+>  
+>  static int ec_device_probe(struct platform_device *pdev)
+> @@ -409,6 +413,7 @@ static int ec_device_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct cros_ec_platform *ec_platform = dev_get_platdata(dev);
+>  	struct cros_ec_dev *ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
+> +	struct device_node *node;
+>  
+>  	if (!ec)
+>  		return retval;
+> @@ -492,6 +497,23 @@ static int ec_device_probe(struct platform_device *pdev)
+>  		dev_err(ec->dev,
+>  			"failed to add cros-ec platform devices: %d\n", retval);
+>  
+> +	/* Check whether this EC instance has a VBC NVRAM */
+> +	node = ec->ec_dev->dev->of_node;
+> +	if (IS_ENABLED(CONFIG_OF) && node) {
 
-I'll clarify it.
+Is IS_ENABLED() necessary here ? Seems to me node should always be NULL
+in this case.
 
-> > +
-> > @@ -2130,9 +2131,10 @@ static bool can_steal_fallback(unsigned int order, int start_mt)
-> >  	return false;
-> >  }
-> >  
-> > +
-> > +static void stall_fragmentation(struct zone *pzone)
-> > +{
-> > +	DEFINE_WAIT(wait);
-> > +	long remaining = 0;
-> > +	long timeout = HZ/50;
-> > +	pg_data_t *pgdat = pzone->zone_pgdat;
-> > +
-> > +	if (current->flags & PF_MEMALLOC)
-> > +		return;
-> > +
-> > +	boost_watermark(pzone, true);
-> 
-> Should zone->lock be taken around this to make watermark_boost
-> adjustment safe? Similar to balance_pgdat().
-> 
+> +		if (of_property_read_bool(node, "google,has-vbc-nvram")) {
+> +			dev_err(dev, "device VBC found.\n");
 
-Yeah, that was a relatively late adjustment. The risk is low but it's
-possible best to be safe. I'm not super-keen that zone->lock protects
-this but that lock already protects more than it should and there is
-little motivation to split it just yet.
+dev_err ?
 
-> > +	prepare_to_wait(&pgdat->pfmemalloc_wait, &wait, TASK_INTERRUPTIBLE);
-> > +	if (waitqueue_active(&pgdat->kswapd_wait))
-> > +		wake_up_interruptible(&pgdat->kswapd_wait);
-> > +	remaining = schedule_timeout(timeout);
-> > +	finish_wait(&pgdat->pfmemalloc_wait, &wait);
-> > +	if (remaining != timeout) {
-> > +		trace_mm_fragmentation_stall(pgdat->node_id,
-> > +			jiffies_to_usecs(timeout - remaining));
-> > +		count_vm_event(FRAGMENTSTALL);
-> > +	}
-> >  }
-> >  
-> 
-> > @@ -4186,6 +4234,14 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
-> >  	 */
-> >  	alloc_flags = gfp_to_alloc_flags(gfp_mask);
-> >  
-> > +	/*
-> > +	 * Consider stalling on heavy for movable allocations in preference to
-> > +	 * fragmenting unmovable/reclaimable pageblocks.
-> > +	 */
-> > +	if ((gfp_mask & (__GFP_MOVABLE|__GFP_DIRECT_RECLAIM)) ==
-> > +			(__GFP_MOVABLE|__GFP_DIRECT_RECLAIM))
-> > +		alloc_flags |= ALLOC_FRAGMENT_STALL;
-> 
-> Surprised that this only has effect in the slowpath, i.e. when
-> watermarks are below 'low'. If it's intended (to not stall that much I
-> suppose) maybe explain the rationale in the changelog?
-> 
+> +			retval = devm_mfd_add_devices(ec->dev,
+> +					PLATFORM_DEVID_AUTO,
+> +					cros_ec_vbc_cells,
+> +					ARRAY_SIZE(cros_ec_vbc_cells),
+> +					NULL, 0, NULL);
+> +			if (retval)
+> +				dev_err(ec->dev,
+> +					"failed to add VBC devices: %d\n",
+> +					retval);
 
-Well, it's the same path when stalls can happen on direct reclaim so I
-didn't think it needed to be explicitly called out. The slowpath is also
-the "we can stall if the context allows" path so this is checking that
-it's a compatible cont3xt.
+Since the error is ignored, maybe better dev_warn() ?
 
-> Thanks for the series, Mel, hope the results are still optimistic after
-> some of the fixes that might unfortunately limit its impact :)
-> 
-
-Preliminary results indicate they are slightly worse but slightly worse
-than 90+% is still better than nothing so I'm reasonably optimistic!
-
-Thanks for the careful review and catching a lot of issues!
-
--- 
-Mel Gorman
-SUSE Labs
+> +		}
+> +	}
+> +
+>  	return 0;
+>  
+>  failed:
+> diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
+> index 374153e3dc13..b7b81fe0fb25 100644
+> --- a/drivers/platform/chrome/cros_ec_vbc.c
+> +++ b/drivers/platform/chrome/cros_ec_vbc.c
+> @@ -108,21 +108,6 @@ static ssize_t vboot_context_write(struct file *filp, struct kobject *kobj,
+>  	return data_sz;
+>  }
+>  
+> -static umode_t cros_ec_vbc_is_visible(struct kobject *kobj,
+> -				      struct bin_attribute *a, int n)
+> -{
+> -	struct device *dev = container_of(kobj, struct device, kobj);
+> -	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+> -	struct device_node *np = ec->ec_dev->dev->of_node;
+> -
+> -	if (IS_ENABLED(CONFIG_OF) && np) {
+> -		if (of_property_read_bool(np, "google,has-vbc-nvram"))
+> -			return a->attr.mode;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  static BIN_ATTR_RW(vboot_context, 16);
+>  
+>  static struct bin_attribute *cros_ec_vbc_bin_attrs[] = {
+> @@ -133,7 +118,6 @@ static struct bin_attribute *cros_ec_vbc_bin_attrs[] = {
+>  struct attribute_group cros_ec_vbc_attr_group = {
+>  	.name = "vbc",
+>  	.bin_attrs = cros_ec_vbc_bin_attrs,
+> -	.is_bin_visible = cros_ec_vbc_is_visible,
+>  };
+>  
+>  static int cros_ec_vbc_probe(struct platform_device *pd)
