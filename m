@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-15.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 727C4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D60C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16DB720821
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:37:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C9252080F
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 03:37:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kYc32wbS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16DB720821
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PY5Kn7Jd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C9252080F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404353AbeKVOO0 (ORCPT
+        id S2404367AbeKVOO3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 09:14:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55942 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 09:14:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404284AbeKVOOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 09:14:25 -0500
+        id S2404284AbeKVOO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 09:14:28 -0500
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35B0A20684;
-        Thu, 22 Nov 2018 03:36:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 167AC206BA;
+        Thu, 22 Nov 2018 03:36:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542857819;
-        bh=D1zWivZhPNfuWGeQTDBtNVGuCByxIQMRUY63fMJ9csU=;
+        s=default; t=1542857822;
+        bh=vNoyr4ztF4Zy/XaFFR6tIwJUnwOsA1bOV4AkTgjsJSM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kYc32wbSHyicrSLvIddk5ClkYSSofUBIIdw/SaB6u8e4o6VpFqDVsMWYzYe9q3c+s
-         fW6qNfSBE8nMAM1rBrKJz64hazV5XmbKlLzNIgw/VA2Y3/oIqbtkZOOgmZZoi3iRow
-         5Mo0WOmSnBwvhghMMl5wsVu7hqvg92EjbOWYZCPc=
+        b=PY5Kn7JdbDHkbT5D2lTW4XOiHG/Nu3oFGxzZrw9j+4fB8G99YG7GfLpEPSAcjcbUu
+         p4ERYWInZmmSxBSScax5Js86Zuo0B9D1UooWa+fn59SumnfpTT2xFLn7/3qb9z5nfd
+         O4uW1QNEGXCWe284mBGBSOW7gQJYlbQUa7UoDRZ4=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 12/28] perf augmented_syscalls: Remove example hardcoded set of filtered pids
-Date:   Thu, 22 Nov 2018 00:35:55 -0300
-Message-Id: <20181122033611.15890-13-acme@kernel.org>
+Subject: [PATCH 13/28] Revert "perf augmented_syscalls: Drop 'write', 'poll' for testing without self pid filter"
+Date:   Thu, 22 Nov 2018 00:35:56 -0300
+Message-Id: <20181122033611.15890-14-acme@kernel.org>
 X-Mailer: git-send-email 2.14.5
 In-Reply-To: <20181122033611.15890-1-acme@kernel.org>
 References: <20181122033611.15890-1-acme@kernel.org>
@@ -59,125 +59,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Now that 'perf trace' fills in that "filtered_pids" BPF map, remove the
-set of filtered pids used as an example to test that feature.
+Now that we have the "filtered_pids" logic in place, no need to do this
+rough filter to avoid the feedback loop from 'perf trace's own syscalls,
+revert it.
 
-That feature works like this:
-
-Starting a system wide 'strace' like 'perf trace' augmented session we
-noticed that lots of events take place for a pid, which ends up being
-the feedback loop of perf trace's syscalls being processed by the
-'gnome-terminal' process:
-
-  # perf trace -e tools/perf/examples/bpf/augmented_raw_syscalls.c
-     0.391 ( 0.002 ms): gnome-terminal/2469 read(fd: 17</dev/ptmx>, buf: 0x564b79f750bc, count: 8176) = 453
-     0.394 ( 0.001 ms): gnome-terminal/2469 read(fd: 17</dev/ptmx>, buf: 0x564b79f75280, count: 7724) = -1 EAGAIN Resource temporarily unavailable
-     0.438 ( 0.001 ms): gnome-terminal/2469 read(fd: 4<anon_inode:[eventfd]>, buf: 0x7fffc696aeb0, count: 16) = 8
-     0.519 ( 0.001 ms): gnome-terminal/2469 read(fd: 17</dev/ptmx>, buf: 0x564b79f75280, count: 7724) = 114
-     0.522 ( 0.001 ms): gnome-terminal/2469 read(fd: 17</dev/ptmx>, buf: 0x564b79f752f1, count: 7611) = -1 EAGAIN Resource temporarily unavailable
-  ^C
-
-So we can use --filter-pids to get rid of that one, and in this case what is
-being used to implement that functionality is that "filtered_pids" BPF map that
-the tools/perf/examples/bpf/augmented_raw_syscalls.c created and that 'perf trace'
-bpf loader noticed and created a "struct bpf_map" associated that then got populated
-by 'perf trace':
-
-  # perf trace --filter-pids 2469 -e tools/perf/examples/bpf/augmented_raw_syscalls.c
-     0.020 ( 0.002 ms): gnome-shell/1663 epoll_pwait(epfd: 12<anon_inode:[eventpoll]>, events: 0x7ffd8f3ef960, maxevents: 32, sigsetsize: 8) = 1
-     0.025 ( 0.002 ms): gnome-shell/1663 read(fd: 24</dev/input/event4>, buf: 0x560c01bb8240, count: 8112) = 48
-     0.029 ( 0.001 ms): gnome-shell/1663 read(fd: 24</dev/input/event4>, buf: 0x560c01bb8258, count: 8088) = -1 EAGAIN Resource temporarily unavailable
-     0.032 ( 0.001 ms): gnome-shell/1663 read(fd: 24</dev/input/event4>, buf: 0x560c01bb8240, count: 8112) = -1 EAGAIN Resource temporarily unavailable
-     0.040 ( 0.003 ms): gnome-shell/1663 recvmsg(fd: 46<socket:[35893]>, msg: 0x7ffd8f3ef950) = -1 EAGAIN Resource temporarily unavailable
-    21.529 ( 0.002 ms): gnome-shell/1663 epoll_pwait(epfd: 5<anon_inode:[eventpoll]>, events: 0x7ffd8f3ef960, maxevents: 32, sigsetsize: 8) = 1
-    21.533 ( 0.004 ms): gnome-shell/1663 recvmsg(fd: 82<socket:[42826]>, msg: 0x7ffd8f3ef7b0, flags: DONTWAIT|CMSG_CLOEXEC) = 236
-    21.581 ( 0.006 ms): gnome-shell/1663 ioctl(fd: 8</dev/dri/card0>, cmd: DRM_I915_GEM_BUSY, arg: 0x7ffd8f3ef060) = 0
-    21.605 ( 0.020 ms): gnome-shell/1663 ioctl(fd: 8</dev/dri/card0>, cmd: DRM_I915_GEM_CREATE, arg: 0x7ffd8f3eeea0) = 0
-    21.626 ( 0.119 ms): gnome-shell/1663 ioctl(fd: 8</dev/dri/card0>, cmd: DRM_I915_GEM_SET_DOMAIN, arg: 0x7ffd8f3eee94) = 0
-    21.746 ( 0.081 ms): gnome-shell/1663 ioctl(fd: 8</dev/dri/card0>, cmd: DRM_I915_GEM_PWRITE, arg: 0x7ffd8f3eeea0) = 0
-  ^C
-
-Oops, yet another gnome process that is involved with the output that
-'perf trace' generates, lets filter that out too:
-
-  # perf trace --filter-pids 2469,1663 -e tools/perf/examples/bpf/augmented_raw_syscalls.c
-         ? (         ): wpa_supplicant/1366  ... [continued]: select()) = 0 Timeout
-     0.006 ( 0.002 ms): wpa_supplicant/1366 clock_gettime(which_clock: BOOTTIME, tp: 0x7fffe5b1e430) = 0
-     0.011 ( 0.001 ms): wpa_supplicant/1366 clock_gettime(which_clock: BOOTTIME, tp: 0x7fffe5b1e3e0) = 0
-     0.014 ( 0.001 ms): wpa_supplicant/1366 clock_gettime(which_clock: BOOTTIME, tp: 0x7fffe5b1e430) = 0
-         ? (         ): gmain/1791  ... [continued]: poll()) = 0 Timeout
-     0.017 (         ): wpa_supplicant/1366 select(n: 6, inp: 0x55646fed3ad0, outp: 0x55646fed3b60, exp: 0x55646fed3bf0, tvp: 0x7fffe5b1e4a0) ...
-   157.879 ( 0.019 ms): gmain/1791 inotify_add_watch(fd: 8<anon_inode:inotify>, pathname: , mask: 16789454) = -1 ENOENT No such file or directory
-         ? (         ): cupsd/1001  ... [continued]: epoll_pwait()) = 0
-         ? (         ): gsd-color/1908  ... [continued]: poll()) = 0 Timeout
-   499.615 (         ): cupsd/1001 epoll_pwait(epfd: 4<anon_inode:[eventpoll]>, events: 0x557a21166500, maxevents: 4096, timeout: 1000, sigsetsize: 8) ...
-   586.593 ( 0.004 ms): gsd-color/1908 recvmsg(fd: 3<socket:[38074]>, msg: 0x7ffdef34e800) = -1 EAGAIN Resource temporarily unavailable
-         ? (         ): fwupd/2230  ... [continued]: poll()) = 0 Timeout
-         ? (         ): rtkit-daemon/906  ... [continued]: poll()) = 0 Timeout
-         ? (         ): rtkit-daemon/907  ... [continued]: poll()) = 1
-   724.603 ( 0.007 ms): rtkit-daemon/907 read(fd: 6<anon_inode:[eventfd]>, buf: 0x7f05ff768d08, count: 8) = 8
-         ? (         ): ssh/5461  ... [continued]: select()) = 1
-   810.431 ( 0.002 ms): ssh/5461 clock_gettime(which_clock: BOOTTIME, tp: 0x7ffd7f39f870) = 0
-   ^C
-
-Several syscall exit events for syscalls in flight when 'perf trace' started, etc. Saner :-)
+This reverts commit 7ed71f124284359676b6496ae7db724fee9da753.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-c3tu5yg204p5mvr9kvwew07n@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-88vh02cnkam0vv5f9vp02o3h@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/examples/bpf/augmented_raw_syscalls.c | 27 ------------------------
- 1 file changed, 27 deletions(-)
+ tools/perf/examples/bpf/augmented_raw_syscalls.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
 diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-index 5fed1eff889d..3f26e705b86c 100644
+index 3f26e705b86c..74ce7574073d 100644
 --- a/tools/perf/examples/bpf/augmented_raw_syscalls.c
 +++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-@@ -51,27 +51,6 @@ struct augmented_filename {
+@@ -44,9 +44,7 @@ struct augmented_filename {
+ 	char		value[256];
+ };
+ 
+-#define SYS_WRITE 1
+ #define SYS_OPEN 2
+-#define SYS_POLL 7
+ #define SYS_OPENAT 257
  
  pid_filter(pids_filtered);
- 
--static void pid_filter__init(void)
--{
--	/*
--	 * Filter a bunch of pids: gnome-shell, kvm, firefox threads,
--	 * avahi-daemon, etc, just for testing as we go along.
--	 *
--	 * These will come from 'perf trace --filter-pids' in a explicit way
--	 * and also it will filter out itself, to avoid the feedback loop:
--	 * syscalls 'perf trace' does gets caught, reported, causing new
--	 * syscalls to get emitted, rinse repeat forever.
--	 */
--	if (pid_filter__add(&pids_filtered, 2971))
--		return; /* pid_filter__init() was already called, bail out */
--	pid_filter__add(&pids_filtered, 20016);
--	pid_filter__add(&pids_filtered, 12018);
--	pid_filter__add(&pids_filtered, 2310);
--	pid_filter__add(&pids_filtered, 3759);
--	pid_filter__add(&pids_filtered, 25978);
--	pid_filter__add(&pids_filtered, 883);
--}
--
- SEC("raw_syscalls:sys_enter")
- int sys_enter(struct syscall_enter_args *args)
- {
-@@ -81,12 +60,6 @@ int sys_enter(struct syscall_enter_args *args)
- 	} augmented_args;
- 	unsigned int len = sizeof(augmented_args);
- 	const void *filename_arg = NULL;
--	/*
-- 	 * We still don't have a "main()" called first and only once
-- 	 * call it always, it will exit as soon as it realizes the
-- 	 * first hard coded filtered pid was already added.
-- 	 */
--	pid_filter__init();
- 
- 	if (pid_filter__has(&pids_filtered, getpid()))
- 		return 0;
+@@ -106,8 +104,6 @@ int sys_enter(struct syscall_enter_args *args)
+ 	 * 	 after the ctx memory access to prevent their down stream merging.
+ 	 */
+ 	switch (augmented_args.args.syscall_nr) {
+-	case SYS_WRITE:
+-	case SYS_POLL:	 return 0;
+ 	case SYS_OPEN:	 filename_arg = (const void *)args->args[0];
+ 			__asm__ __volatile__("": : :"memory");
+ 			 break;
 -- 
 2.14.5
 
