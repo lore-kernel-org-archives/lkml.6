@@ -3,40 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F96C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC13BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6E8420838
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:39:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87C2720838
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:42:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCTg9Vpv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6E8420838
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MW0Vzmnp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87C2720838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438357AbeKWGUH (ORCPT
+        id S2404636AbeKWGXQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 01:20:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58354 "EHLO mail.kernel.org"
+        Fri, 23 Nov 2018 01:23:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731412AbeKWGUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 01:20:06 -0500
+        id S2389492AbeKWGXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 01:23:15 -0500
 Received: from localhost (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 907A620684;
-        Thu, 22 Nov 2018 19:39:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE03620685;
+        Thu, 22 Nov 2018 19:42:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542915558;
-        bh=cTU1975c0PQ8O2ACLJgJzmyoY2yo5rdXZfIvdmyDmic=;
+        s=default; t=1542915746;
+        bh=EQOUARoGjQGg+u4cWfac16ITD1249PlBz+mOauJ2XLw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jCTg9Vpv5N9XV9BPCOQX6M88qX9jo4fG6zPFd9wwzgqMibkq88rFYTEeJho8WIwmw
-         TI6KJ4HjYTrftsMctOCzSTynky0cKG1Y+ERq9vuWKDZsloWXBMk5/NV9+3rLuXDRUR
-         9g4Lqe2is+L/Lz2x0vGzo0gcBFQEhebBMaX4Gp3M=
-Date:   Thu, 22 Nov 2018 14:39:14 -0500
+        b=MW0Vzmnp4PfUZVa1054pxyU5YT+73EjDmdOtNmI2X65eiubvLlKlTqgMzZ3Ag79zj
+         ae3+RInaJDJBXSJK6anw8qo/aq9eBHLT2x3ro+eJoXRrapSjb4/Fknm17q3okbnSyF
+         tKyLAMmL86VGBCnauyYrblZMPs2GNvKGQTr3k7Ao=
+Date:   Thu, 22 Nov 2018 14:42:23 -0500
 From:   Sasha Levin <sashal@kernel.org>
 To:     Tigran Aivazian <aivazian.tigran@gmail.com>
 Cc:     stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
@@ -45,7 +45,7 @@ Cc:     stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
         torvalds@linux-foundation.org
 Subject: Re: [PATCH AUTOSEL 3.18 1/9] bfs: add sanity check at
  bfs_fill_super()
-Message-ID: <20181122193914.GD9725@sasha-vm>
+Message-ID: <20181122194223.GE9725@sasha-vm>
 References: <20181113055252.79406-1-sashal@kernel.org>
  <CAK+_RLnZiy13paU3tRggDpanLv=h+ZCcyXtOz_2UzWfy4tsu2w@mail.gmail.com>
  <CAK+_RLmkDfmxQcNMk7_eoC+=PQ=T9nPc=FVSiHbJADouypcEBQ@mail.gmail.com>
@@ -77,7 +77,8 @@ On Tue, Nov 13, 2018 at 08:00:56PM +0000, Tigran Aivazian wrote:
 >
 >So, the final patch against 4.19.2 is attached.
 
-I've grabbed the backport, thank you.
+Hm, but this one is not upstream yet? I'll wait with it until it gets
+some time to soak upstream.
 
 --
 Thanks,
