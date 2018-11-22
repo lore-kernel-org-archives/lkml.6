@@ -2,214 +2,127 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C71DBC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF62C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:56:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8668420684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:56:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8668420684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id E8F5C20684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:56:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j+3wDzzi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8F5C20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391512AbeKWAfd (ORCPT
+        id S2391566AbeKWAft (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:35:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57364 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730633AbeKWAfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:35:33 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 99F74AC3B;
-        Thu, 22 Nov 2018 13:56:02 +0000 (UTC)
-Subject: Re: [PATCH 3/4] mm: Reclaim small amounts of memory when an external
- fragmentation event occurs
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        Linux-MM <linux-mm@kvack.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Michal Hocko <mhocko@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181121101414.21301-1-mgorman@techsingularity.net>
- <20181121101414.21301-4-mgorman@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <cc8ec820-1526-d753-4619-dedaa227a179@suse.cz>
-Date:   Thu, 22 Nov 2018 14:53:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 22 Nov 2018 19:35:49 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51378 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730633AbeKWAft (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 19:35:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5a2LqsCdGJOKGLI+ozOYHganhhU+CTNqkX5uajpFs5k=; b=j+3wDzziYk+cYHgmzLluq8/PT
+        MPW40qEgdclgD2a+sr6CVSHSYkOgd5Atj0jBj8sC2bTbWXaPxt+xhsSenH96tPX5GQ5IifvGaLe/C
+        4oHDgljPtwYntx0dJmM1Q4GIXGvKKkkHaQkJQm+ZYlutSlffPErCVhFqRSC/TABUUsQi5QVUSKkb+
+        Dk01TIPyLoB2JTDixsfRImXdE2EjKao6yvjUJjQcyRVJeDLxDuYXOKhgdvkCdRTKK7dA9EbTkRKSF
+        X4UCzEW0+M3ozZggDGpvFGEP8i+hAzmJdpw5q1i3QJP+OxaKHem4RRS1vVmv95ro9gVRgnbn2fQ5O
+        6nzrld2GQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gPpSo-0005ax-DR; Thu, 22 Nov 2018 13:56:14 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A262D2029FD58; Thu, 22 Nov 2018 14:56:06 +0100 (CET)
+Date:   Thu, 22 Nov 2018 14:56:06 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@codeaurora.org,
+        skannan@codeaurora.org, pkondeti@codeaurora.org,
+        juri.lelli@redhat.com, edubezval@gmail.com,
+        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
+        javi.merino@kernel.org
+Subject: Re: [PATCH v9 13/15] sched/fair: Introduce an energy estimation
+ helper function
+Message-ID: <20181122135606.GG2113@hirez.programming.kicks-ass.net>
+References: <20181119141857.8625-1-quentin.perret@arm.com>
+ <20181119141857.8625-14-quentin.perret@arm.com>
+ <20181121142803.GF2113@hirez.programming.kicks-ass.net>
+ <20181121160524.ulj6n3shb2fdwboj@queper01-lin>
 MIME-Version: 1.0
-In-Reply-To: <20181121101414.21301-4-mgorman@techsingularity.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181121160524.ulj6n3shb2fdwboj@queper01-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/21/18 11:14 AM, Mel Gorman wrote:
-> An external fragmentation event was previously described as
+On Wed, Nov 21, 2018 at 04:05:27PM +0000, Quentin Perret wrote:
+> On Wednesday 21 Nov 2018 at 15:28:03 (+0100), Peter Zijlstra wrote:
+> > On Mon, Nov 19, 2018 at 02:18:55PM +0000, Quentin Perret wrote:
+> > > +static long
+> > > +compute_energy(struct task_struct *p, int dst_cpu, struct perf_domain *pd)
+> > > +{
+> > > +	long util, max_util, sum_util, energy = 0;
+> > > +	int cpu;
+> > > +
+> > > +	for (; pd; pd = pd->next) {
+> > > +		max_util = sum_util = 0;
+> > > +		/*
+> > > +		 * The capacity state of CPUs of the current rd can be driven by
+> > > +		 * CPUs of another rd if they belong to the same performance
+> > > +		 * domain. So, account for the utilization of these CPUs too
+> > > +		 * by masking pd with cpu_online_mask instead of the rd span.
+> > > +		 *
+> > > +		 * If an entire performance domain is outside of the current rd,
+> > > +		 * it will not appear in its pd list and will not be accounted
+> > > +		 * by compute_energy().
+> > > +		 */
+> > > +		for_each_cpu_and(cpu, perf_domain_span(pd), cpu_online_mask) {
+> > 
+> > Should that not be cpu_active_mask ?
 > 
->     When the page allocator fragments memory, it records the event using
->     the mm_page_alloc_extfrag event. If the fallback_order is smaller
->     than a pageblock order (order-9 on 64-bit x86) then it's considered
->     an event that will cause external fragmentation issues in the future.
+> Hmm, I must admit I'm sometimes a bit confused by the exact difference
+> between these masks, so maybe yeah ...
 > 
-> The kernel reduces the probability of such events by increasing the
-> watermark sizes by calling set_recommended_min_free_kbytes early in the
-> lifetime of the system. This works reasonably well in general but if there
-> are enough sparsely populated pageblocks then the problem can still occur
-> as enough memory is free overall and kswapd stays asleep.
-> 
-> This patch introduces a watermark_boost_factor sysctl that allows a
-> zone watermark to be temporarily boosted when an external fragmentation
-> causing events occurs. The boosting will stall allocations that would
-> decrease free memory below the boosted low watermark and kswapd is woken
-> unconditionally to reclaim an amount of memory relative to the size
-> of the high watermark and the watermark_boost_factor until the boost
-> is cleared. When kswapd finishes, it wakes kcompactd at the pageblock
-> order to clean some of the pageblocks that may have been affected by the
-> fragmentation event. kswapd avoids any writeback or swap from reclaim
-> context during this operation to avoid excessive system disruption in
-> the name of fragmentation avoidance. Care is taken so that kswapd will
-> do normal reclaim work if the system is really low on memory.
-> 
-> This was evaluated using the same workloads as "mm, page_alloc: Spread
-> allocations across zones before introducing fragmentation".
-> 
-> 1-socket Skylake machine
-> config-global-dhp__workload_thpfioscale XFS (no special madvise)
-> 4 fio threads, 1 THP allocating thread
-> --------------------------------------
-> 
-> 4.20-rc1 extfrag events < order 9:  1023463
-> 4.20-rc1+patch:                      358574 (65% reduction)
-> 4.20-rc1+patch1-3:                    19274 (98% reduction)
+> IIUC, cpu_active_mask is basically the set of CPUs on which the
+> scheduler is actually allowed to migrate tasks. Is that correct ?
 
-So the reason I was wondering about movable vs unmovable fallbacks here
-is that movable fallbacks are ok as they can be migrated later, but the
-unmovable/reclaimable not, which is bad if they fallback to movable
-pageblock. Movable fallbacks can however fill the unmovable pageblocks
-and increase change of the unmovable fallback, but that would depend on
-the workload. So hypothetically if the test workload was such that
-movable fallbacks did not cause unmovable fallbacks, and a patch would
-thus only decrease the movable fallbacks (at the cost of e.g. higher
-reclaim, as this patch) with unmovable fallbacks unchanged, then it
-would be useful to know that for better evaluation of the pros vs cons,
-imho.
+Yep. Which is a strict subset of online. The difference only matters
+during hotplug. We take a CPU out of active before we take if offline
+and we add it to active only after the CPU is fully online and
+scheduling.
 
-> +static inline void boost_watermark(struct zone *zone)
-> +{
-> +	unsigned long max_boost;
-> +
-> +	if (!watermark_boost_factor)
-> +		return;
-> +
-> +	max_boost = mult_frac(wmark_pages(zone, WMARK_HIGH),
-> +			watermark_boost_factor, 10000);
+> I have always seen cpu_online_mask as a superset of cpu_active_mask
+> which can also include CPUs which are still running 'special' tasks
+> (kthreads and things like that I assume) although not allowed for
+> migration any more (or not yet) because we're in the process of
+> hotplugging that CPU.
 
-Hmm I assume you didn't use high_wmark_pages() because the calculation
-should start with high watermark not including existing boost. But then,
-wmark_pages() also includes existing boost, so the limit won't work and
-each invocation of boost_watermark() will simply add pageblock_nr_pages?
-I.e. this should use zone->_watermark[] instead of wmark_pages()?
+Right.
 
-> +	max_boost = max(pageblock_nr_pages, max_boost);
-> +
-> +	zone->watermark_boost = min(zone->watermark_boost + pageblock_nr_pages,
-> +		max_boost);
-> +}
-> +
->  /*
->   * This function implements actual steal behaviour. If order is large enough,
->   * we can steal whole pageblock. If not, we first move freepages in this
-> @@ -2160,6 +2176,14 @@ static void steal_suitable_fallback(struct zone *zone, struct page *page,
->  		goto single_page;
->  	}
->  
-> +	/*
-> +	 * Boost watermarks to increase reclaim pressure to reduce the
-> +	 * likelihood of future fallbacks. Wake kswapd now as the node
-> +	 * may be balanced overall and kswapd will not wake naturally.
-> +	 */
-> +	boost_watermark(zone);
-> +	wakeup_kswapd(zone, 0, 0, zone_idx(zone));
-> +
->  	/* We are not allowed to try stealing from the whole block */
->  	if (!whole_block)
->  		goto single_page;
-> @@ -3277,11 +3301,19 @@ static bool zone_allows_reclaim(struct zone *local_zone, struct zone *zone)
->   * probably too small. It only makes sense to spread allocations to avoid
->   * fragmentation between the Normal and DMA32 zones.
->   */
-> -static inline unsigned int alloc_flags_nofragment(struct zone *zone)
-> +static inline unsigned int
-> +alloc_flags_nofragment(struct zone *zone, gfp_t gfp_mask)
->  {
->  	if (zone_idx(zone) != ZONE_NORMAL)
->  		return 0;
->  
-> +	/*
-> +	 * A fragmenting fallback will try waking kswapd. ALLOC_NOFRAGMENT
-> +	 * may break that so such callers can introduce fragmentation.
-> +	 */
+> So, the thing is, I'm not trying to select a CPU candidate for my task
+> here, I'm trying to understand what's the energy impact of a migration.
+> That involves all CPUs that are running _something_ in a perf domain
+> no matter if they're allowed to run more tasks or not. I mean, raising
+> the OPP will make running online && !active CPUs more expensive as well.
+> That's why I thought cpu_online_mask was good match here.
 
-I think I don't understand this comment :( Do you want to avoid waking
-up kswapd from steal_suitable_fallback() (introduced above) for
-allocations without __GFP_KSWAPD_RECLAIM? But returning 0 here means
-actually allowing the allocation go through steal_suitable_fallback()?
-So should it return ALLOC_NOFRAGMENT below, or was the intent different?
-
-> +	if (!(gfp_mask & __GFP_KSWAPD_RECLAIM))
-> +		return 0;
-> +
->  	/*
->  	 * If ZONE_DMA32 exists, assume it is the one after ZONE_NORMAL and
->  	 * the pointer is within zone->zone_pgdat->node_zones[]
-
-.
+Ah, fair enough. Thanks!
