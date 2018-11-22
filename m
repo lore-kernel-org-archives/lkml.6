@@ -2,103 +2,78 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E07E6C04EBB
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:32:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01217C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB85420684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:32:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB85420684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B1AA020684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:34:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1AA020684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405355AbeKVVLf (ORCPT
+        id S2405229AbeKVVNJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 16:11:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34264 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388243AbeKVVLf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 16:11:35 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B03862D2BEB;
-        Thu, 22 Nov 2018 10:32:45 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-23.pek2.redhat.com [10.72.8.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 26F795C25A;
-        Thu, 22 Nov 2018 10:32:13 +0000 (UTC)
-Date:   Thu, 22 Nov 2018 18:32:09 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
-        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V11 14/19] block: handle non-cluster bio out of
- blk_bio_segment_split
-Message-ID: <20181122103208.GD27273@ming.t460p>
-References: <20181121032327.8434-1-ming.lei@redhat.com>
- <20181121032327.8434-15-ming.lei@redhat.com>
- <20181121143355.GB2594@lst.de>
- <20181121153726.GC19111@ming.t460p>
- <20181121174621.GA6961@lst.de>
- <20181122093259.GA27007@ming.t460p>
- <20181122100427.GA28871@lst.de>
+        Thu, 22 Nov 2018 16:13:09 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39739 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388243AbeKVVNJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 16:13:09 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 280BA18E34026;
+        Thu, 22 Nov 2018 18:34:15 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 22 Nov
+ 2018 18:34:10 +0800
+Subject: Re: [PATCH 07/10] staging: erofs: separate into init_once / always
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>, <weidu.du@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>
+References: <20181120143425.43637-1-gaoxiang25@huawei.com>
+ <20181120143425.43637-8-gaoxiang25@huawei.com>
+ <20181122102339.GG3189@kroah.com>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <66b90226-5d0e-7344-5220-908aa243b014@huawei.com>
+Date:   Thu, 22 Nov 2018 18:34:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181122100427.GA28871@lst.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 22 Nov 2018 10:32:46 +0000 (UTC)
+In-Reply-To: <20181122102339.GG3189@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 11:04:28AM +0100, Christoph Hellwig wrote:
-> On Thu, Nov 22, 2018 at 05:33:00PM +0800, Ming Lei wrote:
-> > However, using virt boundary limit on non-cluster seems over-kill,
-> > because the bio will be over-split(each small bvec may be split as one bio)
-> > if it includes lots of small segment.
-> 
-> The combination of the virt boundary of PAGE_SIZE - 1 and a
-> max_segment_size of PAGE_SIZE will only split if the to me merged
-> segment is in a different page than the previous one, which is exactly
-> what we need here.  Multiple small bvec inside the same page (e.g.
-> 512 byte buffer_heads) will still be merged.
-> 
-> > What we want to do is just to avoid to merge bvecs to segment, which
-> > should have been done by NO_SG_MERGE simply. However, after multi-page
-> > is enabled, two adjacent bvecs won't be merged any more, I just forget
-> > to remove the bvec merge code in V11.
-> > 
-> > So seems we can simply avoid to use virt boundary limit for non-cluster
-> > after multipage bvec is enabled?
-> 
-> No, we can't just remove it.  As explained in the patch there is one very
-> visible difference of setting the flag amd that is no segment will span a
-> page boundary, and at least the iSCSI code seems to rely on that.
+Hi Greg,
 
-IMO, we should use queue_segment_boundary() to enhance the rule during splitting
-segment after multi-page bvec is enabled.
+On 2018/11/22 18:23, Greg Kroah-Hartman wrote:
+>> +
+>> +	DBG_BUGON(work->nr_pages);
+>> +	DBG_BUGON(work->vcnt);
+> How can these ever be triggered?  I understand the need for debugging
+> code when you are writing code, but at this point it shouldn't be needed
+> anymore, right?
 
-Seems we miss the segment boundary limit in bvec_split_segs().
+I need to avoid some fields is not 0 when the new workgroup is created (because
+work->nr_pages and work->vcnt == 0 usually after the previous workgroup is freed).
+But that is not obvious, it is promised by the current logic.
+
+In order to not introduce such a issue in the future, or there are some potential
+race (work->nr_pages and work->vcnt != 0 when the previous workgroup == 0), it need
+to be noticed to developpers as early as possible.
 
 Thanks,
-Ming
+Gao Xiang
+
+> 
+> thanks,
+> 
+> greg k-h
