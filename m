@@ -2,152 +2,97 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A1CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C24C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:17:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86C4320818
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:08:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jeSPhr/Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86C4320818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 52B2C20645
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:17:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B2C20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407394AbeKWHtM (ORCPT
+        id S2438936AbeKWH7H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 02:49:12 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39448 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389465AbeKWHtM (ORCPT
+        Fri, 23 Nov 2018 02:59:07 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:49050 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727301AbeKWH7H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 02:49:12 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t27so2492514wra.6
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 13:08:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=3fwIi1HS+B7IqHTnxe4GTaBPBU0ZPbNlR7rFtZhpXrc=;
-        b=jeSPhr/YrQkmBYIUxP336rNiADqHILN1LHSlMWcRRSAoU7ZyDMMx+38FWmGQITz3du
-         7fG9O4zR6mEp6XTqKeSn93s4WYy3d6TN2O/09zVAwdFGNJimbJdLdrej6kg/dhhd3XhB
-         pvXU1GgHDXr94XKPb801kwMxMS8M+LgnJo8l8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=3fwIi1HS+B7IqHTnxe4GTaBPBU0ZPbNlR7rFtZhpXrc=;
-        b=c7vo23XCc7zXbCIi4ZffYugV0KGfQPtZuGvmcRb2TVRJrK7MoVPfoPrmWOdL2mG7NC
-         MSJ+g7o7a37EFrU91Y0yd0xxKzLlMi5tZW3eQSH4HOcsXyu2M9k2lqeigK/OURmvz/43
-         W4hyZPevnGduH7EoOql94Z+U7jX34uo7TFiqZH2QMkdTVwJlcanBqDQeHSRlnBI0Wy4f
-         h119zaOig7OlQWxw67CT6Fy1tZP9Hi8teutvuvAUV+kezTulXPaj7uUHmEiOvOlviCJQ
-         dCUqVtzb7DS9RxqBJVZHiAQ4uM+nXJlnzyRZx+sJefNVUwjkyTQ4D0mx3qySLWuhSUso
-         tv9A==
-X-Gm-Message-State: AA+aEWaO6OHT9oN9ARS0bsYKgIgtzqRpuPmeBwwmKhulXhHW7n4W1tZI
-        h1cdPiGx0p/cKw09WN4nO41BMQ==
-X-Google-Smtp-Source: AFSGD/UnbNFGx3Xr1bxXeiHfwJN0Qq8HUi5bRAnMjW+VuCRJS/h2Egi8LR5ObpHXdM9ELyRsYTUzyQ==
-X-Received: by 2002:a5d:6b09:: with SMTP id v9mr3230402wrw.304.1542920882556;
-        Thu, 22 Nov 2018 13:08:02 -0800 (PST)
-Received: from [192.168.1.54] (33.153.69.91.rev.sfr.net. [91.69.153.33])
-        by smtp.gmail.com with ESMTPSA id 60sm26154756wrb.81.2018.11.22.13.08.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 13:08:01 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 1/2] bpf: add __weak hook for allocating executable memory
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-X-Mailer: iPhone Mail (16A366)
-In-Reply-To: <201811230404.yavKPUOn%fengguang.wu@intel.com>
-Date:   Thu, 22 Nov 2018 22:08:00 +0100
-Cc:     kbuild-all@01.org, linux-arm-kernel@lists.infradead.org,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <800264DE-658A-46B4-8FA1-CD1CF314AA7A@linaro.org>
-References: <20181121131733.14910-2-ard.biesheuvel@linaro.org> <201811230404.yavKPUOn%fengguang.wu@intel.com>
-To:     kbuild test robot <lkp@intel.com>
+        Fri, 23 Nov 2018 02:59:07 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gPwM5-0005CH-QE; Thu, 22 Nov 2018 22:17:45 +0100
+Date:   Thu, 22 Nov 2018 22:17:44 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>
+cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jiri Kosina <jkosina@suse.cz>, thomas.lendacky@amd.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>, dave.hansen@intel.com,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        "Mallick, Asit K" <asit.k.mallick@intel.com>,
+        "Van De Ven, Arjan" <arjan@linux.intel.com>, jcm@redhat.com,
+        longman9394@gmail.com, Greg KH <gregkh@linuxfoundation.org>,
+        david.c.stewart@intel.com, Kees Cook <keescook@chromium.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Subject: Re: [patch 01/24] x86/speculation: Update the TIF_SSBD comment
+In-Reply-To: <20181122175229.GD10365@zn.tnic>
+Message-ID: <alpine.DEB.2.21.1811222215360.1665@nanos.tec.linutronix.de>
+References: <20181121201430.559770965@linutronix.de> <20181121201722.337599561@linutronix.de> <CAHk-=wgLZkKDLeNN818VG0wC6B_kCUJqKPLdW+KDVocU6_DvtA@mail.gmail.com> <CAHk-=wj6fZpcad+1O5Ou0HZb0NEv1RM_BweyM0XBGtzE87YXXg@mail.gmail.com>
+ <alpine.DEB.2.21.1811212345180.1665@nanos.tec.linutronix.de> <20181121230450.k75e4ipdag73dayz@treble> <20181121230854.GH27559@zn.tnic> <20181122173004.fn4tqoclhcyibxff@treble> <20181122175229.GD10365@zn.tnic>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 22 Nov 2018, Borislav Petkov wrote:
+> On Thu, Nov 22, 2018 at 11:30:04AM -0600, Josh Poimboeuf wrote:
+> > But it does describe its purpose, especially in relation to the
+> > 'spectre_v2=' option.
+> 
+> Sure, but the thing I'm proposing
+> 
+> spectre_v2_task_isol=
+> 
+> describes it more precisely, IMHO. :)
+> 
+> I.e., "enable/disable spectre v2 task isolation".
+> 
+> > Previously 'spectre_v2=' might have been more appropriately named
+> > 'spectre_v2_kernel=' because it only protected the kernel from Spectre
+> > v2 attacks.  Now with these new patches, 'spectre_v2=on' will protect
+> > the entire system.
+> 
+> Hmmm, crazy idea: can we extend the options of spectre_v2= nstead?
+> 
+> spectre_v2=user_isolation,...
+> spectre_v2=kernel,...
+> spectre_v2=task_isolation,...
+> 
+> and so on?
+> 
+> This way we can do a couple of option switches in one go.
 
+That's results in a huge parser state space and changes the existing
+interface. We stay with the separate option.
 
-> On 22 Nov 2018, at 21:01, kbuild test robot <lkp@intel.com> wrote:
->=20
-> Hi Ard,
->=20
-> I love your patch! Yet something to improve:
->=20
+Thanks,
 
-Ugh, apologies for this. I=E2=80=99m sure i build tested /something/ but cle=
-arly not what i should have tested.
-
-In any case, following up on the discussion I=E2=80=99ll have to respin this=
- in any case. I=E2=80=99ll triple check next time that what i send out was t=
-ested properly.
-
-
-> [auto build test ERROR on bpf-next/master]
-> [also build test ERROR on v4.20-rc3 next-20181122]
-> [if your patch is applied to the wrong git tree, please drop us a note to h=
-elp improve the system]
->=20
-> url:    https://github.com/0day-ci/linux/commits/Ard-Biesheuvel/bpf-permit=
--JIT-allocations-to-be-served-outside-the-module-region/20181123-033144
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git m=
-aster
-> config: x86_64-randconfig-x002-201846 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->        # save the attached .config to linux build tree
->        make ARCH=3Dx86_64=20
->=20
-> All error/warnings (new ones prefixed by >>):
->=20
->   kernel//bpf/core.c: In function 'bpf_jit_free_exec':
->>> kernel//bpf/core.c:632:24: error: 'size' undeclared (first use in this f=
-unction); did you mean 'ksize'?
->     return module_memfree(size);
->                           ^~~~
->                           ksize
->   kernel//bpf/core.c:632:24: note: each undeclared identifier is reported o=
-nly once for each function it appears in
->>> kernel//bpf/core.c:632:9: warning: 'return' with a value, in function re=
-turning void
->     return module_memfree(size);
->            ^~~~~~~~~~~~~~
->   kernel//bpf/core.c:630:13: note: declared here
->    void __weak bpf_jit_free_exec(const void *addr)
->                ^~~~~~~~~~~~~~~~~
->=20
-> vim +632 kernel//bpf/core.c
->=20
->   629   =20
->   630    void __weak bpf_jit_free_exec(const void *addr)
->   631    {
->> 632        return module_memfree(size);
->   633    }
->   634   =20
->=20
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Cen=
-ter
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporat=
-ion
-> <.config.gz>
+	tglx
