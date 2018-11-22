@@ -2,94 +2,170 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DF5C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E90EDC04EBB
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7DB520684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:30:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="HMny3uil"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7DB520684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id B5FE520870
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:30:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5FE520870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405201AbeKVVIz (ORCPT
+        id S2405215AbeKVVJZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 16:08:55 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:33076 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390585AbeKVVIz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 16:08:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6x2MxDkHB6qpj5hyItW86b8z8/JLPKx7NNxTtyvEZF4=; b=HMny3uilNNBrwK5jyYJGpduUD
-        K+GdeQtte1lRl8SFPdmYacBdaX2ydhKddcjXHPpvCdJvGL7ljrkkPkSj0AZVWB0KaYaV4jIWXg3rQ
-        AtiHK3iDnJ+8CiUv2o8uNNETzYr2uKeDagdOglmSK+y8Ar+cVUcDIIdDXAnrtNPl9yO7E=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:48885)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gPmF6-0001U6-7s; Thu, 22 Nov 2018 10:29:52 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gPmF3-0008AK-KY; Thu, 22 Nov 2018 10:29:49 +0000
-Date:   Thu, 22 Nov 2018 10:29:48 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org,
-        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tony@atomide.com,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
-Message-ID: <20181122102948.GN6920@n2100.armlinux.org.uk>
-References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
- <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
- <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
- <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
+        Thu, 22 Nov 2018 16:09:25 -0500
+Received: from verein.lst.de ([213.95.11.211]:57488 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388270AbeKVVJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 16:09:25 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 07FD668BC7; Thu, 22 Nov 2018 11:30:34 +0100 (CET)
+Date:   Thu, 22 Nov 2018 11:30:33 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
+        Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V11 03/19] block: introduce bio_for_each_bvec()
+Message-ID: <20181122103033.GA29418@lst.de>
+References: <20181121032327.8434-1-ming.lei@redhat.com> <20181121032327.8434-4-ming.lei@redhat.com> <20181121133244.GB1640@lst.de> <20181121153135.GB19111@ming.t460p> <20181121161025.GB4977@lst.de> <20181121171217.GA6259@lst.de> <20181122101527.GB27273@ming.t460p> <20181122102309.GA29295@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181122102309.GA29295@lst.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 11:04:06PM +0200, Aaro Koskinen wrote:
-> I had switched to PIO mode in 2015 since the WARNs about legacy DMA
-> API were too annoying and flooding the console. And now that I tried
-> using DMA again with g_ether, it doesn't work anymore. The device get's
-> recognized on host side, but no traffic goes through. Switching back to
-> PIO makes it to work again.
+Btw, this patch instead of the plain rever might make it a little
+more clear what is going on by skipping the confusing helper altogher
+and operating on the raw bvec array:
 
-A solution to that would be to do what the warning message says, and
-update the driver to the DMAengine API.
 
-The reason it didn't get updated when the DMAengine conversion happened
-is because I don't have hardware for it, so had no way to test, and no
-one seemed to know that anyone was using it.  Eventually, the WARN_ON()
-was added to try and root out any users and generate interest in
-updating the drivers.  Obviously that didn't happen, because people
-just worked around the warning rather than saying anything.
-
-I'm afraid we're long past the time that I'd be willing to update the
-omap_udc driver now as I've dropped most of my knowledge on that as
-it's been four years, and Peter has been looking after OMAP DMAengine
-issues since.
-
-Sorry.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index e5b975fa0558..926550ce2d21 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -137,24 +137,18 @@ static inline bool bio_full(struct bio *bio)
+ 	for (i = 0, iter_all.idx = 0; iter_all.idx < (bio)->bi_vcnt; iter_all.idx++)	\
+ 		bvec_for_each_segment(bvl, &((bio)->bi_io_vec[iter_all.idx]), i, iter_all)
+ 
+-static inline void __bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
+-				      unsigned bytes, unsigned max_seg_len)
++static inline void bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
++				    unsigned bytes)
+ {
+ 	iter->bi_sector += bytes >> 9;
+ 
+ 	if (bio_no_advance_iter(bio))
+ 		iter->bi_size -= bytes;
+ 	else
+-		__bvec_iter_advance(bio->bi_io_vec, iter, bytes, max_seg_len);
++		bvec_iter_advance(bio->bi_io_vec, iter, bytes);
+ 		/* TODO: It is reasonable to complete bio with error here. */
+ }
+ 
+-static inline void bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
+-				    unsigned bytes)
+-{
+-	__bio_advance_iter(bio, iter, bytes, PAGE_SIZE);
+-}
+-
+ #define __bio_for_each_segment(bvl, bio, iter, start)			\
+ 	for (iter = (start);						\
+ 	     (iter).bi_size &&						\
+@@ -168,7 +162,7 @@ static inline void bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
+ 	for (iter = (start);						\
+ 	     (iter).bi_size &&						\
+ 		((bvl = bio_iter_mp_iovec((bio), (iter))), 1);	\
+-	     __bio_advance_iter((bio), &(iter), (bvl).bv_len, BVEC_MAX_LEN))
++	     bio_advance_iter((bio), &(iter), (bvl).bv_len))
+ 
+ /* returns one real segment(multi-page bvec) each time */
+ #define bio_for_each_bvec(bvl, bio, iter)			\
+diff --git a/include/linux/bvec.h b/include/linux/bvec.h
+index cab36d838ed0..7d0f9bdb6f05 100644
+--- a/include/linux/bvec.h
++++ b/include/linux/bvec.h
+@@ -25,8 +25,6 @@
+ #include <linux/errno.h>
+ #include <linux/mm.h>
+ 
+-#define BVEC_MAX_LEN  ((unsigned int)-1)
+-
+ /*
+  * was unsigned short, but we might as well be ready for > 64kB I/O pages
+  */
+@@ -102,8 +100,8 @@ struct bvec_iter_all {
+ 	.bv_offset	= segment_iter_offset((bvec), (iter)),	\
+ })
+ 
+-static inline bool __bvec_iter_advance(const struct bio_vec *bv,
+-		struct bvec_iter *iter, unsigned bytes, unsigned max_seg_len)
++static inline bool bvec_iter_advance(const struct bio_vec *bv,
++		struct bvec_iter *iter, unsigned bytes)
+ {
+ 	if (WARN_ONCE(bytes > iter->bi_size,
+ 		     "Attempted to advance past end of bvec iter\n")) {
+@@ -112,20 +110,15 @@ static inline bool __bvec_iter_advance(const struct bio_vec *bv,
+ 	}
+ 
+ 	while (bytes) {
+-		unsigned segment_len = segment_iter_len(bv, *iter);
+-
+-		if (max_seg_len < BVEC_MAX_LEN)
+-			segment_len = min_t(unsigned, segment_len,
+-					    max_seg_len -
+-					    bvec_iter_offset(bv, *iter));
++		const struct bio_vec *cur = bv + iter->bi_idx;
++		unsigned len = min3(bytes, iter->bi_size,
++				    cur->bv_len - iter->bi_bvec_done);
+ 
+-		segment_len = min(bytes, segment_len);
+-
+-		bytes -= segment_len;
+-		iter->bi_size -= segment_len;
+-		iter->bi_bvec_done += segment_len;
++		bytes -= len;
++		iter->bi_size -= len;
++		iter->bi_bvec_done += len;
+ 
+-		if (iter->bi_bvec_done == __bvec_iter_bvec(bv, *iter)->bv_len) {
++		if (iter->bi_bvec_done == cur->bv_len) {
+ 			iter->bi_bvec_done = 0;
+ 			iter->bi_idx++;
+ 		}
+@@ -157,13 +150,6 @@ static inline bool bvec_iter_rewind(const struct bio_vec *bv,
+ 	return true;
+ }
+ 
+-static inline bool bvec_iter_advance(const struct bio_vec *bv,
+-				     struct bvec_iter *iter,
+-				     unsigned bytes)
+-{
+-	return __bvec_iter_advance(bv, iter, bytes, PAGE_SIZE);
+-}
+-
+ #define for_each_bvec(bvl, bio_vec, iter, start)			\
+ 	for (iter = (start);						\
+ 	     (iter).bi_size &&						\
