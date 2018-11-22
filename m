@@ -2,142 +2,243 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D32C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5434C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:58:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6F9920870
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:55:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7821020684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 02:58:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="v6ASDE36"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6F9920870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UVYcThD/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7821020684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391773AbeKVNdG (ORCPT
+        id S2391791AbeKVNf1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 08:33:06 -0500
-Received: from mail-eopbgr150087.outbound.protection.outlook.com ([40.107.15.87]:55138
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730701AbeKVNdF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 08:33:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DY3XXWpv6kHx2CHoEXrwNinI5Mzn+XmixIRmJeMwgQ0=;
- b=v6ASDE36syzox2zSX4AR4eWKNRs58K8HTWXrfOgkI9LNzlFCw0m+KrueZ03zw7JIYNd5FsIPeWbQQT3iaW+TSZzf0WENA7uCet4GuCvKkVdBXV30Rjvt8o/69NwMQ54GzHlQKt4OhFilFOY8Qjp+hvg164xIznanTKN5O6nxV7Q=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3675.eurprd04.prod.outlook.com (52.134.69.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.28; Thu, 22 Nov 2018 02:55:45 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::e992:8455:42e:7a0b]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::e992:8455:42e:7a0b%2]) with mapi id 15.20.1294.048; Thu, 22 Nov 2018
- 02:55:45 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH] ARM: dts: imx6sll-evk: use WDOG_B pin reset
-Thread-Topic: [PATCH] ARM: dts: imx6sll-evk: use WDOG_B pin reset
-Thread-Index: AQHUgg7d1FC14R6xdkulOHFUc5P9Kg==
-Date:   Thu, 22 Nov 2018 02:55:45 +0000
-Message-ID: <1542855018-30217-1-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR02CA0170.apcprd02.prod.outlook.com
- (2603:1096:201:1f::30) To DB3PR0402MB3916.eurprd04.prod.outlook.com
- (2603:10a6:8:10::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3675;6:KaIXytR+zoibpXYokbHri+3dwSBiEa00k2BRaFH+JBE+9nZ69RdU0ATTCJyY1gOI15GpBhTiXyCK7PynmOljREwFKI9KxJAcHm9RlktCtmMFfAQnqQetLVHBbhWICz0JHZzIr9wpGNCNHZB/IuXve0fzbT9TP5GVz1RvvdVhLqyUxZP1O4VOK8tBwZ0ABnNrRk+7IWVNoTNi7q3YMCTOOi6917CfEoOvdzieDAxefz5zHAZ2LmbH3Jmi9ZaF3b/0DScV4J1xzNV9dY+cHR9JBL/8rQHNaIb5wUHxdHF97wQb2NNMCfVo7CEN5DG6VBmJpMfPFu4OAiEj4FrzK5gdP7QW/9qOmHBTJlx+NGhBylKaN0qHyv7ATyATEFuZPJAQh2040qZF3pcMdw9UdW5KgOMYacU1sCDdgyiAYiOwGOlPm+qUb48Xr3Qg8Gf8rVfNl3C2eRzMDvH+B66bhcCnHg==;5:O0gLGybOuGv4lpZrZ9AO8iC4Td4xl1bzKRdcwAC/zMRvLc20REw0nMtpqp97z2pt6T6RhcRd7m8+rygKtIrzoXyWPuzJnowEbwKYjPhsy1l4ILITqFGkp0MXrelPMqSHBtsa+mE8Tx1BGoYFEEOssgqVq44ZbCmNDjkh118mNAo=;7:g45NXaNxYwEvGoHQPR+nqNd6/ZVjsfCrkqHm9JsyvycSfVpD5BZtJNeGKQza1CUhDczotZQLfNEFmS795HaS3egDTaXIa3FXbSeBvd7sDiKtPdhZ6Qt68oQSVX+eY3cOX2byMqSfFR5vVhiqP+KBKw==
-x-ms-office365-filtering-correlation-id: c3ea7b66-5db9-491d-5808-08d65025ff94
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3675;
-x-ms-traffictypediagnostic: DB3PR0402MB3675:
-x-microsoft-antispam-prvs: <DB3PR0402MB36753AC94CE6BA8BD07A457AF5DB0@DB3PR0402MB3675.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231442)(944501410)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3675;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3675;
-x-forefront-prvs: 0864A36BBF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(366004)(346002)(136003)(189003)(199004)(99286004)(36756003)(2501003)(50226002)(6512007)(256004)(2201001)(14454004)(86362001)(316002)(110136005)(81166006)(81156014)(2906002)(8936002)(106356001)(305945005)(8676002)(97736004)(6116002)(105586002)(2900100001)(5660300001)(71190400001)(6436002)(66066001)(6486002)(7736002)(68736007)(478600001)(71200400001)(386003)(6506007)(102836004)(53936002)(1857600001)(486006)(2616005)(26005)(476003)(52116002)(186003)(3846002)(4326008)(25786009)(32563001)(473944003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3675;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: eYiHolD3nAJdry4weudmIiUwuhWYcjlfS2x0nxSz5t8j+b793cRuJJUBIkrLmb7M6mzEoQ1ld7jN+KAAihysMUsbMrPRJBL1F2rZCGHgcegrocvmGCg3UDN/OWqmaykjiYiRDRx/8m+rz0hMQgKYTgRXZEmYpcoDOduM9TnSlzqog/QCGAXiOy0JlUrHvbI13bRR8uSGtnCepS1xiD3JWeWImM83PIVZyWRnpJiUmgtWspFfsKv4PRupZDoHu7Luno8BzyOdccgF2RnqZ8L/Y5LljXURB0hv9D2Tww7HqVK4cvfw2LoReYyn3vB2+4k7JlatjEBj+dy1VeqI16QBoPW4Cydr/Q9m1y+RwzUS7kY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3ea7b66-5db9-491d-5808-08d65025ff94
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Nov 2018 02:55:45.6151
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3675
+        Thu, 22 Nov 2018 08:35:27 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:61459 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730701AbeKVNf0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 08:35:26 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20181122025805epoutp044f97043982b1e46205dbfc642d0d8623~pUuPTR7bw0352603526epoutp041;
+        Thu, 22 Nov 2018 02:58:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20181122025805epoutp044f97043982b1e46205dbfc642d0d8623~pUuPTR7bw0352603526epoutp041
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1542855485;
+        bh=WB87N4xyS+s3GSFzGd7A24F5JQcrk7gzdDMPVy8pC50=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=UVYcThD/Q4GuUT1ZPBeFlEra/JJTmNZszArqcbaxXemLPnfQ01OV6VE4KPxnPMI5A
+         pyXzJx6lJRsIHyHcc8XEC5X/U4ogjEhFVHW6H/+GXmZRmCN6OEwPdeWufDZjGNasDL
+         ZkBCupPugolJnYCFsrzKNU1s5ud5/K+0cRVXYs7E=
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.156]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20181122025803epcas1p3f9a7b483a7b30177f2191573089be2b7~pUuNJuN5F3008030080epcas1p3V;
+        Thu, 22 Nov 2018 02:58:03 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C4.CD.04058.B3B16FB5; Thu, 22 Nov 2018 11:58:03 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181122025802epcas1p1b8e1fe27259178e71112b95bc5427dd5~pUuMjRjMp1819618196epcas1p1U;
+        Thu, 22 Nov 2018 02:58:02 +0000 (GMT)
+X-AuditID: b6c32a35-e37ff70000000fda-5e-5bf61b3ba2fb
+Received: from epmmp1.local.host ( [203.254.227.16]) by
+        epsmgms2p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D5.EC.03601.A3B16FB5; Thu, 22 Nov 2018 11:58:02 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="utf-8"
+Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PIK009W8QWQQE80@mmp1.samsung.com>; Thu, 22 Nov 2018 11:58:02 +0900 (KST)
+Message-id: <5BF61B3A.9050402@samsung.com>
+Date:   Thu, 22 Nov 2018 11:58:02 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com,
+        pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org,
+        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
+        krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+Subject: Re: [PATCH 3/6] devfreq: add support for suspend/resume of a
+ devfreq device
+In-reply-to: <1542823301-23563-4-git-send-email-l.luba@partner.samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TfUwTZxzOe9frHcS6W0V9Kdtk55YIGa5HLXtx1rnMLJegsZnL/GBZd4EL
+        YD/Xa80kWVZmhMmUD3VGQOYIM2vaOqRU0FHngDKjDotMHDJhceiGlSFRvtwWtx6nGf89vyfP
+        88v7PO/7Urh6XKmhimwuwWnjLYwyUdHalabNeDVlOlf7cDAZdZxKQ81HmgjU1jxNoGORywTa
+        3dikRD9+ZkWVI3dxFI2eJFHPJ2MkGvQ8g2oPncVQcOQagX769qgSPdgfAehI9DsMnYgMkej4
+        z1cw9EuJV4mGLnbHd1zqI9CesxESlfonCDTWO6xYt5RrbW8luMAXAcDVea4ouKrK+4BrDN/B
+        uKBvr5I7Vx8guZavPuYe/UByHeNhjAv1lym4ipAPcF7/DMk9CD5nXLjdvKZQ4PMFZ6pgy7Pn
+        F9kKDEzOZtMbJn2Wls1gs9ErTKqNtwoGZv0GY8abRZZ4fCZ1J29xxykjL4rMy2vXOO1ul5Ba
+        aBddBkZw5Fsc2Y6VIm8V3baClXl262pWq83Ux4XvmwtbfGW4YzT5w4bxv4AHeJLKQQIF6VXw
+        9m8XQDlIpNT0aQBvRO8q5GEGwM/r/Ionqm+8tzAJq+l2AAcvsBJW0U/D2YPDcQ1F4fQyGOkz
+        SzROp8HRyQOP9wwB6GurwGV9Ouyf6SIlrKBfhH/sC81hZZw/NzqglPBT9POwf3YESHgxvRWe
+        OTZNSouS6CiAgTNhTBpweg8OH02E5hyL6HegNzxLSqdIoHPg0cbVkgbSD0nYE6vD5ATrof/6
+        PSDjRTB2PjSnh3QK7Os2yPoyACdHdxPyUAXgxMWWx2Yd/L2hHJOzLYTjU/sI2ayCn5aqZQkH
+        u656SDnyrwDurz6OV4Fna+e1VPt/S7XzWvoS4D6wRHCI1gJBZB3s/OsLgrm3nq4/DQ5d3tAJ
+        aAowC1Qrtk3lqgl+p7jL2gkghTNJql5vnFLl87uKBafd5HRbBLET6OMlV+OaxXn2+M+xuUys
+        PlOn06FVbJaeZZmlqlua+lw1XcC7BLMgOATnEx9GJWg8YPmOseTye1m9r8VyyJp1VxOLzx9o
+        +kC7uWHvndipjTmVf2te8pmyK+5/rRgoMRc3B9qWDN+8vaU5POm+SXJvvzA95fzz3caNEzeu
+        BxN7llFrS7edqE8RUHWWwfheX+alHW8dXpH577Xq7gX1HTpywF9jbG/wJRzcdPijf8Ze/76z
+        xlgSYxRiIc+m406R/w+M5c8YAQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCIsWRmVeSWpSXmKPExsVy+t9jAV0r6W/RBq+a9C0ObtW02DhjPavF
+        9o3fWC3mHznHatG8eD2bxZnuXIv+x6+ZLc6f38BucbbpDbvFrQYZi1lT9jJZbHp8jdXi8q45
+        bBafe48wWsw4v4/JYu2Ru+wWS69fZLK43biCzeLuqaNAM05fYrVo3XuE3aJt9QdWizcX7rE4
+        iHts272N1WPNvDWMHrMbLrJ4TOj/xOixeM9LJo9NqzrZPPbPXcPusXlJvce/Y+weB9/tYfLY
+        crWdxaNvyypGjxWrv7N7fN4kF8AXxWWTkpqTWZZapG+XwJWxeVU7c8ELyYqF734xNjA2iHQx
+        cnJICJhIrFvxhKmLkYtDSGAno8SJ4ztYQBK8AoISPybfA7I5OJgF5CWOXMqGMNUlpkzJhSi/
+        zyhxdv9EZohyLYmr3w+zg9gsAqoSz3u2gNlsQPH9L26wgdj8AooSV388ZgSZIyoQIdF9ohJk
+        jojAeUaJg32drCA1zAKtzBKP2rJAbGGBMImunr/scMtmLfjECtLMKeAtMWex1QRGgVlILp2F
+        cOkshEsXMDKvYpRMLSjOTc8tNiowzEst1ytOzC0uzUvXS87P3cQIjOtth7X6djDeXxJ/iFGA
+        g1GJh1cj8mu0EGtiWXFl7iFGCQ5mJRHeCyuAQrwpiZVVqUX58UWlOanFhxilOViUxHlv5x2L
+        FBJITyxJzU5NLUgtgskycXBKNTA23Xt9mD3U5l3TDtEeRS7dSxcKmj9rh2UVeBc5JnTd4pRf
+        UHtdtWEtzw5r0cPme/3U1287Odkv+d/tywYnprIcUfBf0ie5KfPOS+ek+ohZDDdO/ljavW/v
+        73nCPf8Y4m96vZvgs+KK7IWX+tvtTrvlq4ZKdf0vO1iXdVd7TsrdfGmhKE5D5WdKLMUZiYZa
+        zEXFiQAtI73s5wIAAA==
+X-CMS-MailID: 20181122025802epcas1p1b8e1fe27259178e71112b95bc5427dd5
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382
+References: <1542823301-23563-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382@eucas1p1.samsung.com>
+        <1542823301-23563-4-git-send-email-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i.MX6SLL EVK board has WDOG_B pin connected to the PMIC;
+On 2018년 11월 22일 03:01, Lukasz Luba wrote:
+> The patch adds support for handling suspend/resume process.
+> It uses atomic variables to make sure no race condition
+> affects the process.
+> 
+> The patch draws on Tobias Jakobi's work posted ~2 years ago, who tried to
+> solve issue with devfreq device's frequency during suspend/resume.
+> During the discussion on LKML some corner cases and comments appeared
+> related to the design. This patch address them keeping in mind suggestions
+> from Chanwoo Choi.
 
-Add the WDOG_B pinctrl entry and 'fsl,ext-reset-output'
-property to wdog node to let watchdog trigger a system
-POR reset via the PMIC.
+Please remove the duplicate information about patch history.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/boot/dts/imx6sll-evk.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+> 
+> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  drivers/devfreq/devfreq.c | 45 +++++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 39 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index cf9c643..7e09de8 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -872,14 +872,33 @@ EXPORT_SYMBOL(devm_devfreq_remove_device);
+>   */
+>  int devfreq_suspend_device(struct devfreq *devfreq)
+>  {
+> -	if (!devfreq)
+> -		return -EINVAL;
+> +        int ret;
 
-diff --git a/arch/arm/boot/dts/imx6sll-evk.dts b/arch/arm/boot/dts/imx6sll-=
-evk.dts
-index 9c90cbd..d8ad2a2 100644
---- a/arch/arm/boot/dts/imx6sll-evk.dts
-+++ b/arch/arm/boot/dts/imx6sll-evk.dts
-@@ -313,6 +313,12 @@
- 	status =3D "okay";
- };
-=20
-+&wdog1 {
-+	pinctrl-names =3D "default";
-+	pinctrl-0 =3D <&pinctrl_wdog1>;
-+	fsl,ext-reset-output;
-+};
-+
- &iomuxc {
- 	pinctrl_reg_sd3_vmmc: sd3vmmcgrp {
- 		fsl,pins =3D <
-@@ -478,4 +484,10 @@
- 			MX6SLL_PAD_PWM1__PWM1_OUT   0x110b0
- 		>;
- 	};
-+
-+	pinctrl_wdog1: wdog1grp	{
-+		fsl,pins =3D <
-+			MX6SLL_PAD_WDOG_B__WDOG1_B   0x170b0
-+		>;
-+	};
- };
---=20
-2.7.4
+Move 'ret' definition under 'if (devfreq->suspend_freq) {'
+because 'ret' is used if suspend_freq isn't zero.
 
+> +        unsigned long prev_freq;
+> +        u32 flags = 0;
+> +
+> +        if (!devfreq)
+> +                return -EINVAL;
+> +
+> +        if (devfreq->governor) {
+> +		ret = devfreq->governor->event_handler(devfreq,
+> +					DEVFREQ_GOV_SUSPEND, NULL);
+> +		if (ret)
+> +			return ret;
+> +	}
+>  
+> -	if (!devfreq->governor)
+> -		return 0;
+> +	if (devfreq->suspend_freq) {
+> +		if (atomic_inc_return(&devfreq->suspend_count) > 1)
+> +			return 0;
+>  
+> -	return devfreq->governor->event_handler(devfreq,
+> -				DEVFREQ_GOV_SUSPEND, NULL);
+> +		ret = devfreq_set_target(devfreq, devfreq->suspend_freq,
+> +					 &prev_freq, flags);
+
+Remove the 'prev_freq' parameter.
+
+> +		if (ret)
+> +			return ret;
+> +
+> +		devfreq->resume_freq = prev_freq;
+
+As I commented on patch2, if devfreq_set_taget save the current frequency
+to 'devfreq->resume_freq', this line is not needed.
+
+
+> +	}
+> +
+> +        return 0;
+>  }
+>  EXPORT_SYMBOL(devfreq_suspend_device);
+>  
+> @@ -893,9 +912,23 @@ EXPORT_SYMBOL(devfreq_suspend_device);
+>   */
+>  int devfreq_resume_device(struct devfreq *devfreq)
+>  {
+> +        int ret;
+
+Move 'ret' definition under 'if (devfreq->suspend_freq) {'
+because 'ret' is used if suspend_freq isn't zero.
+
+> +        unsigned long prev_freq;
+
+Remove prev_freq variable which is not used on this function.
+After calling devfreq_set_target, prev_freq is not used.
+
+> +        u32 flags = 0;
+> +
+>  	if (!devfreq)
+>  		return -EINVAL;
+>  
+> +	if (devfreq->suspend_freq) {
+> +		if (atomic_dec_return(&devfreq->suspend_count) >= 1)
+> +			return 0;
+> +
+> +		ret = devfreq_set_target(devfreq, devfreq->resume_freq,
+> +					 &prev_freq, flags);
+
+Remove the 'prev_freq' parameter.
+
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+>  	if (!devfreq->governor)
+>  		return 0;
+>  
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
