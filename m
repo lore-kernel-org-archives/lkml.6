@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43189C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF16AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0CEB20865
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:15:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CEBE20820
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 05:15:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="QJJ7DyCw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0CEB20865
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="orptZcsN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CEBE20820
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392213AbeKVPwl (ORCPT
+        id S2392229AbeKVPwr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 10:52:41 -0500
-Received: from mail-eopbgr20043.outbound.protection.outlook.com ([40.107.2.43]:1281
+        Thu, 22 Nov 2018 10:52:47 -0500
+Received: from mail-eopbgr20044.outbound.protection.outlook.com ([40.107.2.44]:31712
         "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728351AbeKVPwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 10:52:41 -0500
+        id S2392215AbeKVPwq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 10:52:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iha3/v8Unuz6gsDMk51ecqOZOKXxD/Kl3uHaX/5n508=;
- b=QJJ7DyCwVw2bU6A+ICxsuXDsVX4be6wZ3AX5nSjSnXDBka87iY8E59lOlBsSTQLAyCKVAfGnFStp4ylXIv1WG5G/akgp0+Vd4ggmIyYEHvOuo6xqmY7dAGs9XRgubUYtgp/ClRuboF+/UkFM9vOOBhDWWebx/IGyIH1b10oeYH8=
+ bh=tGntyyAunM0d0633GY9h0hyYQf+tv+Cm5+5g8AMlrPk=;
+ b=orptZcsNSkcsR6xFVPGJleXpPXuTUjL+Hj819wSqDjH8OqbnbMk/jHAe6ImTER5U9KNVsGNevKf8IgTUlIgn4qF3swS3IsIiXystSqoNJWyLilYSAcXK3s+nAsStfhhHlfXjXoRa4gWwh8Py/cZ1bqianwriEpX1Ujljvr0gu9I=
 Received: from VI1PR04MB5726.eurprd04.prod.outlook.com (20.178.127.24) by
  VI1PR04MB3055.eurprd04.prod.outlook.com (10.170.228.153) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.15; Thu, 22 Nov 2018 05:14:54 +0000
+ 15.20.1361.15; Thu, 22 Nov 2018 05:15:00 +0000
 Received: from VI1PR04MB5726.eurprd04.prod.outlook.com
  ([fe80::595a:9890:8397:5d51]) by VI1PR04MB5726.eurprd04.prod.outlook.com
  ([fe80::595a:9890:8397:5d51%3]) with mapi id 15.20.1361.016; Thu, 22 Nov 2018
- 05:14:54 +0000
+ 05:15:00 +0000
 From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
 To:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
         "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
@@ -55,12 +55,13 @@ CC:     "robh@kernel.org" <robh@kernel.org>,
         "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Subject: [PATCH v4 5/7] mtd: m25p80: add support of octo mode I/O transfer
-Thread-Topic: [PATCH v4 5/7] mtd: m25p80: add support of octo mode I/O
- transfer
-Thread-Index: AQHUgiJNSdkh7a1cb0+RXLQlwhw+uw==
-Date:   Thu, 22 Nov 2018 05:14:54 +0000
-Message-ID: <1542863544-21257-6-git-send-email-yogeshnarayan.gaur@nxp.com>
+Subject: [PATCH v4 6/7] spi: nxp-fspi: add octo mode flag bit for octal
+ support
+Thread-Topic: [PATCH v4 6/7] spi: nxp-fspi: add octo mode flag bit for octal
+ support
+Thread-Index: AQHUgiJRv9f2hn+ys0KIBM6v8T69Mg==
+Date:   Thu, 22 Nov 2018 05:15:00 +0000
+Message-ID: <1542863544-21257-7-git-send-email-yogeshnarayan.gaur@nxp.com>
 References: <1542863544-21257-1-git-send-email-yogeshnarayan.gaur@nxp.com>
 In-Reply-To: <1542863544-21257-1-git-send-email-yogeshnarayan.gaur@nxp.com>
 Accept-Language: en-US
@@ -75,27 +76,27 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [14.143.30.134]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB3055;6:a69qq/RqxVwIgXtz/vdmAQBWHxyNkOk98W/FkRVZzQhFhVSNEvP4VF8s+YTFyEqkLNG0Xj0D6MCd9G33bD2GMNdm0HzRebiyRCmSWFtfjH9K9Kk3TOcPUmcdQ7F5bgjfWXQPK3AP/gI6fPSncQwy5oz8i7guKGSZ3gdhR/V19xFTp55YUaBMhL2Q68vnP3zq43I+kQyvm8C/K14deU2ACodHPMZsikjuFnVl3D8kxkOPMo4iPQZrWGKKr6aCDBX3Ioj9r1fJcAzMWKCmjkxLG2TPTisbpDdybRbGSC1R8WzqjrzvyLPpazFPIcFEHJBWew7M/rIt9nvLFKxqOypk1JDYSCaKi0UYxaYI173/2378OTny2RxvMeA0DONn/a5EE4eZl3kSx/dk32nKWZoSVmacbX4qTBU3ibV/NIGZNckwY+CzJv2v2nB8c99lePqpkUmwxVeEpky76jR1B+reJA==;5:pYLfACefKkHWhtoQUb3eN7/i3xKBl3u+ILRLqO9nQUH9Lcw6gaKDn2PQ6vQQ/uoyaLjPsWqJsWnl+cXa7elUjp1vswjZR7TU04zSlCaKlNznL2t2bxm2YUEQgJ4JQfm35iuK2ectc+aosaMSMMArxkc+Iqsje8Q1AhJ+6pDk3Tw=;7:8+mSkVFdGU97+ZAJ0NLQf0+2kTnnyBiKY6FW+aYxSOfV54tvhQI72AMttKlO7Xch/9N0+6uDSVYHKEkMWOP4deiHyU3USFsXmSdVuVH5K7Tq3kc+YRvtBljgZfSk5q1ktthwV3ndN/JaCn1p4s1P5g==
-x-ms-office365-filtering-correlation-id: 45aa75b9-b85f-476e-fa6b-08d650397024
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB3055;6:kFvBiOzxazhlr0L+RdPYJmQylXT4Z5T42Zo+htfXsOImLxND5q9/1JOu6MIu1EFqGvclsEhw9Gh1xrmYMYr5shg1+EKEPCsmXAH7bdpj+gVI70Di7BfqS4wfyee2WUiWVxiDdWJUiaQGVxWK/xaEM8Od5IQzzuY/1WWXjwyjLASgWcH1gYHZuux7it/SkaXgIK3Fpm983VHHv/i/QonkJI6AUV+YiDNLe6VjOWXAZgerN6xrJl0PmJm5PShjRhKGUh7FabdSTAJEvDOkP0fY0muXtqOfxGYeajpd0PkSKj+47L3feVS9ny2lpA5gd4YwHQFHz4J3qv7E3cJERZFNlqp2YAyK0Yx1zPYT7jK9KJzyIf0dEh3fonEBJbgf+0HRUyT3NUUIs56bZWNdp6tu3xn0fqgihg98pjmomTvJ1U0G5NMbrTi+ujSrZBa6JXt7QNB7V9xvwRo/gD7ElkO0zA==;5:1ASzz8KvkyoPDKhBK9FrST+enfCtPAZyI1RDG1j1INgbRy72404f3YId/YFfve6StoelCG+sJDPOHJZuuquwxHJV/q4eh/fu0XOMfuE3PssIP3X80GuvJFLfvEulH2SDsmIfDtJIGPiEkW0LndPh0GexQDwBTwgONBnnvPAnx74=;7:nhEPSd+6OIKjLXRFp2iaEUHf8h9fHXRBqPVALewOa8y7ZGtWWrPt+ijTlEm2mZrXIsSQKjgrQBGfkSYGhYz+ev8LEyPDW57TGLJNpNGt9SAvbPbh/ci4POeJWHQKApxQzf74R0R403Quch3nffcyTQ==
+x-ms-office365-filtering-correlation-id: 98c285a1-1e0a-4145-c00b-08d650397394
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB3055;
 x-ms-traffictypediagnostic: VI1PR04MB3055:
-x-microsoft-antispam-prvs: <VI1PR04MB3055FC9A4110126D1841E99499DB0@VI1PR04MB3055.eurprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <VI1PR04MB3055C6E88ECFE78309A94F8A99DB0@VI1PR04MB3055.eurprd04.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231442)(944501410)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB3055;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB3055;
 x-forefront-prvs: 0864A36BBF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(136003)(366004)(39860400002)(376002)(189003)(199004)(8936002)(25786009)(105586002)(316002)(2906002)(106356001)(52116002)(76176011)(4326008)(14454004)(6436002)(6512007)(6486002)(53936002)(39060400002)(68736007)(2616005)(476003)(486006)(99286004)(478600001)(11346002)(446003)(36756003)(102836004)(54906003)(71190400001)(71200400001)(386003)(6506007)(66066001)(6116002)(3846002)(110136005)(26005)(256004)(186003)(14444005)(5660300001)(55236004)(81156014)(78486014)(97736004)(2900100001)(81166006)(8676002)(2201001)(2501003)(305945005)(86362001)(7736002)(7416002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3055;H:VI1PR04MB5726.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(136003)(366004)(39860400002)(376002)(189003)(199004)(8936002)(25786009)(105586002)(316002)(2906002)(106356001)(52116002)(76176011)(4326008)(14454004)(6436002)(6512007)(6486002)(53936002)(39060400002)(68736007)(2616005)(476003)(486006)(99286004)(478600001)(11346002)(446003)(36756003)(102836004)(54906003)(71190400001)(71200400001)(386003)(6506007)(66066001)(6116002)(3846002)(110136005)(26005)(256004)(186003)(5660300001)(55236004)(81156014)(78486014)(97736004)(2900100001)(81166006)(8676002)(2201001)(2501003)(575784001)(305945005)(86362001)(7736002)(7416002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3055;H:VI1PR04MB5726.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 4cFXj5D5CtwPhzVPtuLdEsheehFCAcrwfa2ekLnxy6KA2BgAThyPFSCqpnOiRyX24bj4s6+51oULvDsK4fH+jHXvdek8qbNfzAlYTLgAatQ4jJqBAReK+f8+mEr8nT4kLqFXutNvaQY8BNDRR9Wafsg69+dAbrRJGepKv8DAIWuDNIX7mPDugJILE9O9zieIxSkTSEQCXT25I9LZkGOY8DV661ZCBS1Nj1MDp9xAM6ym+S2onUeCcEO2O/uIvARA6Mxg8zWbX/ij7R35Z/IAwSzZMgfC9kXM9ogpgmf795KZsAFufjgBAUGEzpRebvnVOwVkaeQ4j6QH2bUuYPwEXXXKrUfXoc9Q0aZmkG+cu90=
+x-microsoft-antispam-message-info: HlIk4O87X7zK0/iwZ3IjrKbanyDhyBeTcxLbUyUliqAIYCswXld67WJEKXSnxlgEQo5HgFTSsDiREIelY+GLtFfruj94lzE4xvYOBkayyAgUjdiLIo2zRPktxDm+hare11x/j+WNC1h08jiwyCGNoNT8ihhLpHXCMyH5fmXVpfh93jd/5o/pK9jEgPbj/75IjPbtpcc18ZMGk5CoqYH8Z+bhJxfK2fvHX0tLiIUKJUFKLxdvKjPplX63qPA5rj6fib5F84XbqaDCqmOSSe8cpc37OPsORrhH1pgDHlJnBMT1TyptEovuTcBXF4X7gQ+EYPzMNPlS03fnGOd+E6kRq0kNh4NCF1MxxcuFVG4/3S4=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 45aa75b9-b85f-476e-fa6b-08d650397024
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Nov 2018 05:14:54.8083
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98c285a1-1e0a-4145-c00b-08d650397394
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Nov 2018 05:15:00.5583
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
@@ -105,9 +106,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for octo mode I/O data transfer based on the controller (spi)
-mode.
-Assign hw-capability mask bits for octo transfer.
+Add octo mode flags for octal I/O data transfer support.
+NXP FlexSPI controller supports 8 lines Rx/Tx data transfer.
 
 Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
 ---
@@ -116,31 +116,26 @@ Changes for v4:
 Changes for v3:
 - Modified string 'octal' with 'octo'.
 Changes for v2:
-- Incorporated review comments of Boris.
+- None
 
- drivers/mtd/devices/m25p80.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/spi/spi-nxp-fspi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/devices/m25p80.c b/drivers/mtd/devices/m25p80.c
-index c4a1d04..6f3c280 100644
---- a/drivers/mtd/devices/m25p80.c
-+++ b/drivers/mtd/devices/m25p80.c
-@@ -195,7 +195,14 @@ static int m25p_probe(struct spi_mem *spimem)
- 	spi_mem_set_drvdata(spimem, flash);
- 	flash->spimem =3D spimem;
+diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
+index a35013b..f0d37e0 100644
+--- a/drivers/spi/spi-nxp-fspi.c
++++ b/drivers/spi/spi-nxp-fspi.c
+@@ -995,8 +995,8 @@ static int nxp_fspi_probe(struct platform_device *pdev)
+ 	if (!ctlr)
+ 		return -ENOMEM;
 =20
--	if (spi->mode & SPI_RX_QUAD) {
-+	if (spi->mode & SPI_RX_OCTO) {
-+		hwcaps.mask |=3D SNOR_HWCAPS_READ_1_1_8;
-+
-+		if (spi->mode & SPI_TX_OCTO)
-+			hwcaps.mask |=3D (SNOR_HWCAPS_READ_1_8_8 |
-+					SNOR_HWCAPS_PP_1_1_8 |
-+					SNOR_HWCAPS_PP_1_8_8);
-+	} else if (spi->mode & SPI_RX_QUAD) {
- 		hwcaps.mask |=3D SNOR_HWCAPS_READ_1_1_4;
+-	ctlr->mode_bits =3D SPI_RX_DUAL | SPI_RX_QUAD |
+-			  SPI_TX_DUAL | SPI_TX_QUAD;
++	ctlr->mode_bits =3D SPI_RX_DUAL | SPI_RX_QUAD | SPI_RX_OCTO |
++			  SPI_TX_DUAL | SPI_TX_QUAD | SPI_TX_OCTO;
 =20
- 		if (spi->mode & SPI_TX_QUAD)
+ 	f =3D spi_controller_get_devdata(ctlr);
+ 	f->dev =3D dev;
 --=20
 2.7.4
 
