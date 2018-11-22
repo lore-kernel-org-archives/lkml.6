@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23351C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33DEDC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E325D20864
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:02:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E325D20864
+	by mail.kernel.org (Postfix) with ESMTP id EF32C20864
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 07:02:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF32C20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404781AbeKVRkW (ORCPT
+        id S2404825AbeKVRkt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 12:40:22 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43503 "EHLO
+        Thu, 22 Nov 2018 12:40:49 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:36771 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733189AbeKVRkW (ORCPT
+        with ESMTP id S1732578AbeKVRkt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 12:40:22 -0500
+        Thu, 22 Nov 2018 12:40:49 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAM7229a3689023
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAM72aOn3689053
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 21 Nov 2018 23:02:02 -0800
+        Wed, 21 Nov 2018 23:02:36 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAM722VP3689019;
-        Wed, 21 Nov 2018 23:02:02 -0800
-Date:   Wed, 21 Nov 2018 23:02:02 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAM72alx3689050;
+        Wed, 21 Nov 2018 23:02:36 -0800
+Date:   Wed, 21 Nov 2018 23:02:36 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-pmts9ls2skh8n3zisb4txudd@git.kernel.org>
-Cc:     tglx@linutronix.de, hpa@zytor.com, acme@redhat.com,
-        namhyung@kernel.org, wangnan0@huawei.com, dsahern@gmail.com,
-        jolsa@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        adrian.hunter@intel.com
-Reply-To: linux-kernel@vger.kernel.org, jolsa@kernel.org, mingo@kernel.org,
-          adrian.hunter@intel.com, dsahern@gmail.com, wangnan0@huawei.com,
-          namhyung@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-          acme@redhat.com
+Message-ID: <tip-gdwvq53wltvq6b3g5tdmh0cw@git.kernel.org>
+Cc:     hpa@zytor.com, tglx@linutronix.de, acme@redhat.com,
+        adrian.hunter@intel.com, jolsa@kernel.org, dsahern@gmail.com,
+        namhyung@kernel.org, mingo@kernel.org, wangnan0@huawei.com,
+        linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, wangnan0@huawei.com,
+          mingo@kernel.org, dsahern@gmail.com, namhyung@kernel.org,
+          jolsa@kernel.org, adrian.hunter@intel.com, tglx@linutronix.de,
+          hpa@zytor.com, acme@redhat.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf augmented_syscalls: Remove needless
- linux/socket.h include
-Git-Commit-ID: 66067538e0425beca98e1bee55a357f3869a0e31
+Subject: [tip:perf/core] perf bpf: Add defines for map insertion/lookup
+Git-Commit-ID: 382b55dbef6b68e3fef2fd8a438fbaff57695308
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,39 +59,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  66067538e0425beca98e1bee55a357f3869a0e31
-Gitweb:     https://git.kernel.org/tip/66067538e0425beca98e1bee55a357f3869a0e31
+Commit-ID:  382b55dbef6b68e3fef2fd8a438fbaff57695308
+Gitweb:     https://git.kernel.org/tip/382b55dbef6b68e3fef2fd8a438fbaff57695308
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 6 Nov 2018 15:26:46 -0300
+AuthorDate: Tue, 6 Nov 2018 15:46:27 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Wed, 21 Nov 2018 12:00:31 -0300
 
-perf augmented_syscalls: Remove needless linux/socket.h include
+perf bpf: Add defines for map insertion/lookup
 
-Leftover from when we started augmented_raw_syscalls.c from
-tools/perf/examples/bpf/augmented_syscalls.
+Starting with a helper for a basic pid_map(), a hash using a pid as a
+key.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: e58a0322dbac ("perf examples bpf: Start augmenting raw_syscalls:sys_{start,exit}")
-Link: https://lkml.kernel.org/n/tip-pmts9ls2skh8n3zisb4txudd@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-gdwvq53wltvq6b3g5tdmh0cw@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/examples/bpf/augmented_raw_syscalls.c | 1 -
- 1 file changed, 1 deletion(-)
+ tools/perf/include/bpf/bpf.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-index 2feb00018f79..ec109c12ff24 100644
---- a/tools/perf/examples/bpf/augmented_raw_syscalls.c
-+++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-@@ -16,7 +16,6 @@
+diff --git a/tools/perf/include/bpf/bpf.h b/tools/perf/include/bpf/bpf.h
+index 52b6d87fe822..04ecd425a237 100644
+--- a/tools/perf/include/bpf/bpf.h
++++ b/tools/perf/include/bpf/bpf.h
+@@ -18,6 +18,17 @@ struct bpf_map {
+         unsigned int numa_node;
+ };
  
- #include <stdio.h>
- #include <unistd.h>
--#include <linux/socket.h>
++#define pid_map(name, value_type)		\
++struct bpf_map SEC("maps") name = {		\
++	.type	     = BPF_MAP_TYPE_HASH,	\
++	.key_size    = sizeof(pid_t),		\
++	.value_size  = sizeof(value_type),	\
++	.max_entries = 512,			\
++}
++
++static int (*bpf_map_update_elem)(struct bpf_map *map, void *key, void *value, u64 flags) = (void *)BPF_FUNC_map_update_elem;
++static void *(*bpf_map_lookup_elem)(struct bpf_map *map, void *key) = (void *)BPF_FUNC_map_lookup_elem;
++
+ #define SEC(NAME) __attribute__((section(NAME),  used))
  
- /* bpf-output associated map */
- struct bpf_map SEC("maps") __augmented_syscalls__ = {
+ #define probe(function, vars) \
