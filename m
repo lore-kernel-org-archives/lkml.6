@@ -6,104 +6,119 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86566C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D0BBC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 407D120684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:27:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAB3D20684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:33:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gN8XvJOL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 407D120684
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T4HnRfSx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAB3D20684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395057AbeKVXGZ (ORCPT
+        id S2395061AbeKVXMn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 18:06:25 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:39662 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394865AbeKVXGY (ORCPT
+        Thu, 22 Nov 2018 18:12:43 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:38518 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390958AbeKVXMm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 18:06:24 -0500
+        Thu, 22 Nov 2018 18:12:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6GoQshdtTCtgMebtwlHObzPjr944dMKihJzDk8JnA+E=; b=gN8XvJOLSMf9Ga/u/ly10Llmm
-        d94ZfD94B0B6/m6mCzv91TIyY3eHgeFCJL9dj5fuS93nGq7DX+i8Y/H/a3UzqrpyuLk6nLAbUoibz
-        jFwPpe1WGtzIzPWssrpuIWEWzsayQsj2a9+m+cSKL3e8BQ6v8073C2AsmNS4QxtsSb8E44vmMhFcu
-        au6wPlvaM6ksRF/BkswOOa1rYEsi/HVInl7A0PNOie2KYXkxJxLYQSrNnaKoKFBIZUkaZ3rktsycV
-        iaKN4IdixwWgG7LgClwd5g0QSrNQ4FVwLAyV1IPpvfzP031JzYzlPfPl+O5p3oaes5Qa76i3cweT+
-        2vWyx7Lvw==;
+         bh=femvbVFtBpRYNNc/ZyctjfMjetOb258DickiR4eKZXo=; b=T4HnRfSxDUcKV9akxMOq1gPgi
+        Vrtm2WQo5T4TMmlv/tdRISBnB2Bco7bR5H6OjNv7hCTRgFv8rfKBZnChuFOquvEh0c63qtc5XFSEr
+        GjzWThL2waEEMFBN+fGOuLdcy6DjFFqDH8GKVGCs4Hb0zUekOPcRaLekrOsk45MUT/gnPRk6ZMw0s
+        5LueWulm5Ut54kq7cSnBZKKjHEOmbPjYdkcYbhGEMW0NVCP3wK12ZA64YMHiFuLMq2QRPrEAzeR8f
+        I15bYSj5RMQAmT6EQig1ApGnog5Bs0tk/uBTUFLqgs3wY9legBfHadxCijSg/Hp9VcFJJoFkk0gCx
+        Aegdr0XCA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPo4E-0001H5-NY; Thu, 22 Nov 2018 12:26:49 +0000
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gPoAc-00071H-Qy; Thu, 22 Nov 2018 12:33:23 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1753B2029FD58; Thu, 22 Nov 2018 13:26:37 +0100 (CET)
-Date:   Thu, 22 Nov 2018 13:26:37 +0100
+        id 786022029FD58; Thu, 22 Nov 2018 13:33:16 +0100 (CET)
+Date:   Thu, 22 Nov 2018 13:33:16 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/10] perf/core: Generalise event exclusion checking
-Message-ID: <20181122122637.GS2131@hirez.programming.kicks-ass.net>
-References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
- <20181119130800.GE9761@hirez.programming.kicks-ass.net>
- <20181122122142.GI42987@e119886-lin.cambridge.arm.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Subject: Re: [patch 22/24] x86/speculation: Create PRCTL interface to
+ restrict indirect branch speculation
+Message-ID: <20181122123316.GT2131@hirez.programming.kicks-ass.net>
+References: <20181121201430.559770965@linutronix.de>
+ <20181121201724.414692525@linutronix.de>
+ <20181122122638.GC10365@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181122122142.GI42987@e119886-lin.cambridge.arm.com>
+In-Reply-To: <20181122122638.GC10365@zn.tnic>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 12:21:43PM +0000, Andrew Murray wrote:
-> On Mon, Nov 19, 2018 at 02:08:00PM +0100, Peter Zijlstra wrote:
-
-> > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > index 84530ab358c3..d76b724177b9 100644
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -9772,6 +9772,14 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
-> >  	if (ctx)
-> >  		perf_event_ctx_unlock(event->group_leader, ctx);
-> >  
-> > +	if (!ret) {
-> > +		if ((pmu->capabilities & PERF_PMU_CAP_EXCLUDE) ||
-> > +		    event_has_exclude_flags(event)) {
-> > +			event->destroy(event);
-> > +			ret = -EINVAL;
-> > +		}
-> > +	}
-> > +
+On Thu, Nov 22, 2018 at 01:26:38PM +0100, Borislav Petkov wrote:
+> Perhaps merge the two DISABLE branches to make it obvious what the
+> difference between them is:
 > 
-> I don't quite follow this logic. Should that not have been:
-> 
-> if (!(pmu->capabilities & PERF_PMU_CAP_EXCLUDE) &&
->      event_has_exclude_flags(event)) {
-> 
-> Meaning that if an event has any exclude flags but the pmu doesn't
-> have the capability to handle them then error.
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index 6eac074e3935..28cece3a067b 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -769,7 +769,9 @@ static int indir_branch_prctl_set(struct task_struct *task, unsigned long ctrl)
+>  		task_clear_spec_indir_branch_disable(task);
+>  		task_update_spec_tif(task, TIF_SPEC_IB, false);
+>  		break;
+> +
+>  	case PR_SPEC_DISABLE:
+> +	case PR_SPEC_FORCE_DISABLE:
+>  		/*
+>  		 * Indirect branch speculation is always allowed when
+>  		 * mitigation is force disabled.
+> @@ -780,16 +782,11 @@ static int indir_branch_prctl_set(struct task_struct *task, unsigned long ctrl)
+>  			return 0;
+>  		task_set_spec_indir_branch_disable(task);
+>  		task_update_spec_tif(task, TIF_SPEC_IB, true);
+> +
+> +		if (ctrl == PR_SPEC_FORCE_DISABLE)
+> +			task_set_spec_indir_branch_force_disable(task);
+>  		break;
+> -	case PR_SPEC_FORCE_DISABLE:
+> -		if (spectre_v2_app2app == SPECTRE_V2_APP2APP_NONE)
+> -			return -EPERM;
+> -		if (spectre_v2_app2app == SPECTRE_V2_APP2APP_STRICT)
+> -			return 0;
+> -		task_set_spec_indir_branch_disable(task);
+> -		task_set_spec_indir_branch_force_disable(task);
+> -		task_update_spec_tif(task, TIF_SPEC_IB, true);
+> -		break;
+> +
+>  	default:
+>  		return -ERANGE;
+>  	}
 
-Uhm, yes. Brainfart on my side that.
-
-> If you're happy with my proposed logic, then would it also make
-> sense to move this before the call to the pmu->event_init ?
-
-I'm not sure that can work; I think we need ->event_init() first such
-that it can -ENOENT. Only after ->event_init() returns success can we be
-certain of @pmu.
+I like that; maybe also do the same to the ssb code, for symmetry.
