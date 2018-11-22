@@ -2,155 +2,116 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18630C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2E8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C839D20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:00:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C839D20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7509420838
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:02:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SNwb6U/z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7509420838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406089AbeKWDkM (ORCPT
+        id S2392087AbeKWDnA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 22:40:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57796 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388150AbeKWDkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 22:40:12 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0455361D07;
-        Thu, 22 Nov 2018 16:59:58 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (ovpn-116-170.ams2.redhat.com [10.36.116.170])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 172D4103BAB8;
-        Thu, 22 Nov 2018 16:59:51 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Rich Felker <dalias@libc.org>, carlos <carlos@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl init and thread creation
-References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com>
-        <20181122143603.GD23599@brightrain.aerifal.cx>
-        <782067422.9852.1542899056778.JavaMail.zimbra@efficios.com>
-        <20181122151444.GE23599@brightrain.aerifal.cx>
-        <686626451.10113.1542901620250.JavaMail.zimbra@efficios.com>
-        <87wop5xeit.fsf@oldenburg.str.redhat.com>
-        <1045257294.10291.1542905262086.JavaMail.zimbra@efficios.com>
-Date:   Thu, 22 Nov 2018 17:59:44 +0100
-In-Reply-To: <1045257294.10291.1542905262086.JavaMail.zimbra@efficios.com>
-        (Mathieu Desnoyers's message of "Thu, 22 Nov 2018 11:47:42 -0500
-        (EST)")
-Message-ID: <87k1l5xd33.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Thu, 22 Nov 2018 22:43:00 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:32870 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388916AbeKWDnA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 22:43:00 -0500
+Received: by mail-lf1-f65.google.com with SMTP id i26so6981116lfc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 09:02:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ugR/pBl3KdQ6ZcHhkbBykzrhgV4zZJ3qFIxPsTa39cg=;
+        b=SNwb6U/zcindOVTotPf3EMMg4asOprrHbqhg+8b/S9xsBDT9gF6ls3MQtGCrd0l9mh
+         p58J+rRwQqG6Zz+OxOVDviInIMzacJTS5cYqmZ2/K3VD255LRO4He9SbqFwwCikGbheX
+         BCNl/8qamdc6bfT5AII5/AmJxYZcB7Wvb++Hw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ugR/pBl3KdQ6ZcHhkbBykzrhgV4zZJ3qFIxPsTa39cg=;
+        b=FQohw0RgRZfatlrO6s5OJRmDaR3sKmDloDyfUtZGnMOFPRj9FZYxT8rLt1SPJ+tg7b
+         lCdgzwvOyYxkh6U1WbLWkfOm7Z8foSBfYphf2EW1mgD0gX2ztYgg2Vnmrfrzt2R2bbSI
+         V1/46WbkVhObd/dPd8uwVwtccMsLVzrXAAFe7J+T1Xfa+m4F7PURxtQGj0+lCKi1tL0u
+         N56S0zzOggO+YjUkIIdhZ3hu7seE0nsXFVyY+3/xfgyIa9ADNubOtIJYqbYiPckNwdfI
+         rlmlyeBj1bffs/Ig/3w54aE8CfXj+hFSD4vDcOMYTz7I09/Rf7w2ayGi+xXVMy0kN3Yi
+         QshA==
+X-Gm-Message-State: AGRZ1gIMTgnMBX7QtDHb2uDwdRKqbfh3kf8sa0Wzt93ATu6ocruVMyOl
+        ehjQk/Lm+UIZC2FE3qVBg7YuxWQdA67dFw==
+X-Google-Smtp-Source: AJdET5eSKj+gy0HxGFMM3iHtoEUl+tdBLvikbPGbexs1rqijRmt4+0UqkMsazHQ8B1QCpV88AKV3SA==
+X-Received: by 2002:a19:2b54:: with SMTP id r81mr7333335lfr.34.1542906162335;
+        Thu, 22 Nov 2018 09:02:42 -0800 (PST)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id m13-v6sm7643724ljg.56.2018.11.22.09.02.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 09:02:42 -0800 (PST)
+Received: by mail-lj1-f176.google.com with SMTP id s5-v6so8515022ljd.12
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 09:02:41 -0800 (PST)
+X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr7242500ljh.59.1542905767057;
+ Thu, 22 Nov 2018 08:56:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 22 Nov 2018 16:59:58 +0000 (UTC)
+References: <02bfc577-32a5-66be-64bf-d476b7d447d2@kernel.dk>
+ <20181121063609.GA109082@gmail.com> <48e27a3a-2bb2-ff41-3512-8aeb3fd59e57@kernel.dk>
+ <1c22125bb5d22c2dcd686d0d3b390f115894f746.camel@redhat.com>
+ <CAHk-=wgnjB+=o0771=J_YkQzabU5aadh6pN3x9Vk4HPs3MHL3g@mail.gmail.com>
+ <CAHk-=wjweUiVewcnk39mUccEN-SjxHeTZdB3VOXZrvvW4Cs3dw@mail.gmail.com>
+ <CAHk-=wiDLq5CVnTJhFNEEduqYP_VSsQPSNvi=w6a8Y9figuh7g@mail.gmail.com> <20181122103231.GA102790@gmail.com>
+In-Reply-To: <20181122103231.GA102790@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 22 Nov 2018 08:55:50 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjG=hvKnsRByogG_7Pwwi+7UQ1AK52m5bTp9dUHhAOzfw@mail.gmail.com>
+Message-ID: <CAHk-=wjG=hvKnsRByogG_7Pwwi+7UQ1AK52m5bTp9dUHhAOzfw@mail.gmail.com>
+Subject: Re: [PATCH] x86: only use ERMS for user copies for larger sizes
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     pabeni@redhat.com, Jens Axboe <axboe@kernel.dk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
+        Peter Anvin <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, dvlasenk@redhat.com,
+        brgerst@gmail.com,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Mathieu Desnoyers:
-
-> ----- On Nov 22, 2018, at 11:28 AM, Florian Weimer fweimer@redhat.com wrote:
+On Thu, Nov 22, 2018 at 2:32 AM Ingo Molnar <mingo@kernel.org> wrote:
+> * Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> >
+> > Random patch (with my "asm goto" hack included) attached, in case
+> > people want to play with it.
 >
->> * Mathieu Desnoyers:
->> 
->>> Here is one scenario: we have 2 early adopter libraries using rseq which
->>> are deployed in an environment with an older glibc (which does not
->>> support rseq).
->>>
->>> Of course, none of those libraries can be dlclose'd unless they somehow
->>> track all registered threads.
->> 
->> Well, you can always make them NODELETE so that dlclose is not an issue.
->> If the library is small enough, that shouldn't be a problem.
->
-> That's indeed what I do with lttng-ust, mainly due to use of pthread_key.
->
->> 
->>> But let's focus on how exactly those libraries can handle lazily
->>> registering rseq. They can use pthread_key, and pthread_setspecific on
->>> first use by the thread to setup a destructor function to be invoked
->>> at thread exit. But each early adopter library is unaware of the
->>> other, so if we just use a "is_initialized" flag, the first destructor
->>> to run will unregister rseq while the second library may still be
->>> using it.
->> 
->> I don't think you need unregistering if the memory is initial-exec TLS
->> memory.  Initial-exec TLS memory is tied directly to the TCB and cannot
->> be freed while the thread is running, so it should be safe to put the
->> rseq area there even if glibc knows nothing about it.
->
-> Is it true for user-supplied stacks as well ?
+> Doesn't even look all that hacky to me. Any hack in it that I didn't
+> notice? :-)
 
-I'm not entirely sure because the glibc terminology is confusing, but I
-think it places intial-exec TLS into the static TLS area (so that it has
-a fixed offset from the TCB).  The static TLS area is placed on the
-user-supplied stack.
+The code to use asm goto sadly doesn't have any fallback at all for
+the "no asm goto available".
 
->> Then you'll only need a mechanism to find the address of the actually
->> active rseq area (which you probably have to store in a TLS variable
->> for performance reasons).  And that part you need whether you have
->> reference counter or not.
->
-> I'm not sure I follow your thoughts here. Currently, the __rseq_abi
-> TLS symbol identifies a structure registered to the kernel. The
-> "currently active" rseq critical section is identified by the field
-> "rseq_cs" within the __rseq_abi structure.
->
-> So here when you say "actually active rseq area", do you mean the
-> currently registered struct rseq (__rseq_abi) or the currently running
-> rseq critical section ? (pointed to by __rseq_abi.rseq_cs)
+I guess we're getting close to "we require asm goto support", but I
+don't think we're there yet.
 
-__rseq_abi.
+Also, while "unsafe_put_user()" has been converted to use asm goto
+(and yes, it really does generate much nicer code), the same is not
+true of "unsafe_get_user()". Because sadly, gcc does not support asm
+goto with output values.
 
-> One issue here is that early adopter libraries cannot always use
-> the IE model. I tried using it for other TLS variables in lttng-ust, and
-> it ended up hanging our CI tests when tracing a sample application with
-> lttng-ust under a Java virtual machine: being dlopen'd in a process that
-> possibly already exhausts the number of available backup TLS IE entries
-> seems to have odd effects. This is why I'm worried about using the IE model
-> within lttng-ust.
+So, realistically, my patch is not _technically_ hacky, but it's
+simply not viable as things stand, and it's more of a tech
+demonstration than anything else.
 
-You can work around this by preloading the library.  I'm not sure if
-this is a compelling reason not to use initial-exec TLS memory.
-
->>> The same problem arises if we have an application early adopter which
->>> explicitly deal with rseq, with a library early adopter. The issue is
->>> similar, except that the application will explicitly want to unregister
->>> rseq before exiting the thread, which leaves a race window where rseq
->>> is unregistered, but the library may still need to use it.
->>>
->>> The reference counter solves this: only the last rseq user for a thread
->>> performs unregistration.
->> 
->> If you do explicit unregistration, you will run into issues related to
->> destructor ordering.  You should really find a way to avoid that.
->
-> The per-thread reference counter is a way to avoid issues that arise from
-> lack of destructor ordering. Is it an acceptable approach for you, or
-> you have something else in mind ?
-
-Only for the involved libraries.  It will not help if other TLS
-destructors run and use these libraries.
-
-Thanks,
-Florian
+               Linus
