@@ -7,102 +7,85 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 831A4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1308C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E19220818
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ED2420870
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="arVC2bmd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E19220818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKY6vZa+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED2420870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407382AbeKWGin (ORCPT
+        id S2407394AbeKWGis (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 01:38:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37136 "EHLO mail.kernel.org"
+        Fri, 23 Nov 2018 01:38:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389557AbeKWGim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 01:38:42 -0500
+        id S2389557AbeKWGir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 01:38:47 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5022720878;
-        Thu, 22 Nov 2018 19:57:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8017620892;
+        Thu, 22 Nov 2018 19:57:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542916668;
-        bh=HK/JuGrHGiTDtGnxWRxZ7aQR4CN/5PvqmX6Pdix/JN4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=arVC2bmdjbL21gscjqadIFtCKojmF/Yj82SYGTSKGIGcB6b/Gy42WjwJ9QEgDRE4K
-         Ansn3BT5XI0KqaMXuOvQ4fvXD6Jtw4fqCGFwzk6sckKZgVWq77ZoYDwLmM9r3d5JZ7
-         Q3LBexVuEolW6xt5l6mc6sqE83rOavE+qdiyfcBU=
+        s=default; t=1542916674;
+        bh=zrJzTwYBBEvRfmHIPJmfN9B59d1o5AsPeffcqFCWFOc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AKY6vZa+I+WN8Ids7xfv7IGp8M0RvZNozhU6h33WUZcLsl6+lkGSYB/RP0P/ipWtS
+         2BHKNQ1NXpZZm6BVOvM7JOg9qEtRaT3/0kavVJEBvxUgQvpoF7wXHj0c9lieRfDNm0
+         NDgxiKD2lGppmpuLhKAS5H/E1tR3Zv/9g10M+Iys=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Yufen Yu <yuyufen@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Hugh Dickins <hughd@google.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.4 8/8] tmpfs: make lseek(SEEK_DATA/SEK_HOLE) return ENXIO with a negative offset
-Date:   Thu, 22 Nov 2018 14:57:15 -0500
-Message-Id: <20181122195716.13961-8-sashal@kernel.org>
+Cc:     Anson Huang <anson.huang@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 1/7] cpufreq: imx6q: add return value check for voltage scale
+Date:   Thu, 22 Nov 2018 14:57:43 -0500
+Message-Id: <20181122195749.14086-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181122195716.13961-1-sashal@kernel.org>
-References: <20181122195716.13961-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yufen Yu <yuyufen@huawei.com>
+From: Anson Huang <anson.huang@nxp.com>
 
-[ Upstream commit 1a413646931cb14442065cfc17561e50f5b5bb44 ]
+[ Upstream commit 6ef28a04d1ccf718eee069b72132ce4aa1e52ab9 ]
 
-Other filesystems such as ext4, f2fs and ubifs all return ENXIO when
-lseek (SEEK_DATA or SEEK_HOLE) requests a negative offset.
+Add return value check for voltage scale when ARM clock
+rate change fail.
 
-man 2 lseek says
-
-:      EINVAL whence  is  not  valid.   Or: the resulting file offset would be
-:             negative, or beyond the end of a seekable device.
-:
-:      ENXIO  whence is SEEK_DATA or SEEK_HOLE, and the file offset is  beyond
-:             the end of the file.
-
-Make tmpfs return ENXIO under these circumstances as well.  After this,
-tmpfs also passes xfstests's generic/448.
-
-[akpm@linux-foundation.org: rewrite changelog]
-Link: http://lkml.kernel.org/r/1540434176-14349-1-git-send-email-yuyufen@huawei.com
-Signed-off-by: Yufen Yu <yuyufen@huawei.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: William Kucharski <william.kucharski@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/shmem.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/cpufreq/imx6q-cpufreq.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 8e506a45a6ef..d902b413941a 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1818,9 +1818,7 @@ static loff_t shmem_file_llseek(struct file *file, loff_t offset, int whence)
- 	mutex_lock(&inode->i_mutex);
- 	/* We're holding i_mutex so we can access i_size directly */
+diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
+index c2d30765bf3d..a4ede00483d1 100644
+--- a/drivers/cpufreq/imx6q-cpufreq.c
++++ b/drivers/cpufreq/imx6q-cpufreq.c
+@@ -105,8 +105,13 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
+ 	/* Ensure the arm clock divider is what we expect */
+ 	ret = clk_set_rate(arm_clk, new_freq * 1000);
+ 	if (ret) {
++		int ret1;
++
+ 		dev_err(cpu_dev, "failed to set clock rate: %d\n", ret);
+-		regulator_set_voltage_tol(arm_reg, volt_old, 0);
++		ret1 = regulator_set_voltage_tol(arm_reg, volt_old, 0);
++		if (ret1)
++			dev_warn(cpu_dev,
++				 "failed to restore vddarm voltage: %d\n", ret1);
+ 		return ret;
+ 	}
  
--	if (offset < 0)
--		offset = -EINVAL;
--	else if (offset >= inode->i_size)
-+	if (offset < 0 || offset >= inode->i_size)
- 		offset = -ENXIO;
- 	else {
- 		start = offset >> PAGE_CACHE_SHIFT;
 -- 
 2.17.1
 
