@@ -4,75 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB9A7C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F772C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 564B520659
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:53:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 564B520659
+	by mail.kernel.org (Postfix) with ESMTP id 61DFD20659
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:53:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61DFD20659
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407722AbeKWIeV (ORCPT
+        id S2407737AbeKWIef (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 03:34:21 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:42059 "EHLO
+        Fri, 23 Nov 2018 03:34:35 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57533 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730054AbeKWIeV (ORCPT
+        with ESMTP id S1730054AbeKWIee (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 03:34:21 -0500
+        Fri, 23 Nov 2018 03:34:34 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAMLp6eI3948076
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAMLqJp13948188
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 22 Nov 2018 13:51:06 -0800
+        Thu, 22 Nov 2018 13:52:19 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAMLp58e3948072;
-        Thu, 22 Nov 2018 13:51:05 -0800
-Date:   Thu, 22 Nov 2018 13:51:05 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAMLqJLF3948184;
+        Thu, 22 Nov 2018 13:52:19 -0800
+Date:   Thu, 22 Nov 2018 13:52:19 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Babu Moger <tipbot@zytor.com>
-Message-ID: <tip-723f1a0dd8e26a7523ba068204bee11c95ded38d@git.kernel.org>
-Cc:     kstewart@linuxfoundation.org, puwen@hygon.cn,
-        qianyue.zj@alibaba-inc.com, rafael@kernel.org, tglx@linutronix.de,
-        jroedel@suse.de, mingo@kernel.org, arnd@arndb.de,
-        suravee.suthikulpanit@amd.com, gregkh@linuxfoundation.org,
-        pombredanne@nexb.com, chang.seok.bae@intel.com, corbet@lwn.net,
-        bp@suse.de, xiaochen.shen@intel.com,
-        kirill.shutemov@linux.intel.com, davem@davemloft.net,
-        akpm@linux-foundation.org, pbonzini@redhat.com,
-        linux-kernel@vger.kernel.org, babu.moger@amd.com,
-        Thomas.Lendacky@amd.com, luto@kernel.org,
-        linux-doc@vger.kernel.org, fenghua.yu@intel.com, hpa@zytor.com,
-        tony.luck@intel.com, sherry.hurwitz@amd.com,
-        mchehab+samsung@kernel.org, jannh@google.com, dwmw2@infradead.org,
-        Babu.Moger@amd.com, jpoimboe@redhat.com, mingo@redhat.com,
-        vkuznets@redhat.com, reinette.chatre@intel.com, rian@alum.mit.edu,
-        brijesh.singh@amd.com, peterz@infradead.org, dima@arista.com
-Reply-To: dima@arista.com, brijesh.singh@amd.com, rian@alum.mit.edu,
-          peterz@infradead.org, reinette.chatre@intel.com,
-          jpoimboe@redhat.com, mingo@redhat.com, vkuznets@redhat.com,
-          jannh@google.com, sherry.hurwitz@amd.com,
-          mchehab+samsung@kernel.org, dwmw2@infradead.org,
-          Babu.Moger@amd.com, fenghua.yu@intel.com,
-          linux-doc@vger.kernel.org, tony.luck@intel.com, hpa@zytor.com,
-          luto@kernel.org, linux-kernel@vger.kernel.org,
-          babu.moger@amd.com, Thomas.Lendacky@amd.com,
-          kirill.shutemov@linux.intel.com, davem@davemloft.net,
-          akpm@linux-foundation.org, pbonzini@redhat.com, bp@suse.de,
-          corbet@lwn.net, xiaochen.shen@intel.com, arnd@arndb.de,
-          gregkh@linuxfoundation.org, suravee.suthikulpanit@amd.com,
-          pombredanne@nexb.com, chang.seok.bae@intel.com,
-          tglx@linutronix.de, jroedel@suse.de, mingo@kernel.org,
-          rafael@kernel.org, puwen@hygon.cn, qianyue.zj@alibaba-inc.com,
-          kstewart@linuxfoundation.org
-In-Reply-To: <20181121202811.4492-11-babu.moger@amd.com>
-References: <20181121202811.4492-11-babu.moger@amd.com>
+Message-ID: <tip-a6f771c9bf4eea2da1516e70c283ede61a7d666f@git.kernel.org>
+Cc:     mingo@kernel.org, puwen@hygon.cn, sherry.hurwitz@amd.com,
+        jpoimboe@redhat.com, reinette.chatre@intel.com,
+        pombredanne@nexb.com, bp@suse.de, tony.luck@intel.com,
+        Thomas.Lendacky@amd.com, kirill.shutemov@linux.intel.com,
+        akpm@linux-foundation.org, xiaochen.shen@intel.com,
+        linux-doc@vger.kernel.org, dwmw2@infradead.org,
+        davem@davemloft.net, pbonzini@redhat.com,
+        gregkh@linuxfoundation.org, dima@arista.com, hpa@zytor.com,
+        jannh@google.com, luto@kernel.org, mingo@redhat.com,
+        brijesh.singh@amd.com, jroedel@suse.de, corbet@lwn.net,
+        linux-kernel@vger.kernel.org, babu.moger@amd.com, arnd@arndb.de,
+        qianyue.zj@alibaba-inc.com, chang.seok.bae@intel.com,
+        tglx@linutronix.de, mchehab+samsung@kernel.org,
+        vkuznets@redhat.com, kstewart@linuxfoundation.org,
+        fenghua.yu@intel.com, rafael@kernel.org, rian@alum.mit.edu,
+        suravee.suthikulpanit@amd.com, peterz@infradead.org,
+        Babu.Moger@amd.com
+Reply-To: linux-kernel@vger.kernel.org, jroedel@suse.de, corbet@lwn.net,
+          qianyue.zj@alibaba-inc.com, babu.moger@amd.com, arnd@arndb.de,
+          dima@arista.com, gregkh@linuxfoundation.org, hpa@zytor.com,
+          pbonzini@redhat.com, brijesh.singh@amd.com, mingo@redhat.com,
+          luto@kernel.org, jannh@google.com, fenghua.yu@intel.com,
+          rafael@kernel.org, rian@alum.mit.edu, Babu.Moger@amd.com,
+          peterz@infradead.org, suravee.suthikulpanit@amd.com,
+          vkuznets@redhat.com, mchehab+samsung@kernel.org,
+          tglx@linutronix.de, chang.seok.bae@intel.com,
+          kstewart@linuxfoundation.org, bp@suse.de, tony.luck@intel.com,
+          pombredanne@nexb.com, puwen@hygon.cn, sherry.hurwitz@amd.com,
+          mingo@kernel.org, reinette.chatre@intel.com, jpoimboe@redhat.com,
+          xiaochen.shen@intel.com, linux-doc@vger.kernel.org,
+          akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+          davem@davemloft.net, dwmw2@infradead.org, Thomas.Lendacky@amd.com
+In-Reply-To: <20181121202811.4492-13-babu.moger@amd.com>
+References: <20181121202811.4492-13-babu.moger@amd.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cache] x86/resctrl: Fixup the user-visible strings
-Git-Commit-ID: 723f1a0dd8e26a7523ba068204bee11c95ded38d
+Subject: [tip:x86/cache] Documentation: Rename and update intel_rdt_ui.txt
+ to resctrl_ui.txt
+Git-Commit-ID: a6f771c9bf4eea2da1516e70c283ede61a7d666f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -86,19 +86,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  723f1a0dd8e26a7523ba068204bee11c95ded38d
-Gitweb:     https://git.kernel.org/tip/723f1a0dd8e26a7523ba068204bee11c95ded38d
+Commit-ID:  a6f771c9bf4eea2da1516e70c283ede61a7d666f
+Gitweb:     https://git.kernel.org/tip/a6f771c9bf4eea2da1516e70c283ede61a7d666f
 Author:     Babu Moger <Babu.Moger@amd.com>
-AuthorDate: Wed, 21 Nov 2018 20:28:43 +0000
+AuthorDate: Wed, 21 Nov 2018 20:28:47 +0000
 Committer:  Borislav Petkov <bp@suse.de>
 CommitDate: Thu, 22 Nov 2018 20:16:20 +0100
 
-x86/resctrl: Fixup the user-visible strings
+Documentation: Rename and update intel_rdt_ui.txt to resctrl_ui.txt
 
-Fix the messages in rdt_last_cmd_printf() and rdt_last_cmd_puts() to
-make them more meaningful and consistent.
-
- [ bp: s/cpu/CPU/; s/mem\W/memory ]
+Rename intel_rdt_ui.txt to generic resctrl_ui.txt and update the
+documentation for AMD.
 
 Signed-off-by: Babu Moger <babu.moger@amd.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
@@ -137,416 +135,35 @@ Cc: Thomas Lendacky <Thomas.Lendacky@amd.com>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
 Cc: <xiaochen.shen@intel.com>
-Link: https://lkml.kernel.org/r/20181121202811.4492-11-babu.moger@amd.com
+Link: https://lkml.kernel.org/r/20181121202811.4492-13-babu.moger@amd.com
 ---
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 22 +++++++++----------
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 34 ++++++++++++++---------------
- arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 36 +++++++++++++++----------------
- 3 files changed, 46 insertions(+), 46 deletions(-)
+ Documentation/x86/{intel_rdt_ui.txt => resctrl_ui.txt} | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-index d2e0b99d453f..bfd7bdf8a156 100644
---- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-@@ -70,7 +70,7 @@ int parse_bw_intel(struct rdt_parse_data *data, struct rdt_resource *r,
- 	unsigned long bw_val;
+diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/resctrl_ui.txt
+similarity index 99%
+rename from Documentation/x86/intel_rdt_ui.txt
+rename to Documentation/x86/resctrl_ui.txt
+index 52b10945ff75..d9aed8303984 100644
+--- a/Documentation/x86/intel_rdt_ui.txt
++++ b/Documentation/x86/resctrl_ui.txt
+@@ -1,4 +1,7 @@
+-User Interface for Resource Allocation in Intel Resource Director Technology
++User Interface for Resource Control feature
++
++Intel refers to this feature as Intel Resource Director Technology(Intel(R) RDT).
++AMD refers to this feature as AMD Platform Quality of Service(AMD QoS).
  
- 	if (d->have_new_ctrl) {
--		rdt_last_cmd_printf("duplicate domain %d\n", d->id);
-+		rdt_last_cmd_printf("Duplicate domain %d\n", d->id);
- 		return -EINVAL;
- 	}
+ Copyright (C) 2016 Intel Corporation
  
-@@ -96,12 +96,12 @@ bool cbm_validate_intel(char *buf, u32 *data, struct rdt_resource *r)
+@@ -6,8 +9,8 @@ Fenghua Yu <fenghua.yu@intel.com>
+ Tony Luck <tony.luck@intel.com>
+ Vikas Shivappa <vikas.shivappa@intel.com>
  
- 	ret = kstrtoul(buf, 16, &val);
- 	if (ret) {
--		rdt_last_cmd_printf("non-hex character in mask %s\n", buf);
-+		rdt_last_cmd_printf("Non-hex character in the mask %s\n", buf);
- 		return false;
- 	}
- 
- 	if (val == 0 || val > r->default_ctrl) {
--		rdt_last_cmd_puts("mask out of range\n");
-+		rdt_last_cmd_puts("Mask out of range\n");
- 		return false;
- 	}
- 
-@@ -109,12 +109,12 @@ bool cbm_validate_intel(char *buf, u32 *data, struct rdt_resource *r)
- 	zero_bit = find_next_zero_bit(&val, cbm_len, first_bit);
- 
- 	if (find_next_bit(&val, cbm_len, zero_bit) < cbm_len) {
--		rdt_last_cmd_printf("mask %lx has non-consecutive 1-bits\n", val);
-+		rdt_last_cmd_printf("The mask %lx has non-consecutive 1-bits\n", val);
- 		return false;
- 	}
- 
- 	if ((zero_bit - first_bit) < r->cache.min_cbm_bits) {
--		rdt_last_cmd_printf("Need at least %d bits in mask\n",
-+		rdt_last_cmd_printf("Need at least %d bits in the mask\n",
- 				    r->cache.min_cbm_bits);
- 		return false;
- 	}
-@@ -134,7 +134,7 @@ int parse_cbm(struct rdt_parse_data *data, struct rdt_resource *r,
- 	u32 cbm_val;
- 
- 	if (d->have_new_ctrl) {
--		rdt_last_cmd_printf("duplicate domain %d\n", d->id);
-+		rdt_last_cmd_printf("Duplicate domain %d\n", d->id);
- 		return -EINVAL;
- 	}
- 
-@@ -144,7 +144,7 @@ int parse_cbm(struct rdt_parse_data *data, struct rdt_resource *r,
- 	 */
- 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP &&
- 	    rdtgroup_pseudo_locked_in_hierarchy(d)) {
--		rdt_last_cmd_printf("pseudo-locked region in hierarchy\n");
-+		rdt_last_cmd_printf("Pseudo-locked region in hierarchy\n");
- 		return -EINVAL;
- 	}
- 
-@@ -163,14 +163,14 @@ int parse_cbm(struct rdt_parse_data *data, struct rdt_resource *r,
- 	 * either is exclusive.
- 	 */
- 	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, true)) {
--		rdt_last_cmd_printf("overlaps with exclusive group\n");
-+		rdt_last_cmd_printf("Overlaps with exclusive group\n");
- 		return -EINVAL;
- 	}
- 
- 	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, false)) {
- 		if (rdtgrp->mode == RDT_MODE_EXCLUSIVE ||
- 		    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
--			rdt_last_cmd_printf("overlaps with other group\n");
-+			rdt_last_cmd_printf("0verlaps with other group\n");
- 			return -EINVAL;
- 		}
- 	}
-@@ -292,7 +292,7 @@ static int rdtgroup_parse_resource(char *resname, char *tok,
- 		if (!strcmp(resname, r->name) && rdtgrp->closid < r->num_closid)
- 			return parse_line(tok, r, rdtgrp);
- 	}
--	rdt_last_cmd_printf("unknown/unsupported resource name '%s'\n", resname);
-+	rdt_last_cmd_printf("Unknown or unsupported resource name '%s'\n", resname);
- 	return -EINVAL;
- }
- 
-@@ -323,7 +323,7 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
- 	 */
- 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED) {
- 		ret = -EINVAL;
--		rdt_last_cmd_puts("resource group is pseudo-locked\n");
-+		rdt_last_cmd_puts("Resource group is pseudo-locked\n");
- 		goto out;
- 	}
- 
-diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-index ffb7ebe69d33..14bed6af8377 100644
---- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-@@ -213,7 +213,7 @@ static int pseudo_lock_cstates_constrain(struct pseudo_lock_region *plr)
- 	for_each_cpu(cpu, &plr->d->cpu_mask) {
- 		pm_req = kzalloc(sizeof(*pm_req), GFP_KERNEL);
- 		if (!pm_req) {
--			rdt_last_cmd_puts("fail allocating mem for PM QoS\n");
-+			rdt_last_cmd_puts("Failure to allocate memory for PM QoS\n");
- 			ret = -ENOMEM;
- 			goto out_err;
- 		}
-@@ -222,7 +222,7 @@ static int pseudo_lock_cstates_constrain(struct pseudo_lock_region *plr)
- 					     DEV_PM_QOS_RESUME_LATENCY,
- 					     30);
- 		if (ret < 0) {
--			rdt_last_cmd_printf("fail to add latency req cpu%d\n",
-+			rdt_last_cmd_printf("Failed to add latency req CPU%d\n",
- 					    cpu);
- 			kfree(pm_req);
- 			ret = -1;
-@@ -289,7 +289,7 @@ static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
- 	plr->cpu = cpumask_first(&plr->d->cpu_mask);
- 
- 	if (!cpu_online(plr->cpu)) {
--		rdt_last_cmd_printf("cpu %u associated with cache not online\n",
-+		rdt_last_cmd_printf("CPU %u associated with cache not online\n",
- 				    plr->cpu);
- 		ret = -ENODEV;
- 		goto out_region;
-@@ -307,7 +307,7 @@ static int pseudo_lock_region_init(struct pseudo_lock_region *plr)
- 	}
- 
- 	ret = -1;
--	rdt_last_cmd_puts("unable to determine cache line size\n");
-+	rdt_last_cmd_puts("Unable to determine cache line size\n");
- out_region:
- 	pseudo_lock_region_clear(plr);
- 	return ret;
-@@ -361,14 +361,14 @@ static int pseudo_lock_region_alloc(struct pseudo_lock_region *plr)
- 	 * KMALLOC_MAX_SIZE.
- 	 */
- 	if (plr->size > KMALLOC_MAX_SIZE) {
--		rdt_last_cmd_puts("requested region exceeds maximum size\n");
-+		rdt_last_cmd_puts("Requested region exceeds maximum size\n");
- 		ret = -E2BIG;
- 		goto out_region;
- 	}
- 
- 	plr->kmem = kzalloc(plr->size, GFP_KERNEL);
- 	if (!plr->kmem) {
--		rdt_last_cmd_puts("unable to allocate memory\n");
-+		rdt_last_cmd_puts("Unable to allocate memory\n");
- 		ret = -ENOMEM;
- 		goto out_region;
- 	}
-@@ -665,7 +665,7 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
- 	 * default closid associated with it.
- 	 */
- 	if (rdtgrp == &rdtgroup_default) {
--		rdt_last_cmd_puts("cannot pseudo-lock default group\n");
-+		rdt_last_cmd_puts("Cannot pseudo-lock default group\n");
- 		return -EINVAL;
- 	}
- 
-@@ -707,17 +707,17 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
- 	 */
- 	prefetch_disable_bits = get_prefetch_disable_bits();
- 	if (prefetch_disable_bits == 0) {
--		rdt_last_cmd_puts("pseudo-locking not supported\n");
-+		rdt_last_cmd_puts("Pseudo-locking not supported\n");
- 		return -EINVAL;
- 	}
- 
- 	if (rdtgroup_monitor_in_progress(rdtgrp)) {
--		rdt_last_cmd_puts("monitoring in progress\n");
-+		rdt_last_cmd_puts("Monitoring in progress\n");
- 		return -EINVAL;
- 	}
- 
- 	if (rdtgroup_tasks_assigned(rdtgrp)) {
--		rdt_last_cmd_puts("tasks assigned to resource group\n");
-+		rdt_last_cmd_puts("Tasks assigned to resource group\n");
- 		return -EINVAL;
- 	}
- 
-@@ -727,13 +727,13 @@ int rdtgroup_locksetup_enter(struct rdtgroup *rdtgrp)
- 	}
- 
- 	if (rdtgroup_locksetup_user_restrict(rdtgrp)) {
--		rdt_last_cmd_puts("unable to modify resctrl permissions\n");
-+		rdt_last_cmd_puts("Unable to modify resctrl permissions\n");
- 		return -EIO;
- 	}
- 
- 	ret = pseudo_lock_init(rdtgrp);
- 	if (ret) {
--		rdt_last_cmd_puts("unable to init pseudo-lock region\n");
-+		rdt_last_cmd_puts("Unable to init pseudo-lock region\n");
- 		goto out_release;
- 	}
- 
-@@ -770,7 +770,7 @@ int rdtgroup_locksetup_exit(struct rdtgroup *rdtgrp)
- 	if (rdt_mon_capable) {
- 		ret = alloc_rmid();
- 		if (ret < 0) {
--			rdt_last_cmd_puts("out of RMIDs\n");
-+			rdt_last_cmd_puts("Out of RMIDs\n");
- 			return ret;
- 		}
- 		rdtgrp->mon.rmid = ret;
-@@ -1304,7 +1304,7 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
- 					"pseudo_lock/%u", plr->cpu);
- 	if (IS_ERR(thread)) {
- 		ret = PTR_ERR(thread);
--		rdt_last_cmd_printf("locking thread returned error %d\n", ret);
-+		rdt_last_cmd_printf("Locking thread returned error %d\n", ret);
- 		goto out_cstates;
- 	}
- 
-@@ -1322,13 +1322,13 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
- 		 * the cleared, but not freed, plr struct resulting in an
- 		 * empty pseudo-locking loop.
- 		 */
--		rdt_last_cmd_puts("locking thread interrupted\n");
-+		rdt_last_cmd_puts("Locking thread interrupted\n");
- 		goto out_cstates;
- 	}
- 
- 	ret = pseudo_lock_minor_get(&new_minor);
- 	if (ret < 0) {
--		rdt_last_cmd_puts("unable to obtain a new minor number\n");
-+		rdt_last_cmd_puts("Unable to obtain a new minor number\n");
- 		goto out_cstates;
- 	}
- 
-@@ -1360,7 +1360,7 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
- 
- 	if (IS_ERR(dev)) {
- 		ret = PTR_ERR(dev);
--		rdt_last_cmd_printf("failed to create character device: %d\n",
-+		rdt_last_cmd_printf("Failed to create character device: %d\n",
- 				    ret);
- 		goto out_debugfs;
- 	}
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index fada488069cb..61b102dd51a5 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -345,7 +345,7 @@ static int cpus_mon_write(struct rdtgroup *rdtgrp, cpumask_var_t newmask,
- 	/* Check whether cpus belong to parent ctrl group */
- 	cpumask_andnot(tmpmask, newmask, &prgrp->cpu_mask);
- 	if (cpumask_weight(tmpmask)) {
--		rdt_last_cmd_puts("can only add CPUs to mongroup that belong to parent\n");
-+		rdt_last_cmd_puts("Can only add CPUs to mongroup that belong to parent\n");
- 		return -EINVAL;
- 	}
- 
-@@ -470,14 +470,14 @@ static ssize_t rdtgroup_cpus_write(struct kernfs_open_file *of,
- 	rdt_last_cmd_clear();
- 	if (!rdtgrp) {
- 		ret = -ENOENT;
--		rdt_last_cmd_puts("directory was removed\n");
-+		rdt_last_cmd_puts("Directory was removed\n");
- 		goto unlock;
- 	}
- 
- 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED ||
- 	    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
- 		ret = -EINVAL;
--		rdt_last_cmd_puts("pseudo-locking in progress\n");
-+		rdt_last_cmd_puts("Pseudo-locking in progress\n");
- 		goto unlock;
- 	}
- 
-@@ -487,7 +487,7 @@ static ssize_t rdtgroup_cpus_write(struct kernfs_open_file *of,
- 		ret = cpumask_parse(buf, newmask);
- 
- 	if (ret) {
--		rdt_last_cmd_puts("bad cpu list/mask\n");
-+		rdt_last_cmd_puts("Bad CPU list/mask\n");
- 		goto unlock;
- 	}
- 
-@@ -495,7 +495,7 @@ static ssize_t rdtgroup_cpus_write(struct kernfs_open_file *of,
- 	cpumask_andnot(tmpmask, newmask, cpu_online_mask);
- 	if (cpumask_weight(tmpmask)) {
- 		ret = -EINVAL;
--		rdt_last_cmd_puts("can only assign online cpus\n");
-+		rdt_last_cmd_puts("Can only assign online CPUs\n");
- 		goto unlock;
- 	}
- 
-@@ -574,7 +574,7 @@ static int __rdtgroup_move_task(struct task_struct *tsk,
- 		 */
- 		atomic_dec(&rdtgrp->waitcount);
- 		kfree(callback);
--		rdt_last_cmd_puts("task exited\n");
-+		rdt_last_cmd_puts("Task exited\n");
- 	} else {
- 		/*
- 		 * For ctrl_mon groups move both closid and rmid.
-@@ -692,7 +692,7 @@ static ssize_t rdtgroup_tasks_write(struct kernfs_open_file *of,
- 	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKED ||
- 	    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
- 		ret = -EINVAL;
--		rdt_last_cmd_puts("pseudo-locking in progress\n");
-+		rdt_last_cmd_puts("Pseudo-locking in progress\n");
- 		goto unlock;
- 	}
- 
-@@ -1158,14 +1158,14 @@ static bool rdtgroup_mode_test_exclusive(struct rdtgroup *rdtgrp)
- 		list_for_each_entry(d, &r->domains, list) {
- 			if (rdtgroup_cbm_overlaps(r, d, d->ctrl_val[closid],
- 						  rdtgrp->closid, false)) {
--				rdt_last_cmd_puts("schemata overlaps\n");
-+				rdt_last_cmd_puts("Schemata overlaps\n");
- 				return false;
- 			}
- 		}
- 	}
- 
- 	if (!has_cache) {
--		rdt_last_cmd_puts("cannot be exclusive without CAT/CDP\n");
-+		rdt_last_cmd_puts("Cannot be exclusive without CAT/CDP\n");
- 		return false;
- 	}
- 
-@@ -1206,7 +1206,7 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
- 		goto out;
- 
- 	if (mode == RDT_MODE_PSEUDO_LOCKED) {
--		rdt_last_cmd_printf("cannot change pseudo-locked group\n");
-+		rdt_last_cmd_printf("Cannot change pseudo-locked group\n");
- 		ret = -EINVAL;
- 		goto out;
- 	}
-@@ -1235,7 +1235,7 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
- 			goto out;
- 		rdtgrp->mode = RDT_MODE_PSEUDO_LOCKSETUP;
- 	} else {
--		rdt_last_cmd_printf("unknown/unsupported mode\n");
-+		rdt_last_cmd_printf("Unknown orunsupported mode\n");
- 		ret = -EINVAL;
- 	}
- 
-@@ -2543,7 +2543,7 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
- 			tmp_cbm = d->new_ctrl;
- 			if (bitmap_weight(&tmp_cbm, r->cache.cbm_len) <
- 			    r->cache.min_cbm_bits) {
--				rdt_last_cmd_printf("no space on %s:%d\n",
-+				rdt_last_cmd_printf("No space on %s:%d\n",
- 						    r->name, d->id);
- 				return -ENOSPC;
- 			}
-@@ -2560,7 +2560,7 @@ static int rdtgroup_init_alloc(struct rdtgroup *rdtgrp)
- 			continue;
- 		ret = update_domains(r, rdtgrp->closid);
- 		if (ret < 0) {
--			rdt_last_cmd_puts("failed to initialize allocations\n");
-+			rdt_last_cmd_puts("Failed to initialize allocations\n");
- 			return ret;
- 		}
- 		rdtgrp->mode = RDT_MODE_SHAREABLE;
-@@ -2583,7 +2583,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
- 	rdt_last_cmd_clear();
- 	if (!prdtgrp) {
- 		ret = -ENODEV;
--		rdt_last_cmd_puts("directory was removed\n");
-+		rdt_last_cmd_puts("Directory was removed\n");
- 		goto out_unlock;
- 	}
- 
-@@ -2591,7 +2591,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
- 	    (prdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP ||
- 	     prdtgrp->mode == RDT_MODE_PSEUDO_LOCKED)) {
- 		ret = -EINVAL;
--		rdt_last_cmd_puts("pseudo-locking in progress\n");
-+		rdt_last_cmd_puts("Pseudo-locking in progress\n");
- 		goto out_unlock;
- 	}
- 
-@@ -2599,7 +2599,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
- 	rdtgrp = kzalloc(sizeof(*rdtgrp), GFP_KERNEL);
- 	if (!rdtgrp) {
- 		ret = -ENOSPC;
--		rdt_last_cmd_puts("kernel out of memory\n");
-+		rdt_last_cmd_puts("Kernel out of memory\n");
- 		goto out_unlock;
- 	}
- 	*r = rdtgrp;
-@@ -2640,7 +2640,7 @@ static int mkdir_rdt_prepare(struct kernfs_node *parent_kn,
- 	if (rdt_mon_capable) {
- 		ret = alloc_rmid();
- 		if (ret < 0) {
--			rdt_last_cmd_puts("out of RMIDs\n");
-+			rdt_last_cmd_puts("Out of RMIDs\n");
- 			goto out_destroy;
- 		}
- 		rdtgrp->mon.rmid = ret;
-@@ -2728,7 +2728,7 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
- 	kn = rdtgrp->kn;
- 	ret = closid_alloc();
- 	if (ret < 0) {
--		rdt_last_cmd_puts("out of CLOSIDs\n");
-+		rdt_last_cmd_puts("Out of CLOSIDs\n");
- 		goto out_common_fail;
- 	}
- 	closid = ret;
+-This feature is enabled by the CONFIG_INTEL_RDT Kconfig and the
+-X86 /proc/cpuinfo flag bits:
++This feature is enabled by the CONFIG_RESCTRL and the X86 /proc/cpuinfo
++flag bits:
+ RDT (Resource Director Technology) Allocation - "rdt_a"
+ CAT (Cache Allocation Technology) - "cat_l3", "cat_l2"
+ CDP (Code and Data Prioritization ) - "cdp_l3", "cdp_l2"
