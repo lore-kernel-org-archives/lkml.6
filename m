@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 082C4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F77FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A829A206B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:08:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 309B8206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 17:09:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HoySFDWO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A829A206B2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UErKX1bI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 309B8206B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406202AbeKWDsl (ORCPT
+        id S2406208AbeKWDts (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 22:48:41 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40262 "EHLO
+        Thu, 22 Nov 2018 22:49:48 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38637 "EHLO
         mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbeKWDsl (ORCPT
+        with ESMTP id S1726210AbeKWDts (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 22:48:41 -0500
-Received: by mail-pl1-f195.google.com with SMTP id b22-v6so9496898pls.7
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 09:08:25 -0800 (PST)
+        Thu, 22 Nov 2018 22:49:48 -0500
+Received: by mail-pl1-f195.google.com with SMTP id e5so9498006plb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 09:09:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=lCtemvf4NFRNG2W9DoKfGddHwuQ/13HPz68mrXCfgjw=;
-        b=HoySFDWOkccCQBzOY0jRbD6dkOQJ1vawbv/ajdLV6e7q1WD46QO4vfnHdWKAurgzlu
-         5jBNt5zDTROZxTcG1/jWGV4fF5fKny612yOMgYDk4vR2p4vxBmObvVDhJHIUqhnT/WR+
-         zt8iFDLglRd7q8osHgoZnVshz1n5FMfezgQPCoj46hgrD4Wy76CBEKNzrvjQvxJErhex
-         nG1dRciyyhiMxe2FM0iiRywJrjxEqxx1PIXNlrmph+aBac72o41ueDj8LqZemo0CEzqy
-         529Wap9DWpVPxVwS50lH5SBXzt4YOb+eny7o6AynZuJkd+NCm8TuTLbxkkPGiqX6J+FG
-         nLfQ==
+        bh=VX7QHFAOCrCD1nBdRXQOeK4YOdx1qQiZskFq14Q/6bE=;
+        b=UErKX1bI2n65+BOiIyFyLkZuYxQOsgwNaR5BZlFqpcNuhRDLgwknLYCm8j0qoG6t9K
+         bfq2XIOgvc/I+5XRhaxHjuraXzGT4/MccuiWUFK2uOtvUKiTGqrrARiN/+BWbEciOzPS
+         FqhQLJzpYZV0dsMtVzdn5CbgxD81B1C27Ody2YhJGlrdd58+3QdSIwuQs1ZXvP0TqE9O
+         fELRS2BE+FHvPeZBVsYAktG+ho9gjrAhLWxZCon7cWqUt2LDHhukAYxUUcgJmY+V/zNw
+         PNAhu16oz/QQKv5ERi+HtA3SG/xiDMx9c1RAzolA6sFiKEBH7Ykp0i4qtH+JAP0kwzMI
+         Oq+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lCtemvf4NFRNG2W9DoKfGddHwuQ/13HPz68mrXCfgjw=;
-        b=LlFrhhClL5/lnns5RXwXhCA3tmv6sjeBRrG5h412wxS41WAg+0ouLuUdP3G0BfpEDK
-         +Xy0RzzxEcDnnI+jYxHb2rrQs5+XTPYqUWKSwriTEazOFzCP4DgWiyc3jq3Sl7ThQ3Xd
-         FykHCMDhkI2iFMR6LxqIbnOl+4xxmTViK2JXpifJb1tds7zoQixmCWPyBNEbnI8OGUkP
-         IAyIcjozgfFZVjLhEGzTp7kk9wuRYOe3AjT00ZAdLxndVAitEH5aoq7k85Jmgar3XbBv
-         DJs7Ogh2/frqmkNBJxRzITjS8eNGOHecBT2yw9ENU74Eniwmj0qPFl63DKaL/KPyLpww
-         MYng==
-X-Gm-Message-State: AA+aEWbA0QDZacWG+jHVA84Y2plVZqCdqzlRnVv9+Y+WOqhCIpgYfMQj
-        /KvZ8lZUyQZYpoZtxEQ+nNw=
-X-Google-Smtp-Source: AFSGD/VhbcUAt/jyhr2tQ4TGziFkAC2SWkkLDheo/JCSnubUzLCK9vljpLPDKhjN74yITb/TWzL6lw==
-X-Received: by 2002:a17:902:7d89:: with SMTP id a9mr12089175plm.242.1542906505064;
-        Thu, 22 Nov 2018 09:08:25 -0800 (PST)
+        bh=VX7QHFAOCrCD1nBdRXQOeK4YOdx1qQiZskFq14Q/6bE=;
+        b=rArfdLJTkiIbzqkCCFXnSysSJ77hZCEPxsC7A4b9w+ta3wrXneiwMhVJWihNkpvFBB
+         RzCqu0WUk3qov6PfTl03pYaXI6YR+zxCk34RHQoKJbBgEAfYMGBXN/9uJniQRcIilrJN
+         CyvjsnyO1yZOlwKrAgQZ/IJVhcfx6RGko+eRZRH+b3uP6kn+RR606a9jmwNjlAq4Vjun
+         bQQEP7EnGs2jLem7yzf9cXtlu2mzNVJNSSCpPlBvo3Ht8t7sul77oVG8gWb/Gnd5kgmd
+         tVtXW6Ln1nil5n4ya4c9vLuwwBkHPgVNvw4EMaKHBBTYrvPkpYNLGTPUyPKvhbMZnsJM
+         +jrw==
+X-Gm-Message-State: AA+aEWZQutIrd15nHTByODnrMQViEqs8nBvGR+WdcEo5jVL2cYVg1joi
+        ZQ1VNrydh251xFCnMn24dTE=
+X-Google-Smtp-Source: AFSGD/X/2o3TtstZDl9o4mJwo9CJIuftsbYc4sLSiGDu4maNXPf8arjFYYQrV+oR++p6IfN2sNLInA==
+X-Received: by 2002:a17:902:4523:: with SMTP id m32mr11974993pld.53.1542906571708;
+        Thu, 22 Nov 2018 09:09:31 -0800 (PST)
 Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id v70sm14859170pfa.152.2018.11.22.09.08.22
+        by smtp.gmail.com with ESMTPSA id s2sm32520130pfa.167.2018.11.22.09.09.28
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 22 Nov 2018 09:08:24 -0800 (PST)
-Date:   Thu, 22 Nov 2018 22:38:18 +0530
+        Thu, 22 Nov 2018 09:09:31 -0800 (PST)
+Date:   Thu, 22 Nov 2018 22:39:24 +0530
 From:   Nishad Kamdar <nishadkamdar@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
         Rui Miguel Silva <rmfrfs@gmail.com>,
         greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/3] staging: greybus: arche-apb-ctrl.c: Switch to the
- gpio descriptor interface
-Message-ID: <9ebe2c3909643701e5936da3778bf4fab3e53036.1542898267.git.nishadkamdar@gmail.com>
+Subject: [PATCH v3 3/3] staging: greybus: arche-platform: Switch to the gpio
+ descriptor interface
+Message-ID: <2200db633d8e723b881ef355527afaef0d5ccf24.1542898267.git.nishadkamdar@gmail.com>
 References: <cover.1542898267.git.nishadkamdar@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -80,315 +80,257 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the gpiod interface instead of the deprecated old non-descriptor
-interface.
+Use the gpiod interface instead of the deprecated
+old non-descriptor interface.
 
 Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 ---
 Changes in v2:
- - Resolved compilation errors.
+ - Move comment to the same line as to what it applies to.
 ---
- drivers/staging/greybus/arche-apb-ctrl.c | 159 +++++++++--------------
- 1 file changed, 65 insertions(+), 94 deletions(-)
+ drivers/staging/greybus/arche-platform.c | 119 ++++++++---------------
+ 1 file changed, 41 insertions(+), 78 deletions(-)
 
-diff --git a/drivers/staging/greybus/arche-apb-ctrl.c b/drivers/staging/greybus/arche-apb-ctrl.c
-index be5ffed90bcf..e887f6aee20b 100644
---- a/drivers/staging/greybus/arche-apb-ctrl.c
-+++ b/drivers/staging/greybus/arche-apb-ctrl.c
-@@ -8,9 +8,8 @@
+diff --git a/drivers/staging/greybus/arche-platform.c b/drivers/staging/greybus/arche-platform.c
+index 4c36e88766e7..a5cea79d8e32 100644
+--- a/drivers/staging/greybus/arche-platform.c
++++ b/drivers/staging/greybus/arche-platform.c
+@@ -8,10 +8,9 @@
  
  #include <linux/clk.h>
  #include <linux/delay.h>
 -#include <linux/gpio.h>
 +#include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
--#include <linux/of_gpio.h>
- #include <linux/of_irq.h>
+ #include <linux/init.h>
  #include <linux/module.h>
+-#include <linux/of_gpio.h>
+ #include <linux/of_platform.h>
  #include <linux/pinctrl/consumer.h>
-@@ -24,12 +23,12 @@ static void apb_bootret_deassert(struct device *dev);
+ #include <linux/platform_device.h>
+@@ -45,14 +44,14 @@ enum svc_wakedetect_state {
  
- struct arche_apb_ctrl_drvdata {
- 	/* Control GPIO signals to and from AP <=> AP Bridges */
--	int resetn_gpio;
--	int boot_ret_gpio;
--	int pwroff_gpio;
--	int wake_in_gpio;
--	int wake_out_gpio;
--	int pwrdn_gpio;
-+	struct gpio_desc *resetn;
-+	struct gpio_desc *boot_ret;
-+	struct gpio_desc *pwroff;
-+	struct gpio_desc *wake_in;
-+	struct gpio_desc *wake_out;
-+	struct gpio_desc *pwrdn;
+ struct arche_platform_drvdata {
+ 	/* Control GPIO signals to and from AP <=> SVC */
+-	int svc_reset_gpio;
++	struct gpio_desc *svc_reset;
++	struct gpio_desc *svc_sysboot;
+ 	bool is_reset_act_hi;
+-	int svc_sysboot_gpio;
+-	int wake_detect_gpio; /* bi-dir,maps to WAKE_MOD & WAKE_FRAME signals */
++	struct gpio_desc *wake_detect; /* bi-dir,maps to WAKE_MOD & WAKE_FRAME signals */
  
  	enum arche_platform_state state;
- 	bool init_disabled;
-@@ -37,28 +36,28 @@ struct arche_apb_ctrl_drvdata {
- 	struct regulator *vcore;
- 	struct regulator *vio;
  
--	int clk_en_gpio;
-+	struct gpio_desc *clk_en;
- 	struct clk *clk;
+-	int svc_refclk_req;
++	struct gpio_desc *svc_refclk_req;
+ 	struct clk *svc_ref_clk;
  
  	struct pinctrl *pinctrl;
- 	struct pinctrl_state *pin_default;
- 
- 	/* V2: SPI Bus control  */
--	int spi_en_gpio;
-+	struct gpio_desc *spi_en;
- 	bool spi_en_polarity_high;
- };
- 
- /*
-  * Note that these low level api's are active high
-  */
--static inline void deassert_reset(unsigned int gpio)
-+static inline void deassert_reset(struct gpio_desc *gpio)
- {
--	gpio_set_value(gpio, 1);
-+	gpiod_set_value(gpio, 1);
+@@ -85,9 +84,9 @@ static void arche_platform_set_wake_detect_state(
+ 	arche_pdata->wake_detect_state = state;
  }
  
--static inline void assert_reset(unsigned int gpio)
-+static inline void assert_reset(struct gpio_desc *gpio)
+-static inline void svc_reset_onoff(unsigned int gpio, bool onoff)
++static inline void svc_reset_onoff(struct gpio_desc *gpio, bool onoff)
  {
--	gpio_set_value(gpio, 0);
-+	gpiod_set_value(gpio, 0);
+-	gpio_set_value(gpio, onoff);
++	gpiod_set_value(gpio, onoff);
  }
  
- /*
-@@ -75,11 +74,11 @@ static int coldboot_seq(struct platform_device *pdev)
- 		return 0;
+ static int apb_cold_boot(struct device *dev, void *data)
+@@ -116,7 +115,6 @@ static int apb_poweroff(struct device *dev, void *data)
+ static void arche_platform_wd_irq_en(struct arche_platform_drvdata *arche_pdata)
+ {
+ 	/* Enable interrupt here, to read event back from SVC */
+-	gpio_direction_input(arche_pdata->wake_detect_gpio);
+ 	enable_irq(arche_pdata->wake_detect_irq);
+ }
  
- 	/* Hold APB in reset state */
--	assert_reset(apb->resetn_gpio);
-+	assert_reset(apb->resetn);
+@@ -160,7 +158,7 @@ static irqreturn_t arche_platform_wd_irq(int irq, void *devid)
  
- 	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING &&
--	    gpio_is_valid(apb->spi_en_gpio))
--		devm_gpio_free(dev, apb->spi_en_gpio);
-+	    apb->spi_en)
-+		devm_gpiod_put(dev, apb->spi_en);
+ 	spin_lock_irqsave(&arche_pdata->wake_lock, flags);
  
- 	/* Enable power to APB */
- 	if (!IS_ERR(apb->vcore)) {
-@@ -101,13 +100,13 @@ static int coldboot_seq(struct platform_device *pdev)
- 	apb_bootret_deassert(dev);
+-	if (gpio_get_value(arche_pdata->wake_detect_gpio)) {
++	if (gpiod_get_value(arche_pdata->wake_detect)) {
+ 		/* wake/detect rising */
  
- 	/* On DB3 clock was not mandatory */
--	if (gpio_is_valid(apb->clk_en_gpio))
--		gpio_set_value(apb->clk_en_gpio, 1);
-+	if (apb->clk_en)
-+		gpiod_set_value(apb->clk_en, 1);
+ 		/*
+@@ -224,10 +222,10 @@ arche_platform_coldboot_seq(struct arche_platform_drvdata *arche_pdata)
+ 
+ 	dev_info(arche_pdata->dev, "Booting from cold boot state\n");
+ 
+-	svc_reset_onoff(arche_pdata->svc_reset_gpio,
++	svc_reset_onoff(arche_pdata->svc_reset,
+ 			arche_pdata->is_reset_act_hi);
+ 
+-	gpio_set_value(arche_pdata->svc_sysboot_gpio, 0);
++	gpiod_set_value(arche_pdata->svc_sysboot, 0);
+ 	usleep_range(100, 200);
+ 
+ 	ret = clk_prepare_enable(arche_pdata->svc_ref_clk);
+@@ -238,7 +236,7 @@ arche_platform_coldboot_seq(struct arche_platform_drvdata *arche_pdata)
+ 	}
+ 
+ 	/* bring SVC out of reset */
+-	svc_reset_onoff(arche_pdata->svc_reset_gpio,
++	svc_reset_onoff(arche_pdata->svc_reset,
+ 			!arche_pdata->is_reset_act_hi);
+ 
+ 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_ACTIVE);
+@@ -259,10 +257,10 @@ arche_platform_fw_flashing_seq(struct arche_platform_drvdata *arche_pdata)
+ 
+ 	dev_info(arche_pdata->dev, "Switching to FW flashing state\n");
+ 
+-	svc_reset_onoff(arche_pdata->svc_reset_gpio,
++	svc_reset_onoff(arche_pdata->svc_reset,
+ 			arche_pdata->is_reset_act_hi);
+ 
+-	gpio_set_value(arche_pdata->svc_sysboot_gpio, 1);
++	gpiod_set_value(arche_pdata->svc_sysboot, 1);
  
  	usleep_range(100, 200);
  
- 	/* deassert reset to APB : Active-low signal */
--	deassert_reset(apb->resetn_gpio);
-+	deassert_reset(apb->resetn);
- 
- 	apb->state = ARCHE_PLATFORM_STATE_ACTIVE;
- 
-@@ -119,6 +118,7 @@ static int fw_flashing_seq(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct arche_apb_ctrl_drvdata *apb = platform_get_drvdata(pdev);
- 	int ret;
-+	unsigned long flags;
- 
- 	if (apb->init_disabled ||
- 	    apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING)
-@@ -136,25 +136,20 @@ static int fw_flashing_seq(struct platform_device *pdev)
+@@ -273,7 +271,7 @@ arche_platform_fw_flashing_seq(struct arche_platform_drvdata *arche_pdata)
  		return ret;
  	}
  
--	if (gpio_is_valid(apb->spi_en_gpio)) {
--		unsigned long flags;
-+	if (apb->spi_en_polarity_high)
+-	svc_reset_onoff(arche_pdata->svc_reset_gpio,
++	svc_reset_onoff(arche_pdata->svc_reset,
+ 			!arche_pdata->is_reset_act_hi);
+ 
+ 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_FW_FLASHING);
+@@ -305,7 +303,7 @@ arche_platform_poweroff_seq(struct arche_platform_drvdata *arche_pdata)
+ 	clk_disable_unprepare(arche_pdata->svc_ref_clk);
+ 
+ 	/* As part of exit, put APB back in reset state */
+-	svc_reset_onoff(arche_pdata->svc_reset_gpio,
++	svc_reset_onoff(arche_pdata->svc_reset,
+ 			arche_pdata->is_reset_act_hi);
+ 
+ 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_OFF);
+@@ -435,6 +433,7 @@ static int arche_platform_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	int ret;
++	unsigned int flags;
+ 
+ 	arche_pdata = devm_kzalloc(&pdev->dev, sizeof(*arche_pdata),
+ 				   GFP_KERNEL);
+@@ -444,61 +443,33 @@ static int arche_platform_probe(struct platform_device *pdev)
+ 	/* setup svc reset gpio */
+ 	arche_pdata->is_reset_act_hi = of_property_read_bool(np,
+ 							     "svc,reset-active-high");
+-	arche_pdata->svc_reset_gpio = of_get_named_gpio(np,
+-							"svc,reset-gpio",
+-							0);
+-	if (!gpio_is_valid(arche_pdata->svc_reset_gpio)) {
+-		dev_err(dev, "failed to get reset-gpio\n");
+-		return arche_pdata->svc_reset_gpio;
+-	}
+-	ret = devm_gpio_request(dev, arche_pdata->svc_reset_gpio, "svc-reset");
+-	if (ret) {
+-		dev_err(dev, "failed to request svc-reset gpio:%d\n", ret);
+-		return ret;
+-	}
+-	ret = gpio_direction_output(arche_pdata->svc_reset_gpio,
+-				    arche_pdata->is_reset_act_hi);
+-	if (ret) {
+-		dev_err(dev, "failed to set svc-reset gpio dir:%d\n", ret);
++	if (arche_pdata->is_reset_act_hi)
 +		flags = GPIOD_OUT_HIGH;
 +	else
 +		flags = GPIOD_OUT_LOW;
++
++	arche_pdata->svc_reset = devm_gpiod_get(dev, "svc,reset-gpio", flags);
++	if (IS_ERR(arche_pdata->svc_reset)) {
++		ret = PTR_ERR(arche_pdata->svc_reset);
++		dev_err(dev, "failed to request svc-reset GPIO:%d\n", ret);
+ 		return ret;
+ 	}
+ 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_OFF);
  
--		if (apb->spi_en_polarity_high)
--			flags = GPIOF_OUT_INIT_HIGH;
--		else
--			flags = GPIOF_OUT_INIT_LOW;
+-	arche_pdata->svc_sysboot_gpio = of_get_named_gpio(np,
+-							  "svc,sysboot-gpio",
+-							  0);
+-	if (!gpio_is_valid(arche_pdata->svc_sysboot_gpio)) {
+-		dev_err(dev, "failed to get sysboot gpio\n");
+-		return arche_pdata->svc_sysboot_gpio;
+-	}
+-	ret = devm_gpio_request(dev, arche_pdata->svc_sysboot_gpio, "sysboot0");
+-	if (ret) {
+-		dev_err(dev, "failed to request sysboot0 gpio:%d\n", ret);
+-		return ret;
+-	}
+-	ret = gpio_direction_output(arche_pdata->svc_sysboot_gpio, 0);
+-	if (ret) {
+-		dev_err(dev, "failed to set svc-reset gpio dir:%d\n", ret);
++	arche_pdata->svc_sysboot = devm_gpiod_get(dev, "svc,sysboot-gpio",
++						  GPIOD_OUT_LOW);
++	if (IS_ERR(arche_pdata->svc_sysboot)) {
++		ret = PTR_ERR(arche_pdata->svc_sysboot);
++		dev_err(dev, "failed to request sysboot0 GPIO: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	/* setup the clock request gpio first */
+-	arche_pdata->svc_refclk_req = of_get_named_gpio(np,
+-							"svc,refclk-req-gpio",
+-							0);
+-	if (!gpio_is_valid(arche_pdata->svc_refclk_req)) {
+-		dev_err(dev, "failed to get svc clock-req gpio\n");
+-		return arche_pdata->svc_refclk_req;
+-	}
+-	ret = devm_gpio_request(dev, arche_pdata->svc_refclk_req,
+-				"svc-clk-req");
+-	if (ret) {
+-		dev_err(dev, "failed to request svc-clk-req gpio: %d\n", ret);
+-		return ret;
+-	}
+-	ret = gpio_direction_input(arche_pdata->svc_refclk_req);
+-	if (ret) {
+-		dev_err(dev, "failed to set svc-clk-req gpio dir :%d\n", ret);
++	arche_pdata->svc_refclk_req = devm_gpiod_get(dev, "svc,refclk-req-gpio",
++						     GPIOD_IN);
++	if (IS_ERR(arche_pdata->svc_refclk_req)) {
++		ret = PTR_ERR(arche_pdata->svc_refclk_req);
++		dev_err(dev, "failed to request svc-clk-req GPIO: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+@@ -515,19 +486,11 @@ static int arche_platform_probe(struct platform_device *pdev)
+ 	arche_pdata->num_apbs = of_get_child_count(np);
+ 	dev_dbg(dev, "Number of APB's available - %d\n", arche_pdata->num_apbs);
+ 
+-	arche_pdata->wake_detect_gpio = of_get_named_gpio(np,
+-							  "svc,wake-detect-gpio",
+-							  0);
+-	if (arche_pdata->wake_detect_gpio < 0) {
+-		dev_err(dev, "failed to get wake detect gpio\n");
+-		return arche_pdata->wake_detect_gpio;
+-	}
 -
--		ret = devm_gpio_request_one(dev, apb->spi_en_gpio,
--					    flags, "apb_spi_en");
--		if (ret) {
--			dev_err(dev, "Failed requesting SPI bus en gpio %d\n",
--				apb->spi_en_gpio);
--			return ret;
--		}
-+	apb->spi_en = devm_gpiod_get(dev, "gb,spi-en-gpio", flags);
-+	if (IS_ERR(apb->spi_en)) {
-+		ret = PTR_ERR(apb->spi_en);
-+		dev_err(dev, "Failed requesting SPI bus en GPIO: %d\n", ret);
-+		return ret;
- 	}
- 
- 	/* for flashing device should be in reset state */
--	assert_reset(apb->resetn_gpio);
-+	assert_reset(apb->resetn);
- 	apb->state = ARCHE_PLATFORM_STATE_FW_FLASHING;
- 
- 	return 0;
-@@ -177,8 +172,8 @@ static int standby_boot_seq(struct platform_device *pdev)
- 		return 0;
- 
- 	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING &&
--	    gpio_is_valid(apb->spi_en_gpio))
--		devm_gpio_free(dev, apb->spi_en_gpio);
-+	    apb->spi_en)
-+		devm_gpiod_put(dev, apb->spi_en);
- 
- 	/*
- 	 * As per WDM spec, do nothing
-@@ -202,12 +197,12 @@ static void poweroff_seq(struct platform_device *pdev)
- 		return;
- 
- 	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING &&
--	    gpio_is_valid(apb->spi_en_gpio))
--		devm_gpio_free(dev, apb->spi_en_gpio);
-+	    apb->spi_en)
-+		devm_gpiod_put(dev, apb->spi_en);
- 
- 	/* disable the clock */
--	if (gpio_is_valid(apb->clk_en_gpio))
--		gpio_set_value(apb->clk_en_gpio, 0);
-+	if (apb->clk_en)
-+		gpiod_set_value(apb->clk_en, 0);
- 
- 	if (!IS_ERR(apb->vcore) && regulator_is_enabled(apb->vcore) > 0)
- 		regulator_disable(apb->vcore);
-@@ -216,7 +211,7 @@ static void poweroff_seq(struct platform_device *pdev)
- 		regulator_disable(apb->vio);
- 
- 	/* As part of exit, put APB back in reset state */
--	assert_reset(apb->resetn_gpio);
-+	assert_reset(apb->resetn);
- 	apb->state = ARCHE_PLATFORM_STATE_OFF;
- 
- 	/* TODO: May have to send an event to SVC about this exit */
-@@ -226,7 +221,7 @@ static void apb_bootret_deassert(struct device *dev)
- {
- 	struct arche_apb_ctrl_drvdata *apb = dev_get_drvdata(dev);
- 
--	gpio_set_value(apb->boot_ret_gpio, 0);
-+	gpiod_set_value(apb->boot_ret, 0);
- }
- 
- int apb_ctrl_coldboot(struct device *dev)
-@@ -322,66 +317,46 @@ static int apb_ctrl_get_devtree_data(struct platform_device *pdev,
- 				     struct arche_apb_ctrl_drvdata *apb)
- {
- 	struct device *dev = &pdev->dev;
--	struct device_node *np = dev->of_node;
- 	int ret;
- 
--	apb->resetn_gpio = of_get_named_gpio(np, "reset-gpios", 0);
--	if (apb->resetn_gpio < 0) {
--		dev_err(dev, "failed to get reset gpio\n");
--		return apb->resetn_gpio;
--	}
--	ret = devm_gpio_request_one(dev, apb->resetn_gpio,
--				    GPIOF_OUT_INIT_LOW, "apb-reset");
+-	ret = devm_gpio_request(dev, arche_pdata->wake_detect_gpio,
+-				"wake detect");
 -	if (ret) {
--		dev_err(dev, "Failed requesting reset gpio %d\n",
--			apb->resetn_gpio);
-+	apb->resetn = devm_gpiod_get(dev, "gb,reset-gpios", GPIOD_OUT_LOW);
-+	if (IS_ERR(apb->resetn)) {
-+		ret = PTR_ERR(apb->resetn);
-+		dev_err(dev, "Failed requesting reset GPIO: %d\n", ret);
+-		dev_err(dev, "Failed requesting wake_detect gpio %d\n",
+-			arche_pdata->wake_detect_gpio);
++	arche_pdata->wake_detect = devm_gpiod_get(dev, "svc,wake-detect-gpio",
++						  GPIOD_IN);
++	if (IS_ERR(arche_pdata->wake_detect)) {
++		ret = PTR_ERR(arche_pdata->wake_detect);
++		dev_err(dev, "Failed requesting wake_detect GPIO %d\n", ret);
  		return ret;
  	}
  
--	apb->boot_ret_gpio = of_get_named_gpio(np, "boot-ret-gpios", 0);
--	if (apb->boot_ret_gpio < 0) {
--		dev_err(dev, "failed to get boot retention gpio\n");
--		return apb->boot_ret_gpio;
--	}
--	ret = devm_gpio_request_one(dev, apb->boot_ret_gpio,
--				    GPIOF_OUT_INIT_LOW, "boot retention");
--	if (ret) {
--		dev_err(dev, "Failed requesting bootret gpio %d\n",
--			apb->boot_ret_gpio);
-+	apb->boot_ret = devm_gpiod_get(dev, "gb,boot-ret-gpios", GPIOD_OUT_LOW);
-+	if (IS_ERR(apb->boot_ret)) {
-+		ret = PTR_ERR(apb->boot_ret);
-+		dev_err(dev, "Failed requesting bootret GPIO: %d\n", ret);
- 		return ret;
- 	}
+@@ -538,7 +501,7 @@ static int arche_platform_probe(struct platform_device *pdev)
+ 	spin_lock_init(&arche_pdata->wake_lock);
+ 	mutex_init(&arche_pdata->platform_state_mutex);
+ 	arche_pdata->wake_detect_irq =
+-		gpio_to_irq(arche_pdata->wake_detect_gpio);
++		gpiod_to_irq(arche_pdata->wake_detect);
  
- 	/* It's not mandatory to support power management interface */
--	apb->pwroff_gpio = of_get_named_gpio(np, "pwr-off-gpios", 0);
--	if (apb->pwroff_gpio < 0) {
--		dev_err(dev, "failed to get power off gpio\n");
--		return apb->pwroff_gpio;
--	}
--	ret = devm_gpio_request_one(dev, apb->pwroff_gpio,
--				    GPIOF_IN, "pwroff_n");
--	if (ret) {
--		dev_err(dev, "Failed requesting pwroff_n gpio %d\n",
--			apb->pwroff_gpio);
-+	apb->pwroff = devm_gpiod_get_optional(dev, "gb,pwr-off-gpios",
-+					      GPIOD_IN);
-+	if (IS_ERR(apb->pwroff)) {
-+		ret = PTR_ERR(apb->pwroff);
-+		dev_err(dev, "Failed requesting pwroff_n GPIO: %d\n", ret);
- 		return ret;
- 	}
- 
- 	/* Do not make clock mandatory as of now (for DB3) */
--	apb->clk_en_gpio = of_get_named_gpio(np, "clock-en-gpio", 0);
--	if (apb->clk_en_gpio < 0) {
--		dev_warn(dev, "failed to get clock en gpio\n");
--	} else if (gpio_is_valid(apb->clk_en_gpio)) {
--		ret = devm_gpio_request_one(dev, apb->clk_en_gpio,
--					    GPIOF_OUT_INIT_LOW, "apb_clk_en");
--		if (ret) {
--			dev_warn(dev, "Failed requesting APB clock en gpio %d\n",
--				 apb->clk_en_gpio);
--			return ret;
--		}
-+	apb->clk_en = devm_gpiod_get_optional(dev, "gb,clock-en-gpio",
-+					      GPIOD_OUT_LOW);
-+	if (IS_ERR(apb->clk_en)) {
-+		ret = PTR_ERR(apb->clk_en);
-+		dev_err(dev, "Failed requesting APB clock en GPIO: %d\n", ret);
-+		return ret;
- 	}
- 
--	apb->pwrdn_gpio = of_get_named_gpio(np, "pwr-down-gpios", 0);
--	if (apb->pwrdn_gpio < 0)
--		dev_warn(dev, "failed to get power down gpio\n");
-+	apb->pwrdn = devm_gpiod_get(dev, "gb,pwr-down-gpios", GPIOD_OUT_LOW);
-+	if (IS_ERR(apb->pwrdn)) {
-+		ret = PTR_ERR(apb->pwrdn);
-+		dev_warn(dev, "Failed requesting power down GPIO: %d\n", ret);
-+		return ret;
-+	}
- 
- 	/* Regulators are optional, as we may have fixed supply coming in */
- 	apb->vcore = devm_regulator_get(dev, "vcore");
-@@ -404,12 +379,8 @@ static int apb_ctrl_get_devtree_data(struct platform_device *pdev,
- 	}
- 
- 	/* Only applicable for platform >= V2 */
--	apb->spi_en_gpio = of_get_named_gpio(np, "spi-en-gpio", 0);
--	if (apb->spi_en_gpio >= 0) {
--		if (of_property_read_bool(pdev->dev.of_node,
--					  "spi-en-active-high"))
--			apb->spi_en_polarity_high = true;
--	}
-+	if (of_property_read_bool(pdev->dev.of_node, "gb,spi-en-active-high"))
-+		apb->spi_en_polarity_high = true;
- 
- 	return 0;
- }
+ 	ret = devm_request_threaded_irq(dev, arche_pdata->wake_detect_irq,
+ 					arche_platform_wd_irq,
 -- 
 2.17.1
 
