@@ -2,272 +2,169 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF3FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E6CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9035E20865
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:40:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NofCagNl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9035E20865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FAAA20866
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:40:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FAAA20866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390808AbeKVVTG (ORCPT
+        id S2394017AbeKVVTJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 16:19:06 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:60515 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732364AbeKVVTG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 16:19:06 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181122104014euoutp012c33aafe7c6b47233cb9e62904b46aa2~pbBvUT0ut0634806348euoutp011
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 10:40:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181122104014euoutp012c33aafe7c6b47233cb9e62904b46aa2~pbBvUT0ut0634806348euoutp011
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1542883214;
-        bh=3skxWVU+/hhOhBngib6kBdAfoe2JY3SLVZ1dVYzMEfY=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=NofCagNlp2ScjssepY9230pz/et+AU2krArIOaDP8nBJlYRoUfwUVYoSj8BSWcTKy
-         X7ckpr/aDywVu+MDat7iaMzvVf/afDr+SsMvF9+3qs5j5sLMe9IhqXm7AbA/0BdCWI
-         FdCAXQKP+6zn9N2qA0RDT3gg/3ZV+oJ88yJqtk/c=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181122104012eucas1p20402d123ba4d1f93709f732ac08d2897~pbBuKJekT0935309353eucas1p2G;
-        Thu, 22 Nov 2018 10:40:12 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 0C.E8.04806.C8786FB5; Thu, 22
-        Nov 2018 10:40:12 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181122104011eucas1p285f0f16ea8f06db366d95cc2f0a2acd4~pbBtR-0fl1746917469eucas1p2w;
-        Thu, 22 Nov 2018 10:40:11 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181122104011eusmtrp21245a69a5e2d3a57206a015b60ebca32~pbBtApHll1720417204eusmtrp2v;
-        Thu, 22 Nov 2018 10:40:11 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-92-5bf6878c5b65
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id F0.64.04284.B8786FB5; Thu, 22
-        Nov 2018 10:40:11 +0000 (GMT)
-Received: from [106.120.51.20] (unknown [106.120.51.20]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20181122104010eusmtip150ed015c94c28a369e4f29a4e713f772~pbBsI_HTU0105501055eusmtip1F;
-        Thu, 22 Nov 2018 10:40:10 +0000 (GMT)
-Subject: Re: [PATCH 2/6] devfreq: refactor set_target frequency function
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com,
-        pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org,
-        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
-        krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-Message-ID: <9eef3348-e86f-1113-3691-39ba3a620fb8@partner.samsung.com>
-Date:   Thu, 22 Nov 2018 11:40:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <5BF619EE.8090006@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa1BMYRjHvXuuxXLaSs+4zuxMQ4zS6MNrasKEOR98YMwYYz+w1ZlEG/aU
-        REYSZZUwJlm3CGXbZLNd5FK2y5ZK0qQmlUw7Gl1c2qwxYxbHyejb73me/3/+z/POyxKqq/Q8
-        NjY+QdDHa+PUtCdZ0fijfUVWhkuz8n2PGj8vD8CWvFIKV1pcFO6eHKbwjfqXFD5RUErj1jM6
-        nDM0SuD29gcMbksbY7Dx4lMFLht6Q+HO6qs0dmbXI5zX/kyBS+r7GXynu0OB3x4vonH/i4Y/
-        /pbXFD75tJ7Bp4q/UHjs1QC51o+veFxB8ebrZsRfSe0g+XM5E4gvePJRwZeZTtN8zTUzwz+8
-        fYx3NzK8tSuD5M9aTYgvKv7O8M6yRZuVOzzDooW42IOCPih8l+futK/paH+3/6HCa71kKnqz
-        yIBYFrgQcNjDDMiTVXFFCC5XWhRyMYmgtu7nVOFEkPvDShiQx19H68A9JLGKK0TgcKfIonEE
-        t5rsCmngzfHgbKxF0sCHa0FQU2OjpYLgThLg/mKlpXCaC4Qq0wHJoOQ2gtvx4G8CyfnDp4kR
-        RmJfbjtkviumZY0XNF92kBJ7cMuhJMdCSUxwftDruKGQeTGcKL8ytekgC2luVub10GY+Q8rs
-        DSN2KyPzAvj1SPYCJ0JbpomWOQUymqumNKFQZ++gpJUJLgBKq4Pk9jo432lh5GecDT3jXvIG
-        s+FCxSVCbish85RKVi8Fa9arqaC5UGjOZc4htXHaXcZptxin3WL8n5uPSBPyExJFXYwgrooX
-        kgJFrU5MjI8JjNqnK0N//myL2/6tCj37GWlDHIvUs5Spmm8aFaU9KCbrbAhYQu2j7Fzn0qiU
-        0drkw4J+3059Ypwg2tB8llT7KY/MGNSouBhtgrBXEPYL+n9TBesxLxXFNqTnEwnL+iZ857xI
-        r7207ag6eHxP1c6F4el7+jYN20Y02TUCuj+e25RkuKXvj/il94jMbJoZNevz0L3VcYbgltGC
-        mccKt+wtJ5eUhPOPh550Bfv4fwh1FfRtCp/RELPDtSDv+NZRx0B1b+vN8r41G0K6IgZKsu86
-        Ly4NRFGTjZEpalLcrQ1eRuhF7W/FStHzrwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHec9lZ2qD4/Ly5oeKSXSjo8frq9RIsDp9kAqDLiv0pCe13Gbn
-        bJVFZKWJWtkVapZWKplpupnTrKxkGam5ynSgKIh20SzMWxQibY3Ab7/nef4/Hh545LjSQgbI
-        03QGQdTx6SqZJ9E+97p/TUHujCb4zmggelm/Epmv15CowTxDIsfUFxKV2DpJdKa0RoY6CrSo
-        cOgbjuz2Wgq9PT1GIdPVZxiyDPWQqKvppgxNnrcBdN3ejKFqWz+Fyh3vMdR3qkKG+tteOf32
-        DyTKeWaj0NkH4yQaezdArPfnrE+sJFdVXAW4oqz3BHexcAJwpU9HMM5SmSfjnt+qori6spPc
-        XCvFPerOJbgLjyoBV/HgF8VNWhZvVexm1op6o0FYmqqXDOtUGhaFMGwUYkLCohg2NHJvdEi4
-        Kki9NllITzssiEHqRCb19M9skOFYdvTerV4iC/QszgceckiHwY6B+8DFSrocwLaKRHffD15u
-        bqDcvBDO9uTL8oGnM/MNwPH22n/CQpqDk60vgGvgQ7cDeNXehrkKnM7B4cj3u8CtZGGwoLQJ
-        zwdyuYxmYGPlIZetoDfCueFa3MUEvQz+mBj9t86X3gnfjjwE7ow3fHNjmHCxB70aVheaSRfj
-        dAQsrhvE3ewPe4dLMDcvgWfqi/CLQGmap5vmKaZ5immechsQlcBHMEraFK3EMhKvlYy6FCZJ
-        r7UA579YW3/XNYIP5vgWQMuBaoFixa5pjZLkD0uZ2hYA5bjKR9EVM6NRKpL5zGOCqE8QjemC
-        1ALCncddwgN8k/TO79MZEthwNhJFsZGhkaERSOWvsAdn7lbSKbxBOCgIGYL438PkHgFZIJty
-        FDCdUWLg0KeJnDhN3GyMcr9O6zB7eXkf0ZVnXPIOt4Re+7OZbotXZ58Y3/Z5e2xHWeem3o+e
-        eeei+wZjM76q9tnLDb2tti031Y8zj9N+IVfU1pcHpC/GOKufuIgsY44176sem1V3/6jfsWHH
-        qSm+u2EPi03zMctRU0LJZRUhpfLsKlyU+L9PjejMRQMAAA==
-X-CMS-MailID: 20181122104011eucas1p285f0f16ea8f06db366d95cc2f0a2acd4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181121180202eucas1p27d3aa58411abeae03181c38b91fc67de
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181121180202eucas1p27d3aa58411abeae03181c38b91fc67de
-References: <1542823301-23563-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20181121180202eucas1p27d3aa58411abeae03181c38b91fc67de@eucas1p2.samsung.com>
-        <1542823301-23563-3-git-send-email-l.luba@partner.samsung.com>
-        <5BF619EE.8090006@samsung.com>
+        Thu, 22 Nov 2018 16:19:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55136 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732364AbeKVVTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 16:19:08 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 91FC8AF8C;
+        Thu, 22 Nov 2018 10:40:16 +0000 (UTC)
+Date:   Thu, 22 Nov 2018 11:40:16 +0100
+Message-ID: <s5hr2fd5ran.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 4.20-rc4
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo Choi
+Linus,
 
-On 11/22/18 3:52 AM, Chanwoo Choi wrote:
-> On 2018년 11월 22일 03:01, Lukasz Luba wrote:
->> The refactoring is needed for the new client in devfreq: suspend.
->> To avoid code duplication, move it to the new local function
->> devfreq_set_target.
->>
->> The patch draws on Tobias Jakobi's work posted ~2 years ago, who tried to
->> solve issue with devfreq device's frequency during suspend/resume.
->> During the discussion on LKML some corner cases and comments appeared
->> related to the design. This patch address them keeping in mind suggestions
->> from Chanwoo Choi.
-> 
-> As I commented on patch1, please remove it.
-OK
-> 
->>
->> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->> ---
->>   drivers/devfreq/devfreq.c | 62 ++++++++++++++++++++++++++++-------------------
->>   1 file changed, 37 insertions(+), 25 deletions(-)
->>
->> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->> index e20e7e4..cf9c643 100644
->> --- a/drivers/devfreq/devfreq.c
->> +++ b/drivers/devfreq/devfreq.c
->> @@ -285,6 +285,42 @@ static int devfreq_notify_transition(struct devfreq *devfreq,
->>   	return 0;
->>   }
->>   
->> +static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
->> +			      unsigned long *prev_freq, u32 flags)
-> 
-> Please remove the unused space in front of 'unsigned long *prev_freq'.
-> Use tab only for indentation.
-OK
-> 
->> +{
->> +	struct devfreq_freqs freqs;
->> +	unsigned long cur_freq;
->> +	int err = 0;
->> +
->> +	if (devfreq->profile->get_cur_freq)
->> +		devfreq->profile->get_cur_freq(devfreq->dev.parent, &cur_freq);
->> +	else
->> +		cur_freq = devfreq->previous_freq;
->> +
->> +	freqs.old = cur_freq;
->> +	freqs.new = new_freq;
->> +	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_PRECHANGE);
->> +
->> +	err = devfreq->profile->target(devfreq->dev.parent, &new_freq, flags);
->> +	if (err) {
->> +		freqs.new = cur_freq;
->> +		devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
->> +		return err;
->> +	}
->> +
->> +	freqs.new = new_freq;
->> +	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
->> +
->> +	if (devfreq_update_status(devfreq, new_freq))
->> +		dev_err(&devfreq->dev,
->> +			"Couldn't update frequency transition information.\n");
->> +
->> +	devfreq->previous_freq = new_freq;
->> +	*prev_freq = cur_freq;
->> +
->> +	return err;
->> +}
->> +
->>   /* Load monitoring helper functions for governors use */
->>   
->>   /**
->> @@ -296,7 +332,6 @@ static int devfreq_notify_transition(struct devfreq *devfreq,
->>    */
->>   int update_devfreq(struct devfreq *devfreq)
->>   {
->> -	struct devfreq_freqs freqs;
->>   	unsigned long freq, cur_freq, min_freq, max_freq;
-> 
-> 
-> cur_freq is not used after modification. Remove it.
-> 
->>   	int err = 0;
->>   	u32 flags = 0;
->> @@ -333,31 +368,8 @@ int update_devfreq(struct devfreq *devfreq)
->>   		flags |= DEVFREQ_FLAG_LEAST_UPPER_BOUND; /* Use LUB */
->>   	}
->>   
->> -	if (devfreq->profile->get_cur_freq)
->> -		devfreq->profile->get_cur_freq(devfreq->dev.parent, &cur_freq);
->> -	else
->> -		cur_freq = devfreq->previous_freq;
->> -
->> -	freqs.old = cur_freq;
->> -	freqs.new = freq;
->> -	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_PRECHANGE);
->> +	return devfreq_set_target(devfreq, freq, &cur_freq, flags);
-> 
-> You get the 'cur_freq' from devfreq_set_taget() for devfreq_suspend_device() on patch3.
-> But, update_devfreq() and devfreq_resume_device() don't use the 'cur_freq' value
-> from devfreq_set_target().
-> 
-> Instead, getting 'cur_freq' for 'devfreq->resume_freq' in the devfreq_set_target().
-> Please remove the 'cur_freq' parameter from devfreq_set_target.
+please pull sound fixes for v4.20-rc4 from:
 
-I can remove the 3rd parameter from devfreq_set_target(),
-but it implies that patch 1 and 3 cannot be merged. The function 
-devfreq_set_target will use 'devfreq->resume_freq' so it must be in 
-devfreq struct.
-So, in v2 version there will be still 6 patches, with the 1st patch 
-defining needed fields in devfreq struct.
-Do you agree for that?
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-4.20-rc4
 
-> 
->>   
->> -	err = devfreq->profile->target(devfreq->dev.parent, &freq, flags);
->> -	if (err) {
->> -		freqs.new = cur_freq;
->> -		devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
->> -		return err;
->> -	}
->> -
->> -	freqs.new = freq;
->> -	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
->> -
->> -	if (devfreq_update_status(devfreq, freq))
->> -		dev_err(&devfreq->dev,
->> -			"Couldn't update frequency transition information.\n");
->> -
->> -	devfreq->previous_freq = freq;
->> -	return err;
->>   }
->>   EXPORT_SYMBOL(update_devfreq);
->>   
->>
-> 
-> 
+The topmost commit is a6b0961b39896a9f9f1350d26d202f078a7d9dbc
 
-Regards,
-Lukasz Luba
+----------------------------------------------------------------
+
+sound fixes for 4.20-rc4
+
+The only significant change is for OSS PCM emulation to convert
+with kvcalloc() to address both performance and security issues.
+It's a pretty straightforward change, which should be safe.
+
+The rest are, as usual, device-specific small fixes for HD-audio.
+
+----------------------------------------------------------------
+
+Connor McAdams (2):
+      ALSA: hda/ca0132 - Add new ZxR quirk
+      ALSA: hda/ca0132 - fix AE-5 pincfg
+
+Takashi Iwai (3):
+      ALSA: oss: Use kvzalloc() for local buffer allocations
+      ALSA: hda/realtek - Add quirk entry for HP Pavilion 15
+      ALSA: hda/ca0132 - Call pci_iounmap() instead of iounmap()
+
+---
+ sound/core/oss/pcm_oss.c      | 6 +++---
+ sound/core/oss/pcm_plugin.c   | 6 +++---
+ sound/pci/hda/patch_ca0132.c  | 5 +++--
+ sound/pci/hda/patch_realtek.c | 1 +
+ 4 files changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/sound/core/oss/pcm_oss.c b/sound/core/oss/pcm_oss.c
+index f8d4a419f3af..467039b342b5 100644
+--- a/sound/core/oss/pcm_oss.c
++++ b/sound/core/oss/pcm_oss.c
+@@ -1062,8 +1062,8 @@ static int snd_pcm_oss_change_params_locked(struct snd_pcm_substream *substream)
+ 	runtime->oss.channels = params_channels(params);
+ 	runtime->oss.rate = params_rate(params);
+ 
+-	vfree(runtime->oss.buffer);
+-	runtime->oss.buffer = vmalloc(runtime->oss.period_bytes);
++	kvfree(runtime->oss.buffer);
++	runtime->oss.buffer = kvzalloc(runtime->oss.period_bytes, GFP_KERNEL);
+ 	if (!runtime->oss.buffer) {
+ 		err = -ENOMEM;
+ 		goto failure;
+@@ -2328,7 +2328,7 @@ static void snd_pcm_oss_release_substream(struct snd_pcm_substream *substream)
+ {
+ 	struct snd_pcm_runtime *runtime;
+ 	runtime = substream->runtime;
+-	vfree(runtime->oss.buffer);
++	kvfree(runtime->oss.buffer);
+ 	runtime->oss.buffer = NULL;
+ #ifdef CONFIG_SND_PCM_OSS_PLUGINS
+ 	snd_pcm_oss_plugin_clear(substream);
+diff --git a/sound/core/oss/pcm_plugin.c b/sound/core/oss/pcm_plugin.c
+index 141c5f3a9575..31cb2acf8afc 100644
+--- a/sound/core/oss/pcm_plugin.c
++++ b/sound/core/oss/pcm_plugin.c
+@@ -66,8 +66,8 @@ static int snd_pcm_plugin_alloc(struct snd_pcm_plugin *plugin, snd_pcm_uframes_t
+ 		return -ENXIO;
+ 	size /= 8;
+ 	if (plugin->buf_frames < frames) {
+-		vfree(plugin->buf);
+-		plugin->buf = vmalloc(size);
++		kvfree(plugin->buf);
++		plugin->buf = kvzalloc(size, GFP_KERNEL);
+ 		plugin->buf_frames = frames;
+ 	}
+ 	if (!plugin->buf) {
+@@ -191,7 +191,7 @@ int snd_pcm_plugin_free(struct snd_pcm_plugin *plugin)
+ 	if (plugin->private_free)
+ 		plugin->private_free(plugin);
+ 	kfree(plugin->buf_channels);
+-	vfree(plugin->buf);
++	kvfree(plugin->buf);
+ 	kfree(plugin);
+ 	return 0;
+ }
+diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+index 0a24037184c3..0a567634e5fa 100644
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -1177,6 +1177,7 @@ static const struct snd_pci_quirk ca0132_quirks[] = {
+ 	SND_PCI_QUIRK(0x1028, 0x0708, "Alienware 15 R2 2016", QUIRK_ALIENWARE),
+ 	SND_PCI_QUIRK(0x1102, 0x0010, "Sound Blaster Z", QUIRK_SBZ),
+ 	SND_PCI_QUIRK(0x1102, 0x0023, "Sound Blaster Z", QUIRK_SBZ),
++	SND_PCI_QUIRK(0x1102, 0x0033, "Sound Blaster ZxR", QUIRK_SBZ),
+ 	SND_PCI_QUIRK(0x1458, 0xA016, "Recon3Di", QUIRK_R3DI),
+ 	SND_PCI_QUIRK(0x1458, 0xA026, "Gigabyte G1.Sniper Z97", QUIRK_R3DI),
+ 	SND_PCI_QUIRK(0x1458, 0xA036, "Gigabyte GA-Z170X-Gaming 7", QUIRK_R3DI),
+@@ -8413,7 +8414,7 @@ static void ca0132_free(struct hda_codec *codec)
+ 
+ 	snd_hda_power_down(codec);
+ 	if (spec->mem_base)
+-		iounmap(spec->mem_base);
++		pci_iounmap(codec->bus->pci, spec->mem_base);
+ 	kfree(spec->spec_init_verbs);
+ 	kfree(codec->spec);
+ }
+@@ -8488,7 +8489,7 @@ static void ca0132_config(struct hda_codec *codec)
+ 		break;
+ 	case QUIRK_AE5:
+ 		codec_dbg(codec, "%s: QUIRK_AE5 applied.\n", __func__);
+-		snd_hda_apply_pincfgs(codec, r3di_pincfgs);
++		snd_hda_apply_pincfgs(codec, ae5_pincfgs);
+ 		break;
+ 	}
+ 
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index fa61674a5605..970bc44a378b 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6481,6 +6481,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x2336, "HP", ALC269_FIXUP_HP_MUTE_LED_MIC1),
+ 	SND_PCI_QUIRK(0x103c, 0x2337, "HP", ALC269_FIXUP_HP_MUTE_LED_MIC1),
+ 	SND_PCI_QUIRK(0x103c, 0x221c, "HP EliteBook 755 G2", ALC280_FIXUP_HP_HEADSET_MIC),
++	SND_PCI_QUIRK(0x103c, 0x820d, "HP Pavilion 15", ALC269_FIXUP_HP_MUTE_LED_MIC3),
+ 	SND_PCI_QUIRK(0x103c, 0x8256, "HP", ALC221_FIXUP_HP_FRONT_MIC),
+ 	SND_PCI_QUIRK(0x103c, 0x827e, "HP x360", ALC295_FIXUP_HP_X360),
+ 	SND_PCI_QUIRK(0x103c, 0x82bf, "HP", ALC221_FIXUP_HP_MIC_NO_PRESENCE),
