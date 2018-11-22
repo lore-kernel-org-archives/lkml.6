@@ -2,137 +2,109 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 457EAC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07849C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:02:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0602F20824
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:01:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0602F20824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C4AC520824
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 18:02:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="g+uuLfDx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4AC520824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406533AbeKWEmX (ORCPT
+        id S2437115AbeKWEmw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 23:42:23 -0500
-Received: from mga01.intel.com ([192.55.52.88]:26278 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732278AbeKWEmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 23:42:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Nov 2018 10:01:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,266,1539673200"; 
-   d="scan'208";a="108514970"
-Received: from ambertra-mobl.amr.corp.intel.com (HELO [10.251.23.22]) ([10.251.23.22])
-  by fmsmga004.fm.intel.com with ESMTP; 22 Nov 2018 10:01:54 -0800
-Subject: Re: [PATCH 0/7] ACPI HMAT memory sysfs representation
-To:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Keith Busch <keith.busch@intel.com>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-mm@kvack.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-References: <20181114224902.12082-1-keith.busch@intel.com>
- <1ed406b2-b85f-8e02-1df0-7c39aa21eca9@arm.com>
- <4ea6e80f-80ba-6992-8aa0-5c2d88996af7@intel.com>
- <b79804b0-32ee-03f9-fa62-a89684d46be6@arm.com>
- <c6abb754-0d82-8739-fe08-24e9402bae75@intel.com>
- <aae34dde-fa70-870a-9b74-fff9e385bfc9@arm.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <f5315662-5c1a-68a3-4d04-21b4b5ca94b1@intel.com>
-Date:   Thu, 22 Nov 2018 10:01:53 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 22 Nov 2018 23:42:52 -0500
+Received: from mail-lj1-f178.google.com ([209.85.208.178]:45881 "EHLO
+        mail-lj1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732278AbeKWEmw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 23:42:52 -0500
+Received: by mail-lj1-f178.google.com with SMTP id s5-v6so8640610ljd.12
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 10:02:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5llXmL071LkoV9+aZVNLiRsd4DJMg8wkITczzEgG/F0=;
+        b=g+uuLfDx2wldsmmD9aQBaFnNOrTxJ8CGiOBWl2x/49BhgGlDHh+7yoIP/SswWyEjJx
+         zXr7BvAuf7azuVPMWkGbxXvo+WzqyjAIGq3FgDBNmck3iEaRyOWuorZ10H6kr/k+T2CV
+         7mUJ7deyjFqM5w+985my6PEzgY+WBc2lxqorE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5llXmL071LkoV9+aZVNLiRsd4DJMg8wkITczzEgG/F0=;
+        b=cFD6Y9uMysNpLCYhW4vqA9Aj1ZcR0CVyVX3jCSnmSlL33ngQZ3iUWkPuxJ/egaNCzv
+         FY0o/USsro6bJQ3mVlfjXaPxquPUu0jzSFwfUGQk0JY9EEgdSl2+IJFqfCFao7gboHWe
+         q41r0bOmEDQIaoOg62QVTWo58V9aO+p+kJWY5JhCfmPurfsM/KpEpkXxDXlcpAqsS3Ab
+         uSVX6xrJyVrIwL8XVopetRUkfFheV3seqvqmwFnd31zwUtb1rlp2BA5IKyeSreIOgvHB
+         jr9qIcSL1jBM2tnksVIpV6nxslo6ojt+ukZgxB4uzXYx2ZZkMZ42fUzdTKbS7vixxPeE
+         TS1w==
+X-Gm-Message-State: AA+aEWaZvilPhqnDEJt/IuHQBADcbJBawoL8SDe/RhgCxSdM2wsEQkKw
+        ozPjE4tmCtsn9v2a/okK/+PddJgAmYoJFA==
+X-Google-Smtp-Source: AFSGD/XK4pF55DTYribh1987zlfBWXXsqggrEVgC2vPN1jg/PtGJXTj/KLC/RGq9v/OhpHDR5umCaA==
+X-Received: by 2002:a2e:99d7:: with SMTP id l23-v6mr7330887ljj.165.1542909742552;
+        Thu, 22 Nov 2018 10:02:22 -0800 (PST)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id u21-v6sm7502960lju.46.2018.11.22.10.02.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 10:02:22 -0800 (PST)
+Received: by mail-lf1-f53.google.com with SMTP id p86so7092941lfg.5
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 10:02:22 -0800 (PST)
+X-Received: by 2002:a19:4287:: with SMTP id p129mr7439565lfa.135.1542909341735;
+ Thu, 22 Nov 2018 09:55:41 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <aae34dde-fa70-870a-9b74-fff9e385bfc9@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20181122140320.24080-1-hch@lst.de> <CAHk-=wh=_T=A53+o4zLNbKio43LGqVDb0KCbWPDvAg54bRDmWw@mail.gmail.com>
+ <20181122170715.GI30658@n2100.armlinux.org.uk> <CAHk-=wgfGzXuDAKFQPdzMib3QCRHfSTsy5=gLU-WCoya+Ym+1A@mail.gmail.com>
+ <11829e3c-7302-f821-cf5c-863e5267a17b@arm.com>
+In-Reply-To: <11829e3c-7302-f821-cf5c-863e5267a17b@arm.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 22 Nov 2018 09:55:25 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whxf0zqutExPr_j1A625Z3gcL6k_ABzKo1BtzN4F93hkA@mail.gmail.com>
+Message-ID: <CAHk-=whxf0zqutExPr_j1A625Z3gcL6k_ABzKo1BtzN4F93hkA@mail.gmail.com>
+Subject: Re: remove the ->mapping_error method from dma_map_ops V2
+To:     robin.murphy@arm.com
+Cc:     linux@armlinux.org.uk, Christoph Hellwig <hch@lst.de>,
+        linux-arch@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org,
+        David Woodhouse <dwmw2@infradead.org>, joro@8bytes.org,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, jdmason@kudzu.us,
+        xen-devel@lists.xenproject.org,
+        linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/22/18 3:52 AM, Anshuman Khandual wrote:
->>
->> It sounds like the subset that's being exposed is insufficient for yo
->> We did that because we think doing anything but a subset in sysfs will
->> just blow up sysfs:  MAX_NUMNODES is as high as 1024, so if we have 4
->> attributes, that's at _least_ 1024*1024*4 files if we expose *all*
->> combinations.
-> Each permutation need not be a separate file inside all possible NODE X
-> (/sys/devices/system/node/nodeX) directories. It can be a top level file
-> enumerating various attribute values for a given (X, Y) node pair based
-> on an offset something like /proc/pid/pagemap.
+On Thu, Nov 22, 2018 at 9:52 AM Robin Murphy <robin.murphy@arm.com> wrote:
+>
+> Unfortunately, with things like the top-down IOVA allocator, and 32-bit
+> systems in general, "the top 4095" values may well still be valid
+> addresses -
 
-My assumption has been that this kind of thing is too fancy for sysfs:
+Ugh.
 
-Documentation/filesystems/sysfs.txt:
-> Attributes should be ASCII text files, preferably with only one value
-> per file. It is noted that it may not be efficient to contain only one
-> value per file, so it is socially acceptable to express an array of
-> values of the same type. 
-> 
-> Mixing types, expressing multiple lines of data, and doing fancy
-> formatting of data is heavily frowned upon. Doing these things may get
-> you publicly humiliated and your code rewritten without notice. 
+> The only immediate benefit I can see is that we could distinguish cases
+> like the first which can never possibly succeed, and thus callers could
+> actually give up instead of doing what various subsystems currently do
+> and retry the exact same mapping indefinitely on the apparent assumption
+> that errors must be transient.
 
-/proc/pid/pagemap is binary, not one-value-per-file and relatively
-complicated to parse.
+No, the big immediate benefit of allowing "return -EINVAL" etc is
+simply legibility and error avoidance.
 
-Do you really think following something like pagemap is the right model
-for sysfs?
+It's basically how pretty much all the rest of the kernel returns
+errors, so not only is it very obvious, it's also what people do
+without even thinking.. So it would be good to work.
 
-BTW, I'm not saying we don't need *some* interface like you propose.  We
-almost certainly will at some point.  I just don't think it will be in
-sysfs.
+                       Linus
