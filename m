@@ -2,196 +2,109 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66641C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:32:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F776C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3177220684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:32:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3177220684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F28620684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:33:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F28620684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393509AbeKVULZ (ORCPT
+        id S2393519AbeKVUMR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 15:11:25 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43576 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387669AbeKVULZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:11:25 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E11AB3622;
-        Thu, 22 Nov 2018 01:32:44 -0800 (PST)
-Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E701D3F5CF;
-        Thu, 22 Nov 2018 01:32:40 -0800 (PST)
-Date:   Thu, 22 Nov 2018 09:32:39 +0000
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v9 09/15] sched: Introduce sched_energy_present static key
-Message-ID: <20181122093237.goxmr4p5l4h2izid@queper01-lin>
-References: <20181119141857.8625-1-quentin.perret@arm.com>
- <20181119141857.8625-10-quentin.perret@arm.com>
- <20181121130822.GE2113@hirez.programming.kicks-ass.net>
- <20181121151444.t3zye5l5iycfni2s@queper01-lin>
- <20181122091715.6kvhcbgoqrd54nbs@queper01-lin>
+        Thu, 22 Nov 2018 15:12:17 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49112 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387669AbeKVUMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 15:12:16 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1E7402D7F3;
+        Thu, 22 Nov 2018 09:33:36 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-23.pek2.redhat.com [10.72.8.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 951B3171F6;
+        Thu, 22 Nov 2018 09:33:04 +0000 (UTC)
+Date:   Thu, 22 Nov 2018 17:33:00 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V11 14/19] block: handle non-cluster bio out of
+ blk_bio_segment_split
+Message-ID: <20181122093259.GA27007@ming.t460p>
+References: <20181121032327.8434-1-ming.lei@redhat.com>
+ <20181121032327.8434-15-ming.lei@redhat.com>
+ <20181121143355.GB2594@lst.de>
+ <20181121153726.GC19111@ming.t460p>
+ <20181121174621.GA6961@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181122091715.6kvhcbgoqrd54nbs@queper01-lin>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20181121174621.GA6961@lst.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 22 Nov 2018 09:33:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 22 Nov 2018 at 09:17:16 (+0000), Quentin Perret wrote:
-> On Wednesday 21 Nov 2018 at 15:14:45 (+0000), Quentin Perret wrote:
-> > Hi Peter,
-> > 
-> > On Wednesday 21 Nov 2018 at 14:08:22 (+0100), Peter Zijlstra wrote:
-> > > On Mon, Nov 19, 2018 at 02:18:51PM +0000, Quentin Perret wrote:
-> > > 
-> > > > +static void sched_energy_start(int ndoms_new, cpumask_var_t doms_new[])
-> > > > +{
-> > > > +	/*
-> > > > +	 * The conditions for EAS to start are checked during the creation of
-> > > > +	 * root domains. If one of them meets all conditions, it will have a
-> > > > +	 * non-null list of performance domains.
-> > > > +	 */
-> > > > +	while (ndoms_new) {
-> > > > +		if (cpu_rq(cpumask_first(doms_new[ndoms_new - 1]))->rd->pd)
-> > > > +			goto enable;
-> > > > +		ndoms_new--;
-> > > > +	}
-> > > 
-> > > That seems quite ugly; can't you simply return a bool from
-> > > build_perf_domains() ?
-> > > 
-> > > Something like the below, but less fugly ;-)
-> > > 
-> > > --- a/kernel/sched/topology.c
-> > > +++ b/kernel/sched/topology.c
-> > > @@ -299,7 +299,7 @@ static void destroy_perf_domain_rcu(stru
-> > >  #define EM_MAX_COMPLEXITY 2048
-> > >  
-> > >  extern struct cpufreq_governor schedutil_gov;
-> > > -static void build_perf_domains(const struct cpumask *cpu_map)
-> > > +static bool build_perf_domains(const struct cpumask *cpu_map)
-> > >  {
-> > >  	int i, nr_pd = 0, nr_cs = 0, nr_cpus = cpumask_weight(cpu_map);
-> > >  	struct perf_domain *pd = NULL, *tmp;
-> > > @@ -365,7 +365,7 @@ static void build_perf_domains(const str
-> > >  	if (tmp)
-> > >  		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
-> > >  
-> > > -	return;
-> > > +	return !!pd;
-> > >  
-> > >  free:
-> > >  	free_pd(pd);
-> > > @@ -373,6 +373,8 @@ static void build_perf_domains(const str
-> > >  	rcu_assign_pointer(rd->pd, NULL);
-> > >  	if (tmp)
-> > >  		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
-> > > +
-> > > +	return false;
-> > >  }
-> > >  #else
-> > >  static void free_pd(struct perf_domain *pd) { }
-> > > @@ -2173,6 +2175,9 @@ void partition_sched_domains(int ndoms_n
-> > >  	}
-> > >  
-> > >  #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-> > > +	{
-> > > +	bool has_eas = false;
-> > 
-> > That one wants to be declared '__maybe_unused' at the top of
-> > partition_sched_domains() perhaps ? Just to avoid the { } section.
-> > Hopefully the compiler will be smart enough to not use stack space for
-> > it if not needed.
-> > 
-> > > +
-> > >  	/* Build perf. domains: */
-> > >  	for (i = 0; i < ndoms_new; i++) {
-> > >  		for (j = 0; j < n && !sched_energy_update; j++) {
-> > > @@ -2181,10 +2186,13 @@ void partition_sched_domains(int ndoms_n
-> > >  				goto match3;
-> > 
-> > And we want to do 'has_eas = true' just before 'goto match3' here.
-> > Otherwise we'll end up disabling EAS if we hit 'goto match3' for all
-> > root domains.
-> > 
-> > >  		}
-> > >  		/* No match - add perf. domains for a new rd */
-> > > -		build_perf_domains(doms_new[i]);
-> > > +		has_eas |= build_perf_domains(doms_new[i]);
-> > >  match3:
-> > >  		;
-> > >  	}
-> > > +
-> > > +	sched_energy_set(has_eas);
-> > > +	}
-> > >  #endif
-> > >  
-> > >  	/* Remember the new sched domains: */
-> > 
-> > Other than that I guess that should work OK :-)
+On Wed, Nov 21, 2018 at 06:46:21PM +0100, Christoph Hellwig wrote:
+> Actually..
 > 
-> So I actually just came across your patch that does
-> static_branch_{inc,dec} on sched_smt_present. Maybe I could do something
-> similar here ?
+> I think we can kill this code entirely.  If we look at what the
+> clustering setting is really about it is to avoid ever merging a
+> segement that spans a page boundary.  And we should be able to do
+> that with something like this before your series:
 > 
-> How about something like the below (totally untested):
+> ---
+> From 0d46fa76c376493a74ea0dbe77305bd5fa2cf011 Mon Sep 17 00:00:00 2001
+> From: Christoph Hellwig <hch@lst.de>
+> Date: Wed, 21 Nov 2018 18:39:47 +0100
+> Subject: block: remove the "cluster" flag
 > 
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 8f9dfea60344..10ac32a0dc2e 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -298,6 +298,7 @@ static void destroy_perf_domain_rcu(struct rcu_head *rp)
->  
->         pd = container_of(rp, struct perf_domain, rcu);
->         free_pd(pd);
-> +       static_branch_dec_cpuslocked(&sched_energy_present);
->  }
->  
->  static void sched_energy_start(int ndoms_new, cpumask_var_t doms_new[])
-> @@ -421,6 +422,8 @@ static void build_perf_domains(const struct cpumask *cpu_map)
->         /* Attach the new list of performance domains to the root domain. */
->         tmp = rd->pd;
->         rcu_assign_pointer(rd->pd, pd);
-> +       static_branch_inc_cpuslocked(&sched_energy_present);
-> +
->         if (tmp)
->                 call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
->  
-> @@ -2246,7 +2249,6 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
->  match3:
->                 ;
->         }
-> -       sched_energy_start(ndoms_new, doms_new);
->  #endif
->  
->         /* Remember the new sched domains: */
-> 
+> The cluster flag implements some very old SCSI behavior.  As far as I
+> can tell the original intent was to enable or disable any kind of
+> segment merging.  But the actually visible effect to the LLDD is that
+> it limits each segments to be inside a single page, which we can
+> also affect by setting the maximum segment size and the virt
+> boundary.
 
-Hmm, I went too fast, that's totally broken. But there's still something
-we can do with static_branch_{inc,dec} I think. I'll come back later
-with a better solution.
+This approach is pretty good given we can do post-split during mapping
+sg.
 
-Sorry for the noise :/
+However, using virt boundary limit on non-cluster seems over-kill,
+because the bio will be over-split(each small bvec may be split as one bio)
+if it includes lots of small segment.
+
+What we want to do is just to avoid to merge bvecs to segment, which
+should have been done by NO_SG_MERGE simply. However, after multi-page
+is enabled, two adjacent bvecs won't be merged any more, I just forget
+to remove the bvec merge code in V11.
+
+So seems we can simply avoid to use virt boundary limit for non-cluster
+after multipage bvec is enabled?
+
+
+thanks,
+Ming
