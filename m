@@ -2,56 +2,47 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UPPERCASE_50_75,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FCCC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DD0C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:56:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B378120878
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:56:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FC932087E
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:56:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TN9n1jDu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B378120878
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkCS0SAk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC932087E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438729AbeKWGhm (ORCPT
+        id S2438742AbeKWGhp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 01:37:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36316 "EHLO mail.kernel.org"
+        Fri, 23 Nov 2018 01:37:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728657AbeKWGhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 01:37:41 -0500
+        id S1728657AbeKWGhn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 01:37:43 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66B1D20870;
-        Thu, 22 Nov 2018 19:56:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6F6C20864;
+        Thu, 22 Nov 2018 19:56:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542916607;
-        bh=lkDgE5xW6XOSSOViRXLE1wo4exByULKGqOHTAjRxdH8=;
+        s=default; t=1542916611;
+        bh=P+neFih8nIH274WU8ltSYpRFaqsaur4PjSzVZiBhUxI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TN9n1jDuu/Vd8suiT8F1ttYOmXYRGJgDFLi2BUAp5jUNj8snYs4BQZo5stYnzeeEO
-         CuCm8fTuj2lG+DG2Jux7LHZVUIK9solIHl2VysxBDHSw1R2wAH9rFyR7FtW8HsY65x
-         AXGTc7QjhKYH6bHW0zplsP5ZmXyAlAl2Qz6724Dc=
+        b=jkCS0SAkPJveL3SX6SRzZGNsAis0mr4pWQQW5wx71OHiJW29WmtihxLk9tTMa5vvC
+         w9bL+SML7rk+F+pv54IU+1FZq85BrTtgMyCc3+lQKQJ80guQYo1GiETB2oE8IjQfW3
+         VKUtX/wtH59xDtKNASRxtIPDp9Z6HIGCT+Vv46oc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 08/15] perf/x86/intel/uncore: Add more IMC PCI IDs for KabyLake and CoffeeLake CPUs
-Date:   Thu, 22 Nov 2018 14:56:14 -0500
-Message-Id: <20181122195621.13776-8-sashal@kernel.org>
+Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 09/15] ARM: make lookup_processor_type() non-__init
+Date:   Thu, 22 Nov 2018 14:56:15 -0500
+Message-Id: <20181122195621.13776-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181122195621.13776-1-sashal@kernel.org>
 References: <20181122195621.13776-1-sashal@kernel.org>
@@ -60,172 +51,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit c10a8de0d32e95b0b8c7c17b6dc09baea5a5a899 ]
+[ Upstream commit 899a42f836678a595f7d2bc36a5a0c2b03d08cbc ]
 
-KabyLake and CoffeeLake CPUs have the same client uncore events as SkyLake.
+Move lookup_processor_type() out of the __init section so it is callable
+from (eg) the secondary startup code during hotplug.
 
-Add the PCI IDs for the KabyLake Y, U, S processor lines and CoffeeLake U,
-H, S processor lines.
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Link: http://lkml.kernel.org/r/20181019170419.378-1-kan.liang@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/intel/uncore_snb.c | 115 ++++++++++++++++++++++++++++-
- 1 file changed, 114 insertions(+), 1 deletion(-)
+ arch/arm/kernel/head-common.S | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
-index a3dcc12bef4a..8c700069060b 100644
---- a/arch/x86/events/intel/uncore_snb.c
-+++ b/arch/x86/events/intel/uncore_snb.c
-@@ -14,6 +14,25 @@
- #define PCI_DEVICE_ID_INTEL_SKL_HQ_IMC	0x1910
- #define PCI_DEVICE_ID_INTEL_SKL_SD_IMC	0x190f
- #define PCI_DEVICE_ID_INTEL_SKL_SQ_IMC	0x191f
-+#define PCI_DEVICE_ID_INTEL_KBL_Y_IMC	0x590c
-+#define PCI_DEVICE_ID_INTEL_KBL_U_IMC	0x5904
-+#define PCI_DEVICE_ID_INTEL_KBL_UQ_IMC	0x5914
-+#define PCI_DEVICE_ID_INTEL_KBL_SD_IMC	0x590f
-+#define PCI_DEVICE_ID_INTEL_KBL_SQ_IMC	0x591f
-+#define PCI_DEVICE_ID_INTEL_CFL_2U_IMC	0x3ecc
-+#define PCI_DEVICE_ID_INTEL_CFL_4U_IMC	0x3ed0
-+#define PCI_DEVICE_ID_INTEL_CFL_4H_IMC	0x3e10
-+#define PCI_DEVICE_ID_INTEL_CFL_6H_IMC	0x3ec4
-+#define PCI_DEVICE_ID_INTEL_CFL_2S_D_IMC	0x3e0f
-+#define PCI_DEVICE_ID_INTEL_CFL_4S_D_IMC	0x3e1f
-+#define PCI_DEVICE_ID_INTEL_CFL_6S_D_IMC	0x3ec2
-+#define PCI_DEVICE_ID_INTEL_CFL_8S_D_IMC	0x3e30
-+#define PCI_DEVICE_ID_INTEL_CFL_4S_W_IMC	0x3e18
-+#define PCI_DEVICE_ID_INTEL_CFL_6S_W_IMC	0x3ec6
-+#define PCI_DEVICE_ID_INTEL_CFL_8S_W_IMC	0x3e31
-+#define PCI_DEVICE_ID_INTEL_CFL_4S_S_IMC	0x3e33
-+#define PCI_DEVICE_ID_INTEL_CFL_6S_S_IMC	0x3eca
-+#define PCI_DEVICE_ID_INTEL_CFL_8S_S_IMC	0x3e32
+diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
+index 8733012d231f..7e662bdd5cb3 100644
+--- a/arch/arm/kernel/head-common.S
++++ b/arch/arm/kernel/head-common.S
+@@ -122,6 +122,9 @@ __mmap_switched_data:
+ 	.long	init_thread_union + THREAD_START_SP @ sp
+ 	.size	__mmap_switched_data, . - __mmap_switched_data
  
- /* SNB event control */
- #define SNB_UNC_CTL_EV_SEL_MASK			0x000000ff
-@@ -631,7 +650,82 @@ static const struct pci_device_id skl_uncore_pci_ids[] = {
- 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_SKL_SQ_IMC),
- 		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
- 	},
++	__FINIT
++	.text
++
+ /*
+  * This provides a C-API version of __lookup_processor_type
+  */
+@@ -133,9 +136,6 @@ ENTRY(lookup_processor_type)
+ 	ldmfd	sp!, {r4 - r6, r9, pc}
+ ENDPROC(lookup_processor_type)
+ 
+-	__FINIT
+-	.text
 -
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_Y_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_U_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_UQ_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_SD_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_SQ_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_2U_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4U_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4H_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6H_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_2S_D_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4S_D_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6S_D_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_8S_D_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4S_W_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6S_W_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_8S_W_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4S_S_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6S_S_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_8S_S_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
- 	{ /* end: all zeroes */ },
- };
- 
-@@ -680,6 +774,25 @@ static const struct imc_uncore_pci_dev desktop_imc_pci_ids[] = {
- 	IMC_DEV(SKL_HQ_IMC, &skl_uncore_pci_driver),  /* 6th Gen Core H Quad Core */
- 	IMC_DEV(SKL_SD_IMC, &skl_uncore_pci_driver),  /* 6th Gen Core S Dual Core */
- 	IMC_DEV(SKL_SQ_IMC, &skl_uncore_pci_driver),  /* 6th Gen Core S Quad Core */
-+	IMC_DEV(KBL_Y_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core Y */
-+	IMC_DEV(KBL_U_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core U */
-+	IMC_DEV(KBL_UQ_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core U Quad Core */
-+	IMC_DEV(KBL_SD_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core S Dual Core */
-+	IMC_DEV(KBL_SQ_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core S Quad Core */
-+	IMC_DEV(CFL_2U_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core U 2 Cores */
-+	IMC_DEV(CFL_4U_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core U 4 Cores */
-+	IMC_DEV(CFL_4H_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core H 4 Cores */
-+	IMC_DEV(CFL_6H_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core H 6 Cores */
-+	IMC_DEV(CFL_2S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 2 Cores Desktop */
-+	IMC_DEV(CFL_4S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 4 Cores Desktop */
-+	IMC_DEV(CFL_6S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 6 Cores Desktop */
-+	IMC_DEV(CFL_8S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 8 Cores Desktop */
-+	IMC_DEV(CFL_4S_W_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 4 Cores Work Station */
-+	IMC_DEV(CFL_6S_W_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 6 Cores Work Station */
-+	IMC_DEV(CFL_8S_W_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 8 Cores Work Station */
-+	IMC_DEV(CFL_4S_S_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 4 Cores Server */
-+	IMC_DEV(CFL_6S_S_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 6 Cores Server */
-+	IMC_DEV(CFL_8S_S_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 8 Cores Server */
- 	{  /* end marker */ }
- };
- 
+ /*
+  * Read processor ID register (CP#15, CR0), and look up in the linker-built
+  * supported processor list.  Note that we can't use the absolute addresses
 -- 
 2.17.1
 
