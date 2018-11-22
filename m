@@ -2,408 +2,132 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1EB9C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F091DC04EBB
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B35620685
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:32:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1A7E20659
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 21:40:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p9RcQW/2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B35620685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="c+0FW+Us"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1A7E20659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438980AbeKWINx (ORCPT
+        id S2404942AbeKWIVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 03:13:53 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:52106 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407509AbeKWINt (ORCPT
+        Fri, 23 Nov 2018 03:21:41 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40048 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392303AbeKWIVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 03:13:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0UsevhTtmZozmks7C4ffLdwiZeC+IEmI5pSfKcPr6N0=; b=p9RcQW/2LOptH4kN8G4iernL2
-        OTD9HLzhuC2hsb3HDUdEHtteSTJ7Nr2WcTB3CVPTuV8xqPeG/MogXrjWgIdgbvVi80xxDfuQ8lQO7
-        D748YMTz2iLTLtDgKZweJl82th0LFVmzsQwQkM/crGEEA/L+hxEX/y9ZhlOIEFNvIFnHRefOW8Ynn
-        /jlMICpjiF5tnLM8ASSC+CHVSVOK8EvbLpWDc9wNnYuP0OYLIyCWhW+ckYtp1l7pwyepmLr89wRyZ
-        xu+vFkVTJ946I/08w+Iz5NmQu1CiFYKOBNnX05n0gDRJDCE3+B/YBgb1GknzD9Q3MZtI84ml9kpQ6
-        /dnMEavyw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPwaS-0003Ld-JL; Thu, 22 Nov 2018 21:32:36 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Hugh Dickins <hughd@google.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 2/2] page cache: Store only head pages in i_pages
-Date:   Thu, 22 Nov 2018 13:32:24 -0800
-Message-Id: <20181122213224.12793-3-willy@infradead.org>
-X-Mailer: git-send-email 2.14.5
-In-Reply-To: <20181122213224.12793-1-willy@infradead.org>
-References: <20181122213224.12793-1-willy@infradead.org>
+        Fri, 23 Nov 2018 03:21:40 -0500
+Received: by mail-wm1-f67.google.com with SMTP id q26so10283420wmf.5;
+        Thu, 22 Nov 2018 13:40:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lEf8ew0Ss4HaxFBLQGgMBaQ8orjd3JGzoZQYwrnpOho=;
+        b=c+0FW+UsFQsYAXLL+CBALS5Zo99mFTdv/eaOWmTVmpZ/pybf+1wawSeZSY9tkNwe1y
+         Q01BoMR9EoM/oVOlQKrdLnvRdCz/k0YiQlxY3eN/jXeKMLQZrI20FM0e0B35o+Ib0xgm
+         OKh2yV0oC88h3+YPPZ8Hp4pIjPH1nKtdHrFluDOd90Txgqm1/TXY/bAlgqm3WtKS7L5x
+         EJDAPeBDUSumtXKBLRLRFkAdYoT8da3RxK1ZBxIis23EL3HCQ7z2vI0FRMcJMgCoNSC/
+         D5BtVV9/m1F8v7490+B2SkMytpFlySd7/5aEMGYBbs41RKdT4bEvUhDtRqRsrwCLm8Rt
+         hHwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lEf8ew0Ss4HaxFBLQGgMBaQ8orjd3JGzoZQYwrnpOho=;
+        b=TxFPF4LQAywO/TTvuMnW3oaay5vd5yooGuHciIvYsQlQevFJt+abDDJzauNfU4xEXJ
+         G974k6JIXFNrQyQGbiNEAIvpRw2yAFvGw51mNvKEZFJfGugynvOfsYetizxOYjTyoVwg
+         baDJG6+xb0KdgbbtpHljTm4nFG7EDajnOHiTUD6Q/bBfacKZUwZ43xC9Fd5Ig4GOvx46
+         JqN557V2/S5QLbxx5Rd3ZiPdH6WjO8HVQ1iS82UXARM9F3vsvzLn/esODtD9ONqLpDgu
+         f4lCAthfA3w7CbHgvUcvVaKplakB5DxgwH/7ZJyb7EO8hhNczVOJ19wH6gRTmnoLHEF8
+         +oUg==
+X-Gm-Message-State: AA+aEWbpARnvbBToByJy0bonoDW6QgD9Pfelx59v4RZNvlhDCn+GIklY
+        MUybiDPXSwZ2poz9ZIjDJZU=
+X-Google-Smtp-Source: AFSGD/VfvVHFl0/Y2tUX0BQO4pqUG7sfex/TALv9EU7wYgCJsc7WmP5OsDuSMae1TqDcHMtUp2KgjA==
+X-Received: by 2002:a1c:bb42:: with SMTP id l63mr9652709wmf.47.1542922824760;
+        Thu, 22 Nov 2018 13:40:24 -0800 (PST)
+Received: from blackbox.darklights.net (p200300DCD732F5007DE18DA1F72FF8D9.dip0.t-ipconnect.de. [2003:dc:d732:f500:7de1:8da1:f72f:f8d9])
+        by smtp.googlemail.com with ESMTPSA id x14sm29755554wrm.65.2018.11.22.13.40.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 13:40:24 -0800 (PST)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org, narmstrong@baylibre.com,
+        jbrunet@baylibre.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 0/4] Meson8b: add the CPU clock post-dividers
+Date:   Thu, 22 Nov 2018 22:40:13 +0100
+Message-Id: <20181122214017.25643-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Transparent Huge Pages are currently stored in i_pages as pointers to
-consecutive subpages.  This patch changes that to storing consecutive
-pointers to the head page in preparation for storing huge pages more
-efficiently in i_pages.
+This is the successor to my previous series "meson8b: add the CPU_DIV16
+clock for the ARM TWD" from [0]. I decided to not send this as v2 of
+the original series because the PERIPH clock is not the CPU_DIV16 clock.
+It's not clear whether a CPU_DIV16 clock exists.
 
-Large parts of this are "inspired" by Kirill's patch
-https://lore.kernel.org/lkml/20170126115819.58875-2-kirill.shutemov@linux.intel.com/
+With this series we get all the CPU_CLK post-dividers as listed in the
+public S805 datasheet [1] on pages 31 and 32:
+- ABP
+- PERIPH (used as input for the ARM global timer and ARM TWD timer)
+- AXI
+- L2 DRAM
 
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
----
- include/linux/pagemap.h |  9 ++++
- mm/filemap.c            | 96 +++++++++++++----------------------------
- mm/khugepaged.c         |  4 +-
- mm/shmem.c              |  2 +-
- mm/swap_state.c         |  2 +-
- 5 files changed, 42 insertions(+), 71 deletions(-)
+Each of these clocks has a register called "..._CLK_DIS" which is
+documented as a "just in case" bit:
+"Set to 1 to manually disable the [...] clock when changing the mux
+selection. Typically this bit is set to 0 since the clock muxes can
+switch without glitches."
+Since we're not supposed to touch that register we're using the new
+read-only gate clk_ops to ensure that nothing accidentally modifies
+these bits.
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 226f96f0dee06..41bf976574e74 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -345,6 +345,15 @@ static inline struct page *grab_cache_page_nowait(struct address_space *mapping,
- 			mapping_gfp_mask(mapping));
- }
- 
-+static inline struct page *find_subpage(struct page *page, pgoff_t offset)
-+{
-+	VM_BUG_ON_PAGE(PageTail(page), page);
-+	VM_BUG_ON_PAGE(page->index > offset, page);
-+	VM_BUG_ON_PAGE(page->index + (1 << compound_order(page)) <= offset,
-+			page);
-+	return page - page->index + offset;
-+}
-+
- struct page *find_get_entry(struct address_space *mapping, pgoff_t offset);
- struct page *find_lock_entry(struct address_space *mapping, pgoff_t offset);
- unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 538531590ef2d..d7274591381ac 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1407,7 +1407,7 @@ EXPORT_SYMBOL(page_cache_prev_miss);
- struct page *find_get_entry(struct address_space *mapping, pgoff_t offset)
- {
- 	XA_STATE(xas, &mapping->i_pages, offset);
--	struct page *head, *page;
-+	struct page *page;
- 
- 	rcu_read_lock();
- repeat:
-@@ -1422,25 +1422,19 @@ struct page *find_get_entry(struct address_space *mapping, pgoff_t offset)
- 	if (!page || xa_is_value(page))
- 		goto out;
- 
--	head = compound_head(page);
--	if (!page_cache_get_speculative(head))
--		goto repeat;
--
--	/* The page was split under us? */
--	if (compound_head(page) != head) {
--		put_page(head);
-+	if (!page_cache_get_speculative(page))
- 		goto repeat;
--	}
- 
- 	/*
--	 * Has the page moved?
-+	 * Has the page moved or been split?
- 	 * This is part of the lockless pagecache protocol. See
- 	 * include/linux/pagemap.h for details.
- 	 */
- 	if (unlikely(page != xas_reload(&xas))) {
--		put_page(head);
-+		put_page(page);
- 		goto repeat;
- 	}
-+	page = find_subpage(page, offset);
- out:
- 	rcu_read_unlock();
- 
-@@ -1611,7 +1605,6 @@ unsigned find_get_entries(struct address_space *mapping,
- 
- 	rcu_read_lock();
- 	xas_for_each(&xas, page, ULONG_MAX) {
--		struct page *head;
- 		if (xas_retry(&xas, page))
- 			continue;
- 		/*
-@@ -1622,17 +1615,13 @@ unsigned find_get_entries(struct address_space *mapping,
- 		if (xa_is_value(page))
- 			goto export;
- 
--		head = compound_head(page);
--		if (!page_cache_get_speculative(head))
-+		if (!page_cache_get_speculative(page))
- 			goto retry;
- 
--		/* The page was split under us? */
--		if (compound_head(page) != head)
--			goto put_page;
--
--		/* Has the page moved? */
-+		/* Has the page moved or been split? */
- 		if (unlikely(page != xas_reload(&xas)))
- 			goto put_page;
-+		page = find_subpage(page, xas.xa_index);
- 
- export:
- 		indices[ret] = xas.xa_index;
-@@ -1641,7 +1630,7 @@ unsigned find_get_entries(struct address_space *mapping,
- 			break;
- 		continue;
- put_page:
--		put_page(head);
-+		put_page(page);
- retry:
- 		xas_reset(&xas);
- 	}
-@@ -1683,33 +1672,27 @@ unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
- 
- 	rcu_read_lock();
- 	xas_for_each(&xas, page, end) {
--		struct page *head;
- 		if (xas_retry(&xas, page))
- 			continue;
- 		/* Skip over shadow, swap and DAX entries */
- 		if (xa_is_value(page))
- 			continue;
- 
--		head = compound_head(page);
--		if (!page_cache_get_speculative(head))
-+		if (!page_cache_get_speculative(page))
- 			goto retry;
- 
--		/* The page was split under us? */
--		if (compound_head(page) != head)
--			goto put_page;
--
--		/* Has the page moved? */
-+		/* Has the page moved or been split? */
- 		if (unlikely(page != xas_reload(&xas)))
- 			goto put_page;
- 
--		pages[ret] = page;
-+		pages[ret] = find_subpage(page, xas.xa_index);
- 		if (++ret == nr_pages) {
- 			*start = page->index + 1;
- 			goto out;
- 		}
- 		continue;
- put_page:
--		put_page(head);
-+		put_page(page);
- retry:
- 		xas_reset(&xas);
- 	}
-@@ -1754,7 +1737,6 @@ unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t index,
- 
- 	rcu_read_lock();
- 	for (page = xas_load(&xas); page; page = xas_next(&xas)) {
--		struct page *head;
- 		if (xas_retry(&xas, page))
- 			continue;
- 		/*
-@@ -1764,24 +1746,19 @@ unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t index,
- 		if (xa_is_value(page))
- 			break;
- 
--		head = compound_head(page);
--		if (!page_cache_get_speculative(head))
-+		if (!page_cache_get_speculative(page))
- 			goto retry;
- 
--		/* The page was split under us? */
--		if (compound_head(page) != head)
--			goto put_page;
--
--		/* Has the page moved? */
-+		/* Has the page moved or been split? */
- 		if (unlikely(page != xas_reload(&xas)))
- 			goto put_page;
- 
--		pages[ret] = page;
-+		pages[ret] = find_subpage(page, xas.xa_index);
- 		if (++ret == nr_pages)
- 			break;
- 		continue;
- put_page:
--		put_page(head);
-+		put_page(page);
- retry:
- 		xas_reset(&xas);
- 	}
-@@ -1815,7 +1792,6 @@ unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
- 
- 	rcu_read_lock();
- 	xas_for_each_marked(&xas, page, end, tag) {
--		struct page *head;
- 		if (xas_retry(&xas, page))
- 			continue;
- 		/*
-@@ -1826,26 +1802,21 @@ unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
- 		if (xa_is_value(page))
- 			continue;
- 
--		head = compound_head(page);
--		if (!page_cache_get_speculative(head))
-+		if (!page_cache_get_speculative(page))
- 			goto retry;
- 
--		/* The page was split under us? */
--		if (compound_head(page) != head)
--			goto put_page;
--
--		/* Has the page moved? */
-+		/* Has the page moved or been split? */
- 		if (unlikely(page != xas_reload(&xas)))
- 			goto put_page;
- 
--		pages[ret] = page;
-+		pages[ret] = find_subpage(page, xas.xa_index);
- 		if (++ret == nr_pages) {
- 			*index = page->index + 1;
- 			goto out;
- 		}
- 		continue;
- put_page:
--		put_page(head);
-+		put_page(page);
- retry:
- 		xas_reset(&xas);
- 	}
-@@ -1892,7 +1863,6 @@ unsigned find_get_entries_tag(struct address_space *mapping, pgoff_t start,
- 
- 	rcu_read_lock();
- 	xas_for_each_marked(&xas, page, ULONG_MAX, tag) {
--		struct page *head;
- 		if (xas_retry(&xas, page))
- 			continue;
- 		/*
-@@ -1903,17 +1873,13 @@ unsigned find_get_entries_tag(struct address_space *mapping, pgoff_t start,
- 		if (xa_is_value(page))
- 			goto export;
- 
--		head = compound_head(page);
--		if (!page_cache_get_speculative(head))
-+		if (!page_cache_get_speculative(page))
- 			goto retry;
- 
--		/* The page was split under us? */
--		if (compound_head(page) != head)
--			goto put_page;
--
--		/* Has the page moved? */
-+		/* Has the page moved or been split? */
- 		if (unlikely(page != xas_reload(&xas)))
- 			goto put_page;
-+		page = find_subpage(page, xas.xa_index);
- 
- export:
- 		indices[ret] = xas.xa_index;
-@@ -1922,7 +1888,7 @@ unsigned find_get_entries_tag(struct address_space *mapping, pgoff_t start,
- 			break;
- 		continue;
- put_page:
--		put_page(head);
-+		put_page(page);
- retry:
- 		xas_reset(&xas);
- 	}
-@@ -2533,7 +2499,7 @@ void filemap_map_pages(struct vm_fault *vmf,
- 	pgoff_t last_pgoff = start_pgoff;
- 	unsigned long max_idx;
- 	XA_STATE(xas, &mapping->i_pages, start_pgoff);
--	struct page *head, *page;
-+	struct page *page;
- 
- 	rcu_read_lock();
- 	xas_for_each(&xas, page, end_pgoff) {
-@@ -2542,17 +2508,13 @@ void filemap_map_pages(struct vm_fault *vmf,
- 		if (xa_is_value(page))
- 			goto next;
- 
--		head = compound_head(page);
--		if (!page_cache_get_speculative(head))
-+		if (!page_cache_get_speculative(page))
- 			goto next;
- 
--		/* The page was split under us? */
--		if (compound_head(page) != head)
--			goto skip;
--
--		/* Has the page moved? */
-+		/* Has the page moved or been split? */
- 		if (unlikely(page != xas_reload(&xas)))
- 			goto skip;
-+		page = find_subpage(page, xas.xa_index);
- 
- 		if (!PageUptodate(page) ||
- 				PageReadahead(page) ||
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index c13625c1ad5e5..7d6a1319dd42e 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1363,7 +1363,7 @@ static void collapse_shmem(struct mm_struct *mm,
- 				result = SCAN_FAIL;
- 				break;
- 			}
--			xas_store(&xas, new_page + (index % HPAGE_PMD_NR));
-+			xas_store(&xas, new_page);
- 			nr_none++;
- 			continue;
- 		}
-@@ -1431,7 +1431,7 @@ static void collapse_shmem(struct mm_struct *mm,
- 		list_add_tail(&page->lru, &pagelist);
- 
- 		/* Finally, replace with the new page. */
--		xas_store(&xas, new_page + (index % HPAGE_PMD_NR));
-+		xas_store(&xas, new_page);
- 		continue;
- out_lru:
- 		xas_unlock_irq(&xas);
-diff --git a/mm/shmem.c b/mm/shmem.c
-index ea26d7a0342d7..c2ba84cbb0c0e 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -603,7 +603,7 @@ static int shmem_add_to_page_cache(struct page *page,
- 		if (xas_error(&xas))
- 			goto unlock;
- next:
--		xas_store(&xas, page + i);
-+		xas_store(&xas, page);
- 		if (++i < nr) {
- 			xas_next(&xas);
- 			goto next;
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index fd2f21e1c60ae..dcf9e466d2945 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -132,7 +132,7 @@ int add_to_swap_cache(struct page *page, swp_entry_t entry, gfp_t gfp)
- 		for (i = 0; i < nr; i++) {
- 			VM_BUG_ON_PAGE(xas.xa_index != idx + i, page);
- 			set_page_private(page + i, entry.val + i);
--			xas_store(&xas, page + i);
-+			xas_store(&xas, page);
- 			xas_next(&xas);
- 		}
- 		address_space->nrpages += nr;
+The result of this is that we can use the PERIPH clock which clocks
+the ARM TWD timer. I will send a separate series to add the TWD timer.
+
+
+changes since v1 at [2]:
+- added new patch 2 "clk: meson: clk-regmap: add read-only gate ops"
+- switched from CLK_IS_CRITICAL to the new clk_regmap_gate_ro_ops
+  so we're consistent with all other read-only clocks
+- collected Jerome's Acked-by tags (thanks!)
+
+
+[0] http://lists.infradead.org/pipermail/linux-amlogic/2018-July/007890.html
+[1] https://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
+[2] https://patchwork.kernel.org/cover/10687023/
+
+
+Martin Blumenstingl (4):
+  dt-bindings: clock: meson8b: export the CPU post dividers
+  clk: meson: clk-regmap: add read-only gate ops
+  clk: meson: meson8b: rename cpu_div2/cpu_div3 to
+    cpu_in_div2/cpu_in_div3
+  clk: meson: meson8b: add the CPU clock post divider clocks
+
+ drivers/clk/meson/clk-regmap.c           |   5 +
+ drivers/clk/meson/clk-regmap.h           |   1 +
+ drivers/clk/meson/meson8b.c              | 264 ++++++++++++++++++++++-
+ drivers/clk/meson/meson8b.h              |  17 +-
+ include/dt-bindings/clock/meson8b-clkc.h |   4 +
+ 5 files changed, 278 insertions(+), 13 deletions(-)
+
 -- 
 2.19.1
 
