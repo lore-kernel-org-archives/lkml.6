@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87320C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E70C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BB3020864
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:54:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FE7520672
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:54:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qj+/UAGH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BB3020864
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qlgxrVOt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FE7520672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438653AbeKWGfb (ORCPT
+        id S2406955AbeKWGff (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 01:35:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34278 "EHLO mail.kernel.org"
+        Fri, 23 Nov 2018 01:35:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732661AbeKWGfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 01:35:30 -0500
+        id S2404725AbeKWGfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 01:35:34 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7C4D20645;
-        Thu, 22 Nov 2018 19:54:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A626A20672;
+        Thu, 22 Nov 2018 19:54:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542916478;
-        bh=OIvwv7IS2hqDONDnSt/xuB732ZCGsEvkdES5wVdcztc=;
+        s=default; t=1542916482;
+        bh=cEI4xZXD/nCA45zDyQn1uqDbcZn+7YfiZfdn9YA3Bbo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qj+/UAGHFES19oQT61TWSezhS3+61IVd+s1hLpag4KU2KFCuZ5mcQ6t4m2Ysa3VZk
-         JrGGS5sBtmWiNYTfFDR0+8jojwV79U0lLg8sVzSIyrufeVHTRmwRhUbv3glBTkxPZG
-         ++TI8uRWuM5jcC+0njuOJ5NGeRRzwf3/d2roITSY=
+        b=qlgxrVOt4xGUrFU6Xg8g3hN+owDpAy+xZpsLE/xG4RF5EFOpgbR23ILlrHGU/nlMe
+         tyomIChSXHesT5yQntDQ9AHNbwq/wYZHRXgqplxqzQSodXRfXnB3asyj4jQIMpO/CE
+         UptynUgatfUX/fqromdhpstajHZuHbBk2mIBY0aE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Vitaly Wool <vitalywool@gmail.com>,
-        Vitaly Wool <vitaly.vul@sony.com>,
-        Jongseok Kim <ks77sj@gmail.com>,
+Cc:     Michal Hocko <mhocko@suse.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.19 33/36] z3fold: fix possible reclaim races
-Date:   Thu, 22 Nov 2018 14:52:37 -0500
-Message-Id: <20181122195240.13123-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 34/36] mm, memory_hotplug: check zone_movable in has_unmovable_pages
+Date:   Thu, 22 Nov 2018 14:52:38 -0500
+Message-Id: <20181122195240.13123-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181122195240.13123-1-sashal@kernel.org>
 References: <20181122195240.13123-1-sashal@kernel.org>
@@ -55,231 +53,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Wool <vitalywool@gmail.com>
+From: Michal Hocko <mhocko@suse.com>
 
-[ Upstream commit ca0246bb97c23da9d267c2107c07fb77e38205c9 ]
+[ Upstream commit 9d7899999c62c1a81129b76d2a6ecbc4655e1597 ]
 
-Reclaim and free can race on an object which is basically fine but in
-order for reclaim to be able to map "freed" object we need to encode
-object length in the handle.  handle_to_chunks() is then introduced to
-extract object length from a handle and use it during mapping.
+Page state checks are racy.  Under a heavy memory workload (e.g.  stress
+-m 200 -t 2h) it is quite easy to hit a race window when the page is
+allocated but its state is not fully populated yet.  A debugging patch to
+dump the struct page state shows
 
-Moreover, to avoid racing on a z3fold "headless" page release, we should
-not try to free that page in z3fold_free() if the reclaim bit is set.
-Also, in the unlikely case of trying to reclaim a page being freed, we
-should not proceed with that page.
+  has_unmovable_pages: pfn:0x10dfec00, found:0x1, count:0x0
+  page:ffffea0437fb0000 count:1 mapcount:1 mapping:ffff880e05239841 index:0x7f26e5000 compound_mapcount: 1
+  flags: 0x5fffffc0090034(uptodate|lru|active|head|swapbacked)
 
-While at it, fix the page accounting in reclaim function.
+Note that the state has been checked for both PageLRU and PageSwapBacked
+already.  Closing this race completely would require some sort of retry
+logic.  This can be tricky and error prone (think of potential endless
+or long taking loops).
 
-This patch supersedes "[PATCH] z3fold: fix reclaim lock-ups".
+Workaround this problem for movable zones at least.  Such a zone should
+only contain movable pages.  Commit 15c30bc09085 ("mm, memory_hotplug:
+make has_unmovable_pages more robust") has told us that this is not
+strictly true though.  Bootmem pages should be marked reserved though so
+we can move the original check after the PageReserved check.  Pages from
+other zones are still prone to races but we even do not pretend that
+memory hotremove works for those so pre-mature failure doesn't hurt that
+much.
 
-Link: http://lkml.kernel.org/r/20181105162225.74e8837d03583a9b707cf559@gmail.com
-Signed-off-by: Vitaly Wool <vitaly.vul@sony.com>
-Signed-off-by: Jongseok Kim <ks77sj@gmail.com>
-Reported-by-by: Jongseok Kim <ks77sj@gmail.com>
-Reviewed-by: Snild Dolkow <snild@sony.com>
+Link: http://lkml.kernel.org/r/20181106095524.14629-1-mhocko@kernel.org
+Fixes: 15c30bc09085 ("mm, memory_hotplug: make has_unmovable_pages more robust")
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Reported-by: Baoquan He <bhe@redhat.com>
+Tested-by: Baoquan He <bhe@redhat.com>
+Acked-by: Baoquan He <bhe@redhat.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Acked-by: Balbir Singh <bsingharora@gmail.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/z3fold.c | 101 ++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 62 insertions(+), 39 deletions(-)
+ mm/page_alloc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/mm/z3fold.c b/mm/z3fold.c
-index 4b366d181f35..aee9b0b8d907 100644
---- a/mm/z3fold.c
-+++ b/mm/z3fold.c
-@@ -99,6 +99,7 @@ struct z3fold_header {
- #define NCHUNKS		((PAGE_SIZE - ZHDR_SIZE_ALIGNED) >> CHUNK_SHIFT)
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index e2ef1c17942f..3a4065312938 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -7690,6 +7690,14 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+ 		if (PageReserved(page))
+ 			goto unmovable;
  
- #define BUDDY_MASK	(0x3)
-+#define BUDDY_SHIFT	2
- 
- /**
-  * struct z3fold_pool - stores metadata for each z3fold pool
-@@ -145,7 +146,7 @@ enum z3fold_page_flags {
- 	MIDDLE_CHUNK_MAPPED,
- 	NEEDS_COMPACTING,
- 	PAGE_STALE,
--	UNDER_RECLAIM
-+	PAGE_CLAIMED, /* by either reclaim or free */
- };
- 
- /*****************
-@@ -174,7 +175,7 @@ static struct z3fold_header *init_z3fold_page(struct page *page,
- 	clear_bit(MIDDLE_CHUNK_MAPPED, &page->private);
- 	clear_bit(NEEDS_COMPACTING, &page->private);
- 	clear_bit(PAGE_STALE, &page->private);
--	clear_bit(UNDER_RECLAIM, &page->private);
-+	clear_bit(PAGE_CLAIMED, &page->private);
- 
- 	spin_lock_init(&zhdr->page_lock);
- 	kref_init(&zhdr->refcount);
-@@ -223,8 +224,11 @@ static unsigned long encode_handle(struct z3fold_header *zhdr, enum buddy bud)
- 	unsigned long handle;
- 
- 	handle = (unsigned long)zhdr;
--	if (bud != HEADLESS)
--		handle += (bud + zhdr->first_num) & BUDDY_MASK;
-+	if (bud != HEADLESS) {
-+		handle |= (bud + zhdr->first_num) & BUDDY_MASK;
-+		if (bud == LAST)
-+			handle |= (zhdr->last_chunks << BUDDY_SHIFT);
-+	}
- 	return handle;
- }
- 
-@@ -234,6 +238,12 @@ static struct z3fold_header *handle_to_z3fold_header(unsigned long handle)
- 	return (struct z3fold_header *)(handle & PAGE_MASK);
- }
- 
-+/* only for LAST bud, returns zero otherwise */
-+static unsigned short handle_to_chunks(unsigned long handle)
-+{
-+	return (handle & ~PAGE_MASK) >> BUDDY_SHIFT;
-+}
-+
- /*
-  * (handle & BUDDY_MASK) < zhdr->first_num is possible in encode_handle
-  *  but that doesn't matter. because the masking will result in the
-@@ -720,37 +730,39 @@ static void z3fold_free(struct z3fold_pool *pool, unsigned long handle)
- 	page = virt_to_page(zhdr);
- 
- 	if (test_bit(PAGE_HEADLESS, &page->private)) {
--		/* HEADLESS page stored */
--		bud = HEADLESS;
--	} else {
--		z3fold_page_lock(zhdr);
--		bud = handle_to_buddy(handle);
--
--		switch (bud) {
--		case FIRST:
--			zhdr->first_chunks = 0;
--			break;
--		case MIDDLE:
--			zhdr->middle_chunks = 0;
--			zhdr->start_middle = 0;
--			break;
--		case LAST:
--			zhdr->last_chunks = 0;
--			break;
--		default:
--			pr_err("%s: unknown bud %d\n", __func__, bud);
--			WARN_ON(1);
--			z3fold_page_unlock(zhdr);
--			return;
-+		/* if a headless page is under reclaim, just leave.
-+		 * NB: we use test_and_set_bit for a reason: if the bit
-+		 * has not been set before, we release this page
-+		 * immediately so we don't care about its value any more.
++		/*
++		 * If the zone is movable and we have ruled out all reserved
++		 * pages then it should be reasonably safe to assume the rest
++		 * is movable.
 +		 */
-+		if (!test_and_set_bit(PAGE_CLAIMED, &page->private)) {
-+			spin_lock(&pool->lock);
-+			list_del(&page->lru);
-+			spin_unlock(&pool->lock);
-+			free_z3fold_page(page);
-+			atomic64_dec(&pool->pages_nr);
- 		}
-+		return;
- 	}
- 
--	if (bud == HEADLESS) {
--		spin_lock(&pool->lock);
--		list_del(&page->lru);
--		spin_unlock(&pool->lock);
--		free_z3fold_page(page);
--		atomic64_dec(&pool->pages_nr);
-+	/* Non-headless case */
-+	z3fold_page_lock(zhdr);
-+	bud = handle_to_buddy(handle);
++		if (zone_idx(zone) == ZONE_MOVABLE)
++			continue;
 +
-+	switch (bud) {
-+	case FIRST:
-+		zhdr->first_chunks = 0;
-+		break;
-+	case MIDDLE:
-+		zhdr->middle_chunks = 0;
-+		break;
-+	case LAST:
-+		zhdr->last_chunks = 0;
-+		break;
-+	default:
-+		pr_err("%s: unknown bud %d\n", __func__, bud);
-+		WARN_ON(1);
-+		z3fold_page_unlock(zhdr);
- 		return;
- 	}
- 
-@@ -758,7 +770,7 @@ static void z3fold_free(struct z3fold_pool *pool, unsigned long handle)
- 		atomic64_dec(&pool->pages_nr);
- 		return;
- 	}
--	if (test_bit(UNDER_RECLAIM, &page->private)) {
-+	if (test_bit(PAGE_CLAIMED, &page->private)) {
- 		z3fold_page_unlock(zhdr);
- 		return;
- 	}
-@@ -836,20 +848,30 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
- 		}
- 		list_for_each_prev(pos, &pool->lru) {
- 			page = list_entry(pos, struct page, lru);
-+
-+			/* this bit could have been set by free, in which case
-+			 * we pass over to the next page in the pool.
-+			 */
-+			if (test_and_set_bit(PAGE_CLAIMED, &page->private))
-+				continue;
-+
-+			zhdr = page_address(page);
- 			if (test_bit(PAGE_HEADLESS, &page->private))
--				/* candidate found */
- 				break;
- 
--			zhdr = page_address(page);
--			if (!z3fold_page_trylock(zhdr))
-+			if (!z3fold_page_trylock(zhdr)) {
-+				zhdr = NULL;
- 				continue; /* can't evict at this point */
-+			}
- 			kref_get(&zhdr->refcount);
- 			list_del_init(&zhdr->buddy);
- 			zhdr->cpu = -1;
--			set_bit(UNDER_RECLAIM, &page->private);
- 			break;
- 		}
- 
-+		if (!zhdr)
-+			break;
-+
- 		list_del_init(&page->lru);
- 		spin_unlock(&pool->lock);
- 
-@@ -898,6 +920,7 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
- 		if (test_bit(PAGE_HEADLESS, &page->private)) {
- 			if (ret == 0) {
- 				free_z3fold_page(page);
-+				atomic64_dec(&pool->pages_nr);
- 				return 0;
- 			}
- 			spin_lock(&pool->lock);
-@@ -905,7 +928,7 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
- 			spin_unlock(&pool->lock);
- 		} else {
- 			z3fold_page_lock(zhdr);
--			clear_bit(UNDER_RECLAIM, &page->private);
-+			clear_bit(PAGE_CLAIMED, &page->private);
- 			if (kref_put(&zhdr->refcount,
- 					release_z3fold_page_locked)) {
- 				atomic64_dec(&pool->pages_nr);
-@@ -964,7 +987,7 @@ static void *z3fold_map(struct z3fold_pool *pool, unsigned long handle)
- 		set_bit(MIDDLE_CHUNK_MAPPED, &page->private);
- 		break;
- 	case LAST:
--		addr += PAGE_SIZE - (zhdr->last_chunks << CHUNK_SHIFT);
-+		addr += PAGE_SIZE - (handle_to_chunks(handle) << CHUNK_SHIFT);
- 		break;
- 	default:
- 		pr_err("unknown buddy id %d\n", buddy);
+ 		/*
+ 		 * Hugepages are not in LRU lists, but they're movable.
+ 		 * We need not scan over tail pages bacause we don't
 -- 
 2.17.1
 
