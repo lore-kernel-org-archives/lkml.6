@@ -2,120 +2,137 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 183DFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADAD4C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE08120864
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:28:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D3EE20864
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 08:31:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="K1cHJtMs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE08120864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="olgZ1gH6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D3EE20864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393057AbeKVTHK (ORCPT
+        id S2393073AbeKVTJY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 14:07:10 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:37128 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730527AbeKVTHK (ORCPT
+        Thu, 22 Nov 2018 14:09:24 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:40798 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbeKVTJY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 14:07:10 -0500
-Received: by mail-lj1-f195.google.com with SMTP id e5-v6so7201326lja.4
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 00:28:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UpOTJxdBjHvmAL+anlIkP8EFXqg4Q7+BI3zX6ZZdmMQ=;
-        b=K1cHJtMswBtdgrILIcoteus77GDhgrt/gUliJmFOCVimuSV4VW+pLbicrSyr6zEPRL
-         KC7N/GEeKcMIIN85KwkYucqT/VJtJ1xDe38B+7kSRfln3OjJtbmahNP6gVykG1v1V9mY
-         HxwdlO5Fmnv91VHf/FIOYdy+40vSdiwOYWgbXD3caf9WAR12skR7af/K9iXF8FJcosMh
-         AveVjSjZ2sprlgz8H7EgX4o/mQaPHhfDIIu6YQjJStaukctigYPa1hV22drEtnx9JHMb
-         SRF4WyNYAKW5ccZuVwI/5h4rpLB9myXoCYN4rQUHvCCgInz9ZvyVKMEJmNi1rXVZxx8+
-         /06Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UpOTJxdBjHvmAL+anlIkP8EFXqg4Q7+BI3zX6ZZdmMQ=;
-        b=Y4kmcH4P4Vwg4ABDykUZxrkcFCqGJFKyl4oxZWcPTVemaOrb5ag4e7QNxCiPK6IVLg
-         XBSkV3m4YnRS3EobLn0Io4dAgh/JipgwRWrKh9Is6Xem0IfMkJ5YnXkvLb8p3XVmAarU
-         Fa4zakmL9UEB9tDrYOTFuhQIXlfLrL9GGoGf0UEDyywimB274wqP3VBJe3Z6q65p2urk
-         aRWD5G3XhOLUD39P2/kcmBkv/sTQDKeX0WEXD02OPzE9HSc3QU/lReqVmynI90rEhgnV
-         h8BUvWnB9FZmI97cUaUw9HGpKMw65MYDzhgJJA30F1fi0AXunEkns1oALd214aM+D/8i
-         8Qyg==
-X-Gm-Message-State: AA+aEWaaJrtx84/ymkfxqgGlsQ/B9yNWQNezbGwElkx0j5n2wPt3YBvq
-        +OnuIYCWKFT2F6Pa5jWfxr4jimqeqSc=
-X-Google-Smtp-Source: AFSGD/WmhCSr9eTwULx6tpUYjW+PBFU22BMTvwWoRE3U7XdLRa3PCPgfqEVCZ5Y+ZsOFAboieyLMbQ==
-X-Received: by 2002:a2e:914b:: with SMTP id q11-v6mr6095042ljg.164.1542875324146;
-        Thu, 22 Nov 2018 00:28:44 -0800 (PST)
-Received: from [192.168.0.200] ([31.173.80.84])
-        by smtp.gmail.com with ESMTPSA id p91sm6384006lfg.4.2018.11.22.00.28.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 00:28:43 -0800 (PST)
-Subject: Re: [PATCH] net: amd: add of_node_put()
-To:     Yangtao Li <tiny.windzz@gmail.com>, davem@davemloft.net,
-        yuehaibing@huawei.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181121125824.22168-1-tiny.windzz@gmail.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <9ec3ef0c-b931-6a1e-e1ed-5538c42df830@cogentembedded.com>
-Date:   Thu, 22 Nov 2018 11:28:21 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 22 Nov 2018 14:09:24 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAM8U7ww089247;
+        Thu, 22 Nov 2018 02:30:07 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1542875407;
+        bh=jo8CZI7dGLRY3QRAxcrwmEkyTYBRbkmwbcy5JwbBnmA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=olgZ1gH6MnifTqhl/FpdX4dh2j1PlQUpQpsd7+F/t2bgy6o9531up0pWtIa/ILPq1
+         aYDtgPOXFKfG0HhyRPXHO3nFp3YfCGLbI3OK0xEyA7CrvNsndiAn3R1KWMJ2TCISpM
+         aRWKuhRtaTWxLolAUmcM+7otTzPO6NpEfVytVjx4=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAM8U7WZ093369
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 22 Nov 2018 02:30:07 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 22
+ Nov 2018 02:30:04 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 22 Nov 2018 02:30:04 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAM8U2ex009701;
+        Thu, 22 Nov 2018 02:30:02 -0600
+Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>
+CC:     <vkoul@kernel.org>, <dan.j.williams@intel.com>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <tony@atomide.com>, <linux-omap@vger.kernel.org>,
+        <rmk+kernel@armlinux.org.uk>
+References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
+ <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
+ <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
+ <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <4eb3b03e-0a97-6195-f162-e03e32705fe0@ti.com>
+Date:   Thu, 22 Nov 2018 10:31:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181121125824.22168-1-tiny.windzz@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
 
-On 21.11.2018 15:58, Yangtao Li wrote:
 
-> of_find_node_by_path() acquires a reference to the node
-> returned by it and that reference needs to be dropped by its caller.
-> bl_idle_init() doesn't do that, so fix it.
-
-    Again, maybe sparc_lance_probe_one() doesn't do that?
-
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->   drivers/net/ethernet/amd/sunlance.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
+On 20/11/2018 23.04, Aaro Koskinen wrote:
+> Hi,
 > 
-> diff --git a/drivers/net/ethernet/amd/sunlance.c b/drivers/net/ethernet/amd/sunlance.c
-> index b4fc0ed5bce8..9d4899826823 100644
-> --- a/drivers/net/ethernet/amd/sunlance.c
-> +++ b/drivers/net/ethernet/amd/sunlance.c
-> @@ -1419,7 +1419,7 @@ static int sparc_lance_probe_one(struct platform_device *op,
->   
->   			prop = of_get_property(nd, "tpe-link-test?", NULL);
->   			if (!prop)
-> -				goto no_link_test;
-> +				goto node_put;
->   
->   			if (strcmp(prop, "true")) {
->   				printk(KERN_NOTICE "SunLance: warning: overriding option "
-> @@ -1428,6 +1428,8 @@ static int sparc_lance_probe_one(struct platform_device *op,
->   				       "to ecd@skynet.be\n");
->   				auxio_set_lte(AUXIO_LTE_ON);
->   			}
-> +node_put:
-> +			of_node_put(nd);
->   no_link_test:
->   			lp->auto_select = 1;
->   			lp->tpe = 0;
+> On Tue, Nov 20, 2018 at 09:28:37AM +0200, Peter Ujfalusi wrote:
+>> On 19/11/2018 20.46, Aaro Koskinen wrote:
+>>> On Mon, Nov 19, 2018 at 12:40:40PM +0200, Peter Ujfalusi wrote:
+>>>> When the channel is configured for slave operation the LCH_TYPE needs to be
+>>>> set to LCh-P. For memcpy channels the LCH_TYPE must be set to LCh-2D.
+>>>>
+>>>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+>>>
+>>> I don't have the documentation, but based on what omap_udc driver (still
+>>> using the legacy OMAP DMA API) does this seems to be correct.
+>>
+>> They are hard to fine, true. From the omap1710 TRM:
+>>
+>> Logical channel types (LCh types) supported are:
+>> - LCh-2D for nonsynchronized transfers (memory transfers, 1D and 2D)
+>> - LCh-P for synchronized transfers (mostly peripheral transfers)
+>> - LCh-PD similar to LCh-P but runs on a dedicated physical channel
+>> - LCh-G for graphical transfers/operations
+>> - LCh-D for display transfers
+> 
+> (I found a public document "OMAP5912 Multimedia Processor Direct
+> Memory Access (DMA) Support Reference Guide", documenting these; easy
+> to confuse with "OMAP5910 Dual-Core Processor System DMA Controller
+> Reference Guide".)
+> 
+>> Looking at other part it looks like hat LCH-2D channel mode can happily
+>> service a peripheral. LCH-P supports the same features as LCH-2D, but it
+>> lacks support for Single/Double-indexed addressing mode on the
+>> peripheral port side.
+>>
+>> So, this patch might not be needed at all. Can you test the omap_udc
+>> with s/OMAP_DMA_LCH_P/OMAP_DMA_LCH_2D
+>>
+>> If USB works, then we can just drop this patch.
+> 
+> Unfortunately omap_udc does not seem to work at all anymore with DMA on
+> my 770 setup. :-(
+> 
+> I had switched to PIO mode in 2015 since the WARNs about legacy DMA
+> API were too annoying and flooding the console. And now that I tried
+> using DMA again with g_ether, it doesn't work anymore. The device get's
+> recognized on host side, but no traffic goes through. Switching back to
+> PIO makes it to work again.
 
-MBR, Sergei
+After some tinkering I got omap_udc working with DMA (not DMAengine,
+yet) on 770 - using nfsroot. Configuring the channels to OMAP_DMA_LCH_2D
+works as expected.
 
+This patch can be dropped.
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
