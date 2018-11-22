@@ -3,40 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70190C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66AC5C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36BD62081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:11:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36BD62081C
+	by mail.kernel.org (Postfix) with ESMTP id 342FE206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:11:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 342FE206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391792AbeKWAum (ORCPT
+        id S2391848AbeKWAuq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:50:42 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15136 "EHLO huawei.com"
+        Thu, 22 Nov 2018 19:50:46 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:52076 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729224AbeKWAum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:50:42 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 4DB59D169162D;
-        Thu, 22 Nov 2018 22:11:03 +0800 (CST)
+        id S2391738AbeKWAuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 19:50:46 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9D4E6A76F1DBF;
+        Thu, 22 Nov 2018 22:11:08 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
  DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 22 Nov 2018 22:10:58 +0800
+ 14.3.408.0; Thu, 22 Nov 2018 22:11:04 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, liuzhongzhu <liuzhongzhu@huawei.com>
-Subject: [PATCH V2 net-next 2/8] net: hns3: Add "queue info" query function
-Date:   Thu, 22 Nov 2018 14:09:42 +0000
-Message-ID: <20181122140948.23504-3-salil.mehta@huawei.com>
+Subject: [PATCH V2 net-next 4/8] net: hns3: Add "tc config" info query function
+Date:   Thu, 22 Nov 2018 14:09:44 +0000
+Message-ID: <20181122140948.23504-5-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20181122140948.23504-1-salil.mehta@huawei.com>
 References: <20181122140948.23504-1-salil.mehta@huawei.com>
@@ -51,193 +51,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: liuzhongzhu <liuzhongzhu@huawei.com>
 
-Query the queue information of the current NIC
-such as BD size, queue header and tail pointer.
+This patch prints tc config information.
 
-This  patch adds support for debugfs command:
-echo queue info 1 > cmd
+debugfs command:
+echo dump tc > cmd
 
-it can  print queue config information...
-
-root@(none)# echo queue info 1 > cmd
-hns3 0000:7d:00.0: queue info
-hns3 0000:7d:00.0: RX(1) BASE ADD: 0x00000000ffb58000
-hns3 0000:7d:00.0: RX(1) RING BD NUM: 127
-hns3 0000:7d:00.0: RX(1) RING BD LEN: 2
-hns3 0000:7d:00.0: RX(1) RING TAIL: 120
-hns3 0000:7d:00.0: RX(1) RING HEAD: 0
-hns3 0000:7d:00.0: RX(1) RING FBDNUM: 0
-hns3 0000:7d:00.0: RX(1) RING PKTNUM: 0
-hns3 0000:7d:00.0: TX(1) BASE ADD: 0x00000000fffd8000
-hns3 0000:7d:00.0: TX(1) RING BD NUM: 127
-hns3 0000:7d:00.0: TX(1) RING TC: 0
-hns3 0000:7d:00.0: TX(1) RING TAIL: 2
-hns3 0000:7d:00.0: TX(1) RING HEAD: 2
-hns3 0000:7d:00.0: TX(1) RING FBDNUM: 0
-hns3 0000:7d:00.0: TX(1) RING OFFSET: 0
-hns3 0000:7d:00.0: TX(1) RING PKTNUM: 0
+Sample Output:
+root@(none)# echo dump tc > cmd
+hns3 0000:7d:00.0: weight_offset: 14
+hns3 0000:7d:00.0: tc(0): no sp mode
+hns3 0000:7d:00.0: tc(1): no sp mode
+hns3 0000:7d:00.0: tc(2): no sp mode
+hns3 0000:7d:00.0: tc(3): no sp mode
+hns3 0000:7d:00.0: tc(4): no sp mode
+hns3 0000:7d:00.0: tc(5): no sp mode
+hns3 0000:7d:00.0: tc(6): no sp mode
+hns3 0000:7d:00.0: tc(7): no sp mode
 root@(none)#
 
 Signed-off-by: liuzhongzhu <liuzhongzhu@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c | 122 +++++++++++++++++++++
- 1 file changed, 122 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c |  1 +
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  1 +
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 40 ++++++++++++++++++++++
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |  6 ++++
+ 4 files changed, 48 insertions(+)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-index 9d9ad11..c0685b3 100644
+index 82fe7b9..8acccfb 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-@@ -11,6 +11,120 @@
+@@ -130,6 +130,7 @@ static void hns3_dbg_help(struct hnae3_handle *h)
+ 	dev_info(&h->pdev->dev, "available commands\n");
+ 	dev_info(&h->pdev->dev, "queue info [number]\n");
+ 	dev_info(&h->pdev->dev, "dump fd tcam\n");
++	dev_info(&h->pdev->dev, "dump tc\n");
+ }
  
- static struct dentry *hns3_dbgfs_root;
+ static ssize_t hns3_dbg_cmd_read(struct file *filp, char __user *buffer,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+index aef044d..2b90410 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
+@@ -126,6 +126,7 @@ enum hclge_opcode_type {
+ 	HCLGE_OPC_TM_PRI_SCH_MODE_CFG   = 0x0813,
+ 	HCLGE_OPC_TM_QS_SCH_MODE_CFG    = 0x0814,
+ 	HCLGE_OPC_TM_BP_TO_QSET_MAPPING = 0x0815,
++	HCLGE_OPC_ETS_TC_WEIGHT		= 0x0843,
  
-+static int hns3_dbg_queue_info(struct hnae3_handle *h, char *cmd_buf)
+ 	/* Packet buffer allocate commands */
+ 	HCLGE_OPC_TX_BUFF_ALLOC		= 0x0901,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
+index cf1355b..050b90e 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
+@@ -5,8 +5,46 @@
+ 
+ #include "hclge_cmd.h"
+ #include "hclge_main.h"
++#include "hclge_tm.h"
+ #include "hnae3.h"
+ 
++static void hclge_title_idx_print(struct hclge_dev *hdev, bool flag, int index,
++				  char *title_buf, char *true_buf,
++				  char *false_buf)
 +{
-+	struct hns3_nic_priv *priv = h->priv;
-+	struct hns3_nic_ring_data *ring_data;
-+	struct hns3_enet_ring *ring;
-+	u32 base_add_l, base_add_h;
-+	u32 queue_num, queue_max;
-+	u32 value, i = 0;
-+	int cnt;
-+
-+	if (!priv->ring_data) {
-+		dev_err(&h->pdev->dev, "ring_data is NULL\n");
-+		return -EFAULT;
-+	}
-+
-+	queue_max = h->kinfo.num_tqps;
-+	cnt = kstrtouint(&cmd_buf[11], 0, &queue_num);
-+	if (cnt)
-+		queue_num = 0;
++	if (flag)
++		dev_info(&hdev->pdev->dev, "%s(%d): %s\n", title_buf, index,
++			 true_buf);
 +	else
-+		queue_max = queue_num + 1;
-+
-+	dev_info(&h->pdev->dev, "queue info\n");
-+
-+	if (queue_num >= h->kinfo.num_tqps) {
-+		dev_err(&h->pdev->dev,
-+			"Queue number(%u) is out of range(%u)\n", queue_num,
-+			h->kinfo.num_tqps - 1);
-+		return -EINVAL;
-+	}
-+
-+	ring_data = priv->ring_data;
-+	for (i = queue_num; i < queue_max; i++) {
-+		/* Each cycle needs to determine whether the instance is reset,
-+		 * to prevent reference to invalid memory. And need to ensure
-+		 * that the following code is executed within 100ms.
-+		 */
-+		if (test_bit(HNS3_NIC_STATE_INITED, &priv->state) ||
-+		    test_bit(HNS3_NIC_STATE_RESETTING, &priv->state))
-+			return -EPERM;
-+
-+		ring = ring_data[i + h->kinfo.num_tqps].ring;
-+		base_add_h = readl_relaxed(ring->tqp->io_base +
-+					   HNS3_RING_RX_RING_BASEADDR_H_REG);
-+		base_add_l = readl_relaxed(ring->tqp->io_base +
-+					   HNS3_RING_RX_RING_BASEADDR_L_REG);
-+		dev_info(&h->pdev->dev, "RX(%d) BASE ADD: 0x%08x%08x\n", i,
-+			 base_add_h, base_add_l);
-+
-+		value = readl_relaxed(ring->tqp->io_base +
-+				      HNS3_RING_RX_RING_BD_NUM_REG);
-+		dev_info(&h->pdev->dev, "RX(%d) RING BD NUM: %u\n", i, value);
-+
-+		value = readl_relaxed(ring->tqp->io_base +
-+				      HNS3_RING_RX_RING_BD_LEN_REG);
-+		dev_info(&h->pdev->dev, "RX(%d) RING BD LEN: %u\n", i, value);
-+
-+		value = readl_relaxed(ring->tqp->io_base +
-+				      HNS3_RING_RX_RING_TAIL_REG);
-+		dev_info(&h->pdev->dev, "RX(%d) RING TAIL: %u\n", i, value);
-+
-+		value = readl_relaxed(ring->tqp->io_base +
-+				      HNS3_RING_RX_RING_HEAD_REG);
-+		dev_info(&h->pdev->dev, "RX(%d) RING HEAD: %u\n", i, value);
-+
-+		value = readl_relaxed(ring->tqp->io_base +
-+				      HNS3_RING_RX_RING_FBDNUM_REG);
-+		dev_info(&h->pdev->dev, "RX(%d) RING FBDNUM: %u\n", i, value);
-+
-+		value = readl_relaxed(ring->tqp->io_base +
-+				      HNS3_RING_RX_RING_PKTNUM_RECORD_REG);
-+		dev_info(&h->pdev->dev, "RX(%d) RING PKTNUM: %u\n", i, value);
-+
-+		ring = ring_data[i].ring;
-+		base_add_h = readl_relaxed(ring->tqp->io_base +
-+					   HNS3_RING_TX_RING_BASEADDR_H_REG);
-+		base_add_l = readl_relaxed(ring->tqp->io_base +
-+					   HNS3_RING_TX_RING_BASEADDR_L_REG);
-+		dev_info(&h->pdev->dev, "TX(%d) BASE ADD: 0x%08x%08x\n", i,
-+			 base_add_h, base_add_l);
-+
-+		value = readl_relaxed(ring->tqp->io_base +
-+				      HNS3_RING_TX_RING_BD_NUM_REG);
-+		dev_info(&h->pdev->dev, "TX(%d) RING BD NUM: %u\n", i, value);
-+
-+		value = readl_relaxed(ring->tqp->io_base +
-+				      HNS3_RING_TX_RING_TC_REG);
-+		dev_info(&h->pdev->dev, "TX(%d) RING TC: %u\n", i, value);
-+
-+		value = readl_relaxed(ring->tqp->io_base +
-+				      HNS3_RING_TX_RING_TAIL_REG);
-+		dev_info(&h->pdev->dev, "TX(%d) RING TAIL: %u\n", i, value);
-+
-+		value = readl_relaxed(ring->tqp->io_base +
-+				      HNS3_RING_TX_RING_HEAD_REG);
-+		dev_info(&h->pdev->dev, "TX(%d) RING HEAD: %u\n", i, value);
-+
-+		value = readl_relaxed(ring->tqp->io_base +
-+				      HNS3_RING_TX_RING_FBDNUM_REG);
-+		dev_info(&h->pdev->dev, "TX(%d) RING FBDNUM: %u\n", i, value);
-+
-+		value = readl_relaxed(ring->tqp->io_base +
-+				      HNS3_RING_TX_RING_OFFSET_REG);
-+		dev_info(&h->pdev->dev, "TX(%d) RING OFFSET: %u\n", i, value);
-+
-+		value = readl_relaxed(ring->tqp->io_base +
-+				      HNS3_RING_TX_RING_PKTNUM_RECORD_REG);
-+		dev_info(&h->pdev->dev, "TX(%d) RING PKTNUM: %u\n\n", i,
-+			 value);
-+	}
-+
-+	return 0;
++		dev_info(&hdev->pdev->dev, "%s(%d): %s\n", title_buf, index,
++			 false_buf);
 +}
 +
- static void hns3_dbg_help(struct hnae3_handle *h)
- {
- 	dev_info(&h->pdev->dev, "available commands\n");
-@@ -51,6 +165,7 @@ static ssize_t hns3_dbg_cmd_write(struct file *filp, const char __user *buffer,
- 				  size_t count, loff_t *ppos)
- {
- 	struct hnae3_handle *handle = filp->private_data;
-+	struct hns3_nic_priv *priv  = handle->priv;
- 	char *cmd_buf, *cmd_buf_tmp;
- 	int uncopied_bytes;
- 	int ret = 0;
-@@ -58,6 +173,11 @@ static ssize_t hns3_dbg_cmd_write(struct file *filp, const char __user *buffer,
- 	if (*ppos != 0)
- 		return 0;
- 
-+	/* Judge if the instance is being reset. */
-+	if (test_bit(HNS3_NIC_STATE_INITED, &priv->state) ||
-+	    test_bit(HNS3_NIC_STATE_RESETTING, &priv->state))
-+		return 0;
++static void hclge_dbg_dump_tc(struct hclge_dev *hdev)
++{
++	struct hclge_ets_tc_weight_cmd *ets_weight;
++	struct hclge_desc desc;
++	int i, ret;
 +
- 	cmd_buf = kzalloc(count + 1, GFP_KERNEL);
- 	if (!cmd_buf)
- 		return count;
-@@ -78,6 +198,8 @@ static ssize_t hns3_dbg_cmd_write(struct file *filp, const char __user *buffer,
++	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_ETS_TC_WEIGHT, true);
++
++	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
++	if (ret) {
++		dev_err(&hdev->pdev->dev, "dump tc fail, status is %d.\n", ret);
++		return;
++	}
++
++	ets_weight = (struct hclge_ets_tc_weight_cmd *)desc.data;
++
++	dev_info(&hdev->pdev->dev, "dump tc\n");
++	dev_info(&hdev->pdev->dev, "weight_offset: %u\n",
++		 ets_weight->weight_offset);
++
++	for (i = 0; i < HNAE3_MAX_TC; i++)
++		hclge_title_idx_print(hdev, ets_weight->tc_weight[i], i,
++				      "tc", "no sp mode", "sp mode");
++}
++
+ static void hclge_dbg_fd_tcam_read(struct hclge_dev *hdev, u8 stage,
+ 				   bool sel_x, u32 loc)
+ {
+@@ -68,6 +106,8 @@ int hclge_dbg_run_cmd(struct hnae3_handle *handle, char *cmd_buf)
  
- 	if (strncmp(cmd_buf, "help", 4) == 0)
- 		hns3_dbg_help(handle);
-+	else if (strncmp(cmd_buf, "queue info", 10) == 0)
-+		ret = hns3_dbg_queue_info(handle, cmd_buf);
+ 	if (strncmp(cmd_buf, "dump fd tcam", 12) == 0) {
+ 		hclge_dbg_fd_tcam(hdev);
++	} else if (strncmp(cmd_buf, "dump tc", 7) == 0) {
++		hclge_dbg_dump_tc(hdev);
+ 	} else {
+ 		dev_info(&hdev->pdev->dev, "unknown command\n");
+ 		return -EINVAL;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
+index 4bd916a..9c6192c 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
+@@ -55,6 +55,12 @@ struct hclge_qs_weight_cmd {
+ 	u8 dwrr;
+ };
  
- 	if (ret)
- 		hns3_dbg_help(handle);
++struct hclge_ets_tc_weight_cmd {
++	u8 tc_weight[HNAE3_MAX_TC];
++	u8 weight_offset;
++	u8 rsvd[15];
++};
++
+ #define HCLGE_TM_SHAP_IR_B_MSK  GENMASK(7, 0)
+ #define HCLGE_TM_SHAP_IR_B_LSH	0
+ #define HCLGE_TM_SHAP_IR_U_MSK  GENMASK(11, 8)
 -- 
 2.7.4
 
