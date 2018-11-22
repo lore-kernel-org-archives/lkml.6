@@ -2,168 +2,150 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F883C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E37C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF17920831
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:05:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BDED206BA
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 01:07:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A/8CsJQu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF17920831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="X976QnPF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BDED206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391145AbeKVLmf (ORCPT
+        id S2391235AbeKVLnv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 06:42:35 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45044 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730060AbeKVLmf (ORCPT
+        Thu, 22 Nov 2018 06:43:51 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39780 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388633AbeKVLnv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 06:42:35 -0500
-Received: by mail-pl1-f195.google.com with SMTP id s5-v6so7872046plq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 17:05:42 -0800 (PST)
+        Thu, 22 Nov 2018 06:43:51 -0500
+Received: by mail-pl1-f196.google.com with SMTP id 101so1596306pld.6
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 17:06:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H88b1cmdsQaoqoZRWizaECbaO0xqVJmOgfKDRxRxpmQ=;
-        b=A/8CsJQuup1VRcpAYA9SR4z7C3uaETeqL5QqwT76vV7znii0KUhHbYeR7OHGdRSsmv
-         T+5oK5DCI/jo9i/GbH+ocWUll1oI8dpGXauNR+ZqE/c1+nW1w5EYDzVK/YQcBnxr7Sqg
-         21bZOvHrKM0/gUthVulYOhiMjUXbTIZyoe5YU=
+        d=sifive.com; s=google;
+        h=from:date:to:cc:subject:message-id:user-agent:mime-version;
+        bh=mmYitqJ/Zox8bJAkxiDoh3xH7YY9MHO4cNepwjP4x0A=;
+        b=X976QnPFfIpL3DIJAb1vzf1c+/eGCHKL1ONtI2Dgrx2PVp6HM1SZcwBc36D3vl0CBo
+         F5OpdQX653N1Wzhr/4JHMYdwEOvL8/uunqLGuA21TeV4P34+ySZvpKTu5aAKLEtbzb6+
+         pm2pFhk+n9vUDUr1fX9plh0Ado/+VIHgACeMG/EpfXH6e3K1JZ3ZrignwzQcr3WFUhpv
+         +Yi9jJgLARznTcps0O8PlhFrnuHSGMeIfzfrnPTOd1oT8Tr3eGiUG8z0P7qFTNK53+kP
+         WASIU38xRVMDECc0Kwaxi9CkqiNOzsvQFev2AYwA7zdg/eYWI/2MVi5uLsHDalopolSr
+         E8Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H88b1cmdsQaoqoZRWizaECbaO0xqVJmOgfKDRxRxpmQ=;
-        b=MFroIfV2h3RXgxOjiaXQofTtnfaFByeHKL7lbpmp4873EBlv67nxlHqtnbjWCSRvIR
-         abusfP79RH30IT/7kwspc9WzgAdwwamoxWwdNJ3cvxL4/8yx4vmm6yHzIJSXXGsgNdYy
-         q1h40yRGA6XcHy+BvwbVziTYl9f7bo4S538XnWSJ4A3wHgoAuJcAucZHbgvJ8dR3GAOO
-         MepwnzdNpmdpnMvwD2QVCnkDERfeJJ/dPEGoiurzR5rMQ+VBgaegdCMo66Eg2kkDVkmx
-         xkJdNYirFK3/tr9gLa51ln8+NsQjMP70oLLoQwju9+mhpdNuIc0VbL1GQ01TXkmfPy1d
-         W6YA==
-X-Gm-Message-State: AA+aEWbLfYlq6TcYW2hhGAn7lQgBzawvmu+BoFlA3rVRMsHLSg59MDCC
-        21rnB1/SQy7wzUOsoMy7glMvOifQM6Q5ljnbpzIY3u4/dNzeODPw
-X-Google-Smtp-Source: AFSGD/UqX9+d9WAkQU3htMDieQlRG2pQOAjpDeW/DppRdyLlC2eOPC22Ii1BSqjgFpHVRHc8BiSAyZm2rN7xEAVXYxE=
-X-Received: by 2002:a17:902:8214:: with SMTP id x20-v6mr8712162pln.224.1542848742049;
- Wed, 21 Nov 2018 17:05:42 -0800 (PST)
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:user-agent
+         :mime-version;
+        bh=mmYitqJ/Zox8bJAkxiDoh3xH7YY9MHO4cNepwjP4x0A=;
+        b=sijEtoNYO3l82IkrZcxazUucARidoBJtdcExNlcDxlXpa83rZjbP+9UA9smtZJjGtv
+         +ongaSOHTUGxpsPjUFg7fXojb674Wq8BlD3WdeE42uNamSVHuNhJpVK2W2g1SJPl7wXc
+         TTkDOAoESx1p8ZjqteVUbxGXBrWbC9qS/+C0FIg0cIRTQfsSE/7jJC4XvHx34bodQOjO
+         f9xqd+a37SaIcBf7u6nKrnkaVD8+RT+blU8v2UCe5Z3Rj6rfhT/40kygxFXlobqeElzH
+         E35c9xYDVPfTZO0pff9PND6YG1Hpbx+3CuWOtpHEw5QJ2yFVoy2LhO2Al9WZUy2zHx9M
+         bJjg==
+X-Gm-Message-State: AA+aEWZ0PL4WcLWGXPAKUb5ZkyU1dTomD7pII9vL57aVomfiq/ozKRkP
+        r9tr6JRQMxMyMEsaIxyqjpEAMw==
+X-Google-Smtp-Source: AFSGD/Xqt6mZlf4jp353uPu8viMDnnN9heXTh6lHKIrscPrGtlQDaXICdn6Lj3mz9tYli5ps5sETNw==
+X-Received: by 2002:a17:902:4c08:: with SMTP id a8mr9219265ple.74.1542848818261;
+        Wed, 21 Nov 2018 17:06:58 -0800 (PST)
+Received: from localhost (97-120-243-143.ptld.qwest.net. [97.120.243.143])
+        by smtp.gmail.com with ESMTPSA id m9sm43230248pgd.32.2018.11.21.17.06.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 17:06:57 -0800 (PST)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-Google-Original-From: Paul Walmsley <paulw@sifive.com>
+Date:   Wed, 21 Nov 2018 17:06:56 -0800 (PST)
+To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+cc:     Palmer Dabbelt <palmer@sifive.com>, Megan Wachs <megan@sifive.com>,
+        Wesley Terpstra <wesley@sifive.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, paul@pwsan.com
+Subject: [PATCH] dt-bindings: sifive: describe sifive-blocks versioning
+Message-ID: <alpine.DEB.2.21.9999.1811211704520.16271@viisi.sifive.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-References: <20181111090341.120786-1-drinkcat@chromium.org>
- <0100016737801f14-84f1265d-4577-4dcf-ad57-90dbc8e0a78f-000000@email.amazonses.com>
- <20181121213853.GL3065@bombadil.infradead.org> <c5ccde1e-a711-ad33-537c-2d5a0bd9edd4@arm.com>
-In-Reply-To: <c5ccde1e-a711-ad33-537c-2d5a0bd9edd4@arm.com>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Thu, 22 Nov 2018 09:05:30 +0800
-Message-ID: <CANMq1KASTr_zCZnymfT173BLgGH0p0Pr7ortO1sdm_yb9rjKUg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page tables
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     willy@infradead.org, Christoph Lameter <cl@linux.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Levin Alexander <Alexander.Levin@microsoft.com>,
-        Huaisheng Ye <yehs1@lenovo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        iommu@lists.linux-foundation.org,
-        lkml <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 6:27 AM Robin Murphy <robin.murphy@arm.com> wrote:
->
-> On 2018-11-21 9:38 pm, Matthew Wilcox wrote:
-> > On Wed, Nov 21, 2018 at 06:20:02PM +0000, Christopher Lameter wrote:
-> >> On Sun, 11 Nov 2018, Nicolas Boichat wrote:
-> >>
-> >>> This is a follow-up to the discussion in [1], to make sure that the page
-> >>> tables allocated by iommu/io-pgtable-arm-v7s are contained within 32-bit
-> >>> physical address space.
-> >>
-> >> Page tables? This means you need a page frame? Why go through the slab
-> >> allocators?
-> >
-> > Because this particular architecture has sub-page-size PMD page tables.
-> > We desperately need to hoist page table allocation out of the architectures;
-> > there're a bunch of different implementations and they're mostly bad,
-> > one way or another.
->
-> These are IOMMU page tables, rather than CPU ones, so we're already well
-> outside arch code - indeed the original motivation of io-pgtable was to
-> be entirely independent of the p*d types and arch-specific MM code (this
-> Armv7 short-descriptor format is already "non-native" when used by
-> drivers in an arm64 kernel).
->
-> There are various efficiency reasons for using regular kernel memory
-> instead of coherent DMA allocations - for the most part it works well,
-> we just have the odd corner case like this one where the 32-bit format
-> gets used on 64-bit systems such that the tables themselves still need
-> to be allocated below 4GB (although the final output address can point
-> at higher memory by virtue of the IOMMU in question not implementing
-> permissions and repurposing some of those PTE fields as extra address bits).
->
-> TBH, if this DMA32 stuff is going to be contentious we could possibly
-> just rip out the offending kmem_cache - it seemed like good practice for
-> the use-case, but provided kzalloc(SZ_1K, gfp | GFP_DMA32) can be relied
-> upon to give the same 1KB alignment and chance of succeeding as the
-> equivalent kmem_cache_alloc(), then we could quite easily make do with
-> that instead.
 
-Yes, but if we want to use kzalloc, we'll need to create
-kmalloc_caches for DMA32, which seems wasteful as there are no other
-users (see my comment here:
-https://patchwork.kernel.org/patch/10677525/#22332697).
+For IP blocks that are generated from the public, open-source
+sifive-blocks repository, describe the version numbering policy
+that its maintainers intend to use, upon request from Rob
+Herring <robh@kernel.org>.
 
-Thanks,
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Palmer Dabbelt <palmer@sifive.com>
+Cc: Megan Wachs <megan@sifive.com>
+Cc: Wesley Terpstra <wesley@sifive.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Signed-off-by: Paul Walmsley <paul@pwsan.com>
+---
 
-> Thanks,
-> Robin.
->
-> > For each level of page table we generally have three cases:
-> >
-> > 1. single page
-> > 2. sub-page, naturally aligned
-> > 3. multiple pages, naturally aligned
-> >
-> > for 1 and 3, the page allocator will do just fine.
-> > for 2, we should have a per-MM page_frag allocator.  s390 already has
-> > something like this, although it's more complicated.  ppc also has
-> > something a little more complex for the cases when it's configured with
-> > a 64k page size but wants to use a 4k page table entry.
-> >
-> > I'd like x86 to be able to simply do:
-> >
-> > #define pte_alloc_one(mm, addr)       page_alloc_table(mm, addr, 0)
-> > #define pmd_alloc_one(mm, addr)       page_alloc_table(mm, addr, 0)
-> > #define pud_alloc_one(mm, addr)       page_alloc_table(mm, addr, 0)
-> > #define p4d_alloc_one(mm, addr)       page_alloc_table(mm, addr, 0)
-> >
-> > An architecture with 4k page size and needing a 16k PMD would do:
-> >
-> > #define pmd_alloc_one(mm, addr) page_alloc_table(mm, addr, 2)
-> >
-> > while an architecture with a 64k page size needing a 4k PTE would do:
-> >
-> > #define ARCH_PAGE_TABLE_FRAG
-> > #define pte_alloc_one(mm, addr) pagefrag_alloc_table(mm, addr, 4096)
-> >
-> > I haven't had time to work on this, but perhaps someone with a problem
-> > that needs fixing would like to, instead of burying yet another awful
-> > implementation away in arch/ somewhere.
-> >
+Hi Rob, please let me know if this document works with your
+requirements, or if some changes are needed.  - Paul
+
+ .../sifive/sifive-blocks-ip-versioning.txt    | 38 +++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
+
+diff --git a/Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt b/Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
+new file mode 100644
+index 000000000000..b899e5c6e00c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sifive/sifive-blocks-ip-versioning.txt
+@@ -0,0 +1,38 @@
++DT compatible string versioning for SiFive open-source IP blocks
++
++This document describes the version specification for DT "compatible"
++strings for open-source SiFive IP blocks.  HDL for these IP blocks
++can be found in this public repository:
++
++https://github.com/sifive/sifive-blocks
++
++IP block-specific DT compatible strings are contained within the HDL,
++in the form "sifive,<ip-block-name><integer version number>".
++
++An example is "sifive,uart0" from:
++
++https://github.com/sifive/sifive-blocks/blob/master/src/main/scala/devices/uart/UART.scala#L43
++
++Until these IP blocks (or IP integration) support version
++autodiscovery, the maintainers of these IP blocks intend to increment
++the suffixed number in the compatible string whenever the software
++interface to these IP blocks changes, or when the functionality of the
++underlying IP blocks changes in a way that software should be aware of.
++
++Driver developers can use compatible string "match" values such as
++"sifive,uart0" to indicate that their driver is compatible with the
++register interface and functionality associated with the relevant
++upstream sifive-blocks commits.  It is expected that most drivers will
++match on these IP block-specific compatible strings.
++
++DT data authors, when writing data for a particular SoC, should
++continue to specify an SoC-specific compatible string value, such as
++"sifive,fu540-c000-uart".  This way, if SoC-specific
++integration-specific bug fixes or workarounds are needed, the kernel
++or other system software can match on this string to apply them.  The
++IP block-specific compatible string (such as "sifive,uart0") should
++then be specified as a subsequent value.
++
++An example of this style:
++
++    compatible = "sifive,fu540-c000-uart", "sifive,uart0";
+-- 
+2.19.1
+
