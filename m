@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AF9C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:12:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78AA9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1C8A20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:12:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1C8A20684
+	by mail.kernel.org (Postfix) with ESMTP id 37E2320684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 10:12:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E2320684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393958AbeKVUvO (ORCPT
+        id S2393971AbeKVUvY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 15:51:14 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:42787 "EHLO
+        Thu, 22 Nov 2018 15:51:24 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59279 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387936AbeKVUvN (ORCPT
+        with ESMTP id S2387936AbeKVUvY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:51:13 -0500
+        Thu, 22 Nov 2018 15:51:24 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAMAB3RA3743779
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAMACEHK3744068
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 22 Nov 2018 02:11:04 -0800
+        Thu, 22 Nov 2018 02:12:15 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAMAB3cx3743776;
-        Thu, 22 Nov 2018 02:11:03 -0800
-Date:   Thu, 22 Nov 2018 02:11:03 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAMACE5g3744065;
+        Thu, 22 Nov 2018 02:12:14 -0800
+Date:   Thu, 22 Nov 2018 02:12:14 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
-Message-ID: <tip-d38bc89c72e7235ac889ae64fe7828e2e61a18af@git.kernel.org>
-Cc:     tglx@linutronix.de, luto@kernel.org, peterz@infradead.org,
-        riel@surriel.com, dave.hansen@linux.intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, yu-cheng.yu@intel.com,
-        torvalds@linux-foundation.org, mingo@kernel.org, bp@alien8.de
-Reply-To: yu-cheng.yu@intel.com, torvalds@linux-foundation.org,
-          mingo@kernel.org, bp@alien8.de, tglx@linutronix.de,
-          luto@kernel.org, peterz@infradead.org,
-          dave.hansen@linux.intel.com, riel@surriel.com, hpa@zytor.com,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <4e36812b6e1e95236a812021d35cbf22746b5af6.1542841400.git.luto@kernel.org>
-References: <4e36812b6e1e95236a812021d35cbf22746b5af6.1542841400.git.luto@kernel.org>
+Message-ID: <tip-a1a371c468f7238b7826fde55786b02377faf8e2@git.kernel.org>
+Cc:     tglx@linutronix.de, bp@alien8.de, hpa@zytor.com,
+        yu-cheng.yu@intel.com, dave.hansen@linux.intel.com,
+        luto@kernel.org, riel@surriel.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, torvalds@linux-foundation.org,
+        peterz@infradead.org
+Reply-To: peterz@infradead.org, torvalds@linux-foundation.org,
+          linux-kernel@vger.kernel.org, mingo@kernel.org, riel@surriel.com,
+          dave.hansen@linux.intel.com, luto@kernel.org,
+          yu-cheng.yu@intel.com, bp@alien8.de, hpa@zytor.com,
+          tglx@linutronix.de
+In-Reply-To: <11212acb25980cd1b3030875cd9502414fbb214d.1542841400.git.luto@kernel.org>
+References: <11212acb25980cd1b3030875cd9502414fbb214d.1542841400.git.luto@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/oops: Show the correct CS value in show_regs()
-Git-Commit-ID: d38bc89c72e7235ac889ae64fe7828e2e61a18af
+Subject: [tip:x86/mm] x86/fault: Decode page fault OOPSes better
+Git-Commit-ID: a1a371c468f7238b7826fde55786b02377faf8e2
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -62,20 +63,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d38bc89c72e7235ac889ae64fe7828e2e61a18af
-Gitweb:     https://git.kernel.org/tip/d38bc89c72e7235ac889ae64fe7828e2e61a18af
+Commit-ID:  a1a371c468f7238b7826fde55786b02377faf8e2
+Gitweb:     https://git.kernel.org/tip/a1a371c468f7238b7826fde55786b02377faf8e2
 Author:     Andy Lutomirski <luto@kernel.org>
-AuthorDate: Wed, 21 Nov 2018 15:11:24 -0800
+AuthorDate: Wed, 21 Nov 2018 15:11:25 -0800
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 22 Nov 2018 09:23:01 +0100
+CommitDate: Thu, 22 Nov 2018 09:24:28 +0100
 
-x86/oops: Show the correct CS value in show_regs()
+x86/fault: Decode page fault OOPSes better
 
-show_regs() shows the CS in the CPU register instead of the value in
-regs.  This means that we'll probably print "CS: 0010" almost all
-the time regardless of what was actually in CS when the kernel
-malfunctioned.  This gives a particularly confusing result if we
-OOPSed due to an implicit supervisor access from user mode.
+One of Linus' favorite hobbies seems to be looking at OOPSes and
+decoding the error code in his head.  This is not one of my favorite
+hobbies :)
+
+Teach the page fault OOPS hander to decode the error code.  If it's
+a !USER fault from user mode, print an explicit note to that effect
+and print out the addresses of various tables that might cause such
+an error.
+
+With this patch applied, if I intentionally point the LDT at 0x0 and
+run the x86 selftests, I get:
+
+  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+  HW error: normal kernel read fault
+  This was a system access from user code
+  IDT: 0xfffffe0000000000 (limit=0xfff) GDT: 0xfffffe0000001000 (limit=0x7f)
+  LDTR: 0x50 -- base=0x0 limit=0xfff7
+  TR: 0x40 -- base=0xfffffe0000003000 limit=0x206f
+  PGD 800000000456e067 P4D 800000000456e067 PUD 4623067 PMD 0
+  SMP PTI
+  CPU: 0 PID: 153 Comm: ldt_gdt_64 Not tainted 4.19.0+ #1317
+  Hardware name: ...
+  RIP: 0033:0x401454
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>
@@ -86,39 +105,122 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Rik van Riel <riel@surriel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Link: http://lkml.kernel.org/r/4e36812b6e1e95236a812021d35cbf22746b5af6.1542841400.git.luto@kernel.org
+Link: http://lkml.kernel.org/r/11212acb25980cd1b3030875cd9502414fbb214d.1542841400.git.luto@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/process_64.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/x86/mm/fault.c | 84 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
 
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 0e0b4288a4b2..2b8e6324fa20 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -66,7 +66,7 @@ void __show_regs(struct pt_regs *regs, enum show_regs_mode mode)
- 	unsigned long cr0 = 0L, cr2 = 0L, cr3 = 0L, cr4 = 0L, fs, gs, shadowgs;
- 	unsigned long d0, d1, d2, d3, d6, d7;
- 	unsigned int fsindex, gsindex;
--	unsigned int ds, cs, es;
-+	unsigned int ds, es;
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index ca38bd0472f2..f5efbdba2b6d 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -27,6 +27,7 @@
+ #include <asm/vm86.h>			/* struct vm86			*/
+ #include <asm/mmu_context.h>		/* vma_pkey()			*/
+ #include <asm/efi.h>			/* efi_recover_from_page_fault()*/
++#include <asm/desc.h>			/* store_idt(), ...		*/
  
- 	show_iret_regs(regs);
+ #define CREATE_TRACE_POINTS
+ #include <asm/trace/exceptions.h>
+@@ -571,10 +572,53 @@ static int is_f00f_bug(struct pt_regs *regs, unsigned long address)
+ 	return 0;
+ }
  
-@@ -98,7 +98,6 @@ void __show_regs(struct pt_regs *regs, enum show_regs_mode mode)
- 	}
++static void show_ldttss(const struct desc_ptr *gdt, const char *name, u16 index)
++{
++	u32 offset = (index >> 3) * sizeof(struct desc_struct);
++	unsigned long addr;
++	struct ldttss_desc desc;
++
++	if (index == 0) {
++		pr_alert("%s: NULL\n", name);
++		return;
++	}
++
++	if (offset + sizeof(struct ldttss_desc) >= gdt->size) {
++		pr_alert("%s: 0x%hx -- out of bounds\n", name, index);
++		return;
++	}
++
++	if (probe_kernel_read(&desc, (void *)(gdt->address + offset),
++			      sizeof(struct ldttss_desc))) {
++		pr_alert("%s: 0x%hx -- GDT entry is not readable\n",
++			 name, index);
++		return;
++	}
++
++	addr = desc.base0 | (desc.base1 << 16) | (desc.base2 << 24);
++#ifdef CONFIG_X86_64
++	addr |= ((u64)desc.base3 << 32);
++#endif
++	pr_alert("%s: 0x%hx -- base=0x%lx limit=0x%x\n",
++		 name, index, addr, (desc.limit0 | (desc.limit1 << 16)));
++}
++
++static void errstr(unsigned long ec, char *buf, unsigned long mask,
++		   const char *txt)
++{
++	if (ec & mask) {
++		if (buf[0])
++			strcat(buf, " ");
++		strcat(buf, txt);
++	}
++}
++
+ static void
+ show_fault_oops(struct pt_regs *regs, unsigned long error_code,
+ 		unsigned long address)
+ {
++	char errtxt[64];
++
+ 	if (!oops_may_print())
+ 		return;
  
- 	asm("movl %%ds,%0" : "=r" (ds));
--	asm("movl %%cs,%0" : "=r" (cs));
- 	asm("movl %%es,%0" : "=r" (es));
- 	asm("movl %%fs,%0" : "=r" (fsindex));
- 	asm("movl %%gs,%0" : "=r" (gsindex));
-@@ -114,7 +113,7 @@ void __show_regs(struct pt_regs *regs, enum show_regs_mode mode)
+@@ -602,6 +646,46 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code,
+ 		 address < PAGE_SIZE ? "NULL pointer dereference" : "paging request",
+ 		 (void *)address);
  
- 	printk(KERN_DEFAULT "FS:  %016lx(%04x) GS:%016lx(%04x) knlGS:%016lx\n",
- 	       fs, fsindex, gs, gsindex, shadowgs);
--	printk(KERN_DEFAULT "CS:  %04x DS: %04x ES: %04x CR0: %016lx\n", cs, ds,
-+	printk(KERN_DEFAULT "CS:  %04lx DS: %04x ES: %04x CR0: %016lx\n", regs->cs, ds,
- 			es, cr0);
- 	printk(KERN_DEFAULT "CR2: %016lx CR3: %016lx CR4: %016lx\n", cr2, cr3,
- 			cr4);
++	errtxt[0] = 0;
++	errstr(error_code, errtxt, X86_PF_PROT, "PROT");
++	errstr(error_code, errtxt, X86_PF_WRITE, "WRITE");
++	errstr(error_code, errtxt, X86_PF_USER, "USER");
++	errstr(error_code, errtxt, X86_PF_RSVD, "RSVD");
++	errstr(error_code, errtxt, X86_PF_INSTR, "INSTR");
++	errstr(error_code, errtxt, X86_PF_PK, "PK");
++	pr_alert("HW error: %s\n", error_code ? errtxt :
++		 "normal kernel read fault");
++	if (!(error_code & X86_PF_USER) && user_mode(regs)) {
++		struct desc_ptr idt, gdt;
++		u16 ldtr, tr;
++
++		pr_alert("This was a system access from user code\n");
++
++		/*
++		 * This can happen for quite a few reasons.  The more obvious
++		 * ones are faults accessing the GDT, or LDT.  Perhaps
++		 * surprisingly, if the CPU tries to deliver a benign or
++		 * contributory exception from user code and gets a page fault
++		 * during delivery, the page fault can be delivered as though
++		 * it originated directly from user code.  This could happen
++		 * due to wrong permissions on the IDT, GDT, LDT, TSS, or
++		 * kernel or IST stack.
++		 */
++		store_idt(&idt);
++
++		/* Usable even on Xen PV -- it's just slow. */
++		native_store_gdt(&gdt);
++
++		pr_alert("IDT: 0x%lx (limit=0x%hx) GDT: 0x%lx (limit=0x%hx)\n",
++			 idt.address, idt.size, gdt.address, gdt.size);
++
++		store_ldt(ldtr);
++		show_ldttss(&gdt, "LDTR", ldtr);
++
++		store_tr(tr);
++		show_ldttss(&gdt, "TR", tr);
++	}
++
+ 	dump_pagetable(address);
+ }
+ 
