@@ -2,104 +2,82 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D94B7C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:59:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFACCC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9840720672
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:59:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9840720672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BCEA220672
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 12:59:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCEA220672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391164AbeKVXiR (ORCPT
+        id S2436771AbeKVXir (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 18:38:17 -0500
-Received: from foss.arm.com ([217.140.101.70]:47862 "EHLO foss.arm.com"
+        Thu, 22 Nov 2018 18:38:47 -0500
+Received: from 8bytes.org ([81.169.241.247]:48922 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732044AbeKVXiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 18:38:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C31753622;
-        Thu, 22 Nov 2018 04:59:02 -0800 (PST)
-Received: from localhost (unknown [10.37.6.11])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 58EE93F5A0;
-        Thu, 22 Nov 2018 04:59:02 -0800 (PST)
-Date:   Thu, 22 Nov 2018 12:59:00 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
+        id S2391180AbeKVXir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 18:38:47 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 96E662F5; Thu, 22 Nov 2018 13:59:31 +0100 (CET)
+Date:   Thu, 22 Nov 2018 13:59:31 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Yong Wu <yong.wu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tomasz Figa <tfiga@google.com>,
         Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/10] perf/core: Generalise event exclusion checking
-Message-ID: <20181122125859.GJ42987@e119886-lin.cambridge.arm.com>
-References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
- <20181119130800.GE9761@hirez.programming.kicks-ass.net>
- <20181122122142.GI42987@e119886-lin.cambridge.arm.com>
- <20181122122637.GS2131@hirez.programming.kicks-ass.net>
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, arnd@arndb.de,
+        yingjoe.chen@mediatek.com, youlin.pei@mediatek.com,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: Re: [PATCH v3 00/15] MT8183 IOMMU SUPPORT
+Message-ID: <20181122125931.GC1586@8bytes.org>
+References: <1542422142-30688-1-git-send-email-yong.wu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181122122637.GS2131@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <1542422142-30688-1-git-send-email-yong.wu@mediatek.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 01:26:37PM +0100, Peter Zijlstra wrote:
-> On Thu, Nov 22, 2018 at 12:21:43PM +0000, Andrew Murray wrote:
-> > On Mon, Nov 19, 2018 at 02:08:00PM +0100, Peter Zijlstra wrote:
-> 
-> > > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > > index 84530ab358c3..d76b724177b9 100644
-> > > --- a/kernel/events/core.c
-> > > +++ b/kernel/events/core.c
-> > > @@ -9772,6 +9772,14 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
-> > >  	if (ctx)
-> > >  		perf_event_ctx_unlock(event->group_leader, ctx);
-> > >  
-> > > +	if (!ret) {
-> > > +		if ((pmu->capabilities & PERF_PMU_CAP_EXCLUDE) ||
-> > > +		    event_has_exclude_flags(event)) {
-> > > +			event->destroy(event);
-> > > +			ret = -EINVAL;
-> > > +		}
-> > > +	}
-> > > +
-> > 
-> > I don't quite follow this logic. Should that not have been:
-> > 
-> > if (!(pmu->capabilities & PERF_PMU_CAP_EXCLUDE) &&
-> >      event_has_exclude_flags(event)) {
-> > 
-> > Meaning that if an event has any exclude flags but the pmu doesn't
-> > have the capability to handle them then error.
-> 
-> Uhm, yes. Brainfart on my side that.
-> 
-> > If you're happy with my proposed logic, then would it also make
-> > sense to move this before the call to the pmu->event_init ?
-> 
-> I'm not sure that can work; I think we need ->event_init() first such
-> that it can -ENOENT. Only after ->event_init() returns success can we be
-> certain of @pmu.
+Hi,
 
-Ah yes I see now. Until event_init doesn't return -ENOENT we can't be sure
-that this will be the PMU we use (as per the other calls to
-perf_try_init_event in perf_init_event).
+On Sat, Nov 17, 2018 at 10:35:27AM +0800, Yong Wu wrote:
+> Yong Wu (14):
+>   dt-bindings: mediatek: Add binding for mt8183 IOMMU and SMI
+>   iommu/mediatek: Use a struct as the platform data
+>   memory: mtk-smi: Use a general config_port interface
+>   iommu/io-pgtable-arm-v7s: Add paddr_to_iopte and iopte_to_paddr
+>     helpers
+>   iommu/io-pgtable-arm-v7s: Extend MediaTek 4GB Mode
+>   iommu/mediatek: Add mt8183 IOMMU support
+>   iommu/mediatek: Add mmu1 support
+>   memory: mtk-smi: Invoke pm runtime_callback to enable clocks
+>   memory: mtk-smi: Use a struct for the platform data for smi-common
+>   memory: mtk-smi: Add bus_sel for mt8183
+>   iommu/mediatek: Add VLD_PA_RANGE register backup when suspend
+>   iommu/mediatek: Add shutdown callback
+>   memory: mtk-smi: Get rid of need_larbid
+>   iommu/mediatek: Switch to SPDX license identifier
 
-Thanks,
+This should probably go through the IOMMU tree. For that I'd like to
+have Acks (reviews are even better) for the io-pgtable parts from Robin
+and for the memory parts from Matthias first.
 
-Andrew Murray
+
+Regards,
+
+	Joerg
+
