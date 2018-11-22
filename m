@@ -2,145 +2,179 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3455C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:55:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7851BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B43020831
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:55:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PCI3mcv7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B43020831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3077A20820
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:58:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3077A20820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405673AbeKWBf0 (ORCPT
+        id S2405693AbeKWBiB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 20:35:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50898 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 20:38:01 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34462 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388992AbeKWBf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 20:35:26 -0500
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2388992AbeKWBiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 20:38:01 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49B7320824
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 14:55:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542898543;
-        bh=Mt8CSRGr88p5g1+8PO5LBDynX39LxAaEk0DyOXdk0gk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=PCI3mcv7f7+ddzePXUPWGfMPEcNjN7BdLc5B5nKkCs6T0BXL5ztChAE+C718SFUEm
-         Ww48tBOHoghqGKjDULyNz5gcu4UxilblZw6g/IbVhPfcCXP+9AOS5LjDZV0Um5wxvf
-         Q2egpAWUsEa5Z7S0gMGT1qljcXLVl00eI0Dp6N8Y=
-Received: by mail-wr1-f50.google.com with SMTP id j10so9540896wru.4
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 06:55:43 -0800 (PST)
-X-Gm-Message-State: AA+aEWYyi1yjmw8eVzm5Hm6x9rJA9uhuOo0eFgL1CZK08ngE6bm6YUB4
-        e7H+dow8tEncCVazL/cE40E1iDUsm0HhGN67bbwCww==
-X-Google-Smtp-Source: AFSGD/WkgYduilHO5MmZqtORQ+NJZlp+KKXtQg31SFhnuXBYUiYlwtgzARc9sCi9YVRO/v5XGVhWcvTgRdm/7+pvwRY=
-X-Received: by 2002:a5d:5541:: with SMTP id g1mr10378526wrw.330.1542898541768;
- Thu, 22 Nov 2018 06:55:41 -0800 (PST)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5279630024F0;
+        Thu, 22 Nov 2018 14:58:17 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E482282714;
+        Thu, 22 Nov 2018 14:57:54 +0000 (UTC)
+Date:   Thu, 22 Nov 2018 22:57:50 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V11 03/19] block: introduce bio_for_each_bvec()
+Message-ID: <20181122145749.GA22146@ming.t460p>
+References: <20181121032327.8434-1-ming.lei@redhat.com>
+ <20181121032327.8434-4-ming.lei@redhat.com>
+ <20181121133244.GB1640@lst.de>
+ <20181121153135.GB19111@ming.t460p>
+ <20181121161025.GB4977@lst.de>
+ <20181121171217.GA6259@lst.de>
+ <20181122101527.GB27273@ming.t460p>
+ <20181122102309.GA29295@lst.de>
+ <20181122103033.GA29418@lst.de>
 MIME-Version: 1.0
-References: <20181121165806.07da7c98@akathisia> <CALCETrV3TPCkYyhoLLcikXVeF-RdZUuLTCvKReK3Qb9LSS9Csw@mail.gmail.com>
- <20181121235634.GA14146@altlinux.org>
-In-Reply-To: <20181121235634.GA14146@altlinux.org>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 22 Nov 2018 06:55:29 -0800
-X-Gmail-Original-Message-ID: <CALCETrXea_uRAqw_srW5CWgOzeM=RubaDbjnxZ=cUMy5Zv1TsA@mail.gmail.com>
-Message-ID: <CALCETrXea_uRAqw_srW5CWgOzeM=RubaDbjnxZ=cUMy5Zv1TsA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2] ptrace: add PTRACE_GET_SYSCALL_INFO request
-To:     "Dmitry V. Levin" <ldv@altlinux.org>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Kees Cook <keescook@chromium.org>,
-        Sasha Levin <sasha.levin@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        strace-devel@lists.strace.io
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181122103033.GA29418@lst.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 22 Nov 2018 14:58:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 3:56 PM Dmitry V. Levin <ldv@altlinux.org> wrote:
->
-> On Wed, Nov 21, 2018 at 02:56:57PM -0800, Andy Lutomirski wrote:
-> > Please cc linux-api@vger.kernel.org for future versions.
-> >
-> > On Wed, Nov 21, 2018 at 7:58 AM Elvira Khabirova wrote:
-> > >
-> > > struct ptrace_syscall_info {
-> > >         __u8 op; /* 0 for entry, 1 for exit */
-> >
-> > Can you add proper defines, like:
-> >
-> > #define PTRACE_SYSCALL_ENTRY 0
-> > #define PTRACE_SYSCALL_EXIT 1
-> > #define PTRACE_SYSCALL_SECCOMP 2
-> >
-> > and make seccomp work from the start?  I'd rather we don't merge an
-> > implementation that doesn't work for seccomp and then have to rework
-> > it later.
->
-> What's the difference between PTRACE_EVENT_SECCOMP and syscall-entry-stop
-> with regards to PTRACE_GET_SYSCALL_INFO request?  At least they have the
-> same entry_info to return.
+On Thu, Nov 22, 2018 at 11:30:33AM +0100, Christoph Hellwig wrote:
+> Btw, this patch instead of the plain rever might make it a little
+> more clear what is going on by skipping the confusing helper altogher
+> and operating on the raw bvec array:
+> 
+> 
+> diff --git a/include/linux/bio.h b/include/linux/bio.h
+> index e5b975fa0558..926550ce2d21 100644
+> --- a/include/linux/bio.h
+> +++ b/include/linux/bio.h
+> @@ -137,24 +137,18 @@ static inline bool bio_full(struct bio *bio)
+>  	for (i = 0, iter_all.idx = 0; iter_all.idx < (bio)->bi_vcnt; iter_all.idx++)	\
+>  		bvec_for_each_segment(bvl, &((bio)->bi_io_vec[iter_all.idx]), i, iter_all)
+>  
+> -static inline void __bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
+> -				      unsigned bytes, unsigned max_seg_len)
+> +static inline void bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
+> +				    unsigned bytes)
+>  {
+>  	iter->bi_sector += bytes >> 9;
+>  
+>  	if (bio_no_advance_iter(bio))
+>  		iter->bi_size -= bytes;
+>  	else
+> -		__bvec_iter_advance(bio->bi_io_vec, iter, bytes, max_seg_len);
+> +		bvec_iter_advance(bio->bi_io_vec, iter, bytes);
+>  		/* TODO: It is reasonable to complete bio with error here. */
+>  }
+>  
+> -static inline void bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
+> -				    unsigned bytes)
+> -{
+> -	__bio_advance_iter(bio, iter, bytes, PAGE_SIZE);
+> -}
+> -
+>  #define __bio_for_each_segment(bvl, bio, iter, start)			\
+>  	for (iter = (start);						\
+>  	     (iter).bi_size &&						\
+> @@ -168,7 +162,7 @@ static inline void bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
+>  	for (iter = (start);						\
+>  	     (iter).bi_size &&						\
+>  		((bvl = bio_iter_mp_iovec((bio), (iter))), 1);	\
+> -	     __bio_advance_iter((bio), &(iter), (bvl).bv_len, BVEC_MAX_LEN))
+> +	     bio_advance_iter((bio), &(iter), (bvl).bv_len))
+>  
+>  /* returns one real segment(multi-page bvec) each time */
+>  #define bio_for_each_bvec(bvl, bio, iter)			\
+> diff --git a/include/linux/bvec.h b/include/linux/bvec.h
+> index cab36d838ed0..7d0f9bdb6f05 100644
+> --- a/include/linux/bvec.h
+> +++ b/include/linux/bvec.h
+> @@ -25,8 +25,6 @@
+>  #include <linux/errno.h>
+>  #include <linux/mm.h>
+>  
+> -#define BVEC_MAX_LEN  ((unsigned int)-1)
+> -
+>  /*
+>   * was unsigned short, but we might as well be ready for > 64kB I/O pages
+>   */
+> @@ -102,8 +100,8 @@ struct bvec_iter_all {
+>  	.bv_offset	= segment_iter_offset((bvec), (iter)),	\
+>  })
+>  
+> -static inline bool __bvec_iter_advance(const struct bio_vec *bv,
+> -		struct bvec_iter *iter, unsigned bytes, unsigned max_seg_len)
+> +static inline bool bvec_iter_advance(const struct bio_vec *bv,
+> +		struct bvec_iter *iter, unsigned bytes)
+>  {
+>  	if (WARN_ONCE(bytes > iter->bi_size,
+>  		     "Attempted to advance past end of bvec iter\n")) {
+> @@ -112,20 +110,15 @@ static inline bool __bvec_iter_advance(const struct bio_vec *bv,
+>  	}
+>  
+>  	while (bytes) {
+> -		unsigned segment_len = segment_iter_len(bv, *iter);
+> -
+> -		if (max_seg_len < BVEC_MAX_LEN)
+> -			segment_len = min_t(unsigned, segment_len,
+> -					    max_seg_len -
+> -					    bvec_iter_offset(bv, *iter));
+> +		const struct bio_vec *cur = bv + iter->bi_idx;
+> +		unsigned len = min3(bytes, iter->bi_size,
+> +				    cur->bv_len - iter->bi_bvec_done);
+>  
+> -		segment_len = min(bytes, segment_len);
+> -
+> -		bytes -= segment_len;
+> -		iter->bi_size -= segment_len;
+> -		iter->bi_bvec_done += segment_len;
+> +		bytes -= len;
+> +		iter->bi_size -= len;
+> +		iter->bi_bvec_done += len;
+>  
+> -		if (iter->bi_bvec_done == __bvec_iter_bvec(bv, *iter)->bv_len) {
+> +		if (iter->bi_bvec_done == cur->bv_len) {
+>  			iter->bi_bvec_done = 0;
+>  			iter->bi_idx++;
+>  		}
 
-I'm not sure there's any material difference.
+I'd rather not do the optimization part in this patchset, given it doesn't
+belong to this patchset, and it may decrease readability. So I plan to revert
+the delta part in V12 first.
 
->
-> As long as implementation (ab)uses ptrace_message to tell one kind of stop
-> from another, it can distinguish syscall-entry-stop and syscall-exit-stop
-> from each other and from many other kinds of stops, but it cannot
-> distinguish PTRACE_EVENT_SECCOMP from e.g. PTRACE_EVENT_EXIT.
-
-Hmm.  PTRACE_GET_SYSCALL_INFO should fail for PTRACE_EVENT_EXIT, I think.
-
->
-> > >         __u8 __pad0[7];
-> > >         union {
-> > >                 struct {
-> > >                         __s32 nr;
-> >
-> > __u64 please.  Syscall numbers are, as a practical matter, 64 bits.
-> > Admittedly, the actual effects of setting the high bits are unclear,
-> > and seccomp has issues with it, but let's not perpetuate the problem.
->
-> I agree.  Although the implementation uses syscall_get_nr()
-> which returns int, this could potentially be fixed in the future.
-
-Agreed.  Although if we ever start using those high bits, things will
-get confusing.
-
->
-> > >                         __u32 arch;
-> > >                         __u64 instruction_pointer;
-> > >                         __u64 args[6];
-> > >                 } entry_info;
-> > >                 struct {
-> > >                         __s64 rval;
-> > >                         __u8 is_error;
-> > >                         __u8 __pad1[7];
-> > >                 } exit_info;
-> > >         };
-> > > };
-> >
-> > Should seccomp events use entry_info or should they just literally
-> > supply seccomp_data?
->
-> It certainly can use entry_info.
-> I'd prefer to avoid using in uapi/linux/ptrace.h those types
-> that are defined in uapi/linux/seccomp.h.
-
-Makes sense to me.  Also, it's possible in principle to extend
-seccomp_data with other fields that are only generated if they're
-read, so passing struct seccomp_data to userspace as a struct may be
-the wrong thing to do.
+Thanks,
+Ming
