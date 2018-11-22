@@ -2,99 +2,276 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2243AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:25:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF0F9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:27:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFC662081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:25:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFC662081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 368602081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:27:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 368602081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.ee
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436823AbeKWAEr (ORCPT
+        id S2395258AbeKWAHM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:04:47 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:55788 "EHLO mail.bootlin.com"
+        Thu, 22 Nov 2018 19:07:12 -0500
+Received: from mx2.cyber.ee ([193.40.6.72]:51366 "EHLO mx2.cyber.ee"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388885AbeKWAEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:04:47 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3767020DC4; Thu, 22 Nov 2018 14:25:25 +0100 (CET)
-Received: from localhost.localdomain (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E608920DBF;
-        Thu, 22 Nov 2018 14:25:14 +0100 (CET)
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com
-Cc:     allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        alexandre.belloni@bootlin.com,
-        Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH net-next] net: phy: vitesse: remove duplicate support for VSC8574
-Date:   Thu, 22 Nov 2018 14:24:32 +0100
-Message-Id: <20181122132432.348-1-quentin.schulz@bootlin.com>
-X-Mailer: git-send-email 2.17.1
+        id S2395043AbeKWAHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 19:07:11 -0500
+To:     LKML <linux-kernel@vger.kernel.org>, linux-alpha@vger.kernel.org,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+From:   Meelis Roos <mroos@linux.ee>
+Subject: NO_BOOTMEM breaks alpha pc164
+Message-ID: <8c8e3dba-7adf-96c6-195c-311050256743@linux.ee>
+Date:   Thu, 22 Nov 2018 15:27:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: et-EE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A more featureful support for VSC8574 was recently added to the
-Microsemi (mscc.c) driver. I checked that features supported in the
-Vitesse driver are also supported in the Microsemi driver.
+I have bisected 4.20-rc2 boot hang on a PC164 subarch alpha.
+Other alphas in my collection are working fine.
 
-Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
----
- drivers/net/phy/vitesse.c | 12 ------------
- 1 file changed, 12 deletions(-)
+When it hangs, it hangs right after starting init. "random: crng init done" is printed
+after starting init and nothing more appears on serial console.
 
-diff --git a/drivers/net/phy/vitesse.c b/drivers/net/phy/vitesse.c
-index 4ca513feba0e..0646af458f6a 100644
---- a/drivers/net/phy/vitesse.c
-+++ b/drivers/net/phy/vitesse.c
-@@ -70,7 +70,6 @@
- #define PHY_ID_VSC8244			0x000fc6c0
- #define PHY_ID_VSC8514			0x00070670
- #define PHY_ID_VSC8572			0x000704d0
--#define PHY_ID_VSC8574			0x000704a0
- #define PHY_ID_VSC8601			0x00070420
- #define PHY_ID_VSC7385			0x00070450
- #define PHY_ID_VSC7388			0x00070480
-@@ -303,7 +302,6 @@ static int vsc82xx_config_intr(struct phy_device *phydev)
- 			 phydev->drv->phy_id == PHY_ID_VSC8244 ||
- 			 phydev->drv->phy_id == PHY_ID_VSC8514 ||
- 			 phydev->drv->phy_id == PHY_ID_VSC8572 ||
--			 phydev->drv->phy_id == PHY_ID_VSC8574 ||
- 			 phydev->drv->phy_id == PHY_ID_VSC8601) ?
- 				MII_VSC8244_IMASK_MASK :
- 				MII_VSC8221_IMASK_MASK);
-@@ -430,15 +428,6 @@ static struct phy_driver vsc82xx_driver[] = {
- 	.config_aneg    = &vsc82x4_config_aneg,
- 	.ack_interrupt  = &vsc824x_ack_interrupt,
- 	.config_intr    = &vsc82xx_config_intr,
--}, {
--	.phy_id         = PHY_ID_VSC8574,
--	.name           = "Vitesse VSC8574",
--	.phy_id_mask    = 0x000ffff0,
--	.features       = PHY_GBIT_FEATURES,
--	.config_init    = &vsc824x_config_init,
--	.config_aneg    = &vsc82x4_config_aneg,
--	.ack_interrupt  = &vsc824x_ack_interrupt,
--	.config_intr    = &vsc82xx_config_intr,
- }, {
- 	.phy_id         = PHY_ID_VSC8601,
- 	.name           = "Vitesse VSC8601",
-@@ -519,7 +508,6 @@ static struct mdio_device_id __maybe_unused vitesse_tbl[] = {
- 	{ PHY_ID_VSC8244, 0x000fffc0 },
- 	{ PHY_ID_VSC8514, 0x000ffff0 },
- 	{ PHY_ID_VSC8572, 0x000ffff0 },
--	{ PHY_ID_VSC8574, 0x000ffff0 },
- 	{ PHY_ID_VSC7385, 0x000ffff0 },
- 	{ PHY_ID_VSC7388, 0x000ffff0 },
- 	{ PHY_ID_VSC7395, 0x000ffff0 },
+The bad commit is swith to NO_BOOTMEM.
+
+6471f52af786fc9cb82bf1af9d086fb09c62f99b is the first bad commit
+commit 6471f52af786fc9cb82bf1af9d086fb09c62f99b
+Author: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Date:   Fri Oct 26 15:05:10 2018 -0700
+
+     alpha: switch to NO_BOOTMEM
+
+     Replace bootmem allocator with memblock and enable use of NO_BOOTMEM like
+     on most other architectures.
+
+     Alpha gets the description of the physical memory from the firmware as an
+     array of memory clusters.  Each cluster that is not reserved by the
+     firmware is added to memblock.memory.
+
+     Once the memblock.memory is set up, we reserve the kernel and initrd pages
+     with memblock reserve.
+
+     Since we don't need the bootmem bitmap anymore, the code that finds an
+     appropriate place is removed.
+
+     The conversion does not take care of NUMA support which is marked broken
+     for more than 10 years now.
+
+     Link: http://lkml.kernel.org/r/1535952894-10967-1-git-send-email-rppt@linux.vnet.ibm.com
+     Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+     Cc: Richard Henderson <rth@twiddle.net>
+     Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+     Cc: Michal Hocko <mhocko@kernel.org>
+     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+
+:040000 040000 f71c7d93d971122d0097b2ea9c1f353ae97f48b1 9765698aa49b3de81ba972b5120d0080fd7b79d7 M      arch
+
+How do I debug it?
+
+dmesg from working boot before the commit:
+
+[    0.000000] Linux version 4.19.0-06941-ge92d39cdb120 (mroos@pc164) (gcc version 7.3.0 (Gentoo 7.3.0-r3 p1.4)) #113 Wed Nov 21 23:11:58 EET 2018
+[    0.000000] Booting on EB164 variation PC164 using machine vector PC164 from SRM
+[    0.000000] Major Options: EV56 LEGACY_START VERBOSE_MCHECK DISCONTIGMEM MAGIC_SYSRQ
+[    0.000000] Command line: root=/dev/sda2 console=ttyS0
+[    0.000000] Raw memory layout:
+[    0.000000]  memcluster  0, usage 1, start        0, end      192
+[    0.000000]  memcluster  1, usage 0, start      192, end    32651
+[    0.000000]  memcluster  2, usage 1, start    32651, end    32768
+[    0.000000] Initializing bootmem allocator on Node ID 0
+[    0.000000]  memcluster  1, usage 0, start      192, end    32651
+[    0.000000]  Detected node memory:   start      194, end    32651
+[    0.000000]  freeing pages 192:384
+[    0.000000]  freeing pages 1540:32651
+[    0.000000]  reserving pages 1540:1541
+[    0.000000] 1024K Bcache detected; load hit latency 30 cycles, load miss latency 212 cycles
+[    0.000000] pci: cia revision 2
+[    0.000000] On node 0 totalpages: 32651
+[    0.000000]   DMA zone: 224 pages used for memmap
+[    0.000000]   DMA zone: 0 pages reserved
+[    0.000000]   DMA zone: 32651 pages, LIFO batch:7
+[    0.000000] pcpu-alloc: s0 r0 d32768 u32768 alloc=1*32768
+[    0.000000] pcpu-alloc: [0] 0
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 32427
+[    0.000000] Kernel command line: root=/dev/sda2 console=ttyS0
+[    0.000000] Dentry cache hash table entries: 32768 (order: 5, 262144 bytes)
+[    0.000000] Inode-cache hash table entries: 16384 (order: 4, 131072 bytes)
+[    0.000000] Sorting __ex_table...
+[    0.000000] Memory: 248176K/261208K available (5425K kernel code, 372K rwdata, 1732K rodata, 208K init, 1416K bss, 13032K reserved, 0K cma-reserved)
+[    0.000000] SLUB: HWalign=32, Order=0-3, MinObjects=0, CPUs=1, Nodes=128
+[    0.000000] NR_IRQS: 35
+[    0.000000] clocksource: rpcc: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 3822520893 ns
+[    0.001953] Console: colour VGA+ 80x25
+[    0.028320] printk: console [ttyS0] enabled
+[    0.029296] Calibrating delay loop... 979.52 BogoMIPS (lpj=478208)
+[    0.038085] pid_max: default: 32768 minimum: 301
+[    0.040039] Mount-cache hash table entries: 1024 (order: 0, 8192 bytes)
+[    0.041015] Mountpoint-cache hash table entries: 1024 (order: 0, 8192 bytes)
+[    0.051757] devtmpfs: initialized
+[    0.054687] random: get_random_u32 called from bucket_table_alloc.isra.18+0xbc/0x270 with crng_init=0
+[    0.056640] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1866466235866741 ns
+[    0.057617] futex hash table entries: 256 (order: -1, 6144 bytes)
+[    0.059570] NET: Registered protocol family 16
+[    0.062499] pci: passed tb register update test
+[    0.063476] pci: passed sg loopback i/o read test
+[    0.064453] pci: passed tbia test
+[    0.065429] pci: passed pte write cache snoop test
+[    0.066406] pci: failed valid tag invalid pte reload test (mcheck; workaround available)
+[    0.067382] pci: passed pci machine check test
+[    0.068359] PCI host bridge to bus 0000:00
+[    0.069335] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
+[    0.070312] pci_bus 0000:00: root bus resource [mem 0x00000000-0x1fffffff]
+[    0.071289] pci_bus 0000:00: No busn resource found for root bus, will use [bus 00-ff]
+[    0.072265] pci 0000:00:05.0: [1000:000f] type 00 class 0x010000
+[    0.072265] pci 0000:00:05.0: reg 0x10: [io  0x10000-0x100ff]
+[    0.072265] pci 0000:00:05.0: reg 0x14: [mem 0x82875000-0x828750ff]
+[    0.072265] pci 0000:00:05.0: reg 0x18: [mem 0x82874000-0x82874fff]
+[    0.072265] pci 0000:00:05.0: reg 0x30: [mem 0x82840000-0x8285ffff pref]
+[    0.073242] pci 0000:00:06.0: [102b:051b] type 00 class 0x030000
+[    0.073242] pci 0000:00:06.0: reg 0x10: [mem 0x88000000-0x88ffffff pref]
+[    0.073242] pci 0000:00:06.0: reg 0x14: [mem 0x82870000-0x82873fff]
+[    0.073242] pci 0000:00:06.0: reg 0x18: [mem 0x82000000-0x827fffff]
+[    0.073242] pci 0000:00:06.0: reg 0x30: [mem 0x82860000-0x8286ffff pref]
+[    0.074218] pci 0000:00:08.0: [8086:0484] type 00 class 0x000000
+[    0.074218] pci 0000:00:09.0: [1011:0009] type 00 class 0x020000
+[    0.074218] pci 0000:00:09.0: reg 0x10: [io  0x10100-0x1017f]
+[    0.074218] pci 0000:00:09.0: reg 0x14: [mem 0x82875100-0x8287517f]
+[    0.074218] pci 0000:00:09.0: reg 0x30: [mem 0x82800000-0x8283ffff pref]
+[    0.075195] pci 0000:00:0b.0: [1095:0646] type 00 class 0x010180
+[    0.075195] pci 0000:00:0b.0: reg 0x20: [io  0x10180-0x1018f]
+[    0.075195] pci 0000:00:0b.0: legacy IDE quirk: reg 0x10: [io  0x01f0-0x01f7]
+[    0.076171] pci 0000:00:0b.0: legacy IDE quirk: reg 0x14: [io  0x03f6]
+[    0.077148] pci 0000:00:0b.0: legacy IDE quirk: reg 0x18: [io  0x0170-0x0177]
+[    0.078124] pci 0000:00:0b.0: legacy IDE quirk: reg 0x1c: [io  0x0376]
+[    0.080078] pci: enabling save/restore of SRM state
+[    0.081054] pci_bus 0000:00: busn_res: [bus 00-ff] end is updated to 00
+[    0.081054] pci 0000:00:06.0: BAR 0: assigned [mem 0x03000000-0x03ffffff pref]
+[    0.082031] pci 0000:00:06.0: BAR 2: assigned [mem 0x02800000-0x02ffffff]
+[    0.083007] pci 0000:00:09.0: BAR 6: assigned [mem 0x02200000-0x0223ffff pref]
+[    0.083984] pci 0000:00:05.0: BAR 6: assigned [mem 0x02240000-0x0225ffff pref]
+[    0.084960] pci 0000:00:06.0: BAR 6: assigned [mem 0x02260000-0x0226ffff pref]
+[    0.085937] pci 0000:00:06.0: BAR 1: assigned [mem 0x02270000-0x02273fff]
+[    0.086914] pci 0000:00:05.0: BAR 2: assigned [mem 0x02274000-0x02274fff]
+[    0.088867] pci 0000:00:05.0: BAR 0: assigned [io  0x8000-0x80ff]
+[    0.089843] pci 0000:00:05.0: BAR 1: assigned [mem 0x02275000-0x022750ff]
+[    0.090820] pci 0000:00:09.0: BAR 0: assigned [io  0x8400-0x847f]
+[    0.091796] pci 0000:00:09.0: BAR 1: assigned [mem 0x02276000-0x0227607f]
+[    0.092773] pci 0000:00:0b.0: BAR 4: assigned [io  0x8480-0x848f]
+[    0.093749] pci_bus 0000:00: resource 4 [io  0x0000-0xffff]
+[    0.093749] pci_bus 0000:00: resource 5 [mem 0x00000000-0x1fffffff]
+[    0.094726] SMC FDC37C93X Ultra I/O Controller found @ 0x370
+[    0.105468] pci 0000:00:06.0: vgaarb: setting as boot VGA device
+[    0.105468] pci 0000:00:06.0: vgaarb: VGA device added: decodes=io+mem,owns=io+mem,locks=none
+[    0.106445] pci 0000:00:06.0: vgaarb: bridge control possible
+[    0.107421] vgaarb: loaded
+[    0.109374] SCSI subsystem initialized
+[    0.113281] clocksource: Switched to clocksource rpcc
+[    0.138671] NET: Registered protocol family 2
+[    0.141601] tcp_listen_portaddr_hash hash table entries: 512 (order: 0, 8192 bytes)
+[    0.142578] TCP established hash table entries: 2048 (order: 1, 16384 bytes)
+[    0.143554] TCP bind hash table entries: 2048 (order: 1, 16384 bytes)
+[    0.144531] TCP: Hash tables configured (established 2048 bind 2048)
+[    0.146484] UDP hash table entries: 256 (order: 0, 8192 bytes)
+[    0.147460] UDP-Lite hash table entries: 256 (order: 0, 8192 bytes)
+[    0.149413] NET: Registered protocol family 1
+[    0.150390] PCI: CLS 0 bytes, default 32
+[    0.153320] srm_env: version 0.0.6 loaded successfully
+[    0.154296] Using epoch 2000 for rtc year 18
+[    0.157226] platform rtc-alpha: rtc core: registered rtc-alpha as rtc0
+[    0.159179] workingset: timestamp_bits=55 max_order=15 bucket_order=0
+[    0.196288] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 252)
+[    0.198242] io scheduler noop registered
+[    0.199218] io scheduler cfq registered (default)
+[    0.201171] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+[    0.203124] serial8250: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+[    0.205078] serial8250: ttyS1 at I/O 0x2f8 (irq = 3, base_baud = 115200) is a 16550A
+[    0.249999] random: fast init done
+[    0.358398] sym0: <875> rev 0x3 at pci 0000:00:05.0 irq 18
+[    0.362304] Floppy drive(s): fd0 is 2.88M
+[    0.452148] sym0: Symbios NVRAM, ID 7, Fast-20, SE, parity checking
+[    0.453124] sym0: open drain IRQ line driver, using on-chip SRAM
+[    0.454101] sym0: using LOAD/STORE-based firmware.
+[    0.455077] sym0: SCSI BUS has been reset.
+[    0.456054] scsi host0: sym-2.2.3
+[    0.458984] Linux Tulip driver version 1.1.15-NAPI (Feb 27, 2007)
+[    0.463866] tulip0: Old format EEPROM on 'Accton EN1207' board.  Using substitute media control info
+[    0.464843] tulip0: EEPROM default media type Autosense
+[    0.465820] tulip0: Index #0 - Media 10base2 (#1) described by a 21140 non-MII (0) block
+[    0.466796] tulip0: Index #1 - Media 10baseT (#0) described by a 21140 non-MII (0) block
+[    0.467773] tulip0: Index #2 - Media 10baseT-FDX (#4) described by a 21140 non-MII (0) block
+[    0.468749] tulip0: Index #3 - Media 100baseTx (#3) described by a 21140 non-MII (0) block
+[    0.469726] tulip0: Index #4 - Media 100baseTx-FDX (#5) described by a 21140 non-MII (0) block
+[    0.472656] net eth0: Digital DS21140 Tulip rev 34 at MMIO 0x2276000, 00:00:e8:3c:4e:c2, IRQ 19
+[    0.480468] serio: i8042 KBD port at 0x60,0x64 irq 1
+[    0.482421] serio: i8042 AUX port at 0x60,0x64 irq 12
+[    0.487304] NET: Registered protocol family 10
+[    0.491210] FDC 0 is a post-1991 82077
+[    0.502929] atkbd serio0: keyboard reset failed on isa0060/serio0
+[    0.503905] Segment Routing with IPv6
+[    0.504882] NET: Registered protocol family 17
+[    0.508788] platform rtc-alpha: setting system clock to 2018-11-22 14:26:16 UTC (1542896776)
+[    0.552734] atkbd serio1: keyboard reset failed on isa0060/serio1
+[    0.628905] atkbd serio0: keyboard reset failed on isa0060/serio0
+[    0.693359] atkbd serio1: keyboard reset failed on isa0060/serio1
+[    3.828123] scsi 0:0:0:0: Direct-Access     COMPAQ   BF0369A4BC       HPB7 PQ: 0 ANSI: 3
+[    3.829099] scsi target0:0:0: tagged command queuing enabled, command queue depth 16.
+[    3.830076] scsi target0:0:0: Beginning Domain Validation
+[    3.836912] scsi target0:0:0: FAST-20 WIDE SCSI 40.0 MB/s ST (50 ns, offset 15)
+[    3.840818] scsi target0:0:0: Domain Validation skipping write tests
+[    3.841794] scsi target0:0:0: Ending Domain Validation
+[    3.843748] scsi 0:0:0:0: Power-on or device reset occurred
+[    7.989253] sd 0:0:0:0: Attached scsi generic sg0 type 0
+[    7.991206] sd 0:0:0:0: [sda] 71132000 512-byte logical blocks: (36.4 GB/33.9 GiB)
+[    7.993159] sd 0:0:0:0: [sda] Write Protect is off
+[    7.994136] sd 0:0:0:0: [sda] Mode Sense: cf 00 10 08
+[    7.995113] sd 0:0:0:0: [sda] Write cache: disabled, read cache: enabled, supports DPO and FUA
+[    8.009761]  sda: sda1 sda2 sda4
+[    8.017574] sd 0:0:0:0: [sda] Attached SCSI disk
+[    8.041988] EXT4-fs (sda2): mounted filesystem with ordered data mode. Opts: (null)
+[    8.042964] VFS: Mounted root (ext4 filesystem) readonly on device 8:2.
+[    8.059566] devtmpfs: mounted
+[    8.061519] Freeing unused kernel memory: 208K
+[    8.062495] This architecture does not have kernel memory protection.
+[    8.063472] Run /sbin/init as init process
+[    8.319331] random: crng init done
+[   21.777332] udevd[477]: starting version 3.2.5
+[   21.949207] udevd[478]: starting eudev-3.2.5
+[   23.199206] tulip 0000:00:09.0 enp0s9: renamed from eth0
+[   23.864245] libata version 3.00 loaded.
+[   24.037097] scsi host1: pata_cmd64x
+[   24.055651] scsi host2: pata_cmd64x
+[   24.055651] ata1: PATA max MWDMA2 cmd 0x1f0 ctl 0x3f6 bmdma 0x8480 irq 14
+[   24.055651] ata2: PATA max MWDMA2 cmd 0x170 ctl 0x376 bmdma 0x8488 irq 15
+[   24.056628] pata_cmd64x: active 10 recovery 10 setup 3.
+[   24.056628] pata_cmd64x: active 10 recovery 10 setup 3.
+[   24.232409] ata1.00: ATAPI: SONY    CD-RW  CRX140E, 1.2a, max UDMA/33
+[   24.232409] pata_cmd64x: active 3 recovery 1 setup 1.
+[   24.232409] pata_cmd64x: active 3 recovery 1 setup 1.
+[   24.262682] scsi 1:0:0:0: CD-ROM            SONY     CD-RW  CRX140E   1.2a PQ: 0 ANSI: 5
+[   24.281237] sr 1:0:0:0: [sr0] scsi3-mmc drive: 32x/32x writer cd/rw xa/form2 cdda tray
+[   24.281237] cdrom: Uniform CD-ROM driver Revision: 3.20
+[   24.282214] sr 1:0:0:0: Attached scsi CD-ROM sr0
+[   24.284167] sr 1:0:0:0: Attached scsi generic sg1 type 5
+[   24.285143] pata_cmd64x: active 10 recovery 10 setup 3.
+[   24.285143] pata_cmd64x: active 10 recovery 10 setup 3.
+[   29.485336] EXT4-fs (sda2): re-mounted. Opts: errors=remount-ro
+[   31.106429] Adding 1697208k swap on /dev/sda4.  Priority:-2 extents:1 across:1697208k
+[   31.825179] EXT4-fs (sda1): mounting ext2 file system using the ext4 subsystem
+[   31.846663] EXT4-fs (sda1): mounted filesystem without journal. Opts: (null)
+
 -- 
-2.17.1
-
+Meelis Roos <mroos@linux.ee>
