@@ -2,103 +2,106 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC6FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50ABDC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4A4E20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:01:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10B5020684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 14:03:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3Ou/Vhi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4A4E20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VBeO4MUy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10B5020684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391643AbeKWAk7 (ORCPT
+        id S2395333AbeKWAnG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:40:59 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38234 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388851AbeKWAk7 (ORCPT
+        Thu, 22 Nov 2018 19:43:06 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54716 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388851AbeKWAnF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:40:59 -0500
-Received: by mail-pl1-f195.google.com with SMTP id e5so9316390plb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 06:01:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=lcyTXcwG8IW93lclxLqw2h+G8hESlcBlbKfmLy6kdQs=;
-        b=Z3Ou/VhiDkMKYrFzQ9FwUg08Wvz5Uf+fV7FdMDgpYMdjO+qtrVER6C4KZbE5UlB9Y3
-         5ED7xV8LZG6t4k4WF45xLdFi/qVxdNXYDJh69XVT2P2v1nCLx6xQMTMWRJuSxNJSHL8b
-         FEWt7mURK0dQj2mUtomzC8B0HXRvzn9CdMgJMh8dUsrs0Wb7U3gFHGkjGzhzouxGfW96
-         8JjvBzAWNzRZTpgQ+nnN6DB+gVPwXcpGF8edDhsrWHlMlqlYFnxJdt2DAttwyD9HkUq0
-         mBZxhyRZSHnGCWqgXObqNKlbQWTN7NW4C1mluo48zEZNKGlhXflVvuVq3JoYoJtEjWIR
-         6qeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=lcyTXcwG8IW93lclxLqw2h+G8hESlcBlbKfmLy6kdQs=;
-        b=HXCx2T86oybQiMoBzlnqheGvxVM2m16Ly2MGecVGCt3MpVDVvoUrJTcAMm+nAlePz8
-         ir+QLHZ9BXSsLMNal6aeB+BANHFfvQERU80zFw1i2TQArMjWfQh9QVlseVaoaue2rwHV
-         nnp4F9wuDNuqh8PcDLSq2BaoVxet90B/nDp1E4FMnarftMmHbmz3Oo0dtAu5vf5n7VSA
-         plgkaIpUsahggROix+OdOr+YVo0YR3Ojz4LBOfzX7iAfBFTt9ExYyJZkxlQ5PluFrSuJ
-         QKEAo2Xfa6kNv5qy2qs7EduemRBBTUdgPogbiVMj80/wZvsNKJvJ0KOme59X1yaBzE7Z
-         gaiA==
-X-Gm-Message-State: AA+aEWZuRhW7o9T6p1rv9tBWSlWcaKQiJXIaJnWpse2MbEj2HQOK5Ar4
-        0c6CRjjEXmSAWS+8n84C8Ts=
-X-Google-Smtp-Source: AFSGD/UkSW5niOZTh4WyzIwmTj1FjYJOoLVrJ1T6cxnPY7EJQRAvSB0dEVNuBruwze8FWu3jsq4+2Q==
-X-Received: by 2002:a17:902:4025:: with SMTP id b34mr11476554pld.181.1542895290205;
-        Thu, 22 Nov 2018 06:01:30 -0800 (PST)
-Received: from hp-pavilion-15-notebook-pc-brajeswar ([45.251.61.83])
-        by smtp.gmail.com with ESMTPSA id m11sm39923623pgh.51.2018.11.22.06.01.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 22 Nov 2018 06:01:29 -0800 (PST)
-Date:   Thu, 22 Nov 2018 19:31:26 +0530
-From:   Brajeswar Ghosh <brajeswar.linux@gmail.com>
-To:     harry.wentland@amd.com, sunpeng.li@amd.com,
-        alexander.deucher@amd.com, christian.koenig@amd.com,
-        David1.Zhou@amd.com, airlied@linux.ie, Tony.Cheng@amd.com,
-        Bhawanpreet.Lakha@amd.com, David.Francis@amd.com,
-        hersenxs.wu@amd.com
-Cc:     jrdr.linux@gmail.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        sabyasachi.linux@gmail.com
-Subject: [PATCH] drm/amd/display: Remove duplicate header
-Message-ID: <20181122140126.GA3124@hp-pavilion-15-notebook-pc-brajeswar>
+        Thu, 22 Nov 2018 19:43:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=MtJ8xWA9qUHloLCvIEk/FO/K2KiiWlRZFAUGaRfluEU=; b=VBeO4MUyZpT6Uz3BAJpXDOk8Uo
+        /FRVCIk1A14IplUDrLhOK/gb7SBRYL4RerbmU9plQ3LHIcmmN4tyiGNuJbB9rz7dJKxSpUS0GHIN1
+        Kphn/TXjf55Olgpc9jNDFR+ufftxyVdLXH7aygV7C9ZJ4ZQcFpK8RXniWYx/H/Gw74hoXFLadGVJi
+        kPk3z49co61r2z/69Xf+Kwnt0CCYu8afTmAvS2HCKXnUfGAMsWPWbfq1SlkVW17aNYEFT2KzbIysg
+        iKoBMFEDulX4iK3g+vTgOhytNYv72XKVdeSZZYSb9qDXmS/znUupeKXJbpLTBYBVKsmSqsvvdz1pu
+        1U2moY4Q==;
+Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gPpZn-0007Wm-1w; Thu, 22 Nov 2018 14:03:27 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     iommu@lists.linux-foundation.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jon Mason <jdmason@kudzu.us>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-parisc@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 01/24] dma-direct: Make DIRECT_MAPPING_ERROR viable for SWIOTLB
+Date:   Thu, 22 Nov 2018 15:02:57 +0100
+Message-Id: <20181122140320.24080-2-hch@lst.de>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181122140320.24080-1-hch@lst.de>
+References: <20181122140320.24080-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove dce/dce_mem_input.h which is included more than once
+From: Robin Murphy <robin.murphy@arm.com>
 
-Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+With the overflow buffer removed, we no longer have a unique address
+which is guaranteed not to be a valid DMA target to use as an error
+token. The DIRECT_MAPPING_ERROR value of 0 tries to at least represent
+an unlikely DMA target, but unfortunately there are already SWIOTLB
+users with DMA-able memory at physical address 0 which now gets falsely
+treated as a mapping failure and leads to all manner of misbehaviour.
+
+The best we can do to mitigate that is flip DIRECT_MAPPING_ERROR to the
+other commonly-used error value of all-bits-set, since the last single
+byte of memory is by far the least-likely-valid DMA target.
+
+Fixes: dff8d6c1ed58 ("swiotlb: remove the overflow buffer")
+Reported-by: John Stultz <john.stultz@linaro.org>
+Tested-by: John Stultz <john.stultz@linaro.org>
+Acked-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c | 1 -
- 1 file changed, 1 deletion(-)
+ include/linux/dma-direct.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c b/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c
-index d68f951f9869..c41408c3eaf1 100644
---- a/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce80/dce80_resource.c
-@@ -40,7 +40,6 @@
- #include "dce/dce_mem_input.h"
- #include "dce/dce_link_encoder.h"
- #include "dce/dce_stream_encoder.h"
--#include "dce/dce_mem_input.h"
- #include "dce/dce_ipp.h"
- #include "dce/dce_transform.h"
- #include "dce/dce_opp.h"
+diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
+index bd73e7a91410..9e66bfe369aa 100644
+--- a/include/linux/dma-direct.h
++++ b/include/linux/dma-direct.h
+@@ -5,7 +5,7 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/mem_encrypt.h>
+ 
+-#define DIRECT_MAPPING_ERROR		0
++#define DIRECT_MAPPING_ERROR		(~(dma_addr_t)0)
+ 
+ #ifdef CONFIG_ARCH_HAS_PHYS_TO_DMA
+ #include <asm/dma-direct.h>
 -- 
-2.17.1
+2.19.1
 
