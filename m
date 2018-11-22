@@ -2,108 +2,131 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5938C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03098C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 892592081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:42:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d2whUuXI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 892592081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id C34E420672
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:44:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C34E420672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436991AbeKWAWQ (ORCPT
+        id S2437002AbeKWAX0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:22:16 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46528 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436977AbeKWAWQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 19:22:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1QTzSVO94g0wnOGs1CIZXYdIPuLak3HQX26kKCg76A4=; b=d2whUuXIMoLDUf39ff7wMcgUp
-        zcpi789mE0MNUWbDLkFSUqplnMxoaYWaz9Q9BGHXjSsoJqicNoLgW+y92qxJWMZzwfFTPtqBJkY1a
-        SMDKenxESupZorZdEb3rEjs/VbLTlHMIGSpZHq26d2A0XYRS/WjTfRPFAH7sJpZw/41ibqeXYWHzX
-        nHvQXy9E9eqb1g2mI0bWdWkp5JbkdWlGyPY238HbfDFKk243wHp13ByBCqz53mUOKd1pJG8E4JNsQ
-        qqJdShXqPVLGN1KU2DHurVVwsIJnvuOFX3R1536leZVEB4LYAbufcV7WrKJtbr9EIEmE+JA+qMoxO
-        RR74Mw9OA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPpFl-0000fw-E5; Thu, 22 Nov 2018 13:42:45 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C1F662029FD58; Thu, 22 Nov 2018 14:42:38 +0100 (CET)
-Date:   Thu, 22 Nov 2018 14:42:38 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC][PATCH 00/14] function_graph: Rewrite to allow multiple
- users
-Message-ID: <20181122134238.GU2131@hirez.programming.kicks-ass.net>
-References: <20181122012708.491151844@goodmis.org>
- <20181122100812.GO2131@hirez.programming.kicks-ass.net>
- <20181122074605.063a7525@vmware.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181122074605.063a7525@vmware.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 22 Nov 2018 19:23:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55288 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727723AbeKWAX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 19:23:26 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 332F4AD36;
+        Thu, 22 Nov 2018 13:43:59 +0000 (UTC)
+Date:   Thu, 22 Nov 2018 14:43:58 +0100
+Message-ID: <s5h8t1l5ish.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Ayman Bagabas <ayman.bagabas@gmail.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Hui Wang <hui.wang@canonical.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Kailang Yang <kailang@realtek.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Subject: Re: [PATCH v3 3/3] ALSA: hda: add support for Huawei WMI micmute LED
+In-Reply-To: <20181122131802.GB13339@amd>
+References: <20181108171701.4444-4-ayman.bagabas@gmail.com>
+        <20181119235713.GB7367@amd>
+        <s5hr2fgfcrm.wl-tiwai@suse.de>
+        <20181120091039.GA16916@amd>
+        <s5hbm6kf6gi.wl-tiwai@suse.de>
+        <20181120093610.GF16916@amd>
+        <s5h4lccf58f.wl-tiwai@suse.de>
+        <20181120115159.GG16916@amd>
+        <s5hzhu4c569.wl-tiwai@suse.de>
+        <CAHp75VddanEB-7qQutSWkbSZW4srRzGXkigCMxEP7zJ=KC6iKw@mail.gmail.com>
+        <20181122131802.GB13339@amd>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 07:46:05AM -0500, Steven Rostedt wrote:
-> On Thu, 22 Nov 2018 11:08:12 +0100
-> Peter Zijlstra <peterz@infradead.org> wrote:
+On Thu, 22 Nov 2018 14:18:02 +0100,
+Pavel Machek wrote:
 > 
-> > On Wed, Nov 21, 2018 at 08:27:08PM -0500, Steven Rostedt wrote:
-> > > Well the fuction graph tracer is arguably the strongest of the tracers.
-> > > It shows both the entrance and exit of a function, can give the timings
-> > > of a function, and shows the execution of the code quite nicely.
-> > > 
-> > > But it has one major flaw.
-> > > 
-> > > It can't let more than one user access it at a time.  
+> On Thu 2018-11-22 13:36:43, Andy Shevchenko wrote:
+> > On Tue, Nov 20, 2018 at 2:19 PM Takashi Iwai <tiwai@suse.de> wrote:
+> > >
+> > > On Tue, 20 Nov 2018 12:51:59 +0100,
+> > > Pavel Machek wrote:
+> > > >
+> > > > Hi!
+> > > >
+> > > > > > You have general-purpose LED, yet you are treating it as "something
+> > > > > > special". That means ugly code (quoted above) and lack of flexibility.
+> > > > > >
+> > > > > > For example, if my notebook lacks HDD LED, I can use scrollock LED for
+> > > > > > that instead. Or, in reverse way, maybe "mic mute" LED is not useful
+> > > > > > for me, and I'd like to use it for notifications instead.
+> > > > >
+> > > > > I'm not against adding the LEDs device implementation for any exotic
+> > > > > usage.
+> > > > >
+> > > > > But for the audio mute LED features, you'll need really lots of other
+> > > > > works if it were implemented via leds device.  That's the hardest
+> > > > > part, and a few lines of hooks solves it easily in the kernel side.
+> > > > > That's all about it.
+> > > > >
+> > > > > If you are ready for submitting the real solutions in user-space side
+> > > > > (patching PulseAudio and whatever all existing sound daemons, and
+> > > > > creating yet another daemon for non-PA systems (another footprint,
+> > > > > lovely), and so on), we can happily delete such in-kernel hooks :)
+> > > >
+> > > > I'm not saying we should move it to the userspace.
+> > > >
+> > > > I'm saying this should be "normal" led. drivers/leds/led-huawei-acpi.c,
+> > > > or something. Perhaps this acpi stuff is so similar you don't really
+> > > > need .c code.
+> > > >
+> > > > And then there should be a "mic muted" trigger. Similar to
+> > > > drivers/leds/trigger/ledtrig-disk.c.
+> > >
+> > > And who will trigger this, e.g. when the mixer is muted?
 > > 
-> > The reason I 'never' use it is performance, it _sucks_.. I've never ran
-> > into the multi-user issue.
+> > Is this settled? I'm encouraged to promote this series to our for-next branch.
 > 
-> And performance is also something to fix (it has improved lately, you
-> probably haven't noticed).
+> I'd prefer this to be normal LED and "mic muted" to become normal
+> trigger.
 
-Indeed, I've not recently used it.
+But how would you solve the existing problem?
 
-> > So while I don't think the rewrite is bad, this argument here is.
-> 
-> Except that we plan on merging kretprobe with function graph tracing.
-> This also solves the issue that Mark Rutland has with ret protection.
-> He has a solution for function graph tracing, but not with kretprobes.
+As already mentioned, you'll need to hook the LED trigger and the
+actual mixer value change.  This is the biggest missing piece, and
+it's the very reason we have the exported symbol from the platform
+driver side.
 
-Sure. But you didn't make that argument.
+So, if you prefer in that way, please implement that for the existing
+driver (thinkpad_acpi and dell-laptop) at first.  I'll be really happy
+to get rid of the present ugly solution!  But it's been there just
+because it's not so trivial at all.  FWIW, this must be all done
+inside the kernel; otherwise you'll hit a regression.
 
-> And yes, there's also the case of being able to trace to different
-> buffers where you can have a full function graph tracing enabled and
-> also trace a subset that you want to have.
-> 
-> Just because you don't need it, doesn't mean it's not needed by others.
+If the path via leds class can't be achieved quickly, I'd prefer
+taking the current approach at first.  Once after it's done for those
+above, we can apply the same for huawei-wmi later, too.
 
-Not saying that; just saying the argument doesn't hold. It is not the
-_one_ flaw.
+
+thanks,
+
+Takashi
