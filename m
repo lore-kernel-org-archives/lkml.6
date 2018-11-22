@@ -7,44 +7,47 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7784EC43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 831A4C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C09120892
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E19220818
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 19:57:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x4SSq3J+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C09120892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="arVC2bmd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E19220818
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407372AbeKWGij (ORCPT
+        id S2407382AbeKWGin (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 01:38:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37094 "EHLO mail.kernel.org"
+        Fri, 23 Nov 2018 01:38:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407359AbeKWGii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 01:38:38 -0500
+        id S2389557AbeKWGim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 01:38:42 -0500
 Received: from sasha-vm.mshome.net (unknown [37.142.5.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E60E120870;
-        Thu, 22 Nov 2018 19:57:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5022720878;
+        Thu, 22 Nov 2018 19:57:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542916665;
-        bh=OaGvMOuFWrzD9x3+XaEjkkICGz/i1v+qcchw5RSG9gw=;
+        s=default; t=1542916668;
+        bh=HK/JuGrHGiTDtGnxWRxZ7aQR4CN/5PvqmX6Pdix/JN4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x4SSq3J+haaMU2AirnMoa6vXu9L2GATUEy/kBoej8yVbLJww0xnmdpumcFz3MCki0
-         BCvzL/LxlzYPI9O6KijK7BBNkp32nO5bH65Lt6V3cGxiGrkEQq5At7KWd0Q7ZM1be8
-         LF838me34+Y4o9glh0T9JzDEQcLDzKkK/Hwv/h5U=
+        b=arVC2bmdjbL21gscjqadIFtCKojmF/Yj82SYGTSKGIGcB6b/Gy42WjwJ9QEgDRE4K
+         Ansn3BT5XI0KqaMXuOvQ4fvXD6Jtw4fqCGFwzk6sckKZgVWq77ZoYDwLmM9r3d5JZ7
+         Q3LBexVuEolW6xt5l6mc6sqE83rOavE+qdiyfcBU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.4 7/8] powerpc/numa: Suppress "VPHN is not supported" messages
-Date:   Thu, 22 Nov 2018 14:57:14 -0500
-Message-Id: <20181122195716.13961-7-sashal@kernel.org>
+Cc:     Yufen Yu <yuyufen@huawei.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Hugh Dickins <hughd@google.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.4 8/8] tmpfs: make lseek(SEEK_DATA/SEK_HOLE) return ENXIO with a negative offset
+Date:   Thu, 22 Nov 2018 14:57:15 -0500
+Message-Id: <20181122195716.13961-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181122195716.13961-1-sashal@kernel.org>
 References: <20181122195716.13961-1-sashal@kernel.org>
@@ -53,36 +56,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
+From: Yufen Yu <yuyufen@huawei.com>
 
-[ Upstream commit 437ccdc8ce629470babdda1a7086e2f477048cbd ]
+[ Upstream commit 1a413646931cb14442065cfc17561e50f5b5bb44 ]
 
-When VPHN function is not supported and during cpu hotplug event,
-kernel prints message 'VPHN function not supported. Disabling
-polling...'. Currently it prints on every hotplug event, it floods
-dmesg when a KVM guest tries to hotplug huge number of vcpus, let's
-just print once and suppress further kernel prints.
+Other filesystems such as ext4, f2fs and ubifs all return ENXIO when
+lseek (SEEK_DATA or SEEK_HOLE) requests a negative offset.
 
-Signed-off-by: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+man 2 lseek says
+
+:      EINVAL whence  is  not  valid.   Or: the resulting file offset would be
+:             negative, or beyond the end of a seekable device.
+:
+:      ENXIO  whence is SEEK_DATA or SEEK_HOLE, and the file offset is  beyond
+:             the end of the file.
+
+Make tmpfs return ENXIO under these circumstances as well.  After this,
+tmpfs also passes xfstests's generic/448.
+
+[akpm@linux-foundation.org: rewrite changelog]
+Link: http://lkml.kernel.org/r/1540434176-14349-1-git-send-email-yuyufen@huawei.com
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: William Kucharski <william.kucharski@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/mm/numa.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/shmem.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
-index 3c4faa4c2742..bb3df222ae71 100644
---- a/arch/powerpc/mm/numa.c
-+++ b/arch/powerpc/mm/numa.c
-@@ -1319,7 +1319,7 @@ static long vphn_get_associativity(unsigned long cpu,
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 8e506a45a6ef..d902b413941a 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1818,9 +1818,7 @@ static loff_t shmem_file_llseek(struct file *file, loff_t offset, int whence)
+ 	mutex_lock(&inode->i_mutex);
+ 	/* We're holding i_mutex so we can access i_size directly */
  
- 	switch (rc) {
- 	case H_FUNCTION:
--		printk(KERN_INFO
-+		printk_once(KERN_INFO
- 			"VPHN is not supported. Disabling polling...\n");
- 		stop_topology_update();
- 		break;
+-	if (offset < 0)
+-		offset = -EINVAL;
+-	else if (offset >= inode->i_size)
++	if (offset < 0 || offset >= inode->i_size)
+ 		offset = -ENXIO;
+ 	else {
+ 		start = offset >> PAGE_CACHE_SHIFT;
 -- 
 2.17.1
 
