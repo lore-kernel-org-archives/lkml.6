@@ -2,116 +2,100 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2989EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:07:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E78D3C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:07:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2E3820865
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:07:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HV1a59iO";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JfkhIswR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2E3820865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id B4D3C20663
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 09:07:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4D3C20663
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393402AbeKVTp5 (ORCPT
+        id S2393411AbeKVTqQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 14:45:57 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35610 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730412AbeKVTp5 (ORCPT
+        Thu, 22 Nov 2018 14:46:16 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:46763 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730412AbeKVTqP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 14:45:57 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 50F2760C4B; Thu, 22 Nov 2018 09:07:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542877641;
-        bh=j8YHZdY0q7Y+gH+2J15/fIphu1d7kXx4aeDMlvlxq9g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HV1a59iOS1dZzzFArfVS5lgj4hOckoFIHZvCRr3fKgEVX3qqLPhT7s041nubTBUxn
-         1ED6PjrTOsuxCGts6PVMb0n79v27PGjHeftDjxwHxVOxcCHqqMz6+QIh3SngU19fIH
-         eHgAuE1Swd/O8ns/DnhSKAkoXPSMi4oBnIXHe6ts=
-Received: from skolluku-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: skolluku@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3712F60C4C;
-        Thu, 22 Nov 2018 09:07:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542877639;
-        bh=j8YHZdY0q7Y+gH+2J15/fIphu1d7kXx4aeDMlvlxq9g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JfkhIswRK/qERRhK7PTqkOe/zoX/UMMlP0XfVUyUzMWgrVN9gYM3PgLoaFhDhrx4b
-         tyM6K+HNWqJCssx9e41thyaki9NCcTWGDJ28FQoaK9wtkCHmG1bz6SSXHV8ox8AtMu
-         IypkDQewmDzuaImoCagqNtIuVn4SQmEtr9OlXAKY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3712F60C4C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=skolluku@codeaurora.org
-From:   Sravanthi Kollukuduru <skolluku@codeaurora.org>
-To:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
-Cc:     Sravanthi Kollukuduru <skolluku@codeaurora.org>,
-        linux-kernel@vger.kernel.org, robdclark@gmail.com,
-        seanpaul@chromium.org, sean@poorly.run
-Subject: [PATCH v3 3/3] dt-bindings: msm/disp: Introduce interconnect bindings for MDSS on SDM845
-Date:   Thu, 22 Nov 2018 14:36:53 +0530
-Message-Id: <20181122090653.3523-4-skolluku@codeaurora.org>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20181122090653.3523-1-skolluku@codeaurora.org>
-References: <20181122090653.3523-1-skolluku@codeaurora.org>
+        Thu, 22 Nov 2018 14:46:15 -0500
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gPkxR-00019k-VJ; Thu, 22 Nov 2018 10:07:34 +0100
+Date:   Thu, 22 Nov 2018 10:07:33 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>
+cc:     Tom Lendacky <thomas.lendacky@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [patch 15/24] x86/speculation: Add command line control for
+ indirect branch speculation
+In-Reply-To: <alpine.DEB.2.21.1811220048080.1665@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1811221002560.1571@nanos.tec.linutronix.de>
+References: <20181121201430.559770965@linutronix.de> <20181121201723.764150349@linutronix.de> <20181121234312.GI27559@zn.tnic> <alpine.DEB.2.21.1811220048080.1665@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add interconnect properties such as interconnect provider specifier
-, the edge source and destination ports which are required by the
-interconnect API to configure interconnect path for MDSS.
+On Thu, 22 Nov 2018, Thomas Gleixner wrote:
+> On Thu, 22 Nov 2018, Borislav Petkov wrote:
+> > > +
+> > > +	/* Initialize Indirect Branch Prediction Barrier */
+> > > +	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+> > > +		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
+> > > +		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
+> > > +	}
+> > 
+> > So AFAICT, if coming in here with AUTO, we won't enable IBPB and I
+> > *think* AMD wants IBPB enabled. At least the whitepaper says:
+> > 
+> > "IBPB combined with Reptoline software support is the AMD recommended
+> > setting for Linux mitigation of Google Project Zero Variant 2
+> > (Spectre)."
+> 
+> Ok. That's indeed a step backwards, because we don't do IBPB in KVM
+> anymore. I'll fix that tomorrow morning when brain is more awake.
 
-Changes in v2:
-	- none
+OTOH, off means that all of it is disabled. Which was the case already
+before this when spectre_v2=off is on the command line.
 
-Changes in v3:
-	- Remove common property definitions (Rob Herring)
+Now with the default to prctl/seccomp the IBPB in KVM is enabled. So no
+change there.
 
-Signed-off-by: Sravanthi Kollukuduru <skolluku@codeaurora.org>
----
- Documentation/devicetree/bindings/display/msm/dpu.txt | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> IBPB on context switch is controlled separately anyway now, so that's a
+> nobrainer to sort out.
+> 
+> Though I wait for Toms answer whether we really want IBPB on context switch
+> for AMD by default.
 
-diff --git a/Documentation/devicetree/bindings/display/msm/dpu.txt b/Documentation/devicetree/bindings/display/msm/dpu.txt
-index ad2e8830324e..d75b4360a4be 100644
---- a/Documentation/devicetree/bindings/display/msm/dpu.txt
-+++ b/Documentation/devicetree/bindings/display/msm/dpu.txt
-@@ -28,6 +28,11 @@ Required properties:
- - #address-cells: number of address cells for the MDSS children. Should be 1.
- - #size-cells: Should be 1.
- - ranges: parent bus address space is the same as the child bus address space.
-+- interconnects : interconnect path specifier for MDSS according to
-+  Documentation/devicetree/bindings/interconnect/interconnect.txt. Should be
-+  2 paths corresponding to 2 AXI ports.
-+- interconnect-names : MDSS will have 2 port names to differentiate between the
-+  2 interconnect paths defined with interconnect specifier.
- 
- Optional properties:
- - assigned-clocks: list of clock specifiers for clocks needing rate assignment
-@@ -86,6 +91,10 @@ Example:
- 		interrupt-controller;
- 		#interrupt-cells = <1>;
- 
-+		interconnects = <&qnoc 38 &qnoc 512>,
-+				<&qnoc 39 &qnoc 512>;
-+		interconnect-names = "port0", "port1";
-+
- 		iommus = <&apps_iommu 0>;
- 
- 		#address-cells = <2>;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+That still stands. But if we want to do that, then we need to optimize it a
+bit. Isn't that hard, but ...
 
+Thanks,
+
+	tglx
