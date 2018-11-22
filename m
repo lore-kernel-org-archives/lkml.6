@@ -6,63 +6,68 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A3DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 524AEC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92B8C20663
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:17:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92B8C20663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id E853D208A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 11:21:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E853D208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394677AbeKVV4M (ORCPT
+        id S2394678AbeKVWAQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 16:56:12 -0500
-Received: from www62.your-server.de ([213.133.104.62]:40920 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394640AbeKVV4M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 16:56:12 -0500
-Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1gPmyw-0000Zw-JX; Thu, 22 Nov 2018 12:17:14 +0100
-Received: from [178.197.249.34] (helo=linux.home)
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1gPmyw-000Wmj-Dw; Thu, 22 Nov 2018 12:17:14 +0100
-Subject: Re: [PATCH][next] tools/bpf: fix spelling mistake "memeory" ->
- "memory"
-To:     Colin King <colin.king@canonical.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181122101345.16271-1-colin.king@canonical.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <e3f7ac52-d267-2d9b-d7c2-f579c01ab48d@iogearbox.net>
-Date:   Thu, 22 Nov 2018 12:17:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Thu, 22 Nov 2018 17:00:16 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56443 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387962AbeKVWAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 17:00:16 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 591FFEF1A4E21;
+        Thu, 22 Nov 2018 19:21:17 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Thu, 22 Nov 2018
+ 19:21:17 +0800
+Subject: Re: [PATCH] f2fs: read page index before freeing
+To:     Pan Bian <bianpan2016@163.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1542884326-74903-1-git-send-email-bianpan2016@163.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <2cd91c95-598d-fcc1-b1d6-6fddb224efcf@huawei.com>
+Date:   Thu, 22 Nov 2018 19:21:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181122101345.16271-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1542884326-74903-1-git-send-email-bianpan2016@163.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.2/25142/Thu Nov 22 07:18:56 2018)
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/22/2018 11:13 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The CHECK message contains a spelling mistake, fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hi Pan,
 
-Applied to bpf-next, thanks!
+On 2018/11/22 18:58, Pan Bian wrote:
+> The function truncate_node frees the page with f2fs_put_page. However,
+> the page index is read after that. So, the patch reads the index before
+> freeing the page.
+
+Good catch!
+
+It will be better to add:
+
+Fixes: bf39c00a9a7f ("f2fs: drop obsolete node page when it is truncated")
+Cc: <stable@vger.kernel.org>
+
+> 
+> Signed-off-by: Pan Bian <bianpan2016@163.com>
+
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
+
