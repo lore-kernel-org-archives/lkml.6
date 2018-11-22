@@ -2,87 +2,82 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D88C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A13BBC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 025CC20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:11:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 025CC20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7286F20684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:12:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7286F20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730352AbeKVXvH (ORCPT
+        id S1731421AbeKVXvV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 18:51:07 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48198 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727034AbeKVXvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 18:51:07 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C06683622;
-        Thu, 22 Nov 2018 05:11:50 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D3B523F5CF;
-        Thu, 22 Nov 2018 05:11:49 -0800 (PST)
-Date:   Thu, 22 Nov 2018 13:11:44 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH 2/2] scripts/decode_stacktrace: Only strip base path when
- a prefix of the path
-Message-ID: <20181122131144.e5cxxtqzetawjji4@lakrids.cambridge.arm.com>
-References: <20181122121440.74913-1-marc.zyngier@arm.com>
- <20181122121440.74913-3-marc.zyngier@arm.com>
+        Thu, 22 Nov 2018 18:51:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49748 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727034AbeKVXvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 18:51:21 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CC507B03A;
+        Thu, 22 Nov 2018 13:12:02 +0000 (UTC)
+Date:   Thu, 22 Nov 2018 14:12:02 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCHv3] panic: avoid deadlocks in re-entrant console drivers
+Message-ID: <20181122131202.nkcurdt5k6jrhowa@pathway.suse.cz>
+References: <20181016050428.17966-2-sergey.senozhatsky@gmail.com>
+ <20181025101036.6823-1-sergey.senozhatsky@gmail.com>
+ <20181031122736.epbxu424l3xagge5@pathway.suse.cz>
+ <20181101014821.GB502@jagdpanzerIV>
+ <20181101080808.n73lrlnjd65nk4qf@pathway.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181122121440.74913-3-marc.zyngier@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181101080808.n73lrlnjd65nk4qf@pathway.suse.cz>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 12:14:40PM +0000, Marc Zyngier wrote:
-> Running something like:
+On Thu 2018-11-01 09:08:08, Petr Mladek wrote:
+> On Thu 2018-11-01 10:48:21, Sergey Senozhatsky wrote:
+> > On (10/31/18 13:27), Petr Mladek wrote:
+> > > > 
+> > > > Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> > > 
+> > > The patch makes sense to me. The locks should stay busted also for
+> > > console_flush_on_panic().
+> > > 
+> > > With the added #include <linux/vt_kern.h>:
+> > > 
+> > > Reviewed-by: Petr Mladek <pmladek@suse.com>
+> > 
+> > Thanks!
+> > 
+> > Since there are no objections - how shall we route it? Via printk tree?
 > 
-> 	decodecode vmlinux .
-> 
-> leads to interested results where not only the leading "." gets stripped
-> from the displayed paths, but also anywhere in the string, displaying
-> something like:
-> 
-> 	kvm_vcpu_check_block (arch/arm64/kvm/virt/kvm/kvm_mainc:2141)
-> 
-> which doesn't help further processing.
-> 
-> Fix it by only stripping the base path if it is a prefix of the path.
-> 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->  scripts/decode_stacktrace.sh | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-> index 64220e36ce3b..98a7d63a723e 100755
-> --- a/scripts/decode_stacktrace.sh
-> +++ b/scripts/decode_stacktrace.sh
-> @@ -78,7 +78,7 @@ parse_symbol() {
->  	fi
->  
->  	# Strip out the base of the path
-> -	code=${code//$basepath/""}
-> +	code=${code//^$basepath/""}
+> Good question. OK, I am going to put it into printk.git unless I hear
+> complains withing next couple of days.
 
-FWIW, you can do this using the usual POSIX shell string substitution:
+I have pushed this into printk.git, branch for-4.21.
 
-	code=${code##$basepath}
-
-[1] http://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html#tag_02_06_02
-
-Mark.
+Best Regards,
+Petr
