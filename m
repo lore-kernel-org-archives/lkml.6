@@ -2,167 +2,187 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA001C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B06ADC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7586820824
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:04:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="dHL9CJrM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7586820824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 6FA99206B2
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 15:04:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FA99206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405727AbeKWBoC (ORCPT
+        id S2437512AbeKWBoe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 20:44:02 -0500
-Received: from mail.efficios.com ([167.114.142.138]:51508 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728272AbeKWBoC (ORCPT
+        Thu, 22 Nov 2018 20:44:34 -0500
+Received: from outbound-smtp26.blacknight.com ([81.17.249.194]:59761 "EHLO
+        outbound-smtp26.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728272AbeKWBoe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 20:44:02 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 7E3B02504CC;
-        Thu, 22 Nov 2018 10:04:17 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id W2wSU6brnzaR; Thu, 22 Nov 2018 10:04:17 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 082972504B9;
-        Thu, 22 Nov 2018 10:04:17 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 082972504B9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1542899057;
-        bh=/jGcv3ikfocAK+t2x7GFxnhMfNd9oklnCzgNoZY7JQc=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=dHL9CJrMrXqdieDm5o+mEAgBq+bCJsMhBLoNFnq/fDMxi2KMSTodQRd3pLI98nj2l
-         wOOWbMXfuJRX5Tw3NIGQFE2zZzhNcS5Wv8KKQ2s1QiGvdFu0Ts6G7HzUcFy7worGiL
-         7dgFb9nxwOiOX/IU2FlusrEhbqj6i/E4axMm0+UX3TT3OjEDLF5aWmmpvkPKWFQpXw
-         +eQrjT8VPjlGE063I91d/VV1yw4aNLLLqQsirmMAW1+1/8WjdHYW4pUWhcaCulVGlv
-         +YZTAQosV90jzZum7orL0ON/bgBr9dhVZlqI0J3D8W9D6VOklTdMqamhxFc62wl/nx
-         NNPEenWBFRnmw==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id wV8wBdqjCTrL; Thu, 22 Nov 2018 10:04:16 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id DB5C72504B2;
-        Thu, 22 Nov 2018 10:04:16 -0500 (EST)
-Date:   Thu, 22 Nov 2018 10:04:16 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Rich Felker <dalias@libc.org>
-Cc:     carlos <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <782067422.9852.1542899056778.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20181122143603.GD23599@brightrain.aerifal.cx>
-References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com> <20181122143603.GD23599@brightrain.aerifal.cx>
-Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl
- init and thread creation
+        Thu, 22 Nov 2018 20:44:34 -0500
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp26.blacknight.com (Postfix) with ESMTPS id 8751FB8B87
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 15:04:48 +0000 (GMT)
+Received: (qmail 14567 invoked from network); 22 Nov 2018 15:04:48 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.69])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 22 Nov 2018 15:04:48 -0000
+Date:   Thu, 22 Nov 2018 15:04:46 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Michal Hocko <mhocko@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/4] mm: Reclaim small amounts of memory when an external
+ fragmentation event occurs
+Message-ID: <20181122150446.GK23260@techsingularity.net>
+References: <20181121101414.21301-1-mgorman@techsingularity.net>
+ <20181121101414.21301-4-mgorman@techsingularity.net>
+ <cc8ec820-1526-d753-4619-dedaa227a179@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3047 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
-Thread-Topic: glibc: Perform rseq(2) registration at nptl init and thread creation
-Thread-Index: tTPuXGNepoFLbbnqmkjFnnTYo2v1fg==
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <cc8ec820-1526-d753-4619-dedaa227a179@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Nov 22, 2018, at 9:36 AM, Rich Felker dalias@libc.org wrote:
-
-> On Wed, Nov 21, 2018 at 01:39:32PM -0500, Mathieu Desnoyers wrote:
->> Register rseq(2) TLS for each thread (including main), and unregister
->> for each thread (excluding main). "rseq" stands for Restartable
->> Sequences.
+On Thu, Nov 22, 2018 at 02:53:08PM +0100, Vlastimil Babka wrote:
+> > 1-socket Skylake machine
+> > config-global-dhp__workload_thpfioscale XFS (no special madvise)
+> > 4 fio threads, 1 THP allocating thread
+> > --------------------------------------
+> > 
+> > 4.20-rc1 extfrag events < order 9:  1023463
+> > 4.20-rc1+patch:                      358574 (65% reduction)
+> > 4.20-rc1+patch1-3:                    19274 (98% reduction)
 > 
-> Maybe I'm missing something obvious, but "unregister" does not seem to
-> be a meaningful operation. Can you clarify what it's for?
+> So the reason I was wondering about movable vs unmovable fallbacks here
+> is that movable fallbacks are ok as they can be migrated later, but the
+> unmovable/reclaimable not, which is bad if they fallback to movable
+> pageblock. Movable fallbacks can however fill the unmovable pageblocks
+> and increase change of the unmovable fallback, but that would depend on
+> the workload. So hypothetically if the test workload was such that
+> movable fallbacks did not cause unmovable fallbacks, and a patch would
+> thus only decrease the movable fallbacks (at the cost of e.g. higher
+> reclaim, as this patch) with unmovable fallbacks unchanged, then it
+> would be useful to know that for better evaluation of the pros vs cons,
+> imho.
+> 
 
-There are really two ways rseq TLS can end up being unregistered: either
-through an explicit call to the rseq "unregister", or when the OS frees the
-thread's task struct.
+I can give the breakdown in the next changelog as it'll be similar for
+each instance of the workload.
 
-You bring an interesting point here: do we need to explicitly unregister
-rseq at thread exit, or can we leave that to the OS ?
+Movable fallbacks are ok in that they can fallback but not ok in that
+they can fill an unmovable/reclaimable pageblock causing them to
+fallback later. I think you understand this already. If there is a
+movable pageblock, it is pretty much guaranteed to affect an
+unmovable/reclaimable pageblock and while it might not be enough to
+actually cause a unmovable/reclaimable fallback in the future, we cannot
+know that in advance so the patch takes the only option available to it.
 
-The key thing to look for here is whether it's valid to access the
-TLS area of the thread from preemption or signal delivery happening
-at the very end of START_THREAD_DEFN. If it's OK to access it until
-the very end of the thread lifetime, then we could do without an
-explicit unregistration. However, if at any given point of the late
-thread lifetime we end up in a situation where reading or writing to
-that TLS area can cause corruption, then we need to carefully
-unregister it before that memory is reclaimed/reused.
+In terms of reclaim, what I've observed for a few workloads is that
+reclaim is different but not necessarily worse. With the patch, reclaim
+is roughly similar overall but at a smoother rate. The vanilla kernel
+tends to spike with large amounts of reclaim at semi-regular intervals
+where as this path has a small amount of reclaim done steadily over
+time.
 
-What we have below the current location for the __rseq_unregister_current_thread ()
-call is as follows. I'm not all that convinced that it's valid to access the TLS
-area up until __exit_thread () at the very end, especially after setting
-setxid_futex back to 0.
+Now I did encounter a bug whereby fio reduced throughput because the
+boosted reclaim also reclaimed slab which caused secondary issues that
+were unrelated to the fragmentation pattern. This will be fixed in the
+next version.
 
-Thoughts ?
+While it does leave open the possibilty that a slab-intensive workload
+occupying lots of memory will still cause fragmentation, that is a
+different class of problem and would be approached differently. That
+particular problem is not covered by this approach but it does not exclude
+it either as the full solution would have to encompass both.
 
-  /* Unregister rseq TLS from kernel. */
-  if (has_rseq && __rseq_unregister_current_thread ())
-    abort();
+> > +static inline void boost_watermark(struct zone *zone)
+> > +{
+> > +	unsigned long max_boost;
+> > +
+> > +	if (!watermark_boost_factor)
+> > +		return;
+> > +
+> > +	max_boost = mult_frac(wmark_pages(zone, WMARK_HIGH),
+> > +			watermark_boost_factor, 10000);
+> 
+> Hmm I assume you didn't use high_wmark_pages() because the calculation
+> should start with high watermark not including existing boost. But then,
+> wmark_pages() also includes existing boost, so the limit won't work and
+> each invocation of boost_watermark() will simply add pageblock_nr_pages?
+> I.e. this should use zone->_watermark[] instead of wmark_pages()?
+> 
 
-  advise_stack_range (pd->stackblock, pd->stackblock_size, (uintptr_t) pd,
-                      pd->guardsize);
+You're right. The consequences are that it boosts by higher than
+expected. I'll fix it.
 
-  /* If the thread is detached free the TCB.  */
-  if (IS_DETACHED (pd))
-    /* Free the TCB.  */
-    __free_tcb (pd);
-  else if (__glibc_unlikely (pd->cancelhandling & SETXID_BITMASK))
-    {
-      /* Some other thread might call any of the setXid functions and expect
-         us to reply.  In this case wait until we did that.  */
-      do
-        /* XXX This differs from the typical futex_wait_simple pattern in that
-           the futex_wait condition (setxid_futex) is different from the
-           condition used in the surrounding loop (cancelhandling).  We need
-           to check and document why this is correct.  */
-        futex_wait_simple (&pd->setxid_futex, 0, FUTEX_PRIVATE);
-      while (pd->cancelhandling & SETXID_BITMASK);
+> > +	max_boost = max(pageblock_nr_pages, max_boost);
+> > +
+> > +	zone->watermark_boost = min(zone->watermark_boost + pageblock_nr_pages,
+> > +		max_boost);
+> > +}
+> > +
+> >  /*
+> >   * This function implements actual steal behaviour. If order is large enough,
+> >   * we can steal whole pageblock. If not, we first move freepages in this
+> > @@ -2160,6 +2176,14 @@ static void steal_suitable_fallback(struct zone *zone, struct page *page,
+> >  		goto single_page;
+> >  	}
+> >  
+> > +	/*
+> > +	 * Boost watermarks to increase reclaim pressure to reduce the
+> > +	 * likelihood of future fallbacks. Wake kswapd now as the node
+> > +	 * may be balanced overall and kswapd will not wake naturally.
+> > +	 */
+> > +	boost_watermark(zone);
+> > +	wakeup_kswapd(zone, 0, 0, zone_idx(zone));
+> > +
+> >  	/* We are not allowed to try stealing from the whole block */
+> >  	if (!whole_block)
+> >  		goto single_page;
+> > @@ -3277,11 +3301,19 @@ static bool zone_allows_reclaim(struct zone *local_zone, struct zone *zone)
+> >   * probably too small. It only makes sense to spread allocations to avoid
+> >   * fragmentation between the Normal and DMA32 zones.
+> >   */
+> > -static inline unsigned int alloc_flags_nofragment(struct zone *zone)
+> > +static inline unsigned int
+> > +alloc_flags_nofragment(struct zone *zone, gfp_t gfp_mask)
+> >  {
+> >  	if (zone_idx(zone) != ZONE_NORMAL)
+> >  		return 0;
+> >  
+> > +	/*
+> > +	 * A fragmenting fallback will try waking kswapd. ALLOC_NOFRAGMENT
+> > +	 * may break that so such callers can introduce fragmentation.
+> > +	 */
+> 
+> I think I don't understand this comment :( Do you want to avoid waking
+> up kswapd from steal_suitable_fallback() (introduced above) for
+> allocations without __GFP_KSWAPD_RECLAIM? But returning 0 here means
+> actually allowing the allocation go through steal_suitable_fallback()?
+> So should it return ALLOC_NOFRAGMENT below, or was the intent different?
+> 
 
-      /* Reset the value so that the stack can be reused.  */
-      pd->setxid_futex = 0;
-    }
-
-  /* We cannot call '_exit' here.  '_exit' will terminate the process.
-
-     The 'exit' implementation in the kernel will signal when the
-     process is really dead since 'clone' got passed the CLONE_CHILD_CLEARTID
-     flag.  The 'tid' field in the TCB will be set to zero.
-
-     The exit code is zero since in case all threads exit by calling
-     'pthread_exit' the exit status must be 0 (zero).  */
-  __exit_thread ();
-
-  /* NOTREACHED */
-
-Thanks,
-
-Mathieu
-
+I want to avoid waking kswapd in steal_suitable_fallback if waking
+kswapd is not allowed. If the calling context does not allow it, it does
+mean that fragmentation will be allowed to occur. I'm banking on it
+being a relatively rare case but potentially it'll be problematic. The
+main source of allocation requests that I expect to hit this are THP and
+as they are already at pageblock_order, it has limited impact from a
+fragmentation perspective -- particularly as pageblock_order stealing is
+allowed even with ALLOC_NOFRAGMENT.
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Mel Gorman
+SUSE Labs
