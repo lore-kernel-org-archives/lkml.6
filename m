@@ -2,132 +2,181 @@ Return-Path: <SRS0=Yw3T=OB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F8A8C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDA0C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB1B120672
-	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:06:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DA9320684
+	for <linux-kernel@archiver.kernel.org>; Thu, 22 Nov 2018 13:07:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="eRlr6M57"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB1B120672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bpx1jEuV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DA9320684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395196AbeKVXpU (ORCPT
+        id S2395204AbeKVXqv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 18:45:20 -0500
-Received: from mail-eopbgr80085.outbound.protection.outlook.com ([40.107.8.85]:54487
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732044AbeKVXpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 18:45:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bZ0t1UZsX1ASOmJOjsCdMT76WJ+xKmrog1yPddhlp94=;
- b=eRlr6M573BPp47eCTHAkwkqroBrZ5X7nP3xKVHa7BnmJMAUKCnVnh8Lifpi9txogeX5thvAF5I/XcX6q/y5JmtfNKyCVI41aOVZxvZYYPbITM5vDRRY+s6pGANDyF1jzP/NjYGZCb+KGtVvBkIZekE5pVIv6oaVywSJpRkS/I24=
-Received: from VI1PR04MB4880.eurprd04.prod.outlook.com (20.177.49.153) by
- VI1PR04MB4224.eurprd04.prod.outlook.com (52.134.31.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.15; Thu, 22 Nov 2018 13:06:01 +0000
-Received: from VI1PR04MB4880.eurprd04.prod.outlook.com
- ([fe80::3cf6:b5ab:ac8a:fd94]) by VI1PR04MB4880.eurprd04.prod.outlook.com
- ([fe80::3cf6:b5ab:ac8a:fd94%4]) with mapi id 15.20.1361.015; Thu, 22 Nov 2018
- 13:06:01 +0000
-From:   Claudiu Manoil <claudiu.manoil@nxp.com>
-To:     David Miller <davem@davemloft.net>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexandru Marginean <alexandru.marginean@nxp.com>,
-        Catalin Horghidan <catalin.horghidan@nxp.com>
-Subject: RE: [PATCH net-next v2 1/4] enetc: Introduce basic PF and VF ENETC
- ethernet drivers
-Thread-Topic: [PATCH net-next v2 1/4] enetc: Introduce basic PF and VF ENETC
- ethernet drivers
-Thread-Index: AQHUgP0VcQXM/br9+0etCnjg7gktoKVa8JgAgADTuGA=
-Date:   Thu, 22 Nov 2018 13:06:01 +0000
-Message-ID: <VI1PR04MB48803D4A3D8D331046CFC63196DB0@VI1PR04MB4880.eurprd04.prod.outlook.com>
-References: <1542737734-21756-1-git-send-email-claudiu.manoil@nxp.com>
-        <1542737734-21756-2-git-send-email-claudiu.manoil@nxp.com>
- <20181121.162118.2250773796794960530.davem@davemloft.net>
-In-Reply-To: <20181121.162118.2250773796794960530.davem@davemloft.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=claudiu.manoil@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB4224;6:vLlUq6jorrapK5cm1XE7AiJd/W+vzslXBwx0MHgogCDn9mrRm0FplpW+v/LwmBQSxDKovEEzt+TXvdQybE/XyX1BPqjIeoLdYyZAhWW3z6fYqXCijbFZzdEuvHi+N3hQl0giJXXRxUW4mtX30xFMRS4RiWDX5oa9Kll016iOoq11O+KbYocQ1BPAHLhSwxA25lUQF7VhbxEa65ox+0PcAINdYuosRkA8O3oSdpqC6kiIvpp9HdYBv0ZUXRcV6pIza7FvrAoEVXCKTew6ah/7QNrbBuWJGB5HFUSR9F0oq+6HvhR2ARdcnTBw5LTQgp93+7YZHJX8S2Q0hzk32iAwyYGN2a6efqMKWAPvLxg2S3aYwCu9l/tOaDL26oPnHSjr67RDmR1HipCwEEgGgmSyEBg447dcOuS5zooB+Dc8TNfakKDq+Gx2gUUqWWUxJ9khqIeoMnecV7zVrqz/zT6YkA==;5:cYmHbLCdHofocjDdguwg0Tz0FEFSTzpW5iB2kgb1+L7sY+adehpwGu0SbmLwj+mkipA42XeNfPCT7SyQC568Cs/ITJdvdBnT/wMIXE7TsEvEaHGur/eqHkAdqK9QbTy1XgcIS0UDlbwjSpTm9yuO7NBwZwU3XOmDxzjHJh7Dfd4=;7:tFYva/jSeDsrtYuPJKbeHQe0f8d33CqG9JJHiV86f7EM1fad0K1NgaTF+X13khFn2OpWwzJg2HvCoEvFZH8x7bKdDrQVIOFcJG8FEWAr/9Q5SRAwwvY+nl/+I5NHNo8vY6G3LioToQA/f02jMhUj6w==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: c5162122-0519-4cf0-78cc-08d6507b40c1
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4224;
-x-ms-traffictypediagnostic: VI1PR04MB4224:
-x-microsoft-antispam-prvs: <VI1PR04MB4224A15138A25069B02BDE1996DB0@VI1PR04MB4224.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231442)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB4224;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4224;
-x-forefront-prvs: 0864A36BBF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(366004)(376002)(346002)(136003)(39860400002)(396003)(189003)(199004)(13464003)(102836004)(66066001)(6246003)(97736004)(229853002)(6436002)(99286004)(71200400001)(14454004)(86362001)(316002)(6116002)(3846002)(256004)(446003)(476003)(9686003)(4326008)(76176011)(8936002)(26005)(186003)(7736002)(8676002)(44832011)(53936002)(54906003)(305945005)(5660300001)(105586002)(2906002)(6916009)(71190400001)(55016002)(25786009)(68736007)(33656002)(106356001)(81156014)(6506007)(11346002)(81166006)(486006)(74316002)(478600001)(7696005)(2900100001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4224;H:VI1PR04MB4880.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: mNiwHLIJvpRj+oiBYGWqbp/jCNyfXD+CzPNttwCt7D4YL+vjVajvnZTEnADaYZ4aBE83aTCQi8SJn2zRTtgYzbGwcvnRhtDtYTJIRXS5IMQvEPC/PFC+fxCkDzaUs/Jz9+qsHV0VQe18HJkYiJcp6Nkj3MzkrZmZxNcKf5gc6H89QZaxE9ygAVN07XcKXjv0+Zhh2aaRefenXjLXVCz36npwOqsbpmXN4ygRy/jVY/UN5qnt2ZAGcPtYtVUXK9UC86xoGFesLutkTSk3xfyVkqaYO/NFCTo9Ib0v1z1TP5CYhUHf7KR4RKU/7pjpjrJgBn0gfiP1gFcpTpUO5SdzHYz5Wg+SKran3daSFfkwKw8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 22 Nov 2018 18:46:51 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38995 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731818AbeKVXqv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 18:46:51 -0500
+Received: by mail-wm1-f65.google.com with SMTP id u13-v6so9083856wmc.4
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 05:07:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0OrZMP0wVJU5/gmiIrkRGn6BTqPi8LtbJG/iIHEr1/U=;
+        b=bpx1jEuVEl0ikS56rSmzE9nXWSXD1dDRhK2u82mDv/Y9+hbAugHDajXOlBHviJdryQ
+         wC+n7bS6LUJ6CKieNwFy48MY4gaNTPTZZE0Idj/hD1VL/fjyj/f0jFLqMdpI9008xGW0
+         3tONOAIgfbCIe2yxYz6fQeg8xTz3unL574+z4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0OrZMP0wVJU5/gmiIrkRGn6BTqPi8LtbJG/iIHEr1/U=;
+        b=oWRpiC0HJ9Mw8NFBHXzaZcdk4OAhd68n4zliTwJ4LSEpyF0pwUkZEhSfjPlQ2WWiSg
+         igIT6DLD7DYDR934ETMzseoDZ6EDRxDmPeZq38SGMXC4jToeSvOhWge4KTPLzah/vhU5
+         RUZnyamCDymgsBAiXTMfqiiP5NaS1YZ/N02aiGxzHmTETc49YHZIuySQZnusDY8rND1Y
+         JkTrWx+1n8lNgUIxRIa295hMpRVWM9GRgbC/8hTxklMmQHGFc+SLuq7r0wO/kxTmV89Y
+         Nf+IRjGeCrYrHWzd2QuLJ+5GegXC5sHnB4ThpWfI756UsnUG2H25C985CIq9NIL/Kr/l
+         LpGA==
+X-Gm-Message-State: AA+aEWaRo0Ti3sCVx1qb8roUgmX6hOamGQGdQbJskX9J7InL5yCoFNeC
+        vlwXX1iIF+ng6+spe4KDneEJops8Vyo=
+X-Google-Smtp-Source: AJdET5cAZ7tU34CNlbOfy28KMuW8r4bMISRNnV+Gyvqd9ZCyxSLhsUeB02uQWLp+0mHrgOnqQJzDBg==
+X-Received: by 2002:a1c:950f:: with SMTP id x15-v6mr9925800wmd.3.1542892053712;
+        Thu, 22 Nov 2018 05:07:33 -0800 (PST)
+Received: from [192.168.0.40] (189.35.136.77.rev.sfr.net. [77.136.35.189])
+        by smtp.googlemail.com with ESMTPSA id b13sm21976138wrn.28.2018.11.22.05.07.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 05:07:32 -0800 (PST)
+Subject: Re: [PATCH v2 1/3] thermal: tegra: continue if sensor register fails
+To:     Wei Ni <wni@nvidia.com>, thierry.reding@gmail.com,
+        linux-tegra@vger.kernel.org
+Cc:     rui.zhang@intel.com, edubezval@gmail.com,
+        linux-kernel@vger.kernel.org
+References: <1542103567-5521-1-git-send-email-wni@nvidia.com>
+ <1542103567-5521-2-git-send-email-wni@nvidia.com>
+ <d212af68-fd18-74d4-d81c-ed8b3c0f136a@linaro.org>
+ <70f08208-d04c-c9a4-07e6-d377c33a9386@nvidia.com>
+ <d77fe117-3cde-108f-e1d7-2871f3d4c485@linaro.org>
+ <5e09bc13-7880-40f2-3f90-01d2cc3510ba@nvidia.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <299fc8a0-39e4-1bd9-821b-4712a7f25028@linaro.org>
+Date:   Thu, 22 Nov 2018 14:07:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c5162122-0519-4cf0-78cc-08d6507b40c1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Nov 2018 13:06:01.6343
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4224
+In-Reply-To: <5e09bc13-7880-40f2-3f90-01d2cc3510ba@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->-----Original Message-----
->From: David Miller <davem@davemloft.net>
->Sent: Thursday, November 22, 2018 2:21 AM
->To: Claudiu Manoil <claudiu.manoil@nxp.com>
->Cc: netdev@vger.kernel.org; linux-kernel@vger.kernel.org; Alexandru
->Marginean <alexandru.marginean@nxp.com>; Catalin Horghidan
-><catalin.horghidan@nxp.com>
->Subject: Re: [PATCH net-next v2 1/4] enetc: Introduce basic PF and VF ENET=
-C
->ethernet drivers
->
->From: Claudiu Manoil <claudiu.manoil@nxp.com>
->Date: Tue, 20 Nov 2018 20:15:31 +0200
->
->> diff --git a/drivers/net/ethernet/freescale/Makefile
->b/drivers/net/ethernet/freescale/Makefile
->> index 3b4ff08..20e5c2f9 100644
->> --- a/drivers/net/ethernet/freescale/Makefile
->> +++ b/drivers/net/ethernet/freescale/Makefile
->> @@ -23,3 +23,4 @@ obj-$(CONFIG_FSL_FMAN) +=3D fman/
->>  obj-$(CONFIG_FSL_DPAA_ETH) +=3D dpaa/
+On 22/11/2018 08:10, Wei Ni wrote:
+> 
+> 
+> On 21/11/2018 8:51 PM, Daniel Lezcano wrote:
+>> On 21/11/2018 11:23, Wei Ni wrote:
+>>>
+>>>
+>>> On 21/11/2018 4:55 PM, Daniel Lezcano wrote:
+>>>> On 13/11/2018 11:06, Wei Ni wrote:
+>>>>> Don't bail when a sensor fails to register with the
+>>>>> thermal zone and allow other sensors to register.
+>>>>> This allows other sensors to register with thermal
+>>>>> framework even if one sensor fails registration.
+>>>>
+>>>> I'm not sure if ignoring the error is really safe. Can you describe the
+>>>> real situation you want to overcome ? How do you differentiate critical
+>>>> sensors ?
+>>>
+>>> The driver will always try to register 4 thermal zones, including cpu,
+>>> gpu, mem and pll, but if the dts file doesn't set the corresponding
+>>> sensors, then the register will be failed.
+>>> Normally, the dts file will set all 4 sensors, but there may have some
+>>> platform doesn't support them all. So we post this patch.
 >>
->>  obj-$(CONFIG_FSL_DPAA2_ETH) +=3D dpaa2/
->> +obj-$(CONFIG_NET_VENDOR_FREESCALE) +=3D enetc/
->
->The driver enable Kconfig option should guard traversing into the
->driver subdirectory, not the vendor enable Kconfig knob.
+>> Ignoring errors is not the way to go to support different platforms. Fix
+>> the DT.
+> 
+> The issue isn't in DT file. The Tegra soc thermal include 4 sensors:
+> cpu, gpu, mem, pll. But in some platforms, for example, we may only need
+> to support 2 sensors, such as cpu and gpu, so we only configure these
+> two senors in DT file. But the driver will always try to register 4
+> sensors, cpu/gpu/mem/pll, so mem and pll will be registered failed. So
+> in this case we need to ignoring the failure, and continue to enable the
+> driver.
 
-The enetc/ dir contains 2 drivers, that share a lot of common code.
-Would you agree if I change the vendor enable with the two configs
-(one for each driver) as below?
+You can fix this by changing the driver to support the platform and
+register the sensor you are interested in.
 
--obj-$(CONFIG_NET_VENDOR_FREESCALE) +=3D enetc/
-+obj-$(CONFIG_FSL_ENETC) +=3D enetc/
-+obj-$(CONFIG_FSL_ENETC_VF) +=3D enetc/
+Ignoring errors is not a good idea.
 
-Thanks,
-Claudiu
+
+>>> BTW, what do you mean "critical sensors"? We will set critical trip temp
+>>> for all sensors.
+>>
+>> I meant sensor for thermal zone getting really high temperature.
+> 
+> We doesn't have the critical sensors. We set the critical trip temp for
+> all registered sensors. And these trip temp is set to the Tegra
+> hardware. So it mean if the temperature reached the critical trip point,
+> then the system will be shutdown directly.
+> 
+>>
+>>
+>>>>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>>>>> ---
+>>>>>  drivers/thermal/tegra/soctherm.c | 8 +++++---
+>>>>>  1 file changed, 5 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+>>>>> index ed28110a3535..a824d2e63af3 100644
+>>>>> --- a/drivers/thermal/tegra/soctherm.c
+>>>>> +++ b/drivers/thermal/tegra/soctherm.c
+>>>>> @@ -1370,9 +1370,9 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+>>>>>  							 &tegra_of_thermal_ops);
+>>>>>  		if (IS_ERR(z)) {
+>>>>>  			err = PTR_ERR(z);
+>>>>> -			dev_err(&pdev->dev, "failed to register sensor: %d\n",
+>>>>> -				err);
+>>>>> -			goto disable_clocks;
+>>>>> +			dev_warn(&pdev->dev, "failed to register sensor %s: %d\n",
+>>>>> +				 soc->ttgs[i]->name, err);
+>>>>> +			continue;
+>>>>>  		}
+>>>>>  
+>>>>>  		zone->tz = z;
+>>>>> @@ -1434,6 +1434,8 @@ static int __maybe_unused soctherm_resume(struct device *dev)
+>>>>>  		struct thermal_zone_device *tz;
+>>>>>  
+>>>>>  		tz = tegra->thermctl_tzs[soc->ttgs[i]->id];
+>>>>> +		if (!tz)
+>>>>> +			continue;
+>>>>>  		err = tegra_soctherm_set_hwtrips(dev, soc->ttgs[i], tz);
+>>>>>  		if (err) {
+>>>>>  			dev_err(&pdev->dev,
+>>>>>
+>>>>
+>>>>
+>>
+>>
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
