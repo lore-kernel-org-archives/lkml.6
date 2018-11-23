@@ -2,122 +2,229 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C604C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:12:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B08C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:13:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F02B8206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:12:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JIp06AE1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F02B8206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CF2FA206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:13:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF2FA206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408357AbeKWS4C (ORCPT
+        id S2408387AbeKWS4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 13:56:02 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35907 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390293AbeKWS4B (ORCPT
+        Fri, 23 Nov 2018 13:56:20 -0500
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:51533 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390293AbeKWS4T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 13:56:01 -0500
-Received: by mail-lj1-f194.google.com with SMTP id g11-v6so9942072ljk.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 00:12:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=6QQ5eiXvfq10kYfUEC3g1FBwuRlBaRNfIcAqrwWpjMY=;
-        b=JIp06AE1Nh8cTWQSsNSwNawAl4xyegk0wTHPlhsC4tUn811OVnON6J3ynHkSEcUBJb
-         wPq2s3Ot6Wsu5twPGYmuiTQa4IYBbA34zsgg0DWDT2a4bvUzSKlWVQs4JDNqa1BvqEkJ
-         uH0xc9Da6qEakWQQ9jjKkuXg9iXKDUMmWi9eM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=6QQ5eiXvfq10kYfUEC3g1FBwuRlBaRNfIcAqrwWpjMY=;
-        b=fT4LSA+6AGTdCywNPqiic+3Wm9tPEAMfu4ZoYWLl0/+acUOkrsFXPNG+Q597R3osgr
-         PQa9nC8wSfAyERl6UCGRLrOF7TLPxofzncSX/SySF/iBdGzm6N+XbWpzoD5/FodTXmPA
-         4QzezPWT8vdfnTFO0ORl8TST9E+xWEfouDPsY4PgGChtq63kJxUV4YdC63551Xwk/rDC
-         Cm5+hY2QtH0DP/5ol2MKB34s0SR1qYybu31Mxa3PsknDXF5X7sH/qy6Bu9zB3/piRdtz
-         2D8c6dXhGiHPx6vtWHVcfBeHb0UMdi51byWKQeG21N4vlC3P5Aqp0lEbFiUTHq2YAS7D
-         hl8w==
-X-Gm-Message-State: AA+aEWbxeX6nqAm60P1trOkzCsj089epvBrpRMeZWvdWPgwPUz3oPB5x
-        iUj+EgSM5MqaK9iBPLhhbG+hn+7Z0VFJhxvaNegG4A==
-X-Google-Smtp-Source: AFSGD/UVZtU7uSVpJdH9M5SmqRboTdVIRf1/dIFnr3bhHIhUXIp0FcHTNQhKGrhJK4+ekQXq1TyNQn6Wte4i7KFN8rI=
-X-Received: by 2002:a2e:9e03:: with SMTP id e3-v6mr9135727ljk.4.1542960770688;
- Fri, 23 Nov 2018 00:12:50 -0800 (PST)
+        Fri, 23 Nov 2018 13:56:19 -0500
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 2F28C2001C;
+        Fri, 23 Nov 2018 08:13:01 +0000 (UTC)
+Date:   Fri, 23 Nov 2018 09:13:00 +0100
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Yong <yong.deng@magewell.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH v12 1/2] dt-bindings: media: Add Allwinner V3s Camera
+ Sensor Interface (CSI)
+Message-ID: <20181123081300.GC6788@w540>
+References: <1540887143-27904-1-git-send-email-yong.deng@magewell.com>
+ <308184907.pMD7ZDI2dr@avalon>
+ <20181123074514.GB6788@w540>
+ <20181123160117.7eed41aac3e7e31e4e6d98be@magewell.com>
 MIME-Version: 1.0
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 23 Nov 2018 09:12:38 +0100
-Message-ID: <CACRpkdYEtBRi7qcLtL602qE3fe6+eaYAH_Nw+25NsaL0EebOiQ@mail.gmail.com>
-Subject: [GIT PULL] GPIO fixes for the v4.20 series
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="y2zxS2PfCDLh6JVG"
+Content-Disposition: inline
+In-Reply-To: <20181123160117.7eed41aac3e7e31e4e6d98be@magewell.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
 
-here are a few collected GPIO fixes for the v4.20 series.
-Minor stuff except the IDA leak which was kind of important
-to fix. Also new maintainers, yay.
+--y2zxS2PfCDLh6JVG
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Please pull it in!
+Hi Yong,
 
-Yours,
-Linus Walleij
+On Fri, Nov 23, 2018 at 04:01:17PM +0800, Yong wrote:
+> Hi jacopo,
+>
+> On Fri, 23 Nov 2018 08:45:14 +0100
+> jacopo mondi <jacopo@jmondi.org> wrote:
+>
+> > Hi Yong,
+> >
+> > On Tue, Oct 30, 2018 at 03:06:24PM +0200, Laurent Pinchart wrote:
+> > > Hi Yong,
+> > >
+> > > Thank you for the patch.
+> > >
+> > > On Tuesday, 30 October 2018 10:12:23 EET Yong Deng wrote:
+> > > > Add binding documentation for Allwinner V3s CSI.
+> > > >
+> > > > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > > > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > > Signed-off-by: Yong Deng <yong.deng@magewell.com>
+> > >
+> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > >
+> > > > ---
+> > > >  .../devicetree/bindings/media/sun6i-csi.txt        | 56 +++++++++++++++++++
+> > > >  1 file changed, 56 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt
+> > > > b/Documentation/devicetree/bindings/media/sun6i-csi.txt new file mode
+> > > > 100644
+> > > > index 000000000000..443e18c181b3
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
+> > > > @@ -0,0 +1,56 @@
+> > > > +Allwinner V3s Camera Sensor Interface
+> > > > +-------------------------------------
+> > > > +
+> > > > +Allwinner V3s SoC features a CSI module(CSI1) with parallel interface.
+> > > > +
+> > > > +Required properties:
+> > > > +  - compatible: value must be "allwinner,sun8i-v3s-csi"
+> > > > +  - reg: base address and size of the memory-mapped region.
+> > > > +  - interrupts: interrupt associated to this IP
+> > > > +  - clocks: phandles to the clocks feeding the CSI
+> > > > +    * bus: the CSI interface clock
+> > > > +    * mod: the CSI module clock
+> > > > +    * ram: the CSI DRAM clock
+> > > > +  - clock-names: the clock names mentioned above
+> > > > +  - resets: phandles to the reset line driving the CSI
+> > > > +
+> > > > +The CSI node should contain one 'port' child node with one child 'endpoint'
+> > > > +node, according to the bindings defined in
+> > > > +Documentation/devicetree/bindings/media/video-interfaces.txt.
+> > > > +
+> > > > +Endpoint node properties for CSI
+> > > > +---------------------------------
+> > > > +See the video-interfaces.txt for a detailed description of these
+> > > > properties. +- remote-endpoint	: (required) a phandle to the bus receiver's
+> > > > endpoint +			   node
+> > > > +- bus-width:		: (required) must be 8, 10, 12 or 16
+> > > > +- pclk-sample		: (optional) (default: sample on falling edge)
+> > > > +- hsync-active		: (required; parallel-only)
+> > > > +- vsync-active		: (required; parallel-only)
+> > > > +
+> > > > +Example:
+> > > > +
+> > > > +csi1: csi@1cb4000 {
+> > > > +	compatible = "allwinner,sun8i-v3s-csi";
+> > > > +	reg = <0x01cb4000 0x1000>;
+> > > > +	interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
+> > > > +	clocks = <&ccu CLK_BUS_CSI>,
+> > > > +		 <&ccu CLK_CSI1_SCLK>,
+> > > > +		 <&ccu CLK_DRAM_CSI>;
+> > > > +	clock-names = "bus", "mod", "ram";
+> > > > +	resets = <&ccu RST_BUS_CSI>;
+> > > > +
+> > > > +	port {
+> > > > +		/* Parallel bus endpoint */
+> > > > +		csi1_ep: endpoint {
+> > > > +			remote-endpoint = <&adv7611_ep>;
+> > > > +			bus-width = <16>;
+> > > > +
+> > > > +			/* If hsync-active/vsync-active are missing,
+> > > > +			   embedded BT.656 sync is used */
+> >
+> > Am I confused? The properties description defines [v|h]sync-active as
+> > required, but the example reports that they can be omitted to use
+> > BT.656 synchronization.
+> >
+> > Which one of the following is correct?
+> > 1) [h|v]sync-active are mandatory: no BT.656 support can be selected.
+> > 2) [h|v]sync-active are optional, and if not specified BT.656 is
+> >    selected.
+> > 3) I am confused.
+> >
+>
+> hsync-active		: (required; parallel-only)
+> vsync-active		: (required; parallel-only)
+>
+> Here, parallel means seperate sync signal, BT.656 means embedded sync
+> signal. Kernel use these two properties to detect if the bus type is
+> parallel or Bt656. So [h|v]sync-active are mandatory only if your bus
+> type is parallel and must not be specified if your bus type is Bt656.
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+Well, BT.565 sync mode applies to parallel data transmission busses as
+BT.601 sync mode does... I don't want to bikeshed on terms though, I'm
+sorry...
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+I would have write here:
 
-are available in the Git repository at:
+hsync-active		: Required when using explicit HSYNC synchronism
+                          signal. Default valuse is "high"/"low".
+vsync-active		: Required when using explicit VSYNC synchronism
+                          signal. Default valuse is "high"/"low".
+When both vsync-active and hsync-active are omitted BT.565 implicit
+synchronization mode is used.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.20-2
+To avoid confusing people already confused as I am :)
 
-for you to fetch changes up to 10547d956d590fbb846a7bd053a1dfc30e8f9a68:
+I got this patch is already in, right? Feel free to ignore my comment or
+either send an incremental patch if you think it is appropriate.
 
-  MAINTAINERS: Do maintain Intel GPIO drivers via separate tree
-(2018-11-16 23:06:51 +0100)
+Thanks
+  j
 
-----------------------------------------------------------------
-GPIO fixes for the v4.20 series:
+> Thanks,
+> Yong
 
-- Do not lose an IDA on the gpiochip register errorpath.
+--y2zxS2PfCDLh6JVG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-- Fix the PXA non-pincontrol GPIO-using platforms.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-- Fix the direction on the mockup GPIO driver.
+iQIcBAABCAAGBQJb97aMAAoJEHI0Bo8WoVY8oQIP/j+gd5kc5HL3Ivb0Vl3Ktb90
+lqsCvDsouLqcTf14FY4okYTwpUciIt9YKI4Jt6AcrVr0qWbyKiicSlaLkd+aJp80
+kq+PtKrpWQXBOpXzlujXVowi9+/trJ7M2rMLqRwFN6cFnA4agGTMys/m4lQAusJT
+sQH/gclBD18tAyllflM3xmGfgjvvZZbZuZ/8Y4z7fC1kpllAeMLdCOnWBR1IVdBe
+Bfm8HFCQCLSo0uq94eqGRzKnxRUcJ8TND2tZNa9nAtOXkxB0BnvnfycHxNTLJi09
+Dx7MFa6Y64ydl+JAp6beJs2JaU9Eb3jLAAH3jPVQtvH2GdRRiGuvSarNXGsyls27
+2UjBjTT8dck4JbZEQIpSPrdWUYcTp1iMTfX+wvpQDA61MQ17blaTSSdYh0FTV7z+
+CO1/8SN3thaUTFA8jBIF6S87XUPlWcJI5SU9RGNegUdHbZHLVR6jfxzyk9pSe8tJ
+bBVkR4v55au5/tHFOxye50u+yrRBxDkZzGi2BA8XPDjBRn9kvKEmXWIxKO6F3dRf
+pSYrXCsWTLbqnTzn5OA+y7zUKolybwjawskG8Q/kynTqMD15yXo2tEBieZkJc9zq
+3PyGM8Jwovw87PtFaBeBmLXlhycEt4BhFJBf/yZ+NfP81hEsJXs0a0LoT9dSt6h9
+uXPNoJh8cG9qtmWtjuxU
+=aYBN
+-----END PGP SIGNATURE-----
 
-- Add some MAINTAINERS stuff: Bartosz stepped up as GPIO
-  co-maintainer, and Andy established an Intel git tree.
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      MAINTAINERS: Do maintain Intel GPIO drivers via separate tree
-
-Bartosz Golaszewski (2):
-      MAINTAINERS: add myself as co-maintainer of gpiolib
-      gpio: mockup: fix indicated direction
-
-Robert Jarzmik (1):
-      gpio: pxa: fix legacy non pinctrl aware builds again
-
-Vladimir Zapolskiy (1):
-      gpio: don't free unallocated ida on gpiochip_add_data_with_key()
-error path
-
- MAINTAINERS                | 34 ++++++++++++++++++++++------------
- drivers/gpio/gpio-mockup.c |  6 +++---
- drivers/gpio/gpio-pxa.c    |  4 ++--
- drivers/gpio/gpiolib.c     |  5 +++--
- 4 files changed, 30 insertions(+), 19 deletions(-)
+--y2zxS2PfCDLh6JVG--
