@@ -2,156 +2,1110 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17943C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAABC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6ABB20672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:03:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E41220672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:03:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PMGLIOJ1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6ABB20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Sm296CGU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E41220672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504084AbeKWWrL (ORCPT
+        id S2504012AbeKWWqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 17:47:11 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43518 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388025AbeKWWrK (ORCPT
+        Fri, 23 Nov 2018 17:46:43 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34683 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503967AbeKWWqm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 17:47:10 -0500
-Received: by mail-pg1-f195.google.com with SMTP id v28so3003457pgk.10
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 04:03:13 -0800 (PST)
+        Fri, 23 Nov 2018 17:46:42 -0500
+Received: by mail-wr1-f68.google.com with SMTP id j2so12126712wrw.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 04:02:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gXp7B0C6OpQdpsPvWbXiKDMl2kXbdFO+2j6/Vh1h1zQ=;
-        b=PMGLIOJ14XlNaOFEUpQp809l2Ya5ujEEz2G++FfOHb104/aSu+GA488umDIQUOaZE6
-         4Mc9499elPZHjkE7k1Svd3VAxlIPaV+wsD1fGfiZuocq6vCYciVCf489x7+vU3T5YcDb
-         4dWCFgQserVGVgd6tmR0d/It//4h5wShWqwdYrRMcjfcW7B8/82EmB1vNFhf3SKBGHdT
-         Ym34cFT9DQNs0EzDHxk9szuGfM33lDIXRMdfij4mAxUrGDjn3V1h5NegB2qu6gholYgX
-         sQUPix1pgQngQZBPy9OGEeA5bihKmo6cTOctHGpew3LKR5X/R4iwh5Y2bp7ToO0hyNey
-         3iug==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=bhhcyWoUZtfz46NZflsbxE3CZGDggfn0BmAI471+BNQ=;
+        b=Sm296CGUrd09WRhKqGXV87B9qS8sBA18rx/HzUyPZduYvzQ7tukaDPPtx/87jRHrAT
+         tJlIPVzbRj5hHcJntGuOIyWNNu8V8nQnIoGSf+bIQWlPjdP/2v1H5GpT4csXk0YoYs5H
+         9GE1F3VHdj8XzWvWiKA7JKnUyngoTKk3VFCgrIqabrlyNauzo1px4I3aG+vxu4liSPsg
+         jL+fr63eIicd8Picogw6avWKiEdKq0DUwj8h1og+EzBpDI7aAKPaczany/nBK+r5b0Ex
+         bscPP/GUOAJPeE0yaYQb/a3gjcKV+Yx//SsJjfFlHbkzAYKYGfi1gTlQTtFYgJYBdjIh
+         6xeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gXp7B0C6OpQdpsPvWbXiKDMl2kXbdFO+2j6/Vh1h1zQ=;
-        b=mHL+Tdi8Hfos5zUN008frxSbTYvySFn//A8nErjuOMo3/zaQ83a6VKQZbx13ftOMbz
-         VR6eBrZHWJm4wuWLuuT/ojNwS7v0DR1kDDzqZ8FhpFpSBMDTSiB+Z+ApDh2hHiiHZUCv
-         BCw2f0mlCy8+nDYlWqcrW0pD3G9W4+pm41orczQGQKtLKsQ6nbOHxz/q98JAXq1Y4nF3
-         8StSgz0dLYbg0v8XXRJo5Q6XfdxUCnLaNzsRwyO6XZtn8qyX+dgSPC6kCI/1Ds3guxRX
-         4gVG3CI5Evi4Ung137VuAxIwA4PSCHTTcZy9p7GXSJIpSa4Y8vQMtAuSQnlt2/vt8FKe
-         hM9g==
-X-Gm-Message-State: AGRZ1gJ3fuNKQ8/yTNFdoUjr18Iw5wigMzkTlO9RLJ5bscv2XbwizZ6Z
-        0jlq8oWJCNIt/8ARqcV5ex8=
-X-Google-Smtp-Source: AJdET5cUhfDgL6xyPJUU24Qrs1/6TLylYVzq5St5X/B0HprcXS2rImnY/EPlwTRqSXqk/f0vhb6BeQ==
-X-Received: by 2002:a62:e501:: with SMTP id n1-v6mr15591095pff.71.1542974592844;
-        Fri, 23 Nov 2018 04:03:12 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id v70sm18248692pfa.152.2018.11.23.04.03.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Nov 2018 04:03:12 -0800 (PST)
-Subject: Re: [PATCH 2/7] mfd / platform: cros_ec: move lightbar attributes to
- its own driver.
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     lee.jones@linaro.org, gwendal@chromium.org, drinkcat@chromium.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, bleung@chromium.org,
-        Olof Johansson <olof@lixom.net>
-References: <20181122113356.23610-1-enric.balletbo@collabora.com>
- <20181122113356.23610-3-enric.balletbo@collabora.com>
- <20181122174151.GA30386@roeck-us.net>
- <2c70235f-8f10-de5f-7df5-21104fd371c4@collabora.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <2ca66046-b5eb-6c3a-3559-a12dd869ebbf@roeck-us.net>
-Date:   Fri, 23 Nov 2018 04:03:10 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <2c70235f-8f10-de5f-7df5-21104fd371c4@collabora.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=bhhcyWoUZtfz46NZflsbxE3CZGDggfn0BmAI471+BNQ=;
+        b=R97mBRg6iW8IqoMg+cuEKjrQB81CZyMQyeaX7iDcHICXzaKJJguITYDnPz15gCKzVV
+         SB0i6zyOjVsUmYtREijx/AHXxyztvaMoVIiGW+QPVxEtF66BBqyX/2nYxIVBLGvEESra
+         F7CBKM2tGXqeApIyjbJHE//GkdraFnWsC0tXizwqSvusjwZz2u2CEB/WXXmCOmjdGnL+
+         Ut1EHQOKn+3gYHb9sn8kzN1tw26JEfOEudLmO/5kML52pqNNU3B+PV9Bs+JNVKnD743b
+         HPNd0/NYMnpsisMlMWEtQ1a507W3lCZeQLZvzK81Q2kl4Flsr9L6gSLLln1ZsTnsja28
+         DGvw==
+X-Gm-Message-State: AA+aEWa1Ua7quh8gP8bRDSbKz36BK9E0Mh27EwMaAoC70M0eYOldxasE
+        5fjeGL/tEV1xwEehNe2hJ3BH/A==
+X-Google-Smtp-Source: AFSGD/Uo6FDKbqdpvH1FjXhSiBuAdDwCc1xIA2Cj0ENRLx31YzbI1xqVUzFagsARUBzQlclW3GOLJA==
+X-Received: by 2002:a5d:6710:: with SMTP id o16mr14003996wru.152.1542974562321;
+        Fri, 23 Nov 2018 04:02:42 -0800 (PST)
+Received: from localhost.localdomain ([51.15.160.169])
+        by smtp.googlemail.com with ESMTPSA id a18sm25164379wrp.13.2018.11.23.04.02.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 23 Nov 2018 04:02:40 -0800 (PST)
+From:   Corentin Labbe <clabbe@baylibre.com>
+To:     davem@davemloft.net, ebiggers@kernel.org,
+        herbert@gondor.apana.org.au, nhorman@tuxdriver.com
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH v4 06/11] crypto: crypto_user_stat: fix use_after_free of struct xxx_request
+Date:   Fri, 23 Nov 2018 12:02:16 +0000
+Message-Id: <1542974541-23024-7-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1542974541-23024-1-git-send-email-clabbe@baylibre.com>
+References: <1542974541-23024-1-git-send-email-clabbe@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/23/18 3:52 AM, Enric Balletbo i Serra wrote:
-> Hi Guenter,
-> 
-> On 22/11/18 18:41, Guenter Roeck wrote:
->> Hi Enric,
->>
->> On Thu, Nov 22, 2018 at 12:33:51PM +0100, Enric Balletbo i Serra wrote:
->>> The entire way how cros sysfs attibutes are created is broken.
->>> cros_ec_lightbar should be its own driver and its attributes should be
->>> associated with a lightbar driver not the mfd driver. In order to retain
->>> the path, the lightbar attributes are attached to the cros_class.
->>>
->>> The patch also adds the sysfs documentation.
->>>
->>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->>> ---
->>>
->> ...
->>>   
->>> +int cros_ec_attach_attribute_group(struct cros_ec_dev *ec,
->>> +				   struct attribute_group *attrs)
->>> +{
->>> +	return sysfs_create_group(&ec->class_dev.kobj, attrs);
->>> +}
->>> +EXPORT_SYMBOL(cros_ec_attach_attribute_group);
->>> +
->>> +void cros_ec_detach_attribute_group(struct cros_ec_dev *ec,
->>> +				    struct attribute_group *attrs)
->>> +{
->>> +	sysfs_remove_group(&ec->class_dev.kobj, attrs);
->>> +}
->>> +EXPORT_SYMBOL(cros_ec_detach_attribute_group);
->>> +
->>
->> Are those two functions necessary ? Why not just call sysfs_create_group
->> and sysfs_remove_group directly from the calling code ?
->>
-> 
-> Actually we have cros_ec_dev which registers the cros_ec class, and sysfs/vbc
-> and lightbar using this cros_ec class. I had problems unloading the different
-> modules. For example, when I removed cros_ec_dev modules before
-> cros_ec_sysfs/cros_ec_vbc/cros_ec_lightbar I got a hang.
-> 
-> To solve the hang I did the easy solution that is make these drivers depend on
-> cros_ec_dev so you're not able to unload cros_ec_dev if first you don't unload
-> the sysfs/vbc/lightbar.
-> 
+All crypto_stats functions use the struct xxx_request for feeding stats,
+but in some case this structure could already be freed.
 
-That seems like a side effect of the callbacks, which may increase the use count
-of cros_ec_dev. If the lack of these callbacks causes problems, we should identify
-the root cause and fix it, and not depend on side effects of a callback.
+For fixing this, the needed parameters (len and alg) will be stored
+before the request being executed.
+Fixes: cac5818c25d0 ("crypto: user - Implement a generic crypto statistics")
+Reported-by: syzbot <syzbot+6939a606a5305e9e9799@syzkaller.appspotmail.com>
 
-Thanks,
-Guenter
+Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+---
+ crypto/ahash.c             |  17 ++-
+ crypto/algapi.c            | 285 +++++++++++++++++++++++++++++++++++++
+ crypto/rng.c               |   4 +-
+ include/crypto/acompress.h |  38 ++---
+ include/crypto/aead.h      |  38 ++---
+ include/crypto/akcipher.h  |  74 ++--------
+ include/crypto/hash.h      |  32 +----
+ include/crypto/kpp.h       |  48 ++-----
+ include/crypto/rng.h       |  27 +---
+ include/crypto/skcipher.h  |  36 ++---
+ include/linux/crypto.h     |  63 ++++----
+ 11 files changed, 386 insertions(+), 276 deletions(-)
 
-> Thinking again about it, I don't really understand now why failed in the first
-> place, cros_ec_dev is the parent, so, on remove should call mfd_remove_devices
-> for the subdevices.
-> 
-> So, let me check again this and I'll back to you.
-> 
-> Thanks,
->   Enric
-> 
-> 
->> Thanks,
->> Guenter
->>
-> 
+diff --git a/crypto/ahash.c b/crypto/ahash.c
+index 3a348fbcf8f9..5d320a811f75 100644
+--- a/crypto/ahash.c
++++ b/crypto/ahash.c
+@@ -364,20 +364,28 @@ static int crypto_ahash_op(struct ahash_request *req,
+ 
+ int crypto_ahash_final(struct ahash_request *req)
+ {
++	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
++	struct crypto_alg *alg = tfm->base.__crt_alg;
++	unsigned int nbytes = req->nbytes;
+ 	int ret;
+ 
++	crypto_stats_get(alg);
+ 	ret = crypto_ahash_op(req, crypto_ahash_reqtfm(req)->final);
+-	crypto_stat_ahash_final(req, ret);
++	crypto_stats_ahash_final(nbytes, ret, alg);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(crypto_ahash_final);
+ 
+ int crypto_ahash_finup(struct ahash_request *req)
+ {
++	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
++	struct crypto_alg *alg = tfm->base.__crt_alg;
++	unsigned int nbytes = req->nbytes;
+ 	int ret;
+ 
++	crypto_stats_get(alg);
+ 	ret = crypto_ahash_op(req, crypto_ahash_reqtfm(req)->finup);
+-	crypto_stat_ahash_final(req, ret);
++	crypto_stats_ahash_final(nbytes, ret, alg);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(crypto_ahash_finup);
+@@ -385,13 +393,16 @@ EXPORT_SYMBOL_GPL(crypto_ahash_finup);
+ int crypto_ahash_digest(struct ahash_request *req)
+ {
+ 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
++	struct crypto_alg *alg = tfm->base.__crt_alg;
++	unsigned int nbytes = req->nbytes;
+ 	int ret;
+ 
++	crypto_stats_get(alg);
+ 	if (crypto_ahash_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
+ 		ret = -ENOKEY;
+ 	else
+ 		ret = crypto_ahash_op(req, tfm->digest);
+-	crypto_stat_ahash_final(req, ret);
++	crypto_stats_ahash_final(nbytes, ret, alg);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(crypto_ahash_digest);
+diff --git a/crypto/algapi.c b/crypto/algapi.c
+index 42fe316f80ee..aae302d92c2a 100644
+--- a/crypto/algapi.c
++++ b/crypto/algapi.c
+@@ -1078,6 +1078,291 @@ int crypto_type_has_alg(const char *name, const struct crypto_type *frontend,
+ }
+ EXPORT_SYMBOL_GPL(crypto_type_has_alg);
+ 
++#ifdef CONFIG_CRYPTO_STATS
++void crypto_stats_get(struct crypto_alg *alg)
++{
++	crypto_alg_get(alg);
++}
++
++void crypto_stats_ablkcipher_encrypt(unsigned int nbytes, int ret,
++				     struct crypto_alg *alg)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
++		atomic64_inc(&alg->cipher_err_cnt);
++	} else {
++		atomic64_inc(&alg->encrypt_cnt);
++		atomic64_add(nbytes, &alg->encrypt_tlen);
++	}
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_ablkcipher_decrypt(unsigned int nbytes, int ret,
++				     struct crypto_alg *alg)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
++		atomic64_inc(&alg->cipher_err_cnt);
++	} else {
++		atomic64_inc(&alg->decrypt_cnt);
++		atomic64_add(nbytes, &alg->decrypt_tlen);
++	}
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_aead_encrypt(unsigned int cryptlen, struct crypto_alg *alg,
++			       int ret)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
++		atomic64_inc(&alg->aead_err_cnt);
++	} else {
++		atomic64_inc(&alg->encrypt_cnt);
++		atomic64_add(cryptlen, &alg->encrypt_tlen);
++	}
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_aead_decrypt(unsigned int cryptlen, struct crypto_alg *alg,
++			       int ret)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
++		atomic64_inc(&alg->aead_err_cnt);
++	} else {
++		atomic64_inc(&alg->decrypt_cnt);
++		atomic64_add(cryptlen, &alg->decrypt_tlen);
++	}
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_akcipher_encrypt(unsigned int src_len, int ret,
++				   struct crypto_alg *alg)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
++		atomic64_inc(&alg->akcipher_err_cnt);
++	} else {
++		atomic64_inc(&alg->encrypt_cnt);
++		atomic64_add(src_len, &alg->encrypt_tlen);
++	}
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_akcipher_decrypt(unsigned int src_len, int ret,
++				   struct crypto_alg *alg)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
++		atomic64_inc(&alg->akcipher_err_cnt);
++	} else {
++		atomic64_inc(&alg->decrypt_cnt);
++		atomic64_add(src_len, &alg->decrypt_tlen);
++	}
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_akcipher_sign(int ret, struct crypto_alg *alg)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY)
++		atomic64_inc(&alg->akcipher_err_cnt);
++	else
++		atomic64_inc(&alg->sign_cnt);
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_akcipher_verify(int ret, struct crypto_alg *alg)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY)
++		atomic64_inc(&alg->akcipher_err_cnt);
++	else
++		atomic64_inc(&alg->verify_cnt);
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_compress(unsigned int slen, int ret, struct crypto_alg *alg)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
++		atomic64_inc(&alg->compress_err_cnt);
++	} else {
++		atomic64_inc(&alg->compress_cnt);
++		atomic64_add(slen, &alg->compress_tlen);
++	}
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_decompress(unsigned int slen, int ret, struct crypto_alg *alg)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
++		atomic64_inc(&alg->compress_err_cnt);
++	} else {
++		atomic64_inc(&alg->decompress_cnt);
++		atomic64_add(slen, &alg->decompress_tlen);
++	}
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_ahash_update(unsigned int nbytes, int ret,
++			       struct crypto_alg *alg)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY)
++		atomic64_inc(&alg->hash_err_cnt);
++	else
++		atomic64_add(nbytes, &alg->hash_tlen);
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_ahash_final(unsigned int nbytes, int ret,
++			      struct crypto_alg *alg)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
++		atomic64_inc(&alg->hash_err_cnt);
++	} else {
++		atomic64_inc(&alg->hash_cnt);
++		atomic64_add(nbytes, &alg->hash_tlen);
++	}
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_kpp_set_secret(struct crypto_alg *alg, int ret)
++{
++	if (ret)
++		atomic64_inc(&alg->kpp_err_cnt);
++	else
++		atomic64_inc(&alg->setsecret_cnt);
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_kpp_generate_public_key(struct crypto_alg *alg, int ret)
++{
++	if (ret)
++		atomic64_inc(&alg->kpp_err_cnt);
++	else
++		atomic64_inc(&alg->generate_public_key_cnt);
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_kpp_compute_shared_secret(struct crypto_alg *alg, int ret)
++{
++	if (ret)
++		atomic64_inc(&alg->kpp_err_cnt);
++	else
++		atomic64_inc(&alg->compute_shared_secret_cnt);
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_rng_seed(struct crypto_alg *alg, int ret)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY)
++		atomic64_inc(&alg->rng_err_cnt);
++	else
++		atomic64_inc(&alg->seed_cnt);
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_rng_generate(struct crypto_alg *alg, unsigned int dlen,
++			       int ret)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
++		atomic64_inc(&alg->rng_err_cnt);
++	} else {
++		atomic64_inc(&alg->generate_cnt);
++		atomic64_add(dlen, &alg->generate_tlen);
++	}
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_skcipher_encrypt(unsigned int cryptlen, int ret,
++				   struct crypto_alg *alg)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
++		atomic64_inc(&alg->cipher_err_cnt);
++	} else {
++		atomic64_inc(&alg->encrypt_cnt);
++		atomic64_add(cryptlen, &alg->encrypt_tlen);
++	}
++	crypto_alg_put(alg);
++}
++
++void crypto_stats_skcipher_decrypt(unsigned int cryptlen, int ret,
++				   struct crypto_alg *alg)
++{
++	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
++		atomic64_inc(&alg->cipher_err_cnt);
++	} else {
++		atomic64_inc(&alg->decrypt_cnt);
++		atomic64_add(cryptlen, &alg->decrypt_tlen);
++	}
++	crypto_alg_put(alg);
++}
++#else
++void crypto_stats_get(struct crypto_alg *alg)
++{}
++void crypto_stats_ablkcipher_encrypt(unsigned int nbytes, int ret,
++				     struct crypto_alg *alg)
++{}
++void crypto_stats_ablkcipher_decrypt(unsigned int nbytes, int ret,
++				     struct crypto_alg *alg)
++{}
++void crypto_stats_aead_encrypt(unsigned int cryptlen, struct crypto_alg *alg,
++			       int ret)
++{}
++void crypto_stats_aead_decrypt(unsigned int cryptlen, struct crypto_alg *alg,
++			       int ret)
++{}
++void crypto_stats_ahash_update(unsigned int nbytes, int ret,
++			       struct crypto_alg *alg)
++{}
++void crypto_stats_ahash_final(unsigned int nbytes, int ret,
++			      struct crypto_alg *alg)
++{}
++void crypto_stats_akcipher_encrypt(unsigned int src_len, int ret,
++				   struct crypto_alg *alg)
++{}
++void crypto_stats_akcipher_decrypt(unsigned int src_len, int ret,
++				   struct crypto_alg *alg)
++{}
++void crypto_stats_akcipher_sign(int ret, struct crypto_alg *alg)
++{}
++void crypto_stats_akcipher_verify(int ret, struct crypto_alg *alg)
++{}
++void crypto_stats_compress(unsigned int slen, int ret, struct crypto_alg *alg)
++{}
++void crypto_stats_decompress(unsigned int slen, int ret, struct crypto_alg *alg)
++{}
++void crypto_stats_kpp_set_secret(struct crypto_alg *alg, int ret)
++{}
++void crypto_stats_kpp_generate_public_key(struct crypto_alg *alg, int ret)
++{}
++void crypto_stats_kpp_compute_shared_secret(struct crypto_alg *alg, int ret)
++{}
++void crypto_stats_rng_seed(struct crypto_alg *alg, int ret)
++{}
++void crypto_stats_rng_generate(struct crypto_alg *alg, unsigned int dlen,
++			       int ret)
++{}
++void crypto_stats_skcipher_encrypt(unsigned int cryptlen, int ret,
++				   struct crypto_alg *alg)
++{}
++void crypto_stats_skcipher_decrypt(unsigned int cryptlen, int ret,
++				   struct crypto_alg *alg)
++{}
++#endif
++EXPORT_SYMBOL_GPL(crypto_stats_get);
++EXPORT_SYMBOL_GPL(crypto_stats_ablkcipher_encrypt);
++EXPORT_SYMBOL_GPL(crypto_stats_ablkcipher_decrypt);
++EXPORT_SYMBOL_GPL(crypto_stats_aead_encrypt);
++EXPORT_SYMBOL_GPL(crypto_stats_aead_decrypt);
++EXPORT_SYMBOL_GPL(crypto_stats_ahash_update);
++EXPORT_SYMBOL_GPL(crypto_stats_ahash_final);
++EXPORT_SYMBOL_GPL(crypto_stats_akcipher_encrypt);
++EXPORT_SYMBOL_GPL(crypto_stats_akcipher_decrypt);
++EXPORT_SYMBOL_GPL(crypto_stats_akcipher_sign);
++EXPORT_SYMBOL_GPL(crypto_stats_akcipher_verify);
++EXPORT_SYMBOL_GPL(crypto_stats_compress);
++EXPORT_SYMBOL_GPL(crypto_stats_decompress);
++EXPORT_SYMBOL_GPL(crypto_stats_kpp_set_secret);
++EXPORT_SYMBOL_GPL(crypto_stats_kpp_generate_public_key);
++EXPORT_SYMBOL_GPL(crypto_stats_kpp_compute_shared_secret);
++EXPORT_SYMBOL_GPL(crypto_stats_rng_generate);
++EXPORT_SYMBOL_GPL(crypto_stats_rng_seed);
++EXPORT_SYMBOL_GPL(crypto_stats_skcipher_encrypt);
++EXPORT_SYMBOL_GPL(crypto_stats_skcipher_decrypt);
++
+ static int __init crypto_algapi_init(void)
+ {
+ 	crypto_init_proc();
+diff --git a/crypto/rng.c b/crypto/rng.c
+index 2406501b90b7..33c38a72bff5 100644
+--- a/crypto/rng.c
++++ b/crypto/rng.c
+@@ -35,9 +35,11 @@ static int crypto_default_rng_refcnt;
+ 
+ int crypto_rng_reset(struct crypto_rng *tfm, const u8 *seed, unsigned int slen)
+ {
++	struct crypto_alg *alg = tfm->base.__crt_alg;
+ 	u8 *buf = NULL;
+ 	int err;
+ 
++	crypto_stats_get(alg);
+ 	if (!seed && slen) {
+ 		buf = kmalloc(slen, GFP_KERNEL);
+ 		if (!buf)
+@@ -50,7 +52,7 @@ int crypto_rng_reset(struct crypto_rng *tfm, const u8 *seed, unsigned int slen)
+ 	}
+ 
+ 	err = crypto_rng_alg(tfm)->seed(tfm, seed, slen);
+-	crypto_stat_rng_seed(tfm, err);
++	crypto_stats_rng_seed(alg, err);
+ out:
+ 	kzfree(buf);
+ 	return err;
+diff --git a/include/crypto/acompress.h b/include/crypto/acompress.h
+index f79918196811..a3e766dff917 100644
+--- a/include/crypto/acompress.h
++++ b/include/crypto/acompress.h
+@@ -234,34 +234,6 @@ static inline void acomp_request_set_params(struct acomp_req *req,
+ 		req->flags |= CRYPTO_ACOMP_ALLOC_OUTPUT;
+ }
+ 
+-static inline void crypto_stat_compress(struct acomp_req *req, int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	struct crypto_acomp *tfm = crypto_acomp_reqtfm(req);
+-
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
+-		atomic64_inc(&tfm->base.__crt_alg->compress_err_cnt);
+-	} else {
+-		atomic64_inc(&tfm->base.__crt_alg->compress_cnt);
+-		atomic64_add(req->slen, &tfm->base.__crt_alg->compress_tlen);
+-	}
+-#endif
+-}
+-
+-static inline void crypto_stat_decompress(struct acomp_req *req, int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	struct crypto_acomp *tfm = crypto_acomp_reqtfm(req);
+-
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
+-		atomic64_inc(&tfm->base.__crt_alg->compress_err_cnt);
+-	} else {
+-		atomic64_inc(&tfm->base.__crt_alg->decompress_cnt);
+-		atomic64_add(req->slen, &tfm->base.__crt_alg->decompress_tlen);
+-	}
+-#endif
+-}
+-
+ /**
+  * crypto_acomp_compress() -- Invoke asynchronous compress operation
+  *
+@@ -274,10 +246,13 @@ static inline void crypto_stat_decompress(struct acomp_req *req, int ret)
+ static inline int crypto_acomp_compress(struct acomp_req *req)
+ {
+ 	struct crypto_acomp *tfm = crypto_acomp_reqtfm(req);
++	struct crypto_alg *alg = tfm->base.__crt_alg;
++	unsigned int slen = req->slen;
+ 	int ret;
+ 
++	crypto_stats_get(alg);
+ 	ret = tfm->compress(req);
+-	crypto_stat_compress(req, ret);
++	crypto_stats_compress(slen, ret, alg);
+ 	return ret;
+ }
+ 
+@@ -293,10 +268,13 @@ static inline int crypto_acomp_compress(struct acomp_req *req)
+ static inline int crypto_acomp_decompress(struct acomp_req *req)
+ {
+ 	struct crypto_acomp *tfm = crypto_acomp_reqtfm(req);
++	struct crypto_alg *alg = tfm->base.__crt_alg;
++	unsigned int slen = req->slen;
+ 	int ret;
+ 
++	crypto_stats_get(alg);
+ 	ret = tfm->decompress(req);
+-	crypto_stat_decompress(req, ret);
++	crypto_stats_decompress(slen, ret, alg);
+ 	return ret;
+ }
+ 
+diff --git a/include/crypto/aead.h b/include/crypto/aead.h
+index 99afd78c665d..b7b8d24cf765 100644
+--- a/include/crypto/aead.h
++++ b/include/crypto/aead.h
+@@ -306,34 +306,6 @@ static inline struct crypto_aead *crypto_aead_reqtfm(struct aead_request *req)
+ 	return __crypto_aead_cast(req->base.tfm);
+ }
+ 
+-static inline void crypto_stat_aead_encrypt(struct aead_request *req, int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	struct crypto_aead *tfm = crypto_aead_reqtfm(req);
+-
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
+-		atomic64_inc(&tfm->base.__crt_alg->aead_err_cnt);
+-	} else {
+-		atomic64_inc(&tfm->base.__crt_alg->encrypt_cnt);
+-		atomic64_add(req->cryptlen, &tfm->base.__crt_alg->encrypt_tlen);
+-	}
+-#endif
+-}
+-
+-static inline void crypto_stat_aead_decrypt(struct aead_request *req, int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	struct crypto_aead *tfm = crypto_aead_reqtfm(req);
+-
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
+-		atomic64_inc(&tfm->base.__crt_alg->aead_err_cnt);
+-	} else {
+-		atomic64_inc(&tfm->base.__crt_alg->decrypt_cnt);
+-		atomic64_add(req->cryptlen, &tfm->base.__crt_alg->decrypt_tlen);
+-	}
+-#endif
+-}
+-
+ /**
+  * crypto_aead_encrypt() - encrypt plaintext
+  * @req: reference to the aead_request handle that holds all information
+@@ -356,13 +328,16 @@ static inline void crypto_stat_aead_decrypt(struct aead_request *req, int ret)
+ static inline int crypto_aead_encrypt(struct aead_request *req)
+ {
+ 	struct crypto_aead *aead = crypto_aead_reqtfm(req);
++	struct crypto_alg *alg = aead->base.__crt_alg;
++	unsigned int cryptlen = req->cryptlen;
+ 	int ret;
+ 
++	crypto_stats_get(alg);
+ 	if (crypto_aead_get_flags(aead) & CRYPTO_TFM_NEED_KEY)
+ 		ret = -ENOKEY;
+ 	else
+ 		ret = crypto_aead_alg(aead)->encrypt(req);
+-	crypto_stat_aead_encrypt(req, ret);
++	crypto_stats_aead_encrypt(cryptlen, alg, ret);
+ 	return ret;
+ }
+ 
+@@ -391,15 +366,18 @@ static inline int crypto_aead_encrypt(struct aead_request *req)
+ static inline int crypto_aead_decrypt(struct aead_request *req)
+ {
+ 	struct crypto_aead *aead = crypto_aead_reqtfm(req);
++	struct crypto_alg *alg = aead->base.__crt_alg;
++	unsigned int cryptlen = req->cryptlen;
+ 	int ret;
+ 
++	crypto_stats_get(alg);
+ 	if (crypto_aead_get_flags(aead) & CRYPTO_TFM_NEED_KEY)
+ 		ret = -ENOKEY;
+ 	else if (req->cryptlen < crypto_aead_authsize(aead))
+ 		ret = -EINVAL;
+ 	else
+ 		ret = crypto_aead_alg(aead)->decrypt(req);
+-	crypto_stat_aead_decrypt(req, ret);
++	crypto_stats_aead_decrypt(cryptlen, alg, ret);
+ 	return ret;
+ }
+ 
+diff --git a/include/crypto/akcipher.h b/include/crypto/akcipher.h
+index 97056fd5e718..d564e701654f 100644
+--- a/include/crypto/akcipher.h
++++ b/include/crypto/akcipher.h
+@@ -271,62 +271,6 @@ static inline unsigned int crypto_akcipher_maxsize(struct crypto_akcipher *tfm)
+ 	return alg->max_size(tfm);
+ }
+ 
+-static inline void crypto_stat_akcipher_encrypt(struct akcipher_request *req,
+-						int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
+-
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
+-		atomic64_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
+-	} else {
+-		atomic64_inc(&tfm->base.__crt_alg->encrypt_cnt);
+-		atomic64_add(req->src_len, &tfm->base.__crt_alg->encrypt_tlen);
+-	}
+-#endif
+-}
+-
+-static inline void crypto_stat_akcipher_decrypt(struct akcipher_request *req,
+-						int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
+-
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
+-		atomic64_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
+-	} else {
+-		atomic64_inc(&tfm->base.__crt_alg->decrypt_cnt);
+-		atomic64_add(req->src_len, &tfm->base.__crt_alg->decrypt_tlen);
+-	}
+-#endif
+-}
+-
+-static inline void crypto_stat_akcipher_sign(struct akcipher_request *req,
+-					     int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
+-
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY)
+-		atomic64_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
+-	else
+-		atomic64_inc(&tfm->base.__crt_alg->sign_cnt);
+-#endif
+-}
+-
+-static inline void crypto_stat_akcipher_verify(struct akcipher_request *req,
+-					       int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
+-
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY)
+-		atomic64_inc(&tfm->base.__crt_alg->akcipher_err_cnt);
+-	else
+-		atomic64_inc(&tfm->base.__crt_alg->verify_cnt);
+-#endif
+-}
+-
+ /**
+  * crypto_akcipher_encrypt() - Invoke public key encrypt operation
+  *
+@@ -341,10 +285,13 @@ static inline int crypto_akcipher_encrypt(struct akcipher_request *req)
+ {
+ 	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
+ 	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
++	struct crypto_alg *calg = tfm->base.__crt_alg;
++	unsigned int src_len = req->src_len;
+ 	int ret;
+ 
++	crypto_stats_get(calg);
+ 	ret = alg->encrypt(req);
+-	crypto_stat_akcipher_encrypt(req, ret);
++	crypto_stats_akcipher_encrypt(src_len, ret, calg);
+ 	return ret;
+ }
+ 
+@@ -362,10 +309,13 @@ static inline int crypto_akcipher_decrypt(struct akcipher_request *req)
+ {
+ 	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
+ 	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
++	struct crypto_alg *calg = tfm->base.__crt_alg;
++	unsigned int src_len = req->src_len;
+ 	int ret;
+ 
++	crypto_stats_get(calg);
+ 	ret = alg->decrypt(req);
+-	crypto_stat_akcipher_decrypt(req, ret);
++	crypto_stats_akcipher_decrypt(src_len, ret, calg);
+ 	return ret;
+ }
+ 
+@@ -383,10 +333,12 @@ static inline int crypto_akcipher_sign(struct akcipher_request *req)
+ {
+ 	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
+ 	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
++	struct crypto_alg *calg = tfm->base.__crt_alg;
+ 	int ret;
+ 
++	crypto_stats_get(calg);
+ 	ret = alg->sign(req);
+-	crypto_stat_akcipher_sign(req, ret);
++	crypto_stats_akcipher_sign(ret, calg);
+ 	return ret;
+ }
+ 
+@@ -404,10 +356,12 @@ static inline int crypto_akcipher_verify(struct akcipher_request *req)
+ {
+ 	struct crypto_akcipher *tfm = crypto_akcipher_reqtfm(req);
+ 	struct akcipher_alg *alg = crypto_akcipher_alg(tfm);
++	struct crypto_alg *calg = tfm->base.__crt_alg;
+ 	int ret;
+ 
++	crypto_stats_get(calg);
+ 	ret = alg->verify(req);
+-	crypto_stat_akcipher_verify(req, ret);
++	crypto_stats_akcipher_verify(ret, calg);
+ 	return ret;
+ }
+ 
+diff --git a/include/crypto/hash.h b/include/crypto/hash.h
+index 52920bed05ba..3b31c1b349ae 100644
+--- a/include/crypto/hash.h
++++ b/include/crypto/hash.h
+@@ -412,32 +412,6 @@ static inline void *ahash_request_ctx(struct ahash_request *req)
+ int crypto_ahash_setkey(struct crypto_ahash *tfm, const u8 *key,
+ 			unsigned int keylen);
+ 
+-static inline void crypto_stat_ahash_update(struct ahash_request *req, int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+-
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY)
+-		atomic64_inc(&tfm->base.__crt_alg->hash_err_cnt);
+-	else
+-		atomic64_add(req->nbytes, &tfm->base.__crt_alg->hash_tlen);
+-#endif
+-}
+-
+-static inline void crypto_stat_ahash_final(struct ahash_request *req, int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+-
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
+-		atomic64_inc(&tfm->base.__crt_alg->hash_err_cnt);
+-	} else {
+-		atomic64_inc(&tfm->base.__crt_alg->hash_cnt);
+-		atomic64_add(req->nbytes, &tfm->base.__crt_alg->hash_tlen);
+-	}
+-#endif
+-}
+-
+ /**
+  * crypto_ahash_finup() - update and finalize message digest
+  * @req: reference to the ahash_request handle that holds all information
+@@ -552,10 +526,14 @@ static inline int crypto_ahash_init(struct ahash_request *req)
+  */
+ static inline int crypto_ahash_update(struct ahash_request *req)
+ {
++	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
++	struct crypto_alg *alg = tfm->base.__crt_alg;
++	unsigned int nbytes = req->nbytes;
+ 	int ret;
+ 
++	crypto_stats_get(alg);
+ 	ret = crypto_ahash_reqtfm(req)->update(req);
+-	crypto_stat_ahash_update(req, ret);
++	crypto_stats_ahash_update(nbytes, ret, alg);
+ 	return ret;
+ }
+ 
+diff --git a/include/crypto/kpp.h b/include/crypto/kpp.h
+index bd5103a80919..1a97e1601422 100644
+--- a/include/crypto/kpp.h
++++ b/include/crypto/kpp.h
+@@ -268,42 +268,6 @@ struct kpp_secret {
+ 	unsigned short len;
+ };
+ 
+-static inline void crypto_stat_kpp_set_secret(struct crypto_kpp *tfm, int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	if (ret)
+-		atomic64_inc(&tfm->base.__crt_alg->kpp_err_cnt);
+-	else
+-		atomic64_inc(&tfm->base.__crt_alg->setsecret_cnt);
+-#endif
+-}
+-
+-static inline void crypto_stat_kpp_generate_public_key(struct kpp_request *req,
+-						       int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	struct crypto_kpp *tfm = crypto_kpp_reqtfm(req);
+-
+-	if (ret)
+-		atomic64_inc(&tfm->base.__crt_alg->kpp_err_cnt);
+-	else
+-		atomic64_inc(&tfm->base.__crt_alg->generate_public_key_cnt);
+-#endif
+-}
+-
+-static inline void crypto_stat_kpp_compute_shared_secret(struct kpp_request *req,
+-							 int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	struct crypto_kpp *tfm = crypto_kpp_reqtfm(req);
+-
+-	if (ret)
+-		atomic64_inc(&tfm->base.__crt_alg->kpp_err_cnt);
+-	else
+-		atomic64_inc(&tfm->base.__crt_alg->compute_shared_secret_cnt);
+-#endif
+-}
+-
+ /**
+  * crypto_kpp_set_secret() - Invoke kpp operation
+  *
+@@ -323,10 +287,12 @@ static inline int crypto_kpp_set_secret(struct crypto_kpp *tfm,
+ 					const void *buffer, unsigned int len)
+ {
+ 	struct kpp_alg *alg = crypto_kpp_alg(tfm);
++	struct crypto_alg *calg = tfm->base.__crt_alg;
+ 	int ret;
+ 
++	crypto_stats_get(calg);
+ 	ret = alg->set_secret(tfm, buffer, len);
+-	crypto_stat_kpp_set_secret(tfm, ret);
++	crypto_stats_kpp_set_secret(calg, ret);
+ 	return ret;
+ }
+ 
+@@ -347,10 +313,12 @@ static inline int crypto_kpp_generate_public_key(struct kpp_request *req)
+ {
+ 	struct crypto_kpp *tfm = crypto_kpp_reqtfm(req);
+ 	struct kpp_alg *alg = crypto_kpp_alg(tfm);
++	struct crypto_alg *calg = tfm->base.__crt_alg;
+ 	int ret;
+ 
++	crypto_stats_get(calg);
+ 	ret = alg->generate_public_key(req);
+-	crypto_stat_kpp_generate_public_key(req, ret);
++	crypto_stats_kpp_generate_public_key(calg, ret);
+ 	return ret;
+ }
+ 
+@@ -368,10 +336,12 @@ static inline int crypto_kpp_compute_shared_secret(struct kpp_request *req)
+ {
+ 	struct crypto_kpp *tfm = crypto_kpp_reqtfm(req);
+ 	struct kpp_alg *alg = crypto_kpp_alg(tfm);
++	struct crypto_alg *calg = tfm->base.__crt_alg;
+ 	int ret;
+ 
++	crypto_stats_get(calg);
+ 	ret = alg->compute_shared_secret(req);
+-	crypto_stat_kpp_compute_shared_secret(req, ret);
++	crypto_stats_kpp_compute_shared_secret(calg, ret);
+ 	return ret;
+ }
+ 
+diff --git a/include/crypto/rng.h b/include/crypto/rng.h
+index bdcaac34e9d7..e7c97b946fee 100644
+--- a/include/crypto/rng.h
++++ b/include/crypto/rng.h
+@@ -122,29 +122,6 @@ static inline void crypto_free_rng(struct crypto_rng *tfm)
+ 	crypto_destroy_tfm(tfm, crypto_rng_tfm(tfm));
+ }
+ 
+-static inline void crypto_stat_rng_seed(struct crypto_rng *tfm, int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY)
+-		atomic64_inc(&tfm->base.__crt_alg->rng_err_cnt);
+-	else
+-		atomic64_inc(&tfm->base.__crt_alg->seed_cnt);
+-#endif
+-}
+-
+-static inline void crypto_stat_rng_generate(struct crypto_rng *tfm,
+-					    unsigned int dlen, int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
+-		atomic64_inc(&tfm->base.__crt_alg->rng_err_cnt);
+-	} else {
+-		atomic64_inc(&tfm->base.__crt_alg->generate_cnt);
+-		atomic64_add(dlen, &tfm->base.__crt_alg->generate_tlen);
+-	}
+-#endif
+-}
+-
+ /**
+  * crypto_rng_generate() - get random number
+  * @tfm: cipher handle
+@@ -163,10 +140,12 @@ static inline int crypto_rng_generate(struct crypto_rng *tfm,
+ 				      const u8 *src, unsigned int slen,
+ 				      u8 *dst, unsigned int dlen)
+ {
++	struct crypto_alg *alg = tfm->base.__crt_alg;
+ 	int ret;
+ 
++	crypto_stats_get(alg);
+ 	ret = crypto_rng_alg(tfm)->generate(tfm, src, slen, dst, dlen);
+-	crypto_stat_rng_generate(tfm, dlen, ret);
++	crypto_stats_rng_generate(alg, dlen, ret);
+ 	return ret;
+ }
+ 
+diff --git a/include/crypto/skcipher.h b/include/crypto/skcipher.h
+index dff54731ddf4..480f8301a47d 100644
+--- a/include/crypto/skcipher.h
++++ b/include/crypto/skcipher.h
+@@ -486,32 +486,6 @@ static inline struct crypto_sync_skcipher *crypto_sync_skcipher_reqtfm(
+ 	return container_of(tfm, struct crypto_sync_skcipher, base);
+ }
+ 
+-static inline void crypto_stat_skcipher_encrypt(struct skcipher_request *req,
+-						int ret, struct crypto_alg *alg)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
+-		atomic64_inc(&alg->cipher_err_cnt);
+-	} else {
+-		atomic64_inc(&alg->encrypt_cnt);
+-		atomic64_add(req->cryptlen, &alg->encrypt_tlen);
+-	}
+-#endif
+-}
+-
+-static inline void crypto_stat_skcipher_decrypt(struct skcipher_request *req,
+-						int ret, struct crypto_alg *alg)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
+-		atomic64_inc(&alg->cipher_err_cnt);
+-	} else {
+-		atomic64_inc(&alg->decrypt_cnt);
+-		atomic64_add(req->cryptlen, &alg->decrypt_tlen);
+-	}
+-#endif
+-}
+-
+ /**
+  * crypto_skcipher_encrypt() - encrypt plaintext
+  * @req: reference to the skcipher_request handle that holds all information
+@@ -526,13 +500,16 @@ static inline void crypto_stat_skcipher_decrypt(struct skcipher_request *req,
+ static inline int crypto_skcipher_encrypt(struct skcipher_request *req)
+ {
+ 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
++	struct crypto_alg *alg = tfm->base.__crt_alg;
++	unsigned int cryptlen = req->cryptlen;
+ 	int ret;
+ 
++	crypto_stats_get(alg);
+ 	if (crypto_skcipher_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
+ 		ret = -ENOKEY;
+ 	else
+ 		ret = tfm->encrypt(req);
+-	crypto_stat_skcipher_encrypt(req, ret, tfm->base.__crt_alg);
++	crypto_stats_skcipher_encrypt(cryptlen, ret, alg);
+ 	return ret;
+ }
+ 
+@@ -550,13 +527,16 @@ static inline int crypto_skcipher_encrypt(struct skcipher_request *req)
+ static inline int crypto_skcipher_decrypt(struct skcipher_request *req)
+ {
+ 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
++	struct crypto_alg *alg = tfm->base.__crt_alg;
++	unsigned int cryptlen = req->cryptlen;
+ 	int ret;
+ 
++	crypto_stats_get(alg);
+ 	if (crypto_skcipher_get_flags(tfm) & CRYPTO_TFM_NEED_KEY)
+ 		ret = -ENOKEY;
+ 	else
+ 		ret = tfm->decrypt(req);
+-	crypto_stat_skcipher_decrypt(req, ret, tfm->base.__crt_alg);
++	crypto_stats_skcipher_decrypt(cryptlen, ret, alg);
+ 	return ret;
+ }
+ 
+diff --git a/include/linux/crypto.h b/include/linux/crypto.h
+index b109b50906e7..7af63cb9c815 100644
+--- a/include/linux/crypto.h
++++ b/include/linux/crypto.h
+@@ -557,6 +557,27 @@ struct crypto_alg {
+ 
+ } CRYPTO_MINALIGN_ATTR;
+ 
++void crypto_stats_get(struct crypto_alg *alg);
++void crypto_stats_ablkcipher_encrypt(unsigned int nbytes, int ret, struct crypto_alg *alg);
++void crypto_stats_ablkcipher_decrypt(unsigned int nbytes, int ret, struct crypto_alg *alg);
++void crypto_stats_aead_encrypt(unsigned int cryptlen, struct crypto_alg *alg, int ret);
++void crypto_stats_aead_decrypt(unsigned int cryptlen, struct crypto_alg *alg, int ret);
++void crypto_stats_ahash_update(unsigned int nbytes, int ret, struct crypto_alg *alg);
++void crypto_stats_ahash_final(unsigned int nbytes, int ret, struct crypto_alg *alg);
++void crypto_stats_akcipher_encrypt(unsigned int src_len, int ret, struct crypto_alg *alg);
++void crypto_stats_akcipher_decrypt(unsigned int src_len, int ret, struct crypto_alg *alg);
++void crypto_stats_akcipher_sign(int ret, struct crypto_alg *alg);
++void crypto_stats_akcipher_verify(int ret, struct crypto_alg *alg);
++void crypto_stats_compress(unsigned int slen, int ret, struct crypto_alg *alg);
++void crypto_stats_decompress(unsigned int slen, int ret, struct crypto_alg *alg);
++void crypto_stats_kpp_set_secret(struct crypto_alg *alg, int ret);
++void crypto_stats_kpp_generate_public_key(struct crypto_alg *alg, int ret);
++void crypto_stats_kpp_compute_shared_secret(struct crypto_alg *alg, int ret);
++void crypto_stats_rng_seed(struct crypto_alg *alg, int ret);
++void crypto_stats_rng_generate(struct crypto_alg *alg, unsigned int dlen, int ret);
++void crypto_stats_skcipher_encrypt(unsigned int cryptlen, int ret, struct crypto_alg *alg);
++void crypto_stats_skcipher_decrypt(unsigned int cryptlen, int ret, struct crypto_alg *alg);
++
+ /*
+  * A helper struct for waiting for completion of async crypto ops
+  */
+@@ -975,38 +996,6 @@ static inline struct crypto_ablkcipher *crypto_ablkcipher_reqtfm(
+ 	return __crypto_ablkcipher_cast(req->base.tfm);
+ }
+ 
+-static inline void crypto_stat_ablkcipher_encrypt(struct ablkcipher_request *req,
+-						  int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	struct ablkcipher_tfm *crt =
+-		crypto_ablkcipher_crt(crypto_ablkcipher_reqtfm(req));
+-
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
+-		atomic64_inc(&crt->base->base.__crt_alg->cipher_err_cnt);
+-	} else {
+-		atomic64_inc(&crt->base->base.__crt_alg->encrypt_cnt);
+-		atomic64_add(req->nbytes, &crt->base->base.__crt_alg->encrypt_tlen);
+-	}
+-#endif
+-}
+-
+-static inline void crypto_stat_ablkcipher_decrypt(struct ablkcipher_request *req,
+-						  int ret)
+-{
+-#ifdef CONFIG_CRYPTO_STATS
+-	struct ablkcipher_tfm *crt =
+-		crypto_ablkcipher_crt(crypto_ablkcipher_reqtfm(req));
+-
+-	if (ret && ret != -EINPROGRESS && ret != -EBUSY) {
+-		atomic64_inc(&crt->base->base.__crt_alg->cipher_err_cnt);
+-	} else {
+-		atomic64_inc(&crt->base->base.__crt_alg->decrypt_cnt);
+-		atomic64_add(req->nbytes, &crt->base->base.__crt_alg->decrypt_tlen);
+-	}
+-#endif
+-}
+-
+ /**
+  * crypto_ablkcipher_encrypt() - encrypt plaintext
+  * @req: reference to the ablkcipher_request handle that holds all information
+@@ -1022,10 +1011,13 @@ static inline int crypto_ablkcipher_encrypt(struct ablkcipher_request *req)
+ {
+ 	struct ablkcipher_tfm *crt =
+ 		crypto_ablkcipher_crt(crypto_ablkcipher_reqtfm(req));
++	struct crypto_alg *alg = crt->base->base.__crt_alg;
++	unsigned int nbytes = req->nbytes;
+ 	int ret;
+ 
++	crypto_stats_get(alg);
+ 	ret = crt->encrypt(req);
+-	crypto_stat_ablkcipher_encrypt(req, ret);
++	crypto_stats_ablkcipher_encrypt(nbytes, ret, alg);
+ 	return ret;
+ }
+ 
+@@ -1044,10 +1036,13 @@ static inline int crypto_ablkcipher_decrypt(struct ablkcipher_request *req)
+ {
+ 	struct ablkcipher_tfm *crt =
+ 		crypto_ablkcipher_crt(crypto_ablkcipher_reqtfm(req));
++	struct crypto_alg *alg = crt->base->base.__crt_alg;
++	unsigned int nbytes = req->nbytes;
+ 	int ret;
+ 
++	crypto_stats_get(alg);
+ 	ret = crt->decrypt(req);
+-	crypto_stat_ablkcipher_decrypt(req, ret);
++	crypto_stats_ablkcipher_decrypt(nbytes, ret, alg);
+ 	return ret;
+ }
+ 
+-- 
+2.18.1
 
