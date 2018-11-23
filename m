@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC81C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A46C04EBA
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:27:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F10DF20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:27:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F10DF20863
+	by mail.kernel.org (Postfix) with ESMTP id F1B7220863
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:27:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1B7220863
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502721AbeKWUK0 (ORCPT
+        id S2502763AbeKWUK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 23 Nov 2018 15:10:26 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49324 "EHLO mail.bootlin.com"
+Received: from mail.bootlin.com ([62.4.15.54]:49313 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393935AbeKWUKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390556AbeKWUKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 23 Nov 2018 15:10:25 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 00926207AB; Fri, 23 Nov 2018 10:26:57 +0100 (CET)
+        id F288320DE1; Fri, 23 Nov 2018 10:26:57 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 272CE20DE5;
-        Fri, 23 Nov 2018 10:26:32 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id DA7D820DE4;
+        Fri, 23 Nov 2018 10:26:31 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org
@@ -37,9 +37,9 @@ Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v2 18/43] drm/sun4i: frontend: Add proper definitions for format registers
-Date:   Fri, 23 Nov 2018 10:24:50 +0100
-Message-Id: <20181123092515.2511-19-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 17/43] drm/sun4i: frontend: Add helpers for input data mode and pixel sequence
+Date:   Fri, 23 Nov 2018 10:24:49 +0100
+Message-Id: <20181123092515.2511-18-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
 References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
@@ -50,97 +50,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces proper definitions for the input and output format
-configuration registers instead of a macro and raw values in the code,
-with the intent to increase code readability and reduce indirections.
+This introduces new helpers for retrieving the input data mode and pixel
+sequence register field values based on the DRM format instead of
+hardcoding these. This makes it easier to add support for more formats.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 14 ++++++--------
- drivers/gpu/drm/sun4i/sun4i_frontend.h |  8 ++++----
- 2 files changed, 10 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 46 +++++++++++++++++++++++---
+ 1 file changed, 41 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index bb5977a466f3..a305b731b042 100644
+index f54b1c4a9264..bb5977a466f3 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -108,7 +108,7 @@ static int sun4i_frontend_drm_format_to_input_fmt(uint32_t fmt, u32 *val)
+@@ -116,6 +116,30 @@ static int sun4i_frontend_drm_format_to_input_fmt(uint32_t fmt, u32 *val)
+ 	}
+ }
+ 
++static int sun4i_frontend_drm_format_to_input_mode(uint32_t fmt, u32 *val)
++{
++	switch (fmt) {
++	case DRM_FORMAT_XRGB8888:
++		*val = 1;
++		return 0;
++
++	default:
++		return -EINVAL;
++	}
++}
++
++static int sun4i_frontend_drm_format_to_input_sequence(uint32_t fmt, u32 *val)
++{
++	switch (fmt) {
++	case DRM_FORMAT_XRGB8888:
++		*val = 1;
++		return 0;
++
++	default:
++		return -EINVAL;
++	}
++}
++
+ static int sun4i_frontend_drm_format_to_output_fmt(uint32_t fmt, u32 *val)
  {
  	switch (fmt) {
- 	case DRM_FORMAT_XRGB8888:
--		*val = 5;
-+		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB;
- 		return 0;
- 
- 	default:
-@@ -120,7 +120,7 @@ static int sun4i_frontend_drm_format_to_input_mode(uint32_t fmt, u32 *val)
+@@ -149,17 +173,29 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
  {
- 	switch (fmt) {
- 	case DRM_FORMAT_XRGB8888:
--		*val = 1;
-+		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PACKED;
- 		return 0;
+ 	struct drm_plane_state *state = plane->state;
+ 	struct drm_framebuffer *fb = state->fb;
++	uint32_t format = fb->format->format;
+ 	u32 out_fmt_val;
+-	u32 in_fmt_val;
++	u32 in_fmt_val, in_mod_val, in_ps_val;
+ 	int ret;
  
- 	default:
-@@ -132,7 +132,7 @@ static int sun4i_frontend_drm_format_to_input_sequence(uint32_t fmt, u32 *val)
- {
- 	switch (fmt) {
- 	case DRM_FORMAT_XRGB8888:
--		*val = 1;
-+		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_XRGB;
- 		return 0;
+-	ret = sun4i_frontend_drm_format_to_input_fmt(fb->format->format,
+-						     &in_fmt_val);
++	ret = sun4i_frontend_drm_format_to_input_fmt(format, &in_fmt_val);
+ 	if (ret) {
+ 		DRM_DEBUG_DRIVER("Invalid input format\n");
+ 		return ret;
+ 	}
  
- 	default:
-@@ -144,7 +144,7 @@ static int sun4i_frontend_drm_format_to_output_fmt(uint32_t fmt, u32 *val)
- {
- 	switch (fmt) {
- 	case DRM_FORMAT_XRGB8888:
--		*val = 2;
-+		*val = SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT_XRGB8888;
- 		return 0;
- 
- 	default:
-@@ -218,9 +218,7 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
++	ret = sun4i_frontend_drm_format_to_input_mode(format, &in_mod_val);
++	if (ret) {
++		DRM_DEBUG_DRIVER("Invalid input mode\n");
++		return ret;
++	}
++
++	ret = sun4i_frontend_drm_format_to_input_sequence(format, &in_ps_val);
++	if (ret) {
++		DRM_DEBUG_DRIVER("Invalid pixel sequence\n");
++		return ret;
++	}
++
+ 	ret = sun4i_frontend_drm_format_to_output_fmt(out_fmt, &out_fmt_val);
+ 	if (ret) {
+ 		DRM_DEBUG_DRIVER("Invalid output format\n");
+@@ -182,9 +218,9 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
  			   SUN4I_FRONTEND_BYPASS_CSC_EN);
  
  	regmap_write(frontend->regs, SUN4I_FRONTEND_INPUT_FMT_REG,
--		     SUN4I_FRONTEND_INPUT_FMT_DATA_MOD(in_mod_val) |
--		     SUN4I_FRONTEND_INPUT_FMT_DATA_FMT(in_fmt_val) |
--		     SUN4I_FRONTEND_INPUT_FMT_PS(in_ps_val));
-+		     in_mod_val | in_fmt_val | in_ps_val);
+-		     SUN4I_FRONTEND_INPUT_FMT_DATA_MOD(1) |
++		     SUN4I_FRONTEND_INPUT_FMT_DATA_MOD(in_mod_val) |
+ 		     SUN4I_FRONTEND_INPUT_FMT_DATA_FMT(in_fmt_val) |
+-		     SUN4I_FRONTEND_INPUT_FMT_PS(1));
++		     SUN4I_FRONTEND_INPUT_FMT_PS(in_ps_val));
  
  	/*
  	 * TODO: It look like the A31 and A80 at least will need the
-@@ -228,7 +226,7 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
- 	 * ARGB8888).
- 	 */
- 	regmap_write(frontend->regs, SUN4I_FRONTEND_OUTPUT_FMT_REG,
--		     SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT(out_fmt_val));
-+		     out_fmt_val);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-index a9cb908ced16..56bd5a3f9723 100644
---- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-@@ -26,12 +26,12 @@
- #define SUN4I_FRONTEND_LINESTRD0_REG		0x040
- 
- #define SUN4I_FRONTEND_INPUT_FMT_REG		0x04c
--#define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD(mod)		((mod) << 8)
--#define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT(fmt)		((fmt) << 4)
--#define SUN4I_FRONTEND_INPUT_FMT_PS(ps)			(ps)
-+#define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PACKED	(1 << 8)
-+#define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB		(5 << 4)
-+#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_XRGB		1
- 
- #define SUN4I_FRONTEND_OUTPUT_FMT_REG		0x05c
--#define SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT(fmt)		(fmt)
-+#define SUN4I_FRONTEND_OUTPUT_FMT_DATA_FMT_XRGB8888	2
- 
- #define SUN4I_FRONTEND_CH0_INSIZE_REG		0x100
- #define SUN4I_FRONTEND_INSIZE(h, w)			((((h) - 1) << 16) | (((w) - 1)))
 -- 
 2.19.1
 
