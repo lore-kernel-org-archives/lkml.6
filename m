@@ -2,62 +2,56 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	HK_RANDOM_FROM,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B050EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDB2C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77D6720820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:23:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77D6720820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7CA4E20672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:25:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CA4E20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504544AbeKXAID (ORCPT
+        id S2504556AbeKXAJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 19:08:03 -0500
-Received: from mga07.intel.com ([134.134.136.100]:30414 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394528AbeKXAID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 19:08:03 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Nov 2018 05:23:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,269,1539673200"; 
-   d="scan'208";a="283559131"
-Received: from unknown (HELO [10.251.85.254]) ([10.251.85.254])
-  by fmsmga006.fm.intel.com with ESMTP; 23 Nov 2018 05:23:48 -0800
-Subject: Re: [Intel-gfx] [PATCH 2/3] mm, notifier: Catch sleeping/blocking for
- !blockable
-To:     Daniel Vetter <daniel@ffwll.ch>, Michal Hocko <mhocko@kernel.org>
-Cc:     intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-References: <20181122165106.18238-1-daniel.vetter@ffwll.ch>
- <20181122165106.18238-3-daniel.vetter@ffwll.ch>
- <20181123111237.GE8625@dhcp22.suse.cz>
- <20181123123838.GL4266@phenom.ffwll.local>
- <20181123124643.GK8625@dhcp22.suse.cz>
- <CAKMK7uGv7dHqE4_Gmsum=uhfbVo=ymq-QhsR5cHLOC4ZTq4MxA@mail.gmail.com>
-From:   Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Organization: Intel Corporation UK Plc
-Message-ID: <50923341-d759-2621-7166-695df4cd88fb@linux.intel.com>
-Date:   Fri, 23 Nov 2018 13:23:48 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 23 Nov 2018 19:09:30 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:29339 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390938AbeKXAJa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 19:09:30 -0500
+Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wANDP6Qj091173;
+        Fri, 23 Nov 2018 22:25:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
+ Fri, 23 Nov 2018 22:25:06 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wANDP5v3091167
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 23 Nov 2018 22:25:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] printk: Make printk_emit() local function.
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+References: <1542898768-5732-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20181123122405.3iqc6bvdxkngntzl@pathway.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <d2dd8a02-4e1d-7e9b-4639-fe3a640a2742@i-love.sakura.ne.jp>
+Date:   Fri, 23 Nov 2018 22:25:04 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <CAKMK7uGv7dHqE4_Gmsum=uhfbVo=ymq-QhsR5cHLOC4ZTq4MxA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20181123122405.3iqc6bvdxkngntzl@pathway.suse.cz>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,42 +59,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 23/11/2018 13:12, Daniel Vetter wrote:
-> On Fri, Nov 23, 2018 at 1:46 PM Michal Hocko <mhocko@kernel.org> wrote:
+On 2018/11/23 21:24, Petr Mladek wrote:
+> On Thu 2018-11-22 23:59:28, Tetsuo Handa wrote:
+>> printk_emit() is called from only devkmsg_write() in the same file.
+>> Save object size by making it a local function.
 >>
->> On Fri 23-11-18 13:38:38, Daniel Vetter wrote:
->>> On Fri, Nov 23, 2018 at 12:12:37PM +0100, Michal Hocko wrote:
->>>> On Thu 22-11-18 17:51:05, Daniel Vetter wrote:
->>>>> We need to make sure implementations don't cheat and don't have a
->>>>> possible schedule/blocking point deeply burried where review can't
->>>>> catch it.
->>>>>
->>>>> I'm not sure whether this is the best way to make sure all the
->>>>> might_sleep() callsites trigger, and it's a bit ugly in the code flow.
->>>>> But it gets the job done.
->>>>
->>>> Yeah, it is quite ugly. Especially because it makes DEBUG config
->>>> bahavior much different. So is this really worth it? Has this already
->>>> discovered any existing bug?
->>>
->>> Given that we need an oom trigger to hit this we're not hitting this in CI
->>> (oom is just way to unpredictable to even try). I'd kinda like to also add
->>> some debug interface so I can provoke an oom kill of a specially prepared
->>> process, to make sure we can reliably exercise this path without killing
->>> the kernel accidentally. We do similar tricks for our shrinker already.
+>> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> ---
+>>  include/linux/printk.h |  5 -----
+>>  kernel/printk/printk.c | 31 +++++++++++++++----------------
+>>  2 files changed, 15 insertions(+), 21 deletions(-)
 >>
->> Create a task with oom_score_adj = 1000 and trigger the oom killer via
->> sysrq and you should get a predictable oom invocation and execution.
+>> --- a/kernel/printk/printk.c
+>> +++ b/kernel/printk/printk.c
+>> @@ -752,6 +752,20 @@ struct devkmsg_user {
+>>  	char buf[CONSOLE_EXT_LOG_MAX];
+>>  };
+>>  
+>> +static __printf(3, 4) __cold int devkmsg_emit(int facility, int level,
+>> +					      const char *fmt, ...);
 > 
-> Ah right. We kinda do that already in an attempt to get the tests
-> killed without the runner, for accidental oom. Just didn't think about
-> this in the context of intentionally firing the oom. I'll try whether
-> I can bake up some new subtest in our userptr/mmu-notifier testcases.
+> There is no need for the forward declaration. __printf(3, 4)
+> and __cold could be part of the function definition.
+> Or do I miss anything?
 
-Very handy trick - I think I will think of applying it in the shrinker 
-area as well.
+If you meant below one, it fails with "error: expected ',' or ';' before '{' token".
+Attributes annotation needs to be done as the prototype definition.
+(Though I don't know whether __cold here makes sense...)
 
-Regards,
+static int devkmsg_emit(int facility, int level, const char *fmt, ...)
+__printf(3, 4) __cold
+{
+        va_list args;
+        int r;
 
-Tvrtko
+        va_start(args, fmt);
+        r = vprintk_emit(facility, level, NULL, 0, fmt, args);
+        va_end(args);
+
+        return r;
+}
