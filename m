@@ -2,349 +2,228 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EA1C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C00C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB29420820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:20:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB29420820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id ED98120659
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:20:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED98120659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409604AbeKWWEG (ORCPT
+        id S2503704AbeKWWEe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 17:04:06 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:47037 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729651AbeKWWEG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 17:04:06 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wANBJZZr4176139
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 23 Nov 2018 03:19:35 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wANBJZ4S4176136;
-        Fri, 23 Nov 2018 03:19:35 -0800
-Date:   Fri, 23 Nov 2018 03:19:35 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-35728b8209ee7d25b6241a56304ee926469bd154@git.kernel.org>
-Cc:     rmk+kernel@armlinux.org.uk, mingo@kernel.org,
-        richardcochran@gmail.com, ccross@android.com,
-        keescook@chromium.org, pombredanne@nexb.com, tglx@linutronix.de,
-        hpa@zytor.com, paulmck@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        john.stultz@linaro.org, kstewart@linuxfoundation.org,
-        cminyard@mvista.com, nicolas.pitre@linaro.org,
-        davidriley@chromium.org, broonie@kernel.org
-Reply-To: broonie@kernel.org, nicolas.pitre@linaro.org,
-          davidriley@chromium.org, kstewart@linuxfoundation.org,
-          cminyard@mvista.com, john.stultz@linaro.org,
-          peterz@infradead.org, linux-kernel@vger.kernel.org,
-          hpa@zytor.com, tglx@linutronix.de, paulmck@linux.vnet.ibm.com,
-          keescook@chromium.org, pombredanne@nexb.com, ccross@android.com,
-          richardcochran@gmail.com, mingo@kernel.org,
-          rmk+kernel@armlinux.org.uk
-In-Reply-To: <20181031182252.879109557@linutronix.de>
-References: <20181031182252.879109557@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] time: Add SPDX license identifiers
-Git-Commit-ID: 35728b8209ee7d25b6241a56304ee926469bd154
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 23 Nov 2018 17:04:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54290 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729651AbeKWWEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 17:04:34 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 75A76AEA1;
+        Fri, 23 Nov 2018 11:20:40 +0000 (UTC)
+Date:   Fri, 23 Nov 2018 12:20:39 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2 07/17] debugobjects: Move printk out of db lock
+ critical sections
+Message-ID: <20181123112039.omeup3be4kw6qxxc@pathway.suse.cz>
+References: <1542653726-5655-1-git-send-email-longman@redhat.com>
+ <1542653726-5655-8-git-send-email-longman@redhat.com>
+ <2ddd9e3d-951e-1892-c941-54be80f7e6aa@redhat.com>
+ <20181122020422.GA3441@jagdpanzerIV>
+ <c8c29a58-f356-d379-2bf4-cea09b03dc3e@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c8c29a58-f356-d379-2bf4-cea09b03dc3e@redhat.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  35728b8209ee7d25b6241a56304ee926469bd154
-Gitweb:     https://git.kernel.org/tip/35728b8209ee7d25b6241a56304ee926469bd154
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Wed, 31 Oct 2018 19:21:09 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 23 Nov 2018 11:51:20 +0100
+On Thu 2018-11-22 14:57:02, Waiman Long wrote:
+> On 11/21/2018 09:04 PM, Sergey Senozhatsky wrote:
+> > On (11/21/18 11:49), Waiman Long wrote:
+> > [..]
+> >>>  	case ODEBUG_STATE_ACTIVE:
+> >>> -		debug_print_object(obj, "init");
+> >>>  		state = obj->state;
+> >>>  		raw_spin_unlock_irqrestore(&db->lock, flags);
+> >>> +		debug_print_object(obj, "init");
+> >>>  		debug_object_fixup(descr->fixup_init, addr, state);
+> >>>  		return;
+> >>>  
+> >>>  	case ODEBUG_STATE_DESTROYED:
+> >>> -		debug_print_object(obj, "init");
+> >>> +		debug_printobj = true;
+> >>>  		break;
+> >>>  	default:
+> >>>  		break;
+> >>>  	}
+> >>>  
+> >>>  	raw_spin_unlock_irqrestore(&db->lock, flags);
+> >>> +	if (debug_chkstack)
+> >>> +		debug_object_is_on_stack(addr, onstack);
+> >>> +	if (debug_printobj)
+> >>> +		debug_print_object(obj, "init");
+> >>>
+> > [..]
+> >> As a side note, one of the test systems that I used generated a
+> >> debugobjects splat in the bootup process and the system hanged
+> >> afterward. Applying this patch alone fix the hanging problem and the
+> >> system booted up successfully. So it is not really a good idea to call
+> >> printk() while holding a raw spinlock.
+> > Right, I like this patch.
+> > And I think that we, maybe, can go even further.
+> >
+> > Some serial consoles call mod_timer(). So what we could have with the
+> > debug objects enabled was
+> >
+> > 	mod_timer()
+> > 	 lock_timer_base()
+> > 	  debug_activate()
+> > 	   printk()
+> > 	    call_console_drivers()
+> > 	     foo_console()
+> > 	      mod_timer()
+> > 	       lock_timer_base()       << deadlock
+> >
+> > That's one possible scenario. The other one can involve console's
+> > IRQ handler, uart port spinlock, mod_timer, debug objects, printk,
+> > and an eventual deadlock on the uart port spinlock. This one can
+> > be mitigated with printk_safe. But mod_timer() deadlock will require
+> > a different fix.
+> >
+> > So maybe we need to switch debug objects print-outs to _always_
+> > printk_deferred(). Debug objects can be used in code which cannot
+> > do direct printk() - timekeeping is just one example.
+> >
+> > 	-ss
+> 
+> Actually, I don't think that was the cause of the hang. The debugobjects
+> splat was caused by debug_object_is_on_stack(), below was the output:
+> 
+> [    6.890048] ODEBUG: object (____ptrval____) is NOT on stack
+> (____ptrval____), but annotated.
+> [    6.891000] WARNING: CPU: 28 PID: 1 at lib/debugobjects.c:369
+> __debug_object_init.cold.11+0x51/0x2d6
+> [    6.891000] Modules linked in:
+> [    6.891000] CPU: 28 PID: 1 Comm: swapper/0 Not tainted
+> 4.18.0-41.el8.bz1651764_cgroup_debug.x86_64+debug #1
+> [    6.891000] Hardware name: HPE ProLiant DL120 Gen10/ProLiant DL120
+> Gen10, BIOS U36 11/14/2017
+> [    6.891000] RIP: 0010:__debug_object_init.cold.11+0x51/0x2d6
+> [    6.891000] Code: ea 03 80 3c 02 00 0f 85 85 02 00 00 49 8b 54 24 18
+> 48 89 de 4c 89 44 24 10 48 c7 c7 00 ce 22 94 e8 73 18 62 ff 4c 8b 44 24
+> 10 <0f> 0b e9 60 db ff ff 41 83 c4 01 b8 ff ff 37 00 44 89 25 ce 46 f9
+> [    6.891000] RSP: 0000:ffff880104187960 EFLAGS: 00010086
+> [    6.891000] RAX: 0000000000000050 RBX: ffffffff9764c570 RCX:
+> 0000000000000000
+> [    6.891000] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
+> ffff880104178ca8
+> [    6.891000] RBP: 1ffff10020830f34 R08: ffff8807ce68a1d0 R09:
+> fffffbfff2923554
+> [    6.891000] R10: fffffbfff2923554 R11: ffffffff9491aaa3 R12:
+> ffff880104178000
+> [    6.891000] R13: ffffffff96c809b8 R14: 000000000000a370 R15:
+> ffff8807ce68a1c0
+> [    6.891000] FS:  0000000000000000(0000) GS:ffff8807d4200000(0000)
+> knlGS:0000000000000000
+> [    6.891000] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    6.891000] CR2: 0000000000000000 CR3: 000000028de16001 CR4:
+> 00000000007606e0
+> [    6.891000] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
+> 0000000000000000
+> [    6.891000] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
+> 0000000000000400
+> [    6.891000] PKRU: 00000000
+> [    6.891000] Call Trace:
+> [    6.891000]  ? debug_object_fixup+0x30/0x30
+> [    6.891000]  ? _raw_spin_unlock_irqrestore+0x4b/0x60
+> [    6.891000]  ? __lockdep_init_map+0x12f/0x510
+> [    6.891000]  ? __lockdep_init_map+0x12f/0x510
+> [    6.891000]  virt_efi_get_next_variable+0xa2/0x160
+> [    6.891000]  efivar_init+0x1c4/0x6d7
+> [    6.891000]  ? efivar_ssdt_setup+0x3b/0x3b
+> [    6.891000]  ? efivar_entry_iter+0x120/0x120
+> [    6.891000]  ? find_held_lock+0x3a/0x1c0
+> [    6.891000]  ? lock_downgrade+0x5e0/0x5e0
+> [    6.891000]  ? kmsg_dump_rewind_nolock+0xd9/0xd9
+> [    6.891000]  ? _raw_spin_unlock_irqrestore+0x4b/0x60
+> [    6.891000]  ? trace_hardirqs_on_caller+0x381/0x570
+> [    6.891000]  ? efivar_ssdt_iter+0x1f4/0x1f4
+> [    6.891000]  efisubsys_init+0x1be/0x4ae
+> [    6.891000]  ? kernfs_get.part.8+0x4c/0x60
+> [    6.891000]  ? efivar_ssdt_iter+0x1f4/0x1f4
+> [    6.891000]  ? __kernfs_create_file+0x235/0x2e0
+> [    6.891000]  ? efivar_ssdt_iter+0x1f4/0x1f4
+> [    6.891000]  do_one_initcall+0xe9/0x5fd
+> [    6.891000]  ? perf_trace_initcall_level+0x450/0x450
+> [    6.891000]  ? __wake_up_common+0x5a0/0x5a0
+> [    6.891000]  ? lock_downgrade+0x5e0/0x5e0
+> [    6.891000]  kernel_init_freeable+0x51a/0x5f2
+> [    6.891000]  ? start_kernel+0x7b8/0x7b8
+> [    6.891000]  ? finish_task_switch+0x19a/0x690
+> [    6.891000]  ? __switch_to_asm+0x40/0x70
+> [    6.891000]  ? __switch_to_asm+0x34/0x70
+> [    6.891000]  ? rest_init+0xe9/0xe9
+> [    6.891000]  kernel_init+0xc/0x110
+> [    6.891000]  ? rest_init+0xe9/0xe9
+> [    6.891000]  ret_from_fork+0x24/0x50
+> [    6.891000] irq event stamp: 1081352
+> [    6.891000] hardirqs last  enabled at (1081351): [<ffffffff93af7dab>]
+> _raw_spin_unlock_irqrestore+0x4b/0x60
+> [    6.891000] hardirqs last disabled at (1081352): [<ffffffff93af85c2>]
+> _raw_spin_lock_irqsave+0x22/0x81
+> [    6.891000] softirqs last  enabled at (1081334): [<ffffffff93e006f9>]
+> __do_softirq+0x6f9/0xaa0
+> [    6.891000] softirqs last disabled at (1081325): [<ffffffff921b993f>]
+> irq_exit+0x27f/0x2d0
+> [    6.891000] ---[ end trace 15e1083fc009a526 ]---
+> 
+> All the messages above were printed while holding a raw spinlock with
+> IRQ disabled. Further down the bootup sequence, the system appeared to hang:
+> 
+>    11.270654] systemd[1]: systemd 239 running in system mode. (+PAM
+> +AUDIT +SELINUX +IMA -APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP
+> +GCRYPT +GNUTLS +ACL +XZ +LZ4 +SECCOMP +BLKID +ELFUTILS +KMOD +IDN2 -IDN
+> +PCRE2 default-hierarchy=legacy)
+> [   11.311307] systemd[1]: Detected architecture x86-64.
+> [   11.316420] systemd[1]: Running in initial RAM disk.
+> 
+> Welcome to
+> 
+> The system is not responsive at this point.
+> 
+> I am not totally sure what caused this. Maybe it was caused by disabling
+> IRQ for too long leading to some kind of corruption. Anyway, moving
+> debug_object_is_on_stack() outside of the IRQ disabled lock critical
+> section seemed to fix the hang problem.
 
-time: Add SPDX license identifiers
+It is hard to say why printing the above with disabled interrupts
+would break anything. efivar_init() itself should get delayed
+the same way with and without the patch.
 
-Update the time(r) core files files with the correct SPDX license
-identifier based on the license text in the file itself. The SPDX
-identifier is a legally binding shorthand, which can be used instead of the
-full boiler plate text.
+Some clue might be in the rest of the log. It would be interesting
+to compare full logs of non-patched and patched system.
 
-This work is based on a script and data from Philippe Ombredanne, Kate
-Stewart and myself. The data has been created with two independent license
-scanners and manual inspection.
-
-The following files do not contain any direct license information and have
-been omitted from the big initial SPDX changes:
-
-  timeconst.bc: The .bc files were not touched
-  time.c, timer.c, timekeeping.c: Licence was deduced from EXPORT_SYMBOL_GPL
-
-As those files do not contain direct license references they fall under the
-project license, i.e. GPL V2 only.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: John Stultz <john.stultz@linaro.org>
-Acked-by: Corey Minyard <cminyard@mvista.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Russell King <rmk+kernel@armlinux.org.uk>
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: David Riley <davidriley@chromium.org>
-Cc: Colin Cross <ccross@android.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Link: https://lkml.kernel.org/r/20181031182252.879109557@linutronix.de
-
----
- include/linux/hrtimer.h         | 1 +
- kernel/time/alarmtimer.c        | 1 +
- kernel/time/clockevents.c       | 1 +
- kernel/time/clocksource.c       | 1 +
- kernel/time/hrtimer.c           | 1 +
- kernel/time/jiffies.c           | 1 +
- kernel/time/posix-clock.c       | 1 +
- kernel/time/posix-stubs.c       | 1 +
- kernel/time/posix-timers.c      | 1 +
- kernel/time/sched_clock.c       | 1 +
- kernel/time/test_udelay.c       | 1 +
- kernel/time/tick-broadcast.c    | 1 +
- kernel/time/tick-common.c       | 1 +
- kernel/time/tick-oneshot.c      | 1 +
- kernel/time/tick-sched.c        | 1 +
- kernel/time/time.c              | 1 +
- kernel/time/timeconst.bc        | 2 ++
- kernel/time/timeconv.c          | 1 +
- kernel/time/timecounter.c       | 1 +
- kernel/time/timekeeping.c       | 1 +
- kernel/time/timekeeping_debug.c | 1 +
- kernel/time/timer.c             | 1 +
- kernel/time/timer_list.c        | 1 +
- 23 files changed, 24 insertions(+)
-
-diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
-index 50ebe2ad43e0..851e4231d3ab 100644
---- a/include/linux/hrtimer.h
-+++ b/include/linux/hrtimer.h
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  *  hrtimers - High-resolution kernel timers
-  *
-diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
-index fa5de5e8de61..69070d399d70 100644
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Alarmtimer interface
-  *
-diff --git a/kernel/time/clockevents.c b/kernel/time/clockevents.c
-index 9b8c7c0fd113..0fdbdf17f8a2 100644
---- a/kernel/time/clockevents.c
-+++ b/kernel/time/clockevents.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * This file contains functions which manage clock event devices.
-  *
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 1c5273fbd500..b1abeac5f3f7 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * This file contains the functions which manage clocksource drivers.
-  *
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 223548bb81c6..16dacc8d3ca2 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  *  Copyright(C) 2005-2006, Thomas Gleixner <tglx@linutronix.de>
-  *  Copyright(C) 2005-2007, Red Hat, Inc., Ingo Molnar
-diff --git a/kernel/time/jiffies.c b/kernel/time/jiffies.c
-index 9c3957fe9317..0deb0be2c445 100644
---- a/kernel/time/jiffies.c
-+++ b/kernel/time/jiffies.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /***********************************************************************
- * This file contains the jiffies based clocksource.
- *
-diff --git a/kernel/time/posix-clock.c b/kernel/time/posix-clock.c
-index 4959815f4fd7..339e35e4605f 100644
---- a/kernel/time/posix-clock.c
-+++ b/kernel/time/posix-clock.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Support for dynamic clock devices
-  *
-diff --git a/kernel/time/posix-stubs.c b/kernel/time/posix-stubs.c
-index 989ccf028bde..b9f9f6f02e11 100644
---- a/kernel/time/posix-stubs.c
-+++ b/kernel/time/posix-stubs.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Dummy stubs used when CONFIG_POSIX_TIMERS=n
-  *
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index c72307c119d9..e8cd9aa6c9cf 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * 2002-10-15  Posix Clocks & timers
-  *                           by George Anzinger george@mvista.com
-diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
-index b38b6628f89b..11570ba451cc 100644
---- a/kernel/time/sched_clock.c
-+++ b/kernel/time/sched_clock.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Generic sched_clock() support, to extend low level hardware time
-  * counters to full 64-bit ns values.
-diff --git a/kernel/time/test_udelay.c b/kernel/time/test_udelay.c
-index b0928ab3270f..d6a87bb2040f 100644
---- a/kernel/time/test_udelay.c
-+++ b/kernel/time/test_udelay.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * udelay() test kernel module
-  *
-diff --git a/kernel/time/tick-broadcast.c b/kernel/time/tick-broadcast.c
-index 4f5abde2dfa7..f4725f53d852 100644
---- a/kernel/time/tick-broadcast.c
-+++ b/kernel/time/tick-broadcast.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * This file contains functions which emulate a local clock-event
-  * device via a broadcast event source.
-diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
-index 7b5008039c2d..455b8d65a2b7 100644
---- a/kernel/time/tick-common.c
-+++ b/kernel/time/tick-common.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * This file contains the base functions to manage periodic tick
-  * related events.
-diff --git a/kernel/time/tick-oneshot.c b/kernel/time/tick-oneshot.c
-index 77989efe13d2..1c8ad0fb33c0 100644
---- a/kernel/time/tick-oneshot.c
-+++ b/kernel/time/tick-oneshot.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * This file contains functions which manage high resolution tick
-  * related events.
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index cb557e56a19f..62ecb2a802ca 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  *  Copyright(C) 2005-2006, Thomas Gleixner <tglx@linutronix.de>
-  *  Copyright(C) 2005-2007, Red Hat, Inc., Ingo Molnar
-diff --git a/kernel/time/time.c b/kernel/time/time.c
-index 13ffa9950ffc..5aa0a156e331 100644
---- a/kernel/time/time.c
-+++ b/kernel/time/time.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  *  Copyright (C) 1991, 1992  Linus Torvalds
-  *
-diff --git a/kernel/time/timeconst.bc b/kernel/time/timeconst.bc
-index f83bbb81600b..7ed0e0fb5831 100644
---- a/kernel/time/timeconst.bc
-+++ b/kernel/time/timeconst.bc
-@@ -1,3 +1,5 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
- scale=0
- 
- define gcd(a,b) {
-diff --git a/kernel/time/timeconv.c b/kernel/time/timeconv.c
-index 7142580ad94f..589e0a552129 100644
---- a/kernel/time/timeconv.c
-+++ b/kernel/time/timeconv.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: LGPL-2.0+
- /*
-  * Copyright (C) 1993, 1994, 1995, 1996, 1997 Free Software Foundation, Inc.
-  * This file is part of the GNU C Library.
-diff --git a/kernel/time/timecounter.c b/kernel/time/timecounter.c
-index 400f3456d564..933462326489 100644
---- a/kernel/time/timecounter.c
-+++ b/kernel/time/timecounter.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Based on clocksource code. See commit 74d23cc704d1
-  *
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 30fdf48f50c2..cd02bd38cf2d 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  *  Kernel timekeeping code and accessor functions. Based on code from
-  *  timer.c, moved in commit 8524070b7982.
-diff --git a/kernel/time/timekeeping_debug.c b/kernel/time/timekeeping_debug.c
-index 238e4be60229..d06f09209fb7 100644
---- a/kernel/time/timekeeping_debug.c
-+++ b/kernel/time/timekeeping_debug.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * debugfs file to track time spent in suspend
-  *
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index 2f248bbedb4a..444156debfa0 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  *  Kernel internal timers
-  *
-diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
-index 5d64fff384c8..f81693cdf981 100644
---- a/kernel/time/timer_list.c
-+++ b/kernel/time/timer_list.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * List pending timers
-  *
+Best Regards,
+Petr
