@@ -2,166 +2,103 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B32C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5385AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A827206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:14:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8F1720861
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:14:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FQ2Nd2uX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A827206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="NrcyMYFB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8F1720861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408409AbeKWS5U (ORCPT
+        id S2408422AbeKWS5Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 13:57:20 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37430 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387607AbeKWS5U (ORCPT
+        Fri, 23 Nov 2018 13:57:24 -0500
+Received: from mail-lf1-f42.google.com ([209.85.167.42]:40505 "EHLO
+        mail-lf1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408410AbeKWS5X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 13:57:20 -0500
-Received: by mail-lj1-f194.google.com with SMTP id e5-v6so9927976lja.4
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 00:14:09 -0800 (PST)
+        Fri, 23 Nov 2018 13:57:23 -0500
+Received: by mail-lf1-f42.google.com with SMTP id v5so8091611lfe.7
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 00:14:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=MYnCVfUtt2t4THMTs7eTqsRZVRhikhfOPIYbBHG+4Oc=;
-        b=FQ2Nd2uXBqmPXIykqGG5LuPAw+HwtuwNHXe5zIMpN6qBBJyOBVfhIt3gHn+DrjbWHS
-         CYuI7UQiG4La9rnDTGaEzEEdvhfYUH3FivNEmThLjCISB17z9PaS3wIkF93O+Qcz0Ngm
-         O0QccrP1L7iO9jJUo9AqzhpZHVypl5cDLNDOg=
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2QezV+2WlvZA7bJuTqObIT46PU7b7NzSVeV2Eg8lo+s=;
+        b=NrcyMYFBx/oxHytMcSAPnxKPlubcU27mB9ibSFQ2sPtB9bq0efO3fuTLpbp+C2a7Pg
+         FpxVsuZ6DjHn/WJ5DyWV+Wi/GEPVZOeAXtkdr9LnZ0EtHbKPz6NC3vKRm+eZZpuom8DL
+         ZAJl0cfV+O95hVjW0gJC3no979WH+YtRrwTiQG5m3MaesrxAcTfLy1q4VWUGiGoH839j
+         /Ocb43AeBnP4jEitSoihV2FSO7yf3vWlDHysL7oMrjvYz0yHQz8pP0h+1kxlMk6ZpNmh
+         IJNyJh1RpzleVTSFHfojT42hVzS+mnTMt8sLEWJmN2mcoQjLNKeYA6sfZnC8LIpdvsnU
+         vMHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MYnCVfUtt2t4THMTs7eTqsRZVRhikhfOPIYbBHG+4Oc=;
-        b=cYngu1yZKtiheRuADDNqYQ0OKvvA14uvSsCWV77XfXkWwVVv+0IrNk3uX8PDOJnOPS
-         NxNyD/vYYz96Fx8ig4bo5maAUNU1t1yUjlwuaYLXJKCyrGS4D6yYZGMja7U7DeH+Qx5L
-         lZMeJ5Ea9EIZfKtk9gxNcc8qfwTYhJlOi3SHspoG7C1N4gdZtVl+bs1pK6Rs1wLjSiiz
-         KAUqJgrxWVq3WfR24vPNapsnDKL7m5HJkxhEcWdcXzB4eZbtqOkxLdHe9dlZ3oBQDacD
-         N6sPUn1bwieKASFK0HXgqcVsQ5juescVXUAlIqkedNvSGIs+nJo5LrEdXQicEkjgKgC0
-         4xQg==
-X-Gm-Message-State: AA+aEWavLTM/TCMJi2yFCHUYuwVkzr1EkKzeqAu6QqUD9WRbvbiFucJh
-        EhDgXXYZFtw+zoM2+fbWdnpRzaflSjQTuEuUvWAnmg==
-X-Google-Smtp-Source: AFSGD/WcPOElGjkx2iPBdEG7ZOGb9O1VowVBsD9RcZyUqOs910JwET0ulGOIzC3BRITsuK01Jyg111KZtwWa9tS2D+o=
-X-Received: by 2002:a2e:92ca:: with SMTP id k10-v6mr9054228ljh.63.1542960848536;
- Fri, 23 Nov 2018 00:14:08 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2QezV+2WlvZA7bJuTqObIT46PU7b7NzSVeV2Eg8lo+s=;
+        b=Gg5mbcpGFm5tLddZRqaBlItDNLAhKPgeSwECTP/VWEm9JSo8/qgbLWMQzNuEDCg8H7
+         yIsOudDF/eFG2FPeosn0DZtiJtkgt887HCqIreS8xU5RYyGiHWhWQpHJf3swjhB9Kr32
+         tQsSxEn4lwy1siXG+foz5xLKGCIabjMohxyjjK+zm6DKw+8frQvZs/hOaF1c305tf0vn
+         5TzKL5UhKPTp+0dNRhmaEVfv2JQfg7tYjwMGdEr8a3VyDbS+d5VyQ39AbFgeeJx3uDFi
+         i1GyR157d64yvh6QK0XPhcWmbSFpSqKnvWkDkcNCuSQimJt4UD1o2WDSBd5XTiyOh94/
+         x09Q==
+X-Gm-Message-State: AGRZ1gIDIwVN/4M4UfWcrGlK+dijpXQxydNUdZFbXR60B0cJiW+cHgwr
+        AgqnaGDDEah4soSQ9tLGiVlncN55Qv0=
+X-Google-Smtp-Source: AJdET5f3dbo4KhmC8FJpstU0/9QaVeCg4aI9vh0NpxB/LBMgT43BcFWZqkDQduljtamQ6vMcQ1C5Wg==
+X-Received: by 2002:a19:c18d:: with SMTP id r135mr8041315lff.59.1542960852107;
+        Fri, 23 Nov 2018 00:14:12 -0800 (PST)
+Received: from [192.168.0.36] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
+        by smtp.googlemail.com with ESMTPSA id x16sm7544156lff.26.2018.11.23.00.14.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 23 Nov 2018 00:14:11 -0800 (PST)
+Subject: Re: lightnvm: pblk: avoid ref warning on cache creation
+To:     javier@javigon.com
+Cc:     hans.holmberg@cnexlabs.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, javier@cnexlabs.com
+References: <1542894410-14047-1-git-send-email-javier@cnexlabs.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <2ef4bc58-98cf-fdfc-195d-d6f88e85f4a6@lightnvm.io>
+Date:   Fri, 23 Nov 2018 09:14:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181121183147.869199006@linuxfoundation.org>
-In-Reply-To: <20181121183147.869199006@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 23 Nov 2018 13:43:56 +0530
-Message-ID: <CA+G9fYu1EmZiXQ6U+L0s9AsBH1nOTFer1=ZFv6yBUPK1qDcqMg@mail.gmail.com>
-Subject: Re: [PATCH 4.19 00/42] 4.19.4-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1542894410-14047-1-git-send-email-javier@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Nov 2018 at 00:36, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.19.4 release.
-> There are 42 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri Nov 23 18:31:31 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.4-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 11/22/2018 02:46 PM, Javier González wrote:
+> Matias,
+> 
+> Can you pick this up for 4.20? Even though it is not an error per se, it
+> does trigger an ugly false positive warning when CONFIG_REFCOUNT_FULL is
+> set.
+> 
+> Thanks,
+> Javier
+> 
+> Javier González (1):
+>    lightnvm: pblk: avoid ref warning on cache creation
+> 
+>   drivers/lightnvm/pblk-init.c | 14 +++++---------
+>   1 file changed, 5 insertions(+), 9 deletions(-)
+> 
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+It is too late to get it for 4.20. I'll pull it in for 4.21.
 
-Summary
-------------------------------------------------------------------------
+We can put on a Fixes: 1864de94ec9d6 "lightnvm: pblk: stop recreating 
+global caches" if you want Greg and friends to pick picked it up for 
+stable kernels?
 
-kernel: 4.19.4-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.19.y
-git commit: 2b8db8734888b00156c6afb235eda91aa71da503
-git describe: v4.19.3-43-g2b8db8734888
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
-ild/v4.19.3-43-g2b8db8734888
-
-
-No regressions (compared to build v4.19.2-206-g73aa1c86c6ec)
-
-No fixes (compared to build v4.19.2-206-g73aa1c86c6ec)
-
-Ran 18944 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-hugetlb-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
