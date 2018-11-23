@@ -2,128 +2,178 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 907CFC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8657DC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F4E820685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:15:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 394FB20820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:15:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="jzTvFyZL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F4E820685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="dbBLeQ2f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 394FB20820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504473AbeKWX7d (ORCPT
+        id S2504503AbeKWX76 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:59:33 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:53238 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390867AbeKWX7d (ORCPT
+        Fri, 23 Nov 2018 18:59:58 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55188 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394867AbeKWX75 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:59:33 -0500
-Received: by mail-it1-f194.google.com with SMTP id i7so18362059iti.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 05:15:23 -0800 (PST)
+        Fri, 23 Nov 2018 18:59:57 -0500
+Received: by mail-wm1-f67.google.com with SMTP id r63-v6so11942790wma.4
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 05:15:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TgmVmK8YOkbGetgLHjxUB252HP/issfa95UlGOT8KP4=;
-        b=jzTvFyZLWhaTv3fPabKaGw/xq40CPu2WvN8sSnBauPJ3sbmXpOu9toWODABuHVG3nn
-         e/QtbqaZjx6WvvkC86A1dIPmpEWjUxBxLf2bYQeEZ9jdZ87ELhmDyXw6p5/r6Xe/mGaf
-         jZ3DgzUav6eLqMA2KRMBphZloo99vLORyr9YQ=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=OG9Fku2qd1zlm5sMMBVIgCdneVny+aDNTlvtD2rtPMM=;
+        b=dbBLeQ2fVkEU9x3z25NbAt1n5UuKyYgFBPZOlj2gBgVneYEeEBt99BgVuAvGSmYYye
+         OUzH4SWJijf+PCtCcubJonKTXeKzJge3/WxgQrs3UjwQQdlztWcai9tBxdj1P5GgSuNg
+         gzdexT2HigrnGgODLAoHbnsvr0UbDIxXdiaTEk4cj836M6MCFhSe4Hx35AfJDqLhXqM0
+         Kr1j1Z6tB3i+yyPikvtUwq1Ova7WR+SqJrwMAVzx7C4ETpOyUYN86sw3tj7Zrp5HbSLG
+         yGTkkgZ6Q5rvARq6PWTa2YCYlqPvQa7B+jIMTa9kEIbe8Fzrz8SZmBdcnNZknqey+S1F
+         9nlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TgmVmK8YOkbGetgLHjxUB252HP/issfa95UlGOT8KP4=;
-        b=EEATLsvOzBclad703iHH71PtZ6EsE5AKeYT70/aGxWNDSeE4DVohM64qa2G8vk8EY9
-         nfJrnXorsXyA02Ff3u+HxtK+WeETNJAyS6TLoTQ0yS3WxAyMg3JcUxqL6nbOG5KsFrGI
-         vmOSOhx/HF4f0U5bmVKQbfEP9djd7ZKBS2G1vLfPn5xSaPBzQ3JR/3xip+JxuyyOgJie
-         sPwGu/JMN7jEFV6mrJTF7D3MTf3pZ0yJnC3T7MlUPCTLBFSRspWOuv08mNEG5RB+gQQL
-         JiqQd6TzMLp4cMmC7gk+IQWJ7bFZcM5ym9xVqInQI9LPA8VkyNcM+gx2TgrrmjeAQtCb
-         Tmqg==
-X-Gm-Message-State: AA+aEWaCsbCBf50S/APh4vfBobD2pNV55ncSLrN1aZMhr+ccE/zJ4zH/
-        jwB8UUCxeL2FHvhTnwb7jk7ZWiUAPWVs8UzHymNGSA==
-X-Google-Smtp-Source: AFSGD/X0yvjSxT0V3nOYCe2A+fRqYqEEsRMs+rXehdeHbLbbNSl3yYce4HuTYzzMdE8mqYOF/6mZQSPjVAgSRfQPqeM=
-X-Received: by 2002:a24:138b:: with SMTP id 133-v6mr4830676itz.117.1542978923307;
- Fri, 23 Nov 2018 05:15:23 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=OG9Fku2qd1zlm5sMMBVIgCdneVny+aDNTlvtD2rtPMM=;
+        b=ingvLkyHS5U1DeUIFf5EhcU8xmcMHVXh5FPAKvcKmQ8FayUc9PgRZZpxVdxFXNke5o
+         gzI54I6NAul9zjpcEtNeD2S48NkUJerf0kefh//XESEKyJkQSC557okfJ1T3NAaePbQi
+         BcxKL2pG5265Zm+9QNGgjoi8X4XpA/i2j10gNn/l1laOkhsj+s1UtOc7CvpbWwWHG2oi
+         Mi7exmFESDSDMNSZKcwc9wkl3gLD981Hb5KU9aAC+r8QrHvDgUFDI97qyXOboi702Pga
+         rtFsYaYLEZJUMdnQ5tbr16tlf8p3zL7M05PIoRoXLoCS/RMJ1h9u+iAq2bxkoxauRCk6
+         WP0A==
+X-Gm-Message-State: AA+aEWZDMrzmcYjIx2VBOLUTrxGXyKoislNczepKukU43ht806YUHaEb
+        za7vCbrFwQcgpsMjlhIy8xoMDGR9Aqp6PQ==
+X-Google-Smtp-Source: AJdET5erRRo3wa67EnjomqNzJkYWhQwccYkKOlhLpF1t0AiTxaP8seOpP6dXAt0+g0AKk977fWUGgQ==
+X-Received: by 2002:a1c:4a:: with SMTP id 71-v6mr13643931wma.140.1542978946178;
+        Fri, 23 Nov 2018 05:15:46 -0800 (PST)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id v1sm11004430wrw.90.2018.11.23.05.15.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 23 Nov 2018 05:15:45 -0800 (PST)
+Subject: Re: [PATCH] drm/meson: add support for 1080p25 mode
+To:     Michal Lazo <michal.lazo@mdragon.org>
+Cc:     christianshewitt@gmail.com, airlied@linux.ie, khilman@baylibre.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        carlo@caione.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1542793169-13008-1-git-send-email-christianshewitt@gmail.com>
+ <2a9d9fa9-c9ba-c624-28da-dd3804faf438@baylibre.com>
+ <CAFW1BFzC0wzwmjvpSqb90ipY4mzdWPMc3buXjkwvi4X5e8wGJg@mail.gmail.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <ea9d3fd1-068f-7bec-4166-9399d0aea02f@baylibre.com>
+Date:   Fri, 23 Nov 2018 14:15:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181122165106.18238-1-daniel.vetter@ffwll.ch>
- <20181122165106.18238-2-daniel.vetter@ffwll.ch> <20181123111557.GG8625@dhcp22.suse.cz>
- <20181123123057.GK4266@phenom.ffwll.local> <20181123124358.GJ8625@dhcp22.suse.cz>
-In-Reply-To: <20181123124358.GJ8625@dhcp22.suse.cz>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Fri, 23 Nov 2018 14:15:11 +0100
-Message-ID: <CAKMK7uGViQT5HPEQzFsAT85gdCr-gw94EB5fMT9eXRBAXambWg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] mm: Check if mmu notifier callbacks are allowed to fail
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAFW1BFzC0wzwmjvpSqb90ipY4mzdWPMc3buXjkwvi4X5e8wGJg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 1:43 PM Michal Hocko <mhocko@kernel.org> wrote:
-> On Fri 23-11-18 13:30:57, Daniel Vetter wrote:
-> > On Fri, Nov 23, 2018 at 12:15:57PM +0100, Michal Hocko wrote:
-> > > On Thu 22-11-18 17:51:04, Daniel Vetter wrote:
-> > > > Just a bit of paranoia, since if we start pushing this deep into
-> > > > callchains it's hard to spot all places where an mmu notifier
-> > > > implementation might fail when it's not allowed to.
-> > >
-> > > What does WARN give you more than the existing pr_info? Is really
-> > > backtrace that interesting?
-> >
-> > Automated tools have to ignore everything at info level (there's too much
-> > of that). I guess I could do something like
-> >
-> > if (blockable)
-> >       pr_warn(...)
-> > else
-> >       pr_info(...)
-> >
-> > WARN() is simply my goto tool for getting something at warning level
-> > dumped into dmesg. But I think the pr_warn with the callback function
-> > should be enough indeed.
->
-> I wouldn't mind s@pr_info@pr_warn@
+Hi Michal,
 
-Well that's too much, because then it would misfire in the oom
-testcase, where failing is ok (desireble even, we want to avoid
-blocking after all). So needs to be  a switch (or else we need to
-filter it in results, and that's a bit a maintenance headache from a
-CI pov).
--Danile
+On 23/11/2018 13:57, Michal Lazo wrote:
+> I would suggest same aproach as for
+> "meson_hdmi_encp_mode_1080p30"
+> and "meson_hdmi_encp_mode_1080p60"
+> 
+> so duplicate "meson_hdmi_encp_mode_1080p50"
+> with name "meson_hdmi_encp_mode_1080p25"
 
-> > If you wonder where all the info level stuff happens that we have to
-> > ignore: suspend/resume is a primary culprit (fairly important for
-> > gfx/desktops), but there's a bunch of other places. Even if we ignore
-> > everything at info and below we still need filters because some drivers
-> > are a bit too trigger-happy (i915 definitely included I guess, so everyone
-> > contributes to this problem).
->
-> Thanks for the clarification.
-> --
-> Michal Hocko
-> SUSE Labs
+The configs are litterally the same for 1080p25 and 1080p60 unlike 1080p30/1080p60,
+so I don't see the point about duplicating a same table for the sake of naming.
 
+We will the exact same thing to support the 2160p50/2160p60 modes by reusing the
+same config are 2160p25/2160p50, and I don't see the point of duplication the
+tables here aswell.
 
+Neil
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> 
+> now the code looks really like common copy paste problem
+> Michal Lazo
+> On Wed, Nov 21, 2018 at 10:47 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>>
+>> On 21/11/2018 10:39, Christian Hewitt wrote:
+>>> This essential mode for PAL users is missing, so add it.
+>>>
+>>> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+>>> ---
+>>>  drivers/gpu/drm/meson/meson_venc.c | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
+>>> index acbbad3..ab16046 100644
+>>> --- a/drivers/gpu/drm/meson/meson_venc.c
+>>> +++ b/drivers/gpu/drm/meson/meson_venc.c
+>>> @@ -714,6 +714,7 @@ struct meson_hdmi_venc_vic_mode {
+>>>       { 5, &meson_hdmi_encp_mode_1080i60 },
+>>>       { 20, &meson_hdmi_encp_mode_1080i50 },
+>>>       { 32, &meson_hdmi_encp_mode_1080p24 },
+>>> +     { 33, &meson_hdmi_encp_mode_1080p50 },
+>>>       { 34, &meson_hdmi_encp_mode_1080p30 },
+>>>       { 31, &meson_hdmi_encp_mode_1080p50 },
+>>>       { 16, &meson_hdmi_encp_mode_1080p60 },
+>>>
+>>
+>> Exact, I forgot this mode...
+>>
+>> Thanks for the change !
+>>
+>> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+>>
+>> I'll add :
+>> Fixes: 335e3713afb87 ("drm/meson: Add support for HDMI venc modes and settings")
+>> when applying to drm-misc-fixes.
+>>
+>> Neil
+>>
+>> _______________________________________________
+>> linux-amlogic mailing list
+>> linux-amlogic@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+> 
+> 
+> 
+
