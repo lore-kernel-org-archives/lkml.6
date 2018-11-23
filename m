@@ -2,160 +2,79 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01EBEC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01BB1C04EBA
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA4C520685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:46:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA4C520685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id AFAAF20863
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:48:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFAAF20863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409687AbeKWW31 (ORCPT
+        id S2403793AbeKWWcW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 17:29:27 -0500
-Received: from outbound-smtp16.blacknight.com ([46.22.139.233]:33970 "EHLO
-        outbound-smtp16.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2409672AbeKWW30 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 17:29:26 -0500
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp16.blacknight.com (Postfix) with ESMTPS id C9DF71C2CF2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 11:45:29 +0000 (GMT)
-Received: (qmail 12335 invoked from network); 23 Nov 2018 11:45:29 -0000
-Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.69])
-  by 81.17.254.9 with ESMTPA; 23 Nov 2018 11:45:29 -0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Michal Hocko <mhocko@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 3/5] mm: Use alloc_flags to record if kswapd can wake
-Date:   Fri, 23 Nov 2018 11:45:26 +0000
-Message-Id: <20181123114528.28802-4-mgorman@techsingularity.net>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20181123114528.28802-1-mgorman@techsingularity.net>
-References: <20181123114528.28802-1-mgorman@techsingularity.net>
+        Fri, 23 Nov 2018 17:32:22 -0500
+Received: from foss.arm.com ([217.140.101.70]:42806 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387844AbeKWWcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 17:32:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC0F83620;
+        Fri, 23 Nov 2018 03:48:26 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C81B03F5A0;
+        Fri, 23 Nov 2018 03:48:24 -0800 (PST)
+Date:   Fri, 23 Nov 2018 11:48:16 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>
+Subject: Re: [PATCHv3 0/4] dts/layerscape-pci: removed unsuitable compatible
+ string
+Message-ID: <20181123114816.GA3564@e107981-ln.cambridge.arm.com>
+References: <20181107053500.13575-1-Zhiqiang.Hou@nxp.com>
+ <20181119120123.GQ5829@dragon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181119120123.GQ5829@dragon>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a preparation patch that copies the GFP flag __GFP_KSWAPD_RECLAIM
-into alloc_flags. This is a preparation patch only that avoids having to
-pass gfp_mask through a long callchain in a future patch.
+On Mon, Nov 19, 2018 at 08:01:25PM +0800, Shawn Guo wrote:
+> On Wed, Nov 07, 2018 at 05:35:12AM +0000, Z.q. Hou wrote:
+> > From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> > 
+> > Removed the compatible string "snps,dw-pcie" from FSL layerscape-pci compatible
+> > string list.
+> > 
+> > Hou Zhiqiang (4):
+> >   dt-bindings: pci: layerscape-pci: add compatible strings
+> >     "fsl,ls1043a-pcie"
+> >   dt-bindings: pci: layerscape-pci: removed compatible string
+> >     "snps,dw-pcie"
+> >   ARM: dts: ls1021a: removed compatible string "snps,dw-pcie"
+> >   arm64: dts: layerscape: removed compatible string "snps,dw-pcie"
+> 
+> Applied all, thanks.
 
-Note that the setting in the fast path happens in alloc_flags_nofragment()
-and it may be claimed that this has nothing to do with ALLOC_NO_FRAGMENT.
-That's true in this patch but is not true later so it's done now for
-easier review to show where the flag needs to be recorded.
+Ok, thanks, patches dropped from PCI patch queue.
 
-No functional change.
-
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- mm/internal.h   |  1 +
- mm/page_alloc.c | 25 +++++++++++++++++--------
- 2 files changed, 18 insertions(+), 8 deletions(-)
-
-diff --git a/mm/internal.h b/mm/internal.h
-index 544355156c92..be826ee9dc7f 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -489,6 +489,7 @@ unsigned long reclaim_clean_pages_from_list(struct zone *zone,
- #else
- #define ALLOC_NOFRAGMENT	  0x0
- #endif
-+#define ALLOC_KSWAPD		0x200 /* allow waking of kswapd */
- 
- enum ttu_flags;
- struct tlbflush_unmap_batch;
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 4ba84cd2977a..e44eb68744ed 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3278,10 +3278,15 @@ static bool zone_allows_reclaim(struct zone *local_zone, struct zone *zone)
-  * fragmentation between the Normal and DMA32 zones.
-  */
- static inline unsigned int
--alloc_flags_nofragment(struct zone *zone)
-+alloc_flags_nofragment(struct zone *zone, gfp_t gfp_mask)
- {
-+	unsigned int alloc_flags = 0;
-+
-+	if (gfp_mask & __GFP_KSWAPD_RECLAIM)
-+		alloc_flags |= ALLOC_KSWAPD;
-+
- 	if (zone_idx(zone) != ZONE_NORMAL)
--		return 0;
-+		goto out;
- 
- 	/*
- 	 * If ZONE_DMA32 exists, assume it is the one after ZONE_NORMAL and
-@@ -3290,13 +3295,14 @@ alloc_flags_nofragment(struct zone *zone)
- 	 */
- 	BUILD_BUG_ON(ZONE_NORMAL - ZONE_DMA32 != 1);
- 	if (nr_online_nodes > 1 && !populated_zone(--zone))
--		return 0;
-+		goto out;
- 
--	return ALLOC_NOFRAGMENT;
-+out:
-+	return alloc_flags;
- }
- #else
- static inline unsigned int
--alloc_flags_nofragment(struct zone *zone)
-+alloc_flags_nofragment(struct zone *zone, gfp_t gfp_mask)
- {
- 	return 0;
- }
-@@ -3939,6 +3945,9 @@ gfp_to_alloc_flags(gfp_t gfp_mask)
- 	} else if (unlikely(rt_task(current)) && !in_interrupt())
- 		alloc_flags |= ALLOC_HARDER;
- 
-+	if (gfp_mask & __GFP_KSWAPD_RECLAIM)
-+		alloc_flags |= ALLOC_KSWAPD;
-+
- #ifdef CONFIG_CMA
- 	if (gfpflags_to_migratetype(gfp_mask) == MIGRATE_MOVABLE)
- 		alloc_flags |= ALLOC_CMA;
-@@ -4170,7 +4179,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- 	if (!ac->preferred_zoneref->zone)
- 		goto nopage;
- 
--	if (gfp_mask & __GFP_KSWAPD_RECLAIM)
-+	if (alloc_flags & ALLOC_KSWAPD)
- 		wake_all_kswapds(order, gfp_mask, ac);
- 
- 	/*
-@@ -4228,7 +4237,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- 
- retry:
- 	/* Ensure kswapd doesn't accidentally go to sleep as long as we loop */
--	if (gfp_mask & __GFP_KSWAPD_RECLAIM)
-+	if (alloc_flags & ALLOC_KSWAPD)
- 		wake_all_kswapds(order, gfp_mask, ac);
- 
- 	reserve_flags = __gfp_pfmemalloc_flags(gfp_mask);
-@@ -4451,7 +4460,7 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
- 	 * Forbid the first pass from falling back to types that fragment
- 	 * memory until all local zones are considered.
- 	 */
--	alloc_flags |= alloc_flags_nofragment(ac.preferred_zoneref->zone);
-+	alloc_flags |= alloc_flags_nofragment(ac.preferred_zoneref->zone, gfp_mask);
- 
- 	/* First allocation attempt */
- 	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
--- 
-2.16.4
-
+Lorenzo
