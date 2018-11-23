@@ -2,78 +2,117 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20149C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB8EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D843720663
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:38:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D843720663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 8B26A20685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:41:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s7JJWLPp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B26A20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389347AbeKXHYn (ORCPT
+        id S1726079AbeKXH1M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 02:24:43 -0500
-Received: from netrider.rowland.org ([192.131.102.5]:36717 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S2387832AbeKXHYn (ORCPT
+        Sat, 24 Nov 2018 02:27:12 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33449 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbeKXH1L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 02:24:43 -0500
-Received: (qmail 27928 invoked by uid 500); 23 Nov 2018 15:38:54 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 23 Nov 2018 15:38:54 -0500
-Date:   Fri, 23 Nov 2018 15:38:54 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@netrider.rowland.org
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-cc:     gregkh@linuxfoundation.org, <linux-usb@vger.kernel.org>,
-        <usb-storage@lists.one-eyed-alien.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] USB: usb-storage: Add new IDs to ums-realtek
-In-Reply-To: <20181123084219.30987-1-kai.heng.feng@canonical.com>
-Message-ID: <Pine.LNX.4.44L0.1811231538390.27782-100000@netrider.rowland.org>
+        Sat, 24 Nov 2018 02:27:11 -0500
+Received: by mail-wr1-f65.google.com with SMTP id c14so7796479wrr.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 12:41:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Ayl57y57txfnJnVTIfh4Y1jm17Inqx5LntnG3yRMBh0=;
+        b=s7JJWLPpZ/w5ADKqfRXBUqKhxl4rcTaSxIzTpmJS/QB3gnxgXBtQtFujbTCnvWMdeV
+         9Y6BLAdaGn6bk0qlRd/V8Rr3ogVRjbGFwylGdoi00TOA+xj/bXARxaGgpuGS8dCXryv7
+         f4VIJYv5gInRNAf1rYsYd/9wLtfTFHyWRvCYWQr/WCQJBVVQ5n8z34QRAiHJWiU+tu5r
+         aLR0PAkgApm+ogZ04LhxTcklG/O2sNqcv9yZ84X+4bsCpsl8slXrxBpSnWsVNCSuHvTo
+         DaSzbcoPrgLagChbFt7XDNNtnA2UfV8KYOV5tgSj0KuSWFYOz1K12VRrrjvOKW7CUHgO
+         CZCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Ayl57y57txfnJnVTIfh4Y1jm17Inqx5LntnG3yRMBh0=;
+        b=ObbykJUnHs9W4uJIm0657YcAO8ROJv9rlPLdtn1ssSHom/WZTWymxOhW9YBOjHuW2p
+         snhLbL2RSP5maSzfryE6bgXnmABDNq7h9zq0NkDTS0MqfoFfFqitgkEM9Da3nJ+vXumG
+         vkcv7OXo4QpcKn1e08kzRkhunaSyDpJtT5uB44VbPV4E4sQnhXPqeQOZaigAWgfcajcy
+         K7dzMnq1uMRMBWYl5gxkxMoJk+4RXAo/sc8UQ533jof3uw1xMexPFQBZeBp7XfxQyDom
+         KBrToyIvhQhh/86DGQSb2BiZkAtmM6F232PqIR0OCS4ngWJDeZ/wWW13ZXe3K0mBgXdl
+         SNGQ==
+X-Gm-Message-State: AA+aEWaNLvy6ZQSmyAbwtROzmrj1FYpepD044M9y9//M+p0KHgGsT19/
+        qJQ2MKMPYn5Dvli6Hx+XRxEhxAjr
+X-Google-Smtp-Source: AFSGD/USP8bvrHf3PE9W6XM1NbWVtJBILBxer64uw1BOXUjt6JaBdZfPO6vJ7lL6LzcO5UqNUmKxkQ==
+X-Received: by 2002:adf:9205:: with SMTP id 5mr4677939wrj.189.1543005681116;
+        Fri, 23 Nov 2018 12:41:21 -0800 (PST)
+Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
+        by smtp.gmail.com with ESMTPSA id i9sm24598906wrs.34.2018.11.23.12.41.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 23 Nov 2018 12:41:20 -0800 (PST)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 4/9] staging: rtl8188eu: remove rtw_android_set_block()
+Date:   Fri, 23 Nov 2018 21:41:01 +0100
+Message-Id: <20181123204106.2284-4-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181123204106.2284-1-straube.linux@gmail.com>
+References: <20181123204106.2284-1-straube.linux@gmail.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Nov 2018, Kai-Heng Feng wrote:
+The function rtw_android_set_block() just returns zero. The only user
+is the function rtw_android_priv_cmd(). The variable bytes_written is
+initialized to zero and not changed before the use of
+rtw_android_set_block(). Remove rtw_android_set_block() and it's only
+use.
 
-> There are two new Realtek card readers require ums-realtek to work
-> correctly.
-> 
-> Add the new IDs to support them.
-> 
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
->  drivers/usb/storage/unusual_realtek.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/usb/storage/unusual_realtek.h b/drivers/usb/storage/unusual_realtek.h
-> index d17cd95b55bb..6b2140f966ef 100644
-> --- a/drivers/usb/storage/unusual_realtek.h
-> +++ b/drivers/usb/storage/unusual_realtek.h
-> @@ -27,4 +27,14 @@ UNUSUAL_DEV(0x0bda, 0x0159, 0x0000, 0x9999,
->  		"USB Card Reader",
->  		USB_SC_DEVICE, USB_PR_DEVICE, init_realtek_cr, 0),
->  
-> +UNUSUAL_DEV(0x0bda, 0x0177, 0x0000, 0x9999,
-> +		"Realtek",
-> +		"USB Card Reader",
-> +		USB_SC_DEVICE, USB_PR_DEVICE, init_realtek_cr, 0),
-> +
-> +UNUSUAL_DEV(0x0bda, 0x0184, 0x0000, 0x9999,
-> +		"Realtek",
-> +		"USB Card Reader",
-> +		USB_SC_DEVICE, USB_PR_DEVICE, init_realtek_cr, 0),
-> +
->  #endif  /* defined(CONFIG_USB_STORAGE_REALTEK) || ... */
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+---
+ drivers/staging/rtl8188eu/os_dep/rtw_android.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+diff --git a/drivers/staging/rtl8188eu/os_dep/rtw_android.c b/drivers/staging/rtl8188eu/os_dep/rtw_android.c
+index 34080c0ce14a..2ea2af3286bc 100644
+--- a/drivers/staging/rtl8188eu/os_dep/rtw_android.c
++++ b/drivers/staging/rtl8188eu/os_dep/rtw_android.c
+@@ -127,12 +127,6 @@ static int android_get_p2p_addr(struct net_device *net, char *command,
+ 	return ETH_ALEN;
+ }
+ 
+-static int rtw_android_set_block(struct net_device *net, char *command,
+-				 int total_len)
+-{
+-	return 0;
+-}
+-
+ int rtw_android_priv_cmd(struct net_device *net, struct ifreq *ifr, int cmd)
+ {
+ 	int ret = 0;
+@@ -186,8 +180,6 @@ int rtw_android_priv_cmd(struct net_device *net, struct ifreq *ifr, int cmd)
+ 							priv_cmd.total_len);
+ 		break;
+ 	case ANDROID_WIFI_CMD_BLOCK:
+-		bytes_written = rtw_android_set_block(net, command,
+-						      priv_cmd.total_len);
+ 		break;
+ 	case ANDROID_WIFI_CMD_RXFILTER_START:
+ 		break;
+-- 
+2.19.2
 
