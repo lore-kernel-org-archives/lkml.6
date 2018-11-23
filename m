@@ -2,241 +2,268 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E508BC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 247ADC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:26:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD0D220863
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:23:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD0D220863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C969420865
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:26:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W3xVwV2z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C969420865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440845AbeKXEIW (ORCPT
+        id S2440858AbeKXELp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 23:08:22 -0500
-Received: from mga18.intel.com ([134.134.136.126]:35325 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391344AbeKXEIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 23:08:21 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Nov 2018 09:23:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,270,1539673200"; 
-   d="scan'208";a="107130010"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by fmsmga002.fm.intel.com with SMTP; 23 Nov 2018 09:23:09 -0800
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 23 Nov 2018 19:23:08 +0200
-Date:   Fri, 23 Nov 2018 19:23:08 +0200
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Ayan Halder <Ayan.Halder@arm.com>
-Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>, nd <nd@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Sean Paul <sean@poorly.run>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 12/43] drm/fourcc: Add format helpers for checking YUV
- sub-sampling
-Message-ID: <20181123172308.GR9144@intel.com>
-References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
- <20181123092515.2511-13-paul.kocialkowski@bootlin.com>
- <20181123165532.GA22326@arm.com>
+        Fri, 23 Nov 2018 23:11:45 -0500
+Received: from casper.infradead.org ([85.118.1.10]:57584 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388876AbeKXELp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 23:11:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=yVoHYZe3u3TiCcygu3CStsX8NOU4x2sCtM66999OPtI=; b=W3xVwV2zXkNt+rlj8gWUlLhUKI
+        A6btHAJH+aVr91xILdG/J546xoQRKpwyXI+0V0zpkOFSwuEX8bvt+Jh5LGXjAOxZmv/K6CWuBPiBL
+        zvD6tq9AHCknQbgwDsZxS6Z3tb1jYvpElez2klBZ043QpXPZjCI70glVF4R0Tq65rR9PlQW0AV5Kd
+        ie+ivCnfipzB+vswMEUleCrXVi0q7zIN2ELZ6ECh+Gdg8UP/euzVOMlCAxrKU1Q9kpmErbPbXG6Tz
+        /hcGi9mrT0qQ3CrXI47uz49Oii5VDVQxl4mEZwl97xxoDfhGL0iWUVOwpxGAGbtY7UGR4/7gci4S6
+        NmLWHxuw==;
+Received: from 201.47.163.210.dynamic.adsl.gvt.net.br ([201.47.163.210] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gQFDq-0000fo-NA; Fri, 23 Nov 2018 17:26:31 +0000
+Date:   Fri, 23 Nov 2018 15:26:25 -0200
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     stakanov <stakanov@eclipso.eu>, Takashi Iwai <tiwai@suse.de>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Ira Krufky <mkrufky@linuxtv.org>,
+        Sean Young <sean@mess.org>, Brad Love <brad@nextdimension.cc>,
+        Malcolm Priestley <tvboxspy@gmail.com>
+Subject: Re: DVB-S PCI card regression on 4.19 / 4.20
+Message-ID: <20181123152625.7992ceb4@coco.lan>
+In-Reply-To: <4969775.51lmc1uXLO@roadrunner.suse>
+References: <4e0356d6303c128a3e6d0bcc453ba1be@mail.eclipso.de>
+        <12757009.r0OKxgvFl0@roadrunner.suse>
+        <20181122183549.331ecbc4@coco.lan>
+        <4969775.51lmc1uXLO@roadrunner.suse>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181123165532.GA22326@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 04:55:33PM +0000, Ayan Halder wrote:
-> On Fri, Nov 23, 2018 at 10:24:44AM +0100, Paul Kocialkowski wrote:
-> 
-> Hi Paul,
-> 
-> > This introduces new format helpers that use the previously-introduced
-> > format info helpers for checking YUV sub-sampling.
-> > 
-> > Only the format fourcc is required by these helpers and the formats are
-> > iterated from the list.
-> > 
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > ---
-> >  drivers/gpu/drm/drm_fourcc.c | 105 +++++++++++++++++++++++++++++++++++
-> >  include/drm/drm_fourcc.h     |   5 ++
-> >  2 files changed, 110 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
-> > index b56e773f9f63..6d395c586ad5 100644
-> > --- a/drivers/gpu/drm/drm_fourcc.c
-> > +++ b/drivers/gpu/drm/drm_fourcc.c
-> > @@ -492,6 +492,111 @@ bool drm_format_is_yuv_planar(uint32_t format)
-> >  }
-> >  EXPORT_SYMBOL(drm_format_is_yuv_planar);
-> >  
-> > +/**
-> > + * drm_format_is_yuv_sampling_410 - check that the format is a YUV format with
-> > + * 4:1:0 sub-sampling
-> > + * @format: pixel format
-> > + *
-> > + * Returns:
-> > + * A boolean indicating whether the format is a YUV format with 4:1:0
-> > + * sub-sampling.
-> > + */
-> > +bool drm_format_is_yuv_sampling_410(uint32_t format)
-> > +{
-> > +	const struct drm_format_info *info;
-> > +
-> > +	info = drm_format_info(format);
-> > +	if (!info)
-> > +		return false;
+Hi Stakarov,
 
-Looks like you're doing a lot of drm_format_info(fb->format->format),
-which doesn't make sense. Not to mention that each lookup is a linear
-search so the costs may start to add up.
+Em Fri, 23 Nov 2018 16:55:35 +0100
+stakanov <stakanov@eclipso.eu> escreveu:
 
-Unless there's a really good reason I'd rather we try to remove all
-the current helpers that do these lookups, and not add any more.
+> In data gioved=C3=AC 22 novembre 2018 21:35:49 CET, Mauro Carvalho Chehab=
+ ha=20
+> scritto:
+> > Em Thu, 22 Nov 2018 21:19:49 +0100
+> >=20
+> > stakanov <stakanov@eclipso.eu> escreveu: =20
+> > > Hello Mauro.
+> > >=20
+> > > Thank you so much, for this fast reply and especially for the detailed
+> > > indications. I expected to have a lack of knowledge.
+> > >=20
+> > > Well,  I am replying to the question as of below: (for convenience I =
+did
+> > > cut the before text, if you deem it useful for the list I can then
+> > > correct that in the next posts).
+> > >=20
+> > > In data gioved=C3=AC 22 novembre 2018 21:06:11 CET, Mauro Carvalho Ch=
+ehab ha
+> > >=20
+> > > scritto: =20
+> > > > Are you sure that the difference is just the Kernel version? Perhap=
+s you
+> > > > also updated some other package. =20
+> > >=20
+> > > To be clear: I had the same system(!) with all three kernel 4.18.15-1,
+> > > 4.19.1 (when the problem did arise) and 4.20.2 rc3 from Takashi's rep=
+o)
+> > > installed. =20
+> > Ok, so rebooting to 4.18.15-1 solves the issue?
+> >=20
+> > Also, what GPU driver are you using?
+> >=20
+> > In any case, by using the old "Universal" LNBf, you're likely missing s=
+ome
+> > transponders, and missing several channels.
+> >  =20
+> > > In this very configuration: if one booted in 4.18 (that is in perfect
+> > > parity with all other packages) the card worked. 4.19.1 no. And the l=
+ast
+> > > kernel the same. So whatever might be different, forcefully it has to=
+ be
+> > > in the kernel. (Which is not really a problem if I manage to make it
+> > > work, so settings will be known to others or, if not, we will find out
+> > > what is different, and all will be happy. As you see I am still
+> > > optimist). =20
+> >=20
+> > Well, we don't want regressions in Kernel. If there's an issue there,
+> > it should be fixed. However, I can't think on any other changes since
+> > 4.18 that would be causing troubles for b2c2 driver.
+> >=20
+> > See, the only change at the driver itself is just a simple API
+> > replacement that wouldn't cause this kind of problems:
+> >=20
+> > 	$ git log --oneline v4.18.. drivers/media/common/b2c2/
+> > 	c0decac19da3 media: use strscpy() instead of strlcpy()
+> >=20
+> > There were a few changes at the DVB core:
+> >=20
+> > 	$ git log --no-merges --oneline v4.18.. drivers/media/dvb-core/
+> > 	f3efe15a2f05 media: dvb: use signal types to discover pads
+> > 	b5d3206112dd media: dvb: dmxdev: move compat_ioctl handling to dmxdev.c
+> > 	cc1e6315e83d media: replace strcpy() by strscpy()
+> > 	c0decac19da3 media: use strscpy() instead of strlcpy()
+> > 	fd89e0bb6ebf media: videobuf2-core: integrate with media requests
+> > 	db6e8d57e2cd media: vb2: store userspace data in vb2_v4l2_buffer
+> > 	6a2a1ca34ca6 media: dvb_frontend: ensure that the step is ok for both =
+FE
+> > and tuner f1b1eabff0eb media: dvb: represent min/max/step/tolerance fre=
+qs
+> > in Hz a3f90c75b833 media: dvb: convert tuner_info frequencies to Hz
+> > 	6706fe55af6f media: dvb_ca_en50221: off by one in
+> > dvb_ca_en50221_io_do_ioctl() 4d1e4545a659 media: mark entity-intf links=
+ as
+> > IMMUTABLE
+> >=20
+> > But, on a first glance, the only ones that has potential to cause issues
+> > were the ones addressed that the patch I wrote (merged by Takashi).
+> >=20
+> > If you're really receiving data from EPG (you may just have it
+> > cached), it means that the DVB driver is doing the right thing.
+> >=20
+> > Btw, to be sure that you're not just seeing the old EPG data, you
+> > should move or remove this file:
+> >=20
+> > 	~/.local/share/kaffeine/epgdata.dvb
+> >=20
+> > Kaffeine will generate a new one again once it tunes into a TV channel.
+> >  =20
+> > > I will proceed as indicated and report back here tomorrow. =20
+> >=20
+> > Ok.
+> >=20
+> > Thanks,
+> > Mauro =20
+> So, I confirm that:
+> a) 4.18.15-1 this card worked flawlessly.
+> b) above that, included the kernel with correction, it does not work any =
+more.
+> c) downloading and copying the respective firmware from openelec does not=
+=20
+> change, the card stays dead.=20
+> d) astra: no search of channels, search interrupted after seconds.
+> e) hotbird: search without finding any channel - only noise
+> f) lnbf setting was to "Astra E" as indicated.=20
+> g) after erasing the file in local/share it is clear that EPG data does N=
+OT=20
+> work either.
+> When using the channels as they were recorded before, the signal strength=
+ is 0=20
+> but the fictional led is green (as if it would receive).=20
+>=20
+>=20
+>=20
+> No picture, no tone, no channel sync, no EPG. A brick.=20
+> So, with 4.18 that worked, only that now (due to an error I lost access t=
+o the=20
+> 4.18.15-1 driver of TW, so if Takashi has a link, I can reinstall it and =
+we=20
+> can check if, parity all packages this is still the case. I assure you th=
+at it=20
+> was, but that would be a perfect proof.=20
+> Firmware downloaded and installed in /lib/firmware was:
+> https://www.linuxtv.org/wiki/index.php/TechniSat_SkyStar_S2 following the=
+ link=20
+> to open Elec:
+>=20
+> https://github.com/OpenELEC/dvb-firmware/blob/master/firmware/dvb-fe-cx24=
+120-1.20.58.2.fw
 
-> > +
-> > +	return drm_format_info_is_yuv_sampling_410(info);
-> > +}
-> > +EXPORT_SYMBOL(drm_format_is_yuv_sampling_410);
-> > +
-> > +/**
-> > + * drm_format_is_yuv_sampling_411 - check that the format is a YUV format with
-> > + * 4:1:1 sub-sampling
-> > + * @format: pixel format
-> > + *
-> > + * Returns:
-> > + * A boolean indicating whether the format is a YUV format with 4:1:1
-> > + * sub-sampling.
-> > + */
-> > +bool drm_format_is_yuv_sampling_411(uint32_t format)
-> > +{
-> > +	const struct drm_format_info *info;
-> > +
-> > +	info = drm_format_info(format);
-> > +	if (!info)
-> > +		return false;
-> > +
-> > +	return drm_format_info_is_yuv_sampling_411(info);
-> > +}
-> > +EXPORT_SYMBOL(drm_format_is_yuv_sampling_411);
-> > +
-> > +/**
-> > + * drm_format_is_yuv_sampling_420 - check that the format is a YUV format with
-> > + * 4:2:0 sub-sampling
-> > + * @format: pixel format
-> > + *
-> > + * Returns:
-> > + * A boolean indicating whether the format is a YUV format with 4:2:0
-> > + * sub-sampling.
-> > + */
-> > +bool drm_format_is_yuv_sampling_420(uint32_t format)
-> > +{
-> > +	const struct drm_format_info *info;
-> > +
-> > +	info = drm_format_info(format);
-> > +	if (!info)
-> > +		return false;
-> > +
-> > +	return drm_format_info_is_yuv_sampling_420(info);
-> > +}
-> > +EXPORT_SYMBOL(drm_format_is_yuv_sampling_420);
-> > +
-> > +/**
-> > + * drm_format_is_yuv_sampling_422 - check that the format is a YUV format with
-> > + * 4:2:2 sub-sampling
-> > + * @format: pixel format
-> > + *
-> > + * Returns:
-> > + * A boolean indicating whether the format is a YUV format with 4:2:2
-> > + * sub-sampling.
-> > + */
-> > +bool drm_format_is_yuv_sampling_422(uint32_t format)
-> > +{
-> > +	const struct drm_format_info *info;
-> > +
-> > +	info = drm_format_info(format);
-> > +	if (!info)
-> > +		return false;
-> > +
-> > +	return drm_format_info_is_yuv_sampling_422(info);
-> > +}
-> > +EXPORT_SYMBOL(drm_format_is_yuv_sampling_422);
-> > +
-> > +/**
-> > + * drm_format_is_yuv_sampling_444 - check that the format is a YUV format with
-> > + * 4:4:4 sub-sampling
-> > + * @format: pixel format
-> > + *
-> > + * Returns:
-> > + * A boolean indicating whether the format is a YUV format with 4:4:4
-> > + * sub-sampling.
-> > + */
-> > +bool drm_format_is_yuv_sampling_444(uint32_t format)
-> > +{
-> > +	const struct drm_format_info *info;
-> > +
-> > +	info = drm_format_info(format);
-> > +	if (!info)
-> > +		return false;
-> > +
-> > +	return drm_format_info_is_yuv_sampling_444(info);
-> > +}
-> > +EXPORT_SYMBOL(drm_format_is_yuv_sampling_444);
-> > +
-> >  /**
-> >   * drm_format_info_block_width - width in pixels of block.
-> >   * @info: pixel format info
-> > diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
-> > index d170b7b323f7..cf082d8b6ad4 100644
-> > --- a/include/drm/drm_fourcc.h
-> > +++ b/include/drm/drm_fourcc.h
-> > @@ -278,6 +278,11 @@ bool drm_format_is_yuv(uint32_t format);
-> >  bool drm_format_is_yuv_packed(uint32_t format);
-> >  bool drm_format_is_yuv_semiplanar(uint32_t format);
-> >  bool drm_format_is_yuv_planar(uint32_t format);
-> > +bool drm_format_is_yuv_sampling_410(uint32_t format);
-> > +bool drm_format_is_yuv_sampling_411(uint32_t format);
-> > +bool drm_format_is_yuv_sampling_420(uint32_t format);
-> > +bool drm_format_is_yuv_sampling_422(uint32_t format);
-> > +bool drm_format_is_yuv_sampling_444(uint32_t format);
-> >  unsigned int drm_format_info_block_width(const struct drm_format_info *info,
-> >  					 int plane);
-> >  unsigned int drm_format_info_block_height(const struct drm_format_info *info,
-> > -- 
-> > 2.19.1
-> > 
-> From patches [PATCH v2 08/43] till [PATCH v2 12/43], looks good to me.
-> 
-> How about clubbing all the drm_format_helper functions together in a
-> separate file (call it drm_fourcc_helper.c)? This way, we could
-> keep the __drm_format_info[] only drm_fourcc.c.
-> 
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Thank you for the tests. Yeah, from what you're describing, there's
+still another Kernel bug that the frequency patch didn't fix.
 
--- 
-Ville Syrjälä
-Intel
+I'm c/c a few DVB developers. Maybe they may have some ideas about
+what's happening or may have some b2c2-based board to run some tests.
+I'm very busy up to next Wed, so it is unlikely that I would have any
+time to look on it. Also, I don't have any b2c2 board to test.
+
+Yet, let's do one last attempt: could you please test if the
+enclosed patch changes anything? This was supposed to be just
+a cleanup, but, after thinking a little bit, I guess it may fix
+the issue you're reporting.
+
+In order to make easier for people to test it, I'm applying the 3 patch
+series I posted on my tree, plus the enclosed followup cleanup
+patch at linux_media development tree. With that, everyone will
+have a common base for the tests.
+
+Takashi,
+
+Could you please produce a Kernel for Stakanov to test
+with the following patches:
+
+https://patchwork.linuxtv.org/patch/53044/
+https://patchwork.linuxtv.org/patch/53045/
+https://patchwork.linuxtv.org/patch/53046/
+https://patchwork.linuxtv.org/patch/53128/
+
+Stakanov,
+
+Before booting the new Kernel, please create a new file
+as /etc/modprobe.d/media.conf with:
+
+	options dvb-core debug=3D1
+	options dvb-pll debug=3D1
+
+With this, the next time the Kernel boots, it will cause both
+dvb-core and dvb-pll to be more verbose, enabling the new debug
+messages that the above patches add. Once we get this fixed,
+you may remove the file (or comment the lines), in order to
+avoid uneeded messages on your dmesg.
+
+Thanks,
+Mauro
+
+[PATCH] media: dvb-pll: don't re-validate tuner frequencies
+
+The dvb_frontend core already checks for the frequencies. No
+need for any additional check inside the driver.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+
+diff --git a/drivers/media/dvb-frontends/dvb-pll.c b/drivers/media/dvb-fron=
+tends/dvb-pll.c
+index fff5816f6ec4..29836c1a40e9 100644
+--- a/drivers/media/dvb-frontends/dvb-pll.c
++++ b/drivers/media/dvb-frontends/dvb-pll.c
+@@ -610,9 +610,6 @@ static int dvb_pll_configure(struct dvb_frontend *fe, u=
+8 *buf,
+ 	u32 div;
+ 	int i;
+=20
+-	if (frequency && (frequency < desc->min || frequency > desc->max))
+-		return -EINVAL;
+-
+ 	for (i =3D 0; i < desc->count; i++) {
+ 		if (frequency > desc->entries[i].limit)
+ 			continue;
+
+
