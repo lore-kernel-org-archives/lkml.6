@@ -2,141 +2,158 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D292C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:52:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55049C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:53:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DABFF20672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:52:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DABFF20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 2518820672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:53:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2518820672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633051AbeKXDh0 (ORCPT
+        id S2633063AbeKXDic (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 22:37:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40894 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729195AbeKXDh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 22:37:26 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C7CEBAED5;
-        Fri, 23 Nov 2018 16:52:23 +0000 (UTC)
-Date:   Sat, 24 Nov 2018 03:52:12 +1100
-From:   Aleksa Sarai <asarai@suse.de>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     j@bitron.ch, Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian@brauner.io>,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        David Drysdale <drysdale@google.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH v4 2/4] namei: O_BENEATH-style path resolution flags
-Message-ID: <20181123165212.xldikl55iwcy4hyq@mikami>
-References: <20181112142654.341-1-cyphar@cyphar.com>
- <20181112142654.341-3-cyphar@cyphar.com>
- <1ce83cdf6e3168350b69f98f08aaa202bbaa682d.camel@bitron.ch>
- <CALCETrURCXjNMBR6DjujVc6HHHS=CbET81kHS+odur+Bm-z7Tg@mail.gmail.com>
- <20181123164819.skruu23wjwzf47f5@mikami>
+        Fri, 23 Nov 2018 22:38:32 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:49696 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729195AbeKXDic (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 22:38:32 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gQEht-0001Vl-SY; Fri, 23 Nov 2018 16:53:29 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Evgeniy Dushistov <dushistov@mail.ru>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ufs: clean up indentation issues, replace spaces with tabs
+Date:   Fri, 23 Nov 2018 16:53:29 +0000
+Message-Id: <20181123165329.24323-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="obp4tcxxutn7x4sr"
-Content-Disposition: inline
-In-Reply-To: <20181123164819.skruu23wjwzf47f5@mikami>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---obp4tcxxutn7x4sr
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There is a hunk of code where spaces are used for identations, and it
+off by one in an editor. Clean this up by replacing them with tabs.
+Also remove one blank line.
 
-On 2018-11-24, Aleksa Sarai <asarai@suse.de> wrote:
-> > >> On Tue, 2018-11-13 at 01:26 +1100, Aleksa Sarai wrote:
-> > >> * O_BENEATH: Disallow "escapes" from the starting point of the
-> > >>  filesystem tree during resolution (you must stay "beneath" the
-> > >>  starting point at all times). Currently this is done by disallowing
-> > >>  ".." and absolute paths (either in the given path or found during
-> > >>  symlink resolution) entirely, as well as all "magic link" jumping.
-> > >
-> > > With open_tree(2) and OPEN_TREE_CLONE, will O_BENEATH still be
-> > > necessary?
-> >=20
-> > This discussion reminds me of something I=E2=80=99m uncomfortable with =
-in the
-> > current patches: currently, most of the O_ flags determine some
-> > property of the returned opened file.  The new O_ flags you're adding
-> > don't -- instead, they affect the lookup of the file.  So O_BENEATH
-> > doesn't return a descriptor that can only be used to loop up files
-> > beneath it -- it just controls whether open(2) succeeds or fails.  It
-> > might be nice for the naming of the flags to reflect this.
->=20
-> I agree that there is something quite weird about having path resolution
-> flags in an *open* syscall. The main reason why it's linked to open is
-> because that's the only way to get O_PATH descriptors (which is what you
-> would use for most of the extended operations we need -- as well as
-> reading+writing to files which is what most users would do with this).
->=20
-> And I think O_PATH is another example of an open flag that is just odd
-> in how it changes the semantics of using open(2).
->=20
-> One of the ideas I pitched in an earlier mail was a hypothetical
-> resolveat(2) -- which would just be a new way of getting an O_PATH
-> descriptor. This way, we wouldn't be using up more O_* flag bits with
-> this feature and we'd be able to play with more radical semantic changes
-> in the future. I can outline these here if you like, but it's a bit of a
-> long discussion and I'd prefer not to derail things too much if
-> resolveat(2) is definitely out of the question.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/ufs/inode.c | 87 +++++++++++++++++++++++++-------------------------
+ 1 file changed, 43 insertions(+), 44 deletions(-)
 
-Sorry, one thing I forgot to mention about returning descriptors that
-can only look up files beneath it -- while I think this would be very
-useful, I'd be worried about jumping into chroot(2) territory where now
-you are giving userspace the opportunity to try to create nested
-"beneathfds" and so on. I do think it would be quite useful and
-interesting though, but I'm not entirely sure how doable it would be
-with the current namei infrastructure.
+diff --git a/fs/ufs/inode.c b/fs/ufs/inode.c
+index c843ec858cf7..c4fb99eddff4 100644
+--- a/fs/ufs/inode.c
++++ b/fs/ufs/inode.c
+@@ -1066,52 +1066,51 @@ static int ufs_alloc_lastblock(struct inode *inode, loff_t size)
+ 
+ 	lastpage = ufs_get_locked_page(mapping, lastfrag >>
+ 				       (PAGE_SHIFT - inode->i_blkbits));
+-       if (IS_ERR(lastpage)) {
+-               err = -EIO;
+-               goto out;
+-       }
+-
+-       end = lastfrag & ((1 << (PAGE_SHIFT - inode->i_blkbits)) - 1);
+-       bh = page_buffers(lastpage);
+-       for (i = 0; i < end; ++i)
+-               bh = bh->b_this_page;
+-
+-
+-       err = ufs_getfrag_block(inode, lastfrag, bh, 1);
+-
+-       if (unlikely(err))
+-	       goto out_unlock;
+-
+-       if (buffer_new(bh)) {
+-	       clear_buffer_new(bh);
+-	       clean_bdev_bh_alias(bh);
+-	       /*
+-		* we do not zeroize fragment, because of
+-		* if it maped to hole, it already contains zeroes
+-		*/
+-	       set_buffer_uptodate(bh);
+-	       mark_buffer_dirty(bh);
+-	       set_page_dirty(lastpage);
+-       }
+-
+-       if (lastfrag >= UFS_IND_FRAGMENT) {
+-	       end = uspi->s_fpb - ufs_fragnum(lastfrag) - 1;
+-	       phys64 = bh->b_blocknr + 1;
+-	       for (i = 0; i < end; ++i) {
+-		       bh = sb_getblk(sb, i + phys64);
+-		       lock_buffer(bh);
+-		       memset(bh->b_data, 0, sb->s_blocksize);
+-		       set_buffer_uptodate(bh);
+-		       mark_buffer_dirty(bh);
+-		       unlock_buffer(bh);
+-		       sync_dirty_buffer(bh);
+-		       brelse(bh);
+-	       }
+-       }
++	if (IS_ERR(lastpage)) {
++		err = -EIO;
++		goto out;
++	}
++
++	end = lastfrag & ((1 << (PAGE_SHIFT - inode->i_blkbits)) - 1);
++	bh = page_buffers(lastpage);
++	for (i = 0; i < end; ++i)
++		bh = bh->b_this_page;
++
++	err = ufs_getfrag_block(inode, lastfrag, bh, 1);
++
++	if (unlikely(err))
++		goto out_unlock;
++
++	if (buffer_new(bh)) {
++		clear_buffer_new(bh);
++		clean_bdev_bh_alias(bh);
++		/*
++		 * we do not zeroize fragment, because of
++		 * if it maped to hole, it already contains zeroes
++		 */
++		set_buffer_uptodate(bh);
++		mark_buffer_dirty(bh);
++		set_page_dirty(lastpage);
++	}
++
++	if (lastfrag >= UFS_IND_FRAGMENT) {
++		end = uspi->s_fpb - ufs_fragnum(lastfrag) - 1;
++		phys64 = bh->b_blocknr + 1;
++		for (i = 0; i < end; ++i) {
++			bh = sb_getblk(sb, i + phys64);
++			lock_buffer(bh);
++			memset(bh->b_data, 0, sb->s_blocksize);
++			set_buffer_uptodate(bh);
++			mark_buffer_dirty(bh);
++			unlock_buffer(bh);
++			sync_dirty_buffer(bh);
++			brelse(bh);
++		}
++	}
+ out_unlock:
+-       ufs_put_locked_page(lastpage);
++	ufs_put_locked_page(lastpage);
+ out:
+-       return err;
++	return err;
+ }
+ 
+ static void ufs_truncate_blocks(struct inode *inode)
+-- 
+2.19.1
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---obp4tcxxutn7x4sr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlv4MDwACgkQnhiqJn3b
-jbSFOQ//WF57zWBKmv5f+pJ0wqIOd40G7NvVc33oOtGKuGI6+n1j6PGgtyfCThod
-Ug6s3QlOab3tNyV7Eemuu2+v+8B/Z47RPqvvgOdO82XktAHLJoBiYNXH3+vYwQ0Z
-RObH75dbfI/KPTJhdzLUlKktXMdC3sEfJF63xOWmINoYdc92UQgHgRuyDK2I33Fd
-w2I7wCb0/y6hkCBamhLg/16OfBQvvPfjg7Arf2q9E3bOB7aDrvCcq2IZ360Otp6c
-04HrCH2FU9eX74LgzpJ8C8QGksT6q8l0lHijBjLLirnXgVpCNGFb6qpitH3nakjK
-6VBihD/PBYvGB+vVwL9ntgcrOg2WKBolZ8kj21bSMs6W2esKtqWafUaPUYTLzXW0
-OpVGNeHugkOIfZGtZPFMoGNiN//JWQ8o7GS48S7XbSktHn7zmlgI8Rk2d+9d3kiE
-ucSelf8ywABVB9Jia+ZNMdj7sls0TcxguI7NZYtx4vos3KLfua96JANnGxMc45b8
-2HE79MUK6pM4wez3/n6Uj71RS/r9zM8/QmfLnXdAJiT7HTSwLvK79YuPIevneApn
-O3JKW7iCFM4N/y6OMWnp37kUl/LMDB7ImAcVtvzXAsqqTYLo/259lm4f02HMGrQc
-M3QFeLlT00fSJvzrBXGbQpxHlLYkwChGJP/uZVzc8DtmKNr3aT8=
-=PiR+
------END PGP SIGNATURE-----
-
---obp4tcxxutn7x4sr--
