@@ -2,523 +2,115 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3DCC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE5EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 01:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB337206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:54:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76BEE206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 01:06:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgdVxMT3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB337206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="A5mJscS6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76BEE206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439228AbeKWLgk (ORCPT
+        id S2439205AbeKWLsN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 06:36:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58020 "EHLO mail.kernel.org"
+        Fri, 23 Nov 2018 06:48:13 -0500
+Received: from m12-12.163.com ([220.181.12.12]:33205 "EHLO m12-12.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392434AbeKWLgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 06:36:39 -0500
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E4A520866;
-        Fri, 23 Nov 2018 00:54:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542934478;
-        bh=YiLs5/aHB4nwvO/UFAiLeKz81hheFyQAMpufWFC371A=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=WgdVxMT3jPrwAL6tPYmhY0K27cfE5zoioya61vKyQcC4fzZ7iZRuwdwHEldY2xZhN
-         Gi+Dvk9DL6KI4MxbAAsjCAH4F4VrKa5TR/MzLWJkW1zBlj8WY/zyPd0r5eL86yfbVc
-         ldhy+fpdXHTVXjvaCLwp0JqA++2igLHWxVgo/rHE=
-Received: by mail-wr1-f50.google.com with SMTP id t3so10779789wrr.3;
-        Thu, 22 Nov 2018 16:54:38 -0800 (PST)
-X-Gm-Message-State: AA+aEWZIFgoddegvWV2WM88PqiERqwt/grvakYIYC69t+wi2o4hdHGZj
-        95SSt9v6zAtIuIbPO3CcuFcqqxpjLABPYfoIEl4=
-X-Google-Smtp-Source: AFSGD/VwqS0ajwZmc7CAFn+NMborhUyDL/m8gXqZp2U2BScFSqyBdVKrzgMrNZTVSJZJMvpcMTobWsfdkBF2UdQd2QQ=
-X-Received: by 2002:adf:b253:: with SMTP id y19mr10662034wra.184.1542934476701;
- Thu, 22 Nov 2018 16:54:36 -0800 (PST)
+        id S1726954AbeKWLsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 06:48:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Date:From:Subject:Message-ID:MIME-Version; bh=FVnCK
+        iRPOtTHhR3R2VXIEQAgOV0yCduGKgfYTIdPMGA=; b=A5mJscS6TPbcS6rQG4clZ
+        Pgrub6Be22qZpgoFsaTlMSLL2L8IyqNt1aAP26WE4rMh0rne4s1uFUTWFAwTRLKh
+        TqbzoBQCEb8LpC3Ex083OnpDmzZBNPo8hCdS+esSc7ylFaXyqhQlkszeWKbuhVuB
+        yZQOAy3Q7PgK7RG+vSb9u4=
+Received: from bp (unknown [106.120.213.96])
+        by smtp8 (Coremail) with SMTP id DMCowABX5nJwUvdbvHbqBQ--.22330S2;
+        Fri, 23 Nov 2018 09:05:53 +0800 (CST)
+Date:   Fri, 23 Nov 2018 09:05:55 +0800
+From:   PanBian <bianpan2016@163.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: do not free algorithm before using
+Message-ID: <20181123010555.GA83154@bp>
+Reply-To: PanBian <bianpan2016@163.com>
+References: <1542880816-63838-1-git-send-email-bianpan2016@163.com>
+ <20181122144441.tkfmrq3lzibq2g3y@gondor.apana.org.au>
 MIME-Version: 1.0
-References: <1542882521-18874-1-git-send-email-biao.huang@mediatek.com> <1542882521-18874-2-git-send-email-biao.huang@mediatek.com>
-In-Reply-To: <1542882521-18874-2-git-send-email-biao.huang@mediatek.com>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Thu, 22 Nov 2018 16:54:25 -0800
-X-Gmail-Original-Message-ID: <CAGp9LzoJTVm4OP+SRWCDk0TUmU5jNMFCsT_yyURXzXxjTF+-=g@mail.gmail.com>
-Message-ID: <CAGp9LzoJTVm4OP+SRWCDk0TUmU5jNMFCsT_yyURXzXxjTF+-=g@mail.gmail.com>
-Subject: Re: [v5, PATCH 1/2] net:stmmac: dwmac-mediatek: add support for mt2712
-To:     biao.huang@mediatek.com
-Cc:     davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, nelson.chang@mediatek.com,
-        Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-        Liguo Zhang <liguo.zhang@mediatek.com>,
-        linux-kernel@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        joabreu@synopsys.com, linux-mediatek@lists.infradead.org,
-        honghui.zhang@mediatek.com, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181122144441.tkfmrq3lzibq2g3y@gondor.apana.org.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-CM-TRANSID: DMCowABX5nJwUvdbvHbqBQ--.22330S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7AF15Cr4UAryrAw1rurW5Awb_yoW8Cr4fpr
+        WrJFW8JFWktrZ0kFZ29a1rXry8W3yI9r15GrWUCryIvwnxXr1kJr9Fyr47XF42yF1kJryr
+        JrZ7Wr97Z3WjkaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jNvtAUUUUU=
+X-Originating-IP: [106.120.213.96]
+X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/xtbBzxEIclaD0YLuDwAAsD
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 2:29 AM Biao Huang <biao.huang@mediatek.com> wrote:
->
-> Add Ethernet support for MediaTek SoCs from the mt2712 family
->
-> Signed-off-by: Biao Huang <biao.huang@mediatek.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/Kconfig        |    8 +
->  drivers/net/ethernet/stmicro/stmmac/Makefile       |    1 +
->  .../net/ethernet/stmicro/stmmac/dwmac-mediatek.c   |  364 ++++++++++++++++++++
->  3 files changed, 373 insertions(+)
->  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
->
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> index 324049e..6209cc1 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> @@ -75,6 +75,14 @@ config DWMAC_LPC18XX
->         ---help---
->           Support for NXP LPC18xx/43xx DWMAC Ethernet.
->
-> +config DWMAC_MEDIATEK
-> +       tristate "MediaTek MT27xx GMAC support"
-> +       depends on OF && (ARCH_MEDIATEK || COMPILE_TEST)
-> +       help
-> +         Support for MediaTek GMAC Ethernet controller.
-> +
-> +         This selects the MT2712 SoC support for the stmmac driver.
-> +
->  config DWMAC_MESON
->         tristate "Amlogic Meson dwmac support"
->         default ARCH_MESON
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
-> index 99967a8..bf09701 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/Makefile
-> +++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
-> @@ -13,6 +13,7 @@ obj-$(CONFIG_STMMAC_PLATFORM) += stmmac-platform.o
->  obj-$(CONFIG_DWMAC_ANARION)    += dwmac-anarion.o
->  obj-$(CONFIG_DWMAC_IPQ806X)    += dwmac-ipq806x.o
->  obj-$(CONFIG_DWMAC_LPC18XX)    += dwmac-lpc18xx.o
-> +obj-$(CONFIG_DWMAC_MEDIATEK)   += dwmac-mediatek.o
->  obj-$(CONFIG_DWMAC_MESON)      += dwmac-meson.o dwmac-meson8b.o
->  obj-$(CONFIG_DWMAC_OXNAS)      += dwmac-oxnas.o
->  obj-$(CONFIG_DWMAC_ROCKCHIP)   += dwmac-rk.o
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
-> new file mode 100644
-> index 0000000..dd8d4cc
-> --- /dev/null
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
-> @@ -0,0 +1,364 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018 MediaTek Inc.
-> + */
-> +#include <linux/io.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_net.h>
-> +#include <linux/regmap.h>
-> +#include <linux/stmmac.h>
-> +
-> +#include "stmmac.h"
-> +#include "stmmac_platform.h"
-> +
-> +/* Peri Configuration register for mt2712 */
-> +#define PERI_ETH_PHY_INTF_SEL  0x418
-> +#define PHY_INTF_MII_GMII      0
-> +#define PHY_INTF_RGMII         1
-> +#define PHY_INTF_RMII          4
-> +#define RMII_CLK_SRC_RXC       BIT(4)
-> +#define RMII_CLK_SRC_INTERNAL  BIT(5)
-> +
-> +#define PERI_ETH_PHY_DLY       0x428
-> +#define PHY_DLY_GTXC_INV       BIT(6)
-> +#define PHY_DLY_GTXC_ENABLE    BIT(5)
-> +#define PHY_DLY_GTXC_STAGES    GENMASK(4, 0)
-> +#define PHY_DLY_TXC_INV                BIT(20)
-> +#define PHY_DLY_TXC_ENABLE     BIT(19)
-> +#define PHY_DLY_TXC_STAGES     GENMASK(18, 14)
-> +#define PHY_DLY_TXC_SHIFT      14
-> +#define PHY_DLY_RXC_INV                BIT(13)
-> +#define PHY_DLY_RXC_ENABLE     BIT(12)
-> +#define PHY_DLY_RXC_STAGES     GENMASK(11, 7)
-> +#define PHY_DLY_RXC_SHIFT      7
-> +
-> +#define PERI_ETH_DLY_FINE      0x800
-> +#define ETH_RMII_DLY_TX_INV    BIT(2)
-> +#define ETH_FINE_DLY_GTXC      BIT(1)
-> +#define ETH_FINE_DLY_RXC       BIT(0)
-> +
-> +struct mac_delay_struct {
-> +       u32 tx_delay;
-> +       u32 rx_delay;
-> +       u32 tx_inv;
-bool should be enough
+On Thu, Nov 22, 2018 at 10:44:41PM +0800, Herbert Xu wrote:
+> On Thu, Nov 22, 2018 at 06:00:16PM +0800, Pan Bian wrote:
+> > In multiple functions, the algorithm fields are read after its reference
+> > is dropped through crypto_mod_put. In this case, the algorithm memory
+> > may be freed, resulting in use-after-free bugs. This patch delays the
+> > put operation until the algorithm is never used.
+> > 
+> > Signed-off-by: Pan Bian <bianpan2016@163.com>
+> 
+> I don't think this patch is needed.
+> 
+> > ---
+> >  crypto/cbc.c  | 6 ++++--
+> >  crypto/cfb.c  | 6 ++++--
+> >  crypto/pcbc.c | 6 ++++--
+> >  3 files changed, 12 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/crypto/cbc.c b/crypto/cbc.c
+> > index b761b1f..dd5f332 100644
+> > --- a/crypto/cbc.c
+> > +++ b/crypto/cbc.c
+> > @@ -140,9 +140,8 @@ static int crypto_cbc_create(struct crypto_template *tmpl, struct rtattr **tb)
+> >  	spawn = skcipher_instance_ctx(inst);
+> >  	err = crypto_init_spawn(spawn, alg, skcipher_crypto_instance(inst),
+> >  				CRYPTO_ALG_TYPE_MASK);
+> > -	crypto_mod_put(alg);
+> >  	if (err)
+> > -		goto err_free_inst;
+> > +		goto err_put_alg;
+> 
+> We can safely drop the reference to the algorithm because the spawn
+> is now meant to hold a reference to it.  As long as the spawn is
+> alive so will the algorithm.
 
-> +       u32 rx_inv;
-bool should be enough
+Thanks for your explanation! But I find that the function
+crypto_init_spawn just lets spawn->alg point to the algorithm without 
+increasing the reference count, i.e., alg->cra_refcnt. So I am confused
+about how this can protect the algorithm from being freed. Maybe I
+missed some key points. Could you please explain it in more details?
 
-> +};
-> +
-> +struct mediatek_dwmac_plat_data {
-> +       const struct mediatek_dwmac_variant *variant;
-> +       struct mac_delay_struct mac_delay;
-> +       struct clk_bulk_data *clks;
-> +       struct device_node *np;
-> +       struct regmap *peri_regmap;
-> +       struct device *dev;
-> +       int fine_tune;
-bool
+Thank you!
 
-> +       int phy_mode;
-> +       int rmii_rxc;
-bool
+Best regards,
+Pan Bian
 
-> +};
-> +
-> +struct mediatek_dwmac_variant {
-> +       int (*dwmac_set_phy_interface)(struct mediatek_dwmac_plat_data *plat);
-> +       int (*dwmac_set_delay)(struct mediatek_dwmac_plat_data *plat);
-> +
-> +       /* clock ids to be requested */
-> +       const char * const *clk_list;
-> +       int num_clks;
-> +
-> +       u32 dma_bit_mask;
-> +       u32 rx_delay_max;
-> +       u32 tx_delay_max;
-> +};
-> +
-> +/* list of clocks required for mac */
-> +static const char * const mt2712_dwmac_clk_l[] = {
-> +       "axi", "apb", "mac_main", "ptp_ref"
-> +};
-> +
-> +static int mt2712_set_interface(struct mediatek_dwmac_plat_data *plat)
-> +{
-> +       int rmii_rxc = plat->rmii_rxc ? RMII_CLK_SRC_RXC : 0;
-> +       u32 intf_val = 0;
-> +
-> +       /* select phy interface in top control domain */
-> +       switch (plat->phy_mode) {
-> +       case PHY_INTERFACE_MODE_MII:
-> +               intf_val |= PHY_INTF_MII_GMII;
-> +               break;
-> +       case PHY_INTERFACE_MODE_RMII:
-> +               intf_val |= PHY_INTF_RMII;
-> +               intf_val |= rmii_rxc;
-how about putting into one line such as intf_val |= (PHY_INTF_RMII | rmii_rxc) ?
+> 
+> Cheers,
+> -- 
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
-> +               break;
-> +       case PHY_INTERFACE_MODE_RGMII:
-> +       case PHY_INTERFACE_MODE_RGMII_TXID:
-> +       case PHY_INTERFACE_MODE_RGMII_RXID:
-> +       case PHY_INTERFACE_MODE_RGMII_ID:
-> +               intf_val |= PHY_INTF_RGMII;
-> +               break;
-> +       default:
-> +               dev_err(plat->dev, "phy interface not supported\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       regmap_write(plat->peri_regmap, PERI_ETH_PHY_INTF_SEL, intf_val);
-> +
-> +       return 0;
-> +}
-> +
-> +static int mt2712_set_delay(struct mediatek_dwmac_plat_data *plat)
-> +{
-> +       struct mac_delay_struct *mac_delay = &plat->mac_delay;
-> +       u32 delay_val = 0;
-> +       u32 fine_val = 0;
-The same type declaration can be put into the one line
-
-> +
-> +       switch (plat->phy_mode) {
-
-There exists some room for code optimization in the switch statement
-such as PHY_INTERFACE_MODE_MII and PHY_INTERFACE_MODE_RGMII both are
-almost the same and even the configuration for the other PHY modes can
-reuse their partial setup. It appears to be better using a common way
-to set up various PHY modes.
-
-> +       case PHY_INTERFACE_MODE_MII:
-> +               delay_val |= mac_delay->tx_delay ? PHY_DLY_TXC_ENABLE : 0;
-> +               delay_val |= (mac_delay->tx_delay << PHY_DLY_TXC_SHIFT) &
-> +                            PHY_DLY_TXC_STAGES;
-> +               delay_val |= mac_delay->tx_inv ? PHY_DLY_TXC_INV : 0;
-> +               delay_val |= mac_delay->rx_delay ? PHY_DLY_RXC_ENABLE : 0;
-> +               delay_val |= (mac_delay->rx_delay << PHY_DLY_RXC_SHIFT) &
-> +                            PHY_DLY_RXC_STAGES;
-> +               delay_val |= mac_delay->rx_inv ? PHY_DLY_RXC_INV : 0;
-> +               break;
-> +       case PHY_INTERFACE_MODE_RMII:
-> +               if (plat->rmii_rxc) {
-> +                       delay_val |= mac_delay->rx_delay ?
-> +                                    PHY_DLY_RXC_ENABLE : 0;
-> +                       delay_val |= (mac_delay->rx_delay <<
-> +                                     PHY_DLY_RXC_SHIFT) & PHY_DLY_RXC_STAGES;
-> +                       delay_val |= mac_delay->rx_inv ? PHY_DLY_RXC_INV : 0;
-> +                       fine_val |= mac_delay->tx_inv ?
-> +                                    ETH_RMII_DLY_TX_INV : 0;
-why is fine_val got from tx_inv?
-
-> +               } else {
-> +                       delay_val |= mac_delay->rx_delay ?
-> +                                    PHY_DLY_TXC_ENABLE : 0;
-> +                       delay_val |= (mac_delay->rx_delay <<
-> +                                    PHY_DLY_TXC_SHIFT) & PHY_DLY_TXC_STAGES;
-> +                       delay_val |= mac_delay->rx_inv ? PHY_DLY_TXC_INV : 0;
-> +                       fine_val |= mac_delay->tx_inv ?
-> +                                    ETH_RMII_DLY_TX_INV : 0;
-ditto, why is fine_val got from tx_inv?
-
-> +               }
-> +               break;
-> +       case PHY_INTERFACE_MODE_RGMII:
-> +               fine_val = plat->fine_tune ?
-> +                           (ETH_FINE_DLY_GTXC | ETH_FINE_DLY_RXC) : 0;
-> +               delay_val |= mac_delay->tx_delay ? PHY_DLY_GTXC_ENABLE : 0;
-> +               delay_val |= mac_delay->tx_delay & PHY_DLY_GTXC_STAGES;
-> +               delay_val |= mac_delay->tx_inv ? PHY_DLY_GTXC_INV : 0;
-> +               delay_val |= mac_delay->rx_delay ? PHY_DLY_RXC_ENABLE : 0;
-> +               delay_val |= (mac_delay->rx_delay << PHY_DLY_RXC_SHIFT) &
-> +                            PHY_DLY_RXC_STAGES;
-> +               delay_val |= mac_delay->rx_inv ? PHY_DLY_RXC_INV : 0;
-> +               break;
-> +       case PHY_INTERFACE_MODE_RGMII_TXID:
-> +               fine_val = plat->fine_tune ? ETH_FINE_DLY_RXC : 0;
-> +               delay_val |= mac_delay->rx_delay ? PHY_DLY_RXC_ENABLE : 0;
-> +               delay_val |= (mac_delay->rx_delay << PHY_DLY_RXC_SHIFT) &
-> +                            PHY_DLY_RXC_STAGES;
-> +               delay_val |= mac_delay->rx_inv ? PHY_DLY_RXC_INV : 0;
-why is PHY_INTERFACE_MODE_RGMII_TXID applied with *_RXC_* register
-bits, not with *_TXC_* bits? I'm a little confused about what path the
-register PHY_DLY_RXC_* cause the effects to? MAC to PHY or PHY to MAC?
-
-> +               break;
-> +       case PHY_INTERFACE_MODE_RGMII_RXID:
-> +               fine_val = plat->fine_tune ? ETH_FINE_DLY_GTXC : 0;
-> +               delay_val |= mac_delay->tx_delay ? PHY_DLY_GTXC_ENABLE : 0;
-> +               delay_val |= mac_delay->tx_delay & PHY_DLY_GTXC_STAGES;
-> +               delay_val |= mac_delay->tx_inv ? PHY_DLY_GTXC_INV : 0;
-ditto, as the above quetion
-
-> +               break;
-> +       case PHY_INTERFACE_MODE_RGMII_ID:
-> +               break;
-> +       default:
-> +               dev_err(plat->dev, "phy interface not supported\n");
-> +               return -EINVAL;
-> +       }
-> +       regmap_write(plat->peri_regmap, PERI_ETH_PHY_DLY, delay_val);
-> +       regmap_write(plat->peri_regmap, PERI_ETH_DLY_FINE, fine_val);
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct mediatek_dwmac_variant mt2712_gmac_variant = {
-> +               .dwmac_set_phy_interface = mt2712_set_interface,
-> +               .dwmac_set_delay = mt2712_set_delay,
-> +               .clk_list = mt2712_dwmac_clk_l,
-> +               .num_clks = ARRAY_SIZE(mt2712_dwmac_clk_l),
-> +               .dma_bit_mask = 33,
-> +               .rx_delay_max = 32,
-> +               .tx_delay_max = 32,
-> +};
-> +
-> +static int mediatek_dwmac_config_dt(struct mediatek_dwmac_plat_data *plat)
-> +{
-> +       u32 tx_delay, rx_delay;
-> +
-> +       plat->peri_regmap = syscon_regmap_lookup_by_phandle(plat->np, "mediatek,pericfg");
-> +       if (IS_ERR(plat->peri_regmap)) {
-> +               dev_err(plat->dev, "Failed to get pericfg syscon\n");
-> +               return PTR_ERR(plat->peri_regmap);
-> +       }
-> +
-> +       plat->phy_mode = of_get_phy_mode(plat->np);
-> +       if (plat->phy_mode < 0) {
-> +               dev_err(plat->dev, "not find phy-mode\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       if (!of_property_read_u32(plat->np, "mediatek,tx-delay", &tx_delay)) {
-> +               if (tx_delay < plat->variant->tx_delay_max) {
-> +                       plat->mac_delay.tx_delay = tx_delay;
-> +               } else {
-> +                       dev_err(plat->dev, "Invalid TX clock delay: %d\n", tx_delay);
-> +                       return -EINVAL;
-> +               }
-> +       }
-> +
-> +       if (!of_property_read_u32(plat->np, "mediatek,rx-delay", &rx_delay)) {
-> +               if (rx_delay < plat->variant->rx_delay_max) {
-> +                       plat->mac_delay.rx_delay = rx_delay;
-> +               } else {
-> +                       dev_err(plat->dev, "Invalid RX clock delay: %d\n", rx_delay);
-> +                       return -EINVAL;
-> +               }
-> +       }
-> +
-> +       plat->mac_delay.tx_inv = of_property_read_bool(plat->np, "mediatek,txc-inverse");
-> +       plat->mac_delay.rx_inv = of_property_read_bool(plat->np, "mediatek,rxc-inverse");
-> +       plat->fine_tune = of_property_read_bool(plat->np, "mediatek,fine-tune");
-> +       plat->rmii_rxc = of_property_read_bool(plat->np, "mediatek,rmii-rxc");
-> +
-> +       return 0;
-> +}
-> +
-> +static int mediatek_dwmac_clk_init(struct mediatek_dwmac_plat_data *plat)
-> +{
-> +       const struct mediatek_dwmac_variant *variant = plat->variant;
-> +       int num = variant->num_clks;
-> +       int i;
-put into the same line seems good
-
-> +
-> +       plat->clks = devm_kcalloc(plat->dev, num, sizeof(*plat->clks), GFP_KERNEL);
-> +       if (!plat->clks)
-> +               return -ENOMEM;
-> +
-> +       for (i = 0; i < num; i++)
-> +               plat->clks[i].id = variant->clk_list[i];
-> +
-> +       return devm_clk_bulk_get(plat->dev, num, plat->clks);
-> +}
-> +
-> +static int mediatek_dwmac_init(struct platform_device *pdev, void *priv)
-> +{
-> +       struct mediatek_dwmac_plat_data *plat = priv;
-> +       const struct mediatek_dwmac_variant *variant = plat->variant;
-> +       int ret = 0;
-zero initialized seems unnecessary
-
-> +
-> +       ret = dma_set_mask_and_coherent(plat->dev, DMA_BIT_MASK(variant->dma_bit_mask));
-> +       if (ret) {
-> +               dev_err(plat->dev, "No suitable DMA available, err = %d\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       ret = variant->dwmac_set_phy_interface(plat);
-> +       if (ret) {
-> +               dev_err(plat->dev, "failed to set phy interface, err = %d\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       ret = variant->dwmac_set_delay(plat);
-> +       if (ret) {
-> +               dev_err(plat->dev, "failed to set delay value, err = %d\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       ret = clk_bulk_prepare_enable(variant->num_clks, plat->clks);
-> +       if (ret) {
-> +               dev_err(plat->dev, "failed to enable clks, err = %d\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static void mediatek_dwmac_exit(struct platform_device *pdev, void *priv)
-> +{
-> +       struct mediatek_dwmac_plat_data *plat = priv;
-> +       const struct mediatek_dwmac_variant *variant = plat->variant;
-> +
-> +       clk_bulk_disable_unprepare(variant->num_clks, plat->clks);
-> +}
-> +
-> +static int mediatek_dwmac_probe(struct platform_device *pdev)
-> +{
-> +       struct mediatek_dwmac_plat_data *priv_plat;
-> +       struct plat_stmmacenet_data *plat_dat;
-> +       struct stmmac_resources stmmac_res;
-> +       int ret = 0;
-zero initialized seems unnecessary
-
-> +
-> +       priv_plat = devm_kzalloc(&pdev->dev, sizeof(*priv_plat), GFP_KERNEL);
-> +       if (!priv_plat)
-> +               return -ENOMEM;
-> +
-> +       priv_plat->variant = of_device_get_match_data(&pdev->dev);
-> +       if (!priv_plat->variant) {
-> +               dev_err(&pdev->dev, "Missing dwmac-mediatek variant\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       priv_plat->dev = &pdev->dev;
-> +       priv_plat->np = pdev->dev.of_node;
-> +
-> +       ret = mediatek_dwmac_config_dt(priv_plat);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = mediatek_dwmac_clk_init(priv_plat);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = stmmac_get_platform_resources(pdev, &stmmac_res);
-> +       if (ret)
-> +               return ret;
-> +
-> +       plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-> +       if (IS_ERR(plat_dat))
-> +               return PTR_ERR(plat_dat);
-> +
-> +       plat_dat->interface = priv_plat->phy_mode;
-> +       /* clk_csr_i = 250-300MHz & MDC = clk_csr_i/124 */
-> +       plat_dat->clk_csr = 5;
-> +       plat_dat->has_gmac4 = 1;
-> +       plat_dat->has_gmac = 0;
-> +       plat_dat->pmt = 0;
-> +       plat_dat->maxmtu = ETH_DATA_LEN;
-> +       plat_dat->bsp_priv = priv_plat;
-> +       plat_dat->init = mediatek_dwmac_init;
-> +       plat_dat->exit = mediatek_dwmac_exit;
-> +       mediatek_dwmac_init(pdev, priv_plat);
-> +
-> +       ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
-> +       if (ret) {
-> +               stmmac_remove_config_dt(pdev, plat_dat);
-> +               return ret;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct of_device_id mediatek_dwmac_match[] = {
-> +       { .compatible = "mediatek,mt2712-gmac",
-> +         .data = &mt2712_gmac_variant },
-> +       { }
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, mediatek_dwmac_match);
-> +
-> +static struct platform_driver mediatek_dwmac_driver = {
-> +       .probe  = mediatek_dwmac_probe,
-> +       .remove = stmmac_pltfr_remove,
-> +       .driver = {
-> +               .name           = "dwmac-mediatek",
-> +               .pm             = &stmmac_pltfr_pm_ops,
-> +               .of_match_table = mediatek_dwmac_match,
-> +       },
-> +};
-> +module_platform_driver(mediatek_dwmac_driver);
-> --
-> 1.7.9.5
->
->
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
