@@ -3,116 +3,117 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A18BAC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A98C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:15:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66FFF20820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:14:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66FFF20820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 74A0C20664
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:15:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74A0C20664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394948AbeKXA7M (ORCPT
+        id S2394991AbeKXA7l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 19:59:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34482 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388230AbeKXA7M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 19:59:12 -0500
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2897420664;
-        Fri, 23 Nov 2018 14:14:49 +0000 (UTC)
-Date:   Fri, 23 Nov 2018 09:14:47 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Fri, 23 Nov 2018 19:59:41 -0500
+Received: from bran.ispras.ru ([83.149.199.196]:28112 "EHLO smtp.ispras.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388230AbeKXA7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 19:59:41 -0500
+X-Greylist: delayed 513 seconds by postgrey-1.27 at vger.kernel.org; Fri, 23 Nov 2018 19:59:40 EST
+Received: from monopod.intra.ispras.ru (monopod.intra.ispras.ru [10.10.3.121])
+        by smtp.ispras.ru (Postfix) with ESMTP id 8CDD920AA2;
+        Fri, 23 Nov 2018 17:06:40 +0300 (MSK)
+Date:   Fri, 23 Nov 2018 17:06:38 +0300 (MSK)
+From:   Alexander Monakov <amonakov@ispras.ru>
+To:     Alexander Popov <alex.popov@linux.com>
+cc:     Florian Weimer <fweimer@redhat.com>,
+        Richard Sandiford <richard.sandiford@arm.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Kees Cook <keescook@chromium.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arch@vger.kernel.org,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
         Andy Lutomirski <luto@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>, stable@kernel.org
-Subject: Re: [for-next][PATCH 15/18] function_graph: Use new curr_ret_depth
- to manage depth instead of curr_ret_stack
-Message-ID: <20181123091447.0e2eed1b@vmware.local.home>
-In-Reply-To: <20181122100322.GN2131@hirez.programming.kicks-ass.net>
-References: <20181122002801.501220343@goodmis.org>
-        <20181122003333.592319701@goodmis.org>
-        <20181122100322.GN2131@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tycho Andersen <tycho@tycho.ws>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Emese Revfy <re.emese@gmail.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Jann Horn <jannh@google.com>,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>, gcc@gcc.gnu.org
+Subject: Re: Investigating a stack state mismatch in Linux kernel
+In-Reply-To: <57225f38-3f6d-4029-8f89-4b6eba97c3c1@linux.com>
+Message-ID: <alpine.LNX.2.20.13.1811231634330.6732@monopod.intra.ispras.ru>
+References: <b7aad232-76e1-241f-00e2-77783ce30f87@linux.com> <875zwyabac.fsf@oldenburg.str.redhat.com> <2a2b1181-2175-7e4e-189c-12630f43d10d@linux.com> <57225f38-3f6d-4029-8f89-4b6eba97c3c1@linux.com>
+User-Agent: Alpine 2.20.13 (LNX 116 2015-12-14)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Nov 2018 11:03:22 +0100
-Peter Zijlstra <peterz@infradead.org> wrote:
+Hi,
 
-> On Wed, Nov 21, 2018 at 07:28:16PM -0500, Steven Rostedt wrote:
-> > @@ -188,14 +186,20 @@ int function_graph_enter(unsigned long ret, unsigned long func,
-> >  	struct ftrace_graph_ent trace;
-> >  
-> >  	trace.func = func;
-> > -	trace.depth = current->curr_ret_stack + 1;
-> > +	trace.depth = ++current->curr_ret_depth;
-> >  
-> >  	/* Only trace if the calling function expects to */
-> >  	if (!ftrace_graph_entry(&trace))
-> > -		return -EBUSY;
-> > +		goto out;
-> >  
-> > -	return ftrace_push_return_trace(ret, func, &trace.depth,
-> > -					frame_pointer, retp);
-> > +	if (ftrace_push_return_trace(ret, func,
-> > +				     frame_pointer, retp))  
+On Wed, 21 Nov 2018, Alexander Popov wrote:
+
+> Hello everyone!
 > 
-> You can unwrap that line, by my counting that's at 69 chars, so unless
-> you're editing on a C64 it should fit your screen.
-
-Thanks I may add a clean up patch. I already ran this code under
-several hours of testing, and only plan on touching it if there's more
-than cosmetic issues.
-
-The reason that looks like that is because I just massaged the line it
-replaced, and didn't take into account that I could now make it into a
-single line.
-
+> At irc.freenode.org/#gcc people told me that I should CC gcc@gcc.gnu.org to get
+> some attention of gcc developers.
 > 
-> > +		goto out;
-> > +
-> > +	return 0;
-> > + out:
-> > +	current->curr_ret_depth--;
-> > +	return -EBUSY;
-> >  }  
-> 
-> [diff "default"]
-> 	xfuncname = "^[[:alpha:]$_].*[^:]$"
-> 
-> avoids the need for that ludicrous label indenting.
+> Link to previous discussion:
+>  https://www.openwall.com/lists/kernel-hardening/2018/11/14/1
 
-I still prefer the 'space', and it fits with the rest of the file ;-)
+So just for information, it isn't a plugin bug. I'll elaborate below, but in
+short, objtool was complaining about unreachable code.  To be fair though,
+gcc could have made the problem easier to spot.
 
-TomAYto / TomAHto
+Now for the details.
 
-> 
-> Also, "error" might be a better label name.
+The repro uses an unusual (randomized) kernel config, in particular gcov is
+enabled and NR_CPUS is 1. Thus we have
 
-True. I'll add that on top too, but for the stable/rc release, that
-isn't needed.
+static int duplicate_processor_ids[] = {
+        [0 ... 1 - 1] = -1,
+};
 
-Thanks for taking a look at this code.
+and the compiler deduces that the loop in acpi_duplicate_processor_id does not
+iterate:
 
--- Steve
+bool acpi_duplicate_processor_id(int proc_id)
+{
+        int i;
+
+        for (i = 0; i < nr_duplicate_ids; i++) {
+                if (duplicate_processor_ids[i] == proc_id)
+                        return true;
+        }
+        return false;
+}
+
+However as gcov is enabled, loop backedge remains, followed by gcov counter
+increment and __builtin_unreachable() (on GIMPLE). On RTL, however, the basic
+block with the increment ends with a barrier rtx, which is not visible in
+assembly and looks just as if control flow falls through to a function exit.
+Since the exit in question corresponds to a shrink-wrapped early exit that
+does not push/pop registers, objtool complains.
+
+Ultimately this is poor luck, if gcc optimized the code better or terminated
+the block that-should-not-be-reached with ud2, it would not arise.
+
+Alexander
