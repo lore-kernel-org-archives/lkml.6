@@ -2,74 +2,127 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16DAFC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C7C1C43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:39:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA10B20659
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:40:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ma8ca68R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA10B20659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 58E6E20861
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:39:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58E6E20861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409399AbeKWVXs (ORCPT
+        id S2409386AbeKWVXk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 16:23:48 -0500
-Received: from mail-ed1-f46.google.com ([209.85.208.46]:34553 "EHLO
-        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394186AbeKWVXs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 16:23:48 -0500
-Received: by mail-ed1-f46.google.com with SMTP id b3so9902370ede.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 02:40:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=sq+sbiuLU7iqRObtW/qAvtjBwsdI4HCjL2tyQJe4vy4=;
-        b=ma8ca68R0lwyKl6ElwPJEM+de0wHXadi8GW1cGlza5P3iydj1Jss4JgtdGokU/nI80
-         NwR5+NkfTdJ9HYpdaCens1SGBPKf3/CqP1Mwt/LzVWiFvk2bVirt6X6YzlFe4GhnAhkk
-         FubMc2qicFcM4dcPXcWefZqz4ZhnkOX2vEwWaEFzZ/VpKYnXVCuCci3/LMUfWX81K27S
-         uTp014CVvbvRsM8JShJ67k8fw+dvlfJmn+BAbV/fm87Wag+z2pa3y7E69YpNLSh6YSN0
-         oQ97cbZxzy2y0qtOIi0GKFfjsb1dUwKz+xXbLhyMKP1ysy4uurYjsMPp+8+EkC8Jt1Nn
-         bJRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=sq+sbiuLU7iqRObtW/qAvtjBwsdI4HCjL2tyQJe4vy4=;
-        b=epkfG2gXGQOj/ybT95kkBq1s8doLrybqQ22CvEcL8eBsIDuvwi+jGWN4xpk8dDEisp
-         JR+BxeNPxXZglX5i/YrLKDramI39evWeSSlBRK77POejJQNH38k76N7eJSiSv6M8DRp4
-         yU5Ara3gSL9Pd4nPUYsCkIce4QH7VgUT2C53u7teva4ZdzakfVvF47M0erQkfh+SV8JZ
-         iPDSNdlqOqH7MMvAPZ+kHGAHTMFvUJAiahQJQTA12626VCXj28FgYF3t3zLplkPQsRlS
-         bkzhR1t2y6Xy0OHgRKHf0IPkG6OcyJyk0uacw06Odj9e2cBbQFquB3r6xopvoWhJiRRz
-         pnVQ==
-X-Gm-Message-State: AGRZ1gLrfMiQ+bdEOpSqSjMyktLth/xi4E3Qnc/Z+M/pk2JgmjjH0w8G
-        LYEBwXUBwbh/8HoW3mmQdNvydc4fjl2UdtUfaACNg0gI
-X-Google-Smtp-Source: AJdET5cq8d6E/LQLPnfrGGFz5ZXUQDSXvfjYFJ0KmrzIIvOaASQsutU93CkcNRFhCoMFQE8GrBZUqQ29QHcmEj8KbuI=
-X-Received: by 2002:a17:906:1b12:: with SMTP id o18-v6mr10812052ejg.65.1542969601812;
- Fri, 23 Nov 2018 02:40:01 -0800 (PST)
-MIME-Version: 1.0
-From:   Rishi <2rushikeshj@gmail.com>
-Date:   Fri, 23 Nov 2018 16:09:50 +0530
-Message-ID: <CAO9XypWCiSwf+5NeG9aRcRG+2tUKE2DufMjHHpsCUh65rvNM-A@mail.gmail.com>
-Subject: Page Replacement Algo Enhancement to Flush lest recently used memory page
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 23 Nov 2018 16:23:40 -0500
+Received: from wind.enjellic.com ([76.10.64.91]:34591 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2394186AbeKWVXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 16:23:40 -0500
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.14.3/8.14.3) with ESMTP id wANAdNSt014028;
+        Fri, 23 Nov 2018 04:39:24 -0600
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.14.3/8.14.3/Submit) id wANAdNqg014027;
+        Fri, 23 Nov 2018 04:39:23 -0600
+Date:   Fri, 23 Nov 2018 04:39:23 -0600
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181123103923.GA13851@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com> <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com> <20181119161917.GF13298@linux.intel.com> <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com> <20181120120442.GA22172@linux.intel.com> <20181122111253.GA31150@wind.enjellic.com> <CALCETrV4wOpk7wf9+ywd50PekGjfT7LNtwqHhcV08=oxPmKtKQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrV4wOpk7wf9+ywd50PekGjfT7LNtwqHhcV08=oxPmKtKQ@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [0.0.0.0]); Fri, 23 Nov 2018 04:39:24 -0600 (CST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm looking for right kernel API to be able to flush the least
-recently used memory page from inactive memory.
+On Thu, Nov 22, 2018 at 12:56:23PM -0800, Andy Lutomirski wrote:
 
-I want to develop a kernel module such that it will free least
-recently used memory every n seconds untill inactive memory is 0.
+Good morning to everyone.
 
-This is to reduce the memory allocated to a linux VM dynamically and
-make it available to other vms of the host or hypervisor itself.
+> On Thu, Nov 22, 2018 at 3:12 AM Dr. Greg <greg@enjellic.com> wrote:
+> > In addition, we are not confident
+> > the driver will be useful to anything other then server class hardware
+> > and will be incapable of supporting virtually all of the existing SGX
+> > hardware in the field.
+
+> I forgot to mention: I have a plain old retail Intel Celeron (I
+> think -- it's not in front of me right now) that has Flex LC.  I
+> suspect that, going forward, all new Intel CPUs will support Flex
+> LC.  I really wish that Intel would document all of the detailed
+> capabilities of all their CPUs somewhere.
+
+Interesting, that contradicts the read we had gotten on FLC.
+
+The only specific CPU's that we know of that are acknowledged to have
+FLC are the XEON E series in support of the PCE/ECDSA attestation for
+data-center use of SGX.
+
+I'm assuming this is a really new system?  If so that matches our
+experience with respect to the fact that SGX2/EDMM capable systems
+slipped out quietly in early generation NUC SOC's.
+
+Your sentinments are correct with respect to getting solid guidance on
+hardware, it is a significant issue, particularly with respect to
+SGX.
+
+> There has been some talk of how the driver could support old CPUs.
+> It would involve a rather different LE being signed by Intel, but it
+> should be more or less transparent to user code if it happens.
+
+I will reply to the LE and driver capability issues in my response to
+your earlier e-mail so the thread does not diverge.
+
+Jarkko, when this driver lands it will set the SGX ABI in stone for
+Linux.  It would be very, very helpful to the development community if
+there was some official guidance from Intel on whether or not FLC will
+be a universal feature on all hardware and the date that is going to
+happen or has happened.
+
+If this turns out to be an OEM selectable issue via firmware
+customizations, things will be even more problematic.
+
+As things stand now, the proposed mainline SGX driver is going to be
+useless for a lot of hardware that is out in the field.  Linux has
+always had the reputation for supporting legacy hardware so this
+directly contravenes that principal and needlessly so.
+
+Dr. Greg
+
+As always,
+Dr. Greg Wettstein, Ph.D, Worker
+IDfusion, LLC
+4206 N. 19th Ave.           Implementing measured information privacy
+Fargo, ND  58102            and integrity architectures.
+PH: 701-281-1686
+FAX: 701-281-3949           EMAIL: gw@idfusion.org
+------------------------------------------------------------------------------
+"Simplicity is prerequisite for reliability."
+                                -- Edsger W. Dijkstra
