@@ -2,92 +2,100 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F191AC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 230F5C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:44:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD67120672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:44:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD67120672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DD3D320820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:44:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="UoHhiKj7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD3D320820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409878AbeKWX2E (ORCPT
+        id S2409897AbeKWX2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:28:04 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38132 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388147AbeKWX2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:28:04 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 624CCAEC0;
-        Fri, 23 Nov 2018 12:43:59 +0000 (UTC)
-Date:   Fri, 23 Nov 2018 13:43:58 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        David Rientjes <rientjes@google.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 1/3] mm: Check if mmu notifier callbacks are allowed to
- fail
-Message-ID: <20181123124358.GJ8625@dhcp22.suse.cz>
-References: <20181122165106.18238-1-daniel.vetter@ffwll.ch>
- <20181122165106.18238-2-daniel.vetter@ffwll.ch>
- <20181123111557.GG8625@dhcp22.suse.cz>
- <20181123123057.GK4266@phenom.ffwll.local>
+        Fri, 23 Nov 2018 18:28:12 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:37834 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388147AbeKWX2M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 18:28:12 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id D97AA10C0ACD;
+        Fri, 23 Nov 2018 04:44:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1542977048; bh=pupJ+vnq4yUPjyM9FBKT0G/5a1ZBnXLPypvUbXJpcik=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To:From;
+        b=UoHhiKj7ujqI86b9Dah0Kxty/HmovfxnGmj8SSaENcvgNgCVQzJ1x5ui54USGNFbc
+         NCSy+lR4GFPQE8ut7DLghnw4+ARMcWM49FUIsUF+49BO/XnxnsU2USj0NJSTR+5y18
+         up4/OfNncYtxZB21Z6peT0atzD9c5ptQm52vaAYRVWSOH9aadfHeuBXS5wM2uKLvnM
+         RL5QWBWbRjTRKNmX1ZAwnoSnQYv5EdGu+ai92hM4d0TyF6vpNPNLuyJ7FMvwBrrDCP
+         WuDWUPXv3Si6MDePmnpKtjATlyUCNWJigkkJZLRuY0gUO1On1Slt802P2vddWyNC9E
+         D98MRdoUj1xhw==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 534CB3CF9;
+        Fri, 23 Nov 2018 04:44:08 -0800 (PST)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 23 Nov 2018 04:44:08 -0800
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 23 Nov 2018 13:44:06 +0100
+Received: from [10.0.2.15] (10.107.19.33) by DE02WEHTCA.internal.synopsys.com
+ (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 23 Nov
+ 2018 13:44:05 +0100
+Subject: Re: [PATCH] net: stmmac: Move debugfs init/exit to
+ ->probe()/->remove()
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+References: <20181123122122.18957-1-thierry.reding@gmail.com>
+CC:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <jose.abreu@synopsys.com>, <netdev@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From:   Jose Abreu <jose.abreu@synopsys.com>
+Message-ID: <9c8443aa-edaa-2398-bdd8-df49f2529cb6@synopsys.com>
+Date:   Fri, 23 Nov 2018 12:44:02 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181123123057.GK4266@phenom.ffwll.local>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181123122122.18957-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.19.33]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 23-11-18 13:30:57, Daniel Vetter wrote:
-> On Fri, Nov 23, 2018 at 12:15:57PM +0100, Michal Hocko wrote:
-> > On Thu 22-11-18 17:51:04, Daniel Vetter wrote:
-> > > Just a bit of paranoia, since if we start pushing this deep into
-> > > callchains it's hard to spot all places where an mmu notifier
-> > > implementation might fail when it's not allowed to.
-> > 
-> > What does WARN give you more than the existing pr_info? Is really
-> > backtrace that interesting?
-> 
-> Automated tools have to ignore everything at info level (there's too much
-> of that). I guess I could do something like
-> 
-> if (blockable)
-> 	pr_warn(...)
-> else
-> 	pr_info(...)
-> 
-> WARN() is simply my goto tool for getting something at warning level
-> dumped into dmesg. But I think the pr_warn with the callback function
-> should be enough indeed.
+On 23-11-2018 12:21, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Setting up and tearing down debugfs is current unbalanced, as seen by
+> this error during resume from suspend:
+>
+>     [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to create debugfs directory
+>     [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup: failed debugFS registration
+>
+> The imbalance happens because the driver creates the debugfs hierarchy
+> when the device is opened and tears it down when the device is closed.
+> There's little gain in that, and it could be argued that it is even
+> surprising because it's not usually done for other devices. Fix the
+> imbalance by moving the debugfs creation and teardown to the driver's
+> ->probe() and ->remove() implementations instead.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>
 
-I wouldn't mind s@pr_info@pr_warn@
- 
-> If you wonder where all the info level stuff happens that we have to
-> ignore: suspend/resume is a primary culprit (fairly important for
-> gfx/desktops), but there's a bunch of other places. Even if we ignore
-> everything at info and below we still need filters because some drivers
-> are a bit too trigger-happy (i915 definitely included I guess, so everyone
-> contributes to this problem).
+Did you test trying to dump "descriptors_status" file when
+interface is not open ? I think that's the main reason why this
+is not in probe ...
 
-Thanks for the clarification.
--- 
-Michal Hocko
-SUSE Labs
+Thanks and Best Regards,
+Jose Miguel Abreu
