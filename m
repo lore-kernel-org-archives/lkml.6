@@ -2,186 +2,174 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA4BC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 722CFC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:01:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13C2B20861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:01:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13C2B20861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id 07FBE20820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:01:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07FBE20820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=magewell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408328AbeKWSoR (ORCPT
+        id S2408345AbeKWSog (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 13:44:17 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57633 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729827AbeKWSoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 13:44:17 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8AAEA597EB3C7;
-        Fri, 23 Nov 2018 16:01:07 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 23 Nov
- 2018 16:01:01 +0800
-Date:   Fri, 23 Nov 2018 16:02:42 +0800
-From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Leon Romanovsky <leon@kernel.org>,
-        Kenneth Lee <nek.in.cn@gmail.com>,
-        "Tim Sell" <timothy.sell@unisys.com>, <linux-doc@vger.kernel.org>,
-        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
-        Zaibo Xu <xuzaibo@huawei.com>, <zhangfei.gao@foxmail.com>,
-        <linuxarm@huawei.com>, <haojian.zhuang@linaro.org>,
-        Christoph Lameter <cl@linux.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Gavin Schenk <g.schenk@eckelmann.de>,
-        "RDMA mailing list" <linux-rdma@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        "Doug Ledford" <dledford@redhat.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        David Kershner <david.kershner@unisys.com>,
-        Johan Hovold <johan@kernel.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Jens Axboe <axboe@kernel.dk>, <guodong.xu@linaro.org>,
-        linux-netdev <netdev@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        <linux-crypto@vger.kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Fri, 23 Nov 2018 13:44:36 -0500
+Received: from out20-97.mail.aliyun.com ([115.124.20.97]:47945 "EHLO
+        out20-97.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729827AbeKWSog (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 13:44:36 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07444192|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03292;MF=yong.deng@magewell.com;NM=1;PH=DS;RN=24;RT=24;SR=0;TI=SMTPD_---.DN-BYGt_1542960076;
+Received: from John(mailfrom:yong.deng@magewell.com fp:SMTPD_---.DN-BYGt_1542960076)
+          by smtp.aliyun-inc.com(10.147.42.16);
+          Fri, 23 Nov 2018 16:01:17 +0800
+Date:   Fri, 23 Nov 2018 16:01:17 +0800
+From:   Yong <yong.deng@magewell.com>
+To:     jacopo mondi <jacopo@jmondi.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "David S. Miller" <davem@davemloft.net>,
-        <linux-accelerators@lists.ozlabs.org>
-Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-Message-ID: <20181123080242.GK157308@Turing-Arch-b>
-References: <95310df4-b32c-42f0-c750-3ad5eb89b3dd@gmail.com>
- <20181114160017.GI3759@mtr-leonro.mtl.com>
- <20181115085109.GD157308@Turing-Arch-b>
- <20181115145455.GN3759@mtr-leonro.mtl.com>
- <20181119091405.GE157308@Turing-Arch-b>
- <20181119184954.GB4890@ziepe.ca>
- <20181120030702.GH157308@Turing-Arch-b>
- <20181120032939.GR4890@ziepe.ca>
- <20181121060805.GJ157308@Turing-Arch-b>
- <20181122025840.GB19938@ziepe.ca>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181122025840.GB19938@ziepe.ca>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH v12 1/2] dt-bindings: media: Add Allwinner V3s Camera
+ Sensor Interface (CSI)
+Message-Id: <20181123160117.7eed41aac3e7e31e4e6d98be@magewell.com>
+In-Reply-To: <20181123074514.GB6788@w540>
+References: <1540887143-27904-1-git-send-email-yong.deng@magewell.com>
+        <308184907.pMD7ZDI2dr@avalon>
+        <20181123074514.GB6788@w540>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.30; i686-pc-mingw32)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 07:58:40PM -0700, Jason Gunthorpe wrote:
-> Date: Wed, 21 Nov 2018 19:58:40 -0700
-> From: Jason Gunthorpe <jgg@ziepe.ca>
-> To: Kenneth Lee <liguozhu@hisilicon.com>
-> CC: Leon Romanovsky <leon@kernel.org>, Kenneth Lee <nek.in.cn@gmail.com>,
->  Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org, Alexander
->  Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
->  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
->  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
->  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mailing
->  list <linux-rdma@vger.kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
->  Doug Ledford <dledford@redhat.com>, Uwe Kleine-König
->  <u.kleine-koenig@pengutronix.de>, David Kershner
->  <david.kershner@unisys.com>, Johan Hovold <johan@kernel.org>, Cyrille
->  Pitchen <cyrille.pitchen@free-electrons.com>, Sagar Dharia
->  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
->  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
->  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Vinod Koul
->  <vkoul@kernel.org>, linux-crypto@vger.kernel.org, Philippe Ombredanne
->  <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>, "David S.
->  Miller" <davem@davemloft.net>, linux-accelerators@lists.ozlabs.org
-> Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-> User-Agent: Mutt/1.9.4 (2018-02-28)
-> Message-ID: <20181122025840.GB19938@ziepe.ca>
-> 
-> On Wed, Nov 21, 2018 at 02:08:05PM +0800, Kenneth Lee wrote:
-> 
-> > > But considering Jean's SVA stuff seems based on mmu notifiers, I have
-> > > a hard time believing that it has any different behavior from RDMA's
-> > > ODP, and if it does have different behavior, then it is probably just
-> > > a bug in the ODP implementation.
-> > 
-> > As Jean has explained, his solution is based on page table sharing. I think ODP
-> > should also consider this new feature.
-> 
-> Shared page tables would require the HW to walk the page table format
-> of the CPU directly, not sure how that would be possible for ODP?
-> 
-> Presumably the implementation for ARM relies on the IOMMU hardware
-> doing this?
+Hi jacopo,
 
-Yes, that is the idea. And since Jean is merging the AMD and Intel solution
-together, I assume they can do the same. This is also the reason I want to solve
-my problem on top of IOMMU directly. But anyway, let me try to see if I can
-merge the logic with ODP.
+On Fri, 23 Nov 2018 08:45:14 +0100
+jacopo mondi <jacopo@jmondi.org> wrote:
 
+> Hi Yong,
 > 
-> > > > > If all your driver needs is to mmap some PCI bar space, route
-> > > > > interrupts and do DMA mapping then mediated VFIO is probably a good
-> > > > > choice. 
-> > > > 
-> > > > Yes. That is what is done in our RFCv1/v2. But we accepted Jerome's opinion and
-> > > > try not to add complexity to the mm subsystem.
-> > > 
-> > > Why would a mediated VFIO driver touch the mm subsystem? Sounds like
-> > > you don't have a VFIO driver if it needs to do stuff like that...
-> > 
-> > VFIO has no ODP-like solution, and if we want to solve the fork problem, we have
-> > to make some change to iommu and the fork procedure. Further, VFIO takes every
-> > queue as a independent device. This create a lot of trouble on resource
-> > management. For example, you will need a manager process to withdraw the unused
-> > device and you need to let the user process know about PASID of the queue, and
-> > so on.
+> On Tue, Oct 30, 2018 at 03:06:24PM +0200, Laurent Pinchart wrote:
+> > Hi Yong,
+> >
+> > Thank you for the patch.
+> >
+> > On Tuesday, 30 October 2018 10:12:23 EET Yong Deng wrote:
+> > > Add binding documentation for Allwinner V3s CSI.
+> > >
+> > > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > Signed-off-by: Yong Deng <yong.deng@magewell.com>
+> >
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >
+> > > ---
+> > >  .../devicetree/bindings/media/sun6i-csi.txt        | 56 +++++++++++++++++++
+> > >  1 file changed, 56 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt
+> > > b/Documentation/devicetree/bindings/media/sun6i-csi.txt new file mode
+> > > 100644
+> > > index 000000000000..443e18c181b3
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
+> > > @@ -0,0 +1,56 @@
+> > > +Allwinner V3s Camera Sensor Interface
+> > > +-------------------------------------
+> > > +
+> > > +Allwinner V3s SoC features a CSI module(CSI1) with parallel interface.
+> > > +
+> > > +Required properties:
+> > > +  - compatible: value must be "allwinner,sun8i-v3s-csi"
+> > > +  - reg: base address and size of the memory-mapped region.
+> > > +  - interrupts: interrupt associated to this IP
+> > > +  - clocks: phandles to the clocks feeding the CSI
+> > > +    * bus: the CSI interface clock
+> > > +    * mod: the CSI module clock
+> > > +    * ram: the CSI DRAM clock
+> > > +  - clock-names: the clock names mentioned above
+> > > +  - resets: phandles to the reset line driving the CSI
+> > > +
+> > > +The CSI node should contain one 'port' child node with one child 'endpoint'
+> > > +node, according to the bindings defined in
+> > > +Documentation/devicetree/bindings/media/video-interfaces.txt.
+> > > +
+> > > +Endpoint node properties for CSI
+> > > +---------------------------------
+> > > +See the video-interfaces.txt for a detailed description of these
+> > > properties. +- remote-endpoint	: (required) a phandle to the bus receiver's
+> > > endpoint +			   node
+> > > +- bus-width:		: (required) must be 8, 10, 12 or 16
+> > > +- pclk-sample		: (optional) (default: sample on falling edge)
+> > > +- hsync-active		: (required; parallel-only)
+> > > +- vsync-active		: (required; parallel-only)
+> > > +
+> > > +Example:
+> > > +
+> > > +csi1: csi@1cb4000 {
+> > > +	compatible = "allwinner,sun8i-v3s-csi";
+> > > +	reg = <0x01cb4000 0x1000>;
+> > > +	interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
+> > > +	clocks = <&ccu CLK_BUS_CSI>,
+> > > +		 <&ccu CLK_CSI1_SCLK>,
+> > > +		 <&ccu CLK_DRAM_CSI>;
+> > > +	clock-names = "bus", "mod", "ram";
+> > > +	resets = <&ccu RST_BUS_CSI>;
+> > > +
+> > > +	port {
+> > > +		/* Parallel bus endpoint */
+> > > +		csi1_ep: endpoint {
+> > > +			remote-endpoint = <&adv7611_ep>;
+> > > +			bus-width = <16>;
+> > > +
+> > > +			/* If hsync-active/vsync-active are missing,
+> > > +			   embedded BT.656 sync is used */
 > 
-> Well, I would think you'd add SVA support to the VFIO driver as a
-> generic capability - it seems pretty useful for any VFIO user as it
-> avoids all the kernel upcalls to do memory pinning and DMA address
-> translation.
+> Am I confused? The properties description defines [v|h]sync-active as
+> required, but the example reports that they can be omitted to use
+> BT.656 synchronization.
+> 
+> Which one of the following is correct?
+> 1) [h|v]sync-active are mandatory: no BT.656 support can be selected.
+> 2) [h|v]sync-active are optional, and if not specified BT.656 is
+>    selected.
+> 3) I am confused.
+>
+ 
+hsync-active		: (required; parallel-only)
+vsync-active		: (required; parallel-only)
 
-It is already part of Jean's patchset. And that's why I built my solution on
-VFIO in the first place. But I think the concept of SVA and PASID is not
-compatible with the original VFIO concept space. You would not share your whole
-address space to a device at all in a virtual machine manager, wouldn't you? And
-if you can manage to have a separated mdev for your virtual machine, why bother
-to set a PASID to it?  The answer to those problem, I think, will be Intel's
-Scalable IO Virtualization. For accelerator, the requirement is simply: getting
-a handle to device, attaching the process's mm with the handle by sharing the
-process's page table with its iommu indexed by PASID, and start the
-communication...
+Here, parallel means seperate sync signal, BT.656 means embedded sync
+signal. Kernel use these two properties to detect if the bus type is 
+parallel or Bt656. So [h|v]sync-active are mandatory only if your bus
+type is parallel and must not be specified if your bus type is Bt656.
 
-> 
-> Once the VFIO driver knows about this as a generic capability then the
-> device it exposes to userspace would use CPU addresses instead of DMA
-> addresses.
-> 
-> The question is if your driver needs much more than the device
-> agnostic generic services VFIO provides.
-> 
-> I'm not sure what you have in mind with resource management.. It is
-> hard to revoke resources from userspace, unless you are doing
-> kernel syscalls, but then why do all this?
-
-Say, I have 1024 queues in my accelerator. I can get one by opening the device
-and attach it with the fd. If the process exit by any means, the queue can be
-returned with the release of the fd. But if it is mdev, it will still be there
-and some one should tell the allocator it is available again. This is not easy
-to design in user space.
-
-> 
-> Jason
-
--- 
+Thanks,
+Yong
