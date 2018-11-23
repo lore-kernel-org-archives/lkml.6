@@ -2,30 +2,30 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FFEC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D051C43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D33920664
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:18:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D33920664
+	by mail.kernel.org (Postfix) with ESMTP id 0EC1320664
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:18:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EC1320664
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436598AbeKXBC7 (ORCPT
+        id S2439876AbeKXBDB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 20:02:59 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:33905 "EHLO mail.bootlin.com"
+        Fri, 23 Nov 2018 20:03:01 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:33929 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731702AbeKXBC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 20:02:58 -0500
+        id S2388551AbeKXBC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 20:02:59 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9B232207AD; Fri, 23 Nov 2018 15:18:34 +0100 (CET)
+        id 4590120D29; Fri, 23 Nov 2018 15:18:35 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 23BB420741;
+        by mail.bootlin.com (Postfix) with ESMTPSA id D371C20741;
         Fri, 23 Nov 2018 15:18:34 +0100 (CET)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Gregory Clement <gregory.clement@bootlin.com>,
@@ -43,72 +43,124 @@ Cc:     <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>,
         Nadav Haklai <nadavh@marvell.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 00/12] Bring suspend to RAM support to PCIe Aardvark driver
-Date:   Fri, 23 Nov 2018 15:18:19 +0100
-Message-Id: <20181123141831.8214-1-miquel.raynal@bootlin.com>
+Subject: [PATCH 02/12] PCI: aardvark: add reset GPIO support
+Date:   Fri, 23 Nov 2018 15:18:21 +0100
+Message-Id: <20181123141831.8214-3-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181123141831.8214-1-miquel.raynal@bootlin.com>
+References: <20181123141831.8214-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The IP supports a reset GPIO. When S2RAM will be added, we must ensure
+the reset line (if any) is deasserted when resuming. Add support for
+it.
 
-As part of an effort to bring suspend to RAM support to Armada 3700
-SoCs (main target: ESPRESSObin), this series handles the work around
-the PCIe IP.
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+ drivers/pci/controller/pci-aardvark.c | 57 +++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
-First, more configuration is done in the 'setup' helper as inspired
-from the U-Boot driver. This is needed to entirely initialize the IP
-during future resume operation (patch 1).
-
-Then, reset GPIO, PHY and clock support are introduced (patch 2-4). As
-current device trees do not provide the corresponding properties, not
-finding one of these properties is not an error and just produces a
-warning. However, if the property is present, an error during PHY
-initialization will fail the probe of the driver.
-
-Note: To be sure the clock will be resumed before this driver, a first
-series adding links between clocks and consumers has been submitted,
-see [1].
-
-Patch 5 adds suspend/resume hooks, re-using all the above.
-
-Finally, bindings and device trees are updated to reflect the hardware
-(patch 6-12). While the clock depends on the SoC, the reset GPIO and
-the PHY depends on the board so the clock is added in the
-armada-37xx.dtsi file while the two other properties are added in
-armada-3720-espressobin.dts.
-
-[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-November/614527.html
-
-Thanks,
-Miquèl
-
-
-Miquel Raynal (12):
-  PCI: aardvark: configure more registers in the configuration helper
-  PCI: aardvark: add reset GPIO support
-  PCI: aardvark: add PHY support
-  PCI: aardvark: add clock support
-  PCI: aardvark: add suspend to RAM support
-  dt-bindings: PCI: aardvark: describe the reset-gpios property
-  dt-bindings: PCI: aardvark: describe the clocks property
-  dt-bindings: PCI: aardvark: describe the PHY property
-  ARM64: dts: marvell: armada-37xx: declare PCIe reset pin
-  ARM64: dts: marvell: armada-3720-espressobin: declare PCIe reset GPIO
-  ARM64: dts: marvell: armada-37xx: declare PCIe clock
-  ARM64: dts: marvell: armada-3720-espressobin: declare PCIe PHY
-
- .../devicetree/bindings/pci/aardvark-pci.txt  |   9 +
- .../dts/marvell/armada-3720-espressobin.dts   |   4 +
- arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |   5 +
- drivers/pci/controller/pci-aardvark.c         | 214 ++++++++++++++++++
- 4 files changed, 232 insertions(+)
-
+diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
+index b95eb2aa00bb..1d31d74ddab7 100644
+--- a/drivers/pci/controller/pci-aardvark.c
++++ b/drivers/pci/controller/pci-aardvark.c
+@@ -9,6 +9,7 @@
+  */
+ 
+ #include <linux/delay.h>
++#include <linux/gpio.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/irqdomain.h>
+@@ -17,6 +18,7 @@
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/of_address.h>
++#include <linux/of_gpio.h>
+ #include <linux/of_pci.h>
+ 
+ #include "../pci.h"
+@@ -201,6 +203,7 @@ struct advk_pcie {
+ 	u16 msi_msg;
+ 	int root_bus_nr;
+ 	struct pci_bridge_emul bridge;
++	struct gpio_desc *reset_gpio;
+ };
+ 
+ static inline void advk_writel(struct advk_pcie *pcie, u32 val, u64 reg)
+@@ -973,6 +976,55 @@ static int advk_pcie_parse_request_of_pci_ranges(struct advk_pcie *pcie)
+ 	return err;
+ }
+ 
++static int advk_pcie_hard_reset(struct advk_pcie *pcie)
++{
++	if (!pcie->reset_gpio)
++		return -EINVAL;
++
++	gpiod_set_value_cansleep(pcie->reset_gpio, 0);
++	msleep(1);
++	gpiod_set_value_cansleep(pcie->reset_gpio, 1);
++
++	return 0;
++}
++
++static int advk_pcie_setup_reset_gpio(struct advk_pcie *pcie)
++{
++	struct device *dev = &pcie->pdev->dev;
++	enum of_gpio_flags of_flags;
++	unsigned long gpio_flags;
++	int gpio_nb;
++	int ret;
++
++	gpio_nb = of_get_named_gpio_flags(dev->of_node, "reset-gpios", 0,
++					  &of_flags);
++	if (gpio_nb == -EPROBE_DEFER)
++		return gpio_nb;
++
++	/* Old bindings miss the reset GPIO handle */
++	if (!gpio_is_valid(gpio_nb)) {
++		dev_warn(dev, "Reset GPIO unavailable\n");
++		return 0;
++	}
++
++	if (of_flags & OF_GPIO_ACTIVE_LOW)
++		gpio_flags = GPIOF_ACTIVE_LOW |
++			     GPIOF_OUT_INIT_LOW;
++	else
++		gpio_flags = GPIOF_OUT_INIT_HIGH;
++
++	ret = devm_gpio_request_one(dev, gpio_nb, gpio_flags,
++				    "pcie-aardvark-reset");
++	if (ret) {
++		dev_err(dev, "Failed to retrieve reset GPIO (%d)\n", ret);
++		return ret;
++	}
++
++	pcie->reset_gpio = gpio_to_desc(gpio_nb);
++
++	return 0;
++}
++
+ static int advk_pcie_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -1008,6 +1060,11 @@ static int advk_pcie_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	ret = advk_pcie_setup_reset_gpio(pcie);
++	if (ret)
++		return ret;
++
++	advk_pcie_hard_reset(pcie);
+ 	advk_pcie_setup_hw(pcie);
+ 
+ 	advk_sw_pci_bridge_init(pcie);
 -- 
 2.19.1
 
