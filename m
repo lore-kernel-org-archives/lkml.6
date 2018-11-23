@@ -2,208 +2,112 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFBCCC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 412DDC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:35:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7037120663
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:33:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7037120663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=magewell.com
+	by mail.kernel.org (Postfix) with ESMTP id EB29720663
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:35:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="sUW2rpKW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB29720663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502391AbeKWTQn (ORCPT
+        id S2408609AbeKWTSn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 14:16:43 -0500
-Received: from out20-87.mail.aliyun.com ([115.124.20.87]:53314 "EHLO
-        out20-87.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731874AbeKWTQm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 14:16:42 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436352|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07408;MF=yong.deng@magewell.com;NM=1;PH=DS;RN=24;RT=24;SR=0;TI=SMTPD_---.DN-jJJT_1542962002;
-Received: from John(mailfrom:yong.deng@magewell.com fp:SMTPD_---.DN-jJJT_1542962002)
-          by smtp.aliyun-inc.com(10.147.40.200);
-          Fri, 23 Nov 2018 16:33:22 +0800
-Date:   Fri, 23 Nov 2018 16:33:22 +0800
-From:   Yong <yong.deng@magewell.com>
-To:     jacopo mondi <jacopo@jmondi.org>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v12 1/2] dt-bindings: media: Add Allwinner V3s Camera
- Sensor Interface (CSI)
-Message-Id: <20181123163322.318fd61d2dad525683a58ff1@magewell.com>
-In-Reply-To: <20181123081300.GC6788@w540>
-References: <1540887143-27904-1-git-send-email-yong.deng@magewell.com>
-        <308184907.pMD7ZDI2dr@avalon>
-        <20181123074514.GB6788@w540>
-        <20181123160117.7eed41aac3e7e31e4e6d98be@magewell.com>
-        <20181123081300.GC6788@w540>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.30; i686-pc-mingw32)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 23 Nov 2018 14:18:43 -0500
+Received: from mail-eopbgr150087.outbound.protection.outlook.com ([40.107.15.87]:63664
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731866AbeKWTSm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 14:18:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t6nU8AfNmhGNjiP94oxU8US9jGyqqavLEPXxJbXCVlU=;
+ b=sUW2rpKWP2YMWJDnpp+FhIIo5xWR+yUYHMxlmaoRdVidu59Kdf5uXCX9Ffhl9cPsAAACMNzLqD1uReoo0NOkj3rLJ/1I16kMzxnkS8lviw2c+EOL8S7NLlaK81lLodV6ITTZK27HD1wMF1SPZl8s/h2LvM2kIKPDsj8YWXYtQvQ=
+Received: from DB7PR04MB4618.eurprd04.prod.outlook.com (52.135.138.152) by
+ DB7PR04MB5483.eurprd04.prod.outlook.com (20.178.105.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.26; Fri, 23 Nov 2018 08:35:25 +0000
+Received: from DB7PR04MB4618.eurprd04.prod.outlook.com
+ ([fe80::28ab:d6bc:2c00:a54b]) by DB7PR04MB4618.eurprd04.prod.outlook.com
+ ([fe80::28ab:d6bc:2c00:a54b%3]) with mapi id 15.20.1339.029; Fri, 23 Nov 2018
+ 08:35:25 +0000
+From:   Joakim Zhang <qiangqing.zhang@nxp.com>
+To:     "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "mkl@pengutronix.de" <mkl@pengutronix.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+CC:     "wg@grandegger.com" <wg@grandegger.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>
+Subject: [PATCH V6 0/2] can: flexcan: add can self wakeup support
+Thread-Topic: [PATCH V6 0/2] can: flexcan: add can self wakeup support
+Thread-Index: AQHUgwd6wXBy9Svf4Uuk1UESPmPUkw==
+Date:   Fri, 23 Nov 2018 08:35:25 +0000
+Message-ID: <20181123083304.3232-1-qiangqing.zhang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.17.1
+x-clientproxiedby: SG2PR04CA0182.apcprd04.prod.outlook.com
+ (2603:1096:4:14::20) To DB7PR04MB4618.eurprd04.prod.outlook.com
+ (2603:10a6:5:36::24)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=qiangqing.zhang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [92.121.68.129]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB7PR04MB5483;6:SoonGTXg3zQ5Rw/117HDFNHqrerM2LWFOlop5RB80kf71j9cMO3qSmxX3rr9YP+YloZwyCwUYmX+Q/pj/KSiYZ6IC2vT4KTTpPfL3JRA5vbDyujKIK1RJqBKVA4gk2iWrOmDd4JNMZQpivg9o/QMUABrOkfJN5VFZhmv47iUVDLOl52tCRJQ/cTX9SQBnOVNyrpQd08F7+mortwOhKo6qJS3QD+SKmjBP2+3cNl8Rbn2uNPU7e2Lxp06RCdLGcptybA7uxJ7jGxdCG9FInWs6MS9imNAxT49qDUtxfi0beeaheYu6Jvt14PLzwgxrag9nzHTuiFeGZfpw4QglAqNuSEzbeUGvpAExuAWzWCcp1kPmb1sQyJ0Q7TdHPXdNTxT0V4qGuVT0PBnfix9cVbVGcNd/UmNPaZkcZTZDtTG84vj9pgvXvi7xJm4csc5OKpK0jGz7A92IwbVeDCNikdP4Q==;5:Lk8BOWiQzCOgJXmK4KCr9bmX1Az73YqHDvrktMGt96MTWPnmy6/bW3oDlSwAYEH2WXXBfY1xwya+4O+8EqWBSIZOfu1oDpf49HV+/BCLnrLoh1uyFgWg4oHJQht6TSblh9jhsweHzYBHJyJK3z0syi/A3QElwUh0eq150z0whhU=;7:FsL+cSRVNkrYC1E05pJoMw8a78HDaLHFXKVqq8PJdwathE4HIWI6qD5iTbm0Kt5dY2b1h0/1psS+zk8COsPq+Zj0JBfNOrrEIQPslUibBE+jxdw/IO+xR9W6CshjFPxXrCtK0AHrN2x9zr2d5320nA==
+x-ms-office365-filtering-correlation-id: a947ed6c-d0a4-4501-b4a9-08d6511e9d26
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB5483;
+x-ms-traffictypediagnostic: DB7PR04MB5483:
+x-microsoft-antispam-prvs: <DB7PR04MB5483A441247552A6087FB6B5E6D40@DB7PR04MB5483.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231442)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DB7PR04MB5483;BCL:0;PCL:0;RULEID:;SRVR:DB7PR04MB5483;
+x-forefront-prvs: 086597191B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(366004)(396003)(346002)(376002)(199004)(189003)(105586002)(6512007)(3846002)(6116002)(53936002)(106356001)(1076002)(316002)(36756003)(256004)(110136005)(54906003)(71200400001)(4326008)(6506007)(102836004)(8936002)(50226002)(81166006)(71190400001)(5660300001)(66066001)(26005)(186003)(52116002)(81156014)(305945005)(7736002)(68736007)(478600001)(99286004)(25786009)(8676002)(6436002)(2616005)(2900100001)(2906002)(476003)(386003)(6486002)(486006)(97736004)(14454004)(86362001)(2501003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB5483;H:DB7PR04MB4618.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: PYOVPQvzK5G6AetHNM8Tq22fWsy4csLaML0czLvxMENy5ZW94YtiG1uI3i1/tOoQFYhcSPBzCXC9W2FhGcL7YKzr91p/6dqWP1y89kZrnR/OmbgyvFVj3lhQGlF643RwC3Z6oSLMjdulEBLaL7Oqj5oFNjvtFfNEXOhs9wLPhxFHs+Pe/1sFxv+GZdF7d9PAIXgHho9xMJikoZxcatLQgvU/thBHuWDtNIsUkdILdoDJsCsW+Flq0PCD1bqhKUzX/syqz3XofdSsnRVJz3K6RKV9/PGWj+T7CsyA17CiC+LuEzcXgQAyD6f70mO8Ts/XKJiqroN1qrbMBF826L5mjRtg8scCOQX3SJb2fvf0Qgg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a947ed6c-d0a4-4501-b4a9-08d6511e9d26
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Nov 2018 08:35:25.2088
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5483
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi jacopo,
+This patch series intends to add CAN self wakeup support. The CAN controlle=
+r
+can parse "fsl,stop-mode" property from device tree to enable self wakeup f=
+eature.
 
-On Fri, 23 Nov 2018 09:13:00 +0100
-jacopo mondi <jacopo@jmondi.org> wrote:
+Aisheng Dong (2):
+  Documentation: can: flexcan: add stop mode property to device tree
+  can: flexcan: add self wakeup support
 
-> Hi Yong,
-> 
-> On Fri, Nov 23, 2018 at 04:01:17PM +0800, Yong wrote:
-> > Hi jacopo,
-> >
-> > On Fri, 23 Nov 2018 08:45:14 +0100
-> > jacopo mondi <jacopo@jmondi.org> wrote:
-> >
-> > > Hi Yong,
-> > >
-> > > On Tue, Oct 30, 2018 at 03:06:24PM +0200, Laurent Pinchart wrote:
-> > > > Hi Yong,
-> > > >
-> > > > Thank you for the patch.
-> > > >
-> > > > On Tuesday, 30 October 2018 10:12:23 EET Yong Deng wrote:
-> > > > > Add binding documentation for Allwinner V3s CSI.
-> > > > >
-> > > > > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > > > > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > > > Signed-off-by: Yong Deng <yong.deng@magewell.com>
-> > > >
-> > > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > >
-> > > > > ---
-> > > > >  .../devicetree/bindings/media/sun6i-csi.txt        | 56 +++++++++++++++++++
-> > > > >  1 file changed, 56 insertions(+)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > > > > b/Documentation/devicetree/bindings/media/sun6i-csi.txt new file mode
-> > > > > 100644
-> > > > > index 000000000000..443e18c181b3
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > > > > @@ -0,0 +1,56 @@
-> > > > > +Allwinner V3s Camera Sensor Interface
-> > > > > +-------------------------------------
-> > > > > +
-> > > > > +Allwinner V3s SoC features a CSI module(CSI1) with parallel interface.
-> > > > > +
-> > > > > +Required properties:
-> > > > > +  - compatible: value must be "allwinner,sun8i-v3s-csi"
-> > > > > +  - reg: base address and size of the memory-mapped region.
-> > > > > +  - interrupts: interrupt associated to this IP
-> > > > > +  - clocks: phandles to the clocks feeding the CSI
-> > > > > +    * bus: the CSI interface clock
-> > > > > +    * mod: the CSI module clock
-> > > > > +    * ram: the CSI DRAM clock
-> > > > > +  - clock-names: the clock names mentioned above
-> > > > > +  - resets: phandles to the reset line driving the CSI
-> > > > > +
-> > > > > +The CSI node should contain one 'port' child node with one child 'endpoint'
-> > > > > +node, according to the bindings defined in
-> > > > > +Documentation/devicetree/bindings/media/video-interfaces.txt.
-> > > > > +
-> > > > > +Endpoint node properties for CSI
-> > > > > +---------------------------------
-> > > > > +See the video-interfaces.txt for a detailed description of these
-> > > > > properties. +- remote-endpoint	: (required) a phandle to the bus receiver's
-> > > > > endpoint +			   node
-> > > > > +- bus-width:		: (required) must be 8, 10, 12 or 16
-> > > > > +- pclk-sample		: (optional) (default: sample on falling edge)
-> > > > > +- hsync-active		: (required; parallel-only)
-> > > > > +- vsync-active		: (required; parallel-only)
-> > > > > +
-> > > > > +Example:
-> > > > > +
-> > > > > +csi1: csi@1cb4000 {
-> > > > > +	compatible = "allwinner,sun8i-v3s-csi";
-> > > > > +	reg = <0x01cb4000 0x1000>;
-> > > > > +	interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-> > > > > +	clocks = <&ccu CLK_BUS_CSI>,
-> > > > > +		 <&ccu CLK_CSI1_SCLK>,
-> > > > > +		 <&ccu CLK_DRAM_CSI>;
-> > > > > +	clock-names = "bus", "mod", "ram";
-> > > > > +	resets = <&ccu RST_BUS_CSI>;
-> > > > > +
-> > > > > +	port {
-> > > > > +		/* Parallel bus endpoint */
-> > > > > +		csi1_ep: endpoint {
-> > > > > +			remote-endpoint = <&adv7611_ep>;
-> > > > > +			bus-width = <16>;
-> > > > > +
-> > > > > +			/* If hsync-active/vsync-active are missing,
-> > > > > +			   embedded BT.656 sync is used */
-> > >
-> > > Am I confused? The properties description defines [v|h]sync-active as
-> > > required, but the example reports that they can be omitted to use
-> > > BT.656 synchronization.
-> > >
-> > > Which one of the following is correct?
-> > > 1) [h|v]sync-active are mandatory: no BT.656 support can be selected.
-> > > 2) [h|v]sync-active are optional, and if not specified BT.656 is
-> > >    selected.
-> > > 3) I am confused.
-> > >
-> >
-> > hsync-active		: (required; parallel-only)
-> > vsync-active		: (required; parallel-only)
-> >
-> > Here, parallel means seperate sync signal, BT.656 means embedded sync
-> > signal. Kernel use these two properties to detect if the bus type is
-> > parallel or Bt656. So [h|v]sync-active are mandatory only if your bus
-> > type is parallel and must not be specified if your bus type is Bt656.
-> 
-> Well, BT.565 sync mode applies to parallel data transmission busses as
-> BT.601 sync mode does... I don't want to bikeshed on terms though, I'm
-> sorry...
-> 
-> I would have write here:
-> 
-> hsync-active		: Required when using explicit HSYNC synchronism
->                           signal. Default valuse is "high"/"low".
-> vsync-active		: Required when using explicit VSYNC synchronism
->                           signal. Default valuse is "high"/"low".
-> When both vsync-active and hsync-active are omitted BT.565 implicit
-> synchronization mode is used.
-> 
-> To avoid confusing people already confused as I am :)
-> 
-> I got this patch is already in, right? Feel free to ignore my comment or
-> either send an incremental patch if you think it is appropriate.
-> 
+ .../bindings/net/can/fsl-flexcan.txt          |   8 +
+ drivers/net/can/flexcan.c                     | 172 +++++++++++++++++-
+ 2 files changed, 171 insertions(+), 9 deletions(-)
 
-As Laurent's mentioned in this thread, this is a problem in 
-Documentation/devicetree/bindings/media/video-interfaces.txt in the 
-first place. And he said he'll try to submit a patch for 
-video-interfaces.txt.
+--=20
+2.17.1
 
-Thanks,
-Yong
