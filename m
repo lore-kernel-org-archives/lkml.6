@@ -2,269 +2,174 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C720C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A5A3C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE13420685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:33:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE13420685
+	by mail.kernel.org (Postfix) with ESMTP id AD14920685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:34:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD14920685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440270AbeKXCSH (ORCPT
+        id S2440285AbeKXCTa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 21:18:07 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47660 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388503AbeKXCSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 21:18:07 -0500
+        Fri, 23 Nov 2018 21:19:30 -0500
+Received: from foss.arm.com ([217.140.101.70]:47684 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2440273AbeKXCTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 21:19:30 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A07435CD;
-        Fri, 23 Nov 2018 07:33:28 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C37703F5AF;
-        Fri, 23 Nov 2018 07:33:26 -0800 (PST)
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        mingo@kernel.org
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Borislav Petkov <bp@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH] locking/atomics: build atomic headers as required
-Date:   Fri, 23 Nov 2018 15:33:21 +0000
-Message-Id: <20181123153321.8561-1-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.11.0
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7053135CD;
+        Fri, 23 Nov 2018 07:34:51 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C8A93F5AF;
+        Fri, 23 Nov 2018 07:34:50 -0800 (PST)
+Subject: Re: [PATCH 09/17] irqchip: bcm283x: Switch to SPDX identifier
+To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Eric Anholt <eric@anholt.net>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Simon Arlott <simon@arlott.org>
+References: <1541865263-7571-1-git-send-email-stefan.wahren@i2se.com>
+ <7ab4438c-6cdd-8655-0745-2bbc137970d0@i2se.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ xsFNBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
+ g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
+ t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
+ ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
+ qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
+ 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
+ ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
+ t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
+ lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
+ DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABzSNNYXJjIFp5bmdp
+ ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPsLBewQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
+ AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
+ LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
+ 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
+ TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
+ 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
+ 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
+ UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
+ bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
+ LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
+ cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
+ 6ilrF8nOwU0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
+ 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
+ w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
+ VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
+ w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
+ QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
+ hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
+ o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
+ AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
+ BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAHCwV8EGAEC
+ AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
+ mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
+ MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
+ 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
+ kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
+ 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
+ a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
+ qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
+ hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
+ yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
+Organization: ARM Ltd
+Message-ID: <dda72906-fc11-da81-8aa2-c53639b3dbcc@arm.com>
+Date:   Fri, 23 Nov 2018 15:34:48 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <7ab4438c-6cdd-8655-0745-2bbc137970d0@i2se.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew and Ingo report that the check-atomics.sh script is simply too
-slow to run for every kernel build, and it's impractical to make it
-faster without rewriting it in something other than shell.
+On 23/11/2018 15:23, Stefan Wahren wrote:
+> Hi Jason,
+> hi Marc,
+> 
+> Am 10.11.18 um 16:54 schrieb Stefan Wahren:
+>> Adopt the SPDX license identifier headers to ease license compliance
+>> management.
+>>
+>> Cc: Simon Arlott <simon@arlott.org>
+>> Cc: Eric Anholt <eric@anholt.net>
+>> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+>> ---
+>>  drivers/irqchip/irq-bcm2835.c | 11 +----------
+>>  drivers/irqchip/irq-bcm2836.c | 11 +----------
+>>  2 files changed, 2 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/drivers/irqchip/irq-bcm2835.c b/drivers/irqchip/irq-bcm2835.c
+>> index d2da8a1..418245d 100644
+>> --- a/drivers/irqchip/irq-bcm2835.c
+>> +++ b/drivers/irqchip/irq-bcm2835.c
+>> @@ -1,17 +1,8 @@
+>> +// SPDX-License-Identifier: GPL-2.0+
+>>  /*
+>>   * Copyright 2010 Broadcom
+>>   * Copyright 2012 Simon Arlott, Chris Boot, Stephen Warren
+>>   *
+>> - * This program is free software; you can redistribute it and/or modify
+>> - * it under the terms of the GNU General Public License as published by
+>> - * the Free Software Foundation; either version 2 of the License, or
+>> - * (at your option) any later version.
+>> - *
+>> - * This program is distributed in the hope that it will be useful,
+>> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> - * GNU General Public License for more details.
+>> - *
+>>   * Quirk 1: Shortcut interrupts don't set the bank 1/2 register pending bits
+>>   *
+>>   * If an interrupt fires on bank 1 that isn't in the shortcuts list, bit 8
+>> diff --git a/drivers/irqchip/irq-bcm2836.c b/drivers/irqchip/irq-bcm2836.c
+>> index dfe4a46..2038693 100644
+>> --- a/drivers/irqchip/irq-bcm2836.c
+>> +++ b/drivers/irqchip/irq-bcm2836.c
+>> @@ -1,17 +1,8 @@
+>> +// SPDX-License-Identifier: GPL-2.0+
+>>  /*
+>>   * Root interrupt controller for the BCM2836 (Raspberry Pi 2).
+>>   *
+>>   * Copyright 2015 Broadcom
+>> - *
+>> - * This program is free software; you can redistribute it and/or modify
+>> - * it under the terms of the GNU General Public License as published by
+>> - * the Free Software Foundation; either version 2 of the License, or
+>> - * (at your option) any later version.
+>> - *
+>> - * This program is distributed in the hope that it will be useful,
+>> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> - * GNU General Public License for more details.
+>>   */
+>>  
+>>  #include <linux/cpu.h>
+> 
+> Eric already made a review. Are you fine with it?
 
-Rather than committing the generated headers, let's regenerate these
-as-required for a pristine tree.
+Sure. How do you want this to go in? If you have a series repainting
+multiple subsystems, I'd rather it stays as such, and you can stick my
 
-That ensures they're always up-to-date, allows them to be built in
-parallel, and avoid redundant rebuilds, which is a 2-8s saving per
-incremental build. Since the results are not committed, it's very
-obvious that they should not be modified directly. If we need to
-generate more headers in future, it's easy to extend Makefile.genheader
-to permit this.
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
-I've verified that this works in the cases we previously had issues with
-(out-of-tree builds and where scripts have no execute permissions), and
-have tested these cases for both x86_64 and arm64.
-
-The diffstat looks nice, at least...
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-kernel@vger.kernel.org
----
- Kbuild                                    |   18 +-
- Makefile                                  |    8 +-
- arch/arm64/include/asm/atomic.h           |    2 +-
- arch/x86/include/asm/atomic.h             |    2 +-
- include/asm-generic/atomic-instrumented.h | 1787 ----------------------
- include/asm-generic/atomic-long.h         | 1012 -------------
- include/linux/atomic-fallback.h           | 2294 -----------------------------
- include/linux/atomic.h                    |    4 +-
- scripts/Makefile.genheader                |   23 +
- scripts/atomic/check-atomics.sh           |   19 -
- 10 files changed, 35 insertions(+), 5134 deletions(-)
- delete mode 100644 include/asm-generic/atomic-instrumented.h
- delete mode 100644 include/asm-generic/atomic-long.h
- delete mode 100644 include/linux/atomic-fallback.h
- create mode 100644 scripts/Makefile.genheader
- delete mode 100755 scripts/atomic/check-atomics.sh
-
-Andrew, Ingo, 
-
-Could you please let me know whether you're happy with this?
-
-This is based on the tip locking/core branch.
-
-Locally, for a -j64 build this saves me ~2s for a pristine tree, and ~5s
-for a rebuild:
-
-  # before, pristine
-  make -j64 -s  195.32s user 15.65s system 1670% cpu 12.631 total
-
-  # before, rebuild
-  make -j64 -s  2.55s user 1.64s system 64% cpu 6.468 total
-
-  # after, pristine
-  make -j64 -s  194.46s user 15.82s system 1965% cpu 10.701 total
-
-  # after, rebuild
-  make -j64 -s  2.34s user 1.02s system 179% cpu 1.865 total
+on it.
 
 Thanks,
-Mark.
 
-diff --git a/Kbuild b/Kbuild
-index 780048056ac5..005304205482 100644
---- a/Kbuild
-+++ b/Kbuild
-@@ -6,8 +6,7 @@
- # 2) Generate timeconst.h
- # 3) Generate asm-offsets.h (may need bounds.h and timeconst.h)
- # 4) Check for missing system calls
--# 5) check atomics headers are up-to-date
--# 6) Generate constants.py (may need bounds.h)
-+# 5) Generate constants.py (may need bounds.h)
- 
- #####
- # 1) Generate bounds.h
-@@ -73,20 +72,7 @@ missing-syscalls: scripts/checksyscalls.sh $(offsets-file) FORCE
- 	$(call cmd,syscalls)
- 
- #####
--# 5) Check atomic headers are up-to-date
--#
--
--always += old-atomics
--targets += old-atomics
--
--quiet_cmd_atomics = CALL    $<
--      cmd_atomics = $(CONFIG_SHELL) $<
--
--old-atomics: scripts/atomic/check-atomics.sh FORCE
--	$(call cmd,atomics)
--
--#####
--# 6) Generate constants for Python GDB integration
-+# 5) Generate constants for Python GDB integration
- #
- 
- extra-$(CONFIG_GDB_SCRIPTS) += build_constants_py
-diff --git a/Makefile b/Makefile
-index 6c40d547513c..fd871d2c2f54 100644
---- a/Makefile
-+++ b/Makefile
-@@ -224,7 +224,7 @@ clean-targets := %clean mrproper cleandocs
- no-dot-config-targets := $(clean-targets) \
- 			 cscope gtags TAGS tags help% %docs check% coccicheck \
- 			 $(version_h) headers_% archheaders archscripts \
--			 %asm-generic kernelversion %src-pkg
-+			 %asm-generic genheader kernelversion %src-pkg
- no-sync-config-targets := $(no-dot-config-targets) install %install \
- 			   kernelrelease
- 
-@@ -1089,7 +1089,7 @@ endif
- # prepare2 creates a makefile if using a separate output directory.
- # From this point forward, .config has been reprocessed, so any rules
- # that need to depend on updated CONFIG_* values can be checked here.
--prepare2: prepare3 outputmakefile asm-generic
-+prepare2: prepare3 outputmakefile asm-generic genheader
- 
- prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h
- 	$(cmd_crmodverdir)
-@@ -1113,6 +1113,10 @@ uapi-asm-generic:
- 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.asm-generic \
- 	            src=uapi/asm obj=arch/$(SRCARCH)/include/generated/uapi/asm
- 
-+PHONY += genheader
-+genheader:
-+	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.genheader obj=include/generated
-+
- PHONY += prepare-objtool
- prepare-objtool: $(objtool_target)
- 
-diff --git a/arch/arm64/include/asm/atomic.h b/arch/arm64/include/asm/atomic.h
-index 1f4e9ee641c9..57c73cde3a51 100644
---- a/arch/arm64/include/asm/atomic.h
-+++ b/arch/arm64/include/asm/atomic.h
-@@ -166,7 +166,7 @@
- 
- #define arch_atomic64_dec_if_positive		arch_atomic64_dec_if_positive
- 
--#include <asm-generic/atomic-instrumented.h>
-+#include <generated/atomic-instrumented.h>
- 
- #endif
- #endif
-diff --git a/arch/x86/include/asm/atomic.h b/arch/x86/include/asm/atomic.h
-index ea3d95275b43..d1e3aca236e2 100644
---- a/arch/x86/include/asm/atomic.h
-+++ b/arch/x86/include/asm/atomic.h
-@@ -262,6 +262,6 @@ static inline int arch_atomic_fetch_xor(int i, atomic_t *v)
- # include <asm/atomic64_64.h>
- #endif
- 
--#include <asm-generic/atomic-instrumented.h>
-+#include <generated/atomic-instrumented.h>
- 
- #endif /* _ASM_X86_ATOMIC_H */
-diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
-deleted file mode 100644
-index b8f5b35216e1..000000000000
-diff --git a/include/asm-generic/atomic-long.h b/include/asm-generic/atomic-long.h
-deleted file mode 100644
-index a833d385a70b..000000000000
-diff --git a/include/linux/atomic-fallback.h b/include/linux/atomic-fallback.h
-deleted file mode 100644
-index 1c02c0112fbb..000000000000
-diff --git a/include/linux/atomic.h b/include/linux/atomic.h
-index 4c0d009a46f0..bea7ceec44af 100644
---- a/include/linux/atomic.h
-+++ b/include/linux/atomic.h
-@@ -71,8 +71,8 @@
- 	__ret;								\
- })
- 
--#include <linux/atomic-fallback.h>
-+#include <generated/atomic-fallback.h>
- 
--#include <asm-generic/atomic-long.h>
-+#include <generated/atomic-long.h>
- 
- #endif /* _LINUX_ATOMIC_H */
-diff --git a/scripts/Makefile.genheader b/scripts/Makefile.genheader
-new file mode 100644
-index 000000000000..d4cc070c27c9
---- /dev/null
-+++ b/scripts/Makefile.genheader
-@@ -0,0 +1,23 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Generate common headers under include/generated/
-+
-+include scripts/Kbuild.include
-+
-+atomics-dir := $(srctree)/scripts/atomic
-+atomic-tbl := $(atomics-dir)/atomics.tbl
-+
-+.PHONY: all
-+
-+targets += atomic-fallback.h
-+targets += atomic-instrumented.h
-+targets += atomic-long.h
-+
-+all: $(addprefix $(obj)/,$(targets))
-+
-+quiet_cmd_genheader = GENHDR  $@
-+cmd_genheader = $(CONFIG_SHELL) $^ >$@
-+
-+$(obj)/atomic-%.h: $(atomics-dir)/gen-atomic-%.sh $(atomic-tbl)
-+	$(call if_changed,genheader)
-+
-diff --git a/scripts/atomic/check-atomics.sh b/scripts/atomic/check-atomics.sh
-deleted file mode 100755
-index c30101cddf2d..000000000000
+	M.
 -- 
-2.11.0
-
+Jazz is not dead. It just smells funny...
