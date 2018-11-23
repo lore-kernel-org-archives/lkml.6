@@ -2,100 +2,97 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3EAC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B067DC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 326DC20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:42:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 326DC20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7357120672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:43:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7357120672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394547AbeKWX0e (ORCPT
+        id S2394714AbeKWX2B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:26:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37900 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388147AbeKWX0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:26:34 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B6362AD6B;
-        Fri, 23 Nov 2018 12:42:29 +0000 (UTC)
-Date:   Fri, 23 Nov 2018 13:42:28 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Oscar Salvador <osalvador@d104.suse.de>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Oscar Salvador <osalvador@suse.com>, linux-mm@kvack.org,
-        rppt@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        arunks@codeaurora.org, bhe@redhat.com, dan.j.williams@intel.com,
-        Pavel.Tatashin@microsoft.com, Jonathan.Cameron@huawei.com,
-        jglisse@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/4] mm, memory_hotplug: allocate memmap from
- hotadded memory
-Message-ID: <20181123124228.GI8625@dhcp22.suse.cz>
-References: <20181116101222.16581-1-osalvador@suse.com>
- <2571308d-0460-e8b9-ad40-75d6b13b2d09@redhat.com>
- <20181123115519.2dnzscmmgv63fdub@d104.suse.de>
+        Fri, 23 Nov 2018 18:28:01 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:50424 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388147AbeKWX2A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 18:28:00 -0500
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gQAnn-00042o-78; Fri, 23 Nov 2018 13:43:19 +0100
+Date:   Fri, 23 Nov 2018 13:43:18 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ingo Molnar <mingo@kernel.org>
+cc:     Borislav Petkov <bp@alien8.de>, "Moger, Babu" <Babu.Moger@amd.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v9 01/13] x86/resctrl: Rename and move rdt files to new
+ directory
+In-Reply-To: <20181123114102.GB130228@gmail.com>
+Message-ID: <alpine.DEB.2.21.1811231340430.2603@nanos.tec.linutronix.de>
+References: <20181121202811.4492-1-babu.moger@amd.com> <20181121202811.4492-2-babu.moger@amd.com> <20181123072839.GA51597@gmail.com> <20181123082258.GA30697@zn.tnic> <20181123084117.GA130228@gmail.com> <20181123090011.GB30697@zn.tnic>
+ <20181123114102.GB130228@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181123115519.2dnzscmmgv63fdub@d104.suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 23-11-18 12:55:41, Oscar Salvador wrote:
-> On Thu, Nov 22, 2018 at 10:21:24AM +0100, David Hildenbrand wrote:
-> > 1. How are we going to present such memory to the system statistics?
-> > 
-> > In my opinion, this vmemmap memory should
-> > a) still account to total memory
-> > b) show up as allocated
-> > 
-> > So just like before.
+On Fri, 23 Nov 2018, Ingo Molnar wrote:
+> * Borislav Petkov <bp@alien8.de> wrote:
+> Is there any other resource handled than caches by RDT or by the AMD 
+> variant?
+
+Memory bandwidth.
+
+> So how about "cache_control"? It's shorter and a lot closer to what the 
+> code actually does.
 > 
-> No, it does not show up under total memory and neither as allocated memory.
-> This memory is not for use for anything but for creating the pagetables
-> for the memmap array for the section/s.
+> > resource_control/ is kinda long-ish and the other names we have there
+> > are nice and short, see below.
 
-I haven't read through your patches yet but wanted to clarfify few
-points here.
+resctrl is short and good enough. Can we move on an care about technical
+problems rather than wasting time with bike shed painting?
 
-This should essentially follow the bootmem allocated memory pattern. So
-it is present and accounted to spanned pages but it is not managed.
+Thanks,
 
-> It is not memory that the system can use.
-
-same as bootmem ;)
- 
-> I also guess that if there is a strong opinion on this, we could create
-> a counter, something like NR_VMEMMAP_PAGES, and show it under /proc/meminfo.
-
-Do we really have to? Isn't the number quite obvious from the size of
-the hotpluged memory?
-
-> 
-> > 2. Is this optional, in other words, can a device driver decide to not
-> > to it like that?
-> 
-> Right now, is a per arch setup.
-> For example, x86_64/powerpc/arm64 will do it inconditionally.
-> 
-> If we want to restrict this a per device-driver thing, I guess that we could
-> allow to pass a flag to add_memory()->add_memory_resource(), and there
-> unset MHP_MEMMAP_FROM_RANGE in case that flag is enabled.
-
-I believe we will need to make this opt-in. There are some usecases
-which hotplug an expensive (per size) memory via hotplug and it would be
-too wasteful to use it for struct pages. I haven't bothered to address
-that with my previous patches because I just wanted to make the damn
-thing work first.
--- 
-Michal Hocko
-SUSE Labs
+	tglx
