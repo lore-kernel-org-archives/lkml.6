@@ -2,129 +2,156 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D73BC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44831C43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C850A20663
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:11:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XpJsec8d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C850A20663
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1634A20663
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:11:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1634A20663
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408821AbeKWTyp (ORCPT
+        id S2408848AbeKWTzU convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 14:54:45 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34358 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408808AbeKWTyp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 14:54:45 -0500
-Received: by mail-pl1-f196.google.com with SMTP id f12-v6so10387391plo.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 01:11:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7Puh2n6lBKeRTfbLb/nO2j08HhcaWvTwWPWxBkc45Wg=;
-        b=XpJsec8dzJnLsxQlag9GoUv15sk55804rgFl92riI22+mRZKL//acCZEBmywwDqiHU
-         yeiOyAl9VB5cP5ckzvqcXWHmDWv8ogtgMPOfM1PRs/RciUAYOuLi6XAJQKaG7H2yi3BB
-         PszJng6JV7O9RWeTGCPJBq0V4tUHY4yV4udD8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7Puh2n6lBKeRTfbLb/nO2j08HhcaWvTwWPWxBkc45Wg=;
-        b=rFe3GsjufU9l8vdplYa87oXG+QSABr1si97Vy8pSObHrXwI2cGLS7RnzEGxtXf0f+o
-         Uq6Y0BzwS42ydEqtPZCcb5kcgc/6hA4PmTjr7SPM7RJuItx8KGRvpGjc2YKS/OFqSWhH
-         rRhHm0cgRDg7rt3loZEtWlfkRQYdbMab75I3VefAcLOpYyhZZ1vtzM45qCjgil7BuXi1
-         tu9YsVHhOgZhYGZ0g4bB2iDkHnDO2JqaG4T45MRwzRgvzK0jtz22YjZNshEoYDC5OEd2
-         mNKEOZaQPuDUjAaBMzaWG+IbG0U8oIBXgKAFSEXRMV7DUg+PtMA/EkajR6uQB89rGVPr
-         qHug==
-X-Gm-Message-State: AA+aEWa/RpIxS6aQ9uziiUdBkG42tfRPKs0tNcawP51gtEBCy4STZcQE
-        cfWgoM+UsoGLgErj3SFNj/fKMQ==
-X-Google-Smtp-Source: AFSGD/XamOqV2BirOpLdb/uqHkQjxw8DjASUQ+FEMYc1lWa4mnw/v4eTV7sXNWbNkzJkRtAy7/p+Lw==
-X-Received: by 2002:a17:902:27e6:: with SMTP id i35mr11436511plg.222.1542964282159;
-        Fri, 23 Nov 2018 01:11:22 -0800 (PST)
-Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id r76sm32786647pfb.69.2018.11.23.01.11.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Nov 2018 01:11:21 -0800 (PST)
-Date:   Fri, 23 Nov 2018 14:41:18 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     ulf.hansson@linaro.org, Viresh Kumar <vireshk@kernel.org>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        niklas.cassel@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] OPP: Add dev_pm_opp_xlate_performance_state() helper
-Message-ID: <20181123091118.x73s345xhhr4simo@vireshk-i7>
-References: <cover.1541399301.git.viresh.kumar@linaro.org>
- <cedbfc3a7fffc4c400908c4c3af518bea408d318.1541399301.git.viresh.kumar@linaro.org>
- <45c19ad3-6039-9152-6e5a-51a5c062bdf4@codeaurora.org>
- <20181121051718.a5yo3ibhaihgrwra@vireshk-i7>
- <20181121060622.blnlvydbc4wo5y3y@vireshk-i7>
- <0b40a76d-f779-391a-2770-4a3d368679a9@codeaurora.org>
- <20181122060839.socq3vuaa4ycftzn@vireshk-i7>
+        Fri, 23 Nov 2018 14:55:20 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:48831 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731917AbeKWTzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 14:55:20 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A09F620D29; Fri, 23 Nov 2018 10:11:55 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 03A45207AB;
+        Fri, 23 Nov 2018 10:11:32 +0100 (CET)
+Date:   Fri, 23 Nov 2018 10:11:32 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH 2/2] clk: core: link consumer with clock driver
+Message-ID: <20181123101132.6be3829c@xps13>
+In-Reply-To: <201811231627.H7ojlKLL%fengguang.wu@intel.com>
+References: <20181122212212.16039-3-miquel.raynal@bootlin.com>
+        <201811231627.H7ojlKLL%fengguang.wu@intel.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181122060839.socq3vuaa4ycftzn@vireshk-i7>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-11-18, 11:38, Viresh Kumar wrote:
-> So there are few complexities in the case where an OPP table points to itself in
-> the required-opp field. I looked at solving it up in the opp core but that gets
-> more and more messy.
+Hello,
+
+kbuild test robot <lkp@intel.com> wrote on Fri, 23 Nov 2018 16:30:00
++0800:
+
+> Hi Miquel,
 > 
-> Now there is actually a assumption within the OPP core. Your Mx domain should
-> get initialized before the Cx domain, as that is when the OPP tables are created
-> as well. This is because Cx's OPP table will point to Mx's OPP table (doesn't
-> matter if they share the same table or not) and so Mx's OPP table should come
-> first.
+> I love your patch! Yet something to improve:
 > 
-> Can you check if that is already the case for you? If not, please try doing it
-> and lemme know if it works. It should.
+> [auto build test ERROR on clk/clk-next]
+> [also build test ERROR on v4.20-rc3 next-20181122]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 > 
-> I just want to avoid too much complexity in OPP core without much use.
+> url:    https://github.com/0day-ci/linux/commits/Miquel-Raynal/Link-consumer-with-clock-driver/20181123-113833
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+> config: sh-titan_defconfig (attached as .config)
+> compiler: sh4-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=7.2.0 make.cross ARCH=sh 
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    drivers//clk/clkdev.c: In function 'clk_get':
+> >> drivers//clk/clkdev.c:209:3: error: implicit declaration of function '__clk_device_link'; did you mean '__clk_free_clk'? [-Werror=implicit-function-declaration]  
+>       __clk_device_link(dev, clk);
+>       ^~~~~~~~~~~~~~~~~
+>       __clk_free_clk
+>    drivers//clk/clkdev.c: In function 'clk_put':
+> >> drivers//clk/clkdev.c:217:2: error: implicit declaration of function '__clk_device_unlink'; did you mean 'device_online'? [-Werror=implicit-function-declaration]  
+>      __clk_device_unlink(clk);
+>      ^~~~~~~~~~~~~~~~~~~
+>      device_online
+>    cc1: some warnings being treated as errors
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index 7f338d39809a..09df3fbdb555 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -1734,7 +1734,7 @@ unsigned int dev_pm_opp_xlate_performance_state(struct opp_table *src_table,
-        int i;
- 
-        for (i = 0; i < src_table->required_opp_count; i++) {
--               if (src_table->required_opp_tables[i] == dst_table)
-+               if (src_table->required_opp_tables[i]->np == dst_table->np)
-                        break;
-        }
+I figured thanks to this report that this code won't compile with
+architectures not compliant to the common clock framework. I see there
+is the following block in clkdev.c.
 
-Try this fix and it should make it work for you.
+#if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+#else
+#endif
 
-Having said that, the way you are representing all your domains with a
-single OPP table look incorrect. You are using the same OPP table for
-around 10 power domains, all provided by a single provider. This is
-absolutely fine. But the Mx domain doesn't have any dependency on any
-other domain actually and so its OPPs should never have the
-"required-opps" property, but it has those properties in your setup as
-you are trying to use the same OPP table. That may all work fine with
-the above patch (which is required anyway as it fixes a valid issue),
-but you may see a error warning that something failed for Mx domain,
-as it has required-opps property but no required device or genpd.
+Would you agree with me adding dummy functions in the #else section
+like:
 
-Anyway, please test above first and then you can fix your tables :)
+static inline void __clk_device_link(struct device *consumer, struct clk *clk)
+{
+       return;
+}
 
--- 
-viresh
+static inline void __clk_device_unlink(struct clk *clk)
+{
+       return;
+}
+
+Do you want me to also declare these functions in the #if section
+(with the external keyword) to balance the above declarations?
+
+Thanks for your input.
+Miquèl
+
+> 
+> vim +209 drivers//clk/clkdev.c
+> 
+>    193	
+>    194	struct clk *clk_get(struct device *dev, const char *con_id)
+>    195	{
+>    196		const char *dev_id = dev ? dev_name(dev) : NULL;
+>    197		struct clk *clk = NULL;
+>    198	
+>    199		if (dev && dev->of_node) {
+>    200			clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id);
+>    201			if (PTR_ERR(clk) == -EPROBE_DEFER)
+>    202				return clk;
+>    203		}
+>    204	
+>    205		if (IS_ERR_OR_NULL(clk))
+>    206			clk = clk_get_sys(dev_id, con_id);
+>    207	
+>    208		if (!IS_ERR(clk))
+>  > 209			__clk_device_link(dev, clk);  
+>    210	
+>    211		return clk;
+>    212	}
+>    213	EXPORT_SYMBOL(clk_get);
+>    214	
+>    215	void clk_put(struct clk *clk)
+>    216	{
+>  > 217		__clk_device_unlink(clk);  
+>    218		__clk_put(clk);
+>    219	}
+>    220	EXPORT_SYMBOL(clk_put);
+>    221	
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
