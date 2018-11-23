@@ -2,225 +2,90 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3468CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 23:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D431C04EBA
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 23:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF1F020663
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 23:33:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF1F020663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 60BE720865
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 23:44:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60BE720865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbeKXKT1 (ORCPT
+        id S1728011AbeKXKae (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 05:19:27 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40933 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727607AbeKXKT1 (ORCPT
+        Sat, 24 Nov 2018 05:30:34 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44132 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727607AbeKXKae (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 05:19:27 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id D46A78080F; Sat, 24 Nov 2018 00:33:07 +0100 (CET)
-Date:   Sat, 24 Nov 2018 00:33:09 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Ayman Bagabas <ayman.bagabas@gmail.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Hui Wang <hui.wang@canonical.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Kailang Yang <kailang@realtek.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Subject: Re: [PATCH v3 3/3] ALSA: hda: add support for Huawei WMI micmute LED
-Message-ID: <20181123233309.GA4340@amd>
-References: <s5hr2fgfcrm.wl-tiwai@suse.de>
- <20181120091039.GA16916@amd>
- <s5hbm6kf6gi.wl-tiwai@suse.de>
- <20181120093610.GF16916@amd>
- <s5h4lccf58f.wl-tiwai@suse.de>
- <20181120115159.GG16916@amd>
- <s5hzhu4c569.wl-tiwai@suse.de>
- <CAHp75VddanEB-7qQutSWkbSZW4srRzGXkigCMxEP7zJ=KC6iKw@mail.gmail.com>
- <20181122131802.GB13339@amd>
- <s5h8t1l5ish.wl-tiwai@suse.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="C7zPtVaVf+AK4Oqc"
-Content-Disposition: inline
-In-Reply-To: <s5h8t1l5ish.wl-tiwai@suse.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sat, 24 Nov 2018 05:30:34 -0500
+Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B646415;
+        Fri, 23 Nov 2018 23:44:17 +0000 (UTC)
+Date:   Fri, 23 Nov 2018 15:44:15 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-block@vger.kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org,
+        jiangqi903@gmail.com, hverkuil@xs4all.nl
+Subject: Re: [PATCH] mm: Replace all open encodings for NUMA_NO_NODE
+Message-Id: <20181123154415.42898a42e28a31488749738a@linux-foundation.org>
+In-Reply-To: <1542966856-12619-1-git-send-email-anshuman.khandual@arm.com>
+References: <1542966856-12619-1-git-send-email-anshuman.khandual@arm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 23 Nov 2018 15:24:16 +0530 Anshuman Khandual <anshuman.khandual@arm.com> wrote:
 
---C7zPtVaVf+AK4Oqc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> At present there are multiple places where invalid node number is encoded
+> as -1. Even though implicitly understood it is always better to have macros
+> in there. Replace these open encodings for an invalid node number with the
+> global macro NUMA_NO_NODE. This helps remove NUMA related assumptions like
+> 'invalid node' from various places redirecting them to a common definition.
+> 
+> ...
+> 
+> Build tested this with multiple cross compiler options like alpha, sparc,
+> arm64, x86, powerpc, powerpc64le etc with their default config which might
+> not have compiled tested all driver related changes. I will appreciate
+> folks giving this a test in their respective build environment.
+> 
+> All these places for replacement were found by running the following grep
+> patterns on the entire kernel code. Please let me know if this might have
+> missed some instances. This might also have replaced some false positives.
+> I will appreciate suggestions, inputs and review.
+> 
+> 1. git grep "nid == -1"
+> 2. git grep "node == -1"
+> 3. git grep "nid = -1"
+> 4. git grep "node = -1"
 
-Hi!
+The build testing is good, but I worry that some of the affected files
+don't clearly have numa.h in their include paths, for the NUMA_NO_NODE
+definition.
 
-> > > > > > > You have general-purpose LED, yet you are treating it as "som=
-ething
-> > > > > > > special". That means ugly code (quoted above) and lack of fle=
-xibility.
-> > > > > > >
+The first thing I looked it is arch/powerpc/include/asm/pci-bridge.h. 
+Maybe it somehow manages to include numa.h via some nested include, but
+if so, is that reliable across all config combinations and as code
+evolves?
 
-> > I'd prefer this to be normal LED and "mic muted" to become normal
-> > trigger.
->=20
-> But how would you solve the existing problem?
->=20
-> As already mentioned, you'll need to hook the LED trigger and the
-> actual mixer value change.  This is the biggest missing piece, and
-> it's the very reason we have the exported symbol from the platform
-> driver side.
->=20
-> So, if you prefer in that way, please implement that for the existing
-> driver (thinkpad_acpi and dell-laptop) at first.  I'll be really happy
-> to get rid of the present ugly solution!  But it's been there just
-> because it's not so trivial at all.  FWIW, this must be all done
-> inside the kernel; otherwise you'll hit a regression.
+So I think that the patch should have added an explicit include of
+numa.h, especially in cases where the affected file previously had no
+references to any of the things which numa.h defines.
 
-Ok, what about something like this?
-
-Tested, and it did not work. I guess I hooked it up at the wrong place
-in LED subsystem... or maybe thinkpad x60 is wrong machine to test on.
-
-Anyway, it looks less ugly than current code in alsa. We should not
-really be using mixer settings to turn LED on and off.
-
-Plus, it works in similar way triggers and LEDs "usually" do, and has
-all the flexibility.
-
-Signed-off-by: Pavel Machek <pavel@ucw.cz>
-
-commit e7d6d170f2f45ea7a42c9ebb31869f440382e3ad
-
-    leds: ledtrig-sound: provide indication of muted microphone
-   =20
-    Signed-off-by: Pavel Machek <pavel@ucw.cz>
-
-diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
-index 9bcb64e..c5ea19e 100644
---- a/drivers/leds/trigger/Makefile
-+++ b/drivers/leds/trigger/Makefile
-@@ -14,3 +14,4 @@ obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+=3D ledtrig-camera.o
- obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+=3D ledtrig-panic.o
- obj-$(CONFIG_LEDS_TRIGGER_NETDEV)	+=3D ledtrig-netdev.o
- obj-$(CONFIG_LEDS_TRIGGER_PATTERN)	+=3D ledtrig-pattern.o
-+obj-y					+=3D ledtrig-sound.o
-diff --git a/drivers/leds/trigger/ledtrig-sound.c b/drivers/leds/trigger/le=
-dtrig-sound.c
-new file mode 100644
-index 0000000..608df35
---- /dev/null
-+++ b/drivers/leds/trigger/ledtrig-sound.c
-@@ -0,0 +1,23 @@
-+/* GPLv2+.
-+ * Copyright 2018 Pavel Machek <pavel@ucw.cz>
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/leds.h>
-+
-+DEFINE_LED_TRIGGER(ledtrig_micmute);
-+
-+void ledtrig_mic_muted(bool muted)
-+{
-+	led_trigger_event(ledtrig_micmute, muted ? LED_FULL : LED_OFF);
-+}
-+EXPORT_SYMBOL(ledtrig_mic_muted);
-+
-+static int __init ledtrig_micmute_init(void)
-+{
-+	led_trigger_register_simple("mic-muted", &ledtrig_micmute);
-+
-+	return 0;
-+}
-+device_initcall(ledtrig_micmute_init);
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index e4a9a00..c30e1cb 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -494,6 +494,14 @@ static inline void ledtrig_cpu(enum cpu_led_event evt)
- }
- #endif
-=20
-+#ifdef CONFIG_LEDS_TRIGGERS
-+extern void ledtrig_mic_muted(bool m);
-+#else
-+static inline void ledtrig_mic_muted(bool m) {}
-+#endif
-+
-+
-+
- #ifdef CONFIG_LEDS_BRIGHTNESS_HW_CHANGED
- extern void led_classdev_notify_brightness_hw_changed(
- 	struct led_classdev *led_cdev, enum led_brightness brightness);
-diff --git a/sound/pci/hda/hda_generic.c b/sound/pci/hda/hda_generic.c
-index 276150f..3ec1f61 100644
---- a/sound/pci/hda/hda_generic.c
-+++ b/sound/pci/hda/hda_generic.c
-@@ -29,6 +29,7 @@
- #include <linux/string.h>
- #include <linux/bitops.h>
- #include <linux/module.h>
-+#include <linux/leds.h>
- #include <sound/core.h>
- #include <sound/jack.h>
- #include <sound/tlv.h>
-@@ -3929,6 +3930,7 @@ static void call_micmute_led_update(struct hda_codec =
-*codec)
- 		val =3D !spec->micmute_led.capture;
- 		break;
- 	}
-+	ledtrig_mic_muted(!spec->micmute_led.capture);
-=20
- 	if (val =3D=3D spec->micmute_led.led_value)
- 		return;
-diff --git a/sound/pci/hda/thinkpad_helper.c b/sound/pci/hda/thinkpad_helpe=
-r.c
-index 568575b..f1b2265 100644
---- a/sound/pci/hda/thinkpad_helper.c
-+++ b/sound/pci/hda/thinkpad_helper.c
-@@ -23,6 +23,8 @@ static void update_tpacpi_mute_led(void *private_data, in=
-t enabled)
- 	if (old_vmaster_hook)
- 		old_vmaster_hook(private_data, enabled);
-=20
-+	printk("mute led... %d\n", !enabled);
-+
- 	if (led_set_func)
- 		led_set_func(TPACPI_LED_MUTE, !enabled);
- }
-
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---C7zPtVaVf+AK4Oqc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlv4jjUACgkQMOfwapXb+vJAGgCeMG4/q2ENCFEKzXy0t38q3MXG
-SXEAoJ1ul32RBQTk3ftSyS1sCDHRevmK
-=xYkY
------END PGP SIGNATURE-----
-
---C7zPtVaVf+AK4Oqc--
