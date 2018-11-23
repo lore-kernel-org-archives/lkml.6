@@ -2,99 +2,143 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5293C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 22:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A8C3C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 22:18:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ED2320861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 22:16:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F208220861
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 22:18:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="n6bSNdT/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ED2320861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bKsKXBXS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F208220861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbeKXI74 (ORCPT
+        id S1727337AbeKXJE3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 03:59:56 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36090 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727261AbeKXI74 (ORCPT
+        Sat, 24 Nov 2018 04:04:29 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55214 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727261AbeKXJE2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 03:59:56 -0500
-Received: by mail-pg1-f194.google.com with SMTP id n2so3540733pgm.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 14:13:53 -0800 (PST)
+        Sat, 24 Nov 2018 04:04:28 -0500
+Received: by mail-wm1-f67.google.com with SMTP id r63-v6so13110328wma.4
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 14:18:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8tSzhgCt630THE9GUK2+HLehUtq7NDRnlvWXxDWD0us=;
-        b=n6bSNdT/HbfBfdZlluqtyRQauRub0rrKbrnjbZm/kz6gNBcOWr0Px2x/yTlVuEqCN8
-         j/3kc5lyjqVNlXKz9OaDi5/4tVlwAfVj1Dn6X/a/oZHsixz/Mm3KGxxNW1WWUKgfK3lb
-         q2FlMYYrolI4B4UpfJt2Y4Z2ShjDyDOGpHPGE=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fYPVSXXSxRlZtaS4pECe7oPYKLBl6FSIygjQnihZy4Q=;
+        b=bKsKXBXSoVcz1eSzGI2lS7TvEUTCxlKboZJ1AbNuvllKsJTTVp6Ezjjjgy8YWAOwvM
+         Zm8xRm7+iNYaq/iwRNeCyf1CNr0M08cbE+rKk4qXrB7XuVuvrMo0Q+tHWsJcVb9YOG6f
+         wVAwcSWW+MmCGyiA/w3DStkFqWPIgcu9IcRHk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8tSzhgCt630THE9GUK2+HLehUtq7NDRnlvWXxDWD0us=;
-        b=Pp3h1nbPhbWFseZH0BoIBvtpKwlRv1IhYWx+igGGvkvlaCDQGiIfkApMvbtIJDoMvV
-         voM5SuojpDYJUGKMLTvhyIWO+I5iODI1BsswIM6v8QrsxMIctb6kr+P6lD+5FroUZ/pq
-         CmiN4xtl7Mcvv5CxxpDwVCIBLYOznWX3lPVCjhznYUhDm7gOdUMBD2BlRnrgtmQlmnEV
-         iSkzElymzjY9Kcx7Xl2FaQ6RQ6RAFHMgyERLnK91E7p4Gejzo1OJZLOGb4N6E1Xrt5cW
-         +qvSj7Y9eXSqPCgrqQvabswrUB0MMlYI9+3ZmJ37oRs0Lopexv6snGN+zR3cuwhFXC5V
-         099w==
-X-Gm-Message-State: AA+aEWZS3PFMGqaw84OICZ1h8Z2fsfqm2jgyC3DHi0NbYBmj7b1Zj10x
-        //zkBsLxTEvALrxtf4q21e7n2g1JEVs=
-X-Google-Smtp-Source: AFSGD/VWzJBkArOQKHV+V2AmnWnRc4XfJK3wo0rjAEUjWzEUE0VY9JSxe1sbAcLd1T7/bGvI7OhDYw==
-X-Received: by 2002:a65:40c5:: with SMTP id u5mr15227532pgp.46.1543011233183;
-        Fri, 23 Nov 2018 14:13:53 -0800 (PST)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id 85sm72752733pfw.17.2018.11.23.14.13.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 23 Nov 2018 14:13:52 -0800 (PST)
-Date:   Fri, 23 Nov 2018 14:13:50 -0800
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC][PATCH 06/14] fgraph: Move function graph specific code
- into fgraph.c
-Message-ID: <20181123221350.GA203283@google.com>
-References: <20181122012708.491151844@goodmis.org>
- <20181122012803.442190047@goodmis.org>
- <20181123061133.GA195223@google.com>
- <20181123125834.1ddc367e@vmware.local.home>
- <20181123131138.2a1b0472@vmware.local.home>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fYPVSXXSxRlZtaS4pECe7oPYKLBl6FSIygjQnihZy4Q=;
+        b=bJOp7CWguo4jl6Fv6LiCegZjQMAJjCWfzZr9Gmzkk/8fEE4NcjmkkbcF43TB4MVI/p
+         FbRj1zrvKJqoy9/B2qA12hnjv3cXFwC8CfChXZ82by4JWVlC/oykXERjpkbaeEq8tg6H
+         0QRWFw1dO+HWPLjT5TPERCmkTZ5Va7K+Uk08u2NIWXTprbG2HOc8rBRSMyJrr5MrrI6a
+         +iRwleJnqTECifEE0EvJ7TR4O5uC9YwGlfbsNPufpsMNZP74UW14twmoiFBaFFIMt3DK
+         Hn2COGKNy5ETXes1dw6KTZZdmic+vSKhVjh4DJZRkABBUMbdLG16QjKkZ4RT1xXBVimY
+         Bp3g==
+X-Gm-Message-State: AGRZ1gKJxlfiMZBKYiv32my7r4q9H3VpRnXhqVCfaXdjTwYZwlfPRT6I
+        phehFuK1R+deT+cJjdRqGz3cG0NhllE=
+X-Google-Smtp-Source: AJdET5ebqjOyY42Y7dbOnTyyndvwEOuHwMcKEtiUstUKnE/LOoX2+2tn+Fy0Dq3+LA/z5KRTd2cDzA==
+X-Received: by 2002:a7b:c003:: with SMTP id c3-v6mr14097308wmb.133.1543011502879;
+        Fri, 23 Nov 2018 14:18:22 -0800 (PST)
+Received: from harold.home ([2a01:cb1d:112:6f00:6913:f64b:5e59:5ba5])
+        by smtp.gmail.com with ESMTPSA id y13sm12578267wrw.85.2018.11.23.14.18.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 23 Nov 2018 14:18:21 -0800 (PST)
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
+Subject: [PATCH v4 0/2] bpf: permit JIT allocations to be served outside the module region
+Date:   Fri, 23 Nov 2018 23:18:02 +0100
+Message-Id: <20181123221804.440-1-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181123131138.2a1b0472@vmware.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 01:11:38PM -0500, Steven Rostedt wrote:
-> On Fri, 23 Nov 2018 12:58:34 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > I think the better answer is to move it into trace_functions_graph.c.
-> 
-> I take that back. I think the better answer is to not call that
-> function if the profiler is not set, nor have that option even
-> available. Because it has no meaning without the profiler.
+On arm64, modules are allocated from a 128 MB window which is close to
+the core kernel, so that relative direct branches are guaranteed to be
+in range (except in some KASLR configurations). Also, module_alloc()
+is in charge of allocating KASAN shadow memory when running with KASAN
+enabled.
 
-Agreed, that's better. Thanks,
+This means that the way BPF reuses module_alloc()/module_memfree() is
+undesirable on arm64 (and potentially other architectures as well),
+and so this series refactors BPF's use of those functions to permit
+architectures to change this behavior.
 
- - Joel
+Patch #1 breaks out the module_alloc() and module_memfree() calls into
+__weak functions so they can be overridden.
+
+Patch #2 implements the new alloc/free overrides for arm64
+
+Changes since v3:
+- drop 'const' modifier for free() hook void* argument
+- move the dedicated BPF region to before the module region, putting it
+  within 4GB of the module and kernel regions on non-KASLR kernels
+
+Changes since v2:
+- properly build time and runtime tested this time (log after the diffstat)
+- create a dedicated 128 MB region at the top of the vmalloc space for BPF
+  programs, ensuring that the programs will be in branching range of each
+  other (which we currently rely upon) but at an arbitrary distance from
+  the kernel and modules (which we don't care about)
+
+Changes since v1:
+- Drop misguided attempt to 'fix' and refactor the free path. Instead,
+  just add another __weak wrapper for the invocation of module_memfree()
+
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org
+
+Ard Biesheuvel (2):
+  bpf: add __weak hook for allocating executable memory
+  arm64/bpf: don't allocate BPF JIT programs in module memory
+
+ arch/arm64/include/asm/memory.h |  5 ++++-
+ arch/arm64/net/bpf_jit_comp.c   | 13 +++++++++++++
+ kernel/bpf/core.c               | 14 ++++++++++++--
+ 3 files changed, 29 insertions(+), 3 deletions(-)
+
+-- 
+2.19.1
+
