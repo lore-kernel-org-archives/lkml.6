@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BD2C04EBA
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD505C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3B9420820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:26:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3B9420820
+	by mail.kernel.org (Postfix) with ESMTP id 7DE0D20864
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:26:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DE0D20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502615AbeKWUKH (ORCPT
+        id S2502627AbeKWUKI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:10:07 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49140 "EHLO mail.bootlin.com"
+        Fri, 23 Nov 2018 15:10:08 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49153 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388038AbeKWUKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390496AbeKWUKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 23 Nov 2018 15:10:06 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E525B207AB; Fri, 23 Nov 2018 10:26:37 +0100 (CET)
+        id 34AA820F84; Fri, 23 Nov 2018 10:26:38 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 95591207AB;
+        by mail.bootlin.com (Postfix) with ESMTPSA id D41F9207B0;
         Fri, 23 Nov 2018 10:26:27 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
@@ -37,9 +37,9 @@ Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v2 01/43] drm/sun4i: Cleanup video/YUV source before enabling a layer
-Date:   Fri, 23 Nov 2018 10:24:33 +0100
-Message-Id: <20181123092515.2511-2-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 02/43] drm/sun4i: frontend: Replace ARGB with XRGB as supported format
+Date:   Fri, 23 Nov 2018 10:24:34 +0100
+Message-Id: <20181123092515.2511-3-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
 References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
@@ -50,66 +50,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a dedicated function for cleaning the video and YUV source
-channel layer enable bits. This function is called first on layer atomic
-update to make sure that there are no leftover bits from previous
-plane configuration that were not cleaned until now.
+The frontend documentation (for the A33) mentions that ARGB is supported
+as output, but with the alpha component always set to 0xff. In practice,
+this means that the alpha component cannot be preserved when going
+through the frontend. Since the information is lost, ARGB is not
+properly supported.
 
-It fixes issues when alternating between video and YUV planes, where
-both bits would be set eventually, leading to broken plane display.
+As a result, expose the matching format supported by the frontend (both
+for input and output) as XRGB instead of ARGB.
+
+Since ARGB was the selected format for connecting the frontend to the
+backend, change it to XRGB to reflect this as well.
+
+The A31 and A80 SoCs apparently have a bit to enable proper alpha,
+but this is not supported at this point (see the comment already in the
+code).
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_backend.c | 9 +++++++++
- drivers/gpu/drm/sun4i/sun4i_backend.h | 2 ++
- drivers/gpu/drm/sun4i/sun4i_layer.c   | 2 ++
- 3 files changed, 13 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 3 +--
+ drivers/gpu/drm/sun4i/sun4i_layer.c    | 4 ++--
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-index bf49c55b0f2c..67b4bb4f5365 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-@@ -395,6 +395,15 @@ int sun4i_backend_update_layer_zpos(struct sun4i_backend *backend, int layer,
- 	return 0;
- }
- 
-+void sun4i_backend_cleanup_layer(struct sun4i_backend *backend,
-+				 int layer)
-+{
-+	regmap_update_bits(backend->engine.regs,
-+			   SUN4I_BACKEND_ATTCTL_REG0(layer),
-+			   SUN4I_BACKEND_ATTCTL_REG0_LAY_VDOEN |
-+			   SUN4I_BACKEND_ATTCTL_REG0_LAY_YUVEN, 0);
-+}
-+
- static bool sun4i_backend_plane_uses_scaler(struct drm_plane_state *state)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+index ddf6cfa6dd23..3ea925584891 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+@@ -107,7 +107,7 @@ EXPORT_SYMBOL(sun4i_frontend_update_buffer);
+ static int sun4i_frontend_drm_format_to_input_fmt(uint32_t fmt, u32 *val)
  {
- 	u16 src_h = state->src_h >> 16;
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.h b/drivers/gpu/drm/sun4i/sun4i_backend.h
-index e3d4c6035eb2..339dbff1cce4 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.h
-@@ -208,5 +208,7 @@ int sun4i_backend_update_layer_frontend(struct sun4i_backend *backend,
- 					int layer, uint32_t in_fmt);
- int sun4i_backend_update_layer_zpos(struct sun4i_backend *backend,
- 				    int layer, struct drm_plane *plane);
-+void sun4i_backend_cleanup_layer(struct sun4i_backend *backend,
-+				 int layer);
+ 	switch (fmt) {
+-	case DRM_FORMAT_ARGB8888:
++	case DRM_FORMAT_XRGB8888:
+ 		*val = 5;
+ 		return 0;
  
- #endif /* _SUN4I_BACKEND_H_ */
+@@ -120,7 +120,6 @@ static int sun4i_frontend_drm_format_to_output_fmt(uint32_t fmt, u32 *val)
+ {
+ 	switch (fmt) {
+ 	case DRM_FORMAT_XRGB8888:
+-	case DRM_FORMAT_ARGB8888:
+ 		*val = 2;
+ 		return 0;
+ 
 diff --git a/drivers/gpu/drm/sun4i/sun4i_layer.c b/drivers/gpu/drm/sun4i/sun4i_layer.c
-index 78f77af8805a..e0e37c2f1721 100644
+index e0e37c2f1721..50bb16566f03 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_layer.c
 +++ b/drivers/gpu/drm/sun4i/sun4i_layer.c
-@@ -92,6 +92,8 @@ static void sun4i_backend_layer_atomic_update(struct drm_plane *plane,
- 	struct sun4i_backend *backend = layer->backend;
- 	struct sun4i_frontend *frontend = backend->frontend;
- 
-+	sun4i_backend_cleanup_layer(backend, layer->id);
-+
- 	if (layer_state->uses_frontend) {
- 		sun4i_frontend_init(frontend);
+@@ -99,9 +99,9 @@ static void sun4i_backend_layer_atomic_update(struct drm_plane *plane,
  		sun4i_frontend_update_coord(frontend, plane);
+ 		sun4i_frontend_update_buffer(frontend, plane);
+ 		sun4i_frontend_update_formats(frontend, plane,
+-					      DRM_FORMAT_ARGB8888);
++					      DRM_FORMAT_XRGB8888);
+ 		sun4i_backend_update_layer_frontend(backend, layer->id,
+-						    DRM_FORMAT_ARGB8888);
++						    DRM_FORMAT_XRGB8888);
+ 		sun4i_frontend_enable(frontend);
+ 	} else {
+ 		sun4i_backend_update_layer_formats(backend, layer->id, plane);
 -- 
 2.19.1
 
