@@ -2,133 +2,113 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7442EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 23:19:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B9FC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 23:22:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3391920C01
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 23:19:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3391920C01
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 9A488213A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 23:22:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A488213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727688AbeKXKFk (ORCPT
+        id S1727728AbeKXKIT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 05:05:40 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:50052 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727607AbeKXKFj (ORCPT
+        Sat, 24 Nov 2018 05:08:19 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40720 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727607AbeKXKIT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 05:05:39 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 8B0DA72CC61;
-        Sat, 24 Nov 2018 02:19:24 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 5DFD17CD0D5; Sat, 24 Nov 2018 02:19:24 +0300 (MSK)
-Date:   Sat, 24 Nov 2018 02:19:24 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>, Willy Tarreau <w@1wt.eu>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Official Linux system wrapper library?
-Message-ID: <20181123231924.GA15954@altlinux.org>
-Mail-Followup-To: Daniel Colascione <dancol@google.com>,
-        Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>, Willy Tarreau <w@1wt.eu>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
- <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com>
- <877ehjx447.fsf@oldenburg.str.redhat.com>
- <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
- <875zx2vhpd.fsf@oldenburg.str.redhat.com>
- <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com>
- <87efbbvrx9.fsf@oldenburg.str.redhat.com>
- <CAKOZuesFZqstO-9K2tLQ1sOOmYsN73QdTHNG0De0a=eq5BT99w@mail.gmail.com>
+        Sat, 24 Nov 2018 05:08:19 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id A367B8080F; Sat, 24 Nov 2018 00:22:02 +0100 (CET)
+Date:   Sat, 24 Nov 2018 00:22:04 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-pm@vger.kernel.org, sre@kernel.org,
+        Sameer Nanda <snanda@chromium.org>, gwendal@chromium.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        Adam.Thomson.Opensource@diasemi.com, kernel@collabora.com,
+        bleung@chromium.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>
+Subject: Re: [PATCH v2 1/2] power: supply: add input voltage limit property.
+Message-ID: <20181123232203.GA3852@amd>
+References: <20181122101119.29194-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
 Content-Disposition: inline
-In-Reply-To: <CAKOZuesFZqstO-9K2tLQ1sOOmYsN73QdTHNG0De0a=eq5BT99w@mail.gmail.com>
+In-Reply-To: <20181122101119.29194-1-enric.balletbo@collabora.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---Qxx1br4bt0+wmkIi
+--82I3+IH0IqGh5yIs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 23, 2018 at 12:15:39PM -0800, Daniel Colascione wrote:
-> On Fri, Nov 23, 2018 at 5:34 AM Florian Weimer wrote:
-> > > On Mon, Nov 12, 2018 at 12:11 AM, Florian Weimer wrote:
-> > >>
-> > >>> If the kernel provides a system call, libc should provide a C wrapp=
-er
-> > >>> for it, even if in the opinion of the libc maintainers, that system
-> > >>> call is flawed.
-> > >>
-> > >> It's not that simple, I think.  What about bdflush?  socketcall?
-> > >> getxpid?  osf_gettimeofday?  set_robust_list?
-> > >
-> > > What about them? Mentioning that these system calls exist is not in
-> > > itself an argument.
-> >
-> > But socketcall does not exist on all architectures.  Neither does
-> > getpid, it's called getxpid on some architectures.
+Hi!
+
+> We have a problem with USBPD chargers which under certain conditions
+> can result in system overheating if the voltage provided by the USBPD
+> port is too high. While the preferred means to control this would be
+> through devicetree or ACPI settings, this is not always possible, and
+> we need to have a means to set a voltage limit.
 >=20
-> So what? On systems on which a given system call does not exist,
-> attempts to link against that system call should fail, or attempts to
-> make that system call should fail at runtime with ENOSYS. That's
-> completely expected and unsurprising behavior, not some unavoidable
-> source of catastrophic confusion.
+> This patch exposes a new property, similar to input current limit, to
+> re-configure the maximum voltage from the external supply at runtime
+> based on system-level knowledge or user input.
 
-I'm sorry but you've just said that getpid() must either be unavailable or
-fail on those architectures that provide no syscall with exactly the same
-semantics as getpid syscall.  Nobody is going to use a libc that doesn't
-provide getpid() in a reliable way.
+First, this should really be handled by dt / ACPI. If it is broken,
+that's a hardware bug, and we can do DMI-based blacklists in kernel.
 
-If you really need a 1-1 correspondence between syscalls and C wrappers,
-there is syscall(3) with all associated portability issues.
+How are you supposed to fsck a system, for example?
 
-If you need something else, please be more specific, i.e. be ready to give
-a detailed answer about every syscall ever supported by the kernel,
-on every supported architecture.
+> +What:		/sys/class/power_supply/<supply_name>/input_voltage_limit
+> +Date:		Nov 2018
+> +Contact:	linux-pm@vger.kernel.org
+> +Description:
+> +		Details the incoming VBUS voltage limit currently set in the
+> +		supply. Normally this is configured based on the type of
+> +		connection made.
 
-My first trivial question is, do you need C wrappers for
-__NR_epoll_create, __NR_eventfd, __NR_inotify_init,
-and __NR_signalfd syscalls?
+"Details"?
 
+Who can write to this value and when? What is the limit? If USB
+charger is plugged in, should it show 5.0V (because that's nominal on
+the USB) or 5.25V (because that is the real limit)?
 
+Who can write to this and when. And what happens on write? What
+happens if I write value that charger can't provide there?
+
+Does it set the voltage power supply should produce? Or maximal it can
+choose to produce?
+
+This really needs better documentation.
+
+								Pavel
 --=20
-ldv
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
---Qxx1br4bt0+wmkIi
+--82I3+IH0IqGh5yIs
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQIcBAEBCAAGBQJb+Ir8AAoJEAVFT+BVnCUI9jUQAJxPxURTe4+lhlpMh+pinvW0
-PNzhRbRHJqPClAoJxlSwV+60dKckTt4c3cMEa8jKgLEYG4cXNrEmmlzJ00I9p0k0
-qIw5soU65FkXh+HAfYAL6ujwJI3oxfTse79Q5PvD5WggaKIRKD8cQ0OvxlL8NU2k
-UJoVj2Js4RWybxQdgcaPIg+ciJltCVT+PXmK1h8fvJmXBgq3MefA88MKTDBEY8vz
-3hFOBt4K33anedsyMRiD7IJ50ml93AFtJCko9eGNiLQH1XjyczRg9JkkiKS9aFkQ
-ly/07mAM3qC7xqTJDONA50eOSS94NC30luHri7bVnfG0e7T4uxaXFeJeyxa+r4fP
-DUnKcQc+9lThYqVHHArJNY2sscKLILuhMdfM5d/d9XftSTImJv2fqJ5cRzhgz/7Z
-P8WkL9QFBY7TxOmtFh4V2KjVQswt8CDnfAcZr5cTvogsrW9JFChbDK0MBlMqOWQc
-0SB5Wl/prVR4XHReMjpuf6A/vC5hoDEIW7XR865wmA4/+N+7mvRGcU74RRuom+TL
-9JE9fyM+7g86Sf9IiCWBf96GbYJr9+YbU7kYJ7BZgQMgwrIwWheJoWI7Q8dAVC1y
-pj/uE3cqW9UzDCYnkYmRmieyhfdVyBwWyw8USTGGdrRO62aU3sDf9LHVr8hArOU5
-30L4FgEAHpngDSk2MNUN
-=0Jgr
+iEYEARECAAYFAlv4i5sACgkQMOfwapXb+vLmQACfX+ba61v27dkM11pVow8bPETy
+A+QAnjhSC4iTF6CvFqR/AUcL8p7j1D8i
+=fgBu
 -----END PGP SIGNATURE-----
 
---Qxx1br4bt0+wmkIi--
+--82I3+IH0IqGh5yIs--
