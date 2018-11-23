@@ -6,126 +6,146 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D42C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE76C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE27120824
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:11:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE80320824
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:15:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HCPfFakR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE27120824
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LSNsmafb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE80320824
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410221AbeKXG44 (ORCPT
+        id S2410238AbeKXHBi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 01:56:56 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41106 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbeKXG44 (ORCPT
+        Sat, 24 Nov 2018 02:01:38 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:44506 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2410222AbeKXHBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 01:56:56 -0500
-Received: by mail-pl1-f193.google.com with SMTP id u6so11039566plm.8
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 12:11:12 -0800 (PST)
+        Sat, 24 Nov 2018 02:01:38 -0500
+Received: by mail-vs1-f66.google.com with SMTP id g68so7804372vsd.11
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 12:15:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=ZE9elG57jUJLAbzSG6k5YnO5Fx2q1yadOHcew8XAH1g=;
-        b=HCPfFakRc7OdbvOfkF6k26/GeZlv1RRIBUN/rr2YvQt9TQfFuMSoxCAvveqC+mu1F1
-         BzwGEjEBFu4Y5yD4//USBrvoDOeP8omp4Jrsh+jJiA9fbZZcFGN8o19DBcS6cv6xM9Gk
-         R01T282rQvDihipOxJ82lymsCRR5t32r5kLVpPM5WLnn6grHq+CjEfXCoIxV7T7W2pEY
-         Hfx3TxvuUKPPQGrrO3WLGF9w3/I02Ok1g3gxUJ55UjJ58gMbISzY2xwhkkII3hmddq7G
-         BA2UbUufgguCVYIQWg2dj8tdJhxvpYCPMyHO0tzmq+QM+WTh5YysWxTnRUW/jbuA+jDr
-         fveA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cR54/n7KNZUihlscX6wIjCxZtCWGWQoq6nR0dzcOMhc=;
+        b=LSNsmafbz/cqU1318m/c1DHeeuV8f3aYr84Ptd5U1aVzXab1qwqEcGpR5tcVtT1bOf
+         5WKmNQVF1vFN9VSDS9V+aLtq2+3go2m2gQEwbjxDGMsFpdmwfThDLIuNwG4B+ikRudfw
+         v6C6hIG9zL1TGPS7XAlb04JccRGv9ie97teXyspbIWl/kTegoiupIgsfO4eGkboznHhd
+         w6H1Hm8RLKGITPQ2Xegw9uTAwuWtAXgsVn7lxBCNsze5PqpI6KEd670LYXZfzV9hwX6z
+         jP6OqZTZbzlm7+Ou6pSgKrCqRVAzDFUejLH88e0JJlauCrOh+5Vy9aBdgp+AqvECA9Nw
+         un7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=ZE9elG57jUJLAbzSG6k5YnO5Fx2q1yadOHcew8XAH1g=;
-        b=uXEnbPIfMSSE7lLF0cZ+iPO4HFgtVRgbs017pD1loo4WPfxBcuQ+qTiKM3qwyUdIOQ
-         yhhc8gCdWy1Xxr+MyAJkAzmJC95ycUIsXJuSI+8VU1zJOkUDCjBIDYt9dsSc03bgM2NB
-         3RZbMsIa3Sbmbj7c+DBbD61szPAJeU7gcQgGnh8RyQxPcKxOp/dRETu/hmc+OauKMGQT
-         JvZEayR94OSg80MgaYI1wFtdI+FAA6VgquPbPiGtyNJBNkS5S1QvzF0XruED3xvew2vY
-         O/gcS8vIXvNfrkTv3l6mJF+A2zC6cCUrgEJion0Rq/PJbNwZy7/DeY8QZh7TbTZAmn2A
-         Zagg==
-X-Gm-Message-State: AA+aEWYx2PTUEdQFzzQoTAlSePhKSvydu7COopxKZxFCaOF4z0ib+dQ2
-        k/KGRjQgDGWjqpTiMiS2dkK5nA==
-X-Google-Smtp-Source: AFSGD/XuRZQOwZxRjT9+847pjTVmx1erYzWWX2liO29pX65/Kr/Bhzbg6NwN2Ae8JAZ9RN4W3po4jg==
-X-Received: by 2002:a17:902:a710:: with SMTP id w16mr16789086plq.95.1543003871830;
-        Fri, 23 Nov 2018 12:11:11 -0800 (PST)
-Received: from [100.112.89.103] ([104.133.8.103])
-        by smtp.gmail.com with ESMTPSA id p5-v6sm66510057pfb.109.2018.11.23.12.11.10
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 23 Nov 2018 12:11:10 -0800 (PST)
-Date:   Fri, 23 Nov 2018 12:11:02 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Andrew Morton <akpm@linux-foundation.org>
-cc:     Yu Zhao <yuzhao@google.com>, Hugh Dickins <hughd@google.com>,
-        Matthew Wilcox <willy@infradead.org>, stable@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] mm: use swp_offset as key in shmem_replace_page()
-In-Reply-To: <20181121210159.3a5fb6946e460c561fdec391@linux-foundation.org>
-Message-ID: <alpine.LSU.2.11.1811231140190.1964@eggly.anvils>
-References: <20181119010924.177177-1-yuzhao@google.com> <20181121215442.138545-1-yuzhao@google.com> <20181121210159.3a5fb6946e460c561fdec391@linux-foundation.org>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cR54/n7KNZUihlscX6wIjCxZtCWGWQoq6nR0dzcOMhc=;
+        b=CiH+pE2vXhY8RTQwhY8VbL5rmqrZlXX5aQgOZwOK9yhuRW7qpmTJDompF0KwRDa91r
+         f8dLeN98P21ByGdRqRejcvgp98bHNo3li3hrePNiKWAoRzGP8Thvk6TSNe5Xda1guLF5
+         mV74DdECJ279zVtLwGv+C4iYd+lbcVmrH7pKrXNOo7GPq+gBBb+SYimjtSCAet0TNfCx
+         njpucszosZqlSi6GEtCZ7eo651N+unT83fZxr2p0RQjm3gitCnxgMZvHF3sCMRqAaP2H
+         Wh2zT82R2XDXnu7tpIm6aV2GdwkGOvF5WDJEIYQeMk+nHtkT5eMekGiV7M7LArme7giY
+         KQUQ==
+X-Gm-Message-State: AGRZ1gL28SmSWPPhm14OdXti3742+KNtGk7QtDgTQAWkEj0VRsPFY4KM
+        7+YjZ1K6+e88vgxBcpiD6FmrsRBio6G9Tmr9kiHVIw==
+X-Google-Smtp-Source: AJdET5c/JkK5rZpn3O75Q4B7SzfhrQB6pxbcBOZifPPaaJ/nxqrcdeXG4mATLxO120ofSLMlgb/ZBKmH1D60tvVvhfs=
+X-Received: by 2002:a67:6e87:: with SMTP id j129mr7532640vsc.171.1543004152014;
+ Fri, 23 Nov 2018 12:15:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+ <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com> <877ehjx447.fsf@oldenburg.str.redhat.com>
+ <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
+ <875zx2vhpd.fsf@oldenburg.str.redhat.com> <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com>
+ <87efbbvrx9.fsf@oldenburg.str.redhat.com>
+In-Reply-To: <87efbbvrx9.fsf@oldenburg.str.redhat.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Fri, 23 Nov 2018 12:15:39 -0800
+Message-ID: <CAKOZuesFZqstO-9K2tLQ1sOOmYsN73QdTHNG0De0a=eq5BT99w@mail.gmail.com>
+Subject: Re: Official Linux system wrapper library?
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        GNU C Library <libc-alpha@sourceware.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Nov 2018, Andrew Morton wrote:
-> On Wed, 21 Nov 2018 14:54:42 -0700 Yu Zhao <yuzhao@google.com> wrote:
-> 
-> > We changed key of swap cache tree from swp_entry_t.val to
-> > swp_offset. Need to do so in shmem_replace_page() as well.
-> 
-> What are the user-visible effects of this change?
+On Fri, Nov 23, 2018 at 5:34 AM Florian Weimer <fweimer@redhat.com> wrote:
+>
+> * Daniel Colascione:
+>
+> > On Mon, Nov 12, 2018 at 12:11 AM, Florian Weimer <fweimer@redhat.com> wrote:
+> >> * Daniel Colascione:
+> >>
+> >>> If the kernel provides a system call, libc should provide a C wrapper
+> >>> for it, even if in the opinion of the libc maintainers, that system
+> >>> call is flawed.
+> >>
+> >> It's not that simple, I think.  What about bdflush?  socketcall?
+> >> getxpid?  osf_gettimeofday?  set_robust_list?
+> >
+> > What about them? Mentioning that these system calls exist is not in
+> > itself an argument.
+>
+> But socketcall does not exist on all architectures.  Neither does
+> getpid, it's called getxpid on some architectures.
 
-Sorry, I don't know; and I don't know whether it's something Yu noticed
-by source inspection, or in trying to use it, perhaps in some new way:
-I assume the former, but he can add more info if the latter.
+So what? On systems on which a given system call does not exist,
+attempts to link against that system call should fail, or attempts to
+make that system call should fail at runtime with ENOSYS. That's
+completely expected and unsurprising behavior, not some unavoidable
+source of catastrophic confusion.
 
-shmem_replace_page() was added in 3.5, to allow Intel's GMA500 graphics
-driver to use the shmem support for GEM objects, despite its hardware
-addressing limitations.  (I did once try to extend it to NUMA placement,
-but that turned out to be a waste, doing more harm than good.)
+> >> There are quite a few irregularities
+> >
+> > So?
+>
+> I think it would be a poor approach to expose application developers to
+> these portability issues.  We need to abstract over these differences at
+> a certain layer, and applications are too late.
 
-My guess at user-visible effects would be that the screen goes blank
-or weird on GMA500 after a bout of swapping (because shmem_getpage_gfp()
-failed to bring back a part of the object).  The code in shmem.c looks
-robust (amusing to see my "Is this possible? I think not" comment!),
-but I don't know how it plays out at the graphics driver end.
+And glibc is too early. The purpose of the lowest-level user library
+is not to provide an OS-agnostic portability layer. There are other
+projects much better-suited to providing portability, including the
+excellent GLib, Gnulib, and Qt. The purpose of the lowest-level user
+library is to expose the interfaces of the underlying system, whatever
+they are. That's a basic tenet of layered interface design.
 
-> 
-> > Fixes: f6ab1f7f6b2d ("mm, swap: use offset of swap entry as key of swap cache")
-> > Cc: stable@vger.kernel.org # v4.9+
-> 
-> Please always provide the user-impact information when fixing bugs.  This
-> becomes especially important when proposing -stable backporting.
+Due to historical accident, the same library (on most Linux systems)
+serves as both the lowest-level user library and an implementation of
+some antiquated portability constructs from ANSI C and POSIX. That
+this library provides these old portability interfaces is not a reason
+for that library to neglect its responsibility as the lowest-level
+system interface library. If people find that every attempt to expose
+even trivial new kernel interfaces turns into an endless trek through
+a swamp of specious objection (see the gettid debacle), then it
+becomes perfectly reasonable to find an alternate route over firmer
+ground.
 
-So far as I know, nothing but GMA500 gets to use it, but perhaps other
-uses have been added since.  We could ask around, but, frankly I'd prefer
-just to remove the Fixes and Cc stable tags if they're causing trouble.
-It's just a good simple bugfix, we thought stable would be glad of it.
+Other glibc developers (e.g., Joseph Myers) have expressed support for
+adding long-missing system call wrappers, like gettid, as long as the
+functions are adequately documented. Would you make a sustained
+objection to these additions?
 
-> 
-> Hugh said
-> 
-> : shmem_replace_page() has been wrong since the day I wrote it: good
-> : enough to work on swap "type" 0, which is all most people ever use
-> : (especially those few who need shmem_replace_page() at all), but broken
-> : once there are any non-0 swp_type bits set in the higher order bits.
+> >> and some editorial discretion appears to be unavoidable.
+> >
+> > That's an assertion, not an argument, and I strongly disagree. *Why*
+> > do you think "editorial discretion" is unavoidable?
+>
+> We do not want application authors to write code which uses socketcall,
 
-Yu then kindly restored my honour on that: I was misreading,
-it was not broken from the start, but got broken by the commit in 4.9.
-
-> 
-> but we still don't have a description of "broken".
-> 
-> Thanks.
-
-Hugh
+That's an opinion on portability, not an argument for the necessity of
+"editorial discretion". That you think an application calling
+socketcall would somehow be a bad idea is not a justification for not
+providing this interface. Low-level libraries must focus on mechanism,
+not policy, if a system is to be flexible enough to accommodate
+unanticipated needs.
