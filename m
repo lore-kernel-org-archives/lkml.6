@@ -2,205 +2,196 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C137C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 398DAC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:46:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6FBE20685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:45:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6FBE20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id CFC3520861
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:46:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M4EcZXfV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFC3520861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439593AbeKWS21 (ORCPT
+        id S2502433AbeKWS3n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 13:28:27 -0500
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:60239 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731610AbeKWS20 (ORCPT
+        Fri, 23 Nov 2018 13:29:43 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:32954 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502420AbeKWS3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 13:28:26 -0500
-X-Originating-IP: 2.224.242.101
-Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id D6FBD1BF214;
-        Fri, 23 Nov 2018 07:45:15 +0000 (UTC)
-Date:   Fri, 23 Nov 2018 08:45:14 +0100
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v12 1/2] dt-bindings: media: Add Allwinner V3s Camera
- Sensor Interface (CSI)
-Message-ID: <20181123074514.GB6788@w540>
-References: <1540887143-27904-1-git-send-email-yong.deng@magewell.com>
- <308184907.pMD7ZDI2dr@avalon>
+        Fri, 23 Nov 2018 13:29:43 -0500
+Received: by mail-oi1-f195.google.com with SMTP id c206so9300477oib.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 23:46:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PkwJzD5gIlc7X3+74iL+HcExhZPKip8StS+vQP/JJVY=;
+        b=M4EcZXfVczOtrlbQF4QM53NPVXh8A8NTh4JwH6dXzu1RI12Fcjt0CLH87ZpGN9MhfD
+         UrjI/xisnKBSAH+25XZtk1S9X8ZHJtCa5YJc0bNDDwKUF0zWP7fR3rrZGtPHPNHQyzVr
+         OwC1nInD06c+0ezJPnQbZ7XYBE+Gufds5GKtILCqsDBmpxsk2/XhLZ45J5iiyRFw3/t5
+         RGJILo0yzAHbGBuLB6yX1mwxotCfsJt2fHUQZq9Np07P3Q1vBWA8J17sRDQPoNd288FG
+         7Gdy/1vZEgemd1donbZ83uMjZKR4+3EQDDF4C6atqacFrmhVbSowPGHyq2QtWMPLybCu
+         cA7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PkwJzD5gIlc7X3+74iL+HcExhZPKip8StS+vQP/JJVY=;
+        b=iKm1ucPXsWFZ5H7SeUdqgdcTJp4VhT9cTGrcwq7KiZdTHY6oizQrj+jT/rsVu+Nq6z
+         4HaqXxl6FLvs/TnAfSNADWH2ZVxtuZbHGtU0yxoY81D+c9g6cRY1DliqwbtYFnksXwE0
+         TnpD4OX+LaWypE69U7uEfTERWNdia3FZHDzDU7MtllCi97Ac403q3b25bfj4Uc7XlnF7
+         U78Wahh+TbdIy65JXddzZLzooM/fFmFydFi5ymMZphmiGpZh1+kzIwdNhBCabRLbRQ8I
+         o0FNI7vIl/yNUnzkSIV0ZjGbBrd7EyfE9rQkx7TRecClpiQmGLX24+fdNLfn+AoN3lFn
+         xXJg==
+X-Gm-Message-State: AGRZ1gLmmLUVbpzFKEGK13ahgeqtrBmorrw+xsynOAfZNEt/FXyntgS2
+        fRU87fjp0mQa4KjKI+uJCy+20RHg1ZbNHvbvuSBI/AbZ
+X-Google-Smtp-Source: AJdET5eReRsDstRSGD1fW1kvmFc14ySxjr/oAifHDYT+Ai9Zfz4pvxvoA+NOWz59ah0pO8H5eFvdJv9EW3aHwTwrQbA=
+X-Received: by 2002:aca:c003:: with SMTP id q3-v6mr8070939oif.45.1542959199575;
+ Thu, 22 Nov 2018 23:46:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="DrWhICOqskFTAXiy"
-Content-Disposition: inline
-In-Reply-To: <308184907.pMD7ZDI2dr@avalon>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20181117130337.5856-1-tom@aussec.com> <20181117130337.5856-2-tom@aussec.com>
+ <20181117130337.5856-3-tom@aussec.com>
+In-Reply-To: <20181117130337.5856-3-tom@aussec.com>
+From:   Philipp Zabel <philipp.zabel@gmail.com>
+Date:   Fri, 23 Nov 2018 08:46:28 +0100
+Message-ID: <CA+gwMcfQ5cUZPmAJ6Uhb0KQsmwjtoSdRJVnAzk9mwy=-M19M2Q@mail.gmail.com>
+Subject: Re: [PATCH v8 2/4] pps: descriptor-based gpio, capture-clear addition
+To:     tom@aussec.com
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Tom,
 
---DrWhICOqskFTAXiy
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Hi Yong,
-
-On Tue, Oct 30, 2018 at 03:06:24PM +0200, Laurent Pinchart wrote:
-> Hi Yong,
+On Sat, Nov 17, 2018 at 2:07 PM Tom Burkart <tom@aussec.com> wrote:
 >
-> Thank you for the patch.
->
-> On Tuesday, 30 October 2018 10:12:23 EET Yong Deng wrote:
-> > Add binding documentation for Allwinner V3s CSI.
-> >
-> > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Yong Deng <yong.deng@magewell.com>
->
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> > ---
-> >  .../devicetree/bindings/media/sun6i-csi.txt        | 56 +++++++++++++++++++
-> >  1 file changed, 56 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > b/Documentation/devicetree/bindings/media/sun6i-csi.txt new file mode
-> > 100644
-> > index 000000000000..443e18c181b3
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> > @@ -0,0 +1,56 @@
-> > +Allwinner V3s Camera Sensor Interface
-> > +-------------------------------------
-> > +
-> > +Allwinner V3s SoC features a CSI module(CSI1) with parallel interface.
-> > +
-> > +Required properties:
-> > +  - compatible: value must be "allwinner,sun8i-v3s-csi"
-> > +  - reg: base address and size of the memory-mapped region.
-> > +  - interrupts: interrupt associated to this IP
-> > +  - clocks: phandles to the clocks feeding the CSI
-> > +    * bus: the CSI interface clock
-> > +    * mod: the CSI module clock
-> > +    * ram: the CSI DRAM clock
-> > +  - clock-names: the clock names mentioned above
-> > +  - resets: phandles to the reset line driving the CSI
-> > +
-> > +The CSI node should contain one 'port' child node with one child 'endpoint'
-> > +node, according to the bindings defined in
-> > +Documentation/devicetree/bindings/media/video-interfaces.txt.
-> > +
-> > +Endpoint node properties for CSI
-> > +---------------------------------
-> > +See the video-interfaces.txt for a detailed description of these
-> > properties. +- remote-endpoint	: (required) a phandle to the bus receiver's
-> > endpoint +			   node
-> > +- bus-width:		: (required) must be 8, 10, 12 or 16
-> > +- pclk-sample		: (optional) (default: sample on falling edge)
-> > +- hsync-active		: (required; parallel-only)
-> > +- vsync-active		: (required; parallel-only)
-> > +
-> > +Example:
-> > +
-> > +csi1: csi@1cb4000 {
-> > +	compatible = "allwinner,sun8i-v3s-csi";
-> > +	reg = <0x01cb4000 0x1000>;
-> > +	interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-> > +	clocks = <&ccu CLK_BUS_CSI>,
-> > +		 <&ccu CLK_CSI1_SCLK>,
-> > +		 <&ccu CLK_DRAM_CSI>;
-> > +	clock-names = "bus", "mod", "ram";
-> > +	resets = <&ccu RST_BUS_CSI>;
-> > +
-> > +	port {
-> > +		/* Parallel bus endpoint */
-> > +		csi1_ep: endpoint {
-> > +			remote-endpoint = <&adv7611_ep>;
-> > +			bus-width = <16>;
-> > +
-> > +			/* If hsync-active/vsync-active are missing,
-> > +			   embedded BT.656 sync is used */
+> This patch changes the GPIO access for the pps-gpio driver from the
+> integer based ABI to the descriptor based ABI.  It also adds the
+> extraction of the device tree capture-clear option.
 
-Am I confused? The properties description defines [v|h]sync-active as
-required, but the example reports that they can be omitted to use
-BT.656 synchronization.
+Is the capture-clear property documented in
+Documentation/devicetree/bindings/pps/pps-gpio.txt?
+If not, you should add a binding documentation patch.
 
-Which one of the following is correct?
-1) [h|v]sync-active are mandatory: no BT.656 support can be selected.
-2) [h|v]sync-active are optional, and if not specified BT.656 is
-   selected.
-3) I am confused.
-
-Thanks
-   j
-
-> > +			hsync-active = <0>; /* Active low */
-> > +			vsync-active = <0>; /* Active low */
-> > +			pclk-sample = <1>;  /* Rising */
-> > +		};
-> > +	};
-> > +};
+> Signed-off-by: Tom Burkart <tom@aussec.com>
+> ---
+>  drivers/pps/clients/pps-gpio.c | 80 +++++++++++++++++++++---------------------
+>  include/linux/pps-gpio.h       |  3 +-
+>  2 files changed, 41 insertions(+), 42 deletions(-)
 >
+> diff --git a/drivers/pps/clients/pps-gpio.c b/drivers/pps/clients/pps-gpio.c
+> index 333ad7d5b45b..d2fbc91dc8fc 100644
+> --- a/drivers/pps/clients/pps-gpio.c
+> +++ b/drivers/pps/clients/pps-gpio.c
+> @@ -31,7 +31,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/pps_kernel.h>
+>  #include <linux/pps-gpio.h>
+> -#include <linux/gpio.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/list.h>
+>  #include <linux/of_device.h>
+>  #include <linux/of_gpio.h>
+> @@ -41,9 +41,9 @@ struct pps_gpio_device_data {
+>         int irq;                        /* IRQ used as PPS source */
+>         struct pps_device *pps;         /* PPS source device */
+>         struct pps_source_info info;    /* PPS source information */
+> +       struct gpio_desc *gpio_pin;     /* GPIO port descriptors */
+>         bool assert_falling_edge;
+>         bool capture_clear;
+> -       unsigned int gpio_pin;
+>  };
 >
-> --
-> Regards,
+>  /*
+> @@ -61,18 +61,49 @@ static irqreturn_t pps_gpio_irq_handler(int irq, void *data)
 >
-> Laurent Pinchart
+>         info = data;
 >
+> -       rising_edge = gpio_get_value(info->gpio_pin);
+> +       rising_edge = gpiod_get_value(info->gpio_pin);
+>         if ((rising_edge && !info->assert_falling_edge) ||
+>                         (!rising_edge && info->assert_falling_edge))
+>                 pps_event(info->pps, &ts, PPS_CAPTUREASSERT, NULL);
+>         else if (info->capture_clear &&
+>                         ((rising_edge && info->assert_falling_edge) ||
+> -                        (!rising_edge && !info->assert_falling_edge)))
+> +                       (!rising_edge && !info->assert_falling_edge)))
+>                 pps_event(info->pps, &ts, PPS_CAPTURECLEAR, NULL);
 >
+>         return IRQ_HANDLED;
+>  }
 >
+> +static int pps_gpio_setup(struct platform_device *pdev)
+> +{
+> +       struct pps_gpio_device_data *data = platform_get_drvdata(pdev);
+> +       const struct pps_gpio_platform_data *pdata = pdev->dev.platform_data;
+> +       struct device_node *np = pdev->dev.of_node;
+> +       int ret;
 
---DrWhICOqskFTAXiy
-Content-Type: application/pgp-signature; name="signature.asc"
+Unused variable?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+> +
+> +       if (pdata) {
+> +               data->gpio_pin = pdata->gpio_pin;
+> +
+> +               data->assert_falling_edge = pdata->assert_falling_edge;
+> +               data->capture_clear = pdata->capture_clear;
 
-iQIcBAABCAAGBQJb97AKAAoJEHI0Bo8WoVY87UAQALCDEE5QXjD6VY3sPb0SgeLj
-t1VdmQHFsMedpHdLWo76ZVF/qSipirCk4a4wzAL/MqmTqgHLDw88ACYDW8JP3BaG
-E7zw5ueM2higg8bfqqh8nFVQyLUFwvKxwnocRNvhmhVFsP8j/fJ25rQjKti3hvbP
-djwdEzBT7fkNbgSQi4S19RNx84xjGmStVOBMaKCC/xwm0ausnTfooekw6loZRWA1
-Tvk0JrRKA96OaXt3zzKDlp2YsgFUiEeCo81XFKfhTkdhLUBHUQNxfuxOqVzWdqCe
-XLwXH2blajWAHYspLNKuPUshp6ptJ+W9k4QpXwt6f+/U+8FO/LXf8WT1FScrhYVX
-Yxj4WVP/KeHDseKAgYN6I2/cLVFejOPq6qzSYWtu7TL5xg+oOPKjweDeIUAH7NAW
-oifpXxxDPgigKyhTCJDu7hRRvQaiqYj87knCL46iMj5jElvAogb0jYTCOG/3kVMF
-G2QNhk/4p0DoFvhRy624UY7fSqTIqvr1L5zZqwOkYFAKxp+EuDO36kg6mkBpKnnb
-hIaKw3OsLf82wKlHW9DlL4Q/nnZzXCpxpoJUPV4Q/eE9zMGdCbIQhKmpMEsTrFSC
-0wsSTqevi3rO2iN+bzQHXKuvXwKev2egVXb3XqUJ68wJNf9k6j4Ue5+e3MSt2XuG
-QVgvv0V6jq3uFY7YLqkH
-=L6Um
------END PGP SIGNATURE-----
+This is just a matter of personal taste, so feel free to ignore:
+I would keep the pdata branch in pps_gpio_probe and call this function
+pps_gpio_dt_setup, to reduce indentation of the OF branch.
 
---DrWhICOqskFTAXiy--
+> +       } else {
+> +               data->gpio_pin = devm_gpiod_get(&pdev->dev,
+> +                       NULL,   /* request "gpios" */
+> +                       GPIOD_IN);
+> +               if (IS_ERR(data->gpio_pin)) {
+> +                       dev_err(&pdev->dev,
+> +                               "failed to request PPS GPIO\n");
+> +                       return PTR_ERR(data->gpio_pin);
+> +               }
+> +
+> +               if (of_get_property(np, "assert-falling-edge", NULL))
+> +                       data->assert_falling_edge = true;
+> +
+> +               if (of_get_property(np, "capture-clear", NULL))
+> +                       data->capture_clear = true;
+
+Those two should use the of_property_read_bool wrapper.
+
+> +       }
+> +       return 0;
+> +}
+> +
+>  static unsigned long
+>  get_irqf_trigger_flags(const struct pps_gpio_device_data *data)
+>  {
+> @@ -90,53 +121,23 @@ get_irqf_trigger_flags(const struct pps_gpio_device_data *data)
+>  static int pps_gpio_probe(struct platform_device *pdev)
+>  {
+>         struct pps_gpio_device_data *data;
+> -       const char *gpio_label;
+>         int ret;
+>         int pps_default_params;
+> -       const struct pps_gpio_platform_data *pdata = pdev->dev.platform_data;
+> -       struct device_node *np = pdev->dev.of_node;
+>
+>         /* allocate space for device info */
+>         data = devm_kzalloc(&pdev->dev, sizeof(struct pps_gpio_device_data),
+
+Could use sizeof(*data) here. Otherwise,
+
+Reviewed-by: Philipp Zabel <philipp.zabel@gmail.com>
+
+regards
+Philipp
