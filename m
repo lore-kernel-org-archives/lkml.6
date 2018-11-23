@@ -2,120 +2,94 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CFBC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B644C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 922E6205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:49:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 922E6205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id ECFDC205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:49:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECFDC205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440398AbeKXCdu (ORCPT
+        id S2440419AbeKXCd7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 21:33:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:32792 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2440367AbeKXCdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 21:33:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 96234ADE6;
-        Fri, 23 Nov 2018 15:49:04 +0000 (UTC)
-Subject: Re: [RFC PATCH 3/3] mm, proc: report PR_SET_THP_DISABLE in proc
-To:     Michal Hocko <mhocko@kernel.org>, linux-api@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-References: <20181120103515.25280-1-mhocko@kernel.org>
- <20181120103515.25280-4-mhocko@kernel.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <d07d9742-e7dc-0fe7-c4be-3bd9a60fde98@suse.cz>
-Date:   Fri, 23 Nov 2018 16:49:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 23 Nov 2018 21:33:59 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40526 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2440367AbeKXCd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 21:33:58 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5DA3013D10;
+        Fri, 23 Nov 2018 15:49:15 +0000 (UTC)
+Received: from redhat.com (ovpn-121-146.rdu2.redhat.com [10.10.121.146])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 7B4841054FDA;
+        Fri, 23 Nov 2018 15:49:14 +0000 (UTC)
+Date:   Fri, 23 Nov 2018 10:49:13 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/3] vhost_net: support in order feature
+Message-ID: <20181123104333-mutt-send-email-mst@kernel.org>
+References: <20181123030016.4924-1-jasowang@redhat.com>
+ <20181123030016.4924-3-jasowang@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20181120103515.25280-4-mhocko@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181123030016.4924-3-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 23 Nov 2018 15:49:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/20/18 11:35 AM, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> David Rientjes has reported that 1860033237d4 ("mm: make
-> PR_SET_THP_DISABLE immediately active") has changed the way how
-> we report THPable VMAs to the userspace. Their monitoring tool is
-> triggering false alarms on PR_SET_THP_DISABLE tasks because it considers
-> an insufficient THP usage as a memory fragmentation resp. memory
-> pressure issue.
-> 
-> Before the said commit each newly created VMA inherited VM_NOHUGEPAGE
-> flag and that got exposed to the userspace via /proc/<pid>/smaps file.
-> This implementation had its downsides as explained in the commit message
-> but it is true that the userspace doesn't have any means to query for
-> the process wide THP enabled/disabled status.
-> 
-> PR_SET_THP_DISABLE is a process wide flag so it makes a lot of sense
-> to export in the process wide context rather than per-vma. Introduce
+On Fri, Nov 23, 2018 at 11:00:15AM +0800, Jason Wang wrote:
+> This makes vhost_net to support in order feature. This is as simple as
+> use datacopy path when it was negotiated. An alternative is not to
+> advertise in order when zerocopy is enabled which tends to be
+> suboptimal consider zerocopy may suffer from e.g HOL issues.
 
-Agreed.
+Well IIRC vhost_zerocopy_signal_used is used to
+actually reorder used ring to match available ring.
+So with a big comment explaining why it is so,
+we could just enable IN_ORDER there too.
 
-> a new field to /proc/<pid>/status which export this status.  If
-> PR_SET_THP_DISABLE is used then it reports false same as when the THP is
-> not compiled in. It doesn't consider the global THP status because we
-> already export that information via sysfs
 > 
-> Fixes: 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+>  drivers/vhost/net.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> index d919284f103b..bdf5de5a7eb2 100644
+> --- a/drivers/vhost/net.c
+> +++ b/drivers/vhost/net.c
+> @@ -74,7 +74,8 @@ enum {
+>  	VHOST_NET_FEATURES = VHOST_FEATURES |
+>  			 (1ULL << VHOST_NET_F_VIRTIO_NET_HDR) |
+>  			 (1ULL << VIRTIO_NET_F_MRG_RXBUF) |
+> -			 (1ULL << VIRTIO_F_IOMMU_PLATFORM)
+> +			 (1ULL << VIRTIO_F_IOMMU_PLATFORM) |
+> +	                 (1ULL << VIRTIO_F_IN_ORDER)
+>  };
+>  
+>  enum {
+> @@ -971,7 +972,8 @@ static void handle_tx(struct vhost_net *net)
+>  	vhost_disable_notify(&net->dev, vq);
+>  	vhost_net_disable_vq(net, vq);
+>  
+> -	if (vhost_sock_zcopy(sock))
+> +	if (vhost_sock_zcopy(sock) &&
+> +	    !vhost_has_feature(vq, VIRTIO_F_IN_ORDER))
+>  		handle_tx_zerocopy(net, sock);
+>  	else
+>  		handle_tx_copy(net, sock);
+> -- 
+> 2.17.1
