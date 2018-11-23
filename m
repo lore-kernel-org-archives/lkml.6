@@ -2,92 +2,100 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4FFDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:14:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1DFC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6120A208A3
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:14:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2E1520820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:15:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="crk/Z9t5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6120A208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nvUPFSMd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2E1520820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408276AbeKWR5Y (ORCPT
+        id S2408287AbeKWR56 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 12:57:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42252 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387526AbeKWR5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 12:57:24 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB66E20820;
-        Fri, 23 Nov 2018 07:14:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542957266;
-        bh=o4BHNrGtjvnJ1jE0FC37OqL2oCmGU/CZIB0v23NIIm4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=crk/Z9t5FruUS4MmZh6Vfd1MhctZcopFledF9gch2ZpSiPVqzWlaxDKHknmt0NEHU
-         YGdFkGyPb7VEPIC5exE7/Vn6Xtzbu5s8bdxa8bSt1vW7CEKrlwAXVLkq3j4c4tB1re
-         tLIujFQ/37EdLweDxmmCOFIklcPDs/XZl+HN/Tc8=
-Date:   Fri, 23 Nov 2018 08:14:24 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 4.14 00/21] 4.14.83-stable review
-Message-ID: <20181123071424.GA26178@kroah.com>
-References: <20181121183422.103826775@linuxfoundation.org>
- <CA+G9fYsftAwyA9dsTJWDXtLJd9Zd4OkXYHw6MiJcPwUpXBYNPg@mail.gmail.com>
+        Fri, 23 Nov 2018 12:57:58 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:60774 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732103AbeKWR56 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 12:57:58 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAN7AJ5a031888;
+        Fri, 23 Nov 2018 07:14:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
+ bh=Zc7adYy73by/XXxhaui01rmwfqa9GPowNXVreIDcn7U=;
+ b=nvUPFSMdyf0xgcqHrnlcuBzX69k832V9pehiK+QtqtFgwPx7wEbZgor4dmaYjVdRNlo1
+ 3mKwcSLGwG7HWofjD5xDhHdTq+SG/FPhEoGZF6OIgIUGia83TSBR9vttHfUMH9O9XPHa
+ tNdqDZupdnuXoAIadbvpW3pD4Jl+I+v9O+vS+VKkMY8FVLDaAiNyNm0wn4OtGD30Q01V
+ gImSmLk5XneKCsAGzK0JnFGqKAFZZi24rxzUW8d+Io4SYQyKh1OgP1acWk7J0A0U1RYs
+ 8/Kg6nEPL95qlks7bkzg7OVDeGKkCRaSwL3ETjygsbbqgP45y5gCwOerpDJIwac0Bsaz jg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2ntadu9euy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Nov 2018 07:14:54 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAN7ErMi012827
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Nov 2018 07:14:53 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAN7Ertf028055;
+        Fri, 23 Nov 2018 07:14:53 GMT
+Received: from kili.mountain (/197.157.0.30)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 22 Nov 2018 23:14:52 -0800
+Date:   Fri, 23 Nov 2018 10:14:42 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH 1/2] i3c: fix an error code in i3c_master_add_i3c_dev_locked()
+Message-ID: <20181123071324.iwmbay2yrbiocisf@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+G9fYsftAwyA9dsTJWDXtLJd9Zd4OkXYHw6MiJcPwUpXBYNPg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9085 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=687
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811230057
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 09:52:07AM +0530, Naresh Kamboju wrote:
-> On Thu, 22 Nov 2018 at 00:39, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 4.14.83 release.
-> > There are 21 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Fri Nov 23 18:34:13 UTC 2018.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.83-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> Results from Linaro’s test farm.
-> No regressions on arm64, arm, x86_64, and i386.
+We should return "ret" as-is.  The "newdev" variable is a valid pointer.
 
-Thanks for testing this and letting me know.
+Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/i3c/master.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-greg k-h
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index 0ea7bb045fad..bda4b9613e53 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -1823,10 +1823,8 @@ int i3c_master_add_i3c_dev_locked(struct i3c_master_controller *master,
+ 		return PTR_ERR(newdev);
+ 
+ 	ret = i3c_master_attach_i3c_dev(master, newdev);
+-	if (ret) {
+-		ret = PTR_ERR(newdev);
++	if (ret)
+ 		goto err_free_dev;
+-	}
+ 
+ 	ret = i3c_master_retrieve_dev_info(newdev);
+ 	if (ret)
+-- 
+2.11.0
+
