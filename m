@@ -2,88 +2,77 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A8CC43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E4A5C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6EBF20824
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:00:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihdrkh53"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6EBF20824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5870D20685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:01:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5870D20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389047AbeKXGp6 (ORCPT
+        id S2389187AbeKXGrC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 01:45:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43512 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729224AbeKXGp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 01:45:57 -0500
-Received: from localhost (unknown [37.142.5.207])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A292120685;
-        Fri, 23 Nov 2018 20:00:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543003215;
-        bh=8kFuR1xOVf4eq01hQGad9loy8KNQH2qbCLwRVUJh0A8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ihdrkh53pQZg8CbZfZhZEyNkSnCiI+XRgh8cxDB5bJfn4c7DrAdg4zYc9yntL2Vi4
-         vHkBc3ybEXnFy7MkZLLEClm5a1MBu2sKmTYmpNVkz7tMyrmCOWtyJQVWnSg41HhWaP
-         zYQkIFUPGdrY4z2exkNP2a8QTeGzlgAL3BFuLQxU=
-Date:   Fri, 23 Nov 2018 15:00:11 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        linux-parisc@vger.kernel.org, stable@kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [for-next][PATCH 08/18] parisc: function_graph: Simplify with
- function_graph_entry()
-Message-ID: <20181123200011.GM1917@sasha-vm>
-References: <20181122003332.500796758@goodmis.org>
- <20181123073033.2083020863@mail.kernel.org>
- <511cb47a-a1bd-bb5d-69ec-0836c6b5abfe@gmx.de>
- <20181123121253.278146b4@vmware.local.home>
- <20181123183415.GB1917@sasha-vm>
- <20181123142617.3d3972ca@vmware.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181123142617.3d3972ca@vmware.local.home>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Sat, 24 Nov 2018 01:47:02 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:33930 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbeKXGrC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Nov 2018 01:47:02 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id E5DD814C82957;
+        Fri, 23 Nov 2018 12:01:19 -0800 (PST)
+Date:   Fri, 23 Nov 2018 12:01:19 -0800 (PST)
+Message-Id: <20181123.120119.2279234989819941118.davem@davemloft.net>
+To:     jasowang@redhat.com
+Cc:     mst@redhat.com, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        brouer@redhat.com, pashinho1990@gmail.com, dsahern@gmail.com
+Subject: Re: [PATCH net 1/2] virtio-net: disable guest csum during XDP set
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181122063631.14452-1-jasowang@redhat.com>
+References: <20181122063631.14452-1-jasowang@redhat.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 23 Nov 2018 12:01:20 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 02:26:17PM -0500, Steven Rostedt wrote:
->On Fri, 23 Nov 2018 13:34:15 -0500
->Sasha Levin <sashal@kernel.org> wrote:
->
->> Does this mean that someone (Steve) will send a backport of this to all
->> relevant stable trees? Right now it looks like the series will randomly
->> apply on a mix of trees, which can't be good.
->
->Nope. I stated that in my 0 patch.
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 22 Nov 2018 14:36:30 +0800
 
-That's not good though, if you don't intend for them to be automagically
-backported to stable trees by Greg, then they shouldn't be tagged at all
-and if someone is interested then he can provide a backport.
+> We don't disable VIRTIO_NET_F_GUEST_CSUM if XDP was set. This means we
+> can receive partial csumed packets with metadata kept in the
+> vnet_hdr. This may have several side effects:
+> 
+> - It could be overridden by header adjustment, thus is might be not
+>   correct after XDP processing.
+> - There's no way to pass such metadata information through
+>   XDP_REDIRECT to another driver.
+> - XDP does not support checksum offload right now.
+> 
+> So simply disable guest csum if possible in this the case of XDP.
+> 
+> Fixes: 3f93522ffab2d ("virtio-net: switch off offloads on demand if possible on XDP set")
+> Reported-by: Jesper Dangaard Brouer <brouer@redhat.com>
+> Cc: Jesper Dangaard Brouer <brouer@redhat.com>
+> Cc: Pavel Popa <pashinho1990@gmail.com>
+> Cc: David Ahern <dsahern@gmail.com>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
 
-What will happen with these is that once Greg's scripts process Linus's
-tree he'll end up with this patch series inconsistently backported to
-stable trees, which is not what you want here.
+Applied and queued up for -stable.
 
-Sure, we can wait for the "added to the xyz stable tree" mails and
-object then, but why risk breaking the trees?
-
---
-Thanks.
-Sasha
+We really should have a way to use the checksum provided if the XDP
+program returns XDP_PASS and does not modify the packet contents
+or size.
