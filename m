@@ -2,153 +2,188 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B659C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DD2C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:15:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEA82206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:15:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E4B4206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:15:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AZfztxBi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEA82206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="kAecckbk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E4B4206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502033AbeKWQ6K (ORCPT
+        id S2502047AbeKWQ6f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 11:58:10 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34654 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387519AbeKWQ6K (ORCPT
+        Fri, 23 Nov 2018 11:58:35 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:5573 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729253AbeKWQ6f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 11:58:10 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y185so6859307wmd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 22:15:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VTds35J0GFouJcnffD/GEMrn0+Sw7JBPNZKSRDaR6f4=;
-        b=AZfztxBil9zDO5VkPwgWtbooLrgnW1HswAOSk0gPIrY69+9/wP5gYCwJCnFFW4kky1
-         jQHnRRj5WBhZOPL+DcHtXfYAEQDItsOlgmOVgal9NrUPddq6Z1EtqVax2PQz2z2r+hd8
-         eJVxoUCxKe/KPxsKEO4OWmZWFNcZxkW+1TLZk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VTds35J0GFouJcnffD/GEMrn0+Sw7JBPNZKSRDaR6f4=;
-        b=bqlIznkNbeyhzG2J6aYydl+ZUN0xDNVyIeEYINUEPFgCWLZ5gfSfGyfDHvty2Kt3yp
-         bA2A0k+l/0enAH1rNhToSOY1J6SAIw/PivbUjG3XEviYMa8+hCfmZfjRHC/sr6C9Bc/R
-         09JYjl2K6RSZ34AP6amxm6jfOYB0f1Au7KCIsTk0Jc32KZsQmow92CdS12PZ2C9FxVuC
-         FsEsO0j3Um85oaJlorspCOpel675Gpnw4zenQknzVO0YVTh2irkEVPXPuZn/80DxwzJf
-         7k8zb4hrzlR4Yfrl357/KuR1qz6NVAZF4ls8XXhFv7vF1JbBEAgUZjysDnR41t6DPx3j
-         WMsA==
-X-Gm-Message-State: AA+aEWblHyFW9QumHQKs96TBCnVPzorLGmW2dLtzmtUzlkevUTgpb5kY
-        Pn5O59BXnB7lIPprp/cWyYs0nA==
-X-Google-Smtp-Source: AJdET5c2RM0pCfzH23sEPnvsr8lBHJ87u7OL8nrE8MIB1fm48mOCLzZrIGts7zxDAjyQ8uEgE9Kd+w==
-X-Received: by 2002:a7b:c315:: with SMTP id k21mr11872552wmj.145.1542953721926;
-        Thu, 22 Nov 2018 22:15:21 -0800 (PST)
-Received: from [192.168.0.40] (44.65.136.77.rev.sfr.net. [77.136.65.44])
-        by smtp.googlemail.com with ESMTPSA id w18sm14428089wru.54.2018.11.22.22.15.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 22:15:20 -0800 (PST)
-Subject: Re: [PATCH v2 0/2] clocksource/meson6_timer: implement ARM delay
- timer
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, linux-arm-kernel@lists.infradead.org
-References: <20181115224657.14736-1-martin.blumenstingl@googlemail.com>
- <5ff1a888-cce2-8fd8-a98e-14c3d7c33acf@linaro.org>
- <CAFBinCDSLEAzJVVgFxKhN3LCUwgC3Rrr=4ZhtHCdvqEPBLWbJA@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <a83b92fb-5950-01b8-521d-7b05939dce3a@linaro.org>
-Date:   Fri, 23 Nov 2018 07:15:19 +0100
+        Fri, 23 Nov 2018 11:58:35 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bf79b1c0000>; Thu, 22 Nov 2018 22:15:56 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 22 Nov 2018 22:15:48 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 22 Nov 2018 22:15:48 -0800
+Received: from [10.19.225.182] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 23 Nov
+ 2018 06:15:46 +0000
+Subject: Re: [PATCH v2 1/3] thermal: tegra: continue if sensor register fails
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        <thierry.reding@gmail.com>, <linux-tegra@vger.kernel.org>
+CC:     <rui.zhang@intel.com>, <edubezval@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+References: <1542103567-5521-1-git-send-email-wni@nvidia.com>
+ <1542103567-5521-2-git-send-email-wni@nvidia.com>
+ <d212af68-fd18-74d4-d81c-ed8b3c0f136a@linaro.org>
+ <70f08208-d04c-c9a4-07e6-d377c33a9386@nvidia.com>
+ <d77fe117-3cde-108f-e1d7-2871f3d4c485@linaro.org>
+ <5e09bc13-7880-40f2-3f90-01d2cc3510ba@nvidia.com>
+ <299fc8a0-39e4-1bd9-821b-4712a7f25028@linaro.org>
+From:   Wei Ni <wni@nvidia.com>
+Message-ID: <2f5d3135-6a25-82ce-cf3a-d804484644a1@nvidia.com>
+Date:   Fri, 23 Nov 2018 14:15:43 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCDSLEAzJVVgFxKhN3LCUwgC3Rrr=4ZhtHCdvqEPBLWbJA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <299fc8a0-39e4-1bd9-821b-4712a7f25028@linaro.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1542953757; bh=yp07l0nEX789RDm4w55Eiipzgjwqnbw2WIux1O/A6OY=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=kAecckbk2w9M2lm+JBh0gD0Ehi/MOceT757KgTh4iQg5D5GcVczOoqN6mR1ugvT5Z
+         pFGEcd/JLyzxsNYD1XWwMbXY4Mj/AHpUTCLjiwRTrkGS6UxzDApjIGpW2UTKfEj0MO
+         vnOhHrQZvAZQkngCDvslIyZ9lq+ZddBYmknY0nGhZ10g6RMCC7CzsBnKAXQ74t0X3m
+         EowMPTjB5WHhkvAZl5RVUdOD2Cwj8ektN8qo2y091tqcpVeV6ahVq2qiaWcv4D3Kkc
+         eaVSM9ObOVQtzNGWLZdTsSX8rj/8pNoaNO5Ve2akFsjcO9ZCW4oNlMTcQLYWaW55Lu
+         cBIfgIt7+rP5Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/11/2018 23:12, Martin Blumenstingl wrote:
-> Hi Daniel,
-> 
-> On Sun, Nov 18, 2018 at 2:27 AM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
+
+
+On 22/11/2018 9:07 PM, Daniel Lezcano wrote:
+> On 22/11/2018 08:10, Wei Ni wrote:
 >>
->> On 15/11/2018 23:46, Martin Blumenstingl wrote:
->>> While trying to add support for the ARM TWD Timer and the ARM Global
->>> Timer on Meson8, Meson8b and Meson8m2 (ARM Cortex-A5 and Cortex-A9 SoCs)
->>> I did a review of the existing driver.
->>> Unfortunately I found it hard to review because the pre-processor
->>> #defines did not match the names from the public S805 datasheet. Thus
->>> patch #1 adjusts these. No functional changes here, this is just
->>> preparation work for patch #2.
->>>
->>> Using the ARM Global Timer (drivers/clocksource/arm_global_timer.c)
->>> would have given us a timer-based delay implementation (so udelay() and
->>> friends would use the timer instead of using a loop-based delay
->>> implementation). Unfortunately we can't use the ARM Global Timer yet
->>> because it's input clock is derived from the CPU clock (which can change
->>> once we enable CPU frequency scaling on these SoCs, for which I will be
->>> sending patches in the near future).
->>> Amlogic's 3.10 kernel uses Timer E as delay timer which (with the
->>> current configuration) has a resolution of 1us. So patch #2 uses
->>> register_current_timer_delay() to register Timer E as ARM delay timer
->>> (which will be especially useful as we have to use udelay() when
->>> changing the CPU clocks during DVFS).
->>>
->>>
->>> Changes since v1 at [0]:
->>> - convert the enums for the input clock (meson6_timera_input_clock and
->>>   meson6_timere_input_clock) to simple #defines as these are register
->>>   values and not something driver-internal. All other register values
->>>   are #defines so it makes sense that these are #defines as well.
->>>
->>>
->>> [0] https://patchwork.kernel.org/cover/10658591/
->>>
->>>
->>> Martin Blumenstingl (2):
->>>   clocksource: meson6_timer: use register names from the datasheet
->>>   clocksource: meson6_timer: implement ARM delay timer
->>>
->>>  drivers/clocksource/meson6_timer.c | 128 +++++++++++++++++++----------
->>>  1 file changed, 85 insertions(+), 43 deletions(-)
 >>
->> Both applied, thanks!
-> thank you for taking my patches
+>> On 21/11/2018 8:51 PM, Daniel Lezcano wrote:
+>>> On 21/11/2018 11:23, Wei Ni wrote:
+>>>>
+>>>>
+>>>> On 21/11/2018 4:55 PM, Daniel Lezcano wrote:
+>>>>> On 13/11/2018 11:06, Wei Ni wrote:
+>>>>>> Don't bail when a sensor fails to register with the
+>>>>>> thermal zone and allow other sensors to register.
+>>>>>> This allows other sensors to register with thermal
+>>>>>> framework even if one sensor fails registration.
+>>>>>
+>>>>> I'm not sure if ignoring the error is really safe. Can you describe the
+>>>>> real situation you want to overcome ? How do you differentiate critical
+>>>>> sensors ?
+>>>>
+>>>> The driver will always try to register 4 thermal zones, including cpu,
+>>>> gpu, mem and pll, but if the dts file doesn't set the corresponding
+>>>> sensors, then the register will be failed.
+>>>> Normally, the dts file will set all 4 sensors, but there may have some
+>>>> platform doesn't support them all. So we post this patch.
+>>>
+>>> Ignoring errors is not the way to go to support different platforms. Fix
+>>> the DT.
+>>
+>> The issue isn't in DT file. The Tegra soc thermal include 4 sensors:
+>> cpu, gpu, mem, pll. But in some platforms, for example, we may only need
+>> to support 2 sensors, such as cpu and gpu, so we only configure these
+>> two senors in DT file. But the driver will always try to register 4
+>> sensors, cpu/gpu/mem/pll, so mem and pll will be registered failed. So
+>> in this case we need to ignoring the failure, and continue to enable the
+>> driver.
 > 
-> I have one question more: can you please push these patches to a
-> repository/branch which is included in -next?
-> I'm asking because I'd like to send patches that enable CPU frequency
-> scaling on Meson8, Meson8b and Meson8m2. The code to change the CPU
-> clock calls udelay(), which (in this special case) needs a delay timer
-> to work properly (we can't use jiffies as we're using udelay() *while*
-> changing the CPU clock).
+> You can fix this by changing the driver to support the platform and
+> register the sensor you are interested in.
+> 
+> Ignoring errors is not a good idea.
 
-branch pushed [1], should appear in linux-next very soon.
+If hit the errors, the driver will print out the warning. In current
+code, the driver probe routine will return failure directly, indeed it
+didn't do anything either except print out warnings.
+I think this error should not block other sensors' registration. Let's
+consider this case, we have four sensors, if the one sensor register
+failed, then the driver return probe failure, so the drive will not be
+enabled, and other sensor can't work either, it mean the device may boot
+up without any thermal sensors.
+Or if the error is the -ENODEV, that mean the we didn't set
+corresponding sensor id in the dt file, so we can continue to register.
+If the error is other value, then we can return directly.
 
-  -- Daniel
+Wei.
 
-[1]
-https://git.linaro.org/people/daniel.lezcano/linux.git/log/?h=clockevents/next
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+> 
+> 
+>>>> BTW, what do you mean "critical sensors"? We will set critical trip temp
+>>>> for all sensors.
+>>>
+>>> I meant sensor for thermal zone getting really high temperature.
+>>
+>> We doesn't have the critical sensors. We set the critical trip temp for
+>> all registered sensors. And these trip temp is set to the Tegra
+>> hardware. So it mean if the temperature reached the critical trip point,
+>> then the system will be shutdown directly.
+>>
+>>>
+>>>
+>>>>>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>>>>>> ---
+>>>>>>  drivers/thermal/tegra/soctherm.c | 8 +++++---
+>>>>>>  1 file changed, 5 insertions(+), 3 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+>>>>>> index ed28110a3535..a824d2e63af3 100644
+>>>>>> --- a/drivers/thermal/tegra/soctherm.c
+>>>>>> +++ b/drivers/thermal/tegra/soctherm.c
+>>>>>> @@ -1370,9 +1370,9 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+>>>>>>  							 &tegra_of_thermal_ops);
+>>>>>>  		if (IS_ERR(z)) {
+>>>>>>  			err = PTR_ERR(z);
+>>>>>> -			dev_err(&pdev->dev, "failed to register sensor: %d\n",
+>>>>>> -				err);
+>>>>>> -			goto disable_clocks;
+>>>>>> +			dev_warn(&pdev->dev, "failed to register sensor %s: %d\n",
+>>>>>> +				 soc->ttgs[i]->name, err);
+>>>>>> +			continue;
+>>>>>>  		}
+>>>>>>  
+>>>>>>  		zone->tz = z;
+>>>>>> @@ -1434,6 +1434,8 @@ static int __maybe_unused soctherm_resume(struct device *dev)
+>>>>>>  		struct thermal_zone_device *tz;
+>>>>>>  
+>>>>>>  		tz = tegra->thermctl_tzs[soc->ttgs[i]->id];
+>>>>>> +		if (!tz)
+>>>>>> +			continue;
+>>>>>>  		err = tegra_soctherm_set_hwtrips(dev, soc->ttgs[i], tz);
+>>>>>>  		if (err) {
+>>>>>>  			dev_err(&pdev->dev,
+>>>>>>
+>>>>>
+>>>>>
+>>>
+>>>
+> 
+> 
