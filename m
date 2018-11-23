@@ -3,136 +3,116 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 650F7C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D852C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:16:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DA8A20861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:16:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DA8A20861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 515FC20820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:16:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 515FC20820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503237AbeKWVAC (ORCPT
+        id S2503241AbeKWVA0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 16:00:02 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:41329 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2503239AbeKWVAC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 16:00:02 -0500
-Received: by mail-ua1-f67.google.com with SMTP id z24so3934415ual.8;
-        Fri, 23 Nov 2018 02:16:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wS1oOfUETQckjM9OqKNEwS4Qu8JP8M8400QpDgM8kFY=;
-        b=ez5/zFNBNWhvZcmNFt9aSlor82EOkOiIcPhWusONrNR6UViaZuAnLmRjvZmE1WVXYd
-         ty8TvgBpEAQAVLEldb0GduuhmMScCbERkfH0/R/Kx0ubhxIKU7UMoWTOwQeYPJfwiFmg
-         /iufpfTNxDzz+n9pQh6GqJsxP2Fybra6wuoNBIRkFfDEKouWS6GmhPNJxjU2iebQcEcZ
-         WStACGdNaMOuFiCpnFAwf0YbZ0z+X9OKtp/ycSrrv4Bk7UW2PO/gFqk8XGHQP6GhSJEl
-         3rrIV8+kN3nJW7PGklE4flsqDlKc/u0OpH3U2H+H+bT3S1pqLoz+SDy+n37TNDly17T3
-         z1Ew==
-X-Gm-Message-State: AA+aEWZTqHpUtXBeIwR6L/nz+Rkzs/2zQ3wfEij77w6UrvEUnSMoFJU8
-        fDI5MsZE1uMjqAErK2kQvlPvrRq6E4z5nOZiCgk=
-X-Google-Smtp-Source: AFSGD/VH1+yX84UkEccV3G/LcfErlposKHHx4ERhhJp72+odIPs3tZpkGlGXxgfEbXSYzS2fmJsKx072pRjwOFvtENo=
-X-Received: by 2002:ab0:465:: with SMTP id 92mr6300976uav.28.1542968181915;
- Fri, 23 Nov 2018 02:16:21 -0800 (PST)
+        Fri, 23 Nov 2018 16:00:26 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40978 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388074AbeKWVA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 16:00:26 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48E9D35CD;
+        Fri, 23 Nov 2018 02:16:47 -0800 (PST)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF7063F5CF;
+        Fri, 23 Nov 2018 02:16:45 -0800 (PST)
+Subject: Re: Sleeping in user_access section
+To:     hpa@zytor.com, Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        James Morse <james.morse@arm.com>
+References: <3e881ee6-0ff6-b8b6-0633-3d4a7743411d@arm.com>
+ <5B3B6AF9-9D8C-4577-905E-D407A5E7D0E3@zytor.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <f0c876e9-bbdf-75f9-597a-6ac823d32177@arm.com>
+Date:   Fri, 23 Nov 2018 10:16:44 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20181119161838.10610-1-phil.edworthy@renesas.com>
- <CAMuHMdU2ski3S4FhD5kOhtzxvpin8M5MoYwK7X5gqYZ+HoL0DA@mail.gmail.com> <TY1PR01MB1769DE254148618373F2918CF5D40@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB1769DE254148618373F2918CF5D40@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 23 Nov 2018 11:16:09 +0100
-Message-ID: <CAMuHMdUUjoUmA2R8=PXp-hvYvowb3L-dnP6EDcGkLZJG344Yug@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5B3B6AF9-9D8C-4577-905E-D407A5E7D0E3@zytor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Phil,
 
-On Fri, Nov 23, 2018 at 11:07 AM Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
-> On 23 November 2018 09:41 Geert Uytterhoeven wrote:
-> > Subject: Re: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
-> > On Mon, Nov 19, 2018 at 5:18 PM Phil Edworthy wrote:
-> > > This fixes the check for unused mdio bus setting and the following
-> > > static checker warning:
-> > >  drivers/pinctrl/pinctrl-rzn1.c:198 rzn1_pinctrl_mdio_select()
-> > >  warn: always true condition '(ipctl->mdio_func[mdio] >= 0) => (0-u32max
-> > >= 0)'
-> > >
-> > > It also fixes the return var when calling of_get_child_count()
-> >
-> > I think this should be a separate patch.
-> Ok, I'll split them.
 
-Thanks!
+On 23/11/18 09:57, hpa@zytor.com wrote:
+> On November 23, 2018 1:27:02 AM PST, Julien Thierry <julien.thierry@arm.com> wrote:
+>> Hi,
+>>
+>> I made an attempt at implementing the
+>> user_access_begin()/user_access_end() macros along with the
+>> get/put_user_unsafe() for arm64 by toggling the status of PAN (more or
+>> less similar to x86's STAC/CTAC).
+>>
+>> With a small mistake in my patch, we realized that directly calling
+>> function that could reschedule while in a user_access section could
+>> lead to:
+>>
+>> - scheduling another task keeping the user_access status enabled
+>> despite
+>> the task never calling user_access_begin()
+>>
+>> - when re-scheduling the task that was mid user_access section,
+>> user_access would be disabled and the task would fault on the next
+>> get/put_user_unsafe.
+>>
+>>
+>> This is because __switch_to does not alter the user_access status when
+>> switching from next to prev (at least on arm64 we currently don't, and
+>> by looking at the x86 code I don't think this is done either).
+>>
+>>
+>>  From my understanding, this is not an issue when the task in
+>> user_access mode gets scheduled out/in as a result of an interrupt as
+>> PAN and EFLAGS.AC get saved/restore on exception entry/exit (at least I
+>>
+>> know it is the case for PAN, I am less sure for the x86 side).
+>>
+>>
+>> So, the question is, should __switch_to take care of the user_access
+>> status when scheduling new tasks? Or should there be a restriction
+>> about
+>> scheduling out a task with user_access mode enabled and maybe add a
+>> warning if we can detect this?
+>>
+>> (Or did we miss something and this is not an issue on x86?)
+>>
+>> Thanks,
+> 
+> You should never call a sleeping function from a user_access section. It is intended for very limited regions.
+> 
 
-> > BTW, I have a question about rzn1_pinctrl_mdio_select():
-> >
-> > static void rzn1_pinctrl_mdio_select(struct rzn1_pinctrl *ipctl, int mdio,
-> >                                      u32 func) {
-> >         if (ipctl->mdio_func[mdio] >= 0 && ipctl->mdio_func[mdio] != func)
-> >                 dev_warn(ipctl->dev, "conflicting setting for mdio%d!\n", mdio);
-> >         ipctl->mdio_func[mdio] = func;
-> >
-> >         dev_dbg(ipctl->dev, "setting mdio%d to %u\n", mdio, func);
-> >
-> >         writel(func, &ipctl->lev2->l2_mdio[mdio]); }
-> >
-> > The check warns the user if it overrides an already initialized MDIO function
-> > with a different value.
-> > However, there is no method to uninitialize (reset to -1) mdio_func[], to
-> > avoid getting the warning.
-> >
-> > For a use case, I was thinking about a DT overlay that would cause the MDIO
-> > function to be initialized on loading, and needs to uninitialize the MDIO
-> > function on removing.
-> >
-> > Perhaps that is very unlikely or even impossible, given the function of the
-> > pins controlled by the MDIO function?
-> I hadn't considered that DT overlay possibility...
-> Since this MDIO muxing selects one of several different IP blocks as the
-> MDIO master, I guess it could happen. However, this is pretty unlikely!
->
-> I can't see any way via the pinctrl_ops or pinconf_ops to 'undo' a pin
-> setting, how would this work?
+Thanks for the clarification.
 
-Actually the pinctrl core wouldn't undo the configuration on DT overlay unload,
-but would just do the new configuration when loading the new DT overlay.
-Hence that would print the warning, but work regardless.
-Only for GPIOs there would be an undo step (freeing the requested GPIO).
+Would it be worth documenting this somewhere? And add a check to detect 
+such issues?
 
-> If a DT overlay causes remove() then probe() to be called again, the driver
-> resets mdio_func[] in probe(), so it'll work.
+Also, those limited regions can be interrupted and preempted, but I 
+guess you could consider the interrupted region being split into 
+separate user_access regions, before and after the interrupt. Should it 
+be stated that an exception/interrupt constitutes implicit 
+user_access_end()/begin() when taken from/returning to a user_access region?
 
-Typically a DT overlay would only control I/O devices, not the actual pinctrl
-device, so the pin controller driver's .probe() wouldn't be called.
-
-But I agree it's unlikely and rare, and would still work. And probably you do
-want to keep the warning.  DT overlays are still experimental, as there's no
-upstream support for loading a random DT overlay at runtime.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Thanks,
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Julien Thierry
