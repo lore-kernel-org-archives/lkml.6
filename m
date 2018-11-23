@@ -2,109 +2,100 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99927C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8682C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F8DC20820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:31:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66E3920672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:33:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="bA+d2bHu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F8DC20820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dM+rAQl2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66E3920672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405531AbeKXAPu (ORCPT
+        id S2436518AbeKXASD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 19:15:50 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37772 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388587AbeKXAPt (ORCPT
+        Fri, 23 Nov 2018 19:18:03 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:32968 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388587AbeKXASD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 19:15:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0+7sjnzFxnWCHvUyY435I2q+6Ivy5gFveXEBwf99Bjk=; b=bA+d2bHuhTcUMqwf9AI9zNcYQ
-        s6mKYhmNkzH/84hN6JRBoCPReliRpqtJn/iVhAYFSZnW16zKCStLS5ktxkN6CVDe2fCzI4/akAcDm
-        luwy9yk6JllPyLKYuygfBQxxx/gUMXTEyKZsaOHWIIvznLfkkOe43T9Bqwg6IFwAx+BEg=;
-Received: from [176.12.107.140] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gQBYP-00013i-1W; Fri, 23 Nov 2018 13:31:29 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 07610440078; Fri, 23 Nov 2018 13:31:27 +0000 (GMT)
-Date:   Fri, 23 Nov 2018 13:31:26 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: [PATCH v9 1/8] ASoC: dt-bindings: sun50i-codec-analog: Add
- headphone amp regulator supply
-Message-ID: <20181123133126.GF2089@sirena.org.uk>
-References: <20181122102325.29495-1-wens@csie.org>
- <20181122102325.29495-2-wens@csie.org>
- <20181122153241.lzrwhkewg5q4hy2c@flea>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="tWc6BTYdre847SEs"
-Content-Disposition: inline
-In-Reply-To: <20181122153241.lzrwhkewg5q4hy2c@flea>
-X-Cookie: No Canadian coins.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 23 Nov 2018 19:18:03 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z11so3118662pgu.0;
+        Fri, 23 Nov 2018 05:33:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=lDsJKS1oNLz/0T0+4NfjSFsaxXGbh8mIOnrI7P5Es+4=;
+        b=dM+rAQl2gUgSHgd1sdclsZ02HlyaCXQw3qQkN1u47coDUadS2NRwejkIGbLeiZu13f
+         gD3amtdF0tQB5QepcdmwFQpH0INGPyDAIEVqo+XIe1HxG+nawsPt2SUq2bsmHQMKMcWd
+         4KmcoK8YuQxD5miVw9cfqBPAgIJR/X6Hb/1fXPdFAVNVqrzuS1kziyFt3/oCxHtE0cGd
+         QKkEwnql2mGQ9bhGE7OQqYt37ZEgYsG6hQvtYjhCisK29uTteo64znTH5vdBQFpbynhO
+         Z+JBhDW5qkINjjWzdzyypERxiYYNitpZG+2RopXM/B9H7/wqxFRboxrRAP3aSLBkjv8m
+         T3sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lDsJKS1oNLz/0T0+4NfjSFsaxXGbh8mIOnrI7P5Es+4=;
+        b=FR3leFdI0eSxsxE6Nno9fS0lnCF4ndBFwwt2DYlnYFRtDViAfqwwgDdZTyVtQgAgwt
+         4cuad666caqnE2/xETcnYE1f5KN+Zb+5xX52q+thEN+WF5sOh73aniFfCp0llecwHWD1
+         +v4igkE2KbCm9cIwM0B9pmBA/DS9M4fY1oLDENi1Ak92zlBxFRgoORX60NHxLng/UAOJ
+         5beD7wpqNfcLSW93OSMgyFzaMbLpvoE3EuT19iTxRRb0CtFam58xK0j49CEN3iioaH0K
+         NqYPzO7VHXm8cMNrPFhrn+pYeeFlWI2JHqhXATXfIsp2e2KvO7Zx5yISAnp0/zxlC4R1
+         6SZA==
+X-Gm-Message-State: AA+aEWbP17D1X1uWw7kQIm0VNpRqMRs9K5wXlrSCQuLVoMy+kgjg0kGH
+        fbIxA27A4AUsvIzPI1M6gJY=
+X-Google-Smtp-Source: AJdET5c9TngiJYlm6VKowHdlqL+8rwEppVXR4g+0oDVtg43zOtNU4dhbaD8NBLXnIdJ/Mm6UtP9/Kw==
+X-Received: by 2002:a63:1b1f:: with SMTP id b31mr14108993pgb.66.1542980030167;
+        Fri, 23 Nov 2018 05:33:50 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id d68-v6sm61764630pfa.80.2018.11.23.05.33.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 23 Nov 2018 05:33:48 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     rjw@rjwysocki.net, viresh.kumar@linaro.org,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
+Cc:     linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH v2] cpufreq: pmac64: add of_node_put()
+Date:   Fri, 23 Nov 2018 08:33:40 -0500
+Message-Id: <20181123133340.26849-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+of_find_node_by_path() acquires a reference to the node
+returned by it and that reference needs to be dropped by its caller.
+g5_neo2_cpufreq_init() doesn't do that, so fix it.
 
---tWc6BTYdre847SEs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+Changes in v2:
+-update changelog
+---
+ drivers/cpufreq/pmac64-cpufreq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Thu, Nov 22, 2018 at 04:32:41PM +0100, Maxime Ripard wrote:
-> On Thu, Nov 22, 2018 at 06:23:18PM +0800, Chen-Yu Tsai wrote:
+diff --git a/drivers/cpufreq/pmac64-cpufreq.c b/drivers/cpufreq/pmac64-cpufreq.c
+index be623dd7b9f2..1d32a863332d 100644
+--- a/drivers/cpufreq/pmac64-cpufreq.c
++++ b/drivers/cpufreq/pmac64-cpufreq.c
+@@ -411,6 +411,7 @@ static int __init g5_neo2_cpufreq_init(struct device_node *cpunode)
+ 		pfunc_set_vdnap0 = pmf_find_function(root, "set-vdnap0");
+ 		pfunc_vdnap0_complete =
+ 			pmf_find_function(root, "slewing-done");
++		of_node_put(root);
+ 		if (pfunc_set_vdnap0 == NULL ||
+ 		    pfunc_vdnap0_complete == NULL) {
+ 			pr_err("Can't find required platform function\n");
+-- 
+2.17.0
 
-> > +- cpvdd-supply: Regulator supply for the headphone amplifier
-
-> I guess we should make this optional, since even if it's missing, it's
-> going to create a dummy regulator. and that allows to have backward
-> compatibility.
-
-Regulators should never be marked as optional unless they can be
-physically absent.  It is true that Linux has code to handle partially
-defined device trees but we shouldn't rely on other OSs having similar
-code and it's better practice to have board device trees be fully
-specified, it means that if we need the regulator information for some
-future thing it's more likely to be there and it's less likely that bugs
-which do things like cause the regulator to be powered off incorrectly
-will be introduced in future.
-
---tWc6BTYdre847SEs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv4AS4ACgkQJNaLcl1U
-h9AYIggAhg//WqT0GsO27SLAihrkB6m9aDOYxbNLf16kxManjIHvCNpKAyuOc+bn
-Go+pZkE9hZ83rkO86bfA5fMjkJnkjVmt8/k0nGyJqm9vH7jXh9qW9R7pBhCazgvG
-Pd9Va3ouJXI/HhcECJApYMPXS+DOn9fdS/HUeXcF5FyhEAbVwUsD7l3CZFxgO8n3
-kzVevvyicXzRaYnnSJZMUBQM9INkFwAaPXBzLoYNre86eA/ktc//e4zXCVh1PMwx
-D2cExRRexfpU6QjlCvivVGYY5Qxk4qPMsmdaKD5b94HkVgFszXKjPHqOLobQ2wIA
-w02xpmRW28FVH2vYd/FlOHRfrMGzdQ==
-=9LaI
------END PGP SIGNATURE-----
-
---tWc6BTYdre847SEs--
