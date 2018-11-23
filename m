@@ -2,97 +2,92 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B067DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F191AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:44:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7357120672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:43:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7357120672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id BD67120672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:44:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD67120672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394714AbeKWX2B (ORCPT
+        id S2409878AbeKWX2E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:28:01 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:50424 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388147AbeKWX2A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:28:00 -0500
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gQAnn-00042o-78; Fri, 23 Nov 2018 13:43:19 +0100
-Date:   Fri, 23 Nov 2018 13:43:18 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Ingo Molnar <mingo@kernel.org>
-cc:     Borislav Petkov <bp@alien8.de>, "Moger, Babu" <Babu.Moger@amd.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "rian@alum.mit.edu" <rian@alum.mit.edu>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v9 01/13] x86/resctrl: Rename and move rdt files to new
- directory
-In-Reply-To: <20181123114102.GB130228@gmail.com>
-Message-ID: <alpine.DEB.2.21.1811231340430.2603@nanos.tec.linutronix.de>
-References: <20181121202811.4492-1-babu.moger@amd.com> <20181121202811.4492-2-babu.moger@amd.com> <20181123072839.GA51597@gmail.com> <20181123082258.GA30697@zn.tnic> <20181123084117.GA130228@gmail.com> <20181123090011.GB30697@zn.tnic>
- <20181123114102.GB130228@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 23 Nov 2018 18:28:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38132 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388147AbeKWX2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 18:28:04 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 624CCAEC0;
+        Fri, 23 Nov 2018 12:43:59 +0000 (UTC)
+Date:   Fri, 23 Nov 2018 13:43:58 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        David Rientjes <rientjes@google.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 1/3] mm: Check if mmu notifier callbacks are allowed to
+ fail
+Message-ID: <20181123124358.GJ8625@dhcp22.suse.cz>
+References: <20181122165106.18238-1-daniel.vetter@ffwll.ch>
+ <20181122165106.18238-2-daniel.vetter@ffwll.ch>
+ <20181123111557.GG8625@dhcp22.suse.cz>
+ <20181123123057.GK4266@phenom.ffwll.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181123123057.GK4266@phenom.ffwll.local>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Nov 2018, Ingo Molnar wrote:
-> * Borislav Petkov <bp@alien8.de> wrote:
-> Is there any other resource handled than caches by RDT or by the AMD 
-> variant?
-
-Memory bandwidth.
-
-> So how about "cache_control"? It's shorter and a lot closer to what the 
-> code actually does.
+On Fri 23-11-18 13:30:57, Daniel Vetter wrote:
+> On Fri, Nov 23, 2018 at 12:15:57PM +0100, Michal Hocko wrote:
+> > On Thu 22-11-18 17:51:04, Daniel Vetter wrote:
+> > > Just a bit of paranoia, since if we start pushing this deep into
+> > > callchains it's hard to spot all places where an mmu notifier
+> > > implementation might fail when it's not allowed to.
+> > 
+> > What does WARN give you more than the existing pr_info? Is really
+> > backtrace that interesting?
 > 
-> > resource_control/ is kinda long-ish and the other names we have there
-> > are nice and short, see below.
+> Automated tools have to ignore everything at info level (there's too much
+> of that). I guess I could do something like
+> 
+> if (blockable)
+> 	pr_warn(...)
+> else
+> 	pr_info(...)
+> 
+> WARN() is simply my goto tool for getting something at warning level
+> dumped into dmesg. But I think the pr_warn with the callback function
+> should be enough indeed.
 
-resctrl is short and good enough. Can we move on an care about technical
-problems rather than wasting time with bike shed painting?
+I wouldn't mind s@pr_info@pr_warn@
+ 
+> If you wonder where all the info level stuff happens that we have to
+> ignore: suspend/resume is a primary culprit (fairly important for
+> gfx/desktops), but there's a bunch of other places. Even if we ignore
+> everything at info and below we still need filters because some drivers
+> are a bit too trigger-happy (i915 definitely included I guess, so everyone
+> contributes to this problem).
 
-Thanks,
-
-	tglx
+Thanks for the clarification.
+-- 
+Michal Hocko
+SUSE Labs
