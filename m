@@ -2,112 +2,248 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BBDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2028C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:10:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 371C320685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:10:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FA6920685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:10:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IO7rRKEu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 371C320685
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9oVW+cw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FA6920685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439736AbeKWXyr (ORCPT
+        id S2439750AbeKWXyx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:54:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48262 "EHLO mail.kernel.org"
+        Fri, 23 Nov 2018 18:54:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394696AbeKWXyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:54:47 -0500
+        id S2394696AbeKWXyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 18:54:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7325F20685;
-        Fri, 23 Nov 2018 13:10:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C6B320685;
+        Fri, 23 Nov 2018 13:10:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542978638;
-        bh=IRNVbAofLNbD3p5wsosrut7GJ5fWV+etyBCl6UfK52A=;
-        h=Date:From:To:Cc:Subject:From;
-        b=IO7rRKEuRgnJt3OVSIYroXett34dL4mrmWn6y5+2kjMMebz/GjNI2jrPHdY4s4/25
-         K2KGVv/R8rQq9TqC9hG1ZP6u7IHlROdQYb1m8VzKSofY5wurazflBM5oQFLsYd70LX
-         1zAI/ZIXRprynZWNCruh2Yetv7Avd93vRAXaflPU=
-Date:   Fri, 23 Nov 2018 14:10:36 +0100
+        s=default; t=1542978644;
+        bh=l5W+KmMHiJrSx1aB1MWQZ47PfR53jse7Wpaj3gImMoc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=P9oVW+cwB1EbDxUmgeKQXtJJW0L2gb1XNV90InqKLHzu9ixYoD0UYqTsQmRPaa9C1
+         JYSOCe668eeK7Kmcl4OBusz8u2b1m/OKD9JtIk5THoHpOlGLdnw49YiGBoj/VBEfwc
+         jvjNTapQMRuVzkCd4cd87jRP4+z9S7BaDNJ7KQ8U=
+Date:   Fri, 23 Nov 2018 14:10:42 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 4.9.140
-Message-ID: <20181123131036.GA15416@kroah.com>
+Subject: Re: Linux 4.9.140
+Message-ID: <20181123131042.GB15416@kroah.com>
+References: <20181123131036.GA15416@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181123131036.GA15416@kroah.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---UugvWAfsgieZRqgk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Sorry for the quick follow-on release, but this resolves two reported
-issues that should have gotten into the previous release.
-
-I'm announcing the release of the 4.9.140 kernel.
-
-All users of the 4.9 kernel series must upgrade.
-
-The updated 4.9.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-4.9.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
-
-thanks,
-
-greg k-h
-
-------------
-
- Makefile                   |    2 -
- arch/x86/kernel/cpu/bugs.c |   57 ++++-----------------------------------------
- kernel/cpu.c               |   11 --------
- net/ipv6/route.c           |   11 ++++++--
- 4 files changed, 16 insertions(+), 65 deletions(-)
-
-Greg Kroah-Hartman (3):
-      Revert "x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation"
-      Revert "ipv6: set rt6i_protocol properly in the route when it is installed"
-      Linux 4.9.140
-
-
---UugvWAfsgieZRqgk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlv3/EoACgkQONu9yGCS
-aT6QPg//V5soxHPKjJYmvA/Q2YcXAQU5+b6H4ikjeSoFclK4YsHylNZ3QjiJGgXQ
-PwklgVckl+DiXXiVJR/+wkrY/x/2Ir/2J6lkDKYcI0SY0lpeCJEfo8uZzCqQ3irC
-vSMI0Ry9XDpBx+vcQiWVBrwKkc6iSZhIUeMRvYuWfcEQB71KLkjkRYTB+uC+fn7f
-kh1b2tbBfSk34mgY4pZEVq3cP7FWVJw1RcD79ZLXTqCzRRGDaXWxuiM99X4WQog5
-ChyvW8fO5MwCWDNDhUv0pfyDwcPnFoXJAGsxettseiF59jWZ98hNNTemUjZRdln5
-ZmxYlC6RVe0WXu9z57vDHOxnIlS6zSdbrAWRPTYJqI3D3CNDOZhh+RWzb3/9qXzJ
-iRDSdX8g6bKo9sf7yArtjzj49xmsXIii/xPASD91hFbPLpH5Cyv8jrGZFTzPnWxg
-3G+LpvjhpWuxWrFfAkUvYq8pHYVHGcK2sUJKRVJF6QixsDwVZHCxWwWmP+L8YD0m
-tGN2M9Hq9wX8kbEc/dm3Ut7sNzx4C7AB5Aodxhq/Cm/00SwjjaPq/lD3yx5rclYW
-Ukima1EKFCYvy4JATULX7EVeQK4w+16+5k+Ed/8Gv0v76HWeYm8C8PuolcBjQ6ri
-0N7pdh/Z19+raqHy/YL5XkLq+TpVXVTiFDyjYuvhnw2ytncCMj0=
-=mvyT
------END PGP SIGNATURE-----
-
---UugvWAfsgieZRqgk--
+diff --git a/Makefile b/Makefile
+index a6959d96316d..a9aed2326233 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,6 @@
+ VERSION = 4
+ PATCHLEVEL = 9
+-SUBLEVEL = 139
++SUBLEVEL = 140
+ EXTRAVERSION =
+ NAME = Roaring Lionus
+ 
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 647a702c29dc..6221166e3fca 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -33,10 +33,12 @@ static void __init spectre_v2_select_mitigation(void);
+ static void __init ssb_select_mitigation(void);
+ static void __init l1tf_select_mitigation(void);
+ 
+-/* The base value of the SPEC_CTRL MSR that always has to be preserved. */
+-u64 x86_spec_ctrl_base;
++/*
++ * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
++ * writes to SPEC_CTRL contain whatever reserved bits have been set.
++ */
++u64 __ro_after_init x86_spec_ctrl_base;
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
+-static DEFINE_MUTEX(spec_ctrl_mutex);
+ 
+ /*
+  * The vendor and possibly platform specific bits which can be modified in
+@@ -320,46 +322,6 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
+ 	return cmd;
+ }
+ 
+-static bool stibp_needed(void)
+-{
+-	if (spectre_v2_enabled == SPECTRE_V2_NONE)
+-		return false;
+-
+-	if (!boot_cpu_has(X86_FEATURE_STIBP))
+-		return false;
+-
+-	return true;
+-}
+-
+-static void update_stibp_msr(void *info)
+-{
+-	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
+-}
+-
+-void arch_smt_update(void)
+-{
+-	u64 mask;
+-
+-	if (!stibp_needed())
+-		return;
+-
+-	mutex_lock(&spec_ctrl_mutex);
+-	mask = x86_spec_ctrl_base;
+-	if (cpu_smt_control == CPU_SMT_ENABLED)
+-		mask |= SPEC_CTRL_STIBP;
+-	else
+-		mask &= ~SPEC_CTRL_STIBP;
+-
+-	if (mask != x86_spec_ctrl_base) {
+-		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
+-				cpu_smt_control == CPU_SMT_ENABLED ?
+-				"Enabling" : "Disabling");
+-		x86_spec_ctrl_base = mask;
+-		on_each_cpu(update_stibp_msr, NULL, 1);
+-	}
+-	mutex_unlock(&spec_ctrl_mutex);
+-}
+-
+ static void __init spectre_v2_select_mitigation(void)
+ {
+ 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
+@@ -459,9 +421,6 @@ static void __init spectre_v2_select_mitigation(void)
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
+ 		pr_info("Enabling Restricted Speculation for firmware calls\n");
+ 	}
+-
+-	/* Enable STIBP if appropriate */
+-	arch_smt_update();
+ }
+ 
+ #undef pr_fmt
+@@ -854,8 +813,6 @@ static ssize_t l1tf_show_state(char *buf)
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			       char *buf, unsigned int bug)
+ {
+-	int ret;
+-
+ 	if (!boot_cpu_has_bug(bug))
+ 		return sprintf(buf, "Not affected\n");
+ 
+@@ -870,12 +827,10 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
+ 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
+ 
+ 	case X86_BUG_SPECTRE_V2:
+-		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+ 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+-			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
+ 			       spectre_v2_module_string());
+-		return ret;
+ 
+ 	case X86_BUG_SPEC_STORE_BYPASS:
+ 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 8d7bace9a7b2..b5a0165b7300 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -1970,12 +1970,6 @@ static void cpuhp_online_cpu_device(unsigned int cpu)
+ 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
+ }
+ 
+-/*
+- * Architectures that need SMT-specific errata handling during SMT hotplug
+- * should override this.
+- */
+-void __weak arch_smt_update(void) { };
+-
+ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
+ {
+ 	int cpu, ret = 0;
+@@ -2002,10 +1996,8 @@ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
+ 		 */
+ 		cpuhp_offline_cpu_device(cpu);
+ 	}
+-	if (!ret) {
++	if (!ret)
+ 		cpu_smt_control = ctrlval;
+-		arch_smt_update();
+-	}
+ 	cpu_maps_update_done();
+ 	return ret;
+ }
+@@ -2016,7 +2008,6 @@ static int cpuhp_smt_enable(void)
+ 
+ 	cpu_maps_update_begin();
+ 	cpu_smt_control = CPU_SMT_ENABLED;
+-	arch_smt_update();
+ 	for_each_present_cpu(cpu) {
+ 		/* Skip online CPUs and CPUs on offline nodes */
+ 		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index 0db120d2a4fe..b0a72677b7e5 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -2292,7 +2292,6 @@ static void rt6_do_redirect(struct dst_entry *dst, struct sock *sk, struct sk_bu
+ 	if (on_link)
+ 		nrt->rt6i_flags &= ~RTF_GATEWAY;
+ 
+-	nrt->rt6i_protocol = RTPROT_REDIRECT;
+ 	nrt->rt6i_gateway = *(struct in6_addr *)neigh->primary_key;
+ 
+ 	if (ip6_ins_rt(nrt))
+@@ -2397,7 +2396,6 @@ static struct rt6_info *rt6_add_route_info(struct net *net,
+ 		.fc_dst_len	= prefixlen,
+ 		.fc_flags	= RTF_GATEWAY | RTF_ADDRCONF | RTF_ROUTEINFO |
+ 				  RTF_UP | RTF_PREF(pref),
+-		.fc_protocol = RTPROT_RA,
+ 		.fc_nlinfo.portid = 0,
+ 		.fc_nlinfo.nlh = NULL,
+ 		.fc_nlinfo.nl_net = net,
+@@ -2450,7 +2448,6 @@ struct rt6_info *rt6_add_dflt_router(const struct in6_addr *gwaddr,
+ 		.fc_ifindex	= dev->ifindex,
+ 		.fc_flags	= RTF_GATEWAY | RTF_ADDRCONF | RTF_DEFAULT |
+ 				  RTF_UP | RTF_EXPIRES | RTF_PREF(pref),
+-		.fc_protocol = RTPROT_RA,
+ 		.fc_nlinfo.portid = 0,
+ 		.fc_nlinfo.nlh = NULL,
+ 		.fc_nlinfo.nl_net = dev_net(dev),
+@@ -3247,6 +3244,14 @@ static int rt6_fill_node(struct net *net,
+ 	}
+ 	rtm->rtm_scope = RT_SCOPE_UNIVERSE;
+ 	rtm->rtm_protocol = rt->rt6i_protocol;
++	if (rt->rt6i_flags & RTF_DYNAMIC)
++		rtm->rtm_protocol = RTPROT_REDIRECT;
++	else if (rt->rt6i_flags & RTF_ADDRCONF) {
++		if (rt->rt6i_flags & (RTF_DEFAULT | RTF_ROUTEINFO))
++			rtm->rtm_protocol = RTPROT_RA;
++		else
++			rtm->rtm_protocol = RTPROT_KERNEL;
++	}
+ 
+ 	if (rt->rt6i_flags & RTF_CACHE)
+ 		rtm->rtm_flags |= RTM_F_CLONED;
