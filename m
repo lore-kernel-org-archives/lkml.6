@@ -2,90 +2,80 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA60C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57180C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3278E20672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:52:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F40E420672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:54:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n7Lqe6mS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3278E20672
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bwfjdxJk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F40E420672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407876AbeKWLew (ORCPT
+        id S2439205AbeKWLgO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 06:34:52 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:46685 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392434AbeKWLew (ORCPT
+        Fri, 23 Nov 2018 06:36:14 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:41529 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392434AbeKWLgO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 06:34:52 -0500
-Received: by mail-qk1-f196.google.com with SMTP id q1so7652169qkf.13
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 16:52:51 -0800 (PST)
+        Fri, 23 Nov 2018 06:36:14 -0500
+Received: by mail-qt1-f196.google.com with SMTP id d18so9030763qto.8
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 16:54:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:references:in-reply-to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:mime-version
          :content-transfer-encoding:thread-index:content-language;
-        bh=Ao+FjF5SWqRKc9E4SW4vNeUcTXLpfMPwtNVusoC+6pQ=;
-        b=n7Lqe6mSCmtfqvzj9r8ReAt5j/kuQher9wrzz77ZOQapwzE9kGozf5+Nn/g48+lQYG
-         pLgmJft9xfyaxegSYyv7ad66FOyPpZJEVBVCaO37dKorUGONIkwzKCtDCv/YghM2Nhto
-         zOW3Vpu7i1uTPsElRTrYpChwV1zqjsY4b50jPEkIumAm69DPD28Nx8OGWcVj4j/hpMju
-         i2VBjUy/3CZErNuj6qf8a5RPD6ELPE659ACHOi2pJT11cwzvx7MLvGczOfXHRd6PuG7n
-         Y2wfb8AzQ1m4p182op+hszfEvKeVNhbX90JoNpGDxynCXNDOzsmSkBAo+q8sWqKK++BB
-         Gtng==
+        bh=Bnh6iMYqhkSEP1dwxa9zKpbcPVJ/B4FZz/wZld4/NsY=;
+        b=bwfjdxJkqe+DeF1RY9AKzrEXwyPLC/yHNlT1B2Rkx9sh1QY1A9riBcJ4z/Ko/gS7vg
+         cB+dCspI7yftGASx156yAR30J3ikYf6dHQtsRt7Sj7JCMfHEv/QrQ00RhNqtLuGqCW1G
+         wOy1HL5G+mv9CGPeAyiTDqZxUyuOdqKKKKxLjqv2VqSF7Do3eXKWQxE8BCHlsJS8iV7s
+         vLbxlf+6plAofxj0k1R7/pR5R36oP3ND6qawH/Y9pIHSrioD4Q77DAhZCMXYflm8VaFL
+         2wSbKpgHLnEmwbr43m6Ul0svyBbMYatuKPvT+idUWzjXMHD8WQZ70+2UJ70V7X4oe0ZA
+         Hn7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:references:in-reply-to:subject:date
-         :message-id:mime-version:content-transfer-encoding:thread-index
-         :content-language;
-        bh=Ao+FjF5SWqRKc9E4SW4vNeUcTXLpfMPwtNVusoC+6pQ=;
-        b=RLBWdAPznayVz2us0l167ZS2/q1bJnhZKJ71J+Xmr2mE067UjeCgetGgHCxwcv3U/1
-         IEc30GGIBIxqBP/A42hnI1oHMVXvR5MRZQOUU5sp77evJgSFEucFVJlvkDCKQXF+3SEB
-         1zqdXm2ecAcDleYjHp2YWhl1rL96qW/Zje29mxXXcrj3OM1T/P9o8O/VC3aIRN9Y+aug
-         yHpg2TqPcxJO2X9HXzwFEkEZvVcQ/XbjyMs4MTcbYPD5+XQGAxBx5vkaq+6mzbmsPj1H
-         MOBDzOo8tV6AmTlPYEpIscedYluoR5woB3p+DFIQpsY+tvk7ccfsbLLmTv8So8wq50tv
-         mjgQ==
-X-Gm-Message-State: AA+aEWaIcLRMDN2OL+cASLPMfnXoL1Vl6N1hFQAVs4L0O6A+JuJJaKRh
-        Rk2JhdOh7CKI/jp0Bc70COW7+JR9
-X-Google-Smtp-Source: AFSGD/WGuFJo7fw+FAgGiWh5c7ASbdc62Q5GdoNeSU7gFNu+CPbKXKDe0y10LA6cOQOEVF5qHluR6Q==
-X-Received: by 2002:a37:8b84:: with SMTP id n126mr11176011qkd.355.1542934370386;
-        Thu, 22 Nov 2018 16:52:50 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding:thread-index:content-language;
+        bh=Bnh6iMYqhkSEP1dwxa9zKpbcPVJ/B4FZz/wZld4/NsY=;
+        b=egQ5P9+yyMyuay3z5TQkw4UyVViijWLunpLUeP5IGNpb+48KdLl/OHvvIfbdHnc63X
+         mnn4kqx/9lONmxUYvVuANdB0wFawpdLtu7GAWZaShACPd+fmRRYUMy7dYWtI/mKkZxiV
+         ijdXMeg5raPdFCMXqafFMofY7bZ0f8v9+cM1bH5na/sNzBVXIjaz9RxRgA6Xg4+8k/AI
+         3DjuOLJNTVitbLquLSxseGaVhTcq1R82sDvsleiYGG2I9STWBasGAs6RVMuNv47ksYjj
+         nESvsm0lNgaHZJmKij35DrFyRAcNj3iSKgGH8qPMdJiVT3IQeM+wD2XaOSceWYUO7D1a
+         AutQ==
+X-Gm-Message-State: AGRZ1gKX4BX5lwop50EW1kHCbrmCXiaO8bAEKTTROikuGcIlsPANrmqD
+        Q9Xr9wQzeE34HhvDWgkNKY2f6n5g
+X-Google-Smtp-Source: AJdET5czvmCMXJJVegtFWOtIDqoaTvekHl5c+TRzNFmBAgIqbaWVkdAbtxkHHBhWfs3P0DJmGEKTPQ==
+X-Received: by 2002:aed:358b:: with SMTP id c11mr11699717qte.155.1542934452083;
+        Thu, 22 Nov 2018 16:54:12 -0800 (PST)
 Received: from DESKTOPV0UVPFT ([2601:152:4302:ae1f:295b:c0a6:9d8c:e5b])
-        by smtp.gmail.com with ESMTPSA id 33sm39020361qto.14.2018.11.22.16.52.49
+        by smtp.gmail.com with ESMTPSA id l20sm26751024qke.88.2018.11.22.16.54.11
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 16:52:49 -0800 (PST)
+        Thu, 22 Nov 2018 16:54:11 -0800 (PST)
 From:   <gamanakis@gmail.com>
 To:     <linux-kernel@vger.kernel.org>
-References: <000201d482c6$405e3bc0$c11ab340$@gmail.com>
-In-Reply-To: <000201d482c6$405e3bc0$c11ab340$@gmail.com>
 Subject: Hard lockups with VMs on 4.19
-Date:   Thu, 22 Nov 2018 19:52:48 -0500
-Message-ID: <000f01d482c6$db4848b0$91d8da10$@gmail.com>
+Date:   Thu, 22 Nov 2018 19:54:10 -0500
+Message-ID: <001001d482c7$0bfe3960$23faac20$@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain;
         charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKNae5SmDEcHAdq3rzU3smg+OuydaPquabQ
+Thread-Index: AdSCxwtlwnBw7BagRSeazXfEdb/mPA==
 Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-
-
-
-From: gamanakis@gmail.com <gamanakis@gmail.com>=20
-Sent: Thursday, November 22, 2018 7:48 PM
-To: peterz@infradead.org; linux-kernel@vger.kernel.org
-Subject: Hard lockups with VMs on 4.19
 
 I am seeing a lot of hard lockups when I fire up a KVM (Windows 10 with
 VFIO), on 4.19.2 and 4.19.3 (tested from linux-stable).
@@ -719,6 +709,7 @@ shutdown[1]: Syncing filesystems and block devices.
 shutdown[1]: Sending SIGTERM to remaining processes...
 
 -----------------8<-----------------
+
 
 
 
