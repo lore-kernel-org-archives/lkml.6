@@ -2,85 +2,124 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C6DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6395C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2D8A20865
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:35:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2D8A20865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 8D94520824
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:35:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D94520824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437204AbeKXFUl (ORCPT
+        id S2437225AbeKXFVL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 00:20:41 -0500
-Received: from imap1.codethink.co.uk ([176.9.8.82]:60779 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395385AbeKXFUk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 00:20:40 -0500
-Received: from cpc118554-reig6-2-0-cust775.6-3.cable.virginm.net ([86.18.95.8] helo=xylophone.i.decadent.org.uk)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1gQGIK-0001LL-HD; Fri, 23 Nov 2018 18:35:12 +0000
-Date:   Fri, 23 Nov 2018 18:35:10 +0000
-From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] selftests/bpf: Add test case for defence against SSB
- exploitation
-Message-ID: <20181123183510.irdednmxibfal5mu@xylophone.i.decadent.org.uk>
-References: <20181123183356.5q4bu47zpj5wdufb@xylophone.i.decadent.org.uk>
+        Sat, 24 Nov 2018 00:21:11 -0500
+Received: from foss.arm.com ([217.140.101.70]:51074 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731181AbeKXFVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Nov 2018 00:21:10 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90B8B3620;
+        Fri, 23 Nov 2018 10:35:45 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 60E413F5CF;
+        Fri, 23 Nov 2018 10:35:45 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id D144B1AE1019; Fri, 23 Nov 2018 18:36:01 +0000 (GMT)
+Date:   Fri, 23 Nov 2018 18:36:01 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, alex.williamson@redhat.com,
+        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
+        freedreno <freedreno@lists.freedesktop.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        robh+dt <robh+dt@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [RESEND PATCH v17 2/5] iommu/arm-smmu: Invoke pm_runtime during
+ probe, add/remove device
+Message-ID: <20181123183555.GE21183@arm.com>
+References: <20181116112430.31248-1-vivek.gautam@codeaurora.org>
+ <20181116112430.31248-3-vivek.gautam@codeaurora.org>
+ <20181121173757.GA9801@arm.com>
+ <CAFp+6iEH7_XEcZNsbZfn6iBF5_o-ZKBj=DpturH7N85LU289qg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181123183356.5q4bu47zpj5wdufb@xylophone.i.decadent.org.uk>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAFp+6iEH7_XEcZNsbZfn6iBF5_o-ZKBj=DpturH7N85LU289qg@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Test that the defence added by commit af86ca4e3088 "bpf: Prevent
-memory disambiguation attack" is actually being applied.
+On Thu, Nov 22, 2018 at 05:32:24PM +0530, Vivek Gautam wrote:
+> Hi Will,
+> 
+> On Wed, Nov 21, 2018 at 11:09 PM Will Deacon <will.deacon@arm.com> wrote:
+> >
+> > On Fri, Nov 16, 2018 at 04:54:27PM +0530, Vivek Gautam wrote:
+> > > From: Sricharan R <sricharan@codeaurora.org>
+> > >
+> > > The smmu device probe/remove and add/remove master device callbacks
+> > > gets called when the smmu is not linked to its master, that is without
+> > > the context of the master device. So calling runtime apis in those places
+> > > separately.
+> > > Global locks are also initialized before enabling runtime pm as the
+> > > runtime_resume() calls device_reset() which does tlb_sync_global()
+> > > that ultimately requires locks to be initialized.
+> > >
+> > > Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> > > [vivek: Cleanup pm runtime calls]
+> > > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> > > Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> > > Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > > Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+> > > ---
+> > >  drivers/iommu/arm-smmu.c | 101 ++++++++++++++++++++++++++++++++++++++++++-----
+> > >  1 file changed, 91 insertions(+), 10 deletions(-)
+> >
+> > Given that you're doing the get/put in the TLBI ops unconditionally:
+> >
+> > >  static void arm_smmu_flush_iotlb_all(struct iommu_domain *domain)
+> > >  {
+> > >       struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+> > > +     struct arm_smmu_device *smmu = smmu_domain->smmu;
+> > >
+> > > -     if (smmu_domain->tlb_ops)
+> > > +     if (smmu_domain->tlb_ops) {
+> > > +             arm_smmu_rpm_get(smmu);
+> > >               smmu_domain->tlb_ops->tlb_flush_all(smmu_domain);
+> > > +             arm_smmu_rpm_put(smmu);
+> > > +     }
+> > >  }
+> > >
+> > >  static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
+> > >  {
+> > >       struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+> > > +     struct arm_smmu_device *smmu = smmu_domain->smmu;
+> > >
+> > > -     if (smmu_domain->tlb_ops)
+> > > +     if (smmu_domain->tlb_ops) {
+> > > +             arm_smmu_rpm_get(smmu);
+> > >               smmu_domain->tlb_ops->tlb_sync(smmu_domain);
+> > > +             arm_smmu_rpm_put(smmu);
+> > > +     }
+> >
+> > Why do you need them around the map/unmap calls as well?
+> 
+> We still have .tlb_add_flush path?
 
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
----
- tools/testing/selftests/bpf/test_verifier.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Ok, so we could add the ops around that as well. Right now, we've got
+the runtime pm hooks crossing two parts of the API.
 
-diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
-index e71b7f2e5f17..ca21a63541b0 100644
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -13927,6 +13927,21 @@ static struct bpf_test tests[] = {
- 		.result = ACCEPT,
- 	},
- 	{
-+		"reference tracking: defend against SSB exploitation",
-+		.insns = {
-+			BPF_MOV32_IMM(BPF_REG_2, 1),
-+			/* stack[-1] = (integer) 1 */
-+			BPF_STX_MEM(BPF_DW, BPF_REG_10, BPF_REG_2, -8),
-+			/* stack[-1] = (pointer) context */
-+			BPF_STX_MEM(BPF_DW, BPF_REG_10, BPF_REG_1, -8),
-+			BPF_MOV32_IMM(BPF_REG_0, 0),
-+			BPF_EXIT_INSN(),
-+		},
-+		.infostr_unpriv = "patching in sanitization against SSB at 2",
-+		.result_unpriv = ACCEPT,
-+		.result = ACCEPT,
-+	},
-+	{
- 		"calls: ctx read at start of subprog",
- 		.insns = {
- 			BPF_MOV64_REG(BPF_REG_6, BPF_REG_1),
--- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
-
+Will
