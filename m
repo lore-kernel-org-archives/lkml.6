@@ -1,127 +1,124 @@
 Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D83B4C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71356C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BD51206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:38:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F19A20685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:42:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6OWQge9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD51206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="GFcnzSj1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F19A20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502386AbeKWSVG (ORCPT
+        id S2502391AbeKWSZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 13:21:06 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37606 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731610AbeKWSVG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 13:21:06 -0500
-Received: by mail-wr1-f67.google.com with SMTP id j10so11321642wru.4
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 23:38:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6qKMan9DxzWuKJunm8AKX6QwDO3EfjfugZ3rIsPprOk=;
-        b=P6OWQge9KXnNshFObceCugz3GPKZYZn6P7gRlBJpIpV94SL/0FduDejvBU3NaSyJsg
-         LNkhI2iZM5G+5DeAAeOVD5Y3g0Thg6D9Cgg7bbO1BZ85M2OMoXPeeNAvdnVjbRIwZEoP
-         VmZbBl9nVZ6ropGVzh15mCfR9wfB+FGN3SoMyidjKPHpDwI7v7dckJjWJ+sQxQHWGaRO
-         25YTQQtMfPNQjp/CSnqSvpPX1SavfqzpzxBapJ48mp4O+vPAKnJa08NNUW9EiMNGxGx8
-         6Lk2ZYl4ayI7UGaQm8V/h62Kb2b8A/xkxp+Kt593TMw+z6xUrumEfHqCSxZq9MrX60mJ
-         349w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6qKMan9DxzWuKJunm8AKX6QwDO3EfjfugZ3rIsPprOk=;
-        b=lgxLFMChRATqDOrN9u04wV5hG5Mb7HrSRwkV9lu4hlhrbsKJuiOa7ZE+JoSXHTrBtk
-         vZXY9t4uS4N5HElMV8Qj7VMUabXhEubFQeC5P+bSmrbReMMhfO3Jmk918kHuCMP57G67
-         g9uZzZkcIrCeJRr7y0WEcab5M6N/6Uma0ftXVTHVmTwuU+QdW4I4jTjdYNSvtjRdL65K
-         8c6M3AR83tPHDJIxUmtBUravjKLcp5ZM/aGGQngCo/y2JtO+XirRnJVcj/dgDslhodq/
-         G9l0LqLe2/jCLlYLhM83IBVGoQb5l6UULFrNCQkVAEc6eX5ihgz59ChCoV1mcWU/dkiV
-         vXbg==
-X-Gm-Message-State: AA+aEWYcJS3o/byXcbueSzJijQT9sn3+xxtL+bGTZyhOAsTvRXcGCKYZ
-        qf/II95DaGIhHTgRyL7XueI=
-X-Google-Smtp-Source: AFSGD/V+C7u/dmQl/Eco9fd4n6bRDpSygx+E5BDYXWr9qSwT3jD+ubwDdBIqH4Mg0PDL96MY/Gtafw==
-X-Received: by 2002:adf:be8d:: with SMTP id i13mr13029381wrh.235.1542958682895;
-        Thu, 22 Nov 2018 23:38:02 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id g188sm6609478wmf.32.2018.11.22.23.38.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 22 Nov 2018 23:38:02 -0800 (PST)
-Date:   Fri, 23 Nov 2018 08:37:59 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [patch 20/24] x86/speculation: Split out TIF update
-Message-ID: <20181123073759.GB12959@gmail.com>
-References: <20181121201430.559770965@linutronix.de>
- <20181121201724.227260385@linutronix.de>
- <20181122074322.GE41788@gmail.com>
- <alpine.DEB.2.21.1811230000590.1665@nanos.tec.linutronix.de>
+        Fri, 23 Nov 2018 13:25:58 -0500
+Received: from m12-13.163.com ([220.181.12.13]:48886 "EHLO m12-13.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390041AbeKWSZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 13:25:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Date:From:Subject:Message-ID:MIME-Version; bh=l7HrF
+        AUGrX/AbS0daXYfYodInwELvxOeILo2B59k4VE=; b=GFcnzSj1j2mu3yFSednpH
+        +GC/pwKCgqrzkREQeViqs1ogibrBvrSAV/pfHwl1la86H5BJqbjQNgfORadkeIGI
+        tmATt8z4oSTNIRRUASdktXXFS5QkA/T+DIdbSgBELEYVQrk15sLcnjYd12LtFsiH
+        YyVxvjSGezdzO6yWb7qBWs=
+Received: from bp (unknown [106.120.213.96])
+        by smtp9 (Coremail) with SMTP id DcCowAA3JS4Pr_db3bKfBQ--.42338S2;
+        Fri, 23 Nov 2018 15:41:05 +0800 (CST)
+Date:   Fri, 23 Nov 2018 15:41:06 +0800
+From:   PanBian <bianpan2016@163.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] exportfs: do not read dentry after free
+Message-ID: <20181123074106.GA102096@bp>
+Reply-To: PanBian <bianpan2016@163.com>
+References: <1542942953-93562-1-git-send-email-bianpan2016@163.com>
+ <CAOQ4uxj74Xh6ZbJp7zPZOxOY-gkrm5K1yU31+DW1YMYzOWtKgA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1811230000590.1665@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAOQ4uxj74Xh6ZbJp7zPZOxOY-gkrm5K1yU31+DW1YMYzOWtKgA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-CM-TRANSID: DcCowAA3JS4Pr_db3bKfBQ--.42338S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJr1kAFykXw15Zr1fJry5Jwb_yoW8Aw1kpa
+        n3Gr4FkFWvqFsxCr4xuF15X3409w1IqF15JFyUWr18Xr9xXF1F9r129w1q9Fy09rs5CFWD
+        XF4DKw1fWF45ZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07bUSoXUUUUU=
+X-Originating-IP: [106.120.213.96]
+X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/xtbBUREIclaD0R7dzQAAsw
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Thomas Gleixner <tglx@linutronix.de> wrote:
-
-> On Thu, 22 Nov 2018, Ingo Molnar wrote:
-> > * Thomas Gleixner <tglx@linutronix.de> wrote:
-> > 
-> > Had to read this twice, because the comment and the code are both correct 
-> > but deal with the inverse case. This might have helped:
-> > 
-> > 	/*
-> > 	 * Immediately update the speculation MSRs on the current task,
-> > 	 * but for non-current tasks delay setting the CPU mitigation 
-> > 	 * until it is scheduled next.
-> > 	 */
-> > 	if (tsk == current && update)
-> > 		speculation_ctrl_update_current();
-> > 
-> > But can the target task ever be non-current here? I don't think so: the 
-> > two callers are prctl and seccomp, and both are passing in the current 
-> > task pointer.
+On Fri, Nov 23, 2018 at 07:58:15AM +0200, Amir Goldstein wrote:
+> On Fri, Nov 23, 2018 at 5:16 AM Pan Bian <bianpan2016@163.com> wrote:
+> >
+> > The function dentry_connected calls dput(dentry) to drop the previously
+> > acquired reference to dentry. In this case, dentry can be released.
+> > After that, IS_ROOT(dentry) checks the condition
+> > (dentry == dentry->d_parent), which may result in a use-after-free bug.
+> > This patch directly compares dentry with its parent obtained before
+> > dropping the reference.
+> >
+> > Fixes: a056cc8934c("exportfs: stop retrying once we race with
+> > rename/remove")
+> >
 > 
-> See te other mail. Yes, seccomp passes non current task pointers. Will
-> update the comment.
+> CC Fixes patch author/reviewers
+> 
+> How did you find this? by code review or did this actually happen?
+> 
+> Normally a IS_ROOT dentry would be either DCACHE_DISCONNECTED or
+> pinned to some super block, but I guess there may be corner cases?
 
-Ignore my previous mail :-)
+I found this by code review, and I have not yet observed crash.
 
-Thanks,
+> 
+> > Signed-off-by: Pan Bian <bianpan2016@163.com>
+> > ---
+> >  fs/exportfs/expfs.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+> > index 645158d..a69aaf5 100644
+> > --- a/fs/exportfs/expfs.c
+> > +++ b/fs/exportfs/expfs.c
+> > @@ -77,7 +77,7 @@ static bool dentry_connected(struct dentry *dentry)
+> >                 struct dentry *parent = dget_parent(dentry);
+> >
+> >                 dput(dentry);
+> > -               if (IS_ROOT(dentry)) {
+> > +               if (dentry == parent) { /* is root entry */
+> >                         dput(parent);
+> >                         return false;
+> >                 }
+> 
+> The change itself looks right, but the name IS_ROOT is confusing
+> enough as it is. The explicit comment is just plain wrong.
+> If it was really a root dentry, it wouldn't have been DCACHE_DISCONNECTED
+> (unless it is a filesystem bug).
 
-	Ingo
+I will remove the comment and resubmit the patch.
+
+Thanks a lot,
+Pan
+
+> 
+> Thanks,
+> Amir.
+
