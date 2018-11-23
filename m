@@ -2,179 +2,108 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D779C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C42AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:51:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 256AA20685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:47:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D153E20685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:51:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TXfoCiS1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 256AA20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/QoltaE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D153E20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440177AbeKXBb3 (ORCPT
+        id S2440169AbeKXBfb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 20:31:29 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:42404 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437136AbeKXBb1 (ORCPT
+        Fri, 23 Nov 2018 20:35:31 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45085 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389110AbeKXBfb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 20:31:27 -0500
-Received: by mail-yb1-f195.google.com with SMTP id o204-v6so4817245yba.9
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 06:47:00 -0800 (PST)
+        Fri, 23 Nov 2018 20:35:31 -0500
+Received: by mail-pl1-f194.google.com with SMTP id a14so10732153plm.12;
+        Fri, 23 Nov 2018 06:51:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5n02Z/myeFj1F8RpS5QSGjnT+KVqlmuvpZCbyQ1Fj4I=;
-        b=TXfoCiS1Wcw2OfN/IvOXoWocR13nwkRsejtar4bpLjHQgTC9UalWhBrbhyW8kpXGQg
-         qXjvw55S5P5xdMDj9opUu/saT3phuh91D9fhsq8mCl8figvwMyTSdfUx+0e/L/mtxjgL
-         aiZArSsqoTLE0NaAwoPjaE+S4Wp7g/29POCRg=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=voownpDEuyOtOySXWnXP++MLmz0fNIioGWXEuqsg52c=;
+        b=S/QoltaEpZZnq+ZUi9VdcxTJrS946b8xXaGIof4zcNe3kvv6jqBz5KiRWR1jvZVWh7
+         qLcjKftWKSKG+E2BA+5OBJ937vaYlFFpSk4mZHRHD59MLYDSZJnYB5UGGdIKSEdZc+3y
+         rtzi7gUu/rz7wcx0uuYMxz/ne64uGLADu/KZf5+/v9N1Vo3XVrMagXdVycMlo7XGuHD1
+         TPyska0GcwG7vAJte5ECTSsbbWeJRd617W74hb3YFLFC6PF3GWp8G6qbDb7Yz+urT59S
+         6g4tz0Ctxb5jhytTiDrLmwWaoGbmSHwUHudbUyeLpzesXgmx4NcBkps0CPd35XU1QM9M
+         XK/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5n02Z/myeFj1F8RpS5QSGjnT+KVqlmuvpZCbyQ1Fj4I=;
-        b=Op40GwbzkOI5lpjgdWTVhM2I1JpMeZeAwv7tenFPZ01wSNGAuIMyInr6DaMDUBIyUe
-         +TkbDUMXrFeiP/NWDG0EKuGlG7nWLHHGoZqWjUWoDN/OFREpDIAXM2j2tCK62Z2u79mt
-         8Xt+e3SzDO/5eCu8F9equl4yp2/a4Z26TzZP9IpVIQBR3FIschnRK6O5irhqpF6lJn89
-         sfTwwMpuPdNkG87hSStEzlOnJHlaOK/fwCPT5xEpyo9iSmUjC/y/PthouRE4WXdMr+sR
-         xKdcGfGufgj/e3aIS8W9JpDGu++51ZuwG+TBJJrriSCMLYElcHBD5tpe9HSFU3oAEO9h
-         iX+A==
-X-Gm-Message-State: AA+aEWa2wm86LnizU0HlETqeSVE41UP7iuGnAAQ+jmAW1OIrW2MjDmHz
-        gXbI3uruRvG8GPpZaJxig04Cl39bJQ3lFw==
-X-Google-Smtp-Source: AFSGD/XFr0eKvoJfwGkDRthHsSmSEU9cuXW4UBt57crcH2G2IkmCMMzCRZV5HU2S7OviDvJce8dKZQ==
-X-Received: by 2002:a25:a141:: with SMTP id z59-v6mr15687854ybh.340.1542984420279;
-        Fri, 23 Nov 2018 06:47:00 -0800 (PST)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id x131-v6sm374955ywc.50.2018.11.23.06.46.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Nov 2018 06:46:57 -0800 (PST)
-Received: by mail-yb1-f181.google.com with SMTP id a67-v6so3283928ybg.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 06:46:56 -0800 (PST)
-X-Received: by 2002:a25:9a46:: with SMTP id r6-v6mr16077652ybo.303.1542984416117;
- Fri, 23 Nov 2018 06:46:56 -0800 (PST)
-MIME-Version: 1.0
-References: <20181017075242.21790-1-henryhsu@chromium.org> <CAAFQd5AL2CnnWLk+i133RRa36HTa0baFkezRhpTXf9YP0DSF1Q@mail.gmail.com>
- <CAHNYxRwbSSp02Zr4a1z5gh0q6cHUUDnZCqRQU7QtP8LMe3Jp2A@mail.gmail.com>
- <1610184.U7oo9Z4Yep@avalon> <CAAFQd5A7k2VgmawF-x=AcKhJiG-shrJiCP4Tu9054J0eE91+9w@mail.gmail.com>
- <d79e0857-c6ae-9e57-52e2-e596864a68f8@metafoo.de>
-In-Reply-To: <d79e0857-c6ae-9e57-52e2-e596864a68f8@metafoo.de>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Fri, 23 Nov 2018 23:46:43 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5C_QucJiZMUgCpztC52Mi3p6HDThHNkcNOm9C+SZUDDYQ@mail.gmail.com>
-Message-ID: <CAAFQd5C_QucJiZMUgCpztC52Mi3p6HDThHNkcNOm9C+SZUDDYQ@mail.gmail.com>
-Subject: Re: [PATCH] media: uvcvideo: Add boottime clock support
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Alexandru Stan <amstan@chromium.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Heng-Ruey Hsu <henryhsu@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ricky Liang <jcliang@chromium.org>, linux-iio@vger.kernel.org,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=voownpDEuyOtOySXWnXP++MLmz0fNIioGWXEuqsg52c=;
+        b=QuXQqqB5lOTns1/22fjnmJpJHue8TTSrbJOl9DzTjjeXQHuIQHH+siTI5vyc1NciBe
+         6o+Snq/OXWcjEf+r5/4+Il8043HlDpCT3GbQNk6hlOOUcsKqPrrlDVQfqZ69O66BoN4F
+         fEec7KDkewgAfrxq7lnha44spfN1aJKoAeuUZ1LUIRva4kvJHIP+ur4NZKFNZfHBAcxj
+         W/3zZdj+w73gVwVLCLX2xnNyKxV5lMlkUpzqToviyOluhv45ndck5uVgSDAvsLOeUJlH
+         DlLwk62FXPOXK1Zsb9GAENT5dWOHCTxspWrt6+24CNP6jB+ZdvV1aYadRWCSIRAuMSCQ
+         kDEg==
+X-Gm-Message-State: AA+aEWbg/O+7FxZICMyUCXap1IOxf4QQ+pAxIyrwhCI/vU/0GG9P69SD
+        GeiJOLAY8snSDCHnB6vgY8M=
+X-Google-Smtp-Source: AFSGD/XzJl/m00r7b/fzau4oRQc0kEjH5p+FzhSfmOfGzPNFNA3UbfBu0U+ejj/yk+P3Z4f+FYAF7A==
+X-Received: by 2002:a17:902:6948:: with SMTP id k8mr15791340plt.2.1542984663430;
+        Fri, 23 Nov 2018 06:51:03 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id o1sm75869324pgn.63.2018.11.23.06.51.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 23 Nov 2018 06:51:02 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     rui.zhang@intel.com, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, keescook@chromium.org,
+        nicoleotsuka@gmail.com, ezequiel@collabora.com,
+        srplinux2008@gmail.com
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] thermal: tegra: soctherm: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date:   Fri, 23 Nov 2018 09:50:58 -0500
+Message-Id: <20181123145058.27115-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+Use macro to simplify the code.
 
-On Fri, Nov 2, 2018 at 12:03 AM Lars-Peter Clausen <lars@metafoo.de> wrote:
->
-> On 11/01/2018 03:30 PM, Tomasz Figa wrote:
-> > On Thu, Nov 1, 2018 at 11:03 PM Laurent Pinchart
-> > <laurent.pinchart@ideasonboard.com> wrote:
-> >>
-> >> Hi Alexandru,
-> >>
-> >> On Thursday, 18 October 2018 20:28:06 EET Alexandru M Stan wrote:
-> >>> On Wed, Oct 17, 2018 at 9:31 PM, Tomasz Figa wrote:
-> >>>> On Thu, Oct 18, 2018 at 5:50 AM Laurent Pinchart wrote:
-> >>>>> On Wednesday, 17 October 2018 11:28:52 EEST Tomasz Figa wrote:
-> >>>>>> On Wed, Oct 17, 2018 at 5:02 PM Laurent Pinchart wrote:
-> >>>>>>> On Wednesday, 17 October 2018 10:52:42 EEST Heng-Ruey Hsu wrote:
-> >>>>>>>> Android requires camera timestamps to be reported with
-> >>>>>>>> CLOCK_BOOTTIME to sync timestamp with other sensor sources.
-> >>>>>>>
-> >>>>>>> What's the rationale behind this, why can't CLOCK_MONOTONIC work ? If
-> >>>>>>> the monotonic clock has shortcomings that make its use impossible for
-> >>>>>>> proper synchronization, then we should consider switching to
-> >>>>>>> CLOCK_BOOTTIME globally in V4L2, not in selected drivers only.
-> >>>>>>
-> >>>>>> CLOCK_BOOTTIME includes the time spent in suspend, while
-> >>>>>> CLOCK_MONOTONIC doesn't. I can imagine the former being much more
-> >>>>>> useful for anything that cares about the actual, long term, time
-> >>>>>> tracking. Especially important since suspend is a very common event on
-> >>>>>> Android and doesn't stop the time flow there, i.e. applications might
-> >>>>>> wake up the device to perform various tasks at necessary times.
-> >>>>>
-> >>>>> Sure, but this patch mentions timestamp synchronization with other
-> >>>>> sensors, and from that point of view, I'd like to know what is wrong with
-> >>>>> the monotonic clock if all devices use it.
-> >>>>
-> >>>> AFAIK the sensors mentioned there are not camera sensors, but rather
-> >>>> things we normally put under IIO, e.g. accelerometers, gyroscopes and
-> >>>> so on. I'm not sure how IIO deals with timestamps, but Android seems
-> >>>> to operate in the CLOCK_BOTTIME domain. Let me add some IIO folks.
-> >>>>
-> >>>> Gwendal, Alexandru, do you think you could shed some light on how we
-> >>>> handle IIO sensors timestamps across the kernel, Chrome OS and
-> >>>> Android?
-> >>>
-> >>> On our devices of interest have a specialized "sensor" that comes via
-> >>> IIO (from the EC, cros-ec-ring driver) that can be used to more
-> >>> accurately timestamp each frame (since it's recorded with very low
-> >>> jitter by a realtime-ish OS). In some high level userspace thing
-> >>> (specifically the Android Camera HAL) we try to pick the best
-> >>> timestamp from the IIO, whatever's closest to what the V4L stuff gives
-> >>> us.
-> >>>
-> >>> I guess the Android convention is for sensor timestamps to be in
-> >>> CLOCK_BOOTTIME (maybe because it likes sleeping so much). There's
-> >>> probably no advantage to using one over the other, but the important
-> >>> thing is that they have to be the same, otherwise the closest match
-> >>> logic would fail.
-> >>
-> >> That's my understanding too, I don't think CLOCK_BOOTTIME really brings much
-> >> benefit in this case,
-> >
-> > I think it does have a significant benefit. CLOCK_MONOTONIC stops when
-> > the device is sleeping, but the sensors can still capture various
-> > actions. We would lose the time keeping of those actions if we use
-> > CLOCK_MONOTONIC.
-> >
-> >> but it's important than all timestamps use the same
-> >> clock. The question is thus which clock we should select. Mainline mostly uses
-> >> CLOCK_MONOTONIC, and Android CLOCK_BOOTTIME. Would you like to submit patches
-> >> to switch Android to CLOCK_MONOTONIC ? :-)
-> >
-> > Is it Android using CLOCK_BOOTTIME or the sensors (IIO?). I have
-> > almost zero familiarity with the IIO subsystem and was hoping someone
-> > from there could comment on what time domain is used for those
-> > sensors.
->
-> IIO has the option to choose between BOOTTIME or MONOTONIC (and a few
-> others) for the timestamp on a per device basis.
->
-> There was a bit of a discussion about this a while back. See
-> https://lkml.org/lkml/2018/7/10/432 and the following thread.
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/thermal/tegra/soctherm.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-Given that IIO supports BOOTTIME in upstream already and also the
-important advantage of using it over MONOTONIC for systems which keep
-capturing events during sleep, do you think we could move on with some
-way to support it in uvcvideo or preferably V4L2 in general?
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index ed28110a3535..45b41b885f49 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -803,17 +803,7 @@ static int regs_show(struct seq_file *s, void *data)
+ 	return 0;
+ }
+ 
+-static int regs_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, regs_show, inode->i_private);
+-}
+-
+-static const struct file_operations regs_fops = {
+-	.open		= regs_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(regs);
+ 
+ static void soctherm_debug_init(struct platform_device *pdev)
+ {
+-- 
+2.17.0
 
-Best regards,
-Tomasz
