@@ -2,170 +2,529 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D97EDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBCDAC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9567A20685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:31:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="WpqmA6fq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9567A20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 9E28F20685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:31:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E28F20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504301AbeKWXPE (ORCPT
+        id S2504315AbeKWXP1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:15:04 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46450 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504288AbeKWXPD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:15:03 -0500
-Received: by mail-ed1-f68.google.com with SMTP id o10so10094926edt.13
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 04:31:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=1i5cJD7dtBPIKUJ1vk1tbF/Vq8rFtrmvcUuxYJfDHKo=;
-        b=WpqmA6fq9ypZEqgOHA32IioWamFR+pLfw/q8VAbZhYzZj/nb3BeDnn82na90PfBLqT
-         4gP7Zn0Qr2qLGa/j2Zz2YQut6TRFCIfOU5n1TNKxvJVwzTTltmyREUapXdmiCiLRdN5y
-         av/Ay+uu40MgsBQKAoDCV1u9uEeXJXJgu4cqU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=1i5cJD7dtBPIKUJ1vk1tbF/Vq8rFtrmvcUuxYJfDHKo=;
-        b=o8LDV20dUBj6CRy6bDT7Tmc+vZ8QAuADKJp4BXLLrl2WagIJiXshlMCcokRknd3KfY
-         u2PqTGV2OzblVcTV2kBkUGXF03dr2t2U4ZxRfTEvjul5tu++ctC3+zOe/4kAhsQtgzgv
-         7yxRECwJVLbtg4Lj7wVnrDYyNcmgyTBFDuAmi5KgobsCoO9kyWtAS9x+0+NIgYFpj3qf
-         3pNuhrndLO3RB8ihg0sA4cDIr5HJQ9SRgWWbulS/CHbQcByu98V9Ff8cjlIKO0DcvxWR
-         l3iEiWOYVscUvSmb+qpvDkrRcI+w4mMk2dMtbPFdblCfzcIRxUAGtdqOGacBgABxcxJz
-         B85g==
-X-Gm-Message-State: AGRZ1gK7sba2P9Pd6CU+HV40hBRmP5SVRh1eJuWR2W4yhJi8kEkO+7GB
-        qRyygJI0k9HM2dlccBxtoD13Ww==
-X-Google-Smtp-Source: AJdET5cO93AsubCsxW2yEPYBnQBfAqxgpkrQ/C/JWqhWmAsUE5VUwY95cc/qQLrIt8vDHC4XtemPGA==
-X-Received: by 2002:a17:906:64cb:: with SMTP id p11-v6mr11494968ejn.181.1542976260719;
-        Fri, 23 Nov 2018 04:31:00 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id e35sm9195196eda.13.2018.11.23.04.30.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 23 Nov 2018 04:30:59 -0800 (PST)
-Date:   Fri, 23 Nov 2018 13:30:57 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        David Rientjes <rientjes@google.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 1/3] mm: Check if mmu notifier callbacks are allowed to
- fail
-Message-ID: <20181123123057.GK4266@phenom.ffwll.local>
-Mail-Followup-To: Michal Hocko <mhocko@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        David Rientjes <rientjes@google.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-References: <20181122165106.18238-1-daniel.vetter@ffwll.ch>
- <20181122165106.18238-2-daniel.vetter@ffwll.ch>
- <20181123111557.GG8625@dhcp22.suse.cz>
+        Fri, 23 Nov 2018 18:15:27 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:37124 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2504289AbeKWXP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 18:15:27 -0500
+Received: from [94.134.91.248] (helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gQAcA-0004Zg-8d; Fri, 23 Nov 2018 13:31:18 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Add DT for nanopc-t4
+Date:   Fri, 23 Nov 2018 13:31:17 +0100
+Message-ID: <2370153.n0vTqR1ltx@phil>
+In-Reply-To: <20181123074744.11583-1-tomeu.vizoso@collabora.com>
+References: <20181123073120.6250-1-tomeu.vizoso@collabora.com> <20181123074744.11583-1-tomeu.vizoso@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181123111557.GG8625@dhcp22.suse.cz>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 12:15:57PM +0100, Michal Hocko wrote:
-> On Thu 22-11-18 17:51:04, Daniel Vetter wrote:
-> > Just a bit of paranoia, since if we start pushing this deep into
-> > callchains it's hard to spot all places where an mmu notifier
-> > implementation might fail when it's not allowed to.
-> 
-> What does WARN give you more than the existing pr_info? Is really
-> backtrace that interesting?
+Hi Tomeu,
 
-Automated tools have to ignore everything at info level (there's too much
-of that). I guess I could do something like
+Am Freitag, 23. November 2018, 08:46:30 CET schrieb Tomeu Vizoso:
+> diff --git a/Documentation/devicetree/bindings/arm/rockchip.txt b/Documentation/devicetree/bindings/arm/rockchip.txt
+> index 0cc71236d639..e907d309486e 100644
+> --- a/Documentation/devicetree/bindings/arm/rockchip.txt
+> +++ b/Documentation/devicetree/bindings/arm/rockchip.txt
+> @@ -71,6 +71,10 @@ Rockchip platforms device tree bindings
+>      Required root node properties:
+>        - compatible = "firefly,roc-rk3399-pc", "rockchip,rk3399";
+>  
+> +- FriendlyElec NanoPC-T4 board:
+> +    Required root node properties:
+> +      - compatible = "friendlyarm,nanopc-t4", "rockchip,rk3399";
+> +
 
-if (blockable)
-	pr_warn(...)
-else
-	pr_info(...)
+alphabetical please
 
-WARN() is simply my goto tool for getting something at warning level
-dumped into dmesg. But I think the pr_warn with the callback function
-should be enough indeed.
+>  - ChipSPARK PopMetal-RK3288 board:
+>      Required root node properties:
+>        - compatible = "chipspark,popmetal-rk3288", "rockchip,rk3288";
+> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+> index 49042c477870..ed90cd1e5a8b 100644
+> --- a/arch/arm64/boot/dts/rockchip/Makefile
+> +++ b/arch/arm64/boot/dts/rockchip/Makefile
+> @@ -20,3 +20,4 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rock960.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire-excavator.dtb
+> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopc-t4.dtb
 
-If you wonder where all the info level stuff happens that we have to
-ignore: suspend/resume is a primary culprit (fairly important for
-gfx/desktops), but there's a bunch of other places. Even if we ignore
-everything at info and below we still need filters because some drivers
-are a bit too trigger-happy (i915 definitely included I guess, so everyone
-contributes to this problem).
+alphabetical please
 
-Cheers, Daniel
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi
+> new file mode 100644
+> index 000000000000..148f85b4bd49
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi
 
-> 
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Michal Hocko <mhocko@suse.com>
-> > Cc: "Christian König" <christian.koenig@amd.com>
-> > Cc: David Rientjes <rientjes@google.com>
-> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Cc: "Jérôme Glisse" <jglisse@redhat.com>
-> > Cc: linux-mm@kvack.org
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > ---
-> >  mm/mmu_notifier.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-> > index 5119ff846769..59e102589a25 100644
-> > --- a/mm/mmu_notifier.c
-> > +++ b/mm/mmu_notifier.c
-> > @@ -190,6 +190,8 @@ int __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
-> >  				pr_info("%pS callback failed with %d in %sblockable context.\n",
-> >  						mn->ops->invalidate_range_start, _ret,
-> >  						!blockable ? "non-" : "");
-> > +				WARN(blockable,"%pS callback failure not allowed\n",
-> > +				     mn->ops->invalidate_range_start);
-> >  				ret = _ret;
-> >  			}
-> >  		}
-> > -- 
-> > 2.19.1
-> > 
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
+[...]
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+General comment about regulators, the vendor-kernel dts' regularly
+don't model regulators in a nice way representing the hardware.
+
+There is obviously schematics available for the board
+http://wiki.friendlyarm.com/wiki/images/d/dd/NanoPi-M4-2GB-1807-Schematic.pdf
+
+Please model the regulator tree following the naming scheme from the
+schematics and including correct supply chaining, so that
+$debug/regulator/regulator_summary looks nice.
+
+This makes it way easier to find issues later on if needed and represents
+the hardware in a correct way.
+
+I guess in the end it should look pretty similar to the rock960 or other
+rk3399 boards (except gru), as most boards follow the reference schematics
+for a big part.
+
+> +	vcc3v3_sys: vcc3v3-sys {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc3v3_sys";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +	};
+> +
+> +	vcc5v0_host: vcc5v0-host-regulator {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc5v0_host";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +	};
+> +
+> +	vcc5v0_sys: vcc5v0-sys {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc5v0_sys";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +	};
+> +
+> +	vccadc_ref: vccadc-ref {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc1v8_sys";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +	};
+> +
+> +	vcc_sd: vcc-sd {
+> +		compatible = "regulator-fixed";
+> +		enable-active-high;
+> +		gpio = <&gpio0 1 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&vcc_sd_h>;
+> +		regulator-name = "vcc_sd";
+> +		regulator-min-microvolt = <3000000>;
+> +		regulator-max-microvolt = <3000000>;
+> +	};
+> +
+> +	vcc_phy: vcc-phy-regulator {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc_phy";
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +	};
+> +
+> +	vcc_lcd: vcc-lcd {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc_lcd";
+> +		gpio = <&gpio4 30 GPIO_ACTIVE_HIGH>;
+> +		startup-delay-us = <20000>;
+> +		enable-active-high;
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-boot-on;
+> +		vin-supply = <&vcc5v0_sys>;
+> +	};
+> +
+> +	vcc5v0_typec: vcc5v0-typec-regulator {
+> +		compatible = "regulator-fixed";
+> +		enable-active-high;
+> +		gpios = <&gpio4 26 GPIO_ACTIVE_HIGH>;
+> +		regulator-name = "vcc5v0_typec";
+> +		regulator-always-on;
+> +		vin-supply = <&vcc5v0_sys>;
+> +	};
+> +
+> +	vdd_log: vdd-log {
+> +		compatible = "pwm-regulator";
+> +		pwms = <&pwm2 0 25000 1>;
+> +		regulator-name = "vdd_log";
+> +		regulator-min-microvolt = <800000>;
+> +		regulator-max-microvolt = <1400000>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +
+> +		/* for rockchip boot on */
+> +		rockchip,pwm_id = <2>;
+> +		rockchip,pwm_voltage = <900000>;
+> +	};
+
+you might want to drop vdd_log for the time being. See
+https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v4.20-armsoc/dts64-fixes&id=13682e524167cbd7e2a26c5e91bec765f0f96273
+
+> +	sdio_pwrseq: sdio-pwrseq {
+> +		compatible = "mmc-pwrseq-simple";
+> +		clocks = <&rk808 1>;
+> +		clock-names = "ext_clock";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&wifi_enable_h>;
+> +
+> +		/*
+> +		 * On the module itself this is one of these (depending
+> +		 * on the actual card populated):
+> +		 * - SDIO_RESET_L_WL_REG_ON
+> +		 * - PDN (power down when low)
+> +		 */
+> +		reset-gpios = <&gpio0 10 GPIO_ACTIVE_LOW>; /* GPIO0_B2 */
+
+general for all gpios: <&gpio RK_PB2 ...> for new boards please
+
+
+> +	};
+> +};
+
+[...]
+
+> +&rga {
+> +	status = "disabled";
+
+Why disabled? It shouldn't hurt.
+
+> +};
+> +
+> +&cdn_dp {
+> +// TODO: typec/fusb302 doesn't have extcon support yet
+> +//	status = "enabled";
+> +	extcon = <&fusb0>;
+
+extcon is not specified and as we talked about yesterday, the
+whole thing doesn't work with the type-c framework yet,
+so ideally just remove the whole &cdn_dp node here.
+
+> +	phys = <&tcphy0_dp>;
+> +};
+> +
+> +&hdmi {
+
+general for node-phandles: alphabetical please
+
+> +	ddc-i2c-bus = <&i2c7>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&hdmi_cec>;
+> +	status = "okay";
+> +};
+> +
+> +&i2c0 {
+> +	status = "okay";
+> +	i2c-scl-rising-time-ns = <160>;
+> +	i2c-scl-falling-time-ns = <30>;
+> +	clock-frequency = <400000>;
+> +
+> +	vdd_cpu_b: syr827@40 {
+> +		compatible = "silergy,syr827";
+> +		reg = <0x40>;
+> +		vin-supply = <&vcc3v3_sys>;
+> +		regulator-compatible = "fan53555-reg";
+
+deprecated (and unusued) property
+
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&vsel1_gpio>;
+> +		vsel-gpios = <&gpio1 17 GPIO_ACTIVE_HIGH>;
+
+not specified in mainline, ideally look at rock960 and friends
+for reference
+
+> +		regulator-name = "vdd_cpu_b";
+> +		regulator-min-microvolt = <712500>;
+> +		regulator-max-microvolt = <1500000>;
+> +		regulator-ramp-delay = <1000>;
+> +		fcs,suspend-voltage-selector = <1>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-initial-state = <3>;
+> +			regulator-state-mem {
+> +			regulator-off-in-suspend;
+> +		};
+> +	};
+> +
+> +	vdd_gpu: syr828@41 {
+> +		compatible = "silergy,syr828";
+> +		reg = <0x41>;
+> +		vin-supply = <&vcc3v3_sys>;
+> +		regulator-compatible = "fan53555-reg";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&vsel2_gpio>;
+> +		vsel-gpios = <&gpio1 14 GPIO_ACTIVE_HIGH>;
+
+same here
+
+> +		regulator-name = "vdd_gpu";
+> +		regulator-min-microvolt = <712500>;
+> +		regulator-max-microvolt = <1500000>;
+> +		regulator-ramp-delay = <1000>;
+> +		fcs,suspend-voltage-selector = <1>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		regulator-initial-state = <3>;
+> +			regulator-state-mem {
+> +			regulator-off-in-suspend;
+> +		};
+> +	};
+> +
+
+[...]
+
+> +&i2c4 {
+> +	status = "okay";
+> +	i2c-scl-rising-time-ns = <160>;
+> +	i2c-scl-falling-time-ns = <30>;
+> +	clock-frequency = <400000>;
+> +
+> +	fusb0: typec-portc@22 {
+> +		compatible = "fcs,fusb302";
+> +		reg = <0x22>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <RK_PA2 IRQ_TYPE_LEVEL_LOW>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&fusb0_int>;
+> +		vbus-supply = <&vcc5v0_typec>;
+> +		status = "okay";
+> +	};
+> +};
+> +
+> +&i2c7 {
+> +	status = "okay";
+> +};
+> +
+> +
+
+double empty line
+
+> +&io_domains {
+> +	status = "okay";
+> +
+> +	bt656-supply = <&vcc1v8_dvp>;		/* bt656_gpio2ab_ms */
+> +	audio-supply = <&vcca1v8_codec>;
+> +	sdmmc-supply = <&vccio_sd>;		/* sdmmc_gpio4b_ms */
+> +	gpio1830-supply = <&vcc_3v0>;		/* gpio1833_gpio4cd_ms */
+
+I think we can do without the comments.
+
+> +};
+> +
+> +&pmu_io_domains {
+> +	status = "okay";
+> +	pmu1830-supply = <&vcc_3v0>;
+> +};
+> +
+> +&pcie_phy {
+> +	status = "okay";
+> +	assigned-clocks = <&cru SCLK_PCIEPHY_REF>;
+> +	assigned-clock-parents = <&cru SCLK_PCIEPHY_REF100M>;
+> +	assigned-clock-rates = <100000000>;
+> +};
+> +
+> +&pcie0 {
+> +	status = "okay";
+> +	ep-gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>;
+> +	num-lanes = <4>;
+> +	max-link-speed = <2>;
+> +};
+> +
+> +&pwm0 {
+> +	status = "okay";
+> +};
+> +
+> +&pwm1 {
+> +	status = "okay";
+> +};
+> +
+> +&pwm2 {
+> +	status = "okay";
+> +	pinctrl-names = "active";
+> +	pinctrl-0 = <&pwm2_pin_pull_down>;
+> +};
+> +
+> +&saradc {
+> +	status = "okay";
+> +	vref-supply = <&vccadc_ref>; /* TBD */
+> +};
+> +
+> +&sdhci {
+> +	bus-width = <8>;
+> +	mmc-hs400-1_8v;
+> +	supports-emmc;
+> +	non-removable;
+> +	keep-power-in-suspend;
+> +	mmc-hs400-enhanced-strobe;
+> +	status = "okay";
+> +};
+> +
+> +&emmc_phy {
+> +	status = "okay";
+> +};
+> +
+> +&sdio0 {
+> +	clock-frequency = <50000000>;
+
+We have a ciu clock, so there should be no need for "clock-frquency"
+
+> +	clock-freq-min-max = <200000 50000000>;
+
+Not part of a binding and the mmc code also seems to ignore it
+
+> +	supports-sdio;
+
+unused and undocumented
+
+> +	bus-width = <4>;
+> +	disable-wp;
+> +	cap-sd-highspeed;
+> +	cap-sdio-irq;
+> +	keep-power-in-suspend;
+> +	mmc-pwrseq = <&sdio_pwrseq>;
+> +	non-removable;
+> +	num-slots = <1>;
+
+outdated and unused property
+
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
+> +	sd-uhs-sdr104;
+> +	status = "okay";
+> +};
+> +
+> +&sdmmc {
+> +	clock-frequency = <150000000>;
+> +	clock-freq-min-max = <100000 150000000>;
+
+same as sdio
+
+> +	supports-sd;
+
+unused and undocumented
+
+> +	bus-width = <4>;
+> +	cap-mmc-highspeed;
+> +	cap-sd-highspeed;
+> +	disable-wp;
+> +	num-slots = <1>;
+
+outdated and unused property
+
+> +	sd-uhs-sdr104;
+> +	vmmc-supply = <&vcc_sd>;
+> +	vqmmc-supply = <&vccio_sd>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_cd &sdmmc_bus4>;
+> +	status = "okay";
+> +};
+> +
+> +&tsadc {
+> +	/* tshut mode 0:CRU 1:GPIO */
+> +	rockchip,hw-tshut-mode = <1>;
+> +	/* tshut polarity 0:LOW 1:HIGH */
+> +	rockchip,hw-tshut-polarity = <1>;
+> +	status = "okay";
+> +};
+> +
+> +&tcphy0 {
+> +	extcon = <&fusb0>;
+
+right now the fusb302 does not provide this extcon and should also
+never do so. When omitting it, the tcphy will at least work in usb3
+host mode.
+
+> +	status = "okay";
+> +};
+> +
+> +&tcphy1 {
+> +	status = "okay";
+> +};
+> +
+> +&u2phy0 {
+> +	status = "okay";
+> +	extcon = <&fusb0>;
+
+same with the extcon
+
+> +
+> +	u2phy0_otg: otg-port {
+> +		status = "okay";
+> +	};
+> +
+> +	u2phy0_host: host-port {
+> +		phy-supply = <&vcc5v0_host>;
+> +		status = "okay";
+> +	};
+> +};
+> +
+> +&u2phy1 {
+> +	status = "okay";
+> +
+> +	u2phy1_otg: otg-port {
+> +		status = "okay";
+> +	};
+> +
+> +	u2phy1_host: host-port {
+> +		phy-supply = <&vcc5v0_host>;
+> +		status = "okay";
+> +	};
+> +};
+> +
+> +&usbdrd3_0 {
+> +	status = "okay";
+> +	extcon = <&fusb0>;
+
+not part of any binding I think?
+
+> +&pinctrl {
+> +
+> +	hdmi {
+> +		/delete-node/ hdmi-i2c-xfer;
+> +	};
+
+No need to delete the node, the hdmi-pinctrl above does not use the
+internal i2c.
+
+
+Heiko
+
+
