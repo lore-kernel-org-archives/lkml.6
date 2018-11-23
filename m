@@ -2,232 +2,173 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D5CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 21:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3164C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 21:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8729E20865
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 21:09:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 965FC20663
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 21:12:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="HlX7kxio"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8729E20865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FOBknAHD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965FC20663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbeKXHzD (ORCPT
+        id S1726768AbeKXH62 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 02:55:03 -0500
-Received: from mail.efficios.com ([167.114.142.138]:36568 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbeKXHzD (ORCPT
+        Sat, 24 Nov 2018 02:58:28 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43000 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbeKXH62 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 02:55:03 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 550469ACC3;
-        Fri, 23 Nov 2018 16:09:08 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id 5-hhJ7RwYubo; Fri, 23 Nov 2018 16:09:07 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id ABF809ACB7;
-        Fri, 23 Nov 2018 16:09:07 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com ABF809ACB7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1543007347;
-        bh=OrbKv5IFil1JCcY2aYtDEIKFr4ZRWb/R8RG+ETlTIuA=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=HlX7kxioma2CyO+I31RrsfXyHs/Ym/sRaS2VEsiQ0KRQbw0pa+C5YUQDq9muTaQ0p
-         FCjPv/mNkZOAoFRrOLDgwUOSHVWx4ooKfGvnpZiomFOW1ZxC4JrkELGc+MJJ4KiEP1
-         rmtRFNJ2Swu9++hkBDjaKulTfSLtzTN/ykNYskOH8XxJlZtHaJiy1r60YN93e2hFz+
-         shA3muLVX0wXhBPgHqZeTmZkiiWKgSyRMe2WnptVjTcTM84JAxdWejEJQmcZZXH17K
-         BZ7ghGcYSCljsvPBylbTJt9DvhDew4zukUiZnCfhUypQfxnWSrBat5AlNL1LZDmLzW
-         9i3FWnyA/Y92Q==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id EjLOfgWaK5_2; Fri, 23 Nov 2018 16:09:07 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 8AA2B9ACB0;
-        Fri, 23 Nov 2018 16:09:07 -0500 (EST)
-Date:   Fri, 23 Nov 2018 16:09:07 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Rich Felker <dalias@libc.org>
-Cc:     Florian Weimer <fweimer@redhat.com>, carlos <carlos@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <1758017676.12041.1543007347347.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20181123183558.GM23599@brightrain.aerifal.cx>
-References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com> <20181122171010.GH23599@brightrain.aerifal.cx> <871s7cvt1l.fsf@oldenburg.str.redhat.com> <20181123142843.GJ23599@brightrain.aerifal.cx> <1150466925.11664.1542992720871.JavaMail.zimbra@efficios.com> <20181123173019.GK23599@brightrain.aerifal.cx> <865273158.11687.1542995541389.JavaMail.zimbra@efficios.com> <20181123183558.GM23599@brightrain.aerifal.cx>
-Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl
- init and thread creation
+        Sat, 24 Nov 2018 02:58:28 -0500
+Received: by mail-io1-f68.google.com with SMTP id x6so9627812ioa.9
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 13:12:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=hKYhyXTjzMMCXATgr0JKyll+UYRT8qnO5I8pGehsi5Y=;
+        b=FOBknAHDd7MwPj+2WURr7blbpi2kn9NW/0w4J2GHBaFSxWcXOnF5OwLrZ2L5PLausg
+         NWZBqmbbZNSqqWnav5ZEa6pq3cKAtGAWEmlXZy9kFH3njG7MG1PJvWJX1R0GDeOLzkNf
+         aJzjpMolvdFrpsTO22mgOZky+SDbJu9A8Pz8o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=hKYhyXTjzMMCXATgr0JKyll+UYRT8qnO5I8pGehsi5Y=;
+        b=bk4/qK2s5f32hnaSHe6GucWi7e8+uvIGkUy8GUCxWYv61AQGViQPWpiGiAZyR+5PkR
+         LxqLDhI75DBJ7ICf4T0lUGisFFTzFg4yN7FNEqtEwpVNed0SBo5NRZUP74WY9VIFj+J1
+         PQMUDYbdnRPnWTwHMuwYuX9T1LXTN79LMhLa7bswnYrowc2lbD31Su2ozLlN5a0FnOxi
+         3ScuYOIGz+GLsypyI+kmSuEXoLybYz90vEpZt4XLKCtvozPVNsIxiBzJk/gxUbpuL2FH
+         zuKv7/IfR26/lsavx+UlmQ7A0CG3k1H4dqs1X8rjeOVIGLerg75cgtLZNj9tXeGa+kcR
+         62Fw==
+X-Gm-Message-State: AA+aEWZn0V9amfYcI6lW0IJEeTCDn92RIPase34QdJhGy0QQ7sGZvcxy
+        4XS5NTmdvc1RcbBTBURSV2bQeaJhqSWRvU4IMo9dkg==
+X-Google-Smtp-Source: AFSGD/XOfUoudjQ2ewnC0HzTUE8JJCkQIwaeiV2C+j2morwnDUsvC7BcY9DmlyS7jrUMBmbnKJV0jzogFHwK9cPquV0=
+X-Received: by 2002:a6b:7a46:: with SMTP id k6mr13461825iop.60.1543007553706;
+ Fri, 23 Nov 2018 13:12:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3047 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
-Thread-Topic: glibc: Perform rseq(2) registration at nptl init and thread creation
-Thread-Index: Y0KdXQ8z9UGjS4gF+vUfwWTpiA8z3g==
+References: <20181123094152.21368-1-ard.biesheuvel@linaro.org>
+ <20181123094152.21368-2-ard.biesheuvel@linaro.org> <a3e95c22-fcae-3550-2d3c-4d07eaad95ae@iogearbox.net>
+In-Reply-To: <a3e95c22-fcae-3550-2d3c-4d07eaad95ae@iogearbox.net>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 23 Nov 2018 22:12:21 +0100
+Message-ID: <CAKv+Gu9SwbXaoBxUGaFSrBocWkjSGY3qMUqFaqK=p_DoGz4tjA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] bpf: add __weak hook for allocating executable memory
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Nov 23, 2018, at 1:35 PM, Rich Felker dalias@libc.org wrote:
+On Fri, 23 Nov 2018 at 22:07, Daniel Borkmann <daniel@iogearbox.net> wrote:
+>
+> On 11/23/2018 10:41 AM, Ard Biesheuvel wrote:
+> > By default, BPF uses module_alloc() to allocate executable memory,
+> > but this is not necessary on all arches and potentially undesirable
+> > on some of them.
+> >
+> > So break out the module_alloc() and module_memfree() calls into __weak
+> > functions to allow them to be overridden in arch code.
+> >
+> > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > ---
+> >  kernel/bpf/core.c | 14 ++++++++++++--
+> >  1 file changed, 12 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+> > index 1a796e0799ec..572dd74c26e3 100644
+> > --- a/kernel/bpf/core.c
+> > +++ b/kernel/bpf/core.c
+> > @@ -609,6 +609,16 @@ static void bpf_jit_uncharge_modmem(u32 pages)
+> >       atomic_long_sub(pages, &bpf_jit_current);
+> >  }
+> >
+> > +void *__weak bpf_jit_alloc_exec(unsigned long size)
+> > +{
+> > +     return module_alloc(size);
+> > +}
+> > +
+> > +void __weak bpf_jit_free_exec(const void *addr)
+> > +{
+> > +     module_memfree(addr);
+> > +}
+> > +
+> >  struct bpf_binary_header *
+> >  bpf_jit_binary_alloc(unsigned int proglen, u8 **image_ptr,
+> >                    unsigned int alignment,
+> > @@ -626,7 +636,7 @@ bpf_jit_binary_alloc(unsigned int proglen, u8 **ima=
+ge_ptr,
+> >
+> >       if (bpf_jit_charge_modmem(pages))
+> >               return NULL;
+> > -     hdr =3D module_alloc(size);
+> > +     hdr =3D bpf_jit_alloc_exec(size);
+> >       if (!hdr) {
+> >               bpf_jit_uncharge_modmem(pages);
+> >               return NULL;
+> > @@ -650,7 +660,7 @@ void bpf_jit_binary_free(struct bpf_binary_header *=
+hdr)
+> >  {
+> >       u32 pages =3D hdr->pages;
+> >
+> > -     module_memfree(hdr);
+> > +     bpf_jit_free_exec(hdr);
+> >       bpf_jit_uncharge_modmem(pages);
+>
+> The const needs to be removed, this generates the following warning:
+>
+> # make -j8 kernel/bpf/
+>   DESCEND  objtool
+>   CALL    scripts/checksyscalls.sh
+>   CC      kernel/bpf/core.o
+>   CC      kernel/bpf/syscall.o
+>   CC      kernel/bpf/verifier.o
+>   CC      kernel/bpf/hashtab.o
+>   CC      kernel/bpf/helpers.o
+>   CC      kernel/bpf/inode.o
+>   CC      kernel/bpf/arraymap.o
+>   CC      kernel/bpf/lpm_trie.o
+> kernel/bpf/core.c: In function =E2=80=98bpf_jit_free_exec=E2=80=99:
+> kernel/bpf/core.c:619:17: warning: passing argument 1 of =E2=80=98module_=
+memfree=E2=80=99 discards =E2=80=98const=E2=80=99 qualifier from pointer ta=
+rget type [-Wdiscarded-qualifiers]
+>   module_memfree(addr);
+>                  ^~~~
+> In file included from kernel/bpf/core.c:28:0:
+> ./include/linux/moduleloader.h:30:6: note: expected =E2=80=98void *=E2=80=
+=99 but argument is of type =E2=80=98const void *=E2=80=99
+>  void module_memfree(void *module_region);
+>       ^~~~~~~~~~~~~~
+>   CC      kernel/bpf/local_storage.o
+> [...]
+>
+> Please respin with that fixed.
+>
 
-> On Fri, Nov 23, 2018 at 12:52:21PM -0500, Mathieu Desnoyers wrote:
->> ----- On Nov 23, 2018, at 12:30 PM, Rich Felker dalias@libc.org wrote:
->> 
->> > On Fri, Nov 23, 2018 at 12:05:20PM -0500, Mathieu Desnoyers wrote:
->> >> ----- On Nov 23, 2018, at 9:28 AM, Rich Felker dalias@libc.org wrote:
->> >> [...]
->> >> > 
->> >> > Absolutely. As long as it's in libc, implicit destruction will happen.
->> >> > Actually I think the glibc code shound unconditionally unregister the
->> >> > rseq address at exit (after blocking signals, so no application code
->> >> > can run) in case a third-party rseq library was linked and failed to
->> >> > do so before thread exit (e.g. due to mismatched ref counts) rather
->> >> > than respecting the reference count, since it knows it's the last
->> >> > user. This would make potentially-buggy code safer.
->> >> 
->> >> OK, let me go ahead with a few ideas/questions along that path.
->> >                                                 ^^^^^^^^^^^^^^^
->> >> 
->> >> Let's say our stated goal is to let the "exit" system call from the
->> >> glibc thread exit path perform rseq unregistration (without explicit
->> >> unregistration beforehand). Let's look at what we need.
->> > 
->> > This is not "along that path". The above-quoted text is not about
->> > assuming it's safe to make SYS_exit without unregistering the rseq
->> > object, but rather about glibc being able to perform the
->> > rseq-unregister syscall without caring about reference counts, since
->> > it knows no other code that might depend on rseq can run after it.
->> 
->> When saying "along that path", what I mean is: if we go in that direction,
->> then we should look into going all the way there, and rely on thread
->> exit to implicitly unregister the TLS area.
->> 
->> Do you see any reason for doing an explicit unregistration at thread
->> exit rather than simply rely on the exit system call ?
-> 
-> Whether this is needed is an implementation detail of glibc that
-> should be permitted to vary between versions. Unless glibc wants to
-> promise that it would become a public guarantee, it's not part of the
-> discussion around the API/ABI. Only part of the discussion around
-> implementation internals of the glibc rseq stuff.
-> 
-> Of course I may be biased thinking application code should not assume
-> this since it's not true on musl -- for detached threads, the thread
-> frees its own stack before exiting (and thus has to unregister
-> set_tid_address and set_robustlist before exiting).
+OK.
 
-OK, so on glibc, the implementation could rely on exit side-effect to
-implicitly unregister rseq. On musl, based on the scenario you describe,
-the library should unregister rseq explicitly before stack reclaim.
-
-Am I understanding the situation correctly ?
-
-> 
->> >> First, we need the TLS area to be valid until the exit system call
->> >> is invoked by the thread. If glibc defines __rseq_abi as a weak symbol,
->> >> I'm not entirely sure we can guarantee the IE model if another library
->> >> gets its own global-dynamic weak symbol elected at execution time. Would
->> >> it be better to switch to a "strong" symbol for the glibc __rseq_abi
->> >> rather than weak ?
->> > 
->> > This doesn't help; still whichever comes first in link order would
->> > override. Either way __rseq_abi would be in static TLS, though,
->> > because any dynamically-loaded library is necessarily loaded after
->> > libc, which is loaded at initial exec time.
->> 
->> OK, AFAIU so you argue for leaving the __rseq_abi symbol "weak". Just making
->> sure I correctly understand your position.
-> 
-> I don't think it matters, and I don't think making it weak is
-> meaningful or useful (weak in a shared library is largely meaningless)
-> but maybe I'm missing something here.
-
-Using a "weak" symbol in early adopter libraries is important, so they
-can be loaded together into the same process without causing loader
-errors due to many definitions of the same strong symbol.
-
-Using "weak" in a C library is something I'm not sure is a characteristic
-we want or need, because I doubt we would ever want to load two libc at the
-same time in a given process.
-
-The only reason I see for using "weak" for the __rseq_abi symbol in the
-libc is if we want to allow early adopter applications to define
-__rseq_abi as a strong symbol, which would make some sense.
-
-
-> 
->> Something can be technically correct based on the current implementation,
->> but fragile with respect to future changes. We need to carefully distinguish
->> between the two when exposing ABIs.
-> 
-> Yes.
-> 
->> >> There has been presumptions about signals being blocked when the thread
->> >> exits throughout this email thread. Out of curiosity, what code is
->> >> responsible for disabling signals in this situation ?
->> 
->> This question is still open.
-> 
-> I can't find it -- maybe it's not done in glibc. It is in musl, and I
-> assumed glibc would also do it, because otherwise it's possible to see
-> some inconsistent states from signal handlers. Maybe these are all
-> undefined due to AS-unsafety of pthread_exit, but I think you can
-> construct examples where something could be observably wrong without
-> breaking any rules.
-
-Good to know for the musl case.
-
-> 
->> > Related to this,
->> >> is it valid to access a IE model TLS variable from a signal handler at
->> >> _any_ point where the signal handler nests over thread's execution ?
->> >> This includes early start and just before invoking the exit system call.
->> > 
->> > It should be valid to access *any* TLS object like this, but the
->> > standards don't cover it well. Right now access to dynamic TLS from
->> > signal handlers is unsafe in glibc, but static is safe.
->> 
->> Which is a shame for the lttng-ust tracer, which needs global-dynamic
->> TLS variables so it can be dlopen'd, but aims at allowing tracing from
->> signal handlers. It looks like due to limitations of global-dynamic
->> TLS, tracing from instrumented signal handlers with lttng-ust tracepoints
->> could crash the process if the signal handler nests early at thread start
->> or late before thread exit. One way out of this would be to ensure signals
->> are blocked at thread start/exit, but I can't find the code responsible for
->> doing this within glibc.
-> 
-> Just blocking at start/exit won't solve the problem because
-> global-dynamic TLS in glibc involves dynamic allocation, which is hard
-> to make AS-safe and of course can fail, leaving no way to make forward
-> progress.
-
-How hard would it be to create a async-signal-safe memory pool, which would
-be always accessed with signals blocked, so we could fix those corner-cases
-for good ?
-
-Thanks,
-
-Mathieu
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+I'll respin the second patch as well, and move the BPF window to the
+start of the vmalloc region. However, the arm64 maintainers need to
+ack that as well since it modifies the layout of the kernel virtual
+address space.
