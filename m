@@ -2,124 +2,205 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF45FC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C137C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88C5620861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:45:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dcfB6vtV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88C5620861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id D6FBE20685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:45:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6FBE20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439579AbeKWS2G (ORCPT
+        id S2439593AbeKWS21 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 13:28:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52226 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731610AbeKWS2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 13:28:06 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67B5220685;
-        Fri, 23 Nov 2018 07:45:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542959102;
-        bh=Bxb5wPWn+tkcROoyBSntFU4Ls7NdMpntx6a62Z9+0eA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dcfB6vtVy2ifrf1MJfB8Fo+0kC3k2D0dK5KSUX14NQgSX8waZQWZ3kEV1zVbH5oqD
-         XDnZ4P3hluGbd21PF+tNqsUvdJPFPxbd2V7fdQRmnaugH622qGn1bTrbxhh3B+f2bA
-         Yz6Mp4xRupRPvyAn0iYPbeTQW4E0yecnkzOjXpfY=
-Date:   Fri, 23 Nov 2018 08:45:00 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Thomas Voegtle <tv@lio96.de>, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>
-Subject: Re: [PATCH 4.19 00/42] 4.19.4-stable review
-Message-ID: <20181123074500.GA31919@kroah.com>
-References: <20181121183147.869199006@linuxfoundation.org>
- <alpine.LSU.2.21.1811222148260.12239@er-systems.de>
- <alpine.LSU.2.21.1811222259160.22493@er-systems.de>
- <259dad79-9bed-0b6b-3723-82bf4a0a9603@roeck-us.net>
+        Fri, 23 Nov 2018 13:28:27 -0500
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:60239 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731610AbeKWS20 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 13:28:26 -0500
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id D6FBD1BF214;
+        Fri, 23 Nov 2018 07:45:15 +0000 (UTC)
+Date:   Fri, 23 Nov 2018 08:45:14 +0100
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Yong Deng <yong.deng@magewell.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH v12 1/2] dt-bindings: media: Add Allwinner V3s Camera
+ Sensor Interface (CSI)
+Message-ID: <20181123074514.GB6788@w540>
+References: <1540887143-27904-1-git-send-email-yong.deng@magewell.com>
+ <308184907.pMD7ZDI2dr@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="DrWhICOqskFTAXiy"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <259dad79-9bed-0b6b-3723-82bf4a0a9603@roeck-us.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <308184907.pMD7ZDI2dr@avalon>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 02:30:58PM -0800, Guenter Roeck wrote:
-> On 11/22/18 2:01 PM, Thomas Voegtle wrote:
-> > On Thu, 22 Nov 2018, Thomas Voegtle wrote:
-> > 
-> > > 
-> > > Doesn't compile for me on OpenSuSE 15.0 (gcc 7.3.1):
-> > > 
-> > >   CALL    scripts/checksyscalls.sh
-> > >   DESCEND  objtool
-> > >   CHK     include/generated/compile.h
-> > >   CC [M]  drivers/gpu/drm/i915/i915_gem_gtt.o
-> > > drivers/gpu/drm/i915/i915_gem_gtt.c: In function ‘gen6_dump_ppgtt’:
-> > > drivers/gpu/drm/i915/i915_gem_gtt.c:1771:41: error: format ‘%llx’ expects
-> > > argument of type ‘long long unsigned int’, but argument 5 has type ‘long
-> > > unsigned int’ [-Werror=format=]
-> > >    seq_printf(m, "\t\t(%03d, %04d) %08llx: ",
-> > >                                    ~~~~~ ^
-> > >                                    %08lx
-> > > cc1: all warnings being treated as errors
-> > > make[4]: *** [scripts/Makefile.build:306:
-> > > drivers/gpu/drm/i915/i915_gem_gtt.o] Error 1
-> > > make[3]: *** [scripts/Makefile.build:546: drivers/gpu/drm/i915] Error 2
-> > > make[2]: *** [scripts/Makefile.build:546: drivers/gpu/drm] Error 2
-> > > make[1]: *** [scripts/Makefile.build:546: drivers/gpu] Error 2
-> > > make: *** [Makefile:1052: drivers] Error 2
-> > > 
-> > > 
-> > > 
-> > > 4.19.3 is broken for me, too. 4.19.2 is works.
-> > > 4.20-rc tree works.
-> > > 
-> > > Config attached.
-> > 
-> > 
-> > quick bisect shows problem is:
-> > 
-> > commit 1a25e1a1be71a49ee7f34fb14b5a26191e6cf501
-> > Author: Chris Wilson <chris@chris-wilson.co.uk>
-> > Date:   Thu Oct 25 10:18:22 2018 +0100
-> > 
-> >      drm/i915: Mark up GTT sizes as u64
-> > 
-> >      commit c58281056a8b26d5d9dc15c19859a7880835ef44 upstream.
-> > 
-> > 
-> > reverted on 4.19.4-rc1 it compiles for me. I guess something is missing here?
-> > 
-> AFAICS someone was not careful with the backport. Upstream doesn't have %llx
-> at that place.
 
-Yes it does, unless I'm reading the code wrong?
+--DrWhICOqskFTAXiy
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-It seems that this does not trigger on upstream due to f6e35cda6614
-("drm/i915: Replace some PAGE_SIZE with I915_GTT_PAGE_SIZE") being
-there, which changed the type of the variable being displayed here.
+Hi Yong,
 
-I've now backported that as well, as it should help out over time, and
-the build warning seems to be gone.
+On Tue, Oct 30, 2018 at 03:06:24PM +0200, Laurent Pinchart wrote:
+> Hi Yong,
+>
+> Thank you for the patch.
+>
+> On Tuesday, 30 October 2018 10:12:23 EET Yong Deng wrote:
+> > Add binding documentation for Allwinner V3s CSI.
+> >
+> > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > Signed-off-by: Yong Deng <yong.deng@magewell.com>
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+> > ---
+> >  .../devicetree/bindings/media/sun6i-csi.txt        | 56 +++++++++++++++++++
+> >  1 file changed, 56 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt
+> > b/Documentation/devicetree/bindings/media/sun6i-csi.txt new file mode
+> > 100644
+> > index 000000000000..443e18c181b3
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
+> > @@ -0,0 +1,56 @@
+> > +Allwinner V3s Camera Sensor Interface
+> > +-------------------------------------
+> > +
+> > +Allwinner V3s SoC features a CSI module(CSI1) with parallel interface.
+> > +
+> > +Required properties:
+> > +  - compatible: value must be "allwinner,sun8i-v3s-csi"
+> > +  - reg: base address and size of the memory-mapped region.
+> > +  - interrupts: interrupt associated to this IP
+> > +  - clocks: phandles to the clocks feeding the CSI
+> > +    * bus: the CSI interface clock
+> > +    * mod: the CSI module clock
+> > +    * ram: the CSI DRAM clock
+> > +  - clock-names: the clock names mentioned above
+> > +  - resets: phandles to the reset line driving the CSI
+> > +
+> > +The CSI node should contain one 'port' child node with one child 'endpoint'
+> > +node, according to the bindings defined in
+> > +Documentation/devicetree/bindings/media/video-interfaces.txt.
+> > +
+> > +Endpoint node properties for CSI
+> > +---------------------------------
+> > +See the video-interfaces.txt for a detailed description of these
+> > properties. +- remote-endpoint	: (required) a phandle to the bus receiver's
+> > endpoint +			   node
+> > +- bus-width:		: (required) must be 8, 10, 12 or 16
+> > +- pclk-sample		: (optional) (default: sample on falling edge)
+> > +- hsync-active		: (required; parallel-only)
+> > +- vsync-active		: (required; parallel-only)
+> > +
+> > +Example:
+> > +
+> > +csi1: csi@1cb4000 {
+> > +	compatible = "allwinner,sun8i-v3s-csi";
+> > +	reg = <0x01cb4000 0x1000>;
+> > +	interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
+> > +	clocks = <&ccu CLK_BUS_CSI>,
+> > +		 <&ccu CLK_CSI1_SCLK>,
+> > +		 <&ccu CLK_DRAM_CSI>;
+> > +	clock-names = "bus", "mod", "ram";
+> > +	resets = <&ccu RST_BUS_CSI>;
+> > +
+> > +	port {
+> > +		/* Parallel bus endpoint */
+> > +		csi1_ep: endpoint {
+> > +			remote-endpoint = <&adv7611_ep>;
+> > +			bus-width = <16>;
+> > +
+> > +			/* If hsync-active/vsync-active are missing,
+> > +			   embedded BT.656 sync is used */
 
-thanks,
+Am I confused? The properties description defines [v|h]sync-active as
+required, but the example reports that they can be omitted to use
+BT.656 synchronization.
 
-greg k-h
+Which one of the following is correct?
+1) [h|v]sync-active are mandatory: no BT.656 support can be selected.
+2) [h|v]sync-active are optional, and if not specified BT.656 is
+   selected.
+3) I am confused.
+
+Thanks
+   j
+
+> > +			hsync-active = <0>; /* Active low */
+> > +			vsync-active = <0>; /* Active low */
+> > +			pclk-sample = <1>;  /* Rising */
+> > +		};
+> > +	};
+> > +};
+>
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
+>
+>
+
+--DrWhICOqskFTAXiy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJb97AKAAoJEHI0Bo8WoVY87UAQALCDEE5QXjD6VY3sPb0SgeLj
+t1VdmQHFsMedpHdLWo76ZVF/qSipirCk4a4wzAL/MqmTqgHLDw88ACYDW8JP3BaG
+E7zw5ueM2higg8bfqqh8nFVQyLUFwvKxwnocRNvhmhVFsP8j/fJ25rQjKti3hvbP
+djwdEzBT7fkNbgSQi4S19RNx84xjGmStVOBMaKCC/xwm0ausnTfooekw6loZRWA1
+Tvk0JrRKA96OaXt3zzKDlp2YsgFUiEeCo81XFKfhTkdhLUBHUQNxfuxOqVzWdqCe
+XLwXH2blajWAHYspLNKuPUshp6ptJ+W9k4QpXwt6f+/U+8FO/LXf8WT1FScrhYVX
+Yxj4WVP/KeHDseKAgYN6I2/cLVFejOPq6qzSYWtu7TL5xg+oOPKjweDeIUAH7NAW
+oifpXxxDPgigKyhTCJDu7hRRvQaiqYj87knCL46iMj5jElvAogb0jYTCOG/3kVMF
+G2QNhk/4p0DoFvhRy624UY7fSqTIqvr1L5zZqwOkYFAKxp+EuDO36kg6mkBpKnnb
+hIaKw3OsLf82wKlHW9DlL4Q/nnZzXCpxpoJUPV4Q/eE9zMGdCbIQhKmpMEsTrFSC
+0wsSTqevi3rO2iN+bzQHXKuvXwKev2egVXb3XqUJ68wJNf9k6j4Ue5+e3MSt2XuG
+QVgvv0V6jq3uFY7YLqkH
+=L6Um
+-----END PGP SIGNATURE-----
+
+--DrWhICOqskFTAXiy--
