@@ -2,112 +2,124 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E82FC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8CAC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:47:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4CD220813
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:26:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDCE220820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:47:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ciRAm0bY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4CD220813
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qq2MP7Ie"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDCE220820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439174AbeKWLIC (ORCPT
+        id S2407963AbeKWLZE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 06:08:02 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:42792 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405050AbeKWLIC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 06:08:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=P8eN/TfoExd2pqRphUlEH0sS3BJPdvFIkq5RPGepous=; b=ciRAm0bY97OyZirsVNQmeQZDj
-        89cpwSWWHIwkUlBfCHE6+rpLTnPzVyCg3OfzyijC1EkaPSzgvkJYLYsGIQ7hItN2iU8YyIUH5agXb
-        3joPjCO7ZnfrCZIpGCYa87HxfeyZ+kBYUZ5CJzv6wrMLTHwqNrvknQ0beaETi0B0/kDQo=;
-Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:45848)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gPzIB-0004t7-Hx; Fri, 23 Nov 2018 00:25:55 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gPzI7-0007xU-Oz; Fri, 23 Nov 2018 00:25:51 +0000
-Date:   Fri, 23 Nov 2018 00:25:49 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org,
-        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tony@atomide.com,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
-Message-ID: <20181123002549.GO6920@n2100.armlinux.org.uk>
-References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
- <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
- <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
- <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
- <20181122102948.GN6920@n2100.armlinux.org.uk>
- <20181122151236.GA9611@n2100.armlinux.org.uk>
- <20181122222426.GC11423@darkstar.musicnaut.iki.fi>
+        Fri, 23 Nov 2018 06:25:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54952 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392723AbeKWLZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 06:25:04 -0500
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEAC120820
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 00:43:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542933786;
+        bh=0zrxw6/g7MAbvpMIvgphAIXOPf2qEjruzIahoKcTIxg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qq2MP7IeFmc/i70Fshl4E938hYcQ5G9jzDBrEeF33rpjCUDsoGPW1GNY/60txRLXg
+         jZNZo7jZr3KHFWY1lglwgYTJpGdNPfIgbRdL//REVesPVR7b2oELHStirQ5+oQarmt
+         cD2643v5911ulaDAMhUceURVxxnVxHNsFPkDxXY4=
+Received: by mail-wm1-f43.google.com with SMTP id j207so3311262wmj.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 16:43:05 -0800 (PST)
+X-Gm-Message-State: AA+aEWZuF4NmybhBvxtXbIM6Cb3ijxHffY/6zmNQkFlmgdUQVW/3Cd9O
+        BQF4sssrgA2DthaXYYJz+FFiGIavLzBb12OxkpvwLw==
+X-Google-Smtp-Source: AJdET5fMGUAFdmY7SyMhknl1LAr4qUQaZdrcBnR7ijOIWKdbT2bxnYO+y0K2NBVlQ72MAH2sWTsQsiLhv9I3tfLdrmk=
+X-Received: by 2002:a1c:b1d5:: with SMTP id a204mr11383336wmf.32.1542933784425;
+ Thu, 22 Nov 2018 16:43:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181122222426.GC11423@darkstar.musicnaut.iki.fi>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20181116232728.23538-1-chang.seok.bae@intel.com>
+ <CALCETrVtnkrr+t7-oXXrGDsei1Q0nudh8JstkuaE+dka4FHPEA@mail.gmail.com> <20181122205645.GA36550@gmail.com>
+In-Reply-To: <20181122205645.GA36550@gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 22 Nov 2018 16:42:52 -0800
+X-Gmail-Original-Message-ID: <CALCETrVHtjXFskx5VesHnzv=BnUx=t3qC_RRWsp96RgT5CN2VQ@mail.gmail.com>
+Message-ID: <CALCETrVHtjXFskx5VesHnzv=BnUx=t3qC_RRWsp96RgT5CN2VQ@mail.gmail.com>
+Subject: Re: [PATCH v5] x86/fsgsbase/64: Fix the base write helper functions
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        "Bae, Chang Seok" <chang.seok.bae@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 12:24:26AM +0200, Aaro Koskinen wrote:
-> Hi,
-> 
-> On Thu, Nov 22, 2018 at 03:12:36PM +0000, Russell King - ARM Linux wrote:
-> > On Thu, Nov 22, 2018 at 10:29:48AM +0000, Russell King - ARM Linux wrote:
-> > > On Tue, Nov 20, 2018 at 11:04:06PM +0200, Aaro Koskinen wrote:
-> > > > I had switched to PIO mode in 2015 since the WARNs about legacy DMA
-> > > > API were too annoying and flooding the console. And now that I tried
-> > > > using DMA again with g_ether, it doesn't work anymore. The device get's
-> > > > recognized on host side, but no traffic goes through. Switching back to
-> > > > PIO makes it to work again.
-> > > 
-> > > A solution to that would be to do what the warning message says, and
-> > > update the driver to the DMAengine API.
-> 
-> Fully agreed, but I was busy debugging other more serious issues, and
-> just wanted to get a reliable ssh or USB serial access to the device
-> without any extra noise, so switching to PIO using a module parameter
-> is probably what most users do in such situations.
-> 
-> > Here's a partial conversion (not even build tested) - it only supports
-> > OUT transfers with dmaengine at the moment.
-> 
-> Thanks, I'll take a closer look and try to do some testing hopefully
-> during the weekend.
+On Thu, Nov 22, 2018 at 12:56 PM Ingo Molnar <mingo@kernel.org> wrote:
+>
+>
+> * Andy Lutomirski <luto@kernel.org> wrote:
+>
+> > On Fri, Nov 16, 2018 at 3:27 PM Chang S. Bae <chang.seok.bae@intel.com> wrote:
+> > >
+> > > The helper functions that purport to write the base should just write it
+> > > only. It shouldn't have magic optimizations to change the index.
+> > >
+> > > Make the index explicitly changed from the caller, instead of including
+> > > the code in the helpers.
+> > >
+> > > Subsequently, the task write helpers do not handle for the current task
+> > > anymore. The range check for a base value is also factored out, to
+> > > minimize code redundancy from the caller.
+> > >
+> > > v2: Fix further on the task write functions. Revert the changes on the
+> > > task read helpers.
+> > >
+> > > v3: Fix putreg(). Edit the changelog.
+> > >
+> > > v4: Update the task write helper functions and do_arch_prctl_64(). Fix
+> > > the comment in putreg().
+> > >
+> > > v5: Fix preempt_disable() calls in do_arch_prctl_64()
+> >
+> > Reviewed-by: Andy Lutomirski <luto@kernel.org>
+> >
+> > Ingo, Thomas: can we get this in x86/urgent, please?
+>
+> Sadly this commit introduced a boot failure on both an Intel and an AMD
+> 64-bit testbox.
+>
+> Symptoms range from silent bootup hang in early userspace to segfaults
+> like this:
+>
+> [   21.885741] random: systemd: uninitialized urandom read (16 bytes read)
+> [   21.964778] systemd[1]: segfault at 28 ip 00005584d8d8247d sp 00007ffc7a05aed0 error 4 in systemd[5584d8d0d000+137000]
+> [   21.977664] Code: c3 4c 89 ff e8 94 78 fa ff eb bb 48 89 c3 eb f1 00 00 00 00 00 00 00 00 00 00 00 00 00 41 55 41 54 55 53 48 89 fd 48 83 ec 28 <64> 48 8b 04 25 28 00 00 00 48 89 44 24 18 31 c0 48 85 ff 74 6e 48
+> [   22.000004] systemd[1]: segfault at 28 ip 00005584d8db0a3d sp 00007ffc7a05a7e0 error 4 in systemd[5584d8d0d000+137000]
+> [   22.012869] Code: 49 89 e9 ba 67 01 00 00 bf 04 00 00 00 31 c0 e8 c9 1c 03 00 59 31 c0 5e e9 ff fa ff ff 41 54 55 53 89 fb 48 81 ec 40 01 00 00 <64> 48 8b 04 25 28 00 00 00 48 89 84 24 38 01 00 00 31 c0 e8 fb 92
+>
+> I've zapped the commit from x86/urgent because it's clearly not ready
+> yet.
+>
+> I used a fairly regular distro .config and a fairly regular distro -
+> nothing fancy.
+>
 
-The patch was more for Peter to take a peek at - there's definitely
-some bits missing in the dmaengine driver (like the write to the
-LCH_CTRL register) that would need to be fixed somehow.
+I can reproduce it.  Off the top of my head, maybe 0day is using a
+different, weird glibc configuration?  I think it runs some ancient
+version of Yocto.
 
-However, it's worth noting that there is exactly one user of
-omap_set_dma_channel_mode(), which is omap-udc, which means any DMA
-channel made use of by omap-udc will have the LCH_CTRL register
-modified to LCH_P, and it will remain that way even if someone else
-subsequently makes use of the same channel.  That's rather suspicious
-to me... maybe we can just initialise all LCH_CTRL registers to LCH_P
-in the dmaengine driver in that case!  If not, then there's a bug
-right there.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+And I think I've almost root-caused the problem, and I think it's a
+preexisting bug exposed by this patch.  Lemme double-check and I'll
+send a fix.
