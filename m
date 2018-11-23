@@ -2,106 +2,98 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52AAEC43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1B7C04EBA
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:03:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15E0F20664
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:01:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pybt0gX6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15E0F20664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F231320664
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:02:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F231320664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440192AbeKXBpi (ORCPT
+        id S2440203AbeKXBr3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 20:45:38 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45376 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732166AbeKXBpi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 20:45:38 -0500
-Received: by mail-pf1-f193.google.com with SMTP id g62so3465689pfd.12;
-        Fri, 23 Nov 2018 07:01:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=jgnGcEVugVWlSuF1lHTPMLtj0j/NwsMZfX+9+cdul3c=;
-        b=Pybt0gX6W7dywEDsog/lXmUB6Knhp6fDLmS1xg3elgN0e7sb7fK1oazGmR5/lrFIp1
-         r7J7OLQmCeua0GoPo9iH7+m5atYALovtMfqYuc5MHZfnTom42WXIEn68asXsOczCafkQ
-         NnecLvJNFvJ4S0twUm1GfWx2xl/gNYE1D1zprSX+kgE0OX2eikbDzZiFGphRSN610MB/
-         K+/xILMiPpSjHuvkLn2QQgRhk3pFiS9ZWMrOvIFom9PZqZ3QKSCYCy9SvSM/hievTr30
-         yXFI92lI3WVUfnsF8MkjiJ1fNgKiDP4mNWBxO4z3wn1s15J6YXEiWvd3t6DqMg0U6me2
-         AhhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=jgnGcEVugVWlSuF1lHTPMLtj0j/NwsMZfX+9+cdul3c=;
-        b=HZSV8cuoAqpiBcaPDTf1ILcWUOcyDjswrLvvzBPBDldK/oyL3Ma4/khzrOpIdMZA87
-         jeayQ/Izh9mNNdDip58gR5mFLxIOndrJjyyvSGRcpy7ovclHfMSQdAsh/cCxTGQ+cXx8
-         qN2IR34xX/W/ZSPeYW2qchFpHuAEdeeKpunNXbU5Wp1CKowSa7bs644Dhz14cL9sbOen
-         aTxB3BjfVXFUyHULG0sE7hjDEN7T/qlMGqmZGI0QIbkaDhNrKcqHOoRYDXcnvy4JYDJM
-         aHvQcUfMyRIYxZSPQQxlBQrgWYpyKWUiqUpo9W0ES6EHl7//6p90O3FOVRTIj2uCYgqx
-         BLaA==
-X-Gm-Message-State: AGRZ1gIVRRXe9Qyp/OIs4v2SG0Mn1wio9nxF6d1yVvaOr7uGslRsMoS9
-        1Dja7dPgqZlXWIi/wMP0/fn7xGBXpds=
-X-Google-Smtp-Source: AJdET5dNSbuIWBKxOuotf2QjQW0YRhRvgd05qJ6QxgloBCriXxP3ZSnJhUp/jnODVEwXft+QWKyHSg==
-X-Received: by 2002:a62:4c6:: with SMTP id 189-v6mr16715324pfe.110.1542985268069;
-        Fri, 23 Nov 2018 07:01:08 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id d80sm131763253pfm.146.2018.11.23.07.01.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 23 Nov 2018 07:01:07 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] clk: tegra: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Date:   Fri, 23 Nov 2018 10:01:04 -0500
-Message-Id: <20181123150104.27336-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 23 Nov 2018 20:47:29 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36251 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732166AbeKXBr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 20:47:29 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9160D20D72; Fri, 23 Nov 2018 16:02:56 +0100 (CET)
+Received: from localhost (87-231-134-186.rev.numericable.fr [87.231.134.186])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6242D20742;
+        Fri, 23 Nov 2018 16:02:56 +0100 (CET)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH 6/6] arm64: dts: marvell: Add cpu clock node on Armada 7K/8K
+References: <20180922181709.13007-1-gregory.clement@bootlin.com>
+        <20180922181709.13007-7-gregory.clement@bootlin.com>
+        <153936613666.5275.6122138233361141260@swboyd.mtv.corp.google.com>
+Date:   Fri, 23 Nov 2018 16:02:56 +0100
+In-Reply-To: <153936613666.5275.6122138233361141260@swboyd.mtv.corp.google.com>
+        (Stephen Boyd's message of "Fri, 12 Oct 2018 10:42:16 -0700")
+Message-ID: <87a7lzq1jz.fsf@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use macro to simplify the code.
-
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/clk/tegra/clk-dfll.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index ebb0e1b6bf01..609e363dabf8 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -1184,17 +1184,7 @@ static int attr_registers_show(struct seq_file *s, void *data)
- 	return 0;
- }
+Hi Stephen,
  
--static int attr_registers_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, attr_registers_show, inode->i_private);
--}
--
--static const struct file_operations attr_registers_fops = {
--	.open		= attr_registers_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(attr_registers);
- 
- static void dfll_debug_init(struct tegra_dfll *td)
- {
+ On ven., oct. 12 2018, Stephen Boyd <sboyd@kernel.org> wrote:
+
+> +Rob
+>
+> Quoting Gregory CLEMENT (2018-09-22 11:17:09)
+>> diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+>> index 4a65e4e830aa..27c840e91abe 100644
+>> --- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+>> +++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+>> @@ -280,6 +280,12 @@
+>>                                 #address-cells = <1>;
+>>                                 #size-cells = <1>;
+>>  
+>> +                               cpu_clk: clock-cpu {
+>> +                                       compatible = "marvell,ap806-cpu-clock";
+>> +                                       clocks = <&ap_clk 0>, <&ap_clk 1>;
+>> +                                       #clock-cells = <1>;
+>> +                               };
+>
+> This looks like the wrong place because there isn't a reg property. It
+
+There is no reg property because we are inside a syscon node where the
+registers are shared between multiple IPs.
+
+> should go to the root of the tree. And then it looks like we're adding
+> something to DT to get a driver to probe, which is improper DT design.
+
+There is nothing related to the driver, this subnode describes the way
+the hardware is designed. Under the system controller node there are
+several IPs , like the CPU clocks, but also the GPIO or the pinctrl.
+
+Gregory
+
+>
+
 -- 
-2.17.0
-
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
