@@ -2,134 +2,112 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED43BC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E82FC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF7A120824
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:19:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4CD220813
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:26:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSo4j7P4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF7A120824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ciRAm0bY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4CD220813
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407951AbeKWLBS (ORCPT
+        id S2439174AbeKWLIC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 06:01:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52694 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405050AbeKWLBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 06:01:18 -0500
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FD2B20878
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 00:19:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542932364;
-        bh=8/wxv7W73DqHr6kxpiRnZfl3rIoXdiSPP4K8G497PhM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=HSo4j7P4b0HS7a4HgOdg92NKKfpXG217fQzs5iCA3q1kxd+XxAEdhPZ+nkhT/wBDk
-         fnGIdUCWscOpzCCYhG8+VVjTXIAA3B7lNMBH/Uj2YCTzM903u5RQXQKCmTtxpV3M7r
-         VVjnJnfNgaGX/DgSjgphmpxeflqMPxVscv3ooUy4=
-Received: by mail-wr1-f43.google.com with SMTP id j2so10752990wrw.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 16:19:24 -0800 (PST)
-X-Gm-Message-State: AA+aEWYbQCQZPyfnmOPL4cnGhv3+KAY2EduKu2v/8zLeJ/7mcgdwHrke
-        /7L+bfFsiP/r/a/ZuKE8EUREq+uYmdhkgKbGCVVxyg==
-X-Google-Smtp-Source: AFSGD/WC4QGAWLZ1Jt3BQkDVQ8znvxK7aT653LfubOTbdAWWS867PvZfNZcxGWTek/9uRJ6GLF44RQnLr/DujJ2TQ6Y=
-X-Received: by 2002:a5d:5541:: with SMTP id g1mr12065543wrw.330.1542932362678;
- Thu, 22 Nov 2018 16:19:22 -0800 (PST)
+        Fri, 23 Nov 2018 06:08:02 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:42792 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405050AbeKWLIC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 06:08:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=P8eN/TfoExd2pqRphUlEH0sS3BJPdvFIkq5RPGepous=; b=ciRAm0bY97OyZirsVNQmeQZDj
+        89cpwSWWHIwkUlBfCHE6+rpLTnPzVyCg3OfzyijC1EkaPSzgvkJYLYsGIQ7hItN2iU8YyIUH5agXb
+        3joPjCO7ZnfrCZIpGCYa87HxfeyZ+kBYUZ5CJzv6wrMLTHwqNrvknQ0beaETi0B0/kDQo=;
+Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:45848)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gPzIB-0004t7-Hx; Fri, 23 Nov 2018 00:25:55 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gPzI7-0007xU-Oz; Fri, 23 Nov 2018 00:25:51 +0000
+Date:   Fri, 23 Nov 2018 00:25:49 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org,
+        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tony@atomide.com,
+        linux-omap@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
+Message-ID: <20181123002549.GO6920@n2100.armlinux.org.uk>
+References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
+ <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
+ <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
+ <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
+ <20181122102948.GN6920@n2100.armlinux.org.uk>
+ <20181122151236.GA9611@n2100.armlinux.org.uk>
+ <20181122222426.GC11423@darkstar.musicnaut.iki.fi>
 MIME-Version: 1.0
-References: <20181121165806.07da7c98@akathisia> <CALCETrV3TPCkYyhoLLcikXVeF-RdZUuLTCvKReK3Qb9LSS9Csw@mail.gmail.com>
- <20181121235634.GA14146@altlinux.org> <CALCETrXea_uRAqw_srW5CWgOzeM=RubaDbjnxZ=cUMy5Zv1TsA@mail.gmail.com>
- <20181122191504.GB27204@altlinux.org>
-In-Reply-To: <20181122191504.GB27204@altlinux.org>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 22 Nov 2018 16:19:10 -0800
-X-Gmail-Original-Message-ID: <CALCETrXvXzRzoEqwEY_VZ7Vpt-sLwaF+rZPg+y_eG2xyzubXtw@mail.gmail.com>
-Message-ID: <CALCETrXvXzRzoEqwEY_VZ7Vpt-sLwaF+rZPg+y_eG2xyzubXtw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2] ptrace: add PTRACE_GET_SYSCALL_INFO request
-To:     "Dmitry V. Levin" <ldv@altlinux.org>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        strace-devel@lists.strace.io
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181122222426.GC11423@darkstar.musicnaut.iki.fi>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 11:15 AM Dmitry V. Levin <ldv@altlinux.org> wrote:
->
-> On Thu, Nov 22, 2018 at 06:55:29AM -0800, Andy Lutomirski wrote:
-> > On Wed, Nov 21, 2018 at 3:56 PM Dmitry V. Levin wrote:
-> > > On Wed, Nov 21, 2018 at 02:56:57PM -0800, Andy Lutomirski wrote:
-> > > > Please cc linux-api@vger.kernel.org for future versions.
-> > > >
-> > > > On Wed, Nov 21, 2018 at 7:58 AM Elvira Khabirova wrote:
-> > > > >
-> > > > > struct ptrace_syscall_info {
-> > > > >         __u8 op; /* 0 for entry, 1 for exit */
-> > > >
-> > > > Can you add proper defines, like:
-> > > >
-> > > > #define PTRACE_SYSCALL_ENTRY 0
-> > > > #define PTRACE_SYSCALL_EXIT 1
-> > > > #define PTRACE_SYSCALL_SECCOMP 2
-> > > >
-> > > > and make seccomp work from the start?  I'd rather we don't merge an
-> > > > implementation that doesn't work for seccomp and then have to rework
-> > > > it later.
-> > >
-> > > What's the difference between PTRACE_EVENT_SECCOMP and syscall-entry-stop
-> > > with regards to PTRACE_GET_SYSCALL_INFO request?  At least they have the
-> > > same entry_info to return.
-> >
-> > I'm not sure there's any material difference.
->
-> In that case we don't really need PTRACE_SYSCALL_SECCOMP: op field
-> describes the structure inside the union to use, not the ptrace stop.
+On Fri, Nov 23, 2018 at 12:24:26AM +0200, Aaro Koskinen wrote:
+> Hi,
+> 
+> On Thu, Nov 22, 2018 at 03:12:36PM +0000, Russell King - ARM Linux wrote:
+> > On Thu, Nov 22, 2018 at 10:29:48AM +0000, Russell King - ARM Linux wrote:
+> > > On Tue, Nov 20, 2018 at 11:04:06PM +0200, Aaro Koskinen wrote:
+> > > > I had switched to PIO mode in 2015 since the WARNs about legacy DMA
+> > > > API were too annoying and flooding the console. And now that I tried
+> > > > using DMA again with g_ether, it doesn't work anymore. The device get's
+> > > > recognized on host side, but no traffic goes through. Switching back to
+> > > > PIO makes it to work again.
+> > > 
+> > > A solution to that would be to do what the warning message says, and
+> > > update the driver to the DMAengine API.
+> 
+> Fully agreed, but I was busy debugging other more serious issues, and
+> just wanted to get a reliable ssh or USB serial access to the device
+> without any extra noise, so switching to PIO using a module parameter
+> is probably what most users do in such situations.
+> 
+> > Here's a partial conversion (not even build tested) - it only supports
+> > OUT transfers with dmaengine at the moment.
+> 
+> Thanks, I'll take a closer look and try to do some testing hopefully
+> during the weekend.
 
-Unless we think the structures might diverge in the future.
+The patch was more for Peter to take a peek at - there's definitely
+some bits missing in the dmaengine driver (like the write to the
+LCH_CTRL register) that would need to be fixed somehow.
 
->
-> > > As long as implementation (ab)uses ptrace_message to tell one kind of stop
-> > > from another, it can distinguish syscall-entry-stop and syscall-exit-stop
-> > > from each other and from many other kinds of stops, but it cannot
-> > > distinguish PTRACE_EVENT_SECCOMP from e.g. PTRACE_EVENT_EXIT.
-> >
-> > Hmm.  PTRACE_GET_SYSCALL_INFO should fail for PTRACE_EVENT_EXIT, I think.
->
-> Unless we can change PTRACE_EVENT_SECCOMP to set some higher bits of
-> ptrace_message (beyond SECCOMP_RET_DATA) which is very unlikely because
-> it would qualify as an ABI change, this would require an additional field
-> in struct task_struct because ptrace_message wouldn't be enough
-> to distinguish PTRACE_EVENT_SECCOMP from PTRACE_EVENT_EXIT.
+However, it's worth noting that there is exactly one user of
+omap_set_dma_channel_mode(), which is omap-udc, which means any DMA
+channel made use of by omap-udc will have the LCH_CTRL register
+modified to LCH_P, and it will remain that way even if someone else
+subsequently makes use of the same channel.  That's rather suspicious
+to me... maybe we can just initialise all LCH_CTRL registers to LCH_P
+in the dmaengine driver in that case!  If not, then there's a bug
+right there.
 
-At the risk of making the patch more complicated, there's room to
-massively clean up the ptrace state.  We could add a struct
-ptrace_tracee and put a struct ptrace_tracee *ptrace_tracee into
-task_struct.  The struct would contain a pointer to the task_struct as
-well as ptrace (the flag field, I think), ptrace_entry, ptracer_cred,
-ptrace_message, and last_siginfo.  And then we could add a field for
-the ptrace stop state that would indicate the actual reason for the
-current stop.  We'd only allocate ptrace_tracee when someone attaches
-with ptrace, thus saving quite a few bytes for each task.
-
-It's a bit unfortunate if we allow PTRACE_GET_SYSCALL_INFO to success
-if the event is PTRACE_EVENT_EXIT.  I'd also be a bit nervous about
-info leaks if we start calling the syscall accessors for tasks that
-aren't in syscalls.
-
---Andy
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
