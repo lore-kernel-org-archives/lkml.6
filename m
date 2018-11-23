@@ -2,616 +2,93 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0D3C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D68FAC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5194820874
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:46:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5194820874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E4BC20820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:47:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="0Bd+Pc4T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E4BC20820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503405AbeKWV34 (ORCPT
+        id S2409481AbeKWVbX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 16:29:56 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:32892 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409481AbeKWV3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 16:29:55 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D6EE31A03D2;
-        Fri, 23 Nov 2018 11:46:05 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C988A1A03CA;
-        Fri, 23 Nov 2018 11:46:05 +0100 (CET)
-Received: from fsr-ub1664-016.ea.freescale.net (fsr-ub1664-016.ea.freescale.net [10.171.71.216])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 890C920606;
-        Fri, 23 Nov 2018 11:46:05 +0100 (CET)
-From:   Claudiu Manoil <claudiu.manoil@nxp.com>
-To:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, alexandru.marginean@nxp.com,
-        catalin.horghidan@nxp.com
-Subject: [PATCH net-next v3 3/4] enetc: Add vf to pf messaging support
-Date:   Fri, 23 Nov 2018 12:46:02 +0200
-Message-Id: <1542969963-10676-4-git-send-email-claudiu.manoil@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542969963-10676-1-git-send-email-claudiu.manoil@nxp.com>
-References: <1542969963-10676-1-git-send-email-claudiu.manoil@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Fri, 23 Nov 2018 16:31:23 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34581 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390156AbeKWVbX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 16:31:23 -0500
+Received: by mail-pl1-f193.google.com with SMTP id f12-v6so10502596plo.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 02:47:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yCDzkkUxDhsOcjlmanwy5kH29tqxHEELZlMxWQkLNkI=;
+        b=0Bd+Pc4TxmVh9GydW5lFeJb4aCr0AqloP7Cki0891V9f9h36TnDR2S4R8UYtBRzzDn
+         IryYOOha0ZQ5JXs3ejczRflGLN8i6Ny8pTXlxTkeRBiLNDqFc5WHp4jY5aAZ+6Emy+RD
+         0P0gcnucsLxd3FfPgdnbFVS7RORD+jIuf/uBe5gLQEJlw3KGMiLEbteuqRSQ6yzCaVPQ
+         kUg5I5sO14GMymw94qOJWESeJik+v0P6kttKBc0e4f5FxFUAdwX1zBYkXUt0vsdobYSm
+         qdIfxfpjsL3FdMT3GAOgV2Cqg27FoDO8nuWlWeI4NE5R4imokPyjj1IVh02hsWyK6El4
+         MdJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yCDzkkUxDhsOcjlmanwy5kH29tqxHEELZlMxWQkLNkI=;
+        b=gW3QLCaQDfLUSpJnl7JCaMmkQVWwQVGssDFf+3dx9MJimABol73JPiNyQFOEhJB8JP
+         wonRYnbD98sMlMc8rGX4meshZ2RlrmTwf5FkyLoed0K9e1jze22Ey7mnwIXrTlgTRe5n
+         MU4uGl96ltZrIFcpxwPXu9IznwWXfZUGL2je/cYfOwixUZITNcs41tS7ubVSBrdnwcxv
+         ZLEBKxh0s2Av+CGgO6inP6ofr6Jc4vaTtWD6f+aKPjEV3qyvOwriJrLKodKwt0M1fGTd
+         BHXpbBTXn9I9CsJPfbsKGpDUl2sdtMNVX2FeWB/VdcujoPUaMcpd7FpI3joD2NJN1Bwm
+         9+Bg==
+X-Gm-Message-State: AA+aEWacCjFtUV/209zmKFKwq/tOF7N9qxAc8a2yAY2sI/jCWV5H4w4F
+        M46A1z/oXBF1UgwbEsvTcdKJ5A==
+X-Google-Smtp-Source: AFSGD/VctfVnfQsSEsCBQXJk78IlFyRIi5A/3BaLVibMWQNrYKSXljLjkuzfkmAhjnbqfLSDz4YgTw==
+X-Received: by 2002:a17:902:9f93:: with SMTP id g19mr14777303plq.195.1542970056790;
+        Fri, 23 Nov 2018 02:47:36 -0800 (PST)
+Received: from kshutemo-mobl1.localdomain ([192.55.54.40])
+        by smtp.gmail.com with ESMTPSA id f22-v6sm67172651pff.29.2018.11.23.02.47.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 23 Nov 2018 02:47:36 -0800 (PST)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 83F813001AF; Fri, 23 Nov 2018 13:47:32 +0300 (+03)
+Date:   Fri, 23 Nov 2018 13:47:32 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH 1/2] mm: Remove redundant test from find_get_pages_contig
+Message-ID: <20181123104732.gvhdqyddbsiq3i42@kshutemo-mobl1>
+References: <20181122213224.12793-1-willy@infradead.org>
+ <20181122213224.12793-2-willy@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181122213224.12793-2-willy@infradead.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VSIs (VFs) may send a message to the PSI (PF) for general notification
-or to gain access to hardware resources which requires host inspection.
-These messages may vary in size and are handled as a partition copy
-between two memory regions owned by the respective participants.
-The PSI will respond with fail or success and a 16-bit message code.
-The patch implements the vf to pf messaging mechanism above and, as the
-first application making use of this support, it enables the VF to
-configure its own primary MAC address.
+On Thu, Nov 22, 2018 at 01:32:23PM -0800, Matthew Wilcox wrote:
+> After we establish a reference on the page, we check the pointer continues
+> to be in the correct position in i_pages.  There's no need to check the
+> page->mapping or page->index afterwards; if those can change after we've
+> got the reference, they can change after we return the page to the caller.
 
-Signed-off-by: Catalin Horghidan <catalin.horghidan@nxp.com>
-Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
----
-v2:	- replaced sprintf by snprintf
-v3:	- none
+Hm. IIRC, page->mapping can be set to NULL due truncation, but what about
+index? When it can be changed? Truncation doesn't touch it.
 
- drivers/net/ethernet/freescale/enetc/Makefile    |   1 +
- drivers/net/ethernet/freescale/enetc/enetc.h     |  14 ++
- drivers/net/ethernet/freescale/enetc/enetc_hw.h  |  50 +++++++
- drivers/net/ethernet/freescale/enetc/enetc_msg.c | 164 +++++++++++++++++++++++
- drivers/net/ethernet/freescale/enetc/enetc_pf.c  |  80 ++++++++++-
- drivers/net/ethernet/freescale/enetc/enetc_pf.h  |  17 +++
- drivers/net/ethernet/freescale/enetc/enetc_vf.c  |  85 ++++++++++++
- 7 files changed, 408 insertions(+), 3 deletions(-)
- create mode 100644 drivers/net/ethernet/freescale/enetc/enetc_msg.c
-
-diff --git a/drivers/net/ethernet/freescale/enetc/Makefile b/drivers/net/ethernet/freescale/enetc/Makefile
-index a85ef2b..9529b018 100644
---- a/drivers/net/ethernet/freescale/enetc/Makefile
-+++ b/drivers/net/ethernet/freescale/enetc/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_FSL_ENETC) += fsl-enetc.o
- fsl-enetc-$(CONFIG_FSL_ENETC) += enetc.o enetc_cbdr.o enetc_ethtool.o
-+fsl-enetc-$(CONFIG_PCI_IOV) += enetc_msg.o
- fsl-enetc-objs := enetc_pf.o $(fsl-enetc-y)
- 
- obj-$(CONFIG_FSL_ENETC_VF) += fsl-enetc-vf.o
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc.h b/drivers/net/ethernet/freescale/enetc/enetc.h
-index a2f0cb2..b73ff17 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc.h
-+++ b/drivers/net/ethernet/freescale/enetc/enetc.h
-@@ -102,6 +102,12 @@ struct enetc_cbdr {
- #define ENETC_TXBD(BDR, i) (&(((union enetc_tx_bd *)((BDR).bd_base))[i]))
- #define ENETC_RXBD(BDR, i) (&(((union enetc_rx_bd *)((BDR).bd_base))[i]))
- 
-+struct enetc_msg_swbd {
-+	void *vaddr;
-+	dma_addr_t dma;
-+	int size;
-+};
-+
- #define ENETC_REV1	0x1
- enum enetc_errata {
- 	ENETC_ERR_TXCSUM	= BIT(0),
-@@ -172,6 +178,14 @@ struct enetc_ndev_priv {
- 	phy_interface_t if_mode;
- };
- 
-+/* Messaging */
-+
-+/* VF-PF set primary MAC address message format */
-+struct enetc_msg_cmd_set_primary_mac {
-+	struct enetc_msg_cmd_header header;
-+	struct sockaddr mac;
-+};
-+
- #define ENETC_CBD(R, i)	(&(((struct enetc_cbd *)((R).bd_base))[i]))
- 
- #define ENETC_CBDR_TIMEOUT	1000 /* usecs */
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_hw.h b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-index 511bf5c..b161eff 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-@@ -34,6 +34,29 @@
- #define ENETC_SIPMAR0	0x80
- #define ENETC_SIPMAR1	0x84
- 
-+/* VF-PF Message passing */
-+#define ENETC_DEFAULT_MSG_SIZE	1024	/* and max size */
-+/* msg size encoding: default and max msg value of 1024B encoded as 0 */
-+static inline u32 enetc_vsi_set_msize(u32 size)
-+{
-+	return size < ENETC_DEFAULT_MSG_SIZE ? size >> 5 : 0;
-+}
-+
-+#define ENETC_PSIMSGRR	0x204
-+#define ENETC_PSIMSGRR_MR_MASK	GENMASK(2, 1)
-+#define ENETC_PSIMSGRR_MR(n) BIT((n) + 1) /* n = VSI index */
-+#define ENETC_PSIVMSGRCVAR0(n)	(0x210 + (n) * 0x8) /* n = VSI index */
-+#define ENETC_PSIVMSGRCVAR1(n)	(0x214 + (n) * 0x8)
-+
-+#define ENETC_VSIMSGSR	0x204	/* RO */
-+#define ENETC_VSIMSGSR_MB	BIT(0)
-+#define ENETC_VSIMSGSR_MS	BIT(1)
-+#define ENETC_VSIMSGSNDAR0	0x210
-+#define ENETC_VSIMSGSNDAR1	0x214
-+
-+#define ENETC_SIMSGSR_SET_MC(val) ((val) << 16)
-+#define ENETC_SIMSGSR_GET_MC(val) ((val) >> 16)
-+
- /* SI statistics */
- #define ENETC_SIROCT	0x300
- #define ENETC_SIRFRM	0x308
-@@ -405,6 +428,33 @@ static inline void enetc_get_primary_mac_addr(struct enetc_hw *hw, u8 *addr)
- /* base index for Rx/Tx interrupts */
- #define ENETC_BDR_INT_BASE_IDX	1
- 
-+/* Messaging */
-+
-+/* Command completion status */
-+enum enetc_msg_cmd_status {
-+	ENETC_MSG_CMD_STATUS_OK,
-+	ENETC_MSG_CMD_STATUS_FAIL
-+};
-+
-+/* VSI-PSI command message types */
-+enum enetc_msg_cmd_type {
-+	ENETC_MSG_CMD_MNG_MAC = 1, /* manage MAC address */
-+	ENETC_MSG_CMD_MNG_RX_MAC_FILTER,/* manage RX MAC table */
-+	ENETC_MSG_CMD_MNG_RX_VLAN_FILTER /* manage RX VLAN table */
-+};
-+
-+/* VSI-PSI command action types */
-+enum enetc_msg_cmd_action_type {
-+	ENETC_MSG_CMD_MNG_ADD = 1,
-+	ENETC_MSG_CMD_MNG_REMOVE
-+};
-+
-+/* PSI-VSI command header format */
-+struct enetc_msg_cmd_header {
-+	u16 type;	/* command class type */
-+	u16 id;		/* denotes the specific required action */
-+};
-+
- /* Common H/W utility functions */
- 
- static inline void enetc_enable_rxvlan(struct enetc_hw *hw, int si_idx,
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_msg.c b/drivers/net/ethernet/freescale/enetc/enetc_msg.c
-new file mode 100644
-index 0000000..b013a3e
---- /dev/null
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_msg.c
-@@ -0,0 +1,164 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-+/* Copyright 2017-2018 NXP */
-+
-+#include "enetc_pf.h"
-+
-+static void enetc_msg_disable_mr_int(struct enetc_hw *hw)
-+{
-+	u32 psiier = enetc_rd(hw, ENETC_PSIIER);
-+	/* disable MR int source(s) */
-+	enetc_wr(hw, ENETC_PSIIER, psiier & ~ENETC_PSIIER_MR_MASK);
-+}
-+
-+static void enetc_msg_enable_mr_int(struct enetc_hw *hw)
-+{
-+	u32 psiier = enetc_rd(hw, ENETC_PSIIER);
-+
-+	enetc_wr(hw, ENETC_PSIIER, psiier | ENETC_PSIIER_MR_MASK);
-+}
-+
-+static irqreturn_t enetc_msg_psi_msix(int irq, void *data)
-+{
-+	struct enetc_si *si = (struct enetc_si *)data;
-+	struct enetc_pf *pf = enetc_si_priv(si);
-+
-+	enetc_msg_disable_mr_int(&si->hw);
-+	schedule_work(&pf->msg_task);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void enetc_msg_task(struct work_struct *work)
-+{
-+	struct enetc_pf *pf = container_of(work, struct enetc_pf, msg_task);
-+	struct enetc_hw *hw = &pf->si->hw;
-+	unsigned long mr_mask;
-+	int i;
-+
-+	for (;;) {
-+		mr_mask = enetc_rd(hw, ENETC_PSIMSGRR) & ENETC_PSIMSGRR_MR_MASK;
-+		if (!mr_mask) {
-+			/* re-arm MR interrupts, w1c the IDR reg */
-+			enetc_wr(hw, ENETC_PSIIDR, ENETC_PSIIER_MR_MASK);
-+			enetc_msg_enable_mr_int(hw);
-+			return;
-+		}
-+
-+		for (i = 0; i < pf->num_vfs; i++) {
-+			u32 psimsgrr;
-+			u16 msg_code;
-+
-+			if (!(ENETC_PSIMSGRR_MR(i) & mr_mask))
-+				continue;
-+
-+			enetc_msg_handle_rxmsg(pf, i, &msg_code);
-+
-+			psimsgrr = ENETC_SIMSGSR_SET_MC(msg_code);
-+			psimsgrr |= ENETC_PSIMSGRR_MR(i); /* w1c */
-+			enetc_wr(hw, ENETC_PSIMSGRR, psimsgrr);
-+		}
-+	}
-+}
-+
-+/* Init */
-+static int enetc_msg_alloc_mbx(struct enetc_si *si, int idx)
-+{
-+	struct enetc_pf *pf = enetc_si_priv(si);
-+	struct device *dev = &si->pdev->dev;
-+	struct enetc_hw *hw = &si->hw;
-+	struct enetc_msg_swbd *msg;
-+	u32 val;
-+
-+	msg = &pf->rxmsg[idx];
-+	/* allocate and set receive buffer */
-+	msg->size = ENETC_DEFAULT_MSG_SIZE;
-+
-+	msg->vaddr = dma_zalloc_coherent(dev, msg->size, &msg->dma,
-+					 GFP_KERNEL);
-+	if (!msg->vaddr) {
-+		dev_err(dev, "msg: fail to alloc dma buffer of size: %d\n",
-+			msg->size);
-+		return -ENOMEM;
-+	}
-+
-+	/* set multiple of 32 bytes */
-+	val = lower_32_bits(msg->dma);
-+	enetc_wr(hw, ENETC_PSIVMSGRCVAR0(idx), val);
-+	val = upper_32_bits(msg->dma);
-+	enetc_wr(hw, ENETC_PSIVMSGRCVAR1(idx), val);
-+
-+	return 0;
-+}
-+
-+static void enetc_msg_free_mbx(struct enetc_si *si, int idx)
-+{
-+	struct enetc_pf *pf = enetc_si_priv(si);
-+	struct enetc_hw *hw = &si->hw;
-+	struct enetc_msg_swbd *msg;
-+
-+	msg = &pf->rxmsg[idx];
-+	dma_free_coherent(&si->pdev->dev, msg->size, msg->vaddr, msg->dma);
-+	memset(msg, 0, sizeof(*msg));
-+
-+	enetc_wr(hw, ENETC_PSIVMSGRCVAR0(idx), 0);
-+	enetc_wr(hw, ENETC_PSIVMSGRCVAR1(idx), 0);
-+}
-+
-+int enetc_msg_psi_init(struct enetc_pf *pf)
-+{
-+	struct enetc_si *si = pf->si;
-+	int vector, i, err;
-+
-+	/* register message passing interrupt handler */
-+	snprintf(pf->msg_int_name, sizeof(pf->msg_int_name), "%s-vfmsg",
-+		 si->ndev->name);
-+	vector = pci_irq_vector(si->pdev, ENETC_SI_INT_IDX);
-+	err = request_irq(vector, enetc_msg_psi_msix, 0, pf->msg_int_name, si);
-+	if (err) {
-+		dev_err(&si->pdev->dev,
-+			"PSI messaging: request_irq() failed!\n");
-+		return err;
-+	}
-+
-+	/* set one IRQ entry for PSI message receive notification (SI int) */
-+	enetc_wr(&si->hw, ENETC_SIMSIVR, ENETC_SI_INT_IDX);
-+
-+	/* initialize PSI mailbox */
-+	INIT_WORK(&pf->msg_task, enetc_msg_task);
-+
-+	for (i = 0; i < pf->num_vfs; i++) {
-+		err = enetc_msg_alloc_mbx(si, i);
-+		if (err)
-+			goto err_init_mbx;
-+	}
-+
-+	/* enable MR interrupts */
-+	enetc_msg_enable_mr_int(&si->hw);
-+
-+	return 0;
-+
-+err_init_mbx:
-+	for (i--; i >= 0; i--)
-+		enetc_msg_free_mbx(si, i);
-+
-+	free_irq(vector, si);
-+
-+	return err;
-+}
-+
-+void enetc_msg_psi_free(struct enetc_pf *pf)
-+{
-+	struct enetc_si *si = pf->si;
-+	int i;
-+
-+	cancel_work_sync(&pf->msg_task);
-+
-+	/* disable MR interrupts */
-+	enetc_msg_disable_mr_int(&si->hw);
-+
-+	for (i = 0; i < pf->num_vfs; i++)
-+		enetc_msg_free_mbx(si, i);
-+
-+	/* de-register message passing interrupt handler */
-+	free_irq(pci_irq_vector(si->pdev, ENETC_SI_INT_IDX), si);
-+}
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_pf.c b/drivers/net/ethernet/freescale/enetc/enetc_pf.c
-index 2e3e419..5a772fe 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_pf.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_pf.c
-@@ -365,6 +365,7 @@ static int enetc_pf_set_vf_mac(struct net_device *ndev, int vf, u8 *mac)
- {
- 	struct enetc_ndev_priv *priv = netdev_priv(ndev);
- 	struct enetc_pf *pf = enetc_si_priv(priv->si);
-+	struct enetc_vf_state *vf_state;
- 
- 	if (vf >= pf->total_vfs)
- 		return -EINVAL;
-@@ -372,6 +373,9 @@ static int enetc_pf_set_vf_mac(struct net_device *ndev, int vf, u8 *mac)
- 	if (!is_valid_ether_addr(mac))
- 		return -EADDRNOTAVAIL;
- 
-+	vf_state = &pf->vf_state[vf];
-+	vf_state->flags |= ENETC_VF_FLAG_PF_SET_MAC;
-+
- 	enetc_pf_set_primary_mac_addr(&priv->si->hw, vf + 1, mac);
- 	return 0;
- }
-@@ -531,6 +535,53 @@ static void enetc_configure_port(struct enetc_pf *pf)
- 	enetc_port_wr(hw, ENETC_PMR, ENETC_PMR_EN);
- }
- 
-+/* Messaging */
-+static u16 enetc_msg_pf_set_vf_primary_mac_addr(struct enetc_pf *pf,
-+						int vf_id)
-+{
-+	struct enetc_vf_state *vf_state = &pf->vf_state[vf_id];
-+	struct enetc_msg_swbd *msg = &pf->rxmsg[vf_id];
-+	struct enetc_msg_cmd_set_primary_mac *cmd;
-+	struct device *dev = &pf->si->pdev->dev;
-+	u16 cmd_id;
-+	char *addr;
-+
-+	cmd = (struct enetc_msg_cmd_set_primary_mac *)msg->vaddr;
-+	cmd_id = cmd->header.id;
-+	if (cmd_id != ENETC_MSG_CMD_MNG_ADD)
-+		return ENETC_MSG_CMD_STATUS_FAIL;
-+
-+	addr = cmd->mac.sa_data;
-+	if (vf_state->flags & ENETC_VF_FLAG_PF_SET_MAC)
-+		dev_warn(dev, "Attempt to override PF set mac addr for VF%d\n",
-+			 vf_id);
-+	else
-+		enetc_pf_set_primary_mac_addr(&pf->si->hw, vf_id + 1, addr);
-+
-+	return ENETC_MSG_CMD_STATUS_OK;
-+}
-+
-+void enetc_msg_handle_rxmsg(struct enetc_pf *pf, int vf_id, u16 *status)
-+{
-+	struct enetc_msg_swbd *msg = &pf->rxmsg[vf_id];
-+	struct device *dev = &pf->si->pdev->dev;
-+	struct enetc_msg_cmd_header *cmd_hdr;
-+	u16 cmd_type;
-+
-+	*status = ENETC_MSG_CMD_STATUS_OK;
-+	cmd_hdr = (struct enetc_msg_cmd_header *)msg->vaddr;
-+	cmd_type = cmd_hdr->type;
-+
-+	switch (cmd_type) {
-+	case ENETC_MSG_CMD_MNG_MAC:
-+		*status = enetc_msg_pf_set_vf_primary_mac_addr(pf, vf_id);
-+		break;
-+	default:
-+		dev_err(dev, "command not supported (cmd_type: 0x%x)\n",
-+			cmd_type);
-+	}
-+}
-+
- #ifdef CONFIG_PCI_IOV
- static int enetc_sriov_configure(struct pci_dev *pdev, int num_vfs)
- {
-@@ -541,17 +592,40 @@ static int enetc_sriov_configure(struct pci_dev *pdev, int num_vfs)
- 	if (!num_vfs) {
- 		pf->num_vfs = 0;
- 		pci_disable_sriov(pdev);
-+		enetc_msg_psi_free(pf);
-+		kfree(pf->vf_state);
- 	} else {
-+		pf->num_vfs = num_vfs;
-+
-+		pf->vf_state = kcalloc(num_vfs, sizeof(struct enetc_vf_state),
-+				       GFP_KERNEL);
-+		if (!pf->vf_state) {
-+			pf->num_vfs = 0;
-+			return -ENOMEM;
-+		}
-+
-+		err = enetc_msg_psi_init(pf);
-+		if (err) {
-+			dev_err(&pdev->dev, "enetc_msg_psi_init (%d)\n", err);
-+			goto err_msg_psi;
-+		}
-+
- 		err = pci_enable_sriov(pdev, num_vfs);
- 		if (err) {
- 			dev_err(&pdev->dev, "pci_enable_sriov err %d\n", err);
--			return err;
-+			goto err_en_sriov;
- 		}
--
--		pf->num_vfs = num_vfs;
- 	}
- 
- 	return num_vfs;
-+
-+err_en_sriov:
-+	enetc_msg_psi_free(pf);
-+err_msg_psi:
-+	kfree(pf->vf_state);
-+	pf->num_vfs = 0;
-+
-+	return err;
- }
- #else
- #define enetc_sriov_configure(pdev, num_vfs)	(void)0
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_pf.h b/drivers/net/ethernet/freescale/enetc/enetc_pf.h
-index a9dbb082..6012943 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_pf.h
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_pf.h
-@@ -19,14 +19,31 @@ struct enetc_mac_filter {
- 
- #define ENETC_VLAN_HT_SIZE	64
- 
-+enum enetc_vf_flags {
-+	ENETC_VF_FLAG_PF_SET_MAC	= BIT(0),
-+};
-+
-+struct enetc_vf_state {
-+	enum enetc_vf_flags flags;
-+};
-+
- struct enetc_pf {
- 	struct enetc_si *si;
- 	int num_vfs; /* number of active VFs, after sriov_init */
- 	int total_vfs; /* max number of VFs, set for PF at probe */
-+	struct enetc_vf_state *vf_state;
- 
- 	struct enetc_mac_filter mac_filter[ENETC_MAX_NUM_MAC_FLT];
- 
-+	struct enetc_msg_swbd rxmsg[ENETC_MAX_NUM_VFS];
-+	struct work_struct msg_task;
-+	char msg_int_name[ENETC_INT_NAME_MAX];
-+
- 	char vlan_promisc_simap; /* bitmap of SIs in VLAN promisc mode */
- 	DECLARE_BITMAP(vlan_ht_filter, ENETC_VLAN_HT_SIZE);
- 	DECLARE_BITMAP(active_vlans, VLAN_N_VID);
- };
-+
-+int enetc_msg_psi_init(struct enetc_pf *pf);
-+void enetc_msg_psi_free(struct enetc_pf *pf);
-+void enetc_msg_handle_rxmsg(struct enetc_pf *pf, int mbox_id, u16 *status);
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_vf.c b/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-index 237a2a1..e199b4d 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-@@ -13,12 +13,97 @@ static const char enetc_drv_ver[] = ENETC_DRV_VER_STR;
- #define ENETC_DRV_NAME_STR "ENETC VF driver"
- static const char enetc_drv_name[] = ENETC_DRV_NAME_STR;
- 
-+/* Messaging */
-+static void enetc_msg_vsi_write_msg(struct enetc_hw *hw,
-+				    struct enetc_msg_swbd *msg)
-+{
-+	u32 val;
-+
-+	val = enetc_vsi_set_msize(msg->size) | lower_32_bits(msg->dma);
-+	enetc_wr(hw, ENETC_VSIMSGSNDAR1, upper_32_bits(msg->dma));
-+	enetc_wr(hw, ENETC_VSIMSGSNDAR0, val);
-+}
-+
-+static int enetc_msg_vsi_send(struct enetc_si *si, struct enetc_msg_swbd *msg)
-+{
-+	int timeout = 100;
-+	u32 vsimsgsr;
-+
-+	enetc_msg_vsi_write_msg(&si->hw, msg);
-+
-+	do {
-+		vsimsgsr = enetc_rd(&si->hw, ENETC_VSIMSGSR);
-+		if (!(vsimsgsr & ENETC_VSIMSGSR_MB))
-+			break;
-+
-+		usleep_range(1000, 2000);
-+	} while (--timeout);
-+
-+	if (!timeout)
-+		return -ETIMEDOUT;
-+
-+	/* check for message delivery error */
-+	if (vsimsgsr & ENETC_VSIMSGSR_MS) {
-+		dev_err(&si->pdev->dev, "VSI command execute error: %d\n",
-+			ENETC_SIMSGSR_GET_MC(vsimsgsr));
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static int enetc_msg_vsi_set_primary_mac_addr(struct enetc_ndev_priv *priv,
-+					      struct sockaddr *saddr)
-+{
-+	struct enetc_msg_cmd_set_primary_mac *cmd;
-+	struct enetc_msg_swbd msg;
-+	int err;
-+
-+	msg.size = ALIGN(sizeof(struct enetc_msg_cmd_set_primary_mac), 64);
-+	msg.vaddr = dma_zalloc_coherent(priv->dev, msg.size, &msg.dma,
-+					GFP_KERNEL);
-+	if (!msg.vaddr) {
-+		dev_err(priv->dev, "Failed to alloc Tx msg (size: %d)\n",
-+			msg.size);
-+		return -ENOMEM;
-+	}
-+
-+	cmd = (struct enetc_msg_cmd_set_primary_mac *)msg.vaddr;
-+	cmd->header.type = ENETC_MSG_CMD_MNG_MAC;
-+	cmd->header.id = ENETC_MSG_CMD_MNG_ADD;
-+	memcpy(&cmd->mac, saddr, sizeof(struct sockaddr));
-+
-+	/* send the command and wait */
-+	err = enetc_msg_vsi_send(priv->si, &msg);
-+
-+	dma_free_coherent(priv->dev, msg.size, msg.vaddr, msg.dma);
-+
-+	return err;
-+}
-+
-+static int enetc_vf_set_mac_addr(struct net_device *ndev, void *addr)
-+{
-+	struct enetc_ndev_priv *priv = netdev_priv(ndev);
-+	struct sockaddr *saddr = addr;
-+	int err;
-+
-+	if (!is_valid_ether_addr(saddr->sa_data))
-+		return -EADDRNOTAVAIL;
-+
-+	err = enetc_msg_vsi_set_primary_mac_addr(priv, saddr);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
- /* Probing/ Init */
- static const struct net_device_ops enetc_ndev_ops = {
- 	.ndo_open		= enetc_open,
- 	.ndo_stop		= enetc_close,
- 	.ndo_start_xmit		= enetc_xmit,
- 	.ndo_get_stats		= enetc_get_stats,
-+	.ndo_set_mac_address	= enetc_vf_set_mac_addr,
- };
- 
- static void enetc_vf_netdev_setup(struct enetc_si *si, struct net_device *ndev,
 -- 
-2.7.4
-
+ Kirill A. Shutemov
