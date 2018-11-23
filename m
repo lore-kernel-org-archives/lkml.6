@@ -5,115 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A98C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 834C6C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74A0C20664
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:15:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74A0C20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
+	by mail.kernel.org (Postfix) with ESMTP id 505CA20861
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:16:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 505CA20861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davidnewall.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394991AbeKXA7l (ORCPT
+        id S2436561AbeKXBA5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 19:59:41 -0500
-Received: from bran.ispras.ru ([83.149.199.196]:28112 "EHLO smtp.ispras.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388230AbeKXA7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 19:59:41 -0500
-X-Greylist: delayed 513 seconds by postgrey-1.27 at vger.kernel.org; Fri, 23 Nov 2018 19:59:40 EST
-Received: from monopod.intra.ispras.ru (monopod.intra.ispras.ru [10.10.3.121])
-        by smtp.ispras.ru (Postfix) with ESMTP id 8CDD920AA2;
-        Fri, 23 Nov 2018 17:06:40 +0300 (MSK)
-Date:   Fri, 23 Nov 2018 17:06:38 +0300 (MSK)
-From:   Alexander Monakov <amonakov@ispras.ru>
-To:     Alexander Popov <alex.popov@linux.com>
-cc:     Florian Weimer <fweimer@redhat.com>,
-        Richard Sandiford <richard.sandiford@arm.com>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Laura Abbott <labbott@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Emese Revfy <re.emese@gmail.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Jann Horn <jannh@google.com>,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>, gcc@gcc.gnu.org
-Subject: Re: Investigating a stack state mismatch in Linux kernel
-In-Reply-To: <57225f38-3f6d-4029-8f89-4b6eba97c3c1@linux.com>
-Message-ID: <alpine.LNX.2.20.13.1811231634330.6732@monopod.intra.ispras.ru>
-References: <b7aad232-76e1-241f-00e2-77783ce30f87@linux.com> <875zwyabac.fsf@oldenburg.str.redhat.com> <2a2b1181-2175-7e4e-189c-12630f43d10d@linux.com> <57225f38-3f6d-4029-8f89-4b6eba97c3c1@linux.com>
-User-Agent: Alpine 2.20.13 (LNX 116 2015-12-14)
+        Fri, 23 Nov 2018 20:00:57 -0500
+Received: from hawking.davidnewall.com ([203.20.69.83]:46199 "EHLO
+        hawking.rebel.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391062AbeKXBA5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 20:00:57 -0500
+X-Greylist: delayed 325 seconds by postgrey-1.27 at vger.kernel.org; Fri, 23 Nov 2018 20:00:56 EST
+Received: from [172.30.0.109] (124-169-190-170.dyn.iinet.net.au [::ffff:124.169.190.170])
+  (AUTH: PLAIN davidn, SSL: TLSv1/SSLv3,128bits,AES128-SHA)
+  by hawking.rebel.net.au with ESMTPSA; Sat, 24 Nov 2018 00:41:06 +1030
+  id 0000000000064BC2.5BF80A7C.00004D42
+Subject: Re: Official Linux system wrapper library?
+To:     Florian Weimer <fweimer@redhat.com>,
+        Daniel Colascione <dancol@google.com>
+Cc:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
+        Carlos O'Donell <carlos@redhat.com>,
+        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+ <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com>
+ <877ehjx447.fsf@oldenburg.str.redhat.com>
+ <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
+ <875zx2vhpd.fsf@oldenburg.str.redhat.com>
+ <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com>
+ <87efbbvrx9.fsf@oldenburg.str.redhat.com>
+From:   David Newall <glibc@davidnewall.com>
+Message-ID: <a50dbc52-b5e8-6684-508d-b96ad8d70d4f@davidnewall.com>
+Date:   Sat, 24 Nov 2018 00:41:05 +1030
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <87efbbvrx9.fsf@oldenburg.str.redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-AU
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 24/11/18 12:04 am, Florian Weimer wrote:
+> But socketcall does not exist on all architectures.  Neither does
+> getpid, it's called getxpid on some architectures.
+> ...
+> I think it would be a poor approach to expose application developers to
+> these portability issues.  We need to abstract over these differences at
+> a certain layer, and applications are too late.
 
-On Wed, 21 Nov 2018, Alexander Popov wrote:
+Interesting.  I think the opposite.  I think exposing the OS's 
+interfaces is exactly what a c-library should do.  It might also provide 
+alternative interfaces that work consistently across different 
+platforms, but in addition to, not instead of the OS interface.
 
-> Hello everyone!
-> 
-> At irc.freenode.org/#gcc people told me that I should CC gcc@gcc.gnu.org to get
-> some attention of gcc developers.
-> 
-> Link to previous discussion:
->  https://www.openwall.com/lists/kernel-hardening/2018/11/14/1
-
-So just for information, it isn't a plugin bug. I'll elaborate below, but in
-short, objtool was complaining about unreachable code.  To be fair though,
-gcc could have made the problem easier to spot.
-
-Now for the details.
-
-The repro uses an unusual (randomized) kernel config, in particular gcov is
-enabled and NR_CPUS is 1. Thus we have
-
-static int duplicate_processor_ids[] = {
-        [0 ... 1 - 1] = -1,
-};
-
-and the compiler deduces that the loop in acpi_duplicate_processor_id does not
-iterate:
-
-bool acpi_duplicate_processor_id(int proc_id)
-{
-        int i;
-
-        for (i = 0; i < nr_duplicate_ids; i++) {
-                if (duplicate_processor_ids[i] == proc_id)
-                        return true;
-        }
-        return false;
-}
-
-However as gcov is enabled, loop backedge remains, followed by gcov counter
-increment and __builtin_unreachable() (on GIMPLE). On RTL, however, the basic
-block with the increment ends with a barrier rtx, which is not visible in
-assembly and looks just as if control flow falls through to a function exit.
-Since the exit in question corresponds to a shrink-wrapped early exit that
-does not push/pop registers, objtool complains.
-
-Ultimately this is poor luck, if gcc optimized the code better or terminated
-the block that-should-not-be-reached with ud2, it would not arise.
-
-Alexander
