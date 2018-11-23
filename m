@@ -2,286 +2,232 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3AEC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F3DEC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22167205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:01:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qwyE6PQo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22167205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 5252420861
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:03:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5252420861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503125AbeKWUpE (ORCPT
+        id S2503135AbeKWUql (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:45:04 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:34106 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394542AbeKWUpC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 15:45:02 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181123100125euoutp01b01ad40e748e63bc6772abc1db067956~puJJAyYmw1701017010euoutp01M
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 10:01:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181123100125euoutp01b01ad40e748e63bc6772abc1db067956~puJJAyYmw1701017010euoutp01M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1542967285;
-        bh=bD8S15sT6wO96phZM5E1zkxJw9171bQRWbF6b1upQXM=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=qwyE6PQo9BN/gsxjByCP88WJiaqlAFNv/siiYgxAkInO8qP+HBKdHsLvw6qoFPrSr
-         b4o0PkSMsrHQUHcPBkmt4eDETpN5l/xVt9kNDgIlYwOTzgQaK60WBhhHb/boXTPanF
-         XNHjDorVeQoKu0As+xYQWsW/aT810TeV5peOWj8Y=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181123100124eucas1p1d85244e297138682259d75537e65ab1d~puJH-RP9m2403924039eucas1p1g;
-        Fri, 23 Nov 2018 10:01:24 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 39.6F.04294.4FFC7FB5; Fri, 23
-        Nov 2018 10:01:24 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181123100123eucas1p1e24960e7dc6666c38070bec190d5cdab~puJHDDior1641116411eucas1p1X;
-        Fri, 23 Nov 2018 10:01:23 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181123100123eusmtrp176ce37018e602d4d666e678c5ea8d1bb~puJGyHZ8G1283012830eusmtrp1E;
-        Fri, 23 Nov 2018 10:01:23 +0000 (GMT)
-X-AuditID: cbfec7f4-835ff700000010c6-c7-5bf7cff4bd12
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 22.8F.04128.3FFC7FB5; Fri, 23
-        Nov 2018 10:01:23 +0000 (GMT)
-Received: from [106.120.51.20] (unknown [106.120.51.20]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181123100122eusmtip2a11bb07457a5b06b6b942eca2208e111~puJF8PrbR2096320963eusmtip2p;
-        Fri, 23 Nov 2018 10:01:22 +0000 (GMT)
-Subject: Re: [PATCH 3/6] devfreq: add support for suspend/resume of a
- devfreq device
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com,
-        pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org,
-        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
-        krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
-From:   Lukasz Luba <l.luba@partner.samsung.com>
-Message-ID: <734d0941-c885-4d36-274b-23843d6626c1@partner.samsung.com>
-Date:   Fri, 23 Nov 2018 11:01:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.2.1
+        Fri, 23 Nov 2018 15:46:41 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40710 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2393967AbeKWUqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 15:46:40 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A21E635CD;
+        Fri, 23 Nov 2018 02:03:04 -0800 (PST)
+Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 12B483F5CF;
+        Fri, 23 Nov 2018 02:03:03 -0800 (PST)
+Date:   Fri, 23 Nov 2018 11:03:02 +0100
+From:   Christoffer Dall <christoffer.dall@arm.com>
+To:     peng.hao2@zte.com.cn
+Cc:     marc.zyngier@arm.com, andre.przywara@arm.com,
+        linux-kernel@vger.kernel.org, leif.lindholm@linaro.org,
+        ard.bieshseuvel@linaro.org, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] kvm: arm/arm64 : fix vm's hanging at startup time
+Message-ID: <20181123100302.GB3331@e113682-lin.lund.arm.com>
+References: <20181121110620.GC18678@e113682-lin.lund.arm.com>
+ <201811231401560886603@zte.com.cn>
 MIME-Version: 1.0
-In-Reply-To: <5BF7419E.90006@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTVxjGPfcb4jXHC7OvoJt2MxOj4NSE40eMJszcxT/0L7OMJa7KDRhp
-        1V5ww5mMSfgQVIg6ZUUtfkVWqEgtFdFCRAq6qgWNk0AKC+B0DjYYhKoQlMvVyH+/9znPm+d9
-        kiPQ0ikuSthhSVOsFlOqkQtnPE2vAkuGA6HEpfY7IrlVHUOqiitZcq1qhCVPhp+xxN74gCVZ
-        5ys5cq/ATAp7/qFJIHCFJ/cP9PHEdtxLEVfPHyx5VHuKI0OHGxEpDtRRxNkY5MnFJ60U6fi5
-        jCPB330T+/6HLMn2NvIkp3yAJX0tncw6g+y54WHlijMVSC7JbGXkosL/kXz+5t+U7HIc5OT6
-        0xW8fPXCT/J4Ey+7H+cy8hG3A8ll5SFeHnJ9vFn8JnxNkpK6Y69ijVv7XXhK35FSZnffpz8U
-        nLXzmShnTj4KEwCvgA5PD5ePwgUJlyF4lOOk9WEYQc8FP6UPQwiejpaz71eanhUxGkv4EgLf
-        yWjd1I/A3u2eNEXgLVB28yWvPURiP4L6+obJEBpn0zA+4J4YBIHDsVDj2KOhiDdAdztouwxe
-        AK9DLZzGH+GvIa+rfJJFPBPu/trLaPYwHAMFzlhNprEB2nvtlM6fQFZ1yWQDwL0CZF3+793R
-        CfD0+SCtcwS8aHbzOs8B/7FDjM4q3M9zcDrvh9y7Ne88q+F2cyur5dITuZW1cbq8Hpo7vLwm
-        A54Bbf0z9RNmwFHPSVqXRcjLkXT3QnAfaqF0ngWXKk7wRchom9LLNqWMbUoZ24fcUsQ4kEFJ
-        V83JirrMonwfq5rMarolOXb7LrMLTfxZ/3jzcA2qHdvWgLCAjNPFK1UjiRJr2qtmmBsQCLQx
-        UjwwP5QoiUmmjH2KdddWa3qqojagaIExGsQfp/2ZKOFkU5qyU1F2K9b3r5QQFpWJEvKa4uFw
-        8ezgqng5xlRiP/PbxdAv458X3z7dRqjOpZvmrVS7Um+0VsuFg+3d/gWhzlKHRJK/rHse7L++
-        +OBXCRnBc48HXT7hM2dWkWUsrmv21blV374JROWfLUHebQ/SfG1OKXejL/vhHfOS5fc2jA7u
-        OWFIWrHsr4RZHd5/xfgBI6OmmL5YRFtV01tVIK70rwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAKsWRmVeSWpSXmKPExsVy+t/xe7qfz3+PNrj4ncfi4FZNi40z1rNa
-        bN/4jdXi+pfnrBbzj5xjtWhevJ7N4kx3rkX/49fMFufPb2C3ONv0ht1i1pS9TBabHl9jtbi8
-        aw6bxefeI4wWM87vY7JYe+Quu8XS6xeZLG43rmCzuHvqKFD/6UusFq17j7BbtK3+wGrx5sI9
-        Fgdxj227t7F6rJm3htFjdsNFFo8J/Z8YPRbvecnksWlVJ5vH/rlr2D02L6n3+HeM3WPL1XYW
-        j74tqxg9Vqz+zu7xeZNcAG+Unk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+
-        nU1Kak5mWWqRvl2CXsabvgUsBW+UK7oXzmdvYGyT6WLk5JAQMJE49nwCSxcjF4eQwFJGifaV
-        N5ggEmISk/ZtZ4ewhSX+XOtiA7GFBF4zSpx/ZQZiCwuESXT1/GUHaRYROM0oMeX8KSYQh1mg
-        lVni5dtFjBBj7zBJnF1/BmgHBwebgJ7EjlWFICavgJvEo1sSIINYBFQlfn2/ALZAVCBC4uzL
-        dYwgNq+AoMTJmU/AOjkFNCW61+qBhJkFzCTmbX7IDGGLS9x6Mp8JwpaXaN46m3kCo9AsJN2z
-        kLTMQtIyC0nLAkaWVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIGpZduxn1t2MHa9Cz7EKMDB
-        qMTDu2Hjt2gh1sSy4srcQ4wSHMxKIrxNit+jhXhTEiurUovy44tKc1KLDzGaAv02kVlKNDkf
-        mPbySuINTQ3NLSwNzY3Njc0slMR5zxtURgkJpCeWpGanphakFsH0MXFwSjUw6n25Lj5bqfr2
-        7yWnvkh0PjLd9jZlutzW1zsln3ZoPfWfe8Dd+lJCc+Wcg9em+VQ5bJ/n8+TCFpH/KzeuXip1
-        853DtDC3IIbe/LajYeW7uhctVUxLSzkmqX1V1OR8qVDJEeHQKo3234cWcQteYd3XbDd5/T/T
-        F7tTO1iOVNzmtlTzsN8mO83SRYmlOCPRUIu5qDgRAC87TN9DAwAA
-X-CMS-MailID: 20181123100123eucas1p1e24960e7dc6666c38070bec190d5cdab
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382
-References: <1542823301-23563-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382@eucas1p1.samsung.com>
-        <1542823301-23563-4-git-send-email-l.luba@partner.samsung.com>
-        <5BF61B3A.9050402@samsung.com>
-        <cce4f194-b574-a12c-e876-f11a6f245940@partner.samsung.com>
-        <5BF7419E.90006@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201811231401560886603@zte.com.cn>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo Choi,
+On Fri, Nov 23, 2018 at 02:01:56PM +0800, peng.hao2@zte.com.cn wrote:
+> >Hi,
+> >
+> >On Wed, Nov 21, 2018 at 04:56:54PM +0800, peng.hao2@zte.com.cn wrote:
+> >> >On 19/11/2018 09:10, Mark Rutland wrote:
+> >> >> On Sat, Nov 17, 2018 at 10:58:37AM +0800, peng.hao2@zte.com.cn wrote:
+> >> >>>> On 16/11/18 00:23, peng.hao2@zte.com.cn wrote:
+> >> >>>>>> Hi,
+> >> >>>>>>> When virtual machine starts, hang up.
+> >> >>>>>>
+> >> >>>>>> I take it you mean the *guest* hangs? Because it doesn't get a timer
+> >> >>>>>> interrupt?
+> >> >>>>>>
+> >> >>>>>>> The kernel version of guest
+> >> >>>>>>> is 4.16. Host support vgic_v3.
+> >> >>>>>>
+> >> >>>>>> Your host kernel is something recent, I guess?
+> >> >>>>>>
+> >> >>>>>>> It was mainly due to the incorrect vgic_irq's(intid=27) group value
+> >> >>>>>>> during injection interruption. when kvm_vgic_vcpu_init is called,
+> >> >>>>>>> dist is not initialized at this time. Unable to get vgic V3 or V2
+> >> >>>>>>> correctly, so group is not set.
+> >> >>>>>>
+> >> >>>>>> Mmh, that shouldn't happen with (v)GICv3. Do you use QEMU (which
+> >> >>>>>> version?) or some other userland tool?
+> >> >>>>>>
+> >> >>>>>
+> >> >>>>> QEMU emulator version 3.0.50 .
+> >> >>>>>
+> >> >>>>>>> group is setted to 1 when vgic_mmio_write_group is invoked at some
+> >> >>>>>>> time.
+> >> >>>>>>> when irq->group=0 (intid=27), No ICH_LR_GROUP flag was set and
+> >> >>>>>>> interrupt injection failed.
+> >> >>>>>>>
+> >> >>>>>>> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> >> >>>>>>> ---
+> >> >>>>>>>   virt/kvm/arm/vgic/vgic-v3.c | 2 +-
+> >> >>>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >> >>>>>>>
+> >> >>>>>>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+> >> >>>>>>> index 9c0dd23..d101000 100644
+> >> >>>>>>> --- a/virt/kvm/arm/vgic/vgic-v3.c
+> >> >>>>>>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+> >> >>>>>>> @@ -198,7 +198,7 @@ void vgic_v3_populate_lr(struct kvm_vcpu *vcpu,
+> >> >>>>>>> struct vgic_irq *irq, int lr) if (vgic_irq_is_mapped_level(irq) &&
+> >> >>>>>>> (val & ICH_LR_PENDING_BIT)) irq->line_level = false;
+> >> >>>>>>>
+> >> >>>>>>> -    if (irq->group)
+> >> >>>>>>> +    if (model == KVM_DEV_TYPE_ARM_VGIC_V3)
+> >> >>>>>>
+> >> >>>>>> This is not the right fix, not only because it basically reverts the
+> >> >>>>>> GICv3 part of 87322099052 (KVM: arm/arm64: vgic: Signal IRQs using
+> >> >>>>>> their configured group).
+> >> >>>>>>
+> >> >>>>>> Can you try to work out why kvm_vgic_vcpu_init() is apparently called
+> >> >>>>>> before dist->vgic_model is set, also what value it has?
+> >> >>>>>> If I understand the code correctly, that shouldn't happen for a GICv3.
+> >> >>>>>>
+> >> >>>>> Even if the value of  group is correctly assigned in kvm_vgic_vcpu_init, the group is then written 0 through >vgic_mmio_write_group.
+> >> >>>>>   If the interrupt comes at this time, the interrupt injection fails.
+> >> >>>>
+> >> >>>> Does that mean that the guest is configuring its interrupts as Group0?
+> >> >>>> That sounds wrong, Linux should configure all it's interrupts as
+> >> >>>> non-secure group1.
+> >> >>>
+> >> >>> no, I think that uefi dose this, not linux.
+> >> >>> 1. kvm_vgic_vcpu_init
+> >> >>> 2. vgic_create
+> >> >>> 3. kvm_vgic_dist_init
+> >> >>> 4.vgic_mmio_write_group: uefi as guest, write group=0
+> >> >>> 5.vgic_mmio_write_group: linux as guest, write group=1
+> >> >>
+> >> >> Is this the same issue fixed by EDK2 commit:
+> >> >>
+> >> >> 66127011a544b90e ("ArmPkg/ArmGicDxe ARM: fix encoding for GICv3 interrupt acknowledge")
+> >> >>
+> >> >> ... where EDK2 would try to use IAR0 rather than IAR1?
+> >> >>
+> >> >> The commit messages notes this lead to a boot-time hang.
+> >> >
+> >> >I managed to trigger an issue with a really old EFI implementation that
+> >> >doesn't configure its interrupts as Group1, and yet tries to ACK its
+> >> >interrupts using the Group1 accessor. Guess what? It is not going to work.
+> >> >
+> >> >Commit c7fefb690661f2e38afcb8200bd318ecf38ab961 in the edk2 tree seems
+> >> >to be the fix (I only assume it does, I haven't actually checked). A
+> >> >recent build, as found in Debian Buster, works perfectly (tested with
+> >> >both QEMU v2.12 and tip of tree).
+> >> >
+> >> >Now, I really don't get what you're saying about Linux not getting
+> >> >interrupts. How do you get to booting Linux if EFI is not making any
+> >> >forward progress? Are you trying them independently?
+> >> >
+> >> I start linux with bypassing uefi, the print info is the same.
+> >> [507107.748908]  vgic_mmio_write_group:## intid/27 group=0
+> >> [507107.752185]  vgic_mmio_write_group:## intid/27 group=0
+> >> [507107.899566]  vgic_mmio_write_group:## intid/27 group=1
+> >> [507107.907370]  vgic_mmio_write_group:## intid/27 group=1
+> >> the command line is like this:
+> >> /home/qemu-patch/linshi/qemu/aarch64-softmmu/qemu-system-aarch64  -machine virt-3.1,accel=kvm,usb=off,dump-guest-core=off,gic-version=3  -kernel /home/kernelboot/vmlinuz-4.16.0+ -initrd /home/kernelboot/initramfs-4.16.0+.img -append root=/dev/mapper/cla-root ro crashkernel=auto rd.lvm.lv=cla/root rd.lvm.lv=cla/swap.UTF-8  -drive file=/home/centos74-ph/boot.qcow2,format=qcow2,if=none,id=drive-scsi0-0-0-0 -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0,bootindex=1  -vnc 0.0.0.0:0 -k en-us -device virtio-gpu-pci,id=video0,max_outputs=1,bus=pci.3,addr=0x0 -device pvpanic-mmio -msg >timestamp=on
+> >>
+> >> This is strange. That's probably the Linux 4.16  kernel setting group to 0, and I'll continue to track in guest.
+> >
+> >Could you try the following patch:
+> >
+> >diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
+> >index c0c0b88af1d5..6fa858c7a5a6 100644
+> >--- a/virt/kvm/arm/vgic/vgic-init.c
+> >+++ b/virt/kvm/arm/vgic/vgic-init.c
+> >@@ -231,13 +231,6 @@ int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu)
+> >irq->config = VGIC_CONFIG_LEVEL;
+> >}
+> >-        /*
+> >-         * GICv3 can only be created via the KVM_DEVICE_CREATE API and
+> >-         * so we always know the emulation type at this point as it's
+> >-         * either explicitly configured as GICv3, or explicitly
+> >-         * configured as GICv2, or not configured yet which also
+> >-         * implies GICv2.
+> >-         */
+> >if (dist->vgic_model == KVM_DEV_TYPE_ARM_VGIC_V3)
+> >irq->group = 1;
+> >else
+> >@@ -298,6 +291,16 @@ int vgic_init(struct kvm *kvm)
+> >if (ret)
+> >goto out;
+> >+    /* Initialize groups on CPUs created before the VGIC type was known */
+> >+    kvm_for_each_vcpu(i, vcpu, kvm) {
+> >+        struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
+> >+
+> >+        for (i = 0; i < VGIC_NR_PRIVATE_IRQS; i++) {
+> >+            struct vgic_irq *irq = &vgic_cpu->private_irqs[i];
+> >+            irq->group = 1;
+> >+        }
+> >+    }
+> >+
+> >if (vgic_has_its(kvm)) {
+> >ret = vgic_v4_init(kvm);
+> >if (ret)
+> >
+> Sorry for the late reply. 
+> I test the patch and it works. But I think there is randomness here.
+> 1.vgic_init:  set intid/27 group=1
+> 2.vgic_mmio_write_group:## intid/27 group=0
+> 3.!!! receive a  vtimer irq   ----- it may exist.
+> 4.vgic_mmio_write_group:## intid/27 group=1
 
-On 11/23/18 12:54 AM, Chanwoo Choi wrote:
-> Hi Lukasz,
-> 
-> I add one more comment about devfreq_resume_device().
-> 
-> On 2018년 11월 22일 20:00, Lukasz Luba wrote:
->>
->>
->> On 11/22/18 3:58 AM, Chanwoo Choi wrote:
->>> On 2018년 11월 22일 03:01, Lukasz Luba wrote:
->>>> The patch adds support for handling suspend/resume process.
->>>> It uses atomic variables to make sure no race condition
->>>> affects the process.
->>>>
->>>> The patch draws on Tobias Jakobi's work posted ~2 years ago, who tried to
->>>> solve issue with devfreq device's frequency during suspend/resume.
->>>> During the discussion on LKML some corner cases and comments appeared
->>>> related to the design. This patch address them keeping in mind suggestions
->>>> from Chanwoo Choi.
->>>
->>> Please remove the duplicate information about patch history.
->>>
->>>>
->>>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->>>> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
->>>> ---
->>>>    drivers/devfreq/devfreq.c | 45 +++++++++++++++++++++++++++++++++++++++------
->>>>    1 file changed, 39 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->>>> index cf9c643..7e09de8 100644
->>>> --- a/drivers/devfreq/devfreq.c
->>>> +++ b/drivers/devfreq/devfreq.c
->>>> @@ -872,14 +872,33 @@ EXPORT_SYMBOL(devm_devfreq_remove_device);
->>>>     */
->>>>    int devfreq_suspend_device(struct devfreq *devfreq)
->>>>    {
->>>> -	if (!devfreq)
->>>> -		return -EINVAL;
->>>> +        int ret;
->>>
->>> Move 'ret' definition under 'if (devfreq->suspend_freq) {'
->>> because 'ret' is used if suspend_freq isn't zero.
->> Not only there, 6 lines above 'ret' is used for
->> devfreq->governor->event_handler().
-> 
-> OK.
-> 
->>>
->>>> +        unsigned long prev_freq;
->>>> +        u32 flags = 0;
->>>> +
->>>> +        if (!devfreq)
->>>> +                return -EINVAL;
->>>> +
->>>> +        if (devfreq->governor) {
->>>> +		ret = devfreq->governor->event_handler(devfreq,
->>>> +					DEVFREQ_GOV_SUSPEND, NULL);
->>>> +		if (ret)
->>>> +			return ret;
->>>> +	}
->>>>    
->>>> -	if (!devfreq->governor)
->>>> -		return 0;
->>>> +	if (devfreq->suspend_freq) {
->>>> +		if (atomic_inc_return(&devfreq->suspend_count) > 1)
->>>> +			return 0;
->>>>    
->>>> -	return devfreq->governor->event_handler(devfreq,
->>>> -				DEVFREQ_GOV_SUSPEND, NULL);
->>>> +		ret = devfreq_set_target(devfreq, devfreq->suspend_freq,
->>>> +					 &prev_freq, flags);
->>>
->>> Remove the 'prev_freq' parameter.
->> OK
->>>
->>>> +		if (ret)
->>>> +			return ret;
->>>> +
->>>> +		devfreq->resume_freq = prev_freq;
->>>
->>> As I commented on patch2, if devfreq_set_taget save the current frequency
->>> to 'devfreq->resume_freq', this line is not needed.
->> OK
->>>
->>>
->>>> +	}
->>>> +
->>>> +        return 0;
->>>>    }
->>>>    EXPORT_SYMBOL(devfreq_suspend_device);
->>>>    
->>>> @@ -893,9 +912,23 @@ EXPORT_SYMBOL(devfreq_suspend_device);
->>>>     */
->>>>    int devfreq_resume_device(struct devfreq *devfreq)
->>>>    {
->>>> +        int ret;
->>>
->>> Move 'ret' definition under 'if (devfreq->suspend_freq) {'
->>> because 'ret' is used if suspend_freq isn't zero.
->> OK
-> 
-> If you change the devfreq_resume_device() according to my new comment,
-> please ignore it.
-> 
->>>
->>>> +        unsigned long prev_freq;
->>>
->>> Remove prev_freq variable which is not used on this function.
->>> After calling devfreq_set_target, prev_freq is not used.
->> OK
->>>
->>>> +        u32 flags = 0;
->>>> +
->>>>    	if (!devfreq)
->>>>    		return -EINVAL;
->>>>    
->>>> +	if (devfreq->suspend_freq) {
->>>> +		if (atomic_dec_return(&devfreq->suspend_count) >= 1)
->>>> +			return 0;
->>>> +
->>>> +		ret = devfreq_set_target(devfreq, devfreq->resume_freq,
->>>> +					 &prev_freq, flags);
->>>
->>> Remove the 'prev_freq' parameter.
->> OK
->>>
->>>> +		if (ret)
->>>> +			return ret;
->>>> +	}
->>>> +
->>>>    	if (!devfreq->governor)
->>>>    		return 0;
-> 
-> Please change the code as following because you uses the following type
-> in the devfreq_suspend_device(). If there is any special issue, please
-> keep the same format in order to improve the readability.
-> 
-> 	if (devfreq->governor) {
-> 		ret = devfreq->governor->event_handler(devfreq,
-> 				DEVFREQ_GOV_RESUME, NULL);
-> 		if (ret)
-> 			return ret;
-> 	}
-> 
-> 
-OK, I will change the code to keep the same format.
-Thank you for the review.
+Are these writes from userspace or from the guest?
+(I assume they're from the guest.)
 
-Regards,
-Lukasz
+> 
+> I made an attempt before:
 
+Was this previous experiment using my patch or without my patch?
+
+> 1. kvm_vgic_vcpu_init
+>      according to if  kvm_vgic_global_state.type == VGIC_V3, set group=1
+> 2.vgic_mmio_write_group:## intid/27 group=0
+> 3.!!! receive a  vtimer irq   -----I really receive a vtimer irq, then the guest hangs.
+> 
+
+If the guest you're using is flipping the group of the interrupt and yet
+enabling the device and interrupt while flipping the group, then it's
+not expected to work and it's a guest bug.
+
+My hunch here tells me that my patch is what we need for KVM, and either
+
+  (1) You no longer have a problem but are tracing some guest
+      initialization behavior which is fine, or
+
+  (2) You still have a problem because you also have some broken guest
+      code (guest UEFI or guest Linux) that also needs fixing.
+
+If you can demonstrate that you still have a problem, with my path
+applied to KVM, and with a recent guest Linux and guest UEFI, then I'll
+be happy to have another look.  In that case, could you please provide
+the exact versions of your guest Linux and UEFI, as well as the QEMU
+version and command line.
+
+
+Thanks,
+
+    Christoffer
