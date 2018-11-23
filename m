@@ -2,116 +2,146 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 340A0C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2921C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:31:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 067A420820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:30:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 067A420820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B138020820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:31:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gPojN90a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B138020820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409111AbeKWUOQ (ORCPT
+        id S2409141AbeKWUO6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:14:16 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49179 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393892AbeKWUKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 15:10:06 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B70BF20F8D; Fri, 23 Nov 2018 10:26:38 +0100 (CET)
-Received: from localhost.localdomain (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 602EE20D29;
-        Fri, 23 Nov 2018 10:26:28 +0100 (CET)
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v2 04/43] drm/sun4i: backend: Add a helper and a list for supported formats
-Date:   Fri, 23 Nov 2018 10:24:36 +0100
-Message-Id: <20181123092515.2511-5-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
-References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
+        Fri, 23 Nov 2018 15:14:58 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:37463 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502937AbeKWUO6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 15:14:58 -0500
+Received: by mail-yw1-f67.google.com with SMTP id h193so3331056ywc.4;
+        Fri, 23 Nov 2018 01:31:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=bzjcUHl1w//ssAapa6A5RQcSSMDTYUDZk9FHeTjejYo=;
+        b=gPojN90awjuIdPcPkcY3kxibKmRq7Z2f0j+3CPWaqtKCJvbPnAbpRX/MDPShrSmmcx
+         9P/8szFIgW2t+a0xZa8iboavnx5K75s8kdW6Jh8yzi2eiVYCKSpCNjeak/5xjTg+kPmv
+         TgyLwkyArTEbWnG5m6pW/gW37ZakhJfPr+UWd1C0HaiDVOAnag5WaRcjlLiXt3a90yMs
+         SGGyzZMbQXciNT+Tw0cJ0V0N4JXoq0/JJ2HD2IKmPtc0A1iuooGqSj5cMbUtUeNaeVxf
+         DUSFwhGJTMBv1iSR+GupflizH1v0G7UYLMqqf5OOfv2mkcyYGRS3EDCkVRX+4G7hpe8s
+         yU8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=bzjcUHl1w//ssAapa6A5RQcSSMDTYUDZk9FHeTjejYo=;
+        b=lOPj5U8yDeEWVFIWCp19OueYEQRvKco7DESF8po/5nvucccVSrcct4uy/DnGH3C3QX
+         RcQ9c24LJK1NBT0OKjTAE7saTSqHpl+S+uADOt/Huq5WryQsw2jzKwknU+lmBvoohnJe
+         p5Xe38gjU7yOf0eHLoPw7zNuTx38YoGJWN9tJ4rSWtJsOtLAT6Q4hLa6jWAnI85Pnenl
+         VDr6cnVdUUGvyqUImIVavyDXTdMt+S76xVveNwuskm3fx+tVkAG+Cg/bOZ9Y2gJHCT0x
+         hSW6CXFkWro34lZjoQcr4f5RcTAZ0HX3V/bfK6S5l3QNpD7d+EJkGbRI/TSGaHX00nM5
+         VYyQ==
+X-Gm-Message-State: AGRZ1gIKUf6aF4/aB1CfiVmX48fB2mjK1pIdXX+B5VIMBus6zWv9mWl7
+        4uMqLjMrO8+RAgAHvMOCB6zoeRPWxw8XY9vjUq9I01ay4z0=
+X-Google-Smtp-Source: AJdET5fDumazKDuhg2tlZM+KX1ci3Fdc07HjfUHCZ7XH+LJVfnYPwdNmG90d18Cf2YWw0rWXJjgPZ3ZEBssOhUwRtBY=
+X-Received: by 2002:a81:a40d:: with SMTP id b13-v6mr14987783ywh.345.1542965489953;
+ Fri, 23 Nov 2018 01:31:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181121123508.25119-1-peron.clem@gmail.com> <20181122200536.ndgrxuxealtovngy@pengutronix.de>
+In-Reply-To: <20181122200536.ndgrxuxealtovngy@pengutronix.de>
+From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date:   Fri, 23 Nov 2018 10:31:18 +0100
+Message-ID: <CAJiuCcdt9Kk3z6gsr68O1JrPfan-ENpRjo0dnBaGxs4xDidOzQ@mail.gmail.com>
+Subject: Re: [PATCH v2] pwm: kconfig: enable kona pwm to be built for cygnus arch
+To:     u.kleine-koenig@pengutronix.de
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to check whether the backend supports a specific format, an
-explicit list and a related helper are introduced.
+Hi,
 
-The prototype of this helper is added to the header so that it can be
-called from sun4i_layer later (when introducing tiled mode support).
+On Thu, 22 Nov 2018 at 21:05, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+>
+> Hello Cl=C3=A9ment,
+>
+> On Wed, Nov 21, 2018 at 01:35:08PM +0100, Cl=C3=A9ment P=C3=A9ron wrote:
+> > The Cygnus architecture use a Kona PWM. This is already present
+> > in the device tree but can't be built actually. Hence, allow the
+> > Kona PWM to be built for Cygnus arch.
+> >
+> > Signed-off-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
+> > ---
+> >  drivers/pwm/Kconfig | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> > index 27e5dd47a01f..982f4059f4e8 100644
+> > --- a/drivers/pwm/Kconfig
+> > +++ b/drivers/pwm/Kconfig
+> > @@ -88,7 +88,9 @@ config PWM_BCM_IPROC
+> >
+> >  config PWM_BCM_KONA
+> >       tristate "Kona PWM support"
+> > -     depends on ARCH_BCM_MOBILE
+> > +     depends on ARCH_BCM_MOBILE || ARCH_BCM_CYGNUS || COMPILE_TEST
+> > +     depends on HAVE_CLK && HAS_IOMEM
+> > +     default ARCH_BCM_CYGNUS
+>
+> This looks good. As pointed out before the default is a bit strange
+> and could include ARCH_BCM_MOBILE for symmetry.
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
----
- drivers/gpu/drm/sun4i/sun4i_backend.c | 27 +++++++++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun4i_backend.h |  1 +
- 2 files changed, 28 insertions(+)
+Ok, let me resend a v3
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-index c3444246755b..7dd24eb03f89 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-@@ -155,6 +155,33 @@ static int sun4i_backend_drm_format_to_layer(u32 format, u32 *mode)
- 	return 0;
- }
- 
-+static const uint32_t sun4i_backend_formats[] = {
-+	DRM_FORMAT_ARGB1555,
-+	DRM_FORMAT_ARGB4444,
-+	DRM_FORMAT_ARGB8888,
-+	DRM_FORMAT_BGRX8888,
-+	DRM_FORMAT_RGB565,
-+	DRM_FORMAT_RGB888,
-+	DRM_FORMAT_RGBA4444,
-+	DRM_FORMAT_RGBA5551,
-+	DRM_FORMAT_UYVY,
-+	DRM_FORMAT_VYUY,
-+	DRM_FORMAT_XRGB8888,
-+	DRM_FORMAT_YUYV,
-+	DRM_FORMAT_YVYU,
-+};
-+
-+bool sun4i_backend_format_is_supported(uint32_t fmt)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(sun4i_backend_formats); i++)
-+		if (sun4i_backend_formats[i] == fmt)
-+			return true;
-+
-+	return false;
-+}
-+
- int sun4i_backend_update_layer_coord(struct sun4i_backend *backend,
- 				     int layer, struct drm_plane *plane)
- {
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.h b/drivers/gpu/drm/sun4i/sun4i_backend.h
-index 339dbff1cce4..93db3af675b3 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.h
-@@ -198,6 +198,7 @@ engine_to_sun4i_backend(struct sunxi_engine *engine)
- 
- void sun4i_backend_layer_enable(struct sun4i_backend *backend,
- 				int layer, bool enable);
-+bool sun4i_backend_format_is_supported(uint32_t fmt);
- int sun4i_backend_update_layer_coord(struct sun4i_backend *backend,
- 				     int layer, struct drm_plane *plane);
- int sun4i_backend_update_layer_formats(struct sun4i_backend *backend,
--- 
-2.19.1
+>
+> Anyhow:
+>
+> Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+>
+> Related to this driver I have a set of questions: If the disable
+> callback completed, does the hardware still drive the pin? If yes, would
+> it be possible to disable the pin driver such that the pin gets high-Z?
+> If yes, how?
 
+The output pin type is configured with the bit "21:16 PWMOUT_TYPE RW
+default 0x3F" in the Control register
+PWM_CONTROL_TYPE_SHIFT macro in the driver
+Datasheets says : "When set to 1 the PWM Output signal will have a
+push/pull type.When set to 0 the PWM Output signal will have an open
+drain output type.Recommend to leave it push/pull type."
+
+In the driver we actually set push/pull mode for all channels :
+/* Set push/pull for all channels */
+for (chan =3D 0; chan < kp->chip.npwm; chan++)
+value |=3D (1 << PWM_CONTROL_TYPE_SHIFT(chan));
+
+Regards,
+Clement
+
+>
+> Best regards
+> Uwe
+>
+> --
+> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
+     |
+> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
+|
