@@ -2,129 +2,171 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FE7C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 704DCC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:19:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C92BE20659
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:18:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cAHrnddI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92BE20659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3CA8D20659
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:19:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CA8D20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503687AbeKWWBv (ORCPT
+        id S2409591AbeKWWDY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 17:01:51 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39274 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729651AbeKWWBv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 17:01:51 -0500
-Received: by mail-lf1-f66.google.com with SMTP id n18so8467895lfh.6;
-        Fri, 23 Nov 2018 03:17:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Dnm9e3ZHO3/jCt83r6fUUrfYu0u62tujmgy9U8Ise4c=;
-        b=cAHrnddIxS7rQNUHpTiCRPhDYfde/4HOBFvd7kv2DQ2NMbTVDc7aO05OHDHVemKUf+
-         fkOKKB/DnGKRedjfvtM+5zH83JmMI34fC05aYPzZZNtXvRTbmgBZvio/gluvNBIXb6Kj
-         bzJk8ZUunGObRWFKT5IkRnfvvsFatowzi8MGtYnKuEfpF+GOcX3RgTI9dTvjvMcIeWcB
-         YNqhNSGSPjtUGR8/5Di23BVx+ulfBZpjDCldemDdOrqD51uNmx3yq39bYNrd9qXlqZki
-         PMKHkEXzuWGkBjFDEnYs3xu7wHNJIH3s+ORR21r24oGqFAGP2vjuajwszsfYxxpOkPZl
-         YpfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Dnm9e3ZHO3/jCt83r6fUUrfYu0u62tujmgy9U8Ise4c=;
-        b=c+IuJuBYa5VASIPKqlrvt29HXmOzMRml2LnZcbRd9oat9k8H0RVkeWUHcTpGpaC2d1
-         1huLDcLDSQQDVxIwsKdxROCbRqFR2zTkO9EEcDum/yjbx0KFzZVOKycAoKQydD2GlYBx
-         bywSEBdNSXnP6ggCj0a6OlLLnpMlcZLGpH72ZVBZhfj4UGHRwd7L+I8/lVAcPALV96sA
-         rgMhipKm2unH2HC7Hmt6ZRWY1PFdqccFyiBdYx2cAys2jIiNlanRn/ZIWNNu+UgmasFU
-         5iYbCkaVRl/RcRUTDcV6g5qL1B1+ZwmiVrGLsRsRaVLDF9FO67w74lHUjYHtr+hrhr72
-         hS6w==
-X-Gm-Message-State: AGRZ1gI39kVpsTWrsRKI1gJvpS/44EHWzf3LakKrMH+XTRPrWIxIIoXH
-        jkxsqFxjIwmQo3EKe4sJ0WU=
-X-Google-Smtp-Source: AJdET5eZdgEHYR/TvnZc1+THnBimfAfkLO6coNSwntmoa2PAUhobToxyWcIRR4AaK5XgybKaId+llw==
-X-Received: by 2002:a19:41c4:: with SMTP id o187mr9358432lfa.32.1542971878521;
-        Fri, 23 Nov 2018 03:17:58 -0800 (PST)
-Received: from z50.intranet (78-10-164-223.static.ip.netia.com.pl. [78.10.164.223])
-        by smtp.gmail.com with ESMTPSA id x21sm4227994lfe.6.2018.11.23.03.17.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Nov 2018 03:17:57 -0800 (PST)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH] ARM: OMAP1: ams-delta: Fix audio permanently muted
-Date:   Fri, 23 Nov 2018 12:19:45 +0100
-Message-Id: <20181123111945.6016-1-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.18.1
+        Fri, 23 Nov 2018 17:03:24 -0500
+Received: from mout.gmx.net ([212.227.15.19]:39281 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729651AbeKWWDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 17:03:23 -0500
+Received: from [0.0.0.0] ([210.140.77.29]) by mail.gmx.com (mrgmx003
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 0MGSgq-1gCw4O3sxc-00DDYb; Fri, 23
+ Nov 2018 12:19:08 +0100
+Subject: Re: [PATCH] btrfs: relocation: set trans to be NULL after free
+To:     Pan Bian <bianpan2016@163.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Cc:     Wang Shilong <wangsl.fnst@cn.fujitsu.com>,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1542967815-14547-1-git-send-email-bianpan2016@163.com>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=quwenruo.btrfs@gmx.com; prefer-encrypt=mutual; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCWdWCnQUJCWYC
+ bgAKCRDCPZHzoSX+qAR8B/94VAsSNygx1C6dhb1u1Wp1Jr/lfO7QIOK/nf1PF0VpYjTQ2au8
+ ihf/RApTna31sVjBx3jzlmpy+lDoPdXwbI3Czx1PwDbdhAAjdRbvBmwM6cUWyqD+zjVm4RTG
+ rFTPi3E7828YJ71Vpda2qghOYdnC45xCcjmHh8FwReLzsV2A6FtXsvd87bq6Iw2axOHVUax2
+ FGSbardMsHrya1dC2jF2R6n0uxaIc1bWGweYsq0LXvLcvjWH+zDgzYCUB0cfb+6Ib/ipSCYp
+ 3i8BevMsTs62MOBmKz7til6Zdz0kkqDdSNOq8LgWGLOwUTqBh71+lqN2XBpTDu1eLZaNbxSI
+ ilaVzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCWdWBrwIbDAUJA8JnAAAK
+ CRDCPZHzoSX+qA3xB/4zS8zYh3Cbm3FllKz7+RKBw/ETBibFSKedQkbJzRlZhBc+XRwF61mi
+ f0SXSdqKMbM1a98fEg8H5kV6GTo62BzvynVrf/FyT+zWbIVEuuZttMk2gWLIvbmWNyrQnzPl
+ mnjK4AEvZGIt1pk+3+N/CMEfAZH5Aqnp0PaoytRZ/1vtMXNgMxlfNnb96giC3KMR6U0E+siA
+ 4V7biIoyNoaN33t8m5FwEwd2FQDG9dAXWhG13zcm9gnk63BN3wyCQR+X5+jsfBaS4dvNzvQv
+ h8Uq/YGjCoV1ofKYh3WKMY8avjq25nlrhzD/Nto9jHp8niwr21K//pXVA81R2qaXqGbql+zo
+Message-ID: <1202a51d-8e91-2a72-e12f-8bb6090bd714@gmx.com>
+Date:   Fri, 23 Nov 2018 19:18:52 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <1542967815-14547-1-git-send-email-bianpan2016@163.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="SslFt6b7DEBOxt800EIuFb8ywlnG3ttnc"
+X-Provags-ID: V03:K1:qEpRo6Z6ryKE8YGID8thNC5DbYWcAZYkTNKeRnrwVXVdkNJgFaK
+ mL/+cx1lehtPjB3jTEEM/7B/Ufa9kGoEgMiGT83oEOy/wOUjD9TRWPqT9uj1Dx6O87sMHsf
+ oL48Ypp+CCsCjy+9aaAw97vZaYOxJTxVMrlnA+3sMGSS4YgMqgaBnKZe09VthfF8FD3FT/Q
+ nQTOnon0MP7pJ2GHq3Ojw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:6n8BLC6acO8=:328p0lL0i5SN4b4TFbgw3s
+ GwNIy+Vs47SI9UgbIpCYVhkphebHVUEjE6AxZummB69BCQ6p6CFsjr/D9RBe2GzG0d3gOMGcP
+ PZZLgIk9Ns9OHIvT3vSzTytpf5U0IOkYAFAU8pxpyDx9s2YWk9oF6WhCn0qkNA14OU9rgk8e0
+ JuUeKYXlhfI+k2EKjAkPkJdr9Jbl6r4JCMD6cADqQG6IyMWEDyk3xD1N0kK2XVAF99C1faIRE
+ c0NcKFhKT0O7O2zIO52abnqfhWfwKf4bFQYiXo31AFdefOo5/+0YgrxVoBfgTszEbaasx891u
+ N5VyVR7hkqeZALrW6a9KlKMaIkeMQ6rY7bnXZik1+mK3qHHgGPXGI96xgsj+4OWAlZ7WxOzm7
+ E6h8noJfmxTkT0Fpjx7KdhvWZlgOaGeMZqs6/CUAYgP5QpmEWPO2G0KvB1vkPPvTh1UnHaQvS
+ m9KAVUhGyLt8Rm9kAI8GsXJae9+jwO/rdj5o0Y7bsFBt3qHswwbj42iPZrVqVxWfgplEv7WUX
+ ghKad5wz6iWLIRsw1MudIpH+bT7T83ybYaKtJ7mbqeimgfHIvdQx0f77krt6d02CLHrDaCXbn
+ UlFC89s7ERt2ilVI2OjG0fwavjHVwaLWGIAATO/tj2NpyY+SZj0qip6UvDUbQgQVeyaTfSxup
+ e/OVI7Se1ugjaEOi2pDXlAgQA1YNFUBcsv5rMivOVy1BniDV43Mv7Ggg0CYQuqFI/PQRa8Cc2
+ w/4hHnrnpvcxdH20dAbjxdtq7WJ/u9FpaVre3O/ZuvTy7LJMIExNGhGkTXeAd9UipJOKLLkc5
+ nZKzpNVk/KPtCXmJFqPqhB+A++Btncvv6tUjgI6AF/RxY5cn046sg/Nx4Z3fc1RlhJRkhSb+Y
+ x/JiUSm32vvhPjbAUgiVQbiu/Rx72DbsSQoE6nDsQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 1137ceee76ba ("ARM: OMAP1: ams-delta: Don't request unused
-GPIOs"), on-board audio has appeared muted.  Believed to be unused GPIO
-pin "hookflash1", apparently set high regardless of the corresponding
-bit of "latch2" port attempted to be set low during .init_machine(),
-has been identified as the reason.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--SslFt6b7DEBOxt800EIuFb8ywlnG3ttnc
+Content-Type: multipart/mixed; boundary="bh0aRPMomep1jyi7BjMyv9Ti48mfIsQeL";
+ protected-headers="v1"
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+To: Pan Bian <bianpan2016@163.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Cc: Wang Shilong <wangsl.fnst@cn.fujitsu.com>, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Message-ID: <1202a51d-8e91-2a72-e12f-8bb6090bd714@gmx.com>
+Subject: Re: [PATCH] btrfs: relocation: set trans to be NULL after free
+References: <1542967815-14547-1-git-send-email-bianpan2016@163.com>
+In-Reply-To: <1542967815-14547-1-git-send-email-bianpan2016@163.com>
 
-According to Amstrad E3 wiki, the purpose of the pin hasn't been
-clearly identified.  Original Amstrad software used to produce a high
-pulse on it when the phone was taken off hook or recall was pressed.
-With the current finding, we can assume the pin provides a kind of
-audio mute function.
+--bh0aRPMomep1jyi7BjMyv9Ti48mfIsQeL
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Proper resolution of the issue should be done in two steps:
-- resolution of an issue with the pin state not reflecting the value
-  the corresponding bit of the port was attempted to be initialized
-  with,
-- extension of on-board audio driver with a new control.
 
-For now, rename the pin to "audio_mute" to reflect its function and,
-as a quick fix, hogg it as output low so on-board audio can produce
-audible sound again.
 
-Fixes: 1137ceee76ba ("ARM: OMAP1: ams-delta: Don't request unused GPIOs")
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
- arch/arm/mach-omap1/board-ams-delta.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On 2018/11/23 =E4=B8=8B=E5=8D=886:10, Pan Bian wrote:
+> The function relocate_block_group calls btrfs_end_transaction to releas=
+e
+> trans when update_backref_cache returns 1, and then continues the loop
+> body. If btrfs_block_rsv_refill fails this time, it will jump out the
+> loop and the freed trans will be accessed. This may result in a
+> use-after-free bug. The patch assigns NULL to trans after trans is
+> released so that it will not be accessed.
+>=20
+> Fixes: 0647bf564f1("Btrfs: improve forever loop when doing balance
+> relocation")
+>=20
+> Signed-off-by: Pan Bian <bianpan2016@163.com>
 
-diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-index 3d191fd52910..1d801f5e8308 100644
---- a/arch/arm/mach-omap1/board-ams-delta.c
-+++ b/arch/arm/mach-omap1/board-ams-delta.c
-@@ -247,8 +247,8 @@ static struct platform_device latch2_gpio_device = {
- #define LATCH2_PIN_SCARD_CMDVCC		11
- #define LATCH2_PIN_MODEM_NRESET		12
- #define LATCH2_PIN_MODEM_CODEC		13
--#define LATCH2_PIN_HOOKFLASH1		14
--#define LATCH2_PIN_HOOKFLASH2		15
-+#define LATCH2_PIN_AUDIO_MUTE		14
-+#define LATCH2_PIN_HOOKFLASH		15
- 
- static struct regulator_consumer_supply modem_nreset_consumers[] = {
- 	REGULATOR_SUPPLY("RESET#", "serial8250.1"),
-@@ -588,6 +588,8 @@ static int gpiochip_match_by_label(struct gpio_chip *chip, void *data)
- static struct gpiod_hog ams_delta_gpio_hogs[] = {
- 	GPIO_HOG(LATCH2_LABEL, LATCH2_PIN_KEYBRD_DATAOUT, "keybrd_dataout",
- 		 GPIO_ACTIVE_HIGH, GPIOD_OUT_LOW),
-+	GPIO_HOG(LATCH2_LABEL, LATCH2_PIN_AUDIO_MUTE, "audio_mute",
-+		 GPIO_ACTIVE_HIGH, GPIOD_OUT_LOW),
- 	{},
- };
- 
--- 
-2.18.1
+Reviewed-by: Qu Wenruo <wqu@suse.com>
 
+Thanks,
+Qu
+
+> ---
+>  fs/btrfs/relocation.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
+> index 924116f..a3f75b8 100644
+> --- a/fs/btrfs/relocation.c
+> +++ b/fs/btrfs/relocation.c
+> @@ -3959,6 +3959,7 @@ static noinline_for_stack int relocate_block_grou=
+p(struct reloc_control *rc)
+>  restart:
+>  		if (update_backref_cache(trans, &rc->backref_cache)) {
+>  			btrfs_end_transaction(trans);
+> +			trans =3D NULL;
+>  			continue;
+>  		}
+> =20
+>=20
+
+
+--bh0aRPMomep1jyi7BjMyv9Ti48mfIsQeL--
+
+--SslFt6b7DEBOxt800EIuFb8ywlnG3ttnc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEELd9y5aWlW6idqkLhwj2R86El/qgFAlv34hwACgkQwj2R86El
+/qjO7Af7BmKcQsDx/E044iiHVXGvZomI3qEYa8rkUXvG4cpPTfOKUqHagy8Vvoyg
+RtfEpihP7TTM3IzFMI0HlbI+tZDkILPJ5UM+wOmcyIOpHyaDqIoYetNf9Du2nMnc
+dfrWAhIyAGkFyxtfOpefadv76cMGhGmi8qRxHn8T4l41gr5i8p9EPTPIzVhvISgY
+8MCus1+8AzENUlzuVnTklPSf7IYxOmVVXx4w4+RxO7nCXwd1G9mbF1r/C7E/H0Du
+thvEuj/zqVIHRuueeLRCe189mRVMgn/r18JIJ5pBAu+4CmrW9ubx05o22mviwWJS
+aYItOfo1nRB84VOWYqC+h9GSQS5rFg==
+=ZjX5
+-----END PGP SIGNATURE-----
+
+--SslFt6b7DEBOxt800EIuFb8ywlnG3ttnc--
