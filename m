@@ -2,161 +2,83 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E1CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2869C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D9AE20672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:48:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D9AE20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 51A0320864
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:51:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFVBZNWr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51A0320864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633048AbeKXDdg (ORCPT
+        id S2391230AbeKXDgG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 22:33:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40574 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729195AbeKXDdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 22:33:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3C1F2AEC1;
-        Fri, 23 Nov 2018 16:48:33 +0000 (UTC)
-Date:   Sat, 24 Nov 2018 03:48:19 +1100
-From:   Aleksa Sarai <asarai@suse.de>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     j@bitron.ch, Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian@brauner.io>,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        David Drysdale <drysdale@google.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH v4 2/4] namei: O_BENEATH-style path resolution flags
-Message-ID: <20181123164819.skruu23wjwzf47f5@mikami>
-References: <20181112142654.341-1-cyphar@cyphar.com>
- <20181112142654.341-3-cyphar@cyphar.com>
- <1ce83cdf6e3168350b69f98f08aaa202bbaa682d.camel@bitron.ch>
- <CALCETrURCXjNMBR6DjujVc6HHHS=CbET81kHS+odur+Bm-z7Tg@mail.gmail.com>
+        Fri, 23 Nov 2018 22:36:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56342 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729195AbeKXDgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 22:36:05 -0500
+Received: from localhost (lfbn-ncy-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70B8B20672;
+        Fri, 23 Nov 2018 16:51:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542991866;
+        bh=y+u0IM2C/gDxM/1IIh5emAGQl0ILpUNWvS44IFnlkac=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rFVBZNWrjb//wit7f/8pu4l6lk5h2JLBgvXgeE5jAR09+vUqkzSM70RUW3OyYGVD5
+         m7ke2OJUkyR5e1BLohAhiVyh3nkI70SA7Cig+KSByRdC7oeqhB/GjWPvhJBeubYLr2
+         Mu8/U74u7oUHEu2MYcI5hVWl+/jS7u3C6vzlB5Zo=
+Date:   Fri, 23 Nov 2018 17:51:03 +0100
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Jan =?iso-8859-1?Q?H=2E_Sch=F6nherr?= <jschoenh@amazon.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Paul Turner <pjt@google.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: Task group cleanups and optimizations (was: Re: [RFC 00/60]
+ Coscheduling for Linux)
+Message-ID: <20181123165102.GB4855@lerouge>
+References: <20180907214047.26914-1-jschoenh@amazon.de>
+ <20180914111251.GC24106@hirez.programming.kicks-ass.net>
+ <1d86f497-9fef-0b19-50d6-d46ef1c0bffa@amazon.de>
+ <282230fe-b8de-01f9-c19b-6070717ba5f8@amazon.de>
+ <20180917094844.GR24124@hirez.programming.kicks-ass.net>
+ <08b930d9-7ffe-7df3-ab35-e7b58073e489@amazon.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bd7wx4sujq35ecq2"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CALCETrURCXjNMBR6DjujVc6HHHS=CbET81kHS+odur+Bm-z7Tg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <08b930d9-7ffe-7df3-ab35-e7b58073e489@amazon.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Sep 18, 2018 at 03:22:13PM +0200, Jan H. Schönherr wrote:
+> On 09/17/2018 11:48 AM, Peter Zijlstra wrote:
+> > Right, so the whole bandwidth thing becomes a pain; the simplest
+> > solution is to detect the throttle at task-pick time, dequeue and try
+> > again. But that is indeed quite horrible.
+> > 
+> > I'm not quite sure how this will play out.
+> > 
+> > Anyway, if we pull off this flattening feat, then you can no longer use
+> > the hierarchy for this co-scheduling stuff.
+> 
+> Yeah. I might be a bit biased towards keeping or at least not fully throwing away
+> the nesting of CFS runqueues. ;)
 
---bd7wx4sujq35ecq2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On 2018-11-23, Andy Lutomirski <luto@kernel.org> wrote:
-> > On Nov 23, 2018, at 5:10 AM, J=C3=BCrg Billeter <j@bitron.ch> wrote:
-> >
-> > Hi Aleksa,
-> >
-> >> On Tue, 2018-11-13 at 01:26 +1100, Aleksa Sarai wrote:
-> >> * O_BENEATH: Disallow "escapes" from the starting point of the
-> >>  filesystem tree during resolution (you must stay "beneath" the
-> >>  starting point at all times). Currently this is done by disallowing
-> >>  ".." and absolute paths (either in the given path or found during
-> >>  symlink resolution) entirely, as well as all "magic link" jumping.
-> >
-> > With open_tree(2) and OPEN_TREE_CLONE, will O_BENEATH still be
-> > necessary?
->=20
-> This discussion reminds me of something I=E2=80=99m uncomfortable with in=
- the
-> current patches: currently, most of the O_ flags determine some
-> property of the returned opened file.  The new O_ flags you're adding
-> don't -- instead, they affect the lookup of the file.  So O_BENEATH
-> doesn't return a descriptor that can only be used to loop up files
-> beneath it -- it just controls whether open(2) succeeds or fails.  It
-> might be nice for the naming of the flags to reflect this.
-
-I agree that there is something quite weird about having path resolution
-flags in an *open* syscall. The main reason why it's linked to open is
-because that's the only way to get O_PATH descriptors (which is what you
-would use for most of the extended operations we need -- as well as
-reading+writing to files which is what most users would do with this).
-
-And I think O_PATH is another example of an open flag that is just odd
-in how it changes the semantics of using open(2).
-
-One of the ideas I pitched in an earlier mail was a hypothetical
-resolveat(2) -- which would just be a new way of getting an O_PATH
-descriptor. This way, we wouldn't be using up more O_* flag bits with
-this feature and we'd be able to play with more radical semantic changes
-in the future. I can outline these here if you like, but it's a bit of a
-long discussion and I'd prefer not to derail things too much if
-resolveat(2) is definitely out of the question.
-
-> I also don't love that we have some magic AT_ flags that work with
-> some syscalls and some magic O_ flags that work with others.
-
-I also completely agree. I think that we should have a discussion about
-the long-term plan of syscall flags because it's starting to get a
-little bit crazy:
-
- * Every "get an fd" syscall has its own brand of O_CLOEXEC. Thankfully,
-   many of them use the same value (except for memfd_create(2) and a few
-   other examples).
- * AT_* was supposed to be generic across all *at(2) syscalls, but there
-   are several cases where this isn't really true anymore.
-
-   * renameat2(2) only supports RENAME_* flags.
-   * openat(2) supports only O_* flags.
-   * Most AT_* flags have O_* counterparts (or are even more of a mess
-	 such as with {AT_SYMLINK_FOLLOW,AT_SYMLINK_NOFOLLOW,O_NOFOLLOW}).
-   * statx(2) added AT_STATX_* flags, making AT_* no longer generic.
-
-(Also I just want to mention something I noticed while writing this
-patch -- openat(2) violates one of the kernel "golden rules" -- that you
-reject unknown flags. openat(2) will silently ignore unknown flag bits.
-I'm sure there's a really good reason for this, but it's another flag
-oddity that I felt fit here.)
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---bd7wx4sujq35ecq2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlv4L08ACgkQnhiqJn3b
-jbQNZw//cbVZ6mja1WexO3nT8oHZekLWz51OovZZ//xUM8t4WXfqf794yLdjBW/f
-szkgqHpmoKEGtzJ1jrDkuNezflK8gy/2WETSTYv+hEump+c3z2RgZBbb7dmVz0pF
-MsPgBIAhLtFtnTyMTT57NMgQxCURCG9NAb3vWzcujuci0QX6kzKpMmhNoTe9q8G9
-MuNVv7x/NJCaoUOnLsi1QoEc7RWYQIUfVGHUX6Sw5km8NzLlOOdmYDUC8rJdEIJs
-RBdBQWq+XR/wVFuzBzLfbMLFRsQPlDDOrWvxap7t9CwjKmc1Qm1Q0R/L28kwnNeq
-mPxpFCBnXQ0eWlNTUMIK+gETGlqOxs91lC1rv2FdiwEAyT1SLCBLoIE0X+d1UR4x
-sewI7Rs/WTlFSdPWE8QRltgIK8E0TVrfJxn/vBD/GyAX+edl9JH8Cdx8RV+MKS5x
-yI1d+7YNsYto2heIZ2KrAfWxWluVutiMJ1VjW477vN4T9cVE6jDIbl9dOKFoMDCQ
-MKY3J5CYj9COfhtTbwuIR6jOWeflBTy/VIvGLcPZjNbBLCe/38CfeCBvWObtmmcD
-Jpe4Nkkc5ttQXiZu37A8ZpehnoHBC45YMsRLvavPowTt82P0P8Y5RsIJfaqu0KFw
-xPjs0g6JHiMdUExryNZDsLEIoAeCDCE0aOi+OaHnjYaxTIUyxEk=
-=aoUZ
------END PGP SIGNATURE-----
-
---bd7wx4sujq35ecq2--
+One detail here, is that hierarchical task group a strong requirement for cosched
+or could you live with it flattened in the end?
