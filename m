@@ -2,140 +2,130 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA462C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 19:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F991C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 19:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9F1720824
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 19:40:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6412205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 19:53:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="JFPrnCGC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9F1720824
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="g9roArnj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6412205C9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441444AbeKXG0T (ORCPT
+        id S2441451AbeKXGjG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 01:26:19 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:42327 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729872AbeKXG0T (ORCPT
+        Sat, 24 Nov 2018 01:39:06 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33931 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729872AbeKXGjG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 01:26:19 -0500
-Received: by mail-oi1-f195.google.com with SMTP id w13so10758599oiw.9
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 11:40:40 -0800 (PST)
+        Sat, 24 Nov 2018 01:39:06 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j2so13369738wrw.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 11:53:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kWBNvleb3we7zdiN1V8Y2BZlY6+9lbqF6lapJLt55fw=;
-        b=JFPrnCGCZBAtfW+1m2bRpDs2eAmBM4zdcFoPZgoU0YwbhlOeQ+8/a/cRqMMy4977gX
-         a4TseXwAOZ30m/u1tMLWtYjiPl2Sk0I0yNXXF3vsfTM/XY+/hgUBazzMZfxjIEB3L9fZ
-         PiuiRlWCX6y++PXAS424nXddun2VOeTNSppRkm4VN7Q7k5bqMpWkINHSOK4KA96uCKSU
-         yfZeZPyN+4tD3kEhOo2/wZYEJxWTFwLgZhenjFiq+Jzaks5GxG7YNJSgk70UhfPWLJGO
-         XmLcsSmXVyn3e2+rYiNnWohw5LYO/94CRx2q6Csp7G3kLmFuqSL7JfOEcbgQo2K76dn4
-         M1Lw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gODjD0eo2vQeoQYeMF+uNMs3RYPbO6A3EDKJq3DZPzM=;
+        b=g9roArnjyLDZnVtDT+iM5K2jdtVfMnF0AoRQaob0IWCk9+CBYfKKBQ350OBJWqhWg/
+         NhHkecY7KOP8lU3mSqEwGEuF+SEX9fUlh7J4+HaBVTazWqpGWZKl7d+moxIGw06cDFkJ
+         63BEcJQwWzYH739j55CyZMp2lDRrgXJh542RfN6u8wE8sBw4bRQVfivXAp+hegT+34nM
+         pFK9yAIOaUFMdTLMAwkdV9AOVKQpRE497ZmocA7/iEZew2omsaJGZeLnIFMQ7G2RLjdW
+         QnzyDJmX1XJgGAfIs9YYQGaBSFeOKMWh838tqw7karlgDl7l7My/gUXrWmh9z/tb0JtQ
+         W0VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kWBNvleb3we7zdiN1V8Y2BZlY6+9lbqF6lapJLt55fw=;
-        b=i7cayj8Y3qRvJCrVxsPQGUMk+qW4PCVGw+YWbj8SX3b+BhCYzbdJv51pnnOoxDiAm8
-         0bOBWDPDBHtupTd8zZTPKGS273Jg2fLXdhHBFl9JpoLLQO3hYkEJSYFt09crUg+Nii8o
-         lMaZZg88WBNi6asoCChzSM4LJmMqeFS1d7GW5IROb1rxoJrow1T9QkT1HPWvlzsQQIO7
-         fdcBhsSa6sP25++6zLVXVRWPeELQnS7q4hTZmOujxx2ALNWJRV2+g6iOYHZVEaaGlmDg
-         KpTA39teT3rODXiIG6UoU7JgaxwWLiFHM2IELjm51wg0JQCfd02H46BGgYPFepvyZWV3
-         5fKw==
-X-Gm-Message-State: AGRZ1gKk9RcZ+cP2MUBrIWOrA/mgVWj53Sg9HiyXtg2V/s/MStHqkdIF
-        GN7WIyiunj9/Ct9K29XoWzaI6Qtvg15r3R0OJUM=
-X-Google-Smtp-Source: AJdET5ebJ6Rl1C5zn1O7m3kYScllQsRV1519kxVZnhMxKSNjfE0rGg9FhDAcoWFmrOPYnZfelXoBXXQKwmLnm3Vc/C0=
-X-Received: by 2002:aca:f0f:: with SMTP id 15mr9802459oip.47.1543002039560;
- Fri, 23 Nov 2018 11:40:39 -0800 (PST)
-MIME-Version: 1.0
-References: <20181115224657.14736-1-martin.blumenstingl@googlemail.com>
- <5ff1a888-cce2-8fd8-a98e-14c3d7c33acf@linaro.org> <CAFBinCDSLEAzJVVgFxKhN3LCUwgC3Rrr=4ZhtHCdvqEPBLWbJA@mail.gmail.com>
- <a83b92fb-5950-01b8-521d-7b05939dce3a@linaro.org>
-In-Reply-To: <a83b92fb-5950-01b8-521d-7b05939dce3a@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gODjD0eo2vQeoQYeMF+uNMs3RYPbO6A3EDKJq3DZPzM=;
+        b=dhsOPYZzKM4asJO5cK/Zt7W1gkCAnQZXhT4HJQ/LkFsEZCr21py3+vFLZYk0PX2Nyj
+         tPq5Jlk5AuzUr4FcLbffO8GjV27Z3mC0VNlbVqHqeGTXWsc1ggyp6l2lb2CH1LJJEH7a
+         kzzyoEJUzSh35sTXmjRXmRVyuPKGfAdQBj2EY2mvhsVsW4ujgxov0RIufkmxzYmCPQYy
+         GSJZXyk+0LwXqOX5SDbDj7kvKTKc9lSenBWFf6YbIz/2epR1Utzxz39z+HsE77Q+D7Po
+         wMWb1swprw+0dKSkWIL/67oEULkDoqXUnWQ+yLjgEADZFcB4bagjj6M/DZwmxKx1ajsQ
+         eQCQ==
+X-Gm-Message-State: AA+aEWZhG5Ce8vxe/y9fZ5FPZ1oxnJaNJMJU4KZ1U6UED29ypZPqvAwU
+        dV1tZsCUeTSpvd4hnWXhhD4=
+X-Google-Smtp-Source: AFSGD/XVZY/Gy1e/DGbb/PS1SHQXZH+yaf5RkhGvgF5Hhgzxsi9uHfXzFj1yb7mwPsDNghXB15wfXg==
+X-Received: by 2002:adf:f449:: with SMTP id f9mr15627412wrp.40.1543002803973;
+        Fri, 23 Nov 2018 11:53:23 -0800 (PST)
+Received: from blackbox.darklights.net (p200300DCD732F500597D16A631573221.dip0.t-ipconnect.de. [2003:dc:d732:f500:597d:16a6:3157:3221])
+        by smtp.googlemail.com with ESMTPSA id g198sm11495337wmd.23.2018.11.23.11.53.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 23 Nov 2018 11:53:23 -0800 (PST)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Fri, 23 Nov 2018 20:40:28 +0100
-Message-ID: <CAFBinCA+htBGeT3SfTdCivmKpq3bBF7vAvR-OWqnwO-rgXx22w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] clocksource/meson6_timer: implement ARM delay timer
-To:     daniel.lezcano@linaro.org
-Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+To:     carlo@caione.org, khilman@baylibre.com,
+        linux-amlogic@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/6] 32-bit Meson: add the ARM TWD and Global Timers
+Date:   Fri, 23 Nov 2018 20:53:05 +0100
+Message-Id: <20181123195311.4578-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.19.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 7:15 AM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 22/11/2018 23:12, Martin Blumenstingl wrote:
-> > Hi Daniel,
-> >
-> > On Sun, Nov 18, 2018 at 2:27 AM Daniel Lezcano
-> > <daniel.lezcano@linaro.org> wrote:
-> >>
-> >> On 15/11/2018 23:46, Martin Blumenstingl wrote:
-> >>> While trying to add support for the ARM TWD Timer and the ARM Global
-> >>> Timer on Meson8, Meson8b and Meson8m2 (ARM Cortex-A5 and Cortex-A9 SoCs)
-> >>> I did a review of the existing driver.
-> >>> Unfortunately I found it hard to review because the pre-processor
-> >>> #defines did not match the names from the public S805 datasheet. Thus
-> >>> patch #1 adjusts these. No functional changes here, this is just
-> >>> preparation work for patch #2.
-> >>>
-> >>> Using the ARM Global Timer (drivers/clocksource/arm_global_timer.c)
-> >>> would have given us a timer-based delay implementation (so udelay() and
-> >>> friends would use the timer instead of using a loop-based delay
-> >>> implementation). Unfortunately we can't use the ARM Global Timer yet
-> >>> because it's input clock is derived from the CPU clock (which can change
-> >>> once we enable CPU frequency scaling on these SoCs, for which I will be
-> >>> sending patches in the near future).
-> >>> Amlogic's 3.10 kernel uses Timer E as delay timer which (with the
-> >>> current configuration) has a resolution of 1us. So patch #2 uses
-> >>> register_current_timer_delay() to register Timer E as ARM delay timer
-> >>> (which will be especially useful as we have to use udelay() when
-> >>> changing the CPU clocks during DVFS).
-> >>>
-> >>>
-> >>> Changes since v1 at [0]:
-> >>> - convert the enums for the input clock (meson6_timera_input_clock and
-> >>>   meson6_timere_input_clock) to simple #defines as these are register
-> >>>   values and not something driver-internal. All other register values
-> >>>   are #defines so it makes sense that these are #defines as well.
-> >>>
-> >>>
-> >>> [0] https://patchwork.kernel.org/cover/10658591/
-> >>>
-> >>>
-> >>> Martin Blumenstingl (2):
-> >>>   clocksource: meson6_timer: use register names from the datasheet
-> >>>   clocksource: meson6_timer: implement ARM delay timer
-> >>>
-> >>>  drivers/clocksource/meson6_timer.c | 128 +++++++++++++++++++----------
-> >>>  1 file changed, 85 insertions(+), 43 deletions(-)
-> >>
-> >> Both applied, thanks!
-> > thank you for taking my patches
-> >
-> > I have one question more: can you please push these patches to a
-> > repository/branch which is included in -next?
-> > I'm asking because I'd like to send patches that enable CPU frequency
-> > scaling on Meson8, Meson8b and Meson8m2. The code to change the CPU
-> > clock calls udelay(), which (in this special case) needs a delay timer
-> > to work properly (we can't use jiffies as we're using udelay() *while*
-> > changing the CPU clock).
->
-> branch pushed [1], should appear in linux-next very soon.
-awesome, thank you!
+The 32-bit Meson SoCs use Cortex-A9 or Cortex-A5 cores. These come
+with the ARM TWD ("Timer Watchdog") which contains a timer and a
+watchdog as well as the ARM Global Timer.
+
+This enables the corresponding configs for the 32-bit Meson target.
+Additionally this adds and enables the ARM TWD timer. The Global
+Timer is added but currently disabled because it's clock input is
+the PERIPH clock which is derived from the CPU clock. Thus the rate
+of the PERIPH clock will change when changing the CPU frequency.
+Unfortunately the Global Timer driver doesn't handle clocks with
+changing rates yet (unlike the TWD timer), thus we keep it disabled
+for now.
+
+The whole series is inspired by an almost 3 year old patch from
+Carlo: [0]
 
 
-Regards
-Martin
+Dependencies:
+- I build this on top of my other series "ARM: dts: meson: add the
+  timer interrupts and clocks" from [1]
+- CLKID_PERIPH requires updated clock driver headers. Neil provided
+  a tag which includes the updated headers: [2]
+- There is no runtime dependency on the PERIPH clock as we don't
+  have CPU frequency scaling support enabled yet. In case the TWD
+  timer driver can't find the clock it falls back to auto-detecting
+  the clock rate at boot time. This is safe as long as we don't have
+  .dts patches in place which allow changing the CPU clock rate. Once
+  we enable CPU frequency scaling support for the PERIPH clock becomes
+  mandatory so the TWD timer driver knows about changes to the PERIPH
+  clock (which is derived from the CPU clock).
+
+
+[0] https://patchwork.kernel.org/patch/7797581/
+[1] https://patchwork.kernel.org/cover/10687005/
+[2] http://lists.infradead.org/pipermail/linux-amlogic/2018-November/009136.html
+
+
+Martin Blumenstingl (6):
+  ARM: meson: select HAVE_ARM_TWD and ARM_GLOBAL_TIMER
+  ARM: dts: meson: group the Cortex-A5 / Cortex-A9 peripherals
+  ARM: dts: meson8: add the ARM TWD timer
+  ARM: dts: meson8: add the Cortex-A9 global timer
+  ARM: dts: meson8b: add the ARM TWD timer
+  ARM: dts: meson8b: add the Cortex-A5 global timer
+
+ arch/arm/boot/dts/meson.dtsi   | 24 ++++++++++++++++--------
+ arch/arm/boot/dts/meson8.dtsi  | 32 +++++++++++++++++++++++++++-----
+ arch/arm/boot/dts/meson8b.dtsi | 32 +++++++++++++++++++++++++++-----
+ arch/arm/mach-meson/Kconfig    |  2 ++
+ 4 files changed, 72 insertions(+), 18 deletions(-)
+
+-- 
+2.19.2
+
