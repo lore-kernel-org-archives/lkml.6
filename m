@@ -2,714 +2,523 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57180C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3DCC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F40E420672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:54:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB337206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:54:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bwfjdxJk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F40E420672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgdVxMT3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB337206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439205AbeKWLgO (ORCPT
+        id S2439228AbeKWLgk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 06:36:14 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:41529 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392434AbeKWLgO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 06:36:14 -0500
-Received: by mail-qt1-f196.google.com with SMTP id d18so9030763qto.8
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 16:54:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding:thread-index:content-language;
-        bh=Bnh6iMYqhkSEP1dwxa9zKpbcPVJ/B4FZz/wZld4/NsY=;
-        b=bwfjdxJkqe+DeF1RY9AKzrEXwyPLC/yHNlT1B2Rkx9sh1QY1A9riBcJ4z/Ko/gS7vg
-         cB+dCspI7yftGASx156yAR30J3ikYf6dHQtsRt7Sj7JCMfHEv/QrQ00RhNqtLuGqCW1G
-         wOy1HL5G+mv9CGPeAyiTDqZxUyuOdqKKKKxLjqv2VqSF7Do3eXKWQxE8BCHlsJS8iV7s
-         vLbxlf+6plAofxj0k1R7/pR5R36oP3ND6qawH/Y9pIHSrioD4Q77DAhZCMXYflm8VaFL
-         2wSbKpgHLnEmwbr43m6Ul0svyBbMYatuKPvT+idUWzjXMHD8WQZ70+2UJ70V7X4oe0ZA
-         Hn7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding:thread-index:content-language;
-        bh=Bnh6iMYqhkSEP1dwxa9zKpbcPVJ/B4FZz/wZld4/NsY=;
-        b=egQ5P9+yyMyuay3z5TQkw4UyVViijWLunpLUeP5IGNpb+48KdLl/OHvvIfbdHnc63X
-         mnn4kqx/9lONmxUYvVuANdB0wFawpdLtu7GAWZaShACPd+fmRRYUMy7dYWtI/mKkZxiV
-         ijdXMeg5raPdFCMXqafFMofY7bZ0f8v9+cM1bH5na/sNzBVXIjaz9RxRgA6Xg4+8k/AI
-         3DjuOLJNTVitbLquLSxseGaVhTcq1R82sDvsleiYGG2I9STWBasGAs6RVMuNv47ksYjj
-         nESvsm0lNgaHZJmKij35DrFyRAcNj3iSKgGH8qPMdJiVT3IQeM+wD2XaOSceWYUO7D1a
-         AutQ==
-X-Gm-Message-State: AGRZ1gKX4BX5lwop50EW1kHCbrmCXiaO8bAEKTTROikuGcIlsPANrmqD
-        Q9Xr9wQzeE34HhvDWgkNKY2f6n5g
-X-Google-Smtp-Source: AJdET5czvmCMXJJVegtFWOtIDqoaTvekHl5c+TRzNFmBAgIqbaWVkdAbtxkHHBhWfs3P0DJmGEKTPQ==
-X-Received: by 2002:aed:358b:: with SMTP id c11mr11699717qte.155.1542934452083;
-        Thu, 22 Nov 2018 16:54:12 -0800 (PST)
-Received: from DESKTOPV0UVPFT ([2601:152:4302:ae1f:295b:c0a6:9d8c:e5b])
-        by smtp.gmail.com with ESMTPSA id l20sm26751024qke.88.2018.11.22.16.54.11
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 16:54:11 -0800 (PST)
-From:   <gamanakis@gmail.com>
-To:     <linux-kernel@vger.kernel.org>
-Subject: Hard lockups with VMs on 4.19
-Date:   Thu, 22 Nov 2018 19:54:10 -0500
-Message-ID: <001001d482c7$0bfe3960$23faac20$@gmail.com>
+        Fri, 23 Nov 2018 06:36:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58020 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392434AbeKWLgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 06:36:39 -0500
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E4A520866;
+        Fri, 23 Nov 2018 00:54:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542934478;
+        bh=YiLs5/aHB4nwvO/UFAiLeKz81hheFyQAMpufWFC371A=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WgdVxMT3jPrwAL6tPYmhY0K27cfE5zoioya61vKyQcC4fzZ7iZRuwdwHEldY2xZhN
+         Gi+Dvk9DL6KI4MxbAAsjCAH4F4VrKa5TR/MzLWJkW1zBlj8WY/zyPd0r5eL86yfbVc
+         ldhy+fpdXHTVXjvaCLwp0JqA++2igLHWxVgo/rHE=
+Received: by mail-wr1-f50.google.com with SMTP id t3so10779789wrr.3;
+        Thu, 22 Nov 2018 16:54:38 -0800 (PST)
+X-Gm-Message-State: AA+aEWZIFgoddegvWV2WM88PqiERqwt/grvakYIYC69t+wi2o4hdHGZj
+        95SSt9v6zAtIuIbPO3CcuFcqqxpjLABPYfoIEl4=
+X-Google-Smtp-Source: AFSGD/VwqS0ajwZmc7CAFn+NMborhUyDL/m8gXqZp2U2BScFSqyBdVKrzgMrNZTVSJZJMvpcMTobWsfdkBF2UdQd2QQ=
+X-Received: by 2002:adf:b253:: with SMTP id y19mr10662034wra.184.1542934476701;
+ Thu, 22 Nov 2018 16:54:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AdSCxwtlwnBw7BagRSeazXfEdb/mPA==
-Content-Language: en-us
+References: <1542882521-18874-1-git-send-email-biao.huang@mediatek.com> <1542882521-18874-2-git-send-email-biao.huang@mediatek.com>
+In-Reply-To: <1542882521-18874-2-git-send-email-biao.huang@mediatek.com>
+From:   Sean Wang <sean.wang@kernel.org>
+Date:   Thu, 22 Nov 2018 16:54:25 -0800
+X-Gmail-Original-Message-ID: <CAGp9LzoJTVm4OP+SRWCDk0TUmU5jNMFCsT_yyURXzXxjTF+-=g@mail.gmail.com>
+Message-ID: <CAGp9LzoJTVm4OP+SRWCDk0TUmU5jNMFCsT_yyURXzXxjTF+-=g@mail.gmail.com>
+Subject: Re: [v5, PATCH 1/2] net:stmmac: dwmac-mediatek: add support for mt2712
+To:     biao.huang@mediatek.com
+Cc:     davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, nelson.chang@mediatek.com,
+        Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+        Liguo Zhang <liguo.zhang@mediatek.com>,
+        linux-kernel@vger.kernel.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        joabreu@synopsys.com, linux-mediatek@lists.infradead.org,
+        honghui.zhang@mediatek.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I am seeing a lot of hard lockups when I fire up a KVM (Windows 10 with
-VFIO), on 4.19.2 and 4.19.3 (tested from linux-stable).
-System is a Xeon E5-2667v2 on Supermicro X9SRA.=20
-Kernel command line: =93consoleblank=3D0 intel_iommu=3Don =
-rcu_nocbs=3D1-15
-nohz_full=3D1-15 transparent_hugepage=3Dnever audit=3D0 =
-pcie_aspm=3Doff=94
-Doing a git bisect revealed as the culprit:=20
+On Thu, Nov 22, 2018 at 2:29 AM Biao Huang <biao.huang@mediatek.com> wrote:
+>
+> Add Ethernet support for MediaTek SoCs from the mt2712 family
+>
+> Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/Kconfig        |    8 +
+>  drivers/net/ethernet/stmicro/stmmac/Makefile       |    1 +
+>  .../net/ethernet/stmicro/stmmac/dwmac-mediatek.c   |  364 ++++++++++++++++++++
+>  3 files changed, 373 insertions(+)
+>  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
+>
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> index 324049e..6209cc1 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> @@ -75,6 +75,14 @@ config DWMAC_LPC18XX
+>         ---help---
+>           Support for NXP LPC18xx/43xx DWMAC Ethernet.
+>
+> +config DWMAC_MEDIATEK
+> +       tristate "MediaTek MT27xx GMAC support"
+> +       depends on OF && (ARCH_MEDIATEK || COMPILE_TEST)
+> +       help
+> +         Support for MediaTek GMAC Ethernet controller.
+> +
+> +         This selects the MT2712 SoC support for the stmmac driver.
+> +
+>  config DWMAC_MESON
+>         tristate "Amlogic Meson dwmac support"
+>         default ARCH_MESON
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
+> index 99967a8..bf09701 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/Makefile
+> +++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
+> @@ -13,6 +13,7 @@ obj-$(CONFIG_STMMAC_PLATFORM) += stmmac-platform.o
+>  obj-$(CONFIG_DWMAC_ANARION)    += dwmac-anarion.o
+>  obj-$(CONFIG_DWMAC_IPQ806X)    += dwmac-ipq806x.o
+>  obj-$(CONFIG_DWMAC_LPC18XX)    += dwmac-lpc18xx.o
+> +obj-$(CONFIG_DWMAC_MEDIATEK)   += dwmac-mediatek.o
+>  obj-$(CONFIG_DWMAC_MESON)      += dwmac-meson.o dwmac-meson8b.o
+>  obj-$(CONFIG_DWMAC_OXNAS)      += dwmac-oxnas.o
+>  obj-$(CONFIG_DWMAC_ROCKCHIP)   += dwmac-rk.o
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
+> new file mode 100644
+> index 0000000..dd8d4cc
+> --- /dev/null
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
+> @@ -0,0 +1,364 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018 MediaTek Inc.
+> + */
+> +#include <linux/io.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_net.h>
+> +#include <linux/regmap.h>
+> +#include <linux/stmmac.h>
+> +
+> +#include "stmmac.h"
+> +#include "stmmac_platform.h"
+> +
+> +/* Peri Configuration register for mt2712 */
+> +#define PERI_ETH_PHY_INTF_SEL  0x418
+> +#define PHY_INTF_MII_GMII      0
+> +#define PHY_INTF_RGMII         1
+> +#define PHY_INTF_RMII          4
+> +#define RMII_CLK_SRC_RXC       BIT(4)
+> +#define RMII_CLK_SRC_INTERNAL  BIT(5)
+> +
+> +#define PERI_ETH_PHY_DLY       0x428
+> +#define PHY_DLY_GTXC_INV       BIT(6)
+> +#define PHY_DLY_GTXC_ENABLE    BIT(5)
+> +#define PHY_DLY_GTXC_STAGES    GENMASK(4, 0)
+> +#define PHY_DLY_TXC_INV                BIT(20)
+> +#define PHY_DLY_TXC_ENABLE     BIT(19)
+> +#define PHY_DLY_TXC_STAGES     GENMASK(18, 14)
+> +#define PHY_DLY_TXC_SHIFT      14
+> +#define PHY_DLY_RXC_INV                BIT(13)
+> +#define PHY_DLY_RXC_ENABLE     BIT(12)
+> +#define PHY_DLY_RXC_STAGES     GENMASK(11, 7)
+> +#define PHY_DLY_RXC_SHIFT      7
+> +
+> +#define PERI_ETH_DLY_FINE      0x800
+> +#define ETH_RMII_DLY_TX_INV    BIT(2)
+> +#define ETH_FINE_DLY_GTXC      BIT(1)
+> +#define ETH_FINE_DLY_RXC       BIT(0)
+> +
+> +struct mac_delay_struct {
+> +       u32 tx_delay;
+> +       u32 rx_delay;
+> +       u32 tx_inv;
+bool should be enough
 
-commit 9cf57731b63e37ed995b46690adc604891a9a28f
-Author: Peter Zijlstra <mailto:peterz@infradead.org>
-Date:=A0=A0 Thu Jun 7 10:52:03 2018 +0200
+> +       u32 rx_inv;
+bool should be enough
 
-=A0=A0=A0 watchdog/softlockup: Replace "watchdog/%u" threads with =
-cpu_stop_work
+> +};
+> +
+> +struct mediatek_dwmac_plat_data {
+> +       const struct mediatek_dwmac_variant *variant;
+> +       struct mac_delay_struct mac_delay;
+> +       struct clk_bulk_data *clks;
+> +       struct device_node *np;
+> +       struct regmap *peri_regmap;
+> +       struct device *dev;
+> +       int fine_tune;
+bool
 
-=A0=A0=A0 Oleg suggested to replace the "watchdog/%u" threads with
-=A0=A0=A0 cpu_stop_work. That removes one thread per CPU while at the =
-same time
-=A0=A0=A0 fixes softlockup vs SCHED_DEADLINE.
+> +       int phy_mode;
+> +       int rmii_rxc;
+bool
 
-=A0=A0=A0 But more importantly, it does away with the single
-=A0=A0=A0 smpboot_update_cpumask_percpu_thread() user, which allows
-=A0=A0=A0 cleanups/shrinkage of the smpboot interface.
+> +};
+> +
+> +struct mediatek_dwmac_variant {
+> +       int (*dwmac_set_phy_interface)(struct mediatek_dwmac_plat_data *plat);
+> +       int (*dwmac_set_delay)(struct mediatek_dwmac_plat_data *plat);
+> +
+> +       /* clock ids to be requested */
+> +       const char * const *clk_list;
+> +       int num_clks;
+> +
+> +       u32 dma_bit_mask;
+> +       u32 rx_delay_max;
+> +       u32 tx_delay_max;
+> +};
+> +
+> +/* list of clocks required for mac */
+> +static const char * const mt2712_dwmac_clk_l[] = {
+> +       "axi", "apb", "mac_main", "ptp_ref"
+> +};
+> +
+> +static int mt2712_set_interface(struct mediatek_dwmac_plat_data *plat)
+> +{
+> +       int rmii_rxc = plat->rmii_rxc ? RMII_CLK_SRC_RXC : 0;
+> +       u32 intf_val = 0;
+> +
+> +       /* select phy interface in top control domain */
+> +       switch (plat->phy_mode) {
+> +       case PHY_INTERFACE_MODE_MII:
+> +               intf_val |= PHY_INTF_MII_GMII;
+> +               break;
+> +       case PHY_INTERFACE_MODE_RMII:
+> +               intf_val |= PHY_INTF_RMII;
+> +               intf_val |= rmii_rxc;
+how about putting into one line such as intf_val |= (PHY_INTF_RMII | rmii_rxc) ?
 
-=A0=A0=A0 Suggested-by: Oleg Nesterov <mailto:oleg@redhat.com>
-=A0=A0=A0 Signed-off-by: Peter Zijlstra (Intel) =
-<mailto:peterz@infradead.org>
-=A0=A0=A0 Cc: Linus Torvalds <mailto:torvalds@linux-foundation.org>
-=A0=A0=A0 Cc: Peter Zijlstra <mailto:peterz@infradead.org>
-=A0=A0=A0 Cc: Thomas Gleixner <mailto:tglx@linutronix.de>
-=A0=A0=A0 Cc: mailto:linux-kernel@vger.kernel.org
-=A0=A0=A0 Signed-off-by: Ingo Molnar <mailto:mingo@kernel.org>
+> +               break;
+> +       case PHY_INTERFACE_MODE_RGMII:
+> +       case PHY_INTERFACE_MODE_RGMII_TXID:
+> +       case PHY_INTERFACE_MODE_RGMII_RXID:
+> +       case PHY_INTERFACE_MODE_RGMII_ID:
+> +               intf_val |= PHY_INTF_RGMII;
+> +               break;
+> +       default:
+> +               dev_err(plat->dev, "phy interface not supported\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       regmap_write(plat->peri_regmap, PERI_ETH_PHY_INTF_SEL, intf_val);
+> +
+> +       return 0;
+> +}
+> +
+> +static int mt2712_set_delay(struct mediatek_dwmac_plat_data *plat)
+> +{
+> +       struct mac_delay_struct *mac_delay = &plat->mac_delay;
+> +       u32 delay_val = 0;
+> +       u32 fine_val = 0;
+The same type declaration can be put into the one line
 
------------------8<-----------------
+> +
+> +       switch (plat->phy_mode) {
 
-NMI watchdog: Watchdog detected hard LOCKUP on cpu 10
-Modules linked in: vhost_net vhost tap tun devlink veth cfg80211 rfkill
-8021q garp mrp bridge stp llc nct6775 hwmon_vid msr intel_rapl sb_edac
-x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_hdmi coretemp =
-mousedev
-snd_usb_audio kvm_intel snd_usbmidi_lib kvm snd_rawmidi =
-hid_logitech_hidpp
-snd_hda_codec_realtek snd_hda_codec_generic crct10dif_pclmul =
-snd_hda_intel
-crc32_pclmul snd_seq_device ghash_clmulni_intel pcbc snd_hda_codec
-input_leds aesni_intel hid_logitech_dj snd_hda_core snd_hwdep aes_x86_64
-hid_generic crypto_simd cryptd snd_pcm snd_timer snd usblp soundcore
-glue_helper iTCO_wdt iTCO_vendor_support intel_cstate intel_uncore
-intel_rapl_perf e1000e psmouse pcspkr ioatdma pcc_cpufreq dca i2c_i801
-lpc_ich wmi evdev mac_hid nfsd auth_rpcgss nfs_acl lockd grace sunrpc sg
-crypto_user
-ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto =
-sd_mod
-usbhid hid serio_raw atkbd libps2 isci libsas ahci scsi_transport_sas
-libahci xhci_pci crc32c_intel libata xhci_hcd ehci_pci ehci_hcd i8042 =
-serio
-uas usb_storage scsi_mod vfio_pci irqbypass vfio_virqfd vfio_iommu_type1
-vfio
-CPU: 10 PID: 12844 Comm: fixdep Not tainted 4.19.3-9-custom19 #1
-Hardware name: Supermicro X9SRA/X9SRA-3/X9SRA/X9SRA-3, BIOS 3.2 =
-01/16/2015
-RIP: 0010:__rcu_read_lock+0xe/0x20
-Code: df 48 85 d2 40 0f 94 c5 e8 2f 2f 73 00 89 e8 5b 5d c3 66 2e 0f 1f =
-84
-00 00 00 00 00 0f 1f 44 00 00 65 48 8b 04 25 40 5c 01 00 <83> 80 90 03 =
-00 00
-01 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00
-RSP: 0018:ffff9f0721e67c40 EFLAGS: 00000246
-RAX: ffff8e13ef389e40 RBX: ffff8e13ef389e40 RCX: 0000000000000000
-RDX: 0000000000000041 RSI: 00000000006080c0 RDI: ffff8e13e2373300
-RBP: ffff8e13e2373300 R08: 0000000000000003 R09: 0000000000000000
-R10: 0000000000000fe0 R11: 0000000000000000 R12: 00000000006080c0
-R13: ffffffffaf4766aa R14: ffff8e1cbf57ea00 R15: ffff8e1cbf57ea00
-FS:=A0 00007fc6b422a540(0000) GS:ffff8e1cbfa80000(0000) =
-knlGS:0000000000000000
-CS:=A0 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555bdbfdc5f8 CR3: 0000001732010004 CR4: 00000000001606e0
-Call Trace:
-get_mem_cgroup_from_mm+0x16/0xf0
-memcg_kmem_get_cache+0x6a/0x2a0
-kmem_cache_alloc+0xf7/0x1c0
-__alloc_file+0x2a/0xe0
-? ext4_file_mmap+0xa0/0xa0 [ext4]
-alloc_empty_file+0x43/0xc0
-? terminate_walk+0x91/0x100
-path_openat+0x4c/0x14e0
-? current_time+0x4f/0x90
-? atime_needs_update+0x77/0xe0
-? touch_atime+0x33/0xe0
-do_filp_open+0x93/0x100
-? __check_object_size+0x102/0x189
-? _raw_spin_unlock+0x16/0x30
-do_sys_open+0x186/0x210
-do_syscall_64+0x5b/0x170
-entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x7fc6b41514c2
-Code: 25 00 00 41 00 3d 00 00 41 00 74 4c 48 8d 05 85 70 0d 00 8b 00 85 =
-c0
-75 6d 89 f2 b8 01 01 00 00 48 89 fe bf 9c ff ff ff 0f 05 <48> 3d 00 f0 =
-ff ff
-0f 87 a2 00 00 00 48 8b 4c 24 28 64 48 33 0c 25
-RSP: 002b:00007fffe98405b0 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000555bdbfd28b3 RCX: 00007fc6b41514c2
-RDX: 0000000000000000 RSI: 0000555bdbfd28b3 RDI: 00000000ffffff9c
-RBP: 0000555bdbfd28b3 R08: 0000555bdbfd28b3 R09: 00007fffe98401d0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fffe9841c54 R14: 0000000000000015 R15: 00007fffe9841c54
-NMI watchdog: Watchdog detected hard LOCKUP on cpu 12
-Modules linked in: vhost_net vhost tap tun devlink veth cfg80211 rfkill
-8021q garp mrp bridge stp llc nct6775 hwmon_vid msr intel_rapl sb_edac
-x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_hdmi coretemp =
-mousedev
-snd_usb_audio kvm_intel snd_usbmidi_lib kvm snd_rawmidi =
-hid_logitech_hidpp
-snd_hda_codec_realtek snd_hda_codec_generic crct10dif_pclmul =
-snd_hda_intel
-crc32_pclmul snd_seq_device ghash_clmulni_intel pcbc snd_hda_codec
-input_leds aesni_intel hid_logitech_dj snd_hda_core snd_hwdep aes_x86_64
-hid_generic crypto_simd cryptd snd_pcm snd_timer snd usblp soundcore
-glue_helper iTCO_wdt iTCO_vendor_support intel_cstate intel_uncore
-intel_rapl_perf e1000e psmouse pcspkr ioatdma pcc_cpufreq dca i2c_i801
-lpc_ich wmi evdev mac_hid nfsd auth_rpcgss nfs_acl lockd grace sunrpc sg
-crypto_user
-ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto =
-sd_mod
-usbhid hid serio_raw atkbd libps2 isci libsas ahci scsi_transport_sas
-libahci xhci_pci crc32c_intel libata xhci_hcd ehci_pci ehci_hcd i8042 =
-serio
-uas usb_storage scsi_mod vfio_pci irqbypass vfio_virqfd vfio_iommu_type1
-vfio
-CPU: 12 PID: 13040 Comm: cc1 Not tainted 4.19.3-9-custom19 #1
-Hardware name: Supermicro X9SRA/X9SRA-3/X9SRA/X9SRA-3, BIOS 3.2 =
-01/16/2015
-RIP: 0033:0x6ae07f
-Code: 85 46 ff ff ff 66 0f 1f 44 00 00 4c 8b 77 18 49 89 fd 4d 85 f6 0f =
-84
-d0 00 00 00 49 8b 06 48 85 c0 0f 84 f4 00 00 00 48 8b 10 <48> 8b 48 08 =
-48 85
-d2 0f 84 84 01 00 00 49 89 16 48 89 4a 08 66 0f
-RSP: 002b:00007fff1afce640 EFLAGS: 00000206
-RAX: 00000000025baba0 RBX: 0000000000000000 RCX: 0000000000000007
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000268d210
-RBP: 0000000000000000 R08: 0000000000000000 R09: 00000000025f51a0
-R10: 0000000000000001 R11: 00000000024f0ca8 R12: 0000000000000080
-R13: 000000000268d210 R14: 00000000024874b0 R15: 00000000024cbe40
-FS:=A0 00007f8fddc7dac0 GS:=A0 0000000000000000
-NMI watchdog: Watchdog detected hard LOCKUP on cpu 6
-Modules linked in: vhost_net vhost tap tun devlink veth cfg80211 rfkill
-8021q garp mrp bridge stp llc nct6775 hwmon_vid msr intel_rapl sb_edac
-x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_hdmi coretemp =
-mousedev
-snd_usb_audio kvm_intel snd_usbmidi_lib kvm snd_rawmidi =
-hid_logitech_hidpp
-snd_hda_codec_realtek snd_hda_codec_generic crct10dif_pclmul =
-snd_hda_intel
-crc32_pclmul snd_seq_device ghash_clmulni_intel pcbc snd_hda_codec
-input_leds aesni_intel hid_logitech_dj snd_hda_core snd_hwdep aes_x86_64
-hid_generic crypto_simd cryptd snd_pcm snd_timer snd usblp soundcore
-glue_helper iTCO_wdt iTCO_vendor_support intel_cstate intel_uncore
-intel_rapl_perf e1000e psmouse pcspkr ioatdma pcc_cpufreq dca i2c_i801
-lpc_ich wmi evdev mac_hid nfsd auth_rpcgss nfs_acl lockd grace sunrpc sg
-crypto_user
-ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto =
-sd_mod
-usbhid hid serio_raw atkbd libps2 isci libsas ahci scsi_transport_sas
-libahci xhci_pci crc32c_intel libata xhci_hcd ehci_pci ehci_hcd i8042 =
-serio
-uas usb_storage scsi_mod vfio_pci irqbypass vfio_virqfd vfio_iommu_type1
-vfio
-CPU: 6 PID: 14001 Comm: cc1 Not tainted 4.19.3-9-custom19 #1
-Hardware name: Supermicro X9SRA/X9SRA-3/X9SRA/X9SRA-3, BIOS 3.2 =
-01/16/2015
-RIP: 0033:0x12b0328
-Code: a3 ff ff 48 8b 45 38 48 8b 70 10 8b 03 8d 78 01 eb cf 41 57 41 56 =
-49
-89 f6 48 83 c6 14 41 55 41 54 55 53 48 89 fb 48 83 ec 38 <48> 8b af c0 =
-01 00
-00 e8 7c ff ff ff 48 89 df 48 89 83 c0 01 00 00
-RSP: 002b:00007fffc9ea1ce0 EFLAGS: 00000202
-RAX: 0000000002cb67a0 RBX: 0000000002c45590 RCX: 0000000000000001
-RDX: 0000000000000035 RSI: 00007f7ed3d61df4 RDI: 0000000002c45590
-RBP: 0000000000000000 R08: 000000000000023c R09: 00007f7ed515c000
-R10: 000000000dd86d60 R11: 0000000000000000 R12: 00007f7ed3d3c3d8
-R13: 0000000000000000 R14: 00007f7ed3d61de0 R15: 00007f7ed3d61de0
-FS:=A0 00007f7ed4688ac0 GS:=A0 0000000000000000
-NMI watchdog: Watchdog detected hard LOCKUP on cpu 14
-Modules linked in: vhost_net vhost tap tun devlink veth cfg80211 rfkill
-8021q garp mrp bridge stp llc nct6775 hwmon_vid msr intel_rapl sb_edac
-x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_hdmi coretemp =
-mousedev
-snd_usb_audio kvm_intel snd_usbmidi_lib kvm snd_rawmidi =
-hid_logitech_hidpp
-snd_hda_codec_realtek snd_hda_codec_generic crct10dif_pclmul =
-snd_hda_intel
-crc32_pclmul snd_seq_device ghash_clmulni_intel pcbc snd_hda_codec
-input_leds aesni_intel hid_logitech_dj snd_hda_core snd_hwdep aes_x86_64
-hid_generic crypto_simd cryptd snd_pcm snd_timer snd usblp soundcore
-glue_helper iTCO_wdt iTCO_vendor_support intel_cstate intel_uncore
-intel_rapl_perf e1000e psmouse pcspkr ioatdma pcc_cpufreq dca i2c_i801
-lpc_ich wmi evdev mac_hid nfsd auth_rpcgss nfs_acl lockd grace sunrpc sg
-crypto_user
-ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto =
-sd_mod
-usbhid hid serio_raw atkbd libps2 isci libsas ahci scsi_transport_sas
-libahci xhci_pci crc32c_intel libata xhci_hcd ehci_pci ehci_hcd i8042 =
-serio
-uas usb_storage scsi_mod vfio_pci irqbypass vfio_virqfd vfio_iommu_type1
-vfio
-CPU: 14 PID: 14175 Comm: cc1 Not tainted 4.19.3-9-custom19 #1
-Hardware name: Supermicro X9SRA/X9SRA-3/X9SRA/X9SRA-3, BIOS 3.2 =
-01/16/2015
-RIP: 0033:0x7fe6e03faba0
-Code: 5d 41 5c 41 5d 41 5e 41 5f c3 49 89 fd e8 48 87 fe ff 49 83 c5 02 =
-45
-0f b7 65 fe 49 89 c7 4c 8d 70 fe 48 85 db 75 10 eb cf 90 <48> 83 c5 08 =
-48 8b
-5d 00 48 85 db 74 c1 66 44 3b 23 75 ed 48 8d 7b
-RSP: 002b:00007fffbc0666a0 EFLAGS: 00000283
-RAX: 0000000000000008 RBX: 00007fffbc06ea62 RCX: 00000000000003e7
-RDX: 0000000000004900 RSI: 0000000002a807c1 RDI: 00007fe6e05453e7
-RBP: 00007fffbc06b958 R08: 0000000000000000 R09: 0000000000000000
-R10: 000000001a6677ae R11: 0000000000000000 R12: 000000000000414c
-R13: 00007fe6e05453e9 R14: 0000000000000006 R15: 0000000000000008
-FS:=A0 00007fe6e03beac0 GS:=A0 0000000000000000
-NMI watchdog: Watchdog detected hard LOCKUP on cpu 2
-Modules linked in: vhost_net vhost tap tun devlink veth cfg80211 rfkill
-8021q garp mrp bridge stp llc nct6775 hwmon_vid msr intel_rapl sb_edac
-x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_hdmi coretemp =
-mousedev
-snd_usb_audio kvm_intel snd_usbmidi_lib kvm snd_rawmidi =
-hid_logitech_hidpp
-snd_hda_codec_realtek snd_hda_codec_generic crct10dif_pclmul =
-snd_hda_intel
-crc32_pclmul snd_seq_device ghash_clmulni_intel pcbc snd_hda_codec
-input_leds aesni_intel hid_logitech_dj snd_hda_core snd_hwdep aes_x86_64
-hid_generic crypto_simd cryptd snd_pcm snd_timer snd usblp soundcore
-glue_helper iTCO_wdt iTCO_vendor_support intel_cstate intel_uncore
-intel_rapl_perf e1000e psmouse pcspkr ioatdma pcc_cpufreq dca i2c_i801
-lpc_ich wmi evdev mac_hid nfsd auth_rpcgss nfs_acl lockd grace sunrpc sg
-crypto_user
-ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto =
-sd_mod
-usbhid hid serio_raw atkbd libps2 isci libsas ahci scsi_transport_sas
-libahci xhci_pci crc32c_intel libata xhci_hcd ehci_pci ehci_hcd i8042 =
-serio
-uas usb_storage scsi_mod vfio_pci irqbypass vfio_virqfd vfio_iommu_type1
-vfio
-CPU: 2 PID: 14846 Comm: cc1 Not tainted 4.19.3-9-custom19 #1
-Hardware name: Supermicro X9SRA/X9SRA-3/X9SRA/X9SRA-3, BIOS 3.2 =
-01/16/2015
-RIP: 0033:0x12aa6d1
-Code: e8 64 42 30 ff 48 89 df 48 85 db 75 ec 5b c3 66 2e 0f 1f 84 00 00 =
-00
-00 00 c3 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 55 <53> 48 89 f3 =
-48 83
-ec 08 48 8b 57 40 48 8b 42 10 48 8b 4a 18 48 29
-RSP: 002b:00007ffe4da64ca0 EFLAGS: 00000202
-RAX: 00000000031b2300 RBX: 0000000000000001 RCX: 0000000000000000
-RDX: 00007ffe4da64d3c RSI: 0000000000000002 RDI: 00000000030336a0
-RBP: 0000000003033d70 R08: 000000000303a110 R09: 0000000000000000
-R10: 000000000303a110 R11: 0000000000000000 R12: 00000000031b23de
-R13: 0000000001a83040 R14: 00000000030336a0 R15: 00007ffe4da64d3c
-FS:=A0 00007f78a8eecac0 GS:=A0 0000000000000000
-NMI watchdog: Watchdog detected hard LOCKUP on cpu 13
-Modules linked in: vhost_net vhost tap tun devlink veth cfg80211 rfkill
-8021q garp mrp bridge stp llc nct6775 hwmon_vid msr intel_rapl sb_edac
-x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_hdmi coretemp =
-mousedev
-snd_usb_audio kvm_intel snd_usbmidi_lib kvm snd_rawmidi =
-hid_logitech_hidpp
-snd_hda_codec_realtek snd_hda_codec_generic crct10dif_pclmul =
-snd_hda_intel
-crc32_pclmul snd_seq_device ghash_clmulni_intel pcbc snd_hda_codec
-input_leds aesni_intel hid_logitech_dj snd_hda_core snd_hwdep aes_x86_64
-hid_generic crypto_simd cryptd snd_pcm snd_timer snd usblp soundcore
-glue_helper iTCO_wdt iTCO_vendor_support intel_cstate intel_uncore
-intel_rapl_perf e1000e psmouse pcspkr ioatdma pcc_cpufreq dca i2c_i801
-lpc_ich wmi evdev mac_hid nfsd auth_rpcgss nfs_acl lockd grace sunrpc sg
-crypto_user
-ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto =
-sd_mod
-usbhid hid serio_raw atkbd libps2 isci libsas ahci scsi_transport_sas
-libahci xhci_pci crc32c_intel libata xhci_hcd ehci_pci ehci_hcd i8042 =
-serio
-uas usb_storage scsi_mod vfio_pci irqbypass vfio_virqfd vfio_iommu_type1
-vfio
-CPU: 13 PID: 15862 Comm: cc1 Not tainted 4.19.3-9-custom19 #1
-Hardware name: Supermicro X9SRA/X9SRA-3/X9SRA/X9SRA-3, BIOS 3.2 =
-01/16/2015
-RIP: 0033:0x12b71a1
-Code: 4c 24 08 e8 41 21 03 00 49 8b 4d 18 4c 8b 4c 24 08 e9 63 ff ff ff =
-41
-80 4d 50 02 eb 92 0f 1f 40 00 39 55 08 0f 85 f5 fc ff ff <48> 8b 7d 00 =
-89 4c
-24 20 44 89 5c 24 28 4c 89 44 24 18 48 89 54 24
-RSP: 002b:00007ffdd11d70c0 EFLAGS: 00000246
-RAX: 00000000000042f0 RBX: 00000000000042f0 RCX: 00000000f630c2f0
-RDX: 0000000000000005 RSI: 0000000002beb4d7 RDI: 00000000029e4a70
-RBP: 00007fd9671b4108 R08: 0000000002b12c30 R09: 0000000000000005
-R10: 0000000000008000 R11: 0000000000008000 R12: 0000000002a43c58
-R13: 00000000029e4a70 R14: 00007ffdd11d71bc R15: 0000000000007fff
-FS:=A0 00007fd967691ac0 GS:=A0 0000000000000000
-NMI watchdog: Watchdog detected hard LOCKUP on cpu 11
-Modules linked in: vhost_net vhost tap tun devlink veth cfg80211 rfkill
-8021q garp mrp bridge stp llc nct6775 hwmon_vid msr intel_rapl sb_edac
-x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_hdmi coretemp =
-mousedev
-snd_usb_audio kvm_intel snd_usbmidi_lib kvm snd_rawmidi =
-hid_logitech_hidpp
-snd_hda_codec_realtek snd_hda_codec_generic crct10dif_pclmul =
-snd_hda_intel
-crc32_pclmul snd_seq_device ghash_clmulni_intel pcbc snd_hda_codec
-input_leds aesni_intel hid_logitech_dj snd_hda_core snd_hwdep aes_x86_64
-hid_generic crypto_simd cryptd snd_pcm snd_timer snd usblp soundcore
-glue_helper iTCO_wdt iTCO_vendor_support intel_cstate intel_uncore
-intel_rapl_perf e1000e psmouse pcspkr ioatdma pcc_cpufreq dca i2c_i801
-lpc_ich wmi evdev mac_hid nfsd auth_rpcgss nfs_acl lockd grace sunrpc sg
-crypto_user
-ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto =
-sd_mod
-usbhid hid serio_raw atkbd libps2 isci libsas ahci scsi_transport_sas
-libahci xhci_pci crc32c_intel libata xhci_hcd ehci_pci ehci_hcd i8042 =
-serio
-uas usb_storage scsi_mod vfio_pci irqbypass vfio_virqfd vfio_iommu_type1
-vfio
-CPU: 11 PID: 16002 Comm: cc1 Not tainted 4.19.3-9-custom19 #1
-Hardware name: Supermicro X9SRA/X9SRA-3/X9SRA/X9SRA-3, BIOS 3.2 =
-01/16/2015
-RIP: 0033:0x5e8bae
-Code: c1 29 c3 89 d8 4d 8d 2c c7 49 8b 45 00 48 85 c0 0f 84 02 01 00 00 =
-89
-d5 49 89 f6 49 89 fc 48 83 f8 01 74 4e 48 8b 36 4c 8b 00 <4c> 89 54 24 =
-18 89
-4c 24 10 48 63 46 08 48 8b 36 4c 89 c7 44 89 4c
-RSP: 002b:00007ffd42b14d60 EFLAGS: 00000206
-RAX: 000000000143ee48 RBX: 00000000000000ce RCX: 0000000000000007
-RDX: 0000000000166e6e RSI: 00007ffd42b14de0 RDI: 0000000002a7e810
-RBP: 0000000000166e6e R08: 000000000143d459 R09: 00000000000000fb
-R10: 0000000000000005 R11: 0000000000166e6e R12: 0000000002a7e810
-R13: 0000000002af7e70 R14: 00007ffd42b14dd8 R15: 0000000002af7800
-FS:=A0 00007ff5800a6ac0 GS:=A0 0000000000000000
-NMI watchdog: Watchdog detected hard LOCKUP on cpu 3
-Modules linked in: vhost_net vhost tap tun devlink veth cfg80211 rfkill
-8021q garp mrp bridge stp llc nct6775 hwmon_vid msr intel_rapl sb_edac
-x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_hdmi coretemp =
-mousedev
-snd_usb_audio kvm_intel snd_usbmidi_lib kvm snd_rawmidi =
-hid_logitech_hidpp
-snd_hda_codec_realtek snd_hda_codec_generic crct10dif_pclmul =
-snd_hda_intel
-crc32_pclmul snd_seq_device ghash_clmulni_intel pcbc snd_hda_codec
-input_leds aesni_intel hid_logitech_dj snd_hda_core snd_hwdep aes_x86_64
-hid_generic crypto_simd cryptd snd_pcm snd_timer snd usblp soundcore
-glue_helper iTCO_wdt iTCO_vendor_support intel_cstate intel_uncore
-intel_rapl_perf e1000e psmouse pcspkr ioatdma pcc_cpufreq dca i2c_i801
-lpc_ich wmi evdev mac_hid nfsd auth_rpcgss nfs_acl lockd grace sunrpc sg
-crypto_user
-ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto =
-sd_mod
-usbhid hid serio_raw atkbd libps2 isci libsas ahci scsi_transport_sas
-libahci xhci_pci crc32c_intel libata xhci_hcd ehci_pci ehci_hcd i8042 =
-serio
-uas usb_storage scsi_mod vfio_pci irqbypass vfio_virqfd vfio_iommu_type1
-vfio
-CPU: 3 PID: 16417 Comm: cc1 Not tainted 4.19.3-9-custom19 #1
-Hardware name: Supermicro X9SRA/X9SRA-3/X9SRA/X9SRA-3, BIOS 3.2 =
-01/16/2015
-RIP: 0033:0xcdba17
-Code: 00 00 00 48 89 f2 89 f5 bf 02 00 00 00 48 83 fa 01 0f 87 7d fd ff =
-ff
-eb 9a 66 2e 0f 1f 84 00 00 00 00 00 48 8b 05 71 c5 13 01 <89> d5 8b b8 =
-ac 01
-00 00 8d 47 ff 48 98 48 39 d0 0f 82 54 fd ff ff
-RSP: 002b:00007ffcd5b770e0 EFLAGS: 00000287
-RAX: 0000000002256390 RBX: 00007fa6e85d10a8 RCX: 0000000000000080
-RDX: 0000000000000008 RSI: 0000000000000008 RDI: 0000000000000080
-RBP: 000000002ca727c4 R08: 0000000000000080 R09: 0000000000000001
-R10: 0000000000000008 R11: 0000000000000001 R12: 00007fa6e7d09d20
-R13: 0000000000000001 R14: 0000000000000002 R15: 00007fa6e7d0c488
-FS:=A0 00007fa6e8a9cac0 GS:=A0 0000000000000000
-NMI watchdog: Watchdog detected hard LOCKUP on cpu 15
-Modules linked in: vhost_net vhost tap tun devlink veth cfg80211 rfkill
-8021q garp mrp bridge stp llc nct6775 hwmon_vid msr intel_rapl sb_edac
-x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_hdmi coretemp =
-mousedev
-snd_usb_audio kvm_intel snd_usbmidi_lib kvm snd_rawmidi =
-hid_logitech_hidpp
-snd_hda_codec_realtek snd_hda_codec_generic crct10dif_pclmul =
-snd_hda_intel
-crc32_pclmul snd_seq_device ghash_clmulni_intel pcbc snd_hda_codec
-input_leds aesni_intel hid_logitech_dj snd_hda_core snd_hwdep aes_x86_64
-hid_generic crypto_simd cryptd snd_pcm snd_timer snd usblp soundcore
-glue_helper iTCO_wdt iTCO_vendor_support intel_cstate intel_uncore
-intel_rapl_perf e1000e psmouse pcspkr ioatdma pcc_cpufreq dca i2c_i801
-lpc_ich wmi evdev mac_hid nfsd auth_rpcgss nfs_acl lockd grace sunrpc sg
-crypto_user
-ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto =
-sd_mod
-usbhid hid serio_raw atkbd libps2 isci libsas ahci scsi_transport_sas
-libahci xhci_pci crc32c_intel libata xhci_hcd ehci_pci ehci_hcd i8042 =
-serio
-uas usb_storage scsi_mod vfio_pci irqbypass vfio_virqfd vfio_iommu_type1
-vfio
-CPU: 15 PID: 16522 Comm: cc1 Not tainted 4.19.3-9-custom19 #1
-Hardware name: Supermicro X9SRA/X9SRA-3/X9SRA/X9SRA-3, BIOS 3.2 =
-01/16/2015
-RIP: 0033:0x129dfe0
-Code: 84 c0 0f 84 23 02 00 00 48 8b 4d 08 48 8d 15 a7 2f 7c 00 48 89 df =
-31
-c0 be 06 00 00 00 e8 98 24 00 00 e9 04 02 00 00 0f 1f 00 <48> 8b 45 08 =
-0f b6
-40 10 a8 01 0f 84 80 00 00 00 d0 e8 0f b6 d0 83
-RSP: 002b:00007fff2c18a540 EFLAGS: 00000246
-RAX: 0000000000000035 RBX: 00000000029bf6a0 RCX: 0000000000000000
-RDX: 0b5a02400b5a01c0 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 00000000029bfc48 R08: 00000000000001b3 R09: 00007f9025d4c000
-R10: 000000000b5a01c0 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 00000000029bf6a0
-FS:=A0 00007f902527eac0 GS:=A0 0000000000000000
-NMI watchdog: Watchdog detected hard LOCKUP on cpu 7
-Modules linked in: vhost_net vhost tap tun devlink veth cfg80211 rfkill
-8021q garp mrp bridge stp llc nct6775 hwmon_vid msr intel_rapl sb_edac
-x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_hdmi coretemp =
-mousedev
-snd_usb_audio kvm_intel snd_usbmidi_lib kvm snd_rawmidi =
-hid_logitech_hidpp
-snd_hda_codec_realtek snd_hda_codec_generic crct10dif_pclmul =
-snd_hda_intel
-crc32_pclmul snd_seq_device ghash_clmulni_intel pcbc snd_hda_codec
-input_leds aesni_intel hid_logitech_dj snd_hda_core snd_hwdep aes_x86_64
-hid_generic crypto_simd cryptd snd_pcm snd_timer snd usblp soundcore
-glue_helper iTCO_wdt iTCO_vendor_support intel_cstate intel_uncore
-intel_rapl_perf e1000e psmouse pcspkr ioatdma pcc_cpufreq dca i2c_i801
-lpc_ich wmi evdev mac_hid nfsd auth_rpcgss nfs_acl lockd grace sunrpc sg
-crypto_user
-ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto =
-sd_mod
-usbhid hid serio_raw atkbd libps2 isci libsas ahci scsi_transport_sas
-libahci xhci_pci crc32c_intel libata xhci_hcd ehci_pci ehci_hcd i8042 =
-serio
-uas usb_storage scsi_mod vfio_pci irqbypass vfio_virqfd vfio_iommu_type1
-vfio
-CPU: 7 PID: 16495 Comm: cc1 Not tainted 4.19.3-9-custom19 #1
-Hardware name: Supermicro X9SRA/X9SRA-3/X9SRA/X9SRA-3, BIOS 3.2 =
-01/16/2015
-RIP: 0033:0x12b2248
-Code: 41 59 e9 63 ff ff ff 0f 1f 00 8b b4 24 a8 00 00 00 c6 84 24 93 00 =
-00
-00 00 85 f6 0f 84 49 ff ff ff 90 45 0f b6 9e 85 04 00 00 <3c> 50 75 8c =
-41 8b
-4d 08 41 0f b7 55 06 8d 41 ff 48 8d 04 40 48 c1
-RSP: 002b:00007ffff6bead70 EFLAGS: 00000246
-RAX: 0000000000000035 RBX: 0000000000000028 RCX: 00000000023f2dc0
-RDX: 00007f16bd10a160 RSI: 0000000000000000 RDI: 00007f16bbfdb7f8
-RBP: 0000000002440000 R08: 0008000000000000 R09: 00007f16bdbecc10
-R10: 0000000002205010 R11: 0000000000000002 R12: 0000000000000000
-R13: 00007f16bd4ce090 R14: 00000000022796a0 R15: 0000000000000000
-FS:=A0 00007f16bda2bac0 GS:=A0 0000000000000000
-NMI watchdog: Watchdog detected hard LOCKUP on cpu 5
-Modules linked in: vhost_net vhost tap tun devlink veth cfg80211 rfkill
-8021q garp mrp bridge stp llc nct6775 hwmon_vid msr intel_rapl sb_edac
-x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_hdmi coretemp =
-mousedev
-snd_usb_audio kvm_intel snd_usbmidi_lib kvm snd_rawmidi =
-hid_logitech_hidpp
-snd_hda_codec_realtek snd_hda_codec_generic crct10dif_pclmul =
-snd_hda_intel
-crc32_pclmul snd_seq_device ghash_clmulni_intel pcbc snd_hda_codec
-input_leds aesni_intel hid_logitech_dj snd_hda_core snd_hwdep aes_x86_64
-hid_generic crypto_simd cryptd snd_pcm snd_timer snd usblp soundcore
-glue_helper iTCO_wdt iTCO_vendor_support intel_cstate intel_uncore
-intel_rapl_perf e1000e psmouse pcspkr ioatdma pcc_cpufreq dca i2c_i801
-lpc_ich wmi evdev mac_hid nfsd auth_rpcgss nfs_acl lockd grace sunrpc sg
-crypto_user
-ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto =
-sd_mod
-usbhid hid serio_raw atkbd libps2 isci libsas ahci scsi_transport_sas
-libahci xhci_pci crc32c_intel libata xhci_hcd ehci_pci ehci_hcd i8042 =
-serio
-uas usb_storage scsi_mod vfio_pci irqbypass vfio_virqfd vfio_iommu_type1
-vfio
-CPU: 5 PID: 15214 Comm: cc1 Not tainted 4.19.3-9-custom19 #1
-Hardware name: Supermicro X9SRA/X9SRA-3/X9SRA/X9SRA-3, BIOS 3.2 =
-01/16/2015
-RIP: 0033:0xa2f900
-Code: 0c 48 8b 51 08 49 89 14 ef 48 83 c5 01 48 8b 5c c3 08 48 85 db 75 =
-a8
-0f 1f 00 48 85 ed 74 6b 48 83 ed 01 49 8b 1c ef eb 91 90 <4c> 8b 53 08 =
-41 0f
-b7 02 83 3c 85 40 b2 4a 01 0c 48 89 c1 75 86 83
-RSP: 002b:00007fffd880d650 EFLAGS: 00000246
-RAX: 0000000000000054 RBX: 00007f91fbe22ae0 RCX: 00007f91fbe22b00
-RDX: 0000000000000000 RSI: 0000000000725f70 RDI: 00007f91fbe22af8
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000078
-R10: 0000000000000078 R11: 0000000000000000 R12: 0000000000000001
-R13: 00007fffd880d760 R14: 0000000000725f70 R15: 00007fffd880d660
-FS:=A0 00007f92050edac0 GS:=A0 0000000000000000
-NMI watchdog: Watchdog detected hard LOCKUP on cpu 8
-Modules linked in: vhost_net vhost tap tun devlink veth cfg80211 rfkill
-8021q garp mrp bridge stp llc nct6775 hwmon_vid msr intel_rapl sb_edac
-x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_hdmi coretemp =
-mousedev
-snd_usb_audio kvm_intel snd_usbmidi_lib kvm snd_rawmidi =
-hid_logitech_hidpp
-snd_hda_codec_realtek snd_hda_codec_generic crct10dif_pclmul =
-snd_hda_intel
-crc32_pclmul snd_seq_device ghash_clmulni_intel pcbc snd_hda_codec
-input_leds aesni_intel hid_logitech_dj snd_hda_core snd_hwdep aes_x86_64
-hid_generic crypto_simd cryptd snd_pcm snd_timer snd usblp soundcore
-glue_helper iTCO_wdt iTCO_vendor_support intel_cstate intel_uncore
-intel_rapl_perf e1000e psmouse pcspkr ioatdma pcc_cpufreq dca i2c_i801
-lpc_ich wmi evdev mac_hid nfsd auth_rpcgss nfs_acl lockd grace sunrpc sg
-crypto_user
-ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto =
-sd_mod
-usbhid hid serio_raw atkbd libps2 isci libsas ahci scsi_transport_sas
-libahci xhci_pci crc32c_intel libata xhci_hcd ehci_pci ehci_hcd i8042 =
-serio
-uas usb_storage scsi_mod vfio_pci irqbypass vfio_virqfd vfio_iommu_type1
-vfio
-CPU: 8 PID: 19549 Comm: genksyms Not tainted 4.19.3-9-custom19 #1
-Hardware name: Supermicro X9SRA/X9SRA-3/X9SRA/X9SRA-3, BIOS 3.2 =
-01/16/2015
-RIP: 0033:0x7f00f83a1b50
-Code: 15 ad f7 11 00 0f 83 e2 00 00 00 48 39 f7 72 0f 74 12 4c 8d 0c 16 =
-4c
-39 cf 0f 82 63 01 00 00 48 89 d1 f3 a4 c3 80 fa 08 73 12 <80> fa 04 73 =
-1e 80
-fa 01 77 26 72 05 0f b6 0e 88 0f c3 48 8b 4c 16
-RSP: 002b:00007ffdcfd167f8 EFLAGS: 00000297
-RAX: 000055b0cd5eef90 RBX: 000055b0cd5eeb40 RCX: 000055b0ccd58010
-RDX: 0000000000000002 RSI: 000055b0ccd585f7 RDI: 000055b0cd5eef90
-RBP: 000000000000003a R08: 000055b0ccbe5860 R09: 000055b0ccd585f7
-R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000002
-R13: 0000000000000001 R14: 000055b0ccbe5fc0 R15: 000055b0ccbe61a0
-FS:=A0 00007f00f84c3540 GS:=A0 0000000000000000
-NMI watchdog: Watchdog detected hard LOCKUP on cpu 9
-Modules linked in: vhost_net vhost tap tun devlink veth cfg80211 rfkill
-8021q garp mrp bridge stp llc nct6775 hwmon_vid msr intel_rapl sb_edac
-x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_hdmi coretemp =
-mousedev
-snd_usb_audio kvm_intel snd_usbmidi_lib kvm snd_rawmidi =
-hid_logitech_hidpp
-snd_hda_codec_realtek snd_hda_codec_generic crct10dif_pclmul =
-snd_hda_intel
-crc32_pclmul snd_seq_device ghash_clmulni_intel pcbc snd_hda_codec
-input_leds aesni_intel hid_logitech_dj snd_hda_core snd_hwdep aes_x86_64
-hid_generic crypto_simd cryptd snd_pcm snd_timer snd usblp soundcore
-glue_helper iTCO_wdt iTCO_vendor_support intel_cstate intel_uncore
-intel_rapl_perf e1000e psmouse pcspkr ioatdma pcc_cpufreq dca i2c_i801
-lpc_ich wmi evdev mac_hid nfsd auth_rpcgss nfs_acl lockd grace sunrpc sg
-crypto_user
-ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto =
-sd_mod
-usbhid hid serio_raw atkbd libps2 isci libsas ahci scsi_transport_sas
-libahci xhci_pci crc32c_intel libata xhci_hcd ehci_pci ehci_hcd i8042 =
-serio
-uas usb_storage scsi_mod vfio_pci irqbypass vfio_virqfd vfio_iommu_type1
-vfio
-CPU: 9 PID: 20039 Comm: cc1 Not tainted 4.19.3-9-custom19 #1
-Hardware name: Supermicro X9SRA/X9SRA-3/X9SRA/X9SRA-3, BIOS 3.2 =
-01/16/2015
-RIP: 0033:0x67b7d2
-Code: 83 c4 08 31 c0 5b 5d 41 5c 41 5d c3 0f 1f 40 00 bf 88 95 42 01 31 =
-c0
-e8 6c e6 c0 00 eb dc 66 2e 0f 1f 84 00 00 00 00 00 41 57 <41> 56 41 55 =
-41 54
-55 53 48 81 ec 88 00 00 00 48 89 0c 24 64 48 8b
-RSP: 002b:00007ffc28206fb0 EFLAGS: 00000202
-RAX: 0000000000000001 RBX: 0000000000000004 RCX: 00007ffc282070c8
-RDX: 00007f86a1e84680 RSI: 0000000000000004 RDI: 0000000000000000
-RBP: 00007f86a1e84680 R08: 0000000000000000 R09: 00007ffc282070c8
-R10: 0000000007571fe8 R11: 0000000000000008 R12: 0000000007571fe8
-R13: 00007f86a1f237e0 R14: 00007f86a1f31c80 R15: 00007f86a1e84680
-FS:=A0 00007f86a26d6ac0 GS:=A0 0000000000000000
-NMI watchdog: Watchdog detected hard LOCKUP on cpu 1
-Modules linked in: vhost_net vhost tap tun devlink veth cfg80211 rfkill
-8021q garp mrp bridge stp llc nct6775 hwmon_vid msr intel_rapl sb_edac
-x86_pkg_temp_thermal intel_powerclamp snd_hda_codec_hdmi coretemp =
-mousedev
-snd_usb_audio kvm_intel snd_usbmidi_lib kvm snd_rawmidi =
-hid_logitech_hidpp
-snd_hda_codec_realtek snd_hda_codec_generic crct10dif_pclmul =
-snd_hda_intel
-crc32_pclmul snd_seq_device ghash_clmulni_intel pcbc snd_hda_codec
-input_leds aesni_intel hid_logitech_dj snd_hda_core snd_hwdep aes_x86_64
-hid_generic crypto_simd cryptd snd_pcm snd_timer snd usblp soundcore
-glue_helper iTCO_wdt iTCO_vendor_support intel_cstate intel_uncore
-intel_rapl_perf e1000e psmouse pcspkr ioatdma pcc_cpufreq dca i2c_i801
-lpc_ich wmi evdev mac_hid nfsd auth_rpcgss nfs_acl lockd grace sunrpc sg
-crypto_user
-ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto =
-sd_mod
-usbhid hid serio_raw atkbd libps2 isci libsas ahci scsi_transport_sas
-libahci xhci_pci crc32c_intel libata xhci_hcd ehci_pci ehci_hcd i8042 =
-serio
-uas usb_storage scsi_mod vfio_pci irqbypass vfio_virqfd vfio_iommu_type1
-vfio
-CPU: 1 PID: 20175 Comm: cc1 Not tainted 4.19.3-9-custom19 #1
-Hardware name: Supermicro X9SRA/X9SRA-3/X9SRA/X9SRA-3, BIOS 3.2 =
-01/16/2015
-RIP: 0033:0x12ae100
-Code: 87 c3 0f 1f 84 00 00 00 00 00 48 63 47 28 4c 8b 4f 18 44 8b 47 24 =
-48
-89 c6 48 8d 04 80 49 8d 04 c1 39 10 76 45 44 39 c6 73 78 <42> 8d 04 06 =
-d1 e8
-89 c1 48 8d 0c 89 41 39 14 c9 76 1a eb 44 0f 1f
-RSP: 002b:00007ffc4825b420 EFLAGS: 00000297
-RAX: 000000000000508f RBX: 000000007ffb0bec RCX: 000000000000503f
-RDX: 000000007ffb14e4 RSI: 0000000000005040 RDI: 00007fbdd9a4e000
-RBP: 000000007ffb0bc2 R08: 000000000000508f R09: 00007fbdd82c7000
-R10: 000000007ffb14e4 R11: 00007fbdd9a4e000 R12: 0000000000000000
-R13: 0000000000000001 R14: 0000000000000000 R15: 000000007ffb0bea
-FS:=A0 00007fbdd8f72ac0 GS:=A0 0000000000000000
-perf: interrupt took too long (2503 > 2500), lowering
-kernel.perf_event_max_sample_rate to 79800
-logitech-hidpp-device 0003:046D:101B.000A: HID++ 1.0 device connected.
-perf: interrupt took too long (3139 > 3128), lowering
-kernel.perf_event_max_sample_rate to 63600
-br0: port 2(vethPC49WT) entered disabled state
-device vethPC49WT left promiscuous mode
-br0: port 2(vethPC49WT) entered disabled state
-e1000e: eno2 NIC Link is Down
-br0: port 1(eno2) entered disabled state
-device eno2 left promiscuous mode
-br0: port 1(eno2) entered disabled state
-systemd-shutdow: 50 output lines suppressed due to ratelimiting
-shutdown[1]: Syncing filesystems and block devices.
-shutdown[1]: Sending SIGTERM to remaining processes...
+There exists some room for code optimization in the switch statement
+such as PHY_INTERFACE_MODE_MII and PHY_INTERFACE_MODE_RGMII both are
+almost the same and even the configuration for the other PHY modes can
+reuse their partial setup. It appears to be better using a common way
+to set up various PHY modes.
 
------------------8<-----------------
+> +       case PHY_INTERFACE_MODE_MII:
+> +               delay_val |= mac_delay->tx_delay ? PHY_DLY_TXC_ENABLE : 0;
+> +               delay_val |= (mac_delay->tx_delay << PHY_DLY_TXC_SHIFT) &
+> +                            PHY_DLY_TXC_STAGES;
+> +               delay_val |= mac_delay->tx_inv ? PHY_DLY_TXC_INV : 0;
+> +               delay_val |= mac_delay->rx_delay ? PHY_DLY_RXC_ENABLE : 0;
+> +               delay_val |= (mac_delay->rx_delay << PHY_DLY_RXC_SHIFT) &
+> +                            PHY_DLY_RXC_STAGES;
+> +               delay_val |= mac_delay->rx_inv ? PHY_DLY_RXC_INV : 0;
+> +               break;
+> +       case PHY_INTERFACE_MODE_RMII:
+> +               if (plat->rmii_rxc) {
+> +                       delay_val |= mac_delay->rx_delay ?
+> +                                    PHY_DLY_RXC_ENABLE : 0;
+> +                       delay_val |= (mac_delay->rx_delay <<
+> +                                     PHY_DLY_RXC_SHIFT) & PHY_DLY_RXC_STAGES;
+> +                       delay_val |= mac_delay->rx_inv ? PHY_DLY_RXC_INV : 0;
+> +                       fine_val |= mac_delay->tx_inv ?
+> +                                    ETH_RMII_DLY_TX_INV : 0;
+why is fine_val got from tx_inv?
 
+> +               } else {
+> +                       delay_val |= mac_delay->rx_delay ?
+> +                                    PHY_DLY_TXC_ENABLE : 0;
+> +                       delay_val |= (mac_delay->rx_delay <<
+> +                                    PHY_DLY_TXC_SHIFT) & PHY_DLY_TXC_STAGES;
+> +                       delay_val |= mac_delay->rx_inv ? PHY_DLY_TXC_INV : 0;
+> +                       fine_val |= mac_delay->tx_inv ?
+> +                                    ETH_RMII_DLY_TX_INV : 0;
+ditto, why is fine_val got from tx_inv?
 
+> +               }
+> +               break;
+> +       case PHY_INTERFACE_MODE_RGMII:
+> +               fine_val = plat->fine_tune ?
+> +                           (ETH_FINE_DLY_GTXC | ETH_FINE_DLY_RXC) : 0;
+> +               delay_val |= mac_delay->tx_delay ? PHY_DLY_GTXC_ENABLE : 0;
+> +               delay_val |= mac_delay->tx_delay & PHY_DLY_GTXC_STAGES;
+> +               delay_val |= mac_delay->tx_inv ? PHY_DLY_GTXC_INV : 0;
+> +               delay_val |= mac_delay->rx_delay ? PHY_DLY_RXC_ENABLE : 0;
+> +               delay_val |= (mac_delay->rx_delay << PHY_DLY_RXC_SHIFT) &
+> +                            PHY_DLY_RXC_STAGES;
+> +               delay_val |= mac_delay->rx_inv ? PHY_DLY_RXC_INV : 0;
+> +               break;
+> +       case PHY_INTERFACE_MODE_RGMII_TXID:
+> +               fine_val = plat->fine_tune ? ETH_FINE_DLY_RXC : 0;
+> +               delay_val |= mac_delay->rx_delay ? PHY_DLY_RXC_ENABLE : 0;
+> +               delay_val |= (mac_delay->rx_delay << PHY_DLY_RXC_SHIFT) &
+> +                            PHY_DLY_RXC_STAGES;
+> +               delay_val |= mac_delay->rx_inv ? PHY_DLY_RXC_INV : 0;
+why is PHY_INTERFACE_MODE_RGMII_TXID applied with *_RXC_* register
+bits, not with *_TXC_* bits? I'm a little confused about what path the
+register PHY_DLY_RXC_* cause the effects to? MAC to PHY or PHY to MAC?
 
+> +               break;
+> +       case PHY_INTERFACE_MODE_RGMII_RXID:
+> +               fine_val = plat->fine_tune ? ETH_FINE_DLY_GTXC : 0;
+> +               delay_val |= mac_delay->tx_delay ? PHY_DLY_GTXC_ENABLE : 0;
+> +               delay_val |= mac_delay->tx_delay & PHY_DLY_GTXC_STAGES;
+> +               delay_val |= mac_delay->tx_inv ? PHY_DLY_GTXC_INV : 0;
+ditto, as the above quetion
 
+> +               break;
+> +       case PHY_INTERFACE_MODE_RGMII_ID:
+> +               break;
+> +       default:
+> +               dev_err(plat->dev, "phy interface not supported\n");
+> +               return -EINVAL;
+> +       }
+> +       regmap_write(plat->peri_regmap, PERI_ETH_PHY_DLY, delay_val);
+> +       regmap_write(plat->peri_regmap, PERI_ETH_DLY_FINE, fine_val);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct mediatek_dwmac_variant mt2712_gmac_variant = {
+> +               .dwmac_set_phy_interface = mt2712_set_interface,
+> +               .dwmac_set_delay = mt2712_set_delay,
+> +               .clk_list = mt2712_dwmac_clk_l,
+> +               .num_clks = ARRAY_SIZE(mt2712_dwmac_clk_l),
+> +               .dma_bit_mask = 33,
+> +               .rx_delay_max = 32,
+> +               .tx_delay_max = 32,
+> +};
+> +
+> +static int mediatek_dwmac_config_dt(struct mediatek_dwmac_plat_data *plat)
+> +{
+> +       u32 tx_delay, rx_delay;
+> +
+> +       plat->peri_regmap = syscon_regmap_lookup_by_phandle(plat->np, "mediatek,pericfg");
+> +       if (IS_ERR(plat->peri_regmap)) {
+> +               dev_err(plat->dev, "Failed to get pericfg syscon\n");
+> +               return PTR_ERR(plat->peri_regmap);
+> +       }
+> +
+> +       plat->phy_mode = of_get_phy_mode(plat->np);
+> +       if (plat->phy_mode < 0) {
+> +               dev_err(plat->dev, "not find phy-mode\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       if (!of_property_read_u32(plat->np, "mediatek,tx-delay", &tx_delay)) {
+> +               if (tx_delay < plat->variant->tx_delay_max) {
+> +                       plat->mac_delay.tx_delay = tx_delay;
+> +               } else {
+> +                       dev_err(plat->dev, "Invalid TX clock delay: %d\n", tx_delay);
+> +                       return -EINVAL;
+> +               }
+> +       }
+> +
+> +       if (!of_property_read_u32(plat->np, "mediatek,rx-delay", &rx_delay)) {
+> +               if (rx_delay < plat->variant->rx_delay_max) {
+> +                       plat->mac_delay.rx_delay = rx_delay;
+> +               } else {
+> +                       dev_err(plat->dev, "Invalid RX clock delay: %d\n", rx_delay);
+> +                       return -EINVAL;
+> +               }
+> +       }
+> +
+> +       plat->mac_delay.tx_inv = of_property_read_bool(plat->np, "mediatek,txc-inverse");
+> +       plat->mac_delay.rx_inv = of_property_read_bool(plat->np, "mediatek,rxc-inverse");
+> +       plat->fine_tune = of_property_read_bool(plat->np, "mediatek,fine-tune");
+> +       plat->rmii_rxc = of_property_read_bool(plat->np, "mediatek,rmii-rxc");
+> +
+> +       return 0;
+> +}
+> +
+> +static int mediatek_dwmac_clk_init(struct mediatek_dwmac_plat_data *plat)
+> +{
+> +       const struct mediatek_dwmac_variant *variant = plat->variant;
+> +       int num = variant->num_clks;
+> +       int i;
+put into the same line seems good
+
+> +
+> +       plat->clks = devm_kcalloc(plat->dev, num, sizeof(*plat->clks), GFP_KERNEL);
+> +       if (!plat->clks)
+> +               return -ENOMEM;
+> +
+> +       for (i = 0; i < num; i++)
+> +               plat->clks[i].id = variant->clk_list[i];
+> +
+> +       return devm_clk_bulk_get(plat->dev, num, plat->clks);
+> +}
+> +
+> +static int mediatek_dwmac_init(struct platform_device *pdev, void *priv)
+> +{
+> +       struct mediatek_dwmac_plat_data *plat = priv;
+> +       const struct mediatek_dwmac_variant *variant = plat->variant;
+> +       int ret = 0;
+zero initialized seems unnecessary
+
+> +
+> +       ret = dma_set_mask_and_coherent(plat->dev, DMA_BIT_MASK(variant->dma_bit_mask));
+> +       if (ret) {
+> +               dev_err(plat->dev, "No suitable DMA available, err = %d\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       ret = variant->dwmac_set_phy_interface(plat);
+> +       if (ret) {
+> +               dev_err(plat->dev, "failed to set phy interface, err = %d\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       ret = variant->dwmac_set_delay(plat);
+> +       if (ret) {
+> +               dev_err(plat->dev, "failed to set delay value, err = %d\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       ret = clk_bulk_prepare_enable(variant->num_clks, plat->clks);
+> +       if (ret) {
+> +               dev_err(plat->dev, "failed to enable clks, err = %d\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static void mediatek_dwmac_exit(struct platform_device *pdev, void *priv)
+> +{
+> +       struct mediatek_dwmac_plat_data *plat = priv;
+> +       const struct mediatek_dwmac_variant *variant = plat->variant;
+> +
+> +       clk_bulk_disable_unprepare(variant->num_clks, plat->clks);
+> +}
+> +
+> +static int mediatek_dwmac_probe(struct platform_device *pdev)
+> +{
+> +       struct mediatek_dwmac_plat_data *priv_plat;
+> +       struct plat_stmmacenet_data *plat_dat;
+> +       struct stmmac_resources stmmac_res;
+> +       int ret = 0;
+zero initialized seems unnecessary
+
+> +
+> +       priv_plat = devm_kzalloc(&pdev->dev, sizeof(*priv_plat), GFP_KERNEL);
+> +       if (!priv_plat)
+> +               return -ENOMEM;
+> +
+> +       priv_plat->variant = of_device_get_match_data(&pdev->dev);
+> +       if (!priv_plat->variant) {
+> +               dev_err(&pdev->dev, "Missing dwmac-mediatek variant\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       priv_plat->dev = &pdev->dev;
+> +       priv_plat->np = pdev->dev.of_node;
+> +
+> +       ret = mediatek_dwmac_config_dt(priv_plat);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = mediatek_dwmac_clk_init(priv_plat);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = stmmac_get_platform_resources(pdev, &stmmac_res);
+> +       if (ret)
+> +               return ret;
+> +
+> +       plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
+> +       if (IS_ERR(plat_dat))
+> +               return PTR_ERR(plat_dat);
+> +
+> +       plat_dat->interface = priv_plat->phy_mode;
+> +       /* clk_csr_i = 250-300MHz & MDC = clk_csr_i/124 */
+> +       plat_dat->clk_csr = 5;
+> +       plat_dat->has_gmac4 = 1;
+> +       plat_dat->has_gmac = 0;
+> +       plat_dat->pmt = 0;
+> +       plat_dat->maxmtu = ETH_DATA_LEN;
+> +       plat_dat->bsp_priv = priv_plat;
+> +       plat_dat->init = mediatek_dwmac_init;
+> +       plat_dat->exit = mediatek_dwmac_exit;
+> +       mediatek_dwmac_init(pdev, priv_plat);
+> +
+> +       ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+> +       if (ret) {
+> +               stmmac_remove_config_dt(pdev, plat_dat);
+> +               return ret;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id mediatek_dwmac_match[] = {
+> +       { .compatible = "mediatek,mt2712-gmac",
+> +         .data = &mt2712_gmac_variant },
+> +       { }
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, mediatek_dwmac_match);
+> +
+> +static struct platform_driver mediatek_dwmac_driver = {
+> +       .probe  = mediatek_dwmac_probe,
+> +       .remove = stmmac_pltfr_remove,
+> +       .driver = {
+> +               .name           = "dwmac-mediatek",
+> +               .pm             = &stmmac_pltfr_pm_ops,
+> +               .of_match_table = mediatek_dwmac_match,
+> +       },
+> +};
+> +module_platform_driver(mediatek_dwmac_driver);
+> --
+> 1.7.9.5
+>
+>
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
