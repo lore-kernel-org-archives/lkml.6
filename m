@@ -2,95 +2,119 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB44C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D79C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D91E20861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:46:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D91E20861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0838C20672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:46:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0838C20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394754AbeKWXat (ORCPT
+        id S2409927AbeKWXay (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:30:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38460 "EHLO mx1.suse.de"
+        Fri, 23 Nov 2018 18:30:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38494 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390833AbeKWXat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:30:49 -0500
+        id S2390833AbeKWXay (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 18:30:54 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1F275AEC0;
-        Fri, 23 Nov 2018 12:46:44 +0000 (UTC)
-Date:   Fri, 23 Nov 2018 13:46:43 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 64263AEC0;
+        Fri, 23 Nov 2018 12:46:48 +0000 (UTC)
+Date:   Fri, 23 Nov 2018 13:46:47 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Alexander Potapenko <glider@google.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 2/3] mm, notifier: Catch sleeping/blocking for !blockable
-Message-ID: <20181123124643.GK8625@dhcp22.suse.cz>
-References: <20181122165106.18238-1-daniel.vetter@ffwll.ch>
- <20181122165106.18238-3-daniel.vetter@ffwll.ch>
- <20181123111237.GE8625@dhcp22.suse.cz>
- <20181123123838.GL4266@phenom.ffwll.local>
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH 3/3] lockdep: Use line-buffered printk() for lockdep
+ messages.
+Message-ID: <20181123124647.jmewvgrqdpra7wbm@pathway.suse.cz>
+References: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <1541165517-3557-3-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20181107151900.gxmdvx42qeanpoah@pathway.suse.cz>
+ <20181108044510.GC2343@jagdpanzerIV>
+ <9648a384-853c-942e-6a8d-80432d943aae@i-love.sakura.ne.jp>
+ <20181109061204.GC599@jagdpanzerIV>
+ <07dcbcb8-c5a7-8188-b641-c110ade1c5da@i-love.sakura.ne.jp>
+ <20181109154326.apqkbsojmbg26o3b@pathway.suse.cz>
+ <deb8d78b-0593-2b8e-1c7a-9203aa77005f@i-love.sakura.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181123123838.GL4266@phenom.ffwll.local>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <deb8d78b-0593-2b8e-1c7a-9203aa77005f@i-love.sakura.ne.jp>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 23-11-18 13:38:38, Daniel Vetter wrote:
-> On Fri, Nov 23, 2018 at 12:12:37PM +0100, Michal Hocko wrote:
-> > On Thu 22-11-18 17:51:05, Daniel Vetter wrote:
-> > > We need to make sure implementations don't cheat and don't have a
-> > > possible schedule/blocking point deeply burried where review can't
-> > > catch it.
-> > > 
-> > > I'm not sure whether this is the best way to make sure all the
-> > > might_sleep() callsites trigger, and it's a bit ugly in the code flow.
-> > > But it gets the job done.
+On Sat 2018-11-10 11:42:03, Tetsuo Handa wrote:
+> On 2018/11/10 0:43, Petr Mladek wrote:
+> >> + * Line buffered printk() tries to assign a buffer when printk() from a new
+> >> + * context identifier comes in. And it automatically releases that buffer when
+> >> + * one of three conditions listed below became true.
+> >> + *
+> >> + *   (1) printk() from that context identifier emitted '\n' as the last
+> >> + *       character of output.
+> >> + *   (2) printk() from that context identifier tried to print a too long line
+> >> + *       which cannot be stored into a buffer.
+> >> + *   (3) printk() from a new context identifier noticed that some context
+> >> + *       identifier is reserving a buffer for more than 10 seconds without
+> >> + *       emitting '\n'.
+> >> + *
+> >> + * Since (3) is based on a heuristic that somebody forgot to emit '\n' as the
+> >> + * last character of output(), pr_cont()/KERN_CONT users are expected to emit
+> >> + * '\n' within 10 seconds even if they reserved a buffer.
 > > 
-> > Yeah, it is quite ugly. Especially because it makes DEBUG config
-> > bahavior much different. So is this really worth it? Has this already
-> > discovered any existing bug?
+> > This is my main concern about this approach. It is so easy to omit
+> > the final '\n'.
 > 
-> Given that we need an oom trigger to hit this we're not hitting this in CI
-> (oom is just way to unpredictable to even try). I'd kinda like to also add
-> some debug interface so I can provoke an oom kill of a specially prepared
-> process, to make sure we can reliably exercise this path without killing
-> the kernel accidentally. We do similar tricks for our shrinker already.
-
-Create a task with oom_score_adj = 1000 and trigger the oom killer via
-sysrq and you should get a predictable oom invocation and execution.
-
-[...]
-> Wrt the behavior difference: I guess we could put another counter into the
-> task struct, and change might_sleep() to check it. All under
-> CONFIG_DEBUG_ATOMIC_SLEEP only ofc. That would avoid the preempt-disable
-> sideeffect. My worry with that is that people will spot it, and abuse it
-> in creative ways that do affect semantics. See horrors like
-> drm_can_sleep() (and I'm sure gfx folks are not the only ones who
-> seriously lacked taste here).
+> If it is so easy to forget the final '\n', there will be a lot of implicit
+> pr_cont() users (because pr_cont() assumes that previous printk() omitted the
+> final '\n'), and "I am going to investigate much more pr_cont() users." will
+> be insufficient for getting meaningful conclusion.
 > 
-> Up to the experts really how to best paint this shed I think.
+> Checking "lack of the the final '\n'" means that we need to check
+> "all printk() users who are not emitting the final '\n'" and evaluate
+> "whether there is a possibility that subsequent printk() will not be
+>  called from that context due to e.g. conditional branches". That is an
+> impossible task for anybody, for there might be out-of-tree code doing it.
+> > 
+> > They are currently delayed until another printk(). Even this is bad.
+> > Unfortunately we could not setup timer from printk() because it
+> > would add more locks into the game.
+> 
+> We could use interval timer for flushing incomplete line.
 
-Actually I like a way to say non_block_{begin,end} and might_sleep
-firing inside that context.
--- 
-Michal Hocko
-SUSE Labs
+I am more and more wondering if the buffered printk is worth
+the effort. The more buffers we use the more we risk that nobody
+would see some important message. Even a part of the line
+might be crucial in some situations.
+
+Steven told me on Plumbers conference that even few initial
+characters saved him a day few times.
+
+
+> But updating printk() users to always end with '\n' will be preferable.
+
+This sounds like a whack a mole game. If I get it correctly, you write
+that it is "an impossible task for anybody" just few lines above.
+
+Best Regards,
+Petr
