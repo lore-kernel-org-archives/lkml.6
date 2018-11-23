@@ -2,108 +2,108 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF9AC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D31F4C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 013AB206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:04:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B84920824
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:07:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QBRaxsB1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 013AB206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwPXdpST"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B84920824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2632794AbeKXCtL (ORCPT
+        id S2632819AbeKXCwG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 21:49:11 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39920 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2632780AbeKXCtK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 21:49:10 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t27so4861587wra.6
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 08:04:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lqnu5Frd50dYQ31+ZaN+a9DUcihrXq8ePCw8ZaQxYCI=;
-        b=QBRaxsB1Cbw3nPbm5eHsbSDTXQ4anQkIGlYw/M1IH8nD+CBM9wG5FQsBvQMSwQh4yk
-         4DbCcK7q+niM4bHRxL3TgJTtC2Znb2jeXz3WB/otF23vvbumGoDsNz4+ZPyRuMnL9UDP
-         4OXolBt/Qx4SJnJV+P3SA4/nK/S6mqhz9m/pg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lqnu5Frd50dYQ31+ZaN+a9DUcihrXq8ePCw8ZaQxYCI=;
-        b=k0nrFj+0IIcdyS7YNvw28vO/zEgo4His9ZRqFPZYxjU8ki8y0T/a9xip7P4j3YXPqN
-         MUtsbsiDA/yaVL4+9neeY3iv6Q22BVx6az8hwr0WdDkSWJatPoJfJDypCg9T9oQHS0vG
-         I50y+EZaYTh7RYkieVIwtHuTsBi6w3m9MfL5U5+Cic/AYOrB7mRS3Cn2xvjs4i/elLWi
-         zUG/oU6tVRBtwkTK0LJTALAzQtNIDPagU00FQp82lUV7P5JYxUOF/gRPdG+j1rd2wveo
-         EA672LwHyVX9RnV11fcApgpl6GTFhLymOxKMSMfit+KhJa+u0PnU9qTXnSWFTYPSqVmE
-         VuQA==
-X-Gm-Message-State: AA+aEWbZZGxJck8yxTNBAXXsz8wU+IY2WTCm29ocGjq4aIAUKl89Dj7g
-        fIg0Ztte4dAsffb1jygbV+6g0PwcjSg=
-X-Google-Smtp-Source: AFSGD/W215yRUoS/lZ3FyemPJz47l/9Ny/yJ0y6ChhW8W9YIMMEiELymCCXHvZ55ifWVzvZ4RLgWTQ==
-X-Received: by 2002:adf:ce02:: with SMTP id p2mr15790672wrn.185.1542989061847;
-        Fri, 23 Nov 2018 08:04:21 -0800 (PST)
-Received: from [192.168.0.40] (33.181.88.92.rev.sfr.net. [92.88.181.33])
-        by smtp.googlemail.com with ESMTPSA id e190sm10638546wmf.0.2018.11.23.08.04.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Nov 2018 08:04:20 -0800 (PST)
-Subject: Re: [PATCH 2/4] base/drivers/arch_topology: Replace mutex with
- READ_ONCE / WRITE_ONCE
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     rjw@rjwysocki.net, vincent.guittot@linaro.org,
-        linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>
-References: <1540830201-2947-1-git-send-email-daniel.lezcano@linaro.org>
- <1540830201-2947-2-git-send-email-daniel.lezcano@linaro.org>
- <20181123135807.GA14964@e107155-lin>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <9cea4556-15f8-9377-305a-b629ba7e811f@linaro.org>
-Date:   Fri, 23 Nov 2018 17:04:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 23 Nov 2018 21:52:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43466 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2632803AbeKXCwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 21:52:05 -0500
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60FB6208A3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 16:07:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542989237;
+        bh=QJp/lkBgIyFFh9nuuDPMgSaJkrwqVtsa5gMOqP1UyIE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pwPXdpSTk4sFbZm4Pna31BvSQnE5s63+iMlqZije2mUJ3f873WWt+XzzgIIyxsuDi
+         e5sF6kbTeFPqZm4HoTSu1sYFDQDaoGf+SArh4A9VcEdYzjUyUppbHJUlywi7NF9akX
+         GuTY+haaiG/9j9uf+Bqp9rV+jShLqSXB8iAcwspQ=
+Received: by mail-wm1-f47.google.com with SMTP id y139so12294617wmc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 08:07:17 -0800 (PST)
+X-Gm-Message-State: AGRZ1gLF8ZUOn+XZwDoP4ItqPu4cYtRdxD49FikyZOPKzzy31YNVEilt
+        +6qXfg8ekjlx9UZQCk4QiIKu1mezvBrDOzq40D0aYA==
+X-Google-Smtp-Source: AJdET5eRtBIB3wgTUKzJ+vNKLGTQ7NUHVuGz09CbEXrxIU6l25vMl/Gqm9mS8Nn0bbctlMg8szNO+n+Lmm7v5kFzBy4=
+X-Received: by 2002:a1c:f112:: with SMTP id p18mr13729808wmh.83.1542989235720;
+ Fri, 23 Nov 2018 08:07:15 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181123135807.GA14964@e107155-lin>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20181112142654.341-1-cyphar@cyphar.com> <20181112142654.341-3-cyphar@cyphar.com>
+ <1ce83cdf6e3168350b69f98f08aaa202bbaa682d.camel@bitron.ch>
+In-Reply-To: <1ce83cdf6e3168350b69f98f08aaa202bbaa682d.camel@bitron.ch>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 23 Nov 2018 08:07:03 -0800
+X-Gmail-Original-Message-ID: <CALCETrURCXjNMBR6DjujVc6HHHS=CbET81kHS+odur+Bm-z7Tg@mail.gmail.com>
+Message-ID: <CALCETrURCXjNMBR6DjujVc6HHHS=CbET81kHS+odur+Bm-z7Tg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] namei: O_BENEATH-style path resolution flags
+To:     j@bitron.ch
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian@brauner.io>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        David Drysdale <drysdale@google.com>,
+        Aleksa Sarai <asarai@suse.de>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/11/2018 14:58, Sudeep Holla wrote:
-> On Mon, Oct 29, 2018 at 05:23:18PM +0100, Daniel Lezcano wrote:
->> The mutex protects a per_cpu variable access. The potential race can
->> happen only when the cpufreq governor module is loaded and at the same
->> time the cpu capacity is changed in the sysfs.
->>
-> 
-> I wonder if we really need that sysfs entry to be writable. For some
-> reason, I had assumed it's read only, obviously it's not. I prefer to
-> make it RO if there's no strong reason other than debug purposes.
+> On Nov 23, 2018, at 5:10 AM, J=C3=BCrg Billeter <j@bitron.ch> wrote:
+>
+> Hi Aleksa,
+>
+>> On Tue, 2018-11-13 at 01:26 +1100, Aleksa Sarai wrote:
+>> * O_BENEATH: Disallow "escapes" from the starting point of the
+>>  filesystem tree during resolution (you must stay "beneath" the
+>>  starting point at all times). Currently this is done by disallowing
+>>  ".." and absolute paths (either in the given path or found during
+>>  symlink resolution) entirely, as well as all "magic link" jumping.
+>
+> With open_tree(2) and OPEN_TREE_CLONE, will O_BENEATH still be
+> necessary?
 
-Are you suggesting to remove the READ_ONCE/WRITE_ONCE patch and set the
-sysfs file read-only ?
+This discussion reminds me of something I=E2=80=99m uncomfortable with in t=
+he
+current patches: currently, most of the O_ flags determine some
+property of the returned opened file.  The new O_ flags you're adding
+don't -- instead, they affect the lookup of the file.  So O_BENEATH
+doesn't return a descriptor that can only be used to loop up files
+beneath it -- it just controls whether open(2) succeeds or fails.  It
+might be nice for the naming of the flags to reflect this.  I also
+don't love that we have some magic AT_ flags that work with some
+syscalls and some magic O_ flags that work with others.
 
+In this regard, I liked the AT_ naming better.  Although I don't love
+adding AT_ flags because the restrict our ability to usefully use the
+high bits of the fd in the future.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+--Andy
