@@ -2,165 +2,191 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCA5C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 028FBC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E284220820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:17:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A37n5UG9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E284220820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A799F20861
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:19:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A799F20861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408315AbeKWSAE (ORCPT
+        id S2390408AbeKWSCo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 13:00:04 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37419 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390344AbeKWSAD (ORCPT
+        Fri, 23 Nov 2018 13:02:44 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33050 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387592AbeKWSCo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 13:00:03 -0500
-Received: by mail-lj1-f193.google.com with SMTP id e5-v6so9811909lja.4
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 23:17:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=b1aRLZlEwJSXS3Ka1Uw5klku6tzokb6rI6jOothkjTE=;
-        b=A37n5UG9eWb1f3z6pUm0U2/J13UQ7zxJMsQbMYWi+JIMcsYei1FkFmZS2UQjP16SCE
-         u1snfIx3zxLsNdnmSVGd8h2P2ZT8ug3NdYNPTpOWigSRueWGNH9Iwjys7jTVTGXHsw9e
-         1YHwFaWh5n53xHU4hpKRmklIYRzB9ml94WrVk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=b1aRLZlEwJSXS3Ka1Uw5klku6tzokb6rI6jOothkjTE=;
-        b=OamlOX6n7sNTVvlaC5vvMdmYCJTINs8afz7b72HvTOvy2dhD7VkvobPEE6fBh22YDT
-         B5MEOssTXV9f6F9ylO2XWT3dE5cAjvm3TlQIWRxOu0OZ2QbSqn/ML4lROfqlMCCGpIRz
-         UM5znELZq8zhuQsYQdwemYxXj2vithbJend69fklievAD4KQ7b0rh82zL+89HBC+5Q7Z
-         sfCAajPh+puqIVsd5T5YYLvby5qwJn0mre4ltT0IteubhIQwWKt4IIMNyw9EjckMzVWw
-         902o2rNEPhYrgWzSOib+jXq/WSJ90kcGvJXqBZRTRXceep4BQ/pkucGKLsF/5616DeI0
-         QJuw==
-X-Gm-Message-State: AA+aEWYuF2LyKccgygtl3zJtk8WtTDCu2JaPxzWnhRfFojnIXAFmpWTm
-        MYa/h9JZkoSIBWGpduEc2iWsy4U77lYMkugyCE1V3QTnYtE=
-X-Google-Smtp-Source: AFSGD/WHtbHq+5yAd8eDqK1MgCnh5m3h4uu6n3odjdo+6huoCqW9PGUxLnopzIieZLGe5R8UItNeJU6/T0pERB6t8y4=
-X-Received: by 2002:a2e:92:: with SMTP id e18-v6mr9715360lji.130.1542957423217;
- Thu, 22 Nov 2018 23:17:03 -0800 (PST)
-MIME-Version: 1.0
-References: <20181121183508.262873520@linuxfoundation.org>
-In-Reply-To: <20181121183508.262873520@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 23 Nov 2018 12:46:51 +0530
-Message-ID: <CA+G9fYvnQc57St_DaLMU7aaL98iBVinOWzzku5aCeA2kxaBaqg@mail.gmail.com>
-Subject: Re: [PATCH 4.9 00/59] 4.9.139-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Fri, 23 Nov 2018 13:02:44 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAN7JHLn051872
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 02:19:44 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nxa6r6kx4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 02:19:44 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Fri, 23 Nov 2018 07:19:41 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 23 Nov 2018 07:19:31 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAN7JUHG8978794
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 23 Nov 2018 07:19:30 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4F375AE051;
+        Fri, 23 Nov 2018 07:19:30 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 45CE6AE04D;
+        Fri, 23 Nov 2018 07:19:27 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.207.68])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 23 Nov 2018 07:19:27 +0000 (GMT)
+Date:   Fri, 23 Nov 2018 09:19:25 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
+        Kees Cook <keescook@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
+        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 1/9] mm: Introduce new vm_insert_range API
+References: <20181115154530.GA27872@jordon-HP-15-Notebook-PC>
+ <20181116182836.GB17088@rapoport-lnx>
+ <CAFqt6zYp0j999WXw9Jus0oZMjADQQkPfso8btv6du6L9CE3PXA@mail.gmail.com>
+ <20181117143742.GB7861@bombadil.infradead.org>
+ <CAFqt6zbOWX5LUTWwoGDJsGdf+pTR6N1yTPVxyr1W3-6Fte39ww@mail.gmail.com>
+ <20181119162623.GA13200@rapoport-lnx>
+ <CAFqt6zbhodAGQz-RCB3C-wt_Mvb9QDmQ8pFeP2EO+ba2k2OccA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFqt6zbhodAGQz-RCB3C-wt_Mvb9QDmQ8pFeP2EO+ba2k2OccA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18112307-0016-0000-0000-0000022B7734
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112307-0017-0000-0000-00003283C035
+Message-Id: <20181123071924.GF5704@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-23_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811230058
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Nov 2018 at 00:40, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.9.139 release.
-> There are 59 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri Nov 23 18:34:55 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.9.139-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.9.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Mon, Nov 19, 2018 at 11:15:15PM +0530, Souptick Joarder wrote:
+> On Mon, Nov 19, 2018 at 9:56 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> >
+> > On Mon, Nov 19, 2018 at 08:43:09PM +0530, Souptick Joarder wrote:
+> > > Hi Mike,
+> > >
+> > > On Sat, Nov 17, 2018 at 8:07 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > > >
+> > > > On Sat, Nov 17, 2018 at 12:26:38PM +0530, Souptick Joarder wrote:
+> > > > > On Fri, Nov 16, 2018 at 11:59 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> > > > > > > + * vm_insert_range - insert range of kernel pages into user vma
+> > > > > > > + * @vma: user vma to map to
+> > > > > > > + * @addr: target user address of this page
+> > > > > > > + * @pages: pointer to array of source kernel pages
+> > > > > > > + * @page_count: no. of pages need to insert into user vma
+> > > > > > > + *
+> > > > > > > + * This allows drivers to insert range of kernel pages they've allocated
+> > > > > > > + * into a user vma. This is a generic function which drivers can use
+> > > > > > > + * rather than using their own way of mapping range of kernel pages into
+> > > > > > > + * user vma.
+> > > > > >
+> > > > > > Please add the return value and context descriptions.
+> > > > > >
+> > > > >
+> > > > > Sure I will wait for some time to get additional review comments and
+> > > > > add all of those requested changes in v2.
+> > > >
+> > > > You could send your proposed wording now which might remove the need
+> > > > for a v3 if we end up arguing about the wording.
+> > >
+> > > Does this description looks good ?
+> > >
+> > > /**
+> > >  * vm_insert_range - insert range of kernel pages into user vma
+> > >  * @vma: user vma to map to
+> > >  * @addr: target user address of this page
+> > >  * @pages: pointer to array of source kernel pages
+> > >  * @page_count: number of pages need to insert into user vma
+> > >  *
+> > >  * This allows drivers to insert range of kernel pages they've allocated
+> > >  * into a user vma. This is a generic function which drivers can use
+> > >  * rather than using their own way of mapping range of kernel pages into
+> > >  * user vma.
+> > >  *
+> > >  * Context - Process context. Called by mmap handlers.
+> >
+> > Context:
+> >
+> > >  * Return - int error value
+> >
+> > Return:
+> >
+> > >  * 0                    - OK
+> > >  * -EINVAL              - Invalid argument
+> > >  * -ENOMEM              - No memory
+> > >  * -EFAULT              - Bad address
+> > >  * -EBUSY               - Device or resource busy
+> >
+> > I don't think that elaborate description of error values is needed, just "0
+> > on success and error code otherwise" would be sufficient.
+> 
+> /**
+>  * vm_insert_range - insert range of kernel pages into user vma
+>  * @vma: user vma to map to
+>  * @addr: target user address of this page
+>  * @pages: pointer to array of source kernel pages
+>  * @page_count: number of pages need to insert into user vma
+>  *
+>  * This allows drivers to insert range of kernel pages they've allocated
+>  * into a user vma. This is a generic function which drivers can use
+>  * rather than using their own way of mapping range of kernel pages into
+>  * user vma.
+>  *
+>  * Context: Process context. Called by mmap handlers.
+>  * Return: 0 on success and error code otherwise
+>  */
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Looks good to me.
 
-Summary
-------------------------------------------------------------------------
+-- 
+Sincerely yours,
+Mike.
 
-kernel: 4.9.139-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.9.y
-git commit: 70b13958eeae24843ed944e4f3d4a25a0cdec0dc
-git describe: v4.9.138-60-g70b13958eeae
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
-ld/v4.9.138-60-g70b13958eeae
-
-No regressions (compared to build v4.9.138)
-
-No fixes (compared to build v4.9.138)
-
-Ran 21044 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* ltp-sched-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
