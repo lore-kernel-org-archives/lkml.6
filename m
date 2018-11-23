@@ -2,145 +2,116 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE196C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC6BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9273420861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:20:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EAE220861
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:24:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hG8bb9h8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9273420861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AlFbyGf6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EAE220861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbeKXFFr (ORCPT
+        id S1727119AbeKXFKJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 00:05:47 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39674 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725139AbeKXFFr (ORCPT
+        Sat, 24 Nov 2018 00:10:09 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:41838 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726389AbeKXFKJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 00:05:47 -0500
-Received: by mail-pg1-f193.google.com with SMTP id w6so3364274pgl.6
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 10:20:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wKuEOueeKuKlwNjv+F2Y+FU8AAXIMEHQ3LCBhdlzaBI=;
-        b=hG8bb9h8vovduFm5Vwu6fj9pkxAVK1mNcP+CZANGroDTdXVQHojqpAwTyhF9l/bfas
-         w0zkWHBnpYp0jEZNucOBZDE4KGUZe5/2dgdUSUQDXH1gA9lM2vbz2/COwG2+UtMHOxJj
-         V9cOv3cxtjtKAnqWBui+NeSi1BH9Wz0sDyVDPLDpGJbz0tBmRHYS7/s6ZrJmshTU/93P
-         ZEZ0/QJ1gznz36Jd/l2RF2es6Ltm7CILyYbNDO9yHfvXV3LLOSaaYfbD3KMpHy4eaF27
-         XUTbcBueBpoY3O0eUqszg/plY7lY38otbaOU/WwhK7QsvdDyU6jE10he4Ro/eE28Am5j
-         4Hig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wKuEOueeKuKlwNjv+F2Y+FU8AAXIMEHQ3LCBhdlzaBI=;
-        b=V/XDbJXo1Mab2S2sSBrlZyxh0qOB1uV0DPd1reTU44XkQnNL20Phn6f+tHzD0ue0EL
-         X5rxxJXJSZ0ZJJBt5tNdNCI/I2a3AE156nkeOkWDh0IHH4Ul8SLhc40Bn4JTPiptA0lZ
-         7Xusb35xDKdr77mptunZBsysIIPLctIf0LreUxS2uCi1dEhz1jqHxqzoqZoVETS8iQpc
-         4YnG6mK846FnmK6llflBviccOqdMZSp8P0h5GD5yHaVN84aM6zIhw9glgrlmXnyEFDu6
-         9R4E2NQLto0UVPqD4Mk59beN6Wa7o6n4Z5NLPxgVkJORc4FL9SM6lBD5fJgyRdPhDhcd
-         51yA==
-X-Gm-Message-State: AGRZ1gLZS1jQSJxrs2dui2yOzuVScwJHffk81g6jUi3iFhxJzMy4MVQv
-        K9zE9VVXug+lX5JdUIUaVooHhz3f
-X-Google-Smtp-Source: AJdET5ecXjhFOhwBizgPnDR33mlQZ3IYiWQlx52xJ4LARxY9E/xqNoJq3z29PHL22yRDX47lQJQg+w==
-X-Received: by 2002:a62:2e46:: with SMTP id u67mr16778939pfu.3.1542997224953;
-        Fri, 23 Nov 2018 10:20:24 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id y26-v6sm15351574pfi.123.2018.11.23.10.20.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Nov 2018 10:20:24 -0800 (PST)
-Date:   Fri, 23 Nov 2018 10:20:23 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     arnd@arndb.de, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] serial: 8250: Default SERIAL_OF_PLATFORM to SERIAL_8250
-Message-ID: <20181123182023.GA10080@roeck-us.net>
-References: <20181115011125.GA32556@roeck-us.net>
- <29E7A6C0-7829-4650-93C6-7220FECAA6EF@gmail.com>
- <20181115053836.GA7606@roeck-us.net>
- <27ed27d3-220e-963f-7d2c-64df10421580@gmail.com>
- <20181115172535.GA26922@roeck-us.net>
- <5937b814-ca5f-5786-93a1-3334df8c92dc@gmail.com>
- <20181116011656.GA21813@roeck-us.net>
- <ffff966c-d6ae-1487-5269-b86df0824d1c@gmail.com>
- <20181119205050.GA1933@roeck-us.net>
+        Sat, 24 Nov 2018 00:10:09 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wANIJHSE099613;
+        Fri, 23 Nov 2018 18:24:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ message-id : date : from : sender : to : cc : subject : references :
+ in-reply-to : content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=PH5qArTPuHVr3qoxZ69X+loyht2mK7KKOcWlvJS6ZVc=;
+ b=AlFbyGf6IX2edv0zsXXXgIbTxR6kxq2i9AOcTX9ZSqsr8oMtAYT4zuhUBiNZje+npqBO
+ 5NsO3tWImeaLj+a1D6LvBxVZ+cbPzfkyokNontmYbpHoywjeynQ7OHE8BvmcnDlb6omq
+ JTxWL8G6vLaoWlZnbxk8FBo0wPN7/qJU+xAw/DzSHuLsM1L0Lb4iNahykPtay9kENeue
+ A7N1NU7dy9gnrExjyonipO8IGeJOHvuobuf/i11dhZuzSQSYiEI9SZ00wHzwG7fR5mWv
+ fJXz+MovXkjnYn/fPEA+Ed39HSLbMiMgBFeHJOnZZ8uKYCHIViejXQbv5IlG2Tj53ZR1 Cg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2ntaxqktwn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Nov 2018 18:24:26 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wANIOPRk014122
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Nov 2018 18:24:25 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wANIOO0P025342;
+        Fri, 23 Nov 2018 18:24:24 GMT
 MIME-Version: 1.0
+Message-ID: <3f427959-a41f-4ff4-b095-ef8af11665c9@default>
+Date:   Fri, 23 Nov 2018 10:24:21 -0800 (PST)
+From:   Eric Saint Etienne <eric.saint.etienne@oracle.com>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Linux Kernel <linux-kernel@vger.kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Eric Saint-Etienne <eric.saintetienne@gmail.com>
+Subject: RE: [PATCH] perf symbols: Cannot disassemble some routines when
+ debuginfo present
+References: <1542968726-20910-1-git-send-email-eric.saint.etienne@oracle.com>
+ <20181123160337.GA5575@krava>
+In-Reply-To: <20181123160337.GA5575@krava>
+X-Priority: 3
+X-Mailer: Oracle Beehive Extensions for Outlook 2.0.1.9.1  (1003210) [OL
+ 15.0.5085.0 (x64)]
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181119205050.GA1933@roeck-us.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9086 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=740
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811230153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 12:50:50PM -0800, Guenter Roeck wrote:
-> On Mon, Nov 19, 2018 at 10:44:30AM -0800, Florian Fainelli wrote:
-> > On 11/15/18 5:16 PM, Guenter Roeck wrote:
-> > > On Thu, Nov 15, 2018 at 11:48:20AM -0800, Florian Fainelli wrote:
-> > >>
-> > >> OK, would you mind testing this below? It seems to me that 8250_of.c is
-> > >> incompatible with arch/powerpc/kernel/legacy_serial.c and that is what
-> > >> is causing the issue here.
-> > >>
-> > >> diff --git a/drivers/tty/serial/8250/Kconfig
-> > >> b/drivers/tty/serial/8250/Kconfig
-> > >> index d7737dca0e48..21cb14cbd34a 100644
-> > >> --- a/drivers/tty/serial/8250/Kconfig
-> > >> +++ b/drivers/tty/serial/8250/Kconfig
-> > >> @@ -483,7 +483,7 @@ config SERIAL_8250_PXA
-> > >>
-> > >>  config SERIAL_OF_PLATFORM
-> > >>         tristate "Devicetree based probing for 8250 ports"
-> > >> -       depends on SERIAL_8250 && OF
-> > >> +       depends on SERIAL_8250 && OF && !(PPC && PPC_UDBG_16550)
-> > >>         default SERIAL_8250
-> > >>         help
-> > >>           This option is used for all 8250 compatible serial ports that
-> > > 
-> > > 44x/virtex5_defconfig has both PPC_UDBG_16550 and SERIAL_OF_PLATFORM enabled
-> > > and fails to boot (or display anything on the console) with this patch applied.
-> > 
-> > Thanks for trying, can you either share or provide a link to the mpc85xx
-> > and ml507 qemu command lines that you use? I spent a good chunk of my
-> > time trying to get a kernel to boot but has failed so far.
-> > 
-> 
+> > +=09=09/*
+> > +=09=09 * When using -ffunction-sections, only .text gets loaded by
+> > +=09=09 * map_groups__find() into al->map. Consequently al->map address
+> > +=09=09 * range encompass the whole code.
+> > +=09=09 *
+> > +=09=09 * But map__load() has just loaded many function maps by
+> > +=09=09 * splitting al->map, which reduced al->map range drastically.
+> > +=09=09 * Very likely the target address is now in one of those newly
+> > +=09=09 * created function maps, so we need to lookup the map again
+> > +=09=09 * to find that new map.
+> > +=09=09 */
+>=20
+> hum, so map__load actualy can split the map to create new maps?
+>=20
+> cold you please point me to that code? I haven't touch this area for some
+> time and I can't find it
 
-Any update ? I still see the boot failures in next-20181123.
+The split happens in dso_process_kernel_symbol() in symbol-elf.c where we
+call map_groups__find_by_name() to find an existing map, but with
+-ffunction-sections and a symbol belonging to new (function) map, such map
+doesn't exist yet so we end up creating one and adjusting existing maps
+accordingly because adjust_kernel_syms is set. Makes sense?
 
-Guenter
+As of 4.20-rc3 the call chain is as follows:
+event:c:1573=09   map__load()
+map.c:315=09   dso__load()
+symobl.c:1528=09   dso__load_kernel_sym()
+symbol.c:1896=09   dso__load_vmlinux_path()
+=09=09   (or we directly call dso__load_vmlinux() at line 1892)
+symbol.c:1744=09   dso__load_vmlinux()
+symbol.c:1719=09   dso__load_sym()
+symbol-elf.c:1090  dso_process_kernel_symbol()
 
-> Good to hear that this doesn't just happen to me ;-).
-> 
-> The scripts are all at https://github.com/groeck/linux-build-test/.
-> This includes root file systems. The one used below is at
-> https://github.com/groeck/linux-build-test/blob/master/rootfs/ppc/rootfs.cpio.gz
-> 
-> ml507:
-> 
-> qemu-system-ppc -kernel vmlinux -M virtex-ml507 -m 256 -no-reboot \
-> 	-initrd rootfs.cpio -dtb arch/powerpc/boot/dts/virtex440-ml507.dtb \
-> 	--append 'rdinit=/sbin/init panic=-1 mem=256M console=ttyS0' \
-> 	-monitor none -nographic
-> 
-> mpc85xx:
-> 
-> qemu-system-ppc -kernel arch/powerpc/boot/uImage -M mpc8544ds -m 256 \
-> 	-no-reboot -initrd rootfs.cpio \
-> 	--append 'rdinit=/sbin/init panic=-1 mem=256M console=ttyS0' \
-> 	-monitor none -nographic
-> 
-> Hope this helps,
-> Guenter
+-eric
