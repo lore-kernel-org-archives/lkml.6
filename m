@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC09EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5882EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8189C206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:18:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E3E820820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:18:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXNUDd3j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8189C206B2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rJN7EmtV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E3E820820
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409776AbeKWXCp (ORCPT
+        id S2504174AbeKWXCs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:02:45 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41199 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388006AbeKWXCo (ORCPT
+        Fri, 23 Nov 2018 18:02:48 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34338 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387898AbeKWXCq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:02:44 -0500
-Received: by mail-ed1-f67.google.com with SMTP id z28so10089821edi.8;
-        Fri, 23 Nov 2018 04:18:44 -0800 (PST)
+        Fri, 23 Nov 2018 18:02:46 -0500
+Received: by mail-ed1-f66.google.com with SMTP id b3so10127466ede.1;
+        Fri, 23 Nov 2018 04:18:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZdolHecX+PD3w9d/01mrC0dlHHqNTHapniWeqqzgLrM=;
-        b=BXNUDd3jG58bw9PdNCGdYunSRzlret0k7K2cM9QciXTh7HOe08+80XrylslpS9l/3Y
-         T+i/zeO+Rl86JnvpmB5nAlrId4YEW6VWBiuARmZsAIh8rblwNitJRQpgHHZDC65kJmZg
-         wjr2VIiOvSudmeTc27rpE77hUF44Yx9GTKALcj7KBuqznCVyDmR11NoAdQMiQiI8ggvx
-         WEmhDUX9LSTMtwEZJUJ5+4ih8gk6Bffu4oKjDpLKMZrGDg22ho6Zo7YMUWbuLAs034EL
-         wuTgIJvOSkzLVlj0ed06h17TJY73GLC7wRjqa/ml0VdvDNIzFc0RNs405tv8nAs5KryX
-         bbEg==
+        bh=DiJ8mgydcFLQgRIq3IKKEyTIgKLQiadTZ8mklrWjrmY=;
+        b=rJN7EmtV1SvfEM4enPwsWtkcwsBRnOLFsaIw+26j2GgY5V//qCAQTQmrReX6hqNp0u
+         5JnwX3u0sp0jSb1AtJAqYopVsRLV/VvyZK5WqSZN5obxn7frxM03v6eFnq0aZDMK8hUc
+         uT4i/QUgGpHwEyV7j7gZuCW4Q7ZCDvfOfLkYVWq9EaSmGiU4YmX1jQ6uAkk29OPvRu14
+         hZEudBRz7x3z2cDwyMxhK2AIA/QFXd0WRcobfNUilskZ320qlz2BNiloVGceuiw9C/Th
+         xn+I1GuBifWgdkgSOFT6//04mDDCOuJZ+oBdJZNgqDO6kLDOzODsQ7hk97h8Cqs2aTgO
+         LmMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZdolHecX+PD3w9d/01mrC0dlHHqNTHapniWeqqzgLrM=;
-        b=MrsjVEDs5OlK7MVjKGbplQGnpJpyUK0fuASz3hKt7wz67HwBMhFBUimQGaSU/+IpoI
-         Ixzw03REDhR9dQRao3izcZbdzt9pYL5TpL7Ja0hHE0CXONXAjr3jQDJMoK28XMUxJ5nn
-         fDDQrgJa+s0saYW3IQTQ3KhnS3+cKI71D6Y0LeTQ+LdfSqYxpO7rkwJFvN0sJXiTM2vX
-         wuBNr6wp332LsI1UcfXrVaagR1zVTOmzyteDdHJ+qd8HM7j8yQLOXeWhnZv4juROs/18
-         5h9tltAbT3cNyhDxpeaeCQG/gA4x6keKU5nvIIVJMo9MCKW2kWPycGWsU0flpAt8kMyo
-         VDPg==
-X-Gm-Message-State: AA+aEWYclv7J9/kIrrb1QuNgZnzn1FVwrvMRu6AMMie8poEY0ruczbR5
-        EYP7ZO63DkqX+YhydrXNfLw=
-X-Google-Smtp-Source: AFSGD/VSH7EEAqvhJRJdu8wkEFNUK+Noh9VCiorZI41YuoJvhj71yuLvPwhEpb9HzTToLdYOqZMXCA==
-X-Received: by 2002:a50:98c5:: with SMTP id j63mr12562905edb.273.1542975523606;
-        Fri, 23 Nov 2018 04:18:43 -0800 (PST)
+        bh=DiJ8mgydcFLQgRIq3IKKEyTIgKLQiadTZ8mklrWjrmY=;
+        b=tc17paB70Vm9TibCVhrInD4dl9ubns0jj3WBdSyDNXifutu2RMoECSWvrTzvPiSc/t
+         m0f1Lk7fPv7cuO6dA7pxMPpxtDOLngUKCBHdsXN+ShNTjyZLKTLBUUzHuuve3qY73TGL
+         ElHkJB8p4ZgzEcm43Lo7mvg5pOQOol6MWRYZVSPvzBtShAaUCqkIjjPAhOwp2WopNsvu
+         yHYwNUTvw1j+LaM1pf9eFFVLOA8zBm+kuf27rPm5B3EYify9ytxR2wFyV48kp4m76TW1
+         hlg6aoI0ktQC0aoSt6OKaXR6UytvmzDO9PeiJdIzML+mmTZ/VF+Ta1Pzmk1tV3p7AIyu
+         15ug==
+X-Gm-Message-State: AA+aEWYy/WCCWJfRTzceU+cEgUBu0Us0A0u5onEmJOqn1mhB2Csdcr9H
+        Psd3NCJ/pkrPlbQB0pRHodY=
+X-Google-Smtp-Source: AFSGD/VdFbOsPlP1AqdLvv+GIAS+xc/RexjBk/2YbR0ykvvR9El3sojinb+O+TpFstJ2fTgyH09d0A==
+X-Received: by 2002:a50:d643:: with SMTP id c3mr1554525edj.178.1542975525202;
+        Fri, 23 Nov 2018 04:18:45 -0800 (PST)
 Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id e35sm9188084eda.13.2018.11.23.04.18.42
+        by smtp.gmail.com with ESMTPSA id c11-v6sm6641048ejm.67.2018.11.23.04.18.44
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 23 Nov 2018 04:18:42 -0800 (PST)
+        Fri, 23 Nov 2018 04:18:44 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>,
@@ -66,9 +66,9 @@ Cc:     Jon Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] arm64: tegra: Add thermal zones on Tegra194
-Date:   Fri, 23 Nov 2018 13:18:38 +0100
-Message-Id: <20181123121839.18573-2-thierry.reding@gmail.com>
+Subject: [PATCH 3/3] arm64: tegra: p2972: Enable the CPU, GPU and AUX thermal zones
+Date:   Fri, 23 Nov 2018 13:18:39 +0100
+Message-Id: <20181123121839.18573-3-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181123121839.18573-1-thierry.reding@gmail.com>
 References: <20181123121839.18573-1-thierry.reding@gmail.com>
@@ -81,71 +81,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The NVIDIA Tegra194 SoC defines six thermal zones. Define all of them in
-device tree.
+Enable these thermal zones to be able to monitor their temperatures and
+control the fan to cool down the system if necessary.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 39 ++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ .../boot/dts/nvidia/tegra194-p2972-0000.dts   | 91 ++++++++++++++++++-
+ 1 file changed, 90 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index cbba7395a286..39169f6b6166 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -5,6 +5,7 @@
- #include <dt-bindings/mailbox/tegra186-hsp.h>
- #include <dt-bindings/reset/tegra194-reset.h>
- #include <dt-bindings/power/tegra194-powergate.h>
-+#include <dt-bindings/thermal/tegra194-bpmp-thermal.h>
- 
- / {
- 	compatible = "nvidia,tegra194";
-@@ -938,6 +939,44 @@
- 		mbox-names = "rx", "tx";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+index cbae8e8b1281..e29f8f6117c8 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
+@@ -43,8 +43,97 @@
+ 		};
  	};
  
+-	fan {
++	fan: fan {
+ 		compatible = "pwm-fan";
+ 		pwms = <&pwm4 0 45334>;
++
++		cooling-levels = <0 64 128 255>;
++		cooling-min-state = <0>;
++		cooling-max-state = <3>;
++		#cooling-cells = <2>;
++	};
++
 +	thermal-zones {
 +		cpu {
-+			thermal-sensors = <&{/bpmp/thermal}
-+					   TEGRA194_BPMP_THERMAL_ZONE_CPU>;
-+			status = "disabled";
++			polling-delay = <0>;
++			polling-delay-passive = <500>;
++			status = "okay";
++
++			trips {
++				cpu_trip_critical: critical {
++					temperature = <96500>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++
++				cpu_trip_hot: hot {
++					temperature = <70000>;
++					hysteresis = <2000>;
++					type = "hot";
++				};
++
++				cpu_trip_active: active {
++					temperature = <50000>;
++					hysteresis = <2000>;
++					type = "active";
++				};
++
++				cpu_trip_passive: passive {
++					temperature = <30000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++			};
++
++			cooling-maps {
++				cpu-critical {
++					cooling-device = <&fan 3 3>;
++					trip = <&cpu_trip_critical>;
++				};
++
++				cpu-hot {
++					cooling-device = <&fan 2 2>;
++					trip = <&cpu_trip_hot>;
++				};
++
++				cpu-active {
++					cooling-device = <&fan 1 1>;
++					trip = <&cpu_trip_active>;
++				};
++
++				cpu-passive {
++					cooling-device = <&fan 0 0>;
++					trip = <&cpu_trip_passive>;
++				};
++			};
 +		};
 +
 +		gpu {
-+			thermal-sensors = <&{/bpmp/thermal}
-+					   TEGRA194_BPMP_THERMAL_ZONE_GPU>;
-+			status = "disabled";
++			polling-delay = <0>;
++			polling-delay-passive = <500>;
++			status = "okay";
++
++			trips {
++				gpu_alert0: critical {
++					temperature = <99000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++			};
 +		};
 +
 +		aux {
-+			thermal-sensors = <&{/bpmp/thermal}
-+					   TEGRA194_BPMP_THERMAL_ZONE_AUX>;
-+			status = "disabled";
-+		};
++			polling-delay = <0>;
++			polling-delay-passive = <500>;
++			status = "okay";
 +
-+		pllx {
-+			thermal-sensors = <&{/bpmp/thermal}
-+					   TEGRA194_BPMP_THERMAL_ZONE_PLLX>;
-+			status = "disabled";
++			trips {
++				aux_alert0: critical {
++					temperature = <90000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++			};
 +		};
-+
-+		ao {
-+			thermal-sensors = <&{/bpmp/thermal}
-+					   TEGRA194_BPMP_THERMAL_ZONE_AO>;
-+			status = "disabled";
-+		};
-+
-+		tj {
-+			thermal-sensors = <&{/bpmp/thermal}
-+					   TEGRA194_BPMP_THERMAL_ZONE_TJ_MAX>;
-+			status = "disabled";
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts = <GIC_PPI 13
+ 	};
+ };
 -- 
 2.19.1
 
