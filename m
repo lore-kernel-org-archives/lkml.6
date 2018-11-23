@@ -2,137 +2,129 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DBF6C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:15:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1241AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1F25206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:15:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1F25206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id BB739206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:18:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCpHKBtd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB739206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504159AbeKWW7U (ORCPT
+        id S2409763AbeKWXCn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 17:59:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:32960 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388020AbeKWW7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 17:59:19 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 96A87AE98;
-        Fri, 23 Nov 2018 12:15:18 +0000 (UTC)
-Subject: Re: [PATCH v2 3/3] iommu/io-pgtable-arm-v7s: Request DMA32 memory,
- and improve debugging
-To:     Nicolas Boichat <drinkcat@chromium.org>, mhocko@kernel.org
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Levin Alexander <Alexander.Levin@microsoft.com>,
-        Huaisheng Ye <yehs1@lenovo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        iommu@lists.linux-foundation.org,
-        lkml <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com
-References: <20181111090341.120786-1-drinkcat@chromium.org>
- <20181111090341.120786-4-drinkcat@chromium.org>
- <20181121164638.GD24883@arm.com> <20181121180000.GU12932@dhcp22.suse.cz>
- <CANMq1KCHGZ2vEWg+OQQ-SwvHcU-oMp4qKzEYfLwRYD5ZmRdRsA@mail.gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <f5411603-2d06-916c-473d-1a40a5463876@suse.cz>
-Date:   Fri, 23 Nov 2018 13:15:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 23 Nov 2018 18:02:43 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44256 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387898AbeKWXCn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 18:02:43 -0500
+Received: by mail-ed1-f65.google.com with SMTP id y56so10085307edd.11;
+        Fri, 23 Nov 2018 04:18:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0UFvpLh8JCCWiGkqWwfjN9rWDhTen85Z4fj+eExc9wc=;
+        b=UCpHKBtdATIFPupPEQWgqgLvt99ORdn1VOI83onH6zM9WKyC0i1WzomFK+dzACbDSM
+         CE4QmvI/oL6oqrmhq3ebrTHYOz/tGHiYjD17yZW5bp7Tz3xn/iWK0zrnEaAAZqbgfYyF
+         4gs3/s4fA7W31LiYl/I4lxZ/jyPFRzKCJ64pRtjhpJO5s0xXbBjvpf+kYR1coTIAg5Mx
+         CHU7wYGB0EJ7qNoIxJdEjy+G/eLfjHd0b3ScwNr0wpKYKMeF1+BTLrurF0j+C8lBgMcS
+         txIS2f3GKjsKabEuX+8AJ9dVnD6nmi6qduTEF/3nYNRkySRZId2uJeqxxJ4wJIC+o81P
+         Bj5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0UFvpLh8JCCWiGkqWwfjN9rWDhTen85Z4fj+eExc9wc=;
+        b=OTVTVuFmEQiOHtP3tGYVpPkIOTvyfW7ms8vKEXqCliTUEqRGJBoxZpZ8rq00AAHzJT
+         Ii3viFderqJazWiastfegmp5xW2+m3Nd7Ho4jxI90UN172vdONKIF56VtLbRSFAF0UwL
+         e0HsAGKSFP/Q8aTtokp/qzM/O/XYr7Vy1Ay7yKtgtXTeZ26Rgw4IMeOnRLcMsmamowgj
+         GlJ2sCTebN87pE15o1b+EoV41yaPLApX1RCkhQycR0pIvmpBGpmLiWI8I2K7WsVstZdZ
+         kGqiEL1ilEPX7BrLzt84qTIzeI/8Zq535s21y9ttH5k74UT/EmkkPMkzeJOfgoAHgbqn
+         S8tg==
+X-Gm-Message-State: AGRZ1gLfn2kH5UeTfaruM9AGHby8iROCpSNNjCGw2L0KJxfI6crwPIi7
+        mHfa7BucDD7mSWUktu2txtE=
+X-Google-Smtp-Source: AJdET5dRh0SHLpv6o/qLRhiHcYU0PiYSsTJYNf6kOd7ZZMsRoiKE4k0vqeX1d1DnaJkOr/BC6NVPmg==
+X-Received: by 2002:a17:906:14d8:: with SMTP id y24-v6mr11441079ejc.216.1542975522020;
+        Fri, 23 Nov 2018 04:18:42 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id e53sm13775000ede.90.2018.11.23.04.18.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 23 Nov 2018 04:18:40 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] dt-bindings: thermal: tegra-bpmp: Add Tegra194 support
+Date:   Fri, 23 Nov 2018 13:18:37 +0100
+Message-Id: <20181123121839.18573-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <CANMq1KCHGZ2vEWg+OQQ-SwvHcU-oMp4qKzEYfLwRYD5ZmRdRsA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/22/18 2:20 AM, Nicolas Boichat wrote:
-> On Thu, Nov 22, 2018 at 2:02 AM Michal Hocko <mhocko@kernel.org> wrote:
->>
->> On Wed 21-11-18 16:46:38, Will Deacon wrote:
->>> On Sun, Nov 11, 2018 at 05:03:41PM +0800, Nicolas Boichat wrote:
->>>
->>> It's a bit grotty that GFP_DMA32 doesn't just map to GFP_DMA on 32-bit
->>> architectures, since then we wouldn't need this #ifdeffery afaict.
->>
->> But GFP_DMA32 should map to GFP_KERNEL on 32b, no? Or what exactly is
->> going on in here?
-> 
-> GFP_DMA32 will fail due to check_slab_flags (aka GFP_SLAB_BUG_MASK
-> before patch 1/3 of this series)... But yes, it may be neater if there
-> was transparent remapping of GFP_DMA32/SLAB_CACHE_DMA32 to
-> GFP_DMA/SLAB_CACHE_DMA on 32-bit arch...
+From: Thierry Reding <treding@nvidia.com>
 
-I don't know about ARM, but AFAIK on x86 DMA means within first 4MB of
-physical memory, and DMA32 means within first 4GB. It doesn't matter if
-the CPU is running in 32bit or 64bit mode. But, when it runs 32bit, the
-kernel can direct map less than 4GB anyway, which means it doesn't need
-the extra DMA32 zone, i.e. GFP_KERNEL can only get you memory that's
-also acceptable for GFP_DMA32.
-But, DMA is still DMA, i.e. first 4MB. Remapping GFP_DMA32 to GFP_DMA on
-x86 wouldn't work, as the GFP_DMA32 allocations would then only use
-those 4MB and exhaust it very fast.
+The thermal controller implementation on Tegra194 is very similar to the
+implementation on Tegra186. Add a compatible string for the new
+generation.
 
->> --
->> Michal Hocko
->> SUSE Labs
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ .../thermal/nvidia,tegra186-bpmp-thermal.txt      |  3 ++-
+ .../dt-bindings/thermal/tegra194-bpmp-thermal.h   | 15 +++++++++++++++
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+ create mode 100644 include/dt-bindings/thermal/tegra194-bpmp-thermal.h
+
+diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra186-bpmp-thermal.txt b/Documentation/devicetree/bindings/thermal/nvidia,tegra186-bpmp-thermal.txt
+index 276387dd6815..e17c07be270b 100644
+--- a/Documentation/devicetree/bindings/thermal/nvidia,tegra186-bpmp-thermal.txt
++++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra186-bpmp-thermal.txt
+@@ -15,7 +15,8 @@ Required properties:
+ - compatible:
+     Array of strings.
+     One of:
+-    - "nvidia,tegra186-bpmp-thermal".
++    - "nvidia,tegra186-bpmp-thermal"
++    - "nvidia,tegra194-bpmp-thermal"
+ - #thermal-sensor-cells: Cell for sensor index.
+     Single-cell integer.
+     Must be <1>.
+diff --git a/include/dt-bindings/thermal/tegra194-bpmp-thermal.h b/include/dt-bindings/thermal/tegra194-bpmp-thermal.h
+new file mode 100644
+index 000000000000..aa7fb08135ca
+--- /dev/null
++++ b/include/dt-bindings/thermal/tegra194-bpmp-thermal.h
+@@ -0,0 +1,15 @@
++/*
++ * This header provides constants for binding nvidia,tegra194-bpmp-thermal.
++ */
++
++#ifndef _DT_BINDINGS_THERMAL_TEGRA194_BPMP_THERMAL_H
++#define _DT_BINDINGS_THERMAL_TEGRA194_BPMP_THERMAL_H
++
++#define TEGRA194_BPMP_THERMAL_ZONE_CPU 2
++#define TEGRA194_BPMP_THERMAL_ZONE_GPU 3
++#define TEGRA194_BPMP_THERMAL_ZONE_AUX 4
++#define TEGRA194_BPMP_THERMAL_ZONE_PLLX 5
++#define TEGRA194_BPMP_THERMAL_ZONE_AO 6
++#define TEGRA194_BPMP_THERMAL_ZONE_TJ_MAX 7
++
++#endif
+-- 
+2.19.1
 
