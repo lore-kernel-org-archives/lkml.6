@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C105DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:18:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A8A5C43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 903FC20664
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:18:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 903FC20664
+	by mail.kernel.org (Postfix) with ESMTP id 4295920664
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:18:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4295920664
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439920AbeKXBDE (ORCPT
+        id S2439927AbeKXBDT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 20:03:04 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:33991 "EHLO mail.bootlin.com"
+        Fri, 23 Nov 2018 20:03:19 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:33955 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2439882AbeKXBDD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 20:03:03 -0500
+        id S2439878AbeKXBDC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 20:03:02 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 04CD9207A8; Fri, 23 Nov 2018 15:18:39 +0100 (CET)
+        id 9831020DD1; Fri, 23 Nov 2018 15:18:38 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 90F6F20741;
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2D39E20791;
         Fri, 23 Nov 2018 15:18:38 +0100 (CET)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Gregory Clement <gregory.clement@bootlin.com>,
@@ -43,9 +43,9 @@ Cc:     <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>,
         Nadav Haklai <nadavh@marvell.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 12/12] ARM64: dts: marvell: armada-3720-espressobin: declare PCIe PHY
-Date:   Fri, 23 Nov 2018 15:18:31 +0100
-Message-Id: <20181123141831.8214-13-miquel.raynal@bootlin.com>
+Subject: [PATCH 11/12] ARM64: dts: marvell: armada-37xx: declare PCIe clock
+Date:   Fri, 23 Nov 2018 15:18:30 +0100
+Message-Id: <20181123141831.8214-12-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181123141831.8214-1-miquel.raynal@bootlin.com>
 References: <20181123141831.8214-1-miquel.raynal@bootlin.com>
@@ -56,25 +56,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PCIe node is wired to the second PHY of the COMPHY IP.
+The PCIe IP is fed by a gated clock.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts | 1 +
+ arch/arm64/boot/dts/marvell/armada-37xx.dtsi | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-index 76a508da80b9..43e8e1edc467 100644
---- a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-@@ -49,6 +49,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pcie_pins>;
- 	reset-gpios = <&gpiosb 3 GPIO_ACTIVE_HIGH>;
-+	phys = <&comphy1 0>;
- };
- 
- /* J6 */
+diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+index 9f7e932c8144..854b1d59b2ca 100644
+--- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+@@ -418,6 +418,7 @@
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
+ 			bus-range = <0x00 0xff>;
++			clocks = <&sb_periph_clk 13>;
+ 			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+ 			#interrupt-cells = <1>;
+ 			msi-parent = <&pcie0>;
 -- 
 2.19.1
 
