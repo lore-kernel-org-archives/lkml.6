@@ -2,78 +2,92 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A37C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CADCC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87E5820865
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:25:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87E5820865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 5FFE920824
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:26:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FFE920824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729160AbeKXFLO (ORCPT
+        id S1729739AbeKXFMG convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 00:11:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45058 "EHLO mail.kernel.org"
+        Sat, 24 Nov 2018 00:12:06 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52602 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726389AbeKXFLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 00:11:14 -0500
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726389AbeKXFMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Nov 2018 00:12:06 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89D1220824;
-        Fri, 23 Nov 2018 18:25:50 +0000 (UTC)
-Date:   Fri, 23 Nov 2018 13:25:47 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC][PATCH 07/14] fgraph: Add new fgraph_ops structure to
- enable function graph hooks
-Message-ID: <20181123132547.39da069f@vmware.local.home>
-In-Reply-To: <20181123025946.GB17060@google.com>
-References: <20181122012708.491151844@goodmis.org>
-        <20181122012803.576692300@goodmis.org>
-        <20181123025946.GB17060@google.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id 91E64308624A;
+        Fri, 23 Nov 2018 18:26:43 +0000 (UTC)
+Received: from doriath (ovpn-116-114.phx2.redhat.com [10.3.116.114])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9C9471850B;
+        Fri, 23 Nov 2018 18:26:42 +0000 (UTC)
+Date:   Fri, 23 Nov 2018 13:26:41 -0500
+From:   Luiz Capitulino <lcapitulino@redhat.com>
+To:     Liran Alon <liran.alon@oracle.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, babu.moger@amd.com,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: VMX: re-add ple_gap module parameter
+Message-ID: <20181123132641.712e2695@doriath>
+In-Reply-To: <8049C3CD-E816-4270-A64F-0BB92BD56338@oracle.com>
+References: <20181123120214.174457a4@doriath>
+        <8049C3CD-E816-4270-A64F-0BB92BD56338@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 23 Nov 2018 18:26:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Nov 2018 18:59:46 -0800
-Joel Fernandes <joel@joelfernandes.org> wrote:
+On Fri, 23 Nov 2018 19:42:53 +0200
+Liran Alon <liran.alon@oracle.com> wrote:
 
-> >  static struct ftrace_ops ftrace_profile_ops __read_mostly = {
-> > diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-> > index 0e0ff08357cf..7c7fd13d2373 100644
-> > --- a/kernel/trace/trace_functions_graph.c
-> > +++ b/kernel/trace/trace_functions_graph.c
-> > @@ -336,17 +336,25 @@ static void trace_graph_thresh_return(struct ftrace_graph_ret *trace)
-> >  		trace_graph_return(trace);
-> >  }
-> >  
-> > +static struct fgraph_ops funcgraph_threash_ops = {  
+> > On 23 Nov 2018, at 19:02, Luiz Capitulino <lcapitulino@redhat.com> wrote:
+> > 
+> > 
+> > Apparently, the ple_gap parameter was accidentally removed
+> > by commit c8e88717cfc6b36bedea22368d97667446318291. Add it
+> > back.
+> > 
+> > Signed-off-by: Luiz Capitulino <lcapitulino@redhat.com>  
 > 
-> minor nit: should be funcgraph_thresh_ops ?
+> Weird that nobody noticed this when patch was applied… Thanks.
+> Reviewed-by: Liran Alon <liran.alon@oracle.com>
 
-At least I got it wrong consistently :-)
+I forgot to mention that I noticed this because I have systems
+disabling ple with ple_gap=0 in modprobe.conf. In those systems
+kvm_intel won't load anymore.
 
-Fixed, thanks!
-
--- Steve
+> 
+> > ---
+> > arch/x86/kvm/vmx.c | 1 +
+> > 1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> > index 4555077d69ce..be6f13f1c25f 100644
+> > --- a/arch/x86/kvm/vmx.c
+> > +++ b/arch/x86/kvm/vmx.c
+> > @@ -174,6 +174,7 @@ module_param_named(preemption_timer, enable_preemption_timer, bool, S_IRUGO);
+> >  * refer SDM volume 3b section 21.6.13 & 22.1.3.
+> >  */
+> > static unsigned int ple_gap = KVM_DEFAULT_PLE_GAP;
+> > +module_param(ple_gap, uint, 0444);
+> > 
+> > static unsigned int ple_window = KVM_VMX_DEFAULT_PLE_WINDOW;
+> > module_param(ple_window, uint, 0444);
+> > -- 
+> > 2.17.2
+> >   
+> 
 
