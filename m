@@ -2,171 +2,326 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BE1C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5845FC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE71720861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:52:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE71720861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 12E4C20672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:52:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12E4C20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504407AbeKWXgG (ORCPT
+        id S2504435AbeKWXgV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:36:06 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55854 "EHLO mx1.redhat.com"
+        Fri, 23 Nov 2018 18:36:21 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:59341 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403778AbeKWXgG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:36:06 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 117E385546;
-        Fri, 23 Nov 2018 12:52:01 +0000 (UTC)
-Received: from [10.36.118.36] (unknown [10.36.118.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8AA3717DE5;
-        Fri, 23 Nov 2018 12:51:58 +0000 (UTC)
-Subject: Re: [RFC PATCH 0/4] mm, memory_hotplug: allocate memmap from hotadded
- memory
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Oscar Salvador <osalvador@suse.com>, linux-mm@kvack.org,
-        rppt@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        arunks@codeaurora.org, bhe@redhat.com, dan.j.williams@intel.com,
-        Pavel.Tatashin@microsoft.com, Jonathan.Cameron@huawei.com,
-        jglisse@redhat.com, linux-kernel@vger.kernel.org
-References: <20181116101222.16581-1-osalvador@suse.com>
- <2571308d-0460-e8b9-ad40-75d6b13b2d09@redhat.com>
- <20181123115519.2dnzscmmgv63fdub@d104.suse.de>
- <20181123124228.GI8625@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <4fd2e8fe-a85d-af96-ee04-8ddfd1fbe79d@redhat.com>
-Date:   Fri, 23 Nov 2018 13:51:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181123124228.GI8625@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 23 Nov 2018 12:52:01 +0000 (UTC)
+        id S2403778AbeKWXgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 18:36:21 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 44788207B0; Fri, 23 Nov 2018 13:52:15 +0100 (CET)
+Received: from aptenodytes (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id DD81920791;
+        Fri, 23 Nov 2018 13:52:14 +0100 (CET)
+Message-ID: <c838df0a552cfc34de426dc2bc61bcff4a858e10.camel@bootlin.com>
+Subject: Re: [PATCH v2 31/43] drm/sun4i: Add a dedicated ioctl call for
+ allocating tiled buffers
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Brian Starkey <Brian.Starkey@arm.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Sean Paul <sean@poorly.run>, nd <nd@arm.com>
+Date:   Fri, 23 Nov 2018 13:52:14 +0100
+In-Reply-To: <20181123113019.43vrzvj42l35el7z@DESKTOP-E1NTVVP.localdomain>
+References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
+         <20181123092515.2511-32-paul.kocialkowski@bootlin.com>
+         <20181123113019.43vrzvj42l35el7z@DESKTOP-E1NTVVP.localdomain>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-wyKL1j16CiEHA02MKSd3"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.11.18 13:42, Michal Hocko wrote:
-> On Fri 23-11-18 12:55:41, Oscar Salvador wrote:
->> On Thu, Nov 22, 2018 at 10:21:24AM +0100, David Hildenbrand wrote:
->>> 1. How are we going to present such memory to the system statistics?
->>>
->>> In my opinion, this vmemmap memory should
->>> a) still account to total memory
->>> b) show up as allocated
->>>
->>> So just like before.
->>
->> No, it does not show up under total memory and neither as allocated memory.
->> This memory is not for use for anything but for creating the pagetables
->> for the memmap array for the section/s.
-> 
-> I haven't read through your patches yet but wanted to clarfify few
-> points here.
-> 
-> This should essentially follow the bootmem allocated memory pattern. So
-> it is present and accounted to spanned pages but it is not managed.
-> 
->> It is not memory that the system can use.
-> 
-> same as bootmem ;)
 
-Fair enough, just saying that it represents a change :)
+--=-wyKL1j16CiEHA02MKSd3
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-(but people also already complained if their VM has XGB but they don't
-see actual XGB as total memory e.g. due to the crash kernel size)
+Hi,
 
->  
->> I also guess that if there is a strong opinion on this, we could create
->> a counter, something like NR_VMEMMAP_PAGES, and show it under /proc/meminfo.
-> 
-> Do we really have to? Isn't the number quite obvious from the size of
-> the hotpluged memory?
+On Fri, 2018-11-23 at 11:30 +0000, Brian Starkey wrote:
+> Hi Paul,
+>=20
+> On Fri, Nov 23, 2018 at 10:25:03AM +0100, Paul Kocialkowski wrote:
+> > This introduces a dedicated ioctl for allocating buffers for the VPU
+> > tiling mode. It allows setting up buffers that comply to the hardware
+> > alignment requirements, by aligning the stride and height to 32 bytes.
+> >=20
+> > Only YUV semiplanar and planar formats are allowed by the ioctl, as the
+> > hardware does not support the tiling mode for other formats.
+>=20
+> What's the general feeling about a more generic version of this ioctl?
+> There doesn't seem to be anything Allwinner-specific in the ioctl
+> arguments.
 
-At least the size of vmmaps cannot reliably calculated from "MemTotal" .
-But maybe based on something else. (there, it is indeed obvious)
+That's a great suggestion, I am totally in favour of making a generic
+fashion of this!
 
-> 
->>
->>> 2. Is this optional, in other words, can a device driver decide to not
->>> to it like that?
->>
->> Right now, is a per arch setup.
->> For example, x86_64/powerpc/arm64 will do it inconditionally.
->>
->> If we want to restrict this a per device-driver thing, I guess that we could
->> allow to pass a flag to add_memory()->add_memory_resource(), and there
->> unset MHP_MEMMAP_FROM_RANGE in case that flag is enabled.
-> 
-> I believe we will need to make this opt-in. There are some usecases
-> which hotplug an expensive (per size) memory via hotplug and it would be
-> too wasteful to use it for struct pages. I haven't bothered to address
-> that with my previous patches because I just wanted to make the damn
-> thing work first.
-> 
+It would also remove the need for a new header dedicated to the sun4i-
+drm driver, which was really only motivated by the need for this ioctl.
 
-Good point.
+> It effectively boils down to:
+>=20
+> 	size =3D driver->get_fb_size_with_modifier(...);
+>  	cma_obj =3D drm_gem_cma_create(drm, size);
+>=20
+> It would look exactly the same for Mali-DP, and probably others too.
+> Is it better to try and define something we can share instead of Arm
+> adding another nearly identical ioctl() later?
+>=20
+> I think the minimal viable thing would be to just add modifiers to
+> your structure (I put them first because padding):
+>=20
+>   struct drm_gem_create_with_modifiers {
+>   	__u64 modifiers[4];
+>   	__u32 height;
+>   	__u32 width;
+>   	__u32 format;
+>   	/* handle, offsets, pitches, size will be returned */
+>   	__u32 handle;
+>   	__u32 pitches[4];
+>   	__u32 offsets[4];
+>   	__u64 size;
+>   };
 
+That would totally work for me and our usecase.
 
--- 
+Cheers,
 
-Thanks,
+Paul
 
-David / dhildenb
+> Thanks,
+> -Brian
+>=20
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> > drivers/gpu/drm/sun4i/sun4i_drv.c | 89 +++++++++++++++++++++++++++++++
+> > include/uapi/drm/sun4i_drm.h      | 42 +++++++++++++++
+> > 2 files changed, 131 insertions(+)
+> > create mode 100644 include/uapi/drm/sun4i_drm.h
+> >=20
+> > diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/=
+sun4i_drv.c
+> > index ccdeae6299eb..5ae32973cf34 100644
+> > --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
+> > +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+> > @@ -21,6 +21,7 @@
+> > #include <drm/drm_gem_cma_helper.h>
+> > #include <drm/drm_fb_helper.h>
+> > #include <drm/drm_of.h>
+> > +#include <drm/sun4i_drm.h>
+> >=20
+> > #include "sun4i_drv.h"
+> > #include "sun4i_frontend.h"
+> > @@ -28,6 +29,92 @@
+> > #include "sun4i_tcon.h"
+> > #include "sun8i_tcon_top.h"
+> >=20
+> > +int drm_sun4i_gem_create_tiled(struct drm_device *drm, void *data,
+> > +			       struct drm_file *file_priv)
+> > +{
+> > +	struct drm_sun4i_gem_create_tiled *args =3D data;
+> > +	struct drm_gem_cma_object *cma_obj;
+> > +	struct drm_gem_object *gem_obj;
+> > +	uint32_t luma_stride, chroma_stride;
+> > +	uint32_t luma_height, chroma_height;
+> > +	uint32_t chroma_width;
+> > +	const struct drm_format_info *info;
+> > +	int ret;
+> > +
+> > +	info =3D drm_format_info(args->format);
+> > +	if (!info)
+> > +		return -EINVAL;
+> > +
+> > +	/* The tiled output format only applies to non-packed YUV formats. */
+> > +	if (!info->is_yuv || info->num_planes =3D=3D 1)
+> > +		return -EINVAL;
+> > +
+> > +	memset(args->pitches, 0, sizeof(args->pitches));
+> > +	memset(args->offsets, 0, sizeof(args->offsets));
+> > +
+> > +	/* Stride and height are aligned to 32 bytes for our tiled format. */
+> > +	luma_stride =3D ALIGN(args->width, 32);
+> > +	luma_height =3D ALIGN(args->height, 32);
+> > +
+> > +	chroma_width =3D args->width;
+> > +
+> > +	/* Semiplanar formats have both U and V data in their chroma plane. *=
+/
+> > +	if (drm_format_info_is_yuv_semiplanar(info))
+> > +		chroma_width *=3D 2;
+> > +
+> > +	chroma_stride =3D ALIGN(DIV_ROUND_UP(chroma_width, info->hsub), 32);
+> > +	chroma_height =3D ALIGN(DIV_ROUND_UP(args->height, info->vsub), 32);
+> > +
+> > +	if (drm_format_info_is_yuv_semiplanar(info)) {
+> > +		args->pitches[0] =3D luma_stride;
+> > +		args->pitches[1] =3D chroma_stride;
+> > +
+> > +		args->offsets[0] =3D 0;
+> > +		args->offsets[1] =3D luma_stride * luma_height;
+> > +
+> > +		args->size =3D luma_stride * luma_height +
+> > +			     chroma_stride * chroma_height;
+> > +	} else if (drm_format_info_is_yuv_planar(info)) {
+> > +		args->pitches[0] =3D luma_stride;
+> > +		args->pitches[1] =3D chroma_stride;
+> > +		args->pitches[2] =3D chroma_stride;
+> > +
+> > +		args->offsets[0] =3D 0;
+> > +		args->offsets[1] =3D luma_stride * luma_height;
+> > +		args->offsets[2] =3D luma_stride * luma_height +
+> > +				   chroma_stride * chroma_height;
+> > +
+> > +		args->size =3D luma_stride * luma_height +
+> > +			     chroma_stride * chroma_height * 2;
+> > +	} else {
+> > +		/* No support for other formats in tiled mode. */
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	cma_obj =3D drm_gem_cma_create(drm, args->size);
+> > +	if (IS_ERR(cma_obj))
+> > +		return PTR_ERR(cma_obj);
+> > +
+> > +	gem_obj =3D &cma_obj->base;
+> > +
+> > +	/*
+> > +	 * allocate a id of idr table where the obj is registered
+> > +	 * and handle has the id what user can see.
+> > +	 */
+> > +	ret =3D drm_gem_handle_create(file_priv, gem_obj, &args->handle);
+> > +	/* drop reference from allocate - handle holds it now. */
+> > +	drm_gem_object_put_unlocked(gem_obj);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return PTR_ERR_OR_ZERO(cma_obj);
+> > +}
+> > +
+> > +static const struct drm_ioctl_desc sun4i_drv_ioctls[] =3D {
+> > +	DRM_IOCTL_DEF_DRV(SUN4I_GEM_CREATE_TILED, drm_sun4i_gem_create_tiled,
+> > +			  DRM_UNLOCKED),
+> > +};
+> > +
+> > static int drm_sun4i_gem_dumb_create(struct drm_file *file_priv,
+> > 				     struct drm_device *drm,
+> > 				     struct drm_mode_create_dumb *args)
+> > @@ -44,6 +131,8 @@ static struct drm_driver sun4i_drv_driver =3D {
+> > 	.driver_features	=3D DRIVER_GEM | DRIVER_MODESET | DRIVER_PRIME | DRIV=
+ER_ATOMIC,
+> >=20
+> > 	/* Generic Operations */
+> > +	.ioctls			=3D sun4i_drv_ioctls,
+> > +	.num_ioctls		=3D ARRAY_SIZE(sun4i_drv_ioctls),
+> > 	.fops			=3D &sun4i_drv_fops,
+> > 	.name			=3D "sun4i-drm",
+> > 	.desc			=3D "Allwinner sun4i Display Engine",
+> > diff --git a/include/uapi/drm/sun4i_drm.h b/include/uapi/drm/sun4i_drm.=
+h
+> > new file mode 100644
+> > index 000000000000..2c77584b057b
+> > --- /dev/null
+> > +++ b/include/uapi/drm/sun4i_drm.h
+> > @@ -0,0 +1,42 @@
+> > +/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
+> > +/* sun4i_drm.h
+> > + *
+> > + * Copyright (C) 2018 Paul Kocialkowski <paul.kocialkowski@bootlin.com=
+>
+> > + *
+> > + * This program is free software; you can redistribute  it and/or modi=
+fy it
+> > + * under  the terms of  the GNU General  Public License as published b=
+y the
+> > + * Free Software Foundation;  either version 2 of the  License, or (at=
+ your
+> > + * option) any later version.
+> > + */
+> > +
+> > +#ifndef _UAPI_SUN4I_DRM_H_
+> > +#define _UAPI_SUN4I_DRM_H_
+> > +
+> > +#include "drm.h"
+> > +
+> > +#if defined(__cplusplus)
+> > +extern "C" {
+> > +#endif
+> > +
+> > +struct drm_sun4i_gem_create_tiled {
+> > +	__u32 height;
+> > +	__u32 width;
+> > +	__u32 format;
+> > +	/* handle, offsets, pitches, size will be returned */
+> > +	__u32 handle;
+> > +	__u32 pitches[4];
+> > +	__u32 offsets[4];
+> > +	__u64 size;
+> > +};
+> > +
+> > +#define DRM_SUN4I_GEM_CREATE_TILED	0x00
+> > +
+> > +#define DRM_IOCTL_SUN4I_GEM_CREATE_TILED \
+> > +	DRM_IOWR(DRM_COMMAND_BASE + DRM_SUN4I_GEM_CREATE_TILED, \
+> > +		 struct drm_sun4i_gem_create_tiled)
+> > +
+> > +#if defined(__cplusplus)
+> > +}
+> > +#endif
+> > +
+> > +#endif /* _UAPI_SUN4I_DRM_H_ */
+> > --=20
+> > 2.19.1
+> >=20
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+
+--=-wyKL1j16CiEHA02MKSd3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlv39/4ACgkQ3cLmz3+f
+v9EvJggAhckpy2/VD0havwtKp4EM8UMD08Ze5PBhKOQJ4mb9DgfuUbebff+BConj
+oM6BHBslXITxmQi2drXOOFcRzKvLKoFOy23MgLyImniRAV2mkHe6cZ1pdppGfZyx
+wHUGQm8KRuZkRhUPhDwm4RXGyH0gm5WUdHhGoQzGPCQm3Cq3PXuZUlVPyi4w1QpL
+rGGbPZhzr8jZnMCWYmGTYYev0DPp9dkySKOKedxOgukBQ6uOl4uC20Oelul2ERUW
+dthQA4uvJkOeIhEqPQDVkZcHb6fhi5kb2Wo+Oxt0AOXn5MevTykv4LSla6k+HMDJ
+oYM4Xqp15N4ljhNV1+sSBqiho57xeQ==
+=X2ZE
+-----END PGP SIGNATURE-----
+
+--=-wyKL1j16CiEHA02MKSd3--
+
