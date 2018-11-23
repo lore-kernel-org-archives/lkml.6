@@ -2,116 +2,105 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EE8C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4B7C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7698920824
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:08:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="23VDG7MR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7698920824
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id 0CA2120664
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 15:08:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CA2120664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504810AbeKXBwp (ORCPT
+        id S2504820AbeKXBxC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 20:52:45 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:47014 "EHLO vps0.lunn.ch"
+        Fri, 23 Nov 2018 20:53:02 -0500
+Received: from foss.arm.com ([217.140.101.70]:47196 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2504792AbeKXBwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 20:52:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=+g2W/obI3cWbottSoUi5ycyOnVZOBTkOEsXK/8dB/vk=;
-        b=23VDG7MRE+bBBThhLbaWS5TlCtZ0p/Pa+BhoEMUDgJcv8tO9o8slbINt/KkqpeKogaEb1XLgD+7WPaDP1dQa6IiZImfDT3aKD9EpqRYbwKHVtNHRAhnroK+SHqmAfgRaJSyuD0lPQAhcaL5KGK0OGYNqyEI1eGEsXHkjG1qOWCs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gQD3u-00089i-MK; Fri, 23 Nov 2018 16:08:06 +0100
-Date:   Fri, 23 Nov 2018 16:08:06 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Quentin Schulz <quentin.schulz@bootlin.com>
-Cc:     davem@davemloft.net, f.fainelli@gmail.com,
-        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        alexandre.belloni@bootlin.com
-Subject: Re: [PATCH net v2] net: phy: mscc: fix deadlock in
- vsc85xx_default_config
-Message-ID: <20181123150806.GB30913@lunn.ch>
-References: <20181123081636.18795-1-quentin.schulz@bootlin.com>
+        id S2394903AbeKXBxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 20:53:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FBAB15AB;
+        Fri, 23 Nov 2018 07:08:30 -0800 (PST)
+Received: from [10.1.29.128] (p8cg001049571a15.cambridge.arm.com [10.1.29.128])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 29D7D3F5AF;
+        Fri, 23 Nov 2018 07:08:28 -0800 (PST)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: Re: [PATCH V3 0/5] arm64/mm: Enable HugeTLB migration
+To:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     suzuki.poulose@arm.com, punit.agrawal@arm.com, will.deacon@arm.com,
+        Steven.Price@arm.com, steve.capper@arm.com,
+        catalin.marinas@arm.com, mhocko@kernel.org,
+        akpm@linux-foundation.org, mike.kravetz@oracle.com,
+        n-horiguchi@ah.jp.nec.com, Michal Hocko <mhocko@kernel.org>,
+        Steve Capper <steve.capper@arm.com>
+References: <1540299721-26484-1-git-send-email-anshuman.khandual@arm.com>
+Message-ID: <6cd51837-9d9c-af7a-6843-ef668a99e2ee@arm.com>
+Date:   Fri, 23 Nov 2018 20:38:27 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181123081636.18795-1-quentin.schulz@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1540299721-26484-1-git-send-email-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 09:16:36AM +0100, Quentin Schulz wrote:
-> The vsc85xx_default_config function called in the vsc85xx_config_init
-> function which is used by VSC8530, VSC8531, VSC8540 and VSC8541 PHYs
-> mistakenly calls phy_read and phy_write in-between phy_select_page and
-> phy_restore_page.
-> 
-> phy_select_page and phy_restore_page actually take and release the MDIO
-> bus lock and phy_write and phy_read take and release the lock to write
-> or read to a PHY register.
-> 
-> Let's fix this deadlock by using phy_modify_paged which handles
-> correctly a read followed by a write in a non-standard page.
-> 
-> Fixes: 6a0bfbbe20b0 ("net: phy: mscc: migrate to phy_select/restore_page functions")
-> 
-> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
-> ---
-> 
-> v2:
->  - use phy_modify_paged instead of
->  phy_select_page -> __phy_read -> __phy_write -> phy_restore_page
-> 
->  drivers/net/phy/mscc.c | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
-> index 62269e578718..4dcf7ad06259 100644
-> --- a/drivers/net/phy/mscc.c
-> +++ b/drivers/net/phy/mscc.c
-> @@ -810,17 +810,16 @@ static int vsc85xx_default_config(struct phy_device *phydev)
->  
->  	phydev->mdix_ctrl = ETH_TP_MDI_AUTO;
->  	mutex_lock(&phydev->lock);
-> -	rc = phy_select_page(phydev, MSCC_PHY_PAGE_EXTENDED_2);
-> +
-> +	reg_val = RGMII_RX_CLK_DELAY_1_1_NS << RGMII_RX_CLK_DELAY_POS;
-> +
-> +	rc = phy_modify_paged(phydev, MSCC_PHY_PAGE_EXTENDED_2,
-> +			      MSCC_PHY_RGMII_CNTL, RGMII_RX_CLK_DELAY_MASK,
-> +			      reg_val);
->  	if (rc < 0)
->  		goto out_unlock;
 
-Hi Quentin
 
-Isn't this goto now pointless. You are not jumping over anything.
-
-      Andrew
-
->  
-> -	reg_val = phy_read(phydev, MSCC_PHY_RGMII_CNTL);
-> -	reg_val &= ~(RGMII_RX_CLK_DELAY_MASK);
-> -	reg_val |= (RGMII_RX_CLK_DELAY_1_1_NS << RGMII_RX_CLK_DELAY_POS);
-> -	phy_write(phydev, MSCC_PHY_RGMII_CNTL, reg_val);
-> -
->  out_unlock:
-> -	rc = phy_restore_page(phydev, rc, rc > 0 ? 0 : rc);
->  	mutex_unlock(&phydev->lock);
->  
->  	return rc;
-> -- 
-> 2.17.1
+On 10/23/2018 06:31 PM, Anshuman Khandual wrote:
+> This patch series enables HugeTLB migration support for all supported
+> huge page sizes at all levels including contiguous bit implementation.
+> Following HugeTLB migration support matrix has been enabled with this
+> patch series. All permutations have been tested except for the 16GB.
 > 
+>          CONT PTE    PMD    CONT PMD    PUD
+>          --------    ---    --------    ---
+> 4K:         64K     2M         32M     1G
+> 16K:         2M    32M          1G
+> 64K:         2M   512M         16G
+> 
+> First the series adds migration support for PUD based huge pages. It
+> then adds a platform specific hook to query an architecture if a
+> given huge page size is supported for migration while also providing
+> a default fallback option preserving the existing semantics which just
+> checks for (PMD|PUD|PGDIR)_SHIFT macros. The last two patches enables
+> HugeTLB migration on arm64 and subscribe to this new platform specific
+> hook by defining an override.
+> 
+> The second patch differentiates between movability and migratability
+> aspects of huge pages and implements hugepage_movable_supported() which
+> can then be used during allocation to decide whether to place the huge
+> page in movable zone or not.
+> 
+> Changes in V3:
+> 
+> - Re-ordered patches 1 and 2 per Michal
+> - s/Movability/Migratability/ in unmap_and_move_huge_page() per Naoya
+> 
+> Changes in V2: (https://lkml.org/lkml/2018/10/12/190)
+> 
+> - Added a new patch which differentiates migratability and movability
+>   of huge pages and implements hugepage_movable_supported() function
+>   as suggested by Michal Hocko.
+> 
+> Anshuman Khandual (5):
+>   mm/hugetlb: Distinguish between migratability and movability
+>   mm/hugetlb: Enable PUD level huge page migration
+>   mm/hugetlb: Enable arch specific huge page size support for migration
+>   arm64/mm: Enable HugeTLB migration
+>   arm64/mm: Enable HugeTLB migration for contiguous bit HugeTLB pages
+
+Hello Andrew,
+
+This patch series has been reviewed and acked both for it's core MM and
+arm64 changes. Could you please consider this series. Thank you.
+
+- Anshuman
