@@ -2,115 +2,182 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01852C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F02C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB74320820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:17:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fUwSlnXR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB74320820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 11DF020989
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:18:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11DF020989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409299AbeKWVBL (ORCPT
+        id S2503248AbeKWVB7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 16:01:11 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:52648 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388074AbeKWVBK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 16:01:10 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wANA8Yuq172705;
-        Fri, 23 Nov 2018 10:17:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=/QP+s3Z0gF2/cAf28k73ZVd7CPvEvrkUIKj5jM8Ry6Q=;
- b=fUwSlnXR/8jesuYnSwealz0D1aRXu7bxeJB+1DBEExXcYev4IjuJPEoWp+/EAE+/MmQs
- 3ncPPIue29L+84X5/TpnYwTbUKe5mQ559CVIgR7i/ywo5vxPyUjYRw4VEHD/xGk1pnJ4
- tCpr/XCmyatKj6n1hY5dvNOiWDXOGXnmuOHqH7ze3m8i8bC1JgN35t5vCETBL4Nhl4Z0
- MY91mLuJ35azTm+mL3M/YZ2YpGGZh7agvUWBWJ+aVSBe6orFdATpl1Aa4JUHbBNxzqTt
- FwL47pxfufB0OZB/BMHqnd5V9wlZ/TqaD4TCCLBAsL0pKuLfRT6NNGOyWE4/e7u1UJg9 Ig== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2ntadua9df-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Nov 2018 10:17:11 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wANAHAXH018970
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Nov 2018 10:17:10 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wANAH9bu019665;
-        Fri, 23 Nov 2018 10:17:09 GMT
-Received: from ca-dev-arm44.us.oracle.com (/10.211.8.237)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 23 Nov 2018 02:17:09 -0800
-From:   Eric Saint-Etienne <eric.saint.etienne@oracle.com>
-To:     Linux Kernel <linux-kernel@vger.kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.co>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Eric Saint-Etienne <eric.saintetienne@gmail.com>
-Subject: [PATCH] perf map: remove extra indirection from map__find()
-Date:   Fri, 23 Nov 2018 02:42:39 -0800
-Message-Id: <1542969759-24346-1-git-send-email-eric.saint.etienne@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9085 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811230081
+        Fri, 23 Nov 2018 16:01:59 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:55124 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388074AbeKWVB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 16:01:59 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id DE26420D92; Fri, 23 Nov 2018 11:18:18 +0100 (CET)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7737820EB0;
+        Fri, 23 Nov 2018 11:17:34 +0100 (CET)
+Date:   Fri, 23 Nov 2018 11:17:29 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
+Cc:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mtd: spi-nor: fix erase_type array to indicate current
+ map conf
+Message-ID: <20181123111729.1d5b6e57@bbrezillon>
+In-Reply-To: <3d8a2b83-282d-7cb2-3c8b-addae3c2af7f@nokia.com>
+References: <20181122123552.15756-1-tudor.ambarus@microchip.com>
+        <3d8a2b83-282d-7cb2-3c8b-addae3c2af7f@nokia.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A double pointer is used in map__find() where a single pointer is enough
-because the function doesn't affect the rbtree and the rbtree is locked.
+On Fri, 23 Nov 2018 09:42:55 +0000
+"Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
+wrote:
 
-Signed-off-by: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
----
- tools/perf/util/map.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+> Hello Tudor,
+> 
+> On 22/11/2018 13:36, Tudor.Ambarus@microchip.com wrote:
+> > From: Tudor Ambarus <tudor.ambarus@microchip.com>
+> > 
+> > Bug reported for the out-of-tree S25FS128S flash memory.
+> > 
+> > BFPT table advertises all the erase types supported by all the
+> > possible map configurations. Update the erase_type array to indicate
+> > which erase types are applicable to the current map configuration.
+> > 
+> > Backward compatibility test done on sst26vf064b.
+> > 
+> > Fixes: b038e8e3be72 ("mtd: spi-nor: parse SFDP Sector Map Parameter Table")
+> > Reported-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+> > Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>  
+> 
+> I've tested this patch and it fixes the erasesize for S25FS128S and
+> our 128k partitions are writeable again with this patch.
+> 
+> Nevertheless, I think this is coincidence. I don't think that it
+> makes sense to OR all the erase types from all regions in one
+> bitmask and derive any uniform erasesize out of it.
+> This makes little sense for me in case of non-uniform maps.
+> 
+> I believe, the culprit here is one level higher, in the MTD partitioning
+> code (mtdpart.c) which has to be taught about non-uniform maps
+> but there is no infrastructure for this currently.
 
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 354e545..3dac766 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -846,19 +846,18 @@ void maps__remove(struct maps *maps, struct map *map)
- 
- struct map *maps__find(struct maps *maps, u64 ip)
- {
--	struct rb_node **p, *parent = NULL;
-+	struct rb_node *p;
- 	struct map *m;
- 
- 	down_read(&maps->lock);
- 
--	p = &maps->entries.rb_node;
--	while (*p != NULL) {
--		parent = *p;
--		m = rb_entry(parent, struct map, rb_node);
-+	p = maps->entries.rb_node;
-+	while (p != NULL) {
-+		m = rb_entry(p, struct map, rb_node);
- 		if (ip < m->start)
--			p = &(*p)->rb_left;
-+			p = p->rb_left;
- 		else if (ip >= m->end)
--			p = &(*p)->rb_right;
-+			p = p->rb_right;
- 		else
- 			goto out;
- 	}
--- 
-1.8.3.1
+Keep in mind that mtdpart is only one part of the issue. As I said
+previously, some MTD users (UBI) expect a single eraseblock size, so
+it's not only mtdpart that you'd need to fix, but basically all MTD
+users that don't check ->eraseregions.
+
+> 
+> What is possible to fix still is to choose smallest, not biggest
+> erasesize for uniform case.
+
+Yep, I agree. But we also have to be careful here, if some NORs were
+already supported and were picking the biggest erasesize, we have to
+preserve this behavior, otherwise we'll break things.
+
+> I have such a patch, but I need hands
+> on on a S25FS128S configured in uniform mode.
+> 
+> Non uniform case requires MTD layer rework.
+
+There's already the concept of ->eraseregions. Maybe I'm wrong but I
+thought it would fit the non-uniform erase scheme we have in SPI NOR. 
+
+> We just cannot handle
+> this hardware with just one erasesize in mind.
+
+We can, if we decide to always use the biggest non-uniform erasesize.
+Of course that only works if the biggest erase size is always a
+multiple of smaller ones, but I'm pretty sure this is always true.
+
+> 
+> > ---
+> >  drivers/mtd/spi-nor/spi-nor.c | 29 ++++++++++++++++++++++++++++-
+> >  1 file changed, 28 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> > index 93c9bc8931fc..a71adcd6ddfa 100644
+> > --- a/drivers/mtd/spi-nor/spi-nor.c
+> > +++ b/drivers/mtd/spi-nor/spi-nor.c
+> > @@ -3000,7 +3000,8 @@ static int spi_nor_init_non_uniform_erase_map(struct spi_nor *nor,
+> >  	u64 offset;
+> >  	u32 region_count;
+> >  	int i, j;
+> > -	u8 erase_type, uniform_erase_type;
+> > +	u8 uniform_erase_type, save_uniform_erase_type;
+> > +	u8 erase_type, regions_erase_type;
+> >  
+> >  	region_count = SMPT_MAP_REGION_COUNT(*smpt);
+> >  	/*
+> > @@ -3014,6 +3015,7 @@ static int spi_nor_init_non_uniform_erase_map(struct spi_nor *nor,
+> >  	map->regions = region;
+> >  
+> >  	uniform_erase_type = 0xff;
+> > +	regions_erase_type = 0;
+> >  	offset = 0;
+> >  	/* Populate regions. */
+> >  	for (i = 0; i < region_count; i++) {
+> > @@ -3030,13 +3032,38 @@ static int spi_nor_init_non_uniform_erase_map(struct spi_nor *nor,
+> >  		 */
+> >  		uniform_erase_type &= erase_type;
+> >  
+> > +		/*
+> > +		 * regions_erase_type mask will indicate all the erase types
+> > +		 * supported in this configuration map.
+> > +		 */
+> > +		regions_erase_type |= erase_type;
+> > +
+> >  		offset = (region[i].offset & ~SNOR_ERASE_FLAGS_MASK) +
+> >  			 region[i].size;
+> >  	}
+> >  
+> > +	save_uniform_erase_type = map->uniform_erase_type;
+> >  	map->uniform_erase_type = spi_nor_sort_erase_mask(map,
+> >  							  uniform_erase_type);
+> >  
+> > +	if (!regions_erase_type) {
+> > +		/*
+> > +		 * Roll back to the previous uniform_erase_type mask, SMPT is
+> > +		 * broken.
+> > +		 */
+> > +		map->uniform_erase_type = save_uniform_erase_type;
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	/*
+> > +	 * BFPT table advertises all the erase types supported by all the
+> > +	 * possible map configurations. Update the erase_type array to indicate
+> > +	 * which erase types are applicable to the current map configuration.
+> > +	 */
+> > +	for (i = 0; i < SNOR_ERASE_TYPE_MAX; i++)
+> > +		if (!(regions_erase_type & BIT(erase[i].idx)))
+> > +			spi_nor_set_erase_type(&erase[i], 0, 0xFF);
+> > +
+> >  	spi_nor_region_mark_end(&region[i - 1]);
+> >  
+> >  	return 0;  
+> 
 
