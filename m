@@ -2,80 +2,165 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F375EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCA5C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B95AF20861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:16:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E284220820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:17:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVl78Z0W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B95AF20861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A37n5UG9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E284220820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502233AbeKWR7g (ORCPT
+        id S2408315AbeKWSAE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 12:59:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43510 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730412AbeKWR7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 12:59:36 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA4F320820;
-        Fri, 23 Nov 2018 07:16:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542957397;
-        bh=fysv1ui7R5O+Ev+qgNxdNlGFlXs6vudu3iH777glKN0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aVl78Z0WnNmEnvfJcrNUKVfJvEvSRCVCkgtksIbLhriu0xEhQnW9aWjrJsEqTWk12
-         PG3ARF6s/9lk72xW+7/s0ANGKnn/2dXXTKI+hDN/GeIPnVrs3Cll9ey8Q1IfeuwSQj
-         T6mpy7WRm9zWY6wUSdLnNy9+t7f86h0Az5uwVfEk=
-Date:   Fri, 23 Nov 2018 08:16:35 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 00/42] 4.19.4-stable review
-Message-ID: <20181123071635.GC26178@kroah.com>
-References: <20181121183147.869199006@linuxfoundation.org>
- <8cc559b4-9d61-0047-916e-191fa31e2290@roeck-us.net>
+        Fri, 23 Nov 2018 13:00:04 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37419 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390344AbeKWSAD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 13:00:03 -0500
+Received: by mail-lj1-f193.google.com with SMTP id e5-v6so9811909lja.4
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 23:17:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=b1aRLZlEwJSXS3Ka1Uw5klku6tzokb6rI6jOothkjTE=;
+        b=A37n5UG9eWb1f3z6pUm0U2/J13UQ7zxJMsQbMYWi+JIMcsYei1FkFmZS2UQjP16SCE
+         u1snfIx3zxLsNdnmSVGd8h2P2ZT8ug3NdYNPTpOWigSRueWGNH9Iwjys7jTVTGXHsw9e
+         1YHwFaWh5n53xHU4hpKRmklIYRzB9ml94WrVk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=b1aRLZlEwJSXS3Ka1Uw5klku6tzokb6rI6jOothkjTE=;
+        b=OamlOX6n7sNTVvlaC5vvMdmYCJTINs8afz7b72HvTOvy2dhD7VkvobPEE6fBh22YDT
+         B5MEOssTXV9f6F9ylO2XWT3dE5cAjvm3TlQIWRxOu0OZ2QbSqn/ML4lROfqlMCCGpIRz
+         UM5znELZq8zhuQsYQdwemYxXj2vithbJend69fklievAD4KQ7b0rh82zL+89HBC+5Q7Z
+         sfCAajPh+puqIVsd5T5YYLvby5qwJn0mre4ltT0IteubhIQwWKt4IIMNyw9EjckMzVWw
+         902o2rNEPhYrgWzSOib+jXq/WSJ90kcGvJXqBZRTRXceep4BQ/pkucGKLsF/5616DeI0
+         QJuw==
+X-Gm-Message-State: AA+aEWYuF2LyKccgygtl3zJtk8WtTDCu2JaPxzWnhRfFojnIXAFmpWTm
+        MYa/h9JZkoSIBWGpduEc2iWsy4U77lYMkugyCE1V3QTnYtE=
+X-Google-Smtp-Source: AFSGD/WHtbHq+5yAd8eDqK1MgCnh5m3h4uu6n3odjdo+6huoCqW9PGUxLnopzIieZLGe5R8UItNeJU6/T0pERB6t8y4=
+X-Received: by 2002:a2e:92:: with SMTP id e18-v6mr9715360lji.130.1542957423217;
+ Thu, 22 Nov 2018 23:17:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8cc559b4-9d61-0047-916e-191fa31e2290@roeck-us.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181121183508.262873520@linuxfoundation.org>
+In-Reply-To: <20181121183508.262873520@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 23 Nov 2018 12:46:51 +0530
+Message-ID: <CA+G9fYvnQc57St_DaLMU7aaL98iBVinOWzzku5aCeA2kxaBaqg@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/59] 4.9.139-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 08:36:12AM -0800, Guenter Roeck wrote:
-> On 11/21/18 11:05 AM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.19.4 release.
-> > There are 42 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Fri Nov 23 18:31:31 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> 
-> Build results:
-> 	total: 135 pass: 135 fail: 0
-> Qemu test results:
-> 	total: 291 pass: 291 fail: 0
-> 
-> Details are available at https://kerneltests.org/builders/.
+On Thu, 22 Nov 2018 at 00:40, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.9.139 release.
+> There are 59 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri Nov 23 18:34:55 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.139-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Thanks for testing all of these and letting me know.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-greg k-h
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.9.139-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: 70b13958eeae24843ed944e4f3d4a25a0cdec0dc
+git describe: v4.9.138-60-g70b13958eeae
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.138-60-g70b13958eeae
+
+No regressions (compared to build v4.9.138)
+
+No fixes (compared to build v4.9.138)
+
+Ran 21044 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-sched-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
