@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C470EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A327DC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 906B120861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:28:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 906B120861
+	by mail.kernel.org (Postfix) with ESMTP id 74D5520820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:28:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74D5520820
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502787AbeKWUK3 (ORCPT
+        id S2393967AbeKWUMU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:10:29 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49429 "EHLO mail.bootlin.com"
+        Fri, 23 Nov 2018 15:12:20 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49408 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390556AbeKWUK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 15:10:27 -0500
+        id S2408927AbeKWUK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 15:10:29 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id AAD6920E13; Fri, 23 Nov 2018 10:26:58 +0100 (CET)
+        id 0C44720EB8; Fri, 23 Nov 2018 10:26:59 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1A5CC20EB0;
-        Fri, 23 Nov 2018 10:26:35 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2E69620EC0;
+        Fri, 23 Nov 2018 10:26:36 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org
@@ -37,9 +37,9 @@ Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v2 29/43] drm/sun4i: Make pitch even for GEM dumb alloc as per hardware constraint
-Date:   Fri, 23 Nov 2018 10:25:01 +0100
-Message-Id: <20181123092515.2511-30-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 33/43] drm/sun4i: frontend: Add support for tiled YUV input mode configuration
+Date:   Fri, 23 Nov 2018 10:25:05 +0100
+Message-Id: <20181123092515.2511-34-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
 References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
@@ -50,49 +50,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Our hardware requires the pitch to be an even number when using YUV
-formats with the frontend. Implement a driver-specific callback for GEM
-dumb allocation that sets the pitch accordingly.
+This introduces the data input mode definitions for the tiled YUV mode,
+that are used in the input mode helper if tiling is requested.
 
-Since only the bpp is passed (and not the format), we cannot really
-distinguish if this alignment is really required. Since it doesn't hurt
-to align the pitch anyway, always do it.
+The modifier is passed to the helper from the framebuffer to determine
+if tiling is requested.
+
+Only semiplanar and planar YUV formats are supported for tiling mode.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_drv.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 14 ++++++++++----
+ drivers/gpu/drm/sun4i/sun4i_frontend.h |  2 ++
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index ef773d36baf0..ccdeae6299eb 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -28,6 +28,16 @@
- #include "sun4i_tcon.h"
- #include "sun8i_tcon_top.h"
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+index b78e0a208c95..efa1ff0802bd 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+@@ -186,9 +186,11 @@ static int sun4i_frontend_drm_format_to_input_fmt(uint32_t fmt, u32 *val)
+ 	return 0;
+ }
  
-+static int drm_sun4i_gem_dumb_create(struct drm_file *file_priv,
-+				     struct drm_device *drm,
-+				     struct drm_mode_create_dumb *args)
-+{
-+	/* The hardware only allows even pitches for YUV buffers. */
-+	args->pitch = ALIGN(DIV_ROUND_UP(args->width * args->bpp, 8), 2);
-+
-+	return drm_gem_cma_dumb_create_internal(file_priv, drm, args);
-+}
-+
- DEFINE_DRM_GEM_CMA_FOPS(sun4i_drv_fops);
+-static int sun4i_frontend_drm_format_to_input_mode(uint32_t fmt, u32 *val)
++static int sun4i_frontend_drm_format_to_input_mode(uint32_t fmt,
++						   uint64_t modifier, u32 *val)
+ {
+ 	int num_planes = drm_format_num_planes(fmt);
++	bool tiled = (modifier == DRM_FORMAT_MOD_ALLWINNER_TILED);
  
- static struct drm_driver sun4i_drv_driver = {
-@@ -42,7 +52,7 @@ static struct drm_driver sun4i_drv_driver = {
- 	.minor			= 0,
+ 	switch (num_planes) {
+ 	case 1:
+@@ -196,11 +198,13 @@ static int sun4i_frontend_drm_format_to_input_mode(uint32_t fmt, u32 *val)
+ 		return 0;
  
- 	/* GEM Operations */
--	.dumb_create		= drm_gem_cma_dumb_create,
-+	.dumb_create		= drm_sun4i_gem_dumb_create,
- 	.gem_free_object_unlocked = drm_gem_cma_free_object,
- 	.gem_vm_ops		= &drm_gem_cma_vm_ops,
+ 	case 2:
+-		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_SEMIPLANAR;
++		*val = tiled ? SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_MB32_SEMIPLANAR
++			     : SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_SEMIPLANAR;
+ 		return 0;
  
+ 	case 3:
+-		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PLANAR;
++		*val = tiled ? SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_MB32_PLANAR
++			     : SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PLANAR;
+ 		return 0;
+ 
+ 	default:
+@@ -320,6 +324,7 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
+ 	struct drm_plane_state *state = plane->state;
+ 	struct drm_framebuffer *fb = state->fb;
+ 	uint32_t format = fb->format->format;
++	uint64_t modifier = fb->modifier;
+ 	u32 out_fmt_val;
+ 	u32 in_fmt_val, in_mod_val, in_ps_val;
+ 	unsigned int i;
+@@ -332,7 +337,8 @@ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
+ 		return ret;
+ 	}
+ 
+-	ret = sun4i_frontend_drm_format_to_input_mode(format, &in_mod_val);
++	ret = sun4i_frontend_drm_format_to_input_mode(format, modifier,
++						      &in_mod_val);
+ 	if (ret) {
+ 		DRM_DEBUG_DRIVER("Invalid input mode\n");
+ 		return ret;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+index b209eacdf8c2..ae53ee644694 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+@@ -33,6 +33,8 @@
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PLANAR	(0 << 8)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PACKED	(1 << 8)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_SEMIPLANAR	(2 << 8)
++#define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_MB32_PLANAR	(4 << 8)
++#define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_MB32_SEMIPLANAR (6 << 8)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV444	(0 << 4)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV422	(1 << 4)
+ #define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV420	(2 << 4)
 -- 
 2.19.1
 
