@@ -2,96 +2,108 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C5AC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 21:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C948C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 21:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7678F20672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 21:13:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABFEA20861
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 21:39:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="lsmGmETf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7678F20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eybs+8vV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABFEA20861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbeKXH7n (ORCPT
+        id S1726851AbeKXIU4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 02:59:43 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:43351 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726781AbeKXH7m (ORCPT
+        Sat, 24 Nov 2018 03:20:56 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51650 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbeKXIUz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 02:59:42 -0500
-Received: by mail-ot1-f67.google.com with SMTP id a11so11635937otr.10
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 13:13:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Cf8Bf9cqH3KJAnd4Gakfudx+0el2GbZ4GpkjeweKinQ=;
-        b=lsmGmETfoNfozEG6Ov8+UwIGqho5KN2Uhx7e3tca6RlEJEQDl50jQZTTZBR0n94K+P
-         cWDxFg2wREPMDLYLOzyzihhRq8I010W1EuBjxNac+IGb9e8vus+NPIzQG64Ac8q3LjjV
-         1TcEgPeF0nzE9VZdpGaOf+jh0b+e1VEXD0R3xc0vzJyQSHqf7djk/CpkovTIaCATP+Pk
-         Jnec5IMWBFlNJgFXGo0zHp/WiroZ0SpGZRJbkGaoknddM3z0ByAYf+9jeOrChg/DqlPT
-         tX3zO+XMHIH3tDT2T4AkfWUwIXmDQ/nrDiWsyeBGA+YL7986lF4bkxgZ1Rvh1NhgwdBD
-         /3fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Cf8Bf9cqH3KJAnd4Gakfudx+0el2GbZ4GpkjeweKinQ=;
-        b=fOpWgEZ3NXI096JNs+84MpOtQWVwwoE+tgH8fscvImlTF6Klqcq09QuFA0C6dIg65Q
-         /TyIQB1gRr/cbAWCWjdRt3kNDm0HamKLMruWf12tzGI/O4YH4/U1CNi/2SBNzkkdcubH
-         f/wDiSEJXD4MF2J11fVsZhCsG8kwbs6Hr/N5F8EvbORJhmSK04HSqNMVgfsR5ZEUHUHu
-         J7SYkFMa+B7mZdW/qM5nw/WrQDk68OGQGlvFUzwxXW+xmd6IqfZex/ySZt7/vXned0GS
-         3my/E42//Lm2wLLvmn0FmzXzrWaOawMAnqzn6sOKL/iZ8BAZmszavXVU5cbzAwxwKOPq
-         d8vA==
-X-Gm-Message-State: AA+aEWbUegpqF7ihp4PXkHPH+OTKNd/N75VxDlYYg7R2EGgqeLSy65XL
-        C1NuNnVKxI1ztsIDah7EEqOfQ6nGWMLXSGgrU70YQA==
-X-Google-Smtp-Source: AFSGD/VmF6UjjxpaCFBzvXsEkIn/R/KB7e6BjiEaeGrEkfInKy+TLr9hST3JojX4AegaPSkngJfk8UwEDj4j1P2UZts=
-X-Received: by 2002:a9d:775a:: with SMTP id t26mr9129995otl.32.1543007627876;
- Fri, 23 Nov 2018 13:13:47 -0800 (PST)
+        Sat, 24 Nov 2018 03:20:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=VITkrZG/gk7QdC2jucncz68rp3F1kMHXdL0KqMlEm1w=; b=eybs+8vVSl/lego+Ed76kISbx
+        rVb9QsAi6AYeN92batTbUA4ktZqjTgkr/IbbQjgQoAFo4O6yLm8Ee4N0L2fE92J8XrriGunz9yEmJ
+        FanLKDkzUTiXkRepj7hD3YsTF707Yt4DlQDPgpaIpTRLXcqxJe0Fi0AAxnRrm2t4RfQr8FvUzwi/m
+        8xuegTHPDC19Fx6FLZ9ZtGF/gkeuL4Ha4m7okU5ivbq5AtAlsd7LXxTT668aJpBoWckt1BM/1iuwv
+        PAwtazPnLn6Q0HvFybEKetwvEW/ORo6x3qhdxvP5hLVNJ5k63AEgSo0psC6gwTu+CZ47fWUOL86Xs
+        Z5FGO7P5w==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gQJ68-0006R5-8e; Fri, 23 Nov 2018 21:34:48 +0000
+Date:   Fri, 23 Nov 2018 13:34:48 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Souptick Joarder <jrdr.linux@gmail.com>, akpm@linux-foundation.org,
+        mhocko@suse.com, joro@8bytes.org, linux-mm@kvack.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/9] iommu/dma-iommu.c: Convert to use vm_insert_range
+Message-ID: <20181123213448.GW3065@bombadil.infradead.org>
+References: <20181115154950.GA27985@jordon-HP-15-Notebook-PC>
+ <bbad42cb-4a76-a7e7-c385-db77f1cc588b@arm.com>
 MIME-Version: 1.0
-References: <20181114224902.12082-1-keith.busch@intel.com> <1ed406b2-b85f-8e02-1df0-7c39aa21eca9@arm.com>
- <4ea6e80f-80ba-6992-8aa0-5c2d88996af7@intel.com> <b79804b0-32ee-03f9-fa62-a89684d46be6@arm.com>
- <c6abb754-0d82-8739-fe08-24e9402bae75@intel.com> <aae34dde-fa70-870a-9b74-fff9e385bfc9@arm.com>
- <f5315662-5c1a-68a3-4d04-21b4b5ca94b1@intel.com> <ac942498-8966-6a9b-0e55-c79ae167c679@arm.com>
- <9015e51a-3584-7bb2-cc5e-25b0ec8e5494@intel.com>
-In-Reply-To: <9015e51a-3584-7bb2-cc5e-25b0ec8e5494@intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 23 Nov 2018 13:13:36 -0800
-Message-ID: <CAPcyv4jnnnXi9Fqaf-d7AdnKrTMDCWr-e9tAx+G6nphrEPYm=w@mail.gmail.com>
-Subject: Re: [PATCH 0/7] ACPI HMAT memory sysfs representation
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     anshuman.khandual@arm.com, Keith Busch <keith.busch@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bbad42cb-4a76-a7e7-c385-db77f1cc588b@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 11:21 AM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 11/22/18 10:42 PM, Anshuman Khandual wrote:
-> > Are we willing to go in the direction for inclusion of a new system
-> > call, subset of it appears on sysfs etc ? My primary concern is not
-> > how the attribute information appears on the sysfs but lack of it's
-> > completeness.
->
-> A new system call makes total sense to me.  I have the same concern
-> about the completeness of what's exposed in sysfs, I just don't see a
-> _route_ to completeness with sysfs itself.  Thus, the minimalist
-> approach as a first step.
+On Fri, Nov 23, 2018 at 05:23:06PM +0000, Robin Murphy wrote:
+> On 15/11/2018 15:49, Souptick Joarder wrote:
+> > Convert to use vm_insert_range() to map range of kernel
+> > memory to user vma.
+> > 
+> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > Reviewed-by: Matthew Wilcox <willy@infradead.org>
+> > ---
+> >   drivers/iommu/dma-iommu.c | 12 ++----------
+> >   1 file changed, 2 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> > index d1b0475..69c66b1 100644
+> > --- a/drivers/iommu/dma-iommu.c
+> > +++ b/drivers/iommu/dma-iommu.c
+> > @@ -622,17 +622,9 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
+> >   int iommu_dma_mmap(struct page **pages, size_t size, struct vm_area_struct *vma)
+> >   {
+> > -	unsigned long uaddr = vma->vm_start;
+> > -	unsigned int i, count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+> > -	int ret = -ENXIO;
+> > +	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+> > -	for (i = vma->vm_pgoff; i < count && uaddr < vma->vm_end; i++) {
+> > -		ret = vm_insert_page(vma, uaddr, pages[i]);
+> > -		if (ret)
+> > -			break;
+> > -		uaddr += PAGE_SIZE;
+> > -	}
+> > -	return ret;
+> > +	return vm_insert_range(vma, vma->vm_start, pages, count);
+> 
+> AFIACS, vm_insert_range() doesn't respect vma->vm_pgoff, so doesn't this
+> break partial mmap()s of a large buffer? (which I believe can be a thing)
 
-Outside of platform-firmware-id to Linux-numa-node-id what other
-userspace API infrastructure does the kernel need to provide? It seems
-userspace enumeration of memory attributes is fully enabled once the
-firmware-to-Linux identification is established.
+Whoops.  That should have been:
+
+return vm_insert_range(vma, vma->vm_start, pages + vma->vm_pgoff, count);
+
+I suppose.
+
+Although arguably we should respect vm_pgoff inside vm_insert_region()
+and then callers automatically get support for vm_pgoff without having
+to think about it ... although we should then also pass in the length
+of the pages array to avoid pages being mapped in which aren't part of
+the allocated array.
+
+Hm.  More thought required.
