@@ -2,160 +2,620 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E348EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD17C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:35:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BC3420861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:35:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZMDjYVSP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BC3420861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id DF4CE20861
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:35:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF4CE20861
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409361AbeKWVTL (ORCPT
+        id S2503296AbeKWVTX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 16:19:11 -0500
-Received: from mail-eopbgr50086.outbound.protection.outlook.com ([40.107.5.86]:58202
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390495AbeKWVTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 16:19:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mI9bMLlobphgUderf4GN2qEMzO9n+1PU0alclXA+EQ0=;
- b=ZMDjYVSPaUTS/yMrPjJkfiKLZtVMZ+jXzJPHEeqCPiFURgFU+NdNFn+qVGSrCF78pDCW8H0LjV3kfIDTESclWBrOHSEgqmwgLWhTJC+4sBdGB9GI4vIdl1bQZx0q9KOTVn5mRezJpvDIMITIUMNUiEXY+orrWi8Jpy+koCevtFE=
-Received: from VI1PR04MB4880.eurprd04.prod.outlook.com (20.177.49.153) by
- VI1PR04MB5598.eurprd04.prod.outlook.com (20.178.125.79) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.16; Fri, 23 Nov 2018 10:35:20 +0000
-Received: from VI1PR04MB4880.eurprd04.prod.outlook.com
- ([fe80::3cf6:b5ab:ac8a:fd94]) by VI1PR04MB4880.eurprd04.prod.outlook.com
- ([fe80::3cf6:b5ab:ac8a:fd94%4]) with mapi id 15.20.1361.015; Fri, 23 Nov 2018
- 10:35:19 +0000
-From:   Claudiu Manoil <claudiu.manoil@nxp.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     David Miller <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexandru Marginean <alexandru.marginean@nxp.com>,
-        Catalin Horghidan <catalin.horghidan@nxp.com>
-Subject: RE: [PATCH net-next v2 1/4] enetc: Introduce basic PF and VF ENETC
- ethernet drivers
-Thread-Topic: [PATCH net-next v2 1/4] enetc: Introduce basic PF and VF ENETC
- ethernet drivers
-Thread-Index: AQHUgP0VcQXM/br9+0etCnjg7gktoKVa8JgAgADTuGCAAFW+gIABEv2A
-Date:   Fri, 23 Nov 2018 10:35:19 +0000
-Message-ID: <VI1PR04MB48801D1DF330B957C5BE652296D40@VI1PR04MB4880.eurprd04.prod.outlook.com>
-References: <1542737734-21756-1-git-send-email-claudiu.manoil@nxp.com>
- <1542737734-21756-2-git-send-email-claudiu.manoil@nxp.com>
- <20181121.162118.2250773796794960530.davem@davemloft.net>
- <VI1PR04MB48803D4A3D8D331046CFC63196DB0@VI1PR04MB4880.eurprd04.prod.outlook.com>
- <20181122180557.GC10697@lunn.ch>
-In-Reply-To: <20181122180557.GC10697@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=claudiu.manoil@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB5598;6:jAjY5NP98JwCaGUrdTD7c1q7xk8yKdztpsQAfYhsz1Op6+2M7lF9y/4kHPUCdOiJHn+cYjsJ90DZ25ksJsqO2DE3wwsi6UcjhppCoJ2R0NFk8vDrzTEyRP4Q2RLut/Lh3eOKJE3FMnUX3sfHmUET8eARj24JnbPN9PCejMAxfGuKWMZTxRj2vF2EcpV4MqIUu2PQzvhTQ6uKpkdqX+zdFeVbXGEQT12NTLVGjPAoew9Acqwrynd5o0nK+KIpfnzi1CuMCpZkCuILih2eXSZJcN2QeNv3WN7XsBxi848kpKvmyOyGej6FqDe+1xKn2RflR4IjF4vi37faOcm70CfJaK0qmu2/zgxJVFN7erQUN2w8DP/PxuI2L3PXElSQdo5iTas+v1uCovAwb0QSjYJyQBy6Puhyy4mUHvLWt58kWX/cX4Dle+Ohd45WwVcImbBOuhYpCQZY4e8u8CwBSR8d8w==;5:VF3nS4Ame+2sLhcDLNeTY/CbCP0FqR77IRT2RUBIns2BWnupNQL5xcJ1ZF2rVRp1+sLJ1Hri0rxf3d+jTVIkK9WVVI6pvi3xkiDdPriZGnV+VHsGFcPiCFQQOS/8FvYYuPCFv8sTx+CpyNQUKEgk1ZbuUb9oAnZpEwS6o3qj0JA=;7:84JE3u3uZzwjGstH8A7yH61gePR3AL8abo5YvlxpcZE+ha1TYl1q4Fgq/oogg6qzBHnTBd5XVfQKX7YjClc+ROR4rxZXTHh3pydrR6pA1jX6ywgzNM5sKaATpL1vOcGWiMyMXHbWFF/HKpjtsxMQlw==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: fc2d0f31-1a48-4aa2-2994-08d6512f5de1
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5598;
-x-ms-traffictypediagnostic: VI1PR04MB5598:
-x-microsoft-antispam-prvs: <VI1PR04MB5598CDB4827F942E7E142C1296D40@VI1PR04MB5598.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231442)(944501410)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB5598;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5598;
-x-forefront-prvs: 086597191B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(39860400002)(376002)(396003)(366004)(199004)(189003)(13464003)(6436002)(25786009)(6916009)(256004)(446003)(74316002)(305945005)(7736002)(478600001)(26005)(14454004)(186003)(7696005)(6506007)(102836004)(81166006)(68736007)(5660300001)(76176011)(81156014)(8676002)(8936002)(229853002)(99286004)(105586002)(106356001)(316002)(4326008)(6246003)(97736004)(2906002)(54906003)(3846002)(93886005)(486006)(71200400001)(66066001)(44832011)(55016002)(9686003)(71190400001)(476003)(33656002)(11346002)(53936002)(86362001)(2900100001)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5598;H:VI1PR04MB4880.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: LVNxdeZg+cIZqNBrI2I9uqHC4BsUERJAApI0afkKDnvRGXtk/RJgnjL8PEZA256dqCbdtNW2idUFI9dH4pL6/k/FUyVLwo8Le25eLM/WXHV4iHFN5ptK3sPp3dE6qybQSr8p207coGZu3xaxUHw/4g6zpq303c6vULDdHpzzLTkDajSZCI82xuICz38Bk8F2iP4XfrcMibBQjNMju/DyWwBK2Cj5iVtYJN/N4RDDRdFiVEV1UvFckPUiJGcXk/GaWlUQ0jsdCHm43ucN7YDW75vXIyGS0g5UoXy6Uvc5HCNC61NQ0NQhLS+nCawpghXPMn/TLLzORPH2ueMqVLhX0BhDgIyS6BeqGxYmdpj0D7A=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 23 Nov 2018 16:19:23 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:56845 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2409362AbeKWVTX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 16:19:23 -0500
+Received: from 79.184.254.110.ipv4.supernova.orange.pl (79.184.254.110) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.157)
+ id 9d9d4d00e5e1312e; Fri, 23 Nov 2018 11:35:37 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Doug Smythies <dsmythies@telus.net>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [RFC/RFT][PATCH v6] cpuidle: New timer events oriented governor for tickless systems
+Date:   Fri, 23 Nov 2018 11:35:38 +0100
+Message-ID: <42865872.dmYH3PmblP@aspire.rjw.lan>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc2d0f31-1a48-4aa2-2994-08d6512f5de1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Nov 2018 10:35:19.8760
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5598
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->-----Original Message-----
->From: Andrew Lunn <andrew@lunn.ch>
->Sent: Thursday, November 22, 2018 8:06 PM
->To: Claudiu Manoil <claudiu.manoil@nxp.com>
->Cc: David Miller <davem@davemloft.net>; netdev@vger.kernel.org; linux-
->kernel@vger.kernel.org; Alexandru Marginean
-><alexandru.marginean@nxp.com>; Catalin Horghidan
-><catalin.horghidan@nxp.com>
->Subject: Re: [PATCH net-next v2 1/4] enetc: Introduce basic PF and VF ENET=
-C
->ethernet drivers
->
->On Thu, Nov 22, 2018 at 01:06:01PM +0000, Claudiu Manoil wrote:
->> >-----Original Message-----
->> >From: David Miller <davem@davemloft.net>
->> >Sent: Thursday, November 22, 2018 2:21 AM
->> >To: Claudiu Manoil <claudiu.manoil@nxp.com>
->> >Cc: netdev@vger.kernel.org; linux-kernel@vger.kernel.org; Alexandru
->> >Marginean <alexandru.marginean@nxp.com>; Catalin Horghidan
->> ><catalin.horghidan@nxp.com>
->> >Subject: Re: [PATCH net-next v2 1/4] enetc: Introduce basic PF and VF E=
-NETC
->> >ethernet drivers
->> >
->> >From: Claudiu Manoil <claudiu.manoil@nxp.com>
->> >Date: Tue, 20 Nov 2018 20:15:31 +0200
->> >
->> >> diff --git a/drivers/net/ethernet/freescale/Makefile
->> >b/drivers/net/ethernet/freescale/Makefile
->> >> index 3b4ff08..20e5c2f9 100644
->> >> --- a/drivers/net/ethernet/freescale/Makefile
->> >> +++ b/drivers/net/ethernet/freescale/Makefile
->> >> @@ -23,3 +23,4 @@ obj-$(CONFIG_FSL_FMAN) +=3D fman/
->> >>  obj-$(CONFIG_FSL_DPAA_ETH) +=3D dpaa/
->> >>
->> >>  obj-$(CONFIG_FSL_DPAA2_ETH) +=3D dpaa2/
->> >> +obj-$(CONFIG_NET_VENDOR_FREESCALE) +=3D enetc/
->> >
->> >The driver enable Kconfig option should guard traversing into the
->> >driver subdirectory, not the vendor enable Kconfig knob.
->>
->> The enetc/ dir contains 2 drivers, that share a lot of common code.
->> Would you agree if I change the vendor enable with the two configs
->> (one for each driver) as below?
->>
->> -obj-$(CONFIG_NET_VENDOR_FREESCALE) +=3D enetc/
->> +obj-$(CONFIG_FSL_ENETC) +=3D enetc/
->> +obj-$(CONFIG_FSL_ENETC_VF) +=3D enetc/
->
->CONFIG_NET_VENDOR_FREESCALE should hide/show all Freescale drivers.
->
->Once you show all Freescale drivers, there should be an option to
->enable each individual driver.
->
->Does the ENETC_VF driver depend on the ENETC driver? If so, when
->CONFIG_FSL_ENETC is enabled, the CONFIG_FSL_ENETC_VF should be
->unhidden.
->
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-The two drivers are independent as can be seen from enetc/Makefile.
-E.g., in a virtualized env you can have a linux instance (guest) containing
-only the VF driver.
-Sending v3 with the above mentioned change.
+The venerable menu governor does some thigns that are quite
+questionable in my view.
+
+First, it includes timer wakeups in the pattern detection data and
+mixes them up with wakeups from other sources which in some cases
+causes it to expect what essentially would be a timer wakeup in a
+time frame in which no timer wakeups are possible (becuase it knows
+the time until the next timer event and that is later than the
+expected wakeup time).
+
+Second, it uses the extra exit latency limit based on the predicted
+idle duration and depending on the number of tasks waiting on I/O,
+even though those tasks may run on a different CPU when they are
+woken up.  Moreover, the time ranges used by it for the sleep length
+correction factors depend on whether or not there are tasks waiting
+on I/O, which again doesn't imply anything in particular, and they
+are not correlated to the list of available idle states in any way
+whatever.
+
+Also, the pattern detection code in menu may end up considering
+values that are too large to matter at all, in which cases running
+it is a waste of time.
+
+A major rework of the menu governor would be required to address
+these issues and the performance of at least some workloads (tuned
+specifically to the current behavior of the menu governor) is likely
+to suffer from that.  It is thus better to introduce an entirely new
+governor without them and let everybody use the governor that works
+better with their actual workloads.
+
+The new governor introduced here, the timer events oriented (TEO)
+governor, uses the same basic strategy as menu: it always tries to
+find the deepest idle state that can be used in the given conditions.
+However, it applies a different approach to that problem.
+
+First, it doesn't use "correction factors" for the time till the
+closest timer, but instead it tries to correlate the measured idle
+duration values with the available idle states and use that
+information to pick up the idle state that is most likely to "match"
+the upcoming CPU idle interval.
+
+Second, it doesn't take the number of "I/O waiters" into account at
+all and the pattern detection code in it avoids taking timer wakeups
+into account.  It also only uses idle duration values less than the
+current time till the closest timer (with the tick excluded) for that
+purpose.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+v5 -> v6:
+ * Avoid applying poll_time_limit to non-polling idle states by mistake.
+ * Use idle duration measured by the governor for everything (as it likely is
+   more accurate than the one measured by the core).
+ * Rename SPIKE to PULSE.
+ * Do not run pattern detection upfront.  Instead, use recent idle duration
+   values to refine the state selection after finding a candidate idle state.
+ * Do not use the expected idle duration as an extra latency constraint
+   (exit latency is less than the target residency for all of the idle states
+   known to me anyway, so this doesn't change anything in practice).
+
+v4 -> v5:
+ * Avoid using shallow idle states when the tick has been stopped already.
+
+v3 -> v4:
+ * Make the pattern detection avoid returning too early if the minimum
+   sample is too far from the average.
+ * Reformat the changelog (as requested by Peter).
+
+v2 -> v3:
+ * Simplify the pattern detection code and make it return a value
+	lower than the time to the closest timer if the majority of recent
+	idle intervals are below it regardless of their variance (that should
+	cause it to be slightly more aggressive).
+ * Do not count wakeups from state 0 due to the time limit in poll_idle()
+   as non-timer.
+
+---
+ drivers/cpuidle/Kconfig            |   11 
+ drivers/cpuidle/governors/Makefile |    1 
+ drivers/cpuidle/governors/teo.c    |  450 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 462 insertions(+)
+
+Index: linux-pm/drivers/cpuidle/governors/teo.c
+===================================================================
+--- /dev/null
++++ linux-pm/drivers/cpuidle/governors/teo.c
+@@ -0,0 +1,450 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Timer events oriented CPU idle governor
++ *
++ * Copyright (C) 2018 Intel Corporation
++ * Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
++ *
++ * The idea of this governor is based on the observation that on many systems
++ * timer events are two or more orders of magnitude more frequent than any
++ * other interrupts, so they are likely to be the most significant source of CPU
++ * wakeups from idle states.  Moreover, information about what happened in the
++ * (relatively recent) past can be used to estimate whether or not the deepest
++ * idle state with target residency within the time to the closest timer is
++ * likely to be suitable for the upcoming idle time of the CPU and, if not, then
++ * which of the shallower idle states to choose.
++ *
++ * Of course, non-timer wakeup sources are more important in some use cases and
++ * they can be covered by taking a few most recent idle time intervals of the
++ * CPU into account.  However, even in that case it is not necessary to consider
++ * idle duration values greater than the time till the closest timer, as the
++ * patterns that they may belong to produce average values close enough to
++ * the time till the closest timer (sleep length) anyway.
++ *
++ * Thus this governor estimates whether or not the upcoming idle time of the CPU
++ * is likely to be significantly shorter than the sleep length and selects an
++ * idle state for it in accordance with that, as follows:
++ *
++ * - Find an idle state on the basis of the sleep length and state statistics
++ *   collected over time:
++ *
++ *   o Find the deepest idle state whose target residency is less than or euqal
++ *     to the sleep length.
++ *
++ *   o Select it if it matched both the sleep length and the observed idle
++ *     duration in the past more often than it matched the sleep length alone
++ *     (i.e. the observed idle duration was significantly shorter than the sleep
++ *     length matched by it).
++ *
++ *   o Otherwise, select the shallower state with the greatest matched "early"
++ *     wakeups metric.
++ *
++ * - If at least half of the most recent idle duration values is below the
++ *   target residency of the idle state selected so far, use those values to
++ *   compute the new expected idle duration and find an idle state matching it
++ *   (which has to be shallower than the one selected so far).
++ */
++
++#include <linux/cpuidle.h>
++#include <linux/jiffies.h>
++#include <linux/kernel.h>
++#include <linux/sched/clock.h>
++#include <linux/tick.h>
++
++/*
++ * The PULSE value is added to metrics when they grow and the DECAY_SHIFT value
++ * is used for decreasing metrics on a regular basis.
++ */
++#define PULSE		1024
++#define DECAY_SHIFT	3
++
++/*
++ * Number of the most recent idle duration values to take into consideration for
++ * the detection of wakeup patterns.
++ */
++#define INTERVALS	8
++
++/**
++ * struct teo_idle_state - Idle state data used by the TEO cpuidle governor.
++ * @early_hits: "Early" CPU wakeups matched by this state.
++ * @hits: "On time" CPU wakeups matched by this state.
++ * @misses: CPU wakeups "missed" by this state.
++ *
++ * A CPU wakeup is "matched" by a given idle state if the idle duration measured
++ * after the wakeup is between the target residency of that state and the target
++ * residnecy of the next one (or if this is the deepest available idle state, it
++ * "matches" a CPU wakeup when the measured idle duration is at least equal to
++ * its target residency).
++ *
++ * Also, from the TEO governor prespective, a CPU wakeup from idle is "early" if
++ * it occurs significantly earlier than the closest expected timer event (that
++ * is, early enough to match an idle state shallower than the one matching the
++ * time till the closest timer event).  Otherwise, the wakeup is "on time", or
++ * it is a "hit".
++ *
++ * A "miss" occurs when the given state doesn't match the wakeup, but it matches
++ * the time till the closest timer event used for idle state selection.
++ */
++struct teo_idle_state {
++	unsigned int early_hits;
++	unsigned int hits;
++	unsigned int misses;
++};
++
++/**
++ * struct teo_cpu - CPU data used by the TEO cpuidle governor.
++ * @time_span_ns: Time between idle state selection and post-wakeup update.
++ * @sleep_length_ns: Time till the closest timer event (at the selection time).
++ * @states: Idle states data corresponding to this CPU.
++ * @last_state: Idle state entered by the CPU last time.
++ * @interval_idx: Index of the most recent saved idle interval.
++ * @intervals: Saved idle duration values.
++ */
++struct teo_cpu {
++	u64 time_span_ns;
++	u64 sleep_length_ns;
++	struct teo_idle_state states[CPUIDLE_STATE_MAX];
++	int last_state;
++	int interval_idx;
++	unsigned int intervals[INTERVALS];
++};
++
++static DEFINE_PER_CPU(struct teo_cpu, teo_cpus);
++
++/**
++ * teo_update - Update CPU data after wakeup.
++ * @drv: cpuidle driver containing state data.
++ * @dev: Target CPU.
++ */
++static void teo_update(struct cpuidle_driver *drv, struct cpuidle_device *dev)
++{
++	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
++	unsigned int sleep_length_us = ktime_to_us(cpu_data->sleep_length_ns);
++	int i, idx_hit = -1, idx_timer = -1;
++	unsigned int measured_us;
++
++	if (cpu_data->time_span_ns == cpu_data->sleep_length_ns) {
++		/* One of the safety nets has triggered (most likely). */
++		measured_us = sleep_length_us;
++	} else {
++		measured_us = dev->last_residency;
++		i = cpu_data->last_state;
++		if (measured_us >= 2 * drv->states[i].exit_latency)
++			measured_us -= drv->states[i].exit_latency;
++		else
++			measured_us /= 2;
++	}
++
++	/*
++	 * Decay the "early hits" metric for all of the states and find the
++	 * states matching the sleep length and the measured idle duration.
++	 */
++	for (i = 0; i < drv->state_count; i++) {
++		unsigned int early_hits = cpu_data->states[i].early_hits;
++
++		cpu_data->states[i].early_hits -= early_hits >> DECAY_SHIFT;
++
++		if (drv->states[i].target_residency <= measured_us)
++			idx_hit = i;
++
++		if (drv->states[i].target_residency <= sleep_length_us)
++			idx_timer = i;
++	}
++
++	/*
++	 * Update the "hits" and "misses" data for the state matching the sleep
++	 * length.  If it matches the measured idle duration too, this is a hit,
++	 * so increase the "hits" metric for it then.  Otherwise, this is a
++	 * miss, so increase the "misses" metric for it.  In the latter case
++	 * also increase the "early hits" metric for the state that actually
++	 * matches the measured idle duration.
++	 */
++	if (idx_timer >= 0) {
++		unsigned int hits = cpu_data->states[idx_timer].hits;
++		unsigned int misses = cpu_data->states[idx_timer].misses;
++
++		hits -= hits >> DECAY_SHIFT;
++		misses -= misses >> DECAY_SHIFT;
++
++		if (idx_timer > idx_hit) {
++			misses += PULSE;
++			if (idx_hit >= 0)
++				cpu_data->states[idx_hit].early_hits += PULSE;
++		} else {
++			hits += PULSE;
++		}
++
++		cpu_data->states[idx_timer].misses = misses;
++		cpu_data->states[idx_timer].hits = hits;
++	}
++
++	/*
++	 * Save idle duration values corresponding to non-timer wakeups for
++	 * pattern detection.
++	 *
++	 * If the total time span between idle state selection and the "reflect"
++	 * callback is greater than or equal to the sleep length determined at
++	 * the idle state selection time, the wakeup is likely to be due to a
++	 * timer event.
++	 */
++	if (cpu_data->time_span_ns >= cpu_data->sleep_length_ns)
++		measured_us = UINT_MAX;
++
++	cpu_data->intervals[cpu_data->interval_idx++] = measured_us;
++	if (cpu_data->interval_idx > INTERVALS)
++		cpu_data->interval_idx = 0;
++}
++
++/**
++ * teo_find_shallower_state - Find shallower idle state matching given duration.
++ * @drv: cpuidle driver containing state data.
++ * @dev: Target CPU.
++ * @state_idx: Index of the capping idle state.
++ * @duration_us: Idle duration value to match.
++ */
++static int teo_find_shallower_state(struct cpuidle_driver *drv,
++				    struct cpuidle_device *dev, int state_idx,
++				    unsigned int duration_us)
++{
++	int i;
++
++	for (i = state_idx - 1; i > 0; i--) {
++		if (drv->states[i].disabled || dev->states_usage[i].disable)
++			continue;
++
++		if (drv->states[i].target_residency <= duration_us)
++			break;
++	}
++	return i;
++}
++
++/**
++ * teo_select - Selects the next idle state to enter.
++ * @drv: cpuidle driver containing state data.
++ * @dev: Target CPU.
++ * @stop_tick: Indication on whether or not to stop the scheduler tick.
++ */
++static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
++		      bool *stop_tick)
++{
++	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
++	int latency_req = cpuidle_governor_latency_req(dev->cpu);
++	unsigned int duration_us, count;
++	int max_early_idx, idx, i;
++	ktime_t delta_tick;
++
++	if (cpu_data->last_state >= 0) {
++		teo_update(drv, dev);
++		cpu_data->last_state = -1;
++	}
++
++	cpu_data->time_span_ns = local_clock();
++
++	cpu_data->sleep_length_ns = tick_nohz_get_sleep_length(&delta_tick);
++	duration_us = ktime_to_us(cpu_data->sleep_length_ns);
++
++	count = 0;
++	max_early_idx = -1;
++	idx = -1;
++
++	for (i = 0; i < drv->state_count; i++) {
++		struct cpuidle_state *s = &drv->states[i];
++		struct cpuidle_state_usage *su = &dev->states_usage[i];
++
++		if (s->disabled || su->disable) {
++			/*
++			 * If the "early hits" metric of a disabled state is
++			 * greater than the current maximum, it should be taken
++			 * into account, because it would be a mistake to select
++			 * a deeper state with lower "early hits" metric.  The
++			 * index cannot be changed to point to it, however, so
++			 * just increase the max count alone and let the index
++			 * still point to a shallower idle state.
++			 */
++			if (max_early_idx >= 0 &&
++			    count < cpu_data->states[i].early_hits)
++				count = cpu_data->states[i].early_hits;
++
++			continue;
++		}
++
++		if (idx < 0)
++			idx = i; /* first enabled state */
++
++		if (s->target_residency > duration_us) {
++			/*
++			 * If the "hits" metric of the state matching the sleep
++			 * length is greater than its "misses" metric, that is
++			 * the one to use.
++			 */
++			if (cpu_data->states[idx].hits > cpu_data->states[idx].misses)
++				break;
++
++			/*
++			 * It is more likely that one of the shallower states
++			 * will match the idle duration measured after wakeup,
++			 * so take the one with the maximum "early hits" metric,
++			 * but if that cannot be determined, just use the state
++			 * selected so far.
++			 */
++			if (max_early_idx >= 0) {
++				idx = max_early_idx;
++				duration_us = drv->states[idx].target_residency;
++			}
++			break;
++		}
++		if (s->exit_latency > latency_req) {
++			/*
++			 * If we break out of the loop for latency reasons, use
++			 * the target residency of the selected state as the
++			 * expected idle duration to avoid stopping the tick
++			 * as long as that target residency is low enough.
++			 */
++			duration_us = drv->states[idx].target_residency;
++			break;
++		}
++
++		idx = i;
++
++		if (count < cpu_data->states[i].early_hits &&
++		    !(tick_nohz_tick_stopped() &&
++		      drv->states[i].target_residency < TICK_USEC)) {
++			count = cpu_data->states[i].early_hits;
++			max_early_idx = i;
++		}
++	}
++
++	if (idx < 0) {
++		idx = 0; /* No states enabled. Must use 0. */
++	} else if (idx > 0) {
++		unsigned int max = 0;
++		u64 sum = 0;
++
++		count = 0;
++
++		/*
++		 * Count and sum the most recent idle duration values less than
++		 * the target residency of the state selected so far, find the
++		 * max.
++		 */
++		for (i = 0; i < INTERVALS; i++) {
++			unsigned int val = cpu_data->intervals[i];
++
++			if (val >= drv->states[idx].target_residency)
++				continue;
++
++			count++;
++			sum += val;
++
++			if (val > max)
++				max = val;
++		}
++
++		/*
++		 * Give up if the majority of the most recent idle duration
++		 * values are not in the interesting range.
++		 */
++		if (count >= INTERVALS / 2) {
++			unsigned int avg_us;
++
++			/*
++			 * Discard the max to push the average towards shallower
++			 * idle state somewhat (it is better to underestimate
++			 * the idle duration than to overestimate it).
++			 */
++			count--;
++			sum -= max;
++
++			avg_us = div64_u64(sum, count);
++
++			/*
++			 * Avoid spending too much time in an idle state that
++			 * would be too shallow.
++			 */
++			if (!(tick_nohz_tick_stopped() && avg_us < TICK_USEC)) {
++				idx = teo_find_shallower_state(drv, dev, idx, avg_us);
++				duration_us = avg_us;
++			}
++		}
++	}
++
++	/*
++	 * Don't stop the tick if the selected state is a polling one or if the
++	 * expected idle duration is shorter than the tick period length.
++	 */
++	if (((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) ||
++	    duration_us < TICK_USEC) && !tick_nohz_tick_stopped()) {
++		unsigned int delta_tick_us = ktime_to_us(delta_tick);
++
++		*stop_tick = false;
++
++		/*
++		 * The tick is not going to be stopped, so if the target
++		 * residency of the state to be returned is not within the time
++		 * till the closest timer including the tick, try to correct
++		 * that.
++		 */
++		if (idx > 0 && drv->states[idx].target_residency > delta_tick_us)
++			idx = teo_find_shallower_state(drv, dev, idx, delta_tick_us);
++	}
++
++	return idx;
++}
++
++/**
++ * teo_reflect - Note that governor data for the CPU need to be updated.
++ * @dev: Target CPU.
++ * @state: Entered state.
++ */
++static void teo_reflect(struct cpuidle_device *dev, int state)
++{
++	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
++
++	cpu_data->last_state = state;
++	/*
++	 * If the wakeup was not "natural", but triggered by one of the safety
++	 * nets, assume that the CPU might have been idle for the entire sleep
++	 * length time.
++	 */
++	if (dev->poll_time_limit ||
++	    (tick_nohz_idle_got_tick() && cpu_data->sleep_length_ns > TICK_NSEC)) {
++		dev->poll_time_limit = false;
++		cpu_data->time_span_ns = cpu_data->sleep_length_ns;
++	} else {
++		cpu_data->time_span_ns = local_clock() - cpu_data->time_span_ns;
++	}
++}
++
++/**
++ * teo_enable_device - Initialize the governor's data for the target CPU.
++ * @drv: cpuidle driver (not used).
++ * @dev: Target CPU.
++ */
++static int teo_enable_device(struct cpuidle_driver *drv,
++			     struct cpuidle_device *dev)
++{
++	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
++	int i;
++
++	memset(cpu_data, 0, sizeof(*cpu_data));
++
++	for (i = 0; i < INTERVALS; i++)
++		cpu_data->intervals[i] = UINT_MAX;
++
++	return 0;
++}
++
++static struct cpuidle_governor teo_governor = {
++	.name =		"teo",
++	.rating =	22,
++	.enable =	teo_enable_device,
++	.select =	teo_select,
++	.reflect =	teo_reflect,
++};
++
++static int __init teo_governor_init(void)
++{
++	return cpuidle_register_governor(&teo_governor);
++}
++
++postcore_initcall(teo_governor_init);
+Index: linux-pm/drivers/cpuidle/Kconfig
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/Kconfig
++++ linux-pm/drivers/cpuidle/Kconfig
+@@ -23,6 +23,17 @@ config CPU_IDLE_GOV_LADDER
+ config CPU_IDLE_GOV_MENU
+ 	bool "Menu governor (for tickless system)"
+ 
++config CPU_IDLE_GOV_TEO
++	bool "Timer events oriented governor (for tickless systems)"
++	help
++	  Menu governor derivative that uses a simplified idle state
++	  selection method focused on timer events and does not do any
++	  interactivity boosting.
++
++	  Some workloads benefit from using this governor and it generally
++	  should be safe to use.  Say Y here if you are not happy with the
++	  alternatives.
++
+ config DT_IDLE_STATES
+ 	bool
+ 
+Index: linux-pm/drivers/cpuidle/governors/Makefile
+===================================================================
+--- linux-pm.orig/drivers/cpuidle/governors/Makefile
++++ linux-pm/drivers/cpuidle/governors/Makefile
+@@ -4,3 +4,4 @@
+ 
+ obj-$(CONFIG_CPU_IDLE_GOV_LADDER) += ladder.o
+ obj-$(CONFIG_CPU_IDLE_GOV_MENU) += menu.o
++obj-$(CONFIG_CPU_IDLE_GOV_TEO) += teo.o
+
