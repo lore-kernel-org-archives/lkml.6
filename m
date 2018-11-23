@@ -2,96 +2,107 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF74C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB47C43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC6C220659
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:16:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC6C220659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8521120659
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:16:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8521120659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394326AbeKWV7t (ORCPT
+        id S2503679AbeKWV75 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 16:59:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53388 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387941AbeKWV7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 16:59:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9B019AEA1;
-        Fri, 23 Nov 2018 11:15:57 +0000 (UTC)
-Date:   Fri, 23 Nov 2018 12:15:57 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        David Rientjes <rientjes@google.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 1/3] mm: Check if mmu notifier callbacks are allowed to
- fail
-Message-ID: <20181123111557.GG8625@dhcp22.suse.cz>
-References: <20181122165106.18238-1-daniel.vetter@ffwll.ch>
- <20181122165106.18238-2-daniel.vetter@ffwll.ch>
+        Fri, 23 Nov 2018 16:59:57 -0500
+Received: from foss.arm.com ([217.140.101.70]:42194 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2394331AbeKWV74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 16:59:56 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F7153620;
+        Fri, 23 Nov 2018 03:16:05 -0800 (PST)
+Received: from [10.1.29.128] (p8cg001049571a15.cambridge.arm.com [10.1.29.128])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0DB893F5A0;
+        Fri, 23 Nov 2018 03:16:00 -0800 (PST)
+Subject: Re: [PATCH] mm: Replace all open encodings for NUMA_NO_NODE
+To:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     ocfs2-devel@oss.oracle.com, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-block@vger.kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org,
+        akpm@linux-foundation.org, jiangqi903@gmail.com, hverkuil@xs4all.nl
+References: <1542966856-12619-1-git-send-email-anshuman.khandual@arm.com>
+ <d7cb905f-76f7-3053-2a46-e1a514bd309b@redhat.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <2c0e9cef-663b-553c-e25e-63f7da59ab63@arm.com>
+Date:   Fri, 23 Nov 2018 16:46:00 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181122165106.18238-2-daniel.vetter@ffwll.ch>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <d7cb905f-76f7-3053-2a46-e1a514bd309b@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 22-11-18 17:51:04, Daniel Vetter wrote:
-> Just a bit of paranoia, since if we start pushing this deep into
-> callchains it's hard to spot all places where an mmu notifier
-> implementation might fail when it's not allowed to.
+min
 
-What does WARN give you more than the existing pr_info? Is really
-backtrace that interesting?
-
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: "Christian König" <christian.koenig@amd.com>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: "Jérôme Glisse" <jglisse@redhat.com>
-> Cc: linux-mm@kvack.org
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> ---
->  mm/mmu_notifier.c | 2 ++
->  1 file changed, 2 insertions(+)
+On 11/23/2018 04:06 PM, David Hildenbrand wrote:
+> On 23.11.18 10:54, Anshuman Khandual wrote:
+>> At present there are multiple places where invalid node number is encoded
+>> as -1. Even though implicitly understood it is always better to have macros
+>> in there. Replace these open encodings for an invalid node number with the
+>> global macro NUMA_NO_NODE. This helps remove NUMA related assumptions like
+>> 'invalid node' from various places redirecting them to a common definition.
+>>
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>>
+>> Changes in V1:
+>>
+>> - Dropped OCFS2 changes per Joseph
+>> - Dropped media/video drivers changes per Hans
+>>
+>> RFC - https://patchwork.kernel.org/patch/10678035/
+>>
+>> Build tested this with multiple cross compiler options like alpha, sparc,
+>> arm64, x86, powerpc, powerpc64le etc with their default config which might
+>> not have compiled tested all driver related changes. I will appreciate
+>> folks giving this a test in their respective build environment.
+>>
+>> All these places for replacement were found by running the following grep
+>> patterns on the entire kernel code. Please let me know if this might have
+>> missed some instances. This might also have replaced some false positives.
+>> I will appreciate suggestions, inputs and review.
+>>
+>> 1. git grep "nid == -1"
+>> 2. git grep "node == -1"
+>> 3. git grep "nid = -1"
+>> 4. git grep "node = -1"
 > 
-> diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-> index 5119ff846769..59e102589a25 100644
-> --- a/mm/mmu_notifier.c
-> +++ b/mm/mmu_notifier.c
-> @@ -190,6 +190,8 @@ int __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
->  				pr_info("%pS callback failed with %d in %sblockable context.\n",
->  						mn->ops->invalidate_range_start, _ret,
->  						!blockable ? "non-" : "");
-> +				WARN(blockable,"%pS callback failure not allowed\n",
-> +				     mn->ops->invalidate_range_start);
->  				ret = _ret;
->  			}
->  		}
-> -- 
-> 2.19.1
-> 
+> Hopefully you found most users :)
 
--- 
-Michal Hocko
-SUSE Labs
+I hope so :)
+
+> 
+> Did you check if some are encoded into function calls? f(-1, ...)
+
+Not really. Just wondering how do we even search for it. There might be
+higher level functions passing down -1 to core MM. If you have some
+instances in mind which need replacement I will accommodate them.
+
+> 
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+
+Thanks for the review.
