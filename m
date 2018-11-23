@@ -6,143 +6,130 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76344C43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 930CBC04EBA
 	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 05:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 184F5206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 05:38:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F12020861
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 05:38:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FoBpc3B/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 184F5206B2
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dw05qDxr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F12020861
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbeKWQSp (ORCPT
+        id S1728464AbeKWQUE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 11:18:45 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:42032 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbeKWQSo (ORCPT
+        Fri, 23 Nov 2018 11:20:04 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39905 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726982AbeKWQUE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 11:18:44 -0500
-Received: by mail-yb1-f193.google.com with SMTP id o204-v6so4319043yba.9
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 21:36:04 -0800 (PST)
+        Fri, 23 Nov 2018 11:20:04 -0500
+Received: by mail-pg1-f193.google.com with SMTP id w6so2584776pgl.6
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 21:37:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=8ZyzkIy1RBPCxhkkUXXdPnYFEhrbHkpEXb6nhY8b4mY=;
-        b=FoBpc3B/Dpxua0st18UxwqH6naGQd+HF7E41Vzon4NNi9GWn1GC69N6PPUOg07TA7J
-         jL3v0KpS8NFUTsNHJ3M86jKAbO/0/1cO1SAoHeM9TrkzY4sFndnlrM21HVCanjgqVnbT
-         Il7a+iQ1O/cXNgMw6IztK8ZDyly+NH7esSz8A=
+        bh=lacYSO8ZFVyjLFPiHcmTxi5LsxQOvUurTOk+xPIBdXI=;
+        b=dw05qDxrPRzvnJYwfD/sL8xzi5cuCU1uoFTBdc8zcU/siYbwYMpYmslcaixETGVjzK
+         S7gmhtKxeAJGgq+tGmVuFTOCzyVqP5SrWiZiuC500F9sbnu+SHMsxGfLXskhrOm6AS1r
+         Sxf/Hzb+8Vr0YwXOrxvRkjbUmVgRkMgsuLwJQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8ZyzkIy1RBPCxhkkUXXdPnYFEhrbHkpEXb6nhY8b4mY=;
-        b=dWRTgzuCX0MhO2RLqR/VgIm4l5dI2qjVOVBa2ZISXyHfZKkXT7S/K2qOCPOD6XixrO
-         lypA1sQDSEpzg4UINnxhjl0ziKF1c+mli+RlwqG3R3Bc4bT54O94+HIcXHC33juws4Xb
-         q29N17ApnqIF5DlDfTaBHuKSITeNTi2i/DkTqCi3I2SDD8/NW4RXSZcV4WP2cv38z7W/
-         KPTAM4mv6Vss/IPLdBMPwnyxyPXJNXFNAC7j9cOnJwPDWYFUwauSWQEMjbjRq8zJnHBV
-         wEkkLLZA/CWQQ2+zWVUsuRprujozHJ5LrATWpyIqZNXcqTMzwoY1is4gD9efvTj98TTK
-         7U5Q==
-X-Gm-Message-State: AGRZ1gIORCDl/UjjghEBtnPByR4BXb3UyOK0sQFQlhTDXdJTZO2WPyKV
-        q7vjLjI5O6+34Ja+QzpY9Zq4va0e1q8=
-X-Google-Smtp-Source: AFSGD/UMgAzEzpofyGGRHmrwbk2gqYDLwumk9i4C1urTN9XtjJWs8QyO0PGWdcU13Ey3TEjTck7USw==
-X-Received: by 2002:a25:cc9:: with SMTP id 192-v6mr14476015ybm.145.1542951363449;
-        Thu, 22 Nov 2018 21:36:03 -0800 (PST)
-Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com. [209.85.161.44])
-        by smtp.gmail.com with ESMTPSA id k192-v6sm16656654ywk.99.2018.11.22.21.36.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 21:36:01 -0800 (PST)
-Received: by mail-yw1-f44.google.com with SMTP id l200so4371663ywe.10
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 21:36:00 -0800 (PST)
-X-Received: by 2002:a81:3dc4:: with SMTP id k187-v6mr14802254ywa.415.1542951360072;
- Thu, 22 Nov 2018 21:36:00 -0800 (PST)
+        bh=lacYSO8ZFVyjLFPiHcmTxi5LsxQOvUurTOk+xPIBdXI=;
+        b=HEJVE4GEgDT24VTj9BLkj6jVrBM+07OZQ4Eovprcr20X29NoBa6Tn0qdivMb7AVggT
+         ctKkHD4q0FLIerKcnlezXaP+GUUISlAIEfqP1Lov/IAGUAv3xr2AFRGNqUvJtkR1Lz6O
+         wtKGSEkevE87UD8w/xp/vXRPThfrbnxxjeb5kl8LQiATIvfv6OBQP+lO21VGLJFUqdS2
+         fywpzXasYpp9ZrXdgG1LkXQC+KK+RI/MSfp6zBigoqjGyt0TqSZYV34QguzXgQ94DqOL
+         Dtb2tdjFUUR5AfSCn3RWYt4PrfGAp5D+wN6yzVGR62XW2OIF0t8MhHGlwUK7Lv8qlnA8
+         uKzg==
+X-Gm-Message-State: AA+aEWYXs4pc6xxzrUvRwrqXSSweiVp0ydd2hoGa5BaZOIk2Rl4N8yCg
+        vKqH+Nyprr2/Kr2+7lx+2kx1DMKV6pIkwNFaheeAMA==
+X-Google-Smtp-Source: AFSGD/UiYHOvhvLEZmawlVmqEnMsvZLh3ryI+pyuJ4UJCMRxKjU5nbgBPaxUU1q7lMTy5G/5GYOt/77gVOUZxxSnMV8=
+X-Received: by 2002:a65:4646:: with SMTP id k6mr12486180pgr.153.1542951442537;
+ Thu, 22 Nov 2018 21:37:22 -0800 (PST)
 MIME-Version: 1.0
-References: <20181119190805.19139-1-helen.koike@collabora.com>
- <CAAFQd5DDZwhdMDbrHthQwm2bQ3+NoZNcemAktVTxkR3=LfnnTg@mail.gmail.com>
- <d3fb3b21-6c3d-6b01-727b-dbd66540ce92@collabora.com> <CAAFQd5Afa9ndmU0=q5Kjv-BY+0qpvOdq2+eOTO6OebX4-2NENA@mail.gmail.com>
- <1d10a4323a49ca09bbb7dc865aaaf5b8c5e3b3d5.camel@crowfest.net>
-In-Reply-To: <1d10a4323a49ca09bbb7dc865aaaf5b8c5e3b3d5.camel@crowfest.net>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Fri, 23 Nov 2018 14:35:48 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5DAti8Vf+jyLp6nVH5FiesE=jLNoLq3AFaqdm2FfY=v9Q@mail.gmail.com>
-Message-ID: <CAAFQd5DAti8Vf+jyLp6nVH5FiesE=jLNoLq3AFaqdm2FfY=v9Q@mail.gmail.com>
-Subject: Re: [PATCH v3] drm/rockchip: update cursors asynchronously through atomic.
-To:     mzoran@crowfest.net
-Cc:     helen.koike@collabora.com, Eric Anholt <eric@anholt.net>,
-        Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
-        =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@google.com>
+References: <20181111090341.120786-1-drinkcat@chromium.org>
+ <0100016737801f14-84f1265d-4577-4dcf-ad57-90dbc8e0a78f-000000@email.amazonses.com>
+ <20181121213853.GL3065@bombadil.infradead.org> <c5ccde1e-a711-ad33-537c-2d5a0bd9edd4@arm.com>
+ <20181122082336.GA2049@infradead.org> <CANMq1KALUmxkhE8aaYzEbd7YodF1296KdVympOP+2mWVQ9zmDA@mail.gmail.com>
+In-Reply-To: <CANMq1KALUmxkhE8aaYzEbd7YodF1296KdVympOP+2mWVQ9zmDA@mail.gmail.com>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Fri, 23 Nov 2018 13:37:11 +0800
+Message-ID: <CANMq1KC56nz7u8r54LUbN43DXxZPQWBY67FR1P18tps5V3E-Zw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page tables
+To:     hch@infradead.org
+Cc:     Robin Murphy <robin.murphy@arm.com>, willy@infradead.org,
+        Christoph Lameter <cl@linux.com>,
+        Levin Alexander <Alexander.Levin@microsoft.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        Tomasz Figa <tfiga@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
+        iommu@lists.linux-foundation.org, Michal Hocko <mhocko@suse.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        David Rientjes <rientjes@google.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        yingjoe.chen@mediatek.com, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
-
-On Fri, Nov 23, 2018 at 1:58 PM Michael Zoran <mzoran@crowfest.net> wrote:
+On Fri, Nov 23, 2018 at 11:04 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
 >
-> On Fri, 2018-11-23 at 11:27 +0900, Tomasz Figa wrote:
+> On Thu, Nov 22, 2018 at 4:23 PM Christoph Hellwig <hch@infradead.org> wrote:
 > >
-> > The point here is not about setting and resetting the plane->fb
-> > pointer. It's about what happens inside
-> > drm_atomic_set_fb_for_plane().
+> > On Wed, Nov 21, 2018 at 10:26:26PM +0000, Robin Murphy wrote:
+> > > TBH, if this DMA32 stuff is going to be contentious we could possibly just
+> > > rip out the offending kmem_cache - it seemed like good practice for the
+> > > use-case, but provided kzalloc(SZ_1K, gfp | GFP_DMA32) can be relied upon to
+> > > give the same 1KB alignment and chance of succeeding as the equivalent
+> > > kmem_cache_alloc(), then we could quite easily make do with that instead.
 > >
-> > It calls drm_framebuffer_get() for the new fb and
-> > drm_framebuffer_put() for the old fb. In result, if the fb changes,
-> > the old fb, which had its reference count incremented in the atomic
-> > commit that set it to the plane before, has its reference count
-> > decremented. Moreover, if the new reference count becomes 0,
-> > drm_framebuffer_put() will immediately free the buffer.
+> > Neither is the slab support for kmalloc, not do kmalloc allocations
+> > have useful alignment apparently (at least if you use slub debug).
 > >
-> > Freeing a buffer when the hardware is still scanning out of it isn't
-> > a
-> > good idea, is it?
+> > But I do agree with the sentiment of not wanting to spread GFP_DMA32
+> > futher into the slab allocator.
+> >
+> > I think you want a simple genalloc allocator for this rather special
+> > use case.
 >
-> No, it's not.  But the board I submitted the patch for doesn't have
-> anything like hot swapable ram.  The ram access is still going to work,
-> just it might display something it shouldn't. Say for example if that
-> frame buffer got reused by somethig else and filled with new data in
-> the very small window.
+> So I had a look at genalloc, we'd need to add pre-allocated memory
+> using gen_pool_add [1]. There can be up to 4096 L2 page tables, so we
+> may need to pre-allocate 4MB of memory (1KB per L2 page table). We
+> could add chunks on demand, but then it'd be difficult to free them up
+> (genalloc does not have a "gen_pool_remove" call). So basically if the
+> full 4MB end up being requested, we'd be stuck with that until the
+> iommu domain is freed (on the arm64 Mediatek platforms I looked at,
+> there is only one iommu domain, and it never gets freed).
 
-Thanks for a quick reply!
+I tried out genalloc with pre-allocated 4MB, and that seems to work
+fine. Allocating in chunks would require genalloc changes as
+gen_pool_add calls kmalloc with just GFP_KERNEL [2], and we are in
+atomic context in __arm_v7s_alloc_table...
 
-To clarify, on the Rockchip platform this patch is for (and many other
-arm/arm64 SoCs) the display controller is behind an IOMMU. Freeing the
-buffer would mean unmapping the related IOVAs from the IOMMU. If the
-hardware is still scanning out from the unmapped addresses, it would
-cause IOMMU page faults. We don't have any good IOMMU page fault
-handling in the kernel, so on most platforms that would likely end up
-stalling the display controller completely (on Rockchip it does).
+[2] https://elixir.bootlin.com/linux/latest/source/lib/genalloc.c#L190
 
+> page_frag would at least have a chance to reclaim those pages (if I
+> understand Christoph's statement correctly)
 >
-> But yes, I agree the best solution would be to not release the buffer
-> until the next vblank.
+> Robin: Do you have some ideas of the lifetime/usage of L2 tables? If
+> they are usually few of them, or if they don't get reclaimed easily,
+> some on demand genalloc allocation would be ok (or even 4MB allocation
+> on init, if we're willing to take that hit). If they get allocated and
+> freed together, maybe page_frag is a better option?
 >
-> Perhaps a good solution would be for the DRM api to have the concept of
-> a deferred release?  Meaning if the put() call just added the frame
-> buffer to a list that DRM core could walk during the vblank.  That
-> might be better then every single driver trying to work up a custom
-> solution.
-
-Agreed.
-
-Best regards,
-Tomasz
+> Thanks,
+>
+> [1] https://www.kernel.org/doc/html/v4.19/core-api/genalloc.html
