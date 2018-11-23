@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9808BC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E466C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:27:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 669AF208A3
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:27:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 669AF208A3
+	by mail.kernel.org (Postfix) with ESMTP id 104FE20820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:27:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 104FE20820
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502821AbeKWUKo (ORCPT
+        id S2502829AbeKWUKx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:10:44 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49515 "EHLO mail.bootlin.com"
+        Fri, 23 Nov 2018 15:10:53 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49509 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409043AbeKWUKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2409034AbeKWUKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 23 Nov 2018 15:10:37 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8380B20DD7; Fri, 23 Nov 2018 10:27:08 +0100 (CET)
+        id 4BBD420F7E; Fri, 23 Nov 2018 10:27:08 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B166720F80;
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3DB18207B0;
         Fri, 23 Nov 2018 10:26:38 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
@@ -35,11 +35,10 @@ Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
         Chen-Yu Tsai <wens@csie.org>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v2 43/43] drm/sun4i: frontend: Add A20-specific device-tree compatible and quirks
-Date:   Fri, 23 Nov 2018 10:25:15 +0100
-Message-Id: <20181123092515.2511-44-paul.kocialkowski@bootlin.com>
+        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v2 41/43] drm/sun4i: Make COEF_RDY conditional
+Date:   Fri, 23 Nov 2018 10:25:13 +0100
+Message-Id: <20181123092515.2511-42-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
 References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
@@ -50,55 +49,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the appropriate device-tree compatible and quirk data for
-hooking frontend support for the A20. It supports the FIR coefficients
-ready bit but not the access control bit. It also takes different phase
-values than the A33 for these coefficients.
+From: Maxime Ripard <maxime.ripard@bootlin.com>
 
-The compatible is already used in the A20 device-tree and already
-documented in the device-tree bindings.
+The COEF_RDY bit isn't found in all the SoCs featuring some variant of the
+frontend.
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Add it to our quirks structure.
+
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 9 +++++----
+ drivers/gpu/drm/sun4i/sun4i_frontend.h | 1 +
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index 427c51029a9c..4a9cb478167f 100644
+index 0e92f59efd49..f50507ee6d75 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -676,6 +676,20 @@ static const struct dev_pm_ops sun4i_frontend_pm_ops = {
- 	.runtime_suspend	= sun4i_frontend_runtime_suspend,
+@@ -95,10 +95,11 @@ static void sun4i_frontend_scaler_init(struct sun4i_frontend *frontend)
+ 			     sun4i_frontend_vert_coef[i]);
+ 	}
+ 
+-	regmap_write_bits(frontend->regs,
+-			  SUN4I_FRONTEND_FRM_CTRL_REG,
+-			  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY,
+-			  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY);
++	if (frontend->data->has_coef_rdy)
++		regmap_write_bits(frontend->regs,
++				  SUN4I_FRONTEND_FRM_CTRL_REG,
++				  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY,
++				  SUN4I_FRONTEND_FRM_CTRL_COEF_RDY);
+ }
+ 
+ int sun4i_frontend_init(struct sun4i_frontend *frontend)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+index daf3fa5d01ba..3618993f8e49 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+@@ -102,6 +102,7 @@ struct reset_control;
+ 
+ struct sun4i_frontend_data {
+ 	bool	has_coef_access_ctrl;
++	bool	has_coef_rdy;
  };
  
-+static const struct sun4i_frontend_data sun7i_a20_frontend = {
-+	.ch_phase		= {
-+		{
-+			.horzphase = 0,
-+			.vertphase = { 0, 0 },
-+		},
-+		{
-+			.horzphase = 0xfc000,
-+			.vertphase = { 0xfc000, 0xfc000 },
-+		},
-+	},
-+	.has_coef_rdy		= true,
-+};
-+
- static const struct sun4i_frontend_data sun8i_a33_frontend = {
- 	.ch_phase		= {
- 		{
-@@ -691,6 +705,10 @@ static const struct sun4i_frontend_data sun8i_a33_frontend = {
- };
- 
- const struct of_device_id sun4i_frontend_of_table[] = {
-+	{
-+		.compatible = "allwinner,sun7i-a20-display-frontend",
-+		.data = &sun7i_a20_frontend
-+	},
- 	{
- 		.compatible = "allwinner,sun8i-a33-display-frontend",
- 		.data = &sun8i_a33_frontend
+ struct sun4i_frontend {
 -- 
 2.19.1
 
