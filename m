@@ -2,131 +2,112 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA5BC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BBDC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E114220685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:10:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E114220685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 371C320685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:10:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IO7rRKEu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 371C320685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439727AbeKWXyg (ORCPT
+        id S2439736AbeKWXyr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:54:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49520 "EHLO mx1.redhat.com"
+        Fri, 23 Nov 2018 18:54:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394696AbeKWXyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:54:36 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2394696AbeKWXyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 18:54:47 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BDC3F6EB85;
-        Fri, 23 Nov 2018 13:10:28 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (ovpn-117-155.ams2.redhat.com [10.36.117.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E4DCC19741;
-        Fri, 23 Nov 2018 13:10:22 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Rich Felker <dalias@libc.org>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        carlos <carlos@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl init and thread creation
-References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com>
-        <20181122143603.GD23599@brightrain.aerifal.cx>
-        <782067422.9852.1542899056778.JavaMail.zimbra@efficios.com>
-        <20181122151444.GE23599@brightrain.aerifal.cx>
-        <686626451.10113.1542901620250.JavaMail.zimbra@efficios.com>
-        <87wop5xeit.fsf@oldenburg.str.redhat.com>
-        <1045257294.10291.1542905262086.JavaMail.zimbra@efficios.com>
-        <87k1l5xd33.fsf@oldenburg.str.redhat.com>
-        <20181122171010.GH23599@brightrain.aerifal.cx>
-Date:   Fri, 23 Nov 2018 14:10:14 +0100
-In-Reply-To: <20181122171010.GH23599@brightrain.aerifal.cx> (Rich Felker's
-        message of "Thu, 22 Nov 2018 12:10:10 -0500")
-Message-ID: <871s7cvt1l.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7325F20685;
+        Fri, 23 Nov 2018 13:10:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542978638;
+        bh=IRNVbAofLNbD3p5wsosrut7GJ5fWV+etyBCl6UfK52A=;
+        h=Date:From:To:Cc:Subject:From;
+        b=IO7rRKEuRgnJt3OVSIYroXett34dL4mrmWn6y5+2kjMMebz/GjNI2jrPHdY4s4/25
+         K2KGVv/R8rQq9TqC9hG1ZP6u7IHlROdQYb1m8VzKSofY5wurazflBM5oQFLsYd70LX
+         1zAI/ZIXRprynZWNCruh2Yetv7Avd93vRAXaflPU=
+Date:   Fri, 23 Nov 2018 14:10:36 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 4.9.140
+Message-ID: <20181123131036.GA15416@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 23 Nov 2018 13:10:29 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Rich Felker:
 
->> I'm not entirely sure because the glibc terminology is confusing, but I
->> think it places intial-exec TLS into the static TLS area (so that it has
->> a fixed offset from the TCB).  The static TLS area is placed on the
->> user-supplied stack.
->
-> This is an implementation detail that should not leak to applications,
-> and I believe it's still considered a bug, in that, with large static
-> TLS, it could overflow or leave unusably little space left on an
-> otherwise-plenty-large application-provided stack.
+--UugvWAfsgieZRqgk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Sure, but that does not matter in this context because right now, there
-is no fix for this bug, and when we fix it, we can take backwards
-compatibility into account.
+Sorry for the quick follow-on release, but this resolves two reported
+issues that should have gotten into the previous release.
 
-Any library that ends up using rseq will need to coordinate with the
-toolchain.  I think that's unavoidable given the kernel interface.
+I'm announcing the release of the 4.9.140 kernel.
 
->> > One issue here is that early adopter libraries cannot always use
->> > the IE model. I tried using it for other TLS variables in lttng-ust, and
->> > it ended up hanging our CI tests when tracing a sample application with
->> > lttng-ust under a Java virtual machine: being dlopen'd in a process that
->> > possibly already exhausts the number of available backup TLS IE entries
->> > seems to have odd effects. This is why I'm worried about using the IE model
->> > within lttng-ust.
->> 
->> You can work around this by preloading the library.  I'm not sure if
->> this is a compelling reason not to use initial-exec TLS memory.
->
-> Use of IE model from a .so file (except possibly libc.so or something
-> else that inherently needs to be present at program startup for other
-> reasons) should be a considered a bug and unsupported usage.
-> Encouraging libraries to perpetuate this behavior is going backwards
-> on progress that's being made to end it.
+All users of the 4.9 kernel series must upgrade.
 
-Why?  Just because glibc's TCB allocation strategy is problematic?
-We can fix that, even with dlopen.
+The updated 4.9.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-4.9.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
 
-If you are only concerned about the interactions with dlopen, then why
-do you think initial-exec TLS is the problem, and not dlopen?
+thanks,
 
->> > The per-thread reference counter is a way to avoid issues that arise from
->> > lack of destructor ordering. Is it an acceptable approach for you, or
->> > you have something else in mind ?
->> 
->> Only for the involved libraries.  It will not help if other TLS
->> destructors run and use these libraries.
->
-> Presumably they should have registered their need for rseq too,
-> thereby incrementing the reference count. I'm not sure this is a good
-> idea, but I think I understand it now.
+greg k-h
 
-They may have to increase the reference count from 0 to 1, though, so
-they have to re-register the rseq area.  This tends to get rather messy.
+------------
 
-I still I think implicit destruction of the rseq area is preferable over
-this complexity.
+ Makefile                   |    2 -
+ arch/x86/kernel/cpu/bugs.c |   57 ++++-----------------------------------------
+ kernel/cpu.c               |   11 --------
+ net/ipv6/route.c           |   11 ++++++--
+ 4 files changed, 16 insertions(+), 65 deletions(-)
 
-Thanks,
-Florian
+Greg Kroah-Hartman (3):
+      Revert "x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation"
+      Revert "ipv6: set rt6i_protocol properly in the route when it is installed"
+      Linux 4.9.140
+
+
+--UugvWAfsgieZRqgk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlv3/EoACgkQONu9yGCS
+aT6QPg//V5soxHPKjJYmvA/Q2YcXAQU5+b6H4ikjeSoFclK4YsHylNZ3QjiJGgXQ
+PwklgVckl+DiXXiVJR/+wkrY/x/2Ir/2J6lkDKYcI0SY0lpeCJEfo8uZzCqQ3irC
+vSMI0Ry9XDpBx+vcQiWVBrwKkc6iSZhIUeMRvYuWfcEQB71KLkjkRYTB+uC+fn7f
+kh1b2tbBfSk34mgY4pZEVq3cP7FWVJw1RcD79ZLXTqCzRRGDaXWxuiM99X4WQog5
+ChyvW8fO5MwCWDNDhUv0pfyDwcPnFoXJAGsxettseiF59jWZ98hNNTemUjZRdln5
+ZmxYlC6RVe0WXu9z57vDHOxnIlS6zSdbrAWRPTYJqI3D3CNDOZhh+RWzb3/9qXzJ
+iRDSdX8g6bKo9sf7yArtjzj49xmsXIii/xPASD91hFbPLpH5Cyv8jrGZFTzPnWxg
+3G+LpvjhpWuxWrFfAkUvYq8pHYVHGcK2sUJKRVJF6QixsDwVZHCxWwWmP+L8YD0m
+tGN2M9Hq9wX8kbEc/dm3Ut7sNzx4C7AB5Aodxhq/Cm/00SwjjaPq/lD3yx5rclYW
+Ukima1EKFCYvy4JATULX7EVeQK4w+16+5k+Ed/8Gv0v76HWeYm8C8PuolcBjQ6ri
+0N7pdh/Z19+raqHy/YL5XkLq+TpVXVTiFDyjYuvhnw2ytncCMj0=
+=mvyT
+-----END PGP SIGNATURE-----
+
+--UugvWAfsgieZRqgk--
