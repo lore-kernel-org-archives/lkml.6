@@ -2,268 +2,139 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 247ADC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F78C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C969420865
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:26:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02C3420672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:29:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W3xVwV2z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C969420865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cii11l+5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02C3420672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440858AbeKXELp (ORCPT
+        id S2440877AbeKXEOZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 23:11:45 -0500
-Received: from casper.infradead.org ([85.118.1.10]:57584 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388876AbeKXELp (ORCPT
+        Fri, 23 Nov 2018 23:14:25 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45832 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2440864AbeKXEOZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 23:11:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=yVoHYZe3u3TiCcygu3CStsX8NOU4x2sCtM66999OPtI=; b=W3xVwV2zXkNt+rlj8gWUlLhUKI
-        A6btHAJH+aVr91xILdG/J546xoQRKpwyXI+0V0zpkOFSwuEX8bvt+Jh5LGXjAOxZmv/K6CWuBPiBL
-        zvD6tq9AHCknQbgwDsZxS6Z3tb1jYvpElez2klBZ043QpXPZjCI70glVF4R0Tq65rR9PlQW0AV5Kd
-        ie+ivCnfipzB+vswMEUleCrXVi0q7zIN2ELZ6ECh+Gdg8UP/euzVOMlCAxrKU1Q9kpmErbPbXG6Tz
-        /hcGi9mrT0qQ3CrXI47uz49Oii5VDVQxl4mEZwl97xxoDfhGL0iWUVOwpxGAGbtY7UGR4/7gci4S6
-        NmLWHxuw==;
-Received: from 201.47.163.210.dynamic.adsl.gvt.net.br ([201.47.163.210] helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gQFDq-0000fo-NA; Fri, 23 Nov 2018 17:26:31 +0000
-Date:   Fri, 23 Nov 2018 15:26:25 -0200
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     stakanov <stakanov@eclipso.eu>, Takashi Iwai <tiwai@suse.de>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Ira Krufky <mkrufky@linuxtv.org>,
-        Sean Young <sean@mess.org>, Brad Love <brad@nextdimension.cc>,
-        Malcolm Priestley <tvboxspy@gmail.com>
-Subject: Re: DVB-S PCI card regression on 4.19 / 4.20
-Message-ID: <20181123152625.7992ceb4@coco.lan>
-In-Reply-To: <4969775.51lmc1uXLO@roadrunner.suse>
-References: <4e0356d6303c128a3e6d0bcc453ba1be@mail.eclipso.de>
-        <12757009.r0OKxgvFl0@roadrunner.suse>
-        <20181122183549.331ecbc4@coco.lan>
-        <4969775.51lmc1uXLO@roadrunner.suse>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 23 Nov 2018 23:14:25 -0500
+Received: by mail-wr1-f67.google.com with SMTP id v6so13037241wrr.12
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 09:29:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vsz8kXb6CVVsBzyFCRZkaXVWSBUyNLZRbPvH2/3m1zI=;
+        b=Cii11l+5xtXHlR9rXHCV63qwX5vwMHzHo8g/av47h2GbA8ZB0n8xnNUVYoZix5gzSL
+         EzhMannNO+RLhXEirMVjjyRDZGZlauqrsA+zseqpgT/NgjAXE7IsHm8rOLtC0hJ5mLLI
+         r94bw82iV4vBldk9UgMQWQN583nbS/ZvAkQCU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vsz8kXb6CVVsBzyFCRZkaXVWSBUyNLZRbPvH2/3m1zI=;
+        b=s//TnxzlFnhh2dTomw0s3HpN8A0MGHNXZvVMbTm9BErcHa4qWBAaJV5FqZBdaDaQIV
+         /L0CjflYxZLZgkqeamNlyR3wstXpDjkyFYjRkWI2BJ6POf8cDRykyl15zsxqH1s+gyVa
+         6ULKlp/MxYPpFCrNxSvAnnu43wfek0wU0V1r2gYg6qtukz30uc5jZpXh1fM8vdUaRY3/
+         5ynmDXVVUw6XQ/fvBGLP0+vEg+50IViEjL9zGqcSwbIG6l/hjFoYwzZsSzIMHe8KMlIE
+         I7uSPfT0iFUOJPng80W+oDMSKq2fBwicvefXi7XbkqXwmFJP6RGIYOK1bVXyU++kXTCP
+         61Mw==
+X-Gm-Message-State: AA+aEWbMqp17uwtXPbXMWXq+5pyBhjiKZH9krTBvLzzkNLQ9Itc4LQnE
+        oPwKn2/OKxicsp8EUxni/Jwp5Zfxjvg=
+X-Google-Smtp-Source: AFSGD/W8AV7FoFifqisBZaV4fzOZN1nhgsgcHa2BfC2aXU9iZ+TBe2vik5IRRlXpJVueQD3qTlyi5A==
+X-Received: by 2002:adf:c6c3:: with SMTP id c3-v6mr14341030wrh.243.1542994153948;
+        Fri, 23 Nov 2018 09:29:13 -0800 (PST)
+Received: from harold.home ([2a01:cb1d:112:6f00:6913:f64b:5e59:5ba5])
+        by smtp.gmail.com with ESMTPSA id 125sm5041606wml.35.2018.11.23.09.29.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 23 Nov 2018 09:29:12 -0800 (PST)
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, will.deacon@arm.com,
+        catalin.marinas@arm.com, ast@fb.com, daniel@iogearbox.net,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH] arm64/bpf: use movn/movk/movk sequence to generate kernel addresses
+Date:   Fri, 23 Nov 2018 18:29:02 +0100
+Message-Id: <20181123172902.21480-1-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stakarov,
+On arm64, all executable code is guaranteed to reside in the vmalloc
+space (or the module space), and so jump targets will only use 48
+bits at most, and the remaining bits are guaranteed to be 0x1.
 
-Em Fri, 23 Nov 2018 16:55:35 +0100
-stakanov <stakanov@eclipso.eu> escreveu:
+This means we can generate an immediate jump address using a sequence
+of one MOVN (move wide negated) and two MOVK instructions, where the
+first one sets the lower 16 bits but also sets all top bits to 0x1.
 
-> In data gioved=C3=AC 22 novembre 2018 21:35:49 CET, Mauro Carvalho Chehab=
- ha=20
-> scritto:
-> > Em Thu, 22 Nov 2018 21:19:49 +0100
-> >=20
-> > stakanov <stakanov@eclipso.eu> escreveu: =20
-> > > Hello Mauro.
-> > >=20
-> > > Thank you so much, for this fast reply and especially for the detailed
-> > > indications. I expected to have a lack of knowledge.
-> > >=20
-> > > Well,  I am replying to the question as of below: (for convenience I =
-did
-> > > cut the before text, if you deem it useful for the list I can then
-> > > correct that in the next posts).
-> > >=20
-> > > In data gioved=C3=AC 22 novembre 2018 21:06:11 CET, Mauro Carvalho Ch=
-ehab ha
-> > >=20
-> > > scritto: =20
-> > > > Are you sure that the difference is just the Kernel version? Perhap=
-s you
-> > > > also updated some other package. =20
-> > >=20
-> > > To be clear: I had the same system(!) with all three kernel 4.18.15-1,
-> > > 4.19.1 (when the problem did arise) and 4.20.2 rc3 from Takashi's rep=
-o)
-> > > installed. =20
-> > Ok, so rebooting to 4.18.15-1 solves the issue?
-> >=20
-> > Also, what GPU driver are you using?
-> >=20
-> > In any case, by using the old "Universal" LNBf, you're likely missing s=
-ome
-> > transponders, and missing several channels.
-> >  =20
-> > > In this very configuration: if one booted in 4.18 (that is in perfect
-> > > parity with all other packages) the card worked. 4.19.1 no. And the l=
-ast
-> > > kernel the same. So whatever might be different, forcefully it has to=
- be
-> > > in the kernel. (Which is not really a problem if I manage to make it
-> > > work, so settings will be known to others or, if not, we will find out
-> > > what is different, and all will be happy. As you see I am still
-> > > optimist). =20
-> >=20
-> > Well, we don't want regressions in Kernel. If there's an issue there,
-> > it should be fixed. However, I can't think on any other changes since
-> > 4.18 that would be causing troubles for b2c2 driver.
-> >=20
-> > See, the only change at the driver itself is just a simple API
-> > replacement that wouldn't cause this kind of problems:
-> >=20
-> > 	$ git log --oneline v4.18.. drivers/media/common/b2c2/
-> > 	c0decac19da3 media: use strscpy() instead of strlcpy()
-> >=20
-> > There were a few changes at the DVB core:
-> >=20
-> > 	$ git log --no-merges --oneline v4.18.. drivers/media/dvb-core/
-> > 	f3efe15a2f05 media: dvb: use signal types to discover pads
-> > 	b5d3206112dd media: dvb: dmxdev: move compat_ioctl handling to dmxdev.c
-> > 	cc1e6315e83d media: replace strcpy() by strscpy()
-> > 	c0decac19da3 media: use strscpy() instead of strlcpy()
-> > 	fd89e0bb6ebf media: videobuf2-core: integrate with media requests
-> > 	db6e8d57e2cd media: vb2: store userspace data in vb2_v4l2_buffer
-> > 	6a2a1ca34ca6 media: dvb_frontend: ensure that the step is ok for both =
-FE
-> > and tuner f1b1eabff0eb media: dvb: represent min/max/step/tolerance fre=
-qs
-> > in Hz a3f90c75b833 media: dvb: convert tuner_info frequencies to Hz
-> > 	6706fe55af6f media: dvb_ca_en50221: off by one in
-> > dvb_ca_en50221_io_do_ioctl() 4d1e4545a659 media: mark entity-intf links=
- as
-> > IMMUTABLE
-> >=20
-> > But, on a first glance, the only ones that has potential to cause issues
-> > were the ones addressed that the patch I wrote (merged by Takashi).
-> >=20
-> > If you're really receiving data from EPG (you may just have it
-> > cached), it means that the DVB driver is doing the right thing.
-> >=20
-> > Btw, to be sure that you're not just seeing the old EPG data, you
-> > should move or remove this file:
-> >=20
-> > 	~/.local/share/kaffeine/epgdata.dvb
-> >=20
-> > Kaffeine will generate a new one again once it tunes into a TV channel.
-> >  =20
-> > > I will proceed as indicated and report back here tomorrow. =20
-> >=20
-> > Ok.
-> >=20
-> > Thanks,
-> > Mauro =20
-> So, I confirm that:
-> a) 4.18.15-1 this card worked flawlessly.
-> b) above that, included the kernel with correction, it does not work any =
-more.
-> c) downloading and copying the respective firmware from openelec does not=
-=20
-> change, the card stays dead.=20
-> d) astra: no search of channels, search interrupted after seconds.
-> e) hotbird: search without finding any channel - only noise
-> f) lnbf setting was to "Astra E" as indicated.=20
-> g) after erasing the file in local/share it is clear that EPG data does N=
-OT=20
-> work either.
-> When using the channels as they were recorded before, the signal strength=
- is 0=20
-> but the fictional led is green (as if it would receive).=20
->=20
->=20
->=20
-> No picture, no tone, no channel sync, no EPG. A brick.=20
-> So, with 4.18 that worked, only that now (due to an error I lost access t=
-o the=20
-> 4.18.15-1 driver of TW, so if Takashi has a link, I can reinstall it and =
-we=20
-> can check if, parity all packages this is still the case. I assure you th=
-at it=20
-> was, but that would be a perfect proof.=20
-> Firmware downloaded and installed in /lib/firmware was:
-> https://www.linuxtv.org/wiki/index.php/TechniSat_SkyStar_S2 following the=
- link=20
-> to open Elec:
->=20
-> https://github.com/OpenELEC/dvb-firmware/blob/master/firmware/dvb-fe-cx24=
-120-1.20.58.2.fw
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
 
-Thank you for the tests. Yeah, from what you're describing, there's
-still another Kernel bug that the frequency patch didn't fix.
+I looked into using ADRP/ADD pairs, but this is very fiddly, since
+it requires knowledge about where the ADRP instruction ends up in
+memory. (ADRP produces a PC-relative address with bits [11:0] cleared,
+and so in addition to the distance between the instruction and the
+target, we also need to know their offsets modulo 4096 and I wasn't
+sure whether the offsets are guaranteed to be relative to the start
+of a page or not)
 
-I'm c/c a few DVB developers. Maybe they may have some ideas about
-what's happening or may have some b2c2-based board to run some tests.
-I'm very busy up to next Wed, so it is unlikely that I would have any
-time to look on it. Also, I don't have any b2c2 board to test.
+ arch/arm64/net/bpf_jit_comp.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-Yet, let's do one last attempt: could you please test if the
-enclosed patch changes anything? This was supposed to be just
-a cleanup, but, after thinking a little bit, I guess it may fix
-the issue you're reporting.
-
-In order to make easier for people to test it, I'm applying the 3 patch
-series I posted on my tree, plus the enclosed followup cleanup
-patch at linux_media development tree. With that, everyone will
-have a common base for the tests.
-
-Takashi,
-
-Could you please produce a Kernel for Stakanov to test
-with the following patches:
-
-https://patchwork.linuxtv.org/patch/53044/
-https://patchwork.linuxtv.org/patch/53045/
-https://patchwork.linuxtv.org/patch/53046/
-https://patchwork.linuxtv.org/patch/53128/
-
-Stakanov,
-
-Before booting the new Kernel, please create a new file
-as /etc/modprobe.d/media.conf with:
-
-	options dvb-core debug=3D1
-	options dvb-pll debug=3D1
-
-With this, the next time the Kernel boots, it will cause both
-dvb-core and dvb-pll to be more verbose, enabling the new debug
-messages that the above patches add. Once we get this fixed,
-you may remove the file (or comment the lines), in order to
-avoid uneeded messages on your dmesg.
-
-Thanks,
-Mauro
-
-[PATCH] media: dvb-pll: don't re-validate tuner frequencies
-
-The dvb_frontend core already checks for the frequencies. No
-need for any additional check inside the driver.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-
-diff --git a/drivers/media/dvb-frontends/dvb-pll.c b/drivers/media/dvb-fron=
-tends/dvb-pll.c
-index fff5816f6ec4..29836c1a40e9 100644
---- a/drivers/media/dvb-frontends/dvb-pll.c
-+++ b/drivers/media/dvb-frontends/dvb-pll.c
-@@ -610,9 +610,6 @@ static int dvb_pll_configure(struct dvb_frontend *fe, u=
-8 *buf,
- 	u32 div;
- 	int i;
-=20
--	if (frequency && (frequency < desc->min || frequency > desc->max))
--		return -EINVAL;
--
- 	for (i =3D 0; i < desc->count; i++) {
- 		if (frequency > desc->entries[i].limit)
- 			continue;
-
+diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+index a6fdaea07c63..3b4d2c6fc133 100644
+--- a/arch/arm64/net/bpf_jit_comp.c
++++ b/arch/arm64/net/bpf_jit_comp.c
+@@ -134,10 +134,9 @@ static inline void emit_a64_mov_i64(const int reg, const u64 val,
+ }
+ 
+ /*
+- * This is an unoptimized 64 immediate emission used for BPF to BPF call
+- * addresses. It will always do a full 64 bit decomposition as otherwise
+- * more complexity in the last extra pass is required since we previously
+- * reserved 4 instructions for the address.
++ * Kernel addresses in the vmalloc space use at most 48 bits, and the
++ * remaining bits are guaranteed to be 0x1. So we can compose the address
++ * with a fixed length movn/movk/movk sequence.
+  */
+ static inline void emit_addr_mov_i64(const int reg, const u64 val,
+ 				     struct jit_ctx *ctx)
+@@ -145,8 +144,8 @@ static inline void emit_addr_mov_i64(const int reg, const u64 val,
+ 	u64 tmp = val;
+ 	int shift = 0;
+ 
+-	emit(A64_MOVZ(1, reg, tmp & 0xffff, shift), ctx);
+-	for (;shift < 48;) {
++	emit(A64_MOVN(1, reg, ~tmp & 0xffff, shift), ctx);
++	while (shift < 32) {
+ 		tmp >>= 16;
+ 		shift += 16;
+ 		emit(A64_MOVK(1, reg, tmp & 0xffff, shift), ctx);
+@@ -627,10 +626,7 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx)
+ 		const u8 r0 = bpf2a64[BPF_REG_0];
+ 		const u64 func = (u64)__bpf_call_base + imm;
+ 
+-		if (ctx->prog->is_func)
+-			emit_addr_mov_i64(tmp, func, ctx);
+-		else
+-			emit_a64_mov_i64(tmp, func, ctx);
++		emit_addr_mov_i64(tmp, func, ctx);
+ 		emit(A64_BLR(tmp), ctx);
+ 		emit(A64_MOV(1, r0, A64_R(0)), ctx);
+ 		break;
+-- 
+2.19.1
 
