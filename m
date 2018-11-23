@@ -2,122 +2,77 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAECC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA504C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECD4320866
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:58:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD4320866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 75B3820863
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:59:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rgmDXiSU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75B3820863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441044AbeKXEny (ORCPT
+        id S2441055AbeKXEou (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 23:43:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35698 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730951AbeKXEny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 23:43:54 -0500
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52C7120863;
-        Fri, 23 Nov 2018 17:58:36 +0000 (UTC)
-Date:   Fri, 23 Nov 2018 12:58:34 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC][PATCH 06/14] fgraph: Move function graph specific code
- into fgraph.c
-Message-ID: <20181123125834.1ddc367e@vmware.local.home>
-In-Reply-To: <20181123061133.GA195223@google.com>
-References: <20181122012708.491151844@goodmis.org>
-        <20181122012803.442190047@goodmis.org>
-        <20181123061133.GA195223@google.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 23 Nov 2018 23:44:50 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:46852 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730951AbeKXEou (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 23:44:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ilUvtvGAlq0RxOf3U5Kwm0YPD6DckdcEC5wYTtotjMk=; b=rgmDXiSUqHqzwqTbIsdvf/GQL
+        W0HaH/Ev5eNCoCcNiYzY5QejkGOTJXpJ9S/Tc40paU/8V+XPuSrkiuCJY/9BPhhAAyyAV8Wso9gqG
+        QIL26mzcWVl9rYTbpVh5t9ilvRedyQG3IS4L2bITcBaoVOA+KteMPkLcyJg/poc5Sv6ztwFPW3tvg
+        TARkIX/xu8tRYLIy13KVg1vn1M8HZKJ4B86ZekHPLTzgtmpqPpgCYxku1kYdBHJCzbHdKtT1Ne++6
+        CkeikBgoOHf2W2UGmyubGlWy3PCaxCXOTo6rfBboucMNC7w1Q8nf573DkcepUVsZyHQiek+ghlwsD
+        2vZk4R6MA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gQFjo-00011h-DE; Fri, 23 Nov 2018 17:59:32 +0000
+Date:   Fri, 23 Nov 2018 09:59:32 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH 1/2] mm: Remove redundant test from find_get_pages_contig
+Message-ID: <20181123175932.GV3065@bombadil.infradead.org>
+References: <20181122213224.12793-1-willy@infradead.org>
+ <20181122213224.12793-2-willy@infradead.org>
+ <20181123104732.gvhdqyddbsiq3i42@kshutemo-mobl1>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181123104732.gvhdqyddbsiq3i42@kshutemo-mobl1>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Nov 2018 22:11:33 -0800
-Joel Fernandes <joel@joelfernandes.org> wrote:
-
-> On Wed, Nov 21, 2018 at 08:27:14PM -0500, Steven Rostedt wrote:
-> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> > 
-> > To make the function graph infrastructure more managable, the code needs to
-> > be in its own file (fgraph.c). Move the code that is specific for managing
-> > the function graph infrastructure out of ftrace.c and into fgraph.c
-> > 
-> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>  
+On Fri, Nov 23, 2018 at 01:47:32PM +0300, Kirill A. Shutemov wrote:
+> On Thu, Nov 22, 2018 at 01:32:23PM -0800, Matthew Wilcox wrote:
+> > After we establish a reference on the page, we check the pointer continues
+> > to be in the correct position in i_pages.  There's no need to check the
+> > page->mapping or page->index afterwards; if those can change after we've
+> > got the reference, they can change after we return the page to the caller.
 > 
-> I think this patch causes a build error if CONFIG_FUNCTION_PROFILER is
-> disabled but function graph is enabled. The following diff fixes it for me.
+> Hm. IIRC, page->mapping can be set to NULL due truncation, but what about
+> index? When it can be changed? Truncation doesn't touch it.
 
-Thanks for reporting this.
-
-> 
-> thanks,
-> 
->  - Joel
-> 
->  ----8<------
->  
-> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-> index 3b8c307c7ff0..ce38bb962f91 100644
-> --- a/kernel/trace/ftrace.c
-> +++ b/kernel/trace/ftrace.c
-> @@ -382,6 +382,15 @@ static void ftrace_update_pid_func(void)
->  	update_ftrace_function();
->  }
->  
-> +#ifdef CONFIG_FUNCTION_GRAPH_TRACER
-> +static bool fgraph_graph_time = true;
-> +
-> +void ftrace_graph_graph_time_control(bool enable)
-> +{
-> +	fgraph_graph_time = enable;
-> +}
-> +#endif
-> +
-
-I think the better answer is to move it into trace_functions_graph.c.
-
-I'll do that and give you the "reported-by".
-
--- Steve
-
-
->  #ifdef CONFIG_FUNCTION_PROFILER
->  struct ftrace_profile {
->  	struct hlist_node		node;
-> @@ -783,12 +792,6 @@ function_profile_call(unsigned long ip, unsigned long parent_ip,
->  }
->  
->  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
-> -static bool fgraph_graph_time = true;
-> -
-> -void ftrace_graph_graph_time_control(bool enable)
-> -{
-> -	fgraph_graph_time = enable;
-> -}
->  
->  static int profile_graph_entry(struct ftrace_graph_ent *trace)
->  {
-
+I think index can only be changed after the refcount has hit zero and
+the page is safely out of the pagecache.  I agree that page->mapping can
+be set to NULL after the call to xas_reload() ... but then it can also
+happen after the check, so the check isn't really buying us anything
+that the xas_reload() call doesn't already check.
