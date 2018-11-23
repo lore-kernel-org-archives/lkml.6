@@ -2,119 +2,86 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 150BDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70DF6C04EBA
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF2A920824
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:34:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF2A920824
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2FC0420866
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:34:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7Bscsc2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FC0420866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389252AbeKXFTi (ORCPT
+        id S2395272AbeKXFTp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 00:19:38 -0500
-Received: from foss.arm.com ([217.140.101.70]:50980 "EHLO foss.arm.com"
+        Sat, 24 Nov 2018 00:19:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726368AbeKXFTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 00:19:37 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0AC553620;
-        Fri, 23 Nov 2018 10:34:13 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CC8653F5CF;
-        Fri, 23 Nov 2018 10:34:12 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 466221AE1019; Fri, 23 Nov 2018 18:34:29 +0000 (GMT)
-Date:   Fri, 23 Nov 2018 18:34:29 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     thor.thayer@linux.intel.com, Tomasz Figa <tfiga@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
-        sboyd@kernel.org, linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        alex.williamson@redhat.com, robh+dt <robh+dt@kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [RESEND PATCH v17 5/5] iommu/arm-smmu: Add support for
- qcom,smmu-v2 variant
-Message-ID: <20181123183428.GD21183@arm.com>
-References: <20181116112430.31248-1-vivek.gautam@codeaurora.org>
- <20181116112430.31248-6-vivek.gautam@codeaurora.org>
- <20181121173803.GB9801@arm.com>
- <CAFp+6iELH7Mw3Ue2ksEyV+Ac8hG8--Ki69xrPCA4F-AcireRow@mail.gmail.com>
- <CAAFQd5B-bZR8dmjARb8L4oqgET2YAjXhexAO0GKAvU4JoVU=7g@mail.gmail.com>
- <CAFp+6iFhBRJWGY4Hj30tWedGpEUcnkBJrOvffmbpD2m9QMZB3A@mail.gmail.com>
+        id S2389262AbeKXFTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Nov 2018 00:19:44 -0500
+Received: from localhost (unknown [37.142.5.207])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D0A220865;
+        Fri, 23 Nov 2018 18:34:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542998060;
+        bh=F09aAu/utoXDg3Q1IfaFOFyzokDCuzL9ZU4E0ZjigYs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=i7Bscsc2dWkrlNaxWo8LR8pm8skPe/XZHrt1yL71BnaamhmooW7QPGJHUqLlNdUuK
+         cScI5Is/4ZsY5kZi3KKFDtk8Ji6QEWwS5vjTF9YB9twOT4ogOI77nW0Pye+qPGvnOW
+         +NcAmIAB2yDNT2MD1NLxTT8Dz9EQqX3ldA8DRM7o=
+Date:   Fri, 23 Nov 2018 13:34:15 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Helge Deller <deller@gmx.de>, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        linux-parisc@vger.kernel.org, stable@kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [for-next][PATCH 08/18] parisc: function_graph: Simplify with
+ function_graph_entry()
+Message-ID: <20181123183415.GB1917@sasha-vm>
+References: <20181122003332.500796758@goodmis.org>
+ <20181123073033.2083020863@mail.kernel.org>
+ <511cb47a-a1bd-bb5d-69ec-0836c6b5abfe@gmx.de>
+ <20181123121253.278146b4@vmware.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <CAFp+6iFhBRJWGY4Hj30tWedGpEUcnkBJrOvffmbpD2m9QMZB3A@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181123121253.278146b4@vmware.local.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 03:06:29PM +0530, Vivek Gautam wrote:
-> On Fri, Nov 23, 2018 at 2:52 PM Tomasz Figa <tfiga@chromium.org> wrote:
-> > On Fri, Nov 23, 2018 at 6:13 PM Vivek Gautam
-> > <vivek.gautam@codeaurora.org> wrote:
-> > > On Wed, Nov 21, 2018 at 11:09 PM Will Deacon <will.deacon@arm.com> wrote:
-> > > > On Fri, Nov 16, 2018 at 04:54:30PM +0530, Vivek Gautam wrote:
-> > > > > @@ -2026,6 +2027,17 @@ ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
-> > > > >  ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
-> > > > >  ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
-> > > > >
-> > > > > +static const char * const qcom_smmuv2_clks[] = {
-> > > > > +     "bus", "iface",
-> > > > > +};
-> > > > > +
-> > > > > +static const struct arm_smmu_match_data qcom_smmuv2 = {
-> > > > > +     .version = ARM_SMMU_V2,
-> > > > > +     .model = QCOM_SMMUV2,
-> > > > > +     .clks = qcom_smmuv2_clks,
-> > > > > +     .num_clks = ARRAY_SIZE(qcom_smmuv2_clks),
-> > > > > +};
-> > > >
-> > > > These seems redundant if we go down the route proposed by Thor, where we
-> > > > just pull all of the clocks out of the device-tree. In which case, why
-> > > > do we need this match_data at all?
-> > >
-> > > Which is better? Driver relying solely on the device tree to tell
-> > > which all clocks
-> > > are required to be enabled,
-> > > or, the driver deciding itself based on the platform's match data,
-> > > that it should
-> > > have X, Y, & Z clocks that should be supplied from the device tree.
-> >
-> > The former would simplify the driver, but would also make it
-> > impossible to spot mistakes in DT, which would ultimately surface out
-> > as very hard to debug bugs (likely complete system lockups).
-> 
-> Thanks.
-> Yea, this is how I understand things presently. Relying on device tree
-> puts the things out of driver's control.
+On Fri, Nov 23, 2018 at 12:12:53PM -0500, Steven Rostedt wrote:
+>On Fri, 23 Nov 2018 10:06:05 +0100
+>Helge Deller <deller@gmx.de> wrote:
+>
+>
+>> > How should we proceed with this patch?
+>>
+>> My suggestion, although I didn't looked too much on it:
+>> Apply it to v4.9 and higher only.
+>> I think I started fixing trace functionality on parisc around 4.6,
+>> which is probably why applying it fails on v4.4 and v3.x
+>
+>The problem is, if you backport the generic patches, it will completely
+>break any arch that isn't updated. This also includes the archs that
+>are no longer supported upstream, as they were not changed to handle
+>the generic updates either.
 
-But it also has the undesirable effect of having to update the driver
-code whenever we want to add support for a new SMMU implementation. If
-we do this all in the DT, as Thor is trying to do, then older kernels
-will work well with new hardware.
+Does this mean that someone (Steve) will send a backport of this to all
+relevant stable trees? Right now it looks like the series will randomly
+apply on a mix of trees, which can't be good.
 
-> Hi Will,
-> Am I unable to understand the intentions here for Thor's clock-fetch
-> design change?
-
-I'm having trouble parsing your question, sorry. Please work with Thor
-so that we have a single way to get the clock information. My preference
-is to take it from the firmware, for the reason I stated above.
-
-Will
+--
+Thanks,
+Sasha
