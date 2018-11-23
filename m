@@ -4,29 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC7AC43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14DCFC43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24DA020664
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:19:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24DA020664
+	by mail.kernel.org (Postfix) with ESMTP id DB87E20664
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:19:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB87E20664
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439941AbeKXBDZ (ORCPT
+        id S2436660AbeKXBDA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 20:03:25 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:33981 "EHLO mail.bootlin.com"
+        Fri, 23 Nov 2018 20:03:00 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:33917 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2439877AbeKXBDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 20:03:01 -0500
+        id S2388505AbeKXBC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 20:02:59 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 36EA720DCB; Fri, 23 Nov 2018 15:18:38 +0100 (CET)
+        id E019D207BB; Fri, 23 Nov 2018 15:18:34 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C364A20741;
-        Fri, 23 Nov 2018 15:18:37 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7E06520791;
+        Fri, 23 Nov 2018 15:18:34 +0100 (CET)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Gregory Clement <gregory.clement@bootlin.com>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -43,9 +43,9 @@ Cc:     <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>,
         Nadav Haklai <nadavh@marvell.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 10/12] ARM64: dts: marvell: armada-3720-espressobin: declare PCIe reset GPIO
-Date:   Fri, 23 Nov 2018 15:18:29 +0100
-Message-Id: <20181123141831.8214-11-miquel.raynal@bootlin.com>
+Subject: [PATCH 01/12] PCI: aardvark: configure more registers in the configuration helper
+Date:   Fri, 23 Nov 2018 15:18:20 +0100
+Message-Id: <20181123141831.8214-2-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181123141831.8214-1-miquel.raynal@bootlin.com>
 References: <20181123141831.8214-1-miquel.raynal@bootlin.com>
@@ -56,27 +56,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a reset-gpios property to the PCIe node.
+Mimic U-Boot configuration to be sure all hardware registers are set
+properly. This will be needed for future S2RAM operation.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pci/controller/pci-aardvark.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-index 094994a9c68e..76a508da80b9 100644
---- a/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-+++ b/arch/arm64/boot/dts/marvell/armada-3720-espressobin.dts
-@@ -46,6 +46,9 @@
- /* J9 */
- &pcie0 {
- 	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie_pins>;
-+	reset-gpios = <&gpiosb 3 GPIO_ACTIVE_HIGH>;
- };
+diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
+index 750081c1cb48..b95eb2aa00bb 100644
+--- a/drivers/pci/controller/pci-aardvark.c
++++ b/drivers/pci/controller/pci-aardvark.c
+@@ -100,6 +100,8 @@
+ #define     PCIE_CORE_CTRL2_STRICT_ORDER_ENABLE	BIT(5)
+ #define     PCIE_CORE_CTRL2_OB_WIN_ENABLE	BIT(6)
+ #define     PCIE_CORE_CTRL2_MSI_ENABLE		BIT(10)
++#define PCIE_PHY_REFCLK				(CONTROL_BASE_ADDR + 0x14)
++#define     PCIE_PHY_REFCLK_BUF_CTRL		0x1342
+ #define PCIE_MSG_LOG_REG			(CONTROL_BASE_ADDR + 0x30)
+ #define PCIE_ISR0_REG				(CONTROL_BASE_ADDR + 0x40)
+ #define PCIE_MSG_PM_PME_MASK			BIT(7)
+@@ -243,6 +245,9 @@ static void advk_pcie_setup_hw(struct advk_pcie *pcie)
+ {
+ 	u32 reg;
  
- /* J6 */
++	/* Set HW Reference Clock Buffer Control */
++	advk_writel(pcie, PCIE_PHY_REFCLK_BUF_CTRL, PCIE_PHY_REFCLK);
++
+ 	/* Set to Direct mode */
+ 	reg = advk_readl(pcie, CTRL_CONFIG_REG);
+ 	reg &= ~(CTRL_MODE_MASK << CTRL_MODE_SHIFT);
+@@ -274,6 +279,15 @@ static void advk_pcie_setup_hw(struct advk_pcie *pcie)
+ 		PCIE_CORE_CTRL2_TD_ENABLE;
+ 	advk_writel(pcie, reg, PCIE_CORE_CTRL2_REG);
+ 
++	/* Set PCIe Device Control and Status 1 PF0 register */
++	reg = PCIE_CORE_DEV_CTRL_STATS_RELAX_ORDER_DISABLE |
++		PCIE_CORE_DEV_CTRL_STATS_SNOOP_DISABLE;
++	advk_writel(pcie, reg, PCIE_CORE_DEV_CTRL_STATS_REG);
++
++	/* Program PCIe Control 2 to disable strict ordering */
++	reg = PCIE_CORE_CTRL2_RESERVED | PCIE_CORE_CTRL2_TD_ENABLE;
++	advk_writel(pcie, reg, PCIE_CORE_CTRL2_REG);
++
+ 	/* Set GEN2 */
+ 	reg = advk_readl(pcie, PCIE_CORE_CTRL0_REG);
+ 	reg &= ~PCIE_GEN_SEL_MSK;
 -- 
 2.19.1
 
