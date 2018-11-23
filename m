@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF10C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDBD8C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8116220861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:26:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7ED4A20820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:28:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DGOdB88G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8116220861
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oc6sn6R2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ED4A20820
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502076AbeKWRJI (ORCPT
+        id S2502086AbeKWRLB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 12:09:08 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45568 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729253AbeKWRJI (ORCPT
+        Fri, 23 Nov 2018 12:11:01 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34268 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729253AbeKWRLB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 12:09:08 -0500
-Received: by mail-pg1-f196.google.com with SMTP id y4so2622683pgc.12;
-        Thu, 22 Nov 2018 22:26:19 -0800 (PST)
+        Fri, 23 Nov 2018 12:11:01 -0500
+Received: by mail-pf1-f194.google.com with SMTP id h3so2906070pfg.1;
+        Thu, 22 Nov 2018 22:28:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=WY7lE94eZeM6JKFyYa05G0/1cFXbQw6tUw3ja4+IQlg=;
-        b=DGOdB88GbLE6xA1UUSHe84K+cMm6UjqzkMUrU1/xH2IKFGNhNHMw1UokQVzsNRo1xI
-         nAauboaFhYXP+pQsWH3utUP9ZVNmppcEaEJKw9abwaUVjj1gb9lYn/e2k5e25RA6EBRf
-         tlPbcmKyVcQueWVEZxTM9Rk8t6/OBA2TXb2q/23t99WTMrRfuEqfypi8IvIDtrnI26cv
-         hsLXUwLMgFn5TZ+B4LbQlySbj788mxhj6pFl/gUIRW93pZdh2gyMem/QF724BoDmoDOf
-         SZiGfC83YvtSDIf+ICNnM3mHvjDfO5dRPMfWxt7dw1VSuoYKRA8Cx8DL2zKzMayphjSQ
-         M2Tw==
+        bh=ErDqdjEsmLSbUpdX6oGb3pbSY6xEibcOQetQLQGdD78=;
+        b=oc6sn6R2WOP5kuK129ydTGk7VaczqCIINYeevmJEWgw4OmhG+rsbRfuU+pbhrSN2+v
+         72rEk8SbTv+zWtPyVFvf7coYd/eYQk/cULHN/j2S3K45SFZneqP4CogWa8R04taVjoD5
+         3q7+6SecPgbcKgtkCTQ7b3gvXAjy72XCrJIzEK79132vNPyLkGi/kyosTtyNsnCiuPXt
+         ZYGYfDljj1BNXE7sq0jdkx6gjqnZN5b+ixKQARvh/TktBZl0gXZ0x6l9y8Kq1Ce9cFG0
+         sSwKPpNcMtjkeupxTyV6HcgvJVwwcsYagh8h6xGI2Cbg3EbpFzbYYC/TF09RaOtz/1WO
+         SItA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=WY7lE94eZeM6JKFyYa05G0/1cFXbQw6tUw3ja4+IQlg=;
-        b=cjyNl9bU0Qppo+WLhhbL5umMReCot8jSMCQAvj55oUl9zI6I2fp6LTjcSnHPhTeOvD
-         cI6TkC7pWL3MSxrBFyyqF2K7d5e6j7N48saantRPN5YVdixAAmSsZNMFAB0PB4zSpNR+
-         iEg3snBkml8QNGkogg4qJgoKsQ8dQYML25iATBbOqVwMhru8gfTqS4DHVCWrRse6MlpV
-         Wg/HoxlWgQSmylDZMzeu4tDpoAxGLdlz5s4MXD47Zsg9vSMI6ToAYE+wfW9kfBIeQx+y
-         xvvv4hp6d9xp+lW4xGx+GvDdSm6f+ty0c1J3URWebyeL+vg70wykIWBAaJp+Uraxc17d
-         11fw==
-X-Gm-Message-State: AA+aEWY4jJKePNwvOIDwpmssjZdfRmZU/Q4DWcoTAqxSAm5MJ9LNgHME
-        EReTbn8HlPU0UVEwPvI/SfxQgagnw0o=
-X-Google-Smtp-Source: AFSGD/V6iIFdYXMyZk1HAus4xjkv/4auSpbCjbzEEm6KR8ni0obKaA3kQe1b5/T1QYS6LhlGxxqxeg==
-X-Received: by 2002:a63:1c61:: with SMTP id c33mr12540263pgm.354.1542954378238;
-        Thu, 22 Nov 2018 22:26:18 -0800 (PST)
+        bh=ErDqdjEsmLSbUpdX6oGb3pbSY6xEibcOQetQLQGdD78=;
+        b=IqI9boF+fZgIK+xcky0+x8yYFEdVl5xzj5Pl0kfhHngj2egbrOd5sL7FUEA3xnUopC
+         bn3kXi0GkRWnh6Mu/T+A4giPRgfvmlnkGfVTJRZerry55o/uJlXkRMyd7OH7jlPL8Yhe
+         9Nfpu4OXFhT1FqJk6tqTVPQHlxMZ17hbqysBQrVJEXn4M1e91T2qeukG5Ao4GcfvAeNj
+         ZZgw25OhSxKwu15IT1r5kIml2sBWFMMc2MhVp/MB3tjltZJi7Dg18vnhNOY9e3xqN/sK
+         59+d5rf8+8samX3KQHpScq6FQNgTI4yaMYoUOVzOvqow6bOgeJFny9MpKWxelllwDdHj
+         EkIg==
+X-Gm-Message-State: AGRZ1gLTj8doPdVo1tHkDLNWpW26ArtnIzpg05ojxxfUb3PEsgUEF3yv
+        bTDyIhqiHEfRzLNPUGgY6uhegwtRJ/Q=
+X-Google-Smtp-Source: AJdET5eaanl5jJLsIhXsLHRy0pXGjSSWmVdopvRt2QjZQFPE5BI80DdV5Cqnvy9FXIgv6YhIfUBgPw==
+X-Received: by 2002:aa7:8497:: with SMTP id u23mr14561578pfn.220.1542954490432;
+        Thu, 22 Nov 2018 22:28:10 -0800 (PST)
 Received: from bbox-2.seo.corp.google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id j64-v6sm31548068pfc.43.2018.11.22.22.26.14
+        by smtp.gmail.com with ESMTPSA id m67sm468875pfb.25.2018.11.22.22.28.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 22:26:16 -0800 (PST)
+        Thu, 22 Nov 2018 22:28:09 -0800 (PST)
 From:   Minchan Kim <minchan@kernel.org>
 To:     stable@vger.kernel.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>, hare@suse.com,
@@ -65,9 +65,9 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>, hare@suse.com,
         Minchan Kim <minchan@kernel.org>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Howard Chen <howardsoc@google.com>
-Subject: [PATCH for v4.14] zram: close udev startup race condition as default groups
-Date:   Fri, 23 Nov 2018 15:25:50 +0900
-Message-Id: <20181123062550.163536-1-minchan@kernel.org>
+Subject: [PATCH for 4.9] zram: close udev startup race condition as default groups
+Date:   Fri, 23 Nov 2018 15:28:02 +0900
+Message-Id: <20181123062802.197704-1-minchan@kernel.org>
 X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
 In-Reply-To: <20181115174504.GJ95254@sasha-vm>
 References: <20181115174504.GJ95254@sasha-vm>
@@ -107,10 +107,10 @@ Signed-off-by: Minchan Kim <minchan@kernel.org>
  1 file changed, 6 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 1e2648e4c286..27b202c64c84 100644
+index b7c0b69a02f5..d64a53d3270a 100644
 --- a/drivers/block/zram/zram_drv.c
 +++ b/drivers/block/zram/zram_drv.c
-@@ -1491,6 +1491,11 @@ static const struct attribute_group zram_disk_attr_group = {
+@@ -1223,6 +1223,11 @@ static struct attribute_group zram_disk_attr_group = {
  	.attrs = zram_disk_attrs,
  };
  
@@ -122,9 +122,9 @@ index 1e2648e4c286..27b202c64c84 100644
  /*
   * Allocate and initialize new zram device. the function returns
   * '>= 0' device_id upon success, and negative value otherwise.
-@@ -1568,23 +1573,14 @@ static int zram_add(void)
- 	if (ZRAM_LOGICAL_BLOCK_SIZE == PAGE_SIZE)
- 		blk_queue_max_write_zeroes_sectors(zram->disk->queue, UINT_MAX);
+@@ -1303,24 +1308,15 @@ static int zram_add(void)
+ 		zram->disk->queue->limits.discard_zeroes_data = 0;
+ 	queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, zram->disk->queue);
  
 +	disk_to_dev(zram->disk)->groups = zram_disk_attr_groups;
  	add_disk(zram->disk);
@@ -137,6 +137,7 @@ index 1e2648e4c286..27b202c64c84 100644
 -		goto out_free_disk;
 -	}
  	strlcpy(zram->compressor, default_compressor, sizeof(zram->compressor));
+ 	zram->meta = NULL;
  
  	pr_info("Added device: %s\n", zram->disk->disk_name);
  	return device_id;
@@ -147,7 +148,7 @@ index 1e2648e4c286..27b202c64c84 100644
  out_free_queue:
  	blk_cleanup_queue(queue);
  out_free_idr:
-@@ -1612,16 +1608,6 @@ static int zram_remove(struct zram *zram)
+@@ -1348,16 +1344,6 @@ static int zram_remove(struct zram *zram)
  	zram->claim = true;
  	mutex_unlock(&bdev->bd_mutex);
  
