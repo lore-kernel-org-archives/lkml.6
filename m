@@ -2,99 +2,74 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F6AC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16DAFC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:40:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93A8E20659
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:38:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93A8E20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id CA10B20659
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:40:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ma8ca68R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA10B20659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409372AbeKWVWZ (ORCPT
+        id S2409399AbeKWVXs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 16:22:25 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:50030 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387633AbeKWVWZ (ORCPT
+        Fri, 23 Nov 2018 16:23:48 -0500
+Received: from mail-ed1-f46.google.com ([209.85.208.46]:34553 "EHLO
+        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394186AbeKWVXs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 16:22:25 -0500
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gQ8r7-00046z-K1; Fri, 23 Nov 2018 11:38:37 +0100
-Date:   Fri, 23 Nov 2018 11:38:37 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-cc:     linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCHv18 01/35] Documentation: v4l: document request API
-In-Reply-To: <20181123075157.077758c0@coco.lan>
-Message-ID: <alpine.DEB.2.21.1811231134100.2603@nanos.tec.linutronix.de>
-References: <20180814142047.93856-1-hverkuil@xs4all.nl> <20180814142047.93856-2-hverkuil@xs4all.nl> <alpine.DEB.2.21.1811121048400.14703@nanos.tec.linutronix.de> <20181118115215.5ebc681c@coco.lan> <20181123075157.077758c0@coco.lan>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 23 Nov 2018 16:23:48 -0500
+Received: by mail-ed1-f46.google.com with SMTP id b3so9902370ede.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 02:40:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=sq+sbiuLU7iqRObtW/qAvtjBwsdI4HCjL2tyQJe4vy4=;
+        b=ma8ca68R0lwyKl6ElwPJEM+de0wHXadi8GW1cGlza5P3iydj1Jss4JgtdGokU/nI80
+         NwR5+NkfTdJ9HYpdaCens1SGBPKf3/CqP1Mwt/LzVWiFvk2bVirt6X6YzlFe4GhnAhkk
+         FubMc2qicFcM4dcPXcWefZqz4ZhnkOX2vEwWaEFzZ/VpKYnXVCuCci3/LMUfWX81K27S
+         uTp014CVvbvRsM8JShJ67k8fw+dvlfJmn+BAbV/fm87Wag+z2pa3y7E69YpNLSh6YSN0
+         oQ97cbZxzy2y0qtOIi0GKFfjsb1dUwKz+xXbLhyMKP1ysy4uurYjsMPp+8+EkC8Jt1Nn
+         bJRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=sq+sbiuLU7iqRObtW/qAvtjBwsdI4HCjL2tyQJe4vy4=;
+        b=epkfG2gXGQOj/ybT95kkBq1s8doLrybqQ22CvEcL8eBsIDuvwi+jGWN4xpk8dDEisp
+         JR+BxeNPxXZglX5i/YrLKDramI39evWeSSlBRK77POejJQNH38k76N7eJSiSv6M8DRp4
+         yU5Ara3gSL9Pd4nPUYsCkIce4QH7VgUT2C53u7teva4ZdzakfVvF47M0erQkfh+SV8JZ
+         iPDSNdlqOqH7MMvAPZ+kHGAHTMFvUJAiahQJQTA12626VCXj28FgYF3t3zLplkPQsRlS
+         bkzhR1t2y6Xy0OHgRKHf0IPkG6OcyJyk0uacw06Odj9e2cBbQFquB3r6xopvoWhJiRRz
+         pnVQ==
+X-Gm-Message-State: AGRZ1gLrfMiQ+bdEOpSqSjMyktLth/xi4E3Qnc/Z+M/pk2JgmjjH0w8G
+        LYEBwXUBwbh/8HoW3mmQdNvydc4fjl2UdtUfaACNg0gI
+X-Google-Smtp-Source: AJdET5cq8d6E/LQLPnfrGGFz5ZXUQDSXvfjYFJ0KmrzIIvOaASQsutU93CkcNRFhCoMFQE8GrBZUqQ29QHcmEj8KbuI=
+X-Received: by 2002:a17:906:1b12:: with SMTP id o18-v6mr10812052ejg.65.1542969601812;
+ Fri, 23 Nov 2018 02:40:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From:   Rishi <2rushikeshj@gmail.com>
+Date:   Fri, 23 Nov 2018 16:09:50 +0530
+Message-ID: <CAO9XypWCiSwf+5NeG9aRcRG+2tUKE2DufMjHHpsCUh65rvNM-A@mail.gmail.com>
+Subject: Page Replacement Algo Enhancement to Flush lest recently used memory page
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mauro,
+I'm looking for right kernel API to be able to flush the least
+recently used memory page from inactive memory.
 
-On Fri, 23 Nov 2018, Mauro Carvalho Chehab wrote:
-> > While we don't have it, we can't really use SPDX identifiers on media.
-> > So, replace them by a license text.
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> > 
-> > diff --git a/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst b/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
-> > index 0f8b31874002..60874a1f3d89 100644
-> > --- a/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
-> > +++ b/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
-> > @@ -1,4 +1,15 @@
-> > -.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
-> > +.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
-> > +..
-> > +.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
-> > +..
-> > +.. For GFDL-1.1-or-later, see:
-> > +..
-> > +.. Permission is granted to copy, distribute and/or modify this document
-> > +.. under the terms of the GNU Free Documentation License, Version 1.1 or
-> > +.. any later version published by the Free Software Foundation, with no
-> > +.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
-> > +.. A copy of the license is included at
-> > +.. Documentation/media/uapi/fdl-appendix.rst.
+I want to develop a kernel module such that it will free least
+recently used memory every n seconds untill inactive memory is 0.
 
-There is still an issue here.
-
-The SPDX id for GFDL requires the license text to be in LICENSES/....
-
-But the plain GFDL-1.1-or-later lacks the invariant/front/back parts which
-are an exception to the license and require an exception ID along with the
-corresponding file in LICENSES/..... again.
-
-So no, this won't cut it. Please stay with free form license information
-until this is resolved.
-
-Kate, can you have a look into that please on the SPDX side?
-
-Thanks,
-
-	tglx
-
-
-
-
+This is to reduce the memory allocated to a linux VM dynamically and
+make it available to other vms of the host or hypervisor itself.
