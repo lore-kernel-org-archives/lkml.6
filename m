@@ -6,81 +6,81 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9B7C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD9F2C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F4E920672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:06:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F4E920672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 8C85720672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:06:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C85720672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394663AbeKWWuP (ORCPT
+        id S2504096AbeKWWuc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 17:50:15 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:33462 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388295AbeKWWuP (ORCPT
+        Fri, 23 Nov 2018 17:50:32 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:57387 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388296AbeKWWuc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 17:50:15 -0500
-Received: by mail-ua1-f65.google.com with SMTP id t8so4036701uap.0;
-        Fri, 23 Nov 2018 04:06:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KtjuxidprlDLVOls/eZ8OMHERPfgrBk7C0ZztidCI9E=;
-        b=U5iC95OaL/G8KpmPpAHVJZlMGfkLIsSe/4ebE5c4qI0lchhkAyDG6Z3PL8UzckNcX0
-         kD6b2asqzINb1p0PrkMsWyvU5OaTXSIBfxMtl6pu7aKE/6asY+nPgaQBFb++Xiqbb/lc
-         AdYa1Dt7K1BeOeILk/2Hmvhmi6Qtni284JS+x66q6XSg9oRtVVgn0P/24dxvRUBghAN1
-         UVsshA+hbQB12pg/3IyuWYBDR+i51Lj61+ZvpTXz46X7tyyrITryH23LokSzACdtiVb2
-         cITmQzAhiKfgdzegxe1tKijWiFRCbtxCZrgmTTaVLApLvbmMNmm4wnbwUPjsBj/XyEHn
-         p2cw==
-X-Gm-Message-State: AA+aEWYslEDsioSoyrNlgNljyIW1fjhxdDtaRtYW1pZV3nRY8B9i6WBp
-        RJjdTKkseP4sKGHQQsDhh4pPUgyXlhCvyYEpK5c=
-X-Google-Smtp-Source: AFSGD/VL6Wmx8pY8XWcHu8lRHF2OcpNrZtRgInh8jkkoBty28dK9+IO7uituDFNQL6Mg5rzOTUFqz44mK1E6EczMEEQ=
-X-Received: by 2002:ab0:7251:: with SMTP id d17mr6634282uap.0.1542974776542;
- Fri, 23 Nov 2018 04:06:16 -0800 (PST)
+        Fri, 23 Nov 2018 17:50:32 -0500
+Received: from [192.168.178.52] ([109.104.55.85]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MrhLw-1fcVaD13NU-00ngDg; Fri, 23 Nov 2018 13:06:13 +0100
+Subject: Re: [PATCH 05/17] clocksource: bcm2835: Switch to SPDX identifier
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Eric Anholt <eric@anholt.net>,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Simon Arlott <simon@arlott.org>
+References: <1541863719-7244-1-git-send-email-stefan.wahren@i2se.com>
+ <dbc12f84-ebb1-998f-dd42-5ad936635744@linaro.org>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <993d127f-91d6-aca8-256a-87723389ef8b@i2se.com>
+Date:   Fri, 23 Nov 2018 13:06:14 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20181123105428.13457-1-phil.edworthy@renesas.com> <20181123105428.13457-2-phil.edworthy@renesas.com>
-In-Reply-To: <20181123105428.13457-2-phil.edworthy@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 23 Nov 2018 13:06:02 +0100
-Message-ID: <CAMuHMdW8_1cuLNyUFVVfdydbRmiqY6F+-Qfj9XEX3enz4-z00A@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: rzn1: Fix of_get_child_count() error check
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <dbc12f84-ebb1-998f-dd42-5ad936635744@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: de-DE
+X-Provags-ID: V03:K1:6aoHKLZ0T8zBGhmP8R2eJgd/4QX8KnxqZYD0AwtinKi08wAHqmn
+ 2mQUZG3tOJYK95feZoHEEPgKvaFvvJhP1+vI0+rN+wu8MWDm0Ce8HWhPL80kOeUPlggJMc6
+ uf0q+NBu++pZU33FT7V2aiOpK/lQHBW3HetUhly9ligSY8YZtaJtBMue7t5orLR5YT/ZwgB
+ VGzYDPKUL2Ki1E5ZARjsg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WR+YM94Ox34=:rIGmAKbZhF5a2zKUqHjMn6
+ 34zCBDQ5TsB+JtqHLrxgcyuF7mJiYRKk0PXu7SAU0RqYB4T9Rz9ni7uN6d7q+pu5QT6onGOBg
+ pf68bfjbszvUDRv1y61wNKu312s6Ru7xQCK+6oyHj4oEIN5tj9rlKTIxnFfgq2ArSpbDV0L2m
+ Bxx4RUhrAyBV+UjJp9tdTOXfjVrG//SUWTpG8WnRaJbjlMdXb0gOnc1pzFLmHD12L/T9zghsj
+ 7pdggeZpwK2oB0ACDbf5KHzfKrYLTI8j0f5n5JWQoJ6K41sMNoceAgwAMCKtOOzIjlkENLgwS
+ L83hA6hhERvMZ3bJNBXNwuYJ5j57OR0VEIwGWDd8Lyys+1rd2i4BN7rRfOjCg6siUrNLdFLA7
+ 2QJ5qMxkgrMngATD1bIh1vp2jbfshbTTCXK6hueGmeuU0gha+6CKjUBoPphsYgKptVx1TKcRu
+ 668WTCnv6geIQIl3q35BKEafG8LzNKziAlGWN6lgr+fQtMkSas8JqzRFZ1mfeQDQ2y1QPe8OH
+ EgRirHKFYeVOjNUouQdKJAVes2lmtJ9CzU8K3QMjeFAh/mJfCFxBVI2NxRa5QiUymEGYRNkNi
+ O/CCqG/gmX+xooE0gzEhjnAWM9s+qP840QUU0FUhqrmib1LgA+8Mj8gQpV7S1KUv3qvpTtT9T
+ e4oPlf3/dKSzrBj2X9Dn84kk7IKwIRf4OqIFsZFxjb1/8VNY4BJXkMSF9dZ/uCCd9Kh3ME9TX
+ o+DY/61+o15EPn0Ya6fM6lJv6B4I65YE6lN8bzRnSEaZiEoLCf6IH9xj8Sjyz32QnnB9rCzML
+ 6eDSbitJQTDvgX9T/fb2DsS/UqPJA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 11:54 AM Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
-> If we assign the result of of_get_child_count() to an unsigned int,
-> the code will not detect any errors. Therefore assign it to an int
-> instead.
+Hi Daniel,
 
-Note that currently of_get_child_count() never returns a negative
-error code. But it does return int, not unsigned int.
+Am 12.11.2018 um 07:56 schrieb Daniel Lezcano:
+> On 10/11/2018 16:28, Stefan Wahren wrote:
+>> Adopt the SPDX license identifier headers to ease license compliance
+>> management. Also drop the FSF address.
+>>
+>> Cc: Simon Arlott <simon@arlott.org>
+>> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+>> ---
+> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>
+>
+thanks.
 
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Can this patch go via your clockevents tree?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v4.21.
+Stefan
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
