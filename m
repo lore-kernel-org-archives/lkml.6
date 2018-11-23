@@ -2,745 +2,230 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF1AEC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E8DBC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:25:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8204920664
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:24:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8204920664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pschenker.ch
+	by mail.kernel.org (Postfix) with ESMTP id EB787206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:25:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kvtXwK0L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB787206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436750AbeKXBI7 (ORCPT
+        id S2395248AbeKXBJp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 20:08:59 -0500
-Received: from mxout013.mail.hostpoint.ch ([217.26.49.173]:42010 "EHLO
-        mxout013.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727681AbeKXBI6 (ORCPT
+        Fri, 23 Nov 2018 20:09:45 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42940 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731438AbeKXBJp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 20:08:58 -0500
-Received: from [10.0.2.45] (helo=asmtp012.mail.hostpoint.ch)
-        by mxout013.mail.hostpoint.ch with esmtp (Exim 4.91 (FreeBSD))
-        (envelope-from <dev@pschenker.ch>)
-        id 1gQCNX-00047o-3S; Fri, 23 Nov 2018 15:24:19 +0100
-Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
-        by asmtp012.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.91 (FreeBSD))
-        (envelope-from <dev@pschenker.ch>)
-        id 1gQCNW-000MJh-SO; Fri, 23 Nov 2018 15:24:19 +0100
-X-Authenticated-Sender-Id: dev@pschenker.ch
-From:   Philippe Schenker <dev@pschenker.ch>
-To:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
-Cc:     Max Krummenacher <max.krummenacher@toradex.com>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        Mark Brown <broonie@kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        linux-iio@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Freeman Liu <freeman.liu@spreadtrum.com>,
-        linux-input@vger.kernel.org,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Siddartha Mohanadoss <smohanad@codeaurora.org>,
+        Fri, 23 Nov 2018 20:09:45 -0500
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id DCF6F58E;
+        Fri, 23 Nov 2018 15:25:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1542983119;
+        bh=UXVTUkI454QC/ysI2tQefGcSCQobC9tZ7XBTh0uodQA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kvtXwK0LIyu67hisFzaTq6r0g9H67nqJxrDruXA8kgpgAUXFZBfitWwAm2MhfGiHI
+         ZnrDSCNJrSF7pwRncAfTtc+NUzz7pQcRIKhwc63o6uBLToDPdzTr6cdF+dtC7uPDNz
+         56kzHMV0m6m2qvIj+PDZl1GzwyPNC+zJ5nYZnTLw=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     architt@codeaurora.org, a.hajda@samsung.com,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
         linux-kernel@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH v3 2/4] iio: adc: add STMPE ADC driver using IIO framework
-Date:   Fri, 23 Nov 2018 15:24:09 +0100
-Message-Id: <20181123142411.8921-2-dev@pschenker.ch>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181123142411.8921-1-dev@pschenker.ch>
-References: <20181123142411.8921-1-dev@pschenker.ch>
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        Huicong Xu <xhc@rock-chips.com>
+Subject: Re: [PATCH RFC 1/8] drm/bridge: dw-hdmi: Add SCDC and TMDS Scrambling support
+Date:   Fri, 23 Nov 2018 16:25:39 +0200
+Message-ID: <1880382.AeP59NOuia@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20181123140221.15700-2-narmstrong@baylibre.com>
+References: <20181123140221.15700-1-narmstrong@baylibre.com> <20181123140221.15700-2-narmstrong@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
+Hi Neil,
 
-This adds an ADC driver for the STMPE device using the industrial
-input/output interface. The driver supports raw reading of values.
-The driver depends on the MFD STMPE driver. If the touchscreen
-block is enabled too, only four of the 8 ADC channels are available.
+Thank you for the patch.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
-Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
----
+On Friday, 23 November 2018 16:02:14 EET Neil Armstrong wrote:
+> Add support for SCDC Setup for TMDS Clock > 3.4GHz and enable TMDS
+> Scrambling when supported or mandatory.
+> 
+> This patch also adds an helper to setup the control bit to support
+> the hight TMDS Bit Period/TMDS Clock-Period Ratio as required with
 
-Changes in v3:
- - Undo ADC-settings related code-deletions in stmpe-ts.c that the code is
-   backwards-compatible to older devicetrees.
+s/hight/high/ ?
 
-Changes in v2:
- - Code formatting
- - Move code to setup ADC to MFD device, as it is used by both drivers
-   adc and touchscreen
- - Removed unused includes
- - Defined the macro STMPE_START_ONE_TEMP_CONV with other macros.
- - Added new macro that defines the channel of the temperature sensor.
-   Took new name for STMPE_MAX_ADC->STMPE_ADC_LAST_NR and used it throughout
-   the code for better readability.
- - Added mutex_unlock where missing.
+> TMDS Clock > 3.4GHz for HDMI2.0 3840x2160@60/50 modes.
 
- drivers/iio/adc/Kconfig              |   7 +
- drivers/iio/adc/Makefile             |   1 +
- drivers/iio/adc/stmpe-adc.c          | 326 +++++++++++++++++++++++++++
- drivers/input/touchscreen/stmpe-ts.c |  36 +--
- drivers/mfd/Kconfig                  |   3 +-
- drivers/mfd/stmpe.c                  |  81 +++++++
- include/linux/mfd/stmpe.h            |   9 +
- 7 files changed, 437 insertions(+), 26 deletions(-)
- create mode 100644 drivers/iio/adc/stmpe-adc.c
+Why do you need a helper for this, is there no way it could be handled 
+internally ?
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index a52fea8749a9..224f2067494d 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -734,6 +734,13 @@ config STM32_DFSDM_ADC
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called stm32-dfsdm-adc.
- 
-+config STMPE_ADC
-+	tristate "STMicroelectronics STMPE ADC driver"
-+	depends on OF && MFD_STMPE
-+	help
-+	  Say yes here to build support for ST Microelectronics STMPE
-+	  built-in ADC block (stmpe811).
-+
- config STX104
- 	tristate "Apex Embedded Systems STX104 driver"
- 	depends on PC104 && X86
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index a6e6a0b659e2..cba889c30bf9 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -69,6 +69,7 @@ obj-$(CONFIG_STM32_ADC_CORE) += stm32-adc-core.o
- obj-$(CONFIG_STM32_ADC) += stm32-adc.o
- obj-$(CONFIG_STM32_DFSDM_CORE) += stm32-dfsdm-core.o
- obj-$(CONFIG_STM32_DFSDM_ADC) += stm32-dfsdm-adc.o
-+obj-$(CONFIG_STMPE_ADC) += stmpe-adc.o
- obj-$(CONFIG_TI_ADC081C) += ti-adc081c.o
- obj-$(CONFIG_TI_ADC0832) += ti-adc0832.o
- obj-$(CONFIG_TI_ADC084S021) += ti-adc084s021.o
-diff --git a/drivers/iio/adc/stmpe-adc.c b/drivers/iio/adc/stmpe-adc.c
-new file mode 100644
-index 000000000000..bea3f3c27bb5
---- /dev/null
-+++ b/drivers/iio/adc/stmpe-adc.c
-@@ -0,0 +1,326 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  STMicroelectronics STMPE811 IIO ADC Driver
-+ *
-+ *  4 channel, 10/12-bit ADC
-+ *
-+ *  Copyright (C) 2013-2018 Toradex AG <stefan.agner@toradex.com>
-+ */
-+
-+#include <linux/completion.h>
-+#include <linux/err.h>
-+#include <linux/iio/iio.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/stmpe.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+
-+#define STMPE_REG_INT_STA		0x0B
-+#define STMPE_REG_ADC_INT_EN		0x0E
-+#define STMPE_REG_ADC_INT_STA		0x0F
-+
-+#define STMPE_REG_ADC_CTRL1		0x20
-+#define STMPE_REG_ADC_CTRL2		0x21
-+#define STMPE_REG_ADC_CAPT		0x22
-+#define STMPE_REG_ADC_DATA_CH(channel)	(0x30 + 2 * (channel))
-+
-+#define STMPE_REG_TEMP_CTRL		0x60
-+#define STMPE_TEMP_CTRL_ENABLE		BIT(0)
-+#define STMPE_TEMP_CTRL_ACQ		BIT(1)
-+#define STMPE_TEMP_CTRL_THRES_EN	BIT(3)
-+#define STMPE_START_ONE_TEMP_CONV	(STMPE_TEMP_CTRL_ENABLE | \
-+					STMPE_TEMP_CTRL_ACQ | \
-+					STMPE_TEMP_CTRL_THRES_EN)
-+#define STMPE_REG_TEMP_DATA		0x61
-+#define STMPE_REG_TEMP_TH		0x63
-+#define STMPE_ADC_LAST_NR		7
-+#define STMPE_TEMP_CHANNEL		(STMPE_ADC_LAST_NR + 1)
-+
-+#define STMPE_ADC_CH(channel)		((1 << (channel)) & 0xff)
-+
-+#define STMPE_ADC_TIMEOUT		msecs_to_jiffies(1000)
-+
-+struct stmpe_adc {
-+	struct stmpe *stmpe;
-+	struct clk *clk;
-+	struct device *dev;
-+
-+	/* We are allocating plus one for the temperature channel */
-+	struct iio_chan_spec stmpe_adc_iio_channels[STMPE_ADC_LAST_NR + 2];
-+
-+	struct completion completion;
-+
-+	u8 channel;
-+	u32 value;
-+};
-+
-+static int stmpe_read_raw(struct iio_dev *indio_dev,
-+			  struct iio_chan_spec const *chan,
-+			  int *val,
-+			  int *val2,
-+			  long mask)
-+{
-+	struct stmpe_adc *info = iio_priv(indio_dev);
-+	long ret;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+	case IIO_CHAN_INFO_PROCESSED:
-+
-+		mutex_lock(&indio_dev->mlock);
-+
-+		info->channel = (u8)chan->channel;
-+
-+		switch (chan->type) {
-+		case IIO_VOLTAGE:
-+			if (info->channel > STMPE_ADC_LAST_NR) {
-+				mutex_unlock(&indio_dev->mlock);
-+				return -EINVAL;
-+			}
-+
-+			stmpe_reg_write(info->stmpe, STMPE_REG_ADC_INT_EN,
-+					STMPE_ADC_CH(info->channel));
-+
-+			stmpe_reg_write(info->stmpe, STMPE_REG_ADC_CAPT,
-+					STMPE_ADC_CH(info->channel));
-+
-+			*val = info->value;
-+			break;
-+
-+		case IIO_TEMP:
-+			if (info->channel != STMPE_TEMP_CHANNEL) {
-+				mutex_unlock(&indio_dev->mlock);
-+				return -EINVAL;
-+			}
-+
-+			stmpe_reg_write(info->stmpe, STMPE_REG_TEMP_CTRL,
-+					STMPE_START_ONE_TEMP_CONV);
-+			break;
-+		default:
-+			mutex_unlock(&indio_dev->mlock);
-+			return -EINVAL;
-+		}
-+
-+		ret = wait_for_completion_interruptible_timeout
-+			(&info->completion, STMPE_ADC_TIMEOUT);
-+
-+		if (ret <= 0) {
-+			mutex_unlock(&indio_dev->mlock);
-+			if (ret == 0)
-+				return -ETIMEDOUT;
-+			else
-+				return ret;
-+		}
-+
-+		switch (chan->type) {
-+		case IIO_VOLTAGE:
-+			*val = info->value;
-+			break;
-+
-+		case IIO_TEMP:
-+			/*
-+			 * absolute temp = +V3.3 * value /7.51 [K]
-+			 * scale to [milli °C]
-+			 */
-+			*val = ((449960l * info->value) / 1024l) - 273150;
-+			break;
-+		default:
-+			break;
-+		}
-+
-+		mutex_unlock(&indio_dev->mlock);
-+		return IIO_VAL_INT;
-+
-+	case IIO_CHAN_INFO_SCALE:
-+		*val = 3300;
-+		*val2 = info->stmpe->mod_12b ? 12 : 10;
-+		return IIO_VAL_FRACTIONAL_LOG2;
-+
-+	default:
-+		break;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static irqreturn_t stmpe_adc_isr(int irq, void *dev_id)
-+{
-+	struct stmpe_adc *info = (struct stmpe_adc *)dev_id;
-+	u8 data[2];
-+
-+	if (info->channel > STMPE_TEMP_CHANNEL)
-+		return IRQ_NONE;
-+
-+	if (info->channel <= STMPE_ADC_LAST_NR) {
-+		int int_sta;
-+
-+		int_sta = stmpe_reg_read(info->stmpe, STMPE_REG_ADC_INT_STA);
-+
-+		/* Is the interrupt relevant */
-+		if (!(int_sta & STMPE_ADC_CH(info->channel)))
-+			return IRQ_NONE;
-+
-+		/* Read value */
-+		stmpe_block_read(info->stmpe,
-+			STMPE_REG_ADC_DATA_CH(info->channel), 2, data);
-+
-+		stmpe_reg_write(info->stmpe, STMPE_REG_ADC_INT_STA, int_sta);
-+	} else if (info->channel == STMPE_TEMP_CHANNEL) {
-+		/* Read value */
-+		stmpe_block_read(info->stmpe, STMPE_REG_TEMP_DATA, 2, data);
-+	}
-+
-+	info->value = ((u32)data[0] << 8) + data[1];
-+	complete(&info->completion);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static const struct iio_info stmpe_adc_iio_info = {
-+	.read_raw = &stmpe_read_raw,
-+};
-+
-+static void stmpe_adc_voltage_chan(struct iio_chan_spec *ics, int chan)
-+{
-+	ics->type = IIO_VOLTAGE;
-+	ics->info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
-+	ics->info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE);
-+	ics->indexed = 1;
-+	ics->channel = chan;
-+}
-+
-+static void stmpe_adc_temp_chan(struct iio_chan_spec *ics, int chan)
-+{
-+	ics->type = IIO_TEMP;
-+	ics->info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED);
-+	ics->indexed = 1;
-+	ics->channel = chan;
-+}
-+
-+static int stmpe_adc_init_hw(struct stmpe_adc *adc)
-+{
-+	struct stmpe *stmpe = adc->stmpe;
-+
-+	/* use temp irq for each conversion completion */
-+	stmpe_reg_write(stmpe, STMPE_REG_TEMP_TH, 0);
-+	stmpe_reg_write(stmpe, STMPE_REG_TEMP_TH + 1, 0);
-+
-+	return 0;
-+}
-+
-+static int stmpe_adc_probe(struct platform_device *pdev)
-+{
-+	struct iio_dev *indio_dev = NULL;
-+	struct stmpe_adc *info = NULL;
-+	struct device_node *np;
-+	u32 norequest_mask = 0;
-+	int irq_temp, irq_adc;
-+	int num_chan = 0;
-+	int i = 0;
-+	int ret;
-+
-+	irq_adc = platform_get_irq_byname(pdev, "STMPE_ADC");
-+	if (irq_adc < 0)
-+		return irq_adc;
-+
-+	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(struct stmpe_adc));
-+	if (!indio_dev) {
-+		dev_err(&pdev->dev, "failed allocating iio device\n");
-+		return -ENOMEM;
-+	}
-+
-+	info = iio_priv(indio_dev);
-+
-+	init_completion(&info->completion);
-+	ret = devm_request_threaded_irq(&pdev->dev, irq_adc, NULL,
-+					stmpe_adc_isr, IRQF_ONESHOT,
-+					"stmpe-adc", info);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed requesting irq, irq = %d\n",
-+				irq_adc);
-+		return ret;
-+	}
-+
-+	irq_temp = platform_get_irq_byname(pdev, "STMPE_TEMP_SENS");
-+	if (irq_temp >= 0) {
-+		ret = devm_request_threaded_irq(&pdev->dev, irq_temp, NULL,
-+						stmpe_adc_isr, IRQF_ONESHOT,
-+						"stmpe-adc", info);
-+		if (ret < 0)
-+			dev_warn(&pdev->dev, "failed requesting irq for"
-+				 " temp sensor, irq = %d\n", irq_temp);
-+	}
-+
-+	platform_set_drvdata(pdev, indio_dev);
-+
-+	indio_dev->name		= dev_name(&pdev->dev);
-+	indio_dev->dev.parent	= &pdev->dev;
-+	indio_dev->info		= &stmpe_adc_iio_info;
-+	indio_dev->modes	= INDIO_DIRECT_MODE;
-+
-+	info->stmpe = dev_get_drvdata(pdev->dev.parent);
-+
-+	np = pdev->dev.of_node;
-+
-+	if (!np)
-+		dev_err(&pdev->dev, "no device tree node found\n");
-+
-+	of_property_read_u32(np, "st,norequest-mask", &norequest_mask);
-+
-+	for_each_clear_bit(i, (unsigned long *) &norequest_mask,
-+			   (STMPE_ADC_LAST_NR + 1)) {
-+		stmpe_adc_voltage_chan(&info->stmpe_adc_iio_channels[num_chan], i);
-+		num_chan++;
-+	}
-+	stmpe_adc_temp_chan(&info->stmpe_adc_iio_channels[num_chan], i);
-+	num_chan++;
-+	indio_dev->channels = info->stmpe_adc_iio_channels;
-+	indio_dev->num_channels = num_chan;
-+
-+	ret = stmpe_adc_init_hw(info);
-+	if (ret)
-+		return ret;
-+
-+	return iio_device_register(indio_dev);
-+}
-+
-+static int stmpe_adc_remove(struct platform_device *pdev)
-+{
-+	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct stmpe_adc *info = iio_priv(indio_dev);
-+
-+	iio_device_unregister(indio_dev);
-+	stmpe_disable(info->stmpe, STMPE_BLOCK_ADC);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused stmpe_adc_resume(struct device *dev)
-+{
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-+	struct stmpe_adc *info = iio_priv(indio_dev);
-+
-+	stmpe_adc_init_hw(info);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(stmpe_adc_pm_ops, NULL, stmpe_adc_resume);
-+
-+static struct platform_driver stmpe_adc_driver = {
-+	.probe		= stmpe_adc_probe,
-+	.remove		= stmpe_adc_remove,
-+	.driver		= {
-+		.name	= "stmpe-adc",
-+		.pm	= &stmpe_adc_pm_ops,
-+	},
-+};
-+
-+module_platform_driver(stmpe_adc_driver);
-+
-+MODULE_AUTHOR("Stefan Agner <stefan.agner@toradex.com>");
-+MODULE_DESCRIPTION("STMPEXXX ADC driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:stmpe-adc");
-diff --git a/drivers/input/touchscreen/stmpe-ts.c b/drivers/input/touchscreen/stmpe-ts.c
-index c5d9006588a2..81aa313d6e5a 100644
---- a/drivers/input/touchscreen/stmpe-ts.c
-+++ b/drivers/input/touchscreen/stmpe-ts.c
-@@ -30,8 +30,6 @@
-  * with touchscreen controller
-  */
- #define STMPE_REG_INT_STA		0x0B
--#define STMPE_REG_ADC_CTRL1		0x20
--#define STMPE_REG_ADC_CTRL2		0x21
- #define STMPE_REG_TSC_CTRL		0x40
- #define STMPE_REG_TSC_CFG		0x41
- #define STMPE_REG_FIFO_TH		0x4A
-@@ -58,15 +56,6 @@
-  * @idev: registered input device
-  * @work: a work item used to scan the device
-  * @dev: a pointer back to the MFD cell struct device*
-- * @sample_time: ADC converstion time in number of clock.
-- * (0 -> 36 clocks, 1 -> 44 clocks, 2 -> 56 clocks, 3 -> 64 clocks,
-- * 4 -> 80 clocks, 5 -> 96 clocks, 6 -> 144 clocks),
-- * recommended is 4.
-- * @mod_12b: ADC Bit mode (0 -> 10bit ADC, 1 -> 12bit ADC)
-- * @ref_sel: ADC reference source
-- * (0 -> internal reference, 1 -> external reference)
-- * @adc_freq: ADC Clock speed
-- * (0 -> 1.625 MHz, 1 -> 3.25 MHz, 2 || 3 -> 6.5 MHz)
-  * @ave_ctrl: Sample average control
-  * (0 -> 1 sample, 1 -> 2 samples, 2 -> 4 samples, 3 -> 8 samples)
-  * @touch_det_delay: Touch detect interrupt delay
-@@ -88,10 +77,6 @@ struct stmpe_touch {
- 	struct input_dev *idev;
- 	struct delayed_work work;
- 	struct device *dev;
--	u8 sample_time;
--	u8 mod_12b;
--	u8 ref_sel;
--	u8 adc_freq;
- 	u8 ave_ctrl;
- 	u8 touch_det_delay;
- 	u8 settling;
-@@ -176,7 +161,7 @@ static irqreturn_t stmpe_ts_handler(int irq, void *data)
- 	input_report_key(ts->idev, BTN_TOUCH, 1);
- 	input_sync(ts->idev);
- 
--       /* flush the FIFO after we have read out our values. */
-+	/* flush the FIFO after we have read out our values. */
- 	__stmpe_reset_fifo(ts->stmpe);
- 
- 	/* reenable the tsc */
-@@ -202,20 +187,21 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
- 		return ret;
- 	}
- 
--	adc_ctrl1 = STMPE_SAMPLE_TIME(ts->sample_time) |
--		    STMPE_MOD_12B(ts->mod_12b) | STMPE_REF_SEL(ts->ref_sel);
-+	adc_ctrl1 = STMPE_SAMPLE_TIME(stmpe->sample_time) |
-+		    STMPE_MOD_12B(stmpe->mod_12b) |
-+		    STMPE_REF_SEL(stmpe->ref_sel);
- 	adc_ctrl1_mask = STMPE_SAMPLE_TIME(0xff) | STMPE_MOD_12B(0xff) |
- 			 STMPE_REF_SEL(0xff);
- 
--	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL1,
-+	ret = stmpe_set_bits(stmpe, STMPE811_REG_ADC_CTRL1,
- 			adc_ctrl1_mask, adc_ctrl1);
- 	if (ret) {
- 		dev_err(dev, "Could not setup ADC\n");
- 		return ret;
- 	}
- 
--	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL2,
--			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(ts->adc_freq));
-+	ret = stmpe_set_bits(stmpe, STMPE811_REG_ADC_CTRL2,
-+			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(stmpe->adc_freq));
- 	if (ret) {
- 		dev_err(dev, "Could not setup ADC\n");
- 		return ret;
-@@ -295,13 +281,13 @@ static void stmpe_ts_get_platform_info(struct platform_device *pdev,
- 
- 	if (np) {
- 		if (!of_property_read_u32(np, "st,sample-time", &val))
--			ts->sample_time = val;
-+			ts->stmpe->sample_time = val;
- 		if (!of_property_read_u32(np, "st,mod-12b", &val))
--			ts->mod_12b = val;
-+			ts->stmpe->mod_12b = val;
- 		if (!of_property_read_u32(np, "st,ref-sel", &val))
--			ts->ref_sel = val;
-+			ts->stmpe->ref_sel = val;
- 		if (!of_property_read_u32(np, "st,adc-freq", &val))
--			ts->adc_freq = val;
-+			ts->stmpe->adc_freq = val;
- 		if (!of_property_read_u32(np, "st,ave-ctrl", &val))
- 			ts->ave_ctrl = val;
- 		if (!of_property_read_u32(np, "st,touch-det-delay", &val))
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 8c5dfdce4326..bba159e8eaa4 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1204,7 +1204,7 @@ config MFD_STMPE
- 
- 	  Currently supported devices are:
- 
--		STMPE811: GPIO, Touchscreen
-+		STMPE811: GPIO, Touchscreen, ADC
- 		STMPE1601: GPIO, Keypad
- 		STMPE1801: GPIO, Keypad
- 		STMPE2401: GPIO, Keypad
-@@ -1217,6 +1217,7 @@ config MFD_STMPE
- 		GPIO: stmpe-gpio
- 		Keypad: stmpe-keypad
- 		Touchscreen: stmpe-ts
-+		ADC: stmpe-adc
- 
- menu "STMicroelectronics STMPE Interface Drivers"
- depends on MFD_STMPE
-diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
-index 566caca4efd8..35390d1c2e64 100644
---- a/drivers/mfd/stmpe.c
-+++ b/drivers/mfd/stmpe.c
-@@ -463,6 +463,28 @@ static const struct mfd_cell stmpe_ts_cell = {
- 	.num_resources	= ARRAY_SIZE(stmpe_ts_resources),
- };
- 
-+/*
-+ * ADC (STMPE811)
-+ */
-+
-+static struct resource stmpe_adc_resources[] = {
-+	{
-+		.name	= "STMPE_TEMP_SENS",
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	{
-+		.name	= "STMPE_ADC",
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+};
-+
-+static const struct mfd_cell stmpe_adc_cell = {
-+	.name		= "stmpe-adc",
-+	.of_compatible	= "st,stmpe-adc",
-+	.resources	= stmpe_adc_resources,
-+	.num_resources	= ARRAY_SIZE(stmpe_adc_resources),
-+};
-+
- /*
-  * STMPE811 or STMPE610
-  */
-@@ -497,6 +519,11 @@ static struct stmpe_variant_block stmpe811_blocks[] = {
- 		.irq	= STMPE811_IRQ_TOUCH_DET,
- 		.block	= STMPE_BLOCK_TOUCHSCREEN,
- 	},
-+	{
-+		.cell	= &stmpe_adc_cell,
-+		.irq	= STMPE811_IRQ_TEMP_SENS,
-+		.block	= STMPE_BLOCK_ADC,
-+	},
- };
- 
- static int stmpe811_enable(struct stmpe *stmpe, unsigned int blocks,
-@@ -517,6 +544,44 @@ static int stmpe811_enable(struct stmpe *stmpe, unsigned int blocks,
- 				enable ? 0 : mask);
- }
- 
-+static int stmpe811_init_adc(struct stmpe *stmpe)
-+{
-+	int ret;
-+	u8 adc_ctrl1, adc_ctrl1_mask;
-+
-+	ret = stmpe_enable(stmpe, STMPE_BLOCK_ADC);
-+	if (ret) {
-+		dev_err(stmpe->dev, "Could not enable clock for ADC\n");
-+		goto err_adc;
-+	}
-+
-+	adc_ctrl1 = STMPE_SAMPLE_TIME(stmpe->sample_time) |
-+		    STMPE_MOD_12B(stmpe->mod_12b) |
-+		    STMPE_REF_SEL(stmpe->ref_sel);
-+	adc_ctrl1_mask = STMPE_SAMPLE_TIME(0xff) | STMPE_MOD_12B(0xff) |
-+			 STMPE_REF_SEL(0xff);
-+
-+	ret = stmpe_set_bits(stmpe, STMPE811_REG_ADC_CTRL1,
-+			adc_ctrl1_mask, adc_ctrl1);
-+	if (ret) {
-+		dev_err(stmpe->dev, "Could not setup ADC\n");
-+		goto err_adc;
-+	}
-+
-+	ret = stmpe_set_bits(stmpe, STMPE811_REG_ADC_CTRL2,
-+			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(stmpe->adc_freq));
-+	if (ret) {
-+		dev_err(stmpe->dev, "Could not setup ADC\n");
-+		goto err_adc;
-+	}
-+
-+	return 0;
-+err_adc:
-+	stmpe_disable(stmpe, STMPE_BLOCK_ADC);
-+
-+	return ret;
-+}
-+
- static int stmpe811_get_altfunc(struct stmpe *stmpe, enum stmpe_block block)
- {
- 	/* 0 for touchscreen, 1 for GPIO */
-@@ -1235,6 +1300,12 @@ static int stmpe_chip_init(struct stmpe *stmpe)
- 			return ret;
- 	}
- 
-+	if (id == STMPE811_ID) {
-+		ret = stmpe811_init_adc(stmpe);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return stmpe_reg_write(stmpe, stmpe->regs[STMPE_IDX_ICR_LSB], icr);
- }
- 
-@@ -1325,6 +1396,7 @@ int stmpe_probe(struct stmpe_client_info *ci, enum stmpe_partnum partnum)
- 	struct device_node *np = ci->dev->of_node;
- 	struct stmpe *stmpe;
- 	int ret;
-+	u32 val;
- 
- 	pdata = devm_kzalloc(ci->dev, sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
-@@ -1342,6 +1414,15 @@ int stmpe_probe(struct stmpe_client_info *ci, enum stmpe_partnum partnum)
- 	mutex_init(&stmpe->irq_lock);
- 	mutex_init(&stmpe->lock);
- 
-+	if (!of_property_read_u32(np, "st,sample-time", &val))
-+		stmpe->sample_time = val;
-+	if (!of_property_read_u32(np, "st,mod-12b", &val))
-+		stmpe->mod_12b = val;
-+	if (!of_property_read_u32(np, "st,ref-sel", &val))
-+		stmpe->ref_sel = val;
-+	if (!of_property_read_u32(np, "st,adc-freq", &val))
-+		stmpe->adc_freq = val;
-+
- 	stmpe->dev = ci->dev;
- 	stmpe->client = ci->client;
- 	stmpe->pdata = pdata;
-diff --git a/include/linux/mfd/stmpe.h b/include/linux/mfd/stmpe.h
-index c0353f6431f9..86dca9e9880a 100644
---- a/include/linux/mfd/stmpe.h
-+++ b/include/linux/mfd/stmpe.h
-@@ -21,6 +21,9 @@
- #define STMPE_I_DRIVE(x)	(x & 0x1)
- #define STMPE_OP_MODE(x)	((x & 0x7) << 1)
- 
-+#define STMPE811_REG_ADC_CTRL1	0x20
-+#define STMPE811_REG_ADC_CTRL2	0x21
-+
- struct device;
- struct regulator;
- 
-@@ -134,6 +137,12 @@ struct stmpe {
- 	u8 ier[2];
- 	u8 oldier[2];
- 	struct stmpe_platform_data *pdata;
-+
-+	/* For devices that use an ADC */
-+	u8 sample_time;
-+	u8 mod_12b;
-+	u8 ref_sel;
-+	u8 adc_freq;
- };
- 
- extern int stmpe_reg_write(struct stmpe *stmpe, u8 reg, u8 data);
+> These changes were based on work done by Huicong Xu <xhc@rock-chips.com>
+> and Nickey Yang <nickey.yang@rock-chips.com> to support HDMI2.0 modes
+> on the Rockchip 4.4 BSP kernel at [1]
+> 
+> [1] https://github.com/rockchip-linux/kernel/tree/release-4.4
+> 
+> Cc: Nickey Yang <nickey.yang@rock-chips.com>
+> Cc: Huicong Xu <xhc@rock-chips.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 45 +++++++++++++++++++++--
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.h |  1 +
+>  include/drm/bridge/dw_hdmi.h              |  1 +
+>  3 files changed, 44 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
+> 5971976284bf..523508af70b0 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> @@ -28,6 +28,7 @@
+>  #include <drm/drm_crtc_helper.h>
+>  #include <drm/drm_edid.h>
+>  #include <drm/drm_encoder_slave.h>
+> +#include <drm/drm_scdc_helper.h>
+>  #include <drm/bridge/dw_hdmi.h>
+> 
+>  #include <uapi/linux/media-bus-format.h>
+> @@ -1015,6 +1016,20 @@ void dw_hdmi_phy_i2c_write(struct dw_hdmi *hdmi,
+> unsigned short data, }
+>  EXPORT_SYMBOL_GPL(dw_hdmi_phy_i2c_write);
+> 
+> +void dw_hdmi_set_high_tmds_clock_ratio(struct dw_hdmi *hdmi)
+> +{
+> +	unsigned long mtmdsclock = hdmi->hdmi_data.video_mode.mpixelclock;
+> +
+> +	/* Control for TMDS Bit Period/TMDS Clock-Period Ratio */
+> +	if (hdmi->connector.display_info.hdmi.scdc.supported) {
+> +		if (mtmdsclock > 340000000)
+
+You use the 3.4GHz frequency in a few places, how about creating a macro ?
+
+> +			drm_scdc_set_high_tmds_clock_ratio(hdmi->ddc, 1);
+> +		else
+> +			drm_scdc_set_high_tmds_clock_ratio(hdmi->ddc, 0);
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(dw_hdmi_set_high_tmds_clock_ratio);
+> +
+>  static void dw_hdmi_phy_enable_powerdown(struct dw_hdmi *hdmi, bool enable)
+> {
+>  	hdmi_mask_writeb(hdmi, !enable, HDMI_PHY_CONF0,
+> @@ -1340,11 +1355,12 @@ static void hdmi_tx_hdcp_config(struct dw_hdmi
+> *hdmi)
+> 
+>  static void hdmi_config_AVI(struct dw_hdmi *hdmi, struct drm_display_mode
+> *mode) {
+> +	bool is_hdmi2_sink = hdmi->connector.display_info.hdmi.scdc.supported;
+>  	struct hdmi_avi_infoframe frame;
+>  	u8 val;
+> 
+>  	/* Initialise info frame from DRM mode */
+> -	drm_hdmi_avi_infoframe_from_display_mode(&frame, mode, false);
+> +	drm_hdmi_avi_infoframe_from_display_mode(&frame, mode, is_hdmi2_sink);
+> 
+>  	if (hdmi_bus_fmt_is_yuv444(hdmi->hdmi_data.enc_out_bus_format))
+>  		frame.colorspace = HDMI_COLORSPACE_YUV444;
+> @@ -1503,7 +1519,8 @@ static void
+> hdmi_config_vendor_specific_infoframe(struct dw_hdmi *hdmi, static void
+> hdmi_av_composer(struct dw_hdmi *hdmi,
+>  			     const struct drm_display_mode *mode)
+>  {
+> -	u8 inv_val;
+> +	u8 inv_val, bytes;
+> +	struct drm_hdmi_info *hdmi_info = &hdmi->connector.display_info.hdmi;
+>  	struct hdmi_vmode *vmode = &hdmi->hdmi_data.video_mode;
+>  	int hblank, vblank, h_de_hs, v_de_vs, hsync_len, vsync_len;
+>  	unsigned int vdisplay;
+> @@ -1513,7 +1530,9 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+>  	dev_dbg(hdmi->dev, "final pixclk = %d\n", vmode->mpixelclock);
+> 
+>  	/* Set up HDMI_FC_INVIDCONF */
+> -	inv_val = (hdmi->hdmi_data.hdcp_enable ?
+> +	inv_val = (hdmi->hdmi_data.hdcp_enable ||
+> +		   vmode->mpixelclock > 340000000 ||
+> +		   hdmi_info->scdc.scrambling.low_rates ?
+>  		HDMI_FC_INVIDCONF_HDCP_KEEPOUT_ACTIVE :
+>  		HDMI_FC_INVIDCONF_HDCP_KEEPOUT_INACTIVE);
+> 
+> @@ -1562,6 +1581,26 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
+>  		vsync_len /= 2;
+>  	}
+> 
+> +	/* Scrambling Control */
+> +	if (hdmi_info->scdc.supported) {
+> +		if (vmode->mpixelclock > 340000000 ||
+> +		    hdmi_info->scdc.scrambling.low_rates) {
+> +			drm_scdc_readb(&hdmi->i2c->adap, SCDC_SINK_VERSION,
+> +				       &bytes);
+> +			drm_scdc_writeb(&hdmi->i2c->adap, SCDC_SOURCE_VERSION,
+> +					bytes);
+
+Shouldn't the source version be min(sink version, highest supported source 
+version) ?
+
+> +			drm_scdc_set_scrambling(&hdmi->i2c->adap, 1);
+> +			hdmi_writeb(hdmi, (u8)~HDMI_MC_SWRSTZ_TMDSSWRST_REQ,
+> +				    HDMI_MC_SWRSTZ);
+> +			hdmi_writeb(hdmi, 1, HDMI_FC_SCRAMBLER_CTRL);
+> +		} else {
+> +			hdmi_writeb(hdmi, 0, HDMI_FC_SCRAMBLER_CTRL);
+> +			hdmi_writeb(hdmi, (u8)~HDMI_MC_SWRSTZ_TMDSSWRST_REQ,
+> +				    HDMI_MC_SWRSTZ);
+> +			drm_scdc_set_scrambling(&hdmi->i2c->adap, 0);
+> +		}
+> +	}
+> +
+>  	/* Set up horizontal active pixel width */
+>  	hdmi_writeb(hdmi, mode->hdisplay >> 8, HDMI_FC_INHACTV1);
+>  	hdmi_writeb(hdmi, mode->hdisplay, HDMI_FC_INHACTV0);
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h index
+> 9d90eb9c46e5..3f3c616eba97 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
+> @@ -255,6 +255,7 @@
+>  #define HDMI_FC_MASK2                           0x10DA
+>  #define HDMI_FC_POL2                            0x10DB
+>  #define HDMI_FC_PRCONF                          0x10E0
+> +#define HDMI_FC_SCRAMBLER_CTRL                  0x10E1
+> 
+>  #define HDMI_FC_GMD_STAT                        0x1100
+>  #define HDMI_FC_GMD_EN                          0x1101
+> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+> index ccb5aa8468e0..d7cc5d094270 100644
+> --- a/include/drm/bridge/dw_hdmi.h
+> +++ b/include/drm/bridge/dw_hdmi.h
+> @@ -156,6 +156,7 @@ void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool
+> hpd, bool rx_sense); void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi,
+> unsigned int rate); void dw_hdmi_audio_enable(struct dw_hdmi *hdmi);
+>  void dw_hdmi_audio_disable(struct dw_hdmi *hdmi);
+> +void dw_hdmi_set_high_tmds_clock_ratio(struct dw_hdmi *hdmi);
+> 
+>  /* PHY configuration */
+>  void dw_hdmi_phy_i2c_set_addr(struct dw_hdmi *hdmi, u8 address);
+
+
 -- 
-2.19.1
+Regards,
+
+Laurent Pinchart
+
+
 
