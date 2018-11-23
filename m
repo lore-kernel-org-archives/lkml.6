@@ -2,148 +2,134 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E50CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D2BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:03:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34A52206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:03:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34A52206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id 82DFB206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:03:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fk4yUBRN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82DFB206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502230AbeKWRqI (ORCPT
+        id S2408226AbeKWRqV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 12:46:08 -0500
-Received: from relay.sw.ru ([185.231.240.75]:57032 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389987AbeKWRqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 12:46:08 -0500
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1gQ5UX-0000hx-Qp; Fri, 23 Nov 2018 10:03:05 +0300
-Subject: Re: [PATCH 2/2] mm: ksm: do not block on page lock when searching
- stable tree
-To:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
-        vbabka@suse.cz, hannes@cmpxchg.org, hughd@google.com,
-        akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1541618201-120667-1-git-send-email-yang.shi@linux.alibaba.com>
- <1541618201-120667-2-git-send-email-yang.shi@linux.alibaba.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <302f3116-7e53-2750-ec2d-b90feb4cafec@virtuozzo.com>
-Date:   Fri, 23 Nov 2018 10:03:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 23 Nov 2018 12:46:21 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40396 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731655AbeKWRqU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 12:46:20 -0500
+Received: by mail-wr1-f68.google.com with SMTP id p4so11248117wrt.7;
+        Thu, 22 Nov 2018 23:03:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gQdZKYblrwTj4f+bCgwmPJ00GVcY5LnOcDagPbVLG3Y=;
+        b=Fk4yUBRNxIqZjCaXkHOJ0T2WyX9VXGl7ElxKMqMFuY5UEVJk2GEKuA2cowTQXX3Nvw
+         t8YSunHD7YbkjjauGQJWc9NPKjTFKzCQi9OhdP/cL5qeixwB3LRi8H8rrGgQQ3/sT7s8
+         okp1fdzbsusfm5buavNpHtkuxpppyN2qzO7u5NB/ff/OsnTaSHWTjLhykoAhqHmcQNKN
+         rllxQTd9C9BTshG/Sinc6SVvfY8ZVB1iXEwpyFihwP0eecgYX26yzW2IvMq/xQYbBJc2
+         xd1tfFKMoi2jHjuPFlJ1awgryIVrsihsj5opS050HgzU7e8CnvyH0sl5MedEIk/0j41e
+         PW3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gQdZKYblrwTj4f+bCgwmPJ00GVcY5LnOcDagPbVLG3Y=;
+        b=YgxxSjDyBbw8T4K8eZHX6yrvm3KcrLqnMOFCC83x8zOuPTI1LjEbpP4Ehx/W2cIR37
+         C/ZF48FhL5G8dZ3aBJ7v/GKkrCLG5LNjd/liiqsIpYLUYp/Ry6jae2SXOed33hhHzPuK
+         RjGV/+SmYOlmGfpDtJ6B2gnRgopgSxw6mt+Y6NtyEPGNwS8WK7UTzc/6CPOdCeBq/c0a
+         /pqF0iyW9kssURFZQMQgASyNGvQ2HhLDEpCaL2xO3Eix+RR4iXpqQwHWx8o9RhqMF6Y+
+         eCTiPaa538t+LMy0bsGjLrLEfzHTLYIV1V2Yl7ELSuZ+HV3PE9SWVIRVpvvRNRoEvdmY
+         p/tA==
+X-Gm-Message-State: AA+aEWbq8U0uLQG5ucIMgd3YOy+i4uP8vudeeA2vbtfXHrilX4wo00R0
+        QLHPD45/TPcPp+Pw1G7j8qY=
+X-Google-Smtp-Source: AFSGD/WIEJBED7akuaI6SyWLnTy/VUXnraCVdxMlXYa1fI8SBtyqyMXi/Gx2WErscWyZix0fvQtCKg==
+X-Received: by 2002:a5d:470b:: with SMTP id y11mr11944684wrq.16.1542956602086;
+        Thu, 22 Nov 2018 23:03:22 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id x8sm14620145wrd.53.2018.11.22.23.03.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 22 Nov 2018 23:03:21 -0800 (PST)
+Date:   Fri, 23 Nov 2018 08:03:19 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     wang.yi59@zte.com.cn, torvalds@linux-foundation.org,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        peterz@infradead.org
+Cc:     linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/cleanups] x86/headers: Fix -Wmissing-prototypes warning
+Message-ID: <20181123070318.GA41027@gmail.com>
+References: <1542852249-19820-1-git-send-email-wang.yi59@zte.com.cn>
+ <tip-d37904c5b14317a2c76efec6b9e4dbcaa17380e5@git.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1541618201-120667-2-git-send-email-yang.shi@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tip-d37904c5b14317a2c76efec6b9e4dbcaa17380e5@git.kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07.11.2018 22:16, Yang Shi wrote:
-> ksmd need search stable tree to look for the suitable KSM page, but the
-> KSM page might be locked for long time due to i.e. KSM page rmap walk.
-> 
-> It sounds not worth waiting for the lock, the page can be skip, then try
-> to merge it in the next scan to avoid long stall if its content is
-> still intact.
-> 
-> Introduce async mode to get_ksm_page() to not block on page lock, like
-> what try_to_merge_one_page() does.
-> 
-> Return -EBUSY if trylock fails, since NULL means not find suitable KSM
-> page, which is a valid case.
-> 
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 
-Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+* tip-bot for Yi Wang <tipbot@zytor.com> wrote:
 
-> ---
->  mm/ksm.c | 29 +++++++++++++++++++++++++----
->  1 file changed, 25 insertions(+), 4 deletions(-)
+> Commit-ID:  d37904c5b14317a2c76efec6b9e4dbcaa17380e5
+> Gitweb:     https://git.kernel.org/tip/d37904c5b14317a2c76efec6b9e4dbcaa17380e5
+> Author:     Yi Wang <wang.yi59@zte.com.cn>
+> AuthorDate: Thu, 22 Nov 2018 10:04:09 +0800
+> Committer:  Ingo Molnar <mingo@kernel.org>
+> CommitDate: Thu, 22 Nov 2018 09:52:28 +0100
 > 
-> diff --git a/mm/ksm.c b/mm/ksm.c
-> index 5b0894b..576803d 100644
-> --- a/mm/ksm.c
-> +++ b/mm/ksm.c
-> @@ -667,7 +667,7 @@ static void remove_node_from_stable_tree(struct stable_node *stable_node)
->  }
+> x86/headers: Fix -Wmissing-prototypes warning
+
+
+>  #endif /* _ASM_X86_CRASH_H */
+> diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
+> index eea40d52ca78..063f1d4d698e 100644
+> --- a/arch/x86/include/asm/efi.h
+> +++ b/arch/x86/include/asm/efi.h
+> @@ -173,8 +173,6 @@ static inline bool efi_runtime_supported(void)
+>  extern struct console early_efi_console;
+>  extern void parse_efi_setup(u64 phys_addr, u32 data_len);
 >  
->  /*
-> - * get_ksm_page: checks if the page indicated by the stable node
-> + * __get_ksm_page: checks if the page indicated by the stable node
->   * is still its ksm page, despite having held no reference to it.
->   * In which case we can trust the content of the page, and it
->   * returns the gotten page; but if the page has now been zapped,
-> @@ -685,7 +685,8 @@ static void remove_node_from_stable_tree(struct stable_node *stable_node)
->   * a page to put something that might look like our key in page->mapping.
->   * is on its way to being freed; but it is an anomaly to bear in mind.
->   */
-> -static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
-> +static struct page *__get_ksm_page(struct stable_node *stable_node,
-> +				   bool lock_it, bool async)
->  {
->  	struct page *page;
->  	void *expected_mapping;
-> @@ -728,7 +729,14 @@ static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
->  	}
+> -extern void efifb_setup_from_dmi(struct screen_info *si, const char *opt);
+> -
+>  #ifdef CONFIG_EFI_MIXED
+>  extern void efi_thunk_runtime_setup(void);
+>  extern efi_status_t efi_thunk_set_virtual_address_map(
+
+> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> index 845174e113ce..890c4cb37502 100644
+> --- a/include/linux/efi.h
+> +++ b/include/linux/efi.h
+> @@ -1053,6 +1053,8 @@ extern struct kobject *efi_kobj;
+>  extern int efi_reboot_quirk_mode;
+>  extern bool efi_poweroff_required(void);
 >  
->  	if (lock_it) {
-> -		lock_page(page);
-> +		if (async) {
-> +			if (!trylock_page(page)) {
-> +				put_page(page);
-> +				return ERR_PTR(-EBUSY);
-> +			}
-> +		} else
-> +			lock_page(page);
+> +extern void efifb_setup_from_dmi(struct screen_info *si, const char *opt);
 > +
->  		if (READ_ONCE(page->mapping) != expected_mapping) {
->  			unlock_page(page);
->  			put_page(page);
-> @@ -751,6 +759,11 @@ static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
->  	return NULL;
->  }
->  
-> +static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
-> +{
-> +	return __get_ksm_page(stable_node, lock_it, false);
-> +}
-> +
->  /*
->   * Removing rmap_item from stable or unstable tree.
->   * This function will clean the information from the stable/unstable tree.
-> @@ -1675,7 +1688,11 @@ static struct page *stable_tree_search(struct page *page)
->  			 * It would be more elegant to return stable_node
->  			 * than kpage, but that involves more changes.
->  			 */
-> -			tree_page = get_ksm_page(stable_node_dup, true);
-> +			tree_page = __get_ksm_page(stable_node_dup, true, true);
-> +
-> +			if (PTR_ERR(tree_page) == -EBUSY)
-> +				return ERR_PTR(-EBUSY);
-> +
->  			if (unlikely(!tree_page))
->  				/*
->  				 * The tree may have been rebalanced,
-> @@ -2062,6 +2079,10 @@ static void cmp_and_merge_page(struct page *page, struct rmap_item *rmap_item)
->  
->  	/* We first start with searching the page inside the stable tree */
->  	kpage = stable_tree_search(page);
-> +
-> +	if (PTR_ERR(kpage) == -EBUSY)
-> +		return;
-> +
->  	if (kpage == page && rmap_item->head == stable_node) {
->  		put_page(kpage);
->  		return;
-> 
+>  #ifdef CONFIG_EFI_FAKE_MEMMAP
+>  extern void __init efi_fake_memmap(void);
+>  #else
+
+These efifb_setup_from_dmi() changes were completely bogus and broke 
+every non-x86 EFI architecture, which a simple:
+
+  git grep efifb_setup_from_dmi
+
+should have already exposed.
+
+Did you actually check the usage of every single prototype and think 
+about them case by case? It doesn't seem to be the case.
+
+Thanks,
+
+	Ingo
