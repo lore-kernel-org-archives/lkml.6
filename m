@@ -2,120 +2,216 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03996C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:07:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 368B3C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:10:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF2CF20824
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:07:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=upb.ro header.i=@upb.ro header.b="iLM5ytMG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF2CF20824
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=upb.ro
+	by mail.kernel.org (Postfix) with ESMTP id EC22F20685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:10:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC22F20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2632835AbeKXCwh (ORCPT
+        id S2632851AbeKXCz1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 21:52:37 -0500
-Received: from mail-sender200.upb.ro ([141.85.13.200]:57056 "EHLO mx.upb.ro"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2632803AbeKXCwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 21:52:36 -0500
-Received: from mx.upb.ro (localhost [127.0.0.1])
-        by mx.upb.ro (Postfix) with ESMTPS id A3364B560086;
-        Fri, 23 Nov 2018 18:07:45 +0200 (EET)
-Received: from localhost (localhost [127.0.0.1])
-        by mx.upb.ro (Postfix) with ESMTP id 87834B560085;
-        Fri, 23 Nov 2018 18:07:45 +0200 (EET)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mx.upb.ro 87834B560085
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=upb.ro;
-        s=96342B8A-77E4-11E5-BA93-D93D0963A2DF; t=1542989265;
-        bh=N17DbxNe5WtsCQE9/8kAJPUPENgcF3M5cvkfvxL4RE0=;
-        h=Message-ID:From:To:Date:Mime-Version;
-        b=iLM5ytMGzrAKDSE8sfKtZW7KsBAl7zX9CJSEsZGO6h244dAkbaDwiMP12SmDWtWef
-         PQoN1VaJ2mvVfm5WFrNKyh1BcG3DRgGZBaYgcYd8F0tngRoWh7f83DbX8icXhPgKvJ
-         S7JWfrslVrVxkgJzmKtIz5uPn0ZkxVuLjly9N3jg=
-Received: from mx.upb.ro ([127.0.0.1])
-        by localhost (mx.upb.ro [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 7rGEMjQiBLNf; Fri, 23 Nov 2018 18:07:45 +0200 (EET)
-Received: from asus-rog (arh.pub.ro [141.85.160.17])
-        by mx.upb.ro (Postfix) with ESMTPSA id 62A98B560084;
-        Fri, 23 Nov 2018 18:07:45 +0200 (EET)
-Message-ID: <975b9de554cea6f905afd1f54a2d5510c2e24bd4.camel@upb.ro>
-Subject: Re: [PATCH 2/3] dt-bindings: mfd: atmel-usart: add DMA bindings for
- SPI mode
-From:   Radu Nicolae Pirea <radu_nicolae.pirea@upb.ro>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Richard Genoud <richard.genoud@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.co>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-spi <linux-spi@vger.kernel.org>
-Date:   Fri, 23 Nov 2018 18:07:40 +0200
-In-Reply-To: <CAL_JsqLNURZTWCb5WOyJvN-trUP9r-ueftwUOGWPnrEaQPBKSw@mail.gmail.com>
-References: <20181121112732.15690-1-radu_nicolae.pirea@upb.ro>
-         <20181121112732.15690-3-radu_nicolae.pirea@upb.ro>
-         <CAL_JsqLNURZTWCb5WOyJvN-trUP9r-ueftwUOGWPnrEaQPBKSw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 23 Nov 2018 21:55:27 -0500
+Received: from relay.sw.ru ([185.231.240.75]:47852 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390927AbeKXCz1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 21:55:27 -0500
+Received: from [10.94.4.83] (helo=finist-ce7.sw.ru)
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <khorenko@virtuozzo.com>)
+        id 1gQE2I-0003fC-CB; Fri, 23 Nov 2018 19:10:30 +0300
+From:   Konstantin Khorenko <khorenko@virtuozzo.com>
+To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc:     Konstantin Khorenko <khorenko@virtuozzo.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org,
+        "David S . Miller" <davem@davemloft.net>
+Subject: [PATCH 0/1] drivers/i40iw: out of bound access in i40iw_net_event()
+Date:   Fri, 23 Nov 2018 19:10:27 +0300
+Message-Id: <20181123161028.22633-1-khorenko@virtuozzo.com>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-11-21 at 10:41 -0600, Rob Herring wrote:
-> On Wed, Nov 21, 2018 at 5:29 AM Radu Pirea <radu_nicolae.pirea@upb.ro
-> > wrote:
-> > The bindings for DMA are now common for both drivers of the USART
-> > IP.
-> > 
-> > The node given as an example for USART in SPI mode has been updated
-> > in
-> > order to include DMA bindings.
-> > 
-> > Signed-off-by: Radu Pirea <radu_nicolae.pirea@upb.ro>
-> > ---
-> >  .../devicetree/bindings/mfd/atmel-usart.txt       | 15 ++++++++++-
-> > ----
-> >  1 file changed, 10 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-> > b/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-> > index 7f0cd72f47d2..8ad008175343 100644
-> > --- a/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-> > +++ b/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-> > @@ -17,17 +17,19 @@ Required properties for USART in SPI mode:
-> >  - cs-gpios: chipselects (internal cs not supported)
-> >  - atmel,usart-mode : Must be <AT91_USART_MODE_SPI> (found in dt-
-> > bindings/mfd/at91-usart.h)
-> > 
-> > +Optional properties in serial and SPI mode:
-> > +- dma bindings for dma transfer:
-> > +       - dmas: DMA specifier, consisting of a phandle to DMA
-> > controller node,
-> > +               memory peripheral interface and USART DMA channel
-> > ID, FIFO configuration.
-> > +               Refer to dma.txt and atmel-dma.txt for details.
-> > +       - dma-names: "rx" for RX channel, "tx" for TX channel.
-> > +               dma-names = "tx", "rx";
-> 
-> The dma-names should have a defined order.
+Running debug kernel on a node with infiniband card, got a KASan complain:
 
-Thanks Rob.
-I will specify in bindings a fixed order for dmas and dma-names.
+ ==================================================================
+ BUG: KASAN: slab-out-of-bounds in i40iw_copy_ip_ntohl+0x1c0/0x220
+ Read of size 4 at addr ffff88852d477380 by task swapper/6/0
 
-> 
-> Rob
+ CPU: 6 PID: 0 Comm: swapper/6 Not tainted 4.20.0-rc3-00087-gc8ce94b8fe53-dirty #15
+ Hardware name: DEPO Computers Super Server/X10DRL-i, BIOS 2.0b 05/05/2017
+ Call Trace:
+  <IRQ>
+  dump_stack+0x92/0xeb
+  print_address_description+0x6a/0x280
+  kasan_report+0x260/0x380
+  i40iw_copy_ip_ntohl+0x1c0/0x220
+  i40iw_net_event+0x150/0x200
+  notifier_call_chain+0x90/0x160
+  atomic_notifier_call_chain+0x6c/0x100
+  neigh_update+0x82f/0x15c0
+  neigh_event_ns+0x4c/0xe0
+  arp_process+0x1733/0x1f60
+  __netif_receive_skb_one_core+0xe6/0x150
+  netif_receive_skb_internal+0xe5/0x4c0
+  napi_gro_receive+0x2d1/0x3b0
+  i40e_clean_rx_irq+0x9a5/0x2eb0
+  i40e_napi_poll+0x11fd/0x2410
+  net_rx_action+0x62f/0xbf0
+  __do_softirq+0x256/0x9de
+  irq_exit+0x29b/0x2d0
+  do_IRQ+0x87/0x1a0
+  common_interrupt+0xf/0xf
+
+ Allocated by task 0:
+  kasan_kmalloc+0xa0/0xd0
+  __kmalloc+0x177/0x390
+  __neigh_create+0x1e3/0x1820
+  neigh_event_ns+0x6b/0xe0
+  arp_process+0x1733/0x1f60
+  __netif_receive_skb_one_core+0xe6/0x150
+  netif_receive_skb_internal+0xe5/0x4c0
+  napi_gro_receive+0x2d1/0x3b0
+  i40e_clean_rx_irq+0x9a5/0x2eb0
+  i40e_napi_poll+0x11fd/0x2410
+  net_rx_action+0x62f/0xbf0
+  __do_softirq+0x256/0x9de
+
+ Freed by task 0:
+ (stack is not available)
+
+ The buggy address belongs to the object at ffff88852d477080
+ to the cache kmalloc-1k of size 1024
+ The buggy address is located 768 bytes inside of 1024-byte region [ffff88852d477080, ffff88852d477480)
+ The buggy address belongs to the page:
+ page:ffffea0014b51c00 count:1 mapcount:0 mapping:ffff888107c0ea00 index:0x0 compound_mapcount: 0
+ flags: 0x17ffffc0010200(slab|head)
+ raw: 0017ffffc0010200 dead000000000100 dead000000000200 ffff888107c0ea00
+ raw: 0000000000000000 00000000801c001c 00000001ffffffff 0000000000000000
+ page dumped because: kasan: bad access detected
+
+ Memory state around the buggy address:
+  ffff88852d477280: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff88852d477300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ >ffff88852d477380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                    ^
+  ffff88852d477400: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff88852d477480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ==================================================================
+
+The complain is valid:
+
+i40iw_net_event() reads unconditionally 16 bytes from neigh->primary_key
+while the memory allocated for "neighbour" struct is evaluated in neigh_alloc() as
+
+  tbl->entry_size + dev->neigh_priv_len
+
+where "dev" is a net_device.
+
+But the driver does not setup dev->neigh_priv_len and we read beyond the neigh
+entry allocated memory, so the patch in the next mail fixes this.
+
+
+
+
+More debug details:
+
+crash> list net_device.dev_list -H 0xffffffffa908ec88 -s net_device.name -s net_device.neigh_priv_len
+ffff88065a92a200
+  name = "lo\000\000\000\000\000\000\000\000\000\000\000\000\000"
+  neigh_priv_len = 0
+ffff880642340000
+  name = "eno1\000\000\071:00.0\000\000\000"
+  neigh_priv_len = 0
+ffff88064aa6a200
+  name = "enp6s0f0\000\000\000\000\000\000\000"
+  neigh_priv_len = 0
+ffff880641180000
+  name = "eno2\000\000a:00.0\000\000\000"
+  neigh_priv_len = 0
+ffff88063e8fd500
+  name = "enp6s0f1\000\000\000\000\000\000\000"
+  neigh_priv_len = 0
+ffff880031400000
+  name = "ens11f0\000\000\000\000\000\000\000\000"
+  neigh_priv_len = 0
+ffff88063c800000
+  name = "ens11f1\000\000\000\000\000\000\000\000"
+  neigh_priv_len = 0
+ffff8808ff4ea100
+  name = "bond0\000\000\000\000\000\000\000\000\000\000"
+  neigh_priv_len = 0
+ffff88101e334400
+  name = "ib0\000\000\000\000\000\000\000\000\000\000\000\000"
+  neigh_priv_len = 200
+=========================================
+crash> list i40iw_handler.list -H i40iw_handlers
+ffff88004bbc0000 ldev.netdev == 0xffff88063e8fd500
+struct net_device {
+  name = "enp6s0f1\000\000\000\000\000\000\000",
+
+ffff881049120000 ldev.netdev == 0xffff88064aa6a200
+struct net_device {
+  name = "enp6s0f0\000\000\000\000\000\000\000",
+=========================================
+net_device allocation stack:
+
+alloc_netdev_mqs
+ alloc_etherdev_mq
+  i40e_config_netdev
+   i40e_vsi_setup
+    i40e_setup_pf_switch
+     i40e_probe
+
+=========================================
+After the patch:
+
+crash> list net_device.dev_list -H 0xffffffff92a19b48 -s net_device.name -s net_device.neigh_priv_len
+ffff88065a2dc400
+  name = "lo\000\000\000\000\000\000\000\000\000\000\000\000\000"
+  neigh_priv_len = 0
+ffff8808fb6dc200
+  name = "bond0\000\000\000\000\000\000\000\000\000\000"
+  neigh_priv_len = 0
+ffff880652600000
+  name = "ens11f0\000\000\000\000\000\000\000\000"
+  neigh_priv_len = 0
+ffff880651a00000
+  name = "ens11f1\000\000\000\000\000\000\000\000"
+  neigh_priv_len = 0
+ffff880651454000
+  name = "eno1\000\000\071:00.0\000\000\000"
+  neigh_priv_len = 0
+ffff880651550000
+  name = "eno2\000\000a:00.0\000\000\000"
+  neigh_priv_len = 0
+ffff8806515cc400
+  name = "enp6s0f0\000\000\000\000\000\000\000"
+  neigh_priv_len = 16
+ffff880650932200
+  name = "enp6s0f1\000\000\000\000\000\000\000"
+  neigh_priv_len = 16
+ffff880642903300
+  name = "ib0\000\000\000\000\000\000\000\000\000\000\000\000"
+  neigh_priv_len = 200
+
+=========================================
+
+Konstantin Khorenko (1):
+  drivers/net/i40e: define proper net_device::neigh_priv_len
+
+ drivers/net/ethernet/intel/i40e/i40e_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+-- 
+2.15.1
 
