@@ -2,184 +2,723 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3373FC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF65BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:47:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFE5520685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:47:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75B5620685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:47:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ip4s1Z6n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFE5520685
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ye69TlbM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75B5620685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502478AbeKWSaG (ORCPT
+        id S2502493AbeKWSaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 13:30:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53128 "EHLO mail.kernel.org"
+        Fri, 23 Nov 2018 13:30:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502434AbeKWSaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 13:30:05 -0500
+        id S2502479AbeKWSaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 13:30:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E9E820861;
-        Fri, 23 Nov 2018 07:47:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F1A720685;
+        Fri, 23 Nov 2018 07:47:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542959221;
-        bh=MnExdOfmSew9xofuXrVhtLP1LPcWfHDrT7+lSEVFvnA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Ip4s1Z6nRikgVKduWlntBUrnixlwLcT73spQOItchCz0TDDDXAsn/SqHdm5Y2C5DF
-         G9RMIzuoSF4ow89fGvJSNn3Pj6xJNPcJFZBgLnqY+wbZJfu5yHmD8ugKjZZVHB65Ks
-         aXxdVb7moS1BPvEKy8xvReWlrrF/hVAf2CUKeny8=
-Date:   Fri, 23 Nov 2018 08:46:59 +0100
+        s=default; t=1542959232;
+        bh=VSwoKhUUFqJq72JafUsNLY/ItZLNCTTxyxlViGthtds=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ye69TlbMA/IRI6dkI8msEyeE7oAyVHRfgQ4VS29d+1f0AguHiPYlhtZtPKpC5Pqkw
+         4qNfEM4dOwyRB4q0dSl7IiMKU4eIes4jgJ7MG8mdYx+J0Sw1eE8jQiyPcuSbt5u+dq
+         XGEJ6rN/TdMMCOnsz5jM9MdvIALyDR0e6kcokeX0=
+Date:   Fri, 23 Nov 2018 08:47:09 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 4.14.83
-Message-ID: <20181123074659.GA12056@kroah.com>
+Subject: Re: Linux 4.14.83
+Message-ID: <20181123074709.GB12056@kroah.com>
+References: <20181123074659.GA12056@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181123074659.GA12056@kroah.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---1yeeQ81UyVL57Vl7
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-I'm announcing the release of the 4.14.83 kernel.
-
-All users of the 4.14 kernel series must upgrade.
-
-The updated 4.14.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
-x-4.14.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
-mmary
-
-thanks,
-
-greg k-h
-
-------------
-
- Makefile                                        |    2=20
- arch/arm/boot/dts/r8a7791.dtsi                  |    2=20
- arch/arm/boot/dts/r8a7793.dtsi                  |    2=20
- arch/x86/kernel/cpu/bugs.c                      |   57 ++-----------------=
------
- drivers/net/dsa/microchip/ksz_common.c          |   10 ++--
- drivers/net/ethernet/broadcom/bcmsysport.c      |   15 ++----
- drivers/net/ethernet/broadcom/tg3.c             |   18 ++++++-
- drivers/net/ethernet/ibm/ibmvnic.c              |    2=20
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c  |    1=20
- drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c |    6 +-
- drivers/net/phy/mdio-gpio.c                     |   10 ++--
- drivers/net/tun.c                               |    6 ++
- drivers/net/usb/smsc95xx.c                      |    9 +++
- include/uapi/linux/sctp.h                       |    2=20
- kernel/cpu.c                                    |   11 ----
- net/core/dev.c                                  |    4 +
- net/core/flow_dissector.c                       |    4 -
- net/ipv4/inet_fragment.c                        |   28 ++++++-----
- net/ipv4/ip_tunnel_core.c                       |    2=20
- net/ipv6/route.c                                |    7 ++
- net/sctp/socket.c                               |   26 ++--------
- net/sctp/stream.c                               |    1=20
- 22 files changed, 95 insertions(+), 130 deletions(-)
-
-Chris Paterson (2):
-      ARM: dts: r8a7791: Correct critical CPU temperature
-      ARM: dts: r8a7793: Correct critical CPU temperature
-
-David Ahern (1):
-      ipv6: Fix PMTU updates for UDP/raw sockets in presence of VRF
-
-Eric Dumazet (2):
-      net-gro: reset skb->pkt_type in napi_reuse_skb()
-      inet: frags: better deal with smp races
-
-Florian Fainelli (1):
-      net: systemport: Protect stop from timeout
-
-Frieder Schrempf (1):
-      usbnet: smsc95xx: disable carrier check while suspending
-
-Greg Kroah-Hartman (2):
-      Revert "x86/speculation: Enable cross-hyperthread spectre v2 STIBP mi=
-tigation"
-      Linux 4.14.83
-
-Martin Schiller (1):
-      net: phy: mdio-gpio: Fix working over slow can_sleep GPIOs
-
-Matthew Cover (1):
-      tuntap: fix multiqueue rx
-
-Micha=C5=82 Miros=C5=82aw (1):
-      ibmvnic: fix accelerated VLAN handling
-
-Sabrina Dubroca (1):
-      ip_tunnel: don't force DF when MTU is locked
-
-Shalom Toledo (1):
-      mlxsw: spectrum: Fix IP2ME CPU policer configuration
-
-Siva Reddy Kallam (1):
-      tg3: Add PHY reset for 5717/5719/5720 in change ring and flow control=
- paths
-
-Stefan Wahren (1):
-      net: smsc95xx: Fix MTU range
-
-Subash Abhinov Kasiviswanathan (1):
-      net: qualcomm: rmnet: Fix incorrect assignment of real_dev
-
-Tristram Ha (1):
-      net: dsa: microchip: initialize mutex before use
-
-Xin Long (3):
-      sctp: not allow to set asoc prsctp_enable by sockopt
-      sctp: fix strchange_flags name for Stream Change Event
-      sctp: not increase stream's incnt before sending addstrm_in request
-
-=EB=B0=B0=EC=84=9D=EC=A7=84 (1):
-      flow_dissector: do not dissect l4 ports for fragments
-
-
---1yeeQ81UyVL57Vl7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlv3sHMACgkQONu9yGCS
-aT4ybhAA2FN4MjNaE761Exrjv7KzVkC+ZCarqxHm97513inQdbBE5iYT4pfRTb5u
-9TdZRCVr60QOBFK6U+eOrR8tJ6NeAgBb0tZxuD6B0cwzcl9e11ODD8phhtwszHn7
-Jypp0x0nuQm0HTGzEoo5cEBi6ketuA0g8BIEI3sMK+Qw/GKvphKta0h85u368alW
-9l7mQHAupFiLnjgHLpKyWOjvihY/9EMhiBkzJK97eux67/sBFC2Cby+Z4W09O1BG
-djyPONgfYPk1VUOOnYbCaqFFusr+cJ/9vIhgVWzgdc0ZANLTlxkiGWMq1R2ALOTS
-C2P6nt5JG4jn/qyjkdQQJcQq00ARYBVoPGzJwnqlvH+mACn28X531MH5T/hx+aKt
-/E4M9xzWHAq9vGGSIuSw1YjhIoFWzcf+CKwYjcE6bFmXGsp2xURz+5EI53dw6DOw
-x1xBexzkZW7PkUKGNLaA+wW/KIk2Jxe6+l+Aqo0h/8vrE4p5FmcXul75b+FO1GMV
-2OUwv7dBjHXi1BvUAHzYQQneACu1su4OGPwN5SBZbpn1iUCCCaVM/ytO1xEoxLOK
-N9By/wyw8eyG1XLO5q2gefT+2MEbph75WonbSK0ruulGATygjJvoADCkCdmD8jqG
-6JhyZVEsiUusT+RYLZa5I32sUsTVoePY45n/8Uf4ncSOttCZkUk=
-=nPy+
------END PGP SIGNATURE-----
-
---1yeeQ81UyVL57Vl7--
+diff --git a/Makefile b/Makefile
+index cac5323bc95d..0f42814095a4 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 4
+ PATCHLEVEL = 14
+-SUBLEVEL = 82
++SUBLEVEL = 83
+ EXTRAVERSION =
+ NAME = Petit Gorille
+ 
+diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
+index f1d1a9772153..0aceb3736e5c 100644
+--- a/arch/arm/boot/dts/r8a7791.dtsi
++++ b/arch/arm/boot/dts/r8a7791.dtsi
+@@ -91,7 +91,7 @@
+ 
+ 			trips {
+ 				cpu-crit {
+-					temperature	= <115000>;
++					temperature	= <95000>;
+ 					hysteresis	= <0>;
+ 					type		= "critical";
+ 				};
+diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
+index 497716b6fbe2..fd12564aabc3 100644
+--- a/arch/arm/boot/dts/r8a7793.dtsi
++++ b/arch/arm/boot/dts/r8a7793.dtsi
+@@ -88,7 +88,7 @@
+ 
+ 			trips {
+ 				cpu-crit {
+-					temperature	= <115000>;
++					temperature	= <95000>;
+ 					hysteresis	= <0>;
+ 					type		= "critical";
+ 				};
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index aa6e7f75bccc..e92aedd93806 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -34,10 +34,12 @@ static void __init spectre_v2_select_mitigation(void);
+ static void __init ssb_select_mitigation(void);
+ static void __init l1tf_select_mitigation(void);
+ 
+-/* The base value of the SPEC_CTRL MSR that always has to be preserved. */
+-u64 x86_spec_ctrl_base;
++/*
++ * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
++ * writes to SPEC_CTRL contain whatever reserved bits have been set.
++ */
++u64 __ro_after_init x86_spec_ctrl_base;
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
+-static DEFINE_MUTEX(spec_ctrl_mutex);
+ 
+ /*
+  * The vendor and possibly platform specific bits which can be modified in
+@@ -321,46 +323,6 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
+ 	return cmd;
+ }
+ 
+-static bool stibp_needed(void)
+-{
+-	if (spectre_v2_enabled == SPECTRE_V2_NONE)
+-		return false;
+-
+-	if (!boot_cpu_has(X86_FEATURE_STIBP))
+-		return false;
+-
+-	return true;
+-}
+-
+-static void update_stibp_msr(void *info)
+-{
+-	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
+-}
+-
+-void arch_smt_update(void)
+-{
+-	u64 mask;
+-
+-	if (!stibp_needed())
+-		return;
+-
+-	mutex_lock(&spec_ctrl_mutex);
+-	mask = x86_spec_ctrl_base;
+-	if (cpu_smt_control == CPU_SMT_ENABLED)
+-		mask |= SPEC_CTRL_STIBP;
+-	else
+-		mask &= ~SPEC_CTRL_STIBP;
+-
+-	if (mask != x86_spec_ctrl_base) {
+-		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
+-				cpu_smt_control == CPU_SMT_ENABLED ?
+-				"Enabling" : "Disabling");
+-		x86_spec_ctrl_base = mask;
+-		on_each_cpu(update_stibp_msr, NULL, 1);
+-	}
+-	mutex_unlock(&spec_ctrl_mutex);
+-}
+-
+ static void __init spectre_v2_select_mitigation(void)
+ {
+ 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
+@@ -460,9 +422,6 @@ static void __init spectre_v2_select_mitigation(void)
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
+ 		pr_info("Enabling Restricted Speculation for firmware calls\n");
+ 	}
+-
+-	/* Enable STIBP if appropriate */
+-	arch_smt_update();
+ }
+ 
+ #undef pr_fmt
+@@ -855,8 +814,6 @@ static ssize_t l1tf_show_state(char *buf)
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			       char *buf, unsigned int bug)
+ {
+-	int ret;
+-
+ 	if (!boot_cpu_has_bug(bug))
+ 		return sprintf(buf, "Not affected\n");
+ 
+@@ -871,12 +828,10 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
+ 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
+ 
+ 	case X86_BUG_SPECTRE_V2:
+-		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+ 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+-			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
+ 			       spectre_v2_module_string());
+-		return ret;
+ 
+ 	case X86_BUG_SPEC_STORE_BYPASS:
+ 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
+diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
+index 56cd6d365352..6f4c9913f8f5 100644
+--- a/drivers/net/dsa/microchip/ksz_common.c
++++ b/drivers/net/dsa/microchip/ksz_common.c
+@@ -1104,11 +1104,6 @@ static int ksz_switch_init(struct ksz_device *dev)
+ {
+ 	int i;
+ 
+-	mutex_init(&dev->reg_mutex);
+-	mutex_init(&dev->stats_mutex);
+-	mutex_init(&dev->alu_mutex);
+-	mutex_init(&dev->vlan_mutex);
+-
+ 	dev->ds->ops = &ksz_switch_ops;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(ksz_switch_chips); i++) {
+@@ -1193,6 +1188,11 @@ int ksz_switch_register(struct ksz_device *dev)
+ 	if (dev->pdata)
+ 		dev->chip_id = dev->pdata->chip_id;
+ 
++	mutex_init(&dev->reg_mutex);
++	mutex_init(&dev->stats_mutex);
++	mutex_init(&dev->alu_mutex);
++	mutex_init(&dev->vlan_mutex);
++
+ 	if (ksz_switch_detect(dev))
+ 		return -EINVAL;
+ 
+diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
+index 6e7f9a470ea1..45462557e51c 100644
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -1774,9 +1774,6 @@ static void bcm_sysport_netif_start(struct net_device *dev)
+ 		intrl2_1_mask_clear(priv, 0xffffffff);
+ 	else
+ 		intrl2_0_mask_clear(priv, INTRL2_0_TDMA_MBDONE_MASK);
+-
+-	/* Last call before we start the real business */
+-	netif_tx_start_all_queues(dev);
+ }
+ 
+ static void rbuf_init(struct bcm_sysport_priv *priv)
+@@ -1922,6 +1919,8 @@ static int bcm_sysport_open(struct net_device *dev)
+ 
+ 	bcm_sysport_netif_start(dev);
+ 
++	netif_tx_start_all_queues(dev);
++
+ 	return 0;
+ 
+ out_clear_rx_int:
+@@ -1945,7 +1944,7 @@ static void bcm_sysport_netif_stop(struct net_device *dev)
+ 	struct bcm_sysport_priv *priv = netdev_priv(dev);
+ 
+ 	/* stop all software from updating hardware */
+-	netif_tx_stop_all_queues(dev);
++	netif_tx_disable(dev);
+ 	napi_disable(&priv->napi);
+ 	phy_stop(dev->phydev);
+ 
+@@ -2267,12 +2266,12 @@ static int bcm_sysport_suspend(struct device *d)
+ 	if (!netif_running(dev))
+ 		return 0;
+ 
++	netif_device_detach(dev);
++
+ 	bcm_sysport_netif_stop(dev);
+ 
+ 	phy_suspend(dev->phydev);
+ 
+-	netif_device_detach(dev);
+-
+ 	/* Disable UniMAC RX */
+ 	umac_enable_set(priv, CMD_RX_EN, 0);
+ 
+@@ -2356,8 +2355,6 @@ static int bcm_sysport_resume(struct device *d)
+ 		goto out_free_rx_ring;
+ 	}
+ 
+-	netif_device_attach(dev);
+-
+ 	/* RX pipe enable */
+ 	topctrl_writel(priv, 0, RX_FLUSH_CNTL);
+ 
+@@ -2402,6 +2399,8 @@ static int bcm_sysport_resume(struct device *d)
+ 
+ 	bcm_sysport_netif_start(dev);
+ 
++	netif_device_attach(dev);
++
+ 	return 0;
+ 
+ out_free_rx_ring:
+diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
+index 1b1d2a67f412..bc0221eafe5c 100644
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -12395,6 +12395,7 @@ static int tg3_set_ringparam(struct net_device *dev, struct ethtool_ringparam *e
+ {
+ 	struct tg3 *tp = netdev_priv(dev);
+ 	int i, irq_sync = 0, err = 0;
++	bool reset_phy = false;
+ 
+ 	if ((ering->rx_pending > tp->rx_std_ring_mask) ||
+ 	    (ering->rx_jumbo_pending > tp->rx_jmb_ring_mask) ||
+@@ -12426,7 +12427,13 @@ static int tg3_set_ringparam(struct net_device *dev, struct ethtool_ringparam *e
+ 
+ 	if (netif_running(dev)) {
+ 		tg3_halt(tp, RESET_KIND_SHUTDOWN, 1);
+-		err = tg3_restart_hw(tp, false);
++		/* Reset PHY to avoid PHY lock up */
++		if (tg3_asic_rev(tp) == ASIC_REV_5717 ||
++		    tg3_asic_rev(tp) == ASIC_REV_5719 ||
++		    tg3_asic_rev(tp) == ASIC_REV_5720)
++			reset_phy = true;
++
++		err = tg3_restart_hw(tp, reset_phy);
+ 		if (!err)
+ 			tg3_netif_start(tp);
+ 	}
+@@ -12460,6 +12467,7 @@ static int tg3_set_pauseparam(struct net_device *dev, struct ethtool_pauseparam
+ {
+ 	struct tg3 *tp = netdev_priv(dev);
+ 	int err = 0;
++	bool reset_phy = false;
+ 
+ 	if (tp->link_config.autoneg == AUTONEG_ENABLE)
+ 		tg3_warn_mgmt_link_flap(tp);
+@@ -12550,7 +12558,13 @@ static int tg3_set_pauseparam(struct net_device *dev, struct ethtool_pauseparam
+ 
+ 		if (netif_running(dev)) {
+ 			tg3_halt(tp, RESET_KIND_SHUTDOWN, 1);
+-			err = tg3_restart_hw(tp, false);
++			/* Reset PHY to avoid PHY lock up */
++			if (tg3_asic_rev(tp) == ASIC_REV_5717 ||
++			    tg3_asic_rev(tp) == ASIC_REV_5719 ||
++			    tg3_asic_rev(tp) == ASIC_REV_5720)
++				reset_phy = true;
++
++			err = tg3_restart_hw(tp, reset_phy);
+ 			if (!err)
+ 				tg3_netif_start(tp);
+ 		}
+diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
+index 046af22a37cb..5c7134ccc1fd 100644
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -1259,7 +1259,7 @@ static int ibmvnic_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 	tx_crq.v1.sge_len = cpu_to_be32(skb->len);
+ 	tx_crq.v1.ioba = cpu_to_be64(data_dma_addr);
+ 
+-	if (adapter->vlan_header_insertion) {
++	if (adapter->vlan_header_insertion && skb_vlan_tag_present(skb)) {
+ 		tx_crq.v1.flags2 |= IBMVNIC_TX_VLAN_INSERT;
+ 		tx_crq.v1.vlan_id = cpu_to_be16(skb->vlan_tci);
+ 	}
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+index 8b48338b4a70..18bb6798937b 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+@@ -3471,7 +3471,6 @@ static int mlxsw_sp_cpu_policers_set(struct mlxsw_core *mlxsw_core)
+ 			burst_size = 7;
+ 			break;
+ 		case MLXSW_REG_HTGT_TRAP_GROUP_SP_IP2ME:
+-			is_bytes = true;
+ 			rate = 4 * 1024;
+ 			burst_size = 4;
+ 			break;
+diff --git a/drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c b/drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c
+index 7f90d5587653..fda701419039 100644
+--- a/drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c
++++ b/drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c
+@@ -102,12 +102,14 @@ int rmnet_vnd_newlink(u8 id, struct net_device *rmnet_dev,
+ 		      struct rmnet_port *port,
+ 		      struct net_device *real_dev)
+ {
+-	struct rmnet_priv *priv;
++	struct rmnet_priv *priv = netdev_priv(rmnet_dev);
+ 	int rc;
+ 
+ 	if (port->rmnet_devices[id])
+ 		return -EINVAL;
+ 
++	priv->real_dev = real_dev;
++
+ 	rc = register_netdevice(rmnet_dev);
+ 	if (!rc) {
+ 		port->rmnet_devices[id] = rmnet_dev;
+@@ -115,9 +117,7 @@ int rmnet_vnd_newlink(u8 id, struct net_device *rmnet_dev,
+ 
+ 		rmnet_dev->rtnl_link_ops = &rmnet_link_ops;
+ 
+-		priv = netdev_priv(rmnet_dev);
+ 		priv->mux_id = id;
+-		priv->real_dev = real_dev;
+ 
+ 		netdev_dbg(rmnet_dev, "rmnet dev created\n");
+ 	}
+diff --git a/drivers/net/phy/mdio-gpio.c b/drivers/net/phy/mdio-gpio.c
+index 4333c6e14742..638923a0ca44 100644
+--- a/drivers/net/phy/mdio-gpio.c
++++ b/drivers/net/phy/mdio-gpio.c
+@@ -79,7 +79,7 @@ static void mdio_dir(struct mdiobb_ctrl *ctrl, int dir)
+ 		 * assume the pin serves as pull-up. If direction is
+ 		 * output, the default value is high.
+ 		 */
+-		gpiod_set_value(bitbang->mdo, 1);
++		gpiod_set_value_cansleep(bitbang->mdo, 1);
+ 		return;
+ 	}
+ 
+@@ -94,7 +94,7 @@ static int mdio_get(struct mdiobb_ctrl *ctrl)
+ 	struct mdio_gpio_info *bitbang =
+ 		container_of(ctrl, struct mdio_gpio_info, ctrl);
+ 
+-	return gpiod_get_value(bitbang->mdio);
++	return gpiod_get_value_cansleep(bitbang->mdio);
+ }
+ 
+ static void mdio_set(struct mdiobb_ctrl *ctrl, int what)
+@@ -103,9 +103,9 @@ static void mdio_set(struct mdiobb_ctrl *ctrl, int what)
+ 		container_of(ctrl, struct mdio_gpio_info, ctrl);
+ 
+ 	if (bitbang->mdo)
+-		gpiod_set_value(bitbang->mdo, what);
++		gpiod_set_value_cansleep(bitbang->mdo, what);
+ 	else
+-		gpiod_set_value(bitbang->mdio, what);
++		gpiod_set_value_cansleep(bitbang->mdio, what);
+ }
+ 
+ static void mdc_set(struct mdiobb_ctrl *ctrl, int what)
+@@ -113,7 +113,7 @@ static void mdc_set(struct mdiobb_ctrl *ctrl, int what)
+ 	struct mdio_gpio_info *bitbang =
+ 		container_of(ctrl, struct mdio_gpio_info, ctrl);
+ 
+-	gpiod_set_value(bitbang->mdc, what);
++	gpiod_set_value_cansleep(bitbang->mdc, what);
+ }
+ 
+ static const struct mdiobb_ops mdio_gpio_ops = {
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 7f8c7e3aa356..0a008d136aae 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -1214,6 +1214,7 @@ static void tun_rx_batched(struct tun_struct *tun, struct tun_file *tfile,
+ 
+ 	if (!rx_batched || (!more && skb_queue_empty(queue))) {
+ 		local_bh_disable();
++		skb_record_rx_queue(skb, tfile->queue_index);
+ 		netif_receive_skb(skb);
+ 		local_bh_enable();
+ 		return;
+@@ -1233,8 +1234,11 @@ static void tun_rx_batched(struct tun_struct *tun, struct tun_file *tfile,
+ 		struct sk_buff *nskb;
+ 
+ 		local_bh_disable();
+-		while ((nskb = __skb_dequeue(&process_queue)))
++		while ((nskb = __skb_dequeue(&process_queue))) {
++			skb_record_rx_queue(nskb, tfile->queue_index);
+ 			netif_receive_skb(nskb);
++		}
++		skb_record_rx_queue(skb, tfile->queue_index);
+ 		netif_receive_skb(skb);
+ 		local_bh_enable();
+ 	}
+diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
+index 99e684e39d35..2f65975a121f 100644
+--- a/drivers/net/usb/smsc95xx.c
++++ b/drivers/net/usb/smsc95xx.c
+@@ -1321,6 +1321,8 @@ static int smsc95xx_bind(struct usbnet *dev, struct usb_interface *intf)
+ 	dev->net->ethtool_ops = &smsc95xx_ethtool_ops;
+ 	dev->net->flags |= IFF_MULTICAST;
+ 	dev->net->hard_header_len += SMSC95XX_TX_OVERHEAD_CSUM;
++	dev->net->min_mtu = ETH_MIN_MTU;
++	dev->net->max_mtu = ETH_DATA_LEN;
+ 	dev->hard_mtu = dev->net->mtu + dev->net->hard_header_len;
+ 
+ 	pdata->dev = dev;
+@@ -1598,6 +1600,8 @@ static int smsc95xx_suspend(struct usb_interface *intf, pm_message_t message)
+ 		return ret;
+ 	}
+ 
++	cancel_delayed_work_sync(&pdata->carrier_check);
++
+ 	if (pdata->suspend_flags) {
+ 		netdev_warn(dev->net, "error during last resume\n");
+ 		pdata->suspend_flags = 0;
+@@ -1840,6 +1844,11 @@ static int smsc95xx_suspend(struct usb_interface *intf, pm_message_t message)
+ 	 */
+ 	if (ret && PMSG_IS_AUTO(message))
+ 		usbnet_resume(intf);
++
++	if (ret)
++		schedule_delayed_work(&pdata->carrier_check,
++				      CARRIER_CHECK_DELAY);
++
+ 	return ret;
+ }
+ 
+diff --git a/include/uapi/linux/sctp.h b/include/uapi/linux/sctp.h
+index cfe971296835..e2554c1bcf58 100644
+--- a/include/uapi/linux/sctp.h
++++ b/include/uapi/linux/sctp.h
+@@ -519,6 +519,8 @@ struct sctp_assoc_reset_event {
+ 
+ #define SCTP_ASSOC_CHANGE_DENIED	0x0004
+ #define SCTP_ASSOC_CHANGE_FAILED	0x0008
++#define SCTP_STREAM_CHANGE_DENIED	SCTP_ASSOC_CHANGE_DENIED
++#define SCTP_STREAM_CHANGE_FAILED	SCTP_ASSOC_CHANGE_FAILED
+ struct sctp_stream_change_event {
+ 	__u16 strchange_type;
+ 	__u16 strchange_flags;
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 90cf6a04e08a..f3f389e33343 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -2045,12 +2045,6 @@ static void cpuhp_online_cpu_device(unsigned int cpu)
+ 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
+ }
+ 
+-/*
+- * Architectures that need SMT-specific errata handling during SMT hotplug
+- * should override this.
+- */
+-void __weak arch_smt_update(void) { };
+-
+ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
+ {
+ 	int cpu, ret = 0;
+@@ -2077,10 +2071,8 @@ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
+ 		 */
+ 		cpuhp_offline_cpu_device(cpu);
+ 	}
+-	if (!ret) {
++	if (!ret)
+ 		cpu_smt_control = ctrlval;
+-		arch_smt_update();
+-	}
+ 	cpu_maps_update_done();
+ 	return ret;
+ }
+@@ -2091,7 +2083,6 @@ static int cpuhp_smt_enable(void)
+ 
+ 	cpu_maps_update_begin();
+ 	cpu_smt_control = CPU_SMT_ENABLED;
+-	arch_smt_update();
+ 	for_each_present_cpu(cpu) {
+ 		/* Skip online CPUs and CPUs on offline nodes */
+ 		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
+diff --git a/net/core/dev.c b/net/core/dev.c
+index e8a66ad6d07c..4337450a5fdb 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -4993,6 +4993,10 @@ static void napi_reuse_skb(struct napi_struct *napi, struct sk_buff *skb)
+ 	skb->vlan_tci = 0;
+ 	skb->dev = napi->dev;
+ 	skb->skb_iif = 0;
++
++	/* eth_type_trans() assumes pkt_type is PACKET_HOST */
++	skb->pkt_type = PACKET_HOST;
++
+ 	skb->encapsulation = 0;
+ 	skb_shinfo(skb)->gso_type = 0;
+ 	skb->truesize = SKB_TRUESIZE(skb_end_offset(skb));
+diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
+index d8796a7874b6..e2e716003ede 100644
+--- a/net/core/flow_dissector.c
++++ b/net/core/flow_dissector.c
+@@ -838,8 +838,8 @@ bool __skb_flow_dissect(const struct sk_buff *skb,
+ 		break;
+ 	}
+ 
+-	if (dissector_uses_key(flow_dissector,
+-			       FLOW_DISSECTOR_KEY_PORTS)) {
++	if (dissector_uses_key(flow_dissector, FLOW_DISSECTOR_KEY_PORTS) &&
++	    !(key_control->flags & FLOW_DIS_IS_FRAGMENT)) {
+ 		key_ports = skb_flow_dissector_target(flow_dissector,
+ 						      FLOW_DISSECTOR_KEY_PORTS,
+ 						      target_container);
+diff --git a/net/ipv4/inet_fragment.c b/net/ipv4/inet_fragment.c
+index f6764537148c..653be98fe3fb 100644
+--- a/net/ipv4/inet_fragment.c
++++ b/net/ipv4/inet_fragment.c
+@@ -180,21 +180,22 @@ static struct inet_frag_queue *inet_frag_alloc(struct netns_frags *nf,
+ }
+ 
+ static struct inet_frag_queue *inet_frag_create(struct netns_frags *nf,
+-						void *arg)
++						void *arg,
++						struct inet_frag_queue **prev)
+ {
+ 	struct inet_frags *f = nf->f;
+ 	struct inet_frag_queue *q;
+-	int err;
+ 
+ 	q = inet_frag_alloc(nf, f, arg);
+-	if (!q)
++	if (!q) {
++		*prev = ERR_PTR(-ENOMEM);
+ 		return NULL;
+-
++	}
+ 	mod_timer(&q->timer, jiffies + nf->timeout);
+ 
+-	err = rhashtable_insert_fast(&nf->rhashtable, &q->node,
+-				     f->rhash_params);
+-	if (err < 0) {
++	*prev = rhashtable_lookup_get_insert_key(&nf->rhashtable, &q->key,
++						 &q->node, f->rhash_params);
++	if (*prev) {
+ 		q->flags |= INET_FRAG_COMPLETE;
+ 		inet_frag_kill(q);
+ 		inet_frag_destroy(q);
+@@ -206,19 +207,20 @@ static struct inet_frag_queue *inet_frag_create(struct netns_frags *nf,
+ /* TODO : call from rcu_read_lock() and no longer use refcount_inc_not_zero() */
+ struct inet_frag_queue *inet_frag_find(struct netns_frags *nf, void *key)
+ {
+-	struct inet_frag_queue *fq;
++	struct inet_frag_queue *fq = NULL, *prev;
+ 
+ 	rcu_read_lock();
+ 
+-	fq = rhashtable_lookup(&nf->rhashtable, key, nf->f->rhash_params);
+-	if (fq) {
++	prev = rhashtable_lookup(&nf->rhashtable, key, nf->f->rhash_params);
++	if (!prev)
++		fq = inet_frag_create(nf, key, &prev);
++	if (prev && !IS_ERR(prev)) {
++		fq = prev;
+ 		if (!refcount_inc_not_zero(&fq->refcnt))
+ 			fq = NULL;
+-		rcu_read_unlock();
+-		return fq;
+ 	}
+ 	rcu_read_unlock();
+ 
+-	return inet_frag_create(nf, key);
++	return fq;
+ }
+ EXPORT_SYMBOL(inet_frag_find);
+diff --git a/net/ipv4/ip_tunnel_core.c b/net/ipv4/ip_tunnel_core.c
+index 2f39479be92f..423091727e15 100644
+--- a/net/ipv4/ip_tunnel_core.c
++++ b/net/ipv4/ip_tunnel_core.c
+@@ -80,7 +80,7 @@ void iptunnel_xmit(struct sock *sk, struct rtable *rt, struct sk_buff *skb,
+ 
+ 	iph->version	=	4;
+ 	iph->ihl	=	sizeof(struct iphdr) >> 2;
+-	iph->frag_off	=	df;
++	iph->frag_off	=	ip_mtu_locked(&rt->dst) ? 0 : df;
+ 	iph->protocol	=	proto;
+ 	iph->tos	=	tos;
+ 	iph->daddr	=	dst;
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index 30204bc2fc48..74dd35d6567c 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -1547,10 +1547,13 @@ EXPORT_SYMBOL_GPL(ip6_update_pmtu);
+ 
+ void ip6_sk_update_pmtu(struct sk_buff *skb, struct sock *sk, __be32 mtu)
+ {
++	int oif = sk->sk_bound_dev_if;
+ 	struct dst_entry *dst;
+ 
+-	ip6_update_pmtu(skb, sock_net(sk), mtu,
+-			sk->sk_bound_dev_if, sk->sk_mark, sk->sk_uid);
++	if (!oif && skb->dev)
++		oif = l3mdev_master_ifindex(skb->dev);
++
++	ip6_update_pmtu(skb, sock_net(sk), mtu, oif, sk->sk_mark, sk->sk_uid);
+ 
+ 	dst = __sk_dst_get(sk);
+ 	if (!dst || !dst->obsolete ||
+diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+index d87d56978b4c..6a2532370545 100644
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -3750,32 +3750,16 @@ static int sctp_setsockopt_pr_supported(struct sock *sk,
+ 					unsigned int optlen)
+ {
+ 	struct sctp_assoc_value params;
+-	struct sctp_association *asoc;
+-	int retval = -EINVAL;
+ 
+ 	if (optlen != sizeof(params))
+-		goto out;
+-
+-	if (copy_from_user(&params, optval, optlen)) {
+-		retval = -EFAULT;
+-		goto out;
+-	}
+-
+-	asoc = sctp_id2assoc(sk, params.assoc_id);
+-	if (asoc) {
+-		asoc->prsctp_enable = !!params.assoc_value;
+-	} else if (!params.assoc_id) {
+-		struct sctp_sock *sp = sctp_sk(sk);
++		return -EINVAL;
+ 
+-		sp->ep->prsctp_enable = !!params.assoc_value;
+-	} else {
+-		goto out;
+-	}
++	if (copy_from_user(&params, optval, optlen))
++		return -EFAULT;
+ 
+-	retval = 0;
++	sctp_sk(sk)->ep->prsctp_enable = !!params.assoc_value;
+ 
+-out:
+-	return retval;
++	return 0;
+ }
+ 
+ static int sctp_setsockopt_default_prinfo(struct sock *sk,
+diff --git a/net/sctp/stream.c b/net/sctp/stream.c
+index 9ea6057ed28b..61273534ae10 100644
+--- a/net/sctp/stream.c
++++ b/net/sctp/stream.c
+@@ -310,7 +310,6 @@ int sctp_send_add_streams(struct sctp_association *asoc,
+ 		goto out;
+ 	}
+ 
+-	stream->incnt = incnt;
+ 	stream->outcnt = outcnt;
+ 
+ 	asoc->strreset_outstanding = !!out + !!in;
