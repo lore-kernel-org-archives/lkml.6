@@ -2,240 +2,107 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2508C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 03:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC920C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 03:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 581E320813
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 03:13:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="Y8tOPr0X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 581E320813
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id 841FA20813
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 03:15:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 841FA20813
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393128AbeKWN4D (ORCPT
+        id S2408003AbeKWN5r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 08:56:03 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37600 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731997AbeKWN4D (ORCPT
+        Fri, 23 Nov 2018 08:57:47 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:40471 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731997AbeKWN5r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 08:56:03 -0500
-Received: by mail-pl1-f193.google.com with SMTP id b5so10006624plr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 19:13:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wF4q3yj07SrQPATIMm5bK+qV58UjTXSShJS7quSLwJc=;
-        b=Y8tOPr0X0i8z/tlJGKTWAHY7EtfizSw/tPu/6gAV5N6SfkjL5t0yGeaEZRCnCD/c4g
-         ihhXquz1SqpAYikYjHwlsbo38LHrYaW7n1e24zN50Cw199dfUIeeC2fkSHOXCRlnmXZH
-         bFgYxZpKBNp+HG/zVIk3ZjQr4tPJ1Xaz6K+2c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wF4q3yj07SrQPATIMm5bK+qV58UjTXSShJS7quSLwJc=;
-        b=L1GTLCLDWEMj5B0J238VER9X1QQdOicLZF1vQiHP4wkSgIE0Hr1XM2/fu+3iKzpWNh
-         u9ly2JsMtXnfVjN4bnRmoBYIh1bL9mBkqjFr5T7SzgDeSuPrVP4IqE9GIE1E71Xn2mgx
-         KFmWu5Z2YSnSUPh17FKrXP9NLP4kKXBT5TUcYn6r7KfEz/Wz8TnE5YKlO3T7IsaWjwoc
-         n+pEMksZiMsx6XsblRWTNm/MR2Vy8wXP3iujGfjArsgaQfJtydUyBCllJd8op6ZUe7Ip
-         518j0X3iSH21tJql3WodIPdEqAsQlMA5SdVCP1rSXwtqzHmL4J0i8sWlxRzoL+vU9gOA
-         p4HA==
-X-Gm-Message-State: AA+aEWbRiluCbbdlb84o6gdySgngTomVLnF3qr/rNaFoRewpGBElr8Oy
-        9MQXpFJM+3LvLrsrA156w/msx2aNj7Y=
-X-Google-Smtp-Source: AFSGD/W4PX/ShhpbUVtsCT1/Bb6fgJwlCk04csDAcWYDTqr9nLvRnB26N/mB+HxUZesYGUAjV1yAjg==
-X-Received: by 2002:a17:902:b406:: with SMTP id x6mr7795503plr.329.1542942821282;
-        Thu, 22 Nov 2018 19:13:41 -0800 (PST)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id h74sm2726162pfd.35.2018.11.22.19.13.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 22 Nov 2018 19:13:39 -0800 (PST)
-Date:   Thu, 22 Nov 2018 19:13:38 -0800
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC][PATCH 09/14] function_graph: Move ftrace_graph_get_addr()
- to fgraph.c
-Message-ID: <20181123031338.GC17060@google.com>
-References: <20181122012708.491151844@goodmis.org>
- <20181122012803.843285508@goodmis.org>
+        Fri, 23 Nov 2018 08:57:47 -0500
+Received: from ALA-HCB.corp.ad.wrs.com ([147.11.189.41])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wAN3F9hu023447
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Thu, 22 Nov 2018 19:15:10 -0800 (PST)
+Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
+ ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 22 Nov 2018 19:14:57 -0800
+Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
+ 335EB2E0841; Thu, 22 Nov 2018 22:14:57 -0500 (EST)
+Date:   Thu, 22 Nov 2018 22:14:57 -0500
+From:   Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     kbuild test robot <lkp@intel.com>
+CC:     <kbuild-all@01.org>, Lee Jones <lee.jones@linaro.org>,
+        <linux-kernel@vger.kernel.org>,
+        Support Opensource <support.opensource@diasemi.com>
+Subject: Re: [PATCH 02/11] mfd: da9055-core: make it explicitly non-modular
+Message-ID: <20181123031456.GD14659@windriver.com>
+References: <1542861179-8941-3-git-send-email-paul.gortmaker@windriver.com>
+ <201811231036.wIjm7GBh%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20181122012803.843285508@goodmis.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <201811231036.wIjm7GBh%fengguang.wu@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 08:27:17PM -0500, Steven Rostedt wrote:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+[Re: [PATCH 02/11] mfd: da9055-core: make it explicitly non-modular] On 23/11/2018 (Fri 10:21) kbuild test robot wrote:
+
+> Hi Paul,
 > 
-> Move the function function_graph_get_addr() to fgraph.c, as the management
-> of the curr_ret_stack is going to change, and all the accesses to ret_stack
-> needs to be done in fgraph.c.
+> I love your patch! Yet something to improve:
+> 
+> [auto build test ERROR on ljones-mfd/for-mfd-next]
+> [also build test ERROR on v4.20-rc3]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Paul-Gortmaker/mfd-simple-demodularization-of-non-modular-drivers/20181123-090206
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
+> config: i386-randconfig-s1-11191736 (attached as .config)
+> compiler: gcc-6 (Debian 6.4.0-9) 6.4.0 20171026
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386 
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    drivers/mfd/da9055-i2c.o: In function `da9055_i2c_remove':
+> >> drivers/mfd/da9055-i2c.c:53: undefined reference to `da9055_device_exit'
 
-s/ftrace_graph_get_addr/ftrace_graph_ret_addr/
+Thanks for the report -- I'll look into what causes it, why my testing
+didn't see it, and get an update to Lee as soon as possible.
 
-thanks,
-
- - Joel
+Paul.
+--
 
 > 
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> vim +53 drivers/mfd/da9055-i2c.c
+> 
+> 2896434c Ashish Jangam  2012-09-14  48  
+> 4740f73f Bill Pemberton 2012-11-19  49  static int da9055_i2c_remove(struct i2c_client *i2c)
+> 2896434c Ashish Jangam  2012-09-14  50  {
+> 2896434c Ashish Jangam  2012-09-14  51  	struct da9055 *da9055 = i2c_get_clientdata(i2c);
+> 2896434c Ashish Jangam  2012-09-14  52  
+> 2896434c Ashish Jangam  2012-09-14 @53  	da9055_device_exit(da9055);
+> 2896434c Ashish Jangam  2012-09-14  54  
+> 2896434c Ashish Jangam  2012-09-14  55  	return 0;
+> 2896434c Ashish Jangam  2012-09-14  56  }
+> 2896434c Ashish Jangam  2012-09-14  57  
+> 
+> :::::: The code at line 53 was first introduced by commit
+> :::::: 2896434cf272acace1b7093d5e4ba8022ed11ac8 mfd: DA9055 core driver
+> 
+> :::::: TO: Ashish Jangam <ashish.jangam@kpitcummins.com>
+> :::::: CC: Samuel Ortiz <sameo@linux.intel.com>
+> 
 > ---
->  kernel/trace/fgraph.c                | 55 ++++++++++++++++++++++++++++
->  kernel/trace/trace_functions_graph.c | 55 ----------------------------
->  2 files changed, 55 insertions(+), 55 deletions(-)
-> 
-> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-> index f3a89ecac671..c7d612897e33 100644
-> --- a/kernel/trace/fgraph.c
-> +++ b/kernel/trace/fgraph.c
-> @@ -233,6 +233,61 @@ unsigned long ftrace_return_to_handler(unsigned long frame_pointer)
->  	return ret;
->  }
->  
-> +/**
-> + * ftrace_graph_ret_addr - convert a potentially modified stack return address
-> + *			   to its original value
-> + *
-> + * This function can be called by stack unwinding code to convert a found stack
-> + * return address ('ret') to its original value, in case the function graph
-> + * tracer has modified it to be 'return_to_handler'.  If the address hasn't
-> + * been modified, the unchanged value of 'ret' is returned.
-> + *
-> + * 'idx' is a state variable which should be initialized by the caller to zero
-> + * before the first call.
-> + *
-> + * 'retp' is a pointer to the return address on the stack.  It's ignored if
-> + * the arch doesn't have HAVE_FUNCTION_GRAPH_RET_ADDR_PTR defined.
-> + */
-> +#ifdef HAVE_FUNCTION_GRAPH_RET_ADDR_PTR
-> +unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
-> +				    unsigned long ret, unsigned long *retp)
-> +{
-> +	int index = task->curr_ret_stack;
-> +	int i;
-> +
-> +	if (ret != (unsigned long)return_to_handler)
-> +		return ret;
-> +
-> +	if (index < 0)
-> +		return ret;
-> +
-> +	for (i = 0; i <= index; i++)
-> +		if (task->ret_stack[i].retp == retp)
-> +			return task->ret_stack[i].ret;
-> +
-> +	return ret;
-> +}
-> +#else /* !HAVE_FUNCTION_GRAPH_RET_ADDR_PTR */
-> +unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
-> +				    unsigned long ret, unsigned long *retp)
-> +{
-> +	int task_idx;
-> +
-> +	if (ret != (unsigned long)return_to_handler)
-> +		return ret;
-> +
-> +	task_idx = task->curr_ret_stack;
-> +
-> +	if (!task->ret_stack || task_idx < *idx)
-> +		return ret;
-> +
-> +	task_idx -= *idx;
-> +	(*idx)++;
-> +
-> +	return task->ret_stack[task_idx].ret;
-> +}
-> +#endif /* HAVE_FUNCTION_GRAPH_RET_ADDR_PTR */
-> +
->  static struct ftrace_ops graph_ops = {
->  	.func			= ftrace_stub,
->  	.flags			= FTRACE_OPS_FL_RECURSION_SAFE |
-> diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-> index 7c7fd13d2373..0f9cbc30645d 100644
-> --- a/kernel/trace/trace_functions_graph.c
-> +++ b/kernel/trace/trace_functions_graph.c
-> @@ -90,61 +90,6 @@ static void
->  print_graph_duration(struct trace_array *tr, unsigned long long duration,
->  		     struct trace_seq *s, u32 flags);
->  
-> -/**
-> - * ftrace_graph_ret_addr - convert a potentially modified stack return address
-> - *			   to its original value
-> - *
-> - * This function can be called by stack unwinding code to convert a found stack
-> - * return address ('ret') to its original value, in case the function graph
-> - * tracer has modified it to be 'return_to_handler'.  If the address hasn't
-> - * been modified, the unchanged value of 'ret' is returned.
-> - *
-> - * 'idx' is a state variable which should be initialized by the caller to zero
-> - * before the first call.
-> - *
-> - * 'retp' is a pointer to the return address on the stack.  It's ignored if
-> - * the arch doesn't have HAVE_FUNCTION_GRAPH_RET_ADDR_PTR defined.
-> - */
-> -#ifdef HAVE_FUNCTION_GRAPH_RET_ADDR_PTR
-> -unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
-> -				    unsigned long ret, unsigned long *retp)
-> -{
-> -	int index = task->curr_ret_stack;
-> -	int i;
-> -
-> -	if (ret != (unsigned long)return_to_handler)
-> -		return ret;
-> -
-> -	if (index < 0)
-> -		return ret;
-> -
-> -	for (i = 0; i <= index; i++)
-> -		if (task->ret_stack[i].retp == retp)
-> -			return task->ret_stack[i].ret;
-> -
-> -	return ret;
-> -}
-> -#else /* !HAVE_FUNCTION_GRAPH_RET_ADDR_PTR */
-> -unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
-> -				    unsigned long ret, unsigned long *retp)
-> -{
-> -	int task_idx;
-> -
-> -	if (ret != (unsigned long)return_to_handler)
-> -		return ret;
-> -
-> -	task_idx = task->curr_ret_stack;
-> -
-> -	if (!task->ret_stack || task_idx < *idx)
-> -		return ret;
-> -
-> -	task_idx -= *idx;
-> -	(*idx)++;
-> -
-> -	return task->ret_stack[task_idx].ret;
-> -}
-> -#endif /* HAVE_FUNCTION_GRAPH_RET_ADDR_PTR */
-> -
->  int __trace_graph_entry(struct trace_array *tr,
->  				struct ftrace_graph_ent *trace,
->  				unsigned long flags,
-> -- 
-> 2.19.1
-> 
-> 
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+
