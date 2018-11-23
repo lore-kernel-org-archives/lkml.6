@@ -7,68 +7,67 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0399C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8F6C04EBA
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61D8720685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:02:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F26B20820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:02:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="EdLNJqxQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61D8720685
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="B6X/d97z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F26B20820
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504649AbeKXArA (ORCPT
+        id S2504662AbeKXArC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 19:47:00 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41155 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504623AbeKXAq6 (ORCPT
+        Fri, 23 Nov 2018 19:47:02 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52091 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2504597AbeKXArB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 19:46:58 -0500
-Received: by mail-wr1-f67.google.com with SMTP id x10so12457530wrs.8
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 06:02:38 -0800 (PST)
+        Fri, 23 Nov 2018 19:47:01 -0500
+Received: by mail-wm1-f65.google.com with SMTP id j207so4917848wmj.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 06:02:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=iPc6aKsyCR0rc8B9wZzKkKLvBDF8NLCBhUpLs1nYqDg=;
-        b=EdLNJqxQn+UHQvkoE2Z2vHzP8UE0eEyVegRHgBaj4qfgKFP7nQMVtge56C0cXXIPEx
-         dZyey0gPKicEVvJ2twwkAHJECJB0l6VCDNuO+0UL/tiqUJ0uFGrXEb9biKKZ9tEx8Bp5
-         hGLyYR6iaKsq5eWUO5f2D1uJ68s2fctCQSohhm4dRjeH/WMoH9+7Gb79YnxfqmfM4Vdt
-         1qY/k8h4rJGnVuvx3alITg7P1MXxoGZ7lk3nt/n3dWSCXvFpM/cm9Bx1Dsz3tKl3Gr+W
-         ihSJgoq0nv6YO/II0xSzMwzcDwNMweGqiW/VUHDLQGdZ39UiibBkIaVvlqmoQH45Zm/V
-         Ws9A==
+        bh=kJh0HkLYwhx8RN9DWitgmjtOM+AmvRphG9ewtpY4jrk=;
+        b=B6X/d97zilEFV2nfUiWgCP/ynqmdTvHEuiLvu5MNgh83La7yGqwrtdwW4jfL8I+yQm
+         NXNmj9SmXzE8geGUm24KLC2/DAJXvZaOija5UDwybxNuA8FvxHMAHFeBsFpyAJ+OVUtV
+         F+lDjNRey1T+2Vh7WFkUd3Vi4ELCG5va2qWIybXApGQwB0vazVf8Zv8j/kZVNw2gUAHt
+         jGwhzfPfPXXKASaIkagBjBWCQefcVQslozTilXNpBgMfE6AoAI9OEQA9yXt/FUcXmMq3
+         zXB9utBF+MxGEQBJWd4SVIwI4u3lMQIXGk6tHkUnRLgj5OYFSl5NlAU+DH8oGtjnExqf
+         xzSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=iPc6aKsyCR0rc8B9wZzKkKLvBDF8NLCBhUpLs1nYqDg=;
-        b=i5eYbuAtQmY02ujUVS3SiNHhCa5RmunuX37OBRUqyQ4wiWFKmqX1qXYUxRfKVSQY88
-         xwagbBOcEkvGdFQzPn2rA3dayP2turovq+aFk3x3lFL0boYpolVycAjS1yDDsKApSEIE
-         SbOzCV5XAYS4VMete3pgNHYCOQug8eKzYpSjkflutn8PvGGc1faYK/CeS10EM8/urYW9
-         0fRVSOoNeWJ1NDk0c+kFtr8esCVEJfIxcl+h90/zt9OSXJFKGgtlTSzHPDVZ1mytXER9
-         Ie1IBksCKAkZwtsmBp8JqwUDREagNuNR81V2/I5qKS3Lz+XAAHSFQgrL8PlhEJRZgsMz
-         w3BA==
-X-Gm-Message-State: AA+aEWa6GuDoiYJwfGgHojs8ymaLib4lJchfAl3z4rD3d074dmzbUEMj
-        sCewc+/YyeqFka2Ai/uCHVbWQA==
-X-Google-Smtp-Source: AFSGD/XD/kWmctMwWudcg/z8r8sppGMWUEEGLUHWWvfRsI0xXVIORdak4C5esaKEHXfYSx0SpW23yw==
-X-Received: by 2002:adf:8342:: with SMTP id 60mr13449251wrd.212.1542981757541;
-        Fri, 23 Nov 2018 06:02:37 -0800 (PST)
+        bh=kJh0HkLYwhx8RN9DWitgmjtOM+AmvRphG9ewtpY4jrk=;
+        b=TPK6XVyFZ2ljBiP4ntW0/Oi/uhghvf74thAZAfY54zjfsL+W2dgpjgxECcpMoAcpUD
+         qpePGsYFhjpkN7EJSWIVuGBwVSJjD2I5QMcC83B27gs+AawW5XbxVt8I3CZoKIFalzdl
+         MpyAr+wU5OEedEk40z2c81phRJr76ZNHt44V3AaVr2UBLZ8Iu6PCfJgayWs4Dreso99E
+         519Unu8seBs7kaRtSDE2a46joyR5RB0T3rXYww1hYGoUhUAHSs48PMwiYH3p/5QpFwlU
+         HJYs7SfmMRYLnF18vK71tlCn2tpZCXDuK639R595E1jTCofevpAn0rPYJspKJvnfvf6i
+         Tw0A==
+X-Gm-Message-State: AA+aEWbVS+tCn2+q8NuzKey8x74XWW5AgXIUij6pRHXaqsB2wZdjIxJQ
+        PIDGm1jrE6gyakj0mTFMv/VuOA==
+X-Google-Smtp-Source: AJdET5cQzuGL1Y+nzPCvrLIjQFCqjgS9HPF0FGBm1adwpm1Lx6Kq9DjhRnbk4hjg4l/q1/s+xmTpYg==
+X-Received: by 2002:a1c:c2d4:: with SMTP id s203mr13967030wmf.3.1542981760236;
+        Fri, 23 Nov 2018 06:02:40 -0800 (PST)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id x8sm15172185wrd.53.2018.11.23.06.02.35
+        by smtp.gmail.com with ESMTPSA id x8sm15172185wrd.53.2018.11.23.06.02.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 23 Nov 2018 06:02:36 -0800 (PST)
+        Fri, 23 Nov 2018 06:02:38 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     architt@codeaurora.org, a.hajda@samsung.com,
         Laurent.pinchart@ideasonboard.com
-Cc:     Zheng Yang <zhengyang@rock-chips.com>,
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH RFC 5/8] drm/bridge: dw-hdmi: support dynamically get input/out color info
-Date:   Fri, 23 Nov 2018 15:02:18 +0100
-Message-Id: <20181123140221.15700-6-narmstrong@baylibre.com>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RFC 6/8] drm/bridge: dw-hdmi: allow ycbcr420 modes for >= 0x200a
+Date:   Fri, 23 Nov 2018 15:02:19 +0100
+Message-Id: <20181123140221.15700-7-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181123140221.15700-1-narmstrong@baylibre.com>
 References: <20181123140221.15700-1-narmstrong@baylibre.com>
@@ -79,103 +78,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zheng Yang <zhengyang@rock-chips.com>
+Now the DW-HDMI Controller supports the HDMI2.0 modes, enable support
+for these modes in the connector if the platform supports them.
+We limit these modes to DW-HDMI IP version >= 0x200a which
+are designed to support HDMI2.0 display modes.
 
-To get input/output bus_format/enc_format dynamically, this patch
-introduce following funstion in plat_data:
-	- get_input_bus_format
-	- get_output_bus_format
-	- get_enc_in_encoding
-	- get_enc_out_encoding
-
-Signed-off-by: Zheng Yang <zhengyang@rock-chips.com>
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 28 +++++++++++++++++------
- include/drm/bridge/dw_hdmi.h              |  5 ++++
- 2 files changed, 26 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 6 ++++++
+ include/drm/bridge/dw_hdmi.h              | 1 +
+ 2 files changed, 7 insertions(+)
 
 diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 0b07bda73ffd..b38ec1d775aa 100644
+index b38ec1d775aa..9b0b157dc5ab 100644
 --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
 +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -1763,6 +1763,7 @@ static void hdmi_disable_overflow_interrupts(struct dw_hdmi *hdmi)
- static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
- {
- 	int ret;
-+	void *data = hdmi->plat_data->phy_data;
+@@ -2564,6 +2564,12 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	if (hdmi->phy.ops->setup_hpd)
+ 		hdmi->phy.ops->setup_hpd(hdmi, hdmi->phy.data);
  
- 	hdmi_disable_overflow_interrupts(hdmi);
- 
-@@ -1774,10 +1775,13 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
- 		dev_dbg(hdmi->dev, "CEA mode used vic=%d\n", hdmi->vic);
- 	}
- 
--	if ((hdmi->vic == 6) || (hdmi->vic == 7) ||
--	    (hdmi->vic == 21) || (hdmi->vic == 22) ||
--	    (hdmi->vic == 2) || (hdmi->vic == 3) ||
--	    (hdmi->vic == 17) || (hdmi->vic == 18))
-+	if (hdmi->plat_data->get_enc_out_encoding)
-+		hdmi->hdmi_data.enc_out_encoding =
-+			hdmi->plat_data->get_enc_out_encoding(data);
-+	else if ((hdmi->vic == 6) || (hdmi->vic == 7) ||
-+		 (hdmi->vic == 21) || (hdmi->vic == 22) ||
-+		 (hdmi->vic == 2) || (hdmi->vic == 3) ||
-+		 (hdmi->vic == 17) || (hdmi->vic == 18))
- 		hdmi->hdmi_data.enc_out_encoding = V4L2_YCBCR_ENC_601;
- 	else
- 		hdmi->hdmi_data.enc_out_encoding = V4L2_YCBCR_ENC_709;
-@@ -1786,21 +1790,31 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
- 	hdmi->hdmi_data.video_mode.mpixelrepetitioninput = 0;
- 
- 	/* TOFIX: Get input format from plat data or fallback to RGB888 */
--	if (hdmi->plat_data->input_bus_format)
-+	if (hdmi->plat_data->get_input_bus_format)
-+		hdmi->hdmi_data.enc_in_bus_format =
-+			hdmi->plat_data->get_input_bus_format(data);
-+	else if (hdmi->plat_data->input_bus_format)
- 		hdmi->hdmi_data.enc_in_bus_format =
- 			hdmi->plat_data->input_bus_format;
- 	else
- 		hdmi->hdmi_data.enc_in_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
- 
- 	/* TOFIX: Get input encoding from plat data or fallback to none */
--	if (hdmi->plat_data->input_bus_encoding)
-+	if (hdmi->plat_data->get_enc_in_encoding)
-+		hdmi->hdmi_data.enc_in_encoding =
-+			hdmi->plat_data->get_enc_in_encoding(data);
-+	else if (hdmi->plat_data->input_bus_encoding)
- 		hdmi->hdmi_data.enc_in_encoding =
- 			hdmi->plat_data->input_bus_encoding;
- 	else
- 		hdmi->hdmi_data.enc_in_encoding = V4L2_YCBCR_ENC_DEFAULT;
- 
- 	/* TOFIX: Default to RGB888 output format */
--	hdmi->hdmi_data.enc_out_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
-+	if (hdmi->plat_data->get_output_bus_format)
-+		hdmi->hdmi_data.enc_out_bus_format =
-+			hdmi->plat_data->get_output_bus_format(data);
++	if (hdmi->version >= 0x200a)
++		hdmi->connector.ycbcr_420_allowed =
++			hdmi->plat_data->ycbcr_420_allowed;
 +	else
-+		hdmi->hdmi_data.enc_out_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
- 
- 	hdmi->hdmi_data.pix_repet_factor = 0;
- 	hdmi->hdmi_data.hdcp_enable = 0;
++		hdmi->connector.ycbcr_420_allowed = false;
++
+ 	memset(&pdevinfo, 0, sizeof(pdevinfo));
+ 	pdevinfo.parent = dev;
+ 	pdevinfo.id = PLATFORM_DEVID_AUTO;
 diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index d7cc5d094270..27f9cce66b6a 100644
+index 27f9cce66b6a..c04f497a919b 100644
 --- a/include/drm/bridge/dw_hdmi.h
 +++ b/include/drm/bridge/dw_hdmi.h
-@@ -141,6 +141,11 @@ struct dw_hdmi_plat_data {
- 	int (*configure_phy)(struct dw_hdmi *hdmi,
- 			     const struct dw_hdmi_plat_data *pdata,
- 			     unsigned long mpixelclock);
-+
-+	unsigned long (*get_input_bus_format)(void *data);
-+	unsigned long (*get_output_bus_format)(void *data);
-+	unsigned long (*get_enc_in_encoding)(void *data);
-+	unsigned long (*get_enc_out_encoding)(void *data);
- };
+@@ -128,6 +128,7 @@ struct dw_hdmi_plat_data {
+ 					   const struct drm_display_mode *mode);
+ 	unsigned long input_bus_format;
+ 	unsigned long input_bus_encoding;
++	bool ycbcr_420_allowed;
  
- struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
+ 	/* Vendor PHY support */
+ 	const struct dw_hdmi_phy_ops *phy_ops;
 -- 
 2.19.1
 
