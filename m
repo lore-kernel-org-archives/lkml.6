@@ -2,145 +2,192 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C341CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 01:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE10C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 01:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DAF220672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 01:31:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DAF220672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id AD577206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 01:39:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NatcNkUN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD577206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439286AbeKWMNi (ORCPT
+        id S2439319AbeKWMWD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 07:13:38 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:53259 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1733028AbeKWMNi (ORCPT
+        Fri, 23 Nov 2018 07:22:03 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:39137 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733028AbeKWMWD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 07:13:38 -0500
-X-UUID: 5af2764ce1754de1b782693054180be0-20181123
-X-UUID: 5af2764ce1754de1b782693054180be0-20181123
-Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <biao.huang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 980203538; Fri, 23 Nov 2018 09:31:21 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 23 Nov
- 2018 09:31:19 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 23 Nov 2018 09:31:18 +0800
-Message-ID: <1542936676.24219.66.camel@mhfsdcap03>
-Subject: Re: [v5, PATCH 2/2] dt-binding: mediatek-dwmac: add binding
- document for MediaTek MT2712 DWMAC
-From:   biao huang <biao.huang@mediatek.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     <davem@davemloft.net>, <robh+dt@kernel.org>,
-        <honghui.zhang@mediatek.com>, <yt.shen@mediatek.com>,
-        <liguo.zhang@mediatek.com>, <mark.rutland@arm.com>,
-        <nelson.chang@mediatek.com>, <matthias.bgg@gmail.com>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <joabreu@synopsys.com>
-Date:   Fri, 23 Nov 2018 09:31:16 +0800
-In-Reply-To: <20181122151932.GD15403@lunn.ch>
-References: <1542882521-18874-1-git-send-email-biao.huang@mediatek.com>
-         <1542882521-18874-3-git-send-email-biao.huang@mediatek.com>
-         <20181122151932.GD15403@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Fri, 23 Nov 2018 07:22:03 -0500
+Received: by mail-qt1-f194.google.com with SMTP id n21so9091892qtl.6
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 17:39:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=mIPyIpaufwYdrICu0BtlzYmRcys2x9OfpnBdakSpL2k=;
+        b=NatcNkUNBHAJJ3cPYB4LSWIZJP/3/UISTZvuNRZiEo4AF+ZSVoomzhpPxNLGCF0RsS
+         0TwKdE+erSs04dz2A2TbMfQlLI+4zAh4zMWHHcGeD7hqlzZCVz4v1Ov4qkSh7k96foEt
+         jPVJAXgnRklnf8NH2G0mLUTDpLyZX2+GY4TXhZOisdcP7cetbD7YEehAPQdnUfpxh0ZF
+         gEPKEHWzHriIzY1mKIxTMeovrwgfUc2Cp0Y4DRMJvRESYpc2Pr7AwFTsEHoL3GxneVw6
+         UvuGNc0lhXR62Q+96seTh6Ld1pU9JvjpS2uLBcFCP9yTE/zLpmHR01F5U6Kdo6CBpd5x
+         DL8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=mIPyIpaufwYdrICu0BtlzYmRcys2x9OfpnBdakSpL2k=;
+        b=d+adMHATBJF8ODT0MGN760WmxEevbj5zkoVpKpafn86alaUqHkaPUO/04ICKq4QnUw
+         +zromDXsOaH2erdBssid7y8Uxm3aKoNGouJHcGYBmCb3UrHt5evIzYqAqUw7B1DHIt/s
+         W4tXKn0PcIphph/nLpnUF72PWPukFmFx6dAq1EgDbmcxTaQN1KkxG3zGq35Zs24ROKVr
+         jWuYOiN5j/mgraFJorMdeW28jkpKqntWgGnffeoAZ70dTiIDpIzBYjydBL4oyPosu5N7
+         sCi9/WOC4PW+3c5rgaAhFKX/P+rMgaZxJvG/x07wW31xhfzVrmfrYy00Bc3kaKWTx3Bm
+         7U8A==
+X-Gm-Message-State: AGRZ1gJlgqYKEtsPIRBapDGWFu+4hWohaVt5QibLf52TonRfF+m6BuSx
+        3YD+W2Iy3fleCAQMoDJnxChUQH/TY1cNVpHRhOVlELFg
+X-Google-Smtp-Source: AJdET5exvGlW4lwb1kNlQlNbDv3lg5E2GKD1WLP5f+xJW2c2hhM/qcKJ51zRjqg2njvMvwdauXcezBC2v4PlMkwQb8s=
+X-Received: by 2002:ac8:51d4:: with SMTP id d20mr12359744qtn.365.1542937195480;
+ Thu, 22 Nov 2018 17:39:55 -0800 (PST)
 MIME-Version: 1.0
-X-MTK:  N
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Fri, 23 Nov 2018 11:39:44 +1000
+Message-ID: <CAPM=9tyitqcJ9obyFPuwuNO7oH1KXrVtVgWgw+4S60YjqR8BXA@mail.gmail.com>
+Subject: [git pull] drm fixes for 4.20-rc4
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Andrew,
+Hi Linus,
 
-	Thanks for you remind.
+Regular drm fixes pull for rc4.
 
-	Sincerely, I respect any comment from any reviewer. If I didn't reply
-for any comment, really sorry for that.
+amdgpu: Vega20 fixes, firmware loading fix, panel display fix, override fix
+i915: Sandybridge lockup fix, fastboot DSI panel fix, GPU hang on
+Broxton, GPU reloc fixes on pineview/bearlake
+ast: screen blurring fix, cursor appearance fix
+udmabuf: mmap fix
+vc4: NULL deref fix, async cursor update fix.
 
-	As to this "tx-delay" issue, the following reply in v3 maybe ignored.
-	https://lkml.org/lkml/2018/11/19/158
+All seems pretty normal at this stage,
 
-	"the delay time in mediatek dwmac design is not so accurate,
-	the current mt2712 and the following ICs will not use the
-	same delay design, but will use stages to indicate different
-	delay time.
-	so maybe "mediatek.tx-delay" represent the delay stage is a
-	good choice"
+Thanks,
+Dave.
 
-	And to make it clearer here.
+drm-fixes-2018-11-23:
+drm i915, amdgpu, ast, vc4, udmabuf fixes
+The following changes since commit 9ff01193a20d391e8dbce4403dd5ef87c7eaaca6=
+:
 
-	In mt2712, there are two delay macro circuit: named fine-tune and
-coarse-tune.
-	a. fine-tune, 170+/-50ps per stage, total 32 stages
-	b. coarse-tune, 0.55+/-0.2ns per stage, total 32 stages
-	If we only consider mt2712, delay in fine-tune select a integer
-multiple of 170ps, delay in coarse-tune select a integer multiple of
-550ps, for stage 0~31, the delay in fine-tune will not have the same
-value with that in coarse-tune.
-	OK, It seems the property "fine-tune" can be eliminated .
+  Linux 4.20-rc3 (2018-11-18 13:33:44 -0800)
 
-	But the following ic will not have the same accuracy as mt2712,
-and maybe will not have two delay macro circuit to be selected.
-	1. assume two delay macro circuit in the following ic,
-	fine-tune, 100ps per stage, coarse-tune, 0.55ns per stage,
-	if we want delay 2.2ns, fine-tune will get a 22, and coarse-tune get a
-4. We can't distinguish which delay macro we are choosing.
-	2. assume only one delay macro circuit is used, a similar case as 1
-will also increase the complexity of driver.
-	Then, we need define more flag property to know which delay macro we
-are handling.
+are available in the Git repository at:
 
-	The common things for all delay macro circuit in MediaTek mac design is
-the stages, not the accuracy. so if we maintain stage info in "mediatek,
-tx-delay", we only need care which stage we should choose.
-And for each IC, we will recommend a best stage as a candidate.
+  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-11-23
 
-	Above is my personal opinion, may be my understanding is wrong,
-welcome for further discussion.
+for you to fetch changes up to 98c9cdfd34fbb62886e4c5a07e33661aa3352ef5:
 
-	Thanks a lot.
+  Merge tag 'drm-intel-fixes-2018-11-22' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes (2018-11-23
+11:03:21 +1000)
 
-On Thu, 2018-11-22 at 16:19 +0100, Andrew Lunn wrote:
-> On Thu, Nov 22, 2018 at 06:28:41PM +0800, Biao Huang wrote:
-> > The commit adds the device tree binding documentation for the MediaTek DWMAC
-> > found on MediaTek MT2712.
-> > 
-> > Signed-off-by: Biao Huang <biao.huang@mediatek.com>
-> 
-> > +Optional properties:
-> > +- mediatek,tx-delay: TX clock delay macro value. Range is 0~31. Default is 0.
-> > +	It should be defined for rgmii/rgmii-rxid/mii interface.
-> > +- mediatek,rx-delay: RX clock delay macro value. Range is 0~31. Default is 0.
-> > +	It should be defined for rgmii/rgmii-txid/mii/rmii interface.
-> 
-> You have received the same feedback at least twice now, from two
-> different maintainers, that the delay should be specified in pS, and
-> the driver should figure out what values to place into registers.
-> 
-> You should not ignore feedback like that. If you don't understand the
-> feedback, please ask us to explain it. If you don't agree with the
-> feedback, you need to argue why you think it is wrong, or why what you
-> are doing is better, etc.
-> 
-> We are here to help, but just ignoring us won't get you anywhere.
-> 
-> For the moment:
-> 
-> NACK
-> 
-> 	Andrew
+----------------------------------------------------------------
+drm i915, amdgpu, ast, vc4, udmabuf fixes
 
+----------------------------------------------------------------
+Boris Brezillon (2):
+      drm/vc4: Fix NULL pointer dereference in the async update path
+      drm/vc4: Set ->legacy_cursor_update to false when doing non-async upd=
+ates
 
+Chris Wilson (2):
+      drm/i915: Prevent machine hang from Broxton's vtd w/a and error captu=
+re
+      drm/i915: Write GPU relocs harder with gen3
+
+Dave Airlie (3):
+      Merge tag 'drm-misc-fixes-2018-11-21' of
+git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
+      Merge branch 'drm-fixes-4.20' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes
+      Merge tag 'drm-intel-fixes-2018-11-22' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
+
+Evan Quan (1):
+      drm/amd/powerplay: disable Vega20 DS related features
+
+Felix Kuehling (1):
+      drm/amdgpu: Fix oops when pp_funcs->switch_power_profile is unset
+
+Gerd Hoffmann (1):
+      udmabuf: set read/write flag when exporting
+
+Greathouse, Joseph (1):
+      drm/amd/pp: handle negative values when reading OD
+
+Kenneth Feng (1):
+      drm/amdgpu: Enable HDP memory light sleep
+
+Nicholas Kazlauskas (2):
+      drm/amdgpu: Add amdgpu "max bpc" connector property (v2)
+      drm/amd/display: Support amdgpu "max bpc" connector property (v2)
+
+Paul Kocialkowski (1):
+      drm/fb-helper: Blacklist writeback when adding connectors to fbdev
+
+Takashi Iwai (1):
+      drm/amdgpu: Add missing firmware entry for HAINAN
+
+Thomas Zimmermann (1):
+      drm/ast: Remove existing framebuffers before loading driver
+
+Ville Syrj=C3=A4l=C3=A4 (3):
+      drm/i915: Disable LP3 watermarks on all SNB machines
+      drm/i915: Force a LUT update in intel_initial_commit()
+      drm/i915: Add rotation readout for plane initial config
+
+Y.C. Chen (2):
+      drm/ast: change resolution may cause screen blurred
+      drm/ast: fixed cursor may disappear sometimes
+
+ drivers/dma-buf/udmabuf.c                          |  1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c         |  7 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_display.c        |  7 ++++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h           |  2 ++
+ drivers/gpu/drm/amd/amdgpu/gmc_v6_0.c              |  1 +
+ drivers/gpu/drm/amd/amdgpu/soc15.c                 | 39 ++++++++++++++++--=
+--
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  | 16 +++++++++
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h  |  1 +
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c   | 20 +++++------
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c | 25 ++++++-------
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega12_hwmgr.c | 23 ++++++------
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c | 30 +++++++++++-----
+ drivers/gpu/drm/ast/ast_drv.c                      | 21 +++++++++++
+ drivers/gpu/drm/ast/ast_mode.c                     |  3 +-
+ drivers/gpu/drm/drm_fb_helper.c                    |  3 ++
+ drivers/gpu/drm/i915/i915_gem_execbuffer.c         |  7 +++-
+ drivers/gpu/drm/i915/i915_gem_gtt.c                |  5 +++
+ drivers/gpu/drm/i915/i915_gpu_error.c              | 15 +++++++-
+ drivers/gpu/drm/i915/i915_gpu_error.h              |  8 ++++-
+ drivers/gpu/drm/i915/intel_display.c               | 39 ++++++++++++++++++=
+++
+ drivers/gpu/drm/i915/intel_drv.h                   |  1 +
+ drivers/gpu/drm/i915/intel_pm.c                    | 41 ++++++++++++++++++=
++++-
+ drivers/gpu/drm/vc4/vc4_kms.c                      |  6 ++++
+ drivers/gpu/drm/vc4/vc4_plane.c                    | 15 ++++++--
+ 24 files changed, 273 insertions(+), 63 deletions(-)
