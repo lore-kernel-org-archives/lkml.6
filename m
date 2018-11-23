@@ -3,88 +3,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9934C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9447AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:00:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F8F620645
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:57:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F8F620645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 521C320672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:00:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 521C320672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503909AbeKWWlb (ORCPT
+        id S2503911AbeKWWoe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 17:41:31 -0500
-Received: from foss.arm.com ([217.140.101.70]:42964 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387885AbeKWWlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 17:41:31 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F5B33620;
-        Fri, 23 Nov 2018 03:57:34 -0800 (PST)
-Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E7E163F5A0;
-        Fri, 23 Nov 2018 03:57:32 -0800 (PST)
-Subject: Re: Sleeping in user_access section
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>, hpa@zytor.com
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        James Morse <james.morse@arm.com>
-References: <3e881ee6-0ff6-b8b6-0633-3d4a7743411d@arm.com>
- <5B3B6AF9-9D8C-4577-905E-D407A5E7D0E3@zytor.com>
- <20181123105034.GQ30658@n2100.armlinux.org.uk>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <44297716-74aa-1f14-67be-3594b5244b74@arm.com>
-Date:   Fri, 23 Nov 2018 11:57:31 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 23 Nov 2018 17:44:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59408 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390446AbeKWWoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 17:44:34 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2C182AE98;
+        Fri, 23 Nov 2018 12:00:36 +0000 (UTC)
+Date:   Fri, 23 Nov 2018 13:00:35 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Petr Mladek <pmladek@suse.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jessica Yu <jeyu@kernel.org>
+Subject: Re: [PATCH v13 08/12] livepatch: Add atomic replace
+In-Reply-To: <20181015123713.25868-9-pmladek@suse.com>
+Message-ID: <alpine.LSU.2.21.1811222132050.19197@pobox.suse.cz>
+References: <20181015123713.25868-1-pmladek@suse.com> <20181015123713.25868-9-pmladek@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181123105034.GQ30658@n2100.armlinux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 15 Oct 2018, Petr Mladek wrote:
 
+> +static int klp_add_object_nops(struct klp_patch *patch,
+> +			       struct klp_object *old_obj)
+> +{
+> +	struct klp_object *obj;
+> +	struct klp_func *func, *old_func;
+> +
+> +	obj = klp_find_object(patch, old_obj);
+> +
+> +	if (!obj) {
+> +		obj = klp_alloc_object_dynamic(old_obj->name);
+> +		if (!obj)
+> +			return -ENOMEM;
+> +
+> +		list_add(&obj->node, &patch->obj_list);
+> +	}
+> +
+> +	klp_for_each_func(old_obj, old_func) {
+> +		func = klp_find_func(obj, old_func);
+> +		if (func)
+> +			continue;
+> +
+> +		func = klp_alloc_func_nop(old_func, obj);
+> +		if (!func)
+> +			return -ENOMEM;
+> +
+> +		list_add(&func->node, &obj->func_list);
+> +	}
+> +
+> +	return 0;
+> +}
 
-On 23/11/18 10:50, Russell King - ARM Linux wrote:
-> On Fri, Nov 23, 2018 at 01:57:12AM -0800, hpa@zytor.com wrote:
->> You should never call a sleeping function from a user_access section.
->> It is intended for very limited regions.
-> 
-> So, what happens if the "unsafe" user access causes a page fault that
-> ends up sleeping?
-> 
+Maybe you should consider list_add_tail() here too.
 
-Thanks for pointing that out.
+> +
+> +/*
+> + * Add 'nop' functions which simply return to the caller to run
+> + * the original function. The 'nop' functions are added to a
+> + * patch to facilitate a 'replace' mode.
+> + */
+> +static int klp_add_nops(struct klp_patch *patch)
+> +{
+> +	struct klp_patch *old_patch;
+> +	struct klp_object *old_obj;
+> +	int err = 0;
 
-On the arm64 side, PAN state is saved in spsr and (if PAN feature is 
-enabled in SCTLR) PAN bit gets set (disabling the user accesses). For 
-software PAN we follow the same behaviour on exception entry. So upon 
-exception we implicitly exit user_access mode and then re-enter it when 
-returning from the exception.
+The initialization is unnecessary.
 
-On x86, the EFLAGS.AC bit is also saved upon exception and I think it is 
-cleared upon exception entry so there is implicit exit from the 
-user_access mode when taking exception/interrupt.
+> +	list_for_each_entry(old_patch, &klp_patches, list) {
+> +		klp_for_each_object(old_patch, old_obj) {
+> +			err = klp_add_object_nops(patch, old_obj);
+> +			if (err)
+> +				return err;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
 
-This however is just how those two architectures happen to behave and 
-doesn't seem to be specified as part of the user_access API...
-
-Which is why I'd like to clarify the semantics of user_access region wrt 
-sleeping functions.
-
-Thanks,
-
--- 
-Julien Thierry
+Miroslav
