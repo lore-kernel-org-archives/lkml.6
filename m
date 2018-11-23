@@ -2,59 +2,95 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 280D2C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB44C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E356F20672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:44:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E356F20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 5D91E20861
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:46:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D91E20861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409912AbeKWX2d (ORCPT
+        id S2394754AbeKWXat (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:28:33 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:50429 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388147AbeKWX2b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:28:31 -0500
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gQAor-00046C-2e; Fri, 23 Nov 2018 13:44:25 +0100
-Date:   Fri, 23 Nov 2018 13:44:24 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-cc:     linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCHv18 01/35] Documentation: v4l: document request API
-In-Reply-To: <20181123102908.2ec61ce4@coco.lan>
-Message-ID: <alpine.DEB.2.21.1811231343490.2603@nanos.tec.linutronix.de>
-References: <20180814142047.93856-1-hverkuil@xs4all.nl> <20180814142047.93856-2-hverkuil@xs4all.nl> <alpine.DEB.2.21.1811121048400.14703@nanos.tec.linutronix.de> <20181118115215.5ebc681c@coco.lan> <20181123075157.077758c0@coco.lan>
- <alpine.DEB.2.21.1811231134100.2603@nanos.tec.linutronix.de> <20181123102908.2ec61ce4@coco.lan>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 23 Nov 2018 18:30:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38460 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390833AbeKWXat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 18:30:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1F275AEC0;
+        Fri, 23 Nov 2018 12:46:44 +0000 (UTC)
+Date:   Fri, 23 Nov 2018 13:46:43 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 2/3] mm, notifier: Catch sleeping/blocking for !blockable
+Message-ID: <20181123124643.GK8625@dhcp22.suse.cz>
+References: <20181122165106.18238-1-daniel.vetter@ffwll.ch>
+ <20181122165106.18238-3-daniel.vetter@ffwll.ch>
+ <20181123111237.GE8625@dhcp22.suse.cz>
+ <20181123123838.GL4266@phenom.ffwll.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181123123838.GL4266@phenom.ffwll.local>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Nov 2018, Mauro Carvalho Chehab wrote:
-> Ok, I'll use then the enclosed patch, replacing them by a free
-> form license info, adding a TODO at the end, as a reminder.
+On Fri 23-11-18 13:38:38, Daniel Vetter wrote:
+> On Fri, Nov 23, 2018 at 12:12:37PM +0100, Michal Hocko wrote:
+> > On Thu 22-11-18 17:51:05, Daniel Vetter wrote:
+> > > We need to make sure implementations don't cheat and don't have a
+> > > possible schedule/blocking point deeply burried where review can't
+> > > catch it.
+> > > 
+> > > I'm not sure whether this is the best way to make sure all the
+> > > might_sleep() callsites trigger, and it's a bit ugly in the code flow.
+> > > But it gets the job done.
+> > 
+> > Yeah, it is quite ugly. Especially because it makes DEBUG config
+> > bahavior much different. So is this really worth it? Has this already
+> > discovered any existing bug?
+> 
+> Given that we need an oom trigger to hit this we're not hitting this in CI
+> (oom is just way to unpredictable to even try). I'd kinda like to also add
+> some debug interface so I can provoke an oom kill of a specially prepared
+> process, to make sure we can reliably exercise this path without killing
+> the kernel accidentally. We do similar tricks for our shrinker already.
 
-LGTM. Thanks for fixing this.
+Create a task with oom_score_adj = 1000 and trigger the oom killer via
+sysrq and you should get a predictable oom invocation and execution.
 
-      tglx
+[...]
+> Wrt the behavior difference: I guess we could put another counter into the
+> task struct, and change might_sleep() to check it. All under
+> CONFIG_DEBUG_ATOMIC_SLEEP only ofc. That would avoid the preempt-disable
+> sideeffect. My worry with that is that people will spot it, and abuse it
+> in creative ways that do affect semantics. See horrors like
+> drm_can_sleep() (and I'm sure gfx folks are not the only ones who
+> seriously lacked taste here).
+> 
+> Up to the experts really how to best paint this shed I think.
+
+Actually I like a way to say non_block_{begin,end} and might_sleep
+firing inside that context.
+-- 
+Michal Hocko
+SUSE Labs
