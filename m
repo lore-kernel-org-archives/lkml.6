@@ -2,103 +2,109 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8EB2C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99927C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76BC320672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:30:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76BC320672
+	by mail.kernel.org (Postfix) with ESMTP id 5F8DC20820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:31:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="bA+d2bHu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F8DC20820
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410041AbeKXAOw (ORCPT
+        id S2405531AbeKXAPu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 19:14:52 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43454 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388620AbeKXAOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 19:14:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CABB4AD7D;
-        Fri, 23 Nov 2018 13:30:38 +0000 (UTC)
-Date:   Fri, 23 Nov 2018 14:30:38 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 1/3] mm: Check if mmu notifier callbacks are allowed to
- fail
-Message-ID: <20181123133038.GQ8625@dhcp22.suse.cz>
-References: <20181122165106.18238-1-daniel.vetter@ffwll.ch>
- <20181122165106.18238-2-daniel.vetter@ffwll.ch>
- <20181123111557.GG8625@dhcp22.suse.cz>
- <20181123123057.GK4266@phenom.ffwll.local>
- <20181123124358.GJ8625@dhcp22.suse.cz>
- <CAKMK7uGViQT5HPEQzFsAT85gdCr-gw94EB5fMT9eXRBAXambWg@mail.gmail.com>
+        Fri, 23 Nov 2018 19:15:50 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37772 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388587AbeKXAPt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 19:15:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0+7sjnzFxnWCHvUyY435I2q+6Ivy5gFveXEBwf99Bjk=; b=bA+d2bHuhTcUMqwf9AI9zNcYQ
+        s6mKYhmNkzH/84hN6JRBoCPReliRpqtJn/iVhAYFSZnW16zKCStLS5ktxkN6CVDe2fCzI4/akAcDm
+        luwy9yk6JllPyLKYuygfBQxxx/gUMXTEyKZsaOHWIIvznLfkkOe43T9Bqwg6IFwAx+BEg=;
+Received: from [176.12.107.140] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gQBYP-00013i-1W; Fri, 23 Nov 2018 13:31:29 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 07610440078; Fri, 23 Nov 2018 13:31:27 +0000 (GMT)
+Date:   Fri, 23 Nov 2018 13:31:26 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: Re: [PATCH v9 1/8] ASoC: dt-bindings: sun50i-codec-analog: Add
+ headphone amp regulator supply
+Message-ID: <20181123133126.GF2089@sirena.org.uk>
+References: <20181122102325.29495-1-wens@csie.org>
+ <20181122102325.29495-2-wens@csie.org>
+ <20181122153241.lzrwhkewg5q4hy2c@flea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="tWc6BTYdre847SEs"
 Content-Disposition: inline
-In-Reply-To: <CAKMK7uGViQT5HPEQzFsAT85gdCr-gw94EB5fMT9eXRBAXambWg@mail.gmail.com>
+In-Reply-To: <20181122153241.lzrwhkewg5q4hy2c@flea>
+X-Cookie: No Canadian coins.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 23-11-18 14:15:11, Daniel Vetter wrote:
-> On Fri, Nov 23, 2018 at 1:43 PM Michal Hocko <mhocko@kernel.org> wrote:
-> > On Fri 23-11-18 13:30:57, Daniel Vetter wrote:
-> > > On Fri, Nov 23, 2018 at 12:15:57PM +0100, Michal Hocko wrote:
-> > > > On Thu 22-11-18 17:51:04, Daniel Vetter wrote:
-> > > > > Just a bit of paranoia, since if we start pushing this deep into
-> > > > > callchains it's hard to spot all places where an mmu notifier
-> > > > > implementation might fail when it's not allowed to.
-> > > >
-> > > > What does WARN give you more than the existing pr_info? Is really
-> > > > backtrace that interesting?
-> > >
-> > > Automated tools have to ignore everything at info level (there's too much
-> > > of that). I guess I could do something like
-> > >
-> > > if (blockable)
-> > >       pr_warn(...)
-> > > else
-> > >       pr_info(...)
-> > >
-> > > WARN() is simply my goto tool for getting something at warning level
-> > > dumped into dmesg. But I think the pr_warn with the callback function
-> > > should be enough indeed.
-> >
-> > I wouldn't mind s@pr_info@pr_warn@
-> 
-> Well that's too much, because then it would misfire in the oom
-> testcase, where failing is ok (desireble even, we want to avoid
-> blocking after all). So needs to be  a switch (or else we need to
-> filter it in results, and that's a bit a maintenance headache from a
-> CI pov).
 
-I thought the failure should be rare enough that warning about them can
-be actually useful. E.g. in the oom case we can live with the failure
-because we want to release _some_ memory but know about a callback that
-prevents us to go the full way might be interesting.
+--tWc6BTYdre847SEs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-But I do not really feel strongly about this. I find WARN a bit abuse
-because the trace is unlikely going to help us much. If you want to make
-a verbosity depending on the blockable context then I will surely not
-stand in the way.
+On Thu, Nov 22, 2018 at 04:32:41PM +0100, Maxime Ripard wrote:
+> On Thu, Nov 22, 2018 at 06:23:18PM +0800, Chen-Yu Tsai wrote:
 
--- 
-Michal Hocko
-SUSE Labs
+> > +- cpvdd-supply: Regulator supply for the headphone amplifier
+
+> I guess we should make this optional, since even if it's missing, it's
+> going to create a dummy regulator. and that allows to have backward
+> compatibility.
+
+Regulators should never be marked as optional unless they can be
+physically absent.  It is true that Linux has code to handle partially
+defined device trees but we shouldn't rely on other OSs having similar
+code and it's better practice to have board device trees be fully
+specified, it means that if we need the regulator information for some
+future thing it's more likely to be there and it's less likely that bugs
+which do things like cause the regulator to be powered off incorrectly
+will be introduced in future.
+
+--tWc6BTYdre847SEs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv4AS4ACgkQJNaLcl1U
+h9AYIggAhg//WqT0GsO27SLAihrkB6m9aDOYxbNLf16kxManjIHvCNpKAyuOc+bn
+Go+pZkE9hZ83rkO86bfA5fMjkJnkjVmt8/k0nGyJqm9vH7jXh9qW9R7pBhCazgvG
+Pd9Va3ouJXI/HhcECJApYMPXS+DOn9fdS/HUeXcF5FyhEAbVwUsD7l3CZFxgO8n3
+kzVevvyicXzRaYnnSJZMUBQM9INkFwAaPXBzLoYNre86eA/ktc//e4zXCVh1PMwx
+D2cExRRexfpU6QjlCvivVGYY5Qxk4qPMsmdaKD5b94HkVgFszXKjPHqOLobQ2wIA
+w02xpmRW28FVH2vYd/FlOHRfrMGzdQ==
+=9LaI
+-----END PGP SIGNATURE-----
+
+--tWc6BTYdre847SEs--
