@@ -2,154 +2,159 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D54C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED590C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:58:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6ABF206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:57:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6ABF206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id B9C6A20820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:58:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9C6A20820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439628AbeKWXmD (ORCPT
+        id S2439641AbeKWXm1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:42:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39914 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2439604AbeKWXmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:42:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8A73AAD7D;
-        Fri, 23 Nov 2018 12:57:55 +0000 (UTC)
-Date:   Fri, 23 Nov 2018 13:57:53 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Jessica Yu <jeyu@kernel.org>
-cc:     Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Dave Martin <Dave.Martin@arm.com>, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] module: Overwrite st_size instead of st_info
-In-Reply-To: <20181122162849.GA8856@linux-8ccs>
-Message-ID: <alpine.LSU.2.21.1811231357180.9924@pobox.suse.cz>
-References: <20181119162513.16562-1-vincent.whitchurch@axis.com> <20181122120154.GH3505@e103592.cambridge.arm.com> <20181122122411.6ydftk7bjlrefwa5@axis.com> <20181122162849.GA8856@linux-8ccs>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Fri, 23 Nov 2018 18:42:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58498 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2439604AbeKWXm1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 18:42:27 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 05D1630635F8;
+        Fri, 23 Nov 2018 12:58:21 +0000 (UTC)
+Received: from [10.36.118.36] (unknown [10.36.118.36])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2F44D67E68;
+        Fri, 23 Nov 2018 12:58:17 +0000 (UTC)
+Subject: Re: [PATCH v1] mm/memory_hotplug: drop "online" parameter from
+ add_memory_resource()
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Arun KS <arunks@codeaurora.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+References: <20181123123740.27652-1-david@redhat.com>
+ <20181123125400.GL8625@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <a97fcf28-ef71-2b49-c25c-bc96cff8366b@redhat.com>
+Date:   Fri, 23 Nov 2018 13:58:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181123125400.GL8625@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 23 Nov 2018 12:58:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Nov 2018, Jessica Yu wrote:
-
-> +++ Vincent Whitchurch [22/11/18 13:24 +0100]:
-> >On Thu, Nov 22, 2018 at 12:01:54PM +0000, Dave Martin wrote:
-> >> On Mon, Nov 19, 2018 at 05:25:12PM +0100, Vincent Whitchurch wrote:
-> >> > st_info is currently overwritten after relocation and used to store the
-> >> > elf_type().  However, we're going to need it fix kallsyms on ARM's
-> >> > Thumb-2 kernels, so preserve st_info and overwrite the st_size field
-> >> > instead.  st_size is neither used by the module core nor by any
-> >> > architecture.
-> >> >
-> >> > Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
-> >> > ---
-> >> > v4: Split out to separate patch.  Use st_size instead of st_other.
-> >> > v1-v3: See PATCH 2/2
-> >> >
-> >> >  kernel/module.c | 4 ++--
-> >> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >> >
-> >> > diff --git a/kernel/module.c b/kernel/module.c
-> >> > index 49a405891587..3d86a38b580c 100644
-> >> > --- a/kernel/module.c
-> >> > +++ b/kernel/module.c
-> >> > @@ -2682,7 +2682,7 @@ static void add_kallsyms(struct module *mod, const
-> >> > struct load_info *info)
-> >> >
-> >> >   /* Set types up while we still have access to sections. */
-> >> >   for (i = 0; i < mod->kallsyms->num_symtab; i++)
-> >> > -		mod->kallsyms->symtab[i].st_info
-> >> > +		mod->kallsyms->symtab[i].st_size
-> >> >     = elf_type(&mod->kallsyms->symtab[i], info);
-> >> >
-> >> > 	/* Now populate the cut down core kallsyms for after init. */
-> >> > @@ -4061,7 +4061,7 @@ int module_get_kallsym(unsigned int symnum,
-> >> > unsigned long *value, char *type,
-> >> >    kallsyms = rcu_dereference_sched(mod->kallsyms);
-> >> >    if (symnum < kallsyms->num_symtab) {
-> >> > 			*value = kallsyms->symtab[symnum].st_value;
-> >> > -			*type = kallsyms->symtab[symnum].st_info;
-> >> > +			*type = kallsyms->symtab[symnum].st_size;
-> >> >     strlcpy(name, symname(kallsyms, symnum), KSYM_NAME_LEN);
-> >> >     strlcpy(module_name, mod->name, MODULE_NAME_LEN);
-> >> >     *exported = is_exported(name, *value, mod);
-> >>
-> >> This is fine if st_size is really unused, but how sure are you of that?
-> >>
-> >> grepping for st_size throws up some hits that appear ELF-related, but
-> >> I've not investigated them in detail.
-> >>
-> >> (The fact that struct stat has an identically named field throws up
-> >> a load of false positives too.)
-> >
-> >$ git describe --tags
-> >v4.20-rc3-93-g92b419289cee
-> >
-> >$ rg -m1 '[\.>]st_size'  --iglob '!**/tools/**' --iglob '!**/vdso*' --iglob
-> >'!**/scripts/**' --iglob '!**/usr/**' --iglob '!**/samples/**' | cat
-> >| kernel/kexec_file.c:	if (sym->st_size != size) {
-> >
-> >Symbols in kexec kernel.
-> >
-> >| fs/stat.c:	tmp.st_size = stat->size;
-> >| Documentation/networking/tls.txt:  sendfile(sock, file, &offset,
-> >| stat.st_size);
-> >| net/9p/client.c:		ret->st_rdev, ret->st_size, ret->st_blksize,
-> >| net/9p/protocol.c:					&stbuf->st_rdev,
-> >| &stbuf->st_size,
-> >| fs/9p/vfs_inode_dotl.c:		i_size_write(inode, stat->st_size);
-> >| fs/hostfs/hostfs_user.c:	p->size = buf->st_size;
-> >| arch/powerpc/boot/mktree.c:	nblks = (st.st_size + IMGBLK) / IMGBLK;
-> >| arch/alpha/kernel/osf_sys.c:	tmp.st_size	= lstat->size;
-> >| arch/x86/ia32/sys_ia32.c:	    __put_user(stat->size, &ubuf->st_size) ||
-> >
-> >Not Elf_Sym.
-> >
-> >| arch/x86/kernel/machine_kexec_64.c:			 sym->st_size);
-> >
-> >Symbols in kexec kernel.
-> >
-> >| arch/sparc/boot/piggyback.c:	st4(buffer + 12, s.st_size);
-> >| arch/sparc/kernel/sys_sparc32.c:	err |= put_user(stat->size,
-> >| &statbuf->st_size);
-> >| arch/um/os-Linux/file.c:		.ust_size    = src->st_size,    /*
-> >| total size, in bytes */
-> >| arch/um/os-Linux/start_up.c:	size = (buf.st_size + UM_KERN_PAGE_SIZE) &
-> >| ~(UM_KERN_PAGE_SIZE - 1);
-> >| arch/s390/kernel/compat_linux.c:	tmp.st_size = stat->size;
-> >| arch/arm/kernel/sys_oabi-compat.c:	tmp.st_size = stat->size;
-> >| arch/mips/boot/compressed/calc_vmlinuz_load_addr.c:	vmlinux_size =
-> >| (uint64_t)sb.st_size;
-> >| drivers/net/ethernet/marvell/sky2.c:		hw->st_idx =
-> >| RING_NEXT(hw->st_idx, hw->st_size);
-> >
-> >Not Elf_Sym.
+On 23.11.18 13:54, Michal Hocko wrote:
+> On Fri 23-11-18 13:37:40, David Hildenbrand wrote:
+>> User space should always be in charge of how to online memory and
+>> if memory should be onlined automatically in the kernel. Let's drop the
+>> parameter to overwrite this - XEN passes memhp_auto_online, just like
+>> add_memory(), so we can directly use that instead internally.
 > 
-> [ added Miroslav to CC, just in case he would like to check :) ]
+> Heh, I wanted to get rid of memhp_auto_online so much and now we have it
+> in the core memory_hotplug. Not a win on my side I would say :/
+
+That is actually a good point: Can we remove memhp_auto_online or is it
+already some sort of kernel ABI?
+
+(as it is exported via /sys/devices/system/memory/auto_online_blocks)
+
+> On the other hand this can be seen as a cleanup because it removes that
+> ambiguity that some callers might be unaware of the memhp_auto_online
+> leading to a different behavior.
+
+I would say this patch is a step into the right direction - remove the
+flag from the interfaces, then drop it (eventually, as stated not sure
+if that train has left the station).
+
 > 
-> I have just double checked as well, and am fairly certain that the
-> Elf_Sym st_size field is not used to apply module relocations in any
-> arches, and it is not used in the core module loader nor in the module
-> kallsyms code. We'd like to avoid overwriting st_info in any case, to
-> fix kallsyms on Thumb-2 and also so that livepatch won't run into any
-> issues with delayed relocations, should livepatch support ever expand
-> to arches (e.g., arm) that rely on st_info for module relocations.
+>> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+>> Cc: Juergen Gross <jgross@suse.com>
+>> Cc: Stefano Stabellini <sstabellini@kernel.org>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Dan Williams <dan.j.williams@intel.com>
+>> Cc: Oscar Salvador <osalvador@suse.de>
+>> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+>> Cc: Michal Hocko <mhocko@suse.com>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+>> Cc: Arun KS <arunks@codeaurora.org>
+>> Cc: Mathieu Malaterre <malat@debian.org>
+>> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+> 
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> 
 
-I checked and came to the same conclusion.
 
-Regards,
-Miroslav
+-- 
+
+Thanks,
+
+David / dhildenb
