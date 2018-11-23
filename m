@@ -2,97 +2,102 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0619C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6628EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3DBE20866
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:27:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3DBE20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3513220824
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:28:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3513220824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730717AbeKXFMX (ORCPT
+        id S2387529AbeKXFOT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 00:12:23 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50826 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725139AbeKXFMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 00:12:23 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3E9A3618;
-        Fri, 23 Nov 2018 10:26:59 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C35053F5CF;
-        Fri, 23 Nov 2018 10:26:59 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 3EA1B1AE1019; Fri, 23 Nov 2018 18:27:16 +0000 (GMT)
-Date:   Fri, 23 Nov 2018 18:27:16 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Christoph Hellwig <hch@lst.de>, john.stultz@linaro.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu@lists.linux-foundation.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        Valentin Schneider <valentin.schneider@arm.com>
-Subject: Re: [PATCH 06/10] swiotlb: use swiotlb_map_page in
- swiotlb_map_sg_attrs
-Message-ID: <20181123182715.GA21183@arm.com>
-References: <20181008080246.20543-1-hch@lst.de>
- <20181008080246.20543-7-hch@lst.de>
- <CANcMJZAzrxA9LGNvP-epv2DwsUacEM_hcgA1n5gmaPuWRJG4iw@mail.gmail.com>
- <20181109074955.GA27489@lst.de>
- <CALAqxLVSDkv4faF3ta_ue9AA9s8B=-8cAMxC_sow+wZYtrfxeQ@mail.gmail.com>
- <20181114141311.GA26677@lst.de>
- <20181114161239.GA29462@lst.de>
- <CALAqxLVMW2sYkaQvggZ-LhvkzpuF2rssQJ4thZkkAkROk=wVVw@mail.gmail.com>
- <20181120092516.GC7270@lst.de>
+        Sat, 24 Nov 2018 00:14:19 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:51063 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730778AbeKXFOT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Nov 2018 00:14:19 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gQGCD-0003e4-36; Fri, 23 Nov 2018 19:28:53 +0100
+Date:   Fri, 23 Nov 2018 19:28:46 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Dou Liyang <douliyangs@gmail.com>
+cc:     linux-kernel@vger.kernel.org, kashyap.desai@broadcom.com,
+        shivasharan.srikanteshwara@broadcom.com, sumit.saxena@broadcom.com,
+        ming.lei@redhat.com, hch@lst.de, bhelgaas@google.com
+Subject: Re: [RFC PATCH v2] gen/irq: Change the way to differentiate between
+ managed and unmanaged interrupts by bitmap
+In-Reply-To: <20181109163849.21699-1-douliyangs@gmail.com>
+Message-ID: <alpine.DEB.2.21.1811231834450.1684@nanos.tec.linutronix.de>
+References: <20181109163849.21699-1-douliyangs@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120092516.GC7270@lst.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi John,
+Dou,
 
-On Tue, Nov 20, 2018 at 10:25:16AM +0100, Christoph Hellwig wrote:
-> On Mon, Nov 19, 2018 at 03:22:13PM -0800, John Stultz wrote:
-> > > +               sg->dma_address = dma_addr;
-> > >                 sg_dma_len(sg) = sg->length;
-> > >         }
-> > 
-> > I know Robin has already replied with more detailed info, but just to
-> > close the loop as I'm finally home, applying this patch didn't seem to
-> > help with the IO hangs I'm seeing w/ HiKey960.
-> 
-> If Robins observation is right this should fix the problem for you:
+On Sat, 10 Nov 2018, Dou Liyang wrote:
 
-Please could you give this diff a try and let us know whether the problem
-persists with your board?
+sorry for late reply. Travel, conferences ....
+
+> --- a/drivers/pci/msi.c
+> +++ b/drivers/pci/msi.c
+> @@ -673,14 +674,17 @@ static int msix_setup_entries(struct pci_dev *dev, void __iomem *base,
+>  			      const struct irq_affinity *affd)
+>  {
+>  	struct cpumask *curmsk, *masks = NULL;
+> +	DECLARE_BITMAP(managed, nvec);
+
+This is not working as it creates a variable length array (VLA). We just
+got rid of all VLAs in the kernel and the compiler will catch this and
+complain.
+
+>  	struct msi_desc *entry;
+>  	int ret, i;
+>  
+> +	memset(managed, 0, sizeof(managed));
+>  	if (affd)
+> -		masks = irq_create_affinity_masks(nvec, affd);
+> +		masks = irq_create_affinity_masks(nvec, affd, managed);
+
+So rather than changing the world and everything by adding new arguments,
+what about the following:
+
+-struct cpumask *irq_create_affinity_masks(int nvec, const struct irq_affinity *affd);
++struct irq_affinity_desc * irq_create_affinity_masks(int nvec, struct irq_affinity *affd);
+
+struct irq_affinity_desc {
+	struct cpumask	mask;
+	unsigned long	flags;
+};
+
+or something like that. Let irq_create_affinity_masks() allocate an array
+of those and store the information in the flags field. In the allocation
+functions just replace the cpumask pointer with a irq_affinity_desc pointer
+and hand that through to the irqdesc core, where you can evaluate the
+flags. Way less things to modify and the data structure allows to expand
+this in the future without touching all the functions ever again.
+
+Can you please work against the tip irq/core branch as that has already
+other changes in the affinity spreading code queued?
 
 Thanks,
 
-Will
+	tglx
 
-> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
-> index bd73e7a91410..1833f0c1fba0 100644
-> --- a/include/linux/dma-direct.h
-> +++ b/include/linux/dma-direct.h
-> @@ -5,7 +5,7 @@
->  #include <linux/dma-mapping.h>
->  #include <linux/mem_encrypt.h>
->  
-> -#define DIRECT_MAPPING_ERROR		0
-> +#define DIRECT_MAPPING_ERROR		(~(dma_addr_t)0x0)
->  
->  #ifdef CONFIG_ARCH_HAS_PHYS_TO_DMA
->  #include <asm/dma-direct.h>
+
