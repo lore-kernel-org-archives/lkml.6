@@ -2,182 +2,223 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F02C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:18:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B96C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11DF020989
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:18:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11DF020989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C33420820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:19:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ntj5kPGp";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="g6TL942/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C33420820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503248AbeKWVB7 (ORCPT
+        id S2503227AbeKWVDP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 16:01:59 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:55124 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388074AbeKWVB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 16:01:59 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DE26420D92; Fri, 23 Nov 2018 11:18:18 +0100 (CET)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7737820EB0;
-        Fri, 23 Nov 2018 11:17:34 +0100 (CET)
-Date:   Fri, 23 Nov 2018 11:17:29 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
-Cc:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mtd: spi-nor: fix erase_type array to indicate current
- map conf
-Message-ID: <20181123111729.1d5b6e57@bbrezillon>
-In-Reply-To: <3d8a2b83-282d-7cb2-3c8b-addae3c2af7f@nokia.com>
-References: <20181122123552.15756-1-tudor.ambarus@microchip.com>
-        <3d8a2b83-282d-7cb2-3c8b-addae3c2af7f@nokia.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 23 Nov 2018 16:03:15 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:57950 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394081AbeKWVDP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 16:03:15 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E1B0E6081E; Fri, 23 Nov 2018 10:19:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542968374;
+        bh=27DCqP1D3OqvelHChR0Wcisk1kC64Djcdi+3zh5K/h8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ntj5kPGpgzLT4eetILHrpjFFXpllsBS+G7yAjQOtYNR0WQL0gd1pDpbPaLissClrQ
+         gtD2YVERRIyF1aFPtplYwoQwyIsH6MVw/AJn5rGNyEgPSjfcUEdSWT0yq5X7vDQXxz
+         3lcwupMq4kQMWDgexOM8BpRM+JpkCqMiCs6g8BXQ=
+Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stummala@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 16F3560A98;
+        Fri, 23 Nov 2018 10:19:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542968373;
+        bh=27DCqP1D3OqvelHChR0Wcisk1kC64Djcdi+3zh5K/h8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=g6TL942/J3VI6O1Nh0PSG3HYdt+F+zNFzbU9LSv9sA6d2YBBfSIJwaixHmnNVJP96
+         Uf2lT0ZjaMd+8TeeFl/Ny6N2aCILsea5fFBehuBZGFtH6178nVlGl+vq9rZgMNrZZM
+         KVn9nq4xBlev74zSQpBqYUxcB0gmX3vO5ghPO+Mk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 16F3560A98
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+Date:   Fri, 23 Nov 2018 15:49:28 +0530
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] f2fs: fix sbi->extent_list corruption issue
+Message-ID: <20181123101928.GB9838@codeaurora.org>
+References: <1542884360-19470-1-git-send-email-stummala@codeaurora.org>
+ <a1e799ad-a559-12cc-9f2d-a6f037640a35@huawei.com>
+ <20181122121107.GB52295@jaegeuk-macbookpro.roam.corp.google.com>
+ <20181123034218.GA9838@codeaurora.org>
+ <75b71652-31a9-1061-37a4-9d137c3db9aa@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <75b71652-31a9-1061-37a4-9d137c3db9aa@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Nov 2018 09:42:55 +0000
-"Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
-wrote:
-
-> Hello Tudor,
+On Fri, Nov 23, 2018 at 05:52:16PM +0800, Chao Yu wrote:
+> On 2018/11/23 11:42, Sahitya Tummala wrote:
+> > On Thu, Nov 22, 2018 at 04:11:07AM -0800, Jaegeuk Kim wrote:
+> >> On 11/22, Chao Yu wrote:
+> >>> On 2018/11/22 18:59, Sahitya Tummala wrote:
+> >>>> When there is a failure in f2fs_fill_super() after/during
+> >>>> the recovery of fsync'd nodes, it frees the current sbi and
+> >>>> retries again. This time the mount is successful, but the files
+> >>>> that got recovered before retry, still holds the extent tree,
+> >>>> whose extent nodes list is corrupted since sbi and sbi->extent_list
+> >>>> is freed up. The list_del corruption issue is observed when the
+> >>>> file system is getting unmounted and when those recoverd files extent
+> >>>> node is being freed up in the below context.
+> >>>>
+> >>>> list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
+> >>>> <...>
+> >>>> kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
+> >>>> task: fffffff1f46f2280 task.stack: ffffff8008068000
+> >>>> lr : __list_del_entry_valid+0x94/0xb4
+> >>>> pc : __list_del_entry_valid+0x94/0xb4
+> >>>> <...>
+> >>>> Call trace:
+> >>>> __list_del_entry_valid+0x94/0xb4
+> >>>> __release_extent_node+0xb0/0x114
+> >>>> __free_extent_tree+0x58/0x7c
+> >>>> f2fs_shrink_extent_tree+0xdc/0x3b0
+> >>>> f2fs_leave_shrinker+0x28/0x7c
+> >>>> f2fs_put_super+0xfc/0x1e0
+> >>>> generic_shutdown_super+0x70/0xf4
+> >>>> kill_block_super+0x2c/0x5c
+> >>>> kill_f2fs_super+0x44/0x50
+> >>>> deactivate_locked_super+0x60/0x8c
+> >>>> deactivate_super+0x68/0x74
+> >>>> cleanup_mnt+0x40/0x78
+> >>>> __cleanup_mnt+0x1c/0x28
+> >>>> task_work_run+0x48/0xd0
+> >>>> do_notify_resume+0x678/0xe98
+> >>>> work_pending+0x8/0x14
+> >>>>
+> >>>> Fix this by cleaning up the extent tree of those recovered files
+> >>>> before freeing up sbi and before next retry.
+> >>>
+> >>> Would it be more clear to call shrink_dcache_sb earlier to invalid all
+> >>> inodes and call f2fs_shrink_extent_tree release cached entries and trees in
+> >>> error path?
+> >>
+> >> Agreed.
+> >>
+> > I have tried doing shrink_dcache_sb() earlier but that doesn't call
+> > f2fs_shrink_extent_tree(). So I have moved f2fs_join_shrinker() earlier and 
+> > tried calling f2fs_leave_shrinker() in the error path. That helps to clean up
+> > the cached extent nodes. However, I see that extent tree is left intact for
 > 
-> On 22/11/2018 13:36, Tudor.Ambarus@microchip.com wrote:
-> > From: Tudor Ambarus <tudor.ambarus@microchip.com>
+> I didn't get it, you mean, in error path, after we call shrink_dcache_sb &
+> f2fs_leave_shrinker, for those recovered files, their extent nodes were
+> evicted, but their extent trees are still in cache?
+> 
+
+Yes, only extent tree is present with zero extent nodes as
+f2fs_leave_shrinker() is only clearing the exntent nodes from
+sbi->extent_list.
+
+> > those recovered files, which should not be a problem as it gets freed as part
+> > of next umount/rm. Only one small problem I see with this is - during rm/umount when
+> > those previoulsy recovered files are being evicted, extent tree memory gets
+> > free'd but the counter sbi->total_ext_tree gets invalid as these recovered
+> > files are not present as part of current sbi->extent_tree_root. So i have come
+> > up with this patch below to fix this. Let me know if this looks good?
 > > 
-> > Bug reported for the out-of-tree S25FS128S flash memory.
-> > 
-> > BFPT table advertises all the erase types supported by all the
-> > possible map configurations. Update the erase_type array to indicate
-> > which erase types are applicable to the current map configuration.
-> > 
-> > Backward compatibility test done on sst26vf064b.
-> > 
-> > Fixes: b038e8e3be72 ("mtd: spi-nor: parse SFDP Sector Map Parameter Table")
-> > Reported-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-> > Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>  
-> 
-> I've tested this patch and it fixes the erasesize for S25FS128S and
-> our 128k partitions are writeable again with this patch.
-> 
-> Nevertheless, I think this is coincidence. I don't think that it
-> makes sense to OR all the erase types from all regions in one
-> bitmask and derive any uniform erasesize out of it.
-> This makes little sense for me in case of non-uniform maps.
-> 
-> I believe, the culprit here is one level higher, in the MTD partitioning
-> code (mtdpart.c) which has to be taught about non-uniform maps
-> but there is no infrastructure for this currently.
-
-Keep in mind that mtdpart is only one part of the issue. As I said
-previously, some MTD users (UBI) expect a single eraseblock size, so
-it's not only mtdpart that you'd need to fix, but basically all MTD
-users that don't check ->eraseregions.
-
-> 
-> What is possible to fix still is to choose smallest, not biggest
-> erasesize for uniform case.
-
-Yep, I agree. But we also have to be careful here, if some NORs were
-already supported and were picking the biggest erasesize, we have to
-preserve this behavior, otherwise we'll break things.
-
-> I have such a patch, but I need hands
-> on on a S25FS128S configured in uniform mode.
-> 
-> Non uniform case requires MTD layer rework.
-
-There's already the concept of ->eraseregions. Maybe I'm wrong but I
-thought it would fit the non-uniform erase scheme we have in SPI NOR. 
-
-> We just cannot handle
-> this hardware with just one erasesize in mind.
-
-We can, if we decide to always use the biggest non-uniform erasesize.
-Of course that only works if the biggest erase size is always a
-multiple of smaller ones, but I'm pretty sure this is always true.
-
-> 
-> > ---
-> >  drivers/mtd/spi-nor/spi-nor.c | 29 ++++++++++++++++++++++++++++-
-> >  1 file changed, 28 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> > index 93c9bc8931fc..a71adcd6ddfa 100644
-> > --- a/drivers/mtd/spi-nor/spi-nor.c
-> > +++ b/drivers/mtd/spi-nor/spi-nor.c
-> > @@ -3000,7 +3000,8 @@ static int spi_nor_init_non_uniform_erase_map(struct spi_nor *nor,
-> >  	u64 offset;
-> >  	u32 region_count;
-> >  	int i, j;
-> > -	u8 erase_type, uniform_erase_type;
-> > +	u8 uniform_erase_type, save_uniform_erase_type;
-> > +	u8 erase_type, regions_erase_type;
+> > diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+> > index 1cb0fcc..3e4801e 100644
+> > --- a/fs/f2fs/extent_cache.c
+> > +++ b/fs/f2fs/extent_cache.c
+> > @@ -654,9 +654,9 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
+> >  		}
+> >  		f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
+> >  		list_del_init(&et->list);
+> > -		radix_tree_delete(&sbi->extent_tree_root, et->ino);
+> > +		if (radix_tree_delete(&sbi->extent_tree_root, et->ino))
+> > +			atomic_dec(&sbi->total_ext_tree);
+> >  		kmem_cache_free(extent_tree_slab, et);
+> > -		atomic_dec(&sbi->total_ext_tree);
+> >  		atomic_dec(&sbi->total_zombie_tree);
+> >  		tree_cnt++;
 > >  
-> >  	region_count = SMPT_MAP_REGION_COUNT(*smpt);
-> >  	/*
-> > @@ -3014,6 +3015,7 @@ static int spi_nor_init_non_uniform_erase_map(struct spi_nor *nor,
-> >  	map->regions = region;
+> > @@ -767,7 +767,8 @@ void f2fs_destroy_extent_tree(struct inode *inode)
+> >  	/* delete extent tree entry in radix tree */
+> >  	mutex_lock(&sbi->extent_tree_lock);
+> >  	f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
+> > -	radix_tree_delete(&sbi->extent_tree_root, inode->i_ino);
+> > +	if (radix_tree_delete(&sbi->extent_tree_root, inode->i_ino))
+> > +		atomic_dec(&sbi->total_ext_tree);
+> >  	kmem_cache_free(extent_tree_slab, et);
+> >  	atomic_dec(&sbi->total_ext_tree);
+> >  	mutex_unlock(&sbi->extent_tree_lock);
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index af58b2c..3e5588f 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -3295,6 +3295,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >  	if (err)
+> >  		goto free_root_inode;
 > >  
-> >  	uniform_erase_type = 0xff;
-> > +	regions_erase_type = 0;
-> >  	offset = 0;
-> >  	/* Populate regions. */
-> >  	for (i = 0; i < region_count; i++) {
-> > @@ -3030,13 +3032,38 @@ static int spi_nor_init_non_uniform_erase_map(struct spi_nor *nor,
-> >  		 */
-> >  		uniform_erase_type &= erase_type;
-> >  
-> > +		/*
-> > +		 * regions_erase_type mask will indicate all the erase types
-> > +		 * supported in this configuration map.
-> > +		 */
-> > +		regions_erase_type |= erase_type;
-> > +
-> >  		offset = (region[i].offset & ~SNOR_ERASE_FLAGS_MASK) +
-> >  			 region[i].size;
+> > +	f2fs_join_shrinker(sbi);
+> >  #ifdef CONFIG_QUOTA
+> >  	/* Enable quota usage during mount */
+> >  	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb)) {
+> > @@ -3379,8 +3380,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >  			sbi->valid_super_block ? 1 : 2, err);
 > >  	}
 > >  
-> > +	save_uniform_erase_type = map->uniform_erase_type;
-> >  	map->uniform_erase_type = spi_nor_sort_erase_mask(map,
-> >  							  uniform_erase_type);
+> > -	f2fs_join_shrinker(sbi);
+> > -
+> >  	f2fs_tuning_parameters(sbi);
 > >  
-> > +	if (!regions_erase_type) {
-> > +		/*
-> > +		 * Roll back to the previous uniform_erase_type mask, SMPT is
-> > +		 * broken.
-> > +		 */
-> > +		map->uniform_erase_type = save_uniform_erase_type;
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	/*
-> > +	 * BFPT table advertises all the erase types supported by all the
-> > +	 * possible map configurations. Update the erase_type array to indicate
-> > +	 * which erase types are applicable to the current map configuration.
-> > +	 */
-> > +	for (i = 0; i < SNOR_ERASE_TYPE_MAX; i++)
-> > +		if (!(regions_erase_type & BIT(erase[i].idx)))
-> > +			spi_nor_set_erase_type(&erase[i], 0, 0xFF);
-> > +
-> >  	spi_nor_region_mark_end(&region[i - 1]);
-> >  
-> >  	return 0;  
+> >  	f2fs_msg(sbi->sb, KERN_NOTICE, "Mounted with checkpoint version = %llx",
+> > @@ -3402,6 +3401,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >  	 * falls into an infinite loop in f2fs_sync_meta_pages().
+> >  	 */
+> >  	truncate_inode_pages_final(META_MAPPING(sbi));
+> > +	shrink_dcache_sb(sb);
+> > +	f2fs_leave_shrinker(sbi);
+> 
+> Why not just calling f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi)); ?
 > 
 
+Sure, will update in the next patchset.
+
+> Thanks,
+> 
+> >  	f2fs_unregister_sysfs(sbi);
+> >  free_root_inode:
+> >  	dput(sb->s_root);
+> > @@ -3445,7 +3446,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> >  	/* give only one another chance */
+> >  	if (retry) {
+> >  		retry = false;
+> > -		shrink_dcache_sb(sb);
+> >  		goto try_onemore;
+> >  	}
+> >  	return err;
+> > 
+> 
+
+-- 
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
