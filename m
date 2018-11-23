@@ -2,248 +2,143 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2028C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2140BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FA6920685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:10:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4E4420685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:12:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9oVW+cw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FA6920685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NQGKeTFO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4E4420685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439750AbeKWXyx (ORCPT
+        id S2439765AbeKWX4n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:54:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48332 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394696AbeKWXyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:54:53 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C6B320685;
-        Fri, 23 Nov 2018 13:10:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542978644;
-        bh=l5W+KmMHiJrSx1aB1MWQZ47PfR53jse7Wpaj3gImMoc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=P9oVW+cwB1EbDxUmgeKQXtJJW0L2gb1XNV90InqKLHzu9ixYoD0UYqTsQmRPaa9C1
-         JYSOCe668eeK7Kmcl4OBusz8u2b1m/OKD9JtIk5THoHpOlGLdnw49YiGBoj/VBEfwc
-         jvjNTapQMRuVzkCd4cd87jRP4+z9S7BaDNJ7KQ8U=
-Date:   Fri, 23 Nov 2018 14:10:42 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.9.140
-Message-ID: <20181123131042.GB15416@kroah.com>
-References: <20181123131036.GA15416@kroah.com>
+        Fri, 23 Nov 2018 18:56:43 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33491 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388246AbeKWX4n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 18:56:43 -0500
+Received: by mail-ed1-f68.google.com with SMTP id r27so10263673eda.0;
+        Fri, 23 Nov 2018 05:12:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fiOiczY5EEBCtpidNJ6S5rSUJb77lILBkDmRXRt3Okw=;
+        b=NQGKeTFOPt9I6bag/ucl8JmzUh26wcucbIGFn8f3tTAzcdyyCLXJcu0YXn9AVkn7wx
+         4lvWhOSd07ukZLvH8uhgF2vyNSOYCefZqvKgWQ/0xNLSLT4Tww6rw45pXBUK0ChURCCm
+         E2TN0vgoBcuLdYWMApInUlw0yVYMnNOxJ+1tZwjxzWdhyhCNiitiUkuiOxxN9EOc6wEU
+         gsc7ciqSTdWeAnyvEu8J5d26MIVOKjVT5K3OZfrk7/a1cUagqGx3PNAJlzCKswrNDgEd
+         nVdcEpt69LRAp06gMTPQmSXmjSkOuaAECcmNjRbeX5ZhOIXJcAGfwjm3iUHG3BpbjQ3G
+         x/PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fiOiczY5EEBCtpidNJ6S5rSUJb77lILBkDmRXRt3Okw=;
+        b=to8F70UcFSlJTijD7xIa0TGhbFJZaVpjilHIdcl0zAmiBvIwGh6RQ15+hWDYjB1kQ3
+         K6Rl826o1eNc+gOTGtz01KLUeAD9a5BJjnrdmmn9rsdRsS+ZgZBemTaq6b2+zijgUKz8
+         HNFJ+Dd4chgWmjj4q+M6kK/TxNQd0daeel1i1HIzDQT7g+H5UuOSdt3RWdSnNcUFryeG
+         pqji0kR2uPotOX/dbNijO8uHaFepKDacHH2s5AnfGM5K6OCfJf+X7pQqwtpcFBHyr4B/
+         plFPj5Vt7RgCn+eEAKrTpilDO497VtJg/X68MxxSQmg8ocTodBJEV2RBtQY/DlcT554D
+         qwvg==
+X-Gm-Message-State: AA+aEWZGv8tcDA5q1ZCdzHcnINyhKv08D6N6Pyx2LF2s91lMS65J8+Db
+        qq44LggAPpozKg/nPQrq7+A=
+X-Google-Smtp-Source: AFSGD/Xaxao3UafpL5mNUsbNsH0JethRfNNE53eAz1P0dvKPRjtbFkFdLn31h76q+RG0lVHuui3eMQ==
+X-Received: by 2002:a50:c182:: with SMTP id m2mr6215306edf.139.1542978753465;
+        Fri, 23 Nov 2018 05:12:33 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id z9sm1298782edr.61.2018.11.23.05.12.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 23 Nov 2018 05:12:32 -0800 (PST)
+Date:   Fri, 23 Nov 2018 14:12:31 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Jose Abreu <jose.abreu@synopsys.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        netdev@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: stmmac: Move debugfs init/exit to
+ ->probe()/->remove()
+Message-ID: <20181123131231.GB21651@ulmo>
+References: <20181123122122.18957-1-thierry.reding@gmail.com>
+ <9c8443aa-edaa-2398-bdd8-df49f2529cb6@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="61jdw2sOBCFtR2d/"
 Content-Disposition: inline
-In-Reply-To: <20181123131036.GA15416@kroah.com>
+In-Reply-To: <9c8443aa-edaa-2398-bdd8-df49f2529cb6@synopsys.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Makefile b/Makefile
-index a6959d96316d..a9aed2326233 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 4
- PATCHLEVEL = 9
--SUBLEVEL = 139
-+SUBLEVEL = 140
- EXTRAVERSION =
- NAME = Roaring Lionus
- 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 647a702c29dc..6221166e3fca 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -33,10 +33,12 @@ static void __init spectre_v2_select_mitigation(void);
- static void __init ssb_select_mitigation(void);
- static void __init l1tf_select_mitigation(void);
- 
--/* The base value of the SPEC_CTRL MSR that always has to be preserved. */
--u64 x86_spec_ctrl_base;
-+/*
-+ * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
-+ * writes to SPEC_CTRL contain whatever reserved bits have been set.
-+ */
-+u64 __ro_after_init x86_spec_ctrl_base;
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
--static DEFINE_MUTEX(spec_ctrl_mutex);
- 
- /*
-  * The vendor and possibly platform specific bits which can be modified in
-@@ -320,46 +322,6 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
- 	return cmd;
- }
- 
--static bool stibp_needed(void)
--{
--	if (spectre_v2_enabled == SPECTRE_V2_NONE)
--		return false;
--
--	if (!boot_cpu_has(X86_FEATURE_STIBP))
--		return false;
--
--	return true;
--}
--
--static void update_stibp_msr(void *info)
--{
--	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
--}
--
--void arch_smt_update(void)
--{
--	u64 mask;
--
--	if (!stibp_needed())
--		return;
--
--	mutex_lock(&spec_ctrl_mutex);
--	mask = x86_spec_ctrl_base;
--	if (cpu_smt_control == CPU_SMT_ENABLED)
--		mask |= SPEC_CTRL_STIBP;
--	else
--		mask &= ~SPEC_CTRL_STIBP;
--
--	if (mask != x86_spec_ctrl_base) {
--		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
--				cpu_smt_control == CPU_SMT_ENABLED ?
--				"Enabling" : "Disabling");
--		x86_spec_ctrl_base = mask;
--		on_each_cpu(update_stibp_msr, NULL, 1);
--	}
--	mutex_unlock(&spec_ctrl_mutex);
--}
--
- static void __init spectre_v2_select_mitigation(void)
- {
- 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
-@@ -459,9 +421,6 @@ static void __init spectre_v2_select_mitigation(void)
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
- 	}
--
--	/* Enable STIBP if appropriate */
--	arch_smt_update();
- }
- 
- #undef pr_fmt
-@@ -854,8 +813,6 @@ static ssize_t l1tf_show_state(char *buf)
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			       char *buf, unsigned int bug)
- {
--	int ret;
--
- 	if (!boot_cpu_has_bug(bug))
- 		return sprintf(buf, "Not affected\n");
- 
-@@ -870,12 +827,10 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
- 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
- 
- 	case X86_BUG_SPECTRE_V2:
--		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
--			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
- 			       spectre_v2_module_string());
--		return ret;
- 
- 	case X86_BUG_SPEC_STORE_BYPASS:
- 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 8d7bace9a7b2..b5a0165b7300 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -1970,12 +1970,6 @@ static void cpuhp_online_cpu_device(unsigned int cpu)
- 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
- }
- 
--/*
-- * Architectures that need SMT-specific errata handling during SMT hotplug
-- * should override this.
-- */
--void __weak arch_smt_update(void) { };
--
- static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
- {
- 	int cpu, ret = 0;
-@@ -2002,10 +1996,8 @@ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
- 		 */
- 		cpuhp_offline_cpu_device(cpu);
- 	}
--	if (!ret) {
-+	if (!ret)
- 		cpu_smt_control = ctrlval;
--		arch_smt_update();
--	}
- 	cpu_maps_update_done();
- 	return ret;
- }
-@@ -2016,7 +2008,6 @@ static int cpuhp_smt_enable(void)
- 
- 	cpu_maps_update_begin();
- 	cpu_smt_control = CPU_SMT_ENABLED;
--	arch_smt_update();
- 	for_each_present_cpu(cpu) {
- 		/* Skip online CPUs and CPUs on offline nodes */
- 		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
-diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-index 0db120d2a4fe..b0a72677b7e5 100644
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -2292,7 +2292,6 @@ static void rt6_do_redirect(struct dst_entry *dst, struct sock *sk, struct sk_bu
- 	if (on_link)
- 		nrt->rt6i_flags &= ~RTF_GATEWAY;
- 
--	nrt->rt6i_protocol = RTPROT_REDIRECT;
- 	nrt->rt6i_gateway = *(struct in6_addr *)neigh->primary_key;
- 
- 	if (ip6_ins_rt(nrt))
-@@ -2397,7 +2396,6 @@ static struct rt6_info *rt6_add_route_info(struct net *net,
- 		.fc_dst_len	= prefixlen,
- 		.fc_flags	= RTF_GATEWAY | RTF_ADDRCONF | RTF_ROUTEINFO |
- 				  RTF_UP | RTF_PREF(pref),
--		.fc_protocol = RTPROT_RA,
- 		.fc_nlinfo.portid = 0,
- 		.fc_nlinfo.nlh = NULL,
- 		.fc_nlinfo.nl_net = net,
-@@ -2450,7 +2448,6 @@ struct rt6_info *rt6_add_dflt_router(const struct in6_addr *gwaddr,
- 		.fc_ifindex	= dev->ifindex,
- 		.fc_flags	= RTF_GATEWAY | RTF_ADDRCONF | RTF_DEFAULT |
- 				  RTF_UP | RTF_EXPIRES | RTF_PREF(pref),
--		.fc_protocol = RTPROT_RA,
- 		.fc_nlinfo.portid = 0,
- 		.fc_nlinfo.nlh = NULL,
- 		.fc_nlinfo.nl_net = dev_net(dev),
-@@ -3247,6 +3244,14 @@ static int rt6_fill_node(struct net *net,
- 	}
- 	rtm->rtm_scope = RT_SCOPE_UNIVERSE;
- 	rtm->rtm_protocol = rt->rt6i_protocol;
-+	if (rt->rt6i_flags & RTF_DYNAMIC)
-+		rtm->rtm_protocol = RTPROT_REDIRECT;
-+	else if (rt->rt6i_flags & RTF_ADDRCONF) {
-+		if (rt->rt6i_flags & (RTF_DEFAULT | RTF_ROUTEINFO))
-+			rtm->rtm_protocol = RTPROT_RA;
-+		else
-+			rtm->rtm_protocol = RTPROT_KERNEL;
-+	}
- 
- 	if (rt->rt6i_flags & RTF_CACHE)
- 		rtm->rtm_flags |= RTM_F_CLONED;
+
+--61jdw2sOBCFtR2d/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Nov 23, 2018 at 12:44:02PM +0000, Jose Abreu wrote:
+> On 23-11-2018 12:21, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >
+> > Setting up and tearing down debugfs is current unbalanced, as seen by
+> > this error during resume from suspend:
+> >
+> >     [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to=
+ create debugfs directory
+> >     [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup=
+: failed debugFS registration
+> >
+> > The imbalance happens because the driver creates the debugfs hierarchy
+> > when the device is opened and tears it down when the device is closed.
+> > There's little gain in that, and it could be argued that it is even
+> > surprising because it's not usually done for other devices. Fix the
+> > imbalance by moving the debugfs creation and teardown to the driver's
+> > ->probe() and ->remove() implementations instead.
+> >
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >
+>=20
+> Did you test trying to dump "descriptors_status" file when
+> interface is not open ? I think that's the main reason why this
+> is not in probe ...
+
+I can't say that I did. I'll run a couple more tests and see if I can
+fix both of the issues.
+
+Thierry
+
+--61jdw2sOBCFtR2d/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv3/LoACgkQ3SOs138+
+s6HYpQ/+NA43XmFdoOhzRJjZZqjcPO9spvtNYupeIUjcSJUeMQQErnJkCimsSzfO
+w7hfmHi2o81v1gwvnjPO6oU8dmIMQXbfSSkKsDaIuAz5bBKIZn3eL1+dAL+1aABk
+D+y/oiYYT3sFFKIOIcisxIIVw9oMXfyD/JNclwHjNrYt7HiUeYi0pdKTjDz02IZT
+WlF/yvnFIaiGOCQDVNJ4zCxsKPnlutyZbg4TlyrvApFXLX64uDyNIMCWvQBAtY7f
+92gAvs0/J+6E/0/bDulHLVIoPxRX8oo/Ar6FfRsYJCK6+T3J+TnVJaUNhJoVNA4r
+GprA5ncNTUsjVxfMNtXuLpABcebqqcxMEUXYiBKwphrjg7PwBTFiGwE74vZPIlmB
+oG8YkaopH06f17+7/6nx9z4eLSPZBNWFGhaIUPYQq42TmmQKSqb5OYA2blndGaCa
+xtlCG/YomKwY1J71bUI30zTRV4254aTwtJCOl3l5OHs583Bhi+iN2VtL3eC/5iAE
+XMn5HcP9qgI7951a+QXpNS9SEJqZsDuGrG48qkdnNAzhwQu4DWjKGoa/rY1L/8AD
+VJBC1ustpfGVp8hZwxxfYRsKLp6tbIOHUVA8OT1I0i/Iz4zzwY+Mbem4QCam3fuH
+hmfXx0U16mBV6XpyfFxLgacdm81KMbpwGqTtVsaLFTvqkImUaJ4=
+=RqG/
+-----END PGP SIGNATURE-----
+
+--61jdw2sOBCFtR2d/--
