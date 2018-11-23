@@ -2,171 +2,407 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 704DCC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 943FDC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:19:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CA8D20659
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:19:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CA8D20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
+	by mail.kernel.org (Postfix) with ESMTP id 47C9D20659
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:19:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47C9D20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409591AbeKWWDY (ORCPT
+        id S2503692AbeKWWDs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 17:03:24 -0500
-Received: from mout.gmx.net ([212.227.15.19]:39281 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729651AbeKWWDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 17:03:23 -0500
-Received: from [0.0.0.0] ([210.140.77.29]) by mail.gmx.com (mrgmx003
- [212.227.17.184]) with ESMTPSA (Nemesis) id 0MGSgq-1gCw4O3sxc-00DDYb; Fri, 23
- Nov 2018 12:19:08 +0100
-Subject: Re: [PATCH] btrfs: relocation: set trans to be NULL after free
-To:     Pan Bian <bianpan2016@163.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Cc:     Wang Shilong <wangsl.fnst@cn.fujitsu.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1542967815-14547-1-git-send-email-bianpan2016@163.com>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=quwenruo.btrfs@gmx.com; prefer-encrypt=mutual; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCWdWCnQUJCWYC
- bgAKCRDCPZHzoSX+qAR8B/94VAsSNygx1C6dhb1u1Wp1Jr/lfO7QIOK/nf1PF0VpYjTQ2au8
- ihf/RApTna31sVjBx3jzlmpy+lDoPdXwbI3Czx1PwDbdhAAjdRbvBmwM6cUWyqD+zjVm4RTG
- rFTPi3E7828YJ71Vpda2qghOYdnC45xCcjmHh8FwReLzsV2A6FtXsvd87bq6Iw2axOHVUax2
- FGSbardMsHrya1dC2jF2R6n0uxaIc1bWGweYsq0LXvLcvjWH+zDgzYCUB0cfb+6Ib/ipSCYp
- 3i8BevMsTs62MOBmKz7til6Zdz0kkqDdSNOq8LgWGLOwUTqBh71+lqN2XBpTDu1eLZaNbxSI
- ilaVzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCWdWBrwIbDAUJA8JnAAAK
- CRDCPZHzoSX+qA3xB/4zS8zYh3Cbm3FllKz7+RKBw/ETBibFSKedQkbJzRlZhBc+XRwF61mi
- f0SXSdqKMbM1a98fEg8H5kV6GTo62BzvynVrf/FyT+zWbIVEuuZttMk2gWLIvbmWNyrQnzPl
- mnjK4AEvZGIt1pk+3+N/CMEfAZH5Aqnp0PaoytRZ/1vtMXNgMxlfNnb96giC3KMR6U0E+siA
- 4V7biIoyNoaN33t8m5FwEwd2FQDG9dAXWhG13zcm9gnk63BN3wyCQR+X5+jsfBaS4dvNzvQv
- h8Uq/YGjCoV1ofKYh3WKMY8avjq25nlrhzD/Nto9jHp8niwr21K//pXVA81R2qaXqGbql+zo
-Message-ID: <1202a51d-8e91-2a72-e12f-8bb6090bd714@gmx.com>
-Date:   Fri, 23 Nov 2018 19:18:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 23 Nov 2018 17:03:48 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:58713 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729651AbeKWWDr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 17:03:47 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wANBJ1fx4176107
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 23 Nov 2018 03:19:01 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wANBIvmN4176100;
+        Fri, 23 Nov 2018 03:18:57 -0800
+Date:   Fri, 23 Nov 2018 03:18:57 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-58c5fc2b96e4ae65068d815a1c3ca81da92fa1c9@git.kernel.org>
+Cc:     mingo@kernel.org, paulmck@linux.vnet.ibm.com, ccross@android.com,
+        kstewart@linuxfoundation.org, keescook@chromium.org,
+        davidriley@chromium.org, cminyard@mvista.com,
+        linux-kernel@vger.kernel.org, rmk+kernel@armlinux.org.uk,
+        hpa@zytor.com, pombredanne@nexb.com, peterz@infradead.org,
+        tglx@linutronix.de, john.stultz@linaro.org,
+        richardcochran@gmail.com, broonie@kernel.org, nico@linaro.org
+Reply-To: kstewart@linuxfoundation.org, ccross@android.com,
+          paulmck@linux.vnet.ibm.com, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, cminyard@mvista.com,
+          keescook@chromium.org, davidriley@chromium.org,
+          pombredanne@nexb.com, hpa@zytor.com, rmk+kernel@armlinux.org.uk,
+          nico@linaro.org, broonie@kernel.org, richardcochran@gmail.com,
+          john.stultz@linaro.org, tglx@linutronix.de, peterz@infradead.org
+In-Reply-To: <20181031182252.794898238@linutronix.de>
+References: <20181031182252.794898238@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/core] time: Remove useless filenames in top level
+ comments
+Git-Commit-ID: 58c5fc2b96e4ae65068d815a1c3ca81da92fa1c9
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <1542967815-14547-1-git-send-email-bianpan2016@163.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="SslFt6b7DEBOxt800EIuFb8ywlnG3ttnc"
-X-Provags-ID: V03:K1:qEpRo6Z6ryKE8YGID8thNC5DbYWcAZYkTNKeRnrwVXVdkNJgFaK
- mL/+cx1lehtPjB3jTEEM/7B/Ufa9kGoEgMiGT83oEOy/wOUjD9TRWPqT9uj1Dx6O87sMHsf
- oL48Ypp+CCsCjy+9aaAw97vZaYOxJTxVMrlnA+3sMGSS4YgMqgaBnKZe09VthfF8FD3FT/Q
- nQTOnon0MP7pJ2GHq3Ojw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:6n8BLC6acO8=:328p0lL0i5SN4b4TFbgw3s
- GwNIy+Vs47SI9UgbIpCYVhkphebHVUEjE6AxZummB69BCQ6p6CFsjr/D9RBe2GzG0d3gOMGcP
- PZZLgIk9Ns9OHIvT3vSzTytpf5U0IOkYAFAU8pxpyDx9s2YWk9oF6WhCn0qkNA14OU9rgk8e0
- JuUeKYXlhfI+k2EKjAkPkJdr9Jbl6r4JCMD6cADqQG6IyMWEDyk3xD1N0kK2XVAF99C1faIRE
- c0NcKFhKT0O7O2zIO52abnqfhWfwKf4bFQYiXo31AFdefOo5/+0YgrxVoBfgTszEbaasx891u
- N5VyVR7hkqeZALrW6a9KlKMaIkeMQ6rY7bnXZik1+mK3qHHgGPXGI96xgsj+4OWAlZ7WxOzm7
- E6h8noJfmxTkT0Fpjx7KdhvWZlgOaGeMZqs6/CUAYgP5QpmEWPO2G0KvB1vkPPvTh1UnHaQvS
- m9KAVUhGyLt8Rm9kAI8GsXJae9+jwO/rdj5o0Y7bsFBt3qHswwbj42iPZrVqVxWfgplEv7WUX
- ghKad5wz6iWLIRsw1MudIpH+bT7T83ybYaKtJ7mbqeimgfHIvdQx0f77krt6d02CLHrDaCXbn
- UlFC89s7ERt2ilVI2OjG0fwavjHVwaLWGIAATO/tj2NpyY+SZj0qip6UvDUbQgQVeyaTfSxup
- e/OVI7Se1ugjaEOi2pDXlAgQA1YNFUBcsv5rMivOVy1BniDV43Mv7Ggg0CYQuqFI/PQRa8Cc2
- w/4hHnrnpvcxdH20dAbjxdtq7WJ/u9FpaVre3O/ZuvTy7LJMIExNGhGkTXeAd9UipJOKLLkc5
- nZKzpNVk/KPtCXmJFqPqhB+A++Btncvv6tUjgI6AF/RxY5cn046sg/Nx4Z3fc1RlhJRkhSb+Y
- x/JiUSm32vvhPjbAUgiVQbiu/Rx72DbsSQoE6nDsQ=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---SslFt6b7DEBOxt800EIuFb8ywlnG3ttnc
-Content-Type: multipart/mixed; boundary="bh0aRPMomep1jyi7BjMyv9Ti48mfIsQeL";
- protected-headers="v1"
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-To: Pan Bian <bianpan2016@163.com>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
-Cc: Wang Shilong <wangsl.fnst@cn.fujitsu.com>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-ID: <1202a51d-8e91-2a72-e12f-8bb6090bd714@gmx.com>
-Subject: Re: [PATCH] btrfs: relocation: set trans to be NULL after free
-References: <1542967815-14547-1-git-send-email-bianpan2016@163.com>
-In-Reply-To: <1542967815-14547-1-git-send-email-bianpan2016@163.com>
+Commit-ID:  58c5fc2b96e4ae65068d815a1c3ca81da92fa1c9
+Gitweb:     https://git.kernel.org/tip/58c5fc2b96e4ae65068d815a1c3ca81da92fa1c9
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Wed, 31 Oct 2018 19:21:08 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 23 Nov 2018 11:51:20 +0100
 
---bh0aRPMomep1jyi7BjMyv9Ti48mfIsQeL
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+time: Remove useless filenames in top level comments
 
+Remove the pointless filenames in the top level comments. They have no
+value at all and just occupy space. While at it tidy up some of the
+comments and remove a stale one.
 
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Nicolas Pitre <nico@linaro.org>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: John Stultz <john.stultz@linaro.org>
+Acked-by: Corey Minyard <cminyard@mvista.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Peter Anvin <hpa@zytor.com>
+Cc: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: David Riley <davidriley@chromium.org>
+Cc: Colin Cross <ccross@android.com>
+Cc: Mark Brown <broonie@kernel.org>
+Link: https://lkml.kernel.org/r/20181031182252.794898238@linutronix.de
 
-On 2018/11/23 =E4=B8=8B=E5=8D=886:10, Pan Bian wrote:
-> The function relocate_block_group calls btrfs_end_transaction to releas=
-e
-> trans when update_backref_cache returns 1, and then continues the loop
-> body. If btrfs_block_rsv_refill fails this time, it will jump out the
-> loop and the freed trans will be accessed. This may result in a
-> use-after-free bug. The patch assigns NULL to trans after trans is
-> released so that it will not be accessed.
->=20
-> Fixes: 0647bf564f1("Btrfs: improve forever loop when doing balance
-> relocation")
->=20
-> Signed-off-by: Pan Bian <bianpan2016@163.com>
+---
+ include/linux/hrtimer.h              |  2 --
+ kernel/time/clockevents.c            |  2 --
+ kernel/time/clocksource.c            |  5 -----
+ kernel/time/hrtimer.c                | 16 ++++------------
+ kernel/time/itimer.c                 |  2 --
+ kernel/time/jiffies.c                |  2 --
+ kernel/time/posix-clock.c            |  2 +-
+ kernel/time/posix-timers.c           |  4 ----
+ kernel/time/sched_clock.c            |  4 ++--
+ kernel/time/tick-broadcast-hrtimer.c |  4 +---
+ kernel/time/tick-broadcast.c         |  2 --
+ kernel/time/tick-common.c            |  2 --
+ kernel/time/tick-oneshot.c           |  2 --
+ kernel/time/tick-sched.c             |  2 --
+ kernel/time/time.c                   | 12 ++++--------
+ kernel/time/timecounter.c            |  6 +-----
+ kernel/time/timekeeping.c            | 10 ++--------
+ kernel/time/timer.c                  |  2 --
+ kernel/time/timer_list.c             |  2 --
+ 19 files changed, 15 insertions(+), 68 deletions(-)
 
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-
-Thanks,
-Qu
-
-> ---
->  fs/btrfs/relocation.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
-> index 924116f..a3f75b8 100644
-> --- a/fs/btrfs/relocation.c
-> +++ b/fs/btrfs/relocation.c
-> @@ -3959,6 +3959,7 @@ static noinline_for_stack int relocate_block_grou=
-p(struct reloc_control *rc)
->  restart:
->  		if (update_backref_cache(trans, &rc->backref_cache)) {
->  			btrfs_end_transaction(trans);
-> +			trans =3D NULL;
->  			continue;
->  		}
-> =20
->=20
-
-
---bh0aRPMomep1jyi7BjMyv9Ti48mfIsQeL--
-
---SslFt6b7DEBOxt800EIuFb8ywlnG3ttnc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEELd9y5aWlW6idqkLhwj2R86El/qgFAlv34hwACgkQwj2R86El
-/qjO7Af7BmKcQsDx/E044iiHVXGvZomI3qEYa8rkUXvG4cpPTfOKUqHagy8Vvoyg
-RtfEpihP7TTM3IzFMI0HlbI+tZDkILPJ5UM+wOmcyIOpHyaDqIoYetNf9Du2nMnc
-dfrWAhIyAGkFyxtfOpefadv76cMGhGmi8qRxHn8T4l41gr5i8p9EPTPIzVhvISgY
-8MCus1+8AzENUlzuVnTklPSf7IYxOmVVXx4w4+RxO7nCXwd1G9mbF1r/C7E/H0Du
-thvEuj/zqVIHRuueeLRCe189mRVMgn/r18JIJ5pBAu+4CmrW9ubx05o22mviwWJS
-aYItOfo1nRB84VOWYqC+h9GSQS5rFg==
-=ZjX5
------END PGP SIGNATURE-----
-
---SslFt6b7DEBOxt800EIuFb8ywlnG3ttnc--
+diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
+index 3892e9c8b2de..50ebe2ad43e0 100644
+--- a/include/linux/hrtimer.h
++++ b/include/linux/hrtimer.h
+@@ -1,6 +1,4 @@
+ /*
+- *  include/linux/hrtimer.h
+- *
+  *  hrtimers - High-resolution kernel timers
+  *
+  *   Copyright(C) 2005, Thomas Gleixner <tglx@linutronix.de>
+diff --git a/kernel/time/clockevents.c b/kernel/time/clockevents.c
+index af58898d9ebf..9b8c7c0fd113 100644
+--- a/kernel/time/clockevents.c
++++ b/kernel/time/clockevents.c
+@@ -1,6 +1,4 @@
+ /*
+- * linux/kernel/time/clockevents.c
+- *
+  * This file contains functions which manage clock event devices.
+  *
+  * Copyright(C) 2005-2006, Thomas Gleixner <tglx@linutronix.de>
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index ffe081623aec..1c5273fbd500 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -1,6 +1,4 @@
+ /*
+- * linux/kernel/time/clocksource.c
+- *
+  * This file contains the functions which manage clocksource drivers.
+  *
+  * Copyright (C) 2004, 2005 IBM, John Stultz (johnstul@us.ibm.com)
+@@ -18,9 +16,6 @@
+  * You should have received a copy of the GNU General Public License
+  * along with this program; if not, write to the Free Software
+  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+- *
+- * TODO WishList:
+- *   o Allow clocksource drivers to be unregistered
+  */
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index 9cdd74bd2d27..223548bb81c6 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1,26 +1,18 @@
+ /*
+- *  linux/kernel/hrtimer.c
+- *
+  *  Copyright(C) 2005-2006, Thomas Gleixner <tglx@linutronix.de>
+  *  Copyright(C) 2005-2007, Red Hat, Inc., Ingo Molnar
+  *  Copyright(C) 2006-2007  Timesys Corp., Thomas Gleixner
+  *
+  *  High-resolution kernel timers
+  *
+- *  In contrast to the low-resolution timeout API implemented in
+- *  kernel/timer.c, hrtimers provide finer resolution and accuracy
+- *  depending on system configuration and capabilities.
+- *
+- *  These timers are currently used for:
+- *   - itimers
+- *   - POSIX timers
+- *   - nanosleep
+- *   - precise in-kernel timing
++ *  In contrast to the low-resolution timeout API, aka timer wheel,
++ *  hrtimers provide finer resolution and accuracy depending on system
++ *  configuration and capabilities.
+  *
+  *  Started by: Thomas Gleixner and Ingo Molnar
+  *
+  *  Credits:
+- *	based on kernel/timer.c
++ *	Based on the original timer wheel code
+  *
+  *	Help, testing, suggestions, bugfixes, improvements were
+  *	provided by:
+diff --git a/kernel/time/itimer.c b/kernel/time/itimer.c
+index 9a65713c8309..02068b2d5862 100644
+--- a/kernel/time/itimer.c
++++ b/kernel/time/itimer.c
+@@ -1,7 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * linux/kernel/itimer.c
+- *
+  * Copyright (C) 1992 Darren Senn
+  */
+ 
+diff --git a/kernel/time/jiffies.c b/kernel/time/jiffies.c
+index 497719127bf9..9c3957fe9317 100644
+--- a/kernel/time/jiffies.c
++++ b/kernel/time/jiffies.c
+@@ -1,6 +1,4 @@
+ /***********************************************************************
+-* linux/kernel/time/jiffies.c
+-*
+ * This file contains the jiffies based clocksource.
+ *
+ * Copyright (C) 2004, 2005 IBM, John Stultz (johnstul@us.ibm.com)
+diff --git a/kernel/time/posix-clock.c b/kernel/time/posix-clock.c
+index fe56c4e06c51..4959815f4fd7 100644
+--- a/kernel/time/posix-clock.c
++++ b/kernel/time/posix-clock.c
+@@ -1,5 +1,5 @@
+ /*
+- * posix-clock.c - support for dynamic clock devices
++ * Support for dynamic clock devices
+  *
+  * Copyright (C) 2010 OMICRON electronics GmbH
+  *
+diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+index bd62b5eeb5a0..c72307c119d9 100644
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -1,10 +1,6 @@
+ /*
+- * linux/kernel/posix-timers.c
+- *
+- *
+  * 2002-10-15  Posix Clocks & timers
+  *                           by George Anzinger george@mvista.com
+- *
+  *			     Copyright (C) 2002 2003 by MontaVista Software.
+  *
+  * 2004-06-01  Fix CLOCK_REALTIME clock/timer TIMER_ABSTIME bug.
+diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
+index cbc72c2c1fca..b38b6628f89b 100644
+--- a/kernel/time/sched_clock.c
++++ b/kernel/time/sched_clock.c
+@@ -1,6 +1,6 @@
+ /*
+- * sched_clock.c: Generic sched_clock() support, to extend low level
+- *                hardware time counters to full 64-bit ns values.
++ * Generic sched_clock() support, to extend low level hardware time
++ * counters to full 64-bit ns values.
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+diff --git a/kernel/time/tick-broadcast-hrtimer.c b/kernel/time/tick-broadcast-hrtimer.c
+index a59641fb88b6..5be6154e2fd2 100644
+--- a/kernel/time/tick-broadcast-hrtimer.c
++++ b/kernel/time/tick-broadcast-hrtimer.c
+@@ -1,8 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * linux/kernel/time/tick-broadcast-hrtimer.c
+- * This file emulates a local clock event device
+- * via a pseudo clock device.
++ * Emulate a local clock event device via a pseudo clock device.
+  */
+ #include <linux/cpu.h>
+ #include <linux/err.h>
+diff --git a/kernel/time/tick-broadcast.c b/kernel/time/tick-broadcast.c
+index be0aac2b4300..4f5abde2dfa7 100644
+--- a/kernel/time/tick-broadcast.c
++++ b/kernel/time/tick-broadcast.c
+@@ -1,6 +1,4 @@
+ /*
+- * linux/kernel/time/tick-broadcast.c
+- *
+  * This file contains functions which emulate a local clock-event
+  * device via a broadcast event source.
+  *
+diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
+index 14de3727b18e..7b5008039c2d 100644
+--- a/kernel/time/tick-common.c
++++ b/kernel/time/tick-common.c
+@@ -1,6 +1,4 @@
+ /*
+- * linux/kernel/time/tick-common.c
+- *
+  * This file contains the base functions to manage periodic tick
+  * related events.
+  *
+diff --git a/kernel/time/tick-oneshot.c b/kernel/time/tick-oneshot.c
+index 6fe615d57ebb..77989efe13d2 100644
+--- a/kernel/time/tick-oneshot.c
++++ b/kernel/time/tick-oneshot.c
+@@ -1,6 +1,4 @@
+ /*
+- * linux/kernel/time/tick-oneshot.c
+- *
+  * This file contains functions which manage high resolution tick
+  * related events.
+  *
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index 69e673b88474..cb557e56a19f 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -1,6 +1,4 @@
+ /*
+- *  linux/kernel/time/tick-sched.c
+- *
+  *  Copyright(C) 2005-2006, Thomas Gleixner <tglx@linutronix.de>
+  *  Copyright(C) 2005-2007, Red Hat, Inc., Ingo Molnar
+  *  Copyright(C) 2006-2007  Timesys Corp., Thomas Gleixner
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index ad204cf6d001..13ffa9950ffc 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -1,14 +1,10 @@
+ /*
+- *  linux/kernel/time.c
+- *
+  *  Copyright (C) 1991, 1992  Linus Torvalds
+  *
+- *  This file contains the interface functions for the various
+- *  time related system calls: time, stime, gettimeofday, settimeofday,
+- *			       adjtime
+- */
+-/*
+- * Modification history kernel/time.c
++ *  This file contains the interface functions for the various time related
++ *  system calls: time, stime, gettimeofday, settimeofday, adjtime
++ *
++ * Modification history:
+  *
+  * 1993-09-02    Philip Gladstone
+  *      Created file with time related functions from sched/core.c and adjtimex()
+diff --git a/kernel/time/timecounter.c b/kernel/time/timecounter.c
+index 8afd78932bdf..400f3456d564 100644
+--- a/kernel/time/timecounter.c
++++ b/kernel/time/timecounter.c
+@@ -1,8 +1,5 @@
+ /*
+- * linux/kernel/time/timecounter.c
+- *
+- * based on code that migrated away from
+- * linux/kernel/time/clocksource.c
++ * Based on clocksource code. See commit 74d23cc704d1
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+@@ -14,7 +11,6 @@
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  */
+-
+ #include <linux/export.h>
+ #include <linux/timecounter.h>
+ 
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 2d110c948805..30fdf48f50c2 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -1,13 +1,7 @@
+ /*
+- *  linux/kernel/time/timekeeping.c
+- *
+- *  Kernel timekeeping code and accessor functions
+- *
+- *  This code was moved from linux/kernel/timer.c.
+- *  Please see that file for copyright and history logs.
+- *
++ *  Kernel timekeeping code and accessor functions. Based on code from
++ *  timer.c, moved in commit 8524070b7982.
+  */
+-
+ #include <linux/timekeeper_internal.h>
+ #include <linux/module.h>
+ #include <linux/interrupt.h>
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index fa49cd753dea..2f248bbedb4a 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -1,6 +1,4 @@
+ /*
+- *  linux/kernel/timer.c
+- *
+  *  Kernel internal timers
+  *
+  *  Copyright (C) 1991, 1992  Linus Torvalds
+diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
+index d647dabdac97..5d64fff384c8 100644
+--- a/kernel/time/timer_list.c
++++ b/kernel/time/timer_list.c
+@@ -1,6 +1,4 @@
+ /*
+- * kernel/time/timer_list.c
+- *
+  * List pending timers
+  *
+  * Copyright(C) 2006, Red Hat, Inc., Ingo Molnar
