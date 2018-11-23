@@ -2,69 +2,109 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7888CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 02:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C81C04EBB
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 02:37:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AD7C206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 02:36:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AD7C206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id F3E6A20824
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 02:37:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="m4/YNoiA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3E6A20824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439500AbeKWNSq (ORCPT
+        id S2439507AbeKWNT1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 08:18:46 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:43264 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727343AbeKWNSp (ORCPT
+        Fri, 23 Nov 2018 08:19:27 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:39005 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727343AbeKWNT1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 08:18:45 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gQ1KV-0007mW-Ha; Fri, 23 Nov 2018 10:36:27 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gQ1KT-0003Z6-It; Fri, 23 Nov 2018 10:36:25 +0800
-Date:   Fri, 23 Nov 2018 10:36:25 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     PanBian <bianpan2016@163.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: do not free algorithm before using
-Message-ID: <20181123023625.oguwfmhhi2su6etr@gondor.apana.org.au>
-References: <1542880816-63838-1-git-send-email-bianpan2016@163.com>
- <20181122144441.tkfmrq3lzibq2g3y@gondor.apana.org.au>
- <20181123010555.GA83154@bp>
+        Fri, 23 Nov 2018 08:19:27 -0500
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id wAN2ahNn028785;
+        Fri, 23 Nov 2018 11:36:44 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com wAN2ahNn028785
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1542940604;
+        bh=Grkalro82XcZftrUmZQ9Uk6Q9M7QC4TvdZzw2JwHwGE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=m4/YNoiAWV2v+sVOr1fHL7xqC8GWiY8Vsf1Zh/Te7GtZA5n3DT+2PCGjPDWOyBiI5
+         VDMkFN9xt471NqfL9TeLNSf5rMsiz2m9eX5uHzQWq1v91OzJqHgjI7jOKMJWSWGbZd
+         9zxF+XIcf0OpzCBzmFgn40r/HGHy/lbtAWfS/28bhjHBfRUcyqAsAT8ByPrCKlT2so
+         VEq+8z7jIfRkdqj/4ytGmuNF35qiArHgXpvMKLmrYGTyN0Mlkp3SdheV41Kpl8g3V6
+         okWinZX5ZZw6Dcwx5HR1Gfvs6Dtmj79rb2pTHqHelZAiglvY/97E7vefBb3I9UJwM0
+         s6819/ft24nwg==
+X-Nifty-SrcIP: [209.85.217.45]
+Received: by mail-vs1-f45.google.com with SMTP id e7so6375326vsc.2;
+        Thu, 22 Nov 2018 18:36:44 -0800 (PST)
+X-Gm-Message-State: AGRZ1gI5fj3GDJrGMhIx666iUSjgED9gkvl8rcOkv6xlf9WLwscq1ANi
+        Qkpo3eT3oSklbbCzNqB3VM+VjNsaQXd3VNhCr54=
+X-Google-Smtp-Source: AJdET5cvDS4SzyKrkGSSYigRcVPdU3u9wSG0ScXvHCVHXLUFXKqmyJ6YAXR/wfz8J0hWT/0RlTy9yMtfPTbMsNHvyDU=
+X-Received: by 2002:a67:f1d6:: with SMTP id v22mr5688953vsm.181.1542940603144;
+ Thu, 22 Nov 2018 18:36:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181123010555.GA83154@bp>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20181115190538.17016-1-hch@lst.de> <CAK7LNARL8yZexzXiEaT77U_rdwhr5uENXbSaSTGHU33HbSmW6g@mail.gmail.com>
+In-Reply-To: <CAK7LNARL8yZexzXiEaT77U_rdwhr5uENXbSaSTGHU33HbSmW6g@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 23 Nov 2018 11:36:07 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARA-wbDDh_T2HghAUGizY-bF28O_8cjLmp9DMHaoxZPNw@mail.gmail.com>
+Message-ID: <CAK7LNARA-wbDDh_T2HghAUGizY-bF28O_8cjLmp9DMHaoxZPNw@mail.gmail.com>
+Subject: Re: move bus (PCI, PCMCIA, EISA, rapdio) config to drivers/ v4
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     mporter@kernel.crashing.org, Alex Bounine <alex.bou9@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-pci@vger.kernel.org, linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-alpha@vger.kernel.org, Linux-MIPS <linux-mips@linux-mips.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 09:05:55AM +0800, PanBian wrote:
+On Fri, Nov 23, 2018 at 11:32 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 >
-> Thanks for your explanation! But I find that the function
-> crypto_init_spawn just lets spawn->alg point to the algorithm without 
-> increasing the reference count, i.e., alg->cra_refcnt. So I am confused
-> about how this can protect the algorithm from being freed. Maybe I
-> missed some key points. Could you please explain it in more details?
+> Hi Christoph,
+>
+>
+> On Fri, Nov 16, 2018 at 4:08 AM Christoph Hellwig <hch@lst.de> wrote:
+> >
+> > Hi all,
+> >
+> > currently every architecture that wants to provide on of the common
+> > periphal busses needs to add some boilerplate code and include the
+> > right Kconfig files.   This series instead just selects the presence
+> > (when needed) and then handles everything in the bus-specific
+> > Kconfig file under drivers/.
+>
+>
+> Thanks for this work!
+>
+>
+> I applied this series, and it is available at
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+> kconfig2
 
-Oh you're right! This bug was introduced during the skcipher
-conversion.  The spawns are not meant to carry a reference count
-with them because they are not supposed to stop the underlying
-algorithm from being removed.  So yes we do need to hold a reference
-count on alg until the instance is registered.
 
-Thanks,
+BTW, if you find questionable parts,
+please let me know.
+
+We still have plenty of time by the next MW.
+
+Thanks.
+
+
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Best Regards
+Masahiro Yamada
