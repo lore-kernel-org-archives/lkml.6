@@ -2,135 +2,153 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF23C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B659C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14EB2206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:11:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEA82206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:15:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="IOvGqfIo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14EB2206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AZfztxBi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEA82206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502026AbeKWQyW (ORCPT
+        id S2502033AbeKWQ6K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 11:54:22 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43173 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729253AbeKWQyW (ORCPT
+        Fri, 23 Nov 2018 11:58:10 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34654 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387519AbeKWQ6K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 11:54:22 -0500
-Received: by mail-pg1-f195.google.com with SMTP id v28so2607782pgk.10
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 22:11:36 -0800 (PST)
+        Fri, 23 Nov 2018 11:58:10 -0500
+Received: by mail-wm1-f65.google.com with SMTP id y185so6859307wmd.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 22:15:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hvP9WYXIg/P90MnU6ooiGy94rkZJGJ7qHsKoPd4V5h0=;
-        b=IOvGqfIoAVK2JQUtHKcco5SDlXX3sGKrUEXAME2q1pg9raQPMeFtqaomDdlhmARPMk
-         HiBx0ePiCVvXFZdjIxbnpXvDA28PiuAsG2Iey9qqEq7OypoTg36cUd9cHstNIu3YWXmn
-         3e2pvaJfBa0IuH7bCL8HHnqNdbSjxK2PvkiZk=
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=VTds35J0GFouJcnffD/GEMrn0+Sw7JBPNZKSRDaR6f4=;
+        b=AZfztxBil9zDO5VkPwgWtbooLrgnW1HswAOSk0gPIrY69+9/wP5gYCwJCnFFW4kky1
+         jQHnRRj5WBhZOPL+DcHtXfYAEQDItsOlgmOVgal9NrUPddq6Z1EtqVax2PQz2z2r+hd8
+         eJVxoUCxKe/KPxsKEO4OWmZWFNcZxkW+1TLZk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hvP9WYXIg/P90MnU6ooiGy94rkZJGJ7qHsKoPd4V5h0=;
-        b=gb9WX3WKdiGOvPQ2Y8/UzfBYFLvirh3yvZ4kTtR5UqGX+LQn/ZjcCdmJJ6grlkKtrf
-         54dVpSa61VLQv36DcmUh8tmsA0AGoZBvkMHYraDdPiZsU+aBFTUHbe6VONj9OiVfveeD
-         tkvP40R3Din7j13TzRjUOAI7W7Ees/OQXdc6d//MF3a/m/eEohkYIBfJZytKvNs7yi0w
-         1juwpA7orpOi4/WgnGBR8Nn+RRh8ZXC86BNEInrquZFbTMaHik8Q8BGg4+M0Bh4fURVY
-         jqmvMCvIYVJiIu5ynpvQexI+7lNKVZGX5eeFESek2w3MEEH4n4Jg798PIZnSyin27zpW
-         5cSw==
-X-Gm-Message-State: AGRZ1gLIK3mrBEPnP/QA1QihxXrO4c1kklSCktKcKXeHh6UnRSjR+NnX
-        pR2SS5MTF2zys/xEYv/HW+058Q==
-X-Google-Smtp-Source: AJdET5dRG1i2sjjlwytbYL81s1cFCFn3i1cY40eC9GLQTpXjmF4EA4/csJiyGCLFX64GWoLdd9ZLpQ==
-X-Received: by 2002:a62:5dd1:: with SMTP id n78mr14365556pfj.58.1542953495814;
-        Thu, 22 Nov 2018 22:11:35 -0800 (PST)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id 12sm17172870pgd.35.2018.11.22.22.11.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 22 Nov 2018 22:11:34 -0800 (PST)
-Date:   Thu, 22 Nov 2018 22:11:33 -0800
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC][PATCH 06/14] fgraph: Move function graph specific code
- into fgraph.c
-Message-ID: <20181123061133.GA195223@google.com>
-References: <20181122012708.491151844@goodmis.org>
- <20181122012803.442190047@goodmis.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VTds35J0GFouJcnffD/GEMrn0+Sw7JBPNZKSRDaR6f4=;
+        b=bqlIznkNbeyhzG2J6aYydl+ZUN0xDNVyIeEYINUEPFgCWLZ5gfSfGyfDHvty2Kt3yp
+         bA2A0k+l/0enAH1rNhToSOY1J6SAIw/PivbUjG3XEviYMa8+hCfmZfjRHC/sr6C9Bc/R
+         09JYjl2K6RSZ34AP6amxm6jfOYB0f1Au7KCIsTk0Jc32KZsQmow92CdS12PZ2C9FxVuC
+         FsEsO0j3Um85oaJlorspCOpel675Gpnw4zenQknzVO0YVTh2irkEVPXPuZn/80DxwzJf
+         7k8zb4hrzlR4Yfrl357/KuR1qz6NVAZF4ls8XXhFv7vF1JbBEAgUZjysDnR41t6DPx3j
+         WMsA==
+X-Gm-Message-State: AA+aEWblHyFW9QumHQKs96TBCnVPzorLGmW2dLtzmtUzlkevUTgpb5kY
+        Pn5O59BXnB7lIPprp/cWyYs0nA==
+X-Google-Smtp-Source: AJdET5c2RM0pCfzH23sEPnvsr8lBHJ87u7OL8nrE8MIB1fm48mOCLzZrIGts7zxDAjyQ8uEgE9Kd+w==
+X-Received: by 2002:a7b:c315:: with SMTP id k21mr11872552wmj.145.1542953721926;
+        Thu, 22 Nov 2018 22:15:21 -0800 (PST)
+Received: from [192.168.0.40] (44.65.136.77.rev.sfr.net. [77.136.65.44])
+        by smtp.googlemail.com with ESMTPSA id w18sm14428089wru.54.2018.11.22.22.15.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 22:15:20 -0800 (PST)
+Subject: Re: [PATCH v2 0/2] clocksource/meson6_timer: implement ARM delay
+ timer
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, linux-arm-kernel@lists.infradead.org
+References: <20181115224657.14736-1-martin.blumenstingl@googlemail.com>
+ <5ff1a888-cce2-8fd8-a98e-14c3d7c33acf@linaro.org>
+ <CAFBinCDSLEAzJVVgFxKhN3LCUwgC3Rrr=4ZhtHCdvqEPBLWbJA@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <a83b92fb-5950-01b8-521d-7b05939dce3a@linaro.org>
+Date:   Fri, 23 Nov 2018 07:15:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181122012803.442190047@goodmis.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAFBinCDSLEAzJVVgFxKhN3LCUwgC3Rrr=4ZhtHCdvqEPBLWbJA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 08:27:14PM -0500, Steven Rostedt wrote:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On 22/11/2018 23:12, Martin Blumenstingl wrote:
+> Hi Daniel,
 > 
-> To make the function graph infrastructure more managable, the code needs to
-> be in its own file (fgraph.c). Move the code that is specific for managing
-> the function graph infrastructure out of ftrace.c and into fgraph.c
+> On Sun, Nov 18, 2018 at 2:27 AM Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>>
+>> On 15/11/2018 23:46, Martin Blumenstingl wrote:
+>>> While trying to add support for the ARM TWD Timer and the ARM Global
+>>> Timer on Meson8, Meson8b and Meson8m2 (ARM Cortex-A5 and Cortex-A9 SoCs)
+>>> I did a review of the existing driver.
+>>> Unfortunately I found it hard to review because the pre-processor
+>>> #defines did not match the names from the public S805 datasheet. Thus
+>>> patch #1 adjusts these. No functional changes here, this is just
+>>> preparation work for patch #2.
+>>>
+>>> Using the ARM Global Timer (drivers/clocksource/arm_global_timer.c)
+>>> would have given us a timer-based delay implementation (so udelay() and
+>>> friends would use the timer instead of using a loop-based delay
+>>> implementation). Unfortunately we can't use the ARM Global Timer yet
+>>> because it's input clock is derived from the CPU clock (which can change
+>>> once we enable CPU frequency scaling on these SoCs, for which I will be
+>>> sending patches in the near future).
+>>> Amlogic's 3.10 kernel uses Timer E as delay timer which (with the
+>>> current configuration) has a resolution of 1us. So patch #2 uses
+>>> register_current_timer_delay() to register Timer E as ARM delay timer
+>>> (which will be especially useful as we have to use udelay() when
+>>> changing the CPU clocks during DVFS).
+>>>
+>>>
+>>> Changes since v1 at [0]:
+>>> - convert the enums for the input clock (meson6_timera_input_clock and
+>>>   meson6_timere_input_clock) to simple #defines as these are register
+>>>   values and not something driver-internal. All other register values
+>>>   are #defines so it makes sense that these are #defines as well.
+>>>
+>>>
+>>> [0] https://patchwork.kernel.org/cover/10658591/
+>>>
+>>>
+>>> Martin Blumenstingl (2):
+>>>   clocksource: meson6_timer: use register names from the datasheet
+>>>   clocksource: meson6_timer: implement ARM delay timer
+>>>
+>>>  drivers/clocksource/meson6_timer.c | 128 +++++++++++++++++++----------
+>>>  1 file changed, 85 insertions(+), 43 deletions(-)
+>>
+>> Both applied, thanks!
+> thank you for taking my patches
 > 
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> I have one question more: can you please push these patches to a
+> repository/branch which is included in -next?
+> I'm asking because I'd like to send patches that enable CPU frequency
+> scaling on Meson8, Meson8b and Meson8m2. The code to change the CPU
+> clock calls udelay(), which (in this special case) needs a delay timer
+> to work properly (we can't use jiffies as we're using udelay() *while*
+> changing the CPU clock).
 
-I think this patch causes a build error if CONFIG_FUNCTION_PROFILER is
-disabled but function graph is enabled. The following diff fixes it for me.
+branch pushed [1], should appear in linux-next very soon.
 
-thanks,
+  -- Daniel
 
- - Joel
+[1]
+https://git.linaro.org/people/daniel.lezcano/linux.git/log/?h=clockevents/next
 
- ----8<------
- 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 3b8c307c7ff0..ce38bb962f91 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -382,6 +382,15 @@ static void ftrace_update_pid_func(void)
- 	update_ftrace_function();
- }
- 
-+#ifdef CONFIG_FUNCTION_GRAPH_TRACER
-+static bool fgraph_graph_time = true;
-+
-+void ftrace_graph_graph_time_control(bool enable)
-+{
-+	fgraph_graph_time = enable;
-+}
-+#endif
-+
- #ifdef CONFIG_FUNCTION_PROFILER
- struct ftrace_profile {
- 	struct hlist_node		node;
-@@ -783,12 +792,6 @@ function_profile_call(unsigned long ip, unsigned long parent_ip,
- }
- 
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
--static bool fgraph_graph_time = true;
--
--void ftrace_graph_graph_time_control(bool enable)
--{
--	fgraph_graph_time = enable;
--}
- 
- static int profile_graph_entry(struct ftrace_graph_ent *trace)
- {
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
