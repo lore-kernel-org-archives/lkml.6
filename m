@@ -1,135 +1,169 @@
 Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F32C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF10C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:26:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03DF9206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:23:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8116220861
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 06:26:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ktDZD9Xc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03DF9206B2
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DGOdB88G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8116220861
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502068AbeKWRG0 (ORCPT
+        id S2502076AbeKWRJI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 12:06:26 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33805 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729253AbeKWRG0 (ORCPT
+        Fri, 23 Nov 2018 12:09:08 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45568 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729253AbeKWRJI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 12:06:26 -0500
-Received: by mail-pl1-f193.google.com with SMTP id f12-v6so10194733plo.1
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Nov 2018 22:23:38 -0800 (PST)
+        Fri, 23 Nov 2018 12:09:08 -0500
+Received: by mail-pg1-f196.google.com with SMTP id y4so2622683pgc.12;
+        Thu, 22 Nov 2018 22:26:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cg/H6WaU4s+HYC/VIJ/iqRYH+mU+CTQ/aTwcR+Clv6s=;
-        b=ktDZD9Xca0q8HgFsuw60g/eQWHjLvhuPLfE69W7v6nQwx38R6+tBVLtBAUG78Q3gFA
-         /wHanWHCzBfG6Yg8052iXTDaaXXBF4ggP9gpluUQPJQDO8GeZoJTBXyA79ZQYBE5GCjw
-         hxXLf2cnb3fHXTLkf/341F3tIIvwNiLTvmc2uuB2MrujZz3MSS647UjdNdKjdXEmeW8P
-         cnFaYdeXfGu6lxi9idETElwfdG4r6zS+lhWTC4FeNlmWi40WjQr6IlsRzlVnkpfviyLY
-         U5ljLDePI6rGP1AUCy7xz1RAReiF2wiYb693xXR7UbSA9FOdavjks12HmuJmlC6v7FGT
-         tksw==
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=WY7lE94eZeM6JKFyYa05G0/1cFXbQw6tUw3ja4+IQlg=;
+        b=DGOdB88GbLE6xA1UUSHe84K+cMm6UjqzkMUrU1/xH2IKFGNhNHMw1UokQVzsNRo1xI
+         nAauboaFhYXP+pQsWH3utUP9ZVNmppcEaEJKw9abwaUVjj1gb9lYn/e2k5e25RA6EBRf
+         tlPbcmKyVcQueWVEZxTM9Rk8t6/OBA2TXb2q/23t99WTMrRfuEqfypi8IvIDtrnI26cv
+         hsLXUwLMgFn5TZ+B4LbQlySbj788mxhj6pFl/gUIRW93pZdh2gyMem/QF724BoDmoDOf
+         SZiGfC83YvtSDIf+ICNnM3mHvjDfO5dRPMfWxt7dw1VSuoYKRA8Cx8DL2zKzMayphjSQ
+         M2Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cg/H6WaU4s+HYC/VIJ/iqRYH+mU+CTQ/aTwcR+Clv6s=;
-        b=e24hBdOtyHgsnTaDdjI6uAkI6kTjLNjRnhZEYhiKhMclfWzZO7ifFBKR2B75sEQGxl
-         3XShRnOVVj91UEufGBDLPMlzyVz2Vls9YXC1Uxm89a8T2sR0dOYaDovC1snZBeAPvp19
-         lVxPh9V4SMc4DCAnThEdXR7MzlONasMpkrUf8oR6XJ7LE1gsLu7y+GmozOPst3JKWryW
-         jilmQ9CFoZhVp/x6oB2m/7JGl+Lwu+OHM1Fq3DGYI7ewnTvq3w2uXyO4hl9Le02OfPOo
-         DctLIwdfl3HJaET5Jd4FexTq13IN22dKenBAhwhSGe5OhHNo8/bp1+xzOcG9jvQfloWE
-         4OXg==
-X-Gm-Message-State: AA+aEWb+p29igLgYcEi96s6yEMm3jxxFSod++KBkFPEZmcoxCpMOwPXN
-        gZmIa7hpLdU9bgOvndTnNto=
-X-Google-Smtp-Source: AFSGD/UCQ82IQOHS8dVgG+tVhnJyn8hWsCxSNL9XhReFbJAWbEos/TA5w6GbH7rBo7aM2Nc98fWwjA==
-X-Received: by 2002:a17:902:6113:: with SMTP id t19mr13917605plj.248.1542954217372;
-        Thu, 22 Nov 2018 22:23:37 -0800 (PST)
-Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id c12-v6sm64579172pfb.174.2018.11.22.22.23.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 22 Nov 2018 22:23:35 -0800 (PST)
-Date:   Fri, 23 Nov 2018 15:23:31 +0900
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=WY7lE94eZeM6JKFyYa05G0/1cFXbQw6tUw3ja4+IQlg=;
+        b=cjyNl9bU0Qppo+WLhhbL5umMReCot8jSMCQAvj55oUl9zI6I2fp6LTjcSnHPhTeOvD
+         cI6TkC7pWL3MSxrBFyyqF2K7d5e6j7N48saantRPN5YVdixAAmSsZNMFAB0PB4zSpNR+
+         iEg3snBkml8QNGkogg4qJgoKsQ8dQYML25iATBbOqVwMhru8gfTqS4DHVCWrRse6MlpV
+         Wg/HoxlWgQSmylDZMzeu4tDpoAxGLdlz5s4MXD47Zsg9vSMI6ToAYE+wfW9kfBIeQx+y
+         xvvv4hp6d9xp+lW4xGx+GvDdSm6f+ty0c1J3URWebyeL+vg70wykIWBAaJp+Uraxc17d
+         11fw==
+X-Gm-Message-State: AA+aEWY4jJKePNwvOIDwpmssjZdfRmZU/Q4DWcoTAqxSAm5MJ9LNgHME
+        EReTbn8HlPU0UVEwPvI/SfxQgagnw0o=
+X-Google-Smtp-Source: AFSGD/V6iIFdYXMyZk1HAus4xjkv/4auSpbCjbzEEm6KR8ni0obKaA3kQe1b5/T1QYS6LhlGxxqxeg==
+X-Received: by 2002:a63:1c61:: with SMTP id c33mr12540263pgm.354.1542954378238;
+        Thu, 22 Nov 2018 22:26:18 -0800 (PST)
+Received: from bbox-2.seo.corp.google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
+        by smtp.gmail.com with ESMTPSA id j64-v6sm31548068pfc.43.2018.11.22.22.26.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 22:26:16 -0800 (PST)
 From:   Minchan Kim <minchan@kernel.org>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/6] zram: support idle page writeback
-Message-ID: <20181123062331.GA87907@google.com>
-References: <20181116072035.155108-1-minchan@kernel.org>
- <20181116072035.155108-5-minchan@kernel.org>
- <20181121045551.GC599@jagdpanzerIV>
- <20181121133408.GA103278@google.com>
- <20181122021442.GB3441@jagdpanzerIV>
- <20181122050437.GA182024@google.com>
- <20181122054040.GE3441@jagdpanzerIV>
- <20181122061542.GA211816@google.com>
- <20181122063103.GB211816@google.com>
- <20181122065926.GG3441@jagdpanzerIV>
+To:     stable@vger.kernel.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>, hare@suse.com,
+        LKML <linux-kernel@vger.kernel.org>, sashal@kernel.org,
+        Minchan Kim <minchan@kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Howard Chen <howardsoc@google.com>
+Subject: [PATCH for v4.14] zram: close udev startup race condition as default groups
+Date:   Fri, 23 Nov 2018 15:25:50 +0900
+Message-Id: <20181123062550.163536-1-minchan@kernel.org>
+X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
+In-Reply-To: <20181115174504.GJ95254@sasha-vm>
+References: <20181115174504.GJ95254@sasha-vm>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181122065926.GG3441@jagdpanzerIV>
-User-Agent: Mutt/1.10.1+60 (6df12dc1) (2018-08-07)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 03:59:26PM +0900, Sergey Senozhatsky wrote:
-> On (11/22/18 15:31), Minchan Kim wrote:
-> > > 
-> > > I got what you mean now. Let's call it as "incompressible page wrieback"
-> > > to prevent confusing.
-> > > 
-> > > "incompressible page writeback" would be orthgonal feature. The goal is
-> > > "let's save memory at the cost of *latency*". If the page is swapped-in
-> > > soon, it's unfortunate. However, the design expects once it's swapped out,
-> > > it means it's non-workingset so soonish swappined-in would be rather not
-> > > many, theoritically compared to other workingset.
-> > > If's it's too frequent, it means system were heavily overcommitted.
-> > 
-> > Havid said, I agree it's not a good idea to enable incompressible page
-> > writeback with idle page writeback. If you don't oppose, I want to add
-> > new knob to "enable incompressible page writeback" so by default,
-> > although we enable CONFIG_ZRAM_WRITEBACK, incompressible page writeback
-> > is off until we enable the knob.
-> > It would make some regressison if someone have used the feature but
-> > I guess we are not too late.
-> > 
-> > What do you think?
-> 
-> Yes, totally works for me!
-> 
-> 
-> "IDLE writeback" is superior to "incompressible writeback".
-> 
-> "incompressible writeback" is completely unpredictable and
-> uncontrollable; it depens on data patterns and compression algorithms.
-> While "IDLE writeback" is predictable.
-> 
-> I even suspect, that, *ideally*, we can remove "incompressible
-> writeback". "IDLE pages" is a super set which also includes
-> "incompressible" pages. So, technically, we still can do
-> "incompressible writeback" from "IDLE writeback" path; but a much
-> more reasonable one, based on a page idling period.
-> 
-> I understand that you want to keep "direct incompressible writeback"
-> around. ZRAM is especially popular on devices which do suffer from
-> flash wearout, so I can see "incompressible writeback" path becoming
-> a dead code, long term.
+commit fef912bf860e upstream.
+commit 98af4d4df889 upstream.
 
-Okay, both options makes regression if someone use it. Then, let's try
-to remove it. It would make more clean with new idle writeback.
+I got a report from Howard Chen that he saw zram and sysfs race(ie,
+zram block device file is created but sysfs for it isn't yet)
+when he tried to create new zram devices via hotadd knob.
 
-Thanks!
+v4.20 kernel fixes it by [1, 2] but it's too large size to merge
+into -stable so this patch fixes the problem by registering defualt
+group by Greg KH's approach[3].
+
+This patch should be applied to every stable tree [3.16+] currently
+existing from kernel.org because the problem was introduced at 2.6.37
+by [4].
+
+[1] fef912bf860e, block: genhd: add 'groups' argument to device_add_disk
+[2] 98af4d4df889, zram: register default groups with device_add_disk()
+[3] http://kroah.com/log/blog/2013/06/26/how-to-create-a-sysfs-file-correctly/
+[4] 33863c21e69e9, Staging: zram: Replace ioctls with sysfs interface
+
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Hannes Reinecke <hare@suse.com>
+Tested-by: Howard Chen <howardsoc@google.com>
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+---
+ drivers/block/zram/zram_drv.c | 26 ++++++--------------------
+ 1 file changed, 6 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index 1e2648e4c286..27b202c64c84 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -1491,6 +1491,11 @@ static const struct attribute_group zram_disk_attr_group = {
+ 	.attrs = zram_disk_attrs,
+ };
+ 
++static const struct attribute_group *zram_disk_attr_groups[] = {
++	&zram_disk_attr_group,
++	NULL,
++};
++
+ /*
+  * Allocate and initialize new zram device. the function returns
+  * '>= 0' device_id upon success, and negative value otherwise.
+@@ -1568,23 +1573,14 @@ static int zram_add(void)
+ 	if (ZRAM_LOGICAL_BLOCK_SIZE == PAGE_SIZE)
+ 		blk_queue_max_write_zeroes_sectors(zram->disk->queue, UINT_MAX);
+ 
++	disk_to_dev(zram->disk)->groups = zram_disk_attr_groups;
+ 	add_disk(zram->disk);
+ 
+-	ret = sysfs_create_group(&disk_to_dev(zram->disk)->kobj,
+-				&zram_disk_attr_group);
+-	if (ret < 0) {
+-		pr_err("Error creating sysfs group for device %d\n",
+-				device_id);
+-		goto out_free_disk;
+-	}
+ 	strlcpy(zram->compressor, default_compressor, sizeof(zram->compressor));
+ 
+ 	pr_info("Added device: %s\n", zram->disk->disk_name);
+ 	return device_id;
+ 
+-out_free_disk:
+-	del_gendisk(zram->disk);
+-	put_disk(zram->disk);
+ out_free_queue:
+ 	blk_cleanup_queue(queue);
+ out_free_idr:
+@@ -1612,16 +1608,6 @@ static int zram_remove(struct zram *zram)
+ 	zram->claim = true;
+ 	mutex_unlock(&bdev->bd_mutex);
+ 
+-	/*
+-	 * Remove sysfs first, so no one will perform a disksize
+-	 * store while we destroy the devices. This also helps during
+-	 * hot_remove -- zram_reset_device() is the last holder of
+-	 * ->init_lock, no later/concurrent disksize_store() or any
+-	 * other sysfs handlers are possible.
+-	 */
+-	sysfs_remove_group(&disk_to_dev(zram->disk)->kobj,
+-			&zram_disk_attr_group);
+-
+ 	/* Make sure all the pending I/O are finished */
+ 	fsync_bdev(bdev);
+ 	zram_reset_device(zram);
+-- 
+2.20.0.rc0.387.gc7a69e6b6c-goog
 
