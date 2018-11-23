@@ -2,149 +2,246 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF19C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8BCC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41B2D206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:29:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41B2D206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
+	by mail.kernel.org (Postfix) with ESMTP id B0B0D206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:31:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0B0D206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403873AbeKXBOU (ORCPT
+        id S2410075AbeKXBPl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 20:14:20 -0500
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:58490 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727034AbeKXBOT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 20:14:19 -0500
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1gQCRn-0000MF-00; Fri, 23 Nov 2018 14:28:43 +0000
-Date:   Fri, 23 Nov 2018 09:28:43 -0500
-From:   Rich Felker <dalias@libc.org>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        carlos <carlos@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
+        Fri, 23 Nov 2018 20:15:41 -0500
+Received: from foss.arm.com ([217.140.101.70]:46416 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391009AbeKXBPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 20:15:40 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35EB4362E;
+        Fri, 23 Nov 2018 06:31:16 -0800 (PST)
+Received: from localhost (unknown [10.37.6.11])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 93E7C3F575;
+        Fri, 23 Nov 2018 06:31:15 -0800 (PST)
+Date:   Fri, 23 Nov 2018 14:31:13 +0000
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
         Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl
- init and thread creation
-Message-ID: <20181123142843.GJ23599@brightrain.aerifal.cx>
-References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com>
- <20181122143603.GD23599@brightrain.aerifal.cx>
- <782067422.9852.1542899056778.JavaMail.zimbra@efficios.com>
- <20181122151444.GE23599@brightrain.aerifal.cx>
- <686626451.10113.1542901620250.JavaMail.zimbra@efficios.com>
- <87wop5xeit.fsf@oldenburg.str.redhat.com>
- <1045257294.10291.1542905262086.JavaMail.zimbra@efficios.com>
- <87k1l5xd33.fsf@oldenburg.str.redhat.com>
- <20181122171010.GH23599@brightrain.aerifal.cx>
- <871s7cvt1l.fsf@oldenburg.str.redhat.com>
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/10] drivers/perf: perf/core: generalise event
+ exclusion checking with perf macro
+Message-ID: <20181123143113.GA1617@e119886-lin.cambridge.arm.com>
+References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
+ <1542363853-13849-10-git-send-email-andrew.murray@arm.com>
+ <20181119160352.ua2lx72l754imiek@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <871s7cvt1l.fsf@oldenburg.str.redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181119160352.ua2lx72l754imiek@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 02:10:14PM +0100, Florian Weimer wrote:
-> * Rich Felker:
+On Mon, Nov 19, 2018 at 04:03:52PM +0000, Mark Rutland wrote:
+> On Fri, Nov 16, 2018 at 10:24:12AM +0000, Andrew Murray wrote:
+> > Replace checking of perf event exclusion flags with perf macro.
+> > 
+> > This is a functional change as exclude_host and exclude_guest are added
+> > in the following files:
+> > 
+> >  - drivers/perf/qcom_l2_pmu.c
+> >  - drivers/perf/qcom_l3_pmu.c
+> >  - drivers/perf/arm_pmu.c
+> > 
+> > And exclude_idle and exclude_hv are added in these files:
+> > 
+> >  - drivers/perf/xgene_pmu.c
 > 
-> >> I'm not entirely sure because the glibc terminology is confusing, but I
-> >> think it places intial-exec TLS into the static TLS area (so that it has
-> >> a fixed offset from the TCB).  The static TLS area is placed on the
-> >> user-supplied stack.
-> >
-> > This is an implementation detail that should not leak to applications,
-> > and I believe it's still considered a bug, in that, with large static
-> > TLS, it could overflow or leave unusably little space left on an
-> > otherwise-plenty-large application-provided stack.
+> FWIW, that all sounds fine to me.
 > 
-> Sure, but that does not matter in this context because right now, there
-> is no fix for this bug, and when we fix it, we can take backwards
-> compatibility into account.
+> Assuming you fix up the 'macro' nit:
 > 
-> Any library that ends up using rseq will need to coordinate with the
-> toolchain.  I think that's unavoidable given the kernel interface.
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+> 
+> ... unless we go for Peter's core cap for this.
 
-Right. I don't agree with this. What I'm saying is that this behavior
-(putting static TLS in the caller-provided stack) should not be
-documented as a behavior applications can rely on or accounted as a
-solution to the rseq problem, since doing so would preclude fixing the
-"application doesn't have as much stack as it requested" bug.
+Yeah I'm going to re-spin with the core cap approach - but thanks anyway.
 
-> >> > One issue here is that early adopter libraries cannot always use
-> >> > the IE model. I tried using it for other TLS variables in lttng-ust, and
-> >> > it ended up hanging our CI tests when tracing a sample application with
-> >> > lttng-ust under a Java virtual machine: being dlopen'd in a process that
-> >> > possibly already exhausts the number of available backup TLS IE entries
-> >> > seems to have odd effects. This is why I'm worried about using the IE model
-> >> > within lttng-ust.
-> >> 
-> >> You can work around this by preloading the library.  I'm not sure if
-> >> this is a compelling reason not to use initial-exec TLS memory.
-> >
-> > Use of IE model from a .so file (except possibly libc.so or something
-> > else that inherently needs to be present at program startup for other
-> > reasons) should be a considered a bug and unsupported usage.
-> > Encouraging libraries to perpetuate this behavior is going backwards
-> > on progress that's being made to end it.
+Thanks,
+
+Andrew Murray
+
 > 
-> Why?  Just because glibc's TCB allocation strategy is problematic?
-> We can fix that, even with dlopen.
+> Thanks,
+> Mark.
 > 
-> If you are only concerned about the interactions with dlopen, then why
-> do you think initial-exec TLS is the problem, and not dlopen?
-
-The initial-exec model, *by design*, only works for TLS objects that
-exist at initial execution time. That's why it's called initial-exec.
-This is not an implementation flaw/limitation in glibc but
-fundamental to the fact that you don't have an unlimited-size (or
-practically unlimited) virtual address space range for each thread.
-The global-dynamic model is the one that admits dynamic creation of
-new TLS objects at runtime (thus the name).
-
-> >> > The per-thread reference counter is a way to avoid issues that arise from
-> >> > lack of destructor ordering. Is it an acceptable approach for you, or
-> >> > you have something else in mind ?
-> >> 
-> >> Only for the involved libraries.  It will not help if other TLS
-> >> destructors run and use these libraries.
-> >
-> > Presumably they should have registered their need for rseq too,
-> > thereby incrementing the reference count. I'm not sure this is a good
-> > idea, but I think I understand it now.
-> 
-> They may have to increase the reference count from 0 to 1, though, so
-> they have to re-register the rseq area.  This tends to get rather messy.
-> 
-> I still I think implicit destruction of the rseq area is preferable over
-> this complexity.
-
-Absolutely. As long as it's in libc, implicit destruction will happen.
-Actually I think the glibc code shound unconditionally unregister the
-rseq address at exit (after blocking signals, so no application code
-can run) in case a third-party rseq library was linked and failed to
-do so before thread exit (e.g. due to mismatched ref counts) rather
-than respecting the reference count, since it knows it's the last
-user. This would make potentially-buggy code safer.
-
-Rich
+> > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+> > ---
+> >  drivers/perf/arm-cci.c                   | 7 +------
+> >  drivers/perf/arm-ccn.c                   | 5 +----
+> >  drivers/perf/arm_dsu_pmu.c               | 7 +------
+> >  drivers/perf/arm_pmu.c                   | 9 +--------
+> >  drivers/perf/hisilicon/hisi_uncore_pmu.c | 7 +------
+> >  drivers/perf/qcom_l2_pmu.c               | 3 +--
+> >  drivers/perf/qcom_l3_pmu.c               | 3 +--
+> >  drivers/perf/xgene_pmu.c                 | 3 +--
+> >  8 files changed, 8 insertions(+), 36 deletions(-)
+> > 
+> > diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
+> > index 1bfeb16..d749f19 100644
+> > --- a/drivers/perf/arm-cci.c
+> > +++ b/drivers/perf/arm-cci.c
+> > @@ -1328,12 +1328,7 @@ static int cci_pmu_event_init(struct perf_event *event)
+> >  		return -EOPNOTSUPP;
+> >  
+> >  	/* We have no filtering of any kind */
+> > -	if (event->attr.exclude_user	||
+> > -	    event->attr.exclude_kernel	||
+> > -	    event->attr.exclude_hv	||
+> > -	    event->attr.exclude_idle	||
+> > -	    event->attr.exclude_host	||
+> > -	    event->attr.exclude_guest)
+> > +	if (event_has_exclude_flags(event))
+> >  		return -EINVAL;
+> >  
+> >  	/*
+> > diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
+> > index 7dd850e..9a22a95 100644
+> > --- a/drivers/perf/arm-ccn.c
+> > +++ b/drivers/perf/arm-ccn.c
+> > @@ -741,10 +741,7 @@ static int arm_ccn_pmu_event_init(struct perf_event *event)
+> >  		return -EOPNOTSUPP;
+> >  	}
+> >  
+> > -	if (has_branch_stack(event) || event->attr.exclude_user ||
+> > -			event->attr.exclude_kernel || event->attr.exclude_hv ||
+> > -			event->attr.exclude_idle || event->attr.exclude_host ||
+> > -			event->attr.exclude_guest) {
+> > +	if (has_branch_stack(event) || event_has_exclude_flags(event)) {
+> >  		dev_dbg(ccn->dev, "Can't exclude execution levels!\n");
+> >  		return -EINVAL;
+> >  	}
+> > diff --git a/drivers/perf/arm_dsu_pmu.c b/drivers/perf/arm_dsu_pmu.c
+> > index 660cb8a..300ff3d 100644
+> > --- a/drivers/perf/arm_dsu_pmu.c
+> > +++ b/drivers/perf/arm_dsu_pmu.c
+> > @@ -563,12 +563,7 @@ static int dsu_pmu_event_init(struct perf_event *event)
+> >  	}
+> >  
+> >  	if (has_branch_stack(event) ||
+> > -	    event->attr.exclude_user ||
+> > -	    event->attr.exclude_kernel ||
+> > -	    event->attr.exclude_hv ||
+> > -	    event->attr.exclude_idle ||
+> > -	    event->attr.exclude_host ||
+> > -	    event->attr.exclude_guest) {
+> > +	    event_has_exclude_flags(event)) {
+> >  		dev_dbg(dsu_pmu->pmu.dev, "Can't support filtering\n");
+> >  		return -EINVAL;
+> >  	}
+> > diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
+> > index 7f01f6f..a03634f 100644
+> > --- a/drivers/perf/arm_pmu.c
+> > +++ b/drivers/perf/arm_pmu.c
+> > @@ -357,13 +357,6 @@ static irqreturn_t armpmu_dispatch_irq(int irq, void *dev)
+> >  }
+> >  
+> >  static int
+> > -event_requires_mode_exclusion(struct perf_event_attr *attr)
+> > -{
+> > -	return attr->exclude_idle || attr->exclude_user ||
+> > -	       attr->exclude_kernel || attr->exclude_hv;
+> > -}
+> > -
+> > -static int
+> >  __hw_perf_event_init(struct perf_event *event)
+> >  {
+> >  	struct arm_pmu *armpmu = to_arm_pmu(event->pmu);
+> > @@ -395,7 +388,7 @@ __hw_perf_event_init(struct perf_event *event)
+> >  	 */
+> >  	if ((!armpmu->set_event_filter ||
+> >  	     armpmu->set_event_filter(hwc, &event->attr)) &&
+> > -	     event_requires_mode_exclusion(&event->attr)) {
+> > +	     event_has_exclude_flags(event)) {
+> >  		pr_debug("ARM performance counters do not support "
+> >  			 "mode exclusion\n");
+> >  		return -EOPNOTSUPP;
+> > diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.c b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+> > index 9efd241..d3edff9 100644
+> > --- a/drivers/perf/hisilicon/hisi_uncore_pmu.c
+> > +++ b/drivers/perf/hisilicon/hisi_uncore_pmu.c
+> > @@ -143,12 +143,7 @@ int hisi_uncore_pmu_event_init(struct perf_event *event)
+> >  		return -EOPNOTSUPP;
+> >  
+> >  	/* counters do not have these bits */
+> > -	if (event->attr.exclude_user	||
+> > -	    event->attr.exclude_kernel	||
+> > -	    event->attr.exclude_host	||
+> > -	    event->attr.exclude_guest	||
+> > -	    event->attr.exclude_hv	||
+> > -	    event->attr.exclude_idle)
+> > +	if (event_has_exclude_flags(event))
+> >  		return -EINVAL;
+> >  
+> >  	/*
+> > diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
+> > index 842135c..d7d85a2 100644
+> > --- a/drivers/perf/qcom_l2_pmu.c
+> > +++ b/drivers/perf/qcom_l2_pmu.c
+> > @@ -510,8 +510,7 @@ static int l2_cache_event_init(struct perf_event *event)
+> >  	}
+> >  
+> >  	/* We cannot filter accurately so we just don't allow it. */
+> > -	if (event->attr.exclude_user || event->attr.exclude_kernel ||
+> > -	    event->attr.exclude_hv || event->attr.exclude_idle) {
+> > +	if (event_has_exclude_flags(event)) {
+> >  		dev_dbg_ratelimited(&l2cache_pmu->pdev->dev,
+> >  				    "Can't exclude execution levels\n");
+> >  		return -EOPNOTSUPP;
+> > diff --git a/drivers/perf/qcom_l3_pmu.c b/drivers/perf/qcom_l3_pmu.c
+> > index 2dc63d6..f27af67 100644
+> > --- a/drivers/perf/qcom_l3_pmu.c
+> > +++ b/drivers/perf/qcom_l3_pmu.c
+> > @@ -497,8 +497,7 @@ static int qcom_l3_cache__event_init(struct perf_event *event)
+> >  	/*
+> >  	 * There are no per-counter mode filters in the PMU.
+> >  	 */
+> > -	if (event->attr.exclude_user || event->attr.exclude_kernel ||
+> > -	    event->attr.exclude_hv || event->attr.exclude_idle)
+> > +	if (event_has_exclude_flags(event))
+> >  		return -EINVAL;
+> >  
+> >  	/*
+> > diff --git a/drivers/perf/xgene_pmu.c b/drivers/perf/xgene_pmu.c
+> > index 0e31f13..1fcd5a0 100644
+> > --- a/drivers/perf/xgene_pmu.c
+> > +++ b/drivers/perf/xgene_pmu.c
+> > @@ -915,8 +915,7 @@ static int xgene_perf_event_init(struct perf_event *event)
+> >  		return -EINVAL;
+> >  
+> >  	/* SOC counters do not have usr/os/guest/host bits */
+> > -	if (event->attr.exclude_user || event->attr.exclude_kernel ||
+> > -	    event->attr.exclude_host || event->attr.exclude_guest)
+> > +	if (event_has_exclude_flags(event))
+> >  		return -EINVAL;
+> >  
+> >  	if (event->cpu < 0)
+> > -- 
+> > 2.7.4
+> > 
