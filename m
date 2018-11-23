@@ -2,299 +2,149 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C73CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF19C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A72CD20861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:29:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="xJ+VbUbo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A72CD20861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 41B2D206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:29:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41B2D206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440012AbeKXBNp (ORCPT
+        id S2403873AbeKXBOU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 20:13:45 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34836 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727034AbeKXBNo (ORCPT
+        Fri, 23 Nov 2018 20:14:20 -0500
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:58490 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727034AbeKXBOT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 20:13:44 -0500
-Received: by mail-wr1-f67.google.com with SMTP id 96so12561154wrb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 06:29:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=aGmNONmQY9Dl7+JuTRbRS2kIVYaJksqfmTwUxMRiY+o=;
-        b=xJ+VbUbo72E5UVdsE6tN/ulX/y79EUxVKE5svjTSip+NeuNT/aNa9ndT2o8z++IbSr
-         m4EeEHDaKffoq2s1E0FZ7WzBw5rMAhswujwjcP5q6OC7xZBu8hzT2GxuoB+rA/wJ13Jk
-         jxBWCqnEf6RKeTmGmEZGfaHIBVlaQiLCpB9ObhiMpgtutYOoROPI0cHXRap9C1Z8dXs4
-         UFp2s+HV2TGV2vpqEvIVIZuI63pOSReYuOYcVmaZqFzRQ0wE6X5wX66BZdlHXzLPgbQ4
-         XKz8vsg+JfnwFXm1TUW26FovtK7nV7KX4P1xlfdnLGmX19FyXtHUf533HpvsWfOgWPYj
-         vNNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=aGmNONmQY9Dl7+JuTRbRS2kIVYaJksqfmTwUxMRiY+o=;
-        b=jl1IngrVy5kSFpCZSyytr2nM2ylb8mR7PjXgycONYZQYVNlayCDupInuGYq2Gj+gbQ
-         A4TEM1oBoP0gYJXi+OU7Y/+8efBO3mH7gJCjZ/7yj5fTm+KCsX2Y8lT8H5YVIm7ABJY4
-         BJTSKdqWcRO7PRbZIPlKfrD2AQqf7N/VcoQbg9RMTyoeyockVIk8BwJSPE5l2swq2sRs
-         8llPSR5P2kCOrIkm1/SvOaYDttFpl33u9FG91QkRnq9J2UZ9GbL2nXhbPt39PTBJXpaW
-         GhJmhzO8uUE1eqKzfGjJh21gUs1lhhDCtWNKFGx6i0D9qykKpMwdq4oLHLim+bqUXA1H
-         JBXQ==
-X-Gm-Message-State: AA+aEWa1kCBrzjPAjbNxuFKOi/gqj3T3ynGazCR39V+TeprVMzGP3Am6
-        C16bDxFFjX9yMklNJ+PGTcfusw==
-X-Google-Smtp-Source: AFSGD/WUgGbqZ76dv6L8XUdElC6s8gCNI6mJ9wCCXUByYbmkJMAQPe1tTUA5bwG7nFxMO1hJOvQwdA==
-X-Received: by 2002:adf:b649:: with SMTP id i9mr14717613wre.70.1542983357880;
-        Fri, 23 Nov 2018 06:29:17 -0800 (PST)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id a11sm6530584wmh.26.2018.11.23.06.29.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Nov 2018 06:29:17 -0800 (PST)
-Subject: Re: [PATCH RFC 1/8] drm/bridge: dw-hdmi: Add SCDC and TMDS Scrambling
- support
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     architt@codeaurora.org, a.hajda@samsung.com,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Nickey Yang <nickey.yang@rock-chips.com>,
-        Huicong Xu <xhc@rock-chips.com>
-References: <20181123140221.15700-1-narmstrong@baylibre.com>
- <20181123140221.15700-2-narmstrong@baylibre.com> <1880382.AeP59NOuia@avalon>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <ca86b176-603b-8983-f6af-95e2bdce4aab@baylibre.com>
-Date:   Fri, 23 Nov 2018 15:29:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 23 Nov 2018 20:14:19 -0500
+Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
+        id 1gQCRn-0000MF-00; Fri, 23 Nov 2018 14:28:43 +0000
+Date:   Fri, 23 Nov 2018 09:28:43 -0500
+From:   Rich Felker <dalias@libc.org>
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        carlos <carlos@redhat.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl
+ init and thread creation
+Message-ID: <20181123142843.GJ23599@brightrain.aerifal.cx>
+References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com>
+ <20181122143603.GD23599@brightrain.aerifal.cx>
+ <782067422.9852.1542899056778.JavaMail.zimbra@efficios.com>
+ <20181122151444.GE23599@brightrain.aerifal.cx>
+ <686626451.10113.1542901620250.JavaMail.zimbra@efficios.com>
+ <87wop5xeit.fsf@oldenburg.str.redhat.com>
+ <1045257294.10291.1542905262086.JavaMail.zimbra@efficios.com>
+ <87k1l5xd33.fsf@oldenburg.str.redhat.com>
+ <20181122171010.GH23599@brightrain.aerifal.cx>
+ <871s7cvt1l.fsf@oldenburg.str.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1880382.AeP59NOuia@avalon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871s7cvt1l.fsf@oldenburg.str.redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+On Fri, Nov 23, 2018 at 02:10:14PM +0100, Florian Weimer wrote:
+> * Rich Felker:
+> 
+> >> I'm not entirely sure because the glibc terminology is confusing, but I
+> >> think it places intial-exec TLS into the static TLS area (so that it has
+> >> a fixed offset from the TCB).  The static TLS area is placed on the
+> >> user-supplied stack.
+> >
+> > This is an implementation detail that should not leak to applications,
+> > and I believe it's still considered a bug, in that, with large static
+> > TLS, it could overflow or leave unusably little space left on an
+> > otherwise-plenty-large application-provided stack.
+> 
+> Sure, but that does not matter in this context because right now, there
+> is no fix for this bug, and when we fix it, we can take backwards
+> compatibility into account.
+> 
+> Any library that ends up using rseq will need to coordinate with the
+> toolchain.  I think that's unavoidable given the kernel interface.
 
-On 23/11/2018 15:25, Laurent Pinchart wrote:
-> Hi Neil,
-> 
-> Thank you for the patch.
-> 
-> On Friday, 23 November 2018 16:02:14 EET Neil Armstrong wrote:
->> Add support for SCDC Setup for TMDS Clock > 3.4GHz and enable TMDS
->> Scrambling when supported or mandatory.
->>
->> This patch also adds an helper to setup the control bit to support
->> the hight TMDS Bit Period/TMDS Clock-Period Ratio as required with
-> 
-> s/hight/high/ ?
+Right. I don't agree with this. What I'm saying is that this behavior
+(putting static TLS in the caller-provided stack) should not be
+documented as a behavior applications can rely on or accounted as a
+solution to the rseq problem, since doing so would preclude fixing the
+"application doesn't have as much stack as it requested" bug.
 
-Thanks for catching !
-
+> >> > One issue here is that early adopter libraries cannot always use
+> >> > the IE model. I tried using it for other TLS variables in lttng-ust, and
+> >> > it ended up hanging our CI tests when tracing a sample application with
+> >> > lttng-ust under a Java virtual machine: being dlopen'd in a process that
+> >> > possibly already exhausts the number of available backup TLS IE entries
+> >> > seems to have odd effects. This is why I'm worried about using the IE model
+> >> > within lttng-ust.
+> >> 
+> >> You can work around this by preloading the library.  I'm not sure if
+> >> this is a compelling reason not to use initial-exec TLS memory.
+> >
+> > Use of IE model from a .so file (except possibly libc.so or something
+> > else that inherently needs to be present at program startup for other
+> > reasons) should be a considered a bug and unsupported usage.
+> > Encouraging libraries to perpetuate this behavior is going backwards
+> > on progress that's being made to end it.
 > 
->> TMDS Clock > 3.4GHz for HDMI2.0 3840x2160@60/50 modes.
+> Why?  Just because glibc's TCB allocation strategy is problematic?
+> We can fix that, even with dlopen.
 > 
-> Why do you need a helper for this, is there no way it could be handled 
-> internally ?
+> If you are only concerned about the interactions with dlopen, then why
+> do you think initial-exec TLS is the problem, and not dlopen?
 
-I could, but all the platforms would also do it internally... seems better
-to have common helper, no ? And it will be usable by the PHY models handler
-in the dw-hdmi driver aswell.
+The initial-exec model, *by design*, only works for TLS objects that
+exist at initial execution time. That's why it's called initial-exec.
+This is not an implementation flaw/limitation in glibc but
+fundamental to the fact that you don't have an unlimited-size (or
+practically unlimited) virtual address space range for each thread.
+The global-dynamic model is the one that admits dynamic creation of
+new TLS objects at runtime (thus the name).
 
+> >> > The per-thread reference counter is a way to avoid issues that arise from
+> >> > lack of destructor ordering. Is it an acceptable approach for you, or
+> >> > you have something else in mind ?
+> >> 
+> >> Only for the involved libraries.  It will not help if other TLS
+> >> destructors run and use these libraries.
+> >
+> > Presumably they should have registered their need for rseq too,
+> > thereby incrementing the reference count. I'm not sure this is a good
+> > idea, but I think I understand it now.
 > 
->> These changes were based on work done by Huicong Xu <xhc@rock-chips.com>
->> and Nickey Yang <nickey.yang@rock-chips.com> to support HDMI2.0 modes
->> on the Rockchip 4.4 BSP kernel at [1]
->>
->> [1] https://github.com/rockchip-linux/kernel/tree/release-4.4
->>
->> Cc: Nickey Yang <nickey.yang@rock-chips.com>
->> Cc: Huicong Xu <xhc@rock-chips.com>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 45 +++++++++++++++++++++--
->>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.h |  1 +
->>  include/drm/bridge/dw_hdmi.h              |  1 +
->>  3 files changed, 44 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
->> 5971976284bf..523508af70b0 100644
->> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> @@ -28,6 +28,7 @@
->>  #include <drm/drm_crtc_helper.h>
->>  #include <drm/drm_edid.h>
->>  #include <drm/drm_encoder_slave.h>
->> +#include <drm/drm_scdc_helper.h>
->>  #include <drm/bridge/dw_hdmi.h>
->>
->>  #include <uapi/linux/media-bus-format.h>
->> @@ -1015,6 +1016,20 @@ void dw_hdmi_phy_i2c_write(struct dw_hdmi *hdmi,
->> unsigned short data, }
->>  EXPORT_SYMBOL_GPL(dw_hdmi_phy_i2c_write);
->>
->> +void dw_hdmi_set_high_tmds_clock_ratio(struct dw_hdmi *hdmi)
->> +{
->> +	unsigned long mtmdsclock = hdmi->hdmi_data.video_mode.mpixelclock;
->> +
->> +	/* Control for TMDS Bit Period/TMDS Clock-Period Ratio */
->> +	if (hdmi->connector.display_info.hdmi.scdc.supported) {
->> +		if (mtmdsclock > 340000000)
+> They may have to increase the reference count from 0 to 1, though, so
+> they have to re-register the rseq area.  This tends to get rather messy.
 > 
-> You use the 3.4GHz frequency in a few places, how about creating a macro ?
+> I still I think implicit destruction of the rseq area is preferable over
+> this complexity.
 
-Good idea.
+Absolutely. As long as it's in libc, implicit destruction will happen.
+Actually I think the glibc code shound unconditionally unregister the
+rseq address at exit (after blocking signals, so no application code
+can run) in case a third-party rseq library was linked and failed to
+do so before thread exit (e.g. due to mismatched ref counts) rather
+than respecting the reference count, since it knows it's the last
+user. This would make potentially-buggy code safer.
 
-> 
->> +			drm_scdc_set_high_tmds_clock_ratio(hdmi->ddc, 1);
->> +		else
->> +			drm_scdc_set_high_tmds_clock_ratio(hdmi->ddc, 0);
->> +	}
->> +}
->> +EXPORT_SYMBOL_GPL(dw_hdmi_set_high_tmds_clock_ratio);
->> +
->>  static void dw_hdmi_phy_enable_powerdown(struct dw_hdmi *hdmi, bool enable)
->> {
->>  	hdmi_mask_writeb(hdmi, !enable, HDMI_PHY_CONF0,
->> @@ -1340,11 +1355,12 @@ static void hdmi_tx_hdcp_config(struct dw_hdmi
->> *hdmi)
->>
->>  static void hdmi_config_AVI(struct dw_hdmi *hdmi, struct drm_display_mode
->> *mode) {
->> +	bool is_hdmi2_sink = hdmi->connector.display_info.hdmi.scdc.supported;
->>  	struct hdmi_avi_infoframe frame;
->>  	u8 val;
->>
->>  	/* Initialise info frame from DRM mode */
->> -	drm_hdmi_avi_infoframe_from_display_mode(&frame, mode, false);
->> +	drm_hdmi_avi_infoframe_from_display_mode(&frame, mode, is_hdmi2_sink);
->>
->>  	if (hdmi_bus_fmt_is_yuv444(hdmi->hdmi_data.enc_out_bus_format))
->>  		frame.colorspace = HDMI_COLORSPACE_YUV444;
->> @@ -1503,7 +1519,8 @@ static void
->> hdmi_config_vendor_specific_infoframe(struct dw_hdmi *hdmi, static void
->> hdmi_av_composer(struct dw_hdmi *hdmi,
->>  			     const struct drm_display_mode *mode)
->>  {
->> -	u8 inv_val;
->> +	u8 inv_val, bytes;
->> +	struct drm_hdmi_info *hdmi_info = &hdmi->connector.display_info.hdmi;
->>  	struct hdmi_vmode *vmode = &hdmi->hdmi_data.video_mode;
->>  	int hblank, vblank, h_de_hs, v_de_vs, hsync_len, vsync_len;
->>  	unsigned int vdisplay;
->> @@ -1513,7 +1530,9 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
->>  	dev_dbg(hdmi->dev, "final pixclk = %d\n", vmode->mpixelclock);
->>
->>  	/* Set up HDMI_FC_INVIDCONF */
->> -	inv_val = (hdmi->hdmi_data.hdcp_enable ?
->> +	inv_val = (hdmi->hdmi_data.hdcp_enable ||
->> +		   vmode->mpixelclock > 340000000 ||
->> +		   hdmi_info->scdc.scrambling.low_rates ?
->>  		HDMI_FC_INVIDCONF_HDCP_KEEPOUT_ACTIVE :
->>  		HDMI_FC_INVIDCONF_HDCP_KEEPOUT_INACTIVE);
->>
->> @@ -1562,6 +1581,26 @@ static void hdmi_av_composer(struct dw_hdmi *hdmi,
->>  		vsync_len /= 2;
->>  	}
->>
->> +	/* Scrambling Control */
->> +	if (hdmi_info->scdc.supported) {
->> +		if (vmode->mpixelclock > 340000000 ||
->> +		    hdmi_info->scdc.scrambling.low_rates) {
->> +			drm_scdc_readb(&hdmi->i2c->adap, SCDC_SINK_VERSION,
->> +				       &bytes);
->> +			drm_scdc_writeb(&hdmi->i2c->adap, SCDC_SOURCE_VERSION,
->> +					bytes);
-> 
-> Shouldn't the source version be min(sink version, highest supported source 
-> version) ?
-
-How should the "highest supported source version" be defined ?
-
-> 
->> +			drm_scdc_set_scrambling(&hdmi->i2c->adap, 1);
->> +			hdmi_writeb(hdmi, (u8)~HDMI_MC_SWRSTZ_TMDSSWRST_REQ,
->> +				    HDMI_MC_SWRSTZ);
->> +			hdmi_writeb(hdmi, 1, HDMI_FC_SCRAMBLER_CTRL);
->> +		} else {
->> +			hdmi_writeb(hdmi, 0, HDMI_FC_SCRAMBLER_CTRL);
->> +			hdmi_writeb(hdmi, (u8)~HDMI_MC_SWRSTZ_TMDSSWRST_REQ,
->> +				    HDMI_MC_SWRSTZ);
->> +			drm_scdc_set_scrambling(&hdmi->i2c->adap, 0);
->> +		}
->> +	}
->> +
->>  	/* Set up horizontal active pixel width */
->>  	hdmi_writeb(hdmi, mode->hdisplay >> 8, HDMI_FC_INHACTV1);
->>  	hdmi_writeb(hdmi, mode->hdisplay, HDMI_FC_INHACTV0);
->> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
->> b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h index
->> 9d90eb9c46e5..3f3c616eba97 100644
->> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
->> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
->> @@ -255,6 +255,7 @@
->>  #define HDMI_FC_MASK2                           0x10DA
->>  #define HDMI_FC_POL2                            0x10DB
->>  #define HDMI_FC_PRCONF                          0x10E0
->> +#define HDMI_FC_SCRAMBLER_CTRL                  0x10E1
->>
->>  #define HDMI_FC_GMD_STAT                        0x1100
->>  #define HDMI_FC_GMD_EN                          0x1101
->> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
->> index ccb5aa8468e0..d7cc5d094270 100644
->> --- a/include/drm/bridge/dw_hdmi.h
->> +++ b/include/drm/bridge/dw_hdmi.h
->> @@ -156,6 +156,7 @@ void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool
->> hpd, bool rx_sense); void dw_hdmi_set_sample_rate(struct dw_hdmi *hdmi,
->> unsigned int rate); void dw_hdmi_audio_enable(struct dw_hdmi *hdmi);
->>  void dw_hdmi_audio_disable(struct dw_hdmi *hdmi);
->> +void dw_hdmi_set_high_tmds_clock_ratio(struct dw_hdmi *hdmi);
->>
->>  /* PHY configuration */
->>  void dw_hdmi_phy_i2c_set_addr(struct dw_hdmi *hdmi, u8 address);
-> 
-> 
-
-Thanks for the review,
-
-Neil
+Rich
