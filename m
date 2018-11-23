@@ -2,134 +2,286 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C9BC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3AEC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:01:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12B3D20861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:01:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22167205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:01:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="l13CZNi0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12B3D20861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qwyE6PQo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22167205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409241AbeKWUpB (ORCPT
+        id S2503125AbeKWUpE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:45:01 -0500
-Received: from mail-eopbgr1410132.outbound.protection.outlook.com ([40.107.141.132]:4152
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387971AbeKWUpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 15:45:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kXuHeI22PdEHt53uOQw/CMqx+H/mwHgVLgvf+zZ8A9k=;
- b=l13CZNi0XLA0mJBh6fRVWBnNrGO0vlOlSkUNcEvGWjC+uAGQnGdj0nIc8ww8frDBNxEqRd5QqpOaLToQx3Q75j06f8dj994caTUBvbSGvysGiNIw+bbqbOF6aueUpDiU3MpnjTpqWDeER55HulVdK+dqyBScAT3AM+VPZDr+asI=
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com (52.133.163.146) by
- TY1PR01MB1738.jpnprd01.prod.outlook.com (52.133.163.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.26; Fri, 23 Nov 2018 10:01:23 +0000
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::7484:f2b6:9b32:2c6]) by TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::7484:f2b6:9b32:2c6%5]) with mapi id 15.20.1294.048; Fri, 23 Nov 2018
- 10:01:22 +0000
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
-Thread-Topic: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
-Thread-Index: AQHUgCOKwJ2xop+DoEaLvwVyl7+lsaVdIPwAgAAAkiA=
-Date:   Fri, 23 Nov 2018 10:01:22 +0000
-Message-ID: <TY1PR01MB1769DE254148618373F2918CF5D40@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <20181119161838.10610-1-phil.edworthy@renesas.com>
- <CAMuHMdU2ski3S4FhD5kOhtzxvpin8M5MoYwK7X5gqYZ+HoL0DA@mail.gmail.com>
-In-Reply-To: <CAMuHMdU2ski3S4FhD5kOhtzxvpin8M5MoYwK7X5gqYZ+HoL0DA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=phil.edworthy@renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB1738;20:N/J12mcnsXd2g/RpCuNBVKZADHgHg+nVGwyCeoAnow1kCSOt08hHazK0a3yhd8pfCW3jfqvUwBUABFNmPC3t0WIFlYawWkBRoe5y60PPqP7Pbw8m4Wlu4vKZ3Y7eK40n7wLCREOTEuw1Sl1mDZPgL1tcGAasTzB3JNwcX0o2MbE=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 7b434929-0c98-4708-ed38-08d6512a9fb6
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1738;
-x-ms-traffictypediagnostic: TY1PR01MB1738:
-x-microsoft-antispam-prvs: <TY1PR01MB17388DEA5607DB4C13C8FC1BF5D40@TY1PR01MB1738.jpnprd01.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231442)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:TY1PR01MB1738;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1738;
-x-forefront-prvs: 086597191B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(376002)(346002)(396003)(39850400004)(189003)(199004)(97736004)(5660300001)(4326008)(229853002)(6436002)(6916009)(33656002)(7736002)(305945005)(74316002)(6246003)(53936002)(478600001)(55016002)(25786009)(2900100001)(105586002)(106356001)(9686003)(14454004)(66066001)(6116002)(316002)(486006)(44832011)(7696005)(3846002)(446003)(476003)(11346002)(53546011)(68736007)(8936002)(81156014)(8676002)(54906003)(81166006)(99286004)(102836004)(76176011)(6506007)(26005)(71200400001)(71190400001)(14444005)(256004)(186003)(86362001)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1738;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: vBnR0Gq6dh5kAZwgKt53NWbrGSicr4lfXXXTSpA7tVFj7Mqjvc4Wrh/N0XNFcMOZBPxYvo9PdQDZcjF/pQ2WIDLV2+HkCskwhVodEzo7eWj9LcZ1KZYjtmx/pgGKOD6KWQJGZOPWi+9u6gRijidpMFJFLikQ645IVb+b6PDbJGK+n2powWu4BOCNtaq140wtQC4EfJLoXVb5m9uPtdHzi7E7vWErGo4ApsdFT+LIUYZQlkw/LC+bPIBiR+67ypFw7Bq1U1dF4dayMfbfZDJNEDoqdWquyPqwC9SZANKTMOfC4Hlz2nAHyW2+QUFzLeCjYIE3aFKkyErFAqL+qqFLbNNp9A56oOQmyekPTsTLcAk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 23 Nov 2018 15:45:04 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34106 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394542AbeKWUpC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 15:45:02 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181123100125euoutp01b01ad40e748e63bc6772abc1db067956~puJJAyYmw1701017010euoutp01M
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 10:01:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181123100125euoutp01b01ad40e748e63bc6772abc1db067956~puJJAyYmw1701017010euoutp01M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1542967285;
+        bh=bD8S15sT6wO96phZM5E1zkxJw9171bQRWbF6b1upQXM=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=qwyE6PQo9BN/gsxjByCP88WJiaqlAFNv/siiYgxAkInO8qP+HBKdHsLvw6qoFPrSr
+         b4o0PkSMsrHQUHcPBkmt4eDETpN5l/xVt9kNDgIlYwOTzgQaK60WBhhHb/boXTPanF
+         XNHjDorVeQoKu0As+xYQWsW/aT810TeV5peOWj8Y=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181123100124eucas1p1d85244e297138682259d75537e65ab1d~puJH-RP9m2403924039eucas1p1g;
+        Fri, 23 Nov 2018 10:01:24 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 39.6F.04294.4FFC7FB5; Fri, 23
+        Nov 2018 10:01:24 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181123100123eucas1p1e24960e7dc6666c38070bec190d5cdab~puJHDDior1641116411eucas1p1X;
+        Fri, 23 Nov 2018 10:01:23 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20181123100123eusmtrp176ce37018e602d4d666e678c5ea8d1bb~puJGyHZ8G1283012830eusmtrp1E;
+        Fri, 23 Nov 2018 10:01:23 +0000 (GMT)
+X-AuditID: cbfec7f4-835ff700000010c6-c7-5bf7cff4bd12
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 22.8F.04128.3FFC7FB5; Fri, 23
+        Nov 2018 10:01:23 +0000 (GMT)
+Received: from [106.120.51.20] (unknown [106.120.51.20]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181123100122eusmtip2a11bb07457a5b06b6b942eca2208e111~puJF8PrbR2096320963eusmtip2p;
+        Fri, 23 Nov 2018 10:01:22 +0000 (GMT)
+Subject: Re: [PATCH 3/6] devfreq: add support for suspend/resume of a
+ devfreq device
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     tjakobi@math.uni-bielefeld.de, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, rjw@rjwysocki.net, len.brown@intel.com,
+        pavel@ucw.cz, gregkh@linuxfoundation.org, keescook@chromium.org,
+        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, kgene@kernel.org,
+        krzk@kernel.org, m.szyprowski@samsung.com, b.zolnierkie@samsung.com
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+Message-ID: <734d0941-c885-4d36-274b-23843d6626c1@partner.samsung.com>
+Date:   Fri, 23 Nov 2018 11:01:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b434929-0c98-4708-ed38-08d6512a9fb6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Nov 2018 10:01:22.4752
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1738
+In-Reply-To: <5BF7419E.90006@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTVxjGPfcb4jXHC7OvoJt2MxOj4NSE40eMJszcxT/0L7OMJa7KDRhp
+        1V5ww5mMSfgQVIg6ZUUtfkVWqEgtFdFCRAq6qgWNk0AKC+B0DjYYhKoQlMvVyH+/9znPm+d9
+        kiPQ0ikuSthhSVOsFlOqkQtnPE2vAkuGA6HEpfY7IrlVHUOqiitZcq1qhCVPhp+xxN74gCVZ
+        5ys5cq/ATAp7/qFJIHCFJ/cP9PHEdtxLEVfPHyx5VHuKI0OHGxEpDtRRxNkY5MnFJ60U6fi5
+        jCPB330T+/6HLMn2NvIkp3yAJX0tncw6g+y54WHlijMVSC7JbGXkosL/kXz+5t+U7HIc5OT6
+        0xW8fPXCT/J4Ey+7H+cy8hG3A8ll5SFeHnJ9vFn8JnxNkpK6Y69ijVv7XXhK35FSZnffpz8U
+        nLXzmShnTj4KEwCvgA5PD5ePwgUJlyF4lOOk9WEYQc8FP6UPQwiejpaz71eanhUxGkv4EgLf
+        yWjd1I/A3u2eNEXgLVB28yWvPURiP4L6+obJEBpn0zA+4J4YBIHDsVDj2KOhiDdAdztouwxe
+        AK9DLZzGH+GvIa+rfJJFPBPu/trLaPYwHAMFzlhNprEB2nvtlM6fQFZ1yWQDwL0CZF3+793R
+        CfD0+SCtcwS8aHbzOs8B/7FDjM4q3M9zcDrvh9y7Ne88q+F2cyur5dITuZW1cbq8Hpo7vLwm
+        A54Bbf0z9RNmwFHPSVqXRcjLkXT3QnAfaqF0ngWXKk7wRchom9LLNqWMbUoZ24fcUsQ4kEFJ
+        V83JirrMonwfq5rMarolOXb7LrMLTfxZ/3jzcA2qHdvWgLCAjNPFK1UjiRJr2qtmmBsQCLQx
+        UjwwP5QoiUmmjH2KdddWa3qqojagaIExGsQfp/2ZKOFkU5qyU1F2K9b3r5QQFpWJEvKa4uFw
+        8ezgqng5xlRiP/PbxdAv458X3z7dRqjOpZvmrVS7Um+0VsuFg+3d/gWhzlKHRJK/rHse7L++
+        +OBXCRnBc48HXT7hM2dWkWUsrmv21blV374JROWfLUHebQ/SfG1OKXejL/vhHfOS5fc2jA7u
+        OWFIWrHsr4RZHd5/xfgBI6OmmL5YRFtV01tVIK70rwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAKsWRmVeSWpSXmKPExsVy+t/xe7qfz3+PNrj4ncfi4FZNi40z1rNa
+        bN/4jdXi+pfnrBbzj5xjtWhevJ7N4kx3rkX/49fMFufPb2C3ONv0ht1i1pS9TBabHl9jtbi8
+        aw6bxefeI4wWM87vY7JYe+Quu8XS6xeZLG43rmCzuHvqKFD/6UusFq17j7BbtK3+wGrx5sI9
+        Fgdxj227t7F6rJm3htFjdsNFFo8J/Z8YPRbvecnksWlVJ5vH/rlr2D02L6n3+HeM3WPL1XYW
+        j74tqxg9Vqz+zu7xeZNcAG+Unk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+
+        nU1Kak5mWWqRvl2CXsabvgUsBW+UK7oXzmdvYGyT6WLk5JAQMJE49nwCSxcjF4eQwFJGifaV
+        N5ggEmISk/ZtZ4ewhSX+XOtiA7GFBF4zSpx/ZQZiCwuESXT1/GUHaRYROM0oMeX8KSYQh1mg
+        lVni5dtFjBBj7zBJnF1/BmgHBwebgJ7EjlWFICavgJvEo1sSIINYBFQlfn2/ALZAVCBC4uzL
+        dYwgNq+AoMTJmU/AOjkFNCW61+qBhJkFzCTmbX7IDGGLS9x6Mp8JwpaXaN46m3kCo9AsJN2z
+        kLTMQtIyC0nLAkaWVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIGpZduxn1t2MHa9Cz7EKMDB
+        qMTDu2Hjt2gh1sSy4srcQ4wSHMxKIrxNit+jhXhTEiurUovy44tKc1KLDzGaAv02kVlKNDkf
+        mPbySuINTQ3NLSwNzY3Njc0slMR5zxtURgkJpCeWpGanphakFsH0MXFwSjUw6n25Lj5bqfr2
+        7yWnvkh0PjLd9jZlutzW1zsln3ZoPfWfe8Dd+lJCc+Wcg9em+VQ5bJ/n8+TCFpH/KzeuXip1
+        853DtDC3IIbe/LajYeW7uhctVUxLSzkmqX1V1OR8qVDJEeHQKo3234cWcQteYd3XbDd5/T/T
+        F7tTO1iOVNzmtlTzsN8mO83SRYmlOCPRUIu5qDgRAC87TN9DAwAA
+X-CMS-MailID: 20181123100123eucas1p1e24960e7dc6666c38070bec190d5cdab
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382
+References: <1542823301-23563-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20181121180204eucas1p1c5891d498aa59c0e10dd3ba4727a4382@eucas1p1.samsung.com>
+        <1542823301-23563-4-git-send-email-l.luba@partner.samsung.com>
+        <5BF61B3A.9050402@samsung.com>
+        <cce4f194-b574-a12c-e876-f11a6f245940@partner.samsung.com>
+        <5BF7419E.90006@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCk9uIDIzIE5vdmVtYmVyIDIwMTggMDk6NDEgR2VlcnQgVXl0dGVyaG9ldmVu
-IHdyb3RlOg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBwaW5jdHJsOiByem4xOiBGaXggY2hlY2sg
-Zm9yIHVzZWQgTURJTyBidXMNCj4gT24gTW9uLCBOb3YgMTksIDIwMTggYXQgNToxOCBQTSBQaGls
-IEVkd29ydGh5IHdyb3RlOg0KPiA+IFRoaXMgZml4ZXMgdGhlIGNoZWNrIGZvciB1bnVzZWQgbWRp
-byBidXMgc2V0dGluZyBhbmQgdGhlIGZvbGxvd2luZw0KPiA+IHN0YXRpYyBjaGVja2VyIHdhcm5p
-bmc6DQo+ID4gIGRyaXZlcnMvcGluY3RybC9waW5jdHJsLXJ6bjEuYzoxOTggcnpuMV9waW5jdHJs
-X21kaW9fc2VsZWN0KCkNCj4gPiAgd2FybjogYWx3YXlzIHRydWUgY29uZGl0aW9uICcoaXBjdGwt
-Pm1kaW9fZnVuY1ttZGlvXSA+PSAwKSA9PiAoMC11MzJtYXgNCj4gPj0gMCknDQo+ID4NCj4gPiBJ
-dCBhbHNvIGZpeGVzIHRoZSByZXR1cm4gdmFyIHdoZW4gY2FsbGluZyBvZl9nZXRfY2hpbGRfY291
-bnQoKQ0KPiANCj4gSSB0aGluayB0aGlzIHNob3VsZCBiZSBhIHNlcGFyYXRlIHBhdGNoLg0KT2ss
-IEknbGwgc3BsaXQgdGhlbS4NCg0KDQo+ID4gUmVwb3J0ZWQtYnk6IERhbiBDYXJwZW50ZXIgPGRh
-bi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBQaGlsIEVkd29ydGh5
-IDxwaGlsLmVkd29ydGh5QHJlbmVzYXMuY29tPg0KPiANCj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5
-dHRlcmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQo+IA0KPiBCVFcsIEkgaGF2ZSBh
-IHF1ZXN0aW9uIGFib3V0IHJ6bjFfcGluY3RybF9tZGlvX3NlbGVjdCgpOg0KPiANCj4gc3RhdGlj
-IHZvaWQgcnpuMV9waW5jdHJsX21kaW9fc2VsZWN0KHN0cnVjdCByem4xX3BpbmN0cmwgKmlwY3Rs
-LCBpbnQgbWRpbywNCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHUzMiBm
-dW5jKSB7DQo+ICAgICAgICAgaWYgKGlwY3RsLT5tZGlvX2Z1bmNbbWRpb10gPj0gMCAmJiBpcGN0
-bC0+bWRpb19mdW5jW21kaW9dICE9IGZ1bmMpDQo+ICAgICAgICAgICAgICAgICBkZXZfd2Fybihp
-cGN0bC0+ZGV2LCAiY29uZmxpY3Rpbmcgc2V0dGluZyBmb3IgbWRpbyVkIVxuIiwgbWRpbyk7DQo+
-ICAgICAgICAgaXBjdGwtPm1kaW9fZnVuY1ttZGlvXSA9IGZ1bmM7DQo+IA0KPiAgICAgICAgIGRl
-dl9kYmcoaXBjdGwtPmRldiwgInNldHRpbmcgbWRpbyVkIHRvICV1XG4iLCBtZGlvLCBmdW5jKTsN
-Cj4gDQo+ICAgICAgICAgd3JpdGVsKGZ1bmMsICZpcGN0bC0+bGV2Mi0+bDJfbWRpb1ttZGlvXSk7
-IH0NCj4gDQo+IFRoZSBjaGVjayB3YXJucyB0aGUgdXNlciBpZiBpdCBvdmVycmlkZXMgYW4gYWxy
-ZWFkeSBpbml0aWFsaXplZCBNRElPIGZ1bmN0aW9uDQo+IHdpdGggYSBkaWZmZXJlbnQgdmFsdWUu
-DQo+IEhvd2V2ZXIsIHRoZXJlIGlzIG5vIG1ldGhvZCB0byB1bmluaXRpYWxpemUgKHJlc2V0IHRv
-IC0xKSBtZGlvX2Z1bmNbXSwgdG8NCj4gYXZvaWQgZ2V0dGluZyB0aGUgd2FybmluZy4NCj4gDQo+
-IEZvciBhIHVzZSBjYXNlLCBJIHdhcyB0aGlua2luZyBhYm91dCBhIERUIG92ZXJsYXkgdGhhdCB3
-b3VsZCBjYXVzZSB0aGUgTURJTw0KPiBmdW5jdGlvbiB0byBiZSBpbml0aWFsaXplZCBvbiBsb2Fk
-aW5nLCBhbmQgbmVlZHMgdG8gdW5pbml0aWFsaXplIHRoZSBNRElPDQo+IGZ1bmN0aW9uIG9uIHJl
-bW92aW5nLg0KPiANCj4gUGVyaGFwcyB0aGF0IGlzIHZlcnkgdW5saWtlbHkgb3IgZXZlbiBpbXBv
-c3NpYmxlLCBnaXZlbiB0aGUgZnVuY3Rpb24gb2YgdGhlDQo+IHBpbnMgY29udHJvbGxlZCBieSB0
-aGUgTURJTyBmdW5jdGlvbj8NCkkgaGFkbid0IGNvbnNpZGVyZWQgdGhhdCBEVCBvdmVybGF5IHBv
-c3NpYmlsaXR5Li4uDQpTaW5jZSB0aGlzIE1ESU8gbXV4aW5nIHNlbGVjdHMgb25lIG9mIHNldmVy
-YWwgZGlmZmVyZW50IElQIGJsb2NrcyBhcyB0aGUNCk1ESU8gbWFzdGVyLCBJIGd1ZXNzIGl0IGNv
-dWxkIGhhcHBlbi4gSG93ZXZlciwgdGhpcyBpcyBwcmV0dHkgdW5saWtlbHkhDQoNCkkgY2FuJ3Qg
-c2VlIGFueSB3YXkgdmlhIHRoZSBwaW5jdHJsX29wcyBvciBwaW5jb25mX29wcyB0byAndW5kbycg
-YSBwaW4NCnNldHRpbmcsIGhvdyB3b3VsZCB0aGlzIHdvcms/DQpJZiBhIERUIG92ZXJsYXkgY2F1
-c2VzIHJlbW92ZSgpIHRoZW4gcHJvYmUoKSB0byBiZSBjYWxsZWQgYWdhaW4sIHRoZSBkcml2ZXIN
-CnJlc2V0cyBtZGlvX2Z1bmNbXSBpbiBwcm9iZSgpLCBzbyBpdCdsbCB3b3JrLg0KDQpUaGFua3Mh
-DQpQaGlsDQo=
+Hi Chanwoo Choi,
+
+On 11/23/18 12:54 AM, Chanwoo Choi wrote:
+> Hi Lukasz,
+> 
+> I add one more comment about devfreq_resume_device().
+> 
+> On 2018년 11월 22일 20:00, Lukasz Luba wrote:
+>>
+>>
+>> On 11/22/18 3:58 AM, Chanwoo Choi wrote:
+>>> On 2018년 11월 22일 03:01, Lukasz Luba wrote:
+>>>> The patch adds support for handling suspend/resume process.
+>>>> It uses atomic variables to make sure no race condition
+>>>> affects the process.
+>>>>
+>>>> The patch draws on Tobias Jakobi's work posted ~2 years ago, who tried to
+>>>> solve issue with devfreq device's frequency during suspend/resume.
+>>>> During the discussion on LKML some corner cases and comments appeared
+>>>> related to the design. This patch address them keeping in mind suggestions
+>>>> from Chanwoo Choi.
+>>>
+>>> Please remove the duplicate information about patch history.
+>>>
+>>>>
+>>>> Suggested-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>>>> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>>>> ---
+>>>>    drivers/devfreq/devfreq.c | 45 +++++++++++++++++++++++++++++++++++++++------
+>>>>    1 file changed, 39 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+>>>> index cf9c643..7e09de8 100644
+>>>> --- a/drivers/devfreq/devfreq.c
+>>>> +++ b/drivers/devfreq/devfreq.c
+>>>> @@ -872,14 +872,33 @@ EXPORT_SYMBOL(devm_devfreq_remove_device);
+>>>>     */
+>>>>    int devfreq_suspend_device(struct devfreq *devfreq)
+>>>>    {
+>>>> -	if (!devfreq)
+>>>> -		return -EINVAL;
+>>>> +        int ret;
+>>>
+>>> Move 'ret' definition under 'if (devfreq->suspend_freq) {'
+>>> because 'ret' is used if suspend_freq isn't zero.
+>> Not only there, 6 lines above 'ret' is used for
+>> devfreq->governor->event_handler().
+> 
+> OK.
+> 
+>>>
+>>>> +        unsigned long prev_freq;
+>>>> +        u32 flags = 0;
+>>>> +
+>>>> +        if (!devfreq)
+>>>> +                return -EINVAL;
+>>>> +
+>>>> +        if (devfreq->governor) {
+>>>> +		ret = devfreq->governor->event_handler(devfreq,
+>>>> +					DEVFREQ_GOV_SUSPEND, NULL);
+>>>> +		if (ret)
+>>>> +			return ret;
+>>>> +	}
+>>>>    
+>>>> -	if (!devfreq->governor)
+>>>> -		return 0;
+>>>> +	if (devfreq->suspend_freq) {
+>>>> +		if (atomic_inc_return(&devfreq->suspend_count) > 1)
+>>>> +			return 0;
+>>>>    
+>>>> -	return devfreq->governor->event_handler(devfreq,
+>>>> -				DEVFREQ_GOV_SUSPEND, NULL);
+>>>> +		ret = devfreq_set_target(devfreq, devfreq->suspend_freq,
+>>>> +					 &prev_freq, flags);
+>>>
+>>> Remove the 'prev_freq' parameter.
+>> OK
+>>>
+>>>> +		if (ret)
+>>>> +			return ret;
+>>>> +
+>>>> +		devfreq->resume_freq = prev_freq;
+>>>
+>>> As I commented on patch2, if devfreq_set_taget save the current frequency
+>>> to 'devfreq->resume_freq', this line is not needed.
+>> OK
+>>>
+>>>
+>>>> +	}
+>>>> +
+>>>> +        return 0;
+>>>>    }
+>>>>    EXPORT_SYMBOL(devfreq_suspend_device);
+>>>>    
+>>>> @@ -893,9 +912,23 @@ EXPORT_SYMBOL(devfreq_suspend_device);
+>>>>     */
+>>>>    int devfreq_resume_device(struct devfreq *devfreq)
+>>>>    {
+>>>> +        int ret;
+>>>
+>>> Move 'ret' definition under 'if (devfreq->suspend_freq) {'
+>>> because 'ret' is used if suspend_freq isn't zero.
+>> OK
+> 
+> If you change the devfreq_resume_device() according to my new comment,
+> please ignore it.
+> 
+>>>
+>>>> +        unsigned long prev_freq;
+>>>
+>>> Remove prev_freq variable which is not used on this function.
+>>> After calling devfreq_set_target, prev_freq is not used.
+>> OK
+>>>
+>>>> +        u32 flags = 0;
+>>>> +
+>>>>    	if (!devfreq)
+>>>>    		return -EINVAL;
+>>>>    
+>>>> +	if (devfreq->suspend_freq) {
+>>>> +		if (atomic_dec_return(&devfreq->suspend_count) >= 1)
+>>>> +			return 0;
+>>>> +
+>>>> +		ret = devfreq_set_target(devfreq, devfreq->resume_freq,
+>>>> +					 &prev_freq, flags);
+>>>
+>>> Remove the 'prev_freq' parameter.
+>> OK
+>>>
+>>>> +		if (ret)
+>>>> +			return ret;
+>>>> +	}
+>>>> +
+>>>>    	if (!devfreq->governor)
+>>>>    		return 0;
+> 
+> Please change the code as following because you uses the following type
+> in the devfreq_suspend_device(). If there is any special issue, please
+> keep the same format in order to improve the readability.
+> 
+> 	if (devfreq->governor) {
+> 		ret = devfreq->governor->event_handler(devfreq,
+> 				DEVFREQ_GOV_RESUME, NULL);
+> 		if (ret)
+> 			return ret;
+> 	}
+> 
+> 
+OK, I will change the code to keep the same format.
+Thank you for the review.
+
+Regards,
+Lukasz
+
