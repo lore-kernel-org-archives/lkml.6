@@ -2,86 +2,113 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE42C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F71C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C5B420820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:12:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C5B420820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 127FA20672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:12:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 127FA20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409278AbeKWUzw (ORCPT
+        id S2503155AbeKWU4I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:55:52 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40648 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393883AbeKWUzw (ORCPT
+        Fri, 23 Nov 2018 15:56:08 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:30287 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387808AbeKWU4H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 15:55:52 -0500
-Received: by mail-ot1-f67.google.com with SMTP id s5so10205616oth.7;
-        Fri, 23 Nov 2018 02:12:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=RzicbqRA+sc8lZGo/bttd6EuTXocDuwhmR10RzuVyfg=;
-        b=HtIHGvVzb0n2c75Y8+KgYV+b9NTsC17merQTyuCezIDNb3l162mdW4MVtj3p9c+njc
-         2TtfnZldMLQWD/lb6yrKcQ9Nx3dQwHAKsNPLgZH1nZYOa9uAjFMQbqRL3lLjn0Kd8BWa
-         HpcpJIEgJqspXW13xbe8uNn3+p9fpWt1fdQF39CaaUJwicOGFPC8S8CHkHCP7UhO1VE4
-         vRJktf4BuTSXV6WRNWo+uQG63/4BwndWDfuzfOetduRS5aFBVKOXYcqpVgOACKFNRrZ1
-         cUFJyD9XwzZ6tSupWR9bVBrk/4O1Vim1hUwZo22gGQjYU6Wj+VVDC/hFsn7avb59AbRf
-         5Z1g==
-X-Gm-Message-State: AGRZ1gJvFRYXk1Ci/LYRgclk77yxOHeUeu38F95A0TfIhXxfOFekOTov
-        LMeB8rn91+mj11beMvuaKM9HFVVzpvmQ9FfEIeI=
-X-Google-Smtp-Source: AFSGD/UaP+hwZQdBg/rVcXcsB67EbAooBaNowil0xFe44cYiypzq/E/zXvB8MB0/BT1Pndlyn2uHIcVZ5O0GtcHCxls=
-X-Received: by 2002:a9d:588c:: with SMTP id x12mr8704222otg.139.1542967934009;
- Fri, 23 Nov 2018 02:12:14 -0800 (PST)
+        Fri, 23 Nov 2018 15:56:07 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-25-MDF-VcXoPOm9BxBa3KMGBw-1; Fri, 23 Nov 2018 10:12:26 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri,
+ 23 Nov 2018 10:12:33 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 23 Nov 2018 10:12:33 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Linus Torvalds' <torvalds@linux-foundation.org>,
+        'Andrew Lutomirski' <luto@kernel.org>
+CC:     "'dvlasenk@redhat.com'" <dvlasenk@redhat.com>,
+        'Jens Axboe' <axboe@kernel.dk>,
+        'Ingo Molnar' <mingo@kernel.org>,
+        'Thomas Gleixner' <tglx@linutronix.de>,
+        'Ingo Molnar' <mingo@redhat.com>,
+        "'bp@alien8.de'" <bp@alien8.de>, 'Peter Anvin' <hpa@zytor.com>,
+        'the arch/x86 maintainers' <x86@kernel.org>,
+        'Andrew Morton' <akpm@linux-foundation.org>,
+        "'Peter Zijlstra'" <a.p.zijlstra@chello.nl>,
+        "'brgerst@gmail.com'" <brgerst@gmail.com>,
+        'Linux List Kernel Mailing' <linux-kernel@vger.kernel.org>,
+        "'pabeni@redhat.com'" <pabeni@redhat.com>
+Subject: RE: [PATCH] x86: only use ERMS for user copies for larger sizes
+Thread-Topic: [PATCH] x86: only use ERMS for user copies for larger sizes
+Thread-Index: AQHUgaBY0KBBfG3q00apJLDxEV5GB6VcD8pwgAAXuEiAAPNRcIAAB5ww
+Date:   Fri, 23 Nov 2018 10:12:33 +0000
+Message-ID: <64fd67993af04579b5262c270a7a4694@AcuMS.aculab.com>
+References: <02bfc577-32a5-66be-64bf-d476b7d447d2@kernel.dk>
+ <20181121063609.GA109082@gmail.com>
+ <48e27a3a-2bb2-ff41-3512-8aeb3fd59e57@kernel.dk>
+ <26eff539-7de7-784c-0c88-f1d30753299d@redhat.com>
+ <7ea44458b90b4d41a08ba9012818d273@AcuMS.aculab.com>
+ <CAHk-=wjLNuNpHRfuVTb6awstC9OOmSb3S8aP51ufep-Th4dXKw@mail.gmail.com>
+ <CALCETrW=hMZLUM_nPEEgUW9x9Bmhm2LZ6ZRDiRRguxVT=-_BWA@mail.gmail.com>
+ <CAHk-=wiEUVpSU-GxpKDvN9wnH2yDxkJgE7Vqh46A+fmnvhubyw@mail.gmail.com>
+ <cd11d9423c8b46ecbf97753f8317c294@AcuMS.aculab.com>
+In-Reply-To: <cd11d9423c8b46ecbf97753f8317c294@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 23 Nov 2018 11:12:02 +0100
-Message-ID: <CAJZ5v0i5P6fEocXaOTRjBEW=NM5zYeHxrOB-KzxPpEXTq75esg@mail.gmail.com>
-Subject: [GIT PULL] ACPI fix for v4.20-rc4
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MC-Unique: MDF-VcXoPOm9BxBa3KMGBw-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+RnJvbTogRGF2aWQgTGFpZ2h0DQo+IFNlbnQ6IDIzIE5vdmVtYmVyIDIwMTggMDk6MzUNCj4gRnJv
+bTogTGludXMgVG9ydmFsZHMNCj4gPiBTZW50OiAyMiBOb3ZlbWJlciAyMDE4IDE4OjU4DQo+IC4u
+Lg0KPiA+IE9oLCBhbmQgSSBqdXN0IG5vdGljZWQgdGhhdCBvbiB4ODYgd2UgZXhwcmVzc2x5IHVz
+ZSBvdXIgb2xkICJzYWZlIGFuZA0KPiA+IHNhbmUiIGZ1bmN0aW9uczogc2VlIF9faW5saW5lX21l
+bWNweSgpLCBhbmQgaXRzIHVzZSBpbg0KPiA+IF9fbWVtY3B5X3tmcm9tLHRvfWlvKCkuDQo+ID4N
+Cj4gPiBTbyB0aGUgImZhbGxzIGJhY2sgdG8gbWVtY3B5IiB3YXMgYWx3YXlzIGEgcmVkIGhlcnJp
+bmcuIFdlIGRvbid0DQo+ID4gYWN0dWFsbHkgZG8gdGhhdC4NCj4gPg0KPiA+IFdoaWNoIGV4cGxh
+aW5zIHdoeSB0aGluZ3Mgd29yay4NCj4gDQo+IEl0IGRvZXNuJ3QgZXhwbGFpbiB3aHkgSSd2ZSBz
+ZWVuIHNpbmdsZSBieXRlIFBDSWUgVExQIGdlbmVyYXRlZA0KPiBieSBtZW1jcHlfdG8vZnJvbWlv
+KCkuDQo+IA0KPiBJJ3ZlIGhhZCB0byBjaGFuZ2UgY29kZSB0byB1c2UgcmVhZHEvd3JpdGVxIGxv
+b3BzIGJlY2F1c2UgdGhlDQo+IGJ5dGUgYWNjZXNzZXMgYXJlIHNvIHNsb3cgLSBldmVuIHdoZW4g
+UElPIHBlcmZvcm1hbmNlIHNob3VsZA0KPiBiZSAnZ29vZCBlbm91Z2gnLg0KPiANCj4gSXQgbWln
+aHQgaGF2ZSBiZWVuIGNoYW5nZWQgc2luY2UgbGFzdCB0aW1lIEkgdGVzdGVkIGl0Lg0KPiBCdXQg
+SSBkb24ndCByZW1lbWJlciBzZWVpbmcgYSBjb21taXQgZ28gYnkuDQoNCkkndmUganVzdCBwYXRj
+aGVkIG15IGRyaXZlciBhbmQgcmVkb25lIHRoZSB0ZXN0IG9uIGEgNC4xMyAodWJ1bnR1KSBrZXJu
+ZWwuDQpDYWxsaW5nIG1lbWNweV9mcm9taW8oa2VybmVsX2J1ZmZlciwgUENJZV9hZGRyZXNzLCBs
+ZW5ndGgpDQpnZW5lcmF0ZXMgYSBsb3Qgb2Ygc2luZ2xlIGJ5dGUgVExQLg0KDQpXaGF0IHRoZSBj
+b2RlIG5vcm1hbGx5IGRvZXMgaXMgNjRiaXQgYWxpZ25lZCBQQ0llIHJlYWRzIHdpdGgNCm11bHRp
+cGxlIHdyaXRlcyBhbmQgc2hpZnRzIHRvIGF2b2lkIHdyaXRpbmcgYmV5b25kIHRoZSBlbmQgb2YN
+CnRoZSBrZXJuZWwgYnVmZmVyIGZvciAnb2RkJyBsZW5ndGggdHJhbnNmZXJzLg0KDQpNb3N0IG9m
+IG91ciBQSU8gY29waWVzIGFyZSBhY3R1YWxseSBkaXJlY3QgdG8vZnJvbSB1c2Vyc3BhY2UuDQpX
+aGlsZSBjb3B5X3RvL2Zyb21fdXNlcigpIHdpbGwgd29yayBvbiBQQ0llIG1lbW9yeSwgaXQgaXMg
+J3JlcCBtb3N2YicuDQpXZSBhbHNvIG1tYXAoKSB0aGUgUENJZSBzcGFjZSBpbnRvIHByb2Nlc3Mg
+bWVtb3J5IC0gYW5kIGhhdmUgYmUNCmNhcmVmdWwgbm90IHRvIHVzZSBtZW1jcHkoKSBpbiB1c2Vz
+cGFjZS4NCg0KT24gc3VpdGFibGUgc3lzdGVtcyB1c2Vyc3BhY2UgY2FuIHVzZSB0aGUgQVZYMjU2
+IGluc3RydWN0aW9ucyB0bw0KZ2V0IHdpZGUgcmVhZHMuIE11Y2ggaGFyZGVyIGFuZCBtb3JlIGV4
+cGVuc2l2ZSBpbiB0aGUga2VybmVsLg0KDQpJbiBwcmFjdGlzZSBtb3N0IG9mIHRoZSBidWxrIGRh
+dGEgdHJhbnNmZXJzIGFyZSByZXF1ZXN0ZWQgYnkgdGhlIFBDSWUgc2xhdmUuDQpCdXQgdGhlcmUg
+YXJlIHRpbWVzIHdoZW4gUElPIG9uZXMgYXJlIG5lZWRlZCwgYW5kIDY0IGJpdCB0cmFuc2ZlcnMg
+YXJlDQo4IHRpbWVzIGZhc3RlciB0aGFuIDggYml0IG9uZXMuDQpUaGlzIGlzIGFsbCBtYWRlIG1v
+cmUgc2lnbmlmaWNhbnQgYmVjYXVzZSBpdCB0YWtlcyBvdXIgZnBnYSBhYm91dCA1MDBucw0KdG8g
+Y29tcGxldGUgYSBzaW5nbGUgd29yZCBQQ0llIHJlYWQuDQoNCglEYXZpZA0KDQotDQpSZWdpc3Rl
+cmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtl
+eW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
-Please pull from the tag
-
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-4.20-rc4
-
-with top-most commit 2bbb5fa37475d7aa5fa62f34db1623f3da2dfdfa
-
- ACPI / platform: Add SMB0001 HID to forbidden_id_list
-
-on top of commit 9ff01193a20d391e8dbce4403dd5ef87c7eaaca6
-
- Linux 4.20-rc3
-
-to receive an ACPI fix for 4.20-rc4.
-
-This prevents the ACPI core from registering a platform device for
-the SMB0001 HID to avoid IRQ allocation issues (Hans de Goede).
-
-Thanks!
-
-
----------------
-
-Hans de Goede (1):
-      ACPI / platform: Add SMB0001 HID to forbidden_id_list
-
----------------
-
- drivers/acpi/acpi_platform.c | 1 +
- 1 file changed, 1 insertion(+)
