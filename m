@@ -2,131 +2,128 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA59C43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:05:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5580AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E38F205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:05:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="EebVeko2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E38F205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D0E920820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:11:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D0E920820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503150AbeKWUsr (ORCPT
+        id S2409246AbeKWUys (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:48:47 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:43575 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393839AbeKWUsr (ORCPT
+        Fri, 23 Nov 2018 15:54:48 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33422 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393883AbeKWUys (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 15:48:47 -0500
-Received: by mail-vk1-f195.google.com with SMTP id o130so2545288vke.10
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 02:05:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=YUd68lT+Nbs1CuYWfgadotcTcrWCer+xWXfaNUArWhM=;
-        b=EebVeko2mmI5SWtPIR/svf3tE1WPbBR+a6wqVVBgi2l2k4J6oIBkZnhiDXBs7L5ToE
-         c9mz7ptIEZ+nF8T3Y0lVBLAMT1Sz41raMant5AZveh9rKMsd6W6aUmq2umPcoHLhswbk
-         aV0LzE/8jM4p3hosvcL5qg10piQW5PT/KP2/0Fr/P3XaYgDQwqljvEgH+3WuYx/PCpGJ
-         gb/Hy1sB3jyE3r+xcsJMihNxA4Kwmvu9Ea+aygpE1ydzqV6u311LLnWsgPJ5PnbFk0Xa
-         EKHY1vSP59SOrHfBMsXaZoqlsgWFzA7ud92yzcisAxgHzc3pLOSSv/xumsk1+JBXulyZ
-         GboQ==
+        Fri, 23 Nov 2018 15:54:48 -0500
+Received: by mail-ot1-f65.google.com with SMTP id i20so10247669otl.0;
+        Fri, 23 Nov 2018 02:11:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=YUd68lT+Nbs1CuYWfgadotcTcrWCer+xWXfaNUArWhM=;
-        b=gpmgX+O+BCY2kKsipSDz8IRBJRS6npjE6zWEznmJaJrEFrUB/aq7orJ0OpffRaP/hr
-         lO0Pb45FI+06jRyVNcOAZXYk/5Su7u0xgfhnYea2Pdj8XjB9QRotReP0ePf3tJaubHBX
-         W/raSe1w2IG9JgJVWdynk7AzxSqZHOZtvOe6eNG8xu9jflaStiPAvlR85XEnk1xm/HhC
-         S27rwkVWLPb4sNrzEvVW6iWnK7qtRll35+SXa1mNYOOk32C4oU+cjAt8E2LnozbndT4E
-         XLq6Vr8nr7tFsI4HK2INpdzp9+ViKw3HmIql2WfB89DBkEDdCX9MGgW2lleWd07d5pXu
-         fRBQ==
-X-Gm-Message-State: AA+aEWZ3TAyGOh/5HWeKLVIgGg6M31PrhalhvqEdalWmHqhKtVSdGCxv
-        CUGy1Wg/ksHfFfPCAZRdTgLl5GfZYlaPVdppAjuk/majORw=
-X-Google-Smtp-Source: AFSGD/X33K6U3n0oOIT1K2p9wXWxpWqmndNvaTQGhe3/o+R6jjwYuaaxCVxk6T0+TwtwwjkW1KT4pBkgtvv6ImnwLA8=
-X-Received: by 2002:a1f:8b48:: with SMTP id n69mr5988322vkd.12.1542967509671;
- Fri, 23 Nov 2018 02:05:09 -0800 (PST)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=RTrc90gfMlxCZgiwBCO8uE6FvP/TrDmZK/B99S04B0U=;
+        b=OkbdQxg1l5zIQmb2g5pGpVdpqN+MFmX/+k6fdbjwSouNGUCFBGRhZcGwRerqbGESNY
+         Lthh3S/o0O5S6SZYFNBlOSnpzAFHs3erb0X1oXsVGpClmQ2Lm9ZFoktvocGgGniaVcST
+         SHvC2+/gskJOXMpID1fT7oNCBHCAHN6lj9bMpmbEmHGRCEH3xwZW5RLdL4fso4K9/N3Q
+         XqdK8CRv1H7Pelot5Lh9AZkCataZ9JnEk1HDTXLpULAIAxj1oK8jPK9cZU/yxWehqVj7
+         PvF6ZAr4LEtjIsNPIFMWM7yu76+RaVflTS5dovRZ7P6ABV/XQ65DY2bHehWE0lK32rP5
+         79Ug==
+X-Gm-Message-State: AA+aEWYbciAsHzLud8oPI1EyVyIDydjK6heCgy+yfqjcXH8ImP3Hxety
+        M6gAdmHPy30DFuUx47PNfyyHMpo4cvYbOu4JqhOWLbT9
+X-Google-Smtp-Source: AFSGD/UwTw1KO4D6rQes8oGKviBgfjVpVtMSGwouOt6gh7gve7IcpFzJG5uSnpBnd/all6cHGzWG/Vy4JNbK+5djtxw=
+X-Received: by 2002:a9d:7f0d:: with SMTP id j13mr7821043otq.119.1542967870142;
+ Fri, 23 Nov 2018 02:11:10 -0800 (PST)
 MIME-Version: 1.0
-References: <1542894410-14047-1-git-send-email-javier@cnexlabs.com> <1542894410-14047-2-git-send-email-javier@cnexlabs.com>
-In-Reply-To: <1542894410-14047-2-git-send-email-javier@cnexlabs.com>
-From:   Hans Holmberg <hans.ml.holmberg@owltronix.com>
-Date:   Fri, 23 Nov 2018 11:04:58 +0100
-Message-ID: <CANr-nt2XMzZnd309pY7QJxYXWMSuXXrcWMt8F=pa49BzARb5dg@mail.gmail.com>
-Subject: Re: [PATCH] lightnvm: pblk: avoid ref warning on cache creation
-To:     =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Cc:     Matias Bjorling <mb@lightnvm.io>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
-        linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Javier Gonzalez <javier@cnexlabs.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 23 Nov 2018 11:10:58 +0100
+Message-ID: <CAJZ5v0hpS244DB8nT82TyGFyyNkwg4rgHg834ocrt=+c7wa5CA@mail.gmail.com>
+Subject: [GIT PULL] Power management fixes for v4.20-rc4
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Great catch Javier! Nice refactoring work too.
+Hi Linus,
 
-Reviewed-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-On Thu, Nov 22, 2018 at 2:47 PM Javier Gonz=C3=A1lez <javier@javigon.com> w=
-rote:
->
-> The current kref implementation around pblk global caches triggers a
-> false positive on refcount_inc_checked() (when called) as the kref is
-> initialized to 0. Instead of usint kref_inc() on a 0 reference, which is
-> in principle correct, use kref_init() to avoid the check. This is also
-> more explicit about what actually happens on cache creation.
->
-> In the process, do a small refactoring to use kref helpers.
->
-> Signed-off-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
-> ---
->  drivers/lightnvm/pblk-init.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
-> index 13822594647c..e225bd60cbb4 100644
-> --- a/drivers/lightnvm/pblk-init.c
-> +++ b/drivers/lightnvm/pblk-init.c
-> @@ -350,23 +350,19 @@ static int pblk_create_global_caches(void)
->
->  static int pblk_get_global_caches(void)
->  {
-> -       int ret;
-> +       int ret =3D 0;
->
->         mutex_lock(&pblk_caches.mutex);
->
-> -       if (kref_read(&pblk_caches.kref) > 0) {
-> -               kref_get(&pblk_caches.kref);
-> -               mutex_unlock(&pblk_caches.mutex);
-> -               return 0;
-> -       }
-> +       if (kref_get_unless_zero(&pblk_caches.kref))
-> +               goto out;
->
->         ret =3D pblk_create_global_caches();
-> -
->         if (!ret)
-> -               kref_get(&pblk_caches.kref);
-> +               kref_init(&pblk_caches.kref);
->
-> +out:
->         mutex_unlock(&pblk_caches.mutex);
-> -
->         return ret;
->  }
->
-> --
-> 2.7.4
->
+Please pull from the tag
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-4.20-rc4
+
+with top-most commit 1d50088ca3956e5dcd2751a658e7869b9af10bb4
+
+ Merge branches 'pm-cpufreq' and 'pm-sleep'
+
+on top of commit 9ff01193a20d391e8dbce4403dd5ef87c7eaaca6
+
+ Linux 4.20-rc3
+
+to receive power management fixes for 4.20-rc4.
+
+These fix two issues in the Operating Performance Points (OPP)
+framework, one cpufreq driver issue, one problem related to the
+tasks freezer and a few build-related issues in the cpupower
+utility.
+
+Specifics:
+
+ - Fix tasks freezer deadlock in de_thread() that occurs if one
+   of its sub-threads has been frozen already (Chanho Min).
+
+ - Avoid registering a platform device by the ti-cpufreq driver
+   on platforms that cannot use it (Dave Gerlach).
+
+ - Fix a mistake in the ti-opp-supply operating performance points
+   (OPP) driver that caused an incorrect reference voltage to be
+   used and make it adjust the minimum voltage dynamically to avoid
+   hangs or crashes in some cases (Keerthy).
+
+ - Fix issues related to compiler flags in the cpupower utility
+   and correct a linking problem in it by renaming a file with
+   a duplicate name (Jiri Olsa, Konstantin Khlebnikov).
+
+Thanks!
+
+
+---------------
+
+Chanho Min (1):
+      exec: make de_thread() freezable
+
+Dave Gerlach (1):
+      cpufreq: ti-cpufreq: Only register platform_device when supported
+
+Jiri Olsa (2):
+      tools cpupower debug: Allow to use outside build flags
+      tools cpupower: Override CFLAGS assignments
+
+Keerthy (2):
+      opp: ti-opp-supply: Dynamically update u_volt_min
+      opp: ti-opp-supply: Correct the supply in _get_optimal_vdd_voltage call
+
+Konstantin Khlebnikov (1):
+      tools/power/cpupower: fix compilation with STATIC=true
+
+---------------
+
+ drivers/cpufreq/ti-cpufreq.c               | 26 +++++++++++++++++++++-----
+ drivers/opp/ti-opp-supply.c                |  5 ++++-
+ fs/exec.c                                  |  5 +++--
+ tools/power/cpupower/Makefile              | 12 ++++++------
+ tools/power/cpupower/bench/Makefile        |  2 +-
+ tools/power/cpupower/debug/x86_64/Makefile |  4 ++--
+ tools/power/cpupower/lib/cpufreq.c         |  2 +-
+ tools/power/cpupower/lib/cpuidle.c         |  2 +-
+ tools/power/cpupower/lib/cpupower.c        |  4 ++--
+ tools/power/cpupower/lib/cpupower_intern.h |  2 +-
+ 10 files changed, 42 insertions(+), 22 deletions(-)
