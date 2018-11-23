@@ -2,149 +2,180 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE96C04EBA
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE50C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38561208E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:36:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38561208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B3DB820659
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:37:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3DB820659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503347AbeKWVUS (ORCPT
+        id S2503358AbeKWVVQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 16:20:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50866 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394087AbeKWVUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 16:20:17 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E1FFA30832D4;
-        Fri, 23 Nov 2018 10:36:32 +0000 (UTC)
-Received: from [10.36.118.36] (unknown [10.36.118.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1C4921851B;
-        Fri, 23 Nov 2018 10:36:28 +0000 (UTC)
-Subject: Re: [PATCH] mm: Replace all open encodings for NUMA_NO_NODE
-To:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     ocfs2-devel@oss.oracle.com, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-block@vger.kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org,
-        akpm@linux-foundation.org, jiangqi903@gmail.com, hverkuil@xs4all.nl
-References: <1542966856-12619-1-git-send-email-anshuman.khandual@arm.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwX4EEwECACgFAljj9eoCGwMFCQlmAYAGCwkI
- BwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEE3eEPcA/4Na5IIP/3T/FIQMxIfNzZshIq687qgG
- 8UbspuE/YSUDdv7r5szYTK6KPTlqN8NAcSfheywbuYD9A4ZeSBWD3/NAVUdrCaRP2IvFyELj
- xoMvfJccbq45BxzgEspg/bVahNbyuBpLBVjVWwRtFCUEXkyazksSv8pdTMAs9IucChvFmmq3
- jJ2vlaz9lYt/lxN246fIVceckPMiUveimngvXZw21VOAhfQ+/sofXF8JCFv2mFcBDoa7eYob
- s0FLpmqFaeNRHAlzMWgSsP80qx5nWWEvRLdKWi533N2vC/EyunN3HcBwVrXH4hxRBMco3jvM
- m8VKLKao9wKj82qSivUnkPIwsAGNPdFoPbgghCQiBjBe6A75Z2xHFrzo7t1jg7nQfIyNC7ez
- MZBJ59sqA9EDMEJPlLNIeJmqslXPjmMFnE7Mby/+335WJYDulsRybN+W5rLT5aMvhC6x6POK
- z55fMNKrMASCzBJum2Fwjf/VnuGRYkhKCqqZ8gJ3OvmR50tInDV2jZ1DQgc3i550T5JDpToh
- dPBxZocIhzg+MBSRDXcJmHOx/7nQm3iQ6iLuwmXsRC6f5FbFefk9EjuTKcLMvBsEx+2DEx0E
- UnmJ4hVg7u1PQ+2Oy+Lh/opK/BDiqlQ8Pz2jiXv5xkECvr/3Sv59hlOCZMOaiLTTjtOIU7Tq
- 7ut6OL64oAq+zsFNBFXLn5EBEADn1959INH2cwYJv0tsxf5MUCghCj/CA/lc/LMthqQ773ga
- uB9mN+F1rE9cyyXb6jyOGn+GUjMbnq1o121Vm0+neKHUCBtHyseBfDXHA6m4B3mUTWo13nid
- 0e4AM71r0DS8+KYh6zvweLX/LL5kQS9GQeT+QNroXcC1NzWbitts6TZ+IrPOwT1hfB4WNC+X
- 2n4AzDqp3+ILiVST2DT4VBc11Gz6jijpC/KI5Al8ZDhRwG47LUiuQmt3yqrmN63V9wzaPhC+
- xbwIsNZlLUvuRnmBPkTJwwrFRZvwu5GPHNndBjVpAfaSTOfppyKBTccu2AXJXWAE1Xjh6GOC
- 8mlFjZwLxWFqdPHR1n2aPVgoiTLk34LR/bXO+e0GpzFXT7enwyvFFFyAS0Nk1q/7EChPcbRb
- hJqEBpRNZemxmg55zC3GLvgLKd5A09MOM2BrMea+l0FUR+PuTenh2YmnmLRTro6eZ/qYwWkC
- u8FFIw4pT0OUDMyLgi+GI1aMpVogTZJ70FgV0pUAlpmrzk/bLbRkF3TwgucpyPtcpmQtTkWS
- gDS50QG9DR/1As3LLLcNkwJBZzBG6PWbvcOyrwMQUF1nl4SSPV0LLH63+BrrHasfJzxKXzqg
- rW28CTAE2x8qi7e/6M/+XXhrsMYG+uaViM7n2je3qKe7ofum3s4vq7oFCPsOgwARAQABwsFl
- BBgBAgAPBQJVy5+RAhsMBQkJZgGAAAoJEE3eEPcA/4NagOsP/jPoIBb/iXVbM+fmSHOjEshl
- KMwEl/m5iLj3iHnHPVLBUWrXPdS7iQijJA/VLxjnFknhaS60hkUNWexDMxVVP/6lbOrs4bDZ
- NEWDMktAeqJaFtxackPszlcpRVkAs6Msn9tu8hlvB517pyUgvuD7ZS9gGOMmYwFQDyytpepo
- YApVV00P0u3AaE0Cj/o71STqGJKZxcVhPaZ+LR+UCBZOyKfEyq+ZN311VpOJZ1IvTExf+S/5
- lqnciDtbO3I4Wq0ArLX1gs1q1XlXLaVaA3yVqeC8E7kOchDNinD3hJS4OX0e1gdsx/e6COvy
- qNg5aL5n0Kl4fcVqM0LdIhsubVs4eiNCa5XMSYpXmVi3HAuFyg9dN+x8thSwI836FoMASwOl
- C7tHsTjnSGufB+D7F7ZBT61BffNBBIm1KdMxcxqLUVXpBQHHlGkbwI+3Ye+nE6HmZH7IwLwV
- W+Ajl7oYF+jeKaH4DZFtgLYGLtZ1LDwKPjX7VAsa4Yx7S5+EBAaZGxK510MjIx6SGrZWBrrV
- TEvdV00F2MnQoeXKzD7O4WFbL55hhyGgfWTHwZ457iN9SgYi1JLPqWkZB0JRXIEtjd4JEQcx
- +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <d7cb905f-76f7-3053-2a46-e1a514bd309b@redhat.com>
-Date:   Fri, 23 Nov 2018 11:36:28 +0100
+        Fri, 23 Nov 2018 16:21:16 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58882 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390259AbeKWVVQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 16:21:16 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 2108C27DBCD
+Subject: Re: [PATCH 6/7] mfd / platform: cros_ec: instantiate only if th EC
+ has a VBC NVRAM.
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     lee.jones@linaro.org, gwendal@chromium.org, drinkcat@chromium.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, bleung@chromium.org,
+        Olof Johansson <olof@lixom.net>
+References: <20181122113356.23610-1-enric.balletbo@collabora.com>
+ <20181122113356.23610-7-enric.balletbo@collabora.com>
+ <20181122191401.GA2106@roeck-us.net>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <54b2aa27-2dba-7eba-d414-c7406e80a8c9@collabora.com>
+Date:   Fri, 23 Nov 2018 11:37:28 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <1542966856-12619-1-git-send-email-anshuman.khandual@arm.com>
+In-Reply-To: <20181122191401.GA2106@roeck-us.net>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 23 Nov 2018 10:36:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.11.18 10:54, Anshuman Khandual wrote:
-> At present there are multiple places where invalid node number is encoded
-> as -1. Even though implicitly understood it is always better to have macros
-> in there. Replace these open encodings for an invalid node number with the
-> global macro NUMA_NO_NODE. This helps remove NUMA related assumptions like
-> 'invalid node' from various places redirecting them to a common definition.
-> 
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
-> 
-> Changes in V1:
-> 
-> - Dropped OCFS2 changes per Joseph
-> - Dropped media/video drivers changes per Hans
-> 
-> RFC - https://patchwork.kernel.org/patch/10678035/
-> 
-> Build tested this with multiple cross compiler options like alpha, sparc,
-> arm64, x86, powerpc, powerpc64le etc with their default config which might
-> not have compiled tested all driver related changes. I will appreciate
-> folks giving this a test in their respective build environment.
-> 
-> All these places for replacement were found by running the following grep
-> patterns on the entire kernel code. Please let me know if this might have
-> missed some instances. This might also have replaced some false positives.
-> I will appreciate suggestions, inputs and review.
-> 
-> 1. git grep "nid == -1"
-> 2. git grep "node == -1"
-> 3. git grep "nid = -1"
-> 4. git grep "node = -1"
+Hi Guenter,
 
-Hopefully you found most users :)
+On 22/11/18 20:14, Guenter Roeck wrote:
+> On Thu, Nov 22, 2018 at 12:33:55PM +0100, Enric Balletbo i Serra wrote:
+>> The cros-ec-vbc driver is DT-only and there is a DT property that
+>> indicates if the EC has the VCB NVRAM, in such case instantiate the
+>> driver but don't instantiate on the other cases.
+>>
+>> To do this move the check code to its parent instead of play with the
+>> attribute group visibility. This changes a bit the actual behaviour.
+>> Before the patch if an EC doesn't have a VBC NVRAM an empty vbc folder
+>> is created in /sys/class/chromeos/<ec device>, after the patch the empty
+>> folder is not created, so, the folder is only created if the vbc is set.
+>>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> ---
+>>
+>>  drivers/mfd/cros_ec_dev.c             | 24 +++++++++++++++++++++++-
+>>  drivers/platform/chrome/cros_ec_vbc.c | 16 ----------------
+>>  2 files changed, 23 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+>> index fc235af6da65..a63588953760 100644
+>> --- a/drivers/mfd/cros_ec_dev.c
+>> +++ b/drivers/mfd/cros_ec_dev.c
+>> @@ -21,6 +21,7 @@
+>>  #include <linux/mfd/core.h>
+>>  #include <linux/module.h>
+>>  #include <linux/mod_devicetable.h>
+>> +#include <linux/of_platform.h>
+>>  #include <linux/platform_device.h>
+>>  #include <linux/pm.h>
+>>  #include <linux/slab.h>
+>> @@ -400,7 +401,10 @@ static const struct mfd_cell cros_ec_platform_cells[] = {
+>>  	{ .name = "cros-ec-debugfs" },
+>>  	{ .name = "cros-ec-lightbar" },
+>>  	{ .name = "cros-ec-sysfs" },
+>> -	{ .name = "cros-ec-vbc" },
+>> +};
+>> +
+>> +static const struct mfd_cell cros_ec_vbc_cells[] = {
+>> +	{ .name = "cros-ec-vbc" }
+>>  };
+>>  
+>>  static int ec_device_probe(struct platform_device *pdev)
+>> @@ -409,6 +413,7 @@ static int ec_device_probe(struct platform_device *pdev)
+>>  	struct device *dev = &pdev->dev;
+>>  	struct cros_ec_platform *ec_platform = dev_get_platdata(dev);
+>>  	struct cros_ec_dev *ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
+>> +	struct device_node *node;
+>>  
+>>  	if (!ec)
+>>  		return retval;
+>> @@ -492,6 +497,23 @@ static int ec_device_probe(struct platform_device *pdev)
+>>  		dev_err(ec->dev,
+>>  			"failed to add cros-ec platform devices: %d\n", retval);
+>>  
+>> +	/* Check whether this EC instance has a VBC NVRAM */
+>> +	node = ec->ec_dev->dev->of_node;
+>> +	if (IS_ENABLED(CONFIG_OF) && node) {
+> 
+> Is IS_ENABLED() necessary here ? Seems to me node should always be NULL
+> in this case.
+> 
+>> +		if (of_property_read_bool(node, "google,has-vbc-nvram")) {
+>> +			dev_err(dev, "device VBC found.\n");
+> 
+> dev_err ?
+> 
 
-Did you check if some are encoded into function calls? f(-1, ...)
+Ups, I added this message only for debugging puposes, I think doesn't make sense
+here so I'll remove.
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+>> +			retval = devm_mfd_add_devices(ec->dev,
+>> +					PLATFORM_DEVID_AUTO,
+>> +					cros_ec_vbc_cells,
+>> +					ARRAY_SIZE(cros_ec_vbc_cells),
+>> +					NULL, 0, NULL);
+>> +			if (retval)
+>> +				dev_err(ec->dev,
+>> +					"failed to add VBC devices: %d\n",
+>> +					retval);
+> 
+> Since the error is ignored, maybe better dev_warn() ?
+> 
 
+Done in next version.
 
--- 
-
-Thanks,
-
-David / dhildenb
+>> +		}
+>> +	}
+>> +
+>>  	return 0;
+>>  
+>>  failed:
+>> diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
+>> index 374153e3dc13..b7b81fe0fb25 100644
+>> --- a/drivers/platform/chrome/cros_ec_vbc.c
+>> +++ b/drivers/platform/chrome/cros_ec_vbc.c
+>> @@ -108,21 +108,6 @@ static ssize_t vboot_context_write(struct file *filp, struct kobject *kobj,
+>>  	return data_sz;
+>>  }
+>>  
+>> -static umode_t cros_ec_vbc_is_visible(struct kobject *kobj,
+>> -				      struct bin_attribute *a, int n)
+>> -{
+>> -	struct device *dev = container_of(kobj, struct device, kobj);
+>> -	struct cros_ec_dev *ec = to_cros_ec_dev(dev);
+>> -	struct device_node *np = ec->ec_dev->dev->of_node;
+>> -
+>> -	if (IS_ENABLED(CONFIG_OF) && np) {
+>> -		if (of_property_read_bool(np, "google,has-vbc-nvram"))
+>> -			return a->attr.mode;
+>> -	}
+>> -
+>> -	return 0;
+>> -}
+>> -
+>>  static BIN_ATTR_RW(vboot_context, 16);
+>>  
+>>  static struct bin_attribute *cros_ec_vbc_bin_attrs[] = {
+>> @@ -133,7 +118,6 @@ static struct bin_attribute *cros_ec_vbc_bin_attrs[] = {
+>>  struct attribute_group cros_ec_vbc_attr_group = {
+>>  	.name = "vbc",
+>>  	.bin_attrs = cros_ec_vbc_bin_attrs,
+>> -	.is_bin_visible = cros_ec_vbc_is_visible,
+>>  };
+>>  
+>>  static int cros_ec_vbc_probe(struct platform_device *pd)
