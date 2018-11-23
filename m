@@ -2,146 +2,102 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2921C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D55AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B138020820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:31:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gPojN90a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B138020820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D8A120820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:33:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D8A120820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409141AbeKWUO6 (ORCPT
+        id S2393892AbeKWUQe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:14:58 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:37463 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502937AbeKWUO6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 15:14:58 -0500
-Received: by mail-yw1-f67.google.com with SMTP id h193so3331056ywc.4;
-        Fri, 23 Nov 2018 01:31:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=bzjcUHl1w//ssAapa6A5RQcSSMDTYUDZk9FHeTjejYo=;
-        b=gPojN90awjuIdPcPkcY3kxibKmRq7Z2f0j+3CPWaqtKCJvbPnAbpRX/MDPShrSmmcx
-         9P/8szFIgW2t+a0xZa8iboavnx5K75s8kdW6Jh8yzi2eiVYCKSpCNjeak/5xjTg+kPmv
-         TgyLwkyArTEbWnG5m6pW/gW37ZakhJfPr+UWd1C0HaiDVOAnag5WaRcjlLiXt3a90yMs
-         SGGyzZMbQXciNT+Tw0cJ0V0N4JXoq0/JJ2HD2IKmPtc0A1iuooGqSj5cMbUtUeNaeVxf
-         DUSFwhGJTMBv1iSR+GupflizH1v0G7UYLMqqf5OOfv2mkcyYGRS3EDCkVRX+4G7hpe8s
-         yU8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=bzjcUHl1w//ssAapa6A5RQcSSMDTYUDZk9FHeTjejYo=;
-        b=lOPj5U8yDeEWVFIWCp19OueYEQRvKco7DESF8po/5nvucccVSrcct4uy/DnGH3C3QX
-         RcQ9c24LJK1NBT0OKjTAE7saTSqHpl+S+uADOt/Huq5WryQsw2jzKwknU+lmBvoohnJe
-         p5Xe38gjU7yOf0eHLoPw7zNuTx38YoGJWN9tJ4rSWtJsOtLAT6Q4hLa6jWAnI85Pnenl
-         VDr6cnVdUUGvyqUImIVavyDXTdMt+S76xVveNwuskm3fx+tVkAG+Cg/bOZ9Y2gJHCT0x
-         hSW6CXFkWro34lZjoQcr4f5RcTAZ0HX3V/bfK6S5l3QNpD7d+EJkGbRI/TSGaHX00nM5
-         VYyQ==
-X-Gm-Message-State: AGRZ1gIKUf6aF4/aB1CfiVmX48fB2mjK1pIdXX+B5VIMBus6zWv9mWl7
-        4uMqLjMrO8+RAgAHvMOCB6zoeRPWxw8XY9vjUq9I01ay4z0=
-X-Google-Smtp-Source: AJdET5fDumazKDuhg2tlZM+KX1ci3Fdc07HjfUHCZ7XH+LJVfnYPwdNmG90d18Cf2YWw0rWXJjgPZ3ZEBssOhUwRtBY=
-X-Received: by 2002:a81:a40d:: with SMTP id b13-v6mr14987783ywh.345.1542965489953;
- Fri, 23 Nov 2018 01:31:29 -0800 (PST)
+        Fri, 23 Nov 2018 15:16:34 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:50614 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387987AbeKWUQe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 15:16:34 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C9C38215DD; Fri, 23 Nov 2018 10:33:04 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id EAEAF20D29;
+        Fri, 23 Nov 2018 10:27:30 +0100 (CET)
+Date:   Fri, 23 Nov 2018 10:27:30 +0100
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-kernel@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>
+Subject: Re: [PATCH v2] phy: mvebu-cp110-comphy: fix spelling in structure
+ name
+Message-ID: <20181123092730.GA10195@kwain>
+References: <20181123092115.20617-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-References: <20181121123508.25119-1-peron.clem@gmail.com> <20181122200536.ndgrxuxealtovngy@pengutronix.de>
-In-Reply-To: <20181122200536.ndgrxuxealtovngy@pengutronix.de>
-From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date:   Fri, 23 Nov 2018 10:31:18 +0100
-Message-ID: <CAJiuCcdt9Kk3z6gsr68O1JrPfan-ENpRjo0dnBaGxs4xDidOzQ@mail.gmail.com>
-Subject: Re: [PATCH v2] pwm: kconfig: enable kona pwm to be built for cygnus arch
-To:     u.kleine-koenig@pengutronix.de
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181123092115.20617-1-miquel.raynal@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Miquel,
 
-On Thu, 22 Nov 2018 at 21:05, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
->
-> Hello Cl=C3=A9ment,
->
-> On Wed, Nov 21, 2018 at 01:35:08PM +0100, Cl=C3=A9ment P=C3=A9ron wrote:
-> > The Cygnus architecture use a Kona PWM. This is already present
-> > in the device tree but can't be built actually. Hence, allow the
-> > Kona PWM to be built for Cygnus arch.
-> >
-> > Signed-off-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
-> > ---
-> >  drivers/pwm/Kconfig | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> > index 27e5dd47a01f..982f4059f4e8 100644
-> > --- a/drivers/pwm/Kconfig
-> > +++ b/drivers/pwm/Kconfig
-> > @@ -88,7 +88,9 @@ config PWM_BCM_IPROC
-> >
-> >  config PWM_BCM_KONA
-> >       tristate "Kona PWM support"
-> > -     depends on ARCH_BCM_MOBILE
-> > +     depends on ARCH_BCM_MOBILE || ARCH_BCM_CYGNUS || COMPILE_TEST
-> > +     depends on HAVE_CLK && HAS_IOMEM
-> > +     default ARCH_BCM_CYGNUS
->
-> This looks good. As pointed out before the default is a bit strange
-> and could include ARCH_BCM_MOBILE for symmetry.
+On Fri, Nov 23, 2018 at 10:21:15AM +0100, Miquel Raynal wrote:
+> Rename the mvebu_comhy_conf structure to be mvebu_comphy_conf, which is
+> probably what the original author meant.
+> 
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-Ok, let me resend a v3
+Acked-by: Antoine Tenart <antoine.tenart@bootlin.com>
 
->
-> Anyhow:
->
-> Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
->
-> Related to this driver I have a set of questions: If the disable
-> callback completed, does the hardware still drive the pin? If yes, would
-> it be possible to disable the pin driver such that the pin gets high-Z?
-> If yes, how?
+Thanks!
+Antoine
 
-The output pin type is configured with the bit "21:16 PWMOUT_TYPE RW
-default 0x3F" in the Control register
-PWM_CONTROL_TYPE_SHIFT macro in the driver
-Datasheets says : "When set to 1 the PWM Output signal will have a
-push/pull type.When set to 0 the PWM Output signal will have an open
-drain output type.Recommend to leave it push/pull type."
+> ---
+> 
+> Changes since v1
+> ================
+> * Removed the Fixes: tag after Antoine's request.
+> 
+> 
+>  drivers/phy/marvell/phy-mvebu-cp110-comphy.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+> index 86a5f7b9448b..31b9a1c18345 100644
+> --- a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+> +++ b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+> @@ -114,7 +114,7 @@
+>  #define MVEBU_COMPHY_LANES	6
+>  #define MVEBU_COMPHY_PORTS	3
+>  
+> -struct mvebu_comhy_conf {
+> +struct mvebu_comphy_conf {
+>  	enum phy_mode mode;
+>  	unsigned lane;
+>  	unsigned port;
+> @@ -129,7 +129,7 @@ struct mvebu_comhy_conf {
+>  		.mux = _mux,				\
+>  	}
+>  
+> -static const struct mvebu_comhy_conf mvebu_comphy_cp110_modes[] = {
+> +static const struct mvebu_comphy_conf mvebu_comphy_cp110_modes[] = {
+>  	/* lane 0 */
+>  	MVEBU_COMPHY_CONF(0, 1, PHY_MODE_SGMII, 0x1),
+>  	MVEBU_COMPHY_CONF(0, 1, PHY_MODE_2500SGMII, 0x1),
+> -- 
+> 2.19.1
+> 
 
-In the driver we actually set push/pull mode for all channels :
-/* Set push/pull for all channels */
-for (chan =3D 0; chan < kp->chip.npwm; chan++)
-value |=3D (1 << PWM_CONTROL_TYPE_SHIFT(chan));
-
-Regards,
-Clement
-
->
-> Best regards
-> Uwe
->
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
-     |
-> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
-|
+-- 
+Antoine Ténart, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
