@@ -2,158 +2,115 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F4A7C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E12C5C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:23:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B851720820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:21:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="DFZnldlv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B851720820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id A929720685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:23:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A929720685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504493AbeKXAFK (ORCPT
+        id S2504514AbeKXAHc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 19:05:10 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:51728 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394528AbeKXAFJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 19:05:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=OOjcz63Sr/9KqmtB35xykFtz+hrAlkihgQrZlq/gPBo=; b=DFZnldlvQGplXfx5RL3N17yJo
-        7AT1LgZgzXJ51tma+F7PnUeOQ0aZVDMpzyYlx0dxgcDYSSaImx6WILR1uoRS79XXZvLNXJ6OFbJHi
-        lWikAdscokOXQ3iD02ZsgDb0tj++zLRjA9H/iJl0KxNMpDClAJwx5XILh/So24GXDlVQI=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:50011)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gQBO4-0008A4-MK; Fri, 23 Nov 2018 13:20:48 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gQBNy-0007LO-QO; Fri, 23 Nov 2018 13:20:42 +0000
-Date:   Fri, 23 Nov 2018 13:20:38 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, linux-arch@vger.kernel.org,
-        linux-alpha@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-parisc@vger.kernel.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org, jdmason@kudzu.us,
-        xen-devel@lists.xenproject.org,
-        linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
-Subject: Re: remove the ->mapping_error method from dma_map_ops V2
-Message-ID: <20181123132038.GT30658@n2100.armlinux.org.uk>
-References: <20181122140320.24080-1-hch@lst.de>
- <CAHk-=wh=_T=A53+o4zLNbKio43LGqVDb0KCbWPDvAg54bRDmWw@mail.gmail.com>
- <20181122170715.GI30658@n2100.armlinux.org.uk>
- <CAHk-=wgfGzXuDAKFQPdzMib3QCRHfSTsy5=gLU-WCoya+Ym+1A@mail.gmail.com>
- <11829e3c-7302-f821-cf5c-863e5267a17b@arm.com>
- <20181123104918.GE1586@8bytes.org>
- <20181123110155.GR30658@n2100.armlinux.org.uk>
- <20181123130313.GI1586@8bytes.org>
+        Fri, 23 Nov 2018 19:07:32 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42484 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2394528AbeKXAHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 19:07:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AF27BAD7D;
+        Fri, 23 Nov 2018 13:23:18 +0000 (UTC)
+Subject: Re: [PATCH v1] mm/memory_hotplug: drop "online" parameter from
+ add_memory_resource()
+To:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Arun KS <arunks@codeaurora.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+References: <20181123123740.27652-1-david@redhat.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <60a53b1b-bfbc-79d1-6151-e0779577ab6c@suse.com>
+Date:   Fri, 23 Nov 2018 14:23:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181123130313.GI1586@8bytes.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181123123740.27652-1-david@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 02:03:13PM +0100, Joerg Roedel wrote:
-> On Fri, Nov 23, 2018 at 11:01:55AM +0000, Russell King - ARM Linux wrote:
-> > Yuck.  So, if we have a 4GB non-PAE 32-bit system, or a PAE system
-> > where we have valid memory across the 4GB boundary and no IOMMU,
-> > we have to reserve the top 4K page in the first 4GB of RAM?
+On 23/11/2018 13:37, David Hildenbrand wrote:
+> User space should always be in charge of how to online memory and
+> if memory should be onlined automatically in the kernel. Let's drop the
+> parameter to overwrite this - XEN passes memhp_auto_online, just like
+> add_memory(), so we can directly use that instead internally.
 > 
-> But that is only needed when dma_addr_t is 32bit anyway, no?
+> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: Juergen Gross <jgross@suse.com>
+> Cc: Stefano Stabellini <sstabellini@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> Cc: Arun KS <arunks@codeaurora.org>
+> Cc: Mathieu Malaterre <malat@debian.org>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-You said:
+Acked-by: Juergen Gross <jgross@suse.com>
 
-  But we can easily work around that by reserving the top 4k of the first
-  4GB of IOVA address space in the allocator, no? Then these values are
-  never returned as valid DMA handles.
 
-To me, your proposal equates to this in code:
-
-int dma_error(dma_addr_t addr)
-{
-	return (addr & ~(dma_addr_t)0xfff) == 0xfffff000 ? (s32)addr : 0; 
-}
-
-Hence, the size of dma_addr_t would be entirely irrelevant.  This
-makes dma_addr_t values in the range of 0xfffff000 to 0xffffffff special,
-irrespective of whether dma_addr_t is 32-bit or 64-bit.
-
-If that's not what you meant, then I'm afraid your statement wasn't
-worded very well - so please can you re-word to state more precisely
-what your proposal is?
-
-> > Rather than inventing magic cookies like this, I'd much rather we
-> > sanitised the API so that we have functions that return success or
-> > an error code, rather than trying to shoe-horn some kind of magic
-> > error codes into dma_addr_t and subtly break systems in the process.
-> 
-> Sure, but is has the obvious downside that we need to touch every driver
-> that uses these functions, and that are probably a lot of drivers.
-
-So we have two options:
-- change the interface
-- subtly break drivers
-
-In any case, I disagree that we need to touch every driver.  Today,
-drivers just do:
-
-	if (dma_mapping_error(dev, addr))
-
-and, because dma_mapping_error() returns a boolean, they only care about
-the true/falseness.  If we're going to start returning error codes, then
-there's no point just returning error codes unless we have some way for
-drivers to use them.  Yes, the simple way would be to make
-dma_mapping_error() translate addr to an error code, and that maintains
-compatibility with existing drivers.
-
-If, instead, we revamped the DMA API, and had the *new* mapping functions
-which returned an error code, then the existing mapping functions can be
-implemented as part of compatibility rather trivially:
-
-dma_addr_t dma_map_single(...)
-{
-	dma_addr_t addr;
-	int error;
-
-	error = dma_map_single_error(..., &addr);
-	if (error)
-		addr = DMA_MAPPING_ERROR;
-	return addr;
-}
-
-which means that if drivers want access to the error code, they use
-dma_map_single_error(), meanwhile existing drivers just get on with life
-as it _currently_ is, with the cookie-based all-ones error code - without
-introducing any of this potential breakage.
-
-Remember, existing drivers would need modification in _any_ case to make
-use of a returned error code, so the argument that we'd need to touch
-every driver doesn't really stand up.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Juergen
