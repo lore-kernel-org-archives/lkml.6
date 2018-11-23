@@ -2,107 +2,232 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A264C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 21:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D5CC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 21:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 183FF20664
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 21:07:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8729E20865
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 21:09:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="c+XCp3F7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 183FF20664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="HlX7kxio"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8729E20865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbeKXHxn (ORCPT
+        id S1726731AbeKXHzD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 02:53:43 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:35236 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726467AbeKXHxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 02:53:43 -0500
-Received: from zn.tnic (p200300EC2BDC9100DCA0409AA15535E1.dip0.t-ipconnect.de [IPv6:2003:ec:2bdc:9100:dca0:409a:a155:35e1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 25B761EC02D1;
-        Fri, 23 Nov 2018 22:07:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1543007268;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=/vX8gulj6vukEfIyQl5O8Rn5krafebFNqMpo0kP8ZU4=;
-        b=c+XCp3F7a86lbVRP6s1hBICDmCRehAyS1IddbCWT/+WvMfqFGHaEA7ZRHvqIYVXMm9jvKj
-        OrW4SyGgH6TqgL4V55CfnDu5ppzGW0vVW4pRKeUovMmlcY26s/bzUFu86i0HSGcO0RFPe3
-        b4IdHYv3/Y0ui56iGBKewSvaF8uwf4w=
-Date:   Fri, 23 Nov 2018 22:07:39 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>
-Subject: Re: [PATCH] x86/TSC: Use RDTSCP
-Message-ID: <20181123210739.GO30697@zn.tnic>
-References: <20181119184556.11479-1-bp@alien8.de>
- <20181123200307.GA6223@roeck-us.net>
- <20181123204425.GN30697@zn.tnic>
- <901af2a0-e0d7-586d-5f04-2066cf1ac871@roeck-us.net>
+        Sat, 24 Nov 2018 02:55:03 -0500
+Received: from mail.efficios.com ([167.114.142.138]:36568 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbeKXHzD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Nov 2018 02:55:03 -0500
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 550469ACC3;
+        Fri, 23 Nov 2018 16:09:08 -0500 (EST)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id 5-hhJ7RwYubo; Fri, 23 Nov 2018 16:09:07 -0500 (EST)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id ABF809ACB7;
+        Fri, 23 Nov 2018 16:09:07 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com ABF809ACB7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1543007347;
+        bh=OrbKv5IFil1JCcY2aYtDEIKFr4ZRWb/R8RG+ETlTIuA=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=HlX7kxioma2CyO+I31RrsfXyHs/Ym/sRaS2VEsiQ0KRQbw0pa+C5YUQDq9muTaQ0p
+         FCjPv/mNkZOAoFRrOLDgwUOSHVWx4ooKfGvnpZiomFOW1ZxC4JrkELGc+MJJ4KiEP1
+         rmtRFNJ2Swu9++hkBDjaKulTfSLtzTN/ykNYskOH8XxJlZtHaJiy1r60YN93e2hFz+
+         shA3muLVX0wXhBPgHqZeTmZkiiWKgSyRMe2WnptVjTcTM84JAxdWejEJQmcZZXH17K
+         BZ7ghGcYSCljsvPBylbTJt9DvhDew4zukUiZnCfhUypQfxnWSrBat5AlNL1LZDmLzW
+         9i3FWnyA/Y92Q==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id EjLOfgWaK5_2; Fri, 23 Nov 2018 16:09:07 -0500 (EST)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 8AA2B9ACB0;
+        Fri, 23 Nov 2018 16:09:07 -0500 (EST)
+Date:   Fri, 23 Nov 2018 16:09:07 -0500 (EST)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Rich Felker <dalias@libc.org>
+Cc:     Florian Weimer <fweimer@redhat.com>, carlos <carlos@redhat.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>
+Message-ID: <1758017676.12041.1543007347347.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20181123183558.GM23599@brightrain.aerifal.cx>
+References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com> <20181122171010.GH23599@brightrain.aerifal.cx> <871s7cvt1l.fsf@oldenburg.str.redhat.com> <20181123142843.GJ23599@brightrain.aerifal.cx> <1150466925.11664.1542992720871.JavaMail.zimbra@efficios.com> <20181123173019.GK23599@brightrain.aerifal.cx> <865273158.11687.1542995541389.JavaMail.zimbra@efficios.com> <20181123183558.GM23599@brightrain.aerifal.cx>
+Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl
+ init and thread creation
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <901af2a0-e0d7-586d-5f04-2066cf1ac871@roeck-us.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.10_GA_3047 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
+Thread-Topic: glibc: Perform rseq(2) registration at nptl init and thread creation
+Thread-Index: Y0KdXQ8z9UGjS4gF+vUfwWTpiA8z3g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 01:03:25PM -0800, Guenter Roeck wrote:
-> It is a cut off screen log. x86 boots change xterm configuration from
-> wrap to non-wrap, and I did a cut-and-paste instead of copying the log
-> to a file. Sorry for that.
+----- On Nov 23, 2018, at 1:35 PM, Rich Felker dalias@libc.org wrote:
 
-No worries.
+> On Fri, Nov 23, 2018 at 12:52:21PM -0500, Mathieu Desnoyers wrote:
+>> ----- On Nov 23, 2018, at 12:30 PM, Rich Felker dalias@libc.org wrote:
+>> 
+>> > On Fri, Nov 23, 2018 at 12:05:20PM -0500, Mathieu Desnoyers wrote:
+>> >> ----- On Nov 23, 2018, at 9:28 AM, Rich Felker dalias@libc.org wrote:
+>> >> [...]
+>> >> > 
+>> >> > Absolutely. As long as it's in libc, implicit destruction will happen.
+>> >> > Actually I think the glibc code shound unconditionally unregister the
+>> >> > rseq address at exit (after blocking signals, so no application code
+>> >> > can run) in case a third-party rseq library was linked and failed to
+>> >> > do so before thread exit (e.g. due to mismatched ref counts) rather
+>> >> > than respecting the reference count, since it knows it's the last
+>> >> > user. This would make potentially-buggy code safer.
+>> >> 
+>> >> OK, let me go ahead with a few ideas/questions along that path.
+>> >                                                 ^^^^^^^^^^^^^^^
+>> >> 
+>> >> Let's say our stated goal is to let the "exit" system call from the
+>> >> glibc thread exit path perform rseq unregistration (without explicit
+>> >> unregistration beforehand). Let's look at what we need.
+>> > 
+>> > This is not "along that path". The above-quoted text is not about
+>> > assuming it's safe to make SYS_exit without unregistering the rseq
+>> > object, but rather about glibc being able to perform the
+>> > rseq-unregister syscall without caring about reference counts, since
+>> > it knows no other code that might depend on rseq can run after it.
+>> 
+>> When saying "along that path", what I mean is: if we go in that direction,
+>> then we should look into going all the way there, and rely on thread
+>> exit to implicitly unregister the TLS area.
+>> 
+>> Do you see any reason for doing an explicit unregistration at thread
+>> exit rather than simply rely on the exit system call ?
+> 
+> Whether this is needed is an implementation detail of glibc that
+> should be permitted to vary between versions. Unless glibc wants to
+> promise that it would become a public guarantee, it's not part of the
+> discussion around the API/ABI. Only part of the discussion around
+> implementation internals of the glibc rseq stuff.
+> 
+> Of course I may be biased thinking application code should not assume
+> this since it's not true on musl -- for detached threads, the thread
+> frees its own stack before exiting (and thus has to unregister
+> set_tid_address and set_robustlist before exiting).
 
-It was a head-scratcher though because look what it decodes to with the
-'b':
+OK, so on glibc, the implementation could rely on exit side-effect to
+implicitly unregister rseq. On musl, based on the scenario you describe,
+the library should unregister rseq explicitly before stack reclaim.
 
-[ 0.854209] Code: 90 90 90 90 90 90 90 a1 84 37 11 cd c3 8d b4 26 00 00 00 00 8d 76 00 c3 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00 90 55 89 e5 <0f> ae f0b 0f 31 5d c3 8d b6 00 00 00 00 55 89 e5 57 31 ff 56 53 89
-All code
-========
-   0:   90                      nop
-   1:   90                      nop
-   2:   90                      nop
-   3:   90                      nop
-   4:   90                      nop
-   5:   90                      nop
-   6:   90                      nop
-   7:   a1 84 37 11 cd          mov    0xcd113784,%eax
-   c:   c3                      ret
-   d:   8d b4 26 00 00 00 00    lea    0x0(%esi,%eiz,1),%esi
-  14:   8d 76 00                lea    0x0(%esi),%esi
-  17:   c3                      ret
-  18:   8d b4 26 00 00 00 00    lea    0x0(%esi,%eiz,1),%esi
-  1f:   8d b4 26 00 00 00 00    lea    0x0(%esi,%eiz,1),%esi
-  26:   90                      nop
-  27:   55                      push   %ebp
-  28:   89 e5                   mov    %esp,%ebp
-  2a:*  0f ae 0b                fxrstor (%ebx)          <-- trapping instruction
-  2d:   0f 31                   rdtsc
-  2f:   5d                      pop    %ebp
-  30:   c3                      ret
+Am I understanding the situation correctly ?
 
-FXRSTOR?!?!?
+> 
+>> >> First, we need the TLS area to be valid until the exit system call
+>> >> is invoked by the thread. If glibc defines __rseq_abi as a weak symbol,
+>> >> I'm not entirely sure we can guarantee the IE model if another library
+>> >> gets its own global-dynamic weak symbol elected at execution time. Would
+>> >> it be better to switch to a "strong" symbol for the glibc __rseq_abi
+>> >> rather than weak ?
+>> > 
+>> > This doesn't help; still whichever comes first in link order would
+>> > override. Either way __rseq_abi would be in static TLS, though,
+>> > because any dynamically-loaded library is necessarily loaded after
+>> > libc, which is loaded at initial exec time.
+>> 
+>> OK, AFAIU so you argue for leaving the __rseq_abi symbol "weak". Just making
+>> sure I correctly understand your position.
+> 
+> I don't think it matters, and I don't think making it weak is
+> meaningful or useful (weak in a shared library is largely meaningless)
+> but maybe I'm missing something here.
 
-:-)
+Using a "weak" symbol in early adopter libraries is important, so they
+can be loaded together into the same process without causing loader
+errors due to many definitions of the same strong symbol.
+
+Using "weak" in a C library is something I'm not sure is a characteristic
+we want or need, because I doubt we would ever want to load two libc at the
+same time in a given process.
+
+The only reason I see for using "weak" for the __rseq_abi symbol in the
+libc is if we want to allow early adopter applications to define
+__rseq_abi as a strong symbol, which would make some sense.
+
+
+> 
+>> Something can be technically correct based on the current implementation,
+>> but fragile with respect to future changes. We need to carefully distinguish
+>> between the two when exposing ABIs.
+> 
+> Yes.
+> 
+>> >> There has been presumptions about signals being blocked when the thread
+>> >> exits throughout this email thread. Out of curiosity, what code is
+>> >> responsible for disabling signals in this situation ?
+>> 
+>> This question is still open.
+> 
+> I can't find it -- maybe it's not done in glibc. It is in musl, and I
+> assumed glibc would also do it, because otherwise it's possible to see
+> some inconsistent states from signal handlers. Maybe these are all
+> undefined due to AS-unsafety of pthread_exit, but I think you can
+> construct examples where something could be observably wrong without
+> breaking any rules.
+
+Good to know for the musl case.
+
+> 
+>> > Related to this,
+>> >> is it valid to access a IE model TLS variable from a signal handler at
+>> >> _any_ point where the signal handler nests over thread's execution ?
+>> >> This includes early start and just before invoking the exit system call.
+>> > 
+>> > It should be valid to access *any* TLS object like this, but the
+>> > standards don't cover it well. Right now access to dynamic TLS from
+>> > signal handlers is unsafe in glibc, but static is safe.
+>> 
+>> Which is a shame for the lttng-ust tracer, which needs global-dynamic
+>> TLS variables so it can be dlopen'd, but aims at allowing tracing from
+>> signal handlers. It looks like due to limitations of global-dynamic
+>> TLS, tracing from instrumented signal handlers with lttng-ust tracepoints
+>> could crash the process if the signal handler nests early at thread start
+>> or late before thread exit. One way out of this would be to ensure signals
+>> are blocked at thread start/exit, but I can't find the code responsible for
+>> doing this within glibc.
+> 
+> Just blocking at start/exit won't solve the problem because
+> global-dynamic TLS in glibc involves dynamic allocation, which is hard
+> to make AS-safe and of course can fail, leaving no way to make forward
+> progress.
+
+How hard would it be to create a async-signal-safe memory pool, which would
+be always accessed with signals blocked, so we could fix those corner-cases
+for good ?
+
+Thanks,
+
+Mathieu
+
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
