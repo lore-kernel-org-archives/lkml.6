@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F6CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9278C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2463C20861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:29:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2463C20861
+	by mail.kernel.org (Postfix) with ESMTP id A971520820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:30:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A971520820
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502856AbeKWUNY (ORCPT
+        id S2502845AbeKWUNY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 23 Nov 2018 15:13:24 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49270 "EHLO mail.bootlin.com"
+Received: from mail.bootlin.com ([62.4.15.54]:49271 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388038AbeKWUKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388036AbeKWUKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 23 Nov 2018 15:10:16 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 587DF20DCB; Fri, 23 Nov 2018 10:26:48 +0100 (CET)
+        id 889E620DD1; Fri, 23 Nov 2018 10:26:48 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id F166D20DD1;
-        Fri, 23 Nov 2018 10:26:29 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3DDED20DD6;
+        Fri, 23 Nov 2018 10:26:30 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org
@@ -37,9 +37,9 @@ Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v2 10/43] drm/fourcc: Add format helpers for checking YUV planes disposition
-Date:   Fri, 23 Nov 2018 10:24:42 +0100
-Message-Id: <20181123092515.2511-11-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 11/43] drm/fourcc: Add format info helpers for checking YUV sub-sampling
+Date:   Fri, 23 Nov 2018 10:24:43 +0100
+Message-Id: <20181123092515.2511-12-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
 References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
@@ -50,103 +50,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces new format helpers that use the previously-introduced
-format info helpers for checking YUV planes disposition.
-
-Only the format fourcc is required by these helpers and the formats are
-iterated from the list.
+Display engine drivers often need to distinguish between different types of
+YUV sub-sampling. This introduces helpers to check for common sub-sampling
+ratios in their commonly-used denomination from the DRM format info.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- drivers/gpu/drm/drm_fourcc.c | 60 ++++++++++++++++++++++++++++++++++++
- include/drm/drm_fourcc.h     |  3 ++
- 2 files changed, 63 insertions(+)
+ include/drm/drm_fourcc.h | 75 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
-index f85650c3463a..b56e773f9f63 100644
---- a/drivers/gpu/drm/drm_fourcc.c
-+++ b/drivers/gpu/drm/drm_fourcc.c
-@@ -432,6 +432,66 @@ bool drm_format_is_yuv(uint32_t format)
- }
- EXPORT_SYMBOL(drm_format_is_yuv);
- 
-+/**
-+ * drm_format_is_yuv_packed - check that the format is a YUV format with data
-+ * laid in a single plane
-+ * @format: pixel format
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format is a packed YUV format
-+ */
-+bool drm_format_is_yuv_packed(uint32_t format)
-+{
-+	const struct drm_format_info *info;
-+
-+	info = drm_format_info(format);
-+	if (!info)
-+		return false;
-+
-+	return drm_format_info_is_yuv_packed(info);
-+}
-+EXPORT_SYMBOL(drm_format_is_yuv_packed);
-+
-+/**
-+ * drm_format_is_yuv_semiplanar - check that the format is a YUV format with
-+ * data laid in two planes (luminance and chrominance)
-+ * @format: pixel format
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format is a semiplanar YUV format
-+ */
-+bool drm_format_is_yuv_semiplanar(uint32_t format)
-+{
-+	const struct drm_format_info *info;
-+
-+	info = drm_format_info(format);
-+	if (!info)
-+		return false;
-+
-+	return drm_format_info_is_yuv_semiplanar(info);
-+}
-+EXPORT_SYMBOL(drm_format_is_yuv_semiplanar);
-+
-+/**
-+ * drm_format_is_yuv_planar - check that the format is a YUV format with data
-+ * laid in three planes (one for each YUV component)
-+ * @format: pixel format
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format is a planar YUV format
-+ */
-+bool drm_format_is_yuv_planar(uint32_t format)
-+{
-+	const struct drm_format_info *info;
-+
-+	info = drm_format_info(format);
-+	if (!info)
-+		return false;
-+
-+	return drm_format_info_is_yuv_planar(info);
-+}
-+EXPORT_SYMBOL(drm_format_is_yuv_planar);
-+
- /**
-  * drm_format_info_block_width - width in pixels of block.
-  * @info: pixel format info
 diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
-index f43d5ba412fb..b652b711df1a 100644
+index b652b711df1a..d170b7b323f7 100644
 --- a/include/drm/drm_fourcc.h
 +++ b/include/drm/drm_fourcc.h
-@@ -200,6 +200,9 @@ int drm_format_vert_chroma_subsampling(uint32_t format);
- int drm_format_plane_width(int width, uint32_t format, int plane);
- int drm_format_plane_height(int height, uint32_t format, int plane);
- bool drm_format_is_yuv(uint32_t format);
-+bool drm_format_is_yuv_packed(uint32_t format);
-+bool drm_format_is_yuv_semiplanar(uint32_t format);
-+bool drm_format_is_yuv_planar(uint32_t format);
- unsigned int drm_format_info_block_width(const struct drm_format_info *info,
- 					 int plane);
- unsigned int drm_format_info_block_height(const struct drm_format_info *info,
+@@ -185,6 +185,81 @@ drm_format_info_is_yuv_planar(const struct drm_format_info *info)
+ 	return info->is_yuv && info->num_planes == 3;
+ }
+ 
++/**
++ * drm_format_info_is_yuv_sampling_410 - check that the format info matches a
++ * YUV format with 4:1:0 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:1:0
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_410(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 4 && info->vsub == 4;
++}
++
++/**
++ * drm_format_info_is_yuv_sampling_411 - check that the format info matches a
++ * YUV format with 4:1:1 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:1:1
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_411(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 4 && info->vsub == 1;
++}
++
++/**
++ * drm_format_info_is_yuv_sampling_420 - check that the format info matches a
++ * YUV format with 4:2:0 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:2:0
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_420(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 2 && info->vsub == 2;
++}
++
++/**
++ * drm_format_info_is_yuv_sampling_422 - check that the format info matches a
++ * YUV format with 4:2:2 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:2:2
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_422(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 2 && info->vsub == 1;
++}
++
++/**
++ * drm_format_info_is_yuv_sampling_444 - check that the format info matches a
++ * YUV format with 4:4:4 sub-sampling
++ * @info: format info
++ *
++ * Returns:
++ * A boolean indicating whether the format info matches a YUV format with 4:4:4
++ * sub-sampling.
++ */
++static inline bool
++drm_format_info_is_yuv_sampling_444(const struct drm_format_info *info)
++{
++	return info->is_yuv && info->hsub == 1 && info->vsub == 1;
++}
++
+ const struct drm_format_info *__drm_format_info(u32 format);
+ const struct drm_format_info *drm_format_info(u32 format);
+ const struct drm_format_info *
 -- 
 2.19.1
 
