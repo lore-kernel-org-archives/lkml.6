@@ -2,110 +2,148 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 637ADC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E50CC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F65720685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:02:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F65720685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 34A52206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:03:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34A52206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502219AbeKWRpT (ORCPT
+        id S2502230AbeKWRqI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 12:45:19 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41226 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2393379AbeKWRpT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 12:45:19 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAN6wqQv147014
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 02:02:21 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nx9umw51r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 02:02:19 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Fri, 23 Nov 2018 07:02:17 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 23 Nov 2018 07:02:14 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAN72E8g57606176
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 23 Nov 2018 07:02:14 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EC1414C1F8;
-        Fri, 23 Nov 2018 07:02:13 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A527E4C1EA;
-        Fri, 23 Nov 2018 07:02:13 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.95])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Fri, 23 Nov 2018 07:02:13 +0000 (GMT)
-Date:   Fri, 23 Nov 2018 08:02:12 +0100
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] s390: Remove obsolete bust_spinlock() implementation
-References: <20181122141529.14933-1-pmladek@suse.com>
- <20181123021748.GB1582@jagdpanzerIV>
+        Fri, 23 Nov 2018 12:46:08 -0500
+Received: from relay.sw.ru ([185.231.240.75]:57032 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389987AbeKWRqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 12:46:08 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gQ5UX-0000hx-Qp; Fri, 23 Nov 2018 10:03:05 +0300
+Subject: Re: [PATCH 2/2] mm: ksm: do not block on page lock when searching
+ stable tree
+To:     Yang Shi <yang.shi@linux.alibaba.com>, mhocko@kernel.org,
+        vbabka@suse.cz, hannes@cmpxchg.org, hughd@google.com,
+        akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1541618201-120667-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1541618201-120667-2-git-send-email-yang.shi@linux.alibaba.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <302f3116-7e53-2750-ec2d-b90feb4cafec@virtuozzo.com>
+Date:   Fri, 23 Nov 2018 10:03:04 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181123021748.GB1582@jagdpanzerIV>
-X-TM-AS-GCONF: 00
-x-cbid: 18112307-0012-0000-0000-000002CEF5F8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112307-0013-0000-0000-000021042A06
-Message-Id: <20181123070212.GA3300@osiris>
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-23_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811230056
+In-Reply-To: <1541618201-120667-2-git-send-email-yang.shi@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 11:17:48AM +0900, Sergey Senozhatsky wrote:
-> On (11/22/18 15:15), Petr Mladek wrote:
-> > The commit cefc8be82403cf ("Consolidate bust_spinlocks()") kept
-> > the s390-specific implementation because of the absence of CONFIG_VT.
-> > In fact, the only difference was calling console_unblank() instead of
-> > unblank_screen().
-> > 
-> > The common implementation in lib/bust_spinlocks.c started to call
-> > unblank_screen() explicitly since the commit b61312d353da187
-> > ("oops handling: ensure that any oops is flushed to the mtdoops
-> > console").
-> > 
-> > As a result, the custom implementation is not longer necessary.
-> > And we could get all the other improvements of the common
-> > implementation for free.
+On 07.11.2018 22:16, Yang Shi wrote:
+> ksmd need search stable tree to look for the suitable KSM page, but the
+> KSM page might be locked for long time due to i.e. KSM page rmap walk.
 > 
-> I believe I sent a similar patch several weeks ago and it's
-> in s390 patch queue as of now, waiting for the next merge
-> window.
+> It sounds not worth waiting for the lock, the page can be skip, then try
+> to merge it in the next scan to avoid long stall if its content is
+> still intact.
 > 
-> lkml.kernel.org/r/20181025081108.GB26561@osiris
+> Introduce async mode to get_ksm_page() to not block on page lock, like
+> what try_to_merge_one_page() does.
+> 
+> Return -EBUSY if trylock fails, since NULL means not find suitable KSM
+> page, which is a valid case.
+> 
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 
-Yes, it will be added soon to the features branch of the
-s390/linux.git repository on kernel.org and then hit linux-next.
+Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 
+> ---
+>  mm/ksm.c | 29 +++++++++++++++++++++++++----
+>  1 file changed, 25 insertions(+), 4 deletions(-)
+> 
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index 5b0894b..576803d 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -667,7 +667,7 @@ static void remove_node_from_stable_tree(struct stable_node *stable_node)
+>  }
+>  
+>  /*
+> - * get_ksm_page: checks if the page indicated by the stable node
+> + * __get_ksm_page: checks if the page indicated by the stable node
+>   * is still its ksm page, despite having held no reference to it.
+>   * In which case we can trust the content of the page, and it
+>   * returns the gotten page; but if the page has now been zapped,
+> @@ -685,7 +685,8 @@ static void remove_node_from_stable_tree(struct stable_node *stable_node)
+>   * a page to put something that might look like our key in page->mapping.
+>   * is on its way to being freed; but it is an anomaly to bear in mind.
+>   */
+> -static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
+> +static struct page *__get_ksm_page(struct stable_node *stable_node,
+> +				   bool lock_it, bool async)
+>  {
+>  	struct page *page;
+>  	void *expected_mapping;
+> @@ -728,7 +729,14 @@ static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
+>  	}
+>  
+>  	if (lock_it) {
+> -		lock_page(page);
+> +		if (async) {
+> +			if (!trylock_page(page)) {
+> +				put_page(page);
+> +				return ERR_PTR(-EBUSY);
+> +			}
+> +		} else
+> +			lock_page(page);
+> +
+>  		if (READ_ONCE(page->mapping) != expected_mapping) {
+>  			unlock_page(page);
+>  			put_page(page);
+> @@ -751,6 +759,11 @@ static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
+>  	return NULL;
+>  }
+>  
+> +static struct page *get_ksm_page(struct stable_node *stable_node, bool lock_it)
+> +{
+> +	return __get_ksm_page(stable_node, lock_it, false);
+> +}
+> +
+>  /*
+>   * Removing rmap_item from stable or unstable tree.
+>   * This function will clean the information from the stable/unstable tree.
+> @@ -1675,7 +1688,11 @@ static struct page *stable_tree_search(struct page *page)
+>  			 * It would be more elegant to return stable_node
+>  			 * than kpage, but that involves more changes.
+>  			 */
+> -			tree_page = get_ksm_page(stable_node_dup, true);
+> +			tree_page = __get_ksm_page(stable_node_dup, true, true);
+> +
+> +			if (PTR_ERR(tree_page) == -EBUSY)
+> +				return ERR_PTR(-EBUSY);
+> +
+>  			if (unlikely(!tree_page))
+>  				/*
+>  				 * The tree may have been rebalanced,
+> @@ -2062,6 +2079,10 @@ static void cmp_and_merge_page(struct page *page, struct rmap_item *rmap_item)
+>  
+>  	/* We first start with searching the page inside the stable tree */
+>  	kpage = stable_tree_search(page);
+> +
+> +	if (PTR_ERR(kpage) == -EBUSY)
+> +		return;
+> +
+>  	if (kpage == page && rmap_item->head == stable_node) {
+>  		put_page(kpage);
+>  		return;
+> 
