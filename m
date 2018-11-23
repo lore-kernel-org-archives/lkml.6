@@ -2,120 +2,112 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B3FC04EBA
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BDA6C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD2FF20645
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:24:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="OO/CxISE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD2FF20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	by mail.kernel.org (Postfix) with ESMTP id 3936520645
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 08:25:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3936520645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408528AbeKWTHM (ORCPT
+        id S2408534AbeKWTIO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 14:07:12 -0500
-Received: from mail-lj1-f173.google.com ([209.85.208.173]:42421 "EHLO
-        mail-lj1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408500AbeKWTHL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 14:07:11 -0500
-Received: by mail-lj1-f173.google.com with SMTP id l15-v6so9944398lja.9
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 00:23:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HIfelMlnLBH4z2Mnp8iWztGi0Pyq+RYmCWqVegN7yz8=;
-        b=OO/CxISEAHwYLusZ2lqc/VFIueoLBZbA2HaFbm4YzdF3wuB33DYzS408OoiKVCwv4v
-         cBwilKqIyIEV8u8O6mUatX6I5ssUy39WBx1whNpoZJB0LyXOpCikuNCINEFuAoz8xG90
-         3k8rRIFC2aS21rYYA3c1fk5KGlZcggkfDl3+B4/8bY9CMAXAzkqzeu6MuU1MenJ6D5XG
-         H37CT16aGTUA/Uo4Brj6ZH3nFMNIdvIwOHut/xZ+3Xdvv5uNnR9GcyEj9siLgWhOG2Qe
-         AwxnT1iHa0Y2RHd4g+0hFdkLZ82MND3VYa/WFxwtdmYgjLBGtDuTdKr5fd4k9tEDNKAM
-         /Uog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HIfelMlnLBH4z2Mnp8iWztGi0Pyq+RYmCWqVegN7yz8=;
-        b=USE9R9cyZIGg3iU953zlOcoSZVYIvU8ucmSb06UlnjXdpaMhkXBGqQZgMZ/3px+pGg
-         SiTl8MpKust3oA+wYZHwNY4rTIASfrsx3EpyiJVvLR9evMv4zO/9d3PXN+suFhektrSi
-         dpDLYTSCptkKcFi34c44nl0SXOzsL5GKiFYqScfDUXniMXZY3G4WpAzNPEmjKpjWNP0y
-         lD/3vutspDOX6Mjo+CXo91/26Pgf4isLLw4K80Soxi7qY/+aUcYLwRAmnS3mS4Q3vt0O
-         UEO9F2cIxHAIOHka1Pshr/ijNvaD9EyenGJOQBc6RE/7XS6651Baf+QcQ7GskaVaT2BW
-         k+yw==
-X-Gm-Message-State: AA+aEWaAUyHBQh5yTeij2fRxU3W7PV6wHCBGowVn9/V9lApQnzgFyWK0
-        unZXToZ/i0pb9WLFkZS9FNqRrCXjKQ4=
-X-Google-Smtp-Source: AFSGD/WqEVkH1SQf76yKO5VFAGOE8gTG0gdPdMmgUDqPzmYxzqGhCHxDnhaZkTCRdbaYNb+VhGUmzw==
-X-Received: by 2002:a2e:8007:: with SMTP id j7-v6mr5605266ljg.22.1542961437653;
-        Fri, 23 Nov 2018 00:23:57 -0800 (PST)
-Received: from [192.168.0.36] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.googlemail.com with ESMTPSA id k63sm6706233lfe.13.2018.11.23.00.23.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Nov 2018 00:23:57 -0800 (PST)
-Subject: Re: lightnvm: pblk: avoid ref warning on cache creation
-To:     javier@cnexlabs.com
-Cc:     javier@javigon.com, hans.holmberg@cnexlabs.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1542894410-14047-1-git-send-email-javier@cnexlabs.com>
- <2ef4bc58-98cf-fdfc-195d-d6f88e85f4a6@lightnvm.io>
- <2D1F9096-EFF8-43C2-8403-9897B3D36409@cnexlabs.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <cfcc4dee-c07f-156f-4523-1bda9c878b02@lightnvm.io>
-Date:   Fri, 23 Nov 2018 09:23:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 23 Nov 2018 14:08:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55980 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2393472AbeKWTIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 14:08:14 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E029EACC2;
+        Fri, 23 Nov 2018 08:24:59 +0000 (UTC)
+Subject: Re: [Xen-devel][PATCH 2/3] drm/xen-front: Use Xen common shared
+ buffer implementation
+To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, alsa-devel@alsa-project.org,
+        boris.ostrovsky@oracle.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20181122100230.14976-1-andr2000@gmail.com>
+ <20181122100230.14976-2-andr2000@gmail.com>
+ <20181122143354.GG4266@phenom.ffwll.local>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <0e9bde68-3f4c-7471-1d8d-89b145e65b54@suse.com>
+Date:   Fri, 23 Nov 2018 09:24:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <2D1F9096-EFF8-43C2-8403-9897B3D36409@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181122143354.GG4266@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/23/2018 09:16 AM, Javier Gonzalez wrote:
-> 
-> 
->> On 23 Nov 2018, at 09.14, Matias Bjørling <mb@lightnvm.io> wrote:
+On 22/11/2018 15:33, Daniel Vetter wrote:
+> On Thu, Nov 22, 2018 at 12:02:29PM +0200, Oleksandr Andrushchenko wrote:
+>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 >>
->>> On 11/22/2018 02:46 PM, Javier González wrote:
->>> Matias,
->>> Can you pick this up for 4.20? Even though it is not an error per se, it
->>> does trigger an ugly false positive warning when CONFIG_REFCOUNT_FULL is
->>> set.
->>> Thanks,
->>> Javier
->>> Javier González (1):
->>>    lightnvm: pblk: avoid ref warning on cache creation
->>>   drivers/lightnvm/pblk-init.c | 14 +++++---------
->>>   1 file changed, 5 insertions(+), 9 deletions(-)
+>> Use page directory based shared buffer implementation
+>> now available as common code for Xen frontend drivers.
 >>
->> It is too late to get it for 4.20. I'll pull it in for 4.21.
-> 
-> Well, if it is a fix it’s not too late AFAIK. It also applies to a patch picked up in this series. We should have catches this before.
-> 
-> But I guess it’s your call.
+>> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>> ---
+>>  drivers/gpu/drm/xen/Kconfig               |   1 +
+>>  drivers/gpu/drm/xen/Makefile              |   1 -
+>>  drivers/gpu/drm/xen/xen_drm_front.c       |  60 ++--
+>>  drivers/gpu/drm/xen/xen_drm_front_gem.c   |   1 -
+>>  drivers/gpu/drm/xen/xen_drm_front_shbuf.c | 414 ----------------------
+>>  drivers/gpu/drm/xen/xen_drm_front_shbuf.h |  64 ----
+>>  6 files changed, 30 insertions(+), 511 deletions(-)
+>>  delete mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+>>  delete mode 100644 drivers/gpu/drm/xen/xen_drm_front_shbuf.h
+> Anyway, I'm all for code duplication removal, so if the Xen folks are
+> happy with patch 1, this one here has my ack. Might also be best to merge
+> all three through the Xen tree. Fallback would be xen folks sending a
+> topic pull request with these 3 patches to drm-misc and takashi's sound
+> tree.
 
-There is a likelihood that Linus would catch it, with the result of fire 
-& fury. I don't feel like using one of my cat life's for this one.
+I'm fine with taking it through the Xen tree.
 
-> 
->>
->> We can put on a Fixes: 1864de94ec9d6 "lightnvm: pblk: stop recreating global caches" if you want Greg and friends to pick picked it up for stable kernels?
-> 
-> I didn’t add it as it is not a bug in itself. But it is good to add it. Can you do it.
-> 
 
-I'll do it.
-
-> Javier.
-> 
-
+Juergen
