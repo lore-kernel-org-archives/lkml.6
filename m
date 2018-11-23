@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D34C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6699C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 033AB206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:54:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 033AB206B2
+	by mail.kernel.org (Postfix) with ESMTP id 912EE206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:54:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 912EE206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503571AbeKWViW (ORCPT
+        id S2503586AbeKWVic (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 16:38:22 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:9158 "EHLO
+        Fri, 23 Nov 2018 16:38:32 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:52897 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2503150AbeKWViW (ORCPT
+        by vger.kernel.org with ESMTP id S2503150AbeKWVic (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 16:38:22 -0500
+        Fri, 23 Nov 2018 16:38:32 -0500
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 23 Nov 2018 19:54:32 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 23 Nov 2018 19:54:43 +0900
 Received: from vbox.ree.adwin.renesas.com (unknown [10.226.37.67])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 21E184146021;
-        Fri, 23 Nov 2018 19:54:30 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9A1634146021;
+        Fri, 23 Nov 2018 19:54:41 +0900 (JST)
 From:   Phil Edworthy <phil.edworthy@renesas.com>
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Jacopo Mondi <jacopo@jmondi.org>,
@@ -35,45 +35,40 @@ Cc:     Jacopo Mondi <jacopo@jmondi.org>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
-Date:   Fri, 23 Nov 2018 10:54:27 +0000
-Message-Id: <20181123105428.13457-1-phil.edworthy@renesas.com>
+Subject: [PATCH] pinctrl: rzn1: Fix of_get_child_count() error check
+Date:   Fri, 23 Nov 2018 10:54:28 +0000
+Message-Id: <20181123105428.13457-2-phil.edworthy@renesas.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181123105428.13457-1-phil.edworthy@renesas.com>
+References: <20181123105428.13457-1-phil.edworthy@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes the check for unused mdio bus setting and the following static
-checker warning:
- drivers/pinctrl/pinctrl-rzn1.c:198 rzn1_pinctrl_mdio_select()
- warn: always true condition '(ipctl->mdio_func[mdio] >= 0) => (0-u32max >= 0)'
+If we assign the result of of_get_child_count() to an unsigned int,
+the code will not detect any errors. Therefore assign it to an int
+instead.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v3:
- - Split fixing the return var when calling of_get_child_count() into
-   a separate patch.
-v2:
- - Don't rely on rely on the implicit typecast from -1 to uint
 ---
  drivers/pinctrl/pinctrl-rzn1.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/pinctrl-rzn1.c b/drivers/pinctrl/pinctrl-rzn1.c
-index 57886dcff53d..a04235e3bec4 100644
+index a04235e3bec4..cc0e5aa9128a 100644
 --- a/drivers/pinctrl/pinctrl-rzn1.c
 +++ b/drivers/pinctrl/pinctrl-rzn1.c
-@@ -112,7 +112,7 @@ struct rzn1_pinctrl {
- 	struct rzn1_pinctrl_regs __iomem *lev2;
- 	u32 lev1_protect_phys;
- 	u32 lev2_protect_phys;
--	u32 mdio_func[2];
-+	int mdio_func[2];
+@@ -810,8 +810,8 @@ static int rzn1_pinctrl_probe_dt(struct platform_device *pdev,
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct device_node *child;
+ 	unsigned int maxgroups = 0;
+-	unsigned int nfuncs = 0;
+ 	unsigned int i = 0;
++	int nfuncs = 0;
+ 	int ret;
  
- 	struct rzn1_pin_group *groups;
- 	unsigned int ngroups;
+ 	nfuncs = of_get_child_count(np);
 -- 
 2.17.1
 
