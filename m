@@ -2,76 +2,161 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 505FAC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E1CC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B15820672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:48:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B15820672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D9AE20672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:48:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D9AE20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633031AbeKXDda (ORCPT
+        id S2633048AbeKXDdg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 22:33:30 -0500
-Received: from muru.com ([72.249.23.125]:54862 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729195AbeKXDd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 22:33:29 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id D1D7380D4;
-        Fri, 23 Nov 2018 16:48:31 +0000 (UTC)
-Date:   Fri, 23 Nov 2018 08:48:27 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Belisko Marek <marek.belisko@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org,
-        "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: omap5 fixing palmas IRQ_TYPE_NONE warning leads to gpadc timeouts
-Message-ID: <20181123164827.GE53235@atomide.com>
-References: <CAAfyv35bat+t6awL-VRigAoaUTySwOgZkQMs=W9mEKQ6VDW3FA@mail.gmail.com>
- <20180703084516.GT112168@atomide.com>
- <CAAfyv37F1s8Cg=pfxiN0dA6YEX7KMB-+uifjRoqAdKGWLeYEwA@mail.gmail.com>
- <20181113180656.GE53235@atomide.com>
- <46d271b2-35d3-6353-c530-3292cdac53ab@ti.com>
- <20181119161906.GP53235@atomide.com>
- <20181119171406.GQ53235@atomide.com>
- <725df8e7-4aff-3751-d0b0-809b89e882e5@nvidia.com>
+        Fri, 23 Nov 2018 22:33:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40574 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729195AbeKXDdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 22:33:35 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3C1F2AEC1;
+        Fri, 23 Nov 2018 16:48:33 +0000 (UTC)
+Date:   Sat, 24 Nov 2018 03:48:19 +1100
+From:   Aleksa Sarai <asarai@suse.de>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     j@bitron.ch, Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian@brauner.io>,
+        Linux API <linux-api@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        David Drysdale <drysdale@google.com>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH v4 2/4] namei: O_BENEATH-style path resolution flags
+Message-ID: <20181123164819.skruu23wjwzf47f5@mikami>
+References: <20181112142654.341-1-cyphar@cyphar.com>
+ <20181112142654.341-3-cyphar@cyphar.com>
+ <1ce83cdf6e3168350b69f98f08aaa202bbaa682d.camel@bitron.ch>
+ <CALCETrURCXjNMBR6DjujVc6HHHS=CbET81kHS+odur+Bm-z7Tg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bd7wx4sujq35ecq2"
 Content-Disposition: inline
-In-Reply-To: <725df8e7-4aff-3751-d0b0-809b89e882e5@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CALCETrURCXjNMBR6DjujVc6HHHS=CbET81kHS+odur+Bm-z7Tg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Jon Hunter <jonathanh@nvidia.com> [181120 11:14]:
-> On 19/11/2018 17:14, Tony Lindgren wrote:
-> > Well so commit 7e9d474954f4 ("ARM: tegra: Correct polarity for
-> > Tegra114 PMIC interrupt") states that tegra114 inverts the
-> > polarity of the PMIC interrupt. So adding Jon and Thierry to Cc.
-> 
-> Yes Tegra can invert the polarity of the PMIC interrupt.
 
-So is there some IP on Tegra called "Tegra PMC" that is
-inverting the interrupt? Or is the "Tegra PMC" that commit
-7e9d474954f4 mentions just the palmas configuration for
-inverting the interrupt?
+--bd7wx4sujq35ecq2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The problem I'm having is With omap5 where I can only get the
-PMIC interrupts working with IRQ_TYPE_LEVEL_HIGH if
-PALMAS_POLARITY_CTRL_INT_POLARITY is not set unlike for
-Tegra.
+On 2018-11-23, Andy Lutomirski <luto@kernel.org> wrote:
+> > On Nov 23, 2018, at 5:10 AM, J=C3=BCrg Billeter <j@bitron.ch> wrote:
+> >
+> > Hi Aleksa,
+> >
+> >> On Tue, 2018-11-13 at 01:26 +1100, Aleksa Sarai wrote:
+> >> * O_BENEATH: Disallow "escapes" from the starting point of the
+> >>  filesystem tree during resolution (you must stay "beneath" the
+> >>  starting point at all times). Currently this is done by disallowing
+> >>  ".." and absolute paths (either in the given path or found during
+> >>  symlink resolution) entirely, as well as all "magic link" jumping.
+> >
+> > With open_tree(2) and OPEN_TREE_CLONE, will O_BENEATH still be
+> > necessary?
+>=20
+> This discussion reminds me of something I=E2=80=99m uncomfortable with in=
+ the
+> current patches: currently, most of the O_ flags determine some
+> property of the returned opened file.  The new O_ flags you're adding
+> don't -- instead, they affect the lookup of the file.  So O_BENEATH
+> doesn't return a descriptor that can only be used to loop up files
+> beneath it -- it just controls whether open(2) succeeds or fails.  It
+> might be nice for the naming of the flags to reflect this.
 
-Regards,
+I agree that there is something quite weird about having path resolution
+flags in an *open* syscall. The main reason why it's linked to open is
+because that's the only way to get O_PATH descriptors (which is what you
+would use for most of the extended operations we need -- as well as
+reading+writing to files which is what most users would do with this).
 
-Tony
+And I think O_PATH is another example of an open flag that is just odd
+in how it changes the semantics of using open(2).
+
+One of the ideas I pitched in an earlier mail was a hypothetical
+resolveat(2) -- which would just be a new way of getting an O_PATH
+descriptor. This way, we wouldn't be using up more O_* flag bits with
+this feature and we'd be able to play with more radical semantic changes
+in the future. I can outline these here if you like, but it's a bit of a
+long discussion and I'd prefer not to derail things too much if
+resolveat(2) is definitely out of the question.
+
+> I also don't love that we have some magic AT_ flags that work with
+> some syscalls and some magic O_ flags that work with others.
+
+I also completely agree. I think that we should have a discussion about
+the long-term plan of syscall flags because it's starting to get a
+little bit crazy:
+
+ * Every "get an fd" syscall has its own brand of O_CLOEXEC. Thankfully,
+   many of them use the same value (except for memfd_create(2) and a few
+   other examples).
+ * AT_* was supposed to be generic across all *at(2) syscalls, but there
+   are several cases where this isn't really true anymore.
+
+   * renameat2(2) only supports RENAME_* flags.
+   * openat(2) supports only O_* flags.
+   * Most AT_* flags have O_* counterparts (or are even more of a mess
+	 such as with {AT_SYMLINK_FOLLOW,AT_SYMLINK_NOFOLLOW,O_NOFOLLOW}).
+   * statx(2) added AT_STATX_* flags, making AT_* no longer generic.
+
+(Also I just want to mention something I noticed while writing this
+patch -- openat(2) violates one of the kernel "golden rules" -- that you
+reject unknown flags. openat(2) will silently ignore unknown flag bits.
+I'm sure there's a really good reason for this, but it's another flag
+oddity that I felt fit here.)
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--bd7wx4sujq35ecq2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlv4L08ACgkQnhiqJn3b
+jbQNZw//cbVZ6mja1WexO3nT8oHZekLWz51OovZZ//xUM8t4WXfqf794yLdjBW/f
+szkgqHpmoKEGtzJ1jrDkuNezflK8gy/2WETSTYv+hEump+c3z2RgZBbb7dmVz0pF
+MsPgBIAhLtFtnTyMTT57NMgQxCURCG9NAb3vWzcujuci0QX6kzKpMmhNoTe9q8G9
+MuNVv7x/NJCaoUOnLsi1QoEc7RWYQIUfVGHUX6Sw5km8NzLlOOdmYDUC8rJdEIJs
+RBdBQWq+XR/wVFuzBzLfbMLFRsQPlDDOrWvxap7t9CwjKmc1Qm1Q0R/L28kwnNeq
+mPxpFCBnXQ0eWlNTUMIK+gETGlqOxs91lC1rv2FdiwEAyT1SLCBLoIE0X+d1UR4x
+sewI7Rs/WTlFSdPWE8QRltgIK8E0TVrfJxn/vBD/GyAX+edl9JH8Cdx8RV+MKS5x
+yI1d+7YNsYto2heIZ2KrAfWxWluVutiMJ1VjW477vN4T9cVE6jDIbl9dOKFoMDCQ
+MKY3J5CYj9COfhtTbwuIR6jOWeflBTy/VIvGLcPZjNbBLCe/38CfeCBvWObtmmcD
+Jpe4Nkkc5ttQXiZu37A8ZpehnoHBC45YMsRLvavPowTt82P0P8Y5RsIJfaqu0KFw
+xPjs0g6JHiMdUExryNZDsLEIoAeCDCE0aOi+OaHnjYaxTIUyxEk=
+=aoUZ
+-----END PGP SIGNATURE-----
+
+--bd7wx4sujq35ecq2--
