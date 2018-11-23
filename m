@@ -2,189 +2,116 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0968CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:52:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B03DC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBE4320861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:52:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBE4320861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BD6120685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:53:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BD6120685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502984AbeKWUfy (ORCPT
+        id S2409189AbeKWUg4 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:35:54 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15148 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387976AbeKWUfy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 15:35:54 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C5853939A660E;
-        Fri, 23 Nov 2018 17:52:17 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Fri, 23 Nov 2018
- 17:52:17 +0800
-Subject: Re: [PATCH 1/2] f2fs: fix sbi->extent_list corruption issue
-To:     Sahitya Tummala <stummala@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1542884360-19470-1-git-send-email-stummala@codeaurora.org>
- <a1e799ad-a559-12cc-9f2d-a6f037640a35@huawei.com>
- <20181122121107.GB52295@jaegeuk-macbookpro.roam.corp.google.com>
- <20181123034218.GA9838@codeaurora.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <75b71652-31a9-1061-37a4-9d137c3db9aa@huawei.com>
-Date:   Fri, 23 Nov 2018 17:52:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 23 Nov 2018 15:36:56 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:49901 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394558AbeKWUg4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 15:36:56 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gQ89C-0003PF-VU; Fri, 23 Nov 2018 10:53:15 +0100
+Date:   Fri, 23 Nov 2018 10:53:14 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     zhe.he@windriver.com
+Cc:     catalin.marinas@arm.com, tglx@linutronix.de, rostedt@goodmis.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v2] kmemleak: Turn kmemleak_lock to raw spinlock on RT
+Message-ID: <20181123095314.hervxkxtqoixovro@linutronix.de>
+References: <1542877459-144382-1-git-send-email-zhe.he@windriver.com>
 MIME-Version: 1.0
-In-Reply-To: <20181123034218.GA9838@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <1542877459-144382-1-git-send-email-zhe.he@windriver.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/11/23 11:42, Sahitya Tummala wrote:
-> On Thu, Nov 22, 2018 at 04:11:07AM -0800, Jaegeuk Kim wrote:
->> On 11/22, Chao Yu wrote:
->>> On 2018/11/22 18:59, Sahitya Tummala wrote:
->>>> When there is a failure in f2fs_fill_super() after/during
->>>> the recovery of fsync'd nodes, it frees the current sbi and
->>>> retries again. This time the mount is successful, but the files
->>>> that got recovered before retry, still holds the extent tree,
->>>> whose extent nodes list is corrupted since sbi and sbi->extent_list
->>>> is freed up. The list_del corruption issue is observed when the
->>>> file system is getting unmounted and when those recoverd files extent
->>>> node is being freed up in the below context.
->>>>
->>>> list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
->>>> <...>
->>>> kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
->>>> task: fffffff1f46f2280 task.stack: ffffff8008068000
->>>> lr : __list_del_entry_valid+0x94/0xb4
->>>> pc : __list_del_entry_valid+0x94/0xb4
->>>> <...>
->>>> Call trace:
->>>> __list_del_entry_valid+0x94/0xb4
->>>> __release_extent_node+0xb0/0x114
->>>> __free_extent_tree+0x58/0x7c
->>>> f2fs_shrink_extent_tree+0xdc/0x3b0
->>>> f2fs_leave_shrinker+0x28/0x7c
->>>> f2fs_put_super+0xfc/0x1e0
->>>> generic_shutdown_super+0x70/0xf4
->>>> kill_block_super+0x2c/0x5c
->>>> kill_f2fs_super+0x44/0x50
->>>> deactivate_locked_super+0x60/0x8c
->>>> deactivate_super+0x68/0x74
->>>> cleanup_mnt+0x40/0x78
->>>> __cleanup_mnt+0x1c/0x28
->>>> task_work_run+0x48/0xd0
->>>> do_notify_resume+0x678/0xe98
->>>> work_pending+0x8/0x14
->>>>
->>>> Fix this by cleaning up the extent tree of those recovered files
->>>> before freeing up sbi and before next retry.
->>>
->>> Would it be more clear to call shrink_dcache_sb earlier to invalid all
->>> inodes and call f2fs_shrink_extent_tree release cached entries and trees in
->>> error path?
->>
->> Agreed.
->>
-> I have tried doing shrink_dcache_sb() earlier but that doesn't call
-> f2fs_shrink_extent_tree(). So I have moved f2fs_join_shrinker() earlier and 
-> tried calling f2fs_leave_shrinker() in the error path. That helps to clean up
-> the cached extent nodes. However, I see that extent tree is left intact for
-
-I didn't get it, you mean, in error path, after we call shrink_dcache_sb &
-f2fs_leave_shrinker, for those recovered files, their extent nodes were
-evicted, but their extent trees are still in cache?
-
-> those recovered files, which should not be a problem as it gets freed as part
-> of next umount/rm. Only one small problem I see with this is - during rm/umount when
-> those previoulsy recovered files are being evicted, extent tree memory gets
-> free'd but the counter sbi->total_ext_tree gets invalid as these recovered
-> files are not present as part of current sbi->extent_tree_root. So i have come
-> up with this patch below to fix this. Let me know if this looks good?
+On 2018-11-22 17:04:19 [+0800], zhe.he@windriver.com wrote:
+> From: He Zhe <zhe.he@windriver.com>
 > 
-> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-> index 1cb0fcc..3e4801e 100644
-> --- a/fs/f2fs/extent_cache.c
-> +++ b/fs/f2fs/extent_cache.c
-> @@ -654,9 +654,9 @@ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
->  		}
->  		f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
->  		list_del_init(&et->list);
-> -		radix_tree_delete(&sbi->extent_tree_root, et->ino);
-> +		if (radix_tree_delete(&sbi->extent_tree_root, et->ino))
-> +			atomic_dec(&sbi->total_ext_tree);
->  		kmem_cache_free(extent_tree_slab, et);
-> -		atomic_dec(&sbi->total_ext_tree);
->  		atomic_dec(&sbi->total_zombie_tree);
->  		tree_cnt++;
->  
-> @@ -767,7 +767,8 @@ void f2fs_destroy_extent_tree(struct inode *inode)
->  	/* delete extent tree entry in radix tree */
->  	mutex_lock(&sbi->extent_tree_lock);
->  	f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
-> -	radix_tree_delete(&sbi->extent_tree_root, inode->i_ino);
-> +	if (radix_tree_delete(&sbi->extent_tree_root, inode->i_ino))
-> +		atomic_dec(&sbi->total_ext_tree);
->  	kmem_cache_free(extent_tree_slab, et);
->  	atomic_dec(&sbi->total_ext_tree);
->  	mutex_unlock(&sbi->extent_tree_lock);
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index af58b2c..3e5588f 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -3295,6 +3295,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  	if (err)
->  		goto free_root_inode;
->  
-> +	f2fs_join_shrinker(sbi);
->  #ifdef CONFIG_QUOTA
->  	/* Enable quota usage during mount */
->  	if (f2fs_sb_has_quota_ino(sb) && !f2fs_readonly(sb)) {
-> @@ -3379,8 +3380,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  			sbi->valid_super_block ? 1 : 2, err);
->  	}
->  
-> -	f2fs_join_shrinker(sbi);
-> -
->  	f2fs_tuning_parameters(sbi);
->  
->  	f2fs_msg(sbi->sb, KERN_NOTICE, "Mounted with checkpoint version = %llx",
-> @@ -3402,6 +3401,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  	 * falls into an infinite loop in f2fs_sync_meta_pages().
->  	 */
->  	truncate_inode_pages_final(META_MAPPING(sbi));
-> +	shrink_dcache_sb(sb);
-> +	f2fs_leave_shrinker(sbi);
-
-Why not just calling f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi)); ?
-
-Thanks,
-
->  	f2fs_unregister_sysfs(sbi);
->  free_root_inode:
->  	dput(sb->s_root);
-> @@ -3445,7 +3446,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->  	/* give only one another chance */
->  	if (retry) {
->  		retry = false;
-> -		shrink_dcache_sb(sb);
->  		goto try_onemore;
->  	}
->  	return err;
+> kmemleak_lock, as a rwlock on RT, can possibly be held in atomic context and
+> causes the follow BUG.
 > 
+> BUG: scheduling while atomic: migration/15/132/0x00000002
+…
+> Preemption disabled at:
+> [<ffffffff8c927c11>] cpu_stopper_thread+0x71/0x100
+> CPU: 15 PID: 132 Comm: migration/15 Not tainted 4.19.0-rt1-preempt-rt #1
+> Hardware name: Intel Corp. Harcuvar/Server, BIOS HAVLCRB1.X64.0015.D62.1708310404 08/31/2017
+> Call Trace:
+>  dump_stack+0x4f/0x6a
+>  ? cpu_stopper_thread+0x71/0x100
+>  __schedule_bug.cold.16+0x38/0x55
+>  __schedule+0x484/0x6c0
+>  schedule+0x3d/0xe0
+>  rt_spin_lock_slowlock_locked+0x118/0x2a0
+>  rt_spin_lock_slowlock+0x57/0x90
+>  __rt_spin_lock+0x26/0x30
+>  __write_rt_lock+0x23/0x1a0
+>  ? intel_pmu_cpu_dying+0x67/0x70
+>  rt_write_lock+0x2a/0x30
+>  find_and_remove_object+0x1e/0x80
+>  delete_object_full+0x10/0x20
+>  kmemleak_free+0x32/0x50
+>  kfree+0x104/0x1f0
+>  ? x86_pmu_starting_cpu+0x30/0x30
+>  intel_pmu_cpu_dying+0x67/0x70
+>  x86_pmu_dying_cpu+0x1a/0x30
+>  cpuhp_invoke_callback+0x92/0x700
+>  take_cpu_down+0x70/0xa0
+>  multi_cpu_stop+0x62/0xc0
+>  ? cpu_stop_queue_work+0x130/0x130
+>  cpu_stopper_thread+0x79/0x100
+>  smpboot_thread_fn+0x20f/0x2d0
+>  kthread+0x121/0x140
+>  ? sort_range+0x30/0x30
+>  ? kthread_park+0x90/0x90
+>  ret_from_fork+0x35/0x40
 
+If this is the only problem? kfree() from a preempt-disabled section
+should cause a warning even without kmemleak.
+
+> And on v4.18 stable tree the following call trace, caused by grabbing
+> kmemleak_lock again, is also observed.
+> 
+> kernel BUG at kernel/locking/rtmutex.c:1048! 
+> invalid opcode: 0000 [#1] PREEMPT SMP PTI 
+> CPU: 5 PID: 689 Comm: mkfs.ext4 Not tainted 4.18.16-rt9-preempt-rt #1 
+…
+> Call Trace: 
+>  ? preempt_count_add+0x74/0xc0 
+>  rt_spin_lock_slowlock+0x57/0x90 
+>  ? __kernel_text_address+0x12/0x40 
+>  ? __save_stack_trace+0x75/0x100 
+>  __rt_spin_lock+0x26/0x30 
+>  __write_rt_lock+0x23/0x1a0 
+>  rt_write_lock+0x2a/0x30 
+>  create_object+0x17d/0x2b0 
+…
+
+is this an RT-only problem? Because mainline should not allow read->read
+locking or read->write locking for reader-writer locks. If this only
+happens on v4.18 and not on v4.19 then something must have fixed it.
+ 
+
+Sebastian
