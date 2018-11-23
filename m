@@ -2,118 +2,108 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2B1C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63818C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:41:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE87A20685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:41:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE87A20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 2C84220861
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:41:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iyCBDgIO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C84220861
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409165AbeKWUYj (ORCPT
+        id S2502876AbeKWUYl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:24:39 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:38346 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390381AbeKWUYj (ORCPT
+        Fri, 23 Nov 2018 15:24:41 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40067 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390381AbeKWUYk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 15:24:39 -0500
-Received: by mail-vs1-f67.google.com with SMTP id x64so6825660vsa.5;
-        Fri, 23 Nov 2018 01:41:08 -0800 (PST)
+        Fri, 23 Nov 2018 15:24:40 -0500
+Received: by mail-lf1-f66.google.com with SMTP id v5so8255291lfe.7
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 01:41:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kIj36/zyD1Ru52blSuw/L5cXp3mGSJ9KUJuFx9pDUQo=;
+        b=iyCBDgIOkvgupqNK3ucwnaTmmTvHMX0edt1kADbFjbEhn46wM0+jm/+jxQfC0Npbj4
+         EM0XclqlQPcIYXoO/tF6RzK7mOADC6rfB6bDgMJUF/Q+B4h2To1cDtwflR2DgMKPzTnj
+         rzf1TYcoBXn+bNM/lPOTzTSWLuTJrkk+ofbdU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=any4FmYY/LdNJ7dv+5oFEsPFV8qJ+56k6WaJQexK4eM=;
-        b=CipdJNnKbJhKrkPNcyQKShnp6v41ePsnewO62Eod5I2pW0qRRtH3LeHhHdXV+biq5B
-         XiyV13UHVie8rjEBB6oSQyMOlmvea0oCCJOK/4Cd9ALuF/Iv6B+Xvo8lHfE8J/0qgJRS
-         TczljCzhbABrxzLI+eP+0UUBnjuObZbTrzDvskVwLZZ370BCPdT360nETFNdQCRM1NOE
-         MIsdQOHm/kWdD0roz9lXW3msPRaSsdVnZK0BcFpqS7TSvmUPzBKec27dunxkSwIDakv6
-         opCQ5uE/v/pRmGKvfitmfz9EB6b+g9vtyqFJbfF+O/mHX0icIoL25Cu1/qPHT9YyjVmF
-         W5qw==
-X-Gm-Message-State: AGRZ1gJjRU0pm4usyDTsmJOoFlK4RlswtxKsDPoqE4UfxyHTe6vNEqPM
-        bdmnqJWWA8RqycO4T4MXjJZelX3+EkhuYhwZVSs=
-X-Google-Smtp-Source: AFSGD/X1p7Hr1iX1CA9zXAFwmNAnnxqxvgEugjb45JhumqGzs300AKR3mrL13MESNWqm7QQPbBmeup35PsUzpaXs9hA=
-X-Received: by 2002:a67:3885:: with SMTP id n5mr5537835vsi.96.1542966068343;
+        bh=kIj36/zyD1Ru52blSuw/L5cXp3mGSJ9KUJuFx9pDUQo=;
+        b=QR9Gtx/SdZrvWc0IlICWlZiW8U+5I10paOcNNau1vmtlCRS/5YsRY+Jf+MQRQgQ/PX
+         +IF6RlaNoY2iPOImXV+AxMGql90nT/3QfyMxTy0DvQ3j8oAYUu1M4KVFI0TObwfd2Itw
+         T09QG4sxpSl0ZwjDuRcFgyLJrSZvYa2MG7+r5JXkD3mY5FibWk+mjST/UKU8InnK6jNI
+         UZ8I4XLJfp8U5AiCbN3fIJoqE3VutLAJkjMUl3Y1451IdQnvWL4b/0OduyQUnGBzrgZn
+         y32AAzd64iXviRyQakfv/Sk8eig7y09mTC5jQGeeOCw00zpkIxPRMM+AM2+Fc1YSw5QJ
+         AfsQ==
+X-Gm-Message-State: AGRZ1gKtnAyaktBynGNs872MSpJtnP8EqD99XMf5qGDdp0Mrj8OuOLjK
+        tC/t9nL3yFwov/1+CcxDSF7AnuLKwPpxX47h52k+OA==
+X-Google-Smtp-Source: AJdET5djPTAEz7ZJAwu+0JCDkDHeegX6z/NYXjH2QjWicNbwTJ+mbDDOAg+ptYplKuBAI6EkRX2U0u4Qe8i7HnNDLDQ=
+X-Received: by 2002:a19:2752:: with SMTP id n79mr9233667lfn.11.1542966068753;
  Fri, 23 Nov 2018 01:41:08 -0800 (PST)
 MIME-Version: 1.0
-References: <20181119161838.10610-1-phil.edworthy@renesas.com>
-In-Reply-To: <20181119161838.10610-1-phil.edworthy@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 23 Nov 2018 10:40:56 +0100
-Message-ID: <CAMuHMdU2ski3S4FhD5kOhtzxvpin8M5MoYwK7X5gqYZ+HoL0DA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: rzn1: Fix check for used MDIO bus
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20181122173015.23905-1-ckeepax@opensource.cirrus.com> <20181122173015.23905-3-ckeepax@opensource.cirrus.com>
+In-Reply-To: <20181122173015.23905-3-ckeepax@opensource.cirrus.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 23 Nov 2018 10:40:57 +0100
+Message-ID: <CACRpkdZEu44WHScd5VibYT5C9RikqcvKsgpVOpkkdrYbLaV8Ng@mail.gmail.com>
+Subject: Re: [PATCH 3/3] gpio: Add reference counting for non-exclusive GPIOs
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Phil,
+On Thu, Nov 22, 2018 at 6:30 PM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
 
-Thanks for your patch!
-
-On Mon, Nov 19, 2018 at 5:18 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> This fixes the check for unused mdio bus setting and the following static
-> checker warning:
->  drivers/pinctrl/pinctrl-rzn1.c:198 rzn1_pinctrl_mdio_select()
->  warn: always true condition '(ipctl->mdio_func[mdio] >= 0) => (0-u32max >= 0)'
+> Currently, a GPIO can be requested multiple times when the
+> NONEXCLUSIVE flag is set, however it must still be freed a single
+> time. This makes client code rather complex, since multiple drivers
+> may request the GPIO but only a single one can free it. Rather than
+> manually handling this in each driver add some basic reference
+> counting into the core.  Currently, this is fairly primitive but
+> so is the support for the NONEXCLUSIVE flag and the implementation
+> covers those use-cases.
 >
-> It also fixes the return var when calling of_get_child_count()
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-I think this should be a separate patch.
+This patch is not fixing anything right now, correct?
 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+I discussed the notion of pulling reference counting for
+nonexclusive GPIOs into gpiolib with Mark but the benefit is
+a bit unclear: if the subsystem using nonexeclusive GPIOs
+(currently only regulators) would still have to keep its own
+reference count or somehow semantically know when
+the last user is gone, the point is kind of moot.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I haven't looked closely at the regulators case but I got
+the impression that it is more complex than just reference
+counting so, currently I don't know if this is such a good
+idea.
 
-BTW, I have a question about rzn1_pinctrl_mdio_select():
+Anyway I would like to push this until we have cleaned
+up with the rest of the series I have boiling, if you don't
+mind.
 
-static void rzn1_pinctrl_mdio_select(struct rzn1_pinctrl *ipctl, int mdio,
-                                     u32 func)
-{
-        if (ipctl->mdio_func[mdio] >= 0 && ipctl->mdio_func[mdio] != func)
-                dev_warn(ipctl->dev, "conflicting setting for mdio%d!\n", mdio);
-        ipctl->mdio_func[mdio] = func;
+(Patch 1+2 should be fine anyway.)
 
-        dev_dbg(ipctl->dev, "setting mdio%d to %u\n", mdio, func);
-
-        writel(func, &ipctl->lev2->l2_mdio[mdio]);
-}
-
-The check warns the user if it overrides an already initialized MDIO function
-with a different value.
-However, there is no method to uninitialize (reset to -1) mdio_func[], to
-avoid getting the warning.
-
-For a use case, I was thinking about a DT overlay that would cause the
-MDIO function to be initialized on loading, and needs to uninitialize the
-MDIO function on removing.
-
-Perhaps that is very unlikely or even impossible, given the function of the
-pins controlled by the MDIO function?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
