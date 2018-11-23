@@ -2,529 +2,449 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBCDAC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66ED3C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:33:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E28F20685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:31:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E28F20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id 0D6D020685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:33:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TN2Z7UV9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D6D020685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504315AbeKWXP1 (ORCPT
+        id S2504337AbeKWXR6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:15:27 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:37124 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2504289AbeKWXP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:15:27 -0500
-Received: from [94.134.91.248] (helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gQAcA-0004Zg-8d; Fri, 23 Nov 2018 13:31:18 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Add DT for nanopc-t4
-Date:   Fri, 23 Nov 2018 13:31:17 +0100
-Message-ID: <2370153.n0vTqR1ltx@phil>
-In-Reply-To: <20181123074744.11583-1-tomeu.vizoso@collabora.com>
-References: <20181123073120.6250-1-tomeu.vizoso@collabora.com> <20181123074744.11583-1-tomeu.vizoso@collabora.com>
+        Fri, 23 Nov 2018 18:17:58 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:35376 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2409799AbeKWXR6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 18:17:58 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wANCXbv6039811;
+        Fri, 23 Nov 2018 06:33:37 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1542976417;
+        bh=tpsGwOl+iqyEy9LsRyn0eDJ1qZKjb91qYK9A9RnhQUk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=TN2Z7UV9SRHeyo37P99fj9/WGi/o1WuckJFOuIIcF9wqJTmPwDKcthpthNjKbLbkf
+         PpX7hhtUafJ5hhSr11GdKtWPuqZinqNDI0LRtuzzTVywMXFdpeUhDXX5ibWyX/poK1
+         iBJnrunTiIxZKuzWZqCJzOHndM9tIA0Vk4cDuO1g=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wANCXbWi069002
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 23 Nov 2018 06:33:37 -0600
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 23
+ Nov 2018 06:33:36 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Fri, 23 Nov 2018 06:33:36 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wANCXYQa010887;
+        Fri, 23 Nov 2018 06:33:34 -0600
+Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>
+CC:     <vkoul@kernel.org>, <dan.j.williams@intel.com>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <tony@atomide.com>, <linux-omap@vger.kernel.org>
+References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
+ <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
+ <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
+ <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
+ <20181122102948.GN6920@n2100.armlinux.org.uk>
+ <20181122151236.GA9611@n2100.armlinux.org.uk>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <6ed280af-edb6-4be7-82f4-7fc00378103e@ti.com>
+Date:   Fri, 23 Nov 2018 14:35:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20181122151236.GA9611@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomeu,
 
-Am Freitag, 23. November 2018, 08:46:30 CET schrieb Tomeu Vizoso:
-> diff --git a/Documentation/devicetree/bindings/arm/rockchip.txt b/Documentation/devicetree/bindings/arm/rockchip.txt
-> index 0cc71236d639..e907d309486e 100644
-> --- a/Documentation/devicetree/bindings/arm/rockchip.txt
-> +++ b/Documentation/devicetree/bindings/arm/rockchip.txt
-> @@ -71,6 +71,10 @@ Rockchip platforms device tree bindings
->      Required root node properties:
->        - compatible = "firefly,roc-rk3399-pc", "rockchip,rk3399";
+
+On 22/11/2018 17.12, Russell King - ARM Linux wrote:
+> On Thu, Nov 22, 2018 at 10:29:48AM +0000, Russell King - ARM Linux wrote:
+>> On Tue, Nov 20, 2018 at 11:04:06PM +0200, Aaro Koskinen wrote:
+>>> I had switched to PIO mode in 2015 since the WARNs about legacy DMA
+>>> API were too annoying and flooding the console. And now that I tried
+>>> using DMA again with g_ether, it doesn't work anymore. The device get's
+>>> recognized on host side, but no traffic goes through. Switching back to
+>>> PIO makes it to work again.
+>>
+>> A solution to that would be to do what the warning message says, and
+>> update the driver to the DMAengine API.
+> 
+> Here's a partial conversion (not even build tested) - it only supports
+> OUT transfers with dmaengine at the moment.
+
+Thanks!
+
+What I learned with the tusb that we need to rearrange things for
+DMAengine (4cadc711cdc7 usb: musb: tusb6010_omap: Allocate DMA channels
+upfront)
+
+But that was within the musb framework, so omap_udc might be simpler.
+
+> There's at least one thing that doesn't make sense - the driver
+> apparently can transfer more than req->length bytes, surely if it does
+> that, it's a serious problem - shouldn't it be noisy about that?
+
+
+> Also we can't deal with the omap_set_dma_dest_burst_mode() setting -
+> DMAengine always uses a 64 byte burst, but udc wants a smaller burst
+> setting.  Does this matter?
+
+The tusb also fiddled with the burst before the conversion, I believe
+what the DMAengine driver is doing should be fine. If not then we fix it
+while converting the omap_udc.
+
+> 
+> I've kept the old code for reference (and the driver will fall back if
+> we can't get a dmaengine channel.)  I haven't been through and checked
+> that we result in the channel setup largely the same either.
+> 
+> There will be one major difference - UDC uses element sync, where
+> an element is 16bits, ep->ep.maxpacket/2 in a frame, and "packets"
+> frames.  DMAengine is using frame sync, with a 16bit element, one
+> element in a frame, and packets*ep->ep.maxpacket/2 frames.  This
+> should be functionally equivalent but I'd like confirmation of that.
+
+Yes, I think it should be fine also.
+
+> 
+> I'm also not sure about this:
+> 
+>         if (cpu_is_omap15xx())
+>                 end++;
+> 
+> in dma_dest_len() - is that missing from the omap-dma driver?  It looks
+> like a work-around for some problem on OMAP15xx, but I can't make sense
+> about why it's in the UDC driver rather than the legacy DMA driver.
+
+afaik no other legacy drivers were doing similar thing, this must be
+something which is needed for the omap_udc driver to fix up something?
+
+> 
+> I'm also confused by:
+> 
+>         end |= start & (0xffff << 16);
+> 
+> also in dma_dest_len() - omap_get_dma_dst_pos() returns in the high 16
+> bits the full address:
+> 
+>         if (dma_omap1())
+>                 offset |= (p->dma_read(CDSA, lch) & 0xFFFF0000);
+
+CDSA is OMAP_DMA_REG_2X16BIT for omap1
+The CPC/CDAC holds the LSB of the _current_ DMA pointer. The code gets
+the MSB of the address from the CDSA registers.
+
+> 
+> so if the address crosses a 64k physical address boundary, surely orring
+> in the start address is wrong?  The more I look at dma_dest_len(), the
+> more I wonder whether that and dma_src_len() are anywhere near correct,
+> and whether that is a source of breakage for Aaro.
+
+Hrm, again... the position reporting on OMAP1 is certainly not something
+I would put my life on :o
+
+> As I've already said, I've no way to test this on hardware.
+> 
+> Please review and let me know whether I missed anything on the OUT
+> handling path.
+> 
+> Fixing the IN path is going to be a bit more head-scratching.
+> 
+>  drivers/usb/gadget/udc/omap_udc.c | 154 +++++++++++++++++++++++++++++---------
+>  drivers/usb/gadget/udc/omap_udc.h |   2 +
+>  2 files changed, 120 insertions(+), 36 deletions(-)
+> 
+> diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
+> index 3a16431da321..a37e1d2f0f3e 100644
+> --- a/drivers/usb/gadget/udc/omap_udc.c
+> +++ b/drivers/usb/gadget/udc/omap_udc.c
+> @@ -204,6 +204,7 @@ static int omap_ep_enable(struct usb_ep *_ep,
+>  	ep->dma_channel = 0;
+>  	ep->has_dma = 0;
+>  	ep->lch = -1;
+> +	ep->dma = NULL;
+>  	use_ep(ep, UDC_EP_SEL);
+>  	omap_writew(udc->clr_halt, UDC_CTRL);
+>  	ep->ackwait = 0;
+> @@ -576,21 +577,49 @@ static void finish_in_dma(struct omap_ep *ep, struct omap_req *req, int status)
+>  static void next_out_dma(struct omap_ep *ep, struct omap_req *req)
+>  {
+>  	unsigned packets = req->req.length - req->req.actual;
+> -	int dma_trigger = 0;
+> +	struct dma_async_tx_descriptor *tx;
+> +	struct dma_chan *dma = ep->dma;
+> +	dma_cookie_t cookie;
+>  	u16 w;
 >  
-> +- FriendlyElec NanoPC-T4 board:
-> +    Required root node properties:
-> +      - compatible = "friendlyarm,nanopc-t4", "rockchip,rk3399";
+> -	/* set up this DMA transfer, enable the fifo, start */
+> -	packets /= ep->ep.maxpacket;
+> -	packets = min(packets, (unsigned)UDC_RXN_TC + 1);
+> +	packets = min_t(unsigned, packets / ep->ep.maxpacket, UDC_RXN_TC + 1);
+>  	req->dma_bytes = packets * ep->ep.maxpacket;
+> -	omap_set_dma_transfer_params(ep->lch, OMAP_DMA_DATA_TYPE_S16,
+> -			ep->ep.maxpacket >> 1, packets,
+> -			OMAP_DMA_SYNC_ELEMENT,
+> -			dma_trigger, 0);
+> -	omap_set_dma_dest_params(ep->lch, OMAP_DMA_PORT_EMIFF,
+> -		OMAP_DMA_AMODE_POST_INC, req->req.dma + req->req.actual,
+> -		0, 0);
+> -	ep->dma_counter = omap_get_dma_dst_pos(ep->lch);
 > +
+> +	if (dma) {
+> +		struct dma_slave_config cfg = {
+> +			.direction = DMA_DEV_TO_MEM,
+> +			.src_addr_width = DMA_SLAVE_BUSWIDTH_2_BYTE,
+> +			/*
+> +			 * DMAengine uses frame sync mode, setting maxburst=1
+> +			 * is equivalent to element sync mode.
+> +			 */
+> +			.src_maxburst = 1,
 
-alphabetical please
+We should fix the omap-dma driver for slave_sg  instead:
 
->  - ChipSPARK PopMetal-RK3288 board:
->      Required root node properties:
->        - compatible = "chipspark,popmetal-rk3288", "rockchip,rk3288";
-> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-> index 49042c477870..ed90cd1e5a8b 100644
-> --- a/arch/arm64/boot/dts/rockchip/Makefile
-> +++ b/arch/arm64/boot/dts/rockchip/Makefile
-> @@ -20,3 +20,4 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rock960.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire-excavator.dtb
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopc-t4.dtb
+if (!burst)
+	burst = 1;
 
-alphabetical please
+I thought that I already did that.
 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi
-> new file mode 100644
-> index 000000000000..148f85b4bd49
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi
-
-[...]
-
-General comment about regulators, the vendor-kernel dts' regularly
-don't model regulators in a nice way representing the hardware.
-
-There is obviously schematics available for the board
-http://wiki.friendlyarm.com/wiki/images/d/dd/NanoPi-M4-2GB-1807-Schematic.pdf
-
-Please model the regulator tree following the naming scheme from the
-schematics and including correct supply chaining, so that
-$debug/regulator/regulator_summary looks nice.
-
-This makes it way easier to find issues later on if needed and represents
-the hardware in a correct way.
-
-I guess in the end it should look pretty similar to the rock960 or other
-rk3399 boards (except gru), as most boards follow the reference schematics
-for a big part.
-
-> +	vcc3v3_sys: vcc3v3-sys {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc3v3_sys";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +	};
-> +
-> +	vcc5v0_host: vcc5v0-host-regulator {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc5v0_host";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +	};
-> +
-> +	vcc5v0_sys: vcc5v0-sys {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc5v0_sys";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +	};
-> +
-> +	vccadc_ref: vccadc-ref {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc1v8_sys";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <1800000>;
-> +	};
-> +
-> +	vcc_sd: vcc-sd {
-> +		compatible = "regulator-fixed";
-> +		enable-active-high;
-> +		gpio = <&gpio0 1 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vcc_sd_h>;
-> +		regulator-name = "vcc_sd";
-> +		regulator-min-microvolt = <3000000>;
-> +		regulator-max-microvolt = <3000000>;
-> +	};
-> +
-> +	vcc_phy: vcc-phy-regulator {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc_phy";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +	};
-> +
-> +	vcc_lcd: vcc-lcd {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc_lcd";
-> +		gpio = <&gpio4 30 GPIO_ACTIVE_HIGH>;
-> +		startup-delay-us = <20000>;
-> +		enable-active-high;
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-boot-on;
-> +		vin-supply = <&vcc5v0_sys>;
-> +	};
-> +
-> +	vcc5v0_typec: vcc5v0-typec-regulator {
-> +		compatible = "regulator-fixed";
-> +		enable-active-high;
-> +		gpios = <&gpio4 26 GPIO_ACTIVE_HIGH>;
-> +		regulator-name = "vcc5v0_typec";
-> +		regulator-always-on;
-> +		vin-supply = <&vcc5v0_sys>;
-> +	};
-> +
-> +	vdd_log: vdd-log {
-> +		compatible = "pwm-regulator";
-> +		pwms = <&pwm2 0 25000 1>;
-> +		regulator-name = "vdd_log";
-> +		regulator-min-microvolt = <800000>;
-> +		regulator-max-microvolt = <1400000>;
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +
-> +		/* for rockchip boot on */
-> +		rockchip,pwm_id = <2>;
-> +		rockchip,pwm_voltage = <900000>;
-> +	};
-
-you might want to drop vdd_log for the time being. See
-https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v4.20-armsoc/dts64-fixes&id=13682e524167cbd7e2a26c5e91bec765f0f96273
-
-> +	sdio_pwrseq: sdio-pwrseq {
-> +		compatible = "mmc-pwrseq-simple";
-> +		clocks = <&rk808 1>;
-> +		clock-names = "ext_clock";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&wifi_enable_h>;
-> +
-> +		/*
-> +		 * On the module itself this is one of these (depending
-> +		 * on the actual card populated):
-> +		 * - SDIO_RESET_L_WL_REG_ON
-> +		 * - PDN (power down when low)
-> +		 */
-> +		reset-gpios = <&gpio0 10 GPIO_ACTIVE_LOW>; /* GPIO0_B2 */
-
-general for all gpios: <&gpio RK_PB2 ...> for new boards please
-
-
-> +	};
-> +};
-
-[...]
-
-> +&rga {
-> +	status = "disabled";
-
-Why disabled? It shouldn't hurt.
-
-> +};
-> +
-> +&cdn_dp {
-> +// TODO: typec/fusb302 doesn't have extcon support yet
-> +//	status = "enabled";
-> +	extcon = <&fusb0>;
-
-extcon is not specified and as we talked about yesterday, the
-whole thing doesn't work with the type-c framework yet,
-so ideally just remove the whole &cdn_dp node here.
-
-> +	phys = <&tcphy0_dp>;
-> +};
-> +
-> +&hdmi {
-
-general for node-phandles: alphabetical please
-
-> +	ddc-i2c-bus = <&i2c7>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&hdmi_cec>;
-> +	status = "okay";
-> +};
-> +
-> +&i2c0 {
-> +	status = "okay";
-> +	i2c-scl-rising-time-ns = <160>;
-> +	i2c-scl-falling-time-ns = <30>;
-> +	clock-frequency = <400000>;
-> +
-> +	vdd_cpu_b: syr827@40 {
-> +		compatible = "silergy,syr827";
-> +		reg = <0x40>;
-> +		vin-supply = <&vcc3v3_sys>;
-> +		regulator-compatible = "fan53555-reg";
-
-deprecated (and unusued) property
-
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vsel1_gpio>;
-> +		vsel-gpios = <&gpio1 17 GPIO_ACTIVE_HIGH>;
-
-not specified in mainline, ideally look at rock960 and friends
-for reference
-
-> +		regulator-name = "vdd_cpu_b";
-> +		regulator-min-microvolt = <712500>;
-> +		regulator-max-microvolt = <1500000>;
-> +		regulator-ramp-delay = <1000>;
-> +		fcs,suspend-voltage-selector = <1>;
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-initial-state = <3>;
-> +			regulator-state-mem {
-> +			regulator-off-in-suspend;
+> +			.src_addr = UDC_DATA_DMA,
 > +		};
-> +	};
 > +
-> +	vdd_gpu: syr828@41 {
-> +		compatible = "silergy,syr828";
-> +		reg = <0x41>;
-> +		vin-supply = <&vcc3v3_sys>;
-> +		regulator-compatible = "fan53555-reg";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vsel2_gpio>;
-> +		vsel-gpios = <&gpio1 14 GPIO_ACTIVE_HIGH>;
-
-same here
-
-> +		regulator-name = "vdd_gpu";
-> +		regulator-min-microvolt = <712500>;
-> +		regulator-max-microvolt = <1500000>;
-> +		regulator-ramp-delay = <1000>;
-> +		fcs,suspend-voltage-selector = <1>;
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-initial-state = <3>;
-> +			regulator-state-mem {
-> +			regulator-off-in-suspend;
-> +		};
-> +	};
+> +		if (WARN_ON(dmaengine_slave_config(dma, &cfg)))
+> +			return;
 > +
-
-[...]
-
-> +&i2c4 {
-> +	status = "okay";
-> +	i2c-scl-rising-time-ns = <160>;
-> +	i2c-scl-falling-time-ns = <30>;
-> +	clock-frequency = <400000>;
+> +		tx = dmaengine_prep_slave_single(dma,
+> +						 req->req.dma + req->req.actual,
+> +						 req->dma_bytes,
+> +						 DMA_DEV_TO_MEM, 0);
+> +		if (WARN_ON(!tx))
+> +			return;
+> +	} else {
+> +		int dma_trigger = 0;
 > +
-> +	fusb0: typec-portc@22 {
-> +		compatible = "fcs,fusb302";
-> +		reg = <0x22>;
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <RK_PA2 IRQ_TYPE_LEVEL_LOW>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&fusb0_int>;
-> +		vbus-supply = <&vcc5v0_typec>;
-> +		status = "okay";
-> +	};
-> +};
+> +		/* set up this DMA transfer, enable the fifo, start */
+> +		/* dt = S16, cen = ep->ep.maxpacket / 2, cfn = packets */
+> +		omap_set_dma_transfer_params(ep->lch, OMAP_DMA_DATA_TYPE_S16,
+> +				ep->ep.maxpacket >> 1, packets,
+> +				OMAP_DMA_SYNC_ELEMENT,
+> +				dma_trigger, 0);
+> +		omap_set_dma_dest_params(ep->lch, OMAP_DMA_PORT_EMIFF,
+> +			OMAP_DMA_AMODE_POST_INC, req->req.dma + req->req.actual,
+> +			0, 0);
+> +		ep->dma_counter = omap_get_dma_dst_pos(ep->lch);
+> +	}
+>  
+>  	omap_writew(UDC_RXN_STOP | (packets - 1), UDC_RXDMA(ep->dma_channel));
+>  	w = omap_readw(UDC_DMA_IRQ_EN);
+> @@ -599,7 +628,15 @@ static void next_out_dma(struct omap_ep *ep, struct omap_req *req)
+>  	omap_writew(ep->bEndpointAddress & 0xf, UDC_EP_NUM);
+>  	omap_writew(UDC_SET_FIFO_EN, UDC_CTRL);
+>  
+> -	omap_start_dma(ep->lch);
+> +	if (dma) {
+> +		cookie = dmaengine_submit(tx);
+> +		if (WARN_ON(dma_submit_error(cookie)))
+> +			return;
+> +		ep->dma_cookie = cookie;
+> +		dma_async_issue_pending(dma);
+> +	} else {
+> +		omap_start_dma(ep->lch);
+> +	}
+>  }
+>  
+>  static void
+> @@ -607,21 +644,39 @@ finish_out_dma(struct omap_ep *ep, struct omap_req *req, int status, int one)
+>  {
+>  	u16	count, w;
+>  
+> -	if (status == 0)
+> -		ep->dma_counter = (u16) (req->req.dma + req->req.actual);
+> -	count = dma_dest_len(ep, req->req.dma + req->req.actual);
+> +	if (ep->dma) {
+> +		struct dma_tx_state state;
 > +
-> +&i2c7 {
-> +	status = "okay";
-> +};
+> +		dmaengine_tx_status(ep->dma, ep->dma_cookie, &state);
 > +
+> +		count = req->dma_bytes - state.residual;
+> +	} else {
+> +		if (status == 0)
+> +			ep->dma_counter = (u16) (req->req.dma + req->req.actual);
+> +		count = dma_dest_len(ep, req->req.dma + req->req.actual);
+> +	}
 > +
-
-double empty line
-
-> +&io_domains {
-> +	status = "okay";
+>  	count += req->req.actual;
+>  	if (one)
+>  		count--;
 > +
-> +	bt656-supply = <&vcc1v8_dvp>;		/* bt656_gpio2ab_ms */
-> +	audio-supply = <&vcca1v8_codec>;
-> +	sdmmc-supply = <&vccio_sd>;		/* sdmmc_gpio4b_ms */
-> +	gpio1830-supply = <&vcc_3v0>;		/* gpio1833_gpio4cd_ms */
-
-I think we can do without the comments.
-
-> +};
+> +	/*
+> +	 * FIXME: Surely if count > req->req.length, something has gone
+> +	 * seriously wrong and we've scribbled over memory we should not...
+> +	 * so surely we should be a WARN_ON() at the very least?
+> +	 */
+>  	if (count <= req->req.length)
+>  		req->req.actual = count;
+>  
+> -	if (count != req->dma_bytes || status)
+> -		omap_stop_dma(ep->lch);
+> -
+> +	if (count != req->dma_bytes || status) {
+> +		if (ep->dma)
+> +			dmaengine_terminate_async(ep->dma);
+> +		else
+> +			omap_stop_dma(ep->lch);
+>  	/* if this wasn't short, request may need another transfer */
+> -	else if (req->req.actual < req->req.length)
+> +	} else if (req->req.actual < req->req.length) {
+>  		return;
+> +	}
+>  
+>  	/* rx completion */
+>  	w = omap_readw(UDC_DMA_IRQ_EN);
+> @@ -709,6 +764,7 @@ static void dma_channel_claim(struct omap_ep *ep, unsigned channel)
+>  
+>  	ep->dma_channel = 0;
+>  	ep->lch = -1;
+> +	ep->dma = NULL;
+>  	if (channel == 0 || channel > 3) {
+>  		if ((reg & 0x0f00) == 0)
+>  			channel = 3;
+> @@ -742,26 +798,44 @@ static void dma_channel_claim(struct omap_ep *ep, unsigned channel)
+>  				0, 0);
+>  		}
+>  	} else {
+> +		struct dma_chan *dma;
 > +
-> +&pmu_io_domains {
-> +	status = "okay";
-> +	pmu1830-supply = <&vcc_3v0>;
-> +};
+>  		dma_channel = OMAP_DMA_USB_W2FC_RX0 - 1 + channel;
+> -		status = omap_request_dma(dma_channel,
+> -			ep->ep.name, dma_error, ep, &ep->lch);
+> -		if (status == 0) {
 > +
-> +&pcie_phy {
-> +	status = "okay";
-> +	assigned-clocks = <&cru SCLK_PCIEPHY_REF>;
-> +	assigned-clock-parents = <&cru SCLK_PCIEPHY_REF100M>;
-> +	assigned-clock-rates = <100000000>;
-> +};
-> +
-> +&pcie0 {
-> +	status = "okay";
-> +	ep-gpios = <&gpio2 4 GPIO_ACTIVE_HIGH>;
-> +	num-lanes = <4>;
-> +	max-link-speed = <2>;
-> +};
-> +
-> +&pwm0 {
-> +	status = "okay";
-> +};
-> +
-> +&pwm1 {
-> +	status = "okay";
-> +};
-> +
-> +&pwm2 {
-> +	status = "okay";
-> +	pinctrl-names = "active";
-> +	pinctrl-0 = <&pwm2_pin_pull_down>;
-> +};
-> +
-> +&saradc {
-> +	status = "okay";
-> +	vref-supply = <&vccadc_ref>; /* TBD */
-> +};
-> +
-> +&sdhci {
-> +	bus-width = <8>;
-> +	mmc-hs400-1_8v;
-> +	supports-emmc;
-> +	non-removable;
-> +	keep-power-in-suspend;
-> +	mmc-hs400-enhanced-strobe;
-> +	status = "okay";
-> +};
-> +
-> +&emmc_phy {
-> +	status = "okay";
-> +};
-> +
-> +&sdio0 {
-> +	clock-frequency = <50000000>;
+> +		dma = __dma_request_channel(&mask, omap_dma_filter_fn,
+> +					    (void *)dma_channel);
 
-We have a ciu clock, so there should be no need for "clock-frquency"
+dma_request_chan(dev, "ch_name");
 
-> +	clock-freq-min-max = <200000 50000000>;
+where ch_name: rx0/1/2, tx0/1/2
 
-Not part of a binding and the mmc code also seems to ignore it
-
-> +	supports-sdio;
-
-unused and undocumented
-
-> +	bus-width = <4>;
-> +	disable-wp;
-> +	cap-sd-highspeed;
-> +	cap-sdio-irq;
-> +	keep-power-in-suspend;
-> +	mmc-pwrseq = <&sdio_pwrseq>;
-> +	non-removable;
-> +	num-slots = <1>;
-
-outdated and unused property
-
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
-> +	sd-uhs-sdr104;
-> +	status = "okay";
-> +};
-> +
-> +&sdmmc {
-> +	clock-frequency = <150000000>;
-> +	clock-freq-min-max = <100000 150000000>;
-
-same as sdio
-
-> +	supports-sd;
-
-unused and undocumented
-
-> +	bus-width = <4>;
-> +	cap-mmc-highspeed;
-> +	cap-sd-highspeed;
-> +	disable-wp;
-> +	num-slots = <1>;
-
-outdated and unused property
-
-> +	sd-uhs-sdr104;
-> +	vmmc-supply = <&vcc_sd>;
-> +	vqmmc-supply = <&vccio_sd>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_cd &sdmmc_bus4>;
-> +	status = "okay";
-> +};
-> +
-> +&tsadc {
-> +	/* tshut mode 0:CRU 1:GPIO */
-> +	rockchip,hw-tshut-mode = <1>;
-> +	/* tshut polarity 0:LOW 1:HIGH */
-> +	rockchip,hw-tshut-polarity = <1>;
-> +	status = "okay";
-> +};
-> +
-> +&tcphy0 {
-> +	extcon = <&fusb0>;
-
-right now the fusb302 does not provide this extcon and should also
-never do so. When omitting it, the tcphy will at least work in usb3
-host mode.
-
-> +	status = "okay";
-> +};
-> +
-> +&tcphy1 {
-> +	status = "okay";
-> +};
-> +
-> +&u2phy0 {
-> +	status = "okay";
-> +	extcon = <&fusb0>;
-
-same with the extcon
-
-> +
-> +	u2phy0_otg: otg-port {
-> +		status = "okay";
-> +	};
-> +
-> +	u2phy0_host: host-port {
-> +		phy-supply = <&vcc5v0_host>;
-> +		status = "okay";
-> +	};
-> +};
-> +
-> +&u2phy1 {
-> +	status = "okay";
-> +
-> +	u2phy1_otg: otg-port {
-> +		status = "okay";
-> +	};
-> +
-> +	u2phy1_host: host-port {
-> +		phy-supply = <&vcc5v0_host>;
-> +		status = "okay";
-> +	};
-> +};
-> +
-> +&usbdrd3_0 {
-> +	status = "okay";
-> +	extcon = <&fusb0>;
-
-not part of any binding I think?
-
-> +&pinctrl {
-> +
-> +	hdmi {
-> +		/delete-node/ hdmi-i2c-xfer;
-> +	};
-
-No need to delete the node, the hdmi-pinctrl above does not use the
-internal i2c.
+and we don't need the omap_dma_filter_fn in here as all taken care via
+the dma_slave_map
 
 
-Heiko
+> +		if (dma) {
+> +			ep->dma = dma;
+>  			omap_writew(reg, UDC_RXDMA_CFG);
+> -			/* TIPB */
+> -			omap_set_dma_src_params(ep->lch,
+> -				OMAP_DMA_PORT_TIPB,
+> -				OMAP_DMA_AMODE_CONSTANT,
+> -				UDC_DATA_DMA,
+> -				0, 0);
+> -			/* EMIFF or SDRC */
+> -			omap_set_dma_dest_burst_mode(ep->lch,
+> -						OMAP_DMA_DATA_BURST_4);
+> -			omap_set_dma_dest_data_pack(ep->lch, 1);
+> +		} else {
+> +			status = omap_request_dma(dma_channel,
+> +				ep->ep.name, dma_error, ep, &ep->lch);
+> +			if (status == 0) {
+> +				omap_writew(reg, UDC_RXDMA_CFG);
+> +				/* TIPB */
+> +				omap_set_dma_src_params(ep->lch,
+> +					OMAP_DMA_PORT_TIPB,
+> +					OMAP_DMA_AMODE_CONSTANT,
+> +					UDC_DATA_DMA,
+> +					0, 0);
+> +				/* EMIFF or SDRC */
+> +				/*
+> +				 * not ok - CSDP_DST_BURST_64 selected, but this selects
+> +				 * CSDP_DST_BURST_16 on omap2+ and CSDP_DST_BURST_32 on
+> +				 * omap1.
+> +				 */
+> +				omap_set_dma_dest_burst_mode(ep->lch,
+> +							OMAP_DMA_DATA_BURST_4);
+> +				/* ok - CSDP_DST_PACKED set for dmaengine */
+> +				omap_set_dma_dest_data_pack(ep->lch, 1);
+> +			}
+>  		}
+>  	}
+> -	if (status)
+> +	if (d->dma) {
+> +		ep->has_dma = 1;
+> +	} else if (status) {
+>  		ep->dma_channel = 0;
+> -	else {
+> +	} else {
+>  		ep->has_dma = 1;
+>  		omap_disable_dma_irq(ep->lch, OMAP_DMA_BLOCK_IRQ);
+>  
+> @@ -777,6 +851,10 @@ static void dma_channel_claim(struct omap_ep *ep, unsigned channel)
+>  	if (status)
+>  		DBG("%s no dma channel: %d%s\n", ep->ep.name, status,
+>  			restart ? " (restart)" : "");
+> +	else if (d->dma)
+> +		DBG("%s claimed %cxdma%d dmaengine %s%s\n", ep->ep.name,
+> +			is_in ? 't' : 'r', ep->dma_channel - 1,
+> +			dma_chan_name(d->dma), restart ? " (restart)" : "");
+>  	else
+>  		DBG("%s claimed %cxdma%d lch %d%s\n", ep->ep.name,
+>  			is_in ? 't' : 'r',
+> @@ -850,9 +928,13 @@ static void dma_channel_release(struct omap_ep *ep)
+>  		if (req)
+>  			finish_out_dma(ep, req, -ECONNRESET, 0);
+>  	}
+> -	omap_free_dma(ep->lch);
+> +	if (ep->dma)
+> +		dma_release_channel(ep->dma);
+> +	else
+> +		omap_free_dma(ep->lch);
+>  	ep->dma_channel = 0;
+>  	ep->lch = -1;
+> +	ep->dma = NULL;
+>  	/* has_dma still set, till endpoint is fully quiesced */
+>  }
+>  
+> diff --git a/drivers/usb/gadget/udc/omap_udc.h b/drivers/usb/gadget/udc/omap_udc.h
+> index 00f9e608e755..68857ae8d763 100644
+> --- a/drivers/usb/gadget/udc/omap_udc.h
+> +++ b/drivers/usb/gadget/udc/omap_udc.h
+> @@ -153,6 +153,8 @@ struct omap_ep {
+>  	u8				dma_channel;
+>  	u16				dma_counter;
+>  	int				lch;
+> +	struct dma_chan			*dma;
+> +	dma_cookie_t			dma_cookie;
+>  	struct omap_udc			*udc;
+>  	struct timer_list		timer;
+>  };
 
+I try to give this a try, thanks Russell for the patch!
 
+> 
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
