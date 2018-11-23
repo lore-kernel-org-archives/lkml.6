@@ -2,117 +2,115 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D852C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01852C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:17:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 515FC20820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:16:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 515FC20820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BB74320820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:17:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fUwSlnXR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB74320820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503241AbeKWVA0 (ORCPT
+        id S2409299AbeKWVBL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 16:00:26 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40978 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388074AbeKWVA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 16:00:26 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48E9D35CD;
-        Fri, 23 Nov 2018 02:16:47 -0800 (PST)
-Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF7063F5CF;
-        Fri, 23 Nov 2018 02:16:45 -0800 (PST)
-Subject: Re: Sleeping in user_access section
-To:     hpa@zytor.com, Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        James Morse <james.morse@arm.com>
-References: <3e881ee6-0ff6-b8b6-0633-3d4a7743411d@arm.com>
- <5B3B6AF9-9D8C-4577-905E-D407A5E7D0E3@zytor.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <f0c876e9-bbdf-75f9-597a-6ac823d32177@arm.com>
-Date:   Fri, 23 Nov 2018 10:16:44 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <5B3B6AF9-9D8C-4577-905E-D407A5E7D0E3@zytor.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 23 Nov 2018 16:01:11 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:52648 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388074AbeKWVBK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 16:01:10 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wANA8Yuq172705;
+        Fri, 23 Nov 2018 10:17:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=/QP+s3Z0gF2/cAf28k73ZVd7CPvEvrkUIKj5jM8Ry6Q=;
+ b=fUwSlnXR/8jesuYnSwealz0D1aRXu7bxeJB+1DBEExXcYev4IjuJPEoWp+/EAE+/MmQs
+ 3ncPPIue29L+84X5/TpnYwTbUKe5mQ559CVIgR7i/ywo5vxPyUjYRw4VEHD/xGk1pnJ4
+ tCpr/XCmyatKj6n1hY5dvNOiWDXOGXnmuOHqH7ze3m8i8bC1JgN35t5vCETBL4Nhl4Z0
+ MY91mLuJ35azTm+mL3M/YZ2YpGGZh7agvUWBWJ+aVSBe6orFdATpl1Aa4JUHbBNxzqTt
+ FwL47pxfufB0OZB/BMHqnd5V9wlZ/TqaD4TCCLBAsL0pKuLfRT6NNGOyWE4/e7u1UJg9 Ig== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2ntadua9df-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Nov 2018 10:17:11 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wANAHAXH018970
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Nov 2018 10:17:10 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wANAH9bu019665;
+        Fri, 23 Nov 2018 10:17:09 GMT
+Received: from ca-dev-arm44.us.oracle.com (/10.211.8.237)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 23 Nov 2018 02:17:09 -0800
+From:   Eric Saint-Etienne <eric.saint.etienne@oracle.com>
+To:     Linux Kernel <linux-kernel@vger.kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.co>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Eric Saint-Etienne <eric.saintetienne@gmail.com>
+Subject: [PATCH] perf map: remove extra indirection from map__find()
+Date:   Fri, 23 Nov 2018 02:42:39 -0800
+Message-Id: <1542969759-24346-1-git-send-email-eric.saint.etienne@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9085 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811230081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+A double pointer is used in map__find() where a single pointer is enough
+because the function doesn't affect the rbtree and the rbtree is locked.
 
+Signed-off-by: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
+---
+ tools/perf/util/map.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-On 23/11/18 09:57, hpa@zytor.com wrote:
-> On November 23, 2018 1:27:02 AM PST, Julien Thierry <julien.thierry@arm.com> wrote:
->> Hi,
->>
->> I made an attempt at implementing the
->> user_access_begin()/user_access_end() macros along with the
->> get/put_user_unsafe() for arm64 by toggling the status of PAN (more or
->> less similar to x86's STAC/CTAC).
->>
->> With a small mistake in my patch, we realized that directly calling
->> function that could reschedule while in a user_access section could
->> lead to:
->>
->> - scheduling another task keeping the user_access status enabled
->> despite
->> the task never calling user_access_begin()
->>
->> - when re-scheduling the task that was mid user_access section,
->> user_access would be disabled and the task would fault on the next
->> get/put_user_unsafe.
->>
->>
->> This is because __switch_to does not alter the user_access status when
->> switching from next to prev (at least on arm64 we currently don't, and
->> by looking at the x86 code I don't think this is done either).
->>
->>
->>  From my understanding, this is not an issue when the task in
->> user_access mode gets scheduled out/in as a result of an interrupt as
->> PAN and EFLAGS.AC get saved/restore on exception entry/exit (at least I
->>
->> know it is the case for PAN, I am less sure for the x86 side).
->>
->>
->> So, the question is, should __switch_to take care of the user_access
->> status when scheduling new tasks? Or should there be a restriction
->> about
->> scheduling out a task with user_access mode enabled and maybe add a
->> warning if we can detect this?
->>
->> (Or did we miss something and this is not an issue on x86?)
->>
->> Thanks,
-> 
-> You should never call a sleeping function from a user_access section. It is intended for very limited regions.
-> 
-
-Thanks for the clarification.
-
-Would it be worth documenting this somewhere? And add a check to detect 
-such issues?
-
-Also, those limited regions can be interrupted and preempted, but I 
-guess you could consider the interrupted region being split into 
-separate user_access regions, before and after the interrupt. Should it 
-be stated that an exception/interrupt constitutes implicit 
-user_access_end()/begin() when taken from/returning to a user_access region?
-
-Thanks,
-
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index 354e545..3dac766 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -846,19 +846,18 @@ void maps__remove(struct maps *maps, struct map *map)
+ 
+ struct map *maps__find(struct maps *maps, u64 ip)
+ {
+-	struct rb_node **p, *parent = NULL;
++	struct rb_node *p;
+ 	struct map *m;
+ 
+ 	down_read(&maps->lock);
+ 
+-	p = &maps->entries.rb_node;
+-	while (*p != NULL) {
+-		parent = *p;
+-		m = rb_entry(parent, struct map, rb_node);
++	p = maps->entries.rb_node;
++	while (p != NULL) {
++		m = rb_entry(p, struct map, rb_node);
+ 		if (ip < m->start)
+-			p = &(*p)->rb_left;
++			p = p->rb_left;
+ 		else if (ip >= m->end)
+-			p = &(*p)->rb_right;
++			p = p->rb_right;
+ 		else
+ 			goto out;
+ 	}
 -- 
-Julien Thierry
+1.8.3.1
+
