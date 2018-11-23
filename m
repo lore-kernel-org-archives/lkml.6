@@ -2,194 +2,153 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E6AAC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C1EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:26:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B14C20863
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:25:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VWcX0WWN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B14C20863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 676B320863
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:26:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 676B320863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408914AbeKWUIi (ORCPT
+        id S2502602AbeKWUKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:08:38 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:39334 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390457AbeKWUIi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 15:08:38 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181123092510euoutp023a8fc60f0b49b647af83357db0d8dac0~ptpfgqwxR0407704077euoutp02H
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 09:25:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181123092510euoutp023a8fc60f0b49b647af83357db0d8dac0~ptpfgqwxR0407704077euoutp02H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1542965110;
-        bh=xnIiNwoExWqbDIFPzNeTIRq4lPS4ObQxd7JM1Vz7SFk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=VWcX0WWNL6zoT6Hxk1RKxZChrHgfsuyLF0ox42sOWXxJjAOROF5ACuY1Lp4mCDBiy
-         7+pEXD5ISj3Qbl+iJ2w2s9mVycs3SJRSvbFUOuOzaR2wWidjrlDVosOoAOcZ4/jmju
-         vGJFt31qjyJXhRkvwW7f8h5jmnz4ak5+jwc98wtU=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181123092510eucas1p142b7e7ff7c8dc71f5c0942a963650df4~ptpezT9740792607926eucas1p1o;
-        Fri, 23 Nov 2018 09:25:10 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 7D.71.04806.577C7FB5; Fri, 23
-        Nov 2018 09:25:09 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181123092509eucas1p1cf47e0ae03129b806e0358ca15c9fb86~ptpeEpyik0780607806eucas1p1l;
-        Fri, 23 Nov 2018 09:25:09 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181123092508eusmtrp1a18176fa8c1b3f2fc36a7c2454475cc9~ptpd0zTV10152301523eusmtrp1H;
-        Fri, 23 Nov 2018 09:25:08 +0000 (GMT)
-X-AuditID: cbfec7f5-34dff700000012c6-48-5bf7c775d02b
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 57.F5.04284.477C7FB5; Fri, 23
-        Nov 2018 09:25:08 +0000 (GMT)
-Received: from [106.116.147.30] (unknown [106.116.147.30]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20181123092508eusmtip1330270818c022152afa48ad8d413a4b4~ptpdgqHKb1462014620eusmtip1H;
-        Fri, 23 Nov 2018 09:25:08 +0000 (GMT)
-Subject: Re: [PATCH 3/3] gpio: Add reference counting for non-exclusive
- GPIOs
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>, broonie@kernel.org
-Cc:     linus.walleij@linaro.org, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <56d4a613-21a6-7a51-a9ef-a8e010a6945a@samsung.com>
-Date:   Fri, 23 Nov 2018 10:25:08 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
-        Thunderbird/60.3.1
+        Fri, 23 Nov 2018 15:10:05 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49129 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387992AbeKWUKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 15:10:05 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A6F0420747; Fri, 23 Nov 2018 10:26:37 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5305220747;
+        Fri, 23 Nov 2018 10:26:27 +0100 (CET)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 00/43] drm/sun4i: Support for linear and tiled YUV formats with the frontend
+Date:   Fri, 23 Nov 2018 10:24:32 +0100
+Message-Id: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20181122173015.23905-3-ckeepax@opensource.cirrus.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKKsWRmVeSWpSXmKPExsWy7djPc7qlx79HG3yeq2sx9eETNosrrZsY
-        Lb5d6WCymPJnOZPF5V1z2Cw+v9/P6sDmsXPWXXaPTas62TzuXNvD5jF9zn9Gj8+b5AJYo7hs
-        UlJzMstSi/TtErgytu/+y1ZwQaji2A3FBsbHfF2MnBwSAiYSe07/YgSxhQRWMEo0Ho7vYuQC
-        sr8wSpy/18UC4XxmlPi6cwETTMe6W3+hEssZJR51L2GFcN4zSjQ9a2EFqRIW8JfYP+MFG4gt
-        IuAm8fr+GmYQm1mgQOJb7xMwm03AUKLrbRdYDa+AncS7pc/YQWwWAVWJ+z+/sYDYogIxEsdW
-        3mCEqBGUODnzCVicU8BZ4k//CkaImfIS29/OgZovLnHryXwmkIMkBFaxS7yf9xTqbBeJCxf/
-        sUDYwhKvjm9hh7BlJE5P7mGBaGhmlGifMYsdwulhlNg6ZwcbRJW1xOHjF4Fe4wBaoSmxfpc+
-        RNhRYt7FLUwgYQkBPokbbwUhjuCTmLRtOjNEmFeio00IolpNYtbxdXBrD164xDyBUWkWktdm
-        IXlnFpJ3ZiHsXcDIsopRPLW0ODc9tdg4L7Vcrzgxt7g0L10vOT93EyMw8Zz+d/zrDsZ9f5IO
-        MQpwMCrx8G7Y+C1aiDWxrLgy9xCjBAezkghvk+L3aCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8
-        1QwPooUE0hNLUrNTUwtSi2CyTBycUg2MDEKNC5v2di46WLVxYodfycvPJZ82fM9ys0vI3sbu
-        d/RgktQT0aqJ2uVhG9Jd5rD2JoX4KSa8j/5whqVj1jPmg6LCkRuap/95X5l5t2Pt2aX7w/vc
-        5pfWlgfpXdXiF5eXuHrtUb3W+TkHhet+f6t333d0405r7bU/Lt/aIPHvgZvxs59eTmevKLEU
-        ZyQaajEXFScCAMZgEH44AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOIsWRmVeSWpSXmKPExsVy+t/xu7olx79HG6z/Z2kx9eETNosrrZsY
-        Lb5d6WCymPJnOZPF5V1z2Cw+v9/P6sDmsXPWXXaPTas62TzuXNvD5jF9zn9Gj8+b5AJYo/Rs
-        ivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQytu/+y1Zw
-        Qaji2A3FBsbHfF2MnBwSAiYS6279Zeli5OIQEljKKHF4zUN2iISMxMlpDawQtrDEn2tdbBBF
-        bxklpj75x9jFyMEhLOArsfFbNkiNiICbxOv7a5hBbGaBAomTLXfZIerPM0pMaNoBNpRNwFCi
-        6y3IIE4OXgE7iXdLn4HFWQRUJe7//MYCYosKxEh0Xp8HVSMocXLmE7A4p4CzxJ/+FYwQC9Ql
-        /sy7BLVMXmL72zlQtrjErSfzmSYwCs1C0j4LScssJC2zkLQsYGRZxSiSWlqcm55bbKhXnJhb
-        XJqXrpecn7uJERhp24793LyD8dLG4EOMAhyMSjy8GzZ+ixZiTSwrrsw9xCjBwawkwtuk+D1a
-        iDclsbIqtSg/vqg0J7X4EKMp0HMTmaVEk/OBSSCvJN7Q1NDcwtLQ3Njc2MxCSZz3vEFllJBA
-        emJJanZqakFqEUwfEwenVAOjbXH27Dkd6zO+3Y/myvq3JfaDmvwuDv1LYRH7p99oU2Kw3rYq
-        Nv2//L7SjccE9Fc8ORL0W7E87/vuihjdbymS55/FpjUlfnB4w9h5lF+rNynI/He3zOLAKd0L
-        JZKFkzdPLy+r3rDEZJvbrqkdy0pv50+b+aBBI+DBB4lC5s0CJ4LLuMQm/TulxFKckWioxVxU
-        nAgAAKRVQsoCAAA=
-X-CMS-MailID: 20181123092509eucas1p1cf47e0ae03129b806e0358ca15c9fb86
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181122173053epcas5p1a9b2170d5755bcb31d50d493c6618d25
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181122173053epcas5p1a9b2170d5755bcb31d50d493c6618d25
-References: <20181122173015.23905-1-ckeepax@opensource.cirrus.com>
-        <CGME20181122173053epcas5p1a9b2170d5755bcb31d50d493c6618d25@epcas5p1.samsung.com>
-        <20181122173015.23905-3-ckeepax@opensource.cirrus.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Charles,
+This series implements support for YUV formats using the display engine
+frontend in the sun4i DRM driver, with various fixes along the way.
+Scaling is supported for every format handled by the frontend.
 
-On 2018-11-22 18:30, Charles Keepax wrote:
-> Currently, a GPIO can be requested multiple times when the
-> NONEXCLUSIVE flag is set, however it must still be freed a single
-> time. This makes client code rather complex, since multiple drivers
-> may request the GPIO but only a single one can free it. Rather than
-> manually handling this in each driver add some basic reference
-> counting into the core.  Currently, this is fairly primitive but
-> so is the support for the NONEXCLUSIVE flag and the implementation
-> covers those use-cases.
->
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/gpio/gpiolib.c | 13 ++++++++++++-
->  drivers/gpio/gpiolib.h |  2 ++
->  2 files changed, 14 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index 230e41562462b..42ba86fb495a5 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -2407,6 +2407,13 @@ static bool gpiod_free_commit(struct gpio_desc *desc)
->  
->  	might_sleep();
->  
-> +	if (desc->n_users > 1) {
-> +		desc->n_users--;
-> +		return true;
-> +	} else {
-> +		desc->n_users = 0;
-> +	}
-> +
->  	gpiod_unexport(desc);
->  
->  	spin_lock_irqsave(&gpio_lock, flags);
-> @@ -4142,7 +4149,8 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
->  			 */
->  			dev_info(dev, "nonexclusive access to GPIO for %s\n",
->  				 con_id ? con_id : devname);
-> -			return desc;
-> +
-> +			goto done;
->  		} else {
->  			return ERR_PTR(status);
->  		}
-> @@ -4155,6 +4163,9 @@ struct gpio_desc *__must_check gpiod_get_index(struct device *dev,
->  		return ERR_PTR(status);
->  	}
->  
-> +done:
-> +	desc->n_users++;
-> +
->  	return desc;
->  }
->  EXPORT_SYMBOL_GPL(gpiod_get_index);
-> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-> index 087d865286a0c..f96eda90281a3 100644
-> --- a/drivers/gpio/gpiolib.h
-> +++ b/drivers/gpio/gpiolib.h
-> @@ -230,6 +230,8 @@ struct gpio_desc {
->  	const char		*label;
->  	/* Name of the GPIO */
->  	const char		*name;
-> +
-> +	unsigned int		n_users;
->  };
->  
->  int gpiod_request(struct gpio_desc *desc, const char *label);
+The tiling mode used by the VPU on Allwinner platforms is also supported
+by this series and a dedicated fourcc modifier is introduced, along with
+a specific ioctl for allocating tiled buffers.
 
-Best regards
+New common fourcc helpers are also introduced in this series, especially
+related to YUV formats.
+
+This was tested on the A33 and A20 platforms and all supported features
+work properly on both. Framebuffer offsets and source positions are not
+supported at this point.
+
+Changes since v1:
+* Extended source selected cleanup to both YUV and video channels;
+* Split and reworded comment about backend scaling;
+* Sorted newly-introduced lists alphabetically;
+* Simplified functions to check if a format is supported;
+* Reworked frontend selection logic as discussed;
+* Made YUV helpers common, with fourcc and drm_info fashions;
+* Changed the CREATE_TILED ioctl flags to match the CREATE_DUMB ioctl;
+* Reworked YUV dimensions calculations to use drm_format_info;
+* Dropped MB32 part in modifier to match V4L2 definition name;
+* Improved the description of the tiling modifier;
+* Avoided splitting CSC coefficients to avoid introducing a new module;
+* Fixed building the driver as modules;
+* Various code simplifications and cleanups;
+* Split commits into logical changes.
+
+Maxime Ripard (5):
+  drm/sun4i: Move access control before setting the register as
+    documented
+  drm/sun4i: frontend: Add a quirk structure
+  drm/sun4i: Set the coef_rdy bit right after the coef have been set
+  drm/sun4i: Make COEF_RDY conditional
+  drm/sun4i: frontend: Move the FIR filter phases to our quirks
+
+Paul Kocialkowski (38):
+  drm/sun4i: Cleanup video/YUV source before enabling a layer
+  drm/sun4i: frontend: Replace ARGB with XRGB as supported format
+  drm/sun4i: Add TODO comment about supporting scaling with the backend
+  drm/sun4i: backend: Add a helper and a list for supported formats
+  drm/sun4i: frontend: Add a helper and a list for supported formats
+  drm/sun4i: backend: Refine the logic behind using the frontend
+  drm/sun4i: backend: Use a specific function to check if a plane is
+    supported
+  drm/fourcc: Add helper to check if a format uses a YUV colorspace
+  drm/fourcc: Add format info helpers for checking YUV planes
+    disposition
+  drm/fourcc: Add format helpers for checking YUV planes disposition
+  drm/fourcc: Add format info helpers for checking YUV sub-sampling
+  drm/fourcc: Add format helpers for checking YUV sub-sampling
+  drm/sun4i: backend: Use explicit fourcc helpers for packed YUV422
+    check
+  drm/sun4i: backend: Avoid counting YUV planes that use the frontend
+  drm/sun4i: Rename sun4i_backend_layer_formats to sun4i_layer_formats
+  drm/sun4i: frontend: Move CSC bypass setup to format update routine
+  drm/sun4i: frontend: Add helpers for input data mode and pixel
+    sequence
+  drm/sun4i: frontend: Add proper definitions for format registers
+  drm/sun4i: frontend: Determine input mode based on the number of
+    planes
+  drm/sun4i: frontend: Determine input format based on colorspace
+  drm/sun4i: frontend: Add support for the BGRX8888 input format
+  drm/sun4i: frontend: Add support for the BGRX8888 output format
+  drm/sun4i: backend: Detail the YUV to RGB values coding explanation
+  drm/sun4i: frontend: Configure and enable YUV to RGB CSC when needed
+  drm/sun4i: frontend: Apply format sub-sampling to CH1 dimensions
+  drm/sun4i: frontend: Add support for packed YUV422 input formats
+  drm/sun4i: frontend: Add support for semi-planar YUV input formats
+  drm/sun4i: frontend: Add support for planar YUV input formats
+  drm/sun4i: Make pitch even for GEM dumb alloc as per hardware
+    constraint
+  drm/fourcc: Add definitions for Allwinner vendor and VPU tiled format
+  drm/sun4i: Add a dedicated ioctl call for allocating tiled buffers
+  drm/sun4i: Pass modifier to backend and frontend format support
+    helpers
+  drm/sun4i: frontend: Add support for tiled YUV input mode
+    configuration
+  drm/sun4i: Add buffer stride and offset configuration for tiling mode
+  drm/sun4i: frontend: Add and use helper for checking tiling support
+  drm/sun4i: layer: Add tiled modifier support and helper
+  drm/sun4i: drv: Allow framebuffer modifiers in mode config
+  drm/sun4i: frontend: Add A20-specific device-tree compatible and
+    quirks
+
+ drivers/gpu/drm/drm_fourcc.c           | 184 +++++++++++
+ drivers/gpu/drm/sun4i/sun4i_backend.c  | 109 ++++++-
+ drivers/gpu/drm/sun4i/sun4i_backend.h  |   3 +
+ drivers/gpu/drm/sun4i/sun4i_drv.c      | 102 +++++-
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 415 ++++++++++++++++++++++---
+ drivers/gpu/drm/sun4i/sun4i_frontend.h |  50 ++-
+ drivers/gpu/drm/sun4i/sun4i_layer.c    |  41 ++-
+ include/drm/drm_fourcc.h               | 126 ++++++++
+ include/uapi/drm/drm_fourcc.h          |  16 +
+ include/uapi/drm/sun4i_drm.h           |  42 +++
+ 10 files changed, 1029 insertions(+), 59 deletions(-)
+ create mode 100644 include/uapi/drm/sun4i_drm.h
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.19.1
 
