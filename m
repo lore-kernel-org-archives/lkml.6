@@ -2,446 +2,111 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 011BDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 062DCC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B19D120863
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:37:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B19D120863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C1F1F20863
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:38:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gR1qTB1j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1F1F20863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440087AbeKXBWT (ORCPT
+        id S2440100AbeKXBWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 20:22:19 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:49946 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2440029AbeKXBWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 20:22:19 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 749C721534EFE;
-        Fri, 23 Nov 2018 22:37:45 +0800 (CST)
-Received: from linux-ioko.site (10.71.200.31) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 23 Nov 2018 22:37:36 +0800
-From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-To:     <dledford@redhat.com>, <jgg@ziepe.ca>
-CC:     <linux-rdma@vger.kernel.org>, <xavier.huwei@huawei.com>,
-        <lijun_nudt@163.com>, <oulijun@huawei.com>,
-        <charles.chenxin@huawei.com>, <liuyixian@huawei.com>,
-        <zhangxiping3@huawei.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
-Subject: [PATCH rdma-next 2/3] RDMA/hns: Stop sending mailbox&cmq&doorbell when reset occured or is occuring
-Date:   Fri, 23 Nov 2018 23:14:24 +0800
-Message-ID: <1542986065-44265-3-git-send-email-xavier.huwei@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1542986065-44265-1-git-send-email-xavier.huwei@huawei.com>
-References: <1542986065-44265-1-git-send-email-xavier.huwei@huawei.com>
+        Fri, 23 Nov 2018 20:22:33 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38506 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388198AbeKXBWQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 20:22:16 -0500
+Received: by mail-pl1-f196.google.com with SMTP id e5so10733665plb.5;
+        Fri, 23 Nov 2018 06:37:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0Aj68xe/v5FknL39hGY54BgIh+8HGfbrwuVhVkEqjDo=;
+        b=gR1qTB1jtD9HBcdHor/xSB6mHdxi6f4ucL3W1Sf/QQ0ADeo+Zmtr2T5qJoXoov2guv
+         WlYZ42RcCRMAlbHzUhRNjN9mWziWPVYOH/QJ6oLWdK+3i0bBU6AbvBZVIrpRACgLeCC7
+         T1WlXOkWxkBmre31lxNOKdMrH+A4zIElFlyUU0CW4zVKOHADbRi2t5zf6kRnuQtkPjEM
+         ZFv9m4zEY74q2IMVn1AdyrLnUKw4WVbbX4k+giNf4aha88HoVZZaqQQ1lXEoHUKufyoz
+         5qiLj8F6UlAHjMSYOzXae7nIKx1in83k9RCTljKAd8ZmgNo1GeOSfyRDMBcMBfn15A2I
+         A+Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0Aj68xe/v5FknL39hGY54BgIh+8HGfbrwuVhVkEqjDo=;
+        b=meqlSQv4DJf/EMrcKJpVRsbdOcLMjPL0Q1piD7/y5qkXQ32dRcfqijyVu8TRY+hoS8
+         7IudCr5w2hSxatUUU1vqJI24Ri2wQqmqFdhkvMcU17cNKazSHBUh228KwYaLfSMJaQbe
+         ULpGW8YzGVfliYYQ9dbkmA/iCTYGgL6N4A/MvsURkYxKCsC8As2SiH1eQVadIh2n13HU
+         qrtqm0kPC8Qm1zmUN92Wtx0DJNWLmfR0LDqPFoQ1PVlMf8FzneXYG7j2LdmWEHptVPIo
+         0J8+ILjEHm8hYkVvl58BCm4ujAxm8INr6ulcCWBfU3S5BzT6ZmNkwyViW6pdzFG0onnc
+         I9fw==
+X-Gm-Message-State: AA+aEWaUkqBSkbjVse384t1KYfOVGonJsc4gUNNv7RjYBrgN872VdhVm
+        ioZFy4AStfF10lIyahE+al8p6yFVA1qzuurLklQ=
+X-Google-Smtp-Source: AFSGD/XhzPXxmm7CZ+xFRIukyMRxnApW5l2sisguxuiFO0NNfjF6RDEbwK3STMoTIy151ePm05qvQ3Yto5+FNEkal7Q=
+X-Received: by 2002:a17:902:2aaa:: with SMTP id j39mr16300320plb.335.1542983870343;
+ Fri, 23 Nov 2018 06:37:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.71.200.31]
-X-CFilter-Loop: Reflected
+References: <5beda000.1c69fb81.e6599.d3d8@mx.google.com>
+In-Reply-To: <5beda000.1c69fb81.e6599.d3d8@mx.google.com>
+From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+Date:   Fri, 23 Nov 2018 20:07:38 +0530
+Message-ID: <CAJr6mf0rawk6rDRB7NzsTUXyqvt0U5J4SUnVYck2_-jh6D6MoQ@mail.gmail.com>
+Subject: Re: [PATCH] drivers/scsi/snic/snic_trc.c: Use vzalloc
+To:     kartilak@cisco.com, sebaddel@cisco.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com
+Cc:     Souptick Joarder <jrdr.linux@gmail.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch stops sending mailbox&cmq&doorbell to the hardware
-When reset occured or is occuring to ensure that hardware
-can work normally.
+On Thu, Nov 15, 2018 at 10:04 PM Sabyasachi Gupta
+<sabyasachi.linux@gmail.com> wrote:
+>
+> Replaced vmalloc + memset with vzalloc
+>
+> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
 
-Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
----
- drivers/infiniband/hw/hns/hns_roce_cmd.c    |  32 ++++--
- drivers/infiniband/hw/hns/hns_roce_device.h |   8 ++
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 169 ++++++++++++++++++++++++++--
- drivers/infiniband/hw/hns/hns_roce_hw_v2.h  |  14 +++
- 4 files changed, 206 insertions(+), 17 deletions(-)
+Any comment on this patch?
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_cmd.c b/drivers/infiniband/hw/hns/hns_roce_cmd.c
-index a0ba19d..2acf946 100644
---- a/drivers/infiniband/hw/hns/hns_roce_cmd.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_cmd.c
-@@ -176,17 +176,33 @@ int hns_roce_cmd_mbox(struct hns_roce_dev *hr_dev, u64 in_param, u64 out_param,
- 		      unsigned long in_modifier, u8 op_modifier, u16 op,
- 		      unsigned long timeout)
- {
--	if (hr_dev->is_reset)
--		return 0;
-+	int ret;
-+
-+	if (hr_dev->hw->rst_prc_mbox) {
-+		ret = hr_dev->hw->rst_prc_mbox(hr_dev);
-+		if (ret == CMD_RST_PRC_SUCCESS)
-+			return 0;
-+		else if (ret == CMD_RST_PRC_EBUSY)
-+			return -EBUSY;
-+	}
- 
- 	if (hr_dev->cmd.use_events)
--		return hns_roce_cmd_mbox_wait(hr_dev, in_param, out_param,
--					      in_modifier, op_modifier, op,
--					      timeout);
-+		ret = hns_roce_cmd_mbox_wait(hr_dev, in_param, out_param,
-+					     in_modifier, op_modifier, op,
-+					     timeout);
- 	else
--		return hns_roce_cmd_mbox_poll(hr_dev, in_param, out_param,
--					      in_modifier, op_modifier, op,
--					      timeout);
-+		ret = hns_roce_cmd_mbox_poll(hr_dev, in_param, out_param,
-+					     in_modifier, op_modifier, op,
-+					     timeout);
-+
-+	if (ret == CMD_RST_PRC_EBUSY)
-+		return -EBUSY;
-+
-+	if (ret && (hr_dev->hw->rst_prc_mbox &&
-+		    hr_dev->hw->rst_prc_mbox(hr_dev) == CMD_RST_PRC_SUCCESS))
-+		return 0;
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(hns_roce_cmd_mbox);
- 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
-index d0d03a6..259977b 100644
---- a/drivers/infiniband/hw/hns/hns_roce_device.h
-+++ b/drivers/infiniband/hw/hns/hns_roce_device.h
-@@ -237,6 +237,12 @@ enum {
- 	HNS_ROCE_RST_DIRECT_RETURN		= 0,
- };
- 
-+enum {
-+	CMD_RST_PRC_OTHERS,
-+	CMD_RST_PRC_SUCCESS,
-+	CMD_RST_PRC_EBUSY,
-+};
-+
- #define HNS_ROCE_CMD_SUCCESS			1
- 
- #define HNS_ROCE_PORT_DOWN			0
-@@ -888,6 +894,7 @@ struct hns_roce_hw {
- 			 u64 out_param, u32 in_modifier, u8 op_modifier, u16 op,
- 			 u16 token, int event);
- 	int (*chk_mbox)(struct hns_roce_dev *hr_dev, unsigned long timeout);
-+	int (*rst_prc_mbox)(struct hns_roce_dev *hr_dev);
- 	int (*set_gid)(struct hns_roce_dev *hr_dev, u8 port, int gid_index,
- 		       const union ib_gid *gid, const struct ib_gid_attr *attr);
- 	int (*set_mac)(struct hns_roce_dev *hr_dev, u8 phy_port, u8 *addr);
-@@ -952,6 +959,7 @@ struct hns_roce_dev {
- 	spinlock_t		bt_cmd_lock;
- 	bool			active;
- 	bool			is_reset;
-+	bool			dis_db;
- 	unsigned long		reset_cnt;
- 	struct hns_roce_ib_iboe iboe;
- 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index 896dd59..1d639a0 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -587,7 +587,7 @@ static int hns_roce_v2_post_send(struct ib_qp *ibqp,
- 		roce_set_field(sq_db.parameter, V2_DB_PARAMETER_SL_M,
- 			       V2_DB_PARAMETER_SL_S, qp->sl);
- 
--		hns_roce_write64_k((__le32 *)&sq_db, qp->sq.db_reg_l);
-+		hns_roce_write64(hr_dev, (__le32 *)&sq_db, qp->sq.db_reg_l);
- 
- 		qp->sq_next_wqe = ind;
- 		qp->next_sge = sge_ind;
-@@ -712,6 +712,128 @@ static int hns_roce_v2_post_recv(struct ib_qp *ibqp,
- 	return ret;
- }
- 
-+static int hns_roce_v2_cmd_hw_reseted(struct hns_roce_dev *hr_dev,
-+				      unsigned long instance_stage,
-+				      unsigned long reset_stage)
-+{
-+	/* When hardware reset has been completed once or more, we should stop
-+	 * sending mailbox&cmq&doorbell to hardware. If now in .init_instance()
-+	 * function, we should exit with error. If now at HNAE3_INIT_CLIENT
-+	 * stage of soft reset process, we should exit with error, and then
-+	 * HNAE3_INIT_CLIENT related process can rollback the operation like
-+	 * notifing hardware to free resources, HNAE3_INIT_CLIENT related
-+	 * process will exit with error to notify NIC driver to reschedule soft
-+	 * reset process once again.
-+	 */
-+	hr_dev->is_reset = true;
-+	hr_dev->dis_db = true;
-+
-+	if (reset_stage == HNS_ROCE_STATE_RST_INIT ||
-+	    instance_stage == HNS_ROCE_STATE_INIT)
-+		return CMD_RST_PRC_EBUSY;
-+
-+	return CMD_RST_PRC_SUCCESS;
-+}
-+
-+static int hns_roce_v2_cmd_hw_resetting(struct hns_roce_dev *hr_dev,
-+					unsigned long instance_stage,
-+					unsigned long reset_stage)
-+{
-+	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
-+	struct hnae3_handle *handle = priv->handle;
-+	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
-+	unsigned long end;
-+
-+	/* When hardware reset is detected, we should stop sending mailbox&cmq&
-+	 * doorbell to hardware, and wait until hardware reset finished. If now
-+	 * in .init_instance() function, we should exit with error. If now at
-+	 * HNAE3_INIT_CLIENT stage of soft reset process, we should exit with
-+	 * error, and then HNAE3_INIT_CLIENT related process can rollback the
-+	 * operation like notifing hardware to free resources, HNAE3_INIT_CLIENT
-+	 * related process will exit with error to notify NIC driver to
-+	 * reschedule soft reset process once again.
-+	 */
-+	hr_dev->dis_db = true;
-+	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
-+	while (ops->get_hw_reset_stat(handle) && time_before(jiffies, end))
-+		udelay(1);
-+
-+	if (!ops->get_hw_reset_stat(handle))
-+		hr_dev->is_reset = true;
-+	else
-+		dev_warn(hr_dev->dev, "hw_resetting!\n");
-+
-+	if (!hr_dev->is_reset || reset_stage == HNS_ROCE_STATE_RST_INIT ||
-+	    instance_stage == HNS_ROCE_STATE_INIT)
-+		return CMD_RST_PRC_EBUSY;
-+
-+	return CMD_RST_PRC_SUCCESS;
-+}
-+
-+static int hns_roce_v2_cmd_sw_resetting(struct hns_roce_dev *hr_dev)
-+{
-+	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
-+	struct hnae3_handle *handle = priv->handle;
-+	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
-+	unsigned long end;
-+
-+	/* When software reset is detected at .init_instance() function, we
-+	 * should stop sending mailbox&cmq&doorbell to hardware, and
-+	 * wait until hardware reset finished, we should exit with error.
-+	 */
-+	hr_dev->dis_db = true;
-+	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
-+	while (ops->ae_dev_reset_cnt(handle) == hr_dev->reset_cnt &&
-+	       time_before(jiffies, end))
-+		udelay(1);
-+
-+	if (ops->ae_dev_reset_cnt(handle) != hr_dev->reset_cnt)
-+		hr_dev->is_reset = true;
-+	else
-+		dev_warn(hr_dev->dev, "reset_cnt no change!\n");
-+
-+	return CMD_RST_PRC_EBUSY;
-+}
-+
-+static int hns_roce_v2_rst_process_cmd(struct hns_roce_dev *hr_dev)
-+{
-+	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
-+	struct hnae3_handle *handle = priv->handle;
-+	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
-+	unsigned long instance_stage;	/* the current instance stage */
-+	unsigned long reset_stage;	/* the current reset stage */
-+	unsigned long reset_cnt;
-+	bool sw_resetting;
-+	bool hw_resetting;
-+
-+	if (hr_dev->is_reset)
-+		return CMD_RST_PRC_SUCCESS;
-+
-+	/* Get information about reset from NIC driver or RoCE driver itself,
-+	 * the meaning of the following variables from NIC driver are described
-+	 * as below:
-+	 * reset_cnt -- The count value of completed hardware reset.
-+	 * hw_resetting -- Whether hardware device is resetting now.
-+	 * sw_resetting -- Whether NIC's software reset process is running now.
-+	 */
-+	instance_stage = handle->rinfo.instance_state;
-+	reset_stage = handle->rinfo.reset_state;
-+	reset_cnt = ops->ae_dev_reset_cnt(handle);
-+	hw_resetting = ops->get_hw_reset_stat(handle);
-+	sw_resetting = ops->ae_dev_resetting(handle);
-+
-+	if (reset_cnt != hr_dev->reset_cnt)
-+		return hns_roce_v2_cmd_hw_reseted(hr_dev, instance_stage,
-+						  reset_stage);
-+	else if (hw_resetting)
-+		return hns_roce_v2_cmd_hw_resetting(hr_dev, instance_stage,
-+						    reset_stage);
-+	else if (sw_resetting && instance_stage == HNS_ROCE_STATE_INIT)
-+		return hns_roce_v2_cmd_sw_resetting(hr_dev);
-+
-+	return 0;
-+}
-+
- static int hns_roce_cmq_space(struct hns_roce_v2_cmq_ring *ring)
- {
- 	int ntu = ring->next_to_use;
-@@ -892,8 +1014,8 @@ static int hns_roce_cmq_csq_clean(struct hns_roce_dev *hr_dev)
- 	return clean;
- }
- 
--static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
--			     struct hns_roce_cmq_desc *desc, int num)
-+static int __hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
-+			       struct hns_roce_cmq_desc *desc, int num)
- {
- 	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
- 	struct hns_roce_v2_cmq_ring *csq = &priv->cmq.csq;
-@@ -905,9 +1027,6 @@ static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
- 	int ret = 0;
- 	int ntc;
- 
--	if (hr_dev->is_reset)
--		return 0;
--
- 	spin_lock_bh(&csq->lock);
- 
- 	if (num > hns_roce_cmq_space(csq)) {
-@@ -982,6 +1101,30 @@ static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
- 	return ret;
- }
- 
-+int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
-+			     struct hns_roce_cmq_desc *desc, int num)
-+{
-+	int retval;
-+	int ret;
-+
-+	ret = hns_roce_v2_rst_process_cmd(hr_dev);
-+	if (ret == CMD_RST_PRC_SUCCESS)
-+		return 0;
-+	if (ret == CMD_RST_PRC_EBUSY)
-+		return ret;
-+
-+	ret = __hns_roce_cmq_send(hr_dev, desc, num);
-+	if (ret) {
-+		retval = hns_roce_v2_rst_process_cmd(hr_dev);
-+		if (retval == CMD_RST_PRC_SUCCESS)
-+			return 0;
-+		else if (retval == CMD_RST_PRC_EBUSY)
-+			return retval;
-+	}
-+
-+	return ret;
-+}
-+
- static int hns_roce_cmq_query_hw_info(struct hns_roce_dev *hr_dev)
- {
- 	struct hns_roce_query_version *resp;
-@@ -1816,6 +1959,9 @@ static int hns_roce_v2_chk_mbox(struct hns_roce_dev *hr_dev,
- 
- 	status = hns_roce_v2_cmd_complete(hr_dev);
- 	if (status != 0x1) {
-+		if (status == CMD_RST_PRC_EBUSY)
-+			return status;
-+
- 		dev_err(dev, "mailbox status 0x%x!\n", status);
- 		return -EBUSY;
- 	}
-@@ -2326,6 +2472,7 @@ static void hns_roce_v2_write_cqc(struct hns_roce_dev *hr_dev,
- static int hns_roce_v2_req_notify_cq(struct ib_cq *ibcq,
- 				     enum ib_cq_notify_flags flags)
- {
-+	struct hns_roce_dev *hr_dev = to_hr_dev(ibcq->device);
- 	struct hns_roce_cq *hr_cq = to_hr_cq(ibcq);
- 	u32 notification_flag;
- 	u32 doorbell[2];
-@@ -2351,7 +2498,7 @@ static int hns_roce_v2_req_notify_cq(struct ib_cq *ibcq,
- 	roce_set_bit(doorbell[1], V2_CQ_DB_PARAMETER_NOTIFY_S,
- 		     notification_flag);
- 
--	hns_roce_write64_k(doorbell, hr_cq->cq_db_l);
-+	hns_roce_write64(hr_dev, doorbell, hr_cq->cq_db_l);
- 
- 	return 0;
- }
-@@ -4566,6 +4713,7 @@ static void hns_roce_v2_init_irq_work(struct hns_roce_dev *hr_dev,
- 
- static void set_eq_cons_index_v2(struct hns_roce_eq *eq)
- {
-+	struct hns_roce_dev *hr_dev = eq->hr_dev;
- 	u32 doorbell[2];
- 
- 	doorbell[0] = 0;
-@@ -4592,7 +4740,7 @@ static void set_eq_cons_index_v2(struct hns_roce_eq *eq)
- 		       HNS_ROCE_V2_EQ_DB_PARA_S,
- 		       (eq->cons_index & HNS_ROCE_V2_CONS_IDX_M));
- 
--	hns_roce_write64_k(doorbell, eq->doorbell);
-+	hns_roce_write64(hr_dev, doorbell, eq->doorbell);
- }
- 
- static struct hns_roce_aeqe *get_aeqe_v2(struct hns_roce_eq *eq, u32 entry)
-@@ -5814,6 +5962,7 @@ static int hns_roce_v2_post_srq_recv(struct ib_srq *ibsrq,
- 				     const struct ib_recv_wr *wr,
- 				     const struct ib_recv_wr **bad_wr)
- {
-+	struct hns_roce_dev *hr_dev = to_hr_dev(ibsrq->device);
- 	struct hns_roce_srq *srq = to_hr_srq(ibsrq);
- 	struct hns_roce_v2_wqe_data_seg *dseg;
- 	struct hns_roce_v2_db srq_db;
-@@ -5875,7 +6024,7 @@ static int hns_roce_v2_post_srq_recv(struct ib_srq *ibsrq,
- 		srq_db.byte_4 = HNS_ROCE_V2_SRQ_DB << 24 | srq->srqn;
- 		srq_db.parameter = srq->head;
- 
--		hns_roce_write64_k((__le32 *)&srq_db, srq->db_reg_l);
-+		hns_roce_write64(hr_dev, (__le32 *)&srq_db, srq->db_reg_l);
- 
- 	}
- 
-@@ -5892,6 +6041,7 @@ static int hns_roce_v2_post_srq_recv(struct ib_srq *ibsrq,
- 	.hw_exit = hns_roce_v2_exit,
- 	.post_mbox = hns_roce_v2_post_mbox,
- 	.chk_mbox = hns_roce_v2_chk_mbox,
-+	.rst_prc_mbox = hns_roce_v2_rst_process_cmd,
- 	.set_gid = hns_roce_v2_set_gid,
- 	.set_mac = hns_roce_v2_set_mac,
- 	.write_mtpt = hns_roce_v2_write_mtpt,
-@@ -6147,6 +6297,7 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
- 		return 0;
- 
- 	hr_dev->active = false;
-+	hr_dev->dis_db = true;
- 
- 	event.event = IB_EVENT_DEVICE_FATAL;
- 	event.device = &hr_dev->ib_dev;
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-index 2857669..c32d0d2 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-@@ -95,6 +95,9 @@
- #define HNS_ROCE_V2_UC_RC_SGE_NUM_IN_WQE	2
- #define HNS_ROCE_V2_RSV_QPS			8
- 
-+/* Time out for hardware to complete reset */
-+#define HNS_ROCE_V2_HW_RST_TIMEOUT		1000
-+
- /* The longest time for software reset process in NIC subsystem, if a timeout
-  * occurs, it indicates that the network subsystem has encountered a serious
-  * error and cannot be recovered from the reset processing.
-@@ -1797,4 +1800,15 @@ struct hns_roce_scc_ctx_clr_done {
- 	__le32 rsv[5];
- };
- 
-+static inline void hns_roce_write64(struct hns_roce_dev *hr_dev, __le32 val[2],
-+				    void __iomem *dest)
-+{
-+	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
-+	struct hnae3_handle *handle = priv->handle;
-+	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
-+
-+	if (!hr_dev->dis_db && !ops->get_hw_reset_stat(handle))
-+		hns_roce_write64_k(val, dest);
-+}
-+
- #endif
--- 
-1.9.1
-
+> ---
+>  drivers/scsi/snic/snic_trc.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/scsi/snic/snic_trc.c b/drivers/scsi/snic/snic_trc.c
+> index fc60c93..458eaba 100644
+> --- a/drivers/scsi/snic/snic_trc.c
+> +++ b/drivers/scsi/snic/snic_trc.c
+> @@ -126,7 +126,7 @@ snic_trc_init(void)
+>         int tbuf_sz = 0, ret;
+>
+>         tbuf_sz = (snic_trace_max_pages * PAGE_SIZE);
+> -       tbuf = vmalloc(tbuf_sz);
+> +       tbuf = vzalloc(tbuf_sz);
+>         if (!tbuf) {
+>                 SNIC_ERR("Failed to Allocate Trace Buffer Size. %d\n", tbuf_sz);
+>                 SNIC_ERR("Trace Facility not enabled.\n");
+> @@ -135,7 +135,6 @@ snic_trc_init(void)
+>                 return ret;
+>         }
+>
+> -       memset(tbuf, 0, tbuf_sz);
+>         trc->buf = (struct snic_trc_data *) tbuf;
+>         spin_lock_init(&trc->lock);
+>
+> --
+> 2.7.4
+>
