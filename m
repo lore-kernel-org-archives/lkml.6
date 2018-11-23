@@ -2,140 +2,71 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02595C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C86C43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:59:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C564820863
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:59:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C564820863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id B383D20824
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:59:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B383D20824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440681AbeKXDoC (ORCPT
+        id S2440695AbeKXDoS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 22:44:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41912 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2393482AbeKXDoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 22:44:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8A991AD75;
-        Fri, 23 Nov 2018 16:58:57 +0000 (UTC)
-Date:   Sat, 24 Nov 2018 03:58:43 +1100
-From:   Aleksa Sarai <asarai@suse.de>
-To:     =?utf-8?B?SsO8cmc=?= Billeter <j@bitron.ch>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Christian Brauner <christian@brauner.io>,
-        linux-api@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Jann Horn <jannh@google.com>,
-        David Drysdale <drysdale@google.com>,
-        containers@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] namei: O_BENEATH-style path resolution flags
-Message-ID: <20181123165843.xtkh3jpfz7k6xa5b@mikami>
-References: <20181112142654.341-1-cyphar@cyphar.com>
- <20181112142654.341-3-cyphar@cyphar.com>
- <1ce83cdf6e3168350b69f98f08aaa202bbaa682d.camel@bitron.ch>
+        Fri, 23 Nov 2018 22:44:18 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:49789 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391367AbeKXDoS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 22:44:18 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gQEnS-0001l1-Gs; Fri, 23 Nov 2018 16:59:14 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] xfs: clean up indentation issues, remove an unwanted space
+Date:   Fri, 23 Nov 2018 16:59:13 +0000
+Message-Id: <20181123165913.26671-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7r4daumaby7eak7j"
-Content-Disposition: inline
-In-Reply-To: <1ce83cdf6e3168350b69f98f08aaa202bbaa682d.camel@bitron.ch>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---7r4daumaby7eak7j
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There is a statement that has an unwanted space in the indentation.
+Remove it.
 
-On 2018-11-23, J=FCrg Billeter <j@bitron.ch> wrote:
-> On Tue, 2018-11-13 at 01:26 +1100, Aleksa Sarai wrote:
-> > * O_BENEATH: Disallow "escapes" from the starting point of the
-> >   filesystem tree during resolution (you must stay "beneath" the
-> >   starting point at all times). Currently this is done by disallowing
-> >   ".." and absolute paths (either in the given path or found during
-> >   symlink resolution) entirely, as well as all "magic link" jumping.
->=20
-> With open_tree(2) and OPEN_TREE_CLONE, will O_BENEATH still be
-> necessary? As I understand it, O_BENEATH could be replaced by a much
-> simpler flag that only disallows absolute paths (incl. absolute
-> symlinks). And it would have the benefit that you can actually pass the
-> tree/directory fd to another process and escaping would not be possible
-> even if that other process doesn't use O_BENEATH (after calling
-> mount_setattr(2) to make sure it's locked down).
->=20
-> This approach would also make it easy to restrict writes via a cloned
-> tree/directory fd by marking it read-only via mount_setattr(2) (and
-> locking down the read-only flag). This would again be especially useful
-> when passing tree/directory fds across processes, or for voluntary
-> self-lockdown within a process for robustness against security bugs.
->=20
-> This wouldn't affect any of the other flags in this patch. And for full
-> equivalence to O_BENEATH you'd have to use O_NOMAGICLINKS in addition
-> to O_NOABSOLUTE, or whatever that new flag would be called.
->=20
-> Or is OPEN_TREE_CLONE too expensive for this use case? Or is there
-> anything else I'm missing?
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ fs/xfs/xfs_inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-OPEN_TREE_CLONE currently requires CAP_SYS_ADMIN in mnt_ns->user_ns,
-which requires a fork and unshare -- or at least a vfork and some other
-magic -- at which point we're back to just doing a pivot_root(2) for
-most operations.
+diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+index 05db9540e459..f21756751540 100644
+--- a/fs/xfs/xfs_inode.c
++++ b/fs/xfs/xfs_inode.c
+@@ -2242,7 +2242,7 @@ xfs_ifree_cluster(
+ 		 * want it to fail. We can acheive this by adding a write
+ 		 * verifier to the buffer.
+ 		 */
+-		 bp->b_ops = &xfs_inode_buf_ops;
++		bp->b_ops = &xfs_inode_buf_ops;
+ 
+ 		/*
+ 		 * Walk the inodes already attached to the buffer and mark them
+-- 
+2.19.1
 
-I think open_tree(2) -- which I really should sit down and play around
-with -- would be an interesting way of doing O_BENEATH, but I think
-you'd still need to have the same race protections we have in the
-current O_BENEATH proposal to handle "..".
-
-So really you'd be using open_tree(OPEN_TREE_CLONE) just so that you can
-use the "path.mnt" setting code, which I'm not sure is the best way of
-doing it (plus the other interesting ideas which you get with the other
-mount API changes).
-
-But I am quite hopeful for what cool things we'll be able to make using
-the new mount API.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---7r4daumaby7eak7j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlv4McMACgkQnhiqJn3b
-jbShVA//eL066b61N+4EViLKYRHvgNZYsP88NJzUgT8MksvPPJ3iuOtM6TTI2B2E
-LY/fVfxNOTuRrw7Vx4I0YfNKUU3dyoDhtxL46GUEJ2h0btgiKmXWMCV8VgdPHIRR
-/XLkkiJddJBtZJ6KJogz8PfOY9cewtL2Ir/byZbgYlTBDTLzcCsY/iFi8fuenDRK
-l7mNsKKQge8rsMnOQoZSNV/Ln+7dNwuuuo5wqfaI6vLIud87gbWiwR50DLG465EZ
-3Hz4/4/PzqW00VsG62w0wlWJrugyOfxegwW1HeH7UuaH3NWn5TPnGVA89vtIuO11
-LaX03GVW4MIi+FXdWbYB8W6+9K8m/2/VvA4ArYGBTVNSKoA0ONUclMZdNv+fbElW
-lcOKpORXfeocIq3WUOgtWnWmBfNLV5hCA7qImd1/nPurpA7OMJ8SL153GQAZpukF
-6Q6Gr5Wc/F5uz/m+348+60REslSxTt971m8PRjC1Q0wtUcNKEpVrsv90EW1tHBnq
-k3J0uQ1Vwm6fVl2SWpQkz1MDO2NMk2LDITxJguTIi9oMDjrQpCUMEjEeRtxvdNPm
-5PI2j7jOJ9G5Q9E0SWO823JWsEVSVv1TRB403CNOxoum7PKXHHYYO7AYvR7gfFs0
-H3wWSdKxDavXxm0k+uUuJvWj2UXmFIXLxxcPua97TKZytcq8Tgk=
-=ETTZ
------END PGP SIGNATURE-----
-
---7r4daumaby7eak7j--
