@@ -2,84 +2,128 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86046C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 02:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9DDC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 02:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A8C720672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 02:10:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A8C720672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tencent.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E3A820672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 02:12:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E3A820672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439382AbeKWMwy (ORCPT
+        id S2439393AbeKWMyM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 07:52:54 -0500
-Received: from mail2.tencent.com ([163.177.67.195]:56467 "EHLO
-        mail2.tencent.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733249AbeKWMwx (ORCPT
+        Fri, 23 Nov 2018 07:54:12 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46225 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733249AbeKWMyM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 07:52:53 -0500
-Received: from EXHUB-SZMail03.tencent.com (unknown [10.14.6.33])
-        by mail2.tencent.com (Postfix) with ESMTP id 18E618EA10;
-        Fri, 23 Nov 2018 10:10:38 +0800 (CST)
-Received: from EXMBX-SZMAIL003.tencent.com ([fe80::b5c3:10b3:7066:5904]) by
- EXHUB-SZMail03.tencent.com ([::1]) with mapi id 14.03.0415.000; Fri, 23 Nov
- 2018 10:10:37 +0800
-From:   =?utf-8?B?ZGJ5aW4o5bC554OoKQ==?= <dbyin@tencent.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-CC:     "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0hdIGZzL3hmczogZml4IGZfZmZyZWUgdmFsdWUgZm9y?=
- =?utf-8?B?IHN0YXRmcyB3aGVuIHByb2plY3QgcXVvdGEgaXMgc2V0KEludGVybmV0IG1h?=
- =?utf-8?Q?il)?=
-Thread-Topic: [PATCH] fs/xfs: fix f_ffree value for statfs when project
- quota is set(Internet mail)
-Thread-Index: AQHUgo0N3+qIJgJ6Tkafp0qa1NWuOKVcnizA
-Date:   Fri, 23 Nov 2018 02:10:34 +0000
-Message-ID: <6EC51EE77FA0264BB8DAD779E0C341C9014BD78CB5@EXMBX-SZMAIL003.tencent.com>
-References: <6EC51EE77FA0264BB8DAD779E0C341C9014BD77C91@EXMBX-SZMAIL003.tencent.com>
- <20181122175801.GV6792@magnolia>
-In-Reply-To: <20181122175801.GV6792@magnolia>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.32.219.177]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 23 Nov 2018 07:54:12 -0500
+Received: by mail-ed1-f66.google.com with SMTP id o10so9031078edt.13;
+        Thu, 22 Nov 2018 18:11:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qGCz31pgZFlYojE1pveQ5VbetAHfVJaLcPcB8wPuU+o=;
+        b=g8kJU/cEl153GzNO3nUPmiB5DwqqyO0QtqXWZar0A5Vs7OL64MuZu20v9CTz0SfWi4
+         XLFedjuLwIVprTBaySMREQ+3PUnjOQ/7iXWLHTh44FGxOWPI7PrVwf/oAWoQudKlwhTT
+         N33HhIqU1kjeEw9Sm6wzu+N7JT8QvI636un4ZsCkdzhUZ4vYs+TAzpdaw9oKmUnEhRTY
+         aFcl5ZvWxQ+REg8NW4q2C4ZTHa6wX88BtV7oOTWeEdtr1bxWYZctMXy6a03Kb7TlYAcS
+         i5UvqrZXXrkqC4JWprL38SMyYmVwE41QWUf8jgbP+eDAgdKH2wW5IubkUsQBmw7uak8m
+         EqZg==
+X-Gm-Message-State: AGRZ1gL1TiogZxn35S8m6LTLIJ1Hxxmpve0VOAvsMx9SZopwroA4pQXt
+        AL1ysPCLxsjcOE66PWwxGPFG+x20N0E=
+X-Google-Smtp-Source: AJdET5eYNSDGzQFPuGVwJ95eyS+NLQIxTFTxS8kqA3Fd8pqO+0d9bIuamUXQw2N5yGsEWpAX3bIirw==
+X-Received: by 2002:a17:906:4c94:: with SMTP id q20-v6mr9902476eju.26.1542939118847;
+        Thu, 22 Nov 2018 18:11:58 -0800 (PST)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com. [209.85.221.49])
+        by smtp.gmail.com with ESMTPSA id p1-v6sm7842705ejo.49.2018.11.22.18.11.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 18:11:58 -0800 (PST)
+Received: by mail-wr1-f49.google.com with SMTP id p4so10862640wrt.7;
+        Thu, 22 Nov 2018 18:11:58 -0800 (PST)
+X-Received: by 2002:adf:a599:: with SMTP id g25-v6mr12312770wrc.188.1542939117741;
+ Thu, 22 Nov 2018 18:11:57 -0800 (PST)
 MIME-Version: 1.0
+References: <20181122102325.29495-1-wens@csie.org> <20181122102325.29495-2-wens@csie.org>
+ <20181122153241.lzrwhkewg5q4hy2c@flea> <CAGb2v64-Wszg9m8+jCPWzYYRQduwpod2P0UdrFdhTLvAe3paPA@mail.gmail.com>
+ <20181122154819.powgbwwqpljqvjty@flea>
+In-Reply-To: <20181122154819.powgbwwqpljqvjty@flea>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Fri, 23 Nov 2018 10:11:45 +0800
+X-Gmail-Original-Message-ID: <CAGb2v669eNKvLxrD4OXgqUa_6qXwvNR0241AkS2x_zC3NCSo1Q@mail.gmail.com>
+Message-ID: <CAGb2v669eNKvLxrD4OXgqUa_6qXwvNR0241AkS2x_zC3NCSo1Q@mail.gmail.com>
+Subject: Re: [PATCH v9 1/8] ASoC: dt-bindings: sun50i-codec-analog: Add
+ headphone amp regulator supply
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com,
+        Vasily Khoruzhick <anarsoul@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-V2Ugc2V0IHhmcyBwcm9qZWN0IHF1b3RhIHdpdGggb3ZlcmxheWZzIGZvciBkb2NrZXIgY29udGFp
-bmVyLiBXaGVuIEkgZW50ZXIgaW50byB0aGUgY29udGFpbmVyIGFuZCBydW4gdGhlIGNvbW1hbmQg
-J2RmIC1paCcsIHRoZSAnSUZyZWUnIGFuZCAnSVVzZWQnIGFyZSB1bmNvcnJlY3Q6DQoNCiNkZiAt
-aWgNCkZpbGVzeXN0ZW0gICAgICAgICAgICBJbm9kZXMgICBJVXNlZCAgIElGcmVlIElVc2UlIE1v
-dW50ZWQgb24NCm92ZXJsYXkgICAgICAgICAgICAgICAgIDEwMDAgICAtMjM1TSAgICAyMzVNICAg
-IC0gIC8NCg0KU28gSSB3YW50IHRvIGZpeCB0aGlzIGZsYXcsIGFuZCB0aGlzIGlzIHZlcnkgbWVh
-bmluZ2Z1bCBmb3Igb3VyIGFwcGxpY2F0aW9ucy4NClllDQoNCj4gDQo+IE9uIFRodSwgTm92IDIy
-LCAyMDE4IGF0IDAxOjI4OjA0UE0gKzAwMDAsIGRieWluKOWwueeDqCkgd3JvdGU6DQo+ID4gV2hl
-biBwcm9qZWN0IGlzIHNldCwgd2Ugc2hvdWxkIHVzZSBpbm9kZSBsaW1pdCBtaW51cyB0aGUgdXNl
-ZCBjb3VudA0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogWWUgWWluIDxkYnlpbkB0ZW5jZW50LmNv
-bT4NCj4gDQo+IFRoaXMgbWFrZXMgc2Vuc2UgdG8gbWUsIGJ1dCAuLi4gaXQncyBiZWVuIGJyb2tl
-biBsaWtlIHRoaXMgc2luY2UgMjAwNi4NCj4gSXMgdGhlcmUgYSByZWFzb24gd2h5IChzb21lb25l
-IG5hbWVkIEdsZW4pIHdyb3RlIGl0IHRoaXMgd2F5Pw0KPiANCj4gUmV2aWV3ZWQtYnk6IERhcnJp
-Y2sgSi4gV29uZyA8ZGFycmljay53b25nQG9yYWNsZS5jb20+DQo+IA0KPiAtLUQNCj4gDQo+ID4g
-LS0tDQo+ID4gIGZzL3hmcy94ZnNfcW1fYmh2LmMgfCAyICstDQo+ID4gIDEgZmlsZSBjaGFuZ2Vk
-LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2Zz
-L3hmcy94ZnNfcW1fYmh2LmMgYi9mcy94ZnMveGZzX3FtX2Jodi5jIGluZGV4DQo+ID4gNzNhMWQ3
-N2VjMTg3Li4zMDkxZTRiYzA0ZWYgMTAwNjQ0DQo+ID4gLS0tIGEvZnMveGZzL3hmc19xbV9iaHYu
-Yw0KPiA+ICsrKyBiL2ZzL3hmcy94ZnNfcW1fYmh2LmMNCj4gPiBAQCAtNDAsNyArNDAsNyBAQCB4
-ZnNfZmlsbF9zdGF0dmZzX2Zyb21fZHF1b3QoDQo+ID4gICAgICAgICAgICAgICAgIHN0YXRwLT5m
-X2ZpbGVzID0gbGltaXQ7DQo+ID4gICAgICAgICAgICAgICAgIHN0YXRwLT5mX2ZmcmVlID0NCj4g
-PiAgICAgICAgICAgICAgICAgICAgICAgICAoc3RhdHAtPmZfZmlsZXMgPiBkcXAtPnFfcmVzX2lj
-b3VudCkgPw0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAoc3RhdHAtPmZfZmZyZWUgLSBk
-cXAtPnFfcmVzX2ljb3VudCkgOiAwOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAoc3Rh
-dHAtPmZfZmlsZXMgLSBkcXAtPnFfcmVzX2ljb3VudCkgOiAwOw0KPiA+ICAgICAgICAgfQ0KPiA+
-ICB9DQo+ID4NCj4gPiAtLQ0KPiA+IDIuMTYuMg0KDQo=
+On Thu, Nov 22, 2018 at 11:48 PM Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+>
+> On Thu, Nov 22, 2018 at 11:41:57PM +0800, Chen-Yu Tsai wrote:
+> > On Thu, Nov 22, 2018 at 11:33 PM Maxime Ripard
+> > <maxime.ripard@bootlin.com> wrote:
+> > >
+> > > On Thu, Nov 22, 2018 at 06:23:18PM +0800, Chen-Yu Tsai wrote:
+> > > > On the Allwinner A64 SoC, the audio codec has a built-in headphone
+> > > > amplifier. This amplifier has a power supply separate from the rest of
+> > > > the analog audio circuitry.
+> > > >
+> > > > Add a regulator supply property to handle this.
+> > > >
+> > > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > > > ---
+> > > >  Documentation/devicetree/bindings/sound/sun50i-codec-analog.txt | 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/sound/sun50i-codec-analog.txt b/Documentation/devicetree/bindings/sound/sun50i-codec-analog.txt
+> > > > index 4f8ad0e04d20..056a098495cc 100644
+> > > > --- a/Documentation/devicetree/bindings/sound/sun50i-codec-analog.txt
+> > > > +++ b/Documentation/devicetree/bindings/sound/sun50i-codec-analog.txt
+> > > > @@ -4,9 +4,11 @@ Required properties:
+> > > >  - compatible: must be one of the following compatibles:
+> > > >               - "allwinner,sun50i-a64-codec-analog"
+> > > >  - reg: must contain the registers location and length
+> > > > +- cpvdd-supply: Regulator supply for the headphone amplifier
+> > >
+> > > I guess we should make this optional, since even if it's missing, it's
+> > > going to create a dummy regulator. and that allows to have backward
+> > > compatibility.
+> > >
+> > > For the rest of the series,
+> > > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> >
+> > This one (not sun8i-codec-analog) is new for the next release, so there's
+> > no backward compatibility to consider. Plus none of the device tree changes
+> > for A64 have been merged.
+>
+> Ok, that works for me then.
+
+Well, I misspoke. The driver was introduced in 4.20-rc1, and these changes will
+end up in 4.21. But again, since we don't have any device tree changes already
+merged, we should be fine.
+
+Implementation wise, there really isn't a "required" variant of the regulator
+API. The API will use the dummy regulator if it's missing.
+
+ChenYu
