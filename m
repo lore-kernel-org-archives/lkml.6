@@ -2,109 +2,98 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07283C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18993C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C021A20861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:57:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="bYhnlFxh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C021A20861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id D922E20864
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:57:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D922E20864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502816AbeKWUlQ (ORCPT
+        id S2409228AbeKWUl3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:41:16 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:5293 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726862AbeKWUlQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 15:41:16 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bf7cf170000>; Fri, 23 Nov 2018 01:57:43 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 23 Nov 2018 01:57:42 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 23 Nov 2018 01:57:42 -0800
-Received: from [10.26.11.175] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 23 Nov
- 2018 09:57:38 +0000
-Subject: Re: [PATCH 4.9 00/59] 4.9.139-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20181121183508.262873520@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <8e15183b-defd-b6fa-0c0a-7415a0ee58f4@nvidia.com>
-Date:   Fri, 23 Nov 2018 09:57:35 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 23 Nov 2018 15:41:29 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:37531 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388367AbeKWUl3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 15:41:29 -0500
+Received: from wld62.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id wAN9vIpR4153615
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Fri, 23 Nov 2018 01:57:19 -0800
+Date:   Fri, 23 Nov 2018 01:57:12 -0800
+User-Agent: K-9 Mail for Android
+In-Reply-To: <3e881ee6-0ff6-b8b6-0633-3d4a7743411d@arm.com>
+References: <3e881ee6-0ff6-b8b6-0633-3d4a7743411d@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20181121183508.262873520@linuxfoundation.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1542967063; bh=afSeZ5xiW4FXlolOexQL6HtEnUMvZEgXK2rVU48jk+8=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=bYhnlFxhJGg7+BneP+yPngUz/9ECepBwrPuCgB4SZOVTrNYzZGsKPnOaUPeV25Lr0
-         UBimVFPkKucmybbmzNeEYpv2aCsqfHRgCCmGfSY+rSCJNEHYzle7+duI5nJYtp0Q2v
-         B76t/tc9vmtOMmpOOV/3IQ9x1Kspq7nHUkjqawGC5dHLYU8YhFadb7D2XzFcYGKn4d
-         b+Q3eGVBj7N4B8xge3m675NAKE7L5BPXP6aztdBX8uAgVP/1hRJPxffpMHvbGmwWX6
-         +LGt4JvZX3t9cy1vMM4j4sbyDlEnRQ1N2ESkaLMs6bbQL6wi8jyD2GnLkkwn4XAfyd
-         ZMsfdAnfTNJDw==
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: Sleeping in user_access section
+To:     Julien Thierry <julien.thierry@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        James Morse <james.morse@arm.com>
+From:   hpa@zytor.com
+Message-ID: <5B3B6AF9-9D8C-4577-905E-D407A5E7D0E3@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On November 23, 2018 1:27:02 AM PST, Julien Thierry <julien.thierry@arm.com> wrote:
+>Hi,
+>
+>I made an attempt at implementing the 
+>user_access_begin()/user_access_end() macros along with the 
+>get/put_user_unsafe() for arm64 by toggling the status of PAN (more or 
+>less similar to x86's STAC/CTAC).
+>
+>With a small mistake in my patch, we realized that directly calling 
+>function that could reschedule while in a user_access section could
+>lead to:
+>
+>- scheduling another task keeping the user_access status enabled
+>despite 
+>the task never calling user_access_begin()
+>
+>- when re-scheduling the task that was mid user_access section, 
+>user_access would be disabled and the task would fault on the next 
+>get/put_user_unsafe.
+>
+>
+>This is because __switch_to does not alter the user_access status when 
+>switching from next to prev (at least on arm64 we currently don't, and 
+>by looking at the x86 code I don't think this is done either).
+>
+>
+> From my understanding, this is not an issue when the task in 
+>user_access mode gets scheduled out/in as a result of an interrupt as 
+>PAN and EFLAGS.AC get saved/restore on exception entry/exit (at least I
+>
+>know it is the case for PAN, I am less sure for the x86 side).
+>
+>
+>So, the question is, should __switch_to take care of the user_access 
+>status when scheduling new tasks? Or should there be a restriction
+>about 
+>scheduling out a task with user_access mode enabled and maybe add a 
+>warning if we can detect this?
+>
+>(Or did we miss something and this is not an issue on x86?)
+>
+>Thanks,
 
-On 21/11/2018 19:06, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.139 release.
-> There are 59 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri Nov 23 18:34:55 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.139-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-All tests are passing for Tegra ...
-
-Test results for stable-v4.9:
-    8 builds:	8 pass, 0 fail
-    15 boots:	15 pass, 0 fail
-    14 tests:	14 pass, 0 fail
-
-Linux version:	4.9.139-rc1-g70b1395
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
+You should never call a sleeping function from a user_access section. It is intended for very limited regions.
 -- 
-nvpublic
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
