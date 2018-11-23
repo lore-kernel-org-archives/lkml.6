@@ -2,122 +2,167 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B49F0C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C63D8C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:47:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72909206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:44:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="erVo7NNP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72909206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8B0CB206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:47:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0CB206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439823AbeKXA2e (ORCPT
+        id S2439838AbeKXAb0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 19:28:34 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59238 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394909AbeKXA2e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 19:28:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=K6K8v09SQQo495JMhVMn2SAT2J7VN90bAzdStrYCPoM=; b=erVo7NNPKUgDbbNrCuyAfkkeO
-        bbEexUkChnk9EC2bv0knY6m9bUFOd3iQUGg8M+HFQcEuSqMcWvOswU84AGZak4dn/oopgAyp1rgWP
-        2zr4qt1+Hg3g4/5XvSEhJKw4WgNHIjVIUF6vAL9aPAkr7f8mYNiWcVLZQMfp1FNMj6RSk=;
-Received: from [176.12.107.140] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gQBki-00014t-QY; Fri, 23 Nov 2018 13:44:12 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id EC941440078; Fri, 23 Nov 2018 13:44:11 +0000 (GMT)
-Date:   Fri, 23 Nov 2018 13:44:11 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Andrei.Stefanescu@microchip.com
-Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        gregkh@linuxfoundation.org, Nicolas.Ferre@microchip.com,
-        Cristian.Birsan@microchip.com, Claudiu.Beznea@microchip.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] regulator: mcp16502: add regulator driver for
- MCP16502
-Message-ID: <20181123134411.GG2089@sirena.org.uk>
-References: <1542108563-10108-1-git-send-email-andrei.stefanescu@microchip.com>
- <1542108563-10108-4-git-send-email-andrei.stefanescu@microchip.com>
- <20181113174539.GB2089@sirena.org.uk>
- <03b902d9-49a8-9acd-6f98-048f117b1e93@microchip.com>
+        Fri, 23 Nov 2018 19:31:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45160 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390880AbeKXAb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 19:31:26 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E3C44AF93;
+        Fri, 23 Nov 2018 13:47:07 +0000 (UTC)
+Subject: Re: [RFC PATCH 1/3] mm, proc: be more verbose about unstable VMA
+ flags in /proc/<pid>/smaps
+To:     Michal Hocko <mhocko@kernel.org>, linux-api@vger.kernel.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Rientjes <rientjes@google.com>
+References: <20181120103515.25280-1-mhocko@kernel.org>
+ <20181120103515.25280-2-mhocko@kernel.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <28689fcd-fd57-6a1a-6ae1-a860c77842f8@suse.cz>
+Date:   Fri, 23 Nov 2018 14:47:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="OMIeU0UG8ajn+69Z"
-Content-Disposition: inline
-In-Reply-To: <03b902d9-49a8-9acd-6f98-048f117b1e93@microchip.com>
-X-Cookie: No Canadian coins.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181120103515.25280-2-mhocko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/20/18 11:35 AM, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+> 
+> Even though vma flags exported via /proc/<pid>/smaps are explicitly
+> documented to be not guaranteed for future compatibility the warning
+> doesn't go far enough because it doesn't mention semantic changes to
+> those flags. And they are important as well because these flags are
+> a deep implementation internal to the MM code and the semantic might
+> change at any time.
+> 
+> Let's consider two recent examples:
+> http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
+> : commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
+> : removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
+> : mean time certain customer of ours started poking into /proc/<pid>/smaps
+> : and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
+> : flags, the application just fails to start complaining that DAX support is
+> : missing in the kernel.
+> 
+> http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+> : Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+> : introduced a regression in that userspace cannot always determine the set
+> : of vmas where thp is ineligible.
+> : Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
+> : to determine if a vma is eligible to be backed by hugepages.
+> : Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
+> : be disabled and emit "nh" as a flag for the corresponding vmas as part of
+> : /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
+> : flag and "nh" is not emitted.
+> : This causes smaps parsing libraries to assume a vma is eligible for thp
+> : and ends up puzzling the user on why its memory is not backed by thp.
+> 
+> In both cases userspace was relying on a semantic of a specific VMA
+> flag. The primary reason why that happened is a lack of a proper
+> internface. While this has been worked on and it will be fixed properly,
+> it seems that our wording could see some refinement and be more vocal
+> about semantic aspect of these flags as well.
+> 
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: David Rientjes <rientjes@google.com>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
---OMIeU0UG8ajn+69Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Agreed, although no amount of docs will override the
+do-not-break-userspace rule I'm afraid :)
 
-On Wed, Nov 21, 2018 at 03:44:31PM +0000, Andrei.Stefanescu@microchip.com w=
-rote:
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-> Thank you for your review. While working on the next version I realized t=
-hat
-> the implementation should change a bit. The mcp16502 PMIC has separate=20
-> registers
-> for each of its operating modes (Performance, Active, Low-power, Hibernat=
-e).
-> So, it is possible to setup the values for Low-power (Linux standby) and
-> Hibernate (Linux suspend-to-ram) and these values would not be affected by
-> changes made during runtime (which are made to the ACTIVE registers).
+On top of typos reported by Mike:
 
-This is totally normal for regulators, it's the only way that suspend
-modes can function sensibly since suspend mode configuration is
-typically not capable off supplying the processor.  If your driver is
-currently trying to use the normal operating registers then it's buggy.
+> ---
+>  Documentation/filesystems/proc.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+> index 12a5e6e693b6..b1fda309f067 100644
+> --- a/Documentation/filesystems/proc.txt
+> +++ b/Documentation/filesystems/proc.txt
+> @@ -496,7 +496,9 @@ flags associated with the particular virtual memory area in two letter encoded
+>  
+>  Note that there is no guarantee that every flag and associated mnemonic will
+>  be present in all further kernel releases. Things get changed, the flags may
+> -be vanished or the reverse -- new added.
+> +be vanished or the reverse -- new added. Interpretatation of their meaning
 
-> This means that the calls to suspend_set_* are not necessary to be made e=
-ach
-> time the board suspends. My idea is to add three functions to the=20
-> regulator_ops
-> (setup_suspend_standby/mem/max) which would be called after the regulator=
- is
-> registered and which would set the values found inside the devicetree
-> in the regulator-state-standby/mem/disk subnodes.
+                                            ^ interpretation
 
-There is no need to add new operations, we already have a number of
-suspend specific operations covering enable state, modes and voltage.
-You should just use those, there's already code to call them.
+> +might change in future as well. So each consumnent of these flags have to
+> +follow each specific kernel version for the exact semantic.
+>  
+>  This file is only present if the CONFIG_MMU kernel configuration option is
+>  enabled.
+> 
 
---OMIeU0UG8ajn+69Z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv4BCsACgkQJNaLcl1U
-h9D3lgf+MSPw3VUd37AGGy6UX8e9wrtZWONnJ9xKEgagrfT1n9PgKR3WOAdGfUJP
-WIzVHqG6cMpkr6aYaxrBuQwv/65WH+6oZKowe3+JWBZOjdFeNABdWVwNZpTH2U/m
-fZlC0tjL8trJX+qA7ARsUlb2e6p3eRfAwYUiIdzTR+D//B7nB47bqvNG1WROB9ui
-mt9rf8u16YlCqzgzNPM44CkUdykA+MPzbSr7oTW2GI9/+olP9oBXJvDghHLcJJdl
-DHuzZmzjEler3Ne7cgVY6RV5zlaaqL296QAGYO2ObG9Qln1YMiESuGo/hwSyKO6M
-BFqN/69OsA3HYGct4Hwt2ZYAetXiIQ==
-=LKzK
------END PGP SIGNATURE-----
-
---OMIeU0UG8ajn+69Z--
