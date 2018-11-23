@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 860C3C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D67AC43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 566C020863
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:27:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 566C020863
+	by mail.kernel.org (Postfix) with ESMTP id 2F6A020820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:27:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F6A020820
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408994AbeKWUKa (ORCPT
+        id S2502804AbeKWUKb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:10:30 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49420 "EHLO mail.bootlin.com"
+        Fri, 23 Nov 2018 15:10:31 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49418 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502738AbeKWUK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 15:10:26 -0500
+        id S2502727AbeKWUK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 15:10:27 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7579520DFB; Fri, 23 Nov 2018 10:26:58 +0100 (CET)
+        id 7126220DF9; Fri, 23 Nov 2018 10:26:58 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 440F720E0E;
-        Fri, 23 Nov 2018 10:26:34 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 039B220E00;
+        Fri, 23 Nov 2018 10:26:33 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org
@@ -37,9 +37,9 @@ Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v2 26/43] drm/sun4i: frontend: Add support for packed YUV422 input formats
-Date:   Fri, 23 Nov 2018 10:24:58 +0100
-Message-Id: <20181123092515.2511-27-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 25/43] drm/sun4i: frontend: Apply format sub-sampling to CH1 dimensions
+Date:   Fri, 23 Nov 2018 10:24:57 +0100
+Message-Id: <20181123092515.2511-26-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
 References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
@@ -50,85 +50,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces support for packed YUV formats with 4:2:2 sampling using
-the frontend. Definitions are introduced for the data format and pixel
-sequence input format register values.
+The frontend comes with two "channels", that can be configured
+independently. When used in YUV mode, the first channel (CH0) represents
+the luminance component while the second channel (CH1) represents the
+chrominance. In RGB mode, both have to be configured the same way.
+
+Use variables (with the YUV terminology) for each channel's
+dimensions, calculating the chroma dimensions from the luma dimensions
+and the sub-sampling factors from the format description.
+
+Since the configured size only has pixel precision, the fractional
+fixed-point part of the source size is dropped for both components to
+ensure that the scaling factors are accurate.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 22 ++++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun4i_frontend.h |  5 +++++
- 2 files changed, 27 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index 4700133b96e0..f443e8e1d8ec 100644
+index 5626334c6e87..4700133b96e0 100644
 --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
 +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -130,6 +130,8 @@ static int sun4i_frontend_drm_format_to_input_fmt(uint32_t fmt, u32 *val)
+@@ -276,16 +276,24 @@ void sun4i_frontend_update_coord(struct sun4i_frontend *frontend,
+ 				 struct drm_plane *plane)
  {
- 	if (!drm_format_is_yuv(fmt))
- 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB;
-+	else if (drm_format_is_yuv_sampling_422(fmt))
-+		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV422;
- 	else
- 		return -EINVAL;
+ 	struct drm_plane_state *state = plane->state;
++	struct drm_framebuffer *fb = state->fb;
++	uint32_t luma_width, luma_height;
++	uint32_t chroma_width, chroma_height;
  
-@@ -153,10 +155,26 @@ static int sun4i_frontend_drm_format_to_input_sequence(uint32_t fmt, u32 *val)
- 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_BGRX;
- 		return 0;
- 
-+	case DRM_FORMAT_UYVY:
-+		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UYVY;
-+		return 0;
+ 	/* Set height and width */
+ 	DRM_DEBUG_DRIVER("Frontend size W: %u H: %u\n",
+ 			 state->crtc_w, state->crtc_h);
 +
-+	case DRM_FORMAT_VYUY:
-+		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_VYUY;
-+		return 0;
++	luma_width = state->src_w >> 16;
++	luma_height = state->src_h >> 16;
 +
- 	case DRM_FORMAT_XRGB8888:
- 		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_XRGB;
- 		return 0;
- 
-+	case DRM_FORMAT_YUYV:
-+		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YUYV;
-+		return 0;
++	chroma_width = DIV_ROUND_UP(luma_width, fb->format->hsub);
++	chroma_height = DIV_ROUND_UP(luma_height, fb->format->vsub);
 +
-+	case DRM_FORMAT_YVYU:
-+		*val = SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YVYU;
-+		return 0;
-+
- 	default:
- 		return -EINVAL;
- 	}
-@@ -180,7 +198,11 @@ static int sun4i_frontend_drm_format_to_output_fmt(uint32_t fmt, u32 *val)
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_INSIZE_REG,
+-		     SUN4I_FRONTEND_INSIZE(state->src_h >> 16,
+-					   state->src_w >> 16));
++		     SUN4I_FRONTEND_INSIZE(luma_height, luma_width));
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_INSIZE_REG,
+-		     SUN4I_FRONTEND_INSIZE(state->src_h >> 16,
+-					   state->src_w >> 16));
++		     SUN4I_FRONTEND_INSIZE(chroma_height, chroma_width));
  
- static const uint32_t sun4i_frontend_formats[] = {
- 	DRM_FORMAT_BGRX8888,
-+	DRM_FORMAT_UYVY,
-+	DRM_FORMAT_VYUY,
- 	DRM_FORMAT_XRGB8888,
-+	DRM_FORMAT_YUYV,
-+	DRM_FORMAT_YVYU,
- };
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_OUTSIZE_REG,
+ 		     SUN4I_FRONTEND_OUTSIZE(state->crtc_h, state->crtc_w));
+@@ -293,14 +301,14 @@ void sun4i_frontend_update_coord(struct sun4i_frontend *frontend,
+ 		     SUN4I_FRONTEND_OUTSIZE(state->crtc_h, state->crtc_w));
  
- bool sun4i_frontend_format_is_supported(uint32_t fmt)
-diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-index fb097c34e160..399755939a28 100644
---- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
-@@ -27,7 +27,12 @@
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_HORZFACT_REG,
+-		     state->src_w / state->crtc_w);
++		     (luma_width << 16) / state->crtc_w);
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_HORZFACT_REG,
+-		     state->src_w / state->crtc_w);
++		     (chroma_width << 16) / state->crtc_w);
  
- #define SUN4I_FRONTEND_INPUT_FMT_REG		0x04c
- #define SUN4I_FRONTEND_INPUT_FMT_DATA_MOD_PACKED	(1 << 8)
-+#define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_YUV422	(1 << 4)
- #define SUN4I_FRONTEND_INPUT_FMT_DATA_FMT_RGB		(5 << 4)
-+#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_UYVY		0
-+#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YUYV		1
-+#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_VYUY		2
-+#define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_YVYU		3
- #define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_BGRX		0
- #define SUN4I_FRONTEND_INPUT_FMT_DATA_PS_XRGB		1
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_CH0_VERTFACT_REG,
+-		     state->src_h / state->crtc_h);
++		     (luma_height << 16) / state->crtc_h);
+ 	regmap_write(frontend->regs, SUN4I_FRONTEND_CH1_VERTFACT_REG,
+-		     state->src_h / state->crtc_h);
++		     (chroma_height << 16) / state->crtc_h);
  
+ 	regmap_write_bits(frontend->regs, SUN4I_FRONTEND_FRM_CTRL_REG,
+ 			  SUN4I_FRONTEND_FRM_CTRL_REG_RDY,
 -- 
 2.19.1
 
