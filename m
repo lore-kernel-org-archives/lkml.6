@@ -2,226 +2,138 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A361C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE69C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CA5E205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:59:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E08B3205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:00:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="XYb8zL4Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CA5E205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kddjSDOm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E08B3205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503094AbeKWUnI (ORCPT
+        id S2503104AbeKWUoB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:43:08 -0500
-Received: from mail-eopbgr730060.outbound.protection.outlook.com ([40.107.73.60]:27360
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387962AbeKWUnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 15:43:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PRVu6MdJqbcKh9fUHMDW6/o0Fd4jh3In1N3Z72spQ40=;
- b=XYb8zL4QECVnRJR5+//aXatYkx/zB2ymhL4IRN0ZOZMqhC+IMtHZVj+Zz/OAZICOqDF5JNSgPNGJ+I0T/jVE4mRQ9b5i2+I+KWYgpxR7N2uBZgHxskZsrFv1DzMbDLWclthsu+9+GvAFxItNdxfAIqkJXxKcsaVuGMOhWJP0lEw=
-Received: from BYAPR02CA0004.namprd02.prod.outlook.com (2603:10b6:a02:ee::17)
- by BYAPR02MB4454.namprd02.prod.outlook.com (2603:10b6:a03:57::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1339.26; Fri, 23 Nov
- 2018 09:59:29 +0000
-Received: from CY1NAM02FT023.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::208) by BYAPR02CA0004.outlook.office365.com
- (2603:10b6:a02:ee::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1361.16 via Frontend
- Transport; Fri, 23 Nov 2018 09:59:28 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT023.mail.protection.outlook.com (10.152.74.237) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1339.15
- via Frontend Transport; Fri, 23 Nov 2018 09:59:28 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <harini.katakam@xilinx.com>)
-        id 1gQ8FD-0004ow-Tn; Fri, 23 Nov 2018 01:59:27 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <harini.katakam@xilinx.com>)
-        id 1gQ8F8-00089A-PW; Fri, 23 Nov 2018 01:59:22 -0800
-Received: from xsj-pvapsmtp01 (mailhub.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wAN9xLde011585;
-        Fri, 23 Nov 2018 01:59:21 -0800
-Received: from [172.23.37.92] (helo=xhdharinik40.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <harini.katakam@xilinx.com>)
-        id 1gQ8F7-00087k-9k; Fri, 23 Nov 2018 01:59:21 -0800
-From:   Harini Katakam <harini.katakam@xilinx.com>
-To:     <nicolas.ferre@microchip.com>, <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <michal.simek@xilinx.com>, <harinikatakamlinux@gmail.com>,
-        <harini.katakam@xilinx.com>
-Subject: [RFC PATCH] net: macb: Apply RXUBR workaround only to versions with errata
-Date:   Fri, 23 Nov 2018 15:29:17 +0530
-Message-ID: <1542967157-8053-1-git-send-email-harini.katakam@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(39860400002)(136003)(2980300002)(438002)(189003)(199004)(106002)(63266004)(316002)(54906003)(110136005)(16586007)(575784001)(336012)(356004)(6666004)(36386004)(106466001)(14444005)(50466002)(51416003)(7696005)(50226002)(47776003)(478600001)(48376002)(9786002)(186003)(5660300001)(8936002)(44832011)(107886003)(4326008)(426003)(486006)(126002)(2616005)(476003)(2906002)(36756003)(77096007)(81166006)(26005)(39060400002)(8676002)(305945005)(81156014)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4454;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT023;1:9ZlcnQ18CWbLkdzWM4GqxRpp/IB818eYsKqhY7AoEu/DmNS8q209LN/N1MWfQWuhDKBEQcP6rSIEOlgv5TDVLVhIYQbV6Ae6rzrCKKHPScQr8GH0AxxxHPUHhe5ZsMoO
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 5a425c38-030b-48d3-7f97-08d6512a5b97
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BYAPR02MB4454;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4454;3:6MUTXBMslkaY3jL0x7sJNZ97YqofKYkUSfwAmYkIJK00R31HMYL9NRJOGXcYldDC1yHDcKZgU0LUHmM0hTBzkTmG8zetxXVoY7E9MLI2yY/z9du+mQhFxYKAWHJ2Y3JP2DC3nc6h5gPfzV2SLR00h+FrBU+kMVonYrb3nN0ygV1dxq/2wXPTBz5FHgpyLv/IdUAP0TAegRFRTa4t4YiVlT0qdj3X89QdJGSoKXUMT/kWCtpcTg883lJFI6fp1Mzt8z/T0bbpjTjlhwWcNR7wCsbJPIGDHaFIzV+H4xz8KZSQ3YxB572IgFqMwZkY/OBV+QDsDJVRc1genP+QC+id4XhkXUTvWPDCoxQlj3xiffk=;25:zh12ClLcJYPhGUGuknbkjqnM/yCFTFp40fRBcW44ZHGik9wJk5brKiG8grKO7991LKPR7sjGNEBR4BDEtxb9vxvqDHf7LeslknfEVePIAzdgJ49EtQYI2k34RHlT8oTmgRa+N+Uogm8buDqNVPPk9blNoeEV/ZNM+Gq0hGyXTFRHFudQPhAmTmvQqv9UBq9XfcD+uObVYY4CQ+k/xKZunUywV7Nwi/ddaxIVSbKSm8W0MTWcH9/OGRp0VNgLpn+WWQ5ZXKfb/6wpLkS9lonmn5Ci6NozX/68YocgvDHF/Ox65nlkz/4igSAykmvxZYAwnMrrhV/PMjeZKKS3RlOvLw==
-X-MS-TrafficTypeDiagnostic: BYAPR02MB4454:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4454;31:YBY9JnqffZVjAvOLP2/Gr4N8rJt5S9V9QeQaW36/VSuNBvDtYvqp75svoOPKBtUnuaw1h6uB36E/cH224saEUPAYuYgW+dEQwP2x80kEehGwrNZwLxc1VuYP33n3tp+KV0kQZTFgsa/63vnacNNgklLPv57jLr/eqM6mA+ter2VwvPyvMi6vIRjQgZcj7RJAZ8FltiXepGOBDBDZGD1nxtY+IT0uKQxPcRmSncTckLY=;20:OyLPT1juXisAgA6gKAAdvCu1N+5Kw/SY4kfZs7I8u+XOKhpCpGsD+OwXsRYPxzTrLG7n0M3j4s9A5r9dSYWvU8VGBPI5lhV6HQvCniRWAlvrZSzgbBsL8FTOx6xoT4MSY03wDphyMN0RCVUj6bdicslfZ0Oaf2tyr5vIGFEVy8e300nee3mBQltyeFGczyhqgxrn2CdQ7nNOw0lGE7do8J0inJ/7xAy/Q75j29CrGipiXF19IR6u6lP0O0I+PZFzpvpkAgi+eR62OOwtMdRT/Cwuz1+HNN7i5Xuom8nNIKynkrPwP1hxK7zoZ/s3CJurhb3lpKUlMHWPQY+WlUnbVJ6sgjs7j0OAHkj04tdFx3sfMUdJpbq60/qzfE+C6sQaEb/9RqY83NnznWEKUAsD07dr2K2dqCEL8OKdRyGmkD0xsIKG9oEp599GA/Law0UwQlE8lNG60K5C8WQaaRytz/2gON+AMpgMJcKg7HHC4cVHWqeBcg/CaadX+be9xucN
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <BYAPR02MB4454A30593DBC08E6F75D30EC9D40@BYAPR02MB4454.namprd02.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(3231442)(944501410)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BYAPR02MB4454;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB4454;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4454;4:y3sQYsZq8qJJ4noWgQh2fLZgHk5f57qvGt5OeErK1Oe95iVcpp4JzeDOtnLtycN9aSw3s8VUucGkJeQGwf4WeWnalxBjkUvJ5ctSElf69AjeW6DO7JB80p/zivoWKpgqE25qyHx81mD3kqpPXq4FrXz1h1+yWvscSm332THaP2z31Sy0+tqXC09pDTTRueNOawTqaTY7QN3kgRVytVukN+tmnLp9Z2dGLvVTm23NsmCzfFCMg4K+UZtc+J1IlIomldvMM63Vu0zCqc7pBh2r2A==
-X-Forefront-PRVS: 086597191B
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB4454;23:/tH8Jm4KVKxkxhHAFW5pFNmj49UJIdBzN1AVMdpNQ?=
- =?us-ascii?Q?d8+nasdzTyyJT5zemZJLUIHM8a2Sri5/a86lOfX8bsZyG+x1pUDIr30cq6nw?=
- =?us-ascii?Q?mTg8+1unJvgu/LitkeHG34aJf2o9Oa3xAibzqhSaex1qBl+q6SQUsqPme/ZF?=
- =?us-ascii?Q?rU7FoOGa7L6wCJOq9+YvuFjqmuCIdaAcKgIYjsPTxR9ANqlkH67z6UQtex9g?=
- =?us-ascii?Q?HWtYzUPf6FnIjk5I3FTcFMzXOfSYGk15HIVg37W5PnOroWhapqykYOzDnLMT?=
- =?us-ascii?Q?lwcq6KQBhHQOi58BdrlQzp9oRa+N+LKOiw4rUHmrlOtzmSN5lQmm376btFi7?=
- =?us-ascii?Q?Iiu+ipWNwwVvApGYR6Me/XFPVrCJ1V6AasEgxxIw4EtxukeMBWjC9/PFiWsr?=
- =?us-ascii?Q?CmJTLFiXz5W9QAkC66buwTFpt49azQKP8dJNyzYNVSP4CFYpheRw6d5YwCo3?=
- =?us-ascii?Q?T8LhBKHHBAC+ANxIyf5HV8FkMukmjDoOhg45ZR1KofZAJdM84UB4wiGJyRnc?=
- =?us-ascii?Q?69zOjeG2AAvT4fmR4cpl5zV2RSfhGb4znu2rNsSMQ1cyDTCMGPq/jmhbm09J?=
- =?us-ascii?Q?WrEe0TwpHPy3XP5sAXXHtTTVcdIdkj1/K/jxcFRNMZ2T6/R2UD8jy5hh0eiF?=
- =?us-ascii?Q?Xa0iSWETmj8t4dlhpGu7JpetkJSoWbLtm2lsR2FwJ6gpP3tgA7ZhnV8ht9Ze?=
- =?us-ascii?Q?4gJ/UuiuKgREOcReHTa9Np3h7DM6x5AjJZ7+hPPXVKSCRcE89LZCiMmXrvXU?=
- =?us-ascii?Q?XC49LOHM3B300mbeZSAtfofoyLMF8NDP3hQgTPVz7/6nFk8OT6OvxgfHnkuw?=
- =?us-ascii?Q?TRgmmENByet4hT8RHj40yGbiDLct6jrJFWhG/2w3RYNQPVz3SuNeEYc5ojq2?=
- =?us-ascii?Q?P8Fz//rWI6XWLfiNBDdvmeLTnmqmmFoS7DwS2sq6Q7ktmuICZTcNjxUEKw3L?=
- =?us-ascii?Q?9AMi8TZs+SG34whKCxm6G9vxFjfq1D5DBovxaGH3gKvLkFLflQw9Q7EMU3Yd?=
- =?us-ascii?Q?xInRe/Zh3g9k6tDkOj23r/WoQmcHB/Uky+rIqPZ8FAvi51VGCsa7T4lMN4QF?=
- =?us-ascii?Q?xxKcAV///763eywd68W4XQJJ+adcAnRfMFDjW7iPrVFfKjLsVJAxPPniPPXv?=
- =?us-ascii?Q?xx5ZpP3PiF/k6TcG3fdP8qTAIh6zpjU?=
-X-Microsoft-Antispam-Message-Info: 6yU3AV97yPg5U/XwV03duBQXo3XNJF3pZnHbCZAWZY41wGg9ut5wiBWp6vS0xLk8ukB0MkeQ+5qlFHvfS/CQNVU9/WrD04OFJz//n2xjppto3I5ZJYcdPoGTPMx5gKEBBJtGu9/Uy2L2WgRzei5hT/6HnwoEAk7h13EOREGSELK6zBFjfvwGJJKcue0Y9VvJu7YaYPeJXksl6pFFWZ17+5swM9xeE1XrQdTaryO6xVCEpGq42qEYydmFQh5VWr0yUn5kbrHYwh13pZZyxp36GdZ441G7ammau/XBegSkKba7uHWnI8PG5lYBh1KknFojSJS+/2v6F3kah1Mkef4I7nZib/bjFAlQXtYIPJ+BA/k=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4454;6:0YgeMGKNOqbcpfqAiT/skm7vIIRGlrFPu2uAEzVTRa2VGHcrzlX01sHRuusJ6flK+iW8Z6BiCG31jrbxZEv/AMZOOErJaL2V3WwPwpdF9HHHSphygdXompQyDUyKFpABgZJtDKZpZafaUgt74vPNywFrKwXEQewVtn+XjVQuUMsqettGrtz/Bk2dNjYC2gPVFgjR1YHBVyZwRONLm4ngTS3lU4GGHlTRpljEcHqmIJ40SI6Tnk1XPXj10lcY0jKMQvzUpBd4gjH39+NbymdujW5vBVzDqBmUWUTkjZn+jiucOvCF1Jt0iCKB07VqS+niHKsumLipDQSfz5YmNgsVNdLv5DyOBOJ9cs8nD1o4o3Vs3IWvvDdTATHEYXiN8GlTlSXJXmYi65l4TVtAHlZr559cmhcI7Z6TKm8/PBK7zcQQkVXJftv0W1KBM1T37yaFDw8mYixDeMHARMWMLDDyIQ==;5:n3SSg8dygbTmOmJORbQr50HMfMIbDXiaVIEWZBj7GCZJUhbN7ipalhbrYBMYWLYq6Yt+Sy5SlKgtwuckqFkfpKJ861xB2w2IVQc9QYNChKA3oqf5xLIwOAuEHkbza3qDJNvrFrmGh61LCiGHKwFZzUvkNVoul1GoYC2z/myruc0=;7:67JxGBOwFHndzmuuyYiRT4oiE8MuVb/9PIersZlOwJjfnoYYGte6dJQ3FNpwDUAxgSUX5bFSlFX6cc8AG2zecjV33MJzyChEITjd9FcsE9hcXZN5b/NMi84s4EIv0Poiz8XkuJ6bopnqrKDfJTBtLg==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2018 09:59:28.3197
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a425c38-030b-48d3-7f97-08d6512a5b97
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4454
+        Fri, 23 Nov 2018 15:44:01 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:37796 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388455AbeKWUoA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 15:44:00 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAN9sHJk161189;
+        Fri, 23 Nov 2018 10:00:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=InOpmewHO9sq3FbRlMgi/DBEt0CSmNIJnWOpgjat4AE=;
+ b=kddjSDOmdSAzZ90yfmCZJcFv6tFwHQcKIEC1JzyVFYMQf/B2ZeQaiOCGdCGlInt/clxe
+ JhQRHwhGtPeRA2fQLbCbzRyXsXSO/BjD4RMXU7a9RsaOqssTc8dybIzf9AqZYSrkeScV
+ Lxbrgmj8LnByhFa9+ybvJWrd8DkMSFF/nlxtd7juvk6nCXDcIT29B35kB8vbnbNyRpxb
+ hqiIY/ppF4mS9rF0XxH3aNNJD8h1cfYoBeiIf/iG8dRXaf2q5IHOEBbEUQrIm0P51ji8
+ D9vBS5yzEzREXdJBBbSJ5jhsWvH3EuEHt5x00X9Ejl7puAI2pnfL6IbU17Pqq+ZxvqI0 vw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2ntadua70h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Nov 2018 10:00:03 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wANA01UG003212
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Nov 2018 10:00:01 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wANA00pJ010272;
+        Fri, 23 Nov 2018 10:00:00 GMT
+Received: from ca-dev-arm44.us.oracle.com (/10.211.8.237)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 23 Nov 2018 02:00:00 -0800
+From:   Eric Saint-Etienne <eric.saint.etienne@oracle.com>
+To:     Linux Kernel <linux-kernel@vger.kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.co>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Eric Saint-Etienne <eric.saintetienne@gmail.com>
+Subject: [PATCH] perf symbols: Cannot disassemble some routines when debuginfo present
+Date:   Fri, 23 Nov 2018 02:25:26 -0800
+Message-Id: <1542968726-20910-1-git-send-email-eric.saint.etienne@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9085 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811230079
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The interrupt handler contains a workaround for RX hang applicable
-to Zynq and AT91 only. Subsequent versions do not need this
-workaround. This workaround unecessarily reset RX whenever RX used
-bit read is observed, which can be often under heavy traffic.Hence
-introduce an errata field and a check to enable this workaround.
+When the kernel is compiled with -ffunction-sections and perf uses the
+kernel debuginfo, perf fails the very first symbol lookup and ends up with
+an hex offset inside [kernel.vmlinux]. It's due to how perf loads the maps.
 
-Signed-off-by: Harini Katakam <harini.katakam@xilinx.com>
+Indeed only .text gets loaded by map_groups__find() into al->map.
+Consequently al->map address range encompass the whole code.
+But map__load() has just loaded many function maps by splitting al->map,
+which reduced al->map range drastically. Very likely the target address is
+now in one of those newly created function maps, so we need to lookup the
+map again to find that new map.
+
+This issue is not specific to the kernel but to how the image is linked.
+For the kernel, when we're not using the kernel debuginfo, perf will
+fallback to using kallsyms and then the first lookup will work.
+
+This patch makes sure that the event address we're looking-up is indeed
+within the map we've found, otherwise we lookup another map again.
+Only one extra lookup at most is required for the proper map to be found,
+if it exists.
+
+Signed-off-by: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
 ---
-Note: Enabled the errata in zynq and at91 configs only.
-Please advise if any other versions are affected by this errata.
+ tools/perf/util/event.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
- drivers/net/ethernet/cadence/macb.h      | 6 ++++++
- drivers/net/ethernet/cadence/macb_main.c | 9 +++++++--
- 2 files changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
-index 3d45f4c..f6903d6 100644
---- a/drivers/net/ethernet/cadence/macb.h
-+++ b/drivers/net/ethernet/cadence/macb.h
-@@ -648,6 +648,9 @@
- #define MACB_CAPS_SG_DISABLED			0x40000000
- #define MACB_CAPS_MACB_IS_GEM			0x80000000
- 
-+/* Errata mask bits */
-+#define MACB_ERRATA_RXLOCKUP			0x00000001
-+
- /* LSO settings */
- #define MACB_LSO_UFO_ENABLE			0x01
- #define MACB_LSO_TSO_ENABLE			0x02
-@@ -1085,6 +1088,7 @@ struct macb_config {
- 			    struct clk **rx_clk);
- 	int	(*init)(struct platform_device *pdev);
- 	int	jumbo_max_len;
-+	u32	errata;
- };
- 
- struct tsu_incr {
-@@ -1214,6 +1218,8 @@ struct macb {
- 
- 	int	rx_bd_rd_prefetch;
- 	int	tx_bd_rd_prefetch;
-+
-+	u32 errata;
- };
- 
- #ifdef CONFIG_MACB_USE_HWSTAMP
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index 1d86b4d..f0bb8a4 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -1379,7 +1379,8 @@ static irqreturn_t macb_interrupt(int irq, void *dev_id)
- 		 * the at91 manual, section 41.3.1 or the Zynq manual
- 		 * section 16.7.4 for details.
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index e9c108a..a69ef52 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -1571,7 +1571,28 @@ struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
  		 */
--		if (status & MACB_BIT(RXUBR)) {
-+		if ((bp->errata & MACB_ERRATA_RXLOCKUP) &&
-+		    (status & MACB_BIT(RXUBR))) {
- 			ctrl = macb_readl(bp, NCR);
- 			macb_writel(bp, NCR, ctrl & ~MACB_BIT(RE));
- 			wmb();
-@@ -3835,6 +3836,7 @@ static const struct macb_config at91sam9260_config = {
- 	.caps = MACB_CAPS_USRIO_HAS_CLKEN | MACB_CAPS_USRIO_DEFAULT_IS_MII_GMII,
- 	.clk_init = macb_clk_init,
- 	.init = macb_init,
-+	.errata = MACB_ERRATA_RXLOCKUP,
- };
+ 		if (load_map)
+ 			map__load(al->map);
+-		al->addr = al->map->map_ip(al->map, al->addr);
++
++		/*
++		 * When using -ffunction-sections, only .text gets loaded by
++		 * map_groups__find() into al->map. Consequently al->map address
++		 * range encompass the whole code.
++		 *
++		 * But map__load() has just loaded many function maps by
++		 * splitting al->map, which reduced al->map range drastically.
++		 * Very likely the target address is now in one of those newly
++		 * created function maps, so we need to lookup the map again
++		 * to find that new map.
++		 */
++		if (al->addr < al->map->start || al->addr >= al->map->end)
++			al->map = map_groups__find(mg, al->addr);
++
++		/*
++		 * The new map *ought* to exist because the initial al->map
++		 * contained that address and subsequently has been split into
++		 * many *contiguous* maps.
++		 */
++		if (al->map != NULL)
++			al->addr = al->map->map_ip(al->map, al->addr);
+ 	}
  
- static const struct macb_config sama5d3macb_config = {
-@@ -3900,6 +3902,7 @@ static const struct macb_config zynq_config = {
- 	.dma_burst_length = 16,
- 	.clk_init = macb_clk_init,
- 	.init = macb_init,
-+	.errata = MACB_ERRATA_RXLOCKUP,
- };
- 
- static const struct of_device_id macb_dt_ids[] = {
-@@ -4005,8 +4008,10 @@ static int macb_probe(struct platform_device *pdev)
- 	bp->hclk = hclk;
- 	bp->tx_clk = tx_clk;
- 	bp->rx_clk = rx_clk;
--	if (macb_config)
-+	if (macb_config) {
- 		bp->jumbo_max_len = macb_config->jumbo_max_len;
-+		bp->errata = macb_config->errata;
-+	}
- 
- 	bp->wol = 0;
- 	if (of_get_property(np, "magic-packet", NULL))
+ 	return al->map;
 -- 
-2.7.4
+1.8.3.1
 
