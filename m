@@ -2,77 +2,97 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA504C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 785D2C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75B3820863
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:59:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rgmDXiSU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75B3820863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 4E5E020863
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:59:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E5E020863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441055AbeKXEou (ORCPT
+        id S2441072AbeKXEpG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 23:44:50 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46852 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730951AbeKXEou (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 23:44:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ilUvtvGAlq0RxOf3U5Kwm0YPD6DckdcEC5wYTtotjMk=; b=rgmDXiSUqHqzwqTbIsdvf/GQL
-        W0HaH/Ev5eNCoCcNiYzY5QejkGOTJXpJ9S/Tc40paU/8V+XPuSrkiuCJY/9BPhhAAyyAV8Wso9gqG
-        QIL26mzcWVl9rYTbpVh5t9ilvRedyQG3IS4L2bITcBaoVOA+KteMPkLcyJg/poc5Sv6ztwFPW3tvg
-        TARkIX/xu8tRYLIy13KVg1vn1M8HZKJ4B86ZekHPLTzgtmpqPpgCYxku1kYdBHJCzbHdKtT1Ne++6
-        CkeikBgoOHf2W2UGmyubGlWy3PCaxCXOTo6rfBboucMNC7w1Q8nf573DkcepUVsZyHQiek+ghlwsD
-        2vZk4R6MA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gQFjo-00011h-DE; Fri, 23 Nov 2018 17:59:32 +0000
-Date:   Fri, 23 Nov 2018 09:59:32 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH 1/2] mm: Remove redundant test from find_get_pages_contig
-Message-ID: <20181123175932.GV3065@bombadil.infradead.org>
-References: <20181122213224.12793-1-willy@infradead.org>
- <20181122213224.12793-2-willy@infradead.org>
- <20181123104732.gvhdqyddbsiq3i42@kshutemo-mobl1>
+        Fri, 23 Nov 2018 23:45:06 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50350 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730951AbeKXEpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 23:45:06 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 484E33574;
+        Fri, 23 Nov 2018 09:59:49 -0800 (PST)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 140B73F5CF;
+        Fri, 23 Nov 2018 09:59:47 -0800 (PST)
+Date:   Fri, 23 Nov 2018 17:59:45 +0000
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc:     linux@armlinux.org.uk, jeyu@kernel.org,
+        Vincent Whitchurch <rabinv@axis.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] module: Overwrite st_size instead of st_info
+Message-ID: <20181123175945.GL3505@e103592.cambridge.arm.com>
+References: <20181119162513.16562-1-vincent.whitchurch@axis.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181123104732.gvhdqyddbsiq3i42@kshutemo-mobl1>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181119162513.16562-1-vincent.whitchurch@axis.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 01:47:32PM +0300, Kirill A. Shutemov wrote:
-> On Thu, Nov 22, 2018 at 01:32:23PM -0800, Matthew Wilcox wrote:
-> > After we establish a reference on the page, we check the pointer continues
-> > to be in the correct position in i_pages.  There's no need to check the
-> > page->mapping or page->index afterwards; if those can change after we've
-> > got the reference, they can change after we return the page to the caller.
+On Mon, Nov 19, 2018 at 05:25:12PM +0100, Vincent Whitchurch wrote:
+> st_info is currently overwritten after relocation and used to store the
+> elf_type().  However, we're going to need it fix kallsyms on ARM's
+> Thumb-2 kernels, so preserve st_info and overwrite the st_size field
+> instead.  st_size is neither used by the module core nor by any
+> architecture.
 > 
-> Hm. IIRC, page->mapping can be set to NULL due truncation, but what about
-> index? When it can be changed? Truncation doesn't touch it.
+> Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+> ---
+> v4: Split out to separate patch.  Use st_size instead of st_other.
+> v1-v3: See PATCH 2/2
+> 
+>  kernel/module.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/module.c b/kernel/module.c
+> index 49a405891587..3d86a38b580c 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -2682,7 +2682,7 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
+>  
+>  	/* Set types up while we still have access to sections. */
+>  	for (i = 0; i < mod->kallsyms->num_symtab; i++)
+> -		mod->kallsyms->symtab[i].st_info
+> +		mod->kallsyms->symtab[i].st_size
+>  			= elf_type(&mod->kallsyms->symtab[i], info);
+>  
+>  	/* Now populate the cut down core kallsyms for after init. */
+> @@ -4061,7 +4061,7 @@ int module_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
+>  		kallsyms = rcu_dereference_sched(mod->kallsyms);
+>  		if (symnum < kallsyms->num_symtab) {
+>  			*value = kallsyms->symtab[symnum].st_value;
+> -			*type = kallsyms->symtab[symnum].st_info;
+> +			*type = kallsyms->symtab[symnum].st_size;
+>  			strlcpy(name, symname(kallsyms, symnum), KSYM_NAME_LEN);
+>  			strlcpy(module_name, mod->name, MODULE_NAME_LEN);
+>  			*exported = is_exported(name, *value, mod);
 
-I think index can only be changed after the refcount has hit zero and
-the page is safely out of the pagecache.  I agree that page->mapping can
-be set to NULL after the call to xas_reload() ... but then it can also
-happen after the check, so the check isn't really buying us anything
-that the xas_reload() call doesn't already check.
+Based on the discussion here:
+
+Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+
+(I still think this is a bit gross, but without resorting to overkill
+there's not an obvious nicer option.  Even before this patch, we were
+abusing st_info.  Of course, someday somebody may find a use for
+st_size and then we'd need to revisit this code...)
+
+Cheers
+---Dave
