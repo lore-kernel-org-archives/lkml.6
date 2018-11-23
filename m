@@ -2,170 +2,99 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1329C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CCEEC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:29:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A272820672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:29:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IPLwCYsq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A272820672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1CEB820672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:29:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CEB820672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410020AbeKXANj (ORCPT
+        id S2410034AbeKXANp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 19:13:39 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:53307 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405583AbeKXANi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 19:13:38 -0500
-Received: by mail-it1-f195.google.com with SMTP id g85so18401651ita.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 05:29:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bzdV3bLc0g8yTcTewKK70erjP8WTGgNJSxxyJo/v2og=;
-        b=IPLwCYsqizcNdTMIw2Vt3dUeq9L39XK6AP3TBa+s56fUUleymYMNWlZvx0tUJJ0BFY
-         OlU7DW1Am7DTvS/U4HakbuUYVYQ/P5AdxyJSQVM5iNNKOHwneTckqlA1Wr9hE0HBAutr
-         YFKgNklqzlG0MaV0p+RJcTbXg4XSLTexG0jb8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bzdV3bLc0g8yTcTewKK70erjP8WTGgNJSxxyJo/v2og=;
-        b=dxcVODqrvqG3Z20rWhCYkI9mNAHJLlg6ircW8z5w5j3xZvaq9hM1AzbiYtofglYVj8
-         1kvksH1Rg8Soe79gQud3EMK1pq/cLAA6ru2dCIb0FMCk+WKUGEIoMqwk60G2i7ohVHq9
-         kDFS4HSmynj++xAGq++/2+muTTtayBiInufyDTcH/3UXCH6MGJYhGci6pSZ1U4Yyx8nD
-         /JLBU8gZVcRtVRjURD0cy1K+1PT1heY1+S2BlNGd5j0J/66xvUnGhgYfeu0Kn4tDMDlD
-         5+sHlmGlKzwcc8pG9iZd1gRaiG3NC1mUi2LYbu3kUQNd65eY66/975ceN04n+oZJ8hzM
-         BHXw==
-X-Gm-Message-State: AGRZ1gJwnLOuUX4XMmPFbFNovK4DLqQF3p0gbwx3bXe9pPVh/2XkWkVW
-        usM1NAc3rVeKqcBH0nWDTjcCeAnz++fgJF9Q10cLsYxl
-X-Google-Smtp-Source: AFSGD/XvPe5aTEXXvs2Bychq6vtB1fj3aVrB+mgfVmu0vcI0bssTua6V6XJjd8sAAxFX8gTi7Vw8vZrf8IO0geEBKDs=
-X-Received: by 2002:a24:710:: with SMTP id f16mr11783375itf.121.1542979765588;
- Fri, 23 Nov 2018 05:29:25 -0800 (PST)
-MIME-Version: 1.0
-References: <20181123094152.21368-1-ard.biesheuvel@linaro.org> <20181123094152.21368-3-ard.biesheuvel@linaro.org>
-In-Reply-To: <20181123094152.21368-3-ard.biesheuvel@linaro.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 23 Nov 2018 14:29:14 +0100
-Message-ID: <CAKv+Gu9L10sCQ6j3NbZgC4U6-LzLfjyfVbE_MSpZop-2coYtXA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] arm64/bpf: don't allocate BPF JIT programs in
- module memory
-To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        Fri, 23 Nov 2018 19:13:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47448 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405583AbeKXANp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 19:13:45 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 219713082A20;
+        Fri, 23 Nov 2018 13:29:33 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (ovpn-117-155.ams2.redhat.com [10.36.117.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D2A3518233;
+        Fri, 23 Nov 2018 13:29:26 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Rich Felker <dalias@libc.org>, carlos <carlos@redhat.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
         Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl init and thread creation
+References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com>
+        <20181122143603.GD23599@brightrain.aerifal.cx>
+        <782067422.9852.1542899056778.JavaMail.zimbra@efficios.com>
+        <20181122151444.GE23599@brightrain.aerifal.cx>
+        <686626451.10113.1542901620250.JavaMail.zimbra@efficios.com>
+        <87wop5xeit.fsf@oldenburg.str.redhat.com>
+        <1045257294.10291.1542905262086.JavaMail.zimbra@efficios.com>
+        <87k1l5xd33.fsf@oldenburg.str.redhat.com>
+        <644835950.10383.1542907783295.JavaMail.zimbra@efficios.com>
+Date:   Fri, 23 Nov 2018 14:29:18 +0100
+In-Reply-To: <644835950.10383.1542907783295.JavaMail.zimbra@efficios.com>
+        (Mathieu Desnoyers's message of "Thu, 22 Nov 2018 12:29:43 -0500
+        (EST)")
+Message-ID: <87sgzrvs5t.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 23 Nov 2018 13:29:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Nov 2018 at 10:42, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->
-> The arm64 module region is a 128 MB region that is kept close to
-> the core kernel, in order to ensure that relative branches are
-> always in range. So using the same region for programs that do
-> not have this restriction is wasteful, and preferably avoided.
->
-> Now that the core BPF JIT code permits the alloc/free routines to
-> be overridden, implement them by vmalloc()/vfree() calls from a
-> dedicated 128 MB region set aside for BPF programs. This ensures
-> that BPF programs are still in branching range of each other, which
-> is something the JIT currently depends upon (and is not guaranteed
-> when using module_alloc() on KASLR kernels like we do currently).
-> It also ensures that placement of BPF programs does not correlate
-> with the placement of the core kernel or modules, making it less
-> likely that leaking the former will reveal the latter.
->
-> This also solves an issue under KASAN, where shadow memory is
-> needlessly allocated for all BPF programs (which don't require KASAN
-> shadow pages since they are not KASAN instrumented)
->
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->  arch/arm64/include/asm/memory.h  |  3 +++
->  arch/arm64/include/asm/pgtable.h |  2 +-
->  arch/arm64/net/bpf_jit_comp.c    | 13 +++++++++++++
->  3 files changed, 17 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-> index b96442960aea..506e319da98f 100644
-> --- a/arch/arm64/include/asm/memory.h
-> +++ b/arch/arm64/include/asm/memory.h
-> @@ -69,6 +69,9 @@
->  #define PCI_IO_END             (VMEMMAP_START - SZ_2M)
->  #define PCI_IO_START           (PCI_IO_END - PCI_IO_SIZE)
->  #define FIXADDR_TOP            (PCI_IO_START - SZ_2M)
-> +#define BPF_JIT_REGION_BASE    (VMALLOC_END)
-> +#define BPF_JIT_REGION_SIZE    (SZ_128M)
-> +#define BPF_JIT_REGION_END     (BPF_JIT_REGION_BASE + BPF_JIT_REGION_SIZE)
->
+* Mathieu Desnoyers:
 
-Discussing this off-line with Daniel, it may be better to put the BPF
-region before the module space instead.
+>>>> I don't think you need unregistering if the memory is initial-exec TLS
+>>>> memory.  Initial-exec TLS memory is tied directly to the TCB and cannot
+>>>> be freed while the thread is running, so it should be safe to put the
+>>>> rseq area there even if glibc knows nothing about it.
+>>>
+>>> Is it true for user-supplied stacks as well ?
+>> 
+>> I'm not entirely sure because the glibc terminology is confusing, but I
+>> think it places intial-exec TLS into the static TLS area (so that it has
+>> a fixed offset from the TCB).  The static TLS area is placed on the
+>> user-supplied stack.
+>
+> You said earlier in the email thread that user-supplied stack can be
+> reclaimed by __free_tcb () while the thread still runs, am I correct ?
+> If so, then we really want to unregister the rseq TLS before that.
 
-This will permit the use of adrp/add/b[l]r sequences for long
-jumps/calls. When booting with KASLR enabled, we can enhance the logic
-there to ensure that the BPF region remains inside the same 4 GB
-window as the module region and the core kernel (and randomize it
-relatively as well)
+No, dynamic TLS can be reclaimed.  Static TLS (which I assume includes
+initial-exec TLS) is not deallocated.
 
->  #define KERNEL_START      _text
->  #define KERNEL_END        _end
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 50b1ef8584c0..9db98a4cd9b4 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -31,7 +31,7 @@
->   *     and fixed mappings
->   */
->  #define VMALLOC_START          (MODULES_END)
-> -#define VMALLOC_END            (PAGE_OFFSET - PUD_SIZE - VMEMMAP_SIZE - SZ_64K)
-> +#define VMALLOC_END            (PAGE_OFFSET - PUD_SIZE - VMEMMAP_SIZE - BPF_JIT_REGION_SIZE - SZ_64K)
->
->  #define vmemmap                        ((struct page *)VMEMMAP_START - (memstart_addr >> PAGE_SHIFT))
->
-> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
-> index a6fdaea07c63..298beba29fa5 100644
-> --- a/arch/arm64/net/bpf_jit_comp.c
-> +++ b/arch/arm64/net/bpf_jit_comp.c
-> @@ -940,3 +940,16 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
->                                            tmp : orig_prog);
->         return prog;
->  }
-> +
-> +void *bpf_jit_alloc_exec(unsigned long size)
-> +{
-> +       return __vmalloc_node_range(size, PAGE_SIZE, BPF_JIT_REGION_BASE,
-> +                                   BPF_JIT_REGION_END, GFP_KERNEL,
-> +                                   PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
-> +                                   __builtin_return_address(0));
-> +}
-> +
-> +void bpf_jit_free_exec(const void *addr)
-> +{
-> +       return vfree(addr);
-> +}
-> --
-> 2.17.1
->
+> I notice that __free_tcb () calls __deallocate_stack (), which invokes
+> _dl_deallocate_tls (). Accessing the TLS from the kernel upon preemption
+> would appear fragile after this call.
+
+_dl_deallocate_tls only covers dynamic TLS.
+
+Thanks,
+Florian
