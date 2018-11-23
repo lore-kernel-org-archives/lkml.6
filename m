@@ -2,114 +2,126 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5E3C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3014AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:13:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F62B20820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:06:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E34B320663
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 00:13:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="OZ9/A3tO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F62B20820
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DFylXH2I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E34B320663
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407934AbeKWKsi (ORCPT
+        id S2407940AbeKWKza (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 05:48:38 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:42578 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729489AbeKWKsi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 05:48:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IMakWGmyQF2R+OfH1u3XFfFnrC1OqupFsKwM1SiQ9wg=; b=OZ9/A3tOq09wamNOzZtsz+QIn
-        2mtJFoxKdRifqTa2X3ys7HjHjhVwjXbWjjPntbb8ge1SA/AskK6z45zpvRlGRkh3bYlAp2zJOt3Yp
-        Zoa12AEfOa/WF+PrY6x2SNBuYTg4ENEwPBXsZzEsNulNMyatsLLe5xzibJnJNg3WtuKrY=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:40515)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gPyzc-0004on-Iy; Fri, 23 Nov 2018 00:06:44 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gPyzZ-0007ny-Vi; Fri, 23 Nov 2018 00:06:42 +0000
-Date:   Fri, 23 Nov 2018 00:06:40 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.4 3/8] ARM: make lookup_processor_type()
- non-__init
-Message-ID: <20181123000640.GP30658@n2100.armlinux.org.uk>
-References: <20181122195716.13961-1-sashal@kernel.org>
- <20181122195716.13961-3-sashal@kernel.org>
+        Fri, 23 Nov 2018 05:55:30 -0500
+Received: from ozlabs.org ([203.11.71.1]:33571 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729836AbeKWKza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 05:55:30 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 431GxQ1C0Qz9s3C;
+        Fri, 23 Nov 2018 11:13:27 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1542932014;
+        bh=d2eyL8rxv5i6FsYCXA79zvnpIxPu+G5YMWrrH2JEunw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=DFylXH2I9P6dRPOUwOGvV7lmSeWXG6lQquRpw+bSt9XC3WjdRsI+sSbhwOJvQmaYR
+         EDU6L62xaWMX7Sr17aeo+3w4fRVq0x+0hFVayBLMO2AArpoyscsVqOO0k6zoDmuoIc
+         ridC1n2EDF9Hmt++3I2rpaFJi9p6QL3J1v4ozAH2tc1gjDU3V3WK9g1yLqL1s/IfDa
+         yDKM5m9uJ0Slr7Aem6iJa75CdSEJQdbGDpym5zJ+Qko3LbQ5l2//ac3yIor7JtK5mX
+         UW/37jg9+f6i6l6LdxYndeKdtf9TY88SwIjqDjTeo80XbyvMGVt9Vcufv8r/ZTiYHs
+         LY+kBH0/n8ejQ==
+Date:   Fri, 23 Nov 2018 11:13:09 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@linux.ie>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
+Subject: linux-next: manual merge of the drm-misc tree with the drm tree
+Message-ID: <20181123111309.74882d70@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181122195716.13961-3-sashal@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/sPCzz=0NRvj.EWUcJp_LpA7"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Same comments as for the 4.9 version of these patches, and also applies
-to the two 3.18 patches as well.  They aren't fixes, but preparation
-for fixes, and should not be backported without the actual Spectre fix
-patch (which probably requires manual backport effort.)
+--Sig_/sPCzz=0NRvj.EWUcJp_LpA7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 22, 2018 at 02:57:10PM -0500, Sasha Levin wrote:
-> From: Russell King <rmk+kernel@armlinux.org.uk>
-> 
-> [ Upstream commit 899a42f836678a595f7d2bc36a5a0c2b03d08cbc ]
-> 
-> Move lookup_processor_type() out of the __init section so it is callable
-> from (eg) the secondary startup code during hotplug.
-> 
-> Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-> Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  arch/arm/kernel/head-common.S | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
-> index 8733012d231f..7e662bdd5cb3 100644
-> --- a/arch/arm/kernel/head-common.S
-> +++ b/arch/arm/kernel/head-common.S
-> @@ -122,6 +122,9 @@ __mmap_switched_data:
->  	.long	init_thread_union + THREAD_START_SP @ sp
->  	.size	__mmap_switched_data, . - __mmap_switched_data
->  
-> +	__FINIT
-> +	.text
-> +
->  /*
->   * This provides a C-API version of __lookup_processor_type
->   */
-> @@ -133,9 +136,6 @@ ENTRY(lookup_processor_type)
->  	ldmfd	sp!, {r4 - r6, r9, pc}
->  ENDPROC(lookup_processor_type)
->  
-> -	__FINIT
-> -	.text
-> -
->  /*
->   * Read processor ID register (CP#15, CR0), and look up in the linker-built
->   * supported processor list.  Note that we can't use the absolute addresses
-> -- 
-> 2.17.1
-> 
+Hi all,
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Today's linux-next merge of the drm-misc tree got a conflict in:
+
+  drivers/gpu/drm/Makefile
+
+between commit:
+
+  2bb42410b1bd ("drm: Remove drm_global.{c,h} v2")
+
+from the drm tree and commit:
+
+  c6fdea6e1a19 ("drm: Merge drm_info.c into drm_debugfs.c")
+
+from the drm-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/Makefile
+index 7f3be3506057,7c88f12096c5..000000000000
+--- a/drivers/gpu/drm/Makefile
++++ b/drivers/gpu/drm/Makefile
+@@@ -10,8 -10,8 +10,8 @@@ drm-y       :=3D	drm_auth.o drm_bufs.o dr
+  		drm_scatter.o drm_pci.o \
+  		drm_sysfs.o drm_hashtab.o drm_mm.o \
+  		drm_crtc.o drm_fourcc.o drm_modes.o drm_edid.o \
+- 		drm_info.o drm_encoder_slave.o \
++ 		drm_encoder_slave.o \
+ -		drm_trace_points.o drm_global.o drm_prime.o \
+ +		drm_trace_points.o drm_prime.o \
+  		drm_rect.o drm_vma_manager.o drm_flip_work.o \
+  		drm_modeset_lock.o drm_atomic.o drm_bridge.o \
+  		drm_framebuffer.o drm_connector.o drm_blend.o \
+
+--Sig_/sPCzz=0NRvj.EWUcJp_LpA7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv3RhUACgkQAVBC80lX
+0Gys+QgAk7eSH5O298kafMwyh6zFaQS68csl/LnHa23k9yeMhRe3FNZaJmKbF1wv
+4ofzRc4fQZOIlIpfDmMagwvSzcBb1t1HbfVrsw0UYLzZqua6bn82xLSHA4KSWY3y
+15Uvtxn3e4oUm1Edc0DBBhtyTlofI9XiriZUcvM5a2uCL0lePcot/zkGaw+pV+Es
+70LOoY/HuCXNpu56dxZQISkLHD6IGaKuckoOi3F2n5M0iNMizKsdky+Lbnk20K98
+z1W72YMYFvGQbKwZ++YkaP1fDGnnfXFnoi8mqs9Q5RZerx8VupqyTz1xyVlnJlyZ
+AFb7n6D4Y+0UMPFnAnpFIjX21Cwc1Q==
+=qzfl
+-----END PGP SIGNATURE-----
+
+--Sig_/sPCzz=0NRvj.EWUcJp_LpA7--
