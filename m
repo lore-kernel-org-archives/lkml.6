@@ -2,107 +2,170 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9503C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1329C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DB6C20672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:25:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A272820672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:29:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Y1thfCxl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DB6C20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IPLwCYsq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A272820672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504570AbeKXAJj (ORCPT
+        id S2410020AbeKXANj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 19:09:39 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55682 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390938AbeKXAJj (ORCPT
+        Fri, 23 Nov 2018 19:13:39 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:53307 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405583AbeKXANi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 19:09:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bpnDR76b2ZWMdalr8msjn9gA+Yzx3m0B9/yJrM442Bs=; b=Y1thfCxldSN4HGDr/bMRotnot
-        +oy0ZjqYbl0tbdc8T3K3YcWOLGxiW6tH9N/vuylUMFbJzLe9UUW/pt84VuMG09iQlWHV0WCyLCf6F
-        Xjb4H37akdCS0+JgY5Hf6mtPqJz+Pzuq5Gjwwpidd8gX9w871/n5l590KCRjVFbp72lc0=;
-Received: from [176.12.107.140] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gQBSV-000134-7O; Fri, 23 Nov 2018 13:25:23 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 4247A440078; Fri, 23 Nov 2018 13:25:22 +0000 (GMT)
-Date:   Fri, 23 Nov 2018 13:25:22 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        patches@opensource.cirrus.com
-Subject: Re: [PATCH 3/3] gpio: Add reference counting for non-exclusive GPIOs
-Message-ID: <20181123132522.GE2089@sirena.org.uk>
-References: <20181122173015.23905-1-ckeepax@opensource.cirrus.com>
- <20181122173015.23905-3-ckeepax@opensource.cirrus.com>
- <CACRpkdZEu44WHScd5VibYT5C9RikqcvKsgpVOpkkdrYbLaV8Ng@mail.gmail.com>
- <20181123105729.GM16508@imbe.wolfsonmicro.main>
+        Fri, 23 Nov 2018 19:13:38 -0500
+Received: by mail-it1-f195.google.com with SMTP id g85so18401651ita.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 05:29:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bzdV3bLc0g8yTcTewKK70erjP8WTGgNJSxxyJo/v2og=;
+        b=IPLwCYsqizcNdTMIw2Vt3dUeq9L39XK6AP3TBa+s56fUUleymYMNWlZvx0tUJJ0BFY
+         OlU7DW1Am7DTvS/U4HakbuUYVYQ/P5AdxyJSQVM5iNNKOHwneTckqlA1Wr9hE0HBAutr
+         YFKgNklqzlG0MaV0p+RJcTbXg4XSLTexG0jb8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bzdV3bLc0g8yTcTewKK70erjP8WTGgNJSxxyJo/v2og=;
+        b=dxcVODqrvqG3Z20rWhCYkI9mNAHJLlg6ircW8z5w5j3xZvaq9hM1AzbiYtofglYVj8
+         1kvksH1Rg8Soe79gQud3EMK1pq/cLAA6ru2dCIb0FMCk+WKUGEIoMqwk60G2i7ohVHq9
+         kDFS4HSmynj++xAGq++/2+muTTtayBiInufyDTcH/3UXCH6MGJYhGci6pSZ1U4Yyx8nD
+         /JLBU8gZVcRtVRjURD0cy1K+1PT1heY1+S2BlNGd5j0J/66xvUnGhgYfeu0Kn4tDMDlD
+         5+sHlmGlKzwcc8pG9iZd1gRaiG3NC1mUi2LYbu3kUQNd65eY66/975ceN04n+oZJ8hzM
+         BHXw==
+X-Gm-Message-State: AGRZ1gJwnLOuUX4XMmPFbFNovK4DLqQF3p0gbwx3bXe9pPVh/2XkWkVW
+        usM1NAc3rVeKqcBH0nWDTjcCeAnz++fgJF9Q10cLsYxl
+X-Google-Smtp-Source: AFSGD/XvPe5aTEXXvs2Bychq6vtB1fj3aVrB+mgfVmu0vcI0bssTua6V6XJjd8sAAxFX8gTi7Vw8vZrf8IO0geEBKDs=
+X-Received: by 2002:a24:710:: with SMTP id f16mr11783375itf.121.1542979765588;
+ Fri, 23 Nov 2018 05:29:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Z79+P6LHXcBZ81w+"
-Content-Disposition: inline
-In-Reply-To: <20181123105729.GM16508@imbe.wolfsonmicro.main>
-X-Cookie: No Canadian coins.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181123094152.21368-1-ard.biesheuvel@linaro.org> <20181123094152.21368-3-ard.biesheuvel@linaro.org>
+In-Reply-To: <20181123094152.21368-3-ard.biesheuvel@linaro.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 23 Nov 2018 14:29:14 +0100
+Message-ID: <CAKv+Gu9L10sCQ6j3NbZgC4U6-LzLfjyfVbE_MSpZop-2coYtXA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] arm64/bpf: don't allocate BPF JIT programs in
+ module memory
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 23 Nov 2018 at 10:42, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>
+> The arm64 module region is a 128 MB region that is kept close to
+> the core kernel, in order to ensure that relative branches are
+> always in range. So using the same region for programs that do
+> not have this restriction is wasteful, and preferably avoided.
+>
+> Now that the core BPF JIT code permits the alloc/free routines to
+> be overridden, implement them by vmalloc()/vfree() calls from a
+> dedicated 128 MB region set aside for BPF programs. This ensures
+> that BPF programs are still in branching range of each other, which
+> is something the JIT currently depends upon (and is not guaranteed
+> when using module_alloc() on KASLR kernels like we do currently).
+> It also ensures that placement of BPF programs does not correlate
+> with the placement of the core kernel or modules, making it less
+> likely that leaking the former will reveal the latter.
+>
+> This also solves an issue under KASAN, where shadow memory is
+> needlessly allocated for all BPF programs (which don't require KASAN
+> shadow pages since they are not KASAN instrumented)
+>
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> ---
+>  arch/arm64/include/asm/memory.h  |  3 +++
+>  arch/arm64/include/asm/pgtable.h |  2 +-
+>  arch/arm64/net/bpf_jit_comp.c    | 13 +++++++++++++
+>  3 files changed, 17 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+> index b96442960aea..506e319da98f 100644
+> --- a/arch/arm64/include/asm/memory.h
+> +++ b/arch/arm64/include/asm/memory.h
+> @@ -69,6 +69,9 @@
+>  #define PCI_IO_END             (VMEMMAP_START - SZ_2M)
+>  #define PCI_IO_START           (PCI_IO_END - PCI_IO_SIZE)
+>  #define FIXADDR_TOP            (PCI_IO_START - SZ_2M)
+> +#define BPF_JIT_REGION_BASE    (VMALLOC_END)
+> +#define BPF_JIT_REGION_SIZE    (SZ_128M)
+> +#define BPF_JIT_REGION_END     (BPF_JIT_REGION_BASE + BPF_JIT_REGION_SIZE)
+>
 
---Z79+P6LHXcBZ81w+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Discussing this off-line with Daniel, it may be better to put the BPF
+region before the module space instead.
 
-On Fri, Nov 23, 2018 at 10:57:29AM +0000, Charles Keepax wrote:
+This will permit the use of adrp/add/b[l]r sequences for long
+jumps/calls. When booting with KASLR enabled, we can enhance the logic
+there to ensure that the BPF region remains inside the same 4 GB
+window as the module region and the core kernel (and randomize it
+relatively as well)
 
-> It's fixing something in the case of two regulators using the
-> same GPIO. The direction this patch chain takes is that the end
-> drivers own the GPIOs not the regulator core (except for the
-> legacy case). So both of the end drivers will devm_ request their
-
-The situation with descriptor based GPIOs is a bug - the reason why the
-core does the request in the legacy case is precisely the problem Linus
-identified.  Once a GPIO is shared all the users of the GPIO need to
-coordinate with each other in order to set the value so the refcount by
-itself in the GPIO core isn't super useful unless it can also serve to
-help the multiple users find each other somehow.  I think what we want
-to do here is either push the gpiod requests into the regulator core or
-change things so that once the regulator is registered with the
-regulator core the regulator core owns and is responsible for freeing
-the regulator.
-
---Z79+P6LHXcBZ81w+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv3/8EACgkQJNaLcl1U
-h9CngAf/VsSmqhxP8B88PyMCu9jvoNGZV92/zflmxH90MoJCULb/hYaovGGWRr8i
-ywXaT2Z2v60U9nb2gIAsXV0OcuzCSPKz+546I47AKdP9L6Ib168Y90qKLEe+GN0r
-HR18HPVfzd30RDPykJfFpLh7CZVPuPQcZOxTOQup2TRzYTFU6iEAwjMBHwd0IckW
-bk+DFxAmeF9a+uDeb3BfIWlBN/qRDarUW/H8ihBgj33RSxmtg24WuMO6v1TvH3Do
-qom5VoHbPuPtk75wdvbetJQ1/RZAmJ/mNf6HVPGkDPbH9Qel50wk1XYuYCtbDLZN
-j7/UA2NddoyPWsVgGxnKEXklYVswMA==
-=SGoR
------END PGP SIGNATURE-----
-
---Z79+P6LHXcBZ81w+--
+>  #define KERNEL_START      _text
+>  #define KERNEL_END        _end
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 50b1ef8584c0..9db98a4cd9b4 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -31,7 +31,7 @@
+>   *     and fixed mappings
+>   */
+>  #define VMALLOC_START          (MODULES_END)
+> -#define VMALLOC_END            (PAGE_OFFSET - PUD_SIZE - VMEMMAP_SIZE - SZ_64K)
+> +#define VMALLOC_END            (PAGE_OFFSET - PUD_SIZE - VMEMMAP_SIZE - BPF_JIT_REGION_SIZE - SZ_64K)
+>
+>  #define vmemmap                        ((struct page *)VMEMMAP_START - (memstart_addr >> PAGE_SHIFT))
+>
+> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+> index a6fdaea07c63..298beba29fa5 100644
+> --- a/arch/arm64/net/bpf_jit_comp.c
+> +++ b/arch/arm64/net/bpf_jit_comp.c
+> @@ -940,3 +940,16 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
+>                                            tmp : orig_prog);
+>         return prog;
+>  }
+> +
+> +void *bpf_jit_alloc_exec(unsigned long size)
+> +{
+> +       return __vmalloc_node_range(size, PAGE_SIZE, BPF_JIT_REGION_BASE,
+> +                                   BPF_JIT_REGION_END, GFP_KERNEL,
+> +                                   PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
+> +                                   __builtin_return_address(0));
+> +}
+> +
+> +void bpf_jit_free_exec(const void *addr)
+> +{
+> +       return vfree(addr);
+> +}
+> --
+> 2.17.1
+>
