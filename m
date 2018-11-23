@@ -2,124 +2,172 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6395C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80722C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D94520824
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:35:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D94520824
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BE0320824
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 18:36:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BE0320824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437225AbeKXFVL (ORCPT
+        id S2437196AbeKXFWN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 00:21:11 -0500
-Received: from foss.arm.com ([217.140.101.70]:51074 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731181AbeKXFVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 00:21:10 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 90B8B3620;
-        Fri, 23 Nov 2018 10:35:45 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 60E413F5CF;
-        Fri, 23 Nov 2018 10:35:45 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id D144B1AE1019; Fri, 23 Nov 2018 18:36:01 +0000 (GMT)
-Date:   Fri, 23 Nov 2018 18:36:01 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, alex.williamson@redhat.com,
-        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
-        freedreno <freedreno@lists.freedesktop.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        robh+dt <robh+dt@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [RESEND PATCH v17 2/5] iommu/arm-smmu: Invoke pm_runtime during
- probe, add/remove device
-Message-ID: <20181123183555.GE21183@arm.com>
-References: <20181116112430.31248-1-vivek.gautam@codeaurora.org>
- <20181116112430.31248-3-vivek.gautam@codeaurora.org>
- <20181121173757.GA9801@arm.com>
- <CAFp+6iEH7_XEcZNsbZfn6iBF5_o-ZKBj=DpturH7N85LU289qg@mail.gmail.com>
+        Sat, 24 Nov 2018 00:22:13 -0500
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:58562 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730291AbeKXFWN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Nov 2018 00:22:13 -0500
+Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
+        id 1gQGJ4-00013C-00; Fri, 23 Nov 2018 18:35:58 +0000
+Date:   Fri, 23 Nov 2018 13:35:58 -0500
+From:   Rich Felker <dalias@libc.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Florian Weimer <fweimer@redhat.com>, carlos <carlos@redhat.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl
+ init and thread creation
+Message-ID: <20181123183558.GM23599@brightrain.aerifal.cx>
+References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com>
+ <1045257294.10291.1542905262086.JavaMail.zimbra@efficios.com>
+ <87k1l5xd33.fsf@oldenburg.str.redhat.com>
+ <20181122171010.GH23599@brightrain.aerifal.cx>
+ <871s7cvt1l.fsf@oldenburg.str.redhat.com>
+ <20181123142843.GJ23599@brightrain.aerifal.cx>
+ <1150466925.11664.1542992720871.JavaMail.zimbra@efficios.com>
+ <20181123173019.GK23599@brightrain.aerifal.cx>
+ <865273158.11687.1542995541389.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFp+6iEH7_XEcZNsbZfn6iBF5_o-ZKBj=DpturH7N85LU289qg@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <865273158.11687.1542995541389.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 05:32:24PM +0530, Vivek Gautam wrote:
-> Hi Will,
+On Fri, Nov 23, 2018 at 12:52:21PM -0500, Mathieu Desnoyers wrote:
+> ----- On Nov 23, 2018, at 12:30 PM, Rich Felker dalias@libc.org wrote:
 > 
-> On Wed, Nov 21, 2018 at 11:09 PM Will Deacon <will.deacon@arm.com> wrote:
-> >
-> > On Fri, Nov 16, 2018 at 04:54:27PM +0530, Vivek Gautam wrote:
-> > > From: Sricharan R <sricharan@codeaurora.org>
-> > >
-> > > The smmu device probe/remove and add/remove master device callbacks
-> > > gets called when the smmu is not linked to its master, that is without
-> > > the context of the master device. So calling runtime apis in those places
-> > > separately.
-> > > Global locks are also initialized before enabling runtime pm as the
-> > > runtime_resume() calls device_reset() which does tlb_sync_global()
-> > > that ultimately requires locks to be initialized.
-> > >
-> > > Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> > > [vivek: Cleanup pm runtime calls]
-> > > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> > > Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> > > Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > > Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-> > > ---
-> > >  drivers/iommu/arm-smmu.c | 101 ++++++++++++++++++++++++++++++++++++++++++-----
-> > >  1 file changed, 91 insertions(+), 10 deletions(-)
-> >
-> > Given that you're doing the get/put in the TLBI ops unconditionally:
-> >
-> > >  static void arm_smmu_flush_iotlb_all(struct iommu_domain *domain)
-> > >  {
-> > >       struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-> > > +     struct arm_smmu_device *smmu = smmu_domain->smmu;
-> > >
-> > > -     if (smmu_domain->tlb_ops)
-> > > +     if (smmu_domain->tlb_ops) {
-> > > +             arm_smmu_rpm_get(smmu);
-> > >               smmu_domain->tlb_ops->tlb_flush_all(smmu_domain);
-> > > +             arm_smmu_rpm_put(smmu);
-> > > +     }
-> > >  }
-> > >
-> > >  static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
-> > >  {
-> > >       struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-> > > +     struct arm_smmu_device *smmu = smmu_domain->smmu;
-> > >
-> > > -     if (smmu_domain->tlb_ops)
-> > > +     if (smmu_domain->tlb_ops) {
-> > > +             arm_smmu_rpm_get(smmu);
-> > >               smmu_domain->tlb_ops->tlb_sync(smmu_domain);
-> > > +             arm_smmu_rpm_put(smmu);
-> > > +     }
-> >
-> > Why do you need them around the map/unmap calls as well?
+> > On Fri, Nov 23, 2018 at 12:05:20PM -0500, Mathieu Desnoyers wrote:
+> >> ----- On Nov 23, 2018, at 9:28 AM, Rich Felker dalias@libc.org wrote:
+> >> [...]
+> >> > 
+> >> > Absolutely. As long as it's in libc, implicit destruction will happen.
+> >> > Actually I think the glibc code shound unconditionally unregister the
+> >> > rseq address at exit (after blocking signals, so no application code
+> >> > can run) in case a third-party rseq library was linked and failed to
+> >> > do so before thread exit (e.g. due to mismatched ref counts) rather
+> >> > than respecting the reference count, since it knows it's the last
+> >> > user. This would make potentially-buggy code safer.
+> >> 
+> >> OK, let me go ahead with a few ideas/questions along that path.
+> >                                                 ^^^^^^^^^^^^^^^
+> >> 
+> >> Let's say our stated goal is to let the "exit" system call from the
+> >> glibc thread exit path perform rseq unregistration (without explicit
+> >> unregistration beforehand). Let's look at what we need.
+> > 
+> > This is not "along that path". The above-quoted text is not about
+> > assuming it's safe to make SYS_exit without unregistering the rseq
+> > object, but rather about glibc being able to perform the
+> > rseq-unregister syscall without caring about reference counts, since
+> > it knows no other code that might depend on rseq can run after it.
 > 
-> We still have .tlb_add_flush path?
+> When saying "along that path", what I mean is: if we go in that direction,
+> then we should look into going all the way there, and rely on thread
+> exit to implicitly unregister the TLS area.
+> 
+> Do you see any reason for doing an explicit unregistration at thread
+> exit rather than simply rely on the exit system call ?
 
-Ok, so we could add the ops around that as well. Right now, we've got
-the runtime pm hooks crossing two parts of the API.
+Whether this is needed is an implementation detail of glibc that
+should be permitted to vary between versions. Unless glibc wants to
+promise that it would become a public guarantee, it's not part of the
+discussion around the API/ABI. Only part of the discussion around
+implementation internals of the glibc rseq stuff.
 
-Will
+Of course I may be biased thinking application code should not assume
+this since it's not true on musl -- for detached threads, the thread
+frees its own stack before exiting (and thus has to unregister
+set_tid_address and set_robustlist before exiting).
+
+> >> First, we need the TLS area to be valid until the exit system call
+> >> is invoked by the thread. If glibc defines __rseq_abi as a weak symbol,
+> >> I'm not entirely sure we can guarantee the IE model if another library
+> >> gets its own global-dynamic weak symbol elected at execution time. Would
+> >> it be better to switch to a "strong" symbol for the glibc __rseq_abi
+> >> rather than weak ?
+> > 
+> > This doesn't help; still whichever comes first in link order would
+> > override. Either way __rseq_abi would be in static TLS, though,
+> > because any dynamically-loaded library is necessarily loaded after
+> > libc, which is loaded at initial exec time.
+> 
+> OK, AFAIU so you argue for leaving the __rseq_abi symbol "weak". Just making
+> sure I correctly understand your position.
+
+I don't think it matters, and I don't think making it weak is
+meaningful or useful (weak in a shared library is largely meaningless)
+but maybe I'm missing something here.
+
+> Something can be technically correct based on the current implementation,
+> but fragile with respect to future changes. We need to carefully distinguish
+> between the two when exposing ABIs.
+
+Yes.
+
+> >> There has been presumptions about signals being blocked when the thread
+> >> exits throughout this email thread. Out of curiosity, what code is
+> >> responsible for disabling signals in this situation ?
+> 
+> This question is still open.
+
+I can't find it -- maybe it's not done in glibc. It is in musl, and I
+assumed glibc would also do it, because otherwise it's possible to see
+some inconsistent states from signal handlers. Maybe these are all
+undefined due to AS-unsafety of pthread_exit, but I think you can
+construct examples where something could be observably wrong without
+breaking any rules.
+
+> > Related to this,
+> >> is it valid to access a IE model TLS variable from a signal handler at
+> >> _any_ point where the signal handler nests over thread's execution ?
+> >> This includes early start and just before invoking the exit system call.
+> > 
+> > It should be valid to access *any* TLS object like this, but the
+> > standards don't cover it well. Right now access to dynamic TLS from
+> > signal handlers is unsafe in glibc, but static is safe.
+> 
+> Which is a shame for the lttng-ust tracer, which needs global-dynamic
+> TLS variables so it can be dlopen'd, but aims at allowing tracing from
+> signal handlers. It looks like due to limitations of global-dynamic
+> TLS, tracing from instrumented signal handlers with lttng-ust tracepoints
+> could crash the process if the signal handler nests early at thread start
+> or late before thread exit. One way out of this would be to ensure signals
+> are blocked at thread start/exit, but I can't find the code responsible for
+> doing this within glibc.
+
+Just blocking at start/exit won't solve the problem because
+global-dynamic TLS in glibc involves dynamic allocation, which is hard
+to make AS-safe and of course can fail, leaving no way to make forward
+progress.
+
+Rich
