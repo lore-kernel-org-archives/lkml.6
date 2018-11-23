@@ -2,165 +2,189 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F649C04EBA
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F135EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:41:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C282B20685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:41:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A9CC20685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 14:41:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="KQDheVde"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C282B20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="Pf3SuOQZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A9CC20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436888AbeKXBZZ (ORCPT
+        id S2436960AbeKXBZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 20:25:25 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35031 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391353AbeKXBZY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 20:25:24 -0500
-Received: by mail-wr1-f68.google.com with SMTP id 96so12596950wrb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 06:40:57 -0800 (PST)
+        Fri, 23 Nov 2018 20:25:34 -0500
+Received: from mail-eopbgr700050.outbound.protection.outlook.com ([40.107.70.50]:42498
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388198AbeKXBZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 20:25:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=jWnIdsDrWcxWTq1j213GdVFWnMbnWtL0+OC4UsptE/A=;
-        b=KQDheVdeC2XZ2Jy/v9GFGKxtJk2ry38wY9pJa/HEqfoGTPMepVPoHRhY8AKpY36Tag
-         4uUzKRsjmhtS/OReIS/+S5DNOKIXB4gvPHBDNZFTHAfaOoPLA7Nk9AhKHKDV3FrtuN3K
-         TlktYdIyK0ZP2TbYhTwGSUl5+F+91feuXK5e2OJSVxrToIPGzZks2+n66R0PY6s6mjyD
-         7tecJs1UA4o+Q8JZYDC3j1LgiMjn3OFD+2FnSuHqs9rC8XQmZRkxnGbZmYrelS7o03hp
-         ctdmwcmILHMVDE8LdmKo7a5lYGqlTmLRBYK4LOwQFZtTSpDDgod7LNYTbLo5AnRAhXxF
-         xfnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=jWnIdsDrWcxWTq1j213GdVFWnMbnWtL0+OC4UsptE/A=;
-        b=IZ9siLocq+RtkVFm+qaqKh4P28qK7ESzLvnDX6ZCKDLQMD6XMtnPuG0GRSJ9Nzq6DD
-         YCty8rBAcf8a1kxcGxfbHO2BIlRZDfnvHXU7gKKTVQoX+Fn6aU8sW6fnKIzIYgbKizeF
-         Rq60nipBHCa3QWBVrUf+i38UDH7BkRGVv6V7r8c0/xlaWKhmzAt5O+2IGobmRVBGyDkd
-         IleQcqaXetgPwhzfIue1tN20YYRifbPRBK6krjU+adMNNZep+1Msy9RdtQB+qu4uddOC
-         58IbgOA4P1/H4lKASm2Hkn3fmhIHUmuzuTfvGp3Cfn2idwVGUXMD9TNRfuk/vpWhMcM5
-         AdmA==
-X-Gm-Message-State: AA+aEWYnNt5jCzdPydeaLrmbUp8w7YSCR5FTG4nBEhnDw2JcwqPpk6Ov
-        EpN6VxHPsv1EDPpfqVZ9wtXck7Ys6zzFxA==
-X-Google-Smtp-Source: AFSGD/VSK01VEwGhFg+aAgTrkBkpPB8x/CYYkzpm9VUmFrL3oRQuWHcr55eSxKfu7dTfZZHXrI9CFg==
-X-Received: by 2002:adf:8464:: with SMTP id 91mr14926193wrf.251.1542984056412;
-        Fri, 23 Nov 2018 06:40:56 -0800 (PST)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id t131sm6055850wmt.1.2018.11.23.06.40.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Nov 2018 06:40:55 -0800 (PST)
-Subject: Re: [PATCH v2 0/4] Meson8b: add the CPU clock post-dividers
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, jbrunet@baylibre.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20181122214017.25643-1-martin.blumenstingl@googlemail.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <4859b354-ade4-8172-eeb5-7a4a42045589@baylibre.com>
-Date:   Fri, 23 Nov 2018 15:40:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181122214017.25643-1-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset=utf-8
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4cbLvU+HWVRurM2PBmfgMSXJ0BU1RwqkejenoaVXFaM=;
+ b=Pf3SuOQZczsmXVFNvNtz6qO2MRNFWZd2RWHPKpvBXB+RB6f7IgQuDJtb/taI5NDauVahODyynl0bI5KZUbdAeKHe+0XEJTO15KpENUCYP171esj1JDrJCDiPWMooMTFGFlgp4vZ7sjGMR05r/I9ZX7ETmaOz2l9jqC6mhuXO7+I=
+Received: from BN6PR12MB1649.namprd12.prod.outlook.com (10.172.19.12) by
+ BN6PR12MB1267.namprd12.prod.outlook.com (10.168.227.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.26; Fri, 23 Nov 2018 14:39:10 +0000
+Received: from BN6PR12MB1649.namprd12.prod.outlook.com
+ ([fe80::d9ac:970b:bfa4:198c]) by BN6PR12MB1649.namprd12.prod.outlook.com
+ ([fe80::d9ac:970b:bfa4:198c%8]) with mapi id 15.20.1361.018; Fri, 23 Nov 2018
+ 14:39:10 +0000
+From:   Sandeep Singh <ssingh1@amd.com>
+To:     Kai Heng Feng <kai.heng.feng@canonical.com>,
+        "Singh, Sandeep" <Sandeep.Singh@amd.com>
+CC:     "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
+        "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>
+Subject: Re: [PATCH v2] xhci: workaround CSS timeout on AMD SNPS 3.0 xHC
+Thread-Topic: [PATCH v2] xhci: workaround CSS timeout on AMD SNPS 3.0 xHC
+Thread-Index: AQHUghsO3ddM6jhDFUGc6Lr8yr9U0aVdGdcAgABWeoA=
+Date:   Fri, 23 Nov 2018 14:39:09 +0000
+Message-ID: <4e54e701-223d-f202-9da7-0f2849a53555@amd.com>
+References: <1542860548-3109-1-git-send-email-Sandeep.Singh@amd.com>
+ <31DD822A-AB20-4CE2-A5C9-878299011F62@canonical.com>
+In-Reply-To: <31DD822A-AB20-4CE2-A5C9-878299011F62@canonical.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MA1PR0101CA0054.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:20::16) To BN6PR12MB1649.namprd12.prod.outlook.com
+ (2603:10b6:405:6::12)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Sandeep.Singh@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [125.21.194.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR12MB1267;20:1I0MtQfAI7Q18mH2aWW7qdVqLDGcKO+BjwQpR18qbzWupfXoC07EcxiiAjcAqrMgKgVHGMYk9QcHaQ/WxOvF+94gEzHTSs9t6dhmhTj4mj7MFGQj/F+C47pND2nopMw2gpQewdQJ+LWEyXLcRA5Ayj4tXRK3zMkBv7ZrPQKRgCv/cK9BwipS4l/i3puBdxKKXsl1OGZLs8wf1NliVgF8tXGkEp0EPipdIny4/gKhLJFk3kx/x5xh1Ux3FXZNq2gL
+x-ms-office365-filtering-correlation-id: ce2799f9-7aeb-4357-029b-08d651516db1
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN6PR12MB1267;
+x-ms-traffictypediagnostic: BN6PR12MB1267:
+x-microsoft-antispam-prvs: <BN6PR12MB126768CD63D3C83AB02E1173E0D40@BN6PR12MB1267.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231442)(944501410)(52105112)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BN6PR12MB1267;BCL:0;PCL:0;RULEID:;SRVR:BN6PR12MB1267;
+x-forefront-prvs: 086597191B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(396003)(376002)(346002)(189003)(199004)(71190400001)(71200400001)(217873002)(66066001)(8676002)(4326008)(97736004)(81166006)(81156014)(25786009)(6116002)(256004)(316002)(14444005)(446003)(3846002)(2900100001)(575784001)(478600001)(31696002)(2616005)(68736007)(72206003)(11346002)(305945005)(7736002)(476003)(6636002)(53546011)(6436002)(229853002)(31686004)(105586002)(14454004)(6506007)(486006)(36756003)(76176011)(6512007)(2906002)(386003)(186003)(5660300001)(26005)(53936002)(99286004)(106356001)(110136005)(6246003)(54906003)(8936002)(52116002)(102836004)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1267;H:BN6PR12MB1649.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 0tpnCIh4gp9HCSEpBobGRFcs55gPCD10LhyURgeLGiUM0T6DfmKVjt6unRX7ZVf8ef/W4rBVkjttP3YAfqQ8co6Zf8tjBuysYxLnxpkH+sYu9PWWkC2KtIEZkqVtHz3MWRBgDnFsm6OO4JJIabCxc0D1Ln+OkxNjKI2QyK9u/6WKZriJJGJCl4rThOpJz6QPVbqGjl5MJlpcnLP6PBnrxf9IbPGwJIvtRGwVfbWTkdBbFOPJ6v35HWtG0Dxm/GZgGiPfTiPOHrN7Aw5m5fyKSU+7r11PWh65Oow3Dsu6/K+SVIJkVnbl6ZQbMHYCXwCANP8yMjs0Ib1bYCCNHZg3Q+n4KtcB797qxKIHvtHrP70=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2389E5DC05CEFC41A88721A297317152@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce2799f9-7aeb-4357-029b-08d651516db1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Nov 2018 14:39:09.9803
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1267
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/11/2018 22:40, Martin Blumenstingl wrote:
-> This is the successor to my previous series "meson8b: add the CPU_DIV16
-> clock for the ARM TWD" from [0]. I decided to not send this as v2 of
-> the original series because the PERIPH clock is not the CPU_DIV16 clock.
-> It's not clear whether a CPU_DIV16 clock exists.
-> 
-> With this series we get all the CPU_CLK post-dividers as listed in the
-> public S805 datasheet [1] on pages 31 and 32:
-> - ABP
-> - PERIPH (used as input for the ARM global timer and ARM TWD timer)
-> - AXI
-> - L2 DRAM
-> 
-> Each of these clocks has a register called "..._CLK_DIS" which is
-> documented as a "just in case" bit:
-> "Set to 1 to manually disable the [...] clock when changing the mux
-> selection. Typically this bit is set to 0 since the clock muxes can
-> switch without glitches."
-> Since we're not supposed to touch that register we're using the new
-> read-only gate clk_ops to ensure that nothing accidentally modifies
-> these bits.
-> 
-> The result of this is that we can use the PERIPH clock which clocks
-> the ARM TWD timer. I will send a separate series to add the TWD timer.
-> 
-> 
-> changes since v1 at [2]:
-> - added new patch 2 "clk: meson: clk-regmap: add read-only gate ops"
-> - switched from CLK_IS_CRITICAL to the new clk_regmap_gate_ro_ops
->   so we're consistent with all other read-only clocks
-> - collected Jerome's Acked-by tags (thanks!)
-> 
-> 
-> [0] http://lists.infradead.org/pipermail/linux-amlogic/2018-July/007890.html
-> [1] https://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
-> [2] https://patchwork.kernel.org/cover/10687023/
-> 
-> 
-> Martin Blumenstingl (4):
->   dt-bindings: clock: meson8b: export the CPU post dividers
->   clk: meson: clk-regmap: add read-only gate ops
->   clk: meson: meson8b: rename cpu_div2/cpu_div3 to
->     cpu_in_div2/cpu_in_div3
->   clk: meson: meson8b: add the CPU clock post divider clocks
-> 
->  drivers/clk/meson/clk-regmap.c           |   5 +
->  drivers/clk/meson/clk-regmap.h           |   1 +
->  drivers/clk/meson/meson8b.c              | 264 ++++++++++++++++++++++-
->  drivers/clk/meson/meson8b.h              |  17 +-
->  include/dt-bindings/clock/meson8b-clkc.h |   4 +
->  5 files changed, 278 insertions(+), 13 deletions(-)
-
-
-Applied, with the bindings on next/headers
-
-Neil
+SGkgS2FpLWhlbmcsDQoNCk9uIDExLzIzLzIwMTggMjo1OSBQTSwgS2FpIEhlbmcgRmVuZyB3cm90
+ZToNCj4gSGkgU2FuZGVlcCwNCj4gDQo+PiBPbiBOb3YgMjIsIDIwMTgsIGF0IDEyOjIzIFBNLCBT
+aW5naCwgU2FuZGVlcCA8U2FuZGVlcC5TaW5naEBhbWQuY29tPiB3cm90ZToNCj4+DQo+PiBGcm9t
+OiBTYW5kZWVwIFNpbmdoIDxzYW5kZWVwLnNpbmdoQGFtZC5jb20+DQo+Pg0KPj4gT2NjYXNpb25h
+bGx5IEFNRCBTTlBTIDMuMCB4SEMgZG9lcyBub3QgcmVzcG9uZCB0bw0KPj4gQ1NTIHdoZW4gc2V0
+LCBhbHNvIGl0IGRvZXMgbm90IGZsYWcgYW55dGhpbmcgb24gU1JFIGFuZCBIQ0UNCj4+IHRvIHBv
+aW50IHRoZSBpbnRlcm5hbCB4SEMgZXJyb3JzIG9uIFVTQlNUUyByZWdpc3Rlci4gVGhpcyBzdGFs
+bHMNCj4+IHRoZSBlbnRpcmUgc3lzdGVtIHdpZGUgc3VzcGVuZCBhbmQgdGhlcmUgaXMgbm8gcG9p
+bnQgaW4gc3RhbGxpbmcNCj4+IGp1c3QgYmVjYXVzZSBvZiB4SEMgQ1NTIGlzIG5vdCByZXNwb25k
+aW5nLg0KPj4NCj4+IFRvIHdvcmsgYXJvdW5kIHRoaXMgcHJvYmxlbSwgaWYgdGhlIHhIQyBkb2Vz
+IG5vdCBmbGFnDQo+PiBhbnl0aGluZyBvbiBTUkUgYW5kIEhDRSwgd2UgY2FuIHNraXAgdGhlIENT
+Uw0KPj4gdGltZW91dCBhbmQgYWxsb3cgdGhlIHN5c3RlbSB0byBjb250aW51ZSB0aGUgc3VzcGVu
+ZC4gT25jZSB0aGUNCj4+IHN5c3RlbSByZXN1bWUgaGFwcGVucyB3ZSBjYW4gaW50ZXJuYWxseSBy
+ZXNldCB0aGUgY29udHJvbGxlcg0KPj4gdXNpbmcgWEhDSV9SRVNFVF9PTl9SRVNVTUUgcXVpcmsN
+Cj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBTaHlhbSBTdW5kYXIgUyBLIDxTaHlhbS1zdW5kYXIuUy1r
+QGFtZC5jb20+DQo+PiBTaWduZWQtb2ZmLWJ5OiBTYW5kZWVwIFNpbmdoIDxTYW5kZWVwLlNpbmdo
+QGFtZC5jb20+DQo+PiBjYzogTmVoYWwgU2hhaCA8TmVoYWwtYmFrdWxjaGFuZHJhLlNoYWhAYW1k
+LmNvbT4NCj4+IC0tLQ0KPj4gQ2hhbmdlcyBzaW5jZSB2MToNCj4+DQo+PiAtPiBOZXcgVmFyaWFi
+bGUgYmFzZWQgZGVjaXNpb24gbWFraW5nIHdoZW4gU05QUyBpc3N1ZSBoYXBwZW5zIGhlbmNlIA0K
+Pj4gICBxdWlyayBpbnRlcmRlcGVuZGVuY3kgcmVtb3ZlZC4NCj4+IC0+IFJlbW92ZWQgU1RTIGNv
+bmRpdGlvbmFsIGNoZWNrIGluIHN1c3BlbmQgZnVuY3Rpb24uDQo+Pg0KPj4gZHJpdmVycy91c2Iv
+aG9zdC94aGNpLXBjaS5jIHwgIDQgKysrKw0KPj4gZHJpdmVycy91c2IvaG9zdC94aGNpLmMgICAg
+IHwgMjYgKysrKysrKysrKysrKysrKysrKysrKy0tLS0NCj4+IGRyaXZlcnMvdXNiL2hvc3QveGhj
+aS5oICAgICB8ICAzICsrKw0KPj4gMyBmaWxlcyBjaGFuZ2VkLCAyOSBpbnNlcnRpb25zKCspLCA0
+IGRlbGV0aW9ucygtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9ob3N0L3hoY2kt
+cGNpLmMgYi9kcml2ZXJzL3VzYi9ob3N0L3hoY2ktcGNpLmMNCj4+IGluZGV4IDAxYzU3MDUuLjcy
+NDkzYzQgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL3VzYi9ob3N0L3hoY2ktcGNpLmMNCj4+ICsr
+KyBiL2RyaXZlcnMvdXNiL2hvc3QveGhjaS1wY2kuYw0KPj4gQEAgLTEzOSw2ICsxMzksMTAgQEAg
+c3RhdGljIHZvaWQgeGhjaV9wY2lfcXVpcmtzKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IHho
+Y2lfaGNkICp4aGNpKQ0KPj4gCQkgcGRldi0+ZGV2aWNlID09IDB4NDNiYikpDQo+PiAJCXhoY2kt
+PnF1aXJrcyB8PSBYSENJX1NVU1BFTkRfREVMQVk7DQo+Pg0KPj4gKwlpZiAocGRldi0+dmVuZG9y
+ID09IFBDSV9WRU5ET1JfSURfQU1EICYmDQo+PiArCSAgICAocGRldi0+ZGV2aWNlID09IDB4MTVl
+MCB8fCBwZGV2LT5kZXZpY2UgPT0gMHgxNWUxKSkNCj4+ICsJCXhoY2ktPnF1aXJrcyB8PSBYSENJ
+X1NOUFNfQlJPS0VOX1NVU1BFTkQ7DQo+PiArDQo+PiAJaWYgKHBkZXYtPnZlbmRvciA9PSBQQ0lf
+VkVORE9SX0lEX0FNRCkNCj4+IAkJeGhjaS0+cXVpcmtzIHw9IFhIQ0lfVFJVU1RfVFhfTEVOR1RI
+Ow0KPj4NCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9ob3N0L3hoY2kuYyBiL2RyaXZlcnMv
+dXNiL2hvc3QveGhjaS5jDQo+PiBpbmRleCAwNDIwZWVmLi44MDg2NzdkIDEwMDY0NA0KPj4gLS0t
+IGEvZHJpdmVycy91c2IvaG9zdC94aGNpLmMNCj4+ICsrKyBiL2RyaXZlcnMvdXNiL2hvc3QveGhj
+aS5jDQo+PiBAQCAtOTcwLDYgKzk3MCw3IEBAIGludCB4aGNpX3N1c3BlbmQoc3RydWN0IHhoY2lf
+aGNkICp4aGNpLCBib29sIGRvX3dha2V1cCkNCj4+IAl1bnNpZ25lZCBpbnQJCWRlbGF5ID0gWEhD
+SV9NQVhfSEFMVF9VU0VDOw0KPj4gCXN0cnVjdCB1c2JfaGNkCQkqaGNkID0geGhjaV90b19oY2Qo
+eGhjaSk7DQo+PiAJdTMyCQkJY29tbWFuZDsNCj4+ICsJdTMyCQkJcmVzOw0KPj4NCj4+IAlpZiAo
+IWhjZC0+c3RhdGUpDQo+PiAJCXJldHVybiAwOw0KPj4gQEAgLTEwMjMsMTEgKzEwMjQsMjggQEAg
+aW50IHhoY2lfc3VzcGVuZChzdHJ1Y3QgeGhjaV9oY2QgKnhoY2ksIGJvb2wgZG9fd2FrZXVwKQ0K
+Pj4gCWNvbW1hbmQgPSByZWFkbCgmeGhjaS0+b3BfcmVncy0+Y29tbWFuZCk7DQo+PiAJY29tbWFu
+ZCB8PSBDTURfQ1NTOw0KPj4gCXdyaXRlbChjb21tYW5kLCAmeGhjaS0+b3BfcmVncy0+Y29tbWFu
+ZCk7DQo+PiArCXhoY2ktPmJyb2tlbl9zdXNwZW5kID0gMDsNCj4+IAlpZiAoeGhjaV9oYW5kc2hh
+a2UoJnhoY2ktPm9wX3JlZ3MtPnN0YXR1cywNCj4+IAkJCQlTVFNfU0FWRSwgMCwgMTAgKiAxMDAw
+KSkgew0KPj4gLQkJeGhjaV93YXJuKHhoY2ksICJXQVJOOiB4SEMgc2F2ZSBzdGF0ZSB0aW1lb3V0
+XG4iKTsNCj4+IC0JCXNwaW5fdW5sb2NrX2lycSgmeGhjaS0+bG9jayk7DQo+PiAtCQlyZXR1cm4g
+LUVUSU1FRE9VVDsNCj4+ICsJLyoNCj4+ICsJICogQU1EIFNOUFMgeEhDIDMuMCBvY2Nhc2lvbmFs
+bHkgZG9lcyBub3QgY2xlYXIgdGhlDQo+PiArCSAqIFNTUyBiaXQgb2YgVVNCU1RTIGFuZCB3aGVu
+IGRyaXZlciB0cmllcyB0byBwb2xsDQo+PiArCSAqIHRvIHNlZSBpZiB0aGUgeEhDIGNsZWFycyBC
+SVQoOCkgd2hpY2ggbmV2ZXIgaGFwcGVucw0KPj4gKwkgKiBhbmQgZHJpdmVyIGFzc3VtZXMgdGhh
+dCBjb250cm9sbGVyIGlzIG5vdCByZXNwb25kaW5nDQo+PiArCSAqIGFuZCB0aW1lcyBvdXQuIFRv
+IHdvcmthcm91bmQgdGhpcywgaXRzIGdvb2QgdG8gY2hlY2sNCj4+ICsJICogaWYgU1JFIGFuZCBI
+Q0UgYml0cyBhcmUgbm90IHNldCAoYXMgcGVyIHhoY2kNCj4+ICsJICogU2VjdGlvbiA1LjQuMikg
+YW5kIGJ5cGFzcyB0aGUgdGltZW91dC4NCj4+ICsJICovDQo+PiArCQlyZXMgPSByZWFkbCgmeGhj
+aS0+b3BfcmVncy0+c3RhdHVzKTsNCj4+ICsJCWlmICgoeGhjaS0+cXVpcmtzICYgWEhDSV9TTlBT
+X0JST0tFTl9TVVNQRU5EKSAmJg0KPj4gKwkJICAgICgoKHJlcyAmIFNUU19TUkUpID09IDApICYm
+DQo+PiArCQkJCSgocmVzICYgU1RTX0hDRSkgPT0gMCkpKSB7DQo+PiArCQkJeGhjaS0+YnJva2Vu
+X3N1c3BlbmQgPSAxOw0KPj4gKwkJfSBlbHNlIHsNCj4+ICsJCQl4aGNpX3dhcm4oeGhjaSwgIldB
+Uk46IHhIQyBzYXZlIHN0YXRlIHRpbWVvdXRcbiIpOw0KPj4gKwkJCXNwaW5fdW5sb2NrX2lycSgm
+eGhjaS0+bG9jayk7DQo+PiArCQkJcmV0dXJuIC1FVElNRURPVVQ7DQo+PiArCQl9DQo+PiAJfQ0K
+Pj4gCXNwaW5fdW5sb2NrX2lycSgmeGhjaS0+bG9jayk7DQo+Pg0KPj4gQEAgLTEwODAsNyArMTA5
+OCw3IEBAIGludCB4aGNpX3Jlc3VtZShzdHJ1Y3QgeGhjaV9oY2QgKnhoY2ksIGJvb2wgaGliZXJu
+YXRlZCkNCj4+IAlzZXRfYml0KEhDRF9GTEFHX0hXX0FDQ0VTU0lCTEUsICZ4aGNpLT5zaGFyZWRf
+aGNkLT5mbGFncyk7DQo+Pg0KPj4gCXNwaW5fbG9ja19pcnEoJnhoY2ktPmxvY2spOw0KPj4gLQlp
+ZiAoeGhjaS0+cXVpcmtzICYgWEhDSV9SRVNFVF9PTl9SRVNVTUUpDQo+PiArCWlmICgoeGhjaS0+
+cXVpcmtzICYgWEhDSV9SRVNFVF9PTl9SRVNVTUUpIHx8IHhoY2ktPmJyb2tlbl9zdXNwZW5kKQ0K
+Pj4gCQloaWJlcm5hdGVkID0gdHJ1ZTsNCj4+DQo+PiAJaWYgKCFoaWJlcm5hdGVkKSB7DQo+PiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy91c2IvaG9zdC94aGNpLmggYi9kcml2ZXJzL3VzYi9ob3N0L3ho
+Y2kuaA0KPj4gaW5kZXggYmYwYjM2OS4uZDVkMTliMiAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMv
+dXNiL2hvc3QveGhjaS5oDQo+PiArKysgYi9kcml2ZXJzL3VzYi9ob3N0L3hoY2kuaA0KPj4gQEAg
+LTE4NDksNiArMTg0OSw3IEBAIHN0cnVjdCB4aGNpX2hjZCB7DQo+PiAjZGVmaW5lIFhIQ0lfSU5U
+RUxfVVNCX1JPTEVfU1cJQklUX1VMTCgzMSkNCj4+ICNkZWZpbmUgWEhDSV9aRVJPXzY0Ql9SRUdT
+CUJJVF9VTEwoMzIpDQo+PiAjZGVmaW5lIFhIQ0lfREVGQVVMVF9QTV9SVU5USU1FX0FMTE9XCUJJ
+VF9VTEwoMzMpDQo+PiArI2RlZmluZSBYSENJX1NOUFNfQlJPS0VOX1NVU1BFTkQgICAgQklUX1VM
+TCgzNCkNCj4gDQo+IFRoaXMgYml0IGlzIGFscmVhZHkgaW4gdXNlIGJ5IGEgYW5vdGhlciBwYXRj
+aCwgc28gcGxlYXNlIHVwZGF0ZSBpdHMgdmFsdWUuDQpUaGFua3MgZm9yIGFkZHJlc3NpbmcgIHdl
+IHdpbGwgYmUgc2VuZGluZyBwYXRjaCB2My4NCj4gDQo+IEthaS1IZW5nDQo+IA0KPj4NCj4+IAl1
+bnNpZ25lZCBpbnQJCW51bV9hY3RpdmVfZXBzOw0KPj4gCXVuc2lnbmVkIGludAkJbGltaXRfYWN0
+aXZlX2VwczsNCj4+IEBAIC0xODc4LDYgKzE4NzksOCBAQCBzdHJ1Y3QgeGhjaV9oY2Qgew0KPj4g
+CXZvaWQJCQkqZGJjOw0KPj4gCS8qIHBsYXRmb3JtLXNwZWNpZmljIGRhdGEgLS0gbXVzdCBjb21l
+IGxhc3QgKi8NCj4+IAl1bnNpZ25lZCBsb25nCQlwcml2WzBdIF9fYWxpZ25lZChzaXplb2YoczY0
+KSk7DQo+PiArCS8qIEJyb2tlbiBTdXNwZW5kIGZsYWcgZm9yIFNOUFMgU3VzcGVuZCByZXN1bWUg
+aXNzdWUgKi8NCj4+ICsJdTgJCQlicm9rZW5fc3VzcGVuZDsNCj4+IH07DQo+Pg0KPj4gLyogUGxh
+dGZvcm0gc3BlY2lmaWMgb3ZlcnJpZGVzIHRvIGdlbmVyaWMgWEhDSSBoY19kcml2ZXIgb3BzICov
+DQo+PiAtLSANCj4+IDIuNy40DQo+Pg0KPiANCg==
