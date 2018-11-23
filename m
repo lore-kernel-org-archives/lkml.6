@@ -2,277 +2,110 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 842ABC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 637ADC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 383B120685
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:01:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 383B120685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1F65720685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 07:02:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F65720685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502205AbeKWRoE (ORCPT
+        id S2502219AbeKWRpT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 12:44:04 -0500
-Received: from lgeamrelo12.lge.com ([156.147.23.52]:44031 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1733170AbeKWRoE (ORCPT
+        Fri, 23 Nov 2018 12:45:19 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41226 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2393379AbeKWRpT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 12:44:04 -0500
-Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
-        by 156.147.23.52 with ESMTP; 23 Nov 2018 16:01:05 +0900
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: namhyung@kernel.org
-Received: from unknown (HELO sejong) (10.177.227.17)
-        by 156.147.1.125 with ESMTP; 23 Nov 2018 16:01:05 +0900
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-Date:   Fri, 23 Nov 2018 16:01:05 +0900
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org, kernel-team@lge.com
-Subject: Re: [PATCH v7 05/16] tracing: Generalize hist trigger onmax and save
- action
-Message-ID: <20181123070105.GA3838@sejong>
-References: <cover.1542221862.git.tom.zanussi@linux.intel.com>
- <9baa2b4a9b708791b39f176e3b63c207163d8c3b.1542221863.git.tom.zanussi@linux.intel.com>
+        Fri, 23 Nov 2018 12:45:19 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAN6wqQv147014
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 02:02:21 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nx9umw51r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 02:02:19 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Fri, 23 Nov 2018 07:02:17 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 23 Nov 2018 07:02:14 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAN72E8g57606176
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 23 Nov 2018 07:02:14 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EC1414C1F8;
+        Fri, 23 Nov 2018 07:02:13 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A527E4C1EA;
+        Fri, 23 Nov 2018 07:02:13 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.95])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 23 Nov 2018 07:02:13 +0000 (GMT)
+Date:   Fri, 23 Nov 2018 08:02:12 +0100
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] s390: Remove obsolete bust_spinlock() implementation
+References: <20181122141529.14933-1-pmladek@suse.com>
+ <20181123021748.GB1582@jagdpanzerIV>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20181123021748.GB1582@jagdpanzerIV>
+X-TM-AS-GCONF: 00
+x-cbid: 18112307-0012-0000-0000-000002CEF5F8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112307-0013-0000-0000-000021042A06
+Message-Id: <20181123070212.GA3300@osiris>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
-In-Reply-To: <9baa2b4a9b708791b39f176e3b63c207163d8c3b.1542221863.git.tom.zanussi@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-23_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811230056
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 02:18:02PM -0600, Tom Zanussi wrote:
-> From: Tom Zanussi <tom.zanussi@linux.intel.com>
+On Fri, Nov 23, 2018 at 11:17:48AM +0900, Sergey Senozhatsky wrote:
+> On (11/22/18 15:15), Petr Mladek wrote:
+> > The commit cefc8be82403cf ("Consolidate bust_spinlocks()") kept
+> > the s390-specific implementation because of the absence of CONFIG_VT.
+> > In fact, the only difference was calling console_unblank() instead of
+> > unblank_screen().
+> > 
+> > The common implementation in lib/bust_spinlocks.c started to call
+> > unblank_screen() explicitly since the commit b61312d353da187
+> > ("oops handling: ensure that any oops is flushed to the mtdoops
+> > console").
+> > 
+> > As a result, the custom implementation is not longer necessary.
+> > And we could get all the other improvements of the common
+> > implementation for free.
 > 
-> The action refactor code allowed actions and handlers to be separated,
-> but the existing onmax handler and save action code is still not
-> flexible enough to handle arbitrary coupling.  This change generalizes
-> them and in the process makes additional handlers and actions easier
-> to implement.
+> I believe I sent a similar patch several weeks ago and it's
+> in s390 patch queue as of now, waiting for the next merge
+> window.
 > 
-> The onmax action can be broken up and thought of as two separate
-> components - a variable to be tracked (the parameter given to the
-> onmax($var_to_track) function) and an invisible variable created to
-> save the ongoing result of doing something with that variable, such as
-> saving the max value of that variable so far seen.
-> 
-> Separating it out like this and renaming it appropriately allows us to
-> use the same code for similar tracking functions such as
-> onchange($var_to_track), which would just track the last value seen
-> rather than the max seen so far, which is useful in some situations.
-> 
-> Additionally, because different handlers and actions may want to save
-> and access data differently e.g. save and retrieve tracking values as
-> local variables vs something more global, save_val() and get_val()
-> interface functions are introduced and max-specific implementations
-> are used instead.
-> 
-> The same goes for the code that checks whether a maximum has been hit
-> - a generic check_val() interface and max-checking implementation is
-> used instead, which allows future patches to make use of he same code
-> using their own implemetations of similar functionality.
-> 
-> Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-> ---
->  kernel/trace/trace_events_hist.c | 225 ++++++++++++++++++++++++++-------------
->  1 file changed, 151 insertions(+), 74 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-> index 54b78cfe2766..ac48ad1482c8 100644
-> --- a/kernel/trace/trace_events_hist.c
-> +++ b/kernel/trace/trace_events_hist.c
-> @@ -319,6 +319,15 @@ typedef void (*action_fn_t) (struct hist_trigger_data *hist_data,
->  			     struct ring_buffer_event *rbe,
->  			     struct action_data *data, u64 *var_ref_vals);
->  
-> +typedef bool (*check_track_val_fn_t) (u64 track_val, u64 var_val);
-> +typedef bool (*save_track_val_fn_t) (struct hist_trigger_data *hist_data,
-> +				     struct tracing_map_elt *elt,
-> +				     struct action_data *data,
-> +				     unsigned int track_var_idx, u64 var_val);
-> +typedef u64 (*get_track_val_fn_t) (struct hist_trigger_data *hist_data,
-> +				   struct tracing_map_elt *elt,
-> +				   struct action_data *data);
-> +
->  enum handler_id {
->  	HANDLER_ONMATCH = 1,
->  	HANDLER_ONMAX,
-> @@ -349,14 +358,18 @@ struct action_data {
->  
->  		struct {
->  			char			*var_str;
-> -			unsigned int		max_var_ref_idx;
-> -			struct hist_field	*max_var;
-> -			struct hist_field	*var;
-> -		} onmax;
-> +			struct hist_field	*var_ref;
-> +			unsigned int		var_ref_idx;
-> +
-> +			struct hist_field	*track_var;
-> +
-> +			check_track_val_fn_t	check_val;
-> +			save_track_val_fn_t	save_val;
-> +			get_track_val_fn_t	get_val;
-> +		} track_data;
->  	};
->  };
->  
-> -
->  static char last_hist_cmd[MAX_FILTER_STR_VAL];
->  static char hist_err_str[MAX_FILTER_STR_VAL];
->  
-> @@ -3133,10 +3146,10 @@ static void update_field_vars(struct hist_trigger_data *hist_data,
->  			    hist_data->n_field_vars, 0);
->  }
->  
-> -static void update_max_vars(struct hist_trigger_data *hist_data,
-> -			    struct tracing_map_elt *elt,
-> -			    struct ring_buffer_event *rbe,
-> -			    void *rec)
-> +static void update_save_vars(struct hist_trigger_data *hist_data,
-> +			     struct tracing_map_elt *elt,
-> +			     struct ring_buffer_event *rbe,
-> +			     void *rec)
->  {
->  	__update_field_vars(elt, rbe, rec, hist_data->save_vars,
->  			    hist_data->n_save_vars, hist_data->n_field_var_str);
-> @@ -3274,14 +3287,68 @@ create_target_field_var(struct hist_trigger_data *target_hist_data,
->  	return create_field_var(target_hist_data, file, var_name);
->  }
->  
-> -static void onmax_print(struct seq_file *m,
-> -			struct hist_trigger_data *hist_data,
-> -			struct tracing_map_elt *elt,
-> -			struct action_data *data)
-> +static bool check_track_val_max(u64 track_val, u64 var_val)
->  {
-> -	unsigned int i, save_var_idx, max_idx = data->onmax.max_var->var.idx;
-> +	if (var_val <= track_val)
-> +		return false;
-> +
-> +	return true;
-> +}
->  
-> -	seq_printf(m, "\n\tmax: %10llu", tracing_map_read_var(elt, max_idx));
-> +static u64 get_track_val_local(struct hist_trigger_data *hist_data,
-> +			       struct tracing_map_elt *elt,
-> +			       struct action_data *data)
-> +{
-> +	unsigned int track_var_idx = data->track_data.track_var->var.idx;
-> +	u64 track_val;
-> +
-> +	track_val = tracing_map_read_var(elt, track_var_idx);
-> +
-> +	return track_val;
-> +}
-> +
-> +static bool save_track_val_local(struct hist_trigger_data *hist_data,
-> +				 struct tracing_map_elt *elt,
-> +				 struct action_data *data,
-> +				 unsigned int track_var_idx, u64 var_val)
-> +{
-> +	bool ret = false;
-> +	u64 track_val;
-> +
-> +	track_val = tracing_map_read_var(elt, track_var_idx);
-> +
-> +	if (data->track_data.check_val(track_val, var_val)) {
-> +		tracing_map_set_var(elt, track_var_idx, var_val);
-> +		ret = true;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static bool update_track_val(struct hist_trigger_data *hist_data,
-> +			     struct tracing_map_elt *elt,
-> +			     struct action_data *data, u64 *var_ref_vals)
-> +{
-> +	unsigned int track_var_idx = data->track_data.track_var->var.idx;
-> +	unsigned int track_var_ref_idx = data->track_data.var_ref_idx;
-> +	u64 var_val;
-> +
-> +	var_val = var_ref_vals[track_var_ref_idx];
-> +
-> +	return data->track_data.save_val(hist_data, elt, data,
-> +					 track_var_idx, var_val);
-> +}
+> lkml.kernel.org/r/20181025081108.GB26561@osiris
 
-It's bit confusing for me update_track_val() calls ->save_val() and it
-in turn calls ->check_val().  Why not having wrappers corresponding to
-their callback name?  - get_track_val(), check_track_val() and
-save_trace_val()...
+Yes, it will be added soon to the features branch of the
+s390/linux.git repository on kernel.org and then hit linux-next.
 
-
-> +
-> +static void track_data_print(struct seq_file *m,
-> +			     struct hist_trigger_data *hist_data,
-> +			     struct tracing_map_elt *elt,
-> +			     struct action_data *data)
-> +{
-> +	u64 track_val = data->track_data.get_val(hist_data, elt, data);
-> +	unsigned int i, save_var_idx;
-> +
-> +	if (data->handler == HANDLER_ONMAX)
-> +		seq_printf(m, "\n\tmax: %10llu", track_val);
->  
->  	for (i = 0; i < hist_data->n_save_vars; i++) {
->  		struct hist_field *save_val = hist_data->save_vars[i]->val;
-> @@ -3300,25 +3367,13 @@ static void onmax_print(struct seq_file *m,
->  	}
->  }
->  
-> -static void onmax_save(struct hist_trigger_data *hist_data,
-> -		       struct tracing_map_elt *elt, void *rec,
-> -		       struct ring_buffer_event *rbe,
-> -		       struct action_data *data, u64 *var_ref_vals)
-> +static void ontrack_save(struct hist_trigger_data *hist_data,
-> +			 struct tracing_map_elt *elt, void *rec,
-> +			 struct ring_buffer_event *rbe,
-> +			 struct action_data *data, u64 *var_ref_vals)
->  {
-> -	unsigned int max_idx = data->onmax.max_var->var.idx;
-> -	unsigned int max_var_ref_idx = data->onmax.max_var_ref_idx;
-> -
-> -	u64 var_val, max_val;
-> -
-> -	var_val = var_ref_vals[max_var_ref_idx];
-> -	max_val = tracing_map_read_var(elt, max_idx);
-> -
-> -	if (var_val <= max_val)
-> -		return;
-> -
-> -	tracing_map_set_var(elt, max_idx, var_val);
-> -
-> -	update_max_vars(hist_data, elt, rbe, rec);
-> +	if (update_track_val(hist_data, elt, data, var_ref_vals))
-> +		update_save_vars(hist_data, elt, rbe, rec);
-
-... and then it should look like:
-
-	if (check_track_val()) {
-		save_track_val();
-		update_save_vars();
-	}
-
-I also think update_save_vars() also needs to be renamed something
-like save_track_vars() or save_trace_data().
-
-Thanks,
-Namhyung
-
-
->  }
