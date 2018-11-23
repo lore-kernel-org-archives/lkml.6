@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B605FC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B0DC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7663B20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:41:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 860E720685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 20:41:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKRIKKvn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7663B20868
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HY7Dx1Da"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 860E720685
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726294AbeKXH1Y (ORCPT
+        id S1726234AbeKXH1W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 02:27:24 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42018 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbeKXH1R (ORCPT
+        Sat, 24 Nov 2018 02:27:22 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38372 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbeKXH1O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 02:27:17 -0500
-Received: by mail-wr1-f66.google.com with SMTP id q18so13412541wrx.9
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 12:41:26 -0800 (PST)
+        Sat, 24 Nov 2018 02:27:14 -0500
+Received: by mail-wm1-f68.google.com with SMTP id k198so13067483wmd.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 12:41:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wI9upPqb+0erES6uHn3/tJCvOTsJnHRatY18E0y4L4o=;
-        b=JKRIKKvn+80lRcWkv+mIzSdbjqZC8/KRQRErXLMTm7OkLBBWzlwcoXur3MW4iwPSWD
-         6q/MLVLvL9cZVz1XPHtTi+JLcf9wR7TZBR36diOzuXQtjbToItLrq7R3DR8YZMEsAsUZ
-         oF48Lo+xyPMSfVrG73ChNiRzQSX59ADB0QFR/D7FKwCLBwTNM5G4Iw5nWDs8cxjGvl4G
-         nUmgWqgEl/Y8ZbCxh5Pn5/8IEAGIk3Kiihqs9KzjiIvv/S1f5Pj6QBkR/iedzJ/fN1dL
-         3Rt+st+2hz6RcMrt8VbLohsUDqd7+7YcWKxEOq87nkbjxoK8FzWq8UdxFBcwp1Zlk3jp
-         3wzg==
+        bh=wfbpFWl5GpYveIHjj2TSl8HmA16Uk7z5IJusQKFHpFc=;
+        b=HY7Dx1DaLKFEr4fQ0ntznv4jtOeaMA71dgwKohgM+w1PJoSzOyxjppUArmOenm4GBZ
+         0DWWt48+DTwjdwbPwYwKIvPESkmT3ZtZlDuOe99hODNQiId6FC4f6vFqijB3sBSzK+ff
+         RKyh5dtikaZCY1wvwHhl217k8ly2FHeXTZkck4hI52i3okj7OUbGwC3f8qtTeIf6qtaF
+         dk+eINoj3orpQr6167b6xGGxp+l3hpUzEA9zdZoXvSUvIhJQfgiUmkSiKnTd+2oajanh
+         qsqXxNAH30dhDkVnpDM9TO4ezYvBSEsXQGQrgceoLl9Tpa5+Ia0NGiA687nZduAWCGQv
+         sJew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wI9upPqb+0erES6uHn3/tJCvOTsJnHRatY18E0y4L4o=;
-        b=sD+ebgn1qyh7tAuJNrEieczrz8fvRzxUt9OZvZMtKHKvJIsObHEN+G4StDqE2j1oyT
-         AMDRSnmpptdIZWZJIK8bM9GzNk1f7PxK8Uy8lAnA/RJdHwNTD501Q+qd6pxc608nWZ6X
-         5zNfOlOwPLz8Enezs8GMQBaa7ItCnkHZZBpdaCt2o/sLgBgBMVHkPtWxgOvab/qJOLK+
-         +lFBVlE6aNiYkSlE9scsm6TH2UTJ9Ek+5WxJ+KwLDkHvYNEZcS4dR3NtVgIcuSWcNgUT
-         LrqNOSoqvspnUQ71HlEgfWGP3/zRZYggil+6EDnIOzwDF/ovplsQ8etu8h8H8n63t1cq
-         dbjw==
-X-Gm-Message-State: AA+aEWbFChh2RVbDxvEOKIZa59UnvRY7PIK7MfWo7saTHPrYxbMHYcFP
-        TBA3zipUDrBGuX1ySQrjZzM=
-X-Google-Smtp-Source: AFSGD/WF6YbeRwY5SgpgTlSCH9v0WMe4G9RjhUNENVGJDMQR+TtGr//G8yYy4sjbCxXSh7+XPga6tQ==
-X-Received: by 2002:adf:c7cc:: with SMTP id y12mr7529565wrg.52.1543005686142;
-        Fri, 23 Nov 2018 12:41:26 -0800 (PST)
+        bh=wfbpFWl5GpYveIHjj2TSl8HmA16Uk7z5IJusQKFHpFc=;
+        b=alatzbHLiXLK0t7Unpc+I2fWOEt0IINyWH66u+yDV9/C2evKsaZRxcgJcbU9oFeyzD
+         jG3Y6xvhxUGSR3nCMCFLQsbfHs7HCQq9+aijYew7eSi3vY+fF2MROu5SIBtbXJf+yeUc
+         2cODPyD+F3/3s2Akr7b8CbGDsvJ7IyRZJaymk2cARw9afBcsKuS2EndTWgh0BtjYYHGq
+         LkxNsPwPxpAOLRa6IJ6GQ8ji38fi2RtpQDHChLuHw6LiVdQ9IKw1kFk21wlLaO0Ilowp
+         jYLAg7nag3DJu/vocyWlMRRAypkV7zMKUSbsmFTUMRFcby3zLQZZ3JrZ3e6/D5u3rjY4
+         eB7w==
+X-Gm-Message-State: AGRZ1gK/LlEfJINhm9xJ9gHndg3fFW/tIqfbQTaDJ+g3vkfQtK/NxgU6
+        enuRXt3rRknzilzbtBejlc4=
+X-Google-Smtp-Source: AJdET5dW7RDCjT8S7rDg+RXDPo9W7OX+h2Fav7na9qYVKA85KC0xxz4UThNoL99I2OFSRECZ2MwxIg==
+X-Received: by 2002:a1c:9a4c:: with SMTP id c73mr15737021wme.35.1543005683215;
+        Fri, 23 Nov 2018 12:41:23 -0800 (PST)
 Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
-        by smtp.gmail.com with ESMTPSA id i9sm24598906wrs.34.2018.11.23.12.41.25
+        by smtp.gmail.com with ESMTPSA id i9sm24598906wrs.34.2018.11.23.12.41.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Nov 2018 12:41:25 -0800 (PST)
+        Fri, 23 Nov 2018 12:41:22 -0800 (PST)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 9/9] staging: rtl8188eu: cleanup lines over 80 characters
-Date:   Fri, 23 Nov 2018 21:41:06 +0100
-Message-Id: <20181123204106.2284-9-straube.linux@gmail.com>
+Subject: [PATCH 6/9] staging: rtl8188eu: refactor if else statement
+Date:   Fri, 23 Nov 2018 21:41:03 +0100
+Message-Id: <20181123204106.2284-6-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181123204106.2284-1-straube.linux@gmail.com>
 References: <20181123204106.2284-1-straube.linux@gmail.com>
@@ -76,58 +76,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cleanup lines over 80 characters by replacing tabs with spaces
-or adding appropriate line breaks.
+Refactor if else statement to clear checkpatch warnings.
+WARNING: else is not generally useful after a break or return
+WARNING: line over 80 characters
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/core/rtw_mlme.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/staging/rtl8188eu/core/rtw_mlme.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-index b048a3b633a9..714f7a70ed64 100644
+index 9cc7d5b8293c..513b6d89a0de 100644
 --- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
 +++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-@@ -324,7 +324,7 @@ int is_same_network(struct wlan_bssid_ex *src, struct wlan_bssid_ex *dst)
- 		(d_cap & WLAN_CAPABILITY_ESS)));
+@@ -1758,12 +1758,9 @@ int rtw_restruct_sec_ie(struct adapter *adapter, u8 *in_ie, u8 *out_ie, uint in_
+ 	}
+ 
+ 	iEntry = SecIsInPMKIDList(adapter, pmlmepriv->assoc_bssid);
+-	if (iEntry < 0) {
+-		return ielength;
+-	} else {
+-		if (authmode == _WPA2_IE_ID_)
+-			ielength = rtw_append_pmkid(adapter, iEntry, out_ie, ielength);
+-	}
++	if (iEntry >= 0 && authmode == _WPA2_IE_ID_)
++		ielength = rtw_append_pmkid(adapter, iEntry, out_ie, ielength);
++
+ 	return ielength;
  }
- 
--struct	wlan_network	*rtw_get_oldest_wlan_network(struct __queue *scanned_queue)
-+struct wlan_network *rtw_get_oldest_wlan_network(struct __queue *scanned_queue)
- {
- 	struct list_head *plist, *phead;
- 	struct wlan_network *pwlan = NULL;
-@@ -413,7 +413,7 @@ void rtw_update_scanned_network(struct adapter *adapter, struct wlan_bssid_ex *t
- 	plist = phead->next;
- 
- 	while (phead != plist) {
--		pnetwork	= container_of(plist, struct wlan_network, list);
-+		pnetwork = container_of(plist, struct wlan_network, list);
- 
- 		if (is_same_network(&pnetwork->network, target))
- 			break;
-@@ -451,7 +451,8 @@ void rtw_update_scanned_network(struct adapter *adapter, struct wlan_bssid_ex *t
- 			pnetwork = rtw_alloc_network(pmlmepriv); /*  will update scan_time */
- 
- 			if (!pnetwork) {
--				RT_TRACE(_module_rtl871x_mlme_c_, _drv_err_, ("\n\n\nsomething wrong here\n\n\n"));
-+				RT_TRACE(_module_rtl871x_mlme_c_, _drv_err_,
-+					 ("\n\n\nsomething wrong here\n\n\n"));
- 				goto exit;
- 			}
- 
-@@ -469,9 +470,9 @@ void rtw_update_scanned_network(struct adapter *adapter, struct wlan_bssid_ex *t
- 			list_add_tail(&pnetwork->list, &queue->queue);
- 		}
- 	} else {
--		/* we have an entry and we are going to update it. But this entry may
--		 * be already expired. In this case we do the same as we found a new
--		 * net and call the new_net handler
-+		/* we have an entry and we are going to update it. But this
-+		 * entry may be already expired. In this case we do the same
-+		 * as we found a new net and call the new_net handler
- 		 */
- 		bool update_ie = true;
  
 -- 
 2.19.2
