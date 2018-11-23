@@ -2,104 +2,92 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1195C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 02:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB9EC43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 02:20:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9617D20672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 02:17:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHaT7Kc1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9617D20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5BA4620824
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 02:20:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BA4620824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439421AbeKWNAI (ORCPT
+        id S2439437AbeKWNCO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 08:00:08 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40909 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727343AbeKWNAH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 08:00:07 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z10so2396915pgp.7;
-        Thu, 22 Nov 2018 18:17:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ENN/1jJ8EwAaPH9pZGXV3pxliDwM4jcLxlfjImodmpA=;
-        b=fHaT7Kc1jIM2nILCZHTpECWwaB3WbHjGO/87uFqPWG66A2U/Y1R1QNTYA5Cfq+7i4K
-         2ZNiuto8r8m6/c0UdmJF1DGEUT9cP1dWruhfYtxnRjuUe3hrzmzDOGh81v+T3PI6PZKc
-         5z9D1z0WJH2vmLKoUxTURWmdBqzYtLGs+TPCk7c7pnPayegWfpOGLdDxXCMElvMjpIj5
-         Lj3DBVSGW+gv9FYn6IG5GkOasxrOOB2EIsrVVeep4DNcgF93ujWcC6zE/sp4Ae5EV5+g
-         qR2bWmT32T//+XKXix5jtQmpTL9DgzFgUm62hKa0TiSm5tOvvec5kY37MK2rXuozEVeq
-         yMQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ENN/1jJ8EwAaPH9pZGXV3pxliDwM4jcLxlfjImodmpA=;
-        b=dSpsDu7xPfCU6zcx6b1MERijIrDMdew3VlfPgIYsNrHzcrELfUWXqk+e/dwAI9xClz
-         WvKIsDln4/GJnD2LVLfPDUZNJfuv1Li2pPzXsXbTz5KFebMBdjXIOWW2fdbn6iqtHjWv
-         BTYs3VTnaRcH5gIUfq++fwycstH+hUIyYsoN/sHGa2bwBZg38vCFte/NbeC32pyUajgJ
-         /UqQli8GxbXEnDqy1t3waifwJBzgb21bWRT/iCOGB3P9IL2vCYcOz7wCy/eRcKoTuXx+
-         MooCFVr0gbv7t4DI/HZZKMtt86l2T5YMafqbxr/fEB4BQ23MeXdIdStCadAL++S/NgJA
-         Hf+w==
-X-Gm-Message-State: AA+aEWYZdVHjLPdDTVq8oiga/+jhFs5nGreF+07WZG1wGj98Y4k68xfC
-        QJ8XUxC81ya/m1vkCjAhLP8=
-X-Google-Smtp-Source: AFSGD/Xd+BENZJfVl8hDbs+YsSSyIhoWtHcwgJFcYORifBuVIkWRfpXSNIq9xgS3PrKppw9wNXBKDA==
-X-Received: by 2002:a63:ef47:: with SMTP id c7mr12346836pgk.386.1542939474092;
-        Thu, 22 Nov 2018 18:17:54 -0800 (PST)
-Received: from localhost ([175.223.19.111])
-        by smtp.gmail.com with ESMTPSA id i62sm35172360pge.44.2018.11.22.18.17.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 22 Nov 2018 18:17:52 -0800 (PST)
-Date:   Fri, 23 Nov 2018 11:17:48 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] s390: Remove obsolete bust_spinlock() implementation
-Message-ID: <20181123021748.GB1582@jagdpanzerIV>
-References: <20181122141529.14933-1-pmladek@suse.com>
+        Fri, 23 Nov 2018 08:02:14 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46834 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727343AbeKWNCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 08:02:13 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1ABC19B308;
+        Fri, 23 Nov 2018 02:20:00 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-31.pek2.redhat.com [10.72.8.31])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D723560923;
+        Fri, 23 Nov 2018 02:19:38 +0000 (UTC)
+Date:   Fri, 23 Nov 2018 10:19:34 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V11 12/19] block: allow bio_for_each_segment_all() to
+ iterate over multi-page bvec
+Message-ID: <20181123021933.GB20110@ming.t460p>
+References: <20181121032327.8434-1-ming.lei@redhat.com>
+ <20181121032327.8434-13-ming.lei@redhat.com>
+ <20181122110315.GA30369@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181122141529.14933-1-pmladek@suse.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181122110315.GA30369@lst.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 23 Nov 2018 02:20:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (11/22/18 15:15), Petr Mladek wrote:
-> The commit cefc8be82403cf ("Consolidate bust_spinlocks()") kept
-> the s390-specific implementation because of the absence of CONFIG_VT.
-> In fact, the only difference was calling console_unblank() instead of
-> unblank_screen().
+On Thu, Nov 22, 2018 at 12:03:15PM +0100, Christoph Hellwig wrote:
+> > +/* used for chunk_for_each_segment */
+> > +static inline void bvec_next_segment(const struct bio_vec *bvec,
+> > +				     struct bvec_iter_all *iter_all)
 > 
-> The common implementation in lib/bust_spinlocks.c started to call
-> unblank_screen() explicitly since the commit b61312d353da187
-> ("oops handling: ensure that any oops is flushed to the mtdoops
-> console").
+> FYI, chunk_for_each_segment doesn't exist anymore, this is
+> bvec_for_each_segment now.  Not sure the comment helps much, though.
+
+OK, will remove the comment.
+
 > 
-> As a result, the custom implementation is not longer necessary.
-> And we could get all the other improvements of the common
-> implementation for free.
+> > +{
+> > +	struct bio_vec *bv = &iter_all->bv;
+> > +
+> > +	if (bv->bv_page) {
+> > +		bv->bv_page += 1;
+> 
+> I think this needs to use nth_page() given that with discontigmem
+> page structures might not be allocated contigously.
 
-I believe I sent a similar patch several weeks ago and it's
-in s390 patch queue as of now, waiting for the next merge
-window.
+Good catch!
 
-lkml.kernel.org/r/20181025081108.GB26561@osiris
-
-	-ss
+Thanks,
+Ming
