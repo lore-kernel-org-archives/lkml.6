@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9278C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55253C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:30:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A971520820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:30:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A971520820
+	by mail.kernel.org (Postfix) with ESMTP id 612A520820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 09:30:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 612A520820
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502845AbeKWUNY (ORCPT
+        id S2502671AbeKWUKQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 15:13:24 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49271 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388036AbeKWUKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 23 Nov 2018 15:10:16 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49189 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2502641AbeKWUKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 15:10:15 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 889E620DD1; Fri, 23 Nov 2018 10:26:48 +0100 (CET)
+        id CA3A520DBE; Fri, 23 Nov 2018 10:26:47 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 3DDED20DD6;
-        Fri, 23 Nov 2018 10:26:30 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id A154720DBE;
+        Fri, 23 Nov 2018 10:26:28 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-arm-kernel@lists.infradead.org
@@ -37,9 +37,9 @@ Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-sunxi@googlegroups.com, Daniel Vetter <daniel@ffwll.ch>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v2 11/43] drm/fourcc: Add format info helpers for checking YUV sub-sampling
-Date:   Fri, 23 Nov 2018 10:24:43 +0100
-Message-Id: <20181123092515.2511-12-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 05/43] drm/sun4i: frontend: Add a helper and a list for supported formats
+Date:   Fri, 23 Nov 2018 10:24:37 +0100
+Message-Id: <20181123092515.2511-6-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
 References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
@@ -50,101 +50,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Display engine drivers often need to distinguish between different types of
-YUV sub-sampling. This introduces helpers to check for common sub-sampling
-ratios in their commonly-used denomination from the DRM format info.
+In order to check whether the frontend supports a specific format, an
+explicit list and a related helper are introduced.
+
+Just like in the backend, the prototype of the helper is added to the
+frontend header so that it can be used later on. The helper is also
+exported because it will be used outside of the frontend module.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- include/drm/drm_fourcc.h | 75 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 16 ++++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_frontend.h |  1 +
+ 2 files changed, 17 insertions(+)
 
-diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
-index b652b711df1a..d170b7b323f7 100644
---- a/include/drm/drm_fourcc.h
-+++ b/include/drm/drm_fourcc.h
-@@ -185,6 +185,81 @@ drm_format_info_is_yuv_planar(const struct drm_format_info *info)
- 	return info->is_yuv && info->num_planes == 3;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+index 3ea925584891..0f7f8c7b3402 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+@@ -128,6 +128,22 @@ static int sun4i_frontend_drm_format_to_output_fmt(uint32_t fmt, u32 *val)
+ 	}
  }
  
-+/**
-+ * drm_format_info_is_yuv_sampling_410 - check that the format info matches a
-+ * YUV format with 4:1:0 sub-sampling
-+ * @info: format info
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a YUV format with 4:1:0
-+ * sub-sampling.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_sampling_410(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->hsub == 4 && info->vsub == 4;
-+}
++static const uint32_t sun4i_frontend_formats[] = {
++	DRM_FORMAT_XRGB8888,
++};
 +
-+/**
-+ * drm_format_info_is_yuv_sampling_411 - check that the format info matches a
-+ * YUV format with 4:1:1 sub-sampling
-+ * @info: format info
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a YUV format with 4:1:1
-+ * sub-sampling.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_sampling_411(const struct drm_format_info *info)
++bool sun4i_frontend_format_is_supported(uint32_t fmt)
 +{
-+	return info->is_yuv && info->hsub == 4 && info->vsub == 1;
-+}
++	unsigned int i;
 +
-+/**
-+ * drm_format_info_is_yuv_sampling_420 - check that the format info matches a
-+ * YUV format with 4:2:0 sub-sampling
-+ * @info: format info
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a YUV format with 4:2:0
-+ * sub-sampling.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_sampling_420(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->hsub == 2 && info->vsub == 2;
-+}
++	for (i = 0; i < ARRAY_SIZE(sun4i_frontend_formats); i++)
++		if (sun4i_frontend_formats[i] == fmt)
++			return true;
 +
-+/**
-+ * drm_format_info_is_yuv_sampling_422 - check that the format info matches a
-+ * YUV format with 4:2:2 sub-sampling
-+ * @info: format info
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a YUV format with 4:2:2
-+ * sub-sampling.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_sampling_422(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->hsub == 2 && info->vsub == 1;
++	return false;
 +}
++EXPORT_SYMBOL(sun4i_frontend_format_is_supported);
 +
-+/**
-+ * drm_format_info_is_yuv_sampling_444 - check that the format info matches a
-+ * YUV format with 4:4:4 sub-sampling
-+ * @info: format info
-+ *
-+ * Returns:
-+ * A boolean indicating whether the format info matches a YUV format with 4:4:4
-+ * sub-sampling.
-+ */
-+static inline bool
-+drm_format_info_is_yuv_sampling_444(const struct drm_format_info *info)
-+{
-+	return info->is_yuv && info->hsub == 1 && info->vsub == 1;
-+}
-+
- const struct drm_format_info *__drm_format_info(u32 format);
- const struct drm_format_info *drm_format_info(u32 format);
- const struct drm_format_info *
+ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
+ 				  struct drm_plane *plane, uint32_t out_fmt)
+ {
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.h b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+index 02661ce81f3e..a9cb908ced16 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.h
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.h
+@@ -95,5 +95,6 @@ void sun4i_frontend_update_coord(struct sun4i_frontend *frontend,
+ 				 struct drm_plane *plane);
+ int sun4i_frontend_update_formats(struct sun4i_frontend *frontend,
+ 				  struct drm_plane *plane, uint32_t out_fmt);
++bool sun4i_frontend_format_is_supported(uint32_t fmt);
+ 
+ #endif /* _SUN4I_FRONTEND_H_ */
 -- 
 2.19.1
 
