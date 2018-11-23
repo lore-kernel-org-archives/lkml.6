@@ -2,100 +2,124 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8682C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F96C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66E3920672
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:33:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dM+rAQl2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66E3920672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B977A20672
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 13:34:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B977A20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436518AbeKXASD (ORCPT
+        id S2504579AbeKXASy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 19:18:03 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:32968 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388587AbeKXASD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 19:18:03 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z11so3118662pgu.0;
-        Fri, 23 Nov 2018 05:33:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=lDsJKS1oNLz/0T0+4NfjSFsaxXGbh8mIOnrI7P5Es+4=;
-        b=dM+rAQl2gUgSHgd1sdclsZ02HlyaCXQw3qQkN1u47coDUadS2NRwejkIGbLeiZu13f
-         gD3amtdF0tQB5QepcdmwFQpH0INGPyDAIEVqo+XIe1HxG+nawsPt2SUq2bsmHQMKMcWd
-         4KmcoK8YuQxD5miVw9cfqBPAgIJR/X6Hb/1fXPdFAVNVqrzuS1kziyFt3/oCxHtE0cGd
-         QKkEwnql2mGQ9bhGE7OQqYt37ZEgYsG6hQvtYjhCisK29uTteo64znTH5vdBQFpbynhO
-         Z+JBhDW5qkINjjWzdzyypERxiYYNitpZG+2RopXM/B9H7/wqxFRboxrRAP3aSLBkjv8m
-         T3sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lDsJKS1oNLz/0T0+4NfjSFsaxXGbh8mIOnrI7P5Es+4=;
-        b=FR3leFdI0eSxsxE6Nno9fS0lnCF4ndBFwwt2DYlnYFRtDViAfqwwgDdZTyVtQgAgwt
-         4cuad666caqnE2/xETcnYE1f5KN+Zb+5xX52q+thEN+WF5sOh73aniFfCp0llecwHWD1
-         +v4igkE2KbCm9cIwM0B9pmBA/DS9M4fY1oLDENi1Ak92zlBxFRgoORX60NHxLng/UAOJ
-         5beD7wpqNfcLSW93OSMgyFzaMbLpvoE3EuT19iTxRRb0CtFam58xK0j49CEN3iioaH0K
-         NqYPzO7VHXm8cMNrPFhrn+pYeeFlWI2JHqhXATXfIsp2e2KvO7Zx5yISAnp0/zxlC4R1
-         6SZA==
-X-Gm-Message-State: AA+aEWbP17D1X1uWw7kQIm0VNpRqMRs9K5wXlrSCQuLVoMy+kgjg0kGH
-        fbIxA27A4AUsvIzPI1M6gJY=
-X-Google-Smtp-Source: AJdET5c9TngiJYlm6VKowHdlqL+8rwEppVXR4g+0oDVtg43zOtNU4dhbaD8NBLXnIdJ/Mm6UtP9/Kw==
-X-Received: by 2002:a63:1b1f:: with SMTP id b31mr14108993pgb.66.1542980030167;
-        Fri, 23 Nov 2018 05:33:50 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id d68-v6sm61764630pfa.80.2018.11.23.05.33.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 23 Nov 2018 05:33:48 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
-Cc:     linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH v2] cpufreq: pmac64: add of_node_put()
-Date:   Fri, 23 Nov 2018 08:33:40 -0500
-Message-Id: <20181123133340.26849-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 23 Nov 2018 19:18:54 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44374 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2410046AbeKXASx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 19:18:53 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C8D083091D52;
+        Fri, 23 Nov 2018 13:34:39 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (ovpn-117-155.ams2.redhat.com [10.36.117.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E6A6410018FB;
+        Fri, 23 Nov 2018 13:34:34 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     "Michael Kerrisk \(man-pages\)" <mtk.manpages@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        "libc-alpha\@sourceware.org" <libc-alpha@sourceware.org>
+Subject: Re: Official Linux system wrapper library?
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+        <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com>
+        <877ehjx447.fsf@oldenburg.str.redhat.com>
+        <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
+        <875zx2vhpd.fsf@oldenburg.str.redhat.com>
+        <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com>
+Date:   Fri, 23 Nov 2018 14:34:26 +0100
+Message-ID: <87efbbvrx9.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 23 Nov 2018 13:34:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_find_node_by_path() acquires a reference to the node
-returned by it and that reference needs to be dropped by its caller.
-g5_neo2_cpufreq_init() doesn't do that, so fix it.
+* Daniel Colascione:
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-Changes in v2:
--update changelog
----
- drivers/cpufreq/pmac64-cpufreq.c | 1 +
- 1 file changed, 1 insertion(+)
+> On Mon, Nov 12, 2018 at 12:11 AM, Florian Weimer <fweimer@redhat.com> wrote:
+>> * Daniel Colascione:
+>>
+>>> If the kernel provides a system call, libc should provide a C wrapper
+>>> for it, even if in the opinion of the libc maintainers, that system
+>>> call is flawed.
+>>
+>> It's not that simple, I think.  What about bdflush?  socketcall?
+>> getxpid?  osf_gettimeofday?  set_robust_list?
+>
+> What about them? Mentioning that these system calls exist is not in
+> itself an argument.
 
-diff --git a/drivers/cpufreq/pmac64-cpufreq.c b/drivers/cpufreq/pmac64-cpufreq.c
-index be623dd7b9f2..1d32a863332d 100644
---- a/drivers/cpufreq/pmac64-cpufreq.c
-+++ b/drivers/cpufreq/pmac64-cpufreq.c
-@@ -411,6 +411,7 @@ static int __init g5_neo2_cpufreq_init(struct device_node *cpunode)
- 		pfunc_set_vdnap0 = pmf_find_function(root, "set-vdnap0");
- 		pfunc_vdnap0_complete =
- 			pmf_find_function(root, "slewing-done");
-+		of_node_put(root);
- 		if (pfunc_set_vdnap0 == NULL ||
- 		    pfunc_vdnap0_complete == NULL) {
- 			pr_err("Can't find required platform function\n");
--- 
-2.17.0
+But socketcall does not exist on all architectures.  Neither does
+getpid, it's called getxpid on some architectures.
 
+>> There are quite a few irregularities
+>
+> So?
+
+I think it would be a poor approach to expose application developers to
+these portability issues.  We need to abstract over these differences at
+a certain layer, and applications are too late.
+
+>> and some editorial discretion appears to be unavoidable.
+>
+> That's an assertion, not an argument, and I strongly disagree. *Why*
+> do you think "editorial discretion" is unavoidable?
+
+We do not want application authors to write code which uses socketcall,
+however it is the right system call for the BSD sockets API if you need
+compatibility back to Linux 2.6.32 and before.  If we application
+authors seitched to socketall, applications would not be portable (at
+the source level) to new architectures which do not have socketcall.
+
+We do not want to force application authors to call osf_gettimeofday
+instead of gettimeofday on Alpha.
+
+We do not want to encourage library authors to call set_robust_list
+because doing so would break robust mutex support in any libc.
+
+>> Even if we were to provide perfectly consistent system call wrappers
+>> under separate names, we'd still expose different calling conventions
+>> for things like off_t to applications, which would make using some of
+>> the system calls quite difficult and surprisingly non-portable.
+>
+> We can learn something from how Windows does things. On that system,
+> what we think of as "libc" is actually two parts. (More, actually, but
+> I'm simplifying.) At the lowest level, you have the semi-documented
+> ntdll.dll, which contains raw system call wrappers and arcane
+> kernel-userland glue. On top of ntdll live the "real" libc
+> (msvcrt.dll, kernel32.dll, etc.) that provide conventional
+> application-level glue. The tight integration between ntdll.dll and
+> the kernel allows Windows to do very impressive things.
+
+> We should adopt a similar approach.
+
+Most kernel developers claim that a stable userspace ABI is desirable.
+With your proposal, we need to maintain three stable ABI layers instead
+of two, without actually adding any functionality.  That doesn't seem to
+be a good way of using developer resources.
+
+Thanks,
+Florian
