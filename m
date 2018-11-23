@@ -2,31 +2,31 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBC4C04EBA
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9430CC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E048A20820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:45:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E048A20820
+	by mail.kernel.org (Postfix) with ESMTP id 6074020820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:45:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6074020820
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503879AbeKWW33 (ORCPT
+        id S2409711AbeKWW31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 17:29:29 -0500
-Received: from outbound-smtp27.blacknight.com ([81.17.249.195]:42828 "EHLO
-        outbound-smtp27.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388614AbeKWW31 (ORCPT
+        Fri, 23 Nov 2018 17:29:27 -0500
+Received: from outbound-smtp10.blacknight.com ([46.22.139.15]:46679 "EHLO
+        outbound-smtp10.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2409671AbeKWW31 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 23 Nov 2018 17:29:27 -0500
 Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp27.blacknight.com (Postfix) with ESMTPS id 34C42B88A0
+        by outbound-smtp10.blacknight.com (Postfix) with ESMTPS id 9A9FD1C2CE9
         for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 11:45:29 +0000 (GMT)
-Received: (qmail 12233 invoked from network); 23 Nov 2018 11:45:29 -0000
+Received: (qmail 12299 invoked from network); 23 Nov 2018 11:45:29 -0000
 Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.69])
   by 81.17.254.9 with ESMTPA; 23 Nov 2018 11:45:29 -0000
 From:   Mel Gorman <mgorman@techsingularity.net>
@@ -39,130 +39,116 @@ Cc:     Vlastimil Babka <vbabka@suse.cz>,
         LKML <linux-kernel@vger.kernel.org>,
         Linux-MM <linux-mm@kvack.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 0/5] Fragmentation avoidance improvements v5
-Date:   Fri, 23 Nov 2018 11:45:23 +0000
-Message-Id: <20181123114528.28802-1-mgorman@techsingularity.net>
+Subject: [PATCH 2/5] mm: Move zone watermark accesses behind an accessor
+Date:   Fri, 23 Nov 2018 11:45:25 +0000
+Message-Id: <20181123114528.28802-3-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20181123114528.28802-1-mgorman@techsingularity.net>
+References: <20181123114528.28802-1-mgorman@techsingularity.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are some big changes due to both Vlastimil's review feedback on v4 and
-some oddities spotted while answering his review.  In some respects, the
-series is slightly less effective but the approach is more consistent and
-logical overall. The overhead is also lower from the first patch and stalls
-are less harmful in the last patch so overall I think it has much improved.
+This is a preparation patch only, no functional change.
 
-Changelog since v4
-o Clarified changelogs in response to review
-o Add a compile-time check on where Normal and DMA32 is		(vbabka)
-o Restart zone iteration properly in get_page_from_freelist	(vbabka)
-o Reduce overhead in the page allocation fast path		(mel)
-o Do not over-boost due to a fragmentation event		(vbabka)
-o Correct documentation of sysctl				(mel)
-o Really do not wake kswapd if the calling context forbids it	(vbabka,mel)
-o Do not shrink slab if boosting watermarks as premature
-  reclaim of slab can lead to regressions in IO benchmarks	(mel)
-o Take zone lock when boosting watermarks if necessary		(vbabka)
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ include/linux/mmzone.h |  9 +++++----
+ mm/compaction.c        |  2 +-
+ mm/page_alloc.c        | 12 ++++++------
+ 3 files changed, 12 insertions(+), 11 deletions(-)
 
-Changelog since v3
-o Rebase to 4.20-rc3
-o Remove a stupid warning from the last patch
-
-Changelog since v2
-o Drop patch 5 as it was borderline
-o Decrease timeout when stalling on fragmentation events
-
-Changelog since v1
-o Rebase to v4.20-rc1 for the THP __GFP_THISNODE patch in particular
-o Add tracepoint to record fragmentation stall durations
-o Add vmstat event to record that a fragmentation stall occurred
-o Stalls now alter watermark boosting
-o Stalls occur only when the allocation is about to fail
-
-It has been noted before that fragmentation avoidance (aka
-anti-fragmentation) is not perfect. Given sufficient time or an adverse
-workload, memory gets fragmented and the long-term success of high-order
-allocations degrades. This series defines an adverse workload, a definition
-of external fragmentation events (including serious) ones and a series
-that reduces the level of those fragmentation events.
-
-The details of the workload and the consequences are described in more
-detail in the changelogs. However, from patch 1, this is a high-level
-summary of the adverse workload. The exact details are found in the
-mmtests implementation.
-
-The broad details of the workload are as follows;
-
-1. Create an XFS filesystem (not specified in the configuration but done
-   as part of the testing for this patch)
-2. Start 4 fio threads that write a number of 64K files inefficiently.
-   Inefficiently means that files are created on first access and not
-   created in advance (fio parameterr create_on_open=1) and fallocate
-   is not used (fallocate=none). With multiple IO issuers this creates
-   a mix of slab and page cache allocations over time. The total size
-   of the files is 150% physical memory so that the slabs and page cache
-   pages get mixed
-3. Warm up a number of fio read-only threads accessing the same files
-   created in step 2. This part runs for the same length of time it
-   took to create the files. It'll fault back in old data and further
-   interleave slab and page cache allocations. As it's now low on
-   memory due to step 2, fragmentation occurs as pageblocks get
-   stolen.
-4. While step 3 is still running, start a process that tries to allocate
-   75% of memory as huge pages with a number of threads. The number of
-   threads is based on a (NR_CPUS_SOCKET - NR_FIO_THREADS)/4 to avoid THP
-   threads contending with fio, any other threads or forcing cross-NUMA
-   scheduling. Note that the test has not been used on a machine with less
-   than 8 cores. The benchmark records whether huge pages were allocated
-   and what the fault latency was in microseconds
-5. Measure the number of events potentially causing external fragmentation,
-   the fault latency and the huge page allocation success rate.
-6. Cleanup
-
-Overall the series reduces external fragmentation causing events by over 94%
-on 1 and 2 socket machines, which in turn impacts high-order allocation
-success rates over the long term. There are differences in latencies and
-high-order allocation success rates. Latencies are a mixed bag as they
-are vulnerable to exact system state and whether allocations succeeded
-so they are treated as a secondary metric.
-
-Patch 1 uses lower zones if they are populated and have free memory
-	instead of fragmenting a higher zone. It's special cased to
-	handle a Normal->DMA32 fallback with the reasons explained
-	in the changelog.
-
-Patch 2-4 boosts watermarks temporarily when an external fragmentation
-	event occurs. kswapd wakes to reclaim a small amount of old memory
-	and then wakes kcompactd on completion to recover the system
-	slightly. This introduces some overhead in the slowpath. The level
-	of boosting can be tuned or disabled depending on the tolerance
-	for fragmentation vs allocation latency.
-
-Patch 5 stalls some movable allocation requests to let kswapd from patch 4
-	make some progress. The duration of the stalls is very low but it
-	is possible to tune the system to avoid fragmentation events if
-	larger stalls can be tolerated.
-
-The bulk of the improvement in fragmentation avoidance is from patches
-1-4 but patch 5 can deal with a rare corner case and provides the option
-of tuning a system for THP allocation success rates in exchange for
-some stalls to control fragmentation.
-
- Documentation/sysctl/vm.txt   |  44 +++++++
- include/linux/mm.h            |   2 +
- include/linux/mmzone.h        |  14 ++-
- include/linux/vm_event_item.h |   1 +
- include/trace/events/kmem.h   |  21 ++++
- kernel/sysctl.c               |  18 +++
- mm/compaction.c               |   2 +-
- mm/internal.h                 |  15 ++-
- mm/page_alloc.c               | 263 ++++++++++++++++++++++++++++++++++++++----
- mm/vmscan.c                   | 136 ++++++++++++++++++++--
- mm/vmstat.c                   |   1 +
- 11 files changed, 473 insertions(+), 44 deletions(-)
-
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 847705a6d0ec..e43e8e79db99 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -269,9 +269,10 @@ enum zone_watermarks {
+ 	NR_WMARK
+ };
+ 
+-#define min_wmark_pages(z) (z->watermark[WMARK_MIN])
+-#define low_wmark_pages(z) (z->watermark[WMARK_LOW])
+-#define high_wmark_pages(z) (z->watermark[WMARK_HIGH])
++#define min_wmark_pages(z) (z->_watermark[WMARK_MIN])
++#define low_wmark_pages(z) (z->_watermark[WMARK_LOW])
++#define high_wmark_pages(z) (z->_watermark[WMARK_HIGH])
++#define wmark_pages(z, i) (z->_watermark[i])
+ 
+ struct per_cpu_pages {
+ 	int count;		/* number of pages in the list */
+@@ -362,7 +363,7 @@ struct zone {
+ 	/* Read-mostly fields */
+ 
+ 	/* zone watermarks, access with *_wmark_pages(zone) macros */
+-	unsigned long watermark[NR_WMARK];
++	unsigned long _watermark[NR_WMARK];
+ 
+ 	unsigned long nr_reserved_highatomic;
+ 
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 7c607479de4a..ef29490b0f46 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -1431,7 +1431,7 @@ static enum compact_result __compaction_suitable(struct zone *zone, int order,
+ 	if (is_via_compact_memory(order))
+ 		return COMPACT_CONTINUE;
+ 
+-	watermark = zone->watermark[alloc_flags & ALLOC_WMARK_MASK];
++	watermark = wmark_pages(zone, alloc_flags & ALLOC_WMARK_MASK);
+ 	/*
+ 	 * If watermarks for high-order allocation are already met, there
+ 	 * should be no need for compaction at all.
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index f86638aee96a..4ba84cd2977a 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3376,7 +3376,7 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
+ 			}
+ 		}
+ 
+-		mark = zone->watermark[alloc_flags & ALLOC_WMARK_MASK];
++		mark = wmark_pages(zone, alloc_flags & ALLOC_WMARK_MASK);
+ 		if (!zone_watermark_fast(zone, order, mark,
+ 				       ac_classzone_idx(ac), alloc_flags)) {
+ 			int ret;
+@@ -4796,7 +4796,7 @@ long si_mem_available(void)
+ 		pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
+ 
+ 	for_each_zone(zone)
+-		wmark_low += zone->watermark[WMARK_LOW];
++		wmark_low += low_wmark_pages(zone);
+ 
+ 	/*
+ 	 * Estimate the amount of memory available for userspace allocations,
+@@ -7422,13 +7422,13 @@ static void __setup_per_zone_wmarks(void)
+ 
+ 			min_pages = zone->managed_pages / 1024;
+ 			min_pages = clamp(min_pages, SWAP_CLUSTER_MAX, 128UL);
+-			zone->watermark[WMARK_MIN] = min_pages;
++			zone->_watermark[WMARK_MIN] = min_pages;
+ 		} else {
+ 			/*
+ 			 * If it's a lowmem zone, reserve a number of pages
+ 			 * proportionate to the zone's size.
+ 			 */
+-			zone->watermark[WMARK_MIN] = tmp;
++			zone->_watermark[WMARK_MIN] = tmp;
+ 		}
+ 
+ 		/*
+@@ -7440,8 +7440,8 @@ static void __setup_per_zone_wmarks(void)
+ 			    mult_frac(zone->managed_pages,
+ 				      watermark_scale_factor, 10000));
+ 
+-		zone->watermark[WMARK_LOW]  = min_wmark_pages(zone) + tmp;
+-		zone->watermark[WMARK_HIGH] = min_wmark_pages(zone) + tmp * 2;
++		zone->_watermark[WMARK_LOW]  = min_wmark_pages(zone) + tmp;
++		zone->_watermark[WMARK_HIGH] = min_wmark_pages(zone) + tmp * 2;
+ 
+ 		spin_unlock_irqrestore(&zone->lock, flags);
+ 	}
 -- 
 2.16.4
 
