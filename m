@@ -2,199 +2,517 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3ABC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3F7C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:45:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1AD020861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:44:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s1hssAhi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1AD020861
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 2470220685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:45:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2470220685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409668AbeKWW2j (ORCPT
+        id S2409699AbeKWW31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 17:28:39 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:47096 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388614AbeKWW2i (ORCPT
+        Fri, 23 Nov 2018 17:29:27 -0500
+Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:58665 "EHLO
+        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2409670AbeKWW30 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 17:28:38 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wANBiJ9r007511;
-        Fri, 23 Nov 2018 05:44:19 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1542973459;
-        bh=KMGf+luPj1FpsSomJe8CPFq96J9BRFLeuBVBKB1hwgk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=s1hssAhi232ZieUfMn+e/IsdRllIE3ZXsZEyNXg/Fsri09yNHZDTKSA5bgyOM91zR
-         PDBvgNYJYgEMWRIIYgBtn1VoFnb18tn4oCJzWSJZ6VGFYgKO6dt5hgVng4fthnhzHo
-         DB+iJy8uabv5bB8RYwoVq7LqPzgyW66nuaRcORko=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wANBiJ2m065236
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 23 Nov 2018 05:44:19 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 23
- Nov 2018 05:44:18 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 23 Nov 2018 05:44:18 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wANBiGeJ027964;
-        Fri, 23 Nov 2018 05:44:16 -0600
-Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>
-CC:     <vkoul@kernel.org>, <dan.j.williams@intel.com>,
-        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <tony@atomide.com>, <linux-omap@vger.kernel.org>,
-        <rmk+kernel@armlinux.org.uk>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
- <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
- <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
- <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
- <4eb3b03e-0a97-6195-f162-e03e32705fe0@ti.com>
- <20181122220114.GB11423@darkstar.musicnaut.iki.fi>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <cb1355b5-0d2e-1f83-5ea1-7615350ca0ec@ti.com>
-Date:   Fri, 23 Nov 2018 13:45:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181122220114.GB11423@darkstar.musicnaut.iki.fi>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 23 Nov 2018 17:29:26 -0500
+Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
+        by outbound-smtp04.blacknight.com (Postfix) with ESMTPS id 6483698971
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 11:45:29 +0000 (UTC)
+Received: (qmail 12273 invoked from network); 23 Nov 2018 11:45:29 -0000
+Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.69])
+  by 81.17.254.9 with ESMTPA; 23 Nov 2018 11:45:29 -0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Michal Hocko <mhocko@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: [PATCH 1/5] mm, page_alloc: Spread allocations across zones before introducing fragmentation
+Date:   Fri, 23 Nov 2018 11:45:24 +0000
+Message-Id: <20181123114528.28802-2-mgorman@techsingularity.net>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20181123114528.28802-1-mgorman@techsingularity.net>
+References: <20181123114528.28802-1-mgorman@techsingularity.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The page allocator zone lists are iterated based on the watermarks
+of each zone which does not take anti-fragmentation into account. On
+x86, node 0 may have multiple zones while other nodes have one zone. A
+consequence is that tasks running on node 0 may fragment ZONE_NORMAL even
+though ZONE_DMA32 has plenty of free memory. This patch special cases
+the allocator fast path such that it'll try an allocation from a lower
+local zone before fragmenting a higher zone. In this case, stealing of
+pageblocks or orders larger than a pageblock are still allowed in the
+fast path as they are uninteresting from a fragmentation point of view.
 
+This was evaluated using a benchmark designed to fragment memory before
+attempting THP allocations. It's implemented in mmtests as the following
+configurations
 
-On 23/11/2018 0.01, Aaro Koskinen wrote:
-> Hi,
-> 
-> On Thu, Nov 22, 2018 at 10:31:31AM +0200, Peter Ujfalusi wrote:
->> On 20/11/2018 23.04, Aaro Koskinen wrote:
->>> On Tue, Nov 20, 2018 at 09:28:37AM +0200, Peter Ujfalusi wrote:
->>>> On 19/11/2018 20.46, Aaro Koskinen wrote:
->>>>> On Mon, Nov 19, 2018 at 12:40:40PM +0200, Peter Ujfalusi wrote:
->>>>>> When the channel is configured for slave operation the LCH_TYPE needs to be
->>>>>> set to LCh-P. For memcpy channels the LCH_TYPE must be set to LCh-2D.
->>>>>>
->>>>>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
->>>>>
->>>>> I don't have the documentation, but based on what omap_udc driver (still
->>>>> using the legacy OMAP DMA API) does this seems to be correct.
->>>>
->>>> They are hard to fine, true. From the omap1710 TRM:
->>>>
->>>> Logical channel types (LCh types) supported are:
->>>> - LCh-2D for nonsynchronized transfers (memory transfers, 1D and 2D)
->>>> - LCh-P for synchronized transfers (mostly peripheral transfers)
->>>> - LCh-PD similar to LCh-P but runs on a dedicated physical channel
->>>> - LCh-G for graphical transfers/operations
->>>> - LCh-D for display transfers
->>>
->>> (I found a public document "OMAP5912 Multimedia Processor Direct
->>> Memory Access (DMA) Support Reference Guide", documenting these; easy
->>> to confuse with "OMAP5910 Dual-Core Processor System DMA Controller
->>> Reference Guide".)
->>>
->>>> Looking at other part it looks like hat LCH-2D channel mode can happily
->>>> service a peripheral. LCH-P supports the same features as LCH-2D, but it
->>>> lacks support for Single/Double-indexed addressing mode on the
->>>> peripheral port side.
->>>>
->>>> So, this patch might not be needed at all. Can you test the omap_udc
->>>> with s/OMAP_DMA_LCH_P/OMAP_DMA_LCH_2D
->>>>
->>>> If USB works, then we can just drop this patch.
->>>
->>> Unfortunately omap_udc does not seem to work at all anymore with DMA on
->>> my 770 setup. :-(
->>>
->>> I had switched to PIO mode in 2015 since the WARNs about legacy DMA
->>> API were too annoying and flooding the console. And now that I tried
->>> using DMA again with g_ether, it doesn't work anymore. The device get's
->>> recognized on host side, but no traffic goes through. Switching back to
->>> PIO makes it to work again.
->>
->> After some tinkering I got omap_udc working with DMA (not DMAengine,
->> yet) on 770 - using nfsroot. Configuring the channels to OMAP_DMA_LCH_2D
->> works as expected.
-> 
-> Would be interesting to know how you got it working with DMA. Which
-> gadget driver were you using?
-> 
-> I bisected my issue, and got:
-> 
-> commit 387f869d2579e379ee343f5493dcd360be60f5c6 (refs/bisect/bad)
-> Author: Felipe Balbi <felipe.balbi@linux.intel.com>
-> Date:   Wed Mar 22 13:25:18 2017 +0200
-> 
->     usb: gadget: u_ether: conditionally align transfer size
+configs/config-global-dhp__workload_thpfioscale
+configs/config-global-dhp__workload_thpfioscale-defrag
+configs/config-global-dhp__workload_thpfioscale-madvhugepage
 
-I just:
-commit 0d61d79625202c1c4fcf07fb960e27984a3657a3
-Author: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Date:   Thu Nov 22 10:36:55 2018 +0200
+e.g. from mmtests
+./run-mmtests.sh --run-monitor --config configs/config-global-dhp__workload_thpfioscale test-run-1
 
-    usb: gadget: omap_udc: HACK: Make RX dma work
-    
-    partial packets do work...
-    
-    Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+The broad details of the workload are as follows;
 
-diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
-index 94128eb69d97..0748c3841a25 100644
---- a/drivers/usb/gadget/udc/omap_udc.c
-+++ b/drivers/usb/gadget/udc/omap_udc.c
-@@ -886,14 +886,14 @@ omap_ep_queue(struct usb_ep *_ep, struct usb_request *_req, gfp_t gfp_flags)
+1. Create an XFS filesystem (not specified in the configuration but done
+   as part of the testing for this patch).
+2. Start 4 fio threads that write a number of 64K files inefficiently.
+   Inefficiently means that files are created on first access and not
+   created in advance (fio parameter create_on_open=1) and fallocate
+   is not used (fallocate=none). With multiple IO issuers this creates
+   a mix of slab and page cache allocations over time. The total size
+   of the files is 150% physical memory so that the slabs and page cache
+   pages get mixed.
+3. Warm up a number of fio read-only processes accessing the same files
+   created in step 2. This part runs for the same length of time it
+   took to create the files. It'll refault old data and further
+   interleave slab and page cache allocations. As it's now low on
+   memory due to step 2, fragmentation occurs as pageblocks get
+   stolen.
+4. While step 3 is still running, start a process that tries to allocate
+   75% of memory as huge pages with a number of threads. The number of
+   threads is based on a (NR_CPUS_SOCKET - NR_FIO_THREADS)/4 to avoid THP
+   threads contending with fio, any other threads or forcing cross-NUMA
+   scheduling. Note that the test has not been used on a machine with less
+   than 8 cores. The benchmark records whether huge pages were allocated
+   and what the fault latency was in microseconds.
+5. Measure the number of events potentially causing external fragmentation,
+   the fault latency and the huge page allocation success rate.
+6. Cleanup the test files.
+
+Note that due to the use of IO and page cache that this benchmark is not
+suitable for running on large machines where the time to fragment memory
+may be excessive. Also note that while this is one mix that generates
+fragmentation that it's not the only mix that generates fragmentation.
+Differences in workload that are more slab-intensive or whether SLUB is
+used with high-order pages may yield different results.
+
+When the page allocator fragments memory, it records the event using the
+mm_page_alloc_extfrag ftrace event. If the fallback_order is smaller than
+a pageblock order (order-9 on 64-bit x86) then it's considered to be an
+"external fragmentation event" that may cause issues in the future. Hence,
+the primary metric here is the number of external fragmentation events that
+occur with order < 9. The secondary metric is allocation latency and huge
+page allocation success rates but note that differences in latencies and
+what the success rate also can affect the number of external fragmentation
+event which is why it's a secondary metric.
+
+1-socket Skylake machine
+config-global-dhp__workload_thpfioscale XFS (no special madvise)
+4 fio threads, 1 THP allocating thread
+--------------------------------------
+
+4.20-rc3 extfrag events < order 9:   804694
+4.20-rc3+patch:                      408912 (49% reduction)
+
+thpfioscale Fault Latencies
+                                   4.20.0-rc3             4.20.0-rc3
+                                      vanilla           lowzone-v5r8
+Amean     fault-base-1      662.92 (   0.00%)      653.58 *   1.41%*
+Amean     fault-huge-1        0.00 (   0.00%)        0.00 (   0.00%)
+
+                              4.20.0-rc3             4.20.0-rc3
+                                 vanilla           lowzone-v5r8
+Percentage huge-1        0.00 (   0.00%)        0.00 (   0.00%)
+
+Fault latencies are slightly reduced while allocation success rates remain
+at zero as this configuration does not make any special effort to allocate
+THP and fio is heavily active at the time and either filling memory or
+keeping pages resident. However, a 49% reduction of serious fragmentation
+events reduces the changes of external fragmentation being a problem in
+the future.
+
+Vlastimil asked during review for a breakdown of the allocation types
+that are falling back.
+
+vanilla
+   3816 MIGRATE_UNMOVABLE
+ 800845 MIGRATE_MOVABLE
+     33 MIGRATE_UNRECLAIMABLE
+
+patch
+    735 MIGRATE_UNMOVABLE
+ 408135 MIGRATE_MOVABLE
+     42 MIGRATE_UNRECLAIMABLE
+
+The majority of the fallbacks are due to movable allocations and this is
+consistent for the workload throughout the series so will not be presented
+again as the primary source of fallbacks are movable allocations.
+
+Movable fallbacks are sometimes considered "ok" to fallback because they can
+be migrated. The problem is that they can fill an unmovable/reclaimable
+pageblock causing those allocations to fallback later and polluting
+pageblocks with pages that cannot move.  If there is a movable fallback,
+it is pretty much guaranteed to affect an unmovable/reclaimable pageblock
+and while it might not be enough to actually cause a unmovable/reclaimable
+fallback in the future, we cannot know that in advance so the patch takes
+the only option available to it. Hence, it's important to control them. This
+point is also consistent throughout the series and will not be repeated.
+
+1-socket Skylake machine
+global-dhp__workload_thpfioscale-madvhugepage-xfs (MADV_HUGEPAGE)
+-----------------------------------------------------------------
+
+4.20-rc3 extfrag events < order 9:  291392
+4.20-rc3+patch:                     191187 (34% reduction)
+
+thpfioscale Fault Latencies
+                                   4.20.0-rc3             4.20.0-rc3
+                                      vanilla           lowzone-v5r8
+Amean     fault-base-1     1495.14 (   0.00%)     1467.55 (   1.85%)
+Amean     fault-huge-1     1098.48 (   0.00%)     1127.11 (  -2.61%)
+
+thpfioscale Percentage Faults Huge
+                              4.20.0-rc3             4.20.0-rc3
+                                 vanilla           lowzone-v5r8
+Percentage huge-1       78.57 (   0.00%)       77.64 (  -1.18%)
+
+Fragmentation events were reduced quite a bit although this is known
+to be a little variable. The latencies and allocation success rates
+are similar but they were already quite high.
+
+2-socket Haswell machine
+config-global-dhp__workload_thpfioscale XFS (no special madvise)
+4 fio threads, 5 THP allocating threads
+----------------------------------------------------------------
+
+4.20-rc3 extfrag events < order 9:  215698
+4.20-rc3+patch:                     200210 (7% reduction)
+
+thpfioscale Fault Latencies
+                                   4.20.0-rc3             4.20.0-rc3
+                                      vanilla           lowzone-v5r8
+Amean     fault-base-5     1350.05 (   0.00%)     1346.45 (   0.27%)
+Amean     fault-huge-5     4181.01 (   0.00%)     3418.60 (  18.24%)
+
+                              4.20.0-rc3             4.20.0-rc3
+                                 vanilla           lowzone-v5r8
+Percentage huge-5        1.15 (   0.00%)        0.78 ( -31.88%)
+
+The reduction of external fragmentation events is slight and this is
+partially due to the removal of __GFP_THISNODE in commit ac5b2c18911f ("mm:
+thp: relax __GFP_THISNODE for MADV_HUGEPAGE mappings") as THP allocations
+can now spill over to remote nodes instead of fragmenting local memory.
+
+2-socket Haswell machine
+global-dhp__workload_thpfioscale-madvhugepage-xfs (MADV_HUGEPAGE)
+-----------------------------------------------------------------
+
+4.20-rc3 extfrag events < order 9: 166352
+4.20-rc3+patch:                    147463 (11% reduction)
+
+thpfioscale Fault Latencies
+                                   4.20.0-rc3             4.20.0-rc3
+                                      vanilla           lowzone-v5r8
+Amean     fault-base-5     6138.97 (   0.00%)     6217.43 (  -1.28%)
+Amean     fault-huge-5     2294.28 (   0.00%)     3163.33 * -37.88%*
+
+thpfioscale Percentage Faults Huge
+                              4.20.0-rc3             4.20.0-rc3
+                                 vanilla           lowzone-v5r8
+Percentage huge-5       96.82 (   0.00%)       95.14 (  -1.74%)
+
+There was a slight reduction in external fragmentation events although
+the latencies were higher. The allocation success rate is high enough that
+the system is struggling and there is quite a lot of parallel reclaim and
+compaction activity. There is also a certain degree of luck on whether
+processes start on node 0 or not for this patch but the relevance is
+reduced later in the series.
+
+Overall, the patch reduces the number of external fragmentation causing
+events so the success of THP over long periods of time would be improved
+for this adverse workload.
+
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ mm/internal.h   |  13 ++++---
+ mm/page_alloc.c | 108 +++++++++++++++++++++++++++++++++++++++++++++++++-------
+ 2 files changed, 105 insertions(+), 16 deletions(-)
+
+diff --git a/mm/internal.h b/mm/internal.h
+index 291eb2b6d1d8..544355156c92 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -480,10 +480,15 @@ unsigned long reclaim_clean_pages_from_list(struct zone *zone,
+ #define ALLOC_OOM		ALLOC_NO_WATERMARKS
+ #endif
  
-        /* this isn't bogus, but OMAP DMA isn't the only hardware to
-         * have a hard time with partial packet reads...  reject it.
-+        * Wait a minute, it does work :o
-         */
-        if (use_dma
-                        && ep->has_dma
-                        && ep->bEndpointAddress != 0
-                        && (ep->bEndpointAddress & USB_DIR_IN) == 0
-                        && (req->req.length % ep->ep.maxpacket) != 0) {
--               DBG("%s, no partial packet OUT reads\n", __func__);
--               return -EMSGSIZE;
-+               DBG("%s, partial packet OUT, might not work?\n", __func__);
-        }
+-#define ALLOC_HARDER		0x10 /* try to alloc harder */
+-#define ALLOC_HIGH		0x20 /* __GFP_HIGH set */
+-#define ALLOC_CPUSET		0x40 /* check for correct cpuset */
+-#define ALLOC_CMA		0x80 /* allow allocations from CMA areas */
++#define ALLOC_HARDER		 0x10 /* try to alloc harder */
++#define ALLOC_HIGH		 0x20 /* __GFP_HIGH set */
++#define ALLOC_CPUSET		 0x40 /* check for correct cpuset */
++#define ALLOC_CMA		 0x80 /* allow allocations from CMA areas */
++#ifdef CONFIG_ZONE_DMA32
++#define ALLOC_NOFRAGMENT	0x100 /* avoid mixing pageblock types */
++#else
++#define ALLOC_NOFRAGMENT	  0x0
++#endif
  
-        udc = ep->udc;
+ enum ttu_flags;
+ struct tlbflush_unmap_batch;
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 6847177dc4a1..f86638aee96a 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2375,20 +2375,30 @@ static bool unreserve_highatomic_pageblock(const struct alloc_context *ac,
+  * condition simpler.
+  */
+ static __always_inline bool
+-__rmqueue_fallback(struct zone *zone, int order, int start_migratetype)
++__rmqueue_fallback(struct zone *zone, int order, int start_migratetype,
++						unsigned int alloc_flags)
+ {
+ 	struct free_area *area;
+ 	int current_order;
++	int min_order = order;
+ 	struct page *page;
+ 	int fallback_mt;
+ 	bool can_steal;
+ 
++	/*
++	 * Do not steal pages from freelists belonging to other pageblocks
++	 * i.e. orders < pageblock_order. If there are no local zones free,
++	 * the zonelists will be reiterated without ALLOC_NOFRAGMENT.
++	 */
++	if (alloc_flags & ALLOC_NOFRAGMENT)
++		min_order = pageblock_order;
++
+ 	/*
+ 	 * Find the largest available free page in the other list. This roughly
+ 	 * approximates finding the pageblock with the most free pages, which
+ 	 * would be too costly to do exactly.
+ 	 */
+-	for (current_order = MAX_ORDER - 1; current_order >= order;
++	for (current_order = MAX_ORDER - 1; current_order >= min_order;
+ 				--current_order) {
+ 		area = &(zone->free_area[current_order]);
+ 		fallback_mt = find_suitable_fallback(area, current_order,
+@@ -2447,7 +2457,8 @@ __rmqueue_fallback(struct zone *zone, int order, int start_migratetype)
+  * Call me with the zone->lock already held.
+  */
+ static __always_inline struct page *
+-__rmqueue(struct zone *zone, unsigned int order, int migratetype)
++__rmqueue(struct zone *zone, unsigned int order, int migratetype,
++						unsigned int alloc_flags)
+ {
+ 	struct page *page;
+ 
+@@ -2457,7 +2468,8 @@ __rmqueue(struct zone *zone, unsigned int order, int migratetype)
+ 		if (migratetype == MIGRATE_MOVABLE)
+ 			page = __rmqueue_cma_fallback(zone, order);
+ 
+-		if (!page && __rmqueue_fallback(zone, order, migratetype))
++		if (!page && __rmqueue_fallback(zone, order, migratetype,
++								alloc_flags))
+ 			goto retry;
+ 	}
+ 
+@@ -2472,13 +2484,14 @@ __rmqueue(struct zone *zone, unsigned int order, int migratetype)
+  */
+ static int rmqueue_bulk(struct zone *zone, unsigned int order,
+ 			unsigned long count, struct list_head *list,
+-			int migratetype)
++			int migratetype, unsigned int alloc_flags)
+ {
+ 	int i, alloced = 0;
+ 
+ 	spin_lock(&zone->lock);
+ 	for (i = 0; i < count; ++i) {
+-		struct page *page = __rmqueue(zone, order, migratetype);
++		struct page *page = __rmqueue(zone, order, migratetype,
++								alloc_flags);
+ 		if (unlikely(page == NULL))
+ 			break;
+ 
+@@ -2934,6 +2947,7 @@ static inline void zone_statistics(struct zone *preferred_zone, struct zone *z)
+ 
+ /* Remove page from the per-cpu list, caller must protect the list */
+ static struct page *__rmqueue_pcplist(struct zone *zone, int migratetype,
++			unsigned int alloc_flags,
+ 			struct per_cpu_pages *pcp,
+ 			struct list_head *list)
+ {
+@@ -2943,7 +2957,7 @@ static struct page *__rmqueue_pcplist(struct zone *zone, int migratetype,
+ 		if (list_empty(list)) {
+ 			pcp->count += rmqueue_bulk(zone, 0,
+ 					pcp->batch, list,
+-					migratetype);
++					migratetype, alloc_flags);
+ 			if (unlikely(list_empty(list)))
+ 				return NULL;
+ 		}
+@@ -2959,7 +2973,8 @@ static struct page *__rmqueue_pcplist(struct zone *zone, int migratetype,
+ /* Lock and remove page from the per-cpu list */
+ static struct page *rmqueue_pcplist(struct zone *preferred_zone,
+ 			struct zone *zone, unsigned int order,
+-			gfp_t gfp_flags, int migratetype)
++			gfp_t gfp_flags, int migratetype,
++			unsigned int alloc_flags)
+ {
+ 	struct per_cpu_pages *pcp;
+ 	struct list_head *list;
+@@ -2969,7 +2984,7 @@ static struct page *rmqueue_pcplist(struct zone *preferred_zone,
+ 	local_irq_save(flags);
+ 	pcp = &this_cpu_ptr(zone->pageset)->pcp;
+ 	list = &pcp->lists[migratetype];
+-	page = __rmqueue_pcplist(zone,  migratetype, pcp, list);
++	page = __rmqueue_pcplist(zone,  migratetype, alloc_flags, pcp, list);
+ 	if (page) {
+ 		__count_zid_vm_events(PGALLOC, page_zonenum(page), 1 << order);
+ 		zone_statistics(preferred_zone, zone);
+@@ -2992,7 +3007,7 @@ struct page *rmqueue(struct zone *preferred_zone,
+ 
+ 	if (likely(order == 0)) {
+ 		page = rmqueue_pcplist(preferred_zone, zone, order,
+-				gfp_flags, migratetype);
++				gfp_flags, migratetype, alloc_flags);
+ 		goto out;
+ 	}
+ 
+@@ -3011,7 +3026,7 @@ struct page *rmqueue(struct zone *preferred_zone,
+ 				trace_mm_page_alloc_zone_locked(page, order, migratetype);
+ 		}
+ 		if (!page)
+-			page = __rmqueue(zone, order, migratetype);
++			page = __rmqueue(zone, order, migratetype, alloc_flags);
+ 	} while (page && check_new_pages(page, order));
+ 	spin_unlock(&zone->lock);
+ 	if (!page)
+@@ -3253,6 +3268,40 @@ static bool zone_allows_reclaim(struct zone *local_zone, struct zone *zone)
+ }
+ #endif	/* CONFIG_NUMA */
+ 
++#ifdef CONFIG_ZONE_DMA32
++/*
++ * The restriction on ZONE_DMA32 as being a suitable zone to use to avoid
++ * fragmentation is subtle. If the preferred zone was HIGHMEM then
++ * premature use of a lower zone may cause lowmem pressure problems that
++ * are worse than fragmentation. If the next zone is ZONE_DMA then it is
++ * probably too small. It only makes sense to spread allocations to avoid
++ * fragmentation between the Normal and DMA32 zones.
++ */
++static inline unsigned int
++alloc_flags_nofragment(struct zone *zone)
++{
++	if (zone_idx(zone) != ZONE_NORMAL)
++		return 0;
++
++	/*
++	 * If ZONE_DMA32 exists, assume it is the one after ZONE_NORMAL and
++	 * the pointer is within zone->zone_pgdat->node_zones[]. Also assume
++	 * on UMA that if Normal is populated then so is DMA32.
++	 */
++	BUILD_BUG_ON(ZONE_NORMAL - ZONE_DMA32 != 1);
++	if (nr_online_nodes > 1 && !populated_zone(--zone))
++		return 0;
++
++	return ALLOC_NOFRAGMENT;
++}
++#else
++static inline unsigned int
++alloc_flags_nofragment(struct zone *zone)
++{
++	return 0;
++}
++#endif
++
+ /*
+  * get_page_from_freelist goes through the zonelist trying to allocate
+  * a page.
+@@ -3261,14 +3310,18 @@ static struct page *
+ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
+ 						const struct alloc_context *ac)
+ {
+-	struct zoneref *z = ac->preferred_zoneref;
++	struct zoneref *z;
+ 	struct zone *zone;
+ 	struct pglist_data *last_pgdat_dirty_limit = NULL;
++	bool no_fallback;
+ 
++retry:
+ 	/*
+ 	 * Scan zonelist, looking for a zone with enough free.
+ 	 * See also __cpuset_node_allowed() comment in kernel/cpuset.c.
+ 	 */
++	no_fallback = alloc_flags & ALLOC_NOFRAGMENT;
++	z = ac->preferred_zoneref;
+ 	for_next_zone_zonelist_nodemask(zone, z, ac->zonelist, ac->high_zoneidx,
+ 								ac->nodemask) {
+ 		struct page *page;
+@@ -3307,6 +3360,22 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
+ 			}
+ 		}
+ 
++		if (no_fallback && nr_online_nodes > 1 &&
++		    zone != ac->preferred_zoneref->zone) {
++			int local_nid;
++
++			/*
++			 * If moving to a remote node, retry but allow
++			 * fragmenting fallbacks. Locality is more important
++			 * than fragmentation avoidance.
++			 */
++			local_nid = zone_to_nid(ac->preferred_zoneref->zone);
++			if (zone_to_nid(zone) != local_nid) {
++				alloc_flags &= ~ALLOC_NOFRAGMENT;
++				goto retry;
++			}
++		}
++
+ 		mark = zone->watermark[alloc_flags & ALLOC_WMARK_MASK];
+ 		if (!zone_watermark_fast(zone, order, mark,
+ 				       ac_classzone_idx(ac), alloc_flags)) {
+@@ -3374,6 +3443,15 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
+ 		}
+ 	}
+ 
++	/*
++	 * It's possible on a UMA machine to get through all zones that are
++	 * fragmented. If avoiding fragmentation, reset and try again.
++	 */
++	if (no_fallback) {
++		alloc_flags &= ~ALLOC_NOFRAGMENT;
++		goto retry;
++	}
++
+ 	return NULL;
+ }
+ 
+@@ -4369,6 +4447,12 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+ 
+ 	finalise_ac(gfp_mask, &ac);
+ 
++	/*
++	 * Forbid the first pass from falling back to types that fragment
++	 * memory until all local zones are considered.
++	 */
++	alloc_flags |= alloc_flags_nofragment(ac.preferred_zoneref->zone);
++
+ 	/* First allocation attempt */
+ 	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
+ 	if (likely(page))
+-- 
+2.16.4
 
-> With that reverted, the DMA works OK (and I can also now confirm that
-> OMAP_DMA_LCH_2D works). I haven't yet checked if we actually need that
-> quirk in OMAP UDC,
-
-The omap_udc driver is a bit of a mess, need to check it myself, but for
-now we can just set the quirk_ep_out_aligned_size and investigate later.
-
-> or if this is related to RMK's findings of potential
-> bugs in the driver. Anyway, there is clearly yet another regression.
-
-I'll check Russell's mail.
-
-> 
-> A.
-> 
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
