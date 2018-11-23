@@ -2,143 +2,132 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF19C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E491C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C57A9205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:00:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="KSlNN9KE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C57A9205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 6A3E220659
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 16:03:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A3E220659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2632767AbeKXCoo (ORCPT
+        id S2440474AbeKXCsD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 21:44:44 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53839 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388714AbeKXCoo (ORCPT
+        Fri, 23 Nov 2018 21:48:03 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45897 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436604AbeKXCsD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 21:44:44 -0500
-Received: by mail-it1-f196.google.com with SMTP id g85so19008645ita.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 07:59:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KUyQwwXH5QTSiVHnwU9MghnxKneMD8YKN2Ce7sL0lCA=;
-        b=KSlNN9KE4BV7aykuKFcnJypuZ+4wdSMOv1igMHv7lLG/a9fncw1Un5Jdqikk2Y/uJJ
-         qaI8+h4Rqh3NVosWWsc78mysUQstW5/bDNY1oUsOb+trT4wIqetHeM35iHQsK2YvQ50o
-         HZzO6/xKIGxB6bAxEY4KIcXHn3iUHG3vg3wVNJO+mO3srRcWK/uejBYZQVyNoauyFrv2
-         BnCj8xFk+D29YJXL6bRE1xC0Ii2AK6LNsMkE/PEMXg41rjtHX2CoL01vWry1Tq0xcsZW
-         ondXAmAjt1b1Fh35duvJMMEHnhFfXGBNWWrORg11fHenECQxiaieTPCQbYNtDA4Z6g7Q
-         sCzg==
+        Fri, 23 Nov 2018 21:48:03 -0500
+Received: by mail-ed1-f68.google.com with SMTP id d39so10605755edb.12;
+        Fri, 23 Nov 2018 08:03:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KUyQwwXH5QTSiVHnwU9MghnxKneMD8YKN2Ce7sL0lCA=;
-        b=Tsx27O/z5NGi5Hscvo2BCmWU0xdvUjLkbsr5GMAaLqGGCnUix3QZwluMx969+WpSxc
-         Myf6fjcQM2hXfnwgF9oxCioT2xk0YFsfb+LzzPXIH0ohNvJ7zbrWeHmqp1gBGeA81IML
-         GcGko4F9ZRgJTsSvtYlsR+3idkKrcvRhqkp/Dk3wV364Vp4L4CB0J+CAYg2rh2WMuG9L
-         VCV9KShB005K6sZAGBIignk6Yd+WXdJXRXrjh0RsB2gwreHVWHdepMhku28FB+G9xam4
-         u62x1+V4xc01W/ejJx85O5Tyh4IgYMsT4s3xoFvO4/RTS7Sn+pJGDIJyqncioE48Dw8T
-         mAIQ==
-X-Gm-Message-State: AA+aEWYYjoK8805SlOw5RN6nD3Vt+UKGOHNpR2m+V3q/Kugi79wm4Dti
-        CAwe6MqU3/oJUnIZGZOLBqoxMovFZSvpJCP+08GMOg==
-X-Google-Smtp-Source: AFSGD/WUNN2UJevhLv1w3mZnQMdu0Cp9ZgeucfajbKmWtWm2eN1IHXtJwVOKDZ3h2bqguZFZQTIajJaY4My7Wx7KMy4=
-X-Received: by 2002:a24:9d1:: with SMTP id 200mr5447945itm.53.1542988797504;
- Fri, 23 Nov 2018 07:59:57 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=6SnfM2u1VaB93hc95fAYkUFoAXf1GhMo4+6x2q/JGGw=;
+        b=WEVVI1NQ7/cOW44Mx0biju/Bdz93V1nO3OWLVF5oIezNlCSjpNzHp5pD+jX5forncD
+         USrQgi/BTKtCYa9/GbwoeJdCLlkiKgyH8ltJcSMad2pdcsrF7/efxvHGpbLjFBGJfIFF
+         fU47yJMshKg9GPf+6TvJp43JufU9159poi9C2lY2oPIbqKLPWRKrDLZXkdO19FbBSk6G
+         KtpgsqcLE6KB8cKi+CnmnfeRVN+EMgE1aKTR8kNQlxEyD1n2BYNC1tLSCJvsASKy3LBS
+         fsx5YJoCzrof+3vCvpanx8OvHeAc+pqBbBAo7PqMaRb2n6DbdGKUcSBy4VDe8YXJi1z5
+         2rCw==
+X-Gm-Message-State: AA+aEWaodtiy27KPjzOK6XuqOrNYdSv7RPsKpDioBU9giVIjpPjBnXHu
+        zep9dbM3Qm9R09ekGhIGw22sT4Lg6Cw=
+X-Google-Smtp-Source: AFSGD/X0Mw6ss64H36EjEgG6YF8F8Pak/1iIGDFInrDNOuEp5np03ovOVb6GZW4J115OcZ7IS36uSg==
+X-Received: by 2002:a50:af26:: with SMTP id g35-v6mr7419233edd.192.1542988994509;
+        Fri, 23 Nov 2018 08:03:14 -0800 (PST)
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com. [209.85.221.50])
+        by smtp.gmail.com with ESMTPSA id b11-v6sm4133104ejd.16.2018.11.23.08.03.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 23 Nov 2018 08:03:13 -0800 (PST)
+Received: by mail-wr1-f50.google.com with SMTP id l9so12800880wrt.13;
+        Fri, 23 Nov 2018 08:03:12 -0800 (PST)
+X-Received: by 2002:adf:891a:: with SMTP id s26mr14372986wrs.44.1542988992220;
+ Fri, 23 Nov 2018 08:03:12 -0800 (PST)
 MIME-Version: 1.0
-References: <20181120134032.31645-1-brgl@bgdev.pl> <20181120134032.31645-2-brgl@bgdev.pl>
- <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de> <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
- <20181121191509.ia2vcklvx4q2rh56@pengutronix.de>
-In-Reply-To: <20181121191509.ia2vcklvx4q2rh56@pengutronix.de>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 23 Nov 2018 16:59:46 +0100
-Message-ID: <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20181122102325.29495-1-wens@csie.org> <2007258.VzpTJLJblp@anarsoul-thinkpad>
+ <CAGb2v67J6ptnr_uPW0+H=WvCdAVzZ1Sw1wTUQrr6KrNsc_mXKQ@mail.gmail.com>
+In-Reply-To: <CAGb2v67J6ptnr_uPW0+H=WvCdAVzZ1Sw1wTUQrr6KrNsc_mXKQ@mail.gmail.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Sat, 24 Nov 2018 00:03:01 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66e7KmCLDgj8XFAbNhfg5txBnxE5svP30Zm0=p30mBF2w@mail.gmail.com>
+Message-ID: <CAGb2v66e7KmCLDgj8XFAbNhfg5txBnxE5svP30Zm0=p30mBF2w@mail.gmail.com>
+Subject: Re: [PATCH v9 0/8] Add support for audiocodec in Allwinner A64
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com,
+        Vasily Khoruzhick <anarsoul@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C5=9Br., 21 lis 2018 o 20:15 Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
+On Fri, Nov 23, 2018 at 12:37 PM Chen-Yu Tsai <wens@csie.org> wrote:
 >
-> Hello Bartosz,
->
-> On Wed, Nov 21, 2018 at 05:34:32PM +0100, Bartosz Golaszewski wrote:
-> > wt., 20 lis 2018 o 18:17 Uwe Kleine-K=C3=B6nig
-> > <u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
-> > >
-> > > On Tue, Nov 20, 2018 at 02:40:31PM +0100, Bartosz Golaszewski wrote:
-> > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > >
-> > > > The irq_sim irqchip doesn't allow to configure the sensitivity so e=
-very
-> > > > call to irq_sim_fire() fires a dummy interrupt. This used to not ma=
-tter
-> > > > for gpio-mockup (one of the irq_sim users) until commit fa38869b016=
-1
-> > > > ("gpiolib: Don't support irq sharing for userspace") which made it
-> > > > impossible for gpio-mockup to ignore certain events (e.g. only rece=
-ive
-> > > > notifications about rising edge events).
-> > > >
-> > > > Introduce a specialized variant of irq_sim_fire() which takes anoth=
-er
-> > > > argument called edge. allowing to specify the trigger type for the
-> > > > dummy interrupt.
-> > >
-> > > I wonder if it's worth the effort to fix irq_sim. If you take a look =
-in
-> > > my gpio-simulator patch, it is trivial to get it right without extern=
-al
-> > > help with an amount of code that is usual for a driver that handles
-> > > irqs.
+> On Fri, Nov 23, 2018 at 12:26 PM Vasily Khoruzhick <anarsoul@gmail.com> wrote:
 > >
-> > You're basically recommending handcrafting another local piece of code
-> > for simulating interrupts - something that multiple users may be
-> > interested in. You did that in your proposed gpio-simulator and I
-> > still can't understand why you couldn't reuse the existing solution.
-> > Even if it's broken for your use-case, it's surely easier to fix it
-> > than to rewrite and duplicate it? There are very few cases where code
-> > consolidation is not a good thing and I don't think this is one of
-> > them.
+> > On Thursday, November 22, 2018 2:23:17 AM PST Chen-Yu Tsai wrote:
+> > > Hi everyone,
+> > >
+> > > This is v9 of the A64 audio codec series, originally started by Vasily.
+> > > These are the last changes to make the A64 audio codec work correctly,
+> > > and be accurately represented in the device tree and in software.
+> > >
+> > > Notably, the new driver changes cover regulator supplies for the simple
+> > > audio amplifier, which is used in the Pinebook for the internal
+> > > speakers, and the audio codec's internal headphone amp. There's also an
+> > > extra patch that enables SDM fractional clock support for the audio PLL
+> > > on the A64, which gives us accurate audio playback.
+> > >
+> > > Patch 1 & 2 add the cpvdd regulator supply to the sun50i-codec-analog
+> > > dt bindings & driver.
+> > >
+> > > Patch 3 & 4 add a regulator supply to the simple-audio-amplifier dt
+> > > bindings & driver.
+> > >
+> > > Patch 5 adds SDM fractional clock support for the audio PLL on the A64.
+> > >
+> > > Patch 6 ~ 8 add the device tree bits and enables audio on several
+> > > boards.
+> > >
+> > > I have one extra patch for the Bananapi M64 that's not included here,
+> > > as I'm waiting for an accessory to test the microphone bias. I'll send
+> > > that one out once it's tested.
+> > >
+> > > As always, we'll take the clock and dts patches after Mark has merged
+> > > the ASoC ones.
+> > >
+> > > And a big thanks to Vasily for having worked on this for so long.
+> >
+> > Thank you for picking it up!
+> >
+> > Just a minor note: hpvcc-supply should be a property of codec_analog in
+> > sun50i-a64-pinebook.dts
 >
-> I don't say that factoring out common stuff is bad. But if in the end
-> you call
->
->         irq_sim_something(some, parameters, offset);
->
-> with the simulator and if you don't use the irq simulator you do
->
->         irq =3D irq_find_mapping(irqdomain, offset);
->         generic_handle_irq(irq);
->
-> I prefer the latter because it's only a single additional line and in
-> return it's more obvious what it does because it's the same that many
-> other drivers (for real hardware) also do.
->
+> Thanks. I'll fix that up when applying.
 
-I'm not sure I'm following you. You still need to add ~150 LOC for the
-gpio_simulator_irqtrigger() worker and gpio_simulator_irq_*() routines
-locally as you did in your gpio-simulator patch. A generic simulator +
-using the irq_work saves you that.
+Merged the remaining 4 patches with the misplaced regulator supply property
+in the last patch fixed.
 
-Bart
+ChenYu
+
+> > Otherwise looks fine, tested on Pinebook and Pine64-LTS.
+> >
+> > Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
+>
+> Great!
+>
+> ChenYu
