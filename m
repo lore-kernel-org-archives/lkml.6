@@ -2,127 +2,122 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C7C1C43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D349CC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:40:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58E6E20861
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:39:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58E6E20861
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D52220820
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 10:40:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D52220820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409386AbeKWVXk (ORCPT
+        id S2503360AbeKWVYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 16:23:40 -0500
-Received: from wind.enjellic.com ([76.10.64.91]:34591 "EHLO wind.enjellic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394186AbeKWVXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 16:23:40 -0500
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.14.3/8.14.3) with ESMTP id wANAdNSt014028;
-        Fri, 23 Nov 2018 04:39:24 -0600
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.14.3/8.14.3/Submit) id wANAdNqg014027;
-        Fri, 23 Nov 2018 04:39:23 -0600
-Date:   Fri, 23 Nov 2018 04:39:23 -0600
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        haitao.huang@linux.intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181123103923.GA13851@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com> <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com> <20181119161917.GF13298@linux.intel.com> <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com> <20181120120442.GA22172@linux.intel.com> <20181122111253.GA31150@wind.enjellic.com> <CALCETrV4wOpk7wf9+ywd50PekGjfT7LNtwqHhcV08=oxPmKtKQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrV4wOpk7wf9+ywd50PekGjfT7LNtwqHhcV08=oxPmKtKQ@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [0.0.0.0]); Fri, 23 Nov 2018 04:39:24 -0600 (CST)
+        Fri, 23 Nov 2018 16:24:33 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:58670 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394186AbeKWVYd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 16:24:33 -0500
+Received: from 79.184.254.110.ipv4.supernova.orange.pl (79.184.254.110) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.157)
+ id c4516cd8d735a65b; Fri, 23 Nov 2018 11:40:46 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Doug Smythies <dsmythies@telus.net>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [RFC/RFT][PATCH v6] cpuidle: New timer events oriented governor for tickless systems
+Date:   Fri, 23 Nov 2018 11:40:47 +0100
+Message-ID: <4066059.ijq7GCtu0s@aspire.rjw.lan>
+In-Reply-To: <42865872.dmYH3PmblP@aspire.rjw.lan>
+References: <42865872.dmYH3PmblP@aspire.rjw.lan>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 22, 2018 at 12:56:23PM -0800, Andy Lutomirski wrote:
+On Friday, November 23, 2018 11:35:38 AM CET Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> The venerable menu governor does some thigns that are quite
+> questionable in my view.
+> 
+> First, it includes timer wakeups in the pattern detection data and
+> mixes them up with wakeups from other sources which in some cases
+> causes it to expect what essentially would be a timer wakeup in a
+> time frame in which no timer wakeups are possible (becuase it knows
+> the time until the next timer event and that is later than the
+> expected wakeup time).
+> 
+> Second, it uses the extra exit latency limit based on the predicted
+> idle duration and depending on the number of tasks waiting on I/O,
+> even though those tasks may run on a different CPU when they are
+> woken up.  Moreover, the time ranges used by it for the sleep length
+> correction factors depend on whether or not there are tasks waiting
+> on I/O, which again doesn't imply anything in particular, and they
+> are not correlated to the list of available idle states in any way
+> whatever.
+> 
+> Also, the pattern detection code in menu may end up considering
+> values that are too large to matter at all, in which cases running
+> it is a waste of time.
+> 
+> A major rework of the menu governor would be required to address
+> these issues and the performance of at least some workloads (tuned
+> specifically to the current behavior of the menu governor) is likely
+> to suffer from that.  It is thus better to introduce an entirely new
+> governor without them and let everybody use the governor that works
+> better with their actual workloads.
+> 
+> The new governor introduced here, the timer events oriented (TEO)
+> governor, uses the same basic strategy as menu: it always tries to
+> find the deepest idle state that can be used in the given conditions.
+> However, it applies a different approach to that problem.
+> 
+> First, it doesn't use "correction factors" for the time till the
+> closest timer, but instead it tries to correlate the measured idle
+> duration values with the available idle states and use that
+> information to pick up the idle state that is most likely to "match"
+> the upcoming CPU idle interval.
+> 
+> Second, it doesn't take the number of "I/O waiters" into account at
+> all and the pattern detection code in it avoids taking timer wakeups
+> into account.  It also only uses idle duration values less than the
+> current time till the closest timer (with the tick excluded) for that
+> purpose.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> v5 -> v6:
+>  * Avoid applying poll_time_limit to non-polling idle states by mistake.
+>  * Use idle duration measured by the governor for everything (as it likely is
+>    more accurate than the one measured by the core).
 
-Good morning to everyone.
+This particular change is actually missing, sorry about that.  It is not
+essential, however, so the v6 should be good enough as is for evaluation
+and review purposes.
 
-> On Thu, Nov 22, 2018 at 3:12 AM Dr. Greg <greg@enjellic.com> wrote:
-> > In addition, we are not confident
-> > the driver will be useful to anything other then server class hardware
-> > and will be incapable of supporting virtually all of the existing SGX
-> > hardware in the field.
+>  * Rename SPIKE to PULSE.
+>  * Do not run pattern detection upfront.  Instead, use recent idle duration
+>    values to refine the state selection after finding a candidate idle state.
+>  * Do not use the expected idle duration as an extra latency constraint
+>    (exit latency is less than the target residency for all of the idle states
+>    known to me anyway, so this doesn't change anything in practice).
 
-> I forgot to mention: I have a plain old retail Intel Celeron (I
-> think -- it's not in front of me right now) that has Flex LC.  I
-> suspect that, going forward, all new Intel CPUs will support Flex
-> LC.  I really wish that Intel would document all of the detailed
-> capabilities of all their CPUs somewhere.
+Thanks,
+Rafael
 
-Interesting, that contradicts the read we had gotten on FLC.
-
-The only specific CPU's that we know of that are acknowledged to have
-FLC are the XEON E series in support of the PCE/ECDSA attestation for
-data-center use of SGX.
-
-I'm assuming this is a really new system?  If so that matches our
-experience with respect to the fact that SGX2/EDMM capable systems
-slipped out quietly in early generation NUC SOC's.
-
-Your sentinments are correct with respect to getting solid guidance on
-hardware, it is a significant issue, particularly with respect to
-SGX.
-
-> There has been some talk of how the driver could support old CPUs.
-> It would involve a rather different LE being signed by Intel, but it
-> should be more or less transparent to user code if it happens.
-
-I will reply to the LE and driver capability issues in my response to
-your earlier e-mail so the thread does not diverge.
-
-Jarkko, when this driver lands it will set the SGX ABI in stone for
-Linux.  It would be very, very helpful to the development community if
-there was some official guidance from Intel on whether or not FLC will
-be a universal feature on all hardware and the date that is going to
-happen or has happened.
-
-If this turns out to be an OEM selectable issue via firmware
-customizations, things will be even more problematic.
-
-As things stand now, the proposed mainline SGX driver is going to be
-useless for a lot of hardware that is out in the field.  Linux has
-always had the reputation for supporting legacy hardware so this
-directly contravenes that principal and needlessly so.
-
-Dr. Greg
-
-As always,
-Dr. Greg Wettstein, Ph.D, Worker
-IDfusion, LLC
-4206 N. 19th Ave.           Implementing measured information privacy
-Fargo, ND  58102            and integrity architectures.
-PH: 701-281-1686
-FAX: 701-281-3949           EMAIL: gw@idfusion.org
-------------------------------------------------------------------------------
-"Simplicity is prerequisite for reliability."
-                                -- Edsger W. Dijkstra
