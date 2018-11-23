@@ -2,91 +2,113 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02AFAC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 314E4C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:43:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE0A620866
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:39:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE0A620866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EC44120824
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 17:43:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bR2GkqG1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC44120824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440949AbeKXEYb (ORCPT
+        id S2440974AbeKXE2R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 23:24:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57728 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732362AbeKXEYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 23:24:31 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 530C33084033;
-        Fri, 23 Nov 2018 17:39:18 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (ovpn-117-155.ams2.redhat.com [10.36.117.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 14B515D760;
-        Fri, 23 Nov 2018 17:39:11 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Rich Felker <dalias@libc.org>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        carlos <carlos@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl init and thread creation
-References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com>
-        <686626451.10113.1542901620250.JavaMail.zimbra@efficios.com>
-        <87wop5xeit.fsf@oldenburg.str.redhat.com>
-        <1045257294.10291.1542905262086.JavaMail.zimbra@efficios.com>
-        <87k1l5xd33.fsf@oldenburg.str.redhat.com>
-        <20181122171010.GH23599@brightrain.aerifal.cx>
-        <871s7cvt1l.fsf@oldenburg.str.redhat.com>
-        <20181123142843.GJ23599@brightrain.aerifal.cx>
-        <1150466925.11664.1542992720871.JavaMail.zimbra@efficios.com>
-        <20181123173019.GK23599@brightrain.aerifal.cx>
-Date:   Fri, 23 Nov 2018 18:39:04 +0100
-In-Reply-To: <20181123173019.GK23599@brightrain.aerifal.cx> (Rich Felker's
-        message of "Fri, 23 Nov 2018 12:30:19 -0500")
-Message-ID: <87zhtzsngn.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 23 Nov 2018 17:39:18 +0000 (UTC)
+        Fri, 23 Nov 2018 23:28:17 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:34582 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2440958AbeKXE2Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 23:28:16 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wANHdEII075122;
+        Fri, 23 Nov 2018 17:42:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=PaYMp/undk4qEEdAz+xdNv7cnNSOhXyzfK5VuCspPfE=;
+ b=bR2GkqG1u+VFRZIHceZWzNCpjlTbF94fHQhnHtIDGbgVEgDWKMO/AtVgzkOSp2TrQas7
+ UDvsQz4NGsI1zpbjmNYL6qP/gRd/v7aNv77dqsI3NnCnZRRO5Kkc1rRIoElhTPSUrqJQ
+ BKxTJTjIg0qGpfgoutwsNE6leiK0aHs28TF/+lECzub9uip/yG8ylvQHm2qlTbx4uY4m
+ EH7TgaEGV/Or9cvDJERsINBYaxzmmGYJljOwBgaZSEpbnQ04IY5zyPjxA8dSmjJyiedt
+ mS/5rEcY07b1HZt+JJiaH6x74HIJZoRDhTEngS9ccQFqRvwxQrzrpfWqrBNNog3b7Pyw aQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2ntaxqkrn3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Nov 2018 17:42:59 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wANHgwrH029228
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Nov 2018 17:42:58 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wANHgvm2003129;
+        Fri, 23 Nov 2018 17:42:57 GMT
+Received: from [192.168.14.112] (/79.181.244.115)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 23 Nov 2018 09:42:57 -0800
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
+Subject: Re: [PATCH] KVM: VMX: re-add ple_gap module parameter
+From:   Liran Alon <liran.alon@oracle.com>
+In-Reply-To: <20181123120214.174457a4@doriath>
+Date:   Fri, 23 Nov 2018 19:42:53 +0200
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, babu.moger@amd.com,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <8049C3CD-E816-4270-A64F-0BB92BD56338@oracle.com>
+References: <20181123120214.174457a4@doriath>
+To:     Luiz Capitulino <lcapitulino@redhat.com>
+X-Mailer: Apple Mail (2.3445.4.7)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9086 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811230147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Rich Felker:
 
-> On Fri, Nov 23, 2018 at 12:05:20PM -0500, Mathieu Desnoyers wrote:
->> There has been presumptions about signals being blocked when the thread
->> exits throughout this email thread. Out of curiosity, what code is
->> responsible for disabling signals in this situation ? Related to this,
->> is it valid to access a IE model TLS variable from a signal handler at
->> _any_ point where the signal handler nests over thread's execution ?
->> This includes early start and just before invoking the exit system call.
->
-> It should be valid to access *any* TLS object like this, but the
-> standards don't cover it well.
 
-C++ makes it undefined:
+> On 23 Nov 2018, at 19:02, Luiz Capitulino <lcapitulino@redhat.com> =
+wrote:
+>=20
+>=20
+> Apparently, the ple_gap parameter was accidentally removed
+> by commit c8e88717cfc6b36bedea22368d97667446318291. Add it
+> back.
+>=20
+> Signed-off-by: Luiz Capitulino <lcapitulino@redhat.com>
 
-  <http://eel.is/c++draft/support.signal#def:evaluation,signal-safe>
+Weird that nobody noticed this when patch was applied=E2=80=A6 Thanks.
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
 
-Thanks,
-Florian
+> ---
+> arch/x86/kvm/vmx.c | 1 +
+> 1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index 4555077d69ce..be6f13f1c25f 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -174,6 +174,7 @@ module_param_named(preemption_timer, =
+enable_preemption_timer, bool, S_IRUGO);
+>  * refer SDM volume 3b section 21.6.13 & 22.1.3.
+>  */
+> static unsigned int ple_gap =3D KVM_DEFAULT_PLE_GAP;
+> +module_param(ple_gap, uint, 0444);
+>=20
+> static unsigned int ple_window =3D KVM_VMX_DEFAULT_PLE_WINDOW;
+> module_param(ple_window, uint, 0444);
+> --=20
+> 2.17.2
+>=20
+
