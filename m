@@ -2,107 +2,129 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB47C43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FE7C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:18:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8521120659
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:16:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8521120659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C92BE20659
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:18:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cAHrnddI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92BE20659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503679AbeKWV75 (ORCPT
+        id S2503687AbeKWWBv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 16:59:57 -0500
-Received: from foss.arm.com ([217.140.101.70]:42194 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394331AbeKWV74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 16:59:56 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F7153620;
-        Fri, 23 Nov 2018 03:16:05 -0800 (PST)
-Received: from [10.1.29.128] (p8cg001049571a15.cambridge.arm.com [10.1.29.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0DB893F5A0;
-        Fri, 23 Nov 2018 03:16:00 -0800 (PST)
-Subject: Re: [PATCH] mm: Replace all open encodings for NUMA_NO_NODE
-To:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     ocfs2-devel@oss.oracle.com, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-block@vger.kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org,
-        akpm@linux-foundation.org, jiangqi903@gmail.com, hverkuil@xs4all.nl
-References: <1542966856-12619-1-git-send-email-anshuman.khandual@arm.com>
- <d7cb905f-76f7-3053-2a46-e1a514bd309b@redhat.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <2c0e9cef-663b-553c-e25e-63f7da59ab63@arm.com>
-Date:   Fri, 23 Nov 2018 16:46:00 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <d7cb905f-76f7-3053-2a46-e1a514bd309b@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 23 Nov 2018 17:01:51 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39274 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729651AbeKWWBv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 17:01:51 -0500
+Received: by mail-lf1-f66.google.com with SMTP id n18so8467895lfh.6;
+        Fri, 23 Nov 2018 03:17:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Dnm9e3ZHO3/jCt83r6fUUrfYu0u62tujmgy9U8Ise4c=;
+        b=cAHrnddIxS7rQNUHpTiCRPhDYfde/4HOBFvd7kv2DQ2NMbTVDc7aO05OHDHVemKUf+
+         fkOKKB/DnGKRedjfvtM+5zH83JmMI34fC05aYPzZZNtXvRTbmgBZvio/gluvNBIXb6Kj
+         bzJk8ZUunGObRWFKT5IkRnfvvsFatowzi8MGtYnKuEfpF+GOcX3RgTI9dTvjvMcIeWcB
+         YNqhNSGSPjtUGR8/5Di23BVx+ulfBZpjDCldemDdOrqD51uNmx3yq39bYNrd9qXlqZki
+         PMKHkEXzuWGkBjFDEnYs3xu7wHNJIH3s+ORR21r24oGqFAGP2vjuajwszsfYxxpOkPZl
+         YpfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Dnm9e3ZHO3/jCt83r6fUUrfYu0u62tujmgy9U8Ise4c=;
+        b=c+IuJuBYa5VASIPKqlrvt29HXmOzMRml2LnZcbRd9oat9k8H0RVkeWUHcTpGpaC2d1
+         1huLDcLDSQQDVxIwsKdxROCbRqFR2zTkO9EEcDum/yjbx0KFzZVOKycAoKQydD2GlYBx
+         bywSEBdNSXnP6ggCj0a6OlLLnpMlcZLGpH72ZVBZhfj4UGHRwd7L+I8/lVAcPALV96sA
+         rgMhipKm2unH2HC7Hmt6ZRWY1PFdqccFyiBdYx2cAys2jIiNlanRn/ZIWNNu+UgmasFU
+         5iYbCkaVRl/RcRUTDcV6g5qL1B1+ZwmiVrGLsRsRaVLDF9FO67w74lHUjYHtr+hrhr72
+         hS6w==
+X-Gm-Message-State: AGRZ1gI39kVpsTWrsRKI1gJvpS/44EHWzf3LakKrMH+XTRPrWIxIIoXH
+        jkxsqFxjIwmQo3EKe4sJ0WU=
+X-Google-Smtp-Source: AJdET5eZdgEHYR/TvnZc1+THnBimfAfkLO6coNSwntmoa2PAUhobToxyWcIRR4AaK5XgybKaId+llw==
+X-Received: by 2002:a19:41c4:: with SMTP id o187mr9358432lfa.32.1542971878521;
+        Fri, 23 Nov 2018 03:17:58 -0800 (PST)
+Received: from z50.intranet (78-10-164-223.static.ip.netia.com.pl. [78.10.164.223])
+        by smtp.gmail.com with ESMTPSA id x21sm4227994lfe.6.2018.11.23.03.17.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 23 Nov 2018 03:17:57 -0800 (PST)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [PATCH] ARM: OMAP1: ams-delta: Fix audio permanently muted
+Date:   Fri, 23 Nov 2018 12:19:45 +0100
+Message-Id: <20181123111945.6016-1-jmkrzyszt@gmail.com>
+X-Mailer: git-send-email 2.18.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-min
+Since commit 1137ceee76ba ("ARM: OMAP1: ams-delta: Don't request unused
+GPIOs"), on-board audio has appeared muted.  Believed to be unused GPIO
+pin "hookflash1", apparently set high regardless of the corresponding
+bit of "latch2" port attempted to be set low during .init_machine(),
+has been identified as the reason.
 
-On 11/23/2018 04:06 PM, David Hildenbrand wrote:
-> On 23.11.18 10:54, Anshuman Khandual wrote:
->> At present there are multiple places where invalid node number is encoded
->> as -1. Even though implicitly understood it is always better to have macros
->> in there. Replace these open encodings for an invalid node number with the
->> global macro NUMA_NO_NODE. This helps remove NUMA related assumptions like
->> 'invalid node' from various places redirecting them to a common definition.
->>
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->>
->> Changes in V1:
->>
->> - Dropped OCFS2 changes per Joseph
->> - Dropped media/video drivers changes per Hans
->>
->> RFC - https://patchwork.kernel.org/patch/10678035/
->>
->> Build tested this with multiple cross compiler options like alpha, sparc,
->> arm64, x86, powerpc, powerpc64le etc with their default config which might
->> not have compiled tested all driver related changes. I will appreciate
->> folks giving this a test in their respective build environment.
->>
->> All these places for replacement were found by running the following grep
->> patterns on the entire kernel code. Please let me know if this might have
->> missed some instances. This might also have replaced some false positives.
->> I will appreciate suggestions, inputs and review.
->>
->> 1. git grep "nid == -1"
->> 2. git grep "node == -1"
->> 3. git grep "nid = -1"
->> 4. git grep "node = -1"
-> 
-> Hopefully you found most users :)
+According to Amstrad E3 wiki, the purpose of the pin hasn't been
+clearly identified.  Original Amstrad software used to produce a high
+pulse on it when the phone was taken off hook or recall was pressed.
+With the current finding, we can assume the pin provides a kind of
+audio mute function.
 
-I hope so :)
+Proper resolution of the issue should be done in two steps:
+- resolution of an issue with the pin state not reflecting the value
+  the corresponding bit of the port was attempted to be initialized
+  with,
+- extension of on-board audio driver with a new control.
 
-> 
-> Did you check if some are encoded into function calls? f(-1, ...)
+For now, rename the pin to "audio_mute" to reflect its function and,
+as a quick fix, hogg it as output low so on-board audio can produce
+audible sound again.
 
-Not really. Just wondering how do we even search for it. There might be
-higher level functions passing down -1 to core MM. If you have some
-instances in mind which need replacement I will accommodate them.
+Fixes: 1137ceee76ba ("ARM: OMAP1: ams-delta: Don't request unused GPIOs")
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+---
+ arch/arm/mach-omap1/board-ams-delta.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> 
-> Reviewed-by: David Hildenbrand <david@redhat.com>
+diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
+index 3d191fd52910..1d801f5e8308 100644
+--- a/arch/arm/mach-omap1/board-ams-delta.c
++++ b/arch/arm/mach-omap1/board-ams-delta.c
+@@ -247,8 +247,8 @@ static struct platform_device latch2_gpio_device = {
+ #define LATCH2_PIN_SCARD_CMDVCC		11
+ #define LATCH2_PIN_MODEM_NRESET		12
+ #define LATCH2_PIN_MODEM_CODEC		13
+-#define LATCH2_PIN_HOOKFLASH1		14
+-#define LATCH2_PIN_HOOKFLASH2		15
++#define LATCH2_PIN_AUDIO_MUTE		14
++#define LATCH2_PIN_HOOKFLASH		15
+ 
+ static struct regulator_consumer_supply modem_nreset_consumers[] = {
+ 	REGULATOR_SUPPLY("RESET#", "serial8250.1"),
+@@ -588,6 +588,8 @@ static int gpiochip_match_by_label(struct gpio_chip *chip, void *data)
+ static struct gpiod_hog ams_delta_gpio_hogs[] = {
+ 	GPIO_HOG(LATCH2_LABEL, LATCH2_PIN_KEYBRD_DATAOUT, "keybrd_dataout",
+ 		 GPIO_ACTIVE_HIGH, GPIOD_OUT_LOW),
++	GPIO_HOG(LATCH2_LABEL, LATCH2_PIN_AUDIO_MUTE, "audio_mute",
++		 GPIO_ACTIVE_HIGH, GPIOD_OUT_LOW),
+ 	{},
+ };
+ 
+-- 
+2.18.1
 
-Thanks for the review.
