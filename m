@@ -2,108 +2,114 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02ED2C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC04C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C025820820
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:48:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C025820820
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D0C520685
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:48:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Nifp6Emc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D0C520685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405355AbeKWWcZ (ORCPT
+        id S2405430AbeKWWck (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 17:32:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57600 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387844AbeKWWcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 17:32:24 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 92749AF59;
-        Fri, 23 Nov 2018 11:48:27 +0000 (UTC)
-Date:   Fri, 23 Nov 2018 12:48:26 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Waiman Long <longman@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v2 07/17] debugobjects: Move printk out of db lock
- critical sections
-Message-ID: <20181123114826.h27t7qiwfp7grrqx@pathway.suse.cz>
-References: <1542653726-5655-1-git-send-email-longman@redhat.com>
- <1542653726-5655-8-git-send-email-longman@redhat.com>
- <2ddd9e3d-951e-1892-c941-54be80f7e6aa@redhat.com>
- <20181122020422.GA3441@jagdpanzerIV>
- <20181122101606.GP2131@hirez.programming.kicks-ass.net>
- <20181123024048.GD1582@jagdpanzerIV>
+        Fri, 23 Nov 2018 17:32:40 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:54972 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387945AbeKWWck (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 17:32:40 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wANBlwFH024508;
+        Fri, 23 Nov 2018 05:47:58 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1542973678;
+        bh=77axZYukm1rwXy9LqCTnhYduGHEZ/BUpu6p1xVF9b5Y=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Nifp6EmcVckRU7kvNR6M65cLs5x0WQAJEReonrLimF6GZ4ADlkIOAeSVVhZml71Ea
+         3MpELydltqsU0teRrgssKDyYDQ4/SMNsyLyPQJMU8Jd+brN61YM/fmI1sHDdKKI4/r
+         Sbdw76ETF/QvYo4/GfbGZNDyc65kQyO6IrAms1po=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wANBlwa1068282
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 23 Nov 2018 05:47:58 -0600
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 23
+ Nov 2018 05:47:58 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Fri, 23 Nov 2018 05:47:58 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wANBltg4030483;
+        Fri, 23 Nov 2018 05:47:56 -0600
+Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>
+CC:     <vkoul@kernel.org>, <dan.j.williams@intel.com>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <tony@atomide.com>, <linux-omap@vger.kernel.org>
+References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
+ <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
+ <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
+ <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
+ <20181122102948.GN6920@n2100.armlinux.org.uk>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <6dbb56e9-f76b-5343-1c40-87f326fe06a7@ti.com>
+Date:   Fri, 23 Nov 2018 13:49:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181123024048.GD1582@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20181122102948.GN6920@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2018-11-23 11:40:48, Sergey Senozhatsky wrote:
-> On (11/22/18 11:16), Peter Zijlstra wrote:
-> > > So maybe we need to switch debug objects print-outs to _always_
-> > > printk_deferred(). Debug objects can be used in code which cannot
-> > > do direct printk() - timekeeping is just one example.
-> > 
-> > No, printk_deferred() is a disease, it needs to be eradicated, not
-> > spread around.
-> 
-> deadlock-free printk() is deferred, but OK.
-
-The best solution would be lockless console drivers. Sigh.
 
 
-> Another idea then:
+On 22/11/2018 12.29, Russell King - ARM Linux wrote:
+> On Tue, Nov 20, 2018 at 11:04:06PM +0200, Aaro Koskinen wrote:
+>> I had switched to PIO mode in 2015 since the WARNs about legacy DMA
+>> API were too annoying and flooding the console. And now that I tried
+>> using DMA again with g_ether, it doesn't work anymore. The device get's
+>> recognized on host side, but no traffic goes through. Switching back to
+>> PIO makes it to work again.
 > 
-> ---
-> 
-> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-> index 70935ed91125..3928c2b2f77c 100644
-> --- a/lib/debugobjects.c
-> +++ b/lib/debugobjects.c
-> @@ -323,10 +323,13 @@ static void debug_print_object(struct debug_obj *obj, char *msg)
->  		void *hint = descr->debug_hint ?
->  			descr->debug_hint(obj->object) : NULL;
->  		limit++;
-> +
-> +		bust_spinlocks(1);
->  		WARN(1, KERN_ERR "ODEBUG: %s %s (active state %u) "
->  				 "object type: %s hint: %pS\n",
->  			msg, obj_states[obj->state], obj->astate,
->  			descr->name, hint);
-> +		bust_spinlocks(0);
->  	}
->  	debug_objects_warnings++;
->  }
-> 
-> ---
-> 
-> This should make serial consoles re-entrant.
-> So printk->console_driver_write() hopefully will not deadlock.
+> A solution to that would be to do what the warning message says, and
+> update the driver to the DMAengine API.
 
-Is the re-entrance safe? Some risk might be acceptable in Oops/panic
-situations. It is much less acceptable for random warnings.
+Yep, omap_udc is the last user of legacy omap_dma API. It is a slow
+progress as I do the conversion in my free time, onenand/omap2 and tusb
+was converted not too long ago, let's see how the omap_udc is going to go.
 
-Best Regards,
-Petr
+> The reason it didn't get updated when the DMAengine conversion happened
+> is because I don't have hardware for it, so had no way to test, and no
+> one seemed to know that anyone was using it.  Eventually, the WARN_ON()
+> was added to try and root out any users and generate interest in
+> updating the drivers.  Obviously that didn't happen, because people
+> just worked around the warning rather than saying anything.
+> 
+> I'm afraid we're long past the time that I'd be willing to update the
+> omap_udc driver now as I've dropped most of my knowledge on that as
+> it's been four years, and Peter has been looking after OMAP DMAengine
+> issues since.
+> 
+> Sorry.
+> 
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
