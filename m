@@ -2,155 +2,97 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 734D9C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2F6C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36D4D206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:21:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4394206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 12:21:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NO2g0jgy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36D4D206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ROfZ1Lzj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4394206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504242AbeKWXFZ (ORCPT
+        id S2504256AbeKWXFn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:05:25 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46428 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394543AbeKWXFZ (ORCPT
+        Fri, 23 Nov 2018 18:05:43 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:54227 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394543AbeKWXFn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 18:05:25 -0500
-Received: by mail-ed1-f67.google.com with SMTP id o10so10073310edt.13;
-        Fri, 23 Nov 2018 04:21:24 -0800 (PST)
+        Fri, 23 Nov 2018 18:05:43 -0500
+Received: by mail-it1-f196.google.com with SMTP id g85so18143023ita.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 04:21:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wotCpAV5075qezqHiHnnTQKRjQncmClZGWsAwHl60SI=;
-        b=NO2g0jgyFFNN2dTTDNu40pJkCSfrvwN+OuJ6XUZz5GUYiVFtQ1Nmra+uDJLBwtUTTt
-         HiAQ6azq4wJIoiydKd18tGCCYsKZTrMyPgOMCODtSk1jW0he0WlDJfK/Itx5gpbfpnQ/
-         CHt1RhuIJ9EW/V/taHywCVChQGFath70fEe/vljpdqlbjIVohtHgqGl/VoTcOnZIO5Bt
-         v3+suoDWJDqal78Rr4SSXXas+/iJLg3oDmM5vBcKUqm6V3lB0bHi5plUZaE4JSlEeU+E
-         7bzLkTFAcMWaca7ihyNzd3cUwdI/pKK08iQ/6Dapoum7O+/7ASJZ5phx8lZafxId3+Tm
-         MuEw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3Wem4PShXx7/eGAD2VT5tYYDmIQsmzlMb8bJeFeHtTU=;
+        b=ROfZ1LzjgY7Xhh6uga/Pe/xreeNNhVlcev1I7/Jpv5jUoLuvYJ4LXsUKElfe2UwQEJ
+         fkZ99cWagMCg+BTKHCdVYS4racDosf0ZnbpzinfcOkgOjctmUQ8gGidJtXI7zIG9JttX
+         Mf3rvE8PE4YrgkySLGiCVXD5bhZP7t7FymPxQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wotCpAV5075qezqHiHnnTQKRjQncmClZGWsAwHl60SI=;
-        b=XgB4BP+pQL/03y6nC5BiSXoYSbaEjdLmEyj3rl16UFc7hq4J1T7NH7KwCXgFhBEn0y
-         jCTFLvPfOthGs5RWZRLFBmHsb3XUBqo4ZBRc2K5m2I1ISfGAEiXJLd86/Af5hYgXk6Bo
-         wjjqj5hJKpVAce2wh2WLfWwGwYD1vfr+BxhuO4P3v1neUOkat8Wrr7GeRHsoHFykJQap
-         b9jrC4EmT8PivSdqyM5TJknt7y5X+2hLaczydczS4lUyyKyhf4C71O7/P4bKbiqNksHc
-         Qdl2KFVXuUcOOj5yU7sBxFji9sundgY0+YFtOhJHY0GRJW6/r1oSL7w6DxK/wQCNc1IN
-         hg3Q==
-X-Gm-Message-State: AGRZ1gJXGBlLor+OmzZ1mbiaV6fNzzO9wyOidf21QxqCXB4RDt39gsMM
-        g8CCJ96qxlbFaD51G9z3lcI=
-X-Google-Smtp-Source: AJdET5fZsFu7tNwIdYUeTRN1b3eBKCnSRHxn3RoROLyR+vbvcGNjFlhL1mpZCdXeH8pjW2Bz8cL36w==
-X-Received: by 2002:a17:906:a4cf:: with SMTP id cc15-v6mr11431320ejb.157.1542975683778;
-        Fri, 23 Nov 2018 04:21:23 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id h8sm3311057edb.95.2018.11.23.04.21.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 23 Nov 2018 04:21:23 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: stmmac: Move debugfs init/exit to ->probe()/->remove()
-Date:   Fri, 23 Nov 2018 13:21:22 +0100
-Message-Id: <20181123122122.18957-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3Wem4PShXx7/eGAD2VT5tYYDmIQsmzlMb8bJeFeHtTU=;
+        b=oJ6TO0uYWaX4hi9I44ow/WEhLLSnqKfzqHs5a2YsKFoVM94ZzeuPWvc2heOVG7Ckh6
+         rN3OjRlh+nrsTIT9DoHzdq+qQ6qcXOxwgvkeIf5DYS0x+eUfVMpH44pDffeENCDU22Gd
+         fyV1+pJjYGn584uKxTNzcQJkb5iZrdpKdVmngIKfRPyk3BChXSUuKN5Up7U2x5btRyPV
+         u6FR9vT4K5omVFQDes+vDLTnqqRTJcDnoSciAX/o6B6pqTI+lyeDpU0ekzmRViDT+AXg
+         a+VehqahF7VY8GBEsKHCK5nlgm29jRaYiY9xrmwIEnkxYNd6G/j6CAljtJrzi/arx8sS
+         d4cA==
+X-Gm-Message-State: AGRZ1gLojyNO8XpM0sFbToEnvR9O4tFk9HIfkMb1/AwqCkoh+qHqNqqD
+        Cs9QqIZMfYA8tWT+SolBsvGt9Sl3xoDSZ0motI/jFg==
+X-Google-Smtp-Source: AFSGD/Wysgde+wPGurXTA92GN0ZMz+C55XT56+nABgzYzVLWAZbRPlsw0LXgF05qe8X8Z4JaaDng4Qf3CGXW67u0Z/E=
+X-Received: by 2002:a05:660c:206:: with SMTP id y6mr12688816itj.157.1542975703208;
+ Fri, 23 Nov 2018 04:21:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <58a96c0933bf4c812fa2dd382e6cb377@natalenko.name> <CD517154-3155-4D89-AAA5-11DA0DE7B9EF@canonical.com>
+In-Reply-To: <CD517154-3155-4D89-AAA5-11DA0DE7B9EF@canonical.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 23 Nov 2018 13:21:06 +0100
+Message-ID: <CAPDyKFpHzERzE4T-AExwHAbhzrbxuSLy5cg0et24wzfbOZNw3Q@mail.gmail.com>
+Subject: Re: [PATCH 0/5 v7] Keep rtsx_usb suspended when there's no card
+To:     Kai Heng Feng <kai.heng.feng@canonical.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Fri, 23 Nov 2018 at 07:06, Kai Heng Feng <kai.heng.feng@canonical.com> wrote:
+>
+> Hi Ulf,
+>
+> > On Nov 8, 2018, at 8:17 PM, Oleksandr Natalenko <oleksandr@natalenko.name> wrote:
+> >
+> >> This is based on Ulf's work [1] [2].
+> >> This patch series can keep rtsx_usb suspended, to save ~0.5W on Intel
+> >> platforms and ~1.5W on AMD platforms.
+> >> [1] https://patchwork.kernel.org/patch/10440583/
+> >> [2] https://patchwork.kernel.org/patch/10445725/
+> >
+> > Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+>
+> Do you think this series is ready to be merged to v4.20?
 
-Setting up and tearing down debugfs is current unbalanced, as seen by
-this error during resume from suspend:
+I have had a brief look at the latest version a while ago, looked
+good. However, allow a few more days before I can give it my final
+blessing.
 
-    [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to create debugfs directory
-    [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup: failed debugFS registration
+BTW. We need to figure out what path to route the changes through. I
+can pick it via my mmc tree, unless someone object to that.
 
-The imbalance happens because the driver creates the debugfs hierarchy
-when the device is opened and tears it down when the device is closed.
-There's little gain in that, and it could be argued that it is even
-surprising because it's not usually done for other devices. Fix the
-imbalance by moving the debugfs creation and teardown to the driver's
-->probe() and ->remove() implementations instead.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-This applies on top of net-next.
-
- .../net/ethernet/stmicro/stmmac/stmmac_main.c | 20 +++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 076a8be18d67..3ced86ac2ab1 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2550,12 +2550,6 @@ static int stmmac_hw_setup(struct net_device *dev, bool init_ptp)
- 			netdev_warn(priv->dev, "PTP init failed\n");
- 	}
- 
--#ifdef CONFIG_DEBUG_FS
--	ret = stmmac_init_fs(dev);
--	if (ret < 0)
--		netdev_warn(priv->dev, "%s: failed debugFS registration\n",
--			    __func__);
--#endif
- 	priv->tx_lpi_timer = STMMAC_DEFAULT_TWT_LS;
- 
- 	if (priv->use_riwt) {
-@@ -2756,10 +2750,6 @@ static int stmmac_release(struct net_device *dev)
- 
- 	netif_carrier_off(dev);
- 
--#ifdef CONFIG_DEBUG_FS
--	stmmac_exit_fs(dev);
--#endif
--
- 	stmmac_release_ptp(priv);
- 
- 	return 0;
-@@ -4397,6 +4387,13 @@ int stmmac_dvr_probe(struct device *device,
- 		goto error_netdev_register;
- 	}
- 
-+#ifdef CONFIG_DEBUG_FS
-+	ret = stmmac_init_fs(ndev);
-+	if (ret < 0)
-+		netdev_warn(priv->dev, "%s: failed debugFS registration\n",
-+			    __func__);
-+#endif
-+
- 	return ret;
- 
- error_netdev_register:
-@@ -4432,6 +4429,9 @@ int stmmac_dvr_remove(struct device *dev)
- 
- 	netdev_info(priv->dev, "%s: removing driver", __func__);
- 
-+#ifdef CONFIG_DEBUG_FS
-+	stmmac_exit_fs(ndev);
-+#endif
- 	stmmac_stop_all_dma(priv);
- 
- 	stmmac_mac_set(priv, priv->ioaddr, false);
--- 
-2.19.1
-
+Kind regards
+Uffe
