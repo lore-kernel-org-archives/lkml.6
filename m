@@ -2,132 +2,329 @@ Return-Path: <SRS0=aB5v=OC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8EA8C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A09DC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CC60206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:33:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C325B206B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 23 Nov 2018 11:33:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="lfXYq8Ed"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CC60206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nokia.com
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="g0uh3QJW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C325B206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503813AbeKWWRF (ORCPT
+        id S2503824AbeKWWRP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 23 Nov 2018 17:17:05 -0500
-Received: from mail-eopbgr50129.outbound.protection.outlook.com ([40.107.5.129]:59894
+        Fri, 23 Nov 2018 17:17:15 -0500
+Received: from mail-eopbgr50064.outbound.protection.outlook.com ([40.107.5.64]:45000
         "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388116AbeKWWRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Nov 2018 17:17:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-com;
+        id S1729929AbeKWWRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Nov 2018 17:17:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SZQ+v6tyMEBZr5LdKgLDlNclwwbkMy//+LYX+mmDvIw=;
- b=lfXYq8Edfz0wQDp8/usylXtPIGY6ulOXPUe/x/FsUmV2NU61cTraKbD7OtVyQOT/bH+/iNXOeTML4Ili9xQTY9Hkt3fhb1+f2CqL/Fnwvbe64e03ksfunKKdN71g+N7NFAa1wHqUqekH1EWQHBIHM0dxCR5+hsRpHv0I//V2vfw=
-Received: from HE1PR0701MB2729.eurprd07.prod.outlook.com (10.168.188.135) by
- HE1PR0701MB2076.eurprd07.prod.outlook.com (10.167.190.16) with Microsoft SMTP
+ bh=OCRkKTrvjVuqfVmTM+EoXflk+Tighs1sFB4Bwaaeawo=;
+ b=g0uh3QJWu23fVPpzu7ZrJgmv51nCdD9cPDXrRLY/4DoLdxJyaXZ/CKh+wkUfPtTcXw+gBvhatTK3LaQu0YSmDusjRGJ6tJovS4ea7Q2IcCjkNX1ccwQbPF7HQCIGEr5vzULaHzu/i555hqw5g3jZyly3XbrJGycgYAl0JKfhIBw=
+Received: from AM0PR08MB3025.eurprd08.prod.outlook.com (52.134.93.10) by
+ AM0PR08MB4099.eurprd08.prod.outlook.com (20.178.202.138) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.9; Fri, 23 Nov 2018 11:33:07 +0000
-Received: from HE1PR0701MB2729.eurprd07.prod.outlook.com
- ([fe80::35b1:90ba:fa:3c77]) by HE1PR0701MB2729.eurprd07.prod.outlook.com
- ([fe80::35b1:90ba:fa:3c77%9]) with mapi id 15.20.1361.013; Fri, 23 Nov 2018
- 11:33:07 +0000
-From:   "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
-To:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>
-CC:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mtd: spi-nor: fix erase_type array to indicate current
- map conf
-Thread-Topic: [PATCH] mtd: spi-nor: fix erase_type array to indicate current
- map conf
-Thread-Index: AQHUgxDmRuGauPbUmUaN5hsWx0CViKVdKY2AgAAQ6IA=
-Date:   Fri, 23 Nov 2018 11:33:07 +0000
-Message-ID: <679e7fb8-f424-b72c-ac8a-315926080ede@nokia.com>
-References: <20181122123552.15756-1-tudor.ambarus@microchip.com>
- <3d8a2b83-282d-7cb2-3c8b-addae3c2af7f@nokia.com>
- <65d03690-a475-dc5b-ab9d-14e6216ba0bd@microchip.com>
-In-Reply-To: <65d03690-a475-dc5b-ab9d-14e6216ba0bd@microchip.com>
-Accept-Language: en-US
+ 15.20.1361.14; Fri, 23 Nov 2018 11:30:20 +0000
+Received: from AM0PR08MB3025.eurprd08.prod.outlook.com
+ ([fe80::e84e:50fd:edd6:66e4]) by AM0PR08MB3025.eurprd08.prod.outlook.com
+ ([fe80::e84e:50fd:edd6:66e4%3]) with mapi id 15.20.1361.018; Fri, 23 Nov 2018
+ 11:30:20 +0000
+From:   Brian Starkey <Brian.Starkey@arm.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        "linux-sunxi@googlegroups.com" <linux-sunxi@googlegroups.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Sean Paul <sean@poorly.run>, nd <nd@arm.com>
+Subject: Re: [PATCH v2 31/43] drm/sun4i: Add a dedicated ioctl call for
+ allocating tiled buffers
+Thread-Topic: [PATCH v2 31/43] drm/sun4i: Add a dedicated ioctl call for
+ allocating tiled buffers
+Thread-Index: AQHUgx/q489EEFisaUSe0aohlFTijA==
+Date:   Fri, 23 Nov 2018 11:30:20 +0000
+Message-ID: <20181123113019.43vrzvj42l35el7z@DESKTOP-E1NTVVP.localdomain>
+References: <20181123092515.2511-1-paul.kocialkowski@bootlin.com>
+ <20181123092515.2511-32-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20181123092515.2511-32-paul.kocialkowski@bootlin.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [131.228.32.165]
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-x-clientproxiedby: HE1PR09CA0082.eurprd09.prod.outlook.com
- (2603:10a6:7:3d::26) To HE1PR0701MB2729.eurprd07.prod.outlook.com
- (2603:10a6:3:99::7)
+user-agent: NeoMutt/20180716-849-147d51
+x-originating-ip: [217.140.106.52]
+x-clientproxiedby: CWLP123CA0001.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:401:56::13) To AM0PR08MB3025.eurprd08.prod.outlook.com
+ (2603:10a6:208:5c::10)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=alexander.sverdlin@nokia.com; 
+ smtp.mailfrom=Brian.Starkey@arm.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR0701MB2076;6:gdeSAoRoxAjArn8wOdog1yhYIt7ALg/OpZ9Ncl3Y/oA/Ygw+kPp7nFlXFATZ/givh4A3o8H5IwDOVjlJXMs6a1ou0O2aHCZ7KN3RZ7Q8AlNTFjlkB0sIpUBdIl19zflylrpe/J/U7/IHZ+hy1mabPWDNip0z23+s5EoeR2DSa3Xj0ocoT03WAvNA+dRBVLgWyd+SAw7Yc9oG4X2bjwpqEEd9nDGdXLevTgQzuh962S/XBCPXT4sldfDlgOY0UWZDDN6mNExvPICK3pgZDEcSJ5PS0tykIbMNin3i6CnEThCqX2y1XEqlox8ZSHofkrgLGx4/4ygQcEFUvkygH8XSfBexENj6SzypxzjGVNWb9OFSe4DXXOtpN/Z4M43KdsBJ9GIg5JSu3HK0tS6DAYkRukjYk1DFUprp6FBrvcsmsfRNkuBLf0VYd8jsCR+BBoB7XhqVG8PPVq4TM5aXaHPPZg==;5:DDP0o8F1GgnJF6dZp/6cdfIJvsGU9mLdJmCxdxG7zcwdlmKhlOXKtZsB7tIdWUveJJBWEH3Rimba/s+ifgcGld1ZPRZQdRJEF6+ZV6TNpqf7hoFK/NdFqBwvBo0oLuayy1tIvNAQpNSuULfb4WsuMKY5Fwcj6Zr31tSNAfLoQzU=;7:bHjETfAQlOJgqBfErKsrgU7JIKMsFkxnJFW2pvSy7UjAn7iItNnYS5o7zGnPt/09eF2wzqFeml0PwTIeCFqIsOZCnWBDxhzHk2Qx/m/SDQeDyN/3hbmLBUbFmLo4GMQdBSgW8GncMNrAjnjf6Pkjeg==
-x-ms-office365-filtering-correlation-id: 7ae2bbd4-211e-4a5a-1605-08d651376f54
+x-microsoft-exchange-diagnostics: 1;AM0PR08MB4099;6:Np1u0MqhcVW/t60jtXrxWg2bAFmVXfXSnu4tE5Wt8UBARd+WBKKJhEq0xnHSZcvIdZuZkPlXQ73jVjob7n14pxc6yZKWMfjgR0nrnClMKGRcFa+dAO/kfHaPRGKqIRvAo+HPrs7THd/tAZ6KbMuzbK08nWYgH48p9/Z3TiY+xYvU2aw1gibCSUkx0iuSeVEghQ3wIZCVQLSVQ9Y0chV6DBc5INVfoMkkbQwDVd8c0ZMs9nCVEFs73BboG72CKc1hlr0OnxYgJ35U22W4pvPXRqjyfLOo0nmwydeWpoa+mWtqH5ANr8ErgzE5/IT94XsSq70R+EYun2Zo1PlAfW8XhrP7EyRg74rNIAzbJuArSFKfbvHG+oBIKsXMqOAdWbyJdoig+Zsh8Rcjet7kjG05CkF51PhajrfP00LiknYqNx6eSHUl3ZYFrfKH3ni2kNfUeHkqyp7LuELkvhiPPHOmDQ==;5:boJYrO8KywcUR+aE9rK8c33pJ1Bm6hAWgoEZ9/uVXKXvZ+A7A693DFsSBb4l/R8w8ruRqNToM5GCSRA3tIdVRBrJj9X6hO0NK5xkdXfr2ayUMuT1jUYaRTfHq2QELP1QFebfIJnWaH7v0faLEIIwTnanYijVJA8r7E/WreOCMzk=;7:fO64V9+NRxYFq3TR9tIxVQsShDhCIIJiV/Yd4H/laOgsLJYwQE4i56p8D9JwLxvjcRICfGCxwJtXk8CbWTbBiYn+jy9TiFWy1ScoYYAT/kRGH2AMcXa+Uwe7YgucyJ1GYQ/iFoZzZCvpKOIcReEAKQ==
+x-ms-office365-filtering-correlation-id: 6c9b9609-c860-4ef0-667f-08d651370cca
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:HE1PR0701MB2076;
-x-ms-traffictypediagnostic: HE1PR0701MB2076:
-x-microsoft-antispam-prvs: <HE1PR0701MB2076CA06B8AF4DE69B16258588D40@HE1PR0701MB2076.eurprd07.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB4099;
+x-ms-traffictypediagnostic: AM0PR08MB4099:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <AM0PR08MB4099E85A959E594F52B5C6EEF0D40@AM0PR08MB4099.eurprd08.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231442)(11241501184)(806099)(944501410)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:HE1PR0701MB2076;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0701MB2076;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231442)(944501410)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM0PR08MB4099;BCL:0;PCL:0;RULEID:;SRVR:AM0PR08MB4099;
 x-forefront-prvs: 086597191B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(376002)(366004)(346002)(136003)(199004)(189003)(2906002)(26005)(53936002)(486006)(6246003)(14444005)(256004)(11346002)(446003)(25786009)(2501003)(64126003)(97736004)(476003)(68736007)(2616005)(39060400002)(305945005)(6116002)(3846002)(65826007)(186003)(6512007)(5660300001)(4326008)(71200400001)(71190400001)(7736002)(2900100001)(31696002)(76176011)(2201001)(81156014)(6486002)(81166006)(8676002)(8936002)(31686004)(105586002)(386003)(86362001)(52116002)(99286004)(102836004)(6436002)(106356001)(316002)(6506007)(53546011)(478600001)(229853002)(36756003)(14454004)(66066001)(65956001)(65806001)(54906003)(110136005)(58126008)(473944003)(414714003);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0701MB2076;H:HE1PR0701MB2729.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(376002)(346002)(396003)(136003)(199004)(189003)(44832011)(229853002)(8936002)(105586002)(8676002)(6306002)(66066001)(6486002)(106356001)(81166006)(256004)(6436002)(81156014)(14444005)(33896004)(476003)(4326008)(11346002)(575784001)(86362001)(52116002)(99286004)(386003)(186003)(102836004)(486006)(7416002)(76176011)(6506007)(26005)(6246003)(54906003)(53936002)(478600001)(5660300001)(68736007)(14454004)(6916009)(1076002)(72206003)(3846002)(6116002)(71190400001)(71200400001)(97736004)(25786009)(316002)(9686003)(446003)(2906002)(7736002)(2900100001)(58126008)(6512007)(305945005)(2004002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB4099;H:AM0PR08MB3025.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 3mtbp2MzPdAv/13I/gTYjf8ko9qcmkQ41f9ATMd3UWPHVAn8JbiX+prAjFE121LcBPvD4+tkpeyJs31MBmJadz3Bb3JkjyBBxvdr7ENKXTE3L11dv1IaMNt/1n3K5p8cvHPoMEsf8VjM6dVCoLVohQC2pCboiPXQst8T+Dx4mmMlhrFIWqYKidRMu1Ft0Sh23Jjf+9dbOxiw85Ngu0JksP2W+wAV6QRtaP2lGFF1EQgZzGIfJo/2WBTGT9STwpH4xyVLjYWCdENJp9BtcleRgKkaA7k+7HphptwoqJpyXq69tb2hnM6qS7QkCWuO99kNjoN5NEgtG8vD9liAP2hvDznA/tqvtCSIFVlQHOjrBB8=
+x-microsoft-antispam-message-info: A8T7ncx16N5O9g629SSd3ufZSl26TzTZxDeCNCFDdLJP26/hH08jp+I/Es4qk4qtr8GhEGseAIquHegEkKsXWtFqK1JBytku5Oas44zq1yRcxTjaChMfR+VCPjO5ztjFVhT0msE63WC56gByqYLqgEo3yt9T9RylYZ1Buyg6GWL25a+8d9eGWrcY+vKmst0+Qw4Z75j7XDMUdP2Tqn2Wy8Q/wZKYcxR83qfFgE2RX6YdmrXjv5FbsMnCSJiSn0p0+q3LfcLpAv5NkZDzItD0BKnkIZzRiK5Jr48WzHDcgS8nMN+6LvEWyEn2Hld67p26GzDZ5rAsOvbGIdCprvP9wgfrpzJ6hKTFGlmUBVkRJ4w=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7589A192E7D21A48B0470B71C372E894@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3EC585BC2A7BAB48B698E197F41D16FD@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7ae2bbd4-211e-4a5a-1605-08d651376f54
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Nov 2018 11:33:07.5446
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c9b9609-c860-4ef0-667f-08d651370cca
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Nov 2018 11:30:20.2348
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0701MB2076
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB4099
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8gVHVkb3IsDQoNCk9uIDIzLzExLzIwMTggMTE6MzIsIFR1ZG9yLkFtYmFydXNAbWljcm9j
-aGlwLmNvbSB3cm90ZToNCj4+IEkndmUgdGVzdGVkIHRoaXMgcGF0Y2ggYW5kIGl0IGZpeGVzIHRo
-ZSBlcmFzZXNpemUgZm9yIFMyNUZTMTI4UyBhbmQNCj4+IG91ciAxMjhrIHBhcnRpdGlvbnMgYXJl
-IHdyaXRlYWJsZSBhZ2FpbiB3aXRoIHRoaXMgcGF0Y2guDQo+IEdvb2QuIFlvdSBzYWlkIHRoYXQg
-dGhlIGZsYXNoIGlzIGNvbmZpZ3VyZWQgaW4gbm9uLXVuaWZvcm0gbWFwcGluZyAoaHlicmlkDQo+
-IHNlY3RvciBvcHRpb24pLiBUaGVyZSBpcyBubyB1bmlmb3JtIGVyYXNlIHR5cGUgdGhhdCBjYW4g
-ZXJhc2UgdGhlIGVudGlyZQ0KPiBmbGFzaCBtZW1vcnkgYnkgaXRzIG93biwgc28gdGhlIGVyYXNl
-IHNob3VsZCBiZSBkb25lIHVzaW5nIHRoZSBub24tdW5pZm9ybQ0KPiBlcmFzZSBjb2RlIChzcGlf
-bm9yX2hhc191bmlmb3JtX2VyYXNlKCkgc2hvdWxkIHJldHVybiBmYWxzZSkuIERvZXMgdGhlDQo+
-IG5vbi11bmlmb3JtIGVyYXNlIHdvcmsgYXMgZXhwZWN0ZWQ/IA0KDQp1bmZvcnR1bmF0ZWx5LCBp
-dCBkb2Vzbid0LiBJIHdhcyB0b28gZmFzdCByZXBvcnRpbmcgdGhlIHN1Y2Nlc3MuLi4NClNvIGVy
-YXNlc2l6ZSBpcyBiYWNrIHRvIHRoZSB2YWx1ZSBiZWZvcmUgbm9uLXVuaWZvcm0gc3VwcG9ydCBw
-YXRjaGVzLA0KcGFydGl0aW9ucyBhcmUgbm90IG1hZGUgcmVhZCBvbmx5IGFueSBtb3JlLCBidXQg
-YWN0dWFsIHdyaXRlIG9yDQplcmFzZSBzdGlsbCBmYWlscy4NCg0KSSdsbCBpbnZlc3RpZ2F0ZSBm
-dXJ0aGVyLg0KDQpUYWtpbmcgaW50byBhY2NvdW50IHRoZSBjb21tZW50cyBmcm9tIEJvcmlzLCB3
-ZSBwcm9iYWJseSBuZWVkIHRoaXMgcGF0Y2gNCmFueXdheS4NCg0KPiBGb3IgZXhhbXBsZSwgaWYg
-dGhlIGh5YnJpZCBzZWN0aW9uIGlzIGF0IHRoZSB0b3Agb2YgdGhlIGFkZHJlc3Mgc3BhY2UsIHdo
-ZW4NCj4gdXNpbmcgbXRkX3V0aWxzOg0KPiAkIG10ZF9kZWJ1ZyBlcmFzZSAvZGV2L3lvdXJfbXRk
-IDQwOTYgMTI2OTc2DQo+IEkgd291bGQgZXhwZWN0IHRoZSB1c2Ugb2YgdGhlIGZvbGxvd2luZyBl
-cmFzZSB0eXBlczogNyo0aywgMzJrLCA2NGsNCj4gVGhlbiB3cml0ZSBhbmQgcmVhZCBiYWNrIHRv
-IGNoZWNrIGlmIHRoZSBlcmFzZSB3YXMgZG9uZSBjb3JyZWN0bHk6DQo+ICQgZGQgaWY9L2Rldi91
-cmFuZG9tIG9mPWluIGJzPTQwOTYgY291bnQ9MzENCj4gJCBtdGRfZGVidWcgd3JpdGUgL2Rldi95
-b3VyX210ZCA0MDk2IDEyNjk3NiBpbg0KPiAkIG10ZF9kZWJ1ZyByZWFkIC9kZXYveW91cl9tdGQg
-NDA5NiAxMjY5NzYgb3V0DQo+ICQgc2hhMXN1bSBpbiBvdXQNCj4gdGhlIG91dHB1dCBzaG91bGQg
-YmUgdGhlIHNhbWUuDQo+IA0KPiBGZWVsIGZyZWUgdG8gYWRkIHNvbWUgcHJpbnRzIGluIHRoZSBj
-b2RlIHRvIGJlIHN1cmUgdGhhdCBub24tdW5pZm9ybSBlcmFzZSBjb2RlDQo+IHNlbGVjdHMgdGhl
-IGNvcnJlY3QgZXJhc2UgdHlwZXMuDQo+IA0KDQotLSANCkJlc3QgcmVnYXJkcywNCkFsZXhhbmRl
-ciBTdmVyZGxpbi4NCg==
+Hi Paul,
+
+On Fri, Nov 23, 2018 at 10:25:03AM +0100, Paul Kocialkowski wrote:
+>This introduces a dedicated ioctl for allocating buffers for the VPU
+>tiling mode. It allows setting up buffers that comply to the hardware
+>alignment requirements, by aligning the stride and height to 32 bytes.
+>
+>Only YUV semiplanar and planar formats are allowed by the ioctl, as the
+>hardware does not support the tiling mode for other formats.
+
+What's the general feeling about a more generic version of this ioctl?
+There doesn't seem to be anything Allwinner-specific in the ioctl
+arguments.
+
+It effectively boils down to:
+
+	size =3D driver->get_fb_size_with_modifier(...);
+ 	cma_obj =3D drm_gem_cma_create(drm, size);
+
+It would look exactly the same for Mali-DP, and probably others too.
+Is it better to try and define something we can share instead of Arm
+adding another nearly identical ioctl() later?
+
+I think the minimal viable thing would be to just add modifiers to
+your structure (I put them first because padding):
+
+  struct drm_gem_create_with_modifiers {
+  	__u64 modifiers[4];
+  	__u32 height;
+  	__u32 width;
+  	__u32 format;
+  	/* handle, offsets, pitches, size will be returned */
+  	__u32 handle;
+  	__u32 pitches[4];
+  	__u32 offsets[4];
+  	__u64 size;
+  };
+
+Thanks,
+-Brian
+
+>
+>Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+>---
+> drivers/gpu/drm/sun4i/sun4i_drv.c | 89 +++++++++++++++++++++++++++++++
+> include/uapi/drm/sun4i_drm.h      | 42 +++++++++++++++
+> 2 files changed, 131 insertions(+)
+> create mode 100644 include/uapi/drm/sun4i_drm.h
+>
+>diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun=
+4i_drv.c
+>index ccdeae6299eb..5ae32973cf34 100644
+>--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
+>+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+>@@ -21,6 +21,7 @@
+> #include <drm/drm_gem_cma_helper.h>
+> #include <drm/drm_fb_helper.h>
+> #include <drm/drm_of.h>
+>+#include <drm/sun4i_drm.h>
+>
+> #include "sun4i_drv.h"
+> #include "sun4i_frontend.h"
+>@@ -28,6 +29,92 @@
+> #include "sun4i_tcon.h"
+> #include "sun8i_tcon_top.h"
+>
+>+int drm_sun4i_gem_create_tiled(struct drm_device *drm, void *data,
+>+			       struct drm_file *file_priv)
+>+{
+>+	struct drm_sun4i_gem_create_tiled *args =3D data;
+>+	struct drm_gem_cma_object *cma_obj;
+>+	struct drm_gem_object *gem_obj;
+>+	uint32_t luma_stride, chroma_stride;
+>+	uint32_t luma_height, chroma_height;
+>+	uint32_t chroma_width;
+>+	const struct drm_format_info *info;
+>+	int ret;
+>+
+>+	info =3D drm_format_info(args->format);
+>+	if (!info)
+>+		return -EINVAL;
+>+
+>+	/* The tiled output format only applies to non-packed YUV formats. */
+>+	if (!info->is_yuv || info->num_planes =3D=3D 1)
+>+		return -EINVAL;
+>+
+>+	memset(args->pitches, 0, sizeof(args->pitches));
+>+	memset(args->offsets, 0, sizeof(args->offsets));
+>+
+>+	/* Stride and height are aligned to 32 bytes for our tiled format. */
+>+	luma_stride =3D ALIGN(args->width, 32);
+>+	luma_height =3D ALIGN(args->height, 32);
+>+
+>+	chroma_width =3D args->width;
+>+
+>+	/* Semiplanar formats have both U and V data in their chroma plane. */
+>+	if (drm_format_info_is_yuv_semiplanar(info))
+>+		chroma_width *=3D 2;
+>+
+>+	chroma_stride =3D ALIGN(DIV_ROUND_UP(chroma_width, info->hsub), 32);
+>+	chroma_height =3D ALIGN(DIV_ROUND_UP(args->height, info->vsub), 32);
+>+
+>+	if (drm_format_info_is_yuv_semiplanar(info)) {
+>+		args->pitches[0] =3D luma_stride;
+>+		args->pitches[1] =3D chroma_stride;
+>+
+>+		args->offsets[0] =3D 0;
+>+		args->offsets[1] =3D luma_stride * luma_height;
+>+
+>+		args->size =3D luma_stride * luma_height +
+>+			     chroma_stride * chroma_height;
+>+	} else if (drm_format_info_is_yuv_planar(info)) {
+>+		args->pitches[0] =3D luma_stride;
+>+		args->pitches[1] =3D chroma_stride;
+>+		args->pitches[2] =3D chroma_stride;
+>+
+>+		args->offsets[0] =3D 0;
+>+		args->offsets[1] =3D luma_stride * luma_height;
+>+		args->offsets[2] =3D luma_stride * luma_height +
+>+				   chroma_stride * chroma_height;
+>+
+>+		args->size =3D luma_stride * luma_height +
+>+			     chroma_stride * chroma_height * 2;
+>+	} else {
+>+		/* No support for other formats in tiled mode. */
+>+		return -EINVAL;
+>+	}
+>+
+>+	cma_obj =3D drm_gem_cma_create(drm, args->size);
+>+	if (IS_ERR(cma_obj))
+>+		return PTR_ERR(cma_obj);
+>+
+>+	gem_obj =3D &cma_obj->base;
+>+
+>+	/*
+>+	 * allocate a id of idr table where the obj is registered
+>+	 * and handle has the id what user can see.
+>+	 */
+>+	ret =3D drm_gem_handle_create(file_priv, gem_obj, &args->handle);
+>+	/* drop reference from allocate - handle holds it now. */
+>+	drm_gem_object_put_unlocked(gem_obj);
+>+	if (ret)
+>+		return ret;
+>+
+>+	return PTR_ERR_OR_ZERO(cma_obj);
+>+}
+>+
+>+static const struct drm_ioctl_desc sun4i_drv_ioctls[] =3D {
+>+	DRM_IOCTL_DEF_DRV(SUN4I_GEM_CREATE_TILED, drm_sun4i_gem_create_tiled,
+>+			  DRM_UNLOCKED),
+>+};
+>+
+> static int drm_sun4i_gem_dumb_create(struct drm_file *file_priv,
+> 				     struct drm_device *drm,
+> 				     struct drm_mode_create_dumb *args)
+>@@ -44,6 +131,8 @@ static struct drm_driver sun4i_drv_driver =3D {
+> 	.driver_features	=3D DRIVER_GEM | DRIVER_MODESET | DRIVER_PRIME | DRIVER=
+_ATOMIC,
+>
+> 	/* Generic Operations */
+>+	.ioctls			=3D sun4i_drv_ioctls,
+>+	.num_ioctls		=3D ARRAY_SIZE(sun4i_drv_ioctls),
+> 	.fops			=3D &sun4i_drv_fops,
+> 	.name			=3D "sun4i-drm",
+> 	.desc			=3D "Allwinner sun4i Display Engine",
+>diff --git a/include/uapi/drm/sun4i_drm.h b/include/uapi/drm/sun4i_drm.h
+>new file mode 100644
+>index 000000000000..2c77584b057b
+>--- /dev/null
+>+++ b/include/uapi/drm/sun4i_drm.h
+>@@ -0,0 +1,42 @@
+>+/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
+>+/* sun4i_drm.h
+>+ *
+>+ * Copyright (C) 2018 Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+>+ *
+>+ * This program is free software; you can redistribute  it and/or modify =
+it
+>+ * under  the terms of  the GNU General  Public License as published by t=
+he
+>+ * Free Software Foundation;  either version 2 of the  License, or (at yo=
+ur
+>+ * option) any later version.
+>+ */
+>+
+>+#ifndef _UAPI_SUN4I_DRM_H_
+>+#define _UAPI_SUN4I_DRM_H_
+>+
+>+#include "drm.h"
+>+
+>+#if defined(__cplusplus)
+>+extern "C" {
+>+#endif
+>+
+>+struct drm_sun4i_gem_create_tiled {
+>+	__u32 height;
+>+	__u32 width;
+>+	__u32 format;
+>+	/* handle, offsets, pitches, size will be returned */
+>+	__u32 handle;
+>+	__u32 pitches[4];
+>+	__u32 offsets[4];
+>+	__u64 size;
+>+};
+>+
+>+#define DRM_SUN4I_GEM_CREATE_TILED	0x00
+>+
+>+#define DRM_IOCTL_SUN4I_GEM_CREATE_TILED \
+>+	DRM_IOWR(DRM_COMMAND_BASE + DRM_SUN4I_GEM_CREATE_TILED, \
+>+		 struct drm_sun4i_gem_create_tiled)
+>+
+>+#if defined(__cplusplus)
+>+}
+>+#endif
+>+
+>+#endif /* _UAPI_SUN4I_DRM_H_ */
+>--=20
+>2.19.1
+>
+>_______________________________________________
+>dri-devel mailing list
+>dri-devel@lists.freedesktop.org
+>https://lists.freedesktop.org/mailman/listinfo/dri-devel
