@@ -2,95 +2,97 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64194C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 16:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F85C04EBB
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 16:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CB842086B
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 16:34:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CB842086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osadl.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C08B20874
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 16:46:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C08B20874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbeKYDXd (ORCPT
+        id S1726296AbeKYDe7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 22:23:33 -0500
-Received: from www.osadl.org ([62.245.132.105]:37281 "EHLO www.osadl.org"
+        Sat, 24 Nov 2018 22:34:59 -0500
+Received: from mga04.intel.com ([192.55.52.120]:18828 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725777AbeKYDXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 22:23:32 -0500
-Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59])
-        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id wAOGXQgb014525;
-        Sat, 24 Nov 2018 17:33:26 +0100
-From:   Nicholas Mc Guire <hofrat@osadl.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH] pinctrl: rza1: report if devm_kasptrinf() fails
-Date:   Sat, 24 Nov 2018 17:30:33 +0100
-Message-Id: <1543077033-7016-1-git-send-email-hofrat@osadl.org>
-X-Mailer: git-send-email 2.1.4
+        id S1725774AbeKYDe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Nov 2018 22:34:59 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Nov 2018 08:46:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,273,1539673200"; 
+   d="scan'208";a="108940436"
+Received: from asalamon-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.95])
+  by fmsmga004.fm.intel.com with ESMTP; 24 Nov 2018 08:45:39 -0800
+Date:   Sat, 24 Nov 2018 08:45:34 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Dr. Greg" <greg@enjellic.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181124164534.GC30310@linux.intel.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
+ <20181119161917.GF13298@linux.intel.com>
+ <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
+ <20181120120442.GA22172@linux.intel.com>
+ <20181122111253.GA31150@wind.enjellic.com>
+ <CALCETrV4wOpk7wf9+ywd50PekGjfT7LNtwqHhcV08=oxPmKtKQ@mail.gmail.com>
+ <20181123103923.GA13851@wind.enjellic.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181123103923.GA13851@wind.enjellic.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devm_kasprintf() may return NULL on failure of internal allocation 
-thus the assignments are not safe if not checked. On error
-rza1_pinctrl_register() respectively rza1_parse_gpiochip() return
-negative values so -ENOMEM in the (unlikely) failure case of 
-devm_kasprintf() should be fine here. 
+On Fri, Nov 23, 2018 at 04:39:23AM -0600, Dr. Greg wrote:
+> Jarkko, when this driver lands it will set the SGX ABI in stone for
+> Linux.  It would be very, very helpful to the development community if
+> there was some official guidance from Intel on whether or not FLC will
+> be a universal feature on all hardware and the date that is going to
+> happen or has happened.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
----
+I seriously don't know but I can take this message to the mothership...
 
-Problem was located with an experimental coccinelle script
+> If this turns out to be an OEM selectable issue via firmware
+> customizations, things will be even more problematic.
 
-The dev_err() for this unlikely case is added so that a failures of
-rza1_pinctrl_register() respectively rza1_parse_gpiochip() can be
-understood as currently the negative return value is simply passed up
-the call stack but it would be hard to identify the cause.
+Point taken.
 
-Patch was compile tested with: shmobile_defconfig (implies PINCTRL_RZA1=y)
+> As things stand now, the proposed mainline SGX driver is going to be
+> useless for a lot of hardware that is out in the field.  Linux has
+> always had the reputation for supporting legacy hardware so this
+> directly contravenes that principal and needlessly so.
 
-Patch is against 4.20-rc3 (localversion-next is next-20181123)
+I do get your point about supporting the legacy. I'm wondering if this
+is still a deal breaker for Linux or not.
 
- drivers/pinctrl/pinctrl-rza1.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
-index 14eb576..2533df4 100644
---- a/drivers/pinctrl/pinctrl-rza1.c
-+++ b/drivers/pinctrl/pinctrl-rza1.c
-@@ -1225,6 +1225,11 @@ static int rza1_parse_gpiochip(struct rza1_pinctrl *rza1_pctl,
- 	chip->base	= -1;
- 	chip->label	= devm_kasprintf(rza1_pctl->dev, GFP_KERNEL, "%pOFn",
- 					 np);
-+	if (!chip->label) {
-+		dev_err(rza1_pctl->dev, "Failed to allocate label\n");
-+		return -ENOMEM;
-+	}
-+
- 	chip->ngpio	= of_args.args[2];
- 	chip->of_node	= np;
- 	chip->parent	= rza1_pctl->dev;
-@@ -1326,6 +1331,11 @@ static int rza1_pinctrl_register(struct rza1_pinctrl *rza1_pctl)
- 		pins[i].number = i;
- 		pins[i].name = devm_kasprintf(rza1_pctl->dev, GFP_KERNEL,
- 					      "P%u-%u", port, pin);
-+		if (!pins[i].name) {
-+			dev_err(rza1_pctl->dev,
-+				"RZ/A1 pin controller allocation failed\n");
-+			return -ENOMEM;
-+		}
- 
- 		if (i % RZA1_PINS_PER_PORT == 0) {
- 			/*
--- 
-2.1.4
-
+/Jarkko
