@@ -2,91 +2,119 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4CDC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 09:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 725F7C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 09:59:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05A9220865
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 09:57:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fmBaIyev"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05A9220865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	by mail.kernel.org (Postfix) with ESMTP id 381D920865
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 09:59:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381D920865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbeKXUpb (ORCPT
+        id S1726135AbeKXUre (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 15:45:31 -0500
-Received: from m12-13.163.com ([220.181.12.13]:60059 "EHLO m12-13.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725940AbeKXUpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 15:45:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=7J89eZ5fW8/oS2WhaN
-        DIG5+D61MYEvp2nIuYqqeYPZo=; b=fmBaIyevuH37KFRuqYQlE+vZXg0cDhTzch
-        E6T+fbPBnm8z5k02XPNduecKKA8HX7k6+IHZiDbBSDGnDB1YGGkQCMzr3lzC1BK1
-        X7t/umUNcP+CTI3IEl6U91MTU8tWsnUGv8S2wKHMnpDmCEIDn/uCWEW4Zqh+0/B8
-        MAcUAO/UU=
-Received: from bp.localdomain (unknown [106.120.213.96])
-        by smtp9 (Coremail) with SMTP id DcCowAA3zhaAIPlb6G5XBg--.53608S3;
-        Sat, 24 Nov 2018 17:57:25 +0800 (CST)
-From:   Pan Bian <bianpan2016@163.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        ernesto.mnd.fernandez@gmail.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Pan Bian <bianpan2016@163.com>
-Subject: [PATCH 1/1] hfsplus: do not free node before using
-Date:   Sat, 24 Nov 2018 17:57:21 +0800
-Message-Id: <1543053441-66942-1-git-send-email-bianpan2016@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: DcCowAA3zhaAIPlb6G5XBg--.53608S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtr1DCw1xCFy5WF43tF48Xrb_yoWfGFc_Xa
-        1I9as7t3yrJFZ7JrZxArZ8t3sFgF4rG3s7Ww4xtF1Yk3yjyan8Jr1kZrnYkryfurWYqr15
-        JrWktry5Ga4UXjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0sYFJUUUUU==
-X-Originating-IP: [106.120.213.96]
-X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/1tbiQAIJclSIYSB5fQAAsg
+        Sat, 24 Nov 2018 15:47:34 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36169 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725940AbeKXUre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Nov 2018 15:47:34 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 505FB53A07F94;
+        Sat, 24 Nov 2018 17:59:28 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Sat, 24 Nov 2018
+ 17:59:21 +0800
+Subject: Re: [f2fs-dev] [PATCH] f2fs: check memory boundary by insane namelen
+To:     Sheng Yong <shengyong1@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20181115075040.83500-1-jaegeuk@kernel.org>
+ <3d213d40-a4b0-6e60-87b2-81e66866ac4c@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <1d801acd-ed1e-3593-45e6-ad71b27e4c7a@huawei.com>
+Date:   Sat, 24 Nov 2018 17:59:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <3d213d40-a4b0-6e60-87b2-81e66866ac4c@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function hfs_bmap_free frees node via hfs_bnode_put(node).
-However, it then reads node->this when dumping error message on an error
-path, which may result in a use-after-free bug. This patch frees node
-only when it is never used.
+Hi Sheng,
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
----
- fs/hfsplus/btree.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 2018/11/23 20:11, Sheng Yong wrote:
+> Hi, Jaegeuk and Chao,
+> 
+> On 2018/11/15 15:50, Jaegeuk Kim wrote:
+>> If namelen is corrupted to have very long value, fill_dentries can copy
+>> wrong memory area.
+>>
+> Is there any scenario that could hit this corruption? Or this is triggered
 
-diff --git a/fs/hfsplus/btree.c b/fs/hfsplus/btree.c
-index 236efe5..66774f4 100644
---- a/fs/hfsplus/btree.c
-+++ b/fs/hfsplus/btree.c
-@@ -466,14 +466,15 @@ void hfs_bmap_free(struct hfs_bnode *node)
- 
- 		nidx -= len * 8;
- 		i = node->next;
--		hfs_bnode_put(node);
- 		if (!i) {
- 			/* panic */;
- 			pr_crit("unable to free bnode %u. "
- 					"bmap not found!\n",
- 				node->this);
-+			hfs_bnode_put(node);
- 			return;
- 		}
-+		hfs_bnode_put(node);
- 		node = hfs_bnode_find(tree, i);
- 		if (IS_ERR(node))
- 			return;
--- 
-2.7.4
+I didn't see such issue in my test, I guess it may be caused by fuzzing test.
 
+Thanks,
+
+> by fuzzing injection?
+> 
+> thanks,
+> Sheng Yong
+> 
+>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>> ---
+>>   fs/f2fs/dir.c | 12 +++++++++++-
+>>   1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+>> index bacc667950b6..c0c845da12fa 100644
+>> --- a/fs/f2fs/dir.c
+>> +++ b/fs/f2fs/dir.c
+>> @@ -808,6 +808,17 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+>>   		de_name.name = d->filename[bit_pos];
+>>   		de_name.len = le16_to_cpu(de->name_len);
+>>   
+>> +		/* check memory boundary before moving forward */
+>> +		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+>> +		if (unlikely(bit_pos > d->max)) {
+>> +			f2fs_msg(sbi->sb, KERN_WARNING,
+>> +				"%s: corrupted namelen=%d, run fsck to fix.",
+>> +				__func__, le16_to_cpu(de->name_len));
+>> +			set_sbi_flag(sbi, SBI_NEED_FSCK);
+>> +			err = -EINVAL;
+>> +			goto out;
+>> +		}
+>> +
+>>   		if (f2fs_encrypted_inode(d->inode)) {
+>>   			int save_len = fstr->len;
+>>   
+>> @@ -830,7 +841,6 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+>>   		if (readdir_ra)
+>>   			f2fs_ra_node_page(sbi, le32_to_cpu(de->ino));
+>>   
+>> -		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
+>>   		ctx->pos = start_pos + bit_pos;
+>>   	}
+>>   out:
+>>
+> 
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> 
+> 
 
