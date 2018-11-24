@@ -2,119 +2,78 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 725F7C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 09:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 941E9C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 10:19:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 381D920865
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 09:59:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381D920865
+	by mail.kernel.org (Postfix) with ESMTP id 5778120868
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 10:19:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5778120868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbeKXUre (ORCPT
+        id S1726126AbeKXVHc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 15:47:34 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:36169 "EHLO huawei.com"
+        Sat, 24 Nov 2018 16:07:32 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43893 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725940AbeKXUre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 15:47:34 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 505FB53A07F94;
-        Sat, 24 Nov 2018 17:59:28 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Sat, 24 Nov 2018
- 17:59:21 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: check memory boundary by insane namelen
-To:     Sheng Yong <shengyong1@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20181115075040.83500-1-jaegeuk@kernel.org>
- <3d213d40-a4b0-6e60-87b2-81e66866ac4c@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <1d801acd-ed1e-3593-45e6-ad71b27e4c7a@huawei.com>
-Date:   Sat, 24 Nov 2018 17:59:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1725940AbeKXVHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Nov 2018 16:07:32 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7318636812038;
+        Sat, 24 Nov 2018 18:19:18 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Sat, 24 Nov 2018
+ 18:19:14 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <igor.russkikh@aquantia.com>,
+        <nikita.danilov@aquantia.com>, <yana.esina@aquantia.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] net: aquantia: return 'err' if set MPI_DEINIT state fails
+Date:   Sat, 24 Nov 2018 18:16:41 +0800
+Message-ID: <20181124101641.7072-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <3d213d40-a4b0-6e60-87b2-81e66866ac4c@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sheng,
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-On 2018/11/23 20:11, Sheng Yong wrote:
-> Hi, Jaegeuk and Chao,
-> 
-> On 2018/11/15 15:50, Jaegeuk Kim wrote:
->> If namelen is corrupted to have very long value, fill_dentries can copy
->> wrong memory area.
->>
-> Is there any scenario that could hit this corruption? Or this is triggered
+drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c:260:7:
+ warning: variable 'err' set but not used [-Wunused-but-set-variable]
 
-I didn't see such issue in my test, I guess it may be caused by fuzzing test.
+'err' should be returned while set MPI_DEINIT state fails
+in hw_atl_utils_soft_reset.
 
-Thanks,
+Fixes: cce96d1883da ("net: aquantia: Regression on reset with 1.x firmware")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> by fuzzing injection?
-> 
-> thanks,
-> Sheng Yong
-> 
->> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->> ---
->>   fs/f2fs/dir.c | 12 +++++++++++-
->>   1 file changed, 11 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
->> index bacc667950b6..c0c845da12fa 100644
->> --- a/fs/f2fs/dir.c
->> +++ b/fs/f2fs/dir.c
->> @@ -808,6 +808,17 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
->>   		de_name.name = d->filename[bit_pos];
->>   		de_name.len = le16_to_cpu(de->name_len);
->>   
->> +		/* check memory boundary before moving forward */
->> +		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
->> +		if (unlikely(bit_pos > d->max)) {
->> +			f2fs_msg(sbi->sb, KERN_WARNING,
->> +				"%s: corrupted namelen=%d, run fsck to fix.",
->> +				__func__, le16_to_cpu(de->name_len));
->> +			set_sbi_flag(sbi, SBI_NEED_FSCK);
->> +			err = -EINVAL;
->> +			goto out;
->> +		}
->> +
->>   		if (f2fs_encrypted_inode(d->inode)) {
->>   			int save_len = fstr->len;
->>   
->> @@ -830,7 +841,6 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
->>   		if (readdir_ra)
->>   			f2fs_ra_node_page(sbi, le32_to_cpu(de->ino));
->>   
->> -		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
->>   		ctx->pos = start_pos + bit_pos;
->>   	}
->>   out:
->>
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> 
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
+index 1af6606..9b74a31 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
+@@ -263,6 +263,8 @@ int hw_atl_utils_soft_reset(struct aq_hw_s *self)
+ 		AQ_HW_WAIT_FOR((aq_hw_read_reg(self, HW_ATL_MPI_STATE_ADR) &
+ 				HW_ATL_MPI_STATE_MSK) == MPI_DEINIT,
+ 			       10, 1000U);
++		if (err)
++			return err;
+ 	}
+ 
+ 	if (self->rbl_enabled)
+-- 
+2.7.0
+
 
