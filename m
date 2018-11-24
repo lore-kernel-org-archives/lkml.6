@@ -2,115 +2,136 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C98C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 17:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 242C0C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 17:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 445AD20874
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 17:32:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LXb84wO7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 445AD20874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E17AD20865
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 17:40:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E17AD20865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726348AbeKYEVD (ORCPT
+        id S1726428AbeKYE27 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 23:21:03 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33518 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbeKYEVD (ORCPT
+        Sat, 24 Nov 2018 23:28:59 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:55247 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbeKYE27 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 23:21:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=lJ3kHbsE2hFcf68m/vu/0cee4kk5HDlgXUX+/syPk60=; b=LXb84wO759I7gWO52ZbI3Ks4wW
-        HcfBXZ5PoQAbZ14FHGNVMljl0tBD5/UJ5Mm7NeInnHFGXKdEcxNVoaPmU9rJzfB0jMZPOyzS+/rN9
-        aUQHmvZg3Fm5S7SKy5iHvmuQqjyH+oyNC4dzLQwetYyJsCfoO293LWqhxf2aYgNh/g0XeZP+ihdKy
-        DotBGTdq8Cnc+4d7LL5/oNVQVJmm1oLf1H70P99VJUXogU3q8t7gk4toEQUgRNBa042pjFfnMNGjm
-        Yf5DDQV+a3DJovLTX9g5tXz5XqBdgPhDVmjd9yFR1pqK4UxOQDUmPCN01YJgayPD3drZHidPZ/NGw
-        Ocja5/rw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gQbmr-00040D-VG; Sat, 24 Nov 2018 17:32:09 +0000
-Date:   Sat, 24 Nov 2018 09:32:09 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [GIT PULL] XArray updates
-Message-ID: <20181124173209.GZ3065@bombadil.infradead.org>
+        Sat, 24 Nov 2018 23:28:59 -0500
+Received: by mail-io1-f69.google.com with SMTP id f24so14135144ioh.21
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 09:40:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=XrEutnY5Vj/QyRcAYMGIeSlHjp5B9L+bHpCgLhSQHXs=;
+        b=t4GLUvGePR/v+4znL3jFLYckG1SiBVaPMqjsFkwl/8qzjuD1y5AELDve9lnOrQMjMy
+         wEb33Hmypp9HEfZrtU8CcQe2xS5YZocujdiBq33nZh//wMTjXXduVxJdUj6BiEYRJEf7
+         1AiwSinPmdW9WnLqxtaovaYxwrEk9/xRDiw4m1oxSCExga3pVVqxljXfqiauFt1mnObu
+         +EO+CxDE5ko6Osrh9I1+hXlLH7Gv6M4sOG7CHcPaVDOzkgg/0kKoN2pMJ+hgS/u/JJss
+         5P66j28Rzvip7EZmpFK/82Pr+jryTeNnyjl1E6vV4dLOd8l83Kc7unfc+YS0NUfvmUcs
+         3hJg==
+X-Gm-Message-State: AGRZ1gJVNWOU+V3YZ/h98Rj1t/VWKE8XzWwylX/Sbz1MUeEeU8ZFaWRU
+        Yi3ZxlOO6hfrIGJ7mhWh+dCsZdZw5p0jWd0xZfChhX04zaCw
+X-Google-Smtp-Source: AJdET5cNDV13tXNLvv2AU57GveLiYL2xoGT5sSWeeoyUDnBMuDAwcdN9MiYwIiwWubdizRq+sxdXHXC4Iyl/eNKX8TphgJpN1hBj
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Received: by 2002:a24:3653:: with SMTP id l80mr13928023itl.3.1543081204530;
+ Sat, 24 Nov 2018 09:40:04 -0800 (PST)
+Date:   Sat, 24 Nov 2018 09:40:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000e4a41057b6c9792@google.com>
+Subject: WARNING: syz-executor still has locks held!
+From:   syzbot <syzbot+b70f2aabc707c69c9239@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
-Hi Linus,
+syzbot found the following crash on:
 
-We found some bugs in the DAX conversion to XArray (and one bug which
-predated the XArray conversion).  There were a couple of bugs in some of
-the higher-level functions, which aren't actually being called in today's
-kernel, but surfaced as a result of converting existing radix tree &
-IDR users over to the XArray.  Some of the other changes to how the
-higher-level APIs work were also motivated by converting various users;
-again, they're not in use in today's kernel, so changing them has a low
-probability of introducing a bug.
+HEAD commit:    7c98a4261827 Merge tag 'ceph-for-4.20-rc4' of https://gith..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12d81015400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=73e2bc0cb6463446
+dashboard link: https://syzkaller.appspot.com/bug?extid=b70f2aabc707c69c9239
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16c9e26d400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e1234d400000
 
-Dan can still trigger a bug in the DAX code with hot-offline/online,
-and we're working on tracking that down.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+b70f2aabc707c69c9239@syzkaller.appspotmail.com
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+audit: type=1400 audit(1543059836.603:35): avc:  denied  { map } for   
+pid=6203 comm="bash" path="/bin/bash" dev="sda1" ino=1457  
+scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
+tcontext=system_u:object_r:file_t:s0 tclass=file permissive=1
+audit: type=1400 audit(1543059843.273:36): avc:  denied  { map } for   
+pid=6217 comm="syz-executor552" path="/root/syz-executor552394561"  
+dev="sda1" ino=16483 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
+tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+====================================
+WARNING: syz-executor552/6218 still has locks held!
+4.20.0-rc3+ #127 Not tainted
+------------------------------------
+1 lock held by syz-executor552/6218:
+  #0: 000000004754a9eb (&sig->cred_guard_mutex){+.+.}, at:  
+prepare_bprm_creds+0x53/0x120 fs/exec.c:1405
 
-are available in the Git repository at:
-
-  git://git.infradead.org/users/willy/linux-dax.git xarray
-
-for you to fetch changes up to fffc9a260e38acec3187515738122a3ecb24ac90:
-
-  XArray tests: Add missing locking (2018-11-19 09:41:11 -0500)
-
-----------------------------------------------------------------
-Matthew Wilcox (19):
-      XArray: Fix xa_for_each with a single element at 0
-      XArray: Export __xa_foo to non-GPL modules
-      nilfs2: Use xa_erase_irq
-      XArray: Regularise xa_reserve
-      XArray: Unify xa_cmpxchg and __xa_cmpxchg
-      XArray: Turn xa_erase into an exported function
-      XArray: Add xa_store_bh() and xa_store_irq()
-      XArray: Unify xa_store and __xa_store
-      XArray: Handle NULL pointers differently for allocation
-      XArray: Fix Documentation
-      XArray: Correct xa_store_range
-      XArray tests: Correct some 64-bit assumptions
-      dax: Remove optimisation from dax_lock_mapping_entry
-      dax: Make sure the unlocking entry isn't locked
-      dax: Reinstate RCU protection of inode
-      dax: Fix dax_unlock_mapping_entry for PMD pages
-      dax: Fix huge page faults
-      dax: Avoid losing wakeup in dax_lock_mapping_entry
-      XArray tests: Add missing locking
-
- Documentation/core-api/xarray.rst |  52 ++++++--
- fs/dax.c                          |  60 +++++----
- fs/nilfs2/btnode.c                |   4 +-
- include/linux/xarray.h            | 267 +++++++++++++++++++++++++++++---------
- lib/test_xarray.c                 |  50 ++++++-
- lib/xarray.c                      | 139 +++++++++-----------
- 6 files changed, 387 insertions(+), 185 deletions(-)
+stack backtrace:
+CPU: 0 PID: 6218 Comm: syz-executor552 Not tainted 4.20.0-rc3+ #127
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_held_locks_bug kernel/locking/lockdep.c:4362 [inline]
+  debug_check_no_locks_held.cold.49+0x93/0x9f kernel/locking/lockdep.c:4368
+  try_to_freeze include/linux/freezer.h:66 [inline]
+  freezer_count include/linux/freezer.h:128 [inline]
+  freezable_schedule include/linux/freezer.h:173 [inline]
+  de_thread fs/exec.c:1115 [inline]
+  flush_old_exec+0x1ea2/0x2480 fs/exec.c:1262
+  load_elf_binary+0xa39/0x5620 fs/binfmt_elf.c:869
+  search_binary_handler+0x17d/0x570 fs/exec.c:1654
+  exec_binprm fs/exec.c:1696 [inline]
+  __do_execve_file.isra.33+0x1661/0x25d0 fs/exec.c:1820
+  do_execveat_common fs/exec.c:1867 [inline]
+  do_execveat fs/exec.c:1895 [inline]
+  __do_sys_execveat fs/exec.c:1976 [inline]
+  __se_sys_execveat fs/exec.c:1968 [inline]
+  __x64_sys_execveat+0xed/0x130 fs/exec.c:1968
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x445639
+Code: e8 ec b8 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 8b 12 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f5efaee7d18 EFLAGS: 00000246 ORIG_RAX: 0000000000000142
+RAX: ffffffffffffffda RBX: 00000000006dac28 RCX: 0000000000445639
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000003
+RBP: 00000000006dac20 R08: 0000000000001000 R09: 65732f636f72702f
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5efaee7d20
+R13: 00000000006dac2c R14: 0000000020000280 R15: 00000000006dad2c
 
 
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
