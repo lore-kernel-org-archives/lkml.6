@@ -2,97 +2,138 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F85C04EBB
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 16:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0348C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 17:05:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C08B20874
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 16:46:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C08B20874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9251E2086B
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 17:05:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="g7Acg427"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9251E2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbeKYDe7 (ORCPT
+        id S1726316AbeKYDyh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 22:34:59 -0500
-Received: from mga04.intel.com ([192.55.52.120]:18828 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725774AbeKYDe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 22:34:59 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Nov 2018 08:46:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,273,1539673200"; 
-   d="scan'208";a="108940436"
-Received: from asalamon-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.95])
-  by fmsmga004.fm.intel.com with ESMTP; 24 Nov 2018 08:45:39 -0800
-Date:   Sat, 24 Nov 2018 08:45:34 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Dr. Greg" <greg@enjellic.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        haitao.huang@linux.intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181124164534.GC30310@linux.intel.com>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
- <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
- <20181119161917.GF13298@linux.intel.com>
- <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
- <20181120120442.GA22172@linux.intel.com>
- <20181122111253.GA31150@wind.enjellic.com>
- <CALCETrV4wOpk7wf9+ywd50PekGjfT7LNtwqHhcV08=oxPmKtKQ@mail.gmail.com>
- <20181123103923.GA13851@wind.enjellic.com>
+        Sat, 24 Nov 2018 22:54:37 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:33136 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725880AbeKYDyh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Nov 2018 22:54:37 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAOH2CVa126891;
+        Sat, 24 Nov 2018 17:05:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
+ bh=8iKRPJPWj3gkdXJ+PdZeL7RkqMOadVCZ9tj7qEjgHJY=;
+ b=g7Acg427O0jYqZOMsK0jzwkN24Myo7gdhdagXJu5cHha44ilxvNsHT7aWR62wqh89xzs
+ MAKSEa5Qt5dVxuOUEDpnBuNy4aApiVOnEkDVOe9W7N7uQ6OJ2wgJrQ/qH6OGtwCPQKzQ
+ 36k3FRuAqcU0etEijS3eal9+P6VHtu/rjVXrtjS8smln0jwlSu9FK+9kj/ef/SsijDVf
+ KgaCEzPSgFOSsGL9BB1aH51WXU3EExuWNPdZ0cmEjGeMaWsP8CUmBLSwbu0/Tx2qBVTY
+ KH7i/eWCJlgQpeu1kVMoWhCP1jnTQOxBHDsou3ucTemXSvJJxsuIFm3orp+hwyaRrcUs cQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2nxx2ts16d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 24 Nov 2018 17:05:42 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAOH5fi8030614
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 24 Nov 2018 17:05:41 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAOH5euv023442;
+        Sat, 24 Nov 2018 17:05:40 GMT
+Received: from localhost (/10.159.224.29)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sat, 24 Nov 2018 09:05:40 -0800
+Date:   Sat, 24 Nov 2018 09:05:40 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     torvalds@linux-foundation.org
+Cc:     Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, sandeen@sandeen.net
+Subject: [GIT PULL] xfs: fixes for v4.20-rc4
+Message-ID: <20181124170540.GY6792@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181123103923.GA13851@wind.enjellic.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9087 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=4 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811240162
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 04:39:23AM -0600, Dr. Greg wrote:
-> Jarkko, when this driver lands it will set the SGX ABI in stone for
-> Linux.  It would be very, very helpful to the development community if
-> there was some official guidance from Intel on whether or not FLC will
-> be a universal feature on all hardware and the date that is going to
-> happen or has happened.
+Hi Linus,
 
-I seriously don't know but I can take this message to the mothership...
+Dave and I have continued our work fixing corruption problems that can
+be found when running long-term burn-in exercisers on xfs.  Here are
+some patches fixing most of the problems, but there will likely be more.
+:/
 
-> If this turns out to be an OEM selectable issue via firmware
-> customizations, things will be even more problematic.
+Anyhow, this series merges cleanly with master as of last night, so
+please let me know if you encounter problems.
 
-Point taken.
+--D
 
-> As things stand now, the proposed mainline SGX driver is going to be
-> useless for a lot of hardware that is out in the field.  Linux has
-> always had the reputation for supporting legacy hardware so this
-> directly contravenes that principal and needlessly so.
+The following changes since commit 837514f7a4ca4aca06aec5caa5ff56d33ef06976:
 
-I do get your point about supporting the legacy. I'm wondering if this
-is still a deal breaker for Linux or not.
+  xfs: fix overflow in xfs_attr3_leaf_verify (2018-11-06 07:50:50 -0800)
 
-/Jarkko
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-4.20-fixes-2
+
+for you to fetch changes up to 8c110d43c6bca4b24dd13272a9d4e0ba6f2ec957:
+
+  iomap: readpages doesn't zero page tail beyond EOF (2018-11-21 10:10:54 -0800)
+
+----------------------------------------------------------------
+Changes since last update:
+- Numerous corruption fixes for copy on write
+- Numerous corruption fixes for blocksize < pagesize writes
+- Don't miscalculate AG reservations for small final AGs
+- Fix page cache truncation to work properly for reflink and extent
+  shifting
+- Fix use-after-free when retrying failed inode/dquot buffer logging
+- Fix corruptions seen when using copy_file_range in directio mode
+
+----------------------------------------------------------------
+Brian Foster (1):
+      xfs: fix shared extent data corruption due to missing cow reservation
+
+Dave Chinner (11):
+      xfs: uncached buffer tracing needs to print bno
+      xfs: fix transient reference count error in xfs_buf_resubmit_failed_buffers
+      xfs: finobt AG reserves don't consider last AG can be a runt
+      xfs: extent shifting doesn't fully invalidate page cache
+      xfs: flush removing page cache in xfs_reflink_remap_prep
+      xfs: delalloc -> unwritten COW fork allocation can go wrong
+      iomap: FUA is wrong for DIO O_DSYNC writes into unwritten extents
+      iomap: sub-block dio needs to zeroout beyond EOF
+      iomap: dio data corruption and spurious errors when pipes fill
+      vfs: vfs_dedupe_file_range() doesn't return EOPNOTSUPP
+      iomap: readpages doesn't zero page tail beyond EOF
+
+Eric Biggers (1):
+      xfs: make xfs_file_remap_range() static
+
+ fs/iomap.c                       | 53 +++++++++++++++++++++++++++++++---------
+ fs/read_write.c                  | 15 ++++++------
+ fs/xfs/libxfs/xfs_bmap.c         |  5 +++-
+ fs/xfs/libxfs/xfs_ialloc_btree.c | 11 ++++++---
+ fs/xfs/xfs_bmap_util.c           | 10 ++------
+ fs/xfs/xfs_bmap_util.h           |  3 +++
+ fs/xfs/xfs_buf_item.c            | 28 +++++++++++++++------
+ fs/xfs/xfs_file.c                |  2 +-
+ fs/xfs/xfs_reflink.c             | 18 +++++++++++---
+ fs/xfs/xfs_trace.h               |  5 +++-
+ 10 files changed, 104 insertions(+), 46 deletions(-)
