@@ -2,174 +2,86 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3566FC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 02:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 071B6C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 02:21:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAD1820868
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 02:21:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACC2420868
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 02:21:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ECkwDzlf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAD1820868
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jrR8NlTM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACC2420868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729496AbeKXNH5 (ORCPT
+        id S1729553AbeKXNIe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 08:07:57 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:40957 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729395AbeKXNH4 (ORCPT
+        Sat, 24 Nov 2018 08:08:34 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:36001 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729268AbeKXNId (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 08:07:56 -0500
-Received: by mail-yw1-f68.google.com with SMTP id r130so2260718ywg.7;
-        Fri, 23 Nov 2018 18:21:18 -0800 (PST)
+        Sat, 24 Nov 2018 08:08:33 -0500
+Received: by mail-yw1-f65.google.com with SMTP id y194so5433447ywg.3;
+        Fri, 23 Nov 2018 18:21:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=pybU4UWqYrI/CLuRvloJW5CDHGp6lmNrtOX4JnoQECY=;
-        b=ECkwDzlfHDfN/rSSNJPyrwcOmULh/6nwUBuAyJcPQlJtuB9Z+DBpg7UJafpjhdPh15
-         BYlsgXMrMngviycTTbxpTSS5b+z65xX7WpZ97tUMvQ5+QLW68z/SsH/myzkBK2Lj95lq
-         4FZviQYA+4w7OGmXY8cvXUsszY01Dx6yZTlHZIK0o5p/NF8aj5XVvk2kfTe0MPDeUshY
-         7MUU5lFW3QuX93zYKdP7iOEYV8IsOgVEWMsscFsmJ0xv7XMKltgsn6u9PBx2ZzDlhBtw
-         fa3FG7SaCM1+tXfe/ZQY6B/vCZ1gb9K6xT7ZMo4NV1/PnM/BW5zareZIVrUYcnFtXA4Z
-         ybFQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=SHCpJgQOyYa7KsP6Plz6WSDqViwp9jY3Fiu+zuCVWKw=;
+        b=jrR8NlTM2QtrYM5koplAFBnvL/tefmXtYNZ/i3rh/i4Zc3hpXGjs76oQ8BeO5g7uh9
+         HfzahGxVDlHAL8Nrgca1/EL40zYZ4PdrOoKuzEitogYLy4jQrfNMA3io1W3mDXFrwtvt
+         sU8vOrLZVIMaFM+CxUrRko3O7wnjuLpgTrSYdef9uEw3Dfe/tO/eqCLWDS1Flfa/d+da
+         1xLBhx1ClAlOO54yiqxSdiBNTFtD668PoqH7gmdFfwvH5NWV+KDxUxIDL/kgjKSJiS+E
+         K8tZ9j7XUD/eqLgSqs7vfhgbUNZDsIGXbPPruZdu2plncMrtsQnS65PNdw+XhuksLDfI
+         /5lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=pybU4UWqYrI/CLuRvloJW5CDHGp6lmNrtOX4JnoQECY=;
-        b=VAcIfMXLEqqIghTP3BvqUKIizPGDLuaRG+eCB2i0pnJ91bxmzfCqPgVJjBFL2wgcTj
-         xpaEWfhpIRxFbdjvIGW6YH33ZMcb8dluTHPUveldef3bCjKbM7h8JWM7L4mHqpTB/18w
-         Vto93jFepzk9PuWuT5QgS0uiSHBGyEkyXWZHQdNYtwfTME/i+j2SR7K8RQEgfKGoFoye
-         6TUgjD/2wIxA0xQK2kY10EKFXWVmJHoQgiJ+BZdat6RlDwp3NDTp8df9Ae+V7aPRO7Li
-         GTRG2scQSJl1Tbrjloiiz1lQEhgTnH6n//C9oWfPEiYL1p4BXiCdyymGcmixHr5Crck9
-         NOsA==
-X-Gm-Message-State: AGRZ1gIp+7rD9SHFIHJl9NUnZ+ytLdzqNOfKk7nrBPxhnbIE1m9NqS+N
-        hrupuNMyB/8q1jUsXpMkeM8=
-X-Google-Smtp-Source: AJdET5drIBmGR7xXvOTI1s3dbO5tgeEZgUyIu7oKbQlXS+zZ57msuHkvaR9XTsbBGS9KShEIjaSwkQ==
-X-Received: by 2002:a81:ed0b:: with SMTP id k11-v6mr19320272ywm.115.1543026077717;
-        Fri, 23 Nov 2018 18:21:17 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=SHCpJgQOyYa7KsP6Plz6WSDqViwp9jY3Fiu+zuCVWKw=;
+        b=n0VHVid0svkVnAHR6eqRMBlDkEKO5o9neoI2P00jxGT1pRSgK91sIYpN8OV99iZzhg
+         61n8qemmo145n2wzcnL0X5W1uBb58Ae5ZuAFSZ96LVaCH6iiagsnum1F800zk5SvXLbz
+         Owh/Jkz7SBlgaNHE2lEh2svSu1XkASAdTvJWJffejCijHBMjIKAmLiHA53GFrXdCXQS7
+         hry+F7UQBxcmgjTaChLSTkxbKHDvzr3lhlElTMIlU2l/WOlkZ21Vjrn5v0rFtMuX4xyp
+         Ni5e/k2iJ0FKDJCvMsmWv4x8LRKzR44/2ptd+5GyCAWM/O7reBM8Y/NodI1SVgMWBFHm
+         0lJw==
+X-Gm-Message-State: AGRZ1gKbDui42/49meMGDUqgl/BXdVE2E/0jcxI37sGYT+4cMyJXVT9s
+        XNFLU46jIwpppvVpwFNhrZM=
+X-Google-Smtp-Source: AJdET5dd73/zZL0a/t2mp9rt1X+5M8duNSwqEuE3m/gDN9HBKSWImFrqQL2Dtdxz3DysQxjIDO7OUA==
+X-Received: by 2002:a81:4ed7:: with SMTP id c206mr18914328ywb.207.1543026115053;
+        Fri, 23 Nov 2018 18:21:55 -0800 (PST)
 Received: from deepa-ubuntu.lan (c-98-234-52-213.hsd1.ca.comcast.net. [98.234.52.213])
-        by smtp.gmail.com with ESMTPSA id w1sm6947292ywd.49.2018.11.23.18.21.14
+        by smtp.gmail.com with ESMTPSA id w1sm6947292ywd.49.2018.11.23.18.21.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Nov 2018 18:21:17 -0800 (PST)
+        Fri, 23 Nov 2018 18:21:54 -0800 (PST)
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
 To:     davem@davemloft.net, linux-kernel@vger.kernel.org
 Cc:     netdev@vger.kernel.org, viro@zeniv.linux.org.uk, arnd@arndb.de,
         y2038@lists.linaro.org, chris@zankel.net, fenghua.yu@intel.com,
         tglx@linutronix.de, schwidefsky@de.ibm.com,
         linux-ia64@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-s390@vger.kernel.org, deller@gmx.de, dhowells@redhat.com,
-        jejb@parisc-linux.org, ralf@linux-mips.org, rth@twiddle.net,
-        linux-afs@lists.infradead.org, linux-alpha@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        sparclinux@vger.kernel.org, isdn@linux-pingi.de,
-        ubraun@linux.ibm.com
-Subject: [PATCH 0/8] net: y2038-safe socket timestamps 
-Date:   Fri, 23 Nov 2018 18:20:27 -0800
-Message-Id: <20181124022035.17519-1-deepa.kernel@gmail.com>
+        linux-s390@vger.kernel.org
+Subject: [PATCH 1/8] arch: Use asm-generic/socket.h when possible
+Date:   Fri, 23 Nov 2018 18:20:28 -0800
+Message-Id: <20181124022035.17519-2-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181124022035.17519-1-deepa.kernel@gmail.com>
+References: <20181124022035.17519-1-deepa.kernel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The series introduces new socket timestamps that are
-y2038 safe.
+Many architectures maintain an arch specific copy of the
+file even though there are no differences with the asm-generic
+one. Allow these architectures to use the generic one instead.
 
-The time data types used for the existing socket timestamp
-options: SO_TIMESTAMP, SO_TIMESTAMPNS and SO_TIMESTAMPING
-are not y2038 safe. The series introduces SO_TIMESTAMP_NEW,
-SO_TIMESTAMPNS_NEW and SO_TIMESTAMPING_NEW to replace these.
-These new timestamps can be used on all architectures.
-
-The alternative considered was to extend the sys_setsockopt()
-by using the flags. We did not receive any strong opinions about
-either of the approaches. Hence, this was chosen, as glibc folks
-preferred this.
-
-The series does not deal with updating the internal kernel socket
-calls like rxrpc to make them y2038 safe. This will be dealt
-with separately.
-
-Note that the timestamps behavior already does not match the
-man page specific behavior:
-SIOCGSTAMP
-    This ioctl should only be used if the socket option SO_TIMESTAMP
-	is not set on the socket. Otherwise, it returns the timestamp of
-	the last packet that was received while SO_TIMESTAMP was not set,
-	or it fails if no such packet has been received,
-	(i.e., ioctl(2) returns -1 with errno set to ENOENT).
-	
-The recommendation is to update the man page to remove the above statement.
-
-The overview of the series is as below:
-1. Delete asm specific socket.h when possible.
-2. Support SO/SCM_TIMESTAMP* options only in userspace.
-3. Rename current SO/SCM_TIMESTAMP* to SO/SCM_TIMESTAMP*_OLD.
-3. Alter socket options so that SOCK_RCVTSTAMPNS does
-   not rely on SOCK_RCVTSTAMP.
-4. Introduce y2038 safe types for socket timestamp.
-5. Introduce new y2038 safe socket options SO/SCM_TIMESTAMP*_NEW.
-
-Deepa Dinamani (8):
-  arch: Use asm-generic/socket.h when possible
-  sockopt: Rename SO_TIMESTAMP* to SO_TIMESTAMP*_OLD
-  socket: Disentangle SOCK_RCVTSTAMPNS from SOCK_RCVTSTAMP
-  arch: sparc: Override struct __kernel_old_timeval
-  socket: Use old_timeval types for socket timestamps
-  socket: Add struct sock_timeval
-  socket: Add SO_TIMESTAMP[NS]_NEW
-  socket: Add SO_TIMESTAMPING_NEW
-
- arch/alpha/include/uapi/asm/socket.h      |  35 ++++--
- arch/ia64/include/uapi/asm/Kbuild         |   1 +
- arch/ia64/include/uapi/asm/socket.h       | 120 ------------------
- arch/mips/include/uapi/asm/socket.h       |  34 ++++--
- arch/parisc/include/uapi/asm/socket.h     |  34 ++++--
- arch/s390/include/uapi/asm/Kbuild         |   1 +
- arch/s390/include/uapi/asm/socket.h       | 117 ------------------
- arch/sparc/include/uapi/asm/posix_types.h |  10 ++
- arch/sparc/include/uapi/asm/socket.h      |  36 ++++--
- arch/x86/include/uapi/asm/Kbuild          |   1 +
- arch/x86/include/uapi/asm/socket.h        |   1 -
- arch/xtensa/include/asm/Kbuild            |   1 +
- arch/xtensa/include/uapi/asm/Kbuild       |   1 +
- arch/xtensa/include/uapi/asm/socket.h     | 122 -------------------
- drivers/isdn/mISDN/socket.c               |   2 +-
- include/linux/skbuff.h                    |  24 +++-
- include/linux/socket.h                    |   7 ++
- include/net/sock.h                        |   5 +-
- include/uapi/asm-generic/socket.h         |  35 ++++--
- include/uapi/linux/errqueue.h             |   4 +
- include/uapi/linux/time.h                 |   7 ++
- net/bluetooth/hci_sock.c                  |   4 +-
- net/compat.c                              |  12 +-
- net/core/scm.c                            |  27 ++++
- net/core/sock.c                           | 142 ++++++++++++++--------
- net/ipv4/tcp.c                            |  82 ++++++++-----
- net/rds/af_rds.c                          |  10 +-
- net/rds/recv.c                            |  18 ++-
- net/rxrpc/local_object.c                  |   2 +-
- net/smc/af_smc.c                          |   3 +-
- net/socket.c                              |  68 +++++++----
- net/unix/af_unix.c                        |   4 +-
- 32 files changed, 449 insertions(+), 521 deletions(-)
- delete mode 100644 arch/ia64/include/uapi/asm/socket.h
- delete mode 100644 arch/s390/include/uapi/asm/socket.h
- delete mode 100644 arch/x86/include/uapi/asm/socket.h
- delete mode 100644 arch/xtensa/include/uapi/asm/socket.h
-
-
-base-commit: b124b524bc97868cc2b5656e6ffa21a9b752b7e0
--- 
-2.17.1
-
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
 Cc: chris@zankel.net
 Cc: fenghua.yu@intel.com
 Cc: tglx@linutronix.de
@@ -177,38 +89,459 @@ Cc: schwidefsky@de.ibm.com
 Cc: linux-ia64@vger.kernel.org
 Cc: linux-xtensa@linux-xtensa.org
 Cc: linux-s390@vger.kernel.org
-Cc: deller@gmx.de
-Cc: dhowells@redhat.com
-Cc: jejb@parisc-linux.org
-Cc: ralf@linux-mips.org
-Cc: rth@twiddle.net
-Cc: linux-afs@lists.infradead.org
-Cc: linux-alpha@vger.kernel.org
-Cc: linux-arch@vger.kernel.org
-Cc: linux-mips@linux-mips.org
-Cc: linux-parisc@vger.kernel.org
-Cc: linux-rdma@vger.kernel.org
-Cc: sparclinux@vger.kernel.org
-Cc: sparclinux@vger.kernel.org
-Cc: isdn@linux-pingi.de
-Cc: jejb@parisc-linux.org
-Cc: ralf@linux-mips.org
-Cc: rth@twiddle.net
-Cc: linux-alpha@vger.kernel.org
-Cc: linux-mips@linux-mips.org
-Cc: linux-parisc@vger.kernel.org
-Cc: linux-rdma@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: sparclinux@vger.kernel.org
-Cc: chris@zankel.net
-Cc: fenghua.yu@intel.com
-Cc: rth@twiddle.net
-Cc: tglx@linutronix.de
-Cc: ubraun@linux.ibm.com
-Cc: linux-alpha@vger.kernel.org
-Cc: linux-arch@vger.kernel.org
-Cc: linux-ia64@vger.kernel.org
-Cc: linux-mips@linux-mips.org
-Cc: linux-s390@vger.kernel.org
-Cc: linux-xtensa@linux-xtensa.org
-Cc: sparclinux@vger.kernel.org
+---
+ arch/ia64/include/uapi/asm/Kbuild     |   1 +
+ arch/ia64/include/uapi/asm/socket.h   | 120 -------------------------
+ arch/s390/include/uapi/asm/Kbuild     |   1 +
+ arch/s390/include/uapi/asm/socket.h   | 117 ------------------------
+ arch/x86/include/uapi/asm/Kbuild      |   1 +
+ arch/x86/include/uapi/asm/socket.h    |   1 -
+ arch/xtensa/include/asm/Kbuild        |   1 +
+ arch/xtensa/include/uapi/asm/Kbuild   |   1 +
+ arch/xtensa/include/uapi/asm/socket.h | 122 --------------------------
+ 9 files changed, 5 insertions(+), 360 deletions(-)
+ delete mode 100644 arch/ia64/include/uapi/asm/socket.h
+ delete mode 100644 arch/s390/include/uapi/asm/socket.h
+ delete mode 100644 arch/x86/include/uapi/asm/socket.h
+ delete mode 100644 arch/xtensa/include/uapi/asm/socket.h
+
+diff --git a/arch/ia64/include/uapi/asm/Kbuild b/arch/ia64/include/uapi/asm/Kbuild
+index ccce0ea65e05..37ea5ec1b94d 100644
+--- a/arch/ia64/include/uapi/asm/Kbuild
++++ b/arch/ia64/include/uapi/asm/Kbuild
+@@ -9,3 +9,4 @@ generic-y += msgbuf.h
+ generic-y += poll.h
+ generic-y += sembuf.h
+ generic-y += shmbuf.h
++generic-y += socket.h
+diff --git a/arch/ia64/include/uapi/asm/socket.h b/arch/ia64/include/uapi/asm/socket.h
+deleted file mode 100644
+index c872c4e6bafb..000000000000
+--- a/arch/ia64/include/uapi/asm/socket.h
++++ /dev/null
+@@ -1,120 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-#ifndef _ASM_IA64_SOCKET_H
+-#define _ASM_IA64_SOCKET_H
+-
+-/*
+- * Socket related defines.
+- *
+- * Based on <asm-i386/socket.h>.
+- *
+- * Modified 1998-2000
+- *	David Mosberger-Tang <davidm@hpl.hp.com>, Hewlett-Packard Co
+- */
+-
+-#include <asm/sockios.h>
+-
+-/* For setsockopt(2) */
+-#define SOL_SOCKET	1
+-
+-#define SO_DEBUG	1
+-#define SO_REUSEADDR	2
+-#define SO_TYPE		3
+-#define SO_ERROR	4
+-#define SO_DONTROUTE	5
+-#define SO_BROADCAST	6
+-#define SO_SNDBUF	7
+-#define SO_RCVBUF	8
+-#define SO_SNDBUFFORCE	32
+-#define SO_RCVBUFFORCE	33
+-#define SO_KEEPALIVE	9
+-#define SO_OOBINLINE	10
+-#define SO_NO_CHECK	11
+-#define SO_PRIORITY	12
+-#define SO_LINGER	13
+-#define SO_BSDCOMPAT	14
+-#define SO_REUSEPORT	15
+-#define SO_PASSCRED	16
+-#define SO_PEERCRED	17
+-#define SO_RCVLOWAT	18
+-#define SO_SNDLOWAT	19
+-#define SO_RCVTIMEO	20
+-#define SO_SNDTIMEO	21
+-
+-/* Security levels - as per NRL IPv6 - don't actually do anything */
+-#define SO_SECURITY_AUTHENTICATION		22
+-#define SO_SECURITY_ENCRYPTION_TRANSPORT	23
+-#define SO_SECURITY_ENCRYPTION_NETWORK		24
+-
+-#define SO_BINDTODEVICE		25
+-
+-/* Socket filtering */
+-#define SO_ATTACH_FILTER	26
+-#define SO_DETACH_FILTER	27
+-#define SO_GET_FILTER		SO_ATTACH_FILTER
+-
+-#define SO_PEERNAME		28
+-#define SO_TIMESTAMP		29
+-#define SCM_TIMESTAMP		SO_TIMESTAMP
+-
+-#define SO_ACCEPTCONN		30
+-
+-#define SO_PEERSEC             31
+-#define SO_PASSSEC		34
+-#define SO_TIMESTAMPNS		35
+-#define SCM_TIMESTAMPNS		SO_TIMESTAMPNS
+-
+-#define SO_MARK			36
+-
+-#define SO_TIMESTAMPING		37
+-#define SCM_TIMESTAMPING	SO_TIMESTAMPING
+-
+-#define SO_PROTOCOL		38
+-#define SO_DOMAIN		39
+-
+-#define SO_RXQ_OVFL             40
+-
+-#define SO_WIFI_STATUS		41
+-#define SCM_WIFI_STATUS		SO_WIFI_STATUS
+-#define SO_PEEK_OFF		42
+-
+-/* Instruct lower device to use last 4-bytes of skb data as FCS */
+-#define SO_NOFCS		43
+-
+-#define SO_LOCK_FILTER		44
+-
+-#define SO_SELECT_ERR_QUEUE	45
+-
+-#define SO_BUSY_POLL		46
+-
+-#define SO_MAX_PACING_RATE	47
+-
+-#define SO_BPF_EXTENSIONS	48
+-
+-#define SO_INCOMING_CPU		49
+-
+-#define SO_ATTACH_BPF		50
+-#define SO_DETACH_BPF		SO_DETACH_FILTER
+-
+-#define SO_ATTACH_REUSEPORT_CBPF	51
+-#define SO_ATTACH_REUSEPORT_EBPF	52
+-
+-#define SO_CNX_ADVICE		53
+-
+-#define SCM_TIMESTAMPING_OPT_STATS	54
+-
+-#define SO_MEMINFO		55
+-
+-#define SO_INCOMING_NAPI_ID	56
+-
+-#define SO_COOKIE		57
+-
+-#define SCM_TIMESTAMPING_PKTINFO	58
+-
+-#define SO_PEERGROUPS		59
+-
+-#define SO_ZEROCOPY		60
+-
+-#define SO_TXTIME		61
+-#define SCM_TXTIME		SO_TXTIME
+-
+-#endif /* _ASM_IA64_SOCKET_H */
+diff --git a/arch/s390/include/uapi/asm/Kbuild b/arch/s390/include/uapi/asm/Kbuild
+index dc38a90cf091..15bb61228b74 100644
+--- a/arch/s390/include/uapi/asm/Kbuild
++++ b/arch/s390/include/uapi/asm/Kbuild
+@@ -15,6 +15,7 @@ generic-y += poll.h
+ generic-y += resource.h
+ generic-y += sembuf.h
+ generic-y += shmbuf.h
++generic-y += socket.h
+ generic-y += sockios.h
+ generic-y += swab.h
+ generic-y += termbits.h
+diff --git a/arch/s390/include/uapi/asm/socket.h b/arch/s390/include/uapi/asm/socket.h
+deleted file mode 100644
+index 39d901476ee5..000000000000
+--- a/arch/s390/include/uapi/asm/socket.h
++++ /dev/null
+@@ -1,117 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-/*
+- *  S390 version
+- *
+- *  Derived from "include/asm-i386/socket.h"
+- */
+-
+-#ifndef _ASM_SOCKET_H
+-#define _ASM_SOCKET_H
+-
+-#include <asm/sockios.h>
+-
+-/* For setsockopt(2) */
+-#define SOL_SOCKET	1
+-
+-#define SO_DEBUG	1
+-#define SO_REUSEADDR	2
+-#define SO_TYPE		3
+-#define SO_ERROR	4
+-#define SO_DONTROUTE	5
+-#define SO_BROADCAST	6
+-#define SO_SNDBUF	7
+-#define SO_RCVBUF	8
+-#define SO_SNDBUFFORCE	32
+-#define SO_RCVBUFFORCE	33
+-#define SO_KEEPALIVE	9
+-#define SO_OOBINLINE	10
+-#define SO_NO_CHECK	11
+-#define SO_PRIORITY	12
+-#define SO_LINGER	13
+-#define SO_BSDCOMPAT	14
+-#define SO_REUSEPORT	15
+-#define SO_PASSCRED	16
+-#define SO_PEERCRED	17
+-#define SO_RCVLOWAT	18
+-#define SO_SNDLOWAT	19
+-#define SO_RCVTIMEO	20
+-#define SO_SNDTIMEO	21
+-
+-/* Security levels - as per NRL IPv6 - don't actually do anything */
+-#define SO_SECURITY_AUTHENTICATION		22
+-#define SO_SECURITY_ENCRYPTION_TRANSPORT	23
+-#define SO_SECURITY_ENCRYPTION_NETWORK		24
+-
+-#define SO_BINDTODEVICE	25
+-
+-/* Socket filtering */
+-#define SO_ATTACH_FILTER        26
+-#define SO_DETACH_FILTER        27
+-#define SO_GET_FILTER		SO_ATTACH_FILTER
+-
+-#define SO_PEERNAME		28
+-#define SO_TIMESTAMP		29
+-#define SCM_TIMESTAMP		SO_TIMESTAMP
+-
+-#define SO_ACCEPTCONN		30
+-
+-#define SO_PEERSEC		31
+-#define SO_PASSSEC		34
+-#define SO_TIMESTAMPNS		35
+-#define SCM_TIMESTAMPNS		SO_TIMESTAMPNS
+-
+-#define SO_MARK			36
+-
+-#define SO_TIMESTAMPING		37
+-#define SCM_TIMESTAMPING	SO_TIMESTAMPING
+-
+-#define SO_PROTOCOL		38
+-#define SO_DOMAIN		39
+-
+-#define SO_RXQ_OVFL             40
+-
+-#define SO_WIFI_STATUS		41
+-#define SCM_WIFI_STATUS		SO_WIFI_STATUS
+-#define SO_PEEK_OFF		42
+-
+-/* Instruct lower device to use last 4-bytes of skb data as FCS */
+-#define SO_NOFCS		43
+-
+-#define SO_LOCK_FILTER		44
+-
+-#define SO_SELECT_ERR_QUEUE	45
+-
+-#define SO_BUSY_POLL		46
+-
+-#define SO_MAX_PACING_RATE	47
+-
+-#define SO_BPF_EXTENSIONS	48
+-
+-#define SO_INCOMING_CPU		49
+-
+-#define SO_ATTACH_BPF		50
+-#define SO_DETACH_BPF		SO_DETACH_FILTER
+-
+-#define SO_ATTACH_REUSEPORT_CBPF	51
+-#define SO_ATTACH_REUSEPORT_EBPF	52
+-
+-#define SO_CNX_ADVICE		53
+-
+-#define SCM_TIMESTAMPING_OPT_STATS	54
+-
+-#define	SO_MEMINFO		55
+-
+-#define SO_INCOMING_NAPI_ID	56
+-
+-#define SO_COOKIE		57
+-
+-#define SCM_TIMESTAMPING_PKTINFO	58
+-
+-#define SO_PEERGROUPS		59
+-
+-#define SO_ZEROCOPY		60
+-
+-#define SO_TXTIME		61
+-#define SCM_TXTIME		SO_TXTIME
+-
+-#endif /* _ASM_SOCKET_H */
+diff --git a/arch/x86/include/uapi/asm/Kbuild b/arch/x86/include/uapi/asm/Kbuild
+index 322681622d1e..a400e71a13ce 100644
+--- a/arch/x86/include/uapi/asm/Kbuild
++++ b/arch/x86/include/uapi/asm/Kbuild
+@@ -6,3 +6,4 @@ generated-y += unistd_32.h
+ generated-y += unistd_64.h
+ generated-y += unistd_x32.h
+ generic-y += poll.h
++generic-y += socket.h
+diff --git a/arch/x86/include/uapi/asm/socket.h b/arch/x86/include/uapi/asm/socket.h
+deleted file mode 100644
+index 6b71384b9d8b..000000000000
+--- a/arch/x86/include/uapi/asm/socket.h
++++ /dev/null
+@@ -1 +0,0 @@
+-#include <asm-generic/socket.h>
+diff --git a/arch/xtensa/include/asm/Kbuild b/arch/xtensa/include/asm/Kbuild
+index e255683cd520..809f39ce08c0 100644
+--- a/arch/xtensa/include/asm/Kbuild
++++ b/arch/xtensa/include/asm/Kbuild
+@@ -25,6 +25,7 @@ generic-y += percpu.h
+ generic-y += preempt.h
+ generic-y += rwsem.h
+ generic-y += sections.h
++generic-y += socket.h
+ generic-y += topology.h
+ generic-y += trace_clock.h
+ generic-y += vga.h
+diff --git a/arch/xtensa/include/uapi/asm/Kbuild b/arch/xtensa/include/uapi/asm/Kbuild
+index f95cad300369..fc2680dace55 100644
+--- a/arch/xtensa/include/uapi/asm/Kbuild
++++ b/arch/xtensa/include/uapi/asm/Kbuild
+@@ -10,5 +10,6 @@ generic-y += ioctl.h
+ generic-y += kvm_para.h
+ generic-y += resource.h
+ generic-y += siginfo.h
++generic-y += socket.h
+ generic-y += statfs.h
+ generic-y += termios.h
+diff --git a/arch/xtensa/include/uapi/asm/socket.h b/arch/xtensa/include/uapi/asm/socket.h
+deleted file mode 100644
+index 1de07a7f7680..000000000000
+--- a/arch/xtensa/include/uapi/asm/socket.h
++++ /dev/null
+@@ -1,122 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-/*
+- * include/asm-xtensa/socket.h
+- *
+- * Copied from i386.
+- *
+- * This file is subject to the terms and conditions of the GNU General Public
+- * License.  See the file "COPYING" in the main directory of this archive
+- * for more details.
+- */
+-
+-#ifndef _XTENSA_SOCKET_H
+-#define _XTENSA_SOCKET_H
+-
+-#include <asm/sockios.h>
+-
+-/* For setsockoptions(2) */
+-#define SOL_SOCKET	1
+-
+-#define SO_DEBUG	1
+-#define SO_REUSEADDR	2
+-#define SO_TYPE		3
+-#define SO_ERROR	4
+-#define SO_DONTROUTE	5
+-#define SO_BROADCAST	6
+-#define SO_SNDBUF	7
+-#define SO_RCVBUF	8
+-#define SO_SNDBUFFORCE	32
+-#define SO_RCVBUFFORCE	33
+-#define SO_KEEPALIVE	9
+-#define SO_OOBINLINE	10
+-#define SO_NO_CHECK	11
+-#define SO_PRIORITY	12
+-#define SO_LINGER	13
+-#define SO_BSDCOMPAT	14
+-#define SO_REUSEPORT	15
+-#define SO_PASSCRED	16
+-#define SO_PEERCRED	17
+-#define SO_RCVLOWAT	18
+-#define SO_SNDLOWAT	19
+-#define SO_RCVTIMEO	20
+-#define SO_SNDTIMEO	21
+-
+-/* Security levels - as per NRL IPv6 - don't actually do anything */
+-
+-#define SO_SECURITY_AUTHENTICATION		22
+-#define SO_SECURITY_ENCRYPTION_TRANSPORT	23
+-#define SO_SECURITY_ENCRYPTION_NETWORK		24
+-
+-#define SO_BINDTODEVICE	25
+-
+-/* Socket filtering */
+-
+-#define SO_ATTACH_FILTER        26
+-#define SO_DETACH_FILTER        27
+-#define SO_GET_FILTER		SO_ATTACH_FILTER
+-
+-#define SO_PEERNAME		28
+-#define SO_TIMESTAMP		29
+-#define SCM_TIMESTAMP		SO_TIMESTAMP
+-
+-#define SO_ACCEPTCONN		30
+-#define SO_PEERSEC		31
+-#define SO_PASSSEC		34
+-#define SO_TIMESTAMPNS		35
+-#define SCM_TIMESTAMPNS		SO_TIMESTAMPNS
+-
+-#define SO_MARK			36
+-
+-#define SO_TIMESTAMPING		37
+-#define SCM_TIMESTAMPING	SO_TIMESTAMPING
+-
+-#define SO_PROTOCOL		38
+-#define SO_DOMAIN		39
+-
+-#define SO_RXQ_OVFL             40
+-
+-#define SO_WIFI_STATUS		41
+-#define SCM_WIFI_STATUS		SO_WIFI_STATUS
+-#define SO_PEEK_OFF		42
+-
+-/* Instruct lower device to use last 4-bytes of skb data as FCS */
+-#define SO_NOFCS		43
+-
+-#define SO_LOCK_FILTER		44
+-
+-#define SO_SELECT_ERR_QUEUE	45
+-
+-#define SO_BUSY_POLL		46
+-
+-#define SO_MAX_PACING_RATE	47
+-
+-#define SO_BPF_EXTENSIONS	48
+-
+-#define SO_INCOMING_CPU		49
+-
+-#define SO_ATTACH_BPF		50
+-#define SO_DETACH_BPF		SO_DETACH_FILTER
+-
+-#define SO_ATTACH_REUSEPORT_CBPF	51
+-#define SO_ATTACH_REUSEPORT_EBPF	52
+-
+-#define SO_CNX_ADVICE		53
+-
+-#define SCM_TIMESTAMPING_OPT_STATS	54
+-
+-#define SO_MEMINFO		55
+-
+-#define SO_INCOMING_NAPI_ID	56
+-
+-#define SO_COOKIE		57
+-
+-#define SCM_TIMESTAMPING_PKTINFO	58
+-
+-#define SO_PEERGROUPS		59
+-
+-#define SO_ZEROCOPY		60
+-
+-#define SO_TXTIME		61
+-#define SCM_TXTIME		SO_TXTIME
+-
+-#endif	/* _XTENSA_SOCKET_H */
+-- 
+2.17.1
+
