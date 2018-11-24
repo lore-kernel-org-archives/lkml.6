@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 154E1C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 11:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EABA1C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 11:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C12702086B
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 11:10:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A70FE2086B
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 11:10:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TunuNmpQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C12702086B
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nXDR/av+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A70FE2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726224AbeKXV6Y (ORCPT
+        id S1726254AbeKXV6d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 16:58:24 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46662 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbeKXV6Y (ORCPT
+        Sat, 24 Nov 2018 16:58:33 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42195 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbeKXV6d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 16:58:24 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t13so11672018ply.13
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 03:10:12 -0800 (PST)
+        Sat, 24 Nov 2018 16:58:33 -0500
+Received: by mail-pl1-f196.google.com with SMTP id x21-v6so11677642pln.9
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 03:10:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1/yiL8MSzU0TPG6wYpvLbVxtNR5gac1eR3sg1WCS69w=;
-        b=TunuNmpQxBki+ZFLPPWVDAYUffRWneeZP7KQnxXnCxQZRy7c8CdHwDTG8S33iJNMGa
-         3XNpRdcZ6EpfPkhN58ZGobr4qHWC9evH3xYI3MYg56qiuqK4yqJFZId31G5yNYqjJoXj
-         sZC6QkwzdWBmytZBL8esBucfuMhC+h8XiTXkw=
+        bh=6+oHEdKMDpuxzwVk64tZIxSsbb8yNe8+IDFvuSSfRD8=;
+        b=nXDR/av+SQiZ1+gwoqkq/RVZ93mhWZVEBbciOefSoUVJlhXlFFLmiYXoCUIb4pDgjA
+         CXYyFeJPY3O0r98qup97ze7vH151qM7HkFGgM8t4a3zjfd/bkw1jsrPhIsd9fWrS75KO
+         iU1z/v/n0oyHDJ1C6Vf/honptjR41TsFmqafA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1/yiL8MSzU0TPG6wYpvLbVxtNR5gac1eR3sg1WCS69w=;
-        b=btTLk6fRH4SBw2MFUfC2HXQncnl1jDEQR58oQV8bTQP42auDSGiYdgszbP6A72JtAX
-         dEH9wZJCRw921UsjTsF9SPTtC+HhLIeMGXADgGe0zoCsutbRk85CFJIC9aOsdhhfyIf7
-         XUUtXYAWJhb1YmmAHEAVApvinqMPy4p1iQv+eLRgj2iWgR09zerO4xcaR87Q37nTz7+e
-         JyAqMp107ATcCvugmXDs273XicDLq185GxKDsxM/gioUxfvdzH9PfyqFiOd2IOp+cJUj
-         AG7icoYc51EVUsCBfv4m1GM+NqyvlK7ssv8mb9QkCWuKh/s9jlbUMUledpGortJuMpWR
-         dwIQ==
-X-Gm-Message-State: AA+aEWZgHSdlmtu1Hq8VPjcByzZf/B4nKtGZ2HqnBvC5WCNfyJPeh675
-        ej67v1b5jfqibCNqXBpXvlrE3G49Ai4=
-X-Google-Smtp-Source: AFSGD/WDhQtoCFmc1vAJmHWZvcxL7q29764rWg9RvpQj4zBA3uTrG5HW+BFsGhLiQheZiGVITZsveg==
-X-Received: by 2002:a17:902:9f89:: with SMTP id g9mr19642103plq.214.1543057812209;
-        Sat, 24 Nov 2018 03:10:12 -0800 (PST)
+        bh=6+oHEdKMDpuxzwVk64tZIxSsbb8yNe8+IDFvuSSfRD8=;
+        b=Qz48anbe4bq+m6G66hSVDRGM7IMGFARGSoPQIAUDk1UN5bjPapMEYG9vfY2OA6o7ba
+         bBJsst+z+L2j4z7hO2SrbfUW+9uSnO/ONuctINRecZ9PnG6H1CGR5tHgawEUCPM6q9Kq
+         KIaoKsxgdALlccWLGREt0cHkBSr5oofN6HzvTXXTYtlmXB+ggwt+6TF6COyyE9ymxeIC
+         InwVogTUyapQ6ltRYl6AJXTs+gYlBr/LERLWTNQ3LmEELPl5H6se9WVMm56+jn5MBq4z
+         nWFGa4tLOFRPiw8ryfXwadFa356KG1r9ClWLmxHzaGxpO5W02ZvLQ3TWKDetjrk/jCXS
+         aV0g==
+X-Gm-Message-State: AA+aEWa4ZcvlUNEgO3lFsg4SFRB8jVzx6Lrzei5UEJ3MO0OROH9g+PrI
+        59vuglYwf3jd0oZiCIjamuKOZjf8GZY=
+X-Google-Smtp-Source: AFSGD/VJ5pA0iSjWZrU0R2pZoLZanG+4lruFeYAQ4o8JLhBrSmx5SoJt4wfWok41GEfNdVxXKjUq9A==
+X-Received: by 2002:a17:902:a710:: with SMTP id w16mr19191099plq.95.1543057821327;
+        Sat, 24 Nov 2018 03:10:21 -0800 (PST)
 Received: from cychiang-z840.tpe.corp.google.com ([2401:fa00:1:b:e688:dfd2:a1a7:2956])
-        by smtp.gmail.com with ESMTPSA id v124-v6sm25098580pfb.182.2018.11.24.03.10.10
+        by smtp.gmail.com with ESMTPSA id v124-v6sm25098580pfb.182.2018.11.24.03.10.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 24 Nov 2018 03:10:11 -0800 (PST)
+        Sat, 24 Nov 2018 03:10:20 -0800 (PST)
 From:   Cheng-Yi Chiang <cychiang@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Mark Brown <broonie@kernel.org>, oder_chiou@realtek.com,
         alsa-devel@alsa-project.org, dgreid@chromium.org,
         tzungbi@chromium.org, Rohit kumar <rohitkr@codeaurora.org>,
         Cheng-Yi Chiang <cychiang@chromium.org>
-Subject: [PATCH 2/4] ASoC: qcom: sdm845: Create and setup jack in init callback
-Date:   Sat, 24 Nov 2018 19:09:46 +0800
-Message-Id: <20181124110948.209019-2-cychiang@chromium.org>
+Subject: [PATCH 3/4] ASoC: qcom: sdm845: Add codec related configuration for sdm845
+Date:   Sat, 24 Nov 2018 19:09:47 +0800
+Message-Id: <20181124110948.209019-3-cychiang@chromium.org>
 X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
 In-Reply-To: <20181124110948.209019-1-cychiang@chromium.org>
 References: <20181124110948.209019-1-cychiang@chromium.org>
@@ -75,117 +75,167 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a callback for init ops on dai_link to create and setup jack.
+Set TDM time slots and DAI format for speaker codec.
+Set DAI format and clock for headset.
 
 Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
 Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
 ---
- sound/soc/qcom/sdm845.c | 57 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 55 insertions(+), 2 deletions(-)
+ sound/soc/qcom/sdm845.c | 82 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 81 insertions(+), 1 deletion(-)
 
 diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
-index 95d8d4422dae0..43c03f8e8cdc2 100644
+index 43c03f8e8cdc2..d815040e98dc9 100644
 --- a/sound/soc/qcom/sdm845.c
 +++ b/sound/soc/qcom/sdm845.c
-@@ -8,6 +8,8 @@
+@@ -6,12 +6,15 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
  #include <linux/of_device.h>
++#include <sound/core.h>
  #include <sound/pcm.h>
  #include <sound/pcm_params.h>
-+#include <sound/jack.h>
-+#include <uapi/linux/input-event-codes.h>
+ #include <sound/jack.h>
++#include <sound/soc.h>
+ #include <uapi/linux/input-event-codes.h>
  #include "common.h"
  #include "qdsp6/q6afe.h"
++#include "../codecs/rt5663.h"
  
-@@ -17,6 +19,8 @@
- #define MI2S_BCLK_RATE		1536000
+ #define DEFAULT_SAMPLE_RATE_48K		48000
+ #define DEFAULT_MCLK_RATE		24576000
+@@ -34,7 +37,7 @@ static int sdm845_tdm_snd_hw_params(struct snd_pcm_substream *substream,
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+-	int ret = 0;
++	int ret = 0, j;
+ 	int channels, slot_width;
  
- struct sdm845_snd_data {
-+	struct snd_soc_jack jack;
-+	bool jack_setup;
- 	struct snd_soc_card *card;
- 	uint32_t pri_mi2s_clk_count;
- 	uint32_t sec_mi2s_clk_count;
-@@ -100,6 +104,54 @@ static int sdm845_snd_hw_params(struct snd_pcm_substream *substream,
+ 	switch (params_format(params)) {
+@@ -81,6 +84,31 @@ static int sdm845_tdm_snd_hw_params(struct snd_pcm_substream *substream,
+ 			goto end;
+ 		}
+ 	}
++
++	for (j = 0; j < rtd->num_codecs; j++) {
++		struct snd_soc_dai *codec_dai = rtd->codec_dais[j];
++
++		if (!strcmp(codec_dai->component->name_prefix, "Left")) {
++			ret = snd_soc_dai_set_tdm_slot(
++					codec_dai, 0x30, 0x3, 8, slot_width);
++			if (ret < 0) {
++				dev_err(rtd->dev,
++					"DEV0 TDM slot err:%d\n", ret);
++				return ret;
++			}
++		}
++
++		if (!strcmp(codec_dai->component->name_prefix, "Right")) {
++			ret = snd_soc_dai_set_tdm_slot(
++					codec_dai, 0xC0, 0x3, 8, slot_width);
++			if (ret < 0) {
++				dev_err(rtd->dev,
++					"DEV1 TDM slot err:%d\n", ret);
++				return ret;
++			}
++		}
++	}
++
+ end:
  	return ret;
  }
+@@ -90,9 +118,26 @@ static int sdm845_snd_hw_params(struct snd_pcm_substream *substream,
+ {
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
++	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+ 	int ret = 0;
  
-+static int sdm845_dai_init(struct snd_soc_pcm_runtime *rtd)
-+{
-+	struct snd_soc_component *component;
-+	struct snd_soc_dai_link *dai_link = rtd->dai_link;
-+	struct snd_soc_card *card = rtd->card;
-+	struct sdm845_snd_data *pdata = snd_soc_card_get_drvdata(card);
-+	int i, rval;
-+
-+	if (!pdata->jack_setup) {
-+		struct snd_jack *jack;
-+
-+		rval = snd_soc_card_jack_new(card, "Headset Jack",
-+				SND_JACK_HEADSET |
-+				SND_JACK_HEADPHONE |
-+				SND_JACK_BTN_0 | SND_JACK_BTN_1 |
-+				SND_JACK_BTN_2 | SND_JACK_BTN_3,
-+				&pdata->jack, NULL, 0);
-+
-+		if (rval < 0) {
-+			dev_err(card->dev, "Unable to add Headphone Jack\n");
-+			return rval;
-+		}
-+
-+		jack = pdata->jack.jack;
-+
-+		snd_jack_set_key(jack, SND_JACK_BTN_0, KEY_PLAYPAUSE);
-+		snd_jack_set_key(jack, SND_JACK_BTN_1, KEY_VOICECOMMAND);
-+		snd_jack_set_key(jack, SND_JACK_BTN_2, KEY_VOLUMEUP);
-+		snd_jack_set_key(jack, SND_JACK_BTN_3, KEY_VOLUMEDOWN);
-+		pdata->jack_setup = true;
-+	}
-+
-+	for (i = 0 ; i < dai_link->num_codecs; i++) {
-+		struct snd_soc_dai *dai = rtd->codec_dais[i];
-+
-+		component = dai->component;
-+		rval = snd_soc_component_set_jack(
-+				component, &pdata->jack, NULL);
-+		if (rval != 0 && rval != -ENOTSUPP) {
-+			dev_warn(card->dev, "Failed to set jack: %d\n", rval);
-+			return rval;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+
+ 	switch (cpu_dai->id) {
++	case PRIMARY_MI2S_RX:
++	case PRIMARY_MI2S_TX:
++		/*
++		 * Use ASRC for internal clocks, as PLL rate isn't multiple
++		 * of BCLK.
++		 */
++		rt5663_sel_asrc_clk_src(
++			codec_dai->component,
++			RT5663_DA_STEREO_FILTER | RT5663_AD_STEREO_FILTER,
++			RT5663_CLK_SEL_I2S1_ASRC);
++		ret = snd_soc_dai_set_sysclk(codec_dai,
++				RT5663_SCLK_S_MCLK, 24576000, SND_SOC_CLOCK_IN);
++		if (ret < 0)
++			dev_err(rtd->dev,
++				"snd_soc_dai_set_sysclk err = %d\n", ret);
++		break;
+ 	case QUATERNARY_TDM_RX_0:
+ 	case QUATERNARY_TDM_TX_0:
+ 		ret = sdm845_tdm_snd_hw_params(substream, params);
+@@ -155,14 +200,20 @@ static int sdm845_dai_init(struct snd_soc_pcm_runtime *rtd)
  static int sdm845_snd_startup(struct snd_pcm_substream *substream)
  {
  	unsigned int fmt = SND_SOC_DAIFMT_CBS_CFS;
-@@ -220,7 +272,7 @@ static const struct snd_soc_dapm_widget sdm845_snd_widgets[] = {
- 	SND_SOC_DAPM_MIC("Int Mic", NULL),
- };
++	unsigned int codec_dai_fmt = SND_SOC_DAIFMT_CBS_CFS;
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct snd_soc_card *card = rtd->card;
+ 	struct sdm845_snd_data *data = snd_soc_card_get_drvdata(card);
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
++	struct snd_soc_dai *codec_dai = rtd->codec_dai;
++
++	int j;
++	int ret;
  
--static void sdm845_add_be_ops(struct snd_soc_card *card)
-+static void sdm845_add_ops(struct snd_soc_card *card)
- {
- 	struct snd_soc_dai_link *link;
- 	int i;
-@@ -230,6 +282,7 @@ static void sdm845_add_be_ops(struct snd_soc_card *card)
- 			link->ops = &sdm845_be_ops;
- 			link->be_hw_params_fixup = sdm845_be_hw_params_fixup;
+ 	switch (cpu_dai->id) {
+ 	case PRIMARY_MI2S_RX:
+ 	case PRIMARY_MI2S_TX:
++		codec_dai_fmt |= SND_SOC_DAIFMT_NB_NF;
+ 		if (++(data->pri_mi2s_clk_count) == 1) {
+ 			snd_soc_dai_set_sysclk(cpu_dai,
+ 				Q6AFE_LPASS_CLK_ID_MCLK_1,
+@@ -172,6 +223,7 @@ static int sdm845_snd_startup(struct snd_pcm_substream *substream)
+ 				MI2S_BCLK_RATE, SNDRV_PCM_STREAM_PLAYBACK);
  		}
-+		link->init = sdm845_dai_init;
- 	}
- }
+ 		snd_soc_dai_set_fmt(cpu_dai, fmt);
++		snd_soc_dai_set_fmt(codec_dai, codec_dai_fmt);
+ 		break;
  
-@@ -264,7 +317,7 @@ static int sdm845_snd_platform_probe(struct platform_device *pdev)
- 	data->card = card;
- 	snd_soc_card_set_drvdata(card, data);
+ 	case SECONDARY_MI2S_TX:
+@@ -190,6 +242,34 @@ static int sdm845_snd_startup(struct snd_pcm_substream *substream)
+ 				Q6AFE_LPASS_CLK_ID_QUAD_TDM_IBIT,
+ 				TDM_BCLK_RATE, SNDRV_PCM_STREAM_PLAYBACK);
+ 		}
++
++		codec_dai_fmt |= SND_SOC_DAIFMT_IB_NF | SND_SOC_DAIFMT_DSP_B;
++
++		for (j = 0; j < rtd->num_codecs; j++) {
++			codec_dai = rtd->codec_dais[j];
++
++			if (!strcmp(codec_dai->component->name_prefix,
++				    "Left")) {
++				ret = snd_soc_dai_set_fmt(
++						codec_dai, codec_dai_fmt);
++				if (ret < 0) {
++					dev_err(rtd->dev,
++						"Left TDM fmt err:%d\n", ret);
++					return ret;
++				}
++			}
++
++			if (!strcmp(codec_dai->component->name_prefix,
++				    "Right")) {
++				ret = snd_soc_dai_set_fmt(
++						codec_dai, codec_dai_fmt);
++				if (ret < 0) {
++					dev_err(rtd->dev,
++						"Right TDM slot err:%d\n", ret);
++					return ret;
++				}
++			}
++		}
+ 		break;
  
--	sdm845_add_be_ops(card);
-+	sdm845_add_ops(card);
- 	ret = snd_soc_register_card(card);
- 	if (ret) {
- 		dev_err(dev, "Sound card registration failed\n");
+ 	default:
 -- 
 2.20.0.rc0.387.gc7a69e6b6c-goog
 
