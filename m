@@ -2,136 +2,191 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 242C0C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 17:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9457DC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 17:48:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E17AD20865
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 17:40:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E17AD20865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 52B3D205C9
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 17:48:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="cxDe0L5A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52B3D205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbeKYE27 (ORCPT
+        id S1726451AbeKYEhj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 23:28:59 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:55247 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbeKYE27 (ORCPT
+        Sat, 24 Nov 2018 23:37:39 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:41992 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725880AbeKYEhj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 23:28:59 -0500
-Received: by mail-io1-f69.google.com with SMTP id f24so14135144ioh.21
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 09:40:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=XrEutnY5Vj/QyRcAYMGIeSlHjp5B9L+bHpCgLhSQHXs=;
-        b=t4GLUvGePR/v+4znL3jFLYckG1SiBVaPMqjsFkwl/8qzjuD1y5AELDve9lnOrQMjMy
-         wEb33Hmypp9HEfZrtU8CcQe2xS5YZocujdiBq33nZh//wMTjXXduVxJdUj6BiEYRJEf7
-         1AiwSinPmdW9WnLqxtaovaYxwrEk9/xRDiw4m1oxSCExga3pVVqxljXfqiauFt1mnObu
-         +EO+CxDE5ko6Osrh9I1+hXlLH7Gv6M4sOG7CHcPaVDOzkgg/0kKoN2pMJ+hgS/u/JJss
-         5P66j28Rzvip7EZmpFK/82Pr+jryTeNnyjl1E6vV4dLOd8l83Kc7unfc+YS0NUfvmUcs
-         3hJg==
-X-Gm-Message-State: AGRZ1gJVNWOU+V3YZ/h98Rj1t/VWKE8XzWwylX/Sbz1MUeEeU8ZFaWRU
-        Yi3ZxlOO6hfrIGJ7mhWh+dCsZdZw5p0jWd0xZfChhX04zaCw
-X-Google-Smtp-Source: AJdET5cNDV13tXNLvv2AU57GveLiYL2xoGT5sSWeeoyUDnBMuDAwcdN9MiYwIiwWubdizRq+sxdXHXC4Iyl/eNKX8TphgJpN1hBj
+        Sat, 24 Nov 2018 23:37:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=BQJHxF1J0il6O8yNgQgtphdYspqFwdOUwLTRgBjUR+o=; b=cxDe0L5Ao41nKBSixvyNsPdnm
+        xmlNrFPnM2k4BLsp0szH+/Fv21i2XDniXTpdh72SCWfXdcGr0yeqmYSFGfBaD4dom4Lji5JnDGb79
+        v5MAHlPy6hnv6iHKd0n0U85usKkZP+PYtpdkswFafh0XpjkJcHZfEeS/bX9HQU8mSpAdI=;
+Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:41613)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gQc2e-0006FL-L2; Sat, 24 Nov 2018 17:48:28 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gQc2b-00060n-EU; Sat, 24 Nov 2018 17:48:25 +0000
+Date:   Sat, 24 Nov 2018 17:48:23 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>, Greg KH <greg@kroah.com>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org,
+        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tony@atomide.com,
+        linux-omap@vger.kernel.org,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
+Message-ID: <20181124174823.GQ6920@n2100.armlinux.org.uk>
+References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
+ <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
+ <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
+ <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
+ <4eb3b03e-0a97-6195-f162-e03e32705fe0@ti.com>
+ <20181122220114.GB11423@darkstar.musicnaut.iki.fi>
+ <cb1355b5-0d2e-1f83-5ea1-7615350ca0ec@ti.com>
+ <20181124001740.GI12912@darkstar.musicnaut.iki.fi>
 MIME-Version: 1.0
-X-Received: by 2002:a24:3653:: with SMTP id l80mr13928023itl.3.1543081204530;
- Sat, 24 Nov 2018 09:40:04 -0800 (PST)
-Date:   Sat, 24 Nov 2018 09:40:04 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000e4a41057b6c9792@google.com>
-Subject: WARNING: syz-executor still has locks held!
-From:   syzbot <syzbot+b70f2aabc707c69c9239@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181124001740.GI12912@darkstar.musicnaut.iki.fi>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Sat, Nov 24, 2018 at 02:17:40AM +0200, Aaro Koskinen wrote:
+> Hi,
+> 
+> On Fri, Nov 23, 2018 at 01:45:46PM +0200, Peter Ujfalusi wrote:
+> > On 23/11/2018 0.01, Aaro Koskinen wrote:
+> > > With that reverted, the DMA works OK (and I can also now confirm that
+> > > OMAP_DMA_LCH_2D works). I haven't yet checked if we actually need that
+> > > quirk in OMAP UDC,
+> > 
+> > The omap_udc driver is a bit of a mess, need to check it myself, but for
+> > now we can just set the quirk_ep_out_aligned_size and investigate later.
+> 
+> OK, with quirk_ep_out_aligned_size we get 770/16xx DMA working again,
+> but on 15xx the omap_udc DMA still doesn't work (tested today for the
+> first time ever, I have no idea if it has ever worked and if so, when?).
 
-syzbot found the following crash on:
+Hmm, there's more questionable stuff in this driver, and the gadget
+layer.
 
-HEAD commit:    7c98a4261827 Merge tag 'ceph-for-4.20-rc4' of https://gith..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12d81015400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=73e2bc0cb6463446
-dashboard link: https://syzkaller.appspot.com/bug?extid=b70f2aabc707c69c9239
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16c9e26d400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e1234d400000
+Fundamental fact of struct device - it's a ref-counted structure and
+will only be freed when the last reference is dropped.  dev_unregister()
+merely drops the refcount, it doesn't guarantee that it's dropped to
+zero (iow, there can be other users).  Only when the refcount drops
+to zero is the dev.release function called.  However:
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+b70f2aabc707c69c9239@syzkaller.appspotmail.com
+usb_add_gadget_udc_release(..., release)
+{
+        if (release)
+                gadget->dev.release = release;
+        else
+                gadget->dev.release = usb_udc_nop_release;
+        device_initialize(&gadget->dev);
+        ret = device_add(&gadget->dev);
+}
 
-audit: type=1400 audit(1543059836.603:35): avc:  denied  { map } for   
-pid=6203 comm="bash" path="/bin/bash" dev="sda1" ino=1457  
-scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
-tcontext=system_u:object_r:file_t:s0 tclass=file permissive=1
-audit: type=1400 audit(1543059843.273:36): avc:  denied  { map } for   
-pid=6217 comm="syz-executor552" path="/root/syz-executor552394561"  
-dev="sda1" ino=16483 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
-tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
+At this point, that struct device is registered, so its refcount can
+be increased by other users.
 
-====================================
-WARNING: syz-executor552/6218 still has locks held!
-4.20.0-rc3+ #127 Not tainted
-------------------------------------
-1 lock held by syz-executor552/6218:
-  #0: 000000004754a9eb (&sig->cred_guard_mutex){+.+.}, at:  
-prepare_bprm_creds+0x53/0x120 fs/exec.c:1405
+void usb_del_gadget_udc(struct usb_gadget *gadget)
+{
+...
+        device_unregister(&gadget->dev);
+        memset(&gadget->dev, 0x00, sizeof(gadget->dev));
+}
 
-stack backtrace:
-CPU: 0 PID: 6218 Comm: syz-executor552 Not tainted 4.20.0-rc3+ #127
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_held_locks_bug kernel/locking/lockdep.c:4362 [inline]
-  debug_check_no_locks_held.cold.49+0x93/0x9f kernel/locking/lockdep.c:4368
-  try_to_freeze include/linux/freezer.h:66 [inline]
-  freezer_count include/linux/freezer.h:128 [inline]
-  freezable_schedule include/linux/freezer.h:173 [inline]
-  de_thread fs/exec.c:1115 [inline]
-  flush_old_exec+0x1ea2/0x2480 fs/exec.c:1262
-  load_elf_binary+0xa39/0x5620 fs/binfmt_elf.c:869
-  search_binary_handler+0x17d/0x570 fs/exec.c:1654
-  exec_binprm fs/exec.c:1696 [inline]
-  __do_execve_file.isra.33+0x1661/0x25d0 fs/exec.c:1820
-  do_execveat_common fs/exec.c:1867 [inline]
-  do_execveat fs/exec.c:1895 [inline]
-  __do_sys_execveat fs/exec.c:1976 [inline]
-  __se_sys_execveat fs/exec.c:1968 [inline]
-  __x64_sys_execveat+0xed/0x130 fs/exec.c:1968
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x445639
-Code: e8 ec b8 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 8b 12 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f5efaee7d18 EFLAGS: 00000246 ORIG_RAX: 0000000000000142
-RAX: ffffffffffffffda RBX: 00000000006dac28 RCX: 0000000000445639
-RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000003
-RBP: 00000000006dac20 R08: 0000000000001000 R09: 65732f636f72702f
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5efaee7d20
-R13: 00000000006dac2c R14: 0000000020000280 R15: 00000000006dad2c
+That memset() is down-right wrong - the refcount on this struct device
+may _not_ be zero at this point, the struct device could well be in
+use by another thread.  That memset will trample over the contents of
+the structure potentially while someone else is using it, and
+_potentially_ before the gadget->dev.release function has been called.
 
+However, that _may_ be a good thing when you read the omap_udc code:
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+        status = usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
+                        omap_udc_release);
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+During the omap_udc_remove() function:
+{
+...
+        usb_del_gadget_udc(&udc->gadget);
+        if (udc->driver)
+                return -EBUSY;
+
+        udc->done = &done;
+
+... more dereferences of udc, which is a _global_ variable ...
+
+        wait_for_completion(&done);
+}
+
+Now, omap_udc_release() does this:
+
+        complete(udc->done);
+        kfree(udc);
+        udc = NULL;
+
+So, when usb_del_gadget_udc() is called, if device_unregister() within
+there drops the last reference count, omap_udc_release() will be called
+immediately.  Since udc->done hasn't been setup at that point, that
+complete() will fail with a NULL pointer dereference.  If that doesn't
+happen, then the kfree() and following set of the global 'udc' variable
+to NULL means that all future references to 'udc' after the call to
+usb_del_gadget_udc() in omap_udc_remove() will be dereferencing a NULL
+pointer.  So one way or the other, this leads to a kernel OOPS.
+
+If, on the other hand, omap_udc_release() was not called in
+device_unregister(), the function pointer will be zeroed by the
+memset(), which will lead to 'udc' never being freed - in other words,
+we leak memory.
+
+What's more is that 'done' is never "completed" so we end up hanging
+at the wait_for_completion().
+
+Then there's the pointless:
+
+        if (udc->driver)
+                return -EBUSY;
+
+in omap_udc_remove().  The effect of returning an error is... what
+exactly?  It doesn't prevent the device being removed at all, it
+doesn't delay it, in fact the whole "remove returns an int" is
+nothing but confusion - the return value from all driver remove
+methods is completely ignored.
+
+If udc->driver is still set at this point, it basically means that
+we skip the rest of the tear down, but the platform device will
+still be unbound from the driver, leaving (eg) the transceiver phy
+still claimed, the procfs file still registered, the interrupts
+still claimed, the memory region still registered, etc.  If omap_udc
+is built as a module, the module could even be removed while all
+that is still registered.
+
+So, whatever way I look at this, the code in the removal path both
+in omap_udc and the gadget removal code higher up looks very wrong
+and broken to me.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
