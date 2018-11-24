@@ -2,90 +2,153 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E55ABC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 03:58:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E55C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 04:10:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3BD220673
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 03:58:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WOa3E8ve"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3BD220673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 74E0E2082F
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 04:10:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74E0E2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731046AbeKXOo7 (ORCPT
+        id S1731110AbeKXO5j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 09:44:59 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54730 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728450AbeKXOo7 (ORCPT
+        Sat, 24 Nov 2018 09:57:39 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:48783 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731053AbeKXO5j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 09:44:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rnt75NovqVREUcNFpNXwhtKry1MGSJYgxwyIiIT7cjM=; b=WOa3E8veuEPBENe8Rkn2rbWC4
-        CcnJVvjxj1938b+WMg+lpH4tBhEQoInXFChdPXzfxhWjAADqWP/N/tyyLzqWrBlOvShmcnzzi1J9c
-        cMNShOjvBNiupl8ZU8HN0F/0fxc/KRzRpX7YInRCuxra4em8K2G8CoL8qu1u79HHO0nbQnRSEdc67
-        DHkaZ/BZCINx9jMGK34cOyIIcQCkWLcMz8XZhb7q7uu+DkluHqHeXBLzsV9i49LFpUCCOh74eIr1k
-        zoBCwOnCDAGMcPYZVzD+MRt2qPgAX+kQpeVYpUzoOqaU9zyh17o41RgfG5j1uQFQX3t09vXeM3kUW
-        tq/8y9xgA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gQP51-00050n-Rx; Sat, 24 Nov 2018 03:58:03 +0000
-Date:   Fri, 23 Nov 2018 19:58:03 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     kernel test robot <lkp@intel.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>, LKP <lkp@01.org>,
-        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-input@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linuxppc-dev@lists.ozlabs.org,
-        linux-parisc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: dad4f140ed ("Merge branch 'xarray' of .."):  Mem-Info:
-Message-ID: <20181124035803.GX3065@bombadil.infradead.org>
-References: <5bf8a766.2eiLO6qApoh2dO55%lkp@intel.com>
+        Sat, 24 Nov 2018 09:57:39 -0500
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wAO4AV72042414;
+        Sat, 24 Nov 2018 13:10:31 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
+ Sat, 24 Nov 2018 13:10:31 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wAO4AQkE042386
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sat, 24 Nov 2018 13:10:31 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] printk: Make printk_emit() local function.
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+References: <1542898768-5732-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20181123122405.3iqc6bvdxkngntzl@pathway.suse.cz>
+ <d2dd8a02-4e1d-7e9b-4639-fe3a640a2742@i-love.sakura.ne.jp>
+Message-ID: <5cc99d2c-c408-34f7-d1fc-e1cd2a9e31da@i-love.sakura.ne.jp>
+Date:   Sat, 24 Nov 2018 13:10:25 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5bf8a766.2eiLO6qApoh2dO55%lkp@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <d2dd8a02-4e1d-7e9b-4639-fe3a640a2742@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 24, 2018 at 09:20:38AM +0800, kernel test robot wrote:
-> Greetings,
-> 
-> 0day kernel testing robot got the below dmesg and the first bad commit is
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> 
-> commit dad4f140edaa3f6bb452b6913d41af1ffd672e45
+Well, moving "__printf(3, 4) __cold" to before
+"int devkmsg_emit(int facility, int level, const char *fmt, ...) {"
+seems to be working. I did not know...
 
-I think you've got the wrong bisection point, confused by other messages.
-Here's the messages I think you intend to chase:
+From 86fff21e5fef6d3f7970cf5c07a54a907e582b52 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Sat, 24 Nov 2018 13:05:25 +0900
+Subject: [PATCH v2] printk: Make printk_emit() local function.
 
-[  155.389297] BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck
- for 52s!
-[  155.409004] BUG: workqueue lockup - pool cpus=0 flags=0x4 nice=0 stuck for 40
-s!
-[  155.420377] Showing busy workqueues and worker pools:
-[  155.428445] workqueue events: flags=0x0
-[  155.434634]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-[  155.437904]     pending: cache_reap
-[  155.449671] workqueue events_power_efficient: flags=0x82
-[  155.458000]   pwq 2: cpus=0 flags=0x4 nice=0 active=3/256
-[  155.461269]     pending: neigh_periodic_work, do_cache_clean, check_lifetime
+printk_emit() is called from only devkmsg_write() in the same file.
+Save object size by making it a local function.
 
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ include/linux/printk.h |  5 -----
+ kernel/printk/printk.c | 30 ++++++++++++++----------------
+ 2 files changed, 14 insertions(+), 21 deletions(-)
 
-but you're getting hung up on the testsuite problems.
-
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index cf3eccf..55aa969 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -166,11 +166,6 @@ int vprintk_emit(int facility, int level,
+ asmlinkage __printf(1, 0)
+ int vprintk(const char *fmt, va_list args);
+ 
+-asmlinkage __printf(5, 6) __cold
+-int printk_emit(int facility, int level,
+-		const char *dict, size_t dictlen,
+-		const char *fmt, ...);
+-
+ asmlinkage __printf(1, 2) __cold
+ int printk(const char *fmt, ...);
+ 
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 1b2a029..5c2079d 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -752,6 +752,19 @@ struct devkmsg_user {
+ 	char buf[CONSOLE_EXT_LOG_MAX];
+ };
+ 
++static __printf(3, 4) __cold
++int devkmsg_emit(int facility, int level, const char *fmt, ...)
++{
++	va_list args;
++	int r;
++
++	va_start(args, fmt);
++	r = vprintk_emit(facility, level, NULL, 0, fmt, args);
++	va_end(args);
++
++	return r;
++}
++
+ static ssize_t devkmsg_write(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	char *buf, *line;
+@@ -810,7 +823,7 @@ static ssize_t devkmsg_write(struct kiocb *iocb, struct iov_iter *from)
+ 		}
+ 	}
+ 
+-	printk_emit(facility, level, NULL, 0, "%s", line);
++	devkmsg_emit(facility, level, "%s", line);
+ 	kfree(buf);
+ 	return ret;
+ }
+@@ -1935,21 +1948,6 @@ asmlinkage int vprintk(const char *fmt, va_list args)
+ }
+ EXPORT_SYMBOL(vprintk);
+ 
+-asmlinkage int printk_emit(int facility, int level,
+-			   const char *dict, size_t dictlen,
+-			   const char *fmt, ...)
+-{
+-	va_list args;
+-	int r;
+-
+-	va_start(args, fmt);
+-	r = vprintk_emit(facility, level, dict, dictlen, fmt, args);
+-	va_end(args);
+-
+-	return r;
+-}
+-EXPORT_SYMBOL(printk_emit);
+-
+ int vprintk_default(const char *fmt, va_list args)
+ {
+ 	int r;
+-- 
+1.8.3.1
 
