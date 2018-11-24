@@ -2,128 +2,112 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1787FC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 15:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A0FC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 15:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D030320663
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 15:23:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D030320663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 1FB7B2086B
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 15:35:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RLnPXe4J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FB7B2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbeKYCMe (ORCPT
+        id S1726710AbeKYCX5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 21:12:34 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33776 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726011AbeKYCMe (ORCPT
+        Sat, 24 Nov 2018 21:23:57 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:43283 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726011AbeKYCX5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 21:12:34 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 04E5C80985; Sat, 24 Nov 2018 16:23:49 +0100 (CET)
-Date:   Sat, 24 Nov 2018 16:23:52 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc:     bp@alien8.de, hpa@zytor.com,
-        kernel list <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        tglx@linutronix.de, x86@kernel.org, jani.nikula@linux.intel.com,
-        rodrigo.vivi@intel.com, intel-gfx@lists.freedesktop.org,
-        chris@chris-wilson.co.uk
-Subject: Re: v4.20-rc1: list_del corruption on thinkpad x220
-Message-ID: <20181124152352.GA9548@amd>
-References: <20181108175803.GA10785@amd>
- <154279919462.20217.14259089584802660420@jlahtine-desk.ger.corp.intel.com>
- <20181121115449.GA32455@amd>
- <154296105546.7930.1457928786446716358@jlahtine-desk.ger.corp.intel.com>
+        Sat, 24 Nov 2018 21:23:57 -0500
+Received: by mail-oi1-f193.google.com with SMTP id u18so12167300oie.10
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 07:35:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=/FuY6dgIuspQHr57QcxDIROVOnk4ZxSYqUTFxv9J2GE=;
+        b=RLnPXe4JasnPuwQNW7n+lXR4QyKJ4P0OJXGm72UCGchI3wYQCzFxhMMO7upY96Kjcj
+         nIciCaHW1OcawVqJf2JfcjNauX6w9crkRI9o/fUqtvh0Ne/wRfKELWRcL1UxVzTsDMD5
+         iTEBtfULUMdjH811F1KkV1Pq3bBKcIokv6byt48cEAyRKcdDQDtwd1WyGmG8Gj8Z4069
+         Comi1429HuqdyV2PgEcTnDsWJHaXN+QkXgCkbwNyZ6INj6diOcD/H11IVd7AdCf9vzyL
+         UFmKBOBHR4vaRYH745eouPC0P9DJOYmMgCs/OZYeRo7mZ/sv9FAcXmTB9cb14oted8y7
+         /Z9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=/FuY6dgIuspQHr57QcxDIROVOnk4ZxSYqUTFxv9J2GE=;
+        b=SBaZ6yv2Cu5Vnild3JoiEyYLXyWwzn2dDR3le3qv3A8uA5HJ54Yr9wSgjyju8eBzUG
+         VyZ89PVZx21iVBQYyo17YQsz1dg2iWngIRzI1+t6Qi1JUFed4QgvvVZVPXtwSGF0MJB3
+         rEpOxbWWtlTgOV3ofkqh46wKd2Rvi+PTx7+AFuDjZ9G8N1q7VPru3kE5mF+4gkBp2jw1
+         KDyRXT4l7BLR8BihO46hkxXIFhiqbfgSeBBLU4qsIZvZQLlc5pe45rtzsXIvC3KaG8Tn
+         3V9T6OtOmdo0VxBeFAEusBdsDkhjLlBgjsUrmGcDB8DxyCqouMZTCcsajYmJAGJ2v3aB
+         J7ag==
+X-Gm-Message-State: AGRZ1gIeTAUr0YIPN0UHRDsmTltCho8MVOKXuy2zq0LmBCLfM6iohQOP
+        kybllSjQWdUrKZxq6isGa4MW6h6FAQc9vUbK1WoyKs5j3l0=
+X-Google-Smtp-Source: AJdET5fLiicJ7YaubKHHYpOjDsZMU/kLncyJ5XwdRwPU6BW8uUNcK3P1Ld5IxySLeo6JmDCVr/dhtquMrGCdBeHfjS0=
+X-Received: by 2002:aca:d509:: with SMTP id m9mr10583311oig.82.1543073716617;
+ Sat, 24 Nov 2018 07:35:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
-Content-Disposition: inline
-In-Reply-To: <154296105546.7930.1457928786446716358@jlahtine-desk.ger.corp.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+From:   David CARLIER <devnexen@gmail.com>
+Date:   Sat, 24 Nov 2018 15:35:05 +0000
+Message-ID: <CA+XhMqyP=OZ5=GF1L=1EkNuNWJfk0t=GJWvQd=K46vT-sq9L6A@mail.gmail.com>
+Subject: [PATCH] Little memset_explicit optimisation
+To:     linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        aryabinin@virtuozzo.com, gregkh@linuxfoundation.org,
+        andriy.shevchenko@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Subject: [PATCH] memzero_explicit, optimisation for size.
 
---YiEDa0DAkWCtVeE4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
+Using the return value of memset for save/load sake.
 
-> > > There's one similar for nouveau in Bugzilla, but it seems like a genu=
-ine
-> > > memory corruption (1 bit flipped):
-> > >=20
-> > > https://bugs.freedesktop.org/show_bug.cgi?id=3D84880
-> > >=20
-> > > Any extra information would be of use :)
-> > >=20
-> > > Regards, Joonas
-> > >=20
-> > > PS. Could you open a bug to Bugzilla, it'll help to collect the
-> > > information in one consolidated place:
-> > >=20
-> > > https://01.org/linuxgraphics/documentation/how-report-bugs
-> >=20
-> > I prefer email... certainly for bugs that can't be reproduced.
->=20
-> By adding it to the Bugzilla it may be recognized by somebody else
-> who is experiencing a similar issue. Internet points are not deducted
-> for submitting bugs in good faith, even if they get closed as
-> NOTABUG.
 
-Feel free to copy from email to bugzilla :-).
+Signed-off-by: David Carlier <devnexen@gmail.com>
 
-> It sounds like you've hit the same signature twice, so it may very well
-> be reproducible. Does flightgear have some demo mode where you could
-> leave it running a heavy scene overnight?
+---
 
-I'm not sure if it was same signature twice. I had two lockups, but
-IIRC only investigated one.
+ lib/string.c | 2 +-
 
-Not really a demo mode. I can put plane on autopilot, but eventually
-gas runs out. (And I guess window needs to be visible for test to be
-effective.) I tried today, but it did not crash.
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Do you have something else I could run to do the testing?
 
-> Were you running 4.19 kernel previously, distro one or vanilla? A full
-> dmesg from a boot would be appreciated (from kernel where you didn't
-> experience issues, and from one where you do).
+diff --git a/lib/string.c b/lib/string.c
 
-Recent kernels I'm running are self-compiled.
+index 38e4ca08e757..92da04a0213b 100644
 
-> We actually have a well defined process and personnel to look into the
-> Bugzilla entries, so it'd still be helpful to have this logged to
-> Bugzilla.
+--- a/lib/string.c
 
-If I can reproduce it, it makes sense to create bugzilla entry.
++++ b/lib/string.c
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+@@ -720,7 +720,7 @@ EXPORT_SYMBOL(memset);
 
---YiEDa0DAkWCtVeE4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+  */
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+ void memzero_explicit(void *s, size_t count)
 
-iEYEARECAAYFAlv5bQgACgkQMOfwapXb+vJ2LwCfc8KyBVkCfE84DoaqSiwngr23
-SuUAoL3e2X4/sePjGvTHhEiGWyFgLUzp
-=fZs7
------END PGP SIGNATURE-----
+ {
 
---YiEDa0DAkWCtVeE4--
+- memset(s, 0, count);
+
++ s = memset(s, 0, count);
+
+  barrier_data(s);
+
+ }
+
+ EXPORT_SYMBOL(memzero_explicit);
+
+-- 
+
+2.19.1
