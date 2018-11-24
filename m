@@ -2,101 +2,161 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B30CC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC629C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4378620868
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:10:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="e3aBn87g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4378620868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 9EA0020868
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:16:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EA0020868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbeKYG7K (ORCPT
+        id S1726343AbeKYHFK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 01:59:10 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:43488 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbeKYG7K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 01:59:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FdGqo3cC/VpmpjM13+E2Bs/k7k9atBHPHKhA454la/Y=; b=e3aBn87ggYtQTSbyOsPs/7THM
-        tI1Dyrm1mXU4GnkKAhi9J4RYZE+I6Zx/Aw4ZSV9Pt30dLJKKTwj2cgJbuoSOuZkHQaUql8voPLL/T
-        IB21s7BISc9H/9RS4fxKdvPWLC3+VqM0qMxLEvT5baDk2pS1Qbd4QHi9c99tKZ8+R0/Yo=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:32989)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gQeFO-0006kW-M8; Sat, 24 Nov 2018 20:09:46 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gQeFM-0007Hs-0F; Sat, 24 Nov 2018 20:09:44 +0000
-Date:   Sat, 24 Nov 2018 20:09:42 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>, tony@atomide.com
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org,
-        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
-Message-ID: <20181124200942.GS6920@n2100.armlinux.org.uk>
-References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
- <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
- <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
- <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
- <20181122102948.GN6920@n2100.armlinux.org.uk>
- <20181122151236.GA9611@n2100.armlinux.org.uk>
- <6ed280af-edb6-4be7-82f4-7fc00378103e@ti.com>
- <20181123185215.GH12912@darkstar.musicnaut.iki.fi>
-MIME-Version: 1.0
+        Sun, 25 Nov 2018 02:05:10 -0500
+Received: from wind.enjellic.com ([76.10.64.91]:55114 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726179AbeKYHFK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 02:05:10 -0500
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id wAOKDJgn012412;
+        Sat, 24 Nov 2018 14:13:19 -0600
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id wAOKDIfi012411;
+        Sat, 24 Nov 2018 14:13:18 -0600
+Date:   Sat, 24 Nov 2018 14:13:18 -0600
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181124201318.GB12149@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com> <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com> <20181119161917.GF13298@linux.intel.com> <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com> <20181120120442.GA22172@linux.intel.com> <20181122111253.GA31150@wind.enjellic.com> <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com> <20181124172114.GB32210@linux.intel.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181123185215.GH12912@darkstar.musicnaut.iki.fi>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181124172114.GB32210@linux.intel.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sat, 24 Nov 2018 14:13:19 -0600 (CST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 08:52:15PM +0200, Aaro Koskinen wrote:
-> Hi,
-> 
-> On Fri, Nov 23, 2018 at 02:35:04PM +0200, Peter Ujfalusi wrote:
-> > On 22/11/2018 17.12, Russell King - ARM Linux wrote:
-> > > I'm also not sure about this:
-> > > 
-> > >         if (cpu_is_omap15xx())
-> > >                 end++;
-> > > 
-> > > in dma_dest_len() - is that missing from the omap-dma driver?  It looks
-> > > like a work-around for some problem on OMAP15xx, but I can't make sense
-> > > about why it's in the UDC driver rather than the legacy DMA driver.
+On Sat, Nov 24, 2018 at 09:21:14AM -0800, Jarkko Sakkinen wrote:
+> On Thu, Nov 22, 2018 at 07:21:08AM -0800, Andy Lutomirski wrote:
+> > > At a high level, addressing these issues is straight forward.  First,
+> > > the driver needs to support authorization equivalent to that which is
+> > > implemented in the current Intel Launch Enclave, ie. control over the
+> > > SGX_FLAGS_PROVISION_KEY attribute.
 > > 
-> > afaik no other legacy drivers were doing similar thing, this must be
-> > something which is needed for the omap_udc driver to fix up something?
-> 
-> Here's the patch that added it: https://marc.info/?l=linux-omap&m=119634396324221&w=2
-> 
-> "Make DMA-OUT behave on the 1510 ... the 1510 CPC register was just
-> off-by-one with respect to the 1611 CDAC"
+> > I agree, hence my email :)
 
-... which suggests that's a problem with the CPC register itself, and
-we should fix that in the DMAengine driver rather than the USB gadget
-driver.
+> Started to scratch my head that is it really an issue that any
+> enclave can provision in the end?
+>
+> Direct quote from your first response:
+>
+> "In particular, the ability to run enclaves with the provisioning
+> bit set is somewhat sensitive, since it effectively allows access to
+> a stable fingerprint of the system."
+>
+> As can be seen from the key derivation table this does not exactly
+> hold so you should refine your original argument before we can
+> consider any type of change.
+>
+> I just don't see what it is so wrong for any enclave to be able to
+> tell that it really is an enclave.
 
-Tony, any input on this?
+This isn't about an enclave being able to tell that it is really an
+enclave.  As I noted in my previous reply, access to the provisioning
+bit allows an enclave author to create a perpetual hardware identifier
+for a platform based on a signing key of their choosing, along with a
+few other incidentals, all of which are completely under the control
+of the enclave author.
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+The Intel SGX architects, at least originally, felt strongly enough
+about this issue to use the Launch Enclave to implement
+cryptographically secure policy control over access to the
+SGX_FLAGS_PROVISION_KEY attribute.  See the 'if' clause that begins on
+line 219 of psw/ae/le/launch_enclave.cpp in the current HEAD of the
+Linux SGX SDK which is currently bf22963411.
+
+Let me describe an entirely contrived example but one which is
+representative of the threat.
+
+I'm a web-site that wants to consistently and reliably track platforms
+that visit a site.  Without cryptographically secure policy
+enforcement in the SGX eco-system I push an enclave to the platform
+which only computes the MRSIGNER specific derived provisioning key and
+returns it to the web-site.
+
+From that point onward I will always be able to identify the platform,
+as long as the enclave can be executed on the platform.  Unlike
+cookies, there is nothing to delete since the aggressor enclave only
+needs to exist long enough to be run and generate the derived
+provisioning key, no trace of the fingerprinting remains thereafter.
+
+If the proposed driver is to be a functional replacement for the
+existing SGX eco-system it needs to offer privacy and platform
+security guarantees at least comparable to what is available on a
+non-FLC system.  That means at least some semblance of
+cryptographically secure policy management on at least two fronts.
+
+We can propose a general architecture that we believe satisfies these
+needs without compromising the upstream integrity of the kernel with
+respect to free and open systems.  A solution that could arguably
+protect user's investment in current non-FLC hardware as well.
+
+We would be happy to articulate the outline of that but I don't want
+to waste anyone's time, including ours, if everyone's mind has been
+made up as to what the driver should and should not do.
+
+We are clearly capable of making the proposed driver do whatever we
+want it to do.  Our concern is that Linux security architects that
+choose to use this technology have the best tools available to them,
+within the constraints of upstream sensibility, without whacking on
+the kernel.
+
+As it stands now the driver has both privacy and potential system
+security issues which translate into useability and desirability
+implications for SGX on Linux moving forward.
+
+> /Jarkko
+
+Have a good remainder of the weekend.
+
+I need to get back to my MIG welder out in the shop.
+
+Dr. Greg
+
+As always,
+Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+4206 N. 19th Ave.           Specializing in information infra-structure
+Fargo, ND  58102            development.
+PH: 701-281-1686
+FAX: 701-281-3949           EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"Attendants at a service station in Eunice, Louisiana, handed more than
+ $100 to a naked man who claimed to have a gun in his pocket."
+                                -- Unknown
+
