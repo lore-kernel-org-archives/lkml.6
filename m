@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6A0C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92695C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98D672087E
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:58:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50D8820874
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:59:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cQYQ9fUj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D672087E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="btHfR92E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50D8820874
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbeKYHrt (ORCPT
+        id S1726554AbeKYHsl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 02:47:49 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34877 "EHLO
+        Sun, 25 Nov 2018 02:48:41 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43496 "EHLO
         mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbeKYHrt (ORCPT
+        with ESMTP id S1726241AbeKYHsk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 02:47:49 -0500
-Received: by mail-lj1-f193.google.com with SMTP id x85-v6so13306171ljb.2
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 12:58:31 -0800 (PST)
+        Sun, 25 Nov 2018 02:48:40 -0500
+Received: by mail-lj1-f193.google.com with SMTP id 83-v6so13261826ljf.10
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 12:59:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=G8aC00oI6Bq6NmQvXgGD7tu98VEEn1Ah4XoyIl86u1E=;
-        b=cQYQ9fUjLcnFZGp+CYKwGs2RGLCSTBzErnbBytyqqI295ygJrfkngmYkfCekntnSYa
-         +CKi99FfTbT2Zmuesk774/u2Vh5oBA53QYje+uiJasVLrLyRn/yVyPXJmE4m40gYkY/h
-         az+d3cvK7ST0NXZFseURt+O3Crmskno2XG5G8=
+        bh=tIxw+Yv0PQVXma0Dx+fjN/DXfhPViTkH38A5jStFkdQ=;
+        b=btHfR92EH0oQ7CQWU2asTkt7th7d/Pfmtwv8/QWR2UaM8O3FqlRMUoHUd9V+zqnEkc
+         H2+6bG7f4Mjfl8BB+YT+lntA+dkMofoJ6dqFq23mHcdAB762Dx/6jWQ05wWRac9tB2J0
+         Rnrx6by+Inf7WFFH3hydd48TW/OtncE4pN9MU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=G8aC00oI6Bq6NmQvXgGD7tu98VEEn1Ah4XoyIl86u1E=;
-        b=hO4ELJ9/DayY8MP8rml/d/6t03j7pkGGTZ1z8rk2MVDaAcN+w77ARRCCTC6Tz3oWTq
-         uBslg8a7lhgBlqcaYq76v/LcD2ctW3cGtX3W6aTlOtDmwUDkVrO3jS0e06I1LHQDzPWs
-         iRDnlfsN9+fASBIrLM4LMV7lMheWHWOxNhqsxAzvI/G6eqMIk3/SQnFkJU7MvuZWDNbX
-         9uEZ/cM0svwyc+FTPMTEDZUfD7TBtzSYYXicSntvxkKx3nqkKMN/tqCUGKYZ9JYKEBVC
-         N884Ol1faplQKUkhoUUbvPVQGLDFq1V+48AdRIEM/rk95ljGWwy6yJd0GneI1CLHXhtN
-         ZAbA==
-X-Gm-Message-State: AA+aEWbhejkCGfDHr92N9MQ8n+4aboEvg6VJeBkFAHs+t2GCVpeSVe9a
-        YAVAFAuK3oBbebcTTwtD4vwV+1k0tdbtCyEUMPyVTQ==
-X-Google-Smtp-Source: AFSGD/VkmdUXbCdaOYBUoRQujU4xjke7bxhIGNQAN0RyPQCApFI4hBRgV0wE7Aupt+4+CQrN/HUfWq3W5PGgyNs7Y1c=
-X-Received: by 2002:a2e:29d7:: with SMTP id p84-v6mr12907970ljp.12.1543093111035;
- Sat, 24 Nov 2018 12:58:31 -0800 (PST)
+        bh=tIxw+Yv0PQVXma0Dx+fjN/DXfhPViTkH38A5jStFkdQ=;
+        b=ifNOzYOuiUwvzC8Lq0RpDK6hAW6gfWOhB7b56zaFuy2XMOlzpnqXI/nDcAl1CtDNjp
+         +zILfPwMHsK2+K6zZna0HWyxY5Gtfb7fW4MgJFYWXXTozNS5JriA1hkkcIypTZ1P77tB
+         v6mXfbKgUenAG+S3+lCGa2d3L75wQa3zcvTXv4HJdbC1Adn+0tZMkAnL5x4S6nC8pdR9
+         Iln+B/iorg1jSKuzJAlA7fPu2CSnQrSyCF41eXeQdyVv3CyblFt8J6hwFy8re/O5XkaR
+         USmyLX2hYQDOZyXcpS2pyzY9kES7/zrhrJLKMeos5/miX26sqMJWGsYqW/xT/zI/fBJb
+         jqfg==
+X-Gm-Message-State: AA+aEWbSQszPYvABwHh5GhoPxJMGgVZl6ZxKb1qYoV5hlkjwXyKUaPX4
+        ptk+0wSG/el4klFNWOXSKuomJAooKmfiBj2LXfaWIUStkbY=
+X-Google-Smtp-Source: AFSGD/V3J7VpJHFXkNmRsM2IxwizFs79rZK+D8eZtt95ixlP6XqtpkhhYnmObkPfTywdCOlZO7rZIci8vQ7OocU/Arw=
+X-Received: by 2002:a2e:994:: with SMTP id 142-v6mr11828648ljj.120.1543093162121;
+ Sat, 24 Nov 2018 12:59:22 -0800 (PST)
 MIME-Version: 1.0
-References: <20181115221634.22715-1-greenfoo@gluegarage.com> <20181115221634.22715-9-greenfoo@gluegarage.com>
-In-Reply-To: <20181115221634.22715-9-greenfoo@gluegarage.com>
+References: <20181115221634.22715-1-greenfoo@gluegarage.com> <20181115221634.22715-10-greenfoo@gluegarage.com>
+In-Reply-To: <20181115221634.22715-10-greenfoo@gluegarage.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 24 Nov 2018 21:58:19 +0100
-Message-ID: <CACRpkdZs+jk-KY7kUnRz8EoSrGN74i2fiXwp8BNuSG6JNxgixw@mail.gmail.com>
-Subject: Re: [PATCH 8/9] drm: remove no longer needed drm-get-put coccinelle script
+Date:   Sat, 24 Nov 2018 21:59:10 +0100
+Message-ID: <CACRpkdbRbXCq8DjzeJSGmH=tcb+B1f24oO209wMsLxAdHzvdkg@mail.gmail.com>
+Subject: Re: [PATCH 9/9] docs: drm: remove no longer relevant TODO entry
 To:     greenfoo@gluegarage.com
 Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
         Dave Airlie <airlied@linux.ie>,
@@ -97,12 +97,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, Nov 15, 2018 at 11:18 PM Fernando Ramos <greenfoo@gluegarage.com> wrote:
 
-> The coccinelle script was used to rename some (deprecated) functions
-> which no longer exist now.
+> This entry asked to rename all drm core "*_reference/_unrefence"
+> functions to "*_get/_put".
+>
+> Now that this task is complete, we can remove this entry from the TODO
+> list.
 >
 > Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
 
-Patch applied with Julia's ACK.
+Patch applied.
 
 Yours,
 Linus Walleij
