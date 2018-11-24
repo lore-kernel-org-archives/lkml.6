@@ -2,75 +2,85 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3436BC04EBB
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F2FC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB97320874
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:04:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB97320874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zeniv.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 37F1D20881
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:06:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="VT5ukN8i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37F1D20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=onstation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbeKYGxO (ORCPT
+        id S1726338AbeKYGzx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 01:53:14 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52216 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbeKYGxN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 01:53:13 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
-        id 1gQe9l-0006QY-BK; Sat, 24 Nov 2018 20:03:57 +0000
-Date:   Sat, 24 Nov 2018 20:03:57 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     syzbot <syzbot+ce18da013d76d837144d@syzkaller.appspotmail.com>
-Cc:     davem@davemloft.net, gregkh@linuxfoundation.org,
-        kgraul@linux.ibm.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, stranche@codeaurora.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: WARNING in csum_and_copy_to_iter
-Message-ID: <20181124200357.GC2217@ZenIV.linux.org.uk>
-References: <0000000000001ecaa1057b6e4489@google.com>
+        Sun, 25 Nov 2018 01:55:53 -0500
+Received: from onstation.org ([52.200.56.107]:42422 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726023AbeKYGzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 01:55:53 -0500
+Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 6D1962E4;
+        Sat, 24 Nov 2018 20:06:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
+        s=default; t=1543090002;
+        bh=MPdfZHj9sdY9mICSPGCOhgnMYH6JbIF51iauhh6x474=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VT5ukN8ixYvLkJWoafPMkscH5gHgV0vaSutIedZMqQTOXn+kfUiREXWvjy/7lVJzR
+         J1Siq/9jhb6CPFSs5cWOXznK094xc3rtcc5njRpb/3hF5Bqu8xGqNVR949Hyv5jWIp
+         Yidf2D3Ye8CmltlHTOqPY2y9523QlyofXHCAIEqU=
+From:   Brian Masney <masneyb@onstation.org>
+To:     thierry.reding@gmail.com, airlied@linux.ie, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, jonathan@marek.ca
+Subject: [PATCH 1/2] dt-bindings: drm/panel: simple: add lg,acx467akm-7 panel
+Date:   Sat, 24 Nov 2018 15:06:27 -0500
+Message-Id: <20181124200628.24393-1-masneyb@onstation.org>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000001ecaa1057b6e4489@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 24, 2018 at 11:40:03AM -0800, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    edeca3a769ad Merge tag 'sound-4.20-rc4' of git://git.kerne..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12bee26d400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=73e2bc0cb6463446
-> dashboard link: https://syzkaller.appspot.com/bug?extid=ce18da013d76d837144d
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15ccd1f5400000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+ce18da013d76d837144d@syzkaller.appspotmail.com
+Add binding for the LG ACX467AKM-7 4.95" 1080×1920 LCD panel that is
+found on the LG Nexus 5 (hammerhead) phone. This appears to be a JDI
+panel based on some Internet searches, however a specific model number
+could not be found. I disassembled an old Nexus 5 with a broken
+screen and the LG part number is the only model number present on the
+back of the panel, so I think that is probably the best ID to use.
 
-Caused by commit 95506588d2c1d72ca29adef8ae9bf771bcfb4ced
-Author: Slavomir Kaslev <kaslevs@vmware.com>
-Date:   Fri Nov 16 11:27:53 2018 +0200
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+---
+ .../devicetree/bindings/display/panel/lg,acx467akm-7.txt   | 7 +++++++
+ 1 file changed, 7 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/lg,acx467akm-7.txt
 
-    socket: do a generic_file_splice_read when proto_ops has no splice_read
+diff --git a/Documentation/devicetree/bindings/display/panel/lg,acx467akm-7.txt b/Documentation/devicetree/bindings/display/panel/lg,acx467akm-7.txt
+new file mode 100644
+index 000000000000..fc1e1b325e49
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/lg,acx467akm-7.txt
+@@ -0,0 +1,7 @@
++LG ACX467AKM-7 4.95" 1080×1920 LCD Panel
++
++Required properties:
++- compatible: must be "lg,acx467akm-7"
++
++This binding is compatible with the simple-panel binding, which is specified
++in simple-panel.txt in this directory.
+-- 
+2.17.2
 
-exposing all ->recvmsg() instances to pipe-backed iov_iter as possible destination.
-It's not all that hard to fix (I'll probably have a candidate patch by tonight,
-it's just a matter of adding the only missing primitive), but... shouldn't that
-patch have sat in -next for at least some testing first?  Because it's very
-easy to reproduce - splice from e.g. UDP socket will step into it.  Sure, the
-sky is not falling (unless you set panic-on-WARN, that is); the damn thing
-would've failed anyway, but...
