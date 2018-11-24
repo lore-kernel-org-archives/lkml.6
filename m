@@ -2,487 +2,67 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5B9C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 22:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B489C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 22:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 352EE20868
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 22:14:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eAoEX2JZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 352EE20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3428C20881
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 22:17:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3428C20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbeKYJEG (ORCPT
+        id S1726704AbeKYJGm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 04:04:06 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40175 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbeKYJEF (ORCPT
+        Sun, 25 Nov 2018 04:06:42 -0500
+Received: from emh01.mail.saunalahti.fi ([62.142.5.107]:43942 "EHLO
+        emh01.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbeKYJGm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 04:04:05 -0500
-Received: by mail-lj1-f194.google.com with SMTP id n18-v6so13356758lji.7;
-        Sat, 24 Nov 2018 14:14:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3lASiJ+glt9uNF9n9xfrkuuBHN9E0fTN/Qr03Tfcz6w=;
-        b=eAoEX2JZjUbIOpivdguDjnu27LFepsiIXh9o7xULUPvXEwuMR/2PRF0ltpM0idckYq
-         KYMuk7XkPzKp4vuu3Bb308W/KoXS08kbpn1/MkT/CLEZ8onv0qPQCMPp+ZF8VHQ4w/qm
-         b47p8c22kDRp40wvCOQosftab0PiqqVynHtTnwk7/g+51oXLCmMFqRE0FI6dvI6fEwha
-         mxL73h/9ZnNuWsau8DG8SP4tLkPyYKOW9m7KcTHQJpjRFyMLouUdE5hz+6kKuyvGIEp1
-         b0Ob9HdjnN7i0qOZwFNonXvx6T2mfd37AfIf7T528gGEqpQM+ViVlIzdKU6fX9PKJ3G2
-         8C5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3lASiJ+glt9uNF9n9xfrkuuBHN9E0fTN/Qr03Tfcz6w=;
-        b=LBe6I/yjgUo75/F68KC2kM+iALWFOjBieXpK4c8PRo3uGspYP59m2umC9Lvnb+QxQ8
-         kDiC0FbABakZbQlXDsJiH+McJo/70LhigdI2eM+sZ6lDn9u+IiOkryN4O8TxvkdtLg40
-         brMqfIH7dklWDSa4SsiUaBrDIf/ka43gi0XtYr0VmeEK97+BlAm3GvRKy7vlUJdRlUyn
-         2gLgjvgKMisrUcumymwUCQFCj+7XSY3jZAG/qwdoEtxp5xfLgOENExiWjBJRwle8Y9/3
-         RI+u85h5kTV166W+jvJ3j+UGa9wXXBPZil+RwyZaAIIPpZ8mwvKOUFEZZA2Dp7NpaVt/
-         Y/CQ==
-X-Gm-Message-State: AA+aEWZ/1YXSQBs3Xh4wkL7U3mRD96dYimIGqQ0iepsURmoK73d9jCOz
-        c3nmMmKZt/Y62T2fXFTkgjadxEqvA/I=
-X-Google-Smtp-Source: AFSGD/WcmJcgPVJ2TO4p4YA0dP3Ct4QFt17KoK+BGhpnmihVkad/FNYASYAeWSnfFmKKD/TzJNQ5Bg==
-X-Received: by 2002:a2e:9b15:: with SMTP id u21-v6mr3103124lji.29.1543097676205;
-        Sat, 24 Nov 2018 14:14:36 -0800 (PST)
-Received: from arch.domain.name (89-70-226-70.dynamic.chello.pl. [89.70.226.70])
-        by smtp.gmail.com with ESMTPSA id x16sm8369281lff.26.2018.11.24.14.14.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 24 Nov 2018 14:14:35 -0800 (PST)
-From:   Tomasz Duszynski <tduszyns@gmail.com>
-To:     linux-iio@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Tomasz Duszynski <tduszyns@gmail.com>
-Subject: [PATCH 2/3] iio: chemical: add support for Sensirion SPS30 sensor
-Date:   Sat, 24 Nov 2018 23:14:14 +0100
-Message-Id: <20181124221415.10081-3-tduszyns@gmail.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181124221415.10081-1-tduszyns@gmail.com>
-References: <20181124221415.10081-1-tduszyns@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 25 Nov 2018 04:06:42 -0500
+Received: from localhost.localdomain (85-76-84-147-nat.elisa-mobile.fi [85.76.84.147])
+        by emh01.mail.saunalahti.fi (Postfix) with ESMTP id 7E8B1200CB;
+        Sun, 25 Nov 2018 00:17:13 +0200 (EET)
+From:   Aaro Koskinen <aaro.koskinen@iki.fi>
+To:     Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>
+Subject: [PATCH v2 0/5] omap_udc bug fixes
+Date:   Sun, 25 Nov 2018 00:17:03 +0200
+Message-Id: <20181124221708.31003-1-aaro.koskinen@iki.fi>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for Sensirion SPS30 particulate matter sensor.
+Hello,
 
-Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
----
- drivers/iio/chemical/Kconfig  |  11 ++
- drivers/iio/chemical/Makefile |   1 +
- drivers/iio/chemical/sps30.c  | 359 ++++++++++++++++++++++++++++++++++
- 3 files changed, 371 insertions(+)
- create mode 100644 drivers/iio/chemical/sps30.c
+Some fixes for omap_udc making the driver usable again on Palm TE & 770.
 
-diff --git a/drivers/iio/chemical/Kconfig b/drivers/iio/chemical/Kconfig
-index b8e005be4f87..40057ecf8130 100644
---- a/drivers/iio/chemical/Kconfig
-+++ b/drivers/iio/chemical/Kconfig
-@@ -61,6 +61,17 @@ config IAQCORE
- 	  iAQ-Core Continuous/Pulsed VOC (Volatile Organic Compounds)
- 	  sensors
- 
-+config SPS30
-+	tristate "SPS30 Particulate Matter sensor"
-+	depends on I2C
-+	select CRC8
-+	help
-+	  Say Y here to build support for the Sensirion SPS30 Particulate
-+	  Matter sensor.
-+
-+	  To compile this driver as a module, choose M here: the module will
-+	  be called sps30.
-+
- config VZ89X
- 	tristate "SGX Sensortech MiCS VZ89X VOC sensor"
- 	depends on I2C
-diff --git a/drivers/iio/chemical/Makefile b/drivers/iio/chemical/Makefile
-index 2f4c4ba4d781..9f42f4252151 100644
---- a/drivers/iio/chemical/Makefile
-+++ b/drivers/iio/chemical/Makefile
-@@ -9,4 +9,5 @@ obj-$(CONFIG_BME680_I2C) += bme680_i2c.o
- obj-$(CONFIG_BME680_SPI) += bme680_spi.o
- obj-$(CONFIG_CCS811)		+= ccs811.o
- obj-$(CONFIG_IAQCORE)		+= ams-iaq-core.o
-+obj-$(CONFIG_SPS30) += sps30.o
- obj-$(CONFIG_VZ89X)		+= vz89x.o
-diff --git a/drivers/iio/chemical/sps30.c b/drivers/iio/chemical/sps30.c
-new file mode 100644
-index 000000000000..bf802621ae7f
---- /dev/null
-+++ b/drivers/iio/chemical/sps30.c
-@@ -0,0 +1,359 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Sensirion SPS30 Particulate Matter sensor driver
-+ *
-+ * Copyright (c) Tomasz Duszynski <tduszyns@gmail.com>
-+ *
-+ * I2C slave address: 0x69
-+ *
-+ * TODO:
-+ *  - support for turning on fan cleaning
-+ *  - support for reading/setting auto cleaning interval
-+ */
-+
-+#define pr_fmt(fmt) "sps30: " fmt
-+
-+#include <linux/crc8.h>
-+#include <linux/delay.h>
-+#include <linux/i2c.h>
-+#include <linux/iio/buffer.h>
-+#include <linux/iio/iio.h>
-+#include <linux/iio/sysfs.h>
-+#include <linux/iio/trigger_consumer.h>
-+#include <linux/iio/triggered_buffer.h>
-+#include <linux/module.h>
-+
-+#define SPS30_CRC8_POLYNOMIAL 0x31
-+
-+/* SPS30 commands */
-+#define SPS30_START_MEAS 0x0010
-+#define SPS30_STOP_MEAS 0x0104
-+#define SPS30_RESET 0xd304
-+#define SPS30_READ_DATA_READY_FLAG 0x0202
-+#define SPS30_READ_DATA 0x0300
-+#define SPS30_READ_SERIAL 0xD033
-+
-+#define SPS30_CHAN(_index, _mod) { \
-+	.type = IIO_MASSCONCENTRATION, \
-+	.modified = 1, \
-+	.channel2 = IIO_MOD_ ## _mod, \
-+	.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED), \
-+	.scan_index = _index, \
-+	.scan_type = { \
-+		.sign = 'u', \
-+		.realbits = 12, \
-+		.storagebits = 32, \
-+		.endianness = IIO_CPU, \
-+	}, \
-+}
-+
-+enum {
-+	PM1p0, /* just a placeholder */
-+	PM2p5,
-+	PM4p0, /* just a placeholder */
-+	PM10,
-+};
-+
-+struct sps30_state {
-+	struct i2c_client *client;
-+	/* guards against concurrent access to sensor registers */
-+	struct mutex lock;
-+};
-+
-+DECLARE_CRC8_TABLE(sps30_crc8_table);
-+
-+static int sps30_write_then_read(struct sps30_state *state, u8 *buf,
-+				 int buf_size, u8 *data, int data_size)
-+{
-+	/* every two received data bytes are checksummed */
-+	u8 tmp[data_size + data_size / 2];
-+	int ret, i;
-+
-+	/*
-+	 * Sensor does not support repeated start so instead of
-+	 * sending two i2c messages in a row we just send one by one.
-+	 */
-+	ret = i2c_master_send(state->client, buf, buf_size);
-+	if (ret != buf_size)
-+		return ret < 0 ? ret : -EIO;
-+
-+	if (!data)
-+		return 0;
-+
-+	ret = i2c_master_recv(state->client, tmp, sizeof(tmp));
-+	if (ret != sizeof(tmp))
-+		return ret < 0 ? ret : -EIO;
-+
-+	for (i = 0; i < sizeof(tmp); i += 3) {
-+		u8 crc = crc8(sps30_crc8_table, &tmp[i], 2, CRC8_INIT_VALUE);
-+
-+		if (crc != tmp[i + 2]) {
-+			dev_err(&state->client->dev,
-+				"data integrity check failed\n");
-+			return -EIO;
-+		}
-+
-+		*data++ = tmp[i];
-+		*data++ = tmp[i + 1];
-+	}
-+
-+	return 0;
-+}
-+
-+static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
-+{
-+	/* depending on the command up to 3 bytes may be needed for argument */
-+	u8 buf[sizeof(cmd) + 3] = { cmd >> 8, cmd };
-+
-+	switch (cmd) {
-+	case SPS30_START_MEAS:
-+		buf[2] = 0x03;
-+		buf[3] = 0x00;
-+		buf[4] = 0xac; /* precomputed crc */
-+		return sps30_write_then_read(state, buf, 5, NULL, 0);
-+	case SPS30_STOP_MEAS:
-+	case SPS30_RESET:
-+		return sps30_write_then_read(state, buf, 2, NULL, 0);
-+	case SPS30_READ_DATA_READY_FLAG:
-+	case SPS30_READ_DATA:
-+	case SPS30_READ_SERIAL:
-+		return sps30_write_then_read(state, buf, 2, data, size);
-+	default:
-+		return -EINVAL;
-+	};
-+}
-+
-+static int sps30_ieee754_to_int(const u8 *data)
-+{
-+	u32 val = ((u32)data[0] << 24) | ((u32)data[1] << 16) |
-+		  ((u32)data[2] << 8) | (u32)data[3],
-+	    mantissa = (val << 9) >> 9;
-+	int exp = (val >> 23) - 127;
-+
-+	if (!exp && !mantissa)
-+		return 0;
-+
-+	if (exp < 0)
-+		return 0;
-+
-+	return (1 << exp) + (mantissa >> (23 - exp));
-+}
-+
-+static int sps30_do_meas(struct sps30_state *state, int *pm2p5, int *pm10)
-+{
-+	/*
-+	 * Internally sensor stores measurements in a following manner:
-+	 *
-+	 * PM1p0: upper two bytes, crc8, lower two bytes, crc8
-+	 * PM2p5: upper two bytes, crc8, lower two bytes, crc8
-+	 * PM4p0: upper two bytes, crc8, lower two bytes, crc8
-+	 * PM10:  upper two bytes, crc8, lower two bytes, crc8
-+	 *
-+	 * What follows next are number concentration measurements and
-+	 * typical particle size measurement.
-+	 *
-+	 * Once data is read from sensor crc bytes are stripped off
-+	 * hence we need 16 bytes of buffer space.
-+	 */
-+	int ret, tries = 5;
-+	u8 buf[16];
-+
-+	while (tries--) {
-+		ret = sps30_do_cmd(state, SPS30_READ_DATA_READY_FLAG, buf, 2);
-+		if (ret)
-+			return -EIO;
-+
-+		/* new measurements ready to be read */
-+		if (buf[1] == 1)
-+			break;
-+
-+		usleep_range(300000, 400000);
-+	}
-+
-+	if (!tries)
-+		return -ETIMEDOUT;
-+
-+	ret = sps30_do_cmd(state, SPS30_READ_DATA, buf, sizeof(buf));
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * All measurements come in IEEE754 single precision floating point
-+	 * format but sensor itself is not precise enough (-+ 10% error)
-+	 * to take full advantage of it. Hence converting result to int
-+	 * to keep things simple.
-+	 */
-+	*pm2p5 = sps30_ieee754_to_int(&buf[PM2p5 * 4]);
-+	*pm10 = sps30_ieee754_to_int(&buf[PM10 * 4]);
-+
-+	return 0;
-+}
-+
-+static irqreturn_t sps30_trigger_handler(int irq, void *p)
-+{
-+	struct iio_poll_func *pf = p;
-+	struct iio_dev *indio_dev = pf->indio_dev;
-+	struct sps30_state *state = iio_priv(indio_dev);
-+	u32 buf[4]; /* PM2p5, PM10, timestamp */
-+	int ret;
-+
-+	mutex_lock(&state->lock);
-+	ret = sps30_do_meas(state, &buf[0], &buf[1]);
-+	mutex_unlock(&state->lock);
-+	if (ret < 0)
-+		goto err;
-+
-+	iio_push_to_buffers_with_timestamp(indio_dev, buf,
-+					   iio_get_time_ns(indio_dev));
-+err:
-+	iio_trigger_notify_done(indio_dev->trig);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int sps30_read_raw(struct iio_dev *indio_dev,
-+			  struct iio_chan_spec const *chan,
-+			  int *val, int *val2, long mask)
-+{
-+	struct sps30_state *state = iio_priv(indio_dev);
-+	int ret;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_PROCESSED:
-+		switch (chan->type) {
-+		case IIO_MASSCONCENTRATION:
-+			mutex_lock(&state->lock);
-+			switch (chan->channel2) {
-+			case IIO_MOD_PM2p5:
-+				ret = sps30_do_meas(state, val, val2);
-+				break;
-+			case IIO_MOD_PM10:
-+				ret = sps30_do_meas(state, val2, val);
-+				break;
-+			default:
-+				break;
-+			}
-+			mutex_unlock(&state->lock);
-+			if (ret)
-+				return ret;
-+
-+			return IIO_VAL_INT;
-+		default:
-+			return -EINVAL;
-+		}
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static const struct iio_info sps30_info = {
-+	.read_raw = sps30_read_raw,
-+};
-+
-+static const struct iio_chan_spec sps30_channels[] = {
-+	SPS30_CHAN(0, PM2p5),
-+	SPS30_CHAN(1, PM10),
-+	IIO_CHAN_SOFT_TIMESTAMP(2),
-+};
-+
-+static const unsigned long sps30_scan_masks[] = { 0x03, 0x00 };
-+
-+static int sps30_probe(struct i2c_client *client)
-+{
-+	struct iio_dev *indio_dev;
-+	struct sps30_state *state;
-+	u8 buf[32] = { };
-+	int ret;
-+
-+	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
-+		return -EOPNOTSUPP;
-+
-+	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*state));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	state = iio_priv(indio_dev);
-+	i2c_set_clientdata(client, indio_dev);
-+	state->client = client;
-+	indio_dev->dev.parent = &client->dev;
-+	indio_dev->info = &sps30_info;
-+	indio_dev->name = client->name;
-+	indio_dev->channels = sps30_channels;
-+	indio_dev->num_channels = ARRAY_SIZE(sps30_channels);
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+	indio_dev->available_scan_masks = sps30_scan_masks;
-+
-+	mutex_init(&state->lock);
-+	crc8_populate_msb(sps30_crc8_table, SPS30_CRC8_POLYNOMIAL);
-+
-+	/*
-+	 * Power-on-reset causes sensor to produce some glitch on i2c bus
-+	 * and some controllers end up in error state. Recover simply
-+	 * by placing something on the bus.
-+	 */
-+	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
-+	if (ret) {
-+		dev_err(&client->dev, "failed to reset device\n");
-+		return ret;
-+	}
-+	usleep_range(2500000, 3500000);
-+	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
-+
-+	ret = sps30_do_cmd(state, SPS30_READ_SERIAL, buf, sizeof(buf));
-+	if (ret) {
-+		dev_err(&client->dev, "failed to read serial number\n");
-+		return ret;
-+	}
-+	dev_info(&client->dev, "serial number: %s\n", buf);
-+
-+	ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
-+	if (ret) {
-+		dev_err(&client->dev, "failed to start measurement\n");
-+		return ret;
-+	}
-+
-+	ret = devm_iio_triggered_buffer_setup(&client->dev, indio_dev, NULL,
-+					      sps30_trigger_handler, NULL);
-+	if (ret)
-+		return ret;
-+
-+	return devm_iio_device_register(&client->dev, indio_dev);
-+}
-+
-+static int sps30_remove(struct i2c_client *client)
-+{
-+	struct iio_dev *indio_dev = i2c_get_clientdata(client);
-+	struct sps30_state *state = iio_priv(indio_dev);
-+
-+	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id sps30_id[] = {
-+	{ "sps30" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, sps30_id);
-+
-+static const struct of_device_id sps30_of_match[] = {
-+	{ .compatible = "sensirion,sps30" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, sps30_of_match);
-+
-+static struct i2c_driver sps30_driver = {
-+	.driver = {
-+		.name = "sps30",
-+		.of_match_table = sps30_of_match,
-+	},
-+	.id_table = sps30_id,
-+	.probe_new = sps30_probe,
-+	.remove = sps30_remove,
-+};
-+module_i2c_driver(sps30_driver);
-+
-+MODULE_AUTHOR("Tomasz Duszynski <tduszyns@gmail.com>");
-+MODULE_DESCRIPTION("Sensirion SPS30 particulate matter sensor driver");
-+MODULE_LICENSE("GPL v2");
+	v2: Patch #2 rewritten, now usb_add_gadget_udc_release() should be
+	    properly used.
+	    Patch #5 added.
+
+	v1: https://marc.info/?l=linux-usb&m=154258778216930&w=2
+	    https://marc.info/?l=linux-usb&m=154258778316932&w=2
+	    https://marc.info/?l=linux-usb&m=154258778316931&w=2
+	    https://marc.info/?l=linux-usb&m=154258778216929&w=2
+
+Aaro Koskinen (5):
+  USB: omap_udc: use devm_request_irq()
+  USB: omap_udc: fix crashes on probe error and module removal
+  USB: omap_udc: fix omap_udc_start() on 15xx machines
+  USB: omap_udc: fix USB gadget functionality on Palm Tungsten E
+  USB: omap_udc: fix rejection of out transfers when DMA is used
+
+ drivers/usb/gadget/udc/omap_udc.c | 88 +++++++++++--------------------
+ 1 file changed, 31 insertions(+), 57 deletions(-)
+
 -- 
-2.19.2
+2.17.0
 
