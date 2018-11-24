@@ -2,55 +2,134 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2619C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 19:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D99C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:04:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF29B205C9
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 19:51:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF29B205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zeniv.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id B45592082F
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:04:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20150623.gappssmtp.com header.i=@dubeyko-com.20150623.gappssmtp.com header.b="JuqOOhxE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B45592082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726263AbeKYGk3 (ORCPT
+        id S1726282AbeKYGwy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 01:40:29 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52070 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725981AbeKYGk3 (ORCPT
+        Sun, 25 Nov 2018 01:52:54 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35964 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbeKYGwy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 01:40:29 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
-        id 1gQdxV-00069L-Dc; Sat, 24 Nov 2018 19:51:17 +0000
-Date:   Sat, 24 Nov 2018 19:51:17 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Pan Bian <bianpan2016@163.com>
+        Sun, 25 Nov 2018 01:52:54 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b85so4728594pfc.3
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 12:03:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=qeOINDPCWIFgmDcwccigEa5EApZtKiTbO08+z1codPI=;
+        b=JuqOOhxEyLbrMIs3xJXcEtbNBECwwFr78yD4AbN3pm1Y9huYme5HzlxUFja9WwmEbV
+         pAjCs0sCxv8VOov5omnM++5ItOvTrOYk99vp6jE/QcbYoU9xZ9o642laXUQueAFBY/0a
+         LE3UZ7LQmAPA6ChIzZEnpcywD3vZzHOG7jG9xYHGj4EImI/02lWcrukL8lbNpTjm56Ol
+         mNfg1A9qo6Wh65b19SXGHfjGUZi4fXGB6DnGU62XgxejG5lIj5/7UTh/lULiI3SFg/nK
+         UB3fgPI3IkQNHuHTBBGcVVQBAE/xmNTnL105n7DHiqw+pNSZpahA3HfhXWBMcIjSf9YT
+         GzXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=qeOINDPCWIFgmDcwccigEa5EApZtKiTbO08+z1codPI=;
+        b=UH8gBBOhovsM23rmoLUYP7g0hb1BGa00ao+K9F0WUpbkQp4XFK3EosxqJPJhLsoY4y
+         elJXi44mzUaoBeVFKYPdKnS7js1J6eMXpX+ET4hMDFkWpaipoPHzwemCZ8XcI/EYiEGa
+         ar4nPNsPtM8+0q+E6k0PqsnF5o3QWEOOxfrtwtgOhuHUZNQGdG56YQk7F4hRVIT/k5aZ
+         QvWEIfF7MCb8ssft4JAh2BdgAhDKOZPrujOpnI+iISM37AoBF3s0ol92/fqLTSYcoJ25
+         9+2LMNSd9+OlZ8W628PlryjCoNgEJHMKTO10nay9UyeyrgQ0WUhcMksG8gZtfbA2cpcu
+         yqZw==
+X-Gm-Message-State: AA+aEWZse+IrHB5Iugi263w9mP7HBKdkjypXJffzrquq4EG7/kjS/JFA
+        2sZcekuNee0t50jC9TQM6fI88CcxR6RFBg==
+X-Google-Smtp-Source: AFSGD/XYWVcN9wtIcig82PcTUL+BLZ0Uz746De4vb1s0DRpMQkS6oEK24plCXKEX95PM3EqQMJ1KPQ==
+X-Received: by 2002:a63:4613:: with SMTP id t19-v6mr19132218pga.197.1543089823769;
+        Sat, 24 Nov 2018 12:03:43 -0800 (PST)
+Received: from ubuntu-16 (c-24-130-14-162.hsd1.ca.comcast.net. [24.130.14.162])
+        by smtp.gmail.com with ESMTPSA id m72-v6sm3051678pfj.171.2018.11.24.12.03.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 24 Nov 2018 12:03:43 -0800 (PST)
+Message-ID: <1543089821.12764.7.camel@dubeyko.com>
+Subject: Re: [PATCH V2] hfs: do not free node before using
+From:   Viacheslav Dubeyko <slava@dubeyko.com>
+To:     Pan Bian <bianpan2016@163.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        ernesto.mnd.fernandez@gmail.com, Joe Perches <joe@perches.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] namei: free new_dentry late
-Message-ID: <20181124195117.GB2217@ZenIV.linux.org.uk>
-References: <1543051404-42498-1-git-send-email-bianpan2016@163.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543051404-42498-1-git-send-email-bianpan2016@163.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Date:   Sat, 24 Nov 2018 12:03:41 -0800
+In-Reply-To: <1543025458-31592-1-git-send-email-bianpan2016@163.com>
+References: <1543025458-31592-1-git-send-email-bianpan2016@163.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 24, 2018 at 05:23:24PM +0800, Pan Bian wrote:
-> After calling dput(new_dentry), new_dentry is passed to fsnotify_move.
-> This may result in a use-after-free bug. This patch moves the put
-> operation late.
->
-> Fixes: 49d31c2f389a("dentry name snapshots")
+On Sat, 2018-11-24 at 10:10 +0800, Pan Bian wrote:
+> The function hfs_bmap_free frees node via hfs_bnode_put(node).
+> However,
+> it then reads node->this when dumping error message on an error path,
+> which may result in a use-after-free bug. This patch frees node only
+> when it is never used.
+> 
+> Fixes: a1185ffa2fc("HFS rewrite")
+> 
+> Signed-off-by: Pan Bian <bianpan2016@163.com>
+> 
+> ---
+> V2: correct the commit information in Fixes
 
-What does that commit have to do with anything?  The broken part is
-                        fsnotify_move(new_dir, old_dir, old_dentry->d_name.name,
-                                      new_is_dir, NULL, new_dentry);
-and it predates that commit by 3 years - it came from da1ce0670c14 ("vfs: add
-cross-rename")...
+
+By the way, HFS+ has the same issue [1].
+
+> 
+> ---
+>  fs/hfs/btree.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/hfs/btree.c b/fs/hfs/btree.c
+> index 98b96ff..19017d2 100644
+> --- a/fs/hfs/btree.c
+> +++ b/fs/hfs/btree.c
+> @@ -338,13 +338,14 @@ void hfs_bmap_free(struct hfs_bnode *node)
+>  
+>  		nidx -= len * 8;
+>  		i = node->next;
+> -		hfs_bnode_put(node);
+>  		if (!i) {
+>  			/* panic */;
+>  			pr_crit("unable to free bnode %u. bmap not
+> found!\n",
+>  				node->this);
+> +			hfs_bnode_put(node);
+>  			return;
+>  		}
+> +		hfs_bnode_put(node);
+
+First of all, it looks weird to have two calls of hfs_bnode_put(node).
+Secondly, you will add only one line of code instead of two if you
+simply save the node->this in the local variable.
+
+>  		node = hfs_bnode_find(tree, i);
+>  		if (IS_ERR(node))
+>  			return;
+
+
+Thanks,
+Vyacheslav Dubeyko.
+
+[1] https://elixir.bootlin.com/linux/latest/source/fs/hfsplus/btree.c#L457
+
