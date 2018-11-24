@@ -2,130 +2,107 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B028CC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6A0C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7257320874
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:56:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98D672087E
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:58:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R5hzuHLW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7257320874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cQYQ9fUj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D672087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726533AbeKYHpm (ORCPT
+        id S1726525AbeKYHrt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 02:45:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46458 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726241AbeKYHpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 02:45:42 -0500
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08B6120874;
-        Sat, 24 Nov 2018 20:56:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543092985;
-        bh=hlBsiUEH+ZWka5a8iz5DaWCEzuHRprj8sINmx8c6ZzU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=R5hzuHLWEu28G+/iDcUyeLMIPJhd/JrF3lgl1DJ0VqCt/lBaW6szGY7Aa9hQvo6/x
-         VZm+Kk/7b2XfgKpvcBPGXYkYOH3nmFoGUHZ9EkDirmtha5WYAv3ZrXXlDgiHwqluvU
-         8spO1p47metAK/v5jZXfDHcd+cicMdTb0u5b0Hoo=
-Received: by mail-qt1-f172.google.com with SMTP id n32so13673765qte.11;
-        Sat, 24 Nov 2018 12:56:24 -0800 (PST)
-X-Gm-Message-State: AA+aEWb0HiYas5TSBVhX2Vo4FGyB/q/GG2nT7D1zYRqzgFYNA1B6xeC6
-        KlXHxp+iWWZZcL8jBZpOWejIaz0wcGUDMl1J3Q==
-X-Google-Smtp-Source: AFSGD/WxptSR36uFCD4EPBdkOCOg65I1mjd29oA74fGxOzpWpPzkr5PmnXa/FAZ3gSMKnpVrrdnktNDAaa1NU74cW3I=
-X-Received: by 2002:a0c:f212:: with SMTP id h18mr20410240qvk.106.1543092984189;
- Sat, 24 Nov 2018 12:56:24 -0800 (PST)
+        Sun, 25 Nov 2018 02:47:49 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34877 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbeKYHrt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 02:47:49 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x85-v6so13306171ljb.2
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 12:58:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=G8aC00oI6Bq6NmQvXgGD7tu98VEEn1Ah4XoyIl86u1E=;
+        b=cQYQ9fUjLcnFZGp+CYKwGs2RGLCSTBzErnbBytyqqI295ygJrfkngmYkfCekntnSYa
+         +CKi99FfTbT2Zmuesk774/u2Vh5oBA53QYje+uiJasVLrLyRn/yVyPXJmE4m40gYkY/h
+         az+d3cvK7ST0NXZFseURt+O3Crmskno2XG5G8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G8aC00oI6Bq6NmQvXgGD7tu98VEEn1Ah4XoyIl86u1E=;
+        b=hO4ELJ9/DayY8MP8rml/d/6t03j7pkGGTZ1z8rk2MVDaAcN+w77ARRCCTC6Tz3oWTq
+         uBslg8a7lhgBlqcaYq76v/LcD2ctW3cGtX3W6aTlOtDmwUDkVrO3jS0e06I1LHQDzPWs
+         iRDnlfsN9+fASBIrLM4LMV7lMheWHWOxNhqsxAzvI/G6eqMIk3/SQnFkJU7MvuZWDNbX
+         9uEZ/cM0svwyc+FTPMTEDZUfD7TBtzSYYXicSntvxkKx3nqkKMN/tqCUGKYZ9JYKEBVC
+         N884Ol1faplQKUkhoUUbvPVQGLDFq1V+48AdRIEM/rk95ljGWwy6yJd0GneI1CLHXhtN
+         ZAbA==
+X-Gm-Message-State: AA+aEWbhejkCGfDHr92N9MQ8n+4aboEvg6VJeBkFAHs+t2GCVpeSVe9a
+        YAVAFAuK3oBbebcTTwtD4vwV+1k0tdbtCyEUMPyVTQ==
+X-Google-Smtp-Source: AFSGD/VkmdUXbCdaOYBUoRQujU4xjke7bxhIGNQAN0RyPQCApFI4hBRgV0wE7Aupt+4+CQrN/HUfWq3W5PGgyNs7Y1c=
+X-Received: by 2002:a2e:29d7:: with SMTP id p84-v6mr12907970ljp.12.1543093111035;
+ Sat, 24 Nov 2018 12:58:31 -0800 (PST)
 MIME-Version: 1.0
-References: <1542787873-8429-1-git-send-email-miles.chen@mediatek.com>
- <CAL_JsqLGvUYQmCGXLgSO+6kFj2i87dpaTbMGbyu5oMt=eeu35A@mail.gmail.com> <1542855088.15789.6.camel@mtkswgap22>
-In-Reply-To: <1542855088.15789.6.camel@mtkswgap22>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Sat, 24 Nov 2018 14:56:13 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+O1YDP1yiHZpcxUaFG1LYDqi74D_kEnErP+cwGDppVWQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+O1YDP1yiHZpcxUaFG1LYDqi74D_kEnErP+cwGDppVWQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] of: make MAX_RESERVED_REGIONS configurable
-To:     Miles Chen <miles.chen@mediatek.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
+References: <20181115221634.22715-1-greenfoo@gluegarage.com> <20181115221634.22715-9-greenfoo@gluegarage.com>
+In-Reply-To: <20181115221634.22715-9-greenfoo@gluegarage.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 24 Nov 2018 21:58:19 +0100
+Message-ID: <CACRpkdZs+jk-KY7kUnRz8EoSrGN74i2fiXwp8BNuSG6JNxgixw@mail.gmail.com>
+Subject: Re: [PATCH 8/9] drm: remove no longer needed drm-get-put coccinelle script
+To:     greenfoo@gluegarage.com
+Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>, sean@poorly.run,
+        Jonathan Corbet <corbet@lwn.net>, abrodkin@synopsys.com,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux+etnaviv@armlinux.org.uk,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
+        kieran.bingham+renesas@ideasonboard.com,
+        Shawn Guo <shawnguo@kernel.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>, michal.lkml@markovi.net,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        linux-doc@vger.kernel.org,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        virtualization@lists.linux-foundation.org,
+        etnaviv@lists.freedesktop.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        cocci@systeme.lip6.fr
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 8:51 PM Miles Chen <miles.chen@mediatek.com> wrote:
->
-> On Wed, 2018-11-21 at 10:39 -0600, Rob Herring wrote:
-> > On Wed, Nov 21, 2018 at 2:11 AM <miles.chen@mediatek.com> wrote:
-> > >
-> > > From: Miles Chen <miles.chen@mediatek.com>
-> > >
-> > > When we use more than 32 entries in /resered-memory,
-> > > there will be an error message: "not enough space all defined regions.".
-> > > We can increase MAX_RESERVED_REGIONS to fix this.
-> > >
-> > > commit 22f8cc6e3373 ("drivers: of: increase MAX_RESERVED_REGIONS to 32")
-> > > increased MAX_RESERVED_REGIONS to 32 but I'm not sure if increasing
-> > > MAX_RESERVED_REGIONS to 64 is suitable for everyone.
-> > >
-> > > In this RFC patch, CONFIG_MAX_OF_RESERVED_REGIONS is added and used as
-> > > MAX_RESERVED_REGIONS. Add a sanity test to make sure that
-> > > MAX_RESERVED_REGIONS is less than INIT_MEMBLOCK_REGIONS.
-> > > Users can configure CONFIG_MAX_OF_RESERVED_REGIONS according to their
-> > > need.
-> >
-> > I don't want a kconfig option for this. I think it should be dynamic instead.
-> >
-> > The current flow is like this:
-> >
-> > for each reserved node:
-> >   - call memblock_reserve
-> >   - Add info to reserved_mem array
-> >
-> > I think we should change it to:
-> >
-> > for each reserved node:
-> >   - call memblock_reserve
-> >   - count number of nodes
-> >
-> > Alloc array using memblock_alloc
-> >
-> > for each reserved node:
-> >    - Add info to reserved_mem array
-> >
->
-> thanks for your comment.
->
-> I reviewed the flow and it might be easier to count the
-> nodes and setup array first:
->
-> for each reserved node:
->     - count number of nodes
->
-> Alloc array using memblock_alloc
->
->
-> for each reserved node:
->    - call memblock_reserve
+On Thu, Nov 15, 2018 at 11:18 PM Fernando Ramos <greenfoo@gluegarage.com> wrote:
 
-The order here is wrong. It is important that you reserve the memory
-blocks before doing any allocations.
+> The coccinelle script was used to rename some (deprecated) functions
+> which no longer exist now.
+>
+> Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
 
->    - Add info to reserved_mem array
->
-> What do you think?
->
-> > Rob
->
->
+Patch applied with Julia's ACK.
+
+Yours,
+Linus Walleij
