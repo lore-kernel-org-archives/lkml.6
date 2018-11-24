@@ -2,116 +2,108 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA104C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 19:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B78D3C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 19:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46C44205C9
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 19:15:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="qmqhAm1Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C44205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=natalenko.name
+	by mail.kernel.org (Postfix) with ESMTP id 7984020868
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 19:25:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7984020868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726176AbeKYGEy (ORCPT
+        id S1726210AbeKYGOq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 01:04:54 -0500
-Received: from vulcan.natalenko.name ([104.207.131.136]:37914 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725738AbeKYGEx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 01:04:53 -0500
-Received: from mail.natalenko.name (vulcan.natalenko.name [IPv6:fe80::5400:ff:fe0c:dfa0])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vulcan.natalenko.name (Postfix) with ESMTPSA id D560F47A67C;
-        Sat, 24 Nov 2018 20:15:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=dkim-20170712; t=1543086945;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qU36QWKxefo84ZnAJ7PbSAPL4RuwqtNYWsDCd3cnAZ4=;
-        b=qmqhAm1YTsSgzjUfbTnxDLo27rkWl4ytpv4pQ//eviWCYjNfKywD2pCRMh6lc3klJEzjMz
-        ypBznQoT1hfFenC0SMJsG0MTmIsI7Okw8bx0bjpHLXiAWQIV6D/VZ/eQnf4XwQSRpuMGi0
-        1IRlU+b2p2YX2VDokYxnNZ7y3y1AsRY=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Sat, 24 Nov 2018 20:15:45 +0100
-From:   Oleksandr Natalenko <oleksandr@natalenko.name>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Sun, 25 Nov 2018 01:14:46 -0500
+Received: from wind.enjellic.com ([76.10.64.91]:55086 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725981AbeKYGOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 01:14:46 -0500
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id wAOJOuRT012273;
+        Sat, 24 Nov 2018 13:24:56 -0600
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id wAOJOsKe012272;
+        Sat, 24 Nov 2018 13:24:54 -0600
+Date:   Sat, 24 Nov 2018 13:24:54 -0600
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Eric Dumazet <edumazet@google.com>,
-        Dave Jones <davej@codemonkey.org.uk>, netdev@vger.kernel.org,
-        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Subject: Re: WARN_ON() in netconsole with PREEMPT_RT
-In-Reply-To: <20181111210105.7f376c35@vmware.local.home>
-References: <f9111ab09dbc264c8ff8b3b79e9f4c06@natalenko.name>
- <a23ae3a8501d5c996d7a9dd2f27dd5fa@natalenko.name>
- <20181111210105.7f376c35@vmware.local.home>
-Message-ID: <f479ed5153809ad643cbcf988d76585b@natalenko.name>
-X-Sender: oleksandr@natalenko.name
-User-Agent: Roundcube Webmail/1.3.8
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1543086945;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qU36QWKxefo84ZnAJ7PbSAPL4RuwqtNYWsDCd3cnAZ4=;
-        b=QhdfbK6/KTDx8ma2SQFqFUzTXOohMoA1hctWC29n7DDo+aTFlUhb9+wQwEfvV/Gt6FaoSh
-        uLusfjthqbbRQAW5+bQaKspEqmZE10sHdFyWEDP2n/Z17WTCcy0S2Ky7A3qKlyHjt5kQSl
-        Xhm+Gpkfz2qW/BBxKohxG2GtyaXZXwU=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1543086945; a=rsa-sha256;
-        cv=none;
-        b=A/qJelJEaQwKxOvfZ75US1x2lzBcHITKicLnYTP71/M5h6/7gG0qEtvZAaKTzGnCfxYkpV
-        o6FDbeJzYGgU8wOhZpfVh1EA7iF6VdECxCuZqbKfe+uMmn1mA9mE6kQ73mVKA3iEFKKocD
-        Es90VkqqJALbHrKv30UJR4vQXQsow20=
-ARC-Authentication-Results: i=1;
-        vulcan.natalenko.name;
-        auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>, andy@infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181124192454.GA12149@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com> <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com> <20181120111508.GA26127@wind.enjellic.com> <20181124161521.GB30310@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181124161521.GB30310@linux.intel.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sat, 24 Nov 2018 13:24:56 -0600 (CST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+On Sat, Nov 24, 2018 at 08:15:21AM -0800, Jarkko Sakkinen wrote:
 
-On 12.11.2018 03:01, Steven Rostedt wrote:
-> On Sun, 11 Nov 2018 21:16:00 +0100
-> Oleksandr Natalenko <oleksandr@natalenko.name> wrote:
->> Oh, I see that write_msg() calls netpoll_send_udp() under
->> spin_lock_irqsave(), but in PREEMPT_RT this, AFAIK, does not disable
->> interrupts.
->> 
->> So, the real question here is whether the interrupts should be indeed
->> disabled. And if so, -rt should replace spin_lock_irqsave() call there
->> with what? local_irq_save()? and get rid of the warning?
->> 
-> 
-> Why do we care if interrupts are disabled with PREEMPT_RT here?
+> On Tue, Nov 20, 2018 at 05:15:08AM -0600, Dr. Greg wrote:
+> > Malware would not necessarily need the Intel attestation service.
+> > Once access to the PROVISION bit is available, malware teams could
+> > simply build their own attestation service.
 
-I don't know, if you ask me. But the check was added intentionally with 
-c9fd56b34efd0, so the author had definitely something on his mind. 
-Cc'ing him.
+> AFAIK not possible as they wouldn't have access to the root
+> provisioning key. Can be confirmed from the SDM's key derivation
+> table (41-56).
 
-> printk() itself has a lot of issues with PREEMPT_RT that we are working
-> on dealing with. Right now netconsole is actually at the end of that
-> todo list.
+What provisioning and attestation is all about is establishing an
+identity binding for a platform in question.  The standard Intel
+service binds the identity of a platform to an EPID private key.
 
-OK, I see.
+With access to the SGX_FLAGS_PROVISION_BIT an enclave can generate a
+perpetual identity for a platform based on the identity modulus
+signature (MRSIGNER) of the key that signs the signature structure of
+the enclave.  Without access to the root provisioning key a security
+quorum or group has to be implemented via a subscription or enrollment
+model but that is arguably not much of an obstacle.
 
--- 
-   Oleksandr Natalenko (post-factum)
+That is pretty much the way standard botware works now.
+
+Without provisions for cryptographically secure authorization and
+policy enforcement in the driver, we will be creating infrastructure
+for a new generation of botware/malware whose mothership will know
+that a participating platform is running with full confidentiality and
+integrity protections.
+
+> /Jarkko
+
+Dr. Greg
+
+As always,
+Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
+4206 N. 19th Ave.           Specializing in information infra-structure
+Fargo, ND  58102            development.
+PH: 701-281-1686
+FAX: 701-281-3949           EMAIL: greg@enjellic.com
+------------------------------------------------------------------------------
+"Remember that when you take down the fishhouse you can't put
+ the minnows back into the lake, so throw them out on the ice.
+ Make sure you stomp on any of the live ones so they don't suffer."
+                                -- Fritz Wettstein
+                                   At the lake
