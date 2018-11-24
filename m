@@ -7,67 +7,66 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E03AC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 08:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AFCC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 08:17:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB0982086B
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 08:14:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B17F2086B
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 08:17:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TC5Od98w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB0982086B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vIfjZDQD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B17F2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728085AbeKXTB5 (ORCPT
+        id S1728238AbeKXTEo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 14:01:57 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45568 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727804AbeKXTB4 (ORCPT
+        Sat, 24 Nov 2018 14:04:44 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33316 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727309AbeKXTEo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 14:01:56 -0500
-Received: by mail-lj1-f195.google.com with SMTP id s5-v6so12364979ljd.12
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 00:14:15 -0800 (PST)
+        Sat, 24 Nov 2018 14:04:44 -0500
+Received: by mail-lj1-f193.google.com with SMTP id v1-v6so12410267ljd.0
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 00:17:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zXTlpUKfTDngNNnxSxdLA+oO+uAYUyyIwYbR1zytSQE=;
-        b=TC5Od98wfdmfa1LU42rlmgtSE1W60RPnSJ56PBBO3s6m252gx1tUFFLcgdEZrtbVaU
-         2dxWs5XK8vP8AH25pbX/R0H9GGdfepivZ/lal30OGVxtULiKn1umrOcqOR5KGLYVfHny
-         sk9yDDsc7o7mbLnpSVhEnyMWBBWrC4GfcHT8dSE2cZPhAg0IritXziLOWYsoI9TNlNo1
-         P19vR5M8H0kCglmQPvl7umOZfmCOfzJlwqcvkOaQDD8iZsbfeW6gdFeGFdAvv3K6MS9q
-         jOTGCKe/qbAcpzJhEfZqaOrXv2OGy1Bwc+HIZun5P8RSW2zj0uw61gkbvsx54SJCS8Ig
-         6tyw==
+        bh=XuO3cCnBgi4a+nzaNlWwyIDAzoqgA7kwlXEq0ELHFjw=;
+        b=vIfjZDQDdai+WqXgqcYHzifpLYjtArHIe/vWcae9RIciUvIbBCv/+r81qWQ/hsKJiD
+         NEz80TQV1R/rRTPhhBYtb37tPS22ULzF7YADl4Lc8ASkVUjZ12wg6iXDXEpX5m8mlW78
+         CLVunfK5q9IwhAJQ7Fz1eVeB6K17j8S2e8Oss2Auz+OfziFcNjdNznsovn1nmjidoUxp
+         m14vDaR+tk/lTgRS6/8g+toKJFE5yEW6Y6CWUTKgdsqFdI4bnnb83hszuJuFkaZwBEt7
+         wvTcSlinwDh5Lm237ycRiFSL0aCdUyFHiL6LAF1GGE5jYVyJO4H1dUzPqbs3vyRfYtKF
+         PePw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zXTlpUKfTDngNNnxSxdLA+oO+uAYUyyIwYbR1zytSQE=;
-        b=k+eAQ7MN9DWiNyj2rHeACR4SkXsEr0p5Rty+SnmU/KsuMCpbhftM6KBkHlA3fSp0jr
-         F4sCyXgxXY4/X1InRlnNoHZqCFehUXGpf6naQ7ucu8GzI/RkyyjGiImWQT0xeRybjm8d
-         N8GbmxVG1gPiPnPR6utW5JeqM1+V9x/jzz5l4iS1KkzJVwRuIbI/G9iKMVWQH/SedGwM
-         dSvz4UF/nm+PaLYA2ILG4nMmg0X6YWwJD9DWihttKJuEzGABQ0lFpGxVVIu9+ngGGVzV
-         S3Hqa/+xkcWtkGE6VAQq2tScrYBGW+TBeqovDipPz4D1aFVn/EVdFiLaOJPnXcxVLsY1
-         yqbg==
-X-Gm-Message-State: AA+aEWZOCakxEdO9VGrczTO8k5FFHob2nFFj9cBkAhoxAgouOvw3u0zU
-        HpuxTTvy9GQ1QJucsYI9iSXMSVo1dLHf0SqCig4=
-X-Google-Smtp-Source: AFSGD/W0OMfVxG8tY4wjJfU4Tz44uy9xkUIaNM7ffcbFn0xEraAJoLdOwpPWpcbGPgZ+RT41hLrFx3KTVvcjh7DFpzc=
-X-Received: by 2002:a2e:5054:: with SMTP id v20-v6mr11680495ljd.45.1543047254684;
- Sat, 24 Nov 2018 00:14:14 -0800 (PST)
+        bh=XuO3cCnBgi4a+nzaNlWwyIDAzoqgA7kwlXEq0ELHFjw=;
+        b=ffRGKFzNMsix810KtegxYT8LYVGTHL+v8Yk21TQrHXEdaCw4R4BTRNRsgPHmI5h+uL
+         kln9ihtF+XGYt+oYnv+kzw4GTIASkrKf9gPqWKssh3QyUmKQnpBj+ikqGlhj8YFA/u7k
+         K2OjtImoCVfe/u1wKSEPt5B7TAxzXiM8V/kpKRWspTopNaU738jEINIbUv+fMlTr/zS/
+         zIuwJFspcXXXWdW4WBlyqMIrFsGZWnVtpf39oTAHnYnGu/NGeKokITq+BmzJjSqaj1xP
+         kX8NrD1WyQvWEFNLoOwR8Ne0DyLpnZ6iw+qW7YzqLvTzVKXTEWJfSbMPn9ioOLFffGt1
+         5ifQ==
+X-Gm-Message-State: AA+aEWaUMoBaRAMEih+db7xqcnw5zkrGckeU8lDeVjrWVzdK2OKqzEEl
+        zTDbVnrTUQ9PR470g5EoUgnOCZWNnfTiZ+VX+HE=
+X-Google-Smtp-Source: AFSGD/VJrdAbTL3S/ux+csH87KH67v9AjBGn3qtgZXOiI3kIu7cP/ruAW0fTqD1/ZMsh/CmT9zqcGSqnf7ZlvWixKto=
+X-Received: by 2002:a2e:908b:: with SMTP id l11-v6mr10373996ljg.150.1543047421031;
+ Sat, 24 Nov 2018 00:17:01 -0800 (PST)
 MIME-Version: 1.0
-References: <1542349141-7229-1-git-send-email-yamada.masahiro@socionext.com> <CAGXu5jJn5xRW6EqnULVESy1UZKjzxrxRAcHb412smtjoTVmsEQ@mail.gmail.com>
-In-Reply-To: <CAGXu5jJn5xRW6EqnULVESy1UZKjzxrxRAcHb412smtjoTVmsEQ@mail.gmail.com>
+References: <1542856462-18836-1-git-send-email-yamada.masahiro@socionext.com> <1542856462-18836-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1542856462-18836-2-git-send-email-yamada.masahiro@socionext.com>
 From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Sat, 24 Nov 2018 09:14:03 +0100
-Message-ID: <CANiq72kBpMG8kO+OQT_2TV7-=fU1Xifh6rtrhqDrO3Hjx-rqdw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] build_bug.h: remove negative-array fallback for BUILD_BUG_ON()
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
+Date:   Sat, 24 Nov 2018 09:16:50 +0100
+Message-ID: <CANiq72m24uArkvc-GYMa8j=C+fUfxCXm27nVsg1B-o0r3EDKEw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] build_bug.h: remove negative-array fallback for BUILD_BUG_ON()
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
         Nick Desaulniers <ndesaulniers@google.com>,
+        Kees Cook <keescook@chromium.org>, josh@joshtriplett.org,
         linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,21 +74,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 8:01 PM Kees Cook <keescook@chromium.org> wrote:
+On Thu, Nov 22, 2018 at 5:15 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 >
-> On Fri, Nov 16, 2018 at 12:19 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> > The kernel can only be compiled with an optimization option (-O2, -Os,
-> > or the currently proposed -Og). Hence, __OPTIMIZE__ is always defined
-> > in the kernel source.
-> >
-> > A fallback for -O0 case is just hypothetical and pointless. Moreover,
-> > commit 0bb95f80a38f ("Makefile: Globally enable VLA warning") enabled
-> > -Wvla warning. The use of variable length arrays is banned.
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> The kernel can only be compiled with an optimization option (-O2, -Os,
+> or the currently proposed -Og). Hence, __OPTIMIZE__ is always defined
+> in the kernel source.
 >
+> The fallback for the -O0 case is just hypothetical and pointless.
+> Moreover, commit 0bb95f80a38f ("Makefile: Globally enable VLA warning")
+> enabled -Wvla warning. The use of variable length arrays is banned.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > Acked-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+
+Didn't see v3/v4 (wasn't CC):
 
 Acked-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 
