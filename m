@@ -2,185 +2,192 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28345C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 05:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C22C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 05:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF8732082F
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 05:16:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C8E320673
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 05:32:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="xK+vEpHa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF8732082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="bYbribNZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C8E320673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731738AbeKXQD7 (ORCPT
+        id S1731790AbeKXQSs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 11:03:59 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:41952 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731053AbeKXQD7 (ORCPT
+        Sat, 24 Nov 2018 11:18:48 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40496 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731742AbeKXQSr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 11:03:59 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAO5DoT2112308;
-        Sat, 24 Nov 2018 05:15:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : subject
- : from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=corp-2018-07-02;
- bh=2dzrkc9EJQmBLkdjj96+/0CCtK0Dhu0Ne7UhRd+b+J0=;
- b=xK+vEpHadVvZQj1Rd89IF1h0/Mg5R8BVHrGRqnEM9kYApnRUVKnvK31hPJb4TgQdeOkq
- Qx0jufEA0/Muayqi8chchW5eLSGKq7vxgrCw7x9bJw4vhx0MVummvCAMYTnu96ZkV2Ka
- letyrFSfwnqpCQs9b3kpOWe261Tcvi5o31y7Ki19zZ0j80nKJDOh/WBgurcwqVJinCK7
- E98yKIEX77kXpSBP+mZmiGrVWUFOK0uWNYLh3Sl1go7rv/0TxIAcO1TGXyZ3ikE4TOl8
- DoTRRHbpOOYFPjMnzj8ODavLFvdf56JwT7p0SAMVSFtcdeY3PcC8Vsww3lN8ACp7WkMQ eg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2nxx2tr4ks-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 24 Nov 2018 05:15:40 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAO5FeYn010586
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 24 Nov 2018 05:15:40 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAO5FZ9f027418;
-        Sat, 24 Nov 2018 05:15:35 GMT
-Received: from asu.omang.mine.nu (/92.220.18.196)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 23 Nov 2018 21:15:35 -0800
-Message-ID: <1543036529.4680.655.camel@oracle.com>
-Subject: Re: [RFC v2 00/14] kunit: introduce KUnit, the Linux kernel unit
- testing framework
-From:   Knut Omang <knut.omang@oracle.com>
-To:     Brendan Higgins <brendanhiggins@google.com>,
-        gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org,
-        shuah@kernel.org
-Cc:     brakmo@fb.com, richard@nod.at, dri-devel@lists.freedesktop.org,
-        linux-nvdimm@lists.01.org, mpe@ellerman.id.au, Tim.Bird@sony.com,
-        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
-        rostedt@goodmis.org, kieran.bingham@ideasonboard.com,
-        julia.lawall@lip6.fr, joel@jms.id.au,
-        linux-kselftest@vger.kernel.org, khilman@baylibre.com,
-        joe@perches.com, dan.j.williams@intel.com, jdike@addtoit.com,
-        kunit-dev@googlegroups.com,
-        Hidenori Yamaji <hidenori.yamaji@sony.com>,
-        Alan Maguire <alan.maguire@oracle.com>
-Date:   Sat, 24 Nov 2018 06:15:29 +0100
-In-Reply-To: <20181023235750.103146-1-brendanhiggins@google.com>
-References: <20181023235750.103146-1-brendanhiggins@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9086 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811240051
+        Sat, 24 Nov 2018 11:18:47 -0500
+Received: by mail-pf1-f195.google.com with SMTP id i12so4152326pfo.7
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 21:31:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fEWvlp75wwrnJ3SWqSETifLgJNJ31uZinO57+4jrsYU=;
+        b=bYbribNZMhhrwMvCmKphpzS+AutlZwfWgfusTVAyQZkzirteMV4FeUpa0V6BRTZgBT
+         +VI2dL6di4GM+3/AfyLbr10FO5VHhhI/rQQqK0cNW96ItuBdw2/amcLxILNkIKCVEmHq
+         K7VxgogtNhcyHJmZe8Fm8sjEIAlA49IezlFPU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fEWvlp75wwrnJ3SWqSETifLgJNJ31uZinO57+4jrsYU=;
+        b=b7cKIi4a4DF1McNA3fW8gjvNGU2Mf5M1MHlpGEUUZpg0V3JpCCP3MEI7wJ6A6v49fq
+         aTvQjqmUXZsBaOTUWS7MqLbakx/7rnOjeA2r4NuaYBx8PTBYP0VvrtXGCU19Mdr/oYix
+         pEu70zV7JggirlTA2yZD3hVNB3fleCLmwL2vpdot0pGHbNsp60JfdtIltsQguYAb8S0S
+         A8g54oV7m2vZiLxO2iVcpvAb/j+0BUomDM/xrdpSnLdKKxpQKgz4LgfNP6ASd8TV6r9F
+         YXNFgRf32nFETcCiYs4jHIG7KjWfttJmQH7Dy5634U5SzNOVuuBQlBi6VYbc2yWMTT3k
+         SHKQ==
+X-Gm-Message-State: AGRZ1gKEEgryYTdT4izPvZKS4eoIKtE1M2ZVf7RSNof6SCs+yMWBN1zk
+        utycGrmB4OymdZMcNBiv3/qeKg==
+X-Google-Smtp-Source: AJdET5d9GKSfmUdPsPPwd7HWijlJxu6bdV0hSbZ+XCkA9bwyiZf7N+VKH+b5M8fEz3D+Xbsdg6mplA==
+X-Received: by 2002:a62:6881:: with SMTP id d123-v6mr19555491pfc.195.1543037500807;
+        Fri, 23 Nov 2018 21:31:40 -0800 (PST)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id j185sm30840856pge.72.2018.11.23.21.31.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 23 Nov 2018 21:31:39 -0800 (PST)
+Date:   Fri, 23 Nov 2018 21:31:38 -0800
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [RFC][PATCH 11/14] function_graph: Convert ret_stack to a series
+ of longs
+Message-ID: <20181124053138.GA242510@google.com>
+References: <20181122012708.491151844@goodmis.org>
+ <20181122012804.122411256@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181122012804.122411256@goodmis.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-10-23 at 16:57 -0700, Brendan Higgins wrote:
-> This patch set proposes KUnit, a lightweight unit testing and mocking
-> framework for the Linux kernel.
+On Wed, Nov 21, 2018 at 08:27:19PM -0500, Steven Rostedt wrote:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
-> Unlike Autotest and kselftest, KUnit is a true unit testing framework;
+> In order to make it possible to have multiple callbacks registered with the
+> function_graph tracer, the retstack needs to be converted from an array of
+> ftrace_ret_stack structures to an array of longs. This will allow to store
+> the list of callbacks on the stack for the return side of the functions.
+> 
+> [ Note, this currently breaks architectures that access the ret_stack of a
+>   task to handle unwinding when 'return_to_handler' is on the stack ]
+> 
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  include/linux/sched.h |   2 +-
+>  kernel/trace/fgraph.c | 123 +++++++++++++++++++++++-------------------
+>  2 files changed, 70 insertions(+), 55 deletions(-)
+> 
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index d6183a55e8eb..71a084a300da 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1119,7 +1119,7 @@ struct task_struct {
+>  	int				curr_ret_depth;
+>  
+>  	/* Stack of return addresses for return function tracing: */
+> -	struct ftrace_ret_stack		*ret_stack;
+> +	unsigned long			*ret_stack;
+>  
+>  	/* Timestamp for last schedule: */
+>  	unsigned long long		ftrace_timestamp;
+> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> index 9b85638ecded..1389fe39f64c 100644
+> --- a/kernel/trace/fgraph.c
+> +++ b/kernel/trace/fgraph.c
+> @@ -23,6 +23,17 @@
+>  #define ASSIGN_OPS_HASH(opsname, val)
+>  #endif
+>  
+> +#define FGRAPH_RET_SIZE (sizeof(struct ftrace_ret_stack))
+> +#define FGRAPH_RET_INDEX (ALIGN(FGRAPH_RET_SIZE, sizeof(long)) / sizeof(long))
+> +#define SHADOW_STACK_SIZE (FTRACE_RETFUNC_DEPTH * FGRAPH_RET_SIZE)
+> +#define SHADOW_STACK_INDEX			\
+> +	(ALIGN(SHADOW_STACK_SIZE, sizeof(long)) / sizeof(long))
+> +#define SHADOW_STACK_MAX_INDEX (SHADOW_STACK_INDEX - FGRAPH_RET_INDEX)
+> +
+> +#define RET_STACK(t, index) ((struct ftrace_ret_stack *)(&(t)->ret_stack[index]))
+> +#define RET_STACK_INC(c) ({ c += FGRAPH_RET_INDEX; })
+> +#define RET_STACK_DEC(c) ({ c -= FGRAPH_RET_INDEX; })
+> +
+[...]
+> @@ -514,7 +531,7 @@ void ftrace_graph_init_task(struct task_struct *t)
+>  
+>  void ftrace_graph_exit_task(struct task_struct *t)
+>  {
+> -	struct ftrace_ret_stack	*ret_stack = t->ret_stack;
+> +	unsigned long *ret_stack = t->ret_stack;
+>  
+>  	t->ret_stack = NULL;
+>  	/* NULL must become visible to IRQs before we free it: */
+> @@ -526,12 +543,10 @@ void ftrace_graph_exit_task(struct task_struct *t)
+>  /* Allocate a return stack for each task */
+>  static int start_graph_tracing(void)
+>  {
+> -	struct ftrace_ret_stack **ret_stack_list;
+> +	unsigned long **ret_stack_list;
+>  	int ret, cpu;
+>  
+> -	ret_stack_list = kmalloc_array(FTRACE_RETSTACK_ALLOC_SIZE,
+> -				       sizeof(struct ftrace_ret_stack *),
+> -				       GFP_KERNEL);
+> +	ret_stack_list = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
+>  
 
-First thanks to Hidenori Yamaji for making me aware of these threads!
+I had dumped the fgraph size related macros to understand the patch better, I
+got:
+[    0.909528] val of FGRAPH_RET_SIZE is 40
+[    0.910250] val of FGRAPH_RET_INDEX is 5
+[    0.910866] val of FGRAPH_ARRAY_SIZE is 16
+[    0.911488] val of FGRAPH_ARRAY_MASK is 255
+[    0.912134] val of FGRAPH_MAX_INDEX is 16
+[    0.912751] val of FGRAPH_INDEX_SHIFT is 8
+[    0.913382] val of FGRAPH_FRAME_SIZE is 168
+[    0.914033] val of FGRAPH_FRAME_INDEX is 21
+                      FTRACE_RETFUNC_DEPTH is 50
+[    0.914686] val of SHADOW_STACK_SIZE is 8400
 
-I'd like to kindly remind Brendan, and inform others who might have
-missed out on it, about our (somewhat different approach) to this space
-at Oracle: KTF (Kernel Test Framework). 
+I had a concern about memory overhead per-task. It seems the total memory
+needed per task for the stack is 8400 bytes (with my configuration with
+FUNCTION_PROFILE
+turned off).
 
-KTF is a product of our experience with driver testing within Oracle since 
-2011, developed
-as part of a project that was not made public until 2016.
-During the project, we
-experimented with multiple approaches to enable 
-more test driven work with kernel code.
-KTF is the "testing within the kernel" 
-part of this. While we realize there are quite a
-few testing frameworks out there, 
-KTF makes it easy to run selected tests in kernel
-context directly, 
-and as such provides a valuable approach to unit testing.
+Where as before it would be 32 * 40 = 1280 bytes. That looks like ~7 times
+more than before.
 
-Brendan, I regret you weren't at this year's testing and fuzzing workshop at 
-LPC last week so we could have continued our discussions from last year there!
+On my system with ~4000 threads, that becomes ~32MB which seems a bit
+wasteful especially if there was only one or 2 function graph callbacks
+registered and most of the callback array in the stack isn't used.
 
-I hope we can work on this for a while longer before anything gets merged. 
-Maybe it can be topic for a longer session in a future test related workshop?
+Could we make the array size configurable at compile time and start it with a
+small number like 4 or 6?
 
-Links to more info about KTF:
-------
-Git repo: https://github.com/oracle/ktf
-Formatted docs: http://heim.ifi.uio.no/~knuto/ktf/
+Also for patches 1 through 10:
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-LWN mention from my presentation at LPC'17: https://lwn.net/Articles/735034/
-Oracle blog post: https://blogs.oracle.com/linux/oracles-new-kernel-test-framework-for-linux-v2
-OSS'18 presentation slides: https://events.linuxfoundation.org/wp-content/uploads/2017/12/Test-Driven-Kernel-Development-Knut-Omang-Oracle.pdf
+thanks,
 
-In the documentation (see http://heim.ifi.uio.no/~knuto/ktf/introduction.html)
-we present some more motivation for choices made with KTF. 
-As described in that introduction, we believe in a more pragmatic approach 
-to unit testing for the kernel than the classical "mock everything" approach, 
-except for typical heavily algorithmic components that has interfaces simple to mock, 
-such as container implementations, or components like page table traversal 
-algorithms or memory allocators, where the benefit of being able to "listen" 
-on the mock interfaces needed pays handsomely off.
-
-We also used strategies to compile kernel code in user mode,
-for parts of the code which seemed easy enough to mock interfaces for.
-I also looked at UML back then, but dismissed it in favor of the
-more lightweight approach of just compiling the code under test 
-directly in user mode, with a minimal partly hand crafted, flat mock layer.
-
-> KUnit is heavily inspired by JUnit, Python's unittest.mock, and
-> Googletest/Googlemock for C++. KUnit provides facilities for defining
-> unit test cases, grouping related test cases into test suites, providing
-> common infrastructure for running tests, mocking, spying, and much more.
-
-I am curious, with the intention of only running in user mode anyway, 
-why not try to build upon Googletest/Googlemock (or a similar C unit 
-test framework if C is desired), instead of "reinventing" 
-specific kernel macros for the tests?
-
-> A unit test is supposed to test a single unit of code in isolation,
-> hence the name. There should be no dependencies outside the control of
-> the test; this means no external dependencies, which makes tests orders
-> of magnitudes faster. Likewise, since there are no external dependencies,
-> there are no hoops to jump through to run the tests. Additionally, this
-> makes unit tests deterministic: a failing unit test always indicates a
-> problem. Finally, because unit tests necessarily have finer granularity,
-> they are able to test all code paths easily solving the classic problem
-> of difficulty in exercising error handling code.
-
-I think it is clearly a trade-off here: Tests run in an isolated, mocked 
-environment are subject to fewer external components. But the more complex
-the mock environment gets, the more likely it also is to be a source of errors, 
-nondeterminism and capacity limits itself, also the mock code would typically be 
-less well tested than the mocked parts of the kernel, so it is by no means any 
-silver bullet, precise testing with a real kernel on real hardware is still 
-often necessary and desired. 
-
-If the code under test is fairly standalone and complex enough, building a mock
-environment for it and test it independently may be worth it, but pragmatically, 
-if the same functionality can be relatively easily exercised within the kernel, 
-that would be my first choice.
-
-I like to think about all sorts of testing and assertion making as adding more 
-redundancy. When errors surface you can never be sure whether it is a problem 
-with the test, the test framework, the environment, or an actual error, and 
-all places have to be fixed before the test can pass. 
-
-Thanks,
-Knut
-
-
+ - Joel
 
