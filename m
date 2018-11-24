@@ -2,138 +2,264 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0348C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 17:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5636CC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 17:06:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9251E2086B
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 17:05:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="g7Acg427"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9251E2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 1DAB020874
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 17:06:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DAB020874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726316AbeKYDyh (ORCPT
+        id S1726410AbeKYDzV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 22:54:37 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:33136 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725880AbeKYDyh (ORCPT
+        Sat, 24 Nov 2018 22:55:21 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:43539 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725777AbeKYDzU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 22:54:37 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAOH2CVa126891;
-        Sat, 24 Nov 2018 17:05:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=8iKRPJPWj3gkdXJ+PdZeL7RkqMOadVCZ9tj7qEjgHJY=;
- b=g7Acg427O0jYqZOMsK0jzwkN24Myo7gdhdagXJu5cHha44ilxvNsHT7aWR62wqh89xzs
- MAKSEa5Qt5dVxuOUEDpnBuNy4aApiVOnEkDVOe9W7N7uQ6OJ2wgJrQ/qH6OGtwCPQKzQ
- 36k3FRuAqcU0etEijS3eal9+P6VHtu/rjVXrtjS8smln0jwlSu9FK+9kj/ef/SsijDVf
- KgaCEzPSgFOSsGL9BB1aH51WXU3EExuWNPdZ0cmEjGeMaWsP8CUmBLSwbu0/Tx2qBVTY
- KH7i/eWCJlgQpeu1kVMoWhCP1jnTQOxBHDsou3ucTemXSvJJxsuIFm3orp+hwyaRrcUs cQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2nxx2ts16d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 24 Nov 2018 17:05:42 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAOH5fi8030614
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 24 Nov 2018 17:05:41 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAOH5euv023442;
-        Sat, 24 Nov 2018 17:05:40 GMT
-Received: from localhost (/10.159.224.29)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 24 Nov 2018 09:05:40 -0800
-Date:   Sat, 24 Nov 2018 09:05:40 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     torvalds@linux-foundation.org
-Cc:     Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, sandeen@sandeen.net
-Subject: [GIT PULL] xfs: fixes for v4.20-rc4
-Message-ID: <20181124170540.GY6792@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9087 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=4 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811240162
+        Sat, 24 Nov 2018 22:55:20 -0500
+Received: by mail-qt1-f193.google.com with SMTP id i7so13369437qtj.10
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 09:06:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:reply-to:to:cc:date
+         :in-reply-to:references:organization:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=N3raQaF6xXsQvQ86LfVzkhpyFuWHEewrJKnybrBoaAA=;
+        b=RPQiuArR8MApKtVe962UaON5ZeotdKgSqDm06OAUXlrYRQPxNfQ0KQ2h7uBFj7DQCQ
+         V6ZFn2MusImXn3o+qGLE2CfaudmxmRGEQNN7DxlL7OJrW8iSViSwHwY/R9oStvsmfvQj
+         5t2ZRo6qgrM7j/ZYMHS2PkCYls4cYIsU4z+EQ9/thxVZCCXGZJX7gXbIqQtcYt4JPQGb
+         WRRV4NMlX8xDePMap+sYAeAnkPWJpzfBgTrAnG/J9Ud1Jp4R78WAIUiAKOAl3Wy0DWT5
+         SJMZcUEmYEubJYE2eTbbR1CEsXUBpFmbFMgBQaPOb4VKLMyGKjyeg4VZkRvNuPRBwzFQ
+         oQDQ==
+X-Gm-Message-State: AGRZ1gKadISPCS7YgBMmxisT9kIo4Zggo2g1Z3ZRMgi/NcU/yECpAI9D
+        42YphfylZDdnE1B+CvQtxKud5A==
+X-Google-Smtp-Source: AJdET5cYf7TCH9QWAOAwF0SigRHD8ZzOQRc6xuRTw71wqHJZPqW6n7bGzc1jGA6bcCjZGWCOF40wkQ==
+X-Received: by 2002:ac8:2fdc:: with SMTP id m28mr20200477qta.202.1543079188961;
+        Sat, 24 Nov 2018 09:06:28 -0800 (PST)
+Received: from whitewolf.lyude.net (pool-108-26-148-220.bstnma.fios.verizon.net. [108.26.148.220])
+        by smtp.gmail.com with ESMTPSA id d32sm29109097qte.36.2018.11.24.09.06.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 24 Nov 2018 09:06:28 -0800 (PST)
+Message-ID: <75e9fc92d43fc8ddbb787763581d1d7b9b7ed980.camel@redhat.com>
+Subject: Re: [PATCH v2] drm/meson: Fixes for drm_crtc_vblank_on/off support
+From:   Lyude Paul <lyude@redhat.com>
+Reply-To: lyude@redhat.com
+To:     Neil Armstrong <narmstrong@baylibre.com>, daniel@ffwll.ch
+Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Date:   Sat, 24 Nov 2018 12:06:27 -0500
+In-Reply-To: <20181122160103.10993-1-narmstrong@baylibre.com>
+References: <20181122160103.10993-1-narmstrong@baylibre.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+There are some typos according to dim checkpatch:
 
-Dave and I have continued our work fixing corruption problems that can
-be found when running long-term burn-in exercisers on xfs.  Here are
-some patches fixing most of the problems, but there will likely be more.
-:/
+  6421619a1655 (HEAD) drm/meson: Fixes for drm_crtc_vblank_on/off support
+  -:48: WARNING:TYPO_SPELLING: 'occurence' may be misspelled - perhaps
+  'occurrence'?
+  #48:
+  The issue is that vblank need to be enabled in any occurence of :
 
-Anyhow, this series merges cleanly with master as of last night, so
-please let me know if you encounter problems.
+  -:53: WARNING:TYPO_SPELLING: 'occurence' may be misspelled - perhaps
+  'occurrence'?
+  #53:
+  of these occurence solves this race condition and makes sure vblank
 
---D
+  -:60: WARNING:COMMIT_LOG_LONG_LINE: Possible unwrapped commit description
+  (prefer a maximum 75 chars per line)
+  #60:
+  - Initialize and enable vblank at the first _atomic_begin()/_atomic_enable()
 
-The following changes since commit 837514f7a4ca4aca06aec5caa5ff56d33ef06976:
+  total: 0 errors, 3 warnings, 0 checks, 82 lines checked
 
-  xfs: fix overflow in xfs_attr3_leaf_verify (2018-11-06 07:50:50 -0800)
+But I don't mind correcting those myself. Other then that, looks good
 
-are available in the Git repository at:
+Reviewed-by: Lyude Paul <lyude@redhat.com>
 
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-4.20-fixes-2
+Will push to drm-misc-fixes in just a moment with the typo fixes/cc to
+stable
 
-for you to fetch changes up to 8c110d43c6bca4b24dd13272a9d4e0ba6f2ec957:
+On Thu, 2018-11-22 at 17:01 +0100, Neil Armstrong wrote:
+> Since Linux 4.17, calls to drm_crtc_vblank_on/off are mandatory, and we get
+> a warning when ctrc is disabled :
+> " driver forgot to call drm_crtc_vblank_off()"
+>
+> But, the vsync IRQ was not totally disabled due the transient hardware
+> state and specific interrupt line, thus adding proper IRQ masking from
+> the HHI system control registers.
+>
+> The last change fixes a race condition introduced by calling the added
+> drm_crtc_vblank_on/off when an HPD event occurs from the HDMI connector,
+> triggering a WARN_ON() in the _atomic_begin() callback when the CRTC
+> is disabled, thus also triggering a WARN_ON() in drm_vblank_put() :
+>
+> WARNING: CPU: 0 PID: 1185 at drivers/gpu/drm/meson/meson_crtc.c:157
+> meson_crtc_atomic_begin+0x78/0x80
+> [...]
+> Call trace:
+>   meson_crtc_atomic_begin+0x78/0x80
+>   drm_atomic_helper_commit_planes+0x140/0x218
+>   drm_atomic_helper_commit_tail+0x38/0x80
+>   commit_tail+0x7c/0x80
+>   drm_atomic_helper_commit+0xdc/0x150
+>   drm_atomic_commit+0x54/0x60
+>   restore_fbdev_mode_atomic+0x198/0x238
+>   restore_fbdev_mode+0x6c/0x1c0
+>   drm_fb_helper_restore_fbdev_mode_unlocked+0x7c/0xf0
+>   drm_fb_helper_set_par+0x34/0x60
+>   drm_fb_helper_hotplug_event.part.28+0xb8/0xc8
+>   drm_fbdev_client_hotplug+0xa4/0xe0
+>   drm_client_dev_hotplug+0x90/0xe0
+>   drm_kms_helper_hotplug_event+0x3c/0x48
+>   drm_helper_hpd_irq_event+0x134/0x168
+>   dw_hdmi_top_thread_irq+0x3c/0x50
+> [...]
+> WARNING: CPU: 0 PID: 1185 at drivers/gpu/drm/drm_vblank.c:1026
+> drm_vblank_put+0xb4/0xc8
+> [...]
+>  Call trace:
+>   drm_vblank_put+0xb4/0xc8
+>   drm_crtc_vblank_put+0x24/0x30
+>   drm_atomic_helper_wait_for_vblanks.part.9+0x130/0x2b8
+>   drm_atomic_helper_commit_tail+0x68/0x80
+> [...]
+>
+> The issue is that vblank need to be enabled in any occurence of :
+> - atomic_enable()
+> - atomic_begin() and state->enable == true, which was not the case
+>
+> Moving the CRTC enable code to a common function and calling in one
+> of these occurence solves this race condition and makes sure vblank
+> is enabled in each call to _atomic_begin() from the HPD event leading
+> to drm_atomic_helper_commit_planes().
+>
+> To Summarize :
+> - Make sure that the CRTC code will call the drm_crtc_vblank_on()/off()
+> - *Really* mask the Vsync IRQ
+> - Initialize and enable vblank at the first _atomic_begin()/_atomic_enable()
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  drivers/gpu/drm/meson/meson_crtc.c | 27 +++++++++++++++++++++++++--
+>  drivers/gpu/drm/meson/meson_venc.c |  3 +++
+>  2 files changed, 28 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/meson/meson_crtc.c
+> b/drivers/gpu/drm/meson/meson_crtc.c
+> index d78168f979db..75d97f1b2e8f 100644
+> --- a/drivers/gpu/drm/meson/meson_crtc.c
+> +++ b/drivers/gpu/drm/meson/meson_crtc.c
+> @@ -46,6 +46,7 @@ struct meson_crtc {
+>  	struct drm_crtc base;
+>  	struct drm_pending_vblank_event *event;
+>  	struct meson_drm *priv;
+> +	bool enabled;
+>  };
+>  #define to_meson_crtc(x) container_of(x, struct meson_crtc, base)
+>
+> @@ -81,8 +82,7 @@ static const struct drm_crtc_funcs meson_crtc_funcs = {
+>
+>  };
+>
+> -static void meson_crtc_atomic_enable(struct drm_crtc *crtc,
+> -				     struct drm_crtc_state *old_state)
+> +static void meson_crtc_enable(struct drm_crtc *crtc)
+>  {
+>  	struct meson_crtc *meson_crtc = to_meson_crtc(crtc);
+>  	struct drm_crtc_state *crtc_state = crtc->state;
+> @@ -106,6 +106,22 @@ static void meson_crtc_atomic_enable(struct drm_crtc
+> *crtc,
+>  	writel_bits_relaxed(VPP_POSTBLEND_ENABLE, VPP_POSTBLEND_ENABLE,
+>  			    priv->io_base + _REG(VPP_MISC));
+>
+> +	drm_crtc_vblank_on(crtc);
+> +
+> +	meson_crtc->enabled = true;
+> +}
+> +
+> +static void meson_crtc_atomic_enable(struct drm_crtc *crtc,
+> +				     struct drm_crtc_state *old_state)
+> +{
+> +	struct meson_crtc *meson_crtc = to_meson_crtc(crtc);
+> +	struct meson_drm *priv = meson_crtc->priv;
+> +
+> +	DRM_DEBUG_DRIVER("\n");
+> +
+> +	if (!meson_crtc->enabled)
+> +		meson_crtc_enable(crtc);
+> +
+>  	priv->viu.osd1_enabled = true;
+>  }
+>
+> @@ -117,6 +133,8 @@ static void meson_crtc_atomic_disable(struct drm_crtc
+> *crtc,
+>
+>  	DRM_DEBUG_DRIVER("\n");
+>
+> +	drm_crtc_vblank_off(crtc);
+> +
+>  	priv->viu.osd1_enabled = false;
+>  	priv->viu.osd1_commit = false;
+>
+> @@ -135,6 +153,8 @@ static void meson_crtc_atomic_disable(struct drm_crtc
+> *crtc,
+>
+>  		crtc->state->event = NULL;
+>  	}
+> +
+> +	meson_crtc->enabled = false;
+>  }
+>
+>  static void meson_crtc_atomic_begin(struct drm_crtc *crtc,
+> @@ -143,6 +163,9 @@ static void meson_crtc_atomic_begin(struct drm_crtc *crtc,
+>  	struct meson_crtc *meson_crtc = to_meson_crtc(crtc);
+>  	unsigned long flags;
+>
+> +	if (crtc->state->enable && !meson_crtc->enabled)
+> +		meson_crtc_enable(crtc);
+> +
+>  	if (crtc->state->event) {
+>  		WARN_ON(drm_crtc_vblank_get(crtc) != 0);
+>
+> diff --git a/drivers/gpu/drm/meson/meson_venc.c
+> b/drivers/gpu/drm/meson/meson_venc.c
+> index 9be0376e0329..ab72ddda242d 100644
+> --- a/drivers/gpu/drm/meson/meson_venc.c
+> +++ b/drivers/gpu/drm/meson/meson_venc.c
+> @@ -71,6 +71,7 @@
+>   */
+>
+>  /* HHI Registers */
+> +#define HHI_GCLK_MPEG2		0x148 /* 0x52 offset in data sheet */
+>  #define HHI_VDAC_CNTL0		0x2F4 /* 0xbd offset in data sheet */
+>  #define HHI_VDAC_CNTL1		0x2F8 /* 0xbe offset in data sheet */
+>  #define HHI_HDMI_PHY_CNTL0	0x3a0 /* 0xe8 offset in data sheet */
+> @@ -1663,10 +1664,12 @@ unsigned int meson_venci_get_field(struct meson_drm
+> *priv)
+>  void meson_venc_enable_vsync(struct meson_drm *priv)
+>  {
+>  	writel_relaxed(2, priv->io_base + _REG(VENC_INTCTRL));
+> +	regmap_update_bits(priv->hhi, HHI_GCLK_MPEG2, BIT(25), BIT(25));
+>  }
+>
+>  void meson_venc_disable_vsync(struct meson_drm *priv)
+>  {
+> +	regmap_update_bits(priv->hhi, HHI_GCLK_MPEG2, BIT(25), 0);
+>  	writel_relaxed(0, priv->io_base + _REG(VENC_INTCTRL));
+>  }
+>
 
-  iomap: readpages doesn't zero page tail beyond EOF (2018-11-21 10:10:54 -0800)
-
-----------------------------------------------------------------
-Changes since last update:
-- Numerous corruption fixes for copy on write
-- Numerous corruption fixes for blocksize < pagesize writes
-- Don't miscalculate AG reservations for small final AGs
-- Fix page cache truncation to work properly for reflink and extent
-  shifting
-- Fix use-after-free when retrying failed inode/dquot buffer logging
-- Fix corruptions seen when using copy_file_range in directio mode
-
-----------------------------------------------------------------
-Brian Foster (1):
-      xfs: fix shared extent data corruption due to missing cow reservation
-
-Dave Chinner (11):
-      xfs: uncached buffer tracing needs to print bno
-      xfs: fix transient reference count error in xfs_buf_resubmit_failed_buffers
-      xfs: finobt AG reserves don't consider last AG can be a runt
-      xfs: extent shifting doesn't fully invalidate page cache
-      xfs: flush removing page cache in xfs_reflink_remap_prep
-      xfs: delalloc -> unwritten COW fork allocation can go wrong
-      iomap: FUA is wrong for DIO O_DSYNC writes into unwritten extents
-      iomap: sub-block dio needs to zeroout beyond EOF
-      iomap: dio data corruption and spurious errors when pipes fill
-      vfs: vfs_dedupe_file_range() doesn't return EOPNOTSUPP
-      iomap: readpages doesn't zero page tail beyond EOF
-
-Eric Biggers (1):
-      xfs: make xfs_file_remap_range() static
-
- fs/iomap.c                       | 53 +++++++++++++++++++++++++++++++---------
- fs/read_write.c                  | 15 ++++++------
- fs/xfs/libxfs/xfs_bmap.c         |  5 +++-
- fs/xfs/libxfs/xfs_ialloc_btree.c | 11 ++++++---
- fs/xfs/xfs_bmap_util.c           | 10 ++------
- fs/xfs/xfs_bmap_util.h           |  3 +++
- fs/xfs/xfs_buf_item.c            | 28 +++++++++++++++------
- fs/xfs/xfs_file.c                |  2 +-
- fs/xfs/xfs_reflink.c             | 18 +++++++++++---
- fs/xfs/xfs_trace.h               |  5 +++-
- 10 files changed, 104 insertions(+), 46 deletions(-)
