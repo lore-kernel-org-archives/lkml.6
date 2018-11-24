@@ -5,70 +5,68 @@ X-Spam-Level:
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 824C0C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 04:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D88C6C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 05:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16D1720663
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 04:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A1B82082F
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 05:01:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="amFD8K47"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16D1720663
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYpcOL8s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A1B82082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731343AbeKXPdY (ORCPT
+        id S1731386AbeKXPsh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 10:33:24 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44402 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731053AbeKXPdY (ORCPT
+        Sat, 24 Nov 2018 10:48:37 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40621 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731284AbeKXPsh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 10:33:24 -0500
-Received: by mail-lj1-f196.google.com with SMTP id k19-v6so12146148lji.11
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 20:46:22 -0800 (PST)
+        Sat, 24 Nov 2018 10:48:37 -0500
+Received: by mail-lf1-f65.google.com with SMTP id v5so9912046lfe.7
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Nov 2018 21:01:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=xwL+uTqoULJRP/wlKmnrLAip98cxafdXhNpq3LGDt7U=;
-        b=amFD8K47mQSieu22uNZyShZcPpHoPoUAw1PJ4eMiUeklPBc/XpCOmh25+C/Cv2QwP3
-         gn6MDLoT49yS4efRjuB5vsC0hWU96yx1JAEr2FTw7FGhJWy2g4dy1oi9W+bhiYhokYVh
-         SCp6xnrBM+BEaWNJFO7b9QJBRRWFTXrbnTkhv0AkU+z9Qt3kP0rK9V3OQGWZZZVUGl2O
-         HdmcUBLRMQTi9yCMoEMI5if9rZ4Fb8M8IhSUHn3rxjZbrMYzF5+oegK7idaHFfHgmg+r
-         q45bhEgepca5x0qhsp26IjHC43jAulvp5D7hk+7YaAXXzquZzzu21TYVcsqneaOWEtV6
-         CiBg==
+        bh=OMEYpdytmtRkHudMGsMT8oN29PsYA5sGcuNVsmhdHcI=;
+        b=BYpcOL8seYpKjSHIS69W+N0l+ZvJUWn7a7ZtwcZ36h9smdJgIgdq3mG2/t0AQjjE2s
+         /Hs/drhHf85x6/NW86UYLCQ3vTnIqZQVOw96AVyU5MW1/8jp3jdBVmt41HQAxBl3sZFo
+         tlgXSF6uzYj/070q1PB5ZUfx6H9ZnHa7CHdoxgepQGa058QoBzHkidyw1KtI7P621re/
+         QKw0gfs/2gpzBUH/dQ33Mz9oVyEjyB8E80VuOdENZk8JOJa3dwcQvCeQftrfFdpzJ2qy
+         wzBS6Wv/pAODNoVTwFF5VN6FBFrfcuJ1ihGAvuMEBuAcKRvbQ7bWsVBCBR93Yks2nR6c
+         /tBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=xwL+uTqoULJRP/wlKmnrLAip98cxafdXhNpq3LGDt7U=;
-        b=RD4fBooqv4jK4cZfxe3LKiezYPGjU7tgZMRY5lz9A4dt1bFZsmFZuhy4VtpeJXb+fW
-         1btWXNHFhesUm2VX4CRFLna+rGyKP2uWqg3MPlEPEv4VWocO+dHY4BV8wkEF/gqew2eX
-         xTINz4P5C0UWtC+oUIbFRim060u5WdKCJfm1aM8x0SetqauIjFvd812oLpDTUHorzm/J
-         tAKkrcitbv9qAeMxJRKXc+d3qdmKwxisATJ585wEIckQnc3aUE9G8C0wn3bo3YflXjzW
-         OLjVm25yPEmqfMTR63eNYT1j6+YgmTPyjjuydXO+DxQtifr4NqNzuhtfPzpv6RZJidln
-         0cDA==
-X-Gm-Message-State: AA+aEWZApPIKqTDZmiKcGlgs0k8U4Br1oesSvJUoxeS84qZdNV3V+fbO
-        Gz9kqPqRUiwz33MxcsQ0ADsoUCG0+1m/E1mkp88=
-X-Google-Smtp-Source: AFSGD/V2iHJgXmWZzEkeG7AlipUVZXpImcOPguKbR1UQOMplZGdKuI1HyHJt6+O4V6Fec4iVx4rLdquYLAz03zNqoC4=
-X-Received: by 2002:a2e:3012:: with SMTP id w18-v6mr11487072ljw.75.1543034781802;
- Fri, 23 Nov 2018 20:46:21 -0800 (PST)
+        bh=OMEYpdytmtRkHudMGsMT8oN29PsYA5sGcuNVsmhdHcI=;
+        b=dB7WF41L82lN44J2LHJVJAlHTHCz8iuKmlJo56DvtoSKhtCMXlu2KYouWq3vtR5LEz
+         P9uheRkC5i3HdcQquJfBl24ZrUVU/HlmAUfLLATGz7y7BMToylu7iv/IGKOIhPKlmLFo
+         hNj4kA2M4DIqq1iEWaznPYQa+wYT2/D/EiMw8dcdVFB0FkDpu5SqMv1QXsEk/Sc/l16p
+         TAniPxgv+lTL2RuqhyvlGzrlzAfkvf4OGB/b86vlZLb3JNvHy5+hbJH5pjiwblA57nrK
+         hO9MPLSoL+jU34WHm9U77wpGUCLf8UA55WKtwARliB2aZ9s5iqJIACGwNZ59Ot4kLhpJ
+         ieSw==
+X-Gm-Message-State: AGRZ1gLq9TJy2QVE6xYKCAGWYlS+jj8PZsyi/eO1ww9qmm3OkMHnMaiU
+        rQVK29xvLEcFEKvUIQvaWu7DgHC/YAO6B3U2gMnfQCN5
+X-Google-Smtp-Source: AJdET5c/zsNAxWijbrLIx/RexASo5N97gX8baZY+tfiqUob14rDXzKwheBaYtAM80keDrMfECEPJTJcZcHQfruV1Esk=
+X-Received: by 2002:a19:24c6:: with SMTP id k189mr11237096lfk.77.1543035693507;
+ Fri, 23 Nov 2018 21:01:33 -0800 (PST)
 MIME-Version: 1.0
-References: <20181106120544.GA3783@jordon-HP-15-Notebook-PC> <20181115014737.GA2353@rapoport-lnx>
-In-Reply-To: <20181115014737.GA2353@rapoport-lnx>
+References: <20181115154950.GA27985@jordon-HP-15-Notebook-PC>
+ <bbad42cb-4a76-a7e7-c385-db77f1cc588b@arm.com> <20181123213448.GW3065@bombadil.infradead.org>
+In-Reply-To: <20181123213448.GW3065@bombadil.infradead.org>
 From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Sat, 24 Nov 2018 10:16:06 +0530
-Message-ID: <CAFqt6zbOgSm9omt+6iV0GJtZdZ_qyTr9Jte9ZGYRQ1M4CdB-mA@mail.gmail.com>
-Subject: Re: [PATCH v3] mm: Create the new vm_fault_t type
-To:     rppt@linux.ibm.com
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>, vbabka@suse.cz,
-        riel@redhat.com, Linux-MM <linux-mm@kvack.org>,
+Date:   Sat, 24 Nov 2018 10:31:20 +0530
+Message-ID: <CAFqt6zawenCGGhLoVzCrjzdHH4rV1RqpWGswDGjGE-VqJETFBA@mail.gmail.com>
+Subject: Re: [PATCH 6/9] iommu/dma-iommu.c: Convert to use vm_insert_range
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     robin.murphy@arm.com, Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, joro@8bytes.org,
+        Linux-MM <linux-mm@kvack.org>, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,192 +74,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 7:17 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
+On Sat, Nov 24, 2018 at 3:04 AM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> On Tue, Nov 06, 2018 at 05:36:42PM +0530, Souptick Joarder wrote:
-> > Page fault handlers are supposed to return VM_FAULT codes,
-> > but some drivers/file systems mistakenly return error
-> > numbers. Now that all drivers/file systems have been converted
-> > to use the vm_fault_t return type, change the type definition
-> > to no longer be compatible with 'int'. By making it an unsigned
-> > int, the function prototype becomes incompatible with a function
-> > which returns int. Sparse will detect any attempts to return a
-> > value which is not a VM_FAULT code.
+> On Fri, Nov 23, 2018 at 05:23:06PM +0000, Robin Murphy wrote:
+> > On 15/11/2018 15:49, Souptick Joarder wrote:
+> > > Convert to use vm_insert_range() to map range of kernel
+> > > memory to user vma.
+> > >
+> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > > Reviewed-by: Matthew Wilcox <willy@infradead.org>
+> > > ---
+> > >   drivers/iommu/dma-iommu.c | 12 ++----------
+> > >   1 file changed, 2 insertions(+), 10 deletions(-)
+> > >
+> > > diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> > > index d1b0475..69c66b1 100644
+> > > --- a/drivers/iommu/dma-iommu.c
+> > > +++ b/drivers/iommu/dma-iommu.c
+> > > @@ -622,17 +622,9 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
+> > >   int iommu_dma_mmap(struct page **pages, size_t size, struct vm_area_struct *vma)
+> > >   {
+> > > -   unsigned long uaddr = vma->vm_start;
+> > > -   unsigned int i, count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+> > > -   int ret = -ENXIO;
+> > > +   unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+> > > -   for (i = vma->vm_pgoff; i < count && uaddr < vma->vm_end; i++) {
+> > > -           ret = vm_insert_page(vma, uaddr, pages[i]);
+> > > -           if (ret)
+> > > -                   break;
+> > > -           uaddr += PAGE_SIZE;
+> > > -   }
+> > > -   return ret;
+> > > +   return vm_insert_range(vma, vma->vm_start, pages, count);
 > >
-> > VM_FAULT_SET_HINDEX and VM_FAULT_GET_HINDEX values are changed
-> > to avoid conflict with other VM_FAULT codes.
-> >
-> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > AFIACS, vm_insert_range() doesn't respect vma->vm_pgoff, so doesn't this
+> > break partial mmap()s of a large buffer? (which I believe can be a thing)
 >
-> For the docs part
-> Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+> Whoops.  That should have been:
 >
-> > ---
-> > v2: Updated the change log and corrected the document part.
-> >     name added to the enum that kernel-doc able to parse it.
-> >
-> > v3: Corrected the documentation.
+> return vm_insert_range(vma, vma->vm_start, pages + vma->vm_pgoff, count);
+>
+> I suppose.
 
-If no further comment, can we get this patch in queue for 4.21 ?
+Matthew, patch "drm/rockchip/rockchip_drm_gem.c: Convert to use vm_insert_range"
+also need to address the same issue ?
 
-> >
-> >  include/linux/mm.h       | 46 ------------------------------
-> >  include/linux/mm_types.h | 73 +++++++++++++++++++++++++++++++++++++++++++++++-
-> >  2 files changed, 72 insertions(+), 47 deletions(-)
-> >
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index fcf9cc9..511a3ce 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -1267,52 +1267,6 @@ static inline void clear_page_pfmemalloc(struct page *page)
-> >  }
-> >
-> >  /*
-> > - * Different kinds of faults, as returned by handle_mm_fault().
-> > - * Used to decide whether a process gets delivered SIGBUS or
-> > - * just gets major/minor fault counters bumped up.
-> > - */
-> > -
-> > -#define VM_FAULT_OOM 0x0001
-> > -#define VM_FAULT_SIGBUS      0x0002
-> > -#define VM_FAULT_MAJOR       0x0004
-> > -#define VM_FAULT_WRITE       0x0008  /* Special case for get_user_pages */
-> > -#define VM_FAULT_HWPOISON 0x0010     /* Hit poisoned small page */
-> > -#define VM_FAULT_HWPOISON_LARGE 0x0020  /* Hit poisoned large page. Index encoded in upper bits */
-> > -#define VM_FAULT_SIGSEGV 0x0040
-> > -
-> > -#define VM_FAULT_NOPAGE      0x0100  /* ->fault installed the pte, not return page */
-> > -#define VM_FAULT_LOCKED      0x0200  /* ->fault locked the returned page */
-> > -#define VM_FAULT_RETRY       0x0400  /* ->fault blocked, must retry */
-> > -#define VM_FAULT_FALLBACK 0x0800     /* huge page fault failed, fall back to small */
-> > -#define VM_FAULT_DONE_COW   0x1000   /* ->fault has fully handled COW */
-> > -#define VM_FAULT_NEEDDSYNC  0x2000   /* ->fault did not modify page tables
-> > -                                      * and needs fsync() to complete (for
-> > -                                      * synchronous page faults in DAX) */
-> > -
-> > -#define VM_FAULT_ERROR       (VM_FAULT_OOM | VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV | \
-> > -                      VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE | \
-> > -                      VM_FAULT_FALLBACK)
-> > -
-> > -#define VM_FAULT_RESULT_TRACE \
-> > -     { VM_FAULT_OOM,                 "OOM" }, \
-> > -     { VM_FAULT_SIGBUS,              "SIGBUS" }, \
-> > -     { VM_FAULT_MAJOR,               "MAJOR" }, \
-> > -     { VM_FAULT_WRITE,               "WRITE" }, \
-> > -     { VM_FAULT_HWPOISON,            "HWPOISON" }, \
-> > -     { VM_FAULT_HWPOISON_LARGE,      "HWPOISON_LARGE" }, \
-> > -     { VM_FAULT_SIGSEGV,             "SIGSEGV" }, \
-> > -     { VM_FAULT_NOPAGE,              "NOPAGE" }, \
-> > -     { VM_FAULT_LOCKED,              "LOCKED" }, \
-> > -     { VM_FAULT_RETRY,               "RETRY" }, \
-> > -     { VM_FAULT_FALLBACK,            "FALLBACK" }, \
-> > -     { VM_FAULT_DONE_COW,            "DONE_COW" }, \
-> > -     { VM_FAULT_NEEDDSYNC,           "NEEDDSYNC" }
-> > -
-> > -/* Encode hstate index for a hwpoisoned large page */
-> > -#define VM_FAULT_SET_HINDEX(x) ((x) << 12)
-> > -#define VM_FAULT_GET_HINDEX(x) (((x) >> 12) & 0xf)
-> > -
-> > -/*
-> >   * Can be called by the pagefault handler when it gets a VM_FAULT_OOM.
-> >   */
-> >  extern void pagefault_out_of_memory(void);
-> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > index 5ed8f62..cb25016 100644
-> > --- a/include/linux/mm_types.h
-> > +++ b/include/linux/mm_types.h
-> > @@ -22,7 +22,6 @@
-> >  #endif
-> >  #define AT_VECTOR_SIZE (2*(AT_VECTOR_SIZE_ARCH + AT_VECTOR_SIZE_BASE + 1))
-> >
-> > -typedef int vm_fault_t;
-> >
-> >  struct address_space;
-> >  struct mem_cgroup;
-> > @@ -609,6 +608,78 @@ static inline bool mm_tlb_flush_nested(struct mm_struct *mm)
-> >
-> >  struct vm_fault;
-> >
-> > +/**
-> > + * typedef vm_fault_t - Return type for page fault handlers.
-> > + *
-> > + * Page fault handlers return a bitmask of %VM_FAULT values.
-> > + */
-> > +typedef __bitwise unsigned int vm_fault_t;
-> > +
-> > +/**
-> > + * enum vm_fault_reason - Page fault handlers return a bitmask of
-> > + * these values to tell the core VM what happened when handling the
-> > + * fault. Used to decide whether a process gets delivered SIGBUS or
-> > + * just gets major/minor fault counters bumped up.
-> > + *
-> > + * @VM_FAULT_OOM:            Out Of Memory
-> > + * @VM_FAULT_SIGBUS:         Bad access
-> > + * @VM_FAULT_MAJOR:          Page read from storage
-> > + * @VM_FAULT_WRITE:          Special case for get_user_pages
-> > + * @VM_FAULT_HWPOISON:               Hit poisoned small page
-> > + * @VM_FAULT_HWPOISON_LARGE: Hit poisoned large page. Index encoded
-> > + *                           in upper bits
-> > + * @VM_FAULT_SIGSEGV:                segmentation fault
-> > + * @VM_FAULT_NOPAGE:         ->fault installed the pte, not return page
-> > + * @VM_FAULT_LOCKED:         ->fault locked the returned page
-> > + * @VM_FAULT_RETRY:          ->fault blocked, must retry
-> > + * @VM_FAULT_FALLBACK:               huge page fault failed, fall back to small
-> > + * @VM_FAULT_DONE_COW:               ->fault has fully handled COW
-> > + * @VM_FAULT_NEEDDSYNC:              ->fault did not modify page tables and needs
-> > + *                           fsync() to complete (for synchronous page faults
-> > + *                           in DAX)
-> > + * @VM_FAULT_HINDEX_MASK:    mask HINDEX value
-> > + *
-> > + */
-> > +enum vm_fault_reason {
-> > +     VM_FAULT_OOM            = (__force vm_fault_t)0x000001,
-> > +     VM_FAULT_SIGBUS         = (__force vm_fault_t)0x000002,
-> > +     VM_FAULT_MAJOR          = (__force vm_fault_t)0x000004,
-> > +     VM_FAULT_WRITE          = (__force vm_fault_t)0x000008,
-> > +     VM_FAULT_HWPOISON       = (__force vm_fault_t)0x000010,
-> > +     VM_FAULT_HWPOISON_LARGE = (__force vm_fault_t)0x000020,
-> > +     VM_FAULT_SIGSEGV        = (__force vm_fault_t)0x000040,
-> > +     VM_FAULT_NOPAGE         = (__force vm_fault_t)0x000100,
-> > +     VM_FAULT_LOCKED         = (__force vm_fault_t)0x000200,
-> > +     VM_FAULT_RETRY          = (__force vm_fault_t)0x000400,
-> > +     VM_FAULT_FALLBACK       = (__force vm_fault_t)0x000800,
-> > +     VM_FAULT_DONE_COW       = (__force vm_fault_t)0x001000,
-> > +     VM_FAULT_NEEDDSYNC      = (__force vm_fault_t)0x002000,
-> > +     VM_FAULT_HINDEX_MASK    = (__force vm_fault_t)0x0f0000,
-> > +};
-> > +
-> > +/* Encode hstate index for a hwpoisoned large page */
-> > +#define VM_FAULT_SET_HINDEX(x) ((__force vm_fault_t)((x) << 16))
-> > +#define VM_FAULT_GET_HINDEX(x) (((x) >> 16) & 0xf)
-> > +
-> > +#define VM_FAULT_ERROR (VM_FAULT_OOM | VM_FAULT_SIGBUS |     \
-> > +                     VM_FAULT_SIGSEGV | VM_FAULT_HWPOISON |  \
-> > +                     VM_FAULT_HWPOISON_LARGE | VM_FAULT_FALLBACK)
-> > +
-> > +#define VM_FAULT_RESULT_TRACE \
-> > +     { VM_FAULT_OOM,                 "OOM" },        \
-> > +     { VM_FAULT_SIGBUS,              "SIGBUS" },     \
-> > +     { VM_FAULT_MAJOR,               "MAJOR" },      \
-> > +     { VM_FAULT_WRITE,               "WRITE" },      \
-> > +     { VM_FAULT_HWPOISON,            "HWPOISON" },   \
-> > +     { VM_FAULT_HWPOISON_LARGE,      "HWPOISON_LARGE" },     \
-> > +     { VM_FAULT_SIGSEGV,             "SIGSEGV" },    \
-> > +     { VM_FAULT_NOPAGE,              "NOPAGE" },     \
-> > +     { VM_FAULT_LOCKED,              "LOCKED" },     \
-> > +     { VM_FAULT_RETRY,               "RETRY" },      \
-> > +     { VM_FAULT_FALLBACK,            "FALLBACK" },   \
-> > +     { VM_FAULT_DONE_COW,            "DONE_COW" },   \
-> > +     { VM_FAULT_NEEDDSYNC,           "NEEDDSYNC" }
-> > +
-> >  struct vm_special_mapping {
-> >       const char *name;       /* The name, e.g. "[vdso]". */
-> >
-> > --
-> > 1.9.1
-> >
 >
-> --
-> Sincerely yours,
-> Mike.
+> Although arguably we should respect vm_pgoff inside vm_insert_region()
+> and then callers automatically get support for vm_pgoff without having
+> to think about it ... although we should then also pass in the length
+> of the pages array to avoid pages being mapped in which aren't part of
+> the allocated array.
 >
+> Hm.  More thought required.
