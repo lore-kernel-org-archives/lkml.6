@@ -6,59 +6,59 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C73C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD9EC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E94A20645
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:38:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41F562082F
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 20:39:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZVb6PfSy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E94A20645
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V8JxDTkl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41F562082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726361AbeKYH1i (ORCPT
+        id S1726411AbeKYH2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 02:27:38 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41884 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbeKYH1h (ORCPT
+        Sun, 25 Nov 2018 02:28:03 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37298 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726369AbeKYH2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 02:27:37 -0500
-Received: by mail-lj1-f193.google.com with SMTP id z80-v6so13269221ljb.8
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 12:38:22 -0800 (PST)
+        Sun, 25 Nov 2018 02:28:03 -0500
+Received: by mail-lj1-f194.google.com with SMTP id e5-v6so13265445lja.4
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 12:38:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/YNX1aPE/SVwRFw3fNROIhW8+05SCoozZhXoa+cbw3k=;
-        b=ZVb6PfSyCydnx4jxB+11VrJONbURfp+USpAimVG05XsuW95a8r6yIHF7RrGrlw71q9
-         mZoXJi9ZSuQMVP6SDqS9LAtHt2ZQWkp/nTKu0Xfx1Jbz3ZXrg3fnk4WEOysp1LGHArKK
-         1XL/bt+LfS57ytxcNN4U2NoxD3YAWDVDjNHYc=
+        bh=MemGfOqxhb4bbzDSIHdqtma18mku1RRMcm6AHUMBKwc=;
+        b=V8JxDTkloCGYAza57L/wVUlXIigfX8RjZnYh6L3ieVMg4v8+U0RUVAG2hMQzNxbIF2
+         JKb+3dE4yMPU262wVBS1aWAmvUHwpdf3AU8BaYIKPMv2bbvmJiIFw1MsEbTf9Mv6YLC9
+         6yC0rCKQ/mjRahqVnSvD/JpyJt5D/D/C1GHSU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/YNX1aPE/SVwRFw3fNROIhW8+05SCoozZhXoa+cbw3k=;
-        b=H9ObzYR5i7h89GgMlHb2yXu4OFYf2mqaUisxjn/TvJiomqrNmsiUWqVqcb4QMEBV+X
-         OyCLfQSuAnFYcZglsviSToh92RVmOoLbifOGCnTeZfpZ1yheVhP8NcjBFJaBxGJDigJw
-         Ebryj61BEZ3hq6AA+kRCBNSi+eKt58jcpKbeA7D1uoaHi20gazIvx0YfwMHNm7wV+6S7
-         30U0SVtZDeexSxI7ocSo/z3JZ3v243HIRrrHrZMJDtXPJnkLrie2PTV+Z+tk7rriQOJz
-         jGD7knhKttWLNfZlCb5BuDazcTBSU5Llvk19vl7CknG+9iWbhGuLOo4PGC3Tw581J8NE
-         0xwg==
-X-Gm-Message-State: AA+aEWaKxjiJRufpE/k3rWgsJJEilS3NPbLL8D7rUkgJiTJFDkarGkNv
-        og42PowHiBxuTrZc8EuQduojJxvZBnpH/yCDz/7TJQ==
-X-Google-Smtp-Source: AFSGD/WxaBqpxmjeaIE/9a6dQ4gHFvwQRb4EPq5Y+mprubdQCWeAsbMER2Twzz3vSQ4B7LolaFIf0cvzR4tysMQFyvw=
-X-Received: by 2002:a2e:9e03:: with SMTP id e3-v6mr13041027ljk.4.1543091901638;
- Sat, 24 Nov 2018 12:38:21 -0800 (PST)
+        bh=MemGfOqxhb4bbzDSIHdqtma18mku1RRMcm6AHUMBKwc=;
+        b=DeONOEdN+VNuuSOoJt7eqKXQWE5It601fAJgNZFRHZgXg9B7R1Yt7CNmvNiIBexwnW
+         sfxhtL92T3DT+ZiSsGQ+bvo9ScPPKoxAEI/FQtf8l8m1Z02hv1zeB5/ezuoIFw0t5ZxL
+         TNaVCmsmkQX5fAjqB3/WrnTae754QWHA+5V+0rPvIrmSxA37Guf+lqF26L3xKGvRVbg6
+         w8Fgdp7H8PxEEG34a6UR0SM0v4zmMSLoqdXraEvQsDLqMdbK11EFGHSfz7J52Rq2QYKL
+         YCBPH2B8+3PovFZJ0t6ZOg5XJdrHpCaCfHaJYvv4pAAXjROpJL8cCchl/g8LLMcOvJfm
+         TSHQ==
+X-Gm-Message-State: AA+aEWYbP4gKEBaCxoX1dPmChTZw5pBx2ZFZsQGryFNyxYqapV62yYY/
+        4O2y05d6DSzlAvEW89gfZtF+H7X08XYwL34oJPJDcA==
+X-Google-Smtp-Source: AFSGD/XC6KXTjoxX9zEf/MyCQjYRS7MODc2B1wcixAJcS2bwJ20s7qPBbusb82qy/27Ifzg0VN7yc6AyEXkMKoN8mbc=
+X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr11674367ljj.9.1543091927901;
+ Sat, 24 Nov 2018 12:38:47 -0800 (PST)
 MIME-Version: 1.0
-References: <20181115221634.22715-1-greenfoo@gluegarage.com> <20181115221634.22715-2-greenfoo@gluegarage.com>
-In-Reply-To: <20181115221634.22715-2-greenfoo@gluegarage.com>
+References: <20181115221634.22715-1-greenfoo@gluegarage.com> <20181115221634.22715-3-greenfoo@gluegarage.com>
+In-Reply-To: <20181115221634.22715-3-greenfoo@gluegarage.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 24 Nov 2018 21:38:09 +0100
-Message-ID: <CACRpkda9HhODvWgsUb_ErFVpJ_o3frp-xz_Syvzh0yJRw8US8g@mail.gmail.com>
-Subject: Re: [PATCH 1/9] drm: replace "drm_gem_object_unreference_unlocked"
- function with "*put_unlocked"
+Date:   Sat, 24 Nov 2018 21:38:35 +0100
+Message-ID: <CACRpkdZu+RPr4MrsqF_t4Rd0LAu_rYR4omoLh69+02Qhg21jxw@mail.gmail.com>
+Subject: Re: [PATCH 2/9] drm: remove deprecated "[__]drm_gem_object_[un]reference[_locked]"
+ functions
 To:     greenfoo@gluegarage.com
 Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
         Dave Airlie <airlied@linux.ie>,
@@ -98,47 +98,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, Nov 15, 2018 at 11:17 PM Fernando Ramos <greenfoo@gluegarage.com> wrote:
 
-> This patch unifies the naming of DRM functions for reference counting as
-> requested on Documentation/gpu/todo.rst
+> There are no more places where these (deprecated) functions are being
+> used from, thus they can now be removed.
 >
 > Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
 
-This is already fixed in drm-misc-next as it happens:
-
-commit a0d4d42cb5854400baa47bf63d9aae65fa9f484e
-Author: Thomas Zimmermann <tzimmermann@suse.de>
-Date:   Wed Sep 26 13:36:23 2018 +0200
-
-    drm/bochs: Replace drm_commit a0d4d42cb5854400baa47bf63d9aae65fa9f484e
-Author: Thomas Zimmermann <tzimmermann@suse.de>
-Date:   Wed Sep 26 13:36:23 2018 +0200
-
-    drm/bochs: Replace drm_gem_object_unreference_unlocked with put function
-
-    This patch unifies the naming of DRM functions for reference counting
-    of struct drm_gem_object. The resulting code is more aligned with the
-    rest of the Linux kernel interfaces.
-
-    v2:
-            * rebase onto fbdev rework
-
-    Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-    Link: http://patchwork.freedesktop.org/patch/msgid/20180926113623.22679-1-tzimmermann@suse.de
-    Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-gem_object_unreference_unlocked with put function
-
-    This patch unifies the naming of DRM functions for reference counting
-    of struct drm_gem_object. The resulting code is more aligned with the
-    rest of the Linux kernel interfaces.
-
-    v2:
-            * rebase onto fbdev rework
-
-    Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-    Link: http://patchwork.freedesktop.org/patch/msgid/20180926113623.22679-1-tzimmermann@suse.de
-    Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-
-Going on to try and apply the rest.
+Patch applied to drm-misc-next.
 
 Yours,
 Linus Walleij
