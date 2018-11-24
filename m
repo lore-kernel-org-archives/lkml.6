@@ -2,214 +2,258 @@ Return-Path: <SRS0=c/ts=OD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3503EC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 11:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51592C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 11:51:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBD9A20868
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 11:45:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBD9A20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id F0D292086B
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 11:51:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="b+zes3dd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0D292086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726288AbeKXWdi (ORCPT
+        id S1726291AbeKXWj7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 17:33:38 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57622 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726177AbeKXWdi (ORCPT
+        Sat, 24 Nov 2018 17:39:59 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:40170 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726156AbeKXWj6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 17:33:38 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAOBhMwr133483
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 06:45:22 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ny3h6cxb1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 06:45:22 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Sat, 24 Nov 2018 11:45:15 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 24 Nov 2018 11:45:12 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAOBjBlM61603844
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 24 Nov 2018 11:45:11 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2108BAE045;
-        Sat, 24 Nov 2018 11:45:11 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 94967AE053;
-        Sat, 24 Nov 2018 11:45:10 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.207.68])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Sat, 24 Nov 2018 11:45:10 +0000 (GMT)
-Date:   Sat, 24 Nov 2018 13:45:08 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Meelis Roos <mroos@linux.ee>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-alpha@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: NO_BOOTMEM breaks alpha pc164
-References: <8c8e3dba-7adf-96c6-195c-311050256743@linux.ee>
- <20181123071448.GE5704@rapoport-lnx>
- <78de90df-d88b-d82f-baf1-f0218af7a341@linux.ee>
+        Sat, 24 Nov 2018 17:39:58 -0500
+Received: by mail-it1-f195.google.com with SMTP id h193so21095469ita.5
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 03:51:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=1vtbLZUZf25H9xAyClXglD+IeH8ApqZe6Hv9KdmvqQM=;
+        b=b+zes3ddE9TmiUkMud2EUv88/Qss58WHzjzejdmyxImMYvk+WYuH0IuOzOj+IFH5KT
+         hpW/PnQ4PilEbVQSfNOl9TXn8O3sx7ZZS/LxGnaXMbpSv8M3ih2ObFSqGcWXjv/OGKeu
+         BQNDMA5z7fWlktZWLXXKw4ISic6BKtReC6GIw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=1vtbLZUZf25H9xAyClXglD+IeH8ApqZe6Hv9KdmvqQM=;
+        b=FOpq2vIbzvQXJ7XED6o74putSO008qqBjqKh0M+uCmOM/wLMOzvOLbDIYGddzt3nvO
+         DHNjVGleEYKbQ3OScMj7YrmYMAvQ3RKbPkJRizs7ygR/TJf24dw22Jl6Gc/jLJKEqoH/
+         F1f4nrpiYh1SLnuszDpioi5p9RuCbaOG1DQGw6KSPFqH/5spMLI5EvMPFmMGeTqU1z6f
+         TqQPkNT3mYFdJLgF65BKIWQiGf7PME2x+ipdUrxfsfbL0Y2dPTEzSyi2FF4W6dr8N5md
+         rclkmvMVKtHvze7c9KvEucaXvWByUF0tom2iEoDirMX5yPox2Ty53ktJvpipqnwzjtYE
+         uyMA==
+X-Gm-Message-State: AGRZ1gIn2BXaGh6qJhdOs1HCXndKuVVZuVlI+8THg32cWZfaqe1UZRca
+        x/YYNNOZJKN61RoPOwIkgCeRwxLXI94WX1BCJ+Q5ow==
+X-Google-Smtp-Source: AJdET5fZulLjiJEbV3Yz+3R78BelSX+4sJOqpj6WPW91WGcFhvCYewlwaVidXn4JcyRyAe4TU1RxZYcnXe89usO3im0=
+X-Received: by 2002:a05:660c:4b:: with SMTP id p11mr16938680itk.71.1543060302010;
+ Sat, 24 Nov 2018 03:51:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <78de90df-d88b-d82f-baf1-f0218af7a341@linux.ee>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18112411-0012-0000-0000-000002CF8A1A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112411-0013-0000-0000-00002104C1EC
-Message-Id: <20181124114507.GC28634@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-24_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811240113
+References: <0DF8AA8C9CD0FB4ABF4E83674055F7E2D82974@dggemi508-mbx.china.huawei.com>
+ <CAKv+Gu-ffSgS-ZH58u5mNYnqR0++osS-PHn8oHW72o2kRfDYCw@mail.gmail.com>
+In-Reply-To: <CAKv+Gu-ffSgS-ZH58u5mNYnqR0++osS-PHn8oHW72o2kRfDYCw@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Sat, 24 Nov 2018 12:51:30 +0100
+Message-ID: <CAKv+Gu_V_ZVSEH_3WOaFS8awVjduWU-B9E70yhVxjNseJJqSxQ@mail.gmail.com>
+Subject: Re: Re: [PATCH] arm64: crc: accelerated-crc32-by-64bytes
+To:     sunrui26@huawei.com
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(adding linux-mm, the beginning of the thread is at
-https://lkml.org/lkml/2018/11/22/1032)
-
-On Fri, Nov 23, 2018 at 06:11:09PM +0200, Meelis Roos wrote:
-> >>The bad commit is swith to NO_BOOTMEM.
+On Sat, 24 Nov 2018 at 10:56, Ard Biesheuvel <ard.biesheuvel@linaro.org> wr=
+ote:
+>
+> On Sat, 24 Nov 2018 at 07:42, sunrui <sunrui26@huawei.com> wrote:
 > >
-> >[ ... ]
-> >>How do I debug it?
 > >
-> >Apparently, some of the early memory registration is not properly converted
-> >from bootmem to memblock + nobootmem for your system.
+> > On Thu, 22 Nov 2018 at 02:50, sunrui <sunrui26@huawei.com> wrote:
+> > >
+> > >
+> > >
+> > > On Sun, 18 Nov 2018 at 23:30, Rui Sun <sunrui26@huawei.com> wrote:
+> > >
+> > > >
+> > >
+> > > > add 64 bytes loop to acceleration calculation
+> > >
+> > > >
+> > >
+> > >
+> > >
+> > > Can you share some performance numbers please?
+> > >
+> > >
+> > >
+> > > Also, we don't need 64 byte, 32 byte and 16 byte code paths: just mak=
+e the 8 byte one a loop as well, and drop the 32 byte and 16 byte ones.
+> > >
+> > >
+> > >
+> > > --
+> > >
+> > >
+> > >
+> > > Consider of some processor has instruction N-way parallel function, w=
+ith the increase of the data buf=E2=80=99s size, 64B loop will performance =
+better than 16B loop.
+> > >
+> > >
+> > >
+> > > On the other hand, in the same environment I tested the 8B loop, whic=
+h is worse than the 16-byte loop.
+> > >
+> > >
+> > >
+> > > The test result is shown in the fellow excel(crc test result.xlsx)
+> > > sheet1(64B loop) and sheet2(8B loop)
+> > >
+> > >
+> > >Maybe I phrased that wrong: if we add the 64-byte loop, there is no ne=
+ed for a 32-byte block, a 16 byte block and a 8 byte block, since they all =
+use the same crc32x instruction. After the 64-byte loop, just loop in the 8=
+-byte sequence until the remaining data is less than 8 bytes.
+> > >
+> > >
+> > >
+> > I think we should not use 8-byte loop after 64-byte loop. Although the =
+number of code lines is reduced, but it will run more subs and b.cond instr=
+uction. I test it and shown the result in the fellow excel.
 > >
-> >You can try applying the below patch to enable debug printouts from
-> >memblock, maybe it'll shed some more light.
-> 
-> Here is the serial console output from a boot with the debug patch applied:
-> 
-> (boot dka0.0.0.5.0 -flags 0)
-> block 0 of dka0.0.0.5.0 is a valid boot block
-> reading 161 blocks from dka0.0.0.5.0
-> bootstrap code read in
-> base = 180000, image_start = 0, image_bytes = 14200
-> initializing HWRPB at 2000
-> initializing page table at 172000
-> initializing machine state
-> setting affinity to the primary CPU
-> jumping to bootstrap code
-> aboot: Linux/Alpha SRM bootloader version 1.0_pre20040408
-> aboot: switching to OSF/1 PALcode version 1.23
-> aboot: booting from device 'SCSI 0 5 0 0 0 0 0'
-> aboot: valid disklabel found: 4 partitions.
-> aboot: loading uncompressed test...
-> aboot: loading compressed test...
-> aboot: PHDR 0 vaddr 0xfffffc0000310000 offset 0x2000 size 0x79925c
-> aboot: bss at 0xfffffc0000aa925c, size 0x16469c
-> aboot: zero-filling 1459868 bytes at 0xfffffc0000aa925c
-> aboot: starting kernel test with arguments root=/dev/sda2 console=ttyS0
-> [    0.000000] Linux version 4.20.0-rc2-00068-gda5322e65940-dirty (mroos@pc164) (gcc version 7.3.0 (Gentoo 7.3.0-r3 p1.4)) #115 Fri Nov 23 17:38:17 EET 2018
-> [    0.000000] Booting on EB164 variation PC164 using machine vector PC164 from SRM
-> [    0.000000] Major Options: EV56 LEGACY_START VERBOSE_MCHECK DISCONTIGMEM MAGIC_SYSRQ
-> [    0.000000] Command line: root=/dev/sda2 console=ttyS0
-> [    0.000000] Raw memory layout:
-> [    0.000000]  memcluster  0, usage 1, start        0, end      192
-> [    0.000000]  memcluster  1, usage 0, start      192, end    32651
-> [    0.000000]  memcluster  2, usage 1, start    32651, end    32768
-> [    0.000000] Initializing bootmem allocator on Node ID 0
-> [    0.000000]  memcluster  1, usage 0, start      192, end    32651
-> [    0.000000]  Detected node memory:   start      192, end    32651
-> [    0.000000] memblock_add: [0x0000000000000000-0x000000000ff15fff] setup_memory+0x39c/0x478
-> [    0.000000] memblock_reserve: [0x0000000000300000-0x0000000000c11fff] setup_memory+0x444/0x478
-> [    0.000000] 1024K Bcache detected; load hit latency 30 cycles, load miss latency 212 cycles
-> [    0.000000] pci: cia revision 2
-> [    0.000000] memblock_alloc_try_nid: 104 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 alloc_pci_controller+0x2c/0x50
-> [    0.000000] memblock_reserve: [0x000000000ff15f80-0x000000000ff15fe7] memblock_alloc_internal+0x170/0x278
-> [    0.000000] memblock_alloc_try_nid: 64 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 alloc_resource+0x2c/0x40
-> [    0.000000] memblock_reserve: [0x000000000ff15f40-0x000000000ff15f7f] memblock_alloc_internal+0x170/0x278
+>
+> OK
+>
+> > Why I used three temp variables to do the ldp below is because our proc=
+essor have two load/store unit, if we use the registers which are independe=
+nt, it can processed in parallel.
+> >
+>
+> Yes, but you are adding three instructions to a tight loop, which will
+> be noticeable on in-order cores.
+>
+> Just use something like
+>
+> ldp x3, x4, [x0]
+> ldp x5, x6, [x0, #16]
+> ldp x7, x8, [x0, #32]
+> ldp x9, x10, [x0, #48]
+> add x0, x0, #64
+>
+> Those are completely independent as well
+>
+> > By the way,  In most cases, crc short XOR 0xffffffff before and after t=
+he calculation, if we add 'mvn w0, w0' at the beginning and before the retu=
+rn will bring some benefits. What do you think about it?
+>
+> The C code will take care of that.
+>
 
-...
- 
-> halted CPU 0
-> 
-> halt code = 7
-> machine check while in PAL mode
-> PC = 1814c
-> boot failure
-> >>>
+I tested your code on Cortex-A57, and it performs worse in tcrypt:
 
-Two things that might cause the hang. 
-First, memblock_add() is called after node_min_pfn has been rounded down to
-the nearest 8Mb and in your case this cases memblock to see more memory that
-is actually present in the system.
-I'm not sure why the 8Mb alignment is required, I've just made sure that
-memblock_add() will use exact available memory (the first patch below).
+Before:
+testing speed of async crc32c (crc32c-generic)
+tcrypt: test  0 (   16 byte blocks,   16 bytes per update,   1
+updates): 35416299 opers/sec, 566660784 bytes/sec
+tcrypt: test  1 (   64 byte blocks,   16 bytes per update,   4
+updates): 5342888 opers/sec, 341944832 bytes/sec
+tcrypt: test  2 (   64 byte blocks,   64 bytes per update,   1
+updates): 30056634 opers/sec, 1923624576 bytes/sec
+tcrypt: test  3 (  256 byte blocks,   16 bytes per update,  16
+updates): 1543567 opers/sec, 395153152 bytes/sec
+tcrypt: test  4 (  256 byte blocks,   64 bytes per update,   4
+updates): 4865198 opers/sec, 1245490688 bytes/sec
+tcrypt: test  5 (  256 byte blocks,  256 bytes per update,   1
+updates): 12709474 opers/sec, 3253625344 bytes/sec
+tcrypt: test  6 ( 1024 byte blocks,   16 bytes per update,  64
+updates): 401746 opers/sec, 411387904 bytes/sec
+tcrypt: test  7 ( 1024 byte blocks,  256 bytes per update,   4
+updates): 2576764 opers/sec, 2638606336 bytes/sec
+tcrypt: test  8 ( 1024 byte blocks, 1024 bytes per update,   1
+updates): 4464109 opers/sec, 4571247616 bytes/sec
+tcrypt: test  9 ( 2048 byte blocks,   16 bytes per update, 128
+updates): 202236 opers/sec, 414179328 bytes/sec
+tcrypt: test 10 ( 2048 byte blocks,  256 bytes per update,   8
+updates): 1344017 opers/sec, 2752546816 bytes/sec
+tcrypt: test 11 ( 2048 byte blocks, 1024 bytes per update,   2
+updates): 2000544 opers/sec, 4097114112 bytes/sec
+tcrypt: test 12 ( 2048 byte blocks, 2048 bytes per update,   1
+updates): 2395890 opers/sec, 4906782720 bytes/sec
+tcrypt: test 13 ( 4096 byte blocks,   16 bytes per update, 256
+updates): 101569 opers/sec, 416026624 bytes/sec
+tcrypt: test 14 ( 4096 byte blocks,  256 bytes per update,  16
+updates): 687876 opers/sec, 2817540096 bytes/sec
+tcrypt: test 15 ( 4096 byte blocks, 1024 bytes per update,   4
+updates): 1029042 opers/sec, 4214956032 bytes/sec
+tcrypt: test 16 ( 4096 byte blocks, 4096 bytes per update,   1
+updates): 1206227 opers/sec, 4940705792 bytes/sec
+tcrypt: test 17 ( 8192 byte blocks,   16 bytes per update, 512
+updates):  50842 opers/sec, 416497664 bytes/sec
+tcrypt: test 18 ( 8192 byte blocks,  256 bytes per update,  32
+updates): 347779 opers/sec, 2849005568 bytes/sec
+tcrypt: test 19 ( 8192 byte blocks, 1024 bytes per update,   8
+updates): 525054 opers/sec, 4301242368 bytes/sec
+tcrypt: test 20 ( 8192 byte blocks, 4096 bytes per update,   2
+updates): 600919 opers/sec, 4922728448 bytes/sec
+tcrypt: test 21 ( 8192 byte blocks, 8192 bytes per update,   1
+updates): 606954 opers/sec, 4972167168 bytes/sec
 
-Another thing is that memblock allocates memory from high addresses while
-bootmem was using low memory. It may happen that an allocation from high
-memory is not accessible by the hardware, although it should be. The second
-patch below addresses this issue.
+With your patch applied:
 
-It would be really great if you could test with each patch separately and
-with both patches applied :)
+testing speed of async crc32c (crc32c-generic)
+tcrypt: test  0 (   16 byte blocks,   16 bytes per update,   1
+updates): 29524327 opers/sec, 472389232 bytes/sec
+tcrypt: test  1 (   64 byte blocks,   16 bytes per update,   4
+updates): 4299236 opers/sec, 275151104 bytes/sec
+tcrypt: test  2 (   64 byte blocks,   64 bytes per update,   1
+updates): 25492193 opers/sec, 1631500352 bytes/sec
+tcrypt: test  3 (  256 byte blocks,   16 bytes per update,  16
+updates): 1076108 opers/sec, 275483648 bytes/sec
+tcrypt: test  4 (  256 byte blocks,   64 bytes per update,   4
+updates): 4201545 opers/sec, 1075595520 bytes/sec
+tcrypt: test  5 (  256 byte blocks,  256 bytes per update,   1
+updates): 12872662 opers/sec, 3295401472 bytes/sec
+tcrypt: test  6 ( 1024 byte blocks,   16 bytes per update,  64
+updates): 283351 opers/sec, 290151424 bytes/sec
+tcrypt: test  7 ( 1024 byte blocks,  256 bytes per update,   4
+updates): 2548369 opers/sec, 2609529856 bytes/sec
+tcrypt: test  8 ( 1024 byte blocks, 1024 bytes per update,   1
+updates): 4315953 opers/sec, 4419535872 bytes/sec
+tcrypt: test  9 ( 2048 byte blocks,   16 bytes per update, 128
+updates): 148377 opers/sec, 303876096 bytes/sec
+tcrypt: test 10 ( 2048 byte blocks,  256 bytes per update,   8
+updates): 1321415 opers/sec, 2706257920 bytes/sec
+tcrypt: test 11 ( 2048 byte blocks, 1024 bytes per update,   2
+updates): 1915036 opers/sec, 3921993728 bytes/sec
+tcrypt: test 12 ( 2048 byte blocks, 2048 bytes per update,   1
+updates): 2349295 opers/sec, 4811356160 bytes/sec
+tcrypt: test 13 ( 4096 byte blocks,   16 bytes per update, 256
+updates):  74167 opers/sec, 303788032 bytes/sec
+tcrypt: test 14 ( 4096 byte blocks,  256 bytes per update,  16
+updates): 675385 opers/sec, 2766376960 bytes/sec
+tcrypt: test 15 ( 4096 byte blocks, 1024 bytes per update,   4
+updates): 981948 opers/sec, 4022059008 bytes/sec
+tcrypt: test 16 ( 4096 byte blocks, 4096 bytes per update,   1
+updates): 1178119 opers/sec, 4825575424 bytes/sec
+tcrypt: test 17 ( 8192 byte blocks,   16 bytes per update, 512
+updates):  38580 opers/sec, 316047360 bytes/sec
+tcrypt: test 18 ( 8192 byte blocks,  256 bytes per update,  32
+updates): 340715 opers/sec, 2791137280 bytes/sec
+tcrypt: test 19 ( 8192 byte blocks, 1024 bytes per update,   8
+updates): 498960 opers/sec, 4087480320 bytes/sec
+tcrypt: test 20 ( 8192 byte blocks, 4096 bytes per update,   2
+updates): 594188 opers/sec, 4867588096 bytes/sec
+tcrypt: test 21 ( 8192 byte blocks, 8192 bytes per update,   1
+updates): 599264 opers/sec, 4909170688 bytes/sec
 
-
-Patch 1
-------------------------------------------------------------------------------------
-diff --git a/arch/alpha/mm/numa.c b/arch/alpha/mm/numa.c
-index 74846553..7db1cb5 100644
---- a/arch/alpha/mm/numa.c
-+++ b/arch/alpha/mm/numa.c
-@@ -144,14 +144,14 @@ setup_memory_node(int nid, void *kernel_end)
- 	if (!nid && (node_max_pfn < end_kernel_pfn || node_min_pfn > start_kernel_pfn))
- 		panic("kernel loaded out of ram");
- 
-+	memblock_add(PFN_PHYS(node_min_pfn),
-+		     (node_max_pfn - node_min_pfn) << PAGE_SHIFT);
-+
- 	/* Zone start phys-addr must be 2^(MAX_ORDER-1) aligned.
- 	   Note that we round this down, not up - node memory
- 	   has much larger alignment than 8Mb, so it's safe. */
- 	node_min_pfn &= ~((1UL << (MAX_ORDER-1))-1);
- 
--	memblock_add(PFN_PHYS(node_min_pfn),
--		     (node_max_pfn - node_min_pfn) << PAGE_SHIFT);
--
- 	NODE_DATA(nid)->node_start_pfn = node_min_pfn;
- 	NODE_DATA(nid)->node_present_pages = node_max_pfn - node_min_pfn;
- 
-Patch 2
-------------------------------------------------------------------------------------
-diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
-index a37fd99..4b5b1b2 100644
---- a/arch/alpha/kernel/setup.c
-+++ b/arch/alpha/kernel/setup.c
-@@ -634,6 +634,7 @@ setup_arch(char **cmdline_p)
- 
- 	/* Find our memory.  */
- 	setup_memory(kernel_end);
-+	memblock_set_bottom_up(true);
- 
- 	/* First guess at cpu cache sizes.  Do this before init_arch.  */
- 	determine_cpu_caches(cpu->type);
-
-
-> -- 
-> Meelis Roos <mroos@linux.ee>
-> 
-
--- 
-Sincerely yours,
-Mike.
-
+Note that these are all integral multiples of 16 bytes, so the
+coverage is not great. Could you share your test script please?
