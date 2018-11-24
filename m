@@ -6,27 +6,26 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF71C43610
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 03:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F57C04EBA
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 03:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B34C20824
-	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 03:11:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B34C20824
+	by mail.kernel.org (Postfix) with ESMTP id 6556520824
+	for <linux-kernel@archiver.kernel.org>; Sat, 24 Nov 2018 03:11:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6556520824
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730373AbeKXN5z (ORCPT
+        id S1730510AbeKXN54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 24 Nov 2018 08:57:55 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:56624 "EHLO
+        Sat, 24 Nov 2018 08:57:56 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:56744 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730155AbeKXN5y (ORCPT
+        with ESMTP id S1730221AbeKXN5z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Nov 2018 08:57:54 -0500
+        Sat, 24 Nov 2018 08:57:55 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 4E84728F6B; Fri, 23 Nov 2018 22:11:08 -0500 (EST)
+        id C7BC428F78; Fri, 23 Nov 2018 22:11:08 -0500 (EST)
 To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Philip Blundell <philb@gnu.org>,
         Joshua Thompson <funaho@jurai.org>
 Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -38,187 +37,120 @@ Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         John Stultz <john.stultz@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-Id: <49af3aa11c9020f3dc084597bca6508a4aca84c2.1543028943.git.fthain@telegraphics.com.au>
+Message-Id: <0d0dd9db0030d249ab014c58abb904b241b5b6c9.1543028943.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1543028943.git.fthain@telegraphics.com.au>
 References: <cover.1543028943.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [RFC PATCH v3 04/14] m68k: Drop ARCH_USES_GETTIMEOFFSET
+Subject: [RFC PATCH v3 10/14] m68k: mac: Convert to clocksource API
 Date:   Sat, 24 Nov 2018 14:09:03 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The functions that implement arch_gettimeoffset are re-used by
-new clocksource drivers in subsequent patches.
+Add a platform clocksource by adapting the existing arch_gettimeoffset
+implementation.
 
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Tested-by: Stan Johnson <userm57@yahoo.com>
 ---
- arch/m68k/Kconfig           | 1 -
- arch/m68k/amiga/config.c    | 3 ---
- arch/m68k/atari/config.c    | 2 --
- arch/m68k/bvme6000/config.c | 2 --
- arch/m68k/hp300/config.c    | 1 -
- arch/m68k/hp300/time.h      | 1 -
- arch/m68k/mac/config.c      | 3 ---
- arch/m68k/mvme147/config.c  | 2 --
- arch/m68k/mvme16x/config.c  | 2 --
- 9 files changed, 17 deletions(-)
+Changed since v2:
+ - Drop unneeded 'clk_offset' variable.
 
-diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index 070553791e97..cc62660a5760 100644
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@ -19,7 +19,6 @@ config M68K
- 	select GENERIC_STRNCPY_FROM_USER if MMU
- 	select GENERIC_STRNLEN_USER if MMU
- 	select ARCH_WANT_IPC_PARSE_VERSION
--	select ARCH_USES_GETTIMEOFFSET if MMU && !COLDFIRE
- 	select HAVE_FUTEX_CMPXCHG if MMU && FUTEX
- 	select HAVE_MOD_ARCH_SPECIFIC
- 	select MODULES_USE_ELF_REL
-diff --git a/arch/m68k/amiga/config.c b/arch/m68k/amiga/config.c
-index 65f63a457130..d4976c1aa0cc 100644
---- a/arch/m68k/amiga/config.c
-+++ b/arch/m68k/amiga/config.c
-@@ -95,8 +95,6 @@ static char amiga_model_name[13] = "Amiga ";
- static void amiga_sched_init(irq_handler_t handler);
- static void amiga_get_model(char *model);
- static void amiga_get_hardware_list(struct seq_file *m);
--/* amiga specific timer functions */
--static u32 amiga_gettimeoffset(void);
- extern void amiga_mksound(unsigned int count, unsigned int ticks);
- static void amiga_reset(void);
- extern void amiga_init_sound(void);
-@@ -386,7 +384,6 @@ void __init config_amiga(void)
- 	mach_init_IRQ        = amiga_init_IRQ;
- 	mach_get_model       = amiga_get_model;
- 	mach_get_hardware_list = amiga_get_hardware_list;
--	arch_gettimeoffset   = amiga_gettimeoffset;
+Changed since v1:
+ - Moved clk_total access to within the irq lock.
+ - Use type u32 for tick counter.
+---
+ arch/m68k/mac/via.c | 40 +++++++++++++++++++++++++++++++++-------
+ 1 file changed, 33 insertions(+), 7 deletions(-)
+
+diff --git a/arch/m68k/mac/via.c b/arch/m68k/mac/via.c
+index f1f39ecf84c2..c226ca7eae84 100644
+--- a/arch/m68k/mac/via.c
++++ b/arch/m68k/mac/via.c
+@@ -23,6 +23,7 @@
+  *
+  */
+ 
++#include <linux/clocksource.h>
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
+@@ -573,16 +574,38 @@ EXPORT_SYMBOL(via2_scsi_drq_pending);
+ /* timer and clock source */
+ 
+ #define VIA_CLOCK_FREQ     783360                /* VIA "phase 2" clock in Hz */
+-#define VIA_TIMER_INTERVAL (1000000 / HZ)        /* microseconds per jiffy */
+ #define VIA_TIMER_CYCLES   (VIA_CLOCK_FREQ / HZ) /* clock cycles per jiffy */
+ 
+ #define VIA_TC             (VIA_TIMER_CYCLES - 2) /* including 0 and -1 */
+ #define VIA_TC_LOW         (VIA_TC & 0xFF)
+ #define VIA_TC_HIGH        (VIA_TC >> 8)
+ 
++static u64 mac_read_clk(struct clocksource *cs);
++
++static struct clocksource mac_clk = {
++	.name   = "via1",
++	.rating = 250,
++	.read   = mac_read_clk,
++	.mask   = CLOCKSOURCE_MASK(32),
++	.flags  = CLOCK_SOURCE_IS_CONTINUOUS,
++};
++
++static u32 clk_total;
++
++static irqreturn_t via_timer_handler(int irq, void *dev_id)
++{
++	irq_handler_t timer_routine = dev_id;
++
++	clk_total += VIA_TIMER_CYCLES;
++	timer_routine(0, NULL);
++
++	return IRQ_HANDLED;
++}
++
+ void __init via_init_clock(irq_handler_t timer_routine)
+ {
+-	if (request_irq(IRQ_MAC_TIMER_1, timer_routine, 0, "timer", NULL)) {
++	if (request_irq(IRQ_MAC_TIMER_1, via_timer_handler, IRQF_TIMER, "timer",
++			timer_routine)) {
+ 		pr_err("Couldn't register %s interrupt\n", "timer");
+ 		return;
+ 	}
+@@ -592,13 +615,16 @@ void __init via_init_clock(irq_handler_t timer_routine)
+ 	via1[vT1CL] = VIA_TC_LOW;
+ 	via1[vT1CH] = VIA_TC_HIGH;
+ 	via1[vACR] |= 0x40;
++
++	clocksource_register_hz(&mac_clk, VIA_CLOCK_FREQ);
+ }
+ 
+-u32 mac_gettimeoffset(void)
++static u64 mac_read_clk(struct clocksource *cs)
+ {
+ 	unsigned long flags;
+ 	u8 count_high;
+ 	u16 count, offset = 0;
++	u32 ticks;
  
  	/*
- 	 * default MAX_DMA=0xffffffff on all machines. If we don't do so, the SCSI
-diff --git a/arch/m68k/atari/config.c b/arch/m68k/atari/config.c
-index bd96702a1ad0..89e65be2655f 100644
---- a/arch/m68k/atari/config.c
-+++ b/arch/m68k/atari/config.c
-@@ -78,7 +78,6 @@ static void atari_heartbeat(int on);
+ 	 * Timer counter wrap-around is detected with the timer interrupt flag
+@@ -615,10 +641,10 @@ u32 mac_gettimeoffset(void)
+ 		count_high = 0;
+ 	else if (via1[vIFR] & VIA_TIMER_1_INT)
+ 		offset = VIA_TIMER_CYCLES;
+-	local_irq_restore(flags);
+-
+ 	count = count_high << 8;
+-	count = VIA_TIMER_CYCLES - count + offset;
++	ticks = VIA_TIMER_CYCLES - count;
++	ticks += offset + clk_total;
++	local_irq_restore(flags);
  
- /* atari specific timer functions (in time.c) */
- extern void atari_sched_init(irq_handler_t);
--extern u32 atari_gettimeoffset(void);
- extern int atari_mste_hwclk (int, struct rtc_time *);
- extern int atari_tt_hwclk (int, struct rtc_time *);
- 
-@@ -205,7 +204,6 @@ void __init config_atari(void)
- 	mach_init_IRQ        = atari_init_IRQ;
- 	mach_get_model	 = atari_get_model;
- 	mach_get_hardware_list = atari_get_hardware_list;
--	arch_gettimeoffset   = atari_gettimeoffset;
- 	mach_reset           = atari_reset;
- 	mach_max_dma_address = 0xffffff;
- #if IS_ENABLED(CONFIG_INPUT_M68K_BEEP)
-diff --git a/arch/m68k/bvme6000/config.c b/arch/m68k/bvme6000/config.c
-index 0e5efed4da86..c8b99d5516d1 100644
---- a/arch/m68k/bvme6000/config.c
-+++ b/arch/m68k/bvme6000/config.c
-@@ -39,7 +39,6 @@
- 
- static void bvme6000_get_model(char *model);
- extern void bvme6000_sched_init(irq_handler_t handler);
--extern u32 bvme6000_gettimeoffset(void);
- extern int bvme6000_hwclk (int, struct rtc_time *);
- extern void bvme6000_reset (void);
- void bvme6000_set_vectors (void);
-@@ -105,7 +104,6 @@ void __init config_bvme6000(void)
-     mach_max_dma_address = 0xffffffff;
-     mach_sched_init      = bvme6000_sched_init;
-     mach_init_IRQ        = bvme6000_init_IRQ;
--    arch_gettimeoffset   = bvme6000_gettimeoffset;
-     mach_hwclk           = bvme6000_hwclk;
-     mach_reset		 = bvme6000_reset;
-     mach_get_model       = bvme6000_get_model;
-diff --git a/arch/m68k/hp300/config.c b/arch/m68k/hp300/config.c
-index a19bcd23f80b..a161d44fd20b 100644
---- a/arch/m68k/hp300/config.c
-+++ b/arch/m68k/hp300/config.c
-@@ -254,7 +254,6 @@ void __init config_hp300(void)
- 	mach_sched_init      = hp300_sched_init;
- 	mach_init_IRQ        = hp300_init_IRQ;
- 	mach_get_model       = hp300_get_model;
--	arch_gettimeoffset   = hp300_gettimeoffset;
- 	mach_hwclk	     = hp300_hwclk;
- 	mach_get_ss	     = hp300_get_ss;
- 	mach_reset           = hp300_reset;
-diff --git a/arch/m68k/hp300/time.h b/arch/m68k/hp300/time.h
-index f5583ec4033d..1d77b55cc72a 100644
---- a/arch/m68k/hp300/time.h
-+++ b/arch/m68k/hp300/time.h
-@@ -1,2 +1 @@
- extern void hp300_sched_init(irq_handler_t vector);
--extern u32 hp300_gettimeoffset(void);
-diff --git a/arch/m68k/mac/config.c b/arch/m68k/mac/config.c
-index cd9317d53276..11be08f4f750 100644
---- a/arch/m68k/mac/config.c
-+++ b/arch/m68k/mac/config.c
-@@ -54,8 +54,6 @@ struct mac_booter_data mac_bi_data;
- /* The phys. video addr. - might be bogus on some machines */
- static unsigned long mac_orig_videoaddr;
- 
--/* Mac specific timer functions */
--extern u32 mac_gettimeoffset(void);
- extern int mac_hwclk(int, struct rtc_time *);
- extern void iop_preinit(void);
- extern void iop_init(void);
-@@ -155,7 +153,6 @@ void __init config_mac(void)
- 	mach_sched_init = mac_sched_init;
- 	mach_init_IRQ = mac_init_IRQ;
- 	mach_get_model = mac_get_model;
--	arch_gettimeoffset = mac_gettimeoffset;
- 	mach_hwclk = mac_hwclk;
- 	mach_reset = mac_reset;
- 	mach_halt = mac_poweroff;
-diff --git a/arch/m68k/mvme147/config.c b/arch/m68k/mvme147/config.c
-index 93c68d2b8e0e..4ef4faa5ed8b 100644
---- a/arch/m68k/mvme147/config.c
-+++ b/arch/m68k/mvme147/config.c
-@@ -38,7 +38,6 @@
- 
- static void mvme147_get_model(char *model);
- extern void mvme147_sched_init(irq_handler_t handler);
--extern u32 mvme147_gettimeoffset(void);
- extern int mvme147_hwclk (int, struct rtc_time *);
- extern void mvme147_reset (void);
- 
-@@ -84,7 +83,6 @@ void __init config_mvme147(void)
- 	mach_max_dma_address	= 0x01000000;
- 	mach_sched_init		= mvme147_sched_init;
- 	mach_init_IRQ		= mvme147_init_IRQ;
--	arch_gettimeoffset	= mvme147_gettimeoffset;
- 	mach_hwclk		= mvme147_hwclk;
- 	mach_reset		= mvme147_reset;
- 	mach_get_model		= mvme147_get_model;
-diff --git a/arch/m68k/mvme16x/config.c b/arch/m68k/mvme16x/config.c
-index 5feb3ab484d0..3a3129e6f0bc 100644
---- a/arch/m68k/mvme16x/config.c
-+++ b/arch/m68k/mvme16x/config.c
-@@ -44,7 +44,6 @@ static MK48T08ptr_t volatile rtc = (MK48T08ptr_t)MVME_RTC_BASE;
- 
- static void mvme16x_get_model(char *model);
- extern void mvme16x_sched_init(irq_handler_t handler);
--extern u32 mvme16x_gettimeoffset(void);
- extern int mvme16x_hwclk (int, struct rtc_time *);
- extern void mvme16x_reset (void);
- 
-@@ -272,7 +271,6 @@ void __init config_mvme16x(void)
-     mach_max_dma_address = 0xffffffff;
-     mach_sched_init      = mvme16x_sched_init;
-     mach_init_IRQ        = mvme16x_init_IRQ;
--    arch_gettimeoffset   = mvme16x_gettimeoffset;
-     mach_hwclk           = mvme16x_hwclk;
-     mach_reset		 = mvme16x_reset;
-     mach_get_model       = mvme16x_get_model;
+-	return ((count * VIA_TIMER_INTERVAL) / VIA_TIMER_CYCLES) * 1000;
++	return ticks;
+ }
 -- 
 2.18.1
 
