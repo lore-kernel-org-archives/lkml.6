@@ -2,101 +2,239 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A8B3C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE2ABC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:27:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38AF32082F
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:22:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38AF32082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
+	by mail.kernel.org (Postfix) with ESMTP id 805AA2082F
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:27:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gnEsDfwv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 805AA2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbeKZIOW (ORCPT
+        id S1726112AbeKZITM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 03:14:22 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35892 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725910AbeKZIOV (ORCPT
+        Mon, 26 Nov 2018 03:19:12 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:34066 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbeKZITL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 03:14:21 -0500
-Received: by mail-qt1-f195.google.com with SMTP id t13so15487006qtn.3
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 13:22:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:organization:content-transfer-encoding;
-        bh=rMWL9QbF/dO3upc4LqMskbmDyaUIwCsgwylNGfiC7dM=;
-        b=b1oYsU/ScRWabKzmSEp3eIdxhZrE+cGW+zjtNoSdKfqKuPwzB3ph1FYJNX8GE5xGKd
-         A/e4vnbYn53a/ntRiFKFxGDegt5QPweIVsglgV7LvYWuHIxq4U77TbnmxURKen06fuPB
-         bZ80U7pltFVeenXoqFUUGLwuNqGoyi8ONrw3DjmM5yxXy7+heDGHEWNNWc/79oM0H6Et
-         QFpvk41a/M/OklhA6MKCFhuGNv8xXMtgVy9VYTiEJ/zt+14q9ixmxR110nlHxxA5EGIo
-         CHZ3NIK1bF7EPZT6jnmjPFypzPnFuQuzwfjDiBRjIt2oncjLjnEqJeBujSAImTdwHuqs
-         ZzBg==
-X-Gm-Message-State: AA+aEWZKYndpjuWBriE+yarxfJmXgn76mGfQXesa3QSbHVV81wViJmSt
-        8gkh7McsEy3QG9ZzyJem+uM=
-X-Google-Smtp-Source: AJdET5fSIVhYavP+CKa68JRDHZaU2+Y2nKDgSVl1jbNaoYkGzsQVVmPmfKvlUnfROfImsaZa3d9VZw==
-X-Received: by 2002:ac8:2a26:: with SMTP id k35mr23617665qtk.245.1543180941391;
-        Sun, 25 Nov 2018 13:22:21 -0800 (PST)
-Received: from localhost.localdomain ([181.220.65.91])
-        by smtp.gmail.com with ESMTPSA id e49sm34929291qta.0.2018.11.25.13.22.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Nov 2018 13:22:20 -0800 (PST)
-Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 25 Nov 2018 19:22:14 -0200
-From:   Otavio Salvador <otavio@ossystems.com.br>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Andreas=20M=C3=BCller?= <schnitzeltony@gmail.com>,
-        Otavio Salvador <otavio@ossystems.com.br>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-Subject: [PATCH v2 3/3] ARM: imx_v6_v7_defconfig: Enable USB_ANNOUNCE_NEW_DEVICES
-Date:   Sun, 25 Nov 2018 19:21:59 -0200
-Message-Id: <20181125212159.11590-3-otavio@ossystems.com.br>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181125212159.11590-1-otavio@ossystems.com.br>
-References: <20181125212159.11590-1-otavio@ossystems.com.br>
+        Mon, 26 Nov 2018 03:19:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=F6ce2YdIxWOsOlN3HEwGwWTtYzuyLLTBwh0m2gJOZ6A=; b=gnEsDfwv+KWLGCERa6fUXsR3m9
+        7QgShDtTXxn+dKEalDCcjOYYcrTEmgfPxEz7Yz5+ahUVWIBGX/rVTwOwgQ/QcTn/Yqf5BMWk5RVAn
+        GYudJYDApLVEszSCOU1W0IKrioKc0pyKL/CxudWKEcGtNPbiESQADycxbCFQk31ibRXFGED+dLlO5
+        FA/PWFTqi8jSo/TzwnYnQqVAyPww19sY8lGYqo2UeqHK4h+02/uwGffdUqd7OxVCWeb195oSCH8oz
+        mcdiKp2z4XKxROUKEjeG+PxfwEkDDTyJhtKIHbVTku7Gzt1gNKAZUZCtRIvwHFhyzEpj+5zj0tsTr
+        Jl2Z4z4g==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gR1vp-0001y8-9J; Sun, 25 Nov 2018 21:27:09 +0000
+Date:   Sun, 25 Nov 2018 13:27:09 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     syzbot <syzbot+d89b30c46434c433dbf8@syzkaller.appspotmail.com>
+Cc:     crecklin@redhat.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, linux-net@vger.kernel.org
+Subject: Re: WARNING: bad usercopy in corrupted (2)
+Message-ID: <20181125212708.GD3065@bombadil.infradead.org>
+References: <000000000000f7cb53057b7ee3cb@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Organization: O.S. Systems Software LTDA.
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <000000000000f7cb53057b7ee3cb@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Müller <schnitzeltony@gmail.com>
+On Sun, Nov 25, 2018 at 07:30:04AM -0800, syzbot wrote:
+> Hello,
+>=20
+> syzbot found the following crash on:
+>=20
+> HEAD commit:    aea0a897af9e ptp: Fix pass zero to ERR_PTR() in ptp_clock=
+_..
+> git tree:       net-next
 
-This is very helpful debugging USB issues.
+If you found it on net-next, I'd suggets cc'ing linux-net ...
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-Signed-off-by: Andreas Müller <schnitzeltony@gmail.com>
-Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
----
-
-Changes in v2: None
-
- arch/arm/configs/imx_v6_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
-index 22ad2d7a1cf2..d339913845fa 100644
---- a/arch/arm/configs/imx_v6_v7_defconfig
-+++ b/arch/arm/configs/imx_v6_v7_defconfig
-@@ -305,6 +305,7 @@ CONFIG_SND_SOC_WM8962=y
- CONFIG_SND_SIMPLE_CARD=y
- CONFIG_HID_MULTITOUCH=y
- CONFIG_USB=y
-+CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_EHCI_MXC=y
- CONFIG_USB_STORAGE=y
--- 
-2.19.1
-
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D101b91d5400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc36a72af2123e=
+78a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd89b30c46434c43=
+3dbf8
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D170f6a47400=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12e1df7b400000
+>=20
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+d89b30c46434c433dbf8@syzkaller.appspotmail.com
+>=20
+> ------------[ cut here ]------------
+> DEBUG_LOCKS_WARN_ON(!hlock->nest_lock)
+> ------------[ cut here ]------------
+> Bad or missing usercopy whitelist? Kernel memory overwrite attempt detect=
+ed
+> to SLAB object 'task_struct' (offset 1432, size 2)!
+> WARNING: CPU: 1 PID: 38 at mm/usercopy.c:83 usercopy_warn+0xee/0x110
+> mm/usercopy.c:78
+> Kernel panic - not syncing: panic_on_warn set ...
+> list_add corruption. next->prev should be prev (ffff8881daf2d798), but was
+> 0b7e0c8e49cc0400. (next=3Dffff8881d9b4a4f0).
+> CPU: 1 PID: 38 Comm: =EF=BF=BD=EF=BF=BD=EF=BF=BD=D9=81=EF=BF=BD=EF=BF=BD=
+=EF=BF=BDd=0B=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD Not tai=
+nted 4.20.0-rc3+ #312
+> ------------[ cut here ]------------
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> kernel BUG at lib/list_debug.c:25!
+> ------------[ cut here ]------------
+> invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> kernel BUG at mm/slab.c:4425!
+> CPU: 0 PID: 8652 Comm: syz-executor607 Not tainted 4.20.0-rc3+ #312
+> WARNING: CPU: 1 PID: 38 at kernel/rcu/tree_plugin.h:438
+> __rcu_read_unlock+0x266/0x2e0 kernel/rcu/tree_plugin.h:432
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Modules linked in:
+> RIP: 0010:__list_add_valid.cold.2+0xf/0x2a lib/list_debug.c:23
+> CPU: 1 PID: 38 Comm: =EF=BF=BD=EF=BF=BD=EF=BF=BD=D9=81=EF=BF=BD=EF=BF=BD=
+=EF=BF=BDd=0B=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD Not tai=
+nted 4.20.0-rc3+ #312
+> Code: d1 60 88 e8 a1 37 d2 fd 0f 0b 48 89 de 48 c7 c7 60 d1 60 88 e8 90 37
+> d2 fd 0f 0b 48 89 d9 48 c7 c7 20 d2 60 88 e8 7f 37 d2 fd <0f> 0b 48 89 f1=
+ 48
+> c7 c7 a0 d2 60 88 48 89 de e8 6b 37 d2 fd 0f 0b
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RSP: 0000:ffff8881dae07588 EFLAGS: 00010082
+> usercopy: Kernel memory overwrite attempt detected to SLAB object
+> 'signal_cache' (offset 1328, size 23)!
+> RAX: 0000000000000075 RBX: ffff8881d9b4a4f0 RCX: 0000000000000000
+> ------------[ cut here ]------------
+> RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000005
+> kernel BUG at mm/usercopy.c:102!
+> RBP: ffff8881dae075a0 R08: ffff8881d25ce100 R09: ffffed103b5c5020
+> R10: ffffed103b5c5020 R11: ffff8881dae28107 R12: ffff8881bd890230
+> R13: dffffc0000000000 R14: ffff8881dae07980 R15: ffff8881daf2d798
+> FS:  000000000083c880(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fff14476600 CR3: 00000001d2a59000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <IRQ>
+>  __list_add include/linux/list.h:60 [inline]
+>  list_add include/linux/list.h:79 [inline]
+>  list_move include/linux/list.h:171 [inline]
+>  detach_tasks kernel/sched/fair.c:7298 [inline]
+>  load_balance+0x1b8d/0x39a0 kernel/sched/fair.c:8731
+>  rebalance_domains+0x845/0xdc0 kernel/sched/fair.c:9109
+>  run_rebalance_domains+0x38d/0x500 kernel/sched/fair.c:9731
+>  __do_softirq+0x308/0xb7e kernel/softirq.c:292
+>  invoke_softirq kernel/softirq.c:373 [inline]
+>  irq_exit+0x17f/0x1c0 kernel/softirq.c:413
+>  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+>  smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
+>  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:804
+>  </IRQ>
+> RIP: 0033:0x4005dd
+> Code: c9 00 04 00 66 0f 1f 84 00 00 00 00 00 48 8b 05 f1 2e 2d 00 48 85 c0
+> 74 11 bf 3c e8 4b 00 b9 0e 00 00 00 48 89 c6 f3 a6 75 01 <c3> 48 89 c7 e9=
+ 9a
+> ec 01 00 66 2e 0f 1f 84 00 00 00 00 00 8b 05 4a
+> RSP: 002b:00007fff144765a8 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+> RAX: 0000000000000000 RBX: 0000000000000002 RCX: 00000000006d2190
+> RDX: 0000000000402410 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 00000000006cc0a8 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+> R13: 00000000006d2180 R14: 0000000000000000 R15: 0000000000000000
+> Modules linked in:
+> ---[ end trace eeb5734c13709e17 ]---
+> invalid opcode: 0000 [#2] PREEMPT SMP KASAN
+> CPU: 1 PID: 38 Comm: =EF=BF=BD=EF=BF=BD=EF=BF=BD=D9=81=EF=BF=BD=EF=BF=BD=
+=EF=BF=BDd=0B=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD Tainted=
+: G      D           4.20.0-rc3+
+> #312
+> RIP: 0010:__list_add_valid.cold.2+0xf/0x2a lib/list_debug.c:23
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Code: d1 60 88 e8 a1 37 d2 fd 0f 0b 48 89 de 48 c7 c7 60 d1 60 88 e8 90 37
+> d2 fd 0f 0b 48 89 d9 48 c7 c7 20 d2 60 88 e8 7f 37 d2 fd <0f> 0b 48 89 f1=
+ 48
+> c7 c7 a0 d2 60 88 48 89 de e8 6b 37 d2 fd 0f 0b
+> RIP: 0010:usercopy_abort+0xbb/0xbd mm/usercopy.c:90
+> RSP: 0000:ffff8881dae07588 EFLAGS: 00010082
+> Code: c0 e8 f7 dc b1 ff 48 8b 55 c0 49 89 d9 4d 89 f0 ff 75 c8 4c 89 e1 4c
+> 89 ee 48 c7 c7 80 d5 34 88 ff 75 d0 41 57 e8 e7 28 98 ff <0f> 0b e8 cc dc=
+ b1
+> ff e8 97 13 f5 ff 8b 95 e4 fe ff ff 4c 89 e1 31
+> RAX: 0000000000000075 RBX: ffff8881d9b4a4f0 RCX: 0000000000000000
+> RSP: 0018:ffff8881d9b49438 EFLAGS: 00010086
+> RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000005
+> RAX: 0000000000000068 RBX: ffffffff88291020 RCX: 0000000000000000
+> RBP: ffff8881dae075a0 R08: ffff8881d25ce100 R09: ffffed103b5c5020
+> RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000005
+> R10: ffffed103b5c5020 R11: ffff8881dae28107 R12: ffff8881bd890230
+> RBP: ffff8881d9b49490 R08: ffff8881d9b4a440 R09: ffffed103b5e3ef8
+> R13: dffffc0000000000 R14: ffff8881dae07980 R15: ffff8881daf2d798
+> R10: ffffed103b5e3ef8 R11: ffff8881daf1f7c7 R12: ffffffff8914da1d
+> FS:  000000000083c880(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000=
+000
+> R13: ffffffff8834d3e0 R14: ffffffff8834d320 R15: ffffffff8834d2e0
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000=
+000
+> CR2: 00007fff14476600 CR3: 00000001d2a59000 CR4: 00000000001406f0
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> CR2: 0000000000000130 CR3: 00000001d7880000 CR4: 00000000001406e0
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+> Modules linked in:
+> ---[ end trace eeb5734c13709e18 ]---
+> RIP: 0010:__list_add_valid.cold.2+0xf/0x2a lib/list_debug.c:23
+> Code: d1 60 88 e8 a1 37 d2 fd 0f 0b 48 89 de 48 c7 c7 60 d1 60 88 e8 90 37
+> d2 fd 0f 0b 48 89 d9 48 c7 c7 20 d2 60 88 e8 7f 37 d2 fd <0f> 0b 48 89 f1=
+ 48
+> c7 c7 a0 d2 60 88 48 89 de e8 6b 37 d2 fd 0f 0b
+> RSP: 0000:ffff8881dae07588 EFLAGS: 00010082
+> RAX: 0000000000000075 RBX: ffff8881d9b4a4f0 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000005
+> RBP: ffff8881dae075a0 R08: ffff8881d25ce100 R09: ffffed103b5c5020
+> R10: ffffed103b5c5020 R11: ffff8881dae28107 R12: ffff8881bd890230
+> R13: dffffc0000000000 R14: ffff8881dae07980 R15: ffff8881daf2d798
+> FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000130 CR3: 00000001d7880000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>=20
+>=20
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>=20
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
