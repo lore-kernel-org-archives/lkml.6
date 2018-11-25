@@ -2,356 +2,253 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2AF9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 23:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ECF3C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 23:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F91320855
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 23:07:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F91320855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 2FF612082E
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 23:07:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LwIUcaii"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FF612082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbeKZJ7k (ORCPT
+        id S1726194AbeKZJ7s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 04:59:40 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51744 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbeKZJ7k (ORCPT
+        Mon, 26 Nov 2018 04:59:48 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37998 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbeKZJ7s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 04:59:40 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 6C4DD807BC; Mon, 26 Nov 2018 00:07:20 +0100 (CET)
-Date:   Mon, 26 Nov 2018 00:07:22 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "wzabolot@elektron.elka.pw.edu.pl" <wzabolot@elektron.elka.pw.edu.pl>
-Cc:     LKML <linux-kernel@vger.kernel.org>, bernie@plugable.com,
-        linux-fbdev@vger.kernel.org, airlied@redhat.com, sean@poorly.run,
-        dri-devel@lists.freedesktop.org
-Subject: Re: The "udl" driver crashes the kernel.
-Message-ID: <20181125230722.GD30242@amd>
-References: <31dc20a5-66f4-051c-dfec-73924b00c0f8@elektron.elka.pw.edu.pl>
+        Mon, 26 Nov 2018 04:59:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=vXMn6YtPbbtUC2hy7XfNUeYbDeYuGr+SULaQwOPlYk8=; b=LwIUcaiik58kVu5xQTxgG67Nuy
+        rV4HZTNT5j5bpQEr1eftja2f1m7ta9nudhgM6eYY1rLBWhINnQGYV09GYNKnVbQtiQKDXe9O5IzA9
+        sSx4TaQBFJ4tBTOclRWu8cTSLbSF1H1IedNpqObtVoHFKIPFxfsegT9HqV+jsw7VsR6yJVWPraPzS
+        tW0tLJVJi65vNkd191zn3kmNxQdqQdK4KpNAyNCIAFU17k1ErunEHZvU1lcoi4dgkbjvPc+pgaWY2
+        lCzT4sL+tOPHBzOgWvVLQHOUCEJZ07TfLJRMljfMN+rr6c5atw+bIhSJ63fX0/Mq67RTsE2lO0W5a
+        LBrv0rDg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gR3Uy-0000e5-8f; Sun, 25 Nov 2018 23:07:32 +0000
+Date:   Sun, 25 Nov 2018 15:07:32 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     syzbot <syzbot+d89b30c46434c433dbf8@syzkaller.appspotmail.com>
+Cc:     crecklin@redhat.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, netdev@vger.kernel.org
+Subject: Re: WARNING: bad usercopy in corrupted (2)
+Message-ID: <20181125230732.GE3065@bombadil.infradead.org>
+References: <000000000000f7cb53057b7ee3cb@google.com>
+ <20181125212708.GD3065@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="rz+pwK2yUstbofK6"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <31dc20a5-66f4-051c-dfec-73924b00c0f8@elektron.elka.pw.edu.pl>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181125212708.GD3065@bombadil.infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---rz+pwK2yUstbofK6
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun 2018-11-25 16:58:59, wzabolot@elektron.elka.pw.edu.pl wrote:
-> When I connect my Displaylink DL-165 adapter to my Debian/testing
-> machine, the "udl" driver is loaded and the following error messages
-> appears in kernel logs:
-
-4.18 kernel. Might be worth testing latest stable, and latest
-mainline...
-
-Is there version that worked for you?
-
-I added udl maintainers to the Cc list.
-
-Best regards,
-								Pavel
-
+On Sun, Nov 25, 2018 at 01:27:09PM -0800, Matthew Wilcox wrote:
+> On Sun, Nov 25, 2018 at 07:30:04AM -0800, syzbot wrote:
+> > Hello,
+> >=20
+> > syzbot found the following crash on:
+> >=20
+> > HEAD commit:    aea0a897af9e ptp: Fix pass zero to ERR_PTR() in ptp_clo=
+ck_..
+> > git tree:       net-next
 >=20
-> Nov=A0 7 20:47:30 wzdell kernel: [=A0 205.871354] usb 4-1.2: new high-spe=
-ed
-> USB device number 4 using ehci-pci
-> Nov=A0 7 20:47:35 wzdell kernel: [=A0 211.209020] usb 4-1.2: New USB devi=
-ce
-> found, idVendor=3D17e9, idProduct=3D0290, bcdDevice=3D 0.01
-> Nov=A0 7 20:47:35 wzdell kernel: [=A0 211.209027] usb 4-1.2: New USB devi=
-ce
-> strings: Mfr=3D1, Product=3D2, SerialNumber=3D3
-> Nov=A0 7 20:47:35 wzdell kernel: [=A0 211.209032] usb 4-1.2: Product: DL-=
-165
-> Adapter
-> Nov=A0 7 20:47:35 wzdell kernel: [=A0 211.209036] usb 4-1.2: Manufacturer:
-> DisplayLink
-> Nov=A0 7 20:47:35 wzdell kernel: [=A0 211.209040] usb 4-1.2: SerialNumber:
-> 102140
-> Nov=A0 7 20:47:35 wzdell mtp-probe: checking bus 4, device 4:
-> "/sys/devices/pci0000:00/0000:00:1d.0/usb4/4-1/4-1.2"
-> Nov=A0 7 20:47:35 wzdell mtp-probe: bus: 4, device: 4 was not an MTP devi=
-ce
-> Nov=A0 7 20:47:35 wzdell kernel: [=A0 211.269753] [drm] vendor descriptor
-> length:22 data:22 5f 01 00 20 05 00 01 03 04 02
-> Nov=A0 7 20:47:35 wzdell kernel: [=A0 211.320940] [drm] Cannot find any c=
-rtc
-> or sizes
-> Nov=A0 7 20:47:35 wzdell kernel: [=A0 211.320962] [drm] Supports vblank
-> timestamp caching Rev 2 (21.10.2013).
-> Nov=A0 7 20:47:35 wzdell kernel: [=A0 211.320963] [drm] No driver support
-> for vblank timestamp query.
-> Nov=A0 7 20:47:35 wzdell kernel: [=A0 211.320999] [drm] Initialized udl
-> 0.0.1 20120220 for 4-1.2:1.0 on minor 1
-> Nov=A0 7 20:47:35 wzdell kernel: [=A0 211.321002] [drm] Initialized udl on
-> minor 1
-> Nov=A0 7 20:47:35 wzdell kernel: [=A0 211.321078] usbcore: registered new
-> interface driver udl
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.700722] WARNING: CPU: 0 PID: 10=
-24
-> at /build/linux-iActNR/linux-4.18.10/drivers/gpu/drm/drm_gem.c:893
-> drm_gem_object_put+0x34/0x40 [drm]
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.700726] Modules linked in: udl
-> rfcomm ctr ccm cpufreq_userspace cpufreq_conservative cpufreq_powersave
-> bnep bbswitch(O) nf_conntrack_ipv6 nf_defrag_ipv6 nf_conntrack_ipv4
-> nf_defrag_ipv4 nft_counter xt_owner xt_state xt_conntrack nf_conntrack
-> libcrc32c nft_compat nf_tables nfnetlink binfmt_misc intel_rapl
-> x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass
-> uvcvideo arc4 iwldvm videobuf2_vmalloc mac80211 videobuf2_memops
-> videobuf2_v4l2 snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel
-> videobuf2_common snd_hda_codec videodev snd_hda_core snd_hwdep snd_pcm
-> snd_timer media snd soundcore i915 btusb btrtl btbcm btintel bluetooth
-> iwlwifi dell_laptop dell_wmi dell_smbios mei_me drbg ansi_cprng mei
-> ecdh_generic wmi_bmof dcdbas cfg80211 drm_kms_helper sparse_keymap
-> dell_wmi_descriptor
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.700822]=A0 intel_cstate drm
-> intel_uncore intel_rapl_perf dell_smm_hwmon evdev iTCO_wdt
-> iTCO_vendor_support joydev rfkill video serio_raw i2c_algo_bit pcspkr sg
-> pcc_cpufreq wmi dell_smo8800 button battery ac parport_pc ppdev lp
-> parport ip_tables x_tables autofs4 ext4 crc16 mbcache jbd2
-> crc32c_generic fscrypto ecb algif_skcipher af_alg dm_crypt dm_mod sr_mod
-> cdrom sd_mod ums_realtek uas usb_storage crct10dif_pclmul crc32_pclmul
-> crc32c_intel ghash_clmulni_intel pcbc ahci libahci aesni_intel xhci_pci
-> aes_x86_64 ehci_pci crypto_simd libata xhci_hcd ehci_hcd cryptd
-> glue_helper psmouse scsi_mod i2c_i801 r8169 lpc_ich mii usbcore
-> usb_common thermal
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.700925] CPU: 0 PID: 1024 Comm:
-> Xorg Tainted: G=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 O=A0=A0=A0=A0=A0 4.18.0-2-a=
-md64 #1 Debian 4.18.10-2
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.700927] Hardware name: Dell
-> Inc.=A0=A0=A0=A0=A0=A0=A0=A0=A0 Dell System Vostro 3750/0VP036, BIOS A14 =
-09/26/2012
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.700955] RIP:
-> 0010:drm_gem_object_put+0x34/0x40 [drm]
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.700957] Code: 53 48 8b 47 08 48=
- 8b
-> 40 68 48 a9 f8 ff ff ff 74 19 48 89 fb e8 7d c3 02 de 84 c0 75 02 5b c3
-> 48 89 df 5b e9 ee fc ff ff f3 c3 <0f> 0b eb e3 0f 1f 84 00 00 00 00 00
-> 66 66 66 66 90 48 8b 42 08 48
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701035] RSP: 0018:ffffac86826bb=
-d00
-> EFLAGS: 00010246
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701039] RAX: 0000000000000000 R=
-BX:
-> ffff95fc65313800 RCX: 0000000000000000
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701042] RDX: ffffffffffffffff R=
-SI:
-> ffff95fc662b0610 RDI: ffff95fc65313800
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701045] RBP: ffff95fc31f1a020 R=
-08:
-> ffff95fc662b0610 R09: ffff95fc662b06c0
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701047] R10: 0000000000100000 R=
-11:
-> 0000000000000040 R12: 0000000000000000
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701050] R13: ffffac86826bbdc8 R=
-14:
-> ffffac86826bbdc0 R15: 00000000000000b3
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701054] FS:=A0
-> 00007f78c0ceba80(0000) GS:ffff95fc7e400000(0000) knlGS:0000000000000000
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701057] CS:=A0 0010 DS: 0000 ES:
-> 0000 CR0: 0000000080050033
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701060] CR2: 00007f78abdfac94 C=
-R3:
-> 00000004287fe002 CR4: 00000000000606f0
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701063] Call Trace:
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701080]=A0 udl_gem_mmap+0x58/0x=
-b0 [udl]
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701112]=A0 ?
-> drm_mode_create_dumb_ioctl+0x90/0x90 [drm]
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701138]=A0
-> drm_ioctl_kernel+0xa1/0xf0 [drm]
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701164]=A0 drm_ioctl+0x2eb/0x39=
-0 [drm]
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701193]=A0 ?
-> drm_mode_create_dumb_ioctl+0x90/0x90 [drm]
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701203]=A0 ? datagram_poll+0x28=
-/0xf0
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701209]=A0 ? sock_poll+0x7b/0xb0
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701216]=A0 ?
-> ep_item_poll.isra.13+0x3f/0xb0
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701221]=A0 ? sock_poll+0x7b/0xb0
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701230]=A0 do_vfs_ioctl+0xa4/0x=
-640
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701237]=A0 ?
-> __x64_sys_epoll_ctl+0xf2/0x590
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701243]=A0 ksys_ioctl+0x70/0x80
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701250]=A0 __x64_sys_ioctl+0x16=
-/0x20
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701257]=A0 do_syscall_64+0x55/0=
-x110
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701265]=A0
-> entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701271] RIP: 0033:0x7f78c1c09067
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701272] Code: b3 66 90 48 8b 05=
- 21
-> 7e 0c 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00
-> 00 00 00 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d
-> f1 7d 0c 00 f7 d8 64 89 01 48
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701349] RSP: 002b:00007ffc9ddc4=
-ef8
-> EFLAGS: 00003246 ORIG_RAX: 0000000000000010
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701354] RAX: ffffffffffffffda R=
-BX:
-> 0000000000000000 RCX: 00007f78c1c09067
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701356] RDX: 00007ffc9ddc4f30 R=
-SI:
-> 00000000c01064b3 RDI: 0000000000000037
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701359] RBP: 00007ffc9ddc4f30 R=
-08:
-> 0000000000000000 R09: 000055bbb6541fe0
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701361] R10: 00007ffc9ddc4edc R=
-11:
-> 0000000000003246 R12: 00000000c01064b3
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701364] R13: 0000000000000037 R=
-14:
-> 000055bbb6580d90 R15: 0000000000000001
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.701369] ---[ end trace
-> 6b30e2bd6c85b37b ]---
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703507] WARNING: CPU: 0 PID: 10=
-24
-> at /build/linux-iActNR/linux-4.18.10/drivers/gpu/drm/drm_gem.c:893
-> drm_gem_object_put+0x34/0x40 [drm]
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703509] Modules linked in: udl
-> rfcomm ctr ccm cpufreq_userspace cpufreq_conservative cpufreq_powersave
-> bnep bbswitch(O) nf_conntrack_ipv6 nf_defrag_ipv6 nf_conntrack_ipv4
-> nf_defrag_ipv4 nft_counter xt_owner xt_state xt_conntrack nf_conntrack
-> libcrc32c nft_compat nf_tables nfnetlink binfmt_misc intel_rapl
-> x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass
-> uvcvideo arc4 iwldvm videobuf2_vmalloc mac80211 videobuf2_memops
-> videobuf2_v4l2 snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel
-> videobuf2_common snd_hda_codec videodev snd_hda_core snd_hwdep snd_pcm
-> snd_timer media snd soundcore i915 btusb btrtl btbcm btintel bluetooth
-> iwlwifi dell_laptop dell_wmi dell_smbios mei_me drbg ansi_cprng mei
-> ecdh_generic wmi_bmof dcdbas cfg80211 drm_kms_helper sparse_keymap
-> dell_wmi_descriptor
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703595]=A0 intel_cstate drm
-> intel_uncore intel_rapl_perf dell_smm_hwmon evdev iTCO_wdt
-> iTCO_vendor_support joydev rfkill video serio_raw i2c_algo_bit pcspkr sg
-> pcc_cpufreq wmi dell_smo8800 button battery ac parport_pc ppdev lp
-> parport ip_tables x_tables autofs4 ext4 crc16 mbcache jbd2
-> crc32c_generic fscrypto ecb algif_skcipher af_alg dm_crypt dm_mod sr_mod
-> cdrom sd_mod ums_realtek uas usb_storage crct10dif_pclmul crc32_pclmul
-> crc32c_intel ghash_clmulni_intel pcbc ahci libahci aesni_intel xhci_pci
-> aes_x86_64 ehci_pci crypto_simd libata xhci_hcd ehci_hcd cryptd
-> glue_helper psmouse scsi_mod i2c_i801 r8169 lpc_ich mii usbcore
-> usb_common thermal
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703696] CPU: 0 PID: 1024 Comm:
-> Xorg Tainted: G=A0=A0=A0=A0=A0=A0=A0 W=A0 O=A0=A0=A0=A0=A0 4.18.0-2-amd64=
- #1 Debian 4.18.10-2
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703698] Hardware name: Dell
-> Inc.=A0=A0=A0=A0=A0=A0=A0=A0=A0 Dell System Vostro 3750/0VP036, BIOS A14 =
-09/26/2012
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703723] RIP:
-> 0010:drm_gem_object_put+0x34/0x40 [drm]
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703724] Code: 53 48 8b 47 08 48=
- 8b
-> 40 68 48 a9 f8 ff ff ff 74 19 48 89 fb e8 7d c3 02 de 84 c0 75 02 5b c3
-> 48 89 df 5b e9 ee fc ff ff f3 c3 <0f> 0b eb e3 0f 1f 84 00 00 00 00 00
-> 66 66 66 66 90 48 8b 42 08 48
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703801] RSP: 0018:ffffac86826bb=
-d00
-> EFLAGS: 00010246
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703805] RAX: 0000000000000000 R=
-BX:
-> ffff95fc65313e00 RCX: 0000000000000000
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703807] RDX: ffffffffffffffff R=
-SI:
-> ffff95fc662b0610 RDI: ffff95fc65313e00
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703810] RBP: ffff95fc31f1a020 R=
-08:
-> ffff95fc662b0610 R09: ffff95fc65313868
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703812] R10: 0000000000100004 R=
-11:
-> 0000000000000040 R12: 0000000000000000
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703815] R13: ffffac86826bbdc8 R=
-14:
-> ffffac86826bbdc0 R15: 00000000000000b3
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703819] FS:=A0
-> 00007f78c0ceba80(0000) GS:ffff95fc7e400000(0000) knlGS:0000000000000000
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703822] CS:=A0 0010 DS: 0000 ES:
-> 0000 CR0: 0000000080050033
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703825] CR2: 00007f78abdfac94 C=
-R3:
-> 00000004287fe002 CR4: 00000000000606f0
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703827] Call Trace:
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703837]=A0 udl_gem_mmap+0x58/0x=
-b0 [udl]
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703867]=A0 ?
-> drm_mode_create_dumb_ioctl+0x90/0x90 [drm]
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703902]=A0
-> drm_ioctl_kernel+0xa1/0xf0 [drm]
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703928]=A0 drm_ioctl+0x2eb/0x39=
-0 [drm]
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703956]=A0 ?
-> drm_mode_create_dumb_ioctl+0x90/0x90 [drm]
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703963]=A0 ? do_mmap+0x3f9/0x5c0
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703971]=A0 do_vfs_ioctl+0xa4/0x=
-640
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703978]=A0 ksys_ioctl+0x70/0x80
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703985]=A0 __x64_sys_ioctl+0x16=
-/0x20
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703991]=A0 do_syscall_64+0x55/0=
-x110
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.703998]=A0
-> entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.704002] RIP: 0033:0x7f78c1c09067
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.704003] Code: b3 66 90 48 8b 05=
- 21
-> 7e 0c 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00
-> 00 00 00 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d
-> f1 7d 0c 00 f7 d8 64 89 01 48
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.704080] RSP: 002b:00007ffc9ddc4=
-ef8
-> EFLAGS: 00003246 ORIG_RAX: 0000000000000010
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.704084] RAX: ffffffffffffffda R=
-BX:
-> 0000000000000000 RCX: 00007f78c1c09067
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.704087] RDX: 00007ffc9ddc4f30 R=
-SI:
-> 00000000c01064b3 RDI: 0000000000000037
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.704089] RBP: 00007ffc9ddc4f30 R=
-08:
-> 0000000000000037 R09: 0000000100000000
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.704092] R10: 0000000000000001 R=
-11:
-> 0000000000003246 R12: 00000000c01064b3
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.704094] R13: 0000000000000037 R=
-14:
-> 000055bbb6580d90 R15: 0000000000000001
-> Nov=A0 7 20:47:37 wzdell kernel: [=A0 212.704099] ---[ end trace
-> 6b30e2bd6c85b37c ]---
+> If you found it on net-next, I'd suggets cc'ing linux-net ...
+
+Uh.  I meant netdev.  Oops.
+
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D101b91d5400=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc36a72af212=
+3e78a
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd89b30c46434c=
+433dbf8
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D170f6a474=
+00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12e1df7b400=
+000
+> >=20
+> > IMPORTANT: if you fix the bug, please add the following tag to the comm=
+it:
+> > Reported-by: syzbot+d89b30c46434c433dbf8@syzkaller.appspotmail.com
+> >=20
+> > ------------[ cut here ]------------
+> > DEBUG_LOCKS_WARN_ON(!hlock->nest_lock)
+> > ------------[ cut here ]------------
+> > Bad or missing usercopy whitelist? Kernel memory overwrite attempt dete=
+cted
+> > to SLAB object 'task_struct' (offset 1432, size 2)!
+> > WARNING: CPU: 1 PID: 38 at mm/usercopy.c:83 usercopy_warn+0xee/0x110
+> > mm/usercopy.c:78
+> > Kernel panic - not syncing: panic_on_warn set ...
+> > list_add corruption. next->prev should be prev (ffff8881daf2d798), but =
+was
+> > 0b7e0c8e49cc0400. (next=3Dffff8881d9b4a4f0).
+> > CPU: 1 PID: 38 Comm: =EF=BF=BD=EF=BF=BD=EF=BF=BD=D9=81=EF=BF=BD=EF=BF=
+=BD=EF=BF=BDd=0B=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD Not =
+tainted 4.20.0-rc3+ #312
+> > ------------[ cut here ]------------
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > kernel BUG at lib/list_debug.c:25!
+> > ------------[ cut here ]------------
+> > invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+> > kernel BUG at mm/slab.c:4425!
+> > CPU: 0 PID: 8652 Comm: syz-executor607 Not tainted 4.20.0-rc3+ #312
+> > WARNING: CPU: 1 PID: 38 at kernel/rcu/tree_plugin.h:438
+> > __rcu_read_unlock+0x266/0x2e0 kernel/rcu/tree_plugin.h:432
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Modules linked in:
+> > RIP: 0010:__list_add_valid.cold.2+0xf/0x2a lib/list_debug.c:23
+> > CPU: 1 PID: 38 Comm: =EF=BF=BD=EF=BF=BD=EF=BF=BD=D9=81=EF=BF=BD=EF=BF=
+=BD=EF=BF=BDd=0B=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD Not =
+tainted 4.20.0-rc3+ #312
+> > Code: d1 60 88 e8 a1 37 d2 fd 0f 0b 48 89 de 48 c7 c7 60 d1 60 88 e8 90=
+ 37
+> > d2 fd 0f 0b 48 89 d9 48 c7 c7 20 d2 60 88 e8 7f 37 d2 fd <0f> 0b 48 89 =
+f1 48
+> > c7 c7 a0 d2 60 88 48 89 de e8 6b 37 d2 fd 0f 0b
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > RSP: 0000:ffff8881dae07588 EFLAGS: 00010082
+> > usercopy: Kernel memory overwrite attempt detected to SLAB object
+> > 'signal_cache' (offset 1328, size 23)!
+> > RAX: 0000000000000075 RBX: ffff8881d9b4a4f0 RCX: 0000000000000000
+> > ------------[ cut here ]------------
+> > RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000005
+> > kernel BUG at mm/usercopy.c:102!
+> > RBP: ffff8881dae075a0 R08: ffff8881d25ce100 R09: ffffed103b5c5020
+> > R10: ffffed103b5c5020 R11: ffff8881dae28107 R12: ffff8881bd890230
+> > R13: dffffc0000000000 R14: ffff8881dae07980 R15: ffff8881daf2d798
+> > FS:  000000000083c880(0000) GS:ffff8881dae00000(0000) knlGS:00000000000=
+00000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00007fff14476600 CR3: 00000001d2a59000 CR4: 00000000001406f0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >  <IRQ>
+> >  __list_add include/linux/list.h:60 [inline]
+> >  list_add include/linux/list.h:79 [inline]
+> >  list_move include/linux/list.h:171 [inline]
+> >  detach_tasks kernel/sched/fair.c:7298 [inline]
+> >  load_balance+0x1b8d/0x39a0 kernel/sched/fair.c:8731
+> >  rebalance_domains+0x845/0xdc0 kernel/sched/fair.c:9109
+> >  run_rebalance_domains+0x38d/0x500 kernel/sched/fair.c:9731
+> >  __do_softirq+0x308/0xb7e kernel/softirq.c:292
+> >  invoke_softirq kernel/softirq.c:373 [inline]
+> >  irq_exit+0x17f/0x1c0 kernel/softirq.c:413
+> >  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+> >  smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
+> >  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:804
+> >  </IRQ>
+> > RIP: 0033:0x4005dd
+> > Code: c9 00 04 00 66 0f 1f 84 00 00 00 00 00 48 8b 05 f1 2e 2d 00 48 85=
+ c0
+> > 74 11 bf 3c e8 4b 00 b9 0e 00 00 00 48 89 c6 f3 a6 75 01 <c3> 48 89 c7 =
+e9 9a
+> > ec 01 00 66 2e 0f 1f 84 00 00 00 00 00 8b 05 4a
+> > RSP: 002b:00007fff144765a8 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+> > RAX: 0000000000000000 RBX: 0000000000000002 RCX: 00000000006d2190
+> > RDX: 0000000000402410 RSI: 0000000000000000 RDI: 0000000000000000
+> > RBP: 00000000006cc0a8 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+> > R13: 00000000006d2180 R14: 0000000000000000 R15: 0000000000000000
+> > Modules linked in:
+> > ---[ end trace eeb5734c13709e17 ]---
+> > invalid opcode: 0000 [#2] PREEMPT SMP KASAN
+> > CPU: 1 PID: 38 Comm: =EF=BF=BD=EF=BF=BD=EF=BF=BD=D9=81=EF=BF=BD=EF=BF=
+=BD=EF=BF=BDd=0B=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD Tain=
+ted: G      D           4.20.0-rc3+
+> > #312
+> > RIP: 0010:__list_add_valid.cold.2+0xf/0x2a lib/list_debug.c:23
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Code: d1 60 88 e8 a1 37 d2 fd 0f 0b 48 89 de 48 c7 c7 60 d1 60 88 e8 90=
+ 37
+> > d2 fd 0f 0b 48 89 d9 48 c7 c7 20 d2 60 88 e8 7f 37 d2 fd <0f> 0b 48 89 =
+f1 48
+> > c7 c7 a0 d2 60 88 48 89 de e8 6b 37 d2 fd 0f 0b
+> > RIP: 0010:usercopy_abort+0xbb/0xbd mm/usercopy.c:90
+> > RSP: 0000:ffff8881dae07588 EFLAGS: 00010082
+> > Code: c0 e8 f7 dc b1 ff 48 8b 55 c0 49 89 d9 4d 89 f0 ff 75 c8 4c 89 e1=
+ 4c
+> > 89 ee 48 c7 c7 80 d5 34 88 ff 75 d0 41 57 e8 e7 28 98 ff <0f> 0b e8 cc =
+dc b1
+> > ff e8 97 13 f5 ff 8b 95 e4 fe ff ff 4c 89 e1 31
+> > RAX: 0000000000000075 RBX: ffff8881d9b4a4f0 RCX: 0000000000000000
+> > RSP: 0018:ffff8881d9b49438 EFLAGS: 00010086
+> > RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000005
+> > RAX: 0000000000000068 RBX: ffffffff88291020 RCX: 0000000000000000
+> > RBP: ffff8881dae075a0 R08: ffff8881d25ce100 R09: ffffed103b5c5020
+> > RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000005
+> > R10: ffffed103b5c5020 R11: ffff8881dae28107 R12: ffff8881bd890230
+> > RBP: ffff8881d9b49490 R08: ffff8881d9b4a440 R09: ffffed103b5e3ef8
+> > R13: dffffc0000000000 R14: ffff8881dae07980 R15: ffff8881daf2d798
+> > R10: ffffed103b5e3ef8 R11: ffff8881daf1f7c7 R12: ffffffff8914da1d
+> > FS:  000000000083c880(0000) GS:ffff8881dae00000(0000) knlGS:00000000000=
+00000
+> > R13: ffffffff8834d3e0 R14: ffffffff8834d320 R15: ffffffff8834d2e0
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:00000000000=
+00000
+> > CR2: 00007fff14476600 CR3: 00000001d2a59000 CR4: 00000000001406f0
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > CR2: 0000000000000130 CR3: 00000001d7880000 CR4: 00000000001406e0
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> > Modules linked in:
+> > ---[ end trace eeb5734c13709e18 ]---
+> > RIP: 0010:__list_add_valid.cold.2+0xf/0x2a lib/list_debug.c:23
+> > Code: d1 60 88 e8 a1 37 d2 fd 0f 0b 48 89 de 48 c7 c7 60 d1 60 88 e8 90=
+ 37
+> > d2 fd 0f 0b 48 89 d9 48 c7 c7 20 d2 60 88 e8 7f 37 d2 fd <0f> 0b 48 89 =
+f1 48
+> > c7 c7 a0 d2 60 88 48 89 de e8 6b 37 d2 fd 0f 0b
+> > RSP: 0000:ffff8881dae07588 EFLAGS: 00010082
+> > RAX: 0000000000000075 RBX: ffff8881d9b4a4f0 RCX: 0000000000000000
+> > RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000005
+> > RBP: ffff8881dae075a0 R08: ffff8881d25ce100 R09: ffffed103b5c5020
+> > R10: ffffed103b5c5020 R11: ffff8881dae28107 R12: ffff8881bd890230
+> > R13: dffffc0000000000 R14: ffff8881dae07980 R15: ffff8881daf2d798
+> > FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:00000000000=
+00000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 0000000000000130 CR3: 00000001d7880000 CR4: 00000000001406e0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> >=20
+> >=20
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >=20
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> > syzbot.
+> > syzbot can test patches for this bug, for details see:
+> > https://goo.gl/tpsmEJ#testing-patches
 >=20
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---rz+pwK2yUstbofK6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlv7KyoACgkQMOfwapXb+vIiVQCgtaSRzzaY9Xa5FFJbNtkoTkJE
-zpMAoLDZrNkgaRTSXXcLyFfGYt4+JiLm
-=UvoZ
------END PGP SIGNATURE-----
-
---rz+pwK2yUstbofK6--
