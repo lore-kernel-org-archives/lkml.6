@@ -2,131 +2,108 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD722C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 14:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BEAC04EBA
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 14:53:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87CD620868
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 14:44:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87CD620868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=80x24.org
+	by mail.kernel.org (Postfix) with ESMTP id 79D312084E
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 14:53:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D312084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726388AbeKZBfz (ORCPT
+        id S1726393AbeKZBoz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 20:35:55 -0500
-Received: from dcvr.yhbt.net ([64.71.152.64]:41664 "EHLO dcvr.yhbt.net"
+        Sun, 25 Nov 2018 20:44:55 -0500
+Received: from mga04.intel.com ([192.55.52.120]:20124 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726083AbeKZBfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 20:35:55 -0500
-Received: from localhost (dcvr.yhbt.net [127.0.0.1])
-        by dcvr.yhbt.net (Postfix) with ESMTP id 125A21F97E;
-        Sun, 25 Nov 2018 14:44:42 +0000 (UTC)
-Date:   Sun, 25 Nov 2018 14:44:41 +0000
-From:   Eric Wong <e@80x24.org>
-To:     =?utf-8?B?QmrDuHJu?= Mork <bjorn@mork.no>
-Cc:     Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
-        Shuduo Sang <shuduo.sang@canonical.com>,
+        id S1726090AbeKZBoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 20:44:55 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Nov 2018 06:53:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,278,1539673200"; 
+   d="scan'208";a="109097807"
+Received: from djustese-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.168])
+  by fmsmga004.fm.intel.com with ESMTP; 25 Nov 2018 06:53:30 -0800
+Date:   Sun, 25 Nov 2018 06:53:29 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     "Dr. Greg Wettstein" <greg@enjellic.com>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
-        linux-kernel@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH] platform/x86: thinkpad_acpi: add adaptive_kbd_modes
- parameter
-Message-ID: <20181125144441.xpwuov2i7lab3agh@dcvr>
-References: <20181115073429.z44czywrf7f65ndb@dcvr>
- <20181124232327.t3awc6dnjqdtvzwu@dcvr>
- <87in0l31b9.fsf@miraculix.mork.no>
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181125145329.GA5777@linux.intel.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
+ <20181119161917.GF13298@linux.intel.com>
+ <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
+ <20181120120442.GA22172@linux.intel.com>
+ <20181122111253.GA31150@wind.enjellic.com>
+ <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com>
+ <20181124172114.GB32210@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87in0l31b9.fsf@miraculix.mork.no>
+In-Reply-To: <20181124172114.GB32210@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bjørn Mork <bjorn@mork.no> wrote:
-> Eric Wong <e@80x24.org> writes:
-> > Eric Wong <e@80x24.org> wrote:
-> >> The above setting with this change and the following keymap
-> >> preserves my sanity on the atrocious adaptive keyboard on
-> >> the 2nd-gen X1 Carbon:
-> >
-> > Any comments on this patch?  The Esc and F-keys on the keyboard
-> > are still numb and I'll be getting rid of the laptop in a few
-> > days; but maybe my patch can still be useful to others...
+On Sat, Nov 24, 2018 at 09:21:14AM -0800, Jarkko Sakkinen wrote:
+> On Thu, Nov 22, 2018 at 07:21:08AM -0800, Andy Lutomirski wrote:
+> > > At a high level, addressing these issues is straight forward.  First,
+> > > the driver needs to support authorization equivalent to that which is
+> > > implemented in the current Intel Launch Enclave, ie. control over the
+> > > SGX_FLAGS_PROVISION_KEY attribute.
+> > 
+> > I agree, hence my email :)
 > 
-> I've read through and I like it, FWIW.  A brilliant idea. I don't have
-> the hardare to test the patch, though....
-
-Thanks for checking it out.
-
-> But I do wonder if you aren't missing an empty mask protection
-> somewhere?  If I read this right, then there is nothing preventing you
-> from writing 0 here:
+> Started to scratch my head that is it really an issue that any enclave
+> can provision in the end?
 > 
-> > +static ssize_t adaptive_kbd_modes_store(struct device *dev,
-> > +			struct device_attribute *attr,
-> > +			const char *buf, size_t count)
-> > +{
-> > +	unsigned long t;
-> > +
-> > +	if (parse_strtoul(buf, (1 << LAYFLAT_MODE) - 1, &t))
-> > +		return -EINVAL;
-> > +
-> > +	adaptive_kbd_modes = (unsigned int)t;
-> > +	return count;
-> > +}
-
-Right, 0 is allowed; and it will lock the current mode into
-place...
-
-> And then I believe you have a busy loop here:
+> Direct quote from your first response:
 > 
-> > @@ -3815,20 +3838,20 @@ static int adaptive_keyboard_set_mode(int new_mode)
-> >  
-> >  static int adaptive_keyboard_get_next_mode(int mode)
-> >  {
-> > -	size_t i;
-> > -	size_t max_mode = ARRAY_SIZE(adaptive_keyboard_modes) - 1;
-> > -
-> > -	for (i = 0; i <= max_mode; i++) {
-> > -		if (adaptive_keyboard_modes[i] == mode)
-> > -			break;
-> > -	}
-> > +	int max_mode = fls(adaptive_kbd_modes);
-> > +	int new_mode = mode >= max_mode ? HOME_MODE : mode + 1;
-> >  
-> > -	if (i >= max_mode)
-> > -		i = 0;
-> > -	else
-> > -		i++;
-> > +	/* make sure the new mode is allowed by the user */
-> > +	while (!(adaptive_kbd_modes & (1 << new_mode))) {
-> > +		new_mode++;
-> > +		if (new_mode > max_mode)
-> > +			new_mode = HOME_MODE;
-> >  
-> > -	return adaptive_keyboard_modes[i];
-> > +		/* maybe the user disabled all other modes: */
-> > +		if (new_mode == mode)
-> > +			return mode;
-> > +	}
-> > +	return new_mode;
-> >  }
+> "In particular, the ability to run enclaves with the provisioning bit set
+> is somewhat sensitive, since it effectively allows access to a stable
+> fingerprint of the system."
+> 
+> As can be seen from the key derivation table this does not exactly hold
+> so you should refine your original argument before we can consider any
+> type of change.
+> 
+> I just don't see what it is so wrong for any enclave to be able to tell
+> that it really is an enclave.
 
-Not a busy loop, since new_mode will reset at HOME_MODE (0)
-and then it'll hit "new_mode == mode" and remain locked in
-to the current mode.
+I mean I can understand why Greg wants LE although I don't understand
+what benefit does it bring to anyone to lock in for enclave to allow
+to identify itself.
 
-> Or am I reading this wrong?
+What you are proposing does not really bring any additional security if
+we consider a threat model where the kernel is an adversary but it makes
+the software stack more clanky to use.
 
-It seems that way.  My initial iteration of this patch did
-have a busy loop, but I fixed it before publishing :)
-
-Thanks again for the review.
+/Jarkko
