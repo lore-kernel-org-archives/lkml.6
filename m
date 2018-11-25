@@ -4,57 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2806CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 09:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E324C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 09:59:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCC4720868
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 09:56:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCACA20868
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 09:59:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MklpialH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCC4720868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BWCpcWj4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCACA20868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727418AbeKYUr2 (ORCPT
+        id S1727504AbeKYUuE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 15:47:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54784 "EHLO mail.kernel.org"
+        Sun, 25 Nov 2018 15:50:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726526AbeKYUr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 15:47:28 -0500
+        id S1726526AbeKYUuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 15:50:03 -0500
 Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B08C520672;
-        Sun, 25 Nov 2018 09:56:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAB3A20672;
+        Sun, 25 Nov 2018 09:59:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543139804;
-        bh=HB+3PG60wg705ZPi3ujKn6Pu9geQt2zoIOlyk8aUV4A=;
+        s=default; t=1543139960;
+        bh=LKYFmvkVg1l6SZYRzS1rVh/o5Jsc9irGQq5YdHPU2mM=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=MklpialHryfJ7faAHh4XN10sy8BzD6pr6y5/eiIciVTYsfRJWgN3VTrpkLCtOpfvB
-         OJTuMQM2dVKcQHmYBwplSo75VPTEeyRKvjzNep+Wo93IUHeru7q5Fht+p+2kQHHOif
-         t3cPDUC1hhPy/3kUxkIcCGAjxgeA9Xm8B8ncWRyk=
-Date:   Sun, 25 Nov 2018 09:56:38 +0000
+        b=BWCpcWj434QGPpYyAUwNDjYNbGKNUJiF1Mw52jcbSBSCLPBwHxsrvNHcI5yytS4Cf
+         tlmXby7ZCkClvfO7uv+ZVTKoHDM7jHW8z1RRDOzBmLbZEpwGGOl9g6HrwXo1vBlXTX
+         n5IlMK4rHHw2D243Pdow/L/o7anxsGlLFW53jTrw=
+Date:   Sun, 25 Nov 2018 09:59:16 +0000
 From:   Jonathan Cameron <jic23@kernel.org>
-To:     Matheus Tavares <matheus.bernardino@usp.br>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        kernel-usp@googlegroups.com, victorcolombo@gmail.com
-Subject: Re: [PATCH v3 7/7] staging:iio:ad2s90: Move out of staging
-Message-ID: <20181125095638.68e5205a@archlinux>
-In-Reply-To: <20181124002312.6923-8-matheus.bernardino@usp.br>
-References: <20181124002312.6923-1-matheus.bernardino@usp.br>
-        <20181124002312.6923-8-matheus.bernardino@usp.br>
+To:     Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc:     lars@metafoo.de, Michael.Hennerich@analog.com, knaack.h@gmx.de,
+        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: Re: [PATCH v2] staging: iio: ad5933: add device tree support
+Message-ID: <20181125095916.58de5773@archlinux>
+In-Reply-To: <20181124131857.ur6rt7nnjinmj6gm@smtp.gmail.com>
+References: <20181124131857.ur6rt7nnjinmj6gm@smtp.gmail.com>
 X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -64,218 +56,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Nov 2018 22:23:12 -0200
-Matheus Tavares <matheus.bernardino@usp.br> wrote:
+On Sat, 24 Nov 2018 11:18:57 -0200
+Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
 
-> Move ad2s90 resolver driver out of staging to the main tree.
+> Add a of_device_id struct variable and subsequent call to
+> MODULE_DEVICE_TABLE macro to complete device tree support.
 > 
-> Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
-> Signed-off-by: Victor Colombo <victorcolombo@gmail.com>
-Hi.
-
-One totally trivial comment inline, but if you want to clean
-that up, do it after we have moved this out of staging
-(unless respinning for some other reason).
-
-However, I would like to let this sit on the mailing list for
-a little longer to let others comment and perhaps to pick up
-a review of the DT binding doc (which looks fine to me, but
-I am forever missing issues in those!)
-
-Good work and I'll probably pick this up later in the week.
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Applied to the togreg branch of iio.git and pushed out as testing
+for the autobuilders to play with it.  Note we'll need a binding
+doc for this before it can leave staging.
 
 Thanks,
 
 Jonathan
+
 > ---
-> Changes in v3:
->  - none
+>  drivers/staging/iio/impedance-analyzer/ad5933.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> Changes in v2:
->  - Disabled git move detection, to see the whole code, as Jonathan
->  suggested
-> 
->  drivers/iio/resolver/Kconfig          |  10 ++
->  drivers/iio/resolver/Makefile         |   1 +
->  drivers/iio/resolver/ad2s90.c         | 131 ++++++++++++++++++++++++++
->  drivers/staging/iio/resolver/Kconfig  |  10 --
->  drivers/staging/iio/resolver/Makefile |   1 -
->  drivers/staging/iio/resolver/ad2s90.c | 131 --------------------------
->  6 files changed, 142 insertions(+), 142 deletions(-)
->  create mode 100644 drivers/iio/resolver/ad2s90.c
->  delete mode 100644 drivers/staging/iio/resolver/ad2s90.c
-> 
-> diff --git a/drivers/iio/resolver/Kconfig b/drivers/iio/resolver/Kconfig
-> index 2ced9f22aa70..786801be54f6 100644
-> --- a/drivers/iio/resolver/Kconfig
-> +++ b/drivers/iio/resolver/Kconfig
-> @@ -3,6 +3,16 @@
->  #
->  menu "Resolver to digital converters"
+> diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/staging/iio/impedance-analyzer/ad5933.c
+> index edb8b540bbf1..6faa2700dc8d 100644
+> --- a/drivers/staging/iio/impedance-analyzer/ad5933.c
+> +++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
+> @@ -771,9 +771,18 @@ static const struct i2c_device_id ad5933_id[] = {
 >  
-> +config AD2S90
-> +	tristate "Analog Devices ad2s90 driver"
-> +	depends on SPI
-> +	help
-> +	  Say yes here to build support for Analog Devices spi resolver
-> +	  to digital converters, ad2s90, provides direct access via sysfs.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called ad2s90.
-> +
->  config AD2S1200
->  	tristate "Analog Devices ad2s1200/ad2s1205 driver"
->  	depends on SPI
-> diff --git a/drivers/iio/resolver/Makefile b/drivers/iio/resolver/Makefile
-> index 4e1dccae07e7..398d82d50028 100644
-> --- a/drivers/iio/resolver/Makefile
-> +++ b/drivers/iio/resolver/Makefile
-> @@ -2,4 +2,5 @@
->  # Makefile for Resolver/Synchro drivers
->  #
+>  MODULE_DEVICE_TABLE(i2c, ad5933_id);
 >  
-> +obj-$(CONFIG_AD2S90) += ad2s90.o
->  obj-$(CONFIG_AD2S1200) += ad2s1200.o
-> diff --git a/drivers/iio/resolver/ad2s90.c b/drivers/iio/resolver/ad2s90.c
-> new file mode 100644
-> index 000000000000..a41f5cb10da5
-> --- /dev/null
-> +++ b/drivers/iio/resolver/ad2s90.c
-> @@ -0,0 +1,131 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * ad2s90.c simple support for the ADI Resolver to Digital Converters: AD2S90
-> + *
-> + * Copyright (c) 2010-2010 Analog Devices Inc.
-> + */
-> +#include <linux/types.h>
-> +#include <linux/mutex.h>
-> +#include <linux/device.h>
-> +#include <linux/spi/spi.h>
-> +#include <linux/slab.h>
-> +#include <linux/sysfs.h>
-> +#include <linux/module.h>
-
-We are into the truely trivial realms now - alphabetical order preferred
-for includes.
-
-> +
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/sysfs.h>
-> +
-> +/*
-> + * Although chip's max frequency is 2Mhz, it needs 600ns between CS and the
-> + * first falling edge of SCLK, so frequency should be at most 1 / (2 * 6e-7)
-> + */
-> +#define AD2S90_MAX_SPI_FREQ_HZ  830000
-> +
-> +struct ad2s90_state {
-> +	struct mutex lock; /* lock to protect rx buffer */
-> +	struct spi_device *sdev;
-> +	u8 rx[2] ____cacheline_aligned;
+> +static const struct of_device_id ad5933_of_match[] = {
+> +	{ .compatible = "adi,ad5933" },
+> +	{ .compatible = "adi,ad5934" },
+> +	{ },
 > +};
 > +
-> +static int ad2s90_read_raw(struct iio_dev *indio_dev,
-> +			   struct iio_chan_spec const *chan,
-> +			   int *val,
-> +			   int *val2,
-> +			   long m)
-> +{
-> +	int ret;
-> +	struct ad2s90_state *st = iio_priv(indio_dev);
+> +MODULE_DEVICE_TABLE(of, ad5933_of_match);
 > +
-> +	if (chan->type != IIO_ANGL)
-> +		return -EINVAL;
-> +
-> +	switch (m) {
-> +	case IIO_CHAN_INFO_SCALE:
-> +		/* 2 * Pi / 2^12 */
-> +		*val = 6283; /* mV */
-> +		*val2 = 12;
-> +		return IIO_VAL_FRACTIONAL_LOG2;
-> +	case IIO_CHAN_INFO_RAW:
-> +		mutex_lock(&st->lock);
-> +		ret = spi_read(st->sdev, st->rx, 2);
-> +		if (ret < 0) {
-> +			mutex_unlock(&st->lock);
-> +			return ret;
-> +		}
-> +		*val = (((u16)(st->rx[0])) << 4) | ((st->rx[1] & 0xF0) >> 4);
-> +
-> +		mutex_unlock(&st->lock);
-> +
-> +		return IIO_VAL_INT;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static const struct iio_info ad2s90_info = {
-> +	.read_raw = ad2s90_read_raw,
-> +};
-> +
-> +static const struct iio_chan_spec ad2s90_chan = {
-> +	.type = IIO_ANGL,
-> +	.indexed = 1,
-> +	.channel = 0,
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
-> +};
-> +
-> +static int ad2s90_probe(struct spi_device *spi)
-> +{
-> +	struct iio_dev *indio_dev;
-> +	struct ad2s90_state *st;
-> +
-> +	if (spi->max_speed_hz > AD2S90_MAX_SPI_FREQ_HZ) {
-> +		dev_err(&spi->dev, "SPI CLK, %d Hz exceeds %d Hz\n",
-> +			spi->max_speed_hz, AD2S90_MAX_SPI_FREQ_HZ);
-> +		return -EINVAL;
-> +	}
-> +
-> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +	st = iio_priv(indio_dev);
-> +	spi_set_drvdata(spi, indio_dev);
-> +
-> +	mutex_init(&st->lock);
-> +	st->sdev = spi;
-> +	indio_dev->dev.parent = &spi->dev;
-> +	indio_dev->info = &ad2s90_info;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->channels = &ad2s90_chan;
-> +	indio_dev->num_channels = 1;
-> +	indio_dev->name = spi_get_device_id(spi)->name;
-> +
-> +	return devm_iio_device_register(indio_dev->dev.parent, indio_dev);
-> +}
-> +
-> +static const struct of_device_id ad2s90_of_match[] = {
-> +	{ .compatible = "adi,ad2s90", },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, ad2s90_of_match);
-> +
-> +static const struct spi_device_id ad2s90_id[] = {
-> +	{ "ad2s90" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(spi, ad2s90_id);
-> +
-> +static struct spi_driver ad2s90_driver = {
-> +	.driver = {
-> +		.name = "ad2s90",
-> +		.of_match_table = ad2s90_of_match,
-> +	},
-> +	.probe = ad2s90_probe,
-> +	.id_table = ad2s90_id,
-> +};
-> +module_spi_driver(ad2s90_driver);
-> +
-> +MODULE_AUTHOR("Graff Yang <graff.yang@gmail.com>");
-> +MODULE_DESCRIPTION("Analog Devices AD2S90 Resolver to Digital SPI driver");
-> +MODULE_LICENSE("GPL v2");
-...
+>  static struct i2c_driver ad5933_driver = {
+>  	.driver = {
+>  		.name = "ad5933",
+> +		.of_match_table = ad5933_of_match,
+>  	},
+>  	.probe = ad5933_probe,
+>  	.remove = ad5933_remove,
 
