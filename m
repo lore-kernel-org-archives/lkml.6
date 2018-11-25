@@ -2,46 +2,40 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15806C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 17:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5959AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 17:35:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE40D20672
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 17:34:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE40D20672
+	by mail.kernel.org (Postfix) with ESMTP id 2B90D20865
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 17:35:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B90D20865
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbeKZE0U (ORCPT
+        id S1726840AbeKZE0x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 23:26:20 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40678 "EHLO mx1.redhat.com"
+        Sun, 25 Nov 2018 23:26:53 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51204 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726336AbeKZE0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 23:26:20 -0500
+        id S1726336AbeKZE0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 23:26:53 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D851083F46;
-        Sun, 25 Nov 2018 17:34:46 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id B5731C057F9F;
+        Sun, 25 Nov 2018 17:35:19 +0000 (UTC)
 Received: from [10.36.112.19] (ovpn-112-19.ams2.redhat.com [10.36.112.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B7868604CD;
-        Sun, 25 Nov 2018 17:34:43 +0000 (UTC)
-Subject: Re: [PATCH] svm: Add mutex_lock to protect apic_access_page_done on
- AMD systems
-To:     "joro@8bytes.org" <joro@8bytes.org>,
-        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        Wei Wang <wawei@amazon.de>,
-        Amadeusz Juskowiak <ajusk@amazon.de>,
-        Julian Stecklina <jsteckli@amazon.de>
-References: <20181112122255.128953-1-Suravee.Suthikulpanit@amd.com>
- <20181112133731.lwje2hzibd64cvc3@8bytes.org>
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1CD2087AC;
+        Sun, 25 Nov 2018 17:35:14 +0000 (UTC)
+Subject: Re: [PATCH] KVM: x86: fix empty-body warnings
+To:     Yi Wang <wang.yi59@zte.com.cn>
+Cc:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn
+References: <1541666916-35746-1-git-send-email-wang.yi59@zte.com.cn>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -79,38 +73,52 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <70cc4362-5a95-d6ec-fccf-4cbe3b03bdc9@redhat.com>
-Date:   Sun, 25 Nov 2018 18:34:41 +0100
+Message-ID: <c69d351a-1ce3-0a60-c31b-755467e375c2@redhat.com>
+Date:   Sun, 25 Nov 2018 18:35:12 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181112133731.lwje2hzibd64cvc3@8bytes.org>
+In-Reply-To: <1541666916-35746-1-git-send-email-wang.yi59@zte.com.cn>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Sun, 25 Nov 2018 17:34:47 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Sun, 25 Nov 2018 17:35:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/18 14:37, joro@8bytes.org wrote:
-> On Mon, Nov 12, 2018 at 12:23:14PM +0000, Suthikulpanit, Suravee wrote:
->> From: Wei Wang <wawei@amazon.de>
->>
->> There is a race condition when accessing kvm->arch.apic_access_page_done.
->> Due to it, x86_set_memory_region will fail when creating the second vcpu
->> for a svm guest.
->>
->> Add a mutex_lock to serialize the accesses to apic_access_page_done.
->> This lock is also used by vmx for the same purpose.
->>
->> Signed-off-by: Wei Wang <wawei@amazon.de>
->> Signed-off-by: Amadeusz Juskowiak <ajusk@amazon.de>
->> Signed-off-by: Julian Stecklina <jsteckli@amazon.de>
->> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-> Reviewed-by: Joerg Roedel <jroedel@suse.de>
+On 08/11/18 09:48, Yi Wang wrote:
+> We get the following warnings about empty statements when building
+> with 'W=1':
+> 
+> arch/x86/kvm/lapic.c:632:53: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+> arch/x86/kvm/lapic.c:1907:42: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+> arch/x86/kvm/lapic.c:1936:65: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+> arch/x86/kvm/lapic.c:1975:44: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+> 
+> Rework the debug helper macro to get rid of these warnings.
+> 
+> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+> ---
+>  arch/x86/kvm/lapic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> index 89db20f..53b8c8e 100644
+> --- a/arch/x86/kvm/lapic.c
+> +++ b/arch/x86/kvm/lapic.c
+> @@ -55,7 +55,7 @@
+>  #define PRIo64 "o"
+>  
+>  /* #define apic_debug(fmt,arg...) printk(KERN_WARNING fmt,##arg) */
+> -#define apic_debug(fmt, arg...)
+> +#define apic_debug(fmt, arg...) do {} while (0)
+>  
+>  /* 14 is the version for Xeon and Pentium 8.4.8*/
+>  #define APIC_VERSION			(0x14UL | ((KVM_APIC_LVT_NUM - 1) << 16))
+> 
 
 Queued, thanks.
 
