@@ -2,147 +2,96 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3163CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 17:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B46C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 17:14:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E38EB20868
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 17:11:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E38EB20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9EC4B20870
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 17:14:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EC4B20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726665AbeKZECy (ORCPT
+        id S1726628AbeKZEGC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 23:02:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36330 "EHLO mx1.redhat.com"
+        Sun, 25 Nov 2018 23:06:02 -0500
+Received: from muru.com ([72.249.23.125]:55132 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726317AbeKZECx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 23:02:53 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C14C3308FB8F;
-        Sun, 25 Nov 2018 17:11:23 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 994761778D;
-        Sun, 25 Nov 2018 17:11:18 +0000 (UTC)
-Date:   Sun, 25 Nov 2018 12:11:15 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/3] audit: remove arch_f pointer from struct
- audit_krule
-Message-ID: <20181125171115.su4kuu44lazqw56n@madcap2.tricolour.ca>
-References: <cover.1518435853.git.rgb@redhat.com>
- <7289e57d94a0a13965e3dbd279cc8cd12dfb29a6.1518435853.git.rgb@redhat.com>
- <CAHC9VhRv_F=Gqs7EyTR2ZmLtJobyH9B8Cg-iiHE5hacTC-d=Pw@mail.gmail.com>
+        id S1726317AbeKZEGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 23:06:02 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id BDDA2809C;
+        Sun, 25 Nov 2018 17:14:32 +0000 (UTC)
+Date:   Sun, 25 Nov 2018 09:14:28 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org,
+        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
+Message-ID: <20181125171428.GL53235@atomide.com>
+References: <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
+ <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
+ <20181122102948.GN6920@n2100.armlinux.org.uk>
+ <20181122151236.GA9611@n2100.armlinux.org.uk>
+ <6ed280af-edb6-4be7-82f4-7fc00378103e@ti.com>
+ <20181123185215.GH12912@darkstar.musicnaut.iki.fi>
+ <20181124200942.GS6920@n2100.armlinux.org.uk>
+ <20181125010717.GJ53235@atomide.com>
+ <20181125111105.GT6920@n2100.armlinux.org.uk>
+ <20181125165830.GC3416@darkstar.musicnaut.iki.fi>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhRv_F=Gqs7EyTR2ZmLtJobyH9B8Cg-iiHE5hacTC-d=Pw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Sun, 25 Nov 2018 17:11:23 +0000 (UTC)
+In-Reply-To: <20181125165830.GC3416@darkstar.musicnaut.iki.fi>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-02-15 15:42, Paul Moore wrote:
-> On Mon, Feb 12, 2018 at 7:29 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> > The arch_f pointer was added to the struct audit_krule in commit:
-> > e54dc2431d740a79a6bd013babade99d71b1714f ("audit signal recipients")
-> >
-> > This is only used on addition and deletion of rules which isn't time
-> > critical and the arch field is likely to be one of the first fields,
-> > easily found iterating over the field type.  This isn't worth the
-> > additional complexity and storage.  Delete the field.
-> >
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  include/linux/audit.h |  1 -
-> >  kernel/auditfilter.c  | 12 ++++++++----
-> >  2 files changed, 8 insertions(+), 5 deletions(-)
-> 
-> I haven't decided if I like the removal of arch_f or not, but I think
-> I might know where your oops/panic is coming from, thoughts below ...
+* Aaro Koskinen <aaro.koskinen@iki.fi> [181125 16:58]:
+> Below changes get traffic going with DMA & g_ether...
 
-Have you decided yet if you like the removal of the arch_f pointer or
-not?  An updated v2 was provided the following day:
-	https://www.redhat.com/archives/linux-audit/2018-February/msg00059.html
+Oh cool, if you have dma and g_ether working, you should
+test it with a variable size ping test loop :) That should
+expose any issues within few minutes.
 
-I will send an updated patch if it seems worthwhile.
+Below is the test script I was using earlier, the
+tusb6010 comment there is probably no longer valid.
 
-> > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > index af410d9..64a3b0e 100644
-> > --- a/include/linux/audit.h
-> > +++ b/include/linux/audit.h
-> > @@ -58,7 +58,6 @@ struct audit_krule {
-> >         u32                     field_count;
-> >         char                    *filterkey; /* ties events to rules */
-> >         struct audit_field      *fields;
-> > -       struct audit_field      *arch_f; /* quick access to arch field */
-> >         struct audit_field      *inode_f; /* quick access to an inode field */
-> >         struct audit_watch      *watch; /* associated watch */
-> >         struct audit_tree       *tree;  /* associated watched tree */
-> > diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-> > index 739a6d2..3343d1c 100644
-> > --- a/kernel/auditfilter.c
-> > +++ b/kernel/auditfilter.c
-> > @@ -220,7 +220,14 @@ static inline int audit_match_class_bits(int class, u32 *mask)
-> >
-> >  static int audit_match_signal(struct audit_entry *entry)
-> >  {
-> > -       struct audit_field *arch = entry->rule.arch_f;
-> > +       int i;
-> > +       struct audit_field *arch;
-> > +
-> > +       for (i = 0; i < entry->rule.field_count; i++)
-> > +               if (entry->rule.fields[i].type == AUDIT_ARCH) {
-> > +                       arch = &entry->rule.fields[i];
-> > +                       break;
-> > +               }
-> 
-> In the original code arch_f was initialized to NULL via the allocator
-> so the arch local variable was guaranteed to have a valid value or
-> NULL.  Unfortunately, in your code if there is no AUDIT_ARCH field
-> arch could remain uninitialized which I believe could lead to the
-> oops/panic you are seeing.
-> 
-> >         if (!arch) {
-> >                 /* When arch is unspecified, we must check both masks on biarch
-> > @@ -496,9 +503,6 @@ static struct audit_entry *audit_data_to_entry(struct audit_rule_data *data,
-> >                         if (!gid_valid(f->gid))
-> >                                 goto exit_free;
-> >                         break;
-> > -               case AUDIT_ARCH:
-> > -                       entry->rule.arch_f = f;
-> > -                       break;
-> >                 case AUDIT_SUBJ_USER:
-> >                 case AUDIT_SUBJ_ROLE:
-> >                 case AUDIT_SUBJ_TYPE:
-> > --
-> > 1.8.3.1
-> 
-> -- 
-> paul moore
-> www.paul-moore.com
-> 
-> --
-> Linux-audit mailing list
-> Linux-audit@redhat.com
-> https://www.redhat.com/mailman/listinfo/linux-audit
+Regards,
 
-- RGB
+Tony
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+8< ----------------
+#!/bin/bash
+
+#
+# At least tusb6010 dma needs 32-bit aligned buffers.
+# That can be done by setting no_skb_reserve with:
+# musb->g.quirk_avoids_skb_reserve = 1;
+#
+
+device=$1
+size=$2
+wraps=0
+
+while [ 1 ]; do
+	#echo "Pinging with size $size"
+	if ! ping -w0 -c1 -s$size $device > /dev/null 2>&1; then
+		break;
+	fi
+	size=$(expr $size + 1)
+
+	if [ $size -gt 8192 ]; then
+		wraps=$(expr $wraps + 1)
+		echo "wrapping ($wraps) at $size"
+		size=1
+	fi
+done
+echo "Test ran up to $size"
