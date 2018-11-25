@@ -2,144 +2,122 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFBFC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C334C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:22:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 451A520850
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0746220850
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:22:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="DxNiQADu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 451A520850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WoDya4d0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0746220850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbeKZDOC (ORCPT
+        id S1726789AbeKZDOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 22:14:02 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36972 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726395AbeKZDOC (ORCPT
+        Sun, 25 Nov 2018 22:14:06 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35443 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726395AbeKZDOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 22:14:02 -0500
-Received: by mail-pf1-f193.google.com with SMTP id u3-v6so5377898pfm.4
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 08:22:37 -0800 (PST)
+        Sun, 25 Nov 2018 22:14:06 -0500
+Received: by mail-pl1-f195.google.com with SMTP id p8so2396958plo.2;
+        Sun, 25 Nov 2018 08:22:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=m0PVqkjcw+12u0+KUpFGsrTYmf3DdzTqCQWVqScVdZ8=;
-        b=DxNiQADuf2HNQWqalXSE0mcE9H0HM+fIkUChnNmyIDBS9oV75M2b5hsJ4yjhZvKxuV
-         ihRRte0gMRWjvYtsTn3u86K1CM6ivHJhTdhMxR8lL0nt2HEnDT+e/3RSrqT0yygv9LlM
-         s8CfmwRBj4m48/pWBWZ+7/madFdLU0GfajBmExXRL6C6dnd7v13bc59jsd4T7+MZOA5R
-         HBHbMF/k0QewuoNy03Svo+MnAcPfi0YDnoCwiImsYYEOOYrzUkOy7/Xpcqt15m47jJWq
-         +SAaZ2wfPXwoGDREm9LTWROEMmwAQp93Y2/IuWUhBIqx7nKd4wx8kHhb7w+lIy1wAjD6
-         l+qQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=oRZLwlngBTRlgTkLLHYb5YuavMVSU0mKsDQHiQNPGqw=;
+        b=WoDya4d0Ue/2VK8tsjlG5qxNEH6E1C5gKxxqNiQgkXdU1cCFgdsBntdmt7nKOrJBQp
+         TIHmt1VvsDbaqd4B6tKvFEBYLRLpTV38Fv8u6cQgUG7eEll03jp8eWZ9FiKBBbLce9UU
+         y38ECjyYYf+CaxBhGuUQGv3SxyXFkvWxu6oX5d1eppWCXy5X5OjpYZDsphvzb+fgW7+d
+         ec9PFSsIT6nGJcAF05DgSV2JXfJCctcRnEKnuyxn56QyuahMocAK00pgvp01SNT2laB2
+         9mbFFJTLZEY5epvdajUWHlu7AdJ0YJKyGh6b97nLSDMcy4RGvJ4Oj5Nbf/0v9LhtlARi
+         3oOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=m0PVqkjcw+12u0+KUpFGsrTYmf3DdzTqCQWVqScVdZ8=;
-        b=X4W1q0BBvOt8FeqMIGELG8Jv+lqu2fqmukD8c0ptFNidR9cTfK8/3gJY8rMFXJkPbp
-         6L7xa3n+FzYE+MnvMNVFKjy+dXp59k9D0Or84Hf2JxKWJ3JDn7X8qvGapsXYMSAwXqRT
-         8g5ORHs79DLbd5pYVlK1UkrsRg94TKC49DGpd+CWu1OfV/TuijRlyO4nQy4cJJKhmjF1
-         Ke2sphP3rs5v/7AmLOHJ4EcWvpIXCw/lFP8jFhnv6f23BqGHTbsSUgO9e6Ey4FhOyXh4
-         AESAYPFzJk3ZRzo2lYH59jy0xdGvsouRDheAL6JWyYMs3IqX7qdFtXTWlvyTx1N2ZXCA
-         lLCA==
-X-Gm-Message-State: AA+aEWa1KTk487ucgV2asnM/ZZObbRuaoFpzP0wTpMw3HwTAzJkRz3tr
-        n97tGhUlkmQFYmPzf/dgcJGdGg==
-X-Google-Smtp-Source: AFSGD/WCYkcZcixKUId1uJd0uSrDIXxkJ+WE+KP2ENCvsIj9te9dAhpkGOjjzHVQL21y/OR+9SPlSg==
-X-Received: by 2002:a65:610d:: with SMTP id z13mr21763674pgu.427.1543162957002;
-        Sun, 25 Nov 2018 08:22:37 -0800 (PST)
-Received: from ?IPv6:2601:646:c200:7429:8ca1:5464:4cf7:ce39? ([2601:646:c200:7429:8ca1:5464:4cf7:ce39])
-        by smtp.gmail.com with ESMTPSA id w80-v6sm93123672pfk.11.2018.11.25.08.22.35
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=oRZLwlngBTRlgTkLLHYb5YuavMVSU0mKsDQHiQNPGqw=;
+        b=KHAVHK6E1HZ9hKsmpoAOWYST37wQfWVT6F9sMWzIiROCgJg+NB2Jgd1NiLkdnwllp6
+         /CyvY79sdZUulxziSK8okco61MevYPaqUAU3ucFgABPRwYBuVW9w074UZQRS6vc6oZ5K
+         e4KG8Pt7nmlhXMVsjrzg8bTI+JH1yPHzbVLFpV6fBFRcTNqfbooMxllapeATSf09Ni+K
+         1psm4/xl3NQn81hUwISbSe7iM2YAvaCUwBHNwgis4blmm3wfvo1JXcoQwJiAf8REUnOE
+         OdSNewDfGKLprj4Ot1QTuYhJ+u+kOBceehGdOzXIfMoVHa0oF7txofuExJFYdL53U7ac
+         AVrA==
+X-Gm-Message-State: AA+aEWaYMNigRE9TtLaknx0BS0GhRqJ56j44LTtPsUBmi2RXtHzQIjSN
+        43Me4yDRa0aRlG5LvSQTlUE=
+X-Google-Smtp-Source: AFSGD/XG/ppJrvo3uySEydwXN3OS+lrhza3wBuf9w8NDGdNIdZo1lXT/fNXfaLUAJeFZfDgvtBR8gg==
+X-Received: by 2002:a17:902:f20d:: with SMTP id gn13mr23129317plb.11.1543162961002;
+        Sun, 25 Nov 2018 08:22:41 -0800 (PST)
+Received: from arx-s1 ([116.238.148.251])
+        by smtp.gmail.com with ESMTPSA id t13sm123088987pgr.42.2018.11.25.08.22.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 25 Nov 2018 08:22:36 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A404)
-In-Reply-To: <20181125145329.GA5777@linux.intel.com>
-Date:   Sun, 25 Nov 2018 08:22:35 -0800
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        "Dr. Greg Wettstein" <greg@enjellic.com>, X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        haitao.huang@linux.intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0669C300-02CB-4EA6-BF88-5C4B4DDAD4C7@amacapital.net>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com> <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com> <20181119161917.GF13298@linux.intel.com> <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com> <20181120120442.GA22172@linux.intel.com> <20181122111253.GA31150@wind.enjellic.com> <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com> <20181124172114.GB32210@linux.intel.com> <20181125145329.GA5777@linux.intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+        Sun, 25 Nov 2018 08:22:40 -0800 (PST)
+Date:   Mon, 26 Nov 2018 00:22:03 +0800
+From:   Hao Zhang <hao5781286@gmail.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com,
+        maxime.ripard@bootlin.com, wens@csie.org, mturquette@baylibre.com,
+        sboyd@kernel.org, thierry.reding@gmail.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com,
+        hao5781286@gmail.com
+Subject: [PATCH v3 5/6] DEV: CLK: sunxi ccu: export clk_apb1 for sun8i-r40
+ soc pwm.
+Message-ID: <20181125162203.GA5392@arx-s1>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The clock source for sun8i R40 is from apb1, so export it for
+dt parses.
 
->> On Nov 25, 2018, at 6:53 AM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel=
-.com> wrote:
->>=20
->> On Sat, Nov 24, 2018 at 09:21:14AM -0800, Jarkko Sakkinen wrote:
->> On Thu, Nov 22, 2018 at 07:21:08AM -0800, Andy Lutomirski wrote:
->>>> At a high level, addressing these issues is straight forward.  First,
->>>> the driver needs to support authorization equivalent to that which is
->>>> implemented in the current Intel Launch Enclave, ie. control over the
->>>> SGX_FLAGS_PROVISION_KEY attribute.
->>>=20
->>> I agree, hence my email :)
->>=20
->> Started to scratch my head that is it really an issue that any enclave
->> can provision in the end?
->>=20
->> Direct quote from your first response:
->>=20
->> "In particular, the ability to run enclaves with the provisioning bit set=
+Signed-off-by: Hao Zhang <hao5781286@gmail.com>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.h      | 4 +++-
+ include/dt-bindings/clock/sun8i-r40-ccu.h | 2 ++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
->> is somewhat sensitive, since it effectively allows access to a stable
->> fingerprint of the system."
->>=20
->> As can be seen from the key derivation table this does not exactly hold
->> so you should refine your original argument before we can consider any
->> type of change.
->>=20
->> I just don't see what it is so wrong for any enclave to be able to tell
->> that it really is an enclave.
->=20
-> I mean I can understand why Greg wants LE although I don't understand
-> what benefit does it bring to anyone to lock in for enclave to allow
-> to identify itself.
->=20
-> What you are proposing does not really bring any additional security if
-> we consider a threat model where the kernel is an adversary but it makes
-> the software stack more clanky to use.
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+index db2a124..181ab26 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+@@ -51,7 +51,9 @@
+ 
+ #define CLK_AXI			25
+ #define CLK_AHB1		26
+-#define CLK_APB1		27
++
++/* The APB1 clock is exported */
++
+ #define CLK_APB2		28
+ 
+ /* All the bus gates are exported */
+diff --git a/include/dt-bindings/clock/sun8i-r40-ccu.h b/include/dt-bindings/clock/sun8i-r40-ccu.h
+index f9e15a2..a2b8f06 100644
+--- a/include/dt-bindings/clock/sun8i-r40-ccu.h
++++ b/include/dt-bindings/clock/sun8i-r40-ccu.h
+@@ -49,6 +49,8 @@
+ 
+ #define CLK_CPU			24
+ 
++#define CLK_APB1                27
++
+ #define CLK_BUS_MIPI_DSI	29
+ #define CLK_BUS_CE		30
+ #define CLK_BUS_DMA		31
+-- 
+2.7.4
 
-Agreed. What I=E2=80=99m proposing adds additional security if the kernel is=
- *not* compromised.
-
-There are other ways to accomplish it that might be better in some respects.=
-  For example, there could be /dev/sgx and /dev/sgx_rights/provision.  The f=
-ormer exposes the whole sgx API, except that it doesn=E2=80=99t allow provis=
-ioning by default. The latter does nothing by itself. To run a provisioning e=
-nclave, you open both nodes, then do something like:
-
-ioctl(sgx, SGX_IOC_ADD_RIGHT, sgx_provisioning);
-
-This requires extra syscalls, but it doesn=E2=80=99t have the combinatorial e=
-xplosion problem.=
