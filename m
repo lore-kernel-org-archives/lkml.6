@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C4DEC04EBA
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 07:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F880C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 07:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 633F320867
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 07:43:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6C7F20664
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 07:43:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q3eBm/m+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 633F320867
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZzrHGPn9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6C7F20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbeKYSeR (ORCPT
+        id S1727482AbeKYSeT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 13:34:17 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37332 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726814AbeKYSeQ (ORCPT
+        Sun, 25 Nov 2018 13:34:19 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34354 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbeKYSeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 13:34:16 -0500
-Received: by mail-wm1-f66.google.com with SMTP id g67so1826647wmd.2;
-        Sat, 24 Nov 2018 23:43:47 -0800 (PST)
+        Sun, 25 Nov 2018 13:34:18 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y185so10244122wmd.1;
+        Sat, 24 Nov 2018 23:43:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VF0eXPvxEQ8eg24ufuqCwYbc3OHuCombUgJA5hM0DFE=;
-        b=Q3eBm/m+LTv6BE8f4JKvFY6HjFqbdHeiUwNJXMLjLzMWw/VGYydvoBAZY8ba5VCJ/X
-         izpCImzCFAnaT6QEEzh4valdE0Erfjap8eRDbA8IFCXNM9b/3gQqIS3lKcJ40bx/kt9p
-         MoZ44k9UJOgaRLWcBm+JRk7sf8KhYrCsY9j7mgIFJj4huid02FWyyDivjlWJnIENuA5A
-         AuMvaSRQesAc1m7cSXXyYuIcXGSj1fR9kXCuRp23QObFD7rbZZ340pFjS+eXSGryKu8j
-         WQVQ1FONBfz/Y6kusBN54stmbdsBFbOuH+cY1Khgs9nV7fVO7c3VWgcj0Aq13JDQnZFq
-         uCOw==
+        bh=Djjq1nRc3F7KdYio0IVcGJ34k3H9NlNQupH0SjqgVhc=;
+        b=ZzrHGPn9EhcB4qpV5zcHrtewI1h6zQt2u8t2UwMEe+bJVXG5WOYafk31QwGQxehtJg
+         a66IoFWbva3ayXtkUQZd46wVwgF8phSXKmltbPXh26B7wzAYh5DFCX9IPABxFen6T3AW
+         +4LqQ8G/SROowBIGChoEHipBR0jsZF4hjSqijg58/Rb2ZMwxFe6eGop4VnsZIn/3ktl0
+         oNyLBdiHRJ1dLoOs7n1q3emj68P5w6oFXqQ1h+po1K0lVM4jkrefxnF5BVXCUtkHgMXO
+         sw/HyJk6Foi0KJvWhfCt6TCWaWM/tqpcCvDHLcbitocxNw1GYAf1sZe1PNcDPaDS6r1H
+         RQlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=VF0eXPvxEQ8eg24ufuqCwYbc3OHuCombUgJA5hM0DFE=;
-        b=o2YJ21HWA31VG3SOUOsUeEW2XbiKUNUDeErrXQllGjISmgb5qCjX5APubKG33LdsKG
-         yVVA43uqyHATtlgIWzk7lS9olU7HRJIP92yWeMMwSsKC8j58g+X2DX2+Jnh+G4P9QSUR
-         qbJIzPpQMTSCaro9fR0F4vLP5GAkHsbXgSpTsJKdzt/iT0CA/9Mja/XUVwL1qyS4VoqG
-         IsgLiRyJFu7/2C/N7AHy/FUfO9oM7UVWVPPeU4xRiw+RWrf/fPINV7+M/sw91dQlpyF/
-         UH0+T/1tTd4eMEOfUF5IAiranZFKQcuLTGClbaYIXkXNIe+qdMnMFgqxR4BnASmbgurt
-         RyNQ==
-X-Gm-Message-State: AA+aEWaRPMhDPdErRoLEyH3KKOKPYrpVfR8BabSLV8yzqHJNWWIp6Mc/
-        HFvszFZ06zmblLCcR2cdimp+bsMnHxk=
-X-Google-Smtp-Source: AFSGD/V5fpvPtNuj0rgOKe0owqUEC3XiKuApD3Hmhvdebdxno53sS2N7GEzD0I/xMSQN/BOqwa05yw==
-X-Received: by 2002:a1c:588a:: with SMTP id m132-v6mr3776347wmb.85.1543131827071;
-        Sat, 24 Nov 2018 23:43:47 -0800 (PST)
+        bh=Djjq1nRc3F7KdYio0IVcGJ34k3H9NlNQupH0SjqgVhc=;
+        b=jG0aHo2fPiAZ8ldXFecSMl1WxkQjYbNXIgKm7Y02zxiap14pCyXV0esd28/j3lmU5z
+         QNH6g8/CYysUDQ/DtzRD/J3sqVeZ6IOM1KINWWM7/3tYkHeoFx/7cL08UzwMsTiTS85O
+         Bt/Uwc3Cv9iKS6bi5uM3CLtJb3n/7J8J5z9XkxkP82vviKvADPGN3Womqf6ElD5DG16L
+         6JX1b3WJpABZZ45tOuToGFnhutLoRNxgMHkFnSyIBkigu9PvGze36Ki6djx9kiKUqlDe
+         7uqbFgJ48YF8EVg8H1FPIuRuzjvjTQ0847zweObKW1jlwU67v5fUiX0RL9xy6KqdopHI
+         +T2Q==
+X-Gm-Message-State: AA+aEWaJbr20GGEg7KOFCMcKAAbPW6sVgeN8OfZAWT0SHYTpWodRbjgk
+        d5KE2St1Q1djPFL6Z7EqyHwc9fMSSaQ=
+X-Google-Smtp-Source: AJdET5f0/1VwxW9owJi746HDwt8Fdn/zaedJvAqCytaQUGU0TggBvm1X7kYgz3H1fDgBl0LxAIXWbQ==
+X-Received: by 2002:a1c:d912:: with SMTP id q18mr19308099wmg.122.1543131828836;
+        Sat, 24 Nov 2018 23:43:48 -0800 (PST)
 Received: from localhost.localdomain ([185.219.177.224])
-        by smtp.gmail.com with ESMTPSA id 6-v6sm12296780wmg.19.2018.11.24.23.43.45
+        by smtp.gmail.com with ESMTPSA id 6-v6sm12296780wmg.19.2018.11.24.23.43.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 24 Nov 2018 23:43:46 -0800 (PST)
+        Sat, 24 Nov 2018 23:43:48 -0800 (PST)
 From:   Mesih Kilinc <mesihkilinc@gmail.com>
 To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
@@ -72,9 +72,9 @@ Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
         Icenowy Zheng <icenowy@aosc.io>,
         Rob Herring <robh+dt@kernel.org>,
         Julian Calaby <julian.calaby@gmail.com>
-Subject: [RFC PATCH v4 01/17] ARM: Check ARCH_MULTI_V7 to differentiate ARMv5/v7 Allwinner SoCs
-Date:   Sun, 25 Nov 2018 10:43:04 +0300
-Message-Id: <ff497d650f6a5d5d85b981c28695380172298701.1543131714.git.mesihkilinc@gmail.com>
+Subject: [RFC PATCH v4 02/17] dt-bindings: arm: Add new Allwinner ARMv5 F1C100s SoC
+Date:   Sun, 25 Nov 2018 10:43:05 +0300
+Message-Id: <a038c5ba853cc2534a8ee9b51de3cab5539726cd.1543131714.git.mesihkilinc@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1543131714.git.mesihkilinc@gmail.com>
 References: <cover.1543131714.git.mesihkilinc@gmail.com>
@@ -83,40 +83,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner also has some ARMv5 SoCs.
-
-In order to add support for them, check ARM_MULTI_V7 before enabling
-ARMv7 SoC's. Add help text for ARCH_SUNXI menuconfig.
+Add new Allwinner ARMv5 F1C100s SoC's compatible string
 
 Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- arch/arm/mach-sunxi/Kconfig | 6 ++++++
- 1 file changed, 6 insertions(+)
+ Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
-index d9c8ecf..185c573 100644
---- a/arch/arm/mach-sunxi/Kconfig
-+++ b/arch/arm/mach-sunxi/Kconfig
-@@ -9,9 +9,13 @@ menuconfig ARCH_SUNXI
- 	select PM_OPP
- 	select SUN4I_TIMER
- 	select RESET_CONTROLLER
-+	help
-+	  Support for Allwinner ARM-based family of processors
- 
- if ARCH_SUNXI
- 
-+if ARCH_MULTI_V7
-+
- config MACH_SUN4I
- 	bool "Allwinner A10 (sun4i) SoCs support"
- 	default ARCH_SUNXI
-@@ -56,3 +60,5 @@ config ARCH_SUNXI_MC_SMP
- 	select ARM_CPU_SUSPEND
- 
- endif
-+
-+endif
+diff --git a/Documentation/devicetree/bindings/arm/sunxi.txt b/Documentation/devicetree/bindings/arm/sunxi.txt
+index e4beec3..f9ddc05 100644
+--- a/Documentation/devicetree/bindings/arm/sunxi.txt
++++ b/Documentation/devicetree/bindings/arm/sunxi.txt
+@@ -18,4 +18,5 @@ using one of the following compatible strings:
+   allwinner,sun8i-v3s
+   allwinner,sun9i-a80
+   allwinner,sun50i-a64
++  allwinner,suniv-f1c100s
+   nextthing,gr8
 -- 
 2.7.4
 
