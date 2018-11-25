@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F27AAC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF72C04EBA
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:57:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8FE32084E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:57:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8FE32084E
+	by mail.kernel.org (Postfix) with ESMTP id 7AA122147D
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:57:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AA122147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbeKZFsz (ORCPT
+        id S1726924AbeKZFs5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 00:48:55 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:52688 "EHLO
+        Mon, 26 Nov 2018 00:48:57 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:52687 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726363AbeKZFsz (ORCPT
+        with ESMTP id S1726359AbeKZFsz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 26 Nov 2018 00:48:55 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gQzah-0003OJ-CI; Sun, 25 Nov 2018 19:57:11 +0100
-Message-Id: <20181125185003.966801480@linutronix.de>
+        id 1gQzag-0003OG-FU; Sun, 25 Nov 2018 19:57:10 +0100
+Message-Id: <20181125185003.874479208@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 25 Nov 2018 19:33:33 +0100
+Date:   Sun, 25 Nov 2018 19:33:32 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -51,52 +51,68 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Greg KH <gregkh@linuxfoundation.org>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [patch V2 05/28] x86/speculation: Disable STIBP when enhanced IBRS is
- in use
+Subject: [patch V2 04/28] x86/speculation: Reorganize cpu_show_common()
 References: <20181125183328.318175777@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=x86-speculation-Disable-STIBP-when-enhanced-IBRS-is-in-use.patch
+ filename=x86-speculation-Reorganize-cpu-show-common-.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If enhanced IBRS is active, STIBP is redundant for mitigating Spectre v2
-user space exploits from hyperthread sibling.
+The Spectre V2 printout in cpu_show_common() handles conditionals for the
+various mitigation methods directly in the sprintf() argument list. That's
+hard to read and will become unreadable if more complex decisions need to
+be made for a particular method.
 
-Disable STIBP when enhanced IBRS is used.
+Move the conditionals for STIBP and IBPB string selection into helper
+functions, so they can be extended later on.
 
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
 ---
- arch/x86/kernel/cpu/bugs.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/kernel/cpu/bugs.c |   20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -321,6 +321,10 @@ static bool stibp_needed(void)
- 	if (spectre_v2_enabled == SPECTRE_V2_NONE)
- 		return false;
+@@ -844,6 +844,22 @@ static ssize_t l1tf_show_state(char *buf
+ }
+ #endif
  
-+	/* Enhanced IBRS makes using STIBP unnecessary. */
-+	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
-+		return false;
-+
- 	if (!boot_cpu_has(X86_FEATURE_STIBP))
- 		return false;
- 
-@@ -846,6 +850,9 @@ static ssize_t l1tf_show_state(char *buf
- 
- static char *stibp_state(void)
- {
-+	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
++static char *stibp_state(void)
++{
++	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
++		return ", STIBP";
++	else
 +		return "";
++}
 +
- 	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
- 		return ", STIBP";
- 	else
++static char *ibpb_state(void)
++{
++	if (boot_cpu_has(X86_FEATURE_USE_IBPB))
++		return ", IBPB";
++	else
++		return "";
++}
++
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			       char *buf, unsigned int bug)
+ {
+@@ -865,9 +881,9 @@ static ssize_t cpu_show_common(struct de
+ 
+ 	case X86_BUG_SPECTRE_V2:
+ 		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+-			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
++			       ibpb_state(),
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+-			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
++			       stibp_state(),
+ 			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
+ 			       spectre_v2_module_string());
+ 
 
 
