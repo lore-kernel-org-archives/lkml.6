@@ -2,125 +2,117 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EFFCC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 22:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89191C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 22:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA3F32082E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 22:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 415492082E
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 22:25:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ossystems-com-br.20150623.gappssmtp.com header.i=@ossystems-com-br.20150623.gappssmtp.com header.b="wjl0R4Ah"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA3F32082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="Z4EbqP+s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 415492082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726230AbeKZJNx (ORCPT
+        id S1726106AbeKZJR0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 04:13:53 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37803 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbeKZJNx (ORCPT
+        Mon, 26 Nov 2018 04:17:26 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35071 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbeKZJR0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 04:13:53 -0500
-Received: by mail-oi1-f193.google.com with SMTP id y23so14124959oia.4
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 14:21:45 -0800 (PST)
+        Mon, 26 Nov 2018 04:17:26 -0500
+Received: by mail-io1-f67.google.com with SMTP id u19so12421892ioc.2
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 14:25:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ossystems-com-br.20150623.gappssmtp.com; s=20150623;
-        h=from:mime-version:references:in-reply-to:date:message-id:subject:to
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=b/6EJkdQFxhYvlr4Rst7gVXP5NNsDx7toOt/M6qbnAI=;
-        b=wjl0R4AhQHwbMtUps/DjC7DIYRgcRq6GHkKt6QV14MjaGw1jZvsEyoW+vZST70LV86
-         f7PHScoLFYmY3k+65O2MTBCMK6HUwSp8Dt3HlW3/9MNC/Kc3dyOYgc+mWJtKV+O0ayJz
-         rEPRMuD54MajDfxyibvwDF++myxSMvnEp02LR/FWlH63XpBh1lwwDaAOmjIMHKdfFkMz
-         BHTY3juowgdWdMoJumr83VE6s7ck8DnRk4PqQ8S1NG9yYlCIqtIRrzvwNHei0IyBSxoF
-         BzBPHlbClmjGDLxu2mXvNzIz3w0w5AIeBFx2TBpfJkrUkUjx1y4uNtE5AkfqA50jCLrw
-         BIkA==
+        bh=2vtXpmPeDeAdBMqSLjFlNYcEpEpQlR7ppYKSQmBAQoM=;
+        b=Z4EbqP+setQE9d6yvhTjSyhO96KtfopJSDizdNfAQbUAeDBLYUUrBQVcCBqP+lhVuM
+         Fv992Sr4+vQ2xOdR/R69zvmS2aPFUmhTFkEE/DGh/Q+B+xRSvd0JM081ZOmUrj+I4ehE
+         dOE85vEpE4W2IGsWA76GWSJuoLOqAsDgRxANEhrXSsaA1yCq/Ap/vqDs3rTALlNXn4bJ
+         8+Il8+6teeLnbmsIw1VfcKgLFAZ2/ohbGEHMkYi+mK70h/Uy+raxYkS0LIn0A1Dn4GqI
+         /DDtxCG14siT8DU+67TJPDE5Vhj7PChbc+X+lNf4tLALvfivECu4f2wbwpIfdC7YHR4J
+         WnSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:mime-version:references:in-reply-to:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=b/6EJkdQFxhYvlr4Rst7gVXP5NNsDx7toOt/M6qbnAI=;
-        b=ESt0PpN6Y2Aqf8U7IhPnW23XuvC/qcAObqRE+FKzcCtTc0eC4sQ8OGT0LvZ92ewVtV
-         I8aeajl323HikVV0s03ynpsOoj2LWXmd+CI0iIcCzq9+0uNMVXfonUe1pn/0WD2/pMsu
-         9+URbdNqxUizb2j1J2HZlh91K+jrhk2/ZpvoTufYBb+9g12XgXasdh2Xuh5aWRM2XMPq
-         egZrXlXp/kiYXw1KoWsJLBaLeVo+2haUycPK6t1LJSQjVOCLnmr+BXkBTuegKmu96GC1
-         GD3Vel1z/RRxW57k+z5PakBDF1p5ZpjgqyhcbFg5Are/MB7gjuyRmBcNr1Nl+jPvaLRX
-         QC+Q==
-X-Gm-Message-State: AA+aEWZ+MHK0ayLIlt9b7QQCt5Unv8Sau3WFdQDlI4wPgF1mb2cQQ145
-        DrHb9m1k9PP5sNWjxT3kh3h7UcmOeI/Whg==
-X-Google-Smtp-Source: AFSGD/W4s+VxyW38IavnRNS13UNQxbiwEz+HP2oVaNGKzDy1qNxqGzGA8x4KzJUGs4SaOCH47Y14Xg==
-X-Received: by 2002:aca:b388:: with SMTP id c130mr3270809oif.123.1543184504530;
-        Sun, 25 Nov 2018 14:21:44 -0800 (PST)
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com. [209.85.167.171])
-        by smtp.gmail.com with ESMTPSA id x127sm16524846oia.20.2018.11.25.14.21.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 25 Nov 2018 14:21:43 -0800 (PST)
-From:   Otavio Salvador <otavio.salvador@ossystems.com.br>
-X-Google-Original-From: Otavio Salvador <otavio@ossystems.com.br>
-Received: by mail-oi1-f171.google.com with SMTP id m6so2462541oig.11
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 14:21:43 -0800 (PST)
-X-Received: by 2002:aca:dfc3:: with SMTP id w186-v6mr14419970oig.331.1543184502717;
- Sun, 25 Nov 2018 14:21:42 -0800 (PST)
+        bh=2vtXpmPeDeAdBMqSLjFlNYcEpEpQlR7ppYKSQmBAQoM=;
+        b=QVgT51ydQbwBd+aaeK+/RQyBUzEvPw2p264lPlfpjf1OuSK7wUkfsQ8HvEWVdzzEyY
+         DU+IMG9jBT7q4TvjvqBIFpWdgYyyyocQF6/pogig0NHF2Wv4FVf0zX2fTpZutQf+5dWk
+         iW1npmvIhVE5H0uZGK9YYu9H5V77EZVXyWloHVlkre8E9hf6f3TWH7L4aHmEni3FUSre
+         X+YwuQacVUDHbmMjVOxcT6TSSfhvMKAvu34zfpjI8QIVpVO/6XVqh9NmKEvino4lZL3h
+         897v4YPVEQ0VqccKkY5p8AeIclbZqVZu2CvQ50+QKt2+TZgRRpZ90FVov3tP9wfu7Qbw
+         YzwQ==
+X-Gm-Message-State: AA+aEWZS4Q2nYxS6QTBomSx50YGKCyd/XfaNKSsAIuzjZPHmyALuAlHQ
+        3fWR+6Nsjz65SsmF3d8+zjMubIVwi02LRgZ6QPd00Q==
+X-Google-Smtp-Source: AFSGD/VtooeISGv/uMX2JE0wrWYggNqZmkWbMNEuyJvwEmL4ovCPRkZayrDxSP26pHeyIBu8JejLTtOWMO39WoUUBS0=
+X-Received: by 2002:a5e:c107:: with SMTP id v7mr12457464iol.155.1543184716537;
+ Sun, 25 Nov 2018 14:25:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20181125212159.11590-1-otavio@ossystems.com.br>
- <CAK8P3a2FXsz4-fBvUuQ6J5ERDkK6QsBoKvLLsDsczZqCOrq3Kw@mail.gmail.com>
- <CAP9ODKqDySwsJ+3hJFXYfm8NyhsVGDwyRi+3sUUJiP304SU07g@mail.gmail.com> <CAK8P3a3bCK4MxXoCmzfdgvELz9dNgOkACb1Gzpf8vRH8Cd-FnA@mail.gmail.com>
-In-Reply-To: <CAK8P3a3bCK4MxXoCmzfdgvELz9dNgOkACb1Gzpf8vRH8Cd-FnA@mail.gmail.com>
-Date:   Sun, 25 Nov 2018 20:21:27 -0200
-X-Gmail-Original-Message-ID: <CAP9ODKr3kQjEcKGwiVpsnFTFEEzjTxP0HdJYsQuc7jvqLEBypA@mail.gmail.com>
-Message-ID: <CAP9ODKr3kQjEcKGwiVpsnFTFEEzjTxP0HdJYsQuc7jvqLEBypA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] ARM: imx_v6_v7_defconfig: Remove explicit
- ARM_UNWIND disable
-To:     arnd@arndb.de
-Cc:     Otavio Salvador <otavio@ossystems.com.br>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
+References: <20181125211907.9895-1-otavio@ossystems.com.br> <20181125211907.9895-2-otavio@ossystems.com.br>
+In-Reply-To: <20181125211907.9895-2-otavio@ossystems.com.br>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Sun, 25 Nov 2018 14:25:04 -0800
+Message-ID: <CAOesGMjR--5XC1pNMkPHR9BaPfgGfdC8JHAM3oqS3Xte3TQbGA@mail.gmail.com>
+Subject: Re: [PATCH 02/13] ARM: multi_v7_defconfig: Add missing systemd options
+To:     Otavio Salvador <otavio@ossystems.com.br>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        fabio.berton@ossystems.com.br, yannick.fertre@st.com,
+        Arnd Bergmann <arnd@arndb.de>, Eric Anholt <eric@anholt.net>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Tony Lindgren <tony@atomide.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Russell King <linux@armlinux.org.uk>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
+        Simon Horman <horms+renesas@verge.net.au>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Arnd,
-
-On Sun, Nov 25, 2018 at 7:48 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> On Sun, Nov 25, 2018 at 10:45 PM Otavio Salvador
-> <otavio.salvador@ossystems.com.br> wrote:
-> >
-> > On Sun, Nov 25, 2018 at 7:35 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > > On Sun, Nov 25, 2018 at 10:24 PM Otavio Salvador
-> > > <otavio@ossystems.com.br> wrote:
-> > > >
-> > > > CONFIG_ARM_UNWIND is removed when running 'savedefconfig', but
-> > > > selected by the Kconfig logic.  This is done in preparation to making
-> > > > further changes to this defconfig cleaner.
-> > > >
-> > >
-> > > Does this mean we no longer get the unwinder, or there is some other
-> > > config (which?) that unconditionally selects it?
-> >
-> > It is selected. Before changing the defconfig I did a savedefconfig to
-> > avoid unrelated changes to be included on the subsequent patches and
-> > then I found it was now selected.
+On Sun, Nov 25, 2018 at 1:19 PM Otavio Salvador <otavio@ossystems.com.br> wrote:
 >
-> Ok, then please mention in the changelog which other option selects it,
-> as I said.
+> From: Fabio Berton <fabio.berton@ossystems.com.br>
 >
-> Aside from that, your series looks fine to me.
+> Signed-off-by: Fabio Berton <fabio.berton@ossystems.com.br>
+> Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
 
-Thank you for reviewing it. I sent a v3 mentioning it.
+Hi Otavio,
 
--- 
-Otavio Salvador                             O.S. Systems
-http://www.ossystems.com.br        http://code.ossystems.com.br
-Mobile: +55 (53) 9 9981-7854          Mobile: +1 (347) 903-9750
+Thanks for these patches. I don't have a reason to _not_ enable
+systemd features, but would you mind providing a brief description of
+what's not working without this change? Is it completely broken, or is
+it just the random-UID featues that don't work, or something else?.
+Useful for others to know what's expected to break if someone turns
+them off, etc.
+
+Also, I noticed you posted a series of 13 patches, which includes some
+dts files for rv1108, some network driver changes and some of these
+more generic defconfig changes. I would suggest that you split up your
+patches into independent series where possible, especially when they
+end up going to different subsystems. Providing suitable cover letters
+for the series when you post them is also useful to help reviewers by
+summarizing the series, including changes from last time it was
+posted, etc. Please address it to the superset of patch receivers on
+the series.
+
+I'm asking for the cover letter because this time I was wondering if
+there was a reason for the mix of patches so I went looking for it.
+Maybe there is a need to group them together even though the
+sub-series seem somewhat independent -- I can't tell from the way they
+were posted.
+
+
+Thanks!
+
+-Olof
