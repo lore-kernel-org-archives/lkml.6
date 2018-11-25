@@ -6,60 +6,64 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3449C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 20:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2941C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 20:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ABB520850
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 20:17:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ABB520850
+	by mail.kernel.org (Postfix) with ESMTP id 9A50520850
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 20:17:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A50520850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726562AbeKZHJf (ORCPT
+        id S1726786AbeKZHJm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 02:09:35 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:45773 "EHLO
+        Mon, 26 Nov 2018 02:09:42 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:38282 "EHLO
         mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725953AbeKZHJf (ORCPT
+        with ESMTP id S1725953AbeKZHJm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 02:09:35 -0500
-Received: by mail-qt1-f194.google.com with SMTP id e5so15388122qtr.12
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 12:17:43 -0800 (PST)
+        Mon, 26 Nov 2018 02:09:42 -0500
+Received: by mail-qt1-f194.google.com with SMTP id p17so15367545qtl.5
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 12:17:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :organization:content-transfer-encoding;
-        bh=Gzb5SI2iipIeU/gxEe6Ho36R9xXKBcIksKjSUrshL8s=;
-        b=flFG+VmKfK5iVhACxAB7IkDu8bOXx/DVD7imwRxK2rSmdKrTueo5BSs3B0dKz+bcpA
-         VvbIhzf/gD63N/eq7CBQixZDdKCJjkXNeSvla0X9BDx2y3YWMPtmlRLbrtF0YwPpO5Z7
-         6M/M6+/pAUQx8HLdq9svVA4FOgHKvCZkrEYiZJdUcRttr1+jmnVN8k8sxhiY/ICu1zCL
-         3xyBn/hcD8o9B4HFJr3uesD5o0vKhcK7LXanKDBQgSUJCuLdbKdBLDkq1A23xk8yw+q2
-         KMO85tZovvoM1TbKuirHf3hGBm6FwNQjlGkK4ljLCNaF9xLwOXVItPqx3sNbtT/O8R7t
-         FeOw==
-X-Gm-Message-State: AA+aEWbWN1NMeZHNQcjCrrDdjyClL1qXqjhTS1xl5GXtrhw3ghNA55ZX
-        JpF3TudPPPx8LSgopajG8Og=
-X-Google-Smtp-Source: AFSGD/WOXy17nlxUbFy1inr5LMRoiXdIHNkudJvDpVGRpVmpLsZQw9d9XGchW39XL8UCm1UPrGqzKQ==
-X-Received: by 2002:aed:26a3:: with SMTP id q32mr6539461qtd.106.1543177062848;
-        Sun, 25 Nov 2018 12:17:42 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:organization:content-transfer-encoding;
+        bh=xSfpgZL+FKaYQUzbqKWx7Vcb+iMx3Wiza+Td9f84zjA=;
+        b=HXXhHgYDuB6zWkYuMMDoE89xKJm51ZmL9c/dH9fYTQPxnhjHcGmdU/YenDDQwKRS/i
+         fLziEyEtOdi7OphWy3cnXobztDH3MaVIVQc4npnXvZlEUAp6sDRcqQLZUDXLQwOnPbuJ
+         BiSBH9/rKj1G6pJKh+JWerUQMFPQJhMhGIMnaWEGz/aO5rUEgjQZp4qH0y69SpDFuxpu
+         HT9nQtt3wKMm2FezFz/UHDksJelqylrgVq2SZSC2y0l6YoxtFrOiHsSqT7uFt25bPZNP
+         vTte5dzjpACVb8T1xfP3g2uV5mDPNVBgNifVUzdAUxPFTzcVlenXovBsPt9hwsWtFBe5
+         ipWw==
+X-Gm-Message-State: AGRZ1gJmfceOGix57Ft5DM7Er/crV7alsYQaAoTk7G2vSXyNtS+/Hm4W
+        eUYWxLJDprBqgkqzO6cNAIs=
+X-Google-Smtp-Source: AFSGD/VH+NvPR9is1gwELTlwf8ck1SAWqctj5AbBsC2aNpxoUTA0Lhp+s96U3uMQTn9kHRP8z3i4zg==
+X-Received: by 2002:ac8:107:: with SMTP id e7mr23076723qtg.221.1543177069904;
+        Sun, 25 Nov 2018 12:17:49 -0800 (PST)
 Received: from localhost.localdomain ([181.220.65.91])
-        by smtp.gmail.com with ESMTPSA id z30sm47576585qtz.26.2018.11.25.12.17.38
+        by smtp.gmail.com with ESMTPSA id f2sm19140320qkj.54.2018.11.25.12.17.45
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Nov 2018 12:17:42 -0800 (PST)
-Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 25 Nov 2018 18:17:35 -0200
+        Sun, 25 Nov 2018 12:17:49 -0800 (PST)
+Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 25 Nov 2018 18:17:43 -0200
 From:   Otavio Salvador <otavio@ossystems.com.br>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Otavio Salvador <otavio@ossystems.com.br>,
+Cc:     =?UTF-8?q?Andreas=20M=C3=BCller?= <schnitzeltony@gmail.com>,
+        Otavio Salvador <otavio@ossystems.com.br>,
         Fabio Estevam <fabio.estevam@nxp.com>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Russell King <linux@armlinux.org.uk>,
         Shawn Guo <shawnguo@kernel.org>,
         NXP Linux Team <linux-imx@nxp.com>
-Subject: [PATCH 1/3] ARM: imx_v6_v7_defconfig: Remove CONFIG_ARM_UNWIND
-Date:   Sun, 25 Nov 2018 18:17:27 -0200
-Message-Id: <20181125201729.19836-1-otavio@ossystems.com.br>
+Subject: [PATCH 2/3] ARM: imx_v6_v7_defconfig: Enable BT_BNEP
+Date:   Sun, 25 Nov 2018 18:17:28 -0200
+Message-Id: <20181125201729.19836-2-otavio@ossystems.com.br>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181125201729.19836-1-otavio@ossystems.com.br>
+References: <20181125201729.19836-1-otavio@ossystems.com.br>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Organization: O.S. Systems Software LTDA.
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,25 +71,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The setting is removed when running a `savedefconfig` using the
-current setting set. It is being applied in preparation to some
-patches making changes to this defconfig.
+From: Andreas Müller <schnitzeltony@gmail.com>
 
+This is necessary to support network over bluetooth:
+
+| Sep 11 15:36:33 imx6qdl-variscite-som bluetoothd[281]: kernel lacks bnep-protocol support
+| Sep 11 15:36:33 imx6qdl-variscite-som bluetoothd[281]: System does not support network plugin
+
+Signed-off-by: Andreas Müller <schnitzeltony@gmail.com>
 Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
 ---
 
- arch/arm/configs/imx_v6_v7_defconfig | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/configs/imx_v6_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
-index aa02d18f44d1..0c887a059df3 100644
+index 0c887a059df3..22ad2d7a1cf2 100644
 --- a/arch/arm/configs/imx_v6_v7_defconfig
 +++ b/arch/arm/configs/imx_v6_v7_defconfig
-@@ -445,4 +445,3 @@ CONFIG_MAGIC_SYSRQ=y
- CONFIG_PROVE_LOCKING=y
- # CONFIG_DEBUG_BUGVERBOSE is not set
- # CONFIG_FTRACE is not set
--# CONFIG_ARM_UNWIND is not set
+@@ -81,6 +81,7 @@ CONFIG_NETFILTER=y
+ CONFIG_CAN=y
+ CONFIG_CAN_FLEXCAN=y
+ CONFIG_BT=y
++CONFIG_BT_BNEP=m
+ CONFIG_BT_HCIUART=y
+ CONFIG_BT_HCIUART_LL=y
+ CONFIG_CFG80211=y
 -- 
 2.19.1
 
