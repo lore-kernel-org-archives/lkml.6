@@ -2,241 +2,831 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1B3C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 10:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9504EC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 10:28:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 668A820855
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 10:22:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 668A820855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 318FA2086B
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 10:28:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fU6suo7H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 318FA2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbeKYVNR (ORCPT
+        id S1727569AbeKYVSw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 16:13:17 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59678 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbeKYVNQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 16:13:16 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 82C218092E; Sun, 25 Nov 2018 11:22:25 +0100 (CET)
-Date:   Sun, 25 Nov 2018 11:22:27 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Nishad Kamdar <nishadkamdar@gmail.com>, lkundrak@v3.sk
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jens Frederich <jfrederich@gmail.com>,
-        Daniel Drake <dsd@laptop.org>,
-        Jon Nettleton <jon.nettleton@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] staging: olpc_dcon: olpc_dcon_xo_1.c: Switch to the
- gpio descriptor interface
-Message-ID: <20181125102227.GA25471@amd>
-References: <20181107124849.GA21899@nishad>
+        Sun, 25 Nov 2018 16:18:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727182AbeKYVSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 16:18:52 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6540120855;
+        Sun, 25 Nov 2018 10:28:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543141684;
+        bh=ag8fjKCmWunV2Tfr+2walHCKkp1bV6GlAzs0+FHi0Us=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fU6suo7HMB4hKV55D6S+bEkFKqBLk2Rt7/N20/l0UN7XKfom/JnoXB7YlNkK6yUpD
+         6UpzKkE0nrAclZWnCxBTF/1kKno0bsox4uiuHMM1tD1vz9Hv5b08mXtLMxLK+2HH96
+         3atitbGJIy/uOh0EXBYTXLe3ol0MDyZd8LuIP+Bs=
+Date:   Sun, 25 Nov 2018 10:27:57 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Philippe Schenker <dev@pschenker.ch>
+Cc:     marcel.ziswiler@toradex.com, stefan@agner.ch,
+        Max Krummenacher <max.krummenacher@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Mark Brown <broonie@kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        linux-iio@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Marcus Folkesson <marcus.folkesson@gmail.com>,
+        Freeman Liu <freeman.liu@spreadtrum.com>,
+        linux-input@vger.kernel.org,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Siddartha Mohanadoss <smohanad@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v3 2/4] iio: adc: add STMPE ADC driver using IIO
+ framework
+Message-ID: <20181125102757.2c34371c@archlinux>
+In-Reply-To: <20181123142411.8921-2-dev@pschenker.ch>
+References: <20181123142411.8921-1-dev@pschenker.ch>
+        <20181123142411.8921-2-dev@pschenker.ch>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="7JfCtLOvnd9MIVvH"
-Content-Disposition: inline
-In-Reply-To: <20181107124849.GA21899@nishad>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 23 Nov 2018 15:24:09 +0100
+Philippe Schenker <dev@pschenker.ch> wrote:
 
---7JfCtLOvnd9MIVvH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> Use the gpiod interface instead of the deprecated old non-descriptor
-> interface in olpc_dcon_xo_1.c.
+> From: Stefan Agner <stefan@agner.ch>
 >=20
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> This adds an ADC driver for the STMPE device using the industrial
+> input/output interface. The driver supports raw reading of values.
+> The driver depends on the MFD STMPE driver. If the touchscreen
+> block is enabled too, only four of the 8 ADC channels are available.
+>=20
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
+> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
 
-You may want to cc: lkundrak@v3.sk, he was doing great work on OLPC
-lately...
+Given the dt related refactoring in here is mixed up somewhat with the
+ADC driver, I would like to see that as a precursor patch.
 
-Best regards,
-								Pavel
+Another area that I think needs a rethink is balance between
+enable and disable.  The enable is in the mfd call, but the disable
+in the iio driver remove which isn't right.  Not immediately
+sure what we do about that, but it should be one or the other.
+
+I'd previously missed your use of the IIO core mlock.  Please don't
+use that in a driver directly.  It has very carefully defined
+locking semantics which aren't even in use here.  A locally defined
+lock with well documented scope is much better.  We 'used'
+to abuse mlock for this and have spent years slowly unwinding that.
+
+Thanks,
+
+Jonathan
 
 > ---
-> Changes in v4:
->  - Move changelog after signed-off line.
+>=20
 > Changes in v3:
->  - Resolve a few compilation errors.
-> Changes in v2:
->  - Resolve a few compilation errors.
->  - Add a level of indirection to read and write gpios.
-> ---
->  drivers/staging/olpc_dcon/olpc_dcon_xo_1.c | 90 +++++++++++-----------
->  1 file changed, 47 insertions(+), 43 deletions(-)
+>  - Undo ADC-settings related code-deletions in stmpe-ts.c that the code is
+>    backwards-compatible to older devicetrees.
 >=20
-> diff --git a/drivers/staging/olpc_dcon/olpc_dcon_xo_1.c b/drivers/staging=
-/olpc_dcon/olpc_dcon_xo_1.c
-> index ff145d493e1b..80b8d4153414 100644
-> --- a/drivers/staging/olpc_dcon/olpc_dcon_xo_1.c
-> +++ b/drivers/staging/olpc_dcon/olpc_dcon_xo_1.c
-> @@ -11,35 +11,51 @@
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> Changes in v2:
+>  - Code formatting
+>  - Move code to setup ADC to MFD device, as it is used by both drivers
+>    adc and touchscreen
+>  - Removed unused includes
+>  - Defined the macro STMPE_START_ONE_TEMP_CONV with other macros.
+>  - Added new macro that defines the channel of the temperature sensor.
+>    Took new name for STMPE_MAX_ADC->STMPE_ADC_LAST_NR and used it through=
+out
+>    the code for better readability.
+>  - Added mutex_unlock where missing.
+>=20
+>  drivers/iio/adc/Kconfig              |   7 +
+>  drivers/iio/adc/Makefile             |   1 +
+>  drivers/iio/adc/stmpe-adc.c          | 326 +++++++++++++++++++++++++++
+>  drivers/input/touchscreen/stmpe-ts.c |  36 +--
+>  drivers/mfd/Kconfig                  |   3 +-
+>  drivers/mfd/stmpe.c                  |  81 +++++++
+>  include/linux/mfd/stmpe.h            |   9 +
+>  7 files changed, 437 insertions(+), 26 deletions(-)
+>  create mode 100644 drivers/iio/adc/stmpe-adc.c
+>=20
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index a52fea8749a9..224f2067494d 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -734,6 +734,13 @@ config STM32_DFSDM_ADC
+>  	  This driver can also be built as a module.  If so, the module
+>  	  will be called stm32-dfsdm-adc.
 > =20
->  #include <linux/cs5535.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/delay.h>
-> +#include <linux/i2c.h>
->  #include <asm/olpc.h>
-> =20
->  #include "olpc_dcon.h"
-> =20
-> +enum dcon_gpios {
-> +	OLPC_DCON_STAT0,
-> +	OLPC_DCON_STAT1,
-> +	OLPC_DCON_IRQ,
-> +	OLPC_DCON_LOAD,
-> +	OLPC_DCON_BLANK,
+> +config STMPE_ADC
+> +	tristate "STMicroelectronics STMPE ADC driver"
+> +	depends on OF && MFD_STMPE
+> +	help
+> +	  Say yes here to build support for ST Microelectronics STMPE
+> +	  built-in ADC block (stmpe811).
+> +
+>  config STX104
+>  	tristate "Apex Embedded Systems STX104 driver"
+>  	depends on PC104 && X86
+> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+> index a6e6a0b659e2..cba889c30bf9 100644
+> --- a/drivers/iio/adc/Makefile
+> +++ b/drivers/iio/adc/Makefile
+> @@ -69,6 +69,7 @@ obj-$(CONFIG_STM32_ADC_CORE) +=3D stm32-adc-core.o
+>  obj-$(CONFIG_STM32_ADC) +=3D stm32-adc.o
+>  obj-$(CONFIG_STM32_DFSDM_CORE) +=3D stm32-dfsdm-core.o
+>  obj-$(CONFIG_STM32_DFSDM_ADC) +=3D stm32-dfsdm-adc.o
+> +obj-$(CONFIG_STMPE_ADC) +=3D stmpe-adc.o
+>  obj-$(CONFIG_TI_ADC081C) +=3D ti-adc081c.o
+>  obj-$(CONFIG_TI_ADC0832) +=3D ti-adc0832.o
+>  obj-$(CONFIG_TI_ADC084S021) +=3D ti-adc084s021.o
+> diff --git a/drivers/iio/adc/stmpe-adc.c b/drivers/iio/adc/stmpe-adc.c
+> new file mode 100644
+> index 000000000000..bea3f3c27bb5
+> --- /dev/null
+> +++ b/drivers/iio/adc/stmpe-adc.c
+> @@ -0,0 +1,326 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + *  STMicroelectronics STMPE811 IIO ADC Driver
+> + *
+> + *  4 channel, 10/12-bit ADC
+> + *
+> + *  Copyright (C) 2013-2018 Toradex AG <stefan.agner@toradex.com>
+> + */
+> +
+> +#include <linux/completion.h>
+> +#include <linux/err.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mfd/stmpe.h>
+> +#include <linux/module.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define STMPE_REG_INT_STA		0x0B
+> +#define STMPE_REG_ADC_INT_EN		0x0E
+> +#define STMPE_REG_ADC_INT_STA		0x0F
+> +
+> +#define STMPE_REG_ADC_CTRL1		0x20
+> +#define STMPE_REG_ADC_CTRL2		0x21
+> +#define STMPE_REG_ADC_CAPT		0x22
+> +#define STMPE_REG_ADC_DATA_CH(channel)	(0x30 + 2 * (channel))
+> +
+> +#define STMPE_REG_TEMP_CTRL		0x60
+> +#define STMPE_TEMP_CTRL_ENABLE		BIT(0)
+> +#define STMPE_TEMP_CTRL_ACQ		BIT(1)
+> +#define STMPE_TEMP_CTRL_THRES_EN	BIT(3)
+> +#define STMPE_START_ONE_TEMP_CONV	(STMPE_TEMP_CTRL_ENABLE | \
+> +					STMPE_TEMP_CTRL_ACQ | \
+> +					STMPE_TEMP_CTRL_THRES_EN)
+> +#define STMPE_REG_TEMP_DATA		0x61
+> +#define STMPE_REG_TEMP_TH		0x63
+> +#define STMPE_ADC_LAST_NR		7
+> +#define STMPE_TEMP_CHANNEL		(STMPE_ADC_LAST_NR + 1)
+> +
+> +#define STMPE_ADC_CH(channel)		((1 << (channel)) & 0xff)
+> +
+> +#define STMPE_ADC_TIMEOUT		msecs_to_jiffies(1000)
+> +
+> +struct stmpe_adc {
+> +	struct stmpe *stmpe;
+> +	struct clk *clk;
+> +	struct device *dev;
+> +
+> +	/* We are allocating plus one for the temperature channel */
+> +	struct iio_chan_spec stmpe_adc_iio_channels[STMPE_ADC_LAST_NR + 2];
+> +
+> +	struct completion completion;
+> +
+> +	u8 channel;
+> +	u32 value;
 > +};
 > +
-> +struct dcon_gpio {
-> +	const char *name;
-> +	unsigned long flags;
-> +};
+> +static int stmpe_read_raw(struct iio_dev *indio_dev,
+> +			  struct iio_chan_spec const *chan,
+> +			  int *val,
+> +			  int *val2,
+> +			  long mask)
+> +{
+> +	struct stmpe_adc *info =3D iio_priv(indio_dev);
+> +	long ret;
 > +
-> +static const struct dcon_gpio gpios_asis[] =3D {
-> +	[OLPC_DCON_STAT0] =3D { .name =3D "dcon_stat0", .flags =3D GPIOD_ASIS },
-> +	[OLPC_DCON_STAT1] =3D { .name =3D "dcon_stat1", .flags =3D GPIOD_ASIS },
-> +	[OLPC_DCON_IRQ] =3D { .name =3D "dcon_irq", .flags =3D GPIOD_ASIS },
-> +	[OLPC_DCON_LOAD] =3D { .name =3D "dcon_load", .flags =3D GPIOD_ASIS },
-> +	[OLPC_DCON_BLANK] =3D { .name =3D "dcon_blank", .flags =3D GPIOD_ASIS },
-> +};
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +	case IIO_CHAN_INFO_PROCESSED:
 > +
-> +struct gpio_desc *gpios[5];
+> +		mutex_lock(&indio_dev->mlock);
+
+That's not what this lock is for and I think we have almost
+entirely removed it's use from drivers.  That's the internal IIO lock
+used to protect against changing from polled to trigger driven operation.
+
+Please add your own local lock for which the scope can be cleanly defined
+and documented.  Sorry I missed this before. I only noticed now whilst
+trying to sanity check the documentation for a lock I expected to find
+in the private data structure that wasn't there!.
+
 > +
->  static int dcon_init_xo_1(struct dcon_priv *dcon)
->  {
->  	unsigned char lob;
-> -
-> -	if (gpio_request(OLPC_GPIO_DCON_STAT0, "OLPC-DCON")) {
-> -		pr_err("failed to request STAT0 GPIO\n");
-> -		return -EIO;
-> -	}
-> -	if (gpio_request(OLPC_GPIO_DCON_STAT1, "OLPC-DCON")) {
-> -		pr_err("failed to request STAT1 GPIO\n");
-> -		goto err_gp_stat1;
-> -	}
-> -	if (gpio_request(OLPC_GPIO_DCON_IRQ, "OLPC-DCON")) {
-> -		pr_err("failed to request IRQ GPIO\n");
-> -		goto err_gp_irq;
-> -	}
-> -	if (gpio_request(OLPC_GPIO_DCON_LOAD, "OLPC-DCON")) {
-> -		pr_err("failed to request LOAD GPIO\n");
-> -		goto err_gp_load;
-> -	}
-> -	if (gpio_request(OLPC_GPIO_DCON_BLANK, "OLPC-DCON")) {
-> -		pr_err("failed to request BLANK GPIO\n");
-> -		goto err_gp_blank;
-> +	int ret, i;
-> +	struct dcon_gpio *pin =3D &gpios_asis[0];
+> +		info->channel =3D (u8)chan->channel;
 > +
-> +	for (i =3D 0; i < ARRAY_SIZE(gpios_asis); i++) {
-> +		gpios[i] =3D devm_gpiod_get(&dcon->client->dev, pin[i].name,
-> +					  pin[i].flags);
-> +		if (IS_ERR(gpios[i])) {
-> +			ret =3D PTR_ERR(gpios[i]);
-> +			pr_err("failed to request %s GPIO: %d\n", pin[i].name,
-> +			       ret);
-> +			return ret;
+> +		switch (chan->type) {
+> +		case IIO_VOLTAGE:
+There isn't a whole lot shared in the voltage raw / temp processed
+paths.  It might be more readable to separate them out - perhaps
+as a pair of utility functions rather than having the
+multiple switch statements with common blocks inbetween.
+
+stmpe_read_voltage / stmpe_read_temp?
+
+A few lines will get repeated, but the flow will be more obvious
+I think and the indenting considerably reduced which always
+helps!
+
+
+> +			if (info->channel > STMPE_ADC_LAST_NR) {
+> +				mutex_unlock(&indio_dev->mlock);
+> +				return -EINVAL;
+> +			}
+> +
+> +			stmpe_reg_write(info->stmpe, STMPE_REG_ADC_INT_EN,
+> +					STMPE_ADC_CH(info->channel));
+> +
+> +			stmpe_reg_write(info->stmpe, STMPE_REG_ADC_CAPT,
+> +					STMPE_ADC_CH(info->channel));
+> +
+> +			*val =3D info->value;
+> +			break;
+> +
+> +		case IIO_TEMP:
+> +			if (info->channel !=3D STMPE_TEMP_CHANNEL) {
+> +				mutex_unlock(&indio_dev->mlock);
+> +				return -EINVAL;
+> +			}
+> +
+> +			stmpe_reg_write(info->stmpe, STMPE_REG_TEMP_CTRL,
+> +					STMPE_START_ONE_TEMP_CONV);
+> +			break;
+> +		default:
+> +			mutex_unlock(&indio_dev->mlock);
+> +			return -EINVAL;
 > +		}
+> +
+> +		ret =3D wait_for_completion_interruptible_timeout
+> +			(&info->completion, STMPE_ADC_TIMEOUT);
+> +
+> +		if (ret <=3D 0) {
+> +			mutex_unlock(&indio_dev->mlock);
+> +			if (ret =3D=3D 0)
+> +				return -ETIMEDOUT;
+> +			else
+> +				return ret;
+> +		}
+> +
+> +		switch (chan->type) {
+> +		case IIO_VOLTAGE:
+> +			*val =3D info->value;
+> +			break;
+> +
+> +		case IIO_TEMP:
+> +			/*
+> +			 * absolute temp =3D +V3.3 * value /7.51 [K]
+> +			 * scale to [milli =C2=B0C]
+> +			 */
+> +			*val =3D ((449960l * info->value) / 1024l) - 273150;
+> +			break;
+> +		default:
+> +			break;
+> +		}
+> +
+> +		mutex_unlock(&indio_dev->mlock);
+> +		return IIO_VAL_INT;
+> +
+> +	case IIO_CHAN_INFO_SCALE:
+> +		*val =3D 3300;
+> +		*val2 =3D info->stmpe->mod_12b ? 12 : 10;
+> +		return IIO_VAL_FRACTIONAL_LOG2;
+> +
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static irqreturn_t stmpe_adc_isr(int irq, void *dev_id)
+> +{
+> +	struct stmpe_adc *info =3D (struct stmpe_adc *)dev_id;
+> +	u8 data[2];
+> +
+> +	if (info->channel > STMPE_TEMP_CHANNEL)
+> +		return IRQ_NONE;
+> +
+> +	if (info->channel <=3D STMPE_ADC_LAST_NR) {
+> +		int int_sta;
+> +
+> +		int_sta =3D stmpe_reg_read(info->stmpe, STMPE_REG_ADC_INT_STA);
+> +
+> +		/* Is the interrupt relevant */
+> +		if (!(int_sta & STMPE_ADC_CH(info->channel)))
+> +			return IRQ_NONE;
+> +
+> +		/* Read value */
+> +		stmpe_block_read(info->stmpe,
+> +			STMPE_REG_ADC_DATA_CH(info->channel), 2, data);
+> +
+> +		stmpe_reg_write(info->stmpe, STMPE_REG_ADC_INT_STA, int_sta);
+> +	} else if (info->channel =3D=3D STMPE_TEMP_CHANNEL) {
+> +		/* Read value */
+> +		stmpe_block_read(info->stmpe, STMPE_REG_TEMP_DATA, 2, data);
+> +	}
+> +
+> +	info->value =3D ((u32)data[0] << 8) + data[1];
+
+This is an endian conversion of aligned data.  Can we use an appropriate
+endian to cpu function to do it as cleaner and quite possibly a noop.
+
+> +	complete(&info->completion);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static const struct iio_info stmpe_adc_iio_info =3D {
+> +	.read_raw =3D &stmpe_read_raw,
+> +};
+> +
+> +static void stmpe_adc_voltage_chan(struct iio_chan_spec *ics, int chan)
+> +{
+> +	ics->type =3D IIO_VOLTAGE;
+> +	ics->info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW);
+> +	ics->info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE);
+> +	ics->indexed =3D 1;
+> +	ics->channel =3D chan;
+> +}
+> +
+> +static void stmpe_adc_temp_chan(struct iio_chan_spec *ics, int chan)
+> +{
+> +	ics->type =3D IIO_TEMP;
+> +	ics->info_mask_separate =3D BIT(IIO_CHAN_INFO_PROCESSED);
+> +	ics->indexed =3D 1;
+> +	ics->channel =3D chan;
+> +}
+> +
+> +static int stmpe_adc_init_hw(struct stmpe_adc *adc)
+> +{
+> +	struct stmpe *stmpe =3D adc->stmpe;
+> +
+> +	/* use temp irq for each conversion completion */
+> +	stmpe_reg_write(stmpe, STMPE_REG_TEMP_TH, 0);
+> +	stmpe_reg_write(stmpe, STMPE_REG_TEMP_TH + 1, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static int stmpe_adc_probe(struct platform_device *pdev)
+> +{
+> +	struct iio_dev *indio_dev =3D NULL;
+> +	struct stmpe_adc *info =3D NULL;
+> +	struct device_node *np;
+> +	u32 norequest_mask =3D 0;
+> +	int irq_temp, irq_adc;
+> +	int num_chan =3D 0;
+> +	int i =3D 0;
+> +	int ret;
+> +
+> +	irq_adc =3D platform_get_irq_byname(pdev, "STMPE_ADC");
+> +	if (irq_adc < 0)
+> +		return irq_adc;
+> +
+> +	indio_dev =3D devm_iio_device_alloc(&pdev->dev, sizeof(struct stmpe_adc=
+));
+> +	if (!indio_dev) {
+> +		dev_err(&pdev->dev, "failed allocating iio device\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	info =3D iio_priv(indio_dev);
+> +
+> +	init_completion(&info->completion);
+> +	ret =3D devm_request_threaded_irq(&pdev->dev, irq_adc, NULL,
+> +					stmpe_adc_isr, IRQF_ONESHOT,
+> +					"stmpe-adc", info);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "failed requesting irq, irq =3D %d\n",
+> +				irq_adc);
+> +		return ret;
+> +	}
+> +
+> +	irq_temp =3D platform_get_irq_byname(pdev, "STMPE_TEMP_SENS");
+> +	if (irq_temp >=3D 0) {
+> +		ret =3D devm_request_threaded_irq(&pdev->dev, irq_temp, NULL,
+> +						stmpe_adc_isr, IRQF_ONESHOT,
+> +						"stmpe-adc", info);
+> +		if (ret < 0)
+> +			dev_warn(&pdev->dev, "failed requesting irq for"
+> +				 " temp sensor, irq =3D %d\n", irq_temp);
+> +	}
+> +
+> +	platform_set_drvdata(pdev, indio_dev);
+> +
+> +	indio_dev->name		=3D dev_name(&pdev->dev);
+> +	indio_dev->dev.parent	=3D &pdev->dev;
+> +	indio_dev->info		=3D &stmpe_adc_iio_info;
+> +	indio_dev->modes	=3D INDIO_DIRECT_MODE;
+> +
+> +	info->stmpe =3D dev_get_drvdata(pdev->dev.parent);
+> +
+> +	np =3D pdev->dev.of_node;
+> +
+> +	if (!np)
+> +		dev_err(&pdev->dev, "no device tree node found\n");
+> +
+> +	of_property_read_u32(np, "st,norequest-mask", &norequest_mask);
+> +
+> +	for_each_clear_bit(i, (unsigned long *) &norequest_mask,
+> +			   (STMPE_ADC_LAST_NR + 1)) {
+> +		stmpe_adc_voltage_chan(&info->stmpe_adc_iio_channels[num_chan], i);
+> +		num_chan++;
+> +	}
+> +	stmpe_adc_temp_chan(&info->stmpe_adc_iio_channels[num_chan], i);
+> +	num_chan++;
+> +	indio_dev->channels =3D info->stmpe_adc_iio_channels;
+> +	indio_dev->num_channels =3D num_chan;
+> +
+> +	ret =3D stmpe_adc_init_hw(info);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return iio_device_register(indio_dev);
+> +}
+> +
+> +static int stmpe_adc_remove(struct platform_device *pdev)
+> +{
+> +	struct iio_dev *indio_dev =3D platform_get_drvdata(pdev);
+> +	struct stmpe_adc *info =3D iio_priv(indio_dev);
+> +
+> +	iio_device_unregister(indio_dev);
+> +	stmpe_disable(info->stmpe, STMPE_BLOCK_ADC);
+
+Could we use a devm_add_action_or_reset call covering this so that
+we can get rid of the remove function entirely?
+
+Mind you, this is unwinding something being called from the mfd
+I think rather than being called from the adc probe function.
+
+We need to fix that balance by either calling the disable from
+the ADC or moving the enable in here as necessary.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused stmpe_adc_resume(struct device *dev)
+> +{
+> +	struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
+> +	struct stmpe_adc *info =3D iio_priv(indio_dev);
+> +
+> +	stmpe_adc_init_hw(info);
+> +
+> +	return 0;
+> +}
+> +
+> +static SIMPLE_DEV_PM_OPS(stmpe_adc_pm_ops, NULL, stmpe_adc_resume);
+> +
+> +static struct platform_driver stmpe_adc_driver =3D {
+> +	.probe		=3D stmpe_adc_probe,
+> +	.remove		=3D stmpe_adc_remove,
+> +	.driver		=3D {
+> +		.name	=3D "stmpe-adc",
+> +		.pm	=3D &stmpe_adc_pm_ops,
+> +	},
+> +};
+> +
+> +module_platform_driver(stmpe_adc_driver);
+> +
+> +MODULE_AUTHOR("Stefan Agner <stefan.agner@toradex.com>");
+> +MODULE_DESCRIPTION("STMPEXXX ADC driver");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:stmpe-adc");
+> diff --git a/drivers/input/touchscreen/stmpe-ts.c b/drivers/input/touchsc=
+reen/stmpe-ts.c
+> index c5d9006588a2..81aa313d6e5a 100644
+> --- a/drivers/input/touchscreen/stmpe-ts.c
+> +++ b/drivers/input/touchscreen/stmpe-ts.c
+> @@ -30,8 +30,6 @@
+>   * with touchscreen controller
+>   */
+>  #define STMPE_REG_INT_STA		0x0B
+> -#define STMPE_REG_ADC_CTRL1		0x20
+> -#define STMPE_REG_ADC_CTRL2		0x21
+>  #define STMPE_REG_TSC_CTRL		0x40
+>  #define STMPE_REG_TSC_CFG		0x41
+>  #define STMPE_REG_FIFO_TH		0x4A
+> @@ -58,15 +56,6 @@
+>   * @idev: registered input device
+>   * @work: a work item used to scan the device
+>   * @dev: a pointer back to the MFD cell struct device*
+> - * @sample_time: ADC converstion time in number of clock.
+> - * (0 -> 36 clocks, 1 -> 44 clocks, 2 -> 56 clocks, 3 -> 64 clocks,
+> - * 4 -> 80 clocks, 5 -> 96 clocks, 6 -> 144 clocks),
+> - * recommended is 4.
+> - * @mod_12b: ADC Bit mode (0 -> 10bit ADC, 1 -> 12bit ADC)
+> - * @ref_sel: ADC reference source
+> - * (0 -> internal reference, 1 -> external reference)
+> - * @adc_freq: ADC Clock speed
+> - * (0 -> 1.625 MHz, 1 -> 3.25 MHz, 2 || 3 -> 6.5 MHz)
+>   * @ave_ctrl: Sample average control
+>   * (0 -> 1 sample, 1 -> 2 samples, 2 -> 4 samples, 3 -> 8 samples)
+>   * @touch_det_delay: Touch detect interrupt delay
+> @@ -88,10 +77,6 @@ struct stmpe_touch {
+>  	struct input_dev *idev;
+>  	struct delayed_work work;
+>  	struct device *dev;
+> -	u8 sample_time;
+> -	u8 mod_12b;
+> -	u8 ref_sel;
+> -	u8 adc_freq;
+>  	u8 ave_ctrl;
+>  	u8 touch_det_delay;
+>  	u8 settling;
+> @@ -176,7 +161,7 @@ static irqreturn_t stmpe_ts_handler(int irq, void *da=
+ta)
+>  	input_report_key(ts->idev, BTN_TOUCH, 1);
+>  	input_sync(ts->idev);
+> =20
+> -       /* flush the FIFO after we have read out our values. */
+> +	/* flush the FIFO after we have read out our values. */
+>  	__stmpe_reset_fifo(ts->stmpe);
+> =20
+>  	/* reenable the tsc */
+> @@ -202,20 +187,21 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+>  		return ret;
 >  	}
 > =20
->  	/* Turn off the event enable for GPIO7 just to be safe */
-> @@ -61,12 +77,12 @@ static int dcon_init_xo_1(struct dcon_priv *dcon)
->  	dcon->pending_src =3D dcon->curr_src;
+> -	adc_ctrl1 =3D STMPE_SAMPLE_TIME(ts->sample_time) |
+> -		    STMPE_MOD_12B(ts->mod_12b) | STMPE_REF_SEL(ts->ref_sel);
+> +	adc_ctrl1 =3D STMPE_SAMPLE_TIME(stmpe->sample_time) |
+> +		    STMPE_MOD_12B(stmpe->mod_12b) |
+> +		    STMPE_REF_SEL(stmpe->ref_sel);
+
+Could we split this refactor out 'ahead' of the ADC patch?
+
+>  	adc_ctrl1_mask =3D STMPE_SAMPLE_TIME(0xff) | STMPE_MOD_12B(0xff) |
+>  			 STMPE_REF_SEL(0xff);
 > =20
->  	/* Set the directions for the GPIO pins */
-> -	gpio_direction_input(OLPC_GPIO_DCON_STAT0);
-> -	gpio_direction_input(OLPC_GPIO_DCON_STAT1);
-> -	gpio_direction_input(OLPC_GPIO_DCON_IRQ);
-> -	gpio_direction_input(OLPC_GPIO_DCON_BLANK);
-> -	gpio_direction_output(OLPC_GPIO_DCON_LOAD,
-> -			      dcon->curr_src =3D=3D DCON_SOURCE_CPU);
-> +	gpiod_direction_input(gpios[OLPC_DCON_STAT0]);
-> +	gpiod_direction_input(gpios[OLPC_DCON_STAT1]);
-> +	gpiod_direction_input(gpios[OLPC_DCON_IRQ]);
-> +	gpiod_direction_input(gpios[OLPC_DCON_BLANK]);
-> +	gpiod_direction_output(gpios[OLPC_DCON_LOAD],
-> +			       dcon->curr_src =3D=3D DCON_SOURCE_CPU);
-> =20
->  	/* Set up the interrupt mappings */
-> =20
-> @@ -84,7 +100,7 @@ static int dcon_init_xo_1(struct dcon_priv *dcon)
->  	/* Register the interrupt handler */
->  	if (request_irq(DCON_IRQ, &dcon_interrupt, 0, "DCON", dcon)) {
->  		pr_err("failed to request DCON's irq\n");
-> -		goto err_req_irq;
-> +		return -EIO;
+> -	ret =3D stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL1,
+> +	ret =3D stmpe_set_bits(stmpe, STMPE811_REG_ADC_CTRL1,
+>  			adc_ctrl1_mask, adc_ctrl1);
+>  	if (ret) {
+>  		dev_err(dev, "Could not setup ADC\n");
+>  		return ret;
 >  	}
 > =20
->  	/* Clear INV_EN for GPIO7 (DCONIRQ) */
-> @@ -125,18 +141,6 @@ static int dcon_init_xo_1(struct dcon_priv *dcon)
->  	cs5535_gpio_set(OLPC_GPIO_DCON_BLANK, GPIO_EVENTS_ENABLE);
+> -	ret =3D stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL2,
+> -			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(ts->adc_freq));
+> +	ret =3D stmpe_set_bits(stmpe, STMPE811_REG_ADC_CTRL2,
+> +			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(stmpe->adc_freq));
+>  	if (ret) {
+>  		dev_err(dev, "Could not setup ADC\n");
+>  		return ret;
+> @@ -295,13 +281,13 @@ static void stmpe_ts_get_platform_info(struct platf=
+orm_device *pdev,
 > =20
->  	return 0;
-> -
-> -err_req_irq:
-> -	gpio_free(OLPC_GPIO_DCON_BLANK);
-> -err_gp_blank:
-> -	gpio_free(OLPC_GPIO_DCON_LOAD);
-> -err_gp_load:
-> -	gpio_free(OLPC_GPIO_DCON_IRQ);
-> -err_gp_irq:
-> -	gpio_free(OLPC_GPIO_DCON_STAT1);
-> -err_gp_stat1:
-> -	gpio_free(OLPC_GPIO_DCON_STAT0);
-> -	return -EIO;
+>  	if (np) {
+>  		if (!of_property_read_u32(np, "st,sample-time", &val))
+> -			ts->sample_time =3D val;
+> +			ts->stmpe->sample_time =3D val;
+>  		if (!of_property_read_u32(np, "st,mod-12b", &val))
+> -			ts->mod_12b =3D val;
+> +			ts->stmpe->mod_12b =3D val;
+>  		if (!of_property_read_u32(np, "st,ref-sel", &val))
+> -			ts->ref_sel =3D val;
+> +			ts->stmpe->ref_sel =3D val;
+>  		if (!of_property_read_u32(np, "st,adc-freq", &val))
+> -			ts->adc_freq =3D val;
+> +			ts->stmpe->adc_freq =3D val;
+>  		if (!of_property_read_u32(np, "st,ave-ctrl", &val))
+>  			ts->ave_ctrl =3D val;
+>  		if (!of_property_read_u32(np, "st,touch-det-delay", &val))
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 8c5dfdce4326..bba159e8eaa4 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1204,7 +1204,7 @@ config MFD_STMPE
+> =20
+>  	  Currently supported devices are:
+> =20
+> -		STMPE811: GPIO, Touchscreen
+> +		STMPE811: GPIO, Touchscreen, ADC
+>  		STMPE1601: GPIO, Keypad
+>  		STMPE1801: GPIO, Keypad
+>  		STMPE2401: GPIO, Keypad
+> @@ -1217,6 +1217,7 @@ config MFD_STMPE
+>  		GPIO: stmpe-gpio
+>  		Keypad: stmpe-keypad
+>  		Touchscreen: stmpe-ts
+> +		ADC: stmpe-adc
+> =20
+>  menu "STMicroelectronics STMPE Interface Drivers"
+>  depends on MFD_STMPE
+> diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
+> index 566caca4efd8..35390d1c2e64 100644
+> --- a/drivers/mfd/stmpe.c
+> +++ b/drivers/mfd/stmpe.c
+> @@ -463,6 +463,28 @@ static const struct mfd_cell stmpe_ts_cell =3D {
+>  	.num_resources	=3D ARRAY_SIZE(stmpe_ts_resources),
+>  };
+> =20
+> +/*
+> + * ADC (STMPE811)
+> + */
+> +
+> +static struct resource stmpe_adc_resources[] =3D {
+> +	{
+> +		.name	=3D "STMPE_TEMP_SENS",
+> +		.flags	=3D IORESOURCE_IRQ,
+> +	},
+> +	{
+> +		.name	=3D "STMPE_ADC",
+> +		.flags	=3D IORESOURCE_IRQ,
+> +	},
+> +};
+> +
+> +static const struct mfd_cell stmpe_adc_cell =3D {
+> +	.name		=3D "stmpe-adc",
+> +	.of_compatible	=3D "st,stmpe-adc",
+> +	.resources	=3D stmpe_adc_resources,
+> +	.num_resources	=3D ARRAY_SIZE(stmpe_adc_resources),
+> +};
+> +
+>  /*
+>   * STMPE811 or STMPE610
+>   */
+> @@ -497,6 +519,11 @@ static struct stmpe_variant_block stmpe811_blocks[] =
+=3D {
+>  		.irq	=3D STMPE811_IRQ_TOUCH_DET,
+>  		.block	=3D STMPE_BLOCK_TOUCHSCREEN,
+>  	},
+> +	{
+> +		.cell	=3D &stmpe_adc_cell,
+> +		.irq	=3D STMPE811_IRQ_TEMP_SENS,
+> +		.block	=3D STMPE_BLOCK_ADC,
+> +	},
+>  };
+> =20
+>  static int stmpe811_enable(struct stmpe *stmpe, unsigned int blocks,
+> @@ -517,6 +544,44 @@ static int stmpe811_enable(struct stmpe *stmpe, unsi=
+gned int blocks,
+>  				enable ? 0 : mask);
 >  }
 > =20
->  static void dcon_wiggle_xo_1(void)
-> @@ -180,13 +184,13 @@ static void dcon_wiggle_xo_1(void)
-> =20
->  static void dcon_set_dconload_1(int val)
+> +static int stmpe811_init_adc(struct stmpe *stmpe)
+> +{
+> +	int ret;
+> +	u8 adc_ctrl1, adc_ctrl1_mask;
+> +
+> +	ret =3D stmpe_enable(stmpe, STMPE_BLOCK_ADC);
+> +	if (ret) {
+> +		dev_err(stmpe->dev, "Could not enable clock for ADC\n");
+
+This is a little unusual flow wise. It would be expected that stmpe_enable
+would leave no visible effects if it fails, so we shouldn't need
+to disable it explicitly in the error path here.  Any requirement
+for that should have been done inside stmpe_enable when it detects
+the error.  There are corner cases in which it might fail undetectably
+up, but we typically wouldn't handle those odd ones.
+
+If there is a really good reason that I'm missing I'd like to see
+a comment here saying why.
+
+> +		goto err_adc;
+> +	}
+> +
+> +	adc_ctrl1 =3D STMPE_SAMPLE_TIME(stmpe->sample_time) |
+> +		    STMPE_MOD_12B(stmpe->mod_12b) |
+> +		    STMPE_REF_SEL(stmpe->ref_sel);
+> +	adc_ctrl1_mask =3D STMPE_SAMPLE_TIME(0xff) | STMPE_MOD_12B(0xff) |
+> +			 STMPE_REF_SEL(0xff);
+> +
+> +	ret =3D stmpe_set_bits(stmpe, STMPE811_REG_ADC_CTRL1,
+> +			adc_ctrl1_mask, adc_ctrl1);
+> +	if (ret) {
+> +		dev_err(stmpe->dev, "Could not setup ADC\n");
+> +		goto err_adc;
+> +	}
+> +
+> +	ret =3D stmpe_set_bits(stmpe, STMPE811_REG_ADC_CTRL2,
+> +			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(stmpe->adc_freq));
+> +	if (ret) {
+> +		dev_err(stmpe->dev, "Could not setup ADC\n");
+> +		goto err_adc;
+> +	}
+> +
+> +	return 0;
+> +err_adc:
+> +	stmpe_disable(stmpe, STMPE_BLOCK_ADC);
+> +
+> +	return ret;
+> +}
+> +
+>  static int stmpe811_get_altfunc(struct stmpe *stmpe, enum stmpe_block bl=
+ock)
 >  {
-> -	gpio_set_value(OLPC_GPIO_DCON_LOAD, val);
-> +	gpiod_set_value(gpios[OLPC_DCON_LOAD], val);
+>  	/* 0 for touchscreen, 1 for GPIO */
+> @@ -1235,6 +1300,12 @@ static int stmpe_chip_init(struct stmpe *stmpe)
+>  			return ret;
+>  	}
+> =20
+> +	if (id =3D=3D STMPE811_ID) {
+> +		ret =3D stmpe811_init_adc(stmpe);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+>  	return stmpe_reg_write(stmpe, stmpe->regs[STMPE_IDX_ICR_LSB], icr);
 >  }
 > =20
->  static int dcon_read_status_xo_1(u8 *status)
->  {
-> -	*status =3D gpio_get_value(OLPC_GPIO_DCON_STAT0);
-> -	*status |=3D gpio_get_value(OLPC_GPIO_DCON_STAT1) << 1;
-> +	*status =3D gpiod_get_value(gpios[OLPC_DCON_STAT0]);
-> +	*status |=3D gpiod_get_value(gpios[OLPC_DCON_STAT1]) << 1;
+> @@ -1325,6 +1396,7 @@ int stmpe_probe(struct stmpe_client_info *ci, enum =
+stmpe_partnum partnum)
+>  	struct device_node *np =3D ci->dev->of_node;
+>  	struct stmpe *stmpe;
+>  	int ret;
+> +	u32 val;
 > =20
->  	/* Clear the negative edge status for GPIO7 */
->  	cs5535_gpio_set(OLPC_GPIO_DCON_IRQ, GPIO_NEGATIVE_EDGE_STS);
+>  	pdata =3D devm_kzalloc(ci->dev, sizeof(*pdata), GFP_KERNEL);
+>  	if (!pdata)
+> @@ -1342,6 +1414,15 @@ int stmpe_probe(struct stmpe_client_info *ci, enum=
+ stmpe_partnum partnum)
+>  	mutex_init(&stmpe->irq_lock);
+>  	mutex_init(&stmpe->lock);
+> =20
+> +	if (!of_property_read_u32(np, "st,sample-time", &val))
+> +		stmpe->sample_time =3D val;
+> +	if (!of_property_read_u32(np, "st,mod-12b", &val))
+> +		stmpe->mod_12b =3D val;
+> +	if (!of_property_read_u32(np, "st,ref-sel", &val))
+> +		stmpe->ref_sel =3D val;
+> +	if (!of_property_read_u32(np, "st,adc-freq", &val))
+> +		stmpe->adc_freq =3D val;
+> +
+>  	stmpe->dev =3D ci->dev;
+>  	stmpe->client =3D ci->client;
+>  	stmpe->pdata =3D pdata;
+> diff --git a/include/linux/mfd/stmpe.h b/include/linux/mfd/stmpe.h
+> index c0353f6431f9..86dca9e9880a 100644
+> --- a/include/linux/mfd/stmpe.h
+> +++ b/include/linux/mfd/stmpe.h
+> @@ -21,6 +21,9 @@
+>  #define STMPE_I_DRIVE(x)	(x & 0x1)
+>  #define STMPE_OP_MODE(x)	((x & 0x7) << 1)
+> =20
+> +#define STMPE811_REG_ADC_CTRL1	0x20
+> +#define STMPE811_REG_ADC_CTRL2	0x21
+> +
+>  struct device;
+>  struct regulator;
+> =20
+> @@ -134,6 +137,12 @@ struct stmpe {
+>  	u8 ier[2];
+>  	u8 oldier[2];
+>  	struct stmpe_platform_data *pdata;
+> +
+> +	/* For devices that use an ADC */
+> +	u8 sample_time;
+> +	u8 mod_12b;
+> +	u8 ref_sel;
+> +	u8 adc_freq;
+>  };
+> =20
+>  extern int stmpe_reg_write(struct stmpe *stmpe, u8 reg, u8 data);
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---7JfCtLOvnd9MIVvH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlv6d+MACgkQMOfwapXb+vI8vQCfaulEg6M9u3s3r49J+kTsofdu
-0awAnjQJ9HWAKKb/JmXZnIl21GY79ZoJ
-=iBOB
------END PGP SIGNATURE-----
-
---7JfCtLOvnd9MIVvH--
