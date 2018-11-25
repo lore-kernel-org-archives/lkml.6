@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6357C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D92FC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:59:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 978D420868
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:59:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 978D420868
+	by mail.kernel.org (Postfix) with ESMTP id D7A1B20868
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:59:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7A1B20868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbeKZFs5 (ORCPT
+        id S1727650AbeKZFvJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 00:48:57 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:52695 "EHLO
+        Mon, 26 Nov 2018 00:51:09 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:52697 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbeKZFs4 (ORCPT
+        with ESMTP id S1726616AbeKZFs4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 26 Nov 2018 00:48:56 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gQzaf-0003OC-I5; Sun, 25 Nov 2018 19:57:09 +0100
-Message-Id: <20181125185003.783903657@linutronix.de>
+        id 1gQzai-0003OS-7O; Sun, 25 Nov 2018 19:57:12 +0100
+Message-Id: <20181125185004.058866968@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 25 Nov 2018 19:33:31 +0100
+Date:   Sun, 25 Nov 2018 19:33:34 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -51,50 +51,119 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Greg KH <gregkh@linuxfoundation.org>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [patch V2 03/28] x86/speculation: Remove unnecessary ret variable in
- cpu_show_common()
+Subject: [patch V2 06/28] x86/speculation: Rename SSBD update functions
 References: <20181125183328.318175777@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=x86-speculation-Remove-unnecessary-ret-variable-in-cpu-show-common-.patch
+ filename=x86-speculation-Rename-SSBD-update-functions.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+During context switch, the SSBD bit in SPEC_CTRL MSR is updated according
+to changes of the TIF_SSBD flag in the current and next running task.
+
+Currently, only the bit controlling speculative store bypass disable in
+SPEC_CTRL MSR is updated and the related update functions all have
+"speculative_store" or "ssb" in their names.
+
+For enhanced mitigation control other bits in SPEC_CTRL MSR need to be
+updated as well, which makes the SSB names inadequate.
+
+Rename the "speculative_store*" functions to a more generic name.
+
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
----
- arch/x86/kernel/cpu/bugs.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
 
+---
+ arch/x86/include/asm/spec-ctrl.h |    6 +++---
+ arch/x86/kernel/cpu/bugs.c       |    4 ++--
+ arch/x86/kernel/process.c        |   12 ++++++------
+ 3 files changed, 11 insertions(+), 11 deletions(-)
+
+--- a/arch/x86/include/asm/spec-ctrl.h
++++ b/arch/x86/include/asm/spec-ctrl.h
+@@ -70,11 +70,11 @@ extern void speculative_store_bypass_ht_
+ static inline void speculative_store_bypass_ht_init(void) { }
+ #endif
+ 
+-extern void speculative_store_bypass_update(unsigned long tif);
++extern void speculation_ctrl_update(unsigned long tif);
+ 
+-static inline void speculative_store_bypass_update_current(void)
++static inline void speculation_ctrl_update_current(void)
+ {
+-	speculative_store_bypass_update(current_thread_info()->flags);
++	speculation_ctrl_update(current_thread_info()->flags);
+ }
+ 
+ #endif
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -847,8 +847,6 @@ static ssize_t l1tf_show_state(char *buf
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			       char *buf, unsigned int bug)
+@@ -200,7 +200,7 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl,
+ 		tif = setguest ? ssbd_spec_ctrl_to_tif(guestval) :
+ 				 ssbd_spec_ctrl_to_tif(hostval);
+ 
+-		speculative_store_bypass_update(tif);
++		speculation_ctrl_update(tif);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(x86_virt_spec_ctrl);
+@@ -632,7 +632,7 @@ static int ssb_prctl_set(struct task_str
+ 	 * mitigation until it is next scheduled.
+ 	 */
+ 	if (task == current && update)
+-		speculative_store_bypass_update_current();
++		speculation_ctrl_update_current();
+ 
+ 	return 0;
+ }
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -395,27 +395,27 @@ static __always_inline void amd_set_ssb_
+ 	wrmsrl(MSR_AMD64_VIRT_SPEC_CTRL, ssbd_tif_to_spec_ctrl(tifn));
+ }
+ 
+-static __always_inline void intel_set_ssb_state(unsigned long tifn)
++static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
  {
--	int ret;
--
- 	if (!boot_cpu_has_bug(bug))
- 		return sprintf(buf, "Not affected\n");
+ 	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
  
-@@ -866,13 +864,12 @@ static ssize_t cpu_show_common(struct de
- 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
+ 	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
+ }
  
- 	case X86_BUG_SPECTRE_V2:
--		ret = sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
- 			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
- 			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
- 			       spectre_v2_module_string());
--		return ret;
+-static __always_inline void __speculative_store_bypass_update(unsigned long tifn)
++static __always_inline void __speculation_ctrl_update(unsigned long tifn)
+ {
+ 	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
+ 		amd_set_ssb_virt_state(tifn);
+ 	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
+ 		amd_set_core_ssb_state(tifn);
+ 	else
+-		intel_set_ssb_state(tifn);
++		spec_ctrl_update_msr(tifn);
+ }
  
- 	case X86_BUG_SPEC_STORE_BYPASS:
- 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
+-void speculative_store_bypass_update(unsigned long tif)
++void speculation_ctrl_update(unsigned long tif)
+ {
+ 	preempt_disable();
+-	__speculative_store_bypass_update(tif);
++	__speculation_ctrl_update(tif);
+ 	preempt_enable();
+ }
+ 
+@@ -452,7 +452,7 @@ void __switch_to_xtra(struct task_struct
+ 		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
+ 
+ 	if ((tifp ^ tifn) & _TIF_SSBD)
+-		__speculative_store_bypass_update(tifn);
++		__speculation_ctrl_update(tifn);
+ }
+ 
+ /*
 
 
