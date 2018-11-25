@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B7EEC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6357C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FC2120868
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:59:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FC2120868
+	by mail.kernel.org (Postfix) with ESMTP id 978D420868
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:59:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 978D420868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbeKZFs5 (ORCPT
+        id S1726858AbeKZFs5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 26 Nov 2018 00:48:57 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:52692 "EHLO
+Received: from Galois.linutronix.de ([146.0.238.70]:52695 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726584AbeKZFs4 (ORCPT
+        with ESMTP id S1726586AbeKZFs4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 26 Nov 2018 00:48:56 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gQzae-0003O8-JA; Sun, 25 Nov 2018 19:57:08 +0100
-Message-Id: <20181125185003.688010903@linutronix.de>
+        id 1gQzaf-0003OC-I5; Sun, 25 Nov 2018 19:57:09 +0100
+Message-Id: <20181125185003.783903657@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 25 Nov 2018 19:33:30 +0100
+Date:   Sun, 25 Nov 2018 19:33:31 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -51,64 +51,50 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Greg KH <gregkh@linuxfoundation.org>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [patch V2 02/28] x86/speculation: Clean up spectre_v2_parse_cmdline()
+Subject: [patch V2 03/28] x86/speculation: Remove unnecessary ret variable in
+ cpu_show_common()
 References: <20181125183328.318175777@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=x86-speculation-Clean-up-spectre-v2-parse-cmdline-.patch
+ filename=x86-speculation-Remove-unnecessary-ret-variable-in-cpu-show-common-.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the unnecessary 'else' statement in spectre_v2_parse_cmdline()
-to save an indentation level.
-
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
 ---
- arch/x86/kernel/cpu/bugs.c |   27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -276,22 +276,21 @@ static enum spectre_v2_mitigation_cmd __
+@@ -847,8 +847,6 @@ static ssize_t l1tf_show_state(char *buf
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			       char *buf, unsigned int bug)
+ {
+-	int ret;
+-
+ 	if (!boot_cpu_has_bug(bug))
+ 		return sprintf(buf, "Not affected\n");
  
- 	if (cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
- 		return SPECTRE_V2_CMD_NONE;
--	else {
--		ret = cmdline_find_option(boot_command_line, "spectre_v2", arg, sizeof(arg));
--		if (ret < 0)
--			return SPECTRE_V2_CMD_AUTO;
+@@ -866,13 +864,12 @@ static ssize_t cpu_show_common(struct de
+ 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
  
--		for (i = 0; i < ARRAY_SIZE(mitigation_options); i++) {
--			if (!match_option(arg, ret, mitigation_options[i].option))
--				continue;
--			cmd = mitigation_options[i].cmd;
--			break;
--		}
-+	ret = cmdline_find_option(boot_command_line, "spectre_v2", arg, sizeof(arg));
-+	if (ret < 0)
-+		return SPECTRE_V2_CMD_AUTO;
+ 	case X86_BUG_SPECTRE_V2:
+-		ret = sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+ 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+ 			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
+ 			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
+ 			       spectre_v2_module_string());
+-		return ret;
  
--		if (i >= ARRAY_SIZE(mitigation_options)) {
--			pr_err("unknown option (%s). Switching to AUTO select\n", arg);
--			return SPECTRE_V2_CMD_AUTO;
--		}
-+	for (i = 0; i < ARRAY_SIZE(mitigation_options); i++) {
-+		if (!match_option(arg, ret, mitigation_options[i].option))
-+			continue;
-+		cmd = mitigation_options[i].cmd;
-+		break;
-+	}
-+
-+	if (i >= ARRAY_SIZE(mitigation_options)) {
-+		pr_err("unknown option (%s). Switching to AUTO select\n", arg);
-+		return SPECTRE_V2_CMD_AUTO;
- 	}
- 
- 	if ((cmd == SPECTRE_V2_CMD_RETPOLINE ||
+ 	case X86_BUG_SPEC_STORE_BYPASS:
+ 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
 
 
