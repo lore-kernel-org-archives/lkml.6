@@ -2,53 +2,53 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C3CAC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D322C04EBA
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:36:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00CEF2082E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:36:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 437502086B
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:36:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NE1Naq95";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H8JGUtxX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00CEF2082E
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Nvl9UqOk";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Nvl9UqOk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 437502086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbeKYP0e (ORCPT
+        id S1727276AbeKYP0j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 10:26:34 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:58790 "EHLO
+        Sun, 25 Nov 2018 10:26:39 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:58882 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbeKYP0e (ORCPT
+        with ESMTP id S1726828AbeKYP0i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 10:26:34 -0500
+        Sun, 25 Nov 2018 10:26:38 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9F6CC60877; Sun, 25 Nov 2018 04:36:22 +0000 (UTC)
+        id 89B5D6079C; Sun, 25 Nov 2018 04:36:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543120582;
-        bh=39r+AsrqmFK2JWtMIKONsKIU/YRybUEDgMmOlq+d/Rk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=NE1Naq95L17/Y8RFBKDW7rwiq7p+4Yk3ahYESlCXuX1f0YC4g+kfg+ojP+MdMGVyx
-         ev980tdKjiOIRcDbr6PNsrbRcYpy+R5LwRuDMdY6CUkn4q/P5XM4OZM53TxVY+4U5n
-         PZt8rNz3fHwx6SOy0X3mkRT8PEefNPiR9otA4ww8=
+        s=default; t=1543120587;
+        bh=SStUNadNDp88mqC2T/xLCxjW2QV8V19SYDG+Wrwma9E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Nvl9UqOkiXIuluWmOdqxrlZM6FAc0aKMKKS64JCMakoqCYYBFcZVoLYNtVfrqn9r6
+         FYtZeEVNSJw8Tyb3YA+Smxlumu416vmT4otXKj0JsLFnSQEcuaYCWCLCY/w4NSNAd6
+         QepO1iuMecU66qbXZgw1OahKeYk1E/vNd1emocLI=
 Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D4BA6602D7;
-        Sun, 25 Nov 2018 04:36:16 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 72DC1602D7;
+        Sun, 25 Nov 2018 04:36:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543120580;
-        bh=39r+AsrqmFK2JWtMIKONsKIU/YRybUEDgMmOlq+d/Rk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=H8JGUtxX7OXFmC/J8Ha+nVJ3FCaNGy731oJwFeRl5lZOTPlZSnyI9bnBQXOR6eeJx
-         tJrJD8c7FdqkCEy5+2Q2JOQ+uyFJCqRZY8ME5jSiarEUjzKzLOuqGHRLasWPuGvv1g
-         pD2U31O2gfGIsqr6dM4OlQIw/gdPJwjZGjYb/d7k=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D4BA6602D7
+        s=default; t=1543120587;
+        bh=SStUNadNDp88mqC2T/xLCxjW2QV8V19SYDG+Wrwma9E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Nvl9UqOkiXIuluWmOdqxrlZM6FAc0aKMKKS64JCMakoqCYYBFcZVoLYNtVfrqn9r6
+         FYtZeEVNSJw8Tyb3YA+Smxlumu416vmT4otXKj0JsLFnSQEcuaYCWCLCY/w4NSNAd6
+         QepO1iuMecU66qbXZgw1OahKeYk1E/vNd1emocLI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 72DC1602D7
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
 From:   Taniya Das <tdas@codeaurora.org>
@@ -60,90 +60,85 @@ Cc:     Andy Gross <andy.gross@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, robh@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v4 0/2] Add QCOM graphics clock controller driver for SDM845
-Date:   Sun, 25 Nov 2018 10:06:06 +0530
-Message-Id: <1543120569-14444-1-git-send-email-tdas@codeaurora.org>
+        Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v4 1/2] dt-bindings: clock: Introduce QCOM Graphics clock bindings
+Date:   Sun, 25 Nov 2018 10:06:07 +0530
+Message-Id: <1543120569-14444-2-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1543120569-14444-1-git-send-email-tdas@codeaurora.org>
+References: <1543120569-14444-1-git-send-email-tdas@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes in v4:
-* Cleanup the GPUCC code to keep only the clocks which would be requested
-  from the GPU client SW.
-* Clean up of code as well as header file clock IDs.
-* Due to the above cleanup the patches to enable/disable clocks for GPU GDSC
-  requirement is not supported : https://patchwork.kernel.org/patch/10563889/
-* The GPU_GX RCG support is also removed from the main driver, so the corresponding
-  RCG ops are removed : https://patchwork.kernel.org/patch/10563891/
+From: Amit Nischal <anischal@codeaurora.org>
 
-Changes in v3:
-* Modified the determine_rate() op to use the min/max rate range
-  to round the requested rate within the set_rate range. With this,
-  requested set rate will always stay within the limits.
+Add device tree bindings for graphics clock controller for
+Qualcomm Technology Inc's SDM845 SoCs.
 
-Changes in v2:
-Addressed review comments given by Stephen: https://lkml.org/lkml/2018/6/6/294
-* Introduce clk_rcg2_gfx3d_determine_rate ops to return the best parent
-  as 'gpucc_pll0_even' and best parent rate as twice of the requested rate
-  always. This will eliminate the need of frequency table as source and
-  div-2 are fixed for gfx3d_clk_src.
-  Also modified the clk_rcg2_set_rate ops to configure the fixed source and
-  div.
-* Add support to check if requested rate falls within allowed set_rate range.
-  This will not let the source gpucc_pll0 to go out of the supported range
-  and also client can request the rate within the range.
-* Fixed comment text in probe function and added module description for GPUCC
-  driver.
-
-The graphics clock driver depends upon the below change.
-	https://lkml.org/lkml/2018/6/23/108
-
-Changes in v1:
-This patch series adds support for graphics clock controller for SDM845.
-Below is the brief description for each change:
-
-1. For some of the GDSCs, there is requirement to enable/disable the
-   few clocks before turning on/off the gdsc power domain. This patch
-   will add support to enable/disable the clock associated with the
-   gdsc along with power domain on/off callbacks.
-
-2. To turn on the gpu_gx_gdsc, there is a hardware requirement to
-   turn on the root clock (GFX3D RCG) first which would be the turn
-   on signal for the gdsc along with the SW_COLLAPSE. As per the
-   current implementation of clk_rcg2_shared_ops, it clears the
-   root_enable bit in the enable() clock ops. But due to the above
-   said requirement for GFX3D shared RCG, root_enable bit would be
-   already set by gdsc driver and rcg2_shared_ops should not clear
-   the root unless the disable() is called.
-
-   This patch add support for the same by reusing the existing
-   clk_rcg2_shared_ops and deriving "clk_rcg2_gfx3d_ops" clk_ops
-   for GFX3D clock to take care of the root set/clear requirement.
-
-3. Add device tree bindings for graphics clock controller for SDM845.
-
-4. Add graphics clock controller (GPUCC) driver for SDM845.
-
-[v1] : https://lore.kernel.org/patchwork/project/lkml/list/?series=348697
-[v2] : https://lore.kernel.org/patchwork/project/lkml/list/?series=359012
-
-Amit Nischal (2):
-  dt-bindings: clock: Introduce QCOM Graphics clock bindings
-  clk: qcom: Add graphics clock controller driver for SDM845
-
- .../devicetree/bindings/clock/qcom,gpucc.txt       |  18 ++
- drivers/clk/qcom/Kconfig                           |   9 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/gpucc-sdm845.c                    | 231 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,gpucc-sdm845.h      |  24 +++
- 5 files changed, 283 insertions(+)
+Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+---
+ .../devicetree/bindings/clock/qcom,gpucc.txt       | 18 ++++++++++++++++
+ include/dt-bindings/clock/qcom,gpucc-sdm845.h      | 24 ++++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.txt
- create mode 100644 drivers/clk/qcom/gpucc-sdm845.c
  create mode 100644 include/dt-bindings/clock/qcom,gpucc-sdm845.h
 
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.txt b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
+new file mode 100644
+index 0000000..93752db
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
+@@ -0,0 +1,18 @@
++Qualcomm Graphics Clock & Reset Controller Binding
++--------------------------------------------------
++
++Required properties :
++- compatible : shall contain "qcom,sdm845-gpucc".
++- reg : shall contain base register location and length.
++- #clock-cells : from common clock binding, shall contain 1.
++- #reset-cells : from common reset binding, shall contain 1.
++- #power-domain-cells : from generic power domain binding, shall contain 1.
++
++Example:
++	gpucc: clock-controller@5090000 {
++		compatible = "qcom,sdm845-gpucc";
++		reg = <0x5090000 0x9000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++		#power-domain-cells = <1>;
++	};
+diff --git a/include/dt-bindings/clock/qcom,gpucc-sdm845.h b/include/dt-bindings/clock/qcom,gpucc-sdm845.h
+new file mode 100644
+index 0000000..9690d90
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,gpucc-sdm845.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_SDM_GPU_CC_SDM845_H
++#define _DT_BINDINGS_CLK_SDM_GPU_CC_SDM845_H
++
++/* GPU_CC clock registers */
++#define GPU_CC_CX_GMU_CLK			0
++#define GPU_CC_CXO_CLK				1
++#define GPU_CC_GMU_CLK_SRC			2
++#define GPU_CC_PLL1				3
++
++/* GPU_CC Resets */
++#define GPUCC_GPU_CC_CX_BCR			0
++#define GPUCC_GPU_CC_GMU_BCR			1
++#define GPUCC_GPU_CC_XO_BCR			2
++
++/* GPU_CC GDSCRs */
++#define GPU_CX_GDSC				0
++#define GPU_GX_GDSC				1
++
++#endif
 --
 Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
 of the Code Aurora Forum, hosted by the  Linux Foundation.
