@@ -2,137 +2,180 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77EABC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFB8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1837920865
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:15:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1837920865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
+	by mail.kernel.org (Postfix) with ESMTP id 794BD2087E
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:21:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 794BD2087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbeKYMEw (ORCPT
+        id S1726956AbeKYMLP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 07:04:52 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:56286 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbeKYMEw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 07:04:52 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 66B082238B;
-        Sat, 24 Nov 2018 20:14:59 -0500 (EST)
-Date:   Sun, 25 Nov 2018 12:15:07 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-cc:     Kars de Jong <jongk@linux-m68k.org>,
-        Philip Blundell <philb@gnu.org>,
-        Andreas Schwab <schwab@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Stephen N Chivers <schivers@csc.com.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 09/14] m68k: hp300: Remove hp300_gettimeoffset()
-In-Reply-To: <alpine.LNX.2.21.1811212129520.275@nippy.intranet>
-Message-ID: <alpine.LNX.2.21.1811250953120.10@nippy.intranet>
-References: <cover.1542589838.git.fthain@telegraphics.com.au> <eb676d37a8e40b88f6c577b372b6512bc19a3394.1542589838.git.fthain@telegraphics.com.au> <CACz-3rh6Qw7YxeFK41KG_ju-bWHRoCaciWvv7JLeURn7wGVAOg@mail.gmail.com> <alpine.LNX.2.21.1811202034350.258@nippy.intranet>
- <CAMuHMdVQPSE7+Pe64OybnugCx-pLVfKmNS6_4DEofF3XZPBLsA@mail.gmail.com> <alpine.LNX.2.21.1811211917270.275@nippy.intranet> <CAMuHMdVexpeYVSBMXFwu5cYt3d=w9U48m_fNTuK5awhBNnsW_A@mail.gmail.com> <alpine.LNX.2.21.1811212032550.275@nippy.intranet>
- <CAMuHMdVzamshSdhDAnxdzq=YiQMvDhrE03UmJxHJLHr6g=u44Q@mail.gmail.com> <alpine.LNX.2.21.1811212129520.275@nippy.intranet>
+        Sun, 25 Nov 2018 07:11:15 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41152 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726515AbeKYMLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 07:11:15 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7A6D0308AA13;
+        Sun, 25 Nov 2018 01:21:26 +0000 (UTC)
+Received: from whitewolf.lyude.net.com (ovpn-120-179.rdu2.redhat.com [10.10.120.179])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A59FF4F7F;
+        Sun, 25 Nov 2018 01:21:22 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/meson: Fix OOB memory accesses in meson_viu_set_osd_lut()
+Date:   Sat, 24 Nov 2018 20:21:17 -0500
+Message-Id: <20181125012117.31915-1-lyude@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Sun, 25 Nov 2018 01:21:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Nov 2018, I wrote:
+Currently on driver bringup with KASAN enabled, meson triggers an OOB
+memory access as shown below:
 
-> On Wed, 21 Nov 2018, Geert Uytterhoeven wrote:
-> 
-> > > This suggests that either 0 or N (the latched value) would result 
-> > > from a read from the counter immediately following an interrupt. Who 
-> > > can say which? Just have to try it. The answer should allow us to 
-> > > avoid the risk of a clocksource that jumps forwards and backwards.
-> > 
-> > The code in amiga_gettimeoffset() does:
-> > 
-> >         ticks = hi << 8 | lo;
-> > 
-> >         if (ticks > jiffy_ticks / 2)
-> >                 /* check for pending interrupt */
-> >                 if (cia_set_irq(&ciab_base, 0) & CIA_ICR_TA)
-> >                         offset = 10000;
-> > 
-> 
-> That _suggests_ that there's no interrupt when ticks == 0.
-> 
-> But look what happens next:
-> 
-> >         ticks = jiffy_ticks - ticks;
-> > 
-> >         ticks = (10000 * ticks) / jiffy_ticks;
-> > 
-> >         return (ticks + offset) * 1000;
-> 
-> If (hi << 8 | lo) == 0, and you set offset = 10000, then the return 
-> value would be maximal.
-> 
-> Let's immediately call this function again. This time (hi << 8 | lo) == 
-> N. Let's add the offset again. I'm afraid the clock just jumped 
-> backwards.
-> 
-> So the logic you quoted has a rationale which is unrelated to the 
-> question.
-> 
+[  117.904528] ==================================================================
+[  117.904560] BUG: KASAN: global-out-of-bounds in meson_viu_set_osd_lut+0x7a0/0x890
+[  117.904588] Read of size 4 at addr ffff20000a63ce24 by task systemd-udevd/498
+[  117.904601]
+[  118.083372] CPU: 4 PID: 498 Comm: systemd-udevd Not tainted 4.20.0-rc3Lyude-Test+ #20
+[  118.091143] Hardware name: amlogic khadas-vim2/khadas-vim2, BIOS 2018.07-rc2-armbian 09/11/2018
+[  118.099768] Call trace:
+[  118.102181]  dump_backtrace+0x0/0x3e8
+[  118.105796]  show_stack+0x14/0x20
+[  118.109083]  dump_stack+0x130/0x1c4
+[  118.112539]  print_address_description+0x60/0x25c
+[  118.117214]  kasan_report+0x1b4/0x368
+[  118.120851]  __asan_report_load4_noabort+0x18/0x20
+[  118.125566]  meson_viu_set_osd_lut+0x7a0/0x890
+[  118.129953]  meson_viu_init+0x10c/0x290
+[  118.133741]  meson_drv_bind_master+0x474/0x748
+[  118.138141]  meson_drv_bind+0x10/0x18
+[  118.141760]  try_to_bring_up_master+0x3d8/0x768
+[  118.146249]  component_add+0x214/0x570
+[  118.149978]  meson_dw_hdmi_probe+0x18/0x20 [meson_dw_hdmi]
+[  118.155404]  platform_drv_probe+0x98/0x138
+[  118.159455]  really_probe+0x2a0/0xa70
+[  118.163070]  driver_probe_device+0x1b4/0x2d8
+[  118.167299]  __driver_attach+0x200/0x280
+[  118.171189]  bus_for_each_dev+0x10c/0x1a8
+[  118.175144]  driver_attach+0x38/0x50
+[  118.178681]  bus_add_driver+0x330/0x608
+[  118.182471]  driver_register+0x140/0x388
+[  118.186361]  __platform_driver_register+0xc8/0x108
+[  118.191117]  meson_dw_hdmi_platform_driver_init+0x1c/0x1000 [meson_dw_hdmi]
+[  118.198022]  do_one_initcall+0x12c/0x3bc
+[  118.201883]  do_init_module+0x1fc/0x638
+[  118.205673]  load_module+0x4b4c/0x6808
+[  118.209387]  __se_sys_init_module+0x2e8/0x3c0
+[  118.213699]  __arm64_sys_init_module+0x68/0x98
+[  118.218100]  el0_svc_common+0x104/0x210
+[  118.221893]  el0_svc_handler+0x48/0xb8
+[  118.225594]  el0_svc+0x8/0xc
+[  118.228429]
+[  118.229887] The buggy address belongs to the variable:
+[  118.235007]  eotf_33_linear_mapping+0x84/0xc0
+[  118.239301]
+[  118.240752] Memory state around the buggy address:
+[  118.245522]  ffff20000a63cd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  118.252695]  ffff20000a63cd80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  118.259850] >ffff20000a63ce00: 00 00 00 00 04 fa fa fa fa fa fa fa 00 00 00 00
+[  118.267000]                                ^
+[  118.271222]  ffff20000a63ce80: 00 fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+[  118.278393]  ffff20000a63cf00: 00 00 00 00 00 00 00 00 00 00 00 00 04 fa fa fa
+[  118.285542] ==================================================================
+[  118.292699] Disabling lock debugging due to kernel taint
 
-I've learned that emulators like MAME [1] and VICE [2] have used a 
-reverse-engineered description of the CIA called "A Software Model of the 
-CIA6526" by Wolfgang Lorenz and an accompanying test suite [3].
+It seems that when looping through the OSD EOTF LUT maps, we use the
+same max iterator for OETF: 20. This is wrong though, since 20*2 is 40,
+which means that we'll stop out of bounds on the EOTF maps.
 
-That document says, "When the counter has reached zero, it is reloaded 
-from the latch as soon as there is another clock waiting in the pipeline. 
-In phase 2 mode, this is always the case. This explains why you are 
-reading zeros in cascaded mode only (2-2-2-1-1-1-0-0-2) but not in phase 2 
-mode (2-1-2)."
+But, this whole thing is already confusing enough to read through as-is,
+so let's just replace all of the hardcoded sizes with
+OSD_(OETF/EOTF)_LUT_SIZE / 2.
 
-I think this is a good argument that a zero count will never be observed 
-by reading the counter register. Hence, it seems that this conditional in 
-the v3 patch,
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Carlo Caione <carlo@caione.org>
+Cc: Kevin Hilman <khilman@baylibre.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-amlogic@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: <stable@vger.kernel.org> # v4.10+
+---
+ drivers/gpu/drm/meson/meson_viu.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-	if (msb > 0)
-
-is redundant and should be removed.
-
-It could be reverted to,
-
-	if (ticks > jiffy_ticks / 2)
-
-which is intended to reduce the number of calls to cia_set_irq() but 
-assumes low interrupt latency (below 5 ms).
-
-Maybe the timer interrupt has a sufficiently high priority and latency is 
-low? Maybe cia_set_irq() is really expensive?
-
-I don't know the platform well enough so I'm inclined to revert. We can 
-benchmark gettimeofday syscalls on elgar but is that hardware 
-representative of other relevant models?
-
-[1] 
-https://github.com/mamedev/mame/commit/e2ed0490520f538c346c8bdaa9084bcbc43427cb
-
-[2]
-http://vice-emu.sourceforge.net/vice_9.html
-
-[3]
-https://www.commodore.ca/manuals/funet/cbm/documents/chipdata/cia6526.zip
-
+diff --git a/drivers/gpu/drm/meson/meson_viu.c b/drivers/gpu/drm/meson/meson_viu.c
+index 6bcfa527c180..26a0857878bf 100644
+--- a/drivers/gpu/drm/meson/meson_viu.c
++++ b/drivers/gpu/drm/meson/meson_viu.c
+@@ -184,18 +184,18 @@ void meson_viu_set_osd_lut(struct meson_drm *priv, enum viu_lut_sel_e lut_sel,
+ 	if (lut_sel == VIU_LUT_OSD_OETF) {
+ 		writel(0, priv->io_base + _REG(addr_port));
+ 
+-		for (i = 0; i < 20; i++)
++		for (i = 0; i < (OSD_OETF_LUT_SIZE / 2); i++)
+ 			writel(r_map[i * 2] | (r_map[i * 2 + 1] << 16),
+ 				priv->io_base + _REG(data_port));
+ 
+ 		writel(r_map[OSD_OETF_LUT_SIZE - 1] | (g_map[0] << 16),
+ 			priv->io_base + _REG(data_port));
+ 
+-		for (i = 0; i < 20; i++)
++		for (i = 0; i < (OSD_OETF_LUT_SIZE / 2); i++)
+ 			writel(g_map[i * 2 + 1] | (g_map[i * 2 + 2] << 16),
+ 				priv->io_base + _REG(data_port));
+ 
+-		for (i = 0; i < 20; i++)
++		for (i = 0; i < (OSD_OETF_LUT_SIZE / 2); i++)
+ 			writel(b_map[i * 2] | (b_map[i * 2 + 1] << 16),
+ 				priv->io_base + _REG(data_port));
+ 
+@@ -211,18 +211,18 @@ void meson_viu_set_osd_lut(struct meson_drm *priv, enum viu_lut_sel_e lut_sel,
+ 	} else if (lut_sel == VIU_LUT_OSD_EOTF) {
+ 		writel(0, priv->io_base + _REG(addr_port));
+ 
+-		for (i = 0; i < 20; i++)
++		for (i = 0; i < (OSD_EOTF_LUT_SIZE / 2); i++)
+ 			writel(r_map[i * 2] | (r_map[i * 2 + 1] << 16),
+ 				priv->io_base + _REG(data_port));
+ 
+ 		writel(r_map[OSD_EOTF_LUT_SIZE - 1] | (g_map[0] << 16),
+ 			priv->io_base + _REG(data_port));
+ 
+-		for (i = 0; i < 20; i++)
++		for (i = 0; i < (OSD_EOTF_LUT_SIZE / 2); i++)
+ 			writel(g_map[i * 2 + 1] | (g_map[i * 2 + 2] << 16),
+ 				priv->io_base + _REG(data_port));
+ 
+-		for (i = 0; i < 20; i++)
++		for (i = 0; i < (OSD_EOTF_LUT_SIZE / 2); i++)
+ 			writel(b_map[i * 2] | (b_map[i * 2 + 1] << 16),
+ 				priv->io_base + _REG(data_port));
+ 
 -- 
+2.19.1
+
