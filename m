@@ -6,111 +6,106 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B05AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 13:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3054C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 13:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B69282089F
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 13:54:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8038620868
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 13:57:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="o9lbVdUX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B69282089F
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="1aUGJkfu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8038620868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbeKZApr (ORCPT
+        id S1726290AbeKZAsN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 19:45:47 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:30936 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbeKZApr (ORCPT
+        Sun, 25 Nov 2018 19:48:13 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:44695 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbeKZAsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 19:45:47 -0500
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id wAPDsZMX027010;
-        Sun, 25 Nov 2018 22:54:36 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com wAPDsZMX027010
+        Sun, 25 Nov 2018 19:48:12 -0500
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id wAPDux1W018779
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 22:57:00 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wAPDux1W018779
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1543154076;
-        bh=hH/vAaOoUpB2TDSUWPW2NjP83PJ6T46EPcY68HGCbUA=;
+        s=dec2015msa; t=1543154220;
+        bh=aIuesR7do2IocVBw8Ifx6CBIm/2NA2X6nJXyEEXcI20=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=o9lbVdUXPUN2Mk7hxo4Z4CTOnSAIPHnYNzJDkuljnPEZn9b0uJZGL9Ffh6Nbq/dMx
-         iIljJyV5mSqidlQo940Wii6w7k2DSw4yzpOJIO9Ivk7mHExjssf+wsIlZiH9cF2Abg
-         denZ12BM4rWRhxBJeEsRmmynqUtX9nNawE2EOp2Z25LsP44P6nBtK7S5uEKUDISEzj
-         i+TcAEQ3L2Dpwyzb1xxISSEREvJayfumloyyRMdgbb1GDD6U0B9wTMiQhHYluoRZzM
-         q4R7zF29ixVzepD0lZxhy3932HJcClgs0OQzTW6JT0m1ffRaM6leOE+GAge8fm7/fg
-         KWDQUfE8NP3nQ==
-X-Nifty-SrcIP: [209.85.217.50]
-Received: by mail-vs1-f50.google.com with SMTP id r14so9675341vsc.13;
-        Sun, 25 Nov 2018 05:54:36 -0800 (PST)
-X-Gm-Message-State: AGRZ1gIYIU4JRGDaqcDz8BMmBczy2T3yZrkGbyq40AGzZYENoaDuC34U
-        jW3XypiJGjLj6/dfq8PhxKBLHGMX8moD6+UfHHk=
-X-Google-Smtp-Source: AJdET5e1EdGgMmiZINniI8FuHlakqq2Pt71qlvCou1g9zRa/Xfc+96FMdb13P6n1ySTzBSEapDxHcROyztQ0ShydXoU=
-X-Received: by 2002:a67:385a:: with SMTP id f87mr9823917vsa.179.1543154075229;
- Sun, 25 Nov 2018 05:54:35 -0800 (PST)
+        b=1aUGJkfuFA2JPFrklE4SBF3GYLpme5k4XdBywvYRdOUeIEp//kRoPOZHMgFZHOpv/
+         gi3hgG7PgdxBa6uxkHf9LguwUhkV9b+4RVy/LbVZ/AHpNxyRBVOlCcQELjjyZGgKAu
+         2nSXCh4ZEgja/gHdq78HuD9EaBJRNQ+SxG52WxJE/iyea7GdsHRl9t3QQdyDgr04bx
+         D8/yElge86Fs2bUuF4NMGYUYlCgWbqs5dtLweSLhuyRKKbZ2eeaSCTZcdxhNeM1LUN
+         /FxdH1WapbMxxvYApOSyFHa5m+EXAK5lsj+sia8xUdSKocy6uD/R5ndw/ohq+qYglA
+         INaQ0NMCK+nig==
+X-Nifty-SrcIP: [209.85.222.46]
+Received: by mail-ua1-f46.google.com with SMTP id z11so5431839uaa.10
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 05:57:00 -0800 (PST)
+X-Gm-Message-State: AA+aEWYw8Vt7TGHb23WGQUXALX4cSO0l06LI4b79zejS/WTnvyy7TTue
+        bkqNvtYSpikLSNPKokM4QEk1hTbPJ3Poth5mVfg=
+X-Google-Smtp-Source: AFSGD/WYRpP+O0FLaNc8OH3hCZbFsl9hD4XX00Rb4zzFTsAp+slHNo/4vcraSCwHaz3c0Z5uBv5rFdXMth/VC7Mn1MM=
+X-Received: by 2002:ab0:6705:: with SMTP id q5mr9751327uam.89.1543154219015;
+ Sun, 25 Nov 2018 05:56:59 -0800 (PST)
 MIME-Version: 1.0
-References: <1539276063-5103-1-git-send-email-yamada.masahiro@socionext.com> <20181124141616.GH3175@vkoul-mobl.Dlink>
-In-Reply-To: <20181124141616.GH3175@vkoul-mobl.Dlink>
+References: <1542856462-18836-1-git-send-email-yamada.masahiro@socionext.com>
+ <20181122143201.d7vifhlny7gmrhzd@ltop.local> <CANiq72miapoMHiXsq-gSu5+dhpGDE6Dnf3c_6DpHRkwNiPPU6g@mail.gmail.com>
+In-Reply-To: <CANiq72miapoMHiXsq-gSu5+dhpGDE6Dnf3c_6DpHRkwNiPPU6g@mail.gmail.com>
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sun, 25 Nov 2018 22:53:59 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR8Tk9iXPLnv4XDM0E=kTWwv2+UGz+xmtA-eJyjRFjFRw@mail.gmail.com>
-Message-ID: <CAK7LNAR8Tk9iXPLnv4XDM0E=kTWwv2+UGz+xmtA-eJyjRFjFRw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] dmaengine: add UniPhier MIO DMAC driver
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
-        <dmaengine@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        DTML <devicetree@vger.kernel.org>,
+Date:   Sun, 25 Nov 2018 22:56:23 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATVWmt9Eiy8s2wBbCGrWaus=j2b4NZ-OnEoTeph9x3dJw@mail.gmail.com>
+Message-ID: <CAK7LNATVWmt9Eiy8s2wBbCGrWaus=j2b4NZ-OnEoTeph9x3dJw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] kernel.h: disable type-checks in container_of()
+ for Sparse
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Alexei Starovoitov <ast@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+        NeilBrown <neilb@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>, cmo@melexis.com,
+        Dan Carpenter <dan.carpenter@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 24, 2018 at 11:16 PM Vinod Koul <vkoul@kernel.org> wrote:
+On Sat, Nov 24, 2018 at 6:06 PM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 >
-> On 12-10-18, 01:41, Masahiro Yamada wrote:
-> > 1/2: DT-binding
-> > 2/2: driver
+> On Fri, Nov 23, 2018 at 10:14 PM Luc Van Oostenryck
+> <luc.vanoostenryck@gmail.com> wrote:
+> >
+> > On Thu, Nov 22, 2018 at 12:14:20PM +0900, Masahiro Yamada wrote:
+> > > When I tried to enable BUILD_BUG_ON for Sparse, the kbuild test robot
+> > > reported lots of "unknown expression" warnings from container_of(),
+> > > which seemed false positive.
+> > >
+> > > I addressed this in [1], but fixing Sparse is the right thing to do.
+> > >
+> > > The issue was fixed by Sparse commit 0eb8175d3e9c ("fix expansion of
+> > > function designator"), but it will take time until the fixed version
+> > > of Sparse is widely available.
+> > >
+> > > Disable the container_of() type checks for Sparse for now.
+> >
+> > I would prefer that developers upgrade their version of sparse but ...
+> >
+> > Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 >
-> Applied this series, thanks
+> Indeed. If someone is writing code for the latest kernels, I think it
+> is reasonable to assume they are able to use the latest sparse too,
+> since it is not required for compilation anyway.
 
 
-Thanks.
+I am OK with either way.
 
-
-> While building I noticed that we get few warns when compiling with
-> C=1, I would prefer you fix them. Please send fixes on top of the
-> applied patches.
-
-My code is fine.
-
-If you are talking about the following, your sparse is too old.
-Upgrade your sparse.
-
-./include/linux/overflow.h:285:13: error: undefined identifier
-'__builtin_mul_overflow'
-./include/linux/overflow.h:285:13: error: incorrect type in conditional
-./include/linux/overflow.h:285:13:    got void
-./include/linux/overflow.h:287:13: error: undefined identifier
-'__builtin_add_overflow'
-./include/linux/overflow.h:287:13: error: incorrect type in conditional
-./include/linux/overflow.h:287:13:    got void
-./include/linux/overflow.h:285:13: warning: call with no type!
-./include/linux/overflow.h:287:13: warning: call with no type!
-
-
-
-
-
-> Thanks
-> --
-> ~Vinod
+I leave this to Andrew.
 
 
 
