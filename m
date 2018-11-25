@@ -2,123 +2,120 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42331C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 23:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF41C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 23:47:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0013420855
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 23:46:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC29F20865
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 23:47:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JQWzSE4+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0013420855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bed5rzPm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC29F20865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726168AbeKZKit (ORCPT
+        id S1726202AbeKZKjb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 05:38:49 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:48770 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbeKZKit (ORCPT
+        Mon, 26 Nov 2018 05:39:31 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42136 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbeKZKjb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 05:38:49 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAPNkRfo091030;
-        Sun, 25 Nov 2018 17:46:27 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1543189587;
-        bh=lf8LtwdUZED+A+ylnyyjZqjtl4ylg+CfCwWhN2BcRJg=;
-        h=From:To:CC:Subject:Date;
-        b=JQWzSE4+6TC5xJcikUjvWKs1oSkm2Cft2JTR08nSgriYOyagYK/hslNFE2jgdk+R8
-         agWc9LWA41TuHQozVOOyINva/to7rDllmC5dUQzOsGF1HmRnkx1l2Ho/QPizfJqhBS
-         la93ZcWq9UpU+8uonhIQw0qlYITrklXTB0EIYdZc=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAPNkRbB126123
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 25 Nov 2018 17:46:27 -0600
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sun, 25
- Nov 2018 17:46:27 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Sun, 25 Nov 2018 17:46:27 -0600
-Received: from legion.dal.desgin.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAPNkRJT017822;
-        Sun, 25 Nov 2018 17:46:27 -0600
-Received: from localhost (uda0226610.dhcp.ti.com [128.247.59.147])
-        by legion.dal.desgin.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id wAPNkRU03338;
-        Sun, 25 Nov 2018 17:46:27 -0600 (CST)
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-To:     "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>
-CC:     Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH net-next] net: ethernet: ti: cpsw: drop vid0 configuration in dual_mac mode
-Date:   Sun, 25 Nov 2018 17:46:26 -0600
-Message-ID: <20181125234626.28474-1-grygorii.strashko@ti.com>
-X-Mailer: git-send-email 2.10.5
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Mon, 26 Nov 2018 05:39:31 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 64so5634648pfr.9;
+        Sun, 25 Nov 2018 15:47:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=119WCIjD/9PeWkiZt1Gu4+OimZm1Q9WqFbU+PsTKo+I=;
+        b=Bed5rzPmz6eybEMdOynkJks6JWpyNI6U2AWnXQkdH7OPCA+uZMngIGdRrghphoD3r8
+         VENk7PG9Wx6AQb1TH2047uFRj9RvH3woqMcOLd8ViOsy3Z7hu4GvB1JVOqvqozd2c3g5
+         ZwOGOfNGUopSWxTP81uRS/thtjvKFbF5e9wtkcQbQ+4uFcDnouwO8HAnz/5GS759VkL9
+         3TJ4XikgtqM1cvDyjO58qSNluSlo8vLbgz0qzvRHmqQ2Bixx09El2TCOtskHQeI7lJW2
+         sjCIyMRm5fIgIK1C3GeAzGK3kcZWgLCI7bgbOl+Lbg6ogAbx6ceKaQ0mQJPINS30bjmV
+         XC1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=119WCIjD/9PeWkiZt1Gu4+OimZm1Q9WqFbU+PsTKo+I=;
+        b=tuNHVf3y4I1j1b1WBoZovrujjH0SPIo/TBa1YlC2fLULV6RwF8o6iIAapj3egjdnAZ
+         jRPEicIIrp8ATe5YzsOLS7/4t70+dsZNMIk6NvTzqvIMH5Kf+a191KqKszL1eXh0RDH7
+         6RZlnOoG1694C8FUQduk5mBrW3R4n1atrTPMjpB/E+NfkdlMD6cvHr2N8Lak96yIrTIW
+         uJ8dD7dHkLxXy+m2TsghP5Aa1XHYcGgTsbeXs0JfOB74RyT+Gawle6fu6BE7FQTc6HvT
+         4M5I4oCoARhqGv9HnJ77iyDMXeaNEi9KaytE/5YDZ+Q72m/m/Zjs8zsR7SX3/K9U21hG
+         t6KQ==
+X-Gm-Message-State: AA+aEWZ/re3FdyocneVli4AUOnwsFA/LVRF20Bk+kAlbI1gQ+H6qIVJ8
+        BpjsYzddCoZdb2+Coq5y6ug=
+X-Google-Smtp-Source: AFSGD/WULMYGgN8Fy6knvi6ImyzOR7FdwpjnK+ACRVwvDZl9R7GnTvHQCFk2X///gbN5+myDY0Vcxg==
+X-Received: by 2002:a63:ee4c:: with SMTP id n12mr21823183pgk.21.1543189632823;
+        Sun, 25 Nov 2018 15:47:12 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id x3sm48789867pgk.18.2018.11.25.15.47.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 25 Nov 2018 15:47:11 -0800 (PST)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hwmon fixes for v4.20-rc5
+Date:   Sun, 25 Nov 2018 15:47:10 -0800
+Message-Id: <1543189630-5306-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In dual_mac mode CPSW driver uses vid1 and vid2 by default to implement
-dual mac mode wich are used to configure pvids for each external ports.
-But, historicaly, it also adds vid0 to ALE table and sets "untag" bits for both
-ext. ports. As result, it's imposible to use priority tagged packets in
-dual mac mode.
+Hi Linus,
 
-Hence, drop vid0 configuration in dual mac mode as it's not required for dual
-mac mode functionality and, this way, make it possible to use priority
-tagged packet in dual mac mode.
+Please pull hwmon fixes for Linux v4.20-rc5 from signed tag:
 
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- drivers/net/ethernet/ti/cpsw.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v4.20-rc5
 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 15d563c..4f3a159 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -2036,9 +2036,6 @@ static int cpsw_ndo_open(struct net_device *ndev)
- 	/* Add default VLAN */
- 	if (!cpsw->data.dual_emac)
- 		cpsw_add_default_vlan(priv);
--	else
--		cpsw_ale_add_vlan(cpsw->ale, cpsw->data.default_vlan,
--				  ALE_ALL_PORTS, ALE_ALL_PORTS, 0, 0);
- 
- 	/* initialize shared resources for every ndev */
- 	if (!cpsw->usage_count) {
-@@ -2490,7 +2487,7 @@ static int cpsw_ndo_vlan_rx_add_vid(struct net_device *ndev,
- 	struct cpsw_common *cpsw = priv->cpsw;
- 	int ret;
- 
--	if (vid == cpsw->data.default_vlan)
-+	if (!cpsw->data.dual_emac && vid == cpsw->data.default_vlan)
- 		return 0;
- 
- 	ret = pm_runtime_get_sync(cpsw->dev);
-@@ -2528,7 +2525,7 @@ static int cpsw_ndo_vlan_rx_kill_vid(struct net_device *ndev,
- 	struct cpsw_common *cpsw = priv->cpsw;
- 	int ret;
- 
--	if (vid == cpsw->data.default_vlan)
-+	if (!cpsw->data.dual_emac && vid == cpsw->data.default_vlan)
- 		return 0;
- 
- 	ret = pm_runtime_get_sync(cpsw->dev);
--- 
-2.10.5
+Thanks,
+Guenter
+------
 
+The following changes since commit ccda4af0f4b92f7b4c308d3acc262f4a7e3affad:
+
+  Linux 4.20-rc2 (2018-11-11 17:12:31 -0600)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-v4.20-rc5
+
+for you to fetch changes up to 09aaf6813cfca4c18034fda7a43e68763f34abb1:
+
+  hwmon: (w83795) temp4_type has writable permission (2018-11-18 14:34:56 -0800)
+
+----------------------------------------------------------------
+hwmon fixes for v4.20-rc5
+
+Fix temp4_type attribute permissions in w83795 driver
+Fix tacho fault detection in mlxreg-fan driver
+Fix current value calculations in ina2xx driver
+Fix initial notification/warning in raspberrypi driver
+Fix a NULL pointer access in ina2xx
+
+----------------------------------------------------------------
+Huacai Chen (1):
+      hwmon: (w83795) temp4_type has writable permission
+
+Nicolin Chen (2):
+      hwmon (ina2xx) Fix NULL id pointer in probe()
+      hwmon: (ina2xx) Fix current value calculation
+
+Stefan Wahren (1):
+      hwmon: (raspberrypi) Fix initial notify
+
+Vadim Pasternak (1):
+      hwmon: (mlxreg-fan) Fix macros for tacho fault reading
+
+ drivers/hwmon/ina2xx.c            | 6 +++---
+ drivers/hwmon/mlxreg-fan.c        | 2 +-
+ drivers/hwmon/raspberrypi-hwmon.c | 6 ------
+ drivers/hwmon/w83795.c            | 2 +-
+ 4 files changed, 5 insertions(+), 11 deletions(-)
