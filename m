@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C4BC43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D58C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B880A2084E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:57:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B880A2084E
+	by mail.kernel.org (Postfix) with ESMTP id 10EA32084E
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:57:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10EA32084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727533AbeKZFtR (ORCPT
+        id S1727565AbeKZFtS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 00:49:17 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:52943 "EHLO
+        Mon, 26 Nov 2018 00:49:18 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:52963 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbeKZFtP (ORCPT
+        with ESMTP id S1727456AbeKZFtS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 00:49:15 -0500
+        Mon, 26 Nov 2018 00:49:18 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gQzb2-0003U4-37; Sun, 25 Nov 2018 19:57:32 +0100
-Message-Id: <20181125185005.652305076@linutronix.de>
+        id 1gQzb3-0003US-Ab; Sun, 25 Nov 2018 19:57:33 +0100
+Message-Id: <20181125185005.759457117@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 25 Nov 2018 19:33:51 +0100
+Date:   Sun, 25 Nov 2018 19:33:52 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -51,95 +51,100 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Greg KH <gregkh@linuxfoundation.org>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [patch V2 23/28] x86/speculation: Split out TIF update
+Subject: [patch V2 24/28] x86/speculation: Prepare arch_smt_update() for PRCTL
+ mode
 References: <20181125183328.318175777@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=x86-speculation-Split-out-TIF-update.patch
+ filename=x86-speculation-Prepare-arch-smt-update-for-PRCTL-mode.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The update of the TIF_SSBD flag and the conditional speculation control MSR
-update is done in the ssb_prctl_set() function directly. The upcoming prctl
-support for controlling indirect branch speculation via STIBP needs the
-same mechanism.
+The upcoming fine grained per task STIBP control needs to be updated on CPU
+hotplug as well.
 
-Split the code out and make it reusable. Reword the comment about updates
-for other tasks.
+Split out the code which controls the strict mode so the prctl control code
+can be added later. Mark the SMP function call argument __unused while at it.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+
 ---
-V1 -> V2: Update comment.
+
+v1 -> v2: s/app2app/user/. Mark smp function argument __unused
+
 ---
- arch/x86/kernel/cpu/bugs.c |   35 +++++++++++++++++++++++------------
- 1 file changed, 23 insertions(+), 12 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |   46 ++++++++++++++++++++++++---------------------
+ 1 file changed, 25 insertions(+), 21 deletions(-)
 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -702,10 +702,29 @@ static void ssb_select_mitigation(void)
- #undef pr_fmt
- #define pr_fmt(fmt)     "Speculation prctl: " fmt
+@@ -530,40 +530,44 @@ static void __init spectre_v2_select_mit
+ 	arch_smt_update();
+ }
  
--static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
-+static void task_update_spec_tif(struct task_struct *tsk, int tifbit, bool on)
+-static bool stibp_needed(void)
++static void update_stibp_msr(void * __unused)
  {
- 	bool update;
+-	/* Enhanced IBRS makes using STIBP unnecessary. */
+-	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
+-		return false;
+-
+-	/* Check for strict user mitigation mode */
+-	return spectre_v2_user == SPECTRE_V2_USER_STRICT;
++	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
+ }
  
-+	if (on)
-+		update = !test_and_set_tsk_thread_flag(tsk, tifbit);
-+	else
-+		update = test_and_clear_tsk_thread_flag(tsk, tifbit);
+-static void update_stibp_msr(void *info)
++/* Update x86_spec_ctrl_base in case SMT state changed. */
++static void update_stibp_strict(void)
+ {
+-	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
++	u64 mask = x86_spec_ctrl_base & ~SPEC_CTRL_STIBP;
 +
-+	/*
-+	 * Immediately update the speculation control MSRs for the current
-+	 * task, but for a non-current task delay setting the CPU
-+	 * mitigation until it is scheduled next.
-+	 *
-+	 * This can only happen for SECCOMP mitigation. For PRCTL it's
-+	 * always the current task.
-+	 */
-+	if (tsk == current && update)
-+		speculation_ctrl_update_current();
-+}
++	if (sched_smt_active())
++		mask |= SPEC_CTRL_STIBP;
 +
-+static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
-+{
- 	if (ssb_mode != SPEC_STORE_BYPASS_PRCTL &&
- 	    ssb_mode != SPEC_STORE_BYPASS_SECCOMP)
- 		return -ENXIO;
-@@ -716,28 +735,20 @@ static int ssb_prctl_set(struct task_str
- 		if (task_spec_ssb_force_disable(task))
- 			return -EPERM;
- 		task_clear_spec_ssb_disable(task);
--		update = test_and_clear_tsk_thread_flag(task, TIF_SSBD);
-+		task_update_spec_tif(task, TIF_SSBD, false);
- 		break;
- 	case PR_SPEC_DISABLE:
- 		task_set_spec_ssb_disable(task);
--		update = !test_and_set_tsk_thread_flag(task, TIF_SSBD);
-+		task_update_spec_tif(task, TIF_SSBD, true);
- 		break;
- 	case PR_SPEC_FORCE_DISABLE:
- 		task_set_spec_ssb_disable(task);
- 		task_set_spec_ssb_force_disable(task);
--		update = !test_and_set_tsk_thread_flag(task, TIF_SSBD);
-+		task_update_spec_tif(task, TIF_SSBD, true);
- 		break;
- 	default:
- 		return -ERANGE;
++	if (mask == x86_spec_ctrl_base)
++		return;
++
++	pr_info("Spectre v2 user space SMT mitigation: STIBP %s\n",
++		mask & SPEC_CTRL_STIBP ? "always-on" : "off");
++	x86_spec_ctrl_base = mask;
++	on_each_cpu(update_stibp_msr, NULL, 1);
+ }
+ 
+ void arch_smt_update(void)
+ {
+-	u64 mask;
+-
+-	if (!stibp_needed())
++	/* Enhanced IBRS implies STIBP. No update required. */
++	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
+ 		return;
+ 
+ 	mutex_lock(&spec_ctrl_mutex);
+ 
+-	mask = x86_spec_ctrl_base & ~SPEC_CTRL_STIBP;
+-	if (sched_smt_active())
+-		mask |= SPEC_CTRL_STIBP;
+-
+-	if (mask != x86_spec_ctrl_base) {
+-		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
+-			mask & SPEC_CTRL_STIBP ? "Enabling" : "Disabling");
+-		x86_spec_ctrl_base = mask;
+-		on_each_cpu(update_stibp_msr, NULL, 1);
++	switch (spectre_v2_user) {
++	case SPECTRE_V2_USER_NONE:
++		break;
++	case SPECTRE_V2_USER_STRICT:
++		update_stibp_strict();
++		break;
  	}
--
--	/*
--	 * If being set on non-current task, delay setting the CPU
--	 * mitigation until it is next scheduled.
--	 */
--	if (task == current && update)
--		speculation_ctrl_update_current();
--
- 	return 0;
++
+ 	mutex_unlock(&spec_ctrl_mutex);
  }
  
 
