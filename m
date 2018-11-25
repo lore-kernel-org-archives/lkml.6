@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BF1C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D449BC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED8DB2082F
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:20:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED8DB2082F
+	by mail.kernel.org (Postfix) with ESMTP id A41912082F
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:20:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A41912082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbeKZIMN (ORCPT
+        id S1726404AbeKZIMU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 03:12:13 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:35212 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbeKZIMN (ORCPT
+        Mon, 26 Nov 2018 03:12:20 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45242 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbeKZIMU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 03:12:13 -0500
-Received: by mail-qt1-f196.google.com with SMTP id v11so15477649qtc.2;
-        Sun, 25 Nov 2018 13:20:14 -0800 (PST)
+        Mon, 26 Nov 2018 03:12:20 -0500
+Received: by mail-qt1-f193.google.com with SMTP id e5so15495729qtr.12;
+        Sun, 25 Nov 2018 13:20:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:organization:content-transfer-encoding;
-        bh=bMDavPfWrsM8Ixn5Bu+GWFh5dhTnsIk63iyZIoNG/qM=;
-        b=YWmV4rFb7kn8C6qt+kP7Pvysc/TZlrPmo2wLjrWZxe0Et462q8y3ecg3/rqhv/PcSi
-         T/9oGYgsSr4YwlfcUJPCdQmUtExJfutf0l7xuWKwVErtzE0MuQI+LNVRPLdt4D+lGZdo
-         XgOjgASjBHuCUOBrTqHMWsuMN7zoitbz7OLIpYVp0HHuEv5QeqbteI2YdPI/UkzOmUf7
-         xcjoxQAoJqkcgT+ZvlEs0PrfvtLDwJlFPjpJ9TuL094H1dNZxKpKZZ2WD/wyzBvA4viT
-         1oFjlqR8hbAJy3QvTv51a3vZCBFA8Ga68M17hvxw5pyhARlAhGCkCCKVd6VdeSRc+tVe
-         zNgw==
-X-Gm-Message-State: AGRZ1gJ/tyogYuFJg41xJvVCRXtRMy/gZhhDf5w3M5te5DOkatlk6TCc
-        OoFQnKMTfOLOjUHiFMvC2FyVRRlp
-X-Google-Smtp-Source: AJdET5ehrnKYNl92IhKGQXm06BE4lEDzBj7bTgKraracbc8A57IERLFnKl8nlx2UJZ9iRsYTMS7RVA==
-X-Received: by 2002:ac8:5392:: with SMTP id x18mr23058268qtp.299.1543180813485;
-        Sun, 25 Nov 2018 13:20:13 -0800 (PST)
+        bh=0I+uWKN4GS3+l65NpqS0JmEUsO4byaMbcY6AlhK07H0=;
+        b=ryGLxBRoxPZ/Jra5QLQLDVlFQ2BkRRUKNr8qzLf63uRAUe6lcQSz+TOYf/OuBW44bU
+         WGqz/9hwDZsb9RX+oALXhdTSSwLWDUojGvs8fmgicH5keOvwjwgHq0r14yXXROMpn+Av
+         QyST4Y9NuRWLxWHt01p0kMulMPwch623ztsfZuc+ZMcqk9342DI8irv1LoH2i0rrDeGR
+         yvTmC+kTZnE1Dgd8PyyRgXFxGQ14/exaxVWH0cV1eGAWEkcON5WBhp/KTluL/JkP0dNF
+         dzSha2wRMy5S1+yZNWJsjVhjYLWA5pcLfghh8g8DVFELBBvoOtU84Vito/9MIF5XZx2X
+         65xA==
+X-Gm-Message-State: AGRZ1gJp2HVhGucR3Gzhq0II8gCuoXh/S5hWHNFgmo7Gk6mHM1X5d+Hm
+        Nm25w8PEBJ72lDdcm3VAD4wR3aZT
+X-Google-Smtp-Source: AFSGD/VyrfXG1zCyouLtc+1trJ7a4jJe26htoOZVOqbegObwHN0OYxggUWdpxqj9LnAD001l+l+ulA==
+X-Received: by 2002:aed:3fb1:: with SMTP id s46mr22756161qth.208.1543180820330;
+        Sun, 25 Nov 2018 13:20:20 -0800 (PST)
 Received: from localhost.localdomain ([181.220.65.91])
-        by smtp.gmail.com with ESMTPSA id j95sm27438526qtb.74.2018.11.25.13.20.09
+        by smtp.gmail.com with ESMTPSA id v32sm32303696qta.37.2018.11.25.13.20.16
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Nov 2018 13:20:12 -0800 (PST)
-Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 25 Nov 2018 19:20:07 -0200
+        Sun, 25 Nov 2018 13:20:19 -0800 (PST)
+Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 25 Nov 2018 19:20:13 -0200
 From:   Otavio Salvador <otavio@ossystems.com.br>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org
@@ -54,9 +54,9 @@ Cc:     Otavio Salvador <otavio@ossystems.com.br>,
         devicetree@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 09/13] ARM: dts: rv1108: Assign the proper GPIO clocks
-Date:   Sun, 25 Nov 2018 19:19:03 -0200
-Message-Id: <20181125211907.9895-9-otavio@ossystems.com.br>
+Subject: [PATCH 10/13] ARM: dts: rv1108: Add UART DMA support
+Date:   Sun, 25 Nov 2018 19:19:04 -0200
+Message-Id: <20181125211907.9895-10-otavio@ossystems.com.br>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181125211907.9895-1-otavio@ossystems.com.br>
 References: <20181125211907.9895-1-otavio@ossystems.com.br>
@@ -68,58 +68,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is not correct to assign the 24MHz clock oscillator to the GPIO
-ports.
-
-Fix it by assigning the proper GPIO clocks instead.
+Pass the 'dmas' property to the UART ports so that DMA can
+be supported.
 
 Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
 Signed-off-by: Fabio Berton <fabio.berton@ossystems.com.br>
 ---
 
- arch/arm/boot/dts/rv1108.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/rv1108.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/arch/arm/boot/dts/rv1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
-index 442b749eb2e9..ce5509c4657b 100644
+index ce5509c4657b..7ef6d965871c 100644
 --- a/arch/arm/boot/dts/rv1108.dtsi
 +++ b/arch/arm/boot/dts/rv1108.dtsi
-@@ -562,7 +562,7 @@
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x20030000 0x100>;
- 			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&xin24m>;
-+			clocks = <&cru PCLK_GPIO0_PMU>;
- 
- 			gpio-controller;
- 			#gpio-cells = <2>;
-@@ -575,7 +575,7 @@
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x10310000 0x100>;
- 			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&xin24m>;
-+			clocks = <&cru PCLK_GPIO1>;
- 
- 			gpio-controller;
- 			#gpio-cells = <2>;
-@@ -588,7 +588,7 @@
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x10320000 0x100>;
- 			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&xin24m>;
-+			clocks = <&cru PCLK_GPIO2>;
- 
- 			gpio-controller;
- 			#gpio-cells = <2>;
-@@ -601,7 +601,7 @@
- 			compatible = "rockchip,gpio-bank";
- 			reg = <0x10330000 0x100>;
- 			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&xin24m>;
-+			clocks = <&cru PCLK_GPIO3>;
- 
- 			gpio-controller;
- 			#gpio-cells = <2>;
+@@ -114,6 +114,8 @@
+ 		interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
+ 		reg-shift = <2>;
+ 		reg-io-width = <4>;
++		dmas = <&pdma 6>, <&pdma 7>;
++		#dma-cells = <2>;
+ 		clock-frequency = <24000000>;
+ 		clocks = <&cru SCLK_UART2>, <&cru PCLK_UART2>;
+ 		clock-names = "baudclk", "apb_pclk";
+@@ -128,6 +130,8 @@
+ 		interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+ 		reg-shift = <2>;
+ 		reg-io-width = <4>;
++		dmas = <&pdma 4>, <&pdma 5>;
++		#dma-cells = <2>;
+ 		clock-frequency = <24000000>;
+ 		clocks = <&cru SCLK_UART1>, <&cru PCLK_UART1>;
+ 		clock-names = "baudclk", "apb_pclk";
+@@ -142,6 +146,8 @@
+ 		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+ 		reg-shift = <2>;
+ 		reg-io-width = <4>;
++		dmas = <&pdma 2>, <&pdma 3>;
++		#dma-cells = <2>;
+ 		clock-frequency = <24000000>;
+ 		clocks = <&cru SCLK_UART0>, <&cru PCLK_UART0>;
+ 		clock-names = "baudclk", "apb_pclk";
 -- 
 2.19.1
 
