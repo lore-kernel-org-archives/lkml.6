@@ -2,182 +2,122 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC94C04EBA
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 10:59:34 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5AC420868
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B6DC43441
 	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 10:59:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTPTHO1p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5AC420868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id A86FD20867
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 10:59:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A86FD20867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726457AbeKYVuU (ORCPT
+        id S1727612AbeKYVsr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 16:50:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53450 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726184AbeKYVuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 16:50:20 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03DFA20865;
-        Sun, 25 Nov 2018 10:59:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543143570;
-        bh=ismbxXx5+pAJ2PmvDHhjSwbHJBQeSPnUzYF0/3GfBbY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nTPTHO1pjgi9j7NjwEpAa9o04+fl9pZkYBCq5CMO5PHVQhWgtZqaiPWYXhOHH1lQS
-         tYOF9JYlNRhICyxg8efd29x5Da6s3d3UJM7XOJL0Km7yzYfGW+1tdy+9OvLZ3O/DD5
-         V0h0ALcTVm8SFbA5h7pKjsvJWKlhU0jjfSpOwbNY=
-Date:   Sun, 25 Nov 2018 10:59:26 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc:     lars@metafoo.de, Michael.Hennerich@analog.com, knaack.h@gmx.de,
-        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: Re: [PATCH] staging: iio: ad5933: replaced kfifo by
- triggered_buffer
-Message-ID: <20181125105926.4730a798@archlinux>
-In-Reply-To: <20181122125347.sn2oqrw7fyb4corf@smtp.gmail.com>
-References: <20181122125347.sn2oqrw7fyb4corf@smtp.gmail.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 25 Nov 2018 16:48:47 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60578 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727182AbeKYVsq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 16:48:46 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id C4E5E80954; Sun, 25 Nov 2018 11:57:52 +0100 (CET)
+Date:   Sun, 25 Nov 2018 11:57:54 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Joe Perches <joe@perches.com>,
+        "Tobin C. Harding" <me@tobin.cc>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steve French <stfrench@microsoft.com>,
+        Olof Johansson <olof@lixom.net>, linux-nvdimm@lists.01.org,
+        ksummit-discuss@lists.linuxfoundation.org
+Subject: Re: [RFC PATCH 0/3] Maintainer Handbook: Subsystem Profile
+Message-ID: <20181125105754.GB25471@amd>
+References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="QKdGvSO+nmPlgiQ/"
+Content-Disposition: inline
+In-Reply-To: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Nov 2018 10:53:47 -0200
-Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
 
-> Previously, there was an implicit creation of a kfifo which was replaced
-> by a call to triggered_buffer_setup, which is already implemented in iio
-> infrastructure.
-> 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+--QKdGvSO+nmPlgiQ/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm a little surprised that this would work without screaming a lot as 
-it will register an interrupt with no handlers. Do you have this
-device to test?  It's rapidly heading in the direction of too complex
-a driver to fix without test hardware.  Also, semantically this change
-is not sensible as it implies an operating mode which the driver
-is not using.
+On Wed 2018-11-14 20:53:13, Dan Williams wrote:
+> At a recently concluded session at the Linux Plumbers Conference I
+> proposed a "Subsystem Profile" as a document that a maintainer can
+> provide to set contributor expectations and provide fodder for a
+> discussion between maintainers about the merits of different maintainer
+> policies.
+>=20
+> For those that did not attend, the goal of the Subsystem Profile, and the
+> Maintainer Handbook more generally, is to provide a desk reference for
+> maintainers both new and experienced. The session introduction was:
+>=20
+>     The first rule of kernel maintenance is that there are no hard and
+>     fast rules. That state of affairs is both a blessing and a curse. It
+>     has served the community well to be adaptable to the different
+>     people and different problem spaces that inhabit the kernel
+>     community. However, that variability also leads to inconsistent
+>     experiences for contributors, little to no guidance for new
+>     contributors, and unnecessary stress on current maintainers. There
+>     are quite a few of people who have been around long enough to make
+>     enough mistakes that they have gained some hard earned proficiency.
+>     However if the kernel community expects to keep growing it needs to
+>     be able both scale the maintainers it has and ramp new ones without
+>     necessarily let them make a decades worth of mistakes to learn the
+>     ropes.=20
+>=20
+> To be clear, the proposed document does not impose or suggest new
+> rules. Instead it provides an outlet to document the unwritten rules
+> and policies in effect for each subsystem, and that each subsystem
+> might decide differently for whatever reason.
 
-There are fundamental questions about how we handle an autotriggered
-sweep that need answering before this driver can move forwards.
-It needs some concept of a higher level trigger rather than a per
-sample one like we typically use in IIO.
+Sounds like a new rules to me :-(, making submitting simple patches
+harder.
 
-The main focus in the short term should be around defining that ABI
-as it may fundamentally change the structure of the driver.
-If you want to take this on (and it'll be a big job I think!) then
-it may be possible to source some hardware to support that effort.
-
-Thanks,
-
-Jonathan
-
-> ---
->  .../staging/iio/impedance-analyzer/Kconfig    |  2 +-
->  .../staging/iio/impedance-analyzer/ad5933.c   | 25 ++++---------------
->  2 files changed, 6 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/impedance-analyzer/Kconfig b/drivers/staging/iio/impedance-analyzer/Kconfig
-> index dd97b6bb3fd0..d0af5aa55dc0 100644
-> --- a/drivers/staging/iio/impedance-analyzer/Kconfig
-> +++ b/drivers/staging/iio/impedance-analyzer/Kconfig
-> @@ -7,7 +7,7 @@ config AD5933
->  	tristate "Analog Devices AD5933, AD5934 driver"
->  	depends on I2C
->  	select IIO_BUFFER
-> -	select IIO_KFIFO_BUF
-> +	select IIO_TRIGGERED_BUFFER
->  	help
->  	  Say yes here to build support for Analog Devices Impedance Converter,
->  	  Network Analyzer, AD5933/4, provides direct access via sysfs.
-> diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/staging/iio/impedance-analyzer/ad5933.c
-> index f9bcb8310e21..edb8b540bbf1 100644
-> --- a/drivers/staging/iio/impedance-analyzer/ad5933.c
-> +++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
-> @@ -20,7 +20,7 @@
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
->  #include <linux/iio/buffer.h>
-> -#include <linux/iio/kfifo_buf.h>
-> +#include <linux/iio/triggered_buffer.h>
->  
->  /* AD5933/AD5934 Registers */
->  #define AD5933_REG_CONTROL_HB		0x80	/* R/W, 1 byte */
-> @@ -615,22 +615,6 @@ static const struct iio_buffer_setup_ops ad5933_ring_setup_ops = {
->  	.postdisable = ad5933_ring_postdisable,
->  };
->  
-> -static int ad5933_register_ring_funcs_and_init(struct iio_dev *indio_dev)
-> -{
-> -	struct iio_buffer *buffer;
-> -
-> -	buffer = iio_kfifo_allocate();
-> -	if (!buffer)
-> -		return -ENOMEM;
-> -
-> -	iio_device_attach_buffer(indio_dev, buffer);
-> -
-> -	/* Ring buffer functions - here trigger setup related */
-> -	indio_dev->setup_ops = &ad5933_ring_setup_ops;
-> -
-> -	return 0;
-> -}
-> -
->  static void ad5933_work(struct work_struct *work)
->  {
->  	struct ad5933_state *st = container_of(work,
-> @@ -744,7 +728,8 @@ static int ad5933_probe(struct i2c_client *client,
->  	indio_dev->channels = ad5933_channels;
->  	indio_dev->num_channels = ARRAY_SIZE(ad5933_channels);
->  
-> -	ret = ad5933_register_ring_funcs_and_init(indio_dev);
-> +	ret = iio_triggered_buffer_setup(indio_dev, NULL, NULL,
-> +					 &ad5933_ring_setup_ops);
-
-The absence of either of the interrupt related callbacks made me
-wonder what is going on here.  The upshot is that this device
-isn't operating in a triggered buffer style at all so we really
-shouldn't be using that infrastructure - even if it's convenient.
-
-It'll allocate an interrupt with neither a top half nor a thread
-function. I'm not sure what the core will do about that but it
-seems unlikely to be happy about it!
+It would be good if the rules were similar / same accross the
+subsystems, documenting "it is okay to be different" is not really helpful.
 
 
->  	if (ret)
->  		goto error_disable_reg;
->  
-> @@ -759,7 +744,7 @@ static int ad5933_probe(struct i2c_client *client,
->  	return 0;
->  
->  error_unreg_ring:
-> -	iio_kfifo_free(indio_dev->buffer);
-> +	iio_triggered_buffer_cleanup(indio_dev);
->  error_disable_reg:
->  	regulator_disable(st->reg);
->  
-> @@ -772,7 +757,7 @@ static int ad5933_remove(struct i2c_client *client)
->  	struct ad5933_state *st = iio_priv(indio_dev);
->  
->  	iio_device_unregister(indio_dev);
-> -	iio_kfifo_free(indio_dev->buffer);
-> +	iio_triggered_buffer_cleanup(indio_dev);
->  	regulator_disable(st->reg);
->  
->  	return 0;
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
+--QKdGvSO+nmPlgiQ/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlv6gDIACgkQMOfwapXb+vIHpACeMr/5ZBBOd8P13v1FJdbu09st
+8jwAoLVfTBCtCF/7C+p9+kZKxV4DKggb
+=utEq
+-----END PGP SIGNATURE-----
+
+--QKdGvSO+nmPlgiQ/--
