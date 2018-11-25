@@ -2,235 +2,119 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4A2C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 15:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 436C5C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 15:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A536020865
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 15:19:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tc+/1yzx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A536020865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 088F9213A2
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 15:21:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 088F9213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbeKZCLN (ORCPT
+        id S1727013AbeKZCNC convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 21:11:13 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33314 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbeKZCLM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 21:11:12 -0500
-Received: by mail-lf1-f67.google.com with SMTP id i26so11689826lfc.0;
-        Sun, 25 Nov 2018 07:19:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=V2lGi5Vje5KJ5bexqiZzI6xr0RnGVgmauvE8nPWILMk=;
-        b=tc+/1yzxKNgOIe5SF5Q2IJ+tRK+4taieJI1kBl/JpzXTDo/77+OKRi3fDUmYyuwbBv
-         W1Lu3sXmbEAASp11RZCWXtHThyMNMvXtd7UPnfSRxzkCsqBilz9XucfsQuIwJiwuhTAj
-         SuU8YQaRt3zW8hUMH5fUruwtuPHIb1z9LLnQsCA83f2yDLC5DUXL1zfPmu1KYE3lCj8a
-         IpUnpJ3aturXETCUWlevAylBjzE3/SZ5O5qGfH/LyXJ4bItPuO5fbT+0e17+R8w/GczF
-         /k56UP2/wT7KVEYGjMlEdP3VNhJSCH+kuxINQx6NXD6uir64vqJRmTaDP619jiZxDeVg
-         gzdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=V2lGi5Vje5KJ5bexqiZzI6xr0RnGVgmauvE8nPWILMk=;
-        b=NiX/c0KzJWE591Fx64JpfWE4VlEHtSFtsOppI5xPWLJlpv5ZNagtAPXVjzLQF131lw
-         3W1sYhj6vY0lYi0wA5BiQ9CMzN5hL4MEpzzNkCBOztSPoIIUOtxqnpO6Jty7evofwZdx
-         2nZpPsUEKMKKLDWw7MXSP5vUIkB6GZkkUkV0wXJIFwOztojIUjESMyxfCbPHqIXnCiY+
-         Jp51YgvNLebGHRtlwBcEvmFZz33sHSAZt+SzOT9tAQCkv/51q2lOFGbM4NTnKEIMQ68n
-         iRx0CGLpu6FDizV7TE2PRMRUReugOlMffJRynejIfnklIhhCeQeWlAKAm45EngWCT5xx
-         EF1Q==
-X-Gm-Message-State: AGRZ1gIEbgJEUOf9UBS8bNO+CsPvGc6pl+EQ2Iy/WNMrh+6XvJBj+ZFt
-        2KfH6Vy5uZbqIkW27ppsA78=
-X-Google-Smtp-Source: AJdET5fsj+stESnF1/ugPE1sR496TzR9xrdsgLNgoiiormJEYV6vvRX/LdEVRkdhG/h1gwOQVIsIlA==
-X-Received: by 2002:a19:d287:: with SMTP id j129mr14559124lfg.26.1543159192903;
-        Sun, 25 Nov 2018 07:19:52 -0800 (PST)
-Received: from localhost (89-70-226-70.dynamic.chello.pl. [89.70.226.70])
-        by smtp.gmail.com with ESMTPSA id 67-v6sm9026965ljc.26.2018.11.25.07.19.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Nov 2018 07:19:52 -0800 (PST)
-Date:   Sun, 25 Nov 2018 16:19:33 +0100
-From:   Tomasz Duszynski <tduszyns@gmail.com>
-To:     Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-Cc:     Tomasz Duszynski <tduszyns@gmail.com>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] iio: add IIO_MASSCONCENTRATION channel type
-Message-ID: <20181125150524.GA5053@arch>
-References: <20181124221415.10081-1-tduszyns@gmail.com>
- <20181124221415.10081-2-tduszyns@gmail.com>
- <20181125083507.1b155cc8@archlinux>
+        Sun, 25 Nov 2018 21:13:02 -0500
+Received: from mail-oln040092064060.outbound.protection.outlook.com ([40.92.64.60]:51896
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726179AbeKZCNC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 21:13:02 -0500
+Received: from HE1EUR01FT031.eop-EUR01.prod.protection.outlook.com
+ (10.152.0.55) by HE1EUR01HT224.eop-EUR01.prod.protection.outlook.com
+ (10.152.1.150) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1339.10; Sun, 25 Nov
+ 2018 15:21:42 +0000
+Received: from AM0PR03MB4676.eurprd03.prod.outlook.com (10.152.0.57) by
+ HE1EUR01FT031.mail.protection.outlook.com (10.152.0.177) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1339.10 via Frontend Transport; Sun, 25 Nov 2018 15:21:42 +0000
+Received: from AM0PR03MB4676.eurprd03.prod.outlook.com
+ ([fe80::b527:e8e:9955:7c03]) by AM0PR03MB4676.eurprd03.prod.outlook.com
+ ([fe80::b527:e8e:9955:7c03%4]) with mapi id 15.20.1294.048; Sun, 25 Nov 2018
+ 15:21:42 +0000
+From:   Jonas Karlman <jonas@kwiboo.se>
+To:     "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+CC:     Jonas Karlman <jonas@kwiboo.se>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        "Paul Kocialkowski" <paul.kocialkowski@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        "Smitha T Murthy" <smitha.t@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCH] media: v4l: Fix MPEG-2 slice Intra DC Precision validation
+Thread-Topic: [PATCH] media: v4l: Fix MPEG-2 slice Intra DC Precision
+ validation
+Thread-Index: AQHUhNKRUWp/dRRbvEugocGCqJWSrg==
+Date:   Sun, 25 Nov 2018 15:21:42 +0000
+Message-ID: <AM0PR03MB46764B5CB90B17825C56DFFFACD60@AM0PR03MB4676.eurprd03.prod.outlook.com>
+Accept-Language: sv-SE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HE1PR05CA0388.eurprd05.prod.outlook.com
+ (2603:10a6:7:94::47) To AM0PR03MB4676.eurprd03.prod.outlook.com
+ (2603:10a6:208:cc::33)
+x-incomingtopheadermarker: OriginalChecksum:304731EC8F065EAA74A4330CF19C8A774B6D439F672270D6CF4E17F157A908A2;UpperCasedChecksum:A6120580FF16A413588ABB129DE8B3F73755FEF355E437B114518B92ADCCD26F;SizeAsReceived:7708;Count:48
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [CtHC2hKZxlL9GqfPmNj9IDdnw3A7LCpP]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1EUR01HT224;6:q/V+bRM7eO4wcOhPtVmmvKneRF+EY4MgOE46GJWd3NcetiF9G6tYsSMc+8EpZW5iJnwB6Ccq6GX0yEJwO1xRRBFe1L+7u+jnKXhnOR3AK+/qJSmPf8QvKft6xvsXhSwZgULlbxgB6uIwde0/j4KKenEFyylhDnCHQQD0v6oVuSyZvK6AAIcn2RxLgeIrpvj0wTCF45V5Yh8TU40SzKX/cArtkEWHg1VCvXNA8fJi+wGYjeXVWe3GO63wsL3sf0QBadQEfwt0PEOPIl3JI59y9u83M9KzRLC7fKGXVNwG9C2sFw5/FMZYsCC1Q3Z4opiyS2qq8N2F4ij5Z+RMHRN9jM6inZtnYtOancjRl+v9xMtZnsG2Jlq7nJodUkxETqs6+O+uR7UCmIERfADjqdgYSRx79btbJEK2MQFGQ177XsF/RtXRAQKNxC3+KdORuU7NzH2Gmmh9hmT0wKd2MnrIUg==;5:F8rk0xJyzKqqkANCixuA9K1ri20iMZ2MPPNzSBwpIsyL14N0xuooUL8dojHxH+xkFaipbifC943+XI8K0K4hJSJefhtSEN4ZKJHbJfaT0W1WTH7P05FdOB27W+UCPACUIBOwsaB9qAH2LFckeWnxjeyGOHCUPMuu0KCdPSDr67Y=;7:rkyvJgHa8J5mGfsOH9z/RSoh8wAVXpK6LSCRUSvGhXcIn9Ctt8fLZziyAdOQEaKasBJv/DoaK+FNvn0lkXJFlW5h+AI8EFMwczRkwPPzMxe/fmn0X/ytJffDxQ7kTnC16iH8qvmhUVXgVIKDJy6v5w==
+x-incomingheadercount: 48
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031324274)(2017031323274)(2017031322404)(1603101475)(1601125500)(1701031045);SRVR:HE1EUR01HT224;
+x-ms-traffictypediagnostic: HE1EUR01HT224:
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:HE1EUR01HT224;BCL:0;PCL:0;RULEID:;SRVR:HE1EUR01HT224;
+x-microsoft-antispam-message-info: s6HoLP2+Hs3MDAiiZhcfv1TxnzYMiM0D57W8A585atocWdDG++TXED+BMbZ3kTa2
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181125083507.1b155cc8@archlinux>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 54485d23-c432-40fe-8436-6091d627118c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 180fd712-d76f-44d9-8109-08d652e9b346
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 54485d23-c432-40fe-8436-6091d627118c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Nov 2018 15:21:42.1423
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR01HT224
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 25, 2018 at 08:35:07AM +0000, Jonathan Cameron wrote:
-> On Sat, 24 Nov 2018 23:14:13 +0100
-> Tomasz Duszynski <tduszyns@gmail.com> wrote:
->
-> > Measuring particulate matter in ug / m3 (micro-grams per cubic meter)
-> > is de facto standard. Existing air quality sensors usually follow
-> > this convention and are capable of returning measurements using
-> > this unit.
-> >
-> > IIO currently does not offer suitable channel type for this
-> > type of measurements hence this patch adds this.
-> >
-> > In addition, two modifiers are introduced used for distinguishing
-> > between coarse (PM10) and fine particles (PM2p5) measurements, i.e
-> > IIO_MOD_PM10 and IIO_MOD_PM2p5.
-> I initially wondered why these particular numbers and why don't
-> we provide an attribute specify this separately?
->
-> However google suggests these two are pretty much the only
-> ones anyone worries about in pollution sensors.  I ended
-> up fairly quickly at the EPA website
-> https://www.epa.gov/pm-pollution/table-historical-particulate-matter-pm-national-ambient-air-quality-standards-naaqs
-> which tells me these two have be used since about 1987.
->
+intra_dc_precision is a 2-bit integer [1]
+allow use of all valid options, 8 - 11 bits precision
 
-Usually sensors can measure more than just PM10 and PM2.5. Fairy
-common is measurement of PM1.0. SPS30 additionally measures PM4.0
-but frankly I don't now know exactly what's the real usecase for that.
+[1] ISO/IEC 13818-2 Table 6-13
 
-> So I think the modifier route is the right approach here
-> (I think we've gotten this wrong in the past such as light
-> sensor colours where the list keeps on growing).
->
-> I would like a reference or two in the docs though to point
-> people to these definitions.
->
+Fixes: c27bb30e7b6d ("media: v4l: Add definitions for MPEG-2 slice format and metadata")
+Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 
-Okay, will add something reasonable so everyone interested
-could get the basic idea quickly.
+---
 
-> Thanks,
->
-> Jonathan
->
-> >
-> > Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
-> > ---
-> >  Documentation/ABI/testing/sysfs-bus-iio | 11 ++++++++++-
-> >  drivers/iio/industrialio-core.c         |  3 +++
-> >  include/uapi/linux/iio/types.h          |  3 +++
-> >  tools/iio/iio_event_monitor.c           |  6 ++++++
-> >  4 files changed, 22 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-> > index 8127a08e366d..ce0ed140660d 100644
-> > --- a/Documentation/ABI/testing/sysfs-bus-iio
-> > +++ b/Documentation/ABI/testing/sysfs-bus-iio
-> > @@ -1684,4 +1684,13 @@ KernelVersion:	4.18
-> >  Contact:	linux-iio@vger.kernel.org
-> >  Description:
-> >  		Raw (unscaled) phase difference reading from channel Y
-> > -		that can be processed to radians.
-> > \ No newline at end of file
-> > +		that can be processed to radians.
-> > +
-> > +What:		/sys/bus/iio/devices/iio:deviceX/in_massconcentration_pm2p5_input
-> > +What:		/sys/bus/iio/devices/iio:deviceX/in_massconcentrationY_pm2p5_input
-> > +What:		/sys/bus/iio/devices/iio:deviceX/in_massconcentration_pm10_input
-> > +What:		/sys/bus/iio/devices/iio:deviceX/in_massconcentrationY_pm10_input
-> > +KernelVersion:	4.21
-> > +Contact:	linux-iio@vger.kernel.org
-> > +Description:
-> > +		Mass concentration reading of particulate matter in ug / m3.
-> > diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-> > index a062cfddc5af..2a9ef600c1fb 100644
-> > --- a/drivers/iio/industrialio-core.c
-> > +++ b/drivers/iio/industrialio-core.c
-> > @@ -87,6 +87,7 @@ static const char * const iio_chan_type_name_spec[] = {
-> >  	[IIO_GRAVITY]  = "gravity",
-> >  	[IIO_POSITIONRELATIVE]  = "positionrelative",
-> >  	[IIO_PHASE] = "phase",
-> > +	[IIO_MASSCONCENTRATION] = "massconcentration",
-> >  };
-> >
-> >  static const char * const iio_modifier_names[] = {
-> > @@ -127,6 +128,8 @@ static const char * const iio_modifier_names[] = {
-> >  	[IIO_MOD_Q] = "q",
-> >  	[IIO_MOD_CO2] = "co2",
-> >  	[IIO_MOD_VOC] = "voc",
-> > +	[IIO_MOD_PM2p5] = "pm2p5",
-> > +	[IIO_MOD_PM10] = "pm10",
-> >  };
-> >
-> >  /* relies on pairs of these shared then separate */
-> > diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
-> > index 92baabc103ac..465044b42af5 100644
-> > --- a/include/uapi/linux/iio/types.h
-> > +++ b/include/uapi/linux/iio/types.h
-> > @@ -46,6 +46,7 @@ enum iio_chan_type {
-> >  	IIO_GRAVITY,
-> >  	IIO_POSITIONRELATIVE,
-> >  	IIO_PHASE,
-> > +	IIO_MASSCONCENTRATION,
-> >  };
-> >
-> >  enum iio_modifier {
-> > @@ -87,6 +88,8 @@ enum iio_modifier {
-> >  	IIO_MOD_VOC,
-> >  	IIO_MOD_LIGHT_UV,
-> >  	IIO_MOD_LIGHT_DUV,
-> > +	IIO_MOD_PM2p5,
-> > +	IIO_MOD_PM10,
-> >  };
-> >
-> >  enum iio_event_type {
-> > diff --git a/tools/iio/iio_event_monitor.c b/tools/iio/iio_event_monitor.c
-> > index ac2de6b7e89f..f0fcfeddba2b 100644
-> > --- a/tools/iio/iio_event_monitor.c
-> > +++ b/tools/iio/iio_event_monitor.c
-> > @@ -60,6 +60,7 @@ static const char * const iio_chan_type_name_spec[] = {
-> >  	[IIO_GRAVITY] = "gravity",
-> >  	[IIO_POSITIONRELATIVE] = "positionrelative",
-> >  	[IIO_PHASE] = "phase",
-> > +	[IIO_MASSCONCENTRATION] = "massconcentration",
-> >  };
-> >
-> >  static const char * const iio_ev_type_text[] = {
-> > @@ -115,6 +116,8 @@ static const char * const iio_modifier_names[] = {
-> >  	[IIO_MOD_Q] = "q",
-> >  	[IIO_MOD_CO2] = "co2",
-> >  	[IIO_MOD_VOC] = "voc",
-> > +	[IIO_MOD_PM2p5] = "pm2p5",
-> > +	[IIO_MOD_PM10] = "pm10",
-> >  };
-> >
-> >  static bool event_is_known(struct iio_event_data *event)
-> > @@ -156,6 +159,7 @@ static bool event_is_known(struct iio_event_data *event)
-> >  	case IIO_GRAVITY:
-> >  	case IIO_POSITIONRELATIVE:
-> >  	case IIO_PHASE:
-> > +	case IIO_MASSCONCENTRATION:
-> >  		break;
-> >  	default:
-> >  		return false;
-> > @@ -200,6 +204,8 @@ static bool event_is_known(struct iio_event_data *event)
-> >  	case IIO_MOD_Q:
-> >  	case IIO_MOD_CO2:
-> >  	case IIO_MOD_VOC:
-> > +	case IIO_MOD_PM2p5:
-> > +	case IIO_MOD_PM10:
-> >  		break;
-> >  	default:
-> >  		return false;
->
+ drivers/media/v4l2-core/v4l2-ctrls.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+index 5f2b033a7a42..129a986fa7e1 100644
+--- a/drivers/media/v4l2-core/v4l2-ctrls.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+@@ -1636,7 +1636,8 @@ static int std_validate(const struct v4l2_ctrl *ctrl, u32 idx,
+ 		switch (p_mpeg2_slice_params->picture.intra_dc_precision) {
+ 		case 0: /* 8 bits */
+ 		case 1: /* 9 bits */
+-		case 11: /* 11 bits */
++		case 2: /* 10 bits */
++		case 3: /* 11 bits */
+ 			break;
+ 		default:
+ 			return -EINVAL;
+-- 
+2.19.1
+
