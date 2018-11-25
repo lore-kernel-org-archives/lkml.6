@@ -2,88 +2,103 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3C0C04EBA
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 23:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28052C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 23:55:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9938C2082E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 23:52:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9938C2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E25F920865
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 23:55:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E25F920865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726143AbeKZKoe (ORCPT
+        id S1726135AbeKZKr6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 05:44:34 -0500
-Received: from mga05.intel.com ([192.55.52.43]:4692 "EHLO mga05.intel.com"
+        Mon, 26 Nov 2018 05:47:58 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:45496 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726027AbeKZKoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 05:44:34 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Nov 2018 15:52:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,279,1539673200"; 
-   d="scan'208";a="98941677"
-Received: from msymes-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.170])
-  by FMSMGA003.fm.intel.com with ESMTP; 25 Nov 2018 15:52:00 -0800
-Date:   Sun, 25 Nov 2018 15:51:58 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Dr. Greg" <greg@enjellic.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        haitao.huang@linux.intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181125235109.GA3928@linux.intel.com>
-References: <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
- <20181119161917.GF13298@linux.intel.com>
- <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
- <20181120120442.GA22172@linux.intel.com>
- <20181122111253.GA31150@wind.enjellic.com>
- <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com>
- <20181124172114.GB32210@linux.intel.com>
- <20181125145329.GA5777@linux.intel.com>
- <0669C300-02CB-4EA6-BF88-5C4B4DDAD4C7@amacapital.net>
- <20181125185524.GA23224@wind.enjellic.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181125185524.GA23224@wind.enjellic.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726027AbeKZKr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 05:47:58 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 65F923A9DBB2370909C9;
+        Mon, 26 Nov 2018 07:55:36 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wAPNtVEx093301;
+        Mon, 26 Nov 2018 07:55:31 +0800 (GMT-8)
+        (envelope-from yang.yang29@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018112607553337-12876764 ;
+          Mon, 26 Nov 2018 07:55:33 +0800 
+From:   Yang Yang <yang.yang29@zte.com.cn>
+To:     akpm@linux-foundation.org
+Cc:     mhocko@suse.com, pavel.tatashin@microsoft.com, vbabka@suse.cz,
+        osalvador@suse.de, rppt@linux.vnet.ibm.com, iamjoonsoo.kim@lge.com,
+        alexander.h.duyck@linux.intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        wang.yi59@zte.com.cn, Yang Yang <yang.yang29@zte.com.cn>
+Subject: [PATCH] mm: do not consider SWAP to calculate available when not necessary
+Date:   Mon, 26 Nov 2018 07:58:23 +0800
+Message-Id: <1543190303-8121-1-git-send-email-yang.yang29@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-11-26 07:55:33,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-11-26 07:55:30,
+        Serialize complete at 2018-11-26 07:55:30
+X-MAIL: mse01.zte.com.cn wAPNtVEx093301
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 25, 2018 at 12:55:24PM -0600, Dr. Greg wrote:
-> Good morning to everyone, I hope the weekend continues to proceed
-> well.
+When si_mem_available() calculates 'available', it takes SWAP
+into account. But if CONFIG_SWAP is N or SWAP is off(some embedded system
+would like to do that), there is no need to consider it.
 
-Thank you, wish the same. Surviving from jetlag after flying from
-Finland to Portland yesterday..
+Signed-off-by: Yang Yang <yang.yang29@zte.com.cn>
+---
+ mm/page_alloc.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Greg, Andy, I'll check your remarks with thought after I'm done with v18
-i.e. have less things to multitask with. Is that OK for you? Probably
-v18 won't be the last the version anyway.
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 6847177..10e186b 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -4700,6 +4700,7 @@ static inline void show_node(struct zone *zone)
+ 
+ long si_mem_available(void)
+ {
++	struct sysinfo i;
+ 	long available;
+ 	unsigned long pagecache;
+ 	unsigned long wmark_low = 0;
+@@ -4708,6 +4709,7 @@ long si_mem_available(void)
+ 	struct zone *zone;
+ 	int lru;
+ 
++	si_swapinfo(&i);
+ 	for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
+ 		pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
+ 
+@@ -4724,9 +4726,13 @@ long si_mem_available(void)
+ 	 * Not all the page cache can be freed, otherwise the system will
+ 	 * start swapping. Assume at least half of the page cache, or the
+ 	 * low watermark worth of cache, needs to stay.
++	 * But if CONFIG_SWAP is N or SWAP is off, do not consider it.
+ 	 */
+ 	pagecache = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
+-	pagecache -= min(pagecache / 2, wmark_low);
++#ifdef CONFIG_SWAP
++	if (i.totalswap > 0)
++		pagecache -= min(pagecache / 2, wmark_low);
++#endif
+ 	available += pagecache;
+ 
+ 	/*
+-- 
+2.15.2
 
-/Jarkko
