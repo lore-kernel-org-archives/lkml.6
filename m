@@ -6,148 +6,122 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE08C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 13:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 924F8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 13:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29D0E2086B
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 13:23:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E1082086B
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 13:46:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oBG/LZTn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D0E2086B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLF6tOT0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E1082086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726200AbeKZAOG (ORCPT
+        id S1726513AbeKZAh1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 19:14:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40778 "EHLO mail.kernel.org"
+        Sun, 25 Nov 2018 19:37:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726062AbeKZAOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 19:14:06 -0500
+        id S1726157AbeKZAh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 19:37:27 -0500
 Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8C132082E;
-        Sun, 25 Nov 2018 13:22:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FCED20865;
+        Sun, 25 Nov 2018 13:46:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543152181;
-        bh=/cKKeYl06cI/TnyP2TIask/0nEEx1GiM3Vvx+5DPRY4=;
+        s=default; t=1543153579;
+        bh=TiAbr1Xpxzz7s/LCKpj2vIN1KLj+sbo/MQAArTBl/kA=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=oBG/LZTnfCm3l+Cn9GaBD3MONmoEx05Wr5gr/Sj747O2gdWKdEtq1PhDiXuN50kei
-         YYdHO+4vB5kzhFIpn9ZbCkZ7Koyyat2LN5CBVwljKzlaKyzlqnpznBaejfpjKo/+el
-         VhzfhtiJZCFwb1HDFvevSEyC/AswG0YxH4IHZCrU=
-Date:   Sun, 25 Nov 2018 13:22:57 +0000
+        b=eLF6tOT0BWKj+yKTTRkT7ME4cdbZYBqG2CQ9QdB8wOsL+JOZH+gNmF3ZDWn480X9K
+         3lXelzJQOqIBXI4Mhbp+0kxYRJxUYbwfVy0kauJaJ5wPmqPdpfpHB0GHEwCsCudbEK
+         hQict6h6MTGBgHQlXY+1nT9iHoq1f0AB3rPOjofg=
+Date:   Sun, 25 Nov 2018 13:46:15 +0000
 From:   Jonathan Cameron <jic23@kernel.org>
-To:     Jian-Hong Pan <jian-hong@endlessm.com>
-Cc:     denis.ciocca@st.com, Hartmut Knaack <knaack.h@gmx.de>,
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Hartmut Knaack <knaack.h@gmx.de>,
         Lars-Peter Clausen <lars@metafoo.de>,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        linux-iio@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>, linux@endlessm.com
-Subject: Re: [PATCH] iio: st_sensors: Fix the sleep time for sampling
-Message-ID: <20181125132257.6ae9fe82@archlinux>
-In-Reply-To: <CAPpJ_ed-A_mkPJieZA4pHaRbY0SGpOEXP04aY4g1b60PzMGQuA@mail.gmail.com>
-References: <20181119061219.14238-1-jian-hong@endlessm.com>
-        <04d0345d6c6c4ac0950ab0676ffd7689@SFHDAG2NODE1.st.com>
-        <CAPpJ_ed-A_mkPJieZA4pHaRbY0SGpOEXP04aY4g1b60PzMGQuA@mail.gmail.com>
+        Lee Jones <lee.jones@linaro.org>, <linux-iio@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] iio: adc: ti_am335x_tscadc: Improve accuracy of
+ measurement
+Message-ID: <20181125134615.01d45e14@archlinux>
+In-Reply-To: <20181119064236.28902-3-vigneshr@ti.com>
+References: <20181119064236.28902-1-vigneshr@ti.com>
+        <20181119064236.28902-3-vigneshr@ti.com>
 X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Nov 2018 13:13:40 +0800
-Jian-Hong Pan <jian-hong@endlessm.com> wrote:
+On Mon, 19 Nov 2018 12:12:36 +0530
+Vignesh R <vigneshr@ti.com> wrote:
 
-> Denis CIOCCA <denis.ciocca@st.com> =E6=96=BC 2018=E5=B9=B411=E6=9C=8820=
-=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8A=E5=8D=883:05=E5=AF=AB=E9=81=93=EF=BC=
-=9A
-> >
-> > Hi Jian,
-> >
-> > Not clear to me why should be + instead of *.
-> >
-> > ODR is expressed in Hz, so (1/Hz) =3D period in seconds (1 sample sampl=
-ing time) [s]
-> > 1000 * (1/Hz) =3D period in milliseconds (1 sample sampling time) [ms]
-> > n * 1000 * (1/Hz) =3D n times period in milliseconds (n times sample sa=
-mpling time) [ms]
-> >
-> > In your case you assume bootime is in milliseconds. =20
->=20
-> Yes, I assume that according to the original comment.
->=20
-> >Maybe we can change the comment and use 'number of samples ...'. =20
->=20
-> Making the meaning more clear is better.
->=20
-> However, does the bootime of the measurement need as the long time to
-> be enabled?
-> If the sampling rate is 1Hz and n is 2, then they will do msleep with
-> 2000 ms for each st_sensors_read_info_raw.
+> When performing single ended measurements with TSCADC, its recommended
+> to set negative input (SEL_INM_SWC_3_0) of ADC step to ADC's VREFN in the
+> corresponding STEP_CONFIGx register.
+> Also, the positive(SEL_RFP_SWC_2_0) and negative(SEL_RFM_SWC_1_0)
+> reference voltage for ADC step needs to be set to VREFP and VREFN
+> respectively in STEP_CONFIGx register.
+> Without these changes, there may be variation of as much as ~2% in the
+> ADC's digital output which is bad for precise measurement.
+> 
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+Given the header changes in mfd and the fact not much is going on with this
+driver in IIO at the moment, I'm happy for this to go through the mfd tree.
 
-Superficially that seems correct as we need to be sure that a reading
-has occurred.  If you want it to be quicker than the ODR should be set
-faster so that the reading shows up reasonably quickly. At 1Hz and
-you want to drop 2 samples, it will indeed take 2 seconds.
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-I'm not understanding why this is unexpected?
+Thanks,
 
 Jonathan
 
->=20
-> Regards,
-> Jian-Hong Pan
->=20
-> >
-> >
-> > -----Original Message-----
-> > From: linux-iio-owner@vger.kernel.org <linux-iio-owner@vger.kernel.org>=
- On Behalf Of Jian-Hong Pan
-> > Sent: Sunday, November 18, 2018 10:12 PM
-> > To: Jonathan Cameron <jic23@kernel.org>; Hartmut Knaack <knaack.h@gmx.d=
-e>; Lars-Peter Clausen <lars@metafoo.de>; Peter Meerwald-Stadler <pmeerw@pm=
-eerw.net>; Dominique Martinet <asmadeus@codewreck.org>
-> > Cc: linux-iio@vger.kernel.org; linux-kernel@vger.kernel.org; linux@endl=
-essm.com; Jian-Hong Pan <jian-hong@endlessm.com>
-> > Subject: [PATCH] iio: st_sensors: Fix the sleep time for sampling
-> >
-> > According to the description of st_sensor_settings and st_sensor_data s=
-tructures' comments:
-> > - bootime: samples to discard when sensor passing from power-down to po=
-wer-up.
-> > - odr: Output data rate of the sensor [Hz].
-> >
-> > The sleep time should be
-> > sdata->sensor_settings->bootime + 1000 / sdata->odr ms.
-> >
-> > Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
-> > ---
-> >  drivers/iio/common/st_sensors/st_sensors_core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/iio/common/st_sensors/st_sensors_core.c b/drivers/=
-iio/common/st_sensors/st_sensors_core.c
-> > index 26fbd1bd9413..6b87ea657a92 100644
-> > --- a/drivers/iio/common/st_sensors/st_sensors_core.c
-> > +++ b/drivers/iio/common/st_sensors/st_sensors_core.c
-> > @@ -594,7 +594,7 @@ int st_sensors_read_info_raw(struct iio_dev *indio_=
-dev,
-> >                 if (err < 0)
-> >                         goto out;
-> >
-> > -               msleep((sdata->sensor_settings->bootime * 1000) / sdata=
-->odr);
-> > +               msleep(sdata->sensor_settings->bootime + 1000 / sdata->=
-odr);
-> >                 err =3D st_sensors_read_axis_data(indio_dev, ch, val);
-> >                 if (err < 0)
-> >                         goto out;
-> > --
-> > 2.11.0
-> > =20
+> ---
+>  drivers/iio/adc/ti_am335x_adc.c      | 5 ++++-
+>  include/linux/mfd/ti_am335x_tscadc.h | 4 ++++
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/adc/ti_am335x_adc.c b/drivers/iio/adc/ti_am335x_adc.c
+> index cafb1dcadc48..9d984f2a8ba7 100644
+> --- a/drivers/iio/adc/ti_am335x_adc.c
+> +++ b/drivers/iio/adc/ti_am335x_adc.c
+> @@ -142,7 +142,10 @@ static void tiadc_step_config(struct iio_dev *indio_dev)
+>  			stepconfig |= STEPCONFIG_MODE_SWCNT;
+>  
+>  		tiadc_writel(adc_dev, REG_STEPCONFIG(steps),
+> -				stepconfig | STEPCONFIG_INP(chan));
+> +				stepconfig | STEPCONFIG_INP(chan) |
+> +				STEPCONFIG_INM_ADCREFM |
+> +				STEPCONFIG_RFP_VREFP |
+> +				STEPCONFIG_RFM_VREFN);
+>  
+>  		if (adc_dev->open_delay[i] > STEPDELAY_OPEN_MASK) {
+>  			dev_warn(dev, "chan %d open delay truncating to 0x3FFFF\n",
+> diff --git a/include/linux/mfd/ti_am335x_tscadc.h b/include/linux/mfd/ti_am335x_tscadc.h
+> index b9a53e013bff..483168403ae5 100644
+> --- a/include/linux/mfd/ti_am335x_tscadc.h
+> +++ b/include/linux/mfd/ti_am335x_tscadc.h
+> @@ -78,6 +78,8 @@
+>  #define STEPCONFIG_YNN		BIT(8)
+>  #define STEPCONFIG_XNP		BIT(9)
+>  #define STEPCONFIG_YPN		BIT(10)
+> +#define STEPCONFIG_RFP(val)	((val) << 12)
+> +#define STEPCONFIG_RFP_VREFP	(0x3 << 12)
+>  #define STEPCONFIG_INM_MASK	(0xF << 15)
+>  #define STEPCONFIG_INM(val)	((val) << 15)
+>  #define STEPCONFIG_INM_ADCREFM	STEPCONFIG_INM(8)
+> @@ -86,6 +88,8 @@
+>  #define STEPCONFIG_INP_AN4	STEPCONFIG_INP(4)
+>  #define STEPCONFIG_INP_ADCREFM	STEPCONFIG_INP(8)
+>  #define STEPCONFIG_FIFO1	BIT(26)
+> +#define STEPCONFIG_RFM(val)	((val) << 23)
+> +#define STEPCONFIG_RFM_VREFN	(0x3 << 23)
+>  
+>  /* Delay register */
+>  #define STEPDELAY_OPEN_MASK	(0x3FFFF << 0)
 
