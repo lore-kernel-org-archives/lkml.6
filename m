@@ -7,208 +7,185 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 577E9C04EBA
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F4DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20F5A20865
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:18:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C94FF20855
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:25:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NjorkavK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20F5A20865
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kFhWyV56"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C94FF20855
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbeKYPIO (ORCPT
+        id S1727194AbeKYPPw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 10:08:14 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46593 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbeKYPIN (ORCPT
+        Sun, 25 Nov 2018 10:15:52 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:36873 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726632AbeKYPPv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 10:08:13 -0500
-Received: by mail-ed1-f68.google.com with SMTP id o10so13075230edt.13;
-        Sat, 24 Nov 2018 20:18:03 -0800 (PST)
+        Sun, 25 Nov 2018 10:15:51 -0500
+Received: by mail-it1-f196.google.com with SMTP id b5so22822265iti.2
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 20:25:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=peBHLQfMZprZ7Y8obIOHLEWYp3Ixk/YUySRgAo0Jafw=;
-        b=NjorkavKui9Tc7buhACLon/lY1784aUUvSYflHH+QPFX8yqDS6zSJEeeIkPW/eqAb+
-         /XTfFxzVG02YA3LbBnv8xXF2x3eQGCUgXH9G1rmR3PxMBOK7TRdTk0GMJfn5itImNOym
-         Xp+alG1ykMs38TNqe1LlJKPdaVabnfpGDyROppKmXzTx4Wkp31ZbJ+kkuvIsXyq9umM0
-         5rTL4qlsrJ8uOEOAPy3yFffyyIUlA5f3hJcHZbstrD5sx+H3yuhYo6E6uhok+p//g8+h
-         EJhkJguTrr6l/8stGIAo8jxAmWHOFu9/Tjh+nEE/AFVG4KJK71Y6fHTSNhQe5tYauyCP
-         Aunw==
+         :cc:content-transfer-encoding;
+        bh=fxXrpp+yc0FG1OiTCtn6SzOotBaCFMqh0aS8DWag1Ao=;
+        b=kFhWyV56pwpPQg29uIADxvbU6pWWQUJGsbG3JOSZsDEYVzGwKueJH+dEbatPzFg5YE
+         VTiC6GNeZ0gkNqXQvYzpeaaET6nG8BKIxGX/IPSy1sK/NTXjqSVpFP1E962HBBKHgbpd
+         gYtJPnWkvb6L/+uJfeQ/wFA5mDKVUkqTD3C00CGvA6Q5w88UMmQCXUUR2fnXWRquFkgO
+         mWl5HmLJEb1qzRSsIgDon/AFXwpKORn5hfKPoI44z+5IRptIQB9YgVFFrzwIEkAISQfo
+         ICxuvYDS8/CTK8jySlTkIZHrywvpEEgDhO2kwAYoFquaits0UhFX7a/pduQhJp4j5yFR
+         XaPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=peBHLQfMZprZ7Y8obIOHLEWYp3Ixk/YUySRgAo0Jafw=;
-        b=twwbQd2L3HZyZjeJbVj3ZYBHanIwm91Dlk7zjmm8s4BPe0IincGuyDX8WVCdPjA4Hl
-         l1nd/f6DUrqLTVYHqRBdq7dmeU1DLTDBii15MWdiXatyaQXgzBwR9NNfzQzDXBJ/rKZp
-         IU5xQzmmhn/XxTPrFK2fR+sQZ1lSUo4uDcHyR7euKauc4N6Kda2ShdHWnuCHD5I+BaAj
-         RYB2juSvtv8PiOqEHCVKavgUCXkGV6iGJdKd3i69lMjx8tIheE5BwvQGgSw08mKAyPaO
-         q4Wxg94WlgCBnXIn9FyPeZDmSH9SOB5W7t53O8C8uSz3RliDxSLIyk+p4HWwmfzcbAQM
-         LOzw==
-X-Gm-Message-State: AA+aEWaZOd1qMLXSZOctKHVHogsFM0bEKXyB+lJYtPjlCJDhzrpDdgla
-        HvTXBImyaUFo+gyoW4HdVRZK9rMYzRP80O9tRQc=
-X-Google-Smtp-Source: AFSGD/WFxCqokbbTRO6Hk8K9wcilVroJIfm/Lok7h/4afEenadq1vGvymFhQe8/+ZimaS+/sLdCfXU8DeE36FK40u8M=
-X-Received: by 2002:a50:b31c:: with SMTP id q28mr18322945edd.241.1543119482776;
- Sat, 24 Nov 2018 20:18:02 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fxXrpp+yc0FG1OiTCtn6SzOotBaCFMqh0aS8DWag1Ao=;
+        b=UExLXTA8GPAbt5FmD6CZnydOv0BNHP3BjVHYilEdBrqacqc4I7wEBqgnInC2Go/9I5
+         0Nfrb6TPij22wwQsSPZMZwp+Lhsi9DyJcRHQkfnF8ZE523YA/Lw3WyYgC/eaOkhSWfGF
+         mu0ARgYmuuj1VdWWgpbSmt52Q4ukU+ovWGwjRsbdB2sHEF4JJ3f4oSlccoIfepdLOj2U
+         mW3QHw9R2t6uWVGUkcdnW2A4r8flTiXKt09bxtfHBGIjsQ6dN0wLK8uSKQNd7td8yq1q
+         4LrPU8rWf0ZAXXbSA9zHMlsEMnq3/Mvmyjj6jrixfXqWJvjuqXDjKUDnhOriayNSMl9/
+         DnMA==
+X-Gm-Message-State: AGRZ1gLI5ubuwpYrV9cqfdj+Jx1S5LPZdd9ujfpGUIDbp8+bzkqIgU5r
+        IjMIrVSyUXQQFKmC7HQzFPEQXUoQNJZ2ZZDhnizoKGkj3s0=
+X-Google-Smtp-Source: AFSGD/XMVkjYJFHaitvF57TxsabADevw8sY6RjtXr0xm0I580GMl8JaRNLb8Y6gIWkjfM31tRc+HP0yLgRzWDdoOiNc=
+X-Received: by 2002:a24:648f:: with SMTP id t137mr18054741itc.95.1543119941672;
+ Sat, 24 Nov 2018 20:25:41 -0800 (PST)
 MIME-Version: 1.0
-References: <20181124022035.17519-1-deepa.kernel@gmail.com>
- <20181124022035.17519-8-deepa.kernel@gmail.com> <CAF=yD-K=ZLZ_S=Y6YnhvvkfKQS=21ujwiGd7+JB9yDMtiX_9hg@mail.gmail.com>
-In-Reply-To: <CAF=yD-K=ZLZ_S=Y6YnhvvkfKQS=21ujwiGd7+JB9yDMtiX_9hg@mail.gmail.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Sat, 24 Nov 2018 23:17:25 -0500
-Message-ID: <CAF=yD-K3Ga8qojSh5Epa6m4EYn-Lvdo=e38MnFqOKch1128VHw@mail.gmail.com>
-Subject: Re: [PATCH 7/8] socket: Add SO_TIMESTAMP[NS]_NEW
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        jejb@parisc-linux.org, ralf@linux-mips.org, rth@twiddle.net,
-        linux-alpha@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-parisc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        sparclinux@vger.kernel.org
+References: <20181122152331.25739-1-tiny.windzz@gmail.com> <CAEExFWt45G5hyAEZvaAW--ZANnTqmi7-i473jRfFLD0Wacp6-w@mail.gmail.com>
+ <97b95b60-8420-bad9-4d2c-6baee749b90f@linaro.org>
+In-Reply-To: <97b95b60-8420-bad9-4d2c-6baee749b90f@linaro.org>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Sun, 25 Nov 2018 12:25:19 +0800
+Message-ID: <CAEExFWsdEQCC--E5o5uKuT6nNK_TeqmVu-F1g7Bv_+FO7OkjjQ@mail.gmail.com>
+Subject: Re: [PATCH] clocksource/drivers/integrator-ap: add missing of_node_put()
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 24, 2018 at 10:59 PM Willem de Bruijn
-<willemdebruijn.kernel@gmail.com> wrote:
+On Sun, Nov 25, 2018 at 3:49 AM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
 >
-> On Sat, Nov 24, 2018 at 3:58 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> On 24/11/2018 15:58, Frank Lee wrote:
+> > On Thu, Nov 22, 2018 at 11:23 PM Yangtao Li <tiny.windzz@gmail.com> wro=
+te:
+> >>
+> >> of_find_node_by_path() acquires a reference to the node
+> >> returned by it and that reference needs to be dropped by its caller.
+> >> integrator_ap_timer_init_of() doesn't do that, so fix it.
+> >>
+> >> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> >> ---
+> >>  drivers/clocksource/timer-integrator-ap.c | 20 ++++++++++++++------
+> >>  1 file changed, 14 insertions(+), 6 deletions(-)
+> >>
+> >> diff --git a/drivers/clocksource/timer-integrator-ap.c b/drivers/clock=
+source/timer-integrator-ap.c
+> >> index 76e526f58620..1f04069470bb 100644
+> >> --- a/drivers/clocksource/timer-integrator-ap.c
+> >> +++ b/drivers/clocksource/timer-integrator-ap.c
+> >> @@ -177,7 +177,7 @@ static int __init integrator_ap_timer_init_of(stru=
+ct device_node *node)
+> >>  {
+> >>         const char *path;
+> >>         void __iomem *base;
+> >> -       int err;
+> >> +       int err,rc =3D 0;
+> >>         int irq;
+> >>         struct clk *clk;
+> >>         unsigned long rate;
+> >> @@ -210,26 +210,34 @@ static int __init integrator_ap_timer_init_of(st=
+ruct device_node *node)
+> >>                                 "arm,timer-secondary", &path);
+> >>         if (err) {
+> >>                 pr_warn("Failed to read property\n");
+> >> -               return err;
+> >> +               rc =3D err;
+> >> +               goto out_put_pri_node;
+> >>         }
+> >>
+> >>
+> >>         sec_node =3D of_find_node_by_path(path);
+> >>
+> >> -       if (node =3D=3D pri_node)
+> >> +       if (node =3D=3D pri_node){
+> >>                 /* The primary timer lacks IRQ, use as clocksource */
+> >> -               return integrator_clocksource_init(rate, base);
+> >> +               rc =3D integrator_clocksource_init(rate, base);
+> >> +               goto out;
+> >> +       }
+> >>
+> >>         if (node =3D=3D sec_node) {
+> >>                 /* The secondary timer will drive the clock event */
+> >>                 irq =3D irq_of_parse_and_map(node, 0);
+> >> -               return integrator_clockevent_init(rate, base, irq);
+> >> +               rc =3D integrator_clockevent_init(rate, base, irq);
+> >> +               goto out;
+> >>         }
+> >>
+> >>         pr_info("Timer @%p unused\n", base);
+> >>         clk_disable_unprepare(clk);
+> >> +out:
+> >> +       of_node_put(sec_node);
+> >> +out_put_pri_node:
+> >> +       of_node_put(pri_node);
+> >>
+> >> -       return 0;
+> >> +       return rc;
+> >>  }
+> >>
+> >>  TIMER_OF_DECLARE(integrator_ap_timer, "arm,integrator-timer",
+> >> --
+> >> 2.17.0
+> >>
+> > Hi Daniel=EF=BC=9A
 > >
-> > Add SO_TIMESTAMP_NEW and SO_TIMESTAMPNS_NEW variants of
-> > socket timestamp options.
-> > These are the y2038 safe versions of the SO_TIMESTAMP_OLD
-> > and SO_TIMESTAMPNS_OLD for all architectures.
-> >
-> > Note that the format of scm_timestamping.ts[0] is not changed
-> > in this patch.
-> >
-> > Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> > Cc: jejb@parisc-linux.org
-> > Cc: ralf@linux-mips.org
-> > Cc: rth@twiddle.net
-> > Cc: linux-alpha@vger.kernel.org
-> > Cc: linux-mips@linux-mips.org
-> > Cc: linux-parisc@vger.kernel.org
-> > Cc: linux-rdma@vger.kernel.org
-> > Cc: netdev@vger.kernel.org
-> > Cc: sparclinux@vger.kernel.org
-> > ---
+> > How about this?
 >
-> > diff --git a/include/net/sock.h b/include/net/sock.h
-> > index 8143c4c1a49d..9edf909dc176 100644
-> > --- a/include/net/sock.h
-> > +++ b/include/net/sock.h
-> > @@ -801,6 +801,7 @@ enum sock_flags {
-> >         SOCK_RCU_FREE, /* wait rcu grace period in sk_destruct() */
-> >         SOCK_TXTIME,
-> >         SOCK_XDP, /* XDP is attached */
-> > +       SOCK_TSTAMP_NEW, /* Indicates 64 bit timestamps always */
+> Hi,
 >
-> sk_flags is getting exhausted. Commit b9f40e21ef42 ("net-timestamp:
-> move timestamp flags out of sk_flags") added a new u16 sk_tsflags
-> specifically for timestamps. That may be a better choice here, too.
+> I think there is a simpler fix. The pri_node and the sec_node are used
+> as an identifier to compare against the current node, we can directly
+> drop the refcount after getting the node from path as it is not used as
+> pointer. In addition, a single variable is needed, so we end up with a
+> fix like that.
 >
-> > diff --git a/net/core/sock.c b/net/core/sock.c
-> > index e60036618205..7b485dfaa400 100644
-> > --- a/net/core/sock.c
-> > +++ b/net/core/sock.c
-> > @@ -652,15 +652,23 @@ static void setsockopt_timestamp(struct sock *sk, int type, int val)
-> >         if (!val) {
-> >                 sock_reset_flag(sk, SOCK_RCVTSTAMP);
-> >                 sock_reset_flag(sk, SOCK_RCVTSTAMPNS);
-> > +               sock_reset_flag(sk, SOCK_TSTAMP_NEW);
-> >                 return;
-> >         }
-> >
-> > +       if (type == SO_TIMESTAMP_NEW || type == SO_TIMESTAMPNS_NEW)
-> > +               sock_set_flag(sk, SOCK_TSTAMP_NEW);
-> > +       else
-> > +               sock_reset_flag(sk, SOCK_TSTAMP_NEW);
-> > +
->
-> if adding a boolean whether the socket uses new or old-style
-> timestamps, perhaps fail hard if a process tries to set a new-style
-> option while an old-style is already set and vice versa. Also include
-> SO_TIMESTAMPING_NEW as it toggles the same option.
->
-> > diff --git a/net/socket.c b/net/socket.c
-> > index d3defba55547..9abeb6bc9cfe 100644
-> > --- a/net/socket.c
-> > +++ b/net/socket.c
-> > @@ -699,6 +699,38 @@ static void put_ts_pktinfo(struct msghdr *msg, struct sk_buff *skb)
-> >                  sizeof(ts_pktinfo), &ts_pktinfo);
-> >  }
-> >
-> > +static void sock_recv_sw_timestamp(struct msghdr *msg, struct sock *sk,
-> > +                                  struct sk_buff *skb)
-> > +{
-> > +       if (sock_flag(sk, SOCK_TSTAMP_NEW)) {
-> > +               if (!sock_flag(sk, SOCK_RCVTSTAMPNS)) {
-> > +                       struct sock_timeval tv;
-> > +
-> > +                       skb_get_new_timestamp(skb, &tv);
-> > +                       put_cmsg(msg, SOL_SOCKET, SO_TIMESTAMP_NEW,
-> > +                                sizeof(tv), &tv);
-> > +               } else {
-> > +                       struct __kernel_timespec ts;
-> > +
-> > +                       skb_get_new_timestampns(skb, &ts);
-> > +                       put_cmsg(msg, SOL_SOCKET, SO_TIMESTAMPNS_NEW,
-> > +                                sizeof(ts), &ts);
-> > +               }
-> > +       }
-> > +       if (!sock_flag(sk, SOCK_RCVTSTAMPNS)) {
-> > +               struct __kernel_old_timeval tv;
-> > +
-> > +               skb_get_timestamp(skb, &tv);
-> > +               put_cmsg(msg, SOL_SOCKET, SO_TIMESTAMP_OLD,
-> > +                        sizeof(tv), &tv);
-> > +       } else {
-> > +               struct timespec ts;
-> > +
-> > +               skb_get_timestampns(skb, &ts);
-> > +               put_cmsg(msg, SOL_SOCKET, SO_TIMESTAMPNS_OLD,
-> > +                        sizeof(ts), &ts);
-> > +       }
-> > +}
-> >  /*
-> >   * called from sock_recv_timestamp() if sock_flag(sk, SOCK_RCVTSTAMP)
-> >   * or sock_flag(sk, SOCK_RCVTSTAMPNS)
-> > @@ -719,19 +751,8 @@ void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
-> >                 false_tstamp = 1;
-> >         }
-> > -       if (need_software_tstamp) {
->
-> Considerably less code churn if adding __sock_recv_timestamp_2038 and
-> calling that here:
->
->                    if (sock_flag(sk, SOCK_TSTAMP_NEW))
->                            __sock_recv_timestamp_2038(msg, sk, skb);
->                    else if ...
->
-> Same for the tcp case above, really, and in the case of the next patch
-> for SO_TIMESTAMPING_NEW
+>         alias_node =3D of_find_node_by_path(path);
+>         of_node_put(alias_node);
+>         if (node =3D=3D alias_node)
+>                 return integrator_clocksource_init(rate, base);
 
-That naming convention, ..._2038, is not the nicest, of course. That
-is not the relevant bit in the above comment.
+Daniel,
 
-Come to think of it, and related to my question in patch 2 why the
-need to rename at all, could all new structs, constants and functions
-be named consistently with 64 suffix? __sock_recv_timestamp64,
-SO_TIMESTAMPING64 and timeval64 (instead of sock_timeval,
-it isn't really a sock specific struct)?
+OK,I will simplify it like you said.Although I think of_node_put
+should be called
+after we don't use node.
 
-I guess that there is a good reason for the renaming exercise and
-conditional mapping of SO_TIMESTAMP onto old or new interface.
-Please elucidate in the commit message.
+MBR=EF=BC=8C
+Yangtao
+>
+>
+>
+> >
+> > Thanks=EF=BC=8C
+> > Yangtao
+> >
+>
+>
+> --
+>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
+RM SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
+>
