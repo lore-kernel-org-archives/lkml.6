@@ -2,91 +2,130 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E15FC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98659C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4E0C20865
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:07:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4E0C20865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 6951D20865
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:08:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6951D20865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbeKYL5I (ORCPT
+        id S1726987AbeKYL6J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 06:57:08 -0500
-Received: from muru.com ([72.249.23.125]:54962 "EHLO muru.com"
+        Sun, 25 Nov 2018 06:58:09 -0500
+Received: from air.basealt.ru ([194.107.17.39]:58450 "EHLO air.basealt.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726799AbeKYL5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 06:57:07 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id F14558087;
-        Sun, 25 Nov 2018 01:07:21 +0000 (UTC)
-Date:   Sat, 24 Nov 2018 17:07:17 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org,
-        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
-Message-ID: <20181125010717.GJ53235@atomide.com>
-References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
- <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
- <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
- <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
- <20181122102948.GN6920@n2100.armlinux.org.uk>
- <20181122151236.GA9611@n2100.armlinux.org.uk>
- <6ed280af-edb6-4be7-82f4-7fc00378103e@ti.com>
- <20181123185215.GH12912@darkstar.musicnaut.iki.fi>
- <20181124200942.GS6920@n2100.armlinux.org.uk>
+        id S1726400AbeKYL6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 06:58:09 -0500
+Received: by air.basealt.ru (Postfix, from userid 490)
+        id A6738589AE9; Sun, 25 Nov 2018 01:08:19 +0000 (UTC)
+Received: from akathisia (broadband-46-188-15-144.2com.net [46.188.15.144])
+        by air.basealt.ru (Postfix) with ESMTPSA id F3A18589AE8;
+        Sun, 25 Nov 2018 01:08:17 +0000 (UTC)
+Date:   Sun, 25 Nov 2018 02:08:17 +0100
+From:   Elvira Khabirova <lineprinter@altlinux.org>
+To:     oleg@redhat.com, rostedt@goodmis.org, mingo@redhat.com
+Cc:     linux-kernel@vger.kernel.org, ldv@altlinux.org, esyr@redhat.com,
+        luto@kernel.org, strace-devel@lists.strace.io
+Subject: [PATCH v3 1/3] ptrace: pass type of a syscall-stop in
+ ptrace_message
+Message-ID: <20181125020817.7857cc56@akathisia>
+In-Reply-To: <20181125020659.785c7b29@akathisia>
+References: <20181125020659.785c7b29@akathisia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181124200942.GS6920@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Russell King - ARM Linux <linux@armlinux.org.uk> [181124 20:10]:
-> On Fri, Nov 23, 2018 at 08:52:15PM +0200, Aaro Koskinen wrote:
-> > Hi,
-> > 
-> > On Fri, Nov 23, 2018 at 02:35:04PM +0200, Peter Ujfalusi wrote:
-> > > On 22/11/2018 17.12, Russell King - ARM Linux wrote:
-> > > > I'm also not sure about this:
-> > > > 
-> > > >         if (cpu_is_omap15xx())
-> > > >                 end++;
-> > > > 
-> > > > in dma_dest_len() - is that missing from the omap-dma driver?  It looks
-> > > > like a work-around for some problem on OMAP15xx, but I can't make sense
-> > > > about why it's in the UDC driver rather than the legacy DMA driver.
-> > > 
-> > > afaik no other legacy drivers were doing similar thing, this must be
-> > > something which is needed for the omap_udc driver to fix up something?
-> > 
-> > Here's the patch that added it: https://marc.info/?l=linux-omap&m=119634396324221&w=2
-> > 
-> > "Make DMA-OUT behave on the 1510 ... the 1510 CPC register was just
-> > off-by-one with respect to the 1611 CDAC"
-> 
-> ... which suggests that's a problem with the CPC register itself, and
-> we should fix that in the DMAengine driver rather than the USB gadget
-> driver.
-> 
-> Tony, any input on this?
+Define two constants, PTRACE_EVENTMSG_SYSCALL_ENTRY and
+PTRACE_EVENTMSG_SYSCALL_EXIT, and place them in ptrace_message
+for the duration of syscall-stops.
+This way ptracers can distinguish syscall-enter-stops
+from syscall-exit-stops using PTRACE_GETEVENTMSG request.
 
-Yeah that sounds like some hardware work-around for 15xx as described
-in the DMA_DEST_LAST macro reading CSAC on 15xx instead of CDAC. Seems
-like it should be done in the dmaengine driver.. My guess is that other
-dma users never needed to read CSAC register?
+Signed-off-by: Elvira Khabirova <lineprinter@altlinux.org>
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+---
+ include/linux/tracehook.h   |  9 ++++++---
+ include/uapi/linux/ptrace.h | 10 ++++++++++
+ 2 files changed, 16 insertions(+), 3 deletions(-)
 
-Regards,
+diff --git a/include/linux/tracehook.h b/include/linux/tracehook.h
+index 40b0b4c1bf7b..633a83fe7051 100644
+--- a/include/linux/tracehook.h
++++ b/include/linux/tracehook.h
+@@ -57,13 +57,15 @@ struct linux_binprm;
+ /*
+  * ptrace report for syscall entry and exit looks identical.
+  */
+-static inline int ptrace_report_syscall(struct pt_regs *regs)
++static inline int ptrace_report_syscall(struct pt_regs *regs,
++					unsigned long message)
+ {
+ 	int ptrace = current->ptrace;
+ 
+ 	if (!(ptrace & PT_PTRACED))
+ 		return 0;
+ 
++	current->ptrace_message = message;
+ 	ptrace_notify(SIGTRAP | ((ptrace & PT_TRACESYSGOOD) ? 0x80 : 0));
+ 
+ 	/*
+@@ -76,6 +78,7 @@ static inline int ptrace_report_syscall(struct pt_regs *regs)
+ 		current->exit_code = 0;
+ 	}
+ 
++	current->ptrace_message = 0;
+ 	return fatal_signal_pending(current);
+ }
+ 
+@@ -101,7 +104,7 @@ static inline int ptrace_report_syscall(struct pt_regs *regs)
+ static inline __must_check int tracehook_report_syscall_entry(
+ 	struct pt_regs *regs)
+ {
+-	return ptrace_report_syscall(regs);
++	return ptrace_report_syscall(regs, PTRACE_EVENTMSG_SYSCALL_ENTRY);
+ }
+ 
+ /**
+@@ -126,7 +129,7 @@ static inline void tracehook_report_syscall_exit(struct pt_regs *regs, int step)
+ 	if (step)
+ 		user_single_step_report(regs);
+ 	else
+-		ptrace_report_syscall(regs);
++		ptrace_report_syscall(regs, PTRACE_EVENTMSG_SYSCALL_EXIT);
+ }
+ 
+ /**
+diff --git a/include/uapi/linux/ptrace.h b/include/uapi/linux/ptrace.h
+index d5a1b8a492b9..cb138902d042 100644
+--- a/include/uapi/linux/ptrace.h
++++ b/include/uapi/linux/ptrace.h
+@@ -104,6 +104,16 @@ struct seccomp_metadata {
+ #define PTRACE_O_MASK		(\
+ 	0x000000ff | PTRACE_O_EXITKILL | PTRACE_O_SUSPEND_SECCOMP)
+ 
++/*
++ * These values are stored in task->ptrace_message by tracehook_report_syscall_*
++ * to describe current syscall-stop.
++ *
++ * Values for these constants are chosen so that they do not appear
++ * in task->ptrace_message by other means.
++ */
++#define PTRACE_EVENTMSG_SYSCALL_ENTRY	0x80000000U
++#define PTRACE_EVENTMSG_SYSCALL_EXIT	0x90000000U
++
+ #include <asm/ptrace.h>
+ 
+ 
+-- 
+2.19.1
 
-Tony
