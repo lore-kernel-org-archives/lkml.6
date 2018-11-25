@@ -2,363 +2,120 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D75C4161B
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB590C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B3592082E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:36:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84FCE20850
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:52:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Jth30/Fz";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ivzZwTK8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B3592082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T9lNZrwj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84FCE20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbeKYP0q (ORCPT
+        id S1727257AbeKYPmc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 10:26:46 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:59096 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbeKYP0q (ORCPT
+        Sun, 25 Nov 2018 10:42:32 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:39901 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727173AbeKYPmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 10:26:46 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0F2E860877; Sun, 25 Nov 2018 04:36:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543120595;
-        bh=Re3B2wLU3xloGYCvOs05Ul2z+lPfeWO+0tFV7Kgpt4Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jth30/FzmahOmr6XiLxK644gIi6sapSAOe8xyU6X1qJ2588dScKCQkLh7d9zxCGxe
-         ndQrRsKjzkBzdHVKQ689KTVJ/aPEgEML6cQoQLqFyUgvKv1aRs/358DdhaJiNbxEa3
-         VycuVmyl87NcTF0iM6Qbnstvyyx38rVrpqoNq62Q=
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C09C960541;
-        Sun, 25 Nov 2018 04:36:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543120593;
-        bh=Re3B2wLU3xloGYCvOs05Ul2z+lPfeWO+0tFV7Kgpt4Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ivzZwTK83KZ4N79RD/wny0obI6gVJ8Kc8lYE6RBG6suJu15lBO/LJ+ezAQlo6cdb+
-         TFatF+wRteJplSBQbk9a3jR4fSJ34OZm2fxSV1GvnzWHpcazSFTF+cJziv88jHBdmw
-         6nNYNjoaOZdbh9niPBToBFBxfYALNdylVTzLF/bk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C09C960541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        Amit Nischal <anischal@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v4 2/2] clk: qcom: Add graphics clock controller driver for SDM845
-Date:   Sun, 25 Nov 2018 10:06:08 +0530
-Message-Id: <1543120569-14444-3-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1543120569-14444-1-git-send-email-tdas@codeaurora.org>
-References: <1543120569-14444-1-git-send-email-tdas@codeaurora.org>
+        Sun, 25 Nov 2018 10:42:32 -0500
+Received: by mail-it1-f195.google.com with SMTP id m15so22833733itl.4;
+        Sat, 24 Nov 2018 20:52:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=h8TDJAeY4s5QrmXO/T6BUEmza430F8/8GrmGmRZ73hM=;
+        b=T9lNZrwji1Uhj1dRrLk568BgCeYDWg87O+mPb14QIGVKEZCkN3GPc1b9tpkmq6MWkj
+         uhfscgCWN2wPJBjFzVgTn3b+dN4egyMbhuxuGvPD/xteN79Ln0pflZbvoJB9H0DCuU+e
+         /5EYVtOhzXgUgv9U6YAn0CmJdVVdRJ6BrrhwJMp8eYhu3lHmuDjV7nbzNpVJxielR9nD
+         H9v7IFAitVWJyRDrFgVcOEPDpygODAQdIz/CdKAWnkrdnV6sBUR0l2Ksa+8dfn1QUN1M
+         HA43lEuowBddqaaftI/RM+a7b98+3tIYC0XM96AiI9+7eoVgVhdddF+rdGIWNUKfPC8c
+         zWmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h8TDJAeY4s5QrmXO/T6BUEmza430F8/8GrmGmRZ73hM=;
+        b=APwrHDb+PZZ0zeZrLLQkCiMJkklcVKYEXU2JRyR6lQBMgjZdbRUtexl2c6Bq1SLj+i
+         1khmjxi2UY7enn8PjIi9PeZlqP5rBb/Knvnoab39QFEuk27JWta4W2i+jYQjl4xs/tyT
+         biYQN1sb06Fy2p+EjhYJxWbmH2PVZNVXT3/6YUIWl99jemuU3Rh+vksB19TewnTJJ/3x
+         L8PhKZ6lEqJDIJewyAhmfFAf7zQiyhENKDHkosyDWcXmvuEc7GyDb+6/SGVf9H2ketzH
+         QAuSRwdYnirKX5JClk0Ak5aQxTH/5jJgh0yMm0H9lw73XMKA6MgUFr6hJ9wGqqoSJamC
+         InOQ==
+X-Gm-Message-State: AA+aEWZ696A7nB0sXjjoc4oF2j+zuo4u/fsOveovG70iW0h+HFpuqQxV
+        cwcK+GNwHK5AwQUaJ0jeRzKelMXXZFUlEF3sTG8=
+X-Google-Smtp-Source: AFSGD/UgFJMXZiuV3CaIec/4PE42KqCLPJ8Z9aouhJDiq2pRm+Zwib5jtLxxuIyTF5ePL9sLu5L97W/Gjfm7k7iHBQA=
+X-Received: by 2002:a24:1c86:: with SMTP id c128mr6938575itc.58.1543121539467;
+ Sat, 24 Nov 2018 20:52:19 -0800 (PST)
+MIME-Version: 1.0
+References: <20181124022035.17519-1-deepa.kernel@gmail.com>
+ <20181124022035.17519-7-deepa.kernel@gmail.com> <CAF=yD-+1BJHuajcW=2bpeAp5XOAX2fObyvhOdH-YsiGY3-_J4Q@mail.gmail.com>
+In-Reply-To: <CAF=yD-+1BJHuajcW=2bpeAp5XOAX2fObyvhOdH-YsiGY3-_J4Q@mail.gmail.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Sat, 24 Nov 2018 20:52:08 -0800
+Message-ID: <CABeXuvrV+xN3O8BSmJ7bGR+8uYmtrCk2YL37HQZrBSO8YSvzJQ@mail.gmail.com>
+Subject: Re: [PATCH 6/8] socket: Add struct sock_timeval
+To:     willemdebruijn.kernel@gmail.com
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Network Devel Mailing List <netdev@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        y2038 Mailman List <y2038@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amit Nischal <anischal@codeaurora.org>
+On Sat, Nov 24, 2018 at 11:38 AM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> On Sat, Nov 24, 2018 at 4:00 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> >
+> > The new type is meant to be used as a y2038 safe structure
+> > to be used as part of cmsg data.
+> > Presently the SO_TIMESTAMP socket option uses struct timeval
+> > for timestamps. This is not y2038 safe.
+> > Subsequent patches in the series add new y2038 safe socket
+> > option to be used in the place of SO_TIMESTAMP_OLD.
+> > struct sock_timeval will be used as the timestamp format
+> > at that time.
+> >
+> > struct sock_timeval also maintains the same layout across
+> > 32 bit and 64 bit ABIs.
+> >
+> > Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> > ---
+> >  include/uapi/linux/time.h | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/include/uapi/linux/time.h b/include/uapi/linux/time.h
+> > index 04d5587f30d3..106f9398c285 100644
+> > --- a/include/uapi/linux/time.h
+> > +++ b/include/uapi/linux/time.h
+> > @@ -70,6 +70,11 @@ struct __kernel_old_timeval {
+> >  };
+> >  #endif
+> >
+> > +struct sock_timeval {
+> > +       long long tv_sec;
+> > +       long long tv_usec;
+>
+> should these use fixed-width type __u64?
 
-Add support for the graphics clock controller found on SDM845
-based devices. This would allow graphics drivers to probe and
-control their clocks.
+We have avoided using __u64/__s64 types for time types in uapi.
+I think we did this for portability reasons.
+Although this new type might not be required to be interpreted in
+libc, I would prefer for this to be long long.
+If there is a strong preference then I can change it.
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/Kconfig        |   9 ++
- drivers/clk/qcom/Makefile       |   1 +
- drivers/clk/qcom/gpucc-sdm845.c | 231 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 241 insertions(+)
- create mode 100644 drivers/clk/qcom/gpucc-sdm845.c
-
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index a611531..6f3e466 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -273,6 +273,15 @@ config SDM_GCC_845
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
- 	  i2C, USB, UFS, SDDC, PCIe, etc.
-
-+config SDM_GPUCC_845
-+	tristate "SDM845 Graphics Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	select SDM_GCC_845
-+	help
-+	  Support for the graphics clock controller on SDM845 devices.
-+	  Say Y if you want to support graphics controller devices and
-+	  functionality such as 3D graphics.
-+
- config SDM_VIDEOCC_845
- 	tristate "SDM845 Video Clock Controller"
- 	depends on COMMON_CLK_QCOM
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 981882e..6ed2827 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -46,6 +46,7 @@ obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
- obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
- obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
- obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
-+obj-$(CONFIG_SDM_GPUCC_845) += gpucc-sdm845.o
- obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
- obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
-diff --git a/drivers/clk/qcom/gpucc-sdm845.c b/drivers/clk/qcom/gpucc-sdm845.c
-new file mode 100644
-index 0000000..11222f4
---- /dev/null
-+++ b/drivers/clk/qcom/gpucc-sdm845.c
-@@ -0,0 +1,231 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,gpucc-sdm845.h>
-+
-+#include "common.h"
-+#include "clk-alpha-pll.h"
-+#include "clk-branch.h"
-+#include "clk-pll.h"
-+#include "clk-rcg.h"
-+#include "clk-regmap.h"
-+#include "gdsc.h"
-+
-+#define CX_GMU_CBCR_SLEEP_MASK		0xf
-+#define CX_GMU_CBCR_SLEEP_SHIFT		4
-+#define CX_GMU_CBCR_WAKE_MASK		0xf
-+#define CX_GMU_CBCR_WAKE_SHIFT		8
-+#define CLK_DIS_WAIT_SHIFT		12
-+#define CLK_DIS_WAIT_MASK		(0xf << CLK_DIS_WAIT_SHIFT)
-+
-+enum {
-+	P_BI_TCXO,
-+	P_CORE_BI_PLL_TEST_SE,
-+	P_GPLL0_OUT_MAIN,
-+	P_GPLL0_OUT_MAIN_DIV,
-+	P_GPU_CC_PLL1_OUT_EVEN,
-+	P_GPU_CC_PLL1_OUT_MAIN,
-+	P_GPU_CC_PLL1_OUT_ODD,
-+};
-+
-+static const struct parent_map gpu_cc_parent_map_0[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_GPU_CC_PLL1_OUT_MAIN, 3 },
-+	{ P_GPLL0_OUT_MAIN, 5 },
-+	{ P_GPLL0_OUT_MAIN_DIV, 6 },
-+	{ P_CORE_BI_PLL_TEST_SE, 7 },
-+};
-+
-+static const char * const gpu_cc_parent_names_0[] = {
-+	"bi_tcxo",
-+	"gpu_cc_pll1",
-+	"gcc_gpu_gpll0_clk_src",
-+	"gcc_gpu_gpll0_div_clk_src",
-+	"core_bi_pll_test_se",
-+};
-+
-+static const struct alpha_pll_config gpu_cc_pll1_config = {
-+	.l = 0x1a,
-+	.alpha = 0xaab,
-+};
-+
-+static struct clk_alpha_pll gpu_cc_pll1 = {
-+	.offset = 0x100,
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gpu_cc_pll1",
-+			.parent_names = (const char *[]){ "bi_tcxo" },
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_fabia_ops,
-+		},
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_gpu_cc_gmu_clk_src[] = {
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	F(200000000, P_GPLL0_OUT_MAIN_DIV, 1.5, 0, 0),
-+	F(500000000, P_GPU_CC_PLL1_OUT_MAIN, 1, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 gpu_cc_gmu_clk_src = {
-+	.cmd_rcgr = 0x1120,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = gpu_cc_parent_map_0,
-+	.freq_tbl = ftbl_gpu_cc_gmu_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "gpu_cc_gmu_clk_src",
-+		.parent_names = gpu_cc_parent_names_0,
-+		.num_parents = 6,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static struct clk_branch gpu_cc_cx_gmu_clk = {
-+	.halt_reg = 0x1098,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x1098,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gpu_cc_cx_gmu_clk",
-+			.parent_names = (const char *[]){
-+				"gpu_cc_gmu_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gpu_cc_cxo_clk = {
-+	.halt_reg = 0x109c,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x109c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gpu_cc_cxo_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct gdsc gpu_cx_gdsc = {
-+	.gdscr = 0x106c,
-+	.gds_hw_ctrl = 0x1540,
-+	.pd = {
-+		.name = "gpu_cx_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
-+};
-+
-+static struct gdsc gpu_gx_gdsc = {
-+	.gdscr = 0x100c,
-+	.clamp_io_ctrl = 0x1508,
-+	.pd = {
-+		.name = "gpu_gx_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = CLAMP_IO | AON_RESET | POLL_CFG_GDSCR,
-+};
-+
-+static struct clk_regmap *gpu_cc_sdm845_clocks[] = {
-+	[GPU_CC_CXO_CLK] = &gpu_cc_cxo_clk.clkr,
-+	[GPU_CC_CX_GMU_CLK] = &gpu_cc_cx_gmu_clk.clkr,
-+	[GPU_CC_GMU_CLK_SRC] = &gpu_cc_gmu_clk_src.clkr,
-+	[GPU_CC_PLL1] = &gpu_cc_pll1.clkr,
-+};
-+
-+static struct gdsc *gpu_cc_sdm845_gdscs[] = {
-+	[GPU_CX_GDSC] = &gpu_cx_gdsc,
-+	[GPU_GX_GDSC] = &gpu_gx_gdsc,
-+};
-+
-+static const struct regmap_config gpu_cc_sdm845_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x8008,
-+	.fast_io	= true,
-+};
-+
-+static const struct qcom_cc_desc gpu_cc_sdm845_desc = {
-+	.config = &gpu_cc_sdm845_regmap_config,
-+	.clks = gpu_cc_sdm845_clocks,
-+	.num_clks = ARRAY_SIZE(gpu_cc_sdm845_clocks),
-+	.gdscs = gpu_cc_sdm845_gdscs,
-+	.num_gdscs = ARRAY_SIZE(gpu_cc_sdm845_gdscs),
-+};
-+
-+static const struct of_device_id gpu_cc_sdm845_match_table[] = {
-+	{ .compatible = "qcom,sdm845-gpucc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, gpu_cc_sdm845_match_table);
-+
-+static int gpu_cc_sdm845_probe(struct platform_device *pdev)
-+{
-+	struct regmap *regmap;
-+	unsigned int value, mask;
-+	int ret;
-+
-+	regmap = qcom_cc_map(pdev, &gpu_cc_sdm845_desc);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	clk_fabia_pll_configure(&gpu_cc_pll1, regmap, &gpu_cc_pll1_config);
-+
-+	/*
-+	 * Configure gpu_cc_cx_gmu_clk with recommended
-+	 * wakeup/sleep settings
-+	 */
-+	mask = CX_GMU_CBCR_WAKE_MASK << CX_GMU_CBCR_WAKE_SHIFT;
-+	mask |= CX_GMU_CBCR_SLEEP_MASK << CX_GMU_CBCR_SLEEP_SHIFT;
-+	value = 0xf << CX_GMU_CBCR_WAKE_SHIFT | 0xf << CX_GMU_CBCR_SLEEP_SHIFT;
-+	regmap_update_bits(regmap, 0x1098, mask, value);
-+
-+	/* Configure clk_dis_wait for gpu_cx_gdsc */
-+	regmap_update_bits(regmap, 0x106c, CLK_DIS_WAIT_MASK,
-+						8 << CLK_DIS_WAIT_SHIFT);
-+
-+	ret = qcom_cc_really_probe(pdev, &gpu_cc_sdm845_desc, regmap);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static struct platform_driver gpu_cc_sdm845_driver = {
-+	.probe = gpu_cc_sdm845_probe,
-+	.driver = {
-+		.name = "sdm845-gpucc",
-+		.of_match_table = gpu_cc_sdm845_match_table,
-+	},
-+};
-+
-+static int __init gpu_cc_sdm845_init(void)
-+{
-+	return platform_driver_register(&gpu_cc_sdm845_driver);
-+}
-+subsys_initcall(gpu_cc_sdm845_init);
-+
-+static void __exit gpu_cc_sdm845_exit(void)
-+{
-+	platform_driver_unregister(&gpu_cc_sdm845_driver);
-+}
-+module_exit(gpu_cc_sdm845_exit);
-+
-+MODULE_DESCRIPTION("QTI GPUCC SDM845 Driver");
-+MODULE_LICENSE("GPL v2");
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
-
+-Deepa
