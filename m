@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F0AC04EBA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5858C43610
 	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 22:20:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AA7520855
+	by mail.kernel.org (Postfix) with ESMTP id 975C92082E
 	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 22:20:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AA7520855
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975C92082E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbeKZJMw (ORCPT
+        id S1726171AbeKZJNA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 04:12:52 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:44294 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbeKZJMw (ORCPT
+        Mon, 26 Nov 2018 04:13:00 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36890 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbeKZJM7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 04:12:52 -0500
-Received: by mail-qt1-f196.google.com with SMTP id n32so15566933qte.11
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 14:20:44 -0800 (PST)
+        Mon, 26 Nov 2018 04:12:59 -0500
+Received: by mail-qt1-f195.google.com with SMTP id z16so15572823qtq.4
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 14:20:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:organization:content-transfer-encoding;
-        bh=C8JP1SuLOf6mejDUeg2tNf+GFnOh7ZCWeooqxzTm+eg=;
-        b=o5OwOJXl6A8o7rhUdDhbz5ahQdQPnoSC2O55mwazUCDYkuGu6ohTsn5HijP59hxhSa
-         tLcKlzxtQREG5z9bh2CjTd2LVrc50XTuikcbAfkKvpH2fAvA/gGTpJyDyy3ka+RP0GkI
-         lJy+rlxuy3VzoZl0/S32afTLiDSwS3ZOiLRCM/3xVvcSv+AP7WYtDyeTZ86nNQyRjBPg
-         d7iF2EVj/qJgegOG3lw0v2XHJszFfp5QadocwctQOBGLNadzkDdL5V4uBpoFSW7ZUNgk
-         dTTZ95nxTiLxPYQC2OPrYtfiHFvh1pH2QrQ9Mp4J6fKEbemZcQhKdTE/uNvXMCu9J5Xr
-         vrxA==
-X-Gm-Message-State: AGRZ1gJL2jwLdzesor/Q3OthOywzgNwCn27Xcdw1RgC0wA0Ztm1stp0A
-        Jrm98E1R1kZFMIrG1fsHUbY=
-X-Google-Smtp-Source: AJdET5e5Dwws7mj1bkbc5ZaJ1sXTvDyk4XN3azPf02QDYRnchViYRzxDaAbNjUZT2StMOlTc1EAd1w==
-X-Received: by 2002:aed:20ca:: with SMTP id 68mr23279478qtb.296.1543184443795;
-        Sun, 25 Nov 2018 14:20:43 -0800 (PST)
+        bh=DrPmspBRem/5sI9r3VfghWV3hSgYfzEMFwY2Pvb9ctA=;
+        b=B2RSDAL7wtlwrjvH8wg06J+HkaR7MQoVsi4Ay6ZyhJ92zOWvs3mLVENseSGLWVSmbF
+         4XSbg52jtGhdFD4ho13DOG65aDhAROKanXQfPhCpba1twYAHq3A7rEjfbaop/vspaPsf
+         c6Xa0VFXscEpSR0jZtzRdMIAkk2k+IIpLA4bUhzm2Fgl49MPYyd76a3O27v5p1ZCMwFW
+         IZUiD3TWGm057cC6LYIhnmVUbbGxak8VJ/x3kCo1hv5b8xx0g+wFgtRUvK5W7D3V7B3w
+         +aH0ValvE8xRDLZE9EbELaXUmseMOve+X6MBs/6FjH6kOfNGEsgxaRVtiZkigxCPgBL9
+         IIRg==
+X-Gm-Message-State: AA+aEWYDVZIK+zi922/IIJXGaOl+wFaIb3FX9xNdBQQWT0AlPqtb64gW
+        SSUhGHR+8pFyJhbYddk1OO4=
+X-Google-Smtp-Source: AFSGD/W6yuZYm4ZMIYHhCW11sUlvJH1obbRk2xIb6mprDr0Xezu34rrgo/MNJ0uiUgaH7Bp0/n133w==
+X-Received: by 2002:a0c:872a:: with SMTP id 39mr23689747qvh.1.1543184451549;
+        Sun, 25 Nov 2018 14:20:51 -0800 (PST)
 Received: from localhost.localdomain ([181.220.65.91])
-        by smtp.gmail.com with ESMTPSA id e5sm22493648qtr.52.2018.11.25.14.20.39
+        by smtp.gmail.com with ESMTPSA id v2sm26331751qte.75.2018.11.25.14.20.47
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Nov 2018 14:20:43 -0800 (PST)
-Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 25 Nov 2018 20:20:36 -0200
+        Sun, 25 Nov 2018 14:20:50 -0800 (PST)
+Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 25 Nov 2018 20:20:44 -0200
 From:   Otavio Salvador <otavio@ossystems.com.br>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
@@ -57,9 +57,9 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Russell King <linux@armlinux.org.uk>,
         Shawn Guo <shawnguo@kernel.org>,
         NXP Linux Team <linux-imx@nxp.com>
-Subject: [PATCH v3 2/3] ARM: imx_v6_v7_defconfig: Enable BT_BNEP
-Date:   Sun, 25 Nov 2018 20:20:26 -0200
-Message-Id: <20181125222027.22071-2-otavio@ossystems.com.br>
+Subject: [PATCH v3 3/3] ARM: imx_v6_v7_defconfig: Enable USB_ANNOUNCE_NEW_DEVICES
+Date:   Sun, 25 Nov 2018 20:20:27 -0200
+Message-Id: <20181125222027.22071-3-otavio@ossystems.com.br>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181125222027.22071-1-otavio@ossystems.com.br>
 References: <20181125222027.22071-1-otavio@ossystems.com.br>
@@ -74,10 +74,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andreas Müller <schnitzeltony@gmail.com>
 
-This is necessary to support network over bluetooth:
-
-| Sep 11 15:36:33 imx6qdl-variscite-som bluetoothd[281]: kernel lacks bnep-protocol support
-| Sep 11 15:36:33 imx6qdl-variscite-som bluetoothd[281]: System does not support network plugin
+This is very helpful debugging USB issues.
 
 Reviewed-by: Fabio Estevam <festevam@gmail.com>
 Signed-off-by: Andreas Müller <schnitzeltony@gmail.com>
@@ -91,17 +88,17 @@ Changes in v2: None
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
-index 0c887a059df3..22ad2d7a1cf2 100644
+index 22ad2d7a1cf2..d339913845fa 100644
 --- a/arch/arm/configs/imx_v6_v7_defconfig
 +++ b/arch/arm/configs/imx_v6_v7_defconfig
-@@ -81,6 +81,7 @@ CONFIG_NETFILTER=y
- CONFIG_CAN=y
- CONFIG_CAN_FLEXCAN=y
- CONFIG_BT=y
-+CONFIG_BT_BNEP=m
- CONFIG_BT_HCIUART=y
- CONFIG_BT_HCIUART_LL=y
- CONFIG_CFG80211=y
+@@ -305,6 +305,7 @@ CONFIG_SND_SOC_WM8962=y
+ CONFIG_SND_SIMPLE_CARD=y
+ CONFIG_HID_MULTITOUCH=y
+ CONFIG_USB=y
++CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
+ CONFIG_USB_EHCI_HCD=y
+ CONFIG_USB_EHCI_MXC=y
+ CONFIG_USB_STORAGE=y
 -- 
 2.19.2
 
