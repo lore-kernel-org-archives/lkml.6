@@ -2,124 +2,163 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6BEC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 22:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B66B8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 22:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B00702084E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 22:35:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B00702084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 861FD2084E
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 22:35:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 861FD2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbeKZJ1Y (ORCPT
+        id S1726183AbeKZJ1j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 04:27:24 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39392 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726027AbeKZJ1Y (ORCPT
+        Mon, 26 Nov 2018 04:27:39 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37499 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbeKZJ1i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 04:27:24 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAPMYMo8011833
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 17:35:14 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nymdu8hsd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 17:35:14 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 25 Nov 2018 22:35:13 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 25 Nov 2018 22:35:11 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAPMZA111769860
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 25 Nov 2018 22:35:10 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3D15CB2066;
-        Sun, 25 Nov 2018 22:35:10 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1E416B205F;
-        Sun, 25 Nov 2018 22:35:09 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.199.91])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 25 Nov 2018 22:35:09 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 1BB9916C0890; Sun, 25 Nov 2018 14:35:13 -0800 (PST)
-Date:   Sun, 25 Nov 2018 14:35:13 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Corcodel Marian <corcodel.marian@gmail.com>
-Cc:     Josh Triplett <josh@joshtriplett.org>, linux-kernel@vger.kernel.org
-Subject: Re: Function rcu_dynticks_eqs_exit spent more cycles to processor
-Reply-To: paulmck@linux.ibm.com
-References: <1543174886.3486.4.camel@gmail.com>
+        Mon, 26 Nov 2018 04:27:38 -0500
+Received: by mail-qt1-f195.google.com with SMTP id z16so15598188qtq.4;
+        Sun, 25 Nov 2018 14:35:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3SJwxD2KIsgfEvtC5/n0Wo5UTok5io7rULLEuGLWx/g=;
+        b=ZJmrMDx4QOwiiJ68FRS5qs4eSI8+O4L7r9y41nNWp3Nxt9JP4XkOX2P1IxiRopCbrv
+         qd5p0wpEDg7ItvVXG8WPlAXkv+D53pzQt54rBRBKELzyMMn49f2+OBNIZeDGfTrm1zLK
+         vvQjd6dH4RV+vorFSn3T3+6yUXuCJ53hNCJE7oG0/aUoRI9MgPy7jxKarWfGK8iNp73m
+         cEhb0lxjl9CMnkiDoYKnOZjZaIRSv+pqsJ/F2erkvvd2k/KNgZztFPmC0WAA/TvmyUl0
+         QC+37uCYYAuKwgdBCzoaqV5JOLDwgfcv4kcPdRtzv/ULAffLNtGbXoW6y/pH78L/Ho5V
+         DkAQ==
+X-Gm-Message-State: AGRZ1gK8ZJ/NjRx77vBnzn8ATB/bgtSzM98n1ELrqhPTgikWNcZShfE2
+        dJWoSO6YFAAMJ27gvuWrEei1iYnE83UQgAlCRXA=
+X-Google-Smtp-Source: AJdET5f8EsgHpQRwpp4siGYJVjfYef+Ubgo9hqS+qkOWgE2FzEQHpT7osnlJP7jLgExyFLxfiP8xUGzLCDkjSk0g9NQ=
+X-Received: by 2002:aed:35c5:: with SMTP id d5mr23124756qte.212.1543185327884;
+ Sun, 25 Nov 2018 14:35:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543174886.3486.4.camel@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18112522-2213-0000-0000-0000031F1E24
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010120; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01122737; UDB=6.00582779; IPR=6.00902858;
- MB=3.00024326; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-25 22:35:12
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112522-2214-0000-0000-00005C61E958
-Message-Id: <20181125223513.GE4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-25_20:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811250141
+References: <20181124022035.17519-1-deepa.kernel@gmail.com>
+ <20181124022035.17519-8-deepa.kernel@gmail.com> <CAF=yD-K=ZLZ_S=Y6YnhvvkfKQS=21ujwiGd7+JB9yDMtiX_9hg@mail.gmail.com>
+ <CAF=yD-K3Ga8qojSh5Epa6m4EYn-Lvdo=e38MnFqOKch1128VHw@mail.gmail.com>
+ <CABeXuvoDPvT45CCt2L0TReqtb1Q_-E8+toYu6qjiP0cxfdQNdA@mail.gmail.com> <CAF=yD-LngkYq23Q2TCJv_0PRiAryznYRWRbqYFaQkNO=U0w9gQ@mail.gmail.com>
+In-Reply-To: <CAF=yD-LngkYq23Q2TCJv_0PRiAryznYRWRbqYFaQkNO=U0w9gQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sun, 25 Nov 2018 23:35:11 +0100
+Message-ID: <CAK8P3a2_i=RwcyjeDTn9HrzvPN7FYEYdFuyo3RXSVS_N4sbYeg@mail.gmail.com>
+Subject: Re: [PATCH 7/8] socket: Add SO_TIMESTAMP[NS]_NEW
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Richard Henderson <rth@twiddle.net>,
+        linux-alpha@vger.kernel.org,
+        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 25, 2018 at 09:41:26PM +0200, Corcodel Marian wrote:
-> Hi below , in modified func from kernel/rcu/tree.c and not stall proc,
-> run perf for more info.
-> Item type atomic_t dynticks from rcu_dynticks stucture can bee replaced
-> with u8 type, because Intel guarrantee atomic operations to byte.
->  Eg, rtdp->dynticks = ~RCU_DYNTICK_CTRL_MASK;
+On Sun, Nov 25, 2018 at 3:33 PM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+> On Sun, Nov 25, 2018 at 12:28 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> > So failing here means adding a bunch of ifdef's to verify it is not
+> > executing on 64 bit arch or something like x32.
+>
+> The code as is adds branches on platforms that do not need it. Ifdefs
+> are ugly, but if they can be contained to the few helper functions needed
+> for the _2038 variants of cmsg_put, that is acceptable in my opinion.
 
-I am not clear on exactly what change you are suggesting.  But regardless,
-this is core code, so it must run on all CPUs that the Linux kernel
-supports, not just Intel x86.  Furthermore, a straight store of
-~RCU_DYNTICK_CTRL_MASK would be rather destructive in this function,
-if that is what you are getting at with your assignment statement above.
-So again, I am not clear on exactly what change you are suggesting, but
-whatever it is, it must build and run on all architectures.
+In general, I think we should plan for the new code to be the fast path,
+not the old one. Initially that obviously won't be the case, but I hope
+that in a couple of years from now, 32-bit user space will normally use
+64-bit time_t.
 
-Adding LKML on CC, develop in the open and all that.
+This also means that the compat handling for these timestamps
+can be identical to the native 64-bit bit version, while the old
+32-bit code can be hidden behind a flag that is only active
+as the slowpath in native 32-bit mode or in compat mode.
 
-							Thanx, Paul
+I'd also want to see the same thing for the naming, with the
+64-bit time_t based code having the obvious name.
+SOCK_TSTAMP_NEW is fine, otherwise we can try to
+just use SOCK_TSTAMP as the name in the kernel but
+make it refer to the new version.
 
-> static void rcu_dynticks_eqs_exit(void)
-> {
-> 	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
-> 
-> 	/*
-> 	 * CPUs seeing atomic_add_return() must see prior idle
-> sojourns,
-> 	 * and we also must force ordering with the next RCU read-side
-> 	 * critical section.
-> 	 */
-> 		atomic_andnot(RCU_DYNTICK_CTRL_MASK, &rdtp->dynticks);
-> 		smp_mb__after_atomic(); /* _exit after clearing mask.
-> */
-> 		/* Prefer duplicate flushes to losing a flush. */
-> 		rcu_eqs_special_exit();
-> }
-> 
+The two special cases we have consider are x86 with x32
+user space, which wants 64-bit timestamps in compat mode
+with SOCK_TSTAMP_OLD, and sparc64, which has an
+incompatible layout of timeval, so we need to make sure
+that sparc64 can handle all three layouts correctly.
 
+> > The existing timestamp options: SO_TIMESTAMP* fail to provide proper
+> > timestamps beyond year 2038 on 32 bit ABIs.
+> > But, these work fine on 64 bit native ABIs.
+> > So now we need a way of updating these timestamps so that we do not
+> > break existing userspace: 64 bit ABIs should not have to change
+> > userspace, 32 bit ABIs should work as is until 2038 after which they
+> > have bad timestamps.
+> > So we introduce new y2038 safe timestamp options for 32 bit ABIs. We
+> > assume that 32 bit applications will switch to new ABIs at some point,
+> > but leave the older timestamps as is.
+> > I can update the commit text as per above.
+>
+> So on 32-bit platforms SO_TIMESTAMP_NEW introduces a new struct
+> sock_timeval with both 64-bit fields.
+>
+> Does this not break existing applications that compile against SO_TIMESTAMP
+> and expect struct timeval? For one example, the selftests under tools/testing.
+>
+> The kernel will now convert SO_TIMESTAMP (previously constant 29) to
+> different SO_TIMESTAMP_NEW (62) and returns a different struct. Perhaps
+> with a library like libc in the middle this can be fixed up
+> transparently, but for
+> applications that don't have a more recent libc or use a library at
+> all, it breaks
+> the ABI.
+>
+> I suspect that these finer ABI points may have been discussed outside the
+> narrow confines of socket timestamping. But on its own, this does worry me.
+
+The entire purpose of the complexities in the patch set is to not break
+the user space ABI after an application gets recompiled with a 64-bit
+time_t defined by a new libc version:
+
+#define SO_TIMESTAMP (sizeof(time_t) == sizeof(__kernel_long_t) ? \
+            SO_TIMESTAMP_OLD : SO_TIMESTAMP_NEW)
+
+This delays the evaluation of SO_TIMESTAMP to the point where
+it is first used, the assumption being that at this point we have included
+the libc header file that defines both 'time_t' and 'struct timeval'.
+[If we have not included that header, we get a compile-time error,
+which is also necessary because the compiler has no way of deciding
+whether to use SO_TIMESTAMP_OLD or SO_TIMESTAMP_NEW
+in that case].
+
+If the application is built with a 32-bit time_t, or with on a 64-bit
+architecture (all of which have 64-bit time_t and __kernel_long_t),
+or on x32 (which also has 64-bit time_t and __kernel_long_t),
+the result is SO_TIMESTAMP_OLD, so we tell the kernel
+to send back a timestamp in the old format, and everything works
+as it did before.
+
+The only thing that changes is 32-bit user space (other than x32) with
+a 64-bit time_t. In this case, the application expects a structure
+that corresponds to the new sock_timeval (which is compatible
+with the user space timeval based on 64-bit time_t), so we must
+use the new constant in order to tell the kernel which one we want.
+
+      Arnd
