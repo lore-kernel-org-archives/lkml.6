@@ -2,113 +2,196 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3054C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 13:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8CAAC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 14:03:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8038620868
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 13:57:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="1aUGJkfu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8038620868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 75D9520868
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 14:03:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75D9520868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726290AbeKZAsN (ORCPT
+        id S1726416AbeKZAy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 19:48:13 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:44695 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbeKZAsM (ORCPT
+        Sun, 25 Nov 2018 19:54:29 -0500
+Received: from saturn.retrosnub.co.uk ([46.235.226.198]:37152 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbeKZAy3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 19:48:12 -0500
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id wAPDux1W018779
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 22:57:00 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wAPDux1W018779
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1543154220;
-        bh=aIuesR7do2IocVBw8Ifx6CBIm/2NA2X6nJXyEEXcI20=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1aUGJkfuFA2JPFrklE4SBF3GYLpme5k4XdBywvYRdOUeIEp//kRoPOZHMgFZHOpv/
-         gi3hgG7PgdxBa6uxkHf9LguwUhkV9b+4RVy/LbVZ/AHpNxyRBVOlCcQELjjyZGgKAu
-         2nSXCh4ZEgja/gHdq78HuD9EaBJRNQ+SxG52WxJE/iyea7GdsHRl9t3QQdyDgr04bx
-         D8/yElge86Fs2bUuF4NMGYUYlCgWbqs5dtLweSLhuyRKKbZ2eeaSCTZcdxhNeM1LUN
-         /FxdH1WapbMxxvYApOSyFHa5m+EXAK5lsj+sia8xUdSKocy6uD/R5ndw/ohq+qYglA
-         INaQ0NMCK+nig==
-X-Nifty-SrcIP: [209.85.222.46]
-Received: by mail-ua1-f46.google.com with SMTP id z11so5431839uaa.10
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 05:57:00 -0800 (PST)
-X-Gm-Message-State: AA+aEWYw8Vt7TGHb23WGQUXALX4cSO0l06LI4b79zejS/WTnvyy7TTue
-        bkqNvtYSpikLSNPKokM4QEk1hTbPJ3Poth5mVfg=
-X-Google-Smtp-Source: AFSGD/WYRpP+O0FLaNc8OH3hCZbFsl9hD4XX00Rb4zzFTsAp+slHNo/4vcraSCwHaz3c0Z5uBv5rFdXMth/VC7Mn1MM=
-X-Received: by 2002:ab0:6705:: with SMTP id q5mr9751327uam.89.1543154219015;
- Sun, 25 Nov 2018 05:56:59 -0800 (PST)
+        Sun, 25 Nov 2018 19:54:29 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id AAEFB9E74BE;
+        Sun, 25 Nov 2018 14:03:17 +0000 (GMT)
+Date:   Sun, 25 Nov 2018 14:03:16 +0000
+From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+To:     Matt Ranostay <matt.ranostay@konsulko.com>
+Cc:     Tomasz Duszynski <tduszyns@gmail.com>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] iio: add IIO_MASSCONCENTRATION channel type
+Message-ID: <20181125140316.59d9872b@archlinux>
+In-Reply-To: <CAJCx=g=H6Zp4AtWPpC-KdZmyOxTymtdgf+Hx8VvThLFg0bjYVQ@mail.gmail.com>
+References: <20181124221415.10081-1-tduszyns@gmail.com>
+        <20181124221415.10081-2-tduszyns@gmail.com>
+        <CAJCx=g=H6Zp4AtWPpC-KdZmyOxTymtdgf+Hx8VvThLFg0bjYVQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <1542856462-18836-1-git-send-email-yamada.masahiro@socionext.com>
- <20181122143201.d7vifhlny7gmrhzd@ltop.local> <CANiq72miapoMHiXsq-gSu5+dhpGDE6Dnf3c_6DpHRkwNiPPU6g@mail.gmail.com>
-In-Reply-To: <CANiq72miapoMHiXsq-gSu5+dhpGDE6Dnf3c_6DpHRkwNiPPU6g@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sun, 25 Nov 2018 22:56:23 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATVWmt9Eiy8s2wBbCGrWaus=j2b4NZ-OnEoTeph9x3dJw@mail.gmail.com>
-Message-ID: <CAK7LNATVWmt9Eiy8s2wBbCGrWaus=j2b4NZ-OnEoTeph9x3dJw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] kernel.h: disable type-checks in container_of()
- for Sparse
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        NeilBrown <neilb@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>, cmo@melexis.com,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 24, 2018 at 6:06 PM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Fri, Nov 23, 2018 at 10:14 PM Luc Van Oostenryck
-> <luc.vanoostenryck@gmail.com> wrote:
+On Sun, 25 Nov 2018 05:51:32 -0800
+Matt Ranostay <matt.ranostay@konsulko.com> wrote:
+
+> On Sat, Nov 24, 2018 at 2:14 PM Tomasz Duszynski <tduszyns@gmail.com> wrote:
 > >
-> > On Thu, Nov 22, 2018 at 12:14:20PM +0900, Masahiro Yamada wrote:
-> > > When I tried to enable BUILD_BUG_ON for Sparse, the kbuild test robot
-> > > reported lots of "unknown expression" warnings from container_of(),
-> > > which seemed false positive.
-> > >
-> > > I addressed this in [1], but fixing Sparse is the right thing to do.
-> > >
-> > > The issue was fixed by Sparse commit 0eb8175d3e9c ("fix expansion of
-> > > function designator"), but it will take time until the fixed version
-> > > of Sparse is widely available.
-> > >
-> > > Disable the container_of() type checks for Sparse for now.
+> > Measuring particulate matter in ug / m3 (micro-grams per cubic meter)
+> > is de facto standard. Existing air quality sensors usually follow
+> > this convention and are capable of returning measurements using
+> > this unit.
 > >
-> > I would prefer that developers upgrade their version of sparse but ...
+> > IIO currently does not offer suitable channel type for this
+> > type of measurements hence this patch adds this.
 > >
-> > Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
->
-> Indeed. If someone is writing code for the latest kernels, I think it
-> is reasonable to assume they are able to use the latest sparse too,
-> since it is not required for compilation anyway.
+> > In addition, two modifiers are introduced used for distinguishing
+> > between coarse (PM10) and fine particles (PM2p5) measurements, i.e
+> > IIO_MOD_PM10 and IIO_MOD_PM2p5.
+> >
+> > Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+> > ---
+> >  Documentation/ABI/testing/sysfs-bus-iio | 11 ++++++++++-
+> >  drivers/iio/industrialio-core.c         |  3 +++
+> >  include/uapi/linux/iio/types.h          |  3 +++
+> >  tools/iio/iio_event_monitor.c           |  6 ++++++
+> >  4 files changed, 22 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+> > index 8127a08e366d..ce0ed140660d 100644
+> > --- a/Documentation/ABI/testing/sysfs-bus-iio
+> > +++ b/Documentation/ABI/testing/sysfs-bus-iio
+> > @@ -1684,4 +1684,13 @@ KernelVersion:   4.18
+> >  Contact:       linux-iio@vger.kernel.org
+> >  Description:
+> >                 Raw (unscaled) phase difference reading from channel Y
+> > -               that can be processed to radians.
+> > \ No newline at end of file
+> > +               that can be processed to radians.
+> > +
+> > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentration_pm2p5_input
+> > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentrationY_pm2p5_input
+> > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentration_pm10_input
+> > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentrationY_pm10_input
+> > +KernelVersion: 4.21
+> > +Contact:       linux-iio@vger.kernel.org
+> > +Description:
+> > +               Mass concentration reading of particulate matter in ug / m3.
+> > diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+> > index a062cfddc5af..2a9ef600c1fb 100644
+> > --- a/drivers/iio/industrialio-core.c
+> > +++ b/drivers/iio/industrialio-core.c
+> > @@ -87,6 +87,7 @@ static const char * const iio_chan_type_name_spec[] = {
+> >         [IIO_GRAVITY]  = "gravity",
+> >         [IIO_POSITIONRELATIVE]  = "positionrelative",
+> >         [IIO_PHASE] = "phase",
+> > +       [IIO_MASSCONCENTRATION] = "massconcentration",
+> >  };
+> >
+> >  static const char * const iio_modifier_names[] = {
+> > @@ -127,6 +128,8 @@ static const char * const iio_modifier_names[] = {
+> >         [IIO_MOD_Q] = "q",
+> >         [IIO_MOD_CO2] = "co2",
+> >         [IIO_MOD_VOC] = "voc",
+> > +       [IIO_MOD_PM2p5] = "pm2p5",
+> > +       [IIO_MOD_PM10] = "pm10",
+> >  };
+> >
+> >  /* relies on pairs of these shared then separate */
+> > diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
+> > index 92baabc103ac..465044b42af5 100644
+> > --- a/include/uapi/linux/iio/types.h
+> > +++ b/include/uapi/linux/iio/types.h
+> > @@ -46,6 +46,7 @@ enum iio_chan_type {
+> >         IIO_GRAVITY,
+> >         IIO_POSITIONRELATIVE,
+> >         IIO_PHASE,
+> > +       IIO_MASSCONCENTRATION,  
+> 
+> So I'm guessing IIO_CONCENTRATION can't be scaled to the micro-grams
+> per cubic meter?
 
+Currently concentration is defined as a percentage reading of a substance
+(which does make me wonder if it is meant to be percentage of the volume or
+percentage of the mass?)  Either way, if can't convert to a density measurement
+as it's a unit free ratio (I think).
 
-I am OK with either way.
+> 
+> >  };
+> >
+> >  enum iio_modifier {
+> > @@ -87,6 +88,8 @@ enum iio_modifier {
+> >         IIO_MOD_VOC,
+> >         IIO_MOD_LIGHT_UV,
+> >         IIO_MOD_LIGHT_DUV,
+> > +       IIO_MOD_PM2p5,  
+> 
+> I know this is unit of measure but the lowercase p in IIO_MOD_PM2p5 is
+> a bit non-standard for iio defines/enum.
+It is a bit odd and will get us scripted reports so maybe best to
+just go upper case and not worry about it.
 
-I leave this to Andrew.
+Jonathan
+> 
+> - Matt
+> 
+> > +       IIO_MOD_PM10,
+> >  };
+> >
+> >  enum iio_event_type {
+> > diff --git a/tools/iio/iio_event_monitor.c b/tools/iio/iio_event_monitor.c
+> > index ac2de6b7e89f..f0fcfeddba2b 100644
+> > --- a/tools/iio/iio_event_monitor.c
+> > +++ b/tools/iio/iio_event_monitor.c
+> > @@ -60,6 +60,7 @@ static const char * const iio_chan_type_name_spec[] = {
+> >         [IIO_GRAVITY] = "gravity",
+> >         [IIO_POSITIONRELATIVE] = "positionrelative",
+> >         [IIO_PHASE] = "phase",
+> > +       [IIO_MASSCONCENTRATION] = "massconcentration",
+> >  };
+> >
+> >  static const char * const iio_ev_type_text[] = {
+> > @@ -115,6 +116,8 @@ static const char * const iio_modifier_names[] = {
+> >         [IIO_MOD_Q] = "q",
+> >         [IIO_MOD_CO2] = "co2",
+> >         [IIO_MOD_VOC] = "voc",
+> > +       [IIO_MOD_PM2p5] = "pm2p5",
+> > +       [IIO_MOD_PM10] = "pm10",
+> >  };
+> >
+> >  static bool event_is_known(struct iio_event_data *event)
+> > @@ -156,6 +159,7 @@ static bool event_is_known(struct iio_event_data *event)
+> >         case IIO_GRAVITY:
+> >         case IIO_POSITIONRELATIVE:
+> >         case IIO_PHASE:
+> > +       case IIO_MASSCONCENTRATION:
+> >                 break;
+> >         default:
+> >                 return false;
+> > @@ -200,6 +204,8 @@ static bool event_is_known(struct iio_event_data *event)
+> >         case IIO_MOD_Q:
+> >         case IIO_MOD_CO2:
+> >         case IIO_MOD_VOC:
+> > +       case IIO_MOD_PM2p5:
+> > +       case IIO_MOD_PM10:
+> >                 break;
+> >         default:
+> >                 return false;
+> > --
+> > 2.19.2
+> >  
 
-
-
--- 
-Best Regards
-Masahiro Yamada
