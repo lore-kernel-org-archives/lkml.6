@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF03C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF8A8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:19:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7270420868
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B674E2086B
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:19:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7+PtZso"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7270420868
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KfftdrzL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B674E2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726639AbeKZDKb (ORCPT
+        id S1726683AbeKZDLN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 22:10:31 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36728 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726226AbeKZDKa (ORCPT
+        Sun, 25 Nov 2018 22:11:13 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37850 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbeKZDLN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 22:10:30 -0500
-Received: by mail-pl1-f196.google.com with SMTP id g9so208648plo.3;
-        Sun, 25 Nov 2018 08:19:06 -0800 (PST)
+        Sun, 25 Nov 2018 22:11:13 -0500
+Received: by mail-pf1-f195.google.com with SMTP id u3-v6so5376242pfm.4;
+        Sun, 25 Nov 2018 08:19:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=dNaTAnr10zrYPVdsj0Xu4lcwWPKS7hR7CHzNPhUwwUg=;
-        b=g7+PtZsoKpLBBoCYnVRnl/v5J7PlNw13Xu9ps86JqOKwgf/tWyZwmjG6f31J8Y02bc
-         Z1rMv1r5b0DJTk9y9vo9hxCvxZfytTqbEfCtHyNQYKLybHBt48MAHw8TRfV7RYIgvOsq
-         3ay9eQzRY4Mlkf44ByHz2mEy3RVSIeHYO+tnh9CRUEOGm54i3JlpZsHieZualjvVOeHs
-         QYD/6HZuOrdGlOUS+SrKt8Ap4zxG0hi28SIKPlP6wWo1MhfIHZSwl6EEe9V+7aUbiEst
-         Uj9QqrhKfQ2ZiEBUjG0hL8nn2QUDx8DCd1gzMOoDaJpOCppzcYNmfE7sf6iF0C0Z0AJf
-         PcMA==
+        bh=D2ubccsUc+lruYN/6q8Va1yZPf6jxpt0taqqepYfPvk=;
+        b=KfftdrzLWD4q9F2i7Hk2IX05icitsDSW6T3mBQwFXi4jcwWe2Cc3e4n4iNjSuY6W2b
+         l2JXe9at78XnNL1ZaU3no2z3VGFd4BzVoVotiDRfJwSdU8rXevm6QnmcUc/aj2cVr0m0
+         psC6wT+a7kA6lv+68kYL1gaNQ1mAng7Apf6IycuHYJEcsP84KlFOiQSXhjOyV23OOxsy
+         obweFVj1UxMRY94sJtSC5PferxwglbdLF3QM1Gjt3PMULJpyYtQp/JC8l3xuNxBZ/HdU
+         JQ6bQj++JTIiweam4Tpe97MoBwjbH03MpfBQ7vX6cSR7chn7Li8+EDF7noT6TImKz+PC
+         9+0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=dNaTAnr10zrYPVdsj0Xu4lcwWPKS7hR7CHzNPhUwwUg=;
-        b=uV1khKhl72PqQWWimlLtj2RV28wJnno2YNLUOlmIq5MqIWzgpGrgrkRv709M22RvJQ
-         LLRur+9rXhv9H8zp6NUU/yhfeybg5+dZjX4facruWXVGcla3QfAltJ5blbSAhCc7vSu7
-         9tPUDgo+QeGJMB6kg39EUSJZcIcLaN6fyg/dE9tdh34dH/0XB5AAsfNafvLK8jHxRC+u
-         Io+2myn24njwj9cRPd/BMPbpGu/vQnUE+oM+PEjiakUKnJRthCkWOkiBQM9NGIZo8e+X
-         EbdAfzu/GNJX0PAaI2tWqn4ESwIKUMYlklhfjqZl9Fm45BWZ6gn1i7Xjc/x+9RDPHwd9
-         wZTg==
-X-Gm-Message-State: AA+aEWZnHEgWSWic7hVcOli8gUwUY5+hYgiIGDetL1MqKdHRxRnoLu/W
-        iO4lx1WUc4G3Fo9kHJeCTkk=
-X-Google-Smtp-Source: AFSGD/X2HdyJokSI7P9S8vmbLUJwfsWeJhDWr09Qj7gJ3pjMJJmrn1Mj8iWxpSfNOKsX7GFBXb2XWg==
-X-Received: by 2002:a17:902:14e:: with SMTP id 72mr11379492plb.287.1543162746402;
-        Sun, 25 Nov 2018 08:19:06 -0800 (PST)
+        bh=D2ubccsUc+lruYN/6q8Va1yZPf6jxpt0taqqepYfPvk=;
+        b=HcFUjz48xxKSNxKldwX0dk+fPd7P4ZACp0JJS37oS/cLG2wIiCxQBFJMiCAKZcOv29
+         96+PdytSeARaqf2V81S5Vf4uOuiNKopdaadOriE2bUHok49c3hJ+34Ed61UoFZcW0cZa
+         r1TVBZ411hUgc819AiyR2KjMvsk04Kei8kP8feQGOc8fNVGha05rCE7AiS5j53JqWDuc
+         rKzFgzm7xvvCRJITqxjPX7pw7LjTZaqfP33ZDBKFCFv9gO5WjVtrjBPLSWyrDQSuhHrQ
+         grm9FHTkCpO9lN1+ao7qj4ht2EJrmk1LpCgBLJwRdDPqL3CDbY8aqYbfdzbOtl65hLDh
+         24Kg==
+X-Gm-Message-State: AGRZ1gLPNFsV5Q7tR9LMB1rq/iEYSMaC8dPmBUSxl6DOLfe9ozmQVDvb
+        qKEfGrEGgQmqkfay3sK5Y6U=
+X-Google-Smtp-Source: AJdET5dYwZffezPCRiD0XjloYZtx4Cz6x8UEPuro4rzPC/+ZokmYOOqugNQLfpe4mJe5pr8S7i5s9w==
+X-Received: by 2002:a62:6001:: with SMTP id u1-v6mr24506297pfb.130.1543162788802;
+        Sun, 25 Nov 2018 08:19:48 -0800 (PST)
 Received: from arx-s1 ([116.238.148.251])
-        by smtp.gmail.com with ESMTPSA id e23sm78420517pfh.68.2018.11.25.08.19.02
+        by smtp.gmail.com with ESMTPSA id g123-v6sm98190883pfc.155.2018.11.25.08.19.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 25 Nov 2018 08:19:05 -0800 (PST)
-Date:   Mon, 26 Nov 2018 00:18:59 +0800
+        Sun, 25 Nov 2018 08:19:48 -0800 (PST)
+Date:   Mon, 26 Nov 2018 00:19:41 +0800
 From:   Hao Zhang <hao5781286@gmail.com>
 To:     robh+dt@kernel.org, mark.rutland@arm.com,
         maxime.ripard@bootlin.com, wens@csie.org, mturquette@baylibre.com,
@@ -68,8 +68,8 @@ Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com,
         hao5781286@gmail.com
-Subject: [PATCH v3 1/6] Documentation: ARM: sunxi: pwm: add Allwinner sun8i.
-Message-ID: <20181125161859.GA5277@arx-s1>
+Subject: [PATCH v3 2/6] ARM: dtsi: add pwm node for sun8i R40.
+Message-ID: <20181125161941.GA5305@arx-s1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -79,44 +79,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds Allwinner sun8i pwm binding document.
+This patch adds pwm node for sun8i R40.
 
 Signed-off-by: Hao Zhang <hao5781286@gmail.com>
 ---
- .../devicetree/bindings/pwm/pwm-sun8i.txt          | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
+ arch/arm/boot/dts/sun8i-r40.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt b/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
-new file mode 100644
-index 0000000..7531d85
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pwm/pwm-sun8i.txt
-@@ -0,0 +1,24 @@
-+Allwinner sun8i R40/V40/T3 SoC PWM controller
+diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
+index 6f4c9ca..cc05b2c 100644
+--- a/arch/arm/boot/dts/sun8i-r40.dtsi
++++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+@@ -317,6 +317,7 @@
+ 			clock-names = "hosc", "losc";
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
 +
-+Required properties:
-+  - compatible: Should be one of:
-+    - "allwinner,sun8i-r40-pwm"
-+  - reg: Physical base address and length of the controller's registers
-+  - interrupts: Should contain interrupt.
-+  - clocks: From common clock binding, handle to the parent clock.
-+  - clock-names: Must contain the clock names described just above.
-+  - pwm-channels: PWM channels of the controller.
-+  - #pwm-cells: Should be 3. See pwm.txt in this directory for a description of
-+    the cells format.
+ 		};
+ 
+ 		pio: pinctrl@1c20800 {
+@@ -373,6 +374,11 @@
+ 				bias-pull-up;
+ 			};
+ 
++			pwm_ch0_pin: pwm-ch0-pin {
++				pins = "PB2";
++				function = "pwm";
++			};
 +
-+Example:
+ 			uart0_pb_pins: uart0-pb-pins {
+ 				pins = "PB22", "PB23";
+ 				function = "uart0";
+@@ -384,6 +390,17 @@
+ 			reg = <0x01c20c90 0x10>;
+ 		};
+ 
++		pwm: pwm@1c23400 {
++			compatible = "allwinner,sun8i-r40-pwm";
++			reg = <0x01c23400 0x400>;
++			interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&osc24M>, <&ccu CLK_APB1>;
++			clock-names = "mux-0", "mux-1";
++			pwm-channels = <8>;
++			#pwm-cells = <3>;
++			status = "disabled";
++		};
 +
-+pwm: pwm@1c23400 {
-+	     compatible = "allwinner,sun8i-r40-pwm";
-+	     reg = <0x01c23400 0x400>;
-+	     interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
-+	     clocks = <&osc24M>, <&ccu CLK_APB1>;
-+	     clock-names = "mux-0", "mux-1";
-+	     pwm-channels = <8>;
-+	     #pwm-cells = <3>;
-+};
+ 		uart0: serial@1c28000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x01c28000 0x400>;
 -- 
 2.7.4
 
