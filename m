@@ -2,151 +2,143 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81579C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79123C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A6B52082E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:00:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YqOmSidS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A6B52082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0724A20850
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:10:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0724A20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbeKYOuz (ORCPT
+        id S1727088AbeKYO5l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 09:50:55 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43859 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbeKYOuy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 09:50:54 -0500
-Received: by mail-ed1-f66.google.com with SMTP id f4so13073920edq.10;
-        Sat, 24 Nov 2018 20:00:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=obtjhgtDDsP+5Ip6HZR8RzVAI2Sl/WwjveNuv60FNDs=;
-        b=YqOmSidS95BPQYBVzqnNeBa4T7rgsx5jQyJB8lWWrWUOypCe3UU48DBr5T6RKM/rQa
-         hPYciCQu0hNgfnKSkX29QKmwqkarhfaTT3FkHPIdeC04uGRgL0FBLnGbWv9Rw2S7521Q
-         +nVEk46+FXxcZm8WQ3ZYsHn/xr+3veZkjqDUgQdm8YINbiDQO/wN7oxCxAYLN1bcWLsw
-         GQy8by3SgVIRMl331D//UNZxLAb7EOtAVSNCQhmKf9mYCjbE/Q5X5CFVbztRRL+Kz3N7
-         8HB+Xrp3toMt+Y3gE8GdDCC2HyUJtC0ePC1rg/E8+RqQE1DgJ3w8NfPAXutLtKtIam9h
-         qFdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=obtjhgtDDsP+5Ip6HZR8RzVAI2Sl/WwjveNuv60FNDs=;
-        b=P++kHbDe/DE06EhQKsQ5ixzCeyVPJjYWRM1Ql2LlXcpJD18fMtPiQ9CsRRZZb2TzIG
-         zV7AnLvKHNSv2nje8X+e8B0D+dfJR78fIf/0LuXJFIP534YtWd8tmvgZRnjTGzQ74AOf
-         TpKrXMkjlXiTLPlrS3UGc4kg00x6cKH9xfV0Z2rn5n+CaUy0QHQsH09mmlV0x0Shf1VO
-         qeXg5DK/xvgeC4OKHTwMePz0ry7lwowdHiEiPsP8+eH4bf2Zg7XdCyINN6YQEc/nH6+0
-         ZdkF/6lN5+d/eLI24RG5Wx159nDNjP8SFt2uKhgMm9pDtxswX+EBZHidwrRzZIV8PBl8
-         tdgw==
-X-Gm-Message-State: AA+aEWbGEhRWCBQQtwKkB+AMtfemVk/MY4bh2TfDTqLHjxXRxhL4POCw
-        WEPt6kr+tT115KSeLU1+1qBmFe6kTb+ubiDw68A=
-X-Google-Smtp-Source: AFSGD/WZnElXfbGNhd/Endw6qrCamTs/4J1B/Q9FZt5jGoDda+QJMvhqU/aMWzRGqoIBi/YOjQkiFTOLMj9kMyN0O30=
-X-Received: by 2002:aa7:dace:: with SMTP id x14mr19123754eds.13.1543118445903;
- Sat, 24 Nov 2018 20:00:45 -0800 (PST)
+        Sun, 25 Nov 2018 09:57:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48250 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726540AbeKYO5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 09:57:41 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B92DA307EA99;
+        Sun, 25 Nov 2018 04:07:33 +0000 (UTC)
+Received: from sky.random (ovpn-120-160.rdu2.redhat.com [10.10.120.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2BAAE103BAB6;
+        Sun, 25 Nov 2018 04:07:30 +0000 (UTC)
+Date:   Sat, 24 Nov 2018 23:07:29 -0500
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Hildenbrand <david@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        David Herrmann <dh.herrmann@gmail.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Kan Liang <kan.liang@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christoph Lameter <cl@linux.com>,
+        Nicholas Piggin <npiggin@gmail.com>, pifang@redhat.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm: put_and_wait_on_page_locked() while page is migrated
+Message-ID: <20181125040729.GF4932@redhat.com>
+References: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils>
 MIME-Version: 1.0
-References: <20181124022035.17519-1-deepa.kernel@gmail.com> <20181124022035.17519-9-deepa.kernel@gmail.com>
-In-Reply-To: <20181124022035.17519-9-deepa.kernel@gmail.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Sat, 24 Nov 2018 23:00:08 -0500
-Message-ID: <CAF=yD-Jz8c2EsoKxUDbf7dygWRW49kwteUsksq3eUV00Eg94-w@mail.gmail.com>
-Subject: Re: [PATCH 8/8] socket: Add SO_TIMESTAMPING_NEW
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        chris@zankel.net, fenghua.yu@intel.com, rth@twiddle.net,
-        Thomas Gleixner <tglx@linutronix.de>, ubraun@linux.ibm.com,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Sun, 25 Nov 2018 04:07:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 24, 2018 at 3:58 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
->
-> Add SO_TIMESTAMPING_NEW variant of socket timestamp options.
-> This is the y2038 safe versions of the SO_TIMESTAMPING_OLD
-> for all architectures.
->
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> Cc: chris@zankel.net
-> Cc: fenghua.yu@intel.com
-> Cc: rth@twiddle.net
-> Cc: tglx@linutronix.de
-> Cc: ubraun@linux.ibm.com
-> Cc: linux-alpha@vger.kernel.org
-> Cc: linux-arch@vger.kernel.org
-> Cc: linux-ia64@vger.kernel.org
-> Cc: linux-mips@linux-mips.org
-> Cc: linux-s390@vger.kernel.org
-> Cc: linux-xtensa@linux-xtensa.org
-> Cc: sparclinux@vger.kernel.org
-> ---
+On Sat, Nov 24, 2018 at 07:21:07PM -0800, Hugh Dickins wrote:
+> Waiting on a page migration entry has used wait_on_page_locked() all
+> along since 2006: but you cannot safely wait_on_page_locked() without
+> holding a reference to the page, and that extra reference is enough to
+> make migrate_page_move_mapping() fail with -EAGAIN, when a racing task
+> faults on the entry before migrate_page_move_mapping() gets there.
+> 
+> And that failure is retried nine times, amplifying the pain when
+> trying to migrate a popular page.  With a single persistent faulter,
+> migration sometimes succeeds; with two or three concurrent faulters,
+> success becomes much less likely (and the more the page was mapped,
+> the worse the overhead of unmapping and remapping it on each try).
+> 
+> This is especially a problem for memory offlining, where the outer
+> level retries forever (or until terminated from userspace), because
+> a heavy refault workload can trigger an endless loop of migration
+> failures.  wait_on_page_locked() is the wrong tool for the job.
+> 
+> David Herrmann (but was he the first?) noticed this issue in 2014:
+> https://marc.info/?l=linux-mm&m=140110465608116&w=2
+> 
+> Tim Chen started a thread in August 2017 which appears relevant:
+> https://marc.info/?l=linux-mm&m=150275941014915&w=2
+> where Kan Liang went on to implicate __migration_entry_wait():
+> https://marc.info/?l=linux-mm&m=150300268411980&w=2
+> and the thread ended up with the v4.14 commits:
+> 2554db916586 ("sched/wait: Break up long wake list walk")
+> 11a19c7b099f ("sched/wait: Introduce wakeup boomark in wake_up_page_bit")
+> 
+> Baoquan He reported "Memory hotplug softlock issue" 14 November 2018:
+> https://marc.info/?l=linux-mm&m=154217936431300&w=2
+> 
+> We have all assumed that it is essential to hold a page reference while
+> waiting on a page lock: partly to guarantee that there is still a struct
+> page when MEMORY_HOTREMOVE is configured, but also to protect against
+> reuse of the struct page going to someone who then holds the page locked
+> indefinitely, when the waiter can reasonably expect timely unlocking.
+> 
+> But in fact, so long as wait_on_page_bit_common() does the put_page(),
+> and is careful not to rely on struct page contents thereafter, there is
+> no need to hold a reference to the page while waiting on it.  That does
+> mean that this case cannot go back through the loop: but that's fine for
+> the page migration case, and even if used more widely, is limited by the
+> "Stop walking if it's locked" optimization in wake_page_function().
+> 
+> Add interface put_and_wait_on_page_locked() to do this, using negative
+> value of the lock arg to wait_on_page_bit_common() to implement it.
+> No interruptible or killable variant needed yet, but they might follow:
+> I have a vague notion that reporting -EINTR should take precedence over
+> return from wait_on_page_bit_common() without knowing the page state,
+> so arrange it accordingly - but that may be nothing but pedantic.
+> 
+> __migration_entry_wait() still has to take a brief reference to the
+> page, prior to calling put_and_wait_on_page_locked(): but now that it
+> is dropped before waiting, the chance of impeding page migration is
+> very much reduced.  Should we perhaps disable preemption across this?
+> 
+> shrink_page_list()'s __ClearPageLocked(): that was a surprise!  This
+> survived a lot of testing before that showed up.  PageWaiters may have
+> been set by wait_on_page_bit_common(), and the reference dropped, just
+> before shrink_page_list() succeeds in freezing its last page reference:
+> in such a case, unlock_page() must be used.  Follow the suggestion from
+> Michal Hocko, just revert a978d6f52106 ("mm: unlockless reclaim") now:
+> that optimization predates PageWaiters, and won't buy much these days;
+> but we can reinstate it for the !PageWaiters case if anyone notices.
+> 
+> It does raise the question: should vmscan.c's is_page_cache_freeable()
+> and __remove_mapping() now treat a PageWaiters page as if an extra
+> reference were held?  Perhaps, but I don't think it matters much, since
+> shrink_page_list() already had to win its trylock_page(), so waiters are
+> not very common there: I noticed no difference when trying the bigger
+> change, and it's surely not needed while put_and_wait_on_page_locked()
+> is only used for page migration.
+> 
+> Reported-and-tested-by: Baoquan He <bhe@redhat.com>
+> Signed-off-by: Hugh Dickins <hughd@google.com>
+> Acked-by: Michal Hocko <mhocko@suse.com>
 
->  /*
->   * called from sock_recv_timestamp() if sock_flag(sk, SOCK_RCVTSTAMP)
->   * or sock_flag(sk, SOCK_RCVTSTAMPNS)
-> @@ -739,8 +740,8 @@ void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
->         struct sk_buff *skb)
->  {
->         int need_software_tstamp = sock_flag(sk, SOCK_RCVTSTAMP) || sock_flag(sk, SOCK_RCVTSTAMPNS);
-> -       struct scm_timestamping tss;
-> -       int empty = 1, false_tstamp = 0;
-> +       struct scm_timestamping_internal tss;
-> +       int empty = 1, false_tstamp = 0, new_tstamp = 0;
->         struct skb_shared_hwtstamps *shhwtstamps =
->                 skb_hwtstamps(skb);
->
-> @@ -756,20 +757,23 @@ void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
->
->         memset(&tss, 0, sizeof(tss));
->         if ((sk->sk_tsflags & SOF_TIMESTAMPING_SOFTWARE) &&
-> -           ktime_to_timespec_cond(skb->tstamp, tss.ts + 0))
-> +           ktime_to_timespec64_cond(skb->tstamp, tss.ts + 0))
->                 empty = 0;
->         if (shhwtstamps &&
->             (sk->sk_tsflags & SOF_TIMESTAMPING_RAW_HARDWARE) &&
->             !skb_is_swtx_tstamp(skb, false_tstamp) &&
-> -           ktime_to_timespec_cond(shhwtstamps->hwtstamp, tss.ts + 2)) {
-> +           ktime_to_timespec64_cond(shhwtstamps->hwtstamp, tss.ts + 2)) {
->                 empty = 0;
->                 if ((sk->sk_tsflags & SOF_TIMESTAMPING_OPT_PKTINFO) &&
->                     !skb_is_err_queue(skb))
->                         put_ts_pktinfo(msg, skb);
->         }
->         if (!empty) {
-> -               put_cmsg(msg, SOL_SOCKET,
-> -                        SO_TIMESTAMPING_OLD, sizeof(tss), &tss);
-> +               new_tstamp = sock_flag(sk, SOCK_TSTAMP_NEW);
-> +               if (new_tstamp)
-
-nit: no need for explicit variable
-
-> +                       put_cmsg_scm_timestamping64(msg, &tss);
-> +               else
-> +                       put_cmsg_scm_timestamping(msg, &tss);
->
->                 if (skb_is_err_queue(skb) && skb->len &&
->                     SKB_EXT_ERR(skb)->opt_stats)
-> --
-> 2.17.1
->
+Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
