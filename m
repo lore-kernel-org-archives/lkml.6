@@ -2,63 +2,62 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28EFFC43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 07:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9AB5C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 07:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E54C120664
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 07:44:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B6452086B
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 07:44:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VjEhgCNZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E54C120664
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kv3Xh1Hd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B6452086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbeKYSe1 (ORCPT
+        id S1727623AbeKYSe2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 13:34:27 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43342 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbeKYSe0 (ORCPT
+        Sun, 25 Nov 2018 13:34:28 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39880 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727573AbeKYSe2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 13:34:26 -0500
-Received: by mail-wr1-f66.google.com with SMTP id r10so15763314wrs.10;
-        Sat, 24 Nov 2018 23:43:56 -0800 (PST)
+        Sun, 25 Nov 2018 13:34:28 -0500
+Received: by mail-wm1-f66.google.com with SMTP id u13-v6so15311010wmc.4;
+        Sat, 24 Nov 2018 23:43:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jEChEu3344BdHYPwyNpUg8OvRy/artJMWmV46zplrvk=;
-        b=VjEhgCNZArW/zyQ4tbDkXJgwqMPxJ4ioXIFwwY6dqG8F0fMVxQrT+wk6T6z2NXfxPd
-         aPQKKXbkVbmQOJiAP8oT7Qh+BzhTaDmjTp2eKTgDKQjPVozeP2NQ6BLvyitJnUBvudlx
-         vQWF4Dp223M5B5o4pSZdgQuikopVvRDjcYRAEHKcgDucEQVYnp3Oi6kGPcer0Px7wURl
-         rm4yoRGsHBeOLUPvasnAfktHb5ziyD5PudJw3kIBZJ0lA/f39/z8EZcMbebTDcDXSBM5
-         e/dZJVZjR9c8/41qKKl5Sqjl4tNzk/P8wcyQpcSsyArvyk4n0XGgN6IVhBb8OExQnmIP
-         qdsQ==
+        bh=r1t1+K70MuQ6CIfy7Wgp1L7Kl8mx3XOTA4Vtxtq+eOs=;
+        b=kv3Xh1HdQ7BPoBV56XO3W5TKrKMpFKWgX46s0zugdxCUMb7eJXuZthomI9uwuMh7J2
+         9IW8nbXDo1HQ/G1yw8T0IDHN7d643raQfx/j+7tgOM6AVaItyBwFAWogtaFYpi4fo8wB
+         fxop5T+pU0Y3LJEH9OXkFDNjBWkG2Sdv8evYc9eJKnEQzpnoFfqvzl5G+Ta1ljXj5Yfv
+         +2wzHvX9Dwl3MvwZnMg7UJ5aEscerfWtd+VRWGGR4Xu336P+ZU/YonD50XfxkskSgDej
+         Elbcr8AzmMR9orK69KKkxiXppqzU10oNWJ+kFHYhk9viuOJmhM4tgnhY3XAd3s2ryN5n
+         f43Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=jEChEu3344BdHYPwyNpUg8OvRy/artJMWmV46zplrvk=;
-        b=Sy2PvwJw3KfovZGNMnpuKUFIBejZU/HhhRC9cbqB8nLbZ7wl/0jdbtBMzdxdOcXi7V
-         VDJbJ3pwGYsXRCm7DC3BgqCuOYmTxQmC3P3P/HUbnAIAWQuNJoigJWddr/u92M2jUZg8
-         Q4+HHqQoyDkNQKmqAAPU5cZJ5wrFbZynipTB73v3CqCtkIvbXzV7mK5o0L6Rc25EXwl1
-         gakOgpOEesXAMcG8YJ5AjLEs3AyUQQZoEbNdyardPnIFPvwt+83Pjd2QcL7LYk0/7yjg
-         96E/54OzsZgtNLPD0OTgh3CRBKs/3f392jN5fosh2IIfbzQDztfXl15ALZ63olNuqlLW
-         Ta+w==
-X-Gm-Message-State: AA+aEWasa0uvcajju1N+394atONl7ZqxMPx9tOlO3j4gTcbY/WW2NkI6
-        rbM6/KPGU5WdNzpWj2WHmGoY474Zki4=
-X-Google-Smtp-Source: AFSGD/VS/IymxqJCJFFznwYQc1Sw+M/bg2M9AGSUNkXhnRCoaKJbBXXop29qHjUQqTAwnV9m5I0fZA==
-X-Received: by 2002:a5d:6684:: with SMTP id l4mr21290291wru.154.1543131835958;
-        Sat, 24 Nov 2018 23:43:55 -0800 (PST)
+        bh=r1t1+K70MuQ6CIfy7Wgp1L7Kl8mx3XOTA4Vtxtq+eOs=;
+        b=Jh8mvWV8iiPED9lvOtAP7P57z0Q/iAiAke93+Nk0FZfBBFVs255l76lqCmbdxnRJCF
+         Oq0hQ1N/xvGdr7zPawCDdhF8TEyLu4DKuZfp0HGLHzXo6mn+EsOSAcfJcO4RHsFRMnMD
+         eSZ7/G7KaO49zfltgUacVCId+a85U7jh7IbM4dm20vMAISQF6MXMlSk62KkTPN+G9Xs4
+         kt6x0t/z+nv5ldTpSfPNSztrAO5lIF0pv1zodvBQJEBc+cmdWbHD4ML7JSEdu2UUqSKF
+         10Kb/1Xi1Gc0ukmClCL06dT0xYr3M5Endcj/BzMPRFVUO5MJ1Pc6vFizAIvVeh4ptWRm
+         xGxA==
+X-Gm-Message-State: AGRZ1gK4S82Cmp2Hy14W8L/jTYNibjBEgWIzA141fRQt36lQWaI0WIwv
+        1zpioxW7PL4R7KgmbP9Z1xrtbhicJBA=
+X-Google-Smtp-Source: AJdET5c4Zqajrupn6z1eF0bRHaiePEngnhFgTPALCDwKdmY/qNKgrMSteBc1bwjNYy4fDw/HqKSE3w==
+X-Received: by 2002:a1c:b58b:: with SMTP id e133mr20180076wmf.0.1543131837991;
+        Sat, 24 Nov 2018 23:43:57 -0800 (PST)
 Received: from localhost.localdomain ([185.219.177.224])
-        by smtp.gmail.com with ESMTPSA id 6-v6sm12296780wmg.19.2018.11.24.23.43.54
+        by smtp.gmail.com with ESMTPSA id 6-v6sm12296780wmg.19.2018.11.24.23.43.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 24 Nov 2018 23:43:55 -0800 (PST)
+        Sat, 24 Nov 2018 23:43:57 -0800 (PST)
 From:   Mesih Kilinc <mesihkilinc@gmail.com>
 To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
@@ -73,9 +72,9 @@ Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
         Icenowy Zheng <icenowy@aosc.io>,
         Rob Herring <robh+dt@kernel.org>,
         Julian Calaby <julian.calaby@gmail.com>
-Subject: [RFC PATCH v4 06/17] irqchip/sun4i: Move IC specific register offsets to struct
-Date:   Sun, 25 Nov 2018 10:43:09 +0300
-Message-Id: <0242923026be282e26fe9e50d9bb0ec3d5ae355f.1543131714.git.mesihkilinc@gmail.com>
+Subject: [RFC PATCH v4 07/17] irqchip/sun4i: Add support for Allwinner ARMv5 F1C100s
+Date:   Sun, 25 Nov 2018 10:43:10 +0300
+Message-Id: <1f3cce09623052eaa90093f13ea9d13047a2b250.1543131714.git.mesihkilinc@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1543131714.git.mesihkilinc@gmail.com>
 References: <cover.1543131714.git.mesihkilinc@gmail.com>
@@ -84,93 +83,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch moves IC specific register offsets to sun4i_irq_chip_data
-struct in order to support different chips.
+This patch adds support for suniv Allwinner ARMv5 F1C100s SoC which has
+stripped version of interrupt controller that found in A10/A13.
 
 Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 ---
- drivers/irqchip/irq-sun4i.c | 33 +++++++++++++++++++++------------
- 1 file changed, 21 insertions(+), 12 deletions(-)
+ drivers/irqchip/irq-sun4i.c | 47 +++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 37 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/irqchip/irq-sun4i.c b/drivers/irqchip/irq-sun4i.c
-index 0c32506..507f4e3 100644
+index 507f4e3..fb78d66 100644
 --- a/drivers/irqchip/irq-sun4i.c
 +++ b/drivers/irqchip/irq-sun4i.c
-@@ -28,12 +28,16 @@
- #define SUN4I_IRQ_NMI_CTRL_REG		0x0c
- #define SUN4I_IRQ_PENDING_REG(x)	(0x10 + 0x4 * x)
- #define SUN4I_IRQ_FIQ_PENDING_REG(x)	(0x20 + 0x4 * x)
--#define SUN4I_IRQ_ENABLE_REG(x)		(0x40 + 0x4 * x)
--#define SUN4I_IRQ_MASK_REG(x)		(0x50 + 0x4 * x)
-+#define SUN4I_IRQ_ENABLE_REG(data, x)	((data)->enable_reg_offset + 0x4 * x)
-+#define SUN4I_IRQ_MASK_REG(data, x)	((data)->mask_reg_offset + 0x4 * x)
-+#define SUN4I_IRQ_ENABLE_REG_OFFSET	0x40
-+#define SUN4I_IRQ_MASK_REG_OFFSET	0x50
+@@ -32,6 +32,8 @@
+ #define SUN4I_IRQ_MASK_REG(data, x)	((data)->mask_reg_offset + 0x4 * x)
+ #define SUN4I_IRQ_ENABLE_REG_OFFSET	0x40
+ #define SUN4I_IRQ_MASK_REG_OFFSET	0x50
++#define SUNIV_IRQ_ENABLE_REG_OFFSET	0x20
++#define SUNIV_IRQ_MASK_REG_OFFSET	0x30
  
  struct sun4i_irq_chip_data {
  	void __iomem *irq_base;
- 	struct irq_domain *irq_domain;
-+	u32 enable_reg_offset;
-+	u32 mask_reg_offset;
- };
- 
- static struct sun4i_irq_chip_data *irq_ic_data;
-@@ -57,9 +61,10 @@ static void sun4i_irq_mask(struct irq_data *irqd)
- 	int reg = irq / 32;
- 	u32 val;
- 
--	val = readl(irq_ic_data->irq_base + SUN4I_IRQ_ENABLE_REG(reg));
-+	val = readl(irq_ic_data->irq_base +
-+			SUN4I_IRQ_ENABLE_REG(irq_ic_data, reg));
- 	writel(val & ~(1 << irq_off),
--	       irq_ic_data->irq_base + SUN4I_IRQ_ENABLE_REG(reg));
-+	       irq_ic_data->irq_base + SUN4I_IRQ_ENABLE_REG(irq_ic_data, reg));
- }
- 
- static void sun4i_irq_unmask(struct irq_data *irqd)
-@@ -69,9 +74,10 @@ static void sun4i_irq_unmask(struct irq_data *irqd)
- 	int reg = irq / 32;
- 	u32 val;
- 
--	val = readl(irq_ic_data->irq_base + SUN4I_IRQ_ENABLE_REG(reg));
-+	val = readl(irq_ic_data->irq_base +
-+			SUN4I_IRQ_ENABLE_REG(irq_ic_data, reg));
- 	writel(val | (1 << irq_off),
--	       irq_ic_data->irq_base + SUN4I_IRQ_ENABLE_REG(reg));
-+	       irq_ic_data->irq_base + SUN4I_IRQ_ENABLE_REG(irq_ic_data, reg));
- }
- 
- static struct irq_chip sun4i_irq_chip = {
-@@ -105,20 +111,23 @@ static int __init sun4i_of_init(struct device_node *node,
- 		return -ENOMEM;
- 	}
- 
-+	irq_ic_data->enable_reg_offset = SUN4I_IRQ_ENABLE_REG_OFFSET;
-+	irq_ic_data->mask_reg_offset = SUN4I_IRQ_MASK_REG_OFFSET;
-+
+@@ -105,15 +107,6 @@ static const struct irq_domain_ops sun4i_irq_ops = {
+ static int __init sun4i_of_init(struct device_node *node,
+ 				struct device_node *parent)
+ {
+-	irq_ic_data = kzalloc(sizeof(struct sun4i_irq_chip_data), GFP_KERNEL);
+-	if (!irq_ic_data) {
+-		pr_err("kzalloc failed!\n");
+-		return -ENOMEM;
+-	}
+-
+-	irq_ic_data->enable_reg_offset = SUN4I_IRQ_ENABLE_REG_OFFSET;
+-	irq_ic_data->mask_reg_offset = SUN4I_IRQ_MASK_REG_OFFSET;
+-
  	irq_ic_data->irq_base = of_iomap(node, 0);
  	if (!irq_ic_data->irq_base)
  		panic("%pOF: unable to map IC registers\n",
- 			node);
+@@ -149,7 +142,41 @@ static int __init sun4i_of_init(struct device_node *node,
  
- 	/* Disable all interrupts */
--	writel(0, irq_ic_data->irq_base + SUN4I_IRQ_ENABLE_REG(0));
--	writel(0, irq_ic_data->irq_base + SUN4I_IRQ_ENABLE_REG(1));
--	writel(0, irq_ic_data->irq_base + SUN4I_IRQ_ENABLE_REG(2));
-+	writel(0, irq_ic_data->irq_base + SUN4I_IRQ_ENABLE_REG(irq_ic_data, 0));
-+	writel(0, irq_ic_data->irq_base + SUN4I_IRQ_ENABLE_REG(irq_ic_data, 1));
-+	writel(0, irq_ic_data->irq_base + SUN4I_IRQ_ENABLE_REG(irq_ic_data, 2));
+ 	return 0;
+ }
+-IRQCHIP_DECLARE(allwinner_sun4i_ic, "allwinner,sun4i-a10-ic", sun4i_of_init);
++
++static int __init sun4i_ic_of_init(struct device_node *node,
++				   struct device_node *parent)
++{
++	irq_ic_data = kzalloc(sizeof(struct sun4i_irq_chip_data), GFP_KERNEL);
++	if (!irq_ic_data) {
++		pr_err("kzalloc failed!\n");
++		return -ENOMEM;
++	}
++
++	irq_ic_data->enable_reg_offset = SUN4I_IRQ_ENABLE_REG_OFFSET;
++	irq_ic_data->mask_reg_offset = SUN4I_IRQ_MASK_REG_OFFSET;
++
++	return sun4i_of_init(node, parent);
++}
++
++IRQCHIP_DECLARE(allwinner_sun4i_ic, "allwinner,sun4i-a10-ic", sun4i_ic_of_init);
++
++static int __init suniv_ic_of_init(struct device_node *node,
++				   struct device_node *parent)
++{
++	irq_ic_data = kzalloc(sizeof(struct sun4i_irq_chip_data), GFP_KERNEL);
++	if (!irq_ic_data) {
++		pr_err("kzalloc failed!\n");
++		return -ENOMEM;
++	}
++
++	irq_ic_data->enable_reg_offset = SUNIV_IRQ_ENABLE_REG_OFFSET;
++	irq_ic_data->mask_reg_offset = SUNIV_IRQ_MASK_REG_OFFSET;
++
++	return sun4i_of_init(node, parent);
++}
++
++IRQCHIP_DECLARE(allwinner_sunvi_ic, "allwinner,suniv-f1c100s-ic",
++		suniv_ic_of_init);
  
- 	/* Unmask all the interrupts, ENABLE_REG(x) is used for masking */
--	writel(0, irq_ic_data->irq_base + SUN4I_IRQ_MASK_REG(0));
--	writel(0, irq_ic_data->irq_base + SUN4I_IRQ_MASK_REG(1));
--	writel(0, irq_ic_data->irq_base + SUN4I_IRQ_MASK_REG(2));
-+	writel(0, irq_ic_data->irq_base + SUN4I_IRQ_MASK_REG(irq_ic_data, 0));
-+	writel(0, irq_ic_data->irq_base + SUN4I_IRQ_MASK_REG(irq_ic_data, 1));
-+	writel(0, irq_ic_data->irq_base + SUN4I_IRQ_MASK_REG(irq_ic_data, 2));
- 
- 	/* Clear all the pending interrupts */
- 	writel(0xffffffff, irq_ic_data->irq_base + SUN4I_IRQ_PENDING_REG(0));
+ static void __exception_irq_entry sun4i_handle_irq(struct pt_regs *regs)
+ {
 -- 
 2.7.4
 
