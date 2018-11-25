@@ -2,183 +2,127 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DA4C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 20:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7481C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 20:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6FB22082E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 20:48:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6FB22082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id 6CE222082E
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 20:49:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ossystems-com-br.20150623.gappssmtp.com header.i=@ossystems-com-br.20150623.gappssmtp.com header.b="nEev0yLP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CE222082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726584AbeKZHkY (ORCPT
+        id S1726713AbeKZHlh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 02:40:24 -0500
-Received: from mout.gmx.net ([212.227.15.15]:48859 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725863AbeKZHkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 02:40:24 -0500
-Received: from ovpn-120-100.rdu2.redhat.com ([98.118.28.103]) by mail.gmx.com
- (mrgmx001 [212.227.17.184]) with ESMTPSA (Nemesis) id
- 0M5Lqx-1fU7JQ1Kpz-00zYgR; Sun, 25 Nov 2018 21:48:15 +0100
-Subject: Re: [PATCH v4] debugobjects: scale the static pool size
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     akpm@linux-foundation.org, longman@redhat.com,
-        yang.shi@linux.alibaba.com, arnd@arndb.de,
-        linux-kernel@vger.kernel.org
-References: <20181120232810.2503-1-cai@gmx.us>
- <20181121021157.3061-1-cai@gmx.us>
- <alpine.DEB.2.21.1811222238270.1665@nanos.tec.linutronix.de>
-From:   Qian Cai <cai@gmx.us>
-Message-ID: <245eeb16-e953-9375-5c54-4b9396959340@gmx.us>
-Date:   Sun, 25 Nov 2018 15:48:13 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.1
+        Mon, 26 Nov 2018 02:41:37 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37866 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbeKZHlh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 02:41:37 -0500
+Received: by mail-oi1-f195.google.com with SMTP id y23so14011172oia.4
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 12:49:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ossystems-com-br.20150623.gappssmtp.com; s=20150623;
+        h=from:mime-version:references:in-reply-to:date:message-id:subject:to
+         :cc;
+        bh=dqAVndQ9OdujxZFYFJ+S64NR//MJ30fYRZfwEXWIDek=;
+        b=nEev0yLPMcqgQhkuaOcu6AWzi3aI3OV6zleziuANdl6ZM02FIx4YtorXJk8tPOHzZx
+         l3BZJZ0fK/5VsGTRGn3gwfOzRoPHBUPurcDFfONfbBtM1icZs1FDsiX0TzR57a9WGBo3
+         EqAjsoIJfyWwMHFBPcUM0oKcwfYKFFk8Fg74q1qEPtS7M2/6B/DsgeCzljN1jz4PpdEv
+         2b8u0gWsp8yHe6vQCaktPFUn6/UfJ+GquKiMGWWxx/6hzClcBeyC42IJN7rtUupCf1R5
+         2mEWs7DIeKiHluXvqrgCd5XDUkQ2EPdRkoLDgRUtR67pFBpLsARXLf+OL3LORSY25SAW
+         OdZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:mime-version:references:in-reply-to:date
+         :message-id:subject:to:cc;
+        bh=dqAVndQ9OdujxZFYFJ+S64NR//MJ30fYRZfwEXWIDek=;
+        b=kbXdVnWj4x5Dc46VALJS3NIMS6eC/yyG3cgMiytdaFO53Oy+nDU7kOVLozFc6PUCcO
+         qTQE4/kPU3fHkiz36N4M7xvF1fjPGciqJTyQIINtTkEwC1CmpRX6RuAaa28GSGLmoUBG
+         hC7RoGX+ASfWBfL0E4arZ+LzZO7IqO3agwt7eDteO2FY/fIIiOJiCx6Hdab5cZeepUfX
+         nzsXQY6IIypXI5dUS3Jd+RHK2D5woHTC3e6Ts/TwJkmd7Zb5ZI7xVlwUHCqEwkW6ke96
+         QrzAS9uE76lrCGJpWedNtDJgc0kTToVERLhPC0R9/h0ldnsGcYvgiWxt+cSjo+zAOzXs
+         mdlQ==
+X-Gm-Message-State: AGRZ1gJ1LDC0tXQLHRD1GvV4wIKQfUbWwGB5UYATZ+RRGQKyZUnx02iO
+        jTSAmb6G2wsbqsSFnsV6DA2lCTxDVhquhA==
+X-Google-Smtp-Source: AJdET5dvtLeVda8/QByTuiFiCA6S7M+2YfnAGsmcOK7s8oo43mOgQw0QQDPIuEGvB51tUcqZ02aRmA==
+X-Received: by 2002:aca:5205:: with SMTP id g5mr14181493oib.149.1543178981148;
+        Sun, 25 Nov 2018 12:49:41 -0800 (PST)
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com. [209.85.210.52])
+        by smtp.gmail.com with ESMTPSA id 187sm2590529oic.12.2018.11.25.12.49.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 25 Nov 2018 12:49:40 -0800 (PST)
+From:   Otavio Salvador <otavio.salvador@ossystems.com.br>
+X-Google-Original-From: Otavio Salvador <otavio@ossystems.com.br>
+Received: by mail-ot1-f52.google.com with SMTP id u16so14779054otk.8
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 12:49:40 -0800 (PST)
+X-Received: by 2002:a9d:12f1:: with SMTP id g104mr9955217otg.22.1543178979496;
+ Sun, 25 Nov 2018 12:49:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1811222238270.1665@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:SEL+UXnHw2VDWwDEgB0D7BcMlGccy9qfMkVjMzI6IVVdvOd28XC
- uP8ST2Wq1FCBKgA9M+1qwY1CriHXjl4rk8LszTrF6JOuPN+QmnyW6vyG8dkQD/vw8rNhSMV
- +aVw87R+fc0Z6cA4c3BZLmgR2TJ76R+8wLh5ZSupSeKDGk0WaVPyUfqTxwryqnyTTCeOmzA
- 4RJEXs0eHsFbEESUHUvOQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Lwth3Ax1+1s=:XzQHit2dqoV3pl0cAtjrCN
- J2aMqSRjrg2I9BrkLTqm1v0lMLHVK71QtsZT3s1zSonORj3ZoE9PiN2I8r0voCl0L7upsdM1C
- lxm4hpsr4zeNlVrz7RP5+CLV9nHb4Me0OMnhnqcnEbCYxYQ1coua2T4aPuHcuoEoEkv0ogqwv
- oLsEXYSyBGChO/dIJYSS5a2biNNT9HZWoSdpRVWitaCke2lUxL3m3G0KsO0ZGWpxH5tfw6mOF
- kyNcltZuukGUqb9CAlQwKSt5uLZ4562mi2xGeW3jtfzdF0YCSh3QbXtHbAWzaet6HnjUh0pJk
- 6G40ksUV2WQpBOMOYBb8rVTkW/Kjer3Qf1dzrpfB99d2PWM226/F2tEfCFnyjnjUMUAsFQq3x
- +4ZuizVsIw8YBpgzlTKVAJOFZTABeyrjwNkc0ANY54DtsnZ9g1PbNaRKCkId6Wq+VEHRw56kN
- 08kYG3Jy09998M8YYL7+KcHjdZb8V6FR+mnUHECuqSyPjQ5NH1L9RpZG3LjvW2Bfqg7G+R0iP
- zkBbd9U3CAYtCYO8w2d6kfaCpSTKSar/RaFxS6JNz50bZ/deZUlKMxwl+wPvM1V4iQ7Ialtif
- 1BOyH2xN3DTQcF+RDCqhc3W2HnxcchKx1fys6ZkJY1mi6mfSLjO6upTp3NwCiO6fhxOcbg8ZF
- nY2ljbcXz29E1qcwWE5dF++XITxT+bwNHR8ehccslJuID6m34qH0u7OMoT09Asoy++6tWW4uG
- 9BcEY4iqy+LRaRT0ENB64g53eBGV2b7GkmEUdLYTSjcVgYxo8y+0KQ09Z+A8JjBSLDii+yuj+
- K5ZvNHysfow2pREjn6SW4J5bSMULztKASNw7N6/Bo1YcG4XlXpGnAXUGnDmpxyIZtnfK/M906
- 0DjAUrLSzLt2rMSl7nj3V09kZSxFhQQecT0ZC5OlY=
+References: <20181125201729.19836-1-otavio@ossystems.com.br> <CAOMZO5AVWbk_gdtDvXQfYqmENr8d3z5oxQVtzFtex0WrfY6tZQ@mail.gmail.com>
+In-Reply-To: <CAOMZO5AVWbk_gdtDvXQfYqmENr8d3z5oxQVtzFtex0WrfY6tZQ@mail.gmail.com>
+Date:   Sun, 25 Nov 2018 18:49:22 -0200
+X-Gmail-Original-Message-ID: <CAP9ODKrpde0tpRgoRMihvDur=ftQsT59h4Cqr3VQAOOimoSB1Q@mail.gmail.com>
+Message-ID: <CAP9ODKrpde0tpRgoRMihvDur=ftQsT59h4Cqr3VQAOOimoSB1Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ARM: imx_v6_v7_defconfig: Remove CONFIG_ARM_UNWIND
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Otavio Salvador <otavio@ossystems.com.br>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Fabio,
+On Sun, Nov 25, 2018 at 6:30 PM Fabio Estevam <festevam@gmail.com> wrote:
+> On Sun, Nov 25, 2018 at 6:18 PM Otavio Salvador <otavio@ossystems.com.br> wrote:
+> >
+> > The setting is removed when running a `savedefconfig` using the
+> > current setting set. It is being applied in preparation to some
+>
+> "setting set" is a bit confusing.
+>
+> > patches making changes to this defconfig.
+>
+> It would be good to mention that CONFIG_ARM_UNWIND is still selected
+> automatically.
+>
+> Otherwise it may give the impression that such functionality is being removed.
+>
+> You could reword the commit log to something like this:
+>
+> CONFIG_ARM_UNWIND is removed when running  'savedefconfig', but it is
+> still selected by the Kconfig logic.
+> This is done in preparation to making further changes to this defconfig cleaner.
 
+In fact, was removed and now selected.
 
-On 11/22/18 4:56 PM, Thomas Gleixner wrote:
-> On Tue, 20 Nov 2018, Qian Cai wrote:
-> 
-> Looking deeper at that.
-> 
->> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
->> index 70935ed91125..140571aa483c 100644
->> --- a/lib/debugobjects.c
->> +++ b/lib/debugobjects.c
->> @@ -23,9 +23,81 @@
->>   #define ODEBUG_HASH_BITS	14
->>   #define ODEBUG_HASH_SIZE	(1 << ODEBUG_HASH_BITS)
->>   
->> -#define ODEBUG_POOL_SIZE	1024
->> +#define ODEBUG_DEFAULT_POOL	512
->>   #define ODEBUG_POOL_MIN_LEVEL	256
->>   
->> +/*
->> + * Some debug objects are allocated during the early boot. Enabling some options
->> + * like timers or workqueue objects may increase the size required significantly
->> + * with large number of CPUs. For example (as today, 20 Nov. 2018),
->> + *
->> + * No. CPUs x 2 (worker pool) objects:
->> + *
->> + * start_kernel
->> + *   workqueue_init_early
->> + *     init_worker_pool
->> + *       init_timer_key
->> + *         debug_object_init
->> + *
->> + * No. CPUs objects (CONFIG_HIGH_RES_TIMERS):
->> + *
->> + * sched_init
->> + *   hrtick_rq_init
->> + *     hrtimer_init
->> + *
->> + * CONFIG_DEBUG_OBJECTS_WORK:
->> + * No. CPUs x 6 (workqueue) objects:
->> + *
->> + * workqueue_init_early
->> + *   alloc_workqueue
->> + *     __alloc_workqueue_key
->> + *       alloc_and_link_pwqs
->> + *         init_pwq
->> + *
->> + * Also, plus No. CPUs objects:
->> + *
->> + * perf_event_init
->> + *    __init_srcu_struct
->> + *      init_srcu_struct_fields
->> + *        init_srcu_struct_nodes
->> + *          __init_work
-> 
-> None of the things are actually used or required _BEFORE_
-> debug_objects_mem_init() is invoked.
-> 
-> The reason why the call is at this place in start_kernel() is
-> historical. It's because back in the days when debugobjects were added the
-> memory allocator was enabled way later than today. So we can just move the
-> debug_objects_mem_init() call right before sched_init() I think.
-> 
->> + * Increase the number a bit more in case the implmentatins are changed in the
->> + * future, as it is better to avoid OOM than spending a bit more kernel memory
->> + * that will/can be freed.
->> + *
->> + * With all debug objects config options selected except the workqueue and the
->> + * timers, kernel reports,
->> + * 64-CPU:  ODEBUG: 4 of 4 active objects replaced
->> + * 256-CPU: ODEBUG: 4 of 4 active objects replaced
->> + *
->> + * all the options except the workqueue:
->> + * 64-CPU:  ODEBUG: 466 of 466 active objects replaced
->> + * 256-CPU: ODEBUG: 1810 of 1810 active objects replaced
->> + *
->> + * all the options except the timers:
->> + * 64-CPU:  ODEBUG: 652 of 652 active objects replaced
->> + * 256-CPU: ODEBUG: 2572 of 2572 active objects replaced
->> + *
->> + * all the options:
->> + * 64-CPU:  ODEBUG: 1114 of 1114 active objects replaced
->> + * 256-CPU: ODEBUG: 4378 of 4378 active objects replaced
->> + */
->> +#ifdef CONFIG_DEBUG_OBJECTS_WORK
->> +#define ODEBUG_WORK_PCPU_CNT	10
->> +#else
->> +#define ODEBUG_WORK_PCPU_CNT	0
->> +#endif /* CONFIG_DEBUG_OBJECTS_WORK */
->> +
->> +#ifdef CONFIG_DEBUG_OBJECTS_TIMERS
->> +#define ODEBUG_TIMERS_PCPU_CNT	10
->> +#else
->> +#define ODEBUG_TIMERS_PCPU_CNT	0
->> +#endif /* CONFIG_DEBUG_OBJECTS_TIMERS */
-> 
-> Btw, the scaling here is way off.
-> 
->> +#define ODEBUG_POOL_SIZE	(ODEBUG_DEFAULT_POOL + CONFIG_NR_CPUS * \
->> +				(ODEBUG_TIMERS_PCPU_CNT + ODEBUG_WORK_PCPU_CNT))
-> 
-> CONFIG_NR_CPUS	Pool size		Storage size
-> 
-> 256		256512			4M
-> 		
-> According to your list above it uses 4378 object for 256 CPUs. That's off
-> by an factor of ~58.
-> 
+I changed the commit log as:
 
-Hmm, it is not clear to me why this is off and where did the pool size 256512 
-come from.
+ARM: imx_v6_v7_defconfig: Remove explicit ARM_UNWIND disable
 
-CONFIG_NR_CPUS: 256
-Pool size: 1024 + 256 * (10 + 10) = 6144
+CONFIG_ARM_UNWIND is removed when running 'savedefconfig', but
+selected by the Kconfig logic.  This is done in preparation to making
+further changes to this defconfig cleaner.
 
-Am I missing anything?
+Do you agree?
+
+-- 
+Otavio Salvador                             O.S. Systems
+http://www.ossystems.com.br        http://code.ossystems.com.br
+Mobile: +55 (53) 9 9981-7854          Mobile: +1 (347) 903-9750
