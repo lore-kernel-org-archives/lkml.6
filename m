@@ -2,165 +2,141 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2021C04EBA
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 06:17:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 367FEC4161B
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 06:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A51B520867
+	by mail.kernel.org (Postfix) with ESMTP id DE1A420865
 	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 06:17:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jr/qia6e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A51B520867
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vPYQ+cNW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE1A420865
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbeKYRHo (ORCPT
+        id S1727385AbeKYRHu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 12:07:44 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40686 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727245AbeKYRHn (ORCPT
+        Sun, 25 Nov 2018 12:07:50 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39897 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727245AbeKYRHu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 12:07:43 -0500
-Received: by mail-lj1-f195.google.com with SMTP id n18-v6so13715151lji.7;
-        Sat, 24 Nov 2018 22:17:22 -0800 (PST)
+        Sun, 25 Nov 2018 12:07:50 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c72so5039339pfc.6;
+        Sat, 24 Nov 2018 22:17:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=NtGVn51kqdBCBYo/gCk1GBNdRgZNVjTXeAiZ8A7i4Qc=;
-        b=jr/qia6eSOG6GVm17mXGOSemA122PAuoBivtmZ3bC6Otqe4B52fzcRiAyiVqJMoHDf
-         hve20M5+PVoGtJnHm6FG3JRwVSxpu7AIgRRnp3iqx0iuPgbZZ+rDL9KaqjnR5igtJgdo
-         PmiA5O3SVampAP67+cPWSnGkTlpcZs+BtzR2lmE76cqTyMQ51Nk0LR+VaBGdRq2tRkt+
-         vs+Jch9KlXcIHJv02GISxXUYUkyX5WYkANWx75dXTkScnVzt8IjXZ9XlzgA6dTaQons6
-         9ZJQ4ozg0zhTaAhibQoM45b+CsH9/bo8b9qmn6dm1AkDYK3cE53UF1GFj2JQhrCXqwrq
-         LcxA==
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JGxxvjP1uf9aBMwNE2l4Fw52itgun4YZNtruaS9qrDA=;
+        b=vPYQ+cNWo+fRUsG4fMTrkFG1U8w99QlZpifkpMmEKarVo+xc1c8nwAHQdbQnGTEMzJ
+         d+gzs2GXMfqGBFRDSdcTgjMFIbHZM0Cg3N6iHykr6lYEnXhZ9dGObEnyL81LP2Hk1Lgd
+         4RO02GIqQks1utjWWWhdJstihkIpPi8CnW2Sc/9xB7ZCRABxGvDpgtTJJjWZT6xqTtZc
+         7Afq3+Xgzzsy9YebXvEtuxkf8HPG2MzOl7+84KQnEC4PhK0DKB+DbVERr7FOpZ8dJ7Lo
+         ypY1Kyg07SGl2oafatd8AMJwqjFWtY3EKuv7D8n6C0oB1jrH7An2Q2PEoyiTpF44QBr3
+         /8QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=NtGVn51kqdBCBYo/gCk1GBNdRgZNVjTXeAiZ8A7i4Qc=;
-        b=F1bz4ya/1Uv30UZ5DQhXxchIuQSdHiMXIwfi942Ea/Urap6KgdYkXkQtJldTVQQzxn
-         kr3ISX4VxYPlvVAlEjB9OrjJHTvp4sGQwFjzRWyzhasngBukS026cjfCbyIfBSui5BNT
-         VW99MiTfbnNasbuPSs1ZvbNljZkbwmUwK7JleNHhBL4ymHVOWvCBI7dWg8Nk9wxhqp1U
-         D6Q+GnSmtLoF9aMiXLnxOm8ZjJou8xI0+iHD9fvGINBYtc2grz97YS45HXu9qvkjXWBC
-         9viujBpcP1766H4YpLn97Cr9/wI4W4vs9Hf3mQuLpbs7DxKOgWbLDVdmvWBz8J32jrTw
-         Wl+Q==
-X-Gm-Message-State: AA+aEWYgWUNPEHGykNcPm9j/Rn1g4tlwwwRvB8NNxmJxKMFDjAu4qXF2
-        IvB37phD8xwQh53E3fWTVY8kb4s7wgpormmICNI=
-X-Google-Smtp-Source: AFSGD/XJ+Cd0cgkug/BqY+RJx3IkVWlEcIFX4FzQtBCJtUjMbYFL7vyf78pMhkj8SyX7rC+BLQbXrHGwqAy/oMamzCM=
-X-Received: by 2002:a2e:8989:: with SMTP id c9-v6mr13703096lji.124.1543126641107;
- Sat, 24 Nov 2018 22:17:21 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=JGxxvjP1uf9aBMwNE2l4Fw52itgun4YZNtruaS9qrDA=;
+        b=EgFhSCizcA0i2riLo0fT6OjNp9X//8mLJ5sDjZCYzFyR/bm0F3gxcrduxs4ccWh/dZ
+         fiwgtbwHPcMB1zFCaXhrSbhHIaPQXAt6vdrNwciNqBSk28/XMMQx4R3YEeOzSCag4Ic2
+         0Zk3gUw6emBlj2DNNAExThtM1HmqcGSSgDVZxrCJvvGhF1vMo6xuTVYfM19gV166n4Zn
+         Jey8rQLLvBcqVBOItQk1ydObCANOh4L1YcifkZnyQA91lAx/s3zgzHBmVSrjvI7BER9Y
+         E9Cb7NjTWDBG1Achefp7zSC3l9FoYxv2t7gYVjxiHajwwelBIxqkN//UJ2fqxkAURl8Z
+         wOMw==
+X-Gm-Message-State: AA+aEWbQ6lKoIoRYUC/9yfavJ6THNAzcaIwJLUKnF3TvnKaj2+3qyJf/
+        nFC7LFttHfnhxPGtDWnHymI=
+X-Google-Smtp-Source: AFSGD/XdPfsvkakAaH4uaahhINbcnBDdJ5/jjrSFzdUo1IKEgXfytx9l1rv3xc45jcjhejvXSccKwA==
+X-Received: by 2002:a63:3287:: with SMTP id y129mr20116782pgy.337.1543126649671;
+        Sat, 24 Nov 2018 22:17:29 -0800 (PST)
+Received: from gmail.com (cpe-98-150-136-16.hawaii.res.rr.com. [98.150.136.16])
+        by smtp.gmail.com with ESMTPSA id f22-v6sm62742673pfn.177.2018.11.24.22.17.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 24 Nov 2018 22:17:28 -0800 (PST)
+Date:   Sat, 24 Nov 2018 20:17:26 -1000
+From:   Joey Pabalinas <joeypabalinas@gmail.com>
+To:     "Dmitry V. Levin" <ldv@altlinux.org>
+Cc:     Joey Pabalinas <joeypabalinas@gmail.com>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        strace-devel@lists.strace.io
+Subject: Re: Re: [PATCH RESEND v3 1/3] ptrace: pass type of a syscall-stop in
+ ptrace_message
+Message-ID: <20181125061726.jtalb5t4tgigzzue@gmail.com>
+Mail-Followup-To: Joey Pabalinas <joeypabalinas@gmail.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, strace-devel@lists.strace.io
+References: <20181125022150.46258a20@akathisia>
+ <20181125022227.55e8caf7@akathisia>
+ <20181125015402.glcaw3kghcu4pr22@gmail.com>
+ <20181125021059.GA1190@altlinux.org>
 MIME-Version: 1.0
-From:   Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Date:   Sun, 25 Nov 2018 09:17:10 +0300
-Message-ID: <CAE5jQCcNCcLX_UvhHFe7BmxE010ULbchd1WN7pDbE2enK-pDZg@mail.gmail.com>
-Subject: NFSd: NULL-dereference when writing to v4_end_grace when server is
- not yet started
-To:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>
-Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4ktpenoxjmibnb6h"
+Content-Disposition: inline
+In-Reply-To: <20181125021059.GA1190@altlinux.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-When manually exploring the kernel NFSd feature, I have stumbled upon
-a NULL-dereference when writing to v4_end_grace when server is not yet
-started.
+--4ktpenoxjmibnb6h
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-How to reproduce with kvm-xfstests:
+On Sun, Nov 25, 2018 at 05:10:59AM +0300, Dmitry V. Levin wrote:
+> Given that without this patch the value returned by PTRACE_GETEVENTMSG
+> during syscall stop is undefined, we need two different ptrace_message
+> values that cannot be set by other ptrace events to enable reliable
+> identification of syscall-enter-stop and syscall-exit-stop in userspace:
+> if we make PTRACE_GETEVENTMSG return 0 or any other value routinely set by
+> other ptrace events, it would be hard for userspace to find out whether
+> the kernel implements new semantics or not.
 
-1) Checkout fresh master Linux branch (tested with commit e195ca6cb)
-2) Copy x84_64-config-4.14 to .config, then enable NFS server v4 and build
-3) From `kvm-xfstests shell`:
+Ah, I see, I agree that definitely makes sense.
 
-root@kvm-xfstests:~# mount none /proc/fs/nfsd -t nfsd
-root@kvm-xfstests:~# echo Y > /proc/fs/nfsd/v4_end_grace
-[   11.986359] BUG: unable to handle kernel NULL pointer dereference
-at 0000000000000000
-[   11.987187] PGD 800000007af97067 P4D 800000007af97067 PUD 78e9d067 PMD 0
-[   11.987774] Oops: 0000 [#1] SMP PTI
-[   11.988087] CPU: 0 PID: 281 Comm: bash Not tainted
-4.20.0-rc3-xfstests-00306-ge195ca6cb6f #1
-[   11.988808] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS 1.11.1-1ubuntu1 04/01/2014
-[   11.989575] RIP: 0010:__list_del_entry_valid+0x25/0x90
-[   11.990019] Code: c3 0f 1f 40 00 48 b9 00 01 00 00 00 00 ad de 48
-8b 07 48 8b 57 08 48 39 c8 74 26 48 b9 00 02 00 00 00 00 ad de 48 39
-ca 74 2e <48> 8b 32 48 39 fe 75 3a 48 8b 50 08 48 39 f2 75 48 b8 01 00
-00 00
-[   11.991610] RSP: 0018:ffffa7d8c088fde8 EFLAGS: 00010207
-[   11.992066] RAX: 0000000000000000 RBX: ffff9ac7bc10ec28 RCX: dead000000000200
-[   11.992678] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff9ac7bc10ec28
-[   11.993291] RBP: ffffa7d8c088fe20 R08: 0000000000000000 R09: 0000000000000001
-[   11.993902] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000002
-[   11.994583] R13: ffff9ac7bd8a9e00 R14: ffff9ac7ba56d008 R15: 0000000000000000
-[   11.995226] FS:  0000000000000000(0000) GS:ffff9ac7bfc00000(0063)
-knlGS:00000000f7d76700
-[   11.996018] CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-[   11.996514] CR2: 0000000000000000 CR3: 0000000078c94005 CR4: 0000000000360ef0
-[   11.997126] Call Trace:
-[   11.997346]  locks_end_grace+0x1d/0x50
-[   11.997675]  write_v4_end_grace+0xe7/0x1b0
-[   11.998033]  ? nfsctl_transaction_write+0x80/0x80
-[   11.998440]  nfsctl_transaction_write+0x45/0x80
-[   11.998835]  __vfs_write+0x36/0x1a0
-[   11.999141]  ? rcu_read_lock_sched_held+0x6c/0x80
-[   11.999550]  ? rcu_sync_lockdep_assert+0x2e/0x60
-[   11.999955]  ? __sb_start_write+0x147/0x1b0
-[   12.000320]  ? vfs_write+0x161/0x1a0
-[   12.000634]  vfs_write+0xba/0x1a0
-[   12.000927]  ksys_write+0x52/0xc0
-[   12.001220]  do_fast_syscall_32+0x97/0x2d0
-[   12.001578]  entry_SYSENTER_compat+0x81/0x93
-[   12.001951] CR2: 0000000000000000
-[   12.002243] ---[ end trace 4137b5fb8d67f6b5 ]---
-[   12.002645] RIP: 0010:__list_del_entry_valid+0x25/0x90
-[   12.003089] Code: c3 0f 1f 40 00 48 b9 00 01 00 00 00 00 ad de 48
-8b 07 48 8b 57 08 48 39 c8 74 26 48 b9 00 02 00 00 00 00 ad de 48 39
-ca 74 2e <48> 8b 32 48 39 fe 75 3a 48 8b 50 08 48 39 f2 75 48 b8 01 00
-00 00
-[   12.004682] RSP: 0018:ffffa7d8c088fde8 EFLAGS: 00010207
-[   12.005133] RAX: 0000000000000000 RBX: ffff9ac7bc10ec28 RCX: dead000000000200
-[   12.005746] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff9ac7bc10ec28
-[   12.006360] RBP: ffffa7d8c088fe20 R08: 0000000000000000 R09: 0000000000000001
-[   12.006974] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000002
-[   12.007587] R13: ffff9ac7bd8a9e00 R14: ffff9ac7ba56d008 R15: 0000000000000000
-[   12.008206] FS:  0000000000000000(0000) GS:ffff9ac7bfc00000(0063)
-knlGS:00000000f7d76700
-[   12.008898] CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-[   12.009394] CR2: 0000000000000000 CR3: 0000000078c94005 CR4: 0000000000360ef0
-[   12.010004] BUG: sleeping function called from invalid context at
-include/linux/percpu-rwsem.h:34
-[   12.010765] in_atomic(): 1, irqs_disabled(): 1, pid: 281, name: bash
-[   12.011311] INFO: lockdep is turned off.
-[   12.011652] irq event stamp: 19366
-[   12.012025] hardirqs last  enabled at (19365): [<ffffffff89189da6>]
-get_page_from_freelist+0x2c6/0x1660
-[   12.012862] hardirqs last disabled at (19366): [<ffffffff890015f4>]
-trace_hardirqs_off_thunk+0x1a/0x1c
-[   12.013658] softirqs last  enabled at (18228): [<ffffffff89c0032f>]
-__do_softirq+0x32f/0x440
-[   12.014413] softirqs last disabled at (18221): [<ffffffff8908c806>]
-irq_exit+0xa6/0xe0
-[   12.015091] CPU: 0 PID: 281 Comm: bash Tainted: G      D
-4.20.0-rc3-xfstests-00306-ge195ca6cb6f #1
-[   12.015934] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS 1.11.1-1ubuntu1 04/01/2014
-[   12.016751] Call Trace:
-[   12.017056]  dump_stack+0x67/0x90
-[   12.017348]  ___might_sleep.cold.14+0x9f/0xaf
-[   12.017728]  exit_signals+0x1c/0x200
-[   12.018041]  do_exit+0xac/0xb00
-[   12.018319]  ? ksys_write+0x52/0xc0
-[   12.018626]  rewind_stack_do_exit+0x17/0x20
-[   12.019006] note: bash[281] exited with preempt_count 1
+--=20
+Cheers,
+Joey Pabalinas
 
-Best regards
-Anatoly
+--4ktpenoxjmibnb6h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEENpTlWU2hUK/KMvHp2rGdfm9DtVIFAlv6PnUACgkQ2rGdfm9D
+tVLTKBAAwZqcHYLXU10sq1ZI/dIsYmjVmsCSC7bhuxjAi3cVnkw89BqlbTBfl8s5
+bJcVhmPayYWCWE2paglX31lp1DKKtvWiFkbLE2jF601rAYekH69ty5Qvx8DMcrQV
+Ar2rnb8KECJE7pf9Fdexpx+FyhaM6wkj04YkysMOSEBbBA5ue4pSA5yIkO142jqw
+WRlqYBwYqGkNXWW74Ea8ZNEFPZxMrvBtI2olwqEs99erNGpTcafuchTAhdrKuDKZ
+62zQEnD229IDXeLZV5+rbbyT7UiWb2xuw/xcOreCRhd8EArxgvFc5VcuywHTI6DM
+nPhWsvw7+XUXHpq406m5mLMq1TJMUwrCw+wQjfmaLvehOm+p16z9F3nsjAvUU/ez
+bGbTpgv/315EVtm8nqWl1s6pbBgK9cxnIl1DFmKptWbIl96FlSTCo1cOS4fRUNUC
+1pgAUh2sVTxuTdARAmTkfKOmj1WoVnVJ+qke+0j/Knye9poolvZngb0PgaKdEwps
+i3Wq3OSv7OUGjwIPlYy3oAblfZpC4mhDe9uV+ytzGWfqJoY4hcyXAVOL6rXHx9ih
+XxnxIMd/vpKyc882gzKZ3wc6JOMl2QdJ2nPwb9OeK6qls3csaCHWa9ty4+tnUitk
+nbN53QvbmBiGDHJjTa6Tj9Lu40Buguhoipqu38ynV18XuUrKKQQ=
+=yO6t
+-----END PGP SIGNATURE-----
+
+--4ktpenoxjmibnb6h--
