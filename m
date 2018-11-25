@@ -2,206 +2,242 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57707C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 15:30:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E3E9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 15:36:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C30220868
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 15:30:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C30220868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 54CCC2084E
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 15:36:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kx9h7yIK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54CCC2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbeKZCVX (ORCPT
+        id S1726489AbeKZC1Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 21:21:23 -0500
-Received: from mail-it1-f199.google.com ([209.85.166.199]:42976 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbeKZCVX (ORCPT
+        Sun, 25 Nov 2018 21:27:16 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:47070 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726155AbeKZC1Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 21:21:23 -0500
-Received: by mail-it1-f199.google.com with SMTP id g7so10078873itg.7
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 07:30:04 -0800 (PST)
+        Sun, 25 Nov 2018 21:27:16 -0500
+Received: by mail-lj1-f193.google.com with SMTP id v15-v6so14267721ljh.13;
+        Sun, 25 Nov 2018 07:35:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=j6DN5Aq+hJuC8skgiF9zRvHzmIK60aq01V1Lz1zePxE=;
+        b=Kx9h7yIKx+JchLJF/k38EwLDe5xWZQngzlXPlJwVTvcd7k0X1O0O57KelEYyeTgZYJ
+         Y25+lZYK1+K6oiihEG1R3Ygqe83Vh8+QzEbgqUe1laGMPgzQ2RU2Qwsy30hj/tNKDUk4
+         fE9aONgYWis12Pv6ZzB8DVSMHtU6PSmdfafAk/KRqgIf6wTLSk7PEP85PiDVTM2SUoS0
+         tMOnyEXcQMy6T2XJUMfFN/aYBke4GkRwwnV9GgkJDKEW+j0nC0NGHokjTw2xjxdarWrm
+         RhLb8AxqlXiHGpUfuaUx46hHWt2ZsRnN7Zm4BO58QTieaCD+hAwxY66qEptTvItnbkg7
+         4tQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
-         :content-transfer-encoding;
-        bh=24Dqu/nW69o9FQv/pj8ZDyWm2Z/yxaknVenGRVz7Jrc=;
-        b=GP6q7nAviwIkdyJTf0E8EjZHoXwuX3TEHwLw1s0jn7L+xyEQ42b65MrLHAvsZtAN0A
-         +w4DQgi3VORCcNNyLjgIO9EjeO/P94cMAEpngH6R0M2Xn8HQ6zcYL1bxIIEeOkDVTHIE
-         Rus0aCEtZb65ZREmhSze+2AypCsmPIN2Zd/OsmbTHjfWUkay3p5GvSGhKtWXXfZkOukT
-         ietTBk9yncHVzYBYLNl0crm5Zh+jNRJlk7+p2Sitp4OLmhStEcgZPr93WzoKNTyiStc2
-         qZNb1G5tT/ZNP+TBROINgSjlHwTKTzXThc5FoJr/SxxIVP4cXPMuAF+/zP+eK9ssqq6P
-         JUEg==
-X-Gm-Message-State: AGRZ1gJlmiKvxjARR0GvLVRmkzDM7oc/0eM8ll2XcU4eMOGJbqkKE+op
-        nIKsDBb1IIUM2VZf62hdP7ePuKjievSCec/Gah/x3ubc+LVk
-X-Google-Smtp-Source: AJdET5cKR+opZJVa507Or3iePQW1H37SUMcnoNKeyA7887cGafIR9LcuX+bhT4hlIDZ038R0tjVI91CoMvdTgZb55e8UE/7BdUhJ
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=j6DN5Aq+hJuC8skgiF9zRvHzmIK60aq01V1Lz1zePxE=;
+        b=FHDMYxPcgyboYf+DDuuZlF1lNpdM/nHm2Lgj8yPUWa0PD6ycfqi9nam0xvLwnTGjJe
+         TKk2IxmY8YVEAVH0SHAQTLae2DRdwAEmyubgPt6cbqv5MPQm4w4T2fYzMDnulvDEUxlz
+         ECuTQZJTQNBCWyJnL7JZSrPKUFkwBeKxH/M4kzubgXURwowdG21jMnFqx2boBQS4oC1p
+         5i0IyC+QOCT1Mzi+YXiEihC3TiCdmFElMnhXHzc+/+l7MedJxqaK85qLepN1xpBWJ9uT
+         qJ1a1e8p4cmhb0z3DFyNJB7DfwQH4Sfv7yTlmil86odvoDNCbiEnzMsW62UOqzFHEBBk
+         Vvlg==
+X-Gm-Message-State: AA+aEWYqAgQa8cYGjz9UR6SHacziOnJcfiag8TUg0X2bO3u/qoTlJIMy
+        fLka0X+WR1nq67Hh+vGR8vlYL7Nt/IU=
+X-Google-Smtp-Source: AFSGD/XWX1VxBNEWTkXh2GXNFp9drccWRfPE4XPifLpBlgBLFb3iShVxjwhrk1fjm6wenFdorqjXow==
+X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr13128217ljj.9.1543160154434;
+        Sun, 25 Nov 2018 07:35:54 -0800 (PST)
+Received: from localhost (89-70-226-70.dynamic.chello.pl. [89.70.226.70])
+        by smtp.gmail.com with ESMTPSA id h22-v6sm296014ljg.24.2018.11.25.07.35.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 25 Nov 2018 07:35:53 -0800 (PST)
+Date:   Sun, 25 Nov 2018 16:35:34 +0100
+From:   Tomasz Duszynski <tduszyns@gmail.com>
+To:     Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+Cc:     Matt Ranostay <matt.ranostay@konsulko.com>,
+        Tomasz Duszynski <tduszyns@gmail.com>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] iio: add IIO_MASSCONCENTRATION channel type
+Message-ID: <20181125153533.GB5053@arch>
+References: <20181124221415.10081-1-tduszyns@gmail.com>
+ <20181124221415.10081-2-tduszyns@gmail.com>
+ <CAJCx=g=H6Zp4AtWPpC-KdZmyOxTymtdgf+Hx8VvThLFg0bjYVQ@mail.gmail.com>
+ <20181125140316.59d9872b@archlinux>
 MIME-Version: 1.0
-X-Received: by 2002:a24:4e4d:: with SMTP id r74-v6mr15269260ita.5.1543159804313;
- Sun, 25 Nov 2018 07:30:04 -0800 (PST)
-Date:   Sun, 25 Nov 2018 07:30:04 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f7cb53057b7ee3cb@google.com>
-Subject: WARNING: bad usercopy in corrupted (2)
-From:   syzbot <syzbot+d89b30c46434c433dbf8@syzkaller.appspotmail.com>
-To:     crecklin@redhat.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181125140316.59d9872b@archlinux>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
-bW1pdDogICAgYWVhMGE4OTdhZjllIHB0cDogRml4IHBhc3MgemVybyB0byBFUlJfUFRSKCkgaW4g
-cHRwX2Nsb2NrXy4uDQpnaXQgdHJlZTogICAgICAgbmV0LW5leHQNCmNvbnNvbGUgb3V0cHV0OiBo
-dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L2xvZy50eHQ/eD0xMDFiOTFkNTQwMDAwMA0K
-a2VybmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNvbmZpZz94
-PWMzNmE3MmFmMjEyM2U3OGENCmRhc2hib2FyZCBsaW5rOiBodHRwczovL3N5emthbGxlci5hcHBz
-cG90LmNvbS9idWc/ZXh0aWQ9ZDg5YjMwYzQ2NDM0YzQzM2RiZjgNCmNvbXBpbGVyOiAgICAgICBn
-Y2MgKEdDQykgOC4wLjEgMjAxODA0MTMgKGV4cGVyaW1lbnRhbCkNCnN5eiByZXBybzogICAgICBo
-dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L3JlcHJvLnN5ej94PTE3MGY2YTQ3NDAwMDAw
-DQpDIHJlcHJvZHVjZXI6ICAgaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20veC9yZXByby5j
-P3g9MTJlMWRmN2I0MDAwMDANCg0KSU1QT1JUQU5UOiBpZiB5b3UgZml4IHRoZSBidWcsIHBsZWFz
-ZSBhZGQgdGhlIGZvbGxvd2luZyB0YWcgdG8gdGhlIGNvbW1pdDoNClJlcG9ydGVkLWJ5OiBzeXpi
-b3QrZDg5YjMwYzQ2NDM0YzQzM2RiZjhAc3l6a2FsbGVyLmFwcHNwb3RtYWlsLmNvbQ0KDQotLS0t
-LS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0NCkRFQlVHX0xPQ0tTX1dBUk5fT04oIWhs
-b2NrLT5uZXN0X2xvY2spDQotLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0NCkJh
-ZCBvciBtaXNzaW5nIHVzZXJjb3B5IHdoaXRlbGlzdD8gS2VybmVsIG1lbW9yeSBvdmVyd3JpdGUg
-YXR0ZW1wdCBkZXRlY3RlZCAgDQp0byBTTEFCIG9iamVjdCAndGFza19zdHJ1Y3QnIChvZmZzZXQg
-MTQzMiwgc2l6ZSAyKSENCldBUk5JTkc6IENQVTogMSBQSUQ6IDM4IGF0IG1tL3VzZXJjb3B5LmM6
-ODMgdXNlcmNvcHlfd2FybisweGVlLzB4MTEwICANCm1tL3VzZXJjb3B5LmM6NzgNCktlcm5lbCBw
-YW5pYyAtIG5vdCBzeW5jaW5nOiBwYW5pY19vbl93YXJuIHNldCAuLi4NCmxpc3RfYWRkIGNvcnJ1
-cHRpb24uIG5leHQtPnByZXYgc2hvdWxkIGJlIHByZXYgKGZmZmY4ODgxZGFmMmQ3OTgpLCBidXQg
-d2FzICANCjBiN2UwYzhlNDljYzA0MDAuIChuZXh0PWZmZmY4ODgxZDliNGE0ZjApLg0KQ1BVOiAx
-IFBJRDogMzggQ29tbTog77+977+977+92YHvv73vv73vv71kC++/ve+/ve+/ve+/ve+/ve+/vSBO
-b3QgdGFpbnRlZCA0LjIwLjAtcmMzKyAjMzEyDQotLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0t
-LS0tLS0tLS0NCkhhcmR3YXJlIG5hbWU6IEdvb2dsZSBHb29nbGUgQ29tcHV0ZSBFbmdpbmUvR29v
-Z2xlIENvbXB1dGUgRW5naW5lLCBCSU9TICANCkdvb2dsZSAwMS8wMS8yMDExDQprZXJuZWwgQlVH
-IGF0IGxpYi9saXN0X2RlYnVnLmM6MjUhDQotLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0t
-LS0tLS0NCmludmFsaWQgb3Bjb2RlOiAwMDAwIFsjMV0gUFJFRU1QVCBTTVAgS0FTQU4NCmtlcm5l
-bCBCVUcgYXQgbW0vc2xhYi5jOjQ0MjUhDQpDUFU6IDAgUElEOiA4NjUyIENvbW06IHN5ei1leGVj
-dXRvcjYwNyBOb3QgdGFpbnRlZCA0LjIwLjAtcmMzKyAjMzEyDQpXQVJOSU5HOiBDUFU6IDEgUElE
-OiAzOCBhdCBrZXJuZWwvcmN1L3RyZWVfcGx1Z2luLmg6NDM4ICANCl9fcmN1X3JlYWRfdW5sb2Nr
-KzB4MjY2LzB4MmUwIGtlcm5lbC9yY3UvdHJlZV9wbHVnaW4uaDo0MzINCkhhcmR3YXJlIG5hbWU6
-IEdvb2dsZSBHb29nbGUgQ29tcHV0ZSBFbmdpbmUvR29vZ2xlIENvbXB1dGUgRW5naW5lLCBCSU9T
-ICANCkdvb2dsZSAwMS8wMS8yMDExDQpNb2R1bGVzIGxpbmtlZCBpbjoNClJJUDogMDAxMDpfX2xp
-c3RfYWRkX3ZhbGlkLmNvbGQuMisweGYvMHgyYSBsaWIvbGlzdF9kZWJ1Zy5jOjIzDQpDUFU6IDEg
-UElEOiAzOCBDb21tOiDvv73vv73vv73Zge+/ve+/ve+/vWQL77+977+977+977+977+977+9IE5v
-dCB0YWludGVkIDQuMjAuMC1yYzMrICMzMTINCkNvZGU6IGQxIDYwIDg4IGU4IGExIDM3IGQyIGZk
-IDBmIDBiIDQ4IDg5IGRlIDQ4IGM3IGM3IDYwIGQxIDYwIDg4IGU4IDkwIDM3ICANCmQyIGZkIDBm
-IDBiIDQ4IDg5IGQ5IDQ4IGM3IGM3IDIwIGQyIDYwIDg4IGU4IDdmIDM3IGQyIGZkIDwwZj4gMGIg
-NDggODkgZjEgIA0KNDggYzcgYzcgYTAgZDIgNjAgODggNDggODkgZGUgZTggNmIgMzcgZDIgZmQg
-MGYgMGINCkhhcmR3YXJlIG5hbWU6IEdvb2dsZSBHb29nbGUgQ29tcHV0ZSBFbmdpbmUvR29vZ2xl
-IENvbXB1dGUgRW5naW5lLCBCSU9TICANCkdvb2dsZSAwMS8wMS8yMDExDQpSU1A6IDAwMDA6ZmZm
-Zjg4ODFkYWUwNzU4OCBFRkxBR1M6IDAwMDEwMDgyDQp1c2VyY29weTogS2VybmVsIG1lbW9yeSBv
-dmVyd3JpdGUgYXR0ZW1wdCBkZXRlY3RlZCB0byBTTEFCICANCm9iamVjdCAnc2lnbmFsX2NhY2hl
-JyAob2Zmc2V0IDEzMjgsIHNpemUgMjMpIQ0KUkFYOiAwMDAwMDAwMDAwMDAwMDc1IFJCWDogZmZm
-Zjg4ODFkOWI0YTRmMCBSQ1g6IDAwMDAwMDAwMDAwMDAwMDANCi0tLS0tLS0tLS0tLVsgY3V0IGhl
-cmUgXS0tLS0tLS0tLS0tLQ0KUkRYOiAwMDAwMDAwMDAwMDAwMDAwIFJTSTogZmZmZmZmZmY4MTY1
-ZWFmNSBSREk6IDAwMDAwMDAwMDAwMDAwMDUNCmtlcm5lbCBCVUcgYXQgbW0vdXNlcmNvcHkuYzox
-MDIhDQpSQlA6IGZmZmY4ODgxZGFlMDc1YTAgUjA4OiBmZmZmODg4MWQyNWNlMTAwIFIwOTogZmZm
-ZmVkMTAzYjVjNTAyMA0KUjEwOiBmZmZmZWQxMDNiNWM1MDIwIFIxMTogZmZmZjg4ODFkYWUyODEw
-NyBSMTI6IGZmZmY4ODgxYmQ4OTAyMzANClIxMzogZGZmZmZjMDAwMDAwMDAwMCBSMTQ6IGZmZmY4
-ODgxZGFlMDc5ODAgUjE1OiBmZmZmODg4MWRhZjJkNzk4DQpGUzogIDAwMDAwMDAwMDA4M2M4ODAo
-MDAwMCkgR1M6ZmZmZjg4ODFkYWUwMDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwDQpD
-UzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzDQpDUjI6IDAw
-MDA3ZmZmMTQ0NzY2MDAgQ1IzOiAwMDAwMDAwMWQyYTU5MDAwIENSNDogMDAwMDAwMDAwMDE0MDZm
-MA0KRFIwOiAwMDAwMDAwMDAwMDAwMDAwIERSMTogMDAwMDAwMDAwMDAwMDAwMCBEUjI6IDAwMDAw
-MDAwMDAwMDAwMDANCkRSMzogMDAwMDAwMDAwMDAwMDAwMCBEUjY6IDAwMDAwMDAwZmZmZTBmZjAg
-RFI3OiAwMDAwMDAwMDAwMDAwNDAwDQpDYWxsIFRyYWNlOg0KICA8SVJRPg0KICBfX2xpc3RfYWRk
-IGluY2x1ZGUvbGludXgvbGlzdC5oOjYwIFtpbmxpbmVdDQogIGxpc3RfYWRkIGluY2x1ZGUvbGlu
-dXgvbGlzdC5oOjc5IFtpbmxpbmVdDQogIGxpc3RfbW92ZSBpbmNsdWRlL2xpbnV4L2xpc3QuaDox
-NzEgW2lubGluZV0NCiAgZGV0YWNoX3Rhc2tzIGtlcm5lbC9zY2hlZC9mYWlyLmM6NzI5OCBbaW5s
-aW5lXQ0KICBsb2FkX2JhbGFuY2UrMHgxYjhkLzB4MzlhMCBrZXJuZWwvc2NoZWQvZmFpci5jOjg3
-MzENCiAgcmViYWxhbmNlX2RvbWFpbnMrMHg4NDUvMHhkYzAga2VybmVsL3NjaGVkL2ZhaXIuYzo5
-MTA5DQogIHJ1bl9yZWJhbGFuY2VfZG9tYWlucysweDM4ZC8weDUwMCBrZXJuZWwvc2NoZWQvZmFp
-ci5jOjk3MzENCiAgX19kb19zb2Z0aXJxKzB4MzA4LzB4YjdlIGtlcm5lbC9zb2Z0aXJxLmM6Mjky
-DQogIGludm9rZV9zb2Z0aXJxIGtlcm5lbC9zb2Z0aXJxLmM6MzczIFtpbmxpbmVdDQogIGlycV9l
-eGl0KzB4MTdmLzB4MWMwIGtlcm5lbC9zb2Z0aXJxLmM6NDEzDQogIGV4aXRpbmdfaXJxIGFyY2gv
-eDg2L2luY2x1ZGUvYXNtL2FwaWMuaDo1MzYgW2lubGluZV0NCiAgc21wX2FwaWNfdGltZXJfaW50
-ZXJydXB0KzB4MWNiLzB4NzYwIGFyY2gveDg2L2tlcm5lbC9hcGljL2FwaWMuYzoxMDYxDQogIGFw
-aWNfdGltZXJfaW50ZXJydXB0KzB4Zi8weDIwIGFyY2gveDg2L2VudHJ5L2VudHJ5XzY0LlM6ODA0
-DQogIDwvSVJRPg0KUklQOiAwMDMzOjB4NDAwNWRkDQpDb2RlOiBjOSAwMCAwNCAwMCA2NiAwZiAx
-ZiA4NCAwMCAwMCAwMCAwMCAwMCA0OCA4YiAwNSBmMSAyZSAyZCAwMCA0OCA4NSBjMCAgDQo3NCAx
-MSBiZiAzYyBlOCA0YiAwMCBiOSAwZSAwMCAwMCAwMCA0OCA4OSBjNiBmMyBhNiA3NSAwMSA8YzM+
-IDQ4IDg5IGM3IGU5ICANCjlhIGVjIDAxIDAwIDY2IDJlIDBmIDFmIDg0IDAwIDAwIDAwIDAwIDAw
-IDhiIDA1IDRhDQpSU1A6IDAwMmI6MDAwMDdmZmYxNDQ3NjVhOCBFRkxBR1M6IDAwMDAwMjQ2IE9S
-SUdfUkFYOiBmZmZmZmZmZmZmZmZmZjEzDQpSQVg6IDAwMDAwMDAwMDAwMDAwMDAgUkJYOiAwMDAw
-MDAwMDAwMDAwMDAyIFJDWDogMDAwMDAwMDAwMDZkMjE5MA0KUkRYOiAwMDAwMDAwMDAwNDAyNDEw
-IFJTSTogMDAwMDAwMDAwMDAwMDAwMCBSREk6IDAwMDAwMDAwMDAwMDAwMDANClJCUDogMDAwMDAw
-MDAwMDZjYzBhOCBSMDg6IDAwMDAwMDAwMDAwMDAwMDAgUjA5OiAwMDAwMDAwMDAwMDAwMDAwDQpS
-MTA6IDAwMDAwMDAwMDAwMDAwMDAgUjExOiAwMDAwMDAwMDAwMDAwMjQ2IFIxMjogMDAwMDAwMDAw
-MDAwMDAwMQ0KUjEzOiAwMDAwMDAwMDAwNmQyMTgwIFIxNDogMDAwMDAwMDAwMDAwMDAwMCBSMTU6
-IDAwMDAwMDAwMDAwMDAwMDANCk1vZHVsZXMgbGlua2VkIGluOg0KLS0tWyBlbmQgdHJhY2UgZWVi
-NTczNGMxMzcwOWUxNyBdLS0tDQppbnZhbGlkIG9wY29kZTogMDAwMCBbIzJdIFBSRUVNUFQgU01Q
-IEtBU0FODQpDUFU6IDEgUElEOiAzOCBDb21tOiDvv73vv73vv73Zge+/ve+/ve+/vWQL77+977+9
-77+977+977+977+9IFRhaW50ZWQ6IEcgICAgICBEICAgICAgICAgICAgDQo0LjIwLjAtcmMzKyAj
-MzEyDQpSSVA6IDAwMTA6X19saXN0X2FkZF92YWxpZC5jb2xkLjIrMHhmLzB4MmEgbGliL2xpc3Rf
-ZGVidWcuYzoyMw0KSGFyZHdhcmUgbmFtZTogR29vZ2xlIEdvb2dsZSBDb21wdXRlIEVuZ2luZS9H
-b29nbGUgQ29tcHV0ZSBFbmdpbmUsIEJJT1MgIA0KR29vZ2xlIDAxLzAxLzIwMTENCkNvZGU6IGQx
-IDYwIDg4IGU4IGExIDM3IGQyIGZkIDBmIDBiIDQ4IDg5IGRlIDQ4IGM3IGM3IDYwIGQxIDYwIDg4
-IGU4IDkwIDM3ICANCmQyIGZkIDBmIDBiIDQ4IDg5IGQ5IDQ4IGM3IGM3IDIwIGQyIDYwIDg4IGU4
-IDdmIDM3IGQyIGZkIDwwZj4gMGIgNDggODkgZjEgIA0KNDggYzcgYzcgYTAgZDIgNjAgODggNDgg
-ODkgZGUgZTggNmIgMzcgZDIgZmQgMGYgMGINClJJUDogMDAxMDp1c2VyY29weV9hYm9ydCsweGJi
-LzB4YmQgbW0vdXNlcmNvcHkuYzo5MA0KUlNQOiAwMDAwOmZmZmY4ODgxZGFlMDc1ODggRUZMQUdT
-OiAwMDAxMDA4Mg0KQ29kZTogYzAgZTggZjcgZGMgYjEgZmYgNDggOGIgNTUgYzAgNDkgODkgZDkg
-NGQgODkgZjAgZmYgNzUgYzggNGMgODkgZTEgNGMgIA0KODkgZWUgNDggYzcgYzcgODAgZDUgMzQg
-ODggZmYgNzUgZDAgNDEgNTcgZTggZTcgMjggOTggZmYgPDBmPiAwYiBlOCBjYyBkYyAgDQpiMSBm
-ZiBlOCA5NyAxMyBmNSBmZiA4YiA5NSBlNCBmZSBmZiBmZiA0YyA4OSBlMSAzMQ0KUkFYOiAwMDAw
-MDAwMDAwMDAwMDc1IFJCWDogZmZmZjg4ODFkOWI0YTRmMCBSQ1g6IDAwMDAwMDAwMDAwMDAwMDAN
-ClJTUDogMDAxODpmZmZmODg4MWQ5YjQ5NDM4IEVGTEFHUzogMDAwMTAwODYNClJEWDogMDAwMDAw
-MDAwMDAwMDAwMCBSU0k6IGZmZmZmZmZmODE2NWVhZjUgUkRJOiAwMDAwMDAwMDAwMDAwMDA1DQpS
-QVg6IDAwMDAwMDAwMDAwMDAwNjggUkJYOiBmZmZmZmZmZjg4MjkxMDIwIFJDWDogMDAwMDAwMDAw
-MDAwMDAwMA0KUkJQOiBmZmZmODg4MWRhZTA3NWEwIFIwODogZmZmZjg4ODFkMjVjZTEwMCBSMDk6
-IGZmZmZlZDEwM2I1YzUwMjANClJEWDogMDAwMDAwMDAwMDAwMDAwMCBSU0k6IGZmZmZmZmZmODE2
-NWVhZjUgUkRJOiAwMDAwMDAwMDAwMDAwMDA1DQpSMTA6IGZmZmZlZDEwM2I1YzUwMjAgUjExOiBm
-ZmZmODg4MWRhZTI4MTA3IFIxMjogZmZmZjg4ODFiZDg5MDIzMA0KUkJQOiBmZmZmODg4MWQ5YjQ5
-NDkwIFIwODogZmZmZjg4ODFkOWI0YTQ0MCBSMDk6IGZmZmZlZDEwM2I1ZTNlZjgNClIxMzogZGZm
-ZmZjMDAwMDAwMDAwMCBSMTQ6IGZmZmY4ODgxZGFlMDc5ODAgUjE1OiBmZmZmODg4MWRhZjJkNzk4
-DQpSMTA6IGZmZmZlZDEwM2I1ZTNlZjggUjExOiBmZmZmODg4MWRhZjFmN2M3IFIxMjogZmZmZmZm
-ZmY4OTE0ZGExZA0KRlM6ICAwMDAwMDAwMDAwODNjODgwKDAwMDApIEdTOmZmZmY4ODgxZGFlMDAw
-MDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMA0KUjEzOiBmZmZmZmZmZjg4MzRkM2UwIFIx
-NDogZmZmZmZmZmY4ODM0ZDMyMCBSMTU6IGZmZmZmZmZmODgzNGQyZTANCkNTOiAgMDAxMCBEUzog
-MDAwMCBFUzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMNCkZTOiAgMDAwMDAwMDAwMDAwMDAw
-MCgwMDAwKSBHUzpmZmZmODg4MWRhZjAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDAN
-CkNSMjogMDAwMDdmZmYxNDQ3NjYwMCBDUjM6IDAwMDAwMDAxZDJhNTkwMDAgQ1I0OiAwMDAwMDAw
-MDAwMTQwNmYwDQpDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUw
-MDMzDQpEUjA6IDAwMDAwMDAwMDAwMDAwMDAgRFIxOiAwMDAwMDAwMDAwMDAwMDAwIERSMjogMDAw
-MDAwMDAwMDAwMDAwMA0KQ1IyOiAwMDAwMDAwMDAwMDAwMTMwIENSMzogMDAwMDAwMDFkNzg4MDAw
-MCBDUjQ6IDAwMDAwMDAwMDAxNDA2ZTANCkRSMzogMDAwMDAwMDAwMDAwMDAwMCBEUjY6IDAwMDAw
-MDAwZmZmZTBmZjAgRFI3OiAwMDAwMDAwMDAwMDAwNDAwDQpEUjA6IDAwMDAwMDAwMDAwMDAwMDAg
-RFIxOiAwMDAwMDAwMDAwMDAwMDAwIERSMjogMDAwMDAwMDAwMDAwMDAwMA0KRFIzOiAwMDAwMDAw
-MDAwMDAwMDAwIERSNjogMDAwMDAwMDBmZmZlMGZmMCBEUjc6IDAwMDAwMDAwMDAwMDA0MDANCkNh
-bGwgVHJhY2U6DQpNb2R1bGVzIGxpbmtlZCBpbjoNCi0tLVsgZW5kIHRyYWNlIGVlYjU3MzRjMTM3
-MDllMTggXS0tLQ0KUklQOiAwMDEwOl9fbGlzdF9hZGRfdmFsaWQuY29sZC4yKzB4Zi8weDJhIGxp
-Yi9saXN0X2RlYnVnLmM6MjMNCkNvZGU6IGQxIDYwIDg4IGU4IGExIDM3IGQyIGZkIDBmIDBiIDQ4
-IDg5IGRlIDQ4IGM3IGM3IDYwIGQxIDYwIDg4IGU4IDkwIDM3ICANCmQyIGZkIDBmIDBiIDQ4IDg5
-IGQ5IDQ4IGM3IGM3IDIwIGQyIDYwIDg4IGU4IDdmIDM3IGQyIGZkIDwwZj4gMGIgNDggODkgZjEg
-IA0KNDggYzcgYzcgYTAgZDIgNjAgODggNDggODkgZGUgZTggNmIgMzcgZDIgZmQgMGYgMGINClJT
-UDogMDAwMDpmZmZmODg4MWRhZTA3NTg4IEVGTEFHUzogMDAwMTAwODINClJBWDogMDAwMDAwMDAw
-MDAwMDA3NSBSQlg6IGZmZmY4ODgxZDliNGE0ZjAgUkNYOiAwMDAwMDAwMDAwMDAwMDAwDQpSRFg6
-IDAwMDAwMDAwMDAwMDAwMDAgUlNJOiBmZmZmZmZmZjgxNjVlYWY1IFJESTogMDAwMDAwMDAwMDAw
-MDAwNQ0KUkJQOiBmZmZmODg4MWRhZTA3NWEwIFIwODogZmZmZjg4ODFkMjVjZTEwMCBSMDk6IGZm
-ZmZlZDEwM2I1YzUwMjANClIxMDogZmZmZmVkMTAzYjVjNTAyMCBSMTE6IGZmZmY4ODgxZGFlMjgx
-MDcgUjEyOiBmZmZmODg4MWJkODkwMjMwDQpSMTM6IGRmZmZmYzAwMDAwMDAwMDAgUjE0OiBmZmZm
-ODg4MWRhZTA3OTgwIFIxNTogZmZmZjg4ODFkYWYyZDc5OA0KRlM6ICAwMDAwMDAwMDAwMDAwMDAw
-KDAwMDApIEdTOmZmZmY4ODgxZGFmMDAwMDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMA0K
-Q1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMw0KQ1IyOiAw
-MDAwMDAwMDAwMDAwMTMwIENSMzogMDAwMDAwMDFkNzg4MDAwMCBDUjQ6IDAwMDAwMDAwMDAxNDA2
-ZTANCkRSMDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAwMDAwMDAwMDAwMDAgRFIyOiAwMDAw
-MDAwMDAwMDAwMDAwDQpEUjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUwZmYw
-IERSNzogMDAwMDAwMDAwMDAwMDQwMA0KDQoNCi0tLQ0KVGhpcyBidWcgaXMgZ2VuZXJhdGVkIGJ5
-IGEgYm90LiBJdCBtYXkgY29udGFpbiBlcnJvcnMuDQpTZWUgaHR0cHM6Ly9nb28uZ2wvdHBzbUVK
-IGZvciBtb3JlIGluZm9ybWF0aW9uIGFib3V0IHN5emJvdC4NCnN5emJvdCBlbmdpbmVlcnMgY2Fu
-IGJlIHJlYWNoZWQgYXQgc3l6a2FsbGVyQGdvb2dsZWdyb3Vwcy5jb20uDQoNCnN5emJvdCB3aWxs
-IGtlZXAgdHJhY2sgb2YgdGhpcyBidWcgcmVwb3J0LiBTZWU6DQpodHRwczovL2dvby5nbC90cHNt
-RUojYnVnLXN0YXR1cy10cmFja2luZyBmb3IgaG93IHRvIGNvbW11bmljYXRlIHdpdGggIA0Kc3l6
-Ym90Lg0Kc3l6Ym90IGNhbiB0ZXN0IHBhdGNoZXMgZm9yIHRoaXMgYnVnLCBmb3IgZGV0YWlscyBz
-ZWU6DQpodHRwczovL2dvby5nbC90cHNtRUojdGVzdGluZy1wYXRjaGVzDQo=
+On Sun, Nov 25, 2018 at 02:03:16PM +0000, Jonathan Cameron wrote:
+> On Sun, 25 Nov 2018 05:51:32 -0800
+> Matt Ranostay <matt.ranostay@konsulko.com> wrote:
+>
+> > On Sat, Nov 24, 2018 at 2:14 PM Tomasz Duszynski <tduszyns@gmail.com> wrote:
+> > >
+> > > Measuring particulate matter in ug / m3 (micro-grams per cubic meter)
+> > > is de facto standard. Existing air quality sensors usually follow
+> > > this convention and are capable of returning measurements using
+> > > this unit.
+> > >
+> > > IIO currently does not offer suitable channel type for this
+> > > type of measurements hence this patch adds this.
+> > >
+> > > In addition, two modifiers are introduced used for distinguishing
+> > > between coarse (PM10) and fine particles (PM2p5) measurements, i.e
+> > > IIO_MOD_PM10 and IIO_MOD_PM2p5.
+> > >
+> > > Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+> > > ---
+> > >  Documentation/ABI/testing/sysfs-bus-iio | 11 ++++++++++-
+> > >  drivers/iio/industrialio-core.c         |  3 +++
+> > >  include/uapi/linux/iio/types.h          |  3 +++
+> > >  tools/iio/iio_event_monitor.c           |  6 ++++++
+> > >  4 files changed, 22 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+> > > index 8127a08e366d..ce0ed140660d 100644
+> > > --- a/Documentation/ABI/testing/sysfs-bus-iio
+> > > +++ b/Documentation/ABI/testing/sysfs-bus-iio
+> > > @@ -1684,4 +1684,13 @@ KernelVersion:   4.18
+> > >  Contact:       linux-iio@vger.kernel.org
+> > >  Description:
+> > >                 Raw (unscaled) phase difference reading from channel Y
+> > > -               that can be processed to radians.
+> > > \ No newline at end of file
+> > > +               that can be processed to radians.
+> > > +
+> > > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentration_pm2p5_input
+> > > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentrationY_pm2p5_input
+> > > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentration_pm10_input
+> > > +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentrationY_pm10_input
+> > > +KernelVersion: 4.21
+> > > +Contact:       linux-iio@vger.kernel.org
+> > > +Description:
+> > > +               Mass concentration reading of particulate matter in ug / m3.
+> > > diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+> > > index a062cfddc5af..2a9ef600c1fb 100644
+> > > --- a/drivers/iio/industrialio-core.c
+> > > +++ b/drivers/iio/industrialio-core.c
+> > > @@ -87,6 +87,7 @@ static const char * const iio_chan_type_name_spec[] = {
+> > >         [IIO_GRAVITY]  = "gravity",
+> > >         [IIO_POSITIONRELATIVE]  = "positionrelative",
+> > >         [IIO_PHASE] = "phase",
+> > > +       [IIO_MASSCONCENTRATION] = "massconcentration",
+> > >  };
+> > >
+> > >  static const char * const iio_modifier_names[] = {
+> > > @@ -127,6 +128,8 @@ static const char * const iio_modifier_names[] = {
+> > >         [IIO_MOD_Q] = "q",
+> > >         [IIO_MOD_CO2] = "co2",
+> > >         [IIO_MOD_VOC] = "voc",
+> > > +       [IIO_MOD_PM2p5] = "pm2p5",
+> > > +       [IIO_MOD_PM10] = "pm10",
+> > >  };
+> > >
+> > >  /* relies on pairs of these shared then separate */
+> > > diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
+> > > index 92baabc103ac..465044b42af5 100644
+> > > --- a/include/uapi/linux/iio/types.h
+> > > +++ b/include/uapi/linux/iio/types.h
+> > > @@ -46,6 +46,7 @@ enum iio_chan_type {
+> > >         IIO_GRAVITY,
+> > >         IIO_POSITIONRELATIVE,
+> > >         IIO_PHASE,
+> > > +       IIO_MASSCONCENTRATION,
+> >
+> > So I'm guessing IIO_CONCENTRATION can't be scaled to the micro-grams
+> > per cubic meter?
+>
+> Currently concentration is defined as a percentage reading of a substance
+> (which does make me wonder if it is meant to be percentage of the volume or
+> percentage of the mass?)  Either way, if can't convert to a density measurement
+> as it's a unit free ratio (I think).
+>
+
+And this is the main reason behind introducing a new channel type.
+
+> >
+> > >  };
+> > >
+> > >  enum iio_modifier {
+> > > @@ -87,6 +88,8 @@ enum iio_modifier {
+> > >         IIO_MOD_VOC,
+> > >         IIO_MOD_LIGHT_UV,
+> > >         IIO_MOD_LIGHT_DUV,
+> > > +       IIO_MOD_PM2p5,
+> >
+> > I know this is unit of measure but the lowercase p in IIO_MOD_PM2p5 is
+> > a bit non-standard for iio defines/enum.
+> It is a bit odd and will get us scripted reports so maybe best to
+> just go upper case and not worry about it.
+>
+
+Initially I came up with IIO_MOD_PM2_5 but eventually replaced
+underscore with 'p' meaning 'decimal point'. Anyway, I am okay with the
+suggested change.
+
+> Jonathan
+> >
+> > - Matt
+> >
+> > > +       IIO_MOD_PM10,
+> > >  };
+> > >
+> > >  enum iio_event_type {
+> > > diff --git a/tools/iio/iio_event_monitor.c b/tools/iio/iio_event_monitor.c
+> > > index ac2de6b7e89f..f0fcfeddba2b 100644
+> > > --- a/tools/iio/iio_event_monitor.c
+> > > +++ b/tools/iio/iio_event_monitor.c
+> > > @@ -60,6 +60,7 @@ static const char * const iio_chan_type_name_spec[] = {
+> > >         [IIO_GRAVITY] = "gravity",
+> > >         [IIO_POSITIONRELATIVE] = "positionrelative",
+> > >         [IIO_PHASE] = "phase",
+> > > +       [IIO_MASSCONCENTRATION] = "massconcentration",
+> > >  };
+> > >
+> > >  static const char * const iio_ev_type_text[] = {
+> > > @@ -115,6 +116,8 @@ static const char * const iio_modifier_names[] = {
+> > >         [IIO_MOD_Q] = "q",
+> > >         [IIO_MOD_CO2] = "co2",
+> > >         [IIO_MOD_VOC] = "voc",
+> > > +       [IIO_MOD_PM2p5] = "pm2p5",
+> > > +       [IIO_MOD_PM10] = "pm10",
+> > >  };
+> > >
+> > >  static bool event_is_known(struct iio_event_data *event)
+> > > @@ -156,6 +159,7 @@ static bool event_is_known(struct iio_event_data *event)
+> > >         case IIO_GRAVITY:
+> > >         case IIO_POSITIONRELATIVE:
+> > >         case IIO_PHASE:
+> > > +       case IIO_MASSCONCENTRATION:
+> > >                 break;
+> > >         default:
+> > >                 return false;
+> > > @@ -200,6 +204,8 @@ static bool event_is_known(struct iio_event_data *event)
+> > >         case IIO_MOD_Q:
+> > >         case IIO_MOD_CO2:
+> > >         case IIO_MOD_VOC:
+> > > +       case IIO_MOD_PM2p5:
+> > > +       case IIO_MOD_PM10:
+> > >                 break;
+> > >         default:
+> > >                 return false;
+> > > --
+> > > 2.19.2
+> > >
+>
