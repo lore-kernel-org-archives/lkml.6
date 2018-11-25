@@ -2,112 +2,280 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD01C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 09:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2806CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 09:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 236D120868
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 09:50:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 236D120868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id CCC4720868
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 09:56:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MklpialH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCC4720868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbeKYUlQ (ORCPT
+        id S1727418AbeKYUr2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 15:41:16 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58959 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbeKYUlQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 15:41:16 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 5911A808D4; Sun, 25 Nov 2018 10:50:29 +0100 (CET)
-Date:   Sun, 25 Nov 2018 10:50:31 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     X86 ML <x86@kernel.org>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/16] x86/microcode/AMD: Improve container verification
-Message-ID: <20181125095031.GA24909@amd>
-References: <20181107170218.7596-1-bp@alien8.de>
+        Sun, 25 Nov 2018 15:47:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54784 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726526AbeKYUr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 15:47:28 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B08C520672;
+        Sun, 25 Nov 2018 09:56:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543139804;
+        bh=HB+3PG60wg705ZPi3ujKn6Pu9geQt2zoIOlyk8aUV4A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=MklpialHryfJ7faAHh4XN10sy8BzD6pr6y5/eiIciVTYsfRJWgN3VTrpkLCtOpfvB
+         OJTuMQM2dVKcQHmYBwplSo75VPTEeyRKvjzNep+Wo93IUHeru7q5Fht+p+2kQHHOif
+         t3cPDUC1hhPy/3kUxkIcCGAjxgeA9Xm8B8ncWRyk=
+Date:   Sun, 25 Nov 2018 09:56:38 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Matheus Tavares <matheus.bernardino@usp.br>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        kernel-usp@googlegroups.com, victorcolombo@gmail.com
+Subject: Re: [PATCH v3 7/7] staging:iio:ad2s90: Move out of staging
+Message-ID: <20181125095638.68e5205a@archlinux>
+In-Reply-To: <20181124002312.6923-8-matheus.bernardino@usp.br>
+References: <20181124002312.6923-1-matheus.bernardino@usp.br>
+        <20181124002312.6923-8-matheus.bernardino@usp.br>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
-Content-Disposition: inline
-In-Reply-To: <20181107170218.7596-1-bp@alien8.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 23 Nov 2018 22:23:12 -0200
+Matheus Tavares <matheus.bernardino@usp.br> wrote:
 
---u3/rZRmxL6MmkK24
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Move ad2s90 resolver driver out of staging to the main tree.
+> 
+> Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+> Signed-off-by: Victor Colombo <victorcolombo@gmail.com>
+Hi.
 
-On Wed 2018-11-07 18:02:02, Borislav Petkov wrote:
-> From: Borislav Petkov <bp@suse.de>
->=20
-> Hi all,
->=20
-> this is work which got started by Maciej a while ago. I have finally had
-> the time to redo all the ideas properly, split it in self-contained,
-> logical chunks and test it.
->=20
-> Reveiew and comments are appreciated.
+One totally trivial comment inline, but if you want to clean
+that up, do it after we have moved this out of staging
+(unless respinning for some other reason).
 
-Unfortunately, this is not too useful cover letter. It does not tell
-us what the goals if the series are, for example :-(.
-								Pavel
+However, I would like to let this sit on the mailing list for
+a little longer to let others comment and perhaps to pick up
+a review of the DT binding doc (which looks fine to me, but
+I am forever missing issues in those!)
 
-> Thx.
->=20
-> Borislav Petkov (11):
->   x86/microcode/AMD: Move verify_patch_size() up in the file
->   x86/microcode/AMD: Clean up per-family patch size checks
->   x86/microcode/AMD: Cleanup verify_patch_size() more
->   x86/microcode/AMD: Concentrate patch verification
->   x86/microcode/AMD: Simplify patch family detection
->   x86/microcode/AMD: Move patch family check to verify_patch()
->   x86/microcode/AMD: Move chipset-specific check into verify_patch()
->   x86/microcode/AMD: Change verify_patch()'s return value
->   x86/microcode/AMD: Convert early parser to the new verification routines
->   x86/microcode/AMD: Fix container size's type
->   x86/microcode/AMD: Update copyright
->=20
-> Maciej S. Szmigiero (5):
->   x86/microcode/AMD: Subtract SECTION_HDR_SIZE from file leftover length
->   x86/microcode/AMD: Add microcode container verification
->   x86/microcode/AMD: Check microcode container data in the late loader
->   x86/microcode/AMD: Convert CPU equivalence table variable into a struct
->   x86/microcode/AMD: Check the equivalence table size when scanning it
->=20
->  arch/x86/kernel/cpu/microcode/amd.c | 469 ++++++++++++++++++----------
->  1 file changed, 307 insertions(+), 162 deletions(-)
->=20
+Good work and I'll probably pick this up later in the week.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Thanks,
 
---u3/rZRmxL6MmkK24
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Jonathan
+> ---
+> Changes in v3:
+>  - none
+> 
+> Changes in v2:
+>  - Disabled git move detection, to see the whole code, as Jonathan
+>  suggested
+> 
+>  drivers/iio/resolver/Kconfig          |  10 ++
+>  drivers/iio/resolver/Makefile         |   1 +
+>  drivers/iio/resolver/ad2s90.c         | 131 ++++++++++++++++++++++++++
+>  drivers/staging/iio/resolver/Kconfig  |  10 --
+>  drivers/staging/iio/resolver/Makefile |   1 -
+>  drivers/staging/iio/resolver/ad2s90.c | 131 --------------------------
+>  6 files changed, 142 insertions(+), 142 deletions(-)
+>  create mode 100644 drivers/iio/resolver/ad2s90.c
+>  delete mode 100644 drivers/staging/iio/resolver/ad2s90.c
+> 
+> diff --git a/drivers/iio/resolver/Kconfig b/drivers/iio/resolver/Kconfig
+> index 2ced9f22aa70..786801be54f6 100644
+> --- a/drivers/iio/resolver/Kconfig
+> +++ b/drivers/iio/resolver/Kconfig
+> @@ -3,6 +3,16 @@
+>  #
+>  menu "Resolver to digital converters"
+>  
+> +config AD2S90
+> +	tristate "Analog Devices ad2s90 driver"
+> +	depends on SPI
+> +	help
+> +	  Say yes here to build support for Analog Devices spi resolver
+> +	  to digital converters, ad2s90, provides direct access via sysfs.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called ad2s90.
+> +
+>  config AD2S1200
+>  	tristate "Analog Devices ad2s1200/ad2s1205 driver"
+>  	depends on SPI
+> diff --git a/drivers/iio/resolver/Makefile b/drivers/iio/resolver/Makefile
+> index 4e1dccae07e7..398d82d50028 100644
+> --- a/drivers/iio/resolver/Makefile
+> +++ b/drivers/iio/resolver/Makefile
+> @@ -2,4 +2,5 @@
+>  # Makefile for Resolver/Synchro drivers
+>  #
+>  
+> +obj-$(CONFIG_AD2S90) += ad2s90.o
+>  obj-$(CONFIG_AD2S1200) += ad2s1200.o
+> diff --git a/drivers/iio/resolver/ad2s90.c b/drivers/iio/resolver/ad2s90.c
+> new file mode 100644
+> index 000000000000..a41f5cb10da5
+> --- /dev/null
+> +++ b/drivers/iio/resolver/ad2s90.c
+> @@ -0,0 +1,131 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * ad2s90.c simple support for the ADI Resolver to Digital Converters: AD2S90
+> + *
+> + * Copyright (c) 2010-2010 Analog Devices Inc.
+> + */
+> +#include <linux/types.h>
+> +#include <linux/mutex.h>
+> +#include <linux/device.h>
+> +#include <linux/spi/spi.h>
+> +#include <linux/slab.h>
+> +#include <linux/sysfs.h>
+> +#include <linux/module.h>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+We are into the truely trivial realms now - alphabetical order preferred
+for includes.
 
-iEYEARECAAYFAlv6cGcACgkQMOfwapXb+vIHtACcCm+nFF9keEIe7XzIA6FybqiN
-63wAn36HSGj86urP2YsnS5W6Nb2RXxY5
-=/RcZ
------END PGP SIGNATURE-----
+> +
+> +#include <linux/iio/iio.h>
+> +#include <linux/iio/sysfs.h>
+> +
+> +/*
+> + * Although chip's max frequency is 2Mhz, it needs 600ns between CS and the
+> + * first falling edge of SCLK, so frequency should be at most 1 / (2 * 6e-7)
+> + */
+> +#define AD2S90_MAX_SPI_FREQ_HZ  830000
+> +
+> +struct ad2s90_state {
+> +	struct mutex lock; /* lock to protect rx buffer */
+> +	struct spi_device *sdev;
+> +	u8 rx[2] ____cacheline_aligned;
+> +};
+> +
+> +static int ad2s90_read_raw(struct iio_dev *indio_dev,
+> +			   struct iio_chan_spec const *chan,
+> +			   int *val,
+> +			   int *val2,
+> +			   long m)
+> +{
+> +	int ret;
+> +	struct ad2s90_state *st = iio_priv(indio_dev);
+> +
+> +	if (chan->type != IIO_ANGL)
+> +		return -EINVAL;
+> +
+> +	switch (m) {
+> +	case IIO_CHAN_INFO_SCALE:
+> +		/* 2 * Pi / 2^12 */
+> +		*val = 6283; /* mV */
+> +		*val2 = 12;
+> +		return IIO_VAL_FRACTIONAL_LOG2;
+> +	case IIO_CHAN_INFO_RAW:
+> +		mutex_lock(&st->lock);
+> +		ret = spi_read(st->sdev, st->rx, 2);
+> +		if (ret < 0) {
+> +			mutex_unlock(&st->lock);
+> +			return ret;
+> +		}
+> +		*val = (((u16)(st->rx[0])) << 4) | ((st->rx[1] & 0xF0) >> 4);
+> +
+> +		mutex_unlock(&st->lock);
+> +
+> +		return IIO_VAL_INT;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static const struct iio_info ad2s90_info = {
+> +	.read_raw = ad2s90_read_raw,
+> +};
+> +
+> +static const struct iio_chan_spec ad2s90_chan = {
+> +	.type = IIO_ANGL,
+> +	.indexed = 1,
+> +	.channel = 0,
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
+> +};
+> +
+> +static int ad2s90_probe(struct spi_device *spi)
+> +{
+> +	struct iio_dev *indio_dev;
+> +	struct ad2s90_state *st;
+> +
+> +	if (spi->max_speed_hz > AD2S90_MAX_SPI_FREQ_HZ) {
+> +		dev_err(&spi->dev, "SPI CLK, %d Hz exceeds %d Hz\n",
+> +			spi->max_speed_hz, AD2S90_MAX_SPI_FREQ_HZ);
+> +		return -EINVAL;
+> +	}
+> +
+> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +	st = iio_priv(indio_dev);
+> +	spi_set_drvdata(spi, indio_dev);
+> +
+> +	mutex_init(&st->lock);
+> +	st->sdev = spi;
+> +	indio_dev->dev.parent = &spi->dev;
+> +	indio_dev->info = &ad2s90_info;
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->channels = &ad2s90_chan;
+> +	indio_dev->num_channels = 1;
+> +	indio_dev->name = spi_get_device_id(spi)->name;
+> +
+> +	return devm_iio_device_register(indio_dev->dev.parent, indio_dev);
+> +}
+> +
+> +static const struct of_device_id ad2s90_of_match[] = {
+> +	{ .compatible = "adi,ad2s90", },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, ad2s90_of_match);
+> +
+> +static const struct spi_device_id ad2s90_id[] = {
+> +	{ "ad2s90" },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(spi, ad2s90_id);
+> +
+> +static struct spi_driver ad2s90_driver = {
+> +	.driver = {
+> +		.name = "ad2s90",
+> +		.of_match_table = ad2s90_of_match,
+> +	},
+> +	.probe = ad2s90_probe,
+> +	.id_table = ad2s90_id,
+> +};
+> +module_spi_driver(ad2s90_driver);
+> +
+> +MODULE_AUTHOR("Graff Yang <graff.yang@gmail.com>");
+> +MODULE_DESCRIPTION("Analog Devices AD2S90 Resolver to Digital SPI driver");
+> +MODULE_LICENSE("GPL v2");
+...
 
---u3/rZRmxL6MmkK24--
