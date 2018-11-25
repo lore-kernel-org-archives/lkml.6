@@ -2,421 +2,93 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B16BC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 03:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2B11C04EBA
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 03:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39A2120850
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 03:25:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB27020865
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 03:59:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZESMPdoo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39A2120850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ocdTkfBE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB27020865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbeKYOLV (ORCPT
+        id S1727151AbeKYOtZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 09:11:21 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46089 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbeKYOLV (ORCPT
+        Sun, 25 Nov 2018 09:49:25 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:36804 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726514AbeKYOtZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 09:11:21 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c73so4927940pfe.13
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Nov 2018 19:21:18 -0800 (PST)
+        Sun, 25 Nov 2018 09:49:25 -0500
+Received: by mail-ed1-f67.google.com with SMTP id f23so13124361edb.3;
+        Sat, 24 Nov 2018 19:59:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
-        bh=+8zCRZUBJK0Ya78Xou9gqwoebzB337SjzErezgTkTLU=;
-        b=ZESMPdoo1ygUxKtjfs6RzmgduvZklwXG71qo/4xpc1kL/F4uClANTVngUjQ+MSzt5q
-         SIKh75Htfp1zXmc9sSSW1RYtHd43a05SmoLu9BPcN2BkbxtnLI45GNIHToQ1rVKdO2O+
-         hic/dKjWLpfCVnJj3XG08xwRNwGMFHJoK4Xq+R2Gd3VFOPOo29joAdUoqUk1FAlVWmUH
-         lfJdUA8IswOLLNyMqCsnBSylFyDQTJWD4cwzBBbl7Q0JrRHF3ZcMGSx//tG61qmDOSOW
-         IeC6qq8C7S8wO5y1l8vFdSXw7zDMYZtA3OVHURDAYMkfpdO1P8gekINH0Pgb1Nwo51an
-         v8Qw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=c+VbIPcUA0nJnu19TEKgDmZfhoeqvq+Zc/bRRQahK3k=;
+        b=ocdTkfBE5AFtLyhSSV8CuyIFXHG7GlsaOSO2j0zy3JdpMsb0At1PKZh1bBgvl+syDO
+         lx45TU5Phwa8H6BdHwH+Bf6IJPf7HRQ/yOAe7fZjbM8U51f6xAyBZi8Po1l7EBMRCzXq
+         zhCEziYoT2r3r1dgupyt6RCI4LoeiJ0GexBWvcivKlOZZzLssK2SAjLMwh0svjbJdzxw
+         cvwHa4m9XqlCttALqA20+fJbDiTTaX7Pa7FnMBLyJZCAeKGWLPMbuN6ZU1K3cOxPMaBp
+         W40LpbtMifYMNHlQ6g7X4/cSupZ5xareMupm50/a4TGfR3zSOJJjJ5JoV+UbmSWqYB6N
+         oloQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
-         :mime-version;
-        bh=+8zCRZUBJK0Ya78Xou9gqwoebzB337SjzErezgTkTLU=;
-        b=EGaE/mMh26Yrc49cmlJLzPdINhCPU0Spk4dK5vdmFYDFI4B7s2GgOUf0yaPhNvbLE4
-         n+KB1Bbj8ucK/VcBCZEAIBJrJvtP+5U8R5kQ3uJyGyVNlbHcfQUZtuYRbl2udK1p5bjW
-         Rc0y8EdHsFLS7Eytl7aaux5kjG7KAWMkiL2u65nhzSxlreoqi8X+3OFOAjJgKHEhpk8n
-         a2IrOD++eo0PGo2aIr8Ow4x42iobhvxncHol3OQLWCqsGwc8KQL3wPG1xGra06B3vZba
-         dzGAMX3PieRVr77c5e5fqb5TX3h/7eglBgatD9LMuJK8EJv/5AEelxuSNO6jGinOTOA2
-         YISg==
-X-Gm-Message-State: AGRZ1gKJPPk6jDOCbUuffBpYwA4X04iu/Si4Fkj90AEaVXr42BlXClP7
-        MpuOg0Qzk0oOTmlFh0M2WaZkLg==
-X-Google-Smtp-Source: AJdET5fevNVYBSmrPQXvy9EeeOxhUSpZmF8QZTxwwNAWgD5ic4rqsxwNF9xezMPZ8wJyrB8j/jfMnA==
-X-Received: by 2002:a62:75d1:: with SMTP id q200mr22316087pfc.254.1543116077199;
-        Sat, 24 Nov 2018 19:21:17 -0800 (PST)
-Received: from [100.112.89.103] ([104.133.8.103])
-        by smtp.gmail.com with ESMTPSA id k14sm77117928pgs.52.2018.11.24.19.21.15
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 24 Nov 2018 19:21:16 -0800 (PST)
-Date:   Sat, 24 Nov 2018 19:21:07 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Kan Liang <kan.liang@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christoph Lameter <cl@linux.com>,
-        Nicholas Piggin <npiggin@gmail.com>, pifang@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH] mm: put_and_wait_on_page_locked() while page is migrated
-Message-ID: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=c+VbIPcUA0nJnu19TEKgDmZfhoeqvq+Zc/bRRQahK3k=;
+        b=rf4ycBIExnB310tBUrsSRN29v55DQhlsNXHlf1s40PdSw0OLJXuPNwnPojIMXUchvY
+         eL60tR74n1o7r1lACwbae2K1nQBfQMeAedtS9Dqcq6g3V5LNRZbKTikT5p1eTN+phaaw
+         P0Eg/Tno7AS8x7/hs3InmprhG+Y+NBQeIENxLBDCIhmEt9nkaQkQFijkRoGNQif/WIzR
+         BnvBtBOWGHMqkoiB7sgfEUqZuY+3mvOUuyWSI5TGyl6NP+Vi1ZyiRVu76vKBQy9QDJ17
+         ciAhNRzmHYFB7G2PwGf2bDpTm8IyxGu8Ql0fdqQTPGug5WW1DM1UYQQJey89npl8xH+w
+         SNVg==
+X-Gm-Message-State: AGRZ1gKpxGZO+Lopj4JpOMtUCF7tFlGikdRir2L/Drxt2b+xZRY9n3vb
+        KQP6ULYVU7YrOp7XFtbOQz7uSHzTTqhtsp5yoeM58A==
+X-Google-Smtp-Source: AJdET5fP384hUZ9MCTMYcaTg+4qb4i0FIO8NdOS/IfPbEZfc1J9ZA3JA647zCPwROOGuZcyrIWGP021BQcn7w8N3H5Q=
+X-Received: by 2002:a17:906:4a4b:: with SMTP id a11-v6mr16244194ejv.68.1543118357002;
+ Sat, 24 Nov 2018 19:59:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+References: <20181124022035.17519-1-deepa.kernel@gmail.com> <20181124022035.17519-3-deepa.kernel@gmail.com>
+In-Reply-To: <20181124022035.17519-3-deepa.kernel@gmail.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Sat, 24 Nov 2018 22:58:39 -0500
+Message-ID: <CAF=yD-KfxXK=Ta=+a8UYMcmUYzN=UokotfzSno2-xi=JeS6=0g@mail.gmail.com>
+Subject: Re: [PATCH 2/8] sockopt: Rename SO_TIMESTAMP* to SO_TIMESTAMP*_OLD
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Helge Deller <deller@gmx.de>,
+        David Howells <dhowells@redhat.com>, jejb@parisc-linux.org,
+        ralf@linux-mips.org, rth@twiddle.net,
+        linux-afs@lists.infradead.org, linux-alpha@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-parisc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        sparclinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Waiting on a page migration entry has used wait_on_page_locked() all
-along since 2006: but you cannot safely wait_on_page_locked() without
-holding a reference to the page, and that extra reference is enough to
-make migrate_page_move_mapping() fail with -EAGAIN, when a racing task
-faults on the entry before migrate_page_move_mapping() gets there.
+On Sat, Nov 24, 2018 at 3:58 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+>
+> SO_TIMESTAMP, SO_TIMESTAMPNS and SO_TIMESTAMPING options, the
+> way they are currently defined, are not y2038 safe.
+> Subsequent patches in the series add new y2038 safe versions
+> of these options which provide 64 bit timestamps on all
+> architectures uniformly.
+> Hence, rename existing options with OLD tag suffixes.
 
-And that failure is retried nine times, amplifying the pain when
-trying to migrate a popular page.  With a single persistent faulter,
-migration sometimes succeeds; with two or three concurrent faulters,
-success becomes much less likely (and the more the page was mapped,
-the worse the overhead of unmapping and remapping it on each try).
-
-This is especially a problem for memory offlining, where the outer
-level retries forever (or until terminated from userspace), because
-a heavy refault workload can trigger an endless loop of migration
-failures.  wait_on_page_locked() is the wrong tool for the job.
-
-David Herrmann (but was he the first?) noticed this issue in 2014:
-https://marc.info/?l=linux-mm&m=140110465608116&w=2
-
-Tim Chen started a thread in August 2017 which appears relevant:
-https://marc.info/?l=linux-mm&m=150275941014915&w=2
-where Kan Liang went on to implicate __migration_entry_wait():
-https://marc.info/?l=linux-mm&m=150300268411980&w=2
-and the thread ended up with the v4.14 commits:
-2554db916586 ("sched/wait: Break up long wake list walk")
-11a19c7b099f ("sched/wait: Introduce wakeup boomark in wake_up_page_bit")
-
-Baoquan He reported "Memory hotplug softlock issue" 14 November 2018:
-https://marc.info/?l=linux-mm&m=154217936431300&w=2
-
-We have all assumed that it is essential to hold a page reference while
-waiting on a page lock: partly to guarantee that there is still a struct
-page when MEMORY_HOTREMOVE is configured, but also to protect against
-reuse of the struct page going to someone who then holds the page locked
-indefinitely, when the waiter can reasonably expect timely unlocking.
-
-But in fact, so long as wait_on_page_bit_common() does the put_page(),
-and is careful not to rely on struct page contents thereafter, there is
-no need to hold a reference to the page while waiting on it.  That does
-mean that this case cannot go back through the loop: but that's fine for
-the page migration case, and even if used more widely, is limited by the
-"Stop walking if it's locked" optimization in wake_page_function().
-
-Add interface put_and_wait_on_page_locked() to do this, using negative
-value of the lock arg to wait_on_page_bit_common() to implement it.
-No interruptible or killable variant needed yet, but they might follow:
-I have a vague notion that reporting -EINTR should take precedence over
-return from wait_on_page_bit_common() without knowing the page state,
-so arrange it accordingly - but that may be nothing but pedantic.
-
-__migration_entry_wait() still has to take a brief reference to the
-page, prior to calling put_and_wait_on_page_locked(): but now that it
-is dropped before waiting, the chance of impeding page migration is
-very much reduced.  Should we perhaps disable preemption across this?
-
-shrink_page_list()'s __ClearPageLocked(): that was a surprise!  This
-survived a lot of testing before that showed up.  PageWaiters may have
-been set by wait_on_page_bit_common(), and the reference dropped, just
-before shrink_page_list() succeeds in freezing its last page reference:
-in such a case, unlock_page() must be used.  Follow the suggestion from
-Michal Hocko, just revert a978d6f52106 ("mm: unlockless reclaim") now:
-that optimization predates PageWaiters, and won't buy much these days;
-but we can reinstate it for the !PageWaiters case if anyone notices.
-
-It does raise the question: should vmscan.c's is_page_cache_freeable()
-and __remove_mapping() now treat a PageWaiters page as if an extra
-reference were held?  Perhaps, but I don't think it matters much, since
-shrink_page_list() already had to win its trylock_page(), so waiters are
-not very common there: I noticed no difference when trying the bigger
-change, and it's surely not needed while put_and_wait_on_page_locked()
-is only used for page migration.
-
-Reported-and-tested-by: Baoquan He <bhe@redhat.com>
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
----
-
-Linus, I'm addressing this patch to you because I see from Tim Chen's
-thread that it would interest you, and you were disappointed not to
-root cause the issue back then.  I'm not pushing for you to fast-track
-this into 4.20-rc, but I expect Andrew will pick it up for mmotm, and
-thence linux-next.  Or you may spot a terrible defect, but I hope not.
-
-Hugh
-
- include/linux/pagemap.h |  2 ++
- mm/filemap.c            | 60 ++++++++++++++++++++++++++++++++---------
- mm/huge_memory.c        |  6 ++---
- mm/migrate.c            | 12 +++------
- mm/vmscan.c             | 10 ++-----
- 5 files changed, 57 insertions(+), 33 deletions(-)
-
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 226f96f0dee0..e2d7039af6a3 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -537,6 +537,8 @@ static inline int wait_on_page_locked_killable(struct page *page)
- 	return wait_on_page_bit_killable(compound_head(page), PG_locked);
- }
- 
-+extern void put_and_wait_on_page_locked(struct page *page);
-+
- /* 
-  * Wait for a page to complete writeback
-  */
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 81adec8ee02c..d645fbbf34d7 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -981,7 +981,14 @@ static int wake_page_function(wait_queue_entry_t *wait, unsigned mode, int sync,
- 	if (wait_page->bit_nr != key->bit_nr)
- 		return 0;
- 
--	/* Stop walking if it's locked */
-+	/*
-+	 * Stop walking if it's locked.
-+	 * Is this safe if put_and_wait_on_page_locked() is in use?
-+	 * Yes: the waker must hold a reference to this page, and if PG_locked
-+	 * has now already been set by another task, that task must also hold
-+	 * a reference to the *same usage* of this page; so there is no need
-+	 * to walk on to wake even the put_and_wait_on_page_locked() callers.
-+	 */
- 	if (test_bit(key->bit_nr, &key->page->flags))
- 		return -1;
- 
-@@ -1050,24 +1057,28 @@ static void wake_up_page(struct page *page, int bit)
- }
- 
- static inline int wait_on_page_bit_common(wait_queue_head_t *q,
--		struct page *page, int bit_nr, int state, bool lock)
-+		struct page *page, int bit_nr, int state, int lock)
- {
- 	struct wait_page_queue wait_page;
- 	wait_queue_entry_t *wait = &wait_page.wait;
-+	bool bit_is_set;
- 	bool thrashing = false;
-+	bool delayacct = false;
- 	unsigned long pflags;
- 	int ret = 0;
- 
- 	if (bit_nr == PG_locked &&
- 	    !PageUptodate(page) && PageWorkingset(page)) {
--		if (!PageSwapBacked(page))
-+		if (!PageSwapBacked(page)) {
- 			delayacct_thrashing_start();
-+			delayacct = true;
-+		}
- 		psi_memstall_enter(&pflags);
- 		thrashing = true;
- 	}
- 
- 	init_wait(wait);
--	wait->flags = lock ? WQ_FLAG_EXCLUSIVE : 0;
-+	wait->flags = lock > 0 ? WQ_FLAG_EXCLUSIVE : 0;
- 	wait->func = wake_page_function;
- 	wait_page.page = page;
- 	wait_page.bit_nr = bit_nr;
-@@ -1084,14 +1095,17 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
- 
- 		spin_unlock_irq(&q->lock);
- 
--		if (likely(test_bit(bit_nr, &page->flags))) {
-+		bit_is_set = test_bit(bit_nr, &page->flags);
-+		if (lock < 0)
-+			put_page(page);
-+
-+		if (likely(bit_is_set))
- 			io_schedule();
--		}
- 
--		if (lock) {
-+		if (lock > 0) {
- 			if (!test_and_set_bit_lock(bit_nr, &page->flags))
- 				break;
--		} else {
-+		} else if (lock == 0) {
- 			if (!test_bit(bit_nr, &page->flags))
- 				break;
- 		}
-@@ -1100,12 +1114,23 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
- 			ret = -EINTR;
- 			break;
- 		}
-+
-+		if (lock < 0) {
-+			/*
-+			 * We can no longer safely access page->flags:
-+			 * even if CONFIG_MEMORY_HOTREMOVE is not enabled,
-+			 * there is a risk of waiting forever on a page reused
-+			 * for something that keeps it locked indefinitely.
-+			 * But best check for -EINTR above before breaking.
-+			 */
-+			break;
-+		}
- 	}
- 
- 	finish_wait(q, wait);
- 
- 	if (thrashing) {
--		if (!PageSwapBacked(page))
-+		if (delayacct)
- 			delayacct_thrashing_end();
- 		psi_memstall_leave(&pflags);
- 	}
-@@ -1124,17 +1149,26 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
- void wait_on_page_bit(struct page *page, int bit_nr)
- {
- 	wait_queue_head_t *q = page_waitqueue(page);
--	wait_on_page_bit_common(q, page, bit_nr, TASK_UNINTERRUPTIBLE, false);
-+	wait_on_page_bit_common(q, page, bit_nr, TASK_UNINTERRUPTIBLE, 0);
- }
- EXPORT_SYMBOL(wait_on_page_bit);
- 
- int wait_on_page_bit_killable(struct page *page, int bit_nr)
- {
- 	wait_queue_head_t *q = page_waitqueue(page);
--	return wait_on_page_bit_common(q, page, bit_nr, TASK_KILLABLE, false);
-+	return wait_on_page_bit_common(q, page, bit_nr, TASK_KILLABLE, 0);
- }
- EXPORT_SYMBOL(wait_on_page_bit_killable);
- 
-+void put_and_wait_on_page_locked(struct page *page)
-+{
-+	wait_queue_head_t *q;
-+
-+	page = compound_head(page);
-+	q = page_waitqueue(page);
-+	wait_on_page_bit_common(q, page, PG_locked, TASK_UNINTERRUPTIBLE, -1);
-+}
-+
- /**
-  * add_page_wait_queue - Add an arbitrary waiter to a page's wait queue
-  * @page: Page defining the wait queue of interest
-@@ -1264,7 +1298,7 @@ void __lock_page(struct page *__page)
- {
- 	struct page *page = compound_head(__page);
- 	wait_queue_head_t *q = page_waitqueue(page);
--	wait_on_page_bit_common(q, page, PG_locked, TASK_UNINTERRUPTIBLE, true);
-+	wait_on_page_bit_common(q, page, PG_locked, TASK_UNINTERRUPTIBLE, 1);
- }
- EXPORT_SYMBOL(__lock_page);
- 
-@@ -1272,7 +1306,7 @@ int __lock_page_killable(struct page *__page)
- {
- 	struct page *page = compound_head(__page);
- 	wait_queue_head_t *q = page_waitqueue(page);
--	return wait_on_page_bit_common(q, page, PG_locked, TASK_KILLABLE, true);
-+	return wait_on_page_bit_common(q, page, PG_locked, TASK_KILLABLE, 1);
- }
- EXPORT_SYMBOL_GPL(__lock_page_killable);
- 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 622cced74fd9..832ab11badc2 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1501,8 +1501,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf, pmd_t pmd)
- 		if (!get_page_unless_zero(page))
- 			goto out_unlock;
- 		spin_unlock(vmf->ptl);
--		wait_on_page_locked(page);
--		put_page(page);
-+		put_and_wait_on_page_locked(page);
- 		goto out;
- 	}
- 
-@@ -1538,8 +1537,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf, pmd_t pmd)
- 		if (!get_page_unless_zero(page))
- 			goto out_unlock;
- 		spin_unlock(vmf->ptl);
--		wait_on_page_locked(page);
--		put_page(page);
-+		put_and_wait_on_page_locked(page);
- 		goto out;
- 	}
- 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index f7e4bfdc13b7..acda06f99754 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -327,16 +327,13 @@ void __migration_entry_wait(struct mm_struct *mm, pte_t *ptep,
- 
- 	/*
- 	 * Once page cache replacement of page migration started, page_count
--	 * *must* be zero. And, we don't want to call wait_on_page_locked()
--	 * against a page without get_page().
--	 * So, we use get_page_unless_zero(), here. Even failed, page fault
--	 * will occur again.
-+	 * is zero; but we must not call put_and_wait_on_page_locked() without
-+	 * a ref. Use get_page_unless_zero(), and just fault again if it fails.
- 	 */
- 	if (!get_page_unless_zero(page))
- 		goto out;
- 	pte_unmap_unlock(ptep, ptl);
--	wait_on_page_locked(page);
--	put_page(page);
-+	put_and_wait_on_page_locked(page);
- 	return;
- out:
- 	pte_unmap_unlock(ptep, ptl);
-@@ -370,8 +367,7 @@ void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd)
- 	if (!get_page_unless_zero(page))
- 		goto unlock;
- 	spin_unlock(ptl);
--	wait_on_page_locked(page);
--	put_page(page);
-+	put_and_wait_on_page_locked(page);
- 	return;
- unlock:
- 	spin_unlock(ptl);
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 62ac0c488624..9c50d90b9bc5 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1456,14 +1456,8 @@ static unsigned long shrink_page_list(struct list_head *page_list,
- 			count_memcg_page_event(page, PGLAZYFREED);
- 		} else if (!mapping || !__remove_mapping(mapping, page, true))
- 			goto keep_locked;
--		/*
--		 * At this point, we have no other references and there is
--		 * no way to pick any more up (removed from LRU, removed
--		 * from pagecache). Can use non-atomic bitops now (and
--		 * we obviously don't have to worry about waking up a process
--		 * waiting on the page lock, because there are no references.
--		 */
--		__ClearPageLocked(page);
-+
-+		unlock_page(page);
- free_it:
- 		nr_reclaimed++;
- 
--- 
-2.20.0.rc0.387.gc7a69e6b6c-goog
+Why do the existing interfaces have to be renamed when new interfaces are added?
