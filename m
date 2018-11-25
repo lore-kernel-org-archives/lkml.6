@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 015E8C04EBA
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 12:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB0DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 12:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B17BB2086E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 12:48:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50A4C2082E
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 12:50:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SY1vGsru"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B17BB2086E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KqgJ4WeU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50A4C2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbeKYXjv (ORCPT
+        id S1726315AbeKYXlH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 18:39:51 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41931 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726084AbeKYXju (ORCPT
+        Sun, 25 Nov 2018 18:41:07 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38065 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbeKYXlH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 18:39:50 -0500
-Received: by mail-lj1-f196.google.com with SMTP id z80-v6so14095392ljb.8
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 04:48:49 -0800 (PST)
+        Sun, 25 Nov 2018 18:41:07 -0500
+Received: by mail-lf1-f68.google.com with SMTP id p86so11550927lfg.5
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 04:50:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=OTHNKStSlNnbHa+Ar5ZmoUbdiW/Nu6yGtTGXHQmuWkE=;
-        b=SY1vGsrudf4v6JJ8Nj6V3fCtWK1dIihM88+QS7/Wvu5Wm43D4DQj2REI/XjqJ4fYrS
-         /3M0M0t1YdRDCc67PPoxog6DHWRmxfAgr0U39ZKWrcmkVsDMHkW7G4JQ+kSe5F7BEHEc
-         /o68gCd8+Fm6LtRderC9hr4r/skSnG1TZQbV0=
+        bh=rgKdsQBuKUgq5aJ4Gauhtd25HWjQ3W/6tZZcT1TNouM=;
+        b=KqgJ4WeUzCdietKa1HLTBnwqrtvgHQYzu5YNbX2c8F1oSVaOMiho0kXPYfd5ZZ/dOd
+         9dQUbkau+6F8lS2HCBJyqVJ9k5clnJGEQGEmMGC+Y1LES9GvkQYaJsek6/t+S6+Xb+7e
+         RGfFuOW2cb6BAYpnX36+rW5xNeho84lgJnWbI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=OTHNKStSlNnbHa+Ar5ZmoUbdiW/Nu6yGtTGXHQmuWkE=;
-        b=EIH8OHAo1zIL1AVPEb8o0eU0TvGJHzzAZEWATIzX8346OZvkfRV7IjXj1ZfZVZxqbg
-         AqYKQKIzu2cMaiCA/ZCJlJUN0CL4LF1WYOJljPr3byaH+RcnD/XUbDCv8CmuH53EE8l6
-         CYosvA31HZQ8DxQox6q5Q+pQJmKJd20+wS5JdlYty6/DfCW4nMJiTGmsF94+15itxPqS
-         qzbDXXYxUNKBDZCIET6p34RHekBlOmA2dV9C58g3endjWzkHnghR4qalTWa2R2pDaVNi
-         BB5aisEnRr732gN12gfoahSZKZjfi0wz/rpHU5/8xgFef52uVAUmecgyYBa4O+xc7sce
-         +HJQ==
-X-Gm-Message-State: AA+aEWYIqNWWfA7hvae5fGgxogMkT3V39DgdKf/U60AON9TZ9lzd6pDE
-        zvlJ2qV4ytHfv514ODZYf21J3lkAZ3dTTbX8X1YX3g==
-X-Google-Smtp-Source: AFSGD/U2E1dOcCb6blA/Q+qvmMcx60UcdAjE5v7e4R4LCH7kmBTtQhE1XCC5s+++VMhzyBc+5ZclzoEkQPQgFf4RKEY=
-X-Received: by 2002:a2e:9e03:: with SMTP id e3-v6mr14236673ljk.4.1543150128588;
- Sun, 25 Nov 2018 04:48:48 -0800 (PST)
+        bh=rgKdsQBuKUgq5aJ4Gauhtd25HWjQ3W/6tZZcT1TNouM=;
+        b=cF38VWgoPsfffyzcOkbTH1TouXzL6OuboxiGd6sYxuy6uFFwmM7n70VQ9mEZyP91/f
+         5Iy9fyO+DUFlhYd2LPAEYIemq4dZ/ooCiZJbt89YdIRw9WOZcWzAtECrQS27QS7TovCq
+         KtIrqbIZn00sbMYo3NhA8fbyruUHV80ploLwOf3dS+KEfjd9RkL+GaL9B2oLUgmZO8h3
+         Fn0Ft5sA7aujqgHB1qM79Wh/J1ScSS1ubZmIdE6BJmDlnTqO6qLsF4thfi9/vN5i1vnB
+         VxdicRkYJgfHsAnOPGzkKQvQuWLbkyc0MJwOEFoAIfQs7hJ/x7LAI3H6dvrxWq4qtJh6
+         fZAg==
+X-Gm-Message-State: AGRZ1gI2qzPHgkH72e0Bf6EMroDz9xgeawwCsiUnQ+lq7ZdYG1ZcM7SK
+        HLDEn7CYgHldYGHgFtU1uuyVN/CJaXagKaSTn1hGBg==
+X-Google-Smtp-Source: AJdET5fmTiDIZprkDHy8Zec+rjjB4ADDeodBOpglW0ANT93mLh0pWboPlYhy9b/LRWLchCdkimfb/l1JzGeEp5dO4Y4=
+X-Received: by 2002:a19:5154:: with SMTP id f81mr14406017lfb.96.1543150205471;
+ Sun, 25 Nov 2018 04:50:05 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1543131714.git.mesihkilinc@gmail.com> <ac8d900789e967650e0ab16eeadc04ec456fcf34.1543131714.git.mesihkilinc@gmail.com>
-In-Reply-To: <ac8d900789e967650e0ab16eeadc04ec456fcf34.1543131714.git.mesihkilinc@gmail.com>
+References: <cover.1543131714.git.mesihkilinc@gmail.com> <233099b6384217ddaf5147e54859359acd56be0e.1543131714.git.mesihkilinc@gmail.com>
+In-Reply-To: <233099b6384217ddaf5147e54859359acd56be0e.1543131714.git.mesihkilinc@gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 25 Nov 2018 13:48:37 +0100
-Message-ID: <CACRpkdZEZMsf_eHen_Mf6ag_iTmW48w4Oyyhs6m8tfmOcen76Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 10/17] dt-bindings: pinctrl: Add Allwinner suniv
- F1C100s pinctrl
+Date:   Sun, 25 Nov 2018 13:49:53 +0100
+Message-ID: <CACRpkdb6dbGMdLznm8F_jV2zj9dJfiwTK5w-8YShxwiPALE3+g@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 11/17] pinctrl: sunxi: add support for suniv
+ F1C100s (newer F-series SoCs)
 To:     mesihkilinc@gmail.com
 Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
@@ -82,7 +82,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Sun, Nov 25, 2018 at 8:44 AM Mesih Kilinc <mesihkilinc@gmail.com> wrote:
 
-> Add compatible string for Allwinner suniv F1C100s SoC's pinctrl.
+> The suniv F1C100s chip (several new F-series SoCs) of Allwinner has a
+> pin
+> controller like other SoCs from Allwinner.
+>
+> Add support for it.
 >
 > Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
