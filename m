@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8B0C43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0272C04EBA
 	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61C6E20870
+	by mail.kernel.org (Postfix) with ESMTP id BB15720868
 	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:57:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61C6E20870
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB15720868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbeKZFs7 (ORCPT
+        id S1727062AbeKZFtC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 00:48:59 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:52714 "EHLO
+        Mon, 26 Nov 2018 00:49:02 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:52733 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbeKZFs7 (ORCPT
+        with ESMTP id S1726359AbeKZFtB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 00:48:59 -0500
+        Mon, 26 Nov 2018 00:49:01 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gQzal-0003Ou-9T; Sun, 25 Nov 2018 19:57:15 +0100
-Message-Id: <20181125185004.337452245@linutronix.de>
+        id 1gQzam-0003P1-4i; Sun, 25 Nov 2018 19:57:16 +0100
+Message-Id: <20181125185004.430168326@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 25 Nov 2018 19:33:37 +0100
+Date:   Sun, 25 Nov 2018 19:33:38 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -51,49 +51,72 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Greg KH <gregkh@linuxfoundation.org>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [patch V2 09/28] x86/Kconfig: Select SCHED_SMT if SMP enabled
+Subject: [patch V2 10/28] sched/smt: Expose sched_smt_present static key
 References: <20181125183328.318175777@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=x86-Kconfig-Select-SCHED-SMT-if-SMP-enabled.patch
+ filename=sched-smt-Expose-sched-smt-present-static-key.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CONFIG_SCHED_SMT is enabled by all distros, so there is not a real point to
-have it configurable. The runtime overhead in the core scheduler code is
-minimal because the actual SMT scheduling parts are conditional on a static
-key.
+Make the scheduler's 'sched_smt_present' static key globaly available, so
+it can be used in the x86 speculation control code.
 
-This allows to expose the scheduler's SMT state static key to the
-speculation control code. Alternatively the scheduler's static key could be
-made always available when CONFIG_SMP is enabled, but that's just adding an
-unused static key to every other architecture for nothing.
+Provide a query function and a stub for the CONFIG_SMP=n case.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+
+v1 -> v2: Move SMT stuff to separate header. Unbreaks ia64 build
 
 ---
- arch/x86/Kconfig |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ include/linux/sched/smt.h |   18 ++++++++++++++++++
+ kernel/sched/sched.h      |    4 +---
+ 2 files changed, 19 insertions(+), 3 deletions(-)
 
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1001,13 +1001,7 @@ config NR_CPUS
- 	  to the kernel image.
+--- /dev/null
++++ b/include/linux/sched/smt.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_SCHED_SMT_H
++#define _LINUX_SCHED_SMT_H
++
++#include <linux/static_key.h>
++
++#ifdef CONFIG_SCHED_SMT
++extern struct static_key_false sched_smt_present;
++
++static __always_inline bool sched_smt_active(void)
++{
++	return static_branch_likely(&sched_smt_present);
++}
++#else
++static inline bool sched_smt_active(void) { return false; }
++#endif
++
++#endif
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -23,6 +23,7 @@
+ #include <linux/sched/prio.h>
+ #include <linux/sched/rt.h>
+ #include <linux/sched/signal.h>
++#include <linux/sched/smt.h>
+ #include <linux/sched/stat.h>
+ #include <linux/sched/sysctl.h>
+ #include <linux/sched/task.h>
+@@ -936,9 +937,6 @@ static inline int cpu_of(struct rq *rq)
  
- config SCHED_SMT
--	bool "SMT (Hyperthreading) scheduler support"
--	depends on SMP
--	---help---
--	  SMT scheduler support improves the CPU scheduler's decision making
--	  when dealing with Intel Pentium 4 chips with HyperThreading at a
--	  cost of slightly increased overhead in some places. If unsure say
--	  N here.
-+	def_bool y if SMP
  
- config SCHED_MC
- 	def_bool y
+ #ifdef CONFIG_SCHED_SMT
+-
+-extern struct static_key_false sched_smt_present;
+-
+ extern void __update_idle_core(struct rq *rq);
+ 
+ static inline void update_idle_core(struct rq *rq)
 
 
