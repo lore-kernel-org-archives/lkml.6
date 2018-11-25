@@ -2,285 +2,161 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B299AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 11:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1518C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 11:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56D3620867
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 11:08:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A361320855
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 11:11:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="odfpNRVV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56D3620867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KqZUqbq7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A361320855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbeKYV7f (ORCPT
+        id S1726146AbeKYWCW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 16:59:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51334 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726131AbeKYV7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 16:59:35 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 605FC20855;
-        Sun, 25 Nov 2018 11:08:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543144124;
-        bh=GIEtklm0N5P5qr+IzcaKqDZ08yG7u8cVtaAwGDUbbCM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=odfpNRVVbjHDW5rgbQ+y017McagTN9jDTkZgc3UZsUvP7wYC665LnQq42DKQ03c0x
-         xmLhBpvOGy0t9rDwhAigcs29ujCwHMlqxFMcg6bqDLI4k2vHjVIcZ/IEmHKdnFH8v0
-         1Ka35lLOXKNqTa9cn+ZSzZbfKGnrsDTSuhOCXwyc=
-Date:   Sun, 25 Nov 2018 11:08:39 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>
-Cc:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "giuliano.belinassi@gmail.com" <giuliano.belinassi@gmail.com>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "kernel-usp@googlegroups.com" <kernel-usp@googlegroups.com>
-Subject: Re: [PATCH] staging: iio: ad7780: Add gain & filter gpio support
-Message-ID: <20181125110839.4a3aecf9@archlinux>
-In-Reply-To: <1542884458.30645.22.camel@analog.com>
-References: <20181121180443.tjgcpu2webrq53rh@smtp.gmail.com>
-        <1542884458.30645.22.camel@analog.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 25 Nov 2018 17:02:22 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:53160 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725957AbeKYWCW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 17:02:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=g0CVPf0k1C//M4r6yRI+gNC+GvlY5j6fGOTkbI0mmQs=; b=KqZUqbq7NTfoDNWMiZrSzUhZl
+        ai1NH7E6YoQhdJnhffas5HFlAT47yPy0bV7iTSdDvN0ojRfa/F437TPq8Hw+hseRfrwn1mlmAZ3NC
+        cYP4S8ft4kU7TCuuRGpmR8lYBXaXUyHt+Z3ABNARucJ9NoMO4fANC06HePqYrhUwjCYhE=;
+Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:43389)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gQsJq-0003S4-Dt; Sun, 25 Nov 2018 11:11:18 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gQsJi-0007Ni-Sw; Sun, 25 Nov 2018 11:11:11 +0000
+Date:   Sun, 25 Nov 2018 11:11:05 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org,
+        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
+Message-ID: <20181125111105.GT6920@n2100.armlinux.org.uk>
+References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
+ <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
+ <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
+ <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
+ <20181122102948.GN6920@n2100.armlinux.org.uk>
+ <20181122151236.GA9611@n2100.armlinux.org.uk>
+ <6ed280af-edb6-4be7-82f4-7fc00378103e@ti.com>
+ <20181123185215.GH12912@darkstar.musicnaut.iki.fi>
+ <20181124200942.GS6920@n2100.armlinux.org.uk>
+ <20181125010717.GJ53235@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181125010717.GJ53235@atomide.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Nov 2018 11:01:00 +0000
-"Popa, Stefan Serban" <StefanSerban.Popa@analog.com> wrote:
+On Sat, Nov 24, 2018 at 05:07:17PM -0800, Tony Lindgren wrote:
+> * Russell King - ARM Linux <linux@armlinux.org.uk> [181124 20:10]:
+> > On Fri, Nov 23, 2018 at 08:52:15PM +0200, Aaro Koskinen wrote:
+> > > Hi,
+> > > 
+> > > On Fri, Nov 23, 2018 at 02:35:04PM +0200, Peter Ujfalusi wrote:
+> > > > On 22/11/2018 17.12, Russell King - ARM Linux wrote:
+> > > > > I'm also not sure about this:
+> > > > > 
+> > > > >         if (cpu_is_omap15xx())
+> > > > >                 end++;
+> > > > > 
+> > > > > in dma_dest_len() - is that missing from the omap-dma driver?  It looks
+> > > > > like a work-around for some problem on OMAP15xx, but I can't make sense
+> > > > > about why it's in the UDC driver rather than the legacy DMA driver.
+> > > > 
+> > > > afaik no other legacy drivers were doing similar thing, this must be
+> > > > something which is needed for the omap_udc driver to fix up something?
+> > > 
+> > > Here's the patch that added it: https://marc.info/?l=linux-omap&m=119634396324221&w=2
+> > > 
+> > > "Make DMA-OUT behave on the 1510 ... the 1510 CPC register was just
+> > > off-by-one with respect to the 1611 CDAC"
+> > 
+> > ... which suggests that's a problem with the CPC register itself, and
+> > we should fix that in the DMAengine driver rather than the USB gadget
+> > driver.
+> > 
+> > Tony, any input on this?
+> 
+> Yeah that sounds like some hardware work-around for 15xx as described
+> in the DMA_DEST_LAST macro reading CSAC on 15xx instead of CDAC. Seems
+> like it should be done in the dmaengine driver.. My guess is that other
+> dma users never needed to read CSAC register?
 
-> On Mi, 2018-11-21 at 16:04 -0200, Giuliano Belinassi wrote:
-> > Previously, the AD7780 driver only supported gpio for the 'powerdown'
-> > pin. This commit adds suppport for the 'gain' and 'filter' pin. =20
-> Hey,
->=20
-> Comments inline.
-> >=20
-> > Signed-off-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
-> > ---
-> > =C2=A0drivers/staging/iio/adc/ad7780.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0| 61 ++++++++++++++++++++++++--
-> > =C2=A0include/linux/iio/adc/ad_sigma_delta.h |=C2=A0=C2=A05 +++
-> > =C2=A02 files changed, 62 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/drivers/staging/iio/adc/ad7780.c
-> > b/drivers/staging/iio/adc/ad7780.c
-> > index c4a85789c2db..69794f06dbcd 100644
-> > --- a/drivers/staging/iio/adc/ad7780.c
-> > +++ b/drivers/staging/iio/adc/ad7780.c
-> > @@ -39,6 +39,9 @@
-> > =C2=A0#define AD7170_PATTERN		(AD7780_PAT0 | AD7170_PAT2)
-> > =C2=A0#define AD7170_PATTERN_MASK	(AD7780_PAT0 | AD7780_PAT1 |
-> > AD7170_PAT2)
-> > =C2=A0
-> > +#define AD7780_GAIN_GPIO	0
-> > +#define AD7780_FILTER_GPIO	1
-> > +
-> > =C2=A0struct ad7780_chip_info {
-> > =C2=A0	struct iio_chan_spec	channel;
-> > =C2=A0	unsigned int		pattern_mask;
-> > @@ -50,6 +53,8 @@ struct ad7780_state {
-> > =C2=A0	const struct ad7780_chip_info	*chip_info;
-> > =C2=A0	struct regulator		*reg;
-> > =C2=A0	struct gpio_desc		*powerdown_gpio;
-> > +	struct gpio_desc		*gain_gpio;
-> > +	struct gpio_desc		*filter_gpio;
-> > =C2=A0	unsigned int	gain;
-> > =C2=A0
-> > =C2=A0	struct ad_sigma_delta sd;
-> > @@ -115,18 +120,51 @@ static int ad7780_read_raw(struct iio_dev
-> > *indio_dev,
-> > =C2=A0	return -EINVAL;
-> > =C2=A0}
-> > =C2=A0
-> > +static int ad7780_write_raw(struct iio_dev *indio_dev,
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0struct iio_chan_spec const *chan,
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0int val,
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0int val2,
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0long m)
-> > +{
-> > +	struct ad7780_state *st =3D iio_priv(indio_dev);
-> > +
-> > +	if (m !=3D IIO_CHAN_INFO_RAW)
-> > +		return -EINVAL;
-> > +
-> > +	if (st->chip_info->is_ad778x) {
-> > +		switch(val) {
-> > +		case AD7780_GAIN_GPIO: =20
->=20
-> I think that instead of setting the gain directly, we should use
-> the=C2=A0IIO_CHAN_INFO_SCALE attribute. At page 12 of the ad7780 datashee=
-t there
-> is a formula from which the output code can be calculated:
-> Code =3D 2^(N =E2=88=92 1)
-> =C3=97 [(AIN =C3=97 Gain /VREF) + 1]. So, by setting the scale from user =
-space, the
-> driver can calculate the correct gain by using the formula above. Also, it
-> would be useful to introduce scale available.
-> Furthermore, there is a new
-> ad7124 adc driver which does this exact thing. Take a look here:=C2=A0htt=
-ps://gi
-> thub.com/analogdevicesinc/linux/blob/master/drivers/iio/adc/ad7124.c#L337.
->=20
-> > +			gpiod_set_value(st->gain_gpio, val2);
-> > +		break;
-> > +		case AD7780_FILTER_GPIO: =20
->=20
-> The attribute that should be used to configure the filter gpio is
-> IIO_CHAN_INFO_SAMP_FREQ. So, we should have 10 Hz and 16.7 Hz available
-> sampling frequencies. If from user space the 10 Hz sampling freq is
-> requested, then we set the FILTER pin high, while for 16.7 Hz the FILTER
-> pin will be low.
+Hmm, reading the OMAP1510 TRM for the CPC register, it seems that
+omap-dma won't handle this particularly well.  The fact that the
+register only updates after the last request in an element or frame
+means that if we try to use this value as the current source /
+destination address before the first transfer, it can be wildly
+wrong.
 
-Absolutely agreed with Stefan here.  If it had been decoupled from sampling
-frequency (sometimes they are) then we have specific controls for filters
-as well.  Here it directly effects the sampling frequency.
+Saving the current value at the beginning of a request, and detecting
+if it's changed (like omap_udc) isn't going to work well in the
+generic case.  If, say, the register happens to contain 0x0004, and
+our next transfer is using 32-bit elements in element sync mode
+starting at address with lsb 16 bits as 0, it would mean we'd see
+0x0004 in this register after the _second_ element has been
+transferred, and we'd assume that the register hasn't yet changed -
+but we would have in reality transferred two elements.
 
-Please in future avoid any driver specific control like you have here.
-I haven't really worked out what the interface is beyond some sort
-of bitmap passed through a write to a magic channel?
+However, omap-dma.c zeros the CPC register before each transfer,
+which is interesting, because in one place the OMAP1510 TRM says
+that the CPC register is read/write, but in the actual description
+of this register, it says it's read-only.
 
-If there isn't an existing interface in IIO for what you want to do
-please propose one rather than doing something that will only work
-with a particular userspace.  One of the primary purposes of having
-a subsystem is to standardise interfaces.  This definitely doesn't
-do that!
+What it also means is that, in such a case, after the 2nd element has
+been transferred, where the register contains 0x0004, the address
+we'd be looking for (to calculate the residual) should be 0x0008,
+not 0x0005, so we actually need to be adding the number of bytes
+according to element size.
 
-Will be good to have the support along the lines Stefan suggested though!
+Looking at omap-dma.c, someone has added support for the residue
+granularity:
 
-Thanks,
+        if (__dma_omap15xx(od->plat->dma_attr))
+                od->ddev.residue_granularity =
+                                DMA_RESIDUE_GRANULARITY_DESCRIPTOR;
+        else
+                od->ddev.residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
 
-Jonathan
+If OMAP15xx is truely descriptor granularity, then we can't use
+omap-dma for omap_udc, because omap_udc needs to know exactly
+how many bytes were transferred.
 
+So... hmm, OMAP15xx DMA looks like a complete mess, and the only
+way to know what would and wouldn't work is to actually have the
+hardware.
 
+I think we're better off leaving omap-udc well alone, and if it's
+now broken with DMA, then that's unfortunate - it would require
+someone with the hardware to diagnose the problem and fix it.  I
+think trying to convert it to dmaengine would be risking way more
+problems than its worth.
 
->=20
-> > +			gpiod_set_value(st->filter_gpio, val2);
-> > +		break;
-> > +		default:
-> > +			return -EINVAL;
-> > +		}
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > =C2=A0static int ad7780_postprocess_sample(struct ad_sigma_delta *sigma=
-_delta,
-> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int raw_sample)
-> > =C2=A0{
-> > =C2=A0	struct ad7780_state *st =3D ad_sigma_delta_to_ad7780(sigma_delta=
-);
-> > =C2=A0	const struct ad7780_chip_info *chip_info =3D st->chip_info;
-> > +	int val;
-> > =C2=A0
-> > =C2=A0	if ((raw_sample & AD7780_ERR) ||
-> > =C2=A0	=C2=A0=C2=A0=C2=A0=C2=A0((raw_sample & chip_info->pattern_mask) =
-!=3D chip_info- =20
-> > >pattern)) =20
-> > =C2=A0		return -EIO;
-> > =C2=A0
-> > =C2=A0	if (chip_info->is_ad778x) {
-> > -		if (raw_sample & AD7780_GAIN)
-> > +		val =3D raw_sample & AD7780_GAIN;
-> > +
-> > +		if (val !=3D gpiod_get_value(st->gain_gpio))
-> > +			return -EIO;
-> > +
-> > +		if (val)
-> > =C2=A0			st->gain =3D 1;
-> > =C2=A0		else
-> > =C2=A0			st->gain =3D 128;
-> > @@ -141,18 +179,20 @@ static const struct ad_sigma_delta_info
-> > ad7780_sigma_delta_info =3D {
-> > =C2=A0	.has_registers =3D false,
-> > =C2=A0};
-> > =C2=A0
-> > -#define AD7780_CHANNEL(bits, wordsize) \
-> > +#define AD7170_CHANNEL(bits, wordsize) \
-> > =C2=A0	AD_SD_CHANNEL_NO_SAMP_FREQ(1, 0, 0, bits, 32, wordsize - bits)
-> > +#define AD7780_CHANNEL(bits, wordsize) \
-> > +	AD_SD_CHANNEL_GAIN_FILTER(1, 0, 0, bits, 32, wordsize - bits)
-> > =C2=A0
-> > =C2=A0static const struct ad7780_chip_info ad7780_chip_info_tbl[] =3D {
-> > =C2=A0	[ID_AD7170] =3D {
-> > -		.channel =3D AD7780_CHANNEL(12, 24),
-> > +		.channel =3D AD7170_CHANNEL(12, 24),
-> > =C2=A0		.pattern =3D AD7170_PATTERN,
-> > =C2=A0		.pattern_mask =3D AD7170_PATTERN_MASK,
-> > =C2=A0		.is_ad778x =3D false,
-> > =C2=A0	},
-> > =C2=A0	[ID_AD7171] =3D {
-> > -		.channel =3D AD7780_CHANNEL(16, 24),
-> > +		.channel =3D AD7170_CHANNEL(16, 24),
-> > =C2=A0		.pattern =3D AD7170_PATTERN,
-> > =C2=A0		.pattern_mask =3D AD7170_PATTERN_MASK,
-> > =C2=A0		.is_ad778x =3D false,
-> > @@ -173,6 +213,7 @@ static const struct ad7780_chip_info
-> > ad7780_chip_info_tbl[] =3D {
-> > =C2=A0
-> > =C2=A0static const struct iio_info ad7780_info =3D {
-> > =C2=A0	.read_raw =3D ad7780_read_raw,
-> > +	.write_raw =3D ad7780_write_raw,
-> > =C2=A0};
-> > =C2=A0
-> > =C2=A0static int ad7780_probe(struct spi_device *spi)
-> > @@ -222,6 +263,18 @@ static int ad7780_probe(struct spi_device *spi)
-> > =C2=A0		goto error_disable_reg;
-> > =C2=A0	}
-> > =C2=A0
-> > +	if (st->chip_info->is_ad778x) {
-> > +		st->gain_gpio =3D devm_gpiod_get_optional(&spi->dev,
-> > +							"gain",
-> > +							GPIOD_OUT_HIGH);
-> > +		if (IS_ERR(st->gain_gpio)) {
-> > +			ret =3D PTR_ERR(st->gain_gpio);
-> > +			dev_err(&spi->dev, "Failed to request gain GPIO:
-> > %d\n",
-> > +				ret);
-> > +			goto error_disable_reg;
-> > +		}
-> > +	}
-> > +
-> > =C2=A0	ret =3D ad_sd_setup_buffer_and_trigger(indio_dev);
-> > =C2=A0	if (ret)
-> > =C2=A0		goto error_disable_reg;
-> > diff --git a/include/linux/iio/adc/ad_sigma_delta.h
-> > b/include/linux/iio/adc/ad_sigma_delta.h
-> > index 730ead1a46df..6cadab6fd5fd 100644
-> > --- a/include/linux/iio/adc/ad_sigma_delta.h
-> > +++ b/include/linux/iio/adc/ad_sigma_delta.h
-> > @@ -173,6 +173,11 @@ int ad_sd_validate_trigger(struct iio_dev
-> > *indio_dev, struct iio_trigger *trig);
-> > =C2=A0	__AD_SD_CHANNEL(_si, _channel, -1, _address, _bits, \
-> > =C2=A0		_storagebits, _shift, NULL, IIO_VOLTAGE, 0)
-> > =C2=A0
-> > +#define AD_SD_CHANNEL_GAIN_FILTER(_si, _channel, _address, _bits, \
-> > +	_storagebits, _shift) \
-> > +	__AD_SD_CHANNEL(_si, _channel, -1, _address, _bits, \
-> > +		_storagebits, _shift, NULL, IIO_VOLTAGE,
-> > BIT(IIO_CHAN_INFO_RAW))
-> > +
-> > =C2=A0#define AD_SD_TEMP_CHANNEL(_si, _address, _bits, _storagebits, _s=
-hift) \
-> > =C2=A0	__AD_SD_CHANNEL(_si, 0, -1, _address, _bits, \
-> > =C2=A0		_storagebits, _shift, NULL, IIO_TEMP,  =20
-
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
