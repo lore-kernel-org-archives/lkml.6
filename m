@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7439C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 07:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ABEFC04EBA
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 07:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EB7420664
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 07:44:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5545A20664
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 07:44:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ogR4rcYx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EB7420664
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WJzU+x/c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5545A20664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbeKYSen (ORCPT
+        id S1727818AbeKYSeo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 13:34:43 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:32808 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727601AbeKYSem (ORCPT
+        Sun, 25 Nov 2018 13:34:44 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34835 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727733AbeKYSen (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 13:34:42 -0500
-Received: by mail-wm1-f68.google.com with SMTP id 79so14282047wmo.0;
-        Sat, 24 Nov 2018 23:44:12 -0800 (PST)
+        Sun, 25 Nov 2018 13:34:43 -0500
+Received: by mail-wm1-f67.google.com with SMTP id c126so15225269wmh.0;
+        Sat, 24 Nov 2018 23:44:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Wi0WGhkeV1RzlVqOJY4HaXI1Zlham8MFTpuZ/KUi9PA=;
-        b=ogR4rcYxcp/b+hqI5fCswutLuCS4br+AT4cfsWIShZ+ps3HQTbfis/4/Q3et/X+aLA
-         tJUKBNbV81Bbr8fz7q9gfIEE8Aai9OSGpnGrRTfkIASHSUna0MKFNI/3jjnVn30vEDS/
-         YWdH5XDsMK8GyhZUzlWGLtbIA7CpEZhcc8Qe7Ap4KnTaH2xn2AlXKokWasotZCr7eYb4
-         MdvVFQI7BCCBdKp442ofxu0aXt2aYcZboez8Uu6IAXt7/RJ97STNL+bugvPFTjNfBJsg
-         r+lfSSadV+D09hKXHcTTdS1OfLWvYfxVUli5Sosp3MjQSkjRGgmIOcN47JYlSHo2ytqh
-         NLWA==
+        bh=TJuBhd+OHQHd+WHL80OinaN4yVj5tzpFhMXqi9psrjg=;
+        b=WJzU+x/crKOcafFeVizgWIX1KDe8Ovl0Iag31vJJTw0H8tcPcFUyqeZVG74clLj24B
+         PK1noV8esW5PUabAxd1X6aabkv5LvW1k7lSJWOrMk/znDzQssQlvFdiMjAPEIuYAPV6a
+         nfBj3vChaK0N6XVCLAURx+WqPQV5FaqBZHWjNzqRIO5rkXFr2NP+RMCJ2hCkiZiHaHxu
+         1T9MZzpfrF+NXuhSs2UICjhf+2uWgx7f5qbA1ezDA5qrXkfNEBmM6YBTvOInEV9zydtQ
+         a22CFPQYHMkLOMC7ASfC8sE5lZmKhc9XLkT7ibiIWsMXswouDVEbKSXbBX/BRCm041+3
+         C/jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Wi0WGhkeV1RzlVqOJY4HaXI1Zlham8MFTpuZ/KUi9PA=;
-        b=NyHX0TOCDOoYxS3w2U8Xsf617+dfCAeco7UVyi6+Jik1CFa4f7d6yiPGIT+JFmxjK4
-         uw9pDngi2TV7BD4ImQJLkv00z7ZULDDb5auTfRbV8bbYs1VWDqYLFXvkMf+TDJCo0w73
-         qr0/DBQWS0W5Fc0WNZnn9kjZrp0/qNd1qU6BwI/0MxQ82Y8Uw1MkH8oCXdfU9n+0skj0
-         61QE8XIDtE/vNZ6ZKNzdZ9lwhBgxP7TKkpj9p5VvStPdmF5PimfryaqK90UPQmP8vIAk
-         JEyi+sxTd/U52aro1qYk7SkQ2bL9uy/pzWNL1CCRQPoinrPpo3tXWUN5pUJEGrHu66dt
-         IKsA==
-X-Gm-Message-State: AGRZ1gIeMeTRFcZu29Uv+uAihiiKyOy3yTSDXoT4bBwEEZqNnP3LdrA8
-        SdiY1ZKpxc8M18oajeMM3VyU+4QTIfs=
-X-Google-Smtp-Source: AJdET5e0DVbiKoIunvuj/eYPNez3GFEYebViPktkHFizirnUO5BsrbG0T9v8MrIMgLZCu0qaYiyAvg==
-X-Received: by 2002:a1c:e046:: with SMTP id x67mr19006106wmg.122.1543131852005;
-        Sat, 24 Nov 2018 23:44:12 -0800 (PST)
+        bh=TJuBhd+OHQHd+WHL80OinaN4yVj5tzpFhMXqi9psrjg=;
+        b=NqfztMDShjo2yk6TRvBZHtPXhp2znC/OGhLwyMDfeXvONcE4kehsPJKPmzgM/J5g1E
+         Ci5tWHQL9FhEw+O+nzzr6Uk3K6HuJaposoMhP8B4W8MEv3kJ76YDu6rcSim/xthGD7YP
+         cQfOvZ03h/uLwJkqtkxDB82YIX3uv1Bdt0fl62oW9n0Dxd0CWh9yRJQM1nUa1rQksyVZ
+         jWeUbGr7KSQWn5+28kJw5IVwv3PQQxYiFVy+4En+ADRIiAU3lM+Th148vdcYUAG04yKo
+         jEmW+xxwHYgwmRDOrYHTnqKx0NPij5M7hauARCgjkwi1X25aHCErLEThTaOCDw0SuUSU
+         khag==
+X-Gm-Message-State: AGRZ1gJ46/i/415x4QbPIDt5RF8M5eT93mlfkfCSAh/6rJX1vl5YWho5
+        iFUmxeTDHvVIgT3s42y76FdrUfPDGeE=
+X-Google-Smtp-Source: AFSGD/Whg+/NgmrsSFieLcwF//7U51fn8nA7MffpCU9ysXnNhppU4r7mgKtIk8s849LqDZ1lX1XQdQ==
+X-Received: by 2002:a1c:8d86:: with SMTP id p128-v6mr20712224wmd.48.1543131853781;
+        Sat, 24 Nov 2018 23:44:13 -0800 (PST)
 Received: from localhost.localdomain ([185.219.177.224])
-        by smtp.gmail.com with ESMTPSA id 6-v6sm12296780wmg.19.2018.11.24.23.44.10
+        by smtp.gmail.com with ESMTPSA id 6-v6sm12296780wmg.19.2018.11.24.23.44.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 24 Nov 2018 23:44:11 -0800 (PST)
+        Sat, 24 Nov 2018 23:44:13 -0800 (PST)
 From:   Mesih Kilinc <mesihkilinc@gmail.com>
 To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
@@ -72,9 +72,9 @@ Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
         Icenowy Zheng <icenowy@aosc.io>,
         Rob Herring <robh+dt@kernel.org>,
         Julian Calaby <julian.calaby@gmail.com>
-Subject: [RFC PATCH v4 14/17] dt-bindings: sram: Add Allwinner suniv F1C100s
-Date:   Sun, 25 Nov 2018 10:43:17 +0300
-Message-Id: <f80ca2de497c44c9415b02ac9aba93721d723730.1543131714.git.mesihkilinc@gmail.com>
+Subject: [RFC PATCH v4 15/17] dt-bindings: watchdog: Add Allwinner ARMv5 F1C100s wdt
+Date:   Sun, 25 Nov 2018 10:43:18 +0300
+Message-Id: <29723ab4d09399185b8807a3f20bb2551b940f2f.1543131714.git.mesihkilinc@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1543131714.git.mesihkilinc@gmail.com>
 References: <cover.1543131714.git.mesihkilinc@gmail.com>
@@ -83,36 +83,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The suniv ARMv5 F1C100s chip has similar sram controller to sun4i A10.
-Add compatible string for it.
+Allwinner ARMv5 F1C100s has similar watchdog timer to sun6i A31.
+Add definition for it.
 
 Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 ---
- Documentation/devicetree/bindings/sram/sunxi-sram.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/sram/sunxi-sram.txt b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-index 62dd074..5c84850 100644
---- a/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-+++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-@@ -19,6 +19,7 @@ Required properties:
-     - "allwinner,sun50i-a64-sram-controller" (deprecated)
-     - "allwinner,sun50i-a64-system-control"
-     - "allwinner,sun50i-h6-system-control", "allwinner,sun50i-a64-system-control"
-+    - "allwinner,suniv-f1c100s-system-control", "allwinner,sun4i-a10-system-control"
- - reg : sram controller register offset + length
+diff --git a/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt b/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt
+index ed11ce0..4605525 100644
+--- a/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt
+@@ -6,6 +6,7 @@ Required properties:
+ 	"allwinner,sun4i-a10-wdt"
+ 	"allwinner,sun6i-a31-wdt"
+ 	"allwinner,sun50i-a64-wdt","allwinner,sun6i-a31-wdt"
++	"allwinner,suniv-f1c100s-wdt", "allwinner,sun4i-a10-wdt"
+ - reg : Specifies base physical address and size of the registers.
  
- SRAM nodes
-@@ -58,6 +59,9 @@ The valid sections compatible for A64 are:
- The valid sections compatible for H6 are:
-     - allwinner,sun50i-h6-sram-c, allwinner,sun50i-a64-sram-c
- 
-+The valid sections compatible for F1C100s are:
-+    - allwinner,suniv-f1c100s-sram-d, allwinner,sun4i-a10-sram-d
-+
- Devices using SRAM sections
- ---------------------------
- 
+ Optional properties:
 -- 
 2.7.4
 
