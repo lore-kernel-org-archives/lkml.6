@@ -2,143 +2,169 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79123C43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A51EC04EBA
 	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0724A20850
+	by mail.kernel.org (Postfix) with ESMTP id 3E4E420865
 	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 04:10:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0724A20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E4E420865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbeKYO5l (ORCPT
+        id S1727166AbeKYPAN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 09:57:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48250 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726540AbeKYO5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 09:57:41 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B92DA307EA99;
-        Sun, 25 Nov 2018 04:07:33 +0000 (UTC)
-Received: from sky.random (ovpn-120-160.rdu2.redhat.com [10.10.120.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2BAAE103BAB6;
-        Sun, 25 Nov 2018 04:07:30 +0000 (UTC)
-Date:   Sat, 24 Nov 2018 23:07:29 -0500
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        David Hildenbrand <david@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Kan Liang <kan.liang@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christoph Lameter <cl@linux.com>,
-        Nicholas Piggin <npiggin@gmail.com>, pifang@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] mm: put_and_wait_on_page_locked() while page is migrated
-Message-ID: <20181125040729.GF4932@redhat.com>
-References: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils>
+        Sun, 25 Nov 2018 10:00:13 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:40178 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726540AbeKYPAN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 10:00:13 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 817B872CC61;
+        Sun, 25 Nov 2018 07:10:03 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 719397CD0D5; Sun, 25 Nov 2018 07:10:03 +0300 (MSK)
+Date:   Sun, 25 Nov 2018 07:10:03 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        strace-devel@lists.strace.io
+Subject: Re: [RFC PATCH v2] ptrace: add PTRACE_GET_SYSCALL_INFO request
+Message-ID: <20181125041003.GA3258@altlinux.org>
+References: <20181121165806.07da7c98@akathisia>
+ <CALCETrV3TPCkYyhoLLcikXVeF-RdZUuLTCvKReK3Qb9LSS9Csw@mail.gmail.com>
+ <20181121235634.GA14146@altlinux.org>
+ <CALCETrXea_uRAqw_srW5CWgOzeM=RubaDbjnxZ=cUMy5Zv1TsA@mail.gmail.com>
+ <20181122191504.GB27204@altlinux.org>
+ <CALCETrXvXzRzoEqwEY_VZ7Vpt-sLwaF+rZPg+y_eG2xyzubXtw@mail.gmail.com>
+ <20181123040139.GB2572@altlinux.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
 Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Sun, 25 Nov 2018 04:07:34 +0000 (UTC)
+In-Reply-To: <20181123040139.GB2572@altlinux.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 24, 2018 at 07:21:07PM -0800, Hugh Dickins wrote:
-> Waiting on a page migration entry has used wait_on_page_locked() all
-> along since 2006: but you cannot safely wait_on_page_locked() without
-> holding a reference to the page, and that extra reference is enough to
-> make migrate_page_move_mapping() fail with -EAGAIN, when a racing task
-> faults on the entry before migrate_page_move_mapping() gets there.
-> 
-> And that failure is retried nine times, amplifying the pain when
-> trying to migrate a popular page.  With a single persistent faulter,
-> migration sometimes succeeds; with two or three concurrent faulters,
-> success becomes much less likely (and the more the page was mapped,
-> the worse the overhead of unmapping and remapping it on each try).
-> 
-> This is especially a problem for memory offlining, where the outer
-> level retries forever (or until terminated from userspace), because
-> a heavy refault workload can trigger an endless loop of migration
-> failures.  wait_on_page_locked() is the wrong tool for the job.
-> 
-> David Herrmann (but was he the first?) noticed this issue in 2014:
-> https://marc.info/?l=linux-mm&m=140110465608116&w=2
-> 
-> Tim Chen started a thread in August 2017 which appears relevant:
-> https://marc.info/?l=linux-mm&m=150275941014915&w=2
-> where Kan Liang went on to implicate __migration_entry_wait():
-> https://marc.info/?l=linux-mm&m=150300268411980&w=2
-> and the thread ended up with the v4.14 commits:
-> 2554db916586 ("sched/wait: Break up long wake list walk")
-> 11a19c7b099f ("sched/wait: Introduce wakeup boomark in wake_up_page_bit")
-> 
-> Baoquan He reported "Memory hotplug softlock issue" 14 November 2018:
-> https://marc.info/?l=linux-mm&m=154217936431300&w=2
-> 
-> We have all assumed that it is essential to hold a page reference while
-> waiting on a page lock: partly to guarantee that there is still a struct
-> page when MEMORY_HOTREMOVE is configured, but also to protect against
-> reuse of the struct page going to someone who then holds the page locked
-> indefinitely, when the waiter can reasonably expect timely unlocking.
-> 
-> But in fact, so long as wait_on_page_bit_common() does the put_page(),
-> and is careful not to rely on struct page contents thereafter, there is
-> no need to hold a reference to the page while waiting on it.  That does
-> mean that this case cannot go back through the loop: but that's fine for
-> the page migration case, and even if used more widely, is limited by the
-> "Stop walking if it's locked" optimization in wake_page_function().
-> 
-> Add interface put_and_wait_on_page_locked() to do this, using negative
-> value of the lock arg to wait_on_page_bit_common() to implement it.
-> No interruptible or killable variant needed yet, but they might follow:
-> I have a vague notion that reporting -EINTR should take precedence over
-> return from wait_on_page_bit_common() without knowing the page state,
-> so arrange it accordingly - but that may be nothing but pedantic.
-> 
-> __migration_entry_wait() still has to take a brief reference to the
-> page, prior to calling put_and_wait_on_page_locked(): but now that it
-> is dropped before waiting, the chance of impeding page migration is
-> very much reduced.  Should we perhaps disable preemption across this?
-> 
-> shrink_page_list()'s __ClearPageLocked(): that was a surprise!  This
-> survived a lot of testing before that showed up.  PageWaiters may have
-> been set by wait_on_page_bit_common(), and the reference dropped, just
-> before shrink_page_list() succeeds in freezing its last page reference:
-> in such a case, unlock_page() must be used.  Follow the suggestion from
-> Michal Hocko, just revert a978d6f52106 ("mm: unlockless reclaim") now:
-> that optimization predates PageWaiters, and won't buy much these days;
-> but we can reinstate it for the !PageWaiters case if anyone notices.
-> 
-> It does raise the question: should vmscan.c's is_page_cache_freeable()
-> and __remove_mapping() now treat a PageWaiters page as if an extra
-> reference were held?  Perhaps, but I don't think it matters much, since
-> shrink_page_list() already had to win its trylock_page(), so waiters are
-> not very common there: I noticed no difference when trying the bigger
-> change, and it's surely not needed while put_and_wait_on_page_locked()
-> is only used for page migration.
-> 
-> Reported-and-tested-by: Baoquan He <bhe@redhat.com>
-> Signed-off-by: Hugh Dickins <hughd@google.com>
-> Acked-by: Michal Hocko <mhocko@suse.com>
 
-Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
+--rwEMma7ioTxnRzrJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Nov 23, 2018 at 07:01:39AM +0300, Dmitry V. Levin wrote:
+> On Thu, Nov 22, 2018 at 04:19:10PM -0800, Andy Lutomirski wrote:
+> > On Thu, Nov 22, 2018 at 11:15 AM Dmitry V. Levin wrote:
+> > > On Thu, Nov 22, 2018 at 06:55:29AM -0800, Andy Lutomirski wrote:
+> > > > On Wed, Nov 21, 2018 at 3:56 PM Dmitry V. Levin wrote:
+> > > > > On Wed, Nov 21, 2018 at 02:56:57PM -0800, Andy Lutomirski wrote:
+> > > > > > Please cc linux-api@vger.kernel.org for future versions.
+> > > > > >
+> > > > > > On Wed, Nov 21, 2018 at 7:58 AM Elvira Khabirova wrote:
+> > > > > > >
+> > > > > > > struct ptrace_syscall_info {
+> > > > > > >         __u8 op; /* 0 for entry, 1 for exit */
+> > > > > >
+> > > > > > Can you add proper defines, like:
+> > > > > >
+> > > > > > #define PTRACE_SYSCALL_ENTRY 0
+> > > > > > #define PTRACE_SYSCALL_EXIT 1
+> > > > > > #define PTRACE_SYSCALL_SECCOMP 2
+> > > > > >
+> > > > > > and make seccomp work from the start?  I'd rather we don't merg=
+e an
+> > > > > > implementation that doesn't work for seccomp and then have to r=
+ework
+> > > > > > it later.
+> > > > >
+> > > > > What's the difference between PTRACE_EVENT_SECCOMP and syscall-en=
+try-stop
+> > > > > with regards to PTRACE_GET_SYSCALL_INFO request?  At least they h=
+ave the
+> > > > > same entry_info to return.
+> > > >
+> > > > I'm not sure there's any material difference.
+> > >
+> > > In that case we don't really need PTRACE_SYSCALL_SECCOMP: op field
+> > > describes the structure inside the union to use, not the ptrace stop.
+> >=20
+> > Unless we think the structures might diverge in the future.
+>=20
+> If these structures ever diverge, then a seccomp structure will be added
+> to the union, and a portable userspace code will likely look this way:
+>=20
+> #include <linux/ptrace.h>
+> ...
+> struct ptrace_syscall_info info;
+> long rc =3D ptrace(PTRACE_GET_SYSCALL_INFO, pid, (void *) sizeof(info), &=
+info);
+> ...
+> switch (info.op) {
+> 	case PTRACE_SYSCALL_INFO_ENTRY:
+> 		/* handle info.entry */
+> 	case PTRACE_SYSCALL_INFO_EXIT:
+> 		/* handle info.exit */
+> #ifdef PTRACE_SYSCALL_INFO_SECCOMP
+> 	case PTRACE_SYSCALL_INFO_SECCOMP:
+> 		/* handle info.seccomp */
+> #endif
+> 	default:
+> 		/* handle unknown info.op */
+> }
+>=20
+> In other words, it would be better if PTRACE_SYSCALL_INFO_* selector
+> constants were introduced along with corresponding structures in the
+> union.
+
+However, the approach I suggested doesn't provide forward compatibility:
+if userspace is compiled with kernel headers that don't define
+PTRACE_SYSCALL_INFO_SECCOMP, it will break when the kernel
+starts to use PTRACE_SYSCALL_INFO_SECCOMP instead of
+PTRACE_SYSCALL_INFO_ENTRY for PTRACE_EVENT_SECCOMP support
+in PTRACE_GET_SYSCALL_INFO.
+
+The solution is to introduce PTRACE_SYSCALL_INFO_SECCOMP and struct
+ptrace_syscall_info.seccomp along with PTRACE_EVENT_SECCOMP support
+in PTRACE_GET_SYSCALL_INFO.  The initial revision of the seccomp
+structure could be made the same as the entry structure, or it can
+diverge from the beginning, e.g., by adding ret_data field containing
+SECCOMP_RET_DATA return value stored in ptrace_message, this would save
+ptracers an extra PTRACE_GETEVENTMSG call currently required to obtain it.
+
+
+--=20
+ldv
+
+--rwEMma7ioTxnRzrJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJb+iCbAAoJEAVFT+BVnCUIS3MQAKeeh/Bd9DjwDYgYnBn54D86
+QBdDnegpvIpajluY994tUaCT3vgNamR+SmwRmi8ED7IXsLD6oImZR6ctmN42HSaM
+t7SJc82r6p0yQJ7H/7c78jmlMIQFSGmnCM4H69AUkxYdoDQ3ehSRXPN2w0g5+y1u
+r6F2XAUGgNi9jnwJmz57kkD4qVw32rVfNSWhCl7XxT5aJznozUJk8JRDVk2dbmMw
+vg/WHD47HFcBKkkEPUH9edzFqzHdZcbwqIYQBaAbJpbkxexGIEVF5o26g/kC1Mts
+UL4mmy0LfAsf8GGjomuLsRsGKEEs58oiRdmKWqGmeKi0l0EPCBo+1e1Rb9UbDs9p
+Mepp7tvbh3T/BjS7rBmNgEK7mXUEV4prJq6Os6TJs4mTptaisYRZX+MNYNEahLRg
++c/RGFO5gnsulYoWv+HrTkGjv44MoiespBAwkHIPh873inpcGM4SnMO8nZW0PsDE
+mL7Wei96TDkv1db8Q8dAIz3fb+c9S4uEli+Q2vtGIAc/2bjK1+VL7ZXra0uJCAdT
+Xz3aiQPVZ5Ie65f2rVoLTwr/QlujImY6k64vfRxQrwM9BQei7859QStHr7PtAi8V
+4Gt23TfCWgxg9Lw/Zk8TRY3g9UUc2TsuWQQJ2CikQFkh+sKVpKb2hbe7t12+nWOJ
+fV3T2OM5XZn6FHDXmA8i
+=y+u9
+-----END PGP SIGNATURE-----
+
+--rwEMma7ioTxnRzrJ--
