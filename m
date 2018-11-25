@@ -2,120 +2,94 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 154FEC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D3CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C926F20672
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:35:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9113220989
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:38:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IGT2MQqj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C926F20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="WyoG7el9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9113220989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbeKZDZn (ORCPT
+        id S1726692AbeKZD3c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 22:25:43 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38083 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbeKZDZn (ORCPT
+        Sun, 25 Nov 2018 22:29:32 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41714 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726565AbeKZD3b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 22:25:43 -0500
-Received: by mail-ed1-f67.google.com with SMTP id h50so13833528ede.5
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 08:34:17 -0800 (PST)
+        Sun, 25 Nov 2018 22:29:31 -0500
+Received: by mail-ot1-f68.google.com with SMTP id u16so14463409otk.8
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 08:38:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sdj3reu/TV1b98azsunvTKKx3kLj3onm5IQieLcJEqs=;
-        b=IGT2MQqjAxjUi7W39kFdqH+tlrs1BlCl4n/rk6L4QvUPL1W/JIeajO2b5T5AVs0Rnb
-         /QQf44Xt8IomXt9lcIe/ELO8DVpjTvxMTdmvk4YQYCDygeFQa9cAsd+eGzEgDhiEjP6M
-         XrBzVMdlkYhgauSnD2fwTzaceDMZt0DDFG6cr7NFRQ4ixyk6HDSw89nZ2RIscqC07Edr
-         O/OnE6jpDTVOG9iuchNrdjiHDkWhVQvW+8JrgQrd/7zdyLwX8kVuXUs1kcTyCmVVePyq
-         YB0wxY0CW/w0j+NmPePyRagsAEjEP+jR4XeaItQPG4J2Zy7Uodvh5X9neviC3Bz0PIFN
-         M86w==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2gce5GsT1n9Pah5oD6y4zs56lRB06br/B/8ypmKx18w=;
+        b=WyoG7el9YD9UgFgwKn8iKMHOSEmVHYi6g1lI3SARTNNNtqh++lxcOvCedYVv48DP+W
+         5SwPkXyl2KxUiM7MiRR5o8LaMNUPdvWTLjPfle7XntNChx8fMyg2BxDZ+CAn9LX3W97G
+         Z5VSH94CXpCJT8aKHqznOkz+qeEEzZ3sEuw2NC2tTvBXT1qui5X3fP0lAjwXFCLlwOmX
+         R35nNY4wWqwQe6Rw2MjCSm96xi0tSQegetVaStQfBukpmlakZyvXKLUdpGg04NbBZ97v
+         uaJSs1O/v/6MbosHeHkwW/UAvC/g02/RFAf3SZ62YUdRQmSyC3O88uLNuxupQ+EZdore
+         37HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sdj3reu/TV1b98azsunvTKKx3kLj3onm5IQieLcJEqs=;
-        b=GLFHK+ksoEzmD+ZDlU19lWKuIa1J22vPXHSnFYYIWP59FT/El5lkkveG53xUx4nBIm
-         D0MYVrG6PDXd/nzcyIT4di1/oprTR6u+r1S/uRBzg/pIuO1Qxdu1LSLGp9c24UbnBPMl
-         wGoQSJ/g9h+SuHbmMv+XnRSS7W8S/f2dL/4WMFqHfqtuIFf8YzColHt6xa3bad0vGE1r
-         oOCJJJMya9V0Gt7K90wL67NCU452IteNqNTg2rZvLm169M4E9Tw+Fu2s56F6UBg3rbzm
-         vO1Gpf4/hTIWxMl8ytBJfqiXwxyLklf/slBuSH/cxHiiH65CpqEPps1wzWdZkmOuNDsp
-         ytlw==
-X-Gm-Message-State: AA+aEWYUbHi+B63uWsFehFT3SVUN0WNz4caAYRkhgtAHv8M7W817SXPS
-        7YRWgYuVeyp/81kBNUzcapE=
-X-Google-Smtp-Source: AFSGD/VooiyP0zIX+Q9gBXybgPW4rMRgDtuBNg8K8412e9Zi7dBIaN0rx5rlWWx3Jfia56BI10KAXA==
-X-Received: by 2002:a50:a726:: with SMTP id h35mr2684008edc.192.1543163656472;
-        Sun, 25 Nov 2018 08:34:16 -0800 (PST)
-Received: from localhost.localdomain ([2a02:a03f:40bc:4d00:54c6:20e3:7c3e:2a57])
-        by smtp.gmail.com with ESMTPSA id br3-v6sm9507812ejb.24.2018.11.25.08.34.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 25 Nov 2018 08:34:15 -0800 (PST)
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Christopher Li <sparse@chrisli.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: [PATCH] MAINTAINERS: change Sparse's maintainer
-Date:   Sun, 25 Nov 2018 17:34:05 +0100
-Message-Id: <20181125163405.31443-1-luc.vanoostenryck@gmail.com>
-X-Mailer: git-send-email 2.19.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2gce5GsT1n9Pah5oD6y4zs56lRB06br/B/8ypmKx18w=;
+        b=PrspzLCKo+yz0LTErBiGUxMx79M1ivDxz0jL7E50Vk4Bv2D4nzNEbQTo9QUDDnuCeN
+         TIrqNzDcANmMZw4DUy27HJtKe+bd4HWKTHe6/GlTT/CxsVTln1AljamDwNvu9WKVzTg9
+         LgQoTbwZmFwyHBJggiwrB0it1UGKGoQj2O6zCS/JZIiLZ0Des8DgokKJkGSvQOjAU7Fj
+         FcSfd5nR68bmzJ96EEp73Jz1A8JVv80FFontTrBZ5s9ImW3wm/f78e4g3aiBblR6YFkG
+         MyQi7wwBk/q4+idFtQx7gXG6azOaQNV8oK9Qe0yI5d8nkg/sPWETCj+4nG6LAUB3+7r+
+         hVOQ==
+X-Gm-Message-State: AA+aEWa9rfgovQ7iWB8ULxhmOZmiCcXNgDAYaLlxrNtF0wzHNgjX2ZoK
+        T4VL5CI9w/HHS8JBuo88E3naVFquRnmTIgCi5FmSBo92
+X-Google-Smtp-Source: AFSGD/VItl/EL3xYJuda9he11SqFZQRoyDlTJjiXThqDbJSM9sau9EHBtUs4kB8m8LqTZACAPIV5sGkx5tEhebZ8bLQ=
+X-Received: by 2002:a9d:f07:: with SMTP id 7mr12774426ott.353.1543163885222;
+ Sun, 25 Nov 2018 08:38:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <154308522458.237140.16550557898744466932.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20181125075410.D0EF220865@mail.kernel.org>
+In-Reply-To: <20181125075410.D0EF220865@mail.kernel.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Sun, 25 Nov 2018 08:37:52 -0800
+Message-ID: <CAPcyv4gQmTSqwLUnD2pR0hgJrmRAGEToHNmPZMYQ4+oUmJapRw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] libnvdimm, pfn: Pad pfn namespaces relative to other regions
+To:     sashal@kernel.org
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        stable <stable@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm taking over the maintainance of Sparse so add myself as
-maintainer and move Christopher's info to CREDITS.
+On Sat, Nov 24, 2018 at 11:54 PM Sasha Levin <sashal@kernel.org> wrote:
+>
+> Hi,
+>
+> [This is an automated email]
+>
+> This commit has been processed because it contains a "Fixes:" tag,
+> fixing commit: cfe30b872058 libnvdimm, pmem: adjust for section collisions with 'System RAM'.
+>
+> The bot has tested the following trees: v4.19.4, v4.14.83, v4.9.140.
+>
+> v4.19.4: Build OK!
+> v4.14.83: Build OK!
+> v4.9.140: Failed to apply! Possible dependencies:
+>     Unable to calculate
+>
+>
+> How should we proceed with this patch?
 
-Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
----
- CREDITS     | 4 ++++
- MAINTAINERS | 3 +--
- 2 files changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/CREDITS b/CREDITS
-index 5befd2d71..3d3e79cef 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -2200,6 +2200,10 @@ S: Post Office Box 371
- S: North Little Rock, Arkansas 72115
- S: USA
- 
-+N: Christopher Li
-+E: sparse@chrisli.org
-+D: Sparse maintainer 2009 - 2018
-+
- N: Stephan Linz
- E: linz@mazet.de
- E: Stephan.Linz@gmx.de
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0abecc528..68c7435f2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13977,11 +13977,10 @@ F:	drivers/tty/serial/sunzilog.h
- F:	drivers/tty/vcc.c
- 
- SPARSE CHECKER
--M:	"Christopher Li" <sparse@chrisli.org>
-+M:	"Luc Van Oostenryck" <luc.vanoostenryck@gmail.com>
- L:	linux-sparse@vger.kernel.org
- W:	https://sparse.wiki.kernel.org/
- T:	git git://git.kernel.org/pub/scm/devel/sparse/sparse.git
--T:	git git://git.kernel.org/pub/scm/devel/sparse/chrisl/sparse.git
- S:	Maintained
- F:	include/linux/compiler.h
- 
--- 
-2.19.0
-
+4.9-stable will need a manual backport since this code was refactored
+in the intervening kernel releases.
