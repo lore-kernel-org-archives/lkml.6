@@ -2,180 +2,141 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFB8C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF4CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:21:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 794BD2087E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:21:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 794BD2087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D2B92086B
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:21:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D2B92086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbeKYMLP (ORCPT
+        id S1727011AbeKYMLp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 07:11:15 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41152 "EHLO mx1.redhat.com"
+        Sun, 25 Nov 2018 07:11:45 -0500
+Received: from air.basealt.ru ([194.107.17.39]:37600 "EHLO air.basealt.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726515AbeKYMLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 07:11:15 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7A6D0308AA13;
-        Sun, 25 Nov 2018 01:21:26 +0000 (UTC)
-Received: from whitewolf.lyude.net.com (ovpn-120-179.rdu2.redhat.com [10.10.120.179])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A59FF4F7F;
-        Sun, 25 Nov 2018 01:21:22 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/meson: Fix OOB memory accesses in meson_viu_set_osd_lut()
-Date:   Sat, 24 Nov 2018 20:21:17 -0500
-Message-Id: <20181125012117.31915-1-lyude@redhat.com>
+        id S1726515AbeKYMLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 07:11:45 -0500
+Received: by air.basealt.ru (Postfix, from userid 490)
+        id C9E57589AE9; Sun, 25 Nov 2018 01:21:53 +0000 (UTC)
+Received: from akathisia (broadband-46-188-15-144.2com.net [46.188.15.144])
+        by air.basealt.ru (Postfix) with ESMTPSA id 36626589AE8;
+        Sun, 25 Nov 2018 01:21:51 +0000 (UTC)
+Date:   Sun, 25 Nov 2018 02:21:50 +0100
+From:   Elvira Khabirova <lineprinter@altlinux.org>
+To:     oleg@redhat.com, rostedt@goodmis.org, mingo@redhat.com
+Cc:     linux-kernel@vger.kernel.org, ldv@altlinux.org, esyr@redhat.com,
+        luto@kernel.org, strace-devel@lists.strace.io,
+        linux-api@vger.kernel.org
+Subject: [PATCH RESEND v3 0/3] ptrace: add PTRACE_GET_SYSCALL_INFO request
+Message-ID: <20181125022150.46258a20@akathisia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Sun, 25 Nov 2018 01:21:26 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently on driver bringup with KASAN enabled, meson triggers an OOB
-memory access as shown below:
+Resent with linux-api@ Cc'ed.
 
-[  117.904528] ==================================================================
-[  117.904560] BUG: KASAN: global-out-of-bounds in meson_viu_set_osd_lut+0x7a0/0x890
-[  117.904588] Read of size 4 at addr ffff20000a63ce24 by task systemd-udevd/498
-[  117.904601]
-[  118.083372] CPU: 4 PID: 498 Comm: systemd-udevd Not tainted 4.20.0-rc3Lyude-Test+ #20
-[  118.091143] Hardware name: amlogic khadas-vim2/khadas-vim2, BIOS 2018.07-rc2-armbian 09/11/2018
-[  118.099768] Call trace:
-[  118.102181]  dump_backtrace+0x0/0x3e8
-[  118.105796]  show_stack+0x14/0x20
-[  118.109083]  dump_stack+0x130/0x1c4
-[  118.112539]  print_address_description+0x60/0x25c
-[  118.117214]  kasan_report+0x1b4/0x368
-[  118.120851]  __asan_report_load4_noabort+0x18/0x20
-[  118.125566]  meson_viu_set_osd_lut+0x7a0/0x890
-[  118.129953]  meson_viu_init+0x10c/0x290
-[  118.133741]  meson_drv_bind_master+0x474/0x748
-[  118.138141]  meson_drv_bind+0x10/0x18
-[  118.141760]  try_to_bring_up_master+0x3d8/0x768
-[  118.146249]  component_add+0x214/0x570
-[  118.149978]  meson_dw_hdmi_probe+0x18/0x20 [meson_dw_hdmi]
-[  118.155404]  platform_drv_probe+0x98/0x138
-[  118.159455]  really_probe+0x2a0/0xa70
-[  118.163070]  driver_probe_device+0x1b4/0x2d8
-[  118.167299]  __driver_attach+0x200/0x280
-[  118.171189]  bus_for_each_dev+0x10c/0x1a8
-[  118.175144]  driver_attach+0x38/0x50
-[  118.178681]  bus_add_driver+0x330/0x608
-[  118.182471]  driver_register+0x140/0x388
-[  118.186361]  __platform_driver_register+0xc8/0x108
-[  118.191117]  meson_dw_hdmi_platform_driver_init+0x1c/0x1000 [meson_dw_hdmi]
-[  118.198022]  do_one_initcall+0x12c/0x3bc
-[  118.201883]  do_init_module+0x1fc/0x638
-[  118.205673]  load_module+0x4b4c/0x6808
-[  118.209387]  __se_sys_init_module+0x2e8/0x3c0
-[  118.213699]  __arm64_sys_init_module+0x68/0x98
-[  118.218100]  el0_svc_common+0x104/0x210
-[  118.221893]  el0_svc_handler+0x48/0xb8
-[  118.225594]  el0_svc+0x8/0xc
-[  118.228429]
-[  118.229887] The buggy address belongs to the variable:
-[  118.235007]  eotf_33_linear_mapping+0x84/0xc0
-[  118.239301]
-[  118.240752] Memory state around the buggy address:
-[  118.245522]  ffff20000a63cd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  118.252695]  ffff20000a63cd80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  118.259850] >ffff20000a63ce00: 00 00 00 00 04 fa fa fa fa fa fa fa 00 00 00 00
-[  118.267000]                                ^
-[  118.271222]  ffff20000a63ce80: 00 fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
-[  118.278393]  ffff20000a63cf00: 00 00 00 00 00 00 00 00 00 00 00 00 04 fa fa fa
-[  118.285542] ==================================================================
-[  118.292699] Disabling lock debugging due to kernel taint
+PTRACE_GET_SYSCALL_INFO lets ptracer obtain details of the syscall
+the tracee is blocked in.  The request succeeds when the tracee is in a
+syscall-enter-stop, syscall-exit-stop or PTRACE_EVENT_SECCOMP stop,
+and fails with -EINVAL otherwise.
 
-It seems that when looping through the OSD EOTF LUT maps, we use the
-same max iterator for OETF: 20. This is wrong though, since 20*2 is 40,
-which means that we'll stop out of bounds on the EOTF maps.
+There are two reasons for a special syscall-related ptrace request.
 
-But, this whole thing is already confusing enough to read through as-is,
-so let's just replace all of the hardcoded sizes with
-OSD_(OETF/EOTF)_LUT_SIZE / 2.
+Firstly, with the current ptrace API there are cases when ptracer cannot
+retrieve necessary information about syscalls.  Some examples include:
+* The notorious int-0x80-from-64-bit-task issue.  See [1] for details.
+In short, if a 64-bit task performs a syscall through int 0x80, its tracer
+has no reliable means to find out that the syscall was, in fact,
+a compat syscall, and misidentifies it.
+* Syscall-enter-stop and syscall-exit-stop look the same for the tracer.
+Common practice is to keep track of the sequence of ptrace-stops in order
+not to mix the two syscall-stops up.  But it is not as simple as it looks;
+for example, strace had a (just recently fixed) long-standing bug where
+attaching strace to a tracee that is performing the execve system call
+led to the tracer identifying the following syscall-exit-stop as
+syscall-enter-stop, which messed up all the state tracking.
+* Since the introduction of commit 84d77d3f06e7e8dea057d10e8ec77ad71f721be3
+("ptrace: Don't allow accessing an undumpable mm"), both PTRACE_PEEKDATA
+and process_vm_readv become unavailable when the process dumpable flag
+is cleared.  On such architectures as ia64 this results in all syscall
+arguments being unavailable.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Carlo Caione <carlo@caione.org>
-Cc: Kevin Hilman <khilman@baylibre.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-amlogic@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: <stable@vger.kernel.org> # v4.10+
----
- drivers/gpu/drm/meson/meson_viu.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Secondly, ptracers also have to support a lot of arch-specific code for
+obtaining information about the tracee.  For some architectures, this
+requires a ptrace(PTRACE_PEEKUSER, ...) invocation for every syscall
+argument and return value.
 
-diff --git a/drivers/gpu/drm/meson/meson_viu.c b/drivers/gpu/drm/meson/meson_viu.c
-index 6bcfa527c180..26a0857878bf 100644
---- a/drivers/gpu/drm/meson/meson_viu.c
-+++ b/drivers/gpu/drm/meson/meson_viu.c
-@@ -184,18 +184,18 @@ void meson_viu_set_osd_lut(struct meson_drm *priv, enum viu_lut_sel_e lut_sel,
- 	if (lut_sel == VIU_LUT_OSD_OETF) {
- 		writel(0, priv->io_base + _REG(addr_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_OETF_LUT_SIZE / 2); i++)
- 			writel(r_map[i * 2] | (r_map[i * 2 + 1] << 16),
- 				priv->io_base + _REG(data_port));
- 
- 		writel(r_map[OSD_OETF_LUT_SIZE - 1] | (g_map[0] << 16),
- 			priv->io_base + _REG(data_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_OETF_LUT_SIZE / 2); i++)
- 			writel(g_map[i * 2 + 1] | (g_map[i * 2 + 2] << 16),
- 				priv->io_base + _REG(data_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_OETF_LUT_SIZE / 2); i++)
- 			writel(b_map[i * 2] | (b_map[i * 2 + 1] << 16),
- 				priv->io_base + _REG(data_port));
- 
-@@ -211,18 +211,18 @@ void meson_viu_set_osd_lut(struct meson_drm *priv, enum viu_lut_sel_e lut_sel,
- 	} else if (lut_sel == VIU_LUT_OSD_EOTF) {
- 		writel(0, priv->io_base + _REG(addr_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_EOTF_LUT_SIZE / 2); i++)
- 			writel(r_map[i * 2] | (r_map[i * 2 + 1] << 16),
- 				priv->io_base + _REG(data_port));
- 
- 		writel(r_map[OSD_EOTF_LUT_SIZE - 1] | (g_map[0] << 16),
- 			priv->io_base + _REG(data_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_EOTF_LUT_SIZE / 2); i++)
- 			writel(g_map[i * 2 + 1] | (g_map[i * 2 + 2] << 16),
- 				priv->io_base + _REG(data_port));
- 
--		for (i = 0; i < 20; i++)
-+		for (i = 0; i < (OSD_EOTF_LUT_SIZE / 2); i++)
- 			writel(b_map[i * 2] | (b_map[i * 2 + 1] << 16),
- 				priv->io_base + _REG(data_port));
- 
+PTRACE_GET_SYSCALL_INFO returns the following structure:
+
+struct ptrace_syscall_info {
+	__u8 op;	/* PTRACE_SYSCALL_INFO_* */
+	__u8 __pad0[3];
+	__u32 arch;
+	union {
+		struct {
+			__u64 nr;
+			__u64 instruction_pointer;
+			__u64 stack_pointer;
+			__u64 frame_pointer;
+			__u64 args[6];
+		} entry;
+		struct {
+			__s64 rval;
+			__u8 is_error;
+			__u8 __pad1[7];
+		} exit;
+	};
+};
+
+The structure was chosen according to [2], except for the following
+changes:
+* arch is returned unconditionally to aid with tracing system calls such as
+execve();
+* the type of nr field was changed from int to __u64 because syscall
+numbers are, as a practical matter, 64 bits;
+* stack_pointer and frame_pointer fields were added along with
+instruction_pointer field since they are readily available and can save
+the tracer from extra PTRACE_GETREGSET calls;
+* a boolean is_error field was added along with rval field, this way
+the tracer can more reliably distinguish a return value
+from an error value.
+
+This changeset should be applied on top of [3] and [4].
+
+[1] https://lore.kernel.org/lkml/CA+55aFzcSVmdDj9Lh_gdbz1OzHyEm6ZrGPBDAJnywm2LF_eVyg@mail.gmail.com/
+[2] https://lore.kernel.org/lkml/CAObL_7GM0n80N7J_DFw_eQyfLyzq+sf4y2AvsCCV88Tb3AwEHA@mail.gmail.com/
+[3] https://lore.kernel.org/lkml/20181119210139.GA8360@altlinux.org/
+[4] https://lore.kernel.org/lkml/20181120001128.GA11300@altlinux.org/
+
+v3: Split into three changes.
+    Change struct ptrace_syscall_info.
+    Support PTRACE_EVENT_SECCOMP by adding ptrace_event to task_struct.
+    Add proper defines for ptrace_syscall_info.op values.
+    Rename PT_SYSCALL_IS_ENTERING and PT_SYSCALL_IS_EXITING to
+    PTRACE_EVENTMSG_SYSCALL_ENTRY and PTRACE_EVENTMSG_SYSCALL_EXIT and move
+    them to uapi.
+
+Elvira Khabirova (3):
+  ptrace: pass type of a syscall-stop in ptrace_message
+  ptrace: add PTRACE_GET_SYSCALL_INFO request
+  ptrace: add PTRACE_EVENT_SECCOMP support to PTRACE_GET_SYSCALL_INFO
+
+ include/linux/ptrace.h      |  1 +
+ include/linux/sched.h       |  1 +
+ include/linux/tracehook.h   | 10 ++++---
+ include/uapi/linux/ptrace.h | 34 ++++++++++++++++++++++++
+ kernel/ptrace.c             | 53 +++++++++++++++++++++++++++++++++++++
+ 5 files changed, 96 insertions(+), 3 deletions(-)
+
 -- 
 2.19.1
 
