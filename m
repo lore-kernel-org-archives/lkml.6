@@ -2,127 +2,121 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7481C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 20:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D31EEC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 20:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CE222082E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 20:49:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ossystems-com-br.20150623.gappssmtp.com header.i=@ossystems-com-br.20150623.gappssmtp.com header.b="nEev0yLP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CE222082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
+	by mail.kernel.org (Postfix) with ESMTP id A52D620850
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 20:50:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A52D620850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbeKZHlh (ORCPT
+        id S1726830AbeKZHmX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 02:41:37 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:37866 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbeKZHlh (ORCPT
+        Mon, 26 Nov 2018 02:42:23 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:38454 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbeKZHmX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 02:41:37 -0500
-Received: by mail-oi1-f195.google.com with SMTP id y23so14011172oia.4
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 12:49:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ossystems-com-br.20150623.gappssmtp.com; s=20150623;
-        h=from:mime-version:references:in-reply-to:date:message-id:subject:to
-         :cc;
-        bh=dqAVndQ9OdujxZFYFJ+S64NR//MJ30fYRZfwEXWIDek=;
-        b=nEev0yLPMcqgQhkuaOcu6AWzi3aI3OV6zleziuANdl6ZM02FIx4YtorXJk8tPOHzZx
-         l3BZJZ0fK/5VsGTRGn3gwfOzRoPHBUPurcDFfONfbBtM1icZs1FDsiX0TzR57a9WGBo3
-         EqAjsoIJfyWwMHFBPcUM0oKcwfYKFFk8Fg74q1qEPtS7M2/6B/DsgeCzljN1jz4PpdEv
-         2b8u0gWsp8yHe6vQCaktPFUn6/UfJ+GquKiMGWWxx/6hzClcBeyC42IJN7rtUupCf1R5
-         2mEWs7DIeKiHluXvqrgCd5XDUkQ2EPdRkoLDgRUtR67pFBpLsARXLf+OL3LORSY25SAW
-         OdZw==
+        Mon, 26 Nov 2018 02:42:23 -0500
+Received: by mail-qt1-f194.google.com with SMTP id p17so15420768qtl.5;
+        Sun, 25 Nov 2018 12:50:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:mime-version:references:in-reply-to:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dqAVndQ9OdujxZFYFJ+S64NR//MJ30fYRZfwEXWIDek=;
-        b=kbXdVnWj4x5Dc46VALJS3NIMS6eC/yyG3cgMiytdaFO53Oy+nDU7kOVLozFc6PUCcO
-         qTQE4/kPU3fHkiz36N4M7xvF1fjPGciqJTyQIINtTkEwC1CmpRX6RuAaa28GSGLmoUBG
-         hC7RoGX+ASfWBfL0E4arZ+LzZO7IqO3agwt7eDteO2FY/fIIiOJiCx6Hdab5cZeepUfX
-         nzsXQY6IIypXI5dUS3Jd+RHK2D5woHTC3e6Ts/TwJkmd7Zb5ZI7xVlwUHCqEwkW6ke96
-         QrzAS9uE76lrCGJpWedNtDJgc0kTToVERLhPC0R9/h0ldnsGcYvgiWxt+cSjo+zAOzXs
-         mdlQ==
-X-Gm-Message-State: AGRZ1gJ1LDC0tXQLHRD1GvV4wIKQfUbWwGB5UYATZ+RRGQKyZUnx02iO
-        jTSAmb6G2wsbqsSFnsV6DA2lCTxDVhquhA==
-X-Google-Smtp-Source: AJdET5dvtLeVda8/QByTuiFiCA6S7M+2YfnAGsmcOK7s8oo43mOgQw0QQDPIuEGvB51tUcqZ02aRmA==
-X-Received: by 2002:aca:5205:: with SMTP id g5mr14181493oib.149.1543178981148;
-        Sun, 25 Nov 2018 12:49:41 -0800 (PST)
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com. [209.85.210.52])
-        by smtp.gmail.com with ESMTPSA id 187sm2590529oic.12.2018.11.25.12.49.40
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 25 Nov 2018 12:49:40 -0800 (PST)
-From:   Otavio Salvador <otavio.salvador@ossystems.com.br>
-X-Google-Original-From: Otavio Salvador <otavio@ossystems.com.br>
-Received: by mail-ot1-f52.google.com with SMTP id u16so14779054otk.8
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 12:49:40 -0800 (PST)
-X-Received: by 2002:a9d:12f1:: with SMTP id g104mr9955217otg.22.1543178979496;
- Sun, 25 Nov 2018 12:49:39 -0800 (PST)
+        bh=pUCxW18y8D6N0aWglscyqMJV0lD1gpvnnI/a2Goe44Q=;
+        b=GJ63mvWoSDH+U/XTL+RXFHREofPPF9vPpBKdhfXJib4A2FLh2B1fwiVaI7ykSGKlpU
+         Zzk0xgsxsl6lLfI9jJieIc0fLVKBQsquNlKHonDhfeFNHMOYo9CqoBO65MrKyZyfk803
+         s9HahSXs0cLfIi8/R6Zeo8JJtvRk57tQjS6fYwWA+14Dbgdw18Wz2zkxApOmkweW+qgH
+         dAYv4o2/O3u3L6/Yd5tpYNM3zUJqfSNs3AnmxIque93qTjFGOTY/rDCh86/ecJHZLWGD
+         /yHsGMSC02NNn3GX6/xvJ2M/HCu9Fcs6b+2VXa1bINUODHBRNOl16CEbnsh8zMNGpZ0R
+         4JNg==
+X-Gm-Message-State: AGRZ1gIdHVJIsAXLIOAkM/lSdpoXiNZ0eZwU3mQNKrinwyOISEr9Ud9e
+        zfhJ0kVuSIVFWfrhyzcqTsdt/yr0ByGeeTMT3Br3WQ==
+X-Google-Smtp-Source: AJdET5dnIF9laNWhkNJmLD8ryDxEO2jv4N3E7A/HxrdrghTi9Vf5h8oes6+uA/jit8IPgJgXQL6PO3R9nKoNsv/p2J8=
+X-Received: by 2002:aed:35c5:: with SMTP id d5mr22879184qte.212.1543179027412;
+ Sun, 25 Nov 2018 12:50:27 -0800 (PST)
 MIME-Version: 1.0
-References: <20181125201729.19836-1-otavio@ossystems.com.br> <CAOMZO5AVWbk_gdtDvXQfYqmENr8d3z5oxQVtzFtex0WrfY6tZQ@mail.gmail.com>
-In-Reply-To: <CAOMZO5AVWbk_gdtDvXQfYqmENr8d3z5oxQVtzFtex0WrfY6tZQ@mail.gmail.com>
-Date:   Sun, 25 Nov 2018 18:49:22 -0200
-X-Gmail-Original-Message-ID: <CAP9ODKrpde0tpRgoRMihvDur=ftQsT59h4Cqr3VQAOOimoSB1Q@mail.gmail.com>
-Message-ID: <CAP9ODKrpde0tpRgoRMihvDur=ftQsT59h4Cqr3VQAOOimoSB1Q@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ARM: imx_v6_v7_defconfig: Remove CONFIG_ARM_UNWIND
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     Otavio Salvador <otavio@ossystems.com.br>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
+References: <20181124022035.17519-1-deepa.kernel@gmail.com>
+ <20181124022035.17519-7-deepa.kernel@gmail.com> <CAF=yD-+1BJHuajcW=2bpeAp5XOAX2fObyvhOdH-YsiGY3-_J4Q@mail.gmail.com>
+ <CABeXuvrV+xN3O8BSmJ7bGR+8uYmtrCk2YL37HQZrBSO8YSvzJQ@mail.gmail.com>
+In-Reply-To: <CABeXuvrV+xN3O8BSmJ7bGR+8uYmtrCk2YL37HQZrBSO8YSvzJQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sun, 25 Nov 2018 21:50:09 +0100
+Message-ID: <CAK8P3a3UVOeaYqwOiAMrziVcY6GpbCkDRGGAgFJKBJnB1e=v=w@mail.gmail.com>
+Subject: Re: [PATCH 6/8] socket: Add struct sock_timeval
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        y2038 Mailman List <y2038@lists.linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Fabio,
-On Sun, Nov 25, 2018 at 6:30 PM Fabio Estevam <festevam@gmail.com> wrote:
-> On Sun, Nov 25, 2018 at 6:18 PM Otavio Salvador <otavio@ossystems.com.br> wrote:
+On Sun, Nov 25, 2018 at 5:52 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> On Sat, Nov 24, 2018 at 11:38 AM Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+> > On Sat, Nov 24, 2018 at 4:00 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> > >
+> > > The new type is meant to be used as a y2038 safe structure
+> > > to be used as part of cmsg data.
+> > > Presently the SO_TIMESTAMP socket option uses struct timeval
+> > > for timestamps. This is not y2038 safe.
+> > > Subsequent patches in the series add new y2038 safe socket
+> > > option to be used in the place of SO_TIMESTAMP_OLD.
+> > > struct sock_timeval will be used as the timestamp format
+> > > at that time.
+> > >
+> > > struct sock_timeval also maintains the same layout across
+> > > 32 bit and 64 bit ABIs.
+> > >
+> > > Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> > > ---
+> > >  include/uapi/linux/time.h | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > >
+> > > diff --git a/include/uapi/linux/time.h b/include/uapi/linux/time.h
+> > > index 04d5587f30d3..106f9398c285 100644
+> > > --- a/include/uapi/linux/time.h
+> > > +++ b/include/uapi/linux/time.h
+> > > @@ -70,6 +70,11 @@ struct __kernel_old_timeval {
+> > >  };
+> > >  #endif
+> > >
+> > > +struct sock_timeval {
+> > > +       long long tv_sec;
+> > > +       long long tv_usec;
 > >
-> > The setting is removed when running a `savedefconfig` using the
-> > current setting set. It is being applied in preparation to some
+> > should these use fixed-width type __u64?
 >
-> "setting set" is a bit confusing.
->
-> > patches making changes to this defconfig.
->
-> It would be good to mention that CONFIG_ARM_UNWIND is still selected
-> automatically.
->
-> Otherwise it may give the impression that such functionality is being removed.
->
-> You could reword the commit log to something like this:
->
-> CONFIG_ARM_UNWIND is removed when running  'savedefconfig', but it is
-> still selected by the Kconfig logic.
-> This is done in preparation to making further changes to this defconfig cleaner.
+> We have avoided using __u64/__s64 types for time types in uapi.
+> I think we did this for portability reasons.
+> Although this new type might not be required to be interpreted in
+> libc, I would prefer for this to be long long.
+> If there is a strong preference then I can change it.
 
-In fact, was removed and now selected.
+I think we want signed types to keep it closer to what we
+have today with 'timeval'. as long as linux/types.h is included
+first (it is).
 
-I changed the commit log as:
+Between __s64 or long long, I don't think it makes a difference,
+so let's just go with Willem's suggestion. We already rely on
+'long long' being exactly 64 bit wide in 'struct __kernel_timespec'
+as well.
 
-ARM: imx_v6_v7_defconfig: Remove explicit ARM_UNWIND disable
+We could however debate whether 'sock_timeval' should
+be visible to user space in linux/tme.h like this, or if it
+should be put in a namespace like '__kernel_sock_timeval'
+to ensure it won't conflict with user space headers defining
+a type of the same name.
 
-CONFIG_ARM_UNWIND is removed when running 'savedefconfig', but
-selected by the Kconfig logic.  This is done in preparation to making
-further changes to this defconfig cleaner.
-
-Do you agree?
-
--- 
-Otavio Salvador                             O.S. Systems
-http://www.ossystems.com.br        http://code.ossystems.com.br
-Mobile: +55 (53) 9 9981-7854          Mobile: +1 (347) 903-9750
+       Arnd
