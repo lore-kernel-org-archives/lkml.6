@@ -2,115 +2,168 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E63C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 09:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9636C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 09:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F60B20664
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 09:07:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F60B20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 582FF20865
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 09:20:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 582FF20865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbeKYT63 (ORCPT
+        id S1727535AbeKYUKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 14:58:29 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58055 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726859AbeKYT62 (ORCPT
+        Sun, 25 Nov 2018 15:10:21 -0500
+Received: from smtprelay0238.hostedemail.com ([216.40.44.238]:55257 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727379AbeKYUKU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 14:58:28 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 1154F808B9; Sun, 25 Nov 2018 10:07:45 +0100 (CET)
-Date:   Sun, 25 Nov 2018 10:07:48 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Moger, Babu" <Babu.Moger@amd.com>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "corbet@lwn.net" <corbet@lwn.net>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "rian@alum.mit.edu" <rian@alum.mit.edu>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v9 12/13] Documentation: Rename and update
- intel_rdt_ui.txt to resctrl_ui.txt
-Message-ID: <20181125090748.GA22821@amd>
-References: <20181121202811.4492-1-babu.moger@amd.com>
- <20181121202811.4492-13-babu.moger@amd.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="M9NhX3UHpAaciwkO"
-Content-Disposition: inline
-In-Reply-To: <20181121202811.4492-13-babu.moger@amd.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sun, 25 Nov 2018 15:10:20 -0500
+X-Greylist: delayed 348 seconds by postgrey-1.27 at vger.kernel.org; Sun, 25 Nov 2018 15:10:20 EST
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave03.hostedemail.com (Postfix) with ESMTP id E281418017AB6
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 09:13:54 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 21FA8182CED34;
+        Sun, 25 Nov 2018 09:13:54 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: fight67_21f37406c4050
+X-Filterd-Recvd-Size: 4910
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf01.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 25 Nov 2018 09:13:53 +0000 (UTC)
+Message-ID: <8eb7769cb8550e82105b71ba67fd603394e23b1e.camel@perches.com>
+Subject: RFC: script to convert vsprintf uses of %pf to %ps and %pF to %pS
+From:   Joe Perches <coupons@perches.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Date:   Sun, 25 Nov 2018 01:13:51 -0800
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+commit 04b8eb7a4ccd ("symbol lookup: introduce dereference_symbol_descriptor()}"
 
---M9NhX3UHpAaciwkO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+deprecated vsprintf extension %pf and %pF.
 
-On Wed 2018-11-21 20:28:47, Moger, Babu wrote:
-> Rename intel_rdt_ui.txt to generic resctrl_ui.txt and update the
-> documentation for AMD.
->=20
-> Signed-off-by: Babu Moger <babu.moger@amd.com>
-> ---
->  Documentation/x86/{intel_rdt_ui.txt =3D> resctrl_ui.txt} | 9
+There are approximately these total uses of the symbolic
+lookup vsprintf extensions %p[SsFf]:
 
-Other filenames in the directory use "-".
+$ git grep '".*[^%]%p[SsFf]' | \
+  grep -oh '%p[SsFf]' | sort | uniq -c | sort -rn
+    231 %pS
+     65 %ps
+     60 %pf
+     47 %pF
 
-Plus, this is not really about _user_interface.
+which is about a 3:1 ratio favoring %pS
 
-resctl.txt would be a better name.
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+so a script to convert all the %pf uses to %ps and %pF uses to %pS
+could be useful.
 
---M9NhX3UHpAaciwkO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+There are a few files that appear should not be converted.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+$ git grep -w --name-only -i '%pf'| \
+  grep -vP '^(?:Documentation|tools|include/linux/freezer.h)'| \
+  xargs sed -i -e 's/%pf/%ps/g' -e 's/%pF/%pS/g'
 
-iEYEARECAAYFAlv6ZmQACgkQMOfwapXb+vLI0QCfSz8k+Y5h4PS2/FvJSY9kv7gI
-HawAoL1xmRLmES0LovcNwc6mp1SkuDya
-=o7zH
------END PGP SIGNATURE-----
+If that script above is run, it leaves the following patch
+to be applied:
+---
+ Documentation/core-api/printk-formats.rst | 10 ----------
+ lib/vsprintf.c                            | 12 ++----------
+ 2 files changed, 2 insertions(+), 20 deletions(-)
 
---M9NhX3UHpAaciwkO--
+diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+index ff48b55040ef..ab5a6d1b05c0 100644
+--- a/Documentation/core-api/printk-formats.rst
++++ b/Documentation/core-api/printk-formats.rst
+@@ -70,8 +70,6 @@ Symbols/Function Pointers
+ 
+ 	%pS	versatile_init+0x0/0x110
+ 	%ps	versatile_init
+-	%pF	versatile_init+0x0/0x110
+-	%pf	versatile_init
+ 	%pSR	versatile_init+0x9/0x110
+ 		(with __builtin_extract_return_addr() translation)
+ 	%pB	prev_fn_of_versatile_init+0x88/0x88
+@@ -81,14 +79,6 @@ The ``S`` and ``s`` specifiers are used for printing a pointer in symbolic
+ format. They result in the symbol name with (S) or without (s)
+ offsets. If KALLSYMS are disabled then the symbol address is printed instead.
+ 
+-Note, that the ``F`` and ``f`` specifiers are identical to ``S`` (``s``)
+-and thus deprecated. We have ``F`` and ``f`` because on ia64, ppc64 and
+-parisc64 function pointers are indirect and, in fact, are function
+-descriptors, which require additional dereferencing before we can lookup
+-the symbol. As of now, ``S`` and ``s`` perform dereferencing on those
+-platforms (when needed), so ``F`` and ``f`` exist for compatibility
+-reasons only.
+-
+ The ``B`` specifier results in the symbol name with offsets and should be
+ used when printing stack backtraces. The specifier takes into
+ consideration the effect of compiler optimisations which may occur
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 37a54a6dd594..393002bf5298 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -795,7 +795,7 @@ char *symbol_string(char *buf, char *end, void *ptr,
+ #ifdef CONFIG_KALLSYMS
+ 	if (*fmt == 'B')
+ 		sprint_backtrace(sym, value);
+-	else if (*fmt != 'f' && *fmt != 's')
++	else if (*fmt != 's')
+ 		sprint_symbol(sym, value);
+ 	else
+ 		sprint_symbol_no_offset(sym, value);
+@@ -1756,9 +1756,7 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
+  *
+  * - 'S' For symbolic direct pointers (or function descriptors) with offset
+  * - 's' For symbolic direct pointers (or function descriptors) without offset
+- * - 'F' Same as 'S'
+- * - 'f' Same as 's'
+- * - '[FfSs]R' as above with __builtin_extract_return_addr() translation
++ * - '[Ss]R' as above with __builtin_extract_return_addr() translation
+  * - 'B' For backtraced symbolic direct pointers with offset
+  * - 'R' For decoded struct resource, e.g., [mem 0x0-0x1f 64bit pref]
+  * - 'r' For raw struct resource, e.g., [mem 0x0-0x1f flags 0x201]
+@@ -1872,8 +1870,6 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+ 	}
+ 
+ 	switch (*fmt) {
+-	case 'F':
+-	case 'f':
+ 	case 'S':
+ 	case 's':
+ 		ptr = dereference_symbol_descriptor(ptr);
+@@ -2603,8 +2599,6 @@ int vbin_printf(u32 *bin_buf, size_t size, const char *fmt, va_list args)
+ 			/* Dereference of functions is still OK */
+ 			case 'S':
+ 			case 's':
+-			case 'F':
+-			case 'f':
+ 			case 'x':
+ 			case 'K':
+ 				save_arg(void *);
+@@ -2779,8 +2773,6 @@ int bstr_printf(char *buf, size_t size, const char *fmt, const u32 *bin_buf)
+ 			switch (*fmt) {
+ 			case 'S':
+ 			case 's':
+-			case 'F':
+-			case 'f':
+ 			case 'x':
+ 			case 'K':
+ 				process = true;
+---
+
+
