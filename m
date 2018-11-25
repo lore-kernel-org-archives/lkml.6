@@ -7,67 +7,67 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA9CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 11:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE8C3C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 11:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 847872084E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 11:29:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A200720867
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 11:30:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qce3eiB9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 847872084E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vdadmErl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A200720867
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbeKYWUs (ORCPT
+        id S1726390AbeKYWVf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 17:20:48 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45419 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725936AbeKYWUs (ORCPT
+        Sun, 25 Nov 2018 17:21:35 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38064 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbeKYWVe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 17:20:48 -0500
-Received: by mail-pl1-f196.google.com with SMTP id a14so12490518plm.12;
-        Sun, 25 Nov 2018 03:29:56 -0800 (PST)
+        Sun, 25 Nov 2018 17:21:34 -0500
+Received: by mail-pg1-f194.google.com with SMTP id g189so4851840pgc.5;
+        Sun, 25 Nov 2018 03:30:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=JrmUXIhEdvyW3/PDf9Qjnqq6eYljvs81GxqFgkMOUjo=;
-        b=qce3eiB9xqRmxyHvYEaT+RNRBo2Ui+8VAUlkH8OgGBsCvB0ZFKMdeOMKpVroR9djDM
-         ke4n2TBrYI6Woy5i1cBXWBCdZFBPGWysD9qtDiFgWkIvhsqRlNB6fHBhE6j6qwe6B7Ra
-         UaL+rUm0Y6XLMBpnWXX+XDBWGaTv8BRLBUynhjGNx5fxNBeWWbH/V0taqt357QJXVuMK
-         LlT40CENDemEDshBE5YK90SXEbAEz6J4E0152wIGEhozapGTHDTc25Kg612y6zh5hFaB
-         ZRJSKnWvw6mkVydMxYpa2vzDkA/JsaMYtDhODHMGutrt0HKmOgaA9Wr4Gkcve9O3ElcJ
-         fsvQ==
+        bh=pVvKmfOIVjYe+j60IQblG+ZKp4+HkaMZYtsYJ8xIvg8=;
+        b=vdadmErlwqgo6s0XZE8gk7MijPx7ADiHHEBHHG1WgVaSVBJvzoktqVd1/DcSi3dOt6
+         qv2d2Sv5n+JF95nGLpjBchysIuU/WedWFuiiQ8r1cBiycfebpUKCWVkCdol3ZO7ZlVzi
+         HBbz6jliSbhQsgtO+4/jWPDKd/OSe4uzLtzSoKB/jv/ZE32P97yxllL3oPXLz46nFUlE
+         aevmXCqnbhwdr3LSNnv+3ahwPr+EOVLZh8RieNN8UNDmHwdL9W67zo0LwNun4ZTRqJ3M
+         8BO+8AOaZaQ6agbs/L3KaqkH+t+j3YWwNr5o2RfrDXIiV7DMpeQ70D2uSH4a8A/C9AE6
+         KhrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JrmUXIhEdvyW3/PDf9Qjnqq6eYljvs81GxqFgkMOUjo=;
-        b=uG5fV/R129eoICr4VfCJKrJD8Oq4OKr01vbCpmY4anu+Gt9E9nJacjFWC6zLPOHlIG
-         yhagaMcJyh6LutGs6P150ElSg4t0CLAodhb9N3GNjBpqozqdr6L6gWoe8CCRUlBRL15u
-         Aao6tQL0DlWpBQYl7Al5sTidvbgapnBqf4bHWe+fnMktra+/GylJMMAj0LsV2+1JKGVU
-         u3dEGe/kV+6Wepdv3gb9C2TX1lOyrBv4zX3ASWWgTWv55XC5zkkH+3vUKVnKAAX4QRa/
-         LB7RPnqBZDm3aiHJnIKCIO4qoH+I+BrTTLk+eU5yznJfSeDGeeeHEg396GfbCQwYX7Lc
-         SDsQ==
-X-Gm-Message-State: AA+aEWZdbcFvj3Aez7PmOWtaYLn/KGKu7xl40VgLYYe6wcXMxv5xs9G+
-        WS6BO9mWaqMarTOK4l4gN+g=
-X-Google-Smtp-Source: AFSGD/UBug36aWCimuHDrNIAWO1p89jYRZXLbbC/WpcJniG1zzme4nBc/B7JfTRjZV89NiJBX3s0jQ==
-X-Received: by 2002:a17:902:4c08:: with SMTP id a8mr23380200ple.74.1543145396360;
-        Sun, 25 Nov 2018 03:29:56 -0800 (PST)
+        bh=pVvKmfOIVjYe+j60IQblG+ZKp4+HkaMZYtsYJ8xIvg8=;
+        b=lGIJfXz4Bl+KMxH6cgiCq4RsgaGdV3BWdvlN8RQfOQgHNHQT3RyUudfwH65XSTm58E
+         BuKTCxFbciNkQ5q+73IdIwpn98mDGiDZl8+M5QfwmsxtW6alpWMd1M3LklF5UCLXuccg
+         hkwtujmeqJdRycxdPpoTB3yPRauwpNOSkMbOWA/py/wRY3UzJ6Euhx9DxsVHrcahBAgs
+         835eRKSGRgIQiflcLABO/j2nmdj9xJDSD/gXVuH+exfq+TXhl+pWZTPXKf1PhWbD7Lqn
+         HJU3rXdPwKOWQvGpmrRaskWUgU5wktTQv18Lj/klJo5aur8cye5gVowE9G0lh3NxVUSl
+         Gcpw==
+X-Gm-Message-State: AA+aEWalSEOsDdoNWomeqf6VIvBHzNmHhlp9TGd0ic9gxhRqCWgoaZ4x
+        DyPT423mGHtXdrjwWLPn/aA=
+X-Google-Smtp-Source: AFSGD/Xyxm0fCg+FQnoAOpWNIv4KHcJDumzikYyHEY2GO2mZIfazoUk88WV8UQtzM0UeWwNAFuEH4A==
+X-Received: by 2002:a63:d949:: with SMTP id e9mr20862433pgj.24.1543145442279;
+        Sun, 25 Nov 2018 03:30:42 -0800 (PST)
 Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id d2-v6sm16946778pfj.106.2018.11.25.03.29.54
+        by smtp.gmail.com with ESMTPSA id m9sm55199349pgd.32.2018.11.25.03.30.40
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Nov 2018 03:29:55 -0800 (PST)
-Date:   Sun, 25 Nov 2018 16:59:50 +0530
+        Sun, 25 Nov 2018 03:30:41 -0800 (PST)
+Date:   Sun, 25 Nov 2018 17:00:37 +0530
 From:   Nishad Kamdar <nishadkamdar@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: [PATCH 08/26] Staging: fbtft: fb_uc1611: Switch to the gpio
+Subject: [PATCH 09/26] Staging: fbtft: fb_s6d1211: Switch to the gpio
  descriptor interface
-Message-ID: <d82350e345de07d6dee448a3199cfa0f0b568171.1543142441.git.nishadkamdar@gmail.com>
+Message-ID: <c224f79b36ea42c31a1faa28493c61fdea48025e.1543142441.git.nishadkamdar@gmail.com>
 References: <cover.1543142440.git.nishadkamdar@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -79,36 +79,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This switches the fb_uc1611.c to use GPIO descriptors
+This switches the fb_s6d1211.c to use GPIO descriptors
 rather than numerical gpios.
 
 Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 ---
- drivers/staging/fbtft/fb_uc1611.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/fbtft/fb_s6d1121.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/fbtft/fb_uc1611.c b/drivers/staging/fbtft/fb_uc1611.c
-index dfaf8bc70f73..65681d0fe200 100644
---- a/drivers/staging/fbtft/fb_uc1611.c
-+++ b/drivers/staging/fbtft/fb_uc1611.c
-@@ -10,7 +10,7 @@
+diff --git a/drivers/staging/fbtft/fb_s6d1121.c b/drivers/staging/fbtft/fb_s6d1121.c
+index aa716f33420a..b3d0701880fe 100644
+--- a/drivers/staging/fbtft/fb_s6d1121.c
++++ b/drivers/staging/fbtft/fb_s6d1121.c
+@@ -12,7 +12,7 @@
  #include <linux/module.h>
  #include <linux/kernel.h>
  #include <linux/init.h>
 -#include <linux/gpio.h>
 +#include <linux/gpio/consumer.h>
- #include <linux/spi/spi.h>
  #include <linux/delay.h>
  
-@@ -251,7 +251,7 @@ static int write_vmem(struct fbtft_par *par, size_t offset, size_t len)
- 			}
- 			break;
- 		}
--		gpio_set_value(par->gpio.dc, 1);
-+		gpiod_set_value(par->gpio.dc, 1);
+ #include "fbtft.h"
+@@ -29,8 +29,8 @@ static int init_display(struct fbtft_par *par)
+ {
+ 	par->fbtftops.reset(par);
  
- 		/* Write data */
- 		ret = par->fbtftops.write(par, par->txbuf.buf, len / 2);
+-	if (par->gpio.cs != -1)
+-		gpio_set_value(par->gpio.cs, 0);  /* Activate chip */
++	if (!par->gpio.cs)
++		gpiod_set_value(par->gpio.cs, 0);  /* Activate chip */
+ 
+ 	/* Initialization sequence from Lib_UTFT */
+ 
 -- 
 2.17.1
 
