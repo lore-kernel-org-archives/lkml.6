@@ -2,87 +2,70 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFCFCC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1008DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 805A42087E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:28:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ivV162Ba"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 805A42087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	by mail.kernel.org (Postfix) with ESMTP id BC4A72087E
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:37:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC4A72087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726972AbeKYMRt (ORCPT
+        id S1727024AbeKYM1c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 07:17:49 -0500
-Received: from m12-16.163.com ([220.181.12.16]:60602 "EHLO m12-16.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726515AbeKYMRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 07:17:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=3zDafuTT6xnzkxZqfQ
-        ZEO5Z4PSwIWXdNevZ7cyb3zdo=; b=ivV162Ba+P+k2VpNihTA7fLnLHym/soRaz
-        bNFPqlNWxnIOlUcaOjO4UcL++CUESp1JOPVNKlHBaNG3ufsjgi1ZLv8+glIJ1HRX
-        xTDuVrTMR6jAP+typCIqTtWY9Sp1/hby94NCJIuEGxubL1r7WGuC2FzcBIPd85jW
-        tP2x0a5c0=
-Received: from bp.localdomain (unknown [106.120.213.96])
-        by smtp12 (Coremail) with SMTP id EMCowABXakd0+vlb_XDLBg--.4563S3;
-        Sun, 25 Nov 2018 09:27:18 +0800 (CST)
-From:   Pan Bian <bianpan2016@163.com>
-To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>
-Cc:     ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
-        Tao Ma <boyu.mt@taobao.com>, Pan Bian <bianpan2016@163.com>
-Subject: [PATCH] ocfs2: fix potential use after free
-Date:   Sun, 25 Nov 2018 09:27:17 +0800
-Message-Id: <1543109237-110227-1-git-send-email-bianpan2016@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: EMCowABXakd0+vlb_XDLBg--.4563S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZrWkCr48Cr1Dtw17Wr1rWFg_yoWDGrbEkr
-        4Utan2kw45Zrn7WFs8W3ySqFsa93WvgFn7GF1xKrn8K34jvFykXrn5XwnYvr97Wr13uF98
-        Zw4kXFyDtw1a9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnbVy7UUUUU==
-X-Originating-IP: [106.120.213.96]
-X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/1tbiQAwKclSIYSbodgAAsx
+        Sun, 25 Nov 2018 07:27:32 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:59530 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbeKYM1c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 07:27:32 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id A177714ECF114;
+        Sat, 24 Nov 2018 17:37:41 -0800 (PST)
+Date:   Sat, 24 Nov 2018 17:37:40 -0800 (PST)
+Message-Id: <20181124.173740.1123522176489874677.davem@davemloft.net>
+To:     yuehaibing@huawei.com
+Cc:     ganeshgr@chelsio.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] cxgb4: remove set but not used variables
+ 'multitrc, speed'
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181124103621.24280-1-yuehaibing@huawei.com>
+References: <20181124103621.24280-1-yuehaibing@huawei.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 24 Nov 2018 17:37:41 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function ocfs2_get_dentry calls iput(inode) to drop the reference
-count of inode, and if the reference count hits 0, inode is freed.
-However, in this function, it then reads inode->i_generation, which may
-result in a use after free bug. This patch moves the put operation
-later.
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 24 Nov 2018 18:36:21 +0800
 
-Fixes: 781f200cb7a("ocfs2: Remove masklog ML_EXPORT.")
-Signed-off-by: Pan Bian <bianpan2016@163.com>
----
- fs/ocfs2/export.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:5883:6:
+>  warning: variable 'multitrc' set but not used [-Wunused-but-set-variable]
+> 
+> drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:8585:32:
+>  warning: variable 'speed' set but not used [-Wunused-but-set-variable]
+> 
+> 'multitrc' never used since introduction in
+> commit 8e3d04fd7d70 ("cxgb4: Add MPS tracing support")
+> 
+> 'speed' never used since introduction in
+> commit c3168cabe1af ("cxgb4/cxgbvf: Handle 32-bit fw port capabilities")
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-diff --git a/fs/ocfs2/export.c b/fs/ocfs2/export.c
-index 9f88188..4bf8d58 100644
---- a/fs/ocfs2/export.c
-+++ b/fs/ocfs2/export.c
-@@ -125,10 +125,10 @@ static struct dentry *ocfs2_get_dentry(struct super_block *sb,
- 
- check_gen:
- 	if (handle->ih_generation != inode->i_generation) {
--		iput(inode);
- 		trace_ocfs2_get_dentry_generation((unsigned long long)blkno,
- 						  handle->ih_generation,
- 						  inode->i_generation);
-+		iput(inode);
- 		result = ERR_PTR(-ESTALE);
- 		goto bail;
- 	}
--- 
-2.7.4
-
-
+Applied, thanks.
