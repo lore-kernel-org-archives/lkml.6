@@ -2,97 +2,116 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D806C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 635D2C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C0EF2086B
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:00:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="dHtRey9I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C0EF2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BDEB20868
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:14:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BDEB20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726076AbeKZHwH (ORCPT
+        id S1726081AbeKZIGl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 02:52:07 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44410 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725902AbeKZHwH (ORCPT
+        Mon, 26 Nov 2018 03:06:41 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:39741 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725910AbeKZIGl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 02:52:07 -0500
-Received: by mail-ot1-f65.google.com with SMTP id f18so13207845otl.11
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 13:00:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=grN8iueVCnJfFhI5vNxMNHC4YBEugxlvf468YCpBLTU=;
-        b=dHtRey9Ivdbuwq3wnIMXOBEu793BOjxb+vjEv58lVsuEYQw8Xy2SuP9eCNlaPwzJR+
-         Mif1Tjqsx2c/IgERM10FyEktJSU/6Byc3WrsL7QYRV0H45pNg67wwkwfCZAAkAIhKnmy
-         n3tneNfpYHvHnc5NKjApUUtsLG2kzGTtUtBiqdRaBH8roX7cne2Fx6oV3LTvwg76ml6l
-         GFMRlrXLy35omTbYfEJimuUFOU04kxZ4ORGPhiRJdJTX805NwwM/crG6jvuVdwGnh9Un
-         5ZGg583UrY01zvrTlWtYVk7RuPp4wbnPUbe1HVzNEfPPah0LPpealOJp1ZatRFIkx8nx
-         E1Og==
+        Mon, 26 Nov 2018 03:06:41 -0500
+Received: by mail-qt1-f195.google.com with SMTP id n21so15466443qtl.6;
+        Sun, 25 Nov 2018 13:14:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=grN8iueVCnJfFhI5vNxMNHC4YBEugxlvf468YCpBLTU=;
-        b=jZ5O4OZvFfwyZImZPqwbCrqG+OK/18gcu0NxaiYku3SxdtXFtRnUV2rArq1tA8NoVu
-         wZb9MohkKCYxl+WfwQCPWCGbSbmOnxsd8y32R1b/Z0njY/aNhXXydgsaQGQqSeX25Hdm
-         EEiPsODVY7LqIN2ZkOBwhXn28izBySYk95sohULr99VA718F40LDBAMmQsLLiFp1MYh0
-         y1FICl/yiXZYtdYlOES0QRgpWt9TNUiHOkXgcZH8//ZyKjxoMkq1s8VQXfx++14WYLKm
-         pmaA5pqHHOmTBAVwPGhx1X6MoH3H5WEjT3tRyhjG5QbBdlh8h28Ph4r7HxBsITuTsd5s
-         qHkg==
-X-Gm-Message-State: AA+aEWbeqIFzLQwvQgfvP5Vuee2nNoi5MuVApskrWGhGEjAVHOjLtZ7s
-        z9TsXEsFmbFoWmatCfh+Iw9rMwypQBaxpclLBGq7jw==
-X-Google-Smtp-Source: AJdET5d6Go+dHqS5tEszdo1nPigCgIfhs2WB9QUYzMOsEh/rqGCWsa7U1CiyarMSKgv8jNqsOh3kPTsFZXX9/efTfVw=
-X-Received: by 2002:a9d:7dd5:: with SMTP id k21mr14287939otn.214.1543179610180;
- Sun, 25 Nov 2018 13:00:10 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :organization:content-transfer-encoding;
+        bh=aYfajAnnLcz/9Kt8brXteTgaaCgo35dcBQZALcVEwrc=;
+        b=rrHfuT51nDM4hKDKUYUgb1zyN28N48Os7RFP+UYmDyQgkazPxx5Uf81V8b/bv+xzOV
+         LXhuTS5bPIrUF/BxGLCjp2II9n1lFOZ+s+wyoXGmOHa8BN0QmSAoBaRZDjYVz+7vol6s
+         OLmBlPlcCGsuLM81j/XeMrCOTkXGxCQ2Eu6wESi9wpDjzlclHuNsNnG5HffACoNPUXzy
+         PD5cjplxCjshwp8U1iqaIZ+6UrWqiZg+IwnwJPv3a4gYofkBdfS1zYKa7EKt6gyQk3uY
+         LA94eOidKgkkvoMFD62SQpznKHTOlXAttQRmBapM8FF35teEMVuu2w8O32/0+z0IuAAv
+         Mo3A==
+X-Gm-Message-State: AGRZ1gJOjbm7zEQj6tfzJfTlYJvlhcmdpFnuCAR8esS/VhalZArWYsAT
+        Vd4PzcjqmpAHL0itL5jykqZaS+f5
+X-Google-Smtp-Source: AJdET5doYpN0T2IVPa8NInhj9lQKjMzvaEkjMdnOHBtunIBRiWrHiTVZyVl8Y2R5XELG+Jw38rBE9g==
+X-Received: by 2002:ac8:2ca9:: with SMTP id 38mr23732002qtw.338.1543180482405;
+        Sun, 25 Nov 2018 13:14:42 -0800 (PST)
+Received: from localhost.localdomain ([181.220.65.91])
+        by smtp.gmail.com with ESMTPSA id b20sm33864725qkb.17.2018.11.25.13.14.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 25 Nov 2018 13:14:41 -0800 (PST)
+Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 25 Nov 2018 19:14:35 -0200
+From:   Otavio Salvador <otavio@ossystems.com.br>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Cc:     Otavio Salvador <otavio@ossystems.com.br>,
+        devicetree@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2] ARM: dts: rv1108: enable eMMC support
+Date:   Sun, 25 Nov 2018 19:14:27 -0200
+Message-Id: <20181125211427.4926-1-otavio@ossystems.com.br>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181121032702.3048-1-yehs2007@zoho.com>
-In-Reply-To: <20181121032702.3048-1-yehs2007@zoho.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Sun, 25 Nov 2018 12:59:59 -0800
-Message-ID: <CAPcyv4hmCsNOZPEAzOLxhFCQpyaG0_9TJvJnyuytQAVEU7_wbA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/3] realize dax_operations for dm-snapshot
-To:     Huaisheng Ye <yehs2007@zoho.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, zwisler@kernel.org,
-        Jan Kara <jack@suse.cz>, Dave Jiang <dave.jiang@intel.com>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        NingTing Cheng <chengnt@lenovo.com>,
-        Huaisheng Ye <yehs1@lenovo.com>
-Content-Type: text/plain; charset="UTF-8"
+Organization: O.S. Systems Software LTDA.
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 7:27 PM Huaisheng Ye <yehs2007@zoho.com> wrote:
->
-> From: Huaisheng Ye <yehs1@lenovo.com>
->
-> Changes
-> v1->v2:
->         Add NULL funtions for origin_dax_direct_access and
->         origin_dax_copy_from/to_iter in order to avoid building
->         error when CONFIG_DAX_DRIVER has NOT been enabled.
->
-> [v1]: https://lkml.org/lkml/2018/11/20/759
->
-> This series patches are used to realize the dax_operations for dm-snapshot
-> with persistent memory device.
+Enable eMMC support for rv1108.dtsi as it can be used across multiple
+boards.
 
-How does this interact with mmap write faults if the mapping is dax
-and the page needs to be cow'd?
+Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
+---
+
+Changes in v2:
+- rework evb device tree (Heiko Stuebner)
+- avoid adding the evb use as it is not present on evb but
+  minievb (which I don't have to test) and we are using it on a custom
+  customer board.
+
+ arch/arm/boot/dts/rv1108.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rv1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
+index ed8f6ca52c5b..4f4275599f7a 100644
+--- a/arch/arm/boot/dts/rv1108.dtsi
++++ b/arch/arm/boot/dts/rv1108.dtsi
+@@ -734,6 +734,27 @@
+ 			};
+ 		};
+ 
++		emmc {
++			emmc_clk: emmc-clk {
++				rockchip,pins = <2 RK_PB6 RK_FUNC_1 &pcfg_pull_none_drv_8ma>;
++			};
++
++			emmc_cmd: emmc-cmd {
++				rockchip,pins = <2 RK_PB4 RK_FUNC_2 &pcfg_pull_up_drv_8ma>;
++			};
++
++			emmc_bus8: emmc-bus8 {
++				rockchip,pins = <2 RK_PA0 RK_FUNC_2 &pcfg_pull_up_drv_8ma>,
++						<2 RK_PA1 RK_FUNC_2 &pcfg_pull_up_drv_8ma>,
++						<2 RK_PA2 RK_FUNC_2 &pcfg_pull_up_drv_8ma>,
++						<2 RK_PA3 RK_FUNC_2 &pcfg_pull_up_drv_8ma>,
++						<2 RK_PA4 RK_FUNC_2 &pcfg_pull_up_drv_8ma>,
++						<2 RK_PA5 RK_FUNC_2 &pcfg_pull_up_drv_8ma>,
++						<2 RK_PA6 RK_FUNC_2 &pcfg_pull_up_drv_8ma>,
++						<2 RK_PA7 RK_FUNC_2 &pcfg_pull_up_drv_8ma>;
++			};
++		};
++
+ 		sdmmc {
+ 			sdmmc_clk: sdmmc-clk {
+ 				rockchip,pins = <3 RK_PC4 RK_FUNC_1 &pcfg_pull_none_drv_4ma>;
+-- 
+2.19.1
+
