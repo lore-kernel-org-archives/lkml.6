@@ -7,67 +7,67 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A34C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 11:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9942CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 11:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 028A52084E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 11:28:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CC972084E
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 11:29:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B8AH1pOv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 028A52084E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfqL9iTG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CC972084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbeKYWTM (ORCPT
+        id S1726251AbeKYWT7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 17:19:12 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37944 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725936AbeKYWTM (ORCPT
+        Sun, 25 Nov 2018 17:19:59 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43252 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbeKYWT7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 17:19:12 -0500
-Received: by mail-pg1-f194.google.com with SMTP id g189so4850437pgc.5;
-        Sun, 25 Nov 2018 03:28:20 -0800 (PST)
+        Sun, 25 Nov 2018 17:19:59 -0500
+Received: by mail-pl1-f193.google.com with SMTP id gn14so12513653plb.10;
+        Sun, 25 Nov 2018 03:29:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=yypVDYNEwuNsOFUaoUJ0BiktqZpqR8KebM36sOj/SUc=;
-        b=B8AH1pOv8YvBHhOtZuHLgaFjpsxaK/rmz+ALdEuQRf/ticppLUGdlR+o3Wvg66rSbl
-         G2m8qRFhDIIH3zLw/GdLW2lr5+REVC1phCM5l/di2/5j+dm0+rYHmHQJGgQDRtAoXtlG
-         2WLIWSOXGDTpkqrfBADC/bifcVdqMsHjWQMiFdzBXAZLxYRSn7RX5CyKQzunskqD2Zhh
-         S4q6W936Ss8tnFzK1id4ImrQhj5+TvHu7F+7xa8i4pwNDwcEQE6Uq7LAQpSVZPVhFWLg
-         sqKXb8dtD4cCQY7Wtd4/gNP26FyqV91QLhhngaLwyTfq4XSllwEcUlYqm58fQm5lIlwd
-         rYsw==
+        bh=aq/59RPq4dxet/glAKtloYkdVb6h1n+jWNdOufUL5x0=;
+        b=jfqL9iTGwUBvDtO0RWFPhqXMA0PHZrJBwt6nF2vKl7fKIOc3n8UOZPf+l8uT8XXREY
+         gkfwikm2crKbslOYyzc4DOf8e4I93khMmn8u8NMTs44GIbqfwzZPDFggFXWKpyMTvim9
+         IrAHLb3fGcBUXMidNlSXwMsbhRODSNo3E75z9koY4QVAqjmCaQgIX+GqA1By9UqhNEE0
+         o3ODKqs9tcjGy3cD1QSdZc9LNKRZmbVao0xs6TvEk0WMJGlgz+sINcCpHzzahEEXrLQH
+         +pX2KVUKPiZhBpoNbsl7+AU5UUEhaWfsJBtcW5S/2uSvKCpwcIvK+1IMvWwK85eFw45p
+         wVLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yypVDYNEwuNsOFUaoUJ0BiktqZpqR8KebM36sOj/SUc=;
-        b=BCJxP20EnCeqsboX3k171nVhmz3XzXp4O9XdRvirs7kTdeONtApdODVcc8E5fkzNIa
-         qM2TziRVhxl6Pp8pm+SFPSO96Sg+cV1EjszHjgFC/4BLB+QRZFvx2LVrAPMsguFCftNx
-         lS8uZCjp55i5YYmWtB2W3cYfO3hyhiiIxKqElG5Q5LFFkaBtlodtT/Ia1qzgsasC4Wl/
-         He9tJs4AdH7LF13sf89yzYXN8BgWQ4foNOdCqVpC+YfQQL+EXWniJbi7MZyXDyMAZZj5
-         mdZpwodov5W1ZDrPIMnV5HSmjsmLCid2o0v/ikHzGcVsdQGK4fu+N8Wx01GhFLdRhL9N
-         bN1w==
-X-Gm-Message-State: AA+aEWZnvdMmTc17AQ7FBWJ73WXLG0MWUotPnwWCyOeIgeND5RvRhNBb
-        XJsAvj3ZSjWmk+sk5F9rV1s=
-X-Google-Smtp-Source: AFSGD/XHHplpC6lLoiOi88CI6KJJ5ofJZMD1l/UkFDfxj1jRvBcIuJNiCCe/i1onDH/ekSDbL0N6fA==
-X-Received: by 2002:a62:931a:: with SMTP id b26mr17405632pfe.65.1543145300141;
-        Sun, 25 Nov 2018 03:28:20 -0800 (PST)
+        bh=aq/59RPq4dxet/glAKtloYkdVb6h1n+jWNdOufUL5x0=;
+        b=MmoIksIz1qEFJZK23sNEY7GET4KiMoUWUi8PiC9OK0w9RazaLEIaWvk4835krykoDF
+         AgEr7J12fMbB2v0j+WvMac3r3ZC0yiUCuX/yCcpWd1aOGhG4KfSdnXskz4NDPvZLFbSo
+         BAs67EPprujVKqWT1zACJ0Y+QgkG/7mnLJXef6Bg6bG9pAlHvK6aYSgI0nTi6B6Voq85
+         cBwZiqerj8N2Ok9Q2Gy67qqjFcm1GXzeqkMeCJoDTYYlqwJG8ehq36tIg1CWnGL2L8JK
+         j9xbbmJWETvYQY0FFPiVj1YhR0gNz+RymfEeOpcwpJ5XZUrKs9nZeSpXAKk4D4vdMDyJ
+         fb8g==
+X-Gm-Message-State: AA+aEWbBWCuicpatdSFzlmJWiL8cO//4mtC4ODXIacGNaVb397BGn37J
+        agoeh+vpzz2PnBT384EwzEo=
+X-Google-Smtp-Source: AFSGD/UE9JKH/NadNU9hKATTw7t4r8vIlpuVTvEAezqEEoUNDep30SovNEUc2ufLZeMkYhMGsHwetw==
+X-Received: by 2002:a17:902:2c03:: with SMTP id m3mr23167294plb.125.1543145347074;
+        Sun, 25 Nov 2018 03:29:07 -0800 (PST)
 Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id s2sm49973892pfa.167.2018.11.25.03.28.17
+        by smtp.gmail.com with ESMTPSA id h74sm12306779pfd.35.2018.11.25.03.29.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Nov 2018 03:28:19 -0800 (PST)
-Date:   Sun, 25 Nov 2018 16:58:14 +0530
+        Sun, 25 Nov 2018 03:29:06 -0800 (PST)
+Date:   Sun, 25 Nov 2018 16:59:01 +0530
 From:   Nishad Kamdar <nishadkamdar@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: [PATCH 06/26] Staging: fbtft: fb_upd161704: Switch to the gpio
+Subject: [PATCH 07/26] Staging: fbtft: fb_sh1106: Switch to the gpio
  descriptor interface
-Message-ID: <87f73bf1fb0a79eac6eac5af9a376e68d152c990.1543142440.git.nishadkamdar@gmail.com>
+Message-ID: <efb6414a9e3e04f766188c4e6aee8d125b1cdd2d.1543142440.git.nishadkamdar@gmail.com>
 References: <cover.1543142440.git.nishadkamdar@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -79,19 +79,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This switches the fb_upd161704.c to use GPIO descriptors
+This switches the fb_sh1106.c to use GPIO descriptors
 rather than numerical gpios.
 
 Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 ---
- drivers/staging/fbtft/fb_upd161704.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/fbtft/fb_sh1106.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/fbtft/fb_upd161704.c b/drivers/staging/fbtft/fb_upd161704.c
-index acc425fdf34e..564a38e34440 100644
---- a/drivers/staging/fbtft/fb_upd161704.c
-+++ b/drivers/staging/fbtft/fb_upd161704.c
-@@ -12,7 +12,7 @@
+diff --git a/drivers/staging/fbtft/fb_sh1106.c b/drivers/staging/fbtft/fb_sh1106.c
+index 00096f8d249a..6f7249493ea3 100644
+--- a/drivers/staging/fbtft/fb_sh1106.c
++++ b/drivers/staging/fbtft/fb_sh1106.c
+@@ -9,7 +9,7 @@
  #include <linux/module.h>
  #include <linux/kernel.h>
  #include <linux/init.h>
@@ -100,17 +100,6 @@ index acc425fdf34e..564a38e34440 100644
  #include <linux/delay.h>
  
  #include "fbtft.h"
-@@ -26,8 +26,8 @@ static int init_display(struct fbtft_par *par)
- {
- 	par->fbtftops.reset(par);
- 
--	if (par->gpio.cs != -1)
--		gpio_set_value(par->gpio.cs, 0);  /* Activate chip */
-+	if (!par->gpio.cs)
-+		gpiod_set_value(par->gpio.cs, 0);  /* Activate chip */
- 
- 	/* Initialization sequence from Lib_UTFT */
- 
 -- 
 2.17.1
 
