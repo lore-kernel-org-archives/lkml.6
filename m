@@ -2,328 +2,182 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1CCC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 10:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC94C04EBA
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 10:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A96242084E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 10:44:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5AC420868
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 10:59:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UgUw/5d5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A96242084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTPTHO1p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5AC420868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbeKYVf3 (ORCPT
+        id S1726457AbeKYVuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 16:35:29 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34531 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbeKYVf3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 16:35:29 -0500
-Received: by mail-pl1-f193.google.com with SMTP id f12-v6so12497378plo.1;
-        Sun, 25 Nov 2018 02:44:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=h7weriofn7VQt6OR94EhdryMNpfwBwGXpKipdfPsM5E=;
-        b=UgUw/5d57OWc1lgGm4W8rfe9lHuaHIhrY/v9uyARRvcFmQl5vmrLO04H7TmqbhHXZI
-         eGfQ/L7RqOh4qLoRvJSieaT1gbh5S/GflUF0oubBgyYOVmYEOxo9L9UmS13od2wScAFp
-         fR2dD4aPvlKjJj1WE9JyVHg1Wwxtm84OTYWM/qxBLYhZBiXELQZaooRERuMy1uK117F8
-         IdRev3Wm9cU5/Zd9pF0WbVMJOfXtu0dgEyUlvxAn3o8dCytxa4WhvN6GrGN0gAXRR3O3
-         rHwFNNh7lxgEPyYze7b3rtZ/eAg9G0VX+9heLWJJFeI+1zWpPsn+T8Yy9pFLozfvsLF4
-         yjng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h7weriofn7VQt6OR94EhdryMNpfwBwGXpKipdfPsM5E=;
-        b=oIWJUKLrAYkhVkb8Wpt3TA4vuMcHv2/lepsV+uK/vpWEx9Py/svmifPqjmZ703lZ86
-         u9FkvSbLLGKbgESiLC1PPE4XhO7nCDRCrTcEFXiQ0pPA6Rwq3cb1gaYYZrMgge4MCoZN
-         8WDMZSLhGAvrQF6TiP32HBJxIfU2a5uwkDTHSC4oLN+jodJav0TNoIE+lfcvl679QZ0d
-         HSkf8/8vN7qp3GuhW4aujf4UePMws8aXZChFMdqflThHL4o5N28rIsZmVhK98gQnZlxa
-         2VBCLIFF8Ylfk0V7qfuFWExqqr5QgvcjnxsS2ijJBJVbts5hjpuyLzhwj0v+RM8ngmtm
-         9wyQ==
-X-Gm-Message-State: AA+aEWaNDCpGj+ernEsKlys+195uZzWw4cCwZwWDJvcDf3uh8mw9BaHN
-        Qkn+mNgPsX1+7/zptDY0gbu19hQb
-X-Google-Smtp-Source: AFSGD/UmvCwcXYqHYR/4lVn60mf0vW4ixQytgpTCkPZ4WBl9E8/1T1oyDQWfL+lvjywQXMg1Bc43eg==
-X-Received: by 2002:a17:902:e201:: with SMTP id ce1-v6mr23126779plb.138.1543142680544;
-        Sun, 25 Nov 2018 02:44:40 -0800 (PST)
-Received: from himanshu-Vostro-3559 ([103.233.116.134])
-        by smtp.gmail.com with ESMTPSA id x127sm58110731pfd.156.2018.11.25.02.44.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Nov 2018 02:44:40 -0800 (PST)
-Date:   Sun, 25 Nov 2018 16:14:34 +0530
-From:   Himanshu Jha <himanshujha199640@gmail.com>
-To:     Tomasz Duszynski <tduszyns@gmail.com>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/3] iio: chemical: add support for Sensirion SPS30 sensor
-Message-ID: <20181125104434.GA19309@himanshu-Vostro-3559>
-References: <20181124221415.10081-1-tduszyns@gmail.com>
- <20181124221415.10081-3-tduszyns@gmail.com>
+        Sun, 25 Nov 2018 16:50:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53450 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726184AbeKYVuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 16:50:20 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03DFA20865;
+        Sun, 25 Nov 2018 10:59:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543143570;
+        bh=ismbxXx5+pAJ2PmvDHhjSwbHJBQeSPnUzYF0/3GfBbY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nTPTHO1pjgi9j7NjwEpAa9o04+fl9pZkYBCq5CMO5PHVQhWgtZqaiPWYXhOHH1lQS
+         tYOF9JYlNRhICyxg8efd29x5Da6s3d3UJM7XOJL0Km7yzYfGW+1tdy+9OvLZ3O/DD5
+         V0h0ALcTVm8SFbA5h7pKjsvJWKlhU0jjfSpOwbNY=
+Date:   Sun, 25 Nov 2018 10:59:26 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc:     lars@metafoo.de, Michael.Hennerich@analog.com, knaack.h@gmx.de,
+        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: Re: [PATCH] staging: iio: ad5933: replaced kfifo by
+ triggered_buffer
+Message-ID: <20181125105926.4730a798@archlinux>
+In-Reply-To: <20181122125347.sn2oqrw7fyb4corf@smtp.gmail.com>
+References: <20181122125347.sn2oqrw7fyb4corf@smtp.gmail.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181124221415.10081-3-tduszyns@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 24, 2018 at 11:14:14PM +0100, Tomasz Duszynski wrote:
-> Add support for Sensirion SPS30 particulate matter sensor.
+On Thu, 22 Nov 2018 10:53:47 -0200
+Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
+
+> Previously, there was an implicit creation of a kfifo which was replaced
+> by a call to triggered_buffer_setup, which is already implemented in iio
+> infrastructure.
 > 
-> Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+
+I'm a little surprised that this would work without screaming a lot as 
+it will register an interrupt with no handlers. Do you have this
+device to test?  It's rapidly heading in the direction of too complex
+a driver to fix without test hardware.  Also, semantically this change
+is not sensible as it implies an operating mode which the driver
+is not using.
+
+There are fundamental questions about how we handle an autotriggered
+sweep that need answering before this driver can move forwards.
+It needs some concept of a higher level trigger rather than a per
+sample one like we typically use in IIO.
+
+The main focus in the short term should be around defining that ABI
+as it may fundamentally change the structure of the driver.
+If you want to take this on (and it'll be a big job I think!) then
+it may be possible to source some hardware to support that effort.
+
+Thanks,
+
+Jonathan
+
 > ---
->  drivers/iio/chemical/Kconfig  |  11 ++
->  drivers/iio/chemical/Makefile |   1 +
->  drivers/iio/chemical/sps30.c  | 359 ++++++++++++++++++++++++++++++++++
->  3 files changed, 371 insertions(+)
->  create mode 100644 drivers/iio/chemical/sps30.c
-
-[]
-
-> +#define pr_fmt(fmt) "sps30: " fmt
-
-I don't see its usage ?
-
-> +#include <linux/crc8.h>
-> +#include <linux/delay.h>
-> +#include <linux/i2c.h>
-> +#include <linux/iio/buffer.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/sysfs.h>
-> +#include <linux/iio/trigger_consumer.h>
+>  .../staging/iio/impedance-analyzer/Kconfig    |  2 +-
+>  .../staging/iio/impedance-analyzer/ad5933.c   | 25 ++++---------------
+>  2 files changed, 6 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/impedance-analyzer/Kconfig b/drivers/staging/iio/impedance-analyzer/Kconfig
+> index dd97b6bb3fd0..d0af5aa55dc0 100644
+> --- a/drivers/staging/iio/impedance-analyzer/Kconfig
+> +++ b/drivers/staging/iio/impedance-analyzer/Kconfig
+> @@ -7,7 +7,7 @@ config AD5933
+>  	tristate "Analog Devices AD5933, AD5934 driver"
+>  	depends on I2C
+>  	select IIO_BUFFER
+> -	select IIO_KFIFO_BUF
+> +	select IIO_TRIGGERED_BUFFER
+>  	help
+>  	  Say yes here to build support for Analog Devices Impedance Converter,
+>  	  Network Analyzer, AD5933/4, provides direct access via sysfs.
+> diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/staging/iio/impedance-analyzer/ad5933.c
+> index f9bcb8310e21..edb8b540bbf1 100644
+> --- a/drivers/staging/iio/impedance-analyzer/ad5933.c
+> +++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
+> @@ -20,7 +20,7 @@
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/sysfs.h>
+>  #include <linux/iio/buffer.h>
+> -#include <linux/iio/kfifo_buf.h>
 > +#include <linux/iio/triggered_buffer.h>
-> +#include <linux/module.h>
-> +
-> +#define SPS30_CRC8_POLYNOMIAL 0x31
-> +
-> +/* SPS30 commands */
-> +#define SPS30_START_MEAS 0x0010
-> +#define SPS30_STOP_MEAS 0x0104
-> +#define SPS30_RESET 0xd304
-> +#define SPS30_READ_DATA_READY_FLAG 0x0202
-> +#define SPS30_READ_DATA 0x0300
-> +#define SPS30_READ_SERIAL 0xD033
+>  
+>  /* AD5933/AD5934 Registers */
+>  #define AD5933_REG_CONTROL_HB		0x80	/* R/W, 1 byte */
+> @@ -615,22 +615,6 @@ static const struct iio_buffer_setup_ops ad5933_ring_setup_ops = {
+>  	.postdisable = ad5933_ring_postdisable,
+>  };
+>  
+> -static int ad5933_register_ring_funcs_and_init(struct iio_dev *indio_dev)
+> -{
+> -	struct iio_buffer *buffer;
+> -
+> -	buffer = iio_kfifo_allocate();
+> -	if (!buffer)
+> -		return -ENOMEM;
+> -
+> -	iio_device_attach_buffer(indio_dev, buffer);
+> -
+> -	/* Ring buffer functions - here trigger setup related */
+> -	indio_dev->setup_ops = &ad5933_ring_setup_ops;
+> -
+> -	return 0;
+> -}
+> -
+>  static void ad5933_work(struct work_struct *work)
+>  {
+>  	struct ad5933_state *st = container_of(work,
+> @@ -744,7 +728,8 @@ static int ad5933_probe(struct i2c_client *client,
+>  	indio_dev->channels = ad5933_channels;
+>  	indio_dev->num_channels = ARRAY_SIZE(ad5933_channels);
+>  
+> -	ret = ad5933_register_ring_funcs_and_init(indio_dev);
+> +	ret = iio_triggered_buffer_setup(indio_dev, NULL, NULL,
+> +					 &ad5933_ring_setup_ops);
 
-Could you please put a tab and align these macros.
+The absence of either of the interrupt related callbacks made me
+wonder what is going on here.  The upshot is that this device
+isn't operating in a triggered buffer style at all so we really
+shouldn't be using that infrastructure - even if it's convenient.
 
-  #define SPS30_START_MEAS		0x0010
-  #define SPS30_STOP_MEAS		0x0104
-
-
-> +static int sps30_write_then_read(struct sps30_state *state, u8 *buf,
-> +				 int buf_size, u8 *data, int data_size)
-> +{
-> +	/* every two received data bytes are checksummed */
-> +	u8 tmp[data_size + data_size / 2];
-
-No VLAs!
-
-https://lore.kernel.org/lkml/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com/
-
-> +	int ret, i;
-> +
-> +	/*
-> +	 * Sensor does not support repeated start so instead of
-> +	 * sending two i2c messages in a row we just send one by one.
-> +	 */
-> +	ret = i2c_master_send(state->client, buf, buf_size);
-> +	if (ret != buf_size)
-> +		return ret < 0 ? ret : -EIO;
-> +
-> +	if (!data)
-> +		return 0;
-> +
-> +	ret = i2c_master_recv(state->client, tmp, sizeof(tmp));
-> +	if (ret != sizeof(tmp))
-> +		return ret < 0 ? ret : -EIO;
-> +
-> +	for (i = 0; i < sizeof(tmp); i += 3) {
-> +		u8 crc = crc8(sps30_crc8_table, &tmp[i], 2, CRC8_INIT_VALUE);
-> +
-> +		if (crc != tmp[i + 2]) {
-> +			dev_err(&state->client->dev,
-> +				"data integrity check failed\n");
-> +			return -EIO;
-> +		}
-> +
-> +		*data++ = tmp[i];
-> +		*data++ = tmp[i + 1];
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
-> +{
-> +	/* depending on the command up to 3 bytes may be needed for argument */
-> +	u8 buf[sizeof(cmd) + 3] = { cmd >> 8, cmd };
-
-This is fine, since sizeof returns constant integer expression.
-
-> +	switch (cmd) {
-> +	case SPS30_START_MEAS:
-> +		buf[2] = 0x03;
-> +		buf[3] = 0x00;
-> +		buf[4] = 0xac; /* precomputed crc */
-> +		return sps30_write_then_read(state, buf, 5, NULL, 0);
-> +	case SPS30_STOP_MEAS:
-> +	case SPS30_RESET:
-> +		return sps30_write_then_read(state, buf, 2, NULL, 0);
-> +	case SPS30_READ_DATA_READY_FLAG:
-> +	case SPS30_READ_DATA:
-> +	case SPS30_READ_SERIAL:
-> +		return sps30_write_then_read(state, buf, 2, data, size);
-> +	default:
-> +		return -EINVAL;
-> +	};
-> +}
+It'll allocate an interrupt with neither a top half nor a thread
+function. I'm not sure what the core will do about that but it
+seems unlikely to be happy about it!
 
 
-> +static int sps30_read_raw(struct iio_dev *indio_dev,
-> +			  struct iio_chan_spec const *chan,
-> +			  int *val, int *val2, long mask)
-> +{
-> +	struct sps30_state *state = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_PROCESSED:
-> +		switch (chan->type) {
-> +		case IIO_MASSCONCENTRATION:
-> +			mutex_lock(&state->lock);
-> +			switch (chan->channel2) {
-> +			case IIO_MOD_PM2p5:
+>  	if (ret)
+>  		goto error_disable_reg;
+>  
+> @@ -759,7 +744,7 @@ static int ad5933_probe(struct i2c_client *client,
+>  	return 0;
+>  
+>  error_unreg_ring:
+> -	iio_kfifo_free(indio_dev->buffer);
+> +	iio_triggered_buffer_cleanup(indio_dev);
+>  error_disable_reg:
+>  	regulator_disable(st->reg);
+>  
+> @@ -772,7 +757,7 @@ static int ad5933_remove(struct i2c_client *client)
+>  	struct ad5933_state *st = iio_priv(indio_dev);
+>  
+>  	iio_device_unregister(indio_dev);
+> -	iio_kfifo_free(indio_dev->buffer);
+> +	iio_triggered_buffer_cleanup(indio_dev);
+>  	regulator_disable(st->reg);
+>  
+>  	return 0;
 
-I think lock should be placed here
-
-> +				ret = sps30_do_meas(state, val, val2);
-
-... and unlock here.
-
-> +				break;
-> +			case IIO_MOD_PM10:
-> +				ret = sps30_do_meas(state, val2, val);
-> +				break;
-> +			default:
-> +				break;
-> +			}
-> +			mutex_unlock(&state->lock);
-> +			if (ret)
-> +				return ret;
-> +
-> +			return IIO_VAL_INT;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-
-[]
-
-> +static int sps30_probe(struct i2c_client *client)
-> +{
-> +	struct iio_dev *indio_dev;
-> +	struct sps30_state *state;
-> +	u8 buf[32] = { };
-
-This is not valid in ISO-C but only in C++.
-
-Instead,
-
-	u8 buf[32] = {0};
-
-> +	int ret;
-> +
-> +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
-> +		return -EOPNOTSUPP;
-> +
-> +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*state));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	state = iio_priv(indio_dev);
-> +	i2c_set_clientdata(client, indio_dev);
-> +	state->client = client;
-> +	indio_dev->dev.parent = &client->dev;
-> +	indio_dev->info = &sps30_info;
-> +	indio_dev->name = client->name;
-> +	indio_dev->channels = sps30_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(sps30_channels);
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->available_scan_masks = sps30_scan_masks;
-> +
-> +	mutex_init(&state->lock);
-> +	crc8_populate_msb(sps30_crc8_table, SPS30_CRC8_POLYNOMIAL);
-> +
-> +	/*
-> +	 * Power-on-reset causes sensor to produce some glitch on i2c bus
-> +	 * and some controllers end up in error state. Recover simply
-> +	 * by placing something on the bus.
-> +	 */
-> +	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
-> +	if (ret) {
-> +		dev_err(&client->dev, "failed to reset device\n");
-> +		return ret;
-> +	}
-> +	usleep_range(2500000, 3500000);
-
-Isn't that range too high ?
-msleep_interruptible ?
-
-> +	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
-> +
-> +	ret = sps30_do_cmd(state, SPS30_READ_SERIAL, buf, sizeof(buf));
-> +	if (ret) {
-> +		dev_err(&client->dev, "failed to read serial number\n");
-> +		return ret;
-> +	}
-> +	dev_info(&client->dev, "serial number: %s\n", buf);
-> +
-> +	ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
-> +	if (ret) {
-> +		dev_err(&client->dev, "failed to start measurement\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = devm_iio_triggered_buffer_setup(&client->dev, indio_dev, NULL,
-> +					      sps30_trigger_handler, NULL);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return devm_iio_device_register(&client->dev, indio_dev);
-> +}
-> +
-> +static int sps30_remove(struct i2c_client *client)
-
-Perfect candidate for `devm_add_action_or_reset()` ?
-
-> +{
-> +	struct iio_dev *indio_dev = i2c_get_clientdata(client);
-> +	struct sps30_state *state = iio_priv(indio_dev);
-> +
-> +	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
-> +
-> +	return 0;
-> +}
-
-
--- 
-Himanshu Jha
-Undergraduate Student
-Department of Electronics & Communication
-Guru Tegh Bahadur Institute of Technology
