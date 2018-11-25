@@ -2,97 +2,137 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45FA4C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77EABC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CC5120865
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:11:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CC5120865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 1837920865
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 01:15:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1837920865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbeKYMBW (ORCPT
+        id S1726825AbeKYMEw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 07:01:22 -0500
-Received: from muru.com ([72.249.23.125]:54984 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726400AbeKYMBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 07:01:22 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 96CDC8087;
-        Sun, 25 Nov 2018 01:11:35 +0000 (UTC)
-Date:   Sat, 24 Nov 2018 17:11:31 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org,
-        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
-Message-ID: <20181125011131.GK53235@atomide.com>
-References: <20181119104040.12885-1-peter.ujfalusi@ti.com>
- <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
- <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
- <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
- <20181122102948.GN6920@n2100.armlinux.org.uk>
- <20181122151236.GA9611@n2100.armlinux.org.uk>
- <6ed280af-edb6-4be7-82f4-7fc00378103e@ti.com>
- <20181123185215.GH12912@darkstar.musicnaut.iki.fi>
- <20181124200942.GS6920@n2100.armlinux.org.uk>
- <20181125010717.GJ53235@atomide.com>
+        Sun, 25 Nov 2018 07:04:52 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:56286 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbeKYMEw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Nov 2018 07:04:52 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 66B082238B;
+        Sat, 24 Nov 2018 20:14:59 -0500 (EST)
+Date:   Sun, 25 Nov 2018 12:15:07 +1100 (AEDT)
+From:   Finn Thain <fthain@telegraphics.com.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+cc:     Kars de Jong <jongk@linux-m68k.org>,
+        Philip Blundell <philb@gnu.org>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen N Chivers <schivers@csc.com.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 09/14] m68k: hp300: Remove hp300_gettimeoffset()
+In-Reply-To: <alpine.LNX.2.21.1811212129520.275@nippy.intranet>
+Message-ID: <alpine.LNX.2.21.1811250953120.10@nippy.intranet>
+References: <cover.1542589838.git.fthain@telegraphics.com.au> <eb676d37a8e40b88f6c577b372b6512bc19a3394.1542589838.git.fthain@telegraphics.com.au> <CACz-3rh6Qw7YxeFK41KG_ju-bWHRoCaciWvv7JLeURn7wGVAOg@mail.gmail.com> <alpine.LNX.2.21.1811202034350.258@nippy.intranet>
+ <CAMuHMdVQPSE7+Pe64OybnugCx-pLVfKmNS6_4DEofF3XZPBLsA@mail.gmail.com> <alpine.LNX.2.21.1811211917270.275@nippy.intranet> <CAMuHMdVexpeYVSBMXFwu5cYt3d=w9U48m_fNTuK5awhBNnsW_A@mail.gmail.com> <alpine.LNX.2.21.1811212032550.275@nippy.intranet>
+ <CAMuHMdVzamshSdhDAnxdzq=YiQMvDhrE03UmJxHJLHr6g=u44Q@mail.gmail.com> <alpine.LNX.2.21.1811212129520.275@nippy.intranet>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181125010717.GJ53235@atomide.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [181125 01:07]:
-> * Russell King - ARM Linux <linux@armlinux.org.uk> [181124 20:10]:
-> > On Fri, Nov 23, 2018 at 08:52:15PM +0200, Aaro Koskinen wrote:
-> > > Hi,
-> > > 
-> > > On Fri, Nov 23, 2018 at 02:35:04PM +0200, Peter Ujfalusi wrote:
-> > > > On 22/11/2018 17.12, Russell King - ARM Linux wrote:
-> > > > > I'm also not sure about this:
-> > > > > 
-> > > > >         if (cpu_is_omap15xx())
-> > > > >                 end++;
-> > > > > 
-> > > > > in dma_dest_len() - is that missing from the omap-dma driver?  It looks
-> > > > > like a work-around for some problem on OMAP15xx, but I can't make sense
-> > > > > about why it's in the UDC driver rather than the legacy DMA driver.
-> > > > 
-> > > > afaik no other legacy drivers were doing similar thing, this must be
-> > > > something which is needed for the omap_udc driver to fix up something?
-> > > 
-> > > Here's the patch that added it: https://marc.info/?l=linux-omap&m=119634396324221&w=2
-> > > 
-> > > "Make DMA-OUT behave on the 1510 ... the 1510 CPC register was just
-> > > off-by-one with respect to the 1611 CDAC"
-> > 
-> > ... which suggests that's a problem with the CPC register itself, and
-> > we should fix that in the DMAengine driver rather than the USB gadget
-> > driver.
-> > 
-> > Tony, any input on this?
+On Wed, 21 Nov 2018, I wrote:
+
+> On Wed, 21 Nov 2018, Geert Uytterhoeven wrote:
 > 
-> Yeah that sounds like some hardware work-around for 15xx as described
-> in the DMA_DEST_LAST macro reading CSAC on 15xx instead of CDAC. Seems
-> like it should be done in the dmaengine driver.. My guess is that other
-> dma users never needed to read CSAC register?
+> > > This suggests that either 0 or N (the latched value) would result 
+> > > from a read from the counter immediately following an interrupt. Who 
+> > > can say which? Just have to try it. The answer should allow us to 
+> > > avoid the risk of a clocksource that jumps forwards and backwards.
+> > 
+> > The code in amiga_gettimeoffset() does:
+> > 
+> >         ticks = hi << 8 | lo;
+> > 
+> >         if (ticks > jiffy_ticks / 2)
+> >                 /* check for pending interrupt */
+> >                 if (cia_set_irq(&ciab_base, 0) & CIA_ICR_TA)
+> >                         offset = 10000;
+> > 
+> 
+> That _suggests_ that there's no interrupt when ticks == 0.
+> 
+> But look what happens next:
+> 
+> >         ticks = jiffy_ticks - ticks;
+> > 
+> >         ticks = (10000 * ticks) / jiffy_ticks;
+> > 
+> >         return (ticks + offset) * 1000;
+> 
+> If (hi << 8 | lo) == 0, and you set offset = 10000, then the return 
+> value would be maximal.
+> 
+> Let's immediately call this function again. This time (hi << 8 | lo) == 
+> N. Let's add the offset again. I'm afraid the clock just jumped 
+> backwards.
+> 
+> So the logic you quoted has a rationale which is unrelated to the 
+> question.
+> 
 
-And it looks like for 15xx we have CPC and CSAC both at offset 0x18 in
-arch/arm/mach-omap1/dma.c, seems like the dma driver is missing handling
-for the CPC register that's there only for 15xx.
+I've learned that emulators like MAME [1] and VICE [2] have used a 
+reverse-engineered description of the CIA called "A Software Model of the 
+CIA6526" by Wolfgang Lorenz and an accompanying test suite [3].
 
-Regards,
+That document says, "When the counter has reached zero, it is reloaded 
+from the latch as soon as there is another clock waiting in the pipeline. 
+In phase 2 mode, this is always the case. This explains why you are 
+reading zeros in cascaded mode only (2-2-2-1-1-1-0-0-2) but not in phase 2 
+mode (2-1-2)."
 
-Tony
+I think this is a good argument that a zero count will never be observed 
+by reading the counter register. Hence, it seems that this conditional in 
+the v3 patch,
+
+	if (msb > 0)
+
+is redundant and should be removed.
+
+It could be reverted to,
+
+	if (ticks > jiffy_ticks / 2)
+
+which is intended to reduce the number of calls to cia_set_irq() but 
+assumes low interrupt latency (below 5 ms).
+
+Maybe the timer interrupt has a sufficiently high priority and latency is 
+low? Maybe cia_set_irq() is really expensive?
+
+I don't know the platform well enough so I'm inclined to revert. We can 
+benchmark gettimeofday syscalls on elgar but is that hardware 
+representative of other relevant models?
+
+[1] 
+https://github.com/mamedev/mame/commit/e2ed0490520f538c346c8bdaa9084bcbc43427cb
+
+[2]
+http://vice-emu.sourceforge.net/vice_9.html
+
+[3]
+https://www.commodore.ca/manuals/funet/cbm/documents/chipdata/cia6526.zip
+
+-- 
