@@ -2,81 +2,128 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_ADSP_ALL,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D4FC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 350E3C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E297420868
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:57:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E297420868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mniewoehner.de
+	by mail.kernel.org (Postfix) with ESMTP id F03962086B
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 16:58:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F03962086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbeKZDtO convert rfc822-to-8bit (ORCPT
+        id S1726680AbeKZDuD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 22:49:14 -0500
-Received: from sender-of-o53.zoho.com ([135.84.80.218]:21839 "EHLO
-        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbeKZDtO (ORCPT
+        Sun, 25 Nov 2018 22:50:03 -0500
+Received: from emh03.mail.saunalahti.fi ([62.142.5.109]:54022 "EHLO
+        emh03.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbeKZDuC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 22:49:14 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1543165061; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=jfeZXOWZhfy188x06IYs26fULeE8FXk2TyAVY4Cd5MYhoMrTOcLtNdKaSBvGA4zUHIeuwYT0Ug4jIO5A1vsDPe9+m5sxRZ9YvZ7rVHhQFCgum0AfvLAKfNiXSdhCIDJl3RPvk7wXierh4j4wUIHtcaLQEgQL1qNHsDb3D1O3OjE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1543165061; h=Content-Type:Content-Transfer-Encoding:Date:From:MIME-Version:Message-ID:Subject:To:ARC-Authentication-Results; 
-        bh=7NX2E9WRbjbCE7YQ45f2VflH8nz/0PVhz2mQ6sstecY=; 
-        b=Ry63FiTehbN3rCTaukcQ9sWgM76mv3b0cEPreH6UXtg/FVYtEotujp36zfaLsJvs+9mKYiJ3/Ysw0Hf8c5drgc7IZSpdDGw1mf3DmJiZSyNP2msWmNhrmJSdB8wfz5Co6pixTRgypyM/SKXl+lKv2p4wvt+qaz1FbP7IsuxvAS8=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=mniewoehner.de;
-        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
-        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
-Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
-        with SMTPS id 1543165058645856.8186003044875; Sun, 25 Nov 2018 08:57:38 -0800 (PST)
-Message-ID: <d90d4827c192c43aa3b2f53af17f0b04d6f2f250.camel@mniewoehner.de>
-Subject: [PATCH] usb: core: quirks: add RESET_RESUME quirk for Cherry G230
- Stream series
-From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb <linux-usb@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Sun, 25 Nov 2018 17:57:33 +0100
-Mime-Version: 1.0
-X-Mailer: Evolution 3.28.5 
-Content-Transfer-Encoding: 8BIT
-X-ZohoMailClient: External
+        Sun, 25 Nov 2018 22:50:02 -0500
+Received: from darkstar.musicnaut.iki.fi (85-76-80-180-nat.elisa-mobile.fi [85.76.80.180])
+        by emh03.mail.saunalahti.fi (Postfix) with ESMTP id 49A6940073;
+        Sun, 25 Nov 2018 18:58:31 +0200 (EET)
+Date:   Sun, 25 Nov 2018 18:58:31 +0200
+From:   Aaro Koskinen <aaro.koskinen@iki.fi>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>, vkoul@kernel.org,
+        dan.j.williams@intel.com, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: ti: omap-dma: Configure LCH_TYPE for OMAP1
+Message-ID: <20181125165830.GC3416@darkstar.musicnaut.iki.fi>
+References: <20181119184649.GE16897@darkstar.musicnaut.iki.fi>
+ <6af8c6e7-bf5c-5555-161b-5d3fb7ecae43@ti.com>
+ <20181120210406.GB24888@darkstar.musicnaut.iki.fi>
+ <20181122102948.GN6920@n2100.armlinux.org.uk>
+ <20181122151236.GA9611@n2100.armlinux.org.uk>
+ <6ed280af-edb6-4be7-82f4-7fc00378103e@ti.com>
+ <20181123185215.GH12912@darkstar.musicnaut.iki.fi>
+ <20181124200942.GS6920@n2100.armlinux.org.uk>
+ <20181125010717.GJ53235@atomide.com>
+ <20181125111105.GT6920@n2100.armlinux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181125111105.GT6920@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cherry G230 Stream 2.0 (G85-231) and 3.0 (G85-232) need this quirk to
-function correctly. This fixes a but where double pressing numlock locks
-up the device completely with need to replug the keyboard.
+Hi,
 
-Signed-off-by: Michael Niewöhner <linux@mniewoehner.de>
-Tested-by: Michael Niewöhner <linux@mniewoehner.de>
----
- drivers/usb/core/quirks.c | 3 +++
- 1 file changed, 3 insertions(+)
+On Sun, Nov 25, 2018 at 11:11:05AM +0000, Russell King - ARM Linux wrote:
+> I think we're better off leaving omap-udc well alone, and if it's
+> now broken with DMA, then that's unfortunate - it would require
+> someone with the hardware to diagnose the problem and fix it.  I
+> think trying to convert it to dmaengine would be risking way more
+> problems than its worth.
 
-diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
-index f9ff03e6a..0690fcff0 100644
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -209,6 +209,9 @@ static const struct usb_device_id usb_quirk_list[] = {
- 	/* Microsoft LifeCam-VX700 v2.0 */
- 	{ USB_DEVICE(0x045e, 0x0770), .driver_info = USB_QUIRK_RESET_RESUME },
+Well, there's also an option to use dmaengine only for 16xx at the
+beginning.
+
+My current guess is that 15xx DMA has been broken at least since
+65111084c63d ("USB: more omap_udc updates (dma and omap1710)").
+
+There are two changes in that patch that broke it:
+
+"use 16 bit DMA access" ==> CPC off-by-one becomes now off-by-two...?
+
+"allow burst/pack for memory access" ==> no idea why
+
+Below changes get traffic going with DMA & g_ether...
+
+A.
+
+diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
+index fcf13ef33b31..8094a0380057 100644
+--- a/drivers/usb/gadget/udc/omap_udc.c
++++ b/drivers/usb/gadget/udc/omap_udc.c
+@@ -498,7 +498,7 @@ static u16 dma_dest_len(struct omap_ep *ep, dma_addr_t start)
  
-+	/* Cherry Stream G230 2.0 (G85-231) and 3.0 (G85-232) */
-+	{ USB_DEVICE(0x046a, 0x0023), .driver_info = USB_QUIRK_RESET_RESUME },
-+
- 	/* Logitech HD Pro Webcams C920, C920-C, C925e and C930e */
- 	{ USB_DEVICE(0x046d, 0x082d), .driver_info = USB_QUIRK_DELAY_INIT },
- 	{ USB_DEVICE(0x046d, 0x0841), .driver_info = USB_QUIRK_DELAY_INIT },
-
-
+ 	end |= start & (0xffff << 16);
+ 	if (cpu_is_omap15xx())
+-		end++;
++		end += 2;
+ 	if (end < start)
+ 		end += 0x10000;
+ 	return end - start;
+@@ -730,10 +730,12 @@ static void dma_channel_claim(struct omap_ep *ep, unsigned channel)
+ 			ep->ep.name, dma_error, ep, &ep->lch);
+ 		if (status == 0) {
+ 			omap_writew(reg, UDC_TXDMA_CFG);
+-			/* EMIFF or SDRC */
+-			omap_set_dma_src_burst_mode(ep->lch,
+-						OMAP_DMA_DATA_BURST_4);
+-			omap_set_dma_src_data_pack(ep->lch, 1);
++			if (!cpu_is_omap15xx()) {
++				/* EMIFF or SDRC */
++				omap_set_dma_src_burst_mode(ep->lch,
++							OMAP_DMA_DATA_BURST_4);
++				omap_set_dma_src_data_pack(ep->lch, 1);
++			}
+ 			/* TIPB */
+ 			omap_set_dma_dest_params(ep->lch,
+ 				OMAP_DMA_PORT_TIPB,
+@@ -753,10 +755,12 @@ static void dma_channel_claim(struct omap_ep *ep, unsigned channel)
+ 				OMAP_DMA_AMODE_CONSTANT,
+ 				UDC_DATA_DMA,
+ 				0, 0);
+-			/* EMIFF or SDRC */
+-			omap_set_dma_dest_burst_mode(ep->lch,
+-						OMAP_DMA_DATA_BURST_4);
+-			omap_set_dma_dest_data_pack(ep->lch, 1);
++			if (!cpu_is_omap15xx()) {
++				/* EMIFF or SDRC */
++				omap_set_dma_dest_burst_mode(ep->lch,
++							OMAP_DMA_DATA_BURST_4);
++				omap_set_dma_dest_data_pack(ep->lch, 1);
++			}
+ 		}
+ 	}
+ 	if (status)
