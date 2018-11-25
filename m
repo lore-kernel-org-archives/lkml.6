@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A318EC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:20:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E78DDC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:20:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71C742084E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:20:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71C742084E
+	by mail.kernel.org (Postfix) with ESMTP id BA1022084E
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 21:20:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA1022084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbeKZIMB (ORCPT
+        id S1726364AbeKZIMG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 03:12:01 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39144 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbeKZIMA (ORCPT
+        Mon, 26 Nov 2018 03:12:06 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:34391 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbeKZIMG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 03:12:00 -0500
-Received: by mail-qt1-f195.google.com with SMTP id n21so15474267qtl.6;
-        Sun, 25 Nov 2018 13:20:00 -0800 (PST)
+        Mon, 26 Nov 2018 03:12:06 -0500
+Received: by mail-qt1-f196.google.com with SMTP id r14so15492214qtp.1;
+        Sun, 25 Nov 2018 13:20:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:organization:content-transfer-encoding;
-        bh=7SWfJkSURyZ6Qaf7kGWrWHvU0n7LYaHMjpAyucEttEY=;
-        b=H7Ne1AmsVwo5B6DESs6XFI4oCfWEmkDcFaq0iX7GqQxLcJn401M7e+BMr77DiLb0C5
-         mkRHwtd4+Tjo8yx//qOY4s3D0r7ZWhgD2PPJJ3Smfton7yly5X+6nOiq3dqsqWWJ8FXy
-         ND45aK8qjHWjd5A/8xYa9oFyf2kVW8HoNBkkosTGROPKXAsqGItPgbvTaB6cuoYcX+TY
-         R4TlYtj2p67/AvNSEywonnjDPjxpeLZ+P3awoWJZ8l0QzAijDGOmQc+I50b3e/9EPF+W
-         bRS6LX4Ruj2oDspqov3uJZ55XAHHczVTLVCz8MoKqKooZywmivjfm1UNjg1nwYckoxXS
-         9+Fw==
-X-Gm-Message-State: AGRZ1gJkH7o+owiePzAEbQAR+OwX78wmQqD1JzVxPuqOksVXZeiuBU6K
-        CKVjjfLlEUlkhVo7I26rlPdM+JrN
-X-Google-Smtp-Source: AJdET5cSIJ4Rr5ULc8a6HD1/Tv3Nbc6oouMVL8Zsnm2IUNCoYlnpmE0pZ4SlKZ6t5Kz9NcCt42SsIQ==
-X-Received: by 2002:ac8:3971:: with SMTP id t46mr22858418qtb.331.1543180800034;
-        Sun, 25 Nov 2018 13:20:00 -0800 (PST)
+        bh=nmDsCwmLl9glebqfbdHQbTbjn61d+ZdVRN7Yo+KoZyA=;
+        b=iAjy5Ty1EEwO9OEcg4DpIppPsIKaShIaN6BSbn3e3x0+bE24hmJE1zMetEPRaU2bjF
+         RjtB7kbVX0TMkC/SgePhdpM98oiy+RRuhtPjIE3EYe8Dxht3HMd2GNAIftL1ENxP26dL
+         k1h/QzN7vYlgMb2ztBWxaoL4RzFcmlVatLwqWwNGGI+K57uBtTruGwR4elAgXFrRhAbN
+         b+gRcZvH+whDNK8bRJvejY8zaPkx7Hurj/9AdLKuYAzYqK7GQo4tdIxo9pQcGffmPaqh
+         3ox1fr+ClUoP1ZTMKOUDgERS/DyJCQm3dAZZlDcT2mhz/aXBrFSzMJgL9CT8nFaXoAyE
+         YLTA==
+X-Gm-Message-State: AA+aEWaI+/zHz7BmWdkdufcaKN8tmEQO3AGJ+kmnOmWfKlo3C5n1CFBo
+        Qur3VDHylecB06tiVoU2qe5mh/0U
+X-Google-Smtp-Source: AFSGD/XznogjlgsGgEQZb8x/jbClRWLqDhe9tcidG+VeB3lKjiakl0UsP6s5RGUlVUA3cpr9yRu6Vg==
+X-Received: by 2002:a0c:f8c7:: with SMTP id h7mr23765681qvo.134.1543180806752;
+        Sun, 25 Nov 2018 13:20:06 -0800 (PST)
 Received: from localhost.localdomain ([181.220.65.91])
-        by smtp.gmail.com with ESMTPSA id n71sm28469278qkh.59.2018.11.25.13.19.56
+        by smtp.gmail.com with ESMTPSA id v186sm15358914qkd.13.2018.11.25.13.20.02
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Nov 2018 13:19:59 -0800 (PST)
-Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 25 Nov 2018 19:19:53 -0200
+        Sun, 25 Nov 2018 13:20:06 -0800 (PST)
+Received: by localhost.localdomain (sSMTP sendmail emulation); Sun, 25 Nov 2018 19:20:00 -0200
 From:   Otavio Salvador <otavio@ossystems.com.br>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org
@@ -54,9 +54,9 @@ Cc:     Otavio Salvador <otavio@ossystems.com.br>,
         devicetree@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 07/13] ARM: dts: rv1108: Fix the timer mask
-Date:   Sun, 25 Nov 2018 19:19:01 -0200
-Message-Id: <20181125211907.9895-7-otavio@ossystems.com.br>
+Subject: [PATCH 08/13] ARM: dts: rv1108: Fix the PMU interrupt number
+Date:   Sun, 25 Nov 2018 19:19:02 -0200
+Message-Id: <20181125211907.9895-8-otavio@ossystems.com.br>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181125211907.9895-1-otavio@ossystems.com.br>
 References: <20181125211907.9895-1-otavio@ossystems.com.br>
@@ -68,32 +68,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As done in the Rockchip vendor tree and also on other
-"arm,armv7-timer" instances, the correct GIC_CPU_MASK_SIMPLE mask
-is 4 instead of 1.
+According to the Rockchip vendor tree the PMU interrupt number is
+76, so fix it accordingly.
 
 Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
 Signed-off-by: Fabio Berton <fabio.berton@ossystems.com.br>
 ---
 
- arch/arm/boot/dts/rv1108.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/rv1108.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/rv1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
-index c7a26f82655b..7b331766120d 100644
+index 7b331766120d..442b749eb2e9 100644
 --- a/arch/arm/boot/dts/rv1108.dtsi
 +++ b/arch/arm/boot/dts/rv1108.dtsi
-@@ -71,8 +71,8 @@
+@@ -66,7 +66,7 @@
  
- 	timer {
- 		compatible = "arm,armv7-timer";
--		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>,
--			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
- 		clock-frequency = <24000000>;
+ 	arm-pmu {
+ 		compatible = "arm,cortex-a7-pmu";
+-		interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
  	};
  
+ 	timer {
 -- 
 2.19.1
 
