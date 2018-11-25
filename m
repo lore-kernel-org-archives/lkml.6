@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DC8C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D7F1C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:58:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DCE02084E
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:58:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DCE02084E
+	by mail.kernel.org (Postfix) with ESMTP id 423CC20868
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:58:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 423CC20868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbeKZFtG (ORCPT
+        id S1727674AbeKZFuZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 00:49:06 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:52788 "EHLO
+        Mon, 26 Nov 2018 00:50:25 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:52760 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727114AbeKZFtF (ORCPT
+        with ESMTP id S1727010AbeKZFtD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 00:49:05 -0500
+        Mon, 26 Nov 2018 00:49:03 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gQzar-0003QD-HV; Sun, 25 Nov 2018 19:57:21 +0100
-Message-Id: <20181125185004.893886356@linutronix.de>
+        id 1gQzao-0003Pg-Hp; Sun, 25 Nov 2018 19:57:18 +0100
+Message-Id: <20181125185004.613357354@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 25 Nov 2018 19:33:43 +0100
+Date:   Sun, 25 Nov 2018 19:33:40 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -51,44 +51,48 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Greg KH <gregkh@linuxfoundation.org>,
         Dave Stewart <david.c.stewart@intel.com>,
         Kees Cook <keescook@chromium.org>
-Subject: [patch V2 15/28] x86/speculataion: Mark command line parser data
- __initdata
+Subject: [patch V2 12/28] x86/l1tf: Show actual SMT state
 References: <20181125183328.318175777@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline;
- filename=x86-speculataion--Mark-command-line-parser-data-__initdata.patch
+Content-Disposition: inline; filename=x86-l1tf-Show-actual-SMT-state.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No point to keep that around.
+Use the now exposed real SMT state, not the SMT sysfs control knob
+state. This reflects the state of the system when the mitigation status is
+queried.
+
+This does not change the warning in the VMX launch code. There the
+dependency on the control knob makes sense because siblings could be
+brought online anytime after launching the VM.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+
 ---
- arch/x86/kernel/cpu/bugs.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/bugs.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -248,7 +248,7 @@ static const struct {
- 	const char *option;
- 	enum spectre_v2_mitigation_cmd cmd;
- 	bool secure;
--} mitigation_options[] = {
-+} mitigation_options[] __initdata = {
- 	{ "off",		SPECTRE_V2_CMD_NONE,		  false },
- 	{ "on",			SPECTRE_V2_CMD_FORCE,		  true  },
- 	{ "retpoline",		SPECTRE_V2_CMD_RETPOLINE,	  false },
-@@ -486,7 +486,7 @@ static const char * const ssb_strings[]
- static const struct {
- 	const char *option;
- 	enum ssb_mitigation_cmd cmd;
--} ssb_mitigation_options[] = {
-+} ssb_mitigation_options[]  __initdata = {
- 	{ "auto",	SPEC_STORE_BYPASS_CMD_AUTO },    /* Platform decides */
- 	{ "on",		SPEC_STORE_BYPASS_CMD_ON },      /* Disable Speculative Store Bypass */
- 	{ "off",	SPEC_STORE_BYPASS_CMD_NONE },    /* Don't touch Speculative Store Bypass */
+@@ -832,13 +832,14 @@ static ssize_t l1tf_show_state(char *buf
+ 
+ 	if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_EPT_DISABLED ||
+ 	    (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER &&
+-	     cpu_smt_control == CPU_SMT_ENABLED))
++	     sched_smt_active())) {
+ 		return sprintf(buf, "%s; VMX: %s\n", L1TF_DEFAULT_MSG,
+ 			       l1tf_vmx_states[l1tf_vmx_mitigation]);
++	}
+ 
+ 	return sprintf(buf, "%s; VMX: %s, SMT %s\n", L1TF_DEFAULT_MSG,
+ 		       l1tf_vmx_states[l1tf_vmx_mitigation],
+-		       cpu_smt_control == CPU_SMT_ENABLED ? "vulnerable" : "disabled");
++		       sched_smt_active() ? "vulnerable" : "disabled");
+ }
+ #else
+ static ssize_t l1tf_show_state(char *buf)
 
 
