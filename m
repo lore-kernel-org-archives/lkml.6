@@ -2,156 +2,76 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A49ADC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 17:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F68AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 17:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6552C20868
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 17:53:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NcnOeI0i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6552C20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2C66720868
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 17:56:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C66720868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=katsuster.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbeKZEpF (ORCPT
+        id S1726720AbeKZEry (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 23:45:05 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34244 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbeKZEpF (ORCPT
+        Sun, 25 Nov 2018 23:47:54 -0500
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:42680 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbeKZErx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 23:45:05 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j2so16609020wrw.1;
-        Sun, 25 Nov 2018 09:53:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=yXyfxlHiscoB2pEHT0Kz/2KXkbcS+v3fIbVqvZTxy0c=;
-        b=NcnOeI0ir6i1mhWv6A7Scn2vFu5e/tNHUq5BIv+b4yJKnTFAimXUfoMmhGsDuQ+SOZ
-         aUgrL8zzCsp9j7uoyWpln73aukRkQj1NOizEniyRBAtJuTE85bK+HWA4NW8Rm57NEBGZ
-         INlPdyRK5WbRS9JjBo+oME/kiTqRNlmyeNKYodPFWRFv/znEN0waOJMWQf0FP4ZBSGdO
-         KuuLSjdE0ysn3vJhfeq8qBiI+kwa6IOpziG8XCv0bXEUTBAe3Qkc263KX46LO6NSqkM1
-         JqKmC+/UQlGR1g4iWsfFPXHTCE4alTLuQobvxFdNrwyKrfNFih18E/layGGFA6S+McsA
-         H5fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=yXyfxlHiscoB2pEHT0Kz/2KXkbcS+v3fIbVqvZTxy0c=;
-        b=Ytmh4D2Z0kvKsL+GDnU5taG4jW/8ofBNsvqBlhaiTEFE+P/ZrjqWQw2XDqbzFvMZeV
-         6QdVCpKc7xumBwJx2w4eHM6TecQLYpnhOphM7sCS3YwzlrvjqB5KDPptqDUp7CN2uBM+
-         7lUpDgqMhC9797axKjOro1iYxv/8xW+V5lLDO2B8lt5PZY8XIZRNPb0a0qFKbeEsFFwH
-         nGEjXZjoMWs5uZDXYXQsm+911pdwK9ckxKzZvYKMltGbzUfuPP2Lchs3+zDd9xCNyFeI
-         2NyQ09HmHkX9mJQcB60a/QFZPx7RBUV3iKDoshPcj0xB6X1QLx2hVPHudizOv737k9lU
-         QXlg==
-X-Gm-Message-State: AA+aEWaWXf4gZowtcKsEm6LgbaF71USYDx/vG05c8UaQhwdHdiv9Ov3U
-        p9IDfQRkiQeaNcuaGrpS1tfVhOyQ
-X-Google-Smtp-Source: AFSGD/WNo0ooBYFsiT/wMRbaCG0ZBSIp/87UEls8lJ2cgk5KCKLiaP5Je9KgpkvtqAxZJY4X9xoLBg==
-X-Received: by 2002:adf:db01:: with SMTP id s1mr5252840wri.214.1543168407774;
-        Sun, 25 Nov 2018 09:53:27 -0800 (PST)
-Received: from 640k.lan ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id 6-v6sm10018766wmd.45.2018.11.25.09.53.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 25 Nov 2018 09:53:27 -0800 (PST)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Liran Alon <liran.alon@oracle.com>,
-        Jim Mattson <jmattson@google.com>
-Subject: [PATCH] KVM: x86: Trace changes to active TSC offset regardless if vCPU in guest-mode
-Date:   Sun, 25 Nov 2018 18:53:25 +0100
-Message-Id: <1543168405-16768-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        Sun, 25 Nov 2018 23:47:53 -0500
+Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wAPHtsJG042352;
+        Mon, 26 Nov 2018 02:55:54 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp);
+ Mon, 26 Nov 2018 02:55:54 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp)
+Received: from localhost.localdomain (199.247.151.153.ap.dti.ne.jp [153.151.247.199])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wAPHtpEf042349
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 26 Nov 2018 02:55:54 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+To:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Subject: [PATCH] clk: rockchip: add clock ID of ACODEC for rk3328
+Date:   Mon, 26 Nov 2018 02:55:49 +0900
+Message-Id: <20181125175549.30535-1-katsuhiro@katsuster.net>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For some reason, kvm_x86_ops->write_l1_tsc_offset() skipped trace
-of change to active TSC offset in case vCPU is in guest-mode.
-This patch changes write_l1_tsc_offset() behavior to trace any change
-to active TSC offset to aid debugging.  The VMX code is changed to
-look more similar to SVM, which is in my opinion nicer.
+This patch adds clock ID of audio CODEC (ACODEC) for rk3328.
 
-Based on a patch by Liran Alon.
-
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
 ---
-	Untested still, but throwing it out because it seems pretty
-	obvious...
+ include/dt-bindings/clock/rk3328-cru.h | 1 +
+ 1 file changed, 1 insertion(+)
 
- arch/x86/kvm/svm.c |  9 +++++----
- arch/x86/kvm/vmx.c | 34 +++++++++++++++++-----------------
- 2 files changed, 22 insertions(+), 21 deletions(-)
-
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index a24733aade4c..0d1a74069a9e 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -1456,10 +1456,11 @@ static u64 svm_write_l1_tsc_offset(struct kvm_vcpu *vcpu, u64 offset)
- 		g_tsc_offset = svm->vmcb->control.tsc_offset -
- 			       svm->nested.hsave->control.tsc_offset;
- 		svm->nested.hsave->control.tsc_offset = offset;
--	} else
--		trace_kvm_write_tsc_offset(vcpu->vcpu_id,
--					   svm->vmcb->control.tsc_offset,
--					   offset);
-+	}
-+
-+	trace_kvm_write_tsc_offset(vcpu->vcpu_id,
-+				   svm->vmcb->control.tsc_offset - g_tsc_offset,
-+				   offset);
+diff --git a/include/dt-bindings/clock/rk3328-cru.h b/include/dt-bindings/clock/rk3328-cru.h
+index 9d5f799469ee..bcaa4559ab1b 100644
+--- a/include/dt-bindings/clock/rk3328-cru.h
++++ b/include/dt-bindings/clock/rk3328-cru.h
+@@ -172,6 +172,7 @@
+ #define PCLK_HDCP		232
+ #define PCLK_DCF		233
+ #define PCLK_SARADC		234
++#define PCLK_ACODECPHY		235
  
- 	svm->vmcb->control.tsc_offset = offset + g_tsc_offset;
- 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 764c23dc444f..e7d3f7d35355 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -3466,24 +3466,24 @@ static u64 vmx_read_l1_tsc_offset(struct kvm_vcpu *vcpu)
- 
- static u64 vmx_write_l1_tsc_offset(struct kvm_vcpu *vcpu, u64 offset)
- {
--	u64 active_offset = offset;
--	if (is_guest_mode(vcpu)) {
--		/*
--		 * We're here if L1 chose not to trap WRMSR to TSC. According
--		 * to the spec, this should set L1's TSC; The offset that L1
--		 * set for L2 remains unchanged, and still needs to be added
--		 * to the newly set TSC to get L2's TSC.
--		 */
--		struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
--		if (nested_cpu_has(vmcs12, CPU_BASED_USE_TSC_OFFSETING))
--			active_offset += vmcs12->tsc_offset;
--	} else {
--		trace_kvm_write_tsc_offset(vcpu->vcpu_id,
--					   vmcs_read64(TSC_OFFSET), offset);
--	}
-+	struct vmcs12 *vmcs12 = get_vmcs12(vcpu);
-+	u64 g_tsc_offset = 0;
-+
-+	/*
-+	 * We're here if L1 chose not to trap WRMSR to TSC. According
-+	 * to the spec, this should set L1's TSC; The offset that L1
-+	 * set for L2 remains unchanged, and still needs to be added
-+	 * to the newly set TSC to get L2's TSC.
-+	 */
-+	if (is_guest_mode(vcpu) &&
-+	    (vmcs12->cpu_based_vm_exec_control & CPU_BASED_USE_TSC_OFFSETING))
-+		g_tsc_offset = vmcs12->tsc_offset;
- 
--	vmcs_write64(TSC_OFFSET, active_offset);
--	return active_offset;
-+	trace_kvm_write_tsc_offset(vcpu->vcpu_id,
-+				   vcpu->arch.tsc_offset - g_tsc_offset,
-+				   offset);
-+	vmcs_write64(TSC_OFFSET, offset + g_tsc_offset);
-+	return offset + g_tsc_offset;
- }
- 
- /*
+ /* hclk gates */
+ #define HCLK_PERI		308
 -- 
-1.8.3.1
+2.19.1
 
