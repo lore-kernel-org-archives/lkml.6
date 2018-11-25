@@ -2,105 +2,76 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A87FC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 02:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E941FC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 02:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BA2320881
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 02:11:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BA2320881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 9927120867
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 02:38:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HqZ/y1j8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9927120867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbeKYNA5 (ORCPT
+        id S1726999AbeKYN2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 25 Nov 2018 08:00:57 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:52294 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbeKYNA5 (ORCPT
+        Sun, 25 Nov 2018 08:28:12 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:59234 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbeKYN2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Nov 2018 08:00:57 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 40C3372CC61;
-        Sun, 25 Nov 2018 05:10:59 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 27F857CD0D5; Sun, 25 Nov 2018 05:10:59 +0300 (MSK)
-Date:   Sun, 25 Nov 2018 05:10:59 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Joey Pabalinas <joeypabalinas@gmail.com>
-Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        strace-devel@lists.strace.io
-Subject: Re: [PATCH RESEND v3 1/3] ptrace: pass type of a syscall-stop in
- ptrace_message
-Message-ID: <20181125021059.GA1190@altlinux.org>
-References: <20181125022150.46258a20@akathisia>
- <20181125022227.55e8caf7@akathisia>
- <20181125015402.glcaw3kghcu4pr22@gmail.com>
+        Sun, 25 Nov 2018 08:28:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=OnJtOBe52U7faoApiooKpigX5xapjh0GU8wOwa69F5s=; b=HqZ/y1j8kcdN/VmXaArH0x5As
+        zJMD7i4ph31LitRJA7SXErNmyB/X/7Kqn9/wGSpN2Lq6itSnFt1T075jABWSHhnC2x255LNlRdPmF
+        GsjtlicwbLec7J2QJlxLCBdmUqMr1jDFU3RzvbiemAB9G6AtOyae0YEXAb+XrpVtsexyZyIwKFZe5
+        dBVc6RsPd/YFc2VNCtjGrNMaH2oqI5gaKhCirMAruEpcxC4nJMCZasD1ecEM2NwwGZbBzx4EpWKce
+        +V/mqmId3E8zbg2dkUsji9ksevYeJpAoCABtXtj66i0CTz347WmRsMydT0+k1wR/4UAiUDu68g7pM
+        1p/nheg5w==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gQkJK-0001Kr-Bu; Sun, 25 Nov 2018 02:38:14 +0000
+Date:   Sat, 24 Nov 2018 18:38:14 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        dan.j.williams@intel.com
+Subject: Re: [GIT PULL] XArray updates
+Message-ID: <20181125023814.GB3065@bombadil.infradead.org>
+References: <20181124173209.GZ3065@bombadil.infradead.org>
+ <CAHk-=wgHTcLXY4P-EJiXd4MbwXjp9QdEfQ+udVUGRuUzT-8ZFA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jI8keyz6grp/JLjh"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181125015402.glcaw3kghcu4pr22@gmail.com>
+In-Reply-To: <CAHk-=wgHTcLXY4P-EJiXd4MbwXjp9QdEfQ+udVUGRuUzT-8ZFA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Nov 24, 2018 at 10:04:30AM -0800, Linus Torvalds wrote:
+> On Sat, Nov 24, 2018 at 9:32 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> >   git://git.infradead.org/users/willy/linux-dax.git xarray
+> 
+> Can you *please* make that a signed tag.
 
---jI8keyz6grp/JLjh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sure!  I hadn't been paying attention to the signed tag side of things,
+so I hope I've done everything OK.
 
-On Sat, Nov 24, 2018 at 03:54:02PM -1000, Joey Pabalinas wrote:
-> On Sun, Nov 25, 2018 at 02:22:27AM +0100, Elvira Khabirova wrote:
-> > Define two constants, PTRACE_EVENTMSG_SYSCALL_ENTRY and
-> > PTRACE_EVENTMSG_SYSCALL_EXIT, and place them in ptrace_message
-> > for the duration of syscall-stops.
-> > This way ptracers can distinguish syscall-enter-stops
-> > from syscall-exit-stops using PTRACE_GETEVENTMSG request.
->=20
-> Is there an advantage to using two constants instead of a single
-> sys_exit bit (set/unset for syscall-exit-stop/syscall-enter-stop)?
+I generated a new key 5EC42E41545C1F5E and signed a new tag
+xarray-4.20-rc4
 
-Given that without this patch the value returned by PTRACE_GETEVENTMSG
-during syscall stop is undefined, we need two different ptrace_message
-values that cannot be set by other ptrace events to enable reliable
-identification of syscall-enter-stop and syscall-exit-stop in userspace:
-if we make PTRACE_GETEVENTMSG return 0 or any other value routinely set by
-other ptrace events, it would be hard for userspace to find out whether
-the kernel implements new semantics or not.
-
-
---=20
-ldv
-
---jI8keyz6grp/JLjh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJb+gSyAAoJEAVFT+BVnCUI7msP/03Hw0MVgHwFtPiI1I454dg7
-cG5xi8aZUwHZM/8tWCiAPtk02ttpXDZR+ReQGMmoRdEBsuvdnhTImGHgU08PjNo/
-hR+vTW3cB8hajPBQr2o7+lN2sqRaH/cbaBOdLA31bUz5BNJCrDEASUX64AG8hV5i
-yk8DeoHLfw9Ub34PtDz3yJWudSc7irQfBGidpiKmskabRNeaZWKumtTUx36jkOg0
-oeYrdOVPEawE7nkE9LlmkzUiidZzaj1gd/ObkazJ/NyCPC7GvS4IEzSu59178NlG
-SMiui9AMQkX/3g6S4hY3DQrice4fdYyi6NNnBXhjoePUOjlwYTw7BSA0yNAYSoat
-mnMEds03GuaF5T7S5Okdny7ywROMjkj3i+kH3qXupszUPyY3tlHRsqerSQ/xfKoY
-+lIVYNxrHseIMfIV+3tHP6R4CxYoaUdxSmYcL29un46KUh8E89p3UHEbHivSeHYV
-qccEUnjy5FFwYu6TxFLhIBtCcMnNHZK+IEm/PwlX7sac5/5NE3cLBiMG6oYjGRcg
-YzXg3p62Rtrpsd9sVsEtB2fg3wDjsPQIsZSDnksVPYOFwsx+fIOJE8zTcKw1eiW+
-W7i4enyWZht6MlIzAoaj4VfVqJ4GM5ZKi/vCyGuIApK/AOZHwPHBhlVotrGcXVq6
-o4kgKmniuyFHhcF4armo
-=SNPL
------END PGP SIGNATURE-----
-
---jI8keyz6grp/JLjh--
+I've signed that key with my old DSA key 2218C81E8E7C03FF which has
+about 400 signatures on it, but I understand is not terribly trustable
+these days.
