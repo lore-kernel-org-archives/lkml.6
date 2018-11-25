@@ -2,380 +2,66 @@ Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D5AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C58ABC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:19:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C040920672
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:09:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytheb-org.20150623.gappssmtp.com header.i=@bytheb-org.20150623.gappssmtp.com header.b="pn9O2FAf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C040920672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bytheb.org
+	by mail.kernel.org (Postfix) with ESMTP id 8F3BE2084E
+	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 18:19:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F3BE2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbeKZFBV (ORCPT
+        id S1726421AbeKZFLd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 00:01:21 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:38207 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbeKZFBV (ORCPT
+        Mon, 26 Nov 2018 00:11:33 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:44422 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725838AbeKZFLd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 00:01:21 -0500
-Received: by mail-it1-f195.google.com with SMTP id h65so24174087ith.3
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 10:09:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytheb-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UhWWASpWuscnRsDFC5DeC96YRbPqtXlv0yit6Esju10=;
-        b=pn9O2FAfWBa2/l5ZP5eN3v6aYao+QZYJVFsyWtk1VGD/RNaHkYGgowUZHvwoF1PSI6
-         Ya+LOh0y2awr/SH0Lw6Mks8JLYUqgiti7tNmCbzabVQuJvDFYyK1x01Nn1IJOdDanhG+
-         9+fk1nf168wVZMl/qcVMLLzTXIYMWBis1GJCAQe7Nuoljuwzaew2PcJOIoyGuEoCl4x3
-         o4jT8huOPXBdL749ddS96BHZBBRfXqFtHhaozabLL5UTkPhIfh6YsYgDj7KvdM05YHq+
-         RsMs0YCIHFyo9UwFqMXDcJvjtZ9XB/rv0kfozgUtfj/2XoIj+a/YvKMf54fxYBq1TAil
-         ZfJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UhWWASpWuscnRsDFC5DeC96YRbPqtXlv0yit6Esju10=;
-        b=Ym2w2qzVG5ZDAN22j1r4zZKlwqlOrvZDe9OXHvaL5iPAmHI+DeTaKU/L/E7rFx3RPe
-         2xNncBb22o9PNtsIIj8DMd9JL6bnMJjTdheNI75pI/tdTdwY0+nJ26oUXaiyZ63rjrM2
-         HKIDFwms4wLt430of5HJrZSdzcYhwVzFvJkqanWJSeYqHsPL0QXcqDFeaQLybMtD6JzO
-         P+89/KMaIXYWX2g5rN9pzSWseelNtRfZvriPFyWbAmKFNjf/PwhO51LHwAUodSdGkW/D
-         NanH6/3JRrhQJJuph2mjc8jCiSFzsNAakRo+lzk/ehxACSuUYV85utzDfQhfD8eAePcv
-         OnjQ==
-X-Gm-Message-State: AGRZ1gLLzg/fb1ThaANfBf8fmQcPgM7e+il8FmWF/PMZ4tr01qS3LWbR
-        lO6p7Qe7OcUp/nFuB1DMclAZxA==
-X-Google-Smtp-Source: AFSGD/UywMOP9aEsbkrc8XK2rYa5eLMB5rAsNn8grl3rej/m4gzFMBZA9PFmeWeSIm7pt9nVLsmR/A==
-X-Received: by 2002:a24:5284:: with SMTP id d126mr20588190itb.110.1543169382150;
-        Sun, 25 Nov 2018 10:09:42 -0800 (PST)
-Received: from dhcp-25.97.bos.redhat.com (047-014-005-015.res.spectrum.com. [47.14.5.15])
-        by smtp.gmail.com with ESMTPSA id y8sm5959768ita.5.2018.11.25.10.09.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Nov 2018 10:09:41 -0800 (PST)
-From:   Aaron Conole <aconole@bytheb.org>
-To:     netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Jesper Brouer <brouer@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        Rony Efraim <ronye@mellanox.com>,
-        Simon Horman <horms@verge.net>,
-        Marcelo Leitner <marcelo.leitner@gmail.com>
-Subject: [RFC -next v0 3/3] netfilter: nf_flow_table_bpf_map: introduce new loadable bpf map
-Date:   Sun, 25 Nov 2018 13:09:19 -0500
-Message-Id: <20181125180919.13996-4-aconole@bytheb.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181125180919.13996-1-aconole@bytheb.org>
-References: <20181125180919.13996-1-aconole@bytheb.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 26 Nov 2018 00:11:33 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 73BDF14C876AE;
+        Sun, 25 Nov 2018 10:19:54 -0800 (PST)
+Date:   Sun, 25 Nov 2018 10:19:53 -0800 (PST)
+Message-Id: <20181125.101953.2072129230580561127.davem@davemloft.net>
+To:     willemdebruijn.kernel@gmail.com
+Cc:     deepa.kernel@gmail.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, viro@zeniv.linux.org.uk, arnd@arndb.de,
+        y2038@lists.linaro.org
+Subject: Re: [PATCH 3/8] socket: Disentangle SOCK_RCVTSTAMPNS from
+ SOCK_RCVTSTAMP
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <CAF=yD-LjfVKSr=KhknZHhN-M2-ZdLE9g0XR8Ta4rokx24arkBg@mail.gmail.com>
+References: <CAF=yD-JGh23sA_6eUtBq8=wSZ5g=nipmhdr1WwjP5th51qEtiQ@mail.gmail.com>
+        <CABeXuvqgPE_Cft+T0fSw8zT09uCKWQGUB+bVNqQDk6fOinn8rA@mail.gmail.com>
+        <CAF=yD-LjfVKSr=KhknZHhN-M2-ZdLE9g0XR8Ta4rokx24arkBg@mail.gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 25 Nov 2018 10:19:54 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit introduces a new loadable map that allows an eBPF program to
-query the flow offload tables for specific flow information.  For now,
-that information is limited to input and output index information.  Future
-enhancements would be to include connection tracking details, such as
-state, metadata, and allow for window validation.
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date: Sun, 25 Nov 2018 09:18:55 -0500
 
-Signed-off-by: Aaron Conole <aconole@bytheb.org>
----
- include/linux/bpf_types.h                 |   2 +
- include/uapi/linux/bpf.h                  |   7 +
- net/netfilter/Kconfig                     |   9 +
- net/netfilter/Makefile                    |   1 +
- net/netfilter/nf_flow_table_bpf_flowmap.c | 202 ++++++++++++++++++++++
- 5 files changed, 221 insertions(+)
- create mode 100644 net/netfilter/nf_flow_table_bpf_flowmap.c
+> The existing logic is as is for a reason. There is no need to change
+> it to satisfy the main purpose of your patchset?
+> 
+> It is structured as one bit to test whether a timestamp is requested
+> and another to select among two variants usec/nsec. Just add another
+> layer of branching between new/old in cases where this distinction is
+> needed.
+> 
+> Please avoid code churn unless needed.
 
-diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
-index 44d9ab4809bd..82d3038cf6c3 100644
---- a/include/linux/bpf_types.h
-+++ b/include/linux/bpf_types.h
-@@ -71,3 +71,5 @@ BPF_MAP_TYPE(BPF_MAP_TYPE_REUSEPORT_SOCKARRAY, reuseport_array_ops)
- #endif
- BPF_MAP_TYPE(BPF_MAP_TYPE_QUEUE, queue_map_ops)
- BPF_MAP_TYPE(BPF_MAP_TYPE_STACK, stack_map_ops)
-+
-+BPF_MAP_TYPE(BPF_MAP_TYPE_FLOWMAP, loadable_map)
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index 852dc17ab47a..fb77c8c5c209 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -131,6 +131,7 @@ enum bpf_map_type {
- 	BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE,
- 	BPF_MAP_TYPE_QUEUE,
- 	BPF_MAP_TYPE_STACK,
-+	BPF_MAP_TYPE_FLOWMAP,
- };
- 
- enum bpf_prog_type {
-@@ -2942,4 +2943,10 @@ struct bpf_flow_keys {
- 	};
- };
- 
-+struct bpf_flow_map {
-+	struct bpf_flow_keys	flow;
-+	__u32			iifindex;
-+	__u32			oifindex;
-+};
-+
- #endif /* _UAPI__LINUX_BPF_H__ */
-diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index 2ab870ef233a..30f1bc9084be 100644
---- a/net/netfilter/Kconfig
-+++ b/net/netfilter/Kconfig
-@@ -709,6 +709,15 @@ config NF_FLOW_TABLE
- 
- 	  To compile it as a module, choose M here.
- 
-+config NF_FLOW_TABLE_BPF
-+	tristate "Netfilter flowtable BPF map"
-+	depends on NF_FLOW_TABLE
-+	depends on BPF_LOADABLE_MAPS
-+	help
-+	  This option adds support for retrieving flow table entries
-+	  via a loadable BPF map.
-+	  To compile it as a module, choose M here.
-+
- config NETFILTER_XTABLES
- 	tristate "Netfilter Xtables support (required for ip_tables)"
- 	default m if NETFILTER_ADVANCED=n
-diff --git a/net/netfilter/Makefile b/net/netfilter/Makefile
-index 4ddf3ef51ece..8dba928a03fd 100644
---- a/net/netfilter/Makefile
-+++ b/net/netfilter/Makefile
-@@ -121,6 +121,7 @@ obj-$(CONFIG_NFT_FWD_NETDEV)	+= nft_fwd_netdev.o
- 
- # flow table infrastructure
- obj-$(CONFIG_NF_FLOW_TABLE)	+= nf_flow_table.o
-+obj-$(CONFIG_NF_FLOW_TABLE_BPF)	+= nf_flow_table_bpf_flowmap.o
- nf_flow_table-objs := nf_flow_table_core.o nf_flow_table_ip.o
- 
- obj-$(CONFIG_NF_FLOW_TABLE_INET) += nf_flow_table_inet.o
-diff --git a/net/netfilter/nf_flow_table_bpf_flowmap.c b/net/netfilter/nf_flow_table_bpf_flowmap.c
-new file mode 100644
-index 000000000000..577985560883
---- /dev/null
-+++ b/net/netfilter/nf_flow_table_bpf_flowmap.c
-@@ -0,0 +1,202 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (c) 2018, Aaron Conole <aconole@bytheb.org>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of version 2 of the GNU General Public
-+ * License as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-+ * General Public License for more details.
-+ */
-+
-+#include <linux/bpf.h>
-+#include <net/xdp.h>
-+#include <linux/filter.h>
-+#include <trace/events/xdp.h>
-+#include <net/netfilter/nf_conntrack.h>
-+#include <net/netfilter/nf_flow_table.h>
-+
-+struct flow_map_internal {
-+	struct bpf_map map;
-+	struct nf_flowtable net_flow_table;
-+};
-+
-+static void flow_map_init_from_attr(struct bpf_map *map, union bpf_attr *attr)
-+{
-+	map->map_type = attr->map_type;
-+	map->key_size = attr->key_size;
-+	map->value_size = attr->value_size;
-+	map->max_entries = attr->max_entries;
-+	map->map_flags = attr->map_flags;
-+	map->numa_node = bpf_map_attr_numa_node(attr);
-+}
-+
-+static struct bpf_map *flow_map_alloc(union bpf_attr *attr)
-+{
-+	struct flow_map_internal *fmap_ret;
-+	u64 cost;
-+	int err;
-+
-+	if (!capable(CAP_NET_ADMIN))
-+		return ERR_PTR(-EPERM);
-+
-+	if (attr->max_entries == 0 ||
-+	    attr->key_size != sizeof(struct bpf_flow_map) ||
-+	    attr->value_size != sizeof(struct bpf_flow_map))
-+		return ERR_PTR(-EINVAL);
-+
-+	fmap_ret = kzalloc(sizeof(*fmap_ret), GFP_USER);
-+	if (!fmap_ret)
-+		return ERR_PTR(-ENOMEM);
-+
-+	flow_map_init_from_attr(&fmap_ret->map, attr);
-+	cost = (u64)fmap_ret->map.max_entries * sizeof(struct flow_offload);
-+	if (cost >= U32_MAX - PAGE_SIZE) {
-+		kfree(&fmap_ret);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	fmap_ret->map.pages = round_up(cost, PAGE_SIZE) >> PAGE_SHIFT;
-+
-+	/* if map size is larger than memlock limit, reject it early */
-+	if ((err = bpf_map_precharge_memlock(fmap_ret->map.pages))) {
-+		kfree(&fmap_ret);
-+		return ERR_PTR(err);
-+	}
-+
-+	memset(&fmap_ret->net_flow_table, 0, sizeof(fmap_ret->net_flow_table));
-+	fmap_ret->net_flow_table.flags |= NF_FLOWTABLE_F_SNOOP;
-+	nf_flow_table_init(&fmap_ret->net_flow_table);
-+
-+	return &fmap_ret->map;
-+}
-+
-+static void flow_map_free(struct bpf_map *map)
-+{
-+	struct flow_map_internal *fmap = container_of(map,
-+						      struct flow_map_internal,
-+						      map);
-+
-+	nf_flow_table_free(&fmap->net_flow_table);
-+	synchronize_rcu();
-+	kfree(fmap);
-+}
-+
-+static void flow_walk(struct flow_offload *flow, void *data)
-+{
-+	printk("Flow offload dir0: %x:%d -> %x:%d, %u, %u, %d, %u\n",
-+	       flow->tuplehash[0].tuple.src_v4.s_addr,
-+	       flow->tuplehash[0].tuple.src_port,
-+	       flow->tuplehash[0].tuple.dst_v4.s_addr,
-+	       flow->tuplehash[0].tuple.dst_port,
-+	       flow->tuplehash[0].tuple.l3proto,
-+	       flow->tuplehash[0].tuple.l4proto,
-+	       flow->tuplehash[0].tuple.iifidx,
-+	       flow->tuplehash[0].tuple.dir
-+	       );
-+
-+	printk("Flow offload dir1: %x:%d -> %x:%d, %u, %u, %d, %u\n",
-+	       flow->tuplehash[1].tuple.src_v4.s_addr,
-+	       flow->tuplehash[1].tuple.src_port,
-+	       flow->tuplehash[1].tuple.dst_v4.s_addr,
-+	       flow->tuplehash[1].tuple.dst_port,
-+	       flow->tuplehash[1].tuple.l3proto,
-+	       flow->tuplehash[1].tuple.l4proto,
-+	       flow->tuplehash[1].tuple.iifidx,
-+	       flow->tuplehash[1].tuple.dir
-+	       );
-+}
-+
-+static void *flow_map_lookup_elem(struct bpf_map *map, void *key)
-+{
-+	struct flow_map_internal *fmap = container_of(map,
-+						      struct flow_map_internal, map);
-+	struct bpf_flow_map *internal_key = (struct bpf_flow_map *)key;
-+	struct flow_offload_tuple_rhash *hash_ret;
-+	struct flow_offload_tuple lookup_key;
-+
-+	memset(&lookup_key, 0, sizeof(lookup_key));
-+	lookup_key.src_port = ntohs(internal_key->flow.sport);
-+	lookup_key.dst_port = ntohs(internal_key->flow.dport);
-+	lookup_key.dir = 0;
-+
-+	if (internal_key->flow.addr_proto == htons(ETH_P_IP)) {
-+		lookup_key.l3proto = AF_INET;
-+		lookup_key.src_v4.s_addr = ntohl(internal_key->flow.ipv4_src);
-+		lookup_key.dst_v4.s_addr = ntohl(internal_key->flow.ipv4_dst);
-+	} else if (internal_key->flow.addr_proto == htons(ETH_P_IPV6)) {
-+		lookup_key.l3proto = AF_INET6;
-+		memcpy(&lookup_key.src_v6,
-+		       internal_key->flow.ipv6_src,
-+		       sizeof(lookup_key.src_v6));
-+		memcpy(&lookup_key.dst_v6,
-+		       internal_key->flow.ipv6_dst,
-+		       sizeof(lookup_key.dst_v6));
-+	} else
-+		return NULL;
-+
-+	lookup_key.l4proto = (u8)internal_key->flow.ip_proto;
-+	lookup_key.iifidx = internal_key->iifindex;
-+
-+	printk("Flow offload lookup: %x:%d -> %x:%d, %u, %u, %d, %u\n",
-+	       lookup_key.src_v4.s_addr, lookup_key.src_port,
-+	       lookup_key.dst_v4.s_addr, lookup_key.dst_port,
-+	       lookup_key.l3proto, lookup_key.l4proto,
-+	       lookup_key.iifidx, lookup_key.dir);
-+	hash_ret = flow_offload_lookup(&fmap->net_flow_table, &lookup_key);
-+	if (!hash_ret) {
-+		memcpy(&lookup_key.src_v6, internal_key->flow.ipv6_src,
-+		       sizeof(lookup_key.src_v6));
-+		memcpy(&lookup_key.dst_v6, internal_key->flow.ipv6_dst,
-+		       sizeof(lookup_key.dst_v6));
-+		lookup_key.src_port = internal_key->flow.dport;
-+		lookup_key.dst_port = internal_key->flow.sport;
-+		lookup_key.dir = 1;
-+		hash_ret = flow_offload_lookup(&fmap->net_flow_table,
-+					       &lookup_key);
-+	}
-+
-+	if (!hash_ret) {
-+		printk("No flow found, but table is: %d\n",
-+		       atomic_read(&fmap->net_flow_table.rhashtable.nelems));
-+		nf_flow_table_iterate(&fmap->net_flow_table, flow_walk, NULL);
-+		return NULL;
-+	}
-+
-+	printk("Flow matched!\n");
-+	return key;
-+}
-+
-+static int flow_map_get_next_key(struct bpf_map *map, void *key, void *next_key)
-+{
-+	return 0;
-+}
-+
-+static int flow_map_check_no_btf(const struct bpf_map *map,
-+				 const struct btf_type *key_type,
-+				 const struct btf_type *value_type)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+const struct bpf_map_ops flow_map_ops = {
-+	.map_alloc = flow_map_alloc,
-+	.map_free = flow_map_free,
-+	.map_get_next_key = flow_map_get_next_key,
-+	.map_lookup_elem = flow_map_lookup_elem,
-+	.map_check_btf = flow_map_check_no_btf,
-+};
-+
-+static int __init flow_map_init(void)
-+{
-+	bpf_map_insert_ops(BPF_MAP_TYPE_FLOWMAP, &flow_map_ops);
-+	return 0;
-+}
-+
-+module_init(flow_map_init);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Aaron Conole <aconole@bytheb.org>");
--- 
-2.19.1
-
++1
