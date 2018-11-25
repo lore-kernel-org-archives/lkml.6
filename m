@@ -7,192 +7,111 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41358C43610
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79581C04EBA
 	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 19:47:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D74720855
+	by mail.kernel.org (Postfix) with ESMTP id 43C202084E
 	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 19:47:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIBNba9J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D74720855
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CWNzKxTF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43C202084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbeKZGjd (ORCPT
+        id S1726916AbeKZGje (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 01:39:33 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39514 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbeKZGjc (ORCPT
+        Mon, 26 Nov 2018 01:39:34 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43857 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726655AbeKZGjd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 01:39:32 -0500
-Received: by mail-wm1-f66.google.com with SMTP id u13-v6so16274114wmc.4
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 11:47:42 -0800 (PST)
+        Mon, 26 Nov 2018 01:39:33 -0500
+Received: by mail-wr1-f67.google.com with SMTP id r10so16729828wrs.10
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 11:47:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=YzP74p89FV3nHKyLJN9eSl4PTI/yDx70Z2XdXYx85P0=;
-        b=nIBNba9JH8NwYOk0aEju2qyihNV6BI6zGiKz26O4WJ11HkZqc0g+lCcdbFnK4MVg7L
-         VS4coJmh/686qP3JUEtisuUutCscWY0uNS2z58FyB6UYawtYYRHeDhi/ruWH37NU12nc
-         wYzctWytoYNqDM28/L7JHKZnWb6GgWUk/inhtqwoo5MRPOSxJAAPfznHmrgyTUa5pzEv
-         5DAH9ZzD7ON/KrRaWZhepS7yQ0p0oB0GOHPaCkRKYsd+MFXLOdIL6LTEByk+m2nhF4Nd
-         LNNEZF4BfL35JHAy2goYYGEZQKMbYtMt6MGMZVOM3p0pNFEG/IDWFeK0ZCDctW+Upn43
-         W5Uw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=oRfRYlHEgaG55OS5W6e1It4GqkPEPevt7il/gsL1g1g=;
+        b=CWNzKxTFw3m7I/y1pYPbiUInXXZDT1zwmBVZCXtZCIHS0nQzHaO41dQzmx0SWAq/kV
+         Am/G4hQBDtylcGPHKvl9Iim/qf/HqC9KXd7Iescn4vbHURMC/E9+pC1GZJV5gUJJw1r2
+         A92ty+Wm/gYekVego1ry9NdnBFT6BO3WQ6COhWTHRsKlT4PzMZUkAKgk4tUjyTLZ0pRq
+         1kEPkF7Cm//V2KPQWE2vORY8c0+ZlGdx8UvcdSu8x0UaBx4kQCtzbgOx8Vr1M6qjOTLb
+         2d22jmx1RYWI6Mm5tVVBy2oowmM6nrlIryceJ28Me+tDBoEvdiYKkfH41GCrWZ+OeyYS
+         suFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=YzP74p89FV3nHKyLJN9eSl4PTI/yDx70Z2XdXYx85P0=;
-        b=Ju87Bd50VvJx8e1fvf3kMs+Tg9K2xCWGv+7KE76hyJQuirL+Qoq5JIzCLYsoKHZTHT
-         VnliNKSwljzXoNZFgR1POuyimkt6u/IHYFDZOWNIyw9MuY9ezXg8myTyolnE3UJZbEsg
-         hvEB2G3imrmHqnfM6ncXsldtGwK/DnPfWv66wp1dnzpVwm7No2hx88HfBRrnH2Rxx1Cn
-         JPXmrEKNCHdlYXjF5t3BHrL+nCKQNDJh5VBFSfjxLzYLnJjrhrtmMFJ/+m9toKQxbuvu
-         5RvJie6Q0Ptd5+JCWVWpFKr1Oibw2d3bSmoFDAlfU2jxZcsQOc6fUqwJj0XIXod4CIZU
-         WjAQ==
-X-Gm-Message-State: AGRZ1gJxcGCAQRqoLO83+AdvIo0cw5p/l0RzQXGV8Bu0OuzciqZlr/ez
-        i5rx+os6FKYtvR+rgJw+klI=
-X-Google-Smtp-Source: AFSGD/UPXOYCjNKQ4FsmBz7N1bLfcPf32ZKDHDh03zvTsJhW+BzFz5VfDQ2KC2vxtFe5jr3kz56zJQ==
-X-Received: by 2002:a1c:6e09:: with SMTP id j9mr22041858wmc.105.1543175262021;
-        Sun, 25 Nov 2018 11:47:42 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=oRfRYlHEgaG55OS5W6e1It4GqkPEPevt7il/gsL1g1g=;
+        b=sNm/M6OI3kz1GwcsBKTBLA3doIURKE/xBDD6Umee+BGrJRGe6jnuY7Y43TKwOGPK0y
+         UOlIFWep6GOkGoH1K59KB9rxsXj7849WVzER0lz5SVEJiJ1VgQZTeFjR94qM2DQ4IBog
+         LJtAX5Tbtr4tJYFHupT8ar6r2p+qe01gleu+Iu0UDDqS7mAoZy828M6ILoFOYAjI4QbW
+         Fgxzhh0XQXjatfXdbmX53ZmHWwfD5ILUbezFzcpdGpilcePag+4I9KVeKHkIoWDgDCxG
+         AA3lrb9P3bVxxnW0kwymH914/oNFNTISNDO0Pw8P4ZeIkJkWUORf4aeUATeNrHOt2Rz7
+         T4zA==
+X-Gm-Message-State: AA+aEWYsuytfI7x6X5KtcmeLyrwvDYJ38+NzTr4pI/UOWtTK1mEV+FY7
+        x35+YLW7csisMvGr+Cewywo=
+X-Google-Smtp-Source: AFSGD/UzgDNs8cnrk5zMmUF9Ak+qlZhXAXCN7Jp/AlkB7JLGKwmBBctbGhSFBjiGTKSG09QR0hCXNg==
+X-Received: by 2002:adf:fa05:: with SMTP id m5mr16850230wrr.155.1543175264201;
+        Sun, 25 Nov 2018 11:47:44 -0800 (PST)
 Received: from localhost.localdomain (cpc101300-bagu16-2-0-cust362.1-3.cable.virginm.net. [86.21.41.107])
-        by smtp.gmail.com with ESMTPSA id y138sm15744436wmc.16.2018.11.25.11.47.40
+        by smtp.gmail.com with ESMTPSA id y138sm15744436wmc.16.2018.11.25.11.47.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 25 Nov 2018 11:47:41 -0800 (PST)
+        Sun, 25 Nov 2018 11:47:43 -0800 (PST)
 From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 To:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 1/6] char: lp: remove trailing whitespace
-Date:   Sun, 25 Nov 2018 19:47:32 +0000
-Message-Id: <20181125194737.5591-1-sudipm.mukherjee@gmail.com>
+Subject: [PATCH 3/6] char: lp: do not use return as a function
+Date:   Sun, 25 Nov 2018 19:47:34 +0000
+Message-Id: <20181125194737.5591-3-sudipm.mukherjee@gmail.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181125194737.5591-1-sudipm.mukherjee@gmail.com>
+References: <20181125194737.5591-1-sudipm.mukherjee@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix checkpatch error for trailing whitespace.
+return is not a function, parentheses are not required.
 
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 ---
- drivers/char/lp.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ drivers/char/lp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/char/lp.c b/drivers/char/lp.c
-index 8c4dd1a3bb6a..7b15272c0510 100644
+index 65bf32244f48..4153c6f5683a 100644
 --- a/drivers/char/lp.c
 +++ b/drivers/char/lp.c
-@@ -46,8 +46,8 @@
-  *	lp=auto				(assign lp devices to all ports that
-  *				         have printers attached, as determined
-  *					 by the IEEE-1284 autoprobe)
-- * 
-- *	lp=reset			(reset the printer during 
-+ *
-+ *	lp=reset			(reset the printer during
-  *					 initialisation)
-  *
-  *	lp=off				(disable the printer driver entirely)
-@@ -188,7 +188,7 @@ static int lp_preempt(void *handle)
+@@ -184,7 +184,7 @@ static int lp_preempt(void *handle)
+ {
+ 	struct lp_struct *this_lp = (struct lp_struct *)handle;
+ 	set_bit(LP_PREEMPT_REQUEST, &this_lp->bits);
+-	return (1);
++	return 1;
  }
  
  
--/* 
-+/*
-  * Try to negotiate to a new mode; if unsuccessful negotiate to
-  * compatibility mode.  Return the mode we ended up in.
-  */
-@@ -326,7 +326,7 @@ static ssize_t lp_write(struct file * file, const char __user * buf,
-  	 */
- 	lp_claim_parport_or_block (&lp_table[minor]);
- 	/* Go to the proper mode. */
--	lp_table[minor].current_mode = lp_negotiate (port, 
-+	lp_table[minor].current_mode = lp_negotiate (port,
- 						     lp_table[minor].best_mode);
+@@ -199,7 +199,7 @@ static int lp_negotiate(struct parport * port, int mode)
+ 		parport_negotiate (port, mode);
+ 	}
  
- 	parport_set_timeout (lp_table[minor].dev,
-@@ -355,7 +355,7 @@ static ssize_t lp_write(struct file * file, const char __user * buf,
- 			/* incomplete write -> check error ! */
- 			int error;
+-	return (mode);
++	return mode;
+ }
  
--			parport_negotiate (lp_table[minor].dev->port, 
-+			parport_negotiate (lp_table[minor].dev->port,
- 					   IEEE1284_MODE_COMPAT);
- 			lp_table[minor].current_mode = IEEE1284_MODE_COMPAT;
+ static int lp_reset(int minor)
+@@ -279,7 +279,7 @@ static int lp_wait_ready(int minor, int nonblock)
  
-@@ -372,8 +372,8 @@ static ssize_t lp_write(struct file * file, const char __user * buf,
- 			}
+ 	/* If we're not in compatibility mode, we're ready now! */
+ 	if (lp_table[minor].current_mode != IEEE1284_MODE_COMPAT) {
+-	  return (0);
++		return 0;
+ 	}
  
- 			parport_yield_blocking (lp_table[minor].dev);
--			lp_table[minor].current_mode 
--			  = lp_negotiate (port, 
-+			lp_table[minor].current_mode
-+			  = lp_negotiate (port,
- 					  lp_table[minor].best_mode);
- 
- 		} else if (need_resched())
-@@ -389,13 +389,13 @@ static ssize_t lp_write(struct file * file, const char __user * buf,
- 					retv = -EFAULT;
- 				break;
- 			}
--		}	
-+		}
- 	} while (count > 0);
- 
--	if (test_and_clear_bit(LP_PREEMPT_REQUEST, 
-+	if (test_and_clear_bit(LP_PREEMPT_REQUEST,
- 			       &lp_table[minor].bits)) {
- 		printk(KERN_INFO "lp%d releasing parport\n", minor);
--		parport_negotiate (lp_table[minor].dev->port, 
-+		parport_negotiate (lp_table[minor].dev->port,
- 				   IEEE1284_MODE_COMPAT);
- 		lp_table[minor].current_mode = IEEE1284_MODE_COMPAT;
- 		lp_release_parport (&lp_table[minor]);
-@@ -542,7 +542,7 @@ static int lp_open(struct inode * inode, struct file * file)
- 	/* Determine if the peripheral supports ECP mode */
- 	lp_claim_parport_or_block (&lp_table[minor]);
- 	if ( (lp_table[minor].dev->port->modes & PARPORT_MODE_ECP) &&
--             !parport_negotiate (lp_table[minor].dev->port, 
-+             !parport_negotiate (lp_table[minor].dev->port,
-                                  IEEE1284_MODE_ECP)) {
- 		printk (KERN_INFO "lp%d: ECP mode\n", minor);
- 		lp_table[minor].best_mode = IEEE1284_MODE_ECP;
-@@ -615,7 +615,7 @@ static int lp_do_ioctl(unsigned int minor, unsigned int cmd,
- 		case LPWAIT:
- 			LP_WAIT(minor) = arg;
- 			break;
--		case LPSETIRQ: 
-+		case LPSETIRQ:
- 			return -EINVAL;
- 			break;
- 		case LPGETIRQ:
-@@ -908,7 +908,7 @@ static int __init lp_setup (char *str)
- 
- static int lp_register(int nr, struct parport *port)
- {
--	lp_table[nr].dev = parport_register_device(port, "lp", 
-+	lp_table[nr].dev = parport_register_device(port, "lp",
- 						   lp_preempt, NULL, NULL, 0,
- 						   (void *) &lp_table[nr]);
- 	if (lp_table[nr].dev == NULL)
-@@ -921,7 +921,7 @@ static int lp_register(int nr, struct parport *port)
- 	device_create(lp_class, port->dev, MKDEV(LP_MAJOR, nr), NULL,
- 		      "lp%d", nr);
- 
--	printk(KERN_INFO "lp%d: using %s (%s).\n", nr, port->name, 
-+	printk(KERN_INFO "lp%d: using %s (%s).\n", nr, port->name,
- 	       (port->irq == PARPORT_IRQ_NONE)?"polling":"interrupt-driven");
- 
- #ifdef CONFIG_LP_CONSOLE
-@@ -1060,7 +1060,7 @@ static int __init lp_init_module (void)
- 				else {
- 					char *ep;
- 					unsigned long r = simple_strtoul(parport[n], &ep, 0);
--					if (ep != parport[n]) 
-+					if (ep != parport[n])
- 						parport_nr[n] = r;
- 					else {
- 						printk(KERN_ERR "lp: bad port specifier `%s'\n", parport[n]);
+ 	do {
 -- 
 2.11.0
 
