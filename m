@@ -2,122 +2,136 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C1CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBCEEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:18:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91035208E7
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:17:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACF922082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:18:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LtKdYzsP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91035208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="vkeurhET"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACF922082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbeK0JNa (ORCPT
+        id S1727411AbeK0JOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 04:13:30 -0500
-Received: from ozlabs.org ([203.11.71.1]:36007 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726357AbeK0JNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 04:13:30 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 433hB8554gz9s3l;
-        Tue, 27 Nov 2018 09:17:52 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1543270673;
-        bh=/wRpLNyPG2OWZldnDFdD/ECtIJTrHPp4gOuPdTwqu7Q=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LtKdYzsPJa/j54Z2OkAMqAqzOYyfP3npNnV9S4xnQzgmmLxrwuv9omecT23aNpAxO
-         +QxpbHJQjNGqHe19T7sxwwABsFIZ3mMCCZVBtYHQo0cDGKJYZ+3LnFACc1Gdmhtopw
-         uSIV5dJms0yhgtpXZVgxndMEg/m8FS/saXYPxhu1sh3la3Otxx5X7nQFumeg7gdnIQ
-         IRuNFFW1M3SiZG1gdItyh8uSf1xi3VXquKw04rBtAeYsxfiPVZVtAu3JCxlNsAlgXx
-         eBM6UmzPckyrThhq0MOs4uUWoPkrtTZtzAGCC/guL+LO01OVELM8HrVV+1U8nN2jxV
-         az7jDCqt6mXsw==
-Date:   Tue, 27 Nov 2018 09:17:47 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Kees Cook <keescook@google.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: Re: linux-next: build warning after merge of the f2fs tree
-Message-ID: <20181127091747.4830d123@canb.auug.org.au>
-In-Reply-To: <20181126215924.GA55960@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20181126111933.1b0fb324@canb.auug.org.au>
-        <20181126215924.GA55960@jaegeuk-macbookpro.roam.corp.google.com>
+        Tue, 27 Nov 2018 04:14:17 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38807 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727278AbeK0JOQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 04:14:16 -0500
+Received: by mail-pl1-f196.google.com with SMTP id e5so14543740plb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 14:18:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nnRkIidyTMCkCU8s4XbXhP39Wm67YCXxFtSWO/jSdU8=;
+        b=vkeurhETkMrogwJmGI3eGa62QwDe4P+LcCcTlzyvWMH3ofHRs0MY6V2ZMtGLgSIJu8
+         5TKpaf4v3xugYKohlsROKlKr07KQ+fgqw8xPMYAd536f4Bcp9YPfRYXrheq/uNZ/k/Hb
+         wJwj0EW2vCOTGMz6LZxSHYJYkjrZeU+oOJuwmjTOrb2V2IsCRhZ682+Sz0kpWUHauGPg
+         MLttGBLspbnFV4OAasq9Um7tqAJHWSITMjVpHsB7yZ2axltVtfxE7yy5GyNpYGRJpHTd
+         MRHF3qI73pJ/mlDJxZyYTiTvRj8vsLSXGxzswrshkk4UkJIMQ7P+yk2ARm3KaeDpD2oQ
+         elNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nnRkIidyTMCkCU8s4XbXhP39Wm67YCXxFtSWO/jSdU8=;
+        b=OjVuaYjP5aoJbcAA7fz3px2prnwjNEE/7RfIR7gflmDvMcBWqjsiUFkRckFBjn2dk2
+         SyDs5TzqPlzar8O5Asouq/5wABTU9Z2Cj/3toQ1DwdsXsUlWloC7QRXb6It7gHJ7U/t2
+         p5mSlGkj2HlcAVsvKMtYDLtHCXaGy+YEbq5m1FsTnX7N9+DOTt+t11HR0YBJWHSip/4w
+         rm2FLJk8+eszaK3RTLLAtTGM8BiAptuqzJRQnBwmGtDASPxeS+EbqHLcFKijEI1UzYN8
+         yA1D6bxLgBpcZ9K9LmmPazOskEqwv8R5NRUKqD0YknWEKLikhQJowaI1ZylpcsCO4Lf2
+         fzQA==
+X-Gm-Message-State: AA+aEWaXVaykgFlft7ZGZHRcnoB1B61zHipFfEeN8UrnV9yIJP3RnjmL
+        4/z3dr/nJjQj0l8Cph4uZ6YrPw==
+X-Google-Smtp-Source: AFSGD/UZvPnmXOxr18I1aqWNh2aCKHb4dIcemmTBolztFwKCRREIPoguVnvpQPIq5Z5KW+MHH3uPZA==
+X-Received: by 2002:a17:902:8214:: with SMTP id x20-v6mr28569658pln.224.1543270720790;
+        Mon, 26 Nov 2018 14:18:40 -0800 (PST)
+Received: from vader ([2601:602:8b00:55d3:e6a7:a0ff:fe0b:c9a8])
+        by smtp.gmail.com with ESMTPSA id u69sm1721000pfj.116.2018.11.26.14.18.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 14:18:38 -0800 (PST)
+Date:   Mon, 26 Nov 2018 14:18:35 -0800
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V12 06/20] block: rename bvec helpers
+Message-ID: <20181126221835.GG30411@vader>
+References: <20181126021720.19471-1-ming.lei@redhat.com>
+ <20181126021720.19471-7-ming.lei@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1CNKR_JuZ7EXqjn9Aby.ik6"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126021720.19471-7-ming.lei@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/1CNKR_JuZ7EXqjn9Aby.ik6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Nov 26, 2018 at 10:17:06AM +0800, Ming Lei wrote:
+> We will support multi-page bvec soon, and have to deal with
+> single-page vs multi-page bvec. This patch follows Christoph's
+> suggestion to rename all the following helpers:
+> 
+> 	for_each_bvec
+> 	bvec_iter_bvec
+> 	bvec_iter_len
+> 	bvec_iter_page
+> 	bvec_iter_offset
+> 
+> into:
+> 	for_each_segment
+> 	segment_iter_bvec
+> 	segment_iter_len
+> 	segment_iter_page
+> 	segment_iter_offset
+> 
+> so that these helpers named with 'segment' only deal with single-page
+> bvec, or called segment. We will introduce helpers named with 'bvec'
+> for multi-page bvec.
+> 
+> bvec_iter_advance() isn't renamed becasue this helper is always operated
+> on real bvec even though multi-page bvec is supported.
+> 
+> Suggested-by: Christoph Hellwig <hch@lst.de>
 
-Hi Jaegeuk,
+Reviewed-by: Omar Sandoval <osandov@fb.com>
 
-On Mon, 26 Nov 2018 13:59:24 -0800 Jaegeuk Kim <jaegeuk@kernel.org> wrote:
->
-> On 11/26, Stephen Rothwell wrote:
-> >=20
-> > After merging the f2fs tree, today's linux-next build
-> > (x86_64_allmodconfig) produced this warning:
-> >=20
-> > In file included from fs/f2fs/dir.c:11:
-> > fs/f2fs/f2fs.h: In function '__mark_inode_dirty_flag':
-> > fs/f2fs/f2fs.h:2388:6: warning: this statement may fall through [-Wimpl=
-icit-fallthrough=3D]
-> >    if (set)
-> >       ^
-> > fs/f2fs/f2fs.h:2390:2: note: here
-> >   case FI_DATA_EXIST:
-> >   ^~~~
-> >=20
-> > Exposed by my use of -Wimplicit-fallthrough
-> >=20
-> > I am not sure why this has turned up now (as opposed to earlier today).=
- =20
->=20
-> The above change had been there for a long time, as an intended behavior.
-
-Yeah, it popped up due to line number changes in that file and the way
-I was filtering new warnings.
-
-> Hmm, I'm not sure how to avoid this.
-
-if you add a comment
-	/* fall through */
-at the point the fall through occurs, then the warning is suppressed
-(and it documents that it is deliberate).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/1CNKR_JuZ7EXqjn9Aby.ik6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv8cQsACgkQAVBC80lX
-0GxO+Qf9G6YnjUx/tFlb5nlzFmjONkb4fSe4BTc2s3LWhClbBmvIJ1ZwAy5xV52R
-uqL2orFeRi0I2VfXYhAhspGf4a2xaQC0bD9QMfiWKfYq+CDHb+lyuZzP69ZL7uFS
-BvoK3gXsFgnQWRn5VjOLCTArqN17RouqE1l4iPxbHOpNLybnXwpBL0El//38bYEd
-/CDHPGVg7rNHG1cV07v7uaI5W3nt7PTlRAaSi6gckGqxkRfcH0IM+DoCYK35ys9d
-OiFQhx8oglPj1YQ2mg1ihMOXWmj3eIU5lTBKCf8P3pk9uUKRgzH9pZZqSHWp3wqC
-A2ssZNP5pFRsVU/Rkz9ycV6Jy5QtEA==
-=I5ve
------END PGP SIGNATURE-----
-
---Sig_/1CNKR_JuZ7EXqjn9Aby.ik6--
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
+>  .clang-format                  |  2 +-
+>  drivers/md/dm-integrity.c      |  2 +-
+>  drivers/md/dm-io.c             |  4 ++--
+>  drivers/nvdimm/blk.c           |  4 ++--
+>  drivers/nvdimm/btt.c           |  4 ++--
+>  include/linux/bio.h            | 10 +++++-----
+>  include/linux/bvec.h           | 20 +++++++++++---------
+>  include/linux/ceph/messenger.h |  2 +-
+>  lib/iov_iter.c                 |  2 +-
+>  net/ceph/messenger.c           | 14 +++++++-------
+>  10 files changed, 33 insertions(+), 31 deletions(-)
