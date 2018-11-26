@@ -2,61 +2,75 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E6EC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 142B3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:16:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35FD220664
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:11:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35FD220664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id CA4A92086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:16:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA4A92086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbeK0AGD (ORCPT
+        id S1726259AbeK0AKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 19:06:03 -0500
-Received: from verein.lst.de ([213.95.11.211]:51996 "EHLO newverein.lst.de"
+        Mon, 26 Nov 2018 19:10:35 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:55928 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726225AbeK0AGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 19:06:03 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id E06B568C1D; Mon, 26 Nov 2018 14:11:54 +0100 (CET)
-Date:   Mon, 26 Nov 2018 14:11:54 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V12 10/20] block: use bio_for_each_bvec() to map sg
-Message-ID: <20181126131154.GB6757@lst.de>
-References: <20181126021720.19471-1-ming.lei@redhat.com> <20181126021720.19471-11-ming.lei@redhat.com>
+        id S1725966AbeK0AKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 19:10:35 -0500
+Received: from we0660.dip.tu-dresden.de ([141.76.178.148] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gRGkR-0000Z9-St; Mon, 26 Nov 2018 14:16:23 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, arm@kernel.org,
+        devicetree@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/10] ARM64: dts: rockchip: Add all CPUs in cooling maps
+Date:   Mon, 26 Nov 2018 14:16:23 +0100
+Message-ID: <3451054.D49JNUWnuL@phil>
+In-Reply-To: <ee0bd5fb56652141e5ce23927b258b1779844af6.1542362530.git.viresh.kumar@linaro.org>
+References: <cover.1542362530.git.viresh.kumar@linaro.org> <ee0bd5fb56652141e5ce23927b258b1779844af6.1542362530.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181126021720.19471-11-ming.lei@redhat.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good,
+Am Freitag, 16. November 2018, 11:04:32 CET schrieb Viresh Kumar:
+> Each CPU can (and does) participate in cooling down the system but the
+> DT only captures a handful of them, normally CPU0, in the cooling maps.
+> Things work by chance currently as under normal circumstances its the
+> first CPU of each cluster which is used by the operating systems to
+> probe the cooling devices. But as soon as this CPU ordering changes and
+> any other CPU is used to bring up the cooling device, we will start
+> seeing failures.
+> 
+> Also the DT is rather incomplete when we list only one CPU in the
+> cooling maps, as the hardware doesn't have any such limitations.
+> 
+> Update cooling maps to include all devices affected by individual trip
+> points.
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+looks like I forgot to respond ... applied like 7 days ago
+and already part of my pull-request for 4.21
+
+
+Thanks
+Heiko
+
+
