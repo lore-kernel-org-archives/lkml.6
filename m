@@ -2,147 +2,134 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61DBBC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8B6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29A9B208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:32:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E76802133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:33:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="SVWDfHQl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29A9B208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="XPSmlqgd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E76802133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727660AbeK0K2f (ORCPT
+        id S1727682AbeK0K3W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:28:35 -0500
-Received: from sonic315-27.consmr.mail.ne1.yahoo.com ([66.163.190.153]:37373
-        "EHLO sonic315-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727445AbeK0K2f (ORCPT
+        Tue, 27 Nov 2018 05:29:22 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:49820 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726888AbeK0K3W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:28:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543275166; bh=f/TY9l73GMshFbCbwrpBRqM3LiA17i42/3X1M8hx5cI=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=SVWDfHQlnCDX1GeaY9n/EcjgYFZMikp7Lnlz19S3wyDzFl007uknMXbWv6dleYJqh3PkJXYcFceybLQH3ksAOOJS/4x5tvudx04hYzALFQFfy4xJRu2zXTKtMINPlO+RhjVlbrP/7HrlqWtpwUQ3It1cpeyBmOicLnEal+6K1HYa0lfOjHPJfeZOKLrrY8kQZklap8ivj5vJgFdEGB4vrNh+g3jgX49FUOPkSsb5kOGTb6hI6DmOzp4AgU+Y1tZokL2rlkCmW5QVhqk100USukWTCwBnxSONJPuOJQLVAz5oHrD242YMl9X/WfS11WY5bU172IxgoJRt5HBLCSx2Aw==
-X-YMail-OSG: wesRcy8VM1kpWAP8HLRBHe1xbr39ZevlcgKFQqQvwqoii5CH2HOSzXJeyBC.yOo
- fP1xr6DYp2yqJDEBTxxqzvoUSAbXgETvysQ1BT2z9RcUpqF.1O3xz2Ty39xvCcXCuheaM5ccweJX
- K8kBmDExRTEeM_T2pFcBAPC9.rL03utEcPCDm69m6L_KrtLDj0SYphLpjhu692TiRdqm4D3vivPQ
- juWTRrxALxfLAW8.gw7TaiBXHiVBz.18xa5irf0v9taNEsihf.NU9eg_38jTbuE_BgBx4sWGMxOy
- 5yxFSpv6MVoRHgocDhiV5P0doyocHAR91aZ2Sd.2izcpmtVZSESVgrwA3QB8lJYE1hSHeja3HbSG
- gehC6PyfXYsObyw_epvPZJf7EsErgOpPw7oCJl.pxSVOcOSilMQ6j8T9rsmhVocB6X2Ru2TyeMKq
- cUwzcCsZBqsQ9yK0GJZnOjg31vSFxNd17EklFSELydP6AiHC7JijHKOkWScXM1OWg50SFZxa.TkK
- UfZl.ytjlfNLBeB2uEX_tPq00pZBNp6YDXHI_w0RJy.T5tWzqycpebXtph1h_1YMDGS0GNN3dB8u
- 60SZVEzC_wrTW8Sva.zeSaP7cvfaJJ28Vd3ar4X15uKRZxq82qfivOGthvHfZsVKIAEiURi5LtUU
- Ii9Mbda7eAlElQI9baO.dpw.XaF0lng0Lw2IlsVelaqK1HC0htNAMVrZqk3gidvOTtGRPY0BKODm
- WcMy6mOnMrpV9hrHP0wFsPtS2bYdgT5Kc_pjY9Z4rq4vwMcWZPhOPUoig5FeiRtkVROiHHFsLTQp
- PGdwbTA9jNvGPLngAjeMgKsJsgcos2qRiD7hVY4Aeb2OdznWE59resHtLk3b8XUnicdrr1wC42qc
- F8jFmzTkGUT6WqfFpUo1Hfc2zivEKMGsoQMtcmi62HnjvuCesbQ30FSBWMyxxzckQm2ickZStRo4
- wrRXOwouMUCG1xT9z9KbE_O.6GhmNKwDUXQema1Rs4KcUndLLv.vQJzbonh3zcVJ6HmzwnCgxdSj
- oOK0ZcAJboA8imYcRqR88AbUy0TzP8uwi1jsVFkx9W7mmEYlZsjA6SKbPIsbxxF5gQmApw6ZRN4C
- rLnj10d6z_gk391PL.oFCcNzntVOY8bprp3PfiuMe
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:32:46 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp407.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 111f5b9d597319e49534bdc80c98b414;
-          Mon, 26 Nov 2018 23:32:42 +0000 (UTC)
-Subject: [PATCH v5 08/38] LSM: Tie enabling logic to presence in ordered list
-To:     James Morris <jmorris@namei.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
-References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <602079a2-b7f8-4c8d-8fd7-fc6e90095335@schaufler-ca.com>
-Date:   Mon, 26 Nov 2018 15:32:40 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 27 Nov 2018 05:29:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3iSTjG1yC6ch/Dv/OjBPe0aHzhKAk+o2Mq0b66JIxvA=; b=XPSmlqgdChu6pWMj55vCodQd6
+        fIUg9p0l6hBVAJrYFZZ0qg97FCatHGfKaJYMnP2ss1vOcGotgLt/b2Owfa/FHTP0b6baY2UfUTaSK
+        u4KgGBVK0oVbAVBeHo7NO5AYol/D0HxEV/5JzBvewhtTluCAmYXTlh49S5aitQTfyaHPQ=;
+Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:39276)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gRQNO-0003d2-Oz; Mon, 26 Nov 2018 23:33:14 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gRQNI-00048M-7y; Mon, 26 Nov 2018 23:33:08 +0000
+Date:   Mon, 26 Nov 2018 23:33:03 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
+Cc:     Vladimir Murzin <vladimir.murzin@arm.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Timothy E Baldwin <T.E.Baldwin99@members.leeds.ac.uk>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm: always update thread_info->syscall
+Message-ID: <20181126233303.GZ30658@n2100.armlinux.org.uk>
+References: <20181126225335.10477-1-rafael.tinoco@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126225335.10477-1-rafael.tinoco@linaro.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Until now, any LSM without an enable storage variable was considered
-enabled. This inverts the logic and sets defaults to true only if the
-LSM gets added to the ordered initialization list. (And an exception
-continues for the major LSMs until they are integrated into the ordered
-initialization in a later patch.)
+On Mon, Nov 26, 2018 at 08:53:35PM -0200, Rafael David Tinoco wrote:
+> Right now, only way for task->thread_info->syscall to be updated is if
+> if _TIF_SYSCALL_WORK is set in current's task thread_info->flags
+> (similar to what has_syscall_work() checks for arm64).
+> 
+> This means that "->syscall" will only be updated if we are tracing the
+> syscalls through ptrace, for example. This is NOT the same behavior as
+> arm64, when pt_regs->syscallno is updated in the beginning of svc0
+> handler for *every* syscall entry.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- include/linux/lsm_hooks.h |  2 +-
- security/security.c       | 14 +++++++++++---
- 2 files changed, 12 insertions(+), 4 deletions(-)
+So when was it decided that the syscall number will always be required
+(we need it to know how far back this has to be backported).
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index dabd2761acfc..272791fdd26e 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2044,7 +2044,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
- struct lsm_info {
- 	const char *name;	/* Required. */
- 	unsigned long flags;	/* Optional: flags describing LSM */
--	int *enabled;		/* Optional: NULL means enabled. */
-+	int *enabled;		/* Optional: controlled by CONFIG_LSM */
- 	int (*init)(void);	/* Required. */
- };
- 
-diff --git a/security/security.c b/security/security.c
-index 38fc436e8b4b..ea760d625af6 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -63,10 +63,10 @@ static __initdata bool debug;
- 
- static bool __init is_enabled(struct lsm_info *lsm)
- {
--	if (!lsm->enabled || *lsm->enabled)
--		return true;
-+	if (!lsm->enabled)
-+		return false;
- 
--	return false;
-+	return *lsm->enabled;
- }
- 
- /* Mark an LSM's enabled flag. */
-@@ -117,7 +117,11 @@ static void __init append_ordered_lsm(struct lsm_info *lsm, const char *from)
- 	if (WARN(last_lsm == LSM_COUNT, "%s: out of LSM slots!?\n", from))
- 		return;
- 
-+	/* Enable this LSM, if it is not already set. */
-+	if (!lsm->enabled)
-+		lsm->enabled = &lsm_enabled_true;
- 	ordered_lsms[last_lsm++] = lsm;
-+
- 	init_debug("%s ordering: %s (%sabled)\n", from, lsm->name,
- 		   is_enabled(lsm) ? "en" : "dis");
- }
-@@ -210,6 +214,10 @@ static void __init major_lsm_init(void)
- 		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
- 			continue;
- 
-+		/* Enable this LSM, if it is not already set. */
-+		if (!lsm->enabled)
-+			lsm->enabled = &lsm_enabled_true;
-+
- 		maybe_initialize_lsm(lsm);
- 	}
- }
+> This patch fixes the issue since this behavior is needed for
+> /proc/<pid>/syscall 1st argument to be correctly updated.
+> 
+> Link: https://bugs.linaro.org/show_bug.cgi?id=3783
+> Cc: <stable@vger.kernel.org> # v4.4 v4.9 v4.14 v4.19
+> Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+> ---
+>  arch/arm/kernel/asm-offsets.c  | 1 +
+>  arch/arm/kernel/entry-common.S | 2 ++
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm/kernel/asm-offsets.c b/arch/arm/kernel/asm-offsets.c
+> index 3968d6c22455..bfe68a98e1c6 100644
+> --- a/arch/arm/kernel/asm-offsets.c
+> +++ b/arch/arm/kernel/asm-offsets.c
+> @@ -64,6 +64,7 @@ int main(void)
+>    DEFINE(TI_USED_CP,		offsetof(struct thread_info, used_cp));
+>    DEFINE(TI_TP_VALUE,		offsetof(struct thread_info, tp_value));
+>    DEFINE(TI_FPSTATE,		offsetof(struct thread_info, fpstate));
+> +  DEFINE(TI_SYSCALL,		offsetof(struct thread_info, syscall));
+>  #ifdef CONFIG_VFP
+>    DEFINE(TI_VFPSTATE,		offsetof(struct thread_info, vfpstate));
+>  #ifdef CONFIG_SMP
+> diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
+> index 0465d65d23de..557e2add4e83 100644
+> --- a/arch/arm/kernel/entry-common.S
+> +++ b/arch/arm/kernel/entry-common.S
+> @@ -257,6 +257,8 @@ local_restart:
+>  	tst	r10, #_TIF_SYSCALL_WORK		@ are we tracing syscalls?
+>  	bne	__sys_trace
+>  
+> +	str	r7, [tsk, #TI_SYSCALL]		@ update thread_info->syscall
+
+"scno" is the systemcall number, not "r7".
+
+> +
+>  	invoke_syscall tbl, scno, r10, __ret_fast_syscall
+>  
+>  	add	r1, sp, #S_OFF
+> -- 
+> 2.20.0.rc1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
 -- 
-2.14.5
-
-
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
