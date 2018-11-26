@@ -2,557 +2,159 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4261CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9BBBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E917F20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:55:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E917F20817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 93BF920817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:55:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="KWOR5Nmp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93BF920817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726746AbeK0Atb (ORCPT
+        id S1726793AbeK0At7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 19:49:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53594 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726201AbeK0Ata (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 19:49:30 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3A602C04AC51;
-        Mon, 26 Nov 2018 13:55:17 +0000 (UTC)
-Received: from treble.redhat.com (ovpn-121-105.rdu2.redhat.com [10.10.121.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 304AD4524;
-        Mon, 26 Nov 2018 13:55:15 +0000 (UTC)
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v2 4/4] x86/static_call: Add inline static call implementation for x86-64
-Date:   Mon, 26 Nov 2018 07:55:00 -0600
-Message-Id: <62188c62f6dda49ca2e20629ee8e5a62a6c0b500.1543200841.git.jpoimboe@redhat.com>
-In-Reply-To: <cover.1543200841.git.jpoimboe@redhat.com>
-References: <cover.1543200841.git.jpoimboe@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 26 Nov 2018 13:55:17 +0000 (UTC)
+        Mon, 26 Nov 2018 19:49:59 -0500
+Received: from mail-eopbgr70084.outbound.protection.outlook.com ([40.107.7.84]:13568
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726201AbeK0At7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 19:49:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xg7wkn1WJsO0HH/9EBlHnC7RB0uywTwiWPOeKxLqAAU=;
+ b=KWOR5NmpXKoLuzdgucCPhTHKHzIqnv7s0ilHFm2H3TGoY7itj4Z9nmEEulH8yQxR2wZwZ1r3dIjbm7J51X8OUaVOqH72yWlRPN8yg+ZAsE38JxSbsYX8aW7oIKYjgCldCqodN/4+V4I0Ppjck8u285kSlV6YxMYtM+44S02j8WA=
+Received: from AM4PR0501MB2769.eurprd05.prod.outlook.com (10.172.216.13) by
+ AM4PR0501MB2161.eurprd05.prod.outlook.com (10.165.45.154) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.19; Mon, 26 Nov 2018 13:55:38 +0000
+Received: from AM4PR0501MB2769.eurprd05.prod.outlook.com
+ ([fe80::c8e7:b496:3494:9455]) by AM4PR0501MB2769.eurprd05.prod.outlook.com
+ ([fe80::c8e7:b496:3494:9455%10]) with mapi id 15.20.1361.019; Mon, 26 Nov
+ 2018 13:55:37 +0000
+From:   Ran Rozenstein <ranro@mellanox.com>
+To:     "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
+        Joel Fernandes <joel@joelfernandes.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
+        "dipankar@in.ibm.com" <dipankar@in.ibm.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "fweisbec@gmail.com" <fweisbec@gmail.com>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        Maor Gottlieb <maorg@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Eran Ben Elisha <eranbe@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: RE: [PATCH tip/core/rcu 02/19] rcu: Defer reporting RCU-preempt
+ quiescent states when disabled
+Thread-Topic: [PATCH tip/core/rcu 02/19] rcu: Defer reporting RCU-preempt
+ quiescent states when disabled
+Thread-Index: AQHUb27SVlgbygUSaE+GPdWo3UdIVqU2Ei+ggAA2BYCAAXlekoAAnViAgAFPuYCAAztHAIAlVdDA
+Date:   Mon, 26 Nov 2018 13:55:37 +0000
+Message-ID: <AM4PR0501MB27690D8721451EEE5082E593C5D70@AM4PR0501MB2769.eurprd05.prod.outlook.com>
+References: <20180829222021.GA29944@linux.vnet.ibm.com>
+ <20180829222047.319-2-paulmck@linux.vnet.ibm.com>
+ <AM4PR0501MB27691ECD1B0ECB0531B16F20C5F30@AM4PR0501MB2769.eurprd05.prod.outlook.com>
+ <20181029142735.GZ4170@linux.ibm.com> <20181030034452.GA224709@google.com>
+ <20181030125800.GE4170@linux.ibm.com>
+ <20181030222123.GB44036@joelaf.mtv.corp.google.com>
+ <20181031182259.GH4170@linux.ibm.com> <20181102194356.GA8378@linux.ibm.com>
+In-Reply-To: <20181102194356.GA8378@linux.ibm.com>
+Accept-Language: he-IL, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ranro@mellanox.com; 
+x-originating-ip: [193.47.165.251]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM4PR0501MB2161;6:gAoZ7tegwrbUvyefSTGKVm6l547UZfbQoVpL3mLfIubKFDJru0pPNnAgWmB8EtY3BsdeUMJtZwGfmphWCg8uBFcVck5v5A1NTclnxGJTe8JPmwbkQ0EcZU7BE7babDW8Klmr2YKr5NbV+V8xfElfMuTt6rrpv5+B7drQCSTv+wyTtISTjB2mryOAzSXAp2yxW36HBOqny9zJyj6YXNqI+5MP33EmizPlB49q99AnaOWJqIABcWuktiCvfv06lhGKJlkdjDyYdfwKVwTqqO5ry53GcDFxNpLWTS9GFbGDkcPENj6W+0nS+Yy6Y5RLbvN3EbY5wTveumlL9rJOiZJ9n6pxl50LA9LidVoQAUc+yX/lK0miNWY32DGIyrXIiioT1BZfKc1csznojDrVjZX4wIoxBFy70bjaax6Rm1469F8Ncd9EuG6uLFm4/W+epFFkzGk5J3Dbvi6aeCyJ36OPDw==;5:ddi6+JoFHTuoaLO6QGreP0lP9we/9D1jHUDE8N5ZW0yxvhuwEpOKIw47emaNynATYvWoiED6XLnwBiY0j1WqPhheBd/3JzUUijFYZrIrpy5GZhVO+3mXwXDDsiAj2bHhPrWGvkSYjidjjYr8I2DEYuTm+Fix92fW+tnWF0lQ4kA=;7:RiXi57qjUBDDbQ5MhPMIN+LF3Qa5uogjgczLtfZXCxrPhS/MbYHqFMw8c29J0qXeOhwNHoSdx9WTp56ABYipV8udKOzuJEUaA1C6YptDobcYoJxbO0vHJMgW1kEQbYvgyMdrJfPdRop3xOhHStXwNw==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 8f97b8ab-b50e-4559-306b-08d653a6d856
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM4PR0501MB2161;
+x-ms-traffictypediagnostic: AM4PR0501MB2161:
+x-microsoft-antispam-prvs: <AM4PR0501MB2161E05657E1D014DA6CD6CEC5D70@AM4PR0501MB2161.eurprd05.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231443)(944501410)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM4PR0501MB2161;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0501MB2161;
+x-forefront-prvs: 086831DFB4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(376002)(136003)(39860400002)(346002)(189003)(199004)(2906002)(478600001)(7416002)(86362001)(93886005)(25786009)(316002)(5660300001)(74316002)(54906003)(305945005)(7736002)(33656002)(14454004)(68736007)(476003)(97736004)(110136005)(3846002)(6116002)(8676002)(81166006)(81156014)(8936002)(99286004)(9686003)(71190400001)(26005)(186003)(71200400001)(53936002)(55016002)(7696005)(102836004)(76176011)(6506007)(106356001)(229853002)(4326008)(66066001)(105586002)(107886003)(2501003)(14444005)(11346002)(446003)(39060400002)(6246003)(486006)(256004)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0501MB2161;H:AM4PR0501MB2769.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: NL7A2fLOKXqpU3qE/MEVPgKr3TBUDKpMKjEIxFa/ylTUDV15PWolIMkSOV5qj3MgXl6ehISgQe2TOOF7VLBA2dAp+OE+qMvtQmksxunQE7xmZqd3FmPqLGlCkpKgFU8NFPHlCzCcIU7itZjFAoZYgkmW/1NBmY/v50c1omjJNVLPvw1xOe6Zg6s4skXr5qaBFs2PIBjDZtf60zJEJDCCvCK+xsbRrJ+9P/lbkPOLwFC34lHt8ThfGNf+bOehTHVrLpm5+0pbhi1F2/uh5lRyPjp/haf8BzmO1RnWXcatFtqSao4tRx2yJ56LfEREBw12Mz9okqHQoC7GK80MbRE61llxi+cdUZOeMuEmPXKbUjI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f97b8ab-b50e-4559-306b-08d653a6d856
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2018 13:55:37.6988
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0501MB2161
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the inline static call implementation for x86-64.  For each key, a
-temporary trampoline is created, named __static_call_tramp_<key>.  The
-trampoline has an indirect jump to the destination function.
+>=20
+> Hearing no objections, here is the updated patch.
+>=20
+> 								Thanx, Paul
+>=20
+> ------------------------------------------------------------------------
+>=20
+> commit 970cab5d3d206029ed27274a98ea1c3d7e780e53
+> Author: Paul E. McKenney <paulmck@linux.ibm.com>
+> Date:   Mon Oct 29 07:36:50 2018 -0700
+>=20
+>     rcu: Avoid signed integer overflow in rcu_preempt_deferred_qs()
+>=20
+>     Subtracting INT_MIN can be interpreted as unconditional signed intege=
+r
+>     overflow, which according to the C standard is undefined behavior.
+>     Therefore, kernel build arguments notwithstanding, it would be good t=
+o
+>     future-proof the code.  This commit therefore substitutes INT_MAX for
+>     INT_MIN in order to avoid undefined behavior.
+>=20
+>     While in the neighborhood, this commit also creates some meaningful
+> names
+>     for INT_MAX and friends in order to improve readability, as suggested
+>     by Joel Fernandes.
+>=20
+>     Reported-by: Ran Rozenstein <ranro@mellanox.com>
+>     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+>=20
+>     squash! rcu: Avoid signed integer overflow in rcu_preempt_deferred_qs=
+()
+>=20
+>     While in the neighborhood, use macros to give meaningful names.
+>=20
+>     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+>=20
 
-Objtool uses the trampoline naming convention to detect all the call
-sites.  It then annotates those call sites in the .static_call_sites
-section.
 
-During boot (and module init), the call sites are patched to call
-directly into the destination function.  The temporary trampoline is
-then no longer used.
+Hi,
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
----
- arch/x86/Kconfig                              |   5 +-
- arch/x86/include/asm/static_call.h            |  28 +++-
- arch/x86/kernel/asm-offsets.c                 |   6 +
- arch/x86/kernel/static_call.c                 |  30 ++++-
- include/linux/static_call.h                   |   2 +-
- tools/objtool/Makefile                        |   3 +-
- tools/objtool/check.c                         | 126 +++++++++++++++++-
- tools/objtool/check.h                         |   2 +
- tools/objtool/elf.h                           |   1 +
- .../objtool/include/linux/static_call_types.h |  19 +++
- tools/objtool/sync-check.sh                   |   1 +
- 11 files changed, 213 insertions(+), 10 deletions(-)
- create mode 100644 tools/objtool/include/linux/static_call_types.h
+What is the acceptance status of this patch?
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index a2a10e0ce248..e099ea87ea70 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -189,7 +189,8 @@ config X86
- 	select HAVE_FUNCTION_ARG_ACCESS_API
- 	select HAVE_STACKPROTECTOR		if CC_HAS_SANE_STACKPROTECTOR
- 	select HAVE_STACK_VALIDATION		if X86_64
--	select HAVE_STATIC_CALL_OUTLINE
-+	select HAVE_STATIC_CALL_INLINE		if HAVE_STACK_VALIDATION
-+	select HAVE_STATIC_CALL_OUTLINE		if !HAVE_STACK_VALIDATION
- 	select HAVE_RSEQ
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_UNSTABLE_SCHED_CLOCK
-@@ -203,6 +204,7 @@ config X86
- 	select RTC_MC146818_LIB
- 	select SPARSE_IRQ
- 	select SRCU
-+	select STACK_VALIDATION			if HAVE_STACK_VALIDATION && (HAVE_STATIC_CALL_INLINE || RETPOLINE)
- 	select SYSCTL_EXCEPTION_TRACE
- 	select THREAD_INFO_IN_TASK
- 	select USER_STACKTRACE_SUPPORT
-@@ -438,7 +440,6 @@ config GOLDFISH
- config RETPOLINE
- 	bool "Avoid speculative indirect branches in kernel"
- 	default y
--	select STACK_VALIDATION if HAVE_STACK_VALIDATION
- 	help
- 	  Compile kernel with the retpoline compiler options to guard against
- 	  kernel-to-user data leaks by avoiding speculative indirect
-diff --git a/arch/x86/include/asm/static_call.h b/arch/x86/include/asm/static_call.h
-index 6e9ad5969ec2..27bd7da16150 100644
---- a/arch/x86/include/asm/static_call.h
-+++ b/arch/x86/include/asm/static_call.h
-@@ -2,6 +2,20 @@
- #ifndef _ASM_STATIC_CALL_H
- #define _ASM_STATIC_CALL_H
- 
-+#include <asm/asm-offsets.h>
-+
-+#ifdef CONFIG_HAVE_STATIC_CALL_INLINE
-+
-+/*
-+ * This trampoline is only used during boot / module init, so it's safe to use
-+ * the indirect branch without a retpoline.
-+ */
-+#define __ARCH_STATIC_CALL_TRAMP_JMP(key, func)				\
-+	ANNOTATE_RETPOLINE_SAFE						\
-+	"jmpq *" __stringify(key) "+" __stringify(SC_KEY_func) "(%rip) \n"
-+
-+#else /* !CONFIG_HAVE_STATIC_CALL_INLINE */
-+
- /*
-  * Manually construct a 5-byte direct JMP to prevent the assembler from
-  * optimizing it into a 2-byte JMP.
-@@ -12,9 +26,19 @@
- 	".long " #func " - " __ARCH_STATIC_CALL_JMP_LABEL(key) "\n"	\
- 	__ARCH_STATIC_CALL_JMP_LABEL(key) ":"
- 
-+#endif /* !CONFIG_HAVE_STATIC_CALL_INLINE */
-+
- /*
-- * This is a permanent trampoline which does a direct jump to the function.
-- * The direct jump get patched by static_call_update().
-+ * For CONFIG_HAVE_STATIC_CALL_INLINE, this is a temporary trampoline which
-+ * uses the current value of the key->func pointer to do an indirect jump to
-+ * the function.  This trampoline is only used during boot, before the call
-+ * sites get patched by static_call_update().  The name of this trampoline has
-+ * a magical aspect: objtool uses it to find static call sites so it can create
-+ * the .static_call_sites section.
-+ *
-+ * For CONFIG_HAVE_STATIC_CALL_OUTLINE, this is a permanent trampoline which
-+ * does a direct jump to the function.  The direct jump gets patched by
-+ * static_call_update().
-  */
- #define ARCH_DEFINE_STATIC_CALL_TRAMP(key, func)			\
- 	asm(".pushsection .text, \"ax\"				\n"	\
-diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
-index 72adf6c335dc..da8fd220e4f2 100644
---- a/arch/x86/kernel/asm-offsets.c
-+++ b/arch/x86/kernel/asm-offsets.c
-@@ -12,6 +12,7 @@
- #include <linux/hardirq.h>
- #include <linux/suspend.h>
- #include <linux/kbuild.h>
-+#include <linux/static_call.h>
- #include <asm/processor.h>
- #include <asm/thread_info.h>
- #include <asm/sigframe.h>
-@@ -104,4 +105,9 @@ void common(void) {
- 	OFFSET(TSS_sp0, tss_struct, x86_tss.sp0);
- 	OFFSET(TSS_sp1, tss_struct, x86_tss.sp1);
- 	OFFSET(TSS_sp2, tss_struct, x86_tss.sp2);
-+
-+#ifdef CONFIG_HAVE_STATIC_CALL_INLINE
-+	BLANK();
-+	OFFSET(SC_KEY_func, static_call_key, func);
-+#endif
- }
-diff --git a/arch/x86/kernel/static_call.c b/arch/x86/kernel/static_call.c
-index 8026d176f25c..d3869295b88d 100644
---- a/arch/x86/kernel/static_call.c
-+++ b/arch/x86/kernel/static_call.c
-@@ -9,13 +9,21 @@
- 
- void static_call_bp_handler(void);
- void *bp_handler_dest;
-+void *bp_handler_continue;
- 
- asm(".pushsection .text, \"ax\"						\n"
-     ".globl static_call_bp_handler					\n"
-     ".type static_call_bp_handler, @function				\n"
-     "static_call_bp_handler:						\n"
--    "ANNOTATE_RETPOLINE_SAFE						\n"
-+#ifdef CONFIG_HAVE_STATIC_CALL_INLINE
-+    ANNOTATE_RETPOLINE_SAFE
-+    "call *bp_handler_dest						\n"
-+    ANNOTATE_RETPOLINE_SAFE
-+    "jmp *bp_handler_continue						\n"
-+#else /* !CONFIG_HAVE_STATIC_CALL_INLINE */
-+    ANNOTATE_RETPOLINE_SAFE
-     "jmp *bp_handler_dest						\n"
-+#endif
-     ".popsection							\n");
- 
- void arch_static_call_transform(void *site, void *tramp, void *func)
-@@ -25,7 +33,10 @@ void arch_static_call_transform(void *site, void *tramp, void *func)
- 	unsigned char insn_opcode;
- 	unsigned char opcodes[CALL_INSN_SIZE];
- 
--	insn = (unsigned long)tramp;
-+	if (IS_ENABLED(CONFIG_HAVE_STATIC_CALL_INLINE))
-+		insn = (unsigned long)site;
-+	else
-+		insn = (unsigned long)tramp;
- 
- 	mutex_lock(&text_mutex);
- 
-@@ -41,8 +52,10 @@ void arch_static_call_transform(void *site, void *tramp, void *func)
- 	opcodes[0] = insn_opcode;
- 	memcpy(&opcodes[1], &dest_relative, CALL_INSN_SIZE - 1);
- 
--	/* Set up the variable for the breakpoint handler: */
-+	/* Set up the variables for the breakpoint handler: */
- 	bp_handler_dest = func;
-+	if (IS_ENABLED(CONFIG_HAVE_STATIC_CALL_INLINE))
-+		bp_handler_continue = (void *)(insn + CALL_INSN_SIZE);
- 
- 	/* Patch the call site: */
- 	text_poke_bp((void *)insn, opcodes, CALL_INSN_SIZE,
-@@ -52,3 +65,14 @@ void arch_static_call_transform(void *site, void *tramp, void *func)
- 	mutex_unlock(&text_mutex);
- }
- EXPORT_SYMBOL_GPL(arch_static_call_transform);
-+
-+#ifdef CONFIG_HAVE_STATIC_CALL_INLINE
-+void arch_static_call_defuse_tramp(void *site, void *tramp)
-+{
-+	unsigned short opcode = INSN_UD2;
-+
-+	mutex_lock(&text_mutex);
-+	text_poke((void *)tramp, &opcode, 2);
-+	mutex_unlock(&text_mutex);
-+}
-+#endif
-diff --git a/include/linux/static_call.h b/include/linux/static_call.h
-index 651f4d784377..6daff586c97d 100644
---- a/include/linux/static_call.h
-+++ b/include/linux/static_call.h
-@@ -70,7 +70,7 @@
- #include <linux/cpu.h>
- #include <linux/static_call_types.h>
- 
--#ifdef CONFIG_HAVE_STATIC_CALL
-+#if defined(CONFIG_HAVE_STATIC_CALL) && !defined(COMPILE_OFFSETS)
- #include <asm/static_call.h>
- extern void arch_static_call_transform(void *site, void *tramp, void *func);
- #endif
-diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-index c9d038f91af6..fb1afa34f10d 100644
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -29,7 +29,8 @@ all: $(OBJTOOL)
- 
- INCLUDES := -I$(srctree)/tools/include \
- 	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
--	    -I$(srctree)/tools/objtool/arch/$(ARCH)/include
-+	    -I$(srctree)/tools/objtool/arch/$(ARCH)/include \
-+	    -I$(srctree)/tools/objtool/include
- WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
- CFLAGS   += -Werror $(WARNINGS) $(KBUILD_HOSTCFLAGS) -g $(INCLUDES)
- LDFLAGS  += -lelf $(LIBSUBCMD) $(KBUILD_HOSTLDFLAGS)
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 0414a0d52262..ea1ff9ea2d78 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -27,6 +27,7 @@
- 
- #include <linux/hashtable.h>
- #include <linux/kernel.h>
-+#include <linux/static_call_types.h>
- 
- struct alternative {
- 	struct list_head list;
-@@ -165,6 +166,7 @@ static int __dead_end_function(struct objtool_file *file, struct symbol *func,
- 		"fortify_panic",
- 		"usercopy_abort",
- 		"machine_real_restart",
-+		"rewind_stack_do_exit",
- 	};
- 
- 	if (func->bind == STB_WEAK)
-@@ -525,6 +527,10 @@ static int add_jump_destinations(struct objtool_file *file)
- 		} else {
- 			/* sibling call */
- 			insn->jump_dest = 0;
-+			if (rela->sym->static_call_tramp) {
-+				list_add_tail(&insn->static_call_node,
-+					      &file->static_call_list);
-+			}
- 			continue;
- 		}
- 
-@@ -1202,6 +1208,24 @@ static int read_retpoline_hints(struct objtool_file *file)
- 	return 0;
- }
- 
-+static int read_static_call_tramps(struct objtool_file *file)
-+{
-+	struct section *sec;
-+	struct symbol *func;
-+
-+	for_each_sec(file, sec) {
-+		list_for_each_entry(func, &sec->symbol_list, list) {
-+			if (func->bind == STB_GLOBAL &&
-+			    !strncmp(func->name, STATIC_CALL_TRAMP_PREFIX_STR,
-+				     strlen(STATIC_CALL_TRAMP_PREFIX_STR)))
-+				func->static_call_tramp = true;
-+		}
-+
-+	}
-+
-+	return 0;
-+}
-+
- static void mark_rodata(struct objtool_file *file)
- {
- 	struct section *sec;
-@@ -1267,6 +1291,10 @@ static int decode_sections(struct objtool_file *file)
- 	if (ret)
- 		return ret;
- 
-+	ret = read_static_call_tramps(file);
-+	if (ret)
-+		return ret;
-+
- 	return 0;
- }
- 
-@@ -1920,6 +1948,11 @@ static int validate_branch(struct objtool_file *file, struct instruction *first,
- 			if (is_fentry_call(insn))
- 				break;
- 
-+			if (insn->call_dest->static_call_tramp) {
-+				list_add_tail(&insn->static_call_node,
-+					      &file->static_call_list);
-+			}
-+
- 			ret = dead_end_function(file, insn->call_dest);
- 			if (ret == 1)
- 				return 0;
-@@ -2167,6 +2200,89 @@ static int validate_reachable_instructions(struct objtool_file *file)
- 	return 0;
- }
- 
-+static int create_static_call_sections(struct objtool_file *file)
-+{
-+	struct section *sec, *rela_sec;
-+	struct rela *rela;
-+	struct static_call_site *site;
-+	struct instruction *insn;
-+	char *key_name;
-+	struct symbol *key_sym;
-+	int idx;
-+
-+	sec = find_section_by_name(file->elf, ".static_call_sites");
-+	if (sec) {
-+		WARN("file already has .static_call_sites section, skipping");
-+		return 0;
-+	}
-+
-+	if (list_empty(&file->static_call_list))
-+		return 0;
-+
-+	idx = 0;
-+	list_for_each_entry(insn, &file->static_call_list, static_call_node)
-+		idx++;
-+
-+	sec = elf_create_section(file->elf, ".static_call_sites",
-+				 sizeof(struct static_call_site), idx);
-+	if (!sec)
-+		return -1;
-+
-+	rela_sec = elf_create_rela_section(file->elf, sec);
-+	if (!rela_sec)
-+		return -1;
-+
-+	idx = 0;
-+	list_for_each_entry(insn, &file->static_call_list, static_call_node) {
-+
-+		site = (struct static_call_site *)sec->data->d_buf + idx;
-+		memset(site, 0, sizeof(struct static_call_site));
-+
-+		/* populate rela for 'addr' */
-+		rela = malloc(sizeof(*rela));
-+		if (!rela) {
-+			perror("malloc");
-+			return -1;
-+		}
-+		memset(rela, 0, sizeof(*rela));
-+		rela->sym = insn->sec->sym;
-+		rela->addend = insn->offset;
-+		rela->type = R_X86_64_PC32;
-+		rela->offset = idx * sizeof(struct static_call_site);
-+		list_add_tail(&rela->list, &rela_sec->rela_list);
-+		hash_add(rela_sec->rela_hash, &rela->hash, rela->offset);
-+
-+		/* find key symbol */
-+		key_name = insn->call_dest->name + strlen(STATIC_CALL_TRAMP_PREFIX_STR);
-+		key_sym = find_symbol_by_name(file->elf, key_name);
-+		if (!key_sym) {
-+			WARN("can't find static call key symbol: %s", key_name);
-+			return -1;
-+		}
-+
-+		/* populate rela for 'key' */
-+		rela = malloc(sizeof(*rela));
-+		if (!rela) {
-+			perror("malloc");
-+			return -1;
-+		}
-+		memset(rela, 0, sizeof(*rela));
-+		rela->sym = key_sym;
-+		rela->addend = 0;
-+		rela->type = R_X86_64_PC32;
-+		rela->offset = idx * sizeof(struct static_call_site) + 4;
-+		list_add_tail(&rela->list, &rela_sec->rela_list);
-+		hash_add(rela_sec->rela_hash, &rela->hash, rela->offset);
-+
-+		idx++;
-+	}
-+
-+	if (elf_rebuild_rela_section(rela_sec))
-+		return -1;
-+
-+	return 0;
-+}
-+
- static void cleanup(struct objtool_file *file)
- {
- 	struct instruction *insn, *tmpinsn;
-@@ -2191,12 +2307,13 @@ int check(const char *_objname, bool orc)
- 
- 	objname = _objname;
- 
--	file.elf = elf_open(objname, orc ? O_RDWR : O_RDONLY);
-+	file.elf = elf_open(objname, O_RDWR);
- 	if (!file.elf)
- 		return 1;
- 
- 	INIT_LIST_HEAD(&file.insn_list);
- 	hash_init(file.insn_hash);
-+	INIT_LIST_HEAD(&file.static_call_list);
- 	file.whitelist = find_section_by_name(file.elf, ".discard.func_stack_frame_non_standard");
- 	file.c_file = find_section_by_name(file.elf, ".comment");
- 	file.ignore_unreachables = no_unreachable;
-@@ -2236,6 +2353,11 @@ int check(const char *_objname, bool orc)
- 		warnings += ret;
- 	}
- 
-+	ret = create_static_call_sections(&file);
-+	if (ret < 0)
-+		goto out;
-+	warnings += ret;
-+
- 	if (orc) {
- 		ret = create_orc(&file);
- 		if (ret < 0)
-@@ -2244,7 +2366,9 @@ int check(const char *_objname, bool orc)
- 		ret = create_orc_sections(&file);
- 		if (ret < 0)
- 			goto out;
-+	}
- 
-+	if (orc || !list_empty(&file.static_call_list)) {
- 		ret = elf_write(file.elf);
- 		if (ret < 0)
- 			goto out;
-diff --git a/tools/objtool/check.h b/tools/objtool/check.h
-index e6e8a655b556..56b8b7fb1bd1 100644
---- a/tools/objtool/check.h
-+++ b/tools/objtool/check.h
-@@ -39,6 +39,7 @@ struct insn_state {
- struct instruction {
- 	struct list_head list;
- 	struct hlist_node hash;
-+	struct list_head static_call_node;
- 	struct section *sec;
- 	unsigned long offset;
- 	unsigned int len;
-@@ -60,6 +61,7 @@ struct objtool_file {
- 	struct elf *elf;
- 	struct list_head insn_list;
- 	DECLARE_HASHTABLE(insn_hash, 16);
-+	struct list_head static_call_list;
- 	struct section *whitelist;
- 	bool ignore_unreachables, c_file, hints, rodata;
- };
-diff --git a/tools/objtool/elf.h b/tools/objtool/elf.h
-index bc97ed86b9cd..3cf44d7cc3ac 100644
---- a/tools/objtool/elf.h
-+++ b/tools/objtool/elf.h
-@@ -62,6 +62,7 @@ struct symbol {
- 	unsigned long offset;
- 	unsigned int len;
- 	struct symbol *pfunc, *cfunc;
-+	bool static_call_tramp;
- };
- 
- struct rela {
-diff --git a/tools/objtool/include/linux/static_call_types.h b/tools/objtool/include/linux/static_call_types.h
-new file mode 100644
-index 000000000000..6859b208de6e
---- /dev/null
-+++ b/tools/objtool/include/linux/static_call_types.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _STATIC_CALL_TYPES_H
-+#define _STATIC_CALL_TYPES_H
-+
-+#include <linux/stringify.h>
-+
-+#define STATIC_CALL_TRAMP_PREFIX ____static_call_tramp_
-+#define STATIC_CALL_TRAMP_PREFIX_STR __stringify(STATIC_CALL_TRAMP_PREFIX)
-+
-+#define STATIC_CALL_TRAMP(key) __PASTE(STATIC_CALL_TRAMP_PREFIX, key)
-+#define STATIC_CALL_TRAMP_STR(key) __stringify(STATIC_CALL_TRAMP(key))
-+
-+/* The static call site table is created by objtool. */
-+struct static_call_site {
-+	s32 addr;
-+	s32 key;
-+};
-+
-+#endif /* _STATIC_CALL_TYPES_H */
-diff --git a/tools/objtool/sync-check.sh b/tools/objtool/sync-check.sh
-index 1470e74e9d66..e1a204bf3556 100755
---- a/tools/objtool/sync-check.sh
-+++ b/tools/objtool/sync-check.sh
-@@ -10,6 +10,7 @@ arch/x86/include/asm/insn.h
- arch/x86/include/asm/inat.h
- arch/x86/include/asm/inat_types.h
- arch/x86/include/asm/orc_types.h
-+include/linux/static_call_types.h
- '
- 
- check()
--- 
-2.17.2
+Thanks,
+Ran
 
