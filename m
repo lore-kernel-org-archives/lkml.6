@@ -7,33 +7,47 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2914C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B10DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E2FB208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:35:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2137E208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:35:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="U8nMJ3bk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E2FB208E4
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PBzgCU0m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2137E208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbeK0Kbj (ORCPT
+        id S1727858AbeK0Kbn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:31:39 -0500
-Received: from sonic309-48.consmr.mail.ne1.yahoo.com ([66.163.184.174]:42552
-        "EHLO sonic309-48.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727456AbeK0Kbi (ORCPT
+        Tue, 27 Nov 2018 05:31:43 -0500
+Received: from sonic304-28.consmr.mail.ne1.yahoo.com ([66.163.191.154]:39184
+        "EHLO sonic304-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727841AbeK0Kbm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:31:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543275349; bh=HQoavzPoUgtaN9gOCWKpLaU9vTUnkapJ2x/zqvAbtZs=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=U8nMJ3bkt4M2GxgbIS4IJT1IOq/V9xh2RpEyQ9xpCJz9MhAgOFNVTku8/nzza2n+J2GU9EZe+DXNhPECZz4slfugYt9F4RU3wWjpT+XcycFNFNSX170Z5o1wd4PvJ7BBdkQkQyePL8TO3ctj1KwvLRXeOKw4/30t/ijKHxh7QXRlDGwLsEcXS2EHiwtYuxQvp3a56Uwsb/g1DQ7IMDAoZn5UedOsPSw7R26kV0Up2+/DbXQEbn1Brs+ckkBTFwGR6bv/Dk9nNO7RH4sLPHFibwn3WHYBsLlBvC7YZv4W+JOSKA77vnRJoBX0rDBTblvZHYhTi8IMSWkcPfZJDQ+Khg==
-X-YMail-OSG: UKSUkGAVM1l9sRpN7q3tqu_Y4K48kAK8mvREIdnDAoQqTDQwAAbkGtOsjTuM_3_
- krv8x0a9OKg--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:35:49 +0000
+        Tue, 27 Nov 2018 05:31:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543275354; bh=ym3f469puDtt39uIiVW6xTc7wt1MEzqcALg9oKeNFac=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=PBzgCU0miyUMq9niEBB2HiyrSCI7kj/xxR3NjfgSaGNOJERb9u9izjO8z9pMnLlvZQRwSbtdWpd8Fd4YfcLBVQtuEXdj9bBF2u3+eYwjgtD+h4oivFqwbuO9Mq6naUyNTpce3LGan3JcbqDeu+HhV99N4FkcVGbmbck9RjALbcYMyRfYtxJn/25yiwKnEyFuFpdMstf7kZK7MQ1qQL4M3oIpEN2Vdq8+iqMuoHoo9fhaBttW+r7pkzfr0tYfL98TO9BwdZeXBN+k+xwevMQYZJikadCZSvJk/GzTC4cxYqmFKuqARzBSYzVhOIeRrxUHGuHAspCh7ryEJRgAlMnUKQ==
+X-YMail-OSG: Px.HeuoVM1n4DNnLlIpkF2q10jusmo7ASmK.1PQMG4IF3U2y0IFft5c.5WR1d2M
+ IxoRty2FPZNvjP4wBgAUY02xDJ4JvEUG_rG9vV_xWnLWEm3Acu8cwbf87c7gxO92KOqqV2ow4feK
+ VDTsVYSca5G4ouk_WY.DmLwhKhonMbTBQ.7jLQDlA9QDvwYk2LBXKnLZr6uZkn5bmcYHuy1XTUJ7
+ 8s6zz9sZ5WZWqvtwCe_a9VMn4XR13k89eAEOb1PC3tzjkITAWp4yJwZ_t21gX7wPnAU2fHLoB7d9
+ ykZ8Pj585Hq5BhWtYah.1d9AqiUx6Wkrq1y6UGXVJkZ6AFfQaw52Jz2DGIYgLunzSWTObPab4R5F
+ F_kypCTxq4gcd6hyHz.byfMlRrW.GeJsnVHbSh4QlWtF9sR3Qx02aJ8awWKlaaQ1fgwRuh6XKz8B
+ RuRJanArzWIZ5etw2I2I3vACpyISpRO8Yxa8_ZxCOeSZ9v7hFW_aCrgpvUVPgwvuZEKVRtqDwaFm
+ VNMa_09BEkk97KUKlqVZwco1sH3aglnw.6xHliJqiVnqHnhPpLqWZnHOKIcLLQ9jvrXKOJmblNiO
+ Wgzu_AfycdKciQw4P0288uMF33cgPIr8ovgl9NHIWfsbonjjDkl3peTt3qvwSA1HdjPTUBweErt3
+ lzz.AVwXSnOd6rN48fckcOG.IV.JCDiJL5IDelcPbQLvFs.pk3P9U4qEe2oqP0VuPZNpa0BYEFiK
+ eKcpbmwmKDllNwT_qbRctW7NrQ8NzoQ3Q8hgIPUa61aBjdBBN6Lksqlm4ajedtKsNVauvz4Hi6jr
+ vczzfhppI64WxiIrRUBjHVkZ.oCKhl2hk6d2NhZfmOnDs6ZWY4QvvPMe4BYRPu41pB0hKrknncg9
+ lXcI5QTQ..hErm.BxIS9Go4C.KfQ3TmVga8Gxvc._Fj_10RM7sIAeqpmH7kzvdtD20UDJZVVzOtY
+ jQ4zJg4yIBi9ybEGgkFpsf1gsn9kpNWecBdOS8ogQU5E0lCS.zuWAmFaHyfvUb0d0xLR3051P9VC
+ qYcLZml40TRpz4DCuD7XmGDlh3LnGw9pCLI5T01UgXFwrMKoMrwBQpTJ4jVmFSlcB.H0JClLn1aD
+ Y.k6Ye4WULwSoeG56x_wNWCETToN1A0SEQ1WeoT._8GI-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:35:54 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp420.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 3f9402b8f658487cba525e8eec926514;
-          Mon, 26 Nov 2018 23:31:47 +0000 (UTC)
-Subject: [PATCH v5 07/38] LSM: Introduce "lsm=" for boottime LSM selection
+          by smtp408.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 74fbe16db5e95d37f35c3405e5eb1c61;
+          Mon, 26 Nov 2018 23:35:52 +0000 (UTC)
+Subject: [PATCH v5 12/38] apparmor: Remove SECURITY_APPARMOR_BOOTPARAM_VALUE
 To:     James Morris <jmorris@namei.org>,
         LSM <linux-security-module@vger.kernel.org>,
         LKLM <linux-kernel@vger.kernel.org>,
@@ -49,8 +63,8 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         Salvatore Mesoraca <s.mesoraca16@gmail.com>
 References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <3003d07a-61dc-e997-2814-50ad27930b9d@schaufler-ca.com>
-Date:   Mon, 26 Nov 2018 15:31:44 -0800
+Message-ID: <5f331e9e-f8c2-4e8a-6a30-af93fbf602db@schaufler-ca.com>
+Date:   Mon, 26 Nov 2018 15:35:49 -0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -63,84 +77,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a way to explicitly choose LSM initialization order via the new
-"lsm=" comma-separated list of LSMs.
+In preparation for removing CONFIG_DEFAULT_SECURITY, this removes the
+soon-to-be redundant SECURITY_APPARMOR_BOOTPARAM_VALUE. Since explicit
+ordering via CONFIG_LSM or "lsm=" will define whether an LSM is enabled or
+not, this CONFIG will become effectively ignored, so remove it. However,
+in order to stay backward-compatible with "security=apparmor", the enable
+variable defaults to true.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  4 ++++
- security/Kconfig                                |  3 ++-
- security/security.c                             | 14 +++++++++++++-
- 3 files changed, 19 insertions(+), 2 deletions(-)
+ security/apparmor/Kconfig | 16 ----------------
+ security/apparmor/lsm.c   |  2 +-
+ 2 files changed, 1 insertion(+), 17 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 81d1d5a74728..ea33bcbaecb2 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2302,6 +2302,10 @@
+diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+index b6b68a7750ce..3de21f46c82a 100644
+--- a/security/apparmor/Kconfig
++++ b/security/apparmor/Kconfig
+@@ -14,22 +14,6 @@ config SECURITY_APPARMOR
  
- 	lsm.debug	[SECURITY] Enable LSM initialization debugging output.
+ 	  If you are unsure how to answer this question, answer N.
  
-+	lsm=lsm1,...,lsmN
-+			[SECURITY] Choose order of LSM initialization. This
-+			overrides CONFIG_LSM.
-+
- 	machvec=	[IA-64] Force the use of a particular machine-vector
- 			(machvec) in a generic kernel.
- 			Example: machvec=hpzx1_swiotlb
-diff --git a/security/Kconfig b/security/Kconfig
-index 7de42bbacc28..41aa0be6142f 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -281,7 +281,8 @@ config LSM
- 	default "integrity"
- 	help
- 	  A comma-separated list of LSMs, in initialization order.
--	  Any LSMs left off this list will be ignored.
-+	  Any LSMs left off this list will be ignored. This can be
-+	  controlled at boot with the "lsm=" parameter.
+-config SECURITY_APPARMOR_BOOTPARAM_VALUE
+-	int "AppArmor boot parameter default value"
+-	depends on SECURITY_APPARMOR
+-	range 0 1
+-	default 1
+-	help
+-	  This option sets the default value for the kernel parameter
+-	  'apparmor', which allows AppArmor to be enabled or disabled
+-          at boot.  If this option is set to 0 (zero), the AppArmor
+-	  kernel parameter will default to 0, disabling AppArmor at
+-	  boot.  If this option is set to 1 (one), the AppArmor
+-	  kernel parameter will default to 1, enabling AppArmor at
+-	  boot.
+-
+-	  If you are unsure how to answer this question, answer 1.
+-
+ config SECURITY_APPARMOR_HASH
+ 	bool "Enable introspection of sha1 hashes for loaded profiles"
+ 	depends on SECURITY_APPARMOR
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 37dafab649b1..e8b40008d58c 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1332,7 +1332,7 @@ bool aa_g_paranoid_load = true;
+ module_param_named(paranoid_load, aa_g_paranoid_load, aabool, S_IRUGO);
  
- 	  If unsure, leave this as the default.
+ /* Boot time disable flag */
+-static int apparmor_enabled = CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE;
++static int apparmor_enabled __lsm_ro_after_init = 1;
+ module_param_named(enabled, apparmor_enabled, int, 0444);
  
-diff --git a/security/security.c b/security/security.c
-index 96e0b7d057b0..38fc436e8b4b 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -47,6 +47,7 @@ char *lsm_names;
- /* Boot-time LSM user choice */
- static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
- 	CONFIG_DEFAULT_SECURITY;
-+static __initdata const char *chosen_lsm_order;
- 
- static __initconst const char * const builtin_lsm_order = CONFIG_LSM;
- 
-@@ -190,7 +191,10 @@ static void __init ordered_lsm_init(void)
- 	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
- 				GFP_KERNEL);
- 
--	ordered_lsm_parse(builtin_lsm_order, "builtin");
-+	if (chosen_lsm_order)
-+		ordered_lsm_parse(chosen_lsm_order, "cmdline");
-+	else
-+		ordered_lsm_parse(builtin_lsm_order, "builtin");
- 
- 	for (lsm = ordered_lsms; *lsm; lsm++)
- 		maybe_initialize_lsm(*lsm);
-@@ -252,6 +256,14 @@ static int __init choose_lsm(char *str)
- }
- __setup("security=", choose_lsm);
- 
-+/* Explicitly choose LSM initialization order. */
-+static int __init choose_lsm_order(char *str)
-+{
-+	chosen_lsm_order = str;
-+	return 1;
-+}
-+__setup("lsm=", choose_lsm_order);
-+
- /* Enable LSM order debugging. */
- static int __init enable_debug(char *str)
- {
+ static int __init apparmor_enabled_setup(char *str)
 -- 
 2.14.5
 
