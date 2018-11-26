@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E47C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F50C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73B102146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:55:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEED021104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0XEvvxf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73B102146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AuPAbwca"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEED021104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbeKZVtk (ORCPT
+        id S1728205AbeKZVtn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:49:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58660 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:49:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726561AbeKZVtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:49:39 -0500
+        id S1727233AbeKZVtm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:49:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCCAA21104;
-        Mon, 26 Nov 2018 10:55:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7872221104;
+        Mon, 26 Nov 2018 10:55:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229755;
-        bh=CNKQ1xum+qhbqOllBcoIZSnibIeZCm0ZAP7d8zQx7TM=;
+        s=default; t=1543229758;
+        bh=sm93DTlfa14k6gWyrn4P+EVsPyyM0FcwFW7a3hkgraQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W0XEvvxfaFum8C9xgjCuXBVt+hU63pbGs3zdL7K8Yaw1ylsTmNFp3cm2mKt5OYhSa
-         Ddf4jL76xJPc13X7C6/jMcn9brQncyHTl65i7YMWhQxnapAqcFEL0prLcVGVzs5sFq
-         kGRFNT9M6TL5CZhqR7UKmBmywkuUsqd0BukU8pNQ=
+        b=AuPAbwca64zMyV/tjoTz31z1+R+G59aKTckQ4TfBC4WkgIaibMMSMduNBIayy2Af+
+         KZeEcphdyTqPyHdpTQVbZl9L3rJSLdbgebZkSiusnlqob/GS8pErd1hKQ3lOUkgx/Q
+         uiK9Kme8pB+9lAYCUf6NbLhpFk/APcchJ3XT15Bo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathias Thore <Mathias.Thore@infinera.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 4.4 61/70] uio: Fix an Oops on load
-Date:   Mon, 26 Nov 2018 11:51:16 +0100
-Message-Id: <20181126105052.562947899@linuxfoundation.org>
+        stable@vger.kernel.org, Maarten Jacobs <maarten256@outlook.com>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.4 62/70] usb: cdc-acm: add entry for Hiro (Conexant) modem
+Date:   Mon, 26 Nov 2018 11:51:17 +0100
+Message-Id: <20181126105052.625161353@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
 References: <20181126105046.722096341@linuxfoundation.org>
@@ -62,54 +62,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Maarten Jacobs <maarten256@outlook.com>
 
-commit 432798195bbce1f8cd33d1c0284d0538835e25fb upstream.
+commit 63529eaa6164ef7ab4b907b25ac3648177e5e78f upstream.
 
-I was trying to solve a double free but I introduced a more serious
-NULL dereference bug.  The problem is that if there is an IRQ which
-triggers immediately, then we need "info->uio_dev" but it's not set yet.
+The cdc-acm kernel module currently does not support the Hiro (Conexant)
+H05228 USB modem. The patch below adds the device specific information:
+	idVendor	0x0572
+	idProduct	0x1349
 
-This patch puts the original initialization back to how it was and just
-sets info->uio_dev to NULL on the error path so it should solve both
-the Oops and the double free.
-
-Fixes: f019f07ecf6a ("uio: potential double frees if __uio_register_device() fails")
-Reported-by: Mathias Thore <Mathias.Thore@infinera.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Maarten Jacobs <maarten256@outlook.com>
+Acked-by: Oliver Neukum <oneukum@suse.com>
 Cc: stable <stable@vger.kernel.org>
-Tested-by: Mathias Thore <Mathias.Thore@infinera.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/uio/uio.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/usb/class/cdc-acm.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -842,6 +842,8 @@ int __uio_register_device(struct module
- 	if (ret)
- 		goto err_uio_dev_add_attributes;
- 
-+	info->uio_dev = idev;
-+
- 	if (info->irq && (info->irq != UIO_IRQ_CUSTOM)) {
- 		/*
- 		 * Note that we deliberately don't use devm_request_irq
-@@ -853,11 +855,12 @@ int __uio_register_device(struct module
- 		 */
- 		ret = request_irq(info->irq, uio_interrupt,
- 				  info->irq_flags, info->name, idev);
--		if (ret)
-+		if (ret) {
-+			info->uio_dev = NULL;
- 			goto err_request_irq;
-+		}
- 	}
- 
--	info->uio_dev = idev;
- 	return 0;
- 
- err_request_irq:
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1716,6 +1716,9 @@ static const struct usb_device_id acm_id
+ 	{ USB_DEVICE(0x0572, 0x1328), /* Shiro / Aztech USB MODEM UM-3100 */
+ 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
+ 	},
++	{ USB_DEVICE(0x0572, 0x1349), /* Hiro (Conexant) USB MODEM H50228 */
++	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
++	},
+ 	{ USB_DEVICE(0x20df, 0x0001), /* Simtec Electronics Entropy Key */
+ 	.driver_info = QUIRK_CONTROL_LINE_STATE, },
+ 	{ USB_DEVICE(0x2184, 0x001c) },	/* GW Instek AFG-2225 */
 
 
