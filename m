@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C79CC43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A288AC04EB8
 	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:12:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34C98208E7
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:12:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C37620C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:12:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b7ZA1Uhr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34C98208E7
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bA4pZtam"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C37620C01
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbeK0KIU (ORCPT
+        id S1727671AbeK0KIV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:08:20 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44455 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727627AbeK0KIT (ORCPT
+        Tue, 27 Nov 2018 05:08:21 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:40353 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727627AbeK0KIV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:08:19 -0500
-Received: by mail-pl1-f193.google.com with SMTP id k8so3955952pls.11
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 15:12:35 -0800 (PST)
+        Tue, 27 Nov 2018 05:08:21 -0500
+Received: by mail-pl1-f196.google.com with SMTP id u18so2035200plq.7
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 15:12:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=d1pf3V00Gr7ZLwrYl3d/KGWwyDswWV71YWAdwIZFzf4=;
-        b=b7ZA1UhrLUspcx6+VH57hpguHb+MNjSq+s/81v9ZKN542dal6G91R+giuZHJTMxdBt
-         q8dFuFGNykwRdEr1IKzDnKru14Ci5QbE96WlLRLHisN7qFcIcE0ELBUTg5Z2dm4BuyL0
-         4pIM5Q+om2Yb/EgJzMINJKaKEquOJafDekg/4=
+        bh=EgO3oCMS7TCw/XYPxgVmHqgtlhf2eLhwUDyOYC9S+4c=;
+        b=bA4pZtam9D5iZO2Hjsk4eTlgJ7Dw3sVGKLx/9G/6VkIiS17i809reYfHfzB85Rxwd7
+         MMQb64oqV6ugyU1HJeU+4zYO0GDS0rFCssFroSpSFARHoeR+hg6qiUzDW6FVDaGK4jSM
+         ddRQcUhrx97MIpDX5XqCzrzbKYHq+PCQvVUwE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=d1pf3V00Gr7ZLwrYl3d/KGWwyDswWV71YWAdwIZFzf4=;
-        b=DtXVResusu2bj+2tFOnuSKUdtnofh0LYblnCh9T3UwGLYuwnZDOJg4W6K25w6p0Axk
-         bqT0Irzs/FRN4KowuYMG48BbQ9Lu7hLH6CWNvJV4PhkZW1wWLfrIBmg3OSVWqrdD2d41
-         29yNbpq7py/MgnOnTcsZH1SJCjMvDBvWut2qlSAVTQheblEgtCibSWT3ooleAxLTPjPH
-         B2mMYh18UFv44T/55W9PRBtdHzYJtGUXbxat8OGmiAy8h0jQekhT2NvOjmmZyfKgezo8
-         j14RJa12TGq+z6M7CHC3IwETltnmzp94f9RgCCv22+Li378v+D8xESzDjSL7ymTaNbU8
-         Gajw==
-X-Gm-Message-State: AA+aEWYXDuu8Q59yDSLZWWJ7bcTnJsbluUurqxNYepoYBJxMEqKrjsJV
-        OzcKDUzr4YZY0P6VK20didrsow==
-X-Google-Smtp-Source: AFSGD/U6U9ueX0jueBBybeMDGxBTZG8tBNMCbWOxd7woPVdKjPlETweJa1W5jAvaPzgb0w+XBzHz9g==
-X-Received: by 2002:a17:902:8541:: with SMTP id d1mr5730536plo.205.1543273955258;
-        Mon, 26 Nov 2018 15:12:35 -0800 (PST)
+        bh=EgO3oCMS7TCw/XYPxgVmHqgtlhf2eLhwUDyOYC9S+4c=;
+        b=U9mxbIsCWoOUY62gwzfX6xhU58eCRMkMnyScPgVpgcqpgXCJlrO9NbFVpKgZ3NkDhH
+         2nrRjGOtK2MHKpEwAQ/Exd8qxSA5+pYBFcp8tliZdhv3nwBRx8K23nEAa2tQLdt256f1
+         ZmU7zVbyGffXb4o0S+rGtUx/DyIGr98nKMRLNxqN7wtXxV1Bi/vWJgk5r8bHcponFiPA
+         FbSd9ZJDnvYjeMRXyvLjCdlUVs7fkwFJqp6DuLDXMihDO1DrE+klpI+w2asfQkS6FkqT
+         1LxnnzE5K0lVOHihtrnSmq3KD4WHJ4HG1aFRMlpF91OlSZB/UWrbY++5VCGj2vcIWrwx
+         s72A==
+X-Gm-Message-State: AA+aEWbQxXhXWuMbqOB5QeAMVhysCswLmFTzgvhTVpJVgqroFjCK28/a
+        W795ZLQbb91lMxTUYOggOSSjmg==
+X-Google-Smtp-Source: AFSGD/XOmViLHM31etMLk1h9+pgDI6DNaLZO8qL9MY6HxCYK7CQ0x7fjaRfvTBb71jD02xUksX59Ug==
+X-Received: by 2002:a17:902:6909:: with SMTP id j9mr29035329plk.196.1543273957160;
+        Mon, 26 Nov 2018 15:12:37 -0800 (PST)
 Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id j6sm2128625pfg.126.2018.11.26.15.12.34
+        by smtp.gmail.com with ESMTPSA id j6sm2128625pfg.126.2018.11.26.15.12.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 15:12:34 -0800 (PST)
+        Mon, 26 Nov 2018 15:12:36 -0800 (PST)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
         Rob Herring <robh+dt@kernel.org>,
@@ -71,9 +71,9 @@ Cc:     Archit Taneja <architt@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v2 4/7] arm64: dts: qcom: msm8916: Set 'xo_board' as ref clock of the DSI PHY
-Date:   Mon, 26 Nov 2018 15:11:56 -0800
-Message-Id: <20181126231159.122298-5-mka@chromium.org>
+Subject: [PATCH v2 6/7] arm64: dts: sdm845: Set 'bi_tcxo' as ref clock of the DSI PHYs
+Date:   Mon, 26 Nov 2018 15:11:58 -0800
+Message-Id: <20181126231159.122298-7-mka@chromium.org>
 X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
 In-Reply-To: <20181126231159.122298-1-mka@chromium.org>
 References: <20181126231159.122298-1-mka@chromium.org>
@@ -84,29 +84,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add 'xo_board' as ref clock for the DSI PHYs, it was previously
-hardcoded in the PLL 'driver' for the 28nm PHY.
+Add 'bi_tcxo' as ref clock for the DSI PHYs, it was previously
+hardcoded in the PLL 'driver' for the 10nm PHY.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 ---
+based on "[v4,1/3] arm64: dts: qcom: sdm845: Add dpu to sdm845 dts file"
+  (https://patchwork.kernel.org/patch/10666253/)
+
 Changes in v2:
 - patch added to the series
 ---
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index d302d8d639a12..89f30f34ff896 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -959,8 +959,9 @@
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 5728b4cfae269..cdb5a9bb23e69 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -1372,8 +1372,9 @@
  				#clock-cells = <1>;
  				#phy-cells = <0>;
  
--				clocks = <&gcc GCC_MDSS_AHB_CLK>;
+-				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>;
 -				clock-names = "iface";
-+				clocks = <&gcc GCC_MDSS_AHB_CLK>,
-+					 <&xo_board>;
++				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
++					 <&rpmhcc RPMH_CXO_CLK>;
++				clock-names = "iface", "ref";
+ 			};
+ 
+ 			dsi1: dsi@ae96000 {
+@@ -1434,8 +1435,9 @@
+ 				#clock-cells = <1>;
+ 				#phy-cells = <0>;
+ 
+-				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>;
+-				clock-names = "iface";
++				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
++					 <&rpmhcc RPMH_CXO_CLK>;
 +				clock-names = "iface", "ref";
  			};
  		};
