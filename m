@@ -2,214 +2,180 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE32C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 04:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7A7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 04:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CF7A20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 04:39:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0569220855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 04:47:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VX9Py2N4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CF7A20855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Qd4Xt5pD";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Rcn6cs3n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0569220855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726248AbeKZPc0 (ORCPT
+        id S1726209AbeKZPkZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 10:32:26 -0500
-Received: from ozlabs.org ([203.11.71.1]:54779 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726144AbeKZPc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 10:32:26 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 26 Nov 2018 10:40:25 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45072 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbeKZPkZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 10:40:25 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 402B860877; Mon, 26 Nov 2018 04:47:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543207651;
+        bh=WxM1WTMkKAh38hAJN2aoEa6oY3tqYl1+yqYunQSmaj4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Qd4Xt5pDslgwx4CGPlLQLYpxoY5UfBN77PrGIbVeUQHlrj8jywGAgFshquz5C+wWh
+         PuvV5JBkcIvqtUQ9o7ZMtyfOqPlov+Eral+LsIVRS8SEX1lJJ+Oguc9z6zHTOqoRgA
+         gEfaR95GVNRwVDHhWvpzuUFkzri651qtc7uXVkuc=
+Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 433Dht0Pdnz9s3C;
-        Mon, 26 Nov 2018 15:39:26 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1543207170;
-        bh=TGwz4jyk9wheW3vbXF1li0Al3+LVO7MG++/twsmL16w=;
-        h=Date:From:To:Cc:Subject:From;
-        b=VX9Py2N4wI5IOgpnxj0hhoCCPcqn2XcdB0fgBlAm4Jb97gpXToL5k00We0T0SBBcv
-         ZCATYJCmrKOdDGRDrX+B+5XPrMMVSzMaR1BdarNrocAiC+M1jgCHVeC1fLnYkYha7g
-         n92mCqD95V96H7aUTQaQQj4w7x/iKbWMq3VM61ZQ02IzK7Ys+ebE5H+kw0C08KktC1
-         KkcO84OtLzO3fCWjbARaKt3MDZShHg7ows7Hd8Fvr34ljA7tdubtvqHZQgg9hjMUBn
-         HX5Q9Vck1ZOfLaDHi3TvdYxDuOBpr9Z3xhVwftiR8ETrWZeJVJN/1wAqCIosTQ+O1r
-         3tEuVCoVCkv2Q==
-Date:   Mon, 26 Nov 2018 15:39:25 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Babu Moger <Babu.Moger@amd.com>, Borislav Petkov <bp@suse.de>
-Subject: linux-next: manual merge of the tip tree with the vfs tree
-Message-ID: <20181126153925.3ab6b337@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3BX=4/RIDil5BdQBMqHiwwS"; protocol="application/pgp-signature"
+        (Authenticated sender: stummala@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9D8D6602BD;
+        Mon, 26 Nov 2018 04:47:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543207650;
+        bh=WxM1WTMkKAh38hAJN2aoEa6oY3tqYl1+yqYunQSmaj4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Rcn6cs3nXTJ7f9rMQD2Hnv+CoxcBiXQDk5Epb8vSrtb03JJ8iuDQlDc9bXIPJQbQy
+         +ZfuJhcXWnbgznVx6A9+RxzbXZDTpfBemt2ytLQYhVRY3R9CI6e3LjDrgdeVEoItvs
+         eEPyiee1//ztlJPGQ2FqP+4HvvU75OkOHKeeDoHY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D8D6602BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     linux-kernel@vger.kernel.org,
+        Sahitya Tummala <stummala@codeaurora.org>
+Subject: [PATCH v2] f2fs: fix sbi->extent_list corruption issue
+Date:   Mon, 26 Nov 2018 10:17:20 +0530
+Message-Id: <1543207640-31033-1-git-send-email-stummala@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/3BX=4/RIDil5BdQBMqHiwwS
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+When there is a failure in f2fs_fill_super() after/during
+the recovery of fsync'd nodes, it frees the current sbi and
+retries again. This time the mount is successful, but the files
+that got recovered before retry, still holds the extent tree,
+whose extent nodes list is corrupted since sbi and sbi->extent_list
+is freed up. The list_del corruption issue is observed when the
+file system is getting unmounted and when those recoverd files extent
+node is being freed up in the below context.
 
-Hi all,
+list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
+<...>
+kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
+task: fffffff1f46f2280 task.stack: ffffff8008068000
+lr : __list_del_entry_valid+0x94/0xb4
+pc : __list_del_entry_valid+0x94/0xb4
+<...>
+Call trace:
+__list_del_entry_valid+0x94/0xb4
+__release_extent_node+0xb0/0x114
+__free_extent_tree+0x58/0x7c
+f2fs_shrink_extent_tree+0xdc/0x3b0
+f2fs_leave_shrinker+0x28/0x7c
+f2fs_put_super+0xfc/0x1e0
+generic_shutdown_super+0x70/0xf4
+kill_block_super+0x2c/0x5c
+kill_f2fs_super+0x44/0x50
+deactivate_locked_super+0x60/0x8c
+deactivate_super+0x68/0x74
+cleanup_mnt+0x40/0x78
+__cleanup_mnt+0x1c/0x28
+task_work_run+0x48/0xd0
+do_notify_resume+0x678/0xe98
+work_pending+0x8/0x14
 
-Today's linux-next merge of the tip tree got a conflict in:
+Fix this by cleaning up inodes, extent tree and nodes of those
+recovered files before freeing up sbi and before next retry.
 
-  arch/x86/kernel/cpu/resctrl/rdtgroup.c
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+---
+v2:
+-call evict_inodes() and f2fs_shrink_extent_tree() to cleanup inodes
 
-between commit:
+ fs/f2fs/f2fs.h     |  1 +
+ fs/f2fs/shrinker.c |  2 +-
+ fs/f2fs/super.c    | 13 ++++++++++++-
+ 3 files changed, 14 insertions(+), 2 deletions(-)
 
-  16ec1a5d58ea ("kernfs, sysfs, cgroup, intel_rdt: Support fs_context")
-(where the file is arch/x86/kernel/cpu/intel_rdt_rdtgroup.c)
-
-from the vfs tree and commit:
-
-  580ebb66cbb3 ("x86/resctrl: Add vendor check for the MBA software control=
-ler")
-
-from the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 37c0ccb50823,61b102dd51a5..000000000000
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@@ -2032,88 -2065,8 +2032,91 @@@ out
-  	rdt_last_cmd_clear();
-  	mutex_unlock(&rdtgroup_mutex);
-  	cpus_read_unlock();
- +	return ret;
- +}
- +
- +enum rdt_param {
- +	Opt_cdp,
- +	Opt_cdpl2,
- +	Opt_mba_mpbs,
- +	nr__rdt_params
- +};
- =20
- -	return dentry;
- +static const struct fs_parameter_spec rdt_param_specs[nr__rdt_params] =3D=
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 1e03197..aaee63b 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3407,6 +3407,7 @@ struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root_cached *root,
+ bool f2fs_check_rb_tree_consistence(struct f2fs_sb_info *sbi,
+ 						struct rb_root_cached *root);
+ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink);
++unsigned long __count_extent_cache(struct f2fs_sb_info *sbi);
+ bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext);
+ void f2fs_drop_extent_tree(struct inode *inode);
+ unsigned int f2fs_destroy_extent_node(struct inode *inode);
+diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
+index 9e13db9..7e3c13b 100644
+--- a/fs/f2fs/shrinker.c
++++ b/fs/f2fs/shrinker.c
+@@ -30,7 +30,7 @@ static unsigned long __count_free_nids(struct f2fs_sb_info *sbi)
+ 	return count > 0 ? count : 0;
+ }
+ 
+-static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
++unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
  {
- +	[Opt_cdp]	=3D { fs_param_is_flag },
- +	[Opt_cdpl2]	=3D { fs_param_is_flag },
- +	[Opt_mba_mpbs]	=3D { fs_param_is_flag },
- +};
- +
- +static const char *const rdt_param_keys[nr__rdt_params] =3D {
- +	[Opt_cdp]	=3D "cdp",
- +	[Opt_cdpl2]	=3D "cdpl2",
- +	[Opt_mba_mpbs]	=3D "mba_mbps",
- +};
- +
- +static const struct fs_parameter_description rdt_fs_parameters =3D {
- +	.name		=3D "rdt",
- +	.nr_params	=3D nr__rdt_params,
- +	.keys		=3D rdt_param_keys,
- +	.specs		=3D rdt_param_specs,
- +	.no_source	=3D true,
- +};
- +
- +static int rdt_parse_param(struct fs_context *fc, struct fs_parameter *pa=
-ram)
- +{
- +	struct rdt_fs_context *ctx =3D rdt_fc2context(fc);
- +	struct fs_parse_result result;
- +	int opt;
- +
- +	opt =3D fs_parse(fc, &rdt_fs_parameters, param, &result);
- +	if (opt < 0)
- +		return opt;
- +
- +	switch (opt) {
- +	case Opt_cdp:
- +		ctx->enable_cdpl3 =3D true;
- +		return 0;
- +	case Opt_cdpl2:
- +		ctx->enable_cdpl2 =3D true;
- +		return 0;
- +	case Opt_mba_mpbs:
-- 		ctx->enable_mba_mbps =3D true;
-- 		return 0;
-++		if (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL) {
-++			ctx->enable_mba_mbps =3D true;
-++			return 0;
-++		}
-++		break;
- +	}
- +
- +	return -EINVAL;
- +}
- +
- +static void rdt_fs_context_free(struct fs_context *fc)
- +{
- +	struct rdt_fs_context *ctx =3D rdt_fc2context(fc);
- +
- +	kernfs_free_fs_context(fc);
- +	kfree(ctx);
- +}
- +
- +static const struct fs_context_operations rdt_fs_context_ops =3D {
- +	.free		=3D rdt_fs_context_free,
- +	.parse_param	=3D rdt_parse_param,
- +	.get_tree	=3D rdt_get_tree,
- +};
- +
- +static int rdt_init_fs_context(struct fs_context *fc, struct dentry *refe=
-rence)
- +{
- +	struct rdt_fs_context *ctx;
- +
- +	ctx =3D kzalloc(sizeof(struct rdt_fs_context), GFP_KERNEL);
- +	if (!ctx)
- +		return -ENOMEM;
- +
- +	ctx->kfc.root =3D rdt_root;
- +	ctx->kfc.magic =3D RDTGROUP_SUPER_MAGIC;
- +	fc->fs_private =3D &ctx->kfc;
- +	fc->ops =3D &rdt_fs_context_ops;
- +	return 0;
-  }
- =20
-  static int reset_all_ctrls(struct rdt_resource *r)
+ 	return atomic_read(&sbi->total_zombie_tree) +
+ 				atomic_read(&sbi->total_ext_node);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index af58b2c..769e7b1 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3016,6 +3016,16 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
+ 	sbi->readdir_ra = 1;
+ }
+ 
++static void f2fs_cleanup_inodes(struct f2fs_sb_info *sbi)
++{
++	struct super_block *sb = sbi->sb;
++
++	sync_filesystem(sb);
++	shrink_dcache_sb(sb);
++	evict_inodes(sb);
++	f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi));
++}
++
+ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ {
+ 	struct f2fs_sb_info *sbi;
+@@ -3402,6 +3412,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	 * falls into an infinite loop in f2fs_sync_meta_pages().
+ 	 */
+ 	truncate_inode_pages_final(META_MAPPING(sbi));
++	/* cleanup recovery and quota inodes */
++	f2fs_cleanup_inodes(sbi);
+ 	f2fs_unregister_sysfs(sbi);
+ free_root_inode:
+ 	dput(sb->s_root);
+@@ -3445,7 +3457,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	/* give only one another chance */
+ 	if (retry) {
+ 		retry = false;
+-		shrink_dcache_sb(sb);
+ 		goto try_onemore;
+ 	}
+ 	return err;
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
---Sig_/3BX=4/RIDil5BdQBMqHiwwS
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv7eP0ACgkQAVBC80lX
-0GwLnAf+NcpW5uzfZwQwU+wzNDzQ7xS2g83eds5fNEXheWwkX2dYegLPDLOpS5V2
-pk6GZ9UvAzlVfl5LG3UNHpI2A33wSyYL1Fg3JBGgQ0FE6/coAACoGtpvd2Lm7qLy
-8zEYVN3YKTOXO9erKgwm//fLhExMIsHgjD5rKs1Bsh1VqW2/plzc3mL/AfRjMzSf
-a9qvTv1vSUmgMHu7jxaWC8ZnpUb4sqztb7S22/LKUIF++4NZTBV1DSVCNaaQEFj2
-/I/QhOXfG95C8BFUA6qXwagcv74DZ1LUlqYQw7MRX0xKlQhxW3DTAMU/W9ZglAIM
-t6PSFi8oht0/d4tvahbsjIKpkBj0yg==
-=dyMm
------END PGP SIGNATURE-----
-
---Sig_/3BX=4/RIDil5BdQBMqHiwwS--
