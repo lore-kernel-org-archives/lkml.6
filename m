@@ -2,50 +2,52 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9582FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 753C5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D88C2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C6D12089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lts3Mj12"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D88C2089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lDgF/l4t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C6D12089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731250AbeKZV7A (ORCPT
+        id S1731262AbeKZV7C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:59:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44658 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:59:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730306AbeKZV67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:58:59 -0500
+        id S1731251AbeKZV7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:59:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D74C320645;
-        Mon, 26 Nov 2018 11:05:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96A0020672;
+        Mon, 26 Nov 2018 11:05:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230313;
-        bh=ulFhwUeNe/LluiiySnEZFDa7hjFaG46UL7JSXFWPfF8=;
+        s=default; t=1543230316;
+        bh=J4U3bpuAHwwYUkJ2yvx23lkvtKcdyY6j4ivYyKd5pCE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lts3Mj12vp546juSBocThVdWTTHb6qV/KuX7r+INCxqt83mPkx4SeyZ0Q2cS2jUmb
-         oyGrlOH+Hl970pm8Hh57R9s+PbcV4tbbq63E5QVzXX9hKJK8IxPct4lvB+p3xmfWkE
-         IXgdYxO7gGZP7/GdceW5XvFHLPKFtlRs2VgZxwZg=
+        b=lDgF/l4tzbUMKSmPnJeICzojH4VkFOzTqhGxz7A/1J71qLtrZ0WEAcJkqpTtRXic7
+         Vs5wpbmX5NqD8RjOUB69+/gA4fMs5hagOmlNyBDTpbF7fj8VLStkI/kxN0hyl/gWxm
+         ywHOj+ZjiKrQdPbgnHG3VuADoMw2/8RWc4FJ+RG0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Smythies <dsmythies@telus.net>,
+        stable@vger.kernel.org, Genki Sky <sky@genki.is>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Brian Norris <briannorris@chromium.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 089/118] kbuild: deb-pkg: fix too low build version number
-Date:   Mon, 26 Nov 2018 11:51:23 +0100
-Message-Id: <20181126105105.279445006@linuxfoundation.org>
+Subject: [PATCH 4.19 090/118] Revert "scripts/setlocalversion: git: Make -dirty check more robust"
+Date:   Mon, 26 Nov 2018 11:51:24 +0100
+Message-Id: <20181126105105.316609760@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -63,57 +65,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit bbcde0a7241261cd0ca8d8e6b94a4113a4b71443 ]
+[ Upstream commit 8ef14c2c41d962756d314f1d7dc972b0ea7a180f ]
 
-Since commit b41d920acff8 ("kbuild: deb-pkg: split generating packaging
-and build"), the build version of the kernel contained in a deb package
-is too low by 1.
+This reverts commit 6147b1cf19651c7de297e69108b141fb30aa2349.
 
-Prior to the bad commit, the kernel was built first, then the number
-in .version file was read out, and written into the debian control file.
+The reverted patch results in attempted write access to the source
+repository, even if that repository is mounted read-only.
 
-Now, the debian control file is created before the kernel is actually
-compiled, which is causing the version number mismatch.
+Output from "strace git status -uno --porcelain":
 
-Let the mkdebian script pass KBUILD_BUILD_VERSION=${revision} to require
-the build system to use the specified version number.
+getcwd("/tmp/linux-test", 129)          = 16
+open("/tmp/linux-test/.git/index.lock", O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC, 0666) =
+	-1 EROFS (Read-only file system)
 
-Fixes: b41d920acff8 ("kbuild: deb-pkg: split generating packaging and build")
-Reported-by: Doug Smythies <dsmythies@telus.net>
+While git appears to be able to handle this situation, a monitored
+build environment (such as the one used for Chrome OS kernel builds)
+may detect it and bail out with an access violation error. On top of
+that, the attempted write access suggests that git _will_ write to the
+file even if a build output directory is specified. Users may have the
+reasonable expectation that the source repository remains untouched in
+that situation.
+
+Fixes: 6147b1cf19651 ("scripts/setlocalversion: git: Make -dirty check more robust"
+Cc: Genki Sky <sky@genki.is>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Brian Norris <briannorris@chromium.org>
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Tested-by: Doug Smythies <dsmythies@telus.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/package/mkdebian | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ scripts/setlocalversion | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-index 663a7f343b42..edcad61fe3cd 100755
---- a/scripts/package/mkdebian
-+++ b/scripts/package/mkdebian
-@@ -88,6 +88,7 @@ set_debarch() {
- version=$KERNELRELEASE
- if [ -n "$KDEB_PKGVERSION" ]; then
- 	packageversion=$KDEB_PKGVERSION
-+	revision=${packageversion##*-}
- else
- 	revision=$(cat .version 2>/dev/null||echo 1)
- 	packageversion=$version-$revision
-@@ -205,10 +206,12 @@ cat <<EOF > debian/rules
- #!$(command -v $MAKE) -f
+diff --git a/scripts/setlocalversion b/scripts/setlocalversion
+index 79f7dd57d571..71f39410691b 100755
+--- a/scripts/setlocalversion
++++ b/scripts/setlocalversion
+@@ -74,7 +74,7 @@ scm_version()
+ 		fi
  
- build:
--	\$(MAKE) KERNELRELEASE=${version} ARCH=${ARCH} KBUILD_SRC=
-+	\$(MAKE) KERNELRELEASE=${version} ARCH=${ARCH} \
-+	KBUILD_BUILD_VERSION=${revision} KBUILD_SRC=
+ 		# Check for uncommitted changes
+-		if git status -uno --porcelain | grep -qv '^.. scripts/package'; then
++		if git diff-index --name-only HEAD | grep -qv "^scripts/package"; then
+ 			printf '%s' -dirty
+ 		fi
  
- binary-arch:
--	\$(MAKE) KERNELRELEASE=${version} ARCH=${ARCH} KBUILD_SRC= intdeb-pkg
-+	\$(MAKE) KERNELRELEASE=${version} ARCH=${ARCH} \
-+	KBUILD_BUILD_VERSION=${revision} KBUILD_SRC= intdeb-pkg
- 
- clean:
- 	rm -rf debian/*tmp debian/files
 -- 
 2.17.1
 
