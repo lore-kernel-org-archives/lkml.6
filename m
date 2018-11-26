@@ -7,52 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E1EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93285C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5E692147D
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5996F2089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="USsVu3AP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5E692147D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrMpPjZ6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5996F2089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727586AbeKZVs0 (ORCPT
+        id S1727609AbeKZVs3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:48:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56946 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:48:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726475AbeKZVs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:48:26 -0500
+        id S1726475AbeKZVs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:48:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D47EC2146F;
-        Mon, 26 Nov 2018 10:54:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 963412089F;
+        Mon, 26 Nov 2018 10:54:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229681;
-        bh=QCEqhBY+Ne66DET4jGKPDEeL7sb9GOlkcItyso8j6z0=;
+        s=default; t=1543229684;
+        bh=kLTwNFLZ3Vvb47hJdaUo11wwl7ME+guwx/v7ZqxXwkQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=USsVu3APE6H4Lx/PZdLPwPfCVGRZnpjUbJixDg4wJPD8Kt1wo6gpDT67pu8IAih1N
-         SiOcU1UXZqZT3Ig12EkZcFhXxUHqZqq8yWsV90TFg8xB7lmXjtj5L93wfD6LBHxdl8
-         5mkhk0pdf5xouiOyiFLRAVSnm8fbn7R46hIpjm6E=
+        b=QrMpPjZ69O44YBSCRDgj6LQ3xrMFBublHKdPg7rLOPZydlNRC1L96jN5zx4rFOXjb
+         w1u1VwmyBSkYCtTGQl4XtJoQAwuE3ghF1HKN4goUyfEgrFLCRwN/l/mxGUaPFsBN0+
+         28a5sg6dPmUz7pLm3fzottOy3FzB1B8TxvCjtXms=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
-        Grant Grundler <grundler@chromium.org>,
-        Greg Hackmann <ghackmann@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Davidson <md@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Michal Marek <mmarek@suse.com>,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.4 31/70] x86/mm/kaslr: Use the _ASM_MUL macro for multiplication to work around Clang incompatibility
-Date:   Mon, 26 Nov 2018 11:50:46 +0100
-Message-Id: <20181126105049.785151902@linuxfoundation.org>
+Subject: [PATCH 4.4 32/70] kbuild: Add __cc-option macro
+Date:   Mon, 26 Nov 2018 11:50:47 +0100
+Message-Id: <20181126105049.873076377@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
 References: <20181126105046.722096341@linuxfoundation.org>
@@ -72,68 +67,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Matthias Kaehlcke <mka@chromium.org>
 
-commit 121843eb02a6e2fa30aefab64bfe183c97230c75 upstream.
+commit 9f3f1fd299768782465cb32cdf0dd4528d11f26b upstream.
 
-The constraint "rm" allows the compiler to put mix_const into memory.
-When the input operand is a memory location then MUL needs an operand
-size suffix, since Clang can't infer the multiplication width from the
-operand.
+cc-option uses KBUILD_CFLAGS and KBUILD_CPPFLAGS when it determines
+whether an option is supported or not. This is fine for options used to
+build the kernel itself, however some components like the x86 boot code
+use a different set of flags.
 
-Add and use the _ASM_MUL macro which determines the operand size and
-resolves to the NUL instruction with the corresponding suffix.
+Add the new macro __cc-option which is a more generic version of
+cc-option with additional parameters. One parameter is the compiler
+with which the check should be performed, the other the compiler options
+to be used instead KBUILD_C*FLAGS.
 
-This fixes the following error when building with clang:
+Refactor cc-option and hostcc-option to use __cc-option and move
+hostcc-option to scripts/Kbuild.include.
 
-  CC      arch/x86/lib/kaslr.o
-  /tmp/kaslr-dfe1ad.s: Assembler messages:
-  /tmp/kaslr-dfe1ad.s:182: Error: no instruction mnemonic suffix given and no register operands; can't size instruction
-
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Cc: Grant Grundler <grundler@chromium.org>
-Cc: Greg Hackmann <ghackmann@google.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Davidson <md@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20170501224741.133938-1-mka@chromium.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[nc: Apply to aslr.c in get_random_long as the kaslr shift didn't happen
-     until 4.8 in commit d899a7d146a2]
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Michal Marek <mmarek@suse.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+[nc: Fix conflicts due to lack of CC_OPTION_CFLAGS and hostcc-option
+     wasn't added until v4.8 so no point including it in this tree]
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/boot/compressed/aslr.c |    3 ++-
- arch/x86/include/asm/asm.h      |    1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ Makefile               |    2 +-
+ scripts/Kbuild.include |    9 +++++++--
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
---- a/arch/x86/boot/compressed/aslr.c
-+++ b/arch/x86/boot/compressed/aslr.c
-@@ -1,5 +1,6 @@
- #include "misc.h"
+--- a/Makefile
++++ b/Makefile
+@@ -303,7 +303,7 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH"
  
-+#include <asm/asm.h>
- #include <asm/msr.h>
- #include <asm/archrandom.h>
- #include <asm/e820.h>
-@@ -94,7 +95,7 @@ static unsigned long get_random_long(voi
- 	}
+ HOSTCC       = gcc
+ HOSTCXX      = g++
+-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89
++HOSTCFLAGS   := -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89
+ HOSTCXXFLAGS = -O2
  
- 	/* Circular multiply for better bit diffusion */
--	asm("mul %3"
-+	asm(_ASM_MUL "%3"
- 	    : "=a" (random), "=d" (raw)
- 	    : "a" (random), "rm" (mix_const));
- 	random += raw;
---- a/arch/x86/include/asm/asm.h
-+++ b/arch/x86/include/asm/asm.h
-@@ -34,6 +34,7 @@
- #define _ASM_ADD	__ASM_SIZE(add)
- #define _ASM_SUB	__ASM_SIZE(sub)
- #define _ASM_XADD	__ASM_SIZE(xadd)
-+#define _ASM_MUL	__ASM_SIZE(mul)
+ # Decide whether to build built-in, modular, or both.
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -108,11 +108,16 @@ as-option = $(call try-run,\
+ as-instr = $(call try-run,\
+ 	printf "%b\n" "$(1)" | $(CC) $(KBUILD_AFLAGS) -c -x assembler -o "$$TMP" -,$(2),$(3))
  
- #define _ASM_AX		__ASM_REG(ax)
- #define _ASM_BX		__ASM_REG(bx)
++# __cc-option
++# Usage: MY_CFLAGS += $(call __cc-option,$(CC),$(MY_CFLAGS),-march=winchip-c6,-march=i586)
++__cc-option = $(call try-run,\
++	$(1) -Werror $(2) $(3) -c -x c /dev/null -o "$$TMP",$(3),$(4))
++
+ # cc-option
+ # Usage: cflags-y += $(call cc-option,-march=winchip-c6,-march=i586)
+ 
+-cc-option = $(call try-run,\
+-	$(CC) -Werror $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) $(1) -c -x c /dev/null -o "$$TMP",$(1),$(2))
++cc-option = $(call __cc-option, $(CC),\
++	$(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS),$(1),$(2))
+ 
+ # cc-option-yn
+ # Usage: flag := $(call cc-option-yn,-march=winchip-c6)
 
 
