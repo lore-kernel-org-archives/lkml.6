@@ -2,118 +2,133 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B74FAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6478C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76599208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:43:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="Rnbq6FCR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76599208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	by mail.kernel.org (Postfix) with ESMTP id 8DD0D208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:46:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DD0D208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727229AbeK0Ii7 (ORCPT
+        id S1727066AbeK0Il6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 03:38:59 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40142 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbeK0Ii7 (ORCPT
+        Tue, 27 Nov 2018 03:41:58 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:46705 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726367AbeK0Il6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 03:38:59 -0500
-Received: by mail-lf1-f67.google.com with SMTP id v5so14751064lfe.7
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 13:43:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EaF/FGgMILYt8P2hF3zP1oce9BsgpJa0a1NFDKAvmJ8=;
-        b=Rnbq6FCRgdG8cBVl7L6zKw/AYLdOkYvOXx//s60ciBRRRwbs+nRXSpnmJcJUH0XHI4
-         Ey1g0ubpjS6yIwfVNXaOO7veFmJEL4JK4GsmOOq3LyoyjXc7DJ6ZsUI7evMrQ0vDe5DC
-         Tjxgabxml53VoCe9T5SOWalWPBg9dVwcFwjMbhQ7oTrR7KQDIXnwNCXR8sRDIUJJxfiI
-         4Nj7d69cVQLV7a13gijm5/KtddxiPPdTJVkn83gVo8KIIQlpOq7cTcdAV0lABhm0EnkD
-         eEXcNni2C3ezXtdNsJggIi0KwYDWWnVGp00JrpQwvw/6hfYau7yjNWWyrdcQ3xR/Ex1m
-         pOwg==
+        Tue, 27 Nov 2018 03:41:58 -0500
+Received: by mail-oi1-f194.google.com with SMTP id x202so17331563oif.13;
+        Mon, 26 Nov 2018 13:46:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EaF/FGgMILYt8P2hF3zP1oce9BsgpJa0a1NFDKAvmJ8=;
-        b=GRUqM5hvQ8OVnxyZQP7opyyk08Bq7nSZDyC0Cw12DJbfAPYFfGjntzba57RKSKjRj8
-         SwxAQwdlrb/AVV9O4O2dMVyCBrSeOP2ee4pEA4lelfvimqgjNo3feb8d6p7IImmu+TOh
-         sFPubVm6sBmqF8i4TwVHfAAFmLl4rtQ6TYtGFv4TnNcr7tZQWYPXqCg+4A+6+4OOqqm+
-         HtASVP4G3zuR09klLWeEwzSS3xYOVjBEA7MSWf8eRSGkjpBRQGdMxkufGodp3nPnumhI
-         9W/i2PagjZP9gc6/sDOMZYDFLAHnGE/6iOaSi2C9tmi21sz28nPRxiD0iIj5xQQIc+hL
-         Rhrg==
-X-Gm-Message-State: AGRZ1gISEsb1Sdbh4sxSKhRcdntIMAu1Y6JwzgA7lHPH+BeM+Z0Fctgh
-        J2dp45Cky9v27Ao4B8YSao9R9SYALGPw0jgbFI6D
-X-Google-Smtp-Source: AJdET5fzHcxQvHc4ChpSKpxcnZz6vmWodsVEzKcD1lTtVpeCz1/5gsJZUqSGGOGkZIvHr5UvOmeAHlcFIMJvfv2v7jE=
-X-Received: by 2002:a19:a7c1:: with SMTP id q184mr16174266lfe.4.1543268607204;
- Mon, 26 Nov 2018 13:43:27 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3SZ+vTotyFyuWTvSfSwlZ+iCTw1Yda/AWHj/lJeG8OI=;
+        b=MsoVScrSuUwYdN9+uaZsMOTe9AGWuTalfdDkpzUCGEN+WQ4hxSsQlViDlJmOHXXeqH
+         NfNOFN/FtlZqCR8bgKcUQ12p1+xblYyLZB8Dh/8ZGApcoXB1sYy68NcMMbpRnK4DJl0B
+         DZx5OcH5wzZprWggvcXXfyJvMkujzARgz+DgCiCBHd3d6H4g2XEnEoLOJFUyGCXf6tVY
+         XdNnqq7MzFoTlTZGvsMeDGfrciNZtyqA79cC8lWTZ49kEZ1E+/2S4wHQqxQfv4YuPjo/
+         GCehPYp8WuKlu+Q/2YVZHv77wWhekFF0POcynRXIDJC2Pux4Y9jhBenphTkzGpaI23bq
+         V3Rg==
+X-Gm-Message-State: AA+aEWb0ITE2QbcNlH8Kbz7FSt4qadmri3oj0XCuiQhBmeqTjrELDHcg
+        OfjSDW24E/COk+EJCabbdQ==
+X-Google-Smtp-Source: AFSGD/V1F8bNYB1X6KEu6IyQ5bwIAk1V41Eg5xYqvGK9DsIoUMUFC1856AukGpbEgOt2BA/YRrK4HQ==
+X-Received: by 2002:aca:4489:: with SMTP id r131mr9352498oia.296.1543268787321;
+        Mon, 26 Nov 2018 13:46:27 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 187sm2049348oic.12.2018.11.26.13.46.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 13:46:26 -0800 (PST)
+Date:   Mon, 26 Nov 2018 15:46:26 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     biao huang <biao.huang@mediatek.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, davem@davemloft.net,
+        honghui.zhang@mediatek.com, yt.shen@mediatek.com,
+        liguo.zhang@mediatek.com, mark.rutland@arm.com,
+        nelson.chang@mediatek.com, matthias.bgg@gmail.com,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, joabreu@synopsys.com
+Subject: Re: [v5, PATCH 2/2] dt-binding: mediatek-dwmac: add binding document
+ for MediaTek MT2712 DWMAC
+Message-ID: <20181126214626.GA13830@bogus>
+References: <1542882521-18874-1-git-send-email-biao.huang@mediatek.com>
+ <1542882521-18874-3-git-send-email-biao.huang@mediatek.com>
+ <20181122151932.GD15403@lunn.ch>
+ <1542936676.24219.66.camel@mhfsdcap03>
 MIME-Version: 1.0
-References: <cover.1518435853.git.rgb@redhat.com> <7289e57d94a0a13965e3dbd279cc8cd12dfb29a6.1518435853.git.rgb@redhat.com>
- <CAHC9VhRv_F=Gqs7EyTR2ZmLtJobyH9B8Cg-iiHE5hacTC-d=Pw@mail.gmail.com>
- <20181125171115.su4kuu44lazqw56n@madcap2.tricolour.ca> <CAHC9VhRpYpkVN5fan91g96YuR9GjT=6TbV7vngtS1Crm72+Knw@mail.gmail.com>
- <20181126192138.n6r7buxy4dpra4pt@madcap2.tricolour.ca>
-In-Reply-To: <20181126192138.n6r7buxy4dpra4pt@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 26 Nov 2018 16:43:15 -0500
-Message-ID: <CAHC9VhS4YO4XN51QZDJMiJ7AqGLjc5zZ_b7h=_h1v5mhTCt2BA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/3] audit: remove arch_f pointer from struct audit_krule
-To:     rgb@redhat.com
-Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542936676.24219.66.camel@mhfsdcap03>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 2:21 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2018-11-26 11:37, Paul Moore wrote:
-> > On Sun, Nov 25, 2018 at 12:11 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > On 2018-02-15 15:42, Paul Moore wrote:
-> > > > On Mon, Feb 12, 2018 at 7:29 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > The arch_f pointer was added to the struct audit_krule in commit:
-> > > > > e54dc2431d740a79a6bd013babade99d71b1714f ("audit signal recipients")
-> > > > >
-> > > > > This is only used on addition and deletion of rules which isn't time
-> > > > > critical and the arch field is likely to be one of the first fields,
-> > > > > easily found iterating over the field type.  This isn't worth the
-> > > > > additional complexity and storage.  Delete the field.
-> > > > >
-> > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > > ---
-> > > > >  include/linux/audit.h |  1 -
-> > > > >  kernel/auditfilter.c  | 12 ++++++++----
-> > > > >  2 files changed, 8 insertions(+), 5 deletions(-)
-> > > >
-> > > > I haven't decided if I like the removal of arch_f or not, but I think
-> > > > I might know where your oops/panic is coming from, thoughts below ...
-> > >
-> > > Have you decided yet if you like the removal of the arch_f pointer or
-> > > not?  An updated v2 was provided the following day:
-> > >         https://www.redhat.com/archives/linux-audit/2018-February/msg00059.html
-> >
-> > I still think I'd like to keep it as-is for now.
->
-> Can you explain why you'd prefer to keep it as-is for now?  Is there a
-> factor I'm not aware of that might make it acceptable later?  arch_f
-> appears to make the code noisier than needed and use extra memory that
-> is a convenience at best only when adding or deleting rules.
+On Fri, Nov 23, 2018 at 09:31:16AM +0800, biao huang wrote:
+> Dear Andrew,
+> 
+> 	Thanks for you remind.
+> 
+> 	Sincerely, I respect any comment from any reviewer. If I didn't reply
+> for any comment, really sorry for that.
+> 
+> 	As to this "tx-delay" issue, the following reply in v3 maybe ignored.
+> 	https://lkml.org/lkml/2018/11/19/158
+> 
+> 	"the delay time in mediatek dwmac design is not so accurate,
+> 	the current mt2712 and the following ICs will not use the
+> 	same delay design, but will use stages to indicate different
+> 	delay time.
+> 	so maybe "mediatek.tx-delay" represent the delay stage is a
+> 	good choice"
+> 
+> 	And to make it clearer here.
+> 
+> 	In mt2712, there are two delay macro circuit: named fine-tune and
+> coarse-tune.
+> 	a. fine-tune, 170+/-50ps per stage, total 32 stages
+> 	b. coarse-tune, 0.55+/-0.2ns per stage, total 32 stages
+> 	If we only consider mt2712, delay in fine-tune select a integer
+> multiple of 170ps, delay in coarse-tune select a integer multiple of
+> 550ps, for stage 0~31, the delay in fine-tune will not have the same
+> value with that in coarse-tune.
+> 	OK, It seems the property "fine-tune" can be eliminated .
+> 
+> 	But the following ic will not have the same accuracy as mt2712,
+> and maybe will not have two delay macro circuit to be selected.
 
-Personal preference for the existing approach, status quo, gut
-feeling, etc.  Some things are simply judgement calls.
+New IC will have new compatible string then. If it is different, then 
+likely these properties would have to change or have different meaning 
+unless you use time.
 
-Please stop trying to find a four page, black-and-white explanation
-reason for every single patch that is rejected; it is getting very
-tiring.  I typically provide reasons when I don't merge a patch, and
-often on these smaller, trade-off patches it falls into the "judgement
-call" category and there simply isn't a detailed response to be given.
+> 	1. assume two delay macro circuit in the following ic,
+> 	fine-tune, 100ps per stage, coarse-tune, 0.55ns per stage,
+> 	if we want delay 2.2ns, fine-tune will get a 22, and coarse-tune get a
+> 4. We can't distinguish which delay macro we are choosing.
 
--- 
-paul moore
-www.paul-moore.com
+Why wouldn't you just choose fine-tune for anything less than the max 
+range (3200ps in this example) and course for greater than 3100ps.
+
+> 	2. assume only one delay macro circuit is used, a similar case as 1
+> will also increase the complexity of driver.
+> 	Then, we need define more flag property to know which delay macro we
+> are handling.
+> 
+> 	The common things for all delay macro circuit in MediaTek mac design is
+> the stages, not the accuracy. so if we maintain stage info in "mediatek,
+> tx-delay", we only need care which stage we should choose.
+> And for each IC, we will recommend a best stage as a candidate.
+
+What if you had a 3rd delay circuit?
+
+> 	Above is my personal opinion, may be my understanding is wrong,
+> welcome for further discussion.
+> 
+> 	Thanks a lot.
