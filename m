@@ -2,64 +2,64 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DATE_IN_PAST_12_24,
-	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=DATE_IN_PAST_12_24,
+	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF7EC04EBA
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99528C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:36:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36884208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:35:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E101214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:36:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkDSc2Wq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36884208E4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZSivZpvR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E101214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729415AbeK0Xdp (ORCPT
+        id S1729473AbeK0Xdq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 18:33:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34008 "EHLO mail.kernel.org"
+        Tue, 27 Nov 2018 18:33:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726663AbeK0Xdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:33:44 -0500
+        id S1726663AbeK0Xdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 18:33:45 -0500
 Received: from quaco.infradead.org (unknown [190.15.121.82])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 133B721104;
-        Tue, 27 Nov 2018 12:35:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB2552146F;
+        Tue, 27 Nov 2018 12:35:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543322156;
-        bh=SAqhFFh+ig7tJ2zRM9jio72AcGI0+FeW9BwKg8y/D3Q=;
+        s=default; t=1543322158;
+        bh=rLbZxQ4dkVM31GrIU2ksZxX5RevT3MYmgMGc6aO94tc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YkDSc2WqCrQeMFpQ1xmSA9pF0Kqr5TmV5uD+pHlqyLqwjuJmlT4YFaVBa64aX58CW
-         3ixKcRKK7yhYKaOaLRjq5nnI+tMmwJ3u5Ok09TfpjQ69vIFE7mGENo3iQotEdBMGhR
-         5tj1jHKGJSWzB6GN2n6Vcv9V0PR95LJi67+1nWsE=
+        b=ZSivZpvR8GgbMTMlLnlZomSZAkchppTlgph1Q2BqTkM/rf3HSrrtTIs/IXAGyB5vp
+         v+Q9Err6jmIQPhVUqK4+KuUFfiNInGE3pnMEoRBXa/u9dMN1usiNnIwp+FaGNHpfV3
+         KnX0C7sJXDHDo8Rm+tpm3HFQEl5WoPRtuVajqMqs=
 Received: by quaco.infradead.org (Postfix, from userid 1000)
-        id 467B741116; Mon, 26 Nov 2018 16:02:17 -0300 (-03)
-Date:   Mon, 26 Nov 2018 16:02:17 -0300
+        id 4976241119; Mon, 26 Nov 2018 15:53:57 -0300 (-03)
+Date:   Mon, 26 Nov 2018 15:53:57 -0300
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     "Hunter, Adrian" <adrian.hunter@intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "leo.yan@linaro.org" <leo.yan@linaro.org>,
-        David Miller <davem@davemloft.net>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH 1/5] perf tools: Add fallback functions for cases where
- cpumode is insufficient
-Message-ID: <20181126190217.GC18491@kernel.org>
-References: <20181031091043.23465-1-adrian.hunter@intel.com>
- <20181031091043.23465-2-adrian.hunter@intel.com>
- <20181105172946.GH11147@kernel.org>
- <363DA0ED52042842948283D2FC38E4649C313381@IRSMSX106.ger.corp.intel.com>
- <20181105193615.GG7077@kernel.org>
- <363DA0ED52042842948283D2FC38E4649C3133B4@IRSMSX106.ger.corp.intel.com>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Eric Saint Etienne <eric.saint.etienne@oracle.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Eric Saint-Etienne <eric.saintetienne@gmail.com>
+Subject: Re: [PATCH] perf symbols: Cannot disassemble some routines when
+ debuginfo present
+Message-ID: <20181126185357.GB18491@kernel.org>
+References: <1542968726-20910-1-git-send-email-eric.saint.etienne@oracle.com>
+ <20181123160337.GA5575@krava>
+ <3f427959-a41f-4ff4-b095-ef8af11665c9@default>
+ <20181126083917.GA18783@krava>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <363DA0ED52042842948283D2FC38E4649C3133B4@IRSMSX106.ger.corp.intel.com>
+In-Reply-To: <20181126083917.GA18783@krava>
 X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,109 +67,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Nov 05, 2018 at 07:53:17PM +0000, Hunter, Adrian escreveu:
-> > -----Original Message-----
-> > From: Arnaldo Carvalho de Melo [mailto:acme@kernel.org]
-> > Sent: Monday, November 5, 2018 9:36 PM
-> > To: Hunter, Adrian <adrian.hunter@intel.com>
-> > Cc: Jiri Olsa <jolsa@redhat.com>; Andi Kleen <ak@linux.intel.com>; linux-
-> > kernel@vger.kernel.org; leo.yan@linaro.org; David Miller
-> > <davem@davemloft.net>; Mathieu Poirier <mathieu.poirier@linaro.org>
-> > Subject: Re: [PATCH 1/5] perf tools: Add fallback functions for cases where
-> > cpumode is insufficient
+Em Mon, Nov 26, 2018 at 09:39:17AM +0100, Jiri Olsa escreveu:
+> On Fri, Nov 23, 2018 at 10:24:21AM -0800, Eric Saint Etienne wrote:
+> > > > +		/*
+> > > > +		 * When using -ffunction-sections, only .text gets loaded by
+> > > > +		 * map_groups__find() into al->map. Consequently al->map address
+> > > > +		 * range encompass the whole code.
+> > > > +		 *
+> > > > +		 * But map__load() has just loaded many function maps by
+> > > > +		 * splitting al->map, which reduced al->map range drastically.
+> > > > +		 * Very likely the target address is now in one of those newly
+> > > > +		 * created function maps, so we need to lookup the map again
+> > > > +		 * to find that new map.
+> > > > +		 */
+> > > 
+> > > hum, so map__load actualy can split the map to create new maps?
+> > > 
+> > > cold you please point me to that code? I haven't touch this area for some
+> > > time and I can't find it
 > > 
-> > Em Mon, Nov 05, 2018 at 07:21:44PM +0000, Hunter, Adrian escreveu:
-> > > > In Monday, November 5, 2018 7:30 PM, Arnaldo Carvalho de Melo wrote
-> > <SNIP>
-> > > > > +struct map *thread__find_map_fallback(struct thread *thread, u8
-> > > > cpumode,
-> > > > > +				      u64 addr, struct addr_location *al) {
+> > The split happens in dso_process_kernel_symbol() in symbol-elf.c where we
+> > call map_groups__find_by_name() to find an existing map, but with
+> > -ffunction-sections and a symbol belonging to new (function) map, such map
+> > doesn't exist yet so we end up creating one and adjusting existing maps
+> > accordingly because adjust_kernel_syms is set. Makes sense?
 > > 
-> > > > You named one as _fallback...
-> > 
-> > > > > +	struct map *map = thread__find_map(thread, cpumode, addr, al);
-> > > > > +	struct machine *machine = thread->mg->machine;
-> > > > > +	u8 addr_cpumode = machine__addr_cpumode(machine, cpumode,
-> > > > addr);
-> > > > > +
-> > > > > +	if (map || addr_cpumode == cpumode)
-> > > > > +		return map;
-> > > > > +
-> > > > > +	return thread__find_map(thread, addr_cpumode, addr, al); }
-> > > > > +
-> > > > >  struct symbol *thread__find_symbol(struct thread *thread, u8
-> > cpumode,
-> > > > >  				   u64 addr, struct addr_location *al)  { @@ -
-> > > > 1585,6 +1603,15 @@
-> > > > > struct symbol *thread__find_symbol(struct thread *thread, u8
-> > cpumode,
-> > > > >  	return al->sym;
-> > > > >  }
-> > 
-> > > > > +struct symbol *thread__find_symbol_fb(struct thread *thread, u8
-> > > > cpumode,
-> > > > > +				      u64 addr, struct addr_location *al)
-> > 
-> > > > ... and the other as _fb, make it consistent, please.
-> > 
-> > > ok
-> > 
-> > > > > +{
-> > > > > +	al->sym = NULL;
-> > > > > +	if (thread__find_map_fallback(thread, cpumode, addr, al))
-> > > > > +		al->sym = map__find_symbol(al->map, al->addr);
-> > > > > +	return al->sym;
-> > > > > +}
-> > 
-> > > > >  /*
-> > > > >   * Callers need to drop the reference to al->thread, obtained in
-> > > > >   * machine__findnew_thread()
-> > > > > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> > > > > index 111ae858cbcb..04edc0eac376 100644
-> > > > > --- a/tools/perf/util/machine.c
-> > > > > +++ b/tools/perf/util/machine.c
-> > > > > @@ -2542,6 +2542,46 @@ int machine__get_kernel_start(struct
-> > > > > machine
-> > > > *machine)
-> > > > >  	return err;
-> > > > >  }
-> > 
-> > > > > +/*
-> > > > > + * machine__single_ku_as - Machine has same address space for
-> > > > > +kernel
-> > > > and user.
-> > > > > + * @machine: machine object
-> > > > > + *
-> > > > > + * Some architectures have a single address space for kernel and
-> > > > > +user addresses,
-> > > > > + * which makes it possible to determine if an address is in
-> > > > > +kernel space or user
-> > > > > + * space.
-> > > > > + */
-> > > > > +static bool machine__single_ku_as(struct machine *machine) {
-> > > > > +	return strcmp(perf_env__arch(machine->env), "sparc"); }
-> > 
-> > > > Can we avoid having this strcmp be done repeatedly?
-> > 
-> > > It is only done if there are mapping errors
-> > 
-> > >  > Can we avoid having this strcmp be done repeatedly? I.e. just make
-> > > this a
-> > > > boolean initialized at session start, when machine->env is setup, so
-> > > > we'd
-> > > > have:
-> > 
-> > > >    machine->single_address_space
-> > 
-> > > > Instead of a function?
-> > 
-> > > Sure  thing.
+> > As of 4.20-rc3 the call chain is as follows:
+> > event:c:1573	   map__load()
+> > map.c:315	   dso__load()
+> > symobl.c:1528	   dso__load_kernel_sym()
+> > symbol.c:1896	   dso__load_vmlinux_path()
+> > 		   (or we directly call dso__load_vmlinux() at line 1892)
+> > symbol.c:1744	   dso__load_vmlinux()
+> > symbol.c:1719	   dso__load_sym()
+> > symbol-elf.c:1090  dso_process_kernel_symbol()
+> 
+> i see, thank for the pointers.. could you please mention
+> this in your comment and changelog as well?
+> 
+> also to document in the code that it's related to map__load
+> could you put it to the if contidion, like:
+> 
+> +               if (load_map && (al->addr < al->map->start || al->addr >= al->map->end))
+> 
 
-Have you sent an update to this patch series addressing the concerns? I
-think that renaming that _fb to __fallback and having this
-machine->single_address_space is what is missing, I'll try to take a
-stab at this now and have it in my perf/core branch soon.
-
-But you have this already done, please send it.
+Eric, please address Jiri's comments and send a v2, ok?
 
 - Arnaldo
