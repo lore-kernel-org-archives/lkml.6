@@ -2,195 +2,361 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D423C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F86C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 175DC20672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:56:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 175DC20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D656720663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:56:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D656720663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbeK0EvE (ORCPT
+        id S1726881AbeK0EvX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:51:04 -0500
-Received: from mga02.intel.com ([134.134.136.20]:61962 "EHLO mga02.intel.com"
+        Mon, 26 Nov 2018 23:51:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36898 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726253AbeK0EvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:51:04 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 09:56:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,283,1539673200"; 
-   d="asc'?scan'208";a="95176535"
-Received: from jtkirshe-desk1.jf.intel.com ([134.134.177.96])
-  by orsmga008.jf.intel.com with ESMTP; 26 Nov 2018 09:56:11 -0800
-Message-ID: <c1b8de1a8e9d4d215b56498e2d5b83a02083483a.camel@intel.com>
-Subject: Re: [Intel-wired-lan] [PATCH V2] mm: Replace all open encodings for
- NUMA_NO_NODE
-From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Reply-To: jeffrey.t.kirsher@intel.com
-To:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     hverkuil@xs4all.nl, linux-fbdev@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-rdma@vger.kernel.org,
-        netdev@vger.kernel.org, vkoul@kernel.org,
-        dri-devel@lists.freedesktop.org, linux-block@vger.kernel.org,
-        sparclinux@vger.kernel.org, iommu@lists.linux-foundation.org,
-        intel-wired-lan@lists.osuosl.org, linux-alpha@vger.kernel.org,
-        dmaengine@vger.kernel.org, jiangqi903@gmail.com,
-        akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
-        ocfs2-devel@oss.oracle.com, linux-media@vger.kernel.org
-Date:   Mon, 26 Nov 2018 09:56:28 -0800
-In-Reply-To: <1543235202-9075-1-git-send-email-anshuman.khandual@arm.com>
-References: <1543235202-9075-1-git-send-email-anshuman.khandual@arm.com>
-Organization: Intel
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-w/yFab8vycJu1U8x0saQ"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
+        id S1726251AbeK0EvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 23:51:22 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1D54F80F81;
+        Mon, 26 Nov 2018 17:56:31 +0000 (UTC)
+Received: from treble (ovpn-121-105.rdu2.redhat.com [10.10.121.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 535ED1057076;
+        Mon, 26 Nov 2018 17:56:27 +0000 (UTC)
+Date:   Mon, 26 Nov 2018 11:56:24 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
+ implementation for x86-64
+Message-ID: <20181126175624.bruqfbkngbucpvxr@treble>
+References: <cover.1543200841.git.jpoimboe@redhat.com>
+ <62188c62f6dda49ca2e20629ee8e5a62a6c0b500.1543200841.git.jpoimboe@redhat.com>
+ <20181126160217.GR2113@hirez.programming.kicks-ass.net>
+ <20181126171036.chcbmb35ygpxziub@treble>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181126171036.chcbmb35ygpxziub@treble>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 26 Nov 2018 17:56:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 26, 2018 at 11:10:36AM -0600, Josh Poimboeuf wrote:
+> On Mon, Nov 26, 2018 at 05:02:17PM +0100, Peter Zijlstra wrote:
+> > On Mon, Nov 26, 2018 at 07:55:00AM -0600, Josh Poimboeuf wrote:
+> > > diff --git a/arch/x86/kernel/static_call.c b/arch/x86/kernel/static_call.c
+> > > index 8026d176f25c..d3869295b88d 100644
+> > > --- a/arch/x86/kernel/static_call.c
+> > > +++ b/arch/x86/kernel/static_call.c
+> > > @@ -9,13 +9,21 @@
+> > >  
+> > >  void static_call_bp_handler(void);
+> > >  void *bp_handler_dest;
+> > > +void *bp_handler_continue;
+> > >  
+> > >  asm(".pushsection .text, \"ax\"						\n"
+> > >      ".globl static_call_bp_handler					\n"
+> > >      ".type static_call_bp_handler, @function				\n"
+> > >      "static_call_bp_handler:						\n"
+> > > -    "ANNOTATE_RETPOLINE_SAFE						\n"
+> > > +#ifdef CONFIG_HAVE_STATIC_CALL_INLINE
+> > > +    ANNOTATE_RETPOLINE_SAFE
+> > > +    "call *bp_handler_dest						\n"
+> > > +    ANNOTATE_RETPOLINE_SAFE
+> > > +    "jmp *bp_handler_continue						\n"
+> > > +#else /* !CONFIG_HAVE_STATIC_CALL_INLINE */
+> > > +    ANNOTATE_RETPOLINE_SAFE
+> > >      "jmp *bp_handler_dest						\n"
+> > > +#endif
+> > >      ".popsection							\n");
+> > >  
+> > >  void arch_static_call_transform(void *site, void *tramp, void *func)
+> > > @@ -25,7 +33,10 @@ void arch_static_call_transform(void *site, void *tramp, void *func)
+> > >  	unsigned char insn_opcode;
+> > >  	unsigned char opcodes[CALL_INSN_SIZE];
+> > >  
+> > > -	insn = (unsigned long)tramp;
+> > > +	if (IS_ENABLED(CONFIG_HAVE_STATIC_CALL_INLINE))
+> > > +		insn = (unsigned long)site;
+> > > +	else
+> > > +		insn = (unsigned long)tramp;
+> > >  
+> > >  	mutex_lock(&text_mutex);
+> > >  
+> > > @@ -41,8 +52,10 @@ void arch_static_call_transform(void *site, void *tramp, void *func)
+> > >  	opcodes[0] = insn_opcode;
+> > >  	memcpy(&opcodes[1], &dest_relative, CALL_INSN_SIZE - 1);
+> > >  
+> > > -	/* Set up the variable for the breakpoint handler: */
+> > > +	/* Set up the variables for the breakpoint handler: */
+> > >  	bp_handler_dest = func;
+> > > +	if (IS_ENABLED(CONFIG_HAVE_STATIC_CALL_INLINE))
+> > > +		bp_handler_continue = (void *)(insn + CALL_INSN_SIZE);
+> > >  
+> > >  	/* Patch the call site: */
+> > >  	text_poke_bp((void *)insn, opcodes, CALL_INSN_SIZE,
+> > 
+> > OK, so this is where that static_call_bp_handler comes from; you need
+> > that CALL to frob the stack.
+> > 
+> > But I still think it is broken; consider:
+> > 
+> > 	CPU0				CPU1
+> > 
+> > 	bp_handler = ponies;
+> > 
+> > 	text_poke_bp(, &static_call_bp_handler)
+> > 	  text_poke(&int3);
+> > 	  on_each_cpu(sync)
+> > 	  				<IPI>
+> > 					  ...
+> > 					</IPI>
+> > 
+> > 	  text_poke(/* all but first bytes */)
+> > 	  on_each_cpu(sync)
+> > 	  				<IPI>
+> > 					  ...
+> > 					</IPI>
+> > 
+> > 	  				<int3>
+> > 					  pt_regs->ip = &static_call_bp_handler
+> > 					</int3>
+> > 
+> > 					// VCPU takes a nap...
+> > 	  text_poke(/* first byte */)
+> > 	  on_each_cpu(sync)
+> > 	  				<IPI>
+> > 					  ...
+> > 					</IPI>
+> > 
+> > 					// VCPU sleeps more
+> > 	bp_handler = unicorn;
+> > 
+> > 					CALL unicorn
+> > 
+> > *whoops*
+> > 
+> > Now, granted, that is all rather 'unlikely', but that never stopped
+> > Murphy.
+> 
+> Good find, thanks Peter.
+> 
+> As we discussed on IRC, we'll need to fix this from within the int3
+> exception handler by faking the call: putting a fake return address on
+> the stack (pointing to right after the call) and setting regs->ip to the
+> called function.
+> 
+> And for the out-of-line case we can just jump straight to the function,
+> so the function itself will be the text_poke_bp() "handler".
+> 
+> So the static_call_bp_handler() trampoline will go away.
 
---=-w/yFab8vycJu1U8x0saQ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Peter suggested updating the text_poke_bp() interface to add a handler
+which is called from int3 context.  This seems to work.
 
-On Mon, 2018-11-26 at 17:56 +0530, Anshuman Khandual wrote:
-> At present there are multiple places where invalid node number is
-> encoded
-> as -1. Even though implicitly understood it is always better to have
-> macros
-> in there. Replace these open encodings for an invalid node number
-> with the
-> global macro NUMA_NO_NODE. This helps remove NUMA related assumptions
-> like
-> 'invalid node' from various places redirecting them to a common
-> definition.
->=20
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-
-For the 'ixgbe' driver changes.
-
-Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-
-
-> ---
-> Changes in V2:
->=20
-> - Added inclusion of 'numa.h' header at various places per Andrew
-> - Updated 'dev_to_node' to use NUMA_NO_NODE instead per Vinod
->=20
-> Changes in V1: (https://lkml.org/lkml/2018/11/23/485)
->=20
-> - Dropped OCFS2 changes per Joseph
-> - Dropped media/video drivers changes per Hans
->=20
-> RFC - https://patchwork.kernel.org/patch/10678035/
->=20
-> Build tested this with multiple cross compiler options like alpha,
-> sparc,
-> arm64, x86, powerpc, powerpc64le etc with their default config which
-> might
-> not have compiled tested all driver related changes. I will
-> appreciate
-> folks giving this a test in their respective build environment.
->=20
-> All these places for replacement were found by running the following
-> grep
-> patterns on the entire kernel code. Please let me know if this might
-> have
-> missed some instances. This might also have replaced some false
-> positives.
-> I will appreciate suggestions, inputs and review.
->=20
-> 1. git grep "nid =3D=3D -1"
-> 2. git grep "node =3D=3D -1"
-> 3. git grep "nid =3D -1"
-> 4. git grep "node =3D -1"
->=20
->  arch/alpha/include/asm/topology.h             |  3 ++-
->  arch/ia64/kernel/numa.c                       |  2 +-
->  arch/ia64/mm/discontig.c                      |  6 +++---
->  arch/ia64/sn/kernel/io_common.c               |  3 ++-
->  arch/powerpc/include/asm/pci-bridge.h         |  3 ++-
->  arch/powerpc/kernel/paca.c                    |  3 ++-
->  arch/powerpc/kernel/pci-common.c              |  3 ++-
->  arch/powerpc/mm/numa.c                        | 14 +++++++-------
->  arch/powerpc/platforms/powernv/memtrace.c     |  5 +++--
->  arch/sparc/kernel/auxio_32.c                  |  3 ++-
->  arch/sparc/kernel/pci_fire.c                  |  3 ++-
->  arch/sparc/kernel/pci_schizo.c                |  3 ++-
->  arch/sparc/kernel/pcic.c                      |  7 ++++---
->  arch/sparc/kernel/psycho_common.c             |  3 ++-
->  arch/sparc/kernel/sbus.c                      |  3 ++-
->  arch/sparc/mm/init_64.c                       |  6 +++---
->  arch/sparc/prom/init_32.c                     |  3 ++-
->  arch/sparc/prom/init_64.c                     |  5 +++--
->  arch/sparc/prom/tree_32.c                     | 13 +++++++------
->  arch/sparc/prom/tree_64.c                     | 19 ++++++++++-------
-> --
->  arch/x86/include/asm/pci.h                    |  3 ++-
->  arch/x86/kernel/apic/x2apic_uv_x.c            |  7 ++++---
->  arch/x86/kernel/smpboot.c                     |  3 ++-
->  arch/x86/platform/olpc/olpc_dt.c              | 17 +++++++++--------
->  drivers/block/mtip32xx/mtip32xx.c             |  5 +++--
->  drivers/dma/dmaengine.c                       |  4 +++-
->  drivers/infiniband/hw/hfi1/affinity.c         |  3 ++-
->  drivers/infiniband/hw/hfi1/init.c             |  3 ++-
->  drivers/iommu/dmar.c                          |  5 +++--
->  drivers/iommu/intel-iommu.c                   |  3 ++-
->  drivers/misc/sgi-xp/xpc_uv.c                  |  3 ++-
->  drivers/net/ethernet/intel/ixgbe/ixgbe_main.c |  5 +++--
->  include/linux/device.h                        |  2 +-
->  init/init_task.c                              |  3 ++-
->  kernel/kthread.c                              |  3 ++-
->  kernel/sched/fair.c                           | 15 ++++++++-------
->  lib/cpumask.c                                 |  3 ++-
->  mm/huge_memory.c                              | 13 +++++++------
->  mm/hugetlb.c                                  |  3 ++-
->  mm/ksm.c                                      |  2 +-
->  mm/memory.c                                   |  7 ++++---
->  mm/memory_hotplug.c                           | 12 ++++++------
->  mm/mempolicy.c                                |  2 +-
->  mm/page_alloc.c                               |  4 ++--
->  mm/page_ext.c                                 |  2 +-
->  net/core/pktgen.c                             |  3 ++-
->  net/qrtr/qrtr.c                               |  3 ++-
->  tools/perf/bench/numa.c                       |  6 +++---
->  48 files changed, 146 insertions(+), 108 deletions(-)
-
-
---=-w/yFab8vycJu1U8x0saQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlv8M8wACgkQ5W/vlVpL
-7c7QNQ/+NU3ikW7p6wkGj8G70RbkJORkKztnANrZvZMGTngn9AOr2IYiWm5l1FX0
-J1AyprX0m4BmLXBgW1BrOiReEiunq9RWtCT+2d7jQD6HxydLdRIbnQhLreHfcFv7
-6pUvyapG9B8a4X/6OzQXJVkRV+iXi/NzVxJ2WvZ6PhifiPMJo9oWab/OJDu/+8Fn
-w9BrPNqJhTdrSQ1E7aeMWUs/GbfQsQ+cm51Yb12KAemw5ocp45GNNeN2Y14g+YFZ
-Yhf7+/ihwBaph/zDYqFRsI+uSLnKIh7vLC/weBglkzU5mNZU9ugRj6M76jDE+OI3
-yqOTMp6DquBqH7qYuGA+yJfWvnsXa/KphTKzISpKXzkcGI4uyhjfWjoUN2CPbLWj
-55+k1mCY0glzACh1K+SFV1EDJ157U0sEx+vGaKDfpEcUFi/SUU7xE/u+4lI12Kec
-fMhcStiYmF5wvVMO8ID6+aPl9F7uNdrAJjPV6psDtLRhi6D+EkFRPG/2sxGNWNBC
-2FfNwyEy9of0UsptOWI3IOt80Oz2usDEwcnC4gAQhykPe/6lNI6Yb1OjsMtUdzw1
-BqoYXFKLnC2JQWxluwLMjJ/ng/Af94RzzYw901pIhtJjlTOx6nYUxO38hLp6JU6B
-qKDxnSxdVo6/2QOJpMCJ2o0tX/Q1MdMWbySfxnCX9il8o/TgOck=
-=I+vR
------END PGP SIGNATURE-----
-
---=-w/yFab8vycJu1U8x0saQ--
-
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index e85ff65c43c3..7fcaa37c1876 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -20,6 +20,8 @@ static inline void apply_paravirt(struct paravirt_patch_site *start,
+ 
+ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+ 
++typedef void (*bp_handler_t)(struct pt_regs *regs);
++
+ /*
+  * Clear and restore the kernel write-protection flag on the local CPU.
+  * Allows the kernel to edit read-only pages.
+@@ -36,7 +38,8 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+  */
+ extern void *text_poke(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+-extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
++extern void *text_poke_bp(void *addr, const void *opcode, size_t len,
++			  bp_handler_t handler, void *resume);
+ extern int after_bootmem;
+ 
+ #endif /* _ASM_X86_TEXT_PATCHING_H */
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index ebeac487a20c..b6fb645488be 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -738,7 +738,8 @@ static void do_sync_core(void *info)
+ }
+ 
+ static bool bp_patching_in_progress;
+-static void *bp_int3_handler, *bp_int3_addr;
++static void *bp_int3_resume, *bp_int3_addr;
++static bp_handler_t bp_int3_handler;
+ 
+ int poke_int3_handler(struct pt_regs *regs)
+ {
+@@ -746,11 +747,11 @@ int poke_int3_handler(struct pt_regs *regs)
+ 	 * Having observed our INT3 instruction, we now must observe
+ 	 * bp_patching_in_progress.
+ 	 *
+-	 * 	in_progress = TRUE		INT3
+-	 * 	WMB				RMB
+-	 * 	write INT3			if (in_progress)
++	 *	in_progress = TRUE		INT3
++	 *	WMB				RMB
++	 *	write INT3			if (in_progress)
+ 	 *
+-	 * Idem for bp_int3_handler.
++	 * Idem for bp_int3_resume.
+ 	 */
+ 	smp_rmb();
+ 
+@@ -760,8 +761,10 @@ int poke_int3_handler(struct pt_regs *regs)
+ 	if (user_mode(regs) || regs->ip != (unsigned long)bp_int3_addr)
+ 		return 0;
+ 
+-	/* set up the specified breakpoint handler */
+-	regs->ip = (unsigned long) bp_int3_handler;
++	if (bp_int3_handler)
++		bp_int3_handler(regs);
++
++	regs->ip = (unsigned long)bp_int3_resume;
+ 
+ 	return 1;
+ 
+@@ -772,7 +775,8 @@ int poke_int3_handler(struct pt_regs *regs)
+  * @addr:	address to patch
+  * @opcode:	opcode of new instruction
+  * @len:	length to copy
+- * @handler:	address to jump to when the temporary breakpoint is hit
++ * @handler:	handler to call from int3 context (optional)
++ * @resume:	address to jump to when returning from int3 context
+  *
+  * Modify multi-byte instruction by using int3 breakpoint on SMP.
+  * We completely avoid stop_machine() here, and achieve the
+@@ -787,11 +791,13 @@ int poke_int3_handler(struct pt_regs *regs)
+  *	  replacing opcode
+  *	- sync cores
+  */
+-void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
++void *text_poke_bp(void *addr, const void *opcode, size_t len,
++		   bp_handler_t handler, void *resume)
+ {
+ 	unsigned char int3 = 0xcc;
+ 
+ 	bp_int3_handler = handler;
++	bp_int3_resume = resume;
+ 	bp_int3_addr = (u8 *)addr + sizeof(int3);
+ 	bp_patching_in_progress = true;
+ 
+diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+index aac0c1f7e354..1a54c5c6d9f3 100644
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -90,7 +90,7 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 		return;
+ 	}
+ 
+-	text_poke_bp((void *)jump_entry_code(entry), code, JUMP_LABEL_NOP_SIZE,
++	text_poke_bp((void *)jump_entry_code(entry), code, JUMP_LABEL_NOP_SIZE, NULL,
+ 		     (void *)jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+ }
+ 
+diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
+index 40b16b270656..5787f48be243 100644
+--- a/arch/x86/kernel/kprobes/opt.c
++++ b/arch/x86/kernel/kprobes/opt.c
+@@ -446,7 +446,7 @@ void arch_optimize_kprobes(struct list_head *oplist)
+ 		insn_buf[0] = RELATIVEJUMP_OPCODE;
+ 		*(s32 *)(&insn_buf[1]) = rel;
+ 
+-		text_poke_bp(op->kp.addr, insn_buf, RELATIVEJUMP_SIZE,
++		text_poke_bp(op->kp.addr, insn_buf, RELATIVEJUMP_SIZE, NULL,
+ 			     op->optinsn.insn);
+ 
+ 		list_del_init(&op->list);
+@@ -461,7 +461,7 @@ void arch_unoptimize_kprobe(struct optimized_kprobe *op)
+ 	/* Set int3 to first byte for kprobes */
+ 	insn_buf[0] = BREAKPOINT_INSTRUCTION;
+ 	memcpy(insn_buf + 1, op->optinsn.copied_insn, RELATIVE_ADDR_SIZE);
+-	text_poke_bp(op->kp.addr, insn_buf, RELATIVEJUMP_SIZE,
++	text_poke_bp(op->kp.addr, insn_buf, RELATIVEJUMP_SIZE, NULL,
+ 		     op->optinsn.insn);
+ }
+ 
+diff --git a/arch/x86/kernel/static_call.c b/arch/x86/kernel/static_call.c
+index d3869295b88d..8fd6c8556750 100644
+--- a/arch/x86/kernel/static_call.c
++++ b/arch/x86/kernel/static_call.c
+@@ -7,24 +7,19 @@
+ 
+ #define CALL_INSN_SIZE 5
+ 
+-void static_call_bp_handler(void);
+-void *bp_handler_dest;
+-void *bp_handler_continue;
++unsigned long bp_handler_call_return_addr;
+ 
+-asm(".pushsection .text, \"ax\"						\n"
+-    ".globl static_call_bp_handler					\n"
+-    ".type static_call_bp_handler, @function				\n"
+-    "static_call_bp_handler:						\n"
++static void static_call_bp_handler(struct pt_regs *regs)
++{
+ #ifdef CONFIG_HAVE_STATIC_CALL_INLINE
+-    ANNOTATE_RETPOLINE_SAFE
+-    "call *bp_handler_dest						\n"
+-    ANNOTATE_RETPOLINE_SAFE
+-    "jmp *bp_handler_continue						\n"
+-#else /* !CONFIG_HAVE_STATIC_CALL_INLINE */
+-    ANNOTATE_RETPOLINE_SAFE
+-    "jmp *bp_handler_dest						\n"
++	/*
++	 * Push the return address on the stack so the "called" function will
++	 * return to immediately after the call site.
++	 */
++	regs->sp -= sizeof(long);
++	*(unsigned long *)regs->sp = bp_handler_call_return_addr;
+ #endif
+-    ".popsection							\n");
++}
+ 
+ void arch_static_call_transform(void *site, void *tramp, void *func)
+ {
+@@ -52,14 +47,12 @@ void arch_static_call_transform(void *site, void *tramp, void *func)
+ 	opcodes[0] = insn_opcode;
+ 	memcpy(&opcodes[1], &dest_relative, CALL_INSN_SIZE - 1);
+ 
+-	/* Set up the variables for the breakpoint handler: */
+-	bp_handler_dest = func;
+ 	if (IS_ENABLED(CONFIG_HAVE_STATIC_CALL_INLINE))
+-		bp_handler_continue = (void *)(insn + CALL_INSN_SIZE);
++		bp_handler_call_return_addr = insn + CALL_INSN_SIZE;
+ 
+ 	/* Patch the call site: */
+ 	text_poke_bp((void *)insn, opcodes, CALL_INSN_SIZE,
+-		     static_call_bp_handler);
++		     static_call_bp_handler, func);
+ 
+ done:
+ 	mutex_unlock(&text_mutex);
