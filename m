@@ -6,50 +6,49 @@ X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EDC8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3CBC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8C8020989
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:21:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68C8120659
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:21:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="OWKk5kWv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8C8020989
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Rb4ORm8u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68C8120659
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbeK0EQB (ORCPT
+        id S1727014AbeK0EQD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:16:01 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48338 "EHLO
+        Mon, 26 Nov 2018 23:16:03 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48402 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726282AbeK0EQB (ORCPT
+        with ESMTP id S1726255AbeK0EQC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:16:01 -0500
+        Mon, 26 Nov 2018 23:16:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=w2tXLPzAxSv13SBE+5WcmkEsFJFz06qWZyKgmvPSd9s=; b=OWKk5kWvVIST
-        qbY+vqpJwY5JsFB5J69kDfCb7/CSAvn1xbEW38pSlUecx0fwSSVVi0v1yF3Pgzxz29kjgYQvnZS9Z
-        hFTySp0IYinT1BwqsKdQnJOhtf1Wd29Vj29rGy9FnKO7yVeyYa17dtyNY/Bl72zjmSrH8YJs5nA14
-        CG4rE=;
+        List-Archive; bh=EARQYgnozo85tHMZRDTwCcgCBiCQX/rDMHhyAFuC2Qc=; b=Rb4ORm8u/FRt
+        vMu0VKdzxFZbOR2NXd1Myl2zsEnkPIap0tEz+9TNoePR06HI1SWZcGdhAbO/O2YdiwnHgGfig5Apu
+        nkdmnUKKbTBzPZ8OfZK5XY/tgavBRnDfMJVwCcKch5J4lpaoB+1c70RtCUO5OQG2943oeVH+7rkU7
+        wGMvo=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gRKZM-0005Tu-LL; Mon, 26 Nov 2018 17:21:12 +0000
+        id 1gRKZO-0005U1-7s; Mon, 26 Nov 2018 17:21:14 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 50017112519F; Mon, 26 Nov 2018 17:21:12 +0000 (GMT)
+        id EBEEE112519F; Mon, 26 Nov 2018 17:21:13 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Brian Masney <masneyb@onstation.org>,
-        Brian Masney <masneyb@onstation.org>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: core: Apply system load even if no consumer loads" to the regulator tree
+To:     Olliver Schinagl <oliver@schinagl.nl>
+Cc:     Priit Laes <plaes@plaes.org>, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Applied "regulator: core: enable power when setting up constraints" to the regulator tree
 In-Reply-To: 
-Message-Id: <20181126172112.50017112519F@debutante.sirena.org.uk>
-Date:   Mon, 26 Nov 2018 17:21:12 +0000 (GMT)
+Message-Id: <20181126172113.EBEEE112519F@debutante.sirena.org.uk>
+Date:   Mon, 26 Nov 2018 17:21:13 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -57,7 +56,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: core: Apply system load even if no consumer loads
+   regulator: core: enable power when setting up constraints
 
 has been applied to the regulator tree at
 
@@ -82,59 +81,71 @@ to this mail.
 Thanks,
 Mark
 
-From fa94e48e13a1aaf814b9e956d8e5a52ef303b569 Mon Sep 17 00:00:00 2001
-From: Douglas Anderson <dianders@chromium.org>
-Date: Mon, 26 Nov 2018 09:08:27 -0800
-Subject: [PATCH] regulator: core: Apply system load even if no consumer loads
+From 2bb1666369339f69f227ad060c250afde94d5c69 Mon Sep 17 00:00:00 2001
+From: Olliver Schinagl <oliver@schinagl.nl>
+Date: Mon, 26 Nov 2018 17:27:44 +0200
+Subject: [PATCH] regulator: core: enable power when setting up constraints
 
-Prior to commit 5451781dadf8 ("regulator: core: Only count load for
-enabled consumers") we used to always add up the total load on every
-enable in _regulator_enable().  After that commit we only updated the
-total load when enabling / disabling a regulator where a consumer
-specified a load or when changing the consumer load on an enabled
-regulator.
+When a regulator is marked as always on, it is enabled early on, when
+checking and setting up constraints. It makes the assumption that the
+bootloader properly initialized the regulator, and just in case enables
+the regulator anyway.
 
-The problem with the new scheme is that if there is a system load
-specified for a regulator but no consumers specify a load then we
-never account for it.
+Some constraints however currently get missed, such as the soft-start
+and ramp-delay. This causes the regulator to be enabled, without the
+soft-start and ramp-delay being applied, which in turn can cause
+high-currents or other start-up problems.
 
-Let's account for the system load in set_machine_constraints().
+By moving the always-enabled constraints later in the constraints check,
+we can at least ensure all constraints for the regulator are followed.
 
-NOTE: with the new scheme we end up with a bit of a quandry.  What if
-someone specifies _both_ an initial mode and a system load?  If we
-take the system load into account right at init time then it will
-effectively clobber the initial mode.  We'll resolve this by saying
-that if both are specified then the initial mode will win.  The system
-load will then only take effect if/when a consumer specifies a load.
-If no consumers ever specify a load then the initial mode will persist
-and the system load will have no effect.
-
-Fixes: 5451781dadf8 ("regulator: core: Only count load for enabled consumers")
-Reported-by: Brian Masney <masneyb@onstation.org>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Tested-by: Brian Masney <masneyb@onstation.org>
+Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
+Signed-off-by: Priit Laes <plaes@plaes.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/regulator/core.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 03a03763457c..757619878068 100644
+index 2c66b528aede..6e146102fd93 100644
 --- a/drivers/regulator/core.c
 +++ b/drivers/regulator/core.c
-@@ -1342,6 +1342,12 @@ static int set_machine_constraints(struct regulator_dev *rdev,
- 			rdev_err(rdev, "failed to set initial mode: %d\n", ret);
- 			return ret;
+@@ -1158,17 +1158,6 @@ static int set_machine_constraints(struct regulator_dev *rdev,
  		}
-+	} else if (rdev->constraints->system_load) {
-+		/*
-+		 * We'll only apply the initial system load if an
-+		 * initial mode wasn't specified.
-+		 */
-+		drms_uA_update(rdev);
  	}
  
- 	/* If the constraints say the regulator should be on at this point
+-	/* If the constraints say the regulator should be on at this point
+-	 * and we have control then make sure it is enabled.
+-	 */
+-	if (rdev->constraints->always_on || rdev->constraints->boot_on) {
+-		ret = _regulator_do_enable(rdev);
+-		if (ret < 0 && ret != -EINVAL) {
+-			rdev_err(rdev, "failed to enable\n");
+-			return ret;
+-		}
+-	}
+-
+ 	if ((rdev->constraints->ramp_delay || rdev->constraints->ramp_disable)
+ 		&& ops->set_ramp_delay) {
+ 		ret = ops->set_ramp_delay(rdev, rdev->constraints->ramp_delay);
+@@ -1214,6 +1203,17 @@ static int set_machine_constraints(struct regulator_dev *rdev,
+ 		}
+ 	}
+ 
++	/* If the constraints say the regulator should be on at this point
++	 * and we have control then make sure it is enabled.
++	 */
++	if (rdev->constraints->always_on || rdev->constraints->boot_on) {
++		ret = _regulator_do_enable(rdev);
++		if (ret < 0 && ret != -EINVAL) {
++			rdev_err(rdev, "failed to enable\n");
++			return ret;
++		}
++	}
++
+ 	print_constraints(rdev);
+ 	return 0;
+ }
 -- 
 2.19.0.rc2
 
