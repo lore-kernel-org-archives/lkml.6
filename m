@@ -2,106 +2,94 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB9DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F529C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:51:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E05120672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:50:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RlxKzK/j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E05120672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5FD7620672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:51:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FD7620672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726199AbeKZRnS (ORCPT
+        id S1726252AbeKZRoJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 12:43:18 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43621 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbeKZRnS (ORCPT
+        Mon, 26 Nov 2018 12:44:09 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:53592 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbeKZRoJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 12:43:18 -0500
-Received: by mail-lj1-f195.google.com with SMTP id 83-v6so15454013ljf.10
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 22:50:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JNaQqFbP+i6ZYzSTAwbTrhZcZNcw09b+84lnEigfb1w=;
-        b=RlxKzK/jJ1k4r+/JjGN/emLNCuLJoZnDjO7ly9DroOCakSeuiY/orEO22RoQUwZfyP
-         uYoQgp8berjSfXRa+xYnoNYGR7QrgK4mcD4L18AlFPTyNv2wHgSty75UL4Cs0uP5wseE
-         mKfiXv0LuF0BF+ToTcdVgrRjUqi6OAxCZkl7I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JNaQqFbP+i6ZYzSTAwbTrhZcZNcw09b+84lnEigfb1w=;
-        b=LcEMAQYCKpCyZO2kX6BkS9dcl1fnLhyhPtLCX/aqiO/4+Xg9ZLkK4VF1L/mg1imM9S
-         /j/CIZT2Q/hfEN3eWvezHU1t6Df65L4MEgqJqLMcT0KwrMoaYYxo9dphe+oIpqn3l8nV
-         gOzRQttx1rPAmqG3uxqfLJjacH1Y+yyta1xeMOCKGrZhJa9ppuJuy38RSGFVqmSpeu0Z
-         s9bDnQCD8+k3rRDqKl2YWhHR2ip2rG6ZOz2CnYHp5gotrALk9+gnOxQkwbrhXjWNzJcW
-         CfZN+Hsgc2ncVDFkE/9SjcYaIwvlQeGUmK3S9QVsi3+7Q5W+paXPGp936UyjzQKef/jK
-         h3mg==
-X-Gm-Message-State: AA+aEWbPN+w1ppA6GsvM0QELnCH+2GAGKM/3D+9OymzV1cwR3APShqez
-        eqqkCDhYyvkGUHA7OzeAJUqWSJKaluDAxgAQ/HBT6A==
-X-Google-Smtp-Source: AFSGD/VIpt27N6dLFV1V5g21fX8g2/gxoCgYDiNgsPBxWqSLUwXXP4eUino0TbZZE+FATESqSoJp5fj0FRhFuNyws88=
-X-Received: by 2002:a2e:5c86:: with SMTP id q128-v6mr16883404ljb.119.1543215009419;
- Sun, 25 Nov 2018 22:50:09 -0800 (PST)
+        Mon, 26 Nov 2018 12:44:09 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gRAjP-0001Rj-8x; Mon, 26 Nov 2018 07:50:55 +0100
+Date:   Mon, 26 Nov 2018 07:50:54 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Andi Kleen <ak@linux.intel.com>
+cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [patch V2 21/28] x86/speculation: Prepare for conditional IBPB
+ in switch_mm()
+In-Reply-To: <20181126030708.GP13936@tassilo.jf.intel.com>
+Message-ID: <alpine.DEB.2.21.1811260750330.1684@nanos.tec.linutronix.de>
+References: <20181125183328.318175777@linutronix.de> <20181125185005.466447057@linutronix.de> <20181125205330.GO13936@tassilo.jf.intel.com> <alpine.DEB.2.21.1811252316560.1684@nanos.tec.linutronix.de> <20181126030708.GP13936@tassilo.jf.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <cover.1541480353.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1541480353.git.baolin.wang@linaro.org>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Mon, 26 Nov 2018 14:49:58 +0800
-Message-ID: <CAMz4kuJTN2Qt3HCBdOjyBb9KZ3FJx1iey7L7=3Bjd2NN=ybgrA@mail.gmail.com>
-Subject: Re: [RESEND PATCH 0/7] Add some fixes and new feature for SPRD DMA
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>, eric.long@unisoc.com
-Cc:     Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vinod,
+On Sun, 25 Nov 2018, Andi Kleen wrote:
+> On Sun, Nov 25, 2018 at 11:20:50PM +0100, Thomas Gleixner wrote:
+> > On Sun, 25 Nov 2018, Andi Kleen wrote:
+> > 
+> > > > The current check whether two tasks belong to the same context is using the
+> > > > tasks context id. While correct, it's simpler to use the mm pointer because
+> > > > it allows to mangle the TIF_SPEC_IB bit into it. The context id based
+> > > > mechanism requires extra storage, which creates worse code.
+> > > 
+> > > [We tried similar in some really early versions, but it was replaced
+> > > with the context id later.]
+> > > 
+> > > One issue with using the pointer is that the pointer can be reused
+> > > when the original mm_struct is freed, and then gets reallocated
+> > > immediately to an attacker. Then the attacker may avoid the IBPB.
+> > > 
+> > > Given it's probably hard to generate any reasonable leak bandwidth with
+> > > such a complex scenario, but it still seemed better to close the hole.
+> > 
+> > Sorry, but that's really a purely academic exercise. 
+> 
+> Ok fair enough. I guess it's acceptable if you add a comment explaining it.
 
-On Tue, 6 Nov 2018 at 13:01, Baolin Wang <baolin.wang@linaro.org> wrote:
->
-> This patchset removes the direction usage from struct dma_slave_config,
-> and add one new field to save the direction. It also fixes some issues
-> for link-list transfer. Moreover this patchset adds new 2-stage transfer
-> support for our DMA.
+Will do.
 
-Any comments for this patch set? Thanks.
+Thanks,
 
->
-> Baolin Wang (1):
->   dmaengine: sprd: Remove direction usage from struct dma_slave_config
->
-> Eric Long (6):
->   dmaengine: sprd: Get transfer residue depending on the transfer
->     direction
->   dmaengine: sprd: Fix the last link-list configuration
->   dmaengine: sprd: Set cur_desc as NULL when free or terminate one dma
->     channel
->   dmaengine: sprd: Support DMA link-list cyclic callback
->   dmaengine: sprd: Support DMA 2-stage transfer mode
->   dmaengine: sprd: Add me as one of the module authors
->
->  drivers/dma/sprd-dma.c       |  152 +++++++++++++++++++++++++++++++++++++-----
->  include/linux/dma/sprd-dma.h |   62 ++++++++++++++++-
->  2 files changed, 194 insertions(+), 20 deletions(-)
->
-> --
-> 1.7.9.5
->
-
-
---
-Baolin Wang
-Best Regards
+	tglx
