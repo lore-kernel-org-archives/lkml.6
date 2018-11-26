@@ -2,137 +2,299 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D86EFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50237C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E3E320862
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:10:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E3E320862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CF5DA20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:11:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TbHl0l5v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF5DA20663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726772AbeK0BEq (ORCPT
+        id S1726788AbeK0BFr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 20:04:46 -0500
-Received: from foss.arm.com ([217.140.101.70]:38440 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726202AbeK0BEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 20:04:46 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08D4222C7;
-        Mon, 26 Nov 2018 06:10:30 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F24DD3F5A0;
-        Mon, 26 Nov 2018 06:10:25 -0800 (PST)
-Subject: Re: [PATCH v2 03/20] perf/core: add PERF_PMU_CAP_EXCLUDE for
- exclusion capable PMUs
-To:     Andrew Murray <andrew.murray@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        sparclinux@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-s390@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-References: <1543230756-15319-1-git-send-email-andrew.murray@arm.com>
- <1543230756-15319-4-git-send-email-andrew.murray@arm.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <8c9003c3-ccbf-c342-024f-772d697a911b@arm.com>
-Date:   Mon, 26 Nov 2018 14:10:24 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <1543230756-15319-4-git-send-email-andrew.murray@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Mon, 26 Nov 2018 20:05:47 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34868 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbeK0BFr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 20:05:47 -0500
+Received: by mail-pl1-f196.google.com with SMTP id p8so3649144plo.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 06:11:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=s2/owihrhX8Ds9+oNUcEcQtQy7kzAHAObaBtfpKwRWo=;
+        b=TbHl0l5vGDcqTkX5LdYQ7dEJWN/SFEkiGWSalEcT5Ue6rvMfOKWeWgMWFT+mvKLddh
+         hS0drdj8e6OGbNlz8xIX/o1P0zZfQ9ofiAXo2f9+cjwgYuQYPFULCM+Dq058r3FbiRAs
+         WLsVgV6IabExoJ9L0ZUS3M7+g2U+FQWUI+4MwySgudkxwbtuMI60f0AEJT4nerwFnEtq
+         plOiqgr1RoAjdy7qGt4udShCWbMfKNGwgWfMiGUbLF9YXYigLg8F5Ylssbn1CYrigP63
+         59re+1cwn8OZKePa8f/khaTZmg2DlYQ/B7lifrlHGvmwwFtab0qr1IUifBTIjI+53keq
+         R7Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=s2/owihrhX8Ds9+oNUcEcQtQy7kzAHAObaBtfpKwRWo=;
+        b=LypKQ2w2h9mvHZJoGZiCVPW+kkU0hI8LtNXrWQeWeFF+QHN8ECqaxAVcnafhsGmM5f
+         B5VvLjk8nwJi1EvT2HLjG2E9c2juMVy02FgJDq5IPLt5uB3y/6ADswd1asNEJEr9zli6
+         jI+43TmuRAPi5I7HAcqCkcEq2pK+ECJJ/YcnL8yj2rteYcqf1zH0EuwPjNGunzyZC3NY
+         qpLh7Zb32IzwVIDOQD9I3N2YhE5Rg3/zAbizyLeiI35V01B5GOp9B8o1PCok+AlmHb7y
+         4WUgBal6jlZq0EnleKsCAdYMSFI8aBvhzZbBlPokR5uJpmlboKoTVOdLDxGLrqreRALS
+         0mMQ==
+X-Gm-Message-State: AA+aEWYYj/x9MHKQBpW9ldmXuT8d0N6VGLt4oBcfOwv9qv3L4zMIAG0D
+        U/xWu0viIzSdOgslVhrIq5k=
+X-Google-Smtp-Source: AFSGD/VSe0eRZX6fPwDbdRt3nahHkPVkRrZUaMtvvFtiPBYxhHppjkiI9ZgsaA0iTEDE78yaFNixjw==
+X-Received: by 2002:a17:902:a40f:: with SMTP id p15mr28423740plq.286.1543241491712;
+        Mon, 26 Nov 2018 06:11:31 -0800 (PST)
+Received: from ubuntu.localdomain ([101.87.249.94])
+        by smtp.gmail.com with ESMTPSA id q5sm536971pfi.165.2018.11.26.06.11.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 06:11:30 -0800 (PST)
+From:   Muchun Song <smuchun@gmail.com>
+To:     mingo@kernel.org, peterz@infradead.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND v3] sched/rt: Introduce rt_prio_lower() helper for comparing RT task prority
+Date:   Mon, 26 Nov 2018 22:11:19 +0800
+Message-Id: <20181126141119.5354-1-smuchun@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+We use a value to represent the priority of the RT task. But a smaller
+value corresponds to a higher priority. If there are two RT task A and B,
+their priorities are prio_a and prio_b, respectively. If prio_a is larger
+than prio_b, which means that the priority of RT task A is lower than RT
+task B. It may seem a bit strange.
 
-On 26/11/2018 11:12, Andrew Murray wrote:
-> Many PMU drivers do not have the capability to exclude counting events
-> that occur in specific contexts such as idle, kernel, guest, etc. These
-> drivers indicate this by returning an error in their event_init upon
-> testing the events attribute flags. This approach is error prone and
-> often inconsistent.
-> 
-> Let's instead allow PMU drivers to advertise their ability to exclude
-> based on context via a new capability: PERF_PMU_CAP_EXCLUDE. This
-> allows the perf core to reject requests for exclusion events where
-> there is no support in the PMU.
-> 
-> Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-> ---
->   include/linux/perf_event.h | 1 +
->   kernel/events/core.c       | 9 +++++++++
->   2 files changed, 10 insertions(+)
-> 
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index b2e806f..69b3d65 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -244,6 +244,7 @@ struct perf_event;
->   #define PERF_PMU_CAP_EXCLUSIVE			0x10
->   #define PERF_PMU_CAP_ITRACE			0x20
->   #define PERF_PMU_CAP_HETEROGENEOUS_CPUS		0x40
-> +#define PERF_PMU_CAP_EXCLUDE			0x80
->   
->   /**
->    * struct pmu - generic performance monitoring unit
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 5a97f34..9afb33c 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -9743,6 +9743,15 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
->   	if (ctx)
->   		perf_event_ctx_unlock(event->group_leader, ctx);
->   
-> +	if (!ret) {
-> +		if (!(pmu->capabilities & PERF_PMU_CAP_EXCLUDE) &&
-> +				event_has_any_exclude_flag(event)) {
+In rt.c, there are many if condition of priority comparison. We need to
+think carefully about which priority is higher because of this opposite
+logic when read those code. So we introduce rt_prio_lower() helper for
+comparing RT task prority, which can make code more readable.
 
-Technically this is a bisection-breaker, since no driver has this 
-capability yet - ideally, this patch should come after all the ones 
-introducing it to the relevant drivers (with the removal of the 
-now-redundant code from the other drivers at the end).
+Signed-off-by: Muchun Song <smuchun@gmail.com>
+---
+ kernel/sched/rt.c | 57 +++++++++++++++++++++++++++++------------------
+ 1 file changed, 35 insertions(+), 22 deletions(-)
 
-Alternatively, since we already have several other negative 
-capabilities, unless there's a strong feeling against adding any more 
-then it might work out simpler to flip it to PERF_PMU_CAP_NO_EXCLUDE, 
-such that we only need to introduce the core check then directly replace 
-the open-coded event checks with the capability in the appropriate 
-drivers, and need not touch the exclusion-supporting ones at all.
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 9aa3287ce301..f28157c8212b 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -101,6 +101,15 @@ void init_rt_rq(struct rt_rq *rt_rq)
+ 	raw_spin_lock_init(&rt_rq->rt_runtime_lock);
+ }
+ 
++/**
++ * rt_prio_lower(a, b) returns true if the priority a is
++ * lower than the priority b, otherwise return false.
++ */
++static inline bool rt_prio_lower(int a, int b)
++{
++	return a > b;
++}
++
+ #ifdef CONFIG_RT_GROUP_SCHED
+ static void destroy_rt_bandwidth(struct rt_bandwidth *rt_b)
+ {
+@@ -262,7 +271,7 @@ static void pull_rt_task(struct rq *this_rq);
+ static inline bool need_pull_rt_task(struct rq *rq, struct task_struct *prev)
+ {
+ 	/* Try to pull RT tasks here if we lower this rq's prio */
+-	return rq->rt.highest_prio.curr > prev->prio;
++	return rt_prio_lower(rq->rt.highest_prio.curr, prev->prio);
+ }
+ 
+ static inline int rt_overloaded(struct rq *rq)
+@@ -377,7 +386,7 @@ static void enqueue_pushable_task(struct rq *rq, struct task_struct *p)
+ 	plist_add(&p->pushable_tasks, &rq->rt.pushable_tasks);
+ 
+ 	/* Update the highest prio pushable task */
+-	if (p->prio < rq->rt.highest_prio.next)
++	if (rt_prio_lower(rq->rt.highest_prio.next, p->prio))
+ 		rq->rt.highest_prio.next = p->prio;
+ }
+ 
+@@ -498,7 +507,7 @@ static void sched_rt_rq_enqueue(struct rt_rq *rt_rq)
+ 		else if (!on_rt_rq(rt_se))
+ 			enqueue_rt_entity(rt_se, 0);
+ 
+-		if (rt_rq->highest_prio.curr < curr->prio)
++		if (rt_prio_lower(curr->prio, rt_rq->highest_prio.curr))
+ 			resched_curr(rq);
+ 	}
+ }
+@@ -1044,7 +1053,7 @@ inc_rt_prio_smp(struct rt_rq *rt_rq, int prio, int prev_prio)
+ 	if (&rq->rt != rt_rq)
+ 		return;
+ #endif
+-	if (rq->online && prio < prev_prio)
++	if (rq->online && rt_prio_lower(prev_prio, prio))
+ 		cpupri_set(&rq->rd->cpupri, rq->cpu, prio);
+ }
+ 
+@@ -1079,7 +1088,7 @@ inc_rt_prio(struct rt_rq *rt_rq, int prio)
+ {
+ 	int prev_prio = rt_rq->highest_prio.curr;
+ 
+-	if (prio < prev_prio)
++	if (rt_prio_lower(prev_prio, prio))
+ 		rt_rq->highest_prio.curr = prio;
+ 
+ 	inc_rt_prio_smp(rt_rq, prio, prev_prio);
+@@ -1092,7 +1101,7 @@ dec_rt_prio(struct rt_rq *rt_rq, int prio)
+ 
+ 	if (rt_rq->rt_nr_running) {
+ 
+-		WARN_ON(prio < prev_prio);
++		WARN_ON(rt_prio_lower(prev_prio, prio));
+ 
+ 		/*
+ 		 * This may have been our highest task, and therefore
+@@ -1424,7 +1433,7 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
+ 	 */
+ 	if (curr && unlikely(rt_task(curr)) &&
+ 	    (curr->nr_cpus_allowed < 2 ||
+-	     curr->prio <= p->prio)) {
++	     !rt_prio_lower(curr->prio, p->prio))) {
+ 		int target = find_lowest_rq(p);
+ 
+ 		/*
+@@ -1432,7 +1441,8 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
+ 		 * not running a lower priority task.
+ 		 */
+ 		if (target != -1 &&
+-		    p->prio < cpu_rq(target)->rt.highest_prio.curr)
++		    rt_prio_lower(cpu_rq(target)->rt.highest_prio.curr,
++				  p->prio))
+ 			cpu = target;
+ 	}
+ 	rcu_read_unlock();
+@@ -1475,7 +1485,7 @@ static void check_preempt_equal_prio(struct rq *rq, struct task_struct *p)
+  */
+ static void check_preempt_curr_rt(struct rq *rq, struct task_struct *p, int flags)
+ {
+-	if (p->prio < rq->curr->prio) {
++	if (rt_prio_lower(rq->curr->prio, p->prio)) {
+ 		resched_curr(rq);
+ 		return;
+ 	}
+@@ -1732,7 +1742,8 @@ static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
+ 
+ 		lowest_rq = cpu_rq(cpu);
+ 
+-		if (lowest_rq->rt.highest_prio.curr <= task->prio) {
++		if (!rt_prio_lower(lowest_rq->rt.highest_prio.curr,
++				   task->prio)) {
+ 			/*
+ 			 * Target rq has tasks of equal or higher priority,
+ 			 * retrying does not release any lock and is unlikely
+@@ -1763,7 +1774,7 @@ static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
+ 		}
+ 
+ 		/* If this rq is still suitable use it. */
+-		if (lowest_rq->rt.highest_prio.curr > task->prio)
++		if (rt_prio_lower(lowest_rq->rt.highest_prio.curr, task->prio))
+ 			break;
+ 
+ 		/* try again */
+@@ -1823,7 +1834,7 @@ static int push_rt_task(struct rq *rq)
+ 	 * higher priority than current. If that's the case
+ 	 * just reschedule current.
+ 	 */
+-	if (unlikely(next_task->prio < rq->curr->prio)) {
++	if (unlikely(rt_prio_lower(rq->curr->prio, next_task->prio))) {
+ 		resched_curr(rq);
+ 		return 0;
+ 	}
+@@ -2100,8 +2111,8 @@ static void pull_rt_task(struct rq *this_rq)
+ 		 * logically higher, the src_rq will push this task away.
+ 		 * And if its going logically lower, we do not care
+ 		 */
+-		if (src_rq->rt.highest_prio.next >=
+-		    this_rq->rt.highest_prio.curr)
++		if (!rt_prio_lower(this_rq->rt.highest_prio.curr,
++				src_rq->rt.highest_prio.next))
+ 			continue;
+ 
+ 		/*
+@@ -2121,7 +2132,8 @@ static void pull_rt_task(struct rq *this_rq)
+ 		 * Do we have an RT task that preempts
+ 		 * the to-be-scheduled task?
+ 		 */
+-		if (p && (p->prio < this_rq->rt.highest_prio.curr)) {
++		if (p && rt_prio_lower(this_rq->rt.highest_prio.curr,
++				       p->prio)) {
+ 			WARN_ON(p == src_rq->curr);
+ 			WARN_ON(!task_on_rq_queued(p));
+ 
+@@ -2133,7 +2145,7 @@ static void pull_rt_task(struct rq *this_rq)
+ 			 * p if it is lower in priority than the
+ 			 * current task on the run queue
+ 			 */
+-			if (p->prio < src_rq->curr->prio)
++			if (rt_prio_lower(src_rq->curr->prio, p->prio))
+ 				goto skip;
+ 
+ 			resched = true;
+@@ -2167,7 +2179,7 @@ static void task_woken_rt(struct rq *rq, struct task_struct *p)
+ 	    p->nr_cpus_allowed > 1 &&
+ 	    (dl_task(rq->curr) || rt_task(rq->curr)) &&
+ 	    (rq->curr->nr_cpus_allowed < 2 ||
+-	     rq->curr->prio <= p->prio))
++	     !rt_prio_lower(rq->curr->prio, p->prio)))
+ 		push_rt_tasks(rq);
+ }
+ 
+@@ -2242,7 +2254,8 @@ static void switched_to_rt(struct rq *rq, struct task_struct *p)
+ 		if (p->nr_cpus_allowed > 1 && rq->rt.overloaded)
+ 			rt_queue_push_tasks(rq);
+ #endif /* CONFIG_SMP */
+-		if (p->prio < rq->curr->prio && cpu_online(cpu_of(rq)))
++		if (rt_prio_lower(rq->curr->prio, p->prio) &&
++		    cpu_online(cpu_of(rq)))
+ 			resched_curr(rq);
+ 	}
+ }
+@@ -2263,18 +2276,18 @@ prio_changed_rt(struct rq *rq, struct task_struct *p, int oldprio)
+ 		 * If our priority decreases while running, we
+ 		 * may need to pull tasks to this runqueue.
+ 		 */
+-		if (oldprio < p->prio)
++		if (rt_prio_lower(p->prio, oldprio))
+ 			rt_queue_pull_task(rq);
+ 
+ 		/*
+ 		 * If there's a higher priority task waiting to run
+ 		 * then reschedule.
+ 		 */
+-		if (p->prio > rq->rt.highest_prio.curr)
++		if (rt_prio_lower(p->prio, rq->rt.highest_prio.curr))
+ 			resched_curr(rq);
+ #else
+ 		/* For UP simply resched on drop of prio */
+-		if (oldprio < p->prio)
++		if (rt_prio_lower(p->prio, oldprio))
+ 			resched_curr(rq);
+ #endif /* CONFIG_SMP */
+ 	} else {
+@@ -2283,7 +2296,7 @@ prio_changed_rt(struct rq *rq, struct task_struct *p, int oldprio)
+ 		 * greater than the current running task
+ 		 * then reschedule.
+ 		 */
+-		if (p->prio < rq->curr->prio)
++		if (rt_prio_lower(rq->curr->prio, p->prio))
+ 			resched_curr(rq);
+ 	}
+ }
+-- 
+2.17.1
 
-Robin.
-
-> +			if (event->destroy)
-> +				event->destroy(event);
-> +			ret = -EINVAL;
-> +		}
-> +	}
-> +
->   	if (ret)
->   		module_put(pmu->module);
->   
-> 
