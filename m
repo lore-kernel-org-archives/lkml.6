@@ -4,45 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07DEEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5626C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF49E21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC14E21104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUMqA6ia"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF49E21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QW0JB2C5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC14E21104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729298AbeKZVwT (ORCPT
+        id S1729308AbeKZVwX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:52:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33776 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:52:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727875AbeKZVwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:52:19 -0500
+        id S1727875AbeKZVwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:52:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 070A32089F;
-        Mon, 26 Nov 2018 10:58:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 862B520817;
+        Mon, 26 Nov 2018 10:58:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229914;
-        bh=y9Wo10FlwwELj3mTtmjZjrpmPemFWIQgwbQb2WakB1k=;
+        s=default; t=1543229918;
+        bh=9A0oIfs6AtOeWHXNVQkW9zkyjuaXotNwSZpS+bERxAM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oUMqA6iahy5BL/PZVOy0evZo4+T8TKfTTvhVhP9x2q3R6VATtdWrJ5JKBYFwk6Hkb
-         ki7mBl8+xisUdxjVJ73XxHGk/ucHUVrHYzGnQ3wKvl411yDVDWdvtdayMW/wjwVA5m
-         r5bD1up6wuK6UbUGw4yNX9fxbAbjB2dbPQClhTq8=
+        b=QW0JB2C5uhARKVaxmzgMnAdErXH9MFc1iz2PGQl0SmjfmR9V00YktTTPebBGeaZog
+         W02ylkuJDtKSS57F4gagQsjW/5zIVZ+1YoWbJ51GkXfso13fi95T4y0h9vKKi7QwNy
+         SKWVg6YhvY2m5d+DgjMVUSEyfa/6JTNhqLtIvrjI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH 4.9 38/46] USB: quirks: Add no-lpm quirk for Raydium touchscreens
-Date:   Mon, 26 Nov 2018 11:51:27 +0100
-Message-Id: <20181126105049.687639322@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Emmanuel Pescosta <emmanuelpescosta099@gmail.com>
+Subject: [PATCH 4.9 39/46] usb: quirks: Add delay-init quirk for Corsair K70 LUX RGB
+Date:   Mon, 26 Nov 2018 11:51:28 +0100
+Message-Id: <20181126105049.807145914@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
 References: <20181126105045.447291262@linuxfoundation.org>
@@ -60,48 +62,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Emmanuel Pescosta <emmanuelpescosta099@gmail.com>
 
-commit deefd24228a172d1b27d4a9adbfd2cdacd60ae64 upstream.
+commit a77112577667cbda7c6292c52d909636aef31fd9 upstream.
 
-Raydium USB touchscreen fails to set config if LPM is enabled:
-[    2.030658] usb 1-8: New USB device found, idVendor=2386, idProduct=3119
-[    2.030659] usb 1-8: New USB device strings: Mfr=1, Product=2, SerialNumber=0
-[    2.030660] usb 1-8: Product: Raydium Touch System
-[    2.030661] usb 1-8: Manufacturer: Raydium Corporation
-[    7.132209] usb 1-8: can't set config #1, error -110
+Following on from this patch: https://lkml.org/lkml/2017/11/3/516,
+Corsair K70 LUX RGB keyboards also require the DELAY_INIT quirk to
+start correctly at boot.
 
-Same behavior can be observed on 2386:3114.
+Dmesg output:
+usb 1-6: string descriptor 0 read error: -110
+usb 1-6: New USB device found, idVendor=1b1c, idProduct=1b33
+usb 1-6: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+usb 1-6: can't set config #1, error -110
 
-Raydium claims the touchscreen supports LPM under Windows, so I used
-Microsoft USB Test Tools (MUTT) [1] to check its LPM status. MUTT shows
-that the LPM doesn't work under Windows, either. So let's just disable LPM
-for Raydium touchscreens.
-
-[1] https://docs.microsoft.com/en-us/windows-hardware/drivers/usbcon/usb-test-tools
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Signed-off-by: Emmanuel Pescosta <emmanuelpescosta099@gmail.com>
 Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/usb/core/quirks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
 --- a/drivers/usb/core/quirks.c
 +++ b/drivers/usb/core/quirks.c
-@@ -263,6 +263,11 @@ static const struct usb_device_id usb_qu
- 	{ USB_DEVICE(0x2040, 0x7200), .driver_info =
- 			USB_QUIRK_CONFIG_INTF_STRINGS },
+@@ -243,6 +243,9 @@ static const struct usb_device_id usb_qu
+ 	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT |
+ 	  USB_QUIRK_DELAY_CTRL_MSG },
  
-+	/* Raydium Touchscreen */
-+	{ USB_DEVICE(0x2386, 0x3114), .driver_info = USB_QUIRK_NO_LPM },
++	/* Corsair K70 LUX RGB */
++	{ USB_DEVICE(0x1b1c, 0x1b33), .driver_info = USB_QUIRK_DELAY_INIT },
 +
-+	{ USB_DEVICE(0x2386, 0x3119), .driver_info = USB_QUIRK_NO_LPM },
-+
- 	/* DJI CineSSD */
- 	{ USB_DEVICE(0x2ca3, 0x0031), .driver_info = USB_QUIRK_NO_LPM },
+ 	/* Corsair K70 LUX */
+ 	{ USB_DEVICE(0x1b1c, 0x1b36), .driver_info = USB_QUIRK_DELAY_INIT },
  
 
 
