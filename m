@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B23C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E8B5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C0E32146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B33920989
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVn1xruk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C0E32146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g5ZLdgHk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B33920989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731184AbeKZV6t (ORCPT
+        id S1731198AbeKZV6v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:58:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44296 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:58:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbeKZV6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:58:48 -0500
+        id S1726307AbeKZV6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:58:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82BE620645;
-        Mon, 26 Nov 2018 11:05:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3646A20645;
+        Mon, 26 Nov 2018 11:05:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230302;
-        bh=69c9lbCFPpbncDtmdDUr9t6dB2VT2irCivm3Fo4Yfzo=;
+        s=default; t=1543230304;
+        bh=PsOz21DxxdlII/yMeDVLTW76dnaUPkwtz4RCZKmKxHQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nVn1xruk2MCRXWrCi9vGErh3kCBdmAGUOY1YgQZbtdAh6pqGWJtwlI5bbtYkpufxj
-         7pLAgLstfJtIk40GSNyue7/LXt9X4NmhIJjuscXSmGwB0tqpGmh9TVSS06OPc276ru
-         VjAB/JfDcucAHQi37443k3R+eMcWa7yiRqEq86hQ=
+        b=g5ZLdgHkSii5YUXwUZ9NJTzxyyyHhoSlc9clsFhDP6OBnw2AkizZ9V+YVT8VOhPLq
+         wNjcNtQ0oGjMB51yvpq4+xEwwULKvOt03HzsdhM7ul34RqVr21qse8xnqNZCY+EdfI
+         fxAVlha5ZlLPYmmBxnSWgomZlCFRVv3mfKkAEAjQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jose Abreu <jose.abreu@synopsys.com>,
-        Thor Thayer <thor.thayer@linux.intel.com>,
+        stable@vger.kernel.org,
+        Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>,
+        Igor Russkikh <igor.russkikh@aquantia.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 085/118] net: stmmac: Fix RX packet size > 8191
-Date:   Mon, 26 Nov 2018 11:51:19 +0100
-Message-Id: <20181126105105.113341438@linuxfoundation.org>
+Subject: [PATCH 4.19 086/118] net: aquantia: fix potential IOMMU fault after driver unbind
+Date:   Mon, 26 Nov 2018 11:51:20 +0100
+Message-Id: <20181126105105.154535503@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -64,99 +65,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8137b6ef0ce469154e5cf19f8e7fe04d9a72ac5e ]
+[ Upstream commit 7a1bb49461b12b2e6332a4d054256835f45203f3 ]
 
-Ping problems with packets > 8191 as shown:
+IOMMU fault may occurr on unbind/bind or if_down/if_up sequence.
 
-PING 192.168.1.99 (192.168.1.99) 8150(8178) bytes of data.
-8158 bytes from 192.168.1.99: icmp_seq=1 ttl=64 time=0.669 ms
-wrong data byte 8144 should be 0xd0 but was 0x0
-16    10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f
-      20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f
-%< ---------------snip--------------------------------------
-8112  b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 ba bb bc bd be bf
-      c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
-8144  0 0 0 0 d0 d1
-      ^^^^^^^
-Notice the 4 bytes of 0 before the expected byte of d0.
+Although driver disables the rings on down, this is not enough.
+Due to internal HW design, during subsequent initialization
+NIC sometimes may reuse RX descriptors cache and write to the
+host memory from the descriptor cache.
+That's get catched by IOMMU on host.
 
-Databook notes that the RX buffer must be a multiple of 4/8/16
-bytes [1].
+This patch invalidates the descriptor cache in NIC on interface down
+to prevent writing to the cached descriptors and to the memory pointed
+in those descriptors.
 
-Update the DMA Buffer size define to 8188 instead of 8192. Remove
-the -1 from the RX buffer size allocations and use the new
-DMA Buffer size directly.
-
-[1] Synopsys DesignWare Cores Ethernet MAC Universal v3.70a
-    [section 8.4.2 - Table 8-24]
-
-Tested on SoCFPGA Stratix10 with ping sweep from 100 to 8300 byte packets.
-
-Fixes: 286a83721720 ("stmmac: add CHAINED descriptor mode support (V4)")
-Suggested-by: Jose Abreu <jose.abreu@synopsys.com>
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+Signed-off-by: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
+Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/common.h    | 3 ++-
- drivers/net/ethernet/stmicro/stmmac/descs_com.h | 2 +-
- drivers/net/ethernet/stmicro/stmmac/enh_desc.c  | 2 +-
- drivers/net/ethernet/stmicro/stmmac/ring_mode.c | 2 +-
- 4 files changed, 5 insertions(+), 4 deletions(-)
+ .../aquantia/atlantic/hw_atl/hw_atl_b0.c       |  6 ++++++
+ .../aquantia/atlantic/hw_atl/hw_atl_llh.c      |  8 ++++++++
+ .../aquantia/atlantic/hw_atl/hw_atl_llh.h      |  3 +++
+ .../atlantic/hw_atl/hw_atl_llh_internal.h      | 18 ++++++++++++++++++
+ 4 files changed, 35 insertions(+)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
-index b1b305f8f414..272b9ca66314 100644
---- a/drivers/net/ethernet/stmicro/stmmac/common.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-@@ -365,7 +365,8 @@ struct dma_features {
- 
- /* GMAC TX FIFO is 8K, Rx FIFO is 16K */
- #define BUF_SIZE_16KiB 16384
--#define BUF_SIZE_8KiB 8192
-+/* RX Buffer size must be < 8191 and multiple of 4/8/16 bytes */
-+#define BUF_SIZE_8KiB 8188
- #define BUF_SIZE_4KiB 4096
- #define BUF_SIZE_2KiB 2048
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/descs_com.h b/drivers/net/ethernet/stmicro/stmmac/descs_com.h
-index ca9d7e48034c..40d6356a7e73 100644
---- a/drivers/net/ethernet/stmicro/stmmac/descs_com.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/descs_com.h
-@@ -31,7 +31,7 @@
- /* Enhanced descriptors */
- static inline void ehn_desc_rx_set_on_ring(struct dma_desc *p, int end)
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
+index 1d44a386e7d3..0271a0fdfee8 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
+@@ -915,6 +915,12 @@ static int hw_atl_b0_hw_interrupt_moderation_set(struct aq_hw_s *self)
+ static int hw_atl_b0_hw_stop(struct aq_hw_s *self)
  {
--	p->des1 |= cpu_to_le32(((BUF_SIZE_8KiB - 1)
-+	p->des1 |= cpu_to_le32((BUF_SIZE_8KiB
- 			<< ERDES1_BUFFER2_SIZE_SHIFT)
- 		   & ERDES1_BUFFER2_SIZE_MASK);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
-index 77914c89d749..5ef91a790f9d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
-@@ -262,7 +262,7 @@ static void enh_desc_init_rx_desc(struct dma_desc *p, int disable_rx_ic,
- 				  int mode, int end)
- {
- 	p->des0 |= cpu_to_le32(RDES0_OWN);
--	p->des1 |= cpu_to_le32((BUF_SIZE_8KiB - 1) & ERDES1_BUFFER1_SIZE_MASK);
-+	p->des1 |= cpu_to_le32(BUF_SIZE_8KiB & ERDES1_BUFFER1_SIZE_MASK);
- 
- 	if (mode == STMMAC_CHAIN_MODE)
- 		ehn_desc_rx_set_on_chain(p);
-diff --git a/drivers/net/ethernet/stmicro/stmmac/ring_mode.c b/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
-index a7ffc73fffe8..bc83ced94e1b 100644
---- a/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
-@@ -140,7 +140,7 @@ static void clean_desc3(void *priv_ptr, struct dma_desc *p)
- static int set_16kib_bfsize(int mtu)
- {
- 	int ret = 0;
--	if (unlikely(mtu >= BUF_SIZE_8KiB))
-+	if (unlikely(mtu > BUF_SIZE_8KiB))
- 		ret = BUF_SIZE_16KiB;
- 	return ret;
+ 	hw_atl_b0_hw_irq_disable(self, HW_ATL_B0_INT_MASK);
++
++	/* Invalidate Descriptor Cache to prevent writing to the cached
++	 * descriptors and to the data pointer of those descriptors
++	 */
++	hw_atl_rdm_rx_dma_desc_cache_init_set(self, 1);
++
+ 	return aq_hw_err_from_flags(self);
  }
+ 
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
+index 10ba035dadb1..10ec5dc88e24 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
+@@ -619,6 +619,14 @@ void hw_atl_rpb_rx_flow_ctl_mode_set(struct aq_hw_s *aq_hw, u32 rx_flow_ctl_mode
+ 			    HW_ATL_RPB_RX_FC_MODE_SHIFT, rx_flow_ctl_mode);
+ }
+ 
++void hw_atl_rdm_rx_dma_desc_cache_init_set(struct aq_hw_s *aq_hw, u32 init)
++{
++	aq_hw_write_reg_bit(aq_hw, HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_ADR,
++			    HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_MSK,
++			    HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_SHIFT,
++			    init);
++}
++
+ void hw_atl_rpb_rx_pkt_buff_size_per_tc_set(struct aq_hw_s *aq_hw,
+ 					    u32 rx_pkt_buff_size_per_tc, u32 buffer)
+ {
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
+index dfb426f2dc2c..b3bf64b48b93 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
+@@ -325,6 +325,9 @@ void hw_atl_rpb_rx_pkt_buff_size_per_tc_set(struct aq_hw_s *aq_hw,
+ 					    u32 rx_pkt_buff_size_per_tc,
+ 					    u32 buffer);
+ 
++/* set rdm rx dma descriptor cache init */
++void hw_atl_rdm_rx_dma_desc_cache_init_set(struct aq_hw_s *aq_hw, u32 init);
++
+ /* set rx xoff enable (per tc) */
+ void hw_atl_rpb_rx_xoff_en_per_tc_set(struct aq_hw_s *aq_hw, u32 rx_xoff_en_per_tc,
+ 				      u32 buffer);
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
+index e0cf70120f1d..e2ecdb1c5a5c 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
+@@ -293,6 +293,24 @@
+ /* default value of bitfield desc{d}_reset */
+ #define HW_ATL_RDM_DESCDRESET_DEFAULT 0x0
+ 
++/* rdm_desc_init_i bitfield definitions
++ * preprocessor definitions for the bitfield rdm_desc_init_i.
++ * port="pif_rdm_desc_init_i"
++ */
++
++/* register address for bitfield rdm_desc_init_i */
++#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_ADR 0x00005a00
++/* bitmask for bitfield rdm_desc_init_i */
++#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_MSK 0xffffffff
++/* inverted bitmask for bitfield rdm_desc_init_i */
++#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_MSKN 0x00000000
++/* lower bit position of bitfield  rdm_desc_init_i */
++#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_SHIFT 0
++/* width of bitfield rdm_desc_init_i */
++#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_WIDTH 32
++/* default value of bitfield rdm_desc_init_i */
++#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_DEFAULT 0x0
++
+ /* rx int_desc_wrb_en bitfield definitions
+  * preprocessor definitions for the bitfield "int_desc_wrb_en".
+  * port="pif_rdm_int_desc_wrb_en_i"
 -- 
 2.17.1
 
