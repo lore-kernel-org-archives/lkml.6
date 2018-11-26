@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DBCC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51033C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10365208E7
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:19:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10365208E7
+	by mail.kernel.org (Postfix) with ESMTP id 117B720873
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:19:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 117B720873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbeK0IPV (ORCPT
+        id S1727365AbeK0IPW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 03:15:21 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:40447 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727277AbeK0IPU (ORCPT
+        Tue, 27 Nov 2018 03:15:22 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:38595 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726296AbeK0IPV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 03:15:20 -0500
-Received: by mail-yw1-f65.google.com with SMTP id r130so5034775ywg.7;
-        Mon, 26 Nov 2018 13:19:53 -0800 (PST)
+        Tue, 27 Nov 2018 03:15:21 -0500
+Received: by mail-yb1-f195.google.com with SMTP id u103-v6so8141658ybi.5;
+        Mon, 26 Nov 2018 13:19:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=zbElfZ7fEzEPUKY5ASS32YybzzEidUShAIHW3J0gUbU=;
-        b=W1/h2imyxABfIT+t9EkXGs340RyXwogTVFcF5PNOcVKeqC5tMegCywxY9c9favOJzp
-         thFkORC/wQladmQMpj4UV0BHn4zPwgHAMa+s4LjjMrd1au0J4F45pclemV6HTaY4UeDy
-         Y4XaVyPlEECiNFXxg7h0UTOEmCpddiPWQXHhR5T7Ec1SJMJc5IGH0rk5QdDa46yiXwS+
-         J0/EyJ4PZDXAwxp8OAVYlkAPa1Y1x2ElKsdxJDD/jW8EkWkw9CmhrlPWtNQfZQO8XMpi
-         kEBHniJqaVgwswALfuxiEchf9hDW1dElt869sc2OBR5H3SMx3rbOdi+JJ+GGDTtqau2t
-         6Yeg==
-X-Gm-Message-State: AA+aEWZtWGddLFyZrgLPYwygogZ5BMKYUDC7KA9j/pGJ+xwuP9pab0r/
-        4NcgQUrGGoyfHM0tVU/gyJ0=
-X-Google-Smtp-Source: AFSGD/Vbr62YnX9k8yJpB+6b3TGeeIXlpIXL0OY9C7xEdH5K1TkuyHTqdLcLpkA0AjoKcqQjXL11sQ==
-X-Received: by 2002:a0d:f4c5:: with SMTP id d188mr3300037ywf.480.1543267193357;
-        Mon, 26 Nov 2018 13:19:53 -0800 (PST)
+        bh=BZvs5OryDI6sX+Ah4z4QS3SeAhV6AtbGXkw3bMhIx54=;
+        b=JNaUGzOsoZ6rO39laoaQ1Di0LIqYc6ErY4Uu8nRLvBeIx0CWmicfhVdKRAsvxXFS43
+         D6cfOD+xFVFXqklcFw9wlqtAAzZkIT1NiOAQWVAZk3JcslsfcJXt3pzY0a9M65R3Kg/B
+         /6dzhJUrC0pxhpFMhP6pov73qZmmf99WY3V5mFLmQa7kbcyYsG8JklXOtPpcuA2hOWaN
+         cWtHhzJZw6THGy4nTkCcpjn3Gm7NVxx1KPFvbEMmHiLzwEJxYLedPVQ4wFLw/uMClf7n
+         8ZPYo/op5t8P03JjVaZSsDlWd83OD3U6Hgk32akjVb2J6owgz3lsZnTOjgMjjCg+iXaW
+         mBEw==
+X-Gm-Message-State: AA+aEWZ/FqQNqElHyI4m4EP2MkdU56UC+T+fMsO9Rkr3N2L6wxVOBDGP
+        m7VPDlmWVmNgu/t4rHus1WE=
+X-Google-Smtp-Source: AFSGD/WxTuP+n6Gq7pFHcuhjx+Z4VrazRBz6tOgH1yOoSarGeBdgTdeesg2rXiUSQDhTlwtmpDnCWg==
+X-Received: by 2002:a5b:1c3:: with SMTP id f3-v6mr25575767ybp.267.1543267194545;
+        Mon, 26 Nov 2018 13:19:54 -0800 (PST)
 Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
-        by smtp.gmail.com with ESMTPSA id d135-v6sm495462ywh.43.2018.11.26.13.19.51
+        by smtp.gmail.com with ESMTPSA id d135-v6sm495462ywh.43.2018.11.26.13.19.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 26 Nov 2018 13:19:52 -0800 (PST)
+        Mon, 26 Nov 2018 13:19:53 -0800 (PST)
 From:   Dennis Zhou <dennis@kernel.org>
 To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -52,9 +52,9 @@ To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
 Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH 01/13] blkcg: fix ref count issue with bio_blkcg() using task_css
-Date:   Mon, 26 Nov 2018 16:19:34 -0500
-Message-Id: <20181126211946.77067-2-dennis@kernel.org>
+Subject: [PATCH 02/13] blkcg: update blkg_lookup_create() to do locking
+Date:   Mon, 26 Nov 2018 16:19:35 -0500
+Message-Id: <20181126211946.77067-3-dennis@kernel.org>
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20181126211946.77067-1-dennis@kernel.org>
 References: <20181126211946.77067-1-dennis@kernel.org>
@@ -63,246 +63,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The bio_blkcg() function turns out to be inconsistent and consequently
-dangerous to use. The first part returns a blkcg where a reference is
-owned by the bio meaning it does not need to be rcu protected. However,
-the third case, the last line, is problematic:
+To know when to create a blkg, the general pattern is to do a
+blkg_lookup() and if that fails, lock and do the lookup again, and if
+that fails finally create. It doesn't make much sense for everyone who
+wants to do creation to write this themselves.
 
-	return css_to_blkcg(task_css(current, io_cgrp_id));
-
-This can race against task migration and the cgroup dying. It is also
-semantically different as it must be called rcu protected and is
-susceptible to failure when trying to get a reference to it.
-
-This patch adds association ahead of calling bio_blkcg() rather than
-after. This makes association a required and explicit step along the
-code paths for calling bio_blkcg(). In blk-iolatency, association is
-moved above the bio_blkcg() call to ensure it will not return %NULL.
-
-BFQ uses the old bio_blkcg() function, but I do not want to address it
-in this series due to the complexity. I have created a private version
-documenting the inconsistency and noting not to use it.
+This changes blkg_lookup_create() to do locking and implement this
+pattern. The old blkg_lookup_create() is renamed to
+__blkg_lookup_create().  If a call site wants to do its own error
+handling or already owns the queue lock, they can use
+__blkg_lookup_create(). This will be used in upcoming patches.
 
 Signed-off-by: Dennis Zhou <dennis@kernel.org>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Acked-by: Tejun Heo <tj@kernel.org>
+Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
 ---
- block/bfq-cgroup.c         |  4 +-
- block/bfq-iosched.c        |  2 +-
- block/bio.c                | 10 +++-
+ block/blk-cgroup.c         | 30 +++++++++++++++++++++++++++---
  block/blk-iolatency.c      |  2 +-
- include/linux/blk-cgroup.h | 98 ++++++++++++++++++++++++++++++++++----
- 5 files changed, 102 insertions(+), 14 deletions(-)
+ include/linux/blk-cgroup.h |  4 +++-
+ 3 files changed, 31 insertions(+), 5 deletions(-)
 
-diff --git a/block/bfq-cgroup.c b/block/bfq-cgroup.c
-index a7a1712632b0..c6113af31960 100644
---- a/block/bfq-cgroup.c
-+++ b/block/bfq-cgroup.c
-@@ -642,7 +642,7 @@ void bfq_bic_update_cgroup(struct bfq_io_cq *bic, struct bio *bio)
- 	uint64_t serial_nr;
- 
- 	rcu_read_lock();
--	serial_nr = bio_blkcg(bio)->css.serial_nr;
-+	serial_nr = __bio_blkcg(bio)->css.serial_nr;
- 
- 	/*
- 	 * Check whether blkcg has changed.  The condition may trigger
-@@ -651,7 +651,7 @@ void bfq_bic_update_cgroup(struct bfq_io_cq *bic, struct bio *bio)
- 	if (unlikely(!bfqd) || likely(bic->blkcg_serial_nr == serial_nr))
- 		goto out;
- 
--	bfqg = __bfq_bic_change_cgroup(bfqd, bic, bio_blkcg(bio));
-+	bfqg = __bfq_bic_change_cgroup(bfqd, bic, __bio_blkcg(bio));
- 	/*
- 	 * Update blkg_path for bfq_log_* functions. We cache this
- 	 * path, and update it here, for the following
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 67b22c924aee..3d1f319fe977 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -4384,7 +4384,7 @@ static struct bfq_queue *bfq_get_queue(struct bfq_data *bfqd,
- 
- 	rcu_read_lock();
- 
--	bfqg = bfq_find_set_group(bfqd, bio_blkcg(bio));
-+	bfqg = bfq_find_set_group(bfqd, __bio_blkcg(bio));
- 	if (!bfqg) {
- 		bfqq = &bfqd->oom_bfqq;
- 		goto out;
-diff --git a/block/bio.c b/block/bio.c
-index 03895cc0d74a..7528c2324319 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1990,13 +1990,19 @@ int bio_associate_blkcg_from_page(struct bio *bio, struct page *page)
-  *
-  * This function takes an extra reference of @blkcg_css which will be put
-  * when @bio is released.  The caller must own @bio and is responsible for
-- * synchronizing calls to this function.
-+ * synchronizing calls to this function.  If @blkcg_css is NULL, a call to
-+ * blkcg_get_css() finds the current css from the kthread or task.
-  */
- int bio_associate_blkcg(struct bio *bio, struct cgroup_subsys_state *blkcg_css)
- {
- 	if (unlikely(bio->bi_css))
- 		return -EBUSY;
--	css_get(blkcg_css);
-+
-+	if (blkcg_css)
-+		css_get(blkcg_css);
-+	else
-+		blkcg_css = blkcg_get_css();
-+
- 	bio->bi_css = blkcg_css;
- 	return 0;
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 63d226a084cd..b1ec98eeeae0 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -249,7 +249,7 @@ static struct blkcg_gq *blkg_create(struct blkcg *blkcg,
  }
+ 
+ /**
+- * blkg_lookup_create - lookup blkg, try to create one if not there
++ * __blkg_lookup_create - lookup blkg, try to create one if not there
+  * @blkcg: blkcg of interest
+  * @q: request_queue of interest
+  *
+@@ -262,8 +262,8 @@ static struct blkcg_gq *blkg_create(struct blkcg *blkcg,
+  * value on error.  If @q is dead, returns ERR_PTR(-EINVAL).  If @q is not
+  * dead and bypassing, returns ERR_PTR(-EBUSY).
+  */
+-struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
+-				    struct request_queue *q)
++struct blkcg_gq *__blkg_lookup_create(struct blkcg *blkcg,
++				      struct request_queue *q)
+ {
+ 	struct blkcg_gq *blkg;
+ 
+@@ -293,6 +293,30 @@ struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
+ 	}
+ }
+ 
++/**
++ * blkg_lookup_create - find or create a blkg
++ * @blkcg: target block cgroup
++ * @q: target request_queue
++ *
++ * This looks up or creates the blkg representing the unique pair
++ * of the blkcg and the request_queue.
++ */
++struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
++				    struct request_queue *q)
++{
++	struct blkcg_gq *blkg = blkg_lookup(blkcg, q);
++
++	if (unlikely(!blkg)) {
++		spin_lock_irq(&q->queue_lock);
++
++		blkg = __blkg_lookup_create(blkcg, q);
++
++		spin_unlock_irq(&q->queue_lock);
++	}
++
++	return blkg;
++}
++
+ static void blkg_destroy(struct blkcg_gq *blkg)
+ {
+ 	struct blkcg *blkcg = blkg->blkcg;
 diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
-index 5f7f1773be61..fe0c4ca312ff 100644
+index fe0c4ca312ff..e6f68f15dee9 100644
 --- a/block/blk-iolatency.c
 +++ b/block/blk-iolatency.c
-@@ -481,8 +481,8 @@ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio)
- 		return;
- 
- 	rcu_read_lock();
-+	bio_associate_blkcg(bio, NULL);
- 	blkcg = bio_blkcg(bio);
--	bio_associate_blkcg(bio, &blkcg->css);
+@@ -486,7 +486,7 @@ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio)
  	blkg = blkg_lookup(blkcg, q);
  	if (unlikely(!blkg)) {
  		spin_lock_irq(&q->queue_lock);
+-		blkg = blkg_lookup_create(blkcg, q);
++		blkg = __blkg_lookup_create(blkcg, q);
+ 		if (IS_ERR(blkg))
+ 			blkg = NULL;
+ 		spin_unlock_irq(&q->queue_lock);
 diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index a9e2e2037129..db8214047486 100644
+index db8214047486..49f399cfb0b6 100644
 --- a/include/linux/blk-cgroup.h
 +++ b/include/linux/blk-cgroup.h
-@@ -227,22 +227,103 @@ int blkg_conf_prep(struct blkcg *blkcg, const struct blkcg_policy *pol,
- 		   char *input, struct blkg_conf_ctx *ctx);
- void blkg_conf_finish(struct blkg_conf_ctx *ctx);
+@@ -181,6 +181,8 @@ extern struct cgroup_subsys_state * const blkcg_root_css;
  
-+/**
-+ * blkcg_css - find the current css
-+ *
-+ * Find the css associated with either the kthread or the current task.
-+ * This may return a dying css, so it is up to the caller to use tryget logic
-+ * to confirm it is alive and well.
-+ */
-+static inline struct cgroup_subsys_state *blkcg_css(void)
-+{
-+	struct cgroup_subsys_state *css;
-+
-+	css = kthread_blkcg();
-+	if (css)
-+		return css;
-+	return task_css(current, io_cgrp_id);
-+}
-+
-+/**
-+ * blkcg_get_css - find and get a reference to the css
-+ *
-+ * Find the css associated with either the kthread or the current task.
-+ * This takes a reference on the blkcg which will need to be managed by the
-+ * caller.
-+ */
-+static inline struct cgroup_subsys_state *blkcg_get_css(void)
-+{
-+	struct cgroup_subsys_state *css;
-+
-+	rcu_read_lock();
-+
-+	css = kthread_blkcg();
-+	if (css) {
-+		css_get(css);
-+	} else {
-+		/*
-+		 * This is a bit complicated.  It is possible task_css is seeing
-+		 * an old css pointer here.  This is caused by the current
-+		 * thread migrating away from this cgroup and this cgroup dying.
-+		 * css_tryget() will fail when trying to take a ref on a cgroup
-+		 * that's ref count has hit 0.
-+		 *
-+		 * Therefore, if it does fail, this means current must have
-+		 * been swapped away already and this is waiting for it to
-+		 * propagate on the polling cpu.  Hence the use of cpu_relax().
-+		 */
-+		while (true) {
-+			css = task_css(current, io_cgrp_id);
-+			if (likely(css_tryget(css)))
-+				break;
-+			cpu_relax();
-+		}
-+	}
-+
-+	rcu_read_unlock();
-+
-+	return css;
-+}
- 
- static inline struct blkcg *css_to_blkcg(struct cgroup_subsys_state *css)
- {
- 	return css ? container_of(css, struct blkcg, css) : NULL;
- }
- 
--static inline struct blkcg *bio_blkcg(struct bio *bio)
-+/**
-+ * __bio_blkcg - internal, inconsistent version to get blkcg
-+ *
-+ * DO NOT USE.
-+ * This function is inconsistent and consequently is dangerous to use.  The
-+ * first part of the function returns a blkcg where a reference is owned by the
-+ * bio.  This means it does not need to be rcu protected as it cannot go away
-+ * with the bio owning a reference to it.  However, the latter potentially gets
-+ * it from task_css().  This can race against task migration and the cgroup
-+ * dying.  It is also semantically different as it must be called rcu protected
-+ * and is susceptible to failure when trying to get a reference to it.
-+ * Therefore, it is not ok to assume that *_get() will always succeed on the
-+ * blkcg returned here.
-+ */
-+static inline struct blkcg *__bio_blkcg(struct bio *bio)
- {
--	struct cgroup_subsys_state *css;
-+	if (bio && bio->bi_css)
-+		return css_to_blkcg(bio->bi_css);
-+	return css_to_blkcg(blkcg_css());
-+}
- 
-+/**
-+ * bio_blkcg - grab the blkcg associated with a bio
-+ * @bio: target bio
-+ *
-+ * This returns the blkcg associated with a bio, %NULL if not associated.
-+ * Callers are expected to either handle %NULL or know association has been
-+ * done prior to calling this.
-+ */
-+static inline struct blkcg *bio_blkcg(struct bio *bio)
-+{
- 	if (bio && bio->bi_css)
- 		return css_to_blkcg(bio->bi_css);
--	css = kthread_blkcg();
--	if (css)
--		return css_to_blkcg(css);
--	return css_to_blkcg(task_css(current, io_cgrp_id));
-+	return NULL;
- }
- 
- static inline bool blk_cgroup_congested(void)
-@@ -710,10 +791,10 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
- 	bool throtl = false;
- 
- 	rcu_read_lock();
--	blkcg = bio_blkcg(bio);
- 
- 	/* associate blkcg if bio hasn't attached one */
--	bio_associate_blkcg(bio, &blkcg->css);
-+	bio_associate_blkcg(bio, NULL);
-+	blkcg = bio_blkcg(bio);
- 
+ struct blkcg_gq *blkg_lookup_slowpath(struct blkcg *blkcg,
+ 				      struct request_queue *q, bool update_hint);
++struct blkcg_gq *__blkg_lookup_create(struct blkcg *blkcg,
++				      struct request_queue *q);
+ struct blkcg_gq *blkg_lookup_create(struct blkcg *blkcg,
+ 				    struct request_queue *q);
+ int blkcg_init_queue(struct request_queue *q);
+@@ -799,7 +801,7 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
  	blkg = blkg_lookup(blkcg, q);
  	if (unlikely(!blkg)) {
-@@ -835,6 +916,7 @@ static inline int blkcg_activate_policy(struct request_queue *q,
- static inline void blkcg_deactivate_policy(struct request_queue *q,
- 					   const struct blkcg_policy *pol) { }
- 
-+static inline struct blkcg *__bio_blkcg(struct bio *bio) { return NULL; }
- static inline struct blkcg *bio_blkcg(struct bio *bio) { return NULL; }
- 
- static inline struct blkg_policy_data *blkg_to_pd(struct blkcg_gq *blkg,
+ 		spin_lock_irq(&q->queue_lock);
+-		blkg = blkg_lookup_create(blkcg, q);
++		blkg = __blkg_lookup_create(blkcg, q);
+ 		if (IS_ERR(blkg))
+ 			blkg = NULL;
+ 		spin_unlock_irq(&q->queue_lock);
 -- 
 2.17.1
 
