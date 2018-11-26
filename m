@@ -2,116 +2,106 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97745C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1675CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ED0E20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:12:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lM0waWiw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ED0E20663
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id DB43F20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:13:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB43F20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbeK0EHd (ORCPT
+        id S1726548AbeK0EIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:07:33 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44653 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726355AbeK0EHd (ORCPT
+        Mon, 26 Nov 2018 23:08:37 -0500
+Received: from smtprelay0049.hostedemail.com ([216.40.44.49]:36914 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726254AbeK0EIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:07:33 -0500
-Received: by mail-ot1-f65.google.com with SMTP id f18so15717610otl.11
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 09:12:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DBIkeF5di5rvOQsdFcU+VQ6wdspweSTWHvCr3XgY3pM=;
-        b=lM0waWiwj0iKtm/g7bCe4ewSildW/Wnj49Ce49663Mg0xpqerPQCLE3XNOvZHJH+QT
-         UXSc0wZn5h5f4D08dyyQkGSRJrlb6bvdedCM207BbPO22hEQwDLUwlu3iCxLhVoIXv2g
-         5PBtTLcC5sc2B0LpTbJXTDbqPqHtY+plo68hSet4BdYVEpewLRxS4cMngHzECkFXnKsl
-         AGlpO00G8InLHTBFGA9g8RMblJ9a4V4O5E4PZ36Ts/Fq3BuXSr2oUzdEVfkQMK0QLQWW
-         CIf+Wt2pIOzCwe1H9KnBGSaJv2+Vf5UXmpAXMnxKKl5YqxUMwbaTXEG7n9cnnYeQm4S1
-         ARZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DBIkeF5di5rvOQsdFcU+VQ6wdspweSTWHvCr3XgY3pM=;
-        b=qM65dZ2z4Z58VRKrAqwjqP/jJIQ0aAac19cGukQXLNtIBoocQrcwmunaOdv5X8k/mO
-         3zfgZ4On2uxw6cCFLWSJavtcmxl7pHx2+IcDWMZGlKTW4yZo0gNCDJq4rceWSPWAUJ50
-         qTbmARD9XhybsJFIaDuuk449AMzhTg/A1xqUvV4SSmfUaerehznbbUOM80AjvaEBrhUO
-         wBrNoKrgZG8zYnV4CAbF5s78Lu/ZNeSk1FhiGpgxUY45vZ6V1eYKN7XP6bB0Q6kTNc27
-         6EYMqJjaPWq3o6FywgjqA4449LU5Stlc3cV/6bcqCideL7JVMLeVZCrTpfs+E/3l5Wps
-         6KSA==
-X-Gm-Message-State: AA+aEWZkCsjewnZIuwzwT+g7iO8w/zIqOrdvfkdjEQD+7JF5IETZpwha
-        gFW60PwouItpdlf6hcj7WOaeXWNp0BAuW26VUdA+Ag==
-X-Google-Smtp-Source: AFSGD/U5ZATsp3WDqEDRoZCzWolnvmi6UWhJTQ+Zm6SX7NBe2RSxYXOrp3BftCHYrQJ2UKjNxo5f0aL6Zwnps16YTnI=
-X-Received: by 2002:a9d:460e:: with SMTP id y14mr16849179ote.198.1543252368361;
- Mon, 26 Nov 2018 09:12:48 -0800 (PST)
-MIME-Version: 1.0
-References: <20181126165957.xhsyu2dhyy45mrjo@linutronix.de>
-In-Reply-To: <20181126165957.xhsyu2dhyy45mrjo@linutronix.de>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 26 Nov 2018 18:12:21 +0100
-Message-ID: <CAG48ez0Cc5cQxWVLoFNqgYZ1YA+7hHhjnDp-GvQuyeH8nCoOzw@mail.gmail.com>
-Subject: Re: Backtrace after invalid XRSTOR after "x86/fault: BUG() when
- uaccess helpers fault on kernel addresses"
-To:     bigeasy@linutronix.de
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        naveen.n.rao@linux.vnet.ibm.com, Borislav Petkov <bp@alien8.de>,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 26 Nov 2018 23:08:36 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id E1F7C1822451D;
+        Mon, 26 Nov 2018 17:13:51 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: bat42_3ea9cc07bb914
+X-Filterd-Recvd-Size: 2846
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 26 Nov 2018 17:13:50 +0000 (UTC)
+Message-ID: <48bb15770ef1755a0210db8137045176864d2ece.camel@perches.com>
+Subject: Re: RFC: script to convert vsprintf uses of %pf to %ps and %pF to
+ %pS
+From:   Joe Perches <joe@perches.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Date:   Mon, 26 Nov 2018 09:13:48 -0800
+In-Reply-To: <20181126060824.GG540@jagdpanzerIV>
+References: <8eb7769cb8550e82105b71ba67fd603394e23b1e.camel@perches.com>
+         <20181126053517.GF540@jagdpanzerIV> <20181126060824.GG540@jagdpanzerIV>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 5:59 PM Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
-> Commit 75045f77f7a7 ("x86/extable: Introduce _ASM_EXTABLE_UA for uaccess
-> fixups") made copy_user_to_xregs() -> XSTATE_OP() use _ASM_EXTABLE_UA.
-> Commit 9da3f2b74054 ("x86/fault: BUG() when uaccess helpers fault on
-> kernel addresses") then decided that a #GP is not good and has to be
-> reported loudly.
->
-> I had a TC which sets a few invalid bits in xstate which is used by
-> copy_user_to_xregs() on sig-return. Before that change I had:
-> | sig-xstate-bum[2253] bad frame in rt_sigreturn frame:0000000056078134 ip:7f9da336c227 sp:7ffc871325e8 orax:ffffffffffffffff in  libc-2.27.so[7f9da3358000+146000]
->
-> after those two patches are applied:
-> |BUG: GPF in non-whitelisted uaccess (non-canonical address?)
-> |general protection fault: 0000 [#1] PREEMPT SMP NOPTI
-> |CPU: 26 PID: 2236 Comm: sig-xstate-bum Not tainted 4.20.0-rc3 #45
-> |RIP: 0010:__fpu__restore_sig+0x1c1/0x540
-> |Code: 02 00 00 48 8b 95 58 ff ff ff 48 f7 d2 48 21 d0 0f 85 6e 03 00 00 0f 01 cb 48 8b 85 58 ff ff ff 48 89 df 48 89 c2 48 c1 ea 20 <48> 0f ae 2f 31 db 0f 01 ca 85 db 0f 84 d7 00 00 00 4c 89 f7 bb ff
-> |Call Trace:
-> | fpu__restore_sig+0x28/0x40
-> | restore_sigcontext+0x13a/0x180
-> | __ia32_sys_rt_sigreturn+0xae/0x100
-> | do_syscall_64+0x4f/0x100
-> | entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> |RIP: 0033:0x7f9b06aea227
-> |---[ end trace a45ac23b593e9ab0 ]---
->
-> The expected behaviour would that `xrstor' performs a #GP and this does
-> not a produce a backtrace like that and copy_user_to_fxregs() returns an
-> error.
-> copy_user_to_fxregs() / user_insn() does not have this behaviour and
-> that also might generate a #GP (if invalid bits are set in MCSR).
-> What do we do?
+On Mon, 2018-11-26 at 15:08 +0900, Sergey Senozhatsky wrote:
+> > There are approximately these total uses of the symbolic
+> > lookup vsprintf extensions %p[SsFf]:
+> > 
+> > $ git grep '".*[^%]%p[SsFf]' | \
+> >   grep -oh '%p[SsFf]' | sort | uniq -c | sort -rn
+> >     231 %pS
+> >      65 %ps
+> >      60 %pf
+> >      47 %pF
+> 
+> I didn't bother to remove "pf/pF" because I didn't want to count on:
+>   a) everyone running checkpatch.pl
+>   b) everyone testing all printk-s they added
+> 
+> I guess pf/pF still can sneak in.
 
-Bleh. This code has to use normal _ASM_EXTABLE. _ASM_EXTABLE_UA is
-(almost, with the exception of stuff like probe_kernel_read() and
-exact_copy_from_user()) only for code that isn't expected to throw
-things other than #PF with a userspace address. I must have missed
-this when looking at the documentation for XRSTOR, or something like
-that...
+Any use of %p<invalid_extension> could sneak in.
+
+And thanks, the checkpatch test for %p<invalid_extensions>
+should be updated too.
+
+> But I don't have a really strong opinion on this. If general
+> consensus is that we shall remove deprecated specifiers, then
+> I'm fine.
+
+I think converting deprecated things is generally good.
+
+Also, the %p<extension> lettering space is limited, so
+cleaning deprecated extensions is useful.
+
+> After running this script I still have a bunch of leftovers:
+> 
+> //
+> // these two are probably not really relevant, but still - %pF/%pf
+> //
+> tools/lib/traceevent/event-parse.c:             if (asprintf(&format, "%%pf: (NO FORMAT FOUND at %llx)\n", addr) < 0)
+> tools/lib/traceevent/event-parse.c:     if (asprintf(&format, "%s: %s", "%pf", printk->printk) < 0)
+
+I was not/am not sure about those.
+
+> arch/um/kernel/sysrq.c: pr_info(" [<%08lx>] %s%pF\n", address, reliable ? "" : "? ",
+> arch/x86/xen/multicalls.c:                              printk(KERN_DEBUG "  call %2d/%d: op=%lu arg=[%lx] result=%ld\t%pF\n",
+> kernel/async.c:         pr_debug("calling  %lli_%pF @ %i\n",
+> kernel/async.c:         pr_debug("initcall %lli_%pF returned 0 after %lld usecs\n",
+
+Missed those by using \b, thanks again.
+
+
