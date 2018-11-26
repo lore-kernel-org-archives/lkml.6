@@ -2,166 +2,201 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7285C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CD7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D3B320855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:52:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E072120850
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:52:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q31DbGTz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D3B320855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="jK+bXmcE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E072120850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726309AbeKZTpZ (ORCPT
+        id S1726274AbeKZTpq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 14:45:25 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36658 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbeKZTpY (ORCPT
+        Mon, 26 Nov 2018 14:45:46 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53721 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbeKZTpq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 14:45:24 -0500
-Received: by mail-ot1-f65.google.com with SMTP id k98so15844934otk.3;
-        Mon, 26 Nov 2018 00:51:58 -0800 (PST)
+        Mon, 26 Nov 2018 14:45:46 -0500
+Received: by mail-wm1-f67.google.com with SMTP id y1so14032244wmi.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 00:52:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TIg6599bXYDv0J90J8cqu6N1393IlFzgOndDoXQvKyE=;
-        b=q31DbGTzUorNO+1nWDr8mJYpfMueHhmDCaI8GlDjPLqHqUUY5/ShOgwixNs9ZlXVu0
-         sKH+ULFEMFjDbNcDc4gzVfeBZU684ljsJL5v3fv5I7yAMjRQKZtHveIKsa9A6gOZoPOe
-         wIE6U8kWBIDDU5Yt9E5N+rUHdLv+ebVoyFKLHD+YKYE3VkgoXysE48eeBNOgH9hrQmet
-         2LTcglUND0CTpjV7IMQ/U3nZCszQ5EEy0BeVyvEdZG/AEXspDUA2VqkeusUiLV51uT/M
-         U6U7xZYdGJJCZWvgIAWSYguMYE6/paCXcNY+Jv+JW7CrNuofkd1gIQZVIO45k9d4GxlB
-         /1fw==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=vlIKrk94dp/prLdkcyEzxN99TfCAk4jA/d3dwIi+MkE=;
+        b=jK+bXmcEbWw/1Dguam1QcRsb4OPTLy/hs4tQw3VFTYGu5eiSkm4Mkunp++qM81tgOa
+         ucNq3IV2m6WVmA5t4Ih7HO8XHsE7e9ZU+fDRw5Jq+OFiu+6fKiyR066Xt7cqUrTaTKPu
+         tJhB6Mb49B9mgBlzMT35SKxjmdM81RgWuXkNh77CaZg6v/+HCkDtFUslbfnk4XDYiVpO
+         pK5tECfEa3TpRmUXXvsodQZ7q960v6plqa59u3H6kO4Cmxwh2RiT/zlFC5IMH2thnNzx
+         MLy6niq3tS+B6PXEd4/Pdg2/eXGh+M9OsXoY5Gfexpm7JIqRWRikV9T+t5N3GEbtLrRk
+         4X6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TIg6599bXYDv0J90J8cqu6N1393IlFzgOndDoXQvKyE=;
-        b=dOCFPgj+foXFq4bWfgDLHdJbvyOtADFRKyRWixemaZK1e2HYPkoMO4gKG013hFdG89
-         LVKVfoU3oABYIUWvuGSWUIL3lQ+Y+Yurz+AFWKWbAM5XUX9kIEiQ/FkoDYDNROsOifCu
-         x+Ir5MpOMutuy4P4Y2jg5eEx0gP3rN170cGFoY6QvEawlElgHdP38JEaoSpGjmgV0ut9
-         utbaNGJdsKapOQbacxSlb9pgSiaDUnHAycNPIWFGk/236vEfwk7cMibz3A/C5UqpAcPw
-         2qAPcw8m6lZ6my8UgGngnd977j0GRb/ubq1l97N+e9APVfoF9DOP69jk/ly0la1ZU+kn
-         9Rhw==
-X-Gm-Message-State: AA+aEWZlZwnAxNunn1gR4aVaq0f81FFFp1H9y8MbCJ86uHxusustx3bU
-        arDlF+JN3et7A+XSaBmD6BoFj6kR6fAKt3MPH+Y=
-X-Google-Smtp-Source: AFSGD/UrkcqP4W7GcdjlrbLdGCyxJKvNlUF5v8c0tchrzBq5eBDhljBz8cMmFFpV3qJILdliQmQfmtCwX+prgjWYlpc=
-X-Received: by 2002:a9d:3b4b:: with SMTP id z69mr14092285otb.167.1543222318630;
- Mon, 26 Nov 2018 00:51:58 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=vlIKrk94dp/prLdkcyEzxN99TfCAk4jA/d3dwIi+MkE=;
+        b=pgnXYNEqUYNtWxVnJPpZzdcGNYyRwNM88ji2F+vdV99a4xUkBpOQOgTPn6GDj9WXuy
+         MixVHyzm5Pd4zyT1q7x71/20g1LL4UdSnwhk4wTmcNNaArzJ8NN9+ZBfIV/Pjq01f0+L
+         hP9/ivjKml1tynRMXoXyo8ZOZ7xmhaIYfsZR1IMRByIrLFZjikT3XFNblLNrtlPurGga
+         lCIDQIUwRI8V+k/kTlBtlQbb93uWdiG7GKAoTqLsW5eCslLRy8D7USV57rslGaE65mbA
+         TlDEKl1wNkSR6IY+7XFnOLS47Ofr+i3zHJkFqHgwbz0NhuROqJMX3GaS2QnBYIjoV72o
+         jSPA==
+X-Gm-Message-State: AA+aEWbaeLdyZg6RkorSRyXAGagqjZIPnRM9uGmic+1/7ZzGZ1UqjG5b
+        rTFjNLoXJzH5wSHXMKI/RlAuK2tO+QGkdA==
+X-Google-Smtp-Source: AFSGD/WnWUAXJhh8gfdyJLWqOstB8f8d/4SBBUCNWc0ZVJcmaRQ2SCHykdok7C0QUAAoHggZ9AK4Sg==
+X-Received: by 2002:a1c:2981:: with SMTP id p123mr6591032wmp.19.1543222338498;
+        Mon, 26 Nov 2018 00:52:18 -0800 (PST)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id q20-v6sm52580wmc.33.2018.11.26.00.52.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 00:52:17 -0800 (PST)
+Subject: Re: [PATCH] drm/meson: add support for 1080p25 mode
+To:     Michal Lazo <michal.lazo@mdragon.org>
+Cc:     christianshewitt@gmail.com, airlied@linux.ie, khilman@baylibre.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        carlo@caione.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1542793169-13008-1-git-send-email-christianshewitt@gmail.com>
+ <2a9d9fa9-c9ba-c624-28da-dd3804faf438@baylibre.com>
+ <CAFW1BFzC0wzwmjvpSqb90ipY4mzdWPMc3buXjkwvi4X5e8wGJg@mail.gmail.com>
+ <ea9d3fd1-068f-7bec-4166-9399d0aea02f@baylibre.com>
+ <CAFW1BFwocpL3brp8h66gaAiMgcCvsr1t=tU2+oNVFNOG4DMYPQ@mail.gmail.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <47e37691-b3b1-c6e2-8359-0d0d5d521a2c@baylibre.com>
+Date:   Mon, 26 Nov 2018 09:52:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <CGME20181123094453epcas4p16be0412e0195fe4bf06680111805352a@epcas4p1.samsung.com>
- <20181123094413.1108-1-linux.amoon@gmail.com> <5BFBA550.4020401@samsung.com>
-In-Reply-To: <5BFBA550.4020401@samsung.com>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Mon, 26 Nov 2018 14:21:45 +0530
-Message-ID: <CANAwSgRqvw454E2twn+RwGGhy0XQE0T=k2dKfD50CWVk88p=rQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: samsung: exynos5420: add VPLL rate table for g3d clock
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Marian Mihailescu <mihailescu2m@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAFW1BFwocpL3brp8h66gaAiMgcCvsr1t=tU2+oNVFNOG4DMYPQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo,
+Hi Michal,
 
-On Mon, 26 Nov 2018 at 13:18, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->
-> Hi,
->
-> On 2018=EB=85=84 11=EC=9B=94 23=EC=9D=BC 18:44, Anand Moon wrote:
-> > From: Marian Mihailescu <mihailescu2m@gmail.com>
-> >
-> > A specific clock rate table is added for VPLL so it is possible
-> > to set frequency of the VPLL output clock that used by the g3d clock.
-> >
-> > Cc: Andrzej Hajda <a.hajda@samsung.com>
-> > Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> > Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> >  drivers/clk/samsung/clk-exynos5420.c | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> >
-> > diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung=
-/clk-exynos5420.c
-> > index 34cce3c5898f..34156bdfd0d2 100644
-> > --- a/drivers/clk/samsung/clk-exynos5420.c
-> > +++ b/drivers/clk/samsung/clk-exynos5420.c
-> > @@ -1303,6 +1303,18 @@ static const struct samsung_pll_rate_table exyno=
-s5420_epll_24mhz_tbl[] =3D {
-> >       PLL_36XX_RATE(24 * MHZ,  32768001U, 131, 3, 5, 4719),
-> >  };
-> >
-> > +static const struct samsung_pll_rate_table exynos5420_vpll_24mhz_tbl[]=
- __initconst =3D {
-> > +     PLL_35XX_RATE(24 * MHZ, 600000000U, 200, 2, 2),
-> > +     PLL_35XX_RATE(24 * MHZ, 543000000U, 181, 2, 2),
-> > +     PLL_35XX_RATE(24 * MHZ, 533000000U, 533, 6, 2),
-> > +     PLL_35XX_RATE(24 * MHZ, 480000000U, 320, 4, 2),
-> > +     PLL_35XX_RATE(24 * MHZ, 420000000U, 140, 2, 2),
-> > +     PLL_35XX_RATE(24 * MHZ, 350000000U, 175, 3, 2),
-> > +     PLL_35XX_RATE(24 * MHZ, 266000000U, 266, 3, 3),
-> > +     PLL_35XX_RATE(24 * MHZ, 177000000U, 118, 2, 3),
-> > +     PLL_35XX_RATE(24 * MHZ, 100000000U, 200, 3, 4),
-> > +};
->
-> VPLL has the same PMS table with apll/kpll/bpll. You don't need to add ne=
-w
-> 'exynos5420_vpll_24mhz_tbl' table. Just adding the missing frequency entr=
-ies
-> to 'exynos5420_pll2550x_24mhz_tbl' table.
->
-Thanks for your input. I will leave this for the expert to fix this.
+On 23/11/2018 14:23, Michal Lazo wrote:
 
-> > +
-> >  static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata =3D =
-{
-> >       [apll] =3D PLL(pll_2550, CLK_FOUT_APLL, "fout_apll", "fin_pll", A=
-PLL_LOCK,
-> >               APLL_CON0, NULL),
-> > @@ -1428,6 +1440,7 @@ static void __init exynos5x_clk_init(struct devic=
-e_node *np,
-> >               exynos5x_plls[epll].rate_table =3D exynos5420_epll_24mhz_=
-tbl;
-> >               exynos5x_plls[kpll].rate_table =3D exynos5420_pll2550x_24=
-mhz_tbl;
-> >               exynos5x_plls[bpll].rate_table =3D exynos5420_pll2550x_24=
-mhz_tbl;
-> > +             exynos5x_plls[vpll].rate_table =3D exynos5420_vpll_24mhz_=
-tbl;
-> >       }
-> >
-> >       samsung_clk_register_pll(ctx, exynos5x_plls, ARRAY_SIZE(exynos5x_=
-plls),
-> >
->
->
-> --
-> Best Regards,
-> Chanwoo Choi
-> Samsung Electronics
+Please do not top-post !
 
-Best Regards
--Anand
+> I checked 1080p30/1080p60 and values are same
+> I didn't check others
+> so clean duplicates
+> or make duplicates :)
+
+I'll be happy to apply your patches !
+
+Neil
+
+> 
+> 
+> On Fri, Nov 23, 2018 at 2:15 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>>
+>> Hi Michal,
+>>
+>> On 23/11/2018 13:57, Michal Lazo wrote:
+>>> I would suggest same aproach as for
+>>> "meson_hdmi_encp_mode_1080p30"
+>>> and "meson_hdmi_encp_mode_1080p60"
+>>>
+>>> so duplicate "meson_hdmi_encp_mode_1080p50"
+>>> with name "meson_hdmi_encp_mode_1080p25"
+>>
+>> The configs are litterally the same for 1080p25 and 1080p60 unlike 1080p30/1080p60,
+>> so I don't see the point about duplicating a same table for the sake of naming.
+>>
+>> We will the exact same thing to support the 2160p50/2160p60 modes by reusing the
+>> same config are 2160p25/2160p50, and I don't see the point of duplication the
+>> tables here aswell.
+>>
+>> Neil
+>>
+>>>
+>>> now the code looks really like common copy paste problem
+>>> Michal Lazo
+>>> On Wed, Nov 21, 2018 at 10:47 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>>>>
+>>>> On 21/11/2018 10:39, Christian Hewitt wrote:
+>>>>> This essential mode for PAL users is missing, so add it.
+>>>>>
+>>>>> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+>>>>> ---
+>>>>>  drivers/gpu/drm/meson/meson_venc.c | 1 +
+>>>>>  1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
+>>>>> index acbbad3..ab16046 100644
+>>>>> --- a/drivers/gpu/drm/meson/meson_venc.c
+>>>>> +++ b/drivers/gpu/drm/meson/meson_venc.c
+>>>>> @@ -714,6 +714,7 @@ struct meson_hdmi_venc_vic_mode {
+>>>>>       { 5, &meson_hdmi_encp_mode_1080i60 },
+>>>>>       { 20, &meson_hdmi_encp_mode_1080i50 },
+>>>>>       { 32, &meson_hdmi_encp_mode_1080p24 },
+>>>>> +     { 33, &meson_hdmi_encp_mode_1080p50 },
+>>>>>       { 34, &meson_hdmi_encp_mode_1080p30 },
+>>>>>       { 31, &meson_hdmi_encp_mode_1080p50 },
+>>>>>       { 16, &meson_hdmi_encp_mode_1080p60 },
+>>>>>
+>>>>
+>>>> Exact, I forgot this mode...
+>>>>
+>>>> Thanks for the change !
+>>>>
+>>>> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+>>>>
+>>>> I'll add :
+>>>> Fixes: 335e3713afb87 ("drm/meson: Add support for HDMI venc modes and settings")
+>>>> when applying to drm-misc-fixes.
+>>>>
+>>>> Neil
+>>>>
+>>>> _______________________________________________
+>>>> linux-amlogic mailing list
+>>>> linux-amlogic@lists.infradead.org
+>>>> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+>>>
+>>>
+>>>
+>>
+> 
+> 
+
