@@ -2,133 +2,237 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6478C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3783CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:49:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DD0D208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:46:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DD0D208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B9A93208E7
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:49:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="mbmKeJj9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9A93208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbeK0Il6 (ORCPT
+        id S1727157AbeK0IpP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 03:41:58 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:46705 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726367AbeK0Il6 (ORCPT
+        Tue, 27 Nov 2018 03:45:15 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:33494 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726414AbeK0IpO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 03:41:58 -0500
-Received: by mail-oi1-f194.google.com with SMTP id x202so17331563oif.13;
-        Mon, 26 Nov 2018 13:46:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3SZ+vTotyFyuWTvSfSwlZ+iCTw1Yda/AWHj/lJeG8OI=;
-        b=MsoVScrSuUwYdN9+uaZsMOTe9AGWuTalfdDkpzUCGEN+WQ4hxSsQlViDlJmOHXXeqH
-         NfNOFN/FtlZqCR8bgKcUQ12p1+xblYyLZB8Dh/8ZGApcoXB1sYy68NcMMbpRnK4DJl0B
-         DZx5OcH5wzZprWggvcXXfyJvMkujzARgz+DgCiCBHd3d6H4g2XEnEoLOJFUyGCXf6tVY
-         XdNnqq7MzFoTlTZGvsMeDGfrciNZtyqA79cC8lWTZ49kEZ1E+/2S4wHQqxQfv4YuPjo/
-         GCehPYp8WuKlu+Q/2YVZHv77wWhekFF0POcynRXIDJC2Pux4Y9jhBenphTkzGpaI23bq
-         V3Rg==
-X-Gm-Message-State: AA+aEWb0ITE2QbcNlH8Kbz7FSt4qadmri3oj0XCuiQhBmeqTjrELDHcg
-        OfjSDW24E/COk+EJCabbdQ==
-X-Google-Smtp-Source: AFSGD/V1F8bNYB1X6KEu6IyQ5bwIAk1V41Eg5xYqvGK9DsIoUMUFC1856AukGpbEgOt2BA/YRrK4HQ==
-X-Received: by 2002:aca:4489:: with SMTP id r131mr9352498oia.296.1543268787321;
-        Mon, 26 Nov 2018 13:46:27 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 187sm2049348oic.12.2018.11.26.13.46.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 13:46:26 -0800 (PST)
-Date:   Mon, 26 Nov 2018 15:46:26 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     biao huang <biao.huang@mediatek.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>, davem@davemloft.net,
-        honghui.zhang@mediatek.com, yt.shen@mediatek.com,
-        liguo.zhang@mediatek.com, mark.rutland@arm.com,
-        nelson.chang@mediatek.com, matthias.bgg@gmail.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, joabreu@synopsys.com
-Subject: Re: [v5, PATCH 2/2] dt-binding: mediatek-dwmac: add binding document
- for MediaTek MT2712 DWMAC
-Message-ID: <20181126214626.GA13830@bogus>
-References: <1542882521-18874-1-git-send-email-biao.huang@mediatek.com>
- <1542882521-18874-3-git-send-email-biao.huang@mediatek.com>
- <20181122151932.GD15403@lunn.ch>
- <1542936676.24219.66.camel@mhfsdcap03>
+        Tue, 27 Nov 2018 03:45:14 -0500
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAQLibiW008608
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 13:49:43 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=7Hk0L83+6Exc6u71ZlB9Tkuy907TY6bcTVc/2wuRpSk=;
+ b=mbmKeJj9UkvjZs7s/2llcEH0UcA+qxsBcllUuxjM3nGNmRyrZWgQqyo5H81XQiTY5J6x
+ psNtcx+/ZmcKqFWb6gzg9soLsTgoLmd3YuYql3BvIsQyvX1JH4sVjLhYLolZDh3i8U/u
+ KkBGJHBKWUSCkMjVT7xmXwLGVT7Sw6AWXYs= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2p0qfkrbwm-9
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 13:49:43 -0800
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Mon, 26 Nov 2018 13:49:12 -0800
+Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)
+        id 3AF29433B303; Mon, 26 Nov 2018 13:49:07 -0800 (PST)
+Smtp-Origin-Hostprefix: devvm
+From:   Vijay Khemka <vijaykhemka@fb.com>
+Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
+To:     Samuel Mendoza-Jonas <sam@mendozajonas.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <vijaykhemka@fb.com>,
+        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>,
+        <Justin.Lee1@Dell.com>, <joel@jms.id.au>,
+        <linux-aspeed@lists.ozlabs.org>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH net-next v2] net/ncsi: Add NCSI Mellanox OEM command
+Date:   Mon, 26 Nov 2018 13:49:04 -0800
+Message-ID: <20181126214905.3703229-1-vijaykhemka@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1542936676.24219.66.camel@mhfsdcap03>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-26_17:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 09:31:16AM +0800, biao huang wrote:
-> Dear Andrew,
-> 
-> 	Thanks for you remind.
-> 
-> 	Sincerely, I respect any comment from any reviewer. If I didn't reply
-> for any comment, really sorry for that.
-> 
-> 	As to this "tx-delay" issue, the following reply in v3 maybe ignored.
-> 	https://lkml.org/lkml/2018/11/19/158
-> 
-> 	"the delay time in mediatek dwmac design is not so accurate,
-> 	the current mt2712 and the following ICs will not use the
-> 	same delay design, but will use stages to indicate different
-> 	delay time.
-> 	so maybe "mediatek.tx-delay" represent the delay stage is a
-> 	good choice"
-> 
-> 	And to make it clearer here.
-> 
-> 	In mt2712, there are two delay macro circuit: named fine-tune and
-> coarse-tune.
-> 	a. fine-tune, 170+/-50ps per stage, total 32 stages
-> 	b. coarse-tune, 0.55+/-0.2ns per stage, total 32 stages
-> 	If we only consider mt2712, delay in fine-tune select a integer
-> multiple of 170ps, delay in coarse-tune select a integer multiple of
-> 550ps, for stage 0~31, the delay in fine-tune will not have the same
-> value with that in coarse-tune.
-> 	OK, It seems the property "fine-tune" can be eliminated .
-> 
-> 	But the following ic will not have the same accuracy as mt2712,
-> and maybe will not have two delay macro circuit to be selected.
+This patch adds OEM Mellanox commands and response handling. It also
+defines OEM Get MAC Address handler to get and configure the device.
 
-New IC will have new compatible string then. If it is different, then 
-likely these properties would have to change or have different meaning 
-unless you use time.
+ncsi_oem_gma_handler_mlx: This handler send NCSI mellanox command for
+getting mac address.
+ncsi_rsp_handler_oem_mlx: This handles response received for all
+mellanox OEM commands.
+ncsi_rsp_handler_oem_mlx_gma: This handles get mac address response and
+set it to device.
 
-> 	1. assume two delay macro circuit in the following ic,
-> 	fine-tune, 100ps per stage, coarse-tune, 0.55ns per stage,
-> 	if we want delay 2.2ns, fine-tune will get a 22, and coarse-tune get a
-> 4. We can't distinguish which delay macro we are choosing.
+Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+---
+ net/ncsi/internal.h    |  5 +++++
+ net/ncsi/ncsi-manage.c | 28 +++++++++++++++++++++++++++-
+ net/ncsi/ncsi-pkt.h    |  9 +++++++++
+ net/ncsi/ncsi-rsp.c    | 41 ++++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 81 insertions(+), 2 deletions(-)
 
-Why wouldn't you just choose fine-tune for anything less than the max 
-range (3200ps in this example) and course for greater than 3100ps.
+diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
+index 1dae77c54009..7f3eb1360b9b 100644
+--- a/net/ncsi/internal.h
++++ b/net/ncsi/internal.h
+@@ -73,10 +73,15 @@ enum {
+ #define NCSI_OEM_MFR_BCM_ID             0x113d
+ /* Broadcom specific OEM Command */
+ #define NCSI_OEM_BCM_CMD_GMA            0x01   /* CMD ID for Get MAC */
++/* Mellanox specific OEM Command */
++#define NCSI_OEM_MLX_CMD_GMA            0x00   /* CMD ID for Get MAC */
++#define NCSI_OEM_MLX_CMD_GMA_PARAM      0x1b   /* Parameter for GMA  */
+ /* OEM Command payload lengths*/
+ #define NCSI_OEM_BCM_CMD_GMA_LEN        12
++#define NCSI_OEM_MLX_CMD_GMA_LEN        8
+ /* Mac address offset in OEM response */
+ #define BCM_MAC_ADDR_OFFSET             28
++#define MLX_MAC_ADDR_OFFSET             8
+ 
+ 
+ struct ncsi_channel_version {
+diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
+index bfc43b28c7a6..2c9bcb705460 100644
+--- a/net/ncsi/ncsi-manage.c
++++ b/net/ncsi/ncsi-manage.c
+@@ -675,12 +675,38 @@ static int ncsi_oem_gma_handler_bcm(struct ncsi_cmd_arg *nca)
+ 	return ret;
+ }
+ 
++static int ncsi_oem_gma_handler_mlx(struct ncsi_cmd_arg *nca)
++{
++	union {
++		u8 data_u8[NCSI_OEM_MLX_CMD_GMA_LEN];
++		u32 data_u32[NCSI_OEM_MLX_CMD_GMA_LEN / sizeof(u32)];
++	} u;
++	int ret = 0;
++
++	nca->payload = NCSI_OEM_MLX_CMD_GMA_LEN;
++
++	memset(&u, 0, sizeof(u));
++	u.data_u32[0] = ntohl(NCSI_OEM_MFR_MLX_ID);
++	u.data_u8[5] = NCSI_OEM_MLX_CMD_GMA;
++	u.data_u8[6] = NCSI_OEM_MLX_CMD_GMA_PARAM;
++
++	nca->data = u.data_u8;
++
++	ret = ncsi_xmit_cmd(nca);
++	if (ret)
++		netdev_err(nca->ndp->ndev.dev,
++			   "NCSI: Failed to transmit cmd 0x%x during configure\n",
++			   nca->type);
++	return ret;
++}
++
+ /* OEM Command handlers initialization */
+ static struct ncsi_oem_gma_handler {
+ 	unsigned int	mfr_id;
+ 	int		(*handler)(struct ncsi_cmd_arg *nca);
+ } ncsi_oem_gma_handlers[] = {
+-	{ NCSI_OEM_MFR_BCM_ID, ncsi_oem_gma_handler_bcm }
++	{ NCSI_OEM_MFR_BCM_ID, ncsi_oem_gma_handler_bcm },
++	{ NCSI_OEM_MFR_MLX_ID, ncsi_oem_gma_handler_mlx }
+ };
+ 
+ static int ncsi_gma_handler(struct ncsi_cmd_arg *nca, unsigned int mf_id)
+diff --git a/net/ncsi/ncsi-pkt.h b/net/ncsi/ncsi-pkt.h
+index 4d3f06be38bd..2a6d83a596c9 100644
+--- a/net/ncsi/ncsi-pkt.h
++++ b/net/ncsi/ncsi-pkt.h
+@@ -165,6 +165,15 @@ struct ncsi_rsp_oem_pkt {
+ 	unsigned char           data[];      /* Payload data      */
+ };
+ 
++/* Mellanox Response Data */
++struct ncsi_rsp_oem_mlx_pkt {
++	unsigned char           cmd_rev;     /* Command Revision  */
++	unsigned char           cmd;         /* Command ID        */
++	unsigned char           param;       /* Parameter         */
++	unsigned char           optional;    /* Optional data     */
++	unsigned char           data[];      /* Data              */
++};
++
+ /* Broadcom Response Data */
+ struct ncsi_rsp_oem_bcm_pkt {
+ 	unsigned char           ver;         /* Payload Version   */
+diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
+index 77e07ba3f493..ba9a4ba97c64 100644
+--- a/net/ncsi/ncsi-rsp.c
++++ b/net/ncsi/ncsi-rsp.c
+@@ -611,6 +611,45 @@ static int ncsi_rsp_handler_snfc(struct ncsi_request *nr)
+ 	return 0;
+ }
+ 
++/* Response handler for Mellanox command Get Mac Address */
++static int ncsi_rsp_handler_oem_mlx_gma(struct ncsi_request *nr)
++{
++	struct ncsi_dev_priv *ndp = nr->ndp;
++	struct net_device *ndev = ndp->ndev.dev;
++	const struct net_device_ops *ops = ndev->netdev_ops;
++	struct ncsi_rsp_oem_pkt *rsp;
++	struct sockaddr saddr;
++	int ret = 0;
++
++	/* Get the response header */
++	rsp = (struct ncsi_rsp_oem_pkt *)skb_network_header(nr->rsp);
++
++	saddr.sa_family = ndev->type;
++	ndev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
++	memcpy(saddr.sa_data, &rsp->data[MLX_MAC_ADDR_OFFSET], ETH_ALEN);
++	ret = ops->ndo_set_mac_address(ndev, &saddr);
++	if (ret < 0)
++		netdev_warn(ndev, "NCSI: 'Writing mac address to device failed\n");
++
++	return ret;
++}
++
++/* Response handler for Mellanox card */
++static int ncsi_rsp_handler_oem_mlx(struct ncsi_request *nr)
++{
++	struct ncsi_rsp_oem_mlx_pkt *mlx;
++	struct ncsi_rsp_oem_pkt *rsp;
++
++	/* Get the response header */
++	rsp = (struct ncsi_rsp_oem_pkt *)skb_network_header(nr->rsp);
++	mlx = (struct ncsi_rsp_oem_mlx_pkt *)(rsp->data);
++
++	if (mlx->cmd == NCSI_OEM_MLX_CMD_GMA &&
++	    mlx->param == NCSI_OEM_MLX_CMD_GMA_PARAM)
++		return ncsi_rsp_handler_oem_mlx_gma(nr);
++	return 0;
++}
++
+ /* Response handler for Broadcom command Get Mac Address */
+ static int ncsi_rsp_handler_oem_bcm_gma(struct ncsi_request *nr)
+ {
+@@ -655,7 +694,7 @@ static struct ncsi_rsp_oem_handler {
+ 	unsigned int	mfr_id;
+ 	int		(*handler)(struct ncsi_request *nr);
+ } ncsi_rsp_oem_handlers[] = {
+-	{ NCSI_OEM_MFR_MLX_ID, NULL },
++	{ NCSI_OEM_MFR_MLX_ID, ncsi_rsp_handler_oem_mlx },
+ 	{ NCSI_OEM_MFR_BCM_ID, ncsi_rsp_handler_oem_bcm }
+ };
+ 
+-- 
+2.17.1
 
-> 	2. assume only one delay macro circuit is used, a similar case as 1
-> will also increase the complexity of driver.
-> 	Then, we need define more flag property to know which delay macro we
-> are handling.
-> 
-> 	The common things for all delay macro circuit in MediaTek mac design is
-> the stages, not the accuracy. so if we maintain stage info in "mediatek,
-> tx-delay", we only need care which stage we should choose.
-> And for each IC, we will recommend a best stage as a candidate.
-
-What if you had a 3rd delay circuit?
-
-> 	Above is my personal opinion, may be my understanding is wrong,
-> welcome for further discussion.
-> 
-> 	Thanks a lot.
