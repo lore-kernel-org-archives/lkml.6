@@ -2,110 +2,123 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6438BC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5773AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F0E420855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:56:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1978A20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:57:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="kK5e3xKN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F0E420855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="bzY+Q1rt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1978A20855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbeK0Du4 (ORCPT
+        id S1726894AbeK0Dwc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 22:50:56 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35949 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbeK0Duz (ORCPT
+        Mon, 26 Nov 2018 22:52:32 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37298 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726456AbeK0Dwc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:50:55 -0500
-Received: by mail-ed1-f65.google.com with SMTP id f23so16478601edb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 08:56:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4TU5EWPLOJUD/AgePTOjqipP72/q085XlRhrOSgBK8s=;
-        b=kK5e3xKNjI2JbVfgXMIsWGyfvbH8ewTUKTBN955C3hZPlUTNRSQvhLBf6XljfFTOzw
-         rPnxHc4Quqcx5hfFC22JefFAElMTcpU0fg5OurIEsYouyD1zHoITbUY21XM71DZWQSRJ
-         UE5HTjTpu21G9KmRfpsI/Wh2QWZ6btP47xzTQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4TU5EWPLOJUD/AgePTOjqipP72/q085XlRhrOSgBK8s=;
-        b=LnBu+y2PNFnGaPoyb3zILla2H/rGQQxdXzoYcMtVjFYMQiEAUTGSNgN5YQ5DB8vRbv
-         bFcX5pj/+bIk6L+AHKZFu0O43BrxY8Lc/Tj7mnX3Q4610OSADIZgWkeWtQnN8acxEA6c
-         rJi3FT5E0NKxlyWOSBPtOdSExei4anXU2QTM+vWUfv/RzpcricTj6bdl4WhGC9urVE5H
-         xRNTodveOgDcttYeOfjdDkd/KP6V7ZytW9XOww2M6zRUxB8yv08oAYuhYJaydJ46pLw9
-         o8FROClWNV/ao5ljhHeZUhO918VQOMKbYMekC5PN9XsU4iM0qet767IZz3joVssEHK3+
-         K91Q==
-X-Gm-Message-State: AA+aEWbwSIr0z1s6Q/64hRTi1BxU/fzo5NgMMa9GOAXHKM0rm0wPTSj6
-        rWDDfp3e8wKaH/zXTuNug/ZFEEfQ06zgOw==
-X-Google-Smtp-Source: AFSGD/Ww8SkOmXkqTp+tgTzIUQkCK301QLz1advXudogfGtw4FLcGj9A4HOcRdU2KtEdFCKWSBmHyQ==
-X-Received: by 2002:a50:ae8f:: with SMTP id e15mr24319787edd.250.1543251373294;
-        Mon, 26 Nov 2018 08:56:13 -0800 (PST)
-Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id n11sm315974edn.14.2018.11.26.08.56.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 08:56:12 -0800 (PST)
-Date:   Mon, 26 Nov 2018 17:56:06 +0100
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     gregkh@linux-foundation.org,
-        Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
-        viro@zeniv.linux.org.uk, sandeen@redhat.com,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] fscache: Fix race in fscache_op_complete() due to
- split atomic_sub & read
-Message-ID: <20181126165606.GA11282@andrea>
-References: <20181017164848.GA9795@andrea>
- <20181017151134.GA8966@andrea>
- <153978619457.8478.3813964117489247515.stgit@warthog.procyon.org.uk>
- <153978621809.8478.2198040871218302573.stgit@warthog.procyon.org.uk>
- <14408.1539790333@warthog.procyon.org.uk>
- <26942.1543249596@warthog.procyon.org.uk>
+        Mon, 26 Nov 2018 22:52:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=eEBAfq2DQYAvAjpFc9F+YFzdfKgRBH9w1tG5ETD0XtU=; b=bzY+Q1rtfBM8Pcjl0zYIggb3M
+        UegrBc2BfQU3QM08UV4TluNXGNJha7WFckTHYeShCmBXfq52jKvwajxTWB5jMLJKPEiNV8jf4GYz5
+        HzOnqFPUFAXDxi+zrsUpN9n0yB8pKuM6oHIz1vHg8Kol9eGVsCLQTcRbGXZ0uC4eHzpAo=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gRKCZ-0005PF-Bc; Mon, 26 Nov 2018 16:57:39 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id DB753112519F; Mon, 26 Nov 2018 16:57:38 +0000 (GMT)
+Date:   Mon, 26 Nov 2018 16:57:38 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Priit Laes <plaes@plaes.org>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        Olliver Schinagl <oliver@schinagl.nl>
+Subject: Re: [PATCH 09/14] regulator: dts: add full voltage range to LDO4 on
+ the Lime2
+Message-ID: <20181126165738.GI9715@sirena.org.uk>
+References: <cover.156212c9c5df493e098556cad9793a07dcab5e32.1543245984.git-series.plaes@plaes.org>
+ <0b1aa5b28cb5efe17c04150a181ef1fa4027bc55.1543245984.git-series.plaes@plaes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="SdaPbLtAangIkrMZ"
 Content-Disposition: inline
-In-Reply-To: <26942.1543249596@warthog.procyon.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <0b1aa5b28cb5efe17c04150a181ef1fa4027bc55.1543245984.git-series.plaes@plaes.org>
+X-Cookie: Gloffing is a state of mine.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 04:26:36PM +0000, David Howells wrote:
-> Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
-> 
-> > > > > Fix this by using atomic_sub_return() instead of two calls.
-> > > > 
-> > > > Seems a case for atomic_sub_return_relaxed()... why not?
-> > > 
-> > > Ummm...  In that case, should it be atomic_sub_return_release()?
-> > 
-> > Hard to tell for me: your diff./changelog is all I know about fs-cache
-> > ... (and this suggests -no-, given that atomic_sub() and atomic_read()
-> > provide no ordering...); good question though. ;-)
-> 
-> Yeah, that doesn't mean that it shouldn't be stricter than 'relaxed'.  It's
-> kind of like an unlock/release operation, so I think 'release' is probably the
-> minimum requirement.
 
-Sure.  My point was: those operations are currently not atomic _and_
-they provide no ordering; I think that the above commit message does
-a good work in explaining *why* we need atomicity, but can't say the
-same for the memory-ordering requirement.
+--SdaPbLtAangIkrMZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  Andrea
+On Mon, Nov 26, 2018 at 05:27:50PM +0200, Priit Laes wrote:
 
+> In the defense of LDO3, LDO3 is the regulator that feeds port bank E,
+> which has no other purpose then a CSI/TS interface, however the case
+> may still be, that the connected IO may be just as well be 3.3 volts.
+> The big misnomer is however, that the schematic names GPIO-2 pin4
+> LDO3_2.8V, rather then VDD-CSI0 or similar.
 
-> 
-> David
+In general you want to run regulators at the lowest voltage you can,
+this tends to reduce power consumption.
+
+> Ideally, we want to set a supply voltage for each port bank, but the
+> monolithic nature of the sunxi pinctroller currently prevents this and
+> as such, the board should at least configure the LDO4 with the proper
+> ranges.
+
+>  &reg_ldo4 {
+> -	regulator-min-microvolt = <2800000>;
+> -	regulator-max-microvolt = <2800000>;
+> -	regulator-name = "vddio-csi1";
+> +	regulator-always-on;
+> +	regulator-min-microvolt = <1250000>;
+> +	regulator-max-microvolt = <3300000>;
+> +	regulator-name = "vdd-io-pg";
+>  };
+
+This is obviously broken even according to your analysis above - if you
+have consumers for which 2.8V is too low allowing other consumers to set
+even lower voltages is not going to help as soon as they start doing
+that.
+
+--SdaPbLtAangIkrMZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv8JgIACgkQJNaLcl1U
+h9ChRgf/clrFo+5K7x0k5QWpV6PYmm8qGgoo8qB0vUwTCVr+WUf8MhjYsXuxULU7
+EeUU0PVw+uepX1rpIZdPOGhfZ+j6BAYxQRiqm1T1mGtf8IlnQA+Tc1Yglf6ukLzs
+11XdUj6xUXGQlqqghkJzN2UeDmkY/ldfpniY1endz7B3NNuGPuhjzmieDFp+o/NU
+VnIHkDhDal5Iwg5Vb0f3iGKLlVnQFXpDtAKj/c9CBA0jHgWZmZgmiUC46da68eEz
+dF10grh1qJZcWfrhPz26/b/l+epQTOEamU0H4jnfIxcsLxtsT2xYRKG7jxlQOtzZ
+PW4lHjBRebLGl2z7PwEGh7oU9T/3Og==
+=9htB
+-----END PGP SIGNATURE-----
+
+--SdaPbLtAangIkrMZ--
