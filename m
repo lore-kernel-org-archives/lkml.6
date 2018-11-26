@@ -2,237 +2,96 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B60ECC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 768BFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:52:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C3EF20664
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:50:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C3EF20664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B4CB20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:52:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B4CB20855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726456AbeK0DpQ (ORCPT
+        id S1726457AbeK0Dqi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 22:45:16 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:7866 "EHLO mx1.redhat.com"
+        Mon, 26 Nov 2018 22:46:38 -0500
+Received: from foss.arm.com ([217.140.101.70]:42520 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726255AbeK0DpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:45:16 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2784E3082DDB;
-        Mon, 26 Nov 2018 16:50:36 +0000 (UTC)
-Received: from [10.36.112.66] (ovpn-112-66.ams2.redhat.com [10.36.112.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4CC37176B4;
-        Mon, 26 Nov 2018 16:50:25 +0000 (UTC)
-Subject: Re: [PATCH v2 1/3] mm: make dev_pagemap_mapping_shift() externally
- visible
-To:     Barret Rhoden <brho@google.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, yu.c.zhang@intel.com, yi.z.zhang@intel.com,
-        linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20181109203921.178363-1-brho@google.com>
- <20181114215155.259978-1-brho@google.com>
- <20181114215155.259978-2-brho@google.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <af356f2c-0121-a190-b150-f1352b068945@redhat.com>
-Date:   Mon, 26 Nov 2018 17:50:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181114215155.259978-2-brho@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 26 Nov 2018 16:50:36 +0000 (UTC)
+        id S1726203AbeK0Dqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 22:46:38 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A2C015AD;
+        Mon, 26 Nov 2018 08:51:58 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0A68A3F59C;
+        Mon, 26 Nov 2018 08:51:58 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 83F711AE0839; Mon, 26 Nov 2018 16:52:15 +0000 (GMT)
+From:   Will Deacon <will.deacon@arm.com>
+To:     corbet@lwn.net
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH] docs/memory-barriers.txt: Enforce heavy ordering for port I/O accesses
+Date:   Mon, 26 Nov 2018 16:52:14 +0000
+Message-Id: <1543251134-29867-1-git-send-email-will.deacon@arm.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/11/18 22:51, Barret Rhoden wrote:
-> KVM has a use case for determining the size of a dax mapping.  The KVM
-> code has easy access to the address and the mm; hence the change in
-> parameters.
-> 
-> Signed-off-by: Barret Rhoden <brho@google.com>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> ---
->  include/linux/mm.h  |  3 +++
->  mm/memory-failure.c | 38 +++-----------------------------------
->  mm/util.c           | 34 ++++++++++++++++++++++++++++++++++
->  3 files changed, 40 insertions(+), 35 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 5411de93a363..51215d695753 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -935,6 +935,9 @@ static inline bool is_pci_p2pdma_page(const struct page *page)
->  }
->  #endif /* CONFIG_DEV_PAGEMAP_OPS */
->  
-> +unsigned long dev_pagemap_mapping_shift(unsigned long address,
-> +					struct mm_struct *mm);
-> +
->  static inline void get_page(struct page *page)
->  {
->  	page = compound_head(page);
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 0cd3de3550f0..c3f2c6a8607e 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -265,40 +265,6 @@ void shake_page(struct page *p, int access)
->  }
->  EXPORT_SYMBOL_GPL(shake_page);
->  
-> -static unsigned long dev_pagemap_mapping_shift(struct page *page,
-> -		struct vm_area_struct *vma)
-> -{
-> -	unsigned long address = vma_address(page, vma);
-> -	pgd_t *pgd;
-> -	p4d_t *p4d;
-> -	pud_t *pud;
-> -	pmd_t *pmd;
-> -	pte_t *pte;
-> -
-> -	pgd = pgd_offset(vma->vm_mm, address);
-> -	if (!pgd_present(*pgd))
-> -		return 0;
-> -	p4d = p4d_offset(pgd, address);
-> -	if (!p4d_present(*p4d))
-> -		return 0;
-> -	pud = pud_offset(p4d, address);
-> -	if (!pud_present(*pud))
-> -		return 0;
-> -	if (pud_devmap(*pud))
-> -		return PUD_SHIFT;
-> -	pmd = pmd_offset(pud, address);
-> -	if (!pmd_present(*pmd))
-> -		return 0;
-> -	if (pmd_devmap(*pmd))
-> -		return PMD_SHIFT;
-> -	pte = pte_offset_map(pmd, address);
-> -	if (!pte_present(*pte))
-> -		return 0;
-> -	if (pte_devmap(*pte))
-> -		return PAGE_SHIFT;
-> -	return 0;
-> -}
-> -
->  /*
->   * Failure handling: if we can't find or can't kill a process there's
->   * not much we can do.	We just print a message and ignore otherwise.
-> @@ -329,7 +295,9 @@ static void add_to_kill(struct task_struct *tsk, struct page *p,
->  	tk->addr = page_address_in_vma(p, vma);
->  	tk->addr_valid = 1;
->  	if (is_zone_device_page(p))
-> -		tk->size_shift = dev_pagemap_mapping_shift(p, vma);
-> +		tk->size_shift =
-> +			dev_pagemap_mapping_shift(vma_address(page, vma),
-> +						  vma->vm_mm);
->  	else
->  		tk->size_shift = compound_order(compound_head(p)) + PAGE_SHIFT;
->  
-> diff --git a/mm/util.c b/mm/util.c
-> index 8bf08b5b5760..61bc9bab931d 100644
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -780,3 +780,37 @@ int get_cmdline(struct task_struct *task, char *buffer, int buflen)
->  out:
->  	return res;
->  }
-> +
-> +unsigned long dev_pagemap_mapping_shift(unsigned long address,
-> +					struct mm_struct *mm)
-> +{
-> +	pgd_t *pgd;
-> +	p4d_t *p4d;
-> +	pud_t *pud;
-> +	pmd_t *pmd;
-> +	pte_t *pte;
-> +
-> +	pgd = pgd_offset(mm, address);
-> +	if (!pgd_present(*pgd))
-> +		return 0;
-> +	p4d = p4d_offset(pgd, address);
-> +	if (!p4d_present(*p4d))
-> +		return 0;
-> +	pud = pud_offset(p4d, address);
-> +	if (!pud_present(*pud))
-> +		return 0;
-> +	if (pud_devmap(*pud))
-> +		return PUD_SHIFT;
-> +	pmd = pmd_offset(pud, address);
-> +	if (!pmd_present(*pmd))
-> +		return 0;
-> +	if (pmd_devmap(*pmd))
-> +		return PMD_SHIFT;
-> +	pte = pte_offset_map(pmd, address);
-> +	if (!pte_present(*pte))
-> +		return 0;
-> +	if (pte_devmap(*pte))
-> +		return PAGE_SHIFT;
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(dev_pagemap_mapping_shift);
-> 
+David Laight explains:
 
-Andrew,
+  | A long time ago there was a document from Intel that said that
+  | inb/outb weren't necessarily synchronised wrt memory accesses.
+  | (Might be P-pro era). However no processors actually behaved that
+  | way and more recent docs say that inb/outb are fully ordered.
 
-can you ack this patch?
+This also reflects the situation on other architectures, the the port
+accessor macros tend to be implemented in terms of readX/writeX.
 
-Thanks,
+Update Documentation/memory-barriers.txt to reflect reality.
 
-Paolo
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: David Laight <David.Laight@ACULAB.COM>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+---
+
+Just remembered I had this patch kicking around in my tree...
+
+ Documentation/memory-barriers.txt | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
+index c1d913944ad8..0c34c5dac138 100644
+--- a/Documentation/memory-barriers.txt
++++ b/Documentation/memory-barriers.txt
+@@ -2619,10 +2619,8 @@ functions:
+      intermediary bridges (such as the PCI host bridge) may not fully honour
+      that.
+ 
+-     They are guaranteed to be fully ordered with respect to each other.
+-
+-     They are not guaranteed to be fully ordered with respect to other types of
+-     memory and I/O operation.
++     They are guaranteed to be fully ordered with respect to each other and
++     also with respect to other types of memory and I/O operation.
+ 
+  (*) readX(), writeX():
+ 
+-- 
+2.1.4
+
