@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5535C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CCDEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E460214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 345502146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0yzvslIi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E460214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zk35OIeb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 345502146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729497AbeKZVxD (ORCPT
+        id S1729511AbeKZVxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:53:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34662 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:53:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727875AbeKZVxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:53:01 -0500
+        id S1727875AbeKZVxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:53:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7124A2148E;
-        Mon, 26 Nov 2018 10:59:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 227982146F;
+        Mon, 26 Nov 2018 10:59:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229956;
-        bh=dTK7aThzStika/P3NlnByjppiCmwZH468eEtR5+VtiI=;
+        s=default; t=1543229959;
+        bh=6cjDADyKlfDQwGbf4ite/PGpd12Utf0Hgg6SblM8DlM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0yzvslIiq12pFzgHi/W+uEuTbhbchRxeD20MaxiHL2lVKxlDkBd1GTjo6B5/u5T6G
-         XA0+95DjI4gwxu9llmaWAlxpojZJkuQQhXfjlClR9FzRQ901UYYHhG0CnSi/2eDct9
-         RZuKi6mRP3vbtOV2YEJSIUNp48iZqFbDXkN4+C2k=
+        b=Zk35OIeb8p3HbCuzDwQTXIG9u8PPuF3LFUv3YoJoAtIqeJ1447XCmNjM4w8AB2llx
+         zf9gJLUx/dNIriA8AbEA0HcwkUummYzg0122jWIk8pAEne8z2EtaPD/HGqYqnc7MTn
+         wkihpKGa26n9KpnhA7tF8cbq6bXpE/j1Y2foRvxs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Feuerer <peter@piie.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Prasad Sodagudi <psodagud@codeaurora.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Dennis Zhou <dennis@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 18/62] platform/x86: acerhdf: Add BIOS entry for Gateway LT31 v1.3307
-Date:   Mon, 26 Nov 2018 11:50:59 +0100
-Message-Id: <20181126105052.361704303@linuxfoundation.org>
+Subject: [PATCH 4.14 19/62] arm64: percpu: Initialize ret in the default case
+Date:   Mon, 26 Nov 2018 11:51:00 +0100
+Message-Id: <20181126105052.428139949@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -66,39 +65,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 684238d79ad85c5e19a71bb5818e77e329912fbc ]
+[ Upstream commit b5bb425871186303e6936fa2581521bdd1964a58 ]
 
-To fix:
+Clang warns that if the default case is taken, ret will be
+uninitialized.
 
-  acerhdf: unknown (unsupported) BIOS version Gateway  /LT31   /v1.3307 , please report, aborting!
+./arch/arm64/include/asm/percpu.h:196:2: warning: variable 'ret' is used
+uninitialized whenever switch default is taken
+[-Wsometimes-uninitialized]
+        default:
+        ^~~~~~~
+./arch/arm64/include/asm/percpu.h:200:9: note: uninitialized use occurs
+here
+        return ret;
+               ^~~
+./arch/arm64/include/asm/percpu.h:157:19: note: initialize the variable
+'ret' to silence this warning
+        unsigned long ret, loop;
+                         ^
+                          = 0
 
-As can be seen in the context, the BIOS registers haven't changed in
-the previous versions, so the assumption is they won't have changed
-in this last update for this somewhat older platform either.
+This warning appears several times while building the erofs filesystem.
+While it's not strictly wrong, the BUILD_BUG will prevent this from
+becoming a true problem. Initialize ret to 0 in the default case right
+before the BUILD_BUG to silence all of these warnings.
 
-Cc: Peter Feuerer <peter@piie.net>
-Cc: Darren Hart <dvhart@infradead.org>
-Cc: Andy Shevchenko <andy@infradead.org>
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Peter Feuerer <peter@piie.net>
+Reported-by: Prasad Sodagudi <psodagud@codeaurora.org>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/acerhdf.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/include/asm/percpu.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
-index ea22591ee66f..53dfe67807e3 100644
---- a/drivers/platform/x86/acerhdf.c
-+++ b/drivers/platform/x86/acerhdf.c
-@@ -233,6 +233,7 @@ static const struct bios_settings bios_tbl[] = {
- 	{"Gateway", "LT31",   "v1.3201",  0x55, 0x58, {0x9e, 0x00}, 0},
- 	{"Gateway", "LT31",   "v1.3302",  0x55, 0x58, {0x9e, 0x00}, 0},
- 	{"Gateway", "LT31",   "v1.3303t", 0x55, 0x58, {0x9e, 0x00}, 0},
-+	{"Gateway", "LT31",   "v1.3307",  0x55, 0x58, {0x9e, 0x00}, 0},
- 	/* Packard Bell */
- 	{"Packard Bell", "DOA150",  "v0.3104",  0x55, 0x58, {0x21, 0x00}, 0},
- 	{"Packard Bell", "DOA150",  "v0.3105",  0x55, 0x58, {0x20, 0x00}, 0},
+diff --git a/arch/arm64/include/asm/percpu.h b/arch/arm64/include/asm/percpu.h
+index 43393208229e..d79eaa816f29 100644
+--- a/arch/arm64/include/asm/percpu.h
++++ b/arch/arm64/include/asm/percpu.h
+@@ -93,6 +93,7 @@ static inline unsigned long __percpu_##op(void *ptr,			\
+ 		: [val] "Ir" (val));					\
+ 		break;							\
+ 	default:							\
++		ret = 0;						\
+ 		BUILD_BUG();						\
+ 	}								\
+ 									\
+@@ -122,6 +123,7 @@ static inline unsigned long __percpu_read(void *ptr, int size)
+ 		ret = READ_ONCE(*(u64 *)ptr);
+ 		break;
+ 	default:
++		ret = 0;
+ 		BUILD_BUG();
+ 	}
+ 
+@@ -191,6 +193,7 @@ static inline unsigned long __percpu_xchg(void *ptr, unsigned long val,
+ 		: [val] "r" (val));
+ 		break;
+ 	default:
++		ret = 0;
+ 		BUILD_BUG();
+ 	}
+ 
 -- 
 2.17.1
 
