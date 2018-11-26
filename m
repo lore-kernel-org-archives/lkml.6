@@ -2,172 +2,149 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB30C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 03:29:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0F3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 03:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E66720865
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 03:29:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CCXZBe1L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E66720865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id A49982084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 03:36:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A49982084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726263AbeKZOWB (ORCPT
+        id S1726210AbeKZO3A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 09:22:01 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:33494 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbeKZOWA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 09:22:00 -0500
-Received: by mail-oi1-f193.google.com with SMTP id c206so14572181oib.0
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 19:29:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=3tDKGL4UxnGD+fU8NJPD/QcNWt/1qaHGuZR5ac1DIXI=;
-        b=CCXZBe1L7+ULmWTT4WYTvtR6FMiYWAPh7mmC/YQ1edQj6xb+p8Amr/Fe+GmFZgNjxA
-         sl6WzcX753pwjgrxOnwNnw7wAAZOq4g+OVjhxu4Goi53qPyAM3YPY4gJz9wzNnFL1QD4
-         q7QzMBqKqlTLVZLTq+98q+bgxth4KBL+Y7sohL/fXY+diu6bMaMwGcKq7w9ROfHkFClQ
-         JGb1J4vtJ3OODXLQ9A+70QQTRHd6v9WysCz5Eg/B70qN5HWYL5jzCd6Oe7N/VRbDnpom
-         dQfQplmmeX7b3P8ol5SCWBpnBNcTZl4MRCvH1xDV8jF2ocyviDZK3W9IXr8iqZyIFFC1
-         b3+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=3tDKGL4UxnGD+fU8NJPD/QcNWt/1qaHGuZR5ac1DIXI=;
-        b=nqmF261fBPMF7sF48oTlvavOptzu+89DCFo5zRuZwaPMPrgG35iH5hhFt0RnnkcjaY
-         b9YYXC0ySeFBZmNyY/WrhaS4XEzhSfu36dgh65flHCswy+IkU2sF9kH7+onu8BdgHaN5
-         FwI1NHz/czv13N6XbDCCDB8Fh1MSIx6fI0fJs+e2cF47hdomN8cA6+O8WrhogiJaDXdN
-         jP76RvZ0kmXfS3uhytZC5oFsM67sfNIPnjetn+pUcyXhlw2i0w8MlAiYKoZx1LFxiqK+
-         HCTB0XKt7msrhMpDyEyCw3HjZEseKZdezgSzkOa31yv6jRISxIdZDz11mkHCWkaqBB5W
-         qjMg==
-X-Gm-Message-State: AA+aEWaHEuDzS2+QvgGjviNs3J0S/ODKqasXDVhiADjX9P1ydDQrD+Zy
-        lz5DLJJ2M/azyjxJvJ2JMbf7IQ==
-X-Google-Smtp-Source: AFSGD/UEpAsi8VCCwseuiUlDjFcycy/97L5jVEXPIjh/UXGTKSdHqZGH6EvyrwEuqIpGkCClQj5lYQ==
-X-Received: by 2002:aca:3a55:: with SMTP id h82mr12385505oia.86.1543202956380;
-        Sun, 25 Nov 2018 19:29:16 -0800 (PST)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id c9sm19221094otb.38.2018.11.25.19.29.13
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 25 Nov 2018 19:29:15 -0800 (PST)
-Date:   Sun, 25 Nov 2018 19:29:07 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>, bhe@redhat.com,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>, david@redhat.com,
-        mgorman@techsingularity.net, dh.herrmann@gmail.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, kan.liang@intel.com,
-        Andi Kleen <ak@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christoph Lameter <cl@linux.com>,
-        Nick Piggin <npiggin@gmail.com>, pifang@redhat.com,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] mm: put_and_wait_on_page_locked() while page is
- migrated
-In-Reply-To: <CAHk-=wjeqKYevxGnfCM4UkxX8k8xfArzM6gKkG3BZg1jBYThVQ@mail.gmail.com>
-Message-ID: <alpine.LSU.2.11.1811251900300.1278@eggly.anvils>
-References: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils> <CAHk-=wjeqKYevxGnfCM4UkxX8k8xfArzM6gKkG3BZg1jBYThVQ@mail.gmail.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Mon, 26 Nov 2018 09:29:00 -0500
+Received: from mga04.intel.com ([192.55.52.120]:20778 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726116AbeKZO3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 09:29:00 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Nov 2018 19:36:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,280,1539673200"; 
+   d="scan'208";a="111433439"
+Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
+  by orsmga002.jf.intel.com with ESMTP; 25 Nov 2018 19:36:13 -0800
+Subject: Re: [PATCH v3 1/2] x86/fpu: track AVX-512 usage of tasks
+To:     Samuel Neves <sneves@dei.uc.pt>, dave.hansen@intel.com,
+        aubrey.li@intel.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, peterz@infradead.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        arjan@linux.intel.com, linux-kernel@vger.kernel.org
+References: <CAEX_ruH=9VHD-8YH2--4mYPq7LD2Ciya2ADeSO=c38s2KaQhUg@mail.gmail.com>
+From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
+Message-ID: <2a1a43a7-bb70-9629-0694-1f326ed70e54@linux.intel.com>
+Date:   Mon, 26 Nov 2018 11:36:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <CAEX_ruH=9VHD-8YH2--4mYPq7LD2Ciya2ADeSO=c38s2KaQhUg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 25 Nov 2018, Linus Torvalds wrote:
-> On Sat, Nov 24, 2018 at 7:21 PM Hugh Dickins <hughd@google.com> wrote:
-> >
-> > Linus, I'm addressing this patch to you because I see from Tim Chen's
-> > thread that it would interest you, and you were disappointed not to
-> > root cause the issue back then.  I'm not pushing for you to fast-track
-> > this into 4.20-rc, but I expect Andrew will pick it up for mmotm, and
-> > thence linux-next.  Or you may spot a terrible defect, but I hope not.
+On 2018/11/18 22:03, Samuel Neves wrote:
+> On 11/17/18 12:36 AM, Li, Aubrey wrote:
+>> On 2018/11/17 7:10, Dave Hansen wrote:
+>>> Just to be clear: there are 3 AVX-512 XSAVE states:
+>>>
+>>>          XFEATURE_OPMASK,
+>>>          XFEATURE_ZMM_Hi256,
+>>>          XFEATURE_Hi16_ZMM,
+>>>
+>>> I honestly don't know what XFEATURE_OPMASK does.  It does not appear to
+>>> be affected by VZEROUPPER (although VZEROUPPER's SDM documentation isn't
+>>> looking too great).
 > 
-> The only terrible defect I spot is that I wish the change to the
-> 'lock' argument in wait_on_page_bit_common() came with a comment
-> explaining the new semantics.o
-
-Thanks a lot for looking through it.
-
+> XFEATURE_OPMASK refers to the additional 8 mask registers used in
+> AVX512. These are more similar to general purpose registers than
+> vector registers, and should not be too relevant here.
 > 
-> The old semantics were somewhat obvious (even if not documented): if
-> 'lock' was set,  we'd make the wait exclusive, and we'd lock the page
-> before returning. That kind of matches the intuitive meaning for the
-> function prototype, and it's pretty obvious in the callers too.
+>>>
+>>> But, XFEATURE_ZMM_Hi256 is used for the upper 256 bits of the
+>>> registers ZMM0-ZMM15.  Those are AVX-512-only registers.  The only way
+>>> to get data into XFEATURE_ZMM_Hi256 state is by using AVX512 instructions.
+>>>
+>>> XFEATURE_Hi16_ZMM is the same.  The only way to get state in there is
+>>> with AVX512 instructions.
+>>>
+>>> So, first of all, I think you *MUST* check XFEATURE_ZMM_Hi256 and
+>>> XFEATURE_Hi16_ZMM.  That's without question.
+>>
+>> No, XFEATURE_ZMM_Hi256 does not request turbo license 2, so it's less
+>> interested to us.
+>>
 > 
-> The new semantics don't have the same kind of really intuitive
-> meaning, I feel. That "-1" doesn't mean "unlock", it means "drop page
-> reference", so there is no longer a fairly intuitive and direct
-> mapping between the argument name and type and the behavior of the
-> function.
+> I think Dave is right, and it's easy enough to check this. See the
+> attached program. For the "high current" instruction vpmuludq
+> operating on zmm0--zmm3 registers, we have (on a Skylake-SP Xeon Gold
+> 5120)
 > 
-> So I don't hate the concept of the patch at all, but I do ask to:
+>            175,097      core_power.lvl0_turbo_license:u
+>                      ( +-  2.18% )
+>             41,185      core_power.lvl1_turbo_license:u
+>                      ( +-  1.55% )
+>         83,928,648      core_power.lvl2_turbo_license:u
+>                      ( +-  0.00% )
 > 
->  - better documentation.
+> while for the same code operating on zmm28--zmm31 registers, we have
 > 
->    This might not be "documentation" at all, maybe that "lock"
-> variable should just be renamed (because it's not about just locking
-> any more), and would be better off as a tristate enum called
-> "behavior" that has "LOCK, DROP, WAIT" values?
-
-Agreed, an enum should be best. I'll try it out now, and see what
-naming fits - I'm not all that keen on "LOCK", since (like many of the
-existing comments) it forgets that PG_locked is only one of the flags
-that comes here.  Admittedly, the only other is PG_writeback, and
-nobody wants exclusive behavior on that one, but...
-
+>            163,507      core_power.lvl0_turbo_license:u
+>                      ( +-  6.85% )
+>             47,390      core_power.lvl1_turbo_license:u
+>                      ( +- 12.25% )
+>         83,927,735      core_power.lvl2_turbo_license:u
+>                      ( +-  0.00% )
 > 
->  - while it sounds likely that this is indeed the same issue that
-> plagues us with the insanely long wait-queues, it would be *really*
-> nice to have that actually confirmed.
-
-I echo your words: it would be *really* nice.  We do already know
-that this patch is good for many problem loads, but it would be very
-satisfying if it could also wrap that discussion from last year.
-
+> In other words, the register index does not seem to matter at all for
+> turbo license purposes (this makes sense, considering these chips have
+> 168 vector registers internally; zmm15--zmm31 are simply newly exposed
+> architectural registers).
 > 
->    Does somebody still have access to the customer load that triggered
-> the horrible scaling issues before?
-
-Kan? Tim?
-
+> We can also see that XFEATURE_Hi16_ZMM does not imply license 1 or 2;
+> we may be using xmm15--xmm31 purely for the convenient extra register
+> space. For example, cases 4 and 5 of the sample program:
 > 
-> In particular, on that second issue: the "fixes" that went in for the
-> wait-queues didn't really fix any real scalability problem, it really
-> just fixed the excessive irq latency issues due to the long traversal
-> holding a lock.
+>         84,064,239      core_power.lvl0_turbo_license:u
+>                      ( +-  0.00% )
+>                  0      core_power.lvl1_turbo_license:u
+>                  0      core_power.lvl2_turbo_license:u
 > 
-> If this really fixes the fundamental issue, that should show up as an
-> actual performance difference, I'd expect..
-
-I guess so, though it might be more convincing to add a hack to suppress
-the bookmarking (e.g. #define WAITQUEUE_WALK_BREAK_CNT (INT_MAX - 1))
-when trying out the put_and_wait patch - if they can persuade the
-customer to go back in time on this, which is asking a lot.
-
-Not that I have any ambitions to do away with the bookmarking myself;
-though I do have several reservations about the way it works out (that
-I'd rather go into some other time).
-
+>         84,060,625      core_power.lvl0_turbo_license:u
+>                      ( +-  0.00% )
+>                  0      core_power.lvl1_turbo_license:u
+>                  0      core_power.lvl2_turbo_license:u
 > 
-> End result: I like and approve of the patch, but I'd like it a lot
-> more if the code behavior was clarified a bit, and I'd really like to
-> close the loop on that old nasty page wait queue issue...
+> So what's most important is the width of the vectors being used, not
+> the instruction set or the register index. Second to that is the
+> instruction type, namely whether those are "heavy" instructions.
+> Neither of these things can be accurately captured by the XSAVE state.
+> 
 
-Thanks!
-Hugh
+okay, in terms of license 2 we only care about, AVX512 is a requirement.
+Do we have any exception of non-AVX512 producing license 2? If no, I'm
+gonna use 
+
+#define XFEATURE_MASK_AVX512            (XFEATURE_MASK_OPMASK \
+                                         | XFEATURE_MASK_ZMM_Hi256 \
+                                         | XFEATURE_MASK_Hi16_ZMM)
+
+to expose AVX512 component usage. Although AVX512 is not a sufficient
+condition of license 2, but the usage could be an useful hint to the user
+tool to further check PMU counter. (That is, if the hint is zero, no need
+further check).
+
+What do you think?
+
+Thanks,
+-Aubrey
