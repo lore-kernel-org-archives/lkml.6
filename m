@@ -2,162 +2,161 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CE7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46988C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 881DD20672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:06:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="gNHhiHvh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 881DD20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 0199C20878
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:11:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0199C20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=KARO-electronics.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726243AbeKZUAF (ORCPT
+        id S1726225AbeKZUEt convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 15:00:05 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:45291 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbeKZUAF (ORCPT
+        Mon, 26 Nov 2018 15:04:49 -0500
+Received: from smtprelay06.ispgateway.de ([80.67.31.101]:17645 "EHLO
+        smtprelay06.ispgateway.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbeKZUEt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 15:00:05 -0500
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id wAQ96R3m027687;
-        Mon, 26 Nov 2018 18:06:27 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com wAQ96R3m027687
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1543223188;
-        bh=3yrttje3Lo8lp3aPcMiPLp29pQqesw4fxLAh89FC+aE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=gNHhiHvhUCiYVqL5c7ngPcAR8HhmD770hqjqLLX0hNbVBMkeA5ucv06dnbtB5z6/+
-         NCpVjojwRZKsb41EfL4BOH36z6Q7DKhuhtGNp9xr3v/g4z43QG0NKbxXbp+xoEEBGU
-         Pz6g5NsxWwhlBGfPI23mj6l/qx/eD0yJNbXDk6sYe/yTF9swZ442tvmZrlZgngH9Pn
-         GwWNsZ7n97kvYN5yovFjqVV9m6+gq60ZuuFBulQTPaRIezkk5ZBcVBtaPttH0Zys8G
-         qZJnXsLwMw7VquvVFea/kSCwUYxy3jxXv58G3Wm+9nHLVx4/g02/JrY28/LONJTcKs
-         1Wb9AGmRFLeoQ==
-X-Nifty-SrcIP: [209.85.217.51]
-Received: by mail-vs1-f51.google.com with SMTP id x64so10810641vsa.5;
-        Mon, 26 Nov 2018 01:06:27 -0800 (PST)
-X-Gm-Message-State: AGRZ1gLtRdwsENXZWN5wKftGA6zuQVnhff5Tn7ZY37VPt3Rl/uYW1rLx
-        //IHAtTDwP+WaJ/916Nbj20kq9eiuTP4nWaYa04=
-X-Google-Smtp-Source: AJdET5cCG45bQvi5nMakiZ2byFrkMDsYs7ofVM083qQisX/kH35N/sqVqEE67SOjD0GNGcQVpz3qyLngMhICxg6c47M=
-X-Received: by 2002:a67:5f03:: with SMTP id t3mr11126394vsb.155.1543223186179;
- Mon, 26 Nov 2018 01:06:26 -0800 (PST)
+        Mon, 26 Nov 2018 15:04:49 -0500
+Received: from [89.1.81.74] (helo=ipc1.ka-ro)
+        by smtprelay06.ispgateway.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <LW@KARO-electronics.de>)
+        id 1gRCvF-0004x6-DE; Mon, 26 Nov 2018 10:11:17 +0100
+Date:   Mon, 26 Nov 2018 10:11:16 +0100
+From:   Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
+To:     Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     =?UTF-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        Lukasz Majewski <l.majewski@majess.pl>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        viresh kumar <viresh.kumar@linaro.org>
+Subject: Re: [RCF PATCH,v2,2/2] pwm: imx: Configure output to GPIO in
+ disabled state
+Message-ID: <20181126101116.32819842@ipc1.ka-ro>
+In-Reply-To: <20181125205612.aownvgjnpxhqyxed@pengutronix.de>
+References: <20181114215120.vddykljqyavm64wj@pengutronix.de>
+        <20181115152545.GA8611@ulmo>
+        <20181115203733.qvonika6yhn2bsnb@pengutronix.de>
+        <20181116083430.7f1d8452@ipc1.ka-ro>
+        <20181116082557.l2ljgu3hsu7tvdci@pengutronix.de>
+        <91640f9b-d219-553e-043a-c6151f2f68d7@ysoft.com>
+        <20181122162359.ufngpgxkenlmgqni@pengutronix.de>
+        <b332b319-cbb3-547f-c8b7-1dd275c1596d@ysoft.com>
+        <20181122190321.ktqegs7kpvhcemvi@pengutronix.de>
+        <9da8c6d9-d97c-200c-d8e4-2eb9f73eedc5@ysoft.com>
+        <20181125205612.aownvgjnpxhqyxed@pengutronix.de>
+Organization: Ka-Ro electronics GmbH
 MIME-Version: 1.0
-References: <1543216969-2227-1-git-send-email-yamada.masahiro@socionext.com> <201811261636.PY7IBywo%fengguang.wu@intel.com>
-In-Reply-To: <201811261636.PY7IBywo%fengguang.wu@intel.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 26 Nov 2018 18:05:50 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQkTm4kLSwtF_jDCHSayy5mAMHyNhekA2T5meDTRrVmFg@mail.gmail.com>
-Message-ID: <CAK7LNAQkTm4kLSwtF_jDCHSayy5mAMHyNhekA2T5meDTRrVmFg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] kconfig: fix reverse dependency with tristate if-conditional
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Taehee Yoo <ap420073@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Df-Sender: bHdAa2Fyby1lbGVjdHJvbmljcy5kZQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 5:17 PM kbuild test robot <lkp@intel.com> wrote:
->
-> Hi Masahiro,
->
-> I love your patch! Yet something to improve:
->
-> [auto build test ERROR on masahiroy/kconfig]
-> [also build test ERROR on v4.20-rc4]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
-> url:    https://github.com/0day-ci/linux/commits/Masahiro-Yamada/kconfig-fix-reverse-dependency-with-tristate-if-conditional/20181126-152716
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git kconfig
-> config: i386-randconfig-s1-201847 (attached as .config)
-> compiler: gcc-6 (Debian 6.4.0-9) 6.4.0 20171026
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=i386
->
-> All errors (new ones prefixed by >>):
+Uwe Kleine-König <u.kleine-koenig@pengutronix.de> wrote:
+
+> Hello Michal,
+> 
+> On Fri, Nov 23, 2018 at 03:15:11PM +0000, Vokáč Michal wrote:
+> > On 22.11.2018 20:03, Uwe Kleine-König wrote:  
+> > > On Thu, Nov 22, 2018 at 04:46:39PM +0000, Vokáč Michal wrote:  
+> > >> On 22.11.2018 17:23, Uwe Kleine-König wrote:  
+> > >>> So I'd expect this to really work on i.MX6 but not the earlier SoCs
+> > >>> without a gpio specifier.  
+> > >>
+> > >> Maybe you would expect it to work but I already tested and measured
+> > >> that weeks ago ;) It did not work.  
+> > > 
+> > > Which pin/gpio do we talk about? Which i.MX6 variant did you test this
+> > > on? (Assuming i.MX6D or i.MX6Q and PAD_DISP0_DATA09, did you try setting
+> > > 
+> > > 	IOMUXC_SW_MUX_CTL_PAD_DISP0_DATA09 (0x020E0194) = 0x00000005
+> > > 	IOMUXC_SW_PAD_CTL_PAD_DISP0_DATA09 (0x020E04A8) = 0x0000b080
+> > > 
+> > > and then play with GPIO 4.30 direction and output value?)  
+> > 
+> > My test setup is as follows:
+> > - SoC is i.MX6DL or i.MX6S - I have three board variants in total.
+> > - Pin used for PWM/GPIO is PAD_GPIO9.
+> > - The pin is not connected to any circuit. Just a test point.
+> > - pinctrl setup in DT:
+> >    - for "pwm":
+> >      - fsl,pins = <MX6QDL_PAD_GPIO_9__PWM1_OUT 0x8>
+> >      - IOMUXC_SW_MUX_CTL_PAD_GPIO09 = 0x00000004
+> >      - IOMUXC_SW_PAD_CTL_PAD_GPIO09 = 0x00000008
+> > 
+> >    - for "gpio":
+> >     - fsl,pins = <MX6QDL_PAD_GPIO_9__GPIO1_IO09 0xb000>
+> >     - IOMUXC_SW_MUX_CTL_PAD_GPIO09 = 0x00000005
+> >     - IOMUXC_SW_PAD_CTL_PAD_GPIO09 = 0x0000b000  
+> 
+> FTR: I suggested 0x0000b080 here, but 0x0000b000 is just fine.
+> 
+> > Test scenario:
+> > 
+> > - In bootloader configure the pin as GPIO output, set it LOW (0V).
+> >    I set it LOW to start in the oposite state than I want to end up in.
+> > - Boot Linux
+> > - Use sysfs to configure the PWM to produce some signal.
+> > - In the PWM driver select the "pwm" pinctrl state.
+> > - Measure the output - expected waveform on the scope.
+> > - Use sysfs to stop the PWM "echo 0 > /sys/class/pwm/pwmchip0/pwm0/enable°
+> > - In the PWM driver select the "gpio" pinctrl state.
+> > - Then in the PWM driver:
+> > 
+> > a) non-working variant
+> > - Do not request the GPIO - so do not touch its pad control reg.
+> >    It is set as output from the bootloader, data register = 0.
+> > - Measure voltage on the output
+> >    - against GND = 0V
+> >    - against VCC = 0V
+> > - Measure resistance against VCC: Hi-Z
+> > 
+> > The pin is in Hi-Z mode. That is fine but that does not satisfy any
+> > logic level.
+> > 
+> > b) working variant
+> > - Request the GPIO, configure it as input.
+> > - Measure voltage on the output
+> >    - against GND = VCC (3.3V)
+> >    - against VCC = 0V
+> > - Measure resistance against VCC = 91.1kOhm
+> > 
+> > The pull-up is active.  
+> 
+> Thanks for your detailed test. So DSE = 0 doesn't work as I (and I think
+> Lothar) expected.
+> 
+> @Lothar: if Michal did something different than you expected, please
+> tell us with a few more details.
+> 
+No, Michal's findings are in sync with what I checked here.
 
 
-OK, this is not so easy to fix as I expected.
-
-
-UML is not defined at all for i386,
-
-'UML != n' is evaluated to 'y'.
-
-
-I need to think about how to fix this.
-
-
-
-
-
-
-
-
->    drivers/input//mouse/synaptics.c: In function 'synaptics_create_intertouch':
-> >> drivers/input//mouse/synaptics.c:1754:9: error: implicit declaration of function 'psmouse_smbus_init' [-Werror=implicit-function-declaration]
->      return psmouse_smbus_init(psmouse, &intertouch_board,
->             ^~~~~~~~~~~~~~~~~~
->    cc1: some warnings being treated as errors
->
-> vim +/psmouse_smbus_init +1754 drivers/input//mouse/synaptics.c
->
-> e839ffab Benjamin Tissoires 2017-03-02  1728
-> e839ffab Benjamin Tissoires 2017-03-02  1729  static int synaptics_create_intertouch(struct psmouse *psmouse,
-> e839ffab Benjamin Tissoires 2017-03-02  1730                                   struct synaptics_device_info *info,
-> e839ffab Benjamin Tissoires 2017-03-02  1731                                   bool leave_breadcrumbs)
-> e839ffab Benjamin Tissoires 2017-03-02  1732  {
-> e839ffab Benjamin Tissoires 2017-03-02  1733    bool topbuttonpad =
-> e839ffab Benjamin Tissoires 2017-03-02  1734            psmouse_matches_pnp_id(psmouse, topbuttonpad_pnp_ids) &&
-> e839ffab Benjamin Tissoires 2017-03-02  1735            !SYN_CAP_EXT_BUTTONS_STICK(info->ext_cap_10);
-> e839ffab Benjamin Tissoires 2017-03-02  1736    const struct rmi_device_platform_data pdata = {
-> e839ffab Benjamin Tissoires 2017-03-02  1737            .sensor_pdata = {
-> e839ffab Benjamin Tissoires 2017-03-02  1738                    .sensor_type = rmi_sensor_touchpad,
-> e839ffab Benjamin Tissoires 2017-03-02  1739                    .axis_align.flip_y = true,
-> 2b30297d Andrew Duggan      2017-10-09  1740                    .kernel_tracking = false,
-> e839ffab Benjamin Tissoires 2017-03-02  1741                    .topbuttonpad = topbuttonpad,
-> e839ffab Benjamin Tissoires 2017-03-02  1742            },
-> e839ffab Benjamin Tissoires 2017-03-02  1743            .f30_data = {
-> e839ffab Benjamin Tissoires 2017-03-02  1744                    .buttonpad = SYN_CAP_CLICKPAD(info->ext_cap_0c),
-> e839ffab Benjamin Tissoires 2017-03-02  1745                    .trackstick_buttons =
-> e839ffab Benjamin Tissoires 2017-03-02  1746                            !!SYN_CAP_EXT_BUTTONS_STICK(info->ext_cap_10),
-> e839ffab Benjamin Tissoires 2017-03-02  1747            },
-> e839ffab Benjamin Tissoires 2017-03-02  1748    };
-> e839ffab Benjamin Tissoires 2017-03-02  1749    const struct i2c_board_info intertouch_board = {
-> e839ffab Benjamin Tissoires 2017-03-02  1750            I2C_BOARD_INFO("rmi4_smbus", 0x2c),
-> e839ffab Benjamin Tissoires 2017-03-02  1751            .flags = I2C_CLIENT_HOST_NOTIFY,
-> e839ffab Benjamin Tissoires 2017-03-02  1752    };
-> e839ffab Benjamin Tissoires 2017-03-02  1753
-> e839ffab Benjamin Tissoires 2017-03-02 @1754    return psmouse_smbus_init(psmouse, &intertouch_board,
-> bf232e46 Benjamin Tissoires 2018-05-22  1755                              &pdata, sizeof(pdata), true,
-> e839ffab Benjamin Tissoires 2017-03-02  1756                              leave_breadcrumbs);
-> e839ffab Benjamin Tissoires 2017-03-02  1757  }
-> e839ffab Benjamin Tissoires 2017-03-02  1758
->
-> :::::: The code at line 1754 was first introduced by commit
-> :::::: e839ffab028981ac77f650faf8c84f16e1719738 Input: synaptics - add support for Intertouch devices
->
-> :::::: TO: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> :::::: CC: Dmitry Torokhov <dmitry.torokhov@gmail.com>
->
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
-
-
+Lothar Waßmann
 -- 
-Best Regards
-Masahiro Yamada
+___________________________________________________________
+
+Ka-Ro electronics GmbH | Pascalstraße 22 | D - 52076 Aachen
+Phone: +49 2408 1402-0 | Fax: +49 2408 1402-10
+Geschäftsführer: Matthias Kaussen
+Handelsregistereintrag: Amtsgericht Aachen, HRB 4996
+
+www.karo-electronics.de | info@karo-electronics.de
+___________________________________________________________
