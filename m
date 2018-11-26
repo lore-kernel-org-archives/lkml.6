@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E40A8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E9A6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:27:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A27B320989
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:27:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A27B320989
+	by mail.kernel.org (Postfix) with ESMTP id 3FBB9213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:27:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FBB9213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726288AbeKZVU6 (ORCPT
+        id S1726439AbeKZVVI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:20:58 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59062 "EHLO mx1.redhat.com"
+        Mon, 26 Nov 2018 16:21:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40392 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726168AbeKZVU6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:20:58 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        id S1726290AbeKZVVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:21:08 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 41E363058934;
-        Mon, 26 Nov 2018 10:27:17 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 60FA73081D80;
+        Mon, 26 Nov 2018 10:27:27 +0000 (UTC)
 Received: from [10.36.112.66] (ovpn-112-66.ams2.redhat.com [10.36.112.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B657618A7F;
-        Mon, 26 Nov 2018 10:27:15 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 918FA5C1B2;
+        Mon, 26 Nov 2018 10:27:25 +0000 (UTC)
 Subject: Re: [PATCH] KVM: x86: Trace changes to active TSC offset regardless
  if vCPU in guest-mode
 To:     Liran Alon <liran.alon@oracle.com>
@@ -74,8 +74,8 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <8bbfcec4-22dc-3e90-79f9-1b4155ad30e5@redhat.com>
-Date:   Mon, 26 Nov 2018 11:27:13 +0100
+Message-ID: <555d670e-0622-f258-89d8-ad1bc8d747cb@redhat.com>
+Date:   Mon, 26 Nov 2018 11:27:23 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
@@ -83,8 +83,8 @@ In-Reply-To: <941567E8-FA38-4947-B9F9-529039ADDCEA@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 26 Nov 2018 10:27:17 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 26 Nov 2018 10:27:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -108,10 +108,9 @@ On 25/11/18 22:38, Liran Alon wrote:
 > I would have applied this refactoring change on top of my original version of this patch. Easier to read and review.
 
 Your original version of the patch is a bit different, in that it traced
-the L2 TSC offset for vmx and the L1 TSC offset for svm.  I think
-tracing the L1 TSC offset is clearer, but then doing it for vmx entailed
-either rewriting the function twice, or squashing the refactoring in
-this patch.
+the L2 TSC offset.  I think tracing the L1 TSC offset is clearer, but
+then doing it for vmx entailed either rewriting the function twice, or
+squashing the refactoring in this patch.
 
 Paolo
 
