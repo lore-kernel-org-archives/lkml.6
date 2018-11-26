@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79220C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A16DDC43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 436072086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:28:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C71220865
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:28:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="JUDeyeuP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 436072086B
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="dr4tqszQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C71220865
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727040AbeK0CWp (ORCPT
+        id S1727183AbeK0CXD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 21:22:45 -0500
-Received: from plaes.org ([188.166.43.21]:49992 "EHLO plaes.org"
+        Mon, 26 Nov 2018 21:23:03 -0500
+Received: from plaes.org ([188.166.43.21]:50126 "EHLO plaes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726869AbeK0CWo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 21:22:44 -0500
+        id S1726952AbeK0CWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 21:22:45 -0500
 Received: from localhost (85.253.196.132.cable.starman.ee [85.253.196.132])
-        by plaes.org (Postfix) with ESMTPSA id 0970041C64;
-        Mon, 26 Nov 2018 15:28:15 +0000 (UTC)
+        by plaes.org (Postfix) with ESMTPSA id 8CE6741CD4;
+        Mon, 26 Nov 2018 15:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1543246095; bh=OUsll2pSZ+358NKNJxIvPOwFWCiSRmYw6WUlwJb5uoA=;
+        t=1543246097; bh=GenIgYx59LmIuL/j+2Q6PrK12wKEQotxrKvCSV57Qq4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JUDeyeuPsJnifS/ateXI/uKf1+1hYIbC0VJnuf3ZPEugPFWQnUWo8XjIZ6vtuFesx
-         XCSi6aN/qT4sQgUYGvLOcegxNnUELpkGUueu5XsqBd0MxG2xa+7LdwUMIrjL3Lj/hD
-         duviv/2m4PHcT2pGDinQPj5Hmn7KD7mtet98ulCJ+P1YqziPO4I1hb8m66cjUv29dd
-         +aWnYu2ygMNB11PARsm2U940A1Mf6Wm9MuKxB1Wirb/XCcDQv/iwSJewy0wYN6ubbR
-         UbP98T9yFjdJKqRZiCkADXfEeXp0FxDtZnFMJ7KzHJqng14VGvLQXubM0y3vQqSSXJ
-         7VUeFl7KqW1tw==
+        b=dr4tqszQKjcjy9gyKMnHqFRJaImi/l5junS9rySEl1Xmj7bJuMasiCpYV+hWST6ar
+         Ao6VSylMV/N1AZOiMKkVhYpG10M4PnNa466fmpQIU356U/GBKYS3/AQLxl4gpOVALN
+         X4RLYzrCOmJYYBz/8lQph+CY6OlZ90hq6j4dP7DuTWKgXnxQcg4Kpqj5QdUlhl/IT1
+         XvXpMP7t8VasIqBenSF8RhxXTANE2IatP9OF3abZ4Yxmqfc6B8pVC3UAxbApYREHYO
+         HcTMFMQKc344i+QzSmBtcgxB4reXq8/XNqZEkPsgkt5WyKIVAQfExiWfHzCcvS9x67
+         9gVmIklneQhaQ==
 From:   Priit Laes <plaes@plaes.org>
 To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -49,9 +49,9 @@ To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-pm@vger.kernel.org
 Cc:     Priit Laes <plaes@plaes.org>, Olliver Schinagl <oliver@schinagl.nl>
-Subject: [PATCH 09/14] regulator: dts: add full voltage range to LDO4 on the Lime2
-Date:   Mon, 26 Nov 2018 17:27:50 +0200
-Message-Id: <0b1aa5b28cb5efe17c04150a181ef1fa4027bc55.1543245984.git-series.plaes@plaes.org>
+Subject: [PATCH 13/14] power: supply: axp20x: add missing include bitops.h
+Date:   Mon, 26 Nov 2018 17:27:54 +0200
+Message-Id: <9547ef8e8e6fe9f933264119bd186bdd83974999.1543245984.git-series.plaes@plaes.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.156212c9c5df493e098556cad9793a07dcab5e32.1543245984.git-series.plaes@plaes.org>
 References: <cover.156212c9c5df493e098556cad9793a07dcab5e32.1543245984.git-series.plaes@plaes.org>
@@ -64,63 +64,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Olliver Schinagl <oliver@schinagl.nl>
 
-With commit b43776d65a33b46092 ("ARM: dts: sunxi: Use axp209.dtsi for
-Olinuxino Lime2") we force them an arbitrary 2.8 volts. Granted, for
-LDO3 this may be less arbitrary, but for LDO4 this is just wrong.
-
-In the defense of LDO3, LDO3 is the regulator that feeds port bank E,
-which has no other purpose then a CSI/TS interface, however the case
-may still be, that the connected IO may be just as well be 3.3 volts.
-The big misnomer is however, that the schematic names GPIO-2 pin4
-LDO3_2.8V, rather then VDD-CSI0 or similar.
-
-This is much worse for LDO4 however, which is not referenced on any
-pin, is now set to 2.8 volts, but port bank G can also support various
-other peripherals such as UARTS etc.
-
-By having 2.8 volts however for LDO4, we thus now have peripherals that
-no longer function properly all of the time.
-
-Ideally, we want to set a supply voltage for each port bank, but the
-monolithic nature of the sunxi pinctroller currently prevents this and
-as such, the board should at least configure the LDO4 with the proper
-ranges.
-
-Until we can set the consumer at the port bank level, a child
-device-tree has to do something like:
-
-&reg_ldo4 {
-    regulator-min-microvolt = <3300000>;
-    regulator-max-microvolt = <3300000>;
-};
-
-While doing this the same way results in the same solution currently,
-we force the hack into the final devicetree rather then having it wrong
-at the board level.
+The axp20x_usb_power driver uses BIT() operations but lacks the include
+for it. Include the bitops.h header file.
 
 Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
 Signed-off-by: Priit Laes <plaes@plaes.org>
 ---
- arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/power/supply/axp20x_usb_power.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts b/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
-index ffafe97..1b9867f 100644
---- a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
-+++ b/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
-@@ -250,9 +250,10 @@
- };
+diff --git a/drivers/power/supply/axp20x_usb_power.c b/drivers/power/supply/axp20x_usb_power.c
+index 42001df..f52fe77 100644
+--- a/drivers/power/supply/axp20x_usb_power.c
++++ b/drivers/power/supply/axp20x_usb_power.c
+@@ -10,6 +10,7 @@
+  * option) any later version.
+  */
  
- &reg_ldo4 {
--	regulator-min-microvolt = <2800000>;
--	regulator-max-microvolt = <2800000>;
--	regulator-name = "vddio-csi1";
-+	regulator-always-on;
-+	regulator-min-microvolt = <1250000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vdd-io-pg";
- };
- 
- &reg_usb0_vbus {
++#include <linux/bitops.h>
+ #include <linux/device.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
 -- 
 git-series 0.9.1
