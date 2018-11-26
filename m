@@ -2,53 +2,51 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 616C2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D802C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E7A20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA4972089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNvQEYUH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E7A20817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBsmbCI7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA4972089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbeKZVuG (ORCPT
+        id S1728385AbeKZVuI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:50:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59192 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:50:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726532AbeKZVuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:50:05 -0500
+        id S1726532AbeKZVuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:50:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A209A2089F;
-        Mon, 26 Nov 2018 10:56:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A5ED2146F;
+        Mon, 26 Nov 2018 10:56:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229781;
-        bh=Y4plwhCLfACATu37LcW5m+ndByWUpauOJNUMh+X7WhI=;
+        s=default; t=1543229783;
+        bh=tUi/af6knvffPf3TvTEuzrW31vjPRy3y+HP0mlMnvJ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fNvQEYUHuxGETpaCvbJ8osmbF0gDuZ2aKlQrfvGwtvVok3WqaaTDesDawS43ePLha
-         +8Yq8GICWTbrsm+E/ZQPGgNSc1uA0GP5HBETAWh+L4ZlNBY60Yn4dBPkz64YcSUTwk
-         eEtMIu6YhLOXho0jLq3Gfj/GXByK2q66BWiQkBYg=
+        b=YBsmbCI7lA0FfWTtj7CGchRx5uN9X03I6nAYD/1Bs1tUHn48Ksk0aTOcLvE4daTn8
+         m7t/jSjv5zdRxyBO8PL0vJ4lQZKuPjNMYFaEjhHgkg5hPH4zgkUgbrSYtAxiVDb5Sm
+         T7YHdfAWmD/JVkvhkw4cye770klNb2624CZUoesw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com,
-        Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.4 70/70] HID: uhid: forbid UHID_CREATE under KERNEL_DS or elevated privileges
-Date:   Mon, 26 Nov 2018 11:51:25 +0100
-Message-Id: <20181126105053.225478745@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Westbrook <linux@westbrook.io>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 47/70] netfilter: ipset: actually allow allowable CIDR 0 in hash:net,port,net
+Date:   Mon, 26 Nov 2018 11:51:02 +0100
+Message-Id: <20181126105051.549263236@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
 References: <20181126105046.722096341@linuxfoundation.org>
@@ -66,74 +64,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+[ Upstream commit 886503f34d63e681662057448819edb5b1057a97 ]
 
-commit 8c01db7619f07c85c5cd81ec5eb83608b56c88f5 upstream.
+Allow /0 as advertised for hash:net,port,net sets.
 
-When a UHID_CREATE command is written to the uhid char device, a
-copy_from_user() is done from a user pointer embedded in the command.
-When the address limit is KERNEL_DS, e.g. as is the case during
-sys_sendfile(), this can read from kernel memory.  Alternatively,
-information can be leaked from a setuid binary that is tricked to write
-to the file descriptor.  Therefore, forbid UHID_CREATE in these cases.
+For "hash:net,port,net", ipset(8) says that "either subnet
+is permitted to be a /0 should you wish to match port
+between all destinations."
 
-No other commands in uhid_char_write() are affected by this bug and
-UHID_CREATE is marked as "obsolete", so apply the restriction to
-UHID_CREATE only rather than to uhid_char_write() entirely.
+Make that statement true.
 
-Thanks to Dmitry Vyukov for adding uhid definitions to syzkaller and to
-Jann Horn for commit 9da3f2b740544 ("x86/fault: BUG() when uaccess
-helpers fault on kernel addresses"), allowing this bug to be found.
+Before:
 
-Reported-by: syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com
-Fixes: d365c6cfd337 ("HID: uhid: add UHID_CREATE and UHID_DESTROY events")
-Cc: <stable@vger.kernel.org> # v3.6+
-Cc: Jann Horn <jannh@google.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Reviewed-by: Jann Horn <jannh@google.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    # ipset create cidrzero hash:net,port,net
+    # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
+    ipset v6.34: The value of the CIDR parameter of the IP address is invalid
 
+    # ipset create cidrzero6 hash:net,port,net family inet6
+    # ipset add cidrzero6 ::/0,12345,::/0
+    ipset v6.34: The value of the CIDR parameter of the IP address is invalid
+
+After:
+
+    # ipset create cidrzero hash:net,port,net
+    # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
+    # ipset test cidrzero 192.168.205.129,12345,172.16.205.129
+    192.168.205.129,tcp:12345,172.16.205.129 is in set cidrzero.
+
+    # ipset create cidrzero6 hash:net,port,net family inet6
+    # ipset add cidrzero6 ::/0,12345,::/0
+    # ipset test cidrzero6 fe80::1,12345,ff00::1
+    fe80::1,tcp:12345,ff00::1 is in set cidrzero6.
+
+See also:
+
+  https://bugzilla.kernel.org/show_bug.cgi?id=200897
+  https://github.com/ewestbrook/linux/commit/df7ff6efb0934ab6acc11f003ff1a7580d6c1d9c
+
+Signed-off-by: Eric Westbrook <linux@westbrook.io>
+Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/uhid.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ net/netfilter/ipset/ip_set_hash_netportnet.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/hid/uhid.c
-+++ b/drivers/hid/uhid.c
-@@ -12,6 +12,7 @@
+diff --git a/net/netfilter/ipset/ip_set_hash_netportnet.c b/net/netfilter/ipset/ip_set_hash_netportnet.c
+index 9a14c237830f..b259a5814965 100644
+--- a/net/netfilter/ipset/ip_set_hash_netportnet.c
++++ b/net/netfilter/ipset/ip_set_hash_netportnet.c
+@@ -213,13 +213,13 @@ hash_netportnet4_uadt(struct ip_set *set, struct nlattr *tb[],
  
- #include <linux/atomic.h>
- #include <linux/compat.h>
-+#include <linux/cred.h>
- #include <linux/device.h>
- #include <linux/fs.h>
- #include <linux/hid.h>
-@@ -24,6 +25,7 @@
- #include <linux/spinlock.h>
- #include <linux/uhid.h>
- #include <linux/wait.h>
-+#include <linux/uaccess.h>
+ 	if (tb[IPSET_ATTR_CIDR]) {
+ 		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
+-		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
++		if (e.cidr[0] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
  
- #define UHID_NAME	"uhid"
- #define UHID_BUFSIZE	32
-@@ -721,6 +723,17 @@ static ssize_t uhid_char_write(struct fi
+ 	if (tb[IPSET_ATTR_CIDR2]) {
+ 		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
+-		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
++		if (e.cidr[1] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
  
- 	switch (uhid->input_buf.type) {
- 	case UHID_CREATE:
-+		/*
-+		 * 'struct uhid_create_req' contains a __user pointer which is
-+		 * copied from, so it's unsafe to allow this with elevated
-+		 * privileges (e.g. from a setuid binary) or via kernel_write().
-+		 */
-+		if (file->f_cred != current_cred() || uaccess_kernel()) {
-+			pr_err_once("UHID_CREATE from different security context by process %d (%s), this is not allowed.\n",
-+				    task_tgid_vnr(current), current->comm);
-+			ret = -EACCES;
-+			goto unlock;
-+		}
- 		ret = uhid_dev_create(uhid, &uhid->input_buf);
- 		break;
- 	case UHID_CREATE2:
+@@ -492,13 +492,13 @@ hash_netportnet6_uadt(struct ip_set *set, struct nlattr *tb[],
+ 
+ 	if (tb[IPSET_ATTR_CIDR]) {
+ 		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
+-		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
++		if (e.cidr[0] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
+ 
+ 	if (tb[IPSET_ATTR_CIDR2]) {
+ 		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
+-		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
++		if (e.cidr[1] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
+ 
+-- 
+2.17.1
+
 
 
