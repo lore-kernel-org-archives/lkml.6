@@ -2,157 +2,98 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D94C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D38DFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:51:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1412920663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:51:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BB6120663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:51:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OORiYMsI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1412920663
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCRo8Z/S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BB6120663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726672AbeK0Bp0 (ORCPT
+        id S1726886AbeK0Bpc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 20:45:26 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:56307 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbeK0BpZ (ORCPT
+        Mon, 26 Nov 2018 20:45:32 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33960 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbeK0Bpc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 20:45:25 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y139so18455145wmc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 06:51:03 -0800 (PST)
+        Mon, 26 Nov 2018 20:45:32 -0500
+Received: by mail-pf1-f195.google.com with SMTP id h3so6698349pfg.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 06:51:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=kFMebdd3rVDX4F6Wrh7uYRhO+8QF8tMUU/jfte+pZG4=;
-        b=OORiYMsI47DjN8FRvdpYvwaaDHYcAYetF9/8pgwWigafI284I4oMtPNY5Yb+bfSc7j
-         ZAhNRzdwsWvFhBzzUUAj5yH46W/rGulFcf6r5z/zMGxvQYCEVWa9hDbWlAtxpYCgqVtd
-         UcxbLakWWthfiDkfwP6dkqUa9sM3eD7Yba2wu148qiXxpHy0lT45Cwf8EoxH8PXZkSEt
-         1tE6RCUaaBwSheHdQ8LVvouNLM6q6xr2voFSjI18GAtA3lgezqgZNWb+pkUi8M9z4vOH
-         mK1ooIcWPy+I71Nmw38yLsMUhAXs1rzF29p2Kz5YF/fpjoCJDEBPgRlBOwYl2sj+HJRb
-         DvJg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=1zyIcnckUSRiKfZOtJe0DJi6ekaw2hheXMhU4y1aanI=;
+        b=WCRo8Z/SFy4kcMxoDKFRlPeddo8MZQa7aOqgjyu9bkpzP4PQJQ5GTAFeV7oLgpwWic
+         Oe4QuUq3sfqFBJzHKnVwWggaTujIKYxiE7heBeWwMIY+VBkDUmuaNDWWHYrNfc8RW3XC
+         FM3LSdiyh9ipIZoc7WCz9ZdGtzJD1Oy2dNYQC46JJ53K8eOrPgr1J1zc7fTe/sXhkDth
+         tAAX0VebXoHU3Llz/+MoqmHbiVFnDVsuqDDuhZX9HuQbpAw6Zq2qjnJdsrfyAzjt8ac/
+         q2uJUuoM1nQPc5TzKNaKAVWRJe+40+L7H2ZGLHLQdQ87wjxYXfT5wk/TA6JoHUhmKC4a
+         Q0+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=kFMebdd3rVDX4F6Wrh7uYRhO+8QF8tMUU/jfte+pZG4=;
-        b=In5ZE7T2oScXRYr+4dIJ17e21FeWD0Uk3k0vbw6yDw05SfsNAFtaPMHwCzIVU+MqTm
-         uxncfb3mFD2Hc9U4qO0Wab5YKhMt4LdfNdv05HSkIhYRano31A17lnQhAEyM28WPQAkE
-         dd2JcPpd0IKrsZyMvBL9gw5Ev5+620F8iZVZ/1Qdjyw5SSg1HZfU9kGrVW5VRx3csSf2
-         cINxMmBR1skE+NtQPNE3SkMNZxfntMLSWh1A7S3/fKFyoMFxxL0MawItoIYm/X8tzk10
-         lJhnnB1cITQeklw7p78v3wX12GR06TnHV3Hw/H7AyFaLUk0rEiO1wv2ees8eFgIhV2gE
-         HSuQ==
-X-Gm-Message-State: AGRZ1gLySGqsjjyfyHquu9b/hfCrB7hKLb3iEQvBSouByV2yyqrCgl1n
-        AU03DHowIQ9vo1uxqo5mwRJTwkGBFoFy4Uy15GyA
-X-Google-Smtp-Source: AJdET5eLN3Ygw662ck0Gn3zC+eXaxK5/GRvOjNU/JhBJ48nU7m3unMyBNGYwjkQWhXVIdcrggZGPI/imO9bDf66VpPo=
-X-Received: by 2002:a1c:4046:: with SMTP id n67mr23174655wma.123.1543243862859;
- Mon, 26 Nov 2018 06:51:02 -0800 (PST)
-MIME-Version: 1.0
-References: <20181123141831.8214-1-miquel.raynal@bootlin.com>
-In-Reply-To: <20181123141831.8214-1-miquel.raynal@bootlin.com>
-From:   Bjorn Helgaas <bhelgaas@google.com>
-Date:   Mon, 26 Nov 2018 08:50:51 -0600
-Message-ID: <CAErSpo6WLc-OHGgGJdxVTrKwnPud+Kqpuswiz1zo7Yd8ruihEg@mail.gmail.com>
-Subject: Re: [PATCH 00/12] Bring suspend to RAM support to PCIe Aardvark driver
-To:     miquel.raynal@bootlin.com
-Cc:     gregory.clement@bootlin.com, Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        thomas.petazzoni@bootlin.com, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm <linux-arm-kernel@lists.infradead.org>,
-        antoine.tenart@bootlin.com, maxime.chevallier@bootlin.com,
-        Nadav Haklai <nadavh@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1zyIcnckUSRiKfZOtJe0DJi6ekaw2hheXMhU4y1aanI=;
+        b=mBXw/XLt9YY/VKqY+iFcO8+orF3+JF/X1S15flmYs9x6mMaiSjKgREuWEc87cNR23e
+         d38KgKFU3aOk/gHSUwyxmV6Qr261AF3jFQchbfU9MIkZCI/HTJJ5k8WPC4Xuilw2zfjT
+         MLUVUPC9uADlTLtZOzqXDSWmduR2Rh/t1QkR5THHFx9epab+g8YXKWKs0rKyhPIYN0C/
+         nXPi5w7K41LR78fsjKIUap0chu6FE6KF+E98BERdshKE1Y9gCVg/mnIjh93VdoIIvRyx
+         gyTQ18yI/GhrzPMNSdMwxB6md8LueqipH/I824XCMeBK9acsZUqZ7uZsMneQuxDeHIcv
+         xJFg==
+X-Gm-Message-State: AGRZ1gK7Lgi6FmtccSJmiyI9M+jAMCzzWUd8ZozzrK3jppcynM3MFYki
+        VyI0qDlHX2aYbFRS0wsoC98Zo4yGa4I=
+X-Google-Smtp-Source: AJdET5eB06Y3qAWIIgJ1hmEONyUW07YjJf/hAm7NjlDtzscS+iSJdQG1CZeDPQdvGoY3gzXEtqnZpA==
+X-Received: by 2002:a62:f5da:: with SMTP id b87mr28858299pfm.253.1543243871250;
+        Mon, 26 Nov 2018 06:51:11 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id a15sm620242pgb.1.2018.11.26.06.51.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 06:51:10 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     paul@paul-moore.com, eparis@redhat.com
+Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] audit: remove some duplicated includes
+Date:   Mon, 26 Nov 2018 09:51:07 -0500
+Message-Id: <20181126145107.31597-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 8:18 AM Miquel Raynal <miquel.raynal@bootlin.com> w=
-rote:
->
-> Hello,
->
-> As part of an effort to bring suspend to RAM support to Armada 3700
-> SoCs (main target: ESPRESSObin), this series handles the work around
-> the PCIe IP.
->
-> First, more configuration is done in the 'setup' helper as inspired
-> from the U-Boot driver. This is needed to entirely initialize the IP
-> during future resume operation (patch 1).
->
-> Then, reset GPIO, PHY and clock support are introduced (patch 2-4). As
-> current device trees do not provide the corresponding properties, not
-> finding one of these properties is not an error and just produces a
-> warning. However, if the property is present, an error during PHY
-> initialization will fail the probe of the driver.
->
-> Note: To be sure the clock will be resumed before this driver, a first
-> series adding links between clocks and consumers has been submitted,
-> see [1].
->
-> Patch 5 adds suspend/resume hooks, re-using all the above.
->
-> Finally, bindings and device trees are updated to reflect the hardware
-> (patch 6-12). While the clock depends on the SoC, the reset GPIO and
-> the PHY depends on the board so the clock is added in the
-> armada-37xx.dtsi file while the two other properties are added in
-> armada-3720-espressobin.dts.
->
-> [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-November/6=
-14527.html
->
-> Thanks,
-> Miqu=C3=A8l
->
->
-> Miquel Raynal (12):
->   PCI: aardvark: configure more registers in the configuration helper
->   PCI: aardvark: add reset GPIO support
->   PCI: aardvark: add PHY support
->   PCI: aardvark: add clock support
->   PCI: aardvark: add suspend to RAM support
->   dt-bindings: PCI: aardvark: describe the reset-gpios property
->   dt-bindings: PCI: aardvark: describe the clocks property
->   dt-bindings: PCI: aardvark: describe the PHY property
->   ARM64: dts: marvell: armada-37xx: declare PCIe reset pin
->   ARM64: dts: marvell: armada-3720-espressobin: declare PCIe reset GPIO
->   ARM64: dts: marvell: armada-37xx: declare PCIe clock
->   ARM64: dts: marvell: armada-3720-espressobin: declare PCIe PHY
+audit.h and skbuff.h are included twice.It's unnecessary.
+hence just remove them.
 
-Hi Miqu=C3=A8l,
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ kernel/audit.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Thanks for your work!  If/when you post a v2, please run "git log
---oneline" and adjust your subject lines to match the capitalization
-conventions, i.e., for PCI, start the description with a capital
-letter: "PCI: aardvark: Add suspend to RAM support".
+diff --git a/kernel/audit.c b/kernel/audit.c
+index 2a8058764aa6..a677715891d0 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -62,11 +62,8 @@
+ #include <linux/pid.h>
+ #include <linux/slab.h>
+ 
+-#include <linux/audit.h>
+-
+ #include <net/sock.h>
+ #include <net/netlink.h>
+-#include <linux/skbuff.h>
+ #ifdef CONFIG_SECURITY
+ #include <linux/security.h>
+ #endif
+-- 
+2.17.0
 
-BTW, I notice you closed your email with "Miqu=C3=A8l", but the patches
-contain "Miquel".  you *should* be able to use the correctly accented
-version of your name in the Signed-off-by lines.  I have tripped over
-some tool issues, but if we pay attention, we should be able to get it
-to work.
-
->  .../devicetree/bindings/pci/aardvark-pci.txt  |   9 +
->  .../dts/marvell/armada-3720-espressobin.dts   |   4 +
->  arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |   5 +
->  drivers/pci/controller/pci-aardvark.c         | 214 ++++++++++++++++++
->  4 files changed, 232 insertions(+)
->
-> --
-> 2.19.1
->
