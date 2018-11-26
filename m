@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58391C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA832C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 098B420855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:02:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 098B420855
+	by mail.kernel.org (Postfix) with ESMTP id 8732320850
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:03:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8732320850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726290AbeKZTz4 (ORCPT
+        id S1726313AbeKZT4m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 14:55:56 -0500
-Received: from mga01.intel.com ([192.55.52.88]:21449 "EHLO mga01.intel.com"
+        Mon, 26 Nov 2018 14:56:42 -0500
+Received: from mga06.intel.com ([134.134.136.31]:65425 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726158AbeKZTz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 14:55:56 -0500
+        id S1726158AbeKZT4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 14:56:41 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 01:02:28 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 01:03:14 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,281,1539673200"; 
-   d="scan'208";a="107762323"
+   d="scan'208";a="103152425"
 Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga002.fm.intel.com with ESMTP; 26 Nov 2018 01:02:26 -0800
+  by orsmga003.jf.intel.com with ESMTP; 26 Nov 2018 01:03:14 -0800
 Received: from [10.125.252.8] (abudanko-mobl.ccr.corp.intel.com [10.125.252.8])
-        by linux.intel.com (Postfix) with ESMTP id 6C28D5803C2;
-        Mon, 26 Nov 2018 01:02:19 -0800 (PST)
-Subject: [PATCH v3 1/2] Documentation/admin-guide: introduce perf-security.rst
- file
+        by linux.intel.com (Postfix) with ESMTP id C6FAE5803EB;
+        Mon, 26 Nov 2018 01:03:10 -0800 (PST)
+Subject: [PATCH v3 2/2] Documentation/admin-guide: update admin-guide
+ index.rst
 From:   Alexey Budankov <alexey.budankov@linux.intel.com>
 To:     Jonatan Corbet <corbet@lwn.net>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -55,8 +55,8 @@ Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 References: <6cfb235a-59bc-48f0-3425-59c5b6431b12@linux.intel.com>
 Organization: Intel Corp.
-Message-ID: <d4153c24-ba23-6734-4bcf-39525056aef5@linux.intel.com>
-Date:   Mon, 26 Nov 2018 12:02:18 +0300
+Message-ID: <c8bc809f-ae21-f7de-e477-7d357a1ccf73@linux.intel.com>
+Date:   Mon, 26 Nov 2018 12:03:09 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -70,104 +70,23 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Implement initial version of perf-security.rst documentation file
-covering security concerns of perf_event_paranoid settings.
+Extend index.rst index file at admin-guide root directory with
+the reference to perf-security.rst file being introduced.
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
-Changes in v3:
-- toning down of the markup for "scope, access and resource"
-- adding definite article for "Linux implementation"
-Changes in v2:
-- reverted patches order in the set to avoid CI issue
-- replaced old PCL referencing by PE (Perf Events)
-- skipped >=3 setting documentation at the moment
----
- Documentation/admin-guide/perf-security.rst | 77 +++++++++++++++++++++
- 1 file changed, 77 insertions(+)
- create mode 100644 Documentation/admin-guide/perf-security.rst
+ Documentation/admin-guide/index.rst | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/admin-guide/perf-security.rst b/Documentation/admin-guide/perf-security.rst
-new file mode 100644
-index 000000000000..f0fb75cadaed
---- /dev/null
-+++ b/Documentation/admin-guide/perf-security.rst
-@@ -0,0 +1,77 @@
-+.. _perf_security:
-+
-+Perf Events and tool security
-+=============================
-+
-+Overview
-+--------
-+
-+Usage of Performance Counters for Linux (perf_events) [1]_ , [2]_ , [3]_ can
-+impose a considerable risk of leaking sensitive data accessed by monitored
-+processes. The data leakage is possible both in scenarios of direct usage of
-+perf_events system call API [2]_ and over data files generated by Perf tool user
-+mode utility (Perf) [3]_ , [4]_ . The risk depends on the nature of data that
-+perf_events performance monitoring units (PMU) [2]_ collect and expose for
-+performance analysis. Having that said perf_events/Perf performance monitoring
-+is the subject for security access control management [5]_ .
-+
-+perf_events/Perf access control
-+-------------------------------
-+
-+For the purpose of performing security checks the Linux implementation splits
-+processes into two categories [6]_ : a) privileged processes (whose effective
-+user ID is 0, referred to as superuser or root), and b) unprivileged processes
-+(whose effective UID is nonzero). Privileged processes bypass all kernel
-+security permission checks so perf_events performance monitoring is fully
-+available to privileged processes without access, scope and resource
-+restrictions. Unprivileged processes are subject to full security permission
-+check based on the process's credentials [5]_ (usually: effective UID, effective
-+GID, and supplementary group list).
-+
-+perf_events/Perf unprivileged users
-+-----------------------------------
-+
-+perf_events/Perf *scope* and *access* control for unprivileged processes is
-+governed by perf_event_paranoid [2]_ setting:
-+
-+-1:
-+     Impose no *scope* and *access* restrictions on using perf_events performance
-+     monitoring. Per-user per-cpu perf_event_mlock_kb [2]_ locking limit is
-+     ignored when allocating memory buffers for storing performance data.
-+     This is the least secure mode since allowed monitored *scope* is
-+     maximized and no perf_events specific limits are imposed on *resources*
-+     allocated for performance monitoring.
-+
-+>=0:
-+     *scope* includes per-process and system wide performance monitoring
-+     but excludes raw tracepoints and ftrace function tracepoints monitoring.
-+     CPU and system events happened when executing either in user or
-+     in kernel space can be monitored and captured for later analysis.
-+     Per-user per-cpu perf_event_mlock_kb locking limit is imposed but
-+     ignored for unprivileged processes with CAP_IPC_LOCK [6]_ capability.
-+
-+>=1:
-+     *scope* includes per-process performance monitoring only and excludes
-+     system wide performance monitoring. CPU and system events happened when
-+     executing either in user or in kernel space can be monitored and
-+     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
-+     locking limit is imposed but ignored for unprivileged processes with
-+     CAP_IPC_LOCK capability.
-+
-+>=2:
-+     *scope* includes per-process performance monitoring only. CPU and system
-+     events happened when executing in user space only can be monitored and
-+     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
-+     locking limit is imposed but ignored for unprivileged processes with
-+     CAP_IPC_LOCK capability.
-+
-+Bibliography
-+------------
-+
-+.. [1] `<https://lwn.net/Articles/337493/>`_
-+.. [2] `<http://man7.org/linux/man-pages/man2/perf_event_open.2.html>`_
-+.. [3] `<http://web.eece.maine.edu/~vweaver/projects/perf_events/>`_
-+.. [4] `<https://perf.wiki.kernel.org/index.php/Main_Page>`_
-+.. [5] `<https://www.kernel.org/doc/html/latest/security/credentials.html>`_
-+.. [6] `<http://man7.org/linux/man-pages/man7/capabilities.7.html>`_
-+
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+index 965745d5fb9a..0a491676685e 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -76,6 +76,7 @@ configure specific aspects of kernel behavior to your liking.
+    thunderbolt
+    LSM/index
+    mm/index
++   perf-security
+ 
+ .. only::  subproject and html
+ 
