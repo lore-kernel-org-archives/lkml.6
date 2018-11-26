@@ -2,228 +2,117 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A4D9C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AFBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F99120660
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF54520660
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:22:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yoG/GYOq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F99120660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="O3ThtgcL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF54520660
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbeK0FRc (ORCPT
+        id S1726567AbeK0FRh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 00:17:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49346 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725723AbeK0FRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 00:17:32 -0500
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8074420989
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 18:22:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543256556;
-        bh=6hPGnLrV+QZcJMVsSvi/1YVZ8fpPO+ovW56LjFsKwBg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=yoG/GYOqALUkffbFnchUi9AtizbXwUek27ORislopOZY/cNFCt/q0FBupfrFnZ9tl
-         it/UFaiP2uszxK09FAivYTZW9H2IWWRLEMHHMPcTZlDpE2HppEQZiqR1lrNWf9r/RW
-         naGdN1C5gElGNrwuysefVIFrKRdb4KdKLBIFHHQw=
-Received: by mail-wr1-f45.google.com with SMTP id l9so19979123wrt.13
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 10:22:36 -0800 (PST)
-X-Gm-Message-State: AA+aEWYd7oH9RkDGMWq71oEZGvPRSVgHm5HkHEHhmVxUm5OCdryaKx57
-        yW7wBM5ER3nF//UKlO40asmY/nB54d90B9ZBkLk9Ag==
-X-Google-Smtp-Source: AFSGD/Vv9cNgAyAhEPS2DxyGw96gqnMvWFvxMCsd8g/QKF3f3TXQ6z7q6JyqZVJaeK6/+08cBxDMxyURBD65oFTD164=
-X-Received: by 2002:a5d:5541:: with SMTP id g1mr25339264wrw.330.1543256552960;
- Mon, 26 Nov 2018 10:22:32 -0800 (PST)
+        Tue, 27 Nov 2018 00:17:37 -0500
+Received: from mail-eopbgr780128.outbound.protection.outlook.com ([40.107.78.128]:36171
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725723AbeK0FRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 00:17:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hoWtzb28BwGytOIm3qmha0iTROGEOkKXn1JzxHOAunI=;
+ b=O3ThtgcL5NrjJ5fb33OuXteiBo/G9hmoOac9f0et1/qTSLkw2oAkUhYbmQ2vG47GYFN5zvvul9gnVd+BAfxG7o4T7O2B5eBBdF8Fcd1TN4/l9wwFVJ92X9lKYwHlMWWFQx4pBPSv63BSEQCxo9DJ9g7LRbjP6HMyMhHbve++LWQ=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
+ MWHPR2201MB1344.namprd22.prod.outlook.com (10.174.162.147) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.15; Mon, 26 Nov 2018 18:22:39 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::2d92:328e:af42:2985]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::2d92:328e:af42:2985%3]) with mapi id 15.20.1361.019; Mon, 26 Nov 2018
+ 18:22:39 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Mathias Kresin <dev@kresin.me>
+CC:     John Crispin <john@phrozen.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <pburton@wavecomp.com>,
+        James Hogan <jhogan@kernel.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>
+Subject: Re: [PATCH] MIPS: ralink: Fix mt7620 nd_sd pinmux
+Thread-Topic: [PATCH] MIPS: ralink: Fix mt7620 nd_sd pinmux
+Thread-Index: AQHUhXJnOeDss1ppKEWXi5kmzQdw5KViXyAA
+Date:   Mon, 26 Nov 2018 18:22:39 +0000
+Message-ID: <MWHPR2201MB12777328641375E40D6F11BFC1D70@MWHPR2201MB1277.namprd22.prod.outlook.com>
+References: <20181126102540.5304-1-dev@kresin.me>
+In-Reply-To: <20181126102540.5304-1-dev@kresin.me>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CO1PR15CA0071.namprd15.prod.outlook.com
+ (2603:10b6:101:20::15) To MWHPR2201MB1277.namprd22.prod.outlook.com
+ (2603:10b6:301:24::17)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [4.16.204.77]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1344;6:Fma9mlbTfZkREtA8bEGnXcK+cPnrTQFc1TjsEMzC3N0509k5A0Ckpj11D3ICgsQAQqT9ZLA7j0/eRUwUIK0mbtDgKXLrjx1wcPVlsMM/IXZkyaOecOaxSJYxZuTv4u1w+D/gKaxZyLk1gqSek5z8/+oPO2m8tJAa1/dfvAlYqLaGM3fJGN4uSmvPwQssc00Jmg5V8+eVtu0PyEamoTVc/dvl7rly0njoLUYOv5tEzmHBLlWilj6CvHBWxGFWzJwAhh8P8NUhtvEbmp3y+FlW0o3912oYeZP/lHKuyG8lp6Sgr4LvFzrzLj2tTS54NNFigL7vJlq6EblTVcJRyKBoCTG+bwjY9XON/6z4uH17sRyeRuXKRXDMXTAqff9E3wiWHX9GaHSRE7oMl/F3sQLR/LCNxfDs42juYcXiRRPJuOKgFZ1ueocnT3FSKLAhxHq+L+rLx5afpqIkwCMdBpnx0A==;5:YsCHHVeSLXiwX70a39SFdqBsEY3i5SidRi8ewxAvrtW84AZom2ax93nzStAovdRUwcxeBDG+qV8+LfQMTaO7avBmmHxhJ1Rctld6/3Xsejl1ZR2bmVK5Rtk5n02mV+hKnVdUcnAA3HiVYJHayHsmHsGSX0krlDCIaiiVhRbacv8=;7:FrM+2l1us0MxYnVKq6I+6o2hdjQT3ofmQB2RmFKpR9/IfdVCxC/V9ZIzCH0qKCYMjciB21THvkQZGxSCmASh0t3rZ8FPbK+veFtpOE1S9ph7FZ5StClc49s6MPCGNScJ1+m+5BSvjTh//dQWFMruEA==
+x-ms-office365-filtering-correlation-id: bc4debb3-c0e7-4277-8952-08d653cc25a1
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1344;
+x-ms-traffictypediagnostic: MWHPR2201MB1344:
+x-microsoft-antispam-prvs: <MWHPR2201MB134413FF05C63E11A319B426C1D70@MWHPR2201MB1344.namprd22.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(3002001)(3231443)(944501410)(52105112)(10201501046)(148016)(149066)(150057)(6041310)(2016111802025)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(6043046)(201708071742011)(7699051)(76991095);SRVR:MWHPR2201MB1344;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1344;
+x-forefront-prvs: 086831DFB4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(136003)(376002)(366004)(396003)(39840400004)(189003)(199004)(8936002)(6436002)(66066001)(71200400001)(25786009)(68736007)(71190400001)(81166006)(8676002)(81156014)(229853002)(256004)(14444005)(508600001)(446003)(44832011)(55016002)(6506007)(33656002)(316002)(386003)(11346002)(42882007)(97736004)(105586002)(186003)(6116002)(3846002)(5660300001)(102836004)(476003)(486006)(74316002)(106356001)(54906003)(7736002)(305945005)(6246003)(76176011)(26005)(2906002)(99286004)(9686003)(6916009)(4326008)(7696005)(52116002)(14454004)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1344;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: sGr0NUIhPWUYp+eTTXKudr9UVAi+TOJMXwudLwhjeWcAcXIk0TbPd7AMZWnSJ5VBZDa11QHmHErvSCrKcMEWW65l6ZMZ0/eWveVtYCpuquOf07W5Ds63AtmVhut2nzs1/cIx8XwXtOpFCfZjg77kCM5DhLTyGkIp0t220sCf6gHVxiSVO9lN8RAA2MEBJPs7/DwoCajtyZs6yRtcqEGhgIEYt4bFSYly4G+2OXP558upChJPNC2JFDpbt+/ie/KrSdKXqYU/V+/1g2ZTSb6AwjB18jeJPLIjLMYGpy0JnkDqolJsqEqWM9M/d7USn4/bYcejHkNrkaZvKC1I2Th7SyzRY3SYd8Ye9wWX1dqqIGw=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
- <20181120120442.GA22172@linux.intel.com> <20181122111253.GA31150@wind.enjellic.com>
- <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com>
- <20181124172114.GB32210@linux.intel.com> <20181125145329.GA5777@linux.intel.com>
- <0669C300-02CB-4EA6-BF88-5C4B4DDAD4C7@amacapital.net> <20181125185524.GA23224@wind.enjellic.com>
- <D45BC005-5064-4C75-B486-4E43C454E2F6@amacapital.net> <94154ECB-3EF7-4A37-9057-0B84DBCE650E@amacapital.net>
- <20181126110038.GA27609@wind.enjellic.com>
-In-Reply-To: <20181126110038.GA27609@wind.enjellic.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 26 Nov 2018 10:22:20 -0800
-X-Gmail-Original-Message-ID: <CALCETrVdooOwt080-f-Sr92pnbRVchsffxWGnnEHmH40qLyCdA@mail.gmail.com>
-Message-ID: <CALCETrVdooOwt080-f-Sr92pnbRVchsffxWGnnEHmH40qLyCdA@mail.gmail.com>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-To:     "Dr. Greg Wettstein" <greg@enjellic.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        haitao.huang@linux.intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc4debb3-c0e7-4277-8952-08d653cc25a1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2018 18:22:39.2249
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1344
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 3:00 AM Dr. Greg <greg@enjellic.com> wrote:
->
-> On Sun, Nov 25, 2018 at 04:37:00PM -0800, Andy Lutomirski wrote:
->
-> > Bah, I hit send on a partially written draft. I???ll try again soon.
-> >
-> > --Andy
->
-> Your first issue seems to be complete so I will respond to that in
-> order to make sure we are not talking past one another.
+Hello,
 
-It wasn't, but your answer is enlightening!  I've read the SGX
-*manual*, but I hadn't dug through the actual Intel-supplied enclaves.
-So, when I said that the LE isn't an important part of the overall
-trust model, I meant that it isn't *in hardware*.  It's certainly
-possible to write SGX software that weakens the security of the
-overall system, and Intel seems to have done so:
+Mathias Kresin wrote:
+> In case the nd_sd group is set to the sd-card function, Pins 45 + 46 are
+> configured as GPIOs. If they are blocked by the sd function, they can't
+> be used as GPIOs.
+>=20
+> Signed-off-by: Mathias Kresin <dev@kresin.me>
+> Reported-by: Kristian Evensen <kristian.evensen@gmail.com>
+> Fixes: f576fb6a0700 ("MIPS: ralink: cleanup the soc specific pinmux
+> data")
+> Cc: stable@vger.kernel.org # v3.18+
 
->
-> The Intel supplied launch enclave (LE) specifically denies
-> initialization of enclaves which have the PROVISION attribute set,
-> with the exception of enclaves whose MRSIGNER values match those of
-> the keys that Intel uses to sign the PCE and PVE enclaves.  See line
-> 219 of psw/ae/le/launch_enclave.cpp in the Intel SDK.
+Applied to mips-fixes.
 
-This seems entirely reasonable.  (But see below...)
+Thanks,
+    Paul
 
-> This report, along with the PEK, is submitted to the PCE enclave in
-> order to generate the Platform Provisioning IDentity (PPID), which is
-> the privacy critical identifier.  The PCE verifies the report
-> generated by the PVE and rejects the request to generate the PPID if
-> the report was generated by an enclave that was not initialized with
-> the PROVISION bit set, see line 109 of psw/ae/pce/pce.cpp.
-
-...and this seems entirely unreasonable.  Your description does indeed
-appear consistent with the code: the PCE will hand out the PPID to any
-requesting enclave that has the PROVISION bit set, so you are correct
-that:
-
-> Once again, the important design factor in all of this is the premise
-> that the launch enclave will not allow enclaves other then the PCE and
-> PVE to access the PROVISION bit.
-
-But here's where the whole thing goes off the rails.  I would argue
-that the Intel-supplied (and Intel-signed, apparently!) PCE is just
-straight-up buggy.  What Intel is *trying* to do is to hand out the
-PPID to an appropriately signed enclave.  What they actually did is to
-hand out the PPID to any enclave that has the PROVISION bit set.  This
-is poor design because it overload the PROVISION bit.  That bit is
-supposed to mean "may use EGETKEY to obtain provisioning and
-provisioning seal keys", which is not actually what Intel wants here.
-It's also poor design without FLC because it pointlessly relies on the
-LE to enforce a restriction on the use of provisioning enclaves, when
-the code could instead have checked MRSIGNER..  And it's just straight
-up wrong with FLC because there is no guarantee whatsoever that the LE
-being used is Intel's.  And, for that matter, there is no guarantee
-that the requesting enclave doesn't have the DEBUG bit set.
-
-(It's also poor design because the PCE doesn't appear to verify that
-the report passed in is actually intended to be associated with a call
-to get_ppid().  There appear to be reports associated with provision
-"msg1" and "msg3".  If it's possible to get a valid report for msg3 to
-be accepted as a msg1 report of vice versa, then it might be game
-over.)
-
-Sorry, but this is not Linux's problem.  The right fix is, in my
-opinion, entirely clear: the PCE should check MRSIGNER and possibly
-even MRENCLAVE in the report it receives.  Intel needs to fix their
-PCE, sign a fixed version, and find some way to revoke, to the extent
-possible, the old one.  And the SGX enclave authors need to understand
-something that is apparently subtle: THE LAUNCH POLICY IS NOT PART OF
-THE TCB AND SHOULD NOT BE RELIED UPON.  Enclaves can and should be
-written to remain secure even in the complete absence of any form of
-launch control.
-
-I went and filed a bug on github.  Let's see what happens:
-
-https://github.com/intel/linux-sgx/issues/345
-
-Also, the whole SGX report mechanism seems to be misused in the SDK.
-An SGX report is a cryptographic primitive that essentially acts like
-a signed blob.  Building a secure protocol on top of signed messages
-or on top of reports takes more than just making up ad hoc blob
-formats and signing them.  There needs to be domain separation between
-different messages, and this seems to be entirely missing.  Do you
-know if Intel has had a serious audit of their platform enclave code
-done?
-
->
-> > No, I have no clue why Intel did it this way.  I consider it to be a
-> > mistake.
->
-> Are you referring to there being a mistake in the trust relationships
-> that the provisioning protocol implements or the overall concept of a
-> provisioning key?
-
-I'm referring to the hardware's policy as to when keys that don't
-depend on OWNEREPOCH can be obtained.  As far as I know, the only real
-need for such keys is to verify that the running platform is a real
-Intel platform, which means that access to the provisioning key is
-only useful to Intel-approved services.  Why didn't Intel enforce this
-in hardware or microcode?  I see no reason that EGETKEY should hand
-out those key types of the enclave is not signed by Intel.  For that
-matter, I also don't see why the provisioning seal key needs to exist
--- the regular seal key could be used instead and, if OWNEREPOCH
-changes, the platform could just re-certify itself.
-
-> > >> The driver should establish the equivalent of three linked lists,
-> > >> maintainable via /sysfs pseudo-files or equivalent plumbing.  The
-> > >> lists are referenced by the kernel to enforce the following policies.
-> > >>
-> > >> 1.) The right to initialize an enclave without special attributes.
-> > >>
-> > >> 2.) The right to initialize an enclave with the PROVISION_KEY attribute set.
-> > >>
-> > >> 3.) The right to initialize an enclave with the LICENSE_KEY attribute set.
-> > >>
-> > >> The lists are populated with MRSIGNER values of enclaves that are
-> > >> allowed to initialize under the specified conditions.
->
-> > NAK because this is insufficient.  You're thinking of a model in
-> > which SGX-like protection is all that's needed.  This is an
-> > inadequate model of the real world.  The attack I'm most concerned
-> > about wrt provisioning is an attack in which an unauthorized user is
-> > permitted.
->
-> We will be interested in your comments as to why the proposal is
-> insufficient in the real world of FLC.
-
-That's what you get for reading my unfinished email :)
-
-Your proposal fails to protect against SGX malware.  Here's an SGX
-malware use case: the attacker writes a malicious enclave and gets a
-victim machine to run it as a non-root user.  They bundle it with a
-valid Intel-signed copy of the relevant platform enclaves and use them
-to bootstrap the attestation process.  The malicious enclave attests
-its identity to a command-and-control server and obtains malicious
-code to run.  The good guys can't reverse engineer the malware
-enclave, because they can't pass the attestation check and therefore
-can't obtain the encrypted code.
-
-This isn't prevented by your proposed solution: the provisioning
-enclaves are all signed by Intel.  What's needed is a check that
-prevents unauthorized *users* from running them.
-
---Andy
+[ This message was auto-generated; if you believe anything is incorrect
+  then please email paul.burton@mips.com to report it. ]
