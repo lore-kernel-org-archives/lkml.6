@@ -2,290 +2,126 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E4DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAD3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 391D120664
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:55:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 391D120664
+	by mail.kernel.org (Postfix) with ESMTP id 2AE1620664
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:56:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AE1620664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726665AbeK0Gug (ORCPT
+        id S1726627AbeK0GwG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 01:50:36 -0500
-Received: from mga04.intel.com ([192.55.52.120]:47581 "EHLO mga04.intel.com"
+        Tue, 27 Nov 2018 01:52:06 -0500
+Received: from mga09.intel.com ([134.134.136.24]:24371 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726282AbeK0Gug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 01:50:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1726251AbeK0GwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 01:52:06 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 11:55:24 -0800
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 11:56:54 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,283,1539673200"; 
-   d="scan'208";a="252897806"
-Received: from chang-linux-2.sc.intel.com ([10.3.52.165])
-  by orsmga004.jf.intel.com with ESMTP; 26 Nov 2018 11:55:24 -0800
-From:   "Chang S. Bae" <chang.seok.bae@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        "Chang S . Bae" <chang.seok.bae@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6] x86/fsgsbase/64: Fix the base write helper functions
-Date:   Mon, 26 Nov 2018 11:55:24 -0800
-Message-Id: <20181126195524.32179-1-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.19.1
+   d="scan'208";a="252898133"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga004.jf.intel.com with ESMTP; 26 Nov 2018 11:56:54 -0800
+Date:   Mon, 26 Nov 2018 12:53:53 -0700
+From:   Keith Busch <keith.busch@intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Williams, Dan J" <dan.j.williams@intel.com>
+Subject: Re: [PATCH 4/7] node: Add memory caching attributes
+Message-ID: <20181126195352.GS26707@localhost.localdomain>
+References: <20181114224921.12123-2-keith.busch@intel.com>
+ <20181114224921.12123-5-keith.busch@intel.com>
+ <20181126190619.GA32595@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126190619.GA32595@kroah.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The helper functions that purport to write the base should just write it
-only. It shouldn't have magic optimizations to change the index.
+On Mon, Nov 26, 2018 at 11:06:19AM -0800, Greg Kroah-Hartman wrote:
+> On Wed, Nov 14, 2018 at 03:49:17PM -0700, Keith Busch wrote:
+> > System memory may have side caches to help improve access speed. While
+> > the system provided cache is transparent to the software accessing
+> > these memory ranges, applications can optimize their own access based
+> > on cache attributes.
+> > 
+> > In preparation for such systems, provide a new API for the kernel to
+> > register these memory side caches under the memory node that provides it.
+> > 
+> > The kernel's sysfs representation is modeled from the cpu cacheinfo
+> > attributes, as seen from /sys/devices/system/cpu/cpuX/cache/. Unlike CPU
+> > cacheinfo, though, a higher node's memory cache level is nearer to the
+> > CPU, while lower levels are closer to the backing memory. Also unlike
+> > CPU cache, the system handles flushing any dirty cached memory to the
+> > last level the memory on a power failure if the range is persistent.
+> > 
+> > The exported attributes are the cache size, the line size, associativity,
+> > and write back policy.
+> > 
+> > Signed-off-by: Keith Busch <keith.busch@intel.com>
+> > ---
+> >  drivers/base/node.c  | 117 +++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/node.h |  23 ++++++++++
+> >  2 files changed, 140 insertions(+)
+> > 
+> > diff --git a/drivers/base/node.c b/drivers/base/node.c
+> > index 232535761998..bb94f1d18115 100644
+> > --- a/drivers/base/node.c
+> > +++ b/drivers/base/node.c
+> > @@ -60,6 +60,12 @@ static DEVICE_ATTR(cpumap,  S_IRUGO, node_read_cpumask, NULL);
+> >  static DEVICE_ATTR(cpulist, S_IRUGO, node_read_cpulist, NULL);
+> >  
+> >  #ifdef CONFIG_HMEM
+> > +struct node_cache_obj {
+> > +	struct kobject kobj;
+> > +	struct list_head node;
+> > +	struct node_cache_attrs cache_attrs;
+> > +};
+> 
+> I know you all are off in the weeds designing some new crazy api for
+> this instead of this current proposal (sorry, I lost the thread, I'll
+> wait for the patches before commenting on it), but I do want to say one
+> thing here.
+> 
+> NEVER use a raw kobject as a child for a 'struct device' unless you
+> REALLY REALLY REALLY REALLY know what you are doing and have a VERY good
+> reason to do so.
+> 
+> Just use a 'struct device', otherwise you end up having to reinvent all
+> of the core logic that struct device provides you, like attribute
+> callbacks (which you had to create), and other good stuff like telling
+> userspace that a device has shown up so it knows to look at it.
+> 
+> That last one is key, a kobject is suddenly a "black hole" in sysfs as
+> far as userspace knows because it does not see them for the most part
+> (unless you are mucking around in the filesystem on your own, and
+> really, don't do that, use a library like the rest of the world unless
+> you really like reinventing everything, which, from your patchset it
+> feels like...)
+> 
+> Anyway, use 'struct device'.  That's all.
+> 
+> greg k-h
 
-Make the index explicitly changed from the caller, instead of including
-the code in the helpers.
+Okay, thank you for the advice. I prefer to reuse over reinvent. :)
 
-Subsequently, the task write helpers do not handle for the current task
-anymore. The range check for a base value is also factored out, to
-minimize code redundancy from the caller.
-
-Fixes: b1378a561fd1 ("x86/fsgsbase/64: Introduce FS/GS base helper functions")
-
-v2: Fix further on the task write functions. Revert the changes on the
-task read helpers.
-
-v3: Fix putreg(). Edit the changelog.
-
-v4: Update the task write helper functions and do_arch_prctl_64(). Fix
-the comment in putreg().
-
-v5: Fix preempt_disable() calls in do_arch_prctl_64()
-
-v6: Fix do_arch_prctl_64() to work correctly wrt save_base_legacy()
-(Fixed by Andy Lutomirski)
-
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
----
- arch/x86/include/asm/fsgsbase.h | 15 +++--
- arch/x86/kernel/process_64.c    | 99 ++++++++++++++++++---------------
- arch/x86/kernel/ptrace.c        |  9 +--
- 3 files changed, 71 insertions(+), 52 deletions(-)
-
-diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
-index eb377b6e9eed..bca4c743de77 100644
---- a/arch/x86/include/asm/fsgsbase.h
-+++ b/arch/x86/include/asm/fsgsbase.h
-@@ -16,8 +16,8 @@
-  */
- extern unsigned long x86_fsbase_read_task(struct task_struct *task);
- extern unsigned long x86_gsbase_read_task(struct task_struct *task);
--extern int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
--extern int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
-+extern void x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
-+extern void x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
- 
- /* Helper functions for reading/writing FS/GS base */
- 
-@@ -39,8 +39,15 @@ static inline unsigned long x86_gsbase_read_cpu_inactive(void)
- 	return gsbase;
- }
- 
--extern void x86_fsbase_write_cpu(unsigned long fsbase);
--extern void x86_gsbase_write_cpu_inactive(unsigned long gsbase);
-+static inline void x86_fsbase_write_cpu(unsigned long fsbase)
-+{
-+	wrmsrl(MSR_FS_BASE, fsbase);
-+}
-+
-+static inline void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
-+{
-+	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
-+}
- 
- #endif /* CONFIG_X86_64 */
- 
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 17a6e7d14a22..c5fb429291b1 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -338,24 +338,6 @@ static unsigned long x86_fsgsbase_read_task(struct task_struct *task,
- 	return base;
- }
- 
--void x86_fsbase_write_cpu(unsigned long fsbase)
--{
--	/*
--	 * Set the selector to 0 as a notion, that the segment base is
--	 * overwritten, which will be checked for skipping the segment load
--	 * during context switch.
--	 */
--	loadseg(FS, 0);
--	wrmsrl(MSR_FS_BASE, fsbase);
--}
--
--void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
--{
--	/* Set the selector to 0 for the same reason as %fs above. */
--	loadseg(GS, 0);
--	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
--}
--
- unsigned long x86_fsbase_read_task(struct task_struct *task)
- {
- 	unsigned long fsbase;
-@@ -384,38 +366,18 @@ unsigned long x86_gsbase_read_task(struct task_struct *task)
- 	return gsbase;
- }
- 
--int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase)
-+void x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase)
- {
--	/*
--	 * Not strictly needed for %fs, but do it for symmetry
--	 * with %gs
--	 */
--	if (unlikely(fsbase >= TASK_SIZE_MAX))
--		return -EPERM;
-+	WARN_ON_ONCE(task == current);
- 
--	preempt_disable();
- 	task->thread.fsbase = fsbase;
--	if (task == current)
--		x86_fsbase_write_cpu(fsbase);
--	task->thread.fsindex = 0;
--	preempt_enable();
--
--	return 0;
- }
- 
--int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase)
-+void x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase)
- {
--	if (unlikely(gsbase >= TASK_SIZE_MAX))
--		return -EPERM;
-+	WARN_ON_ONCE(task == current);
- 
--	preempt_disable();
- 	task->thread.gsbase = gsbase;
--	if (task == current)
--		x86_gsbase_write_cpu_inactive(gsbase);
--	task->thread.gsindex = 0;
--	preempt_enable();
--
--	return 0;
- }
- 
- int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
-@@ -753,11 +715,60 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
- 
- 	switch (option) {
- 	case ARCH_SET_GS: {
--		ret = x86_gsbase_write_task(task, arg2);
-+		if (unlikely(arg2 >= TASK_SIZE_MAX))
-+			return -EPERM;
-+
-+		preempt_disable();
-+		/*
-+		 * ARCH_SET_GS has always overwritten the index
-+		 * and the base. Zero is the most sensible value
-+		 * to put in the index, and is the only value that
-+		 * makes any sense if FSGSBASE is unavailable.
-+		 */
-+		if (task == current) {
-+			loadseg(GS, 0);
-+			x86_gsbase_write_cpu_inactive(arg2);
-+
-+			/*
-+			 * On non-FSGSBASE systems, save_base_legacy() expects
-+			 * that we also fill in thread.gsbase.
-+			 */
-+			task->thread.gsbase = arg2;
-+
-+		} else {
-+			task->thread.gsindex = 0;
-+			x86_gsbase_write_task(task, arg2);
-+		}
-+		preempt_enable();
- 		break;
- 	}
- 	case ARCH_SET_FS: {
--		ret = x86_fsbase_write_task(task, arg2);
-+		/*
-+		 * Not strictly needed for %fs, but do it for symmetry
-+		 * with %gs
-+		 */
-+		if (unlikely(arg2 >= TASK_SIZE_MAX))
-+			return -EPERM;
-+
-+		preempt_disable();
-+		/*
-+		 * Set the selector to 0 for the same reason
-+		 * as %gs above.
-+		 */
-+		if (task == current) {
-+			loadseg(FS, 0);
-+			x86_fsbase_write_cpu(arg2);
-+
-+			/*
-+			 * On non-FSGSBASE systems, save_base_legacy() expects
-+			 * that we also fill in thread.fsbase.
-+			 */
-+			task->thread.fsbase = arg2;
-+		} else {
-+			task->thread.fsindex = 0;
-+			x86_fsbase_write_task(task, arg2);
-+		}
-+		preempt_enable();
- 		break;
- 	}
- 	case ARCH_GET_FS: {
-diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
-index ffae9b9740fd..4b8ee05dd6ad 100644
---- a/arch/x86/kernel/ptrace.c
-+++ b/arch/x86/kernel/ptrace.c
-@@ -397,11 +397,12 @@ static int putreg(struct task_struct *child,
- 		if (value >= TASK_SIZE_MAX)
- 			return -EIO;
- 		/*
--		 * When changing the FS base, use the same
--		 * mechanism as for do_arch_prctl_64().
-+		 * When changing the FS base, use do_arch_prctl_64()
-+		 * to set the index to zero and to set the base
-+		 * as requested.
- 		 */
- 		if (child->thread.fsbase != value)
--			return x86_fsbase_write_task(child, value);
-+			return do_arch_prctl_64(child, ARCH_SET_FS, value);
- 		return 0;
- 	case offsetof(struct user_regs_struct,gs_base):
- 		/*
-@@ -410,7 +411,7 @@ static int putreg(struct task_struct *child,
- 		if (value >= TASK_SIZE_MAX)
- 			return -EIO;
- 		if (child->thread.gsbase != value)
--			return x86_gsbase_write_task(child, value);
-+			return do_arch_prctl_64(child, ARCH_SET_GS, value);
- 		return 0;
- #endif
- 	}
--- 
-2.19.1
-
+I only used kobject because the power/ directory was automatically
+created with 'struct device', but I now I see there are better ways to
+suppress that.
