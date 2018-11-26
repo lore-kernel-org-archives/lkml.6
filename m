@@ -2,50 +2,50 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A1D0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BCBFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D41AF2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E98BC20817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H1BhnuGo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D41AF2089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eaze3M+L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E98BC20817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbeKZVuR (ORCPT
+        id S1728456AbeKZVuT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:50:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59412 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:50:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727504AbeKZVuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:50:16 -0500
+        id S1726950AbeKZVuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:50:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FFFA21104;
-        Mon, 26 Nov 2018 10:56:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C43A2146F;
+        Mon, 26 Nov 2018 10:56:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229791;
-        bh=VnjsFWEhdunkV3Tv5ZYaLtINfeBOmKWlox59sAm2JjM=;
+        s=default; t=1543229793;
+        bh=0RUWJyw14SPecctHq9ctbB6fBVuK0u7YA+fHi5oqiR8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H1BhnuGorKCAL7JOa4F3kEKt9L4ehN7URfuGGpx+Mj6uMy/liSfotNpisbpb1EZSF
-         t+83DjEadlI6O/Nvc9BIc3S9yjF3fb+LCKmVbpj0unkPqQEdFbi9EN9l4VQ2aKOvK/
-         zPGK8G+07rEcaJU+hXpkovBmOH7Mpn+3v/LVL42g=
+        b=Eaze3M+LsGDd1SqYHPXoSa4htlNvCYvKHfiRoRcMrLSivWPM7AHIvvmXpQFVT/Mfm
+         VFafRaZ2HK5FQ2wX3XknLpfm6U/F8/C8pOJ62It34RW7oKzmSQOVtl1ShEs6qy7cLn
+         z/iQSkoo0uVb+Thv1wEm2PUf3ELXys4gVMnIwYrM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 50/70] netfilter: xt_IDLETIMER: add sysfs filename checking routine
-Date:   Mon, 26 Nov 2018 11:51:05 +0100
-Message-Id: <20181126105051.792018362@linuxfoundation.org>
+Subject: [PATCH 4.4 51/70] hwmon: (ibmpowernv) Remove bogus __init annotations
+Date:   Mon, 26 Nov 2018 11:51:06 +0100
+Message-Id: <20181126105051.837827181@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
 References: <20181126105046.722096341@linuxfoundation.org>
@@ -63,80 +63,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 54451f60c8fa061af9051a53be9786393947367c ]
+[ Upstream commit e3e61f01d755188cb6c2dcf5a244b9c0937c258e ]
 
-When IDLETIMER rule is added, sysfs file is created under
-/sys/class/xt_idletimer/timers/
-But some label name shouldn't be used.
-".", "..", "power", "uevent", "subsystem", etc...
-So that sysfs filename checking routine is needed.
+If gcc decides not to inline make_sensor_label():
 
-test commands:
-   %iptables -I INPUT -j IDLETIMER --timeout 1 --label "power"
+    WARNING: vmlinux.o(.text+0x4df549c): Section mismatch in reference from the function .create_device_attrs() to the function .init.text:.make_sensor_label()
+    The function .create_device_attrs() references
+    the function __init .make_sensor_label().
+    This is often because .create_device_attrs lacks a __init
+    annotation or the annotation of .make_sensor_label is wrong.
 
-splat looks like:
-[95765.423132] sysfs: cannot create duplicate filename '/devices/virtual/xt_idletimer/timers/power'
-[95765.433418] CPU: 0 PID: 8446 Comm: iptables Not tainted 4.19.0-rc6+ #20
-[95765.449755] Call Trace:
-[95765.449755]  dump_stack+0xc9/0x16b
-[95765.449755]  ? show_regs_print_info+0x5/0x5
-[95765.449755]  sysfs_warn_dup+0x74/0x90
-[95765.449755]  sysfs_add_file_mode_ns+0x352/0x500
-[95765.449755]  sysfs_create_file_ns+0x179/0x270
-[95765.449755]  ? sysfs_add_file_mode_ns+0x500/0x500
-[95765.449755]  ? idletimer_tg_checkentry+0x3e5/0xb1b [xt_IDLETIMER]
-[95765.449755]  ? rcu_read_lock_sched_held+0x114/0x130
-[95765.449755]  ? __kmalloc_track_caller+0x211/0x2b0
-[95765.449755]  ? memcpy+0x34/0x50
-[95765.449755]  idletimer_tg_checkentry+0x4e2/0xb1b [xt_IDLETIMER]
-[ ... ]
+As .probe() can be called after freeing of __init memory, all __init
+annotiations in the driver are bogus, and should be removed.
 
-Fixes: 0902b469bd25 ("netfilter: xtables: idletimer target implementation")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/xt_IDLETIMER.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/hwmon/ibmpowernv.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/net/netfilter/xt_IDLETIMER.c b/net/netfilter/xt_IDLETIMER.c
-index 1718f536689f..8a1d2af3eed0 100644
---- a/net/netfilter/xt_IDLETIMER.c
-+++ b/net/netfilter/xt_IDLETIMER.c
-@@ -116,6 +116,22 @@ static void idletimer_tg_expired(unsigned long data)
- 	schedule_work(&timer->work);
+diff --git a/drivers/hwmon/ibmpowernv.c b/drivers/hwmon/ibmpowernv.c
+index 55b5a8ff1cfe..ca3aa28977bc 100644
+--- a/drivers/hwmon/ibmpowernv.c
++++ b/drivers/hwmon/ibmpowernv.c
+@@ -114,7 +114,7 @@ static ssize_t show_label(struct device *dev, struct device_attribute *devattr,
+ 	return sprintf(buf, "%s\n", sdata->label);
  }
  
-+static int idletimer_check_sysfs_name(const char *name, unsigned int size)
-+{
-+	int ret;
-+
-+	ret = xt_check_proc_name(name, size);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!strcmp(name, "power") ||
-+	    !strcmp(name, "subsystem") ||
-+	    !strcmp(name, "uevent"))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static int idletimer_tg_create(struct idletimer_tg_info *info)
+-static int __init get_logical_cpu(int hwcpu)
++static int get_logical_cpu(int hwcpu)
  {
- 	int ret;
-@@ -126,6 +142,10 @@ static int idletimer_tg_create(struct idletimer_tg_info *info)
- 		goto out;
- 	}
+ 	int cpu;
  
-+	ret = idletimer_check_sysfs_name(info->label, sizeof(info->label));
-+	if (ret < 0)
-+		goto out_free_timer;
-+
- 	sysfs_attr_init(&info->timer->attr.attr);
- 	info->timer->attr.attr.name = kstrdup(info->label, GFP_KERNEL);
- 	if (!info->timer->attr.attr.name) {
+@@ -125,9 +125,8 @@ static int __init get_logical_cpu(int hwcpu)
+ 	return -ENOENT;
+ }
+ 
+-static void __init make_sensor_label(struct device_node *np,
+-				     struct sensor_data *sdata,
+-				     const char *label)
++static void make_sensor_label(struct device_node *np,
++			      struct sensor_data *sdata, const char *label)
+ {
+ 	u32 id;
+ 	size_t n;
 -- 
 2.17.1
 
