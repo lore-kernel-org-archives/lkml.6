@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11075C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A61C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBBD320645
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:04:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A8D3214C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:04:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJ1zSt49"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBBD320645
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L2oLKyoM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A8D3214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731012AbeKZV6J (ORCPT
+        id S1731020AbeKZV6N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:58:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43010 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:58:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729291AbeKZV6I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:58:08 -0500
+        id S1729291AbeKZV6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:58:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B75B20672;
-        Mon, 26 Nov 2018 11:04:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1119B2147D;
+        Mon, 26 Nov 2018 11:04:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230262;
-        bh=+Qox9tBpA767ESYgCFBKeuFTtLJ0gwur2ka5RgEQ6No=;
+        s=default; t=1543230266;
+        bh=bwldbHRaS0kWyyQlVRdZLy8i/lpvYXbvhw+Qwxi2LnM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iJ1zSt49SOPas6Mt0MlJAHL2BD4wEVx1TeQYbKK4JvWXxvIq/KWDgecIShDnuKakA
-         AET6h8mzNlGJ/DvPmHGCF+p3DPAxJmBqNBDUze+dpVEGXWiigXbKFDeQa/qDHym4IX
-         P5Czh4bD4JmdJ2BHMuYq1wN6uDuP4e83MJ2+3s20=
+        b=L2oLKyoMt8PD4TJAqHeaZqVSiut2v58SsS1MGTkn/qlu1PkylStp+jl3MLJCbEBU+
+         KxFzdAH0Co4vvlXYgveMr5fLzQQDl42ZNvevLT7FEpX2C+QBKixCiXWR+xe2wYmLU6
+         PS/h38fzXfx/TVivcUuQGVOtSEOlIUXrFNDKz7n4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Luis Henriques <lhenriques@suse.com>,
+        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 068/118] s390/perf: Change CPUM_CF return code in event init function
-Date:   Mon, 26 Nov 2018 11:51:02 +0100
-Message-Id: <20181126105103.754335347@linuxfoundation.org>
+Subject: [PATCH 4.19 069/118] ceph: quota: fix null pointer dereference in quota check
+Date:   Mon, 26 Nov 2018 11:51:03 +0100
+Message-Id: <20181126105103.912978214@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -64,37 +64,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0bb2ae1b26e1fb7543ec7474cdd374ac4b88c4da ]
+[ Upstream commit 71f2cc64d027d712f29bf8d09d3e123302d5f245 ]
 
-The function perf_init_event() creates a new event and
-assignes it to a PMU. This a done in a loop over all existing
-PMUs. For each listed PMU the event init function is called
-and if this function does return any other error than -ENOENT,
-the loop is terminated the creation of the event fails.
+This patch fixes a possible null pointer dereference in
+check_quota_exceeded, detected by the static checker smatch, with the
+following warning:
 
-If the event is invalid, return -ENOENT to try other PMUs.
+   fs/ceph/quota.c:240 check_quota_exceeded()
+    error: we previously assumed 'realm' could be null (see line 188)
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: b7a2921765cf ("ceph: quota: support for ceph.quota.max_files")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Luis Henriques <lhenriques@suse.com>
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kernel/perf_cpum_cf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ceph/quota.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
-index cc085e2d2ce9..74091fd3101e 100644
---- a/arch/s390/kernel/perf_cpum_cf.c
-+++ b/arch/s390/kernel/perf_cpum_cf.c
-@@ -373,7 +373,7 @@ static int __hw_perf_event_init(struct perf_event *event)
- 		return -ENOENT;
+diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
+index 32d4f13784ba..03f4d24db8fe 100644
+--- a/fs/ceph/quota.c
++++ b/fs/ceph/quota.c
+@@ -237,7 +237,8 @@ static bool check_quota_exceeded(struct inode *inode, enum quota_check_op op,
+ 		ceph_put_snap_realm(mdsc, realm);
+ 		realm = next;
+ 	}
+-	ceph_put_snap_realm(mdsc, realm);
++	if (realm)
++		ceph_put_snap_realm(mdsc, realm);
+ 	up_read(&mdsc->snap_rwsem);
  
- 	if (ev > PERF_CPUM_CF_MAX_CTR)
--		return -EINVAL;
-+		return -ENOENT;
- 
- 	/* Obtain the counter set to which the specified counter belongs */
- 	set = get_counter_set(ev);
+ 	return exceeded;
 -- 
 2.17.1
 
