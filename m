@@ -2,78 +2,97 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE090C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC0DC43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:05:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EB0D20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:02:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EB0D20817
+	by mail.kernel.org (Postfix) with ESMTP id 3AD0620672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:05:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AD0620672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726768AbeK0A5A (ORCPT
+        id S1726402AbeK0BAA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 19:57:00 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38200 "EHLO
+        Mon, 26 Nov 2018 20:00:00 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38330 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726201AbeK0A47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 19:56:59 -0500
+        id S1726249AbeK0BAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 20:00:00 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E5611DCB;
-        Mon, 26 Nov 2018 06:02:46 -0800 (PST)
-Received: from [10.1.196.73] (unknown [10.1.196.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F5613F5A0;
-        Mon, 26 Nov 2018 06:02:42 -0800 (PST)
-Subject: Re: [PATCH V2] mm: Replace all open encodings for NUMA_NO_NODE
-To:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     ocfs2-devel@oss.oracle.com, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-block@vger.kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org,
-        akpm@linux-foundation.org, jiangqi903@gmail.com,
-        hverkuil@xs4all.nl, vkoul@kernel.org
-References: <1543235202-9075-1-git-send-email-anshuman.khandual@arm.com>
- <bcf609de-c60a-d6ad-7acb-6c59c412adbc@redhat.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <20049f8a-b68f-8af2-c4c7-9410781f37fa@arm.com>
-Date:   Mon, 26 Nov 2018 19:32:44 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD4011DCB;
+        Mon, 26 Nov 2018 06:05:46 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9CB633F5A0;
+        Mon, 26 Nov 2018 06:05:46 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 190D81AE0839; Mon, 26 Nov 2018 14:06:04 +0000 (GMT)
+Date:   Mon, 26 Nov 2018 14:06:04 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        vladimir.murzin@arm.com, catalin.marinas@arm.com,
+        mark.rutland@arm.com, Andre Przywara <andre.przywara@arm.com>
+Subject: Re: [PATCH 1/7] arm64: capabilities: Merge entries for
+ ARM64_WORKAROUND_CLEAN_CACHE
+Message-ID: <20181126140603.GA29684@arm.com>
+References: <1541418917-14219-1-git-send-email-suzuki.poulose@arm.com>
+ <1541418917-14219-2-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <bcf609de-c60a-d6ad-7acb-6c59c412adbc@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541418917-14219-2-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/26/2018 06:18 PM, David Hildenbrand wrote:
-> On 26.11.18 13:26, Anshuman Khandual wrote:
->> At present there are multiple places where invalid node number is encoded
->> as -1. Even though implicitly understood it is always better to have macros
->> in there. Replace these open encodings for an invalid node number with the
->> global macro NUMA_NO_NODE. This helps remove NUMA related assumptions like
->> 'invalid node' from various places redirecting them to a common definition.
->>
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->> Changes in V2:
->>
->> - Added inclusion of 'numa.h' header at various places per Andrew
->> - Updated 'dev_to_node' to use NUMA_NO_NODE instead per Vinod
+On Mon, Nov 05, 2018 at 11:55:11AM +0000, Suzuki K Poulose wrote:
+> We have two entries for ARM64_WORKAROUND_CLEAN_CACHE capability :
 > 
-> Reviewed-by: David Hildenbrand <david@redhat.com>
+> 1) ARM Errata 826319, 827319, 824069, 819472 on A53 r0p[012]
+> 2) ARM Errata 819472 on A53 r0p[01]
+> 
+> Both have the same work around. Merge these entries to avoid
+> duplicate entries for a single capability.
+> 
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Andre Przywara <andre.przywara@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  arch/arm64/kernel/cpu_errata.c | 19 +++++++------------
+>  1 file changed, 7 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+> index a509e351..c825bc0 100644
+> --- a/arch/arm64/kernel/cpu_errata.c
+> +++ b/arch/arm64/kernel/cpu_errata.c
+> @@ -573,24 +573,19 @@ static const struct midr_range arm64_harden_el2_vectors[] = {
+>  const struct arm64_cpu_capabilities arm64_errata[] = {
+>  #if	defined(CONFIG_ARM64_ERRATUM_826319) || \
+>  	defined(CONFIG_ARM64_ERRATUM_827319) || \
+> -	defined(CONFIG_ARM64_ERRATUM_824069)
+> +	defined(CONFIG_ARM64_ERRATUM_824069) || \
+> +	defined(CONFIG_ARM64_ERRATUM_819472)
+>  	{
+> -	/* Cortex-A53 r0p[012] */
+> -		.desc = "ARM errata 826319, 827319, 824069",
+> +	/*
+> +	 * Cortex-A53 r0p[012]: ARM errata 826319, 827319, 824069
+> +	 * Cortex-A53 r0p[01] : ARM errata 819472
+> +	 */
+> +		.desc = "ARM errata 826319, 827319, 824069, 819472",
+>  		.capability = ARM64_WORKAROUND_CLEAN_CACHE,
+>  		ERRATA_MIDR_REV_RANGE(MIDR_CORTEX_A53, 0, 0, 2),
+>  		.cpu_enable = cpu_enable_cache_maint_trap,
 
-Thanks David. My bad, forgot to add your review tag from the earlier version.
+Isn't this a semantic change wrt the Kconfig options? After this change,
+if I /only/ set CONFIG_ARM64_ERRATUM_819472=y, then I still get the
+workaround applied for CPUs > r0[p01] which isn't what I asked for.
+
+Will
