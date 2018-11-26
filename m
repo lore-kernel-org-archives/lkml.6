@@ -3,104 +3,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AD3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2BFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:14:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8526320672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:13:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8526320672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
+	by mail.kernel.org (Postfix) with ESMTP id 9166120855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:14:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9166120855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbeKZUG6 (ORCPT
+        id S1726276AbeKZUH1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 15:06:58 -0500
-Received: from mx1.emlix.com ([46.4.235.150]:50348 "EHLO mx1.emlix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726157AbeKZUG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 15:06:58 -0500
-Received: from mailer.emlix.com (unknown [81.20.119.6])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.emlix.com (Postfix) with ESMTPS id A600D25F784;
-        Mon, 26 Nov 2018 10:13:27 +0100 (CET)
-From:   Rolf Eike Beer <eb@emlix.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Linux Kernel Developers List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] scripts: use pkg-config to locate libcrypto
-Date:   Mon, 26 Nov 2018 10:13:23 +0100
-Message-ID: <1637606.U1sPAt16y5@devpool21>
-Organization: emlix GmbH
-In-Reply-To: <20181124055339.E3B9120881@mail.kernel.org>
-References: <2429714.x0fLlpPdDl@devpool21> <20181124055339.E3B9120881@mail.kernel.org>
+        Mon, 26 Nov 2018 15:07:27 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15602 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726157AbeKZUH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 15:07:27 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 91DCDCCAAC64;
+        Mon, 26 Nov 2018 17:13:55 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Mon, 26 Nov 2018
+ 17:13:54 +0800
+Subject: Re: [PATCH] f2fs: read page index before freeing
+To:     Pan Bian <bianpan2016@163.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1542884326-74903-1-git-send-email-bianpan2016@163.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <3ebe6814-586e-77e8-52fa-47fb61d760f5@huawei.com>
+Date:   Mon, 26 Nov 2018 17:13:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart1752020.Mpx49Fk8YG"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+In-Reply-To: <1542884326-74903-1-git-send-email-bianpan2016@163.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart1752020.Mpx49Fk8YG
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Hi Pan,
 
-Am Samstag, 24. November 2018, 06:53:39 CET schrieb Sasha Levin:
-> Hi,
->=20
-> [This is an automated email]
->=20
-> This commit has been processed because it contains a -stable tag.
-> The stable tag indicates that it's relevant for the following trees: all
->=20
-> The bot has tested the following trees: v4.19.3, v4.14.82, v4.9.138,
-> v4.4.164, v3.18.126.
->=20
-> v4.19.3: Build failed! Errors:
->     collect2: error: ld returned 1 exit status
+On 2018/11/22 18:58, Pan Bian wrote:
+> The function truncate_node frees the page with f2fs_put_page. However,
+> the page index is read after that. So, the patch reads the index before
+> freeing the page.
 
-This sounds like it could actually be a problem, can you point me to the fu=
-ll=20
-log, please?
+I notice that you found another use-after-free bug in ext4, out of
+curiosity, I'd like to ask how do you find those bugs? by tool or code review?
 
-> v4.14.82: Failed to apply! Possible dependencies:
->     Unable to calculate
-
-This would either need 8377bd2b9ee1be35b39b5523f640a2b75ddd7c4e as well, or=
- a=20
-modified patch. Manually fixing this up should be trivial. Just tell me whi=
-ch=20
-way you prefer.
-
-Greetings,
-
-Eike
-=2D-=20
-Rolf Eike Beer, emlix GmbH, http://www.emlix.com
-=46on +49 551 30664-0, Fax +49 551 30664-11
-Gothaer Platz 3, 37083 G=C3=B6ttingen, Germany
-Sitz der Gesellschaft: G=C3=B6ttingen, Amtsgericht G=C3=B6ttingen HR B 3160
-Gesch=C3=A4ftsf=C3=BChrung: Heike Jordan, Dr. Uwe Kracke =E2=80=93 Ust-IdNr=
-=2E: DE 205 198 055
-
-emlix - smart embedded open source
---nextPart1752020.Mpx49Fk8YG
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iLMEAAEIAB0WIQQ/Uctzh31xzAxFCLur5FH7Xu2t/AUCW/u5MwAKCRCr5FH7Xu2t
-/EFpA/9s55p/lsh00xy72fidEfEyOxQaoq1VIuvbdlSaiRR7XAuXWD2M7OcBiOc1
-5mqwSq2aqjB+k2tbeMILOX13Dq6Dhwy/0nZ+jswETxo5cJdAQeW5OGAV78ZQvxy4
-cUWAD3A4NBEce8BSPb+old/9sPx4eA5IIjImSNJUg95DwvmJTw==
-=m6L3
------END PGP SIGNATURE-----
-
---nextPart1752020.Mpx49Fk8YG--
-
-
+Thanks,
 
