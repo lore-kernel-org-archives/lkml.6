@@ -7,69 +7,71 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C770CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8831C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A18920664
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:04:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91D0E20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:05:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AtjJVSKl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A18920664
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bYDv8ETO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91D0E20672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbeKZQ5s (ORCPT
+        id S1726276AbeKZQ6K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 11:57:48 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39060 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbeKZQ5s (ORCPT
+        Mon, 26 Nov 2018 11:58:10 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43293 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbeKZQ6K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 11:57:48 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c72so6034133pfc.6
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 22:04:46 -0800 (PST)
+        Mon, 26 Nov 2018 11:58:10 -0500
+Received: by mail-pg1-f195.google.com with SMTP id v28so5634268pgk.10
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 22:05:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=e8v7qQ0zwbh4zCU2GQz0mvIikah8p0wT7A12tJYMPPE=;
-        b=AtjJVSKliVeY9zMQ2IFAjUTZn9Q/kC+cBKIVAGuI67uiDa8qT5IbMDlnRMXnu8lGPS
-         E8aYLm0qbzYCcMUm4adDU/fwIKfNU1qG7QxtpFw5mtR0r1W005dSUPT5HTvBaZXHwWI6
-         GgK6J3dQuPVGH/SDz8lNwHSaPDIWzHUPTLA2o=
+        bh=lzWIjXK5nFzBLvHNhJ1t0wqnEyn01zLBUK2kMcLtnXQ=;
+        b=bYDv8ETOewF4CFtof4cg51Z8iYTIOcOfjLV3iGDV1j3x6Jmx+W06BJQCqKB6iSi7IR
+         h6eZiXC0on5hnlu5fVAFEsAnBuokKe6HVOTPZY/pMi135yIks3rNAq6tNZc8zXhjlyR3
+         L7AnlEjx7dBpcTWGBUuSIpzeN9daEJDcDG6nI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e8v7qQ0zwbh4zCU2GQz0mvIikah8p0wT7A12tJYMPPE=;
-        b=m+NW55wu0m9co1P0cEB5NGheeqq87C1gosLwMXYgwiKyxVaJ8zjdA6CjwO2DyPI0AD
-         AvP6bHTdflRURkLyv5saSQGlJcEGeFowNuA6WHmRiK1l5Vf2+4rjz3IUIfleSYQDSj4O
-         llGr/3Qojw3lFGMsZYI7wv3Uoz7N32rolcX0koMKvwQW+1+mrYubmVnLdtsWCK9y3gi4
-         fk6ChFf1adtQ3nIEilB5qOaVbA8crmBF/u+wJLMzFNqCcrNHJGG7K5k8f9nZpwFcRIEK
-         8ugp8f1LmwRgBKMUiDvaz8yupfzhNyR3M3Gnel22lKwHqIlv258146LrM4T1BHiimqpc
-         zH+A==
-X-Gm-Message-State: AGRZ1gL+sQ8Z8qJ+ji7nWSKlfejMo76I56GOh78Cq9xRmBYAg6Pw1r8H
-        8LuH64wfWGxF3yx39mGns62bxg==
-X-Google-Smtp-Source: AJdET5eWCsYJdaddk6/WQMpbS2jLJYHdTwK5gOHYY4nOxbB0I2vcWkh0FgaBivU6kPpe12PaetGN/g==
-X-Received: by 2002:aa7:804e:: with SMTP id y14-v6mr25955007pfm.73.1543212285824;
-        Sun, 25 Nov 2018 22:04:45 -0800 (PST)
+        bh=lzWIjXK5nFzBLvHNhJ1t0wqnEyn01zLBUK2kMcLtnXQ=;
+        b=rJSK63NPyQDsNYshq7ZtNYSrMmgFhcToxvna6gm7lxIB79eyHJw1Y5xlsPnBTSS0yv
+         XAQCX8xAlU0P3Jug9HW8G5+IyuhIEOEwYfZndZclm7h+M/hH2g4iZD/kwZ9aILx7nlfb
+         oCRoTZJaDkKgzdSLa0IIodE0+0kPyLqF5CYGXroRtJvIzgHumO8e9nko2/XWZ6HMDm1k
+         duG2i8lFZsQ0JApYmaykKuMGR8G4XQuhXFC+S9HE3R4A5l6wjuhSlR9MxaZOrjNKUG2f
+         HtwIAkUIQLxW+fl91MR8kTQaCtCsmOa4rgVUr17HoCePxEVYE4E6Llc8G6d2IuJoQYGL
+         HMlA==
+X-Gm-Message-State: AA+aEWZvfhtTsa1OGKj1Expclr12xLkaUHZwtDNB4llg1a+/nw6R/eNJ
+        rlOUP7lgC9FaKyaXW8Yf705Aaw==
+X-Google-Smtp-Source: AFSGD/V34McLScirnXWqmlpwiaJG60ZuY4II3a4MaiuOkUL52ju8Voy8VPu5v4IzKu0RKwmORPkjZA==
+X-Received: by 2002:a63:955a:: with SMTP id t26mr23812917pgn.449.1543212308563;
+        Sun, 25 Nov 2018 22:05:08 -0800 (PST)
 Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id i1sm46191316pgb.46.2018.11.25.22.04.44
+        by smtp.gmail.com with ESMTPSA id p2sm7846931pfb.28.2018.11.25.22.05.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 25 Nov 2018 22:04:45 -0800 (PST)
-Date:   Mon, 26 Nov 2018 11:34:43 +0530
+        Sun, 25 Nov 2018 22:05:08 -0800 (PST)
+Date:   Mon, 26 Nov 2018 11:35:05 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Anson Huang <anson.huang@nxp.com>
 Cc:     "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
         "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 1/2] cpufreq: imx6q: remove unused code
-Message-ID: <20181126060443.augwfzdlpc26cvxb@vireshk-i7>
+Subject: Re: [PATCH 2/2] cpufreq: imx6q: save one condition block for normal
+ case of nvmem read
+Message-ID: <20181126060505.vgu4serogh4brjpm@vireshk-i7>
 References: <1543200853-10029-1-git-send-email-Anson.Huang@nxp.com>
+ <1543200853-10029-2-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1543200853-10029-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1543200853-10029-2-git-send-email-Anson.Huang@nxp.com>
 User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -77,44 +79,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 26-11-18, 02:59, Anson Huang wrote:
-> In voltage scale down path, the return value is NOT
-> used at all, remove them to simplify the code.
+> Put return value checks of calling imx6ul_opp_check_speed_grading()
+> into one block to save one condition block for normal case.
 > 
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
->  drivers/cpufreq/imx6q-cpufreq.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
+>  drivers/cpufreq/imx6q-cpufreq.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
 > diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
-> index d8c3595..8cb9683 100644
+> index 8cb9683..9fedf62 100644
 > --- a/drivers/cpufreq/imx6q-cpufreq.c
 > +++ b/drivers/cpufreq/imx6q-cpufreq.c
-> @@ -177,22 +177,16 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
->  	/* scaling down?  scale voltage after frequency */
->  	if (new_freq < old_freq) {
->  		ret = regulator_set_voltage_tol(arm_reg, volt, 0);
-> -		if (ret) {
-> +		if (ret)
->  			dev_warn(cpu_dev,
->  				 "failed to scale vddarm down: %d\n", ret);
-> -			ret = 0;
-> -		}
->  		ret = regulator_set_voltage_tol(soc_reg, imx6_soc_volt[index], 0);
-> -		if (ret) {
-> +		if (ret)
->  			dev_warn(cpu_dev, "failed to scale vddsoc down: %d\n", ret);
-> -			ret = 0;
-> -		}
->  		if (!IS_ERR(pu_reg)) {
->  			ret = regulator_set_voltage_tol(pu_reg, imx6_soc_volt[index], 0);
-> -			if (ret) {
-> +			if (ret)
->  				dev_warn(cpu_dev, "failed to scale vddpu down: %d\n", ret);
-> -				ret = 0;
-> -			}
->  		}
->  	}
->  
+> @@ -405,9 +405,10 @@ static int imx6q_cpufreq_probe(struct platform_device *pdev)
+>  	if (of_machine_is_compatible("fsl,imx6ul") ||
+>  	    of_machine_is_compatible("fsl,imx6ull")) {
+>  		ret = imx6ul_opp_check_speed_grading(cpu_dev);
+> -		if (ret == -EPROBE_DEFER)
+> -			return ret;
+>  		if (ret) {
+> +			if (ret == -EPROBE_DEFER)
+> +				return ret;
+> +
+>  			dev_err(cpu_dev, "failed to read ocotp: %d\n",
+>  				ret);
+>  			return ret;
 
 Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
