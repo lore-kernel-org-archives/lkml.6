@@ -2,174 +2,194 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A3CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 12:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A167C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 12:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BEA820855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 12:43:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BEA820855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 20B2120855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 12:45:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="MBp7HorC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20B2120855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbeKZXhM (ORCPT
+        id S1726555AbeKZXjv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 18:37:12 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49588 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726177AbeKZXhL (ORCPT
+        Mon, 26 Nov 2018 18:39:51 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:61958 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbeKZXju (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:37:11 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAQCcmsa146550
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 07:43:10 -0500
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p0f4pdnrd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 07:43:09 -0500
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
-        Mon, 26 Nov 2018 12:43:08 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 26 Nov 2018 12:43:04 -0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAQCh4es44105820
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 26 Nov 2018 12:43:04 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 021CB112061;
-        Mon, 26 Nov 2018 12:43:04 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 95B43112064;
-        Mon, 26 Nov 2018 12:43:03 +0000 (GMT)
-Received: from sofia.ibm.com (unknown [9.85.68.112])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 26 Nov 2018 12:43:03 +0000 (GMT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id B75152E2DEA; Mon, 26 Nov 2018 18:12:54 +0530 (IST)
-Date:   Mon, 26 Nov 2018 18:12:54 +0530
-From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: powernv: add of_node_put()
-Reply-To: ego@linux.vnet.ibm.com
-References: <20181120125731.19368-1-tiny.windzz@gmail.com>
+        Mon, 26 Nov 2018 18:39:50 -0500
+X-IronPort-AV: E=Sophos;i="5.56,282,1539673200"; 
+   d="scan'208";a="23515086"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 26 Nov 2018 05:45:48 -0700
+Received: from NAM01-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.38) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Mon, 26 Nov 2018 05:45:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uWIsapqZYNtyorKuZMwOfYDMLjrvi9tynWSCjhwMp2M=;
+ b=MBp7HorCD5RVYDEHPSAC3oiBrt5jdP9la2R9740eJoZ/mc6aukGzOkjmUrBhN3W93XY/JIwNchIhAz1xHHfuf/hcndD3Gg4jH0hKuO87CF88NUWtgDNGUQfykRI0oLgdNvRFjDLrYETqKmnRaH5fcJJFARCgKq02XtO8oypSzbk=
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
+ BN6PR11MB0001.namprd11.prod.outlook.com (10.161.155.26) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.19; Mon, 26 Nov 2018 12:45:45 +0000
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::d88c:1d67:5fb0:12ae]) by BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::d88c:1d67:5fb0:12ae%2]) with mapi id 15.20.1361.019; Mon, 26 Nov 2018
+ 12:45:45 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <boris.brezillon@bootlin.com>,
+        <richard@nod.at>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <alexander.sverdlin@nokia.com>, <Tudor.Ambarus@microchip.com>
+Subject: [PATCH v2] mtd: spi-nor: fix erase_type array to indicate current map
+ conf
+Thread-Topic: [PATCH v2] mtd: spi-nor: fix erase_type array to indicate
+ current map conf
+Thread-Index: AQHUhYXyqNwBRhXCWUmPjriIVe6LZw==
+Date:   Mon, 26 Nov 2018 12:45:44 +0000
+Message-ID: <20181126124531.17548-1-tudor.ambarus@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1P195CA0038.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:802:5a::27) To BN6PR11MB1842.namprd11.prod.outlook.com
+ (2603:10b6:404:103::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tudor.Ambarus@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR11MB0001;6:RR/Us99dzlNxcVwlPab2sEwpt7S+nKh3sEfrCsNxDeNMQOQb+O1AnSYdk/LUcwrpEzZ0YpodP37TkacGe4tx1hH+PPKZVACDxiIGKaQ5eX1N9OY2F8illPA0yAsOq8WwnVIrjpO9uRcohldox8VsdBeYRW4gMiWDyhyVyi5Ldd8C6wbStGf3dN2x6e53WxBuea0/ByYi575Y4PtB3IFqSgfZhMdmfxMAx8Os90KFjABpcg4J6OfYmsBnMJH4a0S7l3Filrspj9LsSocbhywiNBN0tDkw7O+ke+Dg6h9T2f1tJhCT/KhAIfGo+H7nYuVef34sO7aBuL2GgS0fAWzvqGyGC5t/FCO/oC7FndXHyNPEcpLrDUByBSXSZcS1jVpLERsIAcFVckyoowT/VSoW/jbHhUnfI1ORNH9JuhCkb7CPCDi+Y3RhWRRIeqg7raigB1ZrgsWQBSgOg+dm5V+TIA==;5:8PkEDFzXjxUyUcgBrgS7cH/DsYD048+OK4oGJMdzm7rGJM2IquG7BBF4WjfE+fCeHwc82u6AjuKnmvn5adnPud3toRMWsjdSe5uj3kdkjV3jYJajBlWignnRPS7LF6PyTzsTiUEKBvllwVd2DqSlWIoSX2+U3+/WytXPvLMEqdY=;7:o8hYhjA+uEAUL1njWekJcEI/MV8/p/SmpXAft9MTzIjFW13VhWF2u74XtPIzs1pLVij3nMsqWP1LeRA6Ggiy86Fbw/DSFbomaiYKtzMxVupgGVOScEBywuJvi/5IcZPRf2Do3/Cbq9eVnDJXQxqA3Q==
+x-ms-office365-filtering-correlation-id: 3ef46e8b-0d88-4433-100f-08d6539d14b7
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB0001;
+x-ms-traffictypediagnostic: BN6PR11MB0001:
+x-microsoft-antispam-prvs: <BN6PR11MB0001F4D9624B246F55C67993F0D70@BN6PR11MB0001.namprd11.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231443)(944501410)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB0001;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB0001;
+x-forefront-prvs: 086831DFB4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(366004)(376002)(396003)(136003)(189003)(199004)(72206003)(4326008)(39060400002)(66066001)(36756003)(52116002)(8936002)(54906003)(305945005)(110136005)(7736002)(68736007)(478600001)(316002)(71200400001)(71190400001)(6512007)(99286004)(6486002)(86362001)(6506007)(386003)(2201001)(14454004)(107886003)(53936002)(105586002)(2616005)(106356001)(6436002)(1076002)(102836004)(5660300001)(6116002)(3846002)(186003)(8676002)(256004)(26005)(14444005)(25786009)(486006)(2906002)(97736004)(2501003)(81166006)(476003)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB0001;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 84mDEOleznwk9rUDQl3Wt5cTOxQX9CpKyCBEFJBtAu1VZPll+vDMLBgTQolJeZ75jdFiS7sxULl8j1JCX6fx0lvS+mkWp96jxX28CsP5aqaHqMvGOzPAaLJw13ROrRQQbGw1bF4+Z+A2OFm40uVBGpwgmWhuplyO+0TR8sedEdCi6TFWm0xumbPb4J/eN7I881HbsSFjd1FCEdPDDzjTgGsn1hfcM/hrlcBzJzeaz7u5sdp1tJ2c0m3fzPwHqTUv8gDRPMNidRncDvAMFb+3SHkzyiM/IQxf1UE46S9nimc7yj8u2ccIyzUx454zFw6DAWSs9OucCMYuHB6KOwgtt0SWfBTxnoJACZiw29JnR4Q=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120125731.19368-1-tiny.windzz@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-TM-AS-GCONF: 00
-x-cbid: 18112612-0060-0000-0000-000002D8D8CF
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010123; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01123011; UDB=6.00582947; IPR=6.00903140;
- MB=3.00024335; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-26 12:43:07
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112612-0061-0000-0000-0000475293B3
-Message-Id: <20181126124254.GC21536@in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-26_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811260117
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ef46e8b-0d88-4433-100f-08d6539d14b7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2018 12:45:44.8121
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB0001
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Yangtao Li,
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-On Tue, Nov 20, 2018 at 07:57:31AM -0500, Yangtao Li wrote:
-> use of_node_put() to release the refcount.
->
+BFPT advertises all the erase types supported by all the possible
+map configurations. Mask out the erase types that are not supported
+by the current map configuration.
 
-Thanks for the patch.
+Backward compatibility test done on sst26vf064b.
 
-Reviewed-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+Fixes: b038e8e3be72 ("mtd: spi-nor: parse SFDP Sector Map Parameter Table")
+Reported-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+---
+v2:
+- drop const qualifier
+- update commit message and comment
 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/cpufreq/powernv-cpufreq.c | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
-> index bf6519cf64bc..7e7ad3879c4e 100644
-> --- a/drivers/cpufreq/powernv-cpufreq.c
-> +++ b/drivers/cpufreq/powernv-cpufreq.c
-> @@ -253,18 +253,18 @@ static int init_powernv_pstates(void)
-> 
->  	if (of_property_read_u32(power_mgt, "ibm,pstate-min", &pstate_min)) {
->  		pr_warn("ibm,pstate-min node not found\n");
-> -		return -ENODEV;
-> +		goto out;
->  	}
-> 
->  	if (of_property_read_u32(power_mgt, "ibm,pstate-max", &pstate_max)) {
->  		pr_warn("ibm,pstate-max node not found\n");
-> -		return -ENODEV;
-> +		goto out;
->  	}
-> 
->  	if (of_property_read_u32(power_mgt, "ibm,pstate-nominal",
->  				 &pstate_nominal)) {
->  		pr_warn("ibm,pstate-nominal not found\n");
-> -		return -ENODEV;
-> +		goto out;
->  	}
-> 
->  	if (of_property_read_u32(power_mgt, "ibm,pstate-ultra-turbo",
-> @@ -293,14 +293,14 @@ static int init_powernv_pstates(void)
->  	pstate_ids = of_get_property(power_mgt, "ibm,pstate-ids", &len_ids);
->  	if (!pstate_ids) {
->  		pr_warn("ibm,pstate-ids not found\n");
-> -		return -ENODEV;
-> +		goto out;
->  	}
-> 
->  	pstate_freqs = of_get_property(power_mgt, "ibm,pstate-frequencies-mhz",
->  				      &len_freqs);
->  	if (!pstate_freqs) {
->  		pr_warn("ibm,pstate-frequencies-mhz not found\n");
-> -		return -ENODEV;
-> +		goto out;
->  	}
-> 
->  	if (len_ids != len_freqs) {
-> @@ -311,7 +311,7 @@ static int init_powernv_pstates(void)
->  	nr_pstates = min(len_ids, len_freqs) / sizeof(u32);
->  	if (!nr_pstates) {
->  		pr_warn("No PStates found\n");
-> -		return -ENODEV;
-> +		goto out;
->  	}
-> 
->  	powernv_pstate_info.nr_pstates = nr_pstates;
-> @@ -352,7 +352,12 @@ static int init_powernv_pstates(void)
-> 
->  	/* End of list marker entry */
->  	powernv_freqs[i].frequency = CPUFREQ_TABLE_END;
-> +
-> +	of_node_put(power_mgt);
->  	return 0;
-> +out:
-> +	of_node_put(power_mgt);
-> +	return -ENODEV;
->  }
-> 
->  /* Returns the CPU frequency corresponding to the pstate_id. */
-> -- 
-> 2.17.0
-> 
+ drivers/mtd/spi-nor/spi-nor.c | 31 +++++++++++++++++++++++++++++--
+ 1 file changed, 29 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index 93c9bc8931fc..1fdd2834fbcb 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -2995,12 +2995,13 @@ static int spi_nor_init_non_uniform_erase_map(struc=
+t spi_nor *nor,
+ 					      const u32 *smpt)
+ {
+ 	struct spi_nor_erase_map *map =3D &nor->erase_map;
+-	const struct spi_nor_erase_type *erase =3D map->erase_type;
++	struct spi_nor_erase_type *erase =3D map->erase_type;
+ 	struct spi_nor_erase_region *region;
+ 	u64 offset;
+ 	u32 region_count;
+ 	int i, j;
+-	u8 erase_type, uniform_erase_type;
++	u8 uniform_erase_type, save_uniform_erase_type;
++	u8 erase_type, regions_erase_type;
+=20
+ 	region_count =3D SMPT_MAP_REGION_COUNT(*smpt);
+ 	/*
+@@ -3014,6 +3015,7 @@ static int spi_nor_init_non_uniform_erase_map(struct =
+spi_nor *nor,
+ 	map->regions =3D region;
+=20
+ 	uniform_erase_type =3D 0xff;
++	regions_erase_type =3D 0;
+ 	offset =3D 0;
+ 	/* Populate regions. */
+ 	for (i =3D 0; i < region_count; i++) {
+@@ -3030,13 +3032,38 @@ static int spi_nor_init_non_uniform_erase_map(struc=
+t spi_nor *nor,
+ 		 */
+ 		uniform_erase_type &=3D erase_type;
+=20
++		/*
++		 * regions_erase_type mask will indicate all the erase types
++		 * supported in this configuration map.
++		 */
++		regions_erase_type |=3D erase_type;
++
+ 		offset =3D (region[i].offset & ~SNOR_ERASE_FLAGS_MASK) +
+ 			 region[i].size;
+ 	}
+=20
++	save_uniform_erase_type =3D map->uniform_erase_type;
+ 	map->uniform_erase_type =3D spi_nor_sort_erase_mask(map,
+ 							  uniform_erase_type);
+=20
++	if (!regions_erase_type) {
++		/*
++		 * Roll back to the previous uniform_erase_type mask, SMPT is
++		 * broken.
++		 */
++		map->uniform_erase_type =3D save_uniform_erase_type;
++		return -EINVAL;
++	}
++
++	/*
++	 * BFPT advertises all the erase types supported by all the possible
++	 * map configurations. Mask out the erase types that are not supported
++	 * by the current map configuration.
++	 */
++	for (i =3D 0; i < SNOR_ERASE_TYPE_MAX; i++)
++		if (!(regions_erase_type & BIT(erase[i].idx)))
++			spi_nor_set_erase_type(&erase[i], 0, 0xFF);
++
+ 	spi_nor_region_mark_end(&region[i - 1]);
+=20
+ 	return 0;
+--=20
+2.9.4
 
