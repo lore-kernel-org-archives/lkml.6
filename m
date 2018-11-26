@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC742C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A06C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A255E20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB11C2089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXHSoAns"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A255E20817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0Elq1hhq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB11C2089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbeKZVrz (ORCPT
+        id S1727321AbeKZVr6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:47:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56262 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:47:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726254AbeKZVrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:47:55 -0500
+        id S1726254AbeKZVr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:47:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9149920817;
-        Mon, 26 Nov 2018 10:54:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EA8D2089F;
+        Mon, 26 Nov 2018 10:54:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229651;
-        bh=77rtFgs82BiWNpE7TNqtEshHwHI04rzENm2iK2P/csI=;
+        s=default; t=1543229653;
+        bh=oD6eMPOW2UXVZ1f8g6xKZ17KGiHmZBPdc+zPy9XgUqc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iXHSoAnsa4jD0DmrVBFzRriI38Y0U+RQZ4/V4+v3DMw6fxTHgmEE039lpFilZTU6A
-         YtuEiBVmPZ8o8/vIg8B/Wm7doiqSRTy3hvrHMSvK9ik4GuWU2GSisIuj6qXnjNjvdT
-         8vdq5JAuyb/kaktzZ0YlwlSJ3VwkSKmQg/LzXRVw=
+        b=0Elq1hhqeFtJQvBvFBsxxyqg2D7KzRT3WvUq1FbGRd4BDf3xvLMMwo+60v6LD+XQP
+         MuwdqcT9CqUcXPkNmoXnTS5o2Wb/PiHkfnjdZ7oXiWEhXatG5OnAvwEfMLm7svu9OL
+         KjP/RK1gc1L0y5lJZ/TyOcjS+oI/9X6gLNgBmuAw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Chris Fries <cfries@google.com>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Matthias Kaehlcke <mka@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.4 20/70] kbuild: fix linker feature test macros when cross compiling with Clang
-Date:   Mon, 26 Nov 2018 11:50:35 +0100
-Message-Id: <20181126105048.780330753@linuxfoundation.org>
+Subject: [PATCH 4.4 21/70] kbuild: Set KBUILD_CFLAGS before incl. arch Makefile
+Date:   Mon, 26 Nov 2018 11:50:36 +0100
+Message-Id: <20181126105048.863895905@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
 References: <20181126105046.722096341@linuxfoundation.org>
@@ -65,73 +65,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nick Desaulniers <ndesaulniers@google.com>
+From: Chris Fries <cfries@google.com>
 
-commit 86a9df597cdd564d2d29c65897bcad42519e3678 upstream.
+commit ae6b289a37890909fea0e4a1666e19377fa0ed2c upstream.
 
-I was not seeing my linker flags getting added when using ld-option when
-cross compiling with Clang. Upon investigation, this seems to be due to
-a difference in how GCC vs Clang handle cross compilation.
+Set the clang KBUILD_CFLAGS up before including arch/ Makefiles,
+so that ld-options (etc.) can work correctly.
 
-GCC is configured at build time to support one backend, that is implicit
-when compiling.  Clang is explicit via the use of `-target <triple>` and
-ships with all supported backends by default.
+This fixes errors with clang such as ld-options trying to CC
+against your host architecture, but LD trying to link against
+your target architecture.
 
-GNU Make feature test macros that compile then link will always fail
-when cross compiling with Clang unless Clang's triple is passed along to
-the compiler. For example:
-
-$ clang -x c /dev/null -c -o temp.o
-$ aarch64-linux-android/bin/ld -E temp.o
-aarch64-linux-android/bin/ld:
-unknown architecture of input file `temp.o' is incompatible with
-aarch64 output
-aarch64-linux-android/bin/ld:
-warning: cannot find entry symbol _start; defaulting to
-0000000000400078
-$ echo $?
-1
-
-$ clang -target aarch64-linux-android- -x c /dev/null -c -o temp.o
-$ aarch64-linux-android/bin/ld -E temp.o
-aarch64-linux-android/bin/ld:
-warning: cannot find entry symbol _start; defaulting to 00000000004002e4
-$ echo $?
-0
-
-This causes conditional checks that invoke $(CC) without the target
-triple, then $(LD) on the result, to always fail.
-
-Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Chris Fries <cfries@google.com>
 Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Tested-by: Matthias Kaehlcke <mka@chromium.org>
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-[nc: Fix conflicts due to lack of commit 3298b690b21cd in linux-4.4.y
-     Use KBUILD_CFLAGS instead of CC_OPTION_FLAGS because commit
-     d26e94149276f that introduced that variable isn't in 4.4 either]
+[nc: Adjust context]
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- scripts/Kbuild.include |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ Makefile |   64 +++++++++++++++++++++++++++++++--------------------------------
+ 1 file changed, 32 insertions(+), 32 deletions(-)
 
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -147,12 +147,13 @@ cc-ifversion = $(shell [ $(cc-version) $
- # cc-ldoption
- # Usage: ldflags += $(call cc-ldoption, -Wl$(comma)--hash-style=both)
- cc-ldoption = $(call try-run,\
--	$(CC) $(1) -nostdlib -x c /dev/null -o "$$TMP",$(1),$(2))
-+	$(CC) $(1) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -nostdlib -x c /dev/null -o "$$TMP",$(1),$(2))
+--- a/Makefile
++++ b/Makefile
+@@ -612,6 +612,38 @@ endif # $(dot-config)
+ # Defaults to vmlinux, but the arch makefile usually adds further targets
+ all: vmlinux
  
- # ld-option
- # Usage: LDFLAGS += $(call ld-option, -X)
- ld-option = $(call try-run,\
--	$(CC) -x c /dev/null -c -o "$$TMPO" ; $(LD) $(1) "$$TMPO" -o "$$TMP",$(1),$(2))
-+	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -x c /dev/null -c -o "$$TMPO"; \
-+	$(LD) $(LDFLAGS) $(1) "$$TMPO" -o "$$TMP",$(1),$(2))
++ifeq ($(cc-name),clang)
++ifneq ($(CROSS_COMPILE),)
++CLANG_TARGET	:= -target $(notdir $(CROSS_COMPILE:%-=%))
++GCC_TOOLCHAIN	:= $(realpath $(dir $(shell which $(LD)))/..)
++endif
++ifneq ($(GCC_TOOLCHAIN),)
++CLANG_GCC_TC	:= -gcc-toolchain $(GCC_TOOLCHAIN)
++endif
++KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
++KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
++KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
++KBUILD_CFLAGS += $(call cc-disable-warning, unused-variable)
++KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
++KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
++KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
++# Quiet clang warning: comparison of unsigned expression < 0 is always false
++KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
++# CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
++# source of a reference will be _MergedGlobals and not on of the whitelisted names.
++# See modpost pattern 2
++KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
++KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
++KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
++KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
++else
++
++# These warnings generated too much noise in a regular build.
++# Use make W=1 to enable them (see scripts/Makefile.build)
++KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
++KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
++endif
++
+ # The arch Makefile can set ARCH_{CPP,A,C}FLAGS to override the default
+ # values of the respective KBUILD_* variables
+ ARCH_CPPFLAGS :=
+@@ -697,38 +729,6 @@ endif
+ endif
+ KBUILD_CFLAGS += $(stackp-flag)
  
- # ar-option
- # Usage: KBUILD_ARFLAGS := $(call ar-option,D)
+-ifeq ($(cc-name),clang)
+-ifneq ($(CROSS_COMPILE),)
+-CLANG_TARGET	:= -target $(notdir $(CROSS_COMPILE:%-=%))
+-GCC_TOOLCHAIN	:= $(realpath $(dir $(shell which $(LD)))/..)
+-endif
+-ifneq ($(GCC_TOOLCHAIN),)
+-CLANG_GCC_TC	:= -gcc-toolchain $(GCC_TOOLCHAIN)
+-endif
+-KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+-KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+-KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
+-KBUILD_CFLAGS += $(call cc-disable-warning, unused-variable)
+-KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
+-KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+-KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+-# Quiet clang warning: comparison of unsigned expression < 0 is always false
+-KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
+-# CLANG uses a _MergedGlobals as optimization, but this breaks modpost, as the
+-# source of a reference will be _MergedGlobals and not on of the whitelisted names.
+-# See modpost pattern 2
+-KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
+-KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
+-KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
+-KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+-else
+-
+-# These warnings generated too much noise in a regular build.
+-# Use make W=1 to enable them (see scripts/Makefile.build)
+-KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
+-KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
+-endif
+-
+ ifdef CONFIG_FRAME_POINTER
+ KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
+ else
 
 
