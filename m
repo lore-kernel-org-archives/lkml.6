@@ -2,194 +2,125 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7BEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D14EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 263F820660
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:51:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8E8D20862
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:53:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pf0QkBZ8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 263F820660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="T9ykqtcT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8E8D20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbeKZWpW (ORCPT
+        id S1726501AbeKZWrR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 17:45:22 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46091 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726199AbeKZWpW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 17:45:22 -0500
-Received: by mail-ed1-f66.google.com with SMTP id o10so15503010edt.13;
-        Mon, 26 Nov 2018 03:51:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lvw7BO9vqIh3xNM5ohTUc6wiJZYFlEdlG5VeP+ipl8Q=;
-        b=pf0QkBZ8t+oW69UclpkQFlFH2fG4jkPb0rN343OucmBKqwtVdax8ozj/aRbiat+4YR
-         Rq2sZ+6jCqkoKei0IoM24wCjJOX264JVcuGzGbRhcC6YxUcj/XmguVHzOuFFiQmXvcJ4
-         qzmpZIjmK7u5XwYDbIZSl2DGGXIKxRnuhtjA7oL8JP/JvAUX4/o9ZnQPCfPkZWOsfpl6
-         4hs4tLK2OSOi/JYnCAv0wAUZy+SsurAPE6JbIXwQytUA/dvis3f+kbRqY+icEhW1aoff
-         ddbm0vU0wOJxRt0CZDIfs4wE2bRHDrSz209GOTyjxyldX9a/B0YKfEfmRxFbfMlNvv6e
-         zhuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lvw7BO9vqIh3xNM5ohTUc6wiJZYFlEdlG5VeP+ipl8Q=;
-        b=FnHCEJLEEWKkSG2eqR8xSK+EL3Fkw8FBBiQONGqXxXBfQ0AtwZ1KO3MqeY188si2e6
-         DRArTJn4D1PXc3Er5vNg9HUA3meGVtNhIEZNDL5h/A9olI1sKQ7bg4B36ZHlE69JV9xD
-         rpI2/WdHjkdbqo7Yisbuy2xuAiG5P3T9rvP0/EtOLr2X8DA9kk77cMCw7ZQCDACIzHp4
-         Aswo8jEwvaH3jhLXiUdKVPehxJjbbHtOYXfoym9CDG3lT3rBE2QUMtRRAWYYY4iVbs49
-         wziiXzcG3cL3F/KPaD4+sk8aYx3H9g/jClcKJZyCMXgoCKGMuD8wdC5pSETwdNkiZ2OI
-         2CUQ==
-X-Gm-Message-State: AA+aEWaPkwEhShrAdvB2M+9hkJSAoT/SkqZvsJphnhExsAY74ofVJT94
-        1EbDgqi6sOhxJmZd/IM43hM=
-X-Google-Smtp-Source: AFSGD/XDUzpFavW1fLWcwqqNASf2tfmE5StJPhzIuMykjz2WKFa1Y+5NcIMJqxbRc1G78n+Pv2bWlg==
-X-Received: by 2002:a50:fa0c:: with SMTP id b12mr21798196edq.138.1543233085872;
-        Mon, 26 Nov 2018 03:51:25 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id q4sm121502eda.50.2018.11.26.03.51.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 03:51:24 -0800 (PST)
-Date:   Mon, 26 Nov 2018 12:51:23 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>
-Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Lothar =?utf-8?Q?Wa=C3=9Fmann?= <LW@karo-electronics.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
+        Mon, 26 Nov 2018 17:47:17 -0500
+Received: from mail-eopbgr130079.outbound.protection.outlook.com ([40.107.13.79]:34976
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726266AbeKZWrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 17:47:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pN5PCz6kfTHCNALxy5fhbT8UAE1o95fEeItIRBRc5xI=;
+ b=T9ykqtcT+RteclHBTpBpxoglIEBI2k8NVJnRcxNrwdG2vr4X2G+yhMcoMNur/5ZsG4NYaoe/sIUX44yMWbFr7JUk7R1ihNOxzhtGp2TI/6+xTXKtR2ot9YoblkWZH1WFP7tVhlcZvHjMRhbqhYWRhLxrO+FwhQ11eJEpLeTgBpA=
+Received: from VI1PR04MB5533.eurprd04.prod.outlook.com (20.178.122.159) by
+ VI1PR04MB5453.eurprd04.prod.outlook.com (20.178.121.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.19; Mon, 26 Nov 2018 11:53:18 +0000
+Received: from VI1PR04MB5533.eurprd04.prod.outlook.com
+ ([fe80::8484:31d3:d034:a547]) by VI1PR04MB5533.eurprd04.prod.outlook.com
+ ([fe80::8484:31d3:d034:a547%5]) with mapi id 15.20.1361.019; Mon, 26 Nov 2018
+ 11:53:18 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        Andy Duan <fugang.duan@nxp.com>
+CC:     "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Robin Gong <yibin.gong@nxp.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        viresh kumar <viresh.kumar@linaro.org>
-Subject: Re: [RCF PATCH,v2,2/2] pwm: imx: Configure output to GPIO in
- disabled state
-Message-ID: <20181126115123.GA15164@ulmo>
-References: <20181114215120.vddykljqyavm64wj@pengutronix.de>
- <20181115152545.GA8611@ulmo>
- <20181115203733.qvonika6yhn2bsnb@pengutronix.de>
- <20181116083430.7f1d8452@ipc1.ka-ro>
- <20181116082557.l2ljgu3hsu7tvdci@pengutronix.de>
- <91640f9b-d219-553e-043a-c6151f2f68d7@ysoft.com>
- <20181122162359.ufngpgxkenlmgqni@pengutronix.de>
- <b332b319-cbb3-547f-c8b7-1dd275c1596d@ysoft.com>
- <20181122190321.ktqegs7kpvhcemvi@pengutronix.de>
- <9da8c6d9-d97c-200c-d8e4-2eb9f73eedc5@ysoft.com>
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: imx6sx uart failing loopback tests with sdma firmware (ROM works)
+Thread-Topic: imx6sx uart failing loopback tests with sdma firmware (ROM
+ works)
+Thread-Index: AQHUhX6fudZ5Qa2IqEK64USekwGKUw==
+Date:   Mon, 26 Nov 2018 11:53:18 +0000
+Message-ID: <6d8280df85c6e5b2ddba635780cd2912d9c5d425.camel@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB5453;6:wCc8lyT4EJo/rYgpVgtxZljtlA+TCrrIM4wha5GGEbFYNotgZ7M2kl6kOUuyIuhjhAfB1lrUwdAkROrs9EIWBG7UQJ8+AYMyC4OnAOuaLmKb2P7gqPTgDfFouA+WCYMYez75oVrTdUDEhDVgj+JLMFVZXbOJQ1f3BubD/Jan2KjznVOfQJzalJbEs1E+O0ynbm2rv9pAPRKmsjjjZvEeStXCFc0/dd75YNu76LegjMijwlz30lmjtBJKOJ/LPlYNCeeqdIV4U3Q97O6QHSNkK7XkVPbRx4hYpd1s5fKbYaI4Op1We1w9mkymQdDLud5eTwGDU3Oy/zpBQnrw4+Pm8HCkapeJfcs2Cdfyjt6PwDzpEmPi28ozXJOGndHpBsbaqKEc3fm5/shabHbIIjOcSYCl11rszRZK3CL+ZiPyWCZWIYuDfobOYGuBjXRs1KtxNpvDfcZAZfMS42tg+EIAnw==;5:ZoWgj7hMkJMUesd0Gzh17LUFGv53q5YLWjx/npl0/uBUszQ2HMJ/7kK+wliWBuBWPVz4spKUYjzqvy6hk6YRiV9Wlb0W5S9zFRiVJNsxg7lnoKTFmC3u0Iigh3juZhDeGfcyBFZPGKDTte5XKM1rdgnMGJoaj+dG+aC/3z4/U0M=;7:c4npTu1VBLSXt4Q3BkrqtNhmKRLXFBo1NJ+9aHlH8v/ShG7sd5x5b2eRd2ZtVqxlno9V6A17WAG+1IX82uvB7mOqAFsTGSYI6RE0hW0jbqaYrUoLCaJXW4f404Jxd0ruCweqiCn5wnajNOFhP2ji1Q==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 0f81e00f-3bfc-4fe4-f800-08d65395c1ac
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5453;
+x-ms-traffictypediagnostic: VI1PR04MB5453:
+x-microsoft-antispam-prvs: <VI1PR04MB5453B811FECF63DC6E940241EED70@VI1PR04MB5453.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231443)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB5453;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5453;
+x-forefront-prvs: 086831DFB4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(366004)(346002)(136003)(39860400002)(189003)(199004)(6506007)(305945005)(316002)(99286004)(110136005)(102836004)(54906003)(7736002)(6306002)(3846002)(6512007)(25786009)(53936002)(14444005)(256004)(2501003)(2616005)(44832011)(486006)(71200400001)(71190400001)(2906002)(6636002)(6116002)(6486002)(36756003)(6436002)(106356001)(105586002)(575784001)(5660300001)(86362001)(26005)(118296001)(186003)(66066001)(478600001)(14454004)(966005)(8936002)(8676002)(81156014)(81166006)(50226002)(68736007)(476003)(4326008)(97736004)(99106002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5453;H:VI1PR04MB5533.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: hXtcctm0NoR2YfeiCvcUfXO1lwZHJ8oH8msw7H703qMlV7a8hIEeIXtMaC1UT5R0vwxMgdtnwGfgJ0Intsf4pcsuZCdzVCYy8OfUrOE/miPGVLm1bf2IxWFUMr1gp+6HICmEwQvL1OJlGa6EAjAgcVJlvtVqxbeRBcsgDnYeTDHX45SjXvGQGKyPvcz/32uKWBpjEJ9weK21dA6R6ARcgwrLLTezqtGhRWNQXPQRemnYC2zHqjHKB9nDyWeZoa0sDh36kdj5/f7gj0ox913L334+U+gjocNbSInQJZ3KP+LHdws2QQMkxDFsO+tLMiqgFlrH7c0a/bSwkqIYUbBSPt1/dMvhTC4OjMrc1Vd7CsE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <008117BBEC490F4DABC9F492D0038EDA@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
-Content-Disposition: inline
-In-Reply-To: <9da8c6d9-d97c-200c-d8e4-2eb9f73eedc5@ysoft.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f81e00f-3bfc-4fe4-f800-08d65395c1ac
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2018 11:53:18.3134
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5453
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---y0ulUmNC+osPPQO6
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Nov 23, 2018 at 03:15:11PM +0000, Vok=C3=A1=C4=8D Michal wrote:
-> On 22.11.2018 20:03, Uwe Kleine-K=C3=B6nig wrote:
-> > On Thu, Nov 22, 2018 at 04:46:39PM +0000, Vok=C3=A1=C4=8D Michal wrote:
-> >> On 22.11.2018 17:23, Uwe Kleine-K=C3=B6nig wrote:
-> >>> On Thu, Nov 22, 2018 at 03:42:14PM +0000, Vok=C3=A1=C4=8D Michal wrot=
-e:
-> >>>> On 16.11.2018 09:25, Uwe Kleine-K=C3=B6nig wrote:
-> >>>>> On Fri, Nov 16, 2018 at 08:34:30AM +0100, Lothar Wa=C3=9Fmann wrote:
-> >>>>>> No. You can disable the output driver via pinctrl, so that only the
-> >>>>>> selected pull-up/down is relevant. The pin function and GPIO regis=
-ter
-> >>>>>> settings don't matter at all in this case.
-> >>>>
-> >>>> Lothar, please can you be more specific how would you do that? IFAIK=
- the
-> >>>> pull-up/down internal resistors have effect only if the pin is confi=
-gured
-> >>>> as GPIO *input* (on i.MX6 at least). See the TRM, 29.4.2.2 Output dr=
-iver:
-> >>>>
-> >>>>     "Internal pull-up, pull-down resistors, and pad keeper are disab=
-led in
-> >>>>      output mode."
-> >=20
-> > This would mean you'd have to rely on an external pull up for your use
-> > case. I wouldn't be surprised however if DSE=3D0 wouldn't count as "out=
-put
-> > mode". Given the reliability of NXP documentation I wouldn't bet neither
-> > on one nor the other possibility.
->=20
-> Yeah, the NXP documentation sometimes does not really match reality.
-> My use case is based on the fact that I configure the pin as input in
-> the driver. Then it works just fine.
->=20
-> >>> So I'd expect this to really work on i.MX6 but not the earlier SoCs
-> >>> without a gpio specifier.
-> >>
-> >> Maybe you would expect it to work but I already tested and measured
-> >> that weeks ago ;) It did not work.
-> >=20
-> > Which pin/gpio do we talk about? Which i.MX6 variant did you test this
-> > on? (Assuming i.MX6D or i.MX6Q and PAD_DISP0_DATA09, did you try setting
-> >=20
-> > 	IOMUXC_SW_MUX_CTL_PAD_DISP0_DATA09 (0x020E0194) =3D 0x00000005
-> > 	IOMUXC_SW_PAD_CTL_PAD_DISP0_DATA09 (0x020E04A8) =3D 0x0000b080
-> >=20
-> > and then play with GPIO 4.30 direction and output value?)
->=20
-> My test setup is as follows:
-> - SoC is i.MX6DL or i.MX6S - I have three board variants in total.
-> - Pin used for PWM/GPIO is PAD_GPIO9.
-> - The pin is not connected to any circuit. Just a test point.
-> - pinctrl setup in DT:
->    - for "pwm":
->      - fsl,pins =3D <MX6QDL_PAD_GPIO_9__PWM1_OUT 0x8>
->      - IOMUXC_SW_MUX_CTL_PAD_GPIO09 =3D 0x00000004
->      - IOMUXC_SW_PAD_CTL_PAD_GPIO09 =3D 0x00000008
->=20
->    - for "gpio":
->     - fsl,pins =3D <MX6QDL_PAD_GPIO_9__GPIO1_IO09 0xb000>
->     - IOMUXC_SW_MUX_CTL_PAD_GPIO09 =3D 0x00000005
->     - IOMUXC_SW_PAD_CTL_PAD_GPIO09 =3D 0x0000b000
-
-Does it help if you additionally set the ODE bit (bit 11) here?
-
-Thierry
-
---y0ulUmNC+osPPQO6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv73jgACgkQ3SOs138+
-s6Eo/hAAiZDZS/s4dgLSQLvuZolBku1IUFAPtT68E1MuS8GLBsO3HsTImJ3/+v9C
-QcohCQ4B1ymoOU8x5WcF5kDy928tpvZ7y+u1YG9QUt+jkmZ1tOIUPuSQbjwZsirU
-jDJxmLWMZfOuEydNIRM4CPKSyO6l/XD1QMdtV51LkCJLhvCSUv+bFVDwR+EBpXCw
-0kBlLPuyjVFmp7Lg2oBIgIY2a56TwgpXJViAWRWxY1ugQaS9qrMj70gxlAjGkY0T
-Dz7ZxPTJU7YpggVHF09eO7ReYOFPikSc8hP/2fNIL0O2DbSc04mmbR6sXLY0al5A
-opadlDPtRvMli/5ECp0+jneaQStdThmB3DKfFCxG5rNpwb2dlnm//waFahM6Y9cY
-Kw+C9AJly3hiG1a2uQnmL5ijaBqyLXPlUAqMr5vtU2CHRNZRiHSmZzASSGObIkcn
-4XHYWEkLkxvkxh0Av1Y3vBOX/6+WeZdKWBxNSISDFjG+G74SCKGQpxIRYrLXj+2S
-fAUHHZQSvL1RohhEmm9AICTcaQOuJz4aFV+ew4lo82zKhpbS/J7KvCHredi7tzuf
-pZI363JxqpalfLZQl7cfzYckbFHSnOb3LaYWiVnKgURt45y9Gd2giHqbrKqGJEmU
-SPWgv4bFPRfhnsOb+soBxbZNsOWCUfYPlStImQC+9toyDaIUkM0=
-=ImQK
------END PGP SIGNATURE-----
-
---y0ulUmNC+osPPQO6--
+SGVsbG8sDQoNCk9uIGEgYnVpbGQgZmFybSBhdCBOWFAgd2UgZm91bmQgdGhhdCBsaW51eC1uZXh0
+IG5vdyBmYWlscyBvbiBzaW1wbGUNCmxvb3BiYWNrIHRlc3RzIG9uIGlteDZzeC1zZGIgKGJ1dCBu
+b3Qgb3RoZXIgU09DcyBBRkFJQ1QpLiBJIHRyYWNrZWQNCnRoaXMgZG93biB0byBjb21taXQgMzBm
+ZGQ1MWJlMTYxDQooIkFSTTogaW14X3Y2X3Y3X2RlZmNvbmZpZzogYWRkIENPTkZJR19GV19MT0FE
+RVJfVVNFUl9IRUxQRVIiKQ0KDQpBbGwgdGhhdCBkb2VzIGlzIGVuYWJsZSBsb2FkaW5nIFNETUEg
+ZmlybXdhcmUgZnJvbSByb290ZnMsIGluIHRoZW9yeQ0KdGhpcyBjb25maWcgd2FzIGFsd2F5cyBz
+dXBwb3J0ZWQgc28gaXQgd291bGQgbm90IGJlIGEgbmV3IGJ1Zy4NCg0KVGhpcyBkb2Vzbid0IGhh
+cHBlbiB3aXRoIHRoZSBOWFAgdmVuZG9yIHRyZWUgYnV0IHRoZXJlIGlzIHF1aXRlIGEgbGFyZ2UN
+CmRlbHRhIGluIHVhcnQgZG1hIGNvZGUuIEluIHBhcnRpY3VsYXIgdXBzdHJlYW0gZHJvcHBlZCBJ
+RERNQUVOIGNsYWltaW5nDQp0aGF0IHRoaXMgd29ya3Mgd2l0aCBib3RoIFJPTSBhbmQgRlcgc2Ny
+aXB0cywgc2VlIGNvbW1pdCA5MDVjMGRlY2FkMjgNCigic2VyaWFsOiBpbXg6IGRvbid0IHVzZSBp
+ZGxlIGNvbmRpdGlvbiBkZXRlY3QgZm9yIERNQSB0cmFuc2ZlcnMiKQ0KDQpUaGlzIGRvZXNuJ3Qg
+c2VlbSB0byB3b3JrIG9uIDZzeCB0aG91Z2ggYW5kIEkgZG9uJ3Qga25vdyB3aHkgOigNCg0KVGhl
+IGlzc3VlIGNhbiBiZSB3b3JrZWQtYXJvdW5kIGJ5IGZvcmNpbmcgUlggc2NyaXB0IGZyb20gUk9N
+Og0KDQpkaWZmIC0tZ2l0IGRyaXZlcnMvZG1hL2lteC1zZG1hLmMgZHJpdmVycy9kbWEvaW14LXNk
+bWEuYw0KQEAgLTg5NCw5ICs4OTQsMTEgQEAgc3RhdGljIHZvaWQgc2RtYV9nZXRfcGMoc3RydWN0
+IHNkbWFfY2hhbm5lbCAqc2RtYWMsDQogICAgICAgICAgICAgICAgYnJlYWs7DQogICAgICAgIGNh
+c2UgSU1YX0RNQVRZUEVfVUFSVDoNCi0gICAgICAgICAgICAgICBwZXJfMl9lbWkgPSBzZG1hLT5z
+Y3JpcHRfYWRkcnMtPnVhcnRfMl9tY3VfYWRkcjsNCisgICAgICAgICAgICAgICAvL3Blcl8yX2Vt
+aSA9IHNkbWEtPnNjcmlwdF9hZGRycy0+dWFydF8yX21jdV9hZGRyOw0KKyAgICAgICAgICAgICAg
+IHBlcl8yX2VtaSA9IDgxNzsNCiAgICAgICAgICAgICAgICBlbWlfMl9wZXIgPSBzZG1hLT5zY3Jp
+cHRfYWRkcnMtPm1jdV8yX2FwcF9hZGRyOw0KICAgICAgICAgICAgICAgIGJyZWFrOw0KICAgICAg
+ICBjYXNlIElNWF9ETUFUWVBFX1VBUlRfU1A6DQoNClRoZSBhYm92ZSBkb2Vzbid0IGxvb2sgbGlr
+ZSBhIGdvb2QgZml4LiBJIHRyaWVkIHRvIHJldmVydCA5MDVjMGRlY2FkMjgNCmFuZCByZXNvbHZl
+IGNvbmZsaWN0cyBhbmQgdGhhdCBhbHNvIHNlZW1zIHRvIHdvcmssIHB1c2hlZCBoZXJlOg0KaHR0
+cHM6Ly9naXRodWIuY29tL2NkbGVvbmFyZC9saW51eC9jb21taXQvMGExNzU3ZjQ2N2U2ZGM5NjAz
+N2VjMmUzZWE3Yzg4YzVhNGViMmNlYg0KDQpZb3UgY2FuIGZpbmQgdGVzdCBjb2RlIGhlcmUgKG5v
+dCB2ZXJ5IGludGVyZXN0aW5nKToNCmh0dHBzOi8vc291cmNlLmNvZGVhdXJvcmEub3JnL2V4dGVy
+bmFsL2lteC9pbXgtdGVzdC90cmVlL3Rlc3QvbXhjX3VhcnRfdGVzdC9teGNfdWFydF90ZXN0LmM/
+aD1pbXhfNC4xNC42Ml8xLjAuMF9iZXRhDQoNCkFueSBpZGVhIG9uIGhvdyB0byBmaXggdGhpcz8N
+Cg0KLS0NClJlZ2FyZHMsDQpMZW9uYXJkDQo=
