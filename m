@@ -1,115 +1,88 @@
 Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EC5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE4EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B74A20645
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2705920660
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:09:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jY+ZfKcU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B74A20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=your-benefits.eu header.i=@your-benefits.eu header.b="ITXmVbsA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2705920660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=your-benefits.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731137AbeKZWCN (ORCPT
+        id S1731225AbeKZV65 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 17:02:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45460 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730303AbeKZV7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:59:25 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BF9A20672;
-        Mon, 26 Nov 2018 11:05:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230339;
-        bh=+i0ZO11amGJvZsME5A3b0yD6R50OP1DWjp2u05RPv60=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jY+ZfKcUy83HTlA1sVE7enzYVGQlj6Wze+efBN6TdyAQRDnR/ty2H6vWJiC8qj/SG
-         cspnJdgV01534UuU/wKJ8apuUlXBfQL63tmJ1doSa8UMHVvpqWcCZ1HgFmkDrW9M0x
-         W6o6jjuv9HJoucjQybPmIg2bM6YLwYq4lcgPDfQI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathias Thore <Mathias.Thore@infinera.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 4.19 098/118] uio: Fix an Oops on load
-Date:   Mon, 26 Nov 2018 11:51:32 +0100
-Message-Id: <20181126105105.632882223@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
-References: <20181126105059.832485122@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 26 Nov 2018 16:58:57 -0500
+Received: from mail.your-benefits.eu ([80.211.149.54]:55137 "EHLO
+        your-benefits.eu" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbeKZV64 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:58:56 -0500
+X-Greylist: delayed 431 seconds by postgrey-1.27 at vger.kernel.org; Mon, 26 Nov 2018 16:58:55 EST
+Received: by your-benefits.eu (Postfix, from userid 1001)
+        id 51A0AA3098; Mon, 26 Nov 2018 11:47:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=your-benefits.eu;
+        s=mail; t=1543229836;
+        bh=c14RFkzaLGlrhR+55xbHiwHqcL653MGVSdPbdypDSPk=;
+        h=Date:From:To:Subject:From;
+        b=ITXmVbsAaAuJXp1sskvWTGorM7G7Y9Mqnde63WIR9AuYhWKBtkwmCN0wl5KfKLWSY
+         rdZXCvwWKz5/JgVNwWiQ8worW1d3pacrgGbsuqNvjnECzVfNlwq7AtPxaLS5J+sHg6
+         SUOCC18XRXeIUbJ4hLBin31stZW5eToLDd4Ief6g=
+Received: by mail.your-benefits.eu.your-benefits.eu for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 10:47:42 GMT
+Message-ID: <20181126114509-0.1.i.1b22.0.ekdnj743ua@your-benefits.eu>
+Date:   Mon, 26 Nov 2018 10:47:42 GMT
+From:   =?UTF-8?Q? "L=C3=A1szl=C3=B3_P=C3=A9ter" ?= 
+        <peter.laszlo@your-benefits.eu>
+To:     <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?Q?Dolgoz=C3=B3i_juttat=C3=A1sok?=
+X-Mailer: mail.your-benefits.eu
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+Kedves H=C3=B6lgyem/Uram!
 
-------------------
+2019 janu=C3=A1rj=C3=A1t=C3=B3l szinte minden b=C3=A9ren k=C3=ADv=C3=BCli=
+ juttat=C3=A1s j=C3=B6vedelemk=C3=A9nt fog ad=C3=B3zni (kiv=C3=A9telt k=C3=
+=A9pez ez al=C3=B3l a SZ=C3=89P k=C3=A1rtya). A v=C3=A1ltoz=C3=A1sok elle=
+n=C3=A9re a v=C3=A1llalatok t=C3=B6bb mint 55%-a meg k=C3=ADv=C3=A1nja ta=
+rtani a dolgoz=C3=B3i juttat=C3=A1sok nett=C3=B3 =C3=B6sszeg=C3=A9t, mag=C3=
+=A1ra v=C3=A1llalva ezzel a megemelkedett ad=C3=B3terheket.=20
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+Juttat=C3=A1si k=C3=A1rty=C3=A1ink seg=C3=ADts=C3=A9g=C3=A9vel 2019-ben a=
+ munk=C3=A1ltat=C3=B3k lefedhetik szinte az =C3=B6sszes jelenleg haszn=C3=
+=A1lt b=C3=A9ren k=C3=ADv=C3=BCli juttat=C3=A1st, mik=C3=B6zben munkav=C3=
+=A1llal=C3=B3ik =C3=A9lvezhetik az ak=C3=A1r korl=C3=A1tlan felhaszn=C3=A1=
+l=C3=A1s lehet=C5=91s=C3=A9g=C3=A9t.  A SZ=C3=89P k=C3=A1rty=C3=A1t=C3=B3=
+l elt=C3=A9r=C5=91en a mi k=C3=A1rty=C3=A1inkkal olyan mindennapos k=C3=B6=
+lts=C3=A9gek fedezhet=C5=91ek mint p=C3=A9ld=C3=A1ul =C3=A9lelmiszer v=C3=
+=A1s=C3=A1rl=C3=A1s, eg=C3=A9szs=C3=A9g=C3=BCgyi ell=C3=A1t=C3=A1s, ruh=C3=
+=A1zat, elektronika, =C3=BCzemanyagk=C3=B6lts=C3=A9g, k=C3=B6zm=C5=B1d=C3=
+=ADj, s=C5=91t, ak=C3=A1r m=C3=A9g k=C3=A9szp=C3=A9nzfelv=C3=A9telre is a=
+lkalmasak.=20
 
-commit 432798195bbce1f8cd33d1c0284d0538835e25fb upstream.
+Ez az egyetlen olyan juttat=C3=A1si k=C3=A1rtya a magyar piacon, melyet m=
+inden hazai POS termin=C3=A1l elfogad, ezzel biztos=C3=ADtva a k=C3=A1rty=
+a sz=C3=A9les k=C3=B6r=C5=B1 felhaszn=C3=A1lhat=C3=B3s=C3=A1g=C3=A1t.=20
 
-I was trying to solve a double free but I introduced a more serious
-NULL dereference bug.  The problem is that if there is an IRQ which
-triggers immediately, then we need "info->uio_dev" but it's not set yet.
-
-This patch puts the original initialization back to how it was and just
-sets info->uio_dev to NULL on the error path so it should solve both
-the Oops and the double free.
-
-Fixes: f019f07ecf6a ("uio: potential double frees if __uio_register_device() fails")
-Reported-by: Mathias Thore <Mathias.Thore@infinera.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: stable <stable@vger.kernel.org>
-Tested-by: Mathias Thore <Mathias.Thore@infinera.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/uio/uio.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -959,6 +959,8 @@ int __uio_register_device(struct module
- 	if (ret)
- 		goto err_uio_dev_add_attributes;
- 
-+	info->uio_dev = idev;
-+
- 	if (info->irq && (info->irq != UIO_IRQ_CUSTOM)) {
- 		/*
- 		 * Note that we deliberately don't use devm_request_irq
-@@ -970,11 +972,12 @@ int __uio_register_device(struct module
- 		 */
- 		ret = request_irq(info->irq, uio_interrupt,
- 				  info->irq_flags, info->name, idev);
--		if (ret)
-+		if (ret) {
-+			info->uio_dev = NULL;
- 			goto err_request_irq;
-+		}
- 	}
- 
--	info->uio_dev = idev;
- 	return 0;
- 
- err_request_irq:
+Sz=C3=ADvesen bemutatom =C3=96nnek, milyen tov=C3=A1bbi el=C5=91ny=C3=B6k=
+kel j=C3=A1r k=C3=A1rty=C3=A1ink dolgoz=C3=B3i juttat=C3=A1sk=C3=A9nt t=C3=
+=B6rt=C3=A9n=C5=91 alkalmaz=C3=A1sa, =C3=A9s r=C3=A9szletes t=C3=A1j=C3=A9=
+koztat=C3=A1st adok a k=C3=A1rty=C3=A1k felhaszn=C3=A1l=C3=A1si lehet=C5=91=
+s=C3=A9geir=C5=91l =E2=80=93 k=C3=A9rem jelezze ez ir=C3=A1nti ig=C3=A9ny=
+=C3=A9t.=20
 
 
+L=C3=A1szl=C3=B3 P=C3=A9ter
+Menedzser
