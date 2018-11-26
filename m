@@ -2,92 +2,85 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D688C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89127C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DC9820663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:40:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1686020855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:43:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UATschJS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DC9820663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MT3U/ci8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1686020855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbeKZTeN (ORCPT
+        id S1726231AbeKZTg3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 14:34:13 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36066 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726164AbeKZTeN (ORCPT
+        Mon, 26 Nov 2018 14:36:29 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:47080 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbeKZTg3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 14:34:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dFfCRLDk1yob2SgCd+1I3aUGQ8QQYq7LIE7duVE0qvI=; b=UATschJSxShFT7IxiJ7jXlQ8N
-        5fMMMj2K30Isa1o0nO+HbuRB1pBoqpCB0mgty7P9LvOrwQYvJKvguqH9cvjmrhmoUgc0AZ0VqQuht
-        upqHweYjyKoSrz2/QBtQnSPexRyZqswQyTGaUjpDIH6zulZNZ3crjyho+UNcj9wacWCQ1/6a00/Gj
-        3/53O6Sqj+NcqA/yt3ZaxIwInwswd6REMyBzMVsi6L8tGeZq0Rq5J3Ak28BqtLXWFFQYpxV4MWkAn
-        ir0jY0cW2lvfBJ5EdciWxZSxGEXqsSqI9s96PgKQdUa5TgCf7Yr1+J6MkJGj5Yp2TiXYrRysOY4tV
-        hWgTT3lZA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gRCRg-0002IN-0R; Mon, 26 Nov 2018 08:40:44 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 09C6B2029FD58; Mon, 26 Nov 2018 09:40:42 +0100 (CET)
-Date:   Mon, 26 Nov 2018 09:40:42 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        zhe.he@windriver.com, catalin.marinas@arm.com, tglx@linutronix.de,
-        rostedt@goodmis.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
-        boqun.feng@gmail.com
-Subject: Re: [PATCH v2] kmemleak: Turn kmemleak_lock to raw spinlock on RT
-Message-ID: <20181126084042.GK2113@hirez.programming.kicks-ass.net>
-References: <1542877459-144382-1-git-send-email-zhe.he@windriver.com>
- <20181123095314.hervxkxtqoixovro@linutronix.de>
- <20181123110226.GA5125@andrea>
- <20181123110611.s2gmd237j7docrxt@linutronix.de>
+        Mon, 26 Nov 2018 14:36:29 -0500
+Received: by mail-lj1-f196.google.com with SMTP id v15-v6so15724263ljh.13
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 00:43:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pl/01wJdbl68kMZU3GUZfO6qYr4qR7b/e+82DOpA8Ao=;
+        b=MT3U/ci82DhksDKqaZuW1aotSzNKh83h/ge6OUaIp+hNX12tfVt3DxHjLom2SWKu7X
+         Q+TGPAAJS+mUtHsN/HDoXQeIp2o3hBoqPKlE1Muh7RHVSuje55qa29zye1aAgHQYzGFQ
+         7KIpB0jxkkhPv/Pe/74H/cupm9YfqXfW9C9tE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pl/01wJdbl68kMZU3GUZfO6qYr4qR7b/e+82DOpA8Ao=;
+        b=un5/BvMMQCxWyWyPm68aXBDGCjzuKzLi5roBKD0nsrh2vPy1DdbUQmDEfViPvPGNtP
+         heuBrHm+qFeksaKYUPQrXvK6XNN6mF/KetJkFmG3wolE6nokWp7/njzVyrxrFRJA0bex
+         VsIQ0h57pZz1AVLI6afMpqYrRIhYHd/tT6hj9H4Hb5bv8wJXUFF5OzCwC12DWMv6HjXv
+         VCnVxvjmmDeRMcIwYUy5kdvWbpp8z1CWq6DwY49rB0O5lLN0E6LCuemLemHJJzWXheQk
+         TM1Eoyv+Y8z/K/OCSyNgZMJb+YmH/znxROyb3qkqpGgL55ASmJOKg+JJOpe7DL3zaiyG
+         p+ng==
+X-Gm-Message-State: AA+aEWbUCwOsUNl9JU6PQQI+zkejHKgIhFIPDWVKnj8rJ8rk2ckVwOTb
+        4pgPnFLtthUULYWFFK605jGFMiMpVyYNn19JGEKH3g==
+X-Google-Smtp-Source: AJdET5eQUqLxLv2xNoVxZXchFCSjZGspKE7Cuw051rKDnamucTVAUBhSabrLB16XezWOLFKapicZw+QirGbs1r/tpH8=
+X-Received: by 2002:a2e:9107:: with SMTP id m7-v6mr16153026ljg.23.1543221783527;
+ Mon, 26 Nov 2018 00:43:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181123110611.s2gmd237j7docrxt@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181120111709.22128-1-phil.edworthy@renesas.com>
+In-Reply-To: <20181120111709.22128-1-phil.edworthy@renesas.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 26 Nov 2018 09:42:50 +0100
+Message-ID: <CACRpkdbaWRTiA5=Ost7TUWRuf5fT3UK9wz8kTf_g3jqZjB8Zfg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: dwapb: Correct the DT node name in the example
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Hoan Tran <hotran@apm.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 12:06:11PM +0100, Sebastian Andrzej Siewior wrote:
-> On 2018-11-23 12:02:55 [+0100], Andrea Parri wrote:
-> > > is this an RT-only problem? Because mainline should not allow read->read
-> > > locking or read->write locking for reader-writer locks. If this only
-> > > happens on v4.18 and not on v4.19 then something must have fixed it.
-> > 
-> > Probably misunderstanding, but I'd say that read->read locking is "the
-> > norm"...?
-> > 
-> > If you don't use qrwlock, readers are also "recursive", in part.,
-> > 
-> >   P0			P1
-> >   read_lock(l)
-> > 			write_lock(l)
-> >   read_lock(l)
-> > 
-> > won't block P0 on the second read_lock().  (qrwlock somehow complicate
-> > the analysis; IIUC, they are recursive if and only if in_interrupt().).
-> 
-> ehm, peterz, is that true? My memory on that is that all readers will
-> block if there is a writer pending.
+On Tue, Nov 20, 2018 at 12:17 PM Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
 
-Since qrwlock is the more strict, all users should use its semantics.
-Just like we cannot 'rely' on the unfairness of some lock
-implementations.
+> The sub-nodes should not be called gpio-controller, but simply gpio.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+
+Patch applied.
+
+Yours,
+Linus Walleij
