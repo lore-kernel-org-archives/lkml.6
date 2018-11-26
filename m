@@ -2,229 +2,282 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8728FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6D9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EB1B205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:11:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC54C205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:11:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ef2SdufM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EB1B205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Vpmxhuxk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC54C205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727056AbeK0HHC (ORCPT
+        id S1727180AbeK0HHL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 02:07:02 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:48400 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726300AbeK0HHB (ORCPT
+        Tue, 27 Nov 2018 02:07:11 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:34262 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726300AbeK0HHL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 02:07:01 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAQK8RaY141686;
-        Mon, 26 Nov 2018 20:11:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=EJ6dO1tC4WKazUYFZI9iTSMni1n9v1mUPQd/hXTh/zM=;
- b=ef2SdufMewEY8OgNt8TImZAmsrtgOGlDgz99mvDR2Sb7tIFbijJy7n4UCYrPCnotrFw5
- HygOu1KsKcx41uJgZ4P3wPHT7i4VLMxmbrpfuQiNGoNx9+MtmoQnECtRtJPXmlpqKCXB
- VBmPvHPiwR8t+41YbtVe4TVonpFXwYIniQywFS6krbTKuGeho3Nxw41RmgCaeHDWX6G+
- s3wU1tcwdhqu+QteNrDh/Ae/YPFGBcMIy2p5W76CRi6r6XZAHDh3Cpi9xwTeiFGtEk5n
- GA1t9AjjSXMgY5li1XHOJtQD157SvjJMt08cIlw+DaH9O9POKMkl4B0yJeGFdS641nLb Zg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2nxx2u02yw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 26 Nov 2018 20:11:22 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAQKBLRd016425
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 26 Nov 2018 20:11:21 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAQKBKcW006358;
-        Mon, 26 Nov 2018 20:11:20 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 26 Nov 2018 12:11:20 -0800
-Subject: Re: [PATCH] xen/x86: add diagnostic printout to xen_mc_flush() in
- case of error
-To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org
-Cc:     sstabellini@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de
-References: <20181123162451.3351-1-jgross@suse.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <0727da38-bfe8-f484-6b06-7205c1d953c1@oracle.com>
-Date:   Mon, 26 Nov 2018 15:11:05 -0500
+        Tue, 27 Nov 2018 02:07:11 -0500
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id EBB6524E0B6C;
+        Mon, 26 Nov 2018 12:11:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1543263116; bh=ovscD6vZWINxwQKNF0vk5Ldk9gz9sIB6pHXdMqH0LTU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=VpmxhuxkCEXFoGdV9jqdV4xvzkGTzy2D2TV62bgV9oP22ysR8zXGzhV5oZGwofgw7
+         4CkXAZJE/OqE32d6u5YVYYfDKEsgkhOOcybXAjai6ITXur0wEhzMcD9nwaLZnCnpDb
+         /w53SdSFhpF01E8+wUjeiXU8LRPr0bHZivqDt1DURZ6zCPJzGroxNRecximSUro9QA
+         l8TVYqMminrmKu8+0pZ2SxDVDhqI/XzX9GaO5XZgvRmloWvMS36nscuxfQY7UXYoWb
+         6Kx8Gze5uQDq4RG7VJs//SkZRRcbeCxd7qNySH4ePCY/XwlDlh8mLf6pODow/Z1Ftd
+         1wbY0EjVozxaQ==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2-vip.internal.synopsys.com [10.12.239.238])
+        by mailhost.synopsys.com (Postfix) with ESMTP id DF25F3B0D;
+        Mon, 26 Nov 2018 12:11:54 -0800 (PST)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 26 Nov 2018 12:11:54 -0800
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 26 Nov 2018 21:11:54 +0100
+Received: from [10.0.2.15] (10.107.19.169) by DE02WEHTCA.internal.synopsys.com
+ (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 26 Nov
+ 2018 21:11:54 +0100
+Subject: Re: [PATCH] i3c: master: dw: split dw-i3c-master.c into master and
+ bus specific parts
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        vitor <vitor.soares@synopsys.com>
+CC:     <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+        <arnd@arndb.de>, <psroka@cadence.com>, <agolec@cadence.com>,
+        <adouglas@cadence.com>, <bfolta@cadence.com>, <dkos@cadence.com>,
+        <alicja@cadence.com>, <cwronka@cadence.com>, <sureshp@cadence.com>,
+        <rafalc@cadence.com>, <thomas.petazzoni@bootlin.com>, <nm@ti.com>,
+        <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <geert@linux-m68k.org>, <linus.walleij@linaro.org>,
+        <Xiang.Lin@synaptics.com>, <linux-gpio@vger.kernel.org>,
+        <nsekhar@ti.com>, <pgaj@cadence.com>, <peda@axentia.se>,
+        <mshettel@codeaurora.org>, <swboyd@chromium.org>,
+        <joao.pinto@synopsys.com>
+References: <ade2c1a8d1eb48681b01ccdc9bed22caf5e96c4b.1542904564.git.soares@synopsys.com>
+ <20181122210202.6af50fcc@bbrezillon>
+ <6d513e04-3a57-1989-429c-64631101c5a2@synopsys.com>
+ <20181123135004.7fd1cd58@bbrezillon>
+ <83115f47-1326-cb33-a7dc-4bc8ff95befa@synopsys.com>
+ <20181126133550.51469816@bbrezillon>
+ <4e9c0461-02a3-80b2-c9b7-2e9ea9b38f8b@synopsys.com>
+ <20181126195618.352eafb1@bbrezillon>
+From:   vitor <vitor.soares@synopsys.com>
+Message-ID: <4c743a9a-d636-d34c-b7e3-913f18e6c754@synopsys.com>
+Date:   Mon, 26 Nov 2018 20:11:39 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181123162451.3351-1-jgross@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20181126195618.352eafb1@bbrezillon>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9089 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811260172
+X-Originating-IP: [10.107.19.169]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/23/18 11:24 AM, Juergen Gross wrote:
-> Failure of an element of a Xen multicall is signalled via a WARN()
-> only unless the kernel is compiled with MC_DEBUG. It is impossible to
 
-s/unless/if
-
-
-> know which element failed and why it did so.
+On 26/11/18 18:56, Boris Brezillon wrote:
+> On Mon, 26 Nov 2018 18:33:37 +0000
+> vitor <vitor.soares@synopsys.com> wrote:
 >
-> Change that by printing the related information even without MC_DEBUG,
-> even if maybe in some limited form (e.g. without information which
-> caller produced the failing element).
+>> On 26/11/18 12:35, Boris Brezillon wrote:
+>>> On Mon, 26 Nov 2018 12:06:24 +0000
+>>> vitor <vitor.soares@synopsys.com> wrote:
+>>>   
+>>>> Hi Boris,
+>>>>
+>>>>
+>>>> On 23/11/18 12:50, Boris Brezillon wrote:
+>>>>> On Fri, 23 Nov 2018 12:39:31 +0000
+>>>>> vitor <vitor.soares@synopsys.com> wrote:
+>>>>>      
+>>>>>> Hi Boris,
+>>>>>>
+>>>>>>
+>>>>>> On 22/11/18 20:02, Boris Brezillon wrote:
+>>>>>>> On Thu, 22 Nov 2018 17:54:54 +0000
+>>>>>>> Vitor Soares <vitor.soares@synopsys.com> wrote:
+>>>>>>>         
+>>>>>>>> From: Vitor Soares <soares@synopsys.com>
+>>>>>>>>
+>>>>>>>> This patch slipts dw-i3c-master.c into three pieces:
+>>>>>>>> 	dw-i3c-master.c - contains the code that interacts directly with the
+>>>>>>>> 	core in master mode.
+>>>>>>>>
+>>>>>>>> 	dw-i3c-platdrv.c - contains the code specific to the platform driver.
+>>>>>>>>
+>>>>>>>> 	dw-i3c-core.h - contains the definitions and declarations shared by
+>>>>>>>> 	dw-i3c-master and dw-i3c-platdrv
+>>>>>>>>
+>>>>>>>> This patch will allow SOC integrators to add their code specific to
+>>>>>>>> DesignWare I3C IP.
+>>>>>>> Isn't it too early to do this change? Can't we wait until we have a SoC
+>>>>>>> that actually embeds this IP?
+>>>>>> I'm trying to turn it more flexible so the other can reuse the code.
+>>>>> Looking at the separation you've done here, I don't see why you need
+>>>>> it. All the resources you request are generic, so why not just adding a
+>>>>> new compat in the of_match_table?
+>>>> I understand your point.
+>>>>
+>>>>
+>>>> I'm just following what it's done in others Synopsys drivers and what I
+>>>> expect is that in the future we will have the same for the I3C.
+>>>>
+>>>> Some of the current generic functions might be override according with
+>>>> SoC requirements (e.g i2c-designware, pcie-designware).
+>>>>
+>>>>
+>>>> for now what do you prefer?
+>>>>   
+>>> I prefer that we keep the driver as is until we actually need to split
+>>> things up.
+>> This is already done and will benefit everyone:
+>>
+>>       - for me is better do it now than the secondary master and slave
+>> development.
+> Sorry, I don't get that one.
+
+
+I already share my plan with you. See the structure above.
+
 >
-> Move the printing out of the switch statement in order to have the
-> same information for a single call.
+>>       - for the others it will easy the SoC integration avoiding
+>> duplicated work and doing things from scratch.
+> What would be duplicated? You want to support a new SoC, just add a new
+> entry in the of_match_table and you're done. When you need to add
+> SoC/integration specific stuff, create a struct and attach a different
+> instance per-compatible so that each SoC can have its own configuration
+> (or even init sequence if needed). That's how we do for pretty much all
+> IPs out there, why should designware ones be different?
 >
-> Signed-off-by: Juergen Gross <jgross@suse.com>
-> ---
->  arch/x86/xen/multicalls.c | 35 ++++++++++++++++++++---------------
->  1 file changed, 20 insertions(+), 15 deletions(-)
+>>
+>>>   
+>>>>>>      
+>>>>>>>         
+>>>>>>>> Signed-off-by: Vitor Soares <soares@synopsys.com>
+>>>>>>>> ---
+>>>>>>>>      drivers/i3c/master/Kconfig          |   9 +-
+>>>>>>>>      drivers/i3c/master/Makefile         |   5 +-
+>>>>>>>>      drivers/i3c/master/dw-i3c-core.h    | 214 ++++++++++++++++++++++++++
+>>>>>>>>      drivers/i3c/master/dw-i3c-master.c  | 299 ++----------------------------------
+>>>>>>>>      drivers/i3c/master/dw-i3c-platdrv.c | 112 ++++++++++++++
+>>>>> Just realized the driver is named dw-i3c-master, while the cadence
+>>>>> driver is named i3c-master-cdns.c. I'll send a patch to make that
+>>>>> consistent and follow the initial naming scheme: i3c-master-<ipname>.c.
+>>>> As I shared with you in previous email, the structure that I have in
+>>>> mind is this one:
+>>>>
+>>>> - core.h (or common.h, any though?)
+>>>>
+>>>> - common.c
+>>>>
+>>>> - master.c
+>>>>
+>>>> - slave.c
+>>>>
+>>>>
+>>>> so for me doesn't make sense to have for instance: i3c-master-dw-slave.c
+>>> If you have several files and they're all placed in a dw/ subdir, then
+>>> I agree, prefixing everything with i3c-master- is useless, as you'll
+>>> have to define a custom rule to create the i3c-master-dw.ko object.
+>>>
+>>> When there's a single source file, and this source file is directly
+>>> used to create a .ko, we need this prefix, otherwise we would have
+>>> dw.ko, and this would basically conflict with any other designware
+>>> driver that does not have a proper prefix.
+>>>   
+>>>> But seeing what is already in the kernel I wasn't coherent and it should
+>>>> be named to i3c-designware-master.c
+>>> Actually it's i3c-master-designware.c (or i3c-master-dw.c) if we follow
+>>> what's been done for the cadence driver.
+>>>   
+>> I was referring to what was made in other modules and should be applied
+>> here too.
+> This is a subsystem decision. I don't mind changing the naming scheme,
+> though I don't see why yours is better than the one I initially
+> proposed. In any case, what's important here is to keep driver names
+> consistent.
 >
-> diff --git a/arch/x86/xen/multicalls.c b/arch/x86/xen/multicalls.c
-> index 2bce7958ce8b..0766a08bdf45 100644
-> --- a/arch/x86/xen/multicalls.c
-> +++ b/arch/x86/xen/multicalls.c
-> @@ -69,6 +69,11 @@ void xen_mc_flush(void)
->  
->  	trace_xen_mc_flush(b->mcidx, b->argidx, b->cbidx);
->  
-> +#if MC_DEBUG
-> +	memcpy(b->debug, b->entries,
-> +	       b->mcidx * sizeof(struct multicall_entry));
-> +#endif
-> +
->  	switch (b->mcidx) {
->  	case 0:
->  		/* no-op */
-> @@ -87,32 +92,34 @@ void xen_mc_flush(void)
->  		break;
->  
->  	default:
-> -#if MC_DEBUG
-> -		memcpy(b->debug, b->entries,
-> -		       b->mcidx * sizeof(struct multicall_entry));
-> -#endif
-> -
->  		if (HYPERVISOR_multicall(b->entries, b->mcidx) != 0)
->  			BUG();
->  		for (i = 0; i < b->mcidx; i++)
->  			if (b->entries[i].result < 0)
->  				ret++;
-> +	}
->  
-> +	if (WARN_ON(ret)) {
-> +		pr_err("%d of %d multicall(s) failed: cpu %d\n",
-> +		       ret, b->mcidx, smp_processor_id());
-> +		for (i = 0; i < b->mcidx; i++) {
-> +			if (b->entries[i].result < 0) {
->  #if MC_DEBUG
-> -		if (ret) {
-> -			printk(KERN_ERR "%d multicall(s) failed: cpu %d\n",
-> -			       ret, smp_processor_id());
-> -			dump_stack();
-> -			for (i = 0; i < b->mcidx; i++) {
-> -				printk(KERN_DEBUG "  call %2d/%d: op=%lu arg=[%lx] result=%ld\t%pF\n",
-> -				       i+1, b->mcidx,
-> +				pr_err("  call %2d: op=%lu arg=[%lx] result=%ld\t%pF\n",
-> +				       i + 1,
->  				       b->debug[i].op,
->  				       b->debug[i].args[0],
->  				       b->entries[i].result,
->  				       b->caller[i]);
-> +#else
-> +				pr_err("  call %2d: op=%lu arg=[%lx] result=%ld\n",
-> +				       i + 1,
-> +				       b->entries[i].op,
-> +				       b->entries[i].args[0],
-> +				       b->entries[i].result);
-> +#endif
-
-Doesn't (non-debug) hypervisor corrupt op and args?
-
-(Also, we don't really need to print anything when b->entries[i].result
-== 0)
+>>
+>>>> or
+>>>>
+>>>>
+>>>> follow this https://urldefense.proofpoint.com/v2/url?u=https-3A__lkml.org_lkml_2017_7_12_430&d=DwICAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=qVuU64u9x77Y0Kd0PhDK_lpxFgg6PK9PateHwjb_DY0&m=9fGCPbkiqaG2-CJ5qrOU2Os6ZcstSNxi7UbQiF9YEBk&s=ADR3LotyBBy6e8Rv-UFW_-J8B5os_PY71QtUols3tb4&e=
+>>> And I agree with Linus on this, except that does not apply to single
+>>> source file drivers.
+>>>   
+>>>> This topic rise another one related with the master folder. I understand
+>>>> that now the subsystem doesn't have slave support but the name is
+>>>> limited. Isn't better to have something like controller or busses? What
+>>>> do you have in mind for the slave?
+>>> drivers/i3c/slave/... for slave drivers and drivers/i3c/slave.c for the
+>>> framework, just like we have drivers/i3c/master/ for master controller
+>>> drivers and drivers/i3c/master.c.
+>> I have to disagree here. I don't see any place on the kernel with
+>> .../master/ and ../slave/ folders and it is very likely that both rules
+>> will have some common code.
+> I see at least one that uses this model: the USB framework
+> (drivers/usb/gadget/ for device controllers and drivers/usb/host/ for
+> host controllers). Given that I3C is closer to USB than I2C I initially
+> decided to keep this separation. Maybe I'm wrong, but I'd like to
+> understand why you think it's not appropriate.
 
 
--boris
+You can say there some features from USB in I3C but cannot compare USB 
+vs I3C since they are in different championships.
+
+The aim of I3C is to fill the gaps discovery on I2C over the years but 
+still keeping its simplicity not to go to the complexity of USB.
 
 
->  			}
->  		}
-> -#endif
->  	}
->  
->  	b->mcidx = 0;
-> @@ -126,8 +133,6 @@ void xen_mc_flush(void)
->  	b->cbidx = 0;
->  
->  	local_irq_restore(flags);
-> -
-> -	WARN_ON(ret);
->  }
->  
->  struct multicall_space __xen_mc_entry(size_t args)
+I'm not sure but I think that a controller cannot change between gadget 
+to host in USB in runtime. Even so, this kind of behavior is more likely 
+to have in an I3C bus.
+
+
+>
+>> With this structure the user will have the code spread in /master and
+>> /slave folders...
+> Not sure who you call "user" here, but yes, master controller and slave
+> controller drivers would be placed in different dirs.
+>
+>>
+>> I would like you consider to change the folder name and the names rules
+>> to something like in i2c.
+> Why? And more importantly, why is this coming up now? You've been
+> reviewing the framework since the beginning, and never complained about
+> the subdirs/files organization so far.
+
+
+Sorry for that and don't take me wrong... maybe I should rise this 
+question early but this only came up now when I started splitting and 
+thinking where to put what is for master for slave, what is common and 
+the thing of putting everything of controller in a folder.
+
+
+Taking the USB as exemple do you prefer a dwc folder on i3c root?
+
+
+>
+> I'm okay changing it, but I want to understand why the proposed
+> separation is not good.
+
+
+I already tell you my use case and as I said maybe someone can advise :)
 
