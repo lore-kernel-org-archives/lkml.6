@@ -2,38 +2,37 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 414D0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:09:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB9BAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:09:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FF9320663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:09:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FF9320663
+	by mail.kernel.org (Postfix) with ESMTP id 6C43A20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:09:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C43A20663
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbeK0CDn (ORCPT
+        id S1727331AbeK0CDr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 21:03:43 -0500
-Received: from mga07.intel.com ([134.134.136.100]:25978 "EHLO mga07.intel.com"
+        Mon, 26 Nov 2018 21:03:47 -0500
+Received: from mga01.intel.com ([192.55.52.88]:57910 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727192AbeK0CDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 21:03:31 -0500
+        id S1727192AbeK0CDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 21:03:47 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 07:09:08 -0800
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 07:09:07 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,282,1539673200"; 
-   d="scan'208";a="103314771"
+   d="scan'208";a="92275438"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 26 Nov 2018 07:09:03 -0800
+  by orsmga007.jf.intel.com with ESMTP; 26 Nov 2018 07:09:03 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id F0E8D747; Mon, 26 Nov 2018 17:08:58 +0200 (EET)
+        id 3612D82A; Mon, 26 Nov 2018 17:08:59 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Darren Hart <dvhart@infradead.org>,
         platform-driver-x86@vger.kernel.org,
@@ -45,9 +44,9 @@ To:     Darren Hart <dvhart@infradead.org>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 08/13] platform/x86: i2c-multi-instantiate: Count I2cSerialBus() resources
-Date:   Mon, 26 Nov 2018 17:08:53 +0200
-Message-Id: <20181126150858.16901-9-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 12/13] ACPI / scan: Create platform device for INT3515 ACPI nodes
+Date:   Mon, 26 Nov 2018 17:08:57 +0200
+Message-Id: <20181126150858.16901-13-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181126150858.16901-1-andriy.shevchenko@linux.intel.com>
 References: <20181126150858.16901-1-andriy.shevchenko@linux.intel.com>
@@ -58,97 +57,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of relying on hard coded and thus expected number of I2C clients,
-count the real amount provided by firmware.
+The ACPI device with INT3515 _HID is representing a complex USB PD
+hardware infrastructure which includes several I2C slave ICs.
 
-This allows to support non-fixed amount of the slaves.
+We add an ID to the I2C multi instantiate list to enumerate
+all I2C slaves correctly.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/platform/x86/i2c-multi-instantiate.c | 41 ++++++++++++++++++--
- 1 file changed, 37 insertions(+), 4 deletions(-)
+ drivers/acpi/scan.c                          | 1 +
+ drivers/platform/x86/i2c-multi-instantiate.c | 9 +++++++++
+ drivers/usb/typec/tps6598x.c                 | 8 ++++----
+ 3 files changed, 14 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index bd1c59fb0e17..e9eda5558c1f 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -1541,6 +1541,7 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+ 	static const struct acpi_device_id i2c_multi_instantiate_ids[] = {
+ 		{"BSG1160", },
+ 		{"INT33FE", },
++		{"INT3515", },
+ 		{}
+ 	};
+ 
 diff --git a/drivers/platform/x86/i2c-multi-instantiate.c b/drivers/platform/x86/i2c-multi-instantiate.c
-index 16a0eabe1e31..2a405867bbc6 100644
+index d184833bfd05..ab50dda6062a 100644
 --- a/drivers/platform/x86/i2c-multi-instantiate.c
 +++ b/drivers/platform/x86/i2c-multi-instantiate.c
-@@ -12,6 +12,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/types.h>
- 
- struct i2c_inst_data {
- 	const char *type;
-@@ -23,6 +24,31 @@ struct i2c_multi_inst_data {
- 	struct i2c_client *clients[0];
+@@ -163,12 +163,21 @@ static const struct i2c_inst_data bsg1160_data[]  = {
+ 	{}
  };
  
-+static int i2c_multi_inst_count(struct acpi_resource *ares, void *data)
-+{
-+	struct acpi_resource_i2c_serialbus *sb;
-+	int *count = data;
++static const struct i2c_inst_data int3515_data[]  = {
++	{ "tps6598x", IRQ_RESOURCE_APIC, 0 },
++	{ "tps6598x", IRQ_RESOURCE_APIC, 1 },
++	{ "tps6598x", IRQ_RESOURCE_APIC, 2 },
++	{ "tps6598x", IRQ_RESOURCE_APIC, 3 },
++	{}
++};
 +
-+	if (i2c_acpi_get_i2c_resource(ares, &sb))
-+		*count = *count + 1;
-+
-+	return 1;
-+}
-+
-+static int i2c_multi_inst_count_resources(struct acpi_device *adev)
-+{
-+	LIST_HEAD(r);
-+	int count = 0;
-+	int ret;
-+
-+	ret = acpi_dev_get_resources(adev, &r, i2c_multi_inst_count, &count);
-+	if (ret < 0)
-+		return ret;
-+
-+	acpi_dev_free_resource_list(&r);
-+	return count;
-+}
-+
- static int i2c_multi_inst_probe(struct platform_device *pdev)
- {
- 	struct i2c_multi_inst_data *multi;
-@@ -44,17 +70,19 @@ static int i2c_multi_inst_probe(struct platform_device *pdev)
- 	adev = ACPI_COMPANION(dev);
- 
- 	/* Count number of clients to instantiate */
--	for (i = 0; inst_data[i].type; i++) {}
-+	ret = i2c_multi_inst_count_resources(adev);
-+	if (ret < 0)
-+		return ret;
- 
- 	multi = devm_kmalloc(dev,
--			offsetof(struct i2c_multi_inst_data, clients[i]),
-+			offsetof(struct i2c_multi_inst_data, clients[ret]),
- 			GFP_KERNEL);
- 	if (!multi)
- 		return -ENOMEM;
- 
--	multi->num_clients = i;
-+	multi->num_clients = ret;
- 
--	for (i = 0; i < multi->num_clients; i++) {
-+	for (i = 0; i < multi->num_clients && inst_data[i].type; i++) {
- 		memset(&board_info, 0, sizeof(board_info));
- 		strlcpy(board_info.type, inst_data[i].type, I2C_NAME_SIZE);
- 		snprintf(name, sizeof(name), "%s-%s", match->id,
-@@ -83,6 +111,11 @@ static int i2c_multi_inst_probe(struct platform_device *pdev)
- 			goto error;
- 		}
- 	}
-+	if (i < multi->num_clients) {
-+		dev_err(dev, "Error finding driver, idx %d\n", i);
-+		ret = -ENODEV;
-+		goto error;
-+	}
- 
- 	platform_set_drvdata(pdev, multi);
+ /*
+  * Note new device-ids must also be added to i2c_multi_instantiate_ids in
+  * drivers/acpi/scan.c: acpi_device_enumeration_by_parent().
+  */
+ static const struct acpi_device_id i2c_multi_inst_acpi_ids[] = {
+ 	{ "BSG1160", (unsigned long)bsg1160_data },
++	{ "INT3515", (unsigned long)int3515_data },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(acpi, i2c_multi_inst_acpi_ids);
+diff --git a/drivers/usb/typec/tps6598x.c b/drivers/usb/typec/tps6598x.c
+index c84c8c189e90..1c0033ad8738 100644
+--- a/drivers/usb/typec/tps6598x.c
++++ b/drivers/usb/typec/tps6598x.c
+@@ -501,19 +501,19 @@ static int tps6598x_remove(struct i2c_client *client)
  	return 0;
+ }
+ 
+-static const struct acpi_device_id tps6598x_acpi_match[] = {
+-	{ "INT3515", 0 },
++static const struct i2c_device_id tps6598x_id[] = {
++	{ "tps6598x" },
+ 	{ }
+ };
+-MODULE_DEVICE_TABLE(acpi, tps6598x_acpi_match);
++MODULE_DEVICE_TABLE(i2c, tps6598x_id);
+ 
+ static struct i2c_driver tps6598x_i2c_driver = {
+ 	.driver = {
+ 		.name = "tps6598x",
+-		.acpi_match_table = tps6598x_acpi_match,
+ 	},
+ 	.probe_new = tps6598x_probe,
+ 	.remove = tps6598x_remove,
++	.id_table = tps6598x_id,
+ };
+ module_i2c_driver(tps6598x_i2c_driver);
+ 
 -- 
 2.19.1
 
