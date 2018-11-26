@@ -2,54 +2,52 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD23C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A14E7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 952A821104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6640921104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1TDatplh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 952A821104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQZAJT3x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6640921104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729914AbeKZVy1 (ORCPT
+        id S1729925AbeKZVya (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:54:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36564 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:54:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728754AbeKZVy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:54:26 -0500
+        id S1728754AbeKZVy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:54:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9830020817;
-        Mon, 26 Nov 2018 11:00:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 340912147D;
+        Mon, 26 Nov 2018 11:00:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230041;
-        bh=LaPX98p5/0BH2YUXG3GhbBtnEJxJtz+LXuSWxuS5utA=;
+        s=default; t=1543230043;
+        bh=l5fNqY+c/Nj1Jj3zy58M/PbKG3ic+mxfna6t08x6a+w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1TDatplh135vEVjeNXDAlWwnvG48TTh7lpafocdWzVdqqBHSpkId2Vfh/8pwf2sbb
-         7VzdelQu4ggjUzPF7Ra5wPkLk50CxfnKq1jgDMyVdQzV2uvQA2GqaklXDEQiCxHu1w
-         mAAX8j36pP5CzCGcfw2Ok0eX+YUvwqRJ1+h6kyUQ=
+        b=YQZAJT3x/RgNgARuejLstNGm1PpbgJMMaiV9J6I1U8wCk1ozSrfkxKkBRiBRoC0KW
+         kmXuzgGbVFmW/WMvAIZDwm37xLcih52BPJBbfBAJafNPXL6UTFasli9CtmW0sCIkta
+         PS9VtEbRE/2WVMdte2q7RKtluHUZPfOpW07mnjOs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
-        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
-        peterz@infradead.org, boris.ostrovsky@oracle.com, jgross@suse.com,
-        bhe@redhat.com, willy@infradead.org, linux-mm@kvack.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 49/62] x86/ldt: Unmap PTEs for the slot before freeing LDT pages
-Date:   Mon, 26 Nov 2018 11:51:30 +0100
-Message-Id: <20181126105054.440503950@linuxfoundation.org>
+        Dave Stevenson <dave.stevenson@raspberrypi.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.14 50/62] media: v4l: event: Add subscription to list before calling "add" operation
+Date:   Mon, 26 Nov 2018 11:51:31 +0100
+Message-Id: <20181126105054.498319013@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -67,140 +65,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit a0e6e0831c516860fc7f9be1db6c081fe902ebcf upstream
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-modify_ldt(2) leaves the old LDT mapped after switching over to the new
-one. The old LDT gets freed and the pages can be re-used.
+commit 92539d3eda2c090b382699bbb896d4b54e9bdece upstream.
 
-Leaving the mapping in place can have security implications. The mapping is
-present in the userspace page tables and Meltdown-like attacks can read
-these freed and possibly reused pages.
+Patch ad608fbcf166 changed how events were subscribed to address an issue
+elsewhere. As a side effect of that change, the "add" callback was called
+before the event subscription was added to the list of subscribed events,
+causing the first event queued by the add callback (and possibly other
+events arriving soon afterwards) to be lost.
 
-It's relatively simple to fix: unmap the old LDT and flush TLB before
-freeing the old LDT memory.
+Fix this by adding the subscription to the list before calling the "add"
+callback, and clean up afterwards if that fails.
 
-This further allows to avoid flushing the TLB in map_ldt_struct() as the
-slot is unmapped and flushed by unmap_ldt_struct() or has never been mapped
-at all.
+Fixes: ad608fbcf166 ("media: v4l: event: Prevent freeing event subscriptions while accessed")
 
-[ tglx: Massaged changelog and removed the needless line breaks ]
+Reported-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Tested-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Tested-by: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: stable@vger.kernel.org (for 4.14 and up)
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: f55f0501cbf6 ("x86/pti: Put the LDT in its own PGD if PTI is on")
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: dave.hansen@linux.intel.com
-Cc: luto@kernel.org
-Cc: peterz@infradead.org
-Cc: boris.ostrovsky@oracle.com
-Cc: jgross@suse.com
-Cc: bhe@redhat.com
-Cc: willy@infradead.org
-Cc: linux-mm@kvack.org
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181026122856.66224-3-kirill.shutemov@linux.intel.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/ldt.c | 49 +++++++++++++++++++++++++++++++------------
- 1 file changed, 36 insertions(+), 13 deletions(-)
+ drivers/media/v4l2-core/v4l2-event.c |   43 +++++++++++++++++++----------------
+ 1 file changed, 24 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
-index 26d713ecad34..65df298d4e9e 100644
---- a/arch/x86/kernel/ldt.c
-+++ b/arch/x86/kernel/ldt.c
-@@ -103,14 +103,6 @@ static struct ldt_struct *alloc_ldt_struct(unsigned int num_entries)
- /*
-  * If PTI is enabled, this maps the LDT into the kernelmode and
-  * usermode tables for the given mm.
-- *
-- * There is no corresponding unmap function.  Even if the LDT is freed, we
-- * leave the PTEs around until the slot is reused or the mm is destroyed.
-- * This is harmless: the LDT is always in ordinary memory, and no one will
-- * access the freed slot.
-- *
-- * If we wanted to unmap freed LDTs, we'd also need to do a flush to make
-- * it useful, and the flush would slow down modify_ldt().
-  */
- static int
- map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
-@@ -119,8 +111,8 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- 	bool is_vmalloc, had_top_level_entry;
- 	unsigned long va;
- 	spinlock_t *ptl;
-+	int i, nr_pages;
- 	pgd_t *pgd;
--	int i;
+--- a/drivers/media/v4l2-core/v4l2-event.c
++++ b/drivers/media/v4l2-core/v4l2-event.c
+@@ -193,6 +193,22 @@ int v4l2_event_pending(struct v4l2_fh *f
+ }
+ EXPORT_SYMBOL_GPL(v4l2_event_pending);
  
- 	if (!static_cpu_has(X86_FEATURE_PTI))
- 		return 0;
-@@ -141,7 +133,9 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- 
- 	is_vmalloc = is_vmalloc_addr(ldt->entries);
- 
--	for (i = 0; i * PAGE_SIZE < ldt->nr_entries * LDT_ENTRY_SIZE; i++) {
-+	nr_pages = DIV_ROUND_UP(ldt->nr_entries * LDT_ENTRY_SIZE, PAGE_SIZE);
++static void __v4l2_event_unsubscribe(struct v4l2_subscribed_event *sev)
++{
++	struct v4l2_fh *fh = sev->fh;
++	unsigned int i;
 +
-+	for (i = 0; i < nr_pages; i++) {
- 		unsigned long offset = i << PAGE_SHIFT;
- 		const void *src = (char *)ldt->entries + offset;
- 		unsigned long pfn;
-@@ -189,14 +183,42 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
++	lockdep_assert_held(&fh->subscribe_lock);
++	assert_spin_locked(&fh->vdev->fh_lock);
++
++	/* Remove any pending events for this subscription */
++	for (i = 0; i < sev->in_use; i++) {
++		list_del(&sev->events[sev_pos(sev, i)].list);
++		fh->navailable--;
++	}
++	list_del(&sev->list);
++}
++
+ int v4l2_event_subscribe(struct v4l2_fh *fh,
+ 			 const struct v4l2_event_subscription *sub, unsigned elems,
+ 			 const struct v4l2_subscribed_event_ops *ops)
+@@ -225,27 +241,23 @@ int v4l2_event_subscribe(struct v4l2_fh
+ 
+ 	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
+ 	found_ev = v4l2_event_subscribed(fh, sub->type, sub->id);
++	if (!found_ev)
++		list_add(&sev->list, &fh->subscribed);
+ 	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
+ 
+ 	if (found_ev) {
+ 		/* Already listening */
+ 		kvfree(sev);
+-		goto out_unlock;
+-	}
+-
+-	if (sev->ops && sev->ops->add) {
++	} else if (sev->ops && sev->ops->add) {
+ 		ret = sev->ops->add(sev, elems);
+ 		if (ret) {
++			spin_lock_irqsave(&fh->vdev->fh_lock, flags);
++			__v4l2_event_unsubscribe(sev);
++			spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
+ 			kvfree(sev);
+-			goto out_unlock;
  		}
  	}
  
--	va = (unsigned long)ldt_slot_va(slot);
--	flush_tlb_mm_range(mm, va, va + LDT_SLOT_STRIDE, 0);
+-	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
+-	list_add(&sev->list, &fh->subscribed);
+-	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
 -
- 	ldt->slot = slot;
- #endif
- 	return 0;
- }
+-out_unlock:
+ 	mutex_unlock(&fh->subscribe_lock);
  
-+static void unmap_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt)
-+{
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+	unsigned long va;
-+	int i, nr_pages;
-+
-+	if (!ldt)
-+		return;
-+
-+	/* LDT map/unmap is only required for PTI */
-+	if (!static_cpu_has(X86_FEATURE_PTI))
-+		return;
-+
-+	nr_pages = DIV_ROUND_UP(ldt->nr_entries * LDT_ENTRY_SIZE, PAGE_SIZE);
-+
-+	for (i = 0; i < nr_pages; i++) {
-+		unsigned long offset = i << PAGE_SHIFT;
-+		spinlock_t *ptl;
-+		pte_t *ptep;
-+
-+		va = (unsigned long)ldt_slot_va(ldt->slot) + offset;
-+		ptep = get_locked_pte(mm, va, &ptl);
-+		pte_clear(mm, va, ptep);
-+		pte_unmap_unlock(ptep, ptl);
-+	}
-+
-+	va = (unsigned long)ldt_slot_va(ldt->slot);
-+	flush_tlb_mm_range(mm, va, va + nr_pages * PAGE_SIZE, 0);
-+#endif /* CONFIG_PAGE_TABLE_ISOLATION */
-+}
-+
- static void free_ldt_pgtables(struct mm_struct *mm)
+ 	return ret;
+@@ -280,7 +292,6 @@ int v4l2_event_unsubscribe(struct v4l2_f
  {
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
-@@ -433,6 +455,7 @@ static int write_ldt(void __user *ptr, unsigned long bytecount, int oldmode)
- 	}
+ 	struct v4l2_subscribed_event *sev;
+ 	unsigned long flags;
+-	int i;
  
- 	install_ldt(mm, new_ldt);
-+	unmap_ldt_struct(mm, old_ldt);
- 	free_ldt_struct(old_ldt);
- 	error = 0;
+ 	if (sub->type == V4L2_EVENT_ALL) {
+ 		v4l2_event_unsubscribe_all(fh);
+@@ -292,14 +303,8 @@ int v4l2_event_unsubscribe(struct v4l2_f
+ 	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
  
--- 
-2.17.1
-
+ 	sev = v4l2_event_subscribed(fh, sub->type, sub->id);
+-	if (sev != NULL) {
+-		/* Remove any pending events for this subscription */
+-		for (i = 0; i < sev->in_use; i++) {
+-			list_del(&sev->events[sev_pos(sev, i)].list);
+-			fh->navailable--;
+-		}
+-		list_del(&sev->list);
+-	}
++	if (sev != NULL)
++		__v4l2_event_unsubscribe(sev);
+ 
+ 	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
+ 
 
 
