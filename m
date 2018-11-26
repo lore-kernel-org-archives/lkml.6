@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFBCC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9954BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F4722146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AF9521104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNdTxMG2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F4722146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVT6tahZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AF9521104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728678AbeKZVuw (ORCPT
+        id S1728662AbeKZVut (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:50:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60142 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:50:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726176AbeKZVuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:50:51 -0500
+        id S1726176AbeKZVus (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:50:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCDF92089F;
-        Mon, 26 Nov 2018 10:57:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B8792089F;
+        Mon, 26 Nov 2018 10:57:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229826;
-        bh=nfp57tl1S8Irp1jZHj5Le78Hq5WQqgujMx2ziPsfyrc=;
+        s=default; t=1543229823;
+        bh=Uhl00aZDAdPdwveWgKnu5v5GM2fqSTGkLIUC+mAI71A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YNdTxMG2FVE3Pi/2ydnnN9eq3NS7vhUBtyvmhe0Tso4PQdIIM8swN3dwN13mGNcYj
-         uPDf5j+m6MHsNn2pGbvKOZiV7Nt0lk7BVqfvzdO6hPg9XNqOCvppACAXRUVIzZ8Kr6
-         62Jx9hfU+HXDXCSsQaSDAXKgl/5+wGAFTTmlKYXM=
+        b=aVT6tahZxGy8rmdnj09kUlFX6WZ48VqhKiIdAaHtKNuvbrGUdRsJNv3Blmd9Jmwso
+         rI8EDpkU+uHVt5dgaCTn2Rkih9XKOQ94QAAfQHBLzJSpfSQBHKnFU+hUHgezx0w3Yl
+         slS35ZT3wAkXuansaewR73zeYLEOQeVpOzt72jVY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        stable@vger.kernel.org,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
         Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 17/46] netfilter: xt_IDLETIMER: add sysfs filename checking routine
-Date:   Mon, 26 Nov 2018 11:51:06 +0100
-Message-Id: <20181126105047.820918357@linuxfoundation.org>
+Subject: [PATCH 4.9 16/46] netfilter: ipset: Correct rcu_dereference() call in ip_set_put_comment()
+Date:   Mon, 26 Nov 2018 11:51:05 +0100
+Message-Id: <20181126105047.719779198@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
 References: <20181126105045.447291262@linuxfoundation.org>
@@ -63,80 +64,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 54451f60c8fa061af9051a53be9786393947367c ]
+[ Upstream commit 17b8b74c0f8dbf9b9e3301f9ca5b65dd1c079951 ]
 
-When IDLETIMER rule is added, sysfs file is created under
-/sys/class/xt_idletimer/timers/
-But some label name shouldn't be used.
-".", "..", "power", "uevent", "subsystem", etc...
-So that sysfs filename checking routine is needed.
+The function is called when rcu_read_lock() is held and not
+when rcu_read_lock_bh() is held.
 
-test commands:
-   %iptables -I INPUT -j IDLETIMER --timeout 1 --label "power"
-
-splat looks like:
-[95765.423132] sysfs: cannot create duplicate filename '/devices/virtual/xt_idletimer/timers/power'
-[95765.433418] CPU: 0 PID: 8446 Comm: iptables Not tainted 4.19.0-rc6+ #20
-[95765.449755] Call Trace:
-[95765.449755]  dump_stack+0xc9/0x16b
-[95765.449755]  ? show_regs_print_info+0x5/0x5
-[95765.449755]  sysfs_warn_dup+0x74/0x90
-[95765.449755]  sysfs_add_file_mode_ns+0x352/0x500
-[95765.449755]  sysfs_create_file_ns+0x179/0x270
-[95765.449755]  ? sysfs_add_file_mode_ns+0x500/0x500
-[95765.449755]  ? idletimer_tg_checkentry+0x3e5/0xb1b [xt_IDLETIMER]
-[95765.449755]  ? rcu_read_lock_sched_held+0x114/0x130
-[95765.449755]  ? __kmalloc_track_caller+0x211/0x2b0
-[95765.449755]  ? memcpy+0x34/0x50
-[95765.449755]  idletimer_tg_checkentry+0x4e2/0xb1b [xt_IDLETIMER]
-[ ... ]
-
-Fixes: 0902b469bd25 ("netfilter: xtables: idletimer target implementation")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/xt_IDLETIMER.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ include/linux/netfilter/ipset/ip_set_comment.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/netfilter/xt_IDLETIMER.c b/net/netfilter/xt_IDLETIMER.c
-index bb5d6a058fb7..921c9bd7e1e7 100644
---- a/net/netfilter/xt_IDLETIMER.c
-+++ b/net/netfilter/xt_IDLETIMER.c
-@@ -116,6 +116,22 @@ static void idletimer_tg_expired(unsigned long data)
- 	schedule_work(&timer->work);
+diff --git a/include/linux/netfilter/ipset/ip_set_comment.h b/include/linux/netfilter/ipset/ip_set_comment.h
+index 8d0248525957..9f34204978e4 100644
+--- a/include/linux/netfilter/ipset/ip_set_comment.h
++++ b/include/linux/netfilter/ipset/ip_set_comment.h
+@@ -41,11 +41,11 @@ ip_set_init_comment(struct ip_set_comment *comment,
+ 	rcu_assign_pointer(comment->c, c);
  }
  
-+static int idletimer_check_sysfs_name(const char *name, unsigned int size)
-+{
-+	int ret;
-+
-+	ret = xt_check_proc_name(name, size);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!strcmp(name, "power") ||
-+	    !strcmp(name, "subsystem") ||
-+	    !strcmp(name, "uevent"))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static int idletimer_tg_create(struct idletimer_tg_info *info)
+-/* Used only when dumping a set, protected by rcu_read_lock_bh() */
++/* Used only when dumping a set, protected by rcu_read_lock() */
+ static inline int
+ ip_set_put_comment(struct sk_buff *skb, struct ip_set_comment *comment)
  {
- 	int ret;
-@@ -126,6 +142,10 @@ static int idletimer_tg_create(struct idletimer_tg_info *info)
- 		goto out;
- 	}
+-	struct ip_set_comment_rcu *c = rcu_dereference_bh(comment->c);
++	struct ip_set_comment_rcu *c = rcu_dereference(comment->c);
  
-+	ret = idletimer_check_sysfs_name(info->label, sizeof(info->label));
-+	if (ret < 0)
-+		goto out_free_timer;
-+
- 	sysfs_attr_init(&info->timer->attr.attr);
- 	info->timer->attr.attr.name = kstrdup(info->label, GFP_KERNEL);
- 	if (!info->timer->attr.attr.name) {
+ 	if (!c)
+ 		return 0;
 -- 
 2.17.1
 
