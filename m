@@ -2,139 +2,112 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E602C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 07:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F407C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 07:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F66720663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 07:56:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sPQ4xUs4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F66720663
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DBE7B20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 07:58:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBE7B20663
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbeKZSts (ORCPT
+        id S1726254AbeKZSvy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 13:49:48 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43446 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbeKZSts (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 13:49:48 -0500
-Received: by mail-pl1-f193.google.com with SMTP id gn14so13478840plb.10
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 23:56:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ysnkZzGnKpo2DO4gfhXeEaDsF6I6mZ7WUoLvOcMvo6c=;
-        b=sPQ4xUs416v+hWYEjibA7P910ufwjNvE7f0zYHxsQe8b/o+jLPI/ObEhQXnytkLEPD
-         4N2T45AeCHDub9ZYgXhM99e3vG6Ufv3E/2qeH33jEFj+Heacr3OuFGMQ2k3Zu9LC5TG/
-         nA7/MLfuLfyUwGCau+67qyukQ/0J7cVjmzNS1izKdP3BMEfwzeS7okDoSfBs3ouV7bE+
-         wRD9LLbdKksOXB66ihYYbTNpSda+GwXVGBikFei/drJ0BGdRKkPLYLRAWtEtbZI/4Bqd
-         vfLFHKbE0EKwf+kOfnl4hGRGfyjxvjRCdk5ZuTdxo+Le0zEUPXF8NVaJ/jfgA1sud7X0
-         KGGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ysnkZzGnKpo2DO4gfhXeEaDsF6I6mZ7WUoLvOcMvo6c=;
-        b=SWeHgU9R18CynrwwU3+zGTIbfaFh/QEQB9eK5H57BKotBY/QK7aPvS4qVXY6aTEA6K
-         cH+eGoW92x2qbEK3MzeRHNLOyeBSVqqyAH9FUwBH/3KWsRBr1ZiT+XOQ15dAbuZ5G3iM
-         foF+WMSULR+XfFfLBd73cnTEZRFT/pdTD3J2acQcK2I4o/kL/ATFTBE5/Ajw5Y8StF8e
-         9LzedgHb0AzYs8XmnAFiK+FFUmxsGdW7+M6kuuGsULyYQsVczt2GPiidOCPDtA7w+u1z
-         K8wFer5trgS04c2g+K2mBYsOXmQ+eSs9W6EVSyVewLNBj+zerczLSjsRmfdZeCga+ZIF
-         swcA==
-X-Gm-Message-State: AA+aEWb3nXKR/XI5oUuMUDxqzCPXyQbJyp8QRWEG19onO5HhyfNj7U46
-        jSiGt+57cFyH16waRjA6WACcLo6f
-X-Google-Smtp-Source: AFSGD/V8FDNCdfbFu8VmKZJOB9ySXKcXpycb/o7iCeHeNbG9Wi16qgc6SbqP0mIF5Q7ZVJHWQMVzbg==
-X-Received: by 2002:a17:902:8b88:: with SMTP id ay8mr26798578plb.55.1543218990957;
-        Sun, 25 Nov 2018 23:56:30 -0800 (PST)
-Received: from localhost ([175.223.33.236])
-        by smtp.gmail.com with ESMTPSA id q199sm83490299pfc.97.2018.11.25.23.56.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Nov 2018 23:56:29 -0800 (PST)
-Date:   Mon, 26 Nov 2018 16:56:26 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printk: deduplicate print_prefix() calls
-Message-ID: <20181126075626.GA5481@jagdpanzerIV>
-References: <1543056613-4779-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <1543069716-3246-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+        Mon, 26 Nov 2018 13:51:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54606 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726158AbeKZSvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 13:51:53 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 97C37AE67;
+        Mon, 26 Nov 2018 07:58:34 +0000 (UTC)
+Subject: Re: [PATCH] fat: Replaced 11 magic to MSDOS_NAME for volume label
+To:     Carmeli Tamir <carmeli.tamir@gmail.com>, axboe@kernel.dk,
+        sergey.senozhatsky@gmail.com, bvanassche@acm.org,
+        martin.petersen@oracle.com, linux-kernel@vger.kernel.org
+References: <1543096879-82837-1-git-send-email-carmeli.tamir@gmail.com>
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <7525d368-62aa-a288-b590-864f78cb69f5@suse.de>
+Date:   Mon, 26 Nov 2018 08:58:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543069716-3246-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1543096879-82837-1-git-send-email-carmeli.tamir@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (11/24/18 23:28), Tetsuo Handa wrote:
-> Since /sys/module/printk/parameters/time can change from N to Y between
-> "msg_print_text() called print_prefix() with buf == NULL" and
-> "msg_print_text() again calls print_prefix() with buf != NULL", it is not
-> safe for print_time() to unconditionally return 0 if printk_time == false.
-> 
-> But print_prefix() is called by only msg_print_text(), and print_prefix()
-> is called once more for calculating output length of prefix, and there is
-> no need to recalculate it when one log entry contains multiple lines.
-
-Good catch.
-
-> Since max output length for syslog marker and timestamp are known to be
-> small enough, let's close this race by deduplicating print_prefix() calls.
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-
-Or we can change printk_time under logbuf lock? So msg_print_text will
-not race with it.
-
-Or we can "copy" the value of printk_time and use it in print_prefix(),
-and we will pick up an updated value next time we do msg_print_text()?
-
-Example:
-
----
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 1b2a029360b7..4c57f5d5b0b6 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -1211,13 +1211,14 @@ static inline void boot_delay_msec(int level)
- #endif
- 
- static bool printk_time = IS_ENABLED(CONFIG_PRINTK_TIME);
-+static bool printk_time_saved;
- module_param_named(time, printk_time, bool, S_IRUGO | S_IWUSR);
- 
- static size_t print_time(u64 ts, char *buf)
- {
- 	unsigned long rem_nsec;
- 
--	if (!printk_time)
-+	if (!printk_time_saved)
- 		return 0;
- 
- 	rem_nsec = do_div(ts, 1000000000);
-@@ -1258,6 +1259,8 @@ static size_t msg_print_text(const struct printk_log *msg, bool syslog, char *bu
- 	size_t text_size = msg->text_len;
- 	size_t len = 0;
- 
-+	printk_time_saved = printk_time;
-+
- 	do {
- 		const char *next = memchr(text, '\n', text_size);
- 		size_t text_len;
- 
+Looks good,
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+-- 
+Johannes Thumshirn                                        SUSE Labs
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
