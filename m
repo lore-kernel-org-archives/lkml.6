@@ -7,48 +7,61 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4820C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5139C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A685221473
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B8E42146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYIoOktk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A685221473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y8SgORDF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B8E42146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729467AbeKZVw5 (ORCPT
+        id S1729483AbeKZVxA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:52:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34524 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:53:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728128AbeKZVw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:52:56 -0500
+        id S1727875AbeKZVw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:52:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EF6A2147D;
-        Mon, 26 Nov 2018 10:59:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D076D2147D;
+        Mon, 26 Nov 2018 10:59:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229951;
-        bh=BCjdSTXnFZH8LJCZGz3p7uaQ5dZjEWTBJPXI+SaI0Oo=;
+        s=default; t=1543229954;
+        bh=hDG2PD1RQro0B2wqWyuqKd9RGG8f22wrFe5NByenM+U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JYIoOktkGQaQ6FY/ni9SSpUu+w1wwFMG+Jv4Gz/PBGj4fsOFhF4kauFf7WwVrN0kd
-         Oxaa+OQpSZCh1Id4ojmxJySzyh6k6i5iY6dZ/jb6JaMHmAxv85SPv4SLAi9qrLBKcA
-         Pv42eGpgfXsPLCRhEx1ql8v79/ycLy+3IvIYtDsE=
+        b=y8SgORDFC0+ZDrW2kuP6rBkmIohBIEkSuST6ynvLafai5z8L5xZNs52ah5JsalQTt
+         /rTxw2XzcANPxMVLZkP2WcP+OosCGJoP17aieEXaKqDAhztJ2DWs728vI4DKSoht9l
+         IZ7DbCnRciOMxYbnH8WL3U/R5B8a7kWds8J7l7ps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+61e4b490d9d2da591b50@syzkaller.appspotmail.com,
-        Zubin Mithra <zsm@chromium.org>,
-        Kees Cook <keescook@chromium.org>,
-        John Johansen <john.johansen@canonical.com>,
+        stable@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+        Feng Tang <feng.tang@intel.com>, Borislav Petkov <bp@suse.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Stuart R . Anderson" <stuart.r.anderson@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        H Peter Anvin <hpa@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Kosina <jkosina@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thymo van Beers <thymovanbeers@gmail.com>,
+        alan@linux.intel.com, linux-doc@vger.kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 16/62] apparmor: Fix uninitialized value in aa_split_fqname
-Date:   Mon, 26 Nov 2018 11:50:57 +0100
-Message-Id: <20181126105052.200409608@linuxfoundation.org>
+Subject: [PATCH 4.14 17/62] x86/earlyprintk: Add a force option for pciserial device
+Date:   Mon, 26 Nov 2018 11:50:58 +0100
+Message-Id: <20181126105052.286151446@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -66,71 +79,147 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 250f2da49cb8e582215a65c03f50e8ddf5cd119c ]
+[ Upstream commit d2266bbfa9e3e32e3b642965088ca461bd24a94f ]
 
-Syzkaller reported a OOB-read with the stacktrace below. This occurs
-inside __aa_lookupn_ns as `n` is not initialized. `n` is obtained from
-aa_splitn_fqname. In cases where `name` is invalid, aa_splitn_fqname
-returns without initializing `ns_name` and `ns_len`.
+The "pciserial" earlyprintk variant helps much on many modern x86
+platforms, but unfortunately there are still some platforms with PCI
+UART devices which have the wrong PCI class code. In that case, the
+current class code check does not allow for them to be used for logging.
 
-Fix this by always initializing `ns_name` and `ns_len`.
+Add a sub-option "force" which overrides the class code check and thus
+the use of such device can be enforced.
 
-	__dump_stack lib/dump_stack.c:77 [inline]
-	dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
-	print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
-	kasan_report_error mm/kasan/report.c:354 [inline]
-	kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
-	__asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
-	memcmp+0xe3/0x160 lib/string.c:861
-	strnstr+0x4b/0x70 lib/string.c:934
-	__aa_lookupn_ns+0xc1/0x570 security/apparmor/policy_ns.c:209
-	aa_lookupn_ns+0x88/0x1e0 security/apparmor/policy_ns.c:240
-	aa_fqlookupn_profile+0x1b9/0x1010 security/apparmor/policy.c:468
-	fqlookupn_profile+0x80/0xc0 security/apparmor/label.c:1844
-	aa_label_strn_parse+0xa3a/0x1230 security/apparmor/label.c:1908
-	aa_label_parse+0x42/0x50 security/apparmor/label.c:1943
-	aa_change_profile+0x513/0x3510 security/apparmor/domain.c:1362
-	apparmor_setprocattr+0xaa4/0x1150 security/apparmor/lsm.c:658
-	security_setprocattr+0x66/0xc0 security/security.c:1298
-	proc_pid_attr_write+0x301/0x540 fs/proc/base.c:2555
-	__vfs_write+0x119/0x9f0 fs/read_write.c:485
-	vfs_write+0x1fc/0x560 fs/read_write.c:549
-	ksys_write+0x101/0x260 fs/read_write.c:598
-	__do_sys_write fs/read_write.c:610 [inline]
-	__se_sys_write fs/read_write.c:607 [inline]
-	__x64_sys_write+0x73/0xb0 fs/read_write.c:607
-	do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-	entry_SYSCALL_64_after_hwframe+0x49/0xbe
+ [ bp: massage formulations. ]
 
-Fixes: 3b0aaf5866bf ("apparmor: add lib fn to find the "split" for fqnames")
-Reported-by: syzbot+61e4b490d9d2da591b50@syzkaller.appspotmail.com
-Signed-off-by: Zubin Mithra <zsm@chromium.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: John Johansen <john.johansen@canonical.com>
+Suggested-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Feng Tang <feng.tang@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Stuart R . Anderson" <stuart.r.anderson@intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Feng Tang <feng.tang@intel.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: H Peter Anvin <hpa@linux.intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thymo van Beers <thymovanbeers@gmail.com>
+Cc: alan@linux.intel.com
+Cc: linux-doc@vger.kernel.org
+Link: http://lkml.kernel.org/r/20181002164921.25833-1-feng.tang@intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/apparmor/lib.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ .../admin-guide/kernel-parameters.txt         |  6 +++-
+ arch/x86/kernel/early_printk.c                | 29 ++++++++++++-------
+ 2 files changed, 24 insertions(+), 11 deletions(-)
 
-diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-index 08ca26bcca77..451654372a76 100644
---- a/security/apparmor/lib.c
-+++ b/security/apparmor/lib.c
-@@ -90,10 +90,12 @@ const char *aa_splitn_fqname(const char *fqname, size_t n, const char **ns_name,
- 	const char *end = fqname + n;
- 	const char *name = skipn_spaces(fqname, n);
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 9841bad6f271..99a08722124d 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1011,7 +1011,7 @@
+ 			earlyprintk=serial[,0x...[,baudrate]]
+ 			earlyprintk=ttySn[,baudrate]
+ 			earlyprintk=dbgp[debugController#]
+-			earlyprintk=pciserial,bus:device.function[,baudrate]
++			earlyprintk=pciserial[,force],bus:device.function[,baudrate]
+ 			earlyprintk=xdbc[xhciController#]
  
--	if (!name)
--		return NULL;
- 	*ns_name = NULL;
- 	*ns_len = 0;
+ 			earlyprintk is useful when the kernel crashes before
+@@ -1043,6 +1043,10 @@
+ 
+ 			The sclp output can only be used on s390.
+ 
++			The optional "force" to "pciserial" enables use of a
++			PCI device even when its classcode is not of the
++			UART class.
 +
-+	if (!name)
-+		return NULL;
+ 	edac_report=	[HW,EDAC] Control how to report EDAC event
+ 			Format: {"on" | "off" | "force"}
+ 			on: enable EDAC to report H/W event. May be overridden
+diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_printk.c
+index 5e801c8c8ce7..374a52fa5296 100644
+--- a/arch/x86/kernel/early_printk.c
++++ b/arch/x86/kernel/early_printk.c
+@@ -213,8 +213,9 @@ static unsigned int mem32_serial_in(unsigned long addr, int offset)
+  * early_pci_serial_init()
+  *
+  * This function is invoked when the early_printk param starts with "pciserial"
+- * The rest of the param should be ",B:D.F,baud" where B, D & F describe the
+- * location of a PCI device that must be a UART device.
++ * The rest of the param should be "[force],B:D.F,baud", where B, D & F describe
++ * the location of a PCI device that must be a UART device. "force" is optional
++ * and overrides the use of an UART device with a wrong PCI class code.
+  */
+ static __init void early_pci_serial_init(char *s)
+ {
+@@ -224,17 +225,23 @@ static __init void early_pci_serial_init(char *s)
+ 	u32 classcode, bar0;
+ 	u16 cmdreg;
+ 	char *e;
++	int force = 0;
+ 
+-
+-	/*
+-	 * First, part the param to get the BDF values
+-	 */
+ 	if (*s == ',')
+ 		++s;
+ 
+ 	if (*s == 0)
+ 		return;
+ 
++	/* Force the use of an UART device with wrong class code */
++	if (!strncmp(s, "force,", 6)) {
++		force = 1;
++		s += 6;
++	}
 +
- 	if (name[0] == ':') {
- 		char *split = strnchr(&name[1], end - &name[1], ':');
- 		*ns_name = skipn_spaces(&name[1], end - &name[1]);
++	/*
++	 * Part the param to get the BDF values
++	 */
+ 	bus = (u8)simple_strtoul(s, &e, 16);
+ 	s = e;
+ 	if (*s != ':')
+@@ -253,7 +260,7 @@ static __init void early_pci_serial_init(char *s)
+ 		s++;
+ 
+ 	/*
+-	 * Second, find the device from the BDF
++	 * Find the device from the BDF
+ 	 */
+ 	cmdreg = read_pci_config(bus, slot, func, PCI_COMMAND);
+ 	classcode = read_pci_config(bus, slot, func, PCI_CLASS_REVISION);
+@@ -264,8 +271,10 @@ static __init void early_pci_serial_init(char *s)
+ 	 */
+ 	if (((classcode >> 16 != PCI_CLASS_COMMUNICATION_MODEM) &&
+ 	     (classcode >> 16 != PCI_CLASS_COMMUNICATION_SERIAL)) ||
+-	   (((classcode >> 8) & 0xff) != 0x02)) /* 16550 I/F at BAR0 */
+-		return;
++	   (((classcode >> 8) & 0xff) != 0x02)) /* 16550 I/F at BAR0 */ {
++		if (!force)
++			return;
++	}
+ 
+ 	/*
+ 	 * Determine if it is IO or memory mapped
+@@ -289,7 +298,7 @@ static __init void early_pci_serial_init(char *s)
+ 	}
+ 
+ 	/*
+-	 * Lastly, initialize the hardware
++	 * Initialize the hardware
+ 	 */
+ 	if (*s) {
+ 		if (strcmp(s, "nocfg") == 0)
 -- 
 2.17.1
 
