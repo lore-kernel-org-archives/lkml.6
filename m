@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFFF8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 088AAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 847F321104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C34DA2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnH2djSs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 847F321104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="INczvDw0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C34DA2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbeKZVvD (ORCPT
+        id S1728790AbeKZVvG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:51:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60368 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:51:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727203AbeKZVvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:51:02 -0500
+        id S1726384AbeKZVvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:51:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AAE8020817;
-        Mon, 26 Nov 2018 10:57:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61A5720817;
+        Mon, 26 Nov 2018 10:57:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229838;
-        bh=2X0PJwqPXuDGhlDuFBHPEKTQg2zFmgf9x5d/NVg8QEE=;
+        s=default; t=1543229840;
+        bh=1eAiYWB/zZJks8e/gnJgBggspM0zqmd9HHnNKigUHUw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cnH2djSsh1M/xP5OB94KYp25hIsmm+aZWL+EVvGOb1/1INdp5t4AcTnioPU9HxF41
-         99IGHOJcXyiTNamufAyx+dmON53+39g3QuG4yGJfGR0zCPvBp5vYeGFToFJ/0GzWuI
-         Ga+KVW10cXtAMVxmPMILj4NcEkh3oX3Z0vBVrZkw=
+        b=INczvDw0JPrCcG/h0dpOow0OWUbmSbIz1WGbAeZldqn8tLMC7QhCrakUTjWgCbU3z
+         x1fVCCUtxQlR16/POvNHSAivUSaDQAeJRIadOjvwTpx2flSX0fXJFbEv/Osg2FBQT4
+         K8+QnpcEOJheNMfRYJeZ0P2GFtRyfjWwSyJMWULs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Tull <atull@kernel.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 20/46] clk: fixed-factor: fix of_node_get-put imbalance
-Date:   Mon, 26 Nov 2018 11:51:09 +0100
-Message-Id: <20181126105048.107740811@linuxfoundation.org>
+Subject: [PATCH 4.9 21/46] lib/raid6: Fix arm64 test build
+Date:   Mon, 26 Nov 2018 11:51:10 +0100
+Message-Id: <20181126105048.199709645@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
 References: <20181126105045.447291262@linuxfoundation.org>
@@ -64,34 +64,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f98e8a572bddbf27032114127d2fcc78fa5e6a9d ]
+[ Upstream commit 313a06e636808387822af24c507cba92703568b1 ]
 
-When the fixed factor clock is created by devicetree,
-of_clk_add_provider is called.  Add a call to
-of_clk_del_provider in the remove function to balance
-it out.
+The lib/raid6/test fails to build the neon objects
+on arm64 because the correct machine type is 'aarch64'.
 
-Reported-by: Alan Tull <atull@kernel.org>
-Fixes: 971451b3b15d ("clk: fixed-factor: Convert into a module platform driver")
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Once this is correctly enabled, the neon recovery objects
+need to be added to the build.
+
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-fixed-factor.c | 1 +
- 1 file changed, 1 insertion(+)
+ lib/raid6/test/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index 20724abd38bd..7df6b5b1e7ee 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -210,6 +210,7 @@ static int of_fixed_factor_clk_remove(struct platform_device *pdev)
- {
- 	struct clk *clk = platform_get_drvdata(pdev);
- 
-+	of_clk_del_provider(pdev->dev.of_node);
- 	clk_unregister_fixed_factor(clk);
- 
- 	return 0;
+diff --git a/lib/raid6/test/Makefile b/lib/raid6/test/Makefile
+index 2c7b60edea04..1faeef0c30b9 100644
+--- a/lib/raid6/test/Makefile
++++ b/lib/raid6/test/Makefile
+@@ -26,7 +26,7 @@ ifeq ($(ARCH),arm)
+         CFLAGS += -I../../../arch/arm/include -mfpu=neon
+         HAS_NEON = yes
+ endif
+-ifeq ($(ARCH),arm64)
++ifeq ($(ARCH),aarch64)
+         CFLAGS += -I../../../arch/arm64/include
+         HAS_NEON = yes
+ endif
+@@ -40,7 +40,7 @@ ifeq ($(IS_X86),yes)
+ 		    gcc -c -x assembler - >&/dev/null &&        \
+ 		    rm ./-.o && echo -DCONFIG_AS_AVX512=1)
+ else ifeq ($(HAS_NEON),yes)
+-        OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o
++        OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o recov_neon.o recov_neon_inner.o
+         CFLAGS += -DCONFIG_KERNEL_MODE_NEON=1
+ else
+         HAS_ALTIVEC := $(shell printf '\#include <altivec.h>\nvector int a;\n' |\
 -- 
 2.17.1
 
