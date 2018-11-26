@@ -2,107 +2,152 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65756C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E17C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C82D20664
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:02:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB05120664
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:03:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uu8MIxIQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C82D20664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WrFVehrw";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eo0aeECo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB05120664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726242AbeKZQza (ORCPT
+        id S1726255AbeKZQ4Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 11:55:30 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36151 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbeKZQza (ORCPT
+        Mon, 26 Nov 2018 11:56:25 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:39410 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbeKZQ4Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 11:55:30 -0500
-Received: by mail-pf1-f196.google.com with SMTP id b85so6039925pfc.3
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 22:02:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=r1u8K0n6rtpEId+/esDvsEnjdzMp18LIYOpA/7ZeQoY=;
-        b=Uu8MIxIQ/u6lu8ohtjf93as+hA0Zd2C6NjknMQPXBzwwNjnEeCeI8JDVKxZDDV3CqS
-         +on5WUIaSl8bAbTBnzT2njhDi/CDIcmVsFfKOId5NgW1ndcoYH8JBBgtnZMHyKzRemm1
-         3tQKDl/eUzO1Y//2w/CE4kZzI4CVDPkKjzql8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=r1u8K0n6rtpEId+/esDvsEnjdzMp18LIYOpA/7ZeQoY=;
-        b=OdON1u+L4Wa61ANuj0zy4Ia1czxA761p22EEtXwikzM00sRYWel1Pg5FXhSgYsclnl
-         XBcx0o+QvzHImLJGLZm1dxjjz7XQGy4iSIsZQVVUJUVOCwvYP97u8htVW76SUxH5yDVy
-         +Et48GyY+wTrMK9vA2dm0KiZH7o4Z/PniQU88gag7EVAwAgzbV8aYAlusWWkfEPCycem
-         J8sS2KdfdqUkJqnX+WfoALu2CbrC0joiOWCwO2x1goQqTbseG0eR9gDJlG8P0Bopk00l
-         a85nu5GNeccPFBX8L3EfDZmFE+H3SbLxaOj7H/WiCZv9I6hOecLp457lAevy6QFxMYIA
-         lzrA==
-X-Gm-Message-State: AGRZ1gLHtyN+HmZNWSnL/ysAsEhzDOm7K0U7dJyCsDMcIRd2p4L7bFyG
-        fVpC+tE1WP2/Bulbr1q4367wUA==
-X-Google-Smtp-Source: AJdET5fG6bRXOQmKH6ffUHgy93RTHgYoYpyCII9lbH/0T2Mmz2O8vO4NbsxmmkqDtrXDPKx0E++lOg==
-X-Received: by 2002:a62:2e46:: with SMTP id u67mr26073868pfu.3.1543212148919;
-        Sun, 25 Nov 2018 22:02:28 -0800 (PST)
-Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id y26-v6sm24668763pfi.123.2018.11.25.22.02.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 25 Nov 2018 22:02:28 -0800 (PST)
-Date:   Mon, 26 Nov 2018 11:32:26 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     rjw@rjwysocki.net, benh@kernel.crashing.org, paulus@samba.org,
-        mpe@ellerman.id.au, linux-pm@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] cpufreq: pmac64: add of_node_put()
-Message-ID: <20181126060226.wsludir4g7bao4lk@vireshk-i7>
-References: <20181123133340.26849-1-tiny.windzz@gmail.com>
+        Mon, 26 Nov 2018 11:56:24 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 87C586086B; Mon, 26 Nov 2018 06:03:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543212202;
+        bh=TtMPE2NKj0InUGwHDyByTBIeSUegY40+/tfqcG3xP0U=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=WrFVehrw2FC51qLfo6AwKCP1afd0rL7nQYpe/DQHLmCQD+XgvhfJAPJ1R8wqNB+5a
+         gYOeBtlg+4HptetjKtaXsWhoRlS5BziyPfRiGMAm9wuZvIS4I5uhhe0QGWkKQ5JuCQ
+         Vyxo6h1/3BdOqdV4p5eSu1w5NCJ4IqAYI4DvHUbo=
+Received: from [10.79.40.201] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 93D9B602BD;
+        Mon, 26 Nov 2018 06:03:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543212201;
+        bh=TtMPE2NKj0InUGwHDyByTBIeSUegY40+/tfqcG3xP0U=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=eo0aeECo3Ujhrfn0M54YfcJZklMVWUWJ4I6FrSgBZa8/1QO2/cPytCP7xsbTosvyV
+         AV4bmaH1RYki+ISl6bGtIiZ/qLDI7baZp7tuFq5zRx9YDtwIeauGDobghxXqVCusZM
+         q/b1xk7/InnU7O/tN5AWkMc0yvdZ12KnSolensMc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 93D9B602BD
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [RESEND PATCH v17 2/5] iommu/arm-smmu: Invoke pm_runtime during
+ probe, add/remove device
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, alex.williamson@redhat.com,
+        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
+        freedreno <freedreno@lists.freedesktop.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org, robh+dt <robh+dt@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>
+References: <20181116112430.31248-1-vivek.gautam@codeaurora.org>
+ <20181116112430.31248-3-vivek.gautam@codeaurora.org>
+ <20181121173757.GA9801@arm.com>
+ <CAFp+6iEH7_XEcZNsbZfn6iBF5_o-ZKBj=DpturH7N85LU289qg@mail.gmail.com>
+ <20181123183555.GE21183@arm.com>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <9064c01e-cef0-9306-078a-8d303cd6614b@codeaurora.org>
+Date:   Mon, 26 Nov 2018 11:33:15 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181123133340.26849-1-tiny.windzz@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20181123183555.GE21183@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23-11-18, 08:33, Yangtao Li wrote:
-> of_find_node_by_path() acquires a reference to the node
-> returned by it and that reference needs to be dropped by its caller.
-> g5_neo2_cpufreq_init() doesn't do that, so fix it.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
-> Changes in v2:
-> -update changelog
-> ---
->  drivers/cpufreq/pmac64-cpufreq.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/cpufreq/pmac64-cpufreq.c b/drivers/cpufreq/pmac64-cpufreq.c
-> index be623dd7b9f2..1d32a863332d 100644
-> --- a/drivers/cpufreq/pmac64-cpufreq.c
-> +++ b/drivers/cpufreq/pmac64-cpufreq.c
-> @@ -411,6 +411,7 @@ static int __init g5_neo2_cpufreq_init(struct device_node *cpunode)
->  		pfunc_set_vdnap0 = pmf_find_function(root, "set-vdnap0");
->  		pfunc_vdnap0_complete =
->  			pmf_find_function(root, "slewing-done");
-> +		of_node_put(root);
->  		if (pfunc_set_vdnap0 == NULL ||
->  		    pfunc_vdnap0_complete == NULL) {
->  			pr_err("Can't find required platform function\n");
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
--- 
-viresh
+On 11/24/2018 12:06 AM, Will Deacon wrote:
+> On Thu, Nov 22, 2018 at 05:32:24PM +0530, Vivek Gautam wrote:
+>> Hi Will,
+>>
+>> On Wed, Nov 21, 2018 at 11:09 PM Will Deacon <will.deacon@arm.com> wrote:
+>>> On Fri, Nov 16, 2018 at 04:54:27PM +0530, Vivek Gautam wrote:
+>>>> From: Sricharan R <sricharan@codeaurora.org>
+>>>>
+>>>> The smmu device probe/remove and add/remove master device callbacks
+>>>> gets called when the smmu is not linked to its master, that is without
+>>>> the context of the master device. So calling runtime apis in those places
+>>>> separately.
+>>>> Global locks are also initialized before enabling runtime pm as the
+>>>> runtime_resume() calls device_reset() which does tlb_sync_global()
+>>>> that ultimately requires locks to be initialized.
+>>>>
+>>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>>>> [vivek: Cleanup pm runtime calls]
+>>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>>>> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+>>>> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>>>> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+>>>> ---
+>>>>   drivers/iommu/arm-smmu.c | 101 ++++++++++++++++++++++++++++++++++++++++++-----
+>>>>   1 file changed, 91 insertions(+), 10 deletions(-)
+>>> Given that you're doing the get/put in the TLBI ops unconditionally:
+>>>
+>>>>   static void arm_smmu_flush_iotlb_all(struct iommu_domain *domain)
+>>>>   {
+>>>>        struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>>>> +     struct arm_smmu_device *smmu = smmu_domain->smmu;
+>>>>
+>>>> -     if (smmu_domain->tlb_ops)
+>>>> +     if (smmu_domain->tlb_ops) {
+>>>> +             arm_smmu_rpm_get(smmu);
+>>>>                smmu_domain->tlb_ops->tlb_flush_all(smmu_domain);
+>>>> +             arm_smmu_rpm_put(smmu);
+>>>> +     }
+>>>>   }
+>>>>
+>>>>   static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
+>>>>   {
+>>>>        struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+>>>> +     struct arm_smmu_device *smmu = smmu_domain->smmu;
+>>>>
+>>>> -     if (smmu_domain->tlb_ops)
+>>>> +     if (smmu_domain->tlb_ops) {
+>>>> +             arm_smmu_rpm_get(smmu);
+>>>>                smmu_domain->tlb_ops->tlb_sync(smmu_domain);
+>>>> +             arm_smmu_rpm_put(smmu);
+>>>> +     }
+>>> Why do you need them around the map/unmap calls as well?
+>> We still have .tlb_add_flush path?
+> Ok, so we could add the ops around that as well. Right now, we've got
+> the runtime pm hooks crossing two parts of the API.
+
+Sure, will do that then, and remove the runtime pm hooks from map/unmap.
+
+Thanks
+Vivek
+>
+> Will
+
