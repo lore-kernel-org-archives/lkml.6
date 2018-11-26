@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5461C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE9EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:07:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5EE020865
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:07:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5EE020865
+	by mail.kernel.org (Postfix) with ESMTP id 054B820663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:07:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 054B820663
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbeK0ECO (ORCPT
+        id S1726418AbeK0ECO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 26 Nov 2018 23:02:14 -0500
-Received: from foss.arm.com ([217.140.101.70]:42984 "EHLO foss.arm.com"
+Received: from foss.arm.com ([217.140.101.70]:42942 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726260AbeK0ECO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:02:14 -0500
+        id S1726260AbeK0ECN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 23:02:13 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB6F019BF;
-        Mon, 26 Nov 2018 09:07:31 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EAB75169E;
+        Mon, 26 Nov 2018 09:07:30 -0800 (PST)
 Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7C2B43F59C;
-        Mon, 26 Nov 2018 09:07:31 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BA90A3F911;
+        Mon, 26 Nov 2018 09:07:30 -0800 (PST)
 Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 59FE01AE0C3D; Mon, 26 Nov 2018 17:07:48 +0000 (GMT)
+        id 3555C1AE0B58; Mon, 26 Nov 2018 17:07:48 +0000 (GMT)
 From:   Will Deacon <will.deacon@arm.com>
 To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
 Cc:     cpandya@codeaurora.org, toshi.kani@hpe.com, tglx@linutronix.de,
         mhocko@suse.com, akpm@linux-foundation.org,
         sean.j.christopherson@intel.com, Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v4 5/5] lib/ioremap: Ensure break-before-make is used for huge p4d mappings
-Date:   Mon, 26 Nov 2018 17:07:47 +0000
-Message-Id: <1543252067-30831-6-git-send-email-will.deacon@arm.com>
+Subject: [PATCH v4 3/5] x86/pgtable: Drop pXd_none() checks from pXd_free_pYd_table()
+Date:   Mon, 26 Nov 2018 17:07:45 +0000
+Message-Id: <1543252067-30831-4-git-send-email-will.deacon@arm.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1543252067-30831-1-git-send-email-will.deacon@arm.com>
 References: <1543252067-30831-1-git-send-email-will.deacon@arm.com>
@@ -46,124 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Whilst no architectures actually enable support for huge p4d mappings
-in the vmap area, the code that is implemented should be using
-break-before-make, as we do for pud and pmd huge entries.
+The core code already has a check for pXd_none(), so remove it from the
+architecture implementation.
 
 Cc: Chintan Pandya <cpandya@codeaurora.org>
 Cc: Toshi Kani <toshi.kani@hpe.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Michal Hocko <mhocko@suse.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Toshi Kani <toshi.kani@hpe.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/mm/mmu.c           |  5 +++++
- arch/x86/mm/pgtable.c         |  8 ++++++++
- include/asm-generic/pgtable.h |  5 +++++
- lib/ioremap.c                 | 27 +++++++++++++++++++++------
- 4 files changed, 39 insertions(+), 6 deletions(-)
+ arch/x86/mm/pgtable.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 786cfa6355be..cf9a26d3d7f5 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -1028,3 +1028,8 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
- 	pmd_free(NULL, table);
- 	return 1;
- }
-+
-+int p4d_free_pud_page(p4d_t *p4d, unsigned long addr)
-+{
-+	return 0;	/* Don't attempt a block mapping */
-+}
 diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index e95a7d6ac8f8..b0284eab14dc 100644
+index 59274e2c1ac4..e95a7d6ac8f8 100644
 --- a/arch/x86/mm/pgtable.c
 +++ b/arch/x86/mm/pgtable.c
-@@ -794,6 +794,14 @@ int pmd_clear_huge(pmd_t *pmd)
- 	return 0;
- }
+@@ -811,9 +811,6 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ 	pte_t *pte;
+ 	int i;
  
-+/*
-+ * Until we support 512GB pages, skip them in the vmap area.
-+ */
-+int p4d_free_pud_page(p4d_t *p4d, unsigned long addr)
-+{
-+	return 0;
-+}
-+
- #ifdef CONFIG_X86_64
- /**
-  * pud_free_pmd_page - Clear pud entry and free pmd page.
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index 359fb935ded6..e0381a4ce7d4 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -1019,6 +1019,7 @@ int pud_set_huge(pud_t *pud, phys_addr_t addr, pgprot_t prot);
- int pmd_set_huge(pmd_t *pmd, phys_addr_t addr, pgprot_t prot);
- int pud_clear_huge(pud_t *pud);
- int pmd_clear_huge(pmd_t *pmd);
-+int p4d_free_pud_page(p4d_t *p4d, unsigned long addr);
- int pud_free_pmd_page(pud_t *pud, unsigned long addr);
- int pmd_free_pte_page(pmd_t *pmd, unsigned long addr);
- #else	/* !CONFIG_HAVE_ARCH_HUGE_VMAP */
-@@ -1046,6 +1047,10 @@ static inline int pmd_clear_huge(pmd_t *pmd)
+-	if (pud_none(*pud))
+-		return 1;
+-
+ 	pmd = (pmd_t *)pud_page_vaddr(*pud);
+ 	pmd_sv = (pmd_t *)__get_free_page(GFP_KERNEL);
+ 	if (!pmd_sv)
+@@ -855,9 +852,6 @@ int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
  {
- 	return 0;
- }
-+static inline int p4d_free_pud_page(p4d_t *p4d, unsigned long addr)
-+{
-+	return 0;
-+}
- static inline int pud_free_pmd_page(pud_t *pud, unsigned long addr)
- {
- 	return 0;
-diff --git a/lib/ioremap.c b/lib/ioremap.c
-index 10d7c5485c39..063213685563 100644
---- a/lib/ioremap.c
-+++ b/lib/ioremap.c
-@@ -156,6 +156,25 @@ static inline int ioremap_pud_range(p4d_t *p4d, unsigned long addr,
- 	return 0;
- }
+ 	pte_t *pte;
  
-+static int ioremap_try_huge_p4d(p4d_t *p4d, unsigned long addr,
-+				unsigned long end, phys_addr_t phys_addr,
-+				pgprot_t prot)
-+{
-+	if (!ioremap_p4d_enabled())
-+		return 0;
-+
-+	if ((end - addr) != P4D_SIZE)
-+		return 0;
-+
-+	if (!IS_ALIGNED(phys_addr, P4D_SIZE))
-+		return 0;
-+
-+	if (p4d_present(*p4d) && !p4d_free_pud_page(p4d, addr))
-+		return 0;
-+
-+	return p4d_set_huge(p4d, phys_addr, prot);
-+}
-+
- static inline int ioremap_p4d_range(pgd_t *pgd, unsigned long addr,
- 		unsigned long end, phys_addr_t phys_addr, pgprot_t prot)
- {
-@@ -168,12 +187,8 @@ static inline int ioremap_p4d_range(pgd_t *pgd, unsigned long addr,
- 	do {
- 		next = p4d_addr_end(addr, end);
+-	if (pmd_none(*pmd))
+-		return 1;
+-
+ 	pte = (pte_t *)pmd_page_vaddr(*pmd);
+ 	pmd_clear(pmd);
  
--		if (ioremap_p4d_enabled() &&
--		    ((next - addr) == P4D_SIZE) &&
--		    IS_ALIGNED(phys_addr, P4D_SIZE)) {
--			if (p4d_set_huge(p4d, phys_addr, prot))
--				continue;
--		}
-+		if (ioremap_try_huge_p4d(p4d, addr, next, phys_addr, prot))
-+			continue;
- 
- 		if (ioremap_pud_range(p4d, addr, next, phys_addr, prot))
- 			return -ENOMEM;
 -- 
 2.1.4
 
