@@ -1,115 +1,168 @@
 Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2300EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC865C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D57552086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:35:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 786F22133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:36:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="NuQn4G4f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D57552086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r9aqBbYG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 786F22133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbeK0A3t (ORCPT
+        id S1726587AbeK0AaY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 19:29:49 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44443 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726414AbeK0A3t (ORCPT
+        Mon, 26 Nov 2018 19:30:24 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:32820 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbeK0AaY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 19:29:49 -0500
-Received: by mail-pf1-f193.google.com with SMTP id u6so6582113pfh.11
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 05:35:39 -0800 (PST)
+        Mon, 26 Nov 2018 19:30:24 -0500
+Received: by mail-wm1-f66.google.com with SMTP id 79so16598483wmo.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 05:36:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aTx3zTvJaBmU07f6U5v8PQPgrf2KN3pwhK5vuCBZ3HM=;
-        b=NuQn4G4f5OA6V9NHaxYsXisRNYOH9LubQigPj61tZP9zIKj6+Y/DLvI8m3UTaZXC2L
-         Y8yuapCEUvWG2LelXk6g3zU8bWT8zgLId9w9nHJc92QejOTMu3j+/uE4a/+bbJFHUgcw
-         tIEz3r9deVW9sP4Ik0xoEYFJwChkGQQEg3WI0=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=hrRG+8DGJB5KYXK6fX7hN0b+wV3eWhvpfn5aeYmR0gQ=;
+        b=r9aqBbYGd+cJTgvi4jeeWZsEw1WwT3Sn3MPsAT94yQ3mQE01vll/OWLkQwmph12Ngd
+         gT02P2rna+8lffvQOjBh/9g6/OmZ/XwPO41la0ucmEg7MJ+eI9FGoE/wXx3S8GkN5vmK
+         V8aV9WM+o1aptsJ4/72Co52zV4Id0gN0V7Yg/wWiwtyzIwLSdrC7TVX9CXXwwwZyZoGX
+         Yl+8rWJQ4kna+XxoM/1aPFs83dp4mrjOoWM7a3+EHv8ixmed4R4abaq1KvkiVeA1G8bI
+         0hISGgC7T74xYdJzbfU1RV7ejZ5hW6PdlTHYJqzwnwjdtfhP5bM+Uu8Pd0tqiv3wgSdW
+         7vxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aTx3zTvJaBmU07f6U5v8PQPgrf2KN3pwhK5vuCBZ3HM=;
-        b=UHb13dbc+PfYKOnPMRieB5DJAVAEicseNEBBzNGRA/lXy2UDkpjl6Kz+i+0Sn4XDgS
-         5a6QWVO+HutKFsUd32trwnCTKK1v4447/dN3eJN7eei7lrs+tgo2DGvRxQpK+WXy2sdP
-         so2ZAcu/VMBD5YB9o9RvEI95oK7ReASrlB+PJrd4TIKPjn5SCPpnpR1v/LspT9cA6/AE
-         BcH+j9L+qxhUahzVpJ5HI6yqpq2+ghAJmwa7jQu7vzd/d8WHjEeC02BPnUI2Czh3BcJK
-         eE5Aeyl9YvXMSvUBrd32NL1osL18lGuhzIIyFDGReoKP2FbQOlIxU7X1g4yv5CbiZYpO
-         2/pA==
-X-Gm-Message-State: AA+aEWYxSGPrMqt5aqCY1yQENF4t6t6+LZEjkDSMkOySKSAvekJgGHGx
-        cb96mnIViGcUs1SrH58gFYKbPQ==
-X-Google-Smtp-Source: AFSGD/WKlO4NxqiX1QEDSRM2cUe21kXkVBr7uLt8ue6bKGySIFPUBv0BDTlyKQKu23sBph+VqpUuww==
-X-Received: by 2002:a63:790e:: with SMTP id u14mr24901140pgc.452.1543239339077;
-        Mon, 26 Nov 2018 05:35:39 -0800 (PST)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id k24sm1268543pfj.13.2018.11.26.05.35.37
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=hrRG+8DGJB5KYXK6fX7hN0b+wV3eWhvpfn5aeYmR0gQ=;
+        b=ewH8UsjQ1PQCv/ceu6jFPsNMOw/3txhC8E86gez66xIN9IDJHe/AKMGpTyOlTV5YaS
+         GgTMlvgiQgSWmlIATp4j3GTvdtuyDljyUZA+8KYjxm9PUtziRboL+XxZCssJxlTetA96
+         1DBlVIGrZ3pZvsc4LMoanjOB0+5D+WqFtweba00Q8gXUOCn4CzQrus+++aK9wNqSH5WI
+         O9k7jTKEfEQFWAfsTgXmuVMecMFbQbcNxtyapUKIq6QRt7ZoAqxfR3F0I4bdjTaF40l7
+         ymUCD2eOgaNSKhzFpR4/2o58oN7z6ES5Bu5K53K5TksCXIYwpDoH61dHCeI+iSuDgmIe
+         9JtA==
+X-Gm-Message-State: AGRZ1gLwzO9EAUFmDvJZH+p2Q+gzpg2AoYM/6ax4EmrHR+98xNm5WUag
+        R7yEKQF63ElrU/xxqpYFCbA=
+X-Google-Smtp-Source: AFSGD/Vq//hY4/SrTZ/oZt2INB9Hce7fmEL3srr/OQ7GvyuGr28KNkXQ4yW9Ll4mPxm4XocqmDjVtA==
+X-Received: by 2002:a1c:128c:: with SMTP id 134-v6mr25214156wms.72.1543239374129;
+        Mon, 26 Nov 2018 05:36:14 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id o8sm480073wrx.15.2018.11.26.05.36.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 05:35:37 -0800 (PST)
-Date:   Mon, 26 Nov 2018 05:35:36 -0800
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Mon, 26 Nov 2018 05:36:13 -0800 (PST)
+Date:   Mon, 26 Nov 2018 14:36:10 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Andi Kleen <ak@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        marcandre.lureau@redhat.com,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH -next 1/2] mm/memfd: make F_SEAL_FUTURE_WRITE seal more
- robust
-Message-ID: <20181126133536.GB242510@google.com>
-References: <20181121070658.011d576d@canb.auug.org.au>
- <469B80CB-D982-4802-A81D-95AC493D7E87@amacapital.net>
- <20181120204710.GB22801@google.com>
- <F8E28229-C99E-4711-982B-5B5DE0F70F16@amacapital.net>
- <20181120211335.GC22801@google.com>
- <20181121182701.0d8a775fda6af1f8d2be8f25@linux-foundation.org>
- <CALCETrUGyhqi+M3cTdqJNNOPfTWn-R-ekM_R5heq2mbdVqPUAw@mail.gmail.com>
- <20181122230906.GA198127@google.com>
- <20181124164229.89c670b6e7a3530ef7b0a40c@linux-foundation.org>
- <20181125004736.GA3065@bombadil.infradead.org>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [patch V2 21/28] x86/speculation: Prepare for conditional IBPB
+ in switch_mm()
+Message-ID: <20181126133610.GB108014@gmail.com>
+References: <20181125183328.318175777@linutronix.de>
+ <20181125185005.466447057@linutronix.de>
+ <20181125205330.GO13936@tassilo.jf.intel.com>
+ <alpine.DEB.2.21.1811252316560.1684@nanos.tec.linutronix.de>
+ <92833780-41BE-446E-A676-925BA1EC93D9@amacapital.net>
+ <alpine.DEB.2.21.1811260751030.1684@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181125004736.GA3065@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1811260751030.1684@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 24, 2018 at 04:47:36PM -0800, Matthew Wilcox wrote:
-> On Sat, Nov 24, 2018 at 04:42:29PM -0800, Andrew Morton wrote:
-> > This changelog doesn't have the nifty test case code which was in
-> > earlier versions?
+
+* Thomas Gleixner <tglx@linutronix.de> wrote:
+
+> On Sun, 25 Nov 2018, Andy Lutomirski wrote:
+> > > On Nov 25, 2018, at 2:20 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > On Sun, 25 Nov 2018, Andi Kleen wrote:
+> > > 
+> > >>> The current check whether two tasks belong to the same context is using the
+> > >>> tasks context id. While correct, it's simpler to use the mm pointer because
+> > >>> it allows to mangle the TIF_SPEC_IB bit into it. The context id based
+> > >>> mechanism requires extra storage, which creates worse code.
+> > >> 
+> > >> [We tried similar in some really early versions, but it was replaced
+> > >> with the context id later.]
+> > >> 
+> > >> One issue with using the pointer is that the pointer can be reused
+> > >> when the original mm_struct is freed, and then gets reallocated
+> > >> immediately to an attacker. Then the attacker may avoid the IBPB.
+> > >> 
+> > >> Given it's probably hard to generate any reasonable leak bandwidth with
+> > >> such a complex scenario, but it still seemed better to close the hole.
+> > > 
+> > > Sorry, but that's really a purely academic exercise. 
+> > 
+> > I would guess that it’s actually very easy to force mm_struct* reuse.
+> > Don’t the various allocators try to allocate hot memory?  There’s nothing
+> > hotter than a just-freed allocation of the same size.
 > 
-> Why do we put regression tests in the changelogs anyway?  We have
-> tools/testing/selftests/vm/ already, perhaps they should go there?
+> Sure, but this is about a indirect branch predictor attack against
+> something which reuses the mm.
+> 
+> So you'd need to pull off:
+> 
+>    P1 poisons branch predictor
+>    P1 exit
+> 
+>    P2 starts and resuses mm(P1) and uses the poisoned branch predictor
+> 
+> the only thing between P1 and P2 is either idle or some other kernel
+> thread, but no other user task. If that happens then the code would not
+> issue IBPB as it assumes to switch back to the same process.
+> 
+> Even if you can pull that off the speculation would hit the startup code of
+> P2, which is truly a source of secret information. Creating a valuable
+> attack based on mm reuse is really less proabable than a lottery jackpot.
+> 
+> So using mm is really good enough and results in better assembly code which
+> is surely more valuable than addressing some hypothetical hole.
 
-The reason is I didn't add it was that test case went out of date and the
-updated version of the test case went into the selftests in patch 2/2. I
-thought that would suffice which covers all the cases. That's why I dropped
-it.  Would that be Ok?
+OTOH we could probably close even this with very little cost if we added 
+an IBPB to non-threaded fork() and vfork()+exec() paths? Those are really 
+slow paths compared to all the context switch paths we are trying to 
+optimize here.
 
-The changelog of the previous series had it because the selftest was added
-only later.
+Alternatively we could IBPB on the post-exit() final task struct freeing, 
+which too is a relative slow path compared to the context switch paths.
 
-Let me know, thanks,
+But no strong opinion.
 
- - Joel
+Thanks,
 
+	Ingo
