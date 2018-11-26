@@ -7,56 +7,45 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F23D0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76822C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B85752146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DBB021479
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPfNuz4D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B85752146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YuyuOVGD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DBB021479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730412AbeKZV4C (ORCPT
+        id S1730424AbeKZV4E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:56:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38914 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:56:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729237AbeKZV4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:56:01 -0500
+        id S1729237AbeKZV4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:56:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D3F221473;
-        Mon, 26 Nov 2018 11:02:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A20A22089F;
+        Mon, 26 Nov 2018 11:02:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230135;
-        bh=jDkezgXOqm+fSbbiM4WlID1pDBFG89ri6eR1aeMpbN0=;
+        s=default; t=1543230138;
+        bh=9Bdl5CnzDmnRCu8LZEsBGHe0dwLPfU3GZ2eumisyNdE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VPfNuz4DdesrmwUmCgZ5klFVaw77IPFuqvRFh4zg44cjavjqVF0OuVrx8+9yrf6ld
-         0iSF/yuo3/qkwwM8qIER/e3RhKPfE0+ec826TLAl4sirZ23PF/rSNT9JNnha33W4ub
-         2isBZZ2zNzYy62pZlNfeoFploaddQMtK6LGFardM=
+        b=YuyuOVGDC2OiNyDKo//TE9kjsaAS3b2ODLxg28OUwDfwpjc6fBcyE1PQNYMph/JQX
+         uY75jGyrG7Bzk2MSJZQq1AYGSUl8SxkO6KeamumqqG/rHGOFQLyz5mSb9plRhj8t4+
+         E01peDh5D36yyv5ozsdeEiNcShlYHBzKSRgxe97M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexis Berlemont <alexis.berlemont@gmail.com>,
-        David Tolnay <dtolnay@gmail.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Hemant Kumar <hemant@linux.vnet.ibm.com>,
-        Li Bin <huawei.libin@huawei.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Milian Wolff <milian.wolff@kdab.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Wang Nan <wangnan0@huawei.com>, zhangmengting@huawei.com,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 021/118] perf symbols: Set PLT entry/header sizes properly on Sparc
-Date:   Mon, 26 Nov 2018 11:50:15 +0100
-Message-Id: <20181126105100.675557387@linuxfoundation.org>
+Subject: [PATCH 4.19 022/118] fs/exofs: fix potential memory leak in mount option parsing
+Date:   Mon, 26 Nov 2018 11:50:16 +0100
+Message-Id: <20181126105100.716827728@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -74,58 +63,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d6afa561e1471ccfdaf7191230c0c59a37e45a5b ]
+[ Upstream commit 515f1867addaba49c1c6ac73abfaffbc192c1db4 ]
 
-Using the sh_entsize for both values isn't correct.  It happens to be
-correct on x86...
+There are some cases can cause memory leak when parsing
+option 'osdname'.
 
-For both 32-bit and 64-bit sparc, there are four PLT entries in the PLT
-section.
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexis Berlemont <alexis.berlemont@gmail.com>
-Cc: David Tolnay <dtolnay@gmail.com>
-Cc: Hanjun Guo <guohanjun@huawei.com>
-Cc: Hemant Kumar <hemant@linux.vnet.ibm.com>
-Cc: Li Bin <huawei.libin@huawei.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Milian Wolff <milian.wolff@kdab.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Cc: zhangmengting@huawei.com
-Fixes: b2f7605076d6 ("perf symbols: Fix plt entry calculation for ARM and AARCH64")
-Link: http://lkml.kernel.org/r/20181017.120859.2268840244308635255.davem@davemloft.net
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/symbol-elf.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ fs/exofs/super.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index 29770ea61768..6e70cc00c161 100644
---- a/tools/perf/util/symbol-elf.c
-+++ b/tools/perf/util/symbol-elf.c
-@@ -324,7 +324,17 @@ int dso__synthesize_plt_symbols(struct dso *dso, struct symsrc *ss)
- 			plt_entry_size = 16;
- 			break;
+diff --git a/fs/exofs/super.c b/fs/exofs/super.c
+index 41cf2fbee50d..7d61e3fa378c 100644
+--- a/fs/exofs/super.c
++++ b/fs/exofs/super.c
+@@ -101,6 +101,7 @@ static int parse_options(char *options, struct exofs_mountopt *opts)
+ 		token = match_token(p, tokens, args);
+ 		switch (token) {
+ 		case Opt_name:
++			kfree(opts->dev_name);
+ 			opts->dev_name = match_strdup(&args[0]);
+ 			if (unlikely(!opts->dev_name)) {
+ 				EXOFS_ERR("Error allocating dev_name");
+@@ -866,8 +867,10 @@ static struct dentry *exofs_mount(struct file_system_type *type,
+ 	int ret;
  
--		default: /* FIXME: s390/alpha/mips/parisc/poperpc/sh/sparc/xtensa need to be checked */
-+		case EM_SPARC:
-+			plt_header_size = 48;
-+			plt_entry_size = 12;
-+			break;
-+
-+		case EM_SPARCV9:
-+			plt_header_size = 128;
-+			plt_entry_size = 32;
-+			break;
-+
-+		default: /* FIXME: s390/alpha/mips/parisc/poperpc/sh/xtensa need to be checked */
- 			plt_header_size = shdr_plt.sh_entsize;
- 			plt_entry_size = shdr_plt.sh_entsize;
- 			break;
+ 	ret = parse_options(data, &opts);
+-	if (ret)
++	if (ret) {
++		kfree(opts.dev_name);
+ 		return ERR_PTR(ret);
++	}
+ 
+ 	if (!opts.dev_name)
+ 		opts.dev_name = dev_name;
 -- 
 2.17.1
 
