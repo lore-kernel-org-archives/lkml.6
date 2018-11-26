@@ -2,94 +2,124 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48379C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D02BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10D5820817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:39:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CA1720817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:43:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vQOqud3f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10D5820817
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pe4PKVxo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CA1720817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbeK0BeF (ORCPT
+        id S1726814AbeK0BhT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 20:34:05 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:49458 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbeK0BeF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 20:34:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=RY9LEOD7aRWwx7to15Fj0jf3FoySwRiHpK+tu5rF/O0=;
-        b=vQOqud3fter1syj4YLXATti1W0q678wDR4Rf6hJgmcTmYJ6cx01NvRZxIY1Q8nhBfa3Y42Ezd5xRTm5Eq9CwPxIH+uL2MCSpAKBxJoq67upTE/6IbbmkAVVRzX/r0NS/DLav9IgpFeWIm5/je5Z3yvT10FJNq/AMw9jhu+GskFg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gRI33-0004SB-5u; Mon, 26 Nov 2018 15:39:41 +0100
-Date:   Mon, 26 Nov 2018 15:39:41 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Harini Katakam <harini.katakam@xilinx.com>
-Cc:     nicolas.ferre@microchip.com, davem@davemloft.net,
-        claudiu.beznea@microchip.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, michal.simek@xilinx.com,
-        harinikatakamlinux@gmail.com, Harini Katakam <harinik@xilinx.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Sai Pavan Boddu <sai.pavan.boddu@xilinx.com>
-Subject: Re: [PATCH v2 1/4] net: macb: Check MDIO state before read/write and
- use timeouts
-Message-ID: <20181126143941.GB12116@lunn.ch>
-References: <1543216072-9623-1-git-send-email-harini.katakam@xilinx.com>
- <1543216072-9623-2-git-send-email-harini.katakam@xilinx.com>
+        Mon, 26 Nov 2018 20:37:19 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:38234 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbeK0BhS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 20:37:18 -0500
+Received: by mail-it1-f193.google.com with SMTP id h65so27963494ith.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 06:42:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lhKImEB7vt8t9jKKuMmRs0QM26DaLcd01ZpvBU3o9cQ=;
+        b=pe4PKVxo4mjuI8PzOqkctPc/uNgZSErBvwP3DK2CCyn41n+nz9uCfDHxQlMqaCUu+/
+         Rl8QjurgywWiBP7BJpUZYRftJct9L/nDhtiEjl5G0ZDG603G+RVcYu+x2C47aztduenR
+         6BLhbwIP5HedcAw+pDxR6IUsEaBSoC0qjGdEYZ2ervOEL1WLhBpITAdnjeISs9LYHQ/D
+         wgwCB/UEcU1FBLhP4Zz0SHUVR72oAE3GtMkoCsvqb9JrEL6o8bj14VmmVVXJGSRYSvyT
+         idIXHLD9pJfJwYuaVT096aVzoZ7LPdi4CV6Q5b2PTwNVXXgahgM6IapnEBGr7GnUCU9t
+         PFgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lhKImEB7vt8t9jKKuMmRs0QM26DaLcd01ZpvBU3o9cQ=;
+        b=NUURk1coQrHeQVz3zHsoCv8X764W99ZdnPk18y5EAIWMQxHiwoQ9iHjNmswDcHWiXm
+         9kfj6EKEwgHojYuPacbPCTvW14zb6eA1zfCveGLdcUftOtvhUHahSFpqrmUaIjBN5pZu
+         JiFimrNaIntAl4f871ZC2ujQCn/wQhjfs7GFyb+FZgORs6ug4dDphaSBDRzYWE827cKQ
+         t7bacLpcPc8wODAj7ToAPcePtFxtz/lTa52VU+hsOjl5e3+MK0qOI4bBfGJIBsXkFoXc
+         8t+JxT2bTZPu+M9yfGjEUvJA7CRpxOZqLJL1iuQbQuj+goTBSSrSeoC2chnr9DLmbJ+A
+         tY+w==
+X-Gm-Message-State: AA+aEWZX8x0pQxQ0Ev4K5B81K/nqfUCOrf6+TN+UTt31OwpfBr5X8Qan
+        lTtL7pt0DcaXFcqWlQ3eLfrg2uvglFtszHVxXhI=
+X-Google-Smtp-Source: AFSGD/UQk361QfiAOZZX0k/6Tj5IAJuRiWe4BSHx8I48eyhOp+KfPTNusZR9cJocBZuhfFf0YxXwjzrEoPM1Gp4wmX0=
+X-Received: by 2002:a05:660c:250:: with SMTP id t16mr2002155itk.78.1543243379171;
+ Mon, 26 Nov 2018 06:42:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543216072-9623-2-git-send-email-harini.katakam@xilinx.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20181124145223.29208-1-tiny.windzz@gmail.com>
+In-Reply-To: <20181124145223.29208-1-tiny.windzz@gmail.com>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Mon, 26 Nov 2018 22:42:37 +0800
+Message-ID: <CAEExFWut2Vu0e+j1U8_1PS683DtMMi7FVD6X=LfwwE63DT7Syg@mail.gmail.com>
+Subject: Re: [PATCH v2] soc: bcm: brcmstb: Don't leak device tree node reference
+To:     Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com, treding@nvidia.com,
+        olof@lixom.net, Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 12:37:49PM +0530, Harini Katakam wrote:
-> From: Harini Katakam <harinik@xilinx.com>
-> 
-> Replace the while loop in MDIO read/write functions with a timeout.
-> In addition, add a check for MDIO bus busy before initiating a new
-> operation as well to make sure there is no ongoing MDIO operation.
-> 
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> Signed-off-by: Sai Pavan Boddu <sai.pavan.boddu@xilinx.com>
-> Signed-off-by: Harini Katakam <harinik@xilinx.com>
+On Sat, Nov 24, 2018 at 10:52 PM Yangtao Li <tiny.windzz@gmail.com> wrote:
+>
+> of_find_node_by_path() acquires a reference to the node returned by it
+> and that reference needs to be dropped by its caller. soc_is_brcmstb()
+> doesn't do that, so fix it.
+>
+> [treding: slightly rewrite to avoid inline comparison]
+>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 > ---
-> v2 changes:
-> Use readx_poll_timeout
-> 
-> Changes form RFC:
-> Cleaned up timeout implementation and moved it to a helper.
-> 
->  drivers/net/ethernet/cadence/macb.h      |  3 +++
->  drivers/net/ethernet/cadence/macb_main.c | 33 ++++++++++++++++++++++++++------
->  2 files changed, 30 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/cadence/macb.h b/drivers/net/ethernet/cadence/macb.h
-> index 3d45f4c..df7bee1 100644
-> --- a/drivers/net/ethernet/cadence/macb.h
-> +++ b/drivers/net/ethernet/cadence/macb.h
-> @@ -714,6 +714,9 @@
->  		__v; \
->  	})
->  
-> +#define MACB_IDLE_MASK		(1 << MACB_IDLE_OFFSET)
+> Changes in v2:
+> -update changelog
+> -slightly rewrite to avoid inline comparison
+> ---
+>  drivers/soc/bcm/brcmstb/common.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/soc/bcm/brcmstb/common.c b/drivers/soc/bcm/brcmstb/common.c
+> index 14185451901d..bf9123f727e8 100644
+> --- a/drivers/soc/bcm/brcmstb/common.c
+> +++ b/drivers/soc/bcm/brcmstb/common.c
+> @@ -31,13 +31,17 @@ static const struct of_device_id brcmstb_machine_match[] = {
+>
+>  bool soc_is_brcmstb(void)
+>  {
+> +       const struct of_device_id *match;
+>         struct device_node *root;
+>
+>         root = of_find_node_by_path("/");
+>         if (!root)
+>                 return false;
+>
+> -       return of_match_node(brcmstb_machine_match, root) != NULL;
+> +       match = of_match_node(brcmstb_machine_match, root);
+> +       of_node_put(root);
+> +
+> +       return match != NULL;
+>  }
+>
+>  u32 brcmstb_get_family_id(void)
+> --
+> 2.17.0
+>
+Hi Florian:
 
-I think you could use the MACB_BIT() macro here.
+How about this ?
 
-But otherwise,
-
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+MBR,
+Yangtao
