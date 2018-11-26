@@ -2,53 +2,51 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3750C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB8EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9690A21479
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15CD320817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGPLPQDH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9690A21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w0xQrFf/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15CD320817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730090AbeKZVzB (ORCPT
+        id S1730101AbeKZVzF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:55:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37378 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:55:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728901AbeKZVzB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:55:01 -0500
+        id S1728901AbeKZVzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:55:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96D662146F;
-        Mon, 26 Nov 2018 11:01:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27F1E21104;
+        Mon, 26 Nov 2018 11:01:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230076;
-        bh=ekPJGC4CBt+K2TuFOd4QXSubVxQxwG3tr7apE/giuLg=;
+        s=default; t=1543230078;
+        bh=jvrwHZVV4cT8W5FZXYB+nas78cWmFqmYpv0vCSRaxzs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hGPLPQDHilirQ1QSjXlvZKQIQeOcxl4hkSpHSf4LjWrs+yVNgm6g4T0MknHaErGG/
-         0cTgFEDoL8P7tdhYMkyVxcGh/IrQPq7SmdiFmZnHvQhIoJ8fo+iTmojBUHi8S8D+8d
-         9EJgmVs47APBKkdBSAoM1VeG7xnRHg4K8S5eqPMU=
+        b=w0xQrFf/sAGW/GTjhlNviK7SC85jM2SylhE3I5JWTeDmVx7ptOLctiYRGwJ6OMGZQ
+         az3dsx9b2gbjIH6v+nz9uXKBflvUNaMqmYN9ZxhqYMPcpT0Sn6cejk5COCPtlvN0L/
+         viUWT0fYaj0IiX48evIL8hoPYU6JIDmvHovbKhLo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com,
-        Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Eric Biggers <ebiggers@google.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.14 61/62] HID: uhid: forbid UHID_CREATE under KERNEL_DS or elevated privileges
-Date:   Mon, 26 Nov 2018 11:51:42 +0100
-Message-Id: <20181126105055.130476030@linuxfoundation.org>
+        stable@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 35/62] i40e: restore NETIF_F_GSO_IPXIP[46] to netdev features
+Date:   Mon, 26 Nov 2018 11:51:16 +0100
+Message-Id: <20181126105053.560584053@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -66,66 +64,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+[ Upstream commit ba766b8b99c30ad3c55ed8cf224d1185ecff1476 ]
 
-commit 8c01db7619f07c85c5cd81ec5eb83608b56c88f5 upstream.
+Since commit bacd75cfac8a ("i40e/i40evf: Add capability exchange for
+outer checksum", 2017-04-06) the i40e driver has not reported support
+for IP-in-IP offloads. This likely occurred due to a bad rebase, as the
+commit extracts hw_enc_features into its own variable. As part of this
+change, it dropped the NETIF_F_FSO_IPXIP flags from the
+netdev->hw_enc_features. This was unfortunately not caught during code
+review.
 
-When a UHID_CREATE command is written to the uhid char device, a
-copy_from_user() is done from a user pointer embedded in the command.
-When the address limit is KERNEL_DS, e.g. as is the case during
-sys_sendfile(), this can read from kernel memory.  Alternatively,
-information can be leaked from a setuid binary that is tricked to write
-to the file descriptor.  Therefore, forbid UHID_CREATE in these cases.
+Fix this by adding back the missing feature flags.
 
-No other commands in uhid_char_write() are affected by this bug and
-UHID_CREATE is marked as "obsolete", so apply the restriction to
-UHID_CREATE only rather than to uhid_char_write() entirely.
+For reference, NETIF_F_GSO_IPXIP4 was added in commit 7e13318daa4a
+("net: define gso types for IPx over IPv4 and IPv6", 2016-05-20),
+replacing NETIF_F_GSO_IPIP and NETIF_F_GSO_SIT.
 
-Thanks to Dmitry Vyukov for adding uhid definitions to syzkaller and to
-Jann Horn for commit 9da3f2b740544 ("x86/fault: BUG() when uaccess
-helpers fault on kernel addresses"), allowing this bug to be found.
+NETIF_F_GSO_IPXIP6 was added in commit bf2d1df39502 ("intel: Add support
+for IPv6 IP-in-IP offload", 2016-05-20).
 
-Reported-by: syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com
-Fixes: d365c6cfd337 ("HID: uhid: add UHID_CREATE and UHID_DESTROY events")
-Cc: <stable@vger.kernel.org> # v3.6+
-Cc: Jann Horn <jannh@google.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Reviewed-by: Jann Horn <jannh@google.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/uhid.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/net/ethernet/intel/i40e/i40e_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/hid/uhid.c
-+++ b/drivers/hid/uhid.c
-@@ -12,6 +12,7 @@
- 
- #include <linux/atomic.h>
- #include <linux/compat.h>
-+#include <linux/cred.h>
- #include <linux/device.h>
- #include <linux/fs.h>
- #include <linux/hid.h>
-@@ -722,6 +723,17 @@ static ssize_t uhid_char_write(struct fi
- 
- 	switch (uhid->input_buf.type) {
- 	case UHID_CREATE:
-+		/*
-+		 * 'struct uhid_create_req' contains a __user pointer which is
-+		 * copied from, so it's unsafe to allow this with elevated
-+		 * privileges (e.g. from a setuid binary) or via kernel_write().
-+		 */
-+		if (file->f_cred != current_cred() || uaccess_kernel()) {
-+			pr_err_once("UHID_CREATE from different security context by process %d (%s), this is not allowed.\n",
-+				    task_tgid_vnr(current), current->comm);
-+			ret = -EACCES;
-+			goto unlock;
-+		}
- 		ret = uhid_dev_create(uhid, &uhid->input_buf);
- 		break;
- 	case UHID_CREATE2:
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index 04dbf64fb1cb..176c99b8251d 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -9688,6 +9688,8 @@ static int i40e_config_netdev(struct i40e_vsi *vsi)
+ 			  NETIF_F_GSO_GRE		|
+ 			  NETIF_F_GSO_GRE_CSUM		|
+ 			  NETIF_F_GSO_PARTIAL		|
++			  NETIF_F_GSO_IPXIP4		|
++			  NETIF_F_GSO_IPXIP6		|
+ 			  NETIF_F_GSO_UDP_TUNNEL	|
+ 			  NETIF_F_GSO_UDP_TUNNEL_CSUM	|
+ 			  NETIF_F_SCTP_CRC		|
+-- 
+2.17.1
+
 
 
