@@ -7,43 +7,48 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D10AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B125AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E771C2147D
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 773D020817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jao9msDw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E771C2147D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nePVU0Sc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 773D020817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729209AbeKZVwE (ORCPT
+        id S1729223AbeKZVwH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:52:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33444 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:52:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727234AbeKZVwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:52:03 -0500
+        id S1727234AbeKZVwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:52:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E43D2146F;
-        Mon, 26 Nov 2018 10:58:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA21F20817;
+        Mon, 26 Nov 2018 10:58:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229898;
-        bh=zEMlwzXhDOCRzCUfVwbqxGG0BEH9ywp1o6zFPO/abrg=;
+        s=default; t=1543229901;
+        bh=yd9NdPubpetV7nHxmL535XkWEAN9f6sixP4oprPD/z0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jao9msDwvw3q4jgcPMwerU/Atw9wgXLeVKNfG1BUgDGBAcwFNwIVyqNuN46SpJOnF
-         bU9EGPJd160fHAbEjZsUD8C86KwjZp8ilvXHEQCZZTvHrKGKZXExg8zUgMrt4gFVq0
-         rA8gkiC2BYOW90eNHZvkA0c75DIwu/ujvzFWlQHM=
+        b=nePVU0Sc0WJDGwioImovHohpqb7KL2m9AsjnaeaVvVM3AEvEv499X/jNYaznABRy5
+         uyOVKylO4YefE89XrWOJj17nWLmQVE/uEZn844SA2yyuBew/npmudZ4Bve2c5f1bEB
+         ZM4FhbFTpAR7CNZ+MvhgFdCrnov3wHdSLpfJQ2nU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.9 44/46] new helper: uaccess_kernel()
-Date:   Mon, 26 Nov 2018 11:51:33 +0100
-Message-Id: <20181126105050.249803744@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com,
+        Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.9 45/46] HID: uhid: forbid UHID_CREATE under KERNEL_DS or elevated privileges
+Date:   Mon, 26 Nov 2018 11:51:34 +0100
+Message-Id: <20181126105050.353181326@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
 References: <20181126105045.447291262@linuxfoundation.org>
@@ -61,29 +66,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Eric Biggers <ebiggers@google.com>
 
-commit db68ce10c4f0a27c1ff9fa0e789e5c41f8c4ea63 upstream.
+commit 8c01db7619f07c85c5cd81ec5eb83608b56c88f5 upstream.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-[only take the include/linux/uaccess.h portion - gregkh]
+When a UHID_CREATE command is written to the uhid char device, a
+copy_from_user() is done from a user pointer embedded in the command.
+When the address limit is KERNEL_DS, e.g. as is the case during
+sys_sendfile(), this can read from kernel memory.  Alternatively,
+information can be leaked from a setuid binary that is tricked to write
+to the file descriptor.  Therefore, forbid UHID_CREATE in these cases.
+
+No other commands in uhid_char_write() are affected by this bug and
+UHID_CREATE is marked as "obsolete", so apply the restriction to
+UHID_CREATE only rather than to uhid_char_write() entirely.
+
+Thanks to Dmitry Vyukov for adding uhid definitions to syzkaller and to
+Jann Horn for commit 9da3f2b740544 ("x86/fault: BUG() when uaccess
+helpers fault on kernel addresses"), allowing this bug to be found.
+
+Reported-by: syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com
+Fixes: d365c6cfd337 ("HID: uhid: add UHID_CREATE and UHID_DESTROY events")
+Cc: <stable@vger.kernel.org> # v3.6+
+Cc: Jann Horn <jannh@google.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Reviewed-by: Jann Horn <jannh@google.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/uaccess.h |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/hid/uhid.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -2,6 +2,9 @@
- #define __LINUX_UACCESS_H__
+--- a/drivers/hid/uhid.c
++++ b/drivers/hid/uhid.c
+@@ -12,6 +12,7 @@
  
- #include <linux/sched.h>
-+
-+#define uaccess_kernel() segment_eq(get_fs(), KERNEL_DS)
-+
- #include <asm/uaccess.h>
+ #include <linux/atomic.h>
+ #include <linux/compat.h>
++#include <linux/cred.h>
+ #include <linux/device.h>
+ #include <linux/fs.h>
+ #include <linux/hid.h>
+@@ -24,6 +25,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/uhid.h>
+ #include <linux/wait.h>
++#include <linux/uaccess.h>
  
- static __always_inline void pagefault_disabled_inc(void)
+ #define UHID_NAME	"uhid"
+ #define UHID_BUFSIZE	32
+@@ -721,6 +723,17 @@ static ssize_t uhid_char_write(struct fi
+ 
+ 	switch (uhid->input_buf.type) {
+ 	case UHID_CREATE:
++		/*
++		 * 'struct uhid_create_req' contains a __user pointer which is
++		 * copied from, so it's unsafe to allow this with elevated
++		 * privileges (e.g. from a setuid binary) or via kernel_write().
++		 */
++		if (file->f_cred != current_cred() || uaccess_kernel()) {
++			pr_err_once("UHID_CREATE from different security context by process %d (%s), this is not allowed.\n",
++				    task_tgid_vnr(current), current->comm);
++			ret = -EACCES;
++			goto unlock;
++		}
+ 		ret = uhid_dev_create(uhid, &uhid->input_buf);
+ 		break;
+ 	case UHID_CREATE2:
 
 
