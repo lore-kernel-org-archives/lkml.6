@@ -2,264 +2,137 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79510C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D86EFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35D5420865
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:09:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IXlQVmB6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35D5420865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9E3E320862
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:10:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E3E320862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbeK0BDs (ORCPT
+        id S1726772AbeK0BEq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 20:03:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58282 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 20:04:46 -0500
+Received: from foss.arm.com ([217.140.101.70]:38440 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726348AbeK0BDs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 20:03:48 -0500
-Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21F0220862;
-        Mon, 26 Nov 2018 14:09:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543241372;
-        bh=7t3sMvwwscsY2SzZFqKxSs08kvUtgWo3nY7a7rNmagA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IXlQVmB64PoqoedT3JOgPz8cqDo4GcKSU64GLfjejv+L4xiqQ5MY+nxmEAQXrgiS3
-         8yRjGWgKUcFesfGudIdpM1gZGd6C1N5caL4cTZij81I7b1SIe5EDuW/8Bx0gZw2BQ7
-         Q+avPsUF7229Wy/iFhKAtLkWJKqn7RbPCnZCGcZE=
-Date:   Mon, 26 Nov 2018 23:09:28 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
-        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v7 00/16] tracing: Hist trigger snapshot and onchange
- additions
-Message-Id: <20181126230928.17883eecfaefd6a29cbbd1c3@kernel.org>
-In-Reply-To: <cover.1542221862.git.tom.zanussi@linux.intel.com>
-References: <cover.1542221862.git.tom.zanussi@linux.intel.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1726202AbeK0BEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 20:04:46 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08D4222C7;
+        Mon, 26 Nov 2018 06:10:30 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F24DD3F5A0;
+        Mon, 26 Nov 2018 06:10:25 -0800 (PST)
+Subject: Re: [PATCH v2 03/20] perf/core: add PERF_PMU_CAP_EXCLUDE for
+ exclusion capable PMUs
+To:     Andrew Murray <andrew.murray@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        sparclinux@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-s390@vger.kernel.org, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+References: <1543230756-15319-1-git-send-email-andrew.murray@arm.com>
+ <1543230756-15319-4-git-send-email-andrew.murray@arm.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <8c9003c3-ccbf-c342-024f-772d697a911b@arm.com>
+Date:   Mon, 26 Nov 2018 14:10:24 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <1543230756-15319-4-git-send-email-andrew.murray@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tom,
+Hi Andrew,
 
-On Wed, 14 Nov 2018 14:17:57 -0600
-Tom Zanussi <zanussi@kernel.org> wrote:
-
-> From: Tom Zanussi <tom.zanussi@linux.intel.com>
+On 26/11/2018 11:12, Andrew Murray wrote:
+> Many PMU drivers do not have the capability to exclude counting events
+> that occur in specific contexts such as idle, kernel, guest, etc. These
+> drivers indicate this by returning an error in their event_init upon
+> testing the events attribute flags. This approach is error prone and
+> often inconsistent.
 > 
-> Hi,
+> Let's instead allow PMU drivers to advertise their ability to exclude
+> based on context via a new capability: PERF_PMU_CAP_EXCLUDE. This
+> allows the perf core to reject requests for exclusion events where
+> there is no support in the PMU.
 > 
-> This is v7 of the hist trigger snapshot and onchange additions
-> patchset.  It does a bit of refactoring to address the suggestions
-> made by Masami in v6.
-
-Thank you for fixing it. 
-
+> Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+> ---
+>   include/linux/perf_event.h | 1 +
+>   kernel/events/core.c       | 9 +++++++++
+>   2 files changed, 10 insertions(+)
 > 
-> It also adds an additional patch to update the trigger/inter-event
-> testcases with SPDX license blurbs.
-> 
-> BTW, I noticed that with the recent kselftest changes, I now get
-> mangled output when running the selftests, though I can still see well
-> enough that the tests passed as expected.  This happens with any of
-> the ftrace selftests and not just the trigger selftests.  In my case,
-> this is using the stock Terminal in Ubuntu 17.10, in case that helps.
-
-Hmm, it should be fixed by
-8096fbcf55c0 ("selftests/ftrace: Use colored output when available")
-
-Could you check your kernel has this commit?
-
-BTW, what terminal and environment (especially echo command)
-did you run your tests on? (It seems echo command didn't accept -e option)
-
-Thank you,
-
-> Example output:
-> 
->   # ./ftracetest test.d/trigger/
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index b2e806f..69b3d65 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -244,6 +244,7 @@ struct perf_event;
+>   #define PERF_PMU_CAP_EXCLUSIVE			0x10
+>   #define PERF_PMU_CAP_ITRACE			0x20
+>   #define PERF_PMU_CAP_HETEROGENEOUS_CPUS		0x40
+> +#define PERF_PMU_CAP_EXCLUDE			0x80
 >   
-> -e === Ftrace unit tests ===
-> -e -n [1] event trigger - test inter-event histogram trigger expected fail actions
-> -e 	[\e[31mXFAIL\e[0m]
-> -e -n [2] event trigger - test extended error support
-> -e 	[\e[32mPASS\e[0m]
-> -e -n [3] event trigger - test field variable support
-> -e 	[\e[32mPASS\e[0m]
-> -e -n [4] event trigger - test inter-event combined histogram trigger
-> -e 	[\e[32mPASS\e[0m]
-> -e -n [5] event trigger - test multiple actions on hist trigger
-> -e 	[\e[32mPASS\e[0m]
-> .
-> .
-> .
-> -e 
-> -e # of passed:  31
-> -e # of failed:  0
-> -e # of unresolved:  0
-> -e # of untested:  0
-> -e # of unsupported:  0
-> -e # of xfailed:  1
-> -e # of undefined(test bug):  0
-> 
-> v6->v7 changes:
-> 
->   - Removed unnecessary HANDLER_ONMAX checks from onmax_print()/create()
->   - Moved handler assignment to acion_parse()
->   - Changed goto in ATION_TRACE case in action_create() to return
->   - Changed EINVAL to EEXIST in action_create() ACTION_SAVE case
->   - Made the return logic in create_actions() more consistent
->   - Merged 'tracing: Move hist trigger key printing into a separate
->     function' into 'tracing: Add hist trigger snapshot() action'
->   - Updated the new snapshot, onchange, and trace test cases to match
->     4.20 kselftest changes.
->   - Added new xfail test case that make sure certain unsupported
->     handler/action combinations fail as expected.
->   - While updating the test cases, realized that the other testcases
->     in the inter-event subdir needed SPDX license updates, so added
->     them.
-> 
-> v5->v6 changes:
-> 
->   - Added new Documentation patch explaining handler.action
->   - Added new README patch explaining handler.action
->   - Added separate snapshot() Documentation
->   - Added new snapshot() test case
->   - Updated README with snapshote()
->   - Added separate onchange() Documentation
->   - Added separate onchange() test case
->   - Updated README with onchange()
->   - Added separate trace() test case
->   - Updated README with trace() and <synthetic_event>() syntax
-> 
-> v4->v5 changes:
-> 
->   - added 'trace' keyword test case
->   - added 'onchange' handler test case
-> 
-> v3->v4 changes:
-> 
->   - added 'trace' keyword for generating synthetic events
->   - fix elt_data leak
->   - changed cond_update to cond_update_fn_t
-> 
-> v2->v3 changes:
-> 
->   - fixed problem where trace actions were only being allowed for
->     onmatch handlers - now trace actions can be used with any handler.
->   - fixed problem where no action was being assigned to onmatch
->     handlers if save or snapshot actions were specified.
-> 
-> v1->v2 changes:
-> 
->   - added missing tracing_cond_snapshot_data() definition for when
->     CONFIG_TRACER_SNAPSHOT not defined
->   - removed an unnecessary WARN_ON() in track_data_snapshot_print()
-> 
-> 
-> Original text:
-> 
-> This patchset adds some useful new functions to the hist
-> trigger code: a snapshot action and an onchange handler.
-> 
-> In order to make it easier to add these and in the process make the
-> code more generic, I separated the code into explicit 'handlers' and
-> 'actions', handlers being things like 'onmax' and 'onchange', and
-> 'actions' being things like 'take a snapshot' or 'save some fields'.
-> 
-> The first few patches do that basic refactoring, which make it easier
-> to add the subsequent changes that arbitrarily combine actions and
-> handlers.
-> 
-> The fourth patch adds a 'conditional snapshot' capability that via a
-> new tracing_snaphot_cond() function extends the existing snapshot
-> code.  It allows the caller to associate some user data with the
-> snapshot that can be checked and saved in an update() callback whose
-> return value determines whether the snapshot should be taken or not.
-> 
-> The remaining patches finally add the new snapshot action and onchange
-> handler functionality - please see those patches for details and some
-> examples.
-> 
-> Thanks,
-> 
-> Tom
-> 
-> 
-> The following changes since commit ee474b81fe5aa5dc0faae920bf66240fbf55f891:
-> 
->   tracing/kprobes: Fix strpbrk() argument order (2018-11-05 09:47:14 -0500)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/zanussi/linux-trace.git ftrace/hist-snapshot-onchange-v7
-> 
-> Tom Zanussi (16):
->   tracing: Refactor hist trigger action code
->   tracing: Make hist trigger Documentation better reflect
->     actions/handlers
->   tracing: Add hist trigger handler.action documentation to README
->   tracing: Split up onmatch action data
->   tracing: Generalize hist trigger onmax and save action
->   tracing: Add conditional snapshot
->   tracing: Add hist trigger snapshot() action
->   tracing: Add hist trigger snapshot() action Documentation
->   tracing: Add hist trigger snapshot() action test case
->   tracing: Add hist trigger onchange() handler
->   tracing: Add hist trigger onchange() handler Documentation
->   tracing: Add hist trigger onchange() handler test case
->   tracing: Add alternative synthetic event trace action syntax
->   tracing: Add alternative synthetic event trace action test case
->   tracing: Add hist trigger action 'expected fail' test case
->   tracing: Add SPDX license GPL-2.0 license identifier to inter-event
->     testcases
-> 
->  Documentation/trace/histogram.rst                  |  285 +++++-
->  kernel/trace/trace.c                               |  177 +++-
->  kernel/trace/trace.h                               |   56 +-
->  kernel/trace/trace_events_hist.c                   | 1062 +++++++++++++++-----
->  kernel/trace/trace_events_trigger.c                |    2 +-
->  kernel/trace/trace_sched_wakeup.c                  |    2 +-
->  .../inter-event/trigger-action-hist-xfail.tc       |   30 +
->  .../inter-event/trigger-extended-error-support.tc  |    1 +
->  .../inter-event/trigger-field-variable-support.tc  |    1 +
->  .../trigger-inter-event-combined-hist.tc           |    1 +
->  .../inter-event/trigger-multi-actions-accept.tc    |    1 +
->  .../inter-event/trigger-onchange-action-hist.tc    |   28 +
->  .../inter-event/trigger-onmatch-action-hist.tc     |    1 +
->  .../trigger-onmatch-onmax-action-hist.tc           |    1 +
->  .../inter-event/trigger-onmax-action-hist.tc       |    1 +
->  .../inter-event/trigger-snapshot-action-hist.tc    |   43 +
->  .../trigger-synthetic-event-createremove.tc        |    1 +
->  .../inter-event/trigger-trace-action-hist.tc       |   42 +
->  18 files changed, 1433 insertions(+), 302 deletions(-)
->  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc
->  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
->  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc
->  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-trace-action-hist.tc
-> 
-> -- 
-> 2.14.1
-> 
+>   /**
+>    * struct pmu - generic performance monitoring unit
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 5a97f34..9afb33c 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -9743,6 +9743,15 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
+>   	if (ctx)
+>   		perf_event_ctx_unlock(event->group_leader, ctx);
+>   
+> +	if (!ret) {
+> +		if (!(pmu->capabilities & PERF_PMU_CAP_EXCLUDE) &&
+> +				event_has_any_exclude_flag(event)) {
 
+Technically this is a bisection-breaker, since no driver has this 
+capability yet - ideally, this patch should come after all the ones 
+introducing it to the relevant drivers (with the removal of the 
+now-redundant code from the other drivers at the end).
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Alternatively, since we already have several other negative 
+capabilities, unless there's a strong feeling against adding any more 
+then it might work out simpler to flip it to PERF_PMU_CAP_NO_EXCLUDE, 
+such that we only need to introduce the core check then directly replace 
+the open-coded event checks with the capability in the appropriate 
+drivers, and need not touch the exclusion-supporting ones at all.
+
+Robin.
+
+> +			if (event->destroy)
+> +				event->destroy(event);
+> +			ret = -EINVAL;
+> +		}
+> +	}
+> +
+>   	if (ret)
+>   		module_put(pmu->module);
+>   
+> 
