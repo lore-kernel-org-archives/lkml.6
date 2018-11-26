@@ -2,111 +2,96 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F277C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 04:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD87C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 05:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40F1820865
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 04:59:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1619F20660
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 05:07:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Zk1Pf1fT";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PHplHNQd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40F1820865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="teT9Qkvc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1619F20660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726266AbeKZPv6 (ORCPT
+        id S1726234AbeKZQAI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 10:51:58 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46970 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbeKZPv6 (ORCPT
+        Mon, 26 Nov 2018 11:00:08 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44359 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726144AbeKZQAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 10:51:58 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2322660877; Mon, 26 Nov 2018 04:59:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543208344;
-        bh=IttxXtTRD34URLuQVm/RSwrW+rSCd/ivt1Shjkuv9RM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Zk1Pf1fTIX/va7EiRGq3FfFi/0BOwgVah6tYJk6high1NkR6OxKl+klW+n+0u4gSY
-         oUUtK0ItILHdhWpTVlbbUbWYmcLAWi+O8bGa20Nn+DYn+ySqdC8ogCasGLCVETo68u
-         dnocGVMu6KKKEOgy/o4N26KoWiFmJQS7FCie5vdQ=
-Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: stummala@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A894A6020A;
-        Mon, 26 Nov 2018 04:59:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543208343;
-        bh=IttxXtTRD34URLuQVm/RSwrW+rSCd/ivt1Shjkuv9RM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=PHplHNQd5dViCkoABaGo+qHaHhnxEAx7iVRf996EcvuENoShbxjICYqfNCWvtCWlN
-         sSq8AK9pQnDJQT1W4yi9K4fE9+fBtRk1zdctVHLEdHq+4nRdOfYwFVyO/6OvCYBF37
-         nhVHMRfpx5lsujzLqAWUbcBcK9QCI/e0Xc6cVwAg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A894A6020A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-From:   Sahitya Tummala <stummala@codeaurora.org>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     linux-kernel@vger.kernel.org,
-        Sahitya Tummala <stummala@codeaurora.org>
-Subject: [PATCH v2] f2fs: fix to allow node segment for GC by ioctl path
-Date:   Mon, 26 Nov 2018 10:28:54 +0530
-Message-Id: <1543208334-309-1-git-send-email-stummala@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Mon, 26 Nov 2018 11:00:08 -0500
+Received: by mail-pf1-f196.google.com with SMTP id u6so5958626pfh.11
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 21:07:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8qUeRwI4QTL0hDlyKkNOdtn4Av5ixLXUe9MNaaBK/aw=;
+        b=teT9QkvcR4dUPwMyPSkvcQCDQmzGEtnPsRq2Ao60lxkLc1S4uBE0VoDd9M/ObqOOU0
+         iP6tqUQP2wF4RqDdH2GgLtXbp/y9RHZu7I2qd2RWyQ14ADu94eQ/MD5BufJVGDRld8lZ
+         Dpc4u6twiE3tQucUWzXKTHmawgmJy6CzcnQQU0m4ZPTdhk8SmHEChjzgKARW5ER5nnVt
+         b4F1FL97/DbtSi1mWiWW1fybLM/Gf8E/Q3tQuircTqHMn7Ib3TKg7Qf3nXC45vX1XZ1c
+         zWDBo0EKq2Ve7DmvCFV5pfqSCkQ47iUEmqSues3WjtaViOH56pEd2o7Ed06F3TUHVTCg
+         cf4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8qUeRwI4QTL0hDlyKkNOdtn4Av5ixLXUe9MNaaBK/aw=;
+        b=HAonwNsu9gU0Z4gdJcDY21knaHdMX9+vBUtEb1mGkTvS3ixL1eK+7Q8tCXVlNEwZhM
+         m3AMzmFkOVhKqrlcgX210WYVSQV+r5R1aRNZZkBUaanTk7btUX5N4Cm6JmOoAvn7i7Qb
+         xZ/gEro/gpOLuWS51x2fw6upvQQT8aSrG3bxXdOBJdXor5w1Q6Mlf65bN9QS/+vzh/Uu
+         j9wLR/aI/KP5sQuaDLKLxYVsZoIapL0v9tYtMSlhPqeanxOaOoEGwGTtvPZh/XHLOiFt
+         TnAizmk+FVu83rc7MLyPiRlkjOMGmGIoFQ1R+MLfq6I3YrQQGvsSTJrs51Xjtv4KhuRK
+         mR8g==
+X-Gm-Message-State: AA+aEWYYGHoQBbu3yI2FkjFiS4D/PWPJMmaHTGt+JNdbjzgQjoHy0WwG
+        dICPAP+QrjSKzl0pO5tbEOw=
+X-Google-Smtp-Source: AFSGD/VkNLzuoNbYdG49w5eSJunaex0BYclwo0q6ZRojHIRro3KKvyfkqGYlzomFczegpKqVlcsQbg==
+X-Received: by 2002:a63:66c6:: with SMTP id a189mr23405451pgc.167.1543208832897;
+        Sun, 25 Nov 2018 21:07:12 -0800 (PST)
+Received: from localhost ([175.223.33.236])
+        by smtp.gmail.com with ESMTPSA id 125sm8216018pfd.124.2018.11.25.21.07.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 25 Nov 2018 21:07:11 -0800 (PST)
+Date:   Mon, 26 Nov 2018 14:07:08 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Carmeli Tamir <carmeli.tamir@gmail.com>
+Cc:     axboe@kernel.dk, sergey.senozhatsky@gmail.com, jthumshirn@suse.de,
+        bvanassche@acm.org, martin.petersen@oracle.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fat: Replaced 11 magic to MSDOS_NAME for volume label
+Message-ID: <20181126050708.GE540@jagdpanzerIV>
+References: <1543096879-82837-1-git-send-email-carmeli.tamir@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543096879-82837-1-git-send-email-carmeli.tamir@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow node type segments also to be GC'd via f2fs ioctl
-F2FS_IOC_GARBAGE_COLLECT_RANGE.
+On (11/24/18 17:01), Carmeli Tamir wrote:
+> The FAT file system volume label file stored in the root directory should
+> match the volume label field in the FAT boot sector. As consequence, the
+> max length of these fields ought to be the same. This patch replaces the
+> magic '11' usef in the struct fat_boot_sector with MSDOS_NAME,
+> which is used in struct msdos_dir_entry.
+>
+> Please check the following references:
+> 1. Microsoft FAT specification 2005
+> (http://read.pudn.com/downloads77/ebook/294884/FAT32%20Spec%20%28SDA%20Contribution%29.pdf).
+[..]
+> Signed-off-by: Carmeli Tamir <carmeli.tamir@gmail.com>
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
----
-v2:
-update commit message
+Looks good to me,
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
- fs/f2fs/gc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index a07241f..e4689c6 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -323,8 +323,7 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 	p.min_cost = get_max_cost(sbi, &p);
- 
- 	if (*result != NULL_SEGNO) {
--		if (IS_DATASEG(get_seg_entry(sbi, *result)->type) &&
--			get_valid_blocks(sbi, *result, false) &&
-+		if (get_valid_blocks(sbi, *result, false) &&
- 			!sec_usage_check(sbi, GET_SEC_FROM_SEG(sbi, *result)))
- 			p.min_segno = *result;
- 		goto out;
-@@ -404,11 +403,12 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 		}
- 		*result = (p.min_segno / p.ofs_unit) * p.ofs_unit;
- 
-+	}
-+out:
-+	if (p.min_segno != NULL_SEGNO)
- 		trace_f2fs_get_victim(sbi->sb, type, gc_type, &p,
- 				sbi->cur_victim_sec,
- 				prefree_segments(sbi), free_segments(sbi));
--	}
--out:
- 	mutex_unlock(&dirty_i->seglist_lock);
- 
- 	return (p.min_segno == NULL_SEGNO) ? 0 : 1;
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+	-ss
