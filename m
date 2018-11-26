@@ -2,110 +2,96 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A9AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBE8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395BD20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:54:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 395BD20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8226920855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:54:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dwkEBsIG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8226920855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbeK0Ft2 (ORCPT
+        id S1726535AbeK0Ftm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 00:49:28 -0500
-Received: from mga17.intel.com ([192.55.52.151]:64341 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbeK0Ft2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 00:49:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 10:54:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,283,1539673200"; 
-   d="scan'208";a="111610962"
-Received: from ray.jf.intel.com (HELO [10.7.201.18]) ([10.7.201.18])
-  by orsmga001.jf.intel.com with ESMTP; 26 Nov 2018 10:54:26 -0800
-Subject: Re: [PATCH 0/2 RESEND v7] add reserved e820 ranges to the kdump
- kernel e820 table
-To:     Lianbo Jiang <lijiang@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     kexec@lists.infradead.org, x86@kernel.org,
-        linux-ia64@vger.kernel.org, linux-efi@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        akpm@linux-foundation.org, dave.hansen@linux.intel.com,
-        luto@kernel.org, peterz@infradead.org, ard.biesheuvel@linaro.org,
-        tony.luck@intel.com, fenghua.yu@intel.com, dyoung@redhat.com,
-        bhe@redhat.com
-References: <20181124051223.19994-1-lijiang@redhat.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
- 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
- K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
- VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
- e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
- ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
- kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
- rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
- f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
- mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
- UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
- sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
- 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
- cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
- UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
- db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
- lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
- kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
- gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
- AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
- XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
- e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
- pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
- YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
- lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
- M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
- 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
- 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
- OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
- ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
- z5cecg==
-Message-ID: <35e8ade5-d5a8-b5e4-180b-44b4ff0a83b1@intel.com>
-Date:   Mon, 26 Nov 2018 10:54:26 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 27 Nov 2018 00:49:42 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34247 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbeK0Ftm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 00:49:42 -0500
+Received: by mail-lf1-f68.google.com with SMTP id p6so14419569lfc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 10:54:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hZW1RSy+Pg4CzGdxv/poKG/ywLSVWL2EfUiFOOSa+Go=;
+        b=dwkEBsIGx2n6MKQEh99DSK+jIxMltvzhPkBH5pNwBgwh4HOoF8YoulvBNmJQvQAe9C
+         dYYGELI/OqYWwfvi4Xsqm3k3WbNVxSCuv+M4ePIxYvGmDq/7efS9VvXOapv5j3pHX5IG
+         Tmykb7sayHHbi9Xw2HJXBF9y29WtlHR+xB+7M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hZW1RSy+Pg4CzGdxv/poKG/ywLSVWL2EfUiFOOSa+Go=;
+        b=htt2uXWN1FjI3R3ybLhLzGYcu6uWwjue6gro209JuMt2rVBitjpnqFxn9MEy5f4W73
+         p94zMq8cHa8wFnZJfKsAzp098ZSURE9FXpEIkggLHuf3ZOfY9c3ac/h+44WVajz99jn2
+         Fi+ztqugzp9xAeEfWi6YKPHjw0IPUMeswhfd3Covzp9QKXYbwKZVq5uxNA6dl8hRWIYz
+         KzjbFjGHhnQxWzNujP2svcOsY3GBY+NSon65Rc9/+ML2BdDQpvqOs5XXd+NlcgRAIgj2
+         lpFsmjf4r2/38NuqTk+jnU2kjePeRjz7Uhhb1XANvOn6DG+TbbqjxrrA3RA0g/Ad34od
+         ciww==
+X-Gm-Message-State: AA+aEWbGkUrsIhw5Az9+BXxtI6+MoTCUZab3mcyMWIZeW8IUuSpWmHPR
+        wYYCFUCWKJ0u/hPaX8gHVQuLhbdcvn0=
+X-Google-Smtp-Source: AFSGD/W4dMks9EcS+bxyVTEXBs+F4j2fuZU2BjjU2SIDL66je3U5WjduNe02g7sYRqnNLuVe3lTeXg==
+X-Received: by 2002:a19:e601:: with SMTP id d1mr9946528lfh.71.1543258479682;
+        Mon, 26 Nov 2018 10:54:39 -0800 (PST)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id u21-v6sm179890lju.46.2018.11.26.10.54.38
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 10:54:38 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id f23so14367139lfc.13
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 10:54:38 -0800 (PST)
+X-Received: by 2002:a19:1bca:: with SMTP id b193mr16081053lfb.153.1543258478240;
+ Mon, 26 Nov 2018 10:54:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181124051223.19994-1-lijiang@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181030230624.61834-1-evgreen@chromium.org> <20181030230624.61834-3-evgreen@chromium.org>
+In-Reply-To: <20181030230624.61834-3-evgreen@chromium.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Mon, 26 Nov 2018 10:53:59 -0800
+X-Gmail-Original-Message-ID: <CAE=gft5XZD-GQYwcv4YWHrDSWRqT7SDpWXzv7c6MKAAH7uGr2Q@mail.gmail.com>
+Message-ID: <CAE=gft5XZD-GQYwcv4YWHrDSWRqT7SDpWXzv7c6MKAAH7uGr2Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] loop: Better discard support for block devices
+To:     axboe@kernel.dk
+Cc:     Gwendal Grignou <gwendal@chromium.org>, asavery@chromium.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/23/18 9:12 PM, Lianbo Jiang wrote:
-> These patches add the new I/O resource descriptor 'IORES_DESC_RESERVED'
-> for the iomem resources search interfaces, and in order to make it still
-> work after the new descriptor is added, these codes originally related
-> to 'IORES_DESC_NONE' have been updated.
+On Tue, Oct 30, 2018 at 4:06 PM Evan Green <evgreen@chromium.org> wrote:
+>
+> If the backing device for a loop device is a block device,
+> then mirror the discard properties of the underlying block
+> device into the loop device. While in there, differentiate
+> between REQ_OP_DISCARD and REQ_OP_WRITE_ZEROES, which are
+> different for block devices, but which the loop device had
+> just been lumping together.
+>
+> Signed-off-by: Evan Green <evgreen@chromium.org>
 
-This is rather anemic "0/" text.  Could you please include some more
-background in here?  The 2/2 patch is pretty good in this regard, but it
-needs to be here, too.
+Any thoughts on this patch? This fixes issues for us when using a loop
+device backed by a block device, where we see many logs like:
+
+[  372.767286] print_req_error: I/O error, dev loop5, sector 88125696
+
+-Evan
