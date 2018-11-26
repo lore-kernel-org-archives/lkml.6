@@ -2,48 +2,51 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00CCAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6051DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE4252146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27E8A21104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDsgIgpw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE4252146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dM74pnVY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27E8A21104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728226AbeKZVtp (ORCPT
+        id S1728241AbeKZVts (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:49:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58780 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:49:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726532AbeKZVto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:49:44 -0500
+        id S1726532AbeKZVts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:49:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1213020817;
-        Mon, 26 Nov 2018 10:55:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91AC720817;
+        Mon, 26 Nov 2018 10:56:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229760;
-        bh=HvEbMUUZWTj5q8kMgB6eSkuhBTP3zJS2fAbYNZLd/k4=;
+        s=default; t=1543229763;
+        bh=AvK/r8u1n2EMQXxXBAAudxROsezsjWU6OUgb8f3UGSY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hDsgIgpw/YO0mf6YfhI8qUogrruWByRm5bprcQt0NzsIdXngN6u8UJrQIEYVeAyen
-         FCDP0+nGuVx7uxBD0Yf3nTtsaWMwhGUPudByLu+2dp0NhgsjemF3d1JLPm+D2IoER6
-         jie6mEyBZv+kR1hPbFEi8ZGJABManfiPlZoskH/0=
+        b=dM74pnVY31XHXUWqYvFgH5XXrihFaXhnVwutExPl7JUe8YWu3mWoRLwxXKZP1Un9g
+         TRuYGlmDILEXjt6naKLBeIui/HsTSfxmpR4UBXRVuUj3TtRIDL5cndolZkAb99BzQb
+         I2ARdDQnYugFCv2nwIAlcERa3WFnnL+SfDxq9Ld8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH 4.4 63/70] USB: quirks: Add no-lpm quirk for Raydium touchscreens
-Date:   Mon, 26 Nov 2018 11:51:18 +0100
-Message-Id: <20181126105052.692775343@linuxfoundation.org>
+        stable@vger.kernel.org, Philipp Rudo <prudo@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 46/70] s390/vdso: add missing FORCE to build targets
+Date:   Mon, 26 Nov 2018 11:51:01 +0100
+Message-Id: <20181126105051.464274034@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
 References: <20181126105046.722096341@linuxfoundation.org>
@@ -61,48 +64,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+[ Upstream commit b44b136a3773d8a9c7853f8df716bd1483613cbb ]
 
-commit deefd24228a172d1b27d4a9adbfd2cdacd60ae64 upstream.
+According to Documentation/kbuild/makefiles.txt all build targets using
+if_changed should use FORCE as well. Add missing FORCE to make sure
+vdso targets are rebuild properly when not just immediate prerequisites
+have changed but also when build command differs.
 
-Raydium USB touchscreen fails to set config if LPM is enabled:
-[    2.030658] usb 1-8: New USB device found, idVendor=2386, idProduct=3119
-[    2.030659] usb 1-8: New USB device strings: Mfr=1, Product=2, SerialNumber=0
-[    2.030660] usb 1-8: Product: Raydium Touch System
-[    2.030661] usb 1-8: Manufacturer: Raydium Corporation
-[    7.132209] usb 1-8: can't set config #1, error -110
-
-Same behavior can be observed on 2386:3114.
-
-Raydium claims the touchscreen supports LPM under Windows, so I used
-Microsoft USB Test Tools (MUTT) [1] to check its LPM status. MUTT shows
-that the LPM doesn't work under Windows, either. So let's just disable LPM
-for Raydium touchscreens.
-
-[1] https://docs.microsoft.com/en-us/windows-hardware/drivers/usbcon/usb-test-tools
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reviewed-by: Philipp Rudo <prudo@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/core/quirks.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/s390/kernel/vdso32/Makefile | 6 +++---
+ arch/s390/kernel/vdso64/Makefile | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -263,6 +263,11 @@ static const struct usb_device_id usb_qu
- 	{ USB_DEVICE(0x2040, 0x7200), .driver_info =
- 			USB_QUIRK_CONFIG_INTF_STRINGS },
+diff --git a/arch/s390/kernel/vdso32/Makefile b/arch/s390/kernel/vdso32/Makefile
+index ee8a18e50a25..29b72c46284d 100644
+--- a/arch/s390/kernel/vdso32/Makefile
++++ b/arch/s390/kernel/vdso32/Makefile
+@@ -29,7 +29,7 @@ GCOV_PROFILE := n
+ $(obj)/vdso32_wrapper.o : $(obj)/vdso32.so
  
-+	/* Raydium Touchscreen */
-+	{ USB_DEVICE(0x2386, 0x3114), .driver_info = USB_QUIRK_NO_LPM },
-+
-+	{ USB_DEVICE(0x2386, 0x3119), .driver_info = USB_QUIRK_NO_LPM },
-+
- 	/* DJI CineSSD */
- 	{ USB_DEVICE(0x2ca3, 0x0031), .driver_info = USB_QUIRK_NO_LPM },
+ # link rule for the .so file, .lds has to be first
+-$(obj)/vdso32.so.dbg: $(src)/vdso32.lds $(obj-vdso32)
++$(obj)/vdso32.so.dbg: $(src)/vdso32.lds $(obj-vdso32) FORCE
+ 	$(call if_changed,vdso32ld)
  
+ # strip rule for the .so file
+@@ -38,12 +38,12 @@ $(obj)/%.so: $(obj)/%.so.dbg FORCE
+ 	$(call if_changed,objcopy)
+ 
+ # assembly rules for the .S files
+-$(obj-vdso32): %.o: %.S
++$(obj-vdso32): %.o: %.S FORCE
+ 	$(call if_changed_dep,vdso32as)
+ 
+ # actual build commands
+ quiet_cmd_vdso32ld = VDSO32L $@
+-      cmd_vdso32ld = $(CC) $(c_flags) -Wl,-T $^ -o $@
++      cmd_vdso32ld = $(CC) $(c_flags) -Wl,-T $(filter %.lds %.o,$^) -o $@
+ quiet_cmd_vdso32as = VDSO32A $@
+       cmd_vdso32as = $(CC) $(a_flags) -c -o $@ $<
+ 
+diff --git a/arch/s390/kernel/vdso64/Makefile b/arch/s390/kernel/vdso64/Makefile
+index c4b03f9ed228..1b083d80de50 100644
+--- a/arch/s390/kernel/vdso64/Makefile
++++ b/arch/s390/kernel/vdso64/Makefile
+@@ -29,7 +29,7 @@ GCOV_PROFILE := n
+ $(obj)/vdso64_wrapper.o : $(obj)/vdso64.so
+ 
+ # link rule for the .so file, .lds has to be first
+-$(obj)/vdso64.so.dbg: $(src)/vdso64.lds $(obj-vdso64)
++$(obj)/vdso64.so.dbg: $(src)/vdso64.lds $(obj-vdso64) FORCE
+ 	$(call if_changed,vdso64ld)
+ 
+ # strip rule for the .so file
+@@ -38,12 +38,12 @@ $(obj)/%.so: $(obj)/%.so.dbg FORCE
+ 	$(call if_changed,objcopy)
+ 
+ # assembly rules for the .S files
+-$(obj-vdso64): %.o: %.S
++$(obj-vdso64): %.o: %.S FORCE
+ 	$(call if_changed_dep,vdso64as)
+ 
+ # actual build commands
+ quiet_cmd_vdso64ld = VDSO64L $@
+-      cmd_vdso64ld = $(CC) $(c_flags) -Wl,-T $^ -o $@
++      cmd_vdso64ld = $(CC) $(c_flags) -Wl,-T $(filter %.lds %.o,$^) -o $@
+ quiet_cmd_vdso64as = VDSO64A $@
+       cmd_vdso64as = $(CC) $(a_flags) -c -o $@ $<
+ 
+-- 
+2.17.1
+
 
 
