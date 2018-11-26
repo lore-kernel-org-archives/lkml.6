@@ -2,129 +2,139 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7F8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B59EDC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:47:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D313520659
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:45:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D313520659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 78A0320659
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:47:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Paex8Nks"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78A0320659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727001AbeK0DkH (ORCPT
+        id S1726733AbeK0Dm2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 22:40:07 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35960 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726282AbeK0DkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:40:06 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 639F0300239A;
-        Mon, 26 Nov 2018 16:45:27 +0000 (UTC)
-Received: from [10.36.112.66] (ovpn-112-66.ams2.redhat.com [10.36.112.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 12D305D776;
-        Mon, 26 Nov 2018 16:45:22 +0000 (UTC)
-Subject: Re: [PATCH v2 0/4] x86/kvm/hyper-v: Implement Direct Mode for
- synthetic timers
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-References: <20181126154732.23025-1-vkuznets@redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e0dcfeee-f35b-6c61-51b7-73fcdbf57760@redhat.com>
-Date:   Mon, 26 Nov 2018 17:45:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181126154732.23025-1-vkuznets@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 26 Nov 2018 16:45:27 +0000 (UTC)
+        Mon, 26 Nov 2018 22:42:28 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46925 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbeK0Dm2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 22:42:28 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w7so6406368pgp.13
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 08:47:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=voQZBGSCPwDuHbNWjRsaXWRQKOMCpB1zqAx9MYJffnY=;
+        b=Paex8NkstvwA6QTMcr+LG7SaixSZzZFE1I0a94fM/xlOL42hBira7rtyHSTD1XJtS8
+         lfgPqKZHCRfdpmBunQzVfwfTP5qdifhYHgkV/7G3M3LqqH/Gh5maBlLyuCxrUTDvneud
+         MOsR3vdIfWXU39Q1nVx1POyS/lz5fNCfj6JXZSsmOAycAb6MMCMHfwQ6CdzAISG13ddI
+         43fIipXpmBMtu1fOv5UrC5yZFXYirRsVtiPaa60OcAo30Osc/aDklqc7nAK8vQaSRw3A
+         uzua3wH8xgJn95ONa1/8Y4gl6EQD+6dimnvkdjpuik145xhgD5xHlobZZkxSsm22VjlB
+         xyHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=voQZBGSCPwDuHbNWjRsaXWRQKOMCpB1zqAx9MYJffnY=;
+        b=U42KHoe5I3alcdeeznqzlrhfmtioEyqAX3BeNoDRLH21o+2KX6BXbZlsRjhnXTCeXJ
+         io8Ofbyez6AeZUY7MIQVDoKOTUcXAtdhPpE91JHwosfoEWJTH2hsPDMNQ07yvAZOD8s2
+         F6cUqU7eq1SQRLahGy4WQNq1zJ2T3SUcBCeQJtFm8I+OkFl4wueniUzLOpWEtuqtYY5Z
+         /jroSx9d+ZVjBzH5MDuEawR8QpG6ghClMIz2uRxvPITdqkwF5gL8TU8NzBr48+zu9Od6
+         ubN1R8VDuiqcnGEtYSVnTN+OFfTqW6QJi64mjIh45SVBnvxNYz9oW1QuN3xtktsqtKfr
+         P6eg==
+X-Gm-Message-State: AA+aEWZ6abgLrwa6MbM2+0HMTVWOAFiz1o0PU7VEesdD335AJHqQxPhr
+        VDYoMsFBZ5Z7OR/TG0zGQjk2vXPr5J0=
+X-Google-Smtp-Source: AFSGD/WbmRU1D5GFgMwQPcBrqGJoyV3ClHwB6RyvQBQEpnwvtCTOqBHm9AZC7omWb+SC6vdnzN0aAQ==
+X-Received: by 2002:a63:24c2:: with SMTP id k185mr24942674pgk.406.1543250868232;
+        Mon, 26 Nov 2018 08:47:48 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id l184sm1399081pfc.112.2018.11.26.08.47.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 08:47:47 -0800 (PST)
+Date:   Mon, 26 Nov 2018 08:47:47 -0800 (PST)
+X-Google-Original-Date: Mon, 26 Nov 2018 08:47:42 PST (-0800)
+Subject:     Re: [for-next][PATCH 10/18] riscv/function_graph: Simplify with function_graph_entry()
+In-Reply-To: <20181122003332.793493004@goodmis.org>
+CC:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        mingo@kernel.org, akpm@linux-foundation.org, tglx@linutronix.de,
+        peterz@infradead.org, linux-arch@vger.kernel.org,
+        joel@joelfernandes.org, mhiramat@kernel.org, jpoimboe@redhat.com,
+        luto@kernel.org, frederic@kernel.org, greentime@andestech.com,
+        alankao@andestech.com, stable@kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     rostedt@goodmis.org
+Message-ID: <mhng-b0e40c1e-307d-47cd-aba9-f7d648a4f8bc@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/11/18 16:47, Vitaly Kuznetsov wrote:
-> Changes since v1:
-> - avoid open-coding stimer_mark_pending() in kvm_hv_notify_acked_sint() and
->   kvm_hv_synic_send_eoi [Paolo Bonzini]
-> 
-> Turns out Hyper-V on KVM (as of 2016) will only use synthetic timers
-> if direct mode is available. With direct mode we notify the guest by
-> asserting APIC irq instead of sending a SynIC message.
-> 
-> Qemu and kvm-unit-test patches for testing this series can be found in
-> v1 submission:
-> https://lkml.org/lkml/2018/11/13/972
-> 
-> Vitaly Kuznetsov (4):
->   x86/hyper-v: move synic/stimer control structures definitions to
->     hyperv-tlfs.h
->   x86/kvm/hyper-v: use stimer config definition from hyperv-tlfs.h
->   x86/kvm/hyper-v: direct mode for synthetic timers
->   x86/kvm/hyper-v: avoid open-coding stimer_mark_pending() in
->     kvm_hv_notify_acked_sint()
-> 
->  arch/x86/include/asm/hyperv-tlfs.h |  73 ++++++++++++++++++--
->  arch/x86/include/asm/kvm_host.h    |   2 +-
->  arch/x86/kvm/hyperv.c              | 106 +++++++++++++++++++++--------
->  arch/x86/kvm/trace.h               |  10 +--
->  arch/x86/kvm/x86.c                 |   1 +
->  drivers/hv/hv.c                    |   2 +-
->  drivers/hv/hyperv_vmbus.h          |  68 ------------------
->  include/uapi/linux/kvm.h           |   1 +
->  8 files changed, 154 insertions(+), 109 deletions(-)
-> 
+On Wed, 21 Nov 2018 16:28:11 PST (-0800), rostedt@goodmis.org wrote:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+>
+> The function_graph_entry() function does the work of calling the function
+> graph hook function and the management of the shadow stack, simplifying the
+> work done in the architecture dependent prepare_ftrace_return().
+>
+> Have riscv use the new code, and remove the shadow stack management as well as
+> having to set up the trace structure.
+>
+> This is needed to prepare for a fix of a design bug on how the curr_ret_stack
+> is used.
+>
+> Cc: Greentime Hu <greentime@andestech.com>
+> Cc: Alan Kao <alankao@andestech.com>
+> Cc: Palmer Dabbelt <palmer@sifive.com>
+> Cc: stable@kernel.org
+> Fixes: 03274a3ffb449 ("tracing/fgraph: Adjust fgraph depth before calling trace return callback")
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  arch/riscv/kernel/ftrace.c | 14 ++------------
+>  1 file changed, 2 insertions(+), 12 deletions(-)
+>
+> diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
+> index 1157b6b52d25..c433f6d3dd64 100644
+> --- a/arch/riscv/kernel/ftrace.c
+> +++ b/arch/riscv/kernel/ftrace.c
+> @@ -132,7 +132,6 @@ void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr,
+>  {
+>  	unsigned long return_hooker = (unsigned long)&return_to_handler;
+>  	unsigned long old;
+> -	struct ftrace_graph_ent trace;
+>  	int err;
+>
+>  	if (unlikely(atomic_read(&current->tracing_graph_pause)))
+> @@ -144,17 +143,8 @@ void prepare_ftrace_return(unsigned long *parent, unsigned long self_addr,
+>  	 */
+>  	old = *parent;
+>
+> -	trace.func = self_addr;
+> -	trace.depth = current->curr_ret_stack + 1;
+> -
+> -	if (!ftrace_graph_entry(&trace))
+> -		return;
+> -
+> -	err = ftrace_push_return_trace(old, self_addr, &trace.depth,
+> -				       frame_pointer, parent);
+> -	if (err == -EBUSY)
+> -		return;
+> -	*parent = return_hooker;
+> +	if (function_graph_enter(old, self_addr, frame_pointer, parent))
+> +		*parent = return_hooker;
+>  }
+>
+>  #ifdef CONFIG_DYNAMIC_FTRACE
 
-Queued, thanks.
-
-Paolo
+Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
