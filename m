@@ -2,330 +2,143 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C0EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF85AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA679208E7
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:21:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5135D2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:23:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rz+bV9YH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA679208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="k3UbkV6p";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="SQlwRk41"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5135D2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727619AbeK0IQ5 (ORCPT
+        id S1727140AbeK0ITE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 03:16:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57798 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726397AbeK0IQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 03:16:57 -0500
-Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8275F20873;
-        Mon, 26 Nov 2018 21:21:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543267290;
-        bh=fRubPFu5gLk7G52iOH1qqfwbXbJj0zAx8sS2pcyEVqA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=rz+bV9YHHN74FhGyiHT+RYwnVOBVl3ic46+zHTz9FtfH6dHwCSCQFU1AxQUj92Vr1
-         fm+CqNIEmIfq+2LRmwoE/6ZDQLDhQphFNyQaeMv3z2ImJR/NzPHZVBTMlaOwQ5DuBx
-         2ZgTQvjr1/hvma28yR+0uH9+kSejXCUKsI40/qPc=
-Message-ID: <1543267288.2529.25.camel@kernel.org>
-Subject: Re: [PATCH v7 00/16] tracing: Hist trigger snapshot and onchange
- additions
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     rostedt@goodmis.org, tglx@linutronix.de, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Date:   Mon, 26 Nov 2018 15:21:28 -0600
-In-Reply-To: <20181126230928.17883eecfaefd6a29cbbd1c3@kernel.org>
-References: <cover.1542221862.git.tom.zanussi@linux.intel.com>
-         <20181126230928.17883eecfaefd6a29cbbd1c3@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 27 Nov 2018 03:19:04 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:36790 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726367AbeK0ITD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 03:19:03 -0500
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAQLIKJ4005066;
+        Mon, 26 Nov 2018 13:23:22 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=zDk1WyIF3PcQBmZqndPCprcP1TjB8AiWDMU4J/WHJI0=;
+ b=k3UbkV6pSd5Iqeu7A09tfP05+LsP1JltEZKY3rDRZNqaSOcHWjPUCtgnXnVUfjo6y+fH
+ OIBqMrBjGQIQX9KVtg5yjR526mV3o4Zqs0guksprGbIjZgjIQgDvXNQTcSCqvfrC7O/f
+ O6HD2TCOPJ6cCcn6go+n7dmZFpO9JK/nYgM= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2p0rjp8141-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 26 Nov 2018 13:23:22 -0800
+Received: from frc-hub06.TheFacebook.com (2620:10d:c021:18::176) by
+ frc-hub04.TheFacebook.com (2620:10d:c021:18::174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Mon, 26 Nov 2018 13:23:13 -0800
+Received: from NAM02-BL2-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Mon, 26 Nov 2018 13:23:13 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zDk1WyIF3PcQBmZqndPCprcP1TjB8AiWDMU4J/WHJI0=;
+ b=SQlwRk41heidtk6y9MWNYOlBwRTzbaEGh7m3Q3duOhUySGPOV3fxsvf+sIjl6xf7bTCWurukmVc5tF5tlI6MSQY0WxX7hciCKjLy6WZ18IbDVWCXEEMtXDYkh7hbub3ng7/mCTqv4efwGA3h4AuP3vOLN+b4Z/sDNISqc2aCePQ=
+Received: from CY4PR15MB1269.namprd15.prod.outlook.com (10.172.180.139) by
+ CY4PR15MB1637.namprd15.prod.outlook.com (10.175.119.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.15; Mon, 26 Nov 2018 21:23:11 +0000
+Received: from CY4PR15MB1269.namprd15.prod.outlook.com
+ ([fe80::19df:d934:b961:5442]) by CY4PR15MB1269.namprd15.prod.outlook.com
+ ([fe80::19df:d934:b961:5442%5]) with mapi id 15.20.1361.019; Mon, 26 Nov 2018
+ 21:23:11 +0000
+From:   Vijay Khemka <vijaykhemka@fb.com>
+To:     David Miller <davem@davemloft.net>
+CC:     "sam@mendozajonas.com" <sam@mendozajonas.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+        "Justin.Lee1@Dell.com" <Justin.Lee1@Dell.com>,
+        "joel@jms.id.au" <joel@jms.id.au>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>
+Subject: Re: [PATCH net-next] net/ncsi: Add NCSI Mellanox OEM command
+Thread-Topic: [PATCH net-next] net/ncsi: Add NCSI Mellanox OEM command
+Thread-Index: AQHUgRCoGYkM0A+mg0yjPgjXvLLIkqVa+TkAgAca/wA=
+Date:   Mon, 26 Nov 2018 21:23:10 +0000
+Message-ID: <D0F6A4CE-9BBB-45E2-8915-D02438FBFAB8@fb.com>
+References: <20181120203516.3460764-1-vijaykhemka@fb.com>
+ <20181121.165244.777667590099933299.davem@davemloft.net>
+In-Reply-To: <20181121.165244.777667590099933299.davem@davemloft.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2620:10d:c090:200::7:41c]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR15MB1637;20:ZSe/lvUzaBpjxfJrzW/q6wv01EgOyGF3HdjKnGOfSDKDjovmDTO0yiL/DvGSyS8iJ7ip9GX1xbBCs9GKj4LgtD81uSOzWPJ8MAAw6/7+WYebFNqzgfFlFrarGbDNBVsQdOQJ7mXtxetw5tQCI4dyyD2gz5X5mIKWQTxdtCQj9+k=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 4affa4b2-77a8-43e3-601d-08d653e55e17
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CY4PR15MB1637;
+x-ms-traffictypediagnostic: CY4PR15MB1637:
+x-microsoft-antispam-prvs: <CY4PR15MB1637C0F8C79AD7870002BF27DDD70@CY4PR15MB1637.namprd15.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231443)(11241501185)(944501410)(52105112)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:CY4PR15MB1637;BCL:0;PCL:0;RULEID:;SRVR:CY4PR15MB1637;
+x-forefront-prvs: 086831DFB4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(39860400002)(346002)(366004)(376002)(199004)(189003)(36756003)(6436002)(54906003)(6486002)(316002)(97736004)(6506007)(6116002)(2906002)(11346002)(6246003)(53936002)(6512007)(102836004)(25786009)(14454004)(2616005)(5660300001)(486006)(4326008)(33656002)(83716004)(71200400001)(71190400001)(76176011)(305945005)(7736002)(106356001)(8936002)(186003)(68736007)(105586002)(256004)(86362001)(82746002)(6916009)(81166006)(81156014)(478600001)(99286004)(8676002)(476003)(446003)(46003)(229853002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR15MB1637;H:CY4PR15MB1269.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:3;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Arjy3oPWARfcW5JNXB6Rb37GWjT9zqwggQOlOAKiTAAJj4NMOpj2Moy8aNHTxTuNfmJkhTMbY6Vy7irKokc0jN583/qhzdWAbXcqsKNXQjXqZ++tlFz2y49bTMLj3YdYT7cbAv9W++zXz/GFKEuLqTfoSBdtasafwJLLbrlt/Tu3wqGjSRFrlfqXUR3RJv7elnHDxH1OpYvDaQeuRq10sHd9i5J86rdP568h8Q7ss9lA1eP/gPD8fYH1/F70tL1AmekX61zHAlQjHgxpMZnXUXvfl731g6TLWvibeEkEeT5rN3DxF8ZOaLu/8xzwBn1XlJlslYKHLOTMyrldKTiA592I1+5H/aW3UMV7fFKAOtI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BE53CB4067D0B24387EE590E79B9170D@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4affa4b2-77a8-43e3-601d-08d653e55e17
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2018 21:23:10.8608
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1637
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-26_16:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masami,
-
-On Mon, 2018-11-26 at 23:09 +0900, Masami Hiramatsu wrote:
-> Hi Tom,
-> 
-> On Wed, 14 Nov 2018 14:17:57 -0600
-> Tom Zanussi <zanussi@kernel.org> wrote:
-> 
-> > From: Tom Zanussi <tom.zanussi@linux.intel.com>
-> > 
-> > Hi,
-> > 
-> > This is v7 of the hist trigger snapshot and onchange additions
-> > patchset.  It does a bit of refactoring to address the suggestions
-> > made by Masami in v6.
-> 
-> Thank you for fixing it. 
-> 
-> > 
-> > It also adds an additional patch to update the trigger/inter-event
-> > testcases with SPDX license blurbs.
-> > 
-> > BTW, I noticed that with the recent kselftest changes, I now get
-> > mangled output when running the selftests, though I can still see
-> > well
-> > enough that the tests passed as expected.  This happens with any of
-> > the ftrace selftests and not just the trigger selftests.  In my
-> > case,
-> > this is using the stock Terminal in Ubuntu 17.10, in case that
-> > helps.
-> 
-> Hmm, it should be fixed by
-> 8096fbcf55c0 ("selftests/ftrace: Use colored output when available")
-> 
-> Could you check your kernel has this commit?
-> 
-
-Yes, it does have this commit.
-
-> BTW, what terminal and environment (especially echo command)
-> did you run your tests on? (It seems echo command didn't accept -e
-> option)
-> 
-
-For that system, I'm using Gnome terminal 3.24.2 and GNU bash, version
-4.4.12(1)-release (x86_64-pc-linux-gnu) (Ubuntu 17.10).
-
-If I change 'echo' to '/bin/echo' in e.g. prlog() it works fine, so it
-must be the inbuilt bash echo that's not doing the right thing.  I
-thought it might be the xpg_echo option, but 'shopt -s xpg_echo'
-doesn't have any effect.
-
-I also tried on a Fedora 28 system (GNOME terminal 3.28.2, GNU bash,
-version 4.4.23(1)-release (x86_64-redhat-linux-gnu), and it worked
-fine.
-
-Also, tried a Ubuntu 18.04.1 system (GNOME Terminal 3.28.1, GNU bash,
-version 4.4.19(1)-release (x86_64-pc-linux-gnu) and in that case the
-colors worked fine, but still got the '-e -n' and newlines in the
-output:
-
--e -n [28] (instance)  event trigger - test histogram modifiers
--e 	[PASS]
--e -n [29] (instance)  event trigger - test histogram trigger
--e 	[PASS]
-
-Again, substituting '/bin/echo' in prlog() fixed things in this case
-too.   I guess the builtin bash 'echo' can't be relied on..
-
-Tom
-
-
-> Thank you,
-> 
-> > Example output:
-> > 
-> >   # ./ftracetest test.d/trigger/
-> >   
-> > -e === Ftrace unit tests ===
-> > -e -n [1] event trigger - test inter-event histogram trigger
-> > expected fail actions
-> > -e 	[\e[31mXFAIL\e[0m]
-> > -e -n [2] event trigger - test extended error support
-> > -e 	[\e[32mPASS\e[0m]
-> > -e -n [3] event trigger - test field variable support
-> > -e 	[\e[32mPASS\e[0m]
-> > -e -n [4] event trigger - test inter-event combined histogram
-> > trigger
-> > -e 	[\e[32mPASS\e[0m]
-> > -e -n [5] event trigger - test multiple actions on hist trigger
-> > -e 	[\e[32mPASS\e[0m]
-> > .
-> > .
-> > .
-> > -e 
-> > -e # of passed:  31
-> > -e # of failed:  0
-> > -e # of unresolved:  0
-> > -e # of untested:  0
-> > -e # of unsupported:  0
-> > -e # of xfailed:  1
-> > -e # of undefined(test bug):  0
-> > 
-> > v6->v7 changes:
-> > 
-> >   - Removed unnecessary HANDLER_ONMAX checks from
-> > onmax_print()/create()
-> >   - Moved handler assignment to acion_parse()
-> >   - Changed goto in ATION_TRACE case in action_create() to return
-> >   - Changed EINVAL to EEXIST in action_create() ACTION_SAVE case
-> >   - Made the return logic in create_actions() more consistent
-> >   - Merged 'tracing: Move hist trigger key printing into a separate
-> >     function' into 'tracing: Add hist trigger snapshot() action'
-> >   - Updated the new snapshot, onchange, and trace test cases to
-> > match
-> >     4.20 kselftest changes.
-> >   - Added new xfail test case that make sure certain unsupported
-> >     handler/action combinations fail as expected.
-> >   - While updating the test cases, realized that the other
-> > testcases
-> >     in the inter-event subdir needed SPDX license updates, so added
-> >     them.
-> > 
-> > v5->v6 changes:
-> > 
-> >   - Added new Documentation patch explaining handler.action
-> >   - Added new README patch explaining handler.action
-> >   - Added separate snapshot() Documentation
-> >   - Added new snapshot() test case
-> >   - Updated README with snapshote()
-> >   - Added separate onchange() Documentation
-> >   - Added separate onchange() test case
-> >   - Updated README with onchange()
-> >   - Added separate trace() test case
-> >   - Updated README with trace() and <synthetic_event>() syntax
-> > 
-> > v4->v5 changes:
-> > 
-> >   - added 'trace' keyword test case
-> >   - added 'onchange' handler test case
-> > 
-> > v3->v4 changes:
-> > 
-> >   - added 'trace' keyword for generating synthetic events
-> >   - fix elt_data leak
-> >   - changed cond_update to cond_update_fn_t
-> > 
-> > v2->v3 changes:
-> > 
-> >   - fixed problem where trace actions were only being allowed for
-> >     onmatch handlers - now trace actions can be used with any
-> > handler.
-> >   - fixed problem where no action was being assigned to onmatch
-> >     handlers if save or snapshot actions were specified.
-> > 
-> > v1->v2 changes:
-> > 
-> >   - added missing tracing_cond_snapshot_data() definition for when
-> >     CONFIG_TRACER_SNAPSHOT not defined
-> >   - removed an unnecessary WARN_ON() in track_data_snapshot_print()
-> > 
-> > 
-> > Original text:
-> > 
-> > This patchset adds some useful new functions to the hist
-> > trigger code: a snapshot action and an onchange handler.
-> > 
-> > In order to make it easier to add these and in the process make the
-> > code more generic, I separated the code into explicit 'handlers'
-> > and
-> > 'actions', handlers being things like 'onmax' and 'onchange', and
-> > 'actions' being things like 'take a snapshot' or 'save some
-> > fields'.
-> > 
-> > The first few patches do that basic refactoring, which make it
-> > easier
-> > to add the subsequent changes that arbitrarily combine actions and
-> > handlers.
-> > 
-> > The fourth patch adds a 'conditional snapshot' capability that via
-> > a
-> > new tracing_snaphot_cond() function extends the existing snapshot
-> > code.  It allows the caller to associate some user data with the
-> > snapshot that can be checked and saved in an update() callback
-> > whose
-> > return value determines whether the snapshot should be taken or
-> > not.
-> > 
-> > The remaining patches finally add the new snapshot action and
-> > onchange
-> > handler functionality - please see those patches for details and
-> > some
-> > examples.
-> > 
-> > Thanks,
-> > 
-> > Tom
-> > 
-> > 
-> > The following changes since commit
-> > ee474b81fe5aa5dc0faae920bf66240fbf55f891:
-> > 
-> >   tracing/kprobes: Fix strpbrk() argument order (2018-11-05
-> > 09:47:14 -0500)
-> > 
-> > are available in the git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/zanussi/linux-
-> > trace.git ftrace/hist-snapshot-onchange-v7
-> > 
-> > Tom Zanussi (16):
-> >   tracing: Refactor hist trigger action code
-> >   tracing: Make hist trigger Documentation better reflect
-> >     actions/handlers
-> >   tracing: Add hist trigger handler.action documentation to README
-> >   tracing: Split up onmatch action data
-> >   tracing: Generalize hist trigger onmax and save action
-> >   tracing: Add conditional snapshot
-> >   tracing: Add hist trigger snapshot() action
-> >   tracing: Add hist trigger snapshot() action Documentation
-> >   tracing: Add hist trigger snapshot() action test case
-> >   tracing: Add hist trigger onchange() handler
-> >   tracing: Add hist trigger onchange() handler Documentation
-> >   tracing: Add hist trigger onchange() handler test case
-> >   tracing: Add alternative synthetic event trace action syntax
-> >   tracing: Add alternative synthetic event trace action test case
-> >   tracing: Add hist trigger action 'expected fail' test case
-> >   tracing: Add SPDX license GPL-2.0 license identifier to inter-
-> > event
-> >     testcases
-> > 
-> >  Documentation/trace/histogram.rst                  |  285 +++++-
-> >  kernel/trace/trace.c                               |  177 +++-
-> >  kernel/trace/trace.h                               |   56 +-
-> >  kernel/trace/trace_events_hist.c                   | 1062
-> > +++++++++++++++-----
-> >  kernel/trace/trace_events_trigger.c                |    2 +-
-> >  kernel/trace/trace_sched_wakeup.c                  |    2 +-
-> >  .../inter-event/trigger-action-hist-xfail.tc       |   30 +
-> >  .../inter-event/trigger-extended-error-support.tc  |    1 +
-> >  .../inter-event/trigger-field-variable-support.tc  |    1 +
-> >  .../trigger-inter-event-combined-hist.tc           |    1 +
-> >  .../inter-event/trigger-multi-actions-accept.tc    |    1 +
-> >  .../inter-event/trigger-onchange-action-hist.tc    |   28 +
-> >  .../inter-event/trigger-onmatch-action-hist.tc     |    1 +
-> >  .../trigger-onmatch-onmax-action-hist.tc           |    1 +
-> >  .../inter-event/trigger-onmax-action-hist.tc       |    1 +
-> >  .../inter-event/trigger-snapshot-action-hist.tc    |   43 +
-> >  .../trigger-synthetic-event-createremove.tc        |    1 +
-> >  .../inter-event/trigger-trace-action-hist.tc       |   42 +
-> >  18 files changed, 1433 insertions(+), 302 deletions(-)
-> >  create mode 100644
-> > tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-
-> > action-hist-xfail.tc
-> >  create mode 100644
-> > tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-
-> > onchange-action-hist.tc
-> >  create mode 100644
-> > tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-
-> > snapshot-action-hist.tc
-> >  create mode 100644
-> > tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-
-> > trace-action-hist.tc
-> > 
-> > -- 
-> > 2.14.1
-> > 
-> 
-> 
+VGhhbmtzIERhdmlkLA0KSSB3aWxsIGZpeCB0aGlzIGFuZCB1cGxvYWQgbmV4dCB2ZXJzaW9uLg0K
+DQpSZWdhcmRzDQotVmlqYXkNCg0K77u/T24gMTEvMjEvMTgsIDQ6NTUgUE0sICJEYXZpZCBNaWxs
+ZXIiIDxkYXZlbUBkYXZlbWxvZnQubmV0PiB3cm90ZToNCg0KICAgIEZyb206IFZpamF5IEtoZW1r
+YSA8dmlqYXlraGVta2FAZmIuY29tPg0KICAgIERhdGU6IFR1ZSwgMjAgTm92IDIwMTggMTI6MzU6
+MTYgLTA4MDANCiAgICANCiAgICA+ICtzdGF0aWMgaW50IG5jc2lfb2VtX2dtYV9oYW5kbGVyX21s
+eChzdHJ1Y3QgbmNzaV9jbWRfYXJnICpuY2EpDQogICAgPiArew0KICAgID4gKwl1bnNpZ25lZCBj
+aGFyIGRhdGFbTkNTSV9PRU1fTUxYX0NNRF9HTUFfTEVOXTsNCiAgICA+ICsJaW50IHJldCA9IDA7
+DQogICAgPiArDQogICAgPiArCW5jYS0+cGF5bG9hZCA9IE5DU0lfT0VNX01MWF9DTURfR01BX0xF
+TjsNCiAgICA+ICsNCiAgICA+ICsJbWVtc2V0KGRhdGEsIDAsIE5DU0lfT0VNX01MWF9DTURfR01B
+X0xFTik7DQogICAgPiArCSoodW5zaWduZWQgaW50ICopZGF0YSA9IG50b2hsKE5DU0lfT0VNX01G
+Ul9NTFhfSUQpOw0KICAgIA0KICAgICdkYXRhJyBpcyBub3QgbmVjZXNzYXJpbHkgYWxpZ25lZCBv
+biBhbiB1bnNpZ25lZCBpbnQgYm91bmRhcnkuDQogICAgDQogICAgQnV0IHNlY29uZCBvZiBhbGwg
+eW91IHdhbnQgdG8gdXNlIGEgZml4ZWQgc2l6ZSB0eXBlIGxpa2UgInUzMiIgb3INCiAgICBzaW1p
+bGFyIGhlcmUsIG5vdCAidW5zaWduZWQgaW50Ii4NCiAgICANCiAgICBBbHRvZ2V0aGVyLCBzb21l
+dGhpbmcgbGlrZToNCiAgICANCiAgICAJdW5pb24gew0KICAgIAkJdTggZGF0YV91OFtOQ1NJX09F
+TV9NTFhfQ01EX0dNQV9MRU5dOw0KICAgIAkJdTMyIGRhdGFfdTMyW1tOQ1NJX09FTV9NTFhfQ01E
+X0dNQV9MRU4gLyBzaXplb2YodTMyKV07DQogICAgCX0gdTsNCiAgICANCiAgICAJbWVtc2V0KCZ1
+LCAwLCBzaXplb2YodSkpOw0KICAgIAl1LmRhdGFfdTMyWzBdID0gbnRvaGwoTkNTSV9PRU1fTUZS
+X01MWF9JRCk7DQogICAgCXUuZGF0YV91OFs1XSA9IE5DU0lfT0VNX01MWF9DTURfR01BOw0KICAg
+IAl1LmRhdGFfdThbNl0gPSBOQ1NJX09FTV9NTFhfQ01EX0dNQV9QQVJBTTsNCiAgICANCiAgICBJ
+ZiB0aGUgcmVzdCBvZiB0aGUgbmNzaSBkcml2ZXIgaGFzIGNydWQgbGlrZSB0aGlzLCBpdCBhbGwg
+bmVlZHMNCiAgICB0byBiZSBmaXhlZCB1cCBzaW1pbGFybHkuDQogICAgDQoNCg==
