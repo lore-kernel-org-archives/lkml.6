@@ -7,148 +7,140 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E59C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE1CEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27F7B20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:44:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86EE820663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:44:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K90cOgBQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27F7B20663
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cbNlZDSp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86EE820663
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbeKZTh6 (ORCPT
+        id S1726300AbeKZTiB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 14:37:58 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33395 "EHLO
+        Mon, 26 Nov 2018 14:38:01 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42402 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726164AbeKZTh6 (ORCPT
+        with ESMTP id S1726164AbeKZTiA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 14:37:58 -0500
-Received: by mail-wr1-f66.google.com with SMTP id c14so12285487wrr.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 00:44:33 -0800 (PST)
+        Mon, 26 Nov 2018 14:38:00 -0500
+Received: by mail-wr1-f66.google.com with SMTP id q18so17910912wrx.9
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 00:44:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=He3pqGo+A5MVuYP3nfDqw4JkRlqG2IIP4aWgZQSIRFM=;
-        b=K90cOgBQAPar+TCdDVEU4wOtnfYpzEitFO8EccUFV2G5w8dZvaY4eGF2Z1Csvun9VP
-         CLwZoD8BaIrdLRSrplDK9o+WLMwp1WdRXI6z4dfplsYQSxuywDR7TJfzltkHI6GBi6AB
-         KHMyM2sqXvcyujvKfa01AlX2+uzFfXgMp12a8=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=jfsMP20PX9AzxiepyEa67RYbHxSdA147CoEw18eFqcM=;
+        b=cbNlZDSpq8IRQ7pT28gQc99KmWLJsf6QyE3TEIsiKTA3YLWt9T8j9XOM0w2wQ/NCat
+         Ljn2vxsTrq7L0/Ec1UKBYgCH3LoLbnaz19rYBoX3AF1Gtou4p/3fbWqaGLg/VhIoZR5p
+         wrnNs3uYO4Yu0IOIyMK1aRTJewKo5zZXGoqBw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=He3pqGo+A5MVuYP3nfDqw4JkRlqG2IIP4aWgZQSIRFM=;
-        b=fea1C0B8c1IJQkK1j6B6WlEfX2JkLIDKw0CCQceVrZ9gfX+644smljZtVPUJt5CEgM
-         V4EIU4rWXynDP0DJloJDf+ZVWSFVr5hNhzbtRes/+i6yqBNtuoXoPiygTqiS9vi0EJpw
-         3ui6NLy0GmTg3dxCNlgD6yIIJO0Vb5HQO6fzGbDOM7Ap28hu/WGZWDg35irQNFOzXGGu
-         GnBE+p2f8orYI8wIQC++wlCzAeeD7Q+JSfrJr/sufa0JuT1YByoDwLtRjdz+3MgUeVvu
-         9cRWPBaXPI/15Mux7t7UZInrdiMLx0MdKE1TZsFotaPvhgLfs0VHUmKOzVXprld+kL/S
-         XBww==
-X-Gm-Message-State: AA+aEWaR4B1emWDZgxg3eRValyJRrJNGah6cfgWv8Dz0VqEH6K5rFUhT
-        Axpjm+O1wfRK1EWbPlysvAhRsg==
-X-Google-Smtp-Source: AFSGD/VXqQ3MHEbKPUaWDca/yLfibVXjgYrSRhj++xV5liCzpOvZQruzNBmUADJZiUFLJuUPi+Mc0w==
-X-Received: by 2002:adf:fd50:: with SMTP id h16mr19200808wrs.228.1543221872362;
-        Mon, 26 Nov 2018 00:44:32 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=jfsMP20PX9AzxiepyEa67RYbHxSdA147CoEw18eFqcM=;
+        b=H4fDTFcie51n7PBO8Wj7wfOKkit7oEt/40GaRra0A5m4a8wSIA4z6AkrnYO5JcchJD
+         HnoC8xLdWLoXkN8pYJbHHTkPJL74vMalL6cVMTBH270CclHVZ3bvKkn86UdLS52yrBQt
+         qXj9Z9f2DbxPi41tI0OuSuVz2urLzIKP2bV/JnoSdEBr7cFxeUXv86RE6yIzh0mJfz8/
+         EqRAOZw1nqRaoYJr0RUM4Ub797jVXCO6AqV7QZqzsKGwlyc5vtWjxRhXvhDbvnDtZmea
+         rzaxliP4IDq87LPYekb2GlGKX2xItLIxfvDkSz7tr0qTn7zLqeDGxUSx6HKCWLuI6bVD
+         7JEQ==
+X-Gm-Message-State: AA+aEWbk9gMLwUcLnhCCx6+vdecCJE2XShWAJSUFC/WxvwZNbJALfgDB
+        pAGuJ1DuisGZG5x/+PXEnYP5ag==
+X-Google-Smtp-Source: AFSGD/Xo2l4a7beU44svbWqIvHz0YzWPpJbFn1glzlbxbAHKNtx4FybyNc5mL02tp1cRyrr6+vQ92w==
+X-Received: by 2002:adf:9382:: with SMTP id 2mr7131445wrp.269.1543221874465;
+        Mon, 26 Nov 2018 00:44:34 -0800 (PST)
 Received: from localhost.localdomain (72.224.136.77.rev.sfr.net. [77.136.224.72])
-        by smtp.gmail.com with ESMTPSA id a204sm98009wmh.23.2018.11.26.00.44.30
+        by smtp.gmail.com with ESMTPSA id a204sm98009wmh.23.2018.11.26.00.44.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 26 Nov 2018 00:44:31 -0800 (PST)
+        Mon, 26 Nov 2018 00:44:33 -0800 (PST)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     rjw@rjwysocki.net
 Cc:     linux-kernel@vger.kernel.org, viresh.kumar@linaro.org,
-        Sudeep Holla <sudeep.holla@arm.com>,
+        Chris Redpath <chris.redpath@linaro.org>,
+        Quentin Perret <quentin.perret@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@arm.com>
-Subject: [PATCH V3 1/2] base/drivers/arch_topology: Replace mutex with READ_ONCE / WRITE_ONCE
-Date:   Mon, 26 Nov 2018 09:44:20 +0100
-Message-Id: <1543221866-19671-1-git-send-email-daniel.lezcano@linaro.org>
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: [PATCH V3 2/2] base/drivers/arch_topology: Default dmips-mhz if they are not set in DT
+Date:   Mon, 26 Nov 2018 09:44:21 +0100
+Message-Id: <1543221866-19671-2-git-send-email-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1543221866-19671-1-git-send-email-daniel.lezcano@linaro.org>
+References: <1543221866-19671-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mutex protects a per_cpu variable access. The potential race can
-happen only when the cpufreq governor module is loaded and at the same
-time the cpu capacity is changed in the sysfs.
+In the case of asymmetric SoC with the same micro-architecture, we
+have a group of CPUs with smaller OPPs than the other group. One
+example is the 96boards dragonboard 820c. There is no dmips/MHz
+difference between both groups, so no need to specify the values in
+the DT. Unfortunately, without these defined, there is no scaling
+capacity computation triggered, so we need to write
+'capacity-dmips-mhz' for each CPU with the same value in order to
+force the scaled capacity computation.
 
-There is no real interest of using a mutex to protect a variable
-assignation when there is no situation where a task can take the lock
-and block.
+In order to fix this situation, allocate 'raw_capacity' so the pointer
+is set and the init_cpu_capacity_callback() function can be called.
 
-Replace the mutex by READ_ONCE / WRITE_ONCE.
+This was tested on db820c:
+ - specified values in the DT (correct results)
+ - partial values defined in the DT (error + fallback to defaults)
+ - no specified values in the DT (correct results)
 
+correct results are:
+  cat /sys/devices/system/cpu/cpu*/cpu_capacity
+   758
+   758
+  1024
+  1024
+
+  ... respectively for CPU0, CPU1, CPU2 and CPU3.
+
+That reflects the capacity for the max frequencies 1593600 and 2150400.
+
+Cc: Chris Redpath <chris.redpath@linaro.org>
+Cc: Quentin Perret <quentin.perret@linaro.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Amit Kucheria <amit.kucheria@linaro.org>
+Cc: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+Cc: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/base/arch_topology.c  | 7 +------
- include/linux/arch_topology.h | 2 +-
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ drivers/base/arch_topology.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-index edfcf8d..fd5325b 100644
+index fd5325b..e0c5b60 100644
 --- a/drivers/base/arch_topology.c
 +++ b/drivers/base/arch_topology.c
-@@ -31,12 +31,11 @@ void arch_set_freq_scale(struct cpumask *cpus, unsigned long cur_freq,
- 		per_cpu(freq_scale, i) = scale;
- }
- 
--static DEFINE_MUTEX(cpu_scale_mutex);
- DEFINE_PER_CPU(unsigned long, cpu_scale) = SCHED_CAPACITY_SCALE;
- 
- void topology_set_cpu_scale(unsigned int cpu, unsigned long capacity)
- {
--	per_cpu(cpu_scale, cpu) = capacity;
-+	WRITE_ONCE(per_cpu(cpu_scale, cpu), capacity);
- }
- 
- static ssize_t cpu_capacity_show(struct device *dev,
-@@ -71,10 +70,8 @@ static ssize_t cpu_capacity_store(struct device *dev,
- 	if (new_capacity > SCHED_CAPACITY_SCALE)
+@@ -243,9 +243,20 @@ static int __init register_cpufreq_notifier(void)
+ 	 * until we have the necessary code to parse the cpu capacity, so
+ 	 * skip registering cpufreq notifier.
+ 	 */
+-	if (!acpi_disabled || !raw_capacity)
++	if (!acpi_disabled)
  		return -EINVAL;
  
--	mutex_lock(&cpu_scale_mutex);
- 	for_each_cpu(i, &cpu_topology[this_cpu].core_sibling)
- 		topology_set_cpu_scale(i, new_capacity);
--	mutex_unlock(&cpu_scale_mutex);
- 
- 	schedule_work(&update_topology_flags_work);
- 
-@@ -141,7 +138,6 @@ void topology_normalize_cpu_scale(void)
- 		return;
- 
- 	pr_debug("cpu_capacity: capacity_scale=%u\n", capacity_scale);
--	mutex_lock(&cpu_scale_mutex);
- 	for_each_possible_cpu(cpu) {
- 		pr_debug("cpu_capacity: cpu=%d raw_capacity=%u\n",
- 			 cpu, raw_capacity[cpu]);
-@@ -151,7 +147,6 @@ void topology_normalize_cpu_scale(void)
- 		pr_debug("cpu_capacity: CPU%d cpu_capacity=%lu\n",
- 			cpu, topology_get_cpu_scale(NULL, cpu));
- 	}
--	mutex_unlock(&cpu_scale_mutex);
- }
- 
- bool __init topology_parse_cpu_capacity(struct device_node *cpu_node, int cpu)
-diff --git a/include/linux/arch_topology.h b/include/linux/arch_topology.h
-index d9bdc1a..12c439f 100644
---- a/include/linux/arch_topology.h
-+++ b/include/linux/arch_topology.h
-@@ -20,7 +20,7 @@ struct sched_domain;
- static inline
- unsigned long topology_get_cpu_scale(struct sched_domain *sd, int cpu)
- {
--	return per_cpu(cpu_scale, cpu);
-+	return READ_ONCE(per_cpu(cpu_scale, cpu));
- }
- 
- void topology_set_cpu_scale(unsigned int cpu, unsigned long capacity);
++	if (!raw_capacity) {
++
++		pr_info("cpu_capacity: No capacity defined in DT, set default "
++		       "values to %ld\n", SCHED_CAPACITY_SCALE);
++
++		raw_capacity = kmalloc_array(num_possible_cpus(),
++					     sizeof(*raw_capacity), GFP_KERNEL);
++		if (!raw_capacity)
++			return -ENOMEM;
++	}
++
+ 	if (!alloc_cpumask_var(&cpus_to_visit, GFP_KERNEL)) {
+ 		pr_err("cpu_capacity: failed to allocate memory for cpus_to_visit\n");
+ 		return -ENOMEM;
 -- 
 2.7.4
 
