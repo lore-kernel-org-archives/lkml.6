@@ -2,85 +2,115 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 401E1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5FD3C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE16320664
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:31:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V48fmEF+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE16320664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 76FB820664
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:31:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76FB820664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbeKZUYa (ORCPT
+        id S1726299AbeKZUZP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 15:24:30 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:57514 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbeKZUYa (ORCPT
+        Mon, 26 Nov 2018 15:25:15 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37811 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbeKZUZP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 15:24:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=y1C+U3er+UTlKWMSDrMoXJRVyFZ2s3zavNVn7l21m0s=; b=V48fmEF+h1ktF+ZVDbb/JgJ1k
-        npJa4Rwh3YyICk9O6afzD2C7SGzdDQa1oCYETRdTt7VvfQD5xDv5Sy0m+vqkrzIBL4SIIkXI64V6Z
-        kS4tpH8UZ7j7gPF1wJWCAubfWcX8dH4DYxQpLPcsmp+kXKOjDeN8OHKWHbXlr/PPREQ8UHAQv2f4b
-        AggJbrNEIZK6N54vrQisSf5CEAgrKLZGIhkOaJpW8h18cIMozRFcEKs2jQDTaAATx/kA6jIZpWZK6
-        UaEemmDn0mbZsw9saZiPao1DTzpFhb84Vp7LsEDP4I6ydqiTXWfaetGQXbPOpM4o6LPkIdrFjwdFu
-        bOtqPzSsw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gRDEE-00069R-UF; Mon, 26 Nov 2018 09:30:55 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 837D62029FD58; Mon, 26 Nov 2018 10:30:51 +0100 (CET)
-Date:   Mon, 26 Nov 2018 10:30:51 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
+        Mon, 26 Nov 2018 15:25:15 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j10so18084947wru.4
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 01:31:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=uL7bgYzARgyTxVflDQBrnEwkDPt+c8BtMRqKstMHjRA=;
+        b=bcCLtQU+S1IxIUgec4cUbRgr5xyYkhiYko1bxNjL9pIv9IET1eCBDnzkaG0+JTjaCQ
+         +XqZgTI/juAJr49sdulY8vS4LEvFELRLWDj+CHVXBvaUU6ttHQdK9HWth2vDKXFUMp2p
+         Z3tWRAcXINOX4BHWNOefgDWu86ozt/V5zCw+DE9MTKhh8Wmz49NyJ16WQs9NWJkAeDUW
+         w1AF6vNBuES1I/SyOyajlIcCtdUcE6XRrQqqgAbqZN6l9hvtcFiDAq3VgTxlBdCbzaA6
+         J3rLDK1PDmp319bwMLjszW4SWqWpazhMa7BK3wnbWxghbj8zfC3H5rpGhQ3L0HaUR9MW
+         t7WQ==
+X-Gm-Message-State: AA+aEWakmj4uQ7t3FkmO3l49nprZMjqwXtgPdxF0pTms9569kAdcZefo
+        071I+6k2BaSgsim6P2E/HAHRlA==
+X-Google-Smtp-Source: AFSGD/Uwu1NwgzyQkFGZ3bdutLAvHRhb3MjDk7b4+1x86C7p49Wm7+ohDmNstRU2CCFrHr6r0ZZiog==
+X-Received: by 2002:adf:dec4:: with SMTP id i4mr22019329wrn.307.1543224702478;
+        Mon, 26 Nov 2018 01:31:42 -0800 (PST)
+Received: from hades.usersys.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 60sm38143230wrb.81.2018.11.26.01.31.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 01:31:41 -0800 (PST)
+Date:   Mon, 26 Nov 2018 10:31:39 +0100
+From:   Carlos Maiolino <cmaiolino@redhat.com>
+To:     Pan Bian <bianpan2016@163.com>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [Question] atomic_fetch_andnot() in nohz_idle_balance()
-Message-ID: <20181126093051.GV2131@hirez.programming.kicks-ass.net>
-References: <20181121223453.GA4016@andrea>
+Subject: Re: [PATCH] xfs: libxfs: move xfs_perag_put late
+Message-ID: <20181126093139.cgojlmtubzuzdb23@hades.usersys.redhat.com>
+Mail-Followup-To: Pan Bian <bianpan2016@163.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>, linux-kernel@vger.kernel.org
+References: <1543052660-58625-1-git-send-email-bianpan2016@163.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181121223453.GA4016@andrea>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1543052660-58625-1-git-send-email-bianpan2016@163.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 11:34:53PM +0100, Andrea Parri wrote:
-> Hi,
+On Sat, Nov 24, 2018 at 05:44:20PM +0800, Pan Bian wrote:
+> The function xfs_alloc_get_freelist calls xfs_perag_put to drop the
+> reference. In this case, pag may be released. However,
+> pag->pagf_btreeblks is read and write after the put operation. This may
+> result in a use-after-free bug. This patch moves the put operation late.
 > 
-> The comment for the atomic_fetch_andnot() in nohz_idle_balance() says:
-> 
->   "barrier, pairs with nohz_balance_enter_idle(), ensures ..."
-> 
-> which, well, does sound a note of warning... ;-)
-> 
-> I see that nohz_balance_enter_idle() has an smp_mb__after_atomic() but
-> the comment for the latter suggests that this barrier is pairing with
-> the smp_mb() in _nohz_idle_balance().
-> 
-> So, what is the intended pairing barrier for the atomic_fetch_andnot()?
-> what (which memory accesses) do you want "to order" here?
 
-I can't seem to make sense of that comment either; the best I can come
-up with is that it would order the prior NOHZ_KICK_MASK load vs us then
-changing it.
+The patch looks reasonable, can you detail more how did you find it? Via code
+inspection of you hit this user-after-free in some way?
 
-But that would order against kick_ilb(), not enter_idle.
+Cheers
 
-Vincent?
+> Signed-off-by: Pan Bian <bianpan2016@163.com>
+> ---
+>  fs/xfs/libxfs/xfs_alloc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
+> index e1c0c0d..4be387d 100644
+> --- a/fs/xfs/libxfs/xfs_alloc.c
+> +++ b/fs/xfs/libxfs/xfs_alloc.c
+> @@ -2435,7 +2435,6 @@ xfs_alloc_get_freelist(
+>  	be32_add_cpu(&agf->agf_flcount, -1);
+>  	xfs_trans_agflist_delta(tp, -1);
+>  	pag->pagf_flcount--;
+> -	xfs_perag_put(pag);
+>  
+>  	logflags = XFS_AGF_FLFIRST | XFS_AGF_FLCOUNT;
+>  	if (btreeblk) {
+> @@ -2443,6 +2442,7 @@ xfs_alloc_get_freelist(
+>  		pag->pagf_btreeblks++;
+>  		logflags |= XFS_AGF_BTREEBLKS;
+>  	}
+> +	xfs_perag_put(pag);
+>  
+>  	xfs_alloc_log_agf(tp, agbp, logflags);
+>  	*bnop = bno;
+> -- 
+> 2.7.4
+> 
+> 
+
+-- 
+Carlos
