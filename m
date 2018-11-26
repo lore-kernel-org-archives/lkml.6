@@ -2,117 +2,121 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D5D4C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5C9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B4D620855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:54:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B4D620855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id 520C920865
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:54:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dBiioxk3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 520C920865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbeK0Dsz (ORCPT
+        id S1726735AbeK0Ds7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 22:48:55 -0500
-Received: from mout.gmx.net ([212.227.17.22]:37237 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726255AbeK0Dsz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:48:55 -0500
-Received: from ovpn-120-189.rdu2.redhat.com ([98.118.28.103]) by mail.gmx.com
- (mrgmx102 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 0LsOsW-1fPi1s2h9U-011xcO; Mon, 26 Nov 2018 17:53:57 +0100
-From:   Qian Cai <cai@gmx.us>
-To:     akpm@linux-foundation.org
-Cc:     tglx@linutronix.de, longman@redhat.com, yang.shi@linux.alibaba.com,
-        arnd@arndb.de, catalin.marinas@arm.com,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@gmx.us>
-Subject: [PATCH] debugobjects: avoid recursive calls with kmemleak
-Date:   Mon, 26 Nov 2018 11:53:43 -0500
-Message-Id: <20181126165343.2339-1-cai@gmx.us>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
-X-Provags-ID: V03:K1:Z7xs/5i9krT0NzYMsDvLcsUygqjt/jpWeQQjvMr81mWug/3PZsg
- naIaLeLjjSAUEgiQZHftT19AVpLQxrflepB1Qj5Ho8eNPXLzCpaeN9g4cjvd3t6RrORz9Hl
- A4dXdQv6kwS6VGa97rkwsGzxob+e2NuffiSK7YhIdtjJrs4KqMtwSv8h91FFV04ZiMAdJi6
- groKHWdCTJPY3maYAxtkw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:aWEabYTnR6k=:sDbah4z6OK9H3wkI3T+gEG
- kUTuv8XhaotZjip62BP9npVQZ5TbyWUT9uOWBiGuBWMZOFPMHQoU/Yzpzl4nNgOC62Lq486Of
- aJwTyjMgzAPB4LE1JMH/22oJb3uzz3l0idLdvvTNmMC9jYyv6QGuBTVXII402ja/xeGS8muH5
- J3lqHYwM7u3wMNdiU26y/jHSrSgyH+7oXJRjc5Cqpseu4PSKSrbEoS3uFqU5HjBaUUmhwk104
- ck0AJNg5GUERsrroUOEn3Hu4TJBjZGig3fYQpr9kZ/F9gPWVFgpHBWEN7X5QAyaOilOa5PcWn
- jVlqLZLhc0VKwAGQyNOUoX7meNqwClHinR0cKds1AQ5Fmwn4+dT18R2FamiabGefgfYIohbxH
- 8iguUZEq+OdZ5aCPBaaLQE1mF/no++j1X8JiDRySVxoSUfWtokNJKPZmDfmDipAEmiizH2Sip
- 8155IDoiBpX67HRIUyTffB0S9NwaY1HPxlE935eeuGMyAjOZK0Ru+1X7gZEopoIuu6ISJNS0E
- W8nnPqUjKYt+aTqUxvyC40T1BSoKIj7XRalGvoxbFbQrqcIygu7NxoZW37xXAzbaUrSVPpjql
- KqTxEKt2QsXyW/FvN/PQWP8aVYJjLf2b7xplL7XrGkGX/FsXz/M+YIefqdDoB91Lh4aU21nWk
- CQn3wBniLBBdUSj4knjDdIdTAsCqHeOkdE96X5SNPdqeYSPwtJIaV9VnWlJvgDpemo6it+2Wo
- 25wN06d5rJtuj1v74gX0EkGi/VFvBb4xdfRVzIOkpgM38Z7afBP11Y0L1eZQgq45v4KnWbc97
- c3Pt0UKj+xhWteKH0gnfAip91v5hCGKGlu/Bc8O/BO3Y2RIEGoHmodT1A8rxp9TPmfD8JJz2G
- KTxLpbE4Nz7FxduGydfvhGT355oSLLiyEy7YQRMzc=
+        Mon, 26 Nov 2018 22:48:59 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34404 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbeK0Ds6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 22:48:58 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y185so12965639wmd.1;
+        Mon, 26 Nov 2018 08:54:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=BrcxsdJ3uoMc8L1c1HR2XDoK1sSigEoPDyD1UbnjIVs=;
+        b=dBiioxk3ERXqQz5M/t3NPjC0SwLKFeYR5ufEJNf43nseghKQo2vUReAJ7CkcvAhooz
+         Y4XMD8Vr7q+1yoqZYejQVzT89udqhGdQYVkgIAVJ/GgCDm3q9PEGfChrY/Hqt6d0uN6w
+         IZ7mApXk17nd1lJxCZHe+fAzuGBVJaknDulNEKCc2tUDIMkTXf19781f67VcX+Ph9w5C
+         o6z41/0MWAdVltUNh6YAci/rNRyXdrqlFbA70OCTncr2rHSv+c7334fU97Pvs4Z/ckSz
+         rCwCQCR4EVDO0ffB31PaYIJdiDikzqOc31kyELB0Xt9a+Jwwl1cbcPmE4M05PB6eIpB0
+         nAKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=BrcxsdJ3uoMc8L1c1HR2XDoK1sSigEoPDyD1UbnjIVs=;
+        b=WcK4PheOUDI20tBWOtBfGVk9i9Hjtrgqlepo7YzHdmVjBn7jka0OTPbatTh9oT6Mif
+         dkN2t/N1I3pSoYA9lt6UIKBSOSqY2hNvKYQyzGIJULYYq+trIAGFgwlnrAmI4hLqqgd9
+         AyvyJMWE+2V1BPF+ViuJAxdTUlGiTSgy2IvIfyTs9BvGyQLaz3W65ntiQ6qrg+nDrDNI
+         y8NQZl27TGZX9NwPsEAhQERHP4tDhGFWOqPwzjk6ZFA9Juj+94MNLHe+ON/GKpw71xyQ
+         4y336DFUwR7R0MsfYyDuXFP0Qsq1oby7Pcyw78EcNNbSFv7bdIJNcZbVG/QSmjcwwrwi
+         /PCQ==
+X-Gm-Message-State: AA+aEWa/JCEGFTBhLbDpWWURdO214uFWJAyon80Ny9NpmyoQO4plpbxi
+        Obc/5/g77fcZ8XQgIIkZsBHFD2fd
+X-Google-Smtp-Source: AFSGD/VWXnZeZeWO/tUnE8Zq1Jgyk7G6/35fH0PSCEYDF2/ytr3TINST/5jMKKD+Ya2Dqh56+layMw==
+X-Received: by 2002:a1c:b47:: with SMTP id 68mr12183398wml.148.1543251255512;
+        Mon, 26 Nov 2018 08:54:15 -0800 (PST)
+Received: from 640k.lan ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id w8sm979240wrv.7.2018.11.26.08.54.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 08:54:14 -0800 (PST)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Junaid Shahid <junaids@google.com>,
+        Xiao Guangrong <guangrong.xiao@linux.intel.com>
+Subject: [PATCH 0/3] kvm: split retrieval and clearing of dirty log
+Date:   Mon, 26 Nov 2018 17:54:10 +0100
+Message-Id: <1543251253-24762-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CONFIG_DEBUG_OBJECTS_RCU_HEAD does not play well with kmemleak due to
-recursive calls.
+There are two problems with KVM_GET_DIRTY_LOG.  First, and less important,
+it can take kvm->mmu_lock for an extended period of time.  Second, its user
+can actually see many false positives in some cases.  The latter is due
+to a benign race like this:
 
-fill_pool
-  kmemleak_ignore
-    make_black_object
-      put_object
-        __call_rcu (kernel/rcu/tree.c)
-          debug_rcu_head_queue
-            debug_object_activate
-              debug_object_init
-                fill_pool
-                  kmemleak_ignore
-                    make_black_object
-                      ...
+  1. KVM_GET_DIRTY_LOG returns a set of dirty pages and write protects
+     them.
+  2. The guest modifies the pages, causing them to be marked ditry.
+  3. Userspace actually copies the pages.
+  4. KVM_GET_DIRTY_LOG returns those pages as dirty again, even though
+     they were not written to since (3).
 
-Hence, adding SLAB_NOLEAKTRACE to kmem_cache_create() to not register a
-newly allocated debug objects at all.
+This is especially a problem for large guests, where the time between
+(1) and (3) can be substantial.  This patch introduces a new
+capability which, when enabled, makes KVM_GET_DIRTY_LOG not
+write-protect the pages it returns.  Instead, userspace has to
+explicitly clear the dirty log bits just before using the content
+of the page.  The new KVM_CLEAR_DIRTY_LOG ioctl can operate on a
+64-page granularity rather than requiring to sync a full memslot.
+This way the mmu_lock is taken for small amounts of time, and
+only a small amount of time will pass between write protection
+of pages and the sending of their content.
 
-Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Qian Cai <cai@gmx.us>
----
- lib/debugobjects.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+This is entirely implemented in generic code, but only users of
+kvm_get_dirty_log_protect get the support (that is x86_64 and ARM).
 
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index eab7727b46ed..55437fd5128b 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -135,7 +135,6 @@ static void fill_pool(void)
- 		if (!new)
- 			return;
- 
--		kmemleak_ignore(new);
- 		raw_spin_lock_irqsave(&pool_lock, flags);
- 		hlist_add_head(&new->node, &obj_pool);
- 		debug_objects_allocated++;
-@@ -1128,7 +1127,6 @@ static int __init debug_objects_replace_static_objects(void)
- 		obj = kmem_cache_zalloc(obj_cache, GFP_KERNEL);
- 		if (!obj)
- 			goto free;
--		kmemleak_ignore(obj);
- 		hlist_add_head(&obj->node, &objects);
- 	}
- 
-@@ -1182,7 +1180,8 @@ void __init debug_objects_mem_init(void)
- 
- 	obj_cache = kmem_cache_create("debug_objects_cache",
- 				      sizeof (struct debug_obj), 0,
--				      SLAB_DEBUG_OBJECTS, NULL);
-+				      SLAB_DEBUG_OBJECTS | SLAB_NOLEAKTRACE,
-+				      NULL);
- 
- 	if (!obj_cache || debug_objects_replace_static_objects()) {
- 		debug_objects_enabled = 0;
+Paolo Bonzini (3):
+  kvm: make KVM_CAP_ENABLE_CAP_VM architecture agnostic
+  kvm: rename last argument to kvm_get_dirty_log_protect
+  kvm: introduce manual dirty log reprotect
+
+ Documentation/virtual/kvm/api.txt                  |  78 ++++++++++-
+ arch/mips/kvm/mips.c                               |  29 +++-
+ arch/powerpc/kvm/powerpc.c                         |  14 +-
+ arch/s390/kvm/kvm-s390.c                           |  11 +-
+ arch/x86/kvm/x86.c                                 |  47 ++++---
+ include/linux/kvm_host.h                           |   9 +-
+ include/uapi/linux/kvm.h                           |  15 +++
+ tools/testing/selftests/kvm/Makefile               |   2 +
+ tools/testing/selftests/kvm/clear_dirty_log_test.c |   2 +
+ tools/testing/selftests/kvm/dirty_log_test.c       |  19 +++
+ tools/testing/selftests/kvm/include/kvm_util.h     |   2 +
+ tools/testing/selftests/kvm/lib/kvm_util.c         |  13 ++
+ virt/kvm/arm/arm.c                                 |  22 ++-
+ virt/kvm/kvm_main.c                                | 147 ++++++++++++++++++---
+ 14 files changed, 345 insertions(+), 65 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/clear_dirty_log_test.c
+
 -- 
-2.17.2 (Apple Git-113)
+1.8.3.1
 
