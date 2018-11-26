@@ -2,109 +2,93 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B4A8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA16C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2097620855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:30:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="N8nG7ZPg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2097620855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 81872205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:31:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81872205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726888AbeK0GZf (ORCPT
+        id S1726887AbeK0G0e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 01:25:35 -0500
-Received: from mail-lf1-f42.google.com ([209.85.167.42]:33506 "EHLO
-        mail-lf1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbeK0GZf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 01:25:35 -0500
-Received: by mail-lf1-f42.google.com with SMTP id i26so14497852lfc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 11:30:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KfSiWt4TASYtU/aFn7VLqQdRvKbL6KMMgypgppPpkhY=;
-        b=N8nG7ZPglfkvB0ldspGZvLQddmNZyuLR7Z3MR219b49nwAaRPvLcs0SJDtKpcMpL9n
-         zuavdtsP/caU7W+DhTHc047XdfIkaTGOZn2fM9vwxoDm5K0EACXcEH2UClBcfqUj9kOt
-         iQBm/0jYMv5twHMm/OjKlYhn3n6hMjy8T/r5E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KfSiWt4TASYtU/aFn7VLqQdRvKbL6KMMgypgppPpkhY=;
-        b=G/zomABfIhE+QxmUm2SdHtelp4jOleKWg3pUqs3vMubMVwpnHyYjjB4sadSzx+Wafk
-         v+kxd3hTdQw5qYkrKR77/GXzxh+nvueOjxKmWO/mDULPYWnb45P+5PISuyVaezs9OPBC
-         VeWSwgVwBsr6btxvqdvuqO/ShiFChJXx2/q5pLwst6yuyLwmbFAOF7UiJ/Ea+YiwGtbO
-         oPmyX5/wfZzsUNVlHTu/rpNhhItGs3kd9OYpMBIv/So8LKTFqYV7iJfVABTC00qIPIMa
-         Bmsr4GmO/odPtYajrUZTsKoiEBvXl9WrBgC9dtNf5qxDeoNhZEmR4i+EOJnLisZGcclN
-         HBPQ==
-X-Gm-Message-State: AGRZ1gJIXyA7yR0YC5kFBwF/St09oBhUq6FN2gjBGGoQ/mSEfxoMpb7x
-        iDoYIi2JFvhjIdqeDMBXCDivcRTQAK4=
-X-Google-Smtp-Source: AJdET5dDPvnWUMn/8UPVGOEFeZmdgEWTvQeK6S4JjKZYAAObpX20GdH9HnYeMhJaQ8f5+ORvRkQNtw==
-X-Received: by 2002:a19:1cd3:: with SMTP id c202mr17486782lfc.33.1543260625672;
-        Mon, 26 Nov 2018 11:30:25 -0800 (PST)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id n187sm191831lfn.59.2018.11.26.11.30.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 11:30:24 -0800 (PST)
-Received: by mail-lj1-f177.google.com with SMTP id n18-v6so17736878lji.7
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 11:30:24 -0800 (PST)
-X-Received: by 2002:a2e:2416:: with SMTP id k22-v6mr19811291ljk.80.1543260623475;
- Mon, 26 Nov 2018 11:30:23 -0800 (PST)
+        Tue, 27 Nov 2018 01:26:34 -0500
+Received: from foss.arm.com ([217.140.101.70]:45926 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725884AbeK0G0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 01:26:33 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 699111A25;
+        Mon, 26 Nov 2018 11:31:26 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 385ED3F5AF;
+        Mon, 26 Nov 2018 11:31:26 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id ACD1D1AE0839; Mon, 26 Nov 2018 19:31:43 +0000 (GMT)
+Date:   Mon, 26 Nov 2018 19:31:43 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Christoph Hellwig <hch@lst.de>, john.stultz@linaro.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu@lists.linux-foundation.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        Valentin Schneider <valentin.schneider@arm.com>
+Subject: Re: [PATCH 06/10] swiotlb: use swiotlb_map_page in
+ swiotlb_map_sg_attrs
+Message-ID: <20181126193142.GA534@arm.com>
+References: <20181008080246.20543-7-hch@lst.de>
+ <CANcMJZAzrxA9LGNvP-epv2DwsUacEM_hcgA1n5gmaPuWRJG4iw@mail.gmail.com>
+ <20181109074955.GA27489@lst.de>
+ <CALAqxLVSDkv4faF3ta_ue9AA9s8B=-8cAMxC_sow+wZYtrfxeQ@mail.gmail.com>
+ <20181114141311.GA26677@lst.de>
+ <20181114161239.GA29462@lst.de>
+ <CALAqxLVMW2sYkaQvggZ-LhvkzpuF2rssQJ4thZkkAkROk=wVVw@mail.gmail.com>
+ <20181120092516.GC7270@lst.de>
+ <20181123182715.GA21183@arm.com>
+ <1c782a3d-cac4-954f-21e7-ef89147f0d56@arm.com>
 MIME-Version: 1.0
-References: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils>
- <CAHk-=wjeqKYevxGnfCM4UkxX8k8xfArzM6gKkG3BZg1jBYThVQ@mail.gmail.com>
- <alpine.LSU.2.11.1811251900300.1278@eggly.anvils> <alpine.LSU.2.11.1811261121330.1116@eggly.anvils>
-In-Reply-To: <alpine.LSU.2.11.1811261121330.1116@eggly.anvils>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 26 Nov 2018 11:30:07 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wix+0_ED+78Q43Sk+hoObO+Q1DoSOqq_TLnH2=wcNHx2A@mail.gmail.com>
-Message-ID: <CAHk-=wix+0_ED+78Q43Sk+hoObO+Q1DoSOqq_TLnH2=wcNHx2A@mail.gmail.com>
-Subject: Re: [PATCHi v2] mm: put_and_wait_on_page_locked() while page is migrated
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, bhe@redhat.com,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>, david@redhat.com,
-        mgorman@techsingularity.net,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>, kan.liang@intel.com,
-        Andi Kleen <ak@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christoph Lameter <cl@linux.com>,
-        Nick Piggin <npiggin@gmail.com>, pifang@redhat.com,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1c782a3d-cac4-954f-21e7-ef89147f0d56@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 11:27 AM Hugh Dickins <hughd@google.com> wrote:
->
-> +enum behavior {
-> +       EXCLUSIVE,      /* Hold ref to page and take the bit when woken, like
-> +                        * __lock_page() waiting on then setting PG_locked.
-> +                        */
-> +       SHARED,         /* Hold ref to page and check the bit when woken, like
-> +                        * wait_on_page_writeback() waiting on PG_writeback.
-> +                        */
-> +       DROP,           /* Drop ref to page before wait, no check when woken,
-> +                        * like put_and_wait_on_page_locked() on PG_locked.
-> +                        */
-> +};
+Hi Robin,
 
-Ack, thanks.
+On Fri, Nov 23, 2018 at 07:34:15PM +0000, Robin Murphy wrote:
+> On 2018-11-23 6:27 pm, Will Deacon wrote:
+> >On Tue, Nov 20, 2018 at 10:25:16AM +0100, Christoph Hellwig wrote:
+> >>On Mon, Nov 19, 2018 at 03:22:13PM -0800, John Stultz wrote:
+> >>>>+               sg->dma_address = dma_addr;
+> >>>>                 sg_dma_len(sg) = sg->length;
+> >>>>         }
+> >>>
+> >>>I know Robin has already replied with more detailed info, but just to
+> >>>close the loop as I'm finally home, applying this patch didn't seem to
+> >>>help with the IO hangs I'm seeing w/ HiKey960.
+> >>
+> >>If Robins observation is right this should fix the problem for you:
+> >
+> >Please could you give this diff a try and let us know whether the problem
+> >persists with your board?
+> 
+> This is actually the exact same change that I ended up with in my fixes[1],
+> which John has indeed confirmed.
+> 
+> (sorry, it's the thing I was telling you about the other day, but I
+> neglected to include you on cc you when I sent the patches out the following
+> morning)
 
-                Linus
+Thanks, I missed that series. I'll forget all about this problem then!
+
+Will
