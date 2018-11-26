@@ -2,117 +2,146 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB50CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:35:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D79B3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B165E20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:35:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B165E20663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
+	by mail.kernel.org (Postfix) with ESMTP id 975A220663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:35:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5GjeUnO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975A220663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbeK0EaZ (ORCPT
+        id S1727284AbeK0EaX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:30:25 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:37405 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727230AbeK0EaY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:30:24 -0500
-Received: by mail-qt1-f196.google.com with SMTP id z16so18494522qtq.4;
-        Mon, 26 Nov 2018 09:35:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:organization:content-transfer-encoding;
-        bh=bG2RSG/eMmogT9zLKeSpesOwSTJMB/bL447og4JLn/g=;
-        b=YElhiznN5hC73rS1A2zVqESqKXEPhpbVH3atOTUiBurTOLjTl9ShbRZOqbSFPzcu73
-         B3HmcJfzDtNglfPeFTWOzvarNw2/1+BRTtBKBfYZR5Oq/V4iK+Fy40Td84xL4uGsQ0Vx
-         XsiJS9sqv8X7jx1Fki0vA34f+lFhQG9atfxhiCDXR5Dad9Uip6JikUk820BQ0/TdOtyD
-         QwOLt/IAw4zlXSe8mcs1ydYONS7dZ6TKW8OXNMmB66rf+YQJ76/YbCwlcK+C6vkl+IhT
-         ndUEUvVLG+/ioaxyLkBlq9FPNRiX9XmMZFmJ+8a2UvWyEIDNMm4drslQ9/leM3sSq0pJ
-         DpWA==
-X-Gm-Message-State: AA+aEWZ/4stm54kf1jBI7md9K/pRSxsZmDEm/0RCgrutkl5oWGFhXc+g
-        JSh/H0AUIAO7tU5sOXZ9Hs8F7YWL
-X-Google-Smtp-Source: AFSGD/UCrCUN1WJpSOk9xuNGt7e0LZ5eMujXLmMISKrON8UoU0GzN0PPH86z34FvSzdx/GgjgTXUmw==
-X-Received: by 2002:a0c:d2f7:: with SMTP id x52mr27044363qvh.35.1543253735871;
-        Mon, 26 Nov 2018 09:35:35 -0800 (PST)
-Received: from localhost.localdomain ([181.220.65.91])
-        by smtp.gmail.com with ESMTPSA id x7sm397238qti.76.2018.11.26.09.35.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 09:35:35 -0800 (PST)
-Received: by localhost.localdomain (sSMTP sendmail emulation); Mon, 26 Nov 2018 15:35:29 -0200
-From:   Otavio Salvador <otavio@ossystems.com.br>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     Otavio Salvador <otavio@ossystems.com.br>,
-        devicetree@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH v2 4/4] ARM: dts: rockchip: Add internal timer support for rv1108
-Date:   Mon, 26 Nov 2018 15:35:06 -0200
-Message-Id: <20181126173506.24068-4-otavio@ossystems.com.br>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181126173506.24068-1-otavio@ossystems.com.br>
-References: <20181126173506.24068-1-otavio@ossystems.com.br>
-MIME-Version: 1.0
-Organization: O.S. Systems Software LTDA.
-Content-Transfer-Encoding: 8bit
+        Mon, 26 Nov 2018 23:30:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58692 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726254AbeK0EaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 23:30:22 -0500
+Received: from localhost.localdomain (unknown [136.62.81.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA8152086B;
+        Mon, 26 Nov 2018 17:35:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543253734;
+        bh=qJDW8bMoYKeCM3xnA/soWeSyA0ukKDLXhfMwLcnhPlk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=C5GjeUnOWgWD6e+EsSL4CHRaSN/3VIIT/LFgAssahqORtHyTcG+OERAh8cMlTqzQp
+         eglCSKoXR7c90AugKVMKqAP2yZpzBGRXXEIeACDOxG0rAGv1zcDGc65lBeDjXN54g8
+         fpxqI2jrTlkYAuuXW2RKpj3HOuwf9O1B4XLtDl2Q=
+From:   Alan Tull <atull@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Moritz Fischer <mdf@kernel.org>, Alan Tull <atull@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
+        Anatolij Gustschin <agust@denx.de>
+Subject: [PATCH 2/2] fpga: mgr: altera-ps-spi: enable usage on non-dt platforms
+Date:   Mon, 26 Nov 2018 11:35:28 -0600
+Message-Id: <1543253728-26542-3-git-send-email-atull@kernel.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1543253728-26542-1-git-send-email-atull@kernel.org>
+References: <1543253728-26542-1-git-send-email-atull@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the internal timer peripheral on RV1108.
+From: Anatolij Gustschin <agust@denx.de>
 
-Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
+Driver probing fails on non-dt platforms since of_match_device()
+always returns NULL here. Add spi ids with device names and
+matching driver data as an index of a map array with data for
+supported devices. Add this map array and a function for mapping
+spi ids to driver data. This allows driver binding to dynamically
+added PS-SPI devices (e.g. when added via spi_new_device() after
+hot-plugging).
+
+Signed-off-by: Anatolij Gustschin <agust@denx.de>
+Acked-by: Alan Tull <atull@kernel.org>
 ---
+ drivers/fpga/altera-ps-spi.c | 40 +++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 35 insertions(+), 5 deletions(-)
 
-Changes in v2:
-- add binding to doc
-- fixup commit log
-
- .../devicetree/bindings/timer/rockchip,rk-timer.txt       | 1 +
- arch/arm/boot/dts/rv1108.dtsi                             | 8 ++++++++
- 2 files changed, 9 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/timer/rockchip,rk-timer.txt b/Documentation/devicetree/bindings/timer/rockchip,rk-timer.txt
-index 16a5f4577a61..d65fdce7c7f0 100644
---- a/Documentation/devicetree/bindings/timer/rockchip,rk-timer.txt
-+++ b/Documentation/devicetree/bindings/timer/rockchip,rk-timer.txt
-@@ -2,6 +2,7 @@ Rockchip rk timer
+diff --git a/drivers/fpga/altera-ps-spi.c b/drivers/fpga/altera-ps-spi.c
+index 33aafda..8c18bee 100644
+--- a/drivers/fpga/altera-ps-spi.c
++++ b/drivers/fpga/altera-ps-spi.c
+@@ -75,6 +75,12 @@ static struct altera_ps_data a10_data = {
+ 	.t_st2ck_us = 10, /* min(t_ST2CK) */
+ };
  
- Required properties:
- - compatible: should be:
-+  "rockchip,rv1108-timer", "rockchip,rk3288-timer": for Rockchip RV1108
-   "rockchip,rk3036-timer", "rockchip,rk3288-timer": for Rockchip RK3036
-   "rockchip,rk3066-timer", "rockchip,rk3288-timer": for Rockchip RK3066
-   "rockchip,rk3188-timer", "rockchip,rk3288-timer": for Rockchip RK3188
-diff --git a/arch/arm/boot/dts/rv1108.dtsi b/arch/arm/boot/dts/rv1108.dtsi
-index 23ac4b10d690..9683f3b00d9d 100644
---- a/arch/arm/boot/dts/rv1108.dtsi
-+++ b/arch/arm/boot/dts/rv1108.dtsi
-@@ -293,6 +293,14 @@
- 		};
- 	};
- 
-+	timer: timer@10350000 {
-+		compatible = "rockchip,rv1108-timer", "rockchip,rk3288-timer";
-+		reg = <0x10350000 0x20>;
-+		interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&xin24m>, <&cru PCLK_TIMER>;
-+		clock-names = "timer", "pclk";
-+	};
++/* Array index is enum altera_ps_devtype */
++static const struct altera_ps_data *altera_ps_data_map[] = {
++	&c5_data,
++	&a10_data,
++};
 +
- 	watchdog: wdt@10360000 {
- 		compatible = "snps,dw-wdt";
- 		reg = <0x10360000 0x100>;
+ static const struct of_device_id of_ef_match[] = {
+ 	{ .compatible = "altr,fpga-passive-serial", .data = &c5_data },
+ 	{ .compatible = "altr,fpga-arria10-passive-serial", .data = &a10_data },
+@@ -234,6 +240,22 @@ static const struct fpga_manager_ops altera_ps_ops = {
+ 	.write_complete = altera_ps_write_complete,
+ };
+ 
++static const struct altera_ps_data *id_to_data(const struct spi_device_id *id)
++{
++	kernel_ulong_t devtype = id->driver_data;
++	const struct altera_ps_data *data;
++
++	/* someone added a altera_ps_devtype without adding to the map array */
++	if (devtype >= ARRAY_SIZE(altera_ps_data_map))
++		return NULL;
++
++	data = altera_ps_data_map[devtype];
++	if (!data || data->devtype != devtype)
++		return NULL;
++
++	return data;
++}
++
+ static int altera_ps_probe(struct spi_device *spi)
+ {
+ 	struct altera_ps_conf *conf;
+@@ -244,11 +266,17 @@ static int altera_ps_probe(struct spi_device *spi)
+ 	if (!conf)
+ 		return -ENOMEM;
+ 
+-	of_id = of_match_device(of_ef_match, &spi->dev);
+-	if (!of_id)
+-		return -ENODEV;
++	if (spi->dev.of_node) {
++		of_id = of_match_device(of_ef_match, &spi->dev);
++		if (!of_id)
++			return -ENODEV;
++		conf->data = of_id->data;
++	} else {
++		conf->data = id_to_data(spi_get_device_id(spi));
++		if (!conf->data)
++			return -ENODEV;
++	}
+ 
+-	conf->data = of_id->data;
+ 	conf->spi = spi;
+ 	conf->config = devm_gpiod_get(&spi->dev, "nconfig", GPIOD_OUT_LOW);
+ 	if (IS_ERR(conf->config)) {
+@@ -294,7 +322,9 @@ static int altera_ps_remove(struct spi_device *spi)
+ }
+ 
+ static const struct spi_device_id altera_ps_spi_ids[] = {
+-	{"cyclone-ps-spi", 0},
++	{ "cyclone-ps-spi", CYCLONE5 },
++	{ "fpga-passive-serial", CYCLONE5 },
++	{ "fpga-arria10-passive-serial", ARRIA10 },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(spi, altera_ps_spi_ids);
 -- 
-2.19.2
+2.7.4
 
