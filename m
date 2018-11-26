@@ -2,99 +2,382 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC928C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BBDC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77DA520817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:08:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C3B820862
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:10:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="px+R53O9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77DA520817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NulTZ2Tr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C3B820862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbeK0FDT (ORCPT
+        id S1726357AbeK0FE5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 00:03:19 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45708 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725199AbeK0FDT (ORCPT
+        Tue, 27 Nov 2018 00:04:57 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34202 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725723AbeK0FE4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 00:03:19 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 32so17465817ota.12
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 10:08:26 -0800 (PST)
+        Tue, 27 Nov 2018 00:04:56 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j2so19986940wrw.1;
+        Mon, 26 Nov 2018 10:10:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AzI3Y6/89Bw4vbZl5XXZYpJXzbnTAAgZ69VKphCpYl8=;
-        b=px+R53O95subW6m6mOWCNlVfDv1A0Vq2NjWh1Xu6pzSO4VrsgnBE6f1MEQZlDXQYbV
-         YHUkR0PWAXKdiEuiEf0cELGLoulA4lf9VirFJkG0ODSsRwbd6f5kq2QDY57jODCrG7pt
-         vMFiFkfgvmyeDn0qpGL1HbzrJoC3zH800lfolLcFbbI4vk9vCYaLmtVtZpKtt/Nq7UWq
-         46yBEus2pekcivAH6eEGqfZH1zoS7yaLdZ1Y5U+g8nY3YIDH31eLv3RczWB2vABNP017
-         eVEA1g0JHBDF5x8BuvDzFE+loN/sprLGkiv/8rgdZJUnhQb5fNkexQPrKREeWzsrHVqf
-         Fd7A==
+         :cc:content-transfer-encoding;
+        bh=RaMHMNUarCj00M3rmtT5/PDZv2CjzSWPv+8ByFbA7gM=;
+        b=NulTZ2TrBDGGGtBgkVNSsU5W3b1eB3NQ4e5MMxXnpOyFTRgfJKNDunUf1bVHAuowsZ
+         zRtzyHfDP9mKRQp4Sew2a2msqXrE3xbcCff17wugYVd0n+u8ccQRX6J4Uql5oBGlcC2h
+         nZG0BnHIqseZEiKWM9hOcb3POIxOpoEQXApLX8q2BEsIh3nMOyXxT6LBaqoEMtergAFs
+         9C4ymtz+HTDxxEDZnYTqZIj4Im/SWfmSKDUogaBowhTdI2VJSbBVArNZ9wlOPcHVY1x1
+         ifgZipmJJIlba/PJP28Nq0inEiXOc9WIWjIBF/ATRDf1gd7x+z/7TILvFyWGgupDFPh9
+         Qwkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AzI3Y6/89Bw4vbZl5XXZYpJXzbnTAAgZ69VKphCpYl8=;
-        b=hcn786D49mb01IgCe7PMDGFizyMAUUiPkoSZxXvpIpH8GxbKXhIh7qv5eJUf77aENt
-         QYLDQ4MraKvXPr5bp0QHI5wliLGYP3upJDheSgu/LBe1ZZHo0mwlcsuqUbcXRhrN8BOr
-         dZ0R0XJFX4uxAFbnY2VaRDG70zD+14nQEZl+urJmMRp/Uy+sjgNeiGTEtoAo7Z+V/1Dz
-         DF4l/uwdFPwUoy6JSeFcwK7CtqJD2XIx8ZEbIS+4FxgbFkV9eQFi01qAa/tJppkylfI/
-         Wt15AKaO7N1W+5cl1GHxdybC23xndBQ8gE7lsuB2myTKn0R1B2aX2jl/ehABJTaa4jn9
-         csEg==
-X-Gm-Message-State: AA+aEWb/dxfIMmo8+HGBlMRQZ/f1BSK36vYFpziZyya86pFtOjnFf2oX
-        P5sFPoz6yUmV6aNnUuSgHkM3pgfWE31tjEzeOo58XWx3
-X-Google-Smtp-Source: AFSGD/U4tbq8gjfRU3pLgczr33MS9sSLEqsQzqjsqhHMbcd2nCBSRd1gJGHEVNOHUz1etj9kW4z+US0NUocNX3P7/oY=
-X-Received: by 2002:a9d:3ac:: with SMTP id f41mr12033324otf.98.1543255705724;
- Mon, 26 Nov 2018 10:08:25 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=RaMHMNUarCj00M3rmtT5/PDZv2CjzSWPv+8ByFbA7gM=;
+        b=H6Axf/JEgTC5XTYUGx9DGNwEVZOlSSRCg/4U1K/GoUirjvQd6VmjmONMbgkX0r/qXv
+         0Qaos9M9h+P1eDjd4MXjMSvnlOQ9bIhRTcUYM1a6KROpGMfJ6Er/jZioOh6XMzkZAuen
+         njKSBo+HA+YA92nTtdrHo87Hr1kqMhyl5ux1JNWumKrJ1VdoK3khHnxuB4dcG5mbZtnT
+         aKDNw6MJ6XJ/9Vi5Q6Hhe+bLuW6lq+3Mq7Rrd5bs65/kdMUkWcU4l27Yzi6y5ARTg3Nf
+         KWVi6n+/SNMvFZKVAT6pj0xR4YS8Ai6kKIQbMd/bE0vzzeYBZw0VJN0+go9xnuWxe60M
+         v/vQ==
+X-Gm-Message-State: AA+aEWaL8nl6IkJqdMbULgmN9lwx/wLg2KhyYr7pH7Wi9PMS6LHCAGgb
+        E4WdShyF3gUoZmeMU+LzWgWNiEuebSDoNACvd91jo7QRTak=
+X-Google-Smtp-Source: AFSGD/UqsTJs8Ow6UaLx2iWa6p1srnIPgz3U5IvMOFFzVYbnNXP8pcy5XMIPNs93/r9UToFfHcnXjhsaubh1C/Zh+20=
+X-Received: by 2002:a5d:4b01:: with SMTP id v1mr23617501wrq.5.1543255800279;
+ Mon, 26 Nov 2018 10:10:00 -0800 (PST)
 MIME-Version: 1.0
-References: <20181114224902.12082-1-keith.busch@intel.com> <1ed406b2-b85f-8e02-1df0-7c39aa21eca9@arm.com>
- <4ea6e80f-80ba-6992-8aa0-5c2d88996af7@intel.com> <b79804b0-32ee-03f9-fa62-a89684d46be6@arm.com>
- <c6abb754-0d82-8739-fe08-24e9402bae75@intel.com> <aae34dde-fa70-870a-9b74-fff9e385bfc9@arm.com>
- <f5315662-5c1a-68a3-4d04-21b4b5ca94b1@intel.com> <ac942498-8966-6a9b-0e55-c79ae167c679@arm.com>
- <9015e51a-3584-7bb2-cc5e-25b0ec8e5494@intel.com> <CAPcyv4jnnnXi9Fqaf-d7AdnKrTMDCWr-e9tAx+G6nphrEPYm=w@mail.gmail.com>
- <b9962dfa-924f-77f7-a40f-407dd20e9082@intel.com>
-In-Reply-To: <b9962dfa-924f-77f7-a40f-407dd20e9082@intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 26 Nov 2018 10:08:12 -0800
-Message-ID: <CAPcyv4hVFMvut9+Rq7G41yyKzV072U33YEeHNh160VBr3QW-nw@mail.gmail.com>
-Subject: Re: [PATCH 0/7] ACPI HMAT memory sysfs representation
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     anshuman.khandual@arm.com, Keith Busch <keith.busch@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20181117181225.10737-1-andrew.smirnov@gmail.com>
+ <20181117181225.10737-4-andrew.smirnov@gmail.com> <AM0PR0402MB35706B20F01340140367FECD8CD80@AM0PR0402MB3570.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR0402MB35706B20F01340140367FECD8CD80@AM0PR0402MB3570.eurprd04.prod.outlook.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Mon, 26 Nov 2018 10:09:48 -0800
+Message-ID: <CAHQ1cqER2jjZCfFeaMi0T3-N-yNhiLiX5WYztpzuseXhA96JFw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] PCI: imx: Add support for i.MX8MQ
+To:     Richard Zhu <hongxing.zhu@nxp.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-pci@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 8:42 AM Dave Hansen <dave.hansen@intel.com> wrote:
+On Sun, Nov 18, 2018 at 11:07 PM Richard Zhu <hongxing.zhu@nxp.com> wrote:
 >
-> On 11/23/18 1:13 PM, Dan Williams wrote:
-> >> A new system call makes total sense to me.  I have the same concern
-> >> about the completeness of what's exposed in sysfs, I just don't see a
-> >> _route_ to completeness with sysfs itself.  Thus, the minimalist
-> >> approach as a first step.
-> > Outside of platform-firmware-id to Linux-numa-node-id what other
-> > userspace API infrastructure does the kernel need to provide? It seems
-> > userspace enumeration of memory attributes is fully enabled once the
-> > firmware-to-Linux identification is established.
+> Hi Andrey:
+> Thanks for your patch-set.
+> I have comment about the L1SS implementation below.
+> It's better to figure out one method to fix it.
 >
-> It would be nice not to have each app need to know about each specific
-> platform's firmware.
+> BR
+> Richard
+>
+> > -----Original Message-----
+> > From: Andrey Smirnov [mailto:andrew.smirnov@gmail.com]
+> > Sent: 2018=E5=B9=B411=E6=9C=8818=E6=97=A5 2:12
+> > To: linux-kernel@vger.kernel.org
+> > Cc: Andrey Smirnov <andrew.smirnov@gmail.com>; bhelgaas@google.com;
+> > Fabio Estevam <fabio.estevam@nxp.com>; cphealy@gmail.com;
+> > l.stach@pengutronix.de; Leonard Crestez <leonard.crestez@nxp.com>;
+> > Aisheng DONG <aisheng.dong@nxp.com>; Richard Zhu
+> > <hongxing.zhu@nxp.com>; dl-linux-imx <linux-imx@nxp.com>;
+> > linux-arm-kernel@lists.infradead.org; linux-pci@vger.kernel.org
+> > Subject: [PATCH 3/3] PCI: imx: Add support for i.MX8MQ
+> >
+> > Cc: bhelgaas@google.com
+> > Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> > Cc: cphealy@gmail.com
+> > Cc: l.stach@pengutronix.de
+> > Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> > Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+> > Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> > Cc: linux-imx@nxp.com
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Cc: linux-pci@vger.kernel.org
+> > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> > ---
+> >  drivers/pci/controller/dwc/Kconfig    |   2 +-
+> >  drivers/pci/controller/dwc/pci-imx6.c | 117 ++++++++++++++++++++++++--
+> >  2 files changed, 113 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/pci/controller/dwc/Kconfig
+> > b/drivers/pci/controller/dwc/Kconfig
+> > index 91b0194240a5..2b139acccf32 100644
+> > --- a/drivers/pci/controller/dwc/Kconfig
+> > +++ b/drivers/pci/controller/dwc/Kconfig
+> > @@ -90,7 +90,7 @@ config PCI_EXYNOS
+> >
+> >  config PCI_IMX6
+> >       bool "Freescale i.MX6 PCIe controller"
+> > -     depends on SOC_IMX6Q || (ARM && COMPILE_TEST)
+> > +     depends on SOC_IMX8MQ || SOC_IMX6Q || (ARM && COMPILE_TEST)
+> >       depends on PCI_MSI_IRQ_DOMAIN
+> >       select PCIE_DW_HOST
+> >
+> > diff --git a/drivers/pci/controller/dwc/pci-imx6.c
+> > b/drivers/pci/controller/dwc/pci-imx6.c
+> > index 3c3002861d25..8d1f310e41a6 100644
+> > --- a/drivers/pci/controller/dwc/pci-imx6.c
+> > +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> > @@ -8,6 +8,7 @@
+> >   * Author: Sean Cross <xobs@kosagi.com>
+> >   */
+> >
+> > +#include <linux/bitfield.h>
+> >  #include <linux/clk.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/gpio.h>
+> > @@ -30,6 +31,14 @@
+> >
+> >  #include "pcie-designware.h"
+> >
+> > +#define IMX8MQ_PCIE_LINK_CAP_REG_OFFSET              0x7C
+> > +#define IMX8MQ_PCIE_LINK_CAP_L1EL_64US               (0x6 << 15)
+> > +
+> > +#define IMX8MQ_GPR_PCIE_REF_USE_PAD          BIT(9)
+> > +#define IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN  BIT(10)
+> > +#define IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE     BIT(11)
+> > +
+> > +
+> >  #define to_imx6_pcie(x)      dev_get_drvdata((x)->dev)
+> >
+> >  enum imx6_pcie_variants {
+> > @@ -37,6 +46,7 @@ enum imx6_pcie_variants {
+> >       IMX6SX,
+> >       IMX6QP,
+> >       IMX7D,
+> > +     IMX8MQ,
+> >  };
+> >
+> >  struct imx6_pcie {
+> > @@ -48,8 +58,10 @@ struct imx6_pcie {
+> >       struct clk              *pcie_inbound_axi;
+> >       struct clk              *pcie;
+> >       struct regmap           *iomuxc_gpr;
+> > +     u32                     gpr1x;
+> >       struct reset_control    *pciephy_reset;
+> >       struct reset_control    *apps_reset;
+> > +     struct reset_control    *apps_clk_req;
+> >       struct reset_control    *turnoff_reset;
+> >       enum imx6_pcie_variants variant;
+> >       u32                     tx_deemph_gen1;
+> > @@ -59,6 +71,7 @@ struct imx6_pcie {
+> >       u32                     tx_swing_low;
+> >       int                     link_gen;
+> >       struct regulator        *vpcie;
+> > +     u32                     device_type[2];
+> >  };
+> >
+> >  /* Parameters for the waiting for PCIe PHY PLL to lock on i.MX7 */ @@
+> > -245,7 +258,8 @@ static void imx6_pcie_reset_phy(struct imx6_pcie
+> > *imx6_pcie)  {
+> >       u32 tmp;
+> >
+> > -     if (imx6_pcie->variant =3D=3D IMX7D)
+> > +     if (imx6_pcie->variant =3D=3D IMX7D ||
+> > +         imx6_pcie->variant =3D=3D IMX8MQ)
+> >               return;
+> >
+> >       pcie_phy_read(imx6_pcie, PHY_RX_OVRD_IN_LO, &tmp); @@ -261,6
+> > +275,7 @@ static void imx6_pcie_reset_phy(struct imx6_pcie *imx6_pcie)
+> >       pcie_phy_write(imx6_pcie, PHY_RX_OVRD_IN_LO, tmp);  }
+> >
+> > +#ifdef CONFIG_ARM
+> >  /*  Added for PCI abort handling */
+> >  static int imx6q_pcie_abort_handler(unsigned long addr,
+> >               unsigned int fsr, struct pt_regs *regs) @@ -294,6 +309,7 =
+@@ static
+> > int imx6q_pcie_abort_handler(unsigned long addr,
+> >
+> >       return 1;
+> >  }
+> > +#endif
+> >
+> >  static void imx6_pcie_assert_core_reset(struct imx6_pcie *imx6_pcie)
+> > { @@ -301,6 +317,7 @@ static void imx6_pcie_assert_core_reset(struct
+> > imx6_pcie *imx6_pcie)
+> >
+> >       switch (imx6_pcie->variant) {
+> >       case IMX7D:
+> > +     case IMX8MQ: /* FALLTHROUGH */
+> >               reset_control_assert(imx6_pcie->pciephy_reset);
+> >               reset_control_assert(imx6_pcie->apps_reset);
+> >               break;
+> > @@ -369,6 +386,18 @@ static int imx6_pcie_enable_ref_clk(struct
+> > imx6_pcie *imx6_pcie)
+> >               break;
+> >       case IMX7D:
+> >               break;
+> > +     case IMX8MQ:
+> > +             /*
+> > +              * Set the over ride low and enabled
+> > +              * make sure that REF_CLK is turned on.
+> > +              */
+> > +             regmap_update_bits(imx6_pcie->iomuxc_gpr, imx6_pcie->gpr1=
+x,
+> > +                                IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE,
+> > +                                0);
+> > +             regmap_update_bits(imx6_pcie->iomuxc_gpr, imx6_pcie->gpr1=
+x,
+> > +                                IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN,
+> > +                                IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN);
+> > +             break;
+> >       }
+> >
+> >       return ret;
+> > @@ -397,6 +426,7 @@ static void imx6_pcie_deassert_core_reset(struct
+> > imx6_pcie *imx6_pcie)  {
+> >       struct dw_pcie *pci =3D imx6_pcie->pci;
+> >       struct device *dev =3D pci->dev;
+> > +     unsigned int val;
+> >       int ret;
+> >
+> >       if (imx6_pcie->vpcie && !regulator_is_enabled(imx6_pcie->vpcie)) =
+{ @@
+> > -445,6 +475,29 @@ static void imx6_pcie_deassert_core_reset(struct
+> > imx6_pcie *imx6_pcie)
+> >       }
+> >
+> >       switch (imx6_pcie->variant) {
+> > +     case IMX8MQ:
+> > +             reset_control_deassert(imx6_pcie->pciephy_reset);
+> > +             udelay(100);
+> > +             /*
+> > +              * Configure the CLK_REQ# high, let the L1SS
+> > +              * automatically controlled by HW.
+> > +              */
+> > +             reset_control_assert(imx6_pcie->apps_clk_req);
+> > +
+> > +             /*
+> > +              * Configure the L1 latency of rc to less than 64us
+> > +              * Otherwise, the L1/L1SUB wouldn't be enable by ASPM.
+> > +              */
+> > +             val =3D dw_pcie_readl_dbi(imx6_pcie->pci,
+> > +                                     SZ_1M +
+> > +                                     IMX8MQ_PCIE_LINK_CAP_REG_OFFSET);
+> > +             val &=3D ~PCI_EXP_LNKCAP_L1EL;
+> > +             val |=3D IMX8MQ_PCIE_LINK_CAP_L1EL_64US;
+> > +             dw_pcie_writel_dbi(imx6_pcie->pci,
+> > +                                SZ_1M +
+> > +                                IMX8MQ_PCIE_LINK_CAP_REG_OFFSET,
+> > +                                val);
+> > +             break;
+> >       case IMX7D:
+> >               reset_control_deassert(imx6_pcie->pciephy_reset);
+> >               imx7d_pcie_wait_for_phy_pll_lock(imx6_pcie);
+> > @@ -483,6 +536,15 @@ static void imx6_pcie_deassert_core_reset(struct
+> > imx6_pcie *imx6_pcie)  static void imx6_pcie_init_phy(struct imx6_pcie
+> > *imx6_pcie)  {
+> >       switch (imx6_pcie->variant) {
+> > +     case IMX8MQ:
+> > +             /*
+> > +              * TODO: Currently this code assumes external
+> > +              * oscillator is being used
+> > +              */
+> > +             regmap_update_bits(imx6_pcie->iomuxc_gpr, imx6_pcie->gpr1=
+x,
+> > +                                IMX8MQ_GPR_PCIE_REF_USE_PAD,
+> > +                                IMX8MQ_GPR_PCIE_REF_USE_PAD);
+> > +             break;
+> >       case IMX7D:
+> >               regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> >                                  IMX7D_GPR12_PCIE_PHY_REFCLK_SEL, 0); @=
+@
+> > -519,7 +581,8 @@ static void imx6_pcie_init_phy(struct imx6_pcie
+> > *imx6_pcie)
+> >       }
+> >
+> >       regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> > -                     IMX6Q_GPR12_DEVICE_TYPE, PCI_EXP_TYPE_ROOT_PORT <=
+<
+> > 12);
+> > +                        imx6_pcie->device_type[0],
+> > +                        imx6_pcie->device_type[1]);
+> >  }
+> >
+> >  static int imx6_setup_phy_mpll(struct imx6_pcie *imx6_pcie) @@ -528,7
+> > +591,8 @@ static int imx6_setup_phy_mpll(struct imx6_pcie *imx6_pcie)
+> >       int mult, div;
+> >       u32 val;
+> >
+> > -     if (imx6_pcie->variant =3D=3D IMX7D)
+> > +     if (imx6_pcie->variant =3D=3D IMX7D ||
+> > +         imx6_pcie->variant =3D=3D IMX8MQ)
+> >               return 0;
+> >
+> >       switch (phy_rate) {
+> > @@ -616,6 +680,7 @@ static void imx6_pcie_ltssm_enable(struct device
+> > *dev)
+> >                                  IMX6Q_GPR12_PCIE_CTL_2);
+> >               break;
+> >       case IMX7D:
+> > +     case IMX8MQ:            /* FALLTHROUGH */
+> >               reset_control_deassert(imx6_pcie->apps_reset);
+> >               break;
+> >       }
+> > @@ -798,10 +863,24 @@ static void imx6_pcie_clk_disable(struct imx6_pci=
+e
+> > *imx6_pcie)
+> >       clk_disable_unprepare(imx6_pcie->pcie_phy);
+> >       clk_disable_unprepare(imx6_pcie->pcie_bus);
+> >
+> > -     if (imx6_pcie->variant =3D=3D IMX7D) {
+> > +     switch (imx6_pcie->variant) {
+> > +     case IMX7D:
+> >               regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> >                                  IMX7D_GPR12_PCIE_PHY_REFCLK_SEL,
+> >                                  IMX7D_GPR12_PCIE_PHY_REFCLK_SEL);
+> > +             break;
+> > +     /*
+> > +      * Disable the override. Configure the CLK_REQ# high, let the
+> > +      * L1SS automatically controlled by HW when link is up.
+> > +      * Otherwise, turn off the REF_CLK to save power consumption.
+> > +      */
+> [Richard Zhu] About the L1SS support, there is a back-compatible issue.
+> When one none-L1SS capability EP device is used in one HW design solution=
+.
+> In this case, EP device wouldn't manipulated its own CLK_REQ#.
+> The CLK_REQ# would be high when the override_en is disabled here.
+> That means the REFCLK would be turned off abnormally.
+> System would have problem when the REFCLK of PCIe is turned off abnormall=
+y after link is up.
+>
 
-The app wouldn't need to know if it uses a common library. Whether the
-library calls into the kernel or not is an implementation detail. If
-it is information that only the app cares about and the kernel does
-not consume, why have a syscall?
+I don't have a lot of expertise in this area, so please take my
+comment with a grain of salt. The way I understand it, is in legacy
+systems that do not support L1SS with CLKREQ that feature shouldn't be
+enabled/used. Unless I've missed something, I think it should be
+possible to do so and disable the feature by configuring corresponding
+CLKREQ_B pad as GPIO and adding a GPIO hog node to pull CLKREQ low. Do
+you see any problems with this approach?
+
+Regardless though, I wasn't really planning on including PM support in
+this series. The code in question shouldn't even be in the patch since
+it'll never be executed because imx6_pcie_clk_disable() is only called
+by imx6_pcie_suspend_noirq() which is a no-op on all variants except
+i.MX7D.
+
+I'll drop all of the unused PM-related bits I missed from the series
+and we can add them later in a separate submission.
+
+Thanks,
+Andrey Smirnov
