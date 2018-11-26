@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 308ACC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78604C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC9A220817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3688421104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TTDmYVOC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC9A220817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DlTLSOZt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3688421104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730650AbeKZV4r (ORCPT
+        id S1730659AbeKZV4v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:56:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40342 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:56:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729290AbeKZV4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:56:47 -0500
+        id S1729290AbeKZV4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:56:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1376C2089F;
-        Mon, 26 Nov 2018 11:03:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8505B20817;
+        Mon, 26 Nov 2018 11:03:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230181;
-        bh=QZDwiUXGjGDYYEkp2dsaIHazYK8iliOXY+gZ5dCj5Lg=;
+        s=default; t=1543230185;
+        bh=NbGA7DvdooPg20XQwCj1rEC53F0m/U8+Q4c/c0Op3jk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TTDmYVOCNMaNqBywSeDZAmkLol8FZSmjVfxG+WGG/OtCihjCUK1YnAIsZ+ccfjb1+
-         ZPkSbGNR+pZcX6Hx2oFX58TIwYULnZNRnKZFyoFybXzhB93clMueeP+On6tX+IUVDc
-         s3elSrz5igg0Pbza7YqxQuwa+CtMrytTSqsjJxAE=
+        b=DlTLSOZt7gUcYMdSeDB3X6jLBinh30yt4O+WTpGxHMWyHSJopUVh/uIc05b0eEDdE
+         lqjmx2kt7Dy0e7mZg/cBT0YnQ20pVl9M/l403pcQzpAd3WEAJuE9kqVEkEEkqoF8eZ
+         t9H2ajRuXCkRTkmWKR89AdlN5KqLtvsXiTrmRqlk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org,
+        syzbot+3701447012fe951dabb2@syzkaller.appspotmail.com,
+        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 005/118] nvme-pci: fix conflicting p2p resource adds
-Date:   Mon, 26 Nov 2018 11:49:59 +0100
-Message-Id: <20181126105100.053276084@linuxfoundation.org>
+Subject: [PATCH 4.19 006/118] block: brd: associate with queue until adding disk
+Date:   Mon, 26 Nov 2018 11:50:00 +0100
+Message-Id: <20181126105100.093855271@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -64,74 +64,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9fe5c59ff6a1e5e26a39b75489a1420e7eaaf0b1 ]
+[ Upstream commit 153fcd5f6d93b8e1e4040b1337f564a10f8d93af ]
 
-The nvme pci driver had been adding its CMB resource to the P2P DMA
-subsystem everytime on on a controller reset. This results in the
-following warning:
+brd_free() may be called in failure path on one brd instance which
+disk isn't added yet, so release handler of gendisk may free the
+associated request_queue early and causes the following use-after-free[1].
 
-    ------------[ cut here ]------------
-    nvme 0000:00:03.0: Conflicting mapping in same section
-    WARNING: CPU: 7 PID: 81 at kernel/memremap.c:155 devm_memremap_pages+0xa6/0x380
-    ...
-    Call Trace:
-     pci_p2pdma_add_resource+0x153/0x370
-     nvme_reset_work+0x28c/0x17b1 [nvme]
-     ? add_timer+0x107/0x1e0
-     ? dequeue_entity+0x81/0x660
-     ? dequeue_entity+0x3b0/0x660
-     ? pick_next_task_fair+0xaf/0x610
-     ? __switch_to+0xbc/0x410
-     process_one_work+0x1cf/0x350
-     worker_thread+0x215/0x3d0
-     ? process_one_work+0x350/0x350
-     kthread+0x107/0x120
-     ? kthread_park+0x80/0x80
-     ret_from_fork+0x1f/0x30
-    ---[ end trace f7ea76ac6ee72727 ]---
-    nvme nvme0: failed to register the CMB
+This patch fixes this issue by associating gendisk with request_queue
+just before adding disk.
 
-This patch fixes this by registering the CMB with P2P only once.
+[1] KASAN: use-after-free Read in del_timer_syncNon-volatile memory driver v1.3
+Linux agpgart interface v0.103
+[drm] Initialized vgem 1.0.0 20120112 for virtual device on minor 0
+usbcore: registered new interface driver udl
+==================================================================
+BUG: KASAN: use-after-free in __lock_acquire+0x36d9/0x4c20
+kernel/locking/lockdep.c:3218
+Read of size 8 at addr ffff8801d1b6b540 by task swapper/0/1
 
-Signed-off-by: Keith Busch <keith.busch@intel.com>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0+ #88
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  __lock_acquire+0x36d9/0x4c20 kernel/locking/lockdep.c:3218
+  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+  del_timer_sync+0xb7/0x270 kernel/time/timer.c:1283
+  blk_cleanup_queue+0x413/0x710 block/blk-core.c:809
+  brd_free+0x5d/0x71 drivers/block/brd.c:422
+  brd_init+0x2eb/0x393 drivers/block/brd.c:518
+  do_one_initcall+0x145/0x957 init/main.c:890
+  do_initcall_level init/main.c:958 [inline]
+  do_initcalls init/main.c:966 [inline]
+  do_basic_setup init/main.c:984 [inline]
+  kernel_init_freeable+0x5c6/0x6b9 init/main.c:1148
+  kernel_init+0x11/0x1ae init/main.c:1068
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
+
+Reported-by: syzbot+3701447012fe951dabb2@syzkaller.appspotmail.com
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/pci.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/block/brd.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index d668682f91df..da18e0ac9fa2 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1647,6 +1647,9 @@ static void nvme_map_cmb(struct nvme_dev *dev)
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
- 	int bar;
+diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+index df8103dd40ac..c18586fccb6f 100644
+--- a/drivers/block/brd.c
++++ b/drivers/block/brd.c
+@@ -396,15 +396,14 @@ static struct brd_device *brd_alloc(int i)
+ 	disk->first_minor	= i * max_part;
+ 	disk->fops		= &brd_fops;
+ 	disk->private_data	= brd;
+-	disk->queue		= brd->brd_queue;
+ 	disk->flags		= GENHD_FL_EXT_DEVT;
+ 	sprintf(disk->disk_name, "ram%d", i);
+ 	set_capacity(disk, rd_size * 2);
+-	disk->queue->backing_dev_info->capabilities |= BDI_CAP_SYNCHRONOUS_IO;
++	brd->brd_queue->backing_dev_info->capabilities |= BDI_CAP_SYNCHRONOUS_IO;
  
-+	if (dev->cmb_size)
-+		return;
-+
- 	dev->cmbsz = readl(dev->bar + NVME_REG_CMBSZ);
- 	if (!dev->cmbsz)
- 		return;
-@@ -2129,7 +2132,6 @@ static void nvme_pci_disable(struct nvme_dev *dev)
- {
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
+ 	/* Tell the block layer that this is not a rotational device */
+-	blk_queue_flag_set(QUEUE_FLAG_NONROT, disk->queue);
+-	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, disk->queue);
++	blk_queue_flag_set(QUEUE_FLAG_NONROT, brd->brd_queue);
++	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, brd->brd_queue);
  
--	nvme_release_cmb(dev);
- 	pci_free_irq_vectors(pdev);
+ 	return brd;
  
- 	if (pci_is_enabled(pdev)) {
-@@ -2577,6 +2579,7 @@ static void nvme_remove(struct pci_dev *pdev)
- 	nvme_stop_ctrl(&dev->ctrl);
- 	nvme_remove_namespaces(&dev->ctrl);
- 	nvme_dev_disable(dev, true);
-+	nvme_release_cmb(dev);
- 	nvme_free_host_mem(dev);
- 	nvme_dev_remove_admin(dev);
- 	nvme_free_queues(dev, 0);
+@@ -436,6 +435,7 @@ static struct brd_device *brd_init_one(int i, bool *new)
+ 
+ 	brd = brd_alloc(i);
+ 	if (brd) {
++		brd->brd_disk->queue = brd->brd_queue;
+ 		add_disk(brd->brd_disk);
+ 		list_add_tail(&brd->brd_list, &brd_devices);
+ 	}
+@@ -503,8 +503,14 @@ static int __init brd_init(void)
+ 
+ 	/* point of no return */
+ 
+-	list_for_each_entry(brd, &brd_devices, brd_list)
++	list_for_each_entry(brd, &brd_devices, brd_list) {
++		/*
++		 * associate with queue just before adding disk for
++		 * avoiding to mess up failure path
++		 */
++		brd->brd_disk->queue = brd->brd_queue;
+ 		add_disk(brd->brd_disk);
++	}
+ 
+ 	blk_register_region(MKDEV(RAMDISK_MAJOR, 0), 1UL << MINORBITS,
+ 				  THIS_MODULE, brd_probe, NULL, NULL);
 -- 
 2.17.1
 
