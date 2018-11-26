@@ -2,94 +2,334 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 131BEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF71C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:42:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDD9C2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:41:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 083E72082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:42:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="U/R6z8fv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDD9C2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="bc1GNyWA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 083E72082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbeK0Kh2 (ORCPT
+        id S1727949AbeK0Khz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:37:28 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:49932 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727630AbeK0Kh2 (ORCPT
+        Tue, 27 Nov 2018 05:37:55 -0500
+Received: from sonic315-27.consmr.mail.ne1.yahoo.com ([66.163.190.153]:36595
+        "EHLO sonic315-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727689AbeK0Khz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:37:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oRH6j1u5aPuU+XLEK3cSURgeMBYJ/6FdLObXeu+cT7c=; b=U/R6z8fvq8bZRqvrmYp2I3Aul
-        dhYWwDEPua+r4F/hAWS7cu8+KOnbILgiS2VOZpsomQ2Mpa5abvXdVWDmRhCs1N+u11ewuticygjAa
-        nqzzYKmv8BPxLz7554gjMpxCuUr4B/uIHCg6wYaVH1L3LulgU/3rCrNdFXUujL1oThbsQ=;
-Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:54715)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gRQVF-0003f6-5i; Mon, 26 Nov 2018 23:41:21 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gRQV8-0004DV-RF; Mon, 26 Nov 2018 23:41:15 +0000
-Date:   Mon, 26 Nov 2018 23:41:11 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
-Cc:     Vladimir Murzin <vladimir.murzin@arm.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Timothy E Baldwin <T.E.Baldwin99@members.leeds.ac.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm: always update thread_info->syscall
-Message-ID: <20181126234111.GA30658@n2100.armlinux.org.uk>
-References: <20181126225335.10477-1-rafael.tinoco@linaro.org>
- <20181126233303.GZ30658@n2100.armlinux.org.uk>
+        Tue, 27 Nov 2018 05:37:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543275723; bh=PBT9NIfIFWqve0jgHQc8SqCsASaMC4tLfOD1iemFqzE=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=bc1GNyWAZhbd47rY8amCXU97aHDSJdnMmll9z13Dev6bWz/Sw+RlE11z+FOgOFygL7pbQ+SCYjKr0SJeEWLm+sdyTNDlXum6GH7UBWL9FWCj2KLaRmM2fZmt3vztAd+r/9qlC0jZJmQ1yoJ2qxkTAqCyz90IKyQQMGB0HnmuEflLrrDERZ5e7xqW7ClAc/0BWtugTeQZJieL+syAfWnoxXfgzBnqc66LTdPiSdhSEOPzTobwvzYN9tvVzzLF06Q7fXMU7GddkhXdoxZrhU8yOlXkO1KvfSV13yrjSgwu2q6zwQoYzO8dM4ctaoyQwcqYwMMgX012tvQnSOYiE43agw==
+X-YMail-OSG: jHQ5y9gVM1lMq359mOf9kWSDWqtHxABXzwOonJH7uuDO0udN1vpvDYhaXD1pvFE
+ BQF4gGgNqpuJWd4VbccbqIMrTh3gGxi.lQyXhP8xQGz5EnfVpHI.HcznAcHyHum0OOWQUYYjM_56
+ 6lySS_aVE1fCQIDLjuhtc6KnTCcJZ4e47YaSdaVc73e1UwqkWZtLmIM_a1GVK3u.5BhkDgUeg33S
+ yUE8ESg4.cCDkxJFYLlHrUy_oqhNAHtdMq8.NgkSg4rbqtSW.2PrzelyojzWXKDSAxyE.mxXqZhz
+ .s1p95Os6kRio7BFH9iij1xVeqZIf05GtMpq74tHNlT1NDl7SbN2PxnXdx31v4BblwKCZXreLRRZ
+ nZFU6O6EEhtsYj3y50U9qwpIAPHto_5N1Jq.UcmXNNZjxX7I2SBZYQr6Psu90P5JEl6W5dJFZnGD
+ l06WXW7GAc4ku7w7N4xAlgARyr7IA0OzalNLoDon_WPclWR3ADU2tmRO5Np5w9Polp_528FsZm_z
+ DfO.FVEPFSIDIf_Qr8aF_16heF.hPBdYUskMxNYFrC8EhmojFANOHNzUABNkcfhCnISOjXkd1ICq
+ uUyPZkY4dle024fO.tc6epLtJg6gkvn8WKz8WPy58nqwYgvBVGCOEfQSij0LxVInFldi6jjGG93E
+ VQOv3TzLYvBu6A1beMxyPMx9FBQnLrnyBENEsp_DjUNuUOcwiJ1Yyt2m23z1ug_4_NrONsFGRxLH
+ a3DOhQLKUfQ9mYkdxmmiz_uoTibTnRPHg6837JFGbz7nytmPODnciIB9xobO6fplNqVVd1c69T4w
+ 3q5HSYhdZmw5J6F.8cIKPNDOs1aRujtMrccbRSI.TC.SAgurRjNKQbgu1glAFjQsFcRTd1ysJZ9Z
+ 84SIq77BnFZCiCUy9LdlZ7fX815J2yjJnFRrsAyX9n5k3RJYR5cPkM36hu6hCK0LhdBcfyohT3LH
+ kUgnDvJh3.J4mk0LLZe_pUSfXFxSmlyu3GDo_xjuxGqIhNRxzAeBAdGwjOyJuHX3R8E.b.CO5vFz
+ n.Ym03WzdFzx_TfuMLgpnqVSUvHIkkiVrS.M51Jmvmg8RGonQhoTQK369SKTzLPZJ0HSbA7wxcHd
+ YB0SFFNlktOq8jjxc0la7H75NtvDn6_VYtZYPXg--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:42:03 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
+          by smtp426.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 8d8cc73ed08030887d0e6a0460ee54dd;
+          Mon, 26 Nov 2018 23:42:00 +0000 (UTC)
+Subject: [PATCH v5 20/38] procfs: add smack subdir to attrs
+To:     James Morris <jmorris@namei.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <996e967a-5b42-8441-d3b9-b82efe6809f8@schaufler-ca.com>
+Date:   Mon, 26 Nov 2018 15:41:57 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181126233303.GZ30658@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 11:33:03PM +0000, Russell King - ARM Linux wrote:
-> On Mon, Nov 26, 2018 at 08:53:35PM -0200, Rafael David Tinoco wrote:
-> > Right now, only way for task->thread_info->syscall to be updated is if
-> > if _TIF_SYSCALL_WORK is set in current's task thread_info->flags
-> > (similar to what has_syscall_work() checks for arm64).
-> > 
-> > This means that "->syscall" will only be updated if we are tracing the
-> > syscalls through ptrace, for example. This is NOT the same behavior as
-> > arm64, when pt_regs->syscallno is updated in the beginning of svc0
-> > handler for *every* syscall entry.
-> 
-> So when was it decided that the syscall number will always be required
-> (we need it to know how far back this has to be backported).
+Back in 2007 I made what turned out to be a rather serious
+mistake in the implementation of the Smack security module.
+The SELinux module used an interface in /proc to manipulate
+the security context on processes. Rather than use a similar
+interface, I used the same interface. The AppArmor team did
+likewise. Now /proc/.../attr/current will tell you the
+security "context" of the process, but it will be different
+depending on the security module you're using.
 
-PS, I rather object to the fact that the required behaviour seems to
-change, arch maintainers aren't told about it until... some test is
-created at some random point in the future which then fails.
+This patch provides a subdirectory in /proc/.../attr for
+Smack. Smack user space can use the "current" file in
+this subdirectory and never have to worry about getting
+SELinux attributes by mistake. Programs that use the
+old interface will continue to work (or fail, as the case
+may be) as before.
 
-Surely there's a better way to communicate changes in requirements
-than discovery-by-random-bug-report ?
+The proposed S.A.R.A security module is dependent on
+the mechanism to create its own attr subdirectory.
 
+The original implementation is by Kees Cook.
+
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ Documentation/admin-guide/LSM/index.rst | 13 +++++--
+ fs/proc/base.c                          | 64 ++++++++++++++++++++++++++++-----
+ fs/proc/internal.h                      |  1 +
+ include/linux/security.h                | 15 +++++---
+ security/security.c                     | 24 ++++++++++---
+ 5 files changed, 96 insertions(+), 21 deletions(-)
+
+diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
+index c980dfe9abf1..9842e21afd4a 100644
+--- a/Documentation/admin-guide/LSM/index.rst
++++ b/Documentation/admin-guide/LSM/index.rst
+@@ -17,9 +17,8 @@ MAC extensions, other extensions can be built using the LSM to provide
+ specific changes to system operation when these tweaks are not available
+ in the core functionality of Linux itself.
+ 
+-Without a specific LSM built into the kernel, the default LSM will be the
+-Linux capabilities system. Most LSMs choose to extend the capabilities
+-system, building their checks on top of the defined capability hooks.
++The Linux capabilities modules will always be included. This may be
++followed by any number of "minor" modules and at most one "major" module.
+ For more details on capabilities, see ``capabilities(7)`` in the Linux
+ man-pages project.
+ 
+@@ -30,6 +29,14 @@ order in which checks are made. The capability module will always
+ be first, followed by any "minor" modules (e.g. Yama) and then
+ the one "major" module (e.g. SELinux) if there is one configured.
+ 
++Process attributes associated with "major" security modules should
++be accessed and maintained using the special files in ``/proc/.../attr``.
++A security module may maintain a module specific subdirectory there,
++named after the module. ``/proc/.../attr/smack`` is provided by the Smack
++security module and contains all its special files. The files directly
++in ``/proc/.../attr`` remain as legacy interfaces for modules that provide
++subdirectories.
++
+ .. toctree::
+    :maxdepth: 1
+ 
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ce3465479447..e133de4897df 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -140,9 +140,13 @@ struct pid_entry {
+ #define REG(NAME, MODE, fops)				\
+ 	NOD(NAME, (S_IFREG|(MODE)), NULL, &fops, {})
+ #define ONE(NAME, MODE, show)				\
+-	NOD(NAME, (S_IFREG|(MODE)), 			\
++	NOD(NAME, (S_IFREG|(MODE)),			\
+ 		NULL, &proc_single_file_operations,	\
+ 		{ .proc_show = show } )
++#define ATTR(LSM, NAME, MODE)				\
++	NOD(NAME, (S_IFREG|(MODE)),			\
++		NULL, &proc_pid_attr_operations,	\
++		{ .lsm = LSM })
+ 
+ /*
+  * Count the number of hardlinks for the pid_entry table, excluding the .
+@@ -2517,7 +2521,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
+ 	if (!task)
+ 		return -ESRCH;
+ 
+-	length = security_getprocattr(task,
++	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
+ 				      (char*)file->f_path.dentry->d_name.name,
+ 				      &p);
+ 	put_task_struct(task);
+@@ -2566,7 +2570,9 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+ 	if (rv < 0)
+ 		goto out_free;
+ 
+-	rv = security_setprocattr(file->f_path.dentry->d_name.name, page, count);
++	rv = security_setprocattr(PROC_I(inode)->op.lsm,
++				  file->f_path.dentry->d_name.name, page,
++				  count);
+ 	mutex_unlock(&current->signal->cred_guard_mutex);
+ out_free:
+ 	kfree(page);
+@@ -2580,13 +2586,53 @@ static const struct file_operations proc_pid_attr_operations = {
+ 	.llseek		= generic_file_llseek,
+ };
+ 
++#define LSM_DIR_OPS(LSM) \
++static int proc_##LSM##_attr_dir_iterate(struct file *filp, \
++			     struct dir_context *ctx) \
++{ \
++	return proc_pident_readdir(filp, ctx, \
++				   LSM##_attr_dir_stuff, \
++				   ARRAY_SIZE(LSM##_attr_dir_stuff)); \
++} \
++\
++static const struct file_operations proc_##LSM##_attr_dir_ops = { \
++	.read		= generic_read_dir, \
++	.iterate	= proc_##LSM##_attr_dir_iterate, \
++	.llseek		= default_llseek, \
++}; \
++\
++static struct dentry *proc_##LSM##_attr_dir_lookup(struct inode *dir, \
++				struct dentry *dentry, unsigned int flags) \
++{ \
++	return proc_pident_lookup(dir, dentry, \
++				  LSM##_attr_dir_stuff, \
++				  ARRAY_SIZE(LSM##_attr_dir_stuff)); \
++} \
++\
++static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
++	.lookup		= proc_##LSM##_attr_dir_lookup, \
++	.getattr	= pid_getattr, \
++	.setattr	= proc_setattr, \
++}
++
++#ifdef CONFIG_SECURITY_SMACK
++static const struct pid_entry smack_attr_dir_stuff[] = {
++	ATTR("smack", "current",	0666),
++};
++LSM_DIR_OPS(smack);
++#endif
++
+ static const struct pid_entry attr_dir_stuff[] = {
+-	REG("current",    S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("prev",       S_IRUGO,	   proc_pid_attr_operations),
+-	REG("exec",       S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("fscreate",   S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("keycreate",  S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("sockcreate", S_IRUGO|S_IWUGO, proc_pid_attr_operations),
++	ATTR(NULL, "current",		0666),
++	ATTR(NULL, "prev",		0444),
++	ATTR(NULL, "exec",		0666),
++	ATTR(NULL, "fscreate",		0666),
++	ATTR(NULL, "keycreate",		0666),
++	ATTR(NULL, "sockcreate",	0666),
++#ifdef CONFIG_SECURITY_SMACK
++	DIR("smack",			0555,
++	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
++#endif
+ };
+ 
+ static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index 5185d7f6a51e..d4f9989063d0 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -81,6 +81,7 @@ union proc_op {
+ 	int (*proc_show)(struct seq_file *m,
+ 		struct pid_namespace *ns, struct pid *pid,
+ 		struct task_struct *task);
++	const char *lsm;
+ };
+ 
+ struct proc_inode {
+diff --git a/include/linux/security.h b/include/linux/security.h
+index d170a5b031f3..35691877c3e1 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -390,8 +390,10 @@ int security_sem_semctl(struct kern_ipc_perm *sma, int cmd);
+ int security_sem_semop(struct kern_ipc_perm *sma, struct sembuf *sops,
+ 			unsigned nsops, int alter);
+ void security_d_instantiate(struct dentry *dentry, struct inode *inode);
+-int security_getprocattr(struct task_struct *p, char *name, char **value);
+-int security_setprocattr(const char *name, void *value, size_t size);
++int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
++			 char **value);
++int security_setprocattr(const char *lsm, const char *name, void *value,
++			 size_t size);
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb);
+ int security_ismaclabel(const char *name);
+ int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+@@ -1139,15 +1141,18 @@ static inline int security_sem_semop(struct kern_ipc_perm *sma,
+ 	return 0;
+ }
+ 
+-static inline void security_d_instantiate(struct dentry *dentry, struct inode *inode)
++static inline void security_d_instantiate(struct dentry *dentry,
++					  struct inode *inode)
+ { }
+ 
+-static inline int security_getprocattr(struct task_struct *p, char *name, char **value)
++static inline int security_getprocattr(struct task_struct *p, const char *lsm,
++				       char *name, char **value)
+ {
+ 	return -EINVAL;
+ }
+ 
+-static inline int security_setprocattr(char *name, void *value, size_t size)
++static inline int security_setprocattr(const char *lsm, char *name,
++				       void *value, size_t size)
+ {
+ 	return -EINVAL;
+ }
+diff --git a/security/security.c b/security/security.c
+index eab64bdc60fb..81ff6a71e78e 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1472,14 +1472,30 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
+ }
+ EXPORT_SYMBOL(security_d_instantiate);
+ 
+-int security_getprocattr(struct task_struct *p, char *name, char **value)
++int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
++				char **value)
+ {
+-	return call_int_hook(getprocattr, -EINVAL, p, name, value);
++	struct security_hook_list *hp;
++
++	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
++		if (lsm != NULL && strcmp(lsm, hp->lsm))
++			continue;
++		return hp->hook.getprocattr(p, name, value);
++	}
++	return -EINVAL;
+ }
+ 
+-int security_setprocattr(const char *name, void *value, size_t size)
++int security_setprocattr(const char *lsm, const char *name, void *value,
++			 size_t size)
+ {
+-	return call_int_hook(setprocattr, -EINVAL, name, value, size);
++	struct security_hook_list *hp;
++
++	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
++		if (lsm != NULL && strcmp(lsm, hp->lsm))
++			continue;
++		return hp->hook.setprocattr(name, value, size);
++	}
++	return -EINVAL;
+ }
+ 
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb)
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.14.5
+
+
