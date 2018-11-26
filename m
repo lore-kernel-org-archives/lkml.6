@@ -2,62 +2,62 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2BFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A84AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9166120855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:14:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9166120855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D13B20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:14:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D13B20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726276AbeKZUH1 (ORCPT
+        id S1726312AbeKZUHe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 15:07:27 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15602 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726157AbeKZUH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 15:07:27 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 91DCDCCAAC64;
-        Mon, 26 Nov 2018 17:13:55 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Mon, 26 Nov 2018
- 17:13:54 +0800
-Subject: Re: [PATCH] f2fs: read page index before freeing
-To:     Pan Bian <bianpan2016@163.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1542884326-74903-1-git-send-email-bianpan2016@163.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <3ebe6814-586e-77e8-52fa-47fb61d760f5@huawei.com>
-Date:   Mon, 26 Nov 2018 17:13:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 26 Nov 2018 15:07:34 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:54490 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726157AbeKZUHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 15:07:34 -0500
+Received: from we0660.dip.tu-dresden.de ([141.76.178.148] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gRCxv-0007yr-H2; Mon, 26 Nov 2018 10:14:03 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Otavio Salvador <otavio@ossystems.com.br>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 06/13] ARM: dts: rv1108: Add GMAC support
+Date:   Mon, 26 Nov 2018 10:14:02 +0100
+Message-ID: <1588360.6TRC2vKZya@phil>
+In-Reply-To: <20181125211907.9895-6-otavio@ossystems.com.br>
+References: <20181125211907.9895-1-otavio@ossystems.com.br> <20181125211907.9895-6-otavio@ossystems.com.br>
 MIME-Version: 1.0
-In-Reply-To: <1542884326-74903-1-git-send-email-bianpan2016@163.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pan,
+Am Sonntag, 25. November 2018, 22:19:00 CET schrieb Otavio Salvador:
+> Add GMAC support for RV1108.
+> 
+> Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
 
-On 2018/11/22 18:58, Pan Bian wrote:
-> The function truncate_node frees the page with f2fs_put_page. However,
-> the page index is read after that. So, the patch reads the index before
-> freeing the page.
+applied for 4.21 after modifying the subject a bit and adding
+a comment explaining that the rv1108 only has that rmii interface.
 
-I notice that you found another use-after-free bug in ext4, out of
-curiosity, I'd like to ask how do you find those bugs? by tool or code review?
+While the dwmac is definitly a big improvement over the arc-emac
+it is still surprising that the gbit mac only gets a 100mbit phy interface.
 
-Thanks,
+
+Heiko
+
 
