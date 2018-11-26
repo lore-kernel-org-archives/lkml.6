@@ -2,99 +2,97 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A037C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C29C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:13:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53949208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:12:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53949208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5B8DF205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:13:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B8DF205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbeK0DHR (ORCPT
+        id S1726976AbeK0DHv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 22:07:17 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:43196 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbeK0DHR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:07:17 -0500
-Received: by mail-ot1-f67.google.com with SMTP id a11so17060613otr.10;
-        Mon, 26 Nov 2018 08:12:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NiIx+SzbBCo65yJWjl175jFQgbd4NOd7dqzLNO1bvRA=;
-        b=UtOeeNcAv3uxQzqzfl1cRwdLUXc53RLZ5A2hzNJ3P5rmWu685jU7w+Xc3jMt2KGmk7
-         Vk83tNcJe4hsVPuqf+BZCw3QYFc9a3RCGw6AKzG2T0lOs6DosEjvmy2AvyZYUEoCeIwI
-         e6w/+yfMrDybQlgzJbkRk4p9s38STO4d+RplgE7//kmCUwxYsb2edW1lnGY7QqdgdeP8
-         xtnq8XHKuDNQAxaSOfm5/pSCg2mfxRC7ae1ZedNBlAtp+Im+LpNkGNA2ibG/OnghVCXX
-         0QtDFue+vlt4LGQooyAGf8fHHVY5D687SY+SpxAr3avIMKwotUJtpw/sCIuz3W5ncuVC
-         VitA==
-X-Gm-Message-State: AA+aEWbYawSXB/90ACnBXK121S8kuWOG9/bFytz/c3f8G2SdigNzdfqP
-        5WpISUIOc+ZNJcbOgeirpg==
-X-Google-Smtp-Source: AFSGD/VqVp+yZ3BCcze4o5NndEjRnggVfpxxw+Pp2yvAMFJL/Hg7fyKdY1RamEWvgx12DDAZTuBBhw==
-X-Received: by 2002:a9d:32c7:: with SMTP id u65mr15139836otb.236.1543248763640;
-        Mon, 26 Nov 2018 08:12:43 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id x4sm189513otk.37.2018.11.26.08.12.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 08:12:42 -0800 (PST)
-Date:   Mon, 26 Nov 2018 10:12:42 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Andrea Merello <andrea.merello@gmail.com>
-Cc:     vkoul@kernel.org, dan.j.williams@intel.com,
-        michal.simek@xilinx.com, appana.durga.rao@xilinx.com,
-        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, radhey.shyam.pandey@xilinx.com
-Subject: Re: [PATCH v6 3/7] dt-bindings: dmaengine: xilinx_dma: add optional
- xlnx,sg-length-width property
-Message-ID: <20181126161242.GA19168@bogus>
-References: <20181120153151.18024-1-andrea.merello@gmail.com>
- <20181120153151.18024-3-andrea.merello@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120153151.18024-3-andrea.merello@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 26 Nov 2018 22:07:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53612 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726224AbeK0DHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 22:07:51 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6C6F4B05D;
+        Mon, 26 Nov 2018 16:13:16 +0000 (UTC)
+Date:   Mon, 26 Nov 2018 17:13:16 +0100
+Message-ID: <s5ha7lvzujn.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sh: Always enable CONFIG_GENERIC_PCI_IOMAP
+In-Reply-To: <20181119115910.19390-1-tiwai@suse.de>
+References: <20181119115910.19390-1-tiwai@suse.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 04:31:47PM +0100, Andrea Merello wrote:
-> The width of the "length register" cannot be autodetected, and it is now
-> specified with a DT property. Add documentation for it.
+On Mon, 19 Nov 2018 12:59:10 +0100,
+Takashi Iwai wrote:
 > 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: devicetree@vger.kernel.org
-> Cc: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-> Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-> ---
-> Changes in v2:
-> 	- change property name
-> 	- property is now optional
-> 	- cc DT maintainer
-> Changes in v3:
-> 	- reword
-> 	- cc DT maintainerS and ML
-> Changes in v4:
-> 	- specify the unit, the valid range and the default value
-> Changes in v5:
-> 	- commit message trivial fix
-> 	- fix spaces before tab
-> Changes in v6:
-> 	None
-> ---
->  Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt | 4 ++++
->  1 file changed, 4 insertions(+)
+> CONFIG_GENERIC_PCI_IOMAP is supposed to be set no matter whether
+> CONFIG_PCI is present or not.  Otherwise the generic header
+> (asm-generic/pci_iomap.h) won't create dummy functions, and the code
+> using pci_iomap() and pci_iounmap() will fail due to the lack of the
+> function definitions / declarations.
+> 
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
 
-Please add acks/reviewed-bys when posting new versions.
+This is a gentle reminder for this fix.
+
+If anyone has objection against this, I'm going to apply it via sound
+git tree, as the code there is obviously a trigger of the bug.
+
+
+thanks,
+
+Takashi
+
+> ---
+>  arch/sh/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+> index f82a4da7adf3..3d5220ad9e46 100644
+> --- a/arch/sh/Kconfig
+> +++ b/arch/sh/Kconfig
+> @@ -36,6 +36,8 @@ config SUPERH
+>  	select RTC_LIB
+>  	select GENERIC_ATOMIC64
+>  	select GENERIC_IRQ_SHOW
+> +	select GENERIC_PCI_IOMAP
+> +	select NO_GENERIC_PCI_IOPORT_MAP
+>  	select GENERIC_SMP_IDLE_THREAD
+>  	select GENERIC_IDLE_POLL_SETUP
+>  	select GENERIC_CLOCKEVENTS
+> @@ -859,8 +861,6 @@ config PCI
+>  	bool "PCI support"
+>  	depends on SYS_SUPPORTS_PCI
+>  	select PCI_DOMAINS
+> -	select GENERIC_PCI_IOMAP
+> -	select NO_GENERIC_PCI_IOPORT_MAP
+>  	help
+>  	  Find out whether you have a PCI motherboard. PCI is the name of a
+>  	  bus system, i.e. the way the CPU talks to the other stuff inside
+> -- 
+> 2.19.1
+> 
