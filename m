@@ -2,193 +2,143 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 284BCC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBAFBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5463208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:28:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90E8B208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:28:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="GH56QhWm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5463208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="jxSfTQKi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90E8B208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbeK0KXu (ORCPT
+        id S1727678AbeK0KYg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:23:50 -0500
-Received: from vern.gendns.com ([98.142.107.122]:58056 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727087AbeK0KXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:23:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=OzpzA9BJf7/SLSzjqdKpFAfgkQshNkysSCIMi97enE4=; b=GH56QhWmoWaLoxD1oT/FXZjYQ5
-        hULejPusBhY/yVYiSGWZbhASvr00Bkg2/6ulL4cjA1GiWDnTezqjrxClkxpQ0pIK2U/66333K1bFD
-        1gwjrnRTSmycow/WnT4fcK/rIF83snb2q7TPfVWfPRHFOSKRUuR4RxZGdGM0z9pfWyHGFAWkPI4l3
-        G93+wzZTAUiveDy5VacoPL/zwmpARYOkkbNivM9omQVoABY9K7C9Qs1BsH6cADTWLdC7iEuV10z1c
-        jZxVCwGRlCU6TdcUL0vZ2qf7SM+8LLvY1h7axCEIPMFj8efVEdEc4O6wiN2cYBEgogAU8Innyfq3m
-        S6VzS2oA==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:46016 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1gRQHU-0002nH-VA; Mon, 26 Nov 2018 18:27:09 -0500
-Subject: Re: [PATCH 12/16] dt-bindings: remoteproc: ti-pruss: Document
- application node bindings
-To:     Roger Quadros <rogerq@ti.com>, ohad@wizery.com,
-        bjorn.andersson@linaro.org
-Cc:     tony@atomide.com, robh+dt@kernel.org, bcousson@baylibre.com,
-        ssantosh@kernel.org, s-anna@ti.com, nsekhar@ti.com,
-        t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com,
-        m-karicheri2@ti.com, woods.technical@gmail.com,
-        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1543218769-5507-1-git-send-email-rogerq@ti.com>
- <1543218769-5507-13-git-send-email-rogerq@ti.com>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <6a945433-00b2-e0e5-2dc8-2a4d2bf0db6f@lechnology.com>
-Date:   Mon, 26 Nov 2018 17:27:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 27 Nov 2018 05:24:36 -0500
+Received: from sonic302-28.consmr.mail.ne1.yahoo.com ([66.163.186.154]:37123
+        "EHLO sonic302-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727541AbeK0KYg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 05:24:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543274928; bh=312IAhYZpl8ub+eZq6+4gtdGxApt35wUQovj9MI+k8s=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=jxSfTQKiXJNJOIBP6MKetpVELei/t6KLUZ8Z8L/uezkH318j8B+3NFFpQrNPLgFZ7CsqeLWoDL/vzUuVxA9Oz9FZRiOVK9xuVB2icuCdbs84j9g/s1KoNpxCLAq5U5oTdHQSxWBy5ldN7LBoQn/AVitL1u60L9jGM1CetlBNT8b7sIpS3ljtlQHjm0Tpwz1njUVdXHkyFs4vTpGRIZEhdyhLMQjCP3v8NZd3V1ULfECg8AXnNqk7GY9NaSr6dN9aIoc+Y69J0H2n2tLaUWCT/0OiNQSTQYbcgHUP8CseZ4oKMprivpZCPXs0jGXAMRz4H8C1UrVkPhgyJ+om9DryLA==
+X-YMail-OSG: ZRU9.DsVM1lZhUH8LFy0FYsBONEzzJH5xVBuACBIohjVWeCKGsW68MkoQgyCA2_
+ H7XvjpEdVzTK6JHIjFDZLubD67fZT01qny2n3vvIUJKQa.5T.33NBzSHYkqbSqG5FhEUTP5xeO0f
+ 1nwIw54uYxFH0oxAcHlZjTB5HljMpzE5w4jPm0DilTnE0QRss_xzppNWg.AUtK2ki2AWHCy.nhy5
+ vikiqbNBqPYWRlShr8mWPhXH_eleC6r_hmq.BTSZdzbQcbvYLQe4Po9G9wj6gsErWbdU.DJwJewQ
+ 1_v9x_KaMGW1FwBduaen1iN1R_oyBhlF9JQG_XZvmQAnHJR9MZUKmadPkPcS60p0tilJPEwwm2vC
+ iieibhzBG0evktE_jRnfjT.QfWXmdnxvY6szkc2D3_5SO1L0s8O_KokmTU6jYUMW_9vHaNo86Tws
+ 41Huz77RY8EzcAH.MKp3vku5CRqaTBk0x4YSa1XsZyO_dBKQ6PN3VED8p5wDXgSepE3k1YGW4Ytu
+ CodmcfbBpP_XLtP5EqwCu.oN7MhHz.0qlNeTvmWf87GM7OAnLi2lzgFdQyTR_UU9GQql_hYF0H9t
+ da31R6Su9cx7_e0jqwfq4oa8h.9crg.f4vlH4Yf0eKDjDb_Ppe9FpZLc2_40R7ToYX0DNnjkIDF6
+ 1At9wVXmGRGwwTqIUsPBNeESHaDWoDNRDDo.zp1KXJ1qxG66nZivxw6TD2IrQ4HGAubhJXE9Zwr3
+ ULmitct8p3Nb0WQrccxrbEktBt6nlUB0JQYRxpeOn740eEmrKwMNtougjgFulRhIHencW8ZdbQ.Y
+ VPP7hd5oqhfv3cd4kHA_QGR2ywdbDW_z5eC.n0Yg29XUyNxFALP32ewPmZmw7yPi5GcshU33mSgU
+ sEWoKdx5QvKxfOxi4LR3B3moHFR_qkmABhejK5qE5XNPA3HVR_uBdp57oNhfzbBma7eIWwYGMNjf
+ o7KgM9I8FK3Kg8HAuNnXuTEZ1NfZzxnmUBYkfQLhFIfxRWXcQiFiSFdKJagUK9TNotSUif0GpAps
+ SPh1Z5s2SNDUtC8DVZMfoPME.0MToc2bJk_Xlr66LXgl08C8nx4Ek0mzGKZT2yzrm7A_HoJEahy.
+ .UKDQWxyKenYwRvreJ3v_0PHddtK5hRQwxPw-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:28:48 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
+          by smtp419.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 3d12d55a43ffd32d6288c356d89534e8;
+          Mon, 26 Nov 2018 23:28:47 +0000 (UTC)
+Subject: [PATCH v5 03/38] LSM: Plumb visibility into optional "enabled" state
+To:     James Morris <jmorris@namei.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <aff8e873-56da-fcc2-9ad5-a9d6a6b48356@schaufler-ca.com>
+Date:   Mon, 26 Nov 2018 15:28:45 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1543218769-5507-13-git-send-email-rogerq@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/26/18 1:52 AM, Roger Quadros wrote:
-> From: Tero Kristo <t-kristo@ti.com>
-> 
-> Add documentation for the Texas Instruments PRU application nodes.
-> These are used to configure specific user applications for PRU instances.
+In preparation for lifting the "is this LSM enabled?" logic out of the
+individual LSMs, pass in any special enabled state tracking (as needed
+for SELinux, AppArmor, and LoadPin). This should be an "int" to include
+handling any future cases where "enabled" is exposed via sysctl which
+has no "bool" type.
 
-Could this be made into a generic remoteproc producer/consumer binding? Or
-are there really things that are specific to the TI PRU that need to be
-handled?
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+Reviewed-by: John Johansen <john.johansen@canonical.com>
+---
+ include/linux/lsm_hooks.h | 1 +
+ security/apparmor/lsm.c   | 5 +++--
+ security/selinux/hooks.c  | 1 +
+ 3 files changed, 5 insertions(+), 2 deletions(-)
 
-> 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> [s-anna@ti.com: some binding updates]
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Roger Quadros <rogerq@ti.com>
-> ---
->   .../devicetree/bindings/soc/ti/ti,pruss.txt        | 43 ++++++++++++++++++++++
->   1 file changed, 43 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
-> index 3e5f32f..94c91ee 100644
-> --- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
-> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
-> @@ -210,6 +210,38 @@ used in TI Davinci SoCs. Please refer to the corresponding binding document,
->   Documentation/devicetree/bindings/net/davinci-mdio.txt for details.
->   
->   
-> +Application/User Nodes
-> +=======================
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 63c0e102de20..4e2e9cdf78c6 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2044,6 +2044,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+ struct lsm_info {
+ 	const char *name;	/* Required. */
+ 	unsigned long flags;	/* Optional: flags describing LSM */
++	int *enabled;		/* Optional: NULL means enabled. */
+ 	int (*init)(void);	/* Required. */
+ };
+ 
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 2edd35ca5044..127a540ef63a 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1332,8 +1332,8 @@ bool aa_g_paranoid_load = true;
+ module_param_named(paranoid_load, aa_g_paranoid_load, aabool, S_IRUGO);
+ 
+ /* Boot time disable flag */
+-static bool apparmor_enabled = CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE;
+-module_param_named(enabled, apparmor_enabled, bool, S_IRUGO);
++static int apparmor_enabled = CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE;
++module_param_named(enabled, apparmor_enabled, int, 0444);
+ 
+ static int __init apparmor_enabled_setup(char *str)
+ {
+@@ -1729,5 +1729,6 @@ static int __init apparmor_init(void)
+ DEFINE_LSM(apparmor) = {
+ 	.name = "apparmor",
+ 	.flags = LSM_FLAG_LEGACY_MAJOR,
++	.enabled = &apparmor_enabled,
+ 	.init = apparmor_init,
+ };
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 56c6f1849c80..efc0ac1b5019 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -7210,6 +7210,7 @@ void selinux_complete_init(void)
+ DEFINE_LSM(selinux) = {
+ 	.name = "selinux",
+ 	.flags = LSM_FLAG_LEGACY_MAJOR,
++	.enabled = &selinux_enabled,
+ 	.init = selinux_init,
+ };
+ 
+-- 
+2.14.5
 
-Are these supposed to be stand-alone platform devices?
-
-> +A PRU application/user node typically uses one or more PRU device nodes to
-> +implement a PRU application/functionality. Each application/client node would
-> +need a reference to at least a PRU node, and optionally pass some configuration
-> +parameters.
-
-I thought device tree is not supposed to be used for configuration.
-
-> +
-> +Required Properties:
-> +--------------------
-> +- prus                 : phandles to the PRU nodes used
-> +
-> +Optional Properties:
-> +--------------------
-> +- firmware-name        : firmwares for the PRU cores, the default firmware
-> +                         for the core from the PRU node will be used if not
-> +                         provided. The firmware names should correspond to
-> +                         the PRU cores listed in the 'prus' property
-
-Perhaps this should be a "compatible" property instead of "firmware-name"? The
-driver that matches the compatible string can then set the firmware names.
-
-> +- ti,pruss-gp-mux-sel  : array of values for the GP_MUX_SEL under PRUSS_GPCFG
-> +                         register for a PRU. This selects the internal muxing
-> +                         scheme for the PRU instance. If not provided, the
-> +                         default out-of-reset value (0) for the PRU core is
-> +                         used. Values should correspond to the PRU cores listed
-> +                         in the 'prus' property
-
-Is this supposed to be a pinmux? So maybe we should be using pinmux bindings?
-
-> +- ti,pru-interrupt-map : PRU interrupt mappings, containing an array of entries
-> +                         with each entry consisting of 4 cell-values. First one
-> +                         is an index towards the "prus" property to identify the
-> +                         PRU core for the interrupt map, second is the PRU
-> +                         System Event id, third is the PRU interrupt channel id
-> +                         and fourth is the PRU host interrupt id. If provided,
-> +                         this map will supercede any other configuration
-> +                         provided through firmware
-
-Could this mapping just be cells of the interrupt consumer nodes instead of an
-extra property? As I mentioned in a reply to another patch, unless there is a
-compelling reason to do otherwise, the channel to host mapping can be required
-to be 1:1 as recommended in the TRMs, so that cell can be omitted. Also, since
-the interrupt controller is independent of the PRU cores, the cell specifying the
-index of the PRU core is not needed in this case. The #interrupt-cells already
-includes a cell for the system event number, so this just leaves one cell, the
-host channel, to be added to the #interrupt-cells.
-
-So, instead of:
-
-	ti,pru-interrupt-map = <0 16 2 7 >, <1 19 1 3>;
-
-we could have:
-
-	interrupt-parent = <&pruss_intc>;
-	interrupts = <16 7>, <19 3>;
-
-There are also already alternate interrupt bindings that allow for the case
-where there is more than one interrupt-parent.
-
-> +
->   Example:
->   ========
->   1.	/* AM33xx PRU-ICSS */
-> @@ -397,3 +429,14 @@ Example:
->   			...
->   		};
->   	};
-> +
-> +3:	/* PRU application node example */
-> +	app_node: app_node {
-> +		prus = <&pru1_0>, <&pru1_1>;
-> +		firmware-name = "pruss-app-fw", "pruss-app-fw-2";
-> +		ti,pruss-gp-mux-sel = <2>, <1>;
-> +		/* setup interrupts for prus:
-> +		   prus[0] => pru1_0: ev=16, chnl=2, host-irq=7,
-> +		   prus[1] => pru1_1: ev=19, chnl=1, host-irq=3 */
-> +		ti,pru-interrupt-map = <0 16 2 7 >, <1 19 1 3>;
-> +	}
-> 
 
