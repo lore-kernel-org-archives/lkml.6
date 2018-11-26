@@ -2,637 +2,193 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF9BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB901C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA7CE2082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:32:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA7CE2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 8DFBA2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:33:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DFBA2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727209AbeK0I1h (ORCPT
+        id S1727148AbeK0I3T convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 03:27:37 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:59889 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726363AbeK0I1h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 03:27:37 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gROU5-0002Ez-AZ; Mon, 26 Nov 2018 22:32:01 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gROU2-0006Ql-SK; Mon, 26 Nov 2018 22:31:58 +0100
-Date:   Mon, 26 Nov 2018 22:31:58 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Hao Zhang <hao5781286@gmail.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        maxime.ripard@bootlin.com, wens@csie.org, mturquette@baylibre.com,
-        sboyd@kernel.org, thierry.reding@gmail.com,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 6/6] ARM: PWM: add allwinner sun8i R40/T3/V40 PWM
- support.
-Message-ID: <20181126213158.q5m5bbwnmewud2gb@pengutronix.de>
-References: <20181125162319.GA5422@arx-s1>
+        Tue, 27 Nov 2018 03:29:19 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:43355 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726363AbeK0I3T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 03:29:19 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C2E56207AD; Mon, 26 Nov 2018 22:33:48 +0100 (CET)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1D2FC20736;
+        Mon, 26 Nov 2018 22:33:38 +0100 (CET)
+Date:   Mon, 26 Nov 2018 22:33:34 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     vitor <vitor.soares@synopsys.com>
+Cc:     <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+        <arnd@arndb.de>, <psroka@cadence.com>, <agolec@cadence.com>,
+        <adouglas@cadence.com>, <bfolta@cadence.com>, <dkos@cadence.com>,
+        <alicja@cadence.com>, <cwronka@cadence.com>, <sureshp@cadence.com>,
+        <rafalc@cadence.com>, <thomas.petazzoni@bootlin.com>, <nm@ti.com>,
+        <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <geert@linux-m68k.org>, <linus.walleij@linaro.org>,
+        <Xiang.Lin@synaptics.com>, <linux-gpio@vger.kernel.org>,
+        <nsekhar@ti.com>, <pgaj@cadence.com>, <peda@axentia.se>,
+        <mshettel@codeaurora.org>, <swboyd@chromium.org>,
+        <joao.pinto@synopsys.com>
+Subject: Re: [PATCH] i3c: master: dw: split dw-i3c-master.c into master and
+ bus specific parts
+Message-ID: <20181126223334.08105d89@bbrezillon>
+In-Reply-To: <4c743a9a-d636-d34c-b7e3-913f18e6c754@synopsys.com>
+References: <ade2c1a8d1eb48681b01ccdc9bed22caf5e96c4b.1542904564.git.soares@synopsys.com>
+        <20181122210202.6af50fcc@bbrezillon>
+        <6d513e04-3a57-1989-429c-64631101c5a2@synopsys.com>
+        <20181123135004.7fd1cd58@bbrezillon>
+        <83115f47-1326-cb33-a7dc-4bc8ff95befa@synopsys.com>
+        <20181126133550.51469816@bbrezillon>
+        <4e9c0461-02a3-80b2-c9b7-2e9ea9b38f8b@synopsys.com>
+        <20181126195618.352eafb1@bbrezillon>
+        <4c743a9a-d636-d34c-b7e3-913f18e6c754@synopsys.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181125162319.GA5422@arx-s1>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 12:23:19AM +0800, Hao Zhang wrote:
-> The sun8i R40/T3/V40 PWM has 8 PWM channals and divides to 4 PWM pairs,
-> each PWM pair built-in 1 clock module, 2 timer logic module and 1
-> programmable dead-time generator, it also support waveform capture.
-> It has 2 clock sources OSC24M and APB1, it is different with the
-> sun4i-pwm driver, Therefore add a new driver for it.
+On Mon, 26 Nov 2018 20:11:39 +0000
+vitor <vitor.soares@synopsys.com> wrote:
+
+> >>> I prefer that we keep the driver as is until we actually need to split
+> >>> things up.  
+> >> This is already done and will benefit everyone:
+> >>
+> >>       - for me is better do it now than the secondary master and slave
+> >> development.  
+> > Sorry, I don't get that one.  
 > 
-> Signed-off-by: Hao Zhang <hao5781286@gmail.com>
-> ---
->  drivers/pwm/Kconfig     |  12 +-
->  drivers/pwm/Makefile    |   1 +
->  drivers/pwm/pwm-sun8i.c | 418 ++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 430 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/pwm/pwm-sun8i.c
 > 
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index 504d252..6105ac8 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -426,7 +426,7 @@ config PWM_STMPE
->  	  expanders.
->  
->  config PWM_SUN4I
-> -	tristate "Allwinner PWM support"
-> +	tristate "Allwinner SUN4I PWM support"
->  	depends on ARCH_SUNXI || COMPILE_TEST
->  	depends on HAS_IOMEM && COMMON_CLK
->  	help
-> @@ -435,6 +435,16 @@ config PWM_SUN4I
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called pwm-sun4i.
->  
-> +config PWM_SUN8I
-> +	tristate "Allwinner SUN8I (R40/V40/T3) PWM support"
-> +	depends on ARCH_SUNXI || COMPILE_TEST
-> +	depends on HAS_IOMEM && COMMON_CLK
-> +	help
-> +	  Generic PWM framework driver for Allwinner R40/V40/T3 SoCs.
-> +
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called pwm-sun8i.
-> +
->  config PWM_TEGRA
->  	tristate "NVIDIA Tegra PWM support"
->  	depends on ARCH_TEGRA
-> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> index 9c676a0..32c8d2d 100644
-> --- a/drivers/pwm/Makefile
-> +++ b/drivers/pwm/Makefile
-> @@ -43,6 +43,7 @@ obj-$(CONFIG_PWM_STM32)		+= pwm-stm32.o
->  obj-$(CONFIG_PWM_STM32_LP)	+= pwm-stm32-lp.o
->  obj-$(CONFIG_PWM_STMPE)		+= pwm-stmpe.o
->  obj-$(CONFIG_PWM_SUN4I)		+= pwm-sun4i.o
-> +obj-$(CONFIG_PWM_SUN8I)		+= pwm-sun8i.o
->  obj-$(CONFIG_PWM_TEGRA)		+= pwm-tegra.o
->  obj-$(CONFIG_PWM_TIECAP)	+= pwm-tiecap.o
->  obj-$(CONFIG_PWM_TIEHRPWM)	+= pwm-tiehrpwm.o
-> diff --git a/drivers/pwm/pwm-sun8i.c b/drivers/pwm/pwm-sun8i.c
-> new file mode 100644
-> index 0000000..d8597e4
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-sun8i.c
-> @@ -0,0 +1,418 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2018 Hao Zhang <hao5781286@gmail.com>
-> +
-> +#include <linux/bitops.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pwm.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/time.h>
-> +#include <linux/regmap.h>
-> +
-> +#define PWM_IRQ_ENABLE_REG	0x0000
-> +#define PCIE(ch)		BIT(ch)
-> +
-> +#define PWM_IRQ_STATUS_REG	0x0004
-> +#define PIS(ch)			BIT(ch)
-> +
-> +#define CAPTURE_IRQ_ENABLE_REG	0x0010
-> +#define CRIE(ch)		BIT((ch) * 2)
-> +#define CFIE(ch)		BIT((ch) * 2 + 1)
-> +
-> +#define CAPTURE_IRQ_STATUS_REG	0x0014
-> +#define CRIS(ch)		BIT((ch) * 2)
-> +#define CFIS(ch)		BIT((ch) * 2 + 1)
-> +
-> +#define CLK_CFG_REG(ch)		(0x0020 + ((ch) >> 1) * 4)
-> +#define CLK_SRC_SEL		GENMASK(8, 7)
-> +#define CLK_SRC_BYPASS_SEC	BIT(6)
-> +#define CLK_SRC_BYPASS_FIR	BIT(5)
-> +#define CLK_GATING		BIT(4)
-> +#define CLK_DIV_M		GENMASK(3, 0)
-> +
-> +#define PWM_DZ_CTR_REG(ch)	(0x0030 + ((ch) >> 1) * 4)
-> +#define PWM_DZ_INTV		GENMASK(15, 8)
-> +#define PWM_DZ_EN		BIT(0)
-> +
-> +#define PWM_ENABLE_REG		0x0040
-> +#define PWM_EN(ch)		BIT(ch)
-> +
-> +#define CAPTURE_ENABLE_REG	0x0044
-> +#define CAP_EN(ch)		BIT(ch)
-> +
-> +#define PWM_CTR_REG(ch)		(0x0060 + (ch) * 0x20)
-> +#define PWM_PERIOD_RDY		BIT(11)
-> +#define PWM_PUL_START		BIT(10)
-> +#define PWM_MODE		BIT(9)
-> +#define PWM_ACT_STA		BIT(8)
-> +#define PWM_PRESCAL_K		GENMASK(7, 0)
-> +
-> +#define PWM_PERIOD_REG(ch)	(0x0064 + (ch) * 0x20)
-> +#define PWM_ENTIRE_CYCLE	GENMASK(31, 16)
-> +#define PWM_ACT_CYCLE		GENMASK(15, 0)
-> +
-> +#define PWM_CNT_REG(ch)		(0x0068 + (ch) * 0x20)
-> +#define PWM_CNT_VAL		GENMASK(15, 0)
-> +
-> +#define CAPTURE_CTR_REG(ch)	(0x006c + (ch) * 0x20)
-> +#define CAPTURE_CRLF		BIT(2)
-> +#define CAPTURE_CFLF		BIT(1)
-> +#define CAPINV			BIT(0)
-> +
-> +#define CAPTURE_RISE_REG(ch)	(0x0070 + (ch) * 0x20)
-> +#define CAPTURE_CRLR		GENMASK(15, 0)
-> +
-> +#define CAPTURE_FALL_REG(ch)	(0x0074 + (ch) * 0x20)
-> +#define CAPTURE_CFLR		GENMASK(15, 0)
-> +
-> +struct sun8i_pwm_chip {
-> +	struct pwm_chip chip;
-> +	struct clk *clk;
-> +	void __iomem *base;
-> +	const struct sun8i_pwm_data *data;
+> I already share my plan with you. See the structure above.
 
-This member is only written to, but never used.
+My point is, I don't get the relationship between your patch and
+secondary-master/slave-mode support.
 
-> +	struct regmap *regmap;
-> +};
-> +
-> +static struct sun8i_pwm_chip *to_sun8i_pwm_chip(struct pwm_chip *chip)
-> +{
-> +	return container_of(chip, struct sun8i_pwm_chip, chip);
-> +}
-> +
-> +static u32 sun8i_pwm_read(struct sun8i_pwm_chip *sun8i_pwm,
-> +			  unsigned long offset)
-> +{
-> +	u32 val;
-> +
-> +	regmap_read(sun8i_pwm->regmap, offset, &val);
-> +	return val;
-> +}
-> +
-> +static void sun8i_pwm_set_bit(struct sun8i_pwm_chip *sun8i_pwm,
-> +			      unsigned long reg, u32 bit)
-> +{
-> +	regmap_update_bits(sun8i_pwm->regmap, reg, bit, bit);
-> +}
-> +
-> +static void sun8i_pwm_clear_bit(struct sun8i_pwm_chip *sun8i_pwm,
-> +				unsigned long reg, u32 bit)
-> +{
-> +	regmap_update_bits(sun8i_pwm->regmap, reg, bit, 0);
-> +}
-> +
-> +static void sun8i_pwm_set_value(struct sun8i_pwm_chip *sun8i_pwm,
-> +				unsigned long reg, u32 mask, u32 val)
-> +{
-> +	regmap_update_bits(sun8i_pwm->regmap, reg, mask, val);
-> +}
-> +
-> +static void sun8i_pwm_set_polarity(struct sun8i_pwm_chip *chip, u32 ch,
-> +				   enum pwm_polarity polarity)
-> +{
-> +	if (polarity == PWM_POLARITY_NORMAL)
-> +		sun8i_pwm_set_bit(chip, PWM_CTR_REG(ch), PWM_ACT_STA);
-> +	else
-> +		sun8i_pwm_clear_bit(chip, PWM_CTR_REG(ch), PWM_ACT_STA);
-> +}
+> >>>> This topic rise another one related with the master folder. I understand
+> >>>> that now the subsystem doesn't have slave support but the name is
+> >>>> limited. Isn't better to have something like controller or busses? What
+> >>>> do you have in mind for the slave?  
+> >>> drivers/i3c/slave/... for slave drivers and drivers/i3c/slave.c for the
+> >>> framework, just like we have drivers/i3c/master/ for master controller
+> >>> drivers and drivers/i3c/master.c.  
+> >> I have to disagree here. I don't see any place on the kernel with
+> >> .../master/ and ../slave/ folders and it is very likely that both rules
+> >> will have some common code.  
+> > I see at least one that uses this model: the USB framework
+> > (drivers/usb/gadget/ for device controllers and drivers/usb/host/ for
+> > host controllers). Given that I3C is closer to USB than I2C I initially
+> > decided to keep this separation. Maybe I'm wrong, but I'd like to
+> > understand why you think it's not appropriate.  
+> 
+> 
+> You can say there some features from USB in I3C but cannot compare USB 
+> vs I3C since they are in different championships.
 
-This function is only used once. Maybe drop the function and put the if
-to the caller.
+I maintain that functionally, I3C is closer to USB than I2C. That does
+not mean that it's competing with USB performance-wise, it just means
+that the SW stack is likely to resemble the USB one (probably a bit
+simpler, at least at the beginning). 
 
-> +
-> +static int sun8i_pwm_config(struct sun8i_pwm_chip *sun8i_pwm, u8 ch,
-> +			    struct pwm_state *state)
-> +{
-> +	u64 clk_rate, clk_div, val;
-> +	u16 prescaler = 0;
-> +	u16 div_id = 0;
-> +	struct clk *clk;
-> +	bool is_clk;
-> +	int ret;
-> +
-> +	clk_rate = clk_get_rate(sun8i_pwm->clk);
-> +
-> +	/* check period and select clock source */
-> +	val = state->period * clk_rate;
-> +	do_div(val, NSEC_PER_SEC);
-> +	is_clk = devm_clk_name_match(sun8i_pwm->clk, "mux-0");
-> +	if (val <= 1 && is_clk) {
-> +		clk = devm_clk_get(sun8i_pwm->chip.dev, "mux-1");
-> +		if (IS_ERR(clk)) {
-> +			dev_err(sun8i_pwm->chip.dev,
-> +				"Period expects a larger value\n");
+> 
+> The aim of I3C is to fill the gaps discovery on I2C over the years but 
+> still keeping its simplicity not to go to the complexity of USB.
 
-This error message looks wrong, several others, too.
+Look at the bus discovery mechanism, the notion of DCR (close to the
+concept of USB class), or the fact that each dev has a unique
+manufacturer+PID pair (which resemble the product/vendor ID concept)
+that allows us to easily bind a dev to a driver without requiring a
+static description.
 
-> +			return -EINVAL;
+> 
+> 
+> I'm not sure but I think that a controller cannot change between gadget 
+> to host in USB in runtime.
 
-return PTR_ERR(clk)?
+That's called USB OTG. Okay, to be fair, it's not exactly the same, and
+the mastership handover in I3C is probably more complex than what we
+have with USB OTG (I'm not a USB expert, so I might be wrong here).
 
-> +		}
-> +
-> +		clk_rate = clk_get_rate(clk);
-> +		val = state->period * clk_rate;
-> +		do_div(val, NSEC_PER_SEC);
-> +		if (val <= 1) {
-> +			dev_err(sun8i_pwm->chip.dev,
-> +				"Period expects a larger value\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		/* change clock source to "mux-1" */
-> +		clk_disable_unprepare(sun8i_pwm->clk);
-> +		devm_clk_put(sun8i_pwm->chip.dev, sun8i_pwm->clk);
-> +		sun8i_pwm->clk = clk;
+> Even so, this kind of behavior is more likely 
+> to have in an I3C bus.
 
-sun8i_pwm is shared for all 8 PWMs, right? So if you assign mux-1 here
-for the second mux, how does this influence the first PWM?
+Maybe.
 
-mux-0 might already be enabled, it is then never disabled.
+> 
+> 
+> >  
+> >> With this structure the user will have the code spread in /master and
+> >> /slave folders...  
+> > Not sure who you call "user" here, but yes, master controller and slave
+> > controller drivers would be placed in different dirs.
+> >  
+> >>
+> >> I would like you consider to change the folder name and the names rules
+> >> to something like in i2c.  
+> > Why? And more importantly, why is this coming up now? You've been
+> > reviewing the framework since the beginning, and never complained about
+> > the subdirs/files organization so far.  
+> 
+> 
+> Sorry for that and don't take me wrong... maybe I should rise this 
+> question early but this only came up now when I started splitting and 
+> thinking where to put what is for master for slave, what is common and 
+> the thing of putting everything of controller in a folder.
 
+So you have such a dual-role controller? I mean, Cadence IP has a dummy
+GPIO mode in its Master IP when is operating in slave mode (secondary
+master, or main master after it's released the bus), but I'm not sure
+this was designed for anything else but testing.
 
-> +
-> +		ret = clk_prepare_enable(sun8i_pwm->clk);
-> +		if (ret) {
-> +			dev_err(sun8i_pwm->chip.dev,
-> +				"Failed to enable PWM clock\n");
-> +			return ret;
-> +		}
-> +
-> +	} else {
-> +		dev_err(sun8i_pwm->chip.dev,
-> +			"Period expects a larger value\n");
-> +		return -EINVAL;
+What I call a slave controller would be something that lets you reply to
+SDR/DDR transactions or fill a generic regmap that would be exposed to
+other masters on the bus. This way we could implement generic slave
+drivers in Linux (the same way we have gadget drivers). Anything else
+is likely to be to specific to be exposed as a generic framework.
 
-This looks wrong. If val is > 1 there shouldn't be a reason to abort?
+> 
+> 
+> Taking the USB as exemple do you prefer a dwc folder on i3c root?
 
-> +	}
-> +
-> +	is_clk = devm_clk_name_match(sun8i_pwm->clk, "mux-0");
-> +	if (is_clk)
-> +		sun8i_pwm_set_value(sun8i_pwm, CLK_CFG_REG(ch),
-> +				    CLK_SRC_SEL, 0 << 7);
-> +	else
-> +		sun8i_pwm_set_value(sun8i_pwm, CLK_CFG_REG(ch),
-> +				    CLK_SRC_SEL, 1 << 7);
-> +
-> +	dev_info(sun8i_pwm->chip.dev, "clock source freq:%lldHz\n", clk_rate);
+Hm, not sure I like this idea either. So I see 2 options:
 
-I'd degrade this to dev_dbg.
+1/ put all controller drivers (both master and slave ones) in a common
+   directory (drivers/i3c/controllers) as you suggest, and prefix them
+   correctly (i3c-master-<ip>.c, i3c-slave-<ip>.c and i3c-dual-<ip>.c)
+2/ place them in separate directories: drivers/i3c/{master,slave,dual}
 
-> +
-> +	/* calculate and set prescaler, div table, PWM entire cycle */
-> +	clk_div = val;
-> +	while (clk_div > 65535) {
-> +		prescaler++;
-> +		clk_div = val;
-> +		do_div(clk_div, 1U << div_id);
-> +		do_div(clk_div, prescaler + 1);
-> +
-> +		if (prescaler == 255) {
-> +			prescaler = 0;
-> +			div_id++;
-> +			if (div_id == 9) {
-> +				dev_err(sun8i_pwm->chip.dev,
-> +					"unsupport period value\n");
-> +				return -EINVAL;
-> +			}
-> +		}
-> +	}
+I'm fine either way.
 
-Noting the underlying formula for the calculation and the bitwidth for
-the related register fields above would be good.
+> 
+> 
+> >
+> > I'm okay changing it, but I want to understand why the proposed
+> > separation is not good.  
+> 
+> 
+> I already tell you my use case and as I said maybe someone can advise :)
+> 
 
-> +
-> +	sun8i_pwm_set_value(sun8i_pwm, PWM_PERIOD_REG(ch),
-> +			    PWM_ENTIRE_CYCLE, clk_div << 16);
-> +	sun8i_pwm_set_value(sun8i_pwm, PWM_CTR_REG(ch),
-> +			    PWM_PRESCAL_K, prescaler << 0);
-> +	sun8i_pwm_set_value(sun8i_pwm, CLK_CFG_REG(ch),
-> +			    CLK_DIV_M, div_id << 0);
-> +
-> +	/* set duty cycle */
-> +	val = state->period;
-> +	do_div(val, clk_div);
-> +	clk_div = state->duty_cycle;
-> +	do_div(clk_div, val);
-> +	if (clk_div > 65535)
-> +		clk_div = 65535;
-> +
-> +	sun8i_pwm_set_value(sun8i_pwm, PWM_PERIOD_REG(ch),
-> +			    PWM_ACT_CYCLE, clk_div << 0);
-
-Why "<< 0"?
-
-> +	return 0;
-> +}
-> +
-> +static int sun8i_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-> +			   struct pwm_state *state)
-> +{
-> +	int ret;
-> +	struct sun8i_pwm_chip *sun8i_pwm = to_sun8i_pwm_chip(chip);
-> +	struct pwm_state cstate;
-> +
-> +	pwm_get_state(pwm, &cstate);
-> +	if (!cstate.enabled) {
-> +		ret = clk_prepare_enable(sun8i_pwm->clk);
-> +		if (ret) {
-> +			dev_err(chip->dev, "Failed to enable PWM clock\n");
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	if ((cstate.period != state->period) ||
-> +	    (cstate.duty_cycle != state->duty_cycle)) {
-> +		ret = sun8i_pwm_config(sun8i_pwm, pwm->hwpwm, state);
-> +		if (ret) {
-> +			dev_err(chip->dev, "Failed to config PWM\n");
-> +			return ret;
-> +		}
-> +	}
-
-sun8i_pwm_config writes the registers that are relevant for period and
-duty_cycle. When do these values take effect? If it's already here,
-switching the polarity below might introduce a glitch.
-
-
-> +	if (state->polarity != cstate.polarity)
-> +		sun8i_pwm_set_polarity(sun8i_pwm, pwm->hwpwm, state->polarity);
-> +
-> +	if (state->enabled) {
-> +		sun8i_pwm_set_bit(sun8i_pwm,
-> +				  CLK_CFG_REG(pwm->hwpwm), CLK_GATING);
-> +
-> +		sun8i_pwm_set_bit(sun8i_pwm,
-> +				  PWM_ENABLE_REG, PWM_EN(pwm->hwpwm));
-> +	} else {
-> +		sun8i_pwm_clear_bit(sun8i_pwm,
-> +				    CLK_CFG_REG(pwm->hwpwm), CLK_GATING);
-> +
-> +		sun8i_pwm_clear_bit(sun8i_pwm,
-> +				    PWM_ENABLE_REG, PWM_EN(pwm->hwpwm));
-> +	}
-
-Please document how the hardware behaves when being disabled. (Does it
-drive a 0? Does it drive a 1 when inverted? Or is the output high-z?)
-
-> +
-> +	return 0;
-> +}
-> +
-> +static void sun8i_pwm_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
-> +				struct pwm_state *state)
-> +{
-> +	struct sun8i_pwm_chip *sun8i_pwm = to_sun8i_pwm_chip(chip);
-> +	u64 clk_rate, tmp;
-> +	u32 val;
-> +	u16 clk_div, act_cycle;
-> +	u8 prescal, div_id;
-> +	u8 chn = pwm->hwpwm;
-> +
-> +	clk_rate = clk_get_rate(sun8i_pwm->clk);
-> +
-> +	val = sun8i_pwm_read(sun8i_pwm, PWM_CTR_REG(chn));
-> +	if (PWM_ACT_STA & val)
-
-This looks strange to me. While syntactically equivalent it is more
-usual to write this as
-
-	if (val & PWM_ACT_STA)
-
-
-> +		state->polarity = PWM_POLARITY_NORMAL;
-> +	else
-> +		state->polarity = PWM_POLARITY_INVERSED;
-> +
-> +	prescal = PWM_PRESCAL_K & val;
-> +
-> +	val = sun8i_pwm_read(sun8i_pwm, PWM_ENABLE_REG);
-> +	if (PWM_EN(chn) & val)
-> +		state->enabled = true;
-> +	else
-> +		state->enabled = false;
-
-When the PWM should be enabled, you also set the CLK_GATING bit. Should
-this better be checked for in .get_state, too?
-
-> +
-> +	val = sun8i_pwm_read(sun8i_pwm, PWM_PERIOD_REG(chn));
-> +	act_cycle = PWM_ACT_CYCLE & val;
-> +	clk_div = val >> 16;
-> +
-> +	val = sun8i_pwm_read(sun8i_pwm, CLK_CFG_REG(chn));
-> +	div_id = CLK_DIV_M & val;
-> +
-> +	tmp = act_cycle * prescal * (1U << div_id) * NSEC_PER_SEC;
-> +	state->duty_cycle = DIV_ROUND_CLOSEST_ULL(tmp, clk_rate);
-> +	tmp = clk_div * prescal * (1U << div_id) * NSEC_PER_SEC;
-> +	state->period = DIV_ROUND_CLOSEST_ULL(tmp, clk_rate);
-> +}
-> +
-> +static const struct regmap_config sun8i_pwm_regmap_config = {
-> +	.reg_bits = 32,
-> +	.reg_stride = 4,
-> +	.val_bits = 32,
-> +	.max_register = CAPTURE_FALL_REG(7),
-> +};
-> +
-> +static const struct pwm_ops sun8i_pwm_ops = {
-> +	.apply = sun8i_pwm_apply,
-> +	.get_state = sun8i_pwm_get_state,
-> +	.owner = THIS_MODULE,
-> +};
-> +
-> +static const struct of_device_id sun8i_pwm_dt_ids[] = {
-> +	{
-> +		.compatible = "allwinner,sun8i-r40-pwm",
-> +		.data = NULL,
-
-.data doesn't need to be specified.
-
-> +	},
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, sun8i_pwm_dt_ids);
-> +
-> +static int sun8i_pwm_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +	struct sun8i_pwm_chip *pwm;
-> +	struct resource *res;
-> +	int ret;
-> +	const struct of_device_id *match;
-> +
-> +	match = of_match_device(sun8i_pwm_dt_ids, &pdev->dev);
-> +	if (!match) {
-> +		dev_err(&pdev->dev, "Error: No device match found\n");
-> +		return -ENODEV;
-> +	}
-
-This prevents a match by driver-name, right? Other than that match is
-only used to assign pwm->data below to NULL.
-
-> +
-> +	pwm = devm_kzalloc(&pdev->dev, sizeof(*pwm), GFP_KERNEL);
-> +	if (!pwm)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	pwm->base = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(pwm->base))
-> +		return PTR_ERR(pwm->base);
-> +
-> +	pwm->regmap = devm_regmap_init_mmio(&pdev->dev, pwm->base,
-> +					    &sun8i_pwm_regmap_config);
-> +	if (IS_ERR(pwm->regmap)) {
-> +		dev_err(&pdev->dev, "Failed to create regmap\n");
-> +		return PTR_ERR(pwm->regmap);
-> +	}
-> +
-> +	/* we use mux-0 as default clock source */
-> +	pwm->clk = devm_clk_get(&pdev->dev, "mux-0");
-> +	if (IS_ERR(pwm->clk)) {
-
-You might want to handle pwm->clk == ERR_PTR(-EPROBE_DEFER) without falling
-back to mux-1 and without printing an error.
-
-> +		pwm->clk = devm_clk_get(&pdev->dev, "mux-1");
-> +		if (IS_ERR(pwm->clk)) {
-> +			dev_err(&pdev->dev, "Failed to get PWM clock\n");
-> +			return PTR_ERR(pwm->clk);
-> +		}
-> +	}
-> +
-> +	ret = of_property_read_u32(np, "pwm-channels", &pwm->chip.npwm);
-> +	if (ret && !pwm->chip.npwm) {
-
-This is equivalent to
-
-	if (ret)
-
-because &pwm->chip.npwm is only modified if of_property_read_u32
-returns 0 and the variable holds a 0 before.
-
-> +		dev_err(&pdev->dev, "Can't get pwm-channels\n");
-> +		return ret;
-> +	}
-> +
-> +	dev_info(&pdev->dev, "pwm-channels:%d\n", pwm->chip.npwm);
-
-dev_dbg?
-
-> +	pwm->data = match->data;
-> +	pwm->chip.dev = &pdev->dev;
-> +	pwm->chip.ops = &sun8i_pwm_ops;
-> +	pwm->chip.base = -1;
-> +	pwm->chip.of_xlate = of_pwm_xlate_with_flags;
-> +	pwm->chip.of_pwm_n_cells = 3;
-> +
-> +	ret = pwmchip_add(&pwm->chip);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "Failed to add PWM chip: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, pwm);
-
-If you do this earlier (typically after the allocation succeeded) you
-can simplify the last few lines to:
-
-	ret = pwmchip_add(&pwm->chip);
-	if (ret < 0)
-		dev_err(&pdev->dev, ...);
-
-	return ret;
-
-> +static int sun8i_pwm_remove(struct platform_device *pdev)
-> +{
-> +	struct sun8i_pwm_chip *pwm = platform_get_drvdata(pdev);
-> +
-> +	clk_disable_unprepare(pwm->clk);
-> +	return pwmchip_remove(&pwm->chip);
-
-This is at least unusual (and maybe broken). Please call pwmchip_remove
-before clk_disable_unprepare.
-
-> +}
-> +
-> +static struct platform_driver sun8i_pwm_driver = {
-> +	.driver = {
-> +		.name = "sun8i-pwm",
-> +		.of_match_table = sun8i_pwm_dt_ids,
-> +	},
-> +	.probe = sun8i_pwm_probe,
-> +	.remove = sun8i_pwm_remove,
-> +};
-> +module_platform_driver(sun8i_pwm_driver);
-> +
-> +MODULE_ALIAS("platform: sun8i-pwm");
-
-I think the space in the alias must be dropped. Giving that the driver
-doesn't bind by driver-name I suggest to drop this completely.
-
-> +MODULE_AUTHOR("Hao Zhang <hao5781286@gmail.com>");
-> +MODULE_DESCRIPTION("Allwinner sun8i PWM driver");
-> +MODULE_LICENSE("GPL v2");
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-K�nig            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+I think I understand your concerns now, but only because you started to
+mention a few things that were not clearly stated before (at least, I
+didn't understand it this way), like the fact that your controller (and
+probably others too) supports dual-role, or the fact that you plan to
+expose your IP through the PCI bus.
