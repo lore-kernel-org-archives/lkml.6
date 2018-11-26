@@ -2,176 +2,137 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 932BBC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC55C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5520720672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:37:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5520720672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D235A20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:38:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D235A20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbeK0Hcx (ORCPT
+        id S1727308AbeK0HdX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 02:32:53 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:36089 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbeK0Hcx (ORCPT
+        Tue, 27 Nov 2018 02:33:23 -0500
+Received: from mail-it1-f198.google.com ([209.85.166.198]:56297 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726985AbeK0HdX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 02:32:53 -0500
-Received: by mail-qk1-f194.google.com with SMTP id o125so13238458qkf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 12:37:33 -0800 (PST)
+        Tue, 27 Nov 2018 02:33:23 -0500
+Received: by mail-it1-f198.google.com with SMTP id j3so1242475itf.5
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 12:38:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:organization:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=VHLgVH8k0qVB5vuFVG167QXO5UKSibVmkgWmCZArFwI=;
-        b=DdrLz1JIFH+wl6Xf/Mos9lHJA1tdOKjWHjLxBjjrOiZTDkWWeRemDUVGx6owee8Unq
-         5Sv78wurKOKFgJdfZKAQgz2gcjNFnoYf867pGda1Q5RiwbbeGnLvJ1lDFAkmRxjhgrGX
-         aUp/x8oUheSQmM9D8Sr2zNW2GNI9akZwpzSy1seMCWYcL/6BPfSEhqhhw/7c6N3zgZnO
-         RvwOiChs72MqR3pzxO40FC6JyFmWpNK5P8OEgBVpw6BXxZsB3jP4/SgFiUp4jEdebA10
-         Rzt7+4oh8RPupL084HjIw74XZQIwPo5U+ulQc5kucuUjhzOVWh6daKPnKgMsW/4Ir5qf
-         yfZw==
-X-Gm-Message-State: AA+aEWb/sKhgNonlEeLuSE+KmGRHANgWM+4CyepNnomOQnHvaSuSXExC
-        t3qQ6/mypwuVVTOUM4LU3jcDeA==
-X-Google-Smtp-Source: AFSGD/Us+oursy0az3VlxXgVCAxquJYClVJgzYdQByKtndG81xYes1AmjB9UbV1cZ/pKMNsrmO94/w==
-X-Received: by 2002:a37:5a05:: with SMTP id o5mr26333541qkb.126.1543264653378;
-        Mon, 26 Nov 2018 12:37:33 -0800 (PST)
-Received: from dhcp-10-20-1-11.bss.redhat.com ([144.121.20.162])
-        by smtp.gmail.com with ESMTPSA id v186sm826920qkd.13.2018.11.26.12.37.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 12:37:32 -0800 (PST)
-Message-ID: <6f8b276f708404762557046065bfd8f4f07880dc.camel@redhat.com>
-Subject: Re: [PATCH] drm/dp_mst: Skip validating ports during destruction,
- just ref
-From:   Lyude Paul <lyude@redhat.com>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, Dave Airlie <airlied@linux.ie>,
-        Jerry Zuo <Jerry.Zuo@amd.com>
-Date:   Mon, 26 Nov 2018 15:37:31 -0500
-In-Reply-To: <CAKMK7uFAjG-tLMdUz7xf4E+1Lthnzx+cshobVG5BES9Mt=-fEg@mail.gmail.com>
-References: <20181113224613.28809-1-lyude@redhat.com>
-         <CAKMK7uFAjG-tLMdUz7xf4E+1Lthnzx+cshobVG5BES9Mt=-fEg@mail.gmail.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=OHcNSNk4rlVebSBrOulS4oMh/V/juCT+W2dSjillA9w=;
+        b=laCW6rf/r8iA6E01T3ne7IRVJPrB0utAW7TcS9Qlls19dsGBthT3+SwmysOlf2EW2J
+         9680+g1KJEfNLKskEVKSD0JRmV6L3bUnOQREDKSQ048VwGsKRPN1xIOyrtRgYPSzEKiO
+         aUJfdIVtDzZq1TccXC8KzB/vWDoqsxqkfrtC0VjsNsIjsL52Ud0dnXmrSIOALKtd0abB
+         ing8lhBuRNd4YbZDbQTVJSNkhusVrEMlVAeZtLx1Jjo7TtoMOQaBaVlr+3JmH/q7eUhH
+         SbUjiQxWaJM0PARR9sFQQe2TOEXq/qT7fDb8mxVh8yyL6LEmwvMAKRI5sr+P0Vzs8iZV
+         AO7Q==
+X-Gm-Message-State: AGRZ1gL0ZlO4q11A6rI3eceLmERNbUjYbC44LctShtRKWtkyTABsWEnU
+        fuT+VfUlAxnqnEw+Cm4BmGzba0ojQxYqnhoAQKsSCghsKV8E
+X-Google-Smtp-Source: AJdET5eydn8rTC4smBMU8miKS1zbRvyUgvAXoFoHwT2Ax/X8LfBL5V1KsYirTQUNZgamC5z16/tFEqK9YoNqL9oG2V5YuJ3YpHp0
+MIME-Version: 1.0
+X-Received: by 2002:a02:12dc:: with SMTP id 89mr20000313jap.5.1543264683664;
+ Mon, 26 Nov 2018 12:38:03 -0800 (PST)
+Date:   Mon, 26 Nov 2018 12:38:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000043ae20057b974f14@google.com>
+Subject: WARNING: locking bug in lock_downgrade
+From:   syzbot <syzbot+53383ae265fb161ef488@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux@dominikbrodowski.net, mhocko@suse.com, rientjes@google.com,
+        syzkaller-bugs@googlegroups.com, vbabka@suse.cz,
+        yang.shi@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-11-22 at 09:34 +0100, Daniel Vetter wrote:
-> On Tue, Nov 13, 2018 at 11:47 PM Lyude Paul <lyude@redhat.com> wrote:
-> > Jerry Zuo pointed out a rather obscure hotplugging issue that it seems I
-> > accidentally introduced into DRM two years ago.
-> > 
-> > Pretend we have a topology like this:
-> > 
-> > > - DP-1: mst_primary
-> >    |- DP-4: active display
-> >    |- DP-5: disconnected
-> >    |- DP-6: active hub
-> >       |- DP-7: active display
-> >       |- DP-8: disconnected
-> >       |- DP-9: disconnected
-> > 
-> > If we unplug DP-6, the topology starting at DP-7 will be destroyed but
-> > it's payloads will live on in DP-1's VCPI allocations and thus require
-> > removal. However, this removal currently fails because
-> > drm_dp_update_payload_part1() will (rightly so) try to validate the port
-> > before accessing it, fail then abort. If we keep going, eventually we
-> > run the MST hub out of bandwidth and all new allocations will start to
-> > fail (or in my case; all new displays just start flickering a ton).
-> > 
-> > We could just teach drm_dp_update_payload_part1() not to drop the port
-> > ref in this case, but then we also need to teach
-> > drm_dp_destroy_payload_step1() to do the same thing, then hope no one
-> > ever adds anything to the that requires a validated port reference in
-> > drm_dp_destroy_connector_work(). Kind of sketchy.
-> > 
-> > So let's go with a more clever solution: any port that
-> > drm_dp_destroy_connector_work() interacts with is guaranteed to still
-> > exist in memory until we say so. While said port might not be valid we
-> > don't really care: that's the whole reason we're destroying it in the
-> > first place! So, teach drm_dp_get_validated_port_ref() to use the all
-> > mighty current_work() function to avoid attempting to validate ports
-> > from the context of mgr->destroy_connector_work. I can't see any
-> > situation where this wouldn't be safe, and this avoids having to play
-> > whack-a-mole in the future of trying to work around port validation.
-> > 
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > Fixes: 263efde31f97 ("drm/dp/mst: Get validated port ref in
-> > drm_dp_update_payload_part1()")
-> > Reported-by: Jerry Zuo <Jerry.Zuo@amd.com>
-> > Cc: Jerry Zuo <Jerry.Zuo@amd.com>
-> > Cc: Harry Wentland <Harry.Wentland@amd.com>
-> > Cc: <stable@vger.kernel.org> # v4.6+
-> 
-> Hm, sounds very similar to the bug I pointed out in your "make vcpi
-> alloc more atomic" series. Will this all interact nicely with the
-> solution we've worked out there (where we need to delay at least the
-> kfree(port) until the last vcpi allocation is released?
-Yes, it seems to work fine in my tests
+Hello,
 
-> -Daniel
-> 
-> > ---
-> >  drivers/gpu/drm/drm_dp_mst_topology.c | 15 +++++++++++++--
-> >  1 file changed, 13 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c
-> > b/drivers/gpu/drm/drm_dp_mst_topology.c
-> > index 529414556962..08978ad72f33 100644
-> > --- a/drivers/gpu/drm/drm_dp_mst_topology.c
-> > +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-> > @@ -1023,9 +1023,20 @@ static struct drm_dp_mst_port
-> > *drm_dp_mst_get_port_ref_locked(struct drm_dp_mst_
-> >  static struct drm_dp_mst_port *drm_dp_get_validated_port_ref(struct
-> > drm_dp_mst_topology_mgr *mgr, struct drm_dp_mst_port *port)
-> >  {
-> >         struct drm_dp_mst_port *rport = NULL;
-> > +
-> >         mutex_lock(&mgr->lock);
-> > -       if (mgr->mst_primary)
-> > -               rport = drm_dp_mst_get_port_ref_locked(mgr->mst_primary,
-> > port);
-> > +       /*
-> > +        * Port may or may not be 'valid' but we don't care about that
-> > when
-> > +        * destroying the port and we are guaranteed that the port pointer
-> > +        * will be valid until we've finished
-> > +        */
-> > +       if (current_work() == &mgr->destroy_connector_work) {
-> > +               kref_get(&port->kref);
-> > +               rport = port;
-> > +       } else if (mgr->mst_primary) {
-> > +               rport = drm_dp_mst_get_port_ref_locked(mgr->mst_primary,
-> > +                                                      port);
-> > +       }
-> >         mutex_unlock(&mgr->lock);
-> >         return rport;
-> >  }
-> > --
-> > 2.19.1
-> > 
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-> 
--- 
-Cheers,
-	Lyude Paul
+syzbot found the following crash on:
 
+HEAD commit:    e195ca6cb6f2 Merge branch 'for-linus' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12336ed5400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=73e2bc0cb6463446
+dashboard link: https://syzkaller.appspot.com/bug?extid=53383ae265fb161ef488
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+53383ae265fb161ef488@syzkaller.appspotmail.com
+
+
+------------[ cut here ]------------
+downgrading a read lock
+WARNING: CPU: 0 PID: 26202 at kernel/locking/lockdep.c:3556  
+__lock_downgrade kernel/locking/lockdep.c:3556 [inline]
+WARNING: CPU: 0 PID: 26202 at kernel/locking/lockdep.c:3556  
+lock_downgrade+0x4d7/0x900 kernel/locking/lockdep.c:3819
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 26202 Comm: blkid Not tainted 4.20.0-rc3+ #127
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  panic+0x2ad/0x55c kernel/panic.c:188
+  __warn.cold.8+0x20/0x45 kernel/panic.c:540
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
+RIP: 0010:__lock_downgrade kernel/locking/lockdep.c:3556 [inline]
+RIP: 0010:lock_downgrade+0x4d7/0x900 kernel/locking/lockdep.c:3819
+Code: 00 00 fc ff df 41 c6 44 05 00 f8 e9 1b ff ff ff 48 c7 c7 60 68 2b 88  
+4c 89 9d 58 ff ff ff 48 89 85 60 ff ff ff e8 d9 1f e7 ff <0f> 0b 48 8b 85  
+60 ff ff ff 4c 8d 4d d8 4c 89 e9 48 ba 00 00 00 00
+RSP: 0018:ffff8881ba547b70 EFLAGS: 00010086
+RAX: 0000000000000000 RBX: 1ffff110374a8f74 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000006
+RBP: ffff8881ba547c28 R08: ffff88817c0b2400 R09: fffffbfff12b2254
+R10: fffffbfff12b2254 R11: ffffffff895912a3 R12: ffffffff8b0f67a0
+R13: ffff8881ba547bc0 R14: 0000000000000001 R15: ffff88817c0b2400
+  downgrade_write+0x76/0x270 kernel/locking/rwsem.c:147
+  __do_munmap+0xcd8/0xf80 mm/mmap.c:2812
+  __vm_munmap+0x138/0x1f0 mm/mmap.c:2837
+  __do_sys_munmap mm/mmap.c:2862 [inline]
+  __se_sys_munmap mm/mmap.c:2859 [inline]
+  __x64_sys_munmap+0x65/0x80 mm/mmap.c:2859
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f237e5ce417
+Code: f0 ff ff 73 01 c3 48 8d 0d 8a ad 20 00 31 d2 48 29 c2 89 11 48 83 c8  
+ff eb eb 90 90 90 90 90 90 90 90 90 b8 0b 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 73 01 c3 48 8d 0d 5d ad 20 00 31 d2 48 29 c2 89
+RSP: 002b:00007ffe61bed9d8 EFLAGS: 00000203 ORIG_RAX: 000000000000000b
+RAX: ffffffffffffffda RBX: 00007f237e7d91c8 RCX: 00007f237e5ce417
+RDX: 000000000224ff00 RSI: 00000000000033ef RDI: 00007f237e7d1000
+RBP: 00007ffe61bedb40 R08: 0000000000000001 R09: 0000000000000007
+R10: 00007f237e5c8a0b R11: 0000000000000203 R12: 00000000b1f97d00
+R13: 000004b2b1f97d00 R14: 000004b2afd5fdeb R15: 00007f237e7ce740
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
