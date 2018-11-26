@@ -2,431 +2,109 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2951BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5318C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD83420672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD83420672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 6BC2820663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:53:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=prjkt-io.20150623.gappssmtp.com header.i=@prjkt-io.20150623.gappssmtp.com header.b="zvkx4QPT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BC2820663
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=prjkt.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbeK0ErA (ORCPT
+        id S1727262AbeK0Ers (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:47:00 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:43816 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbeK0Eq7 (ORCPT
+        Mon, 26 Nov 2018 23:47:48 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40476 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726441AbeK0Ers (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:46:59 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 61E3B27DA18
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     lee.jones@linaro.org
-Cc:     gwendal@chromium.org, drinkcat@chromium.org,
-        linux-kernel@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, bleung@chromium.org,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH v2 2/8] mfd / platform: cros_ec: move lightbar attributes to its own driver.
-Date:   Mon, 26 Nov 2018 18:51:52 +0100
-Message-Id: <20181126175158.5425-3-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181126175158.5425-1-enric.balletbo@collabora.com>
-References: <20181126175158.5425-1-enric.balletbo@collabora.com>
+        Mon, 26 Nov 2018 23:47:48 -0500
+Received: by mail-pl1-f195.google.com with SMTP id u18so1652763plq.7
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 09:52:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=prjkt-io.20150623.gappssmtp.com; s=20150623;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=LL5KV36bqh0RYU6Va23d3d9Iu7UeUPcdZro9Vm6/a2c=;
+        b=zvkx4QPTjJjiBEWOGSIVAm+A/NYkKQu3ouarsrgSun5iDmAZKLmCYl3EpYY7aYucsD
+         +sn4bNF+Hu1bGNTf9VKQ9Qj0uMQATtEqMWwGU1pA0I67xgU2Dfd8BOtTk+50U/wBEGOf
+         Gr2Lj1B0F3Vaee5Hf85/AHB5hmfIdORlzrUBNn39MykEsd03xyWeRJVZkZ2xv9/QbqaL
+         TEk4qyU7qJXig/DuLm53weZq2LlWvxHwrvZdoQbvxsJiE/SMQnx1lPczGbO6gLQGniSJ
+         MhU/GVYFGHF4IgPhdujEVOTbcXpG6H9s4R+HF58aITXt5hk3UM6/qW2d7ffi8+a7E4D+
+         uPhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=LL5KV36bqh0RYU6Va23d3d9Iu7UeUPcdZro9Vm6/a2c=;
+        b=pb5j9wH/7NwezQ2nvvFZ0A5Qf4udyLnWWX2jvMjP5jIzoS4+msVCg0NyY4SFxTg8cN
+         3pfFaP/fYcj8JzYT0yAiG4OiyDCLIu/v0Nq2yQUsDyICR+hWyv3ywCUPexti/CrHEA7Z
+         XCm5UQPV3aaCfpRwUghJ8Ek5UnftKpDvodvvpjFDBS9kA3GkArTnX7mizcW1yGn8vdNl
+         ikexgjAz9ajDohlkjI8AAqWgi1OBTp3T7JDjdBX8PMQNw+ClbRs1HZqspx7bGmEFBir5
+         H5MUZy9rO0ywvXL91N0QKYrNc/sRGsGUPjhl6BKwlnmQGUD9VFVytNqP7Uc4BUxVlgnb
+         z1Ig==
+X-Gm-Message-State: AA+aEWZvnxi/OHVm1xXXnjBT7eufC9Y8jU134sv00NHK1xbUidjWX20p
+        DBTg/DDemvVBAedKXs1hNkA3gg==
+X-Google-Smtp-Source: AFSGD/U+YrVzp/SOW6Ru/k8WBfvvsTz8oJ+3c65Pfcz186WajDqBOjprKWZ4iseJowrx4mFtN7qjAA==
+X-Received: by 2002:a17:902:28e9:: with SMTP id f96mr28820081plb.169.1543254777738;
+        Mon, 26 Nov 2018 09:52:57 -0800 (PST)
+Received: from [192.168.0.100] ([160.202.37.134])
+        by smtp.gmail.com with ESMTPSA id f32sm1108333pgf.80.2018.11.26.09.52.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 09:52:56 -0800 (PST)
+Date:   Mon, 26 Nov 2018 23:23:31 +0530
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20181126105029.790599475@linuxfoundation.org>
+References: <20181126105029.790599475@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 3.18 00/24] 3.18.127-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+CC:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+From:   Harsh Shandilya <harsh@prjkt.io>
+Message-ID: <72581FF2-2956-4867-A4DC-2E5923FD557C@prjkt.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The entire way how cros sysfs attibutes are created is broken.
-cros_ec_lightbar should be its own driver and its attributes should be
-associated with a lightbar driver not the mfd driver. In order to retain
-the path, the lightbar attributes are attached to the cros_class.
-
-The patch also adds the sysfs documentation.
-
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
-
-Changes in v2:
-- Removed the two exported functions to attach/detach to the cros_class.
-- Use dev_warn instead of dev_err when adding the lightbar.
-
- ...sfs-class-chromeos-driver-cros-ec-lightbar |  74 +++++++++++++
- drivers/mfd/cros_ec_dev.c                     |  24 +++--
- drivers/mfd/cros_ec_dev.h                     |   6 --
- drivers/platform/chrome/Kconfig               |  10 ++
- drivers/platform/chrome/Makefile              |   3 +-
- drivers/platform/chrome/cros_ec_lightbar.c    | 100 ++++++++++++++----
- include/linux/mfd/cros_ec.h                   |   1 -
- 7 files changed, 177 insertions(+), 41 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos-driver-cros-ec-lightbar
-
-diff --git a/Documentation/ABI/testing/sysfs-class-chromeos-driver-cros-ec-lightbar b/Documentation/ABI/testing/sysfs-class-chromeos-driver-cros-ec-lightbar
-new file mode 100644
-index 000000000000..4893fd2e956f
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-chromeos-driver-cros-ec-lightbar
-@@ -0,0 +1,74 @@
-+What:		/sys/class/chromeos/<cros-ec>/lightbar/brightness
-+Date:		August 2015
-+KernelVersion:	4.2
-+Description:
-+		Writing to this file adjusts the overall brightness of
-+		the lightbar, separate from any color intensity. The
-+		valid range is 0 (off) to 255 (maximum brightness).
-+
-+What:		/sys/class/chromeos/<cros-ec>/lightbar/interval_msec
-+Date:		August 2015
-+KernelVersion:	4.2
-+Description:
-+		The lightbar is controlled by an embedded controller (EC),
-+		which also manages the keyboard, battery charging, fans,
-+		and other system hardware. To prevent unprivileged users
-+		from interfering with the other EC functions, the rate at
-+		which the lightbar control files can be read or written is
-+		limited.
-+
-+		Reading this file will return the number of milliseconds
-+		that must elapse between accessing any of the lightbar
-+		functions through this interface. Going faster will simply
-+		block until the necessary interval has lapsed. The interval
-+		applies uniformly to all accesses of any kind by any user.
-+
-+What:		/sys/class/chromeos/<cros-ec>/lightbar/led_rgb
-+Date:		August 2015
-+KernelVersion:	4.2
-+Description:
-+		This allows you to control each LED segment. If the
-+		lightbar is already running one of the automatic
-+		sequences, you probably won’t see anything change because
-+		your color setting will be almost immediately replaced.
-+		To get useful results, you should stop the lightbar
-+		sequence first.
-+
-+		The values written to this file are sets of four integers,
-+		indicating LED, RED, GREEN, BLUE. The LED number is 0 to 3
-+		to select a single segment, or 4 to set all four segments
-+		to the same value at once. The RED, GREEN, and BLUE
-+		numbers should be in the range 0 (off) to 255 (maximum).
-+		You can update more than one segment at a time by writing
-+		more than one set of four integers.
-+
-+What:		/sys/class/chromeos/<cros-ec>/lightbar/program
-+Date:		August 2015
-+KernelVersion:	4.2
-+Description:
-+		This allows you to upload and run custom lightbar sequences.
-+
-+What:		/sys/class/chromeos/<cros-ec>/lightbar/sequence
-+Date:		August 2015
-+KernelVersion:	4.2
-+Description:
-+		The Pixel lightbar has a number of built-in sequences
-+		that it displays under various conditions, such as at
-+		power on, shut down, or while running. Reading from this
-+		file displays the current sequence that the lightbar is
-+		displaying. Writing to this file allows you to change the
-+		sequence.
-+
-+What:		/sys/class/chromeos/<cros-ec>/lightbar/userspace_control
-+Date:		August 2015
-+KernelVersion:	4.2
-+Description:
-+		This allows you to take the control of the lightbar. This
-+		prevents the kernel from going through its normal
-+		sequences.
-+
-+What:		/sys/class/chromeos/<cros-ec>/lightbar/version
-+Date:		August 2015
-+KernelVersion:	4.2
-+Description:
-+		Show the information about the lightbar version.
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index ff788d3e6d5f..614f888c9d6d 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -36,7 +36,6 @@ static int ec_major;
- 
- static const struct attribute_group *cros_ec_groups[] = {
- 	&cros_ec_attr_group,
--	&cros_ec_lightbar_attr_group,
- 	&cros_ec_vbc_attr_group,
- 	NULL,
- };
-@@ -390,6 +389,10 @@ static const struct mfd_cell cros_usbpd_charger_cells[] = {
- 	{ .name = "cros-usbpd-charger" }
- };
- 
-+static const struct mfd_cell cros_ec_platform_cells[] = {
-+	{ .name = "cros-ec-lightbar" },
-+};
-+
- static int ec_device_probe(struct platform_device *pdev)
- {
- 	int retval = -ENOMEM;
-@@ -464,9 +467,6 @@ static int ec_device_probe(struct platform_device *pdev)
- 				retval);
- 	}
- 
--	/* Take control of the lightbar from the EC. */
--	lb_manual_suspend_ctrl(ec, 1);
--
- 	/* We can now add the sysfs class, we know which parameter to show */
- 	retval = cdev_device_add(&ec->cdev, &ec->class_dev);
- 	if (retval) {
-@@ -474,6 +474,15 @@ static int ec_device_probe(struct platform_device *pdev)
- 		goto failed;
- 	}
- 
-+	retval = mfd_add_devices(ec->dev, PLATFORM_DEVID_AUTO,
-+				 cros_ec_platform_cells,
-+				 ARRAY_SIZE(cros_ec_platform_cells),
-+				 NULL, 0, NULL);
-+	if (retval)
-+		dev_warn(ec->dev,
-+			 "failed to add cros-ec platform devices: %d\n",
-+			 retval);
-+
- 	if (cros_ec_debugfs_init(ec))
- 		dev_warn(dev, "failed to create debugfs directory\n");
- 
-@@ -488,9 +497,6 @@ static int ec_device_remove(struct platform_device *pdev)
- {
- 	struct cros_ec_dev *ec = dev_get_drvdata(&pdev->dev);
- 
--	/* Let the EC take over the lightbar again. */
--	lb_manual_suspend_ctrl(ec, 0);
--
- 	cros_ec_debugfs_remove(ec);
- 
- 	mfd_remove_devices(ec->dev);
-@@ -519,8 +525,6 @@ static __maybe_unused int ec_device_suspend(struct device *dev)
- 
- 	cros_ec_debugfs_suspend(ec);
- 
--	lb_suspend(ec);
--
- 	return 0;
- }
- 
-@@ -530,8 +534,6 @@ static __maybe_unused int ec_device_resume(struct device *dev)
- 
- 	cros_ec_debugfs_resume(ec);
- 
--	lb_resume(ec);
--
- 	return 0;
- }
- 
-diff --git a/drivers/mfd/cros_ec_dev.h b/drivers/mfd/cros_ec_dev.h
-index 978d836a0248..ec750433455a 100644
---- a/drivers/mfd/cros_ec_dev.h
-+++ b/drivers/mfd/cros_ec_dev.h
-@@ -44,10 +44,4 @@ struct cros_ec_readmem {
- #define CROS_EC_DEV_IOCXCMD   _IOWR(CROS_EC_DEV_IOC, 0, struct cros_ec_command)
- #define CROS_EC_DEV_IOCRDMEM  _IOWR(CROS_EC_DEV_IOC, 1, struct cros_ec_readmem)
- 
--/* Lightbar utilities */
--extern bool ec_has_lightbar(struct cros_ec_dev *ec);
--extern int lb_manual_suspend_ctrl(struct cros_ec_dev *ec, uint8_t enable);
--extern int lb_suspend(struct cros_ec_dev *ec);
--extern int lb_resume(struct cros_ec_dev *ec);
--
- #endif /* _CROS_EC_DEV_H_ */
-diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
-index 16b1615958aa..05bcefbe1926 100644
---- a/drivers/platform/chrome/Kconfig
-+++ b/drivers/platform/chrome/Kconfig
-@@ -111,4 +111,14 @@ config CROS_KBD_LED_BACKLIGHT
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called cros_kbd_led_backlight.
- 
-+config CROS_EC_LIGHTBAR
-+	tristate "Chromebook Pixel's lightbar support"
-+	depends on MFD_CROS_EC_CHARDEV
-+	help
-+	  This option exposes the Chromebook Pixel's lightbar to
-+	  userspace.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called cros_ec_lightbar.
-+
- endif # CHROMEOS_PLATFORMS
-diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
-index cd591bf872bb..3c29a4b405d5 100644
---- a/drivers/platform/chrome/Makefile
-+++ b/drivers/platform/chrome/Makefile
-@@ -3,7 +3,7 @@
- obj-$(CONFIG_CHROMEOS_LAPTOP)		+= chromeos_laptop.o
- obj-$(CONFIG_CHROMEOS_PSTORE)		+= chromeos_pstore.o
- obj-$(CONFIG_CHROMEOS_TBMC)		+= chromeos_tbmc.o
--cros_ec_ctl-objs			:= cros_ec_sysfs.o cros_ec_lightbar.o \
-+cros_ec_ctl-objs			:= cros_ec_sysfs.o \
- 					   cros_ec_vbc.o cros_ec_debugfs.o
- obj-$(CONFIG_CROS_EC_CTL)		+= cros_ec_ctl.o
- obj-$(CONFIG_CROS_EC_I2C)		+= cros_ec_i2c.o
-@@ -13,3 +13,4 @@ cros_ec_lpcs-$(CONFIG_CROS_EC_LPC_MEC)	+= cros_ec_lpc_mec.o
- obj-$(CONFIG_CROS_EC_LPC)		+= cros_ec_lpcs.o
- obj-$(CONFIG_CROS_EC_PROTO)		+= cros_ec_proto.o
- obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)	+= cros_kbd_led_backlight.o
-+obj-$(CONFIG_CROS_EC_LIGHTBAR)		+= cros_ec_lightbar.o
-diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-index 68193bb53383..874d0b03a95d 100644
---- a/drivers/platform/chrome/cros_ec_lightbar.c
-+++ b/drivers/platform/chrome/cros_ec_lightbar.c
-@@ -33,6 +33,8 @@
- #include <linux/uaccess.h>
- #include <linux/slab.h>
- 
-+#define DRV_NAME "cros-ec-lightbar"
-+
- /* Rate-limit the lightbar interface to prevent DoS. */
- static unsigned long lb_interval_jiffies = 50 * HZ / 1000;
- 
-@@ -373,7 +375,7 @@ static int lb_send_empty_cmd(struct cros_ec_dev *ec, uint8_t cmd)
- 	return ret;
- }
- 
--int lb_manual_suspend_ctrl(struct cros_ec_dev *ec, uint8_t enable)
-+static int lb_manual_suspend_ctrl(struct cros_ec_dev *ec, uint8_t enable)
- {
- 	struct ec_params_lightbar *param;
- 	struct cros_ec_command *msg;
-@@ -408,25 +410,6 @@ int lb_manual_suspend_ctrl(struct cros_ec_dev *ec, uint8_t enable)
- 
- 	return ret;
- }
--EXPORT_SYMBOL(lb_manual_suspend_ctrl);
--
--int lb_suspend(struct cros_ec_dev *ec)
--{
--	if (userspace_control || ec != ec_with_lightbar)
--		return 0;
--
--	return lb_send_empty_cmd(ec, LIGHTBAR_CMD_SUSPEND);
--}
--EXPORT_SYMBOL(lb_suspend);
--
--int lb_resume(struct cros_ec_dev *ec)
--{
--	if (userspace_control || ec != ec_with_lightbar)
--		return 0;
--
--	return lb_send_empty_cmd(ec, LIGHTBAR_CMD_RESUME);
--}
--EXPORT_SYMBOL(lb_resume);
- 
- static ssize_t sequence_store(struct device *dev, struct device_attribute *attr,
- 			      const char *buf, size_t count)
-@@ -584,7 +567,7 @@ static struct attribute *__lb_cmds_attrs[] = {
- 	NULL,
- };
- 
--bool ec_has_lightbar(struct cros_ec_dev *ec)
-+static bool ec_has_lightbar(struct cros_ec_dev *ec)
- {
- 	return !!get_lightbar_version(ec, NULL, NULL);
- }
-@@ -616,4 +599,77 @@ struct attribute_group cros_ec_lightbar_attr_group = {
- 	.attrs = __lb_cmds_attrs,
- 	.is_visible = cros_ec_lightbar_attrs_are_visible,
- };
--EXPORT_SYMBOL(cros_ec_lightbar_attr_group);
-+
-+static int cros_ec_lightbar_probe(struct platform_device *pd)
-+{
-+	struct cros_ec_dev *ec_dev = dev_get_drvdata(pd->dev.parent);
-+	struct device *dev = &pd->dev;
-+	int ret;
-+
-+	if (!ec_dev) {
-+		dev_err(dev, "No EC dev found\n");
-+		return -EINVAL;
-+	}
-+
-+	/* Take control of the lightbar from the EC. */
-+	lb_manual_suspend_ctrl(ec_dev, 1);
-+
-+	ret = sysfs_create_group(&ec_dev->class_dev.kobj,
-+				 &cros_ec_lightbar_attr_group);
-+	if (ret < 0)
-+		dev_err(dev, "failed to create %s attributes. err=%d\n",
-+			cros_ec_lightbar_attr_group.name, ret);
-+
-+	return ret;
-+}
-+
-+static int cros_ec_lightbar_remove(struct platform_device *pd)
-+{
-+	struct cros_ec_dev *ec_dev = dev_get_drvdata(pd->dev.parent);
-+
-+	sysfs_remove_group(&ec_dev->class_dev.kobj,
-+			   &cros_ec_lightbar_attr_group);
-+
-+	/* Let the EC take over the lightbar again. */
-+	lb_manual_suspend_ctrl(ec_dev, 0);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused cros_ec_lightbar_resume(struct device *dev)
-+{
-+	struct cros_ec_dev *ec_dev = dev_get_drvdata(dev);
-+
-+	if (userspace_control || ec_dev != ec_with_lightbar)
-+		return 0;
-+
-+	return lb_send_empty_cmd(ec_dev, LIGHTBAR_CMD_RESUME);
-+}
-+
-+static int __maybe_unused cros_ec_lightbar_suspend(struct device *dev)
-+{
-+	struct cros_ec_dev *ec_dev = dev_get_drvdata(dev);
-+
-+	if (userspace_control || ec_dev != ec_with_lightbar)
-+		return 0;
-+
-+	return lb_send_empty_cmd(ec_dev, LIGHTBAR_CMD_SUSPEND);
-+}
-+
-+static SIMPLE_DEV_PM_OPS(cros_ec_lightbar_pm_ops,
-+			 cros_ec_lightbar_suspend, cros_ec_lightbar_resume);
-+
-+static struct platform_driver cros_ec_lightbar_driver = {
-+	.driver = {
-+		.name = DRV_NAME,
-+		.pm = &cros_ec_lightbar_pm_ops,
-+	},
-+	.probe = cros_ec_lightbar_probe,
-+	.remove = cros_ec_lightbar_remove,
-+};
-+
-+module_platform_driver(cros_ec_lightbar_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Expose the Chromebook Pixel's lightbar to userspace");
-+MODULE_ALIAS("platform:" DRV_NAME);
-diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-index e44e3ec8a9c7..c69d322dd4f9 100644
---- a/include/linux/mfd/cros_ec.h
-+++ b/include/linux/mfd/cros_ec.h
-@@ -335,7 +335,6 @@ u32 cros_ec_get_host_event(struct cros_ec_device *ec_dev);
- 
- /* sysfs stuff */
- extern struct attribute_group cros_ec_attr_group;
--extern struct attribute_group cros_ec_lightbar_attr_group;
- extern struct attribute_group cros_ec_vbc_attr_group;
- 
- /* debugfs stuff */
--- 
-2.19.1
-
+On 26 November 2018 4:20:54 PM IST, Greg Kroah-Hartman <gregkh@linuxfoundat=
+ion=2Eorg> wrote:
+>This is the start of the stable review cycle for the 3=2E18=2E127 release=
+=2E
+>There are 24 patches in this series, all will be posted as a response
+>to this one=2E  If anyone has any issues with these being applied, please
+>let me know=2E
+>
+>Responses should be made by Wed Nov 28 10:50:13 UTC 2018=2E
+>Anything received after that time might be too late=2E
+>
+>The whole patch series can be found in one patch at:
+>	https://www=2Ekernel=2Eorg/pub/linux/kernel/v3=2Ex/stable-review/patch-3=
+=2E18=2E127-rc1=2Egz
+>or in the git tree and branch at:
+>	git://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/stable/linux-stable-rc=
+=2Egit
+>linux-3=2E18=2Ey
+>and the diffstat can be found below=2E
+>
+>thanks,
+>
+>greg k-h
+Built and booted on the OnePlus 3T, no immediate regressions=2E
+--=20
+Harsh Shandilya
+PRJKT Development LLC
