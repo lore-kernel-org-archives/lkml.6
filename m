@@ -2,72 +2,152 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B52C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50978C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F179220672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:29:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RxJiiUY4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F179220672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 139CC20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:34:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 139CC20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726550AbeKZTWi (ORCPT
+        id S1726206AbeKZT1q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 14:22:38 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35402 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbeKZTWi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 14:22:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=iQTm/XqMSJMom8BW8zmnQQSJXSiibU+HR1aYyO1LZq8=; b=RxJiiUY4dPojPVTiyI5ZcpTux
-        2V3PoDnjJx19BsIqvzf5d0HpbPs2GOevB0Be02LgbB7aKheLo2/5NEtZWGDkEBFqQYSioG0H5NSME
-        uS+wIr0NJscxt034OBqloyQuuOVk9OyHyz5qJof2y6hWqZd+U+zZKgflAaIz8M3KnV3FqaS7D2KCJ
-        VX+XY3BWH/ExfL5USgJq2I5qlTuVOTfTB+LPWJkOvh9KF6ptZthfrO6vnmZt2Muzp/64MtwOOfWW9
-        Ot+L2a4Zx41MAT/DG+KqffSSDMQDgcZquzyHZV3zApoLqT5E9a+xEPF2nmoLX0/ptRF4USBxOFQGU
-        efzdimKyQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gRCGY-0006Yl-2x; Mon, 26 Nov 2018 08:29:14 +0000
-Date:   Mon, 26 Nov 2018 00:29:13 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Ley Foon Tan <lftan@altera.com>, nios2-dev@lists.rocketboards.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nios2: remove unneeded HAS_DMA define
-Message-ID: <20181126082913.GA24840@infradead.org>
-References: <1543218130-5800-1-git-send-email-yamada.masahiro@socionext.com>
+        Mon, 26 Nov 2018 14:27:46 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15160 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726157AbeKZT1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 14:27:46 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A1212CCA6F887;
+        Mon, 26 Nov 2018 16:34:19 +0800 (CST)
+Received: from [127.0.0.1] (10.57.115.182) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Mon, 26 Nov 2018
+ 16:34:10 +0800
+Subject: Re: [PATCH rdma-next 3/3] RDMA/hns: Modify hns RoCE device's name
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+References: <1542986065-44265-1-git-send-email-xavier.huwei@huawei.com>
+ <1542986065-44265-4-git-send-email-xavier.huwei@huawei.com>
+ <20181123203958.GJ3395@ziepe.ca> <5BF94B9F.5030409@huawei.com>
+ <20181126031354.GA15463@ziepe.ca>
+CC:     <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
+        <lijun_nudt@163.com>, <oulijun@huawei.com>,
+        <charles.chenxin@huawei.com>, <liuyixian@huawei.com>,
+        <zhangxiping3@huawei.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
+From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Message-ID: <5BFBB002.8020703@huawei.com>
+Date:   Mon, 26 Nov 2018 16:34:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543218130-5800-1-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20181126031354.GA15463@ziepe.ca>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.115.182]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 04:42:10PM +0900, Masahiro Yamada wrote:
-> kernel/dma/Kconfig globally defines HAS_DMA as follows:
-> 
->   config HAS_DMA
->           bool
->           depends on !NO_DMA
->           default y
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Looks good, thanks!
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+On 2018/11/26 11:13, Jason Gunthorpe wrote:
+> On Sat, Nov 24, 2018 at 09:01:19PM +0800, Wei Hu (Xavier) wrote:
+>>
+>> On 2018/11/24 4:39, Jason Gunthorpe wrote:
+>>> On Fri, Nov 23, 2018 at 11:14:25PM +0800, Wei Hu (Xavier) wrote:
+>>>> This patch modifies the name of hns RoCE device's name in order
+>>>> to ensure that the name is consistent before and after reset.
+>>>>
+>>>> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+>>>>  drivers/infiniband/hw/hns/hns_roce_device.h | 1 +
+>>>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 3 +++
+>>>>  drivers/infiniband/hw/hns/hns_roce_main.c   | 4 +++-
+>>>>  3 files changed, 7 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
+>>>> index 259977b..a8cfe76 100644
+>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
+>>>> @@ -954,6 +954,7 @@ struct hns_roce_dev {
+>>>>  	struct pci_dev		*pci_dev;
+>>>>  	struct device		*dev;
+>>>>  	struct hns_roce_uar     priv_uar;
+>>>> +	char			name[IB_DEVICE_NAME_MAX];
+>>>>  	const char		*irq_names[HNS_ROCE_MAX_IRQ_NUM];
+>>>>  	spinlock_t		sm_lock;
+>>>>  	spinlock_t		bt_cmd_lock;
+>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>>>> index 1d639a0..678c7ec 100644
+>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>>>> @@ -6110,6 +6110,9 @@ static int hns_roce_hw_v2_get_cfg(struct hns_roce_dev *hr_dev,
+>>>>  		hr_dev->irq[i] = pci_irq_vector(handle->pdev,
+>>>>  						i + handle->rinfo.base_vector);
+>>>>  
+>>>> +	snprintf(hr_dev->name, IB_DEVICE_NAME_MAX, "hns%s",
+>>>> +		 handle->rinfo.netdev->name);
+>>> Why is this making up its own driver name? How is this avoiding
+>>> colliding with an existing name?
+>>>
+>>> This is very dangerous since we now have device renaming, the driver
+>>> could fail to load with no recovery.
+>> Hi, Jason
+>>        
+>>     The NIC driver notifies the RoCE driver to perform reset related
+>> processing by calling the .reset_notify() interface registered by the
+>> RoCE driver. If the RoCE reset processing fails, .reset_notify()
+>> returns non-zero, and then hns NIC driver will reschedule the
+>> reset task again.
+>>    
+>>     The current hardware version in hip08 SoC cannot support
+>> after reset process the application still communicates with the
+>> resources like QP requested before reset. In RoCE reset process,
+>> we will release the resources through ib_unregister_device, after
+>> the hardware reset is completed, driver will re-execute
+>> ib_register_device.
+>>    
+>>     Currently, we find that the ib_device's name after reset
+>> and the one before reset may be different. We can specify the
+>> device name to solve this problem.
+> No, now you just have unsolved races.
+>
+> If you want to reset like this then you will need to do some kind of
+> revision to the IB core code to not loose the name assigned to the
+> device and not hacks like this.
+Hi, Jason
+
+    In fact, We only specified the name of the ib_device to be generated
+when
+calling ib_register_device on the hip08 SoC, and doesn't modify its name
+during the existence of ib_device.
+
+    In this example, if you always use hns_%d when registering, I think that
+no matter how you modify IB core code, we can't solve this problem. We
+need to specify the name of the ib_device device when calling
+ib_register_device, and this name should be unique in the OS.
+
+    The NIC and the RoCE hardware engine share the function On the hip08
+SoC.
+The NIC driver will execute register_netdev firstly, and then the RoCE
+driver will
+execute ib_register_device. In the following statement, where
+handle->rinfo.netdev->name is the name of the corresponding net_device
+device,
+this will ensure the uniqueness of the hnsXXX ib_device's name on the OS.
+
+    snprintf(hr_dev->name, IB_DEVICE_NAME_MAX, "hns%s",
+         handle->rinfo.netdev->name);
+
+    Best Regards
+Xavier
+> Jason
+>
+> .
+>
+
+
