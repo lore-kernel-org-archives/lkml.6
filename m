@@ -7,43 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA64C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50FBFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B31FE21479
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 187B22089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BkcporTu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B31FE21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JUbj+SBh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 187B22089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730030AbeKZVyu (ORCPT
+        id S1730046AbeKZVyx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:54:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37158 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:54:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728901AbeKZVyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:54:50 -0500
+        id S1728901AbeKZVyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:54:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80DB02089F;
-        Mon, 26 Nov 2018 11:01:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D32921104;
+        Mon, 26 Nov 2018 11:01:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230065;
-        bh=ijCryN4qeOnAYigIKnM5Ctmyf1V0a3Wq0Px/wYQWQtY=;
+        s=default; t=1543230067;
+        bh=7NOd1hMWgwEE+mFTcMuToxVqPnwEMDXLJoPZzdb9Z6Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BkcporTukDt5ILZGAsb2jqKzGSCNtAmRbetS0ho9gZtWlSBVVUFj1YAGrm60z2f2h
-         I5gqaT3a1mLwfL9XGL28uQyp5uci4r51NK11OibOtZcYWw/gSMERO1bBcxSZE3tPJS
-         xo+XsNDxOmv+u1I1IhQ/S6BSplAlnGUYzxSmtjw8=
+        b=JUbj+SBhge3OI2N6ZvGJFLEXTVmho3glrU+mIMlUHbZZMXQmB3iDySjrsxOc/cS03
+         kgN5/Dqng4GcvYh591znMUn0V0G9HWOQbc+3kMOZkgEXHQ1YTz4igrXlXWMnLkLNQO
+         MLyAG6SQMDUab+Q9HZtjmYkjBeHZU4X3mODNXsFg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mattias Jacobsson <2pi@mok.nu>
-Subject: [PATCH 4.14 57/62] USB: misc: appledisplay: add 20" Apple Cinema Display
-Date:   Mon, 26 Nov 2018 11:51:38 +0100
-Message-Id: <20181126105054.886737466@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 58/62] mtd: rawnand: atmel: fix OF child-node lookup
+Date:   Mon, 26 Nov 2018 11:51:39 +0100
+Message-Id: <20181126105054.941598787@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -61,29 +65,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mattias Jacobsson <2pi@mok.nu>
+From: Johan Hovold <johan@kernel.org>
 
-commit f6501f49199097b99e4e263644d88c90d1ec1060 upstream.
+commit 5d1e9c2212ea6b4dd735e4fc3dd6279a365d5d10 upstream.
 
-Add another Apple Cinema Display to the list of supported displays
+Use the new of_get_compatible_child() helper to lookup the nfc child
+node instead of using of_find_compatible_node(), which searches the
+entire tree from a given start node and thus can return an unrelated
+(i.e. non-child) node.
 
-Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
-Cc: stable <stable@vger.kernel.org>
+This also addresses a potential use-after-free (e.g. after probe
+deferral) as the tree-wide helper drops a reference to its first
+argument (i.e. the node of the device being probed).
+
+While at it, also fix a related nfc-node reference leak.
+
+Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
+Cc: stable <stable@vger.kernel.org>     # 4.11
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Josh Wu <rainyfeeling@outlook.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/appledisplay.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/mtd/nand/atmel/nand-controller.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/misc/appledisplay.c
-+++ b/drivers/usb/misc/appledisplay.c
-@@ -63,6 +63,7 @@ static const struct usb_device_id appled
- 	{ APPLEDISPLAY_DEVICE(0x9219) },
- 	{ APPLEDISPLAY_DEVICE(0x921c) },
- 	{ APPLEDISPLAY_DEVICE(0x921d) },
-+	{ APPLEDISPLAY_DEVICE(0x9222) },
- 	{ APPLEDISPLAY_DEVICE(0x9236) },
+--- a/drivers/mtd/nand/atmel/nand-controller.c
++++ b/drivers/mtd/nand/atmel/nand-controller.c
+@@ -2077,8 +2077,7 @@ atmel_hsmc_nand_controller_legacy_init(s
+ 	int ret;
  
- 	/* Terminating entry */
+ 	nand_np = dev->of_node;
+-	nfc_np = of_find_compatible_node(dev->of_node, NULL,
+-					 "atmel,sama5d3-nfc");
++	nfc_np = of_get_compatible_child(dev->of_node, "atmel,sama5d3-nfc");
+ 	if (!nfc_np) {
+ 		dev_err(dev, "Could not find device node for sama5d3-nfc\n");
+ 		return -ENODEV;
+@@ -2492,15 +2491,19 @@ static int atmel_nand_controller_probe(s
+ 	}
+ 
+ 	if (caps->legacy_of_bindings) {
++		struct device_node *nfc_node;
+ 		u32 ale_offs = 21;
+ 
+ 		/*
+ 		 * If we are parsing legacy DT props and the DT contains a
+ 		 * valid NFC node, forward the request to the sama5 logic.
+ 		 */
+-		if (of_find_compatible_node(pdev->dev.of_node, NULL,
+-					    "atmel,sama5d3-nfc"))
++		nfc_node = of_get_compatible_child(pdev->dev.of_node,
++						   "atmel,sama5d3-nfc");
++		if (nfc_node) {
+ 			caps = &atmel_sama5_nand_caps;
++			of_node_put(nfc_node);
++		}
+ 
+ 		/*
+ 		 * Even if the compatible says we are dealing with an
 
 
