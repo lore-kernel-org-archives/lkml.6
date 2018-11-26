@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12831C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A05A5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDE9B2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 610DA2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDynd9EN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDE9B2146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="03GQ64FS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 610DA2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728577AbeKZVui (ORCPT
+        id S1728593AbeKZVuk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:50:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59870 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:50:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726176AbeKZVuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:50:37 -0500
+        id S1726176AbeKZVuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:50:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E2792147D;
-        Mon, 26 Nov 2018 10:56:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CFBB2089F;
+        Mon, 26 Nov 2018 10:56:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229813;
-        bh=WmOUakZqihvrHPfSu0zVXmuj8A2jH6j83V3bT/rdCZw=;
+        s=default; t=1543229815;
+        bh=yrrM0Vfk/6AZEnCbEpdN5p5P4l5J9KByd0W+niM0akA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WDynd9ENBDLKc6wTjOVXv5jm7HF/YuSncZWoNmo7gPo/h+W+UVIfJJqfS7vD18tf/
-         r+g1u+3Tc5OoJcJ7a9zzRy0Vqx6UGX/WxYPu8dOVW6pg2XJEqmh7rjnODb7M0f5hOl
-         /fj8XDex8OJNfvKefirlZaOa/FE7483Wog417TUM=
+        b=03GQ64FSHgZHqwvdc7EQSuzEyU6HL4k96pnh9NyGHQTr3HXI3sY6qF20uwfsMvdAP
+         0MF2L0PJrcKCwHV7ZeQBzjb08+gjsTQ8oGrEgN5EYwuoMoOaeaGbcAyCuNRENlUyi0
+         VZ/w93MGO/ygBx8Fhm+ppAK0oFp8IRvWVxZJLbr0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Prasad Sodagudi <psodagud@codeaurora.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Dennis Zhou <dennis@kernel.org>,
+        stable@vger.kernel.org, Philipp Rudo <prudo@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 12/46] arm64: percpu: Initialize ret in the default case
-Date:   Mon, 26 Nov 2018 11:51:01 +0100
-Message-Id: <20181126105047.312890705@linuxfoundation.org>
+Subject: [PATCH 4.9 13/46] s390/vdso: add missing FORCE to build targets
+Date:   Mon, 26 Nov 2018 11:51:02 +0100
+Message-Id: <20181126105047.416497002@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
 References: <20181126105045.447291262@linuxfoundation.org>
@@ -65,67 +64,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b5bb425871186303e6936fa2581521bdd1964a58 ]
+[ Upstream commit b44b136a3773d8a9c7853f8df716bd1483613cbb ]
 
-Clang warns that if the default case is taken, ret will be
-uninitialized.
+According to Documentation/kbuild/makefiles.txt all build targets using
+if_changed should use FORCE as well. Add missing FORCE to make sure
+vdso targets are rebuild properly when not just immediate prerequisites
+have changed but also when build command differs.
 
-./arch/arm64/include/asm/percpu.h:196:2: warning: variable 'ret' is used
-uninitialized whenever switch default is taken
-[-Wsometimes-uninitialized]
-        default:
-        ^~~~~~~
-./arch/arm64/include/asm/percpu.h:200:9: note: uninitialized use occurs
-here
-        return ret;
-               ^~~
-./arch/arm64/include/asm/percpu.h:157:19: note: initialize the variable
-'ret' to silence this warning
-        unsigned long ret, loop;
-                         ^
-                          = 0
-
-This warning appears several times while building the erofs filesystem.
-While it's not strictly wrong, the BUILD_BUG will prevent this from
-becoming a true problem. Initialize ret to 0 in the default case right
-before the BUILD_BUG to silence all of these warnings.
-
-Reported-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
+Reviewed-by: Philipp Rudo <prudo@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/percpu.h | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/s390/kernel/vdso32/Makefile | 6 +++---
+ arch/s390/kernel/vdso64/Makefile | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/include/asm/percpu.h b/arch/arm64/include/asm/percpu.h
-index 0d551576eb57..4724b8f0b625 100644
---- a/arch/arm64/include/asm/percpu.h
-+++ b/arch/arm64/include/asm/percpu.h
-@@ -92,6 +92,7 @@ static inline unsigned long __percpu_##op(void *ptr,			\
- 		: [val] "Ir" (val));					\
- 		break;							\
- 	default:							\
-+		ret = 0;						\
- 		BUILD_BUG();						\
- 	}								\
- 									\
-@@ -121,6 +122,7 @@ static inline unsigned long __percpu_read(void *ptr, int size)
- 		ret = ACCESS_ONCE(*(u64 *)ptr);
- 		break;
- 	default:
-+		ret = 0;
- 		BUILD_BUG();
- 	}
+diff --git a/arch/s390/kernel/vdso32/Makefile b/arch/s390/kernel/vdso32/Makefile
+index 6cc947896c77..ca7c3c34f94b 100644
+--- a/arch/s390/kernel/vdso32/Makefile
++++ b/arch/s390/kernel/vdso32/Makefile
+@@ -32,7 +32,7 @@ UBSAN_SANITIZE := n
+ $(obj)/vdso32_wrapper.o : $(obj)/vdso32.so
  
-@@ -190,6 +192,7 @@ static inline unsigned long __percpu_xchg(void *ptr, unsigned long val,
- 		: [val] "r" (val));
- 		break;
- 	default:
-+		ret = 0;
- 		BUILD_BUG();
- 	}
+ # link rule for the .so file, .lds has to be first
+-$(obj)/vdso32.so.dbg: $(src)/vdso32.lds $(obj-vdso32)
++$(obj)/vdso32.so.dbg: $(src)/vdso32.lds $(obj-vdso32) FORCE
+ 	$(call if_changed,vdso32ld)
+ 
+ # strip rule for the .so file
+@@ -41,12 +41,12 @@ $(obj)/%.so: $(obj)/%.so.dbg FORCE
+ 	$(call if_changed,objcopy)
+ 
+ # assembly rules for the .S files
+-$(obj-vdso32): %.o: %.S
++$(obj-vdso32): %.o: %.S FORCE
+ 	$(call if_changed_dep,vdso32as)
+ 
+ # actual build commands
+ quiet_cmd_vdso32ld = VDSO32L $@
+-      cmd_vdso32ld = $(CC) $(c_flags) -Wl,-T $^ -o $@
++      cmd_vdso32ld = $(CC) $(c_flags) -Wl,-T $(filter %.lds %.o,$^) -o $@
+ quiet_cmd_vdso32as = VDSO32A $@
+       cmd_vdso32as = $(CC) $(a_flags) -c -o $@ $<
+ 
+diff --git a/arch/s390/kernel/vdso64/Makefile b/arch/s390/kernel/vdso64/Makefile
+index 2d54c18089eb..84af2b6b64c4 100644
+--- a/arch/s390/kernel/vdso64/Makefile
++++ b/arch/s390/kernel/vdso64/Makefile
+@@ -32,7 +32,7 @@ UBSAN_SANITIZE := n
+ $(obj)/vdso64_wrapper.o : $(obj)/vdso64.so
+ 
+ # link rule for the .so file, .lds has to be first
+-$(obj)/vdso64.so.dbg: $(src)/vdso64.lds $(obj-vdso64)
++$(obj)/vdso64.so.dbg: $(src)/vdso64.lds $(obj-vdso64) FORCE
+ 	$(call if_changed,vdso64ld)
+ 
+ # strip rule for the .so file
+@@ -41,12 +41,12 @@ $(obj)/%.so: $(obj)/%.so.dbg FORCE
+ 	$(call if_changed,objcopy)
+ 
+ # assembly rules for the .S files
+-$(obj-vdso64): %.o: %.S
++$(obj-vdso64): %.o: %.S FORCE
+ 	$(call if_changed_dep,vdso64as)
+ 
+ # actual build commands
+ quiet_cmd_vdso64ld = VDSO64L $@
+-      cmd_vdso64ld = $(CC) $(c_flags) -Wl,-T $^ -o $@
++      cmd_vdso64ld = $(CC) $(c_flags) -Wl,-T $(filter %.lds %.o,$^) -o $@
+ quiet_cmd_vdso64as = VDSO64A $@
+       cmd_vdso64as = $(CC) $(a_flags) -c -o $@ $<
  
 -- 
 2.17.1
