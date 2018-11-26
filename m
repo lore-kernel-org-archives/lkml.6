@@ -2,265 +2,160 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906B7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2389C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:16:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38CC6213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:15:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6766821104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:16:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TcImhy2Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38CC6213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="RDGGIYuZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6766821104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726507AbeKZVJT (ORCPT
+        id S1726393AbeKZVJs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:09:19 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:45087 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbeKZVJS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:09:18 -0500
-Received: by mail-ed1-f65.google.com with SMTP id d39so15268384edb.12;
-        Mon, 26 Nov 2018 02:15:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KyO7auFlm3HI4daglLTbfU1s4WeF1ze3F7mpKIBGZ5A=;
-        b=TcImhy2YOrUIRtc0M1nK519qfUkxUYBpsZ8rn5sNhz/z4uW1irr+jD30ty37LlpNde
-         crEPOAO/f/MIzqExulvq85ENeomnUybLhYGUPEzGbqmmWTksMzTHm7h8KuIuMxEBquUl
-         jYvmZuvHtjTDf/GnU3Zk7TA3/f2g02DMtI8jqJrBWneWZzqM915dvZKOvxFtZjudVLCS
-         1bKtc6JWuCu+BDotOxIzMX5dwEPRx+2FKQkdimqbmw1V/1bE9mxr440ogpSggdgdwNZS
-         O/iK3Ou1eRj4WDtjJ6Heo12hMoAsu23hYOJNLy/KcfTLEmuCuaXNo4eyMyEnnT4LNA62
-         b/kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=KyO7auFlm3HI4daglLTbfU1s4WeF1ze3F7mpKIBGZ5A=;
-        b=GSPs9CRB34r0J/vvnswC9cRWOg3zFHU8VbmXEjoQVWka/XCG+DkgdBw3EFiljhDrSv
-         W7u5tDxQxhEs+vKebrupt/LcydrUN8FLmuQ2O8m8tHOiZzA+wl8zixVza6AUzGFCoGRn
-         VPwqzWq6a93vg3+2C0/1G2VlxAZNeAwik0NvKpK/hfPXeIdnfcgcv4egjyx/5f0sHBZq
-         J9qYQq1aRvnuxVfi1ou1KGqGhXJbivpYMm4fun8HTZK6W/3XgvGLXh/Y/XjMjuJOvVaV
-         OfiG8oo+vlYwEIb9ZveYCKwoIxWDHveMioSh6U34nVngX82emq73bRN/+kbN0ofMgjQX
-         pI7Q==
-X-Gm-Message-State: AA+aEWab5LvOmZKAwdgNhuFmUbGFeUGC4Xr9kVzxfwAJWMOLmbm+DVMJ
-        9MpLdhsXFwhmiD1ZXXerzeU=
-X-Google-Smtp-Source: AFSGD/XjYtnfedtyB98DpMrqRMWveKwTtw4JtM7ZD8nYvMP1N8DcZVcVOETRrYXy6dOhubMkEdCotw==
-X-Received: by 2002:a50:95ce:: with SMTP id x14mr22285333eda.204.1543227337986;
-        Mon, 26 Nov 2018 02:15:37 -0800 (PST)
-Received: from ziggy.stardust ([37.223.147.230])
-        by smtp.gmail.com with ESMTPSA id i24sm69147edq.0.2018.11.26.02.15.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 02:15:36 -0800 (PST)
-Subject: Re: [PATCH v1 3/3] arm64: dts: mt7622: Drop the general purpose timer
- node
-To:     Ryder Lee <ryder.lee@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-References: <30f4a4110190a175307ac4dfebc98ffe96c44b90.1541643419.git.ryder.lee@mediatek.com>
- <17fde639c7d37f9cfabab230379913e652cf869a.1541643419.git.ryder.lee@mediatek.com>
- <be2b45e1-f639-e14c-1c40-9cd94b006309@gmail.com>
- <1543204176.26011.4.camel@mtkswgap22>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <5a8ad8dd-c768-3abe-9ea3-537cdb9b304c@gmail.com>
-Date:   Mon, 26 Nov 2018 11:15:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <1543204176.26011.4.camel@mtkswgap22>
-Content-Type: text/plain; charset=utf-8
+        Mon, 26 Nov 2018 16:09:48 -0500
+Received: from mail-eopbgr20049.outbound.protection.outlook.com ([40.107.2.49]:7693
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726176AbeKZVJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:09:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RCOyXzLmDFAVrGvEWdnNUMmLk1AHxKENryPsW5+Fdsc=;
+ b=RDGGIYuZwEmKeDvy5O4LSFtmy4IGXGFwYsRmCxXgHn2z9P0zYCMm5WwFduc/t8uIckmSIHIFXX5Jnxnzqn2F8xF68/yr+q2WA7pCdoCwu9RqZjET/oBbjMqmx20XY7Wb2o1yeN0zaTmakjuXoxHLTA3neLm9rxp+fMhdLkqnG3k=
+Received: from VI1PR04MB5533.eurprd04.prod.outlook.com (20.178.122.159) by
+ VI1PR04MB3966.eurprd04.prod.outlook.com (10.171.182.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.19; Mon, 26 Nov 2018 10:16:04 +0000
+Received: from VI1PR04MB5533.eurprd04.prod.outlook.com
+ ([fe80::8484:31d3:d034:a547]) by VI1PR04MB5533.eurprd04.prod.outlook.com
+ ([fe80::8484:31d3:d034:a547%5]) with mapi id 15.20.1361.019; Mon, 26 Nov 2018
+ 10:16:04 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     "stefan@agner.ch" <stefan@agner.ch>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "tpiepho@impinj.com" <tpiepho@impinj.com>
+CC:     Richard Zhu <hongxing.zhu@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] PCI: imx6: limit DBI register length
+Thread-Topic: [PATCH v3 2/2] PCI: imx6: limit DBI register length
+Thread-Index: AQHUgPIBCDcLlZpcCkW2XhKPKNSgDqVY+ScAgAAPJoCAABjoAIAIvvGA
+Date:   Mon, 26 Nov 2018 10:16:04 +0000
+Message-ID: <ee74fde8e40a0ca40bd8b69755c9b0919f779b13.camel@nxp.com>
+References: <20181120165626.26424-1-stefan@agner.ch>
+         <20181120165626.26424-2-stefan@agner.ch>
+         <581b9548043d5276f6685f534386180fd0673a9a.camel@nxp.com>
+         <1542741198.30311.608.camel@impinj.com>
+         <268e109e1c6b309454bd5a313078894c@agner.ch>
+In-Reply-To: <268e109e1c6b309454bd5a313078894c@agner.ch>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB3966;6:KO05rrK2z0+u+BGxvT6ewxTO4+IS7vvVwj/IZJ//kLKUwEOAzwwvmDq9af+r/g6gm/rQWv/Js8H7DPAavuwVBoy5O6zdxlobSd1+g5Q49BelLiW8Q72um+gdIYRWFkaONZ5Jd5qucAWIUIzc6QSQbAYX6MORbfE9jT+d++oskebCLPgvgSWcJa2qyc+XbgJ9j6FOECPRLOGOzwoQaWYz8KLOeHI5+HUa8RYzgOHsH+dyJHKqcQKRa9fKui+dd9ozRdKENE7IzpXByjFkIEGW+tSN0UM64n3zeozBn7/NZFqii8Av+nrdN7SInz6RUwj5KrULnCYUVZmHzgnqSKB61rLoUZcOY9OwfF6HHLNsrDzS/LfTE0ZMVGfh0l1HtvZUBn9QNh4UsgNOHXPQsOJwsUczYPOg5RdotQe2FJUyGlCYfqNb2d7O51M96CzqX+WbiHopXY8PnipuZxfwoLXRMg==;5:YDATvbsOfIH6nJkyDXnPJ6H+AFemXkeb0LycYGwO80PgaKbTCWSogvKf2d3qef40KYG3nk7XF9So1Vd561+ziPzlB353SzUVNQ5HBE4MKH8F1Z4Xm7f8n25N8VCVrdmzKoGuOFSCeKbQFiSFkwsRVVyRsYnXbL0alKE5knZ7HTg=;7:aZScFl1pp38nJMUrJ4jSmUGx6Ja6TQJWU0fzy41fBI23OXpLsdp4lqVFLuB04NhDDSD95a510Otg0U6nNR+9Hun08+FqKIhXDo+gqxERABd01ejN+aTiKk1F9J4HqUHKH6J7dzlewNuaafAiZe+1AQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 6977e617-24d0-431e-30f0-08d653882c8b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB3966;
+x-ms-traffictypediagnostic: VI1PR04MB3966:
+x-microsoft-antispam-prvs: <VI1PR04MB39663E82A7749D7391309AF9EED70@VI1PR04MB3966.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231443)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB3966;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB3966;
+x-forefront-prvs: 086831DFB4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(376002)(366004)(346002)(396003)(189003)(199004)(106356001)(105586002)(7416002)(44832011)(2906002)(39060400002)(229853002)(36756003)(118296001)(2501003)(6436002)(4326008)(4001150100001)(6486002)(305945005)(14454004)(86362001)(99286004)(97736004)(3846002)(81156014)(81166006)(478600001)(8676002)(110136005)(316002)(66066001)(93886005)(54906003)(50226002)(53936002)(476003)(2616005)(5660300001)(486006)(446003)(6246003)(11346002)(6512007)(8936002)(25786009)(53546011)(186003)(6506007)(7736002)(26005)(6116002)(71190400001)(71200400001)(2201001)(68736007)(256004)(76176011)(102836004)(14444005)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3966;H:VI1PR04MB5533.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: pyHbiYakXtMeJrD4HjRWDpTZmhsjEqtv2yFIhyTmamShRO6F5bejx5p8OZhVF/S/jaGZtd3anNkzh0Afth1VBQdunXThpH0jnUW+LWVz7omyRiwXbeNbbTi2awxUag+qQKeVtVcQmtU5jrGvIPxBdmsdV5FC/4FVqkeA/9PF5yI5gFWFB4SXdMoJYgixIlE8w/cKvGNjM+N8Hjz93dfxCHbmcwkqDj3HpYoUO/NiHCfAvYxVrSRl3OrRN3nwJ7+3CyWOB8+8bnCCHuu1Rqh8hVZqKsXo7D0YyY2U9JNqHPPn9v9baKxkzznFQPG+V5xCUpJYHRwJkThzidrPpEvAH5t07/anY3rkTPmaylidJFA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EDFD5A1691CA9649B1CB64D5A4C944EB@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6977e617-24d0-431e-30f0-08d653882c8b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2018 10:16:04.6560
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3966
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 26/11/2018 04:49, Ryder Lee wrote:
-> On Fri, 2018-11-23 at 18:07 +0100, Matthias Brugger wrote:
->>
->> On 12/11/2018 02:28, Ryder Lee wrote:
->>> The crash http://termbin.com/zitb is caused by the timer register
->>> into system in early pahse during kernel boot, but the clock
->>> sources didn't get ready at that time.
->>>
->>> A better way is to switch to use CLK_OF_DECLARE() in driver for things
->>> that need them early, but this node is actually useless in MT7622.
->>> So we drop it.
->>
->> I suppose the root cause is, that the driver doesn't check the error
->> timer_of_init returned.
->>
->> Would you mind to test the following patch to see if this fixes the problem?
->>
->> --->8
->> From be91e56ed527261137335af340845eb3dd3dd33a Mon Sep 17 00:00:00 2001
->> From: Matthias Brugger <matthias.bgg@gmail.com>
->> Date: Fri, 23 Nov 2018 17:04:08 +0100
->> Subject: [PATCH] clocksource/drivers/timer-mediatek: error out on probe defer
->>
->> If the clocks are not yet present, because they are loaded after
->> the timer is initialized, we are unable to boot.
->> Check if the return value of timer_of_init and return on EPROBE_DEFER.
->>
->> Error seen is:
->> [    0.008337] Failed to get clock for /timer@10004000
->> [    0.013435] WARNING: CPU: 0 PID: 0 at ../drivers/clk/clk.c:3615
->> __clk_put+0xf0/0x120
->> [    0.021453] Modules linked in:
->> [    0.024614] CPU: 0 PID: 0 Comm: swapper/0 Not tainted
->> 4.20.0-rc1-00063-g2859d9abd7e8 #2
->> [    0.032902] Hardware name: MediaTek MT7622 RFB1 board (DT)
->> [    0.038580] pstate: 20000085 (nzCv daIf -PAN -UAO)
->> [    0.043538] pc : __clk_put+0xf0/0x120
->> [    0.047328] lr : clk_put+0xc/0x18
->> [    0.050753] sp : ffff000009163ed0
->> [    0.054178] x29: ffff000009163ed0 x28: 0000000041010018
->> [    0.059676] x27: 0000000000000000 x26: 0000000000000000
->> [    0.065174] x25: ffff0000090cb008 x24: ffff80001dfd7800
->> [    0.070672] x23: ffff000008f934b8 x22: ffff80001dfdeae0
->> [    0.076169] x21: ffff80001dfdeae0 x20: fffffffffffffdfb
->> [    0.081668] x19: ffff00000929ac40 x18: ffffffffffffffff
->> [    0.087166] x17: 0000000000000000 x16: 0000000000000000
->> [    0.092664] x15: ffff0000091696c8 x14: ffff0000892cd70f
->> [    0.098162] x13: ffff0000092cd71d x12: ffff000009181348
->> [    0.103661] x11: ffff000009181000 x10: 0000000005f5e0ff
->> [    0.109159] x9 : 0000000000000040 x8 : ffff000009181400
->> [    0.114657] x7 : ffff80001c800270 x6 : 0000000000000000
->> [    0.120155] x5 : ffff80001c800248 x4 : 0000000000000000
->> [    0.125653] x3 : 0000000000000000 x2 : 0000000000000000
->> [    0.131151] x1 : 0000000000000000 x0 : fffffffffffffdfb
->> [    0.136649] Call trace:
->> [    0.139175]  __clk_put+0xf0/0x120
->> [    0.142605]  timer_of_cleanup+0x60/0x7c
->> [    0.146572]  mtk_gpt_init+0x18c/0x1a0
->> [    0.150359]  timer_probe+0x74/0x10c
->> [    0.153969]  time_init+0x14/0x44
->> [    0.157307]  start_kernel+0x29c/0x414
->> [    0.161098] ---[ end trace c3137b005300b618 ]---
->>
->> Fixes: a0858f937960 ("clocksource/drivers/timer-mediatek: Convert the driver to
->> timer-of")
->> Fixes: e3af677607d9 ("clocksource/drivers/timer-mediatek: Add support for system
->> timer")
->> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
->> ---
->>  drivers/clocksource/timer-mediatek.c | 12 ++++++++++--
->>  1 file changed, 10 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clocksource/timer-mediatek.c
->> b/drivers/clocksource/timer-mediatek.c
->> index eb10321f8517..d40c77a65b08 100644
->> --- a/drivers/clocksource/timer-mediatek.c
->> +++ b/drivers/clocksource/timer-mediatek.c
->> @@ -276,8 +276,12 @@ static int __init mtk_syst_init(struct device_node *node)
->>  	to.of_irq.handler = mtk_syst_handler;
->>
->>  	ret = timer_of_init(node, &to);
->> -	if (ret)
->> +	if (ret) {
->> +		if (ret == -EPROBE_DEFER)
->> +			return ret;
->> +
->>  		goto err;
->> +	}
->>
->>  	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to),
->>  					TIMER_SYNC_TICKS, 0xffffffff);
->> @@ -301,8 +305,12 @@ static int __init mtk_gpt_init(struct device_node *node)
->>  	to.of_irq.handler = mtk_gpt_interrupt;
->>
->>  	ret = timer_of_init(node, &to);
->> -	if (ret)
->> +	if (ret) {
->> +		if (ret == -EPROBE_DEFER)
->> +			return ret;
->> +
->>  		goto err;
->> +	}
->>
->>  	/* Configure clock source */
->>  	mtk_gpt_setup(&to, TIMER_CLK_SRC, GPT_CTRL_OP_FREERUN);
-> 
-> I tried this patch, but it didn't work. I think *_OF_DECLARE() is not
-> compatible with EPROBE_DEFER.
-> 
-> I also found the similar discussion about this issue:
-> https://patchwork.kernel.org/patch/10580345/
-> 
-
-Got it. So from my research we would need to use CLK_OF_DECLARE_DRIVER for:
-    mainpll (pll)
-
-    syspll4_d16 (div)
-
-    f10m_ref_sel (mux)
-
-    infra_apxgpt_pd (gate)
-
-Anyway, as a quick fix we can delete the device node. I'll reword you commit
-message and I'll also reword commit message for 1/3
-
-In the future please try to not put links into the commit message but explain
-what is happening.
-
-Regards,
-Matthias
+T24gVHVlLCAyMDE4LTExLTIwIGF0IDIxOjQyICswMTAwLCBTdGVmYW4gQWduZXIgd3JvdGU6DQo+
+IE9uIDIwLjExLjIwMTggMjA6MTMsIFRyZW50IFBpZXBobyB3cm90ZToNCj4gPiBPbiBUdWUsIDIw
+MTgtMTEtMjAgYXQgMTg6MTkgKzAwMDAsIExlb25hcmQgQ3Jlc3RleiB3cm90ZToNCj4gPiA+IE9u
+IFR1ZSwgMjAxOC0xMS0yMCBhdCAxNzo1NiArMDEwMCwgU3RlZmFuIEFnbmVyIHdyb3RlOg0KPiA+
+ID4gPiBEZWZpbmUgdGhlIGxlbmd0aCBvZiB0aGUgREJJIHJlZ2lzdGVycy4gVGhpcyBtYWtlcyBz
+dXJlIHRoYXQNCj4gPiA+ID4gdGhlIGtlcm5lbCBkb2VzIG5vdCBhY2Nlc3MgcmVnaXN0ZXJzIGJl
+eW9uZCB0aGF0IHBvaW50LCBhdm9pZGluZw0KPiA+ID4gPiB0aGUgZm9sbG93aW5nIGFib3J0IG9u
+IGEgaS5NWCA2UXVhZDoNCj4gPiA+ID4gICAjIGNhdA0KPiA+ID4gPiAvc3lzL2RldmljZXMvc29j
+MC9zb2MvMWZmYzAwMC5wY2llL3BjaTAwMDBcOjAwLzAwMDBcOjAwXDowMC4wL2NvbmZpZw0KPiA+
+ID4gPiAgIFsgIDEwMC4wMjE0MzNdIFVuaGFuZGxlZCBmYXVsdDogaW1wcmVjaXNlIGV4dGVybmFs
+IGFib3J0ICgweDE0MDYpDQo+ID4gPiA+IGF0IDB4YjZlYTcwMDANCj4gPiA+ID4gICAuLi4NCj4g
+PiA+ID4gICBbICAxMDAuMDU2NDIzXSBQQyBpcyBhdCBkd19wY2llX3JlYWQrMHg1MC8weDg0DQo+
+ID4gPiA+ICAgWyAgMTAwLjA2MDc5MF0gTFIgaXMgYXQgZHdfcGNpZV9yZF9vd25fY29uZisweDQ0
+LzB4NDgNCj4gPiA+IA0KPiA+ID4gSSBkb24ndCBrbm93IGV4YWN0bHkgd2hlcmUgdGhpcyBsaW1p
+dGF0aW9uIGNvbWVzIGZyb20sIEkgY2FuIGluZGVlZA0KPiA+ID4gcmVwcm9kdWNlIGEgc3RhY2sg
+ZHVtcCB3aGVuIGR1bXBpbmcgcGNpIGNvbmZpZyBmcm9tIC9zeXMvDQo+ID4gPiANCj4gPiA+IFVu
+Zm9ydHVuYXRlbHkgdGhpcyBzZWVtcyB0byBibG9jayBhY2Nlc3MgdG8gcmVnaXN0ZXJzIHVzZWQg
+Zm9yDQo+ID4gPiBmdW5jdGlvbmFsaXR5IGxpa2UgaW50ZXJydXB0cy4gRm9yIGV4YW1wbGUgZHdf
+aGFuZGxlX21zaV9pcnEgZG9lczoNCj4gPiA+IA0KPiA+ID4gCWR3X3BjaWVfcmRfb3duX2NvbmYo
+cHAsIFBDSUVfTVNJX0lOVFIwX1NUQVRVUyArDQo+ID4gPiAJCQkgICAgKGkgKiBNU0lfUkVHX0NU
+UkxfQkxPQ0tfU0laRSksDQo+ID4gPiAJCQkgICAgNCwgJnZhbCk7DQo+ID4gPiANCj4gPiA+IHdo
+ZXJlIFBDSV9NU0lfSU5UUjBfU1RBVFVTIGlzIDB4ODMwLiBUaGVyZSBhcmUgbW9yZSBhY2Nlc3Nl
+cyBsaWtlIHRoaXMuDQo+ID4gDQo+ID4gT24gSU1YN2QsIHRoZXJlIGFyZSBzaWduaWZpY2FudCBi
+bG9ja3Mgb2YgMDBzIGluIHRoZSBjb25maWcgc3BhY2UsIGFuZA0KPiA+IGFsbCAweGZmIGF0IDB4
+YjUwIG9uIHVwLg0KPiA+IA0KPiA+IEkuZS4sIHNpZ25pZmljYW50IHBvcnRpb25zIGFyZSBlbXB0
+eSwgaW4gdGhlIG1pZGRsZSBvZiB0aGUgY29uZmlnDQo+ID4gc3BhY2UsIG5vdCBqdXN0IGF0IHRo
+ZSBlbmQuDQo+ID4gDQo+ID4gQnV0IHRoZXkgY2FuIGJlIHJlYWQgd2l0aG91dCBwcm9ibGVtLg0K
+PiA+IA0KPiA+IFBlcmhhcHMgaW14NnEgYWJvcnRzIG9uIGEgcmVhZCBvZiBhbiB1bmltcGxlbWVu
+dGVkIGFkZHJlc3MgaW5zdGVhZCBvZg0KPiA+IHJldHVybmluZyB6ZXJvcyBsaWtlIGlteDdkLiAg
+SW4gdGhhdCBjYXNlIGl0IHJlYWxseSBuZWVkcyBzb21ldGhpbmcNCj4gPiBtb3JlIGNvbXBsZXgg
+dG8gcHJldmVudCBhYm9ydCB0aGFuIGp1c3QgYSBsZW5ndGguDQo+IA0KPiBZZWFoIGl0IHNlZW1z
+IHRob3NlIFNvQ3MgYmVoYXZlIGRpZmZlcmVudGx5Lg0KPiANCj4gRGVzY3JpYmluZyBhIHJlZ2lz
+dGVyIHNldCB3aXRoIGhvbGVzIHdpbGwgZ2V0IGNvbXBsaWNhdGVkLCBJIGd1ZXNzIGl0DQo+IHdv
+dWxkIGFzayBmb3IgYSByZWdtYXAuLi4NCg0KVGhlIFBvcnRMb2dpYyBhcmVhIHNlZW1zIHRvIGJl
+IGFsd2F5cyBhdCAweDcwMC0weEEwMCwgdGhlcmUgYXJlIGRlZmluZXMNCmZvciBpdC4gU28gdGhp
+cyB3b3VsZCBvbmx5IHJlcXVpcmUgb25lIGFkZGl0aW9uYWwgcmFuZ2UsIG5vIHJlZ21hcA0Kc3R1
+ZmYuDQoNCkkgZG9uJ3Qga25vdyBpZiBtYWtpbmcgcG9ydGxvZ2ljIGFjY2Vzc2libGUgdG8gdXNl
+cnNwYWNlIGlzIHVzZWZ1bC4gSW4NCnRoZW9yeSBzb21lYm9keSBjb3VsZCByZWFkIGRlYnVnIERX
+QyByZWdpc3RlcnMgdmlhIC9zeXMvYmxhaC9jb25maWcsDQpidXQgdGhlcmUgYXJlIGJldHRlciB3
+YXlzIHRvIHJlYWQgSFcgcmVnaXN0ZXJzIGZyb20gdXNlcnNwYWNlLg0KDQpCcm93c2luZyB0aHJv
+dWdoIHRoZSBkb2NzIEkgY2FuJ3QgZmluZCBzdHVmZiBsaWtlIHJlYWRzIHdpdGggc2lkZS0NCmVm
+ZmVjdHMgc28gSSBjYW4ndCBzYXkgdGhhdCBpdCdzIGhhcm1mdWwgZWl0aGVyLg0KDQo+ID4gSXQg
+YWxzbyBzZWVtcyB0byBtZSB0aGF0IHRoaXMgZG9lc24ndCBuZWVkIHRvIGJlIGluIHRoZSBpbnRl
+cm5hbCBwY2kNCj4gPiBjb25maWcgYWNjZXNzIGZ1bmN0aW9ucy4gIFRoZSBkcml2ZXIgc2hvdWxk
+bid0IGJlIHJlYWRpbmcgcmVnaXN0ZXJzDQo+ID4gdGhhdCBkb24ndCBleGlzdCBhbnl3YXkuICBJ
+dCdzIHJlYWxseSBhYm91dCB0cnlpbmcgdG8gZml4IHN5c2ZzIGFjY2Vzcw0KPiA+IHRvIHJlZ2lz
+dGVycyB0aGF0IGRvbid0IGV4aXN0LiAgU28gbWF5YmUgaXQgc2hvdWxkIGJlIGRvbmUgdGhlcmUu
+DQo+IA0KPiBUaGF0IHdhcyBteSBmaXJzdCBhcHByb2FjaA0KDQpEb2luZyBpdCBvbiBhIHBlci1z
+b2MgYmFzaXMgaXMgYmV0dGVyLCB0aGlzIHNlZW1zIHRvIGFmZmVjdCBib3RoIDZxIGFuZA0KNnFw
+ICh0aG9zZSBhcmUgZGlzdGluY3QhKSBidXQgbm90IG90aGVycy4NCg0KVGhlIHBjaSBjb25maWcg
+YXJlYSBmcm9tIHVzZXJzcGFjZSBpcyBhY2Nlc3NlZCB0aHJvdWdoIHBjaV9vcHMucmVhZCA9DQpk
+d19wY2llX3JkX2NvbmYgd2hpbGUgaW50ZXJuYWwgYWNjZXNzZXMgZ28gdGhyb3VnaCBkd19wY2ll
+X3JkX293bl9jb25mLg0KU28gbW92aW5nIHRoZSBkYmlfbGVuZ3RoIGNoZWNrIHVwIG9uZSBsZXZl
+bCB3b3VsZCB3b3JrIGVhc2lseS4NCg0KV2hhdCBhYm91dCBhc3NpZ25pbmcgdG8gcGNpX2Rldi0+
+Y2ZnX3NpemUgZnJvbSBwcm9iZSBjb2RlPw0KVW5mb3J0dW5hdGVseSB0aGVyZSBkb2Vzbid0IHNl
+ZW0gdG8gYmUgYW55IHN0cmFpZ2h0LWZvcndhcmQgd2F5IHRvIGRvDQp0aGF0IGZyb20gaW14Nl9w
+Y2llIG9yIGV2ZW4gZHdfcGNpZSwgYnV0IG1heWJlIEknbSBtaXNzaW5nIHNvbWV0aGluZz8NCg0K
+LS0NClJlZ2FyZHMsDQpMZW9uYXJkDQo=
