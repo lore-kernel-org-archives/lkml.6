@@ -2,98 +2,114 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB3BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 596BEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 613FD20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:05:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20A2B20817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:05:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OBg7/fyC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 613FD20817
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="h/wGSuzY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20A2B20817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbeK0GAj (ORCPT
+        id S1726952AbeK0GAy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 01:00:39 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35795 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726388AbeK0GAi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 01:00:38 -0500
-Received: by mail-pg1-f193.google.com with SMTP id s198so6598373pgs.2;
-        Mon, 26 Nov 2018 11:05:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xMCX093hZ96xuLvgm7yaasku7w8dyREUwFIpYJc9FZY=;
-        b=OBg7/fyCvjS8uWwmWk1bN31EftRo0JMvQmNoNoBD5I3pI8lZaeWDKXsshMoWIyG7Kv
-         uKOAiHbJwcMbouWNmaPf0ETOk+7BObeBQcr4gqMgrZ55rhhMayBnc6L3MZcdavdv/DKE
-         GHWXj8I0EbDlP2r/iDiLbcmu0txvZjJxPocra6mPrl0nVIKmsb95fwsMzQyZQtCxGCsC
-         9BaSHlptFKWy2Z6LtqFLn6rjqCihMUMCp4493lgmCsEej5kzzlOGg3+Nk6Eo1buAeQDa
-         21d7CKEHXRo4rPJpZtkIpwtOQEgm5L6MfO1XCDgQ9+SWS9vk2F+riP4R2SBAU+t58QAF
-         G7XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xMCX093hZ96xuLvgm7yaasku7w8dyREUwFIpYJc9FZY=;
-        b=cAjxiEM3rwNDvrwQtGh8qwcboG93/uk8sQJLs8nmBv60K9OO76q091GoZcreAIC4tK
-         guDNhe6xF3fu4vypS7PcR6xIjaoaBGJmqHSGgMGETydkN3Ws/Q8hYk+sqlFKc3fiz3u5
-         ZsLoBpBbThWSAWWUzrMMH7z2JzAMmN4E/QzYendgGSnJVY4xWcPPNNm0BUmspAw6AzfD
-         5u9vieIO8JJsbzibQe6M6w7GpKv5+guKL7PvNK+QtHK83S7safqPI7SH1N04rmBJkBO/
-         A70CTzGOSSOwUU0qe337eZjeUWxHGfHV+a8X5MqsRyHKhCsQJz4xzU761jr8wkWcwa3D
-         tz4w==
-X-Gm-Message-State: AA+aEWazNqH65ig8alARDDMQipqgRcI/PruwJhGg6cY6j2JCaQ2fy/1s
-        JTECwuQyT+qdEcJkD0nYCV/k+UHL
-X-Google-Smtp-Source: AFSGD/U8RVDtUj3kwFNJEqpwsD4DMCKOgPv+W4xIy9wVG4re2M96jQ7OYts7OgOvFiONIP7wvdTkXA==
-X-Received: by 2002:a63:9a09:: with SMTP id o9mr25056439pge.94.1543259136208;
-        Mon, 26 Nov 2018 11:05:36 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id c20sm1327448pfc.92.2018.11.26.11.05.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 11:05:35 -0800 (PST)
-Date:   Mon, 26 Nov 2018 11:05:34 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 000/118] 4.19.5-stable review
-Message-ID: <20181126190534.GC14137@roeck-us.net>
-References: <20181126105059.832485122@linuxfoundation.org>
+        Tue, 27 Nov 2018 01:00:54 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:49398 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726380AbeK0GAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 01:00:53 -0500
+Received: from zn.tnic (p200300EC2BDEFE00DCA0409AA15535E1.dip0.t-ipconnect.de [IPv6:2003:ec:2bde:fe00:dca0:409a:a155:35e1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C32911EC06FB;
+        Mon, 26 Nov 2018 20:05:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1543259149;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=jaw1WLmw20ZQYteP1GCtAD68dXdQ/PmSfvIG2IsdhKQ=;
+        b=h/wGSuzYYDpO/wF7iiMHWO49sFUbbV4EIGgop4sW8fnw3yjkzHA/MCcN190mW6xvvcpuCP
+        1GG1Slv62dN1ACNwKFNBEkpw/+6pPA0oWnQoaPZjLRnYq7N4/VmcaWcg8sRnySt3quzLlV
+        GzRWRtxKtkpLXVh/vMOB6olL1ts+Qbk=
+Date:   Mon, 26 Nov 2018 20:05:44 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     Ingo Molnar <mingo@kernel.org>, "Moger, Babu" <Babu.Moger@amd.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v9 01/13] x86/resctrl: Rename and move rdt files to new
+ directory
+Message-ID: <20181126190544.GL4843@zn.tnic>
+References: <20181121202811.4492-1-babu.moger@amd.com>
+ <20181121202811.4492-2-babu.moger@amd.com>
+ <20181123072839.GA51597@gmail.com>
+ <20181123082258.GA30697@zn.tnic>
+ <20181123084117.GA130228@gmail.com>
+ <20181123090011.GB30697@zn.tnic>
+ <20181126183102.GA15254@agluck-desk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181126183102.GA15254@agluck-desk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 11:49:54AM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.5 release.
-> There are 118 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Nov 26, 2018 at 10:31:02AM -0800, Luck, Tony wrote:
+> Is this talking about renaming /sys/fs/resctrl?
 > 
-> Responses should be made by Wed Nov 28 10:50:22 UTC 2018.
-> Anything received after that time might be too late.
-> 
+> If so NAK to that. It is ABI now. Lots of scripts depend
+> on that name.
 
-Build results:
-	total: 135 pass: 135 fail: 0
-Qemu test results:
-	total: 311 pass: 311 fail: 0
+No no, that is cast in stone. The kernel source dir is called "resctrl"
+now too:
 
-Details are available at https://kerneltests.org/builders/.
+arch/x86/kernel/cpu/resctrl
 
-Guenter
+so even less confusion.
+
+:)
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
