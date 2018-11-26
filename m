@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0414AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C0FBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B604420645
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:04:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFB172089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:04:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xSUfXE03"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B604420645
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnjnI7OY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFB172089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730985AbeKZV6F (ORCPT
+        id S1730999AbeKZV6H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:58:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42814 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:58:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729291AbeKZV6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:58:03 -0500
+        id S1729291AbeKZV6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:58:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 671A920645;
-        Mon, 26 Nov 2018 11:04:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF90620672;
+        Mon, 26 Nov 2018 11:04:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230257;
-        bh=iIcqicoVp4fpOqLafttamQBp887qItvvpfNVF1dy5Rs=;
+        s=default; t=1543230260;
+        bh=Fzr7sv/NyJj/RGar7BK/Lo3vYtd7hLTiF5OSFsRyqlE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xSUfXE03S6jfORBIYlUWP17aaPZl0ralKTMM65E8OKXib4G0865Gv8in1DUY//MtS
-         mh3btX6+Shehw0kGacIel3TDcR1ZNMxGLU7esFj4iixXK1v+UMr4ZaMhzhdeH4/Qda
-         uH5DZHtNS4KMDBxLXSTc+W8y2Vug2QyfEBUk/2Bk=
+        b=fnjnI7OYrXJOGcPzzb0nkMklygd0PfgTeW9ptlt7QF72TEk3Kfg6AH93qEmEqA4Tz
+         1ReZhMz9J/QJdrIXonlALcwBD0fpAO6hxb3HqrE94anyQRLOaV3e4GU3bVQdBWq7hB
+         Ur8FdRcQXpkeOQ1EjWziVDlzL8kPTNbdbsk7eoBY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laura Garcia Liebana <nevola@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 040/118] Revert "netfilter: nft_numgen: add map lookups for numgen random operations"
-Date:   Mon, 26 Nov 2018 11:50:34 +0100
-Message-Id: <20181126105102.396488476@linuxfoundation.org>
+Subject: [PATCH 4.19 067/118] drm/amd/amdgpu/dm: Fix dm_dp_create_fake_mst_encoder()
+Date:   Mon, 26 Nov 2018 11:51:01 +0100
+Message-Id: <20181126105103.609632499@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -63,247 +64,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4269fea768a11a447d8de620ce420f2214d4685c ]
+[ Upstream commit 63237f8748bdf46dccf79ef8f98f05e9fe799162 ]
 
-Laura found a better way to do this from userspace without requiring
-kernel infrastructure, revert this.
+[why]
+Removing connector reusage from DM to match the rest of the tree ended
+up revealing an issue that was surprisingly subtle. The original amdgpu
+code for DC that was submitted appears to have left a chunk in
+dm_dp_create_fake_mst_encoder() that tries to find a "master encoder",
+the likes of which isn't actually used or stored anywhere. It does so at
+the wrong time as well by trying to access parts of the drm_connector
+from the encoder init before it's actually been initialized. This
+results in a NULL pointer deref on MST hotplugs:
 
-Fixes: 978d8f9055c3 ("netfilter: nft_numgen: add map lookups for numgen random operations")
-Signed-off-by: Laura Garcia Liebana <nevola@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+[  160.696613] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+[  160.697234] PGD 0 P4D 0
+[  160.697814] Oops: 0010 [#1] SMP PTI
+[  160.698430] CPU: 2 PID: 64 Comm: kworker/2:1 Kdump: loaded Tainted: G           O      4.19.0Lyude-Test+ #2
+[  160.699020] Hardware name: HP HP ZBook 15 G4/8275, BIOS P70 Ver. 01.22 05/17/2018
+[  160.699672] Workqueue: events_long drm_dp_mst_link_probe_work [drm_kms_helper]
+[  160.700322] RIP: 0010:          (null)
+[  160.700920] Code: Bad RIP value.
+[  160.701541] RSP: 0018:ffffc9000029fc78 EFLAGS: 00010206
+[  160.702183] RAX: 0000000000000000 RBX: ffff8804440ed468 RCX: ffff8804440e9158
+[  160.702778] RDX: 0000000000000000 RSI: ffff8804556c5700 RDI: ffff8804440ed000
+[  160.703408] RBP: ffff880458e21800 R08: 0000000000000002 R09: 000000005fca0a25
+[  160.704002] R10: ffff88045a077a3d R11: ffff88045a077a3c R12: ffff8804440ed000
+[  160.704614] R13: ffff880458e21800 R14: ffff8804440e9000 R15: ffff8804440e9000
+[  160.705260] FS:  0000000000000000(0000) GS:ffff88045f280000(0000) knlGS:0000000000000000
+[  160.705854] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  160.706478] CR2: ffffffffffffffd6 CR3: 000000000200a001 CR4: 00000000003606e0
+[  160.707124] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  160.707724] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  160.708372] Call Trace:
+[  160.708998]  ? dm_dp_add_mst_connector+0xed/0x1d0 [amdgpu]
+[  160.709625]  ? drm_dp_add_port+0x2fa/0x470 [drm_kms_helper]
+[  160.710284]  ? wake_up_q+0x54/0x70
+[  160.710877]  ? __mutex_unlock_slowpath.isra.18+0xb3/0x110
+[  160.711512]  ? drm_dp_dpcd_access+0xe7/0x110 [drm_kms_helper]
+[  160.712161]  ? drm_dp_send_link_address+0x155/0x1e0 [drm_kms_helper]
+[  160.712762]  ? drm_dp_check_and_send_link_address+0xa3/0xd0 [drm_kms_helper]
+[  160.713408]  ? drm_dp_mst_link_probe_work+0x4b/0x80 [drm_kms_helper]
+[  160.714013]  ? process_one_work+0x1a1/0x3a0
+[  160.714667]  ? worker_thread+0x30/0x380
+[  160.715326]  ? wq_update_unbound_numa+0x10/0x10
+[  160.715939]  ? kthread+0x112/0x130
+[  160.716591]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  160.717262]  ? ret_from_fork+0x35/0x40
+[  160.717886] Modules linked in: amdgpu(O) vfat fat snd_hda_codec_generic joydev i915 chash gpu_sched ttm i2c_algo_bit drm_kms_helper snd_hda_codec_hdmi hp_wmi syscopyarea iTCO_wdt sysfillrect sparse_keymap sysimgblt fb_sys_fops snd_hda_intel usbhid wmi_bmof drm snd_hda_codec btusb snd_hda_core intel_rapl btrtl x86_pkg_temp_thermal btbcm btintel coretemp snd_pcm crc32_pclmul bluetooth psmouse snd_timer snd pcspkr i2c_i801 mei_me i2c_core soundcore mei tpm_tis wmi tpm_tis_core hp_accel ecdh_generic lis3lv02d tpm video rfkill acpi_pad input_polldev hp_wireless pcc_cpufreq crc32c_intel serio_raw tg3 xhci_pci xhci_hcd [last unloaded: amdgpu]
+[  160.720141] CR2: 0000000000000000
+
+Somehow the connector reusage DM was using for MST connectors managed to
+paper over this issue entirely; hence why this was never caught until
+now.
+
+[how]
+Since this code isn't used anywhere and seems useless anyway, we can
+just drop it entirely. This appears to fix the issue on my HP ZBook with
+an AMD WX4150.
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/uapi/linux/netfilter/nf_tables.h |   4 +-
- net/netfilter/nft_numgen.c               | 127 -----------------------
- 2 files changed, 2 insertions(+), 129 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/include/uapi/linux/netfilter/nf_tables.h b/include/uapi/linux/netfilter/nf_tables.h
-index e23290ffdc77..325ec6ef0a76 100644
---- a/include/uapi/linux/netfilter/nf_tables.h
-+++ b/include/uapi/linux/netfilter/nf_tables.h
-@@ -1581,8 +1581,8 @@ enum nft_ng_attributes {
- 	NFTA_NG_MODULUS,
- 	NFTA_NG_TYPE,
- 	NFTA_NG_OFFSET,
--	NFTA_NG_SET_NAME,
--	NFTA_NG_SET_ID,
-+	NFTA_NG_SET_NAME,	/* deprecated */
-+	NFTA_NG_SET_ID,		/* deprecated */
- 	__NFTA_NG_MAX
- };
- #define NFTA_NG_MAX	(__NFTA_NG_MAX - 1)
-diff --git a/net/netfilter/nft_numgen.c b/net/netfilter/nft_numgen.c
-index 649d1700ec5b..3cc1b3dc3c3c 100644
---- a/net/netfilter/nft_numgen.c
-+++ b/net/netfilter/nft_numgen.c
-@@ -24,7 +24,6 @@ struct nft_ng_inc {
- 	u32			modulus;
- 	atomic_t		counter;
- 	u32			offset;
--	struct nft_set		*map;
- };
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+index 4b08359e18bd..4cc45a1d21db 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+@@ -317,12 +317,7 @@ dm_dp_create_fake_mst_encoder(struct amdgpu_dm_connector *connector)
+ 	struct amdgpu_device *adev = dev->dev_private;
+ 	struct amdgpu_encoder *amdgpu_encoder;
+ 	struct drm_encoder *encoder;
+-	const struct drm_connector_helper_funcs *connector_funcs =
+-		connector->base.helper_private;
+-	struct drm_encoder *enc_master =
+-		connector_funcs->best_encoder(&connector->base);
  
- static u32 nft_ng_inc_gen(struct nft_ng_inc *priv)
-@@ -48,34 +47,11 @@ static void nft_ng_inc_eval(const struct nft_expr *expr,
- 	regs->data[priv->dreg] = nft_ng_inc_gen(priv);
- }
- 
--static void nft_ng_inc_map_eval(const struct nft_expr *expr,
--				struct nft_regs *regs,
--				const struct nft_pktinfo *pkt)
--{
--	struct nft_ng_inc *priv = nft_expr_priv(expr);
--	const struct nft_set *map = priv->map;
--	const struct nft_set_ext *ext;
--	u32 result;
--	bool found;
--
--	result = nft_ng_inc_gen(priv);
--	found = map->ops->lookup(nft_net(pkt), map, &result, &ext);
--
--	if (!found)
--		return;
--
--	nft_data_copy(&regs->data[priv->dreg],
--		      nft_set_ext_data(ext), map->dlen);
--}
--
- static const struct nla_policy nft_ng_policy[NFTA_NG_MAX + 1] = {
- 	[NFTA_NG_DREG]		= { .type = NLA_U32 },
- 	[NFTA_NG_MODULUS]	= { .type = NLA_U32 },
- 	[NFTA_NG_TYPE]		= { .type = NLA_U32 },
- 	[NFTA_NG_OFFSET]	= { .type = NLA_U32 },
--	[NFTA_NG_SET_NAME]	= { .type = NLA_STRING,
--				    .len = NFT_SET_MAXNAMELEN - 1 },
--	[NFTA_NG_SET_ID]	= { .type = NLA_U32 },
- };
- 
- static int nft_ng_inc_init(const struct nft_ctx *ctx,
-@@ -101,22 +77,6 @@ static int nft_ng_inc_init(const struct nft_ctx *ctx,
- 					   NFT_DATA_VALUE, sizeof(u32));
- }
- 
--static int nft_ng_inc_map_init(const struct nft_ctx *ctx,
--			       const struct nft_expr *expr,
--			       const struct nlattr * const tb[])
--{
--	struct nft_ng_inc *priv = nft_expr_priv(expr);
--	u8 genmask = nft_genmask_next(ctx->net);
--
--	nft_ng_inc_init(ctx, expr, tb);
--
--	priv->map = nft_set_lookup_global(ctx->net, ctx->table,
--					  tb[NFTA_NG_SET_NAME],
--					  tb[NFTA_NG_SET_ID], genmask);
--
--	return PTR_ERR_OR_ZERO(priv->map);
--}
--
- static int nft_ng_dump(struct sk_buff *skb, enum nft_registers dreg,
- 		       u32 modulus, enum nft_ng_types type, u32 offset)
- {
-@@ -143,27 +103,10 @@ static int nft_ng_inc_dump(struct sk_buff *skb, const struct nft_expr *expr)
- 			   priv->offset);
- }
- 
--static int nft_ng_inc_map_dump(struct sk_buff *skb,
--			       const struct nft_expr *expr)
--{
--	const struct nft_ng_inc *priv = nft_expr_priv(expr);
--
--	if (nft_ng_dump(skb, priv->dreg, priv->modulus,
--			NFT_NG_INCREMENTAL, priv->offset) ||
--	    nla_put_string(skb, NFTA_NG_SET_NAME, priv->map->name))
--		goto nla_put_failure;
--
--	return 0;
--
--nla_put_failure:
--	return -1;
--}
--
- struct nft_ng_random {
- 	enum nft_registers      dreg:8;
- 	u32			modulus;
- 	u32			offset;
--	struct nft_set		*map;
- };
- 
- static u32 nft_ng_random_gen(struct nft_ng_random *priv)
-@@ -183,25 +126,6 @@ static void nft_ng_random_eval(const struct nft_expr *expr,
- 	regs->data[priv->dreg] = nft_ng_random_gen(priv);
- }
- 
--static void nft_ng_random_map_eval(const struct nft_expr *expr,
--				   struct nft_regs *regs,
--				   const struct nft_pktinfo *pkt)
--{
--	struct nft_ng_random *priv = nft_expr_priv(expr);
--	const struct nft_set *map = priv->map;
--	const struct nft_set_ext *ext;
--	u32 result;
--	bool found;
--
--	result = nft_ng_random_gen(priv);
--	found = map->ops->lookup(nft_net(pkt), map, &result, &ext);
--	if (!found)
--		return;
--
--	nft_data_copy(&regs->data[priv->dreg],
--		      nft_set_ext_data(ext), map->dlen);
--}
--
- static int nft_ng_random_init(const struct nft_ctx *ctx,
- 			      const struct nft_expr *expr,
- 			      const struct nlattr * const tb[])
-@@ -226,21 +150,6 @@ static int nft_ng_random_init(const struct nft_ctx *ctx,
- 					   NFT_DATA_VALUE, sizeof(u32));
- }
- 
--static int nft_ng_random_map_init(const struct nft_ctx *ctx,
--				  const struct nft_expr *expr,
--				  const struct nlattr * const tb[])
--{
--	struct nft_ng_random *priv = nft_expr_priv(expr);
--	u8 genmask = nft_genmask_next(ctx->net);
--
--	nft_ng_random_init(ctx, expr, tb);
--	priv->map = nft_set_lookup_global(ctx->net, ctx->table,
--					  tb[NFTA_NG_SET_NAME],
--					  tb[NFTA_NG_SET_ID], genmask);
--
--	return PTR_ERR_OR_ZERO(priv->map);
--}
--
- static int nft_ng_random_dump(struct sk_buff *skb, const struct nft_expr *expr)
- {
- 	const struct nft_ng_random *priv = nft_expr_priv(expr);
-@@ -249,22 +158,6 @@ static int nft_ng_random_dump(struct sk_buff *skb, const struct nft_expr *expr)
- 			   priv->offset);
- }
- 
--static int nft_ng_random_map_dump(struct sk_buff *skb,
--				  const struct nft_expr *expr)
--{
--	const struct nft_ng_random *priv = nft_expr_priv(expr);
--
--	if (nft_ng_dump(skb, priv->dreg, priv->modulus,
--			NFT_NG_RANDOM, priv->offset) ||
--	    nla_put_string(skb, NFTA_NG_SET_NAME, priv->map->name))
--		goto nla_put_failure;
--
--	return 0;
--
--nla_put_failure:
--	return -1;
--}
--
- static struct nft_expr_type nft_ng_type;
- static const struct nft_expr_ops nft_ng_inc_ops = {
- 	.type		= &nft_ng_type,
-@@ -274,14 +167,6 @@ static const struct nft_expr_ops nft_ng_inc_ops = {
- 	.dump		= nft_ng_inc_dump,
- };
- 
--static const struct nft_expr_ops nft_ng_inc_map_ops = {
--	.type		= &nft_ng_type,
--	.size		= NFT_EXPR_SIZE(sizeof(struct nft_ng_inc)),
--	.eval		= nft_ng_inc_map_eval,
--	.init		= nft_ng_inc_map_init,
--	.dump		= nft_ng_inc_map_dump,
--};
--
- static const struct nft_expr_ops nft_ng_random_ops = {
- 	.type		= &nft_ng_type,
- 	.size		= NFT_EXPR_SIZE(sizeof(struct nft_ng_random)),
-@@ -290,14 +175,6 @@ static const struct nft_expr_ops nft_ng_random_ops = {
- 	.dump		= nft_ng_random_dump,
- };
- 
--static const struct nft_expr_ops nft_ng_random_map_ops = {
--	.type		= &nft_ng_type,
--	.size		= NFT_EXPR_SIZE(sizeof(struct nft_ng_random)),
--	.eval		= nft_ng_random_map_eval,
--	.init		= nft_ng_random_map_init,
--	.dump		= nft_ng_random_map_dump,
--};
--
- static const struct nft_expr_ops *
- nft_ng_select_ops(const struct nft_ctx *ctx, const struct nlattr * const tb[])
- {
-@@ -312,12 +189,8 @@ nft_ng_select_ops(const struct nft_ctx *ctx, const struct nlattr * const tb[])
- 
- 	switch (type) {
- 	case NFT_NG_INCREMENTAL:
--		if (tb[NFTA_NG_SET_NAME])
--			return &nft_ng_inc_map_ops;
- 		return &nft_ng_inc_ops;
- 	case NFT_NG_RANDOM:
--		if (tb[NFTA_NG_SET_NAME])
--			return &nft_ng_random_map_ops;
- 		return &nft_ng_random_ops;
- 	}
- 
+-	DRM_DEBUG_KMS("enc master is %p\n", enc_master);
+ 	amdgpu_encoder = kzalloc(sizeof(*amdgpu_encoder), GFP_KERNEL);
+ 	if (!amdgpu_encoder)
+ 		return NULL;
 -- 
 2.17.1
 
