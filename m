@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C17C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D30C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE4BD2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFC9421104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nne3AyTc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE4BD2089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xta9UXk0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFC9421104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730739AbeKZV5M (ORCPT
+        id S1730751AbeKZV5O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:57:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41114 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:57:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726729AbeKZV5L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:57:11 -0500
+        id S1726729AbeKZV5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:57:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCD1A20645;
-        Mon, 26 Nov 2018 11:03:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8594120645;
+        Mon, 26 Nov 2018 11:03:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230205;
-        bh=AebL2PcGqoUYAIuRqOKPH1TNU5UgWjezoCLeQplt4+g=;
+        s=default; t=1543230208;
+        bh=sbkR9fgHVrfghcj9JyFi9ZZi1G/hVt7KWGCCmMaSGRA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nne3AyTckNWAx0/OAbRcLg97u8pbHNsboJvAVfKcgWTzWNyLOJpqM2Y8lre4MhYUb
-         RRpfL4G8+rZuF4Hbs93+mRffrjsgtKH4wP177fJf7yrSAPO7Vs4x+hJ1l6Shm+41pi
-         QX8N67stPto2GNHfzgGqlzLdzOheYtOreGjErbF8=
+        b=xta9UXk0BcbYjZYuYA/YUXdAp7lDAT2zQfBpWT391jEW6Pn14+ALbZYiyXrpUZxie
+         HhLluClJ90KQP6UGF8LUsYac5zp6a1qVM2sUzHznGU+FueM/MUVcIBWIIXMKv7enau
+         WMp1ryBFd9vFSf6J8nrytl4F8wuGAssWlmlZI95s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        stable@vger.kernel.org,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
         Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 048/118] netfilter: xt_IDLETIMER: add sysfs filename checking routine
-Date:   Mon, 26 Nov 2018 11:50:42 +0100
-Message-Id: <20181126105102.746351851@linuxfoundation.org>
+Subject: [PATCH 4.19 049/118] netfilter: ipset: Fix calling ip_set() macro at dumping
+Date:   Mon, 26 Nov 2018 11:50:43 +0100
+Message-Id: <20181126105102.786142173@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -63,80 +64,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 54451f60c8fa061af9051a53be9786393947367c ]
+[ Upstream commit 8a02bdd50b2ecb6d62121d2958d3ea186cc88ce7 ]
 
-When IDLETIMER rule is added, sysfs file is created under
-/sys/class/xt_idletimer/timers/
-But some label name shouldn't be used.
-".", "..", "power", "uevent", "subsystem", etc...
-So that sysfs filename checking routine is needed.
+The ip_set() macro is called when either ip_set_ref_lock held only
+or no lock/nfnl mutex is held at dumping. Take this into account
+properly. Also, use Pablo's suggestion to use rcu_dereference_raw(),
+the ref_netlink protects the set.
 
-test commands:
-   %iptables -I INPUT -j IDLETIMER --timeout 1 --label "power"
-
-splat looks like:
-[95765.423132] sysfs: cannot create duplicate filename '/devices/virtual/xt_idletimer/timers/power'
-[95765.433418] CPU: 0 PID: 8446 Comm: iptables Not tainted 4.19.0-rc6+ #20
-[95765.449755] Call Trace:
-[95765.449755]  dump_stack+0xc9/0x16b
-[95765.449755]  ? show_regs_print_info+0x5/0x5
-[95765.449755]  sysfs_warn_dup+0x74/0x90
-[95765.449755]  sysfs_add_file_mode_ns+0x352/0x500
-[95765.449755]  sysfs_create_file_ns+0x179/0x270
-[95765.449755]  ? sysfs_add_file_mode_ns+0x500/0x500
-[95765.449755]  ? idletimer_tg_checkentry+0x3e5/0xb1b [xt_IDLETIMER]
-[95765.449755]  ? rcu_read_lock_sched_held+0x114/0x130
-[95765.449755]  ? __kmalloc_track_caller+0x211/0x2b0
-[95765.449755]  ? memcpy+0x34/0x50
-[95765.449755]  idletimer_tg_checkentry+0x4e2/0xb1b [xt_IDLETIMER]
-[ ... ]
-
-Fixes: 0902b469bd25 ("netfilter: xtables: idletimer target implementation")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/xt_IDLETIMER.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ net/netfilter/ipset/ip_set_core.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/net/netfilter/xt_IDLETIMER.c b/net/netfilter/xt_IDLETIMER.c
-index 5ee859193783..25453a16385e 100644
---- a/net/netfilter/xt_IDLETIMER.c
-+++ b/net/netfilter/xt_IDLETIMER.c
-@@ -116,6 +116,22 @@ static void idletimer_tg_expired(struct timer_list *t)
- 	schedule_work(&timer->work);
- }
+diff --git a/net/netfilter/ipset/ip_set_core.c b/net/netfilter/ipset/ip_set_core.c
+index 68db946df151..1577f2f76060 100644
+--- a/net/netfilter/ipset/ip_set_core.c
++++ b/net/netfilter/ipset/ip_set_core.c
+@@ -55,11 +55,15 @@ MODULE_AUTHOR("Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>");
+ MODULE_DESCRIPTION("core IP set support");
+ MODULE_ALIAS_NFNL_SUBSYS(NFNL_SUBSYS_IPSET);
  
-+static int idletimer_check_sysfs_name(const char *name, unsigned int size)
-+{
-+	int ret;
-+
-+	ret = xt_check_proc_name(name, size);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!strcmp(name, "power") ||
-+	    !strcmp(name, "subsystem") ||
-+	    !strcmp(name, "uevent"))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static int idletimer_tg_create(struct idletimer_tg_info *info)
- {
- 	int ret;
-@@ -126,6 +142,10 @@ static int idletimer_tg_create(struct idletimer_tg_info *info)
- 		goto out;
- 	}
+-/* When the nfnl mutex is held: */
++/* When the nfnl mutex or ip_set_ref_lock is held: */
+ #define ip_set_dereference(p)		\
+-	rcu_dereference_protected(p, lockdep_nfnl_is_held(NFNL_SUBSYS_IPSET))
++	rcu_dereference_protected(p,	\
++		lockdep_nfnl_is_held(NFNL_SUBSYS_IPSET) || \
++		lockdep_is_held(&ip_set_ref_lock))
+ #define ip_set(inst, id)		\
+ 	ip_set_dereference((inst)->ip_set_list)[id]
++#define ip_set_ref_netlink(inst,id)	\
++	rcu_dereference_raw((inst)->ip_set_list)[id]
  
-+	ret = idletimer_check_sysfs_name(info->label, sizeof(info->label));
-+	if (ret < 0)
-+		goto out_free_timer;
-+
- 	sysfs_attr_init(&info->timer->attr.attr);
- 	info->timer->attr.attr.name = kstrdup(info->label, GFP_KERNEL);
- 	if (!info->timer->attr.attr.name) {
+ /* The set types are implemented in modules and registered set types
+  * can be found in ip_set_type_list. Adding/deleting types is
+@@ -1251,7 +1255,7 @@ ip_set_dump_done(struct netlink_callback *cb)
+ 		struct ip_set_net *inst =
+ 			(struct ip_set_net *)cb->args[IPSET_CB_NET];
+ 		ip_set_id_t index = (ip_set_id_t)cb->args[IPSET_CB_INDEX];
+-		struct ip_set *set = ip_set(inst, index);
++		struct ip_set *set = ip_set_ref_netlink(inst, index);
+ 
+ 		if (set->variant->uref)
+ 			set->variant->uref(set, cb, false);
+@@ -1440,7 +1444,7 @@ next_set:
+ release_refcount:
+ 	/* If there was an error or set is done, release set */
+ 	if (ret || !cb->args[IPSET_CB_ARG0]) {
+-		set = ip_set(inst, index);
++		set = ip_set_ref_netlink(inst, index);
+ 		if (set->variant->uref)
+ 			set->variant->uref(set, cb, false);
+ 		pr_debug("release set %s\n", set->name);
 -- 
 2.17.1
 
