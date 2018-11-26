@@ -2,113 +2,89 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9698AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:51:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08317C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:53:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64165208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:51:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64165208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C8AFF20873
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:53:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8AFF20873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbeK0IrQ (ORCPT
+        id S1727203AbeK0Isc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 03:47:16 -0500
-Received: from mga07.intel.com ([134.134.136.100]:65111 "EHLO mga07.intel.com"
+        Tue, 27 Nov 2018 03:48:32 -0500
+Received: from mga14.intel.com ([192.55.52.115]:34711 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726363AbeK0IrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 03:47:16 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1726315AbeK0Isc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 03:48:32 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 13:51:44 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 13:53:01 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,283,1539673200"; 
-   d="scan'208";a="277261516"
-Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.24.8.61])
-  by orsmga005.jf.intel.com with ESMTP; 26 Nov 2018 13:51:44 -0800
-Date:   Mon, 26 Nov 2018 13:51:45 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        "Dr. Greg Wettstein" <greg@enjellic.com>, X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        haitao.huang@linux.intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181126215145.GC868@linux.intel.com>
-References: <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
- <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
- <20181119161917.GF13298@linux.intel.com>
- <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
- <20181120120442.GA22172@linux.intel.com>
- <20181122111253.GA31150@wind.enjellic.com>
- <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com>
- <20181124172114.GB32210@linux.intel.com>
- <20181125145329.GA5777@linux.intel.com>
- <0669C300-02CB-4EA6-BF88-5C4B4DDAD4C7@amacapital.net>
+   d="scan'208";a="99699524"
+Received: from orsmsx109.amr.corp.intel.com ([10.22.240.7])
+  by FMSMGA003.fm.intel.com with ESMTP; 26 Nov 2018 13:53:00 -0800
+Received: from orsmsx114.amr.corp.intel.com ([169.254.8.128]) by
+ ORSMSX109.amr.corp.intel.com ([169.254.11.127]) with mapi id 14.03.0415.000;
+ Mon, 26 Nov 2018 13:53:00 -0800
+From:   "Li, Juston" <juston.li@intel.com>
+To:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "lyude@redhat.com" <lyude@redhat.com>
+CC:     "Ciobanu, Nathan D" <nathan.d.ciobanu@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Taylor, Clinton A" <clinton.a.taylor@intel.com>,
+        "jared_dominguez@dell.com" <jared_dominguez@dell.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "mario.limonciello@dell.com" <mario.limonciello@dell.com>,
+        "cpaul@redhat.com" <cpaul@redhat.com>
+Subject: Re: [RESEND PATCH v2 1/2] drm/dp/mst: Reprobe EDID for MST ports on
+ resume
+Thread-Topic: [RESEND PATCH v2 1/2] drm/dp/mst: Reprobe EDID for MST ports
+ on resume
+Thread-Index: AQHUa0BrUxyBfkiNM0u3Ld3QRT9tzaUva20AgAAKDYCAF8SYgIAcGlIA
+Date:   Mon, 26 Nov 2018 21:53:00 +0000
+Message-ID: <cfbb393ffa55af35a0db0b9412e0a3847dcf7055.camel@intel.com>
+References: <20181024021925.27026-1-juston.li@intel.com>
+         <20181024021925.27026-2-juston.li@intel.com>
+         <f9b43dde4868d3c079b652b48babde9b8bebc728.camel@redhat.com>
+         <ee20a313fb63792c05ab1b67babf1fa9431ebcf8.camel@intel.com>
+         <a0646cacfbc4ed8ded12f15d7553c60553adac34.camel@redhat.com>
+In-Reply-To: <a0646cacfbc4ed8ded12f15d7553c60553adac34.camel@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.7.198.166]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C503A07F5C4C1245955296881F2542FD@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0669C300-02CB-4EA6-BF88-5C4B4DDAD4C7@amacapital.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 25, 2018 at 08:22:35AM -0800, Andy Lutomirski wrote:
-> Agreed. What I’m proposing adds additional security if the kernel is
-> *not* compromised.
-
-And even if the kernel is compromised evil use will detected quicker
-i.e. compromissed kernel is "better" than a kernel that allows to
-use provisioning freely.
-
-> There are other ways to accomplish it that might be better in some
-> respects.  For example, there could be /dev/sgx and
-> /dev/sgx_rights/provision.  The former exposes the whole sgx API,
-> except that it doesn’t allow provisioning by default. The latter does
-> nothing by itself. To run a provisioning enclave, you open both nodes,
-> then do something like:
-> 
-> ioctl(sgx, SGX_IOC_ADD_RIGHT, sgx_provisioning);
-> 
-> This requires extra syscalls, but it doesn’t have the combinatorial
-> explosion problem.
-
-I like this design because it is extendable. I'm now also in the same
-page why we need to protect provisioning in the first place. I would
-slight restructure this as
-
-/dev/sgx/control
-/dev/sgx/attributes/provision
-
-Looks cleaner and the root /dev directory is less polluted.
-
-BTW, off-topic from this but should we remove ENCLAVE from IOC names as
-they all concern enclaves anyway? Seems kind of redundant. I.e.
-
-SGX_IOC_ENCLAVE_CREATE -> SGX_IOC_CREATE
-SGX_IOC_ENCLAVE_ADD_PAGE -> SGX_IOC_ADD_PAGE
-SGX_IOC_ENCLAVE_INIT -> SGX_IOC_INIT
-
-/Jarkko
+U29ycnkgZm9yIHRoZSBsYXRlIHJlcGx5LCBlbWFpbCBnb3QgY2F1Z2h0IGluIGEgYmFkIGZpbHRl
+ciA9Lw0KDQpJIGhhdmVuJ3QgYmVlbiBsb29raW5nIGludG8gaXQgbGF0ZWx5IGJ1dCB3ZSBhcmUg
+c3RpbGwgaW50ZXJlc3RlZCBpbg0KZ2V0dGluZyB0aGlzIGZpeGVkIHNvIEkgY2FuIHN0YXJ0IGxv
+b2tpbmcgaW50byB0aGlzIGFnYWluLg0KDQpJbiB5b3VyIGxhc3QgZW1haWwgeW91IG1lbnRpb25l
+ZCBhIHN5c2ZzIGhvdHBsdWcgY291bGQgYmUgdGhlIHdheSB0bw0KZ28/DQoNClRoYW5rcw0KSnVz
+dG9uDQoNCk9uIFRodSwgMjAxOC0xMS0wOCBhdCAxOTo0MyAtMDUwMCwgTHl1ZGUgUGF1bCB3cm90
+ZToNCj4gQXJlIHlvdSBzdGlsbCBsb29raW5nIGludG8gdGhpcyBhdCBhbGw/IEV2ZW4gaWYgaXQn
+cyBub3QgdGhlIHJpZ2h0DQo+IGFwcHJvYWNoDQo+IEknbSBzdGlsbCBpbnRlcmVzdGVkIGluIHNl
+ZWluZyB0aGlzIGdldCBmaXhlZCBhcyB3ZWxsL2Rpc2N1c3Npbmcgd2hhdA0KPiBJIHNhaWQNCj4g
+YmVmb3JlDQo+IA0KPiBPbiBXZWQsIDIwMTgtMTAtMjQgYXQgMjI6NDUgKzAwMDAsIExpLCBKdXN0
+b24gd3JvdGU6DQo+ID4gT24gV2VkLCAyMDE4LTEwLTI0IGF0IDE4OjA5IC0wNDAwLCBMeXVkZSBQ
+YXVsIHdyb3RlOg0KPiA+ID4gU2luY2UgdGhlcmUncyBnb2luZyB0byBiZSBxdWl0ZSBhIG51bWJl
+ciBvZiBjaGFuZ2VzIEkgbmVlZCB0bw0KPiA+ID4gbWFrZSB0bw0KPiA+ID4gdGhpcyBJJ20NCj4g
+PiA+IGp1c3QgZ29pbmcgdG8gbWFrZSB0aGUgY2hhbmdlcyBteXNlbGYhIEknbGwgbWFrZSBzdXJl
+IHRvIENjIHlvdQ0KPiA+ID4gd2l0aA0KPiA+ID4gdGhlDQo+ID4gPiByZXNwaW4NCj4gPiANCj4g
+PiBTb3VuZHMgZ29vZCwgdGhhbmtzIGZvciBwaWNraW5nIGl0IHVwIQ0KPiA+IA0KPiA+IEp1c3Rv
+bg0KPiA+IA0K
