@@ -2,130 +2,83 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12616C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D0E2C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD39D20645
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBDJCwJT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD39D20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 598EC20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:07:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 598EC20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731689AbeKZWAh (ORCPT
+        id S1731027AbeKZWA6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 17:00:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47582 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729543AbeKZWAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 17:00:36 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5794720672;
-        Mon, 26 Nov 2018 11:06:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230410;
-        bh=05Q3fxx3Y0zkaznjXGGyipRYgar9Rnt7Y+lhNbpS94U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NBDJCwJTS0sdQw82fN0P2DQnxto0r/osmgDZiA7pUiBCgcWDlvGp5J8yb77lnOd1I
-         oZwIa7TKFi5IlMLWgrIToaXyUdtMrYsN46+5hF0E9ozy9BvXjl1+3GluuYRKbHMniG
-         T4vZeAhayXBmSzZEcUWtP/URvqNosJ6M6EpUz5zI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 111/118] mtd: rawnand: atmel: fix OF child-node lookup
-Date:   Mon, 26 Nov 2018 11:51:45 +0100
-Message-Id: <20181126105106.192599067@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
-References: <20181126105059.832485122@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 26 Nov 2018 17:00:58 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15605 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727412AbeKZWA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 17:00:57 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id AB4B5ED0B8FC;
+        Mon, 26 Nov 2018 19:07:08 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Mon, 26 Nov 2018
+ 19:07:09 +0800
+Subject: Re: [PATCH] f2fs: read page index before freeing
+To:     PanBian <bianpan2016@163.com>
+CC:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1542884326-74903-1-git-send-email-bianpan2016@163.com>
+ <3ebe6814-586e-77e8-52fa-47fb61d760f5@huawei.com> <20181126102841.GA94853@bp>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <f8957864-fd65-6c45-de07-9e94459bed52@huawei.com>
+Date:   Mon, 26 Nov 2018 19:07:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181126102841.GA94853@bp>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On 2018/11/26 18:28, PanBian wrote:
+> On Mon, Nov 26, 2018 at 05:13:53PM +0800, Chao Yu wrote:
+>> Hi Pan,
+>>
+>> On 2018/11/22 18:58, Pan Bian wrote:
+>>> The function truncate_node frees the page with f2fs_put_page. However,
+>>> the page index is read after that. So, the patch reads the index before
+>>> freeing the page.
+>>
+>> I notice that you found another use-after-free bug in ext4, out of
+>> curiosity, I'd like to ask how do you find those bugs? by tool or code review?
+> 
+> I found such bugs by the aid of a tool I wrote recently. I designed a method 
+> to automatically find paired alloc/free functions. With such functions, I
+> wrote two checkers, one to check mismatched alloc/free bugs, the other to
+> check use-after-free and double-free bugs.
 
-------------------
+Excellent! Do you have any plan to open its source or announce it w/ binary
+to linux kernel developers, I think w/ it we can help to improve kernel's
+code quality efficiently.
 
-From: Johan Hovold <johan@kernel.org>
+Thanks,
 
-commit 5d1e9c2212ea6b4dd735e4fc3dd6279a365d5d10 upstream.
-
-Use the new of_get_compatible_child() helper to lookup the nfc child
-node instead of using of_find_compatible_node(), which searches the
-entire tree from a given start node and thus can return an unrelated
-(i.e. non-child) node.
-
-This also addresses a potential use-after-free (e.g. after probe
-deferral) as the tree-wide helper drops a reference to its first
-argument (i.e. the node of the device being probed).
-
-While at it, also fix a related nfc-node reference leak.
-
-Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
-Cc: stable <stable@vger.kernel.org>     # 4.11
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Josh Wu <rainyfeeling@outlook.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/mtd/nand/raw/atmel/nand-controller.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
---- a/drivers/mtd/nand/raw/atmel/nand-controller.c
-+++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
-@@ -2061,8 +2061,7 @@ atmel_hsmc_nand_controller_legacy_init(s
- 	int ret;
- 
- 	nand_np = dev->of_node;
--	nfc_np = of_find_compatible_node(dev->of_node, NULL,
--					 "atmel,sama5d3-nfc");
-+	nfc_np = of_get_compatible_child(dev->of_node, "atmel,sama5d3-nfc");
- 	if (!nfc_np) {
- 		dev_err(dev, "Could not find device node for sama5d3-nfc\n");
- 		return -ENODEV;
-@@ -2476,15 +2475,19 @@ static int atmel_nand_controller_probe(s
- 	}
- 
- 	if (caps->legacy_of_bindings) {
-+		struct device_node *nfc_node;
- 		u32 ale_offs = 21;
- 
- 		/*
- 		 * If we are parsing legacy DT props and the DT contains a
- 		 * valid NFC node, forward the request to the sama5 logic.
- 		 */
--		if (of_find_compatible_node(pdev->dev.of_node, NULL,
--					    "atmel,sama5d3-nfc"))
-+		nfc_node = of_get_compatible_child(pdev->dev.of_node,
-+						   "atmel,sama5d3-nfc");
-+		if (nfc_node) {
- 			caps = &atmel_sama5_nand_caps;
-+			of_node_put(nfc_node);
-+		}
- 
- 		/*
- 		 * Even if the compatible says we are dealing with an
-
+> 
+> Best regards,
+> Pan Bian
+> 
+> 
+> .
+> 
 
