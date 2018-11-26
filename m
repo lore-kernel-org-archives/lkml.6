@@ -2,54 +2,50 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAD_ENC_HEADER,
-	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C156AC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06EFAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 824862146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:52:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0B9B21479
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:52:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GtOyTvWg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 824862146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlRgY3k0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0B9B21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726456AbeKZVqc (ORCPT
+        id S1726484AbeKZVqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:46:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54286 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:46:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726167AbeKZVqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:46:30 -0500
+        id S1726167AbeKZVqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:46:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50E5E21473;
-        Mon, 26 Nov 2018 10:52:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E80482148E;
+        Mon, 26 Nov 2018 10:52:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229567;
-        bh=TNvYF5sfp8El2mVihIpWyP8DrA25CGzgXB/ennn0wIc=;
+        s=default; t=1543229569;
+        bh=DaMPJi6JTgQlKYxwJaJJsIDOxCxUp7gT0XgvIsSDNxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GtOyTvWg9sr3HewNJNRzHCedjCzMZeq62lGEJVh2AbcIdYU513k65/gEocqrJNSXu
-         u4Fio3h6LjPIwd4iyTlWRDt9+QzSG7rB4vhVw0sfnUQ0GRqTu8fpxje6PFGut2GL+c
-         OEQxIRNcJkhV3TuYfN4JwKSu1mdNGRffhsAWm9to=
+        b=nlRgY3k0oFQLScOzXPv41Dlc30gCH1vROy8tr7npQNzhH07RsE5jrRnBGAAjx21dF
+         y8waXX7XZEkjHQ7GYiQbWWoUhJGNXvouTHxRvRUsRPY4GH2hu7Du196c/5uhpg6Rkk
+         qRRrYj5f865hULTutY98kWvkC7gUsUpKvzPF6IB8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
-        <ernesto.mnd.fernandez@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 04/24] hfsplus: prevent btree data loss on root split
-Date:   Mon, 26 Nov 2018 11:50:58 +0100
-Message-Id: <20181126105030.399707521@linuxfoundation.org>
+Subject: [PATCH 3.18 13/24] SUNRPC: drop pointless static qualifier in xdr_get_next_encode_buffer()
+Date:   Mon, 26 Nov 2018 11:51:07 +0100
+Message-Id: <20181126105031.706302424@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105029.790599475@linuxfoundation.org>
 References: <20181126105029.790599475@linuxfoundation.org>
@@ -67,57 +63,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0a3021d4f5295aa073c7bf5c5e4de60a2e292578 ]
+[ Upstream commit 025911a5f4e36955498ed50806ad1b02f0f76288 ]
 
-Creating, renaming or deleting a file may cause catalog corruption and
-data loss.  This bug is randomly triggered by xfstests generic/027, but
-here is a faster reproducer:
+There is no need to have the '__be32 *p' variable static since new value
+always be assigned before use it.
 
-  truncate -s 50M fs.iso
-  mkfs.hfsplus fs.iso
-  mount fs.iso /mnt
-  i=100
-  while [ $i -le 150 ]; do
-    touch /mnt/$i &>/dev/null
-    ((++i))
-  done
-  i=100
-  while [ $i -le 150 ]; do
-    mv /mnt/$i /mnt/$(perl -e "print $i x82") &>/dev/null
-    ((++i))
-  done
-  umount /mnt
-  fsck.hfsplus -n fs.iso
-
-The bug is triggered whenever hfs_brec_update_parent() needs to split the
-root node.  The height of the btree is not increased, which leaves the new
-node orphaned and its records lost.
-
-Link: http://lkml.kernel.org/r/26d882184fc43043a810114258f45277752186c7.1535682461.git.ernesto.mnd.fernandez@gmail.com
-Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfsplus/brec.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ net/sunrpc/xdr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
-index 754fdf8c6356..1002a0c08319 100644
---- a/fs/hfsplus/brec.c
-+++ b/fs/hfsplus/brec.c
-@@ -427,6 +427,10 @@ skip:
- 	if (new_node) {
- 		__be32 cnid;
+diff --git a/net/sunrpc/xdr.c b/net/sunrpc/xdr.c
+index 6de975ae7f5b..3cdd34d2a9fc 100644
+--- a/net/sunrpc/xdr.c
++++ b/net/sunrpc/xdr.c
+@@ -512,7 +512,7 @@ EXPORT_SYMBOL_GPL(xdr_commit_encode);
+ static __be32 *xdr_get_next_encode_buffer(struct xdr_stream *xdr,
+ 		size_t nbytes)
+ {
+-	static __be32 *p;
++	__be32 *p;
+ 	int space_left;
+ 	int frag1bytes, frag2bytes;
  
-+		if (!new_node->parent) {
-+			hfs_btree_inc_height(tree);
-+			new_node->parent = tree->root;
-+		}
- 		fd->bnode = hfs_bnode_find(tree, new_node->parent);
- 		/* create index key and entry */
- 		hfs_bnode_read_key(new_node, fd->search_key, 14);
 -- 
 2.17.1
 
