@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AF7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF65CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3C972089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 789302089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OsrEDMRw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3C972089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SPZsG/9u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 789302089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731382AbeKZV7e (ORCPT
+        id S1731394AbeKZV7h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:59:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45670 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:59:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729543AbeKZV7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:59:33 -0500
+        id S1729543AbeKZV7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:59:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2EDA20645;
-        Mon, 26 Nov 2018 11:05:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 679FA20672;
+        Mon, 26 Nov 2018 11:05:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230347;
-        bh=02ejY+3BXnQQcbLFwF+mz30rnx+XlqPdJ+dLH0bdpR4=;
+        s=default; t=1543230349;
+        bh=9ILF32lIcul4Z5RQhXNFWI3+90Y+0gLbYtAsRosaews=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OsrEDMRwnOF8Q5HrXTmjXY87qSTIf7ZWz6fUmHVN2wZs82kQTaIlFG3rzsXLuZPfW
-         h4vtSF2OjxHe3LPHk92MUfxS/j5gQfBS+vasZ38WDKqgwaSOIbbXrv7WywrcwTx84+
-         JEWxH5RzbsR3CUKCqMQfX2f0ezz2qXxsHSPJCsZI=
+        b=SPZsG/9uX7qDfjq3a1XZE3R1Hh+Ag6esVBz58t8XX3WG+hATPPNgmv1zhAdf0nCwf
+         0iCdHKV55hWbSDHI8cfHnb/3TE0lTYX0sTxjgz+nGTCtXYP2dJY7UhN54x/0IHioMO
+         B/fhCz4qpJ3oeT5CCEHg23KC3cPP1Fabc5HX+tgc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         Jimmy Assarsson <jimmyassarsson@gmail.com>,
         Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.19 101/118] can: kvaser_usb: Fix accessing freed memory in kvaser_usb_start_xmit()
-Date:   Mon, 26 Nov 2018 11:51:35 +0100
-Message-Id: <20181126105105.755262742@linuxfoundation.org>
+Subject: [PATCH 4.19 102/118] can: kvaser_usb: Fix potential uninitialized variable use
+Date:   Mon, 26 Nov 2018 11:51:36 +0100
+Message-Id: <20181126105105.792853190@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -65,13 +65,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jimmy Assarsson <jimmyassarsson@gmail.com>
 
-commit e13fb9b37cc00616b90df2d620f30345b5ada6ff upstream.
+commit 95217260649aa504eb5d4a0d50959ca4e67c8f96 upstream.
 
-The call to can_put_echo_skb() may result in the skb being freed. The skb
-is later used in the call to dev->ops->dev_frame_to_cmd().
-
-This is avoided by moving the call to can_put_echo_skb() after
-dev->ops->dev_frame_to_cmd().
+If alloc_can_err_skb() fails, cf is never initialized.
+Move assignment of cf inside check.
 
 Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Jimmy Assarsson <jimmyassarsson@gmail.com>
@@ -80,35 +77,34 @@ Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/can/usb/kvaser_usb/kvaser_usb_hydra.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c
-+++ b/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c
-@@ -528,7 +528,6 @@ static netdev_tx_t kvaser_usb_start_xmit
- 			context = &priv->tx_contexts[i];
+--- a/drivers/net/can/usb/kvaser_usb/kvaser_usb_hydra.c
++++ b/drivers/net/can/usb/kvaser_usb/kvaser_usb_hydra.c
+@@ -1019,6 +1019,11 @@ kvaser_usb_hydra_error_frame(struct kvas
+ 					new_state : CAN_STATE_ERROR_ACTIVE;
  
- 			context->echo_index = i;
--			can_put_echo_skb(skb, netdev, context->echo_index);
- 			++priv->active_tx_contexts;
- 			if (priv->active_tx_contexts >= (int)dev->max_tx_urbs)
- 				netif_stop_queue(netdev);
-@@ -553,7 +552,6 @@ static netdev_tx_t kvaser_usb_start_xmit
- 		dev_kfree_skb(skb);
- 		spin_lock_irqsave(&priv->tx_contexts_lock, flags);
- 
--		can_free_echo_skb(netdev, context->echo_index);
- 		context->echo_index = dev->max_tx_urbs;
- 		--priv->active_tx_contexts;
- 		netif_wake_queue(netdev);
-@@ -564,6 +562,8 @@ static netdev_tx_t kvaser_usb_start_xmit
- 
- 	context->priv = priv;
- 
-+	can_put_echo_skb(skb, netdev, context->echo_index);
+ 			can_change_state(netdev, cf, tx_state, rx_state);
 +
- 	usb_fill_bulk_urb(urb, dev->udev,
- 			  usb_sndbulkpipe(dev->udev,
- 					  dev->bulk_out->bEndpointAddress),
++			if (priv->can.restart_ms &&
++			    old_state >= CAN_STATE_BUS_OFF &&
++			    new_state < CAN_STATE_BUS_OFF)
++				cf->can_id |= CAN_ERR_RESTARTED;
+ 		}
+ 
+ 		if (new_state == CAN_STATE_BUS_OFF) {
+@@ -1028,11 +1033,6 @@ kvaser_usb_hydra_error_frame(struct kvas
+ 
+ 			can_bus_off(netdev);
+ 		}
+-
+-		if (priv->can.restart_ms &&
+-		    old_state >= CAN_STATE_BUS_OFF &&
+-		    new_state < CAN_STATE_BUS_OFF)
+-			cf->can_id |= CAN_ERR_RESTARTED;
+ 	}
+ 
+ 	if (!skb) {
 
 
