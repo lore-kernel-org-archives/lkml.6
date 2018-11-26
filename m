@@ -2,106 +2,100 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A919C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:51:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DAFBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E378E20664
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:51:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="WZmxVeoz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E378E20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id E274420664
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:52:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E274420664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbeK0Cpo (ORCPT
+        id S1726895AbeK0Cqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 21:45:44 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:20436 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbeK0Cpo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 21:45:44 -0500
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id wAQFp9si022767;
-        Tue, 27 Nov 2018 00:51:10 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com wAQFp9si022767
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1543247470;
-        bh=AXrhHwipHRWk/uap1KGeKLx2+numImCbBmKA1MIby+Q=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=WZmxVeozajryrWIf3LMhhHoKsFA0HW3UXLIhp7Mz93H+XfZHSMzaBuPGdOHmkAiV2
-         xpU+q/mMvG510XuHojteof60Vzdb4nCvq58ygJ0bh5vG20Kc1aO4/C42uSE2CvPOG6
-         noMqXdZSG0aDx/GrgK9LJy/VyN/K6/jI6zVht3iURANV0fwFbGbZnbj7/s+1I2/+7i
-         uaFoB0rP97aYu03bMJpY/n/j9ZvPZVDq3HthSUUMFXsr+Uvpml9F3ghQCp2tnUS8UZ
-         B2fBVC8nRxwKBO+nfyh0Bg8QV26vfpw0ADAxQlT0BtFDfBFlJKSh0IEIkRFtPQ2m30
-         7nIGaLPAQZsUQ==
-X-Nifty-SrcIP: [209.85.221.170]
-Received: by mail-vk1-f170.google.com with SMTP id h128so4262124vkg.11;
-        Mon, 26 Nov 2018 07:51:10 -0800 (PST)
-X-Gm-Message-State: AA+aEWbmCrJuM0YdUE0+/SKYJqVCPPiaS2qnvzdIbtIBAZk9HPy5988b
-        GMkjadRnWEc1zK0EADGM0uNElMC0X0grVvUxick=
-X-Google-Smtp-Source: AFSGD/VX3O38ZjWE/636iI3IuancZauJnAWOG/WqBmnglrVNquyylM2JQjDVT6S7OoFaGA+PBiTxPQPw+1Bcn9m9w5I=
-X-Received: by 2002:a1f:fcc3:: with SMTP id a186mr11613916vki.0.1543247468658;
- Mon, 26 Nov 2018 07:51:08 -0800 (PST)
-MIME-Version: 1.0
-References: <1539945019-24950-1-git-send-email-yamada.masahiro@socionext.com> <1539945019-24950-3-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1539945019-24950-3-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 27 Nov 2018 00:50:32 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ9D2V1bYJxuiuCAOW2yfXrqbHSfODyVTkj4oaW4CzSaA@mail.gmail.com>
-Message-ID: <CAK7LNAQ9D2V1bYJxuiuCAOW2yfXrqbHSfODyVTkj4oaW4CzSaA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] dt-bindings: uniphier: move cache-uniphier.txt to
- vendor directory
-To:     arm-soc <arm@kernel.org>, Olof Johansson <olof@lixom.net>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        DTML <devicetree@vger.kernel.org>,
+        Mon, 26 Nov 2018 21:46:43 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40882 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726260AbeK0Cqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 21:46:43 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 980F9351D;
+        Mon, 26 Nov 2018 07:52:12 -0800 (PST)
+Received: from [10.1.196.73] (unknown [10.1.196.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3504F3F59C;
+        Mon, 26 Nov 2018 07:52:11 -0800 (PST)
+Subject: Re: [PATCH 0/7] ACPI HMAT memory sysfs representation
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>
+Cc:     Keith Busch <keith.busch@intel.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20181114224902.12082-1-keith.busch@intel.com>
+ <1ed406b2-b85f-8e02-1df0-7c39aa21eca9@arm.com>
+ <4ea6e80f-80ba-6992-8aa0-5c2d88996af7@intel.com>
+ <b79804b0-32ee-03f9-fa62-a89684d46be6@arm.com>
+ <c6abb754-0d82-8739-fe08-24e9402bae75@intel.com>
+ <aae34dde-fa70-870a-9b74-fff9e385bfc9@arm.com>
+ <f5315662-5c1a-68a3-4d04-21b4b5ca94b1@intel.com>
+ <ac942498-8966-6a9b-0e55-c79ae167c679@arm.com>
+ <9015e51a-3584-7bb2-cc5e-25b0ec8e5494@intel.com>
+ <CAPcyv4jnnnXi9Fqaf-d7AdnKrTMDCWr-e9tAx+G6nphrEPYm=w@mail.gmail.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <4b9e30ea-aa8e-cfd7-230b-1d5b0a8837f4@arm.com>
+Date:   Mon, 26 Nov 2018 21:22:13 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAPcyv4jnnnXi9Fqaf-d7AdnKrTMDCWr-e9tAx+G6nphrEPYm=w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 7:33 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Now, the Socionext vendor directory is available at
-> Documentation/devicetree/bindings/arm/socionext/
->
-> Move cache-uniphier.txt over to it.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
-
-Applied to linux-uniphier.
 
 
+On 11/24/2018 02:43 AM, Dan Williams wrote:
+> On Fri, Nov 23, 2018 at 11:21 AM Dave Hansen <dave.hansen@intel.com> wrote:
+>>
+>> On 11/22/18 10:42 PM, Anshuman Khandual wrote:
+>>> Are we willing to go in the direction for inclusion of a new system
+>>> call, subset of it appears on sysfs etc ? My primary concern is not
+>>> how the attribute information appears on the sysfs but lack of it's
+>>> completeness.
+>>
+>> A new system call makes total sense to me.  I have the same concern
+>> about the completeness of what's exposed in sysfs, I just don't see a
+>> _route_ to completeness with sysfs itself.  Thus, the minimalist
+>> approach as a first step.
+> 
+> Outside of platform-firmware-id to Linux-numa-node-id what other
+> userspace API infrastructure does the kernel need to provide? It seems
+> userspace enumeration of memory attributes is fully enabled once the
+> firmware-to-Linux identification is established.
 
-> Changes in v3: None
-> Changes in v2:
->   - New patch
->
->  .../devicetree/bindings/arm/{uniphier => socionext}/cache-uniphier.txt    | 0
->  1 file changed, 0 insertions(+), 0 deletions(-)
->  rename Documentation/devicetree/bindings/arm/{uniphier => socionext}/cache-uniphier.txt (100%)
->
-> diff --git a/Documentation/devicetree/bindings/arm/uniphier/cache-uniphier.txt b/Documentation/devicetree/bindings/arm/socionext/cache-uniphier.txt
-> similarity index 100%
-> rename from Documentation/devicetree/bindings/arm/uniphier/cache-uniphier.txt
-> rename to Documentation/devicetree/bindings/arm/socionext/cache-uniphier.txt
-> --
-> 2.7.4
->
+Which is true if the user space is required to probe the memory attribute
+values for the platform-firmware-id from the platform and then request
+required memory from corresponding Linux-numa-node-id via standard mm
+interfaces like mbind(). But in this patch series we are not mapping
+platform-firmware-id to Linux-numa-node-id. We are exporting properties
+applicable to Linux nodes (Linux-numa-node-id).
 
+Even if platform-firmware-id to Linux-numa-node-id is required it can
+be done through a new file like the following. Applications can just
+take the platform_id node and query platform about it's properties.
 
--- 
-Best Regards
-Masahiro Yamada
+/sys/devices/system/node/nodeX/platform_id
+
+This above interface would have been okay as its just an extension of
+the existing node information on sysfs. But thats not the case with
+this proposal.
