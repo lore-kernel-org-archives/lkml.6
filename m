@@ -2,175 +2,131 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F3A1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50193C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:35:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F18C21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:35:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F18C21104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 052BB213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:35:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 052BB213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbeK0JbL (ORCPT
+        id S1727586AbeK0Jb0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 04:31:11 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:59846 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727087AbeK0JbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 04:31:10 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wAQMXleL002240
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Mon, 26 Nov 2018 14:34:17 -0800
-Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Mon, 26 Nov 2018
- 14:34:08 -0800
-From:   Paul Gortmaker <paul.gortmaker@windriver.com>
-To:     Joerg Roedel <joro@8bytes.org>
-CC:     <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Hiroshi Doyu <hdoyu@nvidia.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        <linux-tegra@vger.kernel.org>
-Subject: [PATCH 7/9] iommu: tegra-gart: make it explicitly non-modular
-Date:   Mon, 26 Nov 2018 17:31:36 -0500
-Message-ID: <1543271498-28966-8-git-send-email-paul.gortmaker@windriver.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
-References: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Tue, 27 Nov 2018 04:31:26 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:42267 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727426AbeK0Jb0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 04:31:26 -0500
+Received: by mail-qt1-f196.google.com with SMTP id d19so19610324qtq.9
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 14:35:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:organization:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=qXxkPjsHIVgepAZ0xZ4OAkXymLVi1EmXXE216dj8PyA=;
+        b=q/EQ3seL8V9SESqlyr+rxV36LPwSKBx2HaHSVwWUTY/hP6XdV4YOEihtyv7SBf3zQC
+         Mb98sjlQxhK9qiPdsmXNUHxeB2HyFSeMwY9mEHcSty+HjH3G/HnIeNjE8Niv1GAOzMdu
+         JWW7YYvlXxyJfK+zWAAC7oLLiScX5QMVL31+RemDZPD6/Gzabaudg6lf+bskd6ZRSugB
+         ah4En8ZE+ZsAyub6ytAP77iZu4puWqnvgqvs+8OBtouKmIFh1T3Dz2pN6R4j0WgZjLHZ
+         /OnuJA/6bEjCILqCCxAZcuzBPKI3BMbFFg+ANApJU+/5P964UPrZC0Q35o+2UX5IBSbV
+         lYKQ==
+X-Gm-Message-State: AA+aEWaHy+9SBuwrWcIVK1InZ5X0kGkbpkQK8V//O42VhqzDTSyLsq8F
+        wv+RuuwHGjhmSSMnmeqS+u1n8Q==
+X-Google-Smtp-Source: AFSGD/XWc0nTTkTp9EeNVBGAsUrtYRM5W64nluBztnxIRUDauJ8Py1tpiv47zoX+NMAXB4j2Fo25cg==
+X-Received: by 2002:a0c:ba24:: with SMTP id w36mr28141323qvf.60.1543271746885;
+        Mon, 26 Nov 2018 14:35:46 -0800 (PST)
+Received: from dhcp-10-20-1-11.bss.redhat.com ([144.121.20.162])
+        by smtp.gmail.com with ESMTPSA id v50sm1354675qtc.7.2018.11.26.14.35.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 14:35:46 -0800 (PST)
+Message-ID: <ad0799bd71afec272b7c76b1833c45ba47848029.camel@redhat.com>
+Subject: Re: [RESEND PATCH v2 1/2] drm/dp/mst: Reprobe EDID for MST ports on
+ resume
+From:   Lyude Paul <lyude@redhat.com>
+To:     "Li, Juston" <juston.li@intel.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>
+Cc:     "Ciobanu, Nathan D" <nathan.d.ciobanu@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Taylor, Clinton A" <clinton.a.taylor@intel.com>,
+        "jared_dominguez@dell.com" <jared_dominguez@dell.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "mario.limonciello@dell.com" <mario.limonciello@dell.com>,
+        "cpaul@redhat.com" <cpaul@redhat.com>
+Date:   Mon, 26 Nov 2018 17:35:43 -0500
+In-Reply-To: <cfbb393ffa55af35a0db0b9412e0a3847dcf7055.camel@intel.com>
+References: <20181024021925.27026-1-juston.li@intel.com>
+         <20181024021925.27026-2-juston.li@intel.com>
+         <f9b43dde4868d3c079b652b48babde9b8bebc728.camel@redhat.com>
+         <ee20a313fb63792c05ab1b67babf1fa9431ebcf8.camel@intel.com>
+         <a0646cacfbc4ed8ded12f15d7553c60553adac34.camel@redhat.com>
+         <cfbb393ffa55af35a0db0b9412e0a3847dcf7055.camel@intel.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+On Mon, 2018-11-26 at 21:53 +0000, Li, Juston wrote:
+> Sorry for the late reply, email got caught in a bad filter =/
+> 
+> I haven't been looking into it lately but we are still interested in
+> getting this fixed so I can start looking into this again.
+> 
+> In your last email you mentioned a sysfs hotplug could be the way to
+> go?
+I had thought so; but I did a little more investigation and it looks like I
+wasn't totally wrong when I first wrote this patch; we actually do need to
+destroy the previous topology when it's not actually there and prevent the
+driver from trying to set it up again. Something that apparently a simple
+sysfs hotplug won't do.
 
-drivers/iommu/Kconfig:config TEGRA_IOMMU_GART
-drivers/iommu/Kconfig:  bool "Tegra GART IOMMU Support"
+I think what we might be able to do is instead of comparing against the
+connector's EDID, we should try repurposing drm_dp_mst_port->cached_edid so
+that it holds a copy of each mst connector's EDID instead of just logical
+MSTBs, then compare against those EDIDs instead of the ones we assigned to the
+drm_connector to avoid the lockdep issues that would occur from trying to grab
+dev->mode_config.mutex from the suspend/resume codepaths, and decide from
+where whether or not to tell the driver to cut off the topology.
 
-...meaning that it currently is not being built as a module by anyone.
-
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
-
-We explicitly disallow a driver unbind, since that doesn't have a
-sensible use case anyway, and it allows us to drop the ".remove"
-code for non-modular drivers.
-
-Since module_init was not in use by this code, the init ordering
-remains unchanged with this commit.
-
-We replace module.h with moduleparam.h since the file does actually
-declare some module_param() and the easiest way to keep back
-compatibility with existing use cases is to leave it as-is for now.
-
-The init function was missing an __init annotation, so it was added.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
-was (or is now) contained at the top of the file in the comments.
-
-Cc: Hiroshi Doyu <hdoyu@nvidia.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: iommu@lists.linux-foundation.org
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/iommu/tegra-gart.c | 37 +++++++------------------------------
- 1 file changed, 7 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index 7b1361d57a17..da6a4e357b2b 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -3,6 +3,8 @@
-  *
-  * Copyright (c) 2010-2012, NVIDIA CORPORATION.  All rights reserved.
-  *
-+ * Author: Hiroshi DOYU <hdoyu@nvidia.com>
-+ *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms and conditions of the GNU General Public License,
-  * version 2, as published by the Free Software Foundation.
-@@ -19,7 +21,8 @@
- 
- #define pr_fmt(fmt)	"%s(): " fmt, __func__
- 
--#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/moduleparam.h>
- #include <linux/platform_device.h>
- #include <linux/spinlock.h>
- #include <linux/slab.h>
-@@ -478,20 +481,6 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int tegra_gart_remove(struct platform_device *pdev)
--{
--	struct gart_device *gart = platform_get_drvdata(pdev);
--
--	iommu_device_unregister(&gart->iommu);
--	iommu_device_sysfs_remove(&gart->iommu);
--
--	writel(0, gart->regs + GART_CONFIG);
--	if (gart->savedata)
--		vfree(gart->savedata);
--	gart_handle = NULL;
--	return 0;
--}
--
- static const struct dev_pm_ops tegra_gart_pm_ops = {
- 	.suspend	= tegra_gart_suspend,
- 	.resume		= tegra_gart_resume,
-@@ -501,34 +490,22 @@ static const struct of_device_id tegra_gart_of_match[] = {
- 	{ .compatible = "nvidia,tegra20-gart", },
- 	{ },
- };
--MODULE_DEVICE_TABLE(of, tegra_gart_of_match);
- 
- static struct platform_driver tegra_gart_driver = {
- 	.probe		= tegra_gart_probe,
--	.remove		= tegra_gart_remove,
- 	.driver = {
- 		.name	= "tegra-gart",
- 		.pm	= &tegra_gart_pm_ops,
- 		.of_match_table = tegra_gart_of_match,
-+		.suppress_bind_attrs = true,
- 	},
- };
- 
--static int tegra_gart_init(void)
-+static int __init tegra_gart_init(void)
- {
- 	return platform_driver_register(&tegra_gart_driver);
- }
--
--static void __exit tegra_gart_exit(void)
--{
--	platform_driver_unregister(&tegra_gart_driver);
--}
--
- subsys_initcall(tegra_gart_init);
--module_exit(tegra_gart_exit);
--module_param(gart_debug, bool, 0644);
- 
-+module_param(gart_debug, bool, 0644);
- MODULE_PARM_DESC(gart_debug, "Enable GART debugging");
--MODULE_DESCRIPTION("IOMMU API for GART in Tegra20");
--MODULE_AUTHOR("Hiroshi DOYU <hdoyu@nvidia.com>");
--MODULE_ALIAS("platform:tegra-gart");
--MODULE_LICENSE("GPL v2");
+Feel free to poke me about this on irc btw, might be quicker to discuss it
+there
+> 
+> Thanks
+> Juston
+> 
+> On Thu, 2018-11-08 at 19:43 -0500, Lyude Paul wrote:
+> > Are you still looking into this at all? Even if it's not the right
+> > approach
+> > I'm still interested in seeing this get fixed as well/discussing what
+> > I said
+> > before
+> > 
+> > On Wed, 2018-10-24 at 22:45 +0000, Li, Juston wrote:
+> > > On Wed, 2018-10-24 at 18:09 -0400, Lyude Paul wrote:
+> > > > Since there's going to be quite a number of changes I need to
+> > > > make to
+> > > > this I'm
+> > > > just going to make the changes myself! I'll make sure to Cc you
+> > > > with
+> > > > the
+> > > > respin
+> > > 
+> > > Sounds good, thanks for picking it up!
+> > > 
+> > > Juston
+> > > 
 -- 
-2.7.4
+Cheers,
+	Lyude Paul
 
