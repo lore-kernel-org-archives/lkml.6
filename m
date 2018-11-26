@@ -1,168 +1,116 @@
 Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC865C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3D0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:36:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 786F22133F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:36:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF24020865
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:36:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r9aqBbYG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 786F22133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=ossystems-com-br.20150623.gappssmtp.com header.i=@ossystems-com-br.20150623.gappssmtp.com header.b="yc7LjynO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF24020865
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbeK0AaY (ORCPT
+        id S1726671AbeK0Aa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 19:30:24 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:32820 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbeK0AaY (ORCPT
+        Mon, 26 Nov 2018 19:30:28 -0500
+Received: from mail-ot1-f50.google.com ([209.85.210.50]:41011 "EHLO
+        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbeK0Aa0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 19:30:24 -0500
-Received: by mail-wm1-f66.google.com with SMTP id 79so16598483wmo.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 05:36:14 -0800 (PST)
+        Mon, 26 Nov 2018 19:30:26 -0500
+Received: by mail-ot1-f50.google.com with SMTP id u16so16548648otk.8
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 05:36:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=hrRG+8DGJB5KYXK6fX7hN0b+wV3eWhvpfn5aeYmR0gQ=;
-        b=r9aqBbYGd+cJTgvi4jeeWZsEw1WwT3Sn3MPsAT94yQ3mQE01vll/OWLkQwmph12Ngd
-         gT02P2rna+8lffvQOjBh/9g6/OmZ/XwPO41la0ucmEg7MJ+eI9FGoE/wXx3S8GkN5vmK
-         V8aV9WM+o1aptsJ4/72Co52zV4Id0gN0V7Yg/wWiwtyzIwLSdrC7TVX9CXXwwwZyZoGX
-         Yl+8rWJQ4kna+XxoM/1aPFs83dp4mrjOoWM7a3+EHv8ixmed4R4abaq1KvkiVeA1G8bI
-         0hISGgC7T74xYdJzbfU1RV7ejZ5hW6PdlTHYJqzwnwjdtfhP5bM+Uu8Pd0tqiv3wgSdW
-         7vxg==
+        d=ossystems-com-br.20150623.gappssmtp.com; s=20150623;
+        h=from:mime-version:references:in-reply-to:date:message-id:subject:to
+         :cc;
+        bh=zHLNl/ll49Oot9MZZct25czzcfmqR08RrvsLo2mzHkg=;
+        b=yc7LjynO3uwJUHAwB8JJB6EZYIt000t0/t143fLdn+Fml4HqU6lya/0m4/My01DIMb
+         4IcPWnQLpe2rb+yFkgsgita6TVNcFPuDWBwXLxXiX8gDZrkTlABo9eXai1xauQRr8yBY
+         52APVWsVfWVKQvjf75zCX23PKZl9t5aC/k2hbVypFkTkxbDqiyZnxZP7fKGY+yVOdRb9
+         pLTzrR+TJ+rGu/Ln2NMWVYXwbhnH5BiQQbKM1K5Ilht0FcL8zBtJUr+FUrTSBFqtkfXO
+         wIzx8UqkWITDJC1k3q/z0HHYevcd4sYk06nIbSrDQOlSuMTAY+q3RLDbrlhz856Wm+3W
+         fM7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=hrRG+8DGJB5KYXK6fX7hN0b+wV3eWhvpfn5aeYmR0gQ=;
-        b=ewH8UsjQ1PQCv/ceu6jFPsNMOw/3txhC8E86gez66xIN9IDJHe/AKMGpTyOlTV5YaS
-         GgTMlvgiQgSWmlIATp4j3GTvdtuyDljyUZA+8KYjxm9PUtziRboL+XxZCssJxlTetA96
-         1DBlVIGrZ3pZvsc4LMoanjOB0+5D+WqFtweba00Q8gXUOCn4CzQrus+++aK9wNqSH5WI
-         O9k7jTKEfEQFWAfsTgXmuVMecMFbQbcNxtyapUKIq6QRt7ZoAqxfR3F0I4bdjTaF40l7
-         ymUCD2eOgaNSKhzFpR4/2o58oN7z6ES5Bu5K53K5TksCXIYwpDoH61dHCeI+iSuDgmIe
-         9JtA==
-X-Gm-Message-State: AGRZ1gLwzO9EAUFmDvJZH+p2Q+gzpg2AoYM/6ax4EmrHR+98xNm5WUag
-        R7yEKQF63ElrU/xxqpYFCbA=
-X-Google-Smtp-Source: AFSGD/Vq//hY4/SrTZ/oZt2INB9Hce7fmEL3srr/OQ7GvyuGr28KNkXQ4yW9Ll4mPxm4XocqmDjVtA==
-X-Received: by 2002:a1c:128c:: with SMTP id 134-v6mr25214156wms.72.1543239374129;
+        h=x-gm-message-state:from:mime-version:references:in-reply-to:date
+         :message-id:subject:to:cc;
+        bh=zHLNl/ll49Oot9MZZct25czzcfmqR08RrvsLo2mzHkg=;
+        b=Q62l07tX3Qr4froCO4I0n64qXz8tl1ZcdS5EkpOTkEGGoX31dVQTU5Z0/InDaNJOFF
+         qqALiPdAKZfCe3V4vvLQ0W8BCC84zgzi1YZPnrFzu9Fsh2sJevOQtm9zkpzTxQ++QewX
+         0OCF8ypgnL1ppGTolH2eovm1b1wy3VA3LoOYl9IU3daGywo5m6aCSpoBwZjjTJrCyGNC
+         FK2AYaN9tvh/hJ6h5y9814h1vl8eVy4dnZmSr1B0bDgWz2evCaXr17nFLpVmz+NjtiO/
+         dTzAJ3wKlOGa6mvPRKLPM/c9atm3eM2om5pk6/zNKGBa11/GdKjRCMw2bnw6GmM0ouIm
+         IBWw==
+X-Gm-Message-State: AA+aEWa/+VgzEv3kxh8KLfLAln1ZmCDUs8jrMM4i0VyXdKbXws8idGmB
+        45oK1ZQXeasnX5PoYhfbrVm04w==
+X-Google-Smtp-Source: AFSGD/VvDGtzH3zu1vB7L4dqinPZbgHEssG6k8QGUacknaL5TF2NK1QLJ5GS7scOy6mdBobKpAKP6A==
+X-Received: by 2002:a9d:886:: with SMTP id 6mr16574865otf.256.1543239376103;
+        Mon, 26 Nov 2018 05:36:16 -0800 (PST)
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com. [209.85.210.52])
+        by smtp.gmail.com with ESMTPSA id p203sm86279oic.49.2018.11.26.05.36.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 05:36:15 -0800 (PST)
+From:   Otavio Salvador <otavio.salvador@ossystems.com.br>
+X-Google-Original-From: Otavio Salvador <otavio@ossystems.com.br>
+Received: by mail-ot1-f52.google.com with SMTP id w25so16518703otm.13;
         Mon, 26 Nov 2018 05:36:14 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id o8sm480073wrx.15.2018.11.26.05.36.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 05:36:13 -0800 (PST)
-Date:   Mon, 26 Nov 2018 14:36:10 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andi Kleen <ak@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [patch V2 21/28] x86/speculation: Prepare for conditional IBPB
- in switch_mm()
-Message-ID: <20181126133610.GB108014@gmail.com>
-References: <20181125183328.318175777@linutronix.de>
- <20181125185005.466447057@linutronix.de>
- <20181125205330.GO13936@tassilo.jf.intel.com>
- <alpine.DEB.2.21.1811252316560.1684@nanos.tec.linutronix.de>
- <92833780-41BE-446E-A676-925BA1EC93D9@amacapital.net>
- <alpine.DEB.2.21.1811260751030.1684@nanos.tec.linutronix.de>
+X-Received: by 2002:a9d:5325:: with SMTP id g37mr16168013oth.253.1543239374185;
+ Mon, 26 Nov 2018 05:36:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <alpine.DEB.2.21.1811260751030.1684@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20181125211907.9895-1-otavio@ossystems.com.br>
+ <20181125211907.9895-8-otavio@ossystems.com.br> <3361921.c4PKPBIJKP@phil>
+In-Reply-To: <3361921.c4PKPBIJKP@phil>
+Date:   Mon, 26 Nov 2018 11:36:01 -0200
+X-Gmail-Original-Message-ID: <CAP9ODKrX__KXo-XEdoaL=qwALFAxyzKV4-xu_t5baMqN1kQH4g@mail.gmail.com>
+Message-ID: <CAP9ODKrX__KXo-XEdoaL=qwALFAxyzKV4-xu_t5baMqN1kQH4g@mail.gmail.com>
+Subject: Re: [PATCH 08/13] ARM: dts: rv1108: Fix the PMU interrupt number
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Otavio Salvador <otavio@ossystems.com.br>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Fabio Berton <fabio.berton@ossystems.com.br>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        linux-rockchip@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Heiko,
 
-* Thomas Gleixner <tglx@linutronix.de> wrote:
+On Mon, Nov 26, 2018 at 3:59 AM Heiko Stuebner <heiko@sntech.de> wrote:
+> Am Sonntag, 25. November 2018, 22:19:02 CET schrieb Otavio Salvador:
+> > According to the Rockchip vendor tree the PMU interrupt number is
+> > 76, so fix it accordingly.
+> >
+> > Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
+> > Signed-off-by: Fabio Berton <fabio.berton@ossystems.com.br>
+>
+> looks ok, especially as the TRM I have doesn't list neither irqs :-)
+> But please explain the second Signed-off by Fabio?
+>
+> If Fabio is the original author, the patch From should reflect that
+> and the Signed-off-by lines should be swapped. As it is now
+> I would expect Fabio being the one sending the patches.
+> Or is it supposed to be a "Co-developed-by:"?
+> See Documentation/process/5.Posting.rst.
 
-> On Sun, 25 Nov 2018, Andy Lutomirski wrote:
-> > > On Nov 25, 2018, at 2:20 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > > On Sun, 25 Nov 2018, Andi Kleen wrote:
-> > > 
-> > >>> The current check whether two tasks belong to the same context is using the
-> > >>> tasks context id. While correct, it's simpler to use the mm pointer because
-> > >>> it allows to mangle the TIF_SPEC_IB bit into it. The context id based
-> > >>> mechanism requires extra storage, which creates worse code.
-> > >> 
-> > >> [We tried similar in some really early versions, but it was replaced
-> > >> with the context id later.]
-> > >> 
-> > >> One issue with using the pointer is that the pointer can be reused
-> > >> when the original mm_struct is freed, and then gets reallocated
-> > >> immediately to an attacker. Then the attacker may avoid the IBPB.
-> > >> 
-> > >> Given it's probably hard to generate any reasonable leak bandwidth with
-> > >> such a complex scenario, but it still seemed better to close the hole.
-> > > 
-> > > Sorry, but that's really a purely academic exercise. 
-> > 
-> > I would guess that it’s actually very easy to force mm_struct* reuse.
-> > Don’t the various allocators try to allocate hot memory?  There’s nothing
-> > hotter than a just-freed allocation of the same size.
-> 
-> Sure, but this is about a indirect branch predictor attack against
-> something which reuses the mm.
-> 
-> So you'd need to pull off:
-> 
->    P1 poisons branch predictor
->    P1 exit
-> 
->    P2 starts and resuses mm(P1) and uses the poisoned branch predictor
-> 
-> the only thing between P1 and P2 is either idle or some other kernel
-> thread, but no other user task. If that happens then the code would not
-> issue IBPB as it assumes to switch back to the same process.
-> 
-> Even if you can pull that off the speculation would hit the startup code of
-> P2, which is truly a source of secret information. Creating a valuable
-> attack based on mm reuse is really less proabable than a lottery jackpot.
-> 
-> So using mm is really good enough and results in better assembly code which
-> is surely more valuable than addressing some hypothetical hole.
+He works with me and he applied and tested it in our internal tree for
+our customer. He reviewed and tested this with me, so I'd like to
+provide him credit as well.
 
-OTOH we could probably close even this with very little cost if we added 
-an IBPB to non-threaded fork() and vfork()+exec() paths? Those are really 
-slow paths compared to all the context switch paths we are trying to 
-optimize here.
-
-Alternatively we could IBPB on the post-exit() final task struct freeing, 
-which too is a relative slow path compared to the context switch paths.
-
-But no strong opinion.
-
-Thanks,
-
-	Ingo
+-- 
+Otavio Salvador                             O.S. Systems
+http://www.ossystems.com.br        http://code.ossystems.com.br
+Mobile: +55 (53) 9 9981-7854          Mobile: +1 (347) 903-9750
