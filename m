@@ -2,249 +2,139 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B2EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EDC8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6538820873
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:21:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6538820873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id D8C8020989
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:21:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="OWKk5kWv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8C8020989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbeK0EP5 (ORCPT
+        id S1726932AbeK0EQB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:15:57 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:65429 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726318AbeK0EP5 (ORCPT
+        Mon, 26 Nov 2018 23:16:01 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48338 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbeK0EQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:15:57 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAQH8eZD004491;
-        Mon, 26 Nov 2018 18:20:43 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2nxvnam4jr-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 26 Nov 2018 18:20:43 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6E71D2A6;
-        Mon, 26 Nov 2018 18:20:13 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3CECC556C;
-        Mon, 26 Nov 2018 17:20:42 +0000 (GMT)
-Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE2.st.com
- (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 26 Nov
- 2018 18:20:41 +0100
-Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
- SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
- 15.00.1347.000; Mon, 26 Nov 2018 18:20:41 +0100
-From:   Pascal PAILLET-LME <p.paillet@st.com>
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
-        "eballetbo@gmail.com" <eballetbo@gmail.com>,
-        "axel.lin@ingics.com" <axel.lin@ingics.com>
-Subject: Re: [PATCH v5 2/8] mfd: stpmic1: add stpmic1 driver
-Thread-Topic: [PATCH v5 2/8] mfd: stpmic1: add stpmic1 driver
-Thread-Index: AQHUb6OIm86xCsFDlEyEJmUOOpWQYQ==
-Date:   Mon, 26 Nov 2018 17:20:41 +0000
-Message-ID: <5BFC2B69.1050204@st.com>
-References: <1540830122-2577-1-git-send-email-p.paillet@st.com>
- <1540830122-2577-3-git-send-email-p.paillet@st.com>
- <20181113074037.GC29388@dell>
-In-Reply-To: <20181113074037.GC29388@dell>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.3.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <47041C4C52350743AF8B79274FFA6AA1@st.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-26_08:,,
- signatures=0
+        Mon, 26 Nov 2018 23:16:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=w2tXLPzAxSv13SBE+5WcmkEsFJFz06qWZyKgmvPSd9s=; b=OWKk5kWvVIST
+        qbY+vqpJwY5JsFB5J69kDfCb7/CSAvn1xbEW38pSlUecx0fwSSVVi0v1yF3Pgzxz29kjgYQvnZS9Z
+        hFTySp0IYinT1BwqsKdQnJOhtf1Wd29Vj29rGy9FnKO7yVeyYa17dtyNY/Bl72zjmSrH8YJs5nA14
+        CG4rE=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gRKZM-0005Tu-LL; Mon, 26 Nov 2018 17:21:12 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 50017112519F; Mon, 26 Nov 2018 17:21:12 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Brian Masney <masneyb@onstation.org>,
+        Brian Masney <masneyb@onstation.org>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: core: Apply system load even if no consumer loads" to the regulator tree
+In-Reply-To: 
+Message-Id: <20181126172112.50017112519F@debutante.sirena.org.uk>
+Date:   Mon, 26 Nov 2018 17:21:12 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTGVlLA0KSSBoYXZlIGp1c3Qgb25lIHF1ZXN0aW9uIHJlZ2FyZGluZyBpMmNfZGV2aWNlX2lk
-Lg0KDQoNCkxlIDExLzEzLzIwMTggMDg6NDAgQU0sIExlZSBKb25lcyBhIMOpY3JpdCA6DQo+IE9u
-IE1vbiwgMjkgT2N0IDIwMTgsIFBhc2NhbCBQQUlMTEVULUxNRSB3cm90ZToNCj4NCj4+IHN0cG1p
-YzEgaXMgYSBwbWljIGZyb20gU1RNaWNyb2VsZWN0cm9uaWNzLiBUaGUgU1RQTUlDMSBpbnRlZ3Jh
-dGVzIDEwDQo+ICJTVFBNSUMxIGlzIGEgUE1JQyINCj4NCj4+IHJlZ3VsYXRvcnMsIDMgcG93ZXIg
-c3dpdGNoZXMsIGEgd2F0Y2hkb2cgYW5kIGFuIGlucHV0IGZvciBhIHBvd2VyIG9uIGtleS4NCj4+
-DQo+PiBTaWduZWQtb2ZmLWJ5OiBQYXNjYWwgUGFpbGxldCA8cC5wYWlsbGV0QHN0LmNvbT4NCj4+
-IC0tLQ0KPj4gY2hhbmdlcyBpbiB2NToNCj4+ICogdXNlIG1hY3JvIHRvIGRlZmluZSByZWdtYXAg
-cmVnaXN0ZXIgcmFuZ2VzDQo+PiAqIHVzZSBSRUdNQVBfSVJRX1JFRyBtYXJjbyB0byBkZWZpbmUg
-aW50ZXJydXB0cw0KPj4gKiByZW1vdmUgc3QgcHJvcGVydGllcw0KPj4NCj4+ICAgZHJpdmVycy9t
-ZmQvS2NvbmZpZyAgICAgICAgIHwgIDEzICsrKw0KPj4gICBkcml2ZXJzL21mZC9NYWtlZmlsZSAg
-ICAgICAgfCAgIDEgKw0KPj4gICBkcml2ZXJzL21mZC9zdHBtaWMxLmMgICAgICAgfCAyMTUgKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4+ICAgaW5jbHVkZS9s
-aW51eC9tZmQvc3RwbWljMS5oIHwgMjEyICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysNCj4+ICAgNCBmaWxlcyBjaGFuZ2VkLCA0NDQgaW5zZXJ0aW9ucygrKQ0KPj4g
-ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9tZmQvc3RwbWljMS5jDQo+PiAgIGNyZWF0ZSBt
-b2RlIDEwMDY0NCBpbmNsdWRlL2xpbnV4L21mZC9zdHBtaWMxLmgNCj4+DQo+PiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9tZmQvS2NvbmZpZyBiL2RyaXZlcnMvbWZkL0tjb25maWcNCj4+IGluZGV4IDEx
-ODQxZjQuLjA3ZTM5YTYgMTAwNjQ0DQo+PiAtLS0gYS9kcml2ZXJzL21mZC9LY29uZmlnDQo+PiAr
-KysgYi9kcml2ZXJzL21mZC9LY29uZmlnDQo+PiBAQCAtMTg1NSw2ICsxODU1LDIyIEBAIGNvbmZp
-ZyBNRkRfU1RNMzJfVElNRVJTDQo+PiAgIAkgIGZvciBQV00gYW5kIElJTyBUaW1lci4gVGhpcyBk
-cml2ZXIgYWxsb3cgdG8gc2hhcmUgdGhlDQo+PiAgIAkgIHJlZ2lzdGVycyBiZXR3ZWVuIHRoZSBv
-dGhlcnMgZHJpdmVycy4NCj4+ICAgDQo+PiArY29uZmlnIE1GRF9TVFBNSUMxDQo+PiArCXRyaXN0
-YXRlICJTdXBwb3J0IGZvciBTVFBNSUMxIFBNSUMiDQo+PiArCWRlcGVuZHMgb24gKEkyQz15ICYm
-IE9GKQ0KPj4gKwlzZWxlY3QgUkVHTUFQX0kyQw0KPj4gKwlzZWxlY3QgUkVHTUFQX0lSUQ0KPj4g
-KwlzZWxlY3QgTUZEX0NPUkUNCj4+ICsJaGVscA0KPj4gKwkgIFN1cHBvcnQgZm9yIFNUIE1pY3Jv
-ZWxlY3Ryb25pY3MgU1RQTUlDMSBQTUlDLiBTVFBNSUMxIGhhcyBwb3dlciBvbg0KPj4gKwkgIGtl
-eSwgd2F0Y2hkb2cgYW5kIHJlZ3VsYXRvciBmdW5jdGlvbmFsaXRpZXMgd2hpY2ggYXJlIHN1cHBv
-cnRlZCB2aWENCj4+ICsJICB0aGUgcmVsZXZhbnQgc3Vic3lzdGVtcy4gIFRoaXMgZHJpdmVyIHBy
-b3ZpZGVzIGNvcmUgc3VwcG9ydCBmb3IgdGhlDQo+PiArCSAgU1RQTUlDMSwgaW4gb3JkZXIgdG8g
-dXNlIHRoZSBhY3R1YWwgZnVuY3Rpb25hbHRpeSBvZiB0aGUgZGV2aWNlIG90aGVyDQo+IHMvLC8u
-Lw0KPg0KPj4gKwkgIGRyaXZlcnMgbXVzdCBiZSBlbmFibGVkLg0KPj4gKw0KPj4gKwkgIFRvIGNv
-bXBpbGUgdGhpcyBkcml2ZXIgYXMgYSBtb2R1bGUsIGNob29zZSBNIGhlcmU6IHRoZQ0KPj4gKwkg
-IG1vZHVsZSB3aWxsIGJlIGNhbGxlZCBzdHBtaWMxLg0KPj4gKw0KPj4gICBtZW51ICJNdWx0aW1l
-ZGlhIENhcGFiaWxpdGllcyBQb3J0IGRyaXZlcnMiDQo+PiAgIAlkZXBlbmRzIG9uIEFSQ0hfU0Ex
-MTAwDQo+PiAgIA0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWZkL01ha2VmaWxlIGIvZHJpdmVy
-cy9tZmQvTWFrZWZpbGUNCj4+IGluZGV4IDU4NTZhOTQuLjc2ZmZmMTQgMTAwNjQ0DQo+PiAtLS0g
-YS9kcml2ZXJzL21mZC9NYWtlZmlsZQ0KPj4gKysrIGIvZHJpdmVycy9tZmQvTWFrZWZpbGUNCj4+
-IEBAIC0yMzIsNiArMjMyLDcgQEAgb2JqLSQoQ09ORklHX0lOVEVMX1NPQ19QTUlDX0NIVERDX1RJ
-KQkrPSBpbnRlbF9zb2NfcG1pY19jaHRkY190aS5vDQo+PiAgIG9iai0kKENPTkZJR19NRkRfTVQ2
-Mzk3KQkrPSBtdDYzOTctY29yZS5vDQo+PiAgIA0KPj4gICBvYmotJChDT05GSUdfTUZEX0FMVEVS
-QV9BMTBTUikJKz0gYWx0ZXJhLWExMHNyLm8NCj4+ICtvYmotJChDT05GSUdfTUZEX1NUUE1JQzEp
-CSs9IHN0cG1pYzEubw0KPj4gICBvYmotJChDT05GSUdfTUZEX1NVTjRJX0dQQURDKQkrPSBzdW40
-aS1ncGFkYy5vDQo+PiAgIA0KPj4gICBvYmotJChDT05GSUdfTUZEX1NUTTMyX0xQVElNRVIpCSs9
-IHN0bTMyLWxwdGltZXIubw0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWZkL3N0cG1pYzEuYyBi
-L2RyaXZlcnMvbWZkL3N0cG1pYzEuYw0KPj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4+IGluZGV4
-IDAwMDAwMDAuLjJmNGZkNWUNCj4+IC0tLSAvZGV2L251bGwNCj4+ICsrKyBiL2RyaXZlcnMvbWZk
-L3N0cG1pYzEuYw0KPj4gQEAgLTAsMCArMSwyMTUgQEANCj4+ICsvLyBTUERYLUxpY2Vuc2UtSWRl
-bnRpZmllcjogR1BMLTIuMA0KPj4gKy8vIENvcHlyaWdodCAoQykgU1RNaWNyb2VsZWN0cm9uaWNz
-IDIwMTgNCj4+ICsvLyBBdXRob3I6IFBhc2NhbCBQYWlsbGV0IDxwLnBhaWxsZXRAc3QuY29tPg0K
-Pj4gKw0KPj4gKyNpbmNsdWRlIDxsaW51eC9pMmMuaD4NCj4+ICsjaW5jbHVkZSA8bGludXgvaW50
-ZXJydXB0Lmg+DQo+PiArI2luY2x1ZGUgPGxpbnV4L21mZC9jb3JlLmg+DQo+PiArI2luY2x1ZGUg
-PGxpbnV4L21mZC9zdHBtaWMxLmg+DQo+PiArI2luY2x1ZGUgPGxpbnV4L21vZHVsZS5oPg0KPj4g
-KyNpbmNsdWRlIDxsaW51eC9vZi5oPg0KPj4gKyNpbmNsdWRlIDxsaW51eC9vZl9pcnEuaD4NCj4+
-ICsjaW5jbHVkZSA8bGludXgvb2ZfcGxhdGZvcm0uaD4NCj4+ICsjaW5jbHVkZSA8bGludXgvcG1f
-d2FrZWlycS5oPg0KPj4gKyNpbmNsdWRlIDxsaW51eC9yZWdtYXAuaD4NCj4+ICsNCj4+ICsjaW5j
-bHVkZSA8ZHQtYmluZGluZ3MvbWZkL3N0LHN0cG1pYzEuaD4NCj4+ICsNCj4+ICsjZGVmaW5lIFNU
-UE1JQzFfTUFJTl9JUlEgMA0KPj4gKw0KPj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgcmVnbWFwX3Jh
-bmdlIHN0cG1pYzFfcmVhZGFibGVfcmFuZ2VzW10gPSB7DQo+PiArCXJlZ21hcF9yZWdfcmFuZ2Uo
-VFVSTl9PTl9TUiwgVkVSU0lPTl9TUiksDQo+PiArCXJlZ21hcF9yZWdfcmFuZ2UoU1dPRkZfUFdS
-Q1RSTF9DUiwgTERPNl9TVERCWV9DUiksDQo+PiArCXJlZ21hcF9yZWdfcmFuZ2UoQlNUX1NXX0NS
-LCBCU1RfU1dfQ1IpLA0KPj4gKwlyZWdtYXBfcmVnX3JhbmdlKElOVF9QRU5ESU5HX1IxLCBJTlRf
-UEVORElOR19SNCksDQo+PiArCXJlZ21hcF9yZWdfcmFuZ2UoSU5UX0NMRUFSX1IxLCBJTlRfQ0xF
-QVJfUjQpLA0KPj4gKwlyZWdtYXBfcmVnX3JhbmdlKElOVF9NQVNLX1IxLCBJTlRfTUFTS19SNCks
-DQo+PiArCXJlZ21hcF9yZWdfcmFuZ2UoSU5UX1NFVF9NQVNLX1IxLCBJTlRfU0VUX01BU0tfUjQp
-LA0KPj4gKwlyZWdtYXBfcmVnX3JhbmdlKElOVF9DTEVBUl9NQVNLX1IxLCBJTlRfQ0xFQVJfTUFT
-S19SNCksDQo+PiArCXJlZ21hcF9yZWdfcmFuZ2UoSU5UX1NSQ19SMSwgSU5UX1NSQ19SMSksDQo+
-PiArfTsNCj4+ICsNCj4+ICtzdGF0aWMgY29uc3Qgc3RydWN0IHJlZ21hcF9yYW5nZSBzdHBtaWMx
-X3dyaXRlYWJsZV9yYW5nZXNbXSA9IHsNCj4+ICsJcmVnbWFwX3JlZ19yYW5nZShTV09GRl9QV1JD
-VFJMX0NSLCBMRE82X1NUREJZX0NSKSwNCj4+ICsJcmVnbWFwX3JlZ19yYW5nZShCU1RfU1dfQ1Is
-IEJTVF9TV19DUiksDQo+PiArCXJlZ21hcF9yZWdfcmFuZ2UoSU5UX0NMRUFSX1IxLCBJTlRfQ0xF
-QVJfUjQpLA0KPj4gKwlyZWdtYXBfcmVnX3JhbmdlKElOVF9TRVRfTUFTS19SMSwgSU5UX1NFVF9N
-QVNLX1I0KSwNCj4+ICsJcmVnbWFwX3JlZ19yYW5nZShJTlRfQ0xFQVJfTUFTS19SMSwgSU5UX0NM
-RUFSX01BU0tfUjQpLA0KPj4gK307DQo+PiArDQo+PiArc3RhdGljIGNvbnN0IHN0cnVjdCByZWdt
-YXBfcmFuZ2Ugc3RwbWljMV92b2xhdGlsZV9yYW5nZXNbXSA9IHsNCj4+ICsJcmVnbWFwX3JlZ19y
-YW5nZShUVVJOX09OX1NSLCBWRVJTSU9OX1NSKSwNCj4+ICsJcmVnbWFwX3JlZ19yYW5nZShXQ0hE
-R19DUiwgV0NIREdfQ1IpLA0KPj4gKwlyZWdtYXBfcmVnX3JhbmdlKElOVF9QRU5ESU5HX1IxLCBJ
-TlRfUEVORElOR19SNCksDQo+PiArCXJlZ21hcF9yZWdfcmFuZ2UoSU5UX1NSQ19SMSwgSU5UX1NS
-Q19SNCksDQo+PiArfTsNCj4gTmljZSENCj4NCj4+ICtzdGF0aWMgY29uc3Qgc3RydWN0IHJlZ21h
-cF9hY2Nlc3NfdGFibGUgc3RwbWljMV9yZWFkYWJsZV90YWJsZSA9IHsNCj4+ICsJLnllc19yYW5n
-ZXMgPSBzdHBtaWMxX3JlYWRhYmxlX3JhbmdlcywNCj4+ICsJLm5feWVzX3JhbmdlcyA9IEFSUkFZ
-X1NJWkUoc3RwbWljMV9yZWFkYWJsZV9yYW5nZXMpLA0KPj4gK307DQo+PiArDQo+PiArc3RhdGlj
-IGNvbnN0IHN0cnVjdCByZWdtYXBfYWNjZXNzX3RhYmxlIHN0cG1pYzFfd3JpdGVhYmxlX3RhYmxl
-ID0gew0KPj4gKwkueWVzX3JhbmdlcyA9IHN0cG1pYzFfd3JpdGVhYmxlX3JhbmdlcywNCj4+ICsJ
-Lm5feWVzX3JhbmdlcyA9IEFSUkFZX1NJWkUoc3RwbWljMV93cml0ZWFibGVfcmFuZ2VzKSwNCj4+
-ICt9Ow0KPj4gKw0KPj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgcmVnbWFwX2FjY2Vzc190YWJsZSBz
-dHBtaWMxX3ZvbGF0aWxlX3RhYmxlID0gew0KPj4gKwkueWVzX3JhbmdlcyA9IHN0cG1pYzFfdm9s
-YXRpbGVfcmFuZ2VzLA0KPj4gKwkubl95ZXNfcmFuZ2VzID0gQVJSQVlfU0laRShzdHBtaWMxX3Zv
-bGF0aWxlX3JhbmdlcyksDQo+PiArfTsNCj4+ICsNCj4+ICtjb25zdCBzdHJ1Y3QgcmVnbWFwX2Nv
-bmZpZyBzdHBtaWMxX3JlZ21hcF9jb25maWcgPSB7DQo+PiArCS5yZWdfYml0cyA9IDgsDQo+PiAr
-CS52YWxfYml0cyA9IDgsDQo+PiArCS5jYWNoZV90eXBlID0gUkVHQ0FDSEVfUkJUUkVFLA0KPj4g
-KwkubWF4X3JlZ2lzdGVyID0gUE1JQ19NQVhfUkVHSVNURVJfQUREUkVTUywNCj4+ICsJLnJkX3Rh
-YmxlID0gJnN0cG1pYzFfcmVhZGFibGVfdGFibGUsDQo+PiArCS53cl90YWJsZSA9ICZzdHBtaWMx
-X3dyaXRlYWJsZV90YWJsZSwNCj4+ICsJLnZvbGF0aWxlX3RhYmxlID0gJnN0cG1pYzFfdm9sYXRp
-bGVfdGFibGUsDQo+PiArfTsNCj4+ICsNCj4+ICtzdGF0aWMgY29uc3Qgc3RydWN0IHJlZ21hcF9p
-cnEgc3RwbWljMV9pcnFzW10gPSB7DQo+PiArCVJFR01BUF9JUlFfUkVHKElUX1BPTktFWV9GLCAw
-LCAweDAxKSwNCj4+ICsJUkVHTUFQX0lSUV9SRUcoSVRfUE9OS0VZX1IsIDAsIDB4MDIpLA0KPj4g
-KwlSRUdNQVBfSVJRX1JFRyhJVF9XQUtFVVBfRiwgMCwgMHgwNCksDQo+PiArCVJFR01BUF9JUlFf
-UkVHKElUX1dBS0VVUF9SLCAwLCAweDA4KSwNCj4+ICsJUkVHTUFQX0lSUV9SRUcoSVRfVkJVU19P
-VEdfRiwgMCwgMHgxMCksDQo+PiArCVJFR01BUF9JUlFfUkVHKElUX1ZCVVNfT1RHX1IsIDAsIDB4
-MjApLA0KPj4gKwlSRUdNQVBfSVJRX1JFRyhJVF9TV09VVF9GLCAwLCAweDQwKSwNCj4+ICsJUkVH
-TUFQX0lSUV9SRUcoSVRfU1dPVVRfUiwgMCwgMHg4MCksDQo+PiArDQo+PiArCVJFR01BUF9JUlFf
-UkVHKElUX0NVUkxJTV9CVUNLMSwgMSwgMHgwMSksDQo+PiArCVJFR01BUF9JUlFfUkVHKElUX0NV
-UkxJTV9CVUNLMiwgMSwgMHgwMiksDQo+PiArCVJFR01BUF9JUlFfUkVHKElUX0NVUkxJTV9CVUNL
-MywgMSwgMHgwNCksDQo+PiArCVJFR01BUF9JUlFfUkVHKElUX0NVUkxJTV9CVUNLNCwgMSwgMHgw
-OCksDQo+PiArCVJFR01BUF9JUlFfUkVHKElUX09DUF9PVEcsIDEsIDB4MTApLA0KPj4gKwlSRUdN
-QVBfSVJRX1JFRyhJVF9PQ1BfU1dPVVQsIDEsIDB4MjApLA0KPj4gKwlSRUdNQVBfSVJRX1JFRyhJ
-VF9PQ1BfQk9PU1QsIDEsIDB4NDApLA0KPj4gKwlSRUdNQVBfSVJRX1JFRyhJVF9PVlBfQk9PU1Qs
-IDEsIDB4ODApLA0KPj4gKw0KPj4gKwlSRUdNQVBfSVJRX1JFRyhJVF9DVVJMSU1fTERPMSwgMiwg
-MHgwMSksDQo+PiArCVJFR01BUF9JUlFfUkVHKElUX0NVUkxJTV9MRE8yLCAyLCAweDAyKSwNCj4+
-ICsJUkVHTUFQX0lSUV9SRUcoSVRfQ1VSTElNX0xETzMsIDIsIDB4MDQpLA0KPj4gKwlSRUdNQVBf
-SVJRX1JFRyhJVF9DVVJMSU1fTERPNCwgMiwgMHgwOCksDQo+PiArCVJFR01BUF9JUlFfUkVHKElU
-X0NVUkxJTV9MRE81LCAyLCAweDEwKSwNCj4+ICsJUkVHTUFQX0lSUV9SRUcoSVRfQ1VSTElNX0xE
-TzYsIDIsIDB4MjApLA0KPj4gKwlSRUdNQVBfSVJRX1JFRyhJVF9TSE9SVF9TV09URywgMiwgMHg0
-MCksDQo+PiArCVJFR01BUF9JUlFfUkVHKElUX1NIT1JUX1NXT1VULCAyLCAweDgwKSwNCj4+ICsN
-Cj4+ICsJUkVHTUFQX0lSUV9SRUcoSVRfVFdBUk5fRiwgMywgMHgwMSksDQo+PiArCVJFR01BUF9J
-UlFfUkVHKElUX1RXQVJOX1IsIDMsIDB4MDIpLA0KPj4gKwlSRUdNQVBfSVJRX1JFRyhJVF9WSU5M
-T1dfRiwgMywgMHgwNCksDQo+PiArCVJFR01BUF9JUlFfUkVHKElUX1ZJTkxPV19SLCAzLCAweDA4
-KSwNCj4+ICsJUkVHTUFQX0lSUV9SRUcoSVRfU1dJTl9GLCAzLCAweDQwKSwNCj4+ICsJUkVHTUFQ
-X0lSUV9SRUcoSVRfU1dJTl9SLCAzLCAweDgwKSwNCj4+ICt9Ow0KPj4gKw0KPj4gK3N0YXRpYyBj
-b25zdCBzdHJ1Y3QgcmVnbWFwX2lycV9jaGlwIHN0cG1pYzFfcmVnbWFwX2lycV9jaGlwID0gew0K
-Pj4gKwkubmFtZSA9ICJwbWljX2lycSIsDQo+PiArCS5zdGF0dXNfYmFzZSA9IElOVF9QRU5ESU5H
-X1IxLA0KPj4gKwkubWFza19iYXNlID0gSU5UX0NMRUFSX01BU0tfUjEsDQo+PiArCS51bm1hc2tf
-YmFzZSA9IElOVF9TRVRfTUFTS19SMSwNCj4+ICsJLmFja19iYXNlID0gSU5UX0NMRUFSX1IxLA0K
-Pj4gKwkubnVtX3JlZ3MgPSBTVFBNSUMxX1BNSUNfTlVNX0lSUV9SRUdTLA0KPj4gKwkuaXJxcyA9
-IHN0cG1pYzFfaXJxcywNCj4+ICsJLm51bV9pcnFzID0gQVJSQVlfU0laRShzdHBtaWMxX2lycXMp
-LA0KPj4gK307DQo+PiArDQo+PiArc3RhdGljIGludCBzdHBtaWMxX3Byb2JlKHN0cnVjdCBpMmNf
-Y2xpZW50ICppMmMsDQo+PiArCQkJIGNvbnN0IHN0cnVjdCBpMmNfZGV2aWNlX2lkICppZCkNCj4+
-ICt7DQo+PiArCXN0cnVjdCBzdHBtaWMxICpkZGF0YTsNCj4+ICsJc3RydWN0IGRldmljZSAqZGV2
-ID0gJmkyYy0+ZGV2Ow0KPj4gKwlpbnQgcmV0Ow0KPj4gKwlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5w
-ID0gZGV2LT5vZl9ub2RlOw0KPj4gKwl1MzIgcmVnOw0KPj4gKw0KPj4gKwlkZGF0YSA9IGRldm1f
-a3phbGxvYyhkZXYsIHNpemVvZihzdHJ1Y3Qgc3RwbWljMSksIEdGUF9LRVJORUwpOw0KPj4gKwlp
-ZiAoIWRkYXRhKQ0KPj4gKwkJcmV0dXJuIC1FTk9NRU07DQo+PiArDQo+PiArCWkyY19zZXRfY2xp
-ZW50ZGF0YShpMmMsIGRkYXRhKTsNCj4+ICsJZGRhdGEtPmRldiA9IGRldjsNCj4+ICsNCj4+ICsJ
-ZGRhdGEtPnJlZ21hcCA9IGRldm1fcmVnbWFwX2luaXRfaTJjKGkyYywgJnN0cG1pYzFfcmVnbWFw
-X2NvbmZpZyk7DQo+PiArCWlmIChJU19FUlIoZGRhdGEtPnJlZ21hcCkpDQo+PiArCQlyZXR1cm4g
-UFRSX0VSUihkZGF0YS0+cmVnbWFwKTsNCj4+ICsNCj4+ICsJZGRhdGEtPmlycSA9IG9mX2lycV9n
-ZXQobnAsIFNUUE1JQzFfTUFJTl9JUlEpOw0KPj4gKwlpZiAoZGRhdGEtPmlycSA8IDApIHsNCj4+
-ICsJCWRldl9lcnIoZGV2LCAiRmFpbGVkIHRvIGdldCBtYWluIElSUTogJWRcbiIsIGRkYXRhLT5p
-cnEpOw0KPj4gKwkJcmV0dXJuIGRkYXRhLT5pcnE7DQo+PiArCX0NCj4+ICsNCj4+ICsJLyogUmVh
-ZCBWZXJzaW9uIElEICovDQo+IEkgdGhpbmsgdGhlIE1BQ1JPIG5hbWUgYW5kIGVycm9yIG1lc3Nh
-Z2UgbWFrZSB0aGlzIGNvbW1lbnQNCj4gc3VwZXJmbHVvdXMuDQo+DQo+PiArCXJldCA9IHJlZ21h
-cF9yZWFkKGRkYXRhLT5yZWdtYXAsIFZFUlNJT05fU1IsICZyZWcpOw0KPj4gKwlpZiAocmV0KSB7
-DQo+PiArCQlkZXZfZXJyKGRldiwgIlVuYWJsZSB0byByZWFkIHBtaWMgdmVyc2lvblxuIik7DQo+
-ICJQTUlDIg0KPg0KPj4gKwkJcmV0dXJuIHJldDsNCj4+ICsJfQ0KPj4gKwlkZXZfaW5mbyhkZXYs
-ICJQTUlDIENoaXAgVmVyc2lvbjogMHgleFxuIiwgcmVnKTsNCj4+ICsNCj4+ICsJLyogSW5pdGlh
-bGl6ZSBQTUlDIElSUSBDaGlwICYgSVJRIGRvbWFpbnMgYXNzb2NpYXRlZCAqLw0KPiAiYXNzb2Np
-YXRlZCBJUlEgZG9tYWlucyINCj4NCj4+ICsJcmV0ID0gZGV2bV9yZWdtYXBfYWRkX2lycV9jaGlw
-KGRldiwgZGRhdGEtPnJlZ21hcCwgZGRhdGEtPmlycSwNCj4+ICsJCQkJICAgICAgIElSUUZfT05F
-U0hPVCB8IElSUUZfU0hBUkVELA0KPj4gKwkJCQkgICAgICAgMCwgJnN0cG1pYzFfcmVnbWFwX2ly
-cV9jaGlwLA0KPj4gKwkJCQkgICAgICAgJmRkYXRhLT5pcnFfZGF0YSk7DQo+PiArCWlmIChyZXQp
-IHsNCj4+ICsJCWRldl9lcnIoZGV2LCAiSVJRIENoaXAgcmVnaXN0cmF0aW9uIGZhaWxlZDogJWRc
-biIsIHJldCk7DQo+PiArCQlyZXR1cm4gcmV0Ow0KPj4gKwl9DQo+PiArDQo+PiArCXJldHVybiBk
-ZXZtX29mX3BsYXRmb3JtX3BvcHVsYXRlKGRldik7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyBj
-b25zdCBzdHJ1Y3QgaTJjX2RldmljZV9pZCBzdHBtaWMxX2lkW10gPSB7DQo+PiArCXsgInN0cG1p
-YzEifSwNCj4+ICsJe30NCj4+ICt9Ow0KPiBJIGRvbid0IHRoaW5rIHRoaXMgaXMgcmVxdWlyZWQg
-YW55IG1vcmUuDQpzaG91bGQgSSByZXBsYWNlIHdpdGggdGhlIGZvbGxvd2luZyA/DQoNCnN0YXRp
-YyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIHN0cG1pYzFfb2ZfbWF0Y2hbXSA9IHsNCiAgICAg
-eyAuY29tcGF0aWJsZSA9ICJzdCxzdHBtaWMxIiwgfSwNCiAgICAge30sDQp9Ow0KTU9EVUxFX0RF
-VklDRV9UQUJMRShvZiwgc3RwbWljMV9vZl9tYXRjaCk7DQoNCj4+ICtNT0RVTEVfREVWSUNFX1RB
-QkxFKGkyYywgc3RwbWljMV9pZCk7DQoNCg0KVGhhbmsgeW91LA0KcGFzY2Fs
+The patch
+
+   regulator: core: Apply system load even if no consumer loads
+
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From fa94e48e13a1aaf814b9e956d8e5a52ef303b569 Mon Sep 17 00:00:00 2001
+From: Douglas Anderson <dianders@chromium.org>
+Date: Mon, 26 Nov 2018 09:08:27 -0800
+Subject: [PATCH] regulator: core: Apply system load even if no consumer loads
+
+Prior to commit 5451781dadf8 ("regulator: core: Only count load for
+enabled consumers") we used to always add up the total load on every
+enable in _regulator_enable().  After that commit we only updated the
+total load when enabling / disabling a regulator where a consumer
+specified a load or when changing the consumer load on an enabled
+regulator.
+
+The problem with the new scheme is that if there is a system load
+specified for a regulator but no consumers specify a load then we
+never account for it.
+
+Let's account for the system load in set_machine_constraints().
+
+NOTE: with the new scheme we end up with a bit of a quandry.  What if
+someone specifies _both_ an initial mode and a system load?  If we
+take the system load into account right at init time then it will
+effectively clobber the initial mode.  We'll resolve this by saying
+that if both are specified then the initial mode will win.  The system
+load will then only take effect if/when a consumer specifies a load.
+If no consumers ever specify a load then the initial mode will persist
+and the system load will have no effect.
+
+Fixes: 5451781dadf8 ("regulator: core: Only count load for enabled consumers")
+Reported-by: Brian Masney <masneyb@onstation.org>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Tested-by: Brian Masney <masneyb@onstation.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 03a03763457c..757619878068 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -1342,6 +1342,12 @@ static int set_machine_constraints(struct regulator_dev *rdev,
+ 			rdev_err(rdev, "failed to set initial mode: %d\n", ret);
+ 			return ret;
+ 		}
++	} else if (rdev->constraints->system_load) {
++		/*
++		 * We'll only apply the initial system load if an
++		 * initial mode wasn't specified.
++		 */
++		drms_uA_update(rdev);
+ 	}
+ 
+ 	/* If the constraints say the regulator should be on at this point
+-- 
+2.19.0.rc2
+
