@@ -2,109 +2,264 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 274E3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79510C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8D132086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:09:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35D5420865
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:09:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="DOSTd590"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8D132086B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IXlQVmB6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35D5420865
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbeK0BDs (ORCPT
+        id S1726729AbeK0BDs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 26 Nov 2018 20:03:48 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37236 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726346AbeK0BDr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 20:03:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FgtY55CCMeQHnOaKqoq3GQOLNAr29qdycxemvHzwQC8=; b=DOSTd590UshdCIqonSuPNOYoq
-        +FqM1PfC6kqVcuoGZvjVNJ1z/n6rZvJHx4qbbKF9pwM5MyHetQh2WNW/IbAkyctWAVLiCZU04vInl
-        0DsTjXiQHaIEyFDIbmDwBspO/r9pkLS4hiGapPODIWWvnGhU4ssswT5Y3U/9tylpaMT78=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gRHZn-00043j-Lo; Mon, 26 Nov 2018 14:09:27 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 45529112519F; Mon, 26 Nov 2018 14:09:27 +0000 (GMT)
-Date:   Mon, 26 Nov 2018 14:09:27 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        patches@opensource.cirrus.com
-Subject: Re: [PATCH 3/3] gpio: Add reference counting for non-exclusive GPIOs
-Message-ID: <20181126140927.GD9715@sirena.org.uk>
-References: <20181122173015.23905-1-ckeepax@opensource.cirrus.com>
- <20181122173015.23905-3-ckeepax@opensource.cirrus.com>
- <CACRpkdZEu44WHScd5VibYT5C9RikqcvKsgpVOpkkdrYbLaV8Ng@mail.gmail.com>
- <20181123105729.GM16508@imbe.wolfsonmicro.main>
- <20181123132522.GE2089@sirena.org.uk>
- <20181126130001.GN16508@imbe.wolfsonmicro.main>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zbGR4y+acU1DwHSi"
-Content-Disposition: inline
-In-Reply-To: <20181126130001.GN16508@imbe.wolfsonmicro.main>
-X-Cookie: Gloffing is a state of mine.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: from mail.kernel.org ([198.145.29.99]:58282 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726348AbeK0BDs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 20:03:48 -0500
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21F0220862;
+        Mon, 26 Nov 2018 14:09:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543241372;
+        bh=7t3sMvwwscsY2SzZFqKxSs08kvUtgWo3nY7a7rNmagA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=IXlQVmB64PoqoedT3JOgPz8cqDo4GcKSU64GLfjejv+L4xiqQ5MY+nxmEAQXrgiS3
+         8yRjGWgKUcFesfGudIdpM1gZGd6C1N5caL4cTZij81I7b1SIe5EDuW/8Bx0gZw2BQ7
+         Q+avPsUF7229Wy/iFhKAtLkWJKqn7RbPCnZCGcZE=
+Date:   Mon, 26 Nov 2018 23:09:28 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
+        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v7 00/16] tracing: Hist trigger snapshot and onchange
+ additions
+Message-Id: <20181126230928.17883eecfaefd6a29cbbd1c3@kernel.org>
+In-Reply-To: <cover.1542221862.git.tom.zanussi@linux.intel.com>
+References: <cover.1542221862.git.tom.zanussi@linux.intel.com>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Tom,
 
---zbGR4y+acU1DwHSi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, 14 Nov 2018 14:17:57 -0600
+Tom Zanussi <zanussi@kernel.org> wrote:
 
-On Mon, Nov 26, 2018 at 01:00:01PM +0000, Charles Keepax wrote:
-> On Fri, Nov 23, 2018 at 01:25:22PM +0000, Mark Brown wrote:
+> From: Tom Zanussi <tom.zanussi@linux.intel.com>
+> 
+> Hi,
+> 
+> This is v7 of the hist trigger snapshot and onchange additions
+> patchset.  It does a bit of refactoring to address the suggestions
+> made by Masami in v6.
 
-> > help the multiple users find each other somehow.  I think what we want
-> > to do here is either push the gpiod requests into the regulator core or
-> > change things so that once the regulator is registered with the
-> > regulator core the regulator core owns and is responsible for freeing
-> > the regulator.
+Thank you for fixing it. 
 
-> On the co-ordinating do we expect that the behaviour will
-> be that the GPIO should in the "enabled" state whenever any
-> regulator is requesting it? IE. the GPIO state is an OR of
-> the regulator states. Or are we expecting to handle more
-> complex interaction?
+> 
+> It also adds an additional patch to update the trigger/inter-event
+> testcases with SPDX license blurbs.
+> 
+> BTW, I noticed that with the recent kselftest changes, I now get
+> mangled output when running the selftests, though I can still see well
+> enough that the tests passed as expected.  This happens with any of
+> the ftrace selftests and not just the trigger selftests.  In my case,
+> this is using the stock Terminal in Ubuntu 17.10, in case that helps.
 
-For the regulators that's what we do, yes - it's like they're all
-sharing a single regulator.  That probably won't be true in general for
-all GPIO users.
+Hmm, it should be fixed by
+8096fbcf55c0 ("selftests/ftrace: Use colored output when available")
 
---zbGR4y+acU1DwHSi
-Content-Type: application/pgp-signature; name="signature.asc"
+Could you check your kernel has this commit?
 
------BEGIN PGP SIGNATURE-----
+BTW, what terminal and environment (especially echo command)
+did you run your tests on? (It seems echo command didn't accept -e option)
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv7/pYACgkQJNaLcl1U
-h9A61wf/YTf3c1nEcIzq+uJrrPEBzxQm3qE8rBupKwbQHkqzIq/atKhxtPrQwUGT
-zTLu81kIHPwquclbSVHKDJepB6abpbGpSQ3Tlwx/TDV2nUsplGvJMknnX8cRuA4I
-I69mRub7Pjt6cXxKcJyynDEbGZLQjaEHBmSiUe/j0yz2UFy4SLacu5Ox0yxwL/HQ
-2SL9X/iMz7GPRyTxZaVNhheL4mzTOoTshgHjiFoJ/Z2hxblhgxC1s9E4WogAYsrV
-3ynQ/SHWVeJRkdvBpl9dh+2yZ7sLb+iXZDRRgeZg4ISznDpQQz1pHkXE2ifu3+Zj
-yQ05v+i1ww3xAxPkvfjtyPke+DI5Lw==
-=fwXX
------END PGP SIGNATURE-----
+Thank you,
 
---zbGR4y+acU1DwHSi--
+> Example output:
+> 
+>   # ./ftracetest test.d/trigger/
+>   
+> -e === Ftrace unit tests ===
+> -e -n [1] event trigger - test inter-event histogram trigger expected fail actions
+> -e 	[\e[31mXFAIL\e[0m]
+> -e -n [2] event trigger - test extended error support
+> -e 	[\e[32mPASS\e[0m]
+> -e -n [3] event trigger - test field variable support
+> -e 	[\e[32mPASS\e[0m]
+> -e -n [4] event trigger - test inter-event combined histogram trigger
+> -e 	[\e[32mPASS\e[0m]
+> -e -n [5] event trigger - test multiple actions on hist trigger
+> -e 	[\e[32mPASS\e[0m]
+> .
+> .
+> .
+> -e 
+> -e # of passed:  31
+> -e # of failed:  0
+> -e # of unresolved:  0
+> -e # of untested:  0
+> -e # of unsupported:  0
+> -e # of xfailed:  1
+> -e # of undefined(test bug):  0
+> 
+> v6->v7 changes:
+> 
+>   - Removed unnecessary HANDLER_ONMAX checks from onmax_print()/create()
+>   - Moved handler assignment to acion_parse()
+>   - Changed goto in ATION_TRACE case in action_create() to return
+>   - Changed EINVAL to EEXIST in action_create() ACTION_SAVE case
+>   - Made the return logic in create_actions() more consistent
+>   - Merged 'tracing: Move hist trigger key printing into a separate
+>     function' into 'tracing: Add hist trigger snapshot() action'
+>   - Updated the new snapshot, onchange, and trace test cases to match
+>     4.20 kselftest changes.
+>   - Added new xfail test case that make sure certain unsupported
+>     handler/action combinations fail as expected.
+>   - While updating the test cases, realized that the other testcases
+>     in the inter-event subdir needed SPDX license updates, so added
+>     them.
+> 
+> v5->v6 changes:
+> 
+>   - Added new Documentation patch explaining handler.action
+>   - Added new README patch explaining handler.action
+>   - Added separate snapshot() Documentation
+>   - Added new snapshot() test case
+>   - Updated README with snapshote()
+>   - Added separate onchange() Documentation
+>   - Added separate onchange() test case
+>   - Updated README with onchange()
+>   - Added separate trace() test case
+>   - Updated README with trace() and <synthetic_event>() syntax
+> 
+> v4->v5 changes:
+> 
+>   - added 'trace' keyword test case
+>   - added 'onchange' handler test case
+> 
+> v3->v4 changes:
+> 
+>   - added 'trace' keyword for generating synthetic events
+>   - fix elt_data leak
+>   - changed cond_update to cond_update_fn_t
+> 
+> v2->v3 changes:
+> 
+>   - fixed problem where trace actions were only being allowed for
+>     onmatch handlers - now trace actions can be used with any handler.
+>   - fixed problem where no action was being assigned to onmatch
+>     handlers if save or snapshot actions were specified.
+> 
+> v1->v2 changes:
+> 
+>   - added missing tracing_cond_snapshot_data() definition for when
+>     CONFIG_TRACER_SNAPSHOT not defined
+>   - removed an unnecessary WARN_ON() in track_data_snapshot_print()
+> 
+> 
+> Original text:
+> 
+> This patchset adds some useful new functions to the hist
+> trigger code: a snapshot action and an onchange handler.
+> 
+> In order to make it easier to add these and in the process make the
+> code more generic, I separated the code into explicit 'handlers' and
+> 'actions', handlers being things like 'onmax' and 'onchange', and
+> 'actions' being things like 'take a snapshot' or 'save some fields'.
+> 
+> The first few patches do that basic refactoring, which make it easier
+> to add the subsequent changes that arbitrarily combine actions and
+> handlers.
+> 
+> The fourth patch adds a 'conditional snapshot' capability that via a
+> new tracing_snaphot_cond() function extends the existing snapshot
+> code.  It allows the caller to associate some user data with the
+> snapshot that can be checked and saved in an update() callback whose
+> return value determines whether the snapshot should be taken or not.
+> 
+> The remaining patches finally add the new snapshot action and onchange
+> handler functionality - please see those patches for details and some
+> examples.
+> 
+> Thanks,
+> 
+> Tom
+> 
+> 
+> The following changes since commit ee474b81fe5aa5dc0faae920bf66240fbf55f891:
+> 
+>   tracing/kprobes: Fix strpbrk() argument order (2018-11-05 09:47:14 -0500)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/zanussi/linux-trace.git ftrace/hist-snapshot-onchange-v7
+> 
+> Tom Zanussi (16):
+>   tracing: Refactor hist trigger action code
+>   tracing: Make hist trigger Documentation better reflect
+>     actions/handlers
+>   tracing: Add hist trigger handler.action documentation to README
+>   tracing: Split up onmatch action data
+>   tracing: Generalize hist trigger onmax and save action
+>   tracing: Add conditional snapshot
+>   tracing: Add hist trigger snapshot() action
+>   tracing: Add hist trigger snapshot() action Documentation
+>   tracing: Add hist trigger snapshot() action test case
+>   tracing: Add hist trigger onchange() handler
+>   tracing: Add hist trigger onchange() handler Documentation
+>   tracing: Add hist trigger onchange() handler test case
+>   tracing: Add alternative synthetic event trace action syntax
+>   tracing: Add alternative synthetic event trace action test case
+>   tracing: Add hist trigger action 'expected fail' test case
+>   tracing: Add SPDX license GPL-2.0 license identifier to inter-event
+>     testcases
+> 
+>  Documentation/trace/histogram.rst                  |  285 +++++-
+>  kernel/trace/trace.c                               |  177 +++-
+>  kernel/trace/trace.h                               |   56 +-
+>  kernel/trace/trace_events_hist.c                   | 1062 +++++++++++++++-----
+>  kernel/trace/trace_events_trigger.c                |    2 +-
+>  kernel/trace/trace_sched_wakeup.c                  |    2 +-
+>  .../inter-event/trigger-action-hist-xfail.tc       |   30 +
+>  .../inter-event/trigger-extended-error-support.tc  |    1 +
+>  .../inter-event/trigger-field-variable-support.tc  |    1 +
+>  .../trigger-inter-event-combined-hist.tc           |    1 +
+>  .../inter-event/trigger-multi-actions-accept.tc    |    1 +
+>  .../inter-event/trigger-onchange-action-hist.tc    |   28 +
+>  .../inter-event/trigger-onmatch-action-hist.tc     |    1 +
+>  .../trigger-onmatch-onmax-action-hist.tc           |    1 +
+>  .../inter-event/trigger-onmax-action-hist.tc       |    1 +
+>  .../inter-event/trigger-snapshot-action-hist.tc    |   43 +
+>  .../trigger-synthetic-event-createremove.tc        |    1 +
+>  .../inter-event/trigger-trace-action-hist.tc       |   42 +
+>  18 files changed, 1433 insertions(+), 302 deletions(-)
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc
+>  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-trace-action-hist.tc
+> 
+> -- 
+> 2.14.1
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
