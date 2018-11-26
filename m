@@ -2,93 +2,158 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F9DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 109CBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:39:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A99320817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:37:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HwsamLLt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A99320817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D17F820817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:39:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D17F820817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbeK0Bbd (ORCPT
+        id S1726368AbeK0Bdq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 20:31:33 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35517 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbeK0Bbc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 20:31:32 -0500
-Received: by mail-pg1-f194.google.com with SMTP id s198so6266359pgs.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 06:37:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Tc9/HM7ZycuFbB3IFNwvRj7R8Fg2ugfxq/QhzjjzQJI=;
-        b=HwsamLLtubC2sJniuMalLmC+1T/STMnRSQWV6wf6D+JP3TE2NKlGjo15oiNXSZmxTJ
-         vVFEw9JaXdfuxGeMOeAQiwX6/U9TJBv/DEtyvJsucVZzrAUOhwgHVfRbccvApQESCIqJ
-         Nvi6UosDydQ9cbWzfDeW6KTBUpJleuOrR6SmvnAqgxuS+HoiNNpwyKoG0TrBQZSMxolG
-         T2T7UIUlKV+Z1X+YnoGNdWVriPpoOP0ak7M0hyb3QxuNsQHSTh/AQp9IHZCDeohwaufj
-         TI7Mx4d2IT+6l6/LRQ9l+S5Cz9XB5bznOX5ctREYZP0h3D1H7kpJ3lQUrhmKrjLdgF7b
-         R3Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Tc9/HM7ZycuFbB3IFNwvRj7R8Fg2ugfxq/QhzjjzQJI=;
-        b=ljq1D00Sw1E66p8/vTOFa5aFWzhZddZh7XjrSorTVctvDtDF7ibBzgyIemHJp1+fU/
-         iChMg566m54GcpCFvVYb5/7a+umwsGw1zpQ03rPdpJ8cQ23Xfn+kjGPFbvgp9P6KUYOc
-         u4PDpuG7svt+mFExivIi4I3yq6LXh3bUMl7pTU8xjfETZc17laaFkR3QYP0gBi46GC9i
-         WAyk4vmYZUrO20pOuzgjKg1qeWkiP4HuHDLcMrv/a27tEgC9j1U0SZhMzI/ZwSyh4hJk
-         3mIyWbNnm+l2xzOvlYzCXNt2caW4+dQSogq+va1PW/I0nId77SmeVvvAW9IHpbyaCH+v
-         rRIA==
-X-Gm-Message-State: AGRZ1gIri0L3LsPx7KFRFVen4UWAiqSmUhHgH1k8xY6LeGUxdes8AKrn
-        MhwaK7t4lliTDb6FEMRCZluuhHCPj2o=
-X-Google-Smtp-Source: AJdET5c+7gMx5/jh7soYEzCfd+ughL13wQtE4MVcDjEbym1OKTFW/jujFjw83xmWtgFG1NITqp4mOQ==
-X-Received: by 2002:aa7:8354:: with SMTP id z20mr27836415pfm.81.1543243034054;
-        Mon, 26 Nov 2018 06:37:14 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id f67sm581026pfc.141.2018.11.26.06.37.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 06:37:13 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     tj@kernel.org, akpm@linux-foundation.org, linux@rasmusvillemoes.dk
-Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] async: remove some duplicated includes
-Date:   Mon, 26 Nov 2018 09:37:10 -0500
-Message-Id: <20181126143710.31409-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 26 Nov 2018 20:33:46 -0500
+Received: from mga17.intel.com ([192.55.52.151]:37953 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726200AbeK0Bdq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 20:33:46 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 06:39:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,282,1539673200"; 
+   d="scan'208";a="277009075"
+Received: from tthayer-hp-z620.an.intel.com (HELO [10.122.105.146]) ([10.122.105.146])
+  by orsmga005.jf.intel.com with ESMTP; 26 Nov 2018 06:39:25 -0800
+Reply-To: thor.thayer@linux.intel.com
+Subject: Re: [RESEND PATCH v17 5/5] iommu/arm-smmu: Add support for
+ qcom,smmu-v2 variant
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     Tomasz Figa <tfiga@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+        sboyd@kernel.org, linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>, alex.williamson@redhat.com,
+        robh+dt <robh+dt@kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Robin Murphy <robin.murphy@arm.com>
+References: <20181116112430.31248-1-vivek.gautam@codeaurora.org>
+ <20181116112430.31248-6-vivek.gautam@codeaurora.org>
+ <20181121173803.GB9801@arm.com>
+ <CAFp+6iELH7Mw3Ue2ksEyV+Ac8hG8--Ki69xrPCA4F-AcireRow@mail.gmail.com>
+ <CAAFQd5B-bZR8dmjARb8L4oqgET2YAjXhexAO0GKAvU4JoVU=7g@mail.gmail.com>
+ <CAFp+6iFhBRJWGY4Hj30tWedGpEUcnkBJrOvffmbpD2m9QMZB3A@mail.gmail.com>
+ <20181123183428.GD21183@arm.com>
+ <30fd45b5-50f0-7f2f-aab3-adc4528d21a8@codeaurora.org>
+From:   Thor Thayer <thor.thayer@linux.intel.com>
+Message-ID: <ca287382-1d21-ad73-1648-00291a5da21b@linux.intel.com>
+Date:   Mon, 26 Nov 2018 08:41:51 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <30fd45b5-50f0-7f2f-aab3-adc4528d21a8@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-we include workqueue.h twice.It's unnecessary,so
-just remove them.
+Hi Vivek,
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- kernel/async.c | 1 -
- 1 file changed, 1 deletion(-)
+On 11/26/18 4:55 AM, Vivek Gautam wrote:
+> 
+> On 11/24/2018 12:04 AM, Will Deacon wrote:
+>> On Fri, Nov 23, 2018 at 03:06:29PM +0530, Vivek Gautam wrote:
+>>> On Fri, Nov 23, 2018 at 2:52 PM Tomasz Figa <tfiga@chromium.org> wrote:
+>>>> On Fri, Nov 23, 2018 at 6:13 PM Vivek Gautam
+>>>> <vivek.gautam@codeaurora.org> wrote:
+>>>>> On Wed, Nov 21, 2018 at 11:09 PM Will Deacon <will.deacon@arm.com> 
+>>>>> wrote:
+>>>>>> On Fri, Nov 16, 2018 at 04:54:30PM +0530, Vivek Gautam wrote:
+>>>>>>> @@ -2026,6 +2027,17 @@ ARM_SMMU_MATCH_DATA(arm_mmu401, 
+>>>>>>> ARM_SMMU_V1_64K, GENERIC_SMMU);
+>>>>>>>   ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
+>>>>>>>   ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
+>>>>>>>
+>>>>>>> +static const char * const qcom_smmuv2_clks[] = {
+>>>>>>> +     "bus", "iface",
+>>>>>>> +};
+>>>>>>> +
+>>>>>>> +static const struct arm_smmu_match_data qcom_smmuv2 = {
+>>>>>>> +     .version = ARM_SMMU_V2,
+>>>>>>> +     .model = QCOM_SMMUV2,
+>>>>>>> +     .clks = qcom_smmuv2_clks,
+>>>>>>> +     .num_clks = ARRAY_SIZE(qcom_smmuv2_clks),
+>>>>>>> +};
+>>>>>> These seems redundant if we go down the route proposed by Thor, 
+>>>>>> where we
+>>>>>> just pull all of the clocks out of the device-tree. In which case, 
+>>>>>> why
+>>>>>> do we need this match_data at all?
+>>>>> Which is better? Driver relying solely on the device tree to tell
+>>>>> which all clocks
+>>>>> are required to be enabled,
+>>>>> or, the driver deciding itself based on the platform's match data,
+>>>>> that it should
+>>>>> have X, Y, & Z clocks that should be supplied from the device tree.
+>>>> The former would simplify the driver, but would also make it
+>>>> impossible to spot mistakes in DT, which would ultimately surface out
+>>>> as very hard to debug bugs (likely complete system lockups).
+>>> Thanks.
+>>> Yea, this is how I understand things presently. Relying on device tree
+>>> puts the things out of driver's control.
+>> But it also has the undesirable effect of having to update the driver
+>> code whenever we want to add support for a new SMMU implementation. If
+>> we do this all in the DT, as Thor is trying to do, then older kernels
+>> will work well with new hardware.
+>>
+>>> Hi Will,
+>>> Am I unable to understand the intentions here for Thor's clock-fetch
+>>> design change?
+>> I'm having trouble parsing your question, sorry. Please work with Thor
+>> so that we have a single way to get the clock information. My preference
+>> is to take it from the firmware, for the reason I stated above.
+> Hi Will,
+> 
+> Sure, thanks. I will work with Thor to get this going.
+> 
+> Hi Thor,
+> Does it sound okay to you to squash your patch [1] into my patch [2] with
+> your 'Signed-off-by' tag?
+> I will update the commit log to include the information about getting
+> clock details from device tree.
+> 
+> [1] https://patchwork.kernel.org/patch/10628725/
+> [2] https://patchwork.kernel.org/patch/10686061/
+> 
 
-diff --git a/kernel/async.c b/kernel/async.c
-index a893d6170944..4932e9193fa3 100644
---- a/kernel/async.c
-+++ b/kernel/async.c
-@@ -55,7 +55,6 @@ asynchronous and synchronous parts of the kernel.
- #include <linux/wait.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
--#include <linux/workqueue.h>
- 
- #include "workqueue_internal.h"
- 
--- 
-2.17.0
+Yes, that would be great and easier to understand than my patch on top 
+of yours.
+
+Additionally, can you remove the "Error:" as Will requested as part of 
+the squash?
+
+Thank you!
+
+Thor
+
+> Best regards
+> Vivek
+>>
+>> Will
+> 
+> 
 
