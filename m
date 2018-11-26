@@ -2,176 +2,169 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 611FCC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D6DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:02:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 273942089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:00:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 273942089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 557FD20645
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:02:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dZBp+NIU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 557FD20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726542AbeK0Cye (ORCPT
+        id S1726654AbeK0C5J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 21:54:34 -0500
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:50600 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726248AbeK0Cyd (ORCPT
+        Mon, 26 Nov 2018 21:57:09 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57616 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbeK0C5J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 21:54:33 -0500
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id RJIigDku5IGBARJImgfiBi; Mon, 26 Nov 2018 17:00:00 +0100
-Subject: Re: [PATCH v3] media: venus: amend buffer size for bitstream plane
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        mgottam@codeaurora.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        vgarodia@codeaurora.org
-References: <1543227173-2160-1-git-send-email-mgottam@codeaurora.org>
- <d74281c8-a177-12a3-9e72-7a7db3014943@xs4all.nl>
- <f6106d20-abee-979c-8ac1-6c9115e8373c@linaro.org>
- <57b28a7f-8c5c-22d2-2f89-e6d6ebdcb8a2@xs4all.nl>
- <CAAFQd5DJn-_y5dHySAB6_ed-syBOr3Ybo7KfsPLNd+0Z7X0N7g@mail.gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <2a8bbdf7-cec6-4bdf-5833-93d5014ddf89@xs4all.nl>
-Date:   Mon, 26 Nov 2018 16:59:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 26 Nov 2018 21:57:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=VsTCm5zE3RpQJBZbC8onKGQcf6Oja50LKgsJ8cRfa9s=; b=dZBp+NIUabKA7+eVREo8mbGie
+        YZXDDkAM1OLsO1qAjFuNocVVa1l/ZMwtxkplQo/veN3oucqB+igBpLrLuxcTH2nFKNAT7butgNutn
+        vVV4db7HiKga9WvXF7VRQPQDRVckWbqk+6MaAuir5AfUG7krYaFYMnU0iJNCQeBiRbv6Zs4g1AshR
+        oRCbcFtgJny2BR7rHoQLEsLFqTJDbqEYlaRGFAuBd41+WwtFbzwuvlwtqMsMr8fLqDQGEebgRL6qU
+        V7Rwpb0pby4Til8m4wUgvkGwB/WKSuviN1vKwXoSWNptVEReuieYWkpxoxSy7jVTbK6PlBqeRcmaV
+        V9gSOdFqw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gRJL0-0006LU-M8; Mon, 26 Nov 2018 16:02:18 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 12CFC2029F87F; Mon, 26 Nov 2018 17:02:17 +0100 (CET)
+Date:   Mon, 26 Nov 2018 17:02:17 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
+ implementation for x86-64
+Message-ID: <20181126160217.GR2113@hirez.programming.kicks-ass.net>
+References: <cover.1543200841.git.jpoimboe@redhat.com>
+ <62188c62f6dda49ca2e20629ee8e5a62a6c0b500.1543200841.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5DJn-_y5dHySAB6_ed-syBOr3Ybo7KfsPLNd+0Z7X0N7g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfBnaCJFqqVsijnT0+7w9wgcB/jMbJ3r2Vp+Yx/n3p8ND6vMygJ3gWJ96Qf/I/p8RFFmuSZ+nkO/soS6TK+fsOWf1TchyFZ5xNe9ae2Dn8H6kvaGWv37B
- Hx0amvAkJvyMPzp+es3SSzu/EkoFhW0EwlhaDnx2Z6P+5jVHIfp8QbyqUgxL/psVGg+DjyQrhqPerVR6o7/uGu8gsdDrLzJ/mgMCyUNOca9FE7y58i1xxBjR
- bbwaIZg72YkJZKJENMqF4vT61Q4yd4UJEBiN8KxJYOBqAZVgoFSQ9UQOXrPRZ8RTJfeI4n3lE6XKWDGvYwVSRSoWdLnPXQYIZpIwupvvoKajdurAX0h4ndzf
- pYyXbUr6hoCS+rprAtHYb6shQuy5NCTHjV5gW2co5fpVqgzx44I9t1uMhdQCSOqGaKpvR2kYB1XmtCYn6tCDWPJvAaIQXvo0KDRvH4ysbzBTLQBBr+g=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62188c62f6dda49ca2e20629ee8e5a62a6c0b500.1543200841.git.jpoimboe@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/26/2018 04:44 PM, Tomasz Figa wrote:
-> Hi Hans,
-> 
-> On Tue, Nov 27, 2018 at 12:24 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>
->> On 11/26/2018 03:57 PM, Stanimir Varbanov wrote:
->>> Hi Hans,
->>>
->>> On 11/26/18 3:37 PM, Hans Verkuil wrote:
->>>> On 11/26/2018 11:12 AM, Malathi Gottam wrote:
->>>>> Accept the buffer size requested by client and compare it
->>>>> against driver calculated size and set the maximum to
->>>>> bitstream plane.
->>>>>
->>>>> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
->>>>
->>>> Sorry, this isn't allowed. It is the driver that sets the sizeimage value,
->>>> never the other way around.
->>>
->>> I think for decoders (OUTPUT queue) and encoders (CAPTURE queue) we
->>> allowed userspace to set sizeimage for buffers. See [1] Initialization
->>> paragraph point 2:
->>>
->>>     ``sizeimage``
->>>        desired size of ``CAPTURE`` buffers; the encoder may adjust it to
->>>        match hardware requirements
->>>
->>> Similar patch we be needed for decoder as well.
->>
->> I may have missed that change since it wasn't present in v1 of the stateful
->> encoder spec.
-> 
-> It's been there from the very beginning, even before I started working
-> on it. Actually, even the early slides from Kamil mention the
-> application setting the buffer size for compressed streams:
-> https://events.static.linuxfound.org/images/stories/pdf/lceu2012_debski.pdf
-> 
->>
->> Tomasz, what was the reason for this change? I vaguely remember some thread
->> about this, but I forgot the details. Since this would be a departure of
->> the current API this should be explained in more detail.
-> 
-> The kernel is not the place to encode assumptions about optimal
-> bitstream chunk sizes. It depends on the use case and the application
-> should be able decide. It may for example want to use smaller buffers,
-> optimizing for the well compressible video streams and just reallocate
-> if bigger chunks are needed.
-> 
->>
->> I don't really see the point of requiring userspace to fill this in. For
->> stateful codecs it can just return some reasonable size. Possibly calculated
->> using the provided width/height values or (if those are 0) some default value.
-> 
-> How do we decide what's "reasonable"? Would it be reasonable for all
-> applications?
+On Mon, Nov 26, 2018 at 07:55:00AM -0600, Josh Poimboeuf wrote:
+> diff --git a/arch/x86/kernel/static_call.c b/arch/x86/kernel/static_call.c
+> index 8026d176f25c..d3869295b88d 100644
+> --- a/arch/x86/kernel/static_call.c
+> +++ b/arch/x86/kernel/static_call.c
+> @@ -9,13 +9,21 @@
+>  
+>  void static_call_bp_handler(void);
+>  void *bp_handler_dest;
+> +void *bp_handler_continue;
+>  
+>  asm(".pushsection .text, \"ax\"						\n"
+>      ".globl static_call_bp_handler					\n"
+>      ".type static_call_bp_handler, @function				\n"
+>      "static_call_bp_handler:						\n"
+> -    "ANNOTATE_RETPOLINE_SAFE						\n"
+> +#ifdef CONFIG_HAVE_STATIC_CALL_INLINE
+> +    ANNOTATE_RETPOLINE_SAFE
+> +    "call *bp_handler_dest						\n"
+> +    ANNOTATE_RETPOLINE_SAFE
+> +    "jmp *bp_handler_continue						\n"
+> +#else /* !CONFIG_HAVE_STATIC_CALL_INLINE */
+> +    ANNOTATE_RETPOLINE_SAFE
+>      "jmp *bp_handler_dest						\n"
+> +#endif
+>      ".popsection							\n");
+>  
+>  void arch_static_call_transform(void *site, void *tramp, void *func)
+> @@ -25,7 +33,10 @@ void arch_static_call_transform(void *site, void *tramp, void *func)
+>  	unsigned char insn_opcode;
+>  	unsigned char opcodes[CALL_INSN_SIZE];
+>  
+> -	insn = (unsigned long)tramp;
+> +	if (IS_ENABLED(CONFIG_HAVE_STATIC_CALL_INLINE))
+> +		insn = (unsigned long)site;
+> +	else
+> +		insn = (unsigned long)tramp;
+>  
+>  	mutex_lock(&text_mutex);
+>  
+> @@ -41,8 +52,10 @@ void arch_static_call_transform(void *site, void *tramp, void *func)
+>  	opcodes[0] = insn_opcode;
+>  	memcpy(&opcodes[1], &dest_relative, CALL_INSN_SIZE - 1);
+>  
+> -	/* Set up the variable for the breakpoint handler: */
+> +	/* Set up the variables for the breakpoint handler: */
+>  	bp_handler_dest = func;
+> +	if (IS_ENABLED(CONFIG_HAVE_STATIC_CALL_INLINE))
+> +		bp_handler_continue = (void *)(insn + CALL_INSN_SIZE);
+>  
+>  	/* Patch the call site: */
+>  	text_poke_bp((void *)insn, opcodes, CALL_INSN_SIZE,
 
-In theory it should be the minimum size that the hardware supports. But it is
-silly to i.e. provide the size of one PAGE as the minimum. In practice you
-probably want to set sizeimage to something larger than that. Depending on
-the typical compression ratio perhaps 5 or 10% of what a raw YUV 4:2:0 frame
-would be.
+OK, so this is where that static_call_bp_handler comes from; you need
+that CALL to frob the stack.
 
-> 
->>
->> Ditto for decoders.
->>
->> Stanimir, I certainly cannot merge this until this has been fully nailed down
->> as it would be a departure from the current API.
-> 
-> It would not be a departure, because I can see existing stateful
-> drivers behaving like that:
-> https://elixir.bootlin.com/linux/v4.20-rc4/source/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c#L1444
-> https://elixir.bootlin.com/linux/v4.20-rc4/source/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c#L469
+But I still think it is broken; consider:
 
-Yes, and that's out of spec. Clearly v4l2-compliance doesn't test for this.
-It should have been caught at least for the mtk driver.
+	CPU0				CPU1
 
-> 
-> Also, Chromium has been setting the size on its own for long time
-> using its own heuristics.
-> 
->>
->> And looking at the venus patch I do not see how it helps userspace.
->>
->> Regards,
->>
->>         Hans
->>
->>>
->>>>
->>>> If you need to allocate larger buffers, then use VIDIOC_CREATE_BUFS instead
->>>> of VIDIOC_REQBUFS.
-> 
-> CREATE_BUFS wouldn't work, because one needs to use TRY_FMT to obtain
-> a format for it and the format returned by it would have the sizeimage
-> as hardcoded in the driver...
+	bp_handler = ponies;
 
-???
+	text_poke_bp(, &static_call_bp_handler)
+	  text_poke(&int3);
+	  on_each_cpu(sync)
+	  				<IPI>
+					  ...
+					</IPI>
 
-Userspace can change the sizeimage to whatever it wants before calling
-CREATE_BUFS as long as it is >= the sizeimage of the current format.
+	  text_poke(/* all but first bytes */)
+	  on_each_cpu(sync)
+	  				<IPI>
+					  ...
+					</IPI>
 
-If we want to allow smaller sizes, then I think that would not be
-unreasonable for stateful codecs. I actually think that drivers can
-already do this in queue_setup(), but the spec would have to be updated
-a bit.
+	  				<int3>
+					  pt_regs->ip = &static_call_bp_handler
+					</int3>
 
-Regards,
+					// VCPU takes a nap...
+	  text_poke(/* first byte */)
+	  on_each_cpu(sync)
+	  				<IPI>
+					  ...
+					</IPI>
 
-	Hans
+					// VCPU sleeps more
+	bp_handler = unicorn;
 
-> 
-> Best regards,
-> Tomasz
-> 
+					CALL unicorn
 
+*whoops*
+
+Now, granted, that is all rather 'unlikely', but that never stopped
+Murphy.
