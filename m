@@ -2,151 +2,202 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3667DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00164C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0400E20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:31:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0400E20855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B52E7205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:32:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B52E7205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbeK0G0n (ORCPT
+        id S1727076AbeK0G1M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 01:26:43 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45968 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726343AbeK0G0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 01:26:42 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1DCC82381;
-        Mon, 26 Nov 2018 11:31:35 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E1D333F5AF;
-        Mon, 26 Nov 2018 11:31:34 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 6FDF31AE0839; Mon, 26 Nov 2018 19:31:52 +0000 (GMT)
-Date:   Mon, 26 Nov 2018 19:31:52 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, alex.williamson@redhat.com,
-        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
-        freedreno <freedreno@lists.freedesktop.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>, robh+dt <robh+dt@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [RESEND PATCH v17 2/5] iommu/arm-smmu: Invoke pm_runtime during
- probe, add/remove device
-Message-ID: <20181126193151.GC534@arm.com>
-References: <20181116112430.31248-1-vivek.gautam@codeaurora.org>
- <20181116112430.31248-3-vivek.gautam@codeaurora.org>
- <20181121173757.GA9801@arm.com>
- <CAFp+6iEH7_XEcZNsbZfn6iBF5_o-ZKBj=DpturH7N85LU289qg@mail.gmail.com>
- <20181123183555.GE21183@arm.com>
- <9064c01e-cef0-9306-078a-8d303cd6614b@codeaurora.org>
- <d66c5dbf-2e44-a915-14a0-1968c8ede832@codeaurora.org>
+        Tue, 27 Nov 2018 01:27:12 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40066 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbeK0G1M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 01:27:12 -0500
+Received: by mail-lf1-f65.google.com with SMTP id v5so14461998lfe.7
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 11:32:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hAK2f93RbkoelmjiKQh6IJGkzwNjlajJKYQeBPHVu4Y=;
+        b=qa7eyb0dax28xfxKHH0Adr9q5Qi5nSJ+t1jHiw+97wtIwFxImAs3cVjpRUPVehc9pG
+         qgmwwiqY3aSm0jBZ0vhbfRWF5jHBhamdQZ4jNTBSo7bdGSUzs33+eZzZCk/KerliNHCd
+         +AN4UQMG4fxoeGu9FA1n/B0OnpOVim0KA6vi+TChHd4i+ZhAwrX5rGjsJhAtKJemqVLq
+         RG15oUpEKUQQw7dD0tCVQ2vJW2z5iE/e3i3Qi/3rPduJ5cpA7VTCwihn/gMCr3QaUKb3
+         dYzMtB/TfDaqsnA7/7xFGJ5dYcwqR9skHMRkHFcKd6RQ/qVR8Rj33adBP9EpI+Qltaq1
+         u/Kw==
+X-Gm-Message-State: AGRZ1gIpY6lZG81ul0TW5VxLzcKk+FEv5VUSTplZbyzCd+tNI3CwqIdc
+        8CqaWS79/3WqjR7tG1vpBvy+ZgLK/BcARjAdTl3Jlg==
+X-Google-Smtp-Source: AJdET5f62uFVwXkxsQ95s2oYNF6ar5UwKNQg7M2AvcU8E50w56hMsaDPTn9TiMvS5l+opEzE3YVbmmtFlAEb4QTmlco=
+X-Received: by 2002:a19:d857:: with SMTP id p84mr16303917lfg.44.1543260721755;
+ Mon, 26 Nov 2018 11:32:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d66c5dbf-2e44-a915-14a0-1968c8ede832@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1542318469-13699-1-git-send-email-bhsharma@redhat.com> <20181126012824.GB1824@MiWiFi-R3L-srv>
+In-Reply-To: <20181126012824.GB1824@MiWiFi-R3L-srv>
+From:   Bhupesh Sharma <bhsharma@redhat.com>
+Date:   Tue, 27 Nov 2018 01:01:49 +0530
+Message-ID: <CACi5LpPqdzNxi4=UQqVgT6aCyn9nx+sjM-ds0Xx6qBji_xgP1g@mail.gmail.com>
+Subject: Re: [PATCH v2] x86_64, vmcoreinfo: Append 'page_offset_base' to vmcoreinfo
+To:     bhe@redhat.com
+Cc:     linux-kernel@vger.kernel.org, bhupesh.linux@gmail.com,
+        bp@alien8.de, mingo@kernel.org, tglx@linutronix.de,
+        k-hagio@ab.jp.nec.com, anderson@redhat.com, james.morse@arm.com,
+        osandov@fb.com, x86@kernel.org, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 04:56:42PM +0530, Vivek Gautam wrote:
-> On 11/26/2018 11:33 AM, Vivek Gautam wrote:
-> >On 11/24/2018 12:06 AM, Will Deacon wrote:
-> >>On Thu, Nov 22, 2018 at 05:32:24PM +0530, Vivek Gautam wrote:
-> >>>On Wed, Nov 21, 2018 at 11:09 PM Will Deacon <will.deacon@arm.com>
-> >>>wrote:
-> >>>>On Fri, Nov 16, 2018 at 04:54:27PM +0530, Vivek Gautam wrote:
-> >>>>>From: Sricharan R <sricharan@codeaurora.org>
-> >>>>>
-> >>>>>The smmu device probe/remove and add/remove master device callbacks
-> >>>>>gets called when the smmu is not linked to its master, that is
-> >>>>>without
-> >>>>>the context of the master device. So calling runtime apis in those
-> >>>>>places
-> >>>>>separately.
-> >>>>>Global locks are also initialized before enabling runtime pm as the
-> >>>>>runtime_resume() calls device_reset() which does tlb_sync_global()
-> >>>>>that ultimately requires locks to be initialized.
-> >>>>>
-> >>>>>Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> >>>>>[vivek: Cleanup pm runtime calls]
-> >>>>>Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> >>>>>Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> >>>>>Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> >>>>>Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-> >>>>>---
-> >>>>>  drivers/iommu/arm-smmu.c | 101
-> >>>>>++++++++++++++++++++++++++++++++++++++++++-----
-> >>>>>  1 file changed, 91 insertions(+), 10 deletions(-)
-> >>>>Given that you're doing the get/put in the TLBI ops unconditionally:
-> >>>>
-> >>>>>  static void arm_smmu_flush_iotlb_all(struct iommu_domain *domain)
-> >>>>>  {
-> >>>>>       struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-> >>>>>+     struct arm_smmu_device *smmu = smmu_domain->smmu;
-> >>>>>
-> >>>>>-     if (smmu_domain->tlb_ops)
-> >>>>>+     if (smmu_domain->tlb_ops) {
-> >>>>>+             arm_smmu_rpm_get(smmu);
-> >>>>>smmu_domain->tlb_ops->tlb_flush_all(smmu_domain);
-> >>>>>+             arm_smmu_rpm_put(smmu);
-> >>>>>+     }
-> >>>>>  }
-> >>>>>
-> >>>>>  static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
-> >>>>>  {
-> >>>>>       struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-> >>>>>+     struct arm_smmu_device *smmu = smmu_domain->smmu;
-> >>>>>
-> >>>>>-     if (smmu_domain->tlb_ops)
-> >>>>>+     if (smmu_domain->tlb_ops) {
-> >>>>>+             arm_smmu_rpm_get(smmu);
-> >>>>>smmu_domain->tlb_ops->tlb_sync(smmu_domain);
-> >>>>>+             arm_smmu_rpm_put(smmu);
-> >>>>>+     }
-> >>>>Why do you need them around the map/unmap calls as well?
-> >>>We still have .tlb_add_flush path?
-> >>Ok, so we could add the ops around that as well. Right now, we've got
-> >>the runtime pm hooks crossing two parts of the API.
+On Mon, Nov 26, 2018 at 6:58 AM Baoquan He <bhe@redhat.com> wrote:
+>
+> On 11/16/18 at 03:17am, Bhupesh Sharma wrote:
+> > Adding 'page_offset_base' to the vmcoreinfo can be specially useful for
+> > live-debugging of a running kernel via user-space utilities
+> > like makedumpfile (see [1]).
 > >
-> >Sure, will do that then, and remove the runtime pm hooks from map/unmap.
-> 
-> I missed this earlier -
-> We are adding runtime pm hooks in the 'iommu_ops' callbacks and not really
-> to
-> 'tlb_ops'. So how the runtime pm hooks crossing the paths?
-> '.map/.unmap' iommu_ops don't call '.flush_iotlb_all' or '.iotlb_sync'
-> iommu_ops
-> anywhere.
-> 
-> E.g., only callers to domain->ops->flush_iotlb_all() are:
-> iommu_dma_flush_iotlb_all(), or iommu_flush_tlb_all() which are not in
-> map/unmap paths.
+> > Recently, I saw an issue with the 'makedumpfile' utility (see [2] for
+> > details), whose live debugging feature is broken with newer kernels
+>
+> I think this paragraph explained why KCORE_REMAP adding caused the
+> mistake of page_offset calculation in makedumpfile. It can prove the
+> advantage of appending 'page_offset_base' to vmcoreinfo. The old way I
+> took in makedumpfile could be impacted by kernel code change, adding it
+> to vmcoreinfo can make it stable. The example is KCORE_REMAP adding, and
+> later it's removed.
+>
+> But it's not live debugging feature of makedumpfile. Makedumpfile can't be
+> used to live debug. The feature is called '--mem-usage' in makedumpfile,
+> in fact it's used to estimate how big the vmcore could be so that customer
+> can deply an appropriate size of storage space to store it. Because both
+> kcore and vmcore are all elf files which the 1st kernel's memory is
+> mapped to, even though they are different, kcore is dynamically changing.
+> This is more likely a precision in order of of magnitude. This is a feature
+> required by redhat customer.
 
-Yes, sorry, I got confused here and completely misled you. In which case,
-your original patch is ok because it intercepts the core IOMMU API via
-iommu_ops. Apologies.
+Indeed this is a live debugging feature - see we are running this in
+the primary kernel
+context, not in kdump context. We are trying to debug a kernel we are
+presently running (in this case determining the page mapping)
+hence the term live debugging.
 
-At that level, should we also annotate arm_smmu_iova_to_phys_hard()
-for the iova_to_phys() implementation?
+Also, this feature is not limited to redhat - we are talking in
+upstream makedumpfile context here - it is used by other projects as
+well which can have even a simple busybox rootfs configuration (e.g.
+qemu).
 
-With that detail and clock bits sorted out, we should be able to get this
-queued at last.
+> I thought you are talking about using DaveA's crash utility to live
+> debug the running kernel, like we usually do with gdb.
+>
+>         gdb vmlinux /proc/kcore
+>
+> Yes, this gdb live debugging is broken because of KASLR. We have bug about
+> this, while it has not been fixed. Using Crash utility to replace gdb is
+> one way if Crash code is adjusted.
+>
+> > (I tested the same with 4.19-rc8+ kernel), as KCORE_REMAP segments were
+> > added to kcore, thus leading to an additional sections in the same, and
+> > makedumpfile is not longer able to determine the start of direct
+> > mapping of all physical memory, as it relies on traversing the PT_LOAD
+> > segments inside kcore and using the last PT_LOAD segment
+> > to determine the start of direct mapping.
+> ...
+> > Testing:
+> > -------
+>
+> This one vmcoreinfo entry adding won't impact kernel performance. And
+> page_offset_base need be got during makedumpfile initialization, it
+> won't impact makedumpfile efficiency either, especially compared with
+> the later page filterring and writting out to storage space. I don't
+> think there's any need to provide a detailed test result here. If
+> possible, just mention it works in this way, maybe it's better in some
+> aspects, such as code simplicity, etc.
+>
+> >  - I tested this patch (rebased on 'linux-next') on a x86_64 machine
+> >    using the modified 'makedumpfile' user-space code (see [3] for my
+> >    github tree which contains the same) for determining how many pages
+> >    are dumpable when different dump_level is specified (which is
+> >    one use-case of live-debugging via 'makedumpfile').
+> >  - I tested both the KASLR and non-KASLR boot cases with this patch.
+> >  - Here is one sample log (for KASLR boot case) on my x86_64 machine:
+> >
+> >    < snip..>
+> >    The kernel doesn't support mmap(),read() will be used instead.
+> >
+> >    TYPE               PAGES                   EXCLUDABLE      DESCRIPTION
+> >    ----------------------------------------------------------------------
+> >    ZERO               21299                   yes             Pages filled
+> >    with zero
+> >    NON_PRI_CACHE      91785                   yes             Cache
+> >    pages without private flag
+> >    PRI_CACHE  1                       yes             Cache pages with
+> >    private flag
+> >    USER               14057                   yes             User process
+> >    pages
+> >    FREE               740346                  yes             Free pages
+> >    KERN_DATA  58152                   no              Dumpable kernel
+> >    data
+> >
+> >    page size:         4096
+> >    Total pages on system:     925640
+> >    Total size on system:      3791421440       Byte
+> >
+> ...
+>
+> > diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+> > index 4c8acdfdc5a7..6161d77c5bfb 100644
+> > --- a/arch/x86/kernel/machine_kexec_64.c
+> > +++ b/arch/x86/kernel/machine_kexec_64.c
+> > @@ -356,6 +356,9 @@ void arch_crash_save_vmcoreinfo(void)
+> >       VMCOREINFO_SYMBOL(init_top_pgt);
+> >       vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
+> >                       pgtable_l5_enabled());
+> > +#ifdef CONFIG_RANDOMIZE_BASE
+>
+> Finally, embracing it into CONFIG_RANDOMIZE_BASE ifdefery seems not
+> right. The latest kernel is using page_offset_base to do the dynamic
+> memory layout between level4 and level5 changing. This may not work in
+> 5-level system with CONFIG_RANDOMIZE_BASE=n.
 
-Will
+I think you missed the v2 change log and the build-bot error on v1
+(see here: <https://patchwork.kernel.org/patch/10657933/#22291691>).
+With .config files which have CONFIG_RANDOMIZE_BASE=n, we get the
+following compilation error
+without the #ifdef jugglery:
+
+ arch/x86/kernel/machine_kexec_64.o: In function `arch_crash_save_vmcoreinfo':
+ arch/x86/kernel/machine_kexec_64.c:359: undefined reference to
+`page_offset_base'
+ arch/x86/kernel/machine_kexec_64.c:359: undefined reference to
+`page_offset_base'
+
+Anyways, with Kazu's and Boris's comments on the v2, I understand that
+adding 'page_offset_base' variable to vmcoreinfo is useful for x86
+kernel.
+I will now work on the v3 to take into account review comments and
+also work with Lianbo to get the same added to the overall vmcoreinfo
+documentation he is preparing for x86.
+
+Thanks,
+Bhupesh
+
+
+> > +     VMCOREINFO_NUMBER(page_offset_base);
+> > +#endif
+> >
+> >  #ifdef CONFIG_NUMA
+> >       VMCOREINFO_SYMBOL(node_data);
+> > --
+> > 2.7.4
+> >
