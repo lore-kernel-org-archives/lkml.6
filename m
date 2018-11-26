@@ -6,160 +6,147 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7743FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3667DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6267205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:31:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6267205C9
+	by mail.kernel.org (Postfix) with ESMTP id 0400E20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:31:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0400E20855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbeK0G0j (ORCPT
+        id S1727049AbeK0G0n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 01:26:39 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45946 "EHLO
+        Tue, 27 Nov 2018 01:26:43 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45968 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726630AbeK0G0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 01:26:38 -0500
+        id S1726343AbeK0G0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 01:26:42 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 381AF1B55;
-        Mon, 26 Nov 2018 11:31:31 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1DCC82381;
+        Mon, 26 Nov 2018 11:31:35 -0800 (PST)
 Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 085B33F5AF;
-        Mon, 26 Nov 2018 11:31:31 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E1D333F5AF;
+        Mon, 26 Nov 2018 11:31:34 -0800 (PST)
 Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 81AB61AE0839; Mon, 26 Nov 2018 19:31:48 +0000 (GMT)
-Date:   Mon, 26 Nov 2018 19:31:48 +0000
+        id 6FDF31AE0839; Mon, 26 Nov 2018 19:31:52 +0000 (GMT)
+Date:   Mon, 26 Nov 2018 19:31:52 +0000
 From:   Will Deacon <will.deacon@arm.com>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, alex.williamson@redhat.com,
+        Linux PM <linux-pm@vger.kernel.org>, sboyd@kernel.org,
         freedreno <freedreno@lists.freedesktop.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>, robh+dt <robh+dt@kernel.org>,
         linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iommu: arm-smmu: Set SCTLR.HUPCF bit
-Message-ID: <20181126193147.GB534@arm.com>
-References: <20180927224609.19515-1-robdclark@gmail.com>
- <20181029191000.GD16739@arm.com>
- <CAF6AEGtgC0V6ii2=p2HGmqvHFKNJhaOLi8873SGPDsrg70xGRg@mail.gmail.com>
- <20181113063225.GA3109@brain-police>
- <CAF6AEGuV2zh97iq+TgkRw0bK3VNSxJieD1N2KMW3N28h07M+0w@mail.gmail.com>
+        Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [RESEND PATCH v17 2/5] iommu/arm-smmu: Invoke pm_runtime during
+ probe, add/remove device
+Message-ID: <20181126193151.GC534@arm.com>
+References: <20181116112430.31248-1-vivek.gautam@codeaurora.org>
+ <20181116112430.31248-3-vivek.gautam@codeaurora.org>
+ <20181121173757.GA9801@arm.com>
+ <CAFp+6iEH7_XEcZNsbZfn6iBF5_o-ZKBj=DpturH7N85LU289qg@mail.gmail.com>
+ <20181123183555.GE21183@arm.com>
+ <9064c01e-cef0-9306-078a-8d303cd6614b@codeaurora.org>
+ <d66c5dbf-2e44-a915-14a0-1968c8ede832@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAF6AEGuV2zh97iq+TgkRw0bK3VNSxJieD1N2KMW3N28h07M+0w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d66c5dbf-2e44-a915-14a0-1968c8ede832@codeaurora.org>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-On Tue, Nov 13, 2018 at 08:12:35AM -0500, Rob Clark wrote:
-> On Tue, Nov 13, 2018 at 1:32 AM Will Deacon <will.deacon@arm.com> wrote:
-> > On Fri, Nov 09, 2018 at 01:01:55PM -0500, Rob Clark wrote:
-> > > On Mon, Oct 29, 2018 at 3:09 PM Will Deacon <will.deacon@arm.com> wrote:
-> > > > On Thu, Sep 27, 2018 at 06:46:07PM -0400, Rob Clark wrote:
-> > > > > We seem to need to set either this or CFCFG (stall), otherwise gpu
-> > > > > faults trigger problems with other in-flight transactions from the
-> > > > > GPU causing CP errors, etc.
-> > > > >
-> > > > > In the ARM SMMU spec, the 'Hit under previous context fault' bit is
-> > > > > described as:
-> > > > >
-> > > > >  '0' - Stall or terminate subsequent transactions in the presence
-> > > > >        of an outstanding context fault
-> > > > >  '1' - Process all subsequent transactions independently of any
-> > > > >        outstanding context fault.
-> > > > >
-> > > > > Since we don't enable CFCFG (stall) the behavior of terminating
-> > > > > other transactions makes sense.  And is probably not what we want
-> > > > > (and definately not what we want for GPU).
-> > > > >
-> > > > > Signed-off-by: Rob Clark <robdclark@gmail.com>
-> > > > > ---
-> > > > > So I hit this issue a long time back on 820 (msm8996) and at the
-> > > > > time I solved it with a patch that enabled CFCFG.  And it resurfaced
-> > > > > more recently on sdm845.  But at the time CFCFG was rejected, iirc
-> > > > > because of concern that it would cause problems on other non-qcom
-> > > > > arm smmu implementations.  And I think I forgot to send this version
-> > > > > of the solution.
-> > > > >
-> > > > > If enabling HUPCF is anticipated to cause problems on other ARM
-> > > > > SMMU implementations, I think I can come up with a variant of this
-> > > > > patch which conditionally enables it for snapdragon.
-> > > > >
-> > > > > Either way, I'd really like to get some variant of this fix merged
-> > > > > (and probably it would be a good idea for stable kernel branches
-> > > > > too), since current behaviour with the GPU means faults turn into
-> > > > > a fantastic cascade of fail.
-> > > >
-> > > > Can you describe how this fantastic cascade of fail improves with this
-> > > > patch, please? If you're getting context faults then something has already
-> > > > gone horribly wrong, so I'm trying to work out how this improves things.
-> > > >
-> > >
-> > > There are plenty of cases where getting iommu faults with a GPU is
-> > > "normal", or at least not something the kernel or even GL driver can
-> > > control.
+On Mon, Nov 26, 2018 at 04:56:42PM +0530, Vivek Gautam wrote:
+> On 11/26/2018 11:33 AM, Vivek Gautam wrote:
+> >On 11/24/2018 12:06 AM, Will Deacon wrote:
+> >>On Thu, Nov 22, 2018 at 05:32:24PM +0530, Vivek Gautam wrote:
+> >>>On Wed, Nov 21, 2018 at 11:09 PM Will Deacon <will.deacon@arm.com>
+> >>>wrote:
+> >>>>On Fri, Nov 16, 2018 at 04:54:27PM +0530, Vivek Gautam wrote:
+> >>>>>From: Sricharan R <sricharan@codeaurora.org>
+> >>>>>
+> >>>>>The smmu device probe/remove and add/remove master device callbacks
+> >>>>>gets called when the smmu is not linked to its master, that is
+> >>>>>without
+> >>>>>the context of the master device. So calling runtime apis in those
+> >>>>>places
+> >>>>>separately.
+> >>>>>Global locks are also initialized before enabling runtime pm as the
+> >>>>>runtime_resume() calls device_reset() which does tlb_sync_global()
+> >>>>>that ultimately requires locks to be initialized.
+> >>>>>
+> >>>>>Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> >>>>>[vivek: Cleanup pm runtime calls]
+> >>>>>Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> >>>>>Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> >>>>>Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> >>>>>Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+> >>>>>---
+> >>>>>  drivers/iommu/arm-smmu.c | 101
+> >>>>>++++++++++++++++++++++++++++++++++++++++++-----
+> >>>>>  1 file changed, 91 insertions(+), 10 deletions(-)
+> >>>>Given that you're doing the get/put in the TLBI ops unconditionally:
+> >>>>
+> >>>>>  static void arm_smmu_flush_iotlb_all(struct iommu_domain *domain)
+> >>>>>  {
+> >>>>>       struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+> >>>>>+     struct arm_smmu_device *smmu = smmu_domain->smmu;
+> >>>>>
+> >>>>>-     if (smmu_domain->tlb_ops)
+> >>>>>+     if (smmu_domain->tlb_ops) {
+> >>>>>+             arm_smmu_rpm_get(smmu);
+> >>>>>smmu_domain->tlb_ops->tlb_flush_all(smmu_domain);
+> >>>>>+             arm_smmu_rpm_put(smmu);
+> >>>>>+     }
+> >>>>>  }
+> >>>>>
+> >>>>>  static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
+> >>>>>  {
+> >>>>>       struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
+> >>>>>+     struct arm_smmu_device *smmu = smmu_domain->smmu;
+> >>>>>
+> >>>>>-     if (smmu_domain->tlb_ops)
+> >>>>>+     if (smmu_domain->tlb_ops) {
+> >>>>>+             arm_smmu_rpm_get(smmu);
+> >>>>>smmu_domain->tlb_ops->tlb_sync(smmu_domain);
+> >>>>>+             arm_smmu_rpm_put(smmu);
+> >>>>>+     }
+> >>>>Why do you need them around the map/unmap calls as well?
+> >>>We still have .tlb_add_flush path?
+> >>Ok, so we could add the ops around that as well. Right now, we've got
+> >>the runtime pm hooks crossing two parts of the API.
 > >
-> > Such as? All the mainline driver does is print a diagnostic and clear the
-> > fault, which doesn't seem generally useful.
+> >Sure, will do that then, and remove the runtime pm hooks from map/unmap.
 > 
-> it is useful to debug the fault ;-)
+> I missed this earlier -
+> We are adding runtime pm hooks in the 'iommu_ops' callbacks and not really
+> to
+> 'tlb_ops'. So how the runtime pm hooks crossing the paths?
+> '.map/.unmap' iommu_ops don't call '.flush_iotlb_all' or '.iotlb_sync'
+> iommu_ops
+> anywhere.
 > 
-> Although eventually we'll want to be able to do more than that, like
-> have the fault trigger bringing in pages of a mmap'd file and that
-> sort of thing.
+> E.g., only callers to domain->ops->flush_iotlb_all() are:
+> iommu_dma_flush_iotlb_all(), or iommu_flush_tlb_all() which are not in
+> map/unmap paths.
 
-Right, and feels very strange to me if we have this bit set because it
-means that your fault is no longer synchronous and therefore diverges
-from the fault model that you get from the CPU, where you certainly
-wouldn't expect stores appearing in the program after a faulting load to
-be visible in memory. However, thinking harder about it, I suppose we're
-already in a situation where the translations are handled out of order
-in the absence of barriers, so maybe it's not the end of the world.
+Yes, sorry, I got confused here and completely misled you. In which case,
+your original patch is ok because it intercepts the core IOMMU API via
+iommu_ops. Apologies.
 
-Could you dump the FSR value that you see in the fault handler, please?
-From my reading of the architecture spec, as long as clear all of the
-fault bits in the irq handler, then your machine shouldn't die like it
-does with HUPCFG=CFCFG=0..
+At that level, should we also annotate arm_smmu_iova_to_phys_hard()
+for the iova_to_phys() implementation?
 
-> > > With this patch, you still get the iommu fault, but it doesn't cause
-> > > the gpu to crash.  But without it, other memory accesses in flight
-> > > while the fault occurs, like the GPU command-processor reading further
-> > > ahead in the cmdstream to setup next draw, would return zero's,
-> > > causing the GPU to crash or get into a bad state.
-> >
-> > I get that part, but I don't understand why we're seeing faults in the first
-> > place and I worry that this patch is just the tip of the iceberg. It's also
-> > not clear that processing subsequent transactions is always the right thing
-> > to do in a world where we actually want to report (and handle) synchronous
-> > faults from devices.
-> 
-> Sure, it is a bug.. but it can be an application bug that is not
-> something the userspace GL driver or kernel could do anything about.
-> We shouldn't let this kill the GPU.  If the application didn't have
-> this much control, we wouldn't need an IOMMU in the first place[1].
-> With opencl compute, the userspace controlled shader has full blown
-> pointers to GPU memory.
-> 
-> And even in cases where it is a userspace GL driver bug, having some
-> robustness to not completely kill the GPU makes debugging much easier.
-> Something I do a lot when bringing up support for a new generation of
-> GPU.
-> 
-> I'm having a hard time understanding your objection to this.
-> Returning zero's for non-faulting transactions is a *really bad idea*.
-
-Wait -- who said anything about returning zeroes? Where does that behaviour
-appear in the architecture?
+With that detail and clock bits sorted out, we should be able to get this
+queued at last.
 
 Will
