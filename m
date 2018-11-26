@@ -7,110 +7,98 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C672EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26332C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9057120663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:26:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA4A420862
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:27:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sHAPDlzf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9057120663
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R3anh+9C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA4A420862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbeK0EVF (ORCPT
+        id S1726881AbeK0EWE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:21:05 -0500
-Received: from mail-it1-f201.google.com ([209.85.166.201]:54825 "EHLO
-        mail-it1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbeK0EVF (ORCPT
+        Mon, 26 Nov 2018 23:22:04 -0500
+Received: from mail-qk1-f201.google.com ([209.85.222.201]:32870 "EHLO
+        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbeK0EWE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:21:05 -0500
-Received: by mail-it1-f201.google.com with SMTP id v3so23703639itf.4
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 09:26:18 -0800 (PST)
+        Mon, 26 Nov 2018 23:22:04 -0500
+Received: by mail-qk1-f201.google.com with SMTP id 80so20096686qkd.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 09:27:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:message-id:mime-version:subject:from:to:cc;
-        bh=hTRssr8EggBR6XE/i8hBHQD6Z1TBxrR9NysC2XVjA48=;
-        b=sHAPDlzfjrkDNxqOgVAY+MIias9AjygBbJetxZvF8nuAXHEuMTL4uzTblBIgaLGAV7
-         Pu7w3RcBlHw6r0eHD4N5yOFZVbOvQpYcWb4t9QDqLlC3hZCUetMFubN3eIs8wdwizfI8
-         wvqQC5K7oiqyMtvwgcLi+N/BugLrD6xGf+Xka6Y75kGLA/PwxXdTcR6ogSBCAmQqFOzJ
-         kZ9NTQBJLbOYRogVVRDjExRgCXhBFKLaQp85HVWeRHYzHrAEAEgGriHFWD9uf80aOChs
-         7q5XHy9TvZSGhCuX4k2Bgoxdb/nRUlnc/RFWWPlzPthQgDAl5EWn5Agdv8IWQSLB7ivh
-         G1Yw==
+        bh=2uvYqwo8b0d15h+35lgIxvtd3vHLDG6JsoJ+bhXgr5M=;
+        b=R3anh+9CYkNOdHKx/t0Js6QRHN0H3wJhaUFe39j7ELxRdo3kQLWljIhaXciPQkbp36
+         qtE9nmJmVCSfNaOBjyVx8qOy+M8Tx22ds74m1E6aHiu18x3q9oN6bGXpC1iAuv+8Pzjv
+         U3v9E+c/1GwT/+dIDL+P6XQkPeirUpFOONDOn0zy+oU9H52e0Ry/WREvGDqoqzXs3NYy
+         xeko7wlvYtG/hDLz7GRIZ4XFGjUSx/Y9k81qZ1gRXQ7Eyl2Ofb+y3YX74QEGyQkszEUD
+         EXDlez6Aq1+rvv+JyXaeXHnkU5tuVDnq+N20kHfwhSlHJiRjQ9LKo5srhDUMat8omQDb
+         mtJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=hTRssr8EggBR6XE/i8hBHQD6Z1TBxrR9NysC2XVjA48=;
-        b=s2kBUGIm8sN4hTploSCcQPlWPISx5rGdzKZ4sdGuLZ7QaTyJCKko3+qUmq3dz2ZYvZ
-         sHRqDKiQRB4iDGY9kxvdswqJr2vSn5pb6utFeJl0QeK/x6R2TCMyvg6cxVkCFN0JOgf0
-         4ED7T/6JgGXSJ9di6Vw27rBHjVDn0hQWfaN1bW6D/THntjn+jkGrnSm7ec90h0jEKGpo
-         S0FK6pSrBB+7zf2Q1UGAKDSWYYk7I6qJYLVoBH5QPDP+ddl9CbWwE11BG+bWEH9Oqavj
-         NLnxwq8ywEGwW9aX4bZ0RRwsBdh/NCQ5ophyOTGzuJuAPwa8GKMu+cjTJtoBZqzivwvE
-         Og3g==
-X-Gm-Message-State: AA+aEWYiDF65jXHHI/aMoHM4Jp4BMd3yjLVlYCAYTJy3nO4qjcJ/JZvJ
-        nZqs4IOwe5B0kBvxPFBox4A4IeYWvzM=
-X-Google-Smtp-Source: AFSGD/WGfnLffnTR2GAbrzFOO63sKw37JkXE1k5GhdmHWeVbMq+wi+w3QsPbhZIRqluK0QVmAY8lE3cTcUM=
-X-Received: by 2002:a24:946:: with SMTP id 67mr12533808itm.28.1543253178020;
- Mon, 26 Nov 2018 09:26:18 -0800 (PST)
-Date:   Mon, 26 Nov 2018 18:26:07 +0100
-Message-Id: <20181126172607.125782-1-rburny@google.com>
+        bh=2uvYqwo8b0d15h+35lgIxvtd3vHLDG6JsoJ+bhXgr5M=;
+        b=FBw+Vn4yPms3rWeoFjkDt8AVjapBoKFnHRcLPj8lvpxCA72t48LWCL+OOPmx0ZvjHc
+         OO7NU1Ea9VA1uxbxc4AcIHcW+feF/SGyBVcXgdKRRZCrrFKVa9tVdtgj7khRATMhcRA4
+         AjQxYh7ku/UrO98cmlf8QJrTTJsZiEH36E4pXtbjIhfqw3tRCZ1uRmbawtc4bprattKv
+         E6S2Q+k56acP18oNfvmiYWNa2KoDqoRd1awfQd2bA9hWt3pyk/KJfI+X9AMJ/+gARcnq
+         JJ62fY0wsHh7DswArjaz7QQbCVzlwIPvaoL+7B3Qk29I4u0hoNPYawTQ4HzOJV1RwJfq
+         dqwQ==
+X-Gm-Message-State: AGRZ1gLL9zX0KPfCgb5Po7SDY0Mr/hdQqFitPCJkCWPdteiQbiuyWZ1A
+        /0/O9b9Rvz8Ng1GcX/BUsQ5E3Fa5xQ==
+X-Google-Smtp-Source: AJdET5e7LX3HaAy/Rrg06eUAN//jyR1uYYLyA4NcwQVXpJR+VoRkY8ps3mubK4/cT7nNxxqh+05cBxPfLg==
+X-Received: by 2002:aed:23fd:: with SMTP id k58mr17514268qtc.39.1543253237335;
+ Mon, 26 Nov 2018 09:27:17 -0800 (PST)
+Date:   Mon, 26 Nov 2018 18:27:06 +0100
+Message-Id: <20181126172706.184008-1-jannh@google.com>
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
-Subject: [PATCH] fs: Make /proc/sys inodes be owned by global root.
-From:   Radoslaw Burny <rburny@google.com>
-To:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Seth Forshee <seth.forshee@canonical.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        jsperbeck@google.com, Radoslaw Burny <rburny@google.com>
+Subject: [PATCH] x86/fpu: XRSTOR is expected to raise #GP
+From:   Jann Horn <jannh@google.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        jannh@google.com
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Due to a recent commit (d151ddc00498 - fs: Update i_[ug]id_(read|write)
-to translate relative to s_user_ns), inodes under /proc/sys have -1
-written to their i_uid/i_gid members if a containing userns does not
-have entries for root in the uid/gid_map.
+commit 75045f77f7a7 ("x86/extable: Introduce _ASM_EXTABLE_UA for uaccess
+fixups") incorrectly replaced the fixup entry for XSTATE_OP with a
+user-#PF-only fixup. However, XRSTOR can also raise #GP when the supplied
+address points to userspace memory. Change it back.
 
-This wouldn't normally matter, because these values are not used for
-access checks. However, a later change (0bd23d09b874 - Don't modify
-inodes with a uid or gid unknown to the vfs) changes the kernel to
-prevent opens for write if the i_uid/i_gid field in the inode is -1,
-even if the /proc/sys-specific access checks would otherwise pass.
-
-This causes a problem: in a userns without root mapping, even the
-namespace creator cannot write to e.g. /proc/sys/kernel/shmmax.
-This change fixes the problem by overriding i_uid/i_gid back to
-GLOBAL_ROOT_UID/GID.
-
-Tested: Used a repro program that creates a user namespace without any
-mapping and stat'ed /proc/$PID/root/proc/sys/kernel/shmmax from outside.
-Before the change, it shows uid/gid of 65534, with the change it's 0.
-
-Signed-off-by: Radoslaw Burny <rburny@google.com>
+Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Fixes: 75045f77f7a7 ("x86/extable: Introduce _ASM_EXTABLE_UA for uaccess fixups")
+Signed-off-by: Jann Horn <jannh@google.com>
 ---
- fs/proc/proc_sysctl.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/include/asm/fpu/internal.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index c5cbbdff3c3d..67379a389658 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -499,6 +499,10 @@ static struct inode *proc_sys_make_inode(struct super_block *sb,
- 
- 	if (root->set_ownership)
- 		root->set_ownership(head, table, &inode->i_uid, &inode->i_gid);
-+	else {
-+		inode->i_uid = GLOBAL_ROOT_UID;
-+		inode->i_gid = GLOBAL_ROOT_GID;
-+	}
- 
- out:
- 	return inode;
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index 5f7290e6e954..69dcdf195b61 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -226,7 +226,7 @@ static inline void copy_fxregs_to_kernel(struct fpu *fpu)
+ 		     "3: movl $-2,%[err]\n\t"				\
+ 		     "jmp 2b\n\t"					\
+ 		     ".popsection\n\t"					\
+-		     _ASM_EXTABLE_UA(1b, 3b)				\
++		     _ASM_EXTABLE(1b, 3b)				\
+ 		     : [err] "=r" (err)					\
+ 		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
+ 		     : "memory")
 -- 
 2.20.0.rc0.387.gc7a69e6b6c-goog
 
