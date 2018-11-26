@@ -2,127 +2,76 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6716C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B09BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AFD920855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:45:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20D3120663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:46:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="azxt4IIP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AFD920855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Alf7PPyQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20D3120663
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbeKZTjB (ORCPT
+        id S1726253AbeKZTjw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 14:39:01 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38125 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726164AbeKZTjB (ORCPT
+        Mon, 26 Nov 2018 14:39:52 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37650 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbeKZTjv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 14:39:01 -0500
-Received: by mail-pl1-f193.google.com with SMTP id e5so13534896plb.5
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 00:45:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=46CET2+Q2IdzQ/i3quwG541JRfuR6CuxmXLMvtEzmwc=;
-        b=azxt4IIP8t82KkeRGVKgYwr8GL3OVXxJkcu4hpOQ8QNA5Z8YQDlm7VHImFPTN7yK+P
-         hdd4Hzshq5cDXCbxeAZ6qOTB2iq1/o5gsS76w7Ie7s6JLLmA2DKY97lkK8RUWxDoBkUO
-         8SNAxpuwRM4OoOG1144iebWkrqp4AfRJioaZ0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=46CET2+Q2IdzQ/i3quwG541JRfuR6CuxmXLMvtEzmwc=;
-        b=n6SjIU3E+pDXukjfvYXxlq8BrmLYWJ9YB9A8pfe0Dlku273Z8Mw+3Cvfcc8px0TDP7
-         oaqejBMKNaRmpmJzESf/bL8kOBwRZPixfzCRpnwvXoYXODjkevv/P5udscZrNgePdo9L
-         ga6vu+KIjOHcMeFHe/nfS3FVAH+Uasroj6vvGvSWPy0lbA3vAtwwI0HHgtGcQtrtV7dg
-         il5oPCa7ofL6J0XwWGgqh5jAsi9Vyt9u3UidMHxvSb/YA3M9gFSSs4/nCunOpnHh516h
-         yTdqEHgMToT/9gmshspfKGFNpUnG7vu0wH8pRC/zKyDM+bHWprEoC3/GTzMyPygIJxxX
-         zGeA==
-X-Gm-Message-State: AA+aEWaQ4XK5pwgToojRdJq2VfK2zBQk7WIlRWmkLfthDcxXP4B6pX1z
-        KpHV1PHYvIDmQry9YhQjEaAR+Q==
-X-Google-Smtp-Source: AFSGD/WDkNQlSvKH4zRg050vAHXYvOwuYXkYm1grgNRDa/dq/Xz2+lTE0o7e+FN8EXbLN9qJsAYgEA==
-X-Received: by 2002:a17:902:2862:: with SMTP id e89mr27180376plb.158.1543221936838;
-        Mon, 26 Nov 2018 00:45:36 -0800 (PST)
-Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id w80-v6sm95740479pfk.11.2018.11.26.00.45.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 00:45:36 -0800 (PST)
-Date:   Mon, 26 Nov 2018 14:15:33 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        Chris Redpath <chris.redpath@linaro.org>,
-        Quentin Perret <quentin.perret@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH V3 2/2] base/drivers/arch_topology: Default dmips-mhz if
- they are not set in DT
-Message-ID: <20181126084533.f5kydkdhukjez2kg@vireshk-i7>
-References: <1543221866-19671-1-git-send-email-daniel.lezcano@linaro.org>
- <1543221866-19671-2-git-send-email-daniel.lezcano@linaro.org>
+        Mon, 26 Nov 2018 14:39:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=upHccE84qko1SAtWxh1pmEqvVg9EbpXGOdVNEHwnQL8=; b=Alf7PPyQqsXsNSGz42T47xB0z
+        iWERJb7X6TSihJNG/Xe5rn7C9obt2oVwrhUsbbl6KYscBMfkj/mdPFEgVAkkG3ChFoHef1Aj2NWsb
+        2L8u/fMix4YwEMtXaMTUGheK551ciZBXWV9obYnnQ7U+aL5vJ5WkyeEnj1BnxjWgGjWs053Sf75CX
+        zxNDIKfLsSPo2WPG2y3+lG2YGnO6jO52A+vwuvghDMfg374QjZGzZvyIHaxFxN1y6X3uBLJ9tZkAV
+        YNBlyjOTED5ME9BOUwbZjV9R7E95k+NKruU4aIaYA+11yz7vmYp+twB35abo7VR0AU/WceHkC87k5
+        qC0DBXViA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gRCXA-0004GJ-MZ; Mon, 26 Nov 2018 08:46:24 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 85A052029FD58; Mon, 26 Nov 2018 09:46:21 +0100 (CET)
+Date:   Mon, 26 Nov 2018 09:46:21 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        mingo@kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Borislav Petkov <bp@suse.de>, Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] locking/atomics: build atomic headers as required
+Message-ID: <20181126084621.GL2113@hirez.programming.kicks-ass.net>
+References: <20181123153321.8561-1-mark.rutland@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1543221866-19671-2-git-send-email-daniel.lezcano@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20181123153321.8561-1-mark.rutland@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26-11-18, 09:44, Daniel Lezcano wrote:
-> In the case of asymmetric SoC with the same micro-architecture, we
-> have a group of CPUs with smaller OPPs than the other group. One
-> example is the 96boards dragonboard 820c. There is no dmips/MHz
-> difference between both groups, so no need to specify the values in
-> the DT. Unfortunately, without these defined, there is no scaling
-> capacity computation triggered, so we need to write
-> 'capacity-dmips-mhz' for each CPU with the same value in order to
-> force the scaled capacity computation.
+On Fri, Nov 23, 2018 at 03:33:21PM +0000, Mark Rutland wrote:
+> Andrew and Ingo report that the check-atomics.sh script is simply too
+> slow to run for every kernel build, and it's impractical to make it
+> faster without rewriting it in something other than shell.
 > 
-> In order to fix this situation, allocate 'raw_capacity' so the pointer
-> is set and the init_cpu_capacity_callback() function can be called.
-> 
-> This was tested on db820c:
->  - specified values in the DT (correct results)
->  - partial values defined in the DT (error + fallback to defaults)
->  - no specified values in the DT (correct results)
-> 
-> correct results are:
->   cat /sys/devices/system/cpu/cpu*/cpu_capacity
->    758
->    758
->   1024
->   1024
-> 
->   ... respectively for CPU0, CPU1, CPU2 and CPU3.
-> 
-> That reflects the capacity for the max frequencies 1593600 and 2150400.
-> 
-> Cc: Chris Redpath <chris.redpath@linaro.org>
-> Cc: Quentin Perret <quentin.perret@linaro.org>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Amit Kucheria <amit.kucheria@linaro.org>
-> Cc: Nicolas Dechesne <nicolas.dechesne@linaro.org>
-> Cc: Niklas Cassel <niklas.cassel@linaro.org>
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/base/arch_topology.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+> Rather than committing the generated headers, let's regenerate these
+> as-required for a pristine tree.
 
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+Thing is, I '_never_' have a pristine tree. Now, I would also be in a
+position to know if something with the atomics changed, but that can't
+help other people that never use pristine trees.
 
--- 
-viresh
+Could we perhaps get an explicit 'genatomics' target or something to
+check/force-update this stuff?
