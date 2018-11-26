@@ -2,140 +2,115 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D948C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FFBDC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:24:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF3DC205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:23:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF3DC205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id F37502086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:24:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SVX38tyo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F37502086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727056AbeK0GTA (ORCPT
+        id S1727093AbeK0GTd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 01:19:00 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:51994 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726254AbeK0GS7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 01:18:59 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gRMTv-00019x-C5; Mon, 26 Nov 2018 12:23:44 -0700
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>
-References: <20181126105059.832485122@linuxfoundation.org>
- <20181126105100.053276084@linuxfoundation.org>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <22aec0ec-4da1-fcbc-3318-ec7709888769@deltatee.com>
-Date:   Mon, 26 Nov 2018 12:23:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 27 Nov 2018 01:19:33 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:46639 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbeK0GTb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 01:19:31 -0500
+Received: by mail-oi1-f194.google.com with SMTP id x202so16926601oif.13;
+        Mon, 26 Nov 2018 11:24:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=AvfIZ9PB1dFlppUzJKR1909FJIJrzR+QBaeS3Cpmn9w=;
+        b=SVX38tyoPh+Ne0hZ4ujiqVS3FY9BW7IyBp9zzj9KEj6shQAl+X/ODvU61qvCO5fD2r
+         mUesX+qfnBKb9mYtmljgwOS/ijdZZ2zGzhkRVIqjOT1TPWGo+LKmaDz7QUXxNulCD4lE
+         ONd78mQb+hHADpOag08TDvikUporiCcLxzCnSNHxrKfyUGZ5EcVDxgp6jDXZghgpTwhq
+         hWH1zj6sjcwM4Z/w3j+/tuAbHz+hIv/Y2LaBddlgppeQFi31IZi4lHq9qt1jF2/0cts8
+         wjOKsrJFc0r50i2+PfX1x5IpY0SscoB3Ig+np68lW/Rxgww7QzM2mbDb1pS1IjYiMKDZ
+         gOrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=AvfIZ9PB1dFlppUzJKR1909FJIJrzR+QBaeS3Cpmn9w=;
+        b=RBPNbEGTIeiZo/AAmElywdK5cbLcnES0mFZ3Q5TqX0QDbe68z/Xbbw7IqPdpVqgSvS
+         PNIm9VHi+KNijsi3d9DgP7x9AyhWbtI1GCNbyUCg1pNYC08PU0lJI4E2Wp8dF+fQi1BY
+         IsYjDroYuPVg570lI44r3bE87bN6KL3qHYAC92YixfdZhWcuiyTt4atkfBCgKsMfiszP
+         xzOuS4XHS586puIjl25vmZTFDS18AkIfF5sxnEYvXG0ob9MSs3w1X6pgSDww+EXLtBm4
+         rQlMl2BlW5qpZsM/XS4T9n2lhxy157+eMBesCtFz/7pUwJRb6CWUALwjpdm/htGqS+nz
+         A1fQ==
+X-Gm-Message-State: AGRZ1gJ3ECDWtPvvJDorHQTREaGq3s6YwXf0nYOlkZHS7r4jkMkK2itv
+        EtPx3pXCPxzzvxlVFrU1qeSBsOfDY+/aZzb1rEU=
+X-Google-Smtp-Source: AJdET5fpJOHg+9C+1W9jpnQDVdAcrdgSvWNcxEUcsvBZ0ezDrNFQBhguDY/BRM6erCbRAQf3aDKrqO/IhEYgCGPkdJg=
+X-Received: by 2002:aca:a60d:: with SMTP id p13mr16745510oie.2.1543260265055;
+ Mon, 26 Nov 2018 11:24:25 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181126105100.053276084@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: sashal@kernel.org, axboe@kernel.dk, hch@lst.de, keith.busch@intel.com, stable@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 4.19 005/118] nvme-pci: fix conflicting p2p resource adds
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20181121180443.tjgcpu2webrq53rh@smtp.gmail.com>
+ <1542884458.30645.22.camel@analog.com> <20181125110839.4a3aecf9@archlinux>
+In-Reply-To: <20181125110839.4a3aecf9@archlinux>
+From:   Giuliano Belinassi <giuliano.belinassi@gmail.com>
+Date:   Mon, 26 Nov 2018 17:24:13 -0200
+Message-ID: <CAG4RSAHcEYj5bUpxT8apwXZZpWkPowFJ333tZiTHhb9VVn4m7g@mail.gmail.com>
+Subject: Re: [PATCH] staging: iio: ad7780: Add gain & filter gpio support
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     StefanSerban.Popa@analog.com,
+        "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, kernel-usp@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, thank you for the review
 
+> On Thu, 22 Nov 2018 11:01:00 +0000
+> "Popa, Stefan Serban" <StefanSerban.Popa@analog.com> wrote:
+> > I think that instead of setting the gain directly, we should use
+> > the IIO_CHAN_INFO_SCALE attribute. At page 12 of the ad7780 datasheet t=
+here
+> > is a formula from which the output code can be calculated:
+> > Code =3D 2^(N =E2=88=92 1)
+> > =C3=97 [(AIN =C3=97 Gain /VREF) + 1]. So, by setting the scale from use=
+r space, the
+> > driver can calculate the correct gain by using the formula above. Also,=
+ it
+> > would be useful to introduce scale available.
+> > Furthermore, there is a new
+> > ad7124 adc driver which does this exact thing. Take a look here: https:=
+//gi
+> > thub.com/analogdevicesinc/linux/blob/master/drivers/iio/adc/ad7124.c#L3=
+37.
 
-On 2018-11-26 3:49 a.m., Greg Kroah-Hartman wrote:
-> 4.19-stable review patch.  If anyone has any objections, please let me know.
+We have some questions about the code you provided to us:
+  1-) What is exactly the inputs for the write_raw function?
+  2-) Could you give more details about the math around lines 346-348?
+Is it correct to assume that the multiplication at line 346 won't
+overflow? (vref is an uint)
 
-This commit is fixing a bug in the p2pdma code which was merged for
-4.20. I'm not sure it would actually fix anything in the stable kernels.
-On the other hand, based on my understanding, it shouldn't hurt anything
-either.
+And regarding our code:
+  1-) The val in our write_raw function should be, in case of GAIN, a
+number that best approximate the actual gain value of 1 or 128? For
+instance, if the user inputs 126, we should default to 128?
+  2-) In the case of FILTER, is it the same? Is the user sending the
+value in mHz (milihertz)?
 
-Thanks,
-
-Logan
-
-> ------------------
-> 
-> [ Upstream commit 9fe5c59ff6a1e5e26a39b75489a1420e7eaaf0b1 ]
-> 
-> The nvme pci driver had been adding its CMB resource to the P2P DMA
-> subsystem everytime on on a controller reset. This results in the
-> following warning:
-> 
->     ------------[ cut here ]------------
->     nvme 0000:00:03.0: Conflicting mapping in same section
->     WARNING: CPU: 7 PID: 81 at kernel/memremap.c:155 devm_memremap_pages+0xa6/0x380
->     ...
->     Call Trace:
->      pci_p2pdma_add_resource+0x153/0x370
->      nvme_reset_work+0x28c/0x17b1 [nvme]
->      ? add_timer+0x107/0x1e0
->      ? dequeue_entity+0x81/0x660
->      ? dequeue_entity+0x3b0/0x660
->      ? pick_next_task_fair+0xaf/0x610
->      ? __switch_to+0xbc/0x410
->      process_one_work+0x1cf/0x350
->      worker_thread+0x215/0x3d0
->      ? process_one_work+0x350/0x350
->      kthread+0x107/0x120
->      ? kthread_park+0x80/0x80
->      ret_from_fork+0x1f/0x30
->     ---[ end trace f7ea76ac6ee72727 ]---
->     nvme nvme0: failed to register the CMB
-> 
-> This patch fixes this by registering the CMB with P2P only once.
-> 
-> Signed-off-by: Keith Busch <keith.busch@intel.com>
-> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/nvme/host/pci.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index d668682f91df..da18e0ac9fa2 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -1647,6 +1647,9 @@ static void nvme_map_cmb(struct nvme_dev *dev)
->  	struct pci_dev *pdev = to_pci_dev(dev->dev);
->  	int bar;
->  
-> +	if (dev->cmb_size)
-> +		return;
-> +
->  	dev->cmbsz = readl(dev->bar + NVME_REG_CMBSZ);
->  	if (!dev->cmbsz)
->  		return;
-> @@ -2129,7 +2132,6 @@ static void nvme_pci_disable(struct nvme_dev *dev)
->  {
->  	struct pci_dev *pdev = to_pci_dev(dev->dev);
->  
-> -	nvme_release_cmb(dev);
->  	pci_free_irq_vectors(pdev);
->  
->  	if (pci_is_enabled(pdev)) {
-> @@ -2577,6 +2579,7 @@ static void nvme_remove(struct pci_dev *pdev)
->  	nvme_stop_ctrl(&dev->ctrl);
->  	nvme_remove_namespaces(&dev->ctrl);
->  	nvme_dev_disable(dev, true);
-> +	nvme_release_cmb(dev);
->  	nvme_free_host_mem(dev);
->  	nvme_dev_remove_admin(dev);
->  	nvme_free_queues(dev, 0);
-> 
+Thank you
