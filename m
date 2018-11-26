@@ -2,117 +2,126 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3955AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A34C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0989020663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:08:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0989020663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
+	by mail.kernel.org (Postfix) with ESMTP id 504F820663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:08:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Yc8U4TRH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504F820663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbeK0ED0 (ORCPT
+        id S1727131AbeK0EDc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:03:26 -0500
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:58592 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbeK0ED0 (ORCPT
+        Mon, 26 Nov 2018 23:03:32 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35246 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727082AbeK0EDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:03:26 -0500
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1gRKMY-0006Gt-00; Mon, 26 Nov 2018 17:07:58 +0000
-Date:   Mon, 26 Nov 2018 12:07:58 -0500
-From:   Rich Felker <dalias@libc.org>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Florian Weimer <fweimer@redhat.com>, carlos <carlos@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl
- init and thread creation
-Message-ID: <20181126170758.GP23599@brightrain.aerifal.cx>
-References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com>
- <1150466925.11664.1542992720871.JavaMail.zimbra@efficios.com>
- <20181123173019.GK23599@brightrain.aerifal.cx>
- <865273158.11687.1542995541389.JavaMail.zimbra@efficios.com>
- <20181123183558.GM23599@brightrain.aerifal.cx>
- <1758017676.12041.1543007347347.JavaMail.zimbra@efficios.com>
- <87bm6cqm31.fsf@oldenburg.str.redhat.com>
- <688718071.12798.1543247469553.JavaMail.zimbra@efficios.com>
- <1284855405.12857.1543249851299.JavaMail.zimbra@efficios.com>
+        Mon, 26 Nov 2018 23:03:32 -0500
+Received: by mail-pg1-f194.google.com with SMTP id s198so6453800pgs.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 09:08:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zSJaFg264tb2HzfZbkslyNfTGBGf+AM92JOHgcmxpY4=;
+        b=Yc8U4TRH5vGPPwT182qrDaAEZ7zAQYHAuC3Vl0dWkNtqzjdCcSUAzYKVkkmx6s/nfM
+         bSFpMs++SJ9nSG9m7o0VJ7S5qxgopmFa5JqNuMhLVmah8YLd3C0vVSd+ZHDdS+/+Peku
+         stqF9tyoffbM6gsBagNvP/Y3ZlqSuHwstUwRw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zSJaFg264tb2HzfZbkslyNfTGBGf+AM92JOHgcmxpY4=;
+        b=oeeYUeLt76o+cRlJ/4Fyr/q1Nk0RUNV4Cuyt1LMCWodYc3KZXpRAKp3bxcCGAMHQbV
+         F+JTgpTQV8RZrh8eiIsKPEQAPxVlYqiVLL3ijMGMcdNdoozI5eu8SX5OeD7AURZXLjGB
+         FHRqs0Sf6Gh0x91ztmXVDQSIiO4oLM6nbc+JWg/M2yoYDtfC+nNF+3elb5xBLOHnH/Gn
+         4Oo8Xaxam3t9NAOgyUhoebI6kE4ucAHxtE8mHVt+uAWaPS0odSFFirEPWq99gNGui5tI
+         LseAHo6tZ5q/SJfi2Zypv9RDgTSNpQ/clKXf/et7U1TYP1J67S4lBxmRZkyi/Sm8U1hP
+         RJUg==
+X-Gm-Message-State: AA+aEWYt74/7ekQ95MQc8Tk3Gx/qRpzS+V1ngslTEK9okgEwFBZubUmS
+        2McDUwyCKASbrkQk0n3ep5WeMA==
+X-Google-Smtp-Source: AFSGD/WD6VkjhtY/IkGkGmeUf0zOvO5Qh+6CiCRjTP8lN5O3MQZUxPECCg8E4+v6bI8Q0qFhEjM3iw==
+X-Received: by 2002:a62:5182:: with SMTP id f124mr26647790pfb.238.1543252128786;
+        Mon, 26 Nov 2018 09:08:48 -0800 (PST)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id h129sm1167105pfb.110.2018.11.26.09.08.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 09:08:48 -0800 (PST)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Brian Masney <masneyb@onstation.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] regulator: core: Apply system load even if no consumer loads
+Date:   Mon, 26 Nov 2018 09:08:27 -0800
+Message-Id: <20181126170827.160567-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1284855405.12857.1543249851299.JavaMail.zimbra@efficios.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 11:30:51AM -0500, Mathieu Desnoyers wrote:
-> ----- On Nov 26, 2018, at 10:51 AM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
-> 
-> > ----- On Nov 26, 2018, at 3:28 AM, Florian Weimer fweimer@redhat.com wrote:
-> > 
-> >> * Mathieu Desnoyers:
-> >> 
-> >>> Using a "weak" symbol in early adopter libraries is important, so they
-> >>> can be loaded together into the same process without causing loader
-> >>> errors due to many definitions of the same strong symbol.
-> >> 
-> >> This is not how ELF dynamic linking works.  If the symbol name is the
-> >> same, one definition interposes the others.
-> >> 
-> >> You need to ensure that the symbol has the same size everywhere, though.
-> >> There are some tricky interactions with symbol versions, too.  (The
-> >> interposing libraries must not use symbol versioning.)
-> > 
-> > I was under the impression that loading the same strong symbol into an
-> > application multiple times would cause some kind of warning if non-weak. I did
-> > some testing to figure out which case I remembered would cause this.
-> > 
-> > When compiling with "-fno-common", dynamic and static linking work fine, but
-> > trying to add multiple instances of a given symbol into a single object fails
-> > with:
-> > 
-> > /tmp/ccSakXZV.o:(.bss+0x0): multiple definition of `a'
-> > /tmp/ccQBJBOo.o:(.bss+0x0): first defined here
-> > 
-> > Even if the symbol has the same size.
-> > 
-> > So considering that we don't care about compiling into a single object here,
-> > and only care about static and dynamic linking of libraries, indeed the "weak"
-> > symbol is not useful.
-> > 
-> > So let's make __rseq_abi and __rseq_refcount strong symbols then ?
-> 
-> Actually, looking into ld(1) --warn-common, it looks like "weak" would be cleaner
-> after all, especially for __rseq_abi which we needs to be initialized to a specific
-> value, which is therefore not a common symbol.
-> 
-> "      --warn-common
->            Warn when a common symbol is combined with another common symbol or with a symbol definition.  Unix
->            linkers allow this somewhat sloppy practice, but linkers on some other operating systems do not.
->            This option allows you to find potential problems from combining global symbols.  Unfortunately,
->            some C libraries use this practice, so you may get some warnings about symbols in the libraries as
->            well as in your programs."
-> 
-> Thoughts ?
+Prior to commit 5451781dadf8 ("regulator: core: Only count load for
+enabled consumers") we used to always add up the total load on every
+enable in _regulator_enable().  After that commit we only updated the
+total load when enabling / disabling a regulator where a consumer
+specified a load or when changing the consumer load on an enabled
+regulator.
 
-AFAIK this has nothing to do with dynamic linking.
+The problem with the new scheme is that if there is a system load
+specified for a regulator but no consumers specify a load then we
+never account for it.
 
-Rich
+Let's account for the system load in set_machine_constraints().
+
+NOTE: with the new scheme we end up with a bit of a quandry.  What if
+someone specifies _both_ an initial mode and a system load?  If we
+take the system load into account right at init time then it will
+effectively clobber the initial mode.  We'll resolve this by saying
+that if both are specified then the initial mode will win.  The system
+load will then only take effect if/when a consumer specifies a load.
+If no consumers ever specify a load then the initial mode will persist
+and the system load will have no effect.
+
+Fixes: 5451781dadf8 ("regulator: core: Only count load for enabled consumers")
+Reported-by: Brian Masney <masneyb@onstation.org>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Tested-by: Brian Masney <masneyb@onstation.org>
+---
+
+ drivers/regulator/core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index dbe2f2e6e625..dffee5432ca1 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -1344,6 +1344,12 @@ static int set_machine_constraints(struct regulator_dev *rdev,
+ 			rdev_err(rdev, "failed to set initial mode: %d\n", ret);
+ 			return ret;
+ 		}
++	} else if (rdev->constraints->system_load) {
++		/*
++		 * We'll only apply the initial system load if an
++		 * initial mode wasn't specified.
++		 */
++		drms_uA_update(rdev);
+ 	}
+ 
+ 	/* If the constraints say the regulator should be on at this point
+-- 
+2.20.0.rc0.387.gc7a69e6b6c-goog
+
