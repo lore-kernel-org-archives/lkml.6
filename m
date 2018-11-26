@@ -2,50 +2,51 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BCBFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B744C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E98BC20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5ADC21104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eaze3M+L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E98BC20817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZMq+S/VD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5ADC21104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbeKZVuT (ORCPT
+        id S1728473AbeKZVuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:50:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59470 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:50:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726950AbeKZVuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:50:18 -0500
+        id S1726950AbeKZVuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:50:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C43A2146F;
-        Mon, 26 Nov 2018 10:56:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E16562089F;
+        Mon, 26 Nov 2018 10:56:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229793;
-        bh=0RUWJyw14SPecctHq9ctbB6fBVuK0u7YA+fHi5oqiR8=;
+        s=default; t=1543229796;
+        bh=dsvoUj1At/JPM36WakFhzod6p58EmgVwGdVLhvSpH/E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Eaze3M+LsGDd1SqYHPXoSa4htlNvCYvKHfiRoRcMrLSivWPM7AHIvvmXpQFVT/Mfm
-         VFafRaZ2HK5FQ2wX3XknLpfm6U/F8/C8pOJ62It34RW7oKzmSQOVtl1ShEs6qy7cLn
-         z/iQSkoo0uVb+Thv1wEm2PUf3ELXys4gVMnIwYrM=
+        b=ZMq+S/VDj1yYNFX/swt9ROPETYTUpwKf9uJUA1DH7AG9MB+hZhgHRRrr0dLtJEKnm
+         JDMCNUlJMdFONfkfVlyIjT9quyKI0PJrOh0J4EdX2J5EHzkBqPUIvsfB/nWX/br6s/
+         zEMtnCRUUwOHL2IqcyJ/NJ4yPCR7c2G5CT+bLSrg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 51/70] hwmon: (ibmpowernv) Remove bogus __init annotations
-Date:   Mon, 26 Nov 2018 11:51:06 +0100
-Message-Id: <20181126105051.837827181@linuxfoundation.org>
+Subject: [PATCH 4.4 52/70] lib/raid6: Fix arm64 test build
+Date:   Mon, 26 Nov 2018 11:51:07 +0100
+Message-Id: <20181126105051.910948607@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
 References: <20181126105046.722096341@linuxfoundation.org>
@@ -63,51 +64,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e3e61f01d755188cb6c2dcf5a244b9c0937c258e ]
+[ Upstream commit 313a06e636808387822af24c507cba92703568b1 ]
 
-If gcc decides not to inline make_sensor_label():
+The lib/raid6/test fails to build the neon objects
+on arm64 because the correct machine type is 'aarch64'.
 
-    WARNING: vmlinux.o(.text+0x4df549c): Section mismatch in reference from the function .create_device_attrs() to the function .init.text:.make_sensor_label()
-    The function .create_device_attrs() references
-    the function __init .make_sensor_label().
-    This is often because .create_device_attrs lacks a __init
-    annotation or the annotation of .make_sensor_label is wrong.
+Once this is correctly enabled, the neon recovery objects
+need to be added to the build.
 
-As .probe() can be called after freeing of __init memory, all __init
-annotiations in the driver are bogus, and should be removed.
-
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/ibmpowernv.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ lib/raid6/test/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hwmon/ibmpowernv.c b/drivers/hwmon/ibmpowernv.c
-index 55b5a8ff1cfe..ca3aa28977bc 100644
---- a/drivers/hwmon/ibmpowernv.c
-+++ b/drivers/hwmon/ibmpowernv.c
-@@ -114,7 +114,7 @@ static ssize_t show_label(struct device *dev, struct device_attribute *devattr,
- 	return sprintf(buf, "%s\n", sdata->label);
- }
- 
--static int __init get_logical_cpu(int hwcpu)
-+static int get_logical_cpu(int hwcpu)
- {
- 	int cpu;
- 
-@@ -125,9 +125,8 @@ static int __init get_logical_cpu(int hwcpu)
- 	return -ENOENT;
- }
- 
--static void __init make_sensor_label(struct device_node *np,
--				     struct sensor_data *sdata,
--				     const char *label)
-+static void make_sensor_label(struct device_node *np,
-+			      struct sensor_data *sdata, const char *label)
- {
- 	u32 id;
- 	size_t n;
+diff --git a/lib/raid6/test/Makefile b/lib/raid6/test/Makefile
+index 29090f3db677..28c089cb13f1 100644
+--- a/lib/raid6/test/Makefile
++++ b/lib/raid6/test/Makefile
+@@ -26,7 +26,7 @@ ifeq ($(ARCH),arm)
+         CFLAGS += -I../../../arch/arm/include -mfpu=neon
+         HAS_NEON = yes
+ endif
+-ifeq ($(ARCH),arm64)
++ifeq ($(ARCH),aarch64)
+         CFLAGS += -I../../../arch/arm64/include
+         HAS_NEON = yes
+ endif
+@@ -37,7 +37,7 @@ ifeq ($(IS_X86),yes)
+                     gcc -c -x assembler - >&/dev/null &&	\
+                     rm ./-.o && echo -DCONFIG_AS_AVX2=1)
+ else ifeq ($(HAS_NEON),yes)
+-        OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o
++        OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o recov_neon.o recov_neon_inner.o
+         CFLAGS += -DCONFIG_KERNEL_MODE_NEON=1
+ else
+         HAS_ALTIVEC := $(shell printf '\#include <altivec.h>\nvector int a;\n' |\
 -- 
 2.17.1
 
