@@ -2,85 +2,93 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89127C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36303C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1686020855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:43:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA8DE20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:44:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MT3U/ci8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1686020855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="X/0UUI72"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA8DE20663
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726231AbeKZTg3 (ORCPT
+        id S1726248AbeKZThf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 14:36:29 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:47080 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726164AbeKZTg3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 14:36:29 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v15-v6so15724263ljh.13
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 00:43:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pl/01wJdbl68kMZU3GUZfO6qYr4qR7b/e+82DOpA8Ao=;
-        b=MT3U/ci82DhksDKqaZuW1aotSzNKh83h/ge6OUaIp+hNX12tfVt3DxHjLom2SWKu7X
-         Q+TGPAAJS+mUtHsN/HDoXQeIp2o3hBoqPKlE1Muh7RHVSuje55qa29zye1aAgHQYzGFQ
-         7KIpB0jxkkhPv/Pe/74H/cupm9YfqXfW9C9tE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pl/01wJdbl68kMZU3GUZfO6qYr4qR7b/e+82DOpA8Ao=;
-        b=un5/BvMMQCxWyWyPm68aXBDGCjzuKzLi5roBKD0nsrh2vPy1DdbUQmDEfViPvPGNtP
-         heuBrHm+qFeksaKYUPQrXvK6XNN6mF/KetJkFmG3wolE6nokWp7/njzVyrxrFRJA0bex
-         VsIQ0h57pZz1AVLI6afMpqYrRIhYHd/tT6hj9H4Hb5bv8wJXUFF5OzCwC12DWMv6HjXv
-         VCnVxvjmmDeRMcIwYUy5kdvWbpp8z1CWq6DwY49rB0O5lLN0E6LCuemLemHJJzWXheQk
-         TM1Eoyv+Y8z/K/OCSyNgZMJb+YmH/znxROyb3qkqpGgL55ASmJOKg+JJOpe7DL3zaiyG
-         p+ng==
-X-Gm-Message-State: AA+aEWbUCwOsUNl9JU6PQQI+zkejHKgIhFIPDWVKnj8rJ8rk2ckVwOTb
-        4pgPnFLtthUULYWFFK605jGFMiMpVyYNn19JGEKH3g==
-X-Google-Smtp-Source: AJdET5eQUqLxLv2xNoVxZXchFCSjZGspKE7Cuw051rKDnamucTVAUBhSabrLB16XezWOLFKapicZw+QirGbs1r/tpH8=
-X-Received: by 2002:a2e:9107:: with SMTP id m7-v6mr16153026ljg.23.1543221783527;
- Mon, 26 Nov 2018 00:43:03 -0800 (PST)
-MIME-Version: 1.0
-References: <20181120111709.22128-1-phil.edworthy@renesas.com>
-In-Reply-To: <20181120111709.22128-1-phil.edworthy@renesas.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 26 Nov 2018 09:42:50 +0100
-Message-ID: <CACRpkdbaWRTiA5=Ost7TUWRuf5fT3UK9wz8kTf_g3jqZjB8Zfg@mail.gmail.com>
-Subject: Re: [PATCH] gpio: dwapb: Correct the DT node name in the example
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Hoan Tran <hotran@apm.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 26 Nov 2018 14:37:35 -0500
+Received: from m12-14.163.com ([220.181.12.14]:53139 "EHLO m12-14.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726167AbeKZThf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 14:37:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=mRUPHWAZbqOzpceLys
+        nWh/u7NmcOm2I8CdBzUvVl9WY=; b=X/0UUI72BuOq7LA1cQ3Y/o0hqo4y5gN/vB
+        WC6LWpb7EMucZyuUrlo2mDQAiksXWQMl01KNltHxHNjz0UzHfwfEht9piMdsqa+c
+        /pV/rYcXeYedf5zGEWIRG3wxH6vW7zZ3LrpJFiSLiuQEDaFDi1sepo7Z4AFeZp27
+        53HAtLitA=
+Received: from bp.localdomain (unknown [106.120.213.96])
+        by smtp10 (Coremail) with SMTP id DsCowADX6QwysvtbCavNBw--.55256S3;
+        Mon, 26 Nov 2018 16:43:32 +0800 (CST)
+From:   Pan Bian <bianpan2016@163.com>
+To:     Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, cluster-devel@redhat.com,
+        linux-kernel@vger.kernel.org, Pan Bian <bianpan2016@163.com>
+Subject: [PATCH] gfs2: get rid of potential double free
+Date:   Mon, 26 Nov 2018 16:43:29 +0800
+Message-Id: <1543221809-86560-1-git-send-email-bianpan2016@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: DsCowADX6QwysvtbCavNBw--.55256S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7JF1xZw1xWr1rCF1kAw43Wrg_yoWkWFc_AF
+        4DKwn5u34UW3WkXa9xuw45trs3ArWDW3W8CrW8tFy3ArW8K3srGr1DWwn5Cr15ZF47ZrZ5
+        trykXFyjkr1SgjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnFeHDUUUUU==
+X-Originating-IP: [106.120.213.96]
+X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/1tbiVAkLclUMGKWupAAAsK
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 12:17 PM Phil Edworthy
-<phil.edworthy@renesas.com> wrote:
+__gfs2_set_acl will not increase the reference count of acl if it fails.
+In this case, posix_acl_release are called twice, one after
+__gfs2_set_acl and one in the error handling block. This patch does not
+release acl when __gfs2_set_acl fails.
 
-> The sub-nodes should not be called gpio-controller, but simply gpio.
->
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Fixes: e01580bf9e4("gfs2: use generic posix ACL infrastructure")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+---
+ fs/gfs2/inode.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-Patch applied.
+diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
+index 648f0ca..3a9041c 100644
+--- a/fs/gfs2/inode.c
++++ b/fs/gfs2/inode.c
+@@ -744,12 +744,13 @@ static int gfs2_create_inode(struct inode *dir, struct dentry *dentry,
+ 			       the gfs2 structures. */
+ 	if (default_acl) {
+ 		error = __gfs2_set_acl(inode, default_acl, ACL_TYPE_DEFAULT);
+-		posix_acl_release(default_acl);
++		if (!error)
++			posix_acl_release(default_acl);
+ 	}
+-	if (acl) {
++	if (acl && !error) {
++		error = __gfs2_set_acl(inode, acl, ACL_TYPE_ACCESS);
+ 		if (!error)
+-			error = __gfs2_set_acl(inode, acl, ACL_TYPE_ACCESS);
+-		posix_acl_release(acl);
++			posix_acl_release(acl);
+ 	}
+ 
+ 	if (error)
+-- 
+2.7.4
 
-Yours,
-Linus Walleij
+
