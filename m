@@ -2,52 +2,51 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84135C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD06C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DC6F21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F6392089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXUm6QU9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DC6F21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ja8w6aUz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F6392089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729546AbeKZVxO (ORCPT
+        id S1729557AbeKZVxQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:53:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34890 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:53:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727875AbeKZVxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:53:13 -0500
+        id S1727875AbeKZVxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:53:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E80420817;
-        Mon, 26 Nov 2018 10:59:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2BBF2089F;
+        Mon, 26 Nov 2018 10:59:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229967;
-        bh=SrF/1Pfky7jYe5NIUzTFYvZOS8g7FhMMHX/jQtVMjfg=;
+        s=default; t=1543229970;
+        bh=CSuJ8/+IhKk0cvsGL82n6K9ra4GeK139sw5sVk4Rr70=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OXUm6QU9Sh8qwY71iNl4sT0gJR6fZ8Pk/50T+Nnvz6thbOklXA0gOm/hd7/0d7K4D
-         j9eE/FDpWCzJ/fKCSjoMpV9+juV6umXun894Wh1JBAO2S2UUfwyubrqOltBu3u/Scj
-         EYh/crGowtmNQOOmWHHK4TtE4itvuc4o/I64AZjw=
+        b=ja8w6aUzEq4EOARQW90qMPpAje5rh9h9lhiTJXNoyAtWqS6585rHtne5B46box81l
+         H+3VV224kbXguDAN313eH4bHr1+Pu5qzwGPFewt1z1gaTmg1hDKDFA9mzLlOv6ugdy
+         XiXa3J4lrOtsnoIQEC0FFDH/rSVCm2q/5tdHlnxo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li Shuang <shuali@redhat.com>,
-        Stefano Brivio <sbrivio@redhat.com>,
+        stable@vger.kernel.org, Eric Westbrook <linux@westbrook.io>,
         Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
         Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 21/62] netfilter: ipset: list:set: Decrease refcount synchronously on deletion and replace
-Date:   Mon, 26 Nov 2018 11:51:02 +0100
-Message-Id: <20181126105052.590398742@linuxfoundation.org>
+Subject: [PATCH 4.14 22/62] netfilter: ipset: actually allow allowable CIDR 0 in hash:net,port,net
+Date:   Mon, 26 Nov 2018 11:51:03 +0100
+Message-Id: <20181126105052.656943752@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -65,188 +64,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 439cd39ea136d2c026805264d58a91f36b6b64ca ]
+[ Upstream commit 886503f34d63e681662057448819edb5b1057a97 ]
 
-Commit 45040978c899 ("netfilter: ipset: Fix set:list type crash
-when flush/dump set in parallel") postponed decreasing set
-reference counters to the RCU callback.
+Allow /0 as advertised for hash:net,port,net sets.
 
-An 'ipset del' command can terminate before the RCU grace period
-is elapsed, and if sets are listed before then, the reference
-counter shown in userspace will be wrong:
+For "hash:net,port,net", ipset(8) says that "either subnet
+is permitted to be a /0 should you wish to match port
+between all destinations."
 
- # ipset create h hash:ip; ipset create l list:set; ipset add l
- # ipset del l h; ipset list h
- Name: h
- Type: hash:ip
- Revision: 4
- Header: family inet hashsize 1024 maxelem 65536
- Size in memory: 88
- References: 1
- Number of entries: 0
- Members:
- # sleep 1; ipset list h
- Name: h
- Type: hash:ip
- Revision: 4
- Header: family inet hashsize 1024 maxelem 65536
- Size in memory: 88
- References: 0
- Number of entries: 0
- Members:
+Make that statement true.
 
-Fix this by making the reference count update synchronous again.
+Before:
 
-As a result, when sets are listed, ip_set_name_byindex() might
-now fetch a set whose reference count is already zero. Instead
-of relying on the reference count to protect against concurrent
-set renaming, grab ip_set_ref_lock as reader and copy the name,
-while holding the same lock in ip_set_rename() as writer
-instead.
+    # ipset create cidrzero hash:net,port,net
+    # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
+    ipset v6.34: The value of the CIDR parameter of the IP address is invalid
 
-Reported-by: Li Shuang <shuali@redhat.com>
-Fixes: 45040978c899 ("netfilter: ipset: Fix set:list type crash when flush/dump set in parallel")
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+    # ipset create cidrzero6 hash:net,port,net family inet6
+    # ipset add cidrzero6 ::/0,12345,::/0
+    ipset v6.34: The value of the CIDR parameter of the IP address is invalid
+
+After:
+
+    # ipset create cidrzero hash:net,port,net
+    # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
+    # ipset test cidrzero 192.168.205.129,12345,172.16.205.129
+    192.168.205.129,tcp:12345,172.16.205.129 is in set cidrzero.
+
+    # ipset create cidrzero6 hash:net,port,net family inet6
+    # ipset add cidrzero6 ::/0,12345,::/0
+    # ipset test cidrzero6 fe80::1,12345,ff00::1
+    fe80::1,tcp:12345,ff00::1 is in set cidrzero6.
+
+See also:
+
+  https://bugzilla.kernel.org/show_bug.cgi?id=200897
+  https://github.com/ewestbrook/linux/commit/df7ff6efb0934ab6acc11f003ff1a7580d6c1d9c
+
+Signed-off-by: Eric Westbrook <linux@westbrook.io>
 Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/netfilter/ipset/ip_set.h |  2 +-
- net/netfilter/ipset/ip_set_core.c      | 23 +++++++++++------------
- net/netfilter/ipset/ip_set_list_set.c  | 17 +++++++++++------
- 3 files changed, 23 insertions(+), 19 deletions(-)
+ net/netfilter/ipset/ip_set_hash_netportnet.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/netfilter/ipset/ip_set.h b/include/linux/netfilter/ipset/ip_set.h
-index 8e42253e5d4d..91a533bd3eb1 100644
---- a/include/linux/netfilter/ipset/ip_set.h
-+++ b/include/linux/netfilter/ipset/ip_set.h
-@@ -312,7 +312,7 @@ enum {
- extern ip_set_id_t ip_set_get_byname(struct net *net,
- 				     const char *name, struct ip_set **set);
- extern void ip_set_put_byindex(struct net *net, ip_set_id_t index);
--extern const char *ip_set_name_byindex(struct net *net, ip_set_id_t index);
-+extern void ip_set_name_byindex(struct net *net, ip_set_id_t index, char *name);
- extern ip_set_id_t ip_set_nfnl_get_byindex(struct net *net, ip_set_id_t index);
- extern void ip_set_nfnl_put(struct net *net, ip_set_id_t index);
+diff --git a/net/netfilter/ipset/ip_set_hash_netportnet.c b/net/netfilter/ipset/ip_set_hash_netportnet.c
+index 8602f2595a1a..0e6e40c6f652 100644
+--- a/net/netfilter/ipset/ip_set_hash_netportnet.c
++++ b/net/netfilter/ipset/ip_set_hash_netportnet.c
+@@ -213,13 +213,13 @@ hash_netportnet4_uadt(struct ip_set *set, struct nlattr *tb[],
  
-diff --git a/net/netfilter/ipset/ip_set_core.c b/net/netfilter/ipset/ip_set_core.c
-index 9d2ce1459cec..a3f1dc7cf538 100644
---- a/net/netfilter/ipset/ip_set_core.c
-+++ b/net/netfilter/ipset/ip_set_core.c
-@@ -668,21 +668,20 @@ ip_set_put_byindex(struct net *net, ip_set_id_t index)
- EXPORT_SYMBOL_GPL(ip_set_put_byindex);
+ 	if (tb[IPSET_ATTR_CIDR]) {
+ 		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
+-		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
++		if (e.cidr[0] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
  
- /* Get the name of a set behind a set index.
-- * We assume the set is referenced, so it does exist and
-- * can't be destroyed. The set cannot be renamed due to
-- * the referencing either.
-- *
-+ * Set itself is protected by RCU, but its name isn't: to protect against
-+ * renaming, grab ip_set_ref_lock as reader (see ip_set_rename()) and copy the
-+ * name.
-  */
--const char *
--ip_set_name_byindex(struct net *net, ip_set_id_t index)
-+void
-+ip_set_name_byindex(struct net *net, ip_set_id_t index, char *name)
- {
--	const struct ip_set *set = ip_set_rcu_get(net, index);
-+	struct ip_set *set = ip_set_rcu_get(net, index);
+ 	if (tb[IPSET_ATTR_CIDR2]) {
+ 		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
+-		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
++		if (e.cidr[1] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
  
- 	BUG_ON(!set);
--	BUG_ON(set->ref == 0);
+@@ -492,13 +492,13 @@ hash_netportnet6_uadt(struct ip_set *set, struct nlattr *tb[],
  
--	/* Referenced, so it's safe */
--	return set->name;
-+	read_lock_bh(&ip_set_ref_lock);
-+	strncpy(name, set->name, IPSET_MAXNAMELEN);
-+	read_unlock_bh(&ip_set_ref_lock);
- }
- EXPORT_SYMBOL_GPL(ip_set_name_byindex);
+ 	if (tb[IPSET_ATTR_CIDR]) {
+ 		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
+-		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
++		if (e.cidr[0] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
  
-@@ -1128,7 +1127,7 @@ static int ip_set_rename(struct net *net, struct sock *ctnl,
- 	if (!set)
- 		return -ENOENT;
+ 	if (tb[IPSET_ATTR_CIDR2]) {
+ 		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
+-		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
++		if (e.cidr[1] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
  
--	read_lock_bh(&ip_set_ref_lock);
-+	write_lock_bh(&ip_set_ref_lock);
- 	if (set->ref != 0) {
- 		ret = -IPSET_ERR_REFERENCED;
- 		goto out;
-@@ -1145,7 +1144,7 @@ static int ip_set_rename(struct net *net, struct sock *ctnl,
- 	strncpy(set->name, name2, IPSET_MAXNAMELEN);
- 
- out:
--	read_unlock_bh(&ip_set_ref_lock);
-+	write_unlock_bh(&ip_set_ref_lock);
- 	return ret;
- }
- 
-diff --git a/net/netfilter/ipset/ip_set_list_set.c b/net/netfilter/ipset/ip_set_list_set.c
-index 178d4eba013b..75d52aed6fdb 100644
---- a/net/netfilter/ipset/ip_set_list_set.c
-+++ b/net/netfilter/ipset/ip_set_list_set.c
-@@ -156,9 +156,7 @@ __list_set_del_rcu(struct rcu_head * rcu)
- {
- 	struct set_elem *e = container_of(rcu, struct set_elem, rcu);
- 	struct ip_set *set = e->set;
--	struct list_set *map = set->data;
- 
--	ip_set_put_byindex(map->net, e->id);
- 	ip_set_ext_destroy(set, e);
- 	kfree(e);
- }
-@@ -166,15 +164,21 @@ __list_set_del_rcu(struct rcu_head * rcu)
- static inline void
- list_set_del(struct ip_set *set, struct set_elem *e)
- {
-+	struct list_set *map = set->data;
-+
- 	set->elements--;
- 	list_del_rcu(&e->list);
-+	ip_set_put_byindex(map->net, e->id);
- 	call_rcu(&e->rcu, __list_set_del_rcu);
- }
- 
- static inline void
--list_set_replace(struct set_elem *e, struct set_elem *old)
-+list_set_replace(struct ip_set *set, struct set_elem *e, struct set_elem *old)
- {
-+	struct list_set *map = set->data;
-+
- 	list_replace_rcu(&old->list, &e->list);
-+	ip_set_put_byindex(map->net, old->id);
- 	call_rcu(&old->rcu, __list_set_del_rcu);
- }
- 
-@@ -306,7 +310,7 @@ list_set_uadd(struct ip_set *set, void *value, const struct ip_set_ext *ext,
- 	INIT_LIST_HEAD(&e->list);
- 	list_set_init_extensions(set, ext, e);
- 	if (n)
--		list_set_replace(e, n);
-+		list_set_replace(set, e, n);
- 	else if (next)
- 		list_add_tail_rcu(&e->list, &next->list);
- 	else if (prev)
-@@ -497,6 +501,7 @@ list_set_list(const struct ip_set *set,
- 	const struct list_set *map = set->data;
- 	struct nlattr *atd, *nested;
- 	u32 i = 0, first = cb->args[IPSET_CB_ARG0];
-+	char name[IPSET_MAXNAMELEN];
- 	struct set_elem *e;
- 	int ret = 0;
- 
-@@ -515,8 +520,8 @@ list_set_list(const struct ip_set *set,
- 		nested = ipset_nest_start(skb, IPSET_ATTR_DATA);
- 		if (!nested)
- 			goto nla_put_failure;
--		if (nla_put_string(skb, IPSET_ATTR_NAME,
--				   ip_set_name_byindex(map->net, e->id)))
-+		ip_set_name_byindex(map->net, e->id, name);
-+		if (nla_put_string(skb, IPSET_ATTR_NAME, name))
- 			goto nla_put_failure;
- 		if (ip_set_put_extensions(skb, set, e, true))
- 			goto nla_put_failure;
 -- 
 2.17.1
 
