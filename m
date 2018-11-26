@@ -2,264 +2,192 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E5BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A33C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A38192082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:48:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A38192082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id 92EE22082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:48:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="KowtF5DM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92EE22082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbeK0KoU (ORCPT
+        id S1728036AbeK0Koj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:44:20 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:33150 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727688AbeK0KoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:44:20 -0500
-Received: from ip5f5a905a.dynamic.kabel-deutschland.de ([95.90.144.90] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gRQc4-0003H9-HH; Tue, 27 Nov 2018 00:48:24 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] arm64: dts: rockchip: Add DT for nanopc-t4
-Date:   Tue, 27 Nov 2018 00:48:23 +0100
-Message-ID: <26178858.xdqtN7Rtck@phil>
-In-Reply-To: <20181126145107.38222-1-tomeu.vizoso@collabora.com>
-References: <20181123073120.6250-1-tomeu.vizoso@collabora.com> <20181126145107.38222-1-tomeu.vizoso@collabora.com>
+        Tue, 27 Nov 2018 05:44:39 -0500
+Received: from sonic315-27.consmr.mail.ne1.yahoo.com ([66.163.190.153]:44815
+        "EHLO sonic315-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727652AbeK0Koi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 05:44:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543276126; bh=qbpXcajJrA98ZZWDlgqmt0cbStnF49zKm903egriuBg=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=KowtF5DMSc298/qt2gWvaYu22JFcylgEW2xik0Bl4lMS/P1BiJY4sQMza8STTf2Moe2g0C9R+nTASF7xpgrqB4JxSiCJvnG1qJX7omximaTs2pGYtixJbr2TRl9tHGiWfn2g8Z2oUyHtZNhgxV9yxSPhKNS+M2/+2eYujTvzp1o4nAe/WLjV6JJc2tnGooZ6ym0mE0/dyryAT23f/NuVuERxcSKw9ZFlvP9ZkCsfT7RblklvL2zCALlENMIRbkWB2PhPvvxjo/+LZj60lDvdW8NGbNF7sQR1kKGVRJgKfgkSkcVEMcs4cmcd7PTUYQfUbMgVt1hkLb/DF70K32QxFQ==
+X-YMail-OSG: JP5K1QAVM1nKa.vRMNBzjG0jIEuf9a_7fD.DXkm7j4GbvQjNE3Fv2.4.TyutJai
+ XQtSm0Wpr.4LmroZBOagKW5hxY35UhFLi7ze5OsrGY7bXbqmWgz0sC._C7f8bxxPN4hRogIWW8vv
+ 6xnXVHKqf3eqSMSjVnfITarNT7Br1Sezcu5ZkFrOXoT0C9A1kQ.cCocRcMTvIci0rbPJuYUUBoEl
+ 4TiEuyVKa5gOLvSDsnsvGUdDFd99d6ssNVPiOcqt9Ztjq35nDY4xy6.rP8VdjQBQ5lt8Ehi21NjY
+ cTaaj_uQXIV7qlw2uLRapG.ouXq1XakQzzFaCifjVGdRdtDWUO3_qpDOql3RAoaZRWW_WhBWbMBX
+ QbPrlqnVeFu8xF38KnrFxEhSIvy1jO5scg8EEHufvvrkJO1ZxFMfUY020SBt7qeSRxnv2XydimUi
+ i4S_kZztIvbRGq14xYQf0y7MSNFlHDMKgTyLkQNySLZyo30pGCesVKEGlvK5PoMqkEjYzsRuCRea
+ ODbdzzm3oLDyhIvGDrh59nXsZixc3Go7FuLeMOHz9HikDokQDuZdl_mSjFAFBDhVPO4pZBzjTFxY
+ piZn3A2lyHZ9bKnnROMjPG4xT6kOb_XF4t_gFZOJglJM6VABXmy1lZ10VsgpOvHv4jjppdSXj4i4
+ 3bZQ70Q3h.yY08U_BC4MEeX.IjoVjoL24uOMyI7IoH73T4nlMyGclZn0skeBk6qswfdn0arCWkC7
+ V9OCfCPN7oYf_Y4T2tiDrw.K_RW_NgARPD3hfK8ZQawOgHrHsyjocfbYg.xxv_9386jGhQ85x_Qe
+ dYSeMgGIx_P70a.X6BOxYiJDl32SvrtMkTwZCbGMJTf7uXK96AK5VZxELhJLyyVXNUz0AFBMalm1
+ 3wll2aX_iQ62I9_4rkaTG2osn3chNZw8UPwJFYUx6HeCNUnq.LEaXoKSNC071KjiG6jimigyxPRt
+ ZjWlo9HW2fl2kjCA9wl7D5a5yM7exx7TKGvBiTBl_v0QykoKWbQ.E0FpjbYRem80ecQHxoxOFA1u
+ .t2fdQF1Et4_Zypmx..IJJDWoMfGMDEonSD.14YirWPzeGgT4K7Cy5hOiVRLQCZzFs3eUCA_DVXh
+ zpe8MIqeWUdc2.qxZvyEXQLJYHHETGvDOHLUeug--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:48:46 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
+          by smtp425.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID f5346034b70e818e7690c08090f23b62;
+          Mon, 26 Nov 2018 23:48:45 +0000 (UTC)
+Subject: [PATCH v5 28/38] SELinux: Abstract use of file security blob
+To:     James Morris <jmorris@namei.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <d9b63669-c163-449a-dd13-c28baa02485c@schaufler-ca.com>
+Date:   Mon, 26 Nov 2018 15:48:42 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomeu,
+Don't use the file->f_security pointer directly.
+Provide a helper function that provides the security blob pointer.
 
-Am Montag, 26. November 2018, 15:47:49 CET schrieb Tomeu Vizoso:
-> This adds a device tree for the NanoPC-T4 SBC, which is based on the
-> Rockchip RK3399 SoC and marketed by FriendlyELEC.
-> 
-> Known working:
-> 
-> - Serial
-> - Ethernet
-> - HDMI
-> - USB 2.0
-> 
-> All of the interesting stuff is in a .dtsi because there are at least
-> two other boards that share most of it: NanoPi M4 and NanoPi NEO4.
-> 
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ security/selinux/hooks.c          | 18 +++++++++---------
+ security/selinux/include/objsec.h |  5 +++++
+ 2 files changed, 14 insertions(+), 9 deletions(-)
 
-looks pretty good overall, just some more small-scale things
-below.
-
-> ---
-> 
-> v2: - Rename compatible from friendlyelec to friendlyarm, to match
->       existing bindings
->     - Remove superfluous node spi1
-> 
-> v3: - Rewrite regulator tree to match the schematics (Heiko)
->     - Sort top-level nodes alphabetically (Heiko)
->     - Used defines for GPIO numbers (Heiko)
->     - Enabled rga (Heiko)
->     - Removed cdn_dp node (Heiko)
->     - Removed dependencies to fusb0 as extcon (Heiko)
->     - Removed superfluous properties (Heiko)
-
-
-> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-> index 49042c477870..4cbd2c461052 100644
-> --- a/arch/arm64/boot/dts/rockchip/Makefile
-> +++ b/arch/arm64/boot/dts/rockchip/Makefile
-> @@ -1,6 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-evb.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-evb.dtb
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-nanopc-t4.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-rock64.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-roc-cc.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3368-evb-act8846.dtb
-
-These are definitly sorted in the Makefile, so this should move between
-rk3399-gru-scarlet-kd.dtb and rk3399-puma-haikou.dtb :-)
-
-
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi
-> new file mode 100644
-> index 000000000000..f102ff2317c3
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi4.dtsi
-> @@ -0,0 +1,740 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * RK3399-based FriendlyElec boards device tree source
-> + *
-> + * Copyright (c) 2016 Fuzhou Rockchip Electronics Co., Ltd
-> + *
-> + * Copyright (c) 2018 FriendlyElec Computer Tech. Co., Ltd.
-> + * (http://www.friendlyarm.com)
-> + *
-> + * Copyright (c) 2018 Collabora Ltd.
-> + */
-> +
-> +/dts-v1/;
-> +#include <dt-bindings/input/linux-event-codes.h>
-> +#include "rk3399.dtsi"
-> +#include "rk3399-opp.dtsi"
-> +
-> +/ {
-> +	chosen {
-> +		stdout-path = "serial2:1500000n8";
-> +	};
-> +
-> +	clkin_gmac: external-gmac-clock {
-> +		compatible = "fixed-clock";
-> +		clock-frequency = <125000000>;
-> +		clock-output-names = "clkin_gmac";
-> +		#clock-cells = <0>;
-> +	};
-> +
-> +	vdd_5v: vdd_5v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vdd_5v";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +	};
-> +
-> +	vcc5v0_core: vcc5v0_core {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc5v0_core";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		vin-supply = <&vdd_5v>;
-> +	};
-> +
-> +	vcc3v3_sys: vcc3v3_sys {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc3v3_sys";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		vin-supply = <&vcc5v0_core>;
-> +	};
-> +
-> +	vcc5v0_sys: vcc5v0_sys {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc5v0_sys";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		vin-supply = <&vdd_5v>;
-> +	};
-> +
-> +	vcc5v0_usb1: vcc5v0_usb1 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc5v0_usb1";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		vin-supply = <&vcc5v0_sys>;
-> +	};
-> +
-> +	vcc5v0_usb2: vcc5v0_usb2 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc5v0_usb2";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		vin-supply = <&vcc5v0_sys>;
-> +	};
-> +
-> +	/* switched by pmic_sleep */
-> +	vcc1v8_s3: vcca1v8_s3: vcc1v8-s3 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc1v8_s3";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <1800000>;
-> +		vin-supply = <&vcc_1v8>;
-> +	};
-> +
-> +	vcc3v0_sd: vcc3v0_sd {
-
-dt-spec mandates node names with "-", so this should become
-	vcc3v0_sd: vcc3v0-sd {
-
-Same for most regulators above.
-
-> +	rk808: pmic@1b {
-> +		compatible = "rockchip,rk808";
-> +		reg = <0x1b>;
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pmic_int_l>;
-> +		rockchip,system-power-controller;
-> +		wakeup-source;
-> +		#clock-cells = <1>;
-> +		clock-output-names = "rk808-clkout1", "rk808-clkout2";
-
-rename rk808-clkout1 to xin32k so that it hooks correctly into
-the rk3399 clock controller, as that signals is providing the 32kHz clock
-for the system. (see $debug/clk/clk_summary and rk3399-cru dt binding)
-
-
-> +&pinctrl {
-> +
-
-unnecessary empty line
-
-> +	pmic {
-
-
-> +&rga {
-> +	status = "okay";
-> +};
-
-rga is not dependant on pinout, so is always enabled in rk3399.dtsi
-So this node can go away.
-
-> +&sdhci {
-> +	bus-width = <8>;
-> +	mmc-hs400-1_8v;
-> +	supports-emmc;
-
-remnant from the vendor-kernel?
-Should also go away.
-
-> +	non-removable;
-> +	keep-power-in-suspend;
-> +	mmc-hs400-enhanced-strobe;
-> +	status = "okay";
-> +};
-> +
-
-> +&usbdrd3_0 {
-> +	status = "okay";
-> +	extcon = <&fusb0>;
-
-I still don't think that extcon gets defined at all and is also
-not specified in any dwc3 binding, so should probably go away.
-
-
-Heiko
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index ac6d8a2d00f1..ce1d37378eb5 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -393,7 +393,7 @@ static int file_alloc_security(struct file *file)
+ 
+ static void file_free_security(struct file *file)
+ {
+-	struct file_security_struct *fsec = file->f_security;
++	struct file_security_struct *fsec = selinux_file(file);
+ 	file->f_security = NULL;
+ 	kmem_cache_free(file_security_cache, fsec);
+ }
+@@ -1881,7 +1881,7 @@ static int file_has_perm(const struct cred *cred,
+ 			 struct file *file,
+ 			 u32 av)
+ {
+-	struct file_security_struct *fsec = file->f_security;
++	struct file_security_struct *fsec = selinux_file(file);
+ 	struct inode *inode = file_inode(file);
+ 	struct common_audit_data ad;
+ 	u32 sid = cred_sid(cred);
+@@ -2225,7 +2225,7 @@ static int selinux_binder_transfer_file(struct task_struct *from,
+ 					struct file *file)
+ {
+ 	u32 sid = task_sid(to);
+-	struct file_security_struct *fsec = file->f_security;
++	struct file_security_struct *fsec = selinux_file(file);
+ 	struct dentry *dentry = file->f_path.dentry;
+ 	struct inode_security_struct *isec;
+ 	struct common_audit_data ad;
+@@ -3537,7 +3537,7 @@ static int selinux_revalidate_file_permission(struct file *file, int mask)
+ static int selinux_file_permission(struct file *file, int mask)
+ {
+ 	struct inode *inode = file_inode(file);
+-	struct file_security_struct *fsec = file->f_security;
++	struct file_security_struct *fsec = selinux_file(file);
+ 	struct inode_security_struct *isec;
+ 	u32 sid = current_sid();
+ 
+@@ -3572,7 +3572,7 @@ static int ioctl_has_perm(const struct cred *cred, struct file *file,
+ 		u32 requested, u16 cmd)
+ {
+ 	struct common_audit_data ad;
+-	struct file_security_struct *fsec = file->f_security;
++	struct file_security_struct *fsec = selinux_file(file);
+ 	struct inode *inode = file_inode(file);
+ 	struct inode_security_struct *isec;
+ 	struct lsm_ioctlop_audit ioctl;
+@@ -3824,7 +3824,7 @@ static void selinux_file_set_fowner(struct file *file)
+ {
+ 	struct file_security_struct *fsec;
+ 
+-	fsec = file->f_security;
++	fsec = selinux_file(file);
+ 	fsec->fown_sid = current_sid();
+ }
+ 
+@@ -3839,7 +3839,7 @@ static int selinux_file_send_sigiotask(struct task_struct *tsk,
+ 	/* struct fown_struct is never outside the context of a struct file */
+ 	file = container_of(fown, struct file, f_owner);
+ 
+-	fsec = file->f_security;
++	fsec = selinux_file(file);
+ 
+ 	if (!signum)
+ 		perm = signal_to_av(SIGIO); /* as per send_sigio_to_task */
+@@ -3863,7 +3863,7 @@ static int selinux_file_open(struct file *file)
+ 	struct file_security_struct *fsec;
+ 	struct inode_security_struct *isec;
+ 
+-	fsec = file->f_security;
++	fsec = selinux_file(file);
+ 	isec = inode_security(file_inode(file));
+ 	/*
+ 	 * Save inode label and policy sequence number
+@@ -4002,7 +4002,7 @@ static int selinux_kernel_module_from_file(struct file *file)
+ 	ad.type = LSM_AUDIT_DATA_FILE;
+ 	ad.u.file = file;
+ 
+-	fsec = file->f_security;
++	fsec = selinux_file(file);
+ 	if (sid != fsec->sid) {
+ 		rc = avc_has_perm(&selinux_state,
+ 				  sid, fsec->sid, SECCLASS_FD, FD__USE, &ad);
+diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+index c2974b031d05..e0ac2992e059 100644
+--- a/security/selinux/include/objsec.h
++++ b/security/selinux/include/objsec.h
+@@ -165,4 +165,9 @@ static inline struct task_security_struct *selinux_cred(const struct cred *cred)
+ 	return cred->security + selinux_blob_sizes.lbs_cred;
+ }
+ 
++static inline struct file_security_struct *selinux_file(const struct file *file)
++{
++	return file->f_security;
++}
++
+ #endif /* _SELINUX_OBJSEC_H_ */
+-- 
+2.14.5
 
 
