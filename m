@@ -2,118 +2,170 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1429EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F84DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D133220664
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:50:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1839420865
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:50:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="gp9r/IxJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D133220664
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="TrI6miEL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1839420865
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbeK0Cot (ORCPT
+        id S1727096AbeK0Cp1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 21:44:49 -0500
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:63658 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbeK0Cot (ORCPT
+        Mon, 26 Nov 2018 21:45:27 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:31566 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726253AbeK0Cp0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 21:44:49 -0500
+        Mon, 26 Nov 2018 21:45:26 -0500
 Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id wAQFo03N009191;
-        Tue, 27 Nov 2018 00:50:01 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com wAQFo03N009191
+        by conssluserg-05.nifty.com with ESMTP id wAQFoqDB009619;
+        Tue, 27 Nov 2018 00:50:52 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wAQFoqDB009619
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1543247401;
-        bh=hL+L3u9Fm2Haz7qoi3wTzyMopfmO+fzPMqkMT2tsQ2U=;
+        s=dec2015msa; t=1543247453;
+        bh=qOViX/GpR6jXbfnCfQlfaTKoOyERTC7kDBvvGaiuR4Q=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=gp9r/IxJzkf3HeT1FoVi+Bnk5iQEqhEW8d07ziuKfZhVcf+pTue8aLl5V25ABeDsp
-         5Rm2FOYUCj+eGVl5DifhXuFB8NqAjhzfZj5KVVPvm9R7QtVHfvt9ItnW1UtXlVwRLb
-         zXxu1ipXxkZOkeD++18AAJHt779Z9u/3kGxO9MYmCbQjODah0jIvUZ/GznUpmP46kw
-         bphD1oVPhL12ewA7XtcwKS1uQsscPXJzwscBlsQKO/AXjlklci/kzDO8vq4YNSeOWS
-         8yGVrSmkeU7FIdCqlFgQV9jgvhycMkfuny6qOZqUuOJy/b1OT6MP12zNfqAJjBFpQd
-         V7bxEq1xQahuw==
+        b=TrI6miELnIPTLUwlEUhYY1pT39MyQ3F+M2FirEKewV5LAMMceY3T3SdqUaLNrNwv+
+         YgHsCtfwarN5pKmgNLo7+C9CewjNH34D+s9tu90haB4FjESpW02vVs0wgqIm2NOfaA
+         5KEOKlSY4Glp755lMoF9A0xZHTAZZXbosi+bXniSrHEQuVqDUa1Fhq9Y0a20XNHtQU
+         A04IwbTD0ZI/t+ZdzP7DGQxGKvYbeS4y+2BZe1jAZhUB0old5SrTxTFpV90Nrdy3qg
+         rd0EK4yfBhqlGuKRvTx7lfot7kFMe9y19uAPjR3hyH6a5Js79Z4SjE4QCob5Q7ud5O
+         CYsy5/lM547Ow==
 X-Nifty-SrcIP: [209.85.222.46]
-Received: by mail-ua1-f46.google.com with SMTP id d19so6445943uaq.11;
-        Mon, 26 Nov 2018 07:50:00 -0800 (PST)
-X-Gm-Message-State: AA+aEWZjjd9NP9gjVqNB7HUn/H6fOBeKYStSOYiiZS5UCRWt4/Gfqr/V
-        eYxWZii3V6WBUylV6vOjzA3GfCbwnfv3lLiCCSA=
-X-Google-Smtp-Source: AFSGD/VukaDB3Vj3fzz7Nl3TN+LKs/MONeFxFkv30nfMH95NV5Kzc0SrLhFkNXFkEeA+07WVFxOPo55JfsJuzGB7QaE=
-X-Received: by 2002:a9f:3f41:: with SMTP id i1mr10874260uaj.42.1543247399696;
- Mon, 26 Nov 2018 07:49:59 -0800 (PST)
+Received: by mail-ua1-f46.google.com with SMTP id d21so6457543uap.9;
+        Mon, 26 Nov 2018 07:50:52 -0800 (PST)
+X-Gm-Message-State: AA+aEWYciSmA1jCp+Y2zkdHPcwWvOv4kMMigtfOViA5wRAm0uHe/aL6L
+        +98A6MI3sEehQqvXOB8v5Vw1+V0QX83fO7mLhRM=
+X-Google-Smtp-Source: AFSGD/VaDG+3SccZkcAerwaLed1Kp+gvuqzTEgweeQBAuG8MHlZiXguLa5wRTUknTQMEcqU+KTZmCKaGXSDjo6lpYEY=
+X-Received: by 2002:ab0:3402:: with SMTP id z2mr11476568uap.6.1543247451616;
+ Mon, 26 Nov 2018 07:50:51 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1542362000.git.viresh.kumar@linaro.org> <b522f13dfffcec1e2b78e126513114428ec9a4b4.1542362000.git.viresh.kumar@linaro.org>
-In-Reply-To: <b522f13dfffcec1e2b78e126513114428ec9a4b4.1542362000.git.viresh.kumar@linaro.org>
+References: <1539945019-24950-1-git-send-email-yamada.masahiro@socionext.com> <1539945019-24950-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1539945019-24950-2-git-send-email-yamada.masahiro@socionext.com>
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 27 Nov 2018 00:49:23 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATh3cGVC+KhBtATyzvCnzqv_QpFujjg_J7WikRHq0rjPA@mail.gmail.com>
-Message-ID: <CAK7LNATh3cGVC+KhBtATyzvCnzqv_QpFujjg_J7WikRHq0rjPA@mail.gmail.com>
-Subject: Re: [PATCH 6/6] ARM: dts: uniphier: Add all CPUs in cooling maps
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
+Date:   Tue, 27 Nov 2018 00:50:15 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQi6TT86260vy_5iLJuH9cxBnXYzW7dsEU_cmDTrGADxg@mail.gmail.com>
+Message-ID: <CAK7LNAQi6TT86260vy_5iLJuH9cxBnXYzW7dsEU_cmDTrGADxg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: uniphier: add bindings for UniPhier
+ SoC family
+To:     arm-soc <arm@kernel.org>, Olof Johansson <olof@lixom.net>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         DTML <devicetree@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 7:02 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+On Fri, Oct 19, 2018 at 7:32 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 >
-> Each CPU can (and does) participate in cooling down the system but the
-> DT only captures a handful of them, normally CPU0, in the cooling maps.
-> Things work by chance currently as under normal circumstances its the
-> first CPU of each cluster which is used by the operating systems to
-> probe the cooling devices. But as soon as this CPU ordering changes and
-> any other CPU is used to bring up the cooling device, we will start
-> seeing failures.
+> Document the list of SoCs and boards of UniPhier platform.
 >
-> Also the DT is rather incomplete when we list only one CPU in the
-> cooling maps, as the hardware doesn't have any such limitations.
->
-> Update cooling maps to include all devices affected by individual trip
-> points.
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
 
 Applied to linux-uniphier.
-Thanks.
 
-> ---
->  arch/arm/boot/dts/uniphier-pxs2.dtsi | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+
+> Changes in v3:
+>   - Capitalize 'Board' consistently
+>   - Add Rob's Reviewed-by
 >
-> diff --git a/arch/arm/boot/dts/uniphier-pxs2.dtsi b/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> index 8d20e9548e39..06a049f6edf8 100644
-> --- a/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> +++ b/arch/arm/boot/dts/uniphier-pxs2.dtsi
-> @@ -141,8 +141,10 @@
->                         cooling-maps {
->                                 map {
->                                         trip = <&cpu_alert>;
-> -                                       cooling-device = <&cpu0
-> -                                           THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> +                                       cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +                                                        <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +                                                        <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> +                                                        <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
->                                 };
->                         };
->                 };
+> Changes in v2:
+>   Changes suggested by Rob.
+>   - Move the file to
+>     Documentation/devicetree/bindings/arm/socionext/uniphier.txt
+>   - Group boards by each SoC
+>   Previous post:
+>   v1: https://patchwork.ozlabs.org/patch/842010/
+>
+>  .../devicetree/bindings/arm/socionext/uniphier.txt | 47 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 48 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/socionext/uniphier.txt
+>
+> diff --git a/Documentation/devicetree/bindings/arm/socionext/uniphier.txt b/Documentation/devicetree/bindings/arm/socionext/uniphier.txt
+> new file mode 100644
+> index 0000000..b3ed103
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/socionext/uniphier.txt
+> @@ -0,0 +1,47 @@
+> +Socionext UniPhier SoC family
+> +-----------------------------
+> +
+> +Required properties in the root node:
+> +  - compatible: should contain board and SoC compatible strings
+> +
+> +SoC and board compatible strings:
+> +  (sorted chronologically)
+> +
+> +  - LD4 SoC:  "socionext,uniphier-ld4"
+> +      - Reference Board: "socionext,uniphier-ld4-ref"
+> +
+> +  - Pro4 SoC: "socionext,uniphier-pro4"
+> +      - Reference Board: "socionext,uniphier-pro4-ref"
+> +      - Ace Board:       "socionext,uniphier-pro4-ace"
+> +      - Sanji Board:     "socionext,uniphier-pro4-sanji"
+> +
+> +  - sLD8 SoC: "socionext,uniphier-sld8"
+> +      - Reference Board: "socionext,uniphier-sld8-ref"
+> +
+> +  - PXs2 SoC: "socionext,uniphier-pxs2"
+> +      - Gentil Board:    "socionext,uniphier-pxs2-gentil"
+> +      - Vodka Board:     "socionext,uniphier-pxs2-vodka"
+> +
+> +  - LD6b SoC: "socionext,uniphier-ld6b"
+> +      - Reference Board: "socionext,uniphier-ld6b-ref"
+> +
+> +  - LD11 SoC: "socionext,uniphier-ld11"
+> +      - Reference Board: "socionext,uniphier-ld11-ref"
+> +      - Global Board:    "socionext,uniphier-ld11-global"
+> +
+> +  - LD20 SoC: "socionext,uniphier-ld20"
+> +      - Reference Board: "socionext,uniphier-ld20-ref"
+> +      - Global Board:    "socionext,uniphier-ld20-global"
+> +
+> +  - PXs3 SoC: "socionext,uniphier-pxs3"
+> +      - Reference Board: "socionext,uniphier-pxs3-ref"
+> +
+> +Example:
+> +
+> +/dts-v1/;
+> +
+> +/ {
+> +       compatible = "socionext,uniphier-ld20-ref", "socionext,uniphier-ld20";
+> +
+> +       ...
+> +};
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 5e6a1da..87b2c2c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2183,6 +2183,7 @@ M:        Masahiro Yamada <yamada.masahiro@socionext.com>
+>  L:     linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
+>  S:     Maintained
+> +F:     Documentation/devicetree/bindings/arm/socionext/uniphier.txt
+>  F:     Documentation/devicetree/bindings/gpio/gpio-uniphier.txt
+>  F:     Documentation/devicetree/bindings/pinctrl/socionext,uniphier-pinctrl.txt
+>  F:     arch/arm/boot/dts/uniphier*
 > --
-> 2.19.1.568.g152ad8e3369a
+> 2.7.4
 >
 
 
