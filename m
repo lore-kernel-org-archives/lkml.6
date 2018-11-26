@@ -6,76 +6,90 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD18C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0F3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF68C20672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:05:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF68C20672
+	by mail.kernel.org (Postfix) with ESMTP id 1E0B9205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:06:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E0B9205C9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbeK0HBF (ORCPT
+        id S1727198AbeK0HBf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 02:01:05 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:40165 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbeK0HBE (ORCPT
+        Tue, 27 Nov 2018 02:01:35 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:41121 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726296AbeK0HBf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 02:01:04 -0500
-Received: by mail-ot1-f66.google.com with SMTP id s5so17849407oth.7;
-        Mon, 26 Nov 2018 12:05:51 -0800 (PST)
+        Tue, 27 Nov 2018 02:01:35 -0500
+Received: by mail-oi1-f193.google.com with SMTP id j21so17068959oii.8;
+        Mon, 26 Nov 2018 12:06:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KQ5joNutaw4ez/PLSPqbgWdNm1gYWMuYr+j8QOknVzw=;
-        b=SE6xYFTVHIYbFg+juu5KSdFizKlHGdECmk7CdlXR9WMv2bZ52jDZ9HajGdDXh/yAqp
-         vzVhCtPsqzpBQ/VLns3Fw2l5Pue3ElFd1cEg9ozoL/nf5t/+IrK3I9NzGFjkIKjxlZgT
-         BGpyunJ5OCf8D3LMCVxWVLTVyAcZz1D2x48YNfnFpBjf4bbYRAJlyXw+coQi6NAP4lhJ
-         daXd93KB/IAFnzDv2+Z7z3f0c4BqyRNdRMvUP6BCrfKg7YB4Yzm9DcWlLMUlHsH94hTf
-         Iwek9eHNcqLcTcmE2BvytMptOp62Pkfv2DR0YFDPPytdF304WwCAgD2QytbT5IJao4hb
-         YZmg==
-X-Gm-Message-State: AA+aEWaV9YbBCFmQC5aEJrjQDxChHCnKoWnxsvm2GX/n6mQS+wgDv3Md
-        Y7L/c8pWVeNa6jim5ZMjQAqoR9E=
-X-Google-Smtp-Source: AFSGD/XMu+Mzhy4q/rRue/WqsiZ3UvCWrksHHIQ/HzyVGRhEtDkoKzC55xI530omnNlEweLpUDXJNw==
-X-Received: by 2002:a9d:401:: with SMTP id 1mr13430676otc.78.1543262750823;
-        Mon, 26 Nov 2018 12:05:50 -0800 (PST)
+        bh=ky4Bbf0jEivHCSN6gBnvnaix1XGilPXfFAhBlpfsIdA=;
+        b=uYuxTm1r6o+te9q2/jxyJal9AedFUjHcykVgYKX+82gez9DIiCnSqoghSPlQ2wR8Nl
+         /2lPs4OTvUZ5SLFAsgZmkwPsTlt7D76zn3Tz8xp7psxOu1XRgzeJ1M0CqYqEQt+iazC0
+         oDBa1ReKGScm2shzUr7stjAVaKSyq5p0t+lbVisH4wHXezUo8OkQScE1p8s72FT2qjJe
+         z/krzNgvcnztgUipWxaB9+ywBHcnDm3vKICiP4sG5mrjFn1AzTxTPOWDpT8TrhxZ5qh1
+         EU28MRasqhrm2w4Ex+lhx3Z1/vRTvJp+0r3xyq2AxPU7J3eBV5LhTOwMOzINXchWxIYO
+         wv6A==
+X-Gm-Message-State: AA+aEWb5EM2diIHs8EMwwXnLIpY74IZIIvztHHi4KYTVB775urhljmLy
+        RjTQvUfCPtqiySxY1KF0rw==
+X-Google-Smtp-Source: AFSGD/XWXKd0+oQu4CkY0/8HkvT9NcMrEVstIFCpHi4XQ+XY8A26gi0jGHP7xZ5FgKERrZhozltypA==
+X-Received: by 2002:aca:2d3:: with SMTP id 202mr3721978oic.214.1543262781278;
+        Mon, 26 Nov 2018 12:06:21 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id o186-v6sm385946oib.47.2018.11.26.12.05.49
+        by smtp.gmail.com with ESMTPSA id 18sm389814otf.59.2018.11.26.12.06.20
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 12:05:50 -0800 (PST)
-Date:   Mon, 26 Nov 2018 14:05:49 -0600
+        Mon, 26 Nov 2018 12:06:20 -0800 (PST)
+Date:   Mon, 26 Nov 2018 14:06:19 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Wendy Liang <wendy.liang@xilinx.com>
-Cc:     jassisinghbrar@gmail.com, michal.simek@xilinx.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, Wendy Liang <wendy.liang@xilinx.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 2/2] dt-bindings: mailbox: Add Xilinx IPI Mailbox
-Message-ID: <20181126200549.GA611@bogus>
-References: <1542662761-31158-1-git-send-email-wendy.liang@xilinx.com>
- <1542662761-31158-3-git-send-email-wendy.liang@xilinx.com>
+To:     Joakim Zhang <qiangqing.zhang@nxp.com>
+Cc:     "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "mkl@pengutronix.de" <mkl@pengutronix.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "wg@grandegger.com" <wg@grandegger.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Aisheng DONG <aisheng.dong@nxp.com>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>
+Subject: Re: [PATCH V6 1/2] Documentation: can: flexcan: add stop mode
+ property to  device tree
+Message-ID: <20181126200619.GA1595@bogus>
+References: <20181123083304.3232-1-qiangqing.zhang@nxp.com>
+ <20181123083304.3232-2-qiangqing.zhang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1542662761-31158-3-git-send-email-wendy.liang@xilinx.com>
+In-Reply-To: <20181123083304.3232-2-qiangqing.zhang@nxp.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Nov 2018 13:26:01 -0800, Wendy Liang wrote:
-> Xilinx ZynqMP IPI(Inter Processor Interrupt) is a hardware block
-> in ZynqMP SoC used for the communication between various processor
-> systems.
+On Fri, 23 Nov 2018 08:35:29 +0000, Joakim Zhang wrote:
+> From: Aisheng Dong <aisheng.dong@nxp.com>
 > 
-> Signed-off-by: Wendy Liang <wendy.liang@xilinx.com>
+> The FlexCAN controller can parse the stop mode property to enable CAN
+> self wakeup feature.
+> 
+> Signed-off-by: Aisheng Dong <aisheng.dong@nxp.com>
+> Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
 > ---
->  .../bindings/mailbox/xlnx,zynqmp-ipi-mailbox.txt   | 127 +++++++++++++++++++++
->  1 file changed, 127 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/xlnx,zynqmp-ipi-mailbox.txt
+> ChangeLog:
+> V1->V2:
+> 	*add a vendor prefix in property (stop-mode -> fsl,stop-mode).
+> V2->V6:
+> 	*no change.
+> ---
+>  Documentation/devicetree/bindings/net/can/fsl-flexcan.txt | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
