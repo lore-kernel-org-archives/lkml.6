@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FF9C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEE3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79BCF21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04D2E21473
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1l9zrS+Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79BCF21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElAVS+H4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04D2E21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729738AbeKZVxt (ORCPT
+        id S1729754AbeKZVxw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:53:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35660 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:53:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729664AbeKZVxs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:53:48 -0500
+        id S1728553AbeKZVxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:53:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED34421479;
-        Mon, 26 Nov 2018 11:00:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B074220817;
+        Mon, 26 Nov 2018 11:00:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230003;
-        bh=O6Bi7nnlwijdvCYYfgFwnQ2vNjN4sREjCOJ0sFUd87Q=;
+        s=default; t=1543230006;
+        bh=fpTD0ysJEdVeiWXbAEL48UcURfs08lQawS/r4j+qfQg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1l9zrS+Z/N6gVXj3ypEyBOR+bpSM6UMPY5jJE3MGkHf+XbIyJ9tM104aN1wfWgjCM
-         pl1SrRvD4ovEAONA2jlcmkg/SrZamrmbyYVXYfFn5DWIp1r3mhGUR1WQpdGZ6ncDru
-         oUuhmode/RG669J6HXHz5ht6y8Mmmc5+403qQL7U=
+        b=ElAVS+H4g+mcQgo5WtBWLZyQUmDLc6vP9pxv9Czw9TlYpNKlsecJ7qBxZ1EEZLE/t
+         WwzkMecWr8Kic6mQnNoJWmNO05Dyk3mr0y0mnMTuXWg7rv5/nrl1bKkV/CUdEd0man
+         sDr4u0o/H95JMRu4Yt+Lt4u9gqxaMeSHfn8KBdZU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Radoslaw Tyl <radoslawx.tyl@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Piotr Skajewski <piotrx.skajewski@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jeff Mahoney <jeffm@suse.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 05/62] ixgbe: fix MAC anti-spoofing filter after VFLR
-Date:   Mon, 26 Nov 2018 11:50:46 +0100
-Message-Id: <20181126105051.423412166@linuxfoundation.org>
+Subject: [PATCH 4.14 06/62] reiserfs: propagate errors from fill_with_dentries() properly
+Date:   Mon, 26 Nov 2018 11:50:47 +0100
+Message-Id: <20181126105051.497519036@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -65,40 +67,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6702185c1ffec3421181b5e24491e3fac920cb61 ]
+[ Upstream commit b10298d56c9623f9b173f19959732d3184b35f4f ]
 
-This change resolves a driver bug where the driver is logging a
-message that says "Spoofed packets detected". This can occur on the PF
-(host) when a VF has VLAN+MACVLAN enabled and is re-started with a
-different MAC address.
+fill_with_dentries() failed to propagate errors up to
+reiserfs_for_each_xattr() properly.  Plumb them through.
 
-MAC and VLAN anti-spoofing filters are to be enabled together.
+Note that reiserfs_for_each_xattr() is only used by
+reiserfs_delete_xattrs() and reiserfs_chown_xattrs().  The result of
+reiserfs_delete_xattrs() is discarded anyway, the only difference there is
+whether a warning is printed to dmesg.  The result of
+reiserfs_chown_xattrs() does matter because it can block chowning of the
+file to which the xattrs belong; but either way, the resulting state can
+have misaligned ownership, so my patch doesn't improve things greatly.
 
-Signed-off-by: Radoslaw Tyl <radoslawx.tyl@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Acked-by: Piotr Skajewski <piotrx.skajewski@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Credit for making me look at this code goes to Al Viro, who pointed out
+that the ->actor calling convention is suboptimal and should be changed.
+
+Link: http://lkml.kernel.org/r/20180802163335.83312-1-jannh@google.com
+Signed-off-by: Jann Horn <jannh@google.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jeff Mahoney <jeffm@suse.com>
+Cc: Eric Biggers <ebiggers@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/reiserfs/xattr.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
-index 112d24c6c9ce..4904a63b83ef 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
-@@ -760,8 +760,10 @@ static inline void ixgbe_vf_reset_event(struct ixgbe_adapter *adapter, u32 vf)
- 			ixgbe_set_vmvir(adapter, vfinfo->pf_vlan,
- 					adapter->default_up, vf);
+diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
+index 505f87a8c724..83423192588c 100644
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -185,6 +185,7 @@ struct reiserfs_dentry_buf {
+ 	struct dir_context ctx;
+ 	struct dentry *xadir;
+ 	int count;
++	int err;
+ 	struct dentry *dentries[8];
+ };
  
--		if (vfinfo->spoofchk_enabled)
-+		if (vfinfo->spoofchk_enabled) {
- 			hw->mac.ops.set_vlan_anti_spoofing(hw, true, vf);
-+			hw->mac.ops.set_mac_anti_spoofing(hw, true, vf);
-+		}
+@@ -207,6 +208,7 @@ fill_with_dentries(struct dir_context *ctx, const char *name, int namelen,
+ 
+ 	dentry = lookup_one_len(name, dbuf->xadir, namelen);
+ 	if (IS_ERR(dentry)) {
++		dbuf->err = PTR_ERR(dentry);
+ 		return PTR_ERR(dentry);
+ 	} else if (d_really_is_negative(dentry)) {
+ 		/* A directory entry exists, but no file? */
+@@ -215,6 +217,7 @@ fill_with_dentries(struct dir_context *ctx, const char *name, int namelen,
+ 			       "not found for file %pd.\n",
+ 			       dentry, dbuf->xadir);
+ 		dput(dentry);
++		dbuf->err = -EIO;
+ 		return -EIO;
  	}
  
- 	/* reset multicast table array for vf */
+@@ -262,6 +265,10 @@ static int reiserfs_for_each_xattr(struct inode *inode,
+ 		err = reiserfs_readdir_inode(d_inode(dir), &buf.ctx);
+ 		if (err)
+ 			break;
++		if (buf.err) {
++			err = buf.err;
++			break;
++		}
+ 		if (!buf.count)
+ 			break;
+ 		for (i = 0; !err && i < buf.count && buf.dentries[i]; i++) {
 -- 
 2.17.1
 
