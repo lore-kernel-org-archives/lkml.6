@@ -4,141 +4,104 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08935C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F38F8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:38:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF87420C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:38:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD6CF2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:38:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Q4nK2J9K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF87420C01
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="QVEe2eHb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD6CF2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727874AbeK0KeR (ORCPT
+        id S1727882AbeK0Ke0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:34:17 -0500
-Received: from sonic315-27.consmr.mail.ne1.yahoo.com ([66.163.190.153]:44812
-        "EHLO sonic315-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727667AbeK0KeR (ORCPT
+        Tue, 27 Nov 2018 05:34:26 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46529 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbeK0Ke0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:34:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543275507; bh=jV11Dho+W8jm+OTKCjoUEiJ1PzwrfCLcMmvEuAbflbk=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=Q4nK2J9KPexbdiAxFNCpJbLhYux6mtOzZBYhpYerRgCIT4T9lcs3efTtp+3xx2F4Y/ZLc1kWXFmP4f6hnfo52WVlGsHnUMEZmj1mlOiTJPkDKX2YH41ubKpc+IhcBS7fwDL63ooeBF8DsHMp1FpuBlXvnRhNcZYYfodgYKRopucujHdlEtnEznv8Z0vL4b7TpsohwVnpqR8QYtoOQ9c68j9HL4uljrJN8ogwJv/Q9MJmJRyotYTKidw/RrKpce3TjI8STRXdS6oyp692uf9Rp3TP4tlPVgldKX4YH8hynQRy/fXeebTz5dv/mFfEL3kK8HyeVI6c94fiDSUR3mWj2g==
-X-YMail-OSG: jFRivIQVM1ngjnr4QdwflB1dsQegw.b6uPut84.dlAyrgrpmW3JCDFqY0hokOM_
- SsDeaCCt6MFl0GZY01K3stMOV_P9Gr8H9RDAH1KrD0oEG_P64zkL9LN7iH4TabnlkwDHeeCX.W6d
- T7C2UF37eEtbVRJ886M6xwPoTn2Vyfv_.PbhHcsABcj5vK.5.nItivY4jxK1m9jsALlUl7IH3emj
- XOGj.eS125E2xeYODtiD11zIAg3rp.dz4osmXzmEk6bKNq0SYGY0zEjbkFPtFmLAWhsGK5_BuA17
- 71UEjaYEp7P512UPuFoyO._zqGvaEkVcBZqrQCOMdrG2cU.rpbsW5f18IXSK79ilRhsuZ8o8OwAQ
- b6ozR8A0akszzvHTdt_vFGxrazEetKwGISkckxkR.BcMuctm9Dho3O282EWx1xUpQRaMekhixfP8
- F0D3hOm8ZAeS7cy80nsE5coSyfqJ9y5K7_G0gEpanxXi76D0q1IHTLursuZuUJAqXDcSCldGc80U
- Rv3WUHjRqCzb.u04iDdvA2yIWF2RbQPZUJLMoLMv_b3_GrAZtoKwnt0jljp_7IeHitYxfrQdWsUO
- CEDGV_MWJR1ufKlXqem.7lnQMBDNQiQFem_c0RC.z0OzYCuene8T7Ni9Cs_6y73aQZfpQVchrGas
- IDJ1LRsKCTVvr1DwqPR3s8gnF6uz2_3sxh8LtFEv_2JV4B0kWKMv6L3y7oUY5IwfDo1j6vXJEpsa
- UMZTfFymHyxXZL3k2ZqvvodQDT.1iTDTRikhUHTphrQf.78Ao5ilsW5drWv1u7pXtkeKjNmzv6CQ
- .p21Nl6khkFqrVasqy4CN09k_jWjIJvl5_hXfxF4IGPF.U5oIXwMuJ47nrGTcmXihQt5sMWam3kz
- XRGHRtgKo61T13xvkiAvfO_R_7vgydFDTLSjHydf3K6.J6U030QysttTRc47UJzULA.yo7YoUUHV
- Yv7u9lwbThpYEYLF7CplCTBN9vUBWkwvd6OJCCCVK0bNCGxaiwoQVwco4W3IKpnokZv578EvJckM
- agJsyJyuVD5vZhXmGHCIZ7Hahh_Lc7zgOGUM3atgw4tsDb4ef4yGu10ZoLMwVlEcfmc7LkOpCUjX
- LJgAC6oAvYv4M.a8chUUMf4Rl.xOPfWqNpBP.Fw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:38:27 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp417.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 453e085596c4061cfe71d166fcd08f8b;
-          Mon, 26 Nov 2018 23:38:23 +0000 (UTC)
-Subject: [PATCH v5 15/38] LSM: Split LSM preparation from initialization
-To:     James Morris <jmorris@namei.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
-References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <ff5b9d6e-6c1a-cbde-a816-eaa4974d13d0@schaufler-ca.com>
-Date:   Mon, 26 Nov 2018 15:38:20 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 27 Nov 2018 05:34:26 -0500
+Received: by mail-lf1-f65.google.com with SMTP id f23so14939871lfc.13
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 15:38:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XGKVNJXaxyGwpkt5lwxumgR4J0vhaQGpXNk2oMyBT0s=;
+        b=QVEe2eHboKnM5Tn3wdNaNXlNYgCn25r8coPDe48Aj1eM0kW0JLNxsr77F/X3YMbuj9
+         FfKmUCwNudhApfl4yKKI9sYuRfT+kjuQUEq7aI6IlHTCWuRejPVYvE+OrlNJeyjLQslJ
+         n6wQEV99WmDjpMoTZBHuySOb1cNFHO6F7zvPsoQhbrkfITuig8qY1cRa9ZwDtsKAJ8JF
+         tSKKhuJsuLw93ECVK8AEX55LqO32dOZaS4wdRpRQVmt5/Vq9Cr6XnSdZ46XjNZWMYuwu
+         Oyu6WC9t8+6uoiEqYA8zHlVnu3jdrwius7ztOq/2oyTy7NzpvR4GcPNtDsm5wzn/ckFd
+         M8eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XGKVNJXaxyGwpkt5lwxumgR4J0vhaQGpXNk2oMyBT0s=;
+        b=Q1XL2EZJme4ZOcCJpUUR8FTB6N1bjZ1bAWYgS4RC4YANxuScdfZtCc6aYjmHJKC0v+
+         HiyEFmc3l1h3I1BPyrHSMYUSHRzx6MlsP2DfLjQsin0r/0LFYhPWfyqwFkFiEpxZsvKF
+         3Jp/bEYKFvP8XC+7b4PXFWBjf02/IyTDktpyWNSBEKjdKH9Xn5+Q/jq5gnD1ikjcVn0S
+         GNMF0QbrdlPLooUbRs4DJLA0rW8OD4vs5UQSAxzt5vbcNiugCXnOYBPCmgJnzzAZyZH4
+         RltVkxGf7YRFSrigI7+QvIyuDxNO9wjDJ/qIfXxLLGsYLn5CtEK9dmkbWUQWQ3gtFvTh
+         YgSw==
+X-Gm-Message-State: AGRZ1gLNzeBlM2oSLPC3m9n0iQeKIgCmhcwRYvSFszGQWY8YCsE5L6MX
+        NofubAnxzRwbTnEmyF+UUr8uNcUuiiyzE81aNWpp
+X-Google-Smtp-Source: AJdET5eiB6VnWHTQJ0HaakbTqVetbRuHEwIVEBktr9LtSUOwBqGdnDKmPj1+ecaKoXKDl+tVwrbVrb2pZ5HQBrpccCo=
+X-Received: by 2002:a19:8fce:: with SMTP id s75mr16631932lfk.151.1543275515679;
+ Mon, 26 Nov 2018 15:38:35 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20181126150139.31989-1-tiny.windzz@gmail.com>
+In-Reply-To: <20181126150139.31989-1-tiny.windzz@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 26 Nov 2018 18:38:24 -0500
+Message-ID: <CAHC9VhQt9q=wN2Rk1rvO=Xr9C4X-HztU4C=dMV_6ss_-BBzm8Q@mail.gmail.com>
+Subject: Re: [PATCH] audit/filter: remove some duplicated includes
+To:     tiny.windzz@gmail.com
+Cc:     Eric Paris <eparis@redhat.com>, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we already have to do a pass through the LSMs to figure out if
-exclusive LSMs should be disabled after the first one is seen as enabled,
-this splits the logic up a bit more cleanly. Now we do a full "prepare"
-pass through the LSMs (which also allows for later use by the blob-sharing
-code), before starting the LSM initialization pass.
+On Mon, Nov 26, 2018 at 10:01 AM Yangtao Li <tiny.windzz@gmail.com> wrote:
+> audit.h and fs.h are included twice.It's unnecessary.
+> hence just remove them.
+>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  kernel/auditfilter.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- security/security.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+See my previous comments.
 
-diff --git a/security/security.c b/security/security.c
-index df71b54c1ba4..3fac0ff39944 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -139,22 +139,28 @@ static bool __init lsm_allowed(struct lsm_info *lsm)
- 	return true;
- }
- 
--/* Check if LSM should be initialized. */
--static void __init maybe_initialize_lsm(struct lsm_info *lsm)
-+/* Prepare LSM for initialization. */
-+static void __init prepare_lsm(struct lsm_info *lsm)
- {
- 	int enabled = lsm_allowed(lsm);
- 
- 	/* Record enablement (to handle any following exclusive LSMs). */
- 	set_enabled(lsm, enabled);
- 
--	/* If selected, initialize the LSM. */
-+	/* If enabled, do pre-initialization work. */
- 	if (enabled) {
--		int ret;
--
- 		if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && !exclusive) {
- 			exclusive = lsm;
- 			init_debug("exclusive chosen: %s\n", lsm->name);
- 		}
-+	}
-+}
-+
-+/* Initialize a given LSM, if it is enabled. */
-+static void __init initialize_lsm(struct lsm_info *lsm)
-+{
-+	if (is_enabled(lsm)) {
-+		int ret;
- 
- 		init_debug("initializing %s\n", lsm->name);
- 		ret = lsm->init();
-@@ -240,7 +246,10 @@ static void __init ordered_lsm_init(void)
- 		ordered_lsm_parse(builtin_lsm_order, "builtin");
- 
- 	for (lsm = ordered_lsms; *lsm; lsm++)
--		maybe_initialize_lsm(*lsm);
-+		prepare_lsm(*lsm);
-+
-+	for (lsm = ordered_lsms; *lsm; lsm++)
-+		initialize_lsm(*lsm);
- 
- 	kfree(ordered_lsms);
- }
+> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+> index bf309f2592c4..6d43928a41c2 100644
+> --- a/kernel/auditfilter.c
+> +++ b/kernel/auditfilter.c
+> @@ -22,10 +22,8 @@
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>
+>  #include <linux/kernel.h>
+> -#include <linux/audit.h>
+>  #include <linux/kthread.h>
+>  #include <linux/mutex.h>
+> -#include <linux/fs.h>
+>  #include <linux/namei.h>
+>  #include <linux/netlink.h>
+>  #include <linux/sched.h>
+> --
+> 2.17.0
+>
+
+
 -- 
-2.14.5
-
-
+paul moore
+www.paul-moore.com
