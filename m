@@ -2,67 +2,62 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14CDEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E6FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2F0020663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:23:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F0020663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dominikbrodowski.net
+	by mail.kernel.org (Postfix) with ESMTP id 3BC6220855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:26:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BC6220855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726259AbeKZURV (ORCPT
+        id S1726234AbeKZUTc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 15:17:21 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:45166 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbeKZURV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 15:17:21 -0500
-Received: from light.dominikbrodowski.net (isilmar.linta [10.0.0.1])
-        by isilmar-4.linta.de (Postfix) with ESMTPS id 4F270200941;
-        Mon, 26 Nov 2018 09:23:49 +0000 (UTC)
-Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
-        id 0646E201C6; Mon, 26 Nov 2018 09:36:33 +0100 (CET)
-Date:   Mon, 26 Nov 2018 09:36:33 +0100
-From:   Dominik Brodowski <linux@dominikbrodowski.net>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        linux-s390@vger.kernel.org,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Richard Weinberger <richard@nod.at>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Jeff Dike <jdike@addtoit.com>
-Subject: Re: [PATCH] pcmcia: remove per-arch PCMCIA config entry
-Message-ID: <20181126083633.GA10604@light.dominikbrodowski.net>
-References: <1543220141-13744-1-git-send-email-yamada.masahiro@socionext.com>
+        Mon, 26 Nov 2018 15:19:32 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:54540 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726164AbeKZUTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 15:19:31 -0500
+Received: from we0660.dip.tu-dresden.de ([141.76.178.148] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gRD9S-00080e-Se; Mon, 26 Nov 2018 10:25:58 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Otavio Salvador <otavio@ossystems.com.br>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 13/13] ARM: dts: rv1108: Pass the 'clock-latency' property
+Date:   Mon, 26 Nov 2018 10:25:58 +0100
+Message-ID: <4040449.WahONkjxjR@phil>
+In-Reply-To: <20181125211907.9895-13-otavio@ossystems.com.br>
+References: <20181125211907.9895-1-otavio@ossystems.com.br> <20181125211907.9895-13-otavio@ossystems.com.br>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543220141-13744-1-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.11.0 (2018-11-25)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 05:15:41PM +0900, Masahiro Yamada wrote:
-> Now that all architectures include drivers/pcmcia/Kconfig where
-> the PCMCIA config is defined, the PCMCIA config entries in per-arch
-> Kconfig files are redundant.
+Am Sonntag, 25. November 2018, 22:19:07 CET schrieb Otavio Salvador:
+> Like it is done on cpu nodes of other Rockchip SoCs, pass the
+> 'clock-latency' property to the CPU node, so that cpufreq driver
+> can take the latency into account when switching frequencies.
 > 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
-> I will queue this up to my kbuild tree
-> along with Christoph's clean-up patch set.
+> Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
 
-Acked-by: Dominik Brodowski <linux@dominikbrodowski.net>
+applied for 4.21 after adapting the subject and moving the property
+to its correct alphabetical position in the node.
 
-Thanks,
-	Dominik
+
+Thanks
+Heiko
+
+
