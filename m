@@ -2,130 +2,170 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E482EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A42C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A93A420862
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:57:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DR+JimNZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A93A420862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id D1EC320862
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:57:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1EC320862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726888AbeK0Gwm (ORCPT
+        id S1727027AbeK0Gws (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 01:52:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59392 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726300AbeK0Gwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 01:52:42 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE7CC20664;
-        Mon, 26 Nov 2018 19:57:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543262249;
-        bh=lNGhGzTWpw0qgtqdEHZvw7uKPMnqA1k/BXCI2eFNUcc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DR+JimNZvWzwJUHs6wW+jt3v0iVK3pkwUcEVh1Q/EE8Ne2RBnlE9hbEcEkzUKCr+k
-         AbTecd6vfHjnjB0IOppK1CNpmIlROLUCuWyt71sBpQikWUgfTxN1lc0ajElT/TSZeX
-         CinHAzh2ANvOjUBI6VHPJQiGVb7UsctFKhLlgVM4=
-Date:   Mon, 26 Nov 2018 20:57:27 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Michael Kelley <mikelley@microsoft.com>
-Cc:     KY Srinivasan <kys@microsoft.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "catalin.marinas@armm.com" <catalin.marinas@armm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        vkuznets <vkuznets@redhat.com>
-Subject: Re: [PATCH 3/4] Drivers: hv: vmbus: Add hooks for per-CPU IRQ
-Message-ID: <20181126195727.GA9957@kroah.com>
-References: <20181122030914.16274-1-kys@linuxonhyperv.com>
- <20181122031059.16338-1-kys@linuxonhyperv.com>
- <20181122031059.16338-3-kys@linuxonhyperv.com>
- <20181126192101.GC32208@kroah.com>
- <CY4PR21MB07735AB610D4BFD3EB7556D5D7D70@CY4PR21MB0773.namprd21.prod.outlook.com>
+        Tue, 27 Nov 2018 01:52:48 -0500
+Received: from smtp03.citrix.com ([162.221.156.55]:21573 "EHLO
+        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbeK0Gws (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 01:52:48 -0500
+X-IronPort-AV: E=Sophos;i="5.56,283,1539648000"; 
+   d="scan'208";a="71525982"
+Subject: Re: [Xen-devel] [PATCH v3] xen/balloon: Mark unallocated host memory
+ as UNUSABLE
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        <xen-devel@lists.xen.org>, <linux-kernel@vger.kernel.org>
+CC:     <jgross@suse.com>, <helgaas@kernel.org>,
+        <christian.koenig@amd.com>, <JBeulich@suse.com>
+References: <1513778746-6155-1-git-send-email-boris.ostrovsky@oracle.com>
+ <7c833e3a-4a0b-e80c-91e2-4348d6959651@citrix.com>
+ <d42938a7-2081-65f4-a0d9-6fb7a8dd2fa0@oracle.com>
+ <f955576f-532d-d4de-e7eb-718dae4b14c1@citrix.com>
+ <3dd5153d-0f17-0e3b-7ebb-5579a7200765@oracle.com>
+From:   Igor Druzhinin <igor.druzhinin@citrix.com>
+Message-ID: <a49d8dc8-ff2f-16d5-aa94-bfb153352d9a@citrix.com>
+Date:   Mon, 26 Nov 2018 19:57:22 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY4PR21MB07735AB610D4BFD3EB7556D5D7D70@CY4PR21MB0773.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <3dd5153d-0f17-0e3b-7ebb-5579a7200765@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 07:47:41PM +0000, Michael Kelley wrote:
-> From: Greg KH <gregkh@linuxfoundation.org>  Monday, November 26, 2018 11:21 AM
+On 26/11/2018 19:42, Boris Ostrovsky wrote:
+> On 11/26/18 12:10 PM, Igor Druzhinin wrote:
+>> On 26/11/2018 16:25, Boris Ostrovsky wrote:
+>>> On 11/25/18 8:00 PM, Igor Druzhinin wrote:
+>>>> On 20/12/2017 14:05, Boris Ostrovsky wrote:
+>>>>> Commit f5775e0b6116 ("x86/xen: discard RAM regions above the maximum
+>>>>> reservation") left host memory not assigned to dom0 as available for
+>>>>> memory hotplug.
+>>>>>
+>>>>> Unfortunately this also meant that those regions could be used by
+>>>>> others. Specifically, commit fa564ad96366 ("x86/PCI: Enable a 64bit BAR
+>>>>> on AMD Family 15h (Models 00-1f, 30-3f, 60-7f)") may try to map those
+>>>>> addresses as MMIO.
+>>>>>
+>>>>> To prevent this mark unallocated host memory as E820_TYPE_UNUSABLE (thus
+>>>>> effectively reverting f5775e0b6116) and keep track of that region as
+>>>>> a hostmem resource that can be used for the hotplug.
+>>>>>
+>>>>> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+>>>> This commit breaks Xen balloon memory hotplug for us in Dom0 with
+>>>> "hoplug_unpopulated" set to 1. The issue is that the common kernel
+>>>> memory onlining procedures require "System RAM" resource to be 1-st
+>>>> level. That means by inserting it under "Unusable memory" as the commit
+>>>> above does (intentionally or not) we make it 2-nd level and break memory
+>>>> onlining.
+>>> What do you mean by 1st and 2nd level?
+>>>
+>> I mean the level of a resource in IOMEM tree (the one that's printed
+>> from /proc/iomem). 1-st level means its parent is root and so on.
 > 
-> > > diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-> > > index 0d6271cce198..8d97bd3a13a6 100644
-> > > --- a/arch/x86/include/asm/mshyperv.h
-> > > +++ b/arch/x86/include/asm/mshyperv.h
-> > > @@ -109,6 +109,10 @@ void hyperv_vector_handler(struct pt_regs *regs);
-> > >  void hv_setup_vmbus_irq(void (*handler)(void));
-> > >  void hv_remove_vmbus_irq(void);
-> > >
-> > > +/* On x86/x64, there isn't a real IRQ to be enabled/disable */
-> > > +static inline void hv_enable_vmbus_irq(void) {}
-> > > +static inline void hv_disable_vmbus_irq(void) {}
-> > > +
-> > >  void hv_setup_kexec_handler(void (*handler)(void));
-> > >  void hv_remove_kexec_handler(void);
-> > >  void hv_setup_crash_handler(void (*handler)(struct pt_regs *regs));
-> > > diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-> > > index 166c2501de17..d0bb09a4bd73 100644
-> > > --- a/drivers/hv/hv.c
-> > > +++ b/drivers/hv/hv.c
-> > > @@ -307,6 +307,7 @@ int hv_synic_init(unsigned int cpu)
-> > >  	hv_set_siefp(siefp.as_uint64);
-> > >
-> > >  	/* Setup the shared SINT. */
-> > > +	hv_enable_vmbus_irq();
-> > >  	hv_get_synint_state(VMBUS_MESSAGE_SINT, shared_sint.as_uint64);
-> > >
-> > >  	shared_sint.vector = HYPERVISOR_CALLBACK_VECTOR;
-> > > @@ -434,6 +435,7 @@ int hv_synic_cleanup(unsigned int cpu)
-> > >  	/* Disable the global synic bit */
-> > >  	sctrl.enable = 0;
-> > >  	hv_set_synic_state(sctrl.as_uint64);
-> > > +	hv_disable_vmbus_irq();
-> > >
-> > >  	return 0;
-> > >  }
-> > > --
-> > > 2.19.1
-> > 
-> > You created "null" hooks that do nothing, for no one in this patch
-> > series, why?
-> > 
+> Ah, OK. Doesn't
+> additional_memory_resource()->insert_resource(iomem_resource) place the
+> RAM at 1st level? And if not, can we make it so?
 > 
-> hv_enable_vmbus_irq() and hv_disable_vmbus_irq() have non-null
-> implementations in the ARM64 code in patch 2 of this series.  The
-> implementations are in the new file arch/arm64/hyperv/mshyperv.c.
-> Or am I misunderstanding your point?
 
-So you use a hook in an earlier patch and then add it in a later one?
+That'd mean splitting "Unusable memory" resource. Since it's allocated
+from bootmem it has proven to be quite difficult but there are seem to
+be special functions available particularly for memory resource
+management operations that I've not yet experimented with. So the answer
+is probably - maybe yes but not straightforward.
 
-Shouldn't you do it the other way around?  As it is, the earlier patch
-should not work properly, right?
+>>
+>>>> There are multiple ways to fix it depending on what was the intention of
+>>>> original commit and what exactly it tried to workaround. It seems it
+>>>> does several things at once:
+>>>> 1) Marks non-Dom0 host memory "Unusable memory" in resource tree.
+>>>> 2) Keeps track of all the areas safe for hotplug in Dom0
+>>>> 3) Changes allocation algorithms itself in balloon driver to use those areas
+>>> Pretty much. (3) is true in the sense that memory is first allocated
+>>> from hostmem_resource (which is non-dom0 RAM).
+>>>
+>>>> Are all the things above necessary to cover the issue in fa564ad96366
+>>>> ("x86/PCI: Enable a 64bit BAR on AMD Family 15h (Models 00-1f, 30-3f,
+>>>> 60-7f)")?
+>>> Not anymore, as far as that particular commit is concerned, but that's
+>>> because of 03a551734 ("x86/PCI: Move and shrink AMD 64-bit window to
+>>> avoid conflict") which was introduced after balloon patch. IIRC there
+>>> were some issues with fa564ad96366 unrelated to balloon.
+>>>
+>> If it's not a problem anymore IIUC, can we revert the change as it still
+>> breaks "hotplug_unpopulated=1" for the reasons I described above?
+> 
+> Since this seems to have broken existing feature this would be an
+> option. But before going that route I'd like to see if we can fix the patch.
+> 
+> I have been unable to reproduce your problem. Can you describe what you did?
+> 
 
-thanks,
+It doesn't happen on all configurations as sometimes the memory is
+successfully hotplugged to a hole depending on the size of Dom0 memory.
+But we reproduced it quite reliably with small Dom0 sizes like 752MB.
 
-greg k-h
+XenServer is using this feature to hotplug additional memory for grant
+table operations so we started a VM and observed a stable hang.
+
+> 
+>>
+>>>> Can we remove "Unusable memory" resources as soon as we finished
+>>>> booting? Is removing on-demand is preferable over "shoot them all" in
+>>>> that case?
+>>> The concern is that in principle nothing prevents someone else to do
+>>> exact same thing fa564ad96366 did, which is grab something from right
+>>> above end of RAM as the kernel sees it. And that can be done at any point.
+>>>
+>> Nothing prevents - true, but that's plainly wrong from OS point of view
+>> to grab physical ranges for something without knowing what's actually
+>> behind on that platform. 
+> 
+> I am not sure I agree that this is plainly wrong. If not for BIOS issues
+> that 03a551734cf mentions I think what the original implementation of
+> fa564ad963 did was perfectly reasonable. Which is why I would prefer to
+> keep keep the hostmem resource *if possible*.
+> 
+
+Exactly, those *are* BIOS issues and are not supposed to be workarounded
+by the OS. And as the next commit showed even the workaround didn't
+quite helped with it.
+
+I agree that having hotmem as a precaution is fine but only if there is
+a non-cringy way to keep things working with it which I'm not sure does
+exist.
+
+Igor
+
+> 
+> -boris
+> 
+> 
+>> I think we shouldn't consider this as a valid
+>> thing to do and don't try to workaround initially incorrect code.
+>>
+>>> -boris
+>>>
+>>>> Does it even make sense to remove the 1-st level only restriction in
+>>>> kernel/resource.c ?
+>>>
+>>>
+> 
