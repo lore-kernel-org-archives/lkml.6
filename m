@@ -2,54 +2,54 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAD_ENC_HEADER,
+	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C964C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E6CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 524E321104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F7EE21479
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcC28WNA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 524E321104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aziKDl5J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F7EE21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728976AbeKZVv1 (ORCPT
+        id S1728999AbeKZVva (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:51:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60848 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:51:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbeKZVv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:51:27 -0500
+        id S1726200AbeKZVv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:51:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E374820817;
-        Mon, 26 Nov 2018 10:57:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 668752089F;
+        Mon, 26 Nov 2018 10:57:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229862;
-        bh=G3k+FTa+WkB+wh7BqmilwAEZZOLY1LmvG6VNeEaPPms=;
+        s=default; t=1543229864;
+        bh=7Hd6Dt3DmAdCdfbq7TCO/RreanY7vlWNxc6udsB/ETw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TcC28WNAr6d84xXv48jTgzKPylV7JemDownVsZKNkvzcSL7Znq3ha0nR48ubfplBA
-         25ZDGL/3O4tv5i2u8Nl76bYOcH5EWF7zZAq3KotcptfACwYXVr7pDrovzwp900Frbk
-         zPYgF0EUP3vjeeFi3B2GISgeCm1yhdiRyR87kzs4=
+        b=aziKDl5J/RRl7WBLiYLvmwTOAtvM+l8PHovLOtKucMFCO/nAT/3C4njJBtRCoT65k
+         0I6SZXAuutSBdZSg4ZMAjAtf78X4hQiIfui9CrKFhaqSs+lViTLKnRgtFNBIvap+Tj
+         BarPxoxMpexiG6X+FlJtEdjItXlqWJxEs6e8Cqbc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnold Guy <aurnoldg@gmail.com>,
-        Alois Nespor <nespor@fssp.cz>, Yury Pakin <zxwarior@gmail.com>,
-        Ihor Chyhin <ihorchyhin@ukr.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org,
+        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
+        <ernesto.mnd.fernandez@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 29/46] ACPI / watchdog: Prefer iTCO_wdt always when WDAT table uses RTC SRAM
-Date:   Mon, 26 Nov 2018 11:51:18 +0100
-Message-Id: <20181126105048.880481831@linuxfoundation.org>
+Subject: [PATCH 4.9 03/46] hfs: prevent btree data loss on root split
+Date:   Mon, 26 Nov 2018 11:50:52 +0100
+Message-Id: <20181126105045.966457422@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
 References: <20181126105045.447291262@linuxfoundation.org>
@@ -67,128 +67,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5a802a7a285c8877ca872e44eeb0f06afcb5212f ]
+[ Upstream commit d057c036672f33d43a5f7344acbb08cf3a8a0c09 ]
 
-After we added quirk for Lenovo Z50-70 it turns out there are at least
-two more systems where WDAT table includes instructions accessing RTC
-SRAM. Instead of quirking each system separately, look for such
-instructions in the table and automatically prefer iTCO_wdt if found.
+This bug is triggered whenever hfs_brec_update_parent() needs to split
+the root node.  The height of the btree is not increased, which leaves
+the new node orphaned and its records lost.  It is not possible for this
+to happen on a valid hfs filesystem because the index nodes have fixed
+length keys.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199033
-Reported-by: Arnold Guy <aurnoldg@gmail.com>
-Reported-by: Alois Nespor <nespor@fssp.cz>
-Reported-by: Yury Pakin <zxwarior@gmail.com>
-Reported-by: Ihor Chyhin <ihorchyhin@ukr.net>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+For reasons I ignore, the hfs module does have support for a number of
+hfsplus features.  A corrupt btree header may report variable length
+keys and trigger this bug, so it's better to fix it.
+
+Link: http://lkml.kernel.org/r/9750b1415685c4adca10766895f6d5ef12babdb0.1535682463.git.ernesto.mnd.fernandez@gmail.com
+Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/acpi_watchdog.c | 72 ++++++++++++++++++++++--------------
- 1 file changed, 45 insertions(+), 27 deletions(-)
+ fs/hfs/brec.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/acpi/acpi_watchdog.c b/drivers/acpi/acpi_watchdog.c
-index ca2724893541..396e358c2cee 100644
---- a/drivers/acpi/acpi_watchdog.c
-+++ b/drivers/acpi/acpi_watchdog.c
-@@ -12,35 +12,51 @@
- #define pr_fmt(fmt) "ACPI: watchdog: " fmt
+diff --git a/fs/hfs/brec.c b/fs/hfs/brec.c
+index 2a6f3c67cb3f..2e713673df42 100644
+--- a/fs/hfs/brec.c
++++ b/fs/hfs/brec.c
+@@ -424,6 +424,10 @@ skip:
+ 	if (new_node) {
+ 		__be32 cnid;
  
- #include <linux/acpi.h>
--#include <linux/dmi.h>
- #include <linux/ioport.h>
- #include <linux/platform_device.h>
- 
- #include "internal.h"
- 
--static const struct dmi_system_id acpi_watchdog_skip[] = {
--	{
--		/*
--		 * On Lenovo Z50-70 there are two issues with the WDAT
--		 * table. First some of the instructions use RTC SRAM
--		 * to store persistent information. This does not work well
--		 * with Linux RTC driver. Second, more important thing is
--		 * that the instructions do not actually reset the system.
--		 *
--		 * On this particular system iTCO_wdt seems to work just
--		 * fine so we prefer that over WDAT for now.
--		 *
--		 * See also https://bugzilla.kernel.org/show_bug.cgi?id=199033.
--		 */
--		.ident = "Lenovo Z50-70",
--		.matches = {
--			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
--			DMI_MATCH(DMI_PRODUCT_NAME, "20354"),
--			DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo Z50-70"),
--		},
--	},
--	{}
--};
-+#ifdef CONFIG_RTC_MC146818_LIB
-+#include <linux/mc146818rtc.h>
-+
-+/*
-+ * There are several systems where the WDAT table is accessing RTC SRAM to
-+ * store persistent information. This does not work well with the Linux RTC
-+ * driver so on those systems we skip WDAT driver and prefer iTCO_wdt
-+ * instead.
-+ *
-+ * See also https://bugzilla.kernel.org/show_bug.cgi?id=199033.
-+ */
-+static bool acpi_watchdog_uses_rtc(const struct acpi_table_wdat *wdat)
-+{
-+	const struct acpi_wdat_entry *entries;
-+	int i;
-+
-+	entries = (struct acpi_wdat_entry *)(wdat + 1);
-+	for (i = 0; i < wdat->entries; i++) {
-+		const struct acpi_generic_address *gas;
-+
-+		gas = &entries[i].register_region;
-+		if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
-+			switch (gas->address) {
-+			case RTC_PORT(0):
-+			case RTC_PORT(1):
-+			case RTC_PORT(2):
-+			case RTC_PORT(3):
-+				return true;
-+			}
++		if (!new_node->parent) {
++			hfs_btree_inc_height(tree);
++			new_node->parent = tree->root;
 +		}
-+	}
-+
-+	return false;
-+}
-+#else
-+static bool acpi_watchdog_uses_rtc(const struct acpi_table_wdat *wdat)
-+{
-+	return false;
-+}
-+#endif
- 
- static const struct acpi_table_wdat *acpi_watchdog_get_wdat(void)
- {
-@@ -50,9 +66,6 @@ static const struct acpi_table_wdat *acpi_watchdog_get_wdat(void)
- 	if (acpi_disabled)
- 		return NULL;
- 
--	if (dmi_check_system(acpi_watchdog_skip))
--		return NULL;
--
- 	status = acpi_get_table(ACPI_SIG_WDAT, 0,
- 				(struct acpi_table_header **)&wdat);
- 	if (ACPI_FAILURE(status)) {
-@@ -60,6 +73,11 @@ static const struct acpi_table_wdat *acpi_watchdog_get_wdat(void)
- 		return NULL;
- 	}
- 
-+	if (acpi_watchdog_uses_rtc(wdat)) {
-+		pr_info("Skipping WDAT on this system because it uses RTC SRAM\n");
-+		return NULL;
-+	}
-+
- 	return wdat;
- }
- 
+ 		fd->bnode = hfs_bnode_find(tree, new_node->parent);
+ 		/* create index key and entry */
+ 		hfs_bnode_read_key(new_node, fd->search_key, 14);
 -- 
 2.17.1
 
