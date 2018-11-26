@@ -2,111 +2,158 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B35C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B38DFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EF0120C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:25:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C5F1208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:26:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCMr4esE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EF0120C01
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="p/JeJBcA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C5F1208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbeK0KVR (ORCPT
+        id S1727636AbeK0KWk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:21:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48906 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726448AbeK0KVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:21:17 -0500
-Received: from localhost (unknown [104.132.1.80])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B35F2208E4;
-        Mon, 26 Nov 2018 23:25:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543274730;
-        bh=PF7iB6C2AhXKF3kqUaQXYATUPxfZ3B0YbXdWF+vWhwI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gCMr4esE3ob7kG+XTxtzfP4BNWbUsJmnNuJFybjvyk9YwK6CSXxodlhVa+OuBNCTL
-         3Fhqor8TBrQYhUi9wQey0SrwAWe2rlg6eOcw+tLza1bbItiFE5FkfSMrsKom23jCZK
-         aRcVHq5GE2dmtfMYrFmfRbgGekL9piwbQE0LkBzk=
-Date:   Mon, 26 Nov 2018 15:25:29 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Sheng Yong <shengyong1@huawei.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        "gongchen (E)" <gongchen4@huawei.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: check memory boundary by insane namelen
-Message-ID: <20181126232529.GC55960@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20181115075040.83500-1-jaegeuk@kernel.org>
- <3d213d40-a4b0-6e60-87b2-81e66866ac4c@huawei.com>
+        Tue, 27 Nov 2018 05:22:40 -0500
+Received: from sonic302-28.consmr.mail.ne1.yahoo.com ([66.163.186.154]:42538
+        "EHLO sonic302-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726448AbeK0KWj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 05:22:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543274812; bh=mdy2YdUdtSJS+oWKPUtutk2c4C3wLLPLrYrGLBo+7N8=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=p/JeJBcAiLq17bJWVyy9tmqSP1VEwJZOxnPc5f/lLRd/r24uHLo5Jj5vB4DxOiPp+PqNP4btZVhrO/f7N7UFBHPho1QWjA+3r9DQ+To9eHCBmnqiZgESLcsdnxIfpc0cFNBqQcMKp9padW3OVs99MkPkOWMt61KpYfWTcS3cOeOBi6LA5q1XoIjIWtHTjthBgC9l3ZKJTVnEkelrQMmwMsMNsoey3EXOW3Da3Mzypb7IG1GUUhm/fRQM/vCUPPamOKO08Kvxj3JR7ujLn3TxlO8nmgaSRcqNcqgpO+pCWjGjbuN/uULTdAD/dLLAD3zz6ZS7QyzTM8DgpM6dUonAug==
+X-YMail-OSG: _cZQ2iYVM1k_4JyYuTwv5LfT8_Pl6w2BJwh10yHM6HKOlwiM9HZM8KBI9.G_MuT
+ bwg2kme0j3iFs.tRkrbx8OamVLTGVyPKX2w3EmL.NERv0K8rVVe9P1u5yB9Z_U92F1ZjEgtfiPdZ
+ .VfZN2GAP5FEgnNjWDMsIAokUDD1awKLHKT5K92bZ9A3q3F3pCOrJtC4BR.UTj7tTiZ3DRYVbdhA
+ FabhdXlJh4Wje7lFxbRafA84MpkjIDHZ_kHhlreqGBeSjTyf5OpJJl4p98T5GsA8WlrGYlRmC7p4
+ mtP6b1Z0gVfwXDFlOnFs5V.MJyvkgsa_ajHTEZqIcpuBM22LlGLlwCXsnR6uLzJTd2n8Nk8A4Mm3
+ zjHsHcPtMBQXvq.r5DKWhQffgUQyPnG6Ofy9d6jjJBKV2i5ZvHFHAfIsRxkKbUYFBET.gY2FZKty
+ As_0qWpU7jcx1t0FfyCziDJhWrvvdDv6E0Q4ROcX2Ls7N1J_betq_xGWRrkzcu6pW6nnotMN8znK
+ Fgp1fInBGIDm2BIMFJMjES8TmMSkU6pth1WGdMpUR1lesOSDgPdu8XntHF.wZr56CtQQ3CevdjYx
+ lpKUbKg.7iJjKB.cOC1QVs8XhGTcTEl3gtWLKmhTwdF3rxxNnZ8PGioNIt7QTBytqK2nZADcuMTo
+ i6N.FRJ3yxB9lp53KcGZPc.exxIH3RlAjvM7ZF0cYP.CwR.d4LeUGL.smD3wj3jq5i91Tqx6fGmu
+ fD5UFyWGSE2WppJ.7lJGezJWvWTcor.w5nU.s7vsIvuJlLLGjJPCbduoKYXfrZDGWvLSrUn__IHk
+ 9HT3LXk4ZnBafsviOxfP_HpcJHT5Y7__6kQhxhKbkszrkI6b9H2XIDTqDe06bxrs5ZydK_4R.tFr
+ VbnpH03B8K.K0t8.JY7gQopntEmC0ZmbQW02EuRmKMqtlSOrmvHPbMV2IYcFG_gsfSZMSihdDmOx
+ 2rm694vb6SUmCIuB8WquVB48inQE7jj5eN87cN2ne15E0GVoRytammRF9Gzv7zIZQ6r.2tLtQrx0
+ ZWL8DJDooA2CAA8eyR3.wcGt1RqTWrYbCKbkgcBxhlJ8WZ3PwvN6v8_8iEIt.bf7Xuz9APQbwuH7
+ Iz9jP79eExK8Ie0hKLNee4o9EqUEwgJW41NY-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:26:52 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
+          by smtp429.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 29dff8d62ab536d21f7d336a2d7a212f;
+          Mon, 26 Nov 2018 23:26:49 +0000 (UTC)
+Subject: [PATCH v5 01/38] LSM: Introduce LSM_FLAG_LEGACY_MAJOR
+To:     James Morris <jmorris@namei.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <ecb10f5c-7bbd-fb2e-4148-63290bc9a7ff@schaufler-ca.com>
+Date:   Mon, 26 Nov 2018 15:26:46 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d213d40-a4b0-6e60-87b2-81e66866ac4c@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/23, Sheng Yong wrote:
-> Hi, Jaegeuk and Chao,
-> 
-> On 2018/11/15 15:50, Jaegeuk Kim wrote:
-> > If namelen is corrupted to have very long value, fill_dentries can copy
-> > wrong memory area.
-> > 
-> Is there any scenario that could hit this corruption? Or this is triggered
-> by fuzzing injection?
+This adds a flag for the current "major" LSMs to distinguish them when
+we have a universal method for ordering all LSMs. It's called "legacy"
+since the distinction of "major" will go away in the blob-sharing world.
 
-Hi Sheng,
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+Reviewed-by: John Johansen <john.johansen@canonical.com>
+---
+ include/linux/lsm_hooks.h  | 3 +++
+ security/apparmor/lsm.c    | 1 +
+ security/selinux/hooks.c   | 1 +
+ security/smack/smack_lsm.c | 1 +
+ security/tomoyo/tomoyo.c   | 1 +
+ 5 files changed, 7 insertions(+)
 
-It's from a fuzzing test.
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index aaeb7fa24dc4..63c0e102de20 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2039,8 +2039,11 @@ extern char *lsm_names;
+ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+ 				char *lsm);
+ 
++#define LSM_FLAG_LEGACY_MAJOR	BIT(0)
++
+ struct lsm_info {
+ 	const char *name;	/* Required. */
++	unsigned long flags;	/* Optional: flags describing LSM */
+ 	int (*init)(void);	/* Required. */
+ };
+ 
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 42446a216f3b..2edd35ca5044 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1728,5 +1728,6 @@ static int __init apparmor_init(void)
+ 
+ DEFINE_LSM(apparmor) = {
+ 	.name = "apparmor",
++	.flags = LSM_FLAG_LEGACY_MAJOR,
+ 	.init = apparmor_init,
+ };
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 7ce683259357..56c6f1849c80 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -7209,6 +7209,7 @@ void selinux_complete_init(void)
+    all processes and objects when they are created. */
+ DEFINE_LSM(selinux) = {
+ 	.name = "selinux",
++	.flags = LSM_FLAG_LEGACY_MAJOR,
+ 	.init = selinux_init,
+ };
+ 
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 81fb4c1631e9..3639e55b1f4b 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4891,5 +4891,6 @@ static __init int smack_init(void)
+  */
+ DEFINE_LSM(smack) = {
+ 	.name = "smack",
++	.flags = LSM_FLAG_LEGACY_MAJOR,
+ 	.init = smack_init,
+ };
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 1b5b5097efd7..09f7af130d3a 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -552,5 +552,6 @@ static int __init tomoyo_init(void)
+ 
+ DEFINE_LSM(tomoyo) = {
+ 	.name = "tomoyo",
++	.flags = LSM_FLAG_LEGACY_MAJOR,
+ 	.init = tomoyo_init,
+ };
+-- 
+2.14.5
 
-Thanks,
 
-> 
-> thanks,
-> Sheng Yong
-> 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >   fs/f2fs/dir.c | 12 +++++++++++-
-> >   1 file changed, 11 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-> > index bacc667950b6..c0c845da12fa 100644
-> > --- a/fs/f2fs/dir.c
-> > +++ b/fs/f2fs/dir.c
-> > @@ -808,6 +808,17 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
-> >   		de_name.name = d->filename[bit_pos];
-> >   		de_name.len = le16_to_cpu(de->name_len);
-> > +		/* check memory boundary before moving forward */
-> > +		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-> > +		if (unlikely(bit_pos > d->max)) {
-> > +			f2fs_msg(sbi->sb, KERN_WARNING,
-> > +				"%s: corrupted namelen=%d, run fsck to fix.",
-> > +				__func__, le16_to_cpu(de->name_len));
-> > +			set_sbi_flag(sbi, SBI_NEED_FSCK);
-> > +			err = -EINVAL;
-> > +			goto out;
-> > +		}
-> > +
-> >   		if (f2fs_encrypted_inode(d->inode)) {
-> >   			int save_len = fstr->len;
-> > @@ -830,7 +841,6 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
-> >   		if (readdir_ra)
-> >   			f2fs_ra_node_page(sbi, le32_to_cpu(de->ino));
-> > -		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-> >   		ctx->pos = start_pos + bit_pos;
-> >   	}
-> >   out:
-> > 
