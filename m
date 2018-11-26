@@ -3,34 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF34C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7F8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:45:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D96F20659
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:45:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D96F20659
+	by mail.kernel.org (Postfix) with ESMTP id D313520659
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:45:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D313520659
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbeK0DkE (ORCPT
+        id S1727001AbeK0DkH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 22:40:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38780 "EHLO mx1.redhat.com"
+        Mon, 26 Nov 2018 22:40:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35960 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726282AbeK0DkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:40:03 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1726282AbeK0DkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 22:40:06 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B485D30016E7;
-        Mon, 26 Nov 2018 16:45:24 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 639F0300239A;
+        Mon, 26 Nov 2018 16:45:27 +0000 (UTC)
 Received: from [10.36.112.66] (ovpn-112-66.ams2.redhat.com [10.36.112.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 20EEA1974F;
-        Mon, 26 Nov 2018 16:45:15 +0000 (UTC)
-Subject: Re: [PATCH v2 4/4] x86/kvm/hyper-v: avoid open-coding
- stimer_mark_pending() in kvm_hv_notify_acked_sint()
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 12D305D776;
+        Mon, 26 Nov 2018 16:45:22 +0000 (UTC)
+Subject: Re: [PATCH v2 0/4] x86/kvm/hyper-v: Implement Direct Mode for
+ synthetic timers
 To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
 Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
         linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
@@ -39,7 +40,6 @@ Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
         Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
         "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
 References: <20181126154732.23025-1-vkuznets@redhat.com>
- <20181126154732.23025-5-vkuznets@redhat.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -77,28 +77,54 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <a5b1c17a-0026-3a7d-1e44-4524a6f1beae@redhat.com>
-Date:   Mon, 26 Nov 2018 17:45:13 +0100
+Message-ID: <e0dcfeee-f35b-6c61-51b7-73fcdbf57760@redhat.com>
+Date:   Mon, 26 Nov 2018 17:45:20 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181126154732.23025-5-vkuznets@redhat.com>
+In-Reply-To: <20181126154732.23025-1-vkuznets@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 26 Nov 2018 16:45:25 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 26 Nov 2018 16:45:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 26/11/18 16:47, Vitaly Kuznetsov wrote:
-> stimers_pending optimization only helps us to avoid multiple
-> kvm_make_request() calls. This doesn't happen very often and these
-> calls are very cheap in the first place, remove open-coded version of
-> stimer_mark_pending() from kvm_hv_notify_acked_sint().
+> Changes since v1:
+> - avoid open-coding stimer_mark_pending() in kvm_hv_notify_acked_sint() and
+>   kvm_hv_synic_send_eoi [Paolo Bonzini]
+> 
+> Turns out Hyper-V on KVM (as of 2016) will only use synthetic timers
+> if direct mode is available. With direct mode we notify the guest by
+> asserting APIC irq instead of sending a SynIC message.
+> 
+> Qemu and kvm-unit-test patches for testing this series can be found in
+> v1 submission:
+> https://lkml.org/lkml/2018/11/13/972
+> 
+> Vitaly Kuznetsov (4):
+>   x86/hyper-v: move synic/stimer control structures definitions to
+>     hyperv-tlfs.h
+>   x86/kvm/hyper-v: use stimer config definition from hyperv-tlfs.h
+>   x86/kvm/hyper-v: direct mode for synthetic timers
+>   x86/kvm/hyper-v: avoid open-coding stimer_mark_pending() in
+>     kvm_hv_notify_acked_sint()
+> 
+>  arch/x86/include/asm/hyperv-tlfs.h |  73 ++++++++++++++++++--
+>  arch/x86/include/asm/kvm_host.h    |   2 +-
+>  arch/x86/kvm/hyperv.c              | 106 +++++++++++++++++++++--------
+>  arch/x86/kvm/trace.h               |  10 +--
+>  arch/x86/kvm/x86.c                 |   1 +
+>  drivers/hv/hv.c                    |   2 +-
+>  drivers/hv/hyperv_vmbus.h          |  68 ------------------
+>  include/uapi/linux/kvm.h           |   1 +
+>  8 files changed, 154 insertions(+), 109 deletions(-)
+> 
 
-I wouldn't say very cheap, but still relatively cheap compared to a vmexit.
+Queued, thanks.
 
 Paolo
