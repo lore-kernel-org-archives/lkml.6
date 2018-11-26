@@ -2,166 +2,185 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32047C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F4C3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5E2520855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:43:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 436EB20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:44:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aBu+vK0B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5E2520855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ZX76AY0P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 436EB20855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbeK0Eir (ORCPT
+        id S1726620AbeK0Eix (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:38:47 -0500
-Received: from mail-vs1-f41.google.com ([209.85.217.41]:36851 "EHLO
-        mail-vs1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbeK0Eiq (ORCPT
+        Mon, 26 Nov 2018 23:38:53 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40497 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbeK0Eix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:38:46 -0500
-Received: by mail-vs1-f41.google.com with SMTP id v205so11893690vsc.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 09:43:57 -0800 (PST)
+        Mon, 26 Nov 2018 23:38:53 -0500
+Received: by mail-pf1-f195.google.com with SMTP id i12so6926070pfo.7
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 09:44:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=z9ncKStqKYFpy5k5QNVfeTI2b4E4IW77gfoJb/WU5Is=;
-        b=aBu+vK0B/l0RpppKE9HPNFwUCk4ch88TmvTrBZoSr+tGnMSVB4t3LMIkKwH+BeGI0e
-         uTS1Q02d2EM9LLp1Ae0dWkBtxRahmE8hMMyUKiE1u0s3YYj6GQWT7+RrhZ4pi50oMYZk
-         d94LlCg/PLiYETEf+XiimSCQuw6h7tws5Efpw=
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NUCxedA8jCUh3/XWnCY1VzGLGAfytMQF+dvduY8RF9k=;
+        b=ZX76AY0PUIWfUz11VWmh0ElI8jN4RFjPrJtV2nDkYghOvK67CD7TPAUfzzWLVDPFnH
+         BSeIpi4UvM8beNt8RY1e86N0kZGbjx0WnsaGRtizagE9NcyGGsts+GyxJhAszXSS/UDB
+         veTx42yye8+K38iGpLasQ6ZyKbi2mmwYDdSDG/jyAkP39f1XGGne5HK6FFW9zPFq2U0V
+         INJBdf7BHXcinry2OwErCJYs65raojNqUoaTWCEwE37MIzQKrhJgEPXSs5HxZtNBB2BB
+         eQ+iMfjc/3ckxYcdiqSYK6BGWD1fecrhNFuJS1WY+EE/CBLDZzZs70ZzuV9ZRFjuLa8x
+         Xotw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=z9ncKStqKYFpy5k5QNVfeTI2b4E4IW77gfoJb/WU5Is=;
-        b=PSnyGWeb6auftHzSd6Ik6Xn+R+Lh8k5UGn/YRcQGw6BMN5YKMNdSscLP+9lPUpcP0K
-         Ye7WM0nn5+u6/9W4UW6WGod0lCMw65CrTYUWBNFIhlIrDL4K/Rg94c0H5sMRmfZWDD9o
-         NcDg6FmzE/sTph1OGX12NU4Obn/e8F/H8rAeyN/1lrImVJh8KhXYBIyDfpG23v/xSU76
-         lc/vKE2i4XRDu8TFUWVwgtfe178250FUYELl9PRQiOisiaHmU9llfG2t6xtbWOQKPKPe
-         Yr6IxQO3YfAz9FifVvpJLTWpxOVIlQPJv/ZhC7P+6+Hr0M06+KvaiLYBKT5oMNwcZQWG
-         aD1Q==
-X-Gm-Message-State: AGRZ1gJd/saLJ7+LHhkZwyqjb3FDOIbS1zs+6xGdNPGMcgMd9DxR0pGl
-        1a0ubLooluaJPbQ7JDNeHOoHhecZrx0=
-X-Google-Smtp-Source: AJdET5dbrYIWD3pB74i9OmhfEIsx8k4dVwMX/7pO8fsW7p8CexaYXNzABk057yvpyi3gYJRHTHaibw==
-X-Received: by 2002:a67:208:: with SMTP id 8mr12209698vsc.48.1543254236275;
-        Mon, 26 Nov 2018 09:43:56 -0800 (PST)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id o8sm704548vkf.4.2018.11.26.09.43.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 09:43:55 -0800 (PST)
-Received: by mail-ua1-f45.google.com with SMTP id z24so6603595ual.8
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 09:43:54 -0800 (PST)
-X-Received: by 2002:a9f:2b44:: with SMTP id q4mr11018288uaj.126.1543254234308;
- Mon, 26 Nov 2018 09:43:54 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NUCxedA8jCUh3/XWnCY1VzGLGAfytMQF+dvduY8RF9k=;
+        b=LDlW++7zw9ISZb4Yij7U7GPsQJXqcJGR/OYDnC4DfnsZDLv7mZrzU7997KAdQYoBNQ
+         qplvH+e4Oa8xxwxt84oWLIRuMbWSKUsZJ2RtxjPfOcqRHESeq7vpbdjCjkzEqiUGJitu
+         5QHcmuw33Usun8HM9m2JZ0Ff778lTTUaa+kNCd8XHSmFdM0JyTBuvlozA87O5w+dSx63
+         Xc+neBuqv0+7RPtW6mgcyAYQOL6sx7ZKxseLK3yhjygK29ZtXXuRq5eSVEJL94GCzfC6
+         QVKikeZ72zmncbuDjSIXdHtGULAee80S8MNcitSDhiizWbw0Fg1XFOjtZrCpgSCJaMex
+         wNDQ==
+X-Gm-Message-State: AA+aEWYX0KdATJjI5oTeBU9Rkdb9RVfGCtPWLxbnehtVM0cKHdcaWTnZ
+        K+GTy4S9sE6zUOpbbEy7c+SYOQ==
+X-Google-Smtp-Source: AFSGD/V9cW7eRC+YHEDaIFoZflTcDKFlZ5QX6Sguk06dzw6xJUJ2T7UQywqtHfpUpaP07/2rrba5wg==
+X-Received: by 2002:a62:3811:: with SMTP id f17mr1008496pfa.206.1543254243818;
+        Mon, 26 Nov 2018 09:44:03 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id a10sm1096242pfi.138.2018.11.26.09.44.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 09:44:03 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gRKvS-00019y-6G; Mon, 26 Nov 2018 10:44:02 -0700
+Date:   Mon, 26 Nov 2018 10:44:02 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Cc:     dledford@redhat.com, linux-rdma@vger.kernel.org,
+        lijun_nudt@163.com, oulijun@huawei.com, charles.chenxin@huawei.com,
+        liuyixian@huawei.com, zhangxiping3@huawei.com, linuxarm@huawei.com,
+        linux-kernel@vger.kernel.org, xavier_huwei@163.com
+Subject: Re: [PATCH rdma-next 3/3] RDMA/hns: Modify hns RoCE device's name
+Message-ID: <20181126174402.GC32083@ziepe.ca>
+References: <1542986065-44265-1-git-send-email-xavier.huwei@huawei.com>
+ <1542986065-44265-4-git-send-email-xavier.huwei@huawei.com>
+ <20181123203958.GJ3395@ziepe.ca>
+ <5BF94B9F.5030409@huawei.com>
+ <20181126031354.GA15463@ziepe.ca>
+ <5BFBB002.8020703@huawei.com>
 MIME-Version: 1.0
-References: <20181125093750.GA28055@basecamp> <CAD=FV=VuPerEgPPiUKk7-Ck9aVz=oR1CAAzg+0wag1WTrTGKxg@mail.gmail.com>
- <20181125232450.GA3774@basecamp>
-In-Reply-To: <20181125232450.GA3774@basecamp>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 26 Nov 2018 09:43:42 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=V4WFYoKLQ72pico4HCGgLDTae7xougivv6VWOSoPhLpg@mail.gmail.com>
-Message-ID: <CAD=FV=V4WFYoKLQ72pico4HCGgLDTae7xougivv6VWOSoPhLpg@mail.gmail.com>
-Subject: Re: Question about "regulator: core: Only count load for enabled
- consumers" in -next
-To:     masneyb@onstation.org
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5BFBB002.8020703@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Nov 26, 2018 at 04:34:10PM +0800, Wei Hu (Xavier) wrote:
+> 
+> 
+> On 2018/11/26 11:13, Jason Gunthorpe wrote:
+> > On Sat, Nov 24, 2018 at 09:01:19PM +0800, Wei Hu (Xavier) wrote:
+> >>
+> >> On 2018/11/24 4:39, Jason Gunthorpe wrote:
+> >>> On Fri, Nov 23, 2018 at 11:14:25PM +0800, Wei Hu (Xavier) wrote:
+> >>>> This patch modifies the name of hns RoCE device's name in order
+> >>>> to ensure that the name is consistent before and after reset.
+> >>>>
+> >>>> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+> >>>>  drivers/infiniband/hw/hns/hns_roce_device.h | 1 +
+> >>>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 3 +++
+> >>>>  drivers/infiniband/hw/hns/hns_roce_main.c   | 4 +++-
+> >>>>  3 files changed, 7 insertions(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
+> >>>> index 259977b..a8cfe76 100644
+> >>>> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
+> >>>> @@ -954,6 +954,7 @@ struct hns_roce_dev {
+> >>>>  	struct pci_dev		*pci_dev;
+> >>>>  	struct device		*dev;
+> >>>>  	struct hns_roce_uar     priv_uar;
+> >>>> +	char			name[IB_DEVICE_NAME_MAX];
+> >>>>  	const char		*irq_names[HNS_ROCE_MAX_IRQ_NUM];
+> >>>>  	spinlock_t		sm_lock;
+> >>>>  	spinlock_t		bt_cmd_lock;
+> >>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> >>>> index 1d639a0..678c7ec 100644
+> >>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+> >>>> @@ -6110,6 +6110,9 @@ static int hns_roce_hw_v2_get_cfg(struct hns_roce_dev *hr_dev,
+> >>>>  		hr_dev->irq[i] = pci_irq_vector(handle->pdev,
+> >>>>  						i + handle->rinfo.base_vector);
+> >>>>  
+> >>>> +	snprintf(hr_dev->name, IB_DEVICE_NAME_MAX, "hns%s",
+> >>>> +		 handle->rinfo.netdev->name);
+> >>> Why is this making up its own driver name? How is this avoiding
+> >>> colliding with an existing name?
+> >>>
+> >>> This is very dangerous since we now have device renaming, the driver
+> >>> could fail to load with no recovery.
+> >> Hi, Jason
+> >>        
+> >>     The NIC driver notifies the RoCE driver to perform reset related
+> >> processing by calling the .reset_notify() interface registered by the
+> >> RoCE driver. If the RoCE reset processing fails, .reset_notify()
+> >> returns non-zero, and then hns NIC driver will reschedule the
+> >> reset task again.
+> >>    
+> >>     The current hardware version in hip08 SoC cannot support
+> >> after reset process the application still communicates with the
+> >> resources like QP requested before reset. In RoCE reset process,
+> >> we will release the resources through ib_unregister_device, after
+> >> the hardware reset is completed, driver will re-execute
+> >> ib_register_device.
+> >>    
+> >>     Currently, we find that the ib_device's name after reset
+> >> and the one before reset may be different. We can specify the
+> >> device name to solve this problem.
+> > No, now you just have unsolved races.
+> >
+> > If you want to reset like this then you will need to do some kind of
+> > revision to the IB core code to not loose the name assigned to the
+> > device and not hacks like this.
+> Hi, Jason
+> 
+>     In fact, We only specified the name of the ib_device to be generated
+> when
+> calling ib_register_device on the hip08 SoC, and doesn't modify its name
+> during the existence of ib_device.
+> 
+>     In this example, if you always use hns_%d when registering, I think that
+> no matter how you modify IB core code, we can't solve this problem. We
+> need to specify the name of the ib_device device when calling
+> ib_register_device, and this name should be unique in the OS.
+> 
+>     The NIC and the RoCE hardware engine share the function On the hip08
+> SoC.
+> The NIC driver will execute register_netdev firstly, and then the RoCE
+> driver will
+> execute ib_register_device. In the following statement, where
+> handle->rinfo.netdev->name is the name of the corresponding net_device
+> device,
+> this will ensure the uniqueness of the hnsXXX ib_device's name on the OS.
+> 
+>     snprintf(hr_dev->name, IB_DEVICE_NAME_MAX, "hns%s",
+>          handle->rinfo.netdev->name);
 
-On Sun, Nov 25, 2018 at 3:24 PM Brian Masney <masneyb@onstation.org> wrote:
->
-> > I guess this is a workaround for drivers that don't set the load
-> > properly themselves?
->
-> I'm honestly not sure when the load should be set in the driver or in
-> device tree. None of the drivers in drivers/mmc/ call
-> regulator_set_load. The dt bindings describes the regulator-system-load
-> property in Documentation/devicetree/bindings/regulator/regulator.txt.
+It does not. We support rename in ib_core now, so users can set device
+names to whatever they like and break these naming assumptions.
 
-My initial thought is that I'd expect that the load should be
-associated with the consumer, not with the regulator.  The way you
-have it specified in the device tree it's associated with the
-regulator.  The distinction would only matter if:
+The only solution I can see is to make a reset function in IB core
+that retains the name but forces all clients to disconnect and
+reconnect.
 
-A) there was another consumer of this rail
-
-B) that other consumer could actually make due with a lower power mode
-of the regulator.
-
-C) we knew for sure that the SD card wouldn't draw (much) power from
-this rail when the SD driver told it to be off.
-
-In your system A) isn't true so thus it doesn't matter.  Even if A)
-and B) were true though, I'm not sure I'd trust random SD cards
-plugged into the system to not draw power.  Given that a random SD
-card might draw power from the rail even if the driver wants the
-regulator off then perhaps your "system-load" solution is the most
-correct thing after all.
-
-NOTE: another option would be to change the regulator driver to just
-force this rail to a high power mode and never let it change.  That's
-what we're doing on a SDM845-based board.  When the regulator is off
-the mode doesn't matter and as per the above argument we always want
-it in high power mode when it's on.
-
-
-> I see that there are 8 users of regulator-system-load but most are all
-> addressing this same issue with the SD card.
-> qcom-msm8974-sony-xperia-castor.dts sets the load to 500 mA but all of
-> the other msm8974-based SOCs use 200 mA. I'm not sure if this is
-> correct.
-
-Interestingly enough I think the max load here is specified by the SD
-card specification.  My quick reading of the SD spec shows that you
-could do all sorts of complex negotiation with the card about how much
-load it could take up but Linux didn't actually support that.  If I'm
-reading it right the default is 200 mA.
-
-It's unlikely that really matters though.  I doubt your regulator has
-a different mode for 200 mA vs. 500 mA.
-
-
-> > +++ b/drivers/regulator/core.c
-> > @@ -1344,6 +1344,12 @@ static int set_machine_constraints(struct
-> > regulator_dev *rdev,
-> >                         rdev_err(rdev, "failed to set initial mode: %d\n", ret);
-> >                         return ret;
-> >                 }
-> > +       } else if (rdev->constraints->system_load) {
-> > +               /*
-> > +                * We'll only apply the initial system load if an
-> > +                * initial mode wasn't specified.
-> > +                */
-> > +               drms_uA_update(rdev);
-> >         }
->
-> Yes, this patch corrects the issue for me. You can add my tags if you
-> end up applying it:
->
-> Reported-by: Brian Masney <masneyb@onstation.org>
-> Tested-by: Brian Masney <masneyb@onstation.org>
-
-Sent.  See <http://lkml.kernel.org/r/20181126170827.160567-1-dianders@chromium.org>.
-Looks like Mark already applied it.  Thanks, Mark!
-
-
-> Thanks for the quick response!
-
-Thanks for the quick report and testing.  I'm very happy that it was
-something as simple as this and not some complex interaction.
-
--Doug
+Jason
