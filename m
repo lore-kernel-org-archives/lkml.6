@@ -1,104 +1,118 @@
-Return-Path: <SRS0=bZNE=OE=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28052C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 23:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF88C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 00:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E25F920865
-	for <linux-kernel@archiver.kernel.org>; Sun, 25 Nov 2018 23:55:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E25F920865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id CD9392089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 00:06:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WJkH5Yni"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD9392089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbeKZKr6 (ORCPT
+        id S1726124AbeKZK6w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 05:47:58 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:45496 "EHLO mxhk.zte.com.cn"
+        Mon, 26 Nov 2018 05:58:52 -0500
+Received: from ozlabs.org ([203.11.71.1]:47339 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726027AbeKZKr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 05:47:58 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 65F923A9DBB2370909C9;
-        Mon, 26 Nov 2018 07:55:36 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wAPNtVEx093301;
-        Mon, 26 Nov 2018 07:55:31 +0800 (GMT-8)
-        (envelope-from yang.yang29@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018112607553337-12876764 ;
-          Mon, 26 Nov 2018 07:55:33 +0800 
-From:   Yang Yang <yang.yang29@zte.com.cn>
-To:     akpm@linux-foundation.org
-Cc:     mhocko@suse.com, pavel.tatashin@microsoft.com, vbabka@suse.cz,
-        osalvador@suse.de, rppt@linux.vnet.ibm.com, iamjoonsoo.kim@lge.com,
-        alexander.h.duyck@linux.intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
-        wang.yi59@zte.com.cn, Yang Yang <yang.yang29@zte.com.cn>
-Subject: [PATCH] mm: do not consider SWAP to calculate available when not necessary
-Date:   Mon, 26 Nov 2018 07:58:23 +0800
-Message-Id: <1543190303-8121-1-git-send-email-yang.yang29@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-11-26 07:55:33,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-11-26 07:55:30,
-        Serialize complete at 2018-11-26 07:55:30
-X-MAIL: mse01.zte.com.cn wAPNtVEx093301
+        id S1726027AbeKZK6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 05:58:51 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 4336dx3VNWz9s29;
+        Mon, 26 Nov 2018 11:06:29 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1543190789;
+        bh=AjAAJnUA0yyih/z+3dxvCvhSD1Ln8Fd2k9x3VLDl3nY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=WJkH5YniF5oyKIFZ/MGulOOPDGmCN6d0KgGXueX1Y0J7go8Ds3VDaE40/PGb7qwPK
+         s3uV2Dc0H/ELv+iDjVRv3WQ5/1BkI879ql3OauJoPJAB0BB6ZzZR5RS5vJkxAUdbqu
+         gw2neLJXQlU09VSh8nHX2C6+qvROPZ9Uf42sRT2/PR/GUB4hm7jK5zbeA9KZ8pOxcz
+         blhPQ7IliOLcM1KQoUqzyXUHXPJR/R5CxdlTlTD/qC/Gtc/lhuT9knpqq5wO+Q4suc
+         CyTg8YWqhcNxtdbDVR+3AwMDfZ/QU9cM7U90wXD1x/LpcFbtfHaV89P4Zstdm5YGyx
+         vRJu3+PRrnqfg==
+Date:   Mon, 26 Nov 2018 11:06:29 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Sterba <dsterba@suse.cz>, Kees Cook <keescook@google.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: linux-next: build warning after merge of the btrfs-kdave tree
+Message-ID: <20181126110629.45969c51@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/NY1.eIclTa7R63+zM52V_6P"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When si_mem_available() calculates 'available', it takes SWAP
-into account. But if CONFIG_SWAP is N or SWAP is off(some embedded system
-would like to do that), there is no need to consider it.
+--Sig_/NY1.eIclTa7R63+zM52V_6P
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Yang Yang <yang.yang29@zte.com.cn>
----
- mm/page_alloc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Hi David,
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 6847177..10e186b 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4700,6 +4700,7 @@ static inline void show_node(struct zone *zone)
- 
- long si_mem_available(void)
- {
-+	struct sysinfo i;
- 	long available;
- 	unsigned long pagecache;
- 	unsigned long wmark_low = 0;
-@@ -4708,6 +4709,7 @@ long si_mem_available(void)
- 	struct zone *zone;
- 	int lru;
- 
-+	si_swapinfo(&i);
- 	for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
- 		pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
- 
-@@ -4724,9 +4726,13 @@ long si_mem_available(void)
- 	 * Not all the page cache can be freed, otherwise the system will
- 	 * start swapping. Assume at least half of the page cache, or the
- 	 * low watermark worth of cache, needs to stay.
-+	 * But if CONFIG_SWAP is N or SWAP is off, do not consider it.
- 	 */
- 	pagecache = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
--	pagecache -= min(pagecache / 2, wmark_low);
-+#ifdef CONFIG_SWAP
-+	if (i.totalswap > 0)
-+		pagecache -= min(pagecache / 2, wmark_low);
-+#endif
- 	available += pagecache;
- 
- 	/*
--- 
-2.15.2
+After merging the btrfs-kdave tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
+In file included from include/linux/string.h:6,
+                 from arch/powerpc/include/asm/paca.h:19,
+                 from arch/powerpc/include/asm/current.h:16,
+                 from include/linux/sched.h:12,
+                 from fs/btrfs/volumes.c:6:
+fs/btrfs/volumes.h: In function 'btrfs_op':
+include/linux/compiler.h:77:22: warning: this statement may fall through [-=
+Wimplicit-fallthrough=3D]
+ # define unlikely(x) __builtin_expect(!!(x), 0)
+                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+include/asm-generic/bug.h:72:2: note: in expansion of macro 'unlikely'
+  unlikely(__ret_warn_on);    \
+  ^~~~~~~~
+fs/btrfs/volumes.h:395:3: note: in expansion of macro 'WARN_ON_ONCE'
+   WARN_ON_ONCE(1);
+   ^~~~~~~~~~~~
+In file included from fs/btrfs/volumes.c:22:
+fs/btrfs/volumes.h:396:2: note: here
+  case REQ_OP_READ:
+  ^~~~
+
+Introduced by commit
+
+  cf8cddd38bab3 ("btrfs: don't abuse REQ_OP_* flags for btrfs_map_block")
+
+exposed by my new use of -Wimplicit-fallthrough
+
+I am not sure why this has only turned up now (as opposed to earlier
+today).
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/NY1.eIclTa7R63+zM52V_6P
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv7OQUACgkQAVBC80lX
+0GxrKQgAnO359KtN/3xmOk8Bo3Qx881zdG8xFgAMpV44xOEF/eOdV6nmgs+Bx6K4
+ogWVSzdOM/xLIbeglvpTCUeiiU+H8eB2VJU9xIaXRroxXvgWp6SZp3V6PPoDS0I5
+b2H/ZHzkQbIgJLK/WoneqJSZanSW0iChijeoHCn7W+HB2tK1EUowKsZz4D6sBL1l
++mMDZgqXkwLit4OwCtqsiAuRp9NgR5g3Llr9l2l70RoxyBvD/rtSILkt4WKtZQpz
+CRNe1RigFsxmSxC1xgv+m6/+z5AenqSCfmOJ0i1u0O72/KAkLUFPhMgzaQv2vUNt
+A98AC1wEv4GWROuw+bERZ7MswY6BKw==
+=wpGx
+-----END PGP SIGNATURE-----
+
+--Sig_/NY1.eIclTa7R63+zM52V_6P--
