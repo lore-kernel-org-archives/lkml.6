@@ -2,75 +2,97 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8102C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5A9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9E8C20865
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:01:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A02420862
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:01:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IcZWfnGV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9E8C20865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHBuSB7n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A02420862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbeK0B4H (ORCPT
+        id S1726448AbeK0B4G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 20:56:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52326 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726243AbeK0B4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 26 Nov 2018 20:56:06 -0500
-Received: from localhost (unknown [178.228.8.233])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B23F720862;
-        Mon, 26 Nov 2018 15:01:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543244503;
-        bh=RGi+0FSQngd5D97NR+avqDs5xfLbzfYEQISuLTKyOrA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IcZWfnGVfJZVCdvB9+/JV0Hc0qauUJEWDf3LjeZWd07MIZlyKh/T1r+QrSmTM2SIL
-         zIm5T4GZ8jwmL5NJBUw7QqpmQv8PbOUuM9ZzinBHAsC5Hf8GRAa7k7j/yJJ2v6J75S
-         ZIUPilwOCF90ls0P4E3VWDyxquxpWOhVI4ah7fgw=
-Date:   Mon, 26 Nov 2018 16:01:40 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Vignesh R <vigneshr@ti.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.14 32/62] i2c: omap: Enable for ARCH_K3
-Message-ID: <20181126150140.GC4637@kroah.com>
-References: <20181126105050.592727680@linuxfoundation.org>
- <20181126105053.367583470@linuxfoundation.org>
- <3c9dbe29-1fa0-9e2d-7fe2-6049dd38716f@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3c9dbe29-1fa0-9e2d-7fe2-6049dd38716f@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45842 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbeK0B4F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 20:56:05 -0500
+Received: by mail-pg1-f194.google.com with SMTP id y4so6279233pgc.12
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 07:01:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=7aNr8lT4g0X8YaxC1dnyIkR+7Z/DPOdEpX/yqL61nHo=;
+        b=IHBuSB7npTTECF1LUJ7fEZ87O/vlL+wtrpeVbiXyyhWVcxYFSO3SXKy9rw9+6nJOdb
+         zjSqxwz/v6lVeSvOAy5KLhdn9vD/vwzB01rQHAFiemSWdAbQSoO9eZxLg42YMQB0IRPP
+         FsQvFrTVNKWotkKvlyw/ySqAv60JP11LneSqBHWV47hquzipZdoY342dYL42aurlojCl
+         gwCiDf8KSZ0rjFJ+VoPIkdSYb4Nv3N7DzY0/rTXoQWDx0MebOMF0twhfmPd14T4jEoCB
+         rb/maAQLqP5ndRSWo8AGUP8AjPVcf2IpOSCUuzAECZMVJHM7mSSmAnXM4kt87JdIFr34
+         GrhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7aNr8lT4g0X8YaxC1dnyIkR+7Z/DPOdEpX/yqL61nHo=;
+        b=F28h/bvl+UsG2t8mj/7F4UxxNDWlDtEaDwbN0MffuUzqBZw+OIVgYf4DeY7b6KNoh+
+         MJ7RDdfn00EAGSsjbJok/kD4YrEjkK7/XBWbqNnEcNTmWV8njmLQOdHxNyOW6xwPrHiJ
+         blQCZUFM6F0oTV2xt4kH0rk8DCnr4s67lYEwswjVOQicv0/jzinEAwEvBymNXTYJZ528
+         u7RYWp+2+qmeYwDOq+bYkJ5HeUyBfUGuwNKwvkEYNx9dZ4ruFVMVaV4fKRKSehPordWJ
+         bikztJTE9Tzhy8JhtPRLzyuX/Rswq1BZhwwrJpy+L5znV5PDdBUIQhl8mm6F91ros9Aq
+         iA7Q==
+X-Gm-Message-State: AGRZ1gJL6oRISdICX/CxWiczc9qb0NntEQpO+PfoxynWJy+CflJI5pW9
+        x53vnLKIQWPz8Jxq2acT2ZI=
+X-Google-Smtp-Source: AJdET5d2C9Sv0NO1TolItKqdAY4vBfrDlQJUU2yMLmVO9mObN6O6bamMr4cSzSEySphcyLg3Tri+zQ==
+X-Received: by 2002:aa7:8497:: with SMTP id u23mr28191244pfn.220.1543244503327;
+        Mon, 26 Nov 2018 07:01:43 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id v70sm689219pfa.152.2018.11.26.07.01.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 07:01:42 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     paul@paul-moore.com, eparis@redhat.com
+Cc:     linux-audit@redhat.com, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] audit/filter: remove some duplicated includes
+Date:   Mon, 26 Nov 2018 10:01:39 -0500
+Message-Id: <20181126150139.31989-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 06:54:45PM +0530, Vignesh R wrote:
-> Hi Greg,
-> 
-> On 26/11/18 4:21 PM, Greg Kroah-Hartman wrote:
-> > 4.14-stable review patch.  If anyone has any objections, please let me know.
-> 
-> 
-> This patch depends on c77245722fb4 ("arm64: Add support for TI's K3
-> Multicore SoC architecture") which adds ARCH_K3 Kconfig symbol and
-> merged to mainline in v4.19. Since I don't see c77245722fb4 in
-> stable tree, could you please drop this patch from _all prior versions_
-> i.e 4.14, 4.9, 4.4 and 3.18. Thanks!
+audit.h and fs.h are included twice.It's unnecessary.
+hence just remove them.
 
-Now dropped, thanks for letting us know.
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ kernel/auditfilter.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-greg k-h
+diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+index bf309f2592c4..6d43928a41c2 100644
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -22,10 +22,8 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/kernel.h>
+-#include <linux/audit.h>
+ #include <linux/kthread.h>
+ #include <linux/mutex.h>
+-#include <linux/fs.h>
+ #include <linux/namei.h>
+ #include <linux/netlink.h>
+ #include <linux/sched.h>
+-- 
+2.17.0
+
