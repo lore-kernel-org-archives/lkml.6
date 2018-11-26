@@ -2,49 +2,49 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFD4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9217C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A805920989
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B317F20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yR6aj+ev"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A805920989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdOB+hfr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B317F20989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731456AbeKZV7s (ORCPT
+        id S1731468AbeKZV7w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:59:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46188 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:59:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729543AbeKZV7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:59:48 -0500
+        id S1729543AbeKZV7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:59:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFC3520672;
-        Mon, 26 Nov 2018 11:06:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FC682089F;
+        Mon, 26 Nov 2018 11:06:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230362;
-        bh=9cZ7MMMvudXd3+I4SNGAEsjP0YKa5FiguHeHTk+x1x4=;
+        s=default; t=1543230364;
+        bh=EUiP0MqTj4Qkfkq1lZ0vBj3Lav1WRw3k+a0LTAqwJbM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yR6aj+evBsoQEFoD5bFQ6avWQs2f6ktunCoS5A61ELW32UuD1scTR/qSw79V7CT4W
-         +J4JCSbWoc00p7Pdf9DgTd2EeLsOw00sGm/8suXxJs/bj+6jmcs6inM9GFF670m/LF
-         3J2+Fb+40RwwRU4vg2z8X9Pei18Ak0UP6RaluRmI=
+        b=gdOB+hfrOQ7VLmmBf5Mco8GBw1DHtyYn7q6E1Hz2cSj7BGhsldNsVTm6grnU4MFOD
+         yakbuOQKj1+LCbyAm1BU/wSOUc0iUfaZXtQoykgzyM58rQjr+HnRlwS+/krRfFHViB
+         GiNo65J4oYn37/nAbI52hOQVL10Ax+APanmCE+nA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Emmanuel Pescosta <emmanuelpescosta099@gmail.com>
-Subject: [PATCH 4.19 106/118] usb: quirks: Add delay-init quirk for Corsair K70 LUX RGB
-Date:   Mon, 26 Nov 2018 11:51:40 +0100
-Message-Id: <20181126105105.953904015@linuxfoundation.org>
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.19 107/118] misc: atmel-ssc: Fix section annotation on atmel_ssc_get_driver_data
+Date:   Mon, 26 Nov 2018 11:51:41 +0100
+Message-Id: <20181126105105.990730459@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -62,39 +62,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Emmanuel Pescosta <emmanuelpescosta099@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-commit a77112577667cbda7c6292c52d909636aef31fd9 upstream.
+commit 7c97301285b62a41d6bceded7d964085fc8cc50f upstream.
 
-Following on from this patch: https://lkml.org/lkml/2017/11/3/516,
-Corsair K70 LUX RGB keyboards also require the DELAY_INIT quirk to
-start correctly at boot.
+After building the kernel with Clang, the following section mismatch
+warning appears:
 
-Dmesg output:
-usb 1-6: string descriptor 0 read error: -110
-usb 1-6: New USB device found, idVendor=1b1c, idProduct=1b33
-usb 1-6: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-usb 1-6: can't set config #1, error -110
+WARNING: vmlinux.o(.text+0x3bf19a6): Section mismatch in reference from
+the function ssc_probe() to the function
+.init.text:atmel_ssc_get_driver_data()
+The function ssc_probe() references
+the function __init atmel_ssc_get_driver_data().
+This is often because ssc_probe lacks a __init
+annotation or the annotation of atmel_ssc_get_driver_data is wrong.
 
-Signed-off-by: Emmanuel Pescosta <emmanuelpescosta099@gmail.com>
+Remove __init from atmel_ssc_get_driver_data to get rid of the mismatch.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/usb/core/quirks.c |    3 +++
- 1 file changed, 3 insertions(+)
-
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -397,6 +397,9 @@ static const struct usb_device_id usb_qu
- 	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT |
- 	  USB_QUIRK_DELAY_CTRL_MSG },
+diff --git a/drivers/misc/atmel-ssc.c b/drivers/misc/atmel-ssc.c
+index b2a0340f277e..d8e3cc2dc747 100644
+--- a/drivers/misc/atmel-ssc.c
++++ b/drivers/misc/atmel-ssc.c
+@@ -132,7 +132,7 @@ static const struct of_device_id atmel_ssc_dt_ids[] = {
+ MODULE_DEVICE_TABLE(of, atmel_ssc_dt_ids);
+ #endif
  
-+	/* Corsair K70 LUX RGB */
-+	{ USB_DEVICE(0x1b1c, 0x1b33), .driver_info = USB_QUIRK_DELAY_INIT },
-+
- 	/* Corsair K70 LUX */
- 	{ USB_DEVICE(0x1b1c, 0x1b36), .driver_info = USB_QUIRK_DELAY_INIT },
- 
+-static inline const struct atmel_ssc_platform_data * __init
++static inline const struct atmel_ssc_platform_data *
+ 	atmel_ssc_get_driver_data(struct platform_device *pdev)
+ {
+ 	if (pdev->dev.of_node) {
 
 
