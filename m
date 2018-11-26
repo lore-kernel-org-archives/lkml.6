@@ -2,171 +2,157 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A23C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD19C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:14:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DCB220663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:13:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03C4220663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:14:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="su68d3Lh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DCB220663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/F3c4Ei"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C4220663
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbeK0CHx (ORCPT
+        id S1726630AbeK0CIs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 21:07:53 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34827 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726230AbeK0CHx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 21:07:53 -0500
-Received: by mail-wm1-f65.google.com with SMTP id c126so18813953wmh.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 07:13:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=nsuM/ME2oK8iArRxQ/xtoP4eOlCwhyxAU8gzQf6UTs4=;
-        b=su68d3Lh9GFqKg0iAahvzsC3oPhL9cIdUyfvZ5xhN3I/FkDjzk7Lxo0qhfX/7LfFMA
-         pSdzThIS3k2r29Vrewg5v4EkfSwS6k63XKKt1XtLu59TxYQJOJgrqEO9KbecZ0mI+wnY
-         w3ABlY2v9nuKt9KgvYvrK3g/0LsSowW/HAeY3/VdlPXnX3ybgZqeesH6EyfzTn1LnSo6
-         QInGDzVETEtrPxWy1B87gl0nCwR7NW/wzrk7wjwkI4MCpadWM7Kcw3beKCQr6hj7NE8V
-         WPtG6uA7QeSEcXXSENtCycou7A2SVFcef/hmVe2UdtWxFF0bayIYsmdLMJ9aop66fPwm
-         iNYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=nsuM/ME2oK8iArRxQ/xtoP4eOlCwhyxAU8gzQf6UTs4=;
-        b=efiRXo/C7J10JzGcUYDeygRH1pi6XtBzewbCPrNNcEhqAu/8yV+qZk8sxZ8ZRcabw6
-         ElTMjEyYbcENCDa+ZCwY05sdOTDV37H2nH1YQJimaxtZY6X4ouAyqBh2xKqfCvkDHJ8B
-         Me1RNQe1oJGTVEEvkYHWnT6tDSZOmB1ItTiSeNIhF3JfuR8cv4eLSNHvByKXnrTtC/BG
-         q9+oVoqb5ayhx5l5Z+IrOYALM40rrgd8bX+UQOWbeXeO3xCpPtkE7JDPv4jQ1x5NznDK
-         vXfM42yIxXaT7JrN88DHAIm8XadjzjR/+ZQuNUCJDU7b7B1bQ9tIe9VV8ex4f6JRqyNK
-         nGGw==
-X-Gm-Message-State: AA+aEWY0rck8ziGSDfMFIjqXiPhuGhszaunZam0PtcWKLSNNHRwGTtyn
-        mj6cTtRZcDvKDzsppglP6GY9Lw==
-X-Google-Smtp-Source: AFSGD/VLca9ABwM69/IcvolOr+QSXmvt/JL7OcBthE4BvzlQDXVIBscDzEJ0R5sgrus1Crw2hYf9TQ==
-X-Received: by 2002:a1c:cec1:: with SMTP id e184mr16668641wmg.75.1543245206448;
-        Mon, 26 Nov 2018 07:13:26 -0800 (PST)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id d8sm607007wrw.70.2018.11.26.07.13.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 07:13:25 -0800 (PST)
-Subject: Re: [PATCH] clk: meson: Fix GXL HDMI PLL fractional bits width
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20181121111922.1277-1-narmstrong@baylibre.com>
- <CAFBinCDkXYH9bCf_aaVptqcgZabreuZxLoAW3-o2qBHgcbm8Xw@mail.gmail.com>
- <5e87ffda-4a38-f45b-00c4-6b73dc721656@baylibre.com>
- <CAFBinCCjmw=8ESk0tztWszXnuA4aqWqC8_wdpvMtSYfwZ-KT=A@mail.gmail.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <b5bdaca0-326e-ada8-507b-1eb494e7c3c0@baylibre.com>
-Date:   Mon, 26 Nov 2018 16:13:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 26 Nov 2018 21:08:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726253AbeK0CIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 21:08:47 -0500
+Received: from localhost (unknown [178.228.8.233])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6209820663;
+        Mon, 26 Nov 2018 15:14:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543245262;
+        bh=iACnV1Pmbmy7wdtBkYqYLC7v60g59485OgrJhX7eRcQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=l/F3c4Ei2bbzeY9/FBwkIBgoNlmLuDbfnJbfaP82xu9WUfLXMkS7ao0mVzZBZ1CDd
+         6xahhGGJNacG+vfCI0sCAp9hDBn475aLS7Z3fr/kp6waOxBfGDngEARlfF1ucc+VSX
+         CIkwCdApx8Koc7/97xBl8xCeasR3U1S1DgfvxgW8=
+Date:   Mon, 26 Nov 2018 16:14:18 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux- stable <stable@vger.kernel.org>,
+        nicolas.ferre@microchip.com, rainyfeeling@outlook.com,
+        johan@kernel.org
+Subject: Re: [PATCH 4.14 58/62] mtd: rawnand: atmel: fix OF child-node lookup
+Message-ID: <20181126151418.GA19698@kroah.com>
+References: <20181126105050.592727680@linuxfoundation.org>
+ <20181126105054.941598787@linuxfoundation.org>
+ <CA+G9fYsyM9VS8QkaEizQT_LSvZyT+h6zdoWZbhVQtd1n60Bniw@mail.gmail.com>
+ <20181126160840.1c702e87@bbrezillon>
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCCjmw=8ESk0tztWszXnuA4aqWqC8_wdpvMtSYfwZ-KT=A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126160840.1c702e87@bbrezillon>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
+On Mon, Nov 26, 2018 at 04:08:40PM +0100, Boris Brezillon wrote:
+> On Mon, 26 Nov 2018 19:46:15 +0530
+> Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
+> 
+> > Do you see build failure arm x15 beagleboard on 4.14 due to this patch ?
+> > 
+> > On Mon, 26 Nov 2018 at 16:31, Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > 4.14-stable review patch.  If anyone has any objections, please let me know.
+> > >
+> > > ------------------
+> > >
+> > > From: Johan Hovold <johan@kernel.org>
+> > >
+> > > commit 5d1e9c2212ea6b4dd735e4fc3dd6279a365d5d10 upstream.
+> > >
+> > > Use the new of_get_compatible_child() helper to lookup the nfc child
+> > > node instead of using of_find_compatible_node(), which searches the
+> > > entire tree from a given start node and thus can return an unrelated
+> > > (i.e. non-child) node.
+> > >
+> > > This also addresses a potential use-after-free (e.g. after probe
+> > > deferral) as the tree-wide helper drops a reference to its first
+> > > argument (i.e. the node of the device being probed).
+> > >
+> > > While at it, also fix a related nfc-node reference leak.
+> > >
+> > > Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
+> > > Cc: stable <stable@vger.kernel.org>     # 4.11
+> > > Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > > Cc: Josh Wu <rainyfeeling@outlook.com>
+> > > Cc: Boris Brezillon <boris.brezillon@bootlin.com>
+> > > Signed-off-by: Johan Hovold <johan@kernel.org>
+> > > Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > >
+> > > ---
+> > >  drivers/mtd/nand/atmel/nand-controller.c |   11 +++++++----
+> > >  1 file changed, 7 insertions(+), 4 deletions(-)
+> > >
+> > > --- a/drivers/mtd/nand/atmel/nand-controller.c
+> > > +++ b/drivers/mtd/nand/atmel/nand-controller.c
+> > > @@ -2077,8 +2077,7 @@ atmel_hsmc_nand_controller_legacy_init(s
+> > >         int ret;
+> > >
+> > >         nand_np = dev->of_node;
+> > > -       nfc_np = of_find_compatible_node(dev->of_node, NULL,
+> > > -                                        "atmel,sama5d3-nfc");
+> > > +       nfc_np = of_get_compatible_child(dev->of_node, "atmel,sama5d3-nfc");
+> > >         if (!nfc_np) {
+> > >                 dev_err(dev, "Could not find device node for sama5d3-nfc\n");
+> > >                 return -ENODEV;
+> > > @@ -2492,15 +2491,19 @@ static int atmel_nand_controller_probe(s
+> > >         }
+> > >
+> > >         if (caps->legacy_of_bindings) {
+> > > +               struct device_node *nfc_node;
+> > >                 u32 ale_offs = 21;
+> > >
+> > >                 /*
+> > >                  * If we are parsing legacy DT props and the DT contains a
+> > >                  * valid NFC node, forward the request to the sama5 logic.
+> > >                  */
+> > > -               if (of_find_compatible_node(pdev->dev.of_node, NULL,
+> > > -                                           "atmel,sama5d3-nfc"))
+> > > +               nfc_node = of_get_compatible_child(pdev->dev.of_node,
+> > > +                                                  "atmel,sama5d3-nfc");
+> > > +               if (nfc_node) {
+> > >                         caps = &atmel_sama5_nand_caps;
+> > > +                       of_node_put(nfc_node);
+> > > +               }
+> > >
+> > >                 /*
+> > >                  * Even if the compatible says we are dealing with an
+> > >
+> > >  
+> > 
+> > /drivers/mtd/nand/atmel/nand-controller.c: In function
+> > 'atmel_hsmc_nand_controller_legacy_init':
+> > /drivers/mtd/nand/atmel/nand-controller.c:2080:11: error: implicit
+> > declaration of function 'of_get_compatible_child'; did you mean
+> > 'of_get_next_available_child'? [-Werror=implicit-function-declaration]
+> >    nfc_np = of_get_compatible_child(dev->of_node, "atmel,sama5d3-nfc");
+> 
+> Looks like of_get_compatible_child() has been introduced in 4.18, hence
+> this error.
+> 
+> Greg, can you drop this patch from 4.14.y?
 
-On 22/11/2018 23:05, Martin Blumenstingl wrote:
-> Hi Neil,
-> 
-> On Thu, Nov 22, 2018 at 9:26 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->>
->> Hi Martin,
->>
->> On 21/11/2018 22:53, Martin Blumenstingl wrote:
->>> Hi Neil,
->>>
->>> On Wed, Nov 21, 2018 at 12:19 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->>>>
->>>> The GXL Documentation specifies 12 bits for the Fractional bit field,
->>>> bit the last bits have a different purpose that we cannot handle right
->>>> now, so update the bitwidth to have correct fractional calculations.
->>> I assume you have more accurate documentation than what's available publicly:
->>> - the S805 datasheet doesn't have any documentation for this register at all
->>> - the S905 datasheet states that HHI_HDMI_PLL_CNTL2[11:0] are DIV_FRAC
->>> - the S905X and S912 datasheets state that SDMNC_POWER is at
->>> HHI_HDMI_PLL_CNTL2[6:0], SDMNC_ULMS is at HHI_HDMI_PLL_CNTL2[9:7] and
->>> SSC_DEP_SEL is at HHI_HDMI_PLL_CNTL2[13:10]
->>> - the S905X and S912 datasheets state that HHI_HDMI_PLL_CNTL1[11:0] are DIV_FRAC
->>
->> On S905, the HHI_HDMI_PLL_CNTL2 is at address 0xc9 << 2, but on S905X/S905D/S912 the
->> equivalent register at same address is named HHI_HDMI_PLL_CNTL1.
->>
->> They changed the numbering of registers between these 2 SoCs, but the register
->> content and addresses are similar for m/n/frac/reset.
-> I totally missed that - thanks for the explanation!
-> 
->>>
->>> can you confirm that the public S905X and S912 documentation is wrong
->>> and that the .frac field is really part of HHI_HDMI_PLL_CNTL2 instead
->>> of HHI_HDMI_PLL_CNTL1?
->>
->> Is is part of HHI_HDMI_PLL_CNTL1 but at address of S905 HHI_HDMI_PLL_CNTL2.
->>
->> When jerome pushed the PLL support earlier, he added a comment.
->> I simply forgot to put it back when I added back the GXL HDMI PLL DCO.
-> I'm curious: do you know whether the fractional divider field on
-> Meson8b is 10 or 12 bits wide?
-> 
-> if you can add a short note about the naming confusion to the patch
-> description when applying the patch:
-> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Yes, my fault, I fixed a number of these in the past, missed this one :(
 
-I'll add back the comments about the register shift and i'll apply
-it for a next PR.
+Now dropped.
 
-Thanks,
-Neil
-
-> 
-> 
-> Regards
-> Martin
-> 
-
+greg k-h
