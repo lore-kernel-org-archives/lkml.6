@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 259F0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B9AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E20AE2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C2DE2089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxPNE/TU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E20AE2089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AzVomuNj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C2DE2089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731530AbeKZWAE (ORCPT
+        id S1731545AbeKZWAG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 17:00:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46666 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 17:00:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729543AbeKZWAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 17:00:03 -0500
+        id S1729543AbeKZWAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 17:00:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E73020645;
-        Mon, 26 Nov 2018 11:06:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0E7720645;
+        Mon, 26 Nov 2018 11:06:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230377;
-        bh=BjG6lzcT06SpvdPTlev6IwSaMZGi8F8fMoietZw6mJ4=;
+        s=default; t=1543230380;
+        bh=WGRc9f0fNtoAKrQlOaQNzJ6dgUv1//++lL4Jwr9AHlM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pxPNE/TUAq0w5tv1WJz7YVvFcW5giYIGC1kAfzT0gxMzz8TLFC5jHkuhvoDT0B2A3
-         cidRZtsasTiN/Yelc8D9vzhzCvtVKq3j8H5u9gL1g2zVGo7Akc0VHXyd/9+4O4ztBa
-         +Md6xhzF/06zHSYqyhzuSFk96f8rHjJ/Tg/MnjQ0=
+        b=AzVomuNjZJIW83O0t+Y0Jt2O5lH8i3OsllC8QNUJZx9hfAJ34QjPMHbMpIR7cxIAo
+         XVSAREh+10LbGqPiRfs4avu08CJa6C7vvyuD8nqiA2ok1ay98jwkNCP3Jy8DVe5HEi
+         f0cImhfrra1hkK9caFpkQMoWR+hP2dq1JQn1Z3CE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brett Creeley <brett.creeley@intel.com>,
+        stable@vger.kernel.org, Bruce Allan <bruce.w.allan@intel.com>,
+        Chinh T Cao <chinh.t.cao@intel.com>,
         Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
         Andrew Bowers <andrewx.bowers@intel.com>,
         Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 078/118] ice: Fix the bytecount sent to netdev_tx_sent_queue
-Date:   Mon, 26 Nov 2018 11:51:12 +0100
-Message-Id: <20181126105104.753463979@linuxfoundation.org>
+Subject: [PATCH 4.19 079/118] ice: Change req_speeds to be u16
+Date:   Mon, 26 Nov 2018 11:51:13 +0100
+Message-Id: <20181126105104.805674384@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -65,39 +66,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d944b46992f8e99b6bdc721e44b02e5ca294fa2b ]
+[ Upstream commit ffe498237b36ee42624e139b21efa05da4ff1f48 ]
 
-Currently if the driver does a TSO offload the bytecount sent to
-netdev_tx_sent_queue will be incorrect. This is because in ice_tso we
-overwrite the initial value that we set in ice_tx_map. This creates a
-mismatch between the Tx and Tx clean flow. In the Tx clean flow we
-calculate the bytecount (called total_bytes) as we clean the
-descriptors so the value used in the Tx clean path is correct. Fix this
-by using += in ice_tso instead of =. This fixes the mismatch in
-bytecount mentioned above.
+Since the req_speeds field in struct ice_link_status is a u8,
+req_speeds & ICE_AQ_LINK_SPEED_40GB always returns 0. This was caught
+by a coverity scan.
 
-Signed-off-by: Brett Creeley <brett.creeley@intel.com>
+Fix this by changing req_speeds to be u16.
+
+Reported-by: Bruce Allan <bruce.w.allan@intel.com>
+Signed-off-by: Chinh T Cao <chinh.t.cao@intel.com>
 Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
 Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
 Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ice/ice_txrx.c | 2 +-
+ drivers/net/ethernet/intel/ice/ice_type.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_txrx.c b/drivers/net/ethernet/intel/ice/ice_txrx.c
-index 6481e3d86374..0c95c8f83432 100644
---- a/drivers/net/ethernet/intel/ice/ice_txrx.c
-+++ b/drivers/net/ethernet/intel/ice/ice_txrx.c
-@@ -1519,7 +1519,7 @@ int ice_tso(struct ice_tx_buf *first, struct ice_tx_offload_params *off)
- 
- 	/* update gso_segs and bytecount */
- 	first->gso_segs = skb_shinfo(skb)->gso_segs;
--	first->bytecount = (first->gso_segs - 1) * off->header_len;
-+	first->bytecount += (first->gso_segs - 1) * off->header_len;
- 
- 	cd_tso_len = skb->len - off->header_len;
- 	cd_mss = skb_shinfo(skb)->gso_size;
+diff --git a/drivers/net/ethernet/intel/ice/ice_type.h b/drivers/net/ethernet/intel/ice/ice_type.h
+index 97c366e0ca59..ba11b5898833 100644
+--- a/drivers/net/ethernet/intel/ice/ice_type.h
++++ b/drivers/net/ethernet/intel/ice/ice_type.h
+@@ -83,12 +83,12 @@ struct ice_link_status {
+ 	u64 phy_type_low;
+ 	u16 max_frame_size;
+ 	u16 link_speed;
++	u16 req_speeds;
+ 	u8 lse_ena;	/* Link Status Event notification */
+ 	u8 link_info;
+ 	u8 an_info;
+ 	u8 ext_info;
+ 	u8 pacing;
+-	u8 req_speeds;
+ 	/* Refer to #define from module_type[ICE_MODULE_TYPE_TOTAL_BYTE] of
+ 	 * ice_aqc_get_phy_caps structure
+ 	 */
 -- 
 2.17.1
 
