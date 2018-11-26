@@ -2,153 +2,93 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40BFCC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EA7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3A7020663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:30:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="lk2cCn1k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3A7020663
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id F248020664
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:32:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F248020664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbeK0DZ3 (ORCPT
+        id S1726672AbeK0D0z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 22:25:29 -0500
-Received: from mail.efficios.com ([167.114.142.138]:59298 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbeK0DZ3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:25:29 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 2E1849BFA5;
-        Mon, 26 Nov 2018 11:30:52 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id Oex9yWyNh_5F; Mon, 26 Nov 2018 11:30:51 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 8721E9BF8F;
-        Mon, 26 Nov 2018 11:30:51 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 8721E9BF8F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1543249851;
-        bh=ovo+zDFqLfyap0iw506QV+RX5ucBbbeQ2CcRjUqfiIs=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=lk2cCn1knCaTkTMzN6i29Sd9DIuxUihERHYjf4OOuTJsHLf/i2hn6NPaP1+xaFOAl
-         4ZT7CrZTR5XCUWy7+OA5M+z76IglSfV1xcYxRNuB+UFL9ACkoLpEW9c8l4NOlEKgaR
-         qW7saAlaZJ+memw4BqAJQZo8bjO1ljxVvQ821XUpnXTGEyUecQwkn96CqeHOIh+ZjO
-         bmyNvLtG5ndqRfNQyUAms5zSh5Cx+VUz0JgLOSLw6eCWHGGP6+5nGbL+4sFC2m1Sqq
-         zfxFIz//de/VfYshoOO0YqCHOprYCiBSBfernnEwYJ27aTZ/4ZbFpr348HcbnZ8Nd9
-         0BlywXkF3yxRQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id WO3odgPlIenj; Mon, 26 Nov 2018 11:30:51 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 697909BF86;
-        Mon, 26 Nov 2018 11:30:51 -0500 (EST)
-Date:   Mon, 26 Nov 2018 11:30:51 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Rich Felker <dalias@libc.org>, carlos <carlos@redhat.com>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
+        Mon, 26 Nov 2018 22:26:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45066 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726210AbeK0D0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 22:26:54 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD84820663;
+        Mon, 26 Nov 2018 16:32:16 +0000 (UTC)
+Date:   Mon, 26 Nov 2018 11:32:15 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <1284855405.12857.1543249851299.JavaMail.zimbra@efficios.com>
-In-Reply-To: <688718071.12798.1543247469553.JavaMail.zimbra@efficios.com>
-References: <20181121183936.8176-1-mathieu.desnoyers@efficios.com> <1150466925.11664.1542992720871.JavaMail.zimbra@efficios.com> <20181123173019.GK23599@brightrain.aerifal.cx> <865273158.11687.1542995541389.JavaMail.zimbra@efficios.com> <20181123183558.GM23599@brightrain.aerifal.cx> <1758017676.12041.1543007347347.JavaMail.zimbra@efficios.com> <87bm6cqm31.fsf@oldenburg.str.redhat.com> <688718071.12798.1543247469553.JavaMail.zimbra@efficios.com>
-Subject: Re: [RFC PATCH v4 1/5] glibc: Perform rseq(2) registration at nptl
- init and thread creation
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [RFC][PATCH 00/14] function_graph: Rewrite to allow multiple
+ users
+Message-ID: <20181126113215.4259d473@gandalf.local.home>
+In-Reply-To: <20181126182112.422b914dd00ecb36e15f7b07@kernel.org>
+References: <20181122012708.491151844@goodmis.org>
+        <20181126182112.422b914dd00ecb36e15f7b07@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3047 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
-Thread-Topic: glibc: Perform rseq(2) registration at nptl init and thread creation
-Thread-Index: PUX+I3v3zwDvk8MSf4HO3/oABovOyKt8H8mP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Nov 26, 2018, at 10:51 AM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
+On Mon, 26 Nov 2018 18:21:12 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-> ----- On Nov 26, 2018, at 3:28 AM, Florian Weimer fweimer@redhat.com wrote:
-> 
->> * Mathieu Desnoyers:
->> 
->>> Using a "weak" symbol in early adopter libraries is important, so they
->>> can be loaded together into the same process without causing loader
->>> errors due to many definitions of the same strong symbol.
->> 
->> This is not how ELF dynamic linking works.  If the symbol name is the
->> same, one definition interposes the others.
->> 
->> You need to ensure that the symbol has the same size everywhere, though.
->> There are some tricky interactions with symbol versions, too.  (The
->> interposing libraries must not use symbol versioning.)
-> 
-> I was under the impression that loading the same strong symbol into an
-> application multiple times would cause some kind of warning if non-weak. I did
-> some testing to figure out which case I remembered would cause this.
-> 
-> When compiling with "-fno-common", dynamic and static linking work fine, but
-> trying to add multiple instances of a given symbol into a single object fails
-> with:
-> 
-> /tmp/ccSakXZV.o:(.bss+0x0): multiple definition of `a'
-> /tmp/ccQBJBOo.o:(.bss+0x0): first defined here
-> 
-> Even if the symbol has the same size.
-> 
-> So considering that we don't care about compiling into a single object here,
-> and only care about static and dynamic linking of libraries, indeed the "weak"
-> symbol is not useful.
-> 
-> So let's make __rseq_abi and __rseq_refcount strong symbols then ?
 
-Actually, looking into ld(1) --warn-common, it looks like "weak" would be cleaner
-after all, especially for __rseq_abi which we needs to be initialized to a specific
-value, which is therefore not a common symbol.
+> > Note, if another fgraph_ops is registered in the same location, its
+> > retfunc may be called that was set by a previous fgraph_ops. This
+> > is not a regression because that's what can happen today if you unregister
+> > a callback from the current function_graph tracer and register another
+> > one. If this is an issue, there are ways to solve it.  
+> 
+> Yeah, I need the solution, maybe an API to get correct return address? :)
 
-"      --warn-common
-           Warn when a common symbol is combined with another common symbol or with a symbol definition.  Unix
-           linkers allow this somewhat sloppy practice, but linkers on some other operating systems do not.
-           This option allows you to find potential problems from combining global symbols.  Unfortunately,
-           some C libraries use this practice, so you may get some warnings about symbols in the libraries as
-           well as in your programs."
-
-Thoughts ?
-
-Thanks,
-
-Mathieu
+One way to solve this is to also have a counter array that gets updated
+every time the index array gets updated. And save the counter to the
+shadow stack index as well. This way, we only call the return if the
+counter on the stack matches what's in the counter on the counter array
+for the index.
 
 > 
-> Thanks,
+> By the way, are there any way to hold a private data on each ret_stack entry?
+> Since kretprobe supports "entry data" passed from entry_handler to
+> return handler, we have to store the data or data-instance on the ret_stack.
 > 
-> Mathieu
-> 
-> --
-> Mathieu Desnoyers
-> EfficiOS Inc.
-> http://www.efficios.com
+> This feature is used by systemtap to save the function entry data, like
+> function parameters etc., so that return handler analyzes the parameters
+> with return value.
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Yes, I remember you telling me about this at plumbers, and while I was
+writing this code I had that in mind. It wouldn't be too hard to
+implement, I just left it off for now. I also left it off because I
+have some questions about what exactly is needed. What size do you
+require to be stored. Especially if we want to keep the shadow stack
+smaller. I was going to find a way to implement some of the data that
+is already stored via the ret_stack with this instead, and make the
+ret_stack entry smaller. Should we allow just sizeof(long)*3? or just
+let user choose any size and if they run out of stack, then too bad. We
+just wont let it crash.
+
+-- Steve
