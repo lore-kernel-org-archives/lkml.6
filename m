@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CCDEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1CDC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 345502146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2725A21479
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zk35OIeb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 345502146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISvJkBI8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2725A21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729511AbeKZVxF (ORCPT
+        id S1729523AbeKZVxH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:53:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34716 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:53:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727875AbeKZVxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:53:04 -0500
+        id S1727875AbeKZVxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:53:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 227982146F;
-        Mon, 26 Nov 2018 10:59:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4F7821473;
+        Mon, 26 Nov 2018 10:59:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229959;
-        bh=6cjDADyKlfDQwGbf4ite/PGpd12Utf0Hgg6SblM8DlM=;
+        s=default; t=1543229962;
+        bh=WNVtHkZjpRtc7mPPiDoHihXJVBu785klHMYTLV5gI4o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zk35OIeb8p3HbCuzDwQTXIG9u8PPuF3LFUv3YoJoAtIqeJ1447XCmNjM4w8AB2llx
-         zf9gJLUx/dNIriA8AbEA0HcwkUummYzg0122jWIk8pAEne8z2EtaPD/HGqYqnc7MTn
-         wkihpKGa26n9KpnhA7tF8cbq6bXpE/j1Y2foRvxs=
+        b=ISvJkBI8CDirvM4FZiqaMVWblFB/vdfPlxNSriXx0lkE5gEA+O+WO4ZxBmdkOs7dl
+         RxOMwUyUQ2Bhqjiig0ArvPDMBwMxL/VmLSlQg96WbKXadiARcJoD4W4XgvcOio4F6w
+         9gva8suk+hEDBj9xkJMleH/be9j/fR3hGkfjb/bI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Prasad Sodagudi <psodagud@codeaurora.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Dennis Zhou <dennis@kernel.org>,
+        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 19/62] arm64: percpu: Initialize ret in the default case
-Date:   Mon, 26 Nov 2018 11:51:00 +0100
-Message-Id: <20181126105052.428139949@linuxfoundation.org>
+Subject: [PATCH 4.14 02/62] cifs: fix return value for cifs_listxattr
+Date:   Mon, 26 Nov 2018 11:50:43 +0100
+Message-Id: <20181126105051.109646457@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -65,68 +64,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b5bb425871186303e6936fa2581521bdd1964a58 ]
+[ Upstream commit 0c5d6cb6643f48ad3775322f3ebab6c7eb67484e ]
 
-Clang warns that if the default case is taken, ret will be
-uninitialized.
+If the application buffer was too small to fit all the names
+we would still count the number of bytes and return this for
+listxattr. This would then trigger a BUG in usercopy.c
 
-./arch/arm64/include/asm/percpu.h:196:2: warning: variable 'ret' is used
-uninitialized whenever switch default is taken
-[-Wsometimes-uninitialized]
-        default:
-        ^~~~~~~
-./arch/arm64/include/asm/percpu.h:200:9: note: uninitialized use occurs
-here
-        return ret;
-               ^~~
-./arch/arm64/include/asm/percpu.h:157:19: note: initialize the variable
-'ret' to silence this warning
-        unsigned long ret, loop;
-                         ^
-                          = 0
+Fix the computation of the size so that we return -ERANGE
+correctly when the buffer is too small.
 
-This warning appears several times while building the erofs filesystem.
-While it's not strictly wrong, the BUILD_BUG will prevent this from
-becoming a true problem. Initialize ret to 0 in the default case right
-before the BUILD_BUG to silence all of these warnings.
+This fixes the kernel BUG for xfstest generic/377
 
-Reported-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/percpu.h | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/cifs/smb2ops.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/include/asm/percpu.h b/arch/arm64/include/asm/percpu.h
-index 43393208229e..d79eaa816f29 100644
---- a/arch/arm64/include/asm/percpu.h
-+++ b/arch/arm64/include/asm/percpu.h
-@@ -93,6 +93,7 @@ static inline unsigned long __percpu_##op(void *ptr,			\
- 		: [val] "Ir" (val));					\
- 		break;							\
- 	default:							\
-+		ret = 0;						\
- 		BUILD_BUG();						\
- 	}								\
- 									\
-@@ -122,6 +123,7 @@ static inline unsigned long __percpu_read(void *ptr, int size)
- 		ret = READ_ONCE(*(u64 *)ptr);
- 		break;
- 	default:
-+		ret = 0;
- 		BUILD_BUG();
- 	}
+diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+index 4e5b05263e4a..3372eedaa94d 100644
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -441,6 +441,7 @@ move_smb2_ea_to_cifs(char *dst, size_t dst_size,
+ 	int rc = 0;
+ 	unsigned int ea_name_len = ea_name ? strlen(ea_name) : 0;
+ 	char *name, *value;
++	size_t buf_size = dst_size;
+ 	size_t name_len, value_len, user_name_len;
  
-@@ -191,6 +193,7 @@ static inline unsigned long __percpu_xchg(void *ptr, unsigned long val,
- 		: [val] "r" (val));
- 		break;
- 	default:
-+		ret = 0;
- 		BUILD_BUG();
- 	}
+ 	while (src_size > 0) {
+@@ -476,9 +477,10 @@ move_smb2_ea_to_cifs(char *dst, size_t dst_size,
+ 			/* 'user.' plus a terminating null */
+ 			user_name_len = 5 + 1 + name_len;
  
+-			rc += user_name_len;
+-
+-			if (dst_size >= user_name_len) {
++			if (buf_size == 0) {
++				/* skip copy - calc size only */
++				rc += user_name_len;
++			} else if (dst_size >= user_name_len) {
+ 				dst_size -= user_name_len;
+ 				memcpy(dst, "user.", 5);
+ 				dst += 5;
+@@ -486,8 +488,7 @@ move_smb2_ea_to_cifs(char *dst, size_t dst_size,
+ 				dst += name_len;
+ 				*dst = 0;
+ 				++dst;
+-			} else if (dst_size == 0) {
+-				/* skip copy - calc size only */
++				rc += user_name_len;
+ 			} else {
+ 				/* stop before overrun buffer */
+ 				rc = -ERANGE;
 -- 
 2.17.1
 
