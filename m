@@ -6,38 +6,40 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE39C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35840C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AE7F20C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:33:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AE7F20C01
+	by mail.kernel.org (Postfix) with ESMTP id DFCF820C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:34:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFCF820C01
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbeK0J33 (ORCPT
+        id S1727451AbeK0J3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 04:29:29 -0500
-Received: from mail1.windriver.com ([147.11.146.13]:44277 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbeK0J33 (ORCPT
+        Tue, 27 Nov 2018 04:29:36 -0500
+Received: from mail.windriver.com ([147.11.1.11]:49909 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbeK0J3g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 04:29:29 -0500
+        Tue, 27 Nov 2018 04:29:36 -0500
 Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wAQMXZQN015332
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id wAQMXWI9007338
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Mon, 26 Nov 2018 14:33:35 -0800 (PST)
+        Mon, 26 Nov 2018 14:33:32 -0800 (PST)
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Mon, 26 Nov 2018
- 14:33:34 -0800
+ 14:33:32 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Joerg Roedel <joro@8bytes.org>
 CC:     <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH 5/9] iommu: ipmmu-vmsa: make it explicitly non-modular
-Date:   Mon, 26 Nov 2018 17:31:34 -0500
-Message-ID: <1543271498-28966-6-git-send-email-paul.gortmaker@windriver.com>
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Honghui Zhang <honghui.zhang@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>
+Subject: [PATCH 4/9] iommu: mtk_iommu: make it explicitly non-modular
+Date:   Mon, 26 Nov 2018 17:31:33 -0500
+Message-ID: <1543271498-28966-5-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
@@ -50,8 +52,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/iommu/Kconfig:config IPMMU_VMSA
-drivers/iommu/Kconfig:        bool "Renesas VMSA-compatible IPMMU"
+drivers/iommu/Kconfig:config MTK_IOMMU_V1
+drivers/iommu/Kconfig:  bool "MTK IOMMU Version 1 (M4U gen1) Support"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -64,61 +66,51 @@ remains unchanged with this commit.
 We also delete the MODULE_LICENSE tag etc. since all that information
 was (or is now) contained at the top of the file in the comments.
 
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-
 Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Honghui Zhang <honghui.zhang@mediatek.com>
 Cc: iommu@lists.linux-foundation.org
+Cc: linux-mediatek@lists.infradead.org
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/iommu/ipmmu-vmsa.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+ drivers/iommu/mtk_iommu_v1.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 9e2655f1c1bf..de39ef992d8a 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -1,6 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
+index 27867b862d7a..5fbf3cecb87f 100644
+--- a/drivers/iommu/mtk_iommu_v1.c
++++ b/drivers/iommu/mtk_iommu_v1.c
+@@ -1,4 +1,6 @@
  /*
-  * IPMMU VMSA
-+ * IOMMU API for Renesas VMSA-compatible IPMMU
-+ * Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
++ * IOMMU API for MTK architected m4u v1 implementations
++ *
+  * Copyright (c) 2015-2016 MediaTek Inc.
+  * Author: Honghui Zhang <honghui.zhang@mediatek.com>
   *
-  * Copyright (C) 2014 Renesas Electronics Corporation
-  */
-@@ -14,7 +16,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/iommu.h>
+@@ -35,7 +37,7 @@
+ #include <linux/spinlock.h>
+ #include <asm/barrier.h>
+ #include <asm/dma-iommu.h>
 -#include <linux/module.h>
 +#include <linux/init.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/of_iommu.h>
-@@ -968,7 +970,6 @@ static const struct of_device_id ipmmu_of_ids[] = {
- 	},
- };
- 
--MODULE_DEVICE_TABLE(of, ipmmu_of_ids);
- 
- static int ipmmu_probe(struct platform_device *pdev)
+ #include <dt-bindings/memory/mt2701-larb-port.h>
+ #include <soc/mediatek/smi.h>
+ #include "mtk_iommu.h"
+@@ -704,15 +706,4 @@ static int __init m4u_init(void)
  {
-@@ -1140,15 +1141,4 @@ static int __init ipmmu_init(void)
- 	setup_done = true;
- 	return 0;
+ 	return platform_driver_register(&mtk_iommu_driver);
  }
 -
--static void __exit ipmmu_exit(void)
+-static void __exit m4u_exit(void)
 -{
--	return platform_driver_unregister(&ipmmu_driver);
+-	return platform_driver_unregister(&mtk_iommu_driver);
 -}
 -
- subsys_initcall(ipmmu_init);
--module_exit(ipmmu_exit);
+ subsys_initcall(m4u_init);
+-module_exit(m4u_exit);
 -
--MODULE_DESCRIPTION("IOMMU API for Renesas VMSA-compatible IPMMU");
--MODULE_AUTHOR("Laurent Pinchart <laurent.pinchart@ideasonboard.com>");
+-MODULE_DESCRIPTION("IOMMU API for MTK architected m4u v1 implementations");
+-MODULE_AUTHOR("Honghui Zhang <honghui.zhang@mediatek.com>");
 -MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
