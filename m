@@ -7,76 +7,76 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F860C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 07:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62939C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 07:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4CE320664
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 07:08:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F078620664
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 07:08:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="P1KZuxjx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4CE320664
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="tLyBakSf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F078620664
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726367AbeKZSBj (ORCPT
+        id S1726397AbeKZSBr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 13:01:39 -0500
-Received: from mail-eopbgr760080.outbound.protection.outlook.com ([40.107.76.80]:37920
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        Mon, 26 Nov 2018 13:01:47 -0500
+Received: from mail-eopbgr750082.outbound.protection.outlook.com ([40.107.75.82]:51775
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726330AbeKZSBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726146AbeKZSBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 26 Nov 2018 13:01:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kLCAZHHPXnCfDkSJGZC0OsOE5Xm59cro7yzJtFBNgb4=;
- b=P1KZuxjx/IvejYK2chcpRSJxq/Zx4i0Lb43hMg6s8DfmhJ3foOSzRcbLAMe6rHqSTFChUl1jgXmNr7QISTvhW/wdAqbreARLK0Lm4lPpf5EcEphGkZI4fUllsb+2XIvLy7LHA9UNZkbiv18YIojqyWBQ5tDesF0TnWU5RPoEt9c=
-Received: from MWHPR02CA0010.namprd02.prod.outlook.com (2603:10b6:300:4b::20)
- by BYAPR02MB4454.namprd02.prod.outlook.com (2603:10b6:a03:57::27) with
+ bh=jwnDi3f+XU9OqJ11pVvLvJ/u3+w+zmv7DpWzEs4v03g=;
+ b=tLyBakSfHM/k981Mr2t2ZbaxZCE+94r5IupQBR8gfGDLWkltTfnK8evM89OooOdMhuOmCgaXLHvpXm0JiQxsCf7asJZ1UJn5TmQK7g/B4kBYQjCfsPd9xlNt99IldZahrPlPaErmc+lYs5ePIUkPgrHYKbp4H17xaHXwsE/C0gk=
+Received: from SN6PR02CA0001.namprd02.prod.outlook.com (2603:10b6:805:a2::14)
+ by BYAPR02MB4453.namprd02.prod.outlook.com (2603:10b6:a03:57::26) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1361.19; Mon, 26 Nov
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1361.18; Mon, 26 Nov
  2018 07:08:25 +0000
-Received: from SN1NAM02FT011.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::207) by MWHPR02CA0010.outlook.office365.com
- (2603:10b6:300:4b::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1361.19 via Frontend
+Received: from BL2NAM02FT026.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::201) by SN6PR02CA0001.outlook.office365.com
+ (2603:10b6:805:a2::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1361.14 via Frontend
  Transport; Mon, 26 Nov 2018 07:08:25 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+Authentication-Results: spf=pass (sender IP is 149.199.60.100)
  smtp.mailfrom=xilinx.com; gmail.com; dkim=none (message not signed)
  header.d=none;gmail.com; dmarc=bestguesspass action=none
  header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT011.mail.protection.outlook.com (10.152.72.82) with Microsoft SMTP
+ 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
+Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
+ BL2NAM02FT026.mail.protection.outlook.com (10.152.77.156) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1339.15
  via Frontend Transport; Mon, 26 Nov 2018 07:08:24 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+Received: from unknown-38-66.xilinx.com ([149.199.38.66]:46781 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
         (envelope-from <harini.katakam@xilinx.com>)
-        id 1gRB0K-0005rJ-DY; Sun, 25 Nov 2018 23:08:24 -0800
+        id 1gRB0K-0002jl-CD; Sun, 25 Nov 2018 23:08:24 -0800
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <harini.katakam@xilinx.com>)
-        id 1gRB0F-0007Iz-BS; Sun, 25 Nov 2018 23:08:19 -0800
-Received: from xsj-pvapsmtp01 (smtp.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wAQ789v4026430;
-        Sun, 25 Nov 2018 23:08:09 -0800
+        id 1gRB0F-0007Iz-9r; Sun, 25 Nov 2018 23:08:19 -0800
+Received: from xsj-pvapsmtp01 (mailman.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wAQ78CvO028141;
+        Sun, 25 Nov 2018 23:08:12 -0800
 Received: from [172.23.37.92] (helo=xhdharinik40.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <harini.katakam@xilinx.com>)
-        id 1gRB05-000758-8G; Sun, 25 Nov 2018 23:08:09 -0800
+        id 1gRB08-000758-7e; Sun, 25 Nov 2018 23:08:12 -0800
 From:   Harini Katakam <harini.katakam@xilinx.com>
 To:     <nicolas.ferre@microchip.com>, <davem@davemloft.net>,
         <claudiu.beznea@microchip.com>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <michal.simek@xilinx.com>, <harinikatakamlinux@gmail.com>,
-        <harini.katakam@xilinx.com>, Harini Katakam <harinik@xilinx.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Subject: [PATCH v2 3/4] net: macb: Add pm runtime support
-Date:   Mon, 26 Nov 2018 12:37:51 +0530
-Message-ID: <1543216072-9623-4-git-send-email-harini.katakam@xilinx.com>
+        <harini.katakam@xilinx.com>,
+        Kedareswara rao Appana <appanad@xilinx.com>
+Subject: [PATCH v2 4/4] net: macb: Add support for suspend/resume with full power down
+Date:   Mon, 26 Nov 2018 12:37:52 +0530
+Message-ID: <1543216072-9623-5-git-send-email-harini.katakam@xilinx.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543216072-9623-1-git-send-email-harini.katakam@xilinx.com>
 References: <1543216072-9623-1-git-send-email-harini.katakam@xilinx.com>
@@ -85,341 +85,155 @@ X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(396003)(39860400002)(2980300002)(438002)(199004)(189003)(48376002)(50466002)(478600001)(47776003)(63266004)(51416003)(7696005)(9786002)(186003)(77096007)(26005)(76176011)(2201001)(5024004)(14444005)(4326008)(107886003)(39060400002)(106002)(5660300001)(16586007)(316002)(2906002)(36386004)(44832011)(356004)(6666004)(446003)(426003)(486006)(305945005)(11346002)(2616005)(476003)(126002)(54906003)(81156014)(81166006)(50226002)(8936002)(336012)(106466001)(8676002)(110136005)(36756003)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4454;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT011;1:5AGp9QkoUqk2Sbcy4Xh9tkI0RtXaBPJHT0Cp6EFJqkIkaJbBx8qGb3TBO0WywLq0qJIs5Msn4T0DeRjy3S1WM8/xq9MampAK5YTjmXldOyHJnftqR4PcxmMeS7lfTEM2
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(39860400002)(396003)(2980300002)(438002)(189003)(199004)(36386004)(76176011)(316002)(107886003)(110136005)(54906003)(106466001)(486006)(16586007)(36756003)(126002)(47776003)(106002)(15650500001)(39060400002)(81156014)(8676002)(7696005)(81166006)(305945005)(50226002)(51416003)(8936002)(9786002)(48376002)(14444005)(5024004)(50466002)(5660300001)(11346002)(446003)(77096007)(2906002)(2201001)(26005)(2616005)(186003)(6666004)(356004)(336012)(4326008)(426003)(63266004)(476003)(478600001)(44832011)(107986001)(5001870100001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4453;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-100.xilinx.com,xapps1.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT026;1:SMJxqBFitgMcd85epAw0HXkIZzLO2dgJ7yjjTt6eRILjrbhWE14QNvUnAqIUdSvHOmVgSstLqdsFB4cJgcrYcTIYiN5vh7zpAL0T4OnXlwCkHICFmZKClQeF6BSwtJJe
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 01e60f50-2cac-400d-0a97-08d6536df54b
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BYAPR02MB4454;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4454;3:WkImjEjfGanspR0r40xDZnH+zqlY7qEBlLgJBcWZbwWmTz+yHWk5fuAOAJmAYPobtDtgdRq/avoeAwu2W0pbq9ABV2dYbcEFMBeXKFpXCSkxcjnmrKNV8/3FMOweJJOjKqz40LKmMNYLUfF5JYalEwI6b6Lf9WDS8fIUCvPZUmZLnMn+44iE5OPyrAtcgI3FhUEvtJIa4Cmbw7cn22bz+0z87hDaQVu2x+YCnxiisv8nifmuTtPxYkQH7sgIL8CiUlKdBQieerl20TRjT4fosNLbBJx0pebYLf0lcnoUCW1Rm0TAAyjBwDIgA/UZ93Lx9/T9F+C9t+4jtotO7erIIlbtDmzs9T1fEvdoHo5O88E=;25:p0TwMgxuKCOGvyrLPFVOT4BduJBzbE0saNLelnQOtxHSGg5vgBqolMWkJCiUNOYAvLyA2rge1tAxoKewHIFfveb608ymvkkK4hamtcrAkKf0qb91UiK4w78t+1K9x+OZJAYonJCU2qfv3SbV1Gy8jj8uUM8nMy9JE+w7ZXjtJJKyvX2e093n9l5gAw/KWxQp/oR1Fv+Q15p7ex7fhviYNqPDpoaOgzu1QBM0CIVfyhW02rucjerQZHBCQxn6ivhzvoG0Lqm5p5n49yfUNqyODODtpxK+vnQvzU7IZVpBDvsBgvjruB10r+oamqwU+gqSNl/mK5m+myhQ66zgDweq6Q==
-X-MS-TrafficTypeDiagnostic: BYAPR02MB4454:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4454;31:cvzoYyMntn6gBpREQSM0/b9oBV+6/zy+X+WnNACMRj1KZjZyonm8oYAJ2gzW5xLdUu/lFGLOsUkPqG3jqk+0Qvj6/DN6w0ZNkK/3agEF8CUvTVRpRhRirJojSf779/q2nH6LK/o4F5tJ4YRf/j3RW/zFaJxNNK27b2PZzhinirXlJlPoMiWH89hsr7nCTZbBanXJ4D4F/myEw78N6QTaJFNcePOKoT0Osmy6jGjO5Bk=;20:qjaHxfLQ7h8kpMNM/QLmHKFqPvo4wMKEAZiRj9usKPqW+tAIGB4GPrJdbUw/3fo1CR9dLU5JMFWh/pdQgWZo5FcdaSbTe5bHflgr8V9bhtfhv9p8flQ/Wf/BGfkXG40mZkNh18MHyPzGpF/XSgSUS1uSB02ZwjTqTGuQasw5QOEuDv9lUnEfGwPZ18Vin5GG7NlcJ7ltyPewWDfMz0gSuJL8UIWymTB7GK+KQyeNDHtoPsCko59kMcD6KLs8mSszVBua6WKM5eDOT3iblYHwjMTfswGVAEk1rZrr1C1jIu0b9Unn9RhktO65NxOf8/y9J04OsW9PYVIrSlj0eOrF0W8xO5lD2MOfB7SgBtk+fFTv7uvz6GnNZbix05+g2gNq6OZXgigQJVvkf6eZlB8lI1vZR84iUKqqgHTvpXcYfqL7NZDR17cbCgwDQK4VZa312zaaV1lx1btq8p5T28ZdVRpNV7O0g4n1rgpWhfhZAUJwYAHp6NDIm1cP6UCIGwmt
+X-MS-Office365-Filtering-Correlation-Id: b1118fb0-8930-4aed-80c2-08d6536df554
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BYAPR02MB4453;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4453;3:U7jiI0H1Rd+INN+LwTk6DlA4R7+mZioUKKFgQrNclHxB72xLweze/RrIe/WOKPyFbJoN22OZKJF7C9a3qHDEqv/eoxTuq74FaeOh77r7BNzAqLEGZEcBy6g/rF1thQgfb4twQINUYHh5zW7gvLPpp2GNHFRVVeZt2z/4Haeg7qEn/UxkDISlw8/gIzSrXI6m71sRFjT2A8oUh6yEGcNYfeG1H0aYfbb2XDuCOu38LZyh8TooEakdZa6hELvr9XXdN19r+mfck+vMIIqaePTSMA7TJiL30je+7SKMVdfc83AnzmOxKCOR4W4JYdsK5OIsho4UW5D/XdLpiPB3kbfZupEr78EvvnzNnQhRFj4UByw=;25:ZBR43m1nPa7O4ymbAIWxNy9bFzceu9PZbK2fN+KiwdmrHTUwaGJSCUgnNGLJksJOO5AsjO0N9YEh1UFcqisdztkERsnSXptuiqpgRyrCY2e77XvtTFe7RXAUXobdaAjAH97DuEwQ6vlN+Iv0xtGH0/gYC7w1LE9x0CR3BDlhK03+spSpH0E86/VIa4xojPWVDFLqUw2DVJE/bTpXmoR2RCUSnbeQFwt/dyiUUSQf2ChAMH/FUq38lZ2KO3Hs3+tqyXQ2L8sNF1MFogwOWelw/2ndwh4kVItoAOJujg0a8yQyI5WZK8CetfQKlUy4rRdSc9W9diskjNUUD/LkDO2KHQ==
+X-MS-TrafficTypeDiagnostic: BYAPR02MB4453:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4453;31:dlJfMoLo5x5LVnkERfxzAMVDO3//C9FYHAMWDEHE6BGHCEY8N6tPVABNAWxJe1pMAmjzLs4xXZ7qKFH3QUscSuEWxoqUDa4ay2vFrrhsJ/hNAKkSje/XqTUrmC7RJqUqGwi6GW8NtkrtYOyzYT3U494fbqMmN+ahJcUOwgUgyeG1LZ0vT8wIAApFCw85VSFK9IN3zWRCQbFmmD6E6AAvgKcwzNu8J1NxqGVqnRATUVs=;20:P8kCnwwVwElMB47A1/+X/4ZL3ZumI+WBtZOeDDkBPIHRg2Fx4L3M4gF+NCYXFkOFOyCrXBjkIdkpG1+h+o8q41dnp+nVJ68hKWHwdXMFzKC6X2EjPMv2fArS51tST+NDXKKJ/gtgkx6DxhzSooCn40KSZwXpP/nGhzWz10T4n0DZO50dZwgYM0P8BQK5m2gGPhp/sB4yb3VU8v1IYPdFXfoLOupKpGa26DmDDeew22fnYlyiSRuKBJqf6618izAihRNK0oC2D3PN70cRFG2+8UuS8+Dr0jjIPtNzzKo6IQqaWVPfALWe9tfk+4OZrpzShr1TsMbT81/yKnS3ZpnKnegf87hHo0vUZJE2XYu+iNfwDQogAZNIikZrxmBXbmRQoa2b6GnwFmXiL9CEtKkSf2wr81Lx2dsZm4YqbFMcOrsm6MBwfvmQtbckfD4Oh5KXVt/jfSC/yKUAIjHRuegtjmU/0isSKHhqxLW1oociuP3Mv+wx21sGTxQnSqq5ZunH
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <BYAPR02MB44545A222FB8464343DCCFE8C9D70@BYAPR02MB4454.namprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <BYAPR02MB4453246153F5D1FD74B400B2C9D70@BYAPR02MB4453.namprd02.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(10201501046)(3002001)(3231443)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BYAPR02MB4454;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB4454;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4454;4:WBUcIv952Unul2limS1mwdM0ImYTF2kq/xc/6VuOeOoUEXVjRT/R0ilXpDVmixZ4dtE2reuFCoinpSj3lX9ylvKowfkRPbhfggGj3xFxz6/vDbcF7LT+d7b0MYI1Fi2Z4oUW7nVpbiPe8GiKZmDByH9WDBMrKKiPoa+QVJ6YLco8SplYM0ffsGZU1o+CA2/XZ1hsoRPR+0gK5W4NWU4/0ZegA8HFWOH/ASeyJz0bD6pHolTcy7wG1miXdK/Ls6vtECgts2EaRvE+JiFjHX68KA==
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231443)(944501410)(52105112)(93006095)(93004095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BYAPR02MB4453;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB4453;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4453;4:+JooShXzGZaLZ4UFY0fXLWolFf1/MeUiTvyppfzyxgdfskfp+esQqogN9DZWzEqa045Z30dNZ6r193N9adTed5S6ThyRdgxRk4BvAV8P9PPk6NKTsI2aafp317F23cjW9unF1KrrtEMlDg5Ta5khwhiIkCH6YTr75IriAOBO/9hiL0+mk5F3wllAXbsvUJPAvPNvk04kQzWLS0iZAcCQAGWN7hHr2ysge+SbCFeS3UhV95oz85g94zvkV2w/sdfDO+d5y3qOaykVSqiKmCZFxw==
 X-Forefront-PRVS: 086831DFB4
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB4454;23:bwz0EP6k6SvnX3+Exyl+mvkperbIYlCg/2gD5w4GL?=
- =?us-ascii?Q?w+6IMi6ByPX7HSVPU6yq6RF62vMozfgF2PbQuO416CeHDxIgOV7ByZWclZLe?=
- =?us-ascii?Q?GM4+lTkhhxG2syf/2IOktT4runWvRwtt7vVKaG7rApwW60Eil5hQ8U7St4M2?=
- =?us-ascii?Q?UDHyZq2XdClEJ5NvIH8GbqmzlF7vyvLTpbJG4XpA45KYq7GoEcWIFkyha5dy?=
- =?us-ascii?Q?NUA2HxtOrFYAw38b0z9nxOtVzLgc37MMYhJn82etNz38gzH7teUZ/YKGNkiT?=
- =?us-ascii?Q?WelKq0bZ8TWIFZ/4q//KVzsFB7D/izprlju14gankvQrek3odREShaFyoB2T?=
- =?us-ascii?Q?H74PsXFUZTNKMulLanHSgZOwZYj8EUD1iKCt92yGQ8HojQZ1myJSZkCO41A8?=
- =?us-ascii?Q?Sf+3YGgif7tFxQMn8/dfn/rMhXGWLsRLYtBfKqWnwvos0qDEXqvEFBUeWtTf?=
- =?us-ascii?Q?l10jhpUr9kloj5IXkjsFI1CICF5TbuNoLia/tDyxjHRq1nND4vgwazdVnuUC?=
- =?us-ascii?Q?XXsC9FuGNk3mZOrYJOSDL2UXx8mlqBXjYrpJ8nROWP38G2Rastpno8WxcMX5?=
- =?us-ascii?Q?XRYzCngJ71hzUDlYCWSlz+CDlQTt1AXdaTFN0OWP/g57DBbOHzmlkTdraMjk?=
- =?us-ascii?Q?LvDXely7gi2GKJiqr1Mo45E0RiKMIfaeiiaqK2NsB9XGQb7wrnwdyqnMs+ZG?=
- =?us-ascii?Q?tbGnO7fdF12QvA912BeM5z3eGNPdC5FxZNloQbmhyxlNYsw5jWJV4L0mlYzY?=
- =?us-ascii?Q?NyYoIu5CUoZ/ET2pXHdIckHjoAFKb1A6AICgXQGW1aoeYMI3i34mPj8vw6kF?=
- =?us-ascii?Q?Po7XA8uer9j1CioG3s/zwdcajS9MMe9L5U9Vvkcd3HeX8YZc03n0/zVIdp++?=
- =?us-ascii?Q?uYW1AcMNoGsN8TswlHFrCN9Tyx9T8NAMBIu4lAIIDawziKTNs8u5e9UHZJUP?=
- =?us-ascii?Q?qJH5DUpcEwKOeFnaDlRFQ3q8Ttm/YJSL/dkO2H5EcUjrrqR8bM5K2ZOoB83F?=
- =?us-ascii?Q?xNPzwfapOtlnnQ/QD5kN85s+mqgk65CiLSADz5exZxduisGzAwkfed7H2/ee?=
- =?us-ascii?Q?3EymsI784PyvcdKcFjFctgaSoCIk6/M2R85dTMQhpuQVu6lcu7Zu3rbh9aX+?=
- =?us-ascii?Q?nH8DWFwMzhmkeuR5rIdq2K5KyBpAwE4GIM8GB4g5AD9ErxGhAfYy5CAVR82j?=
- =?us-ascii?Q?XN3Lu4qHau75RfmcIc9QEDECGSuWpRJvI12?=
-X-Microsoft-Antispam-Message-Info: AthmzYjqx2aK4Z07oi/YIjEPkyqItcnO4IRyE7sxWDfnEHbBdXqnzmVEipfe2Cg2Z2FbKIN6QgMy2bjI7qQbtR6/DiAW0VVbEYoO6Zn1/osHOGmqztsKJIEPhb7gwtftAqCTZ7InmuaRfH7ySMv0eWxPTfXVRcGE11GcII7GpMNPCCYGMth/B3sprGgQp8j9Ms1QLSgyTPS8ZErCwMLh7aDbBrY4qDlH/YF3MfrENaasoeeg5AKZDbMvQQXG96nU26LC/EtVFghd6+f+d3nith0BCBVsK+Q4aZ3gRW7XgUe2rTwbw2o9pMRDu+zjmh+9mPEVb3qUao9vLGF/hRVW2MX7+/ic8ZIX9xrZC+SxswE=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4454;6:TgzWHDiBpHeGXatcX7mMaRR/UasB6rXTDLzjdOW8un55PnfqDQuuSunSzUzzWQsV8hGYWoNuEWCUzlAd0IkoIyilZbVqTFM8KyCnWwElhfU5r0Pr7OZ8kxb5O5Jbek7lmR4wV6f3Hmio1I8B6/uSTY6S+GhAyoq6brvfREs9bIICnztCQT84b3Dyfd7aNgl4Vs9FE3crMP85yvkAV6zqosHZJpm6r3Lbuzc/56h9uy68C6RghocKS0PsBS8yCYnZ9YVj2tc0Lmtw1XJWA9DxHV2+I9aBM7P65TcwLh3CT1hfoR6ACGwrB5KWHsqVSwmqGAvjnQDTQTioX/lAxTfVHTGz5ijyaQt2JOUlgKwYdz5PPNzT1hJeyT5l+X352AkGtecMKyWuPCnk6jPnyWJxs8VR4DwuU16hjpAAMW1c8J3+Bt05XIJv9CBGFNpo8oagDcIye1Dm0mNfdb3eduHh8w==;5:3eiyRC9gqerIjE+XfJfgcUOL1C8VyLdGlxny9RrTLV9SO5iQBsHHTrwgCRseBy3bmlIgzBAITQOO/XyIM5MRlrHglEd0QYiE1KSgec2Me1YPepKlpDYfkB1jQ1luUbRBf0CzieSjbt7KnUHagigGUOz72b2Ta9F3t2Kd6ARASC0=;7:Vzsk2/oPgzu8JS2J7bV/es+in/b+Ke6Vs3/of0Pcgaxw/g/SzlSdqhj0ntrdwkijtA7EG8bwlcR9mSJ3VuHsbF5da2Fvo2Ti/BcApSnoj179P7toR2tPdYNYAHH1Zfog7WmbUYexvpiV4haAS1iAIA==
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR02MB4453;23:ik/bLVDRwKSCBizISDzZdebemdBspk13+kyCoKhsm?=
+ =?us-ascii?Q?BQhKgsTwTVrDfSS/jm8ov6V4AQv+PQB+eFLKRlYVPM+nQtKzVmfMY97UT+hF?=
+ =?us-ascii?Q?WgKv82zRyz5nyoQIkU+iunlCw5sZvU5ZZ8W+6hlrotgN4v+SLgCahDL9UZvY?=
+ =?us-ascii?Q?GaCsarOqOUG0BIVWzTaBrXFmxCE4e48/OSX9B4z99UgJGnySTzkRo0UbvMpq?=
+ =?us-ascii?Q?obbsjwgwa37zMSnxQN06TeWM6kxu4JC7IZbGewLVNReNqTRJhazsd6FJntw5?=
+ =?us-ascii?Q?A/HaneW57RNeu+8x4/6rNpdOvfMRa15XFAqMn89+K1OKyouw4Hz5vHNrda4n?=
+ =?us-ascii?Q?ZL6Gxy7r3QgFiU7QBzeWUrMeJZOjXvjymmm8NUO0LAX7Hx3+ZNAnuGR3NBiv?=
+ =?us-ascii?Q?LuGGCeNPA5dC6NjiAcg4rwTWWT1/0RIifz/atve2skKq3crP2zgBt0VpN+6O?=
+ =?us-ascii?Q?Nm3KDiy/ewrv7Bi+MUh/3lx2UVqhYi+OaOLMp1T4D9QkTyW/NbA2cH2lE6sp?=
+ =?us-ascii?Q?un25rP7m1Qq4pJsWL6l1G5xpDuGT/FLqldoVB5YA0wn5FXzGooVziX88qyKE?=
+ =?us-ascii?Q?3XYd913je6Xo0+Pf9Vm0fZi0HYOX0QoYfnMkmDB9pEnQTT8PSpwOpbhuUUgq?=
+ =?us-ascii?Q?LWIE9ip/YtVdUFLQQYLU+a/+EUW1HwGYOMLszoMo4Lj5sJNwtToKaFIrFR4C?=
+ =?us-ascii?Q?rC+jEVu3JwbbBeY6vSJvV1kHkaxl0jEW3r2j3eTmLjRtE5DVFaAJ4+MKXKw+?=
+ =?us-ascii?Q?EUF+UjzdBxVrzgLaYyb9krkh8lQ+Z3BjCvtk0j8twfoICMiah6NUcTNVq0t8?=
+ =?us-ascii?Q?sS+RapfzEKVVOgkWR2FY0PoRXjiOTMuwfz8qRY2mAFKdMYnvmTEKs5x95eTU?=
+ =?us-ascii?Q?RyYukF+pDjFSjeTaUc1f1QaVc5ieph6/DwOb9A841q4Ikoy5933YDqKbZggO?=
+ =?us-ascii?Q?TVgdv3PTOgC4jfbVGI5emGnCy8KrOv8CuSonjMo+yYmdLpowL+4Jtw2MK8is?=
+ =?us-ascii?Q?cWLVjXUU1uV4j7InnperBKcmz6SXWCHlWjlbCJRy2HxaZXZbI1CiJz3wZZhl?=
+ =?us-ascii?Q?UqOxUWyZ/KC73jSl2f4gjpw/2qsAS5pDcwjOA0gd3PHl195oVxkcwQWIiPnR?=
+ =?us-ascii?Q?sP1SN6JIr2XOjWogbPir0DhPVHdopNCURlNdgd734yOANMuN+7oC0W6oqhum?=
+ =?us-ascii?Q?uVjvMRwNd1u0e2izkH8u/dhfbOacm8VtZxpHZPep9bp/1rx+5N/R5+IiujFq?=
+ =?us-ascii?Q?mIwqkzoxgNlnDgEfxTAd+OsvAcgK4C53wiOKMyI?=
+X-Microsoft-Antispam-Message-Info: xd66ZyV8aXSTpAkPdqI2Ej474NCTurX29/ERT/G1JCmO/FGxJeWknx89yMdqSMVlXsnJj+stoTbuwUbDRYZaJbEu28SLVyOd+/hwhJaoHSGTa03+KHP7udpmALmH5HidiIYrA+44v9iVbRFoj5AvD5RSYiQgPf2f8d4Qfoi88V07nJ8DUGDyVg3A3dwg+WPIr7ABBM6pe6XwIaa1N7krpgbPD9nzchfYsP9KNerHF9B07GHizvF+RTDUwi0Ko9OcGttziqiN6E74vUuXSJfqp0zhwP8ipcnj4gyB8GSa6FeepZG9bxHFICD3tTzPgOgrjrGu+Aez6iT4gcLc7CHS9V8eHKPwGIIO4uCW8qFoV98=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR02MB4453;6:H6BUXKY6FNcwWFPl5LM8X52NPb/CDBMXL5nTvhFpux8wFi8QkOsqWd/H1lwYW3BoMzfOez3M1p3K2fTEzw1GFk0L2S0vyEP44Q0tmLvmcmos6r0r6vjgXnXrBBedZiFloLBJJ2DKwo48QTEnSu64OAWZnMTSlx+eqvNZevkiyJAbyuzMacW5Zv5jeWV+IJtWGE0lasAqR0G0OrNL0YuyZwPht/F72bnrEZ7ZuJ9JIcPHICBXjc2YjS90y5TVZso/H95M5V3z6CjVuLiUNXD8FeWyB9vPkwwDrTGW3xbVp4mhLfW+m50+iyBLIh1WAWHCDrn4G/nq98+lg3JeLFlLZj3A+sF9Q/blNRYZI2OYfyYiLPM3xtAzRBlA8EhArhYshmfGAeh6RkgH5bmqpLTcAMdHUpfJsreWJkrdLepRFPMZa/hK+27YeNMwm3OPGy3/At1HpXrF4LAY3omPkqcGXg==;5:nfhkHhUsclxtUTaqPgoC9NeL9VVjgGj86EIki9PLweDm1//s5/ki15+iqXWtXEXxqhZTNdC2FXvMSJAZpOTZJgmDu5eponVmgIKW4z7qhteGd+dFn+NE5bgtx2XS9GOjyevFR6JOmlj4+gwy0g1ohvc/4j40ZQEbH0LlOXBI94Y=;7:JnlVqUOPwrCIQnESNGI4PWn9SgV9wuDvIPj5JdEKMlRBaZzQQoJV27/lHD0sxm6cqCaJYv9O3fDo8sn7cwgWBYjMdzL/gIxtfvzOM8lPLheOWATffKY2yXJ3Zwuyh9cD7dUWeZ9tZZmsmOO2ecs/uA==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2018 07:08:24.7786
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2018 07:08:24.9656
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01e60f50-2cac-400d-0a97-08d6536df54b
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1118fb0-8930-4aed-80c2-08d6536df554
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4454
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4453
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Harini Katakam <harinik@xilinx.com>
+When macb device is suspended and system is powered down, the clocks
+are removed and hence macb should be closed gracefully and restored
+upon resume. This patch does the same by switching off the net device,
+suspending phy and performing necessary cleanup of interrupts and BDs.
+Upon resume, all these are reinitialized again.
 
-Add runtime pm functions and move clock handling there.
-Add runtime PM calls to mdio functions to allow for active mdio bus.
+Reset of macb device is done only when GEM is not a wake device.
+Even when gem is a wake device, tx queues can be stopped and ptp device
+can be closed (tsu clock will be disabled in pm_runtime_suspend) as
+wake event detection has no dependency on this.
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Signed-off-by: Harini Katakam <harinik@xilinx.com>
+Signed-off-by: Kedareswara rao Appana <appanad@xilinx.com>
+Signed-off-by: Harini Katakam <harini.katakam@xilinx.com>
 ---
 v2 changes:
-Allow for mdio bus to be active
+Fixed parameter passed to phy calls.
 
-Changes from RFC:
-Updated pm get sync/put sync calls.
-Removed unecessary clk up in mdio helpers.
-
- drivers/net/ethernet/cadence/macb_main.c | 121 ++++++++++++++++++++++++++-----
- 1 file changed, 101 insertions(+), 20 deletions(-)
+ drivers/net/ethernet/cadence/macb_main.c | 38 ++++++++++++++++++++++++++++++--
+ 1 file changed, 36 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index 32453d4..4b85ad7 100644
+index 4b85ad7..dcb0194 100644
 --- a/drivers/net/ethernet/cadence/macb_main.c
 +++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -37,6 +37,7 @@
- #include <linux/udp.h>
- #include <linux/tcp.h>
- #include <linux/iopoll.h>
-+#include <linux/pm_runtime.h>
- #include "macb.h"
- 
- #define MACB_RX_BUFFER_SIZE	128
-@@ -80,6 +81,8 @@
-  */
- #define MACB_HALT_TIMEOUT	1230
- 
-+#define MACB_PM_TIMEOUT  100 /* ms */
+@@ -4249,16 +4249,33 @@ static int __maybe_unused macb_suspend(struct device *dev)
+ {
+ 	struct net_device *netdev = dev_get_drvdata(dev);
+ 	struct macb *bp = netdev_priv(netdev);
++	struct macb_queue *queue = bp->queues;
++	unsigned long flags;
++	unsigned int q;
 +
- #define MACB_MDIO_TIMEOUT	1000000 /* in usecs */
++	if (!netif_running(netdev))
++		return 0;
  
- /* DMA buffer descriptor might be different size
-@@ -335,6 +338,10 @@ static int macb_mdio_read(struct mii_bus *bus, int mii_id, int regnum)
- 	int value;
- 	int err;
+-	netif_carrier_off(netdev);
+-	netif_device_detach(netdev);
  
-+	err = pm_runtime_get_sync(&bp->pdev->dev);
-+	if (err < 0)
-+		return err;
-+
- 	err = macb_mdio_wait_for_idle(bp);
- 	if (err < 0)
- 		return err;
-@@ -346,11 +353,17 @@ static int macb_mdio_read(struct mii_bus *bus, int mii_id, int regnum)
- 			      | MACB_BF(CODE, MACB_MAN_CODE)));
- 
- 	err = macb_mdio_wait_for_idle(bp);
--	if (err < 0)
-+	if (err < 0) {
-+		pm_runtime_mark_last_busy(&bp->pdev->dev);
-+		pm_runtime_put_autosuspend(&bp->pdev->dev);
- 		return err;
-+	}
- 
- 	value = MACB_BFEXT(DATA, macb_readl(bp, MAN));
- 
-+	pm_runtime_mark_last_busy(&bp->pdev->dev);
-+	pm_runtime_put_autosuspend(&bp->pdev->dev);
-+
- 	return value;
- }
- 
-@@ -360,10 +373,17 @@ static int macb_mdio_write(struct mii_bus *bus, int mii_id, int regnum,
- 	struct macb *bp = bus->priv;
- 	int err;
- 
--	err = macb_mdio_wait_for_idle(bp);
-+	err = pm_runtime_get_sync(&bp->pdev->dev);
- 	if (err < 0)
- 		return err;
- 
-+	err = macb_mdio_wait_for_idle(bp);
-+	if (err < 0) {
-+		pm_runtime_mark_last_busy(&bp->pdev->dev);
-+		pm_runtime_put_autosuspend(&bp->pdev->dev);
-+		return err;
-+	}
-+
- 	macb_writel(bp, MAN, (MACB_BF(SOF, MACB_MAN_SOF)
- 			      | MACB_BF(RW, MACB_MAN_WRITE)
- 			      | MACB_BF(PHYA, mii_id)
-@@ -375,6 +395,9 @@ static int macb_mdio_write(struct mii_bus *bus, int mii_id, int regnum,
- 	if (err < 0)
- 		return err;
- 
-+	pm_runtime_mark_last_busy(&bp->pdev->dev);
-+	pm_runtime_put_autosuspend(&bp->pdev->dev);
-+
- 	return 0;
- }
- 
-@@ -2386,12 +2409,18 @@ static int macb_open(struct net_device *dev)
- 
- 	netdev_dbg(bp->dev, "open\n");
- 
-+	err = pm_runtime_get_sync(&bp->pdev->dev);
-+	if (err < 0)
-+		goto pm_exit;
-+
- 	/* carrier starts down */
- 	netif_carrier_off(dev);
- 
- 	/* if the phy is not yet register, retry later*/
--	if (!dev->phydev)
--		return -EAGAIN;
-+	if (!dev->phydev) {
-+		err = -EAGAIN;
-+		goto pm_exit;
-+	}
- 
- 	/* RX buffers initialization */
- 	macb_init_rx_buffer_size(bp, bufsz);
-@@ -2400,7 +2429,7 @@ static int macb_open(struct net_device *dev)
- 	if (err) {
- 		netdev_err(dev, "Unable to allocate DMA memory (error %d)\n",
- 			   err);
--		return err;
-+		goto pm_exit;
- 	}
- 
- 	bp->macbgem_ops.mog_init_rings(bp);
-@@ -2417,6 +2446,11 @@ static int macb_open(struct net_device *dev)
- 	if (bp->ptp_info)
- 		bp->ptp_info->ptp_init(dev);
- 
-+pm_exit:
-+	if (err) {
-+		pm_runtime_put_sync(&bp->pdev->dev);
-+		return err;
-+	}
- 	return 0;
- }
- 
-@@ -2445,6 +2479,8 @@ static int macb_close(struct net_device *dev)
- 	if (bp->ptp_info)
- 		bp->ptp_info->ptp_remove(dev);
- 
-+	pm_runtime_put(&bp->pdev->dev);
-+
- 	return 0;
- }
- 
-@@ -4008,6 +4044,11 @@ static int macb_probe(struct platform_device *pdev)
- 	if (err)
- 		return err;
- 
-+	pm_runtime_set_autosuspend_delay(&pdev->dev, MACB_PM_TIMEOUT);
-+	pm_runtime_use_autosuspend(&pdev->dev);
-+	pm_runtime_get_noresume(&pdev->dev);
-+	pm_runtime_set_active(&pdev->dev);
-+	pm_runtime_enable(&pdev->dev);
- 	native_io = hw_is_native_io(mem);
- 
- 	macb_probe_queues(mem, native_io, &queue_mask, &num_queues);
-@@ -4139,6 +4180,9 @@ static int macb_probe(struct platform_device *pdev)
- 		    macb_is_gem(bp) ? "GEM" : "MACB", macb_readl(bp, MID),
- 		    dev->base_addr, dev->irq, dev->dev_addr);
- 
-+	pm_runtime_mark_last_busy(&bp->pdev->dev);
-+	pm_runtime_put_autosuspend(&bp->pdev->dev);
-+
- 	return 0;
- 
- err_out_unregister_mdio:
-@@ -4158,6 +4202,9 @@ static int macb_probe(struct platform_device *pdev)
- 	clk_disable_unprepare(pclk);
- 	clk_disable_unprepare(rx_clk);
- 	clk_disable_unprepare(tsu_clk);
-+	pm_runtime_disable(&pdev->dev);
-+	pm_runtime_set_suspended(&pdev->dev);
-+	pm_runtime_dont_use_autosuspend(&pdev->dev);
- 
- 	return err;
- }
-@@ -4181,11 +4228,16 @@ static int macb_remove(struct platform_device *pdev)
- 		mdiobus_free(bp->mii_bus);
- 
- 		unregister_netdev(dev);
--		clk_disable_unprepare(bp->tx_clk);
--		clk_disable_unprepare(bp->hclk);
--		clk_disable_unprepare(bp->pclk);
--		clk_disable_unprepare(bp->rx_clk);
--		clk_disable_unprepare(bp->tsu_clk);
-+		pm_runtime_disable(&pdev->dev);
-+		pm_runtime_dont_use_autosuspend(&pdev->dev);
-+		if (!pm_runtime_suspended(&pdev->dev)) {
-+			clk_disable_unprepare(bp->tx_clk);
-+			clk_disable_unprepare(bp->hclk);
-+			clk_disable_unprepare(bp->pclk);
-+			clk_disable_unprepare(bp->rx_clk);
-+			clk_disable_unprepare(bp->tsu_clk);
-+			pm_runtime_set_suspended(&pdev->dev);
-+		}
- 		of_node_put(bp->phy_node);
- 		free_netdev(dev);
- 	}
-@@ -4205,13 +4257,9 @@ static int __maybe_unused macb_suspend(struct device *dev)
+ 	if (bp->wol & MACB_WOL_ENABLED) {
  		macb_writel(bp, IER, MACB_BIT(WOL));
  		macb_writel(bp, WOL, MACB_BIT(MAG));
  		enable_irq_wake(bp->queues[0].irq);
--	} else {
--		clk_disable_unprepare(bp->tx_clk);
--		clk_disable_unprepare(bp->hclk);
--		clk_disable_unprepare(bp->pclk);
--		clk_disable_unprepare(bp->rx_clk);
++		netif_device_detach(netdev);
++	} else {
++		netif_device_detach(netdev);
++		for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue)
++			napi_disable(&queue->napi);
++		phy_stop(netdev->phydev);
++		phy_suspend(netdev->phydev);
++		spin_lock_irqsave(&bp->lock, flags);
++		macb_reset_hw(bp);
++		spin_unlock_irqrestore(&bp->lock, flags);
  	}
--	clk_disable_unprepare(bp->tsu_clk);
-+
-+	pm_runtime_force_suspend(dev);
+ 
++	netif_carrier_off(netdev);
++	if (bp->ptp_info)
++		bp->ptp_info->ptp_remove(netdev);
+ 	pm_runtime_force_suspend(dev);
  
  	return 0;
- }
-@@ -4221,11 +4269,43 @@ static int __maybe_unused macb_resume(struct device *dev)
+@@ -4268,6 +4285,11 @@ static int __maybe_unused macb_resume(struct device *dev)
+ {
  	struct net_device *netdev = dev_get_drvdata(dev);
  	struct macb *bp = netdev_priv(netdev);
- 
-+	pm_runtime_force_resume(dev);
++	struct macb_queue *queue = bp->queues;
++	unsigned int q;
 +
- 	if (bp->wol & MACB_WOL_ENABLED) {
++	if (!netif_running(netdev))
++		return 0;
+ 
+ 	pm_runtime_force_resume(dev);
+ 
+@@ -4275,9 +4297,21 @@ static int __maybe_unused macb_resume(struct device *dev)
  		macb_writel(bp, IDR, MACB_BIT(WOL));
  		macb_writel(bp, WOL, 0);
  		disable_irq_wake(bp->queues[0].irq);
--	} else {
-+	}
-+
-+	netif_device_attach(netdev);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused macb_runtime_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct net_device *netdev = platform_get_drvdata(pdev);
-+	struct macb *bp = netdev_priv(netdev);
-+
-+	if (!(device_may_wakeup(&bp->dev->dev))) {
-+		clk_disable_unprepare(bp->tx_clk);
-+		clk_disable_unprepare(bp->hclk);
-+		clk_disable_unprepare(bp->pclk);
-+		clk_disable_unprepare(bp->rx_clk);
-+	}
-+	clk_disable_unprepare(bp->tsu_clk);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused macb_runtime_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct net_device *netdev = platform_get_drvdata(pdev);
-+	struct macb *bp = netdev_priv(netdev);
-+
-+	if (!(device_may_wakeup(&bp->dev->dev))) {
- 		clk_prepare_enable(bp->pclk);
- 		clk_prepare_enable(bp->hclk);
- 		clk_prepare_enable(bp->tx_clk);
-@@ -4233,12 +4313,13 @@ static int __maybe_unused macb_resume(struct device *dev)
++	} else {
++		macb_writel(bp, NCR, MACB_BIT(MPE));
++		for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue)
++			napi_enable(&queue->napi);
++		phy_resume(netdev->phydev);
++		phy_init_hw(netdev->phydev);
++		phy_start(netdev->phydev);
  	}
- 	clk_prepare_enable(bp->tsu_clk);
  
--	netif_device_attach(netdev);
--
++	bp->macbgem_ops.mog_init_rings(bp);
++	macb_init_hw(bp);
++	macb_set_rx_mode(netdev);
+ 	netif_device_attach(netdev);
++	if (bp->ptp_info)
++		bp->ptp_info->ptp_init(netdev);
+ 
  	return 0;
  }
- 
--static SIMPLE_DEV_PM_OPS(macb_pm_ops, macb_suspend, macb_resume);
-+static const struct dev_pm_ops macb_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(macb_suspend, macb_resume)
-+	SET_RUNTIME_PM_OPS(macb_runtime_suspend, macb_runtime_resume, NULL)
-+};
- 
- static struct platform_driver macb_driver = {
- 	.probe		= macb_probe,
 -- 
 2.7.4
 
