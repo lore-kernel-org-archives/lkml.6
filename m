@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 275C2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A432BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E16E921104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B13121104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GFxXlkE2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E16E921104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hn9oTyHD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B13121104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729699AbeKZVxk (ORCPT
+        id S1729710AbeKZVxn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:53:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35444 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:53:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729664AbeKZVxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:53:40 -0500
+        id S1729005AbeKZVxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:53:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B707F21104;
-        Mon, 26 Nov 2018 10:59:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D1B12089F;
+        Mon, 26 Nov 2018 10:59:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229995;
-        bh=Wj7f5rameFSk6t/vTaVDJFFnVOAw+nel2JYbihYH1Tw=;
+        s=default; t=1543229998;
+        bh=SF8RGkjisO1eaQrUWyHdGVu2P+NW/W/BjQxUKS4kz+c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GFxXlkE279+JFK4lZEUEuoDNB7fb5j7nLAEntr6TB3eYJQVdISsdVO9J/26sCPnnS
-         7Lhq0rr3c811pq6A5az+/J4U/rIzBXugNNkC0zJ8+Q2VubPcHWVC8K4C3IlL5DGbyf
-         gJ1kLmPEaP3dVGzWNFTMUnXqKtU7E+poS6pgyP6M=
+        b=hn9oTyHDSzee3npZD+LYMHuhA9jc3xNsAmVQ2eOQUFOMCsx/UbBHeZObi2HYKnTiD
+         6vGLc8WpnpOoTBgQo4Y8Uvh7cZtVepoWYNbR2JSvq8AW7rKKO3xBsoeqdOxWzRG7Gu
+         ZHuKPB7E6E92oYqCCIpaOek8oAAj/Mf9uvHCZvlk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 30/62] lib/raid6: Fix arm64 test build
-Date:   Mon, 26 Nov 2018 11:51:11 +0100
-Message-Id: <20181126105053.199254797@linuxfoundation.org>
+Subject: [PATCH 4.14 31/62] s390/perf: Change CPUM_CF return code in event init function
+Date:   Mon, 26 Nov 2018 11:51:12 +0100
+Message-Id: <20181126105053.288397075@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -64,44 +64,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 313a06e636808387822af24c507cba92703568b1 ]
+[ Upstream commit 0bb2ae1b26e1fb7543ec7474cdd374ac4b88c4da ]
 
-The lib/raid6/test fails to build the neon objects
-on arm64 because the correct machine type is 'aarch64'.
+The function perf_init_event() creates a new event and
+assignes it to a PMU. This a done in a loop over all existing
+PMUs. For each listed PMU the event init function is called
+and if this function does return any other error than -ENOENT,
+the loop is terminated the creation of the event fails.
 
-Once this is correctly enabled, the neon recovery objects
-need to be added to the build.
+If the event is invalid, return -ENOENT to try other PMUs.
 
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/raid6/test/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/s390/kernel/perf_cpum_cf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/raid6/test/Makefile b/lib/raid6/test/Makefile
-index be1010bdc435..565a77220fae 100644
---- a/lib/raid6/test/Makefile
-+++ b/lib/raid6/test/Makefile
-@@ -27,7 +27,7 @@ ifeq ($(ARCH),arm)
-         CFLAGS += -I../../../arch/arm/include -mfpu=neon
-         HAS_NEON = yes
- endif
--ifeq ($(ARCH),arm64)
-+ifeq ($(ARCH),aarch64)
-         CFLAGS += -I../../../arch/arm64/include
-         HAS_NEON = yes
- endif
-@@ -41,7 +41,7 @@ ifeq ($(IS_X86),yes)
- 		    gcc -c -x assembler - >&/dev/null &&        \
- 		    rm ./-.o && echo -DCONFIG_AS_AVX512=1)
- else ifeq ($(HAS_NEON),yes)
--        OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o
-+        OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o recov_neon.o recov_neon_inner.o
-         CFLAGS += -DCONFIG_KERNEL_MODE_NEON=1
- else
-         HAS_ALTIVEC := $(shell printf '\#include <altivec.h>\nvector int a;\n' |\
+diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
+index 746d03423333..61e91fee8467 100644
+--- a/arch/s390/kernel/perf_cpum_cf.c
++++ b/arch/s390/kernel/perf_cpum_cf.c
+@@ -376,7 +376,7 @@ static int __hw_perf_event_init(struct perf_event *event)
+ 		return -ENOENT;
+ 
+ 	if (ev > PERF_CPUM_CF_MAX_CTR)
+-		return -EINVAL;
++		return -ENOENT;
+ 
+ 	/* Obtain the counter set to which the specified counter belongs */
+ 	set = get_counter_set(ev);
 -- 
 2.17.1
 
