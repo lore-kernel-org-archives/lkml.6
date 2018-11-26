@@ -2,138 +2,148 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C4DAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4276CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:46:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1CCC208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:44:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1CCC208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 02D70208E7
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:46:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="Kpi1e8f6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02D70208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbeK0Jke (ORCPT
+        id S1727619AbeK0Jlv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 04:40:34 -0500
-Received: from mga14.intel.com ([192.55.52.115]:39562 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726634AbeK0Jke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 04:40:34 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 14:44:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,284,1539673200"; 
-   d="scan'208";a="284128160"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.87]) ([10.24.14.87])
-  by fmsmga005.fm.intel.com with ESMTP; 26 Nov 2018 14:44:53 -0800
-Subject: Re: [PATCH v9 10/13] x86/resctrl: Fix the messages in
- rdt_last_cmd_printf and rdt_last_cmd_puts
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     "Moger, Babu" <Babu.Moger@amd.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "rian@alum.mit.edu" <rian@alum.mit.edu>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-References: <20181121202811.4492-1-babu.moger@amd.com>
- <20181121202811.4492-11-babu.moger@amd.com>
- <fe5c4f4b-e233-875c-1f33-f22c5986b041@intel.com>
- <20181126222800.GR4843@zn.tnic>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <22dcf61a-fddf-3a7a-4e28-25d27e9482ad@intel.com>
-Date:   Mon, 26 Nov 2018 14:44:49 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 27 Nov 2018 04:41:51 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44001 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726914AbeK0Jlv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 04:41:51 -0500
+Received: by mail-pl1-f194.google.com with SMTP id gn14so14576990plb.10
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 14:46:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ywd5ugQ7Rz1RkaT/YTlEuW45bSGgrrZi2Jz7k8219mE=;
+        b=Kpi1e8f6GJRJ50Hn5h0sre6zNOKaYDt3fxj+x4x8cevO2ccWoRZdNHAZCVzBUC0duR
+         OY877RYF1bg2ljubA75pLiQxyURBIk7QX+iBpEfTzk5bwLKeXVOEDDLkZsI4sqyJb7KU
+         uJMGbZXMNH+stq7oP6Qe83wSjgnHOO9JULwlnamt6j9i3EbB6LHL/egqXTeNYZih/G0u
+         imwSfHqMXsaOUGnEhojqnHVq6D3X89BuTQETDAW040NuS6FsyFpOCnbREM/md+YzDCpg
+         jnVKbt1TyUJ6MJt8wskPNvgMfFeqq84sztCREvP57IozbS1JJdZ4hphMztQXyB5GUhbu
+         itQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ywd5ugQ7Rz1RkaT/YTlEuW45bSGgrrZi2Jz7k8219mE=;
+        b=ZDi6u6kmlUt6fjp9JI/i3OrFYrTkiySMcLJUwVtwjf8XxGMPpP6gJaq4+5+Onh5HXC
+         EE+EG5N3twDw4zWQzkdb6BfFAtRARJ8afwaxqjXhSD7rqK8fSCNtcL5d4Yj4IxeQfOWh
+         yboJzp6KuweHLIHn/vivZWI4xI0kWhuakFW6JGwCP8NewDvecBr1JWS2kwF09MDtndKR
+         mFaq7V0Nby5BpbZb+xt9lY1b+iiCVLMkJjG/FodgUaI+xfGRVu7kasD6MHnXi4GrrpC0
+         8mzKD+fTOG3IaqXX1idoaoZnZ8V+QOdJ9F9EyhjUpkwMrD7hcbJKgSvVuIoa9ksbBggF
+         Xejg==
+X-Gm-Message-State: AA+aEWZE55JfuGiPxUhWe+qMJsdwmkDy8TXbdU847hb1NjgxU1qAK3br
+        +JT84iPCFyls7QN3VotvnYrUiA==
+X-Google-Smtp-Source: AFSGD/UL5x1piOl75InkO1fAxBxYd2Fq3/7AjzpD75b4uGy+SpBEB5rHvBG9lh1Zgpjou2Kf5Jm8GA==
+X-Received: by 2002:a17:902:a50a:: with SMTP id s10mr28485938plq.278.1543272370482;
+        Mon, 26 Nov 2018 14:46:10 -0800 (PST)
+Received: from vader ([2601:602:8b00:55d3:e6a7:a0ff:fe0b:c9a8])
+        by smtp.gmail.com with ESMTPSA id b9sm1764128pfi.118.2018.11.26.14.46.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 14:46:09 -0800 (PST)
+Date:   Mon, 26 Nov 2018 14:46:08 -0800
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V12 02/20] btrfs: look at bi_size for repair decisions
+Message-ID: <20181126224608.GO30411@vader>
+References: <20181126021720.19471-1-ming.lei@redhat.com>
+ <20181126021720.19471-3-ming.lei@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20181126222800.GR4843@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126021720.19471-3-ming.lei@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Borislav,
-
-On 11/26/2018 2:28 PM, Borislav Petkov wrote:
-> On Mon, Nov 26, 2018 at 02:16:24PM -0800, Reinette Chatre wrote:
->> Hi Babu and Borislav,
->>
->> Two typos seemed to have slipped through into the merged commit ...
->>
->> On 11/21/2018 12:28 PM, Moger, Babu wrote:
->>> @@ -163,14 +163,14 @@ int parse_cbm(struct rdt_parse_data *data, struct rdt_resource *r,
->>>  	 * either is exclusive.
->>>  	 */
->>>  	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, true)) {
->>> -		rdt_last_cmd_printf("overlaps with exclusive group\n");
->>> +		rdt_last_cmd_printf("Overlaps with exclusive group\n");
->>>  		return -EINVAL;
->>>  	}
->>>  
->>>  	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, false)) {
->>>  		if (rdtgrp->mode == RDT_MODE_EXCLUSIVE ||
->>>  		    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
->>> -			rdt_last_cmd_printf("overlaps with other group\n");
->>> +			rdt_last_cmd_printf("0verlaps with other group\n");
->>>  			return -EINVAL;
->>>  		}
->>>  	}
->>
->> There is a zero instead of O used in second "Overlaps".
+On Mon, Nov 26, 2018 at 10:17:02AM +0800, Ming Lei wrote:
+> From: Christoph Hellwig <hch@lst.de>
 > 
-> LOL!
+> bio_readpage_error currently uses bi_vcnt to decide if it is worth
+> retrying an I/O.  But the vector count is mostly an implementation
+> artifact - it really should figure out if there is more than a
+> single sector worth retrying.  Use bi_size for that and shift by
+> PAGE_SHIFT.  This really should be blocks/sectors, but given that
+> btrfs doesn't support a sector size different from the PAGE_SIZE
+> using the page size keeps the changes to a minimum.
 > 
-> That's so l337 :-)
+> Reviewed-by: David Sterba <dsterba@suse.com>
+
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/btrfs/extent_io.c | 2 +-
+>  include/linux/bio.h  | 6 ------
+>  2 files changed, 1 insertion(+), 7 deletions(-)
 > 
->>> @@ -1235,7 +1235,7 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
->>>  			goto out;
->>>  		rdtgrp->mode = RDT_MODE_PSEUDO_LOCKSETUP;
->>>  	} else {
->>> -		rdt_last_cmd_printf("unknown/unsupported mode\n");
->>> +		rdt_last_cmd_printf("Unknown orunsupported mode\n");
->>>  		ret = -EINVAL;
->>>  	}
->>
->> Missing a space.
+> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+> index 15fd46582bb2..40751e86a2a9 100644
+> --- a/fs/btrfs/extent_io.c
+> +++ b/fs/btrfs/extent_io.c
+> @@ -2368,7 +2368,7 @@ static int bio_readpage_error(struct bio *failed_bio, u64 phy_offset,
+>  	int read_mode = 0;
+>  	blk_status_t status;
+>  	int ret;
+> -	unsigned failed_bio_pages = bio_pages_all(failed_bio);
+> +	unsigned failed_bio_pages = failed_bio->bi_iter.bi_size >> PAGE_SHIFT;
+>  
+>  	BUG_ON(bio_op(failed_bio) == REQ_OP_WRITE);
+>  
+> diff --git a/include/linux/bio.h b/include/linux/bio.h
+> index 056fb627edb3..6f6bc331a5d1 100644
+> --- a/include/linux/bio.h
+> +++ b/include/linux/bio.h
+> @@ -263,12 +263,6 @@ static inline void bio_get_last_bvec(struct bio *bio, struct bio_vec *bv)
+>  		bv->bv_len = iter.bi_bvec_done;
+>  }
+>  
+> -static inline unsigned bio_pages_all(struct bio *bio)
+> -{
+> -	WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED));
+> -	return bio->bi_vcnt;
+> -}
+> -
+>  static inline struct bio_vec *bio_first_bvec_all(struct bio *bio)
+>  {
+>  	WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED));
+> -- 
+> 2.9.5
 > 
-> Whoops, nice catch. Can you send a fix pls?
-
-Will do. Since there is overlap here I am planning for the fix to also
-include changing rdt_last_cmd_printf() instances like the above to use
-rdt_last_cmd_puts() instead.
-
-Reinette
-
-
