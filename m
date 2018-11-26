@@ -2,79 +2,154 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F120C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5AAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2395120663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:52:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95C9420663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:52:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="s2W9wA5+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2395120663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ytRPpQLw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95C9420663
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbeK0Bqf (ORCPT
+        id S1727048AbeK0Bq4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 20:46:35 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:49499 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726224AbeK0Bqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 20:46:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=qpeqr1RVm0aX6xRtJv8DUVFMfa9V7O7COPfCVjJm3Dc=;
-        b=s2W9wA5+FbJOZLmt9nEhpG6OtZnxzBXshJRYUT/x/2y/pAoJGI/Vo5VVPpOfB+qCz9C2SD4xSHvdYjObnhojAAeSDZmbb31JuotDTye8xoHTI2bHXA37wyIxh+zprpwC/qB6uEtFOWyEH8HjBeb0ohd9YcrLPv59JEVKbCRbOx0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gRIF8-0004fZ-AE; Mon, 26 Nov 2018 15:52:10 +0100
-Date:   Mon, 26 Nov 2018 15:52:10 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Claudiu.Beznea@microchip.com
-Cc:     harini.katakam@xilinx.com, Nicolas.Ferre@microchip.com,
-        davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, michal.simek@xilinx.com,
-        harinikatakamlinux@gmail.com, harinik@xilinx.com,
-        shubhrajyoti.datta@xilinx.com, sai.pavan.boddu@xilinx.com
-Subject: Re: [PATCH v2 1/4] net: macb: Check MDIO state before read/write and
- use timeouts
-Message-ID: <20181126145210.GD12116@lunn.ch>
-References: <1543216072-9623-1-git-send-email-harini.katakam@xilinx.com>
- <1543216072-9623-2-git-send-email-harini.katakam@xilinx.com>
- <5de882e3-65ac-7ff1-bb55-7537666dfc77@microchip.com>
+        Mon, 26 Nov 2018 20:46:56 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:33513 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbeK0Bq4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 20:46:56 -0500
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id wAQEqUHB020636;
+        Mon, 26 Nov 2018 23:52:31 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com wAQEqUHB020636
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1543243951;
+        bh=rYskIvsOGtOANynK50kzJ7dJByd3KsCHzMxP9W0XPhI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ytRPpQLwZF5I5dgMuYZTnUbJcTIFtYYiWXcWI3hIBw9xUHTyf5a9gkf8+VrCgr+10
+         Nd1/NYSlEdjYxolA0mS7yZiEpwcyI/HBl+j6pviLgrVUlyfw2bUUZXzB7iDJBdJwaH
+         JcRmDjbE4wAzK8p/QDKB3BdliluC6BnY1yCU+heMYpzj4XmGZEtNPkCR/noDQ3+YJO
+         +z548gzTr+lNjxB8ie66v7u51bdd0Bc48IxGh0pGzttl2QgXHEnZjAjYxszpu23aLu
+         xf7/NEMo0elRBgodYZ0awKyuQKXmtnSs7RkR84hQ8VCVJdV/DESuB2jOxTnS9i+AZp
+         s5WeATqJKW2wA==
+X-Nifty-SrcIP: [209.85.221.180]
+Received: by mail-vk1-f180.google.com with SMTP id w72so4205692vkd.5;
+        Mon, 26 Nov 2018 06:52:31 -0800 (PST)
+X-Gm-Message-State: AA+aEWaeQOYnON/3Dj5GI4Yt1UWI6f+DBtMOyw7UOGvASs2IcpEyruGG
+        vSOWeG157HEmpblBI7vxvJa5hR2a46PAZv6pi9w=
+X-Google-Smtp-Source: AFSGD/XzNAckCbmXM3//czRnv/+XsdLKDmt9a4HuQ3yIx/398CRPehDDIZeeh1AiEJgOIKGpa9vIxqRyj7liwJehs/0=
+X-Received: by 2002:a1f:4d47:: with SMTP id a68mr10801588vkb.34.1543243950079;
+ Mon, 26 Nov 2018 06:52:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5de882e3-65ac-7ff1-bb55-7537666dfc77@microchip.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1542841915-19686-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1542841915-19686-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 26 Nov 2018 23:51:53 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR1kzp+aPezpff3AC=tqEs9hTgrUk6578JzD=up4KXynQ@mail.gmail.com>
+Message-ID: <CAK7LNAR1kzp+aPezpff3AC=tqEs9hTgrUk6578JzD=up4KXynQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] kbuild: fix single target build for external module
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 02:46:01PM +0000, Claudiu.Beznea@microchip.com wrote:
-> Hi Harini,
-> 
-> On 26.11.2018 09:07, Harini Katakam wrote:
-> > From: Harini Katakam <harinik@xilinx.com>
-> > 
-> > Replace the while loop in MDIO read/write functions with a timeout.
-> > In addition, add a check for MDIO bus busy before initiating a new
-> > operation as well to make sure there is no ongoing MDIO operation.
-> 
-> Is this MDIO bus busy check necessary? The caller of
-> macb_mdio_read/macb_mdio_write locks the mdio bus mutex before calling it
-> (e.g. mdiobus_read).
+On Thu, Nov 22, 2018 at 6:33 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Building a single target in an external module fails due to missing
+> .tmp_versions directory.
+>
+> For example,
+>
+>   $ make -C /lib/modules/$(uname -r)/build M=$PWD foo.o
+>
+> will fail in the following way:
+>
+>   CC [M]  /home/masahiro/foo/foo.o
+> /bin/sh: 1: cannot create /home/masahiro/foo/.tmp_versions/foo.mod: Directory nonexistent
+>
+> This is because $(cmd_crmodverdir) is executed only for /, %/, %.ko
+> single targets for external modules. Create .tmp_versions in the
+> 'prepare' target.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-Hi Claudiu
 
-It depends on the implementation. A write operation you could just
-launch, but not wait for it to complete, allowing you to do other
-stuff while the hardware is busy. For the next operation you then do
-need to check the previous operation has completed.
+Applied to linux-kbuild.
 
-I've not checked it is actually implemented this way.
 
-     Andrew
+
+>  Makefile | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
+>
+> diff --git a/Makefile b/Makefile
+> index d5da1df..36f3f0e 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1554,9 +1554,6 @@ else # KBUILD_EXTMOD
+>
+>  # We are always building modules
+>  KBUILD_MODULES := 1
+> -PHONY += crmodverdir
+> -crmodverdir:
+> -       $(cmd_crmodverdir)
+>
+>  PHONY += $(objtree)/Module.symvers
+>  $(objtree)/Module.symvers:
+> @@ -1568,7 +1565,7 @@ $(objtree)/Module.symvers:
+>
+>  module-dirs := $(addprefix _module_,$(KBUILD_EXTMOD))
+>  PHONY += $(module-dirs) modules
+> -$(module-dirs): crmodverdir $(objtree)/Module.symvers
+> +$(module-dirs): prepare $(objtree)/Module.symvers
+>         $(Q)$(MAKE) $(build)=$(patsubst _module_%,%,$@)
+>
+>  modules: $(module-dirs)
+> @@ -1609,7 +1606,8 @@ help:
+>
+>  # Dummies...
+>  PHONY += prepare scripts
+> -prepare: ;
+> +prepare:
+> +       $(cmd_crmodverdir)
+>  scripts: ;
+>  endif # KBUILD_EXTMOD
+>
+> @@ -1733,17 +1731,14 @@ endif
+>
+>  # Modules
+>  /: prepare scripts FORCE
+> -       $(cmd_crmodverdir)
+>         $(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1) \
+>         $(build)=$(build-dir)
+>  # Make sure the latest headers are built for Documentation
+>  Documentation/ samples/: headers_install
+>  %/: prepare scripts FORCE
+> -       $(cmd_crmodverdir)
+>         $(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1) \
+>         $(build)=$(build-dir)
+>  %.ko: prepare scripts FORCE
+> -       $(cmd_crmodverdir)
+>         $(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1)   \
+>         $(build)=$(build-dir) $(@:.ko=.o)
+>         $(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost
+> --
+> 2.7.4
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
