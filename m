@@ -2,115 +2,121 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9A1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5E1C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54939208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:09:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 686672082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:10:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2KJb0efW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54939208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cuFqq0sb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 686672082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726321AbeKZTDA (ORCPT
+        id S1726347AbeKZTDg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 14:03:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46998 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726158AbeKZTDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 14:03:00 -0500
-Received: from localhost (unknown [122.178.235.61])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08B302082F;
-        Mon, 26 Nov 2018 08:09:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543219781;
-        bh=FocSMzy+xvjIdUnDhR6bcTICWVY1yOUgVR1zGL5rW+4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2KJb0efWnCKx2ttPDZeiiwSp9hHfvAEuxADBCzHLRwDV2eZJ+jboA4sbw2I3Kzecv
-         Y7u6JyQErDG3QISNZKwCCb5JK9l5sXyPA6SKWhoWwciWe2LwuyNw4nn1bibZne3HD7
-         6lJRyk+p3QIp0YsVW4WG+ArRaa35cZaR6Mc6wfMg=
-Date:   Mon, 26 Nov 2018 13:39:38 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        dma <dmaengine@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the slave-dma tree
-Message-ID: <20181126080855.GS3175@vkoul-mobl.Dlink>
-References: <20181126165903.33b1d872@canb.auug.org.au>
+        Mon, 26 Nov 2018 14:03:36 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46329 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbeKZTDg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 14:03:36 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c73so6171922pfe.13
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 00:10:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w/GMM1ff8p/gM+URgpq1+8fAO9Gjz+eWd4YbnE/xt2Q=;
+        b=cuFqq0sbM4dbCfR1isEaD457wwgRo7duSKA7RMJdvxVuRpoUXU0WDE4d04dPjUNgSk
+         VCUfmwrBAJmQnY4ZDjnLz9jQ6nuRXJL8zWv6zjYsFhleCS4XiQ9FEsGOz8MB+L/wI8WB
+         5O1TaOdf4KFOmyKVkBK7reKsriky0KbRaAX0w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w/GMM1ff8p/gM+URgpq1+8fAO9Gjz+eWd4YbnE/xt2Q=;
+        b=bSuzuqedhxtbPyfcUOL5R+HUM0Q3yDgfInFk2oudvbrhanBDn4LzMxcUUYF9zLLi2c
+         PwYVEFhylM3kxKwCp2Aoqb+qybL1K6m5dH4X769emr2HD9yXXbK6HQHflNkIbdT1bDs3
+         bpmktcr3CN0JQowyBKIJ1G7ypfWyiZTrfUsehNOGAeiU9urswZj8z/6/m8XN75/Z5idt
+         kNYVYDkeapaqMdVGbpiKYcAroArOeDPmg//FOySO6+UCFdCClRCgoYG1KVYuHnMeNIYi
+         olVg6m9Y4PjNLcJwoxiNR2V2V5EASjqzDpeZlwCIaWHwUgcpC3/IUNDEIywsmNF8N2bA
+         UO3g==
+X-Gm-Message-State: AA+aEWZGM/mQRZ47exs0LOl73a//ko/vR3QIwOT9dPJHol2cbV/jvwgm
+        Tjr6a1wiakCPqFDnJS5WgPmFrw==
+X-Google-Smtp-Source: AFSGD/Wy7pTOwKlEbxX+86GJIT3b9YpEup09CIN0JS9rd/mCw2qLdnf6LFXHPMPwjnUuIc5d7XpJcg==
+X-Received: by 2002:a63:588:: with SMTP id 130mr23447488pgf.273.1543219816695;
+        Mon, 26 Nov 2018 00:10:16 -0800 (PST)
+Received: from localhost ([122.172.88.116])
+        by smtp.gmail.com with ESMTPSA id 12sm41463533pgd.35.2018.11.26.00.10.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 00:10:15 -0800 (PST)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     ulf.hansson@linaro.org, Rafael Wysocki <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Len Brown <len.brown@intel.com>, Nishanth Menon <nm@ti.com>,
+        Pavel Machek <pavel@ucw.cz>, Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        rnayak@codeaurora.org, niklas.cassel@linaro.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH V2 0/5] PM / Domains: Allow performance state propagation
+Date:   Mon, 26 Nov 2018 13:39:59 +0530
+Message-Id: <cover.1543219386.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181126165903.33b1d872@canb.auug.org.au>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+Hi,
 
-On 26-11-18, 16:59, Stephen Rothwell wrote:
-> Hi Vinod,
-> 
-> After merging the slave-dma tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> drivers/dma/coh901318.c: In function 'coh901318_config':
-> drivers/dma/coh901318.c:1805:16: warning: unused variable 'flags' [-Wunused-variable]
->   unsigned long flags;
->                 ^~~~~
-> 
-> Introduced by commit
-> 
->   627469e4445b ("dmaengine: coh901318: Fix a double-lock bug")
+This series adds performance state propagation support in genpd core.
+The propagation happens from the sub-domains to their masters. More
+details can be found in the individual commit logs.
 
-Thanks for the report, I have fixed it up with below:
+This is tested on hikey960 by faking power domains in such a way that
+the CPU devices have two power domains and both of them have the same
+master domain. The CPU device, as well as its power domains have
+"required-opps" property set and the performance requirement from the
+CPU eventually configures all the domains (2 sub-domains and 1 master).
 
--- >8 --
+Based on opp/linux-next branch (which is 4.20-rc1 +
+multiple-power-domain-support-in-opp-core + some OPP fixes).
 
-From fbbdec195155b4497cb83be37788865f98f31dca Mon Sep 17 00:00:00 2001
-From: Vinod Koul <vkoul@kernel.org>
-Date: Mon, 26 Nov 2018 13:34:15 +0530
-Subject: [PATCH] dmaengine: coh901318: Remove unused variable
+v1->V2:
+- First patch (1/5) is new and an improvement to earlier stuff.
+- Move genpd_status_on() check to _genpd_reeval_performance_state() from
+  _genpd_set_performance_state().
+- Improve dev_pm_opp_xlate_performance_state() to handle 1:1 pstate
+  mapping between genpd and its master and also to fix a problem while
+  finding the dst_table.
+- Handle pstate=0 case properly.
 
-Commit 627469e4445b ("dmaengine: coh901318: Fix a double-lock bug") left
-flags variable unused, so remove it to fix the warning.
+--
+viresh
 
-drivers/dma/coh901318.c: In function 'coh901318_config':
-drivers/dma/coh901318.c:1805:16: warning: unused variable 'flags' [-Wunused-variable]
-  unsigned long flags;
-                ^~~~~
+Viresh Kumar (5):
+  OPP: Improve _find_table_of_opp_np()
+  OPP: Add dev_pm_opp_xlate_performance_state() helper
+  PM / Domains: Save OPP table pointer in genpd
+  PM / Domains: Factorize dev_pm_genpd_set_performance_state()
+  PM / Domains: Propagate performance state updates
 
-Reported-By: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- drivers/dma/coh901318.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/dma/coh901318.c b/drivers/dma/coh901318.c
-index fd862a478738..b69d66e44052 100644
---- a/drivers/dma/coh901318.c
-+++ b/drivers/dma/coh901318.c
-@@ -1802,7 +1802,6 @@ static struct dma_chan *coh901318_xlate(struct of_phandle_args *dma_spec,
- static int coh901318_config(struct coh901318_chan *cohc,
- 			    struct coh901318_params *param)
- {
--	unsigned long flags;
- 	const struct coh901318_params *p;
- 	int channel = cohc->id;
- 	void __iomem *virtbase = cohc->base->virtbase;
--- 
-2.14.5
+ drivers/base/power/domain.c | 211 +++++++++++++++++++++++++++---------
+ drivers/opp/core.c          |  59 ++++++++++
+ drivers/opp/of.c            |  14 ++-
+ include/linux/pm_domain.h   |   6 +
+ include/linux/pm_opp.h      |   7 ++
+ 5 files changed, 244 insertions(+), 53 deletions(-)
 
 -- 
-~Vinod
+2.19.1.568.g152ad8e3369a
+
