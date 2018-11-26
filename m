@@ -4,63 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB667C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:37:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D415C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A435E208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:37:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7A162082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:38:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="f5NtrIb9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A435E208E4
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="F6zoWUP3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7A162082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbeK0Kdp (ORCPT
+        id S1727795AbeK0KeG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:33:45 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:41704 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726516AbeK0Kdp (ORCPT
+        Tue, 27 Nov 2018 05:34:06 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34783 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726516AbeK0KeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:33:45 -0500
-Received: by mail-lf1-f67.google.com with SMTP id c16so14982927lfj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 15:37:55 -0800 (PST)
+        Tue, 27 Nov 2018 05:34:06 -0500
+Received: by mail-lj1-f195.google.com with SMTP id u6-v6so18336152ljd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 15:38:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=gEMPWpcRdJwqoxxn2uGsySlTQlz8YrJG3TBPUm/5CRY=;
-        b=f5NtrIb9lRuL6bBKqBYfO329emLp2kx+/jSTEFgnwLghNVjiJcO2YvsRbd41FFuREk
-         uhjP5qUKH5JNCpli/slpFvctj8P3bdaV9Qy/yjum7WvXJmC4hA63QI5gh6HV6gedGNvg
-         IwMdokrZ4++7+V++64x7b46k0GZAhlfBCtrgRe1l0+g+HD4HgKUdFSlp+ibyuNECaNpA
-         +a9DyleUanMWp4EHWnaGL5iSF44amqqR9HlFkqKnwwwIfeZE/BmAmi9BHAV5DxVNBop0
-         aYkemDCyLueDvlzyt3viyFB9AYdgMPbQLgVUjf1NN9XxOBdOHrIlNxvxagsMUrvpTCTU
-         sMOw==
+        bh=0vSPEoo8UirkbUzoFtdd/0N+Ncp7rxO3RvWkbjta/Sc=;
+        b=F6zoWUP3kJGjnWQiAm0SKmGxt3cB7sZzwu9Jk2K25C4kYzvb8Sb4JdPAxPj9uk3YhS
+         /Kh9Uy/OdTa1xxc/Xk9VLP+tabNZmRfwqzsvbk9ezhfSyAFp5dAr1o51xKkSvcaSKREu
+         qG1zpzxfbTszKmF8VqqsXrisUITPqQYdPI6i31mc2KD83ScZ8jLRaM7z4NJvUuoD0Bgw
+         FxxN1dNBB/7qC1ARnKMPDUJtRX1/xGNHjFpLSkZIIWsQgLt7TDjEC0Jcl2auYFJKn1Hp
+         aRhsYjhax9ls+KfTMGaTvBNNFxGsmRlFwUoDUaA/CGlipUPg1Lp8csX+cA+5t7p1gyM5
+         ktug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=gEMPWpcRdJwqoxxn2uGsySlTQlz8YrJG3TBPUm/5CRY=;
-        b=OhSWkyT1FE2pXIsD3ECpoeVaCC/vypce02GZ8Xswd/rLpHwTIfdv6/Cn2/Y7KntsAF
-         M1cr9qM2tYgXD/1Pfmk6ERqI+2SA6+efg6sKvwzDXXa39bJis6HHBuRY96v6atzW2wb+
-         7dgYZgY1N+hNbimGpu388NdlaSYE29MbCokJ0IwfbYR+eGsC73e8D6uNp+yf1wgIrz3t
-         jP5fvR+c72Mem24311VO7p+DceHhXtEB1F0mKkBgsR4Dc64/x2o3g5Qy1gpP9+NJWZiR
-         QlOJeeY8O19Tf/t8yzl0P0Bzqldok4NvmmmoFt7jP7T+21H78vNjOv0kpeWiUwLszjj4
-         o9nQ==
-X-Gm-Message-State: AGRZ1gLVEEu5A5WqxwnexfejGPUt39JY2V9+d8LFJEdNwoH2fakwu42M
-        QRqhvyiMShDtRfGMVhB/oD6peGRNO3iK/KZwEP6v
-X-Google-Smtp-Source: AJdET5cqSi7OdCEnv850ydXQ8G3S8F0cZpiANQdNu97Vv39oE+hfRVupGSR9h0/6bMoEvWVoTSMYQHzgA7Wy5Dnvjns=
-X-Received: by 2002:a19:a7c1:: with SMTP id q184mr16340499lfe.4.1543275474596;
- Mon, 26 Nov 2018 15:37:54 -0800 (PST)
+        bh=0vSPEoo8UirkbUzoFtdd/0N+Ncp7rxO3RvWkbjta/Sc=;
+        b=ZklMpT29DhpWpVCUZYTR0j8ItUjdu/DeN+T/NLp0ahQfXQinL+wzL9uYzCqWSMeRHY
+         HYKeS3Sme/YRbJd+4SQ8V073o42FJGe7QsDf+HTlPTpyXpebkqqVUoXA5i+nSitStDgA
+         Fp4Nmd2drR7iH3ECaOcrHyy42n01OcIqZML44b9HTwN2x/8HcxvccaV/lYwGqUa/NJgh
+         aWNVFAK1KpzrECRhqElfp/qHayoPDchMKK7Fe5L/bT7vxg/VDrm99ELswwfplfZl6sM4
+         I1a81ip+qKKr2YCYC4btGKJ4hIAuy95sh6xxHAnvAeNbzPo6xA2Y/28nyHs/wEA91CnJ
+         sJCQ==
+X-Gm-Message-State: AA+aEWZaBfm9Z3tqI0F6EuvR7MEVEwDU+fw2h0dtBu4camKV9shxTVCe
+        qKLCMMm5Ba6FVIsGO2ra0TdOz6ozHsDI1kBS4TtZ
+X-Google-Smtp-Source: AFSGD/V3bdfxy7u/3nQoRKDAAjDq6cQnJU6alOQwaPZil2iw5nhKy/cBoVqPegA1nLF9c8DFFyCDuI+o5C2ot87wWoE=
+X-Received: by 2002:a2e:8ec8:: with SMTP id e8-v6mr1996645ljl.162.1543275495723;
+ Mon, 26 Nov 2018 15:38:15 -0800 (PST)
 MIME-Version: 1.0
-References: <20181126145434.31705-1-tiny.windzz@gmail.com>
-In-Reply-To: <20181126145434.31705-1-tiny.windzz@gmail.com>
+References: <20181126145830.31882-1-tiny.windzz@gmail.com>
+In-Reply-To: <20181126145830.31882-1-tiny.windzz@gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 26 Nov 2018 18:37:43 -0500
-Message-ID: <CAHC9VhRX8vs42AYaQRAwqs1VonJWai75fcsHogn17FxDT431_g@mail.gmail.com>
-Subject: Re: [PATCH] fsnotify: remove some duplicated includes
+Date:   Mon, 26 Nov 2018 18:38:04 -0500
+Message-ID: <CAHC9VhS4oQKv+YgsLdA_ef2_o5bAXN9P3xO43GcnKoHBd2KoSw@mail.gmail.com>
+Subject: Re: [PATCH] kernel/audit: remove some duplicated includes
 To:     tiny.windzz@gmail.com
 Cc:     Eric Paris <eparis@redhat.com>, linux-audit@redhat.com,
         linux-kernel@vger.kernel.org
@@ -70,24 +71,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 9:54 AM Yangtao Li <tiny.windzz@gmail.com> wrote:
+On Mon, Nov 26, 2018 at 9:58 AM Yangtao Li <tiny.windzz@gmail.com> wrote:
 > audit.h and fs.h are included twice.It's unnecessary.
 > hence just remove them.
 >
 > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 > ---
->  kernel/audit_fsnotify.c | 2 --
+>  kernel/audit_watch.c | 2 --
 >  1 file changed, 2 deletions(-)
 
-I currently prefer to keep things as-is, see my response to your previous patch.
+Same as my previous comments.
 
-> diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
-> index fba78047fb37..5b54386a9edf 100644
-> --- a/kernel/audit_fsnotify.c
-> +++ b/kernel/audit_fsnotify.c
-> @@ -16,10 +16,8 @@
->   */
+> diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+> index 787c7afdf829..8c8b1a87fd2b 100644
+> --- a/kernel/audit_watch.c
+> +++ b/kernel/audit_watch.c
+> @@ -21,10 +21,8 @@
 >
+>  #include <linux/file.h>
 >  #include <linux/kernel.h>
 > -#include <linux/audit.h>
 >  #include <linux/kthread.h>
