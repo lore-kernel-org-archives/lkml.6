@@ -2,69 +2,73 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE71EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A23C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:13:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99AAC20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:12:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DCB220663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:13:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="LStFrTqG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99AAC20663
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="su68d3Lh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DCB220663
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726511AbeK0CGs (ORCPT
+        id S1726683AbeK0CHx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 21:06:48 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35027 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbeK0CGs (ORCPT
+        Mon, 26 Nov 2018 21:07:53 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34827 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbeK0CHx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 21:06:48 -0500
-Received: by mail-wr1-f68.google.com with SMTP id 96so19331894wrb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 07:12:23 -0800 (PST)
+        Mon, 26 Nov 2018 21:07:53 -0500
+Received: by mail-wm1-f65.google.com with SMTP id c126so18813953wmh.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 07:13:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=/lmotuRIFMmx6O3HvSMOtxNghIq8hqR9LwoR2FFPanI=;
-        b=LStFrTqGoiRm2pxkJiqKyjRBNEhCmUBiwj4OFlk8IqrhM4LP210d6sLZqmP3wmotht
-         uyKmcknXVDiNm6r9iBn7u6sKZjx1kN06aXSFaen5jHb4P6LF86T/1eQ5YJ0PEnS6r30I
-         RJvXRkFCcU+WdX8mSWi5k3K0uVG24taN8yMAUvenCxeGV52vb+72XNYlOlGRMGr7QLKb
-         BzOgEcQ6yUSw0djj8/pO6aUY/4PFHvVSLTcqIMqDl/Kg3V/fLEDu6L31yU5afaCO31qZ
-         SvQzVvYTrIcQ3H93xz9Oo3wW2eLp1sHtRsooTj64JQTACrNaHvccsghQ07rmMr+nTKH2
-         87CQ==
+        bh=nsuM/ME2oK8iArRxQ/xtoP4eOlCwhyxAU8gzQf6UTs4=;
+        b=su68d3Lh9GFqKg0iAahvzsC3oPhL9cIdUyfvZ5xhN3I/FkDjzk7Lxo0qhfX/7LfFMA
+         pSdzThIS3k2r29Vrewg5v4EkfSwS6k63XKKt1XtLu59TxYQJOJgrqEO9KbecZ0mI+wnY
+         w3ABlY2v9nuKt9KgvYvrK3g/0LsSowW/HAeY3/VdlPXnX3ybgZqeesH6EyfzTn1LnSo6
+         QInGDzVETEtrPxWy1B87gl0nCwR7NW/wzrk7wjwkI4MCpadWM7Kcw3beKCQr6hj7NE8V
+         WPtG6uA7QeSEcXXSENtCycou7A2SVFcef/hmVe2UdtWxFF0bayIYsmdLMJ9aop66fPwm
+         iNYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=/lmotuRIFMmx6O3HvSMOtxNghIq8hqR9LwoR2FFPanI=;
-        b=LrN2eXBNrAiJk9HvcWXaEEFXRlGaKgS6QkDyS/qFwHnrwKjkgcyQ7XVVlIB66yPtZ7
-         cufXvQioZtHiidc+luqwFyTvOPpVzQ9iwGRQhALdwxpN066naHBd2WccUuWar/opZ2Vf
-         HGShuDVq3ZctqFhItVs9VynMKiyg58aqW9dZHtTanSe0M3T+0AHNa7SNsN8j7VSIuYMB
-         B0UOydiCBtdZKzjlefYtywtXrzAiLTiJpy7vQbWRRVIGtxX1EySPKsFuPaSV+PM+MVfT
-         YabjDZAfehr0ygws1Do/Zdpp+dfelVqXQdrgowhV/9xAydWNYW0C9QXOAxV+FlUguLvq
-         B4vQ==
-X-Gm-Message-State: AA+aEWZgCg76wsJu+TahLk6iR1SbVaSQvJn28xo5Udv01mAqx583XIzy
-        pYraVqbFNADstlT1SR9V9JGLvYsC2yHhyA==
-X-Google-Smtp-Source: AFSGD/XE1MR6MlPAFOuNXXKuFy+Wm3unHDzd1YykaVAJ4kplS7Iv+FBao+DfkZ3akPexQ+U0kMkvzQ==
-X-Received: by 2002:adf:e608:: with SMTP id p8mr24108991wrm.166.1543245142101;
-        Mon, 26 Nov 2018 07:12:22 -0800 (PST)
+        bh=nsuM/ME2oK8iArRxQ/xtoP4eOlCwhyxAU8gzQf6UTs4=;
+        b=efiRXo/C7J10JzGcUYDeygRH1pi6XtBzewbCPrNNcEhqAu/8yV+qZk8sxZ8ZRcabw6
+         ElTMjEyYbcENCDa+ZCwY05sdOTDV37H2nH1YQJimaxtZY6X4ouAyqBh2xKqfCvkDHJ8B
+         Me1RNQe1oJGTVEEvkYHWnT6tDSZOmB1ItTiSeNIhF3JfuR8cv4eLSNHvByKXnrTtC/BG
+         q9+oVoqb5ayhx5l5Z+IrOYALM40rrgd8bX+UQOWbeXeO3xCpPtkE7JDPv4jQ1x5NznDK
+         vXfM42yIxXaT7JrN88DHAIm8XadjzjR/+ZQuNUCJDU7b7B1bQ9tIe9VV8ex4f6JRqyNK
+         nGGw==
+X-Gm-Message-State: AA+aEWY0rck8ziGSDfMFIjqXiPhuGhszaunZam0PtcWKLSNNHRwGTtyn
+        mj6cTtRZcDvKDzsppglP6GY9Lw==
+X-Google-Smtp-Source: AFSGD/VLca9ABwM69/IcvolOr+QSXmvt/JL7OcBthE4BvzlQDXVIBscDzEJ0R5sgrus1Crw2hYf9TQ==
+X-Received: by 2002:a1c:cec1:: with SMTP id e184mr16668641wmg.75.1543245206448;
+        Mon, 26 Nov 2018 07:13:26 -0800 (PST)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id l15sm728975wrw.4.2018.11.26.07.12.21
+        by smtp.gmail.com with ESMTPSA id d8sm607007wrw.70.2018.11.26.07.13.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 07:12:21 -0800 (PST)
-Subject: Re: [PATCH] drm/meson: Fix an Alpha Primary Plane bug on Meson
- GXL/GXM SoCs
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20181123105417.18948-1-narmstrong@baylibre.com>
+        Mon, 26 Nov 2018 07:13:25 -0800 (PST)
+Subject: Re: [PATCH] clk: meson: Fix GXL HDMI PLL fractional bits width
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20181121111922.1277-1-narmstrong@baylibre.com>
+ <CAFBinCDkXYH9bCf_aaVptqcgZabreuZxLoAW3-o2qBHgcbm8Xw@mail.gmail.com>
+ <5e87ffda-4a38-f45b-00c4-6b73dc721656@baylibre.com>
+ <CAFBinCCjmw=8ESk0tztWszXnuA4aqWqC8_wdpvMtSYfwZ-KT=A@mail.gmail.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -92,12 +96,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
  Acmp6h8g
 Organization: Baylibre
-Message-ID: <7ab852a3-91a5-b84c-04b4-d2ea0ef653b8@baylibre.com>
-Date:   Mon, 26 Nov 2018 16:12:20 +0100
+Message-ID: <b5bdaca0-326e-ada8-507b-1eb494e7c3c0@baylibre.com>
+Date:   Mon, 26 Nov 2018 16:13:24 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181123105417.18948-1-narmstrong@baylibre.com>
+In-Reply-To: <CAFBinCCjmw=8ESk0tztWszXnuA4aqWqC8_wdpvMtSYfwZ-KT=A@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -106,98 +110,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+Hi Martin,
 
-On 23/11/2018 11:54, Neil Armstrong wrote:
-> On the Amlogic GXL & GXM SoCs, a bug occurs on the OSD1 primaty plane when
-> alpha is used where the alpha is not aligned with the pixel content.
+On 22/11/2018 23:05, Martin Blumenstingl wrote:
+> Hi Neil,
 > 
-> The woraround Amlogic implemented is to reset the OSD1 plane hardware
-> block each time the plane is updated, solving the issue.
+> On Thu, Nov 22, 2018 at 9:26 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>>
+>> Hi Martin,
+>>
+>> On 21/11/2018 22:53, Martin Blumenstingl wrote:
+>>> Hi Neil,
+>>>
+>>> On Wed, Nov 21, 2018 at 12:19 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>>>>
+>>>> The GXL Documentation specifies 12 bits for the Fractional bit field,
+>>>> bit the last bits have a different purpose that we cannot handle right
+>>>> now, so update the bitwidth to have correct fractional calculations.
+>>> I assume you have more accurate documentation than what's available publicly:
+>>> - the S805 datasheet doesn't have any documentation for this register at all
+>>> - the S905 datasheet states that HHI_HDMI_PLL_CNTL2[11:0] are DIV_FRAC
+>>> - the S905X and S912 datasheets state that SDMNC_POWER is at
+>>> HHI_HDMI_PLL_CNTL2[6:0], SDMNC_ULMS is at HHI_HDMI_PLL_CNTL2[9:7] and
+>>> SSC_DEP_SEL is at HHI_HDMI_PLL_CNTL2[13:10]
+>>> - the S905X and S912 datasheets state that HHI_HDMI_PLL_CNTL1[11:0] are DIV_FRAC
+>>
+>> On S905, the HHI_HDMI_PLL_CNTL2 is at address 0xc9 << 2, but on S905X/S905D/S912 the
+>> equivalent register at same address is named HHI_HDMI_PLL_CNTL1.
+>>
+>> They changed the numbering of registers between these 2 SoCs, but the register
+>> content and addresses are similar for m/n/frac/reset.
+> I totally missed that - thanks for the explanation!
 > 
-> In the reset, we still need to save the content of 2 registers which
-> depends on the status of the plane, in addition to reload the scaler
-> conversion matrix at the same time.
+>>>
+>>> can you confirm that the public S905X and S912 documentation is wrong
+>>> and that the .frac field is really part of HHI_HDMI_PLL_CNTL2 instead
+>>> of HHI_HDMI_PLL_CNTL1?
+>>
+>> Is is part of HHI_HDMI_PLL_CNTL1 but at address of S905 HHI_HDMI_PLL_CNTL2.
+>>
+>> When jerome pushed the PLL support earlier, he added a comment.
+>> I simply forgot to put it back when I added back the GXL HDMI PLL DCO.
+> I'm curious: do you know whether the fractional divider field on
+> Meson8b is 10 or 12 bits wide?
+> 
+> if you can add a short note about the naming confusion to the patch
+> description when applying the patch:
+> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-This patch needs much more work, it creates some screen flickering and shaking
-in 4k modes, which is not really good.
+I'll add back the comments about the register shift and i'll apply
+it for a next PR.
 
+Thanks,
 Neil
 
 > 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  drivers/gpu/drm/meson/meson_crtc.c |  6 ++++++
->  drivers/gpu/drm/meson/meson_viu.c  | 27 +++++++++++++++++++++++++++
->  drivers/gpu/drm/meson/meson_viu.h  |  1 +
->  3 files changed, 34 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/meson/meson_crtc.c b/drivers/gpu/drm/meson/meson_crtc.c
-> index 75d97f1b2e8f..2f9dfb1d408f 100644
-> --- a/drivers/gpu/drm/meson/meson_crtc.c
-> +++ b/drivers/gpu/drm/meson/meson_crtc.c
-> @@ -200,6 +200,12 @@ void meson_crtc_irq(struct meson_drm *priv)
->  
->  	/* Update the OSD registers */
->  	if (priv->viu.osd1_enabled && priv->viu.osd1_commit) {
-> +
-> +		/* Reset OSD1 at updates on GXL+ SoCs */
-> +		if (meson_vpu_is_compatible(priv, "amlogic,meson-gxm-vpu") ||
-> +		    meson_vpu_is_compatible(priv, "amlogic,meson-gxl-vpu"))
-> +			meson_viu_reset(priv);
-> +
->  		writel_relaxed(priv->viu.osd1_ctrl_stat,
->  				priv->io_base + _REG(VIU_OSD1_CTRL_STAT));
->  		writel_relaxed(priv->viu.osd1_blk0_cfg[0],
-> diff --git a/drivers/gpu/drm/meson/meson_viu.c b/drivers/gpu/drm/meson/meson_viu.c
-> index 2dffb987ec65..a41dd6cc343e 100644
-> --- a/drivers/gpu/drm/meson/meson_viu.c
-> +++ b/drivers/gpu/drm/meson/meson_viu.c
-> @@ -296,6 +296,33 @@ static void meson_viu_load_matrix(struct meson_drm *priv)
->  				 true);
->  }
->  
-> +/* VIU OSD1 Reset as workaround for GXL+ Alpha OSD Bug */
-> +void meson_viu_reset(struct meson_drm *priv)
-> +{
-> +	uint32_t osd1_fifo_ctrl_stat, osd1_ctrl_stat2;
-> +
-> +	/* Save these 2 registers state */
-> +	osd1_fifo_ctrl_stat = readl_relaxed(
-> +				priv->io_base + _REG(VIU_OSD1_FIFO_CTRL_STAT));
-> +	osd1_ctrl_stat2 = readl_relaxed(
-> +				priv->io_base + _REG(VIU_OSD1_CTRL_STAT2));
-> +
-> +	/* Reset OSD1 */
-> +	writel_bits_relaxed(BIT(0), BIT(0),
-> +			    priv->io_base + _REG(VIU_SW_RESET));
-> +	writel_bits_relaxed(BIT(0), 0,
-> +			    priv->io_base + _REG(VIU_SW_RESET));
-> +
-> +	/* Rewrite these registers state lost in the reset */
-> +	writel_relaxed(osd1_fifo_ctrl_stat,
-> +		       priv->io_base + _REG(VIU_OSD1_FIFO_CTRL_STAT));
-> +	writel_relaxed(osd1_ctrl_stat2,
-> +		       priv->io_base + _REG(VIU_OSD1_CTRL_STAT2));
-> +
-> +	/* Reload the conversion matrix */
-> +	meson_viu_load_matrix(priv);
-> +}
-> +
->  void meson_viu_init(struct meson_drm *priv)
->  {
->  	uint32_t reg;
-> diff --git a/drivers/gpu/drm/meson/meson_viu.h b/drivers/gpu/drm/meson/meson_viu.h
-> index 073b1910bd1b..e4a6e2fba8fb 100644
-> --- a/drivers/gpu/drm/meson/meson_viu.h
-> +++ b/drivers/gpu/drm/meson/meson_viu.h
-> @@ -59,6 +59,7 @@
->  #define OSD_REPLACE_EN		BIT(14)
->  #define OSD_REPLACE_SHIFT	6
->  
-> +void meson_viu_reset(struct meson_drm *priv);
->  void meson_viu_init(struct meson_drm *priv);
->  
->  #endif /* __MESON_VIU_H */
+> Regards
+> Martin
 > 
 
