@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BE1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D77C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4831C214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20DC321473
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gxumx/pM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4831C214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lU4Om/CZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20DC321473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729439AbeKZVww (ORCPT
+        id S1729451AbeKZVwy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:52:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34410 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:52:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727875AbeKZVwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:52:51 -0500
+        id S1727875AbeKZVwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:52:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F4F021473;
-        Mon, 26 Nov 2018 10:59:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC2232148E;
+        Mon, 26 Nov 2018 10:59:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229946;
-        bh=2YkuDvduXmUqwRfNxpNqkKoVhVjjrKZblW9YkYY/1ZY=;
+        s=default; t=1543229949;
+        bh=3jU+B/3xW7NLO5YrchtAu3p5TBz+d0vsboQ3CoCrz0k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gxumx/pMGqNeRHWiF5wSCOzL5ZC+0HOMo9LZbgif6t3LI5pKor/j0h9n1cEcFodZ9
-         4igELHn+NQs0X+coHHzQMKce+gD7+FuSj14YQz+/GRaWb55v2ZwArrFLmRdtckrk/A
-         o17HIUVdAwCe6lR8oGr/P+7y0v1gzGVBBNrlJoKg=
+        b=lU4Om/CZ5AsaNClqh3cUarBPiYqlb4tcQR0T+HWHwzUc3zYwM7cfazNwXs1g323ze
+         gh9jxIMevs++lK4qHNLtPVvBDGNrlaNCwyPe30o6l7KG5/J1Q+zSEnJN2k6WSoThpu
+         dFSWPqoX0DnzaEQxqomhMV//Yq37P/FOWYaNJ+iI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        stable@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 14/62] fs/exofs: fix potential memory leak in mount option parsing
-Date:   Mon, 26 Nov 2018 11:50:55 +0100
-Message-Id: <20181126105052.063766745@linuxfoundation.org>
+Subject: [PATCH 4.14 15/62] clk: samsung: exynos5420: Enable PERIS clocks for suspend
+Date:   Mon, 26 Nov 2018 11:50:56 +0100
+Message-Id: <20181126105052.149761341@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -63,42 +64,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 515f1867addaba49c1c6ac73abfaffbc192c1db4 ]
+[ Upstream commit b33228029d842269e17bba591609e83ed422005d ]
 
-There are some cases can cause memory leak when parsing
-option 'osdname'.
+Ensure that clocks for core SoC modules (including TZPC0..9 modules)
+are enabled for suspend/resume cycle. This fixes suspend/resume
+support on Exynos5422-based Odroid XU3/XU4 boards.
 
-Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Suggested-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Sylwester Nawrocki <snawrocki@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/exofs/super.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos5420.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/exofs/super.c b/fs/exofs/super.c
-index 819624cfc8da..c9ec652e2fcd 100644
---- a/fs/exofs/super.c
-+++ b/fs/exofs/super.c
-@@ -100,6 +100,7 @@ static int parse_options(char *options, struct exofs_mountopt *opts)
- 		token = match_token(p, tokens, args);
- 		switch (token) {
- 		case Opt_name:
-+			kfree(opts->dev_name);
- 			opts->dev_name = match_strdup(&args[0]);
- 			if (unlikely(!opts->dev_name)) {
- 				EXOFS_ERR("Error allocating dev_name");
-@@ -863,8 +864,10 @@ static struct dentry *exofs_mount(struct file_system_type *type,
- 	int ret;
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 25601967d1cd..500a55415e90 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -280,6 +280,7 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
+ 	{ .offset = GATE_BUS_TOP,		.value = 0xffffffff, },
+ 	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
+ 	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
++	{ .offset = GATE_IP_PERIS,		.value = 0xffffffff, },
+ };
  
- 	ret = parse_options(data, &opts);
--	if (ret)
-+	if (ret) {
-+		kfree(opts.dev_name);
- 		return ERR_PTR(ret);
-+	}
- 
- 	if (!opts.dev_name)
- 		opts.dev_name = dev_name;
+ static int exynos5420_clk_suspend(void)
 -- 
 2.17.1
 
