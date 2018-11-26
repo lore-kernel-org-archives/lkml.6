@@ -2,622 +2,163 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 807FDC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 01:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1708CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 01:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32CF120865
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 01:23:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32CF120865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=buserror.net
+	by mail.kernel.org (Postfix) with ESMTP id DB54E20865
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 01:28:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB54E20865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbeKZMQI (ORCPT
+        id S1726138AbeKZMU5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 07:16:08 -0500
-Received: from baldur.buserror.net ([165.227.176.147]:48430 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbeKZMQI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 07:16:08 -0500
-Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1gR5YF-0000Bq-AS; Sun, 25 Nov 2018 19:19:04 -0600
-Message-ID: <09ee2f91765add47e628e0ab03776d468cec0914.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     Yuantian Tang <andy.tang@nxp.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, benh@kernel.crashing.org, paulus@samba.org,
-        mpe@ellerman.id.au, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Date:   Sun, 25 Nov 2018 19:19:00 -0600
-In-Reply-To: <20181031065736.32719-1-andy.tang@nxp.com>
-References: <20181031065736.32719-1-andy.tang@nxp.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: andy.tang@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-X-SA-Exim-Mail-From: oss@buserror.net
-Subject: Re: [PATCH 1/2 v3] powerpc/fsl: Use new clockgen binding
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
+        Mon, 26 Nov 2018 07:20:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46020 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726060AbeKZMU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 07:20:57 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7B136307DAA0;
+        Mon, 26 Nov 2018 01:28:27 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A0E2D425F;
+        Mon, 26 Nov 2018 01:28:26 +0000 (UTC)
+Date:   Mon, 26 Nov 2018 09:28:24 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Bhupesh Sharma <bhsharma@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, bhupesh.linux@gmail.com,
+        Boris Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
+        Dave Anderson <anderson@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Omar Sandoval <osandov@fb.com>, x86@kernel.org,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] x86_64, vmcoreinfo: Append 'page_offset_base' to
+ vmcoreinfo
+Message-ID: <20181126012824.GB1824@MiWiFi-R3L-srv>
+References: <1542318469-13699-1-git-send-email-bhsharma@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542318469-13699-1-git-send-email-bhsharma@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 26 Nov 2018 01:28:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-31 at 14:57 +0800, Yuantian Tang wrote:
-> From: Scott Wood <oss@buserror.net>
+On 11/16/18 at 03:17am, Bhupesh Sharma wrote:
+> Adding 'page_offset_base' to the vmcoreinfo can be specially useful for
+> live-debugging of a running kernel via user-space utilities
+> like makedumpfile (see [1]).
 > 
-> The driver retains compatibility with old device trees, but we don't
-> want the old nodes lying around to be copied, or used as a reference
-> (some of the mux options are incorrect), or even just being clutter.
+> Recently, I saw an issue with the 'makedumpfile' utility (see [2] for
+> details), whose live debugging feature is broken with newer kernels
+
+I think this paragraph explained why KCORE_REMAP adding caused the
+mistake of page_offset calculation in makedumpfile. It can prove the
+advantage of appending 'page_offset_base' to vmcoreinfo. The old way I
+took in makedumpfile could be impacted by kernel code change, adding it
+to vmcoreinfo can make it stable. The example is KCORE_REMAP adding, and
+later it's removed.
+
+But it's not live debugging feature of makedumpfile. Makedumpfile can't be
+used to live debug. The feature is called '--mem-usage' in makedumpfile,
+in fact it's used to estimate how big the vmcore could be so that customer
+can deply an appropriate size of storage space to store it. Because both
+kcore and vmcore are all elf files which the 1st kernel's memory is
+mapped to, even though they are different, kcore is dynamically changing.
+This is more likely a precision in order of of magnitude. This is a feature
+required by redhat customer.
+
+I thought you are talking about using DaveA's crash utility to live
+debug the running kernel, like we usually do with gdb.
+
+	gdb vmlinux /proc/kcore
+
+Yes, this gdb live debugging is broken because of KASLR. We have bug about
+this, while it has not been fixed. Using Crash utility to replace gdb is
+one way if Crash code is adjusted.
+
+> (I tested the same with 4.19-rc8+ kernel), as KCORE_REMAP segments were
+> added to kcore, thus leading to an additional sections in the same, and
+> makedumpfile is not longer able to determine the start of direct
+> mapping of all physical memory, as it relies on traversing the PT_LOAD
+> segments inside kcore and using the last PT_LOAD segment
+> to determine the start of direct mapping.
+...
+> Testing:
+> -------
+
+This one vmcoreinfo entry adding won't impact kernel performance. And
+page_offset_base need be got during makedumpfile initialization, it
+won't impact makedumpfile efficiency either, especially compared with
+the later page filterring and writting out to storage space. I don't
+think there's any need to provide a detailed test result here. If
+possible, just mention it works in this way, maybe it's better in some
+aspects, such as code simplicity, etc.
+
+>  - I tested this patch (rebased on 'linux-next') on a x86_64 machine
+>    using the modified 'makedumpfile' user-space code (see [3] for my
+>    github tree which contains the same) for determining how many pages
+>    are dumpable when different dump_level is specified (which is
+>    one use-case of live-debugging via 'makedumpfile').
+>  - I tested both the KASLR and non-KASLR boot cases with this patch.
+>  - Here is one sample log (for KASLR boot case) on my x86_64 machine:
 > 
-> Signed-off-by: Scott Wood <oss@buserror.net>
-> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-> ---
-> v3:
->   - update the commit message
->   - split the dts and driver to different patchset
+>    < snip..>
+>    The kernel doesn't support mmap(),read() will be used instead.
 > 
->  arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi     |    4 +-
->  arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi     |    8 ++--
->  arch/powerpc/boot/dts/fsl/b4si-post.dtsi       |   15 -----
->  arch/powerpc/boot/dts/fsl/p2041si-post.dtsi    |   18 ------
->  arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi     |    8 ++--
->  arch/powerpc/boot/dts/fsl/p3041si-post.dtsi    |   18 ------
->  arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi     |    8 ++--
->  arch/powerpc/boot/dts/fsl/p4080si-post.dtsi    |   70 -------------------
-> -----
->  arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi     |   16 +++---
->  arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi     |    4 +-
->  arch/powerpc/boot/dts/fsl/p5040si-post.dtsi    |   18 ------
->  arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi     |    8 ++--
->  arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi |   55 +++----------------
->  arch/powerpc/boot/dts/fsl/qoriq-clockgen2.dtsi |   38 +++----------
->  arch/powerpc/boot/dts/fsl/t1023si-post.dtsi    |   16 ------
->  arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi     |    4 +-
->  arch/powerpc/boot/dts/fsl/t1040si-post.dtsi    |   44 ---------------
->  arch/powerpc/boot/dts/fsl/t104xsi-pre.dtsi     |    8 ++--
->  arch/powerpc/boot/dts/fsl/t2081si-post.dtsi    |   22 --------
->  arch/powerpc/boot/dts/fsl/t208xsi-pre.dtsi     |    8 ++--
->  arch/powerpc/boot/dts/fsl/t4240si-post.dtsi    |   61 ---------------------
->  arch/powerpc/boot/dts/fsl/t4240si-pre.dtsi     |   24 ++++----
->  22 files changed, 66 insertions(+), 409 deletions(-)
+>    TYPE		PAGES			EXCLUDABLE	DESCRIPTION
+>    ----------------------------------------------------------------------
+>    ZERO		21299           	yes		Pages filled
+>    with zero
+>    NON_PRI_CACHE	91785           	yes		Cache
+>    pages without private flag
+>    PRI_CACHE	1               	yes		Cache pages with
+>    private flag
+>    USER		14057           	yes		User process
+>    pages
+>    FREE		740346          	yes		Free pages
+>    KERN_DATA	58152           	no		Dumpable kernel
+>    data
 > 
-> diff --git a/arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi
-> b/arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi
-> index 88d8423..bb7b9b9 100644
-> --- a/arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi
-> @@ -70,14 +70,14 @@
->  		cpu0: PowerPC,e6500@0 {
->  			device_type = "cpu";
->  			reg = <0 1>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x80000000>;
->  		};
->  		cpu1: PowerPC,e6500@2 {
->  			device_type = "cpu";
->  			reg = <2 3>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x80000000>;
->  		};
-> diff --git a/arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi
-> b/arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi
-> index f3f968c..388ba1b 100644
-> --- a/arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi
-> @@ -75,28 +75,28 @@
->  		cpu0: PowerPC,e6500@0 {
->  			device_type = "cpu";
->  			reg = <0 1>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x80000000>;
->  		};
->  		cpu1: PowerPC,e6500@2 {
->  			device_type = "cpu";
->  			reg = <2 3>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x80000000>;
->  		};
->  		cpu2: PowerPC,e6500@4 {
->  			device_type = "cpu";
->  			reg = <4 5>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x80000000>;
->  		};
->  		cpu3: PowerPC,e6500@6 {
->  			device_type = "cpu";
->  			reg = <6 7>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x80000000>;
->  		};
-> diff --git a/arch/powerpc/boot/dts/fsl/b4si-post.dtsi
-> b/arch/powerpc/boot/dts/fsl/b4si-post.dtsi
-> index 1b33f51..4f044b4 100644
-> --- a/arch/powerpc/boot/dts/fsl/b4si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/b4si-post.dtsi
-> @@ -398,21 +398,6 @@
->  	};
->  
->  /include/ "qoriq-clockgen2.dtsi"
-> -	clockgen: global-utilities@e1000 {
-> -		compatible = "fsl,b4-clockgen", "fsl,qoriq-clockgen-2.0";
-> -		reg = <0xe1000 0x1000>;
-> -
-> -		mux0: mux0@0 {
-> -			#clock-cells = <0>;
-> -			reg = <0x0 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-2.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll0 2>,
-> -				<&pll1 0>, <&pll1 1>, <&pll1 2>;
-> -			clock-names = "pll0", "pll0-div2", "pll0-div4",
-> -				"pll1", "pll1-div2", "pll1-div4";
-> -			clock-output-names = "cmux0";
-> -		};
-> -	};
->  
->  	rcpm: global-utilities@e2000 {
->  		compatible = "fsl,b4-rcpm", "fsl,qoriq-rcpm-2.0";
-> diff --git a/arch/powerpc/boot/dts/fsl/p2041si-post.dtsi
-> b/arch/powerpc/boot/dts/fsl/p2041si-post.dtsi
-> index 51e975d..872e448 100644
-> --- a/arch/powerpc/boot/dts/fsl/p2041si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p2041si-post.dtsi
-> @@ -327,24 +327,6 @@
->  /include/ "qoriq-clockgen1.dtsi"
->  	global-utilities@e1000 {
->  		compatible = "fsl,p2041-clockgen", "fsl,qoriq-clockgen-1.0";
-> -
-> -		mux2: mux2@40 {
-> -			#clock-cells = <0>;
-> -			reg = <0x40 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux2";
-> -		};
-> -
-> -		mux3: mux3@60 {
-> -			#clock-cells = <0>;
-> -			reg = <0x60 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux3";
-> -		};
->  	};
->  
->  	rcpm: global-utilities@e2000 {
-> diff --git a/arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi
-> b/arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi
-> index 941274c..6318962 100644
-> --- a/arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi
-> @@ -89,7 +89,7 @@
->  		cpu0: PowerPC,e500mc@0 {
->  			device_type = "cpu";
->  			reg = <0>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_0>;
->  			fsl,portid-mapping = <0x80000000>;
->  			L2_0: l2-cache {
-> @@ -99,7 +99,7 @@
->  		cpu1: PowerPC,e500mc@1 {
->  			device_type = "cpu";
->  			reg = <1>;
-> -			clocks = <&mux1>;
-> +			clocks = <&clockgen 1 1>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x40000000>;
->  			L2_1: l2-cache {
-> @@ -109,7 +109,7 @@
->  		cpu2: PowerPC,e500mc@2 {
->  			device_type = "cpu";
->  			reg = <2>;
-> -			clocks = <&mux2>;
-> +			clocks = <&clockgen 1 2>;
->  			next-level-cache = <&L2_2>;
->  			fsl,portid-mapping = <0x20000000>;
->  			L2_2: l2-cache {
-> @@ -119,7 +119,7 @@
->  		cpu3: PowerPC,e500mc@3 {
->  			device_type = "cpu";
->  			reg = <3>;
-> -			clocks = <&mux3>;
-> +			clocks = <&clockgen 1 3>;
->  			next-level-cache = <&L2_3>;
->  			fsl,portid-mapping = <0x10000000>;
->  			L2_3: l2-cache {
-> diff --git a/arch/powerpc/boot/dts/fsl/p3041si-post.dtsi
-> b/arch/powerpc/boot/dts/fsl/p3041si-post.dtsi
-> index 187676f..81bc75a 100644
-> --- a/arch/powerpc/boot/dts/fsl/p3041si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p3041si-post.dtsi
-> @@ -354,24 +354,6 @@
->  /include/ "qoriq-clockgen1.dtsi"
->  	global-utilities@e1000 {
->  		compatible = "fsl,p3041-clockgen", "fsl,qoriq-clockgen-1.0";
-> -
-> -		mux2: mux2@40 {
-> -			#clock-cells = <0>;
-> -			reg = <0x40 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux2";
-> -		};
-> -
-> -		mux3: mux3@60 {
-> -			#clock-cells = <0>;
-> -			reg = <0x60 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux3";
-> -		};
->  	};
->  
->  	rcpm: global-utilities@e2000 {
-> diff --git a/arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi
-> b/arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi
-> index 50b73e8..db92f11 100644
-> --- a/arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi
-> @@ -90,7 +90,7 @@
->  		cpu0: PowerPC,e500mc@0 {
->  			device_type = "cpu";
->  			reg = <0>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_0>;
->  			fsl,portid-mapping = <0x80000000>;
->  			L2_0: l2-cache {
-> @@ -100,7 +100,7 @@
->  		cpu1: PowerPC,e500mc@1 {
->  			device_type = "cpu";
->  			reg = <1>;
-> -			clocks = <&mux1>;
-> +			clocks = <&clockgen 1 1>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x40000000>;
->  			L2_1: l2-cache {
-> @@ -110,7 +110,7 @@
->  		cpu2: PowerPC,e500mc@2 {
->  			device_type = "cpu";
->  			reg = <2>;
-> -			clocks = <&mux2>;
-> +			clocks = <&clockgen 1 2>;
->  			next-level-cache = <&L2_2>;
->  			fsl,portid-mapping = <0x20000000>;
->  			L2_2: l2-cache {
-> @@ -120,7 +120,7 @@
->  		cpu3: PowerPC,e500mc@3 {
->  			device_type = "cpu";
->  			reg = <3>;
-> -			clocks = <&mux3>;
-> +			clocks = <&clockgen 1 3>;
->  			next-level-cache = <&L2_3>;
->  			fsl,portid-mapping = <0x10000000>;
->  			L2_3: l2-cache {
-> diff --git a/arch/powerpc/boot/dts/fsl/p4080si-post.dtsi
-> b/arch/powerpc/boot/dts/fsl/p4080si-post.dtsi
-> index a025208..4da49b6 100644
-> --- a/arch/powerpc/boot/dts/fsl/p4080si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p4080si-post.dtsi
-> @@ -374,76 +374,6 @@
->  /include/ "qoriq-clockgen1.dtsi"
->  	global-utilities@e1000 {
->  		compatible = "fsl,p4080-clockgen", "fsl,qoriq-clockgen-1.0";
-> -
-> -		pll2: pll2@840 {
-> -			#clock-cells = <1>;
-> -			reg = <0x840 0x4>;
-> -			compatible = "fsl,qoriq-core-pll-1.0";
-> -			clocks = <&sysclk>;
-> -			clock-output-names = "pll2", "pll2-div2";
-> -		};
-> -
-> -		pll3: pll3@860 {
-> -			#clock-cells = <1>;
-> -			reg = <0x860 0x4>;
-> -			compatible = "fsl,qoriq-core-pll-1.0";
-> -			clocks = <&sysclk>;
-> -			clock-output-names = "pll3", "pll3-div2";
-> -		};
-> -
-> -		mux2: mux2@40 {
-> -			#clock-cells = <0>;
-> -			reg = <0x40 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux2";
-> -		};
-> -
-> -		mux3: mux3@60 {
-> -			#clock-cells = <0>;
-> -			reg = <0x60 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux3";
-> -		};
-> -
-> -		mux4: mux4@80 {
-> -			#clock-cells = <0>;
-> -			reg = <0x80 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll2 0>, <&pll2 1>, <&pll3 0>, <&pll3 1>;
-> -			clock-names = "pll2", "pll2-div2", "pll3", "pll3-
-> div2";
-> -			clock-output-names = "cmux4";
-> -		};
-> -
-> -		mux5: mux5@a0 {
-> -			#clock-cells = <0>;
-> -			reg = <0xa0 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll2 0>, <&pll2 1>, <&pll3 0>, <&pll3 1>;
-> -			clock-names = "pll2", "pll2-div2", "pll3", "pll3-
-> div2";
-> -			clock-output-names = "cmux5";
-> -		};
-> -
-> -		mux6: mux6@c0 {
-> -			#clock-cells = <0>;
-> -			reg = <0xc0 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll2 0>, <&pll2 1>, <&pll3 0>, <&pll3 1>;
-> -			clock-names = "pll2", "pll2-div2", "pll3", "pll3-
-> div2";
-> -			clock-output-names = "cmux6";
-> -		};
-> -
-> -		mux7: mux7@e0 {
-> -			#clock-cells = <0>;
-> -			reg = <0xe0 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll2 0>, <&pll2 1>, <&pll3 0>, <&pll3 1>;
-> -			clock-names = "pll2", "pll2-div2", "pll3", "pll3-
-> div2";
-> -			clock-output-names = "cmux7";
-> -		};
->  	};
->  
->  	rcpm: global-utilities@e2000 {
-> diff --git a/arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi
-> b/arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi
-> index d56a546..0a7c65a 100644
-> --- a/arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi
-> @@ -94,7 +94,7 @@
->  		cpu0: PowerPC,e500mc@0 {
->  			device_type = "cpu";
->  			reg = <0>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_0>;
->  			fsl,portid-mapping = <0x80000000>;
->  			L2_0: l2-cache {
-> @@ -104,7 +104,7 @@
->  		cpu1: PowerPC,e500mc@1 {
->  			device_type = "cpu";
->  			reg = <1>;
-> -			clocks = <&mux1>;
-> +			clocks = <&clockgen 1 1>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x40000000>;
->  			L2_1: l2-cache {
-> @@ -114,7 +114,7 @@
->  		cpu2: PowerPC,e500mc@2 {
->  			device_type = "cpu";
->  			reg = <2>;
-> -			clocks = <&mux2>;
-> +			clocks = <&clockgen 1 2>;
->  			next-level-cache = <&L2_2>;
->  			fsl,portid-mapping = <0x20000000>;
->  			L2_2: l2-cache {
-> @@ -124,7 +124,7 @@
->  		cpu3: PowerPC,e500mc@3 {
->  			device_type = "cpu";
->  			reg = <3>;
-> -			clocks = <&mux3>;
-> +			clocks = <&clockgen 1 3>;
->  			next-level-cache = <&L2_3>;
->  			fsl,portid-mapping = <0x10000000>;
->  			L2_3: l2-cache {
-> @@ -134,7 +134,7 @@
->  		cpu4: PowerPC,e500mc@4 {
->  			device_type = "cpu";
->  			reg = <4>;
-> -			clocks = <&mux4>;
-> +			clocks = <&clockgen 1 4>;
->  			next-level-cache = <&L2_4>;
->  			fsl,portid-mapping = <0x08000000>;
->  			L2_4: l2-cache {
-> @@ -144,7 +144,7 @@
->  		cpu5: PowerPC,e500mc@5 {
->  			device_type = "cpu";
->  			reg = <5>;
-> -			clocks = <&mux5>;
-> +			clocks = <&clockgen 1 5>;
->  			next-level-cache = <&L2_5>;
->  			fsl,portid-mapping = <0x04000000>;
->  			L2_5: l2-cache {
-> @@ -154,7 +154,7 @@
->  		cpu6: PowerPC,e500mc@6 {
->  			device_type = "cpu";
->  			reg = <6>;
-> -			clocks = <&mux6>;
-> +			clocks = <&clockgen 1 6>;
->  			next-level-cache = <&L2_6>;
->  			fsl,portid-mapping = <0x02000000>;
->  			L2_6: l2-cache {
-> @@ -164,7 +164,7 @@
->  		cpu7: PowerPC,e500mc@7 {
->  			device_type = "cpu";
->  			reg = <7>;
-> -			clocks = <&mux7>;
-> +			clocks = <&clockgen 1 7>;
->  			next-level-cache = <&L2_7>;
->  			fsl,portid-mapping = <0x01000000>;
->  			L2_7: l2-cache {
-> diff --git a/arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi
-> b/arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi
-> index bfba0b4..2d74ea8 100644
-> --- a/arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi
-> @@ -96,7 +96,7 @@
->  		cpu0: PowerPC,e5500@0 {
->  			device_type = "cpu";
->  			reg = <0>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_0>;
->  			fsl,portid-mapping = <0x80000000>;
->  			L2_0: l2-cache {
-> @@ -106,7 +106,7 @@
->  		cpu1: PowerPC,e5500@1 {
->  			device_type = "cpu";
->  			reg = <1>;
-> -			clocks = <&mux1>;
-> +			clocks = <&clockgen 1 1>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x40000000>;
->  			L2_1: l2-cache {
-> diff --git a/arch/powerpc/boot/dts/fsl/p5040si-post.dtsi
-> b/arch/powerpc/boot/dts/fsl/p5040si-post.dtsi
-> index e2bd931..16b454b 100644
-> --- a/arch/powerpc/boot/dts/fsl/p5040si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p5040si-post.dtsi
-> @@ -319,24 +319,6 @@
->  /include/ "qoriq-clockgen1.dtsi"
->  	global-utilities@e1000 {
->  		compatible = "fsl,p5040-clockgen", "fsl,qoriq-clockgen-1.0";
-> -
-> -		mux2: mux2@40 {
-> -			#clock-cells = <0>;
-> -			reg = <0x40 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux2";
-> -		};
-> -
-> -		mux3: mux3@60 {
-> -			#clock-cells = <0>;
-> -			reg = <0x60 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux3";
-> -		};
->  	};
->  
->  	rcpm: global-utilities@e2000 {
-> diff --git a/arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi
-> b/arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi
-> index dbd5775..ed89dbb 100644
-> --- a/arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi
-> @@ -102,7 +102,7 @@
->  		cpu0: PowerPC,e5500@0 {
->  			device_type = "cpu";
->  			reg = <0>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_0>;
->  			fsl,portid-mapping = <0x80000000>;
->  			L2_0: l2-cache {
-> @@ -112,7 +112,7 @@
->  		cpu1: PowerPC,e5500@1 {
->  			device_type = "cpu";
->  			reg = <1>;
-> -			clocks = <&mux1>;
-> +			clocks = <&clockgen 1 1>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x40000000>;
->  			L2_1: l2-cache {
-> @@ -122,7 +122,7 @@
->  		cpu2: PowerPC,e5500@2 {
->  			device_type = "cpu";
->  			reg = <2>;
-> -			clocks = <&mux2>;
-> +			clocks = <&clockgen 1 2>;
->  			next-level-cache = <&L2_2>;
->  			fsl,portid-mapping = <0x20000000>;
->  			L2_2: l2-cache {
-> @@ -132,7 +132,7 @@
->  		cpu3: PowerPC,e5500@3 {
->  			device_type = "cpu";
->  			reg = <3>;
-> -			clocks = <&mux3>;
-> +			clocks = <&clockgen 1 3>;
->  			next-level-cache = <&L2_3>;
->  			fsl,portid-mapping = <0x10000000>;
->  			L2_3: l2-cache {
-> diff --git a/arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi
-> b/arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi
-> index 88cd70d..5c89cfa 100644
-> --- a/arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi
-> @@ -32,55 +32,16 @@
->   * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
->   */
->  
-> +sysclk: sysclk {
-> +	compatible = "fixed-clock";
-> +	#clock-cells = <0>;
-> +	clock-frequency = <100000000>;
-> +	clock-output-names = "sysclk";
-> +};
-> +
->  clockgen: global-utilities@e1000 {
+>    page size:		4096
+>    Total pages on system:	925640
+>    Total size on system:	3791421440       Byte
+> 
+...
 
-The U-Boot fixup won't work with this.  U-Boot patches the frequency directly
-into the clockgen node (BTW, this is another reason to preserve the generic
-1.0/2.0 compatible string).  The new binding does not require an input clock
-node when it is provided as clock-frequency directly in the clockgen node --
-and the sysclk node was not in my original patch (nor did you note that you
-made changes from that original).  Why did you add it?
+> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+> index 4c8acdfdc5a7..6161d77c5bfb 100644
+> --- a/arch/x86/kernel/machine_kexec_64.c
+> +++ b/arch/x86/kernel/machine_kexec_64.c
+> @@ -356,6 +356,9 @@ void arch_crash_save_vmcoreinfo(void)
+>  	VMCOREINFO_SYMBOL(init_top_pgt);
+>  	vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
+>  			pgtable_l5_enabled());
+> +#ifdef CONFIG_RANDOMIZE_BASE
 
-I would just remove it when applying, but I'm concerned that this indicates a
-lack of testing (and I don't have the hardware access to test it myself,
-except on t4240) -- unless the 100 MHz sysclk just happened to be correct on
-the machines you tested (which would also be a test coverage problem)?
+Finally, embracing it into CONFIG_RANDOMIZE_BASE ifdefery seems not
+right. The latest kernel is using page_offset_base to do the dynamic
+memory layout between level4 and level5 changing. This may not work in
+5-level system with CONFIG_RANDOMIZE_BASE=n.
 
--Scott
-
-
+> +	VMCOREINFO_NUMBER(page_offset_base);
+> +#endif
+>  
+>  #ifdef CONFIG_NUMA
+>  	VMCOREINFO_SYMBOL(node_data);
+> -- 
+> 2.7.4
+> 
