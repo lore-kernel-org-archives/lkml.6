@@ -2,110 +2,125 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B49BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B80C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:30:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11AA020865
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:29:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9954D20862
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:30:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AL1lPhoI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11AA020865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="PCrtsy8D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9954D20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbeK0FYw (ORCPT
+        id S1726841AbeK0FZ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 00:24:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53244 "EHLO mail.kernel.org"
+        Tue, 27 Nov 2018 00:25:27 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:42606 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726745AbeK0FYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 00:24:51 -0500
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726260AbeK0FZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 00:25:27 -0500
+Received: from zn.tnic (p200300EC2BDEFE00DCA0409AA15535E1.dip0.t-ipconnect.de [IPv6:2003:ec:2bde:fe00:dca0:409a:a155:35e1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B244A208E4
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 18:29:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543256994;
-        bh=7HfgAS31S3MBTg6aCWFB7OG7qwwUQNkUtAAt6bQyTHs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=AL1lPhoIt7FGDbOB7x93yIelShfAGAs/XxuzPtDScgQOavPlWg/IU6CUD0p22w0yS
-         SeXeDUVMFTgc2Ah8AfeeDbN0c6j9oukykejegZrpMV+zTFx/5/Ix53dIGrDU2ZZjAw
-         D0jNJuCulmhT2Kf34sET2qgcOR21Hp9zzUMNJqWw=
-Received: by mail-wm1-f45.google.com with SMTP id y185so13150173wmd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 10:29:53 -0800 (PST)
-X-Gm-Message-State: AA+aEWbBvq6nrHnVnjJfis93bCkkBn5McuBei0wwR5/RHUU8LYzaXHa8
-        riDGMdbxcbcizVw273Bf8Nneb0Lmn++x6PgGUBJr3g==
-X-Google-Smtp-Source: AJdET5eYdvGDoeNsLHYwqYlmUeF3j0KwcSKR8p7r4mL7xnccS1a4yi78jaCaSO2uFVvwXyYm3g8jKj01FqrKin0v3is=
-X-Received: by 2002:a1c:b1d5:: with SMTP id a204mr25099599wmf.32.1543256992210;
- Mon, 26 Nov 2018 10:29:52 -0800 (PST)
-MIME-Version: 1.0
-References: <20181119214809.6086-1-yu-cheng.yu@intel.com> <CALCETrWLtpfkecfUAXJ64Z5xDeHPJxTQSci+T4RCem7vCqorTw@mail.gmail.com>
- <35b33f293bc392df71710102f38fa6a40d0bb996.camel@intel.com>
-In-Reply-To: <35b33f293bc392df71710102f38fa6a40d0bb996.camel@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 26 Nov 2018 10:29:40 -0800
-X-Gmail-Original-Message-ID: <CALCETrV4BP6gTgVZos19WZrbgEH7t4PqPOeP2VJte1kE=ehokg@mail.gmail.com>
-Message-ID: <CALCETrV4BP6gTgVZos19WZrbgEH7t4PqPOeP2VJte1kE=ehokg@mail.gmail.com>
-Subject: Re: [RFC PATCH v6 00/26] Control-flow Enforcement: Shadow Stack
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        "Carlos O'Donell" <carlos@redhat.com>,
-        Rich Felker <dalias@libc.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CF8741EC047F;
+        Mon, 26 Nov 2018 19:30:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1543257029;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=RDNzXtn+HNtoCQox5ql8d7eGjIh4D5a/YKWp0NeyHtY=;
+        b=PCrtsy8DyWimPVtHoBK7KkWljcIJbhBbA2dPXq3+GHp1luQqQhHBo7M28Ls+sAp+Ceh6du
+        pbYp5e5LoUV/ocDS22CfCIpACw1ishrM05+LeizF3x5x9t0xuNz1N09E/VQDVZrOqBEQ37
+        WuwSu3KG5bA1z110Qn1O1wHiyEO5A8Y=
+Date:   Mon, 26 Nov 2018 19:30:24 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [patch V2 19/28] x86/process: Consolidate and simplify
+ switch_to_xtra() code
+Message-ID: <20181126183024.GJ4843@zn.tnic>
+References: <20181125183328.318175777@linutronix.de>
+ <20181125185005.280855518@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181125185005.280855518@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 9:44 AM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
->
-> On Thu, 2018-11-22 at 08:53 -0800, Andy Lutomirski wrote:
-> > [cc some more libc folks]
+On Sun, Nov 25, 2018 at 07:33:47PM +0100, Thomas Gleixner wrote:
+> Move the conditional invocation of __switch_to_xtra() into an inline
+> function so the logic can be shared between 32 and 64 bit.
+> 
+> Remove the handthrough of the TSS pointer and retrieve the pointer directly
 
->
-> >
-> > 2. I want to be able to modify the signal context from a signal
-> > handler such that, when the signal handler returns, it will return to
-> > a frame higher up on the call stack than where the signal started and
-> > to a different RIP value.  How can I do this?  I guess I can modify
-> > the shadow stack with WRSS if WR_SHSTK_EN=1, but how do I tell the
-> > kernel to kindly skip the frames I want to skip when I do sigreturn()?
-> >
-> > The reason I'm asking #2 is that I think it's time to resurrect my old
-> > vDSO syscall cancellation helper series here:
-> >
-> > https://lwn.net/Articles/679434/
->
-> If tools/testing/selftests/x86/unwind_vdso.c passes, can we say the kernel does
-> the right thing?  Or do you have other tests that I can run?
+s/handthrough/passing/
 
-I haven't written the relevant test yet.  Hopefully soon :)
+I guess.
+
+> in the bitmap handling function. Use this_cpu_ptr() instead of the
+> per_cpu() indirection.
+>
+> This is a preparatory change so integration of conditional indirect branch
+> speculation optimization happens only in one place.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  arch/x86/include/asm/switch_to.h |    3 ---
+>  arch/x86/kernel/process.c        |   12 +++++++-----
+>  arch/x86/kernel/process.h        |   24 ++++++++++++++++++++++++
+>  arch/x86/kernel/process_32.c     |   10 +++-------
+>  arch/x86/kernel/process_64.c     |   10 +++-------
+>  5 files changed, 37 insertions(+), 22 deletions(-)
+
+...
+
+> --- /dev/null
+> +++ b/arch/x86/kernel/process.h
+> @@ -0,0 +1,24 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Code shared between 32 and 64 bit
+
+checkpatch mutters here too:
+
+WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
+#105: FILE: arch/x86/kernel/process.h:1:
++// SPDX-License-Identifier: GPL-2.0
+
+I guess you want /* comments.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
