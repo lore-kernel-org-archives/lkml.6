@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A894C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AD4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2313D20645
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC39F20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0OPLJVar"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2313D20645
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2W05bQP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC39F20672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731657AbeKZWA3 (ORCPT
+        id S1731669AbeKZWAc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 17:00:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47406 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 17:00:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729543AbeKZWA3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 17:00:29 -0500
+        id S1729543AbeKZWAb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 17:00:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDBAC20672;
-        Mon, 26 Nov 2018 11:06:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5650B20989;
+        Mon, 26 Nov 2018 11:06:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230403;
-        bh=Nz73UC6TMUx0RELU80oINF7VzK+El7UMU+Vi4hc4ho8=;
+        s=default; t=1543230405;
+        bh=4hyPOgcu85TyUuePAvpL059wlKEAOzD3cZm4Suew0W4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0OPLJVarBhLPhSBBsaeuut4RTCU5UFMKS+OZ+ruem1/WwVT0N8xJiLr9Y5m1Oqfjc
-         Tdap6MH7K9tL3sIryz75ZKFP/Q1tNV1rsTO3EnBbBP0wrop7BxEYU6Nlyr/QFsQ5mJ
-         XcB2pzC19/NYDlOHmQB67OoH0HIA5XoknOjWENhQ=
+        b=k2W05bQP7bOmd70mVzIPIHjxQMholvKgWnAqEBMwtcGZF5EdBUin30zfFlBB8339T
+         rrRF5Hc+k/W1ITvsMTwcIT/cLr9vuVvY9GhDCyo2j/ZXiKMaXC6ZFf5PftzBy160RI
+         /SQ/Ojy+gETHKb/K/InrW6LarPwIOyRfNARQlXu0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sebastian Parschauer <sparschauer@suse.de>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.19 116/118] HID: Add quirk for Microsoft PIXART OEM mouse
-Date:   Mon, 26 Nov 2018 11:51:50 +0100
-Message-Id: <20181126105106.455061993@linuxfoundation.org>
+        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 4.19 117/118] libceph: fall back to sendmsg for slab pages
+Date:   Mon, 26 Nov 2018 11:51:51 +0100
+Message-Id: <20181126105106.496968704@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -62,47 +61,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Parschauer <sparschauer@suse.de>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit e82e62e390d39c3819641cd721695702180d54fb upstream.
+commit 7e241f647dc7087a0401418a187f3f5b527cc690 upstream.
 
-The PixArt OEM mice are known for disconnecting every minute in
-runlevel 1 or 3 if they are not always polled. So add quirk
-ALWAYS_POLL for this one as well.
+skb_can_coalesce() allows coalescing neighboring slab objects into
+a single frag:
 
-References:
-https://www.spinics.net/lists/linux-usb/msg88965.html
-http://linet.gr.jp/~kojima/PlamoWeb/ML/htdocs/201808/msg00019.html
+  return page == skb_frag_page(frag) &&
+         off == frag->page_offset + skb_frag_size(frag);
 
-Signed-off-by: Sebastian Parschauer <sparschauer@suse.de>
-CC: stable@vger.kernel.org
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+ceph_tcp_sendpage() can be handed slab pages.  One example of this is
+XFS: it passes down sector sized slab objects for its metadata I/O.  If
+the kernel client is co-located on the OSD node, the skb may go through
+loopback and pop on the receive side with the exact same set of frags.
+When tcp_recvmsg() attempts to copy out such a frag, hardened usercopy
+complains because the size exceeds the object's allocated size:
+
+  usercopy: kernel memory exposure attempt detected from ffff9ba917f20a00 (kmalloc-512) (1024 bytes)
+
+Although skb_can_coalesce() could be taught to return false if the
+resulting frag would cross a slab object boundary, we already have
+a fallback for non-refcounted pages.  Utilize it for slab pages too.
+
+Cc: stable@vger.kernel.org # 4.8+
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-ids.h    |    1 +
- drivers/hid/hid-quirks.c |    1 +
- 2 files changed, 2 insertions(+)
+ net/ceph/messenger.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -799,6 +799,7 @@
- #define USB_DEVICE_ID_MS_TOUCH_COVER_2   0x07a7
- #define USB_DEVICE_ID_MS_TYPE_COVER_2    0x07a9
- #define USB_DEVICE_ID_MS_POWER_COVER     0x07da
-+#define USB_DEVICE_ID_MS_PIXART_MOUSE    0x00cb
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -593,9 +593,15 @@ static int ceph_tcp_sendpage(struct sock
+ 	struct bio_vec bvec;
+ 	int ret;
  
- #define USB_VENDOR_ID_MOJO		0x8282
- #define USB_DEVICE_ID_RETRO_ADAPTER	0x3201
---- a/drivers/hid/hid-quirks.c
-+++ b/drivers/hid/hid-quirks.c
-@@ -106,6 +106,7 @@ static const struct hid_device_id hid_qu
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_C05A), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_C06A), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_MCS, USB_DEVICE_ID_MCS_GAMEPADBLOCK), HID_QUIRK_MULTI_INPUT },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_PIXART_MOUSE), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_POWER_COVER), HID_QUIRK_NO_INIT_REPORTS },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_SURFACE_PRO_2), HID_QUIRK_NO_INIT_REPORTS },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_TOUCH_COVER_2), HID_QUIRK_NO_INIT_REPORTS },
+-	/* sendpage cannot properly handle pages with page_count == 0,
+-	 * we need to fallback to sendmsg if that's the case */
+-	if (page_count(page) >= 1)
++	/*
++	 * sendpage cannot properly handle pages with page_count == 0,
++	 * we need to fall back to sendmsg if that's the case.
++	 *
++	 * Same goes for slab pages: skb_can_coalesce() allows
++	 * coalescing neighboring slab objects into a single frag which
++	 * triggers one of hardened usercopy checks.
++	 */
++	if (page_count(page) >= 1 && !PageSlab(page))
+ 		return __ceph_tcp_sendpage(sock, page, offset, size, more);
+ 
+ 	bvec.bv_page = page;
 
 
