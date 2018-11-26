@@ -2,114 +2,99 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3428C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E52C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:24:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B42FC20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:24:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B42FC20817
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id DA03D20862
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:24:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="axfI5PWb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA03D20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbeK0CSZ (ORCPT
+        id S1726410AbeK0CS6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 21:18:25 -0500
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:36144 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726167AbeK0CSY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 21:18:24 -0500
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id RIjogDaI4IGBARIjrgfcWc; Mon, 26 Nov 2018 16:23:57 +0100
-Subject: Re: [PATCH v3] media: venus: amend buffer size for bitstream plane
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Malathi Gottam <mgottam@codeaurora.org>, mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
-        vgarodia@codeaurora.org, Tomasz Figa <tfiga@chromium.org>
-References: <1543227173-2160-1-git-send-email-mgottam@codeaurora.org>
- <d74281c8-a177-12a3-9e72-7a7db3014943@xs4all.nl>
- <f6106d20-abee-979c-8ac1-6c9115e8373c@linaro.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <57b28a7f-8c5c-22d2-2f89-e6d6ebdcb8a2@xs4all.nl>
-Date:   Mon, 26 Nov 2018 16:23:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 26 Nov 2018 21:18:58 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:37752 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726343AbeK0CS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 21:18:57 -0500
+Received: from zn.tnic (p200300EC2BDEFE00DCA0409AA15535E1.dip0.t-ipconnect.de [IPv6:2003:ec:2bde:fe00:dca0:409a:a155:35e1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 210751EC047F;
+        Mon, 26 Nov 2018 16:24:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1543245870;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=OrHRTyV8ZL8PKT6F+Lc9ZzBZbizj+TXF4HFQKjTXSEg=;
+        b=axfI5PWbEWB5pi7j54gdY1JKOYC6y9HyPNCeHxcRCaePFejapCpMbW/sOSx0r6sQXfq7yk
+        RNV9DOJ9sKnLWefNpvVp8q+iNBmXeoBIBiIwIAwKTuoNEPnS+MwTZs3eTz42YUBkzezoW0
+        10oeIA2E2tRq1vcqGs3FpeI06snVkIc=
+Date:   Mon, 26 Nov 2018 16:24:29 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [patch V2 06/28] x86/speculation: Rename SSBD update functions
+Message-ID: <20181126152429.GE4843@zn.tnic>
+References: <20181125183328.318175777@linutronix.de>
+ <20181125185004.058866968@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <f6106d20-abee-979c-8ac1-6c9115e8373c@linaro.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfISXF+eRkpVnhf4Z/3F84PafkCHgnu7bRH9AxzaGgryI+PKf0Q0gTNJFhaWRQF0cG+Bj1fLo7O8hUmHjfDsgUBgeMdyEv4D42EMEY/WtNd6mCElAqqCc
- LOPaENOqU8I+IlL3DwtlFLB58B64jVQtqaLWeR6iLN7mZBvHfo0VJVeLXi9atm59f9MSQaUDkQ6w5UQeXuwyIEDdQYfggHIZCnNKjq+bxgfTi2H17noAkc1t
- oyJo9w8OrBVq4+DSaPRnArWmKaYfoTxsEldDyrSIMHLlThvWNAXmHaUKt2JRC2T7zct15xI720/1CRH9CtVMLoqsZpEdOBB2iKQdqbHOzumKB/nnFXS6sSjF
- qemA2qkiOKXFn4P8gpSn32oRrtGoVZRK1tevZgSk1ih2FabtCDHbKRSvez7LT4l58hlA3BWPgVUFvXZ9C+nLtm4tXLivkAQb8m4qllEG87bQbk5senk=
+Content-Disposition: inline
+In-Reply-To: <20181125185004.058866968@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/26/2018 03:57 PM, Stanimir Varbanov wrote:
-> Hi Hans,
+On Sun, Nov 25, 2018 at 07:33:34PM +0100, Thomas Gleixner wrote:
+> During context switch, the SSBD bit in SPEC_CTRL MSR is updated according
+> to changes of the TIF_SSBD flag in the current and next running task.
 > 
-> On 11/26/18 3:37 PM, Hans Verkuil wrote:
->> On 11/26/2018 11:12 AM, Malathi Gottam wrote:
->>> Accept the buffer size requested by client and compare it
->>> against driver calculated size and set the maximum to
->>> bitstream plane.
->>>
->>> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
->>
->> Sorry, this isn't allowed. It is the driver that sets the sizeimage value,
->> never the other way around.
+> Currently, only the bit controlling speculative store bypass disable in
+> SPEC_CTRL MSR is updated and the related update functions all have
+> "speculative_store" or "ssb" in their names.
 > 
-> I think for decoders (OUTPUT queue) and encoders (CAPTURE queue) we
-> allowed userspace to set sizeimage for buffers. See [1] Initialization
-> paragraph point 2:
+> For enhanced mitigation control other bits in SPEC_CTRL MSR need to be
+> updated as well, which makes the SSB names inadequate.
 > 
->     ``sizeimage``
->        desired size of ``CAPTURE`` buffers; the encoder may adjust it to
->        match hardware requirements
-> 
-> Similar patch we be needed for decoder as well.
-
-I may have missed that change since it wasn't present in v1 of the stateful
-encoder spec.
-
-Tomasz, what was the reason for this change? I vaguely remember some thread
-about this, but I forgot the details. Since this would be a departure of
-the current API this should be explained in more detail.
-
-I don't really see the point of requiring userspace to fill this in. For
-stateful codecs it can just return some reasonable size. Possibly calculated
-using the provided width/height values or (if those are 0) some default value.
-
-Ditto for decoders.
-
-Stanimir, I certainly cannot merge this until this has been fully nailed down
-as it would be a departure from the current API.
-
-And looking at the venus patch I do not see how it helps userspace.
-
-Regards,
-
-	Hans
-
-> 
->>
->> If you need to allocate larger buffers, then use VIDIOC_CREATE_BUFS instead
->> of VIDIOC_REQBUFS.
->>
->> What problem are you trying to solve with this patch?
->>
->> Regards,
->>
->> 	Hans
->>
+> Rename the "speculative_store*" functions to a more generic name.
 > 
 
+And add:
+
+"No functional changes."
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
