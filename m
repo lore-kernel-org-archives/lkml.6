@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB1DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98977C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5619620672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:14:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5619620672
+	by mail.kernel.org (Postfix) with ESMTP id 65AB720660
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:14:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65AB720660
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730884AbeKZWIC (ORCPT
+        id S1730911AbeKZWII (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 17:08:02 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32886 "EHLO
+        Mon, 26 Nov 2018 17:08:08 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32926 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729507AbeKZWIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 17:08:02 -0500
+        id S1726477AbeKZWIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 17:08:07 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C2B4A3916;
-        Mon, 26 Nov 2018 03:14:14 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C6809391A;
+        Mon, 26 Nov 2018 03:14:19 -0800 (PST)
 Received: from e119886-lin.cambridge.arm.com (unknown [10.37.6.11])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 186F03F5AF;
-        Mon, 26 Nov 2018 03:14:09 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B0853F5AF;
+        Mon, 26 Nov 2018 03:14:14 -0800 (PST)
 From:   Andrew Murray <andrew.murray@arm.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -49,9 +49,9 @@ To:     Peter Zijlstra <peterz@infradead.org>,
 Cc:     linux-s390@vger.kernel.org, linux-mips@linux-mips.org,
         linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-alpha@vger.kernel.org
-Subject: [PATCH v2 10/20] drivers/perf: perf/core: remove unnecessary checks for exclusion
-Date:   Mon, 26 Nov 2018 11:12:26 +0000
-Message-Id: <1543230756-15319-11-git-send-email-andrew.murray@arm.com>
+Subject: [PATCH v2 11/20] drivers/perf: perf/core: advertise PMU exclusion capability
+Date:   Mon, 26 Nov 2018 11:12:27 +0000
+Message-Id: <1543230756-15319-12-git-send-email-andrew.murray@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543230756-15319-1-git-send-email-andrew.murray@arm.com>
 References: <1543230756-15319-1-git-send-email-andrew.murray@arm.com>
@@ -60,81 +60,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For drivers that do not support context exclusion we do not
-advertise the PERF_PMU_CAP_EXCLUDE capability. This ensures that
-perf will prevent us from handling events where any exclusion
-flags are set. Let's remove the now unnecessary check for
-exclusion flags.
-
-This change means that qcom_{l2|l3}_pmu will now also indicate that
-they do not support exclude_{host|guest} and that xgene_pmu does
-not also support exclude_idle and exclude_hv.
-
-Note that for qcom_l2_pmu we now implictly return -EINVAL instead
-of -EOPNOTSUPP. This change will result in the perf userspace
-utility retrying the perf_event_open system call with fallback
-event attributes that do not fail.
+The arm_pse PMU has the capability to exclude events based on
+context. Let's advertise that we support the PERF_PMU_CAP_EXCLUDE
+capability to ensure that perf doesn't prevent us from handling
+events where any exclusion flags are set.
 
 Signed-off-by: Andrew Murray <andrew.murray@arm.com>
 ---
- drivers/perf/qcom_l2_pmu.c | 8 --------
- drivers/perf/qcom_l3_pmu.c | 7 -------
- drivers/perf/xgene_pmu.c   | 5 -----
- 3 files changed, 20 deletions(-)
+ drivers/perf/arm_spe_pmu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
-index 842135c..518e18c 100644
---- a/drivers/perf/qcom_l2_pmu.c
-+++ b/drivers/perf/qcom_l2_pmu.c
-@@ -509,14 +509,6 @@ static int l2_cache_event_init(struct perf_event *event)
- 		return -EOPNOTSUPP;
- 	}
+diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+index 54ec278..a09c38a 100644
+--- a/drivers/perf/arm_spe_pmu.c
++++ b/drivers/perf/arm_spe_pmu.c
+@@ -902,7 +902,8 @@ static int arm_spe_pmu_perf_init(struct arm_spe_pmu *spe_pmu)
  
--	/* We cannot filter accurately so we just don't allow it. */
--	if (event->attr.exclude_user || event->attr.exclude_kernel ||
--	    event->attr.exclude_hv || event->attr.exclude_idle) {
--		dev_dbg_ratelimited(&l2cache_pmu->pdev->dev,
--				    "Can't exclude execution levels\n");
--		return -EOPNOTSUPP;
--	}
--
- 	if (((L2_EVT_GROUP(event->attr.config) > L2_EVT_GROUP_MAX) ||
- 	     ((event->attr.config & ~L2_EVT_MASK) != 0)) &&
- 	    (event->attr.config != L2CYCLE_CTR_RAW_CODE)) {
-diff --git a/drivers/perf/qcom_l3_pmu.c b/drivers/perf/qcom_l3_pmu.c
-index 2dc63d6..e28bd2f 100644
---- a/drivers/perf/qcom_l3_pmu.c
-+++ b/drivers/perf/qcom_l3_pmu.c
-@@ -495,13 +495,6 @@ static int qcom_l3_cache__event_init(struct perf_event *event)
- 		return -ENOENT;
- 
- 	/*
--	 * There are no per-counter mode filters in the PMU.
--	 */
--	if (event->attr.exclude_user || event->attr.exclude_kernel ||
--	    event->attr.exclude_hv || event->attr.exclude_idle)
--		return -EINVAL;
--
--	/*
- 	 * Sampling not supported since these events are not core-attributable.
- 	 */
- 	if (hwc->sample_period)
-diff --git a/drivers/perf/xgene_pmu.c b/drivers/perf/xgene_pmu.c
-index 0e31f13..bdc55de 100644
---- a/drivers/perf/xgene_pmu.c
-+++ b/drivers/perf/xgene_pmu.c
-@@ -914,11 +914,6 @@ static int xgene_perf_event_init(struct perf_event *event)
- 	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
- 		return -EINVAL;
- 
--	/* SOC counters do not have usr/os/guest/host bits */
--	if (event->attr.exclude_user || event->attr.exclude_kernel ||
--	    event->attr.exclude_host || event->attr.exclude_guest)
--		return -EINVAL;
--
- 	if (event->cpu < 0)
- 		return -EINVAL;
- 	/*
+ 	spe_pmu->pmu = (struct pmu) {
+ 		.module = THIS_MODULE,
+-		.capabilities	= PERF_PMU_CAP_EXCLUSIVE | PERF_PMU_CAP_ITRACE,
++		.capabilities	= PERF_PMU_CAP_EXCLUSIVE | PERF_PMU_CAP_ITRACE |
++				  PERF_PMU_CAP_EXCLUDE,
+ 		.attr_groups	= arm_spe_pmu_attr_groups,
+ 		/*
+ 		 * We hitch a ride on the software context here, so that
 -- 
 2.7.4
 
