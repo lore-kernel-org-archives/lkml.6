@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E71D7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D78E4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE3BA21473
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E06221104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VcPVL3Cj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE3BA21473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bc8eYHeK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E06221104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730599AbeKZV4h (ORCPT
+        id S1730612AbeKZV4j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:56:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39998 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:56:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729290AbeKZV4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:56:36 -0500
+        id S1729290AbeKZV4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:56:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93E5B20817;
-        Mon, 26 Nov 2018 11:02:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E46F21104;
+        Mon, 26 Nov 2018 11:02:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230171;
-        bh=IWHe9pvVuEm9cpYdygrCQHSWaM/neAWGg8MQbfVL49Q=;
+        s=default; t=1543230173;
+        bh=zunTDiH9rN1gMZqE56D7hrD2cRWVRw/j4WYmX4DqzRU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VcPVL3Cj9pw/iG481zz/x6Bim/wIz5UG/BBjEcs9dmkFz4X7K3uu9IIDNZ4eXVC59
-         vrFu4OLLznm4lNi5zQdZWWQIGxYByl57oCR997x8o9Kmlei00KTpmZjjJdRwAjB/jd
-         I1iTVNBB1PUnICyTgbe3v/miDCyOIbENcY+YufMA=
+        b=Bc8eYHeKCB5HJuqqog+QgeDozr8uS9BFdV6achSW1hYVkpJ3q2mshDg/ZMPWVx8ou
+         0DFvLMSuDk/NY90xXZm/3Pbdgc9dLqXq2oQa5jjOCX0IwvhMC0jsMdalVYpSIAI7hQ
+         J1TSxjqao5jOpxXheGGQhddpVoeksuBbE1Sc08fc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <zenczykowski@gmail.com>,
-        Florian Westphal <fw@strlen.de>,
-        Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
+        =?UTF-8?q?M=C3=A1t=C3=A9=20Eckl?= <ecklm94@gmail.com>,
         Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 033/118] netfilter: ipv6: fix oops when defragmenting locally generated fragments
-Date:   Mon, 26 Nov 2018 11:50:27 +0100
-Message-Id: <20181126105101.307993614@linuxfoundation.org>
+Subject: [PATCH 4.19 034/118] netfilter: bridge: define INT_MIN & INT_MAX in userspace
+Date:   Mon, 26 Nov 2018 11:50:28 +0100
+Message-Id: <20181126105101.526437622@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -66,49 +64,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 61792b677415b77c8db04991c22966bb8de7603e ]
+[ Upstream commit 5a8de47b3c250521dd632cdedaac6db88367defa ]
 
-Unlike ipv4 and normal ipv6 defrag, netfilter ipv6 defragmentation did
-not save/restore skb->dst.
+With 4.19, programs like ebtables fail to build when they include
+"linux/netfilter_bridge.h". It is caused by commit 94276fa8a2a4 which
+added a use of INT_MIN and INT_MAX to the header:
+: In file included from /usr/include/linux/netfilter_bridge/ebtables.h:18,
+:                  from include/ebtables_u.h:28,
+:                  from communication.c:23:
+: /usr/include/linux/netfilter_bridge.h:30:20: error: 'INT_MIN' undeclared here (not in a function)
+:   NF_BR_PRI_FIRST = INT_MIN,
+:                     ^~~~~~~
 
-This causes oops when handling locally generated ipv6 fragments, as
-output path needs a valid dst.
+Define these constants by including "limits.h" when !__KERNEL__ (the
+same way as for other netfilter_* headers).
 
-Reported-by: Maciej Żenczykowski <zenczykowski@gmail.com>
-Fixes: 84379c9afe01 ("netfilter: ipv6: nf_defrag: drop skb dst before queueing")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Fixes: 94276fa8a2a4 ("netfilter: bridge: Expose nf_tables bridge hook priorities through uapi")
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Acked-by: Máté Eckl <ecklm94@gmail.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/netfilter/nf_conntrack_reasm.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ include/uapi/linux/netfilter_bridge.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/net/ipv6/netfilter/nf_conntrack_reasm.c b/net/ipv6/netfilter/nf_conntrack_reasm.c
-index 8f68a518d9db..f76bd4d15704 100644
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -587,11 +587,16 @@ int nf_ct_frag6_gather(struct net *net, struct sk_buff *skb, u32 user)
- 	 */
- 	ret = -EINPROGRESS;
- 	if (fq->q.flags == (INET_FRAG_FIRST_IN | INET_FRAG_LAST_IN) &&
--	    fq->q.meat == fq->q.len &&
--	    nf_ct_frag6_reasm(fq, skb, dev))
--		ret = 0;
--	else
-+	    fq->q.meat == fq->q.len) {
-+		unsigned long orefdst = skb->_skb_refdst;
-+
-+		skb->_skb_refdst = 0UL;
-+		if (nf_ct_frag6_reasm(fq, skb, dev))
-+			ret = 0;
-+		skb->_skb_refdst = orefdst;
-+	} else {
- 		skb_dst_drop(skb);
-+	}
+diff --git a/include/uapi/linux/netfilter_bridge.h b/include/uapi/linux/netfilter_bridge.h
+index 156ccd089df1..1610fdbab98d 100644
+--- a/include/uapi/linux/netfilter_bridge.h
++++ b/include/uapi/linux/netfilter_bridge.h
+@@ -11,6 +11,10 @@
+ #include <linux/if_vlan.h>
+ #include <linux/if_pppox.h>
  
- out_unlock:
- 	spin_unlock_bh(&fq->q.lock);
++#ifndef __KERNEL__
++#include <limits.h> /* for INT_MIN, INT_MAX */
++#endif
++
+ /* Bridge Hooks */
+ /* After promisc drops, checksum checks. */
+ #define NF_BR_PRE_ROUTING	0
 -- 
 2.17.1
 
