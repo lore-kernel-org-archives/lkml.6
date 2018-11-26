@@ -6,42 +6,43 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68FACC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A40FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C6A7208E7
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:14:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3093420817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:15:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="p3SvR+mX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C6A7208E7
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="o+2CxZJV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3093420817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeK0IKM (ORCPT
+        id S1727415AbeK0IKg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 03:10:12 -0500
-Received: from vern.gendns.com ([98.142.107.122]:43784 "EHLO vern.gendns.com"
+        Tue, 27 Nov 2018 03:10:36 -0500
+Received: from vern.gendns.com ([98.142.107.122]:43820 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727107AbeK0IKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 03:10:12 -0500
+        id S1727107AbeK0IKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 03:10:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
         In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=jAo7j1JdPscjfFzdMCzJeTYsWErZOnhmq5dR06MrMxY=; b=p3SvR+mXcTOS7pHoyGwRx6JsDu
-        0o9Qo133ZB3XMIdfUoeyPN9nZOeWbh+85YbDPVS2lDW7ym8WWEC1bbgsz2lBs26KcdYe1IB9+i3Ga
-        0pBckS2aVAGpXXHQ3wnPwkezKbVVaFZDkLEVx5DlVTishfgz6cWMaeGNUzUyKAEZiPsENtRpVwEKh
-        t+FQviO8nA7wR+Iow+u+Y3XKDR5oHqenTFD0dgE2dnIIP2c4hTJdKR6UxFfAGeGVAYlHejTqryPq/
-        be9u0JvNHq4Vr91qb1Zedpm5ACcVrFBTMgGo7ceHLYz+/JVTXCfp0WbT8sNLjCJ+mQPvAnwUaCrAq
-        krhdsmfg==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:44790 helo=[192.168.0.134])
+        bh=PTY5HB7fVTFFAAZeV+GiHcPg/H9ZlU87Svhs4IutOlU=; b=o+2CxZJVi0xHDYJSxVYhDhlTml
+        RNwPCEtufiUCMwcojxoBjFuXuZiopDp+7e2BrdFx907Mt2Tm14em3bY3kZ9rfpzGjXwwfKRsHwWVN
+        DDHhmTx2jRmkw+WVEejSi4OICcKp4qWPsPQtucYoL52M7qnva0fG0d/fVET6BzD9L7MUaPPYFZBLS
+        uPq2daZdFw3mdGCAM25FMCLzJDO3pKKvtmq8YPpdtAXwxVuwlzzpB4CHd0E0hJmvbT8NMmvG0Qfu8
+        7ax7ULZQ214yP3peMVjJRQ9cHd8e2YsEAApq/V7pKWWXPZABmZfJopUPet+d5aVfvpH+lSvygWVAN
+        DIsPql8w==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:44794 helo=[192.168.0.134])
         by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <david@lechnology.com>)
-        id 1gROCW-00020T-8n; Mon, 26 Nov 2018 16:13:52 -0500
-Subject: Re: [PATCH 01/17] dt-bindings: remoteproc: Add TI PRUSS bindings
+        id 1gROCu-00024q-W4; Mon, 26 Nov 2018 16:14:17 -0500
+Subject: Re: [PATCH 06/17] soc: ti: pruss: Add a platform driver for PRUSS in
+ TI SoCs
 To:     Roger Quadros <rogerq@ti.com>, tony@atomide.com
 Cc:     robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org,
         ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com,
@@ -50,14 +51,14 @@ Cc:     robh+dt@kernel.org, bcousson@baylibre.com, ssantosh@kernel.org,
         linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 References: <1542886753-17625-1-git-send-email-rogerq@ti.com>
- <1542886753-17625-2-git-send-email-rogerq@ti.com>
+ <1542886753-17625-7-git-send-email-rogerq@ti.com>
 From:   David Lechner <david@lechnology.com>
-Message-ID: <a4fe952b-9065-d91b-4c07-984ec3f5b276@lechnology.com>
-Date:   Mon, 26 Nov 2018 15:14:41 -0600
+Message-ID: <1608af03-35b5-79ce-4995-84e85e740687@lechnology.com>
+Date:   Mon, 26 Nov 2018 15:15:05 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1542886753-17625-2-git-send-email-rogerq@ti.com>
+In-Reply-To: <1542886753-17625-7-git-send-email-rogerq@ti.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -76,127 +77,149 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/22/18 5:38 AM, Roger Quadros wrote:
+On 11/22/18 5:39 AM, Roger Quadros wrote:
 > From: Suman Anna <s-anna@ti.com>
 > 
-> This patch adds the bindings for the Programmable Real-Time Unit
-> and Industrial Communication Subsystem (PRU-ICSS) present on various
-> TI SoCs. The IP is present on multiple TI SoC architecture families
-> including the OMAP architecture SoCs such as AM33xx, AM437x and
-> AM57xx; and on a Keystone 2 architecture based 66AK2G SoC. It is
-> also present on the Davinci based OMAPL138 SoCs and K3 architecture
-> based AM65x SoCs as well (not covered for now). Details have been
-> added to include bindings for various core sub-modules like the PRU
-> Cores, the PRUSS Interrupt Controller, and other sub-modules used
-> for Industrial Communication purposes, covering the MDIO, MII_RT
-> and the IEP sub-modules. The binding mostly uses standard DT
-> properties.
+> The PRUSS platform driver deals with the overall PRUSS and is
+> used for managing the subsystem level resources like various
+> memories. It is responsible for the creation and deletion of
+> the platform devices for the child PRU devices and other child
+> devices (Interrupt Controller or MDIO node or some syscon nodes)
+> so that they can be managed by specific platform drivers.
+> 
+> This design provides flexibility in representing the different
+> modules of PRUSS accordingly, and at the same time allowing the
+> PRUSS driver to add some instance specific configuration within
+> an SoC.
+> 
+> The driver currently supports the AM335x SoC.
 > 
 > Signed-off-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
 > Signed-off-by: Roger Quadros <rogerq@ti.com>
 > ---
->   .../devicetree/bindings/soc/ti/ti,pruss.txt        | 360 +++++++++++++++++++++
->   1 file changed, 360 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>   drivers/soc/ti/Makefile |   2 +-
+>   drivers/soc/ti/pruss.c  | 116 ++++++++++++++++++++++++++++++++++++++++++++++++
+>   drivers/soc/ti/pruss.h  |  44 ++++++++++++++++++
+>   3 files changed, 161 insertions(+), 1 deletion(-)
+>   create mode 100644 drivers/soc/ti/pruss.c
+>   create mode 100644 drivers/soc/ti/pruss.h
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+
+...
+
+> diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
 > new file mode 100644
-> index 0000000..24fedad
+> index 0000000..0840b59
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
-
-...
-
+> +++ b/drivers/soc/ti/pruss.c
+> @@ -0,0 +1,116 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * PRU-ICSS platform driver for various TI SoCs
+> + *
+> + * Copyright (C) 2014-2018 Texas Instruments Incorporated - http://www.ti.com/
+> + *	Suman Anna <s-anna@ti.com>
+> + *	Andrew F. Davis <afd@ti.com>
+> + */
 > +
-> +PRU-ICSS SoC Bus Parent Node
-> +=============================
-> +This node represents the integration of the PRU-ICSS IP into a SoC, and is
-> +required for all SoCs. The PRU-ICSS parent nodes need to be defined as child
-> +nodes of this node.
+> +#include <linux/dma-mapping.h>
+> +#include <linux/module.h>
+
+alphabetical order?
+
+> +#include <linux/io.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
 > +
-> +Required Properties:
-> +--------------------
-> +- compatible     : should be one of,
-> +                       "ti,am3356-pruss-soc-bus" for AM335x family of SoCs
-> +                       "ti,am4376-pruss-soc-bus" for AM437x family of SoCs
-> +                       "ti,am5728-pruss-soc-bus" for AM57xx family of SoCs
-> +                       "ti,k2g-pruss-soc-bus" for 66AK2G family of SoCs
-> +- reg            : address and size of the PRUSS CFG sub-module registers
-> +                   dictating the interconnect configuration
-
-I haven't looked into Tony's suggestion of using ti-sysc yet, so this may be a
-moot point, but how will this work with AM18xx that does not have a PRUSS CFG
-register? It seems to me that reg here should be the address and size of the
-entire PRUSS IP block and the CFG register should be a syscon node or something
-like that.
-
-> +- #address-cells : should be 1
-> +- #size-cells    : should be 1
-> +- ranges         : standard ranges definition
+> +#include "pruss.h"
 > +
-
-...
-
+> +static int pruss_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *node = dev->of_node;
+> +	struct device_node *np;
+> +	struct pruss *pruss;
+> +	struct resource res;
+> +	int ret, i, index;
+> +	const char *mem_names[PRUSS_MEM_MAX] = { "dram0", "dram1", "shrdram2" };
 > +
-> +PRUSS INTC Child Node
-> +======================
-> +Each PRUSS has a single interrupt controller instance that is common to both
-> +the PRU cores. Each interrupt controller can detect 64 input events which are
-> +then mapped to 10 possible output interrupts through two levels of mapping. The
-> +input events can be triggered by either the PRUs and/or various other PRUSS
-> +internal and external peripherals. The first 2 output interrupts are fed
-> +exclusively to the internal PRU cores, with the remaining 8 connected to
-> +external interrupt controllers including the MPU.
-
-FYI, on AM18xx, there is a PRUSSEVTSEL bit in CFGCHIP3[3] (already a syscon node
-in the device tree) that allows selecting one of two groups of 32 input events
-out of this group of 64. This is perhaps getting out of the scope of this patch
-series, but I just want to make sure we end up with something that can be easily
-extended for this case. For example, I was thinking that this binding could be
-modified so that #interrupt-cells could be 1 or 2. If it is 2, then the first
-cell specifies the PRUSSEVTSEL value and the second value is the event number.
-
-
+> +	if (!node) {
+> +		dev_err(dev, "Non-DT platform device not supported\n");
+> +		return -ENODEV;
+> +	}
 > +
-> +Required Properties:
-> +--------------------
-> +- compatible           : should be one of,
-> +                             "ti,am3356-pruss-intc" for AM335x family of SoCs
-> +                             "ti,am4376-pruss-intc" for AM437x family of SoCs
-> +                             "ti,am5728-pruss-intc" for AM57xx family of SoCs
-> +                             "ti,k2g-pruss-intc" for 66AK2G family of SoCs
-> +- reg                  : base address and size for the PRUSS INTC sub-module
-> +- reg-names            : should contain the string "intc"
-> +- interrupt-controller : mark this node as an interrupt controller
-> +- #interrupt-cells     : should be 1. Client users shall use the PRU System
-> +                         event number (the interrupt source that the client
-> +                         is interested in) as the value of the interrupts
-> +                         property in their node
+> +	ret = dma_set_coherent_mask(dev, DMA_BIT_MASK(32));
+> +	if (ret) {
+> +		dev_err(dev, "dma_set_coherent_mask: %d\n", ret);
+> +		return ret;
+> +	}
 > +
+> +	pruss = devm_kzalloc(dev, sizeof(*pruss), GFP_KERNEL);
+> +	if (!pruss)
+> +		return -ENOMEM;
 > +
-> +PRU Child Node
-> +===============
-> +Each PRUSS has dual PRU cores, each represented by a PRU child node. Each node
-> +can optionally be rendered inactive by using the standard DT string property,
-> +"status".
+> +	pruss->dev = dev;
 > +
-> +Required Properties:
-> +--------------------
-> +- compatible     : should be
-> +                       "ti,am3356-pru" for AM335x family of SoCs
-> +                       "ti,am4376-pru" for AM437x family of SoCs
-> +                       "ti,am5728-pru" for AM57xx family of SoCs
-> +                       "ti,k2g-pru" for 66AK2G family of SoCs
-> +- reg            : base address and size for each of the 3 sub-module address
-> +                   spaces as mentioned in reg-names, and in the same order as
-> +                   the reg-names
-> +- reg-names      : should contain each of the following 3 names, the binding is
-> +                   agnostic of the order of these reg-names
-> +                       "iram" for Instruction RAM,
-> +                       "control" for the CTRL sub-module registers,
-> +                       "debug" for the Debug sub-module registers,
-> +- firmware-name  : should contain the name of the default firmware image file
-> +                   located on the firmware search path
+> +	np = of_get_child_by_name(node, "memories");
+> +	if (!np)
 
-What does the default firmware do? It doesn't seem like this could be useful
-since the PRU doesn't have a definite purpose.
+error message?
+
+> +		return -ENODEV;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
+> +		index = of_property_match_string(np, "reg-names", mem_names[i]);
+> +		if (index < 0) {
+> +			of_node_put(np);
+> +			return index;
+> +		}
+> +
+> +		if (of_address_to_resource(np, index, &res)) {
+> +			of_node_put(np);
+> +			return -EINVAL;
+> +		}
+> +
+> +		pruss->mem_regions[i].va = devm_ioremap(dev, res.start,
+> +							resource_size(&res));
+> +		if (!pruss->mem_regions[i].va) {
+> +			dev_err(dev, "failed to parse and map memory resource %d %s\n",
+> +				i, mem_names[i]);
+> +			of_node_put(np);
+> +			return -ENOMEM;
+> +		}
+> +		pruss->mem_regions[i].pa = res.start;
+> +		pruss->mem_regions[i].size = resource_size(&res);
+> +
+> +		dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %p\n",
+> +			mem_names[i], &pruss->mem_regions[i].pa,
+> +			pruss->mem_regions[i].size, pruss->mem_regions[i].va);
+> +	}
+> +	of_node_put(np);
+> +
+> +	platform_set_drvdata(pdev, pruss);
+> +
+> +	dev_info(&pdev->dev, "creating PRU cores and other child platform devices\n");
+
+Is this really needed? Or dev_dbg instead?
+
+> +	ret = of_platform_populate(node, NULL, NULL, &pdev->dev);
+> +	if (ret)
+> +		dev_err(dev, "of_platform_populate failed\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static int pruss_remove(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +
+> +	dev_info(dev, "remove PRU cores and other child platform devices\n");
+
+same here... looks like debug message
+
+> +	of_platform_depopulate(dev);
+> +
+> +	return 0;
+> +}
+> +
