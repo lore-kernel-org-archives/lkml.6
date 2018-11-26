@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1E8C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2956EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0579D21473
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E515A2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvZuHqEL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0579D21473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PwrZnFHQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E515A2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730562AbeKZV4b (ORCPT
+        id S1730572AbeKZV4e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:56:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39804 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:56:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729436AbeKZV4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:56:30 -0500
+        id S1729290AbeKZV4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:56:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A9342147D;
-        Mon, 26 Nov 2018 11:02:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F190021104;
+        Mon, 26 Nov 2018 11:02:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230165;
-        bh=RelLPr/eJs61Od1xJF6KjtcxJca6bKdlb/qQvL9zL4M=;
+        s=default; t=1543230168;
+        bh=EPAxqVIfuKBje7BY4dkySFcOZhqu2H8hK5EANgoRQF8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TvZuHqELbczIAN4VCFcdTbOO+N0uYT75Tf/wAWm2QrXeu1/vvKhtcyUdwJxdKL6tG
-         oZOnPHw6vvXPILjMf9LkON5O3B1TeP80Ri7zrRRIeisR1N8AaZjvA2s606mocUN4oJ
-         cprMkZsPpIwwPnp5k3bJYTCE/hV7gIZVhsJHESXM=
+        b=PwrZnFHQvgBa8Io65CyM0EFji6MHbcyNO1bHjVTvPdNczK+/SkkAefhO/2Qj/H2V7
+         Gk8vDMoJypQVfrMnvqeVb0NvZ6DTh9pZTq7oC4dQS/UvFSwrcRdxlYJNqvzQeQJhex
+         f4uNEZeqvYKLrKh3S5GmPcv6Fl0kTtxJCbAojQyQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 031/118] clk: ti: fix OF child-node lookup
-Date:   Mon, 26 Nov 2018 11:50:25 +0100
-Message-Id: <20181126105101.070113081@linuxfoundation.org>
+Subject: [PATCH 4.19 032/118] serial: sh-sci: Fix receive on SCIFA/SCIFB variants with DMA
+Date:   Mon, 26 Nov 2018 11:50:26 +0100
+Message-Id: <20181126105101.174510502@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -63,65 +65,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 00a461cc32ec27fa7bd9c874a7b36b0c6c542c12 ]
+[ Upstream commit 202dc3cc10b4d37e5251431acf8d5040a8876c7d ]
 
-Fix child-node lookup which by using the wrong OF helper was searching
-the whole tree depth-first, something which could end up matching an
-unrelated node.
+On SCIFA and SCIFB serial ports with DMA support (i.e. some ports on
+R-Car Gen2 and RZ/G1 SoCs), receive DMA operations are submitted before
+the DMA channel pointer is initialized.  Hence this fails, and the
+driver tries to fall back to PIO.  However, at this early phase in the
+initialization sequence, fallback to PIO does not work, leading to a
+serial port that cannot receive any data.
 
-Also fix the related node-reference leaks.
+Fix this by calling sci_submit_rx() after initialization of the DMA
+channel pointer.
 
-Fixes: 5b385a45e001 ("clk: ti: add support for clkctrl aliases")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Acked-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Fixes: 2c4ee23530ffc022 ("serial: sh-sci: Postpone DMA release when falling back to PIO")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/ti/clk.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/tty/serial/sh-sci.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index 7d22e1af2247..27e0979b3158 100644
---- a/drivers/clk/ti/clk.c
-+++ b/drivers/clk/ti/clk.c
-@@ -129,7 +129,7 @@ int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
- void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
- {
- 	struct ti_dt_clk *c;
--	struct device_node *node;
-+	struct device_node *node, *parent;
- 	struct clk *clk;
- 	struct of_phandle_args clkspec;
- 	char buf[64];
-@@ -164,8 +164,12 @@ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
- 			continue;
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 3649b83ef863..effba6ce0caa 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1614,10 +1614,10 @@ static void sci_request_dma(struct uart_port *port)
+ 		hrtimer_init(&s->rx_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+ 		s->rx_timer.function = rx_timer_fn;
  
- 		node = of_find_node_by_name(NULL, buf);
--		if (num_args)
--			node = of_find_node_by_name(node, "clk");
-+		if (num_args) {
-+			parent = node;
-+			node = of_get_child_by_name(parent, "clk");
-+			of_node_put(parent);
-+		}
++		s->chan_rx_saved = s->chan_rx = chan;
 +
- 		clkspec.np = node;
- 		clkspec.args_count = num_args;
- 		for (i = 0; i < num_args; i++) {
-@@ -173,11 +177,12 @@ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
- 			if (ret) {
- 				pr_warn("Bad tag in %s at %d: %s\n",
- 					c->node_name, i, tags[i]);
-+				of_node_put(node);
- 				return;
- 			}
- 		}
- 		clk = of_clk_get_from_provider(&clkspec);
+ 		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
+ 			sci_submit_rx(s);
 -
-+		of_node_put(node);
- 		if (!IS_ERR(clk)) {
- 			c->lk.clk = clk;
- 			clkdev_add(&c->lk);
+-		s->chan_rx_saved = s->chan_rx = chan;
+ 	}
+ }
+ 
 -- 
 2.17.1
 
