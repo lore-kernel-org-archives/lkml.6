@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60EFEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5729CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2877A21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CB402089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIGE+2cM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2877A21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qcc4QG07"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CB402089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727625AbeKZVsb (ORCPT
+        id S1727644AbeKZVse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:48:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57072 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:48:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726475AbeKZVsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:48:30 -0500
+        id S1726475AbeKZVsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:48:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FB9F21479;
-        Mon, 26 Nov 2018 10:54:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A87A52089F;
+        Mon, 26 Nov 2018 10:54:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229686;
-        bh=MJk2C0A6Tzto0zftuZpB1Jaup8B/VUTXdJ81LJ/Yf+k=;
+        s=default; t=1543229689;
+        bh=wXR5OY3d2wpKSPu4/C9+/cViUuiNTlMfyxjAClR0HhA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oIGE+2cMcsyJQny50LOIgqnMakEfdJJ6g9kqq8suOnDybQJtaGU8iHFx67jMuwT/f
-         FenuDzYgyx4dGU6sa4+YXc7oIhCPMjzdYUjTBIy/e89kuHxsc7suQAU8fG+uGDSWV3
-         COyWBqM+pb/b2bXaAU5ZOpKJlUwT09xGeF5FPgiE=
+        b=qcc4QG07NTNg7a650StKb9LX4B76TS2qUhbXOcwMB99SxAvOsUtrQ3q2AiWmA0pjI
+         Nl8DLuYkrcolrI/9Dyqx/7CMkNxxwRoVor7q3kJZoCc2gvMde42mJYyaeT5vhLvKxB
+         qmK0+y4vqjJPpXU5Q83M4Kc92iSBaxWJVZe6g5eA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -44,9 +44,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ingo Molnar <mingo@kernel.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.4 33/70] x86/build: Use __cc-option for boot code compiler options
-Date:   Mon, 26 Nov 2018 11:50:48 +0100
-Message-Id: <20181126105049.951735109@linuxfoundation.org>
+Subject: [PATCH 4.4 34/70] x86/build: Specify stack alignment for clang
+Date:   Mon, 26 Nov 2018 11:50:49 +0100
+Message-Id: <20181126105050.030657011@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
 References: <20181126105046.722096341@linuxfoundation.org>
@@ -66,24 +66,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Matthias Kaehlcke <mka@chromium.org>
 
-commit 032a2c4f65a2f81c93e161a11197ba19bc14a909 upstream.
+commit d77698df39a512911586834d303275ea5fda74d0 upstream.
 
-cc-option is used to enable compiler options for the boot code if they
-are available. The macro uses KBUILD_CFLAGS and KBUILD_CPPFLAGS for the
-check, however these flags aren't used to build the boot code, in
-consequence cc-option can yield wrong results. For example
--mpreferred-stack-boundary=2 is never set with a 64-bit compiler,
-since the setting is only valid for 16 and 32-bit binaries. This
-is also the case for 32-bit kernel builds, because the option -m32 is
-added to KBUILD_CFLAGS after the assignment of REALMODE_CFLAGS.
+For gcc stack alignment is configured with -mpreferred-stack-boundary=N,
+clang has the option -mstack-alignment=N for that purpose. Use the same
+alignment as with gcc.
 
-Use __cc-option instead of cc-option for the boot mode options.
-The macro receives the compiler options as parameter instead of using
-KBUILD_C*FLAGS, for the boot code we pass REALMODE_CFLAGS.
-
-Also use separate statements for the __cc-option checks instead
-of performing them in the initial assignment of REALMODE_CFLAGS since
-the variable is an input of the macro.
+If the alignment is not specified clang assumes an alignment of
+16 bytes, as required by the standard ABI. However as mentioned in
+d9b0cde91c60 ("x86-64, gcc: Use -mpreferred-stack-boundary=3 if
+supported") the standard kernel entry on x86-64 leaves the stack
+on an 8-byte boundary, as a consequence clang will keep the stack
+misaligned.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 Acked-by: Ingo Molnar <mingo@kernel.org>
@@ -91,26 +85,64 @@ Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/Makefile |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ arch/x86/Makefile |   26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
 --- a/arch/x86/Makefile
 +++ b/arch/x86/Makefile
-@@ -24,10 +24,11 @@ REALMODE_CFLAGS	:= $(M16_CFLAGS) -g -Os
- 		   -DDISABLE_BRANCH_PROFILING \
- 		   -Wall -Wstrict-prototypes -march=i386 -mregparm=3 \
- 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic \
--		   -mno-mmx -mno-sse \
--		   $(call cc-option, -ffreestanding) \
--		   $(call cc-option, -fno-stack-protector) \
--		   $(call cc-option, -mpreferred-stack-boundary=2)
-+		   -mno-mmx -mno-sse
+@@ -11,6 +11,14 @@ else
+         KBUILD_DEFCONFIG := $(ARCH)_defconfig
+ endif
+ 
++# For gcc stack alignment is specified with -mpreferred-stack-boundary,
++# clang has the option -mstack-alignment for that purpose.
++ifneq ($(call cc-option, -mpreferred-stack-boundary=4),)
++        cc_stack_align_opt := -mpreferred-stack-boundary
++else ifneq ($(call cc-option, -mstack-alignment=4),)
++        cc_stack_align_opt := -mstack-alignment
++endif
 +
-+REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -ffreestanding)
-+REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -fno-stack-protector)
-+REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -mpreferred-stack-boundary=2)
+ # How to compile the 16-bit code.  Note we always compile for -march=i386;
+ # that way we can complain to the user if the CPU is insufficient.
+ #
+@@ -28,7 +36,7 @@ REALMODE_CFLAGS	:= $(M16_CFLAGS) -g -Os
+ 
+ REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -ffreestanding)
+ REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -fno-stack-protector)
+-REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -mpreferred-stack-boundary=2)
++REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), $(cc_stack_align_opt)=2)
  export REALMODE_CFLAGS
  
  # BITS is used as extension for files which are available in a 32 bit
+@@ -65,8 +73,10 @@ ifeq ($(CONFIG_X86_32),y)
+         # with nonstandard options
+         KBUILD_CFLAGS += -fno-pic
+ 
+-        # prevent gcc from keeping the stack 16 byte aligned
+-        KBUILD_CFLAGS += $(call cc-option,-mpreferred-stack-boundary=2)
++        # Align the stack to the register width instead of using the default
++        # alignment of 16 bytes. This reduces stack usage and the number of
++        # alignment instructions.
++        KBUILD_CFLAGS += $(call cc-option,$(cc_stack_align_opt)=2)
+ 
+         # Disable unit-at-a-time mode on pre-gcc-4.0 compilers, it makes gcc use
+         # a lot more stack due to the lack of sharing of stacklots:
+@@ -98,8 +108,14 @@ else
+         KBUILD_CFLAGS += $(call cc-option,-mno-80387)
+         KBUILD_CFLAGS += $(call cc-option,-mno-fp-ret-in-387)
+ 
+-	# Use -mpreferred-stack-boundary=3 if supported.
+-	KBUILD_CFLAGS += $(call cc-option,-mpreferred-stack-boundary=3)
++        # By default gcc and clang use a stack alignment of 16 bytes for x86.
++        # However the standard kernel entry on x86-64 leaves the stack on an
++        # 8-byte boundary. If the compiler isn't informed about the actual
++        # alignment it will generate extra alignment instructions for the
++        # default alignment which keep the stack *mis*aligned.
++        # Furthermore an alignment to the register width reduces stack usage
++        # and the number of alignment instructions.
++        KBUILD_CFLAGS += $(call cc-option,$(cc_stack_align_opt)=3)
+ 
+ 	# Use -mskip-rax-setup if supported.
+ 	KBUILD_CFLAGS += $(call cc-option,-mskip-rax-setup)
 
 
