@@ -2,91 +2,117 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 285C4C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D5D4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB31F20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:53:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB31F20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B4D620855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:54:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B4D620855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbeK0DsX (ORCPT
+        id S1726579AbeK0Dsz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 22:48:23 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:50430 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726203AbeK0DsX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:48:23 -0500
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAQGrP80012732;
-        Mon, 26 Nov 2018 10:53:37 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail3.cirrus.com ([87.246.76.56])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2ny4x62s3j-1;
-        Mon, 26 Nov 2018 10:53:37 -0600
-Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
-        by mail3.cirrus.com (Postfix) with ESMTP id BA89C611C8AF;
-        Mon, 26 Nov 2018 10:56:25 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 26 Nov 2018
- 16:53:36 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wAQGrZsL004922; Mon,
- 26 Nov 2018 16:53:35 GMT
-Date:   Mon, 26 Nov 2018 16:53:35 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH 3/3] gpio: Add reference counting for non-exclusive GPIOs
-Message-ID: <20181126165335.GP16508@imbe.wolfsonmicro.main>
-References: <20181122173015.23905-1-ckeepax@opensource.cirrus.com>
- <20181122173015.23905-3-ckeepax@opensource.cirrus.com>
- <CACRpkdZEu44WHScd5VibYT5C9RikqcvKsgpVOpkkdrYbLaV8Ng@mail.gmail.com>
- <20181123105729.GM16508@imbe.wolfsonmicro.main>
- <20181123132522.GE2089@sirena.org.uk>
- <20181126130001.GN16508@imbe.wolfsonmicro.main>
- <20181126140927.GD9715@sirena.org.uk>
- <20181126143028.GO16508@imbe.wolfsonmicro.main>
- <20181126145428.GF9715@sirena.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181126145428.GF9715@sirena.org.uk>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=614 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1811260150
+        Mon, 26 Nov 2018 22:48:55 -0500
+Received: from mout.gmx.net ([212.227.17.22]:37237 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726255AbeK0Dsz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 22:48:55 -0500
+Received: from ovpn-120-189.rdu2.redhat.com ([98.118.28.103]) by mail.gmx.com
+ (mrgmx102 [212.227.17.174]) with ESMTPSA (Nemesis) id
+ 0LsOsW-1fPi1s2h9U-011xcO; Mon, 26 Nov 2018 17:53:57 +0100
+From:   Qian Cai <cai@gmx.us>
+To:     akpm@linux-foundation.org
+Cc:     tglx@linutronix.de, longman@redhat.com, yang.shi@linux.alibaba.com,
+        arnd@arndb.de, catalin.marinas@arm.com,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@gmx.us>
+Subject: [PATCH] debugobjects: avoid recursive calls with kmemleak
+Date:   Mon, 26 Nov 2018 11:53:43 -0500
+Message-Id: <20181126165343.2339-1-cai@gmx.us>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+X-Provags-ID: V03:K1:Z7xs/5i9krT0NzYMsDvLcsUygqjt/jpWeQQjvMr81mWug/3PZsg
+ naIaLeLjjSAUEgiQZHftT19AVpLQxrflepB1Qj5Ho8eNPXLzCpaeN9g4cjvd3t6RrORz9Hl
+ A4dXdQv6kwS6VGa97rkwsGzxob+e2NuffiSK7YhIdtjJrs4KqMtwSv8h91FFV04ZiMAdJi6
+ groKHWdCTJPY3maYAxtkw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:aWEabYTnR6k=:sDbah4z6OK9H3wkI3T+gEG
+ kUTuv8XhaotZjip62BP9npVQZ5TbyWUT9uOWBiGuBWMZOFPMHQoU/Yzpzl4nNgOC62Lq486Of
+ aJwTyjMgzAPB4LE1JMH/22oJb3uzz3l0idLdvvTNmMC9jYyv6QGuBTVXII402ja/xeGS8muH5
+ J3lqHYwM7u3wMNdiU26y/jHSrSgyH+7oXJRjc5Cqpseu4PSKSrbEoS3uFqU5HjBaUUmhwk104
+ ck0AJNg5GUERsrroUOEn3Hu4TJBjZGig3fYQpr9kZ/F9gPWVFgpHBWEN7X5QAyaOilOa5PcWn
+ jVlqLZLhc0VKwAGQyNOUoX7meNqwClHinR0cKds1AQ5Fmwn4+dT18R2FamiabGefgfYIohbxH
+ 8iguUZEq+OdZ5aCPBaaLQE1mF/no++j1X8JiDRySVxoSUfWtokNJKPZmDfmDipAEmiizH2Sip
+ 8155IDoiBpX67HRIUyTffB0S9NwaY1HPxlE935eeuGMyAjOZK0Ru+1X7gZEopoIuu6ISJNS0E
+ W8nnPqUjKYt+aTqUxvyC40T1BSoKIj7XRalGvoxbFbQrqcIygu7NxoZW37xXAzbaUrSVPpjql
+ KqTxEKt2QsXyW/FvN/PQWP8aVYJjLf2b7xplL7XrGkGX/FsXz/M+YIefqdDoB91Lh4aU21nWk
+ CQn3wBniLBBdUSj4knjDdIdTAsCqHeOkdE96X5SNPdqeYSPwtJIaV9VnWlJvgDpemo6it+2Wo
+ 25wN06d5rJtuj1v74gX0EkGi/VFvBb4xdfRVzIOkpgM38Z7afBP11Y0L1eZQgq45v4KnWbc97
+ c3Pt0UKj+xhWteKH0gnfAip91v5hCGKGlu/Bc8O/BO3Y2RIEGoHmodT1A8rxp9TPmfD8JJz2G
+ KTxLpbE4Nz7FxduGydfvhGT355oSLLiyEy7YQRMzc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 02:54:28PM +0000, Mark Brown wrote:
-> On Mon, Nov 26, 2018 at 02:30:28PM +0000, Charles Keepax wrote:
-> 
-> > Would there perhaps be milage in looking at just making
-> > the regulator core request the GPIO, rather than the end
-> > drivers? Gives us a single request/free point. We don't need
-> > any special flags in the GPIO layer, as its just a single
-> > user as far as GPIO is concerned.
-> 
-> Yes, I did suggest that earlier in the thread :/
+CONFIG_DEBUG_OBJECTS_RCU_HEAD does not play well with kmemleak due to
+recursive calls.
 
-Sorry yes it seems I misread what you had written earlier, I will
-have a quick look see what a patch to do this might look like.
+fill_pool
+  kmemleak_ignore
+    make_black_object
+      put_object
+        __call_rcu (kernel/rcu/tree.c)
+          debug_rcu_head_queue
+            debug_object_activate
+              debug_object_init
+                fill_pool
+                  kmemleak_ignore
+                    make_black_object
+                      ...
 
-Thanks,
-Charles
+Hence, adding SLAB_NOLEAKTRACE to kmem_cache_create() to not register a
+newly allocated debug objects at all.
+
+Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Qian Cai <cai@gmx.us>
+---
+ lib/debugobjects.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index eab7727b46ed..55437fd5128b 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -135,7 +135,6 @@ static void fill_pool(void)
+ 		if (!new)
+ 			return;
+ 
+-		kmemleak_ignore(new);
+ 		raw_spin_lock_irqsave(&pool_lock, flags);
+ 		hlist_add_head(&new->node, &obj_pool);
+ 		debug_objects_allocated++;
+@@ -1128,7 +1127,6 @@ static int __init debug_objects_replace_static_objects(void)
+ 		obj = kmem_cache_zalloc(obj_cache, GFP_KERNEL);
+ 		if (!obj)
+ 			goto free;
+-		kmemleak_ignore(obj);
+ 		hlist_add_head(&obj->node, &objects);
+ 	}
+ 
+@@ -1182,7 +1180,8 @@ void __init debug_objects_mem_init(void)
+ 
+ 	obj_cache = kmem_cache_create("debug_objects_cache",
+ 				      sizeof (struct debug_obj), 0,
+-				      SLAB_DEBUG_OBJECTS, NULL);
++				      SLAB_DEBUG_OBJECTS | SLAB_NOLEAKTRACE,
++				      NULL);
+ 
+ 	if (!obj_cache || debug_objects_replace_static_objects()) {
+ 		debug_objects_enabled = 0;
+-- 
+2.17.2 (Apple Git-113)
+
