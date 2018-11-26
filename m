@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBEEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E843C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBC4A2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA42820672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqyH4RoJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBC4A2089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kpju2SIv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA42820672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730042AbeKZWAP (ORCPT
+        id S1731593AbeKZWAR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 17:00:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46996 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 17:00:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729543AbeKZWAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 17:00:14 -0500
+        id S1729543AbeKZWAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 17:00:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40AF320645;
-        Mon, 26 Nov 2018 11:06:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAC5020645;
+        Mon, 26 Nov 2018 11:06:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230387;
-        bh=ViPrb8JsQd9qJMiibI2QUpi6zli7IOAC9W1tKK35cTg=;
+        s=default; t=1543230390;
+        bh=VcWrju7b4gxuc3QUd31rkgd8beeU/0qkOEIgduKtwQM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QqyH4RoJB0DqD4itHkmGoDrHi7jzrq5qs4L+Vs07B0co6zf7Agn6maQnQK8gHftJJ
-         DNZlMcQGnhZgt5WwQqmUEZjvAlzDE959Wx2/PBAZzfwrK4mXXRSF1xqOSxhSsNxvLa
-         DO5u1WuHIef6Jvw/ovFb/Y4BeWK94mRyxvYSvYW4=
+        b=Kpju2SIvtIIhbOS2mLkhHq6OgiFdfnITiMeMSP51b1qYU0Phd9sFGRMAEaZEwv0So
+         S7//dgdd85SlTjK/47SKMQ0ccx8TY9IbDtP3Vr9A79RMc4GveyzkL8OLvVSBQhJspI
+         FyWd92yAtAf2wDNafX0ENuW03jxW45vq101X+qoc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Bolotin <denis.bolotin@cavium.com>,
-        Michal Kalderon <michal.kalderon@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 082/118] qed: Fix blocking/unlimited SPQ entries leak
-Date:   Mon, 26 Nov 2018 11:51:16 +0100
-Message-Id: <20181126105104.987936772@linuxfoundation.org>
+Subject: [PATCH 4.19 073/118] i2c: qcom-geni: Fix runtime PM mismatch with child devices
+Date:   Mon, 26 Nov 2018 11:51:07 +0100
+Message-Id: <20181126105104.336966682@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -64,143 +64,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2632f22ebd08da249c2017962a199a0cfb2324bf ]
+[ Upstream commit 848bd3f3de9d44950c00eda6c115e8e9785440da ]
 
-When there are no SPQ entries left in the free_pool, new entries are
-allocated and are added to the unlimited list. When an entry in the pool
-is available, the content is copied from the original entry, and the new
-entry is sent to the device. qed_spq_post() is not aware of that, so the
-additional entry is stored in the original entry as p_post_ent, which can
-later be returned to the pool.
+We need to enable runtime PM on this i2c controller before populating
+child devices with i2c_add_adapter(). Otherwise, if a child device uses
+runtime PM and stays runtime PM enabled we'll get the following warning
+at boot.
 
-Signed-off-by: Denis Bolotin <denis.bolotin@cavium.com>
-Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+ Enabling runtime PM for inactive device (a98000.i2c) with active children
+
+[...]
+
+ Call trace:
+  pm_runtime_enable+0xd8/0xf8
+  geni_i2c_probe+0x440/0x460
+  platform_drv_probe+0x74/0xc8
+[...]
+
+Let's move the runtime PM enabling and setup to before we add the
+adapter, so that this device can respond to runtime PM requests from
+children.
+
+Fixes: 37692de5d523 ("i2c: i2c-qcom-geni: Add bus driver for the Qualcomm GENI I2C controller")
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_sp.h  |  3 ++
- drivers/net/ethernet/qlogic/qed/qed_spq.c | 57 ++++++++++++-----------
- 2 files changed, 33 insertions(+), 27 deletions(-)
+ drivers/i2c/busses/i2c-qcom-geni.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp.h b/drivers/net/ethernet/qlogic/qed/qed_sp.h
-index e95431f6acd4..04259df8a5c2 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_sp.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed_sp.h
-@@ -167,6 +167,9 @@ struct qed_spq_entry {
- 	enum spq_mode			comp_mode;
- 	struct qed_spq_comp_cb		comp_cb;
- 	struct qed_spq_comp_done	comp_done; /* SPQ_MODE_EBLOCK */
+diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+index 9f2eb02481d3..d7329177b0ea 100644
+--- a/drivers/i2c/busses/i2c-qcom-geni.c
++++ b/drivers/i2c/busses/i2c-qcom-geni.c
+@@ -590,18 +590,19 @@ static int geni_i2c_probe(struct platform_device *pdev)
+ 
+ 	dev_dbg(&pdev->dev, "i2c fifo/se-dma mode. fifo depth:%d\n", tx_depth);
+ 
+-	ret = i2c_add_adapter(&gi2c->adap);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Error adding i2c adapter %d\n", ret);
+-		return ret;
+-	}
+-
+ 	gi2c->suspended = 1;
+ 	pm_runtime_set_suspended(gi2c->se.dev);
+ 	pm_runtime_set_autosuspend_delay(gi2c->se.dev, I2C_AUTO_SUSPEND_DELAY);
+ 	pm_runtime_use_autosuspend(gi2c->se.dev);
+ 	pm_runtime_enable(gi2c->se.dev);
+ 
++	ret = i2c_add_adapter(&gi2c->adap);
++	if (ret) {
++		dev_err(&pdev->dev, "Error adding i2c adapter %d\n", ret);
++		pm_runtime_disable(gi2c->se.dev);
++		return ret;
++	}
 +
-+	/* Posted entry for unlimited list entry in EBLOCK mode */
-+	struct qed_spq_entry		*post_ent;
- };
- 
- struct qed_eq {
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_spq.c b/drivers/net/ethernet/qlogic/qed/qed_spq.c
-index 1673fc90027f..43619b6bb232 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_spq.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_spq.c
-@@ -685,6 +685,8 @@ static int qed_spq_add_entry(struct qed_hwfn *p_hwfn,
- 			/* EBLOCK responsible to free the allocated p_ent */
- 			if (p_ent->comp_mode != QED_SPQ_MODE_EBLOCK)
- 				kfree(p_ent);
-+			else
-+				p_ent->post_ent = p_en2;
- 
- 			p_ent = p_en2;
- 		}
-@@ -768,6 +770,25 @@ static int qed_spq_pend_post(struct qed_hwfn *p_hwfn)
- 				 SPQ_HIGH_PRI_RESERVE_DEFAULT);
+ 	return 0;
  }
  
-+/* Avoid overriding of SPQ entries when getting out-of-order completions, by
-+ * marking the completions in a bitmap and increasing the chain consumer only
-+ * for the first successive completed entries.
-+ */
-+static void qed_spq_comp_bmap_update(struct qed_hwfn *p_hwfn, __le16 echo)
-+{
-+	u16 pos = le16_to_cpu(echo) % SPQ_RING_SIZE;
-+	struct qed_spq *p_spq = p_hwfn->p_spq;
-+
-+	__set_bit(pos, p_spq->p_comp_bitmap);
-+	while (test_bit(p_spq->comp_bitmap_idx,
-+			p_spq->p_comp_bitmap)) {
-+		__clear_bit(p_spq->comp_bitmap_idx,
-+			    p_spq->p_comp_bitmap);
-+		p_spq->comp_bitmap_idx++;
-+		qed_chain_return_produced(&p_spq->chain);
-+	}
-+}
-+
- int qed_spq_post(struct qed_hwfn *p_hwfn,
- 		 struct qed_spq_entry *p_ent, u8 *fw_return_code)
+@@ -609,8 +610,8 @@ static int geni_i2c_remove(struct platform_device *pdev)
  {
-@@ -825,11 +846,12 @@ int qed_spq_post(struct qed_hwfn *p_hwfn,
- 				   p_ent->queue == &p_spq->unlimited_pending);
+ 	struct geni_i2c_dev *gi2c = platform_get_drvdata(pdev);
  
- 		if (p_ent->queue == &p_spq->unlimited_pending) {
--			/* This is an allocated p_ent which does not need to
--			 * return to pool.
--			 */
-+			struct qed_spq_entry *p_post_ent = p_ent->post_ent;
-+
- 			kfree(p_ent);
--			return rc;
-+
-+			/* Return the entry which was actually posted */
-+			p_ent = p_post_ent;
- 		}
- 
- 		if (rc)
-@@ -843,7 +865,7 @@ int qed_spq_post(struct qed_hwfn *p_hwfn,
- spq_post_fail2:
- 	spin_lock_bh(&p_spq->lock);
- 	list_del(&p_ent->list);
--	qed_chain_return_produced(&p_spq->chain);
-+	qed_spq_comp_bmap_update(p_hwfn, p_ent->elem.hdr.echo);
- 
- spq_post_fail:
- 	/* return to the free pool */
-@@ -875,25 +897,8 @@ int qed_spq_completion(struct qed_hwfn *p_hwfn,
- 	spin_lock_bh(&p_spq->lock);
- 	list_for_each_entry_safe(p_ent, tmp, &p_spq->completion_pending, list) {
- 		if (p_ent->elem.hdr.echo == echo) {
--			u16 pos = le16_to_cpu(echo) % SPQ_RING_SIZE;
--
- 			list_del(&p_ent->list);
--
--			/* Avoid overriding of SPQ entries when getting
--			 * out-of-order completions, by marking the completions
--			 * in a bitmap and increasing the chain consumer only
--			 * for the first successive completed entries.
--			 */
--			__set_bit(pos, p_spq->p_comp_bitmap);
--
--			while (test_bit(p_spq->comp_bitmap_idx,
--					p_spq->p_comp_bitmap)) {
--				__clear_bit(p_spq->comp_bitmap_idx,
--					    p_spq->p_comp_bitmap);
--				p_spq->comp_bitmap_idx++;
--				qed_chain_return_produced(&p_spq->chain);
--			}
--
-+			qed_spq_comp_bmap_update(p_hwfn, echo);
- 			p_spq->comp_count++;
- 			found = p_ent;
- 			break;
-@@ -932,11 +937,9 @@ int qed_spq_completion(struct qed_hwfn *p_hwfn,
- 			   QED_MSG_SPQ,
- 			   "Got a completion without a callback function\n");
- 
--	if ((found->comp_mode != QED_SPQ_MODE_EBLOCK) ||
--	    (found->queue == &p_spq->unlimited_pending))
-+	if (found->comp_mode != QED_SPQ_MODE_EBLOCK)
- 		/* EBLOCK  is responsible for returning its own entry into the
--		 * free list, unless it originally added the entry into the
--		 * unlimited pending list.
-+		 * free list.
- 		 */
- 		qed_spq_return_entry(p_hwfn, found);
+-	pm_runtime_disable(gi2c->se.dev);
+ 	i2c_del_adapter(&gi2c->adap);
++	pm_runtime_disable(gi2c->se.dev);
+ 	return 0;
+ }
  
 -- 
 2.17.1
