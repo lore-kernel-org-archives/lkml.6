@@ -2,93 +2,184 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E52C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93110C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5407D2086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:18:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XL8Bha0A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5407D2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5557520672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:20:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5557520672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbeK0ENZ (ORCPT
+        id S1726638AbeK0EOu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:13:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38632 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 23:14:50 -0500
+Received: from mga14.intel.com ([192.55.52.115]:7219 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726167AbeK0ENZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:13:25 -0500
-Received: from localhost (unknown [37.142.5.207])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D23A20672;
-        Mon, 26 Nov 2018 17:18:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543252719;
-        bh=lrj9ahwHOd/wzj+Ut8sjCGAOH+1/JNl0hmJ1YfS4XL8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XL8Bha0AVJ1qGjurRElOSY6OyEU4OvuizG4O7WHGg99HLxyy9oGKer19I345WV3GF
-         nkdLCMJVZq1R7pWuvHQk88Xlxzy8Tc/S9+ENCOkH8NkA69gYdTdTkXB8lmLM5lTTfr
-         jTSzW8vDivHo2mJx5bE8G0fhSJosVOWgvubr2oig=
-Date:   Mon, 26 Nov 2018 12:18:36 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Matt Hart <matthew.hart@linaro.org>
-Cc:     boris.brezillon@bootlin.com,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        gregkh@linuxfoundation.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org, nicolas.ferre@microchip.com,
-        rainyfeeling@outlook.com, johan@kernel.org
-Subject: Re: [PATCH 4.14 58/62] mtd: rawnand: atmel: fix OF child-node lookup
-Message-ID: <20181126171836.GB100860@sasha-vm>
-References: <20181126105050.592727680@linuxfoundation.org>
- <20181126105054.941598787@linuxfoundation.org>
- <CA+G9fYsyM9VS8QkaEizQT_LSvZyT+h6zdoWZbhVQtd1n60Bniw@mail.gmail.com>
- <20181126160840.1c702e87@bbrezillon>
- <20181126151601.GA100860@sasha-vm>
- <CAH+k93GJjYB75Z+zkrzdkbabUaTSzWCfLGXuuVRuu8ML=6yY6g@mail.gmail.com>
+        id S1726167AbeK0EOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 23:14:50 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 09:20:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,283,1539673200"; 
+   d="scan'208";a="111580162"
+Received: from ray.jf.intel.com (HELO [10.7.201.18]) ([10.7.201.18])
+  by orsmga001.jf.intel.com with ESMTP; 26 Nov 2018 09:20:04 -0800
+Subject: Re: [PATCH 0/7] ACPI HMAT memory sysfs representation
+To:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        Keith Busch <keith.busch@intel.com>,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20181114224902.12082-1-keith.busch@intel.com>
+ <1ed406b2-b85f-8e02-1df0-7c39aa21eca9@arm.com>
+ <4ea6e80f-80ba-6992-8aa0-5c2d88996af7@intel.com>
+ <b79804b0-32ee-03f9-fa62-a89684d46be6@arm.com>
+ <c6abb754-0d82-8739-fe08-24e9402bae75@intel.com>
+ <aae34dde-fa70-870a-9b74-fff9e385bfc9@arm.com>
+ <f5315662-5c1a-68a3-4d04-21b4b5ca94b1@intel.com>
+ <ac942498-8966-6a9b-0e55-c79ae167c679@arm.com>
+ <9015e51a-3584-7bb2-cc5e-25b0ec8e5494@intel.com>
+ <1a9e887b-8087-e897-6195-e8df325bd458@arm.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <3b86c5c5-53f2-29bf-48e7-5749c7287dca@intel.com>
+Date:   Mon, 26 Nov 2018 09:20:04 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAH+k93GJjYB75Z+zkrzdkbabUaTSzWCfLGXuuVRuu8ML=6yY6g@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1a9e887b-8087-e897-6195-e8df325bd458@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 04:39:03PM +0000, Matt Hart wrote:
->On Mon, 26 Nov 2018 at 15:16, Sasha Levin <sashal@kernel.org> wrote:
+On 11/26/18 7:38 AM, Anshuman Khandual wrote:
+> On 11/24/2018 12:51 AM, Dave Hansen wrote:
+>> On 11/22/18 10:42 PM, Anshuman Khandual wrote:
+>>> Are we willing to go in the direction for inclusion of a new system
+>>> call, subset of it appears on sysfs etc ? My primary concern is not
+>>> how the attribute information appears on the sysfs but lack of it's
+>>> completeness.
 >>
-><snip>
->
->> >>
->> >> /drivers/mtd/nand/atmel/nand-controller.c: In function
->> >> 'atmel_hsmc_nand_controller_legacy_init':
->> >> /drivers/mtd/nand/atmel/nand-controller.c:2080:11: error: implicit
->> >> declaration of function 'of_get_compatible_child'; did you mean
->> >> 'of_get_next_available_child'? [-Werror=implicit-function-declaration]
->> >>    nfc_np = of_get_compatible_child(dev->of_node, "atmel,sama5d3-nfc");
->> >
->> >Looks like of_get_compatible_child() has been introduced in 4.18, hence
->> >this error.
->> >
->> >Greg, can you drop this patch from 4.14.y?
->>
->> Interesting, none of the kernelci builds caught this? hmm
->
->They did, a few arm defconfigs failed to build because of this error.
->https://kernelci.org/build/stable-rc/branch/linux-4.14.y/kernel/v4.14.83-64-gd81d0be7d560/
+>> A new system call makes total sense to me.  I have the same concern
+>> about the completeness of what's exposed in sysfs, I just don't see a
+>> _route_ to completeness with sysfs itself.  Thus, the minimalist
+>> approach as a first step.
+> 
+> Okay if we agree on the need for a new specific system call extracting
+> the superset attribute information MAX_NUMNODES * MAX_NUMNODES * U64
+> (u64 packs 8 bit values for 8 attributes or something like that) as we
+> had discussed before, it makes sense to export a subset of it which can
+> be faster but useful for the user space without going through a system
+> call. 
 
-Indeed, and it was even removed from a few (but not all) of the branches
-it failed on. I retract my kernelci comments :)
+The information that needs to be exported is a bit more than that.  It's
+not just a binary attribute.
 
---
-Thanks,
-Sasha
+The information we have from the new ACPI table, for instance, is the
+read and write bandwidth and latency between two nodes.  They are, IIRC,
+two-byte values in the ACPI table[1], each.  That's 8 bytes worth of
+data right there, which wouldn't fit *anything* else.
+
+The list of things we want to export will certainly grow.  That means we
+need a syscall something like this:
+
+int get_mem_attribute(unsigned long attribute_nr,
+		      unsigned long __user * initiator_nmask,
+		      unsigned long __user * target_nmask,
+		      unsigned long maxnode,
+		      unsigned long *attributes_out);
+
+#define MEM_ATTR_READ_BANDWIDTH		1
+#define MEM_ATTR_WRITE_BANDWIDTH	2
+#define MEM_ATTR_READ_LATENCY		3
+#define MEM_ATTR_WRITE_LATENCTY		4
+#define MEM_ATTR_ENCRYPTION		5
+
+If you want to know the read latency between nodes 4 and 8, you do:
+
+	ret = get_mem_attr(MEM_ATTR_READ_LATENCY,
+			   (1<<4), (1<<8), max, &array);
+
+And the answer shows up at array[0] in this example.  If you had more
+than one bit set in the two nmasks, you would have a longer array.
+
+The length of the array is the number of bits set in initiator_nmask *
+the number of bits set in target_nmask * sizeof(ulong).
+
+This has the advantage of supporting ULONG_MAX attributes, and scales
+from asking for one attribute at a time all the way up to dumping the
+entire system worth of data for a single attribute.  The only downside
+is that it's one syscall per attribute instead of packing them all
+together.  But, if we have a small enough number to pack them in one
+ulong, then I think we can make 64 syscalls without too much trouble.
+
+> Do you agree on a (system call + sysfs) approach in principle ?
+> Also sysfs exported information has to be derived from whats available
+> through the system call not the other way round. Hence the starting
+> point has to be the system call definition.
+
+Both the sysfs information *and* what will be exported in any future
+interfaces are derived from platform-specific information.  They are not
+derived from one _interface_ or the other.
+
+They obviously need to be consistent, though.
+
+1. See "Table 5-142 System Locality Latency and Bandwidth Information
+Structure" here:
+http://www.uefi.org/sites/default/files/resources/ACPI_6_2.pdf
