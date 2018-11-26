@@ -2,125 +2,96 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B80C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CC6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9954D20862
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:30:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="PCrtsy8D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9954D20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 7CFD120862
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:31:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CFD120862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbeK0FZ1 (ORCPT
+        id S1726956AbeK0F0A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 00:25:27 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:42606 "EHLO mail.skyhub.de"
+        Tue, 27 Nov 2018 00:26:00 -0500
+Received: from mga09.intel.com ([134.134.136.24]:15567 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726260AbeK0FZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 00:25:27 -0500
-Received: from zn.tnic (p200300EC2BDEFE00DCA0409AA15535E1.dip0.t-ipconnect.de [IPv6:2003:ec:2bde:fe00:dca0:409a:a155:35e1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CF8741EC047F;
-        Mon, 26 Nov 2018 19:30:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1543257029;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=RDNzXtn+HNtoCQox5ql8d7eGjIh4D5a/YKWp0NeyHtY=;
-        b=PCrtsy8DyWimPVtHoBK7KkWljcIJbhBbA2dPXq3+GHp1luQqQhHBo7M28Ls+sAp+Ceh6du
-        pbYp5e5LoUV/ocDS22CfCIpACw1ishrM05+LeizF3x5x9t0xuNz1N09E/VQDVZrOqBEQ37
-        WuwSu3KG5bA1z110Qn1O1wHiyEO5A8Y=
-Date:   Mon, 26 Nov 2018 19:30:24 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [patch V2 19/28] x86/process: Consolidate and simplify
- switch_to_xtra() code
-Message-ID: <20181126183024.GJ4843@zn.tnic>
-References: <20181125183328.318175777@linutronix.de>
- <20181125185005.280855518@linutronix.de>
+        id S1726202AbeK0F0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 00:26:00 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 10:31:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,283,1539673200"; 
+   d="scan'208";a="99454914"
+Received: from agluck-desk.sc.intel.com (HELO agluck-desk) ([10.3.52.160])
+  by FMSMGA003.fm.intel.com with ESMTP; 26 Nov 2018 10:31:02 -0800
+Date:   Mon, 26 Nov 2018 10:31:02 -0800
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Ingo Molnar <mingo@kernel.org>, "Moger, Babu" <Babu.Moger@amd.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v9 01/13] x86/resctrl: Rename and move rdt files to new
+ directory
+Message-ID: <20181126183102.GA15254@agluck-desk>
+References: <20181121202811.4492-1-babu.moger@amd.com>
+ <20181121202811.4492-2-babu.moger@amd.com>
+ <20181123072839.GA51597@gmail.com>
+ <20181123082258.GA30697@zn.tnic>
+ <20181123084117.GA130228@gmail.com>
+ <20181123090011.GB30697@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181125185005.280855518@linutronix.de>
+In-Reply-To: <20181123090011.GB30697@zn.tnic>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 25, 2018 at 07:33:47PM +0100, Thomas Gleixner wrote:
-> Move the conditional invocation of __switch_to_xtra() into an inline
-> function so the logic can be shared between 32 and 64 bit.
-> 
-> Remove the handthrough of the TSS pointer and retrieve the pointer directly
+On Fri, Nov 23, 2018 at 10:00:11AM +0100, Borislav Petkov wrote:
+> Sure, I can do that together with the directory rename once we've agreed
+> on the name.
 
-s/handthrough/passing/
+Is this talking about renaming /sys/fs/resctrl?
 
-I guess.
+If so NAK to that. It is ABI now. Lots of scripts depend
+on that name.
 
-> in the bitmap handling function. Use this_cpu_ptr() instead of the
-> per_cpu() indirection.
->
-> This is a preparatory change so integration of conditional indirect branch
-> speculation optimization happens only in one place.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  arch/x86/include/asm/switch_to.h |    3 ---
->  arch/x86/kernel/process.c        |   12 +++++++-----
->  arch/x86/kernel/process.h        |   24 ++++++++++++++++++++++++
->  arch/x86/kernel/process_32.c     |   10 +++-------
->  arch/x86/kernel/process_64.c     |   10 +++-------
->  5 files changed, 37 insertions(+), 22 deletions(-)
-
-...
-
-> --- /dev/null
-> +++ b/arch/x86/kernel/process.h
-> @@ -0,0 +1,24 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// Code shared between 32 and 64 bit
-
-checkpatch mutters here too:
-
-WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
-#105: FILE: arch/x86/kernel/process.h:1:
-+// SPDX-License-Identifier: GPL-2.0
-
-I guess you want /* comments.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+-Tony
