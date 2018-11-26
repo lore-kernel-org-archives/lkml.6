@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9954BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6640FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AF9521104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27E8420817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVT6tahZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AF9521104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ty4N0uIr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27E8420817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728662AbeKZVut (ORCPT
+        id S1728735AbeKZVuy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:50:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60090 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:50:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726176AbeKZVus (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:50:48 -0500
+        id S1727203AbeKZVux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:50:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B8792089F;
-        Mon, 26 Nov 2018 10:57:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A88F21104;
+        Mon, 26 Nov 2018 10:57:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229823;
-        bh=Uhl00aZDAdPdwveWgKnu5v5GM2fqSTGkLIUC+mAI71A=;
+        s=default; t=1543229829;
+        bh=3QujUCfT7RZi0NMIMQvvvqh6PAUVZx610sGrNelOdbM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aVT6tahZxGy8rmdnj09kUlFX6WZ48VqhKiIdAaHtKNuvbrGUdRsJNv3Blmd9Jmwso
-         rI8EDpkU+uHVt5dgaCTn2Rkih9XKOQ94QAAfQHBLzJSpfSQBHKnFU+hUHgezx0w3Yl
-         slS35ZT3wAkXuansaewR73zeYLEOQeVpOzt72jVY=
+        b=Ty4N0uIrlOqC7HB0ma0XuS/CBsy8tReSlIbRoYpnD8XVHPCzABhE3qx2kRqbiJt1U
+         KxOFcD8UEESs6zZRJxgUKXf5kEDLELW86YfGEBOl49v082Q9xtNmUs4cZ73qbCdLnw
+         jhdCQJEsv/rsQj8zczSKROUX0uhNaxANH9eaxy6o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 16/46] netfilter: ipset: Correct rcu_dereference() call in ip_set_put_comment()
-Date:   Mon, 26 Nov 2018 11:51:05 +0100
-Message-Id: <20181126105047.719779198@linuxfoundation.org>
+Subject: [PATCH 4.9 18/46] s390/qeth: fix HiperSockets sniffer
+Date:   Mon, 26 Nov 2018 11:51:07 +0100
+Message-Id: <20181126105047.933950804@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
 References: <20181126105045.447291262@linuxfoundation.org>
@@ -64,36 +63,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 17b8b74c0f8dbf9b9e3301f9ca5b65dd1c079951 ]
+[ Upstream commit bd74a7f9cc033cf4d405788f80292268987dc0c5 ]
 
-The function is called when rcu_read_lock() is held and not
-when rcu_read_lock_bh() is held.
+Sniffing mode for L3 HiperSockets requires that no IP addresses are
+registered with the HW. The preferred way to achieve this is for
+userspace to delete all the IPs on the interface. But qeth is expected
+to also tolerate a configuration where that is not the case, by skipping
+the IP registration when in sniffer mode.
+Since commit 5f78e29ceebf ("qeth: optimize IP handling in rx_mode callback")
+reworked the IP registration logic in the L3 subdriver, this no longer
+works. When the qeth device is set online, qeth_l3_recover_ip() now
+unconditionally registers all unicast addresses from our internal
+IP table.
 
-Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+While we could fix this particular problem by skipping
+qeth_l3_recover_ip() on a sniffer device, the more future-proof change
+is to skip the IP address registration at the lowest level. This way we
+a) catch any future code path that attempts to register an IP address
+   without considering the sniffer scenario, and
+b) continue to build up our internal IP table, so that if sniffer mode
+   is switched off later we can operate just like normal.
+
+Fixes: 5f78e29ceebf ("qeth: optimize IP handling in rx_mode callback")
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/netfilter/ipset/ip_set_comment.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/s390/net/qeth_l3_main.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/netfilter/ipset/ip_set_comment.h b/include/linux/netfilter/ipset/ip_set_comment.h
-index 8d0248525957..9f34204978e4 100644
---- a/include/linux/netfilter/ipset/ip_set_comment.h
-+++ b/include/linux/netfilter/ipset/ip_set_comment.h
-@@ -41,11 +41,11 @@ ip_set_init_comment(struct ip_set_comment *comment,
- 	rcu_assign_pointer(comment->c, c);
- }
+diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_main.c
+index efefe075557f..6e6ba1baf9c4 100644
+--- a/drivers/s390/net/qeth_l3_main.c
++++ b/drivers/s390/net/qeth_l3_main.c
+@@ -363,9 +363,6 @@ static void qeth_l3_clear_ip_htable(struct qeth_card *card, int recover)
  
--/* Used only when dumping a set, protected by rcu_read_lock_bh() */
-+/* Used only when dumping a set, protected by rcu_read_lock() */
- static inline int
- ip_set_put_comment(struct sk_buff *skb, struct ip_set_comment *comment)
+ 	QETH_CARD_TEXT(card, 4, "clearip");
+ 
+-	if (recover && card->options.sniffer)
+-		return;
+-
+ 	spin_lock_bh(&card->ip_lock);
+ 
+ 	hash_for_each_safe(card->ip_htable, i, tmp, addr, hnode) {
+@@ -823,6 +820,8 @@ static int qeth_l3_register_addr_entry(struct qeth_card *card,
+ 	int rc = 0;
+ 	int cnt = 3;
+ 
++	if (card->options.sniffer)
++		return 0;
+ 
+ 	if (addr->proto == QETH_PROT_IPV4) {
+ 		QETH_CARD_TEXT(card, 2, "setaddr4");
+@@ -858,6 +857,9 @@ static int qeth_l3_deregister_addr_entry(struct qeth_card *card,
  {
--	struct ip_set_comment_rcu *c = rcu_dereference_bh(comment->c);
-+	struct ip_set_comment_rcu *c = rcu_dereference(comment->c);
+ 	int rc = 0;
  
- 	if (!c)
- 		return 0;
++	if (card->options.sniffer)
++		return 0;
++
+ 	if (addr->proto == QETH_PROT_IPV4) {
+ 		QETH_CARD_TEXT(card, 2, "deladdr4");
+ 		QETH_CARD_HEX(card, 3, &addr->u.a4.addr, sizeof(int));
 -- 
 2.17.1
 
