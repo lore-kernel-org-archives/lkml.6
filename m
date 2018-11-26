@@ -2,542 +2,337 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AED09C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 114FFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 596B420873
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:59:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 596B420873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id B51FB20873
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:01:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B51FB20873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeK0IzH (ORCPT
+        id S1726924AbeK0I5A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 03:55:07 -0500
-Received: from anholt.net ([50.246.234.109]:38404 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726367AbeK0IzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 03:55:07 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id E4C6310A0D70;
-        Mon, 26 Nov 2018 13:59:33 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id pzcZuVvDBkQN; Mon, 26 Nov 2018 13:59:29 -0800 (PST)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id C7E5110A017F;
-        Mon, 26 Nov 2018 13:59:29 -0800 (PST)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 442D22FE1FE5; Mon, 26 Nov 2018 13:59:29 -0800 (PST)
-From:   Eric Anholt <eric@anholt.net>
-To:     dri-devel@lists.freedesktop.org,
-        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>
-Subject: [PATCH 2/2] drm/vkms: Add PRIME support by converting to Noralf's shmem helpers.
-Date:   Mon, 26 Nov 2018 13:59:29 -0800
-Message-Id: <20181126215929.20546-2-eric@anholt.net>
-X-Mailer: git-send-email 2.20.0.rc1
-In-Reply-To: <20181126215929.20546-1-eric@anholt.net>
-References: <20181126215929.20546-1-eric@anholt.net>
+        Tue, 27 Nov 2018 03:57:00 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56524 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726296AbeK0I5A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 03:57:00 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAQLxHEN119151
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 17:01:26 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p0r762fq8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 17:01:26 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 26 Nov 2018 22:01:24 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 26 Nov 2018 22:01:21 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAQM1KtE16384032
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 26 Nov 2018 22:01:20 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 093BDB205F;
+        Mon, 26 Nov 2018 22:01:20 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D03D6B206B;
+        Mon, 26 Nov 2018 22:01:19 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 26 Nov 2018 22:01:19 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 9454D16C356B; Mon, 26 Nov 2018 14:01:22 -0800 (PST)
+Date:   Mon, 26 Nov 2018 14:01:22 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [REGRESSION 4.20-rc1] 45975c7d21a1 ("rcu: Define RCU-sched API
+ in terms of RCU for Tree RCU PREEMPT builds")
+Reply-To: paulmck@linux.ibm.com
+References: <20181113135453.GW9144@intel.com>
+ <20181113151037.GG4170@linux.ibm.com>
+ <20181114202013.GA27603@linux.ibm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181114202013.GA27603@linux.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18112622-0072-0000-0000-000003CF6D79
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010126; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01123197; UDB=6.00582089; IPR=6.00903326;
+ MB=3.00024342; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-26 22:01:23
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112622-0073-0000-0000-00004A3D17C6
+Message-Id: <20181126220122.GA6345@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-26_17:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811260185
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This cuts out a tremendous amount of boilerplate.  I've used the PRIME
-support now to test V3D rendering on a STB development board with no
-KMS driver.
+On Wed, Nov 14, 2018 at 12:20:13PM -0800, Paul E. McKenney wrote:
+> On Tue, Nov 13, 2018 at 07:10:37AM -0800, Paul E. McKenney wrote:
+> > On Tue, Nov 13, 2018 at 03:54:53PM +0200, Ville Syrjälä wrote:
+> > > Hi Paul,
+> > > 
+> > > After 4.20-rc1 some of my 32bit UP machines no longer reboot/shutdown.
+> > > I bisected this down to commit 45975c7d21a1 ("rcu: Define RCU-sched
+> > > API in terms of RCU for Tree RCU PREEMPT builds").
+> > > 
+> > > I traced the hang into
+> > > -> cpufreq_suspend()
+> > >  -> cpufreq_stop_governor()
+> > >   -> cpufreq_dbs_governor_stop()
+> > >    -> gov_clear_update_util()
+> > >     -> synchronize_sched()
+> > >      -> synchronize_rcu()
+> > > 
+> > > Only PREEMPT=y is affected for obvious reasons, but that couldn't
+> > > explain why the same UP kernel booted on an SMP machine worked fine.
+> > > Eventually I realized that the difference between working and
+> > > non-working machine was IOAPIC vs. PIC. With initcall_debug I saw
+> > > that we mask everything in the PIC before cpufreq is shut down,
+> > > and came up with the following fix:
+> > > 
+> > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > > index 7aa3dcad2175..f88bf3c77fc0 100644
+> > > --- a/drivers/cpufreq/cpufreq.c
+> > > +++ b/drivers/cpufreq/cpufreq.c
+> > > @@ -2605,4 +2605,4 @@ static int __init cpufreq_core_init(void)
+> > >         return 0;
+> > >  }
+> > >  module_param(off, int, 0444);
+> > > -core_initcall(cpufreq_core_init);
+> > > +late_initcall(cpufreq_core_init);
+> > 
+> > Thank you for testing this and tracking it down!
+> > 
+> > I am glad that you have a fix, but I hope that we can arrive at a less
+> > constraining one.
+> > 
+> > > Here's the resulting change in inutcall_debug:
+> > >   pci 0000:00:00.1: shutdown
+> > >   hub 4-0:1.0: hub_ext_port_status failed (err = -110)
+> > >   agpgart-intel 0000:00:00.0: shutdown
+> > > + PM: Calling cpufreq_suspend+0x0/0x100
+> > >   PM: Calling mce_syscore_shutdown+0x0/0x10
+> > >   PM: Calling i8259A_shutdown+0x0/0x10
+> > > - PM: Calling cpufreq_suspend+0x0/0x100
+> > > + reboot: Restarting system
+> > > + reboot: machine restart
+> > > 
+> > > I didn't really look into what other ramifications the cpufreq
+> > > initcall change might have. cpufreq_global_kobject worries
+> > > me a bit. Maybe that one has to remain in core_initcall() and
+> > > we could just move the suspend to late_initcall()? Anyways,
+> > > I figured I'd leave this for someone more familiar with the
+> > > code to figure out ;) 
+> > 
+> > Let me guess...
+> > 
+> > When the system suspends or shuts down, there comes a point after which
+> > there is only a single CPU that is running with preemption and interrupts
+> > are disabled.  At this point, RCU must change the way that it works, and
+> > the commit you bisected to would make the change more necessary.  But if
+> > I am guessing correctly, we have just been getting lucky in the past.
+> > 
+> > It looks like RCU needs to create a struct syscore_ops with a shutdown
+> > function and pass this to register_syscore_ops().  Maybe a suspend
+> > function as well.  And RCU needs to invoke register_syscore_ops() at
+> > a time that causes RCU's shutdown function to be invoked in the right
+> > order with respect to the other work in flight.  The hope would be that
+> > RCU's suspend function gets called just as the system transitions into
+> > a mode where the scheduler is no longer active, give or take.
+> > 
+> > Does this make sense, or am I confused?
+> 
+> Well, it certainly does not make sense in that blocking is still legal
+> at .shutdown() invocation time, which means that RCU cannot revert to
+> its boot-time approach at that point.  Looks like I need hooks in a
+> bunch of arch-dependent functions.  Which is certainly doable, but will
+> take a bit more digging.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
+A bit more detail, after some additional discussion at Linux Plumbers
+conference...
 
-This patch depends on https://patchwork.freedesktop.org/series/27184/
+The preferred approach is to hook into syscore_suspend(),
+syscore_resume(), and syscore_shutdown().  This can be done easily by
+creating an appropriately initialized struct syscore_ops and passing a
+pointer to it to register_syscore_ops() during boot.  Taking these three
+functions in turn:
 
- drivers/gpu/drm/Kconfig           |   1 +
- drivers/gpu/drm/vkms/vkms_crc.c   |  28 ++--
- drivers/gpu/drm/vkms/vkms_drv.c   |  16 +--
- drivers/gpu/drm/vkms/vkms_drv.h   |  22 ----
- drivers/gpu/drm/vkms/vkms_gem.c   | 212 ++----------------------------
- drivers/gpu/drm/vkms/vkms_plane.c |  17 ++-
- 6 files changed, 42 insertions(+), 254 deletions(-)
+syscore_suspend():
 
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index 0dedbc040c77..3bdd95f99feb 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -253,6 +253,7 @@ config DRM_VKMS
- 	tristate "Virtual KMS (EXPERIMENTAL)"
- 	depends on DRM
- 	select DRM_KMS_HELPER
-+	select DRM_GEM_SHMEM_HELPER
- 	default n
- 	help
- 	  Virtual Kernel Mode-Setting (VKMS) is used for testing or for
-diff --git a/drivers/gpu/drm/vkms/vkms_crc.c b/drivers/gpu/drm/vkms/vkms_crc.c
-index 9d9e8146db90..72d6422fb1a5 100644
---- a/drivers/gpu/drm/vkms/vkms_crc.c
-+++ b/drivers/gpu/drm/vkms/vkms_crc.c
-@@ -4,6 +4,7 @@
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-+#include <drm/drm_gem_shmem_helper.h>
- 
- /**
-  * compute_crc - Compute CRC value on output frame
-@@ -91,21 +92,19 @@ static void compose_cursor(struct vkms_crc_data *cursor_crc,
- 			   struct vkms_crc_data *primary_crc, void *vaddr_out)
- {
- 	struct drm_gem_object *cursor_obj;
--	struct vkms_gem_object *cursor_vkms_obj;
-+	void *vaddr;
- 
- 	cursor_obj = drm_gem_fb_get_obj(&cursor_crc->fb, 0);
--	cursor_vkms_obj = drm_gem_to_vkms_gem(cursor_obj);
-+	vaddr = drm_gem_shmem_vmap(cursor_obj);
- 
--	mutex_lock(&cursor_vkms_obj->pages_lock);
--	if (!cursor_vkms_obj->vaddr) {
-+	if (IS_ERR(vaddr)) {
- 		DRM_WARN("cursor plane vaddr is NULL");
--		goto out;
-+		return;
- 	}
- 
--	blend(vaddr_out, cursor_vkms_obj->vaddr, primary_crc, cursor_crc);
-+	blend(vaddr_out, vaddr, primary_crc, cursor_crc);
- 
--out:
--	mutex_unlock(&cursor_vkms_obj->pages_lock);
-+	drm_gem_shmem_vunmap(cursor_obj, vaddr);
- }
- 
- static uint32_t _vkms_get_crc(struct vkms_crc_data *primary_crc,
-@@ -113,8 +112,8 @@ static uint32_t _vkms_get_crc(struct vkms_crc_data *primary_crc,
- {
- 	struct drm_framebuffer *fb = &primary_crc->fb;
- 	struct drm_gem_object *gem_obj = drm_gem_fb_get_obj(fb, 0);
--	struct vkms_gem_object *vkms_obj = drm_gem_to_vkms_gem(gem_obj);
--	void *vaddr_out = kzalloc(vkms_obj->gem.size, GFP_KERNEL);
-+	void *vaddr;
-+	void *vaddr_out = kzalloc(gem_obj->size, GFP_KERNEL);
- 	u32 crc = 0;
- 
- 	if (!vaddr_out) {
-@@ -122,21 +121,20 @@ static uint32_t _vkms_get_crc(struct vkms_crc_data *primary_crc,
- 		return 0;
- 	}
- 
--	mutex_lock(&vkms_obj->pages_lock);
--	if (WARN_ON(!vkms_obj->vaddr)) {
--		mutex_unlock(&vkms_obj->pages_lock);
-+	vaddr = drm_gem_shmem_vmap(gem_obj);
-+	if (WARN_ON(IS_ERR(vaddr))) {
- 		kfree(vaddr_out);
- 		return crc;
- 	}
- 
--	memcpy(vaddr_out, vkms_obj->vaddr, vkms_obj->gem.size);
--	mutex_unlock(&vkms_obj->pages_lock);
-+	memcpy(vaddr_out, vaddr, gem_obj->size);
- 
- 	if (cursor_crc)
- 		compose_cursor(cursor_crc, primary_crc, vaddr_out);
- 
- 	crc = compute_crc(vaddr_out, primary_crc);
- 
-+	drm_gem_shmem_vunmap(gem_obj, vaddr);
- 	kfree(vaddr_out);
- 
- 	return crc;
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-index 83087877565c..fa26e2675028 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.c
-+++ b/drivers/gpu/drm/vkms/vkms_drv.c
-@@ -19,6 +19,7 @@
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-+#include <drm/drm_gem_shmem_helper.h>
- #include <drm/drm_fb_helper.h>
- #include "vkms_drv.h"
- 
-@@ -46,12 +47,6 @@ static const struct file_operations vkms_driver_fops = {
- 	.release	= drm_release,
- };
- 
--static const struct vm_operations_struct vkms_gem_vm_ops = {
--	.fault = vkms_gem_fault,
--	.open = drm_gem_vm_open,
--	.close = drm_gem_vm_close,
--};
--
- static void vkms_release(struct drm_device *dev)
- {
- 	struct vkms_device *vkms = container_of(dev, struct vkms_device, drm);
-@@ -64,12 +59,13 @@ static void vkms_release(struct drm_device *dev)
- }
- 
- static struct drm_driver vkms_driver = {
--	.driver_features	= DRIVER_MODESET | DRIVER_ATOMIC | DRIVER_GEM,
-+	.driver_features	= (DRIVER_MODESET |
-+				   DRIVER_ATOMIC |
-+				   DRIVER_GEM |
-+				   DRIVER_PRIME),
- 	.release		= vkms_release,
- 	.fops			= &vkms_driver_fops,
--	.dumb_create		= vkms_dumb_create,
--	.gem_vm_ops		= &vkms_gem_vm_ops,
--	.gem_free_object_unlocked = vkms_gem_free_object,
-+	DRM_GEM_SHMEM_DRIVER_OPS,
- 	.get_vblank_timestamp	= vkms_get_vblank_timestamp,
- 
- 	.name			= DRIVER_NAME,
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-index e4469cd3d254..3faf49f43feb 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.h
-+++ b/drivers/gpu/drm/vkms/vkms_drv.h
-@@ -80,23 +80,12 @@ struct vkms_device {
- 	struct vkms_output output;
- };
- 
--struct vkms_gem_object {
--	struct drm_gem_object gem;
--	struct mutex pages_lock; /* Page lock used in page fault handler */
--	struct page **pages;
--	unsigned int vmap_count;
--	void *vaddr;
--};
--
- #define drm_crtc_to_vkms_output(target) \
- 	container_of(target, struct vkms_output, crtc)
- 
- #define drm_device_to_vkms_device(target) \
- 	container_of(target, struct vkms_device, drm)
- 
--#define drm_gem_to_vkms_gem(target)\
--	container_of(target, struct vkms_gem_object, gem)
--
- #define to_vkms_crtc_state(target)\
- 	container_of(target, struct vkms_crtc_state, base)
- 
-@@ -122,17 +111,6 @@ struct drm_gem_object *vkms_gem_create(struct drm_device *dev,
- 				       u32 *handle,
- 				       u64 size);
- 
--vm_fault_t vkms_gem_fault(struct vm_fault *vmf);
--
--int vkms_dumb_create(struct drm_file *file, struct drm_device *dev,
--		     struct drm_mode_create_dumb *args);
--
--void vkms_gem_free_object(struct drm_gem_object *obj);
--
--int vkms_gem_vmap(struct drm_gem_object *obj);
--
--void vkms_gem_vunmap(struct drm_gem_object *obj);
--
- /* CRC Support */
- int vkms_set_crc_source(struct drm_crtc *crtc, const char *src_name);
- int vkms_verify_crc_source(struct drm_crtc *crtc, const char *source_name,
-diff --git a/drivers/gpu/drm/vkms/vkms_gem.c b/drivers/gpu/drm/vkms/vkms_gem.c
-index 80311daed47a..11f52aa4e732 100644
---- a/drivers/gpu/drm/vkms/vkms_gem.c
-+++ b/drivers/gpu/drm/vkms/vkms_gem.c
-@@ -7,222 +7,34 @@
-  */
- 
- #include <linux/shmem_fs.h>
-+#include <drm/drm_gem_shmem_helper.h>
- 
- #include "vkms_drv.h"
- 
--static struct vkms_gem_object *__vkms_gem_create(struct drm_device *dev,
--						 u64 size)
--{
--	struct vkms_gem_object *obj;
--	int ret;
--
--	obj = kzalloc(sizeof(*obj), GFP_KERNEL);
--	if (!obj)
--		return ERR_PTR(-ENOMEM);
--
--	size = roundup(size, PAGE_SIZE);
--	ret = drm_gem_object_init(dev, &obj->gem, size);
--	if (ret) {
--		kfree(obj);
--		return ERR_PTR(ret);
--	}
--
--	mutex_init(&obj->pages_lock);
--
--	return obj;
--}
--
--void vkms_gem_free_object(struct drm_gem_object *obj)
--{
--	struct vkms_gem_object *gem = container_of(obj, struct vkms_gem_object,
--						   gem);
--
--	WARN_ON(gem->pages);
--	WARN_ON(gem->vaddr);
--
--	mutex_destroy(&gem->pages_lock);
--	drm_gem_object_release(obj);
--	kfree(gem);
--}
--
--vm_fault_t vkms_gem_fault(struct vm_fault *vmf)
--{
--	struct vm_area_struct *vma = vmf->vma;
--	struct vkms_gem_object *obj = vma->vm_private_data;
--	unsigned long vaddr = vmf->address;
--	pgoff_t page_offset;
--	loff_t num_pages;
--	vm_fault_t ret = VM_FAULT_SIGBUS;
--
--	page_offset = (vaddr - vma->vm_start) >> PAGE_SHIFT;
--	num_pages = DIV_ROUND_UP(obj->gem.size, PAGE_SIZE);
--
--	if (page_offset > num_pages)
--		return VM_FAULT_SIGBUS;
--
--	mutex_lock(&obj->pages_lock);
--	if (obj->pages) {
--		get_page(obj->pages[page_offset]);
--		vmf->page = obj->pages[page_offset];
--		ret = 0;
--	}
--	mutex_unlock(&obj->pages_lock);
--	if (ret) {
--		struct page *page;
--		struct address_space *mapping;
--
--		mapping = file_inode(obj->gem.filp)->i_mapping;
--		page = shmem_read_mapping_page(mapping, page_offset);
--
--		if (!IS_ERR(page)) {
--			vmf->page = page;
--			ret = 0;
--		} else {
--			switch (PTR_ERR(page)) {
--			case -ENOSPC:
--			case -ENOMEM:
--				ret = VM_FAULT_OOM;
--				break;
--			case -EBUSY:
--				ret = VM_FAULT_RETRY;
--				break;
--			case -EFAULT:
--			case -EINVAL:
--				ret = VM_FAULT_SIGBUS;
--				break;
--			default:
--				WARN_ON(PTR_ERR(page));
--				ret = VM_FAULT_SIGBUS;
--				break;
--			}
--		}
--	}
--	return ret;
--}
--
- struct drm_gem_object *vkms_gem_create(struct drm_device *dev,
- 				       struct drm_file *file,
- 				       u32 *handle,
- 				       u64 size)
- {
--	struct vkms_gem_object *obj;
-+	struct drm_gem_shmem_object *obj;
- 	int ret;
- 
- 	if (!file || !dev || !handle)
- 		return ERR_PTR(-EINVAL);
- 
--	obj = __vkms_gem_create(dev, size);
-+	obj = drm_gem_shmem_create(dev, size);
- 	if (IS_ERR(obj))
- 		return ERR_CAST(obj);
- 
--	ret = drm_gem_handle_create(file, &obj->gem, handle);
--	drm_gem_object_put_unlocked(&obj->gem);
--	if (ret) {
--		drm_gem_object_release(&obj->gem);
--		kfree(obj);
-+	/*
-+	 * Allocate an id of idr table where the obj is registered
-+	 * and handle has the id what user can see.
-+	 */
-+	ret = drm_gem_handle_create(file, &obj->base, handle);
-+	/* drop reference from allocate - handle holds it now. */
-+	drm_gem_object_put_unlocked(&obj->base);
-+	if (ret)
- 		return ERR_PTR(ret);
--	}
--
--	return &obj->gem;
--}
--
--int vkms_dumb_create(struct drm_file *file, struct drm_device *dev,
--		     struct drm_mode_create_dumb *args)
--{
--	struct drm_gem_object *gem_obj;
--	u64 pitch, size;
--
--	if (!args || !dev || !file)
--		return -EINVAL;
--
--	pitch = args->width * DIV_ROUND_UP(args->bpp, 8);
--	size = pitch * args->height;
--
--	if (!size)
--		return -EINVAL;
--
--	gem_obj = vkms_gem_create(dev, file, &args->handle, size);
--	if (IS_ERR(gem_obj))
--		return PTR_ERR(gem_obj);
--
--	args->size = gem_obj->size;
--	args->pitch = pitch;
--
--	DRM_DEBUG_DRIVER("Created object of size %lld\n", size);
--
--	return 0;
--}
--
--static struct page **_get_pages(struct vkms_gem_object *vkms_obj)
--{
--	struct drm_gem_object *gem_obj = &vkms_obj->gem;
--
--	if (!vkms_obj->pages) {
--		struct page **pages = drm_gem_get_pages(gem_obj);
--
--		if (IS_ERR(pages))
--			return pages;
--
--		if (cmpxchg(&vkms_obj->pages, NULL, pages))
--			drm_gem_put_pages(gem_obj, pages, false, true);
--	}
--
--	return vkms_obj->pages;
--}
--
--void vkms_gem_vunmap(struct drm_gem_object *obj)
--{
--	struct vkms_gem_object *vkms_obj = drm_gem_to_vkms_gem(obj);
--
--	mutex_lock(&vkms_obj->pages_lock);
--	if (vkms_obj->vmap_count < 1) {
--		WARN_ON(vkms_obj->vaddr);
--		WARN_ON(vkms_obj->pages);
--		mutex_unlock(&vkms_obj->pages_lock);
--		return;
--	}
--
--	vkms_obj->vmap_count--;
--
--	if (vkms_obj->vmap_count == 0) {
--		vunmap(vkms_obj->vaddr);
--		vkms_obj->vaddr = NULL;
--		drm_gem_put_pages(obj, vkms_obj->pages, false, true);
--		vkms_obj->pages = NULL;
--	}
--
--	mutex_unlock(&vkms_obj->pages_lock);
--}
--
--int vkms_gem_vmap(struct drm_gem_object *obj)
--{
--	struct vkms_gem_object *vkms_obj = drm_gem_to_vkms_gem(obj);
--	int ret = 0;
--
--	mutex_lock(&vkms_obj->pages_lock);
--
--	if (!vkms_obj->vaddr) {
--		unsigned int n_pages = obj->size >> PAGE_SHIFT;
--		struct page **pages = _get_pages(vkms_obj);
--
--		if (IS_ERR(pages)) {
--			ret = PTR_ERR(pages);
--			goto out;
--		}
--
--		vkms_obj->vaddr = vmap(pages, n_pages, VM_MAP, PAGE_KERNEL);
--		if (!vkms_obj->vaddr)
--			goto err_vmap;
--	}
--
--	vkms_obj->vmap_count++;
--	goto out;
- 
--err_vmap:
--	ret = -ENOMEM;
--	drm_gem_put_pages(obj, vkms_obj->pages, false, true);
--	vkms_obj->pages = NULL;
--out:
--	mutex_unlock(&vkms_obj->pages_lock);
--	return ret;
-+	return &obj->base;
- }
-diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-index 7041007396ae..29e6e870d7ac 100644
---- a/drivers/gpu/drm/vkms/vkms_plane.c
-+++ b/drivers/gpu/drm/vkms/vkms_plane.c
-@@ -11,6 +11,7 @@
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-+#include <drm/drm_gem_shmem_helper.h>
- 
- static struct drm_plane_state *
- vkms_plane_duplicate_state(struct drm_plane *plane)
-@@ -138,17 +139,17 @@ static int vkms_prepare_fb(struct drm_plane *plane,
- 			   struct drm_plane_state *state)
- {
- 	struct drm_gem_object *gem_obj;
--	struct vkms_gem_object *vkms_obj;
--	int ret;
-+	void *map;
- 
- 	if (!state->fb)
- 		return 0;
- 
- 	gem_obj = drm_gem_fb_get_obj(state->fb, 0);
--	vkms_obj = drm_gem_to_vkms_gem(gem_obj);
--	ret = vkms_gem_vmap(gem_obj);
--	if (ret)
--		DRM_ERROR("vmap failed: %d\n", ret);
-+	map = drm_gem_shmem_vmap(gem_obj);
-+	if (IS_ERR(map)) {
-+		DRM_ERROR("vmap failed: %ld\n", PTR_ERR(map));
-+		return PTR_ERR(map);
-+	}
- 
- 	return drm_gem_fb_prepare_fb(plane, state);
- }
-@@ -157,12 +158,14 @@ static void vkms_cleanup_fb(struct drm_plane *plane,
- 			    struct drm_plane_state *old_state)
- {
- 	struct drm_gem_object *gem_obj;
-+	struct drm_gem_shmem_object *shmem_obj;
- 
- 	if (!old_state->fb)
- 		return;
- 
- 	gem_obj = drm_gem_fb_get_obj(old_state->fb, 0);
--	vkms_gem_vunmap(gem_obj);
-+	shmem_obj = to_drm_gem_shmem_obj(gem_obj);
-+	drm_gem_shmem_vunmap(gem_obj, shmem_obj->vaddr);
- }
- 
- static const struct drm_plane_helper_funcs vkms_primary_helper_funcs = {
--- 
-2.20.0.rc1
+o	arch/x86/kernel/apm_32.c suspend(), standby()
+
+	These calls to syscore_suspend() has interrupts disabled, which
+	is very good, but they are immediately re-enabled, and only then
+	is the call to set_system_power_state().  Unless both interrupts
+	and preemption are prevented somehow, it is not safe for
+	CONFIG_PREEMPT=y RCU implementations to revert back to boot-time
+	behavior at this point.
+
+o	drivers/xen/manage.c xen_suspend()
+
+	This looks to have interrupts disabled throughout.  It is also
+	invoked within stop_machine(), which means that the other CPUs,
+	though online, are quiescent.  This allows RCU to safely switch
+	back to early boot operating mode.  That is, this is safe only
+	if there is no interaction with RCU-preempt read-side critical
+	sections that might well be underway in the other CPUs.  This
+	assumption is likely violated in CONFIG_PREEMPT=y kernels.  One
+	alternative that would work with RCU in CONFIG_PREEMPT=y kernels
+	is CPU-hotplug removing all but one CPU, but that might have
+	some other disadvantages.
+
+o	kernel/kexec_core.c kernel_kexec()
+
+	Before we get here, disable_nonboot_cpus() has been invoked, which
+	in turn invokes freeze_secondary_cpus(), which offlines all but
+	the boot CPU.  Prior to that, all user-space tasks are frozen.
+	So in this case, it would be safe for RCU to revert back to its
+	boot-time behavior.  Aside from the possibility of unfreezable
+	kthreads being preempted within RCU-preempt read-side critical
+	sections, anyway...  :-/
+
+	However, one can argue that as long as the kthreads preempted
+	within an RCU-preempt read-side critical section are guaranteed
+	to never ever run again, we might be OK.  And this guarantee
+	seems consistent with the kernel_kexec() operation.  At least
+	when there are no errors that cause the kernel_kexec() to return
+	control to the initial kernel image...
+
+	Of course, this line of reasoning does not apply when the
+	kernel is to resume on the same hardware, as in some of the
+	cases above.
+
+o	kernel/power/hibernate.c create_image()
+
+	Same as for kernel_kexec(), except that freeze_kernel_threads()
+	is invoked, which hopefully gets all tasks out of RCU read-side
+	critical sections.  So this one might actually permit RCU to
+	revert back to boot-time behavior.  Except for the possibility of
+	an error condition forcing an abort back into the original kernel
+	image, which again could have trouble with kthreads that were
+	preempted within an RCU read-side critical section throughout.
+
+o	kernel/power/hibernate.c resume_target_kernel()
+	kernel/power/hibernate.c hibernation_platform_enter()
+	kernel/power/suspend.c suspend_enter()
+
+	Same as for kernel_kexec(), but no obvious pretense of freezing
+	any tasks.
+
+
+syscore_resume():
+
+o	arch/x86/kernel/apm_32.c suspend(), standby()
+
+	Resume-time counterparts to the calls to syscore_suspend() called
+	out above, with the same interrupt-enabling problem, as well as
+	issues with tasks being preempted throughout within RCU-preempt
+	read-side critical sections.
+
+o	drivers/xen/manage.c xen_suspend()
+
+	Resume-time counterpart to the calls to xen_suspend() called out
+	above, with the same issues with tasks being preempted throughout
+	within RCU-preempt read-side critical sections.
+
+o	kernel/kexec_core.c kernel_kexec()
+
+	Resume-time counterpart to the calls to kernel_kexec() called out
+	above.  This is the error case that causes trouble due to the
+	possibility of preempted RCU read-side critical sections.
+
+o	kernel/power/hibernate.c create_image()
+	kernel/power/hibernate.c resume_target_kernel()
+	kernel/power/hibernate.c hibernation_platform_enter()
+	kernel/power/hibernate.c suspend_enter()
+
+	Resume-time counterparts to calls within kernel/power/hibernate.c
+	and kernel/power/suspend.c called out above.  This is the error
+	case that causes trouble due to the possibility of preempted
+	RCU read-side critical sections.
+
+
+syscore_shutdown():
+
+o	kernel/reboot.c kernel_restart()
+	kernel/reboot.c kernel_halt()
+	kernel/reboot.c kernel_power_off()
+
+	These appears to leave all CPUs online, which prevents RCU from
+	safely reverting back to boot-time mode.
+
+
+So what is to be done?
+
+Here are the options I can see:
+
+1.	Status quo, which means that synchronize_rcu() and friends
+	cannot be used in syscore_suspend(), syscore_resume(), and
+	syscore_shutdown() callbacks.  At the moment, this appears to
+	be the only workable approach, though ideas and suggestions are
+	quite welcome.
+
+2.	Make each code path to syscore_suspend(), syscore_resume(), and
+	syscore_shutdown() offline all but the boot CPU, ensure that
+	all tasks exit any RCU read-side critical sections that they
+	might be in, then run the remainder of the code path on the
+	boot CPU with interrupts disabled.
+
+	Making all tasks exit any RCU read-side critical sections is
+	easy when CONFIG_PREEMPT=n via things like stop-machine, but
+	it is difficult and potentially time-consuming for
+	CONFIG_PREEMPT=y kernels.
+
+3.	Do error checking so that there cannot possibly be failures
+	beyond the time that syscore_suspend(), syscore_resume(),
+	and syscore_shutdown() are invoked.  This is fine for
+	syscore_shutdown() and syscore_resume(), but syscore_suspend()'s
+	callbacks are permitted to return errors that force suspend
+	failures.
+
+	And there are syscore_suspend() callbacks that actually do
+	return errors, for example, fsl_lbc_syscore_suspend()
+	in arch/powerpc/sysdev/fsl_lbc.c can return -ENOMEM.
+	As can save_ioapic_entries() in arch/x86/kernel/apic/io_apic.c
+	and arch/x86/include/asm/io_apic.h.  And mvebu_mbus_suspend()
+	in drivers/bus/mvebu-mbus.c.  And iommu_suspend() in
+	drivers/iommu/intel-iommu.c.
+
+	And its_save_disable() in drivers/irqchip/irq-gic-v3-its.c
+	can return -EBUSY.
+
+	Perhaps these can be remedied somehow, but unless that can
+	be done, this approach cannot work.
+
+4.	Your idea here!!!
+
+							Thanx, Paul
 
