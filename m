@@ -2,115 +2,215 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B460BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CFA3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58F2F20659
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:39:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FaKHFIl8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58F2F20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 57D5F20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:41:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57D5F20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbeK0DeL (ORCPT
+        id S1726659AbeK0DgA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 22:34:11 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49470 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726290AbeK0DeL (ORCPT
+        Mon, 26 Nov 2018 22:36:00 -0500
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:34321 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726260AbeK0DgA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:34:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=44aeCHeKySluNGD7M4jVwHCSxTCuoMjwIkcW4/8Nidk=; b=FaKHFIl8bsuEqOzSMl1jzS6py
-        HclEQIXlxKLLmQJhRNELeO43u814KBfnZnooLEkPUTg9IRABpDdBAsDSYfc73nDreWg0s1d11aXNt
-        O/y0TxRx4m8NzVUEcJYYfRAWmPs1XMgvgp3P9kQ3oHPgJTmnPk/KOncgs7VgFna1x6qmKyxPzU4Fh
-        UL97DJxyeH5VNKsAmrvMQSL5Zq2Ui6r/m8pblasXa9xdw5rQ60XvXicHHGFLVODfL0ij3HB/6Js/G
-        p0SgbVXQznnkwOSkUY8aMBimx+iZdaVqvWbFeUoTk6XZ+DcMIIQp360s9T8bhv7KOPjh1e8gMcjUF
-        +WZDN3Jgw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gRJuu-0005xy-Pm; Mon, 26 Nov 2018 16:39:24 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2E8E72029FD58; Mon, 26 Nov 2018 17:39:23 +0100 (CET)
-Date:   Mon, 26 Nov 2018 17:39:23 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
+        Mon, 26 Nov 2018 22:36:00 -0500
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id RJwigDx8rIGBARJwlgfoDu; Mon, 26 Nov 2018 17:41:19 +0100
+Subject: Re: [PATCH v3] media: venus: amend buffer size for bitstream plane
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        mgottam@codeaurora.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>, julia@ni.com,
-        Jessica Yu <jeyu@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-Message-ID: <20181126163923.GT2113@hirez.programming.kicks-ass.net>
-References: <cover.1543200841.git.jpoimboe@redhat.com>
- <62188c62f6dda49ca2e20629ee8e5a62a6c0b500.1543200841.git.jpoimboe@redhat.com>
- <20181126160837.GS2113@hirez.programming.kicks-ass.net>
- <CAKv+Gu8WiBtPJCjBDbOjjsjALHgdgokMCtyAZbSy6NPpxo=usQ@mail.gmail.com>
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        vgarodia@codeaurora.org
+References: <1543227173-2160-1-git-send-email-mgottam@codeaurora.org>
+ <d74281c8-a177-12a3-9e72-7a7db3014943@xs4all.nl>
+ <f6106d20-abee-979c-8ac1-6c9115e8373c@linaro.org>
+ <57b28a7f-8c5c-22d2-2f89-e6d6ebdcb8a2@xs4all.nl>
+ <CAAFQd5DJn-_y5dHySAB6_ed-syBOr3Ybo7KfsPLNd+0Z7X0N7g@mail.gmail.com>
+ <2a8bbdf7-cec6-4bdf-5833-93d5014ddf89@xs4all.nl>
+ <CAAFQd5BijN58EkxHmCPuJO1TnoTiB5CjoA5uuKHzi_1SD0iawQ@mail.gmail.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <a7652127-a302-fdd8-a8d8-9d184e933988@xs4all.nl>
+Date:   Mon, 26 Nov 2018 17:41:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu8WiBtPJCjBDbOjjsjALHgdgokMCtyAZbSy6NPpxo=usQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAAFQd5BijN58EkxHmCPuJO1TnoTiB5CjoA5uuKHzi_1SD0iawQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfOE+C3hI8D+BcbskRD3IXAdo7fCexJF35wbR4icjWSijKw7WFKtgZsHgphqP9VXtFjKOXOv2zBWo1vJm2RB+CmGR7BWzO6kPGVyIc2HkeaOEnWcxx0OQ
+ vSsmqGi9WqIL6Y+tb6qza+dbnld79DZlkTiBt/NAX+tBn1OBIisqX+zBoUptO+l69gOJywgjnHTs4C1zQ7Mu/mPkCY4l6ILSa2FTIL18VF9YW9faUs40NWvP
+ aXXf43BiN/LXDwO06ZI8u+EmRXFvLYL1wLa8Y5cer+Wf9N/S88U7fZiCsgSlpUcb5h1ptSd7O6Y9yYdhp0rhDLwPi4Suj7hD84l3PI2ML478JnJ3X2Gv/pHb
+ M87LvbnKnXqyLFq189Dgokg2ZaBUBG+C8NltFxUtQfyGFpRyFx/55MC/TJFDJAXn4ti41QSLOa4vSYvi2A0ldukz+RpneX+DOiFPxQ/DwYUgaPBE7b0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 05:11:05PM +0100, Ard Biesheuvel wrote:
-> On Mon, 26 Nov 2018 at 17:08, Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Mon, Nov 26, 2018 at 07:55:00AM -0600, Josh Poimboeuf wrote:
-> > > +#ifdef CONFIG_HAVE_STATIC_CALL_INLINE
-> > > +void arch_static_call_defuse_tramp(void *site, void *tramp)
-> > > +{
-> > > +     unsigned short opcode = INSN_UD2;
-> > > +
-> > > +     mutex_lock(&text_mutex);
-> > > +     text_poke((void *)tramp, &opcode, 2);
-> > > +     mutex_unlock(&text_mutex);
-> > > +}
-> > > +#endif
-> >
-> > I would rather think that makes the trampoline _more_ dangerous, rather
-> > than less so.
-> >
-> > My dictionary sayeth:
-> >
-> >   defuse: verb
-> >
-> >     - remove the fuse from (an explosive device) in order to prevent it
-> >       from exploding.
-> >
-> >     - make (a situation) less tense or dangerous
-> >
-> > patching in an UD2 seems to do the exact opposite.
+On 11/26/2018 05:07 PM, Tomasz Figa wrote:
+> On Tue, Nov 27, 2018 at 1:00 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>
+>> On 11/26/2018 04:44 PM, Tomasz Figa wrote:
+>>> Hi Hans,
+>>>
+>>> On Tue, Nov 27, 2018 at 12:24 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>>>
+>>>> On 11/26/2018 03:57 PM, Stanimir Varbanov wrote:
+>>>>> Hi Hans,
+>>>>>
+>>>>> On 11/26/18 3:37 PM, Hans Verkuil wrote:
+>>>>>> On 11/26/2018 11:12 AM, Malathi Gottam wrote:
+>>>>>>> Accept the buffer size requested by client and compare it
+>>>>>>> against driver calculated size and set the maximum to
+>>>>>>> bitstream plane.
+>>>>>>>
+>>>>>>> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+>>>>>>
+>>>>>> Sorry, this isn't allowed. It is the driver that sets the sizeimage value,
+>>>>>> never the other way around.
+>>>>>
+>>>>> I think for decoders (OUTPUT queue) and encoders (CAPTURE queue) we
+>>>>> allowed userspace to set sizeimage for buffers. See [1] Initialization
+>>>>> paragraph point 2:
+>>>>>
+>>>>>     ``sizeimage``
+>>>>>        desired size of ``CAPTURE`` buffers; the encoder may adjust it to
+>>>>>        match hardware requirements
+>>>>>
+>>>>> Similar patch we be needed for decoder as well.
+>>>>
+>>>> I may have missed that change since it wasn't present in v1 of the stateful
+>>>> encoder spec.
+>>>
+>>> It's been there from the very beginning, even before I started working
+>>> on it. Actually, even the early slides from Kamil mention the
+>>> application setting the buffer size for compressed streams:
+>>> https://events.static.linuxfound.org/images/stories/pdf/lceu2012_debski.pdf
+>>>
+>>>>
+>>>> Tomasz, what was the reason for this change? I vaguely remember some thread
+>>>> about this, but I forgot the details. Since this would be a departure of
+>>>> the current API this should be explained in more detail.
+>>>
+>>> The kernel is not the place to encode assumptions about optimal
+>>> bitstream chunk sizes. It depends on the use case and the application
+>>> should be able decide. It may for example want to use smaller buffers,
+>>> optimizing for the well compressible video streams and just reallocate
+>>> if bigger chunks are needed.
+>>>
+>>>>
+>>>> I don't really see the point of requiring userspace to fill this in. For
+>>>> stateful codecs it can just return some reasonable size. Possibly calculated
+>>>> using the provided width/height values or (if those are 0) some default value.
+>>>
+>>> How do we decide what's "reasonable"? Would it be reasonable for all
+>>> applications?
+>>
+>> In theory it should be the minimum size that the hardware supports. But it is
+>> silly to i.e. provide the size of one PAGE as the minimum. In practice you
+>> probably want to set sizeimage to something larger than that. Depending on
+>> the typical compression ratio perhaps 5 or 10% of what a raw YUV 4:2:0 frame
+>> would be.
+>>
+>>>
+>>>>
+>>>> Ditto for decoders.
+>>>>
+>>>> Stanimir, I certainly cannot merge this until this has been fully nailed down
+>>>> as it would be a departure from the current API.
+>>>
+>>> It would not be a departure, because I can see existing stateful
+>>> drivers behaving like that:
+>>> https://elixir.bootlin.com/linux/v4.20-rc4/source/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c#L1444
+>>> https://elixir.bootlin.com/linux/v4.20-rc4/source/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c#L469
+>>
+>> Yes, and that's out of spec. Clearly v4l2-compliance doesn't test for this.
+>> It should have been caught at least for the mtk driver.
+>>
 > 
-> That is my fault.
+> Perhaps we should make it a part of the spec then?
 > 
-> The original name was 'poison' iirc, but on arm64, we need to retain
-> the trampoline for cases where the direct branch is out of range, and
-> so poisoning is semantically inaccurate.
-> 
-> But since you opened your dictionary anyway, any better suggestions? :-)
+> Actually I'm not really sure if we can say that this is out of spec
+> There has been no clear spec for the stateful codecs for many years,
+> with drivers doing wildly whatever they like and applications ending
+> up relying on those quirks.
 
-I was leaning towards: "prime", but I'm not entirely sure that works
-with your case.
+The VIDIOC_S_FMT spec for v4l2_pix_format is quite clear that it is the
+driver that sets this value. The spec for v4l2_plane_pix_format is
+unfortunately not so clear.
+
+> My spec actually attempts to incorporate what was decided on the
+> earlier summits, including what's in Kamil's slides, the drivers are
+> already doing and existing applications rely on. The sizeimage
+> handling is just a part of it.
+> 
+>>>
+>>> Also, Chromium has been setting the size on its own for long time
+>>> using its own heuristics.
+>>>
+>>>>
+>>>> And looking at the venus patch I do not see how it helps userspace.
+>>>>
+>>>> Regards,
+>>>>
+>>>>         Hans
+>>>>
+>>>>>
+>>>>>>
+>>>>>> If you need to allocate larger buffers, then use VIDIOC_CREATE_BUFS instead
+>>>>>> of VIDIOC_REQBUFS.
+>>>
+>>> CREATE_BUFS wouldn't work, because one needs to use TRY_FMT to obtain
+>>> a format for it and the format returned by it would have the sizeimage
+>>> as hardcoded in the driver...
+>>
+>> ???
+>>
+>> Userspace can change the sizeimage to whatever it wants before calling
+>> CREATE_BUFS as long as it is >= the sizeimage of the current format.
+>>
+>> If we want to allow smaller sizes, then I think that would not be
+>> unreasonable for stateful codecs. I actually think that drivers can
+>> already do this in queue_setup(), but the spec would have to be updated
+>> a bit.
+> 
+> Existing applications rely on REQBUFS honoring the size they set in
+> sizeimage, though...
+
+REQBUFS, yes. But not CREATE_BUFS. Which is why that ioctl was added in the
+first place.
+
+However (and now I remember the real problem with CREATE_BUFS) the spec for
+CREATE_BUFS says that it will not change the provided sizeimage value. So
+any adjustments required due to specific alignment requirements won't be
+applied, all CREATE_BUFS can do is to reject it.
+
+So what this boils down to is a change to the spec:
+
+For compressed formats (and only those!) userspace can set sizeimage to a
+proposed value. The driver may either ignore it and just set its own value,
+or modify it to satisfy HW requirements. The returned value will be used
+by REQBUFS when it allocates buffers.
+
+I think this is reasonable, provided the spec is updated accordingly.
+
+As far as I can tell this shouldn't cause any backwards compatibility
+problems, and it should be easy to test in v4l2-compliance.
+
+Regards,
+
+	Hans
