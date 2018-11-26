@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEC3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F415C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63F6F2147D
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58A262146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kW/Hcy2r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63F6F2147D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1Efyhg2O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58A262146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730509AbeKZV4V (ORCPT
+        id S1730521AbeKZV4Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:56:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39462 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:56:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730481AbeKZV4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:56:20 -0500
+        id S1729692AbeKZV4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:56:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13B4B2147D;
-        Mon, 26 Nov 2018 11:02:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93E032089F;
+        Mon, 26 Nov 2018 11:02:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230155;
-        bh=PspPYDW7nO30Kx0HzYkJrraEp4WmNd5TjJSUEOV5mlE=;
+        s=default; t=1543230158;
+        bh=pg2tf+DNKacqh458ouMN5PzpvYZ2NgwOVxv1bgGBKZU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kW/Hcy2rjER+KmMvAfyfwQj5LVA1j+6pb75nPK2Z69aU7WnX+IVB8hB0CVX7mW45x
-         qiALWshS0dq9BBdo09auJqbtxQw1ydqPYSpSw19O3gayjWlXIcITgS0T/XJ880lnQ0
-         gZhER9wvk/lhrzIJ8EMA2wMZOQyI54FS/6j2SXDc=
+        b=1Efyhg2OD0A8RSbBLmIyR5dPNdSnOoLbsneNxX8BHXyZhgI5L0D5/yYPFltNKXJgF
+         9aCH/wnYnrJ25Nbcwe+k6JJ8/529Q+yVYp2c773QJsRs341/vNABWkUgaL0JwEv3w3
+         osS7bKWoWc5fud8ZWVpbe3SC73W1/d3n0vsgztvs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Prasad Sodagudi <psodagud@codeaurora.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Dennis Zhou <dennis@kernel.org>,
+        stable@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 028/118] arm64: percpu: Initialize ret in the default case
-Date:   Mon, 26 Nov 2018 11:50:22 +0100
-Message-Id: <20181126105100.947333890@linuxfoundation.org>
+Subject: [PATCH 4.19 029/118] clk: meson: clk-pll: drop CLK_GET_RATE_NOCACHE where unnecessary
+Date:   Mon, 26 Nov 2018 11:50:23 +0100
+Message-Id: <20181126105100.989313708@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -65,67 +64,122 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b5bb425871186303e6936fa2581521bdd1964a58 ]
+[ Upstream commit 2303a9ca693e585a558497ad737728fec97e2b8a ]
 
-Clang warns that if the default case is taken, ret will be
-uninitialized.
+CLK_GET_RATE_NOCACHE should only be necessary when the registers
+controlling the rate of clock may change outside of CCF. On Amlogic,
+it should only be the case for the hdmi pll which is directly controlled
+by the display driver (WIP to fix this).
 
-./arch/arm64/include/asm/percpu.h:196:2: warning: variable 'ret' is used
-uninitialized whenever switch default is taken
-[-Wsometimes-uninitialized]
-        default:
-        ^~~~~~~
-./arch/arm64/include/asm/percpu.h:200:9: note: uninitialized use occurs
-here
-        return ret;
-               ^~~
-./arch/arm64/include/asm/percpu.h:157:19: note: initialize the variable
-'ret' to silence this warning
-        unsigned long ret, loop;
-                         ^
-                          = 0
+The other plls should not require this flag.
 
-This warning appears several times while building the erofs filesystem.
-While it's not strictly wrong, the BUILD_BUG will prevent this from
-becoming a true problem. Initialize ret to 0 in the default case right
-before the BUILD_BUG to silence all of these warnings.
-
-Reported-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Tested-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/percpu.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/meson/axg.c     |  1 -
+ drivers/clk/meson/gxbb.c    | 12 ++++++++----
+ drivers/clk/meson/meson8b.c |  3 ---
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/include/asm/percpu.h b/arch/arm64/include/asm/percpu.h
-index 9234013e759e..21a81b59a0cc 100644
---- a/arch/arm64/include/asm/percpu.h
-+++ b/arch/arm64/include/asm/percpu.h
-@@ -96,6 +96,7 @@ static inline unsigned long __percpu_##op(void *ptr,			\
- 		: [val] "Ir" (val));					\
- 		break;							\
- 	default:							\
-+		ret = 0;						\
- 		BUILD_BUG();						\
- 	}								\
- 									\
-@@ -125,6 +126,7 @@ static inline unsigned long __percpu_read(void *ptr, int size)
- 		ret = READ_ONCE(*(u64 *)ptr);
- 		break;
- 	default:
-+		ret = 0;
- 		BUILD_BUG();
- 	}
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index baabcf7c0a24..02229d051d77 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -96,7 +96,6 @@ static struct clk_regmap axg_sys_pll = {
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+-		.flags = CLK_GET_RATE_NOCACHE,
+ 	},
+ };
  
-@@ -194,6 +196,7 @@ static inline unsigned long __percpu_xchg(void *ptr, unsigned long val,
- 		: [val] "r" (val));
- 		break;
- 	default:
-+		ret = 0;
- 		BUILD_BUG();
- 	}
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 6435d86118f1..6628ffa31383 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -213,7 +213,6 @@ static struct clk_regmap gxbb_fixed_pll = {
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+-		.flags = CLK_GET_RATE_NOCACHE,
+ 	},
+ };
+ 
+@@ -276,6 +275,10 @@ static struct clk_regmap gxbb_hdmi_pll = {
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "hdmi_pll_pre_mult" },
+ 		.num_parents = 1,
++		/*
++		 * Display directly handle hdmi pll registers ATM, we need
++		 * NOCACHE to keep our view of the clock as accurate as possible
++		 */
+ 		.flags = CLK_GET_RATE_NOCACHE,
+ 	},
+ };
+@@ -334,6 +337,10 @@ static struct clk_regmap gxl_hdmi_pll = {
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
++		/*
++		 * Display directly handle hdmi pll registers ATM, we need
++		 * NOCACHE to keep our view of the clock as accurate as possible
++		 */
+ 		.flags = CLK_GET_RATE_NOCACHE,
+ 	},
+ };
+@@ -371,7 +378,6 @@ static struct clk_regmap gxbb_sys_pll = {
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+-		.flags = CLK_GET_RATE_NOCACHE,
+ 	},
+ };
+ 
+@@ -418,7 +424,6 @@ static struct clk_regmap gxbb_gp0_pll = {
+ 		.ops = &meson_clk_pll_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+-		.flags = CLK_GET_RATE_NOCACHE,
+ 	},
+ };
+ 
+@@ -472,7 +477,6 @@ static struct clk_regmap gxl_gp0_pll = {
+ 		.ops = &meson_clk_pll_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+-		.flags = CLK_GET_RATE_NOCACHE,
+ 	},
+ };
+ 
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 7447d96a265f..74697e145dde 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -132,7 +132,6 @@ static struct clk_regmap meson8b_fixed_pll = {
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+-		.flags = CLK_GET_RATE_NOCACHE,
+ 	},
+ };
+ 
+@@ -169,7 +168,6 @@ static struct clk_regmap meson8b_vid_pll = {
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+-		.flags = CLK_GET_RATE_NOCACHE,
+ 	},
+ };
+ 
+@@ -207,7 +205,6 @@ static struct clk_regmap meson8b_sys_pll = {
+ 		.ops = &meson_clk_pll_ro_ops,
+ 		.parent_names = (const char *[]){ "xtal" },
+ 		.num_parents = 1,
+-		.flags = CLK_GET_RATE_NOCACHE,
+ 	},
+ };
  
 -- 
 2.17.1
