@@ -2,71 +2,115 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6658FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB34C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3415020663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:50:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3415020663
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BE0020663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BE0020663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbeK0Epb (ORCPT
+        id S1726616AbeK0Eq5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:45:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54778 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726296AbeK0Epb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:45:31 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5A2BBC036769;
-        Mon, 26 Nov 2018 17:50:41 +0000 (UTC)
-Received: from gondolin (ovpn-117-95.ams2.redhat.com [10.36.117.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C840587A8;
-        Mon, 26 Nov 2018 17:50:38 +0000 (UTC)
-Date:   Mon, 26 Nov 2018 18:50:35 +0100
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Junaid Shahid <junaids@google.com>,
-        Xiao Guangrong <guangrong.xiao@linux.intel.com>
-Subject: Re: [PATCH 1/3] kvm: make KVM_CAP_ENABLE_CAP_VM architecture
- agnostic
-Message-ID: <20181126185035.19635614.cohuck@redhat.com>
-In-Reply-To: <1543251253-24762-2-git-send-email-pbonzini@redhat.com>
-References: <1543251253-24762-1-git-send-email-pbonzini@redhat.com>
-        <1543251253-24762-2-git-send-email-pbonzini@redhat.com>
-Organization: Red Hat GmbH
+        Mon, 26 Nov 2018 23:46:57 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:43794 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbeK0Eq5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 23:46:57 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id F2CF927AA40
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     lee.jones@linaro.org
+Cc:     gwendal@chromium.org, drinkcat@chromium.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, bleung@chromium.org,
+        Olof Johansson <olof@lixom.net>
+Subject: [PATCH v2 0/8] mfd / platform: cros_ec: move cros_ec sysfs attributes to its own drivers.
+Date:   Mon, 26 Nov 2018 18:51:50 +0100
+Message-Id: <20181126175158.5425-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 26 Nov 2018 17:50:41 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Nov 2018 17:54:11 +0100
-Paolo Bonzini <pbonzini@redhat.com> wrote:
+Hi,
 
-> The first such capability to be handled in virt/kvm/ will be manual
-> dirty page reprotection.
-> 
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> ---
->  Documentation/virtual/kvm/api.txt | 13 +++++++++----
->  arch/powerpc/kvm/powerpc.c        | 14 ++------------
->  arch/s390/kvm/kvm-s390.c          | 11 +----------
->  arch/x86/kvm/x86.c                | 14 ++------------
->  include/linux/kvm_host.h          |  2 ++
->  virt/kvm/kvm_main.c               | 25 +++++++++++++++++++++++++
->  6 files changed, 41 insertions(+), 38 deletions(-)
+This is another patchset to try to cleanup a bit more the crossed
+references for cros-ec driver between the MFD and the platform/chrome
+subsystems.
 
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+The purpose of these patches is get rid of the different cros-ec attributes
+from mfd/cros_ec_dev to its own sub-driver in platform/chrome. cros_ec_dev
+continues instantiating the sub-devices but the sysfs attributes are owned
+by the platform driver.E.g. The lightbar driver should own his sysfs
+attributes and be instantiated only if the Embedded Controller has a
+lightbar.
+
+The patchset also adds the documentation of the sysfs attributes.
+
+Waiting for your feedback. Best regards,
+ Enric
+
+Changes in v2:
+- Use devm only for the cros-ec core.
+- Removed the two exported functions to attach/detach to the cros_class.
+- Use dev_warn instead of dev_err when adding the lightbar.
+- Remove unneeded check of ec_dev.
+- Add a "default MFD_CROS_EC_CHARDEV" in Kconfig for this.
+- Remove the checks for missing debug_info, are not needed now.
+- Remove a comment that no longer applies.
+- Remove unnecessary check for ec_dev.
+- Create the attributes directly instead of use the attach/detach callbacks.
+- Remove unnecessary IS_ENABLED.
+- Remove dev_err message telling that VBC is found.
+- Use dev_warn instead of dev_err as the error is ignored.
+- Removed ec_with_lightbar variable.
+- Fix WARN when unloading. This is new in these series.
+
+Enric Balletbo i Serra (8):
+  mfd / platform: cros_ec: use devm_mfd_add_devices.
+  mfd / platform: cros_ec: move lightbar attributes to its own driver.
+  mfd / platform: cros_ec: move vbc attributes to its own driver.
+  mfd / platform: cros_ec: move debugfs attributes to its own driver.
+  mfd / platform: cros_ec: move device sysfs attributes to its own
+    driver.
+  mfd / platform: cros_ec: instantiate only if th EC has a VBC NVRAM.
+  platform/chrome: cros_ec_lightbar: instantiate only if the EC has a
+    lightbar.
+  mfd: cros_ec: add a dev_release empty method.
+
+ .../ABI/testing/sysfs-class-chromeos          |  32 +++++
+ ...sfs-class-chromeos-driver-cros-ec-lightbar |  74 ++++++++++
+ .../sysfs-class-chromeos-driver-cros-ec-vbc   |   6 +
+ drivers/mfd/Kconfig                           |   1 -
+ drivers/mfd/cros_ec.c                         |  14 +-
+ drivers/mfd/cros_ec_dev.c                     |  93 +++++--------
+ drivers/mfd/cros_ec_dev.h                     |   6 -
+ drivers/platform/chrome/Kconfig               |  45 ++++++-
+ drivers/platform/chrome/Makefile              |   7 +-
+ drivers/platform/chrome/cros_ec_debugfs.c     |  62 ++++++---
+ drivers/platform/chrome/cros_ec_i2c.c         |  10 --
+ drivers/platform/chrome/cros_ec_lightbar.c    | 126 ++++++++++++------
+ drivers/platform/chrome/cros_ec_lpc.c         |   4 -
+ drivers/platform/chrome/cros_ec_spi.c         |  11 --
+ drivers/platform/chrome/cros_ec_sysfs.c       |  38 +++++-
+ drivers/platform/chrome/cros_ec_vbc.c         |  59 +++++---
+ include/linux/mfd/cros_ec.h                   |  11 --
+ 17 files changed, 402 insertions(+), 197 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos
+ create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos-driver-cros-ec-lightbar
+ create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos-driver-cros-ec-vbc
+
+-- 
+2.19.1
+
