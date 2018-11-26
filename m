@@ -2,93 +2,101 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EA7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73298C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:33:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F248020664
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:32:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F248020664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 2EC0A20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:33:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2ytwpH7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EC0A20663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726672AbeK0D0z (ORCPT
+        id S1726765AbeK0D2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 22:26:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726210AbeK0D0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:26:54 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD84820663;
-        Mon, 26 Nov 2018 16:32:16 +0000 (UTC)
-Date:   Mon, 26 Nov 2018 11:32:15 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC][PATCH 00/14] function_graph: Rewrite to allow multiple
- users
-Message-ID: <20181126113215.4259d473@gandalf.local.home>
-In-Reply-To: <20181126182112.422b914dd00ecb36e15f7b07@kernel.org>
-References: <20181122012708.491151844@goodmis.org>
-        <20181126182112.422b914dd00ecb36e15f7b07@kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 26 Nov 2018 22:28:10 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:37101 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbeK0D2K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 22:28:10 -0500
+Received: by mail-it1-f193.google.com with SMTP id b5so28677929iti.2;
+        Mon, 26 Nov 2018 08:33:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fl71CfqvxPlk7nHaasK0HbIEsS77+OcwFnQnwi9yvbQ=;
+        b=R2ytwpH7ZMdFoqWxj8w89dls+TsE2oQrFXtNhtVBpTQZoGNuxEeJg1zc9Qb153v+Za
+         8rRmxqF4QrPAriAk939QtY1MJ/xzg7T2komSrxI+VAGkySYW7GnVz68ypJXR7RlIEbfI
+         sAMCa6KVeZrKLSJaHo50VYlyBYJc9wQTowgSD/M4lTlSzZ48/kK+wv8GXGqjg5/s/1Om
+         x9ahNZbrPuoih7vp3u62RD1q5T1EPUjcZ21R/9WmeiEGiyZPSgFAZmZLJlMQQdzco1M3
+         5UarxnMrVOhGT2ahvlxqlZeMp6VcQ18zignZXs9uPuU4kHBzCPZ6Yk1XYhFpd4ladUSm
+         /R3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fl71CfqvxPlk7nHaasK0HbIEsS77+OcwFnQnwi9yvbQ=;
+        b=JXvzambYGV/HX1xbTgUjNHq3UgPWeljfhOi6b3ORZDhmZ6kItoMU2Ur65hbrs4tqye
+         A/yl8vXafVVdv16CdMh3b6E++E7WluYMJId/CJFQtqlF0qrj0HQpiV37oSg4tHmSvpOs
+         MAo37k1+9/epuPW2CPbAEg6s9C6BBoe3Mx8aTOL/Id9YlqaxlMM1QMpBp25xR5P0Zx7Z
+         +CzEWtL1HVm45VqrGLdcg7awFVN74q8RMGJ5zRZkkn13gyY6Yxt8wTvmH+VkFJkTHDNI
+         xVw0XwXTonINifX2KGaaeG1ivO95sp4T0oeMZGTBYZR25DmTLna5Vn10t4BKe7P0w/ec
+         xKyA==
+X-Gm-Message-State: AA+aEWYbanoo4tOt3zdUSKDOorp8uzKO9bsPxxTg+h5wTnSFDXG82eF/
+        sBXE4afigec5hecAW6JMcnBOpWHZULePZwLydo0=
+X-Google-Smtp-Source: AFSGD/UBZl4sNLDeAHLPtqC6FHZL58hqqKrWrew7Pl/2QvSn11oNvRMQSvEURJXwY/Y2smsbNy88oqivjTDjvsqE08w=
+X-Received: by 2002:a02:781e:: with SMTP id p30mr8979014jac.85.1543250013402;
+ Mon, 26 Nov 2018 08:33:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181124022035.17519-1-deepa.kernel@gmail.com>
+ <20181124022035.17519-7-deepa.kernel@gmail.com> <CAF=yD-+1BJHuajcW=2bpeAp5XOAX2fObyvhOdH-YsiGY3-_J4Q@mail.gmail.com>
+ <CABeXuvrV+xN3O8BSmJ7bGR+8uYmtrCk2YL37HQZrBSO8YSvzJQ@mail.gmail.com> <CAK8P3a3UVOeaYqwOiAMrziVcY6GpbCkDRGGAgFJKBJnB1e=v=w@mail.gmail.com>
+In-Reply-To: <CAK8P3a3UVOeaYqwOiAMrziVcY6GpbCkDRGGAgFJKBJnB1e=v=w@mail.gmail.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Mon, 26 Nov 2018 08:33:22 -0800
+Message-ID: <CABeXuvp5KAhJmU69G54G1LAB69otk=svpuaV8vra_iuHa2VsBA@mail.gmail.com>
+Subject: Re: [PATCH 6/8] socket: Add struct sock_timeval
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     willemdebruijn.kernel@gmail.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Network Devel Mailing List <netdev@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        y2038 Mailman List <y2038@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Nov 2018 18:21:12 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> I think we want signed types to keep it closer to what we
+> have today with 'timeval'. as long as linux/types.h is included
+> first (it is).
+>
+> Between __s64 or long long, I don't think it makes a difference,
+> so let's just go with Willem's suggestion. We already rely on
+> 'long long' being exactly 64 bit wide in 'struct __kernel_timespec'
+> as well.
 
+Sure, I will change this to __s64.
+I was also thinking we want signed types because it should be possible
+to set system time before 1970.
 
-> > Note, if another fgraph_ops is registered in the same location, its
-> > retfunc may be called that was set by a previous fgraph_ops. This
-> > is not a regression because that's what can happen today if you unregister
-> > a callback from the current function_graph tracer and register another
-> > one. If this is an issue, there are ways to solve it.  
-> 
-> Yeah, I need the solution, maybe an API to get correct return address? :)
+> We could however debate whether 'sock_timeval' should
+> be visible to user space in linux/tme.h like this, or if it
+> should be put in a namespace like '__kernel_sock_timeval'
+> to ensure it won't conflict with user space headers defining
+> a type of the same name.
 
-One way to solve this is to also have a counter array that gets updated
-every time the index array gets updated. And save the counter to the
-shadow stack index as well. This way, we only call the return if the
-counter on the stack matches what's in the counter on the counter array
-for the index.
+Good idea. I can rename it to __kernel_sock_timeval.
 
-> 
-> By the way, are there any way to hold a private data on each ret_stack entry?
-> Since kretprobe supports "entry data" passed from entry_handler to
-> return handler, we have to store the data or data-instance on the ret_stack.
-> 
-> This feature is used by systemtap to save the function entry data, like
-> function parameters etc., so that return handler analyzes the parameters
-> with return value.
-
-Yes, I remember you telling me about this at plumbers, and while I was
-writing this code I had that in mind. It wouldn't be too hard to
-implement, I just left it off for now. I also left it off because I
-have some questions about what exactly is needed. What size do you
-require to be stored. Especially if we want to keep the shadow stack
-smaller. I was going to find a way to implement some of the data that
-is already stored via the ret_stack with this instead, and make the
-ret_stack entry smaller. Should we allow just sizeof(long)*3? or just
-let user choose any size and if they run out of stack, then too bad. We
-just wont let it crash.
-
--- Steve
+Thanks,
+Deepa
