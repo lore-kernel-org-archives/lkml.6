@@ -2,215 +2,139 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CFA3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E12C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57D5F20659
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:41:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57D5F20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 914F820659
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:41:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 914F820659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbeK0DgA (ORCPT
+        id S1726810AbeK0DgG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 22:36:00 -0500
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:34321 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726260AbeK0DgA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:36:00 -0500
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id RJwigDx8rIGBARJwlgfoDu; Mon, 26 Nov 2018 17:41:19 +0100
-Subject: Re: [PATCH v3] media: venus: amend buffer size for bitstream plane
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        mgottam@codeaurora.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        vgarodia@codeaurora.org
-References: <1543227173-2160-1-git-send-email-mgottam@codeaurora.org>
- <d74281c8-a177-12a3-9e72-7a7db3014943@xs4all.nl>
- <f6106d20-abee-979c-8ac1-6c9115e8373c@linaro.org>
- <57b28a7f-8c5c-22d2-2f89-e6d6ebdcb8a2@xs4all.nl>
- <CAAFQd5DJn-_y5dHySAB6_ed-syBOr3Ybo7KfsPLNd+0Z7X0N7g@mail.gmail.com>
- <2a8bbdf7-cec6-4bdf-5833-93d5014ddf89@xs4all.nl>
- <CAAFQd5BijN58EkxHmCPuJO1TnoTiB5CjoA5uuKHzi_1SD0iawQ@mail.gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <a7652127-a302-fdd8-a8d8-9d184e933988@xs4all.nl>
-Date:   Mon, 26 Nov 2018 17:41:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 26 Nov 2018 22:36:06 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41140 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726254AbeK0DgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 22:36:05 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1E97C308212C;
+        Mon, 26 Nov 2018 16:41:27 +0000 (UTC)
+Received: from [10.36.112.66] (ovpn-112-66.ams2.redhat.com [10.36.112.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 24141604CD;
+        Mon, 26 Nov 2018 16:41:23 +0000 (UTC)
+Subject: Re: [PATCH v3 0/2] x86/kvm: Enable MCE injection in the guest
+To:     Borislav Petkov <bp@alien8.de>, KVM <kvm@vger.kernel.org>
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181114181507.6037-1-bp@alien8.de>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <64d0e75f-f292-7e63-dd66-4e05d4afed5b@redhat.com>
+Date:   Mon, 26 Nov 2018 17:41:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5BijN58EkxHmCPuJO1TnoTiB5CjoA5uuKHzi_1SD0iawQ@mail.gmail.com>
+In-Reply-To: <20181114181507.6037-1-bp@alien8.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfOE+C3hI8D+BcbskRD3IXAdo7fCexJF35wbR4icjWSijKw7WFKtgZsHgphqP9VXtFjKOXOv2zBWo1vJm2RB+CmGR7BWzO6kPGVyIc2HkeaOEnWcxx0OQ
- vSsmqGi9WqIL6Y+tb6qza+dbnld79DZlkTiBt/NAX+tBn1OBIisqX+zBoUptO+l69gOJywgjnHTs4C1zQ7Mu/mPkCY4l6ILSa2FTIL18VF9YW9faUs40NWvP
- aXXf43BiN/LXDwO06ZI8u+EmRXFvLYL1wLa8Y5cer+Wf9N/S88U7fZiCsgSlpUcb5h1ptSd7O6Y9yYdhp0rhDLwPi4Suj7hD84l3PI2ML478JnJ3X2Gv/pHb
- M87LvbnKnXqyLFq189Dgokg2ZaBUBG+C8NltFxUtQfyGFpRyFx/55MC/TJFDJAXn4ti41QSLOa4vSYvi2A0ldukz+RpneX+DOiFPxQ/DwYUgaPBE7b0=
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 26 Nov 2018 16:41:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/26/2018 05:07 PM, Tomasz Figa wrote:
-> On Tue, Nov 27, 2018 at 1:00 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>
->> On 11/26/2018 04:44 PM, Tomasz Figa wrote:
->>> Hi Hans,
->>>
->>> On Tue, Nov 27, 2018 at 12:24 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>>>
->>>> On 11/26/2018 03:57 PM, Stanimir Varbanov wrote:
->>>>> Hi Hans,
->>>>>
->>>>> On 11/26/18 3:37 PM, Hans Verkuil wrote:
->>>>>> On 11/26/2018 11:12 AM, Malathi Gottam wrote:
->>>>>>> Accept the buffer size requested by client and compare it
->>>>>>> against driver calculated size and set the maximum to
->>>>>>> bitstream plane.
->>>>>>>
->>>>>>> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
->>>>>>
->>>>>> Sorry, this isn't allowed. It is the driver that sets the sizeimage value,
->>>>>> never the other way around.
->>>>>
->>>>> I think for decoders (OUTPUT queue) and encoders (CAPTURE queue) we
->>>>> allowed userspace to set sizeimage for buffers. See [1] Initialization
->>>>> paragraph point 2:
->>>>>
->>>>>     ``sizeimage``
->>>>>        desired size of ``CAPTURE`` buffers; the encoder may adjust it to
->>>>>        match hardware requirements
->>>>>
->>>>> Similar patch we be needed for decoder as well.
->>>>
->>>> I may have missed that change since it wasn't present in v1 of the stateful
->>>> encoder spec.
->>>
->>> It's been there from the very beginning, even before I started working
->>> on it. Actually, even the early slides from Kamil mention the
->>> application setting the buffer size for compressed streams:
->>> https://events.static.linuxfound.org/images/stories/pdf/lceu2012_debski.pdf
->>>
->>>>
->>>> Tomasz, what was the reason for this change? I vaguely remember some thread
->>>> about this, but I forgot the details. Since this would be a departure of
->>>> the current API this should be explained in more detail.
->>>
->>> The kernel is not the place to encode assumptions about optimal
->>> bitstream chunk sizes. It depends on the use case and the application
->>> should be able decide. It may for example want to use smaller buffers,
->>> optimizing for the well compressible video streams and just reallocate
->>> if bigger chunks are needed.
->>>
->>>>
->>>> I don't really see the point of requiring userspace to fill this in. For
->>>> stateful codecs it can just return some reasonable size. Possibly calculated
->>>> using the provided width/height values or (if those are 0) some default value.
->>>
->>> How do we decide what's "reasonable"? Would it be reasonable for all
->>> applications?
->>
->> In theory it should be the minimum size that the hardware supports. But it is
->> silly to i.e. provide the size of one PAGE as the minimum. In practice you
->> probably want to set sizeimage to something larger than that. Depending on
->> the typical compression ratio perhaps 5 or 10% of what a raw YUV 4:2:0 frame
->> would be.
->>
->>>
->>>>
->>>> Ditto for decoders.
->>>>
->>>> Stanimir, I certainly cannot merge this until this has been fully nailed down
->>>> as it would be a departure from the current API.
->>>
->>> It would not be a departure, because I can see existing stateful
->>> drivers behaving like that:
->>> https://elixir.bootlin.com/linux/v4.20-rc4/source/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c#L1444
->>> https://elixir.bootlin.com/linux/v4.20-rc4/source/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c#L469
->>
->> Yes, and that's out of spec. Clearly v4l2-compliance doesn't test for this.
->> It should have been caught at least for the mtk driver.
->>
+On 14/11/18 19:15, Borislav Petkov wrote:
+> From: Borislav Petkov <bp@suse.de>
 > 
-> Perhaps we should make it a part of the spec then?
+> Hi all,
 > 
-> Actually I'm not really sure if we can say that this is out of spec
-> There has been no clear spec for the stateful codecs for many years,
-> with drivers doing wildly whatever they like and applications ending
-> up relying on those quirks.
-
-The VIDIOC_S_FMT spec for v4l2_pix_format is quite clear that it is the
-driver that sets this value. The spec for v4l2_plane_pix_format is
-unfortunately not so clear.
-
-> My spec actually attempts to incorporate what was decided on the
-> earlier summits, including what's in Kamil's slides, the drivers are
-> already doing and existing applications rely on. The sizeimage
-> handling is just a part of it.
+> here's a rediff ontop of -rc2. No changes, only added Yazen's Tested-by.
 > 
->>>
->>> Also, Chromium has been setting the size on its own for long time
->>> using its own heuristics.
->>>
->>>>
->>>> And looking at the venus patch I do not see how it helps userspace.
->>>>
->>>> Regards,
->>>>
->>>>         Hans
->>>>
->>>>>
->>>>>>
->>>>>> If you need to allocate larger buffers, then use VIDIOC_CREATE_BUFS instead
->>>>>> of VIDIOC_REQBUFS.
->>>
->>> CREATE_BUFS wouldn't work, because one needs to use TRY_FMT to obtain
->>> a format for it and the format returned by it would have the sizeimage
->>> as hardcoded in the driver...
->>
->> ???
->>
->> Userspace can change the sizeimage to whatever it wants before calling
->> CREATE_BUFS as long as it is >= the sizeimage of the current format.
->>
->> If we want to allow smaller sizes, then I think that would not be
->> unreasonable for stateful codecs. I actually think that drivers can
->> already do this in queue_setup(), but the spec would have to be updated
->> a bit.
+> Please queue,
+> thx.
 > 
-> Existing applications rely on REQBUFS honoring the size they set in
-> sizeimage, though...
+> Changelog:
+> ==========
+> 
+> v2:
+> 
+> here's v2, dropping patch 3 and incorporating hopefully all of Radim's
+> feedback.
+> 
+> v1:
+> 
+> there's this mce-inject.ko module in the kernel which allows for
+> injecting real MCEs and thus test the MCE handling code.
+> 
+> It is doubly useful to be able to inject same MCEs in a guest so that
+> testing of the MCE handling code can happen even easier/faster. In order
+> to be able to do that on an AMD guest, we need to emulate some bits
+> and pieces like the HWCR[McStatusWrEn] bit which allows writes to the
+> MCi_STATUS registers without a #GP.
+> 
+> The below does that and with it I'm able to properly inject MCEs in said
+> guest.
+> 
+> --
+> 
+> Borislav Petkov (2):
+>   kvm/x86: Move MSR_K7_HWCR to svm.c
+>   x86/kvm: Implement MSR_HWCR support
+> 
+>  arch/x86/kvm/svm.c | 20 ++++++++++++++++++++
+>  arch/x86/kvm/x86.c | 46 +++++++++++++++++++++++++++++++---------------
+>  2 files changed, 51 insertions(+), 15 deletions(-)
+> 
 
-REQBUFS, yes. But not CREATE_BUFS. Which is why that ioctl was added in the
-first place.
+Queued, thanks.
 
-However (and now I remember the real problem with CREATE_BUFS) the spec for
-CREATE_BUFS says that it will not change the provided sizeimage value. So
-any adjustments required due to specific alignment requirements won't be
-applied, all CREATE_BUFS can do is to reject it.
-
-So what this boils down to is a change to the spec:
-
-For compressed formats (and only those!) userspace can set sizeimage to a
-proposed value. The driver may either ignore it and just set its own value,
-or modify it to satisfy HW requirements. The returned value will be used
-by REQBUFS when it allocates buffers.
-
-I think this is reasonable, provided the spec is updated accordingly.
-
-As far as I can tell this shouldn't cause any backwards compatibility
-problems, and it should be easy to test in v4l2-compliance.
-
-Regards,
-
-	Hans
+Paolo
