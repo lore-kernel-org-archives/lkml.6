@@ -7,47 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50FBFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E41C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 187B22089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B04C2146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JUbj+SBh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 187B22089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qDyppsvO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B04C2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730046AbeKZVyx (ORCPT
+        id S1730060AbeKZVy4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:54:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37190 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:54:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728901AbeKZVyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:54:52 -0500
+        id S1728901AbeKZVy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:54:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D32921104;
-        Mon, 26 Nov 2018 11:01:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 794BF2089F;
+        Mon, 26 Nov 2018 11:01:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230067;
-        bh=7NOd1hMWgwEE+mFTcMuToxVqPnwEMDXLJoPZzdb9Z6Q=;
+        s=default; t=1543230070;
+        bh=tK4Ev2g/K3bk+abi+HNndug5WoYB05kw2bVuFK37FuU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JUbj+SBhge3OI2N6ZvGJFLEXTVmho3glrU+mIMlUHbZZMXQmB3iDySjrsxOc/cS03
-         kgN5/Dqng4GcvYh591znMUn0V0G9HWOQbc+3kMOZkgEXHQ1YTz4igrXlXWMnLkLNQO
-         MLyAG6SQMDUab+Q9HZtjmYkjBeHZU4X3mODNXsFg=
+        b=qDyppsvO92wpkJy2RSvl5SsQop3Twj2i6lxwsKatTM5JZdskF/SAKQjwr950Q4mT4
+         Dj2ctenQgofRDLLGlm6ATatvf1EYW/xXyyGekqvLqPc038QmYJq6ZtR5uxmRSgobS7
+         5CP5SwMpYG5Lhb5fdwKCh8xwc5Dx/iSNXTk3/TNg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Josh Wu <rainyfeeling@outlook.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 58/62] mtd: rawnand: atmel: fix OF child-node lookup
-Date:   Mon, 26 Nov 2018 11:51:39 +0100
-Message-Id: <20181126105054.941598787@linuxfoundation.org>
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH 4.14 59/62] drivers/misc/sgi-gru: fix Spectre v1 vulnerability
+Date:   Mon, 26 Nov 2018 11:51:40 +0100
+Message-Id: <20181126105054.997469993@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -65,67 +62,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 5d1e9c2212ea6b4dd735e4fc3dd6279a365d5d10 upstream.
+commit fee05f455ceb5c670cbe48e2f9454ebc4a388554 upstream.
 
-Use the new of_get_compatible_child() helper to lookup the nfc child
-node instead of using of_find_compatible_node(), which searches the
-entire tree from a given start node and thus can return an unrelated
-(i.e. non-child) node.
+req.gid can be indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-This also addresses a potential use-after-free (e.g. after probe
-deferral) as the tree-wide helper drops a reference to its first
-argument (i.e. the node of the device being probed).
+This issue was detected with the help of Smatch:
 
-While at it, also fix a related nfc-node reference leak.
+vers/misc/sgi-gru/grukdump.c:200 gru_dump_chiplet_request() warn:
+potential spectre issue 'gru_base' [w]
 
-Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
-Cc: stable <stable@vger.kernel.org>     # 4.11
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Josh Wu <rainyfeeling@outlook.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Fix this by sanitizing req.gid before calling macro GID_TO_GRU, which
+uses it to index gru_base.
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/atmel/nand-controller.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/misc/sgi-gru/grukdump.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/mtd/nand/atmel/nand-controller.c
-+++ b/drivers/mtd/nand/atmel/nand-controller.c
-@@ -2077,8 +2077,7 @@ atmel_hsmc_nand_controller_legacy_init(s
- 	int ret;
+--- a/drivers/misc/sgi-gru/grukdump.c
++++ b/drivers/misc/sgi-gru/grukdump.c
+@@ -27,6 +27,9 @@
+ #include <linux/delay.h>
+ #include <linux/bitops.h>
+ #include <asm/uv/uv_hub.h>
++
++#include <linux/nospec.h>
++
+ #include "gru.h"
+ #include "grutables.h"
+ #include "gruhandles.h"
+@@ -196,6 +199,7 @@ int gru_dump_chiplet_request(unsigned lo
+ 	/* Currently, only dump by gid is implemented */
+ 	if (req.gid >= gru_max_gids)
+ 		return -EINVAL;
++	req.gid = array_index_nospec(req.gid, gru_max_gids);
  
- 	nand_np = dev->of_node;
--	nfc_np = of_find_compatible_node(dev->of_node, NULL,
--					 "atmel,sama5d3-nfc");
-+	nfc_np = of_get_compatible_child(dev->of_node, "atmel,sama5d3-nfc");
- 	if (!nfc_np) {
- 		dev_err(dev, "Could not find device node for sama5d3-nfc\n");
- 		return -ENODEV;
-@@ -2492,15 +2491,19 @@ static int atmel_nand_controller_probe(s
- 	}
- 
- 	if (caps->legacy_of_bindings) {
-+		struct device_node *nfc_node;
- 		u32 ale_offs = 21;
- 
- 		/*
- 		 * If we are parsing legacy DT props and the DT contains a
- 		 * valid NFC node, forward the request to the sama5 logic.
- 		 */
--		if (of_find_compatible_node(pdev->dev.of_node, NULL,
--					    "atmel,sama5d3-nfc"))
-+		nfc_node = of_get_compatible_child(pdev->dev.of_node,
-+						   "atmel,sama5d3-nfc");
-+		if (nfc_node) {
- 			caps = &atmel_sama5_nand_caps;
-+			of_node_put(nfc_node);
-+		}
- 
- 		/*
- 		 * Even if the compatible says we are dealing with an
+ 	gru = GID_TO_GRU(req.gid);
+ 	ubuf = req.buf;
 
 
