@@ -2,96 +2,176 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD87C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 05:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81019C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 05:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1619F20660
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 05:07:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BBF52086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 05:16:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="teT9Qkvc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1619F20660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wdCIpjH0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BBF52086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbeKZQAI (ORCPT
+        id S1726252AbeKZQI7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 11:00:08 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44359 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726144AbeKZQAI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 11:00:08 -0500
-Received: by mail-pf1-f196.google.com with SMTP id u6so5958626pfh.11
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 21:07:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8qUeRwI4QTL0hDlyKkNOdtn4Av5ixLXUe9MNaaBK/aw=;
-        b=teT9QkvcR4dUPwMyPSkvcQCDQmzGEtnPsRq2Ao60lxkLc1S4uBE0VoDd9M/ObqOOU0
-         iP6tqUQP2wF4RqDdH2GgLtXbp/y9RHZu7I2qd2RWyQ14ADu94eQ/MD5BufJVGDRld8lZ
-         Dpc4u6twiE3tQucUWzXKTHmawgmJy6CzcnQQU0m4ZPTdhk8SmHEChjzgKARW5ER5nnVt
-         b4F1FL97/DbtSi1mWiWW1fybLM/Gf8E/Q3tQuircTqHMn7Ib3TKg7Qf3nXC45vX1XZ1c
-         zWDBo0EKq2Ve7DmvCFV5pfqSCkQ47iUEmqSues3WjtaViOH56pEd2o7Ed06F3TUHVTCg
-         cf4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8qUeRwI4QTL0hDlyKkNOdtn4Av5ixLXUe9MNaaBK/aw=;
-        b=HAonwNsu9gU0Z4gdJcDY21knaHdMX9+vBUtEb1mGkTvS3ixL1eK+7Q8tCXVlNEwZhM
-         m3AMzmFkOVhKqrlcgX210WYVSQV+r5R1aRNZZkBUaanTk7btUX5N4Cm6JmOoAvn7i7Qb
-         xZ/gEro/gpOLuWS51x2fw6upvQQT8aSrG3bxXdOBJdXor5w1Q6Mlf65bN9QS/+vzh/Uu
-         j9wLR/aI/KP5sQuaDLKLxYVsZoIapL0v9tYtMSlhPqeanxOaOoEGwGTtvPZh/XHLOiFt
-         TnAizmk+FVu83rc7MLyPiRlkjOMGmGIoFQ1R+MLfq6I3YrQQGvsSTJrs51Xjtv4KhuRK
-         mR8g==
-X-Gm-Message-State: AA+aEWYYGHoQBbu3yI2FkjFiS4D/PWPJMmaHTGt+JNdbjzgQjoHy0WwG
-        dICPAP+QrjSKzl0pO5tbEOw=
-X-Google-Smtp-Source: AFSGD/VkNLzuoNbYdG49w5eSJunaex0BYclwo0q6ZRojHIRro3KKvyfkqGYlzomFczegpKqVlcsQbg==
-X-Received: by 2002:a63:66c6:: with SMTP id a189mr23405451pgc.167.1543208832897;
-        Sun, 25 Nov 2018 21:07:12 -0800 (PST)
-Received: from localhost ([175.223.33.236])
-        by smtp.gmail.com with ESMTPSA id 125sm8216018pfd.124.2018.11.25.21.07.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Nov 2018 21:07:11 -0800 (PST)
-Date:   Mon, 26 Nov 2018 14:07:08 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Carmeli Tamir <carmeli.tamir@gmail.com>
-Cc:     axboe@kernel.dk, sergey.senozhatsky@gmail.com, jthumshirn@suse.de,
-        bvanassche@acm.org, martin.petersen@oracle.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fat: Replaced 11 magic to MSDOS_NAME for volume label
-Message-ID: <20181126050708.GE540@jagdpanzerIV>
-References: <1543096879-82837-1-git-send-email-carmeli.tamir@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543096879-82837-1-git-send-email-carmeli.tamir@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 26 Nov 2018 11:08:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53252 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726144AbeKZQI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 11:08:58 -0500
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95AA120660;
+        Mon, 26 Nov 2018 05:15:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543209362;
+        bh=58GUl73SmHSM3NX9bHWiLDrWqwW+HlxuAcXmspvUsGk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=wdCIpjH0me2URW3lcxXBtkH0xV9B1uE0IaCW0hS8L0r5J8i/Iz1BRXs1oHYDbqLbQ
+         TDa0RZy77ySfXp/y3O6WXlwI+/xY2f73UckR8pn/H9uji5KGT/v5ridN9gbDXXUqlJ
+         xkAj2f05gf4eqXMEkSN+GI0HBxg/+FHq6ECNccJU=
+Date:   Mon, 26 Nov 2018 14:15:57 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-arch@vger.kernel.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [for-next][PATCH 00/18] function_graph: Add separate depth
+ counter to prevent trace corruption
+Message-Id: <20181126141557.3f7be1aad456345b9a0dfcae@kernel.org>
+In-Reply-To: <20181122002801.501220343@goodmis.org>
+References: <20181122002801.501220343@goodmis.org>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (11/24/18 17:01), Carmeli Tamir wrote:
-> The FAT file system volume label file stored in the root directory should
-> match the volume label field in the FAT boot sector. As consequence, the
-> max length of these fields ought to be the same. This patch replaces the
-> magic '11' usef in the struct fat_boot_sector with MSDOS_NAME,
-> which is used in struct msdos_dir_entry.
->
-> Please check the following references:
-> 1. Microsoft FAT specification 2005
-> (http://read.pudn.com/downloads77/ebook/294884/FAT32%20Spec%20%28SDA%20Contribution%29.pdf).
-[..]
-> Signed-off-by: Carmeli Tamir <carmeli.tamir@gmail.com>
+Hi Steve,
 
-Looks good to me,
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+This series looks good to me.
 
-	-ss
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+for this series.
+
+Thank you!
+
+# Now I know why sometimes func-graph depth looks broken...
+
+
+On Wed, 21 Nov 2018 19:28:01 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> While working on rewriting function graph tracer, I found a design
+> flaw in the code. Commit 03274a3ffb449 ("tracing/fgraph: Adjust fgraph depth
+> before calling trace return callback") tried to fix a bug that caused
+> interrupts not to be traced if max_depth was set to 1 (for debugging
+> NO_HZ_FULL), because if it came in just as another function that was being
+> traced that had a depth of 1 was exiting. This caused the timing of being in
+> the kernel to be off. The fix was simply to move the calling of the return
+> function after the updating of curr_ret_stack index as that was what was
+> being used.
+> 
+> The change log even says that it was safe to do this, but unfortunately it
+> was not, and the barrier() there was specifically *for* that function (which
+> shows why one should document barriers).
+> 
+> The problem is that the return callback may still be using what's on the
+> shadow stack and by changing the shadow stack pointer, it may allow for
+> another function being traced to overwrite that data. Note, if this happens,
+> it will only cause garbage data to be traced and will not affect the actual
+> operations of the kernel (ie. it wont crash).
+> 
+> Unfortunately just reverting that will bring back the old bug. The real way
+> to fix that old bug is to create another counter to handle the depth, but
+> this means that we need to change all the architectures that implement
+> function graph tracing (that's 12 of them). Luckily, I need to do this
+> anyway in my re-design so this is a good thing.
+> 
+> Since all the archictectures do basicall the same thing to prepare the
+> function graph trace to be traced, I made a generic function that they all
+> can use and simplified the logic of all the architectures. Then I'm able to
+> fix the design problem in one place.
+> 
+> I pushed this code up to let zero-day have a whack at it, and I also
+> downloaded the latest 8.1.0 cross compilers for all the archs that are
+> affected and compiled tested them all (and got rid of all the warnings
+> I introduced as well).
+> 
+> I marked this all for stable, but in reality it may not need to be ported
+> as it will probably not be trivial to do so, becaues you'll need to also
+> fix the architectures that are no longer used (although do we care about
+> them?). But if someone really cares about correct timings of the function
+> graph profiler when the options/graph-time is set to zero, then be my
+> guest.
+> 
+> Feel free to test this! I'll be pushing this to linux-next and let it
+> sit there a week or so before pushing it to Linus.
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+> ftrace/urgent
+> 
+> Head SHA1: 1ffd62e282a649483afb0bb4d76f7244b3c10075
+> 
+> 
+> Steven Rostedt (VMware) (18):
+>       function_graph: Create function_graph_enter() to consolidate architecture code
+>       x86/function_graph: Simplify with function_graph_entry()
+>       ARM: function_graph: Simplify with function_graph_entry()
+>       arm64: function_graph: Simplify with function_graph_entry()
+>       microblaze: function_graph: Simplify with function_graph_entry()
+>       MIPS: function_graph: Simplify with function_graph_entry()
+>       nds32: function_graph: Simplify with function_graph_entry()
+>       parisc: function_graph: Simplify with function_graph_entry()
+>       powerpc/function_graph: Simplify with function_graph_entry()
+>       riscv/function_graph: Simplify with function_graph_entry()
+>       s390/function_graph: Simplify with function_graph_entry()
+>       sh/function_graph: Simplify with function_graph_entry()
+>       sparc/function_graph: Simplify with function_graph_entry()
+>       function_graph: Make ftrace_push_return_trace() static
+>       function_graph: Use new curr_ret_depth to manage depth instead of curr_ret_stack
+>       function_graph: Move return callback before update of curr_ret_stack
+>       function_graph: Reverse the order of pushing the ret_stack and the callback
+>       function_graph: Have profiler use curr_ret_stack and not depth
+> 
+> ----
+>  arch/arm/kernel/ftrace.c             | 17 +------------
+>  arch/arm64/kernel/ftrace.c           | 15 +----------
+>  arch/microblaze/kernel/ftrace.c      | 15 ++---------
+>  arch/mips/kernel/ftrace.c            | 14 ++---------
+>  arch/nds32/kernel/ftrace.c           | 18 ++-----------
+>  arch/parisc/kernel/ftrace.c          | 17 +++----------
+>  arch/powerpc/kernel/trace/ftrace.c   | 15 ++---------
+>  arch/riscv/kernel/ftrace.c           | 14 ++---------
+>  arch/s390/kernel/ftrace.c            | 13 ++--------
+>  arch/sh/kernel/ftrace.c              | 16 ++----------
+>  arch/sparc/kernel/ftrace.c           | 11 +-------
+>  arch/x86/kernel/ftrace.c             | 15 +----------
+>  include/linux/ftrace.h               |  4 +--
+>  include/linux/sched.h                |  1 +
+>  kernel/trace/ftrace.c                |  7 ++++--
+>  kernel/trace/trace_functions_graph.c | 49 ++++++++++++++++++++++++++++--------
+>  16 files changed, 67 insertions(+), 174 deletions(-)
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
