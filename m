@@ -2,149 +2,163 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6376AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB689C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:52:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 341FD20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:52:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 341FD20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6AE9C2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:52:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A8QlBzvA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AE9C2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726345AbeKZUpm (ORCPT
+        id S1726372AbeKZUqD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 15:45:42 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60300 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726203AbeKZUpl (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 15:45:41 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0584758E22;
-        Mon, 26 Nov 2018 09:52:07 +0000 (UTC)
-Received: from krava (ovpn-204-234.brq.redhat.com [10.40.204.234])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 846D25D776;
-        Mon, 26 Nov 2018 09:52:04 +0000 (UTC)
-Date:   Mon, 26 Nov 2018 10:52:03 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Jin Yao <yao.jin@linux.intel.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-Subject: Re: [PATCH 2/2] perf report: Display average IPC and IPC coverage
- per symbol
-Message-ID: <20181126095203.GA18780@krava>
-References: <1543225254-5858-1-git-send-email-yao.jin@linux.intel.com>
- <1543225254-5858-3-git-send-email-yao.jin@linux.intel.com>
+        Mon, 26 Nov 2018 15:46:03 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40708 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbeKZUqD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 15:46:03 -0500
+Received: by mail-wr1-f65.google.com with SMTP id p4so18151224wrt.7
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 01:52:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=G7p27rePNqiCFY3KVFZ3ftmIVArR7WdXGvdqeI4YKNo=;
+        b=A8QlBzvA0cr4sAgzWZHyk7EB67jC8YUKYnyCo3VUd56SqIts9v2iE9oFZNKlvdvtGC
+         BJChgEYNKyzM6b4RxYGgqmeqjLEbExz8qa7QPe9sbSw4IEkbwCembnnmtyDSe292Y0C2
+         lVU03jeyQWtS5Jlcx7bKAUJoBbe9AB8EtebF8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=G7p27rePNqiCFY3KVFZ3ftmIVArR7WdXGvdqeI4YKNo=;
+        b=gJ30s6cmJY3adBQ7EWozqD1NA/ueMK1y+NLTP4thUiML0hJYCRW6cbITL9SEd3kYzi
+         V0i8YlMwl50Hp1QryrJ/g0Wic7+0xt6JES4ML6X3YrNqW/W6lNgJK1miUcm6qnHt0dny
+         YYLJufaj1OSSdaEZrHQFPi6k8y6DnhmTIdwvKw32OlT7+ZQhLgsDqUlUE4LVJrCWHjYw
+         iUEq8chKHI7asVdEO5n15BvK8bufHzyEoM8ZhY/hkFU/ViEbCS/ISSBJ5vh3ZwHZ+M+t
+         zhK/k5nVRdwr1rgK/MxLtZJBYzD8lsdIAjZ6lmvuycpNM5qaeeP3wyd4iryYzkDjevqk
+         xY8Q==
+X-Gm-Message-State: AA+aEWb0RQrQrh9muzL2yCAjjGTZvTrShMdVcajPEO/CLDjfVc69Xuhi
+        odvhQCC6z9ehjDn4cKqa8xK4Qg==
+X-Google-Smtp-Source: AFSGD/X1GWC7YKv+m6W3qkDBl6AMiRacv3GH1ecyHS2l61gvYubA2+rk0C4/Dc60lB0mt+1C5pAc3A==
+X-Received: by 2002:adf:f848:: with SMTP id d8mr24500200wrq.178.1543225946827;
+        Mon, 26 Nov 2018 01:52:26 -0800 (PST)
+Received: from queper01-ThinkPad-T460s ([217.140.96.141])
+        by smtp.gmail.com with ESMTPSA id x136sm407276wme.0.2018.11.26.01.52.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 01:52:26 -0800 (PST)
+Date:   Mon, 26 Nov 2018 09:52:24 +0000
+From:   Quentin Perret <quentin.perret@linaro.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        viresh.kumar@linaro.org, Chris Redpath <chris.redpath@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH V3 2/2] base/drivers/arch_topology: Default dmips-mhz if
+ they are not set in DT
+Message-ID: <20181126095224.i5se3n5lavww4a2n@queper01-ThinkPad-T460s>
+References: <1543221866-19671-1-git-send-email-daniel.lezcano@linaro.org>
+ <1543221866-19671-2-git-send-email-daniel.lezcano@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1543225254-5858-3-git-send-email-yao.jin@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 26 Nov 2018 09:52:07 +0000 (UTC)
+In-Reply-To: <1543221866-19671-2-git-send-email-daniel.lezcano@linaro.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 05:40:54PM +0800, Jin Yao wrote:
-> Support displaying the average IPC and IPC coverage for symbol
-> in perf report TUI browser. We create a new sort-key 'ipc' for
-> that.
+On Monday 26 Nov 2018 at 09:44:21 (+0100), Daniel Lezcano wrote:
+> In the case of asymmetric SoC with the same micro-architecture, we
+> have a group of CPUs with smaller OPPs than the other group. One
+> example is the 96boards dragonboard 820c. There is no dmips/MHz
+> difference between both groups, so no need to specify the values in
+> the DT. Unfortunately, without these defined, there is no scaling
+> capacity computation triggered, so we need to write
+> 'capacity-dmips-mhz' for each CPU with the same value in order to
+> force the scaled capacity computation.
 > 
-> For example,
+> In order to fix this situation, allocate 'raw_capacity' so the pointer
+> is set and the init_cpu_capacity_callback() function can be called.
 > 
-> $ perf record -g -b ...
-> $ perf report -s symbol,ipc or
->   perf report -s ipc
+> This was tested on db820c:
+>  - specified values in the DT (correct results)
+>  - partial values defined in the DT (error + fallback to defaults)
+>  - no specified values in the DT (correct results)
 > 
-> Overhead  Symbol                           IPC   [IPC Coverage]
->   39.60%  [.] __random                     2.30  [ 54.8%]
->   18.02%  [.] main                         0.43  [ 54.3%]
->   14.21%  [.] compute_flag                 2.29  [100.0%]
->   14.16%  [.] rand                         0.36  [100.0%]
->    7.06%  [.] __random_r                   2.57  [ 70.5%]
->    6.85%  [.] rand@plt                     0.00  [  0.0%]
+> correct results are:
+>   cat /sys/devices/system/cpu/cpu*/cpu_capacity
+>    758
+>    758
+>   1024
+>   1024
 > 
-> Note that, stdio mode doesn't support this feature.
+>   ... respectively for CPU0, CPU1, CPU2 and CPU3.
+> 
+> That reflects the capacity for the max frequencies 1593600 and 2150400.
+> 
+> Cc: Chris Redpath <chris.redpath@linaro.org>
+> Cc: Quentin Perret <quentin.perret@linaro.org>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Amit Kucheria <amit.kucheria@linaro.org>
+> Cc: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+> Cc: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  drivers/base/arch_topology.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+> index fd5325b..e0c5b60 100644
+> --- a/drivers/base/arch_topology.c
+> +++ b/drivers/base/arch_topology.c
+> @@ -243,9 +243,20 @@ static int __init register_cpufreq_notifier(void)
+>  	 * until we have the necessary code to parse the cpu capacity, so
+>  	 * skip registering cpufreq notifier.
+>  	 */
+> -	if (!acpi_disabled || !raw_capacity)
+> +	if (!acpi_disabled)
+>  		return -EINVAL;
+>  
+> +	if (!raw_capacity) {
+> +
+> +		pr_info("cpu_capacity: No capacity defined in DT, set default "
+> +		       "values to %ld\n", SCHED_CAPACITY_SCALE);
+> +
+> +		raw_capacity = kmalloc_array(num_possible_cpus(),
+> +					     sizeof(*raw_capacity), GFP_KERNEL);
+> +		if (!raw_capacity)
+> +			return -ENOMEM;
+> +	}
+> +
+>  	if (!alloc_cpumask_var(&cpus_to_visit, GFP_KERNEL)) {
+>  		pr_err("cpu_capacity: failed to allocate memory for cpus_to_visit\n");
+>  		return -ENOMEM;
+> -- 
+> 2.7.4
 
-the patch below allowed this for stdio
-please merge it in, and feel free to change it as you see fit
+With this, if the DT is partially filled, we will still do the frequency
+scaling thing now right ?
 
-jirka
+I'm not sure if this is the expected behaviour. If the DT is partially
+filled, we probably want to have 1024 of capacity for all CPUs to match
+the doc.
 
+Maybe you want to test 'if (!raw_capacity || cap_parsing_failed)' at the
+top of topology_parse_cpu_capacity() ?
 
----
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 9b75e118f609..a6756dc13285 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -85,6 +85,7 @@ struct report {
- 	int			socket_filter;
- 	DECLARE_BITMAP(cpu_bitmap, MAX_NR_CPUS);
- 	struct branch_type_stat	brtype_stat;
-+	bool			symbol_ipc;
- };
- 
- static int report__config(const char *var, const char *value, void *cb)
-@@ -129,7 +130,7 @@ static int hist_iter__report_callback(struct hist_entry_iter *iter,
- 	struct mem_info *mi;
- 	struct branch_info *bi;
- 
--	if (!ui__has_annotation())
-+	if (!ui__has_annotation() && !rep->symbol_ipc)
- 		return 0;
- 
- 	hist__account_cycles(sample->branch_stack, al, sample,
-@@ -174,7 +175,7 @@ static int hist_iter__branch_callback(struct hist_entry_iter *iter,
- 	struct perf_evsel *evsel = iter->evsel;
- 	int err;
- 
--	if (!ui__has_annotation())
-+	if (!ui__has_annotation() && !rep->symbol_ipc)
- 		return 0;
- 
- 	hist__account_cycles(sample->branch_stack, al, sample,
-@@ -954,7 +955,6 @@ int cmd_report(int argc, const char **argv)
- 	bool has_br_stack = false;
- 	int branch_mode = -1;
- 	bool branch_call_mode = false;
--	bool symbol_ipc = false;
- #define CALLCHAIN_DEFAULT_OPT  "graph,0.5,caller,function,percent"
- 	const char report_callchain_help[] = "Display call graph (stack chain/backtrace):\n\n"
- 					     CALLCHAIN_REPORT_HELP
-@@ -1289,7 +1289,7 @@ int cmd_report(int argc, const char **argv)
- 		strstr(sort_order, "ipc")) {
- 		if (!strstr(sort_order, "symbol"))
- 			sort_order = "symbol,ipc";
--		symbol_ipc = true;
-+		report.symbol_ipc = true;
- 	}
- 
- 	if (setup_sorting(session->evlist) < 0) {
-@@ -1319,7 +1319,7 @@ int cmd_report(int argc, const char **argv)
- 	 * so don't allocate extra space that won't be used in the stdio
- 	 * implementation.
- 	 */
--	if (ui__has_annotation()) {
-+	if (ui__has_annotation() || report.symbol_ipc) {
- 		ret = symbol__annotation_init();
- 		if (ret < 0)
- 			goto error;
-@@ -1339,9 +1339,6 @@ int cmd_report(int argc, const char **argv)
- 			symbol_conf.sort_by_name = true;
- 		}
- 		annotation_config__init();
--	} else if (symbol_ipc) {
--		pr_err("Only TUI mode supports sort-key ipc\n");
--		goto error;
- 	}
- 
- 	if (symbol__init(&session->header.env) < 0)
+Thanks,
+Quentin
