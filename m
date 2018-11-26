@@ -2,103 +2,145 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 760B2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 926E6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 12:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AD1F20660
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:59:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 541E720862
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 12:01:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ossystems-com-br.20150623.gappssmtp.com header.i=@ossystems-com-br.20150623.gappssmtp.com header.b="pkk20jab"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AD1F20660
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ossystems.com.br
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OIys24FN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 541E720862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726580AbeKZWw7 (ORCPT
+        id S1726561AbeKZWzR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 17:52:59 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34522 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726287AbeKZWw7 (ORCPT
+        Mon, 26 Nov 2018 17:55:17 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42785 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726254AbeKZWzR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 17:52:59 -0500
-Received: by mail-oi1-f196.google.com with SMTP id h25so15563968oig.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 03:59:04 -0800 (PST)
+        Mon, 26 Nov 2018 17:55:17 -0500
+Received: by mail-pl1-f196.google.com with SMTP id x21-v6so13767401pln.9;
+        Mon, 26 Nov 2018 04:01:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ossystems-com-br.20150623.gappssmtp.com; s=20150623;
-        h=from:mime-version:references:in-reply-to:date:message-id:subject:to
-         :cc;
-        bh=U4fWpuyq/k38XZmUuDsKJlXblVWtlWPpXb00xjYs2ZI=;
-        b=pkk20jabk405B12aacnGgvBt4w436H0TzIejUCX4iwlW6kvYNVAd4I8jTOKKF1j9Th
-         0urm2h0jxsBc1Cb37vvK27ojcOjrqqSEhVnvCt5iZeOmT4NRxkMcXALRxxe97/XVvXLq
-         09DcKO40P70W5QxBtPT8s0IIY4bG22bL1yrJhd8GR/U6uCUDbVD1COod+vM8oQfOKkvN
-         bCKmTxKNyxIMPmkZcuq/pUtJjhijIpmSCUEEqIrdpXfKVY3im/JlBCQ0UgLKOZj+xOVC
-         LHg+9dJ4G21mAIbA7b58E4WWToPWfSbZ0n56V70oAst/Flw1FiFzEv198V6wy4CEiuM/
-         aqUQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=otYbq0C9LVqp27elVROsGPtmHiho10hG3fe3tncFiVU=;
+        b=OIys24FNf70xWYrzu/YZdIPresKoHAK37iPkHMg2p9DZA94CTZL3QIUC5D0U1P8jE+
+         vBs9iEhHTArO651EfqLzKW5YnEy88W8oVJmMWSOpzEhKQczUnen/ihCsw5gWdDgELvIx
+         l7HDQ6fCZnuVWa0SmNm91POx1bQqWCsIJR6s5Q4fkXR94KxDochfmywX//q2x+zwGFjr
+         E6QgkRpFHRhza2hx6hhe8vq5xGzVorKCNf1wKzyYl3hLPOGrdty7JVhVSbuL3LBkEPP0
+         8FdS5LYSF5zYvBBUN2kKaH33P2YpvxMenTnI9Xe607DUjzjl0dMorwMqp9hy4+E37kQe
+         Gw2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:mime-version:references:in-reply-to:date
-         :message-id:subject:to:cc;
-        bh=U4fWpuyq/k38XZmUuDsKJlXblVWtlWPpXb00xjYs2ZI=;
-        b=ZsmYDmBbhp7vZJSuUujF0eDUu5BhcIs13zVNjCzeF5/rzQQfU+srk9o6i0dRly4RI9
-         ymP7Ncq8LTNuYjmm8W8fpz1a7EmloZyKeDhNHT4HYsyZ5BXM5Bgq7FZqr4SsLd8OCRz8
-         DVen4Ej0X2xhI62TYq/J41Oit9qYyZRO2dis0DjofCGXGhNneIz9zizQB6ig5zmnud8k
-         XhRFc6Slq9HJE+MW5Fde+cXq9TB36s4Ro0pgSuIY5ZdAYlxFW5gHnGlPhngbOUEO369E
-         YAjz9aT4HgTVkLGm/48XiekEdYHrepz81VIVIA7rGFmsz/9qVwfeQ7qcVqdBmau3KPif
-         BGYw==
-X-Gm-Message-State: AA+aEWblVUtclpTi1Aywq7nop6OwYkfQXBYtpG06AsiHk89oiIDy/1px
-        19kiEeSm0scrWw+P+EFcDsKSUQ==
-X-Google-Smtp-Source: AFSGD/XUq31dmMa8Fzl0rvySIGYjubdKn6fFCLG8XKmtCL6/aMHUc/GGlO6cS0ycgz2t8VIDebFe8Q==
-X-Received: by 2002:aca:3541:: with SMTP id c62mr4690726oia.330.1543233543718;
-        Mon, 26 Nov 2018 03:59:03 -0800 (PST)
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com. [209.85.210.46])
-        by smtp.gmail.com with ESMTPSA id v141sm34683oia.25.2018.11.26.03.59.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 03:59:02 -0800 (PST)
-From:   Otavio Salvador <otavio.salvador@ossystems.com.br>
-X-Google-Original-From: Otavio Salvador <otavio@ossystems.com.br>
-Received: by mail-ot1-f46.google.com with SMTP id g27so16288043oth.6;
-        Mon, 26 Nov 2018 03:59:01 -0800 (PST)
-X-Received: by 2002:a9d:3095:: with SMTP id s21mr15748808otc.359.1543233541440;
- Mon, 26 Nov 2018 03:59:01 -0800 (PST)
-MIME-Version: 1.0
-References: <20181125211427.4926-1-otavio@ossystems.com.br> <2374110.cSv9E7W1qs@phil>
-In-Reply-To: <2374110.cSv9E7W1qs@phil>
-Date:   Mon, 26 Nov 2018 09:58:49 -0200
-X-Gmail-Original-Message-ID: <CAP9ODKoVG0ceSdRdpMz705=a9Wh0vubE6=ja=bwSF35ORzVOwA@mail.gmail.com>
-Message-ID: <CAP9ODKoVG0ceSdRdpMz705=a9Wh0vubE6=ja=bwSF35ORzVOwA@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: rv1108: enable eMMC support
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     Otavio Salvador <otavio@ossystems.com.br>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        linux-rockchip@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=otYbq0C9LVqp27elVROsGPtmHiho10hG3fe3tncFiVU=;
+        b=RlDPrf81adb+OC0K+s0Fw4X3uP/lGiGzYtqQuA1YGwLOwndLpIdeD+MtfXkWTWCPnt
+         lTJ4rB1SrjRqRRVr18w5Yl5Z0M+AkpltKqlBJn+ny44QFMdtceaUWsFognYOd+NLmUgy
+         f1/n0ilyX5jKcHGyqUTbkKl8xCtqEa4HsamYelKEXxv7IuAa8Mvpq6RVssKcLTQIM++v
+         K9vW+d0zv5c8lFX430PLmJmNKjmFJ0b1AOuKlD0641cwB+0+ErqUjJ9fMUQPXd3tB6CC
+         UcwtszHkFJP9iKf8WrJbF+uPho2wfDnYL4gylUPI4y2o0xE7iXm9EpHAYEgzt0fED4Lj
+         4sUA==
+X-Gm-Message-State: AA+aEWaGzL007nrqBf57IXNWB8pKzVKVa61XZt/dPQibSAHOpXgoqMsa
+        ExadIXr7dKnp2yZe6cZg3ttBI627
+X-Google-Smtp-Source: AFSGD/U8TTkQtKaDAPDsZBvgeHrwrJwAeVklW9+OyPOI2Ib0e344uLSpvNpP1E8cnh8C1lpatPRpdw==
+X-Received: by 2002:a17:902:e085:: with SMTP id cb5mr27122536plb.24.1543233682079;
+        Mon, 26 Nov 2018 04:01:22 -0800 (PST)
+Received: from localhost.localdomain ([125.29.25.186])
+        by smtp.gmail.com with ESMTPSA id h64sm146219pfj.186.2018.11.26.04.01.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 26 Nov 2018 04:01:21 -0800 (PST)
+From:   frowand.list@gmail.com
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Julia Lawall <julia.lawall@lip6.fr>
+Subject: [PATCH] of: add dtc annotations functionality to dtx_diff
+Date:   Mon, 26 Nov 2018 04:01:09 -0800
+Message-Id: <1543233669-8696-1-git-send-email-frowand.list@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 7:03 AM Heiko Stuebner <heiko@sntech.de> wrote:
-> Am Sonntag, 25. November 2018, 22:14:27 CET schrieb Otavio Salvador:
-> > Enable eMMC support for rv1108.dtsi as it can be used across multiple
-> > boards.
-> >
-> > Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
->
-> applied for 4.21 after reordering the emmc pinctrl nodes a bit
-> and modifying the suject + commit message to be a bit more specific
-> in that we only add the common pin settings.
+From: Frank Rowand <frank.rowand@sony.com>
 
-Which tree is it applied? I'd like to rebase the patches on top of it.
+Add -T and --annotations command line arguments to dtx_diff.  These
+arguments will be passed through to dtc.  dtc will then add source
+location annotations to its output.
 
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+---
+
+This feature depends upon commit 5667e7ef9a9a ("annotations: add the
+annotation functionality") in the dtc git repository.  To use the
+new flags before the new version of dtc is imported to the linux
+kernel, download the dtc repository, compile dtc with the make command,
+then add the path of the dtc repository to the shell PATH variable.
+
+ scripts/dtc/dtx_diff | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/dtc/dtx_diff b/scripts/dtc/dtx_diff
+index 8c4fbad2055e..0d8572008729 100755
+--- a/scripts/dtc/dtx_diff
++++ b/scripts/dtc/dtx_diff
+@@ -21,6 +21,7 @@ Usage:
+         diff DTx_1 and DTx_2
+ 
+ 
++      --annotate    synonym for -T
+        -f           print full dts in diff (--unified=99999)
+        -h           synonym for --help
+        -help        synonym for --help
+@@ -28,6 +29,7 @@ Usage:
+        -s SRCTREE   linux kernel source tree is at path SRCTREE
+                         (default is current directory)
+        -S           linux kernel source tree is at root of current git repo
++       -T           Annotate output .dts with input source file and line (-T -T for more details)
+        -u           unsorted, do not sort DTx
+ 
+ 
+@@ -174,6 +176,7 @@ compile_to_dts() {
+ 
+ # -----  start of script
+ 
++annotate=""
+ cmd_diff=0
+ diff_flags="-u"
+ dtx_file_1=""
+@@ -208,6 +211,14 @@ while [ $# -gt 0 ] ; do
+ 		shift
+ 		;;
+ 
++	-T | --annotate )
++		if [ "${annotate}"  = "" ] ; then
++			annotate="-T"
++		elif [ "${annotate}"  = "-T" ] ; then
++			annotate="-T -T"
++		fi
++		shift
++		;;
+ 	-u )
+ 		dtc_sort=""
+ 		shift
+@@ -327,7 +338,7 @@ cpp_flags="\
+ DTC="\
+ 	${DTC}                                     \
+ 	-i ${srctree}/scripts/dtc/include-prefixes \
+-	-O dts -qq -f ${dtc_sort} -o -"
++	-O dts -qq -f ${dtc_sort} ${annotate} -o -"
+ 
+ 
+ # -----  do the diff or decompile
 -- 
-Otavio Salvador                             O.S. Systems
-http://www.ossystems.com.br        http://code.ossystems.com.br
-Mobile: +55 (53) 9 9981-7854          Mobile: +1 (347) 903-9750
+Frank Rowand <frank.rowand@sony.com>
+
