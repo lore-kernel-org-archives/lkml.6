@@ -7,50 +7,45 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0409C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1E8C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98F8721473
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0579D21473
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iy8E8tM9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F8721473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvZuHqEL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0579D21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730549AbeKZV43 (ORCPT
+        id S1730562AbeKZV4b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:56:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39714 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:56:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729436AbeKZV43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:56:29 -0500
+        id S1729436AbeKZV4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:56:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB85820817;
-        Mon, 26 Nov 2018 11:02:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A9342147D;
+        Mon, 26 Nov 2018 11:02:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230163;
-        bh=0gjk2vvgzVFygHTcjkqToschVY2PR34uE0HGqi9sF/o=;
+        s=default; t=1543230165;
+        bh=RelLPr/eJs61Od1xJF6KjtcxJca6bKdlb/qQvL9zL4M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iy8E8tM9d08EvQrG/0ntVsDSoWVhfbxVCralhffUKdVaYOZW7q35iG5sBkJtnvWFj
-         cfaMHkCVBMwHZh62JVm9fiOb5g+MAcF7mHcXe0mtejdl8TZbRNquHBFp4uK3Ap4jqg
-         PwX9z44SKH2E/dPhHyP7NMlC0byelh5sgR9nyLgo=
+        b=TvZuHqELbczIAN4VCFcdTbOO+N0uYT75Tf/wAWm2QrXeu1/vvKhtcyUdwJxdKL6tG
+         oZOnPHw6vvXPILjMf9LkON5O3B1TeP80Ri7zrRRIeisR1N8AaZjvA2s606mocUN4oJ
+         cprMkZsPpIwwPnp5k3bJYTCE/hV7gIZVhsJHESXM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 004/118] arm64: kprobe: make page to RO mode when allocate it
-Date:   Mon, 26 Nov 2018 11:49:58 +0100
-Message-Id: <20181126105100.016774541@linuxfoundation.org>
+Subject: [PATCH 4.19 031/118] clk: ti: fix OF child-node lookup
+Date:   Mon, 26 Nov 2018 11:50:25 +0100
+Message-Id: <20181126105101.070113081@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -68,121 +63,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 966866892cf89d606544bca22d584ba2ef9ec208 ]
+[ Upstream commit 00a461cc32ec27fa7bd9c874a7b36b0c6c542c12 ]
 
-Commit 1404d6f13e47 ("arm64: dump: Add checking for writable and exectuable pages")
-has successfully identified code that leaves a page with W+X
-permissions.
+Fix child-node lookup which by using the wrong OF helper was searching
+the whole tree depth-first, something which could end up matching an
+unrelated node.
 
-[    3.245140] arm64/mm: Found insecure W+X mapping at address (____ptrval____)/0xffff000000d90000
-[    3.245771] WARNING: CPU: 0 PID: 1 at ../arch/arm64/mm/dump.c:232 note_page+0x410/0x420
-[    3.246141] Modules linked in:
-[    3.246653] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc5-next-20180928-00001-ge70ae259b853-dirty #62
-[    3.247008] Hardware name: linux,dummy-virt (DT)
-[    3.247347] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[    3.247623] pc : note_page+0x410/0x420
-[    3.247898] lr : note_page+0x410/0x420
-[    3.248071] sp : ffff00000804bcd0
-[    3.248254] x29: ffff00000804bcd0 x28: ffff000009274000
-[    3.248578] x27: ffff00000921a000 x26: ffff80007dfff000
-[    3.248845] x25: ffff0000093f5000 x24: ffff000009526f6a
-[    3.249109] x23: 0000000000000004 x22: ffff000000d91000
-[    3.249396] x21: ffff000000d90000 x20: 0000000000000000
-[    3.249661] x19: ffff00000804bde8 x18: 0000000000000400
-[    3.249924] x17: 0000000000000000 x16: 0000000000000000
-[    3.250271] x15: ffffffffffffffff x14: 295f5f5f5f6c6176
-[    3.250594] x13: 7274705f5f5f5f28 x12: 2073736572646461
-[    3.250941] x11: 20746120676e6970 x10: 70616d20582b5720
-[    3.251252] x9 : 6572756365736e69 x8 : 3039643030303030
-[    3.251519] x7 : 306666666678302f x6 : ffff0000095467b2
-[    3.251802] x5 : 0000000000000000 x4 : 0000000000000000
-[    3.252060] x3 : 0000000000000000 x2 : ffffffffffffffff
-[    3.252323] x1 : 4d151327adc50b00 x0 : 0000000000000000
-[    3.252664] Call trace:
-[    3.252953]  note_page+0x410/0x420
-[    3.253186]  walk_pgd+0x12c/0x238
-[    3.253417]  ptdump_check_wx+0x68/0xf8
-[    3.253637]  mark_rodata_ro+0x68/0x98
-[    3.253847]  kernel_init+0x38/0x160
-[    3.254103]  ret_from_fork+0x10/0x18
+Also fix the related node-reference leaks.
 
-kprobes allocates a writable executable page with module_alloc() in
-order to store executable code.
-Reworked to that when allocate a page it sets mode RO. Inspired by
-commit 63fef14fc98a ("kprobes/x86: Make insn buffer always ROX and use text_poke()").
-
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reviewed-by: Laura Abbott <labbott@redhat.com>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-[catalin.marinas@arm.com: removed unnecessary casts]
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: 5b385a45e001 ("clk: ti: add support for clkctrl aliases")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Acked-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/probes/kprobes.c | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+ drivers/clk/ti/clk.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-index e78c3ef04d95..b5a367d4bba6 100644
---- a/arch/arm64/kernel/probes/kprobes.c
-+++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -23,7 +23,9 @@
- #include <linux/slab.h>
- #include <linux/stop_machine.h>
- #include <linux/sched/debug.h>
-+#include <linux/set_memory.h>
- #include <linux/stringify.h>
-+#include <linux/vmalloc.h>
- #include <asm/traps.h>
- #include <asm/ptrace.h>
- #include <asm/cacheflush.h>
-@@ -42,10 +44,21 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
- static void __kprobes
- post_kprobe_handler(struct kprobe_ctlblk *, struct pt_regs *);
- 
-+static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
-+{
-+	void *addrs[1];
-+	u32 insns[1];
-+
-+	addrs[0] = addr;
-+	insns[0] = opcode;
-+
-+	return aarch64_insn_patch_text(addrs, insns, 1);
-+}
-+
- static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 7d22e1af2247..27e0979b3158 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -129,7 +129,7 @@ int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
+ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
  {
- 	/* prepare insn slot */
--	p->ainsn.api.insn[0] = cpu_to_le32(p->opcode);
-+	patch_text(p->ainsn.api.insn, p->opcode);
+ 	struct ti_dt_clk *c;
+-	struct device_node *node;
++	struct device_node *node, *parent;
+ 	struct clk *clk;
+ 	struct of_phandle_args clkspec;
+ 	char buf[64];
+@@ -164,8 +164,12 @@ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
+ 			continue;
  
- 	flush_icache_range((uintptr_t) (p->ainsn.api.insn),
- 			   (uintptr_t) (p->ainsn.api.insn) +
-@@ -118,15 +131,15 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
- 	return 0;
- }
- 
--static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
-+void *alloc_insn_page(void)
- {
--	void *addrs[1];
--	u32 insns[1];
-+	void *page;
- 
--	addrs[0] = (void *)addr;
--	insns[0] = (u32)opcode;
-+	page = vmalloc_exec(PAGE_SIZE);
-+	if (page)
-+		set_memory_ro((unsigned long)page, 1);
- 
--	return aarch64_insn_patch_text(addrs, insns, 1);
-+	return page;
- }
- 
- /* arm kprobe: install breakpoint in text */
+ 		node = of_find_node_by_name(NULL, buf);
+-		if (num_args)
+-			node = of_find_node_by_name(node, "clk");
++		if (num_args) {
++			parent = node;
++			node = of_get_child_by_name(parent, "clk");
++			of_node_put(parent);
++		}
++
+ 		clkspec.np = node;
+ 		clkspec.args_count = num_args;
+ 		for (i = 0; i < num_args; i++) {
+@@ -173,11 +177,12 @@ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
+ 			if (ret) {
+ 				pr_warn("Bad tag in %s at %d: %s\n",
+ 					c->node_name, i, tags[i]);
++				of_node_put(node);
+ 				return;
+ 			}
+ 		}
+ 		clk = of_clk_get_from_provider(&clkspec);
+-
++		of_node_put(node);
+ 		if (!IS_ERR(clk)) {
+ 			c->lk.clk = clk;
+ 			clkdev_add(&c->lk);
 -- 
 2.17.1
 
