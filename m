@@ -2,277 +2,138 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E3EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9495FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:41:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 191D8208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:40:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="1m6Byp9E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 191D8208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	by mail.kernel.org (Postfix) with ESMTP id 5EBEC208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:41:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EBEC208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbeK0Ifb (ORCPT
+        id S1727114AbeK0Igo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 03:35:31 -0500
-Received: from mail-eopbgr750070.outbound.protection.outlook.com ([40.107.75.70]:42454
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726296AbeK0Ifb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 03:35:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UnvTW9xLRYGlbB/A6jjadQINGM45zQV4bi+SGSDRPMA=;
- b=1m6Byp9Ewju83FbDBE70PcKXVIxlVNWos431DVaCkVTcpVKI57pl/OrKxl9/mFfCrUqGp6F63XaDv1o+WOFip1fMTRgfeWGY5jofnKPyMp2WZu2qmG3I5I301jb3p14u8QUiFBYDPZ/TWv5H4Ol7lUCIebUIeJjbgBQEXKqbdvU=
-Received: from DM5PR0201MB3525.namprd02.prod.outlook.com (10.167.106.13) by
- DM5PR0201MB3591.namprd02.prod.outlook.com (10.167.106.33) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.19; Mon, 26 Nov 2018 21:40:00 +0000
-Received: from DM5PR0201MB3525.namprd02.prod.outlook.com
- ([fe80::e4af:798f:45e8:9c26]) by DM5PR0201MB3525.namprd02.prod.outlook.com
- ([fe80::e4af:798f:45e8:9c26%2]) with mapi id 15.20.1361.019; Mon, 26 Nov 2018
- 21:39:58 +0000
-From:   Jolly Shah <JOLLYS@xilinx.com>
-To:     Jolly Shah <JOLLYS@xilinx.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-CC:     Michal Simek <michals@xilinx.com>, Rajan Vaja <RAJANV@xilinx.com>,
-        Nava kishore Manne <navam@xilinx.com>,
-        "linux-arm-kernel@lists.infradead.org" 
+        Tue, 27 Nov 2018 03:36:44 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:43500 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726315AbeK0Igo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 03:36:44 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8EC15207BB; Mon, 26 Nov 2018 22:41:13 +0100 (CET)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2B17E206D8;
+        Mon, 26 Nov 2018 22:41:03 +0100 (CET)
+Date:   Mon, 26 Nov 2018 22:41:02 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Eric Anholt <eric@anholt.net>
+Cc:     Michael Zoran <mzoran@crowfest.net>,
+        Tomasz Figa <tfiga@chromium.org>, helen.koike@collabora.com,
+        Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>,
+        David Airlie <airlied@linux.ie>,
+        "list\@263.net\:IOMMU DRIVERS \<iommu\@lists.linux-foundation.org\>\,
+        Joerg Roedel \<joro\@8bytes.org\>\," 
+        <iommu@lists.linux-foundation.org>,
+        "list\@263.net\:IOMMU DRIVERS \<iommu\@lists.linux-foundation.org\>\,
+        Joerg Roedel \<joro\@8bytes.org\>\," <joro@8bytes.org>,
+        "list\@263.net\:IOMMU DRIVERS \<iommu\@lists.linux-foundation.org\>\,
+        Joerg Roedel \<joro\@8bytes.org\>\," 
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH 0/9] dt-bindings: Firmware node binding for ZynqMP core
-Thread-Topic: [PATCH 0/9] dt-bindings: Firmware node binding for ZynqMP core
-Thread-Index: AQHUfggvkVKuttW8xEq5Oarr4c4vt6VipNcA
-Date:   Mon, 26 Nov 2018 21:39:58 +0000
-Message-ID: <DM5PR0201MB35255E725459B3CE05A7402DB8D70@DM5PR0201MB3525.namprd02.prod.outlook.com>
-References: <1542412619-387-1-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1542412619-387-1-git-send-email-jollys@xilinx.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=JOLLYS@xilinx.com; 
-x-originating-ip: [149.199.62.133]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR0201MB3591;6:hNQ4ASd8xYy6MsLqFi4Dwww3EKhdkkGKOG8T439s4l94NXNNGki/ALWe+J0kMAUH26+Ck2ua+ZzFz/83NKP7Mi3QEwK4MU5mgBYGEG+6SdDv7cVlq7H8KTxSoIswv5F/vx/6/XZ9+HlqEmvsZOd779YONkAlT7xokRtBXFWinPcPZO0Npgbhf7SeDhworHFCCmj5407K9yMvzA8/aaJ7wdALj1KDkp14D45hOwqKHYdOwCD8nfG4b6fKcvXI0xLJHBxwxGrNBYJVkjp+S8KCMse9IduP1kT5jQ/BlSC+9lR+kLTs2I4ITIYZNUotLqnsOaLgDj9X/s/cTEhvmtnHIxD1u7/buIji99f/8HeagOHxEdzIs+mqrb3OsP+rMqZs+82KDaJDauF6i1t45n249lDaf5fXAiq+npk/GZpYUTNbIvrvkg7XbH+EwO06wkbObRSqZaRbcAL5K5KiYNOZiQ==;5:evnhZI77qoOZGLPkINa3H147Fk0AuBBJNz/lI/OXmrrpnjtJyyEM6ij3Ds3X+cfIH11sNLxauxGWVQCUjmxEFwit18B5SfQ8V+xcU1NRWWvpSc9HEiRv8RIpExuR7wpHXj8VEqSpLDkhCK+NIm8BVvc4fz/HcsUUQFHwQ3XOA+E=;7:gHvX5otuU+Ix2VpFJ+BwTCuM+SZSh5+0RzRU3LEeRwP0XHxKROe1DQPlonyH8lK0Mxew/ONcCPm1BSA1LiczUxTmH6NX7f1TgzfM5tJMPbAdC2/c5hna+C2A0/8C2dxuJBstEhJ65JS6duXtVpJLVw==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(396003)(39860400002)(376002)(136003)(346002)(199004)(189003)(13464003)(11346002)(2906002)(72206003)(575784001)(86362001)(7736002)(74316002)(25786009)(316002)(5660300001)(33656002)(305945005)(478600001)(54906003)(110136005)(14454004)(68736007)(446003)(476003)(97736004)(8936002)(8676002)(81166006)(6116002)(81156014)(3846002)(99286004)(26005)(71190400001)(186003)(71200400001)(53936002)(55016002)(6246003)(76176011)(102836004)(53546011)(9686003)(6506007)(7696005)(486006)(229853002)(106356001)(105586002)(4326008)(66066001)(2501003)(6436002)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR0201MB3591;H:DM5PR0201MB3525.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: d304c6dd-5c7c-4728-2276-08d653e7b67c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DM5PR0201MB3591;
-x-ms-traffictypediagnostic: DM5PR0201MB3591:
-x-microsoft-antispam-prvs: <DM5PR0201MB3591F861A1AB226E6E086F05B8D70@DM5PR0201MB3591.namprd02.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231443)(944501410)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DM5PR0201MB3591;BCL:0;PCL:0;RULEID:;SRVR:DM5PR0201MB3591;
-x-forefront-prvs: 086831DFB4
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: XVzDfsWtUT0aoR3XicM19AvNtoj3ygRRJyKRF0SCnDWJOS1jlk2u5keicL1CdBcPqtMpGLPMM5RR8wCV/ndTnt/p4UwUhg/f/dGGc8AXPa8irC9ha5W3Hrc88k1c+XVbyOyeveGdXfV5gF8S6sxOry8595jvuSl8TXYjj2mJA2C/quhn4QZzV7ngyT9/S/2SiY+LrfrnqC7+fEMYHTmN+XbAqMS62n8eZ6S7kc5YpUEOeF/7nhyC8tYyfeUoVEuPp1XhV4ccVGd/P5g9vn2XaLn9gdIjjS6BUToEq4UVKuVCMlFdeHfHCBHLFdKLXT5Ly583Ygs2wwhtC67zAIeFatgM+ivU3Al20pwNBTYk+TI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list\:ARM\/Rockchip SoC..." 
+        <linux-rockchip@lists.infradead.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
+        =?UTF-8?B?U3TDqXBoYW5l?= Marchesin <marcheu@google.com>
+Subject: Re: [PATCH v3] drm/rockchip: update cursors asynchronously through
+ atomic.
+Message-ID: <20181126224102.1efbf2d1@bbrezillon>
+In-Reply-To: <87o9abbmq4.fsf@anholt.net>
+References: <20181119190805.19139-1-helen.koike@collabora.com>
+        <CAAFQd5DDZwhdMDbrHthQwm2bQ3+NoZNcemAktVTxkR3=LfnnTg@mail.gmail.com>
+        <d3fb3b21-6c3d-6b01-727b-dbd66540ce92@collabora.com>
+        <CAAFQd5Afa9ndmU0=q5Kjv-BY+0qpvOdq2+eOTO6OebX4-2NENA@mail.gmail.com>
+        <1d10a4323a49ca09bbb7dc865aaaf5b8c5e3b3d5.camel@crowfest.net>
+        <87o9abbmq4.fsf@anholt.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d304c6dd-5c7c-4728-2276-08d653e7b67c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2018 21:39:58.2392
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR0201MB3591
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ping for comments
+On Mon, 26 Nov 2018 12:36:03 -0800
+Eric Anholt <eric@anholt.net> wrote:
 
-> -----Original Message-----
-> From: Jolly Shah [mailto:jolly.shah@xilinx.com]
-> Sent: Friday, November 16, 2018 3:57 PM
-> To: robh+dt@kernel.org; mark.rutland@arm.com
-> Cc: Michal Simek <michals@xilinx.com>; Rajan Vaja <RAJANV@xilinx.com>;
-> Nava kishore Manne <navam@xilinx.com>; linux-arm-
-> kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
-> devicetree@vger.kernel.org; Jolly Shah <JOLLYS@xilinx.com>
-> Subject: [PATCH 0/9] dt-bindings: Firmware node binding for ZynqMP core
->=20
-> Base firmware node and clock child node binding are part of mainline kern=
-el.
-> This patchset adds documentation to describe rest of the firmware child n=
-ode
-> bindings.
-> Complete firmware DT node example is shown below for ease of understandin=
-g:
->=20
-> firmware {
-> 	zynqmp_firmware: zynqmp-firmware {
-> 		compatible =3D "xlnx,zynqmp-firmware";
-> 		method =3D "smc";
-> 		#power-domain-cells =3D <1>;
-> 		#reset-cells =3D <1>;
->=20
-> 		zynqmp_clk: clock-controller {
-> 			#clock-cells =3D <1>;
-> 			compatible =3D "xlnx,zynqmp-clk";
-> 			clocks =3D <&pss_ref_clk>, <&video_clk>,
-> <&pss_alt_ref_clk>, <&aux_ref_clk>, <&gt_crx_ref_clk>;
-> 			clock-names =3D "pss_ref_clk", "video_clk",
-> "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk";
-> 		};
->=20
-> 		zynqmp_power: zynqmp-power {
-> 			compatible =3D "xlnx,zynqmp-power";
-> 			interrupts =3D <0 35 4>;
-> 		};
->=20
-> 		nvmem_firmware {
-> 			compatible =3D "xlnx,zynqmp-nvmem-fw";
-> 			#address-cells =3D <1>;
-> 			#size-cells =3D <1>;
->=20
-> 			/* Data cells */
-> 			soc_revision: soc_revision {
-> 				reg =3D <0x0 0x4>;
-> 			};
-> 		};
->=20
-> 		afi0: afi0 {
-> 			compatible =3D "xlnx,afi-fpga";
-> 			config-afi =3D <0 2>, <1 1>, <2 1>;
-> 		};
->=20
-> 		qspi: spi@ff0f0000 {
-> 			compatible =3D "xlnx,zynqmp-qspi-1.0";
-> 			clock-names =3D "ref_clk", "pclk";
-> 			clocks =3D <&misc_clk &misc_clk>;
-> 			interrupts =3D <0 15 4>;
-> 			interrupt-parent =3D <&gic>;
-> 			num-cs =3D <1>;
-> 			reg =3D <0x0 0xff0f0000 0x1000>,<0x0 0xc0000000
-> 0x8000000>;
-> 		};
->=20
-> 		serdes: zynqmp_phy@fd400000 {
-> 			compatible =3D "xlnx,zynqmp-psgtr";
-> 			status =3D "okay";
-> 			reg =3D <0x0 0xfd400000 0x0 0x40000>, <0x0 0xfd3d0000
-> 0x0 0x1000>,
-> 				<0x0 0xff5e0000 0x0 0x1000>;
-> 			reg-names =3D "serdes", "siou", "lpd";
->=20
-> 			lane0: lane@0 {
-> 				#phy-cells =3D <4>;
-> 			};
-> 			lane1: lane@1 {
-> 				#phy-cells =3D <4>;
-> 			};
-> 			lane2: lane@2 {
-> 				#phy-cells =3D <4>;
-> 			};
-> 			lane3: lane@3 {
-> 				#phy-cells =3D <4>;
-> 			};
-> 		};
->=20
-> 		pinctrl_uart1_default: uart1-default {
-> 			mux {
-> 				groups =3D "uart0_4_grp";
-> 				function =3D "uart0";
-> 			};
->=20
-> 			conf {
-> 				groups =3D "uart0_4_grp";
-> 				slew-rate =3D <SLEW_RATE_SLOW>;
-> 				io-standard =3D <IO_STANDARD_LVCMOS18>;
-> 			};
->=20
-> 			conf-rx {
-> 				pins =3D "MIO18";
-> 				bias-high-impedance;
-> 			};
->=20
-> 			conf-tx {
-> 				pins =3D "MIO19";
-> 				bias-disable;
-> 				schmitt-cmos =3D <PIN_INPUT_TYPE_CMOS>;
-> 			};
-> 		};
-> 		zynqmp-r5-remoteproc@0 {
-> 			compatible =3D "xlnx,zynqmp-r5-remoteproc-1.0";
-> 			reg =3D <0x0 0xFFE00000 0x0 0x10000>,
-> 				<0x0 0xFFE20000 0x0 0x10000>,
-> 				<0x0 0xff340000 0x0 0x100>;
-> 			reg-names =3D "tcm_a", "tcm_b", "ipi";
-> 			dma-ranges;
-> 			core_conf =3D "split0";
-> 			memory-region =3D <&rproc_0_fw_reserved>,
-> 					<&rproc_0_dma_reserved>;
-> 			tcm-pnode-id =3D <0xf>, <0x10>;
-> 			rpu-pnode-id =3D <0x7>;
-> 			interrupt-parent =3D <&gic>;
-> 			interrupts =3D <0 29 4>;
-> 		};
-> 	};
-> };
->=20
-> Jolly Shah (2):
->   dt-bindings: phy: Add dt bindings for ZynqMP PHY
->   dt-bindings: fpga: Add binding doc for the afi config driver
->=20
-> Nava kishore Manne (2):
->   dt-bindings: reset: Add bindings for ZynqMP reset driver
->   dt-bindings: nvmem: Add bindings for ZynqMP nvmem driver
->=20
-> Rajan Vaja (4):
->   dt-bindings: power: Add ZynqMP power domain bindings
->   dt-bindings: soc: Add ZynqMP PM bindings
->   dt-bindings: pinctrl: Add ZynqMP pin controller bindings
->   dt-bindings: spi: zynqmp: Move SPI node under zynqmp firmware
->=20
-> Wendy Liang (1):
->   dt-bindings: remoteproc: Add Xilinx R5 rproc binding
->=20
->  .../devicetree/bindings/fpga/xlnx,afi-fpga.txt     |  67 +++++
->  .../bindings/nvmem/xlnx,zynqmp-nvmem.txt           |  44 ++++
->  .../devicetree/bindings/phy/phy-zynqmp.txt         | 126 ++++++++++
->  .../bindings/pinctrl/xlnx,zynqmp-pinctrl.txt       | 272 +++++++++++++++=
-++++++
->  .../bindings/power/reset/xlnx,zynqmp-power.txt     |  25 ++
->  .../bindings/power/xlnx,zynqmp-genpd.txt           |  34 +++
->  .../remoteproc/xlnx,zynqmp-r5-remoteproc.txt       |  81 ++++++
->  .../bindings/reset/xlnx,zynqmp-reset.txt           | 148 +++++++++++
->  .../devicetree/bindings/spi/spi-zynqmp-qspi.txt    |  22 +-
->  include/dt-bindings/power/xlnx-zynqmp-power.h      |  39 +++
->  10 files changed, 850 insertions(+), 8 deletions(-)  create mode 100644
-> Documentation/devicetree/bindings/fpga/xlnx,afi-fpga.txt
->  create mode 100644 Documentation/devicetree/bindings/nvmem/xlnx,zynqmp-
-> nvmem.txt
->  create mode 100644 Documentation/devicetree/bindings/phy/phy-zynqmp.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp=
--
-> pinctrl.txt
->  create mode 100644
-> Documentation/devicetree/bindings/power/reset/xlnx,zynqmp-power.txt
->  create mode 100644 Documentation/devicetree/bindings/power/xlnx,zynqmp-
-> genpd.txt
->  create mode 100644
-> Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5-
-> remoteproc.txt
->  create mode 100644 Documentation/devicetree/bindings/reset/xlnx,zynqmp-
-> reset.txt
->  create mode 100644 include/dt-bindings/power/xlnx-zynqmp-power.h
->=20
-> --
-> 2.7.4
+> Michael Zoran <mzoran@crowfest.net> writes:
+> 
+> > On Fri, 2018-11-23 at 11:27 +0900, Tomasz Figa wrote:  
+> >> 
+> >> The point here is not about setting and resetting the plane->fb
+> >> pointer. It's about what happens inside
+> >> drm_atomic_set_fb_for_plane().
+> >> 
+> >> It calls drm_framebuffer_get() for the new fb and
+> >> drm_framebuffer_put() for the old fb. In result, if the fb changes,
+> >> the old fb, which had its reference count incremented in the atomic
+> >> commit that set it to the plane before, has its reference count
+> >> decremented. Moreover, if the new reference count becomes 0,
+> >> drm_framebuffer_put() will immediately free the buffer.
+> >> 
+> >> Freeing a buffer when the hardware is still scanning out of it isn't
+> >> a
+> >> good idea, is it?  
+> >
+> > No, it's not.  But the board I submitted the patch for doesn't have
+> > anything like hot swapable ram.  The ram access is still going to work,
+> > just it might display something it shouldn't. Say for example if that
+> > frame buffer got reused by somethig else and filled with new data in
+> > the very small window.
+> >
+> > But yes, I agree the best solution would be to not release the buffer
+> > until the next vblank.
+> >
+> > Perhaps a good solution would be for the DRM api to have the concept of
+> > a deferred release?  Meaning if the put() call just added the frame
+> > buffer to a list that DRM core could walk during the vblank.  That
+> > might be better then every single driver trying to work up a custom
+> > solution.
+> >  
+> >> The vc4 driver seems to be able to program the hardware to switch the
+> >> scanout to the new buffer immediately:
+> >> 
+> >> https://elixir.bootlin.com/linux/v4.20-rc3/source/drivers/gpu/drm/vc4/vc4_plane.c#L794
+> >> 
+> >> Although I wonder if there isn't still a tiny race there - the
+> >> hardware may have just started refilling the FIFO from the old
+> >> address. Still, if the FIFO is small, the FIFO refill operation may
+> >> be
+> >> much shorter than it takes for the kernel code to actually free the
+> >> buffer. Eric and Michael, could you confirm?
+> >>   
+> >
+> > I don't have those boards anymore, and I don't have access to any
+> > technical documentation on the GPU so I can't really add much here.  
+> > Eric can probably provide the best information.  
+> 
+> I don't think I understood my scanout hardware well enough when I
+> started on the async update stuff for rpi.  vc4 probably needs to wait
+> until the HW starts scanning out a new line before letting the old BO
+> get freed.
 
+That's also my understanding. Note that even if the BO is freed before
+the HVS has finished generating a line it shouldn't crash, because
+accesses are done through DMA. Might be a security issue though if we
+start re-using the memory for something else while it's still being
+accessed.
+
+The solution would be to wait for the EOL (End Of Line) interrupt in
+the async update path, but I'm not sure this is allowed.
