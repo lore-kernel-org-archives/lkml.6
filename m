@@ -2,106 +2,109 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379B8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E70AC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04EAC20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:37:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04EAC20817
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B82520817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:39:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B82520817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbeK0GcJ (ORCPT
+        id S1726705AbeK0GeP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 01:32:09 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:35875 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726140AbeK0GcJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 01:32:09 -0500
-Received: from oxbaltgw35.schlund.de ([172.19.246.43]) by
- mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1Mgvj1-1fktOp0k7p-00hN81; Mon, 26 Nov 2018 20:36:34 +0100
-Date:   Mon, 26 Nov 2018 20:36:33 +0100 (CET)
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>, eric@anholt.net,
-        dave.stevenson@raspberrypi.org
-Cc:     linux-rpi-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Message-ID: <2009845931.201432.1543260993249@email.ionos.de>
-In-Reply-To: <20181120145351.30390-1-nsaenzjulienne@suse.de>
-References: <20181120145351.30390-1-nsaenzjulienne@suse.de>
-Subject: Re: [PATCH 00/16] staging: vchiq: dead code removal & misc fixes
+        Tue, 27 Nov 2018 01:34:15 -0500
+Received: from mga14.intel.com ([192.55.52.115]:21757 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726253AbeK0GeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 01:34:15 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 11:39:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,283,1539673200"; 
+   d="scan'208";a="109013289"
+Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.24.8.61])
+  by fmsmga002.fm.intel.com with ESMTP; 26 Nov 2018 11:39:05 -0800
+Date:   Mon, 26 Nov 2018 11:39:06 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Dr. Greg" <greg@enjellic.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>, andy@infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181126193906.GA32327@linux.intel.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
+ <20181120111508.GA26127@wind.enjellic.com>
+ <20181124161521.GB30310@linux.intel.com>
+ <20181124192454.GA12149@wind.enjellic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev46
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:3sCsHhsdID0vg4NtgQM1x+FnWi7PJgPq8Rf4oXzm0xlAolVDMaM
- yaIjbp6he2owa8+GCAbzSYvQhjNA4mnjCM4uqnzT6mGfRE33nv1susc1EI8HVlz40gHSUEq
- qH4p2Jg50b/OPEelWQb3TvefbLVDFuTgGtKMW9sDJKnUEDQjo/H6PdNisSJtADs7K8RjNMh
- GR+OFbCrMKVa0WzI9QRDg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:rJlCHoAO7i4=:7dgGUDnewYIL3u+aV//65T
- bE+9+IVKMLqDWUk7m0ha+7jRJHWMoJbubGnEXjzJ6eUjTUBiIy3vJnmq7ku3mnALLFkVQf9OK
- eUsMcrjyJIOCQDE0eSSgRaLXPY/OzHwGlFi4dUKsm+eytU3FTYMJi0INPFDEayAOuw2SVBLUn
- JQC5Q0oxy1Uym+0rTl4+KGw24FeXqv6+gqdhGKx+hZRT3iE7pQ2i26Wg2RHX4CpMB+/nH8q+Q
- wv2hxxi1FsP1Ib9qlfpp9aVyimuPzdqO5YoQmIbm9wiUtgxK6MN8yaLdGP3W6HKj1ZzAT/0oR
- Lw/xWTv7mPjl5ecbjUIWUVlF0OHy1SBoHuuVgCh8gSuipVApe8YPBpzNO9pUBOJ873JgS7BoR
- EOdIwKsbCDLNhw2JDT75gcPERmMYeKDnu5GZ5Fy8cHfgbljKmokPpsIdVEp3cbwwget/+LLpI
- NtG6NFZF+DiXRi/QWQuUOsgel0paLrkc9UnMExFRJtv5x3b3fQEiTLClZtUAhNKHtHXV8y9ie
- h6UTxC0b/wgZKvvKBWK51jmEFbF8NV/iulKz/LUp2bs9JD1iMUMCiLfTIsNoQR/l43xjjdiB4
- p4VjtaG2cIIHK7JeufqnoBcJ5cbDN5ajzgQjDvM6eCXuO7537KBnHdCyCnZGkCxj7L2YuIjNw
- tN+BuHWTbyKpq4U1CG8ks8kDqFEAgzUXNB6my6AqwWh0PPKhUGtcSczgoZxvhDf86qyYjWbif
- KIt2CeltkNeBORJNbTsoWJA80VKBFyjbN9fMddG6cZewjNosBF/gwB9hEU1qUR/2pLVZhuNON
- RYwT/OrizC6QXRknNn7mGrUC0QDHw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181124192454.GA12149@wind.enjellic.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Nicolas Saenz Julienne <nsaenzjulienne@suse.de> hat am 20. November 2018 um 15:53 geschrieben:
+On Sat, Nov 24, 2018 at 01:24:54PM -0600, Dr. Greg wrote:
+> On Sat, Nov 24, 2018 at 08:15:21AM -0800, Jarkko Sakkinen wrote:
 > 
+> > On Tue, Nov 20, 2018 at 05:15:08AM -0600, Dr. Greg wrote:
+> > > Malware would not necessarily need the Intel attestation service.
+> > > Once access to the PROVISION bit is available, malware teams could
+> > > simply build their own attestation service.
 > 
-> Hi All,
+> > AFAIK not possible as they wouldn't have access to the root
+> > provisioning key. Can be confirmed from the SDM's key derivation
+> > table (41-56).
 > 
-> This series was written in parallel with reading and understanding the
-> vchiq code. So excuse me for the lack of logic in the sequence of
-> patches.
+> What provisioning and attestation is all about is establishing an
+> identity binding for a platform in question.  The standard Intel
+> service binds the identity of a platform to an EPID private key.
 > 
-> The main focus was to delete as much code as possible, I've counted
-> around 550 lines, which is not bad. Apart from that there are some
-> patches enforcing proper kernel APIs usage.
+> With access to the SGX_FLAGS_PROVISION_BIT an enclave can generate a
+> perpetual identity for a platform based on the identity modulus
+> signature (MRSIGNER) of the key that signs the signature structure of
+> the enclave.  Without access to the root provisioning key a security
+> quorum or group has to be implemented via a subscription or enrollment
+> model but that is arguably not much of an obstacle.
 > 
-> The only patch that really changes code is the
-> vchiq_ioc_copy_element_data() rewrite.
+> That is pretty much the way standard botware works now.
 > 
-> The last commit updates the TODO list with some of my observations, I
-> realise some of the might be a little opinionated. If anything it's
-> going to force a discussion on the topic, which is nice.
-> 
-> It was developed on top of the latest linux-next, and was tested on a
-> RPIv3B+ with audio, video and running vchiq_test.
-> 
-> Regards,
-> Nicolas
-> 
-> RFC -> PATCH, as per Stefan's comments:
->   - Remove semaphore initialization from remove_event_create()
->     (commit 9)
->   - Join all three semaphore to completion patches (commit 11)
->   - Update probe/init commit message (commit 14)
->   - Update TODO commit message and clean up (commit 16)
->   - Fix spelling on some of the patches
-> 
+> Without provisions for cryptographically secure authorization and
+> policy enforcement in the driver, we will be creating infrastructure
+> for a new generation of botware/malware whose mothership will know
+> that a participating platform is running with full confidentiality and
+> integrity protections.
 
-The whole series is
+OK, I think I got what you mean.
 
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+With free access to the provision the bot net controller could be sure
+that a node is running inside an enclave. Is this what you are worried
+about? Please correct if not or even if there is a slight drift on what
+you are trying to state.
 
-Unfortunately patch 05 might not apply.
+/Jarkko
