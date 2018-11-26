@@ -2,82 +2,93 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2075C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E52C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96CE220672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:14:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96CE220672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5407D2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:18:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XL8Bha0A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5407D2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbeK0EJh (ORCPT
+        id S1726387AbeK0ENZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:09:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49596 "EHLO mx1.redhat.com"
+        Mon, 26 Nov 2018 23:13:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726206AbeK0EJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:09:37 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726167AbeK0ENZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 23:13:25 -0500
+Received: from localhost (unknown [37.142.5.207])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0DF428E3CB;
-        Mon, 26 Nov 2018 17:14:53 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 08C3E19C7F;
-        Mon, 26 Nov 2018 17:14:50 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-Cc:     Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>
-Subject: Re: [PATCH v2 3/4] x86/kvm/hyper-v: direct mode for synthetic timers
-In-Reply-To: <e565638e-d6cc-bbd9-f99e-c835ef1be5b7@redhat.com>
-References: <20181126154732.23025-1-vkuznets@redhat.com> <20181126154732.23025-4-vkuznets@redhat.com> <e565638e-d6cc-bbd9-f99e-c835ef1be5b7@redhat.com>
-Date:   Mon, 26 Nov 2018 18:14:49 +0100
-Message-ID: <8736rnlq0m.fsf@vitty.brq.redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D23A20672;
+        Mon, 26 Nov 2018 17:18:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543252719;
+        bh=lrj9ahwHOd/wzj+Ut8sjCGAOH+1/JNl0hmJ1YfS4XL8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XL8Bha0AVJ1qGjurRElOSY6OyEU4OvuizG4O7WHGg99HLxyy9oGKer19I345WV3GF
+         nkdLCMJVZq1R7pWuvHQk88Xlxzy8Tc/S9+ENCOkH8NkA69gYdTdTkXB8lmLM5lTTfr
+         jTSzW8vDivHo2mJx5bE8G0fhSJosVOWgvubr2oig=
+Date:   Mon, 26 Nov 2018 12:18:36 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Matt Hart <matthew.hart@linaro.org>
+Cc:     boris.brezillon@bootlin.com,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        gregkh@linuxfoundation.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org, nicolas.ferre@microchip.com,
+        rainyfeeling@outlook.com, johan@kernel.org
+Subject: Re: [PATCH 4.14 58/62] mtd: rawnand: atmel: fix OF child-node lookup
+Message-ID: <20181126171836.GB100860@sasha-vm>
+References: <20181126105050.592727680@linuxfoundation.org>
+ <20181126105054.941598787@linuxfoundation.org>
+ <CA+G9fYsyM9VS8QkaEizQT_LSvZyT+h6zdoWZbhVQtd1n60Bniw@mail.gmail.com>
+ <20181126160840.1c702e87@bbrezillon>
+ <20181126151601.GA100860@sasha-vm>
+ <CAH+k93GJjYB75Z+zkrzdkbabUaTSzWCfLGXuuVRuu8ML=6yY6g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 26 Nov 2018 17:14:53 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAH+k93GJjYB75Z+zkrzdkbabUaTSzWCfLGXuuVRuu8ML=6yY6g@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paolo Bonzini <pbonzini@redhat.com> writes:
-
->> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
->> index 2b7a652c9fa4..b8da14cee8e5 100644
->> --- a/include/uapi/linux/kvm.h
->> +++ b/include/uapi/linux/kvm.h
->> @@ -975,6 +975,7 @@ struct kvm_ppc_resize_hpt {
->>  #define KVM_CAP_HYPERV_ENLIGHTENED_VMCS 163
->>  #define KVM_CAP_EXCEPTION_PAYLOAD 164
->>  #define KVM_CAP_ARM_VM_IPA_SIZE 165
->> +#define KVM_CAP_HYPERV_STIMER_DIRECT 166
+On Mon, Nov 26, 2018 at 04:39:03PM +0000, Matt Hart wrote:
+>On Mon, 26 Nov 2018 at 15:16, Sasha Levin <sashal@kernel.org> wrote:
+>>
+><snip>
 >
-> I wonder if all these capabilities shouldn't be replaced by a single
-> KVM_GET_HYPERV_SUPPORTED_CPUID ioctl, or something like that.  If you
-> can do it for 4.21, before this one cap is crystallized into userspace
-> API, that would be great. :)
+>> >>
+>> >> /drivers/mtd/nand/atmel/nand-controller.c: In function
+>> >> 'atmel_hsmc_nand_controller_legacy_init':
+>> >> /drivers/mtd/nand/atmel/nand-controller.c:2080:11: error: implicit
+>> >> declaration of function 'of_get_compatible_child'; did you mean
+>> >> 'of_get_next_available_child'? [-Werror=implicit-function-declaration]
+>> >>    nfc_np = of_get_compatible_child(dev->of_node, "atmel,sama5d3-nfc");
+>> >
+>> >Looks like of_get_compatible_child() has been introduced in 4.18, hence
+>> >this error.
+>> >
+>> >Greg, can you drop this patch from 4.14.y?
+>>
+>> Interesting, none of the kernelci builds caught this? hmm
+>
+>They did, a few arm defconfigs failed to build because of this error.
+>https://kernelci.org/build/stable-rc/branch/linux-4.14.y/kernel/v4.14.83-64-gd81d0be7d560/
 
-Oh, so the suggestion is to get all these features in CPUID format
-(leafs 0x40000001-0x4000000A at this moment - as Hyper-V encodes them)
-and let userspace parse them. Could work. Will take a look.
+Indeed, and it was even removed from a few (but not all) of the branches
+it failed on. I retract my kernelci comments :)
 
-Alternatively, we can go with 'something like that' and add a
-generalized KVM_GET_HYPERV_SUPPORTED_CAPS ioctl (returning somehthing
-like u64 feature, u64 parameter pair). Doing that, however, wouldn't
-relieve us from adding a new KVM_CAP_HYPERV_* constant for every new
-feature.
-
--- 
-Vitaly
+--
+Thanks,
+Sasha
