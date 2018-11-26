@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C157C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF08C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6391F20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 193082146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ErVL781I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6391F20817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JDv25ilO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 193082146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729362AbeKZVwf (ORCPT
+        id S1729372AbeKZVwi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:52:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34082 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:52:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727875AbeKZVwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:52:34 -0500
+        id S1727875AbeKZVwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:52:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A9A620817;
-        Mon, 26 Nov 2018 10:58:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 380F920817;
+        Mon, 26 Nov 2018 10:58:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229930;
-        bh=SDhrV7A39LIHQjt1QjccrpLOOhWyKZvW5rqCnXcYiAA=;
+        s=default; t=1543229933;
+        bh=n2qdwHn0fdICCvhig6j8DPvKrfLjveBAVmnlF0paWyM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ErVL781ILNEhfeLNyUjNuM5ntWWebZHR2OU8Z0l74Ia9R31nd+FdM8XSLRBh6SzD9
-         uhzvY7ByUbyHua8tCat95qZ82FlnuRcVDZgN9kTkOrnWKNSX7Qwnh2+kh/D6Ov6aDo
-         1b14tpIn3+1bSaxN77EfOErycWhQlaaiU1ODTcVY=
+        b=JDv25ilOHfm1bt5aX0kuqm17Op7n0D/mTMH8Tx+jzKeQ9eH6I2KXW8hMk5cvV+xT4
+         9r1DchMzV7kP1NyzcSR/eydRv/XqRZXN9stRMDFxUbqYY2ao28X04sXdHIeFSgV4nu
+         Zo08/JguKETS0T+GYGRs0INoa8ozkcYzwLdDrDgI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Steve French <stfrench@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 33/46] Revert "media: videobuf2-core: dont call memop finish when queueing"
-Date:   Mon, 26 Nov 2018 11:51:22 +0100
-Message-Id: <20181126105049.243773279@linuxfoundation.org>
+Subject: [PATCH 4.14 01/62] cifs: dont dereference smb_file_target before null check
+Date:   Mon, 26 Nov 2018 11:50:42 +0100
+Message-Id: <20181126105051.013117079@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
-References: <20181126105045.447291262@linuxfoundation.org>
+In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
+References: <20181126105050.592727680@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -58,55 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-This reverts commit 9ac47200b51cb09d2f15dbefa67e0412741d98aa.
+[ Upstream commit 8c6c9bed8773375b1d54ccca2911ec892c59db5d ]
 
-This commit fixes a bug in upstream commit a136f59c0a1f ("vb2: Move
-buffer cache synchronisation to prepare from queue") which isn't
-present in 4.9.
+There is a null check on dst_file->private data which suggests
+it can be potentially null. However, before this check, pointer
+smb_file_target is derived from dst_file->private and dereferenced
+in the call to tlink_tcon, hence there is a potential null pointer
+deference.
 
-So as a result you get an UNBALANCED message in the kernel log if
-this patch is applied:
+Fix this by assigning smb_file_target and target_tcon after the
+null pointer sanity checks.
 
-vb2:   counters for queue ffffffc0f3687478, buffer 3: UNBALANCED!
-vb2:     buf_init: 1 buf_cleanup: 1 buf_prepare: 805 buf_finish: 805
-vb2:     buf_queue: 806 buf_done: 806
-vb2:     alloc: 0 put: 0 prepare: 806 finish: 805 mmap: 0
-vb2:     get_userptr: 0 put_userptr: 0
-vb2:     attach_dmabuf: 1 detach_dmabuf: 1 map_dmabuf: 805 unmap_dmabuf: 805
-vb2:     get_dmabuf: 0 num_users: 1609 vaddr: 0 cookie: 805
+Detected by CoverityScan, CID#1475302 ("Dereference before null check")
 
-Reverting this patch solves this regression.
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Fixes: 04b38d601239 ("vfs: pull btrfs clone API to vfs layer")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/v4l2-core/videobuf2-core.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ fs/cifs/cifsfs.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
-index f7ca1fab4808..4df4a1f402be 100644
---- a/drivers/media/v4l2-core/videobuf2-core.c
-+++ b/drivers/media/v4l2-core/videobuf2-core.c
-@@ -914,12 +914,9 @@ void vb2_buffer_done(struct vb2_buffer *vb, enum vb2_buffer_state state)
- 	dprintk(4, "done processing on buffer %d, state: %d\n",
- 			vb->index, state);
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index 44a7b2dea688..c5fd5abf7206 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -933,8 +933,8 @@ static int cifs_clone_file_range(struct file *src_file, loff_t off,
+ 	struct inode *src_inode = file_inode(src_file);
+ 	struct inode *target_inode = file_inode(dst_file);
+ 	struct cifsFileInfo *smb_file_src = src_file->private_data;
+-	struct cifsFileInfo *smb_file_target = dst_file->private_data;
+-	struct cifs_tcon *target_tcon = tlink_tcon(smb_file_target->tlink);
++	struct cifsFileInfo *smb_file_target;
++	struct cifs_tcon *target_tcon;
+ 	unsigned int xid;
+ 	int rc;
  
--	if (state != VB2_BUF_STATE_QUEUED &&
--	    state != VB2_BUF_STATE_REQUEUEING) {
--		/* sync buffers */
--		for (plane = 0; plane < vb->num_planes; ++plane)
--			call_void_memop(vb, finish, vb->planes[plane].mem_priv);
--	}
-+	/* sync buffers */
-+	for (plane = 0; plane < vb->num_planes; ++plane)
-+		call_void_memop(vb, finish, vb->planes[plane].mem_priv);
+@@ -948,6 +948,9 @@ static int cifs_clone_file_range(struct file *src_file, loff_t off,
+ 		goto out;
+ 	}
  
- 	spin_lock_irqsave(&q->done_lock, flags);
- 	if (state == VB2_BUF_STATE_QUEUED ||
++	smb_file_target = dst_file->private_data;
++	target_tcon = tlink_tcon(smb_file_target->tlink);
++
+ 	/*
+ 	 * Note: cifs case is easier than btrfs since server responsible for
+ 	 * checks for proper open modes and file type and if it wants
 -- 
 2.17.1
 
