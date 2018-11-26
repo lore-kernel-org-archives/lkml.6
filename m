@@ -2,54 +2,54 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18645C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB46C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D50E421473
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6EE52146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBI3ZgFz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D50E421473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GakQd23d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6EE52146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729108AbeKZVvq (ORCPT
+        id S1729122AbeKZVvt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:51:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33002 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:51:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729097AbeKZVvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:51:45 -0500
+        id S1729097AbeKZVvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:51:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A9402089F;
-        Mon, 26 Nov 2018 10:57:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B952121104;
+        Mon, 26 Nov 2018 10:58:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229880;
-        bh=k9OORM2FAMNsQbwJZX2Zkxd8+B9oEJ9OFXe0/GOw/8Y=;
+        s=default; t=1543229883;
+        bh=0x5bHCRQY2D8jCwK+ciBkWc9xNrDkuYv6x6aFsxZeRE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eBI3ZgFzxQnFGX2HHS5RlWcHML97xML7RfvkN2aF8AsXVo0+lk8dcfAOAY0iFlAPQ
-         P41kiQHU1YH3VGzK/u+1ThXTlPwUM44JwgC7v1vQkndZxMt3f0MtZhepfW6Ie6cYaQ
-         TGFss57d0A8MNSIr2GXtBWzkEGHfQ7u97+ziv7EY=
+        b=GakQd23df/a5CihZBNb22wrOWvigXiESRgCYTnPsc5hOafOC9rl4tNSK2UduI/1J0
+         50RO1LleyFHsP+C/IyEn0fMDMq7h3xO7spRCi0F9lk8uwyYctmGRR23kYmqY3MX3hX
+         Kh525F4m/AnRP92cwHgxg+av+FoM1553Gt72D4Ug=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Cooper Chiou <cooper.chiou@intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sasha Levin <sashal@kernel.org>, Lee@vger.kernel.org,
-        Shawn C <shawn.c.lee@intel.com>
-Subject: [PATCH 4.9 06/46] drm/edid: Add 6 bpc quirk for BOE panel.
-Date:   Mon, 26 Nov 2018 11:50:55 +0100
-Message-Id: <20181126105046.309439218@linuxfoundation.org>
+        stable@vger.kernel.org, Matt Turner <matt.turner@intel.com>,
+        Len Brown <len.brown@intel.com>,
+        Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>,
+        Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@intel.com>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 07/46] platform/x86: intel_telemetry: report debugfs failure
+Date:   Mon, 26 Nov 2018 11:50:56 +0100
+Message-Id: <20181126105046.594759682@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
 References: <20181126105045.447291262@linuxfoundation.org>
@@ -67,40 +67,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 922dceff8dc1fb4dafc9af78139ba65671408103 ]
+[ Upstream commit 8d98b1ef368feeb7720b8b9b6f3bd93f2ad892bc ]
 
-BOE panel (ID: 0x0771) that reports "DFP 1.x compliant TMDS".
-But it's 6bpc panel only instead of 8 bpc.
+On some Goldmont based systems such as ASRock J3455M the BIOS may not
+enable the IPC1 device that provides access to the PMC and PUNIT. In
+such scenarios, the IOSS and PSS resources from the platform device can
+not be obtained and result in a invalid telemetry_plt_config which is an
+internal data structure that holds platform config and is maintained by
+the telemetry platform driver.
 
-Add panel ID to edid quirk list and set 6 bpc as default to
-work around this issue.
+This is also applicable to the platforms where the BIOS supports IPC1
+device under debug configurations but IPC1 is disabled by user or the
+policy.
 
-Cc: Jani Nikula <jani.nikula@intel.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>
-Cc: Cooper Chiou <cooper.chiou@intel.com>
-Signed-off-by: Lee, Shawn C <shawn.c.lee@intel.com>>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/1540792173-7288-1-git-send-email-shawn.c.lee@intel.com
+This change allows user to know the reason for not seeing entries under
+/sys/kernel/debug/telemetry/* when there is no apparent failure at boot.
+
+Cc: Matt Turner <matt.turner@intel.com>
+Cc: Len Brown <len.brown@intel.com>
+Cc: Souvik Kumar Chakravarty <souvik.k.chakravarty@intel.com>
+Cc: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@intel.com>
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198779
+Acked-by: Matt Turner <matt.turner@intel.com>
+Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_edid.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/platform/x86/intel_telemetry_debugfs.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index 83d2f43b5a2f..c93dcfedc219 100644
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -116,6 +116,9 @@ static const struct edid_quirk {
- 	/* SDC panel of Lenovo B50-80 reports 8 bpc, but is a 6 bpc panel */
- 	{ "SDC", 0x3652, EDID_QUIRK_FORCE_6BPC },
+diff --git a/drivers/platform/x86/intel_telemetry_debugfs.c b/drivers/platform/x86/intel_telemetry_debugfs.c
+index ef29f18b1951..4069433a0ec6 100644
+--- a/drivers/platform/x86/intel_telemetry_debugfs.c
++++ b/drivers/platform/x86/intel_telemetry_debugfs.c
+@@ -953,12 +953,16 @@ static int __init telemetry_debugfs_init(void)
+ 	debugfs_conf = (struct telemetry_debugfs_conf *)id->driver_data;
  
-+	/* BOE model 0x0771 reports 8 bpc, but is a 6 bpc panel */
-+	{ "BOE", 0x0771, EDID_QUIRK_FORCE_6BPC },
-+
- 	/* Belinea 10 15 55 */
- 	{ "MAX", 1516, EDID_QUIRK_PREFER_LARGE_60 },
- 	{ "MAX", 0x77e, EDID_QUIRK_PREFER_LARGE_60 },
+ 	err = telemetry_pltconfig_valid();
+-	if (err < 0)
++	if (err < 0) {
++		pr_info("Invalid pltconfig, ensure IPC1 device is enabled in BIOS\n");
+ 		return -ENODEV;
++	}
+ 
+ 	err = telemetry_debugfs_check_evts();
+-	if (err < 0)
++	if (err < 0) {
++		pr_info("telemetry_debugfs_check_evts failed\n");
+ 		return -EINVAL;
++	}
+ 
+ 
+ #ifdef CONFIG_PM_SLEEP
 -- 
 2.17.1
 
