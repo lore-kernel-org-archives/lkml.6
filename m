@@ -1,88 +1,110 @@
 Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE4EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E653C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:09:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2705920660
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:09:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3764F20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:09:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=your-benefits.eu header.i=@your-benefits.eu header.b="ITXmVbsA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2705920660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=your-benefits.eu
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XhvHjlGK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3764F20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731225AbeKZV65 (ORCPT
+        id S1731206AbeKZWDF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:58:57 -0500
-Received: from mail.your-benefits.eu ([80.211.149.54]:55137 "EHLO
-        your-benefits.eu" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbeKZV64 (ORCPT
+        Mon, 26 Nov 2018 17:03:05 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33422 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730635AbeKZWDF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:58:56 -0500
-X-Greylist: delayed 431 seconds by postgrey-1.27 at vger.kernel.org; Mon, 26 Nov 2018 16:58:55 EST
-Received: by your-benefits.eu (Postfix, from userid 1001)
-        id 51A0AA3098; Mon, 26 Nov 2018 11:47:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=your-benefits.eu;
-        s=mail; t=1543229836;
-        bh=c14RFkzaLGlrhR+55xbHiwHqcL653MGVSdPbdypDSPk=;
-        h=Date:From:To:Subject:From;
-        b=ITXmVbsAaAuJXp1sskvWTGorM7G7Y9Mqnde63WIR9AuYhWKBtkwmCN0wl5KfKLWSY
-         rdZXCvwWKz5/JgVNwWiQ8worW1d3pacrgGbsuqNvjnECzVfNlwq7AtPxaLS5J+sHg6
-         SUOCC18XRXeIUbJ4hLBin31stZW5eToLDd4Ief6g=
-Received: by mail.your-benefits.eu.your-benefits.eu for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 10:47:42 GMT
-Message-ID: <20181126114509-0.1.i.1b22.0.ekdnj743ua@your-benefits.eu>
-Date:   Mon, 26 Nov 2018 10:47:42 GMT
-From:   =?UTF-8?Q? "L=C3=A1szl=C3=B3_P=C3=A9ter" ?= 
-        <peter.laszlo@your-benefits.eu>
-To:     <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?Q?Dolgoz=C3=B3i_juttat=C3=A1sok?=
-X-Mailer: mail.your-benefits.eu
+        Mon, 26 Nov 2018 17:03:05 -0500
+Received: by mail-wm1-f67.google.com with SMTP id 79so16310703wmo.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 03:09:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EwtnTGDk73qNySKwRAKgEBn5iXeDODEswSfu5lxXIdQ=;
+        b=XhvHjlGK98Q0ltPxen64R6bAaPdMMqLkMhQsLvzdgQzY0lNhoQNIbn1m2c6YTTik/e
+         mcIB3xMwt3PUZW8yed+dxhbCYLnHGsGzHQrVAIi9w3rasLFXFjmCR5D2GhNLkso9crhB
+         g9V7i2HZuqpDMJ1b6rxKQtU2Oq2kEzlQg/5CY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EwtnTGDk73qNySKwRAKgEBn5iXeDODEswSfu5lxXIdQ=;
+        b=i+ErpEqqsqR1f2DEwHNNv+odCNWZ6mCp2fbEsyPVbB+xc25B+JZTbrQ9QvTuMFfbRa
+         Hmd8WHAAxc4HhP2GuImYbH6BMIgFP5IPaOQkx6OvaJK3UF5RpDE9kKf/KQW3OoRssYd5
+         XaDVkBzYmuffZaM9tnUzuFGAB0mp27s1PpWQgkMzgSWVaMY9ia82FKfBUrbP0+szsvC5
+         u4VnvpgwxM3gl2UqwGAPb49emj4YerPIX3WNvh4ClekIUIjYpWJ8QDNFkIxXBHaFUHa/
+         xCeht0fRH6bGN+xpKtyMTar5Al+bwzc51gGc2h7Tet8O94eA+iNdmDVomL+hWPms6xiZ
+         202Q==
+X-Gm-Message-State: AGRZ1gK2NKxV8tfTt+JIlJtatbaaeC61TIeRabDjn+BxvV/biBMTDWT3
+        sJP26Pg2jvpoiyPj0z7joSJkPQ==
+X-Google-Smtp-Source: AJdET5cWmppAz2xkPjYCClEiXdUHlWfaGH+795pEjaq+tyP85XLkMBPuU3rvhLZQKBMdn3gC9L+q5w==
+X-Received: by 2002:a1c:a183:: with SMTP id k125mr22252117wme.25.1543230557059;
+        Mon, 26 Nov 2018 03:09:17 -0800 (PST)
+Received: from queper01-ThinkPad-T460s ([217.140.96.141])
+        by smtp.gmail.com with ESMTPSA id z9sm22858469wrs.63.2018.11.26.03.09.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 03:09:16 -0800 (PST)
+Date:   Mon, 26 Nov 2018 11:09:15 +0000
+From:   Quentin Perret <quentin.perret@linaro.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org,
+        Chris Redpath <chris.redpath@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH V3 2/2] base/drivers/arch_topology: Default dmips-mhz if
+ they are not set in DT
+Message-ID: <20181126110915.372tanwevpfcr7zp@queper01-ThinkPad-T460s>
+References: <1543221866-19671-1-git-send-email-daniel.lezcano@linaro.org>
+ <1543221866-19671-2-git-send-email-daniel.lezcano@linaro.org>
+ <20181126095224.i5se3n5lavww4a2n@queper01-ThinkPad-T460s>
+ <97f85a4b-efb6-b26f-94d0-cd538c83a03e@linaro.org>
+ <20181126101955.pdn76f2ujeb6urxz@vireshk-i7>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126101955.pdn76f2ujeb6urxz@vireshk-i7>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kedves H=C3=B6lgyem/Uram!
+On Monday 26 Nov 2018 at 15:49:55 (+0530), Viresh Kumar wrote:
+> On 26-11-18, 11:08, Daniel Lezcano wrote:
+> > On 26/11/2018 10:52, Quentin Perret wrote:
+> > > Maybe you want to test 'if (!raw_capacity || cap_parsing_failed)' at the
+> > > top of topology_parse_cpu_capacity() ?
+> > 
+> > I prefer to update the documentation, it makes more sense than adding
+> > more cumbersome tests in the current code.
+> 
+> +1
+> 
+> Throwing an error and ignoring DT number completely for the capacity
+> are good enough in my opinion as well.
+> 
+> And who cares for the platforms that can't even fill the DT properly :)
 
-2019 janu=C3=A1rj=C3=A1t=C3=B3l szinte minden b=C3=A9ren k=C3=ADv=C3=BCli=
- juttat=C3=A1s j=C3=B6vedelemk=C3=A9nt fog ad=C3=B3zni (kiv=C3=A9telt k=C3=
-=A9pez ez al=C3=B3l a SZ=C3=89P k=C3=A1rtya). A v=C3=A1ltoz=C3=A1sok elle=
-n=C3=A9re a v=C3=A1llalatok t=C3=B6bb mint 55%-a meg k=C3=ADv=C3=A1nja ta=
-rtani a dolgoz=C3=B3i juttat=C3=A1sok nett=C3=B3 =C3=B6sszeg=C3=A9t, mag=C3=
-=A1ra v=C3=A1llalva ezzel a megemelkedett ad=C3=B3terheket.=20
+Right, I think we all agree the case with a partially filled DT is
+broken. I don't actually care too much about the behaviour in this case,
+but it needs to be consistent with the doc.
 
-Juttat=C3=A1si k=C3=A1rty=C3=A1ink seg=C3=ADts=C3=A9g=C3=A9vel 2019-ben a=
- munk=C3=A1ltat=C3=B3k lefedhetik szinte az =C3=B6sszes jelenleg haszn=C3=
-=A1lt b=C3=A9ren k=C3=ADv=C3=BCli juttat=C3=A1st, mik=C3=B6zben munkav=C3=
-=A1llal=C3=B3ik =C3=A9lvezhetik az ak=C3=A1r korl=C3=A1tlan felhaszn=C3=A1=
-l=C3=A1s lehet=C5=91s=C3=A9g=C3=A9t.  A SZ=C3=89P k=C3=A1rty=C3=A1t=C3=B3=
-l elt=C3=A9r=C5=91en a mi k=C3=A1rty=C3=A1inkkal olyan mindennapos k=C3=B6=
-lts=C3=A9gek fedezhet=C5=91ek mint p=C3=A9ld=C3=A1ul =C3=A9lelmiszer v=C3=
-=A1s=C3=A1rl=C3=A1s, eg=C3=A9szs=C3=A9g=C3=BCgyi ell=C3=A1t=C3=A1s, ruh=C3=
-=A1zat, elektronika, =C3=BCzemanyagk=C3=B6lts=C3=A9g, k=C3=B6zm=C5=B1d=C3=
-=ADj, s=C5=91t, ak=C3=A1r m=C3=A9g k=C3=A9szp=C3=A9nzfelv=C3=A9telre is a=
-lkalmasak.=20
+So, as long as you fix the doc, that change is fine by me :-)
 
-Ez az egyetlen olyan juttat=C3=A1si k=C3=A1rtya a magyar piacon, melyet m=
-inden hazai POS termin=C3=A1l elfogad, ezzel biztos=C3=ADtva a k=C3=A1rty=
-a sz=C3=A9les k=C3=B6r=C5=B1 felhaszn=C3=A1lhat=C3=B3s=C3=A1g=C3=A1t.=20
-
-Sz=C3=ADvesen bemutatom =C3=96nnek, milyen tov=C3=A1bbi el=C5=91ny=C3=B6k=
-kel j=C3=A1r k=C3=A1rty=C3=A1ink dolgoz=C3=B3i juttat=C3=A1sk=C3=A9nt t=C3=
-=B6rt=C3=A9n=C5=91 alkalmaz=C3=A1sa, =C3=A9s r=C3=A9szletes t=C3=A1j=C3=A9=
-koztat=C3=A1st adok a k=C3=A1rty=C3=A1k felhaszn=C3=A1l=C3=A1si lehet=C5=91=
-s=C3=A9geir=C5=91l =E2=80=93 k=C3=A9rem jelezze ez ir=C3=A1nti ig=C3=A9ny=
-=C3=A9t.=20
-
-
-L=C3=A1szl=C3=B3 P=C3=A9ter
-Menedzser
+Thanks,
+Quentin
