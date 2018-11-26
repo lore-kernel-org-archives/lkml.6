@@ -2,148 +2,140 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D50C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC57C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3451320865
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:08:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 831AB205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:08:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kBknsphJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3451320865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HjjStoop"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 831AB205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727316AbeK0HD3 (ORCPT
+        id S1727340AbeK0HDb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 02:03:29 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47190 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbeK0HD3 (ORCPT
+        Tue, 27 Nov 2018 02:03:31 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54641 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727317AbeK0HDa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 02:03:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=y3ridubM4dBF7ftT7WYOeOEUeMypENWrpCwnp1BVO+E=; b=kBknsphJkm9Flb3C5VRfJQ2LC
-        ng9OHTCBA3zoW7RPmTf6Z+U9hwdvJGI+yN2QM6/bnhYmDwQHNxsaDFKT41lHSWi+5t1vuxxCjavFg
-        MWsIUmO5vRdplf5mDX3YlmW7QPYsEcwmAep9Voetic6chGrHYqy6yb2y2+ObmNQSpN/+Gy0Ffhcb/
-        jJAKNu5CNHWXG+aac9SacaewHW5ixx5EhVjKKg7s4LscHlAB4GI9xsVRxUsi/yBobhH2HiKfcA5ra
-        pALz53BdoV0FrdF6qrN6t4lyV9VQKM8BUIPGazBw/MLfmWTfCx+GVkmmVnBETTor5MLtDM5Br4yoS
-        1Ml2kwoIA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gRNAq-0006cb-Ga; Mon, 26 Nov 2018 20:08:04 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3E8B92029FD58; Mon, 26 Nov 2018 21:08:01 +0100 (CET)
-Date:   Mon, 26 Nov 2018 21:08:01 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
- implementation for x86-64
-Message-ID: <20181126200801.GW2113@hirez.programming.kicks-ass.net>
-References: <cover.1543200841.git.jpoimboe@redhat.com>
- <62188c62f6dda49ca2e20629ee8e5a62a6c0b500.1543200841.git.jpoimboe@redhat.com>
- <20181126160217.GR2113@hirez.programming.kicks-ass.net>
- <20181126171036.chcbmb35ygpxziub@treble>
- <20181126175624.bruqfbkngbucpvxr@treble>
+        Tue, 27 Nov 2018 02:03:30 -0500
+Received: by mail-wm1-f68.google.com with SMTP id z18so4867639wmc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 12:08:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IDdcgfcTuQZriqBwmuMwXXRPU2P6JnWM+lQvlN8bFWE=;
+        b=HjjStoopAIC2B+G3TgxTttzGBvYcEJfFelUHCSP8nqbtpTqigJ/DmZIibQD15ATRJS
+         23ONaZOzEP17nsnuu7t8wwjtRfCTMa+pdJxw4wKsMsrd4XaClTPlDW8Ju8++6BRFnYIu
+         6GfZ5fUdeUATkUXdmXi1n3nu2pVj0K24CEois=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IDdcgfcTuQZriqBwmuMwXXRPU2P6JnWM+lQvlN8bFWE=;
+        b=ftwETjykTNGgp78YROVuRscouYzyTmcIROq0zGFNFFzCOLzswRr0YkyvAj8xsM79FP
+         he9E8jiQeP+2dGiHsVN+BfSfSUqBv/SszZwtpc/8OafbuiFJmaiNJTyd092T7jOw6LBb
+         2NXVFJzir+tVfeflLdZ9f/y6/lG9iNbswMIbTWvJR6OLivHJqQtMhJWNhXZ6rxZ6ldd9
+         cDAZg9g/TrPJOJAlu6/0SRbM1JL73ABDpPxq0kokAI5irFhTiYmu95sipA4yqjg4Uo/V
+         ejXbsp7/pGeWue/7UMGUVTowlkkjDDS+JGc8rXSd5YJjeG4LQBOi/k4tIpCatgsAdzfr
+         UFoA==
+X-Gm-Message-State: AGRZ1gJ5QtGwConhDcaIS8+jZsl3Me/BVwOzlwamte/c46OizsptAk4V
+        WKD7TDVsKqLylbo0nqI6jASDhaN/DE8=
+X-Google-Smtp-Source: AJdET5etdLY0oQyS1j9gUpf+lN83Yeu0oh/dd4E7YoXrrNtpVhtc2S7wKRlyDLUO5Bg9MzyyPhg70g==
+X-Received: by 2002:a1c:e046:: with SMTP id x67mr24494390wmg.122.1543262894924;
+        Mon, 26 Nov 2018 12:08:14 -0800 (PST)
+Received: from [192.168.0.40] (72.224.136.77.rev.sfr.net. [77.136.224.72])
+        by smtp.googlemail.com with ESMTPSA id v4sm856882wme.6.2018.11.26.12.08.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 12:08:14 -0800 (PST)
+Subject: Re: [PATCH V4 2/2] base/drivers/arch_topology: Default dmips-mhz if
+ they are not set in DT
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        viresh.kumar@linaro.org, Chris Redpath <chris.redpath@linaro.org>,
+        Quentin Perret <quentin.perret@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Li Yang <leoyang.li@nxp.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+References: <1543234847-21611-1-git-send-email-daniel.lezcano@linaro.org>
+ <1543234847-21611-2-git-send-email-daniel.lezcano@linaro.org>
+ <20181126150601.GD4637@kroah.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <1ad863c3-2c78-52a1-2f0f-b7a3cc3ad80d@linaro.org>
+Date:   Mon, 26 Nov 2018 21:08:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181126175624.bruqfbkngbucpvxr@treble>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181126150601.GD4637@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 11:56:24AM -0600, Josh Poimboeuf wrote:
-> diff --git a/arch/x86/kernel/static_call.c b/arch/x86/kernel/static_call.c
-> index d3869295b88d..8fd6c8556750 100644
-> --- a/arch/x86/kernel/static_call.c
-> +++ b/arch/x86/kernel/static_call.c
-> @@ -7,24 +7,19 @@
->  
->  #define CALL_INSN_SIZE 5
->  
-> +unsigned long bp_handler_call_return_addr;
->  
-> +static void static_call_bp_handler(struct pt_regs *regs)
-> +{
->  #ifdef CONFIG_HAVE_STATIC_CALL_INLINE
-> +	/*
-> +	 * Push the return address on the stack so the "called" function will
-> +	 * return to immediately after the call site.
-> +	 */
-> +	regs->sp -= sizeof(long);
-> +	*(unsigned long *)regs->sp = bp_handler_call_return_addr;
->  #endif
-> +}
->  
->  void arch_static_call_transform(void *site, void *tramp, void *func)
->  {
-> @@ -52,14 +47,12 @@ void arch_static_call_transform(void *site, void *tramp, void *func)
->  	opcodes[0] = insn_opcode;
->  	memcpy(&opcodes[1], &dest_relative, CALL_INSN_SIZE - 1);
->  
->  	if (IS_ENABLED(CONFIG_HAVE_STATIC_CALL_INLINE))
-> +		bp_handler_call_return_addr = insn + CALL_INSN_SIZE;
->  
->  	/* Patch the call site: */
->  	text_poke_bp((void *)insn, opcodes, CALL_INSN_SIZE,
-> -		     static_call_bp_handler);
-> +		     static_call_bp_handler, func);
->  
->  done:
->  	mutex_unlock(&text_mutex);
+
+Hi Greg,
+
+thanks for the review.
+
+On 26/11/2018 16:06, Greg Kroah-Hartman wrote:
+> On Mon, Nov 26, 2018 at 01:20:43PM +0100, Daniel Lezcano wrote:
+>> --- a/drivers/base/arch_topology.c
+>> +++ b/drivers/base/arch_topology.c
+>> @@ -243,9 +243,20 @@ static int __init register_cpufreq_notifier(void)
+>>  	 * until we have the necessary code to parse the cpu capacity, so
+>>  	 * skip registering cpufreq notifier.
+>>  	 */
+>> -	if (!acpi_disabled || !raw_capacity)
+>> +	if (!acpi_disabled)
+>>  		return -EINVAL;
+>>  
+>> +	if (!raw_capacity) {
+>> +
+>> +		pr_info("cpu_capacity: No capacity defined in DT, set default "
+>> +		       "values to %ld\n", SCHED_CAPACITY_SCALE);
+> 
+> Why the extra blank line?
+> 
+> And what is userspace going to do with this noise?  Is this an error?
+> Just normal operation?  A device should never be saying anything to the
+> log for normal boot functionality.  When is this called?
+
+It is not an error but a fallback path. It is called at init time when
+the cpufreq notifier is called and when either the DT read failed or
+nothing is specified. I agree this is noise, I will remove the trace.
+
+> And no need for the "cpu_capacity:" right?  Shouldn't the pr_info() line
+> handle the prefix for you?
+
+Ah, right I did not pay attention to the prefix and blindly copied the
+line from somewhere else. I think it is better to drop this trace in any
+case.
+
+I will provide a patch setting the pr_fmt in a separate series.
 
 
-like maybe something along the lines of:
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-struct sc_data {
-	unsigned long ret;
-	unsigned long ip;
-};
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-void sc_handler(struct pt_regs *regs, void *data)
-{
-	struct sc_data *scd = data;
-
-	regs->sp -= sizeof(long);
-	*(unsigned long *)regs->sp = scd->ret;
-	regs->ip = scd->ip;
-}
-
-arch_static_call_transform()
-{
-	...
-
-	scd = (struct sc_data){
-		.ret = insn + CALL_INSN_SIZE,
-		.ip = (unsigned long)func,
-	};
-
-	text_poke_bp((void *)insn, opcodes, CALL_INSN_SIZE,
-			sc_handler, (void *)&scd);
-
-	...
-}
