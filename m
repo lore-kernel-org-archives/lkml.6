@@ -2,103 +2,117 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B37C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1871C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84C74208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:57:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6052D20856
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 23:59:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="beqR9sWY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84C74208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="CCyTpzIY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6052D20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbeK0KxA (ORCPT
+        id S1727844AbeK0KzH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:53:00 -0500
-Received: from sonic302-28.consmr.mail.ne1.yahoo.com ([66.163.186.154]:35616
-        "EHLO sonic302-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727725AbeK0Kw7 (ORCPT
+        Tue, 27 Nov 2018 05:55:07 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41704 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727456AbeK0KzG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:52:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543276626; bh=3u9R9GyCFBDGOshX42y2/d53w6/c/YWPzQ9YJX8JK0o=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=beqR9sWYG4P40la0QKd9DjfrtbGL2ravnp98JKuw+KDujbTyZjYpTRvXfGGbXdWuuiDvObjUBMIzs/f1vmDEThCbOqCF7MVNQLR71wpBZGUmkyjVR67TdR2xeXIXZJQU08HZ3d6+UaVbX4Qs35fTpRGsETnJTKcTluDVYWQ7IDBzbWNlz5/LpgM1y3JNng1FLoFqzyLzjSiwR/ifonQeCrPS5lPEsKA9Lg9PmGPQk5DgTOhUj0t8TAerJOl7CNtq0wJQEKd3BrjY2Pt5DiczbwJsxoaArbin/26chvnB1GjxDBXj7in9jD/uOr1Nj/f15yCByP0JM9uovEgrdhwuJA==
-X-YMail-OSG: wV_VxM4VM1mFVFV3WCrVT84wyUbUP3QxBitvUllHLQeqeglqbDAdsdE_kBk3XN7
- vRiMFuTDe.lMZCuYgYewvLVPzaCXuDrZ0cComlfVOomsMn7J6uCDPSLmQl5w6JtwmfiyS7OTn8yx
- j7hLAtxAgNiKa2fEDOp74hOoErWbELRBHFeNmnLIqCtfV4S.enBK851rAtwVkRP1iy_Oi7Daxz9l
- 6a9EqIXddwXM1JdUUQlDh9srV0peFhowR0aCq6OmEBXord7kMHH02lDPrPmi_7qKAt1gkQrtChN7
- voxu435cnpaexO01kSt40MeYZeKz4bTadP5kDdqQY2beB_r07LzqpKON4ItvWF_m018bD5vbn_mM
- f1BuIXJKekypSqPxXaMPWDY49aokcztTwi1W6F_ZHtWW7fqjI6x3XGYVgUN2PbQCqM1e5Int3W5U
- GTQ_RONiLlMdvOiiKgUl_RROeG9irn7USBn5O5MHdQ108inx43z5.t4srrGRW1XYB_Ff3npE5KrD
- lSp0ruOHoYH9N68QTNi3h4Cp5pSz9wIag1Goa5CAptG_ctvAvSsk.QpdfAGn_45O_hWDuZWlh9Pk
- cquWDNc8apC5fOStw1Uni1BYphnTOJ6aGi9n4RDUmDz4yZ775a7Zs3NXJK03wTfPVyNfbYQlOhbt
- Huc6hzEwFQzS3gBXsZh.VgEm0w2mEp8enmFLrvhLkPRikMdYEnY9Qr5NkbVZVuHHWvRVL8rAzAcx
- lGHX9jVmBjHnpw.h3sgd3i3hF9HVL4T51LPSkiv7y88lm_mBFGXI7xBVLDSduVbW3sodG9PtLbg1
- 0jnA7cpQFDZfI3uXKR1ruqaIRjlXI1sNEjrVwTpAV7CvQhoq7dNC6RClY3un4aVvDS_Ugv9H0Y5T
- MUW65_lWOMCLN_sacRbHmZ1L9xpitC7R9xfE0JrLgnciEM8PemIbRzir9HwLJkqpC6lf9W6GtODK
- aVjOS34jrWbt_B1h2.Ors.F77CBWihh7LTt1ZSZvapacuqDsOB9FHftmHCA2_d_Bzi.mZJKLjUt4
- Vkxxo34YRBnvPTDUJhYhN2FjDgH9FoEs3Ho4_Q95KoR8_VFmrMzbNmXN3mQP59jX3HNzYZGQ2yle
- RWfsq00BZyxPg96AfQEkSpLTrrs3dfmetl9htXw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:57:06 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp422.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 4ab9a22a8175d9218d86768033f8d9bd;
-          Mon, 26 Nov 2018 23:57:04 +0000 (UTC)
-Subject: [PATCH v5 38/38] TOMOYO: Update LSM flags to no longer be exclusive
-To:     James Morris <jmorris@namei.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
-References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <02dd3038-09e8-34e8-ed57-8888788d17d2@schaufler-ca.com>
-Date:   Mon, 26 Nov 2018 15:57:01 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 27 Nov 2018 05:55:06 -0500
+Received: by mail-lf1-f68.google.com with SMTP id c16so15010982lfj.8
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 15:59:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Dtxb/gAAdv0SWRFdJzThyq6cqOuYXqVCh4d7fsrqnTg=;
+        b=CCyTpzIY6W3vkG2LztILrllgKTN5oeMR+M6jlPgOe/rPxolu628/Ph8X0gCn9c5nne
+         DAjVctOQuJL3Dum23vMB9UcoTIeujE8IMz/pL8aw8Zw9pIIsSuRZ0/fe+sUV/9klkQav
+         Yz1J2F5zrf3X/Tm5RDsuRYVEs9t2mub7bgJevolfSqat8tx6YZ0z9DpkE+Ysu4yWT6ud
+         JkxM164Bsh7JvHe+9NEtaYyMvVBsO+oCB+WpEc9ZY3Z41heQO4g9QUR8m6vCycG34A8p
+         7W2StEc9qOW+LPzG/5LkfXZMO/qkRobi110/VsylVif22ic9em8rhHM2HZxe/RmurOxU
+         CPiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Dtxb/gAAdv0SWRFdJzThyq6cqOuYXqVCh4d7fsrqnTg=;
+        b=VQl3++tGT94j6bclbqbVxYqer0xzecxUwxbeTU2buTS9aDzHDxRDp6CLdmzh/mtOw6
+         em3F2W0q+rf/0VFaV1RWOQG+fUkhylk7oMQSeSRW3+Q/wzJDVWpLI4sOoTO5N6dlAQ15
+         4eW5gnlNkSIBLsWaSWgV1zFTOAWv9w/kUe5Utznp9DJdPuA6LHrQiutGXDPpWIHHBe8A
+         xTLDEWJjUwpDTqA+nqm3huL0HFef/krIx3tak6UeBFe5thi27FpQLns6jXsmX8ultpO+
+         iZdzSeYlBste85Xo+isH/Ntg4gyPOKAgSPZPjpBzVBjaZSLi9Gn3Cq5p29VinIJnhkAY
+         BjVA==
+X-Gm-Message-State: AGRZ1gIBz+/KH7yq4faea4pMIpoc0k+L+3okPewxIsiBLLGu8IlKkXn1
+        8Xn1ofGa/PW2g05Cseka1XOvEw==
+X-Google-Smtp-Source: AJdET5e7sjMGRbZruNqh+6v/+RuqkfpBmWd1lyDPvOJtr1qYtv94RZ6SFvdxZtj6dWpFZARVP+Zgyw==
+X-Received: by 2002:a19:4345:: with SMTP id m5mr16747977lfj.142.1543276751989;
+        Mon, 26 Nov 2018 15:59:11 -0800 (PST)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id 75-v6sm280643ljs.50.2018.11.26.15.59.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 15:59:10 -0800 (PST)
+Date:   Mon, 26 Nov 2018 15:58:56 -0800
+From:   Olof Johansson <olof@lixom.net>
+To:     Krishna Reddy <vdumpa@nvidia.com>
+Cc:     will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org,
+        snikam@nvidia.com, praithatha@nvidia.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        talho@nvidia.com, yhsu@nvidia.com, nicolinc@nvidia.com,
+        linux-tegra@vger.kernel.org, treding@nvidia.com,
+        avanbrunt@nvidia.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 0/5] Add Tegra194 Dual ARM SMMU driver
+Message-ID: <20181126235856.vnseoe5lucfryc5p@localhost>
+References: <1541029430-14150-1-git-send-email-vdumpa@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541029430-14150-1-git-send-email-vdumpa@nvidia.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With blob sharing in place, TOMOYO is no longer an exclusive LSM, so it
-can operate separately now. Mark it as such.
+Hi Krishna,
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- security/tomoyo/tomoyo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Oct 31, 2018 at 04:43:45PM -0700, Krishna Reddy wrote:
+> NVIDIA's Xavier (Tegra194) SOC has three ARM SMMU(MMU-500) instances.
+> Two of the SMMU instances are used to interleave IOVA accesses across them.
+> The IOVA accesses from HW devices are interleaved across these two SMMU instances
+> and they need to be programmed identical.
+> 
+> The existing ARM SMMU driver can't be used in its current form for programming the
+> two SMMU instances identically. But, most of the code can be shared between ARM SMMU
+> driver and Tegra194 SMMU driver.
+> Page fault handling and TLB sync operations need to know about specific instance
+> of SMMU for correct fault handling and optimal TLB sync wait. Rest of the code doesn't
+> need to know about number of SMMU instances. Based on this fact, The patch series here
+> rearranges the arm-smmu.c code to allow sharing most of the ARM SMMU programming/iommu_ops
+> code between ARM SMMU driver and Tegra194 SMMU driver and transparently
+> handles programming of two SMMU instances.
 
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 9094cf41a247..066c0daf0efc 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -577,7 +577,7 @@ static int __init tomoyo_init(void)
- DEFINE_LSM(tomoyo) = {
- 	.name = "tomoyo",
- 	.enabled = &tomoyo_enabled,
--	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
-+	.flags = LSM_FLAG_LEGACY_MAJOR,
- 	.blobs = &tomoyo_blob_sizes,
- 	.init = tomoyo_init,
- };
--- 
-2.14.5
+Based on what I can see, it seems that you're trying to describe two
+pieces of hardware with only one device in the DT. That seems like an
+odd choice. Also, it seems like all three SMMUs share the same interrupt
+line? That's somewhat suboptimal IMHO, but harder to change.
+
+Why not instantiate both of them and create a reference between then
+such that the TLB and sync ops are done on both of them in the native
+driver? I.e. two arm_smmu structs and a pointer between then (i.e. add a
+"next shared smmu" pointer in the struct arm_smmu).
+
+As long as devices only references one of them, locking only that one should
+provide suitable protection as well.
+
+Seems like a simpler approach than adding a new layer to the driver, but maybe
+I am missing some complexity here?
 
 
+-Olof
