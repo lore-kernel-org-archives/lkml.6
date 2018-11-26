@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36455C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFABEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E38A12089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99A1920817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="brVzJsJ9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E38A12089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MGCtzEFt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99A1920817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728851AbeKZVvP (ORCPT
+        id S1728867AbeKZVvS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:51:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60582 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:51:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbeKZVvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:51:14 -0500
+        id S1726200AbeKZVvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:51:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 388E320817;
-        Mon, 26 Nov 2018 10:57:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5D8320817;
+        Mon, 26 Nov 2018 10:57:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229849;
-        bh=t2Xv3J3qgAmSqUJHrbsiVuZQFCAmkT4d+EQRIFHp3Yg=;
+        s=default; t=1543229852;
+        bh=e32PDZH/K5hk6uEO7HLK5+0vsDg1syEeFLQDFm5OAKI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=brVzJsJ9g55kce+igtecSwoh0Rn5IbDyyCQWloBC30FOigSAZ3SXSHuJI256ii+BM
-         fxqfx5Y3/1XyNvHG4l4DKNtNEilULmGFzu6978I/6fNYa+P3dLSwceU0GLK9EX9+xG
-         sZjm0TRby2XAIpkykRPzDKW06o1iNtTkv7AfvECI=
+        b=MGCtzEFtKsdPv5hHQFFfydxTIEgG84V3SN3iaQI1Lsw5BinUbAg7fwrjYgufZ3o14
+         9G9vCQu+YXN+0dVFN1bgRVJupZoTe04NXQ1uNs52i0Klc98G2qLKXGkhokfMffcc1x
+         L5GLmGNrUDj0wS062PVVwsbrR6Wc9GEosGUZlYF8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Bolotin <denis.bolotin@cavium.com>,
-        Michal Kalderon <michal.kalderon@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Howard Chen <howardsoc@google.com>,
+        Minchan Kim <minchan@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 24/46] qed: Fix blocking/unlimited SPQ entries leak
-Date:   Mon, 26 Nov 2018 11:51:13 +0100
-Message-Id: <20181126105048.475077429@linuxfoundation.org>
+Subject: [PATCH 4.9 25/46] zram: close udev startup race condition as default groups
+Date:   Mon, 26 Nov 2018 11:51:14 +0100
+Message-Id: <20181126105048.552195863@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
 References: <20181126105045.447291262@linuxfoundation.org>
@@ -64,144 +66,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2632f22ebd08da249c2017962a199a0cfb2324bf ]
+commit fef912bf860e upstream.
+commit 98af4d4df889 upstream.
 
-When there are no SPQ entries left in the free_pool, new entries are
-allocated and are added to the unlimited list. When an entry in the pool
-is available, the content is copied from the original entry, and the new
-entry is sent to the device. qed_spq_post() is not aware of that, so the
-additional entry is stored in the original entry as p_post_ent, which can
-later be returned to the pool.
+I got a report from Howard Chen that he saw zram and sysfs race(ie,
+zram block device file is created but sysfs for it isn't yet)
+when he tried to create new zram devices via hotadd knob.
 
-Signed-off-by: Denis Bolotin <denis.bolotin@cavium.com>
-Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+v4.20 kernel fixes it by [1, 2] but it's too large size to merge
+into -stable so this patch fixes the problem by registering defualt
+group by Greg KH's approach[3].
+
+This patch should be applied to every stable tree [3.16+] currently
+existing from kernel.org because the problem was introduced at 2.6.37
+by [4].
+
+[1] fef912bf860e, block: genhd: add 'groups' argument to device_add_disk
+[2] 98af4d4df889, zram: register default groups with device_add_disk()
+[3] http://kroah.com/log/blog/2013/06/26/how-to-create-a-sysfs-file-correctly/
+[4] 33863c21e69e9, Staging: zram: Replace ioctls with sysfs interface
+
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Hannes Reinecke <hare@suse.com>
+Tested-by: Howard Chen <howardsoc@google.com>
+Signed-off-by: Minchan Kim <minchan@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_sp.h  |  3 ++
- drivers/net/ethernet/qlogic/qed/qed_spq.c | 57 ++++++++++++-----------
- 2 files changed, 33 insertions(+), 27 deletions(-)
+ drivers/block/zram/zram_drv.c | 26 ++++++--------------------
+ 1 file changed, 6 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp.h b/drivers/net/ethernet/qlogic/qed/qed_sp.h
-index b2c08e4d2a9b..bae7b7f9b1cf 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_sp.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed_sp.h
-@@ -132,6 +132,9 @@ struct qed_spq_entry {
- 	enum spq_mode			comp_mode;
- 	struct qed_spq_comp_cb		comp_cb;
- 	struct qed_spq_comp_done	comp_done; /* SPQ_MODE_EBLOCK */
-+
-+	/* Posted entry for unlimited list entry in EBLOCK mode */
-+	struct qed_spq_entry		*post_ent;
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index b7c0b69a02f5..d64a53d3270a 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -1223,6 +1223,11 @@ static struct attribute_group zram_disk_attr_group = {
+ 	.attrs = zram_disk_attrs,
  };
  
- struct qed_eq {
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_spq.c b/drivers/net/ethernet/qlogic/qed/qed_spq.c
-index 9fbaf9429fd0..80c8c7f0d932 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_spq.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_spq.c
-@@ -595,6 +595,8 @@ static int qed_spq_add_entry(struct qed_hwfn *p_hwfn,
- 			/* EBLOCK responsible to free the allocated p_ent */
- 			if (p_ent->comp_mode != QED_SPQ_MODE_EBLOCK)
- 				kfree(p_ent);
-+			else
-+				p_ent->post_ent = p_en2;
- 
- 			p_ent = p_en2;
- 		}
-@@ -678,6 +680,25 @@ static int qed_spq_pend_post(struct qed_hwfn *p_hwfn)
- 				 SPQ_HIGH_PRI_RESERVE_DEFAULT);
- }
- 
-+/* Avoid overriding of SPQ entries when getting out-of-order completions, by
-+ * marking the completions in a bitmap and increasing the chain consumer only
-+ * for the first successive completed entries.
-+ */
-+static void qed_spq_comp_bmap_update(struct qed_hwfn *p_hwfn, __le16 echo)
-+{
-+	u16 pos = le16_to_cpu(echo) % SPQ_RING_SIZE;
-+	struct qed_spq *p_spq = p_hwfn->p_spq;
++static const struct attribute_group *zram_disk_attr_groups[] = {
++	&zram_disk_attr_group,
++	NULL,
++};
 +
-+	__set_bit(pos, p_spq->p_comp_bitmap);
-+	while (test_bit(p_spq->comp_bitmap_idx,
-+			p_spq->p_comp_bitmap)) {
-+		__clear_bit(p_spq->comp_bitmap_idx,
-+			    p_spq->p_comp_bitmap);
-+		p_spq->comp_bitmap_idx++;
-+		qed_chain_return_produced(&p_spq->chain);
-+	}
-+}
-+
- int qed_spq_post(struct qed_hwfn *p_hwfn,
- 		 struct qed_spq_entry *p_ent, u8 *fw_return_code)
- {
-@@ -728,11 +749,12 @@ int qed_spq_post(struct qed_hwfn *p_hwfn,
- 		rc = qed_spq_block(p_hwfn, p_ent, fw_return_code);
+ /*
+  * Allocate and initialize new zram device. the function returns
+  * '>= 0' device_id upon success, and negative value otherwise.
+@@ -1303,24 +1308,15 @@ static int zram_add(void)
+ 		zram->disk->queue->limits.discard_zeroes_data = 0;
+ 	queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, zram->disk->queue);
  
- 		if (p_ent->queue == &p_spq->unlimited_pending) {
--			/* This is an allocated p_ent which does not need to
--			 * return to pool.
--			 */
-+			struct qed_spq_entry *p_post_ent = p_ent->post_ent;
-+
- 			kfree(p_ent);
--			return rc;
-+
-+			/* Return the entry which was actually posted */
-+			p_ent = p_post_ent;
- 		}
++	disk_to_dev(zram->disk)->groups = zram_disk_attr_groups;
+ 	add_disk(zram->disk);
  
- 		if (rc)
-@@ -746,7 +768,7 @@ int qed_spq_post(struct qed_hwfn *p_hwfn,
- spq_post_fail2:
- 	spin_lock_bh(&p_spq->lock);
- 	list_del(&p_ent->list);
--	qed_chain_return_produced(&p_spq->chain);
-+	qed_spq_comp_bmap_update(p_hwfn, p_ent->elem.hdr.echo);
+-	ret = sysfs_create_group(&disk_to_dev(zram->disk)->kobj,
+-				&zram_disk_attr_group);
+-	if (ret < 0) {
+-		pr_err("Error creating sysfs group for device %d\n",
+-				device_id);
+-		goto out_free_disk;
+-	}
+ 	strlcpy(zram->compressor, default_compressor, sizeof(zram->compressor));
+ 	zram->meta = NULL;
  
- spq_post_fail:
- 	/* return to the free pool */
-@@ -778,25 +800,8 @@ int qed_spq_completion(struct qed_hwfn *p_hwfn,
- 	spin_lock_bh(&p_spq->lock);
- 	list_for_each_entry_safe(p_ent, tmp, &p_spq->completion_pending, list) {
- 		if (p_ent->elem.hdr.echo == echo) {
--			u16 pos = le16_to_cpu(echo) % SPQ_RING_SIZE;
+ 	pr_info("Added device: %s\n", zram->disk->disk_name);
+ 	return device_id;
+ 
+-out_free_disk:
+-	del_gendisk(zram->disk);
+-	put_disk(zram->disk);
+ out_free_queue:
+ 	blk_cleanup_queue(queue);
+ out_free_idr:
+@@ -1348,16 +1344,6 @@ static int zram_remove(struct zram *zram)
+ 	zram->claim = true;
+ 	mutex_unlock(&bdev->bd_mutex);
+ 
+-	/*
+-	 * Remove sysfs first, so no one will perform a disksize
+-	 * store while we destroy the devices. This also helps during
+-	 * hot_remove -- zram_reset_device() is the last holder of
+-	 * ->init_lock, no later/concurrent disksize_store() or any
+-	 * other sysfs handlers are possible.
+-	 */
+-	sysfs_remove_group(&disk_to_dev(zram->disk)->kobj,
+-			&zram_disk_attr_group);
 -
- 			list_del(&p_ent->list);
--
--			/* Avoid overriding of SPQ entries when getting
--			 * out-of-order completions, by marking the completions
--			 * in a bitmap and increasing the chain consumer only
--			 * for the first successive completed entries.
--			 */
--			__set_bit(pos, p_spq->p_comp_bitmap);
--
--			while (test_bit(p_spq->comp_bitmap_idx,
--					p_spq->p_comp_bitmap)) {
--				__clear_bit(p_spq->comp_bitmap_idx,
--					    p_spq->p_comp_bitmap);
--				p_spq->comp_bitmap_idx++;
--				qed_chain_return_produced(&p_spq->chain);
--			}
--
-+			qed_spq_comp_bmap_update(p_hwfn, echo);
- 			p_spq->comp_count++;
- 			found = p_ent;
- 			break;
-@@ -835,11 +840,9 @@ int qed_spq_completion(struct qed_hwfn *p_hwfn,
- 			   QED_MSG_SPQ,
- 			   "Got a completion without a callback function\n");
- 
--	if ((found->comp_mode != QED_SPQ_MODE_EBLOCK) ||
--	    (found->queue == &p_spq->unlimited_pending))
-+	if (found->comp_mode != QED_SPQ_MODE_EBLOCK)
- 		/* EBLOCK  is responsible for returning its own entry into the
--		 * free list, unless it originally added the entry into the
--		 * unlimited pending list.
-+		 * free list.
- 		 */
- 		qed_spq_return_entry(p_hwfn, found);
- 
+ 	/* Make sure all the pending I/O are finished */
+ 	fsync_bdev(bdev);
+ 	zram_reset_device(zram);
 -- 
 2.17.1
 
