@@ -2,213 +2,114 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67EACC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2300EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:35:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 240EE20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:34:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D57552086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:35:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHrdov29"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 240EE20817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="NuQn4G4f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D57552086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbeK0A24 (ORCPT
+        id S1726546AbeK0A3t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 19:28:56 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40525 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbeK0A24 (ORCPT
+        Mon, 26 Nov 2018 19:29:49 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44443 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726414AbeK0A3t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 19:28:56 -0500
-Received: by mail-ed1-f66.google.com with SMTP id d3so15817855edx.7;
-        Mon, 26 Nov 2018 05:34:46 -0800 (PST)
+        Mon, 26 Nov 2018 19:29:49 -0500
+Received: by mail-pf1-f193.google.com with SMTP id u6so6582113pfh.11
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 05:35:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=joelfernandes.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=PvoTnl1fyScwZ9OPhWe2dyxBuLCH0L7Dlf/cEQDBvxQ=;
-        b=JHrdov29f+fFOiHcdTaAVGcXMUlIBHa047fsw1nhGI64vB9+xyMl2R3+M9W7UV3zAC
-         H1Jd3Fso14TYupN7dS0g6E6bzcTa3sejnr7tJTh+iHe7A13DS1vyGhcNpsNUH5rMBkBQ
-         aunWpJtiMaU7tdZ8m7FlAFRmi3zPSweW+HiKkhXJAmaQz4voyl5qlU2jMrYfudUZTluA
-         dX7xdUj7plbkpMcVNK8PBHHf3sjyPF9OU6737eep/D/1qpbGAfBUMox0sbw0Qv6kmYem
-         fgGnKuU1O8YAhJiRjW/aE/sbeYgh/xhUxPnVGSLQ++IddAxVNtMnZtMqyrxUof3+cZxX
-         FFPg==
+        bh=aTx3zTvJaBmU07f6U5v8PQPgrf2KN3pwhK5vuCBZ3HM=;
+        b=NuQn4G4f5OA6V9NHaxYsXisRNYOH9LubQigPj61tZP9zIKj6+Y/DLvI8m3UTaZXC2L
+         Y8yuapCEUvWG2LelXk6g3zU8bWT8zgLId9w9nHJc92QejOTMu3j+/uE4a/+bbJFHUgcw
+         tIEz3r9deVW9sP4Ik0xoEYFJwChkGQQEg3WI0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PvoTnl1fyScwZ9OPhWe2dyxBuLCH0L7Dlf/cEQDBvxQ=;
-        b=GsbfYACaPGym9Frm/JevEFMq0Wv896B238u0p0JEiIq5gQu28IWb2fQcCuOmKqDZCC
-         h5ZbAc4YnsAeI0OV7xJ9FnknStBWMmX019HzQPks6d5o8UoQiOdqKK95sVshA3EDwjdF
-         7pxshq4qGdgYqdBlY8NQJTrJp+z/5w3UpklHVc1RP6gVhx4PdBXY3gopQt3MFEMjYaZv
-         fgm9D+kxrtkjlU94HDWZ29kmIYJkFwJvDuDD/orzNpBYQMS5RxcIOQVkATpJWftXtLgP
-         7auWKDXLYxUYNBweWO7s9956zyS4y4ihhAz0a4cA4dO6QBFeTidqqtqAeHjgTbXw2I5a
-         mmOg==
-X-Gm-Message-State: AGRZ1gIs7cEsFsaTKvak23sl3772w57Ah3ilNAy6gzpJjWRJ5c+vJz6o
-        mOgM+okTt2PlbxOOn1jLxHo=
-X-Google-Smtp-Source: AJdET5fWh8qHTFXaS3p8UAXooP6o94VdN1VKcctliLwku8h76iH/xmw218OABEk+Eov03MCU19q9IQ==
-X-Received: by 2002:a17:906:3548:: with SMTP id s8-v6mr20245688eja.161.1543239285306;
-        Mon, 26 Nov 2018 05:34:45 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id s27-v6sm109706ejm.14.2018.11.26.05.34.43
+        bh=aTx3zTvJaBmU07f6U5v8PQPgrf2KN3pwhK5vuCBZ3HM=;
+        b=UHb13dbc+PfYKOnPMRieB5DJAVAEicseNEBBzNGRA/lXy2UDkpjl6Kz+i+0Sn4XDgS
+         5a6QWVO+HutKFsUd32trwnCTKK1v4447/dN3eJN7eei7lrs+tgo2DGvRxQpK+WXy2sdP
+         so2ZAcu/VMBD5YB9o9RvEI95oK7ReASrlB+PJrd4TIKPjn5SCPpnpR1v/LspT9cA6/AE
+         BcH+j9L+qxhUahzVpJ5HI6yqpq2+ghAJmwa7jQu7vzd/d8WHjEeC02BPnUI2Czh3BcJK
+         eE5Aeyl9YvXMSvUBrd32NL1osL18lGuhzIIyFDGReoKP2FbQOlIxU7X1g4yv5CbiZYpO
+         2/pA==
+X-Gm-Message-State: AA+aEWYxSGPrMqt5aqCY1yQENF4t6t6+LZEjkDSMkOySKSAvekJgGHGx
+        cb96mnIViGcUs1SrH58gFYKbPQ==
+X-Google-Smtp-Source: AFSGD/WKlO4NxqiX1QEDSRM2cUe21kXkVBr7uLt8ue6bKGySIFPUBv0BDTlyKQKu23sBph+VqpUuww==
+X-Received: by 2002:a63:790e:: with SMTP id u14mr24901140pgc.452.1543239339077;
+        Mon, 26 Nov 2018 05:35:39 -0800 (PST)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id k24sm1268543pfj.13.2018.11.26.05.35.37
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 05:34:43 -0800 (PST)
-Date:   Mon, 26 Nov 2018 14:34:41 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Lothar =?utf-8?Q?Wa=C3=9Fmann?= <LW@karo-electronics.de>
-Cc:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        viresh kumar <viresh.kumar@linaro.org>
-Subject: Re: [RCF PATCH,v2,2/2] pwm: imx: Configure output to GPIO in
- disabled state
-Message-ID: <20181126133441.GA19710@ulmo>
-References: <20181115203733.qvonika6yhn2bsnb@pengutronix.de>
- <20181116083430.7f1d8452@ipc1.ka-ro>
- <20181116082557.l2ljgu3hsu7tvdci@pengutronix.de>
- <91640f9b-d219-553e-043a-c6151f2f68d7@ysoft.com>
- <20181122162359.ufngpgxkenlmgqni@pengutronix.de>
- <b332b319-cbb3-547f-c8b7-1dd275c1596d@ysoft.com>
- <20181122190321.ktqegs7kpvhcemvi@pengutronix.de>
- <9da8c6d9-d97c-200c-d8e4-2eb9f73eedc5@ysoft.com>
- <20181126115123.GA15164@ulmo>
- <20181126132316.541a4131@ipc1.ka-ro>
+        Mon, 26 Nov 2018 05:35:37 -0800 (PST)
+Date:   Mon, 26 Nov 2018 05:35:36 -0800
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        marcandre.lureau@redhat.com,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH -next 1/2] mm/memfd: make F_SEAL_FUTURE_WRITE seal more
+ robust
+Message-ID: <20181126133536.GB242510@google.com>
+References: <20181121070658.011d576d@canb.auug.org.au>
+ <469B80CB-D982-4802-A81D-95AC493D7E87@amacapital.net>
+ <20181120204710.GB22801@google.com>
+ <F8E28229-C99E-4711-982B-5B5DE0F70F16@amacapital.net>
+ <20181120211335.GC22801@google.com>
+ <20181121182701.0d8a775fda6af1f8d2be8f25@linux-foundation.org>
+ <CALCETrUGyhqi+M3cTdqJNNOPfTWn-R-ekM_R5heq2mbdVqPUAw@mail.gmail.com>
+ <20181122230906.GA198127@google.com>
+ <20181124164229.89c670b6e7a3530ef7b0a40c@linux-foundation.org>
+ <20181125004736.GA3065@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="FCuugMFkClbJLl1L"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181126132316.541a4131@ipc1.ka-ro>
+In-Reply-To: <20181125004736.GA3065@bombadil.infradead.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Nov 24, 2018 at 04:47:36PM -0800, Matthew Wilcox wrote:
+> On Sat, Nov 24, 2018 at 04:42:29PM -0800, Andrew Morton wrote:
+> > This changelog doesn't have the nifty test case code which was in
+> > earlier versions?
+> 
+> Why do we put regression tests in the changelogs anyway?  We have
+> tools/testing/selftests/vm/ already, perhaps they should go there?
 
---FCuugMFkClbJLl1L
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The reason is I didn't add it was that test case went out of date and the
+updated version of the test case went into the selftests in patch 2/2. I
+thought that would suffice which covers all the cases. That's why I dropped
+it.  Would that be Ok?
 
-On Mon, Nov 26, 2018 at 01:23:16PM +0100, Lothar Wa=C3=9Fmann wrote:
-> Thierry Reding <thierry.reding@gmail.com> wrote:
->=20
-> > On Fri, Nov 23, 2018 at 03:15:11PM +0000, Vok=C3=A1=C4=8D Michal wrote:
-> > > On 22.11.2018 20:03, Uwe Kleine-K=C3=B6nig wrote: =20
-> > > > On Thu, Nov 22, 2018 at 04:46:39PM +0000, Vok=C3=A1=C4=8D Michal wr=
-ote: =20
-> > > >> On 22.11.2018 17:23, Uwe Kleine-K=C3=B6nig wrote: =20
-> > > >>> On Thu, Nov 22, 2018 at 03:42:14PM +0000, Vok=C3=A1=C4=8D Michal =
-wrote: =20
-> > > >>>> On 16.11.2018 09:25, Uwe Kleine-K=C3=B6nig wrote: =20
-> > > >>>>> On Fri, Nov 16, 2018 at 08:34:30AM +0100, Lothar Wa=C3=9Fmann w=
-rote: =20
-> > > >>>>>> No. You can disable the output driver via pinctrl, so that onl=
-y the
-> > > >>>>>> selected pull-up/down is relevant. The pin function and GPIO r=
-egister
-> > > >>>>>> settings don't matter at all in this case. =20
-> > > >>>>
-> > > >>>> Lothar, please can you be more specific how would you do that? I=
-FAIK the
-> > > >>>> pull-up/down internal resistors have effect only if the pin is c=
-onfigured
-> > > >>>> as GPIO *input* (on i.MX6 at least). See the TRM, 29.4.2.2 Outpu=
-t driver:
-> > > >>>>
-> > > >>>>     "Internal pull-up, pull-down resistors, and pad keeper are d=
-isabled in
-> > > >>>>      output mode." =20
-> > > >=20
-> > > > This would mean you'd have to rely on an external pull up for your =
-use
-> > > > case. I wouldn't be surprised however if DSE=3D0 wouldn't count as =
-"output
-> > > > mode". Given the reliability of NXP documentation I wouldn't bet ne=
-ither
-> > > > on one nor the other possibility. =20
-> > >=20
-> > > Yeah, the NXP documentation sometimes does not really match reality.
-> > > My use case is based on the fact that I configure the pin as input in
-> > > the driver. Then it works just fine.
-> > >  =20
-> > > >>> So I'd expect this to really work on i.MX6 but not the earlier So=
-Cs
-> > > >>> without a gpio specifier. =20
-> > > >>
-> > > >> Maybe you would expect it to work but I already tested and measured
-> > > >> that weeks ago ;) It did not work. =20
-> > > >=20
-> > > > Which pin/gpio do we talk about? Which i.MX6 variant did you test t=
-his
-> > > > on? (Assuming i.MX6D or i.MX6Q and PAD_DISP0_DATA09, did you try se=
-tting
-> > > >=20
-> > > > 	IOMUXC_SW_MUX_CTL_PAD_DISP0_DATA09 (0x020E0194) =3D 0x00000005
-> > > > 	IOMUXC_SW_PAD_CTL_PAD_DISP0_DATA09 (0x020E04A8) =3D 0x0000b080
-> > > >=20
-> > > > and then play with GPIO 4.30 direction and output value?) =20
-> > >=20
-> > > My test setup is as follows:
-> > > - SoC is i.MX6DL or i.MX6S - I have three board variants in total.
-> > > - Pin used for PWM/GPIO is PAD_GPIO9.
-> > > - The pin is not connected to any circuit. Just a test point.
-> > > - pinctrl setup in DT:
-> > >    - for "pwm":
-> > >      - fsl,pins =3D <MX6QDL_PAD_GPIO_9__PWM1_OUT 0x8>
-> > >      - IOMUXC_SW_MUX_CTL_PAD_GPIO09 =3D 0x00000004
-> > >      - IOMUXC_SW_PAD_CTL_PAD_GPIO09 =3D 0x00000008
-> > >=20
-> > >    - for "gpio":
-> > >     - fsl,pins =3D <MX6QDL_PAD_GPIO_9__GPIO1_IO09 0xb000>
-> > >     - IOMUXC_SW_MUX_CTL_PAD_GPIO09 =3D 0x00000005
-> > >     - IOMUXC_SW_PAD_CTL_PAD_GPIO09 =3D 0x0000b000 =20
-> >=20
-> > Does it help if you additionally set the ODE bit (bit 11) here?
-> >=20
-> That only helps to NOT actively pulling the pin HIGH, but the opposite
-> is what is needed here.
+The changelog of the previous series had it because the selftest was added
+only later.
 
-=46rom the description in the reference manual it sounded like the ODE
-would avoid the pin from actively being driven anywhere if configured as
-output. So I was hoping that in conjunction with the pull-up it would
-actually do the right thing.
+Let me know, thanks,
 
-Thierry
+ - Joel
 
---FCuugMFkClbJLl1L
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv79msACgkQ3SOs138+
-s6FdMA//UNvSguIX8sS/vfmK7dI87/H47jK7CWgbpBE6XKTZB0x2qwlTyIIpm8At
-JtzsZOJa6+V8wmyTJ0XPlOIBIM/mazjK+SYOI5o98ZtJ7gqkKSbMAK5UKCz9YoJ8
-rkzqWMN/Kaj2yI6zFJtAxAxtAovKOVdbRb4tAJtbEMB5597H82OmOVnEatBSZSDP
-u9zbN5J2fWNFwk2zIyzoeD1Jq4ZHkaDK2GWS3emVYCwX0z98AIHtkRo+DuX8Ya9/
-/oNqGIvBER++5FW2mG9cR2qLCiogSEfh3Qg3AkNXlbiP5sz18cQXgMxE8dPN2IuG
-QjqxOBJxc+vTOkn6ip29wZ1FX2hJktvrNp1NhO3w4RPM64/XBJsZg5wSTFjf3a/H
-bTC6t5h/uri3/SkKv/h6CYJhwVqtTfGiqZLsjxW7XoWh8kW7JQ8hfKqT82SsBLL0
-Qqqse/9whsPqraFa4fWOjT1qcPbw+Ovo1bk4kjXLdmuzdsZlB36H96EtUk1Yluip
-SfAY2iqGpZwIylHxGoqO8rmpWTRliHM0DFGN6M9D4fpo0pejx6Juzr4lPhwvTkaT
-cN9fHFwJIoYYP0Y0yLWd4to6oSVItGALGAFy7Zk9uBEQcbUGhQ9h3zxLi23VK/4+
-/o0V0r+awY085jEq8FDWcV31kPFIqDLTp+rXx3AViWkW+8aFf8w=
-=xRNX
------END PGP SIGNATURE-----
-
---FCuugMFkClbJLl1L--
