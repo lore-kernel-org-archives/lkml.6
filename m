@@ -2,162 +2,105 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B32ACC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A7F8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76C9520873
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:37:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76C9520873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 22DBD20873
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:37:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22DBD20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbeK0Jc5 (ORCPT
+        id S1727565AbeK0JdD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 04:32:57 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:59874 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726627AbeK0Jc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 04:32:56 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wAQMVvpu002166
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Mon, 26 Nov 2018 14:32:07 -0800
-Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Mon, 26 Nov 2018
- 14:31:46 -0800
-From:   Paul Gortmaker <paul.gortmaker@windriver.com>
-To:     Joerg Roedel <joro@8bytes.org>
-CC:     <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Alexandre Courbot <gnurou@gmail.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Hiroshi Doyu <hdoyu@nvidia.com>,
-        Honghui Zhang <honghui.zhang@mediatek.com>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Nate Watterson <nwatters@codeaurora.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Simon Xue <xxm@rock-chips.com>,
-        Stepan Moskovchenko <stepanm@codeaurora.org>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>, <linux-tegra@vger.kernel.org>
-Subject: [PATCH 0/9] iommu: clean up/remove modular stuff from non-modules.
-Date:   Mon, 26 Nov 2018 17:31:29 -0500
-Message-ID: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 27 Nov 2018 04:33:03 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:52079 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbeK0JdD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 04:33:03 -0500
+Received: from 79.184.254.110.ipv4.supernova.orange.pl (79.184.254.110) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.157)
+ id 035f868819a7f287; Mon, 26 Nov 2018 23:37:22 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Patrick Talbert <ptalbert@redhat.com>
+Subject: Re: [Bug] SD card reader in Acer Aspire S5 broken in 4.20-rc
+Date:   Mon, 26 Nov 2018 23:37:20 +0100
+Message-ID: <1675729.7aZxPkvRd8@aspire.rjw.lan>
+In-Reply-To: <2960808.4YCFhzuD0k@aspire.rjw.lan>
+References: <2960808.4YCFhzuD0k@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The work here represents a scan over the iommu dir, looking for files/drivers
-that have nothing to do with a modular use case, but are using modular
-infrastructure regardless.
+On Monday, November 26, 2018 7:03:58 PM CET Rafael J. Wysocki wrote:
+> Hi Bjorn,
+> 
+> The SD card reader in my Acer Aspire S5 doesn't work with 4.20-rc.
+> 
+> Here's what lspci -v says about it (in a bad kernel):
+> 
+> 02:00.0 Unassigned class [ff00]: Realtek Semiconductor Co., Ltd. RTS5209 PCI Express Card Reader 
+> (rev 01)
+>         Subsystem: Acer Incorporated [ALI] Device 0704
+>         Flags: bus master, fast devsel, latency 0, IRQ 35
+>         Memory at d9001000 (32-bit, non-prefetchable) [size=4K]
+>         Capabilities: [40] Power Management version 3
+>         Capabilities: [50] MSI: Enable+ Count=1/1 Maskable- 64bit+
+>         Capabilities: [70] Express Endpoint, MSI 00
+>         Capabilities: [100] Advanced Error Reporting
+>         Capabilities: [140] Device Serial Number 00-00-00-01-00-4c-e0-00
+>         Kernel driver in use: rtsx_pci
+>         Kernel modules: rtsx_pci
+> 
+> When it doesn't work, it doesn't generate any interrupts on device insertion
+> and removal and this seems to be reproducible 100% of the time.
+> 
+> Bisection turned up
+> 
+> commit de468b755464426c276df2daf1e54bcd64186020
+> Merge: b1801bf05964 d6112f8def51
+> Author: Bjorn Helgaas <bhelgaas@google.com>
+> Date:   Sat Oct 20 11:45:28 2018 -0500
+> 
+>     Merge branch 'pci/enumeration'
+>     
+>       - Remove x86 and arm64 node-local allocation for host bridge structures
+>         (Punit Agrawal)
+>     
+>       - Pay attention to device-specific _PXM node values (Jonathan Cameron)
+>     
+>       - Support new Immediate Readiness bit (Felipe Balbi)
+>     
+>     * pci/enumeration:
+>       PCI: Add support for Immediate Readiness
+>       ACPI/PCI: Pay attention to device-specific _PXM node values
+>       x86/PCI: Remove node-local allocation when initialising host controller
+>       arm64: PCI: Remove node-local allocations when initialising host controller
+> 
+> as the first bad commit, but the "PCI: Add support for Immediate Readiness"
+> one was tested as "good" (full bisect log is attached).
+> 
+> I wonder if you have any ideas on what to check?
 
-We are trying to make driver code consistent with the Makefiles/Kconfigs that
-control them.  This means not using modular functions/macros for drivers that
-can never be built as a module.  I've done this in other subsystem dirs
-already, and some of this has already happened in drivers/iommu by others;
-such as 98b72b94def9 ("iommu/rockchip: Prohibit unbind and remove").
+So reverting 17c91487364f (PCI/ASPM: Do not initialize link state when
+aspm_disabled is set) on top of 4.20-rc4 makes the problem go away.
 
-Using modular infrastructure in non-modules might seem harmless, but some
-of the downfalls this leads to are:
+I guess that the device in question needs pcie_aspm_cap_init() to be
+called for it even though the FADT says "NO_ASPM".
 
- (1) it is easy to accidentally write unused module_exit and remove code
- (2) it can be misleading when reading the source, thinking it can be
-     modular when the Makefile and/or Kconfig prohibit it
- (3) it requires the include of the module.h header file which in turn
-     includes nearly everything else, thus adding to CPP overhead.
- (4) it gets copied/replicated into other drivers and spreads quickly.
+Thanks,
+Rafael
 
-The last two commits (arm-smmu related ones) deserve an extra mention,
-and I put them at the end in case they want to be deferred for later or
-altered.  Normally a "module-ectomy" allows us to delete the ".remove"
-function, as per the rockchip commit above, but ...
 
-A kexec commit (7aa8619a66ae) tried to improve reliability by trying to
-shutdown the iommu in the compromised/crashing kernel, but of course the
-better solution is to have the recovery kernel be able to handle all of
-the possible initial conditions.  It appears this was done later in the
-commit b63b3439b856 - but I don't know if that means relying on an
-orderly shutdown is no longer required - I don't have the platform and
-am only going on what is in git history.
-
-So, as the kexec commit recycled the ".remove" handle to also be the
-".shutdown" handle, in this series the remove function was renamed to
-shutdown, and the ".remove" handle was deleted.  This was IMHO the most
-back compatible way to make this update.  If the reliance on the
-compromised kernel to run ".shutdown" is no longer necessary, then it
-can be removed in a future change.
-
-Patches were build tested on top of next-20181122 for ARM, ARM64, x86-64
-on an allyesconfig.
-
-Paul.
-
----
-
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Daniel Kurtz <djkurtz@chromium.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Hiroshi Doyu <hdoyu@nvidia.com>
-Cc: Honghui Zhang <honghui.zhang@mediatek.com>
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Nate Watterson <nwatters@codeaurora.org>
-Cc: Rob Clark <robdclark@gmail.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Simon Xue <xxm@rock-chips.com>
-Cc: Stepan Moskovchenko <stepanm@codeaurora.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: iommu@lists.linux-foundation.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org
-Cc: linux-tegra@vger.kernel.org
-
-Paul Gortmaker (9):
-  iommu: audit and remove any unnecessary uses of module.h
-  iommu: rockchip: make it explicitly non-modular
-  iommu: msm_iommu: make it explicitly non-modular
-  iommu: mtk_iommu: make it explicitly non-modular
-  iommu: ipmmu-vmsa: make it explicitly non-modular
-  iommu: qcom_iommu: make it explicitly non-modular
-  iommu: tegra-gart: make it explicitly non-modular
-  iommu: arm-smmu: make it explicitly non-modular
-  iommu: arm-smmu-v3: make it explicitly non-modular
-
- drivers/iommu/arm-smmu-v3.c    | 25 +++++++++----------------
- drivers/iommu/arm-smmu.c       | 32 +++++++++++++-------------------
- drivers/iommu/iommu-sysfs.c    |  2 +-
- drivers/iommu/iommu.c          |  3 ++-
- drivers/iommu/ipmmu-vmsa.c     | 16 +++-------------
- drivers/iommu/msm_iommu.c      | 13 +++----------
- drivers/iommu/mtk_iommu_v1.c   | 15 +++------------
- drivers/iommu/qcom_iommu.c     | 16 ++--------------
- drivers/iommu/rockchip-iommu.c | 13 ++++++-------
- drivers/iommu/tegra-gart.c     | 37 +++++++------------------------------
- 10 files changed, 49 insertions(+), 123 deletions(-)
-
--- 
-2.7.4
 
