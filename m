@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3174AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC742C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E85BC21479
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A255E20817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cedkTM96"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E85BC21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXHSoAns"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A255E20817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbeKZVrx (ORCPT
+        id S1727301AbeKZVrz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:47:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56184 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:47:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726254AbeKZVrw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:47:52 -0500
+        id S1726254AbeKZVrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:47:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4DB82146F;
-        Mon, 26 Nov 2018 10:54:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9149920817;
+        Mon, 26 Nov 2018 10:54:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229648;
-        bh=Um1uA36yTrZrtv/CfrAye/+lLictZ2usYz08AVOv+2I=;
+        s=default; t=1543229651;
+        bh=77rtFgs82BiWNpE7TNqtEshHwHI04rzENm2iK2P/csI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cedkTM96jGrGThL7cq/oDnGv5qQ7/MF5GZtyUObuXtVD+TesnZAhhRXcNaG+U1Mtq
-         +fsfUlHg9iR01HqsJ6En/E5NlsUNt19ZNgB/Pw7vlZ6K0WJrwLfgp8aIYgb2EOBIcc
-         sVBhv2zA2pOZR06dwR8q00ElCkzwp9n2ZMnFZEkg=
+        b=iXHSoAnsa4jD0DmrVBFzRriI38Y0U+RQZ4/V4+v3DMw6fxTHgmEE039lpFilZTU6A
+         YtuEiBVmPZ8o8/vIg8B/Wm7doiqSRTy3hvrHMSvK9ik4GuWU2GSisIuj6qXnjNjvdT
+         8vdq5JAuyb/kaktzZ0YlwlSJ3VwkSKmQg/LzXRVw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.4 19/70] efi/libstub/arm64: Set -fpie when building the EFI stub
-Date:   Mon, 26 Nov 2018 11:50:34 +0100
-Message-Id: <20181126105048.681817537@linuxfoundation.org>
+Subject: [PATCH 4.4 20/70] kbuild: fix linker feature test macros when cross compiling with Clang
+Date:   Mon, 26 Nov 2018 11:50:35 +0100
+Message-Id: <20181126105048.780330753@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
 References: <20181126105046.722096341@linuxfoundation.org>
@@ -68,49 +65,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Nick Desaulniers <ndesaulniers@google.com>
 
-commit 91ee5b21ee026c49e4e7483de69b55b8b47042be upstream.
+commit 86a9df597cdd564d2d29c65897bcad42519e3678 upstream.
 
-Clang may emit absolute symbol references when building in non-PIC mode,
-even when using the default 'small' code model, which is already mostly
-position independent to begin with, due to its use of adrp/add pairs
-that have a relative range of +/- 4 GB. The remedy is to pass the -fpie
-flag, which can be done safely now that the code has been updated to avoid
-GOT indirections (which may be emitted due to the compiler assuming that
-the PIC/PIE code may end up in a shared library that is subject to ELF
-symbol preemption)
+I was not seeing my linker flags getting added when using ld-option when
+cross compiling with Clang. Upon investigation, this seems to be due to
+a difference in how GCC vs Clang handle cross compilation.
 
-Passing -fpie when building code that needs to execute at an a priori
-unknown offset is arguably an improvement in any case, and given that
-the recent visibility changes allow the PIC build to pass with GCC as
-well, let's add -fpie for all arm64 builds rather than only for Clang.
+GCC is configured at build time to support one backend, that is implicit
+when compiling.  Clang is explicit via the use of `-target <triple>` and
+ships with all supported backends by default.
 
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20170818194947.19347-5-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+GNU Make feature test macros that compile then link will always fail
+when cross compiling with Clang unless Clang's triple is passed along to
+the compiler. For example:
+
+$ clang -x c /dev/null -c -o temp.o
+$ aarch64-linux-android/bin/ld -E temp.o
+aarch64-linux-android/bin/ld:
+unknown architecture of input file `temp.o' is incompatible with
+aarch64 output
+aarch64-linux-android/bin/ld:
+warning: cannot find entry symbol _start; defaulting to
+0000000000400078
+$ echo $?
+1
+
+$ clang -target aarch64-linux-android- -x c /dev/null -c -o temp.o
+$ aarch64-linux-android/bin/ld -E temp.o
+aarch64-linux-android/bin/ld:
+warning: cannot find entry symbol _start; defaulting to 00000000004002e4
+$ echo $?
+0
+
+This causes conditional checks that invoke $(CC) without the target
+triple, then $(LD) on the result, to always fail.
+
+Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+[nc: Fix conflicts due to lack of commit 3298b690b21cd in linux-4.4.y
+     Use KBUILD_CFLAGS instead of CC_OPTION_FLAGS because commit
+     d26e94149276f that introduced that variable isn't in 4.4 either]
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/firmware/efi/libstub/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/Kbuild.include |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -10,7 +10,7 @@ cflags-$(CONFIG_X86)		+= -m$(BITS) -D__K
- 				   -fPIC -fno-strict-aliasing -mno-red-zone \
- 				   -mno-mmx -mno-sse -DDISABLE_BRANCH_PROFILING
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -147,12 +147,13 @@ cc-ifversion = $(shell [ $(cc-version) $
+ # cc-ldoption
+ # Usage: ldflags += $(call cc-ldoption, -Wl$(comma)--hash-style=both)
+ cc-ldoption = $(call try-run,\
+-	$(CC) $(1) -nostdlib -x c /dev/null -o "$$TMP",$(1),$(2))
++	$(CC) $(1) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -nostdlib -x c /dev/null -o "$$TMP",$(1),$(2))
  
--cflags-$(CONFIG_ARM64)		:= $(subst -pg,,$(KBUILD_CFLAGS))
-+cflags-$(CONFIG_ARM64)		:= $(subst -pg,,$(KBUILD_CFLAGS)) -fpie
- cflags-$(CONFIG_ARM)		:= $(subst -pg,,$(KBUILD_CFLAGS)) \
- 				   -fno-builtin -fpic -mno-single-pic-base
+ # ld-option
+ # Usage: LDFLAGS += $(call ld-option, -X)
+ ld-option = $(call try-run,\
+-	$(CC) -x c /dev/null -c -o "$$TMPO" ; $(LD) $(1) "$$TMPO" -o "$$TMP",$(1),$(2))
++	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -x c /dev/null -c -o "$$TMPO"; \
++	$(LD) $(LDFLAGS) $(1) "$$TMPO" -o "$$TMP",$(1),$(2))
  
+ # ar-option
+ # Usage: KBUILD_ARFLAGS := $(call ar-option,D)
 
 
