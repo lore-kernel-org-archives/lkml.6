@@ -2,112 +2,140 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A582FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01FFBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C2992086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:48:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB9072086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:49:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3l2SdiMo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C2992086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="t4cIGTr0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB9072086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbeKZUle (ORCPT
+        id S1726289AbeKZUnB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 15:41:34 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:51860 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726280AbeKZUle (ORCPT
+        Mon, 26 Nov 2018 15:43:01 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:43072 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726176AbeKZUnA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 15:41:34 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAQ9gwAq150245;
-        Mon, 26 Nov 2018 09:47:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=Fa5xW9Cxynbl4UAT5xsxSvfem6iGLOlMnOMw99xSS+A=;
- b=3l2SdiMorebgo9Vr8WCttLobCnlSqF/zd1HEmax1G21hQoiajbLxCHLTp7fAmoavmwdz
- gGV43XITJau5HDNN/PDCsPUbitVVlAzcNiwH5z2kLkNCRcg98jVm1JJdc+Gxv+y9qt9A
- IouBuCKaGoXi847RDHSr7OLhN2/Zr5CzRGCoTuhd7mcwietYsEmAxgb74/L55mE9tqCQ
- +f+8tZG3sjEHHs0G9+cfr0h2+xMr8FyfxYuvqeBFmd3ZHqw95o5FzEfBABVCVS7+ygss
- YUFXHh9Kh2KEuUOoGGicKAxIxC2smafhrCL4cmXeo67ZdJrrCRckpye3xvm0f1iBaNZV VQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2nxy9qvn6a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 26 Nov 2018 09:47:56 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAQ9ltgW028062
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 26 Nov 2018 09:47:56 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAQ9lsG9000830;
-        Mon, 26 Nov 2018 09:47:54 GMT
-Received: from unbuntlaptop (/41.202.241.51)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 26 Nov 2018 01:47:54 -0800
-Date:   Mon, 26 Nov 2018 12:47:45 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Michael Straube <straube.linux@gmail.com>
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux@wolf-entwicklungen.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: pi433: fix potential null dereference
-Message-ID: <20181126094745.GF3088@unbuntlaptop>
-References: <20181125092225.10188-1-straube.linux@gmail.com>
+        Mon, 26 Nov 2018 15:43:00 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAQ9nJPo021384;
+        Mon, 26 Nov 2018 03:49:19 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1543225759;
+        bh=u76TlQpPsm+1e7kgGekCZ9xvT0awBuq6MaFcju4bxPk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=t4cIGTr02ImJ1csOVMMTRSxndFCfOFQyjLPwYyzqQC2TTFKnAG8b2lSBrdvm6xqPK
+         53M44hWRFZfZK0MYS6uEWKI++V80Yr4UtYV/nJBOXhLkXk/VZ3pPD2AOuGVESc1/wn
+         C7Vcg09XVZN68ttREfVKXw3VMulJCfgZ/UJ1887M=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAQ9nJCr053359
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 26 Nov 2018 03:49:19 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 26
+ Nov 2018 03:49:19 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 26 Nov 2018 03:49:19 -0600
+Received: from [172.22.5.0] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAQ9nEfC024156;
+        Mon, 26 Nov 2018 03:49:15 -0600
+Subject: Re: omap5 fixing palmas IRQ_TYPE_NONE warning leads to gpadc timeouts
+To:     Thierry Reding <treding@nvidia.com>,
+        Tony Lindgren <tony@atomide.com>
+CC:     Jon Hunter <jonathanh@nvidia.com>,
+        Belisko Marek <marek.belisko@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>
+References: <CAAfyv35bat+t6awL-VRigAoaUTySwOgZkQMs=W9mEKQ6VDW3FA@mail.gmail.com>
+ <20180703084516.GT112168@atomide.com>
+ <CAAfyv37F1s8Cg=pfxiN0dA6YEX7KMB-+uifjRoqAdKGWLeYEwA@mail.gmail.com>
+ <20181113180656.GE53235@atomide.com>
+ <46d271b2-35d3-6353-c530-3292cdac53ab@ti.com>
+ <20181119161906.GP53235@atomide.com> <20181119171406.GQ53235@atomide.com>
+ <725df8e7-4aff-3751-d0b0-809b89e882e5@nvidia.com>
+ <20181123164827.GE53235@atomide.com> <20181126093625.GA10878@ulmo>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <d3f17ac6-c13b-5b5f-a482-b565b130f1ba@ti.com>
+Date:   Mon, 26 Nov 2018 11:49:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181125092225.10188-1-straube.linux@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9088 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811260090
+In-Reply-To: <20181126093625.GA10878@ulmo>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 25, 2018 at 10:22:25AM +0100, Michael Straube wrote:
-> Add a test for successful call to cdev_alloc() to avoid
-> potential null dereference. Issue reported by smatch.
+Thierry,
+
+On 11/26/18 11:36 AM, Thierry Reding wrote:
+> On Fri, Nov 23, 2018 at 08:48:27AM -0800, Tony Lindgren wrote:
+>> * Jon Hunter <jonathanh@nvidia.com> [181120 11:14]:
+>>> On 19/11/2018 17:14, Tony Lindgren wrote:
+>>>> Well so commit 7e9d474954f4 ("ARM: tegra: Correct polarity for
+>>>> Tegra114 PMIC interrupt") states that tegra114 inverts the
+>>>> polarity of the PMIC interrupt. So adding Jon and Thierry to Cc.
+>>>
+>>> Yes Tegra can invert the polarity of the PMIC interrupt.
+>>
+>> So is there some IP on Tegra called "Tegra PMC" that is
+>> inverting the interrupt? Or is the "Tegra PMC" that commit
+>> 7e9d474954f4 mentions just the palmas configuration for
+>> inverting the interrupt?
+> 
+> Yes, there's indeed an IP called PMC (Power-Management Controller) on
+> Tegra. It has a special input that is usually wired up to the PMIC
+> interrupt and a bit in the control register that configures the polarity
+> of that interrupt. If the PMIC generates a low-active interrupt we
+> usually set that bit to make sure it is properly sampled by the PMC.
+> 
+> The symptoms of this being incorrectly configured is usually an
+> interrupt storm on the PMIC interrupt, which I think typically results
+> in the system not booting at all, or taking a very long time to boot
+> because of that storm.
+> 
+>> The problem I'm having is With omap5 where I can only get the
+>> PMIC interrupts working with IRQ_TYPE_LEVEL_HIGH if
+>> PALMAS_POLARITY_CTRL_INT_POLARITY is not set unlike for
+>> Tegra.
+> 
+> Does somebody have access to the Palmas documentation? That should
+> pretty clearly state what the default polarity is and what it changes to
+> if you set the interrupt polarity bit.
+
+The register map documentation I have states the following:
+bit7 INT_POLARITY Select the polarity of the INT output line
+0: Interrupt line (INT) is low when interrupt is pending (default) RW
+1: Interrupt line (INT) is high when interrupt is pending
+
+By default the Palmas irq is active low.
+
+> From what you're saying it sounds like either the logic is the wrong way
+> around in the Palmas MFD driver (and we correct it by switching it back
+> to the correct polarity in the PMC) or that you'd need to find some way
+> of inverting in on OMAP5.
+> 
+> Thierry
 > 
 
-Fixes: 874bcba65f9a ("staging: pi433: New driver")
+- Peter
 
-
-> Signed-off-by: Michael Straube <straube.linux@gmail.com>
-> ---
->  drivers/staging/pi433/pi433_if.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
-> index 786478671190..d72de2105053 100644
-> --- a/drivers/staging/pi433/pi433_if.c
-> +++ b/drivers/staging/pi433/pi433_if.c
-> @@ -1245,6 +1245,10 @@ static int pi433_probe(struct spi_device *spi)
->  
->  	/* create cdev */
->  	device->cdev = cdev_alloc();
-> +	if (!device->cdev) {
-> +		dev_dbg(device->dev, "allocation of cdev failed");
-> +		goto cdev_failed;
-> +	}
->  	device->cdev->owner = THIS_MODULE;
->  	cdev_init(device->cdev, &pi433_fops);
->  	retval = cdev_add(device->cdev, device->devt, 1);
-
-There is a second related bug here if we cdev_add() fails then we should
-call cdev_del(device->cdev).  (cdev_del() does not take a NULL cdev
-pointer).
-
-regards,
-dan carpenter
-
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
