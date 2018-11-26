@@ -2,114 +2,228 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB92DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A4D9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 934A620855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:20:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F99120660
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:22:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="QV8uEY6e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 934A620855
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yoG/GYOq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F99120660
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbeK0FPU (ORCPT
+        id S1726313AbeK0FRc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 00:15:20 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34606 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbeK0FPU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 00:15:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Cu/kVXph88pAUUvv9tZqQ9kmLcyMuvcq1dcgd3ChQLI=; b=QV8uEY6e8qVjh4QaKUBrbvKkR
-        CKpj5AUhnFXutkS4do65Urg5edhGnyeVEe70u/f4iKwXdorNGrTxlJ3m/HUD1A3MIhuIfz7thv5kJ
-        0LRyvTXGFR2h0rq/AlWuPCZ5Sig8sWQeB0bhz4EX3Lpbmi+Az3EAOVPPGvckAFoHUuxjM=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gRLAg-0005Z5-9f; Mon, 26 Nov 2018 17:59:46 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id DA202112519F; Mon, 26 Nov 2018 17:59:45 +0000 (GMT)
-Date:   Mon, 26 Nov 2018 17:59:45 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     masneyb@onstation.org, Liam Girdwood <lgirdwood@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Question about "regulator: core: Only count load for enabled
- consumers" in -next
-Message-ID: <20181126175945.GL9715@sirena.org.uk>
-References: <20181125093750.GA28055@basecamp>
- <CAD=FV=VuPerEgPPiUKk7-Ck9aVz=oR1CAAzg+0wag1WTrTGKxg@mail.gmail.com>
- <20181125232450.GA3774@basecamp>
- <CAD=FV=V4WFYoKLQ72pico4HCGgLDTae7xougivv6VWOSoPhLpg@mail.gmail.com>
+        Tue, 27 Nov 2018 00:17:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49346 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725723AbeK0FRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 00:17:32 -0500
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8074420989
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 18:22:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543256556;
+        bh=6hPGnLrV+QZcJMVsSvi/1YVZ8fpPO+ovW56LjFsKwBg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=yoG/GYOqALUkffbFnchUi9AtizbXwUek27ORislopOZY/cNFCt/q0FBupfrFnZ9tl
+         it/UFaiP2uszxK09FAivYTZW9H2IWWRLEMHHMPcTZlDpE2HppEQZiqR1lrNWf9r/RW
+         naGdN1C5gElGNrwuysefVIFrKRdb4KdKLBIFHHQw=
+Received: by mail-wr1-f45.google.com with SMTP id l9so19979123wrt.13
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 10:22:36 -0800 (PST)
+X-Gm-Message-State: AA+aEWYd7oH9RkDGMWq71oEZGvPRSVgHm5HkHEHhmVxUm5OCdryaKx57
+        yW7wBM5ER3nF//UKlO40asmY/nB54d90B9ZBkLk9Ag==
+X-Google-Smtp-Source: AFSGD/Vv9cNgAyAhEPS2DxyGw96gqnMvWFvxMCsd8g/QKF3f3TXQ6z7q6JyqZVJaeK6/+08cBxDMxyURBD65oFTD164=
+X-Received: by 2002:a5d:5541:: with SMTP id g1mr25339264wrw.330.1543256552960;
+ Mon, 26 Nov 2018 10:22:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oOpJzULQ70+PGW7h"
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=V4WFYoKLQ72pico4HCGgLDTae7xougivv6VWOSoPhLpg@mail.gmail.com>
-X-Cookie: Gloffing is a state of mine.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
+ <20181120120442.GA22172@linux.intel.com> <20181122111253.GA31150@wind.enjellic.com>
+ <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com>
+ <20181124172114.GB32210@linux.intel.com> <20181125145329.GA5777@linux.intel.com>
+ <0669C300-02CB-4EA6-BF88-5C4B4DDAD4C7@amacapital.net> <20181125185524.GA23224@wind.enjellic.com>
+ <D45BC005-5064-4C75-B486-4E43C454E2F6@amacapital.net> <94154ECB-3EF7-4A37-9057-0B84DBCE650E@amacapital.net>
+ <20181126110038.GA27609@wind.enjellic.com>
+In-Reply-To: <20181126110038.GA27609@wind.enjellic.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 26 Nov 2018 10:22:20 -0800
+X-Gmail-Original-Message-ID: <CALCETrVdooOwt080-f-Sr92pnbRVchsffxWGnnEHmH40qLyCdA@mail.gmail.com>
+Message-ID: <CALCETrVdooOwt080-f-Sr92pnbRVchsffxWGnnEHmH40qLyCdA@mail.gmail.com>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+To:     "Dr. Greg Wettstein" <greg@enjellic.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 26, 2018 at 3:00 AM Dr. Greg <greg@enjellic.com> wrote:
+>
+> On Sun, Nov 25, 2018 at 04:37:00PM -0800, Andy Lutomirski wrote:
+>
+> > Bah, I hit send on a partially written draft. I???ll try again soon.
+> >
+> > --Andy
+>
+> Your first issue seems to be complete so I will respond to that in
+> order to make sure we are not talking past one another.
 
---oOpJzULQ70+PGW7h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+It wasn't, but your answer is enlightening!  I've read the SGX
+*manual*, but I hadn't dug through the actual Intel-supplied enclaves.
+So, when I said that the LE isn't an important part of the overall
+trust model, I meant that it isn't *in hardware*.  It's certainly
+possible to write SGX software that weakens the security of the
+overall system, and Intel seems to have done so:
 
-On Mon, Nov 26, 2018 at 09:43:42AM -0800, Doug Anderson wrote:
+>
+> The Intel supplied launch enclave (LE) specifically denies
+> initialization of enclaves which have the PROVISION attribute set,
+> with the exception of enclaves whose MRSIGNER values match those of
+> the keys that Intel uses to sign the PCE and PVE enclaves.  See line
+> 219 of psw/ae/le/launch_enclave.cpp in the Intel SDK.
 
-> NOTE: another option would be to change the regulator driver to just
-> force this rail to a high power mode and never let it change.  That's
-> what we're doing on a SDM845-based board.  When the regulator is off
-> the mode doesn't matter and as per the above argument we always want
-> it in high power mode when it's on.
+This seems entirely reasonable.  (But see below...)
 
-You should never need to modify the driver for this, the regulator
-framework will only change things if it's been given permission to do
-so - simply don't specify a regulator-allowed-modes property and the
-mode will be left alone (we should probably still use -initial-mode if
-it's specified but I'd need to check if we actually do).
+> This report, along with the PEK, is submitted to the PCE enclave in
+> order to generate the Platform Provisioning IDentity (PPID), which is
+> the privacy critical identifier.  The PCE verifies the report
+> generated by the PVE and rejects the request to generate the PPID if
+> the report was generated by an enclave that was not initialized with
+> the PROVISION bit set, see line 109 of psw/ae/pce/pce.cpp.
 
-> > I see that there are 8 users of regulator-system-load but most are all
-> > addressing this same issue with the SD card.
-> > qcom-msm8974-sony-xperia-castor.dts sets the load to 500 mA but all of
-> > the other msm8974-based SOCs use 200 mA. I'm not sure if this is
-> > correct.
+...and this seems entirely unreasonable.  Your description does indeed
+appear consistent with the code: the PCE will hand out the PPID to any
+requesting enclave that has the PROVISION bit set, so you are correct
+that:
 
-> Interestingly enough I think the max load here is specified by the SD
-> card specification.  My quick reading of the SD spec shows that you
-> could do all sorts of complex negotiation with the card about how much
-> load it could take up but Linux didn't actually support that.  If I'm
-> reading it right the default is 200 mA.
+> Once again, the important design factor in all of this is the premise
+> that the launch enclave will not allow enclaves other then the PCE and
+> PVE to access the PROVISION bit.
 
-I'd like to see how closely hardware adheres to the spec too...
+But here's where the whole thing goes off the rails.  I would argue
+that the Intel-supplied (and Intel-signed, apparently!) PCE is just
+straight-up buggy.  What Intel is *trying* to do is to hand out the
+PPID to an appropriately signed enclave.  What they actually did is to
+hand out the PPID to any enclave that has the PROVISION bit set.  This
+is poor design because it overload the PROVISION bit.  That bit is
+supposed to mean "may use EGETKEY to obtain provisioning and
+provisioning seal keys", which is not actually what Intel wants here.
+It's also poor design without FLC because it pointlessly relies on the
+LE to enforce a restriction on the use of provisioning enclaves, when
+the code could instead have checked MRSIGNER..  And it's just straight
+up wrong with FLC because there is no guarantee whatsoever that the LE
+being used is Intel's.  And, for that matter, there is no guarantee
+that the requesting enclave doesn't have the DEBUG bit set.
 
---oOpJzULQ70+PGW7h
-Content-Type: application/pgp-signature; name="signature.asc"
+(It's also poor design because the PCE doesn't appear to verify that
+the report passed in is actually intended to be associated with a call
+to get_ppid().  There appear to be reports associated with provision
+"msg1" and "msg3".  If it's possible to get a valid report for msg3 to
+be accepted as a msg1 report of vice versa, then it might be game
+over.)
 
------BEGIN PGP SIGNATURE-----
+Sorry, but this is not Linux's problem.  The right fix is, in my
+opinion, entirely clear: the PCE should check MRSIGNER and possibly
+even MRENCLAVE in the report it receives.  Intel needs to fix their
+PCE, sign a fixed version, and find some way to revoke, to the extent
+possible, the old one.  And the SGX enclave authors need to understand
+something that is apparently subtle: THE LAUNCH POLICY IS NOT PART OF
+THE TCB AND SHOULD NOT BE RELIED UPON.  Enclaves can and should be
+written to remain secure even in the complete absence of any form of
+launch control.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv8NJEACgkQJNaLcl1U
-h9C41wf/eYy5LvY8hdnM7HN65nkdHyMIz9bgfxD0G/uiv35k5jQxEomVAURZy2pZ
-QXwEsbjW1s9egx4153hwDwn5V4aXiyDdvhvL8kxoozaWjVBYqUHDmQ/+iTmCVcQ1
-B9ZCN/OobV/DRuYCbGmy9gMqc0gsUy+U4f2vq12Hq4zKGid2MdUTprpmJVTQLZDh
-GcQwD07GS/Ozxoa69g1STTTzzeWN129vdPR355mO5c8mT4hFmgCzK1A0tds4DlQ8
-74eOsmSdENTeviBbUTSheJu4HtyzxM1ARhnysRuV3xBbSIp7t5DVIN+ql7g5pEcr
-hekFJuDhvc+SEXkxT6vHh37JZIodUw==
-=8KyR
------END PGP SIGNATURE-----
+I went and filed a bug on github.  Let's see what happens:
 
---oOpJzULQ70+PGW7h--
+https://github.com/intel/linux-sgx/issues/345
+
+Also, the whole SGX report mechanism seems to be misused in the SDK.
+An SGX report is a cryptographic primitive that essentially acts like
+a signed blob.  Building a secure protocol on top of signed messages
+or on top of reports takes more than just making up ad hoc blob
+formats and signing them.  There needs to be domain separation between
+different messages, and this seems to be entirely missing.  Do you
+know if Intel has had a serious audit of their platform enclave code
+done?
+
+>
+> > No, I have no clue why Intel did it this way.  I consider it to be a
+> > mistake.
+>
+> Are you referring to there being a mistake in the trust relationships
+> that the provisioning protocol implements or the overall concept of a
+> provisioning key?
+
+I'm referring to the hardware's policy as to when keys that don't
+depend on OWNEREPOCH can be obtained.  As far as I know, the only real
+need for such keys is to verify that the running platform is a real
+Intel platform, which means that access to the provisioning key is
+only useful to Intel-approved services.  Why didn't Intel enforce this
+in hardware or microcode?  I see no reason that EGETKEY should hand
+out those key types of the enclave is not signed by Intel.  For that
+matter, I also don't see why the provisioning seal key needs to exist
+-- the regular seal key could be used instead and, if OWNEREPOCH
+changes, the platform could just re-certify itself.
+
+> > >> The driver should establish the equivalent of three linked lists,
+> > >> maintainable via /sysfs pseudo-files or equivalent plumbing.  The
+> > >> lists are referenced by the kernel to enforce the following policies.
+> > >>
+> > >> 1.) The right to initialize an enclave without special attributes.
+> > >>
+> > >> 2.) The right to initialize an enclave with the PROVISION_KEY attribute set.
+> > >>
+> > >> 3.) The right to initialize an enclave with the LICENSE_KEY attribute set.
+> > >>
+> > >> The lists are populated with MRSIGNER values of enclaves that are
+> > >> allowed to initialize under the specified conditions.
+>
+> > NAK because this is insufficient.  You're thinking of a model in
+> > which SGX-like protection is all that's needed.  This is an
+> > inadequate model of the real world.  The attack I'm most concerned
+> > about wrt provisioning is an attack in which an unauthorized user is
+> > permitted.
+>
+> We will be interested in your comments as to why the proposal is
+> insufficient in the real world of FLC.
+
+That's what you get for reading my unfinished email :)
+
+Your proposal fails to protect against SGX malware.  Here's an SGX
+malware use case: the attacker writes a malicious enclave and gets a
+victim machine to run it as a non-root user.  They bundle it with a
+valid Intel-signed copy of the relevant platform enclaves and use them
+to bootstrap the attestation process.  The malicious enclave attests
+its identity to a command-and-control server and obtains malicious
+code to run.  The good guys can't reverse engineer the malware
+enclave, because they can't pass the attestation check and therefore
+can't obtain the encrypted code.
+
+This isn't prevented by your proposed solution: the provisioning
+enclaves are all signed by Intel.  What's needed is a check that
+prevents unauthorized *users* from running them.
+
+--Andy
