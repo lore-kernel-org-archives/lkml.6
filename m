@@ -2,152 +2,99 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50978C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B55C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:36:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 139CC20672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:34:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 139CC20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 50E3820663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:36:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50E3820663
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726206AbeKZT1q (ORCPT
+        id S1726219AbeKZTaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 14:27:46 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15160 "EHLO huawei.com"
+        Mon, 26 Nov 2018 14:30:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60210 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726157AbeKZT1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 14:27:46 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A1212CCA6F887;
-        Mon, 26 Nov 2018 16:34:19 +0800 (CST)
-Received: from [127.0.0.1] (10.57.115.182) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Mon, 26 Nov 2018
- 16:34:10 +0800
-Subject: Re: [PATCH rdma-next 3/3] RDMA/hns: Modify hns RoCE device's name
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-References: <1542986065-44265-1-git-send-email-xavier.huwei@huawei.com>
- <1542986065-44265-4-git-send-email-xavier.huwei@huawei.com>
- <20181123203958.GJ3395@ziepe.ca> <5BF94B9F.5030409@huawei.com>
- <20181126031354.GA15463@ziepe.ca>
-CC:     <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
-        <lijun_nudt@163.com>, <oulijun@huawei.com>,
-        <charles.chenxin@huawei.com>, <liuyixian@huawei.com>,
-        <zhangxiping3@huawei.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
-From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Message-ID: <5BFBB002.8020703@huawei.com>
-Date:   Mon, 26 Nov 2018 16:34:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
-MIME-Version: 1.0
-In-Reply-To: <20181126031354.GA15463@ziepe.ca>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.115.182]
-X-CFilter-Loop: Reflected
+        id S1726157AbeKZTaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 14:30:18 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D6ADBAD48;
+        Mon, 26 Nov 2018 08:36:53 +0000 (UTC)
+Date:   Mon, 26 Nov 2018 09:36:53 +0100
+Message-ID: <s5hin0k6xqy.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Chanho Min <chanho.min@lge.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Daniel Mentz <danielmentz@google.com>,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        Seungho Park <seungho1.park@lge.com>,
+        Jongsung Kim <neidhard.kim@lge.com>,
+        Wonmin Jung <wonmin.jung@lge.com>,
+        Jaehyun Kim <jehn.kim@lge.com>,
+        Hyonwoo Park <hyonwoo.park@lge.com>
+Subject: Re: [PATCH] ALSA: pcm: Fix starvation on down_write_nonblock()
+In-Reply-To: <1543210597-6717-1-git-send-email-chanho.min@lge.com>
+References: <1543210597-6717-1-git-send-email-chanho.min@lge.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 26 Nov 2018 06:36:37 +0100,
+Chanho Min wrote:
+> 
+> Commit 67ec1072b053 ("ALSA: pcm: Fix rwsem deadlock for non-atomic PCM stream")
+> fixes deadlock for non-atomic PCM stream. But, This patch causes antother stuck.
+> If writer is RT thread and reader is a normal thread, the reader thread will
+> be difficult to get scheduled. It may not give chance to release readlocks
+> and writer gets stuck for a long time if they are pinned to single cpu.
+> 
+> The deadlock described in the previous commit is because the linux rwsem
+> queues like a FIFO. So, we might need non-FIFO writelock, not non-block one.
+> 
+> My suggestion is that the writer gives reader a chance to be scheduled by using
+> the minimum msleep() instaed of spinning without blocking by writer. Also,
+> The *_nonblock may be changed to *_nonfifo appropriately to this concept.
+> In terms of performance, when trylock is failed, this minimum periodic msleep
+> will have the same performance as the tick-based schedule()/wake_up_q().
+> 
+> Suggested-by: Wonmin Jung <wonmin.jung@lge.com>
+> Signed-off-by: Chanho Min <chanho.min@lge.com>
+
+Hrm, converting unconditionally with msleep() looks too drastic.
+
+I guess you've hit this while not explicitly using the linked PCM
+streams, i.e. in the call of snd_pcm_unlink() at close, right?
+
+Then this can be worked around by checking the link before calling
+it.  Could you check the patch below?
 
 
-On 2018/11/26 11:13, Jason Gunthorpe wrote:
-> On Sat, Nov 24, 2018 at 09:01:19PM +0800, Wei Hu (Xavier) wrote:
->>
->> On 2018/11/24 4:39, Jason Gunthorpe wrote:
->>> On Fri, Nov 23, 2018 at 11:14:25PM +0800, Wei Hu (Xavier) wrote:
->>>> This patch modifies the name of hns RoCE device's name in order
->>>> to ensure that the name is consistent before and after reset.
->>>>
->>>> Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
->>>>  drivers/infiniband/hw/hns/hns_roce_device.h | 1 +
->>>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 3 +++
->>>>  drivers/infiniband/hw/hns/hns_roce_main.c   | 4 +++-
->>>>  3 files changed, 7 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
->>>> index 259977b..a8cfe76 100644
->>>> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
->>>> @@ -954,6 +954,7 @@ struct hns_roce_dev {
->>>>  	struct pci_dev		*pci_dev;
->>>>  	struct device		*dev;
->>>>  	struct hns_roce_uar     priv_uar;
->>>> +	char			name[IB_DEVICE_NAME_MAX];
->>>>  	const char		*irq_names[HNS_ROCE_MAX_IRQ_NUM];
->>>>  	spinlock_t		sm_lock;
->>>>  	spinlock_t		bt_cmd_lock;
->>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>> index 1d639a0..678c7ec 100644
->>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>> @@ -6110,6 +6110,9 @@ static int hns_roce_hw_v2_get_cfg(struct hns_roce_dev *hr_dev,
->>>>  		hr_dev->irq[i] = pci_irq_vector(handle->pdev,
->>>>  						i + handle->rinfo.base_vector);
->>>>  
->>>> +	snprintf(hr_dev->name, IB_DEVICE_NAME_MAX, "hns%s",
->>>> +		 handle->rinfo.netdev->name);
->>> Why is this making up its own driver name? How is this avoiding
->>> colliding with an existing name?
->>>
->>> This is very dangerous since we now have device renaming, the driver
->>> could fail to load with no recovery.
->> Hi, Jason
->>        
->>     The NIC driver notifies the RoCE driver to perform reset related
->> processing by calling the .reset_notify() interface registered by the
->> RoCE driver. If the RoCE reset processing fails, .reset_notify()
->> returns non-zero, and then hns NIC driver will reschedule the
->> reset task again.
->>    
->>     The current hardware version in hip08 SoC cannot support
->> after reset process the application still communicates with the
->> resources like QP requested before reset. In RoCE reset process,
->> we will release the resources through ib_unregister_device, after
->> the hardware reset is completed, driver will re-execute
->> ib_register_device.
->>    
->>     Currently, we find that the ib_device's name after reset
->> and the one before reset may be different. We can specify the
->> device name to solve this problem.
-> No, now you just have unsolved races.
->
-> If you want to reset like this then you will need to do some kind of
-> revision to the IB core code to not loose the name assigned to the
-> device and not hacks like this.
-Hi, Jason
+thanks,
 
-    In fact, We only specified the name of the ib_device to be generated
-when
-calling ib_register_device on the hip08 SoC, and doesn't modify its name
-during the existence of ib_device.
+Takashi
 
-    In this example, if you always use hns_%d when registering, I think that
-no matter how you modify IB core code, we can't solve this problem. We
-need to specify the name of the ib_device device when calling
-ib_register_device, and this name should be unique in the OS.
-
-    The NIC and the RoCE hardware engine share the function On the hip08
-SoC.
-The NIC driver will execute register_netdev firstly, and then the RoCE
-driver will
-execute ib_register_device. In the following statement, where
-handle->rinfo.netdev->name is the name of the corresponding net_device
-device,
-this will ensure the uniqueness of the hnsXXX ib_device's name on the OS.
-
-    snprintf(hr_dev->name, IB_DEVICE_NAME_MAX, "hns%s",
-         handle->rinfo.netdev->name);
-
-    Best Regards
-Xavier
-> Jason
->
-> .
->
-
-
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -2369,7 +2369,8 @@ int snd_pcm_hw_constraints_complete(struct snd_pcm_substream *substream)
+ 
+ static void pcm_release_private(struct snd_pcm_substream *substream)
+ {
+-	snd_pcm_unlink(substream);
++	if (snd_pcm_stream_linked(substream))
++		snd_pcm_unlink(substream);
+ }
+ 
+ void snd_pcm_release_substream(struct snd_pcm_substream *substream)
