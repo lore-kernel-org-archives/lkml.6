@@ -2,95 +2,82 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 857FAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6EDDC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CBAE20C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:09:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ay8QJgsp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CBAE20C01
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BD40820663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:09:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD40820663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727091AbeK0CD3 (ORCPT
+        id S1727222AbeK0CDb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 26 Nov 2018 21:03:31 -0500
+Received: from mga07.intel.com ([134.134.136.100]:25969 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727082AbeK0CD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 26 Nov 2018 21:03:29 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39055 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726603AbeK0CD2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 21:03:28 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c72so6711512pfc.6
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 07:09:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=//tPueLUVR6LXP3YJz8CCfrGr5OAVWbzXeLfYqx4uYI=;
-        b=Ay8QJgspR8wbmgsN4GgIWPN/2i/YIbROBuLFoD+06Zt2FeA+ic+d+PZWyE2Jwe94nV
-         c/TGbX1FFh7lGsIckY9oBPhT72an7L3TOdX9xYnV30qOYGuRzpe7/88i8Zk8ZsAfsH9D
-         9Uv7HuRMXeQAJ+jpi30N03JU5A+8fkciZCugnHKgPJ/P4jdAj4/9Fbm5aUctzIJGw0tB
-         YxJ9saI6RDIHa7yfSh6gPInLOfDotyWn01J1hxNXwwEQS/hOEOlM1iyVSoJ1b1ew3rfh
-         xFiOCCDwjAMCEpHAc+cnq4GCSB3Za2c3ECMAbrxIfFdwU2xpq7qnbBo4vyXsC1DJz01w
-         oArw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=//tPueLUVR6LXP3YJz8CCfrGr5OAVWbzXeLfYqx4uYI=;
-        b=QfGS+/BdeNiFrO4r4XbYxvPSPRuiebZrJMSSWJOuh2HWalrnyM7fJ49AaF2OwZ4tnm
-         vmFlUNx7RUmL0/j7gXc1M9H501NGoDGnqUBLKFcgfuaZ/ZsW+vLWY8HZY4sJEu9XK5oF
-         VLV+VSnN0qd5dEvlSO5CBEd3P723CWPHgRdbjcFiFYPV4xplyEsIWyUZ2NVoXbf+hxjf
-         33VZZxMTaBhpY3suhpck1/8RMV0Fmo726qHLhA59tfhzQJzf7gmEu5AzBbUUzQCuSBZi
-         /Pgj5Y5waNHFtWUr4DX3CqFH0+Zkt8fvtxFiVsQzpW6XKjUz/QPQDkG5fRZe1tLasbJl
-         G4Lg==
-X-Gm-Message-State: AA+aEWZ2PNzdB/ua9pRgZEGzoHgyiCyb19Xe4DbhQ7P5Lq94CVCKBAPe
-        K2u7EKIA3vij0E0FwvYB2AQ=
-X-Google-Smtp-Source: AFSGD/U9F/h50wSO7MEGd2gDnRFoUKUxr5mxRwKc63pTVAn7bJ0yTOuhVLqpjgCvupGLLCSwrDB0+g==
-X-Received: by 2002:a63:bd1a:: with SMTP id a26mr25002163pgf.121.1543244944899;
-        Mon, 26 Nov 2018 07:09:04 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id l5-v6sm736722pfl.73.2018.11.26.07.09.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 07:09:03 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     ebiederm@xmission.com, akpm@linux-foundation.org,
-        christian@brauner.io, tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] signal: remove some duplicated includes
-Date:   Mon, 26 Nov 2018 10:09:00 -0500
-Message-Id: <20181126150900.32235-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 07:09:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,282,1539673200"; 
+   d="scan'208";a="108595763"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga002.fm.intel.com with ESMTP; 26 Nov 2018 07:09:03 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id D28D5591; Mon, 26 Nov 2018 17:08:58 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 06/13] i2c: acpi: Use ACPI_FAILURE instead of !ACPI_SUCCESS
+Date:   Mon, 26 Nov 2018 17:08:51 +0200
+Message-Id: <20181126150858.16901-7-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181126150858.16901-1-andriy.shevchenko@linux.intel.com>
+References: <20181126150858.16901-1-andriy.shevchenko@linux.intel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tty.h and fs.h are included twice.It's unnecessary.
-hence just remove them.
+Convert to use ACPI_FAILURE instead of !ACPI_SUCCESS.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 ---
- kernel/signal.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/i2c/i2c-core-acpi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 9a32bc2088c9..b319f06e23f7 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -19,8 +19,6 @@
- #include <linux/sched/task.h>
- #include <linux/sched/task_stack.h>
- #include <linux/sched/cputime.h>
--#include <linux/fs.h>
--#include <linux/tty.h>
- #include <linux/binfmts.h>
- #include <linux/coredump.h>
- #include <linux/security.h>
+diff --git a/drivers/i2c/i2c-core-acpi.c b/drivers/i2c/i2c-core-acpi.c
+index af4b5bd5d973..287a5e4b3d30 100644
+--- a/drivers/i2c/i2c-core-acpi.c
++++ b/drivers/i2c/i2c-core-acpi.c
+@@ -65,7 +65,7 @@ static int i2c_acpi_fill_info(struct acpi_resource *ares, void *data)
+ 	status = acpi_get_handle(lookup->device_handle,
+ 				 sb->resource_source.string_ptr,
+ 				 &lookup->adapter_handle);
+-	if (!ACPI_SUCCESS(status))
++	if (ACPI_FAILURE(status))
+ 		return 1;
+ 
+ 	info->addr = sb->slave_address;
 -- 
-2.17.0
+2.19.1
 
