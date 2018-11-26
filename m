@@ -2,137 +2,201 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC55C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08439C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D235A20672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:38:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D235A20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B5AE720672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:38:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="d83p5kgy";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KO8LJm70"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5AE720672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbeK0HdX (ORCPT
+        id S1727329AbeK0Hdn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 02:33:23 -0500
-Received: from mail-it1-f198.google.com ([209.85.166.198]:56297 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726985AbeK0HdX (ORCPT
+        Tue, 27 Nov 2018 02:33:43 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:44432 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726985AbeK0Hdn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 02:33:23 -0500
-Received: by mail-it1-f198.google.com with SMTP id j3so1242475itf.5
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 12:38:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=OHcNSNk4rlVebSBrOulS4oMh/V/juCT+W2dSjillA9w=;
-        b=laCW6rf/r8iA6E01T3ne7IRVJPrB0utAW7TcS9Qlls19dsGBthT3+SwmysOlf2EW2J
-         9680+g1KJEfNLKskEVKSD0JRmV6L3bUnOQREDKSQ048VwGsKRPN1xIOyrtRgYPSzEKiO
-         aUJfdIVtDzZq1TccXC8KzB/vWDoqsxqkfrtC0VjsNsIjsL52Ud0dnXmrSIOALKtd0abB
-         ing8lhBuRNd4YbZDbQTVJSNkhusVrEMlVAeZtLx1Jjo7TtoMOQaBaVlr+3JmH/q7eUhH
-         SbUjiQxWaJM0PARR9sFQQe2TOEXq/qT7fDb8mxVh8yyL6LEmwvMAKRI5sr+P0Vzs8iZV
-         AO7Q==
-X-Gm-Message-State: AGRZ1gL0ZlO4q11A6rI3eceLmERNbUjYbC44LctShtRKWtkyTABsWEnU
-        fuT+VfUlAxnqnEw+Cm4BmGzba0ojQxYqnhoAQKsSCghsKV8E
-X-Google-Smtp-Source: AJdET5eydn8rTC4smBMU8miKS1zbRvyUgvAXoFoHwT2Ax/X8LfBL5V1KsYirTQUNZgamC5z16/tFEqK9YoNqL9oG2V5YuJ3YpHp0
+        Tue, 27 Nov 2018 02:33:43 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id DE48A609A8; Mon, 26 Nov 2018 20:38:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543264703;
+        bh=h/CNbwkRsGJl8yYJThUPim4l2A9j88kcpeYuR3wordw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=d83p5kgy0928axpNXUEHh+QCJNPAqwbTc3Kn1VGzIpJ6hhczbhg3eOv8J0rLZQUym
+         slgpKRwZlh4yuLL8JAaBnvytSJMrLvB7Z+/7N3gu/WHm9LHceGppoQW9GgAj+4531D
+         H+bZLZadKvQpuxT1UkMuuwlr3Y//o3bzGv911NIM=
+Received: from jcrouse-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BDFC46060A;
+        Mon, 26 Nov 2018 20:38:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543264702;
+        bh=h/CNbwkRsGJl8yYJThUPim4l2A9j88kcpeYuR3wordw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KO8LJm70mX95E28+bbW1EIy7G5KsG4AEzUHbrhyi0klXsYERopesxOjGhRNQKcytD
+         fy/anCXBq4vZam2/2QUfiUyNhB3ZQDG8dRg45nyt9uwtk25A7ISJfbuTEz9yNeKMwh
+         FPowIRRe71Srn5ofJBeZSdZ8UryosOj7L7XVUEMc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BDFC46060A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date:   Mon, 26 Nov 2018 13:38:19 -0700
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>, " <iommu@lists.linux-foundation.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] iommu: arm-smmu: Set SCTLR.HUPCF bit
+Message-ID: <20181126203819.GL31792@jcrouse-lnx.qualcomm.com>
+Mail-Followup-To: Will Deacon <will.deacon@arm.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg Roedel <joro@8bytes.org>, " <iommu@lists.linux-foundation.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+References: <20180927224609.19515-1-robdclark@gmail.com>
+ <20181029191000.GD16739@arm.com>
+ <CAF6AEGtgC0V6ii2=p2HGmqvHFKNJhaOLi8873SGPDsrg70xGRg@mail.gmail.com>
+ <20181113063225.GA3109@brain-police>
+ <CAF6AEGuV2zh97iq+TgkRw0bK3VNSxJieD1N2KMW3N28h07M+0w@mail.gmail.com>
+ <20181126193147.GB534@arm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:12dc:: with SMTP id 89mr20000313jap.5.1543264683664;
- Mon, 26 Nov 2018 12:38:03 -0800 (PST)
-Date:   Mon, 26 Nov 2018 12:38:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000043ae20057b974f14@google.com>
-Subject: WARNING: locking bug in lock_downgrade
-From:   syzbot <syzbot+53383ae265fb161ef488@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux@dominikbrodowski.net, mhocko@suse.com, rientjes@google.com,
-        syzkaller-bugs@googlegroups.com, vbabka@suse.cz,
-        yang.shi@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126193147.GB534@arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Nov 26, 2018 at 07:31:48PM +0000, Will Deacon wrote:
+> Hi Rob,
+> 
+> On Tue, Nov 13, 2018 at 08:12:35AM -0500, Rob Clark wrote:
+> > On Tue, Nov 13, 2018 at 1:32 AM Will Deacon <will.deacon@arm.com> wrote:
+> > > On Fri, Nov 09, 2018 at 01:01:55PM -0500, Rob Clark wrote:
+> > > > On Mon, Oct 29, 2018 at 3:09 PM Will Deacon <will.deacon@arm.com> wrote:
+> > > > > On Thu, Sep 27, 2018 at 06:46:07PM -0400, Rob Clark wrote:
+> > > > > > We seem to need to set either this or CFCFG (stall), otherwise gpu
+> > > > > > faults trigger problems with other in-flight transactions from the
+> > > > > > GPU causing CP errors, etc.
+> > > > > >
+> > > > > > In the ARM SMMU spec, the 'Hit under previous context fault' bit is
+> > > > > > described as:
+> > > > > >
+> > > > > >  '0' - Stall or terminate subsequent transactions in the presence
+> > > > > >        of an outstanding context fault
+> > > > > >  '1' - Process all subsequent transactions independently of any
+> > > > > >        outstanding context fault.
+> > > > > >
+> > > > > > Since we don't enable CFCFG (stall) the behavior of terminating
+> > > > > > other transactions makes sense.  And is probably not what we want
+> > > > > > (and definately not what we want for GPU).
+> > > > > >
+> > > > > > Signed-off-by: Rob Clark <robdclark@gmail.com>
+> > > > > > ---
+> > > > > > So I hit this issue a long time back on 820 (msm8996) and at the
+> > > > > > time I solved it with a patch that enabled CFCFG.  And it resurfaced
+> > > > > > more recently on sdm845.  But at the time CFCFG was rejected, iirc
+> > > > > > because of concern that it would cause problems on other non-qcom
+> > > > > > arm smmu implementations.  And I think I forgot to send this version
+> > > > > > of the solution.
+> > > > > >
+> > > > > > If enabling HUPCF is anticipated to cause problems on other ARM
+> > > > > > SMMU implementations, I think I can come up with a variant of this
+> > > > > > patch which conditionally enables it for snapdragon.
+> > > > > >
+> > > > > > Either way, I'd really like to get some variant of this fix merged
+> > > > > > (and probably it would be a good idea for stable kernel branches
+> > > > > > too), since current behaviour with the GPU means faults turn into
+> > > > > > a fantastic cascade of fail.
+> > > > >
+> > > > > Can you describe how this fantastic cascade of fail improves with this
+> > > > > patch, please? If you're getting context faults then something has already
+> > > > > gone horribly wrong, so I'm trying to work out how this improves things.
+> > > > >
+> > > >
+> > > > There are plenty of cases where getting iommu faults with a GPU is
+> > > > "normal", or at least not something the kernel or even GL driver can
+> > > > control.
+> > >
+> > > Such as? All the mainline driver does is print a diagnostic and clear the
+> > > fault, which doesn't seem generally useful.
+> > 
+> > it is useful to debug the fault ;-)
+> > 
+> > Although eventually we'll want to be able to do more than that, like
+> > have the fault trigger bringing in pages of a mmap'd file and that
+> > sort of thing.
+> 
+> Right, and feels very strange to me if we have this bit set because it
+> means that your fault is no longer synchronous and therefore diverges
+> from the fault model that you get from the CPU, where you certainly
+> wouldn't expect stores appearing in the program after a faulting load to
+> be visible in memory. However, thinking harder about it, I suppose we're
+> already in a situation where the translations are handled out of order
+> in the absence of barriers, so maybe it's not the end of the world.
+> 
+> Could you dump the FSR value that you see in the fault handler, please?
+> From my reading of the architecture spec, as long as clear all of the
+> fault bits in the irq handler, then your machine shouldn't die like it
+> does with HUPCFG=CFCFG=0..
+> 
+> > > > With this patch, you still get the iommu fault, but it doesn't cause
+> > > > the gpu to crash.  But without it, other memory accesses in flight
+> > > > while the fault occurs, like the GPU command-processor reading further
+> > > > ahead in the cmdstream to setup next draw, would return zero's,
+> > > > causing the GPU to crash or get into a bad state.
+> > >
+> > > I get that part, but I don't understand why we're seeing faults in the first
+> > > place and I worry that this patch is just the tip of the iceberg. It's also
+> > > not clear that processing subsequent transactions is always the right thing
+> > > to do in a world where we actually want to report (and handle) synchronous
+> > > faults from devices.
+> > 
+> > Sure, it is a bug.. but it can be an application bug that is not
+> > something the userspace GL driver or kernel could do anything about.
+> > We shouldn't let this kill the GPU.  If the application didn't have
+> > this much control, we wouldn't need an IOMMU in the first place[1].
+> > With opencl compute, the userspace controlled shader has full blown
+> > pointers to GPU memory.
+> > 
+> > And even in cases where it is a userspace GL driver bug, having some
+> > robustness to not completely kill the GPU makes debugging much easier.
+> > Something I do a lot when bringing up support for a new generation of
+> > GPU.
+> > 
+> > I'm having a hard time understanding your objection to this.
+> > Returning zero's for non-faulting transactions is a *really bad idea*.
+> 
+> Wait -- who said anything about returning zeroes? Where does that behaviour
+> appear in the architecture?
 
-syzbot found the following crash on:
+I _think_ it is the bus implementation that returns zero on a terminated
+transaction but the effect on the GPU is the same.
 
-HEAD commit:    e195ca6cb6f2 Merge branch 'for-linus' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12336ed5400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=73e2bc0cb6463446
-dashboard link: https://syzkaller.appspot.com/bug?extid=53383ae265fb161ef488
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+Jordan
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+53383ae265fb161ef488@syzkaller.appspotmail.com
-
-
-------------[ cut here ]------------
-downgrading a read lock
-WARNING: CPU: 0 PID: 26202 at kernel/locking/lockdep.c:3556  
-__lock_downgrade kernel/locking/lockdep.c:3556 [inline]
-WARNING: CPU: 0 PID: 26202 at kernel/locking/lockdep.c:3556  
-lock_downgrade+0x4d7/0x900 kernel/locking/lockdep.c:3819
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 26202 Comm: blkid Not tainted 4.20.0-rc3+ #127
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  panic+0x2ad/0x55c kernel/panic.c:188
-  __warn.cold.8+0x20/0x45 kernel/panic.c:540
-  report_bug+0x254/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
-RIP: 0010:__lock_downgrade kernel/locking/lockdep.c:3556 [inline]
-RIP: 0010:lock_downgrade+0x4d7/0x900 kernel/locking/lockdep.c:3819
-Code: 00 00 fc ff df 41 c6 44 05 00 f8 e9 1b ff ff ff 48 c7 c7 60 68 2b 88  
-4c 89 9d 58 ff ff ff 48 89 85 60 ff ff ff e8 d9 1f e7 ff <0f> 0b 48 8b 85  
-60 ff ff ff 4c 8d 4d d8 4c 89 e9 48 ba 00 00 00 00
-RSP: 0018:ffff8881ba547b70 EFLAGS: 00010086
-RAX: 0000000000000000 RBX: 1ffff110374a8f74 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000006
-RBP: ffff8881ba547c28 R08: ffff88817c0b2400 R09: fffffbfff12b2254
-R10: fffffbfff12b2254 R11: ffffffff895912a3 R12: ffffffff8b0f67a0
-R13: ffff8881ba547bc0 R14: 0000000000000001 R15: ffff88817c0b2400
-  downgrade_write+0x76/0x270 kernel/locking/rwsem.c:147
-  __do_munmap+0xcd8/0xf80 mm/mmap.c:2812
-  __vm_munmap+0x138/0x1f0 mm/mmap.c:2837
-  __do_sys_munmap mm/mmap.c:2862 [inline]
-  __se_sys_munmap mm/mmap.c:2859 [inline]
-  __x64_sys_munmap+0x65/0x80 mm/mmap.c:2859
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f237e5ce417
-Code: f0 ff ff 73 01 c3 48 8d 0d 8a ad 20 00 31 d2 48 29 c2 89 11 48 83 c8  
-ff eb eb 90 90 90 90 90 90 90 90 90 b8 0b 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 73 01 c3 48 8d 0d 5d ad 20 00 31 d2 48 29 c2 89
-RSP: 002b:00007ffe61bed9d8 EFLAGS: 00000203 ORIG_RAX: 000000000000000b
-RAX: ffffffffffffffda RBX: 00007f237e7d91c8 RCX: 00007f237e5ce417
-RDX: 000000000224ff00 RSI: 00000000000033ef RDI: 00007f237e7d1000
-RBP: 00007ffe61bedb40 R08: 0000000000000001 R09: 0000000000000007
-R10: 00007f237e5c8a0b R11: 0000000000000203 R12: 00000000b1f97d00
-R13: 000004b2b1f97d00 R14: 000004b2afd5fdeb R15: 00007f237e7ce740
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
