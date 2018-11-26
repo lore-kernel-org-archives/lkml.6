@@ -2,130 +2,111 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D92C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EEDC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:11:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11F5120663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:11:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11F5120663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id 29CC92086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:11:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="mm8SRryG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29CC92086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbeK0EGW (ORCPT
+        id S1727294AbeK0EGY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:06:22 -0500
-Received: from smtp03.citrix.com ([162.221.156.55]:5522 "EHLO
-        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbeK0EGW (ORCPT
+        Mon, 26 Nov 2018 23:06:24 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36781 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727249AbeK0EGX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:06:22 -0500
-X-IronPort-AV: E=Sophos;i="5.56,283,1539648000"; 
-   d="scan'208";a="71504935"
-Subject: Re: [Xen-devel] [PATCH v3] xen/balloon: Mark unallocated host memory
- as UNUSABLE
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        <xen-devel@lists.xen.org>, <linux-kernel@vger.kernel.org>
-CC:     <jgross@suse.com>, <helgaas@kernel.org>,
-        <christian.koenig@amd.com>, <JBeulich@suse.com>
-References: <1513778746-6155-1-git-send-email-boris.ostrovsky@oracle.com>
- <7c833e3a-4a0b-e80c-91e2-4348d6959651@citrix.com>
- <d42938a7-2081-65f4-a0d9-6fb7a8dd2fa0@oracle.com>
-From:   Igor Druzhinin <igor.druzhinin@citrix.com>
-Message-ID: <f955576f-532d-d4de-e7eb-718dae4b14c1@citrix.com>
-Date:   Mon, 26 Nov 2018 17:10:16 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <d42938a7-2081-65f4-a0d9-6fb7a8dd2fa0@oracle.com>
+        Mon, 26 Nov 2018 23:06:23 -0500
+Received: by mail-wm1-f66.google.com with SMTP id s11so19388255wmh.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 09:11:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=bsCUzTV03oR+yjYCClLv+PWHhBbGrRd1NQDA66y6fTA=;
+        b=mm8SRryGb91sW6Ft5ec9ust4SZ0jik7RL9DQMPONhqTYR5e24qGeEDu8qoEnLcOLWM
+         Sxm04L51FvJXBg5fscJO9eLOr4F/WUTxhObju1PjkX1xJDLo7rq83cgqhMH7ITWskgBT
+         zVH7de1uI5UjfN5qZeOgsXZjBqEuT8thZwSONfTj3dezOyTAj66S1zCQDIsLSODwQr8b
+         vfJMy3M5GkAMXfBoqnX1T0YukegiF72vZkX4GbUusvFoCGWtLQ1MUX5p4YJflEMpi7Gg
+         yng0xqlT+DOB/S6uh8ZlrN9j1X6FUKP4wIx/MeatpZUxiwTNaci0VQLAnNwU3Ft1akdA
+         oE0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=bsCUzTV03oR+yjYCClLv+PWHhBbGrRd1NQDA66y6fTA=;
+        b=Za8fAriVuamWg4jA0q5nQLj5kLPxmOlKEqZ+WbXlIhU+JT6UlzDgOPHabjMVeOF2fr
+         96y+TBMS3NnsTrgVcNuri/gD3riwIuc0iPlvk+Ftugv8tSs8cfUqrUpO+KDlsKqnLtaB
+         CHn5btO1Yd3FEvYy3Wah7QI7s9E4CTb4tkJFvz2vaKiGySejLZvCvvMwtB+9aMwNdpoB
+         5b+LTx/sBAFEmGaEjEbQJpzkm0yfG9AfP1w3MSLFQZjB+GqL8obGC7M9nzdFhhy0UReT
+         7NtIoIC1rz3lw08ftNc5kLcbs5T/hGcpmysbS/5q7vOdhYD8fQ90de1v8KQgtRtV2ebY
+         4UlQ==
+X-Gm-Message-State: AA+aEWbv3MgdFVpZ1WRxSgZVuNXY1UI6xCiZfdeXc1ZkpvKiTfgT/tqz
+        ZHxB12ans7naYWigDUkyJbcPXw==
+X-Google-Smtp-Source: AFSGD/X2k3Z5RbG3B79XMLG9lIDqirQ5A5I8HPwK2ot+rhfwSEVdKxq+juqe9O0I5+ydjzKAyLvX8Q==
+X-Received: by 2002:a1c:da92:: with SMTP id r140mr17185598wmg.136.1543252298287;
+        Mon, 26 Nov 2018 09:11:38 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id l3sm870436wru.36.2018.11.26.09.11.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 09:11:37 -0800 (PST)
+Message-ID: <5bfc2949.1c69fb81.80f6c.5681@mx.google.com>
+Date:   Mon, 26 Nov 2018 09:11:37 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Branch: linux-4.14.y
+X-Kernelci-Kernel: v4.14.83-63-g0ece78cdc128
+In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
+References: <20181126105050.592727680@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 00/62] 4.14.84-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/11/2018 16:25, Boris Ostrovsky wrote:
-> On 11/25/18 8:00 PM, Igor Druzhinin wrote:
->> On 20/12/2017 14:05, Boris Ostrovsky wrote:
->>> Commit f5775e0b6116 ("x86/xen: discard RAM regions above the maximum
->>> reservation") left host memory not assigned to dom0 as available for
->>> memory hotplug.
->>>
->>> Unfortunately this also meant that those regions could be used by
->>> others. Specifically, commit fa564ad96366 ("x86/PCI: Enable a 64bit BAR
->>> on AMD Family 15h (Models 00-1f, 30-3f, 60-7f)") may try to map those
->>> addresses as MMIO.
->>>
->>> To prevent this mark unallocated host memory as E820_TYPE_UNUSABLE (thus
->>> effectively reverting f5775e0b6116) and keep track of that region as
->>> a hostmem resource that can be used for the hotplug.
->>>
->>> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->> This commit breaks Xen balloon memory hotplug for us in Dom0 with
->> "hoplug_unpopulated" set to 1. The issue is that the common kernel
->> memory onlining procedures require "System RAM" resource to be 1-st
->> level. That means by inserting it under "Unusable memory" as the commit
->> above does (intentionally or not) we make it 2-nd level and break memory
->> onlining.
-> 
-> What do you mean by 1st and 2nd level?
-> 
+stable-rc/linux-4.14.y boot: 60 boots: 0 failed, 57 passed with 2 offline, =
+1 untried/unknown (v4.14.83-63-g0ece78cdc128)
 
-I mean the level of a resource in IOMEM tree (the one that's printed
-from /proc/iomem). 1-st level means its parent is root and so on.
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.14.y/kernel/v4.14.83-63-g0ece78cdc128/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
+y/kernel/v4.14.83-63-g0ece78cdc128/
 
->>
->> There are multiple ways to fix it depending on what was the intention of
->> original commit and what exactly it tried to workaround. It seems it
->> does several things at once:
->> 1) Marks non-Dom0 host memory "Unusable memory" in resource tree.
->> 2) Keeps track of all the areas safe for hotplug in Dom0
->> 3) Changes allocation algorithms itself in balloon driver to use those areas
-> 
-> Pretty much. (3) is true in the sense that memory is first allocated
-> from hostmem_resource (which is non-dom0 RAM).
-> 
->>
->> Are all the things above necessary to cover the issue in fa564ad96366
->> ("x86/PCI: Enable a 64bit BAR on AMD Family 15h (Models 00-1f, 30-3f,
->> 60-7f)")?
-> 
-> Not anymore, as far as that particular commit is concerned, but that's
-> because of 03a551734 ("x86/PCI: Move and shrink AMD 64-bit window to
-> avoid conflict") which was introduced after balloon patch. IIRC there
-> were some issues with fa564ad96366 unrelated to balloon.
-> 
+Tree: stable-rc
+Branch: linux-4.14.y
+Git Describe: v4.14.83-63-g0ece78cdc128
+Git Commit: 0ece78cdc1285e114e5cec4c7517c90121ee32f5
+Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Tested: 48 unique boards, 15 SoC families, 13 builds out of 197
 
-If it's not a problem anymore IIUC, can we revert the change as it still
-breaks "hotplug_unpopulated=1" for the reasons I described above?
+Offline Platforms:
 
-> 
->>
->> Can we remove "Unusable memory" resources as soon as we finished
->> booting? Is removing on-demand is preferable over "shoot them all" in
->> that case?
-> 
-> The concern is that in principle nothing prevents someone else to do
-> exact same thing fa564ad96366 did, which is grab something from right
-> above end of RAM as the kernel sees it. And that can be done at any point.
-> 
+arm64:
 
-Nothing prevents - true, but that's plainly wrong from OS point of view
-to grab physical ranges for something without knowing what's actually
-behind on that platform. I think we shouldn't consider this as a valid
-thing to do and don't try to workaround initially incorrect code.
+    defconfig:
+        meson-gxl-s905d-p230: 1 offline lab
+        meson-gxl-s905x-p212: 1 offline lab
 
-> 
-> -boris
-> 
->>
->> Does it even make sense to remove the 1-st level only restriction in
->> kernel/resource.c ?
-> 
-> 
-> 
+---
+For more info write to <info@kernelci.org>
