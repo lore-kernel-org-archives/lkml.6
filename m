@@ -7,53 +7,49 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C07C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F22C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C17A21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31D9121473
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RgFRS465"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C17A21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lsl5Oq+F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31D9121473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbeKZVu0 (ORCPT
+        id S1728525AbeKZVu3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:50:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59632 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:50:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726950AbeKZVuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:50:25 -0500
+        id S1726950AbeKZVu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:50:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15DC620817;
-        Mon, 26 Nov 2018 10:56:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98EF721473;
+        Mon, 26 Nov 2018 10:56:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229801;
-        bh=ab0vwbTuUnenV19EYmo2+NDSaD+vItpw43vUJ9WHVDI=;
+        s=default; t=1543229804;
+        bh=1ZyrKQ+mcvo01AgSPROAEUKx64exaAZIE1J8TrpVrUM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RgFRS465cFz0zDKO8cujUBLH4B7zl7BSihLx4tIzxpEQPhPUIBLXG4k1v4hYr533T
-         gZ/4Y+tGpWZgTYoTQh14d72tgJp1iBncfyKEtpuRCr+TWceLqEev+MjSIOoyuk0kIS
-         DaqF8R5gukROc5tO8JziI1DtFDiXFZnnATnmfhxc=
+        b=Lsl5Oq+Fb7tn7eoPqsJGP/d4lnYf0QXVhjUtEO9bC9bee7YhdjaZMYWTQFm9zYqy3
+         Ylcoqx9bNIk2KEsphGG/k6YPY9bWqflMk/q6Czi3prD++VAebEkiwkf0ztDF1Sf1Qp
+         a4aOdiDOHrFKVukAaoGHEKnGn9a/MzKttsF/5y1A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Feuerer <peter@piie.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Steve French <stfrench@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 44/70] platform/x86: acerhdf: Add BIOS entry for Gateway LT31 v1.3307
-Date:   Mon, 26 Nov 2018 11:50:59 +0100
-Message-Id: <20181126105051.276790702@linuxfoundation.org>
+Subject: [PATCH 4.9 01/46] cifs: dont dereference smb_file_target before null check
+Date:   Mon, 26 Nov 2018 11:50:50 +0100
+Message-Id: <20181126105045.633305446@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
-References: <20181126105046.722096341@linuxfoundation.org>
+In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
+References: <20181126105045.447291262@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -62,43 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-[ Upstream commit 684238d79ad85c5e19a71bb5818e77e329912fbc ]
+[ Upstream commit 8c6c9bed8773375b1d54ccca2911ec892c59db5d ]
 
-To fix:
+There is a null check on dst_file->private data which suggests
+it can be potentially null. However, before this check, pointer
+smb_file_target is derived from dst_file->private and dereferenced
+in the call to tlink_tcon, hence there is a potential null pointer
+deference.
 
-  acerhdf: unknown (unsupported) BIOS version Gateway  /LT31   /v1.3307 , please report, aborting!
+Fix this by assigning smb_file_target and target_tcon after the
+null pointer sanity checks.
 
-As can be seen in the context, the BIOS registers haven't changed in
-the previous versions, so the assumption is they won't have changed
-in this last update for this somewhat older platform either.
+Detected by CoverityScan, CID#1475302 ("Dereference before null check")
 
-Cc: Peter Feuerer <peter@piie.net>
-Cc: Darren Hart <dvhart@infradead.org>
-Cc: Andy Shevchenko <andy@infradead.org>
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Peter Feuerer <peter@piie.net>
+Fixes: 04b38d601239 ("vfs: pull btrfs clone API to vfs layer")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/acerhdf.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/cifs/cifsfs.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
-index 460fa6708bfc..3c4b107aba78 100644
---- a/drivers/platform/x86/acerhdf.c
-+++ b/drivers/platform/x86/acerhdf.c
-@@ -233,6 +233,7 @@ static const struct bios_settings bios_tbl[] = {
- 	{"Gateway", "LT31",   "v1.3201",  0x55, 0x58, {0x9e, 0x00}, 0},
- 	{"Gateway", "LT31",   "v1.3302",  0x55, 0x58, {0x9e, 0x00}, 0},
- 	{"Gateway", "LT31",   "v1.3303t", 0x55, 0x58, {0x9e, 0x00}, 0},
-+	{"Gateway", "LT31",   "v1.3307",  0x55, 0x58, {0x9e, 0x00}, 0},
- 	/* Packard Bell */
- 	{"Packard Bell", "DOA150",  "v0.3104",  0x55, 0x58, {0x21, 0x00}, 0},
- 	{"Packard Bell", "DOA150",  "v0.3105",  0x55, 0x58, {0x20, 0x00}, 0},
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index 87658f63b374..be84d49f2406 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -927,8 +927,8 @@ static int cifs_clone_file_range(struct file *src_file, loff_t off,
+ 	struct inode *src_inode = file_inode(src_file);
+ 	struct inode *target_inode = file_inode(dst_file);
+ 	struct cifsFileInfo *smb_file_src = src_file->private_data;
+-	struct cifsFileInfo *smb_file_target = dst_file->private_data;
+-	struct cifs_tcon *target_tcon = tlink_tcon(smb_file_target->tlink);
++	struct cifsFileInfo *smb_file_target;
++	struct cifs_tcon *target_tcon;
+ 	unsigned int xid;
+ 	int rc;
+ 
+@@ -942,6 +942,9 @@ static int cifs_clone_file_range(struct file *src_file, loff_t off,
+ 		goto out;
+ 	}
+ 
++	smb_file_target = dst_file->private_data;
++	target_tcon = tlink_tcon(smb_file_target->tlink);
++
+ 	/*
+ 	 * Note: cifs case is easier than btrfs since server responsible for
+ 	 * checks for proper open modes and file type and if it wants
 -- 
 2.17.1
 
