@@ -2,40 +2,42 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB34C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC9FC43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BE0020663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BE0020663
+	by mail.kernel.org (Postfix) with ESMTP id E449920663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E449920663
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbeK0Eq5 (ORCPT
+        id S1726719AbeK0Eq6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:46:57 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:43794 "EHLO
+        Mon, 26 Nov 2018 23:46:58 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:43808 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbeK0Eq5 (ORCPT
+        with ESMTP id S1726266AbeK0Eq5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 26 Nov 2018 23:46:57 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id F2CF927AA40
+        with ESMTPSA id A3E1627DA16
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     lee.jones@linaro.org
 Cc:     gwendal@chromium.org, drinkcat@chromium.org,
         linux-kernel@vger.kernel.org, groeck@chromium.org,
         kernel@collabora.com, bleung@chromium.org,
         Olof Johansson <olof@lixom.net>
-Subject: [PATCH v2 0/8] mfd / platform: cros_ec: move cros_ec sysfs attributes to its own drivers.
-Date:   Mon, 26 Nov 2018 18:51:50 +0100
-Message-Id: <20181126175158.5425-1-enric.balletbo@collabora.com>
+Subject: [PATCH v2 1/8] mfd / platform: cros_ec: use devm_mfd_add_devices.
+Date:   Mon, 26 Nov 2018 18:51:51 +0100
+Message-Id: <20181126175158.5425-2-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181126175158.5425-1-enric.balletbo@collabora.com>
+References: <20181126175158.5425-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -43,74 +45,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Use devm_mfd_add_devices() for adding cros-ec core MFD child devices. This
+reduces the need of remove callback from platform/chrome for removing the
+MFD child devices.
 
-This is another patchset to try to cleanup a bit more the crossed
-references for cros-ec driver between the MFD and the platform/chrome
-subsystems.
-
-The purpose of these patches is get rid of the different cros-ec attributes
-from mfd/cros_ec_dev to its own sub-driver in platform/chrome. cros_ec_dev
-continues instantiating the sub-devices but the sysfs attributes are owned
-by the platform driver.E.g. The lightbar driver should own his sysfs
-attributes and be instantiated only if the Embedded Controller has a
-lightbar.
-
-The patchset also adds the documentation of the sysfs attributes.
-
-Waiting for your feedback. Best regards,
- Enric
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
 Changes in v2:
 - Use devm only for the cros-ec core.
-- Removed the two exported functions to attach/detach to the cros_class.
-- Use dev_warn instead of dev_err when adding the lightbar.
-- Remove unneeded check of ec_dev.
-- Add a "default MFD_CROS_EC_CHARDEV" in Kconfig for this.
-- Remove the checks for missing debug_info, are not needed now.
-- Remove a comment that no longer applies.
-- Remove unnecessary check for ec_dev.
-- Create the attributes directly instead of use the attach/detach callbacks.
-- Remove unnecessary IS_ENABLED.
-- Remove dev_err message telling that VBC is found.
-- Use dev_warn instead of dev_err as the error is ignored.
-- Removed ec_with_lightbar variable.
-- Fix WARN when unloading. This is new in these series.
 
-Enric Balletbo i Serra (8):
-  mfd / platform: cros_ec: use devm_mfd_add_devices.
-  mfd / platform: cros_ec: move lightbar attributes to its own driver.
-  mfd / platform: cros_ec: move vbc attributes to its own driver.
-  mfd / platform: cros_ec: move debugfs attributes to its own driver.
-  mfd / platform: cros_ec: move device sysfs attributes to its own
-    driver.
-  mfd / platform: cros_ec: instantiate only if th EC has a VBC NVRAM.
-  platform/chrome: cros_ec_lightbar: instantiate only if the EC has a
-    lightbar.
-  mfd: cros_ec: add a dev_release empty method.
+ drivers/mfd/cros_ec.c                 | 14 +++-----------
+ drivers/mfd/cros_ec_dev.c             |  1 +
+ drivers/platform/chrome/cros_ec_i2c.c | 10 ----------
+ drivers/platform/chrome/cros_ec_lpc.c |  4 ----
+ drivers/platform/chrome/cros_ec_spi.c | 11 -----------
+ 5 files changed, 4 insertions(+), 36 deletions(-)
 
- .../ABI/testing/sysfs-class-chromeos          |  32 +++++
- ...sfs-class-chromeos-driver-cros-ec-lightbar |  74 ++++++++++
- .../sysfs-class-chromeos-driver-cros-ec-vbc   |   6 +
- drivers/mfd/Kconfig                           |   1 -
- drivers/mfd/cros_ec.c                         |  14 +-
- drivers/mfd/cros_ec_dev.c                     |  93 +++++--------
- drivers/mfd/cros_ec_dev.h                     |   6 -
- drivers/platform/chrome/Kconfig               |  45 ++++++-
- drivers/platform/chrome/Makefile              |   7 +-
- drivers/platform/chrome/cros_ec_debugfs.c     |  62 ++++++---
- drivers/platform/chrome/cros_ec_i2c.c         |  10 --
- drivers/platform/chrome/cros_ec_lightbar.c    | 126 ++++++++++++------
- drivers/platform/chrome/cros_ec_lpc.c         |   4 -
- drivers/platform/chrome/cros_ec_spi.c         |  11 --
- drivers/platform/chrome/cros_ec_sysfs.c       |  38 +++++-
- drivers/platform/chrome/cros_ec_vbc.c         |  59 +++++---
- include/linux/mfd/cros_ec.h                   |  11 --
- 17 files changed, 402 insertions(+), 197 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos
- create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos-driver-cros-ec-lightbar
- create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos-driver-cros-ec-vbc
-
+diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+index fe6f83766144..6acfe036d522 100644
+--- a/drivers/mfd/cros_ec.c
++++ b/drivers/mfd/cros_ec.c
+@@ -129,8 +129,8 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+ 		}
+ 	}
+ 
+-	err = mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO, &ec_cell, 1,
+-			      NULL, ec_dev->irq, NULL);
++	err = devm_mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO, &ec_cell,
++				   1, NULL, ec_dev->irq, NULL);
+ 	if (err) {
+ 		dev_err(dev,
+ 			"Failed to register Embedded Controller subdevice %d\n",
+@@ -147,7 +147,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+ 		 * - the EC is responsive at init time (it is not true for a
+ 		 *   sensor hub.
+ 		 */
+-		err = mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO,
++		err = devm_mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO,
+ 				      &ec_pd_cell, 1, NULL, ec_dev->irq, NULL);
+ 		if (err) {
+ 			dev_err(dev,
+@@ -181,14 +181,6 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+ }
+ EXPORT_SYMBOL(cros_ec_register);
+ 
+-int cros_ec_remove(struct cros_ec_device *ec_dev)
+-{
+-	mfd_remove_devices(ec_dev->dev);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL(cros_ec_remove);
+-
+ #ifdef CONFIG_PM_SLEEP
+ int cros_ec_suspend(struct cros_ec_device *ec_dev)
+ {
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index 8f9d6964173e..ff788d3e6d5f 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -493,6 +493,7 @@ static int ec_device_remove(struct platform_device *pdev)
+ 
+ 	cros_ec_debugfs_remove(ec);
+ 
++	mfd_remove_devices(ec->dev);
+ 	cdev_del(&ec->cdev);
+ 	device_unregister(&ec->class_dev);
+ 	return 0;
+diff --git a/drivers/platform/chrome/cros_ec_i2c.c b/drivers/platform/chrome/cros_ec_i2c.c
+index ef9b4763356f..9a009eaa4ada 100644
+--- a/drivers/platform/chrome/cros_ec_i2c.c
++++ b/drivers/platform/chrome/cros_ec_i2c.c
+@@ -317,15 +317,6 @@ static int cros_ec_i2c_probe(struct i2c_client *client,
+ 	return 0;
+ }
+ 
+-static int cros_ec_i2c_remove(struct i2c_client *client)
+-{
+-	struct cros_ec_device *ec_dev = i2c_get_clientdata(client);
+-
+-	cros_ec_remove(ec_dev);
+-
+-	return 0;
+-}
+-
+ #ifdef CONFIG_PM_SLEEP
+ static int cros_ec_i2c_suspend(struct device *dev)
+ {
+@@ -376,7 +367,6 @@ static struct i2c_driver cros_ec_driver = {
+ 		.pm	= &cros_ec_i2c_pm_ops,
+ 	},
+ 	.probe		= cros_ec_i2c_probe,
+-	.remove		= cros_ec_i2c_remove,
+ 	.id_table	= cros_ec_i2c_id,
+ };
+ 
+diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+index e1b75775cd4a..14684a56e40f 100644
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -327,7 +327,6 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+ 
+ static int cros_ec_lpc_remove(struct platform_device *pdev)
+ {
+-	struct cros_ec_device *ec_dev;
+ 	struct acpi_device *adev;
+ 
+ 	adev = ACPI_COMPANION(&pdev->dev);
+@@ -335,9 +334,6 @@ static int cros_ec_lpc_remove(struct platform_device *pdev)
+ 		acpi_remove_notify_handler(adev->handle, ACPI_ALL_NOTIFY,
+ 					   cros_ec_lpc_acpi_notify);
+ 
+-	ec_dev = platform_get_drvdata(pdev);
+-	cros_ec_remove(ec_dev);
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/platform/chrome/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
+index 2060d1483043..6cfbc2835beb 100644
+--- a/drivers/platform/chrome/cros_ec_spi.c
++++ b/drivers/platform/chrome/cros_ec_spi.c
+@@ -685,16 +685,6 @@ static int cros_ec_spi_probe(struct spi_device *spi)
+ 	return 0;
+ }
+ 
+-static int cros_ec_spi_remove(struct spi_device *spi)
+-{
+-	struct cros_ec_device *ec_dev;
+-
+-	ec_dev = spi_get_drvdata(spi);
+-	cros_ec_remove(ec_dev);
+-
+-	return 0;
+-}
+-
+ #ifdef CONFIG_PM_SLEEP
+ static int cros_ec_spi_suspend(struct device *dev)
+ {
+@@ -733,7 +723,6 @@ static struct spi_driver cros_ec_driver_spi = {
+ 		.pm	= &cros_ec_spi_pm_ops,
+ 	},
+ 	.probe		= cros_ec_spi_probe,
+-	.remove		= cros_ec_spi_remove,
+ 	.id_table	= cros_ec_spi_id,
+ };
+ 
 -- 
 2.19.1
 
