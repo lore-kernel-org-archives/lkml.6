@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE35C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81404C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B6DC20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:39:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B6DC20855
+	by mail.kernel.org (Postfix) with ESMTP id 4F61820855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:39:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F61820855
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbeK0HeZ (ORCPT
+        id S1727355AbeK0Hee (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 02:34:25 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:39485 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727131AbeK0HeZ (ORCPT
+        Tue, 27 Nov 2018 02:34:34 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:56217 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727175AbeK0HeZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 27 Nov 2018 02:34:25 -0500
-Received: by mail-io1-f69.google.com with SMTP id q23so18283240ior.6
+Received: by mail-io1-f72.google.com with SMTP id m5so4540634iok.22
         for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 12:39:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=u9dqxVZINJx4qR3cJdQHJ3FhfRpOVRzgpQq8KEa+JFw=;
-        b=pXDm3tZenYJQPTe9QtxMyruvkBcEBKlIojII+JVVd6qpBBB+AQyBx6UICSCvMp/o0L
-         nu7UAb7eeLfvIpoSGWXDCjS3j5OARWdeX0PAov8w3FJ1DMeDfH4EN9G92L4+0l3QPDrC
-         L9/bDJBItOfbxdexKIPplrgXtzbLqiSlBPLOlbvEd2uu3uSDeYQkNIy1LmyoTq8yC4Id
-         rcEhaFiRyNM1FELdttN5EBuh2DLg08oUFp2bDIUvmkT0tlEj7Y4peMI5hjfzHFgZaXBQ
-         9CGAySGCj1nn64SJrIZq1kZ+ROqJrPwdX8wLd4+VTtRIFzKAamdpLL79+8Yg/6Xuh+NC
-         V4bA==
-X-Gm-Message-State: AA+aEWbwTZUxzh83C1c8Kf9OVe75jSXlQ+4FXdzspto5Rsjbi9Dq/4Dq
-        +IbuNUv+MKxrdAlkM6oPegmv5/eLRPBR/sA114GakL2bO9lH
-X-Google-Smtp-Source: AFSGD/VUl91lxycYWNV/0BW8aFRny/WYa25hLzIsOfQM4Z34ybSUASSU1fjjNZobwDY9gJo5wlixiR3vqJhWU+eh6P03HywHklm0
+        bh=fsm4eW7Wt7boWCMjTmNWqfWjzu17qAYqrIyeC4L/rT8=;
+        b=puZnElSqIckY3vwG0+efoKDBkPcv817duAiW70qS+6aqUGLWG3MEamdF60VBo38g51
+         kYfQltp1wkYePBaTh5XioxcCJgwZu+yhrawmpFpAJtR60mAFhRp1jwsMHrAmsbImj/4h
+         bIk8gArBe8ZflkuOVRHYcmGbk9WKJ9dLTlImht51pYiKg+CLfoABmlGiBGd5hJXBZ/Cg
+         7sMGHz7ykeaaX70NEuv1F7M62QyezxES840tSMklwMGRcOQ2ykkVJ4N6P+sA2lfRh6j3
+         cyCvCiDD9DBqG8UC5iBH9WZMjr2u5eHPyLH1yCZQOl6i2b/EBq5CyZA4Coed6pXCUN0o
+         lSxw==
+X-Gm-Message-State: AGRZ1gInNQTkLKVD4satLT+jgc/PNy+G33xv9hsOuCwRfRR+IZqhov5I
+        uZl8fL02/PjF9gNMm9xdvft2pqi8TTYZja/OJGXXR4vzi/VX
+X-Google-Smtp-Source: AFSGD/WESIVqk65/IEe0D/LTMr8V4hUcmPC5gtNndFb7oaCOvWm4Xt9k7ycv8s4nxpI4M6cbrajmeigSx+pHByylBLoQimDX6sBw
 MIME-Version: 1.0
-X-Received: by 2002:a6b:8e83:: with SMTP id q125mr18285845iod.9.1543264745175;
+X-Received: by 2002:a24:5f84:: with SMTP id r126-v6mr18524997itb.39.1543264745414;
  Mon, 26 Nov 2018 12:39:05 -0800 (PST)
 Date:   Mon, 26 Nov 2018 12:39:05 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ee41d6057b975283@google.com>
-Subject: KASAN: stack-out-of-bounds Read in refcount_sub_and_test_checked
-From:   syzbot <syzbot+d3ed975648421c381ca4@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Message-ID: <000000000000f1e837057b97522a@google.com>
+Subject: WARNING in ext4_dio_get_block_overwrite
+From:   syzbot <syzbot+9b095ee32c8a10c367dc@syzkaller.appspotmail.com>
+To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,64 +60,86 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    358be656406d selftests/net: add txring_overwrite
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=113f8ed5400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c36a72af2123e78a
-dashboard link: https://syzkaller.appspot.com/bug?extid=d3ed975648421c381ca4
+HEAD commit:    442b8cea2477 Add linux-next specific files for 20181109
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15d84a47400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2f72bdb11df9fbe8
+dashboard link: https://syzkaller.appspot.com/bug?extid=9b095ee32c8a10c367dc
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d3ed975648421c381ca4@syzkaller.appspotmail.com
+Reported-by: syzbot+9b095ee32c8a10c367dc@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KASAN: stack-out-of-bounds in atomic_read  
-include/asm-generic/atomic-instrumented.h:21 [inline]
-BUG: KASAN: stack-out-of-bounds in refcount_sub_and_test_checked+0x9d/0x310  
-lib/refcount.c:179
-Read of size 4 at addr ffff8881da9c0bf0 by task udevd/15453
-
-CPU: 1 PID: 15453 Comm: udevd Not tainted 4.20.0-rc3+ #313
-PANIC: double fault, error_code: 0x0
+audit: type=1804 audit(1543213093.902:156): pid=10653 uid=0 auid=4294967295  
+ses=4294967295 subj==unconfined op=invalid_pcr cause=ToMToU  
+comm="syz-executor3"  
+name="/root/syzkaller-testdir952476403/syzkaller.2X9ByG/94/bus" dev="sda1"  
+ino=16843 res=1
+WARNING: CPU: 0 PID: 10648 at fs/ext4/inode.c:945  
+ext4_dio_get_block_overwrite+0xbf/0x100 fs/ext4/inode.c:945
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 10648 Comm: syz-executor3 Not tainted 4.20.0-rc1-next-20181109+  
+#110
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x244/0x39d lib/dump_stack.c:113
-CPU: 0 PID: 18956 Comm: syz-executor1 Not tainted 4.20.0-rc3+ #313
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__udp4_lib_lookup+0x25/0x870 net/ipv4/udp.c:466
-Code: ff 0f 1f 40 00 55 48 89 e5 41 57 41 56 41 55 49 bd 00 00 00 00 00 fc  
-ff df 41 54 53 44 89 c3 48 81 ec 00 01 00 00 48 8b 45 20 <48> 89 bd 28 ff  
-ff ff 66 c1 c3 08 4c 8b 65 18 89 b5 1c ff ff ff 89
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-RSP: 0018:ffff8881d9a8af98 EFLAGS: 00010282
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-RAX: 0000000000000000 RBX: 000000000000e5be RCX: 00000000111414ac
-RDX: 000000000000224e RSI: 00000000aa1414ac RDI: ffff88818b3fc340
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
-RBP: ffff8881d9a8b0c0 R08: 000000000000e5be R09: 0000000000000001
-  kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
-R10: 0000000000000000 R11: ffff8881dae2db3b R12: ffff8881d7835800
-  atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
-  refcount_sub_and_test_checked+0x9d/0x310 lib/refcount.c:179
-R13: dffffc0000000000 R14: ffff8881d78357ec R15: 0000000000000003
-FS:  00007f18ebe99700(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff8881d9a8af88 CR3: 000000014f1a9000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  refcount_dec_and_test_checked+0x1a/0x20 lib/refcount.c:212
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-  kref_put include/linux/kref.h:69 [inline]
-  aa_put_label security/apparmor/include/label.h:447 [inline]
-  aa_free_file_ctx security/apparmor/include/file.h:75 [inline]
-  apparmor_file_free_security+0x115/0x1a0 security/apparmor/lsm.c:450
-Call Trace:
+  panic+0x2ad/0x55c kernel/panic.c:188
+  __warn.cold.8+0x20/0x45 kernel/panic.c:540
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
+RIP: 0010:ext4_dio_get_block_overwrite+0xbf/0x100 fs/ext4/inode.c:945
+Code: ff 48 85 db 74 1f e8 80 b0 64 ff 49 8b 1c 24 31 ff 48 c1 eb 0c 83 e3  
+01 48 89 de e8 9b b1 64 ff 48 85 db 74 07 e8 61 b0 64 ff <0f> 0b e8 5a b0  
+64 ff 44 89 e8 5b 41 5c 41 5d 41 5e 5d c3 e8 49 b0
+RSP: 0018:ffff880179a0dc98 EFLAGS: 00010246
+RAX: 0000000000040000 RBX: 0000000000000000 RCX: ffffc9000c02a000
+RDX: 0000000000040000 RSI: ffffffff821af84f RDI: 0000000000000007
+RBP: ffff880179a0dcb8 R08: ffff8801d203e3c0 R09: ffffed002e9db6a9
+R10: ffffed002e9db6a9 R11: ffff880174edb54f R12: ffff880179a0e980
+R13: 0000000000000000 R14: 000000000000006b R15: ffff880179a0ea20
+  get_more_blocks fs/direct-io.c:716 [inline]
+  do_direct_IO+0x1941/0xc110 fs/direct-io.c:1001
+  do_blockdev_direct_IO+0x131e/0xa340 fs/direct-io.c:1333
+  __blockdev_direct_IO+0x9d/0xc6 fs/direct-io.c:1419
+  ext4_direct_IO_write fs/ext4/inode.c:3774 [inline]
+  ext4_direct_IO+0x15ab/0x2220 fs/ext4/inode.c:3901
+  generic_file_direct_write+0x275/0x4b0 mm/filemap.c:3043
+  __generic_file_write_iter+0x2ff/0x630 mm/filemap.c:3222
+  ext4_file_write_iter+0x390/0x1420 fs/ext4/file.c:266
+  call_write_iter include/linux/fs.h:1867 [inline]
+  do_iter_readv_writev+0x8b0/0xa80 fs/read_write.c:680
+  do_iter_write+0x185/0x5f0 fs/read_write.c:959
+  vfs_iter_write+0x77/0xb0 fs/read_write.c:972
+  iter_file_splice_write+0x90d/0x1050 fs/splice.c:749
+  do_splice_from fs/splice.c:851 [inline]
+  direct_splice_actor+0x128/0x190 fs/splice.c:1018
+  splice_direct_to_actor+0x318/0x8f0 fs/splice.c:973
+  do_splice_direct+0x2d4/0x420 fs/splice.c:1061
+  do_sendfile+0x62a/0xe20 fs/read_write.c:1439
+  __do_sys_sendfile64 fs/read_write.c:1500 [inline]
+  __se_sys_sendfile64 fs/read_write.c:1486 [inline]
+  __x64_sys_sendfile64+0x1fd/0x250 fs/read_write.c:1486
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457569
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f2cc2bb1c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000000457569
+RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000005
+RBP: 000000000072bfa0 R08: 0000000000000000 R09: 0000000000000000
+R10: 000000000a5cc54d R11: 0000000000000246 R12: 00007f2cc2bb26d4
+R13: 00000000004c3c2a R14: 00000000004d63d0 R15: 00000000ffffffff
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
