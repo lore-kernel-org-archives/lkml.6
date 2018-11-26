@@ -7,46 +7,50 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2659CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE949C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE90621104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:04:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9841C21479
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:04:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUUgyylC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE90621104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qr5O9KAm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9841C21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731140AbeKZV6i (ORCPT
+        id S1730646AbeKZV6l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:58:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43982 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:58:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbeKZV6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:58:37 -0500
+        id S1726307AbeKZV6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:58:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 395BD20645;
-        Mon, 26 Nov 2018 11:04:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 862092089F;
+        Mon, 26 Nov 2018 11:04:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230291;
-        bh=B7uStpCXEtydp7MEapUlFcLCwkNFP+Ox47CIe/gjSzE=;
+        s=default; t=1543230294;
+        bh=PPssmZnB4ckM8MsehMVvkmGb7GRpe1KYmV9ODtLmfAM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tUUgyylC7PvA7vK0ALMVpGNFqirHjbJq80GSEpfP3Q5F7qZsULoYwSN/1UKy4f5h7
-         iGHlPg8PdSWfb6nBVj5FbXT6P1BpHg/D6c8Q941VIwddtoQGO5Sq5nq3hEiDKM4mGx
-         703SZkbnwppLBJDUH9lO6SgEF8i6szPxP7E1+omU=
+        b=Qr5O9KAmIyxQoGl6Cvqqgc9VnpnBk1j4xQJGrUG1fIzFomtXasMK3kke+8xrFRX2/
+         SSmT9XFVg4DH2KtUmK486wf9jCH5Bdew1OucK7VcOq1+QHvtBEVK2zaSD5A3azBuqK
+         NhvcegBTj57ea3pykeWVN6V5w5muceKv3AhqA1aI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 037/118] HID: i2c-hid: Add a small delay after sleep command for Raydium touchpanel
-Date:   Mon, 26 Nov 2018 11:50:31 +0100
-Message-Id: <20181126105102.203155837@linuxfoundation.org>
+        stable@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Dietmar.Eggemann@arm.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, morten.rasmussen@arm.com,
+        quentin.perret@arm.com, Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 074/118] sched/core: Take the hotplug lock in sched_init_smp()
+Date:   Mon, 26 Nov 2018 11:51:08 +0100
+Message-Id: <20181126105104.412501387@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -64,104 +68,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 00b790ea545b6ef30221adef6e9c3707e03b82b5 ]
+[ Upstream commit 40fa3780bac2b654edf23f6b13f4e2dd550aea10 ]
 
-Raydium touchpanel (2386:4B33) sometimes does not work in desktop session
-although it works in display manager.
+When running on linux-next (8c60c36d0b8c ("Add linux-next specific files
+for 20181019")) + CONFIG_PROVE_LOCKING=y on a big.LITTLE system (e.g.
+Juno or HiKey960), we get the following report:
 
-During user logging, the display manager exits, close the HID device,
-then the device gets runtime suspended and powered off. The desktop
-session begins shortly after, opens the HID device, then the device gets
-runtime resumed and powered on.
+ [    0.748225] Call trace:
+ [    0.750685]  lockdep_assert_cpus_held+0x30/0x40
+ [    0.755236]  static_key_enable_cpuslocked+0x20/0xc8
+ [    0.760137]  build_sched_domains+0x1034/0x1108
+ [    0.764601]  sched_init_domains+0x68/0x90
+ [    0.768628]  sched_init_smp+0x30/0x80
+ [    0.772309]  kernel_init_freeable+0x278/0x51c
+ [    0.776685]  kernel_init+0x10/0x108
+ [    0.780190]  ret_from_fork+0x10/0x18
 
-If the trasition from display manager to desktop sesesion is fast, the
-touchpanel cannot switch from powered off to powered on in short
-timeframe. So add a small delay to workaround the issue.
+The static_key in question is 'sched_asym_cpucapacity' introduced by
+commit:
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+  df054e8445a4 ("sched/topology: Add static_key for asymmetric CPU capacity optimizations")
+
+In this particular case, we enable it because smp_prepare_cpus() will
+end up fetching the capacity-dmips-mhz entry from the devicetree,
+so we already have some asymmetry detected when entering sched_init_smp().
+
+This didn't get detected in tip/sched/core because we were missing:
+
+  commit cb538267ea1e ("jump_label/lockdep: Assert we hold the hotplug lock for _cpuslocked() operations")
+
+Calls to build_sched_domains() post sched_init_smp() will hold the
+hotplug lock, it just so happens that this very first call is a
+special case. As stated by a comment in sched_init_smp(), "There's no
+userspace yet to cause hotplug operations" so this is a harmless
+warning.
+
+However, to both respect the semantics of underlying
+callees and make lockdep happy, take the hotplug lock in
+sched_init_smp(). This also satisfies the comment atop
+sched_init_domains() that says "Callers must hold the hotplug lock".
+
+Reported-by: Sudeep Holla <sudeep.holla@arm.com>
+Tested-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Dietmar.Eggemann@arm.com
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: morten.rasmussen@arm.com
+Cc: quentin.perret@arm.com
+Link: http://lkml.kernel.org/r/1540301851-3048-1-git-send-email-valentin.schneider@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-ids.h         |  3 +++
- drivers/hid/i2c-hid/i2c-hid.c | 19 +++++++++++++++++++
- 2 files changed, 22 insertions(+)
+ kernel/sched/core.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index bc49909aba8e..636b9d903b26 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -921,6 +921,9 @@
- #define USB_DEVICE_ID_QUANTA_OPTICAL_TOUCH_3003		0x3003
- #define USB_DEVICE_ID_QUANTA_OPTICAL_TOUCH_3008		0x3008
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index ad97f3ba5ec5..35551110d277 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5854,11 +5854,14 @@ void __init sched_init_smp(void)
+ 	/*
+ 	 * There's no userspace yet to cause hotplug operations; hence all the
+ 	 * CPU masks are stable and all blatant races in the below code cannot
+-	 * happen.
++	 * happen. The hotplug lock is nevertheless taken to satisfy lockdep,
++	 * but there won't be any contention on it.
+ 	 */
++	cpus_read_lock();
+ 	mutex_lock(&sched_domains_mutex);
+ 	sched_init_domains(cpu_active_mask);
+ 	mutex_unlock(&sched_domains_mutex);
++	cpus_read_unlock();
  
-+#define I2C_VENDOR_ID_RAYDIUM		0x2386
-+#define I2C_PRODUCT_ID_RAYDIUM_4B33	0x4b33
-+
- #define USB_VENDOR_ID_RAZER            0x1532
- #define USB_DEVICE_ID_RAZER_BLADE_14   0x011D
- 
-diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
-index 4e3592e7a3f7..88daa388e1f6 100644
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -48,6 +48,7 @@
- #define I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV	BIT(0)
- #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
- #define I2C_HID_QUIRK_NO_RUNTIME_PM		BIT(2)
-+#define I2C_HID_QUIRK_DELAY_AFTER_SLEEP		BIT(3)
- 
- /* flags */
- #define I2C_HID_STARTED		0
-@@ -157,6 +158,8 @@ struct i2c_hid {
- 
- 	bool			irq_wake_enabled;
- 	struct mutex		reset_lock;
-+
-+	unsigned long		sleep_delay;
- };
- 
- static const struct i2c_hid_quirks {
-@@ -171,6 +174,8 @@ static const struct i2c_hid_quirks {
- 	{ I2C_VENDOR_ID_HANTICK, I2C_PRODUCT_ID_HANTICK_5288,
- 		I2C_HID_QUIRK_NO_IRQ_AFTER_RESET |
- 		I2C_HID_QUIRK_NO_RUNTIME_PM },
-+	{ I2C_VENDOR_ID_RAYDIUM, I2C_PRODUCT_ID_RAYDIUM_4B33,
-+		I2C_HID_QUIRK_DELAY_AFTER_SLEEP },
- 	{ 0, 0 }
- };
- 
-@@ -386,6 +391,7 @@ static int i2c_hid_set_power(struct i2c_client *client, int power_state)
- {
- 	struct i2c_hid *ihid = i2c_get_clientdata(client);
- 	int ret;
-+	unsigned long now, delay;
- 
- 	i2c_hid_dbg(ihid, "%s\n", __func__);
- 
-@@ -403,9 +409,22 @@ static int i2c_hid_set_power(struct i2c_client *client, int power_state)
- 			goto set_pwr_exit;
- 	}
- 
-+	if (ihid->quirks & I2C_HID_QUIRK_DELAY_AFTER_SLEEP &&
-+	    power_state == I2C_HID_PWR_ON) {
-+		now = jiffies;
-+		if (time_after(ihid->sleep_delay, now)) {
-+			delay = jiffies_to_usecs(ihid->sleep_delay - now);
-+			usleep_range(delay, delay + 1);
-+		}
-+	}
-+
- 	ret = __i2c_hid_command(client, &hid_set_power_cmd, power_state,
- 		0, NULL, 0, NULL, 0);
- 
-+	if (ihid->quirks & I2C_HID_QUIRK_DELAY_AFTER_SLEEP &&
-+	    power_state == I2C_HID_PWR_SLEEP)
-+		ihid->sleep_delay = jiffies + msecs_to_jiffies(20);
-+
- 	if (ret)
- 		dev_err(&client->dev, "failed to change power setting.\n");
- 
+ 	/* Move init over to a non-isolated CPU */
+ 	if (set_cpus_allowed_ptr(current, housekeeping_cpumask(HK_FLAG_DOMAIN)) < 0)
 -- 
 2.17.1
 
