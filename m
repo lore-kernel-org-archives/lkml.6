@@ -2,145 +2,87 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 330B5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:18:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A39DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8B5720855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:18:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HWof2+Yt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8B5720855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5D2692082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 06:39:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D2692082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbeKZRLo (ORCPT
+        id S1726184AbeKZRc7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 12:11:44 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33933 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbeKZRLo (ORCPT
+        Mon, 26 Nov 2018 12:32:59 -0500
+Received: from mail-sz2.amlogic.com ([211.162.65.114]:46653 "EHLO
+        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbeKZRc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 12:11:44 -0500
-Received: by mail-lj1-f193.google.com with SMTP id u6-v6so15418310ljd.1
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 22:18:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mHdBpzOqujIzObqg9evHk7t2I4F20aupal2seUd+uME=;
-        b=HWof2+Ytzn2vEPSr7RihPY8BKXTHMD2CANN/LvjQjk3JhJRFppjdidBFlffY5HOfih
-         GU+AxBCBt4QW1AASZeQ4GZZj0sVc6eNpzl9YCwne/q51pW1jAcHT7zW69tc3GLWWkLGG
-         2GPMze2yCg1ok7U7prMGRe3u+UJcUrPsVbZeg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mHdBpzOqujIzObqg9evHk7t2I4F20aupal2seUd+uME=;
-        b=NgD9NcNbfnzeziLxSGLdT567LxmgSS8Jhq2CmNK4enO6eOwsHYhpoLgJtFKgsuPuSl
-         Xhe/J2+i+C4OseY7R7E6mpKOwQShzjys8/Y07NrGmlTdjKoy/COTeCRGxjDWPYRFSGJJ
-         grrY3Q2Z2mbzoMHpwvaZqyumQm/n7X6loM6XmBc06mWlIEpOQgNfZcAPU+804y+V1ynE
-         keJNbW8XSAAgrudDh6dhfV6NGT36GOH5pOu92FHmzEzXCIWgZ7px3EEoHrjhM/Y5zg2/
-         19HubcvDYtzuHvvyiHSPgIFLG+54nZrZ+cn/dM7iDHzdvPm8DTT5vhdgphxJyL8b1475
-         45Sg==
-X-Gm-Message-State: AA+aEWbhs0K5kRMVkClQImGWv+Hs22EnHQZ4bwLGxRoC7WuUspTNZa+o
-        McgNk31475hL0mMGoAF4IVPMYi7itGVBr8KMh4R4gA==
-X-Google-Smtp-Source: AFSGD/WNE17W06hDfulFeosi7pvN8ZUFsnGCoVn5IIyZ0m3IU3LsoG82PGQEria6s06b8SIJ0Uj9P8nCqnwmyak9hKc=
-X-Received: by 2002:a2e:449c:: with SMTP id b28-v6mr15438717ljf.47.1543213119407;
- Sun, 25 Nov 2018 22:18:39 -0800 (PST)
+        Mon, 26 Nov 2018 12:32:58 -0500
+Received: from [10.28.18.115] (10.28.18.115) by mail-sz2.amlogic.com
+ (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Mon, 26 Nov
+ 2018 14:39:58 +0800
+Subject: Re: [PATCH v7 0/2] mtd: rawnand: meson: add Amlogic NAND driver
+ support
+To:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        <linux-mtd@lists.infradead.org>
+CC:     David Woodhouse <dwmw2@infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1542386439-30166-1-git-send-email-jianxin.pan@amlogic.com>
+From:   Liang Yang <liang.yang@amlogic.com>
+Message-ID: <9c340a88-06a1-2b81-f435-f9da338077ba@amlogic.com>
+Date:   Mon, 26 Nov 2018 14:39:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <cover.1542185618.git.baolin.wang@linaro.org> <db2aa7892d7ecfae563ef22de5bbc7587ea3471f.1542185618.git.baolin.wang@linaro.org>
- <20181125214823.GB9913@amd>
-In-Reply-To: <20181125214823.GB9913@amd>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Mon, 26 Nov 2018 14:18:27 +0800
-Message-ID: <CAMz4kuJ+7J+MYh02YhP9j8Tf6ntdL6tOLiJO6yN0a4Qot4t4Jg@mail.gmail.com>
-Subject: Re: [PATCH 5/5] power: supply: sc27xx: Save last battery capacity
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, yuanjiang.yu@unisoc.com,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1542386439-30166-1-git-send-email-jianxin.pan@amlogic.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.18.115]
+X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
+ (10.28.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
-On Mon, 26 Nov 2018 at 05:48, Pavel Machek <pavel@ucw.cz> wrote:
->
-> Hi!
->
-> > Our charger manager can optimize the battery capacity periodically, so
-> > we can save last battery capacity into registers. Then next system
-> > power-on, we can read the last saved battery capacity as the initial
-> > battery capacity, which can make the battery capacity more accurate.
-> >
-> > Signed-off-by: Yuanjiang Yu <yuanjiang.yu@unisoc.com>
-> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> > ---
-> >  drivers/power/supply/sc27xx_fuel_gauge.c |  143 +++++++++++++++++++++++++++++-
-> >  1 file changed, 142 insertions(+), 1 deletion(-)
-> >
->
-> > +static int sc27xx_fgu_set_property(struct power_supply *psy,
-> > +                                enum power_supply_property psp,
-> > +                                const union power_supply_propval *val)
-> > +{
-> > +     struct sc27xx_fgu_data *data = power_supply_get_drvdata(psy);
-> > +     int ret;
-> > +
-> > +     mutex_lock(&data->lock);
-> > +
-> > +     switch (psp) {
-> > +     case POWER_SUPPLY_PROP_CAPACITY:
-> > +             ret = sc27xx_fgu_save_last_cap(data, val->intval);
-> > +             if (ret < 0)
-> > +                     dev_err(data->dev, "failed to save battery capacity\n");
-> > +             break;
-> > +
-> > +     default:
-> > +             ret = -EINVAL;
-> > +     }
-> > +
-> > +     mutex_unlock(&data->lock);
-> > +     return ret;
->
-> if (psp != ....) return -EINVAL; And you can do that outside
-> lock...
->
-> Ok, OTOH this is easier to extend in future. Do you expect more
-> writable properties?
+Hi Boris and Miquel,
 
-Until now I think there are no writable properties, I think I can
-change it like you suggested.
+How about the v7 patch?
 
->
-> > +static int sc27xx_fgu_property_is_writeable(struct power_supply *psy,
-> > +                                         enum power_supply_property psp)
-> > +{
-> > +     switch (psp) {
-> > +     case POWER_SUPPLY_PROP_CAPACITY:
-> > +             return 1;
-> > +
-> > +     default:
-> > +             return 0;
-> > +     }
-> > +}
->
->
-> Same here. return psp == POWER_SUPPLY_PROP_CAPACITY; really looks
-> strange written like this.
-
-Sure. Thanks.
-
--- 
-Baolin Wang
-Best Regards
+On 2018/11/17 0:40, Jianxin Pan wrote:
+> These two patches try to add initial NAND driver support for Amlogic Meson
+> SoCs, current it has been tested on GXL(p212) and AXG(s400) platform.
+> 
+> Changes since V6 at [7]
+>   - use timings->tBERS_max as the maximum time out, delete NFC_CMD_RB_TIMEOUT
+>   - fix nand_rw_cmd and support small block flash and which row address less than 3
+>   - fix coding style
+>   - replace readl/writel_* with readl/writel_relaxed*
+>   - delete ECC_SET_PROTECTED_OOB_BYTE and ECC_GET_PROTECTED_OOB_BYTE
+>   - implement dma access for read_buf and write_buf, more efficient.
+>   - delete waiting dma finish in write process and let NAND_CMD_PAGEPROG and
+> RB command go on queuing
+>   - add waiting the completed flag of last ecc page be set, for more strict
+> 
