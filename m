@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45472C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 275C2C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00CDC2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E16E921104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:59:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrE7aV0h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00CDC2146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GFxXlkE2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E16E921104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729663AbeKZVxi (ORCPT
+        id S1729699AbeKZVxk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:53:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35404 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:53:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729648AbeKZVxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:53:38 -0500
+        id S1729664AbeKZVxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:53:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 212102089F;
-        Mon, 26 Nov 2018 10:59:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B707F21104;
+        Mon, 26 Nov 2018 10:59:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229992;
-        bh=gcl4dKD/iQTZW4VRvVK/Pli48iTyXU6tDSRNFyzJ0s0=;
+        s=default; t=1543229995;
+        bh=Wj7f5rameFSk6t/vTaVDJFFnVOAw+nel2JYbihYH1Tw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FrE7aV0hngg1DqLyTUdHKRLyKZIdsUWOmQoyUCq/Fb63aKyzYNEeeetIIZ7yrR6ek
-         /GCbQGN2wTVnklhrIYlQubUXFGqMWwaUJ8TPCsA7Mt8dz98n6scrRIEoR9oMGwrGhz
-         7iAxHBciJfKMfjnhhXKUXRiGRHlVf6ojA2B3Dork=
+        b=GFxXlkE279+JFK4lZEUEuoDNB7fb5j7nLAEntr6TB3eYJQVdISsdVO9J/26sCPnnS
+         7Lhq0rr3c811pq6A5az+/J4U/rIzBXugNNkC0zJ8+Q2VubPcHWVC8K4C3IlL5DGbyf
+         gJ1kLmPEaP3dVGzWNFTMUnXqKtU7E+poS6pgyP6M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Linton <jeremy.linton@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 03/62] arm64: kprobe: make page to RO mode when allocate it
-Date:   Mon, 26 Nov 2018 11:50:44 +0100
-Message-Id: <20181126105051.213025360@linuxfoundation.org>
+Subject: [PATCH 4.14 30/62] lib/raid6: Fix arm64 test build
+Date:   Mon, 26 Nov 2018 11:51:11 +0100
+Message-Id: <20181126105053.199254797@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -68,121 +64,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 966866892cf89d606544bca22d584ba2ef9ec208 ]
+[ Upstream commit 313a06e636808387822af24c507cba92703568b1 ]
 
-Commit 1404d6f13e47 ("arm64: dump: Add checking for writable and exectuable pages")
-has successfully identified code that leaves a page with W+X
-permissions.
+The lib/raid6/test fails to build the neon objects
+on arm64 because the correct machine type is 'aarch64'.
 
-[    3.245140] arm64/mm: Found insecure W+X mapping at address (____ptrval____)/0xffff000000d90000
-[    3.245771] WARNING: CPU: 0 PID: 1 at ../arch/arm64/mm/dump.c:232 note_page+0x410/0x420
-[    3.246141] Modules linked in:
-[    3.246653] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc5-next-20180928-00001-ge70ae259b853-dirty #62
-[    3.247008] Hardware name: linux,dummy-virt (DT)
-[    3.247347] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[    3.247623] pc : note_page+0x410/0x420
-[    3.247898] lr : note_page+0x410/0x420
-[    3.248071] sp : ffff00000804bcd0
-[    3.248254] x29: ffff00000804bcd0 x28: ffff000009274000
-[    3.248578] x27: ffff00000921a000 x26: ffff80007dfff000
-[    3.248845] x25: ffff0000093f5000 x24: ffff000009526f6a
-[    3.249109] x23: 0000000000000004 x22: ffff000000d91000
-[    3.249396] x21: ffff000000d90000 x20: 0000000000000000
-[    3.249661] x19: ffff00000804bde8 x18: 0000000000000400
-[    3.249924] x17: 0000000000000000 x16: 0000000000000000
-[    3.250271] x15: ffffffffffffffff x14: 295f5f5f5f6c6176
-[    3.250594] x13: 7274705f5f5f5f28 x12: 2073736572646461
-[    3.250941] x11: 20746120676e6970 x10: 70616d20582b5720
-[    3.251252] x9 : 6572756365736e69 x8 : 3039643030303030
-[    3.251519] x7 : 306666666678302f x6 : ffff0000095467b2
-[    3.251802] x5 : 0000000000000000 x4 : 0000000000000000
-[    3.252060] x3 : 0000000000000000 x2 : ffffffffffffffff
-[    3.252323] x1 : 4d151327adc50b00 x0 : 0000000000000000
-[    3.252664] Call trace:
-[    3.252953]  note_page+0x410/0x420
-[    3.253186]  walk_pgd+0x12c/0x238
-[    3.253417]  ptdump_check_wx+0x68/0xf8
-[    3.253637]  mark_rodata_ro+0x68/0x98
-[    3.253847]  kernel_init+0x38/0x160
-[    3.254103]  ret_from_fork+0x10/0x18
+Once this is correctly enabled, the neon recovery objects
+need to be added to the build.
 
-kprobes allocates a writable executable page with module_alloc() in
-order to store executable code.
-Reworked to that when allocate a page it sets mode RO. Inspired by
-commit 63fef14fc98a ("kprobes/x86: Make insn buffer always ROX and use text_poke()").
-
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reviewed-by: Laura Abbott <labbott@redhat.com>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-[catalin.marinas@arm.com: removed unnecessary casts]
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/probes/kprobes.c | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+ lib/raid6/test/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-index 22a5921562c7..0417c929d21a 100644
---- a/arch/arm64/kernel/probes/kprobes.c
-+++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -23,7 +23,9 @@
- #include <linux/slab.h>
- #include <linux/stop_machine.h>
- #include <linux/sched/debug.h>
-+#include <linux/set_memory.h>
- #include <linux/stringify.h>
-+#include <linux/vmalloc.h>
- #include <asm/traps.h>
- #include <asm/ptrace.h>
- #include <asm/cacheflush.h>
-@@ -42,10 +44,21 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
- static void __kprobes
- post_kprobe_handler(struct kprobe_ctlblk *, struct pt_regs *);
- 
-+static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
-+{
-+	void *addrs[1];
-+	u32 insns[1];
-+
-+	addrs[0] = addr;
-+	insns[0] = opcode;
-+
-+	return aarch64_insn_patch_text(addrs, insns, 1);
-+}
-+
- static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
- {
- 	/* prepare insn slot */
--	p->ainsn.api.insn[0] = cpu_to_le32(p->opcode);
-+	patch_text(p->ainsn.api.insn, p->opcode);
- 
- 	flush_icache_range((uintptr_t) (p->ainsn.api.insn),
- 			   (uintptr_t) (p->ainsn.api.insn) +
-@@ -118,15 +131,15 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
- 	return 0;
- }
- 
--static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
-+void *alloc_insn_page(void)
- {
--	void *addrs[1];
--	u32 insns[1];
-+	void *page;
- 
--	addrs[0] = (void *)addr;
--	insns[0] = (u32)opcode;
-+	page = vmalloc_exec(PAGE_SIZE);
-+	if (page)
-+		set_memory_ro((unsigned long)page, 1);
- 
--	return aarch64_insn_patch_text(addrs, insns, 1);
-+	return page;
- }
- 
- /* arm kprobe: install breakpoint in text */
+diff --git a/lib/raid6/test/Makefile b/lib/raid6/test/Makefile
+index be1010bdc435..565a77220fae 100644
+--- a/lib/raid6/test/Makefile
++++ b/lib/raid6/test/Makefile
+@@ -27,7 +27,7 @@ ifeq ($(ARCH),arm)
+         CFLAGS += -I../../../arch/arm/include -mfpu=neon
+         HAS_NEON = yes
+ endif
+-ifeq ($(ARCH),arm64)
++ifeq ($(ARCH),aarch64)
+         CFLAGS += -I../../../arch/arm64/include
+         HAS_NEON = yes
+ endif
+@@ -41,7 +41,7 @@ ifeq ($(IS_X86),yes)
+ 		    gcc -c -x assembler - >&/dev/null &&        \
+ 		    rm ./-.o && echo -DCONFIG_AS_AVX512=1)
+ else ifeq ($(HAS_NEON),yes)
+-        OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o
++        OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o recov_neon.o recov_neon_inner.o
+         CFLAGS += -DCONFIG_KERNEL_MODE_NEON=1
+ else
+         HAS_ALTIVEC := $(shell printf '\#include <altivec.h>\nvector int a;\n' |\
 -- 
 2.17.1
 
