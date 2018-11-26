@@ -2,158 +2,116 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DATE_IN_PAST_12_24,
+	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B26C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18829C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:23:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5048120873
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D58F820873
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 11:23:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="LPvxfy+y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5048120873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="igGBwrMk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D58F820873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729791AbeK0WUM (ORCPT
+        id S1731018AbeK0WUh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 17:20:12 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38007 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729484AbeK0WUM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 17:20:12 -0500
-Received: by mail-ed1-f66.google.com with SMTP id h50so18676604ede.5
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Nov 2018 03:22:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=xhM4mxpl6FFZ/rThS7YpFSaPWQ7uwJbzqsu3JPtVKbQ=;
-        b=LPvxfy+y35jRGSNkF+j4PLckvO6VUIisTpP/6HtBQMvgv8nAp1JWXxM9cFsag02QYJ
-         5e3ISVcvYxhCXUyY2M6nq7SECfUP+BzVwJ4LmNXpffolj4BYYR9mar6AFGy8uP4A3qfS
-         Xbn8Ktgbr6QJWnGFLaNV628vX71IPen9d88FA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xhM4mxpl6FFZ/rThS7YpFSaPWQ7uwJbzqsu3JPtVKbQ=;
-        b=sDbTv6hOKJDMcOBE+KricjBOyTjtY9UfCQHhngSLI5LsudILaUOByHCdEAIRzq1aoS
-         nsC9urO58B0RQQydJRQClOdYhpbKY/uuU/PWPB6dKO/+Xe657UcKq1huCKFERTcKiV48
-         VUrMDBRccGndIsBtC7anw4CZclPH7b4YlhG/DAqBaSrOEflYlWGd6R+ZcR8dH2ZZ86sh
-         iIH3edD/8xZPY/KDmTpx+glC1MvR/RJhrFPdGSujBAiZfqKYDyu8KxyLE1pVY4L+Hho7
-         QrZpZ9vHedeeFT9/bU9Rb1kL4Baa7mN90JQ1CaSIUM373cECf245YrJXFHCTCMW59oU8
-         jArQ==
-X-Gm-Message-State: AA+aEWbLyfdc/hxu7bq639ZvcT9IvvASQuTT5rlHFtq4Zl9HKwc3MkJj
-        kZGrfJyJQ6BVeko2OBkUxgMuyw==
-X-Google-Smtp-Source: AFSGD/Wntr1PiMVM4oxiRsSwz4IxSoz4FROnk54Ri/lhtmGiITa/iHtydqPgrgtBKAssfqxxqzRasQ==
-X-Received: by 2002:a50:a982:: with SMTP id n2mr10322240edc.236.1543317755637;
-        Tue, 27 Nov 2018 03:22:35 -0800 (PST)
-Received: from andrea.amarulasolutions.com (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id b2sm964538ede.30.2018.11.27.03.22.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 03:22:34 -0800 (PST)
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>
-Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: [PATCH] bluetooth: Remove unnecessary smp_mb__after_atomic() barriers
-Date:   Tue, 27 Nov 2018 12:22:25 +0100
-Message-Id: <20181127112225.6177-1-andrea.parri@amarulasolutions.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 27 Nov 2018 17:20:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46862 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726450AbeK0WUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 17:20:37 -0500
+Received: from earth.universe (host-091-097-082-090.ewe-ip-backbone.de [91.97.82.90])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 570CE208E4;
+        Tue, 27 Nov 2018 11:23:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543317781;
+        bh=rQXEvHMi4WI3url6gdyZxxuOkgL20aJK4Azxhn2Z3xc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=igGBwrMk9ejIFPenM+hp8nvP4Am8Rn29d9XSYjoJB7w/9qZMf3KEqMigJmKM12v4Y
+         ApfJ5BaxJJbhKCwa2ERcwAjhEII4loGCZP/elXIp1tl+rmHrsF0D2pzWbCSO16eHDK
+         a/7CyXXgxAdtQ0Vu1k4DTdWyKzqKepAMdQRwONQE=
+Received: by earth.universe (Postfix, from userid 1000)
+        id D74C63C08D7; Mon, 26 Nov 2018 23:45:39 +0100 (CET)
+Date:   Mon, 26 Nov 2018 23:45:39 +0100
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc:     Tony Lindgren <tony@atomide.com>, Pavel Machek <pavel@ucw.cz>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        dri-devel@lists.freedesktop.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCHv5 0/6] omapdrm: DSI command mode panel support
+Message-ID: <20181126224539.557iafey44mqx3mm@earth.universe>
+References: <20181121160916.22017-1-sebastian.reichel@collabora.com>
+ <d566cd03-8348-ffa9-8798-3483a07741d1@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5oam3d2sfgetcsle"
+Content-Disposition: inline
+In-Reply-To: <d566cd03-8348-ffa9-8798-3483a07741d1@ti.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The barriers are redundant because atomic_test_and_clear_bit() already
-provides the required full ordering for the cases in question (that is,
-when the bit is cleared).
 
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
----
- drivers/bluetooth/btusb.c     |  8 ++------
- drivers/bluetooth/hci_intel.c | 16 ++++------------
- 2 files changed, 6 insertions(+), 18 deletions(-)
+--5oam3d2sfgetcsle
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 7439a7eb50acb..885e17a1a9a57 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -1935,10 +1935,8 @@ static void btusb_intel_bootup(struct btusb_data *data, const void *ptr,
- 	if (len != sizeof(*evt))
- 		return;
- 
--	if (test_and_clear_bit(BTUSB_BOOTING, &data->flags)) {
--		smp_mb__after_atomic();
-+	if (test_and_clear_bit(BTUSB_BOOTING, &data->flags))
- 		wake_up_bit(&data->flags, BTUSB_BOOTING);
--	}
- }
- 
- static void btusb_intel_secure_send_result(struct btusb_data *data,
-@@ -1953,10 +1951,8 @@ static void btusb_intel_secure_send_result(struct btusb_data *data,
- 		set_bit(BTUSB_FIRMWARE_FAILED, &data->flags);
- 
- 	if (test_and_clear_bit(BTUSB_DOWNLOADING, &data->flags) &&
--	    test_bit(BTUSB_FIRMWARE_LOADED, &data->flags)) {
--		smp_mb__after_atomic();
-+	    test_bit(BTUSB_FIRMWARE_LOADED, &data->flags))
- 		wake_up_bit(&data->flags, BTUSB_DOWNLOADING);
--	}
- }
- 
- static int btusb_recv_event_intel(struct hci_dev *hdev, struct sk_buff *skb)
-diff --git a/drivers/bluetooth/hci_intel.c b/drivers/bluetooth/hci_intel.c
-index 46ace321bf60e..8caa1a6619cea 100644
---- a/drivers/bluetooth/hci_intel.c
-+++ b/drivers/bluetooth/hci_intel.c
-@@ -909,10 +909,8 @@ static int intel_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
- 			set_bit(STATE_FIRMWARE_FAILED, &intel->flags);
- 
- 		if (test_and_clear_bit(STATE_DOWNLOADING, &intel->flags) &&
--		    test_bit(STATE_FIRMWARE_LOADED, &intel->flags)) {
--			smp_mb__after_atomic();
-+		    test_bit(STATE_FIRMWARE_LOADED, &intel->flags))
- 			wake_up_bit(&intel->flags, STATE_DOWNLOADING);
--		}
- 
- 	/* When switching to the operational firmware the device
- 	 * sends a vendor specific event indicating that the bootup
-@@ -920,10 +918,8 @@ static int intel_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
- 	 */
- 	} else if (skb->len == 9 && hdr->evt == 0xff && hdr->plen == 0x07 &&
- 		   skb->data[2] == 0x02) {
--		if (test_and_clear_bit(STATE_BOOTING, &intel->flags)) {
--			smp_mb__after_atomic();
-+		if (test_and_clear_bit(STATE_BOOTING, &intel->flags))
- 			wake_up_bit(&intel->flags, STATE_BOOTING);
--		}
- 	}
- recv:
- 	return hci_recv_frame(hdev, skb);
-@@ -960,17 +956,13 @@ static int intel_recv_lpm(struct hci_dev *hdev, struct sk_buff *skb)
- 		break;
- 	case LPM_OP_SUSPEND_ACK:
- 		set_bit(STATE_SUSPENDED, &intel->flags);
--		if (test_and_clear_bit(STATE_LPM_TRANSACTION, &intel->flags)) {
--			smp_mb__after_atomic();
-+		if (test_and_clear_bit(STATE_LPM_TRANSACTION, &intel->flags))
- 			wake_up_bit(&intel->flags, STATE_LPM_TRANSACTION);
--		}
- 		break;
- 	case LPM_OP_RESUME_ACK:
- 		clear_bit(STATE_SUSPENDED, &intel->flags);
--		if (test_and_clear_bit(STATE_LPM_TRANSACTION, &intel->flags)) {
--			smp_mb__after_atomic();
-+		if (test_and_clear_bit(STATE_LPM_TRANSACTION, &intel->flags))
- 			wake_up_bit(&intel->flags, STATE_LPM_TRANSACTION);
--		}
- 		break;
- 	default:
- 		bt_dev_err(hdev, "Unknown LPM opcode (%02x)", lpm->opcode);
--- 
-2.17.1
+Hi,
 
+On Mon, Nov 26, 2018 at 11:34:30AM +0200, Tomi Valkeinen wrote:
+> On 21/11/18 18:09, Sebastian Reichel wrote:
+> > Here is another round of the DSI command mode panel patchset
+> > integrating the feedback from PATCHv4. The patches are based
+> > on 4.20-rc1 + fixes from Laurent and Tony. I dropped the patches
+> > for OMAP3 support (it needs a workaround for a hardware bug) and
+> > for automatic display rotation. They should get their own series,
+> > once this patchset has landed.
+>=20
+> Thanks. I can pick 1, 2 and 4 as fixes.
+
+Feel free to pick up any patches in any order. I can rebase the
+remaining ones.
+
+> I need to look at 3 a bit more, but it might also be a valid fix
+> for the rcs. Although I believe the correct fix would be to
+> implement check_timings for dsi.c, which would return the adjusted
+> timings.
+
+I wondered how a proper fix should look like. In the end I just
+restored the old behaviour of not checking dispc to fix the
+regression.
+
+-- Sebastian
+
+--5oam3d2sfgetcsle
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlv8d4wACgkQ2O7X88g7
++prU7Q/9E+gTxeyN4QuuHPd3YImAUddnaKgas2r9KAdB/fmef627iRWf1HGg5CvU
+KFuYeP/NxdGqD/FM5TeayBjVSNa8aMSJYZuokjDTxY3VqPDXPB4M/URmAF8A6O4m
+Ihw7Ve49y+6jSDStc4VPxrC2fRFlMftBA1U9fnN60fsdvqIFZHR5G1G8n+EwfKav
+/RcjDRmeXtnzbOyjRVNYscobumigGF/cTagSrKvBF+cHN8h9UE0jcTvmYsfxsFBy
+N6tHNEwXJ2mPT1w3S+pIbDGdswaFI0oPpSxxftEmrMl7G4rdaJsoPRBe4lmqodPj
+Y1b4YHF155ZWXDeESCw+tb3+EAGW5dVdRRU6JfobyvnXumd2elnxQBGg4tDDYOgh
+aeS7ZAgEaiTbKmPcgzWgy2Bv0WWh/4q7iHsY8vocnJVRVHH3vNDN6YpvyIPGpk0J
+E80sHaivcYFCXUvX+NbbtCewg7v+eFLEVTEm1xNOcr4YzGe6bYLReNFhpc1ajTeh
+jR98DfMG9/6fDnl0vY0YEahslsaSXlpMtMWahPd1lx8tDT38wLR0WJsYeemiZoZO
+6ypnfhzErUzagYZ+9eUj2AQvSooOD4JOGtaaqnF/Ev8CISesHsR4/2ZkZVOi0yIA
+lTjFdaSP+gM1/LA4mxv5nrZoTqJVy8vJltMxkZIDapzKZpHZZks=
+=LobM
+-----END PGP SIGNATURE-----
+
+--5oam3d2sfgetcsle--
