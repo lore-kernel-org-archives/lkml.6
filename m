@@ -6,176 +6,137 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC51AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 12:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 448AFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 12:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81EDE20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 12:36:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81EDE20855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 131B020660
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 12:37:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 131B020660
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbeKZXaD (ORCPT
+        id S1726463AbeKZXbB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 18:30:03 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:53141 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726177AbeKZXaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:30:03 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5111D20D31; Mon, 26 Nov 2018 13:36:01 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8EAD3207BD;
-        Mon, 26 Nov 2018 13:35:50 +0100 (CET)
-Date:   Mon, 26 Nov 2018 13:35:50 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     vitor <vitor.soares@synopsys.com>
-Cc:     <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>, <corbet@lwn.net>,
-        <linux-doc@vger.kernel.org>, <gregkh@linuxfoundation.org>,
-        <arnd@arndb.de>, <psroka@cadence.com>, <agolec@cadence.com>,
-        <adouglas@cadence.com>, <bfolta@cadence.com>, <dkos@cadence.com>,
-        <alicja@cadence.com>, <cwronka@cadence.com>, <sureshp@cadence.com>,
-        <rafalc@cadence.com>, <thomas.petazzoni@bootlin.com>, <nm@ti.com>,
-        <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <geert@linux-m68k.org>, <linus.walleij@linaro.org>,
-        <Xiang.Lin@synaptics.com>, <linux-gpio@vger.kernel.org>,
-        <nsekhar@ti.com>, <pgaj@cadence.com>, <peda@axentia.se>,
-        <mshettel@codeaurora.org>, <swboyd@chromium.org>,
-        <joao.pinto@synopsys.com>
-Subject: Re: [PATCH] i3c: master: dw: split dw-i3c-master.c into master and
- bus specific parts
-Message-ID: <20181126133550.51469816@bbrezillon>
-In-Reply-To: <83115f47-1326-cb33-a7dc-4bc8ff95befa@synopsys.com>
-References: <ade2c1a8d1eb48681b01ccdc9bed22caf5e96c4b.1542904564.git.soares@synopsys.com>
-        <20181122210202.6af50fcc@bbrezillon>
-        <6d513e04-3a57-1989-429c-64631101c5a2@synopsys.com>
-        <20181123135004.7fd1cd58@bbrezillon>
-        <83115f47-1326-cb33-a7dc-4bc8ff95befa@synopsys.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 26 Nov 2018 18:31:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45972 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726177AbeKZXbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 18:31:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 699EAAC89;
+        Mon, 26 Nov 2018 12:36:59 +0000 (UTC)
+Subject: Re: [PATCH 1/5] mm, page_alloc: Spread allocations across zones
+ before introducing fragmentation
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Michal Hocko <mhocko@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+References: <20181123114528.28802-1-mgorman@techsingularity.net>
+ <20181123114528.28802-2-mgorman@techsingularity.net>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <7a3b2706-8d8c-9233-d6fc-26ace52641e7@suse.cz>
+Date:   Mon, 26 Nov 2018 13:36:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181123114528.28802-2-mgorman@techsingularity.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Nov 2018 12:06:24 +0000
-vitor <vitor.soares@synopsys.com> wrote:
+On 11/23/18 12:45 PM, Mel Gorman wrote:
+...
 
-> Hi Boris,
-> 
-> 
-> On 23/11/18 12:50, Boris Brezillon wrote:
-> > On Fri, 23 Nov 2018 12:39:31 +0000
-> > vitor <vitor.soares@synopsys.com> wrote:
-> >  
-> >> Hi Boris,
-> >>
-> >>
-> >> On 22/11/18 20:02, Boris Brezillon wrote:  
-> >>> On Thu, 22 Nov 2018 17:54:54 +0000
-> >>> Vitor Soares <vitor.soares@synopsys.com> wrote:
-> >>>     
-> >>>> From: Vitor Soares <soares@synopsys.com>
-> >>>>
-> >>>> This patch slipts dw-i3c-master.c into three pieces:
-> >>>> 	dw-i3c-master.c - contains the code that interacts directly with the
-> >>>> 	core in master mode.
-> >>>>
-> >>>> 	dw-i3c-platdrv.c - contains the code specific to the platform driver.
-> >>>>
-> >>>> 	dw-i3c-core.h - contains the definitions and declarations shared by
-> >>>> 	dw-i3c-master and dw-i3c-platdrv
-> >>>>
-> >>>> This patch will allow SOC integrators to add their code specific to
-> >>>> DesignWare I3C IP.  
-> >>> Isn't it too early to do this change? Can't we wait until we have a SoC
-> >>> that actually embeds this IP?  
-> >>
-> >> I'm trying to turn it more flexible so the other can reuse the code.  
-> > Looking at the separation you've done here, I don't see why you need
-> > it. All the resources you request are generic, so why not just adding a
-> > new compat in the of_match_table?  
-> 
-> I understand your point.
-> 
-> 
-> I'm just following what it's done in others Synopsys drivers and what I 
-> expect is that in the future we will have the same for the I3C.
-> 
-> Some of the current generic functions might be override according with 
-> SoC requirements (e.g i2c-designware, pcie-designware).
-> 
-> 
-> for now what do you prefer?
-> 
 
-I prefer that we keep the driver as is until we actually need to split
-things up.
+> Fault latencies are slightly reduced while allocation success rates remain
+> at zero as this configuration does not make any special effort to allocate
+> THP and fio is heavily active at the time and either filling memory or
+> keeping pages resident. However, a 49% reduction of serious fragmentation
+> events reduces the changes of external fragmentation being a problem in
+> the future.
+> 
+> Vlastimil asked during review for a breakdown of the allocation types
+> that are falling back.
+> 
+> vanilla
+>    3816 MIGRATE_UNMOVABLE
+>  800845 MIGRATE_MOVABLE
+>      33 MIGRATE_UNRECLAIMABLE
+> 
+> patch
+>     735 MIGRATE_UNMOVABLE
+>  408135 MIGRATE_MOVABLE
+>      42 MIGRATE_UNRECLAIMABLE
 
-> >>  
-> >>>     
-> >>>> Signed-off-by: Vitor Soares <soares@synopsys.com>
-> >>>> ---
-> >>>>    drivers/i3c/master/Kconfig          |   9 +-
-> >>>>    drivers/i3c/master/Makefile         |   5 +-
-> >>>>    drivers/i3c/master/dw-i3c-core.h    | 214 ++++++++++++++++++++++++++
-> >>>>    drivers/i3c/master/dw-i3c-master.c  | 299 ++----------------------------------
-> >>>>    drivers/i3c/master/dw-i3c-platdrv.c | 112 ++++++++++++++  
-> > Just realized the driver is named dw-i3c-master, while the cadence
-> > driver is named i3c-master-cdns.c. I'll send a patch to make that
-> > consistent and follow the initial naming scheme: i3c-master-<ipname>.c.  
-> 
-> As I shared with you in previous email, the structure that I have in 
-> mind is this one:
-> 
-> - core.h (or common.h, any though?)
-> 
-> - common.c
-> 
-> - master.c
-> 
-> - slave.c
-> 
-> 
-> so for me doesn't make sense to have for instance: i3c-master-dw-slave.c
+Nit: it's MIGRATE_RECLAIMABLE :)
 
-If you have several files and they're all placed in a dw/ subdir, then
-I agree, prefixing everything with i3c-master- is useless, as you'll
-have to define a custom rule to create the i3c-master-dw.ko object.
+> The majority of the fallbacks are due to movable allocations and this is
+> consistent for the workload throughout the series so will not be presented
+> again as the primary source of fallbacks are movable allocations.
 
-When there's a single source file, and this source file is directly
-used to create a .ko, we need this prefix, otherwise we would have
-dw.ko, and this would basically conflict with any other designware
-driver that does not have a proper prefix.
+Note that I was more interested in the *reduction* of different kinds of
+fallbacks, not their ratios - that the majority is caused by movable
+allocations is fully expected.
+And the results above actually show that while the reduction for MOVABLE
+is ~50%, the reduction for UNMOVABLE is actually 80%! IMHO that's great
+(better than I would expect, in fact), and good to know.
 
-> 
-> But seeing what is already in the kernel I wasn't coherent and it should 
-> be named to i3c-designware-master.c
+...
 
-Actually it's i3c-master-designware.c (or i3c-master-dw.c) if we follow
-what's been done for the cadence driver.
+> Overall, the patch reduces the number of external fragmentation causing
+> events so the success of THP over long periods of time would be improved
+> for this adverse workload.
+> 
+> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 
-> 
-> 
-> or
-> 
-> 
-> follow this https://lkml.org/lkml/2017/7/12/430
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-And I agree with Linus on this, except that does not apply to single
-source file drivers.
-
-> 
-> 
-> This topic rise another one related with the master folder. I understand 
-> that now the subsystem doesn't have slave support but the name is 
-> limited. Isn't better to have something like controller or busses? What 
-> do you have in mind for the slave?
-
-drivers/i3c/slave/... for slave drivers and drivers/i3c/slave.c for the
-framework, just like we have drivers/i3c/master/ for master controller
-drivers and drivers/i3c/master.c.
