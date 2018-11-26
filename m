@@ -2,247 +2,105 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBAFC04EBA
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 00:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0409BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 00:53:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8332420865
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 00:37:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B40C320855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 00:53:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="Qe8/I/So"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8332420865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="N+eJs+Ys"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B40C320855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbeKZL32 (ORCPT
+        id S1726141AbeKZLpR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 06:29:28 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44286 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbeKZL32 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 06:29:28 -0500
-Received: by mail-pf1-f195.google.com with SMTP id u6so5673783pfh.11
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 16:37:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=hW5H5eUlUgTpOIzdNNZ8H532v4I3mH9Vh7sq0pS0Uws=;
-        b=Qe8/I/SoyfMbx7r6ZlTob46zZbkiyNsb6cVYNKUnlfalU3CGH5L3uJcb1xcC92WoWV
-         B/uuw/+dtZU7VdwQk1loyXD2ACDpYRuwEltagst1sOYlwoAH5BvF50FVDuOpWHzctDcR
-         zjJFDA7TQj3ogkNllalze+olRfI2nzoTtBdDFhq8Rn0YvQcb0jIYihsRv2WLxRnzvXAq
-         EXlA/owk7TTWtEWGyUqXNbhdr0witzIqua7uf/yw5DIoFw+2qznha5A7sFlmEGW3uVnj
-         ocSEFDdHSEQC8VQK7dcHIiqRxc0BhMYBrDEW9RMbpJ6JhSutz6AjOwof7326Z4F1VP3W
-         TxGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=hW5H5eUlUgTpOIzdNNZ8H532v4I3mH9Vh7sq0pS0Uws=;
-        b=oJ9jy5kpO29d+5n8GFwTT2RFTtFWa1XIZ+sNPOAPRN2GrkOztgGb+lTiY1dIYLAhfV
-         05OgrHF68RsiykhQ3LhqPWq5IN7AfN6/SfQPuHwLn8Kbdg4IQQm1JrxEw1t0E51Ob14s
-         Bhuf5WZHf6wD43y/wdXrMX5lC8MBungMXZuu2mxOpetb/iUJZt1A0OUkLdPqtlS2myyY
-         sUGwIdhjYIKlyB7ppoqeasZwK/rYcZFur+Cyt8QU7aqpddPnxqHobe2zsfq0wqupLBki
-         /BB7UhPrEH2BaOPWSa77X3q6OgVBgt1H8PTBsKNfmLyMIq6dFp3FAR3h2gWYjih7jul+
-         2eVQ==
-X-Gm-Message-State: AA+aEWaAHcUjnMQk8l5VdamqYyvoRPUMn2KmxKzo8a5vThcqMNTtG+pV
-        yJ/FSTxIbTn/IesqMyNIBhvBAQ==
-X-Google-Smtp-Source: AFSGD/XY/gdT8hzY2aXicgjskg3kiDJH9A/Xz3bFvsWuLsAfGzRVxF1XuJTzX8BjqUNc0yFTpvhDlw==
-X-Received: by 2002:a62:53c5:: with SMTP id h188mr15295103pfb.190.1543192622866;
-        Sun, 25 Nov 2018 16:37:02 -0800 (PST)
-Received: from ?IPv6:2601:646:c200:7429:7069:da99:d9d2:c355? ([2601:646:c200:7429:7069:da99:d9d2:c355])
-        by smtp.gmail.com with ESMTPSA id s2sm52205469pfa.167.2018.11.25.16.37.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 25 Nov 2018 16:37:01 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16B92)
-In-Reply-To: <D45BC005-5064-4C75-B486-4E43C454E2F6@amacapital.net>
-Date:   Sun, 25 Nov 2018 16:37:00 -0800
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        haitao.huang@linux.intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
+        Mon, 26 Nov 2018 06:45:17 -0500
+Received: from ozlabs.org ([203.11.71.1]:37819 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726085AbeKZLpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 06:45:16 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 4337gN2FNFz9s0n;
+        Mon, 26 Nov 2018 11:52:48 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1543193568;
+        bh=7SkV6QFeXwKdKf5TYYyLcwsZvKUdmYHX8KyPX9xQZkM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=N+eJs+Ys42dqVc1CHiNo61QQk/cqJgBVKzymLEW3yeoeyQ2w5IZQtRLoVcYXNudOL
+         7ZceJ3kgfmRqy1w2DeAP62lecQrU3JkyQsMcZmazgUib6kHrITIxO+xfsG2TDK7DoG
+         3rxW4LhAPiTxnxWGG/KIBROmJwXAYyl9opEbtONBz5DZQO4pKF3OIyw1eDZm2BHegt
+         BynDonBM5irOdNl/TrSGqfea5EiE+eCCbaxeeMYMVkslVbMa0yDF+JLY4aM/5YIdto
+         4SR/RM0aDbnD6NglkUq35TpLKmqZWwDB+LShwaanM9NNHI3NQTvlt9timSzSoF4iaC
+         O0J14uhRCyL+Q==
+Date:   Mon, 26 Nov 2018 11:52:47 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Steve French <smfrench@gmail.com>
+Cc:     Sachin Prabhu <sprabhu@redhat.com>,
+        CIFS <linux-cifs@vger.kernel.org>, keescook@google.com,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <94154ECB-3EF7-4A37-9057-0B84DBCE650E@amacapital.net>
-References: <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com> <20181119161917.GF13298@linux.intel.com> <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com> <20181120120442.GA22172@linux.intel.com> <20181122111253.GA31150@wind.enjellic.com> <CALCETrWJr-C6yK8NBCp=NbapwHOaBFphiDU9VKEtQ0NMRrdC2g@mail.gmail.com> <20181124172114.GB32210@linux.intel.com> <20181125145329.GA5777@linux.intel.com> <0669C300-02CB-4EA6-BF88-5C4B4DDAD4C7@amacapital.net> <20181125185524.GA23224@wind.enjellic.com> <D45BC005-5064-4C75-B486-4E43C454E2F6@amacapital.net>
-To:     "Dr. Greg" <greg@enjellic.com>
+Subject: Re: linux-next: build warnings after merge of the cifs tree
+Message-ID: <20181126115247.53cbf7be@canb.auug.org.au>
+In-Reply-To: <CAH2r5mvtFzp=nYK+J92vh9y4tsNLT3rD4a2+mB9LMyWcFN-EHA@mail.gmail.com>
+References: <20181126111415.5cf17f39@canb.auug.org.au>
+        <CAH2r5mvtFzp=nYK+J92vh9y4tsNLT3rD4a2+mB9LMyWcFN-EHA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/914m7+LezhCz7kA/2bBuqhG"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bah, I hit send on a partially written draft. I=E2=80=99ll try again soon.
+--Sig_/914m7+LezhCz7kA/2bBuqhG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---Andy
+Hi Steve,
 
-> On Nov 25, 2018, at 1:59 PM, Andy Lutomirski <luto@amacapital.net> wrote:
+On Sun, 25 Nov 2018 18:31:40 -0600 Steve French <smfrench@gmail.com> wrote:
+>
+> Both of those cases are intentional fallthroughs and there are
+> existing comments in the code noting the reasons for them to
+> fallthrough
 >=20
->=20
->=20
->> On Nov 25, 2018, at 10:55 AM, Dr. Greg <greg@enjellic.com> wrote:
->>=20
->=20
->>=20
->>=20
->> The notion of a launch enclave is critical to establishing these
->> guarantees.  As soon as the kernel becomes involved in implementing
->> SGX security policy the architecture becomes vulnerable to kernel
->> and/or privilege modification attacks.
->>=20
->> We've talked at length about the provisioning bit, I won't go into
->> details unless people are interested, but the EPID provisioning
->> protocol implements an SGX mediated cryptographic contract that a
->> perpetual platform identifier will not be disclosed to anyone but
->> Intel. =20
->=20
-> As a reviewer, and as an occasional academic cryptographer, I need to put m=
-y foot down here.  This is inaccurate.
->=20
-> There is an SGX-mediated contract that says:
->=20
-> 1. For any given public key p, a perpetual platform identifier ID_p exists=
- and will only be disclosed to the holder of the corresponding private key p=
-_priv or to someone to whom the private key holder permits (intentionally or=
- otherwise) to use that identifier.
->=20
-> 2. The ability described in #1 is available to anyone whom the kernel and l=
-aunch enclave (if the MSRs are locked ) permits (intentionally or otherwise)=
- to use it.
->=20
-> No, I have no clue why Intel did it this way.  I consider it to be a mista=
-ke.
->=20
->> The launch enclave is critical to that guarantee.
->>=20
->> It is completely understandable why a locked down, (non-FLC) hardware
->> platform, is undesirable in this community.  That doesn't mean that a
->> launch enclave as a concept is unneeded or necessarily evil.
->>=20
->> In an FLC environment the kernel assumes responsibility for SGX
->> privacy and security.  This means that we need to do at least as well
->> with a kernel based model as to what is currently available.
->>=20
->>> There are other ways to accomplish it that might be better in some
->>> respects.  For example, there could be /dev/sgx and
->>> /dev/sgx_rights/provision.  The former exposes the whole sgx API,
->>> except that it doesn???t allow provisioning by default. The latter
->>> does nothing by itself. To run a provisioning enclave, you open both
->>> nodes, then do something like:
->>>=20
->>> ioctl(sgx, SGX_IOC_ADD_RIGHT, sgx_provisioning);
->>>=20
->>> This requires extra syscalls, but it doesn't have the combinatorial
->>> explosion problem.
->>=20
->> Here is a proposal for the driver to add the needed policy control
->> that is 'SGXy' in nature.  The 'SGXy' way is to use MRSIGNER values as
->> the currency for security policy management.
->>=20
->> The driver should establish the equivalent of three linked lists,
->> maintainable via /sysfs pseudo-files or equivalent plumbing.  The
->> lists are referenced by the kernel to enforce the following policies.
->>=20
->> 1.) The right to initialize an enclave without special attributes.
->>=20
->> 2.) The right to initialize an enclave with the PROVISION_KEY attribute s=
-et.
->>=20
->> 3.) The right to initialize an enclave with the LICENSE_KEY attribute set=
-.
->>=20
->> The lists are populated with MRSIGNER values of enclaves that are
->> allowed to initialize under the specified conditions.
->=20
-> NAK because this is insufficient.  You=E2=80=99re thinking of a model in w=
-hich SGX-like protection is all that=E2=80=99s needed.  This is an inadequat=
-e model of the real world.  The attack I=E2=80=99m most concerned about wrt p=
-rovisioning is an attack in which an unauthorized user is permitted=20
->=20
-> The use case I see for attestation *privacy*
->=20
->>=20
->> The driver should either establish a 'seal' file or value,
->> ie. MRSIGNER value of all zero's, that once written will not allow
->> further modifications of the list(s).  This will allow
->> cryptographically guaranteed policies to be setup at early boot that
->> will limit the ability of subsequent DAC compromises to affect policy
->> management.
->>=20
->> The lists are obviously vulnerable to a kernel compromise but the
->> vulnerability scope is significantly limited vs. 'can I get root or
->> some other userid'.  If we are really concerned about the scope of
->> that vulnerability there could be an option on TPM based systems to
->> verify a hash value over the lists once sealed on each enclave
->> initialization.  We have already conceded that EINIT isn't going to be
->> any type of speed daemon.
->>=20
->> On an FLC system the driver verifies that the submitted enclave has an
->> MRSIGNER value on one of the lists consistent with the attributes of
->> the enclave before loading the value into the identity modulus
->> signature registers.
->>=20
->> In this model, I would argue that the driver does not need to
->> arbitrarily exclude launch enclaves as it does now, since the kernel
->> has the ability to specify acceptable launch enclaves.  The driver API
->> can alaso continue to accept an EINITTOKEN which maintains
->> compatibility with the current ABI.  Punishment can be inflicted on
->> non-FLC hardware owners by issueing EINVAL if an EINITTOKEN is
->> specified on platforms with fixed launch keys.
->>=20
->> This also has the effect of allowing multiple launch enclaves at the
->> platform owner's discretion.  I know there was some sentiment, and
->> Jarkko had code, that used a launch enclave at a fixed location such
->> as /lib/firmware.  That has the disadvantage of requiring that the
->> kernel know about all the different ways that a launch enclave might
->> be used or setup.  It also establishes a cryptographic rather then a
->> filesystem based guarantee on the launch enclave being used.
->>=20
->> If the lists are empty the kernel simply proceeds as it does now and
->> loads any enclave submitted to it.
->>=20
->> I believe this architecture has a number of merits.  It largely
->> preserves compatibility with current PSW's and provides a mechanism
->> for cryptographically enforced policy that is consistent with the SGX
->> architecture.
->>=20
->> I need to get Christmas lights put up on the house for the squirrels
->> to eat so I will leave this proposal open for debate.
->>=20
->> Have a good remainder of the weekend or whats left of it.
->>=20
->> Dr. Greg
->>=20
->> As always,
->> Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
->> 4206 N. 19th Ave.           Specializing in information infra-structure
->> Fargo, ND  58102            development.
->> PH: 701-281-1686
->> FAX: 701-281-3949           EMAIL: greg@enjellic.com
->> -------------------------------------------------------------------------=
------
->> "Some of them are.  A surprising number aren't.  A personal favorite of
->> mine was the log from a cracker who couldn't figure out how to untar
->> and install the trojan package he'd ftped onto the machine.  He tried a
->> few times, and then eventually gave up and logged out."
->>                               -- Nat Lanza
+> (also can see the reasoning for these in the commits which introduced
+> them from Sachin c369c9a4a7c82) and dde2356c84662)
+
+I am not questioning that :-)
+
+The gcc warning can be turned off by adding a /* fall through */
+comment at the point the fall through happens.  Kees and others are
+working on the several hundred other places that need annotating.
+
+This one just popped up.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/914m7+LezhCz7kA/2bBuqhG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv7Q98ACgkQAVBC80lX
+0GxJXwf/YbJmvqG4cflEZDjeqL/qziZ5xfP7S3vWetuFVBU+fYrAGVxeKhRHmb2F
+6fk3UNhtanCj895jn4xW7JhyKJ3PBkrtwJRcYtnfGR1TwhXvLX/wwGOFi1PqfUKe
+1tdBF29iXUoKik8lqMGUpJFCDpTSems77gMSuvz1I3B5/rMMueXqdLBaQpGROm1q
+/OrNs0yJ89EKiIrGNLH/ii6c5Fx2z66/P6fkx2rO0fACbgJy1V3UimaStofutHJw
+8WyLjhiYzUBnuEnLB8GbBJCIz8iFUw6UnfrZgdXsjpIwxNhPd3t/38oScK+FzWm9
+9eaTlVopq0D91mJbp5BVElIsdjC6aQ==
+=p9lr
+-----END PGP SIGNATURE-----
+
+--Sig_/914m7+LezhCz7kA/2bBuqhG--
