@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFC5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEAC9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 948E72146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A85652089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+PHnUMF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 948E72146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCN6OVUJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A85652089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730480AbeKZV4Q (ORCPT
+        id S1730494AbeKZV4T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:56:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39316 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:56:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729135AbeKZV4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:56:15 -0500
+        id S1730481AbeKZV4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:56:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D1BE20817;
-        Mon, 26 Nov 2018 11:02:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FAA72089F;
+        Mon, 26 Nov 2018 11:02:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230150;
-        bh=jr0iJgUo5wWx2wF2i33Y7rN8NwKs9OYpnUDYoYQX+Sk=;
+        s=default; t=1543230152;
+        bh=uI6R94bC9cVV0856vDCMPip4AzeRZHG8NoXO1PEtDhQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u+PHnUMFG+7XZ1CVhT91OdirZTvCvPht5w65JunJMO0w130r4M0ncaDphQZ9PxxpG
-         DDAcG+Ci9dmXaB9AeqCayFwm7TCDxZ3/lIVUzn3+AKFrLwj2az3Hdver8D6rmHaqFP
-         Yz9nLfHi5WtB/8hxGUzDLvgQysLhP5bELhpq0F/0=
+        b=iCN6OVUJP8ZDrZr3JlFdm3Rh0+zRqpADxajFYGPLXMAlPpRdwOXHL5YYHmAkc4Un6
+         l8dhxrYSlHVOqbdTe7WoDd+0U6JY7cY49j1SN3xg/LfUQ0slwAKNjZ5ajvTlMHkx9n
+         pxWKigt0v84OFMHvupghcUpbc2YYLflvQn79mtZA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Feuerer <peter@piie.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Jianxin Qin <jianxin.qin@amlogic.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 026/118] platform/x86: acerhdf: Add BIOS entry for Gateway LT31 v1.3307
-Date:   Mon, 26 Nov 2018 11:50:20 +0100
-Message-Id: <20181126105100.866981018@linuxfoundation.org>
+Subject: [PATCH 4.19 027/118] clk: meson-axg: pcie: drop the mpll3 clock parent
+Date:   Mon, 26 Nov 2018 11:50:21 +0100
+Message-Id: <20181126105100.912940259@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -66,39 +64,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 684238d79ad85c5e19a71bb5818e77e329912fbc ]
+[ Upstream commit 69b93104c7ec5668019caf5d2dbfd0e182df06db ]
 
-To fix:
+We found the PCIe driver doesn't really work with
+the mpll3 clock which is actually reserved for debug,
+So drop it from the mux list.
 
-  acerhdf: unknown (unsupported) BIOS version Gateway  /LT31   /v1.3307 , please report, aborting!
-
-As can be seen in the context, the BIOS registers haven't changed in
-the previous versions, so the assumption is they won't have changed
-in this last update for this somewhat older platform either.
-
-Cc: Peter Feuerer <peter@piie.net>
-Cc: Darren Hart <dvhart@infradead.org>
-Cc: Andy Shevchenko <andy@infradead.org>
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Peter Feuerer <peter@piie.net>
+Fixes: 33b89db68236 ("clk: meson-axg: add clocks required by pcie driver")
+Tested-by: Jianxin Qin <jianxin.qin@amlogic.com>
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/acerhdf.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/meson/axg.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
-index ea22591ee66f..53dfe67807e3 100644
---- a/drivers/platform/x86/acerhdf.c
-+++ b/drivers/platform/x86/acerhdf.c
-@@ -233,6 +233,7 @@ static const struct bios_settings bios_tbl[] = {
- 	{"Gateway", "LT31",   "v1.3201",  0x55, 0x58, {0x9e, 0x00}, 0},
- 	{"Gateway", "LT31",   "v1.3302",  0x55, 0x58, {0x9e, 0x00}, 0},
- 	{"Gateway", "LT31",   "v1.3303t", 0x55, 0x58, {0x9e, 0x00}, 0},
-+	{"Gateway", "LT31",   "v1.3307",  0x55, 0x58, {0x9e, 0x00}, 0},
- 	/* Packard Bell */
- 	{"Packard Bell", "DOA150",  "v0.3104",  0x55, 0x58, {0x21, 0x00}, 0},
- 	{"Packard Bell", "DOA150",  "v0.3105",  0x55, 0x58, {0x20, 0x00}, 0},
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 8cf74fc423e6..baabcf7c0a24 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -713,12 +713,14 @@ static struct clk_regmap axg_pcie_mux = {
+ 		.offset = HHI_PCIE_PLL_CNTL6,
+ 		.mask = 0x1,
+ 		.shift = 2,
++		/* skip the parent mpll3, reserved for debug */
++		.table = (u32[]){ 1 },
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "pcie_mux",
+ 		.ops = &clk_regmap_mux_ops,
+-		.parent_names = (const char *[]){ "mpll3", "pcie_pll" },
+-		.num_parents = 2,
++		.parent_names = (const char *[]){ "pcie_pll" },
++		.num_parents = 1,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
 -- 
 2.17.1
 
