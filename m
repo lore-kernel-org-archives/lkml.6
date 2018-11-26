@@ -2,50 +2,50 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B121BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46AC9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 781A320645
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1011320645
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2U0Xa6on"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 781A320645
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrGrmn9f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1011320645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730801AbeKZV50 (ORCPT
+        id S1730814AbeKZV51 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:57:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41528 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:57:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729290AbeKZV5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:57:24 -0500
+        id S1730795AbeKZV50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:57:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD86A20645;
-        Mon, 26 Nov 2018 11:03:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 697CE2089F;
+        Mon, 26 Nov 2018 11:03:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230218;
-        bh=3LkfeakymRouNzuWwNh8C6aebfAEEfPI3G1pv581dss=;
+        s=default; t=1543230220;
+        bh=zPYaixEMGLFFIxpwnLT1u9Hfh9OL2U0Ge2noZwSTPVw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2U0Xa6onETVPbi3+dyCDMuOrs1mHUieero3OOq9HkEkhDW0MI34s/sg7Z3pAl8rxp
-         dqstIbNOJcIXnKz8H6KAqWE93Zm7OzAhA87o/UKBpbn756ofltzXuKO9oPuqT7IXgI
-         0Uh4hXP7qLbQnBEdGsejh816afGW2Z3gjY9ZpntY=
+        b=WrGrmn9ffEZwoIsP1hDnL+Xf/Bo9kPfE4Ip5QDz52Zap5idpBntnGSIwOr4Uw/QyO
+         v+Ze7TJbTETUZeTxn2M0KRCGe69GfjYwkZi4N/21HKhlbIDxVtmVjwOuvqE9KrHrM4
+         qbFFof8fWxRmWzkIZrlpzAgt2qckhUXTtq7Z/MkY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 053/118] net: hns3: Fix for out-of-bounds access when setting pfc back pressure
-Date:   Mon, 26 Nov 2018 11:50:47 +0100
-Message-Id: <20181126105102.945220580@linuxfoundation.org>
+Subject: [PATCH 4.19 054/118] hwmon: (ibmpowernv) Remove bogus __init annotations
+Date:   Mon, 26 Nov 2018 11:50:48 +0100
+Message-Id: <20181126105102.986617404@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -63,96 +63,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e8ccbb7d2f53c62e14b889faaa3f6f809b657278 ]
+[ Upstream commit e3e61f01d755188cb6c2dcf5a244b9c0937c258e ]
 
-The vport should be initialized to hdev->vport for each bp group,
-otherwise it will cause out-of-bounds access and bp setting not
-correct problem.
+If gcc decides not to inline make_sensor_label():
 
-[   35.254124] BUG: KASAN: slab-out-of-bounds in hclge_pause_setup_hw+0x2a0/0x3f8 [hclge]
-[   35.254126] Read of size 2 at addr ffff803b6651581a by task kworker/0:1/14
+    WARNING: vmlinux.o(.text+0x4df549c): Section mismatch in reference from the function .create_device_attrs() to the function .init.text:.make_sensor_label()
+    The function .create_device_attrs() references
+    the function __init .make_sensor_label().
+    This is often because .create_device_attrs lacks a __init
+    annotation or the annotation of .make_sensor_label is wrong.
 
-[   35.254132] CPU: 0 PID: 14 Comm: kworker/0:1 Not tainted 4.19.0-rc7-hulk+ #85
-[   35.254133] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 UEFI RC0 - B052 (V0.52) 09/14/2018
-[   35.254141] Workqueue: events work_for_cpu_fn
-[   35.254144] Call trace:
-[   35.254147]  dump_backtrace+0x0/0x2f0
-[   35.254149]  show_stack+0x24/0x30
-[   35.254154]  dump_stack+0x110/0x184
-[   35.254157]  print_address_description+0x168/0x2b0
-[   35.254160]  kasan_report+0x184/0x310
-[   35.254162]  __asan_load2+0x7c/0xa0
-[   35.254170]  hclge_pause_setup_hw+0x2a0/0x3f8 [hclge]
-[   35.254177]  hclge_tm_init_hw+0x794/0x9f0 [hclge]
-[   35.254184]  hclge_tm_schd_init+0x48/0x58 [hclge]
-[   35.254191]  hclge_init_ae_dev+0x778/0x1168 [hclge]
-[   35.254196]  hnae3_register_ae_dev+0x14c/0x298 [hnae3]
-[   35.254206]  hns3_probe+0x88/0xa8 [hns3]
-[   35.254210]  local_pci_probe+0x7c/0xf0
-[   35.254212]  work_for_cpu_fn+0x34/0x50
-[   35.254214]  process_one_work+0x4d4/0xa38
-[   35.254216]  worker_thread+0x55c/0x8d8
-[   35.254219]  kthread+0x1b0/0x1b8
-[   35.254222]  ret_from_fork+0x10/0x1c
+As .probe() can be called after freeing of __init memory, all __init
+annotiations in the driver are bogus, and should be removed.
 
-[   35.254224] The buggy address belongs to the page:
-[   35.254228] page:ffff7e00ed994400 count:1 mapcount:0 mapping:0000000000000000 index:0x0 compound_mapcount: 0
-[   35.273835] flags: 0xfffff8000008000(head)
-[   35.282007] raw: 0fffff8000008000 dead000000000100 dead000000000200 0000000000000000
-[   35.282010] raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-[   35.282012] page dumped because: kasan: bad access detected
-
-[   35.282014] Memory state around the buggy address:
-[   35.282017]  ffff803b66515700: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-[   35.282019]  ffff803b66515780: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-[   35.282021] >ffff803b66515800: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-[   35.282022]                             ^
-[   35.282024]  ffff803b66515880: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-[   35.282026]  ffff803b66515900: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-[   35.282028] ==================================================================
-[   35.282029] Disabling lock debugging due to kernel taint
-[   35.282747] hclge driver initialization finished.
-
-Fixes: 67bf2541f4b9 ("net: hns3: Fixes the back pressure setting when sriov is enabled")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/hwmon/ibmpowernv.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index 5db70a1451c5..48235dc2dd56 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -1167,14 +1167,14 @@ static int hclge_pfc_setup_hw(struct hclge_dev *hdev)
-  */
- static int hclge_bp_setup_hw(struct hclge_dev *hdev, u8 tc)
+diff --git a/drivers/hwmon/ibmpowernv.c b/drivers/hwmon/ibmpowernv.c
+index 83472808c816..64d05edff130 100644
+--- a/drivers/hwmon/ibmpowernv.c
++++ b/drivers/hwmon/ibmpowernv.c
+@@ -181,7 +181,7 @@ static ssize_t show_label(struct device *dev, struct device_attribute *devattr,
+ 	return sprintf(buf, "%s\n", sdata->label);
+ }
+ 
+-static int __init get_logical_cpu(int hwcpu)
++static int get_logical_cpu(int hwcpu)
  {
--	struct hclge_vport *vport = hdev->vport;
--	u32 i, k, qs_bitmap;
--	int ret;
-+	int i;
+ 	int cpu;
  
- 	for (i = 0; i < HCLGE_BP_GRP_NUM; i++) {
--		qs_bitmap = 0;
-+		u32 qs_bitmap = 0;
-+		int k, ret;
+@@ -192,9 +192,8 @@ static int __init get_logical_cpu(int hwcpu)
+ 	return -ENOENT;
+ }
  
- 		for (k = 0; k < hdev->num_alloc_vport; k++) {
-+			struct hclge_vport *vport = &hdev->vport[k];
- 			u16 qs_id = vport->qs_offset + tc;
- 			u8 grp, sub_grp;
- 
-@@ -1184,8 +1184,6 @@ static int hclge_bp_setup_hw(struct hclge_dev *hdev, u8 tc)
- 						  HCLGE_BP_SUB_GRP_ID_S);
- 			if (i == grp)
- 				qs_bitmap |= (1 << sub_grp);
--
--			vport++;
- 		}
- 
- 		ret = hclge_tm_qs_bp_cfg(hdev, tc, i, qs_bitmap);
+-static void __init make_sensor_label(struct device_node *np,
+-				     struct sensor_data *sdata,
+-				     const char *label)
++static void make_sensor_label(struct device_node *np,
++			      struct sensor_data *sdata, const char *label)
+ {
+ 	u32 id;
+ 	size_t n;
 -- 
 2.17.1
 
