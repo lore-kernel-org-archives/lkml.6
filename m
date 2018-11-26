@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7823C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34CFCC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A906C20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:57:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A906C20855
+	by mail.kernel.org (Postfix) with ESMTP id 054A620850
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 08:57:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 054A620850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbeKZTuo (ORCPT
+        id S1726308AbeKZTux (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 14:50:44 -0500
-Received: from mga05.intel.com ([192.55.52.43]:51482 "EHLO mga05.intel.com"
+        Mon, 26 Nov 2018 14:50:53 -0500
+Received: from mga09.intel.com ([134.134.136.24]:20870 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726157AbeKZTuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 14:50:44 -0500
+        id S1726157AbeKZTuw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 14:50:52 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 00:57:17 -0800
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 00:57:26 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,281,1539673200"; 
-   d="scan'208";a="89218240"
+   d="scan'208";a="111517504"
 Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga008.fm.intel.com with ESMTP; 26 Nov 2018 00:57:17 -0800
+  by orsmga002.jf.intel.com with ESMTP; 26 Nov 2018 00:57:25 -0800
 Received: from [10.125.252.8] (abudanko-mobl.ccr.corp.intel.com [10.125.252.8])
-        by linux.intel.com (Postfix) with ESMTP id 062695803C2;
-        Mon, 26 Nov 2018 00:57:13 -0800 (PST)
-To:     Jonatan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        by linux.intel.com (Postfix) with ESMTP id 46CC3580460;
+        Mon, 26 Nov 2018 00:57:22 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] Documentation/admin-guide: introduce
+ perf-security.rst file
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Kees Cook <keescook@chromium.org>,
         Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v3 0/2] Documentation/admin-guide: introduce perf-security.rst
- file and extend perf_event_paranoid documentation
-Organization: Intel Corp.
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -54,11 +52,17 @@ Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         "kernel-hardening@lists.openwall.com" 
         <kernel-hardening@lists.openwall.com>,
         "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Message-ID: <6cfb235a-59bc-48f0-3425-59c5b6431b12@linux.intel.com>
-Date:   Mon, 26 Nov 2018 11:57:11 +0300
+References: <259a9cd2-5c56-4f8d-57c4-cabaeaa774bc@linux.intel.com>
+ <4d95341d-d1f4-fc48-f173-a6fedfc70d33@linux.intel.com>
+ <20181125124732.6c1807de@lwn.net>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <02dbd6dc-86b5-2307-4122-b716c51b9eaa@linux.intel.com>
+Date:   Mon, 26 Nov 2018 11:57:21 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20181125124732.6c1807de@lwn.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,49 +71,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Jon,
 
-To facilitate informed decision making by system administrators [1]
-to permit and manage access to Perf Events (perf_events) / Perf tool 
-(Perf) [2],[3] performance monitoring for multiple users perf-security.rst 
-document suggested by Thomas Gleixner is introduced [4] that:
+On 25.11.2018 22:47, Jonathan Corbet wrote:
+> On Wed, 21 Nov 2018 12:14:14 +0300
+> Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
+> 
+>> +For the purpose of performing security checks Linux implementation splits
+>> +processes into two categories [6]_ : a) privileged processes (whose effective
+>> +user ID is 0, referred to as superuser or root), and b) unprivileged processes
+>> +(whose effective UID is nonzero).
+> 
+> Is that really what's going on here?  If I understand things correctly,
+> it's looking for CAP_SYS_PTRACE rather than a specific UID; am I missing
+> something here?
 
-a) states perf_events/Perf access security concerns for multi user environment
-b) refers to base Linux access control and management principles
-c) extends documentation of possible perf_event_paranoid knob settings 
+You are right regarding CAP_SYS_PTRACE but this capability is not the only 
+one which is used by perf_events for security checks, so the capabilities 
+clarification is kept aside of these patches, because patches initial intention 
+is to clarify security specifics of sysctl_perf_even_paranoid settings.
 
-The file serves as single knowledge source for perf_events/Perf security and 
-access control related matter according to decisions, discussion and  
-PoC prototype previously made here [5],[6].
+I agree that the document can be extended with details clarifying capabilities 
+used by perf_events for security checks.
 
-The file can later be extended with information describing:
+> 
+> (Also, you would want "*the* Linux implementation" in the first sentence
+> above).
 
-a) perf_events/Perf usage models and its security implications
-b) perf_events/Perf user interface, its changes and related security implications
-c) security related implications of monitoring by a specific perf_events PMU [2]
+Accepted.
 
----
-Alexey Budankov (2):
-  Documentation/admin-guide: introduce perf-security.rst file
-  Documentation/admin-guide: update admin-guide index.rst
+> 
+> One other thing:
+> 
+>> +(whose effective UID is nonzero). Privileged processes bypass all kernel
+>> +security permission checks so perf_events performance monitoring is fully
+>> +available to privileged processes without *access*, *scope* and *resource*
+>> +restrictions.
+> 
+> Could I ask for a slight toning down of the markup here?  There's a lot of
+> *emphasis* here that isn't really needed and tends to get in the way.
 
- Documentation/admin-guide/index.rst         |  1 +
- Documentation/admin-guide/perf-security.rst | 77 +++++++++++++++++++++
- 2 files changed, 78 insertions(+)
- create mode 100644 Documentation/admin-guide/perf-security.rst
+Accepted.
 
----
-Changes in v3:
-- toning down of the markup for "scope, access and resource"
-- adding definite article for "Linux implementation"
-Changes in v2:
-- reverted patches order in the set to avoid CI issue
-- replaced old PCL referencing by PE (Perf Events)
-- skipped >=3 setting documentation at the moment
+Thanks,
+Alexey
 
----
-[1] https://marc.info/?l=linux-kernel&m=153815883923913&w=2
-[2] http://man7.org/linux/man-pages/man2/perf_event_open.2.html
-[3] https://perf.wiki.kernel.org/index.php/Main_Page
-[4] https://marc.info/?l=linux-kernel&m=153837512226838&w=2
-[5] https://marc.info/?l=linux-kernel&m=153736008310781&w=2
-[6] https://lkml.org/lkml/2018/5/21/156
+> 
+> Thanks,
+> 
+> jon
+> 
