@@ -2,59 +2,55 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAD_ENC_HEADER,
-	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4087C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D7EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:53:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9888621104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:53:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 672722146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:53:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BWqwvItv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9888621104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZmVTpv2N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 672722146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbeKZVrY (ORCPT
+        id S1727019AbeKZVr1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:47:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55562 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:47:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726138AbeKZVrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:47:24 -0500
+        id S1726138AbeKZVr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:47:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A711920817;
-        Mon, 26 Nov 2018 10:53:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DA9E2089F;
+        Mon, 26 Nov 2018 10:53:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229620;
-        bh=QcxgaZI8Q/cNWh2Xq1XWK2y8QOte/9JbCCWp3CiLJF0=;
+        s=default; t=1543229622;
+        bh=zct57Nzi0/6IrqHbQW2JJKFcpWjLjH5fVz2xk/6ocxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BWqwvItvutSY+rsaqbOhcjRg3xVi0h9Kbh0P0l1iPjsUjGAw64VT4zg4mq5etaXln
-         PyhhBMOs2W29Y3RqkuwtBuQsD4ZG+sWgED+4n7vboaGYFvV82ssasuHkikLK+ZyMKw
-         empwnIJmvIaRICauVsCuwQE8wK//lHzaaBX6rneQ=
+        b=ZmVTpv2N89g/TAKnKDt6qKtNyhownHwTzHlpBYQLVa53WFiXP/0ySvcEHCKLV4mxM
+         yWPALQz8l/Kt+BYepavNoieJ+rUL52L5YA36dsPLlbSU+tY3jadHWNokqjNhD7JeNY
+         9CMnFzx8G7gVT7emlQ3gRS6UisRreu9QHTPAZzkU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "=?UTF-8?q?Ernesto=20A . =20Fern=C3=A1ndez?=" 
-        <ernesto.mnd.fernandez@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 03/24] hfs: prevent btree data loss on root split
-Date:   Mon, 26 Nov 2018 11:50:57 +0100
-Message-Id: <20181126105030.256797058@linuxfoundation.org>
+        =?UTF-8?q?=EB=B0=B0=EC=84=9D=EC=A7=84?= <soukjin.bae@samsung.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 01/70] flow_dissector: do not dissect l4 ports for fragments
+Date:   Mon, 26 Nov 2018 11:50:16 +0100
+Message-Id: <20181126105046.915034200@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181126105029.790599475@linuxfoundation.org>
-References: <20181126105029.790599475@linuxfoundation.org>
+In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
+References: <20181126105046.722096341@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -63,49 +59,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-[ Upstream commit d057c036672f33d43a5f7344acbb08cf3a8a0c09 ]
+From: 배석진 <soukjin.bae@samsung.com>
 
-This bug is triggered whenever hfs_brec_update_parent() needs to split
-the root node.  The height of the btree is not increased, which leaves
-the new node orphaned and its records lost.  It is not possible for this
-to happen on a valid hfs filesystem because the index nodes have fixed
-length keys.
+[ Upstream commit 62230715fd2453b3ba948c9d83cfb3ada9169169 ]
 
-For reasons I ignore, the hfs module does have support for a number of
-hfsplus features.  A corrupt btree header may report variable length
-keys and trigger this bug, so it's better to fix it.
+Only first fragment has the sport/dport information,
+not the following ones.
 
-Link: http://lkml.kernel.org/r/9750b1415685c4adca10766895f6d5ef12babdb0.1535682463.git.ernesto.mnd.fernandez@gmail.com
-Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+If we want consistent hash for all fragments, we need to
+ignore ports even for first fragment.
+
+This bug is visible for IPv6 traffic, if incoming fragments
+do not have a flow label, since skb_get_hash() will give
+different results for first fragment and following ones.
+
+It is also visible if any routing rule wants dissection
+and sport or dport.
+
+See commit 5e5d6fed3741 ("ipv6: route: dissect flow
+in input path if fib rules need it") for details.
+
+[edumazet] rewrote the changelog completely.
+
+Fixes: 06635a35d13d ("flow_dissect: use programable dissector in skb_flow_dissect and friends")
+Signed-off-by: 배석진 <soukjin.bae@samsung.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/hfs/brec.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ net/core/flow_dissector.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/hfs/brec.c b/fs/hfs/brec.c
-index 2a6f3c67cb3f..2e713673df42 100644
---- a/fs/hfs/brec.c
-+++ b/fs/hfs/brec.c
-@@ -424,6 +424,10 @@ skip:
- 	if (new_node) {
- 		__be32 cnid;
+--- a/net/core/flow_dissector.c
++++ b/net/core/flow_dissector.c
+@@ -480,8 +480,8 @@ ip_proto_again:
+ 		break;
+ 	}
  
-+		if (!new_node->parent) {
-+			hfs_btree_inc_height(tree);
-+			new_node->parent = tree->root;
-+		}
- 		fd->bnode = hfs_bnode_find(tree, new_node->parent);
- 		/* create index key and entry */
- 		hfs_bnode_read_key(new_node, fd->search_key, 14);
--- 
-2.17.1
-
+-	if (dissector_uses_key(flow_dissector,
+-			       FLOW_DISSECTOR_KEY_PORTS)) {
++	if (dissector_uses_key(flow_dissector, FLOW_DISSECTOR_KEY_PORTS) &&
++	    !(key_control->flags & FLOW_DIS_IS_FRAGMENT)) {
+ 		key_ports = skb_flow_dissector_target(flow_dissector,
+ 						      FLOW_DISSECTOR_KEY_PORTS,
+ 						      target_container);
 
 
