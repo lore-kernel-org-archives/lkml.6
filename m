@@ -2,128 +2,218 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFFEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF1CBC04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B60142082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:53:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C05220C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:56:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LQR5kBI0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B60142082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="kjJ40KIA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C05220C01
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbeK0JtZ (ORCPT
+        id S1727529AbeK0Jwg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 04:49:25 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:43727 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727415AbeK0JtZ (ORCPT
+        Tue, 27 Nov 2018 04:52:36 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37530 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727188AbeK0Jwf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 04:49:25 -0500
-Received: by mail-qk1-f195.google.com with SMTP id r71so13411803qkr.10
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 14:53:43 -0800 (PST)
+        Tue, 27 Nov 2018 04:52:35 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 80so6872908pge.4
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 14:56:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iNXQazqtwLAEPT7yGKdIR+2AxZuQpxFBdO6FmYo9ZiY=;
-        b=LQR5kBI0fEDyzPLjKGlv5mlhPpaSghZStSEUcPoPH231GBF3swKb081AKSCQ78ADEh
-         JRbJGAg3GXxUWfV/k14a5eylCR3gG8ft0nltQsNenjTxt7k/JkkWDDfwwpfIGB6iVc/n
-         PxJd8vn8zNaOJFQXkLuOSIpbvFYMfK5I393zM=
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zbfCjqBHpAJ7K3XFvE3QIuIxE9xXYdGtzAQcePbc+b8=;
+        b=kjJ40KIAs6CJd9vbyC4OxMuKuzLv9P0M+3fs8oA7yLXGSKDh9ooEer+N6sG/TIv02K
+         u5f09fdt3N2VxD0oiXbct2aJOCQCUdDZPAoy4mJ5K8rZ+Z+ybQvCDf72o3Svo4Ov4lkl
+         WoBy9MTIywvgJdsGjaYVHZNPdYKFRsEawnMsU5k+DFWZVESRwLd0zkkqgHmDHlxE4CF2
+         Oo2IwAukkVu6SjMPpM4Q22u/sjYGmgK1iGNEDewb0q2UriqLOgaq1YUTIJLvFgU3fMI4
+         yJtzFyrEvxnIqJlrsK63mLpslLax00bqYdnyHI4OUwNLu2LTRT7CLJ/Xp0QkBznPBsD0
+         GrxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iNXQazqtwLAEPT7yGKdIR+2AxZuQpxFBdO6FmYo9ZiY=;
-        b=MRP8A9/WOEovGHeWkzhP39j8HVr2dqbjTLf3sCFtHC6W10s3pHmhRPFRa/D9v/ZmE/
-         Wxp3o7n/QpRGPq3rJqE+JXmETZ6tDq3Zo1xelgtSS305PeXSn7SCvgwGVqgOQ3nmuUSZ
-         8fKbPFtyf1m/TttTbA/JAAok/wm0JcWlX5+tYESQYjw8LIBQ+0FeuDhebEXbsT/feM9U
-         labrrUQAb3Lki72WwhPAMeFuyFEL8MPs+Q6fQagRFSL8z7g1dQxB7rObBxww4q3RNr9h
-         xxScrRSWEpJAF2bxstCGSRfaqBS2xg+OY8JhbFGhq0T0Tf/EzvrU0k5iqwxSTt0OQhmQ
-         pwbA==
-X-Gm-Message-State: AA+aEWZKDRikg178pLdeaClmzuOlvTAl8iQ/kWn7Ctd4+g6d+1Jw7KF1
-        MPnIwYBg3TggD7/Iv3acIbtAEQ==
-X-Google-Smtp-Source: AFSGD/V5KyETLYrfWvrSQQVbSpIHLBwp/gqggIJCapcxomnOyXjmn487SHOUzooajnFsgb5+oG+Beg==
-X-Received: by 2002:a37:4792:: with SMTP id u140mr28058241qka.301.1543272821113;
-        Mon, 26 Nov 2018 14:53:41 -0800 (PST)
-Received: from workstation.celeiro.br ([138.204.25.29])
-        by smtp.gmail.com with ESMTPSA id h25sm1337681qtc.49.2018.11.26.14.53.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 14:53:40 -0800 (PST)
-From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
-To:     Russell King <linux@armlinux.org.uk>
-Cc:     Vladimir Murzin <vladimir.murzin@arm.com>,
-        Rafael David Tinoco <rafael.tinoco@linaro.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        Timothy E Baldwin <T.E.Baldwin99@members.leeds.ac.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: [PATCH] arm: always update thread_info->syscall
-Date:   Mon, 26 Nov 2018 20:53:35 -0200
-Message-Id: <20181126225335.10477-1-rafael.tinoco@linaro.org>
-X-Mailer: git-send-email 2.20.0.rc1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zbfCjqBHpAJ7K3XFvE3QIuIxE9xXYdGtzAQcePbc+b8=;
+        b=hWxcmLbXr5CF/JuhNUkeN+vuGyXZM5IlrENMICr0xf/VPh4TqjB3zz++5S2csidP8o
+         bFZAFqQ23WcZCP0MdEGZLlrQfw1RzZR9ZPe/CVHjcAmiWm9ZHgZvCYPe6Wl3dhyzh5ZX
+         eVFrOv3t8OdU7HHVMWBLaE0X1wSayOMJCyiHTTtoVUaOzPdkDR4EDZU6w5lQoZI4RneS
+         g67KYSld+5yl67bYefXCPUqNVNPQ5Oj6avFXFxgdWdoIfAf5e+9ZDLW+frYXFfqvfW38
+         bi11cFGQ07bPsy8ThYWYN5naUwYX18lqdQ50HtyownRbgi1m2ohEFxsK/Jezlepl355L
+         Mcxw==
+X-Gm-Message-State: AA+aEWZvzFeVi61dPXDjl2Taln0yQwZFzdAqYA3DsonUQ5AUFiXjsbkN
+        N9y83iGpRY7NLFy2mDK9KgTLfQ==
+X-Google-Smtp-Source: AFSGD/XsLnbmJ7JSiEaKpuAFiMdBC3Q1tAhywKOzA3kv9DDd3m2ZXLpW6CUfttmabObm5+3pyI0MyQ==
+X-Received: by 2002:a63:5e43:: with SMTP id s64mr26918522pgb.101.1543273012498;
+        Mon, 26 Nov 2018 14:56:52 -0800 (PST)
+Received: from vader ([2601:602:8b00:55d3:e6a7:a0ff:fe0b:c9a8])
+        by smtp.gmail.com with ESMTPSA id n22sm2153399pfh.166.2018.11.26.14.56.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 14:56:51 -0800 (PST)
+Date:   Mon, 26 Nov 2018 14:56:49 -0800
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V12 16/20] block: enable multipage bvecs
+Message-ID: <20181126225649.GP30411@vader>
+References: <20181126021720.19471-1-ming.lei@redhat.com>
+ <20181126021720.19471-17-ming.lei@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181126021720.19471-17-ming.lei@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Right now, only way for task->thread_info->syscall to be updated is if
-if _TIF_SYSCALL_WORK is set in current's task thread_info->flags
-(similar to what has_syscall_work() checks for arm64).
+On Mon, Nov 26, 2018 at 10:17:16AM +0800, Ming Lei wrote:
+> This patch pulls the trigger for multi-page bvecs.
 
-This means that "->syscall" will only be updated if we are tracing the
-syscalls through ptrace, for example. This is NOT the same behavior as
-arm64, when pt_regs->syscallno is updated in the beginning of svc0
-handler for *every* syscall entry.
+Reviewed-by: Omar Sandoval <osandov@fb.com>
 
-This patch fixes the issue since this behavior is needed for
-/proc/<pid>/syscall 1st argument to be correctly updated.
-
-Link: https://bugs.linaro.org/show_bug.cgi?id=3783
-Cc: <stable@vger.kernel.org> # v4.4 v4.9 v4.14 v4.19
-Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
----
- arch/arm/kernel/asm-offsets.c  | 1 +
- arch/arm/kernel/entry-common.S | 2 ++
- 2 files changed, 3 insertions(+)
-
-diff --git a/arch/arm/kernel/asm-offsets.c b/arch/arm/kernel/asm-offsets.c
-index 3968d6c22455..bfe68a98e1c6 100644
---- a/arch/arm/kernel/asm-offsets.c
-+++ b/arch/arm/kernel/asm-offsets.c
-@@ -64,6 +64,7 @@ int main(void)
-   DEFINE(TI_USED_CP,		offsetof(struct thread_info, used_cp));
-   DEFINE(TI_TP_VALUE,		offsetof(struct thread_info, tp_value));
-   DEFINE(TI_FPSTATE,		offsetof(struct thread_info, fpstate));
-+  DEFINE(TI_SYSCALL,		offsetof(struct thread_info, syscall));
- #ifdef CONFIG_VFP
-   DEFINE(TI_VFPSTATE,		offsetof(struct thread_info, vfpstate));
- #ifdef CONFIG_SMP
-diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
-index 0465d65d23de..557e2add4e83 100644
---- a/arch/arm/kernel/entry-common.S
-+++ b/arch/arm/kernel/entry-common.S
-@@ -257,6 +257,8 @@ local_restart:
- 	tst	r10, #_TIF_SYSCALL_WORK		@ are we tracing syscalls?
- 	bne	__sys_trace
- 
-+	str	r7, [tsk, #TI_SYSCALL]		@ update thread_info->syscall
-+
- 	invoke_syscall tbl, scno, r10, __ret_fast_syscall
- 
- 	add	r1, sp, #S_OFF
--- 
-2.20.0.rc1
-
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
+>  block/bio.c         | 22 +++++++++++++++-------
+>  fs/iomap.c          |  4 ++--
+>  fs/xfs/xfs_aops.c   |  4 ++--
+>  include/linux/bio.h |  2 +-
+>  4 files changed, 20 insertions(+), 12 deletions(-)
+> 
+> diff --git a/block/bio.c b/block/bio.c
+> index 75fde30af51f..8bf9338d4783 100644
+> --- a/block/bio.c
+> +++ b/block/bio.c
+> @@ -753,6 +753,8 @@ EXPORT_SYMBOL(bio_add_pc_page);
+>   * @page: page to add
+>   * @len: length of the data to add
+>   * @off: offset of the data in @page
+> + * @same_page: if %true only merge if the new data is in the same physical
+> + *		page as the last segment of the bio.
+>   *
+>   * Try to add the data at @page + @off to the last bvec of @bio.  This is a
+>   * a useful optimisation for file systems with a block size smaller than the
+> @@ -761,19 +763,25 @@ EXPORT_SYMBOL(bio_add_pc_page);
+>   * Return %true on success or %false on failure.
+>   */
+>  bool __bio_try_merge_page(struct bio *bio, struct page *page,
+> -		unsigned int len, unsigned int off)
+> +		unsigned int len, unsigned int off, bool same_page)
+>  {
+>  	if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
+>  		return false;
+>  
+>  	if (bio->bi_vcnt > 0) {
+>  		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
+> +		phys_addr_t vec_end_addr = page_to_phys(bv->bv_page) +
+> +			bv->bv_offset + bv->bv_len;
+> +		phys_addr_t page_addr = page_to_phys(page);
+>  
+> -		if (page == bv->bv_page && off == bv->bv_offset + bv->bv_len) {
+> -			bv->bv_len += len;
+> -			bio->bi_iter.bi_size += len;
+> -			return true;
+> -		}
+> +		if (vec_end_addr != page_addr + off)
+> +			return false;
+> +		if (same_page && ((vec_end_addr - 1) & PAGE_MASK) != page_addr)
+> +			return false;
+> +
+> +		bv->bv_len += len;
+> +		bio->bi_iter.bi_size += len;
+> +		return true;
+>  	}
+>  	return false;
+>  }
+> @@ -819,7 +827,7 @@ EXPORT_SYMBOL_GPL(__bio_add_page);
+>  int bio_add_page(struct bio *bio, struct page *page,
+>  		 unsigned int len, unsigned int offset)
+>  {
+> -	if (!__bio_try_merge_page(bio, page, len, offset)) {
+> +	if (!__bio_try_merge_page(bio, page, len, offset, false)) {
+>  		if (bio_full(bio))
+>  			return 0;
+>  		__bio_add_page(bio, page, len, offset);
+> diff --git a/fs/iomap.c b/fs/iomap.c
+> index 1f648d098a3b..ec5527b0fba4 100644
+> --- a/fs/iomap.c
+> +++ b/fs/iomap.c
+> @@ -313,7 +313,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  	 */
+>  	sector = iomap_sector(iomap, pos);
+>  	if (ctx->bio && bio_end_sector(ctx->bio) == sector) {
+> -		if (__bio_try_merge_page(ctx->bio, page, plen, poff))
+> +		if (__bio_try_merge_page(ctx->bio, page, plen, poff, true))
+>  			goto done;
+>  		is_contig = true;
+>  	}
+> @@ -344,7 +344,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  		ctx->bio->bi_end_io = iomap_read_end_io;
+>  	}
+>  
+> -	__bio_add_page(ctx->bio, page, plen, poff);
+> +	bio_add_page(ctx->bio, page, plen, poff);
+>  done:
+>  	/*
+>  	 * Move the caller beyond our range so that it keeps making progress.
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index 1f1829e506e8..b9fd44168f61 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -616,12 +616,12 @@ xfs_add_to_ioend(
+>  				bdev, sector);
+>  	}
+>  
+> -	if (!__bio_try_merge_page(wpc->ioend->io_bio, page, len, poff)) {
+> +	if (!__bio_try_merge_page(wpc->ioend->io_bio, page, len, poff, true)) {
+>  		if (iop)
+>  			atomic_inc(&iop->write_count);
+>  		if (bio_full(wpc->ioend->io_bio))
+>  			xfs_chain_bio(wpc->ioend, wbc, bdev, sector);
+> -		__bio_add_page(wpc->ioend->io_bio, page, len, poff);
+> +		bio_add_page(wpc->ioend->io_bio, page, len, poff);
+>  	}
+>  
+>  	wpc->ioend->io_size += len;
+> diff --git a/include/linux/bio.h b/include/linux/bio.h
+> index c35997dd02c2..5505f74aef8b 100644
+> --- a/include/linux/bio.h
+> +++ b/include/linux/bio.h
+> @@ -441,7 +441,7 @@ extern int bio_add_page(struct bio *, struct page *, unsigned int,unsigned int);
+>  extern int bio_add_pc_page(struct request_queue *, struct bio *, struct page *,
+>  			   unsigned int, unsigned int);
+>  bool __bio_try_merge_page(struct bio *bio, struct page *page,
+> -		unsigned int len, unsigned int off);
+> +		unsigned int len, unsigned int off, bool same_page);
+>  void __bio_add_page(struct bio *bio, struct page *page,
+>  		unsigned int len, unsigned int off);
+>  int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter);
+> -- 
+> 2.9.5
+> 
