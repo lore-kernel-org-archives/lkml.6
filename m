@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 564D0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9831C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D64721473
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 813292146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:58:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNdflg4L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D64721473
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GjZZ6tbF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 813292146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729138AbeKZVvu (ORCPT
+        id S1729150AbeKZVvx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:51:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33128 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:51:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727670AbeKZVvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:51:50 -0500
+        id S1727234AbeKZVvw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:51:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 371D321479;
-        Mon, 26 Nov 2018 10:58:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC66621479;
+        Mon, 26 Nov 2018 10:58:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229885;
-        bh=Erp3CIEJ/KEUio/Zo/nT5HEqNypLcCWsGURDa+jZkV4=;
+        s=default; t=1543229888;
+        bh=SBFtfISYn+QnuQ18TGL/SPMH+FHk/DAlE2BM8UMyKBo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kNdflg4LxmXIEVMvCy7cTn5JLjyj5kMV4EDCAk3HsnUT/jDb9jJYAPnoucdr4voyq
-         WHsGF/ZRwUOCDz2hvWPg92aQ8KoGh4SMmOrBsX/AW7Bqn4OrQ6bWfOj1zFPF8OVtpH
-         vvsq8kKc9N8zLJY8VZ1W6SYznQLPsSlQuv7ESlA4=
+        b=GjZZ6tbF5oxF8lZiN+6lSvjVbi5e+9DSjsGaSCJt/O6ynj1m7w1B5QdV50cZlVbsy
+         oXDODTJGfgwTf20bFCWF9b7b+US+Dcodv7r8ongmeDf13QgRCB9fLXr7321zJffGpj
+         5i8LsN+wocPJwtBq7/alJ2nAFgfa/EYEpp+qdhYg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Tull <atull@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 08/46] clk: fixed-rate: fix of_node_get-put imbalance
-Date:   Mon, 26 Nov 2018 11:50:57 +0100
-Message-Id: <20181126105046.776869163@linuxfoundation.org>
+Subject: [PATCH 4.9 09/46] fs/exofs: fix potential memory leak in mount option parsing
+Date:   Mon, 26 Nov 2018 11:50:58 +0100
+Message-Id: <20181126105046.957046373@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
 References: <20181126105045.447291262@linuxfoundation.org>
@@ -63,33 +63,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 52091c256bdcad0d01e2852a63f19cd2cce6af96 ]
+[ Upstream commit 515f1867addaba49c1c6ac73abfaffbc192c1db4 ]
 
-When the fixed rate clock is created by devicetree,
-of_clk_add_provider is called.  Add a call to
-of_clk_del_provider in the remove function to balance
-it out.
+There are some cases can cause memory leak when parsing
+option 'osdname'.
 
-Signed-off-by: Alan Tull <atull@kernel.org>
-Fixes: 435779fe1336 ("clk: fixed-rate: Convert into a module platform driver")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-fixed-rate.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/exofs/super.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-index b5c46b3f8764..6d6475c32ee5 100644
---- a/drivers/clk/clk-fixed-rate.c
-+++ b/drivers/clk/clk-fixed-rate.c
-@@ -200,6 +200,7 @@ static int of_fixed_clk_remove(struct platform_device *pdev)
- {
- 	struct clk *clk = platform_get_drvdata(pdev);
+diff --git a/fs/exofs/super.c b/fs/exofs/super.c
+index 1076a4233b39..0c48138486dc 100644
+--- a/fs/exofs/super.c
++++ b/fs/exofs/super.c
+@@ -100,6 +100,7 @@ static int parse_options(char *options, struct exofs_mountopt *opts)
+ 		token = match_token(p, tokens, args);
+ 		switch (token) {
+ 		case Opt_name:
++			kfree(opts->dev_name);
+ 			opts->dev_name = match_strdup(&args[0]);
+ 			if (unlikely(!opts->dev_name)) {
+ 				EXOFS_ERR("Error allocating dev_name");
+@@ -868,8 +869,10 @@ static struct dentry *exofs_mount(struct file_system_type *type,
+ 	int ret;
  
-+	of_clk_del_provider(pdev->dev.of_node);
- 	clk_unregister_fixed_rate(clk);
+ 	ret = parse_options(data, &opts);
+-	if (ret)
++	if (ret) {
++		kfree(opts.dev_name);
+ 		return ERR_PTR(ret);
++	}
  
- 	return 0;
+ 	if (!opts.dev_name)
+ 		opts.dev_name = dev_name;
 -- 
 2.17.1
 
