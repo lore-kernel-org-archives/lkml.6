@@ -4,52 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C873C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFFF8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA6C721104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 847F321104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:57:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQYYSDXM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA6C721104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnH2djSs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 847F321104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728771AbeKZVvB (ORCPT
+        id S1728779AbeKZVvD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:51:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60340 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:51:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727203AbeKZVvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:51:00 -0500
+        id S1727203AbeKZVvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:51:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A88D42146F;
-        Mon, 26 Nov 2018 10:57:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAE8020817;
+        Mon, 26 Nov 2018 10:57:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229835;
-        bh=SbvxV9ajGgrZwkN/m2wavK6wgiyTVDOmmtPsA504jwc=;
+        s=default; t=1543229838;
+        bh=2X0PJwqPXuDGhlDuFBHPEKTQg2zFmgf9x5d/NVg8QEE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lQYYSDXM5/dimeQ6BaUW38orag+tTrWQr1qYIdQfS2n3O36jwGsOc9eIw2Zr0JlOv
-         nIvv4V/EJw3Lp7ldOiAEgTMYWcEYhl7IKEG495kSBjw+c/gWIgFQHFmdtSkrVgZcBg
-         XkCvNTPRrLFXgu8el4fe68V4Pj4YMyy2mnnDMCjE=
+        b=cnH2djSsh1M/xP5OB94KYp25hIsmm+aZWL+EVvGOb1/1INdp5t4AcTnioPU9HxF41
+         99IGHOJcXyiTNamufAyx+dmON53+39g3QuG4yGJfGR0zCPvBp5vYeGFToFJ/0GzWuI
+         Ga+KVW10cXtAMVxmPMILj4NcEkh3oX3Z0vBVrZkw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jeff Mahoney <jeffm@suse.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Alan Tull <atull@kernel.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 02/46] reiserfs: propagate errors from fill_with_dentries() properly
-Date:   Mon, 26 Nov 2018 11:50:51 +0100
-Message-Id: <20181126105045.762935823@linuxfoundation.org>
+Subject: [PATCH 4.9 20/46] clk: fixed-factor: fix of_node_get-put imbalance
+Date:   Mon, 26 Nov 2018 11:51:09 +0100
+Message-Id: <20181126105048.107740811@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105045.447291262@linuxfoundation.org>
 References: <20181126105045.447291262@linuxfoundation.org>
@@ -67,74 +64,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b10298d56c9623f9b173f19959732d3184b35f4f ]
+[ Upstream commit f98e8a572bddbf27032114127d2fcc78fa5e6a9d ]
 
-fill_with_dentries() failed to propagate errors up to
-reiserfs_for_each_xattr() properly.  Plumb them through.
+When the fixed factor clock is created by devicetree,
+of_clk_add_provider is called.  Add a call to
+of_clk_del_provider in the remove function to balance
+it out.
 
-Note that reiserfs_for_each_xattr() is only used by
-reiserfs_delete_xattrs() and reiserfs_chown_xattrs().  The result of
-reiserfs_delete_xattrs() is discarded anyway, the only difference there is
-whether a warning is printed to dmesg.  The result of
-reiserfs_chown_xattrs() does matter because it can block chowning of the
-file to which the xattrs belong; but either way, the resulting state can
-have misaligned ownership, so my patch doesn't improve things greatly.
-
-Credit for making me look at this code goes to Al Viro, who pointed out
-that the ->actor calling convention is suboptimal and should be changed.
-
-Link: http://lkml.kernel.org/r/20180802163335.83312-1-jannh@google.com
-Signed-off-by: Jann Horn <jannh@google.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jeff Mahoney <jeffm@suse.com>
-Cc: Eric Biggers <ebiggers@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Alan Tull <atull@kernel.org>
+Fixes: 971451b3b15d ("clk: fixed-factor: Convert into a module platform driver")
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/reiserfs/xattr.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/clk-fixed-factor.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index 06a9fae202a7..9e313fc7fdc7 100644
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -184,6 +184,7 @@ struct reiserfs_dentry_buf {
- 	struct dir_context ctx;
- 	struct dentry *xadir;
- 	int count;
-+	int err;
- 	struct dentry *dentries[8];
- };
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 20724abd38bd..7df6b5b1e7ee 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -210,6 +210,7 @@ static int of_fixed_factor_clk_remove(struct platform_device *pdev)
+ {
+ 	struct clk *clk = platform_get_drvdata(pdev);
  
-@@ -206,6 +207,7 @@ fill_with_dentries(struct dir_context *ctx, const char *name, int namelen,
++	of_clk_del_provider(pdev->dev.of_node);
+ 	clk_unregister_fixed_factor(clk);
  
- 	dentry = lookup_one_len(name, dbuf->xadir, namelen);
- 	if (IS_ERR(dentry)) {
-+		dbuf->err = PTR_ERR(dentry);
- 		return PTR_ERR(dentry);
- 	} else if (d_really_is_negative(dentry)) {
- 		/* A directory entry exists, but no file? */
-@@ -214,6 +216,7 @@ fill_with_dentries(struct dir_context *ctx, const char *name, int namelen,
- 			       "not found for file %pd.\n",
- 			       dentry, dbuf->xadir);
- 		dput(dentry);
-+		dbuf->err = -EIO;
- 		return -EIO;
- 	}
- 
-@@ -261,6 +264,10 @@ static int reiserfs_for_each_xattr(struct inode *inode,
- 		err = reiserfs_readdir_inode(d_inode(dir), &buf.ctx);
- 		if (err)
- 			break;
-+		if (buf.err) {
-+			err = buf.err;
-+			break;
-+		}
- 		if (!buf.count)
- 			break;
- 		for (i = 0; !err && i < buf.count && buf.dentries[i]; i++) {
+ 	return 0;
 -- 
 2.17.1
 
