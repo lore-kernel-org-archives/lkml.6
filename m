@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22410C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F74C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF6FD21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 280D820817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:01:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FWYUZ33H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF6FD21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8YF0hPr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 280D820817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730126AbeKZVzK (ORCPT
+        id S1730141AbeKZVzM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:55:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37582 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:55:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728901AbeKZVzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:55:09 -0500
+        id S1728901AbeKZVzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:55:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2423A20817;
-        Mon, 26 Nov 2018 11:01:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B7092089F;
+        Mon, 26 Nov 2018 11:01:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230083;
-        bh=IkdleI6JqI4w45qufnA7n5sG0Ug8nxmHsfOKvqnhCAg=;
+        s=default; t=1543230086;
+        bh=hYqTkETKCJvuWXpd5fMMSrgqSBkmY+bS9/cAzFpqZQw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FWYUZ33HPx31AieqZuSyqZCYaL5g1cvKqd0A5T3gyOjn/ifmgqNn0pxPNIHFsVhPx
-         IkmwB0HIZLrb//Eub+AFhjkJlwCH2n15jH8+ld7CwcblD2TpcDVJHbYw/ma3Z6HFDG
-         HZF6mF0TtP4tNJm4gb4NEnzoqbqTY7cODobnvhZI=
+        b=X8YF0hPrQMOUzUP2NSq3FclTePLPxbFk7JNZplgFEMDbNfn+cGc7KD1pbFh9u4P4g
+         NM+EwxqrBbQ4xQWehdrNmRhVUUzDZnwSUSgavEwuFrkhchYKuuoboRKSAWlEIR4rCi
+         txTqHXFRG+J351yvscaUXwQgVsIcEjt9MD6ac92E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -44,9 +44,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michal Kalderon <michal.kalderon@cavium.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 36/62] qed: Fix memory/entry leak in qed_init_sp_request()
-Date:   Mon, 26 Nov 2018 11:51:17 +0100
-Message-Id: <20181126105053.634396466@linuxfoundation.org>
+Subject: [PATCH 4.14 37/62] qed: Fix blocking/unlimited SPQ entries leak
+Date:   Mon, 26 Nov 2018 11:51:18 +0100
+Message-Id: <20181126105053.709722966@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -64,60 +64,144 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 39477551df940ddb1339203817de04f5caaacf7a ]
+[ Upstream commit 2632f22ebd08da249c2017962a199a0cfb2324bf ]
 
-Free the allocated SPQ entry or return the acquired SPQ entry to the free
-list in error flows.
+When there are no SPQ entries left in the free_pool, new entries are
+allocated and are added to the unlimited list. When an entry in the pool
+is available, the content is copied from the original entry, and the new
+entry is sent to the device. qed_spq_post() is not aware of that, so the
+additional entry is stored in the original entry as p_post_ent, which can
+later be returned to the pool.
 
 Signed-off-by: Denis Bolotin <denis.bolotin@cavium.com>
 Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/qlogic/qed/qed_sp_commands.c    | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_sp.h  |  3 ++
+ drivers/net/ethernet/qlogic/qed/qed_spq.c | 57 ++++++++++++-----------
+ 2 files changed, 33 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-index d7c5965328be..b26578464469 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-@@ -80,7 +80,7 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
- 
- 	case QED_SPQ_MODE_BLOCK:
- 		if (!p_data->p_comp_data)
--			return -EINVAL;
-+			goto err;
- 
- 		p_ent->comp_cb.cookie = p_data->p_comp_data->cookie;
- 		break;
-@@ -95,7 +95,7 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
- 	default:
- 		DP_NOTICE(p_hwfn, "Unknown SPQE completion mode %d\n",
- 			  p_ent->comp_mode);
--		return -EINVAL;
-+		goto err;
- 	}
- 
- 	DP_VERBOSE(p_hwfn, QED_MSG_SPQ,
-@@ -109,6 +109,18 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
- 	memset(&p_ent->ramrod, 0, sizeof(p_ent->ramrod));
- 
- 	return 0;
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp.h b/drivers/net/ethernet/qlogic/qed/qed_sp.h
+index ab4ad8a1e2a5..01a213d4ee9c 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_sp.h
++++ b/drivers/net/ethernet/qlogic/qed/qed_sp.h
+@@ -167,6 +167,9 @@ struct qed_spq_entry {
+ 	enum spq_mode			comp_mode;
+ 	struct qed_spq_comp_cb		comp_cb;
+ 	struct qed_spq_comp_done	comp_done; /* SPQ_MODE_EBLOCK */
 +
-+err:
-+	/* qed_spq_get_entry() can either get an entry from the free_pool,
-+	 * or, if no entries are left, allocate a new entry and add it to
-+	 * the unlimited_pending list.
-+	 */
-+	if (p_ent->queue == &p_hwfn->p_spq->unlimited_pending)
-+		kfree(p_ent);
-+	else
-+		qed_spq_return_entry(p_hwfn, p_ent);
-+
-+	return -EINVAL;
++	/* Posted entry for unlimited list entry in EBLOCK mode */
++	struct qed_spq_entry		*post_ent;
+ };
+ 
+ struct qed_eq {
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_spq.c b/drivers/net/ethernet/qlogic/qed/qed_spq.c
+index be48d9abd001..0313e9c46979 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_spq.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_spq.c
+@@ -687,6 +687,8 @@ static int qed_spq_add_entry(struct qed_hwfn *p_hwfn,
+ 			/* EBLOCK responsible to free the allocated p_ent */
+ 			if (p_ent->comp_mode != QED_SPQ_MODE_EBLOCK)
+ 				kfree(p_ent);
++			else
++				p_ent->post_ent = p_en2;
+ 
+ 			p_ent = p_en2;
+ 		}
+@@ -770,6 +772,25 @@ static int qed_spq_pend_post(struct qed_hwfn *p_hwfn)
+ 				 SPQ_HIGH_PRI_RESERVE_DEFAULT);
  }
  
- static enum tunnel_clss qed_tunn_clss_to_fw_clss(u8 type)
++/* Avoid overriding of SPQ entries when getting out-of-order completions, by
++ * marking the completions in a bitmap and increasing the chain consumer only
++ * for the first successive completed entries.
++ */
++static void qed_spq_comp_bmap_update(struct qed_hwfn *p_hwfn, __le16 echo)
++{
++	u16 pos = le16_to_cpu(echo) % SPQ_RING_SIZE;
++	struct qed_spq *p_spq = p_hwfn->p_spq;
++
++	__set_bit(pos, p_spq->p_comp_bitmap);
++	while (test_bit(p_spq->comp_bitmap_idx,
++			p_spq->p_comp_bitmap)) {
++		__clear_bit(p_spq->comp_bitmap_idx,
++			    p_spq->p_comp_bitmap);
++		p_spq->comp_bitmap_idx++;
++		qed_chain_return_produced(&p_spq->chain);
++	}
++}
++
+ int qed_spq_post(struct qed_hwfn *p_hwfn,
+ 		 struct qed_spq_entry *p_ent, u8 *fw_return_code)
+ {
+@@ -821,11 +842,12 @@ int qed_spq_post(struct qed_hwfn *p_hwfn,
+ 				   p_ent->queue == &p_spq->unlimited_pending);
+ 
+ 		if (p_ent->queue == &p_spq->unlimited_pending) {
+-			/* This is an allocated p_ent which does not need to
+-			 * return to pool.
+-			 */
++			struct qed_spq_entry *p_post_ent = p_ent->post_ent;
++
+ 			kfree(p_ent);
+-			return rc;
++
++			/* Return the entry which was actually posted */
++			p_ent = p_post_ent;
+ 		}
+ 
+ 		if (rc)
+@@ -839,7 +861,7 @@ int qed_spq_post(struct qed_hwfn *p_hwfn,
+ spq_post_fail2:
+ 	spin_lock_bh(&p_spq->lock);
+ 	list_del(&p_ent->list);
+-	qed_chain_return_produced(&p_spq->chain);
++	qed_spq_comp_bmap_update(p_hwfn, p_ent->elem.hdr.echo);
+ 
+ spq_post_fail:
+ 	/* return to the free pool */
+@@ -871,25 +893,8 @@ int qed_spq_completion(struct qed_hwfn *p_hwfn,
+ 	spin_lock_bh(&p_spq->lock);
+ 	list_for_each_entry_safe(p_ent, tmp, &p_spq->completion_pending, list) {
+ 		if (p_ent->elem.hdr.echo == echo) {
+-			u16 pos = le16_to_cpu(echo) % SPQ_RING_SIZE;
+-
+ 			list_del(&p_ent->list);
+-
+-			/* Avoid overriding of SPQ entries when getting
+-			 * out-of-order completions, by marking the completions
+-			 * in a bitmap and increasing the chain consumer only
+-			 * for the first successive completed entries.
+-			 */
+-			__set_bit(pos, p_spq->p_comp_bitmap);
+-
+-			while (test_bit(p_spq->comp_bitmap_idx,
+-					p_spq->p_comp_bitmap)) {
+-				__clear_bit(p_spq->comp_bitmap_idx,
+-					    p_spq->p_comp_bitmap);
+-				p_spq->comp_bitmap_idx++;
+-				qed_chain_return_produced(&p_spq->chain);
+-			}
+-
++			qed_spq_comp_bmap_update(p_hwfn, echo);
+ 			p_spq->comp_count++;
+ 			found = p_ent;
+ 			break;
+@@ -928,11 +933,9 @@ int qed_spq_completion(struct qed_hwfn *p_hwfn,
+ 			   QED_MSG_SPQ,
+ 			   "Got a completion without a callback function\n");
+ 
+-	if ((found->comp_mode != QED_SPQ_MODE_EBLOCK) ||
+-	    (found->queue == &p_spq->unlimited_pending))
++	if (found->comp_mode != QED_SPQ_MODE_EBLOCK)
+ 		/* EBLOCK  is responsible for returning its own entry into the
+-		 * free list, unless it originally added the entry into the
+-		 * unlimited pending list.
++		 * free list.
+ 		 */
+ 		qed_spq_return_entry(p_hwfn, found);
+ 
 -- 
 2.17.1
 
