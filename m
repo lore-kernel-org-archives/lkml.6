@@ -2,204 +2,151 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C28CBC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDB9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72975208E7
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:56:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7786E205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:56:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e7lB3hUU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72975208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="JaOxs/Sd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7786E205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbeK0HwO (ORCPT
+        id S1727341AbeK0HwR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 02:52:14 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:56304 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727105AbeK0HwO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 02:52:14 -0500
-Received: by mail-it1-f195.google.com with SMTP id o19so30598251itg.5;
-        Mon, 26 Nov 2018 12:56:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vlo6ByVMVqdO50IfdiZ9PKec1ERKKwejQK+K+Ptqaw0=;
-        b=e7lB3hUUHaGc0tjgqjpphaFwZwLD1sfteBojzQ5aM7Xpcsl6mlCDwnQW7T1p3QgbGt
-         dxS0vjmpEUYBAUATHazN/OGE2B3pf+MEix+i4LWCkYxXqG1oqGjA6jbS9DE4uGn8G6FM
-         baiFSsJ4QfBdpeSI0zWTy+hLILgIUdljDWsIEqErpWPk1nSAa7mNaitow4a/24vULKQC
-         PPjA3xaVd83NNSvCNfRej4iDON55eH7VIQqt1wLlk5KJb0LwrPFeMet8Qzmo0QAxjolk
-         C2O1uUP1WfV3cgljkm/YKvNldrTUWyHsMDQ5QuexO8oJB5cbd/DBgnHS/MlaKog5Z7tx
-         RbhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vlo6ByVMVqdO50IfdiZ9PKec1ERKKwejQK+K+Ptqaw0=;
-        b=PE41HAaDtYmwiIYbQWNuyeaelagWDUdcTUfxvOl7CXYA6nDLBHUUCvIv9sCqho/pb2
-         vGexMRAQ/YWQ7jrAwPjpSixu4Z7kzG7OUGyvXHh4JhYZcqWSY/cifCg4fd83NXcoqM8I
-         t3PK7gYx5BA9ufDPWhtuaJ1blxxgb5a7GVyo6WJ/8t/NR5gCnVxWWTyKW4sbamHTSpAv
-         Rg2DbT8sRdZSOEXV3jWHvLdy+RJSCtuNgZx4DdFls/TIh3poikzKz/gfsQGwF2pbFglD
-         q7M2D6J+KcGUOT+2SL1SFQefDh9TTtRuwrWzRLaf3mZc8PK4Guz2W+IYhMHS23Jgb9cc
-         H0VQ==
-X-Gm-Message-State: AA+aEWapg7xsyWDk1GIAjuejEMR+Fzj+PYD9xcYkXIwUMKrfTP7yR3l9
-        xWYE04ZGtm1VGKuQb2IT+GmGneLOVwfjWvMtcAmLkA==
-X-Google-Smtp-Source: AFSGD/VpKUobTbjhR/mscZd2N849w019AHhtoFF833WMxG0hvSsCfI/4sKlxQkUonmsXpVi4Ud89z75w2VjfIB9dprE=
-X-Received: by 2002:a02:242b:: with SMTP id f43mr4536608jaa.144.1543265811307;
- Mon, 26 Nov 2018 12:56:51 -0800 (PST)
-MIME-Version: 1.0
-References: <20180927224609.19515-1-robdclark@gmail.com> <20181029191000.GD16739@arm.com>
- <CAF6AEGtgC0V6ii2=p2HGmqvHFKNJhaOLi8873SGPDsrg70xGRg@mail.gmail.com>
- <20181113063225.GA3109@brain-police> <CAF6AEGuV2zh97iq+TgkRw0bK3VNSxJieD1N2KMW3N28h07M+0w@mail.gmail.com>
- <20181126193147.GB534@arm.com>
-In-Reply-To: <20181126193147.GB534@arm.com>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Mon, 26 Nov 2018 15:56:38 -0500
-Message-ID: <CAF6AEGuQ1vqzf4vDbOXvRdiYC9oBmmfAGa=FrBctR64NffwtzA@mail.gmail.com>
-Subject: Re: [PATCH] iommu: arm-smmu: Set SCTLR.HUPCF bit
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        Tue, 27 Nov 2018 02:52:17 -0500
+Received: from mail-eopbgr740137.outbound.protection.outlook.com ([40.107.74.137]:50460
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727105AbeK0HwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 02:52:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=J4BPa4CBlxH2/iFA48bTrShQbAjXxR8zRKo71qr2pwg=;
+ b=JaOxs/SdW1tbAgxfBhFm289hngHe3aO6YK/jksybW9gdwwvyqXdRJW3jangYd0moSt0OkcuKj7cXoV3LYbRDDFLCVPLiRaFWEoIIBWGTEk+P8HtUaawBKF6Q9ly/s8ixOWJXOyuFLx/ophgQiuLImc337XvSeXz2tCA7G5tS/OQ=
+Received: from CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) by
+ CY4PR21MB0759.namprd21.prod.outlook.com (10.173.192.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
+ 15.20.1404.5; Mon, 26 Nov 2018 20:56:50 +0000
+Received: from CY4PR21MB0773.namprd21.prod.outlook.com
+ ([fe80::f597:e00a:584b:fd8c]) by CY4PR21MB0773.namprd21.prod.outlook.com
+ ([fe80::f597:e00a:584b:fd8c%2]) with mapi id 15.20.1404.002; Mon, 26 Nov 2018
+ 20:56:50 +0000
+From:   Michael Kelley <mikelley@microsoft.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     KY Srinivasan <kys@microsoft.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "catalin.marinas@armm.com" <catalin.marinas@armm.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "olaf@aepfle.de" <olaf@aepfle.de>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        vkuznets <vkuznets@redhat.com>
+Subject: RE: [PATCH 3/4] Drivers: hv: vmbus: Add hooks for per-CPU IRQ
+Thread-Topic: [PATCH 3/4] Drivers: hv: vmbus: Add hooks for per-CPU IRQ
+Thread-Index: AQHUghEmRPt7Kjul9E+Q8Cz+6wluT6VidjKAgAAFstCAAAR8gIAAAInQ
+Date:   Mon, 26 Nov 2018 20:56:50 +0000
+Message-ID: <CY4PR21MB0773AFA3555BC08A4CC129D4D7D70@CY4PR21MB0773.namprd21.prod.outlook.com>
+References: <20181122030914.16274-1-kys@linuxonhyperv.com>
+ <20181122031059.16338-1-kys@linuxonhyperv.com>
+ <20181122031059.16338-3-kys@linuxonhyperv.com>
+ <20181126192101.GC32208@kroah.com>
+ <CY4PR21MB07735AB610D4BFD3EB7556D5D7D70@CY4PR21MB0773.namprd21.prod.outlook.com>
+ <20181126195727.GA9957@kroah.com>
+In-Reply-To: <20181126195727.GA9957@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-11-26T20:56:48.3225463Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+x-originating-ip: [2001:4898:80e8:1:ed00:bad5:da35:76f9]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0759;6:cja+cqgmVwLt84SJjnQ79GE3i+Um4utf431R6IKoIb+AM1dnbRQQhTL4Q5XzMPE98Rkn6pNdC0K+5ZiCOclmn+FPReB7lInPdrVSpuApWl3wBikEtBGltUpeF111HOrKbsqPJP0DV7U/5MaMgErdMoGMFUFIyPa9vjhWBr6QjPpCR6B8ppKoa0KUYQIjgVEclleT038EippYlpjL4db769IIhbfQP7S+rnOm2cBvQBDWsEbOKHzVfZ5WN6GnvPJUd2PKPhDXdhFLhLEvcxtIGEIIwVWon2eLYjWHChB1dUcqZHwnYZCM7iLBgwEHaGbq8Kf2Rnn25e0vXDpkH9ICxDW49FuKKjSCluOKS2IwaCCXOerZpT3OPagzxEPiBR9Gk4/dLsF2KPhr0vIXWAMKdUW6FuPDPYFq91wUQR8CPoMg0o1LxOMKiL8aVuA0XJzepsx9p/gBlFjGBAsbqNdzxg==;5:MkWT5sZHxoNCilRh/wqrIPlZOuoZIpjYsSAS68gB+thLNPaNMlkBSU4AiN3O9F7T51VYHUENYHRLDzXmdhfYXZlr1pRbRxCi5E5ms2iGoV7DTIiby1VXd3bpCjff//uvWsS2FYtzGPDR9A/Bzv4X3zZSQyF6NZra5yYs+7v6+eU=;7:ieIj3cU7ECkg8ocI8XDjK0ntvX6KqaG1hVV1dT4zkgSyTZYCXydg+GvwGV5ihs2wEh559pgOSBkvpj72wgbYSw0TSZ4xQA7maiTocHf91GvIt4BdV3ZEu0v9Wae2cETA4a30PQXSUSRMC4jF0xZSoQ==
+x-ms-office365-filtering-correlation-id: 4b3378c6-ebe0-4072-1091-08d653e1b017
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:CY4PR21MB0759;
+x-ms-traffictypediagnostic: CY4PR21MB0759:
+x-ms-exchange-purlcount: -3
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=mikelley@microsoft.com; 
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <CY4PR21MB0759C841060D01BF6427690CD7D70@CY4PR21MB0759.namprd21.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(8220035)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231443)(944501421)(2018427008)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:CY4PR21MB0759;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0759;
+x-forefront-prvs: 086831DFB4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(136003)(346002)(39860400002)(199004)(189003)(478600001)(4326008)(229853002)(25786009)(14454004)(186003)(33656002)(68736007)(81166006)(8936002)(81156014)(105586002)(446003)(11346002)(10290500003)(106356001)(8676002)(46003)(6916009)(6116002)(8990500004)(2906002)(10090500001)(486006)(476003)(99286004)(7696005)(9686003)(54906003)(76176011)(74316002)(6436002)(305945005)(7736002)(55016002)(53936002)(256004)(86362001)(5660300001)(6506007)(6246003)(93886005)(22452003)(316002)(7416002)(86612001)(71190400001)(102836004)(97736004)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0759;H:CY4PR21MB0773.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: iSGZ20BjqLwGCWhrdDqo0Su3srRxH4PRZ5EqQ9lG6jKAbOgx8Fu7sFqhLKy9KHlA2AGXpfIjp7S/i2aI64+7EhaDgxdtamyhXylzy/5oTKo3czx1hVSphS+A/vNWilAPNETEou2WNKtwr7pde2XcE7rBGnGi2dSbfwyW6N21XVgod6fszZKk2l1INYcsDc8MxQ6f72UopZB/H1wpUhUem47uA5BuEX4w91dR1UMw4qtrRhXEnLgW3BjI9x7TvGDyIyGgH/eiQ7/UyS+H5FHl6sI7t4ecrwnEdW57IwmWxEQ40kUtZUFsVLs7rBVpiHsuG5OepcO7DPxWMKk+BmRKjfk0y+ajNWYCy7xjoumRpGA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b3378c6-ebe0-4072-1091-08d653e1b017
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2018 20:56:50.4150
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0759
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 2:31 PM Will Deacon <will.deacon@arm.com> wrote:
->
-> Hi Rob,
->
-> On Tue, Nov 13, 2018 at 08:12:35AM -0500, Rob Clark wrote:
-> > On Tue, Nov 13, 2018 at 1:32 AM Will Deacon <will.deacon@arm.com> wrote:
-> > > On Fri, Nov 09, 2018 at 01:01:55PM -0500, Rob Clark wrote:
-> > > > On Mon, Oct 29, 2018 at 3:09 PM Will Deacon <will.deacon@arm.com> wrote:
-> > > > > On Thu, Sep 27, 2018 at 06:46:07PM -0400, Rob Clark wrote:
-> > > > > > We seem to need to set either this or CFCFG (stall), otherwise gpu
-> > > > > > faults trigger problems with other in-flight transactions from the
-> > > > > > GPU causing CP errors, etc.
-> > > > > >
-> > > > > > In the ARM SMMU spec, the 'Hit under previous context fault' bit is
-> > > > > > described as:
-> > > > > >
-> > > > > >  '0' - Stall or terminate subsequent transactions in the presence
-> > > > > >        of an outstanding context fault
-> > > > > >  '1' - Process all subsequent transactions independently of any
-> > > > > >        outstanding context fault.
-> > > > > >
-> > > > > > Since we don't enable CFCFG (stall) the behavior of terminating
-> > > > > > other transactions makes sense.  And is probably not what we want
-> > > > > > (and definately not what we want for GPU).
-> > > > > >
-> > > > > > Signed-off-by: Rob Clark <robdclark@gmail.com>
-> > > > > > ---
-> > > > > > So I hit this issue a long time back on 820 (msm8996) and at the
-> > > > > > time I solved it with a patch that enabled CFCFG.  And it resurfaced
-> > > > > > more recently on sdm845.  But at the time CFCFG was rejected, iirc
-> > > > > > because of concern that it would cause problems on other non-qcom
-> > > > > > arm smmu implementations.  And I think I forgot to send this version
-> > > > > > of the solution.
-> > > > > >
-> > > > > > If enabling HUPCF is anticipated to cause problems on other ARM
-> > > > > > SMMU implementations, I think I can come up with a variant of this
-> > > > > > patch which conditionally enables it for snapdragon.
-> > > > > >
-> > > > > > Either way, I'd really like to get some variant of this fix merged
-> > > > > > (and probably it would be a good idea for stable kernel branches
-> > > > > > too), since current behaviour with the GPU means faults turn into
-> > > > > > a fantastic cascade of fail.
-> > > > >
-> > > > > Can you describe how this fantastic cascade of fail improves with this
-> > > > > patch, please? If you're getting context faults then something has already
-> > > > > gone horribly wrong, so I'm trying to work out how this improves things.
-> > > > >
-> > > >
-> > > > There are plenty of cases where getting iommu faults with a GPU is
-> > > > "normal", or at least not something the kernel or even GL driver can
-> > > > control.
+From: Greg KH <gregkh@linuxfoundation.org>  Monday, November 26, 2018 11:57=
+ AM
+
+> > > You created "null" hooks that do nothing, for no one in this patch
+> > > series, why?
 > > >
-> > > Such as? All the mainline driver does is print a diagnostic and clear the
-> > > fault, which doesn't seem generally useful.
 > >
-> > it is useful to debug the fault ;-)
-> >
-> > Although eventually we'll want to be able to do more than that, like
-> > have the fault trigger bringing in pages of a mmap'd file and that
-> > sort of thing.
->
-> Right, and feels very strange to me if we have this bit set because it
-> means that your fault is no longer synchronous and therefore diverges
-> from the fault model that you get from the CPU, where you certainly
-> wouldn't expect stores appearing in the program after a faulting load to
-> be visible in memory. However, thinking harder about it, I suppose we're
-> already in a situation where the translations are handled out of order
-> in the absence of barriers, so maybe it's not the end of the world.
+> > hv_enable_vmbus_irq() and hv_disable_vmbus_irq() have non-null
+> > implementations in the ARM64 code in patch 2 of this series.  The
+> > implementations are in the new file arch/arm64/hyperv/mshyperv.c.
+> > Or am I misunderstanding your point?
+>=20
+> So you use a hook in an earlier patch and then add it in a later one?
+>=20
+> Shouldn't you do it the other way around?  As it is, the earlier patch
+> should not work properly, right?
 
-I guess I wouldn't have expected synchronous without CFCFG=1
+The earlier patch implements the hook on the ARM64 side but it is
+unused -- it's not called.  The later patch then calls it.  Wouldn't the
+other way around be backwards?
 
-> Could you dump the FSR value that you see in the fault handler, please?
-> From my reading of the architecture spec, as long as clear all of the
-> fault bits in the irq handler, then your machine shouldn't die like it
-> does with HUPCFG=CFCFG=0..
+The general approach is for patches 1 and 2 of the series to provide
+all the new code under arch/arm64 to enable Hyper-V.  But the code
+won't get called (or even built) with just these two patches because
+CONFIG_HYPERV can't be selected.  Patch 3 is separate because it
+applies to architecture independent code and arch/x86 code -- I thought
+there might be value in keeping the ARM64 and x86 patches distinct.=20
+Patch 4 applies to architecture independent code, and enables the
+ARM64 code in patches 1 and 2 to be compiled and run when
+CONFIG_HYPERV is selected.
 
-I expect it dies before the irq handler returns..
+If combining some of the patches in the series is a better approach, I'm
+good with that.
 
-possibly the behavior of terminated translations returning zero's
-might be some detail of qcom's implementation (or how the gpu reacts
-to terminated memory transactions, etc), rather than something the
-spec expects/specifies.
-
-I'll try and get you a dump of FSR in next couple days.. (need to
-switch kernels and write up some test code to trigger faults)
-
-BR,
--R
-
->
-> > > > With this patch, you still get the iommu fault, but it doesn't cause
-> > > > the gpu to crash.  But without it, other memory accesses in flight
-> > > > while the fault occurs, like the GPU command-processor reading further
-> > > > ahead in the cmdstream to setup next draw, would return zero's,
-> > > > causing the GPU to crash or get into a bad state.
-> > >
-> > > I get that part, but I don't understand why we're seeing faults in the first
-> > > place and I worry that this patch is just the tip of the iceberg. It's also
-> > > not clear that processing subsequent transactions is always the right thing
-> > > to do in a world where we actually want to report (and handle) synchronous
-> > > faults from devices.
-> >
-> > Sure, it is a bug.. but it can be an application bug that is not
-> > something the userspace GL driver or kernel could do anything about.
-> > We shouldn't let this kill the GPU.  If the application didn't have
-> > this much control, we wouldn't need an IOMMU in the first place[1].
-> > With opencl compute, the userspace controlled shader has full blown
-> > pointers to GPU memory.
-> >
-> > And even in cases where it is a userspace GL driver bug, having some
-> > robustness to not completely kill the GPU makes debugging much easier.
-> > Something I do a lot when bringing up support for a new generation of
-> > GPU.
-> >
-> > I'm having a hard time understanding your objection to this.
-> > Returning zero's for non-faulting transactions is a *really bad idea*.
->
-> Wait -- who said anything about returning zeroes? Where does that behaviour
-> appear in the architecture?
->
-> Will
+Michael
