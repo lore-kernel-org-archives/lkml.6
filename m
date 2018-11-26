@@ -2,119 +2,275 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE0BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:45:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E982EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A060620850
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:45:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YIdtoT5q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A060620850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A210B20850
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:46:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A210B20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbeKZUjY (ORCPT
+        id S1726369AbeKZUjs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 15:39:24 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39207 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbeKZUjY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 15:39:24 -0500
-Received: by mail-wm1-f67.google.com with SMTP id n133so813546wmd.4
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 01:45:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vVxREeXO+PAlp7en4AnUo35LnPzIhiArPtqKtPDTvQc=;
-        b=YIdtoT5qxffMjqezeD+Erf10INMxb/Y8bIepQl+prGVEzL+FXcp8PCkzuWQSAq7dIb
-         pL+nbQITf2TUwHcMHHE2psXf9GcLrNtxwokeqmFW0J6p6huaayvVZIb9ikQffDkKzPFz
-         I8PWg/E1rWnATTqJyK9z29ORDIGXJbfY+SPoE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vVxREeXO+PAlp7en4AnUo35LnPzIhiArPtqKtPDTvQc=;
-        b=PJpGrZnEIme3QwtR01WZhFNhgnSb7TgkLKodelOtI9gj/Ez2pMg0DetMJ2vF9AGP11
-         ukh3EtJIoYJok5LpUdeBdYIE9QMUAih+0PlOuZDbr7uS8N04pOQyQaS7AT2DpuYm3gXj
-         pkR1dXTD4ZN4Frv/ruMYAjiyYYyWK1y2hD4Mc9guRRqf/Qt2X42LznTPRIM+6+dURsyR
-         iHcpNyp2nOKH7utnCvD7WTfR1SROf3f8UK3KUXVb2RytrRu6nyizFMazdZDGmBfSXreS
-         f8edMb5JpdMfWGOIp8AqAUjw9GRUy5ZEJ0YIkXHNI970M8+2e3pNzStyG8zYjVT4sZ/i
-         nvCA==
-X-Gm-Message-State: AA+aEWY70dldrhs+09VoCN17wgr6fKsnvuImzXhCHyrYn4N1E52zAXWb
-        nDTJRMHv0RoYxqK/g6EsFVEmVdnAihg=
-X-Google-Smtp-Source: AJdET5fJk35Jn2bIqJLVaC9F2Y9IodjHc5ZTbyXC005yeMuaTpAQgScU1mlSQgo6R5KVYvcGqyNU7g==
-X-Received: by 2002:a1c:cb84:: with SMTP id b126mr20859030wmg.64.1543225548499;
-        Mon, 26 Nov 2018 01:45:48 -0800 (PST)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id h131sm378209wmd.17.2018.11.26.01.45.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 01:45:47 -0800 (PST)
-Subject: Re: [PATCH] media: venus: fix reported size of 0-length buffers
-To:     Alexandre Courbot <acourbot@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181113093048.236201-1-acourbot@chromium.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <a56320a4-c74f-54c2-a340-fa3c2c19a2a1@linaro.org>
-Date:   Mon, 26 Nov 2018 11:45:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 26 Nov 2018 15:39:48 -0500
+Received: from mout.gmx.net ([212.227.15.15]:43041 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726203AbeKZUjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 15:39:48 -0500
+Received: from ovpn-120-189.rdu2.redhat.com ([98.118.28.103]) by mail.gmx.com
+ (mrgmx001 [212.227.17.184]) with ESMTPSA (Nemesis) id
+ 0MXq3L-1fwgQE13MV-00WjYZ; Mon, 26 Nov 2018 10:45:57 +0100
+Subject: Re: [PATCH v4] debugobjects: scale the static pool size
+From:   Qian Cai <cai@gmx.us>
+To:     Waiman Long <longman@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>, arnd@arndb.de,
+        linux kernel <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+References: <20181120232810.2503-1-cai@gmx.us>
+ <20181121021157.3061-1-cai@gmx.us>
+ <alpine.DEB.2.21.1811222238270.1665@nanos.tec.linutronix.de>
+ <EAB01918-727E-4E6F-AC7F-0417CA469D5A@gmx.us>
+ <211af3b2-bc56-2d1b-c6c2-f6853797a7a1@gmx.us>
+ <473f6a6e-1a14-d07c-b0f0-4d96e3232d1a@redhat.com>
+ <5abb31e1-b5f2-718d-3a48-b0d8a73d6e5c@gmx.us>
+Message-ID: <0cba9054-99dd-9dbe-3da8-e10d25752c5b@gmx.us>
+Date:   Mon, 26 Nov 2018 04:45:54 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181113093048.236201-1-acourbot@chromium.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <5abb31e1-b5f2-718d-3a48-b0d8a73d6e5c@gmx.us>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:9G341W1981hDDNmL6bwjzBm+pOFh9QzvlZWVDJbmyew1Pk24CaI
+ 2VHA2IfN8E1W+U2OqdYCBdF0WGDBE1LJc8E/T+hebMhUgqVIuqkFc1qahF7frsircNoKq/j
+ dE/f4Bncjse22of41RuwEEpt9RcboqrSQW6c1Bnhsl6oJB6x17WXdA2llpU+HYVDchQpVwO
+ nBjFyQWZBZYAn+7Xit4CA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:dcNXxznjifg=:FlE5gLDZP6ZgY0rALM4A3y
+ 8pDyMq03632I5JG+VrGU0TdEobj/fwZ/lfaMAmNSKyXsCjpz/tWJXcRoZQfSNEYDLeRZq8pPX
+ aswDiYYI38A0P2CLkmEMcTve/ZK7nUal6+A/ySB1+05Z9TUrGE/7Wu1cd7lZUxgNLTJ5iUU7e
+ EDh5gCbJM43B8dsKzhwnWrDxW/n0O3BblE8DalblazXbED5e49phNN07PSFVejs8GKjeIdh55
+ RBCCICtrJE+wAt3dNSwixe5TTItKih3L8pMYe/35uCh4DMNyuQfl5zvplLpwCF8gaDCm8QpTx
+ hSDbS9yUoiSLJ+4VHDfF2lQHinyDZwwbuuKAxo0xEhdyTxkKWkhp3QjqbnfCFIs01HABj49Ck
+ NMYirE07Qpa4vJNnDwWKDjYAY3HHm3UVIc66/i39uYlEQV0t8IQ9f/vzVONV+aef4/mKKyA1X
+ JEVg7z6XsJBWgQSFGSkhP4x9XDuEQvv/Sb9zBD++oYA+w+7QTHFjg7uPsnkueIA8m9UhTjYFX
+ VhC5jZ/m7mOuTj9vtiE7OFG2/ybj8H7t5fr099t6qBPSOw2ctayNt7FtJronwSwFEVU/U8Xe/
+ Cn3urVjYXGoI2KEeuMIZfqdLO06qtvazXit757NgPGUZLlEgzRec4zE1kGm9Ul8qWQ1Qa+bF6
+ Vn2Rq4Ghd5qsSf81OLnDhrObSAy6c3bV3En8wpju1JJWK/9dccYXJsOMtKPQcj4NGBv6vbhPi
+ JsVScquphLIly+rzuBKezzWp29iUpjmfNPLUi28i9kbeH0jzbMJsqPaxIEZcUmJozg4WzSm+w
+ mmjuusKoXDjsSiXHBtE3sZ8Sw9YDZmZGc+bnlsXE0xNZL3jP8lmPmrxDLAj7VZcRLa4SXexDx
+ rcuHeC0iWMBoySbZ/t970T4tK0/oG8qh3wnU1gnRQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
 
-Thanks for the patch!
 
-On 11/13/18 11:30 AM, Alexandre Courbot wrote:
-> The last buffer is often signaled by an empty buffer with the
-> V4L2_BUF_FLAG_LAST flag set. Such buffers were returned with the
-> bytesused field set to the full size of the OPB, which leads
-> user-space to believe that the buffer actually contains useful data. Fix
-> this by passing the number of bytes reported used by the firmware.
+On 11/25/18 11:52 PM, Qian Cai wrote:
 > 
-> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
-> ---
->  drivers/media/platform/qcom/venus/vdec.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-
-Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-
 > 
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> index 189ec975c6bb..282de21cf2e1 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -885,10 +885,8 @@ static void vdec_buf_done(struct venus_inst *inst, unsigned int buf_type,
->  	vbuf->field = V4L2_FIELD_NONE;
->  
->  	if (type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-> -		unsigned int opb_sz = venus_helper_get_opb_size(inst);
-> -
->  		vb = &vbuf->vb2_buf;
-> -		vb2_set_plane_payload(vb, 0, bytesused ? : opb_sz);
-> +		vb2_set_plane_payload(vb, 0, bytesused);
->  		vb->planes[0].data_offset = data_offset;
->  		vb->timestamp = timestamp_us * NSEC_PER_USEC;
->  		vbuf->sequence = inst->sequence_cap++;
+> On 11/25/18 8:31 PM, Waiman Long wrote:
+>> On 11/25/2018 03:42 PM, Qian Cai wrote:
+>>>
+>>>
+>>> On 11/23/18 10:01 PM, Qian Cai wrote:
+>>>>
+>>>>
+>>>>> On Nov 22, 2018, at 4:56 PM, Thomas Gleixner <tglx@linutronix.de>
+>>>>> wrote:
+>>>>>
+>>>>> On Tue, 20 Nov 2018, Qian Cai wrote:
+>>>>>
+>>>>> Looking deeper at that.
+>>>>>
+>>>>>> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+>>>>>> index 70935ed91125..140571aa483c 100644
+>>>>>> --- a/lib/debugobjects.c
+>>>>>> +++ b/lib/debugobjects.c
+>>>>>> @@ -23,9 +23,81 @@
+>>>>>> #define ODEBUG_HASH_BITS    14
+>>>>>> #define ODEBUG_HASH_SIZE    (1 << ODEBUG_HASH_BITS)
+>>>>>>
+>>>>>> -#define ODEBUG_POOL_SIZE    1024
+>>>>>> +#define ODEBUG_DEFAULT_POOL    512
+>>>>>> #define ODEBUG_POOL_MIN_LEVEL    256
+>>>>>>
+>>>>>> +/*
+>>>>>> + * Some debug objects are allocated during the early boot.
+>>>>>> Enabling some options
+>>>>>> + * like timers or workqueue objects may increase the size required
+>>>>>> significantly
+>>>>>> + * with large number of CPUs. For example (as today, 20 Nov. 2018),
+>>>>>> + *
+>>>>>> + * No. CPUs x 2 (worker pool) objects:
+>>>>>> + *
+>>>>>> + * start_kernel
+>>>>>> + *   workqueue_init_early
+>>>>>> + *     init_worker_pool
+>>>>>> + *       init_timer_key
+>>>>>> + *         debug_object_init
+>>>>>> + *
+>>>>>> + * No. CPUs objects (CONFIG_HIGH_RES_TIMERS):
+>>>>>> + *
+>>>>>> + * sched_init
+>>>>>> + *   hrtick_rq_init
+>>>>>> + *     hrtimer_init
+>>>>>> + *
+>>>>>> + * CONFIG_DEBUG_OBJECTS_WORK:
+>>>>>> + * No. CPUs x 6 (workqueue) objects:
+>>>>>> + *
+>>>>>> + * workqueue_init_early
+>>>>>> + *   alloc_workqueue
+>>>>>> + *     __alloc_workqueue_key
+>>>>>> + *       alloc_and_link_pwqs
+>>>>>> + *         init_pwq
+>>>>>> + *
+>>>>>> + * Also, plus No. CPUs objects:
+>>>>>> + *
+>>>>>> + * perf_event_init
+>>>>>> + *    __init_srcu_struct
+>>>>>> + *      init_srcu_struct_fields
+>>>>>> + *        init_srcu_struct_nodes
+>>>>>> + *          __init_work
+>>>>>
+>>>>> None of the things are actually used or required _BEFORE_
+>>>>> debug_objects_mem_init() is invoked.
+>>>>>
+>>>>> The reason why the call is at this place in start_kernel() is
+>>>>> historical. It's because back in the days when debugobjects were
+>>>>> added the
+>>>>> memory allocator was enabled way later than today. So we can just
+>>>>> move the
+>>>>> debug_objects_mem_init() call right before sched_init() I think.
+>>>>
+>>>> Well, now that kmemleak_init() seems complains that
+>>>> debug_objects_mem_init()
+>>>> is called before it.
+>>>>
+>>>> [    0.078805] kmemleak: Cannot insert 0xc000000dff930000 into the
+>>>> object search tree (overlaps existing)
+>>>> [    0.078860] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.20.0-rc3+ #3
+>>>> [    0.078883] Call Trace:
+>>>> [    0.078904] [c000000001c8fcd0] [c000000000c96b34]
+>>>> dump_stack+0xe8/0x164 (unreliable)
+>>>> [    0.078935] [c000000001c8fd20] [c000000000486e84]
+>>>> create_object+0x344/0x380
+>>>> [    0.078962] [c000000001c8fde0] [c000000000489544]
+>>>> early_alloc+0x108/0x1f8
+>>>> [    0.078989] [c000000001c8fe20] [c00000000109738c]
+>>>> kmemleak_init+0x1d8/0x3d4
+>>>> [    0.079016] [c000000001c8ff00] [c000000001054028]
+>>>> start_kernel+0x5c0/0x6f8
+>>>> [    0.079043] [c000000001c8ff90] [c00000000000ae7c]
+>>>> start_here_common+0x1c/0x520
+>>>> [    0.079070] kmemleak: Kernel memory leak detector disabled
+>>>> [    0.079091] kmemleak: Object 0xc000000ffd587b68 (size 40):
+>>>> [    0.079112] kmemleak:   comm "swapper/0", pid 0, jiffies 4294937299
+>>>> [    0.079135] kmemleak:   min_count = -1
+>>>> [    0.079153] kmemleak:   count = 0
+>>>> [    0.079170] kmemleak:   flags = 0x5
+>>>> [    0.079188] kmemleak:   checksum = 0
+>>>> [    0.079206] kmemleak:   backtrace:
+>>>> [    0.079227]      __debug_object_init+0x688/0x700
+>>>> [    0.079250]      debug_object_activate+0x1e0/0x350
+>>>> [    0.079272]      __call_rcu+0x60/0x430
+>>>> [    0.079292]      put_object+0x60/0x80
+>>>> [    0.079311]      kmemleak_init+0x2cc/0x3d4
+>>>> [    0.079331]      start_kernel+0x5c0/0x6f8
+>>>> [    0.079351]      start_here_common+0x1c/0x520
+>>>> [    0.079380] kmemleak: Early log backtrace:
+>>>> [    0.079399]    memblock_alloc_try_nid_raw+0x90/0xcc
+>>>> [    0.079421]    sparse_init_nid+0x144/0x51c
+>>>> [    0.079440]    sparse_init+0x1a0/0x238
+>>>> [    0.079459]    initmem_init+0x1d8/0x25c
+>>>> [    0.079498]    setup_arch+0x3e0/0x464
+>>>> [    0.079517]    start_kernel+0xa4/0x6f8
+>>>> [    0.079536]    start_here_common+0x1c/0x520
+>>>>
+>>>
+>>> So this is an chicken-egg problem. Debug objects need kmemleak_init()
+>>> first, so it can make use of kmemleak_ignore() for all debug objects
+>>> in order to avoid the overlapping like the above.
+>>>
+>>> while (obj_pool_free < debug_objects_pool_min_level) {
+>>>
+>>>      new = kmem_cache_zalloc(obj_cache, gfp);
+>>>      if (!new)
+>>>          return;
+>>>
+>>>      kmemleak_ignore(new);
+>>>
+>>> However, there seems no way to move kmemleak_init() together this
+>>> early in start_kernel() just before vmalloc_init() [1] because it
+>>> looks like it depends on things like workqueue
+>>> (schedule_work(&cleanup_work)) and rcu. Hence, it needs to be after
+>>> workqueue_init_early() and rcu_init()
+>>>
+>>> Given that, maybe the best outcome is to stick to the alternative
+>>> approach that works [1] rather messing up with the order of
+>>> debug_objects_mem_init() in start_kernel() which seems tricky. What do
+>>> you think?
+>>>
+>>> [1] https://goo.gl/18N78g
+>>> [2] https://goo.gl/My6ig6
+>>
+>> Could you move kmemleak_init() and debug_objects_mem_init() as far up as
+>> possible, like before the hrtimer_init() to at least make static count
+>> calculation as simple as possible?
+>>
 > 
+> Well, there is only 2 x NR_CPUS difference after moved both calls just after 
+> rcu_init().
+> 
+>           Before After
+> 64-CPU:  1114   974
+> 160-CPU: 2774   2429
+> 256-CPU: 3853   4378
+> 
+> I suppose it is possible that the timers only need the scale factor 5 instead of 
+> 10. However, it needs to be retested for all the configurations to be sure, and 
+> likely need to remove all irqs calls in kmemleak_init() and subroutines because 
+> it is now called with irq disabled. Given the initdata will be freed anyway, 
+> does it really worth doing?
+> 
+> BTW, calling debug_objects_mem_init() before kmemleak_init() actually could 
+> trigger a loop on machines with 160+ CPUs until the pool is filled up,
+> 
+> debug_objects_pool_min_level += num_possible_cpus() * 4;
+> 
+> [1] while (obj_pool_free < debug_objects_pool_min_level)
+> 
+> kmemleak_init
+>    kmemleak_ignore (from replaced static debug objects)
+>      make_black_object
+>        put_object
+>          __call_rcu (kernel/rcu/tree.c)
+>            debug_rcu_head_queue
+>              debug_object_activate
+>                debug_object_init
+>                  fill_pool
+>                    kmemleak_ignore (looping in [1])
+>                      make_black_object
+>                        ...
+> 
+> I think until this is resolved, there is no way to move debug_objects_mem_init() 
+> before kmemleak_init().
 
--- 
-regards,
-Stan
+I believe this is a separate issue that kmemleak is broken with 
+CONFIG_DEBUG_OBJECTS_RCU_HEAD anyway where the infinite loop above could be 
+triggered in the existing code as well, i.e., once the pool need be refilled 
+(fill_pool()) after the system boot up, debug object creation will call 
+kmemleak_ignore() and it will create a new rcu debug_object_init(), and then it 
+will call fill_pool() again and again. As the results, the system is locking up 
+during kernel compilations.
+
+Hence, I'll send out a patch for debug objects with large CPUs anyway and deal 
+with kmemleak + CONFIG_DEBUG_OBJECTS_RCU_HEAD issue later.
