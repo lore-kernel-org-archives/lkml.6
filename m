@@ -2,307 +2,202 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A02C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D5BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D877C20850
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:39:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D877C20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.ee
+	by mail.kernel.org (Postfix) with ESMTP id 7D61020855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:40:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CTNDalyY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D61020855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbeKZUdO (ORCPT
+        id S1726356AbeKZUdb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 15:33:14 -0500
-Received: from mx2.cyber.ee ([193.40.6.72]:32849 "EHLO mx2.cyber.ee"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726176AbeKZUdN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 15:33:13 -0500
-Subject: Re: NO_BOOTMEM breaks alpha pc164
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-alpha@vger.kernel.org,
-        linux-mm@kvack.org
-References: <8c8e3dba-7adf-96c6-195c-311050256743@linux.ee>
- <20181123071448.GE5704@rapoport-lnx>
- <78de90df-d88b-d82f-baf1-f0218af7a341@linux.ee>
- <20181124114507.GC28634@rapoport-lnx>
-From:   Meelis Roos <mroos@linux.ee>
-Message-ID: <3916b9f1-76a3-c20d-6e2d-ff62a73a0b4a@linux.ee>
-Date:   Mon, 26 Nov 2018 11:39:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 26 Nov 2018 15:33:31 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:58050 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbeKZUdb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 15:33:31 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAQ9drRK074110;
+        Mon, 26 Nov 2018 03:39:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1543225194;
+        bh=bl1zAi6N2kVHbF0UDuXfcjeDmAVNGawptVMXN3ZREkc=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=CTNDalyYqg/G78cMiGvXhzBo3GmaY82rvlZlfk20KeYnQx0J3rGgii9VMv7zMGa2q
+         eZJbjPFXe1Jy0tc+ERUVw7250Dp4xRm18jcHudy7N147iXII6QGloxxrSuKB/LRNbk
+         ks4R0j7EcWbobldvYnEzMIkRSO2ybHJDQzRhcAjc=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAQ9drtQ085931
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 26 Nov 2018 03:39:53 -0600
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 26
+ Nov 2018 03:39:53 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 26 Nov 2018 03:39:53 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAQ9doOn002070;
+        Mon, 26 Nov 2018 03:39:50 -0600
+Subject: Re: [RFC PATCH v2 05/15] usb:cdns3: Added DRD support
+To:     Pawel Laszczak <pawell@cadence.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
+ <1542535751-16079-6-git-send-email-pawell@cadence.com>
+ <5BF8140C.7000605@ti.com>
+ <BYAPR07MB470991EB0AE200B6481AEE35DDD70@BYAPR07MB4709.namprd07.prod.outlook.com>
+ <5BFBA9BC.20306@ti.com>
+ <BYAPR07MB47092F6F92A344AA76C093C9DDD70@BYAPR07MB4709.namprd07.prod.outlook.com>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alan Douglas <adouglas@cadence.com>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        "peter.chen@nxp.com" <peter.chen@nxp.com>,
+        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5BFBBF65.7090204@ti.com>
+Date:   Mon, 26 Nov 2018 11:39:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-In-Reply-To: <20181124114507.GC28634@rapoport-lnx>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: et-EE
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <BYAPR07MB47092F6F92A344AA76C093C9DDD70@BYAPR07MB4709.namprd07.prod.outlook.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Two things that might cause the hang.
-> First, memblock_add() is called after node_min_pfn has been rounded down to
-> the nearest 8Mb and in your case this cases memblock to see more memory that
-> is actually present in the system.
-> I'm not sure why the 8Mb alignment is required, I've just made sure that
-> memblock_add() will use exact available memory (the first patch below).
+On 26/11/18 10:39, Pawel Laszczak wrote:
+>>
+>> Pawel,
+>>
+>> On 26/11/18 09:23, Pawel Laszczak wrote:
+>>> Hi Roger,
+>>>
+>>>> On 18/11/18 12:09, Pawel Laszczak wrote:
+>>>>> Patch adds supports for detecting Host/Device mode.
+>>>>> Controller has additional OTG register that allow
+>>>>> implement even whole OTG functionality.
+>>>>> At this moment patch adds support only for detecting
+>>>>> the appropriate mode based on strap pins and ID pin.
+>>>>>
+>>>>> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+>>>>> ---
+>>>>>  drivers/usb/cdns3/Makefile |   2 +-
+>>>>>  drivers/usb/cdns3/core.c   |  27 +++--
+>>>>>  drivers/usb/cdns3/drd.c    | 229 +++++++++++++++++++++++++++++++++++++
+>>>>>  drivers/usb/cdns3/drd.h    | 122 ++++++++++++++++++++
+>>>>>  4 files changed, 372 insertions(+), 8 deletions(-)
+>>>>>  create mode 100644 drivers/usb/cdns3/drd.c
+>>>>>  create mode 100644 drivers/usb/cdns3/drd.h
+>>>>>
+>>>>> diff --git a/drivers/usb/cdns3/Makefile b/drivers/usb/cdns3/Makefile
+>>>>> index 02d25b23c5d3..e779b2a2f8eb 100644
+>>>>> --- a/drivers/usb/cdns3/Makefile
+>>>>> +++ b/drivers/usb/cdns3/Makefile
+>>>>> @@ -1,5 +1,5 @@
+>>>>>  obj-$(CONFIG_USB_CDNS3)			+= cdns3.o
+>>>>>  obj-$(CONFIG_USB_CDNS3_PCI_WRAP)	+= cdns3-pci.o
+>>>>>
+>>>>> -cdns3-y					:= core.o
+>>>>> +cdns3-y					:= core.o drd.o
+>>>>>  cdns3-pci-y		 		:= cdns3-pci-wrap.o
+>>>>> diff --git a/drivers/usb/cdns3/core.c b/drivers/usb/cdns3/core.c
+>>>>> index f9055d4da67f..dbee4325da7f 100644
+>>>>> --- a/drivers/usb/cdns3/core.c
+>>>>> +++ b/drivers/usb/cdns3/core.c
+>>>>> @@ -17,6 +17,7 @@
+>>>>>
+>>>>>  #include "gadget.h"
+>>>>>  #include "core.h"
+>>>>> +#include "drd.h"
+>>>>>
+>>>>>  static inline struct cdns3_role_driver *cdns3_get_current_role_driver(struct cdns3 *cdns)
+>>>>>  {
+>>>>> @@ -57,8 +58,10 @@ static inline void cdns3_role_stop(struct cdns3 *cdns)
+>>>>>  static enum cdns3_roles cdns3_get_role(struct cdns3 *cdns)
+>>>>>  {
+>>>>>  	if (cdns->roles[CDNS3_ROLE_HOST] && cdns->roles[CDNS3_ROLE_GADGET]) {
+>>>>> -		//TODO: implements selecting device/host mode
+>>>>> -		return CDNS3_ROLE_HOST;
+>>>>> +		if (cdns3_is_host(cdns))
+>>>>> +			return CDNS3_ROLE_HOST;
+>>>>> +		if (cdns3_is_device(cdns))
+>>>>> +			return CDNS3_ROLE_GADGET;
+>>>>>  	}
+>>>>>  	return cdns->roles[CDNS3_ROLE_HOST]
+>>>>>  		? CDNS3_ROLE_HOST
+>>>>> @@ -124,6 +127,12 @@ static irqreturn_t cdns3_irq(int irq, void *data)
+>>>>>  	struct cdns3 *cdns = data;
+>>>>>  	irqreturn_t ret = IRQ_NONE;
+>>>>>
+>>>>> +	if (cdns->dr_mode == USB_DR_MODE_OTG) {
+>>>>> +		ret = cdns3_drd_irq(cdns);
+>>>>> +		if (ret == IRQ_HANDLED)
+>>>>> +			return ret;
+>>>>> +	}
+>>>>
+>>>> The kernel's shared IRQ model takes care of sharing the same interrupt
+>>>> between different devices and their drivers. You don't need to manually
+>>>> handle it here. Just let all 3 drivers do a request_irq() and have
+>>>> handlers check if the IRQ was theirs or not and return IRQ_HANDLED or
+>>>> IRQ_NONE accordingly.
+>>>>
+>>>> Looks like you can do away with irq member of the role driver struct.
+>>>
+>>> Ok, I will split it into 3 separate part, but in this case, I additionally have to check the current
+>>> role in ISR function. Driver can't read host side registers when controller works in device role
+>>> and vice versa. One part of controller is kept in reset. Only DRD registers are common and are all accessible.
+>>>
+>>
+>> In which ISR do you need to check current role?
+>>
+>> I'm not sure if we are on the same page.
+>> Core (drd) driver shouldn't read host/device side registers. All 3 drivers,
+>> i.e. DRD(core), Host (xhci) and device (cdns3) should do a request_irq()
+>> and process their respective IRQ events.
 > 
-> Another thing is that memblock allocates memory from high addresses while
-> bootmem was using low memory. It may happen that an allocation from high
-> memory is not accessible by the hardware, although it should be. The second
-> patch below addresses this issue.
+> Yes, I understand. 
+> I need to check this in cdns3_irq_handler_thread and cdns3_host_irq.
 > 
-> It would be really great if you could test with each patch separately and
-> with both patches applied :)
+> Core (drd) has register that are always accessible. 
+> Core (device)  - registers are available also in device mode
+> Core (host)  - registers  are available only in host mode 
+> 
+> So we can use separate request_irq  for drd, device and host side, but 
+> we need ensure that in host side driver will not touch the device register. 
 
-Tested separateöy and together, with the previous debug patch applied.
+That should never happen as host side doesn't have visibility to device registers.
+> 
+> We doesn't know the order in which  the system will call interrupts function related to 
+>  the shared interrupt line.
 
-debug+patch1 caused no visible change cmpared to just debug - same crash before starting init as with plain debug patch.
+Order shouldn't matter. Each user will check its own events return IRQ_NONE if they
+didn't cause the IRQ.
+> 
 
-debug+patch2 caused a change - now instead of hang before starting init, it hangs after starting init as with no patch applied.
+<snip>
 
-debug+patch1+patch2: works, dmesg attached:
-
-[    0.000000] Linux version 4.20.0-rc2-00068-gda5322e65940-dirty (mroos@pc164) (gcc version 7.3.0 (Gentoo 7.3.0-r3 p1.4)) #118 Mon Nov 26 12:24:51 EET 2018
-[    0.000000] Booting on EB164 variation PC164 using machine vector PC164 from SRM
-[    0.000000] Major Options: EV56 LEGACY_START VERBOSE_MCHECK DISCONTIGMEM MAGIC_SYSRQ
-[    0.000000] Command line: root=/dev/sda2 console=ttyS0
-[    0.000000] Raw memory layout:
-[    0.000000]  memcluster  0, usage 1, start        0, end      192
-[    0.000000]  memcluster  1, usage 0, start      192, end    32651
-[    0.000000]  memcluster  2, usage 1, start    32651, end    32768
-[    0.000000] Initializing bootmem allocator on Node ID 0
-[    0.000000]  memcluster  1, usage 0, start      192, end    32651
-[    0.000000]  Detected node memory:   start      192, end    32651
-[    0.000000] memblock_add: [0x0000000000180000-0x000000000ff15fff] setup_memory+0x38c/0x470
-[    0.000000] memblock_reserve: [0x0000000000300000-0x0000000000c11fff] setup_memory+0x43c/0x470
-[    0.000000] 1024K Bcache detected; load hit latency 30 cycles, load miss latency 212 cycles
-[    0.000000] pci: cia revision 2
-[    0.000000] memblock_alloc_try_nid: 104 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 alloc_pci_controller+0x2c/0x50
-[    0.000000] memblock_reserve: [0x0000000000c12000-0x0000000000c12067] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid: 64 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 alloc_resource+0x2c/0x40
-[    0.000000] memblock_reserve: [0x0000000000c12080-0x0000000000c120bf] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid: 40 bytes align=0x8000 nid=0 from=0x0000000000000000 max_addr=0x0000000000000000 iommu_arena_new_node+0x74/0x1b0
-[    0.000000] memblock_reserve: [0x0000000000c18000-0x0000000000c18027] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid: 40 bytes align=0x8000 nid=0 from=0x0000000000000000 max_addr=0x0000000000000000 iommu_arena_new_node+0x104/0x1b0
-[    0.000000] memblock_reserve: [0x0000000000c20000-0x0000000000c20027] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid: 1024 bytes align=0x8000 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 do_init_arch+0x37c/0x448
-[    0.000000] memblock_reserve: [0x0000000000c28000-0x0000000000c283ff] memblock_alloc_internal+0x170/0x278
-[    0.000000] On node 0 totalpages: 32651
-[    0.000000] memblock_alloc_try_nid_nopanic: 1835008 bytes align=0x20 nid=0 from=0x0000000000000000 max_addr=0x0000000000000000 alloc_node_mem_map+0x7c/0xa8
-[    0.000000] memblock_reserve: [0x0000000000c28400-0x0000000000de83ff] memblock_alloc_internal+0x170/0x278
-[    0.000000]   DMA zone: 224 pages used for memmap
-[    0.000000]   DMA zone: 0 pages reserved
-[    0.000000]   DMA zone: 32651 pages, LIFO batch:7
-[    0.000000] memblock_alloc_try_nid_nopanic: 16 bytes align=0x20 nid=0 from=0x0000000000000000 max_addr=0x0000000000000000 setup_usemap.isra.111+0x5c/0x78
-[    0.000000] memblock_reserve: [0x0000000000c120c0-0x0000000000c120cf] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid: 29 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 memblock_alloc.constprop.14+0x28/0x40
-[    0.000000] memblock_reserve: [0x0000000000c120e0-0x0000000000c120fc] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid: 29 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 memblock_alloc.constprop.14+0x28/0x40
-[    0.000000] memblock_reserve: [0x0000000000c12100-0x0000000000c1211c] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid: 29 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 memblock_alloc.constprop.14+0x28/0x40
-[    0.000000] memblock_reserve: [0x0000000000c12120-0x0000000000c1213c] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid_nopanic: 8192 bytes align=0x2000 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 pcpu_alloc_alloc_info+0x5c/0xc8
-[    0.000000] memblock_reserve: [0x0000000000c14000-0x0000000000c15fff] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid_nopanic: 32768 bytes align=0x2000 nid=-1 from=0x000003ffffffffff max_addr=0x0000000000000000 setup_per_cpu_areas+0x70/0x118
-[    0.000000] memblock_reserve: [0x0000000000dea000-0x0000000000df1fff] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid: 8 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 memblock_alloc.constprop.29+0x28/0x40
-[    0.000000] memblock_reserve: [0x0000000000c12140-0x0000000000c12147] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid: 8 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 memblock_alloc.constprop.29+0x28/0x40
-[    0.000000] memblock_reserve: [0x0000000000c12160-0x0000000000c12167] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid: 4 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 memblock_alloc.constprop.29+0x28/0x40
-[    0.000000] memblock_reserve: [0x0000000000c12180-0x0000000000c12183] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid: 8 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 memblock_alloc.constprop.29+0x28/0x40
-[    0.000000] memblock_reserve: [0x0000000000c121a0-0x0000000000c121a7] memblock_alloc_internal+0x170/0x278
-[    0.000000] pcpu-alloc: s0 r0 d32768 u32768 alloc=1*32768
-[    0.000000] pcpu-alloc: [0] 0
-[    0.000000] memblock_alloc_try_nid: 240 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 memblock_alloc.constprop.29+0x28/0x40
-[    0.000000] memblock_reserve: [0x0000000000c121c0-0x0000000000c122af] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid: 105 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 memblock_alloc.constprop.29+0x28/0x40
-[    0.000000] memblock_reserve: [0x0000000000c122c0-0x0000000000c12328] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid: 1024 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 memblock_alloc.constprop.29+0x28/0x40
-[    0.000000] memblock_reserve: [0x0000000000c12340-0x0000000000c1273f] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid: 1032 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 memblock_alloc.constprop.29+0x28/0x40
-[    0.000000] memblock_reserve: [0x0000000000c12740-0x0000000000c12b47] memblock_alloc_internal+0x170/0x278
-[    0.000000] memblock_alloc_try_nid: 80 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 memblock_alloc.constprop.29+0x28/0x40
-[    0.000000] memblock_reserve: [0x0000000000c12b60-0x0000000000c12baf] memblock_alloc_internal+0x170/0x278
-[    0.000000] __memblock_free_early: [0x0000000000c14000-0x0000000000c15fff] pcpu_free_alloc_info+0x2c/0x40
-[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 32427
-[    0.000000] Kernel command line: root=/dev/sda2 console=ttyS0
-[    0.000000] memblock_alloc_try_nid_nopanic: 262144 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 alloc_large_system_hash+0x258/0x3dc
-[    0.000000] memblock_reserve: [0x0000000000df2000-0x0000000000e31fff] memblock_alloc_internal+0x170/0x278
-[    0.000000] Dentry cache hash table entries: 32768 (order: 5, 262144 bytes)
-[    0.000000] memblock_alloc_try_nid_nopanic: 131072 bytes align=0x20 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 alloc_large_system_hash+0x258/0x3dc
-[    0.000000] memblock_reserve: [0x0000000000e32000-0x0000000000e51fff] memblock_alloc_internal+0x170/0x278
-[    0.000000] Inode-cache hash table entries: 16384 (order: 4, 131072 bytes)
-[    0.000000] Sorting __ex_table...
-[    0.000000] Memory: 248144K/261208K available (5455K kernel code, 372K rwdata, 1740K rodata, 200K init, 1425K bss, 13064K reserved, 0K cma-reserved)
-[    0.000000] SLUB: HWalign=32, Order=0-3, MinObjects=0, CPUs=1, Nodes=128
-[    0.000000] NR_IRQS: 35
-[    0.000000] clocksource: rpcc: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 3822520893 ns
-[    0.001953] Console: colour VGA+ 80x25
-[    0.073242] printk: console [ttyS0] enabled
-[    0.074218] Calibrating delay loop... 985.92 BogoMIPS (lpj=480768)
-[    0.083007] pid_max: default: 32768 minimum: 301
-[    0.084960] Mount-cache hash table entries: 1024 (order: 0, 8192 bytes)
-[    0.085937] Mountpoint-cache hash table entries: 1024 (order: 0, 8192 bytes)
-[    0.096679] devtmpfs: initialized
-[    0.098632] random: get_random_u32 called from bucket_table_alloc.isra.19+0xbc/0x280 with crng_init=0
-[    0.101562] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1866466235866741 ns
-[    0.102539] futex hash table entries: 256 (order: -1, 6144 bytes)
-[    0.104492] NET: Registered protocol family 16
-[    0.106445] pci: passed tb register update test
-[    0.108398] pci: passed sg loopback i/o read test
-[    0.109374] pci: passed tbia test
-[    0.110351] pci: passed pte write cache snoop test
-[    0.111328] pci: failed valid tag invalid pte reload test (mcheck; workaround available)
-[    0.112304] pci: passed pci machine check test
-[    0.113281] PCI host bridge to bus 0000:00
-[    0.114257] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
-[    0.115234] pci_bus 0000:00: root bus resource [mem 0x00000000-0x1fffffff]
-[    0.116210] pci_bus 0000:00: No busn resource found for root bus, will use [bus 00-ff]
-[    0.117187] pci 0000:00:05.0: [1000:000f] type 00 class 0x010000
-[    0.117187] pci 0000:00:05.0: reg 0x10: [io  0x10000-0x100ff]
-[    0.117187] pci 0000:00:05.0: reg 0x14: [mem 0x82875000-0x828750ff]
-[    0.117187] pci 0000:00:05.0: reg 0x18: [mem 0x82874000-0x82874fff]
-[    0.118164] pci 0000:00:05.0: reg 0x30: [mem 0x82840000-0x8285ffff pref]
-[    0.118164] pci 0000:00:06.0: [102b:051b] type 00 class 0x030000
-[    0.118164] pci 0000:00:06.0: reg 0x10: [mem 0x88000000-0x88ffffff pref]
-[    0.118164] pci 0000:00:06.0: reg 0x14: [mem 0x82870000-0x82873fff]
-[    0.118164] pci 0000:00:06.0: reg 0x18: [mem 0x82000000-0x827fffff]
-[    0.118164] pci 0000:00:06.0: reg 0x30: [mem 0x82860000-0x8286ffff pref]
-[    0.119140] pci 0000:00:08.0: [8086:0484] type 00 class 0x000000
-[    0.119140] pci 0000:00:09.0: [1011:0009] type 00 class 0x020000
-[    0.119140] pci 0000:00:09.0: reg 0x10: [io  0x10100-0x1017f]
-[    0.119140] pci 0000:00:09.0: reg 0x14: [mem 0x82875100-0x8287517f]
-[    0.119140] pci 0000:00:09.0: reg 0x30: [mem 0x82800000-0x8283ffff pref]
-[    0.120117] pci 0000:00:0b.0: [1095:0646] type 00 class 0x010180
-[    0.120117] pci 0000:00:0b.0: reg 0x20: [io  0x10180-0x1018f]
-[    0.120117] pci 0000:00:0b.0: legacy IDE quirk: reg 0x10: [io  0x01f0-0x01f7]
-[    0.121093] pci 0000:00:0b.0: legacy IDE quirk: reg 0x14: [io  0x03f6]
-[    0.122070] pci 0000:00:0b.0: legacy IDE quirk: reg 0x18: [io  0x0170-0x0177]
-[    0.123046] pci 0000:00:0b.0: legacy IDE quirk: reg 0x1c: [io  0x0376]
-[    0.124023] pci: enabling save/restore of SRM state
-[    0.124999] pci_bus 0000:00: busn_res: [bus 00-ff] end is updated to 00
-[    0.124999] pci 0000:00:06.0: BAR 0: assigned [mem 0x03000000-0x03ffffff pref]
-[    0.125976] pci 0000:00:06.0: BAR 2: assigned [mem 0x02800000-0x02ffffff]
-[    0.126953] pci 0000:00:09.0: BAR 6: assigned [mem 0x02200000-0x0223ffff pref]
-[    0.127929] pci 0000:00:05.0: BAR 6: assigned [mem 0x02240000-0x0225ffff pref]
-[    0.128906] pci 0000:00:06.0: BAR 6: assigned [mem 0x02260000-0x0226ffff pref]
-[    0.130859] pci 0000:00:06.0: BAR 1: assigned [mem 0x02270000-0x02273fff]
-[    0.131835] pci 0000:00:05.0: BAR 2: assigned [mem 0x02274000-0x02274fff]
-[    0.132812] pci 0000:00:05.0: BAR 0: assigned [io  0x8000-0x80ff]
-[    0.133788] pci 0000:00:05.0: BAR 1: assigned [mem 0x02275000-0x022750ff]
-[    0.134765] pci 0000:00:09.0: BAR 0: assigned [io  0x8400-0x847f]
-[    0.135742] pci 0000:00:09.0: BAR 1: assigned [mem 0x02276000-0x0227607f]
-[    0.136718] pci 0000:00:0b.0: BAR 4: assigned [io  0x8480-0x848f]
-[    0.137695] pci_bus 0000:00: resource 4 [io  0x0000-0xffff]
-[    0.137695] pci_bus 0000:00: resource 5 [mem 0x00000000-0x1fffffff]
-[    0.138671] SMC FDC37C93X Ultra I/O Controller found @ 0x370
-[    0.149413] pci 0000:00:06.0: vgaarb: setting as boot VGA device
-[    0.149413] pci 0000:00:06.0: vgaarb: VGA device added: decodes=io+mem,owns=io+mem,locks=none
-[    0.150390] pci 0000:00:06.0: vgaarb: bridge control possible
-[    0.151367] vgaarb: loaded
-[    0.153320] SCSI subsystem initialized
-[    0.157226] clocksource: Switched to clocksource rpcc
-[    0.182617] NET: Registered protocol family 2
-[    0.185546] tcp_listen_portaddr_hash hash table entries: 512 (order: 0, 8192 bytes)
-[    0.186523] TCP established hash table entries: 2048 (order: 1, 16384 bytes)
-[    0.187499] TCP bind hash table entries: 2048 (order: 1, 16384 bytes)
-[    0.188476] TCP: Hash tables configured (established 2048 bind 2048)
-[    0.190429] UDP hash table entries: 256 (order: 0, 8192 bytes)
-[    0.191406] UDP-Lite hash table entries: 256 (order: 0, 8192 bytes)
-[    0.193359] NET: Registered protocol family 1
-[    0.194335] PCI: CLS 0 bytes, default 32
-[    0.196288] srm_env: version 0.0.6 loaded successfully
-[    0.197265] Using epoch 2000 for rtc year 18
-[    0.200195] platform rtc-alpha: rtc core: registered rtc-alpha as rtc0
-[    0.203124] workingset: timestamp_bits=55 max_order=15 bucket_order=0
-[    0.241210] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 252)
-[    0.242187] io scheduler noop registered
-[    0.244140] io scheduler cfq registered (default)
-[    0.247070] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
-[    0.249023] serial8250: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
-[    0.249999] random: fast init done
-[    0.252929] serial8250: ttyS1 at I/O 0x2f8 (irq = 3, base_baud = 115200) is a 16550A
-[    0.406249] sym0: <875> rev 0x3 at pci 0000:00:05.0 irq 18
-[    0.410156] Floppy drive(s): fd0 is 2.88M
-[    0.499999] sym0: Symbios NVRAM, ID 7, Fast-20, SE, parity checking
-[    0.500976] sym0: open drain IRQ line driver, using on-chip SRAM
-[    0.501952] sym0: using LOAD/STORE-based firmware.
-[    0.502929] sym0: SCSI BUS has been reset.
-[    0.503905] scsi host0: sym-2.2.3
-[    0.506835] Linux Tulip driver version 1.1.15-NAPI (Feb 27, 2007)
-[    0.511718] tulip0: Old format EEPROM on 'Accton EN1207' board.  Using substitute media control info
-[    0.512695] tulip0: EEPROM default media type Autosense
-[    0.513671] tulip0: Index #0 - Media 10base2 (#1) described by a 21140 non-MII (0) block
-[    0.514648] tulip0: Index #1 - Media 10baseT (#0) described by a 21140 non-MII (0) block
-[    0.516601] tulip0: Index #2 - Media 10baseT-FDX (#4) described by a 21140 non-MII (0) block
-[    0.517577] tulip0: Index #3 - Media 100baseTx (#3) described by a 21140 non-MII (0) block
-[    0.518554] tulip0: Index #4 - Media 100baseTx-FDX (#5) described by a 21140 non-MII (0) block
-[    0.520507] net eth0: Digital DS21140 Tulip rev 34 at MMIO 0x2276000, 00:00:e8:3c:4e:c2, IRQ 19
-[    0.527343] serio: i8042 KBD port at 0x60,0x64 irq 1
-[    0.528320] serio: i8042 AUX port at 0x60,0x64 irq 12
-[    0.532226] NET: Registered protocol family 10
-[    0.536132] FDC 0 is a post-1991 82077
-[    0.546874] Segment Routing with IPv6
-[    0.547851] NET: Registered protocol family 17
-[    0.549804] atkbd serio0: keyboard reset failed on isa0060/serio0
-[    0.553710] platform rtc-alpha: setting system clock to 2018-11-26 10:35:27 UTC (1543228527)
-[    0.609374] atkbd serio1: keyboard reset failed on isa0060/serio1
-[    0.685546] atkbd serio0: keyboard reset failed on isa0060/serio0
-[    0.750976] atkbd serio1: keyboard reset failed on isa0060/serio1
-[    3.902341] scsi 0:0:0:0: Direct-Access     COMPAQ   BF0369A4BC       HPB7 PQ: 0 ANSI: 3
-[    3.903318] scsi target0:0:0: tagged command queuing enabled, command queue depth 16.
-[    3.904294] scsi target0:0:0: Beginning Domain Validation
-[    3.911130] scsi target0:0:0: FAST-20 WIDE SCSI 40.0 MB/s ST (50 ns, offset 15)
-[    3.915037] scsi target0:0:0: Domain Validation skipping write tests
-[    3.916013] scsi target0:0:0: Ending Domain Validation
-[    3.917966] scsi 0:0:0:0: Power-on or device reset occurred
-[    8.038081] sd 0:0:0:0: Attached scsi generic sg0 type 0
-[    8.039058] sd 0:0:0:0: [sda] 71132000 512-byte logical blocks: (36.4 GB/33.9 GiB)
-[    8.041011] sd 0:0:0:0: [sda] Write Protect is off
-[    8.041988] sd 0:0:0:0: [sda] Mode Sense: cf 00 10 08
-[    8.042964] sd 0:0:0:0: [sda] Write cache: disabled, read cache: enabled, supports DPO and FUA
-[    8.058589]  sda: sda1 sda2 sda4
-[    8.067378] sd 0:0:0:0: [sda] Attached SCSI disk
-[    8.096675] EXT4-fs (sda2): mounted filesystem with ordered data mode. Opts: (null)
-[    8.098628] VFS: Mounted root (ext4 filesystem) readonly on device 8:2.
-[    8.114253] devtmpfs: mounted
-[    8.116206] Freeing unused kernel memory: 200K
-[    8.118159] This architecture does not have kernel memory protection.
-[    8.119136] Run /sbin/init as init process
-[    8.398433] random: crng init done
-[   21.775379] udevd[477]: starting version 3.2.5
-[   21.947254] udevd[478]: starting eudev-3.2.5
-[   23.135730] tulip 0000:00:09.0 enp0s9: renamed from eth0
-[   23.919909] libata version 3.00 loaded.
-[   24.090807] scsi host1: pata_cmd64x
-[   24.114245] scsi host2: pata_cmd64x
-[   24.115222] ata1: PATA max MWDMA2 cmd 0x1f0 ctl 0x3f6 bmdma 0x8480 irq 14
-[   24.115222] ata2: PATA max MWDMA2 cmd 0x170 ctl 0x376 bmdma 0x8488 irq 15
-[   24.116198] pata_cmd64x: active 10 recovery 10 setup 3.
-[   24.116198] pata_cmd64x: active 10 recovery 10 setup 3.
-[   24.293932] ata1.00: ATAPI: SONY    CD-RW  CRX140E, 1.2a, max UDMA/33
-[   24.293932] pata_cmd64x: active 3 recovery 1 setup 1.
-[   24.293932] pata_cmd64x: active 3 recovery 1 setup 1.
-[   24.324206] scsi 1:0:0:0: CD-ROM            SONY     CD-RW  CRX140E   1.2a PQ: 0 ANSI: 5
-[   24.341784] sr 1:0:0:0: [sr0] scsi3-mmc drive: 32x/32x writer cd/rw xa/form2 cdda tray
-[   24.341784] cdrom: Uniform CD-ROM driver Revision: 3.20
-[   24.346667] sr 1:0:0:0: Attached scsi CD-ROM sr0
-[   24.349596] sr 1:0:0:0: Attached scsi generic sg1 type 5
-[   24.351550] pata_cmd64x: active 10 recovery 10 setup 3.
-[   24.351550] pata_cmd64x: active 10 recovery 10 setup 3.
-[   29.886703] EXT4-fs (sda2): re-mounted. Opts: errors=remount-ro
-[   31.499983] Adding 1697208k swap on /dev/sda4.  Priority:-2 extents:1 across:1697208k
-[   32.217756] EXT4-fs (sda1): mounting ext2 file system using the ext4 subsystem
-[   32.240217] EXT4-fs (sda1): mounted filesystem without journal. Opts: (null)
-
+cheers,
+-roger
 
 -- 
-Meelis Roos <mroos@linux.ee>
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
