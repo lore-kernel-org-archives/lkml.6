@@ -2,102 +2,188 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C5DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23269C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:08:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C99E20873
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:04:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C99E20873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id D580C20817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:08:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="W364BUJY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D580C20817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726489AbeKZU6N (ORCPT
+        id S1726276AbeKZVCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 15:58:13 -0500
-Received: from mail-out.m-online.net ([212.18.0.10]:56191 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbeKZU6H (ORCPT
+        Mon, 26 Nov 2018 16:02:24 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46519 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726176AbeKZVCY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 15:58:07 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 433Mvw5Bb5z1r0gg;
-        Mon, 26 Nov 2018 11:04:28 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 433Mvw37dtz1qrnF;
-        Mon, 26 Nov 2018 11:04:28 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id nRLbTjrzKojX; Mon, 26 Nov 2018 11:04:26 +0100 (CET)
-X-Auth-Info: C40uYKx4URgmB4AezhcpmU2ShP15+sZuSK0uzPQjvtE=
-Received: from xpert.denx.de (unknown [62.91.23.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Mon, 26 Nov 2018 11:04:26 +0100 (CET)
-From:   Parthiban Nallathambi <pn@denx.de>
-To:     marc.zyngier@arm.com, tglx@linutronix.de, jason@lakedaemon.net,
-        robh+dt@kernel.org, mark.rutland@arm.com, afaerber@suse.de,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        manivannan.sadhasivam@linaro.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, thomas.liau@actions-semi.com,
-        mp-cs@actions-semi.com, linux@cubietech.com,
-        edgar.righi@lsitec.org.br, laisa.costa@lsitec.org.br,
-        guilherme.simoes@lsitec.org.br, mkzuffo@lsi.usp.br,
-        Parthiban Nallathambi <pn@denx.de>,
-        Saravanan Sekar <sravanhome@gmail.com>
-Subject: [PATCH v3 3/4] arm64: dts: actions: Add sirq node for Actions Semi S700
-Date:   Mon, 26 Nov 2018 11:03:55 +0100
-Message-Id: <20181126100356.2840578-4-pn@denx.de>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20181126100356.2840578-1-pn@denx.de>
-References: <20181126100356.2840578-1-pn@denx.de>
+        Mon, 26 Nov 2018 16:02:24 -0500
+Received: by mail-wr1-f68.google.com with SMTP id l9so18189566wrt.13
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 02:08:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JUflMH9nHJ4QglcOT/HXW3nLKZmF6gxHXJWquZY1L/4=;
+        b=W364BUJYqukkxRRJdAy+EZe7bqxeJmAKWEJSmrFrURgJf4AO4CDz41vhfYGs1KioV9
+         eJoIbjFSbe+Rxl44agOefmAQs5ZA/6rdpZOJ6znX4JWXIw9K4AC20uTpjkCffjplrrl1
+         15U7PxI6N9YFd+qEMPGbOYu6v+vBPShC8ujrU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JUflMH9nHJ4QglcOT/HXW3nLKZmF6gxHXJWquZY1L/4=;
+        b=Pj5XtFdLbPgHyFahnJS3A8GfQtjOdvHiB1dTuzVhizwjDAio2TiraCk5JXENgHYS6v
+         bOGb8ShuchR99mEA5N/+OMasVkxrVOVNPVwD0ge19qXKut12EhZ5g8Mjbdnj/o8u5NAc
+         KaMfhbXL39UykKDG0aUk8FPtlY3D4fsaPsb9X3CViPYebm8rMimx91JhgmFYs2MdpOJJ
+         NxkGHBLZ/fhJTlc8xGjM9PIaa1HG5fAjw53ByvAWilcGdVxinAsZqvWgi0+lGyxPjsGV
+         gxVyEUjoKBNw9Ty8eehKXHx9VSOea+/3aRmrZu5WYE5oc8no9FKnS9cA7Vk/VUGDeSWz
+         jc8w==
+X-Gm-Message-State: AA+aEWbv5YLuLFuUk6GCjTEtThfCdxuIscyWuKk1ZLXlGaT41XM8W6YY
+        yxtbjqO0Asysdxi/GaKQ1CX55g==
+X-Google-Smtp-Source: AFSGD/WFCRZJigM4ObsUlJQPZpdWHTiVx2NBm3tJgrMnX6kvS9tdeS17dBvKvO9Kc+P9SeCecFKcvA==
+X-Received: by 2002:adf:b190:: with SMTP id q16mr23006313wra.95.1543226924969;
+        Mon, 26 Nov 2018 02:08:44 -0800 (PST)
+Received: from [192.168.0.40] (72.224.136.77.rev.sfr.net. [77.136.224.72])
+        by smtp.googlemail.com with ESMTPSA id t131sm15196745wmt.1.2018.11.26.02.08.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 02:08:43 -0800 (PST)
+Subject: Re: [PATCH V3 2/2] base/drivers/arch_topology: Default dmips-mhz if
+ they are not set in DT
+To:     Quentin Perret <quentin.perret@linaro.org>
+Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        viresh.kumar@linaro.org, Chris Redpath <chris.redpath@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+References: <1543221866-19671-1-git-send-email-daniel.lezcano@linaro.org>
+ <1543221866-19671-2-git-send-email-daniel.lezcano@linaro.org>
+ <20181126095224.i5se3n5lavww4a2n@queper01-ThinkPad-T460s>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <97f85a4b-efb6-b26f-94d0-cd538c83a03e@linaro.org>
+Date:   Mon, 26 Nov 2018 11:08:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181126095224.i5se3n5lavww4a2n@queper01-ThinkPad-T460s>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add sirq node for Actions Semi S700 SoC with 3 SIRQ pins support,
-in which external interrupt controllers can be connected.
+On 26/11/2018 10:52, Quentin Perret wrote:
+> On Monday 26 Nov 2018 at 09:44:21 (+0100), Daniel Lezcano wrote:
+>> In the case of asymmetric SoC with the same micro-architecture, we
+>> have a group of CPUs with smaller OPPs than the other group. One
+>> example is the 96boards dragonboard 820c. There is no dmips/MHz
+>> difference between both groups, so no need to specify the values in
+>> the DT. Unfortunately, without these defined, there is no scaling
+>> capacity computation triggered, so we need to write
+>> 'capacity-dmips-mhz' for each CPU with the same value in order to
+>> force the scaled capacity computation.
+>>
+>> In order to fix this situation, allocate 'raw_capacity' so the pointer
+>> is set and the init_cpu_capacity_callback() function can be called.
+>>
+>> This was tested on db820c:
+>>  - specified values in the DT (correct results)
+>>  - partial values defined in the DT (error + fallback to defaults)
+>>  - no specified values in the DT (correct results)
+>>
+>> correct results are:
+>>   cat /sys/devices/system/cpu/cpu*/cpu_capacity
+>>    758
+>>    758
+>>   1024
+>>   1024
+>>
+>>   ... respectively for CPU0, CPU1, CPU2 and CPU3.
+>>
+>> That reflects the capacity for the max frequencies 1593600 and 2150400.
+>>
+>> Cc: Chris Redpath <chris.redpath@linaro.org>
+>> Cc: Quentin Perret <quentin.perret@linaro.org>
+>> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+>> Cc: Amit Kucheria <amit.kucheria@linaro.org>
+>> Cc: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+>> Cc: Niklas Cassel <niklas.cassel@linaro.org>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> ---
+>>  drivers/base/arch_topology.c | 13 ++++++++++++-
+>>  1 file changed, 12 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+>> index fd5325b..e0c5b60 100644
+>> --- a/drivers/base/arch_topology.c
+>> +++ b/drivers/base/arch_topology.c
+>> @@ -243,9 +243,20 @@ static int __init register_cpufreq_notifier(void)
+>>  	 * until we have the necessary code to parse the cpu capacity, so
+>>  	 * skip registering cpufreq notifier.
+>>  	 */
+>> -	if (!acpi_disabled || !raw_capacity)
+>> +	if (!acpi_disabled)
+>>  		return -EINVAL;
+>>  
+>> +	if (!raw_capacity) {
+>> +
+>> +		pr_info("cpu_capacity: No capacity defined in DT, set default "
+>> +		       "values to %ld\n", SCHED_CAPACITY_SCALE);
+>> +
+>> +		raw_capacity = kmalloc_array(num_possible_cpus(),
+>> +					     sizeof(*raw_capacity), GFP_KERNEL);
+>> +		if (!raw_capacity)
+>> +			return -ENOMEM;
+>> +	}
+>> +
+>>  	if (!alloc_cpumask_var(&cpus_to_visit, GFP_KERNEL)) {
+>>  		pr_err("cpu_capacity: failed to allocate memory for cpus_to_visit\n");
+>>  		return -ENOMEM;
+>> -- 
+>> 2.7.4
+> 
+> With this, if the DT is partially filled, we will still do the frequency
+> scaling thing now right ?
 
-Example:
-atc260x: atc2603c@65 {
-        interrupt-parent = <&sirq>;
-        interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-};
+Right, if the DT is partially filled. We end up with the error, the
+raw_capacity is free and set to NULL.
 
-Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
----
- arch/arm64/boot/dts/actions/s700.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+register_cpufreq_notifier() will allocate it and the capacity is computed.
 
-diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
-index 192c7b39c8c1..d87602ebd689 100644
---- a/arch/arm64/boot/dts/actions/s700.dtsi
-+++ b/arch/arm64/boot/dts/actions/s700.dtsi
-@@ -174,6 +174,16 @@
- 			#clock-cells = <1>;
- 		};
- 
-+		sirq: interrupt-controller@e01b0200 {
-+			compatible = "actions,owl-sirq";
-+			reg = <0x0 0xe01b0000 0x0 0x1000>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			actions,sirq-shared-reg;
-+			actions,sirq-reg-offset = <0x200 0x200 0x200>;
-+			actions,ext-irq-range = <13 15>;
-+		};
-+
- 		sps: power-controller@e01b0100 {
- 			compatible = "actions,s700-sps";
- 			reg = <0x0 0xe01b0100 0x0 0x100>;
+> I'm not sure if this is the expected behaviour. If the DT is partially
+> filled, we probably want to have 1024 of capacity for all CPUs to match
+> the doc.
+
+Yes if they have the same number of OPP which is the case of 99% of the
+boards (excluding the big Little). Otherwise setting all CPU with a
+capacity of 1024 but having different OPP (like qcom gold-silver arch)
+does not make sense and the patch fix this.
+
+> Maybe you want to test 'if (!raw_capacity || cap_parsing_failed)' at the
+> top of topology_parse_cpu_capacity() ?
+
+I prefer to update the documentation, it makes more sense than adding
+more cumbersome tests in the current code.
+
+
+
 -- 
-2.17.2
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
