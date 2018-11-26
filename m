@@ -2,190 +2,129 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76844C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6040DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:17:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C506205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:16:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C506205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1F4AC205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 20:17:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="gikuxULj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F4AC205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727157AbeK0HME (ORCPT
+        id S1727241AbeK0HMl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 02:12:04 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:45852 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726300AbeK0HME (ORCPT
+        Tue, 27 Nov 2018 02:12:41 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:14896 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726300AbeK0HMl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 02:12:04 -0500
-Received: by mail-oi1-f194.google.com with SMTP id b141so17091971oii.12;
-        Mon, 26 Nov 2018 12:16:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bJqT5DgqK4ueMKz7tkQIEWHTq6M/XndBis6a7nMEaQk=;
-        b=AJC8K4W46spct79TL/XMdHiJp7RJn/XUA7fWl3UoJYXgmDWQbjKLA+jpxKQ4AuQgAz
-         JL/daa6zG10jsQRI9HBB/2Kjo6DfnG96W/8XyzCJVLogjReVMftBJngbg8lLUWwS3OBJ
-         mODRgL16umnLHcPDm9tTa4eVLsSzLv8XNFd4Jrp+1bHNdEiMIES/7I+RHi73JHE5sFmt
-         N0kyxdJJ5Mz0ygmBu+9e7h2hJWXofyxppU44qP4OMDhIZjVTijb+9jqGafTJUmAs4ON+
-         ER/C57Z7ZBm7Yf5cjl4p/mKikJpZX9UQycl7a0PGFg1zFuQcJizSv0g9a3dAFPwe4s2z
-         8Yew==
-X-Gm-Message-State: AGRZ1gLwj1fTHc+Uq4kIrwAOD/SIgSSPH1XazNa4PH4wDisdCRzFqJZU
-        EgWT+LyNryOs7JxrTKBDAg==
-X-Google-Smtp-Source: AJdET5eMh82SPt+r48J46sRTwjPRMS/Zx68lY4PASlDqO51iPxGAwxb9NVYQQljKEMGKigniEGqlrA==
-X-Received: by 2002:aca:cd14:: with SMTP id d20mr16645959oig.179.1543263407797;
-        Mon, 26 Nov 2018 12:16:47 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id w4sm400072otm.46.2018.11.26.12.16.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 12:16:47 -0800 (PST)
-Date:   Mon, 26 Nov 2018 14:16:45 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
-        broonie@kernel.org, linus.walleij@linaro.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v5 3/8] clk: lochnagar: Add initial binding documentation
-Message-ID: <20181126201645.GA2094@bogus>
-References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
- <20181120141631.18949-3-ckeepax@opensource.cirrus.com>
+        Tue, 27 Nov 2018 02:12:41 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bfc54de0000>; Mon, 26 Nov 2018 12:17:34 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 26 Nov 2018 12:17:25 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 26 Nov 2018 12:17:25 -0800
+Received: from [10.26.11.165] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 26 Nov
+ 2018 20:17:22 +0000
+Subject: Re: omap5 fixing palmas IRQ_TYPE_NONE warning leads to gpadc timeouts
+To:     Tony Lindgren <tony@atomide.com>,
+        Thierry Reding <treding@nvidia.com>
+CC:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Belisko Marek <marek.belisko@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>
+References: <CAAfyv37F1s8Cg=pfxiN0dA6YEX7KMB-+uifjRoqAdKGWLeYEwA@mail.gmail.com>
+ <20181113180656.GE53235@atomide.com>
+ <46d271b2-35d3-6353-c530-3292cdac53ab@ti.com>
+ <20181119161906.GP53235@atomide.com> <20181119171406.GQ53235@atomide.com>
+ <725df8e7-4aff-3751-d0b0-809b89e882e5@nvidia.com>
+ <20181123164827.GE53235@atomide.com> <20181126093625.GA10878@ulmo>
+ <d3f17ac6-c13b-5b5f-a482-b565b130f1ba@ti.com> <20181126102541.GC10878@ulmo>
+ <20181126193212.GN53235@atomide.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <149b3b6b-e52e-4942-151b-6df4358f5a7a@nvidia.com>
+Date:   Mon, 26 Nov 2018 20:17:20 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120141631.18949-3-ckeepax@opensource.cirrus.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181126193212.GN53235@atomide.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1543263454; bh=eQ3AsTvnGApB+TzqTQICue2aDLm7E+L0Pf/fAoN3WMM=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=gikuxULjyJZ3mNJNju4wekt96Gmws4XtDGi8IrwIdGwelXN9L/Zu5PTDTFpkHdl8f
+         xS5Cum3oH5q5BsC0LEsGpL5Xks32Pys+rWTV21Ro3dIc/OHidgL/Bne53gyIgYRRck
+         437UwOxQqgIyNiU/4UI7YaYiTPCY5y8DXY3z66eTRxWwb7QOil7/K8La1kaoFyVZvk
+         I13Pb3QgegzzY7eVnaRxWmQIaaMcTHwelKbvk/Hofx/6b5eNV4IuriTn79lsSU9jm5
+         t5CEqW85NVOo60kjIbgUxcWUVwV0PSFECDij9FwGWrBDJm/s2qcbNLJa+Fqsv/F+Yb
+         sSfuthuGG9nvw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 02:16:26PM +0000, Charles Keepax wrote:
-> Lochnagar is an evaluation and development board for Cirrus
-> Logic Smart CODEC and Amp devices. It allows the connection of
-> most Cirrus Logic devices on mini-cards, as well as allowing
-> connection of various application processor systems to provide a
-> full evaluation platform. This driver supports the board
-> controller chip on the Lochnagar board.
+
+On 26/11/2018 19:32, Tony Lindgren wrote:
+> * Thierry Reding <treding@nvidia.com> [181126 10:25]:
+>> On Mon, Nov 26, 2018 at 11:49:54AM +0200, Peter Ujfalusi wrote:
+>>> The register map documentation I have states the following:
+>>> bit7 INT_POLARITY Select the polarity of the INT output line
+>>> 0: Interrupt line (INT) is low when interrupt is pending (default) RW
+>>> 1: Interrupt line (INT) is high when interrupt is pending
+>>>
+>>> By default the Palmas irq is active low.
+>>
+>> That would confirm that the driver code is correct. My understanding is
+>> that the PMC on Tegra expects a low-active IRQ from the PMIC, so we need
+>> to invert the interrupt again in the PMC.
 > 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
->  .../devicetree/bindings/clock/cirrus,lochnagar.txt | 89 ++++++++++++++++++++++
->  1 file changed, 89 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt b/Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
-> new file mode 100644
-> index 000000000000..c1b5478d5432
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
-> @@ -0,0 +1,89 @@
-> +Cirrus Logic Lochnagar Audio Development Board
-> +
-> +Lochnagar is an evaluation and development board for Cirrus Logic
-> +Smart CODEC and Amp devices. It allows the connection of most Cirrus
-> +Logic devices on mini-cards, as well as allowing connection of
-> +various application processor systems to provide a full evaluation
-> +platform.  Audio system topology, clocking and power can all be
-> +controlled through the Lochnagar, allowing the device under test
-> +to be used in a variety of possible use cases.
-> +
-> +This binding document describes the binding for the clock portion of
-> +the driver.
-> +
-> +Also see these documents for generic binding information:
-> +  [1] Clock : ../clock/clock-bindings.txt
-> +
-> +And these for relevant defines:
-> +  [2] include/dt-bindings/clock/lochnagar.h
-> +
-> +This binding must be part of the Lochnagar MFD binding:
-> +  [3] ../mfd/cirrus,lochnagar.txt
-> +
-> +Required properties:
-> +
-> +  - compatible : One of the following strings:
-> +                 "cirrus,lochnagar1-clk"
-> +                 "cirrus,lochnagar2-clk"
+> But then why Tegra need to set PALMAS_POLARITY_CTRL_INT_POLARITY
+> if dts has IRQ_TYPE_LEVEL_HIGH? Shouldn't the Palmas default low
+> setting be correct for Tegra if PMC expects active-low interrupt
+> and then inverts it for GIC?
 
-What's the 1 vs. 2?
+So I think what is going on here is ...
 
-> +
-> +  - #clock-cells : Must be 1. The first cell indicates the clock
-> +    number, see [2] for available clocks and [1].
-> +
-> +Optional properties:
-> +
-> +  - clocks : Must contain an entry for each clock in clock-names.
-> +  - clock-names : May contain entries for each of the following
-> +    clocks:
-> +     - ln-cdc-clkout : Output clock from CODEC card.
-> +     - ln-dsp-clkout : Output clock from DSP card.
-> +     - ln-gf-mclk1,ln-gf-mclk2,ln-gf-mclk3,ln-gf-mclk4 : Optional
-> +       input audio clocks from host system.
-> +     - ln-psia1-mclk, ln-psia2-mclk : Optional input audio clocks from
-> +       external connector.
-> +     - ln-spdif-clkout : Optional input audio clock from SPDIF.
-> +     - ln-adat-clkout : Optional input audio clock from ADAT.
-> +     - ln-pmic-32k : On board fixed regulator.
+1. For Tegra, the interrupt parent the palmas interrupt in DT is the GIC
+   not the PMC. The PMC does not register an interrupt controller
+   (although to be correct probably should have. I think it had been
+    discussed in the past and Stephen W may know the history here). So
+   the interrupt polarity has to be HIGH otherwise setting the trigger
+   type in the GIC will fail (as it only supports rising edge or level
+   high IIRC).
+2. However, as Thierry mentioned the Tegra PMC wants an active low
+   interrupt and so the PMC inverts it on entering the PMC. However,
+   given that the GIC interrupts must be active high, the PMC must
+   invert again between the PMC and GIC.
 
-regulator?
+So looking back my description in the change 7e9d474954f4 was not quite
+accurate because the interrupt from palmas is active high but the PMC
+inverts it. I think that this is quite confusing because we don't have a
+good way to describe this in the DT. If we made the PMC an interrupt
+controller then it would probably be a lot clearer. However, for
+historical reasons this was not done.
 
-> +     - ln-clk-12m : On board fixed regulator.
-> +     - ln-clk-11m : On board fixed regulator.
-> +     - ln-clk-24m : On board fixed regulator.
-> +     - ln-clk-22m : On board fixed regulator.
-> +     - ln-usb-clk-24m : On board fixed regulator.
-> +     - ln-usb-clk-12m : On board fixed regulator.
-> +
-> +  - assigned-clocks : A list of Lochnagar clocks to be reparented, see
-> +    [2] for available clocks.
-> +  - assigned-clock-parents : Parents to be assigned to the clocks
-> +    listed in "assigned-clocks".
-> +
-> +Optional sub-nodes:
-> +
-> +  - fixed-clock nodes may be registered for the following on board clocks:
-> +     - ln-pmic-32k : 32768 kHz
-> +     - ln-clk-12m : 12288000 kHz
-> +     - ln-clk-11m : 11298600 kHz
-> +     - ln-clk-24m : 24576000 kHz
-> +     - ln-clk-22m : 22579200 kHz
-> +     - ln-usb-clk-24m : 24576000 kHz
-> +     - ln-usb-clk-12m : 12288000 kHz
-> +
-> +Example:
-> +
-> +lochnagar-clk {
-> +	compatible = "cirrus,lochnagar2-clk";
-> +
-> +	#clock-cells = <1>;
-> +
-> +	clocks = <&clk-audio>, <&clk_pmic>;
-> +	clock-names = "ln-gf-mclk2", "ln-pmic-32k";
-> +
-> +	assigned-clocks = <&lochnagar-clk LOCHNAGAR_CDC_MCLK1>,
-> +			  <&lochnagar-clk LOCHNAGAR_CDC_MCLK2>;
-> +	assigned-clock-parents = <&clk-audio>,
-> +				 <&clk-pmic>;
-> +
-> +	clk-pmic: clk-pmic {
+Cheers
+Jon
 
-This isn't really any relationship to the parent and I think shouldn't 
-be a sub-node.
-
-> +		compatible = "fixed-clock";
-> +		clock-cells = <0>;
-> +		clock-frequency = <32768>;
-> +	};
-> +};
-> -- 
-> 2.11.0
-> 
+-- 
+nvpublic
