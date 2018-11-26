@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E72C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E4D5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39C1821104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3CA920817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:54:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uNPMeN1X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39C1821104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CardRxp0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3CA920817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbeKZVsL (ORCPT
+        id S1727481AbeKZVsN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:48:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56608 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:48:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726254AbeKZVsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:48:10 -0500
+        id S1727457AbeKZVsN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:48:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE79021104;
-        Mon, 26 Nov 2018 10:54:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89E0E2089F;
+        Mon, 26 Nov 2018 10:54:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229666;
-        bh=gdH0QmvCJ5Nja+lqUc04m4IcGbDxoULBnYVU6GxJ5DY=;
+        s=default; t=1543229669;
+        bh=TcZUJ3qJ746Vszrr+P3Y6ou2WvCokzJlY/PUn6Y/NUo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uNPMeN1X43Q9Rkn9OpAsR3i8A1VYmXXL72YpEyo9jNBCmDSPm8ZTlxHFRKEY5Oag+
-         Ew8WeMP1a9GdVsYzUNY8DHB8KMj2yG6OZcaHPlUrlHAHYiuCPW5vtHmuOfRHzvztCD
-         44I7bx1Ke2FXsC8XjJ+TqVH2j2svaMP9br6G3jmg=
+        b=CardRxp0ITJWnLqF0vtBDLqud/Q2wdCi/YTMBx26q7pmxkp1BQZ4Fbn770lSWKsSu
+         d2xgs8X3IJGwyVsIeLaw5AoZhyPGojIT8YTWvtFnScbSUtM1+BmOeB8N7MpMDGOjBO
+         iZ4G9DgoAm6/IxYT+3yHf/JOTMlAzN1x1VsVSZcE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Prasad Sodagudi <psodagud@codeaurora.org>,
+        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.4 25/70] kbuild: clang: disable unused variable warnings only when constant
-Date:   Mon, 26 Nov 2018 11:50:40 +0100
-Message-Id: <20181126105049.227591290@linuxfoundation.org>
+Subject: [PATCH 4.4 26/70] kbuild: set no-integrated-as before incl. arch Makefile
+Date:   Mon, 26 Nov 2018 11:50:41 +0100
+Message-Id: <20181126105049.322985900@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
 References: <20181126105046.722096341@linuxfoundation.org>
@@ -63,49 +63,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sodagudi Prasad <psodagud@codeaurora.org>
+From: Stefan Agner <stefan@agner.ch>
 
-commit 0a5f41767444cc3b4fc5573921ab914b4f78baaa upstream.
+commit 0f0e8de334c54c38818a4a5390a39aa09deff5bf upstream.
 
-Currently, GCC disables -Wunused-const-variable, but not
--Wunused-variable, so warns unused variables if they are
-non-constant.
+In order to make sure compiler flag detection for ARM works
+correctly the no-integrated-as flags need to be set before
+including the arch specific Makefile.
 
-While, Clang does not warn unused variables at all regardless of
-the const qualifier because -Wno-unused-const-variable is implied
-by the stronger option -Wno-unused-variable.
-
-Disable -Wunused-const-variable instead of -Wunused-variable so that
-GCC and Clang work in the same way.
-
-Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
+Fixes: cfe17c9bbe6a ("kbuild: move cc-option and cc-disable-warning after incl. arch Makefile")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+[nc: Adjust context]
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Makefile |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ Makefile |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 --- a/Makefile
 +++ b/Makefile
-@@ -706,7 +706,6 @@ KBUILD_CFLAGS += $(stackp-flag)
- 
- ifeq ($(cc-name),clang)
- KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
--KBUILD_CFLAGS += $(call cc-disable-warning, unused-variable)
- KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
- KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
- KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
-@@ -724,9 +723,9 @@ else
- # These warnings generated too much noise in a regular build.
- # Use make W=1 to enable them (see scripts/Makefile.extrawarn)
- KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
--KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
+@@ -617,6 +617,8 @@ CLANG_GCC_TC	:= --gcc-toolchain=$(GCC_TO
+ endif
+ KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+ KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
++KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
++KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
  endif
  
-+KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
- ifdef CONFIG_FRAME_POINTER
- KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
+ # The arch Makefile can set ARCH_{CPP,A,C}FLAGS to override the default
+@@ -716,8 +718,6 @@ KBUILD_CFLAGS += $(call cc-disable-warni
+ # See modpost pattern 2
+ KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
+ KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
+-KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
+-KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
  else
+ 
+ # These warnings generated too much noise in a regular build.
 
 
