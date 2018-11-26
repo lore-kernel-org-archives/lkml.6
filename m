@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B932FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1F7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8290220989
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33AD720672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:06:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z4JmYGrV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8290220989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8anEaHz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33AD720672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731618AbeKZWAW (ORCPT
+        id S1731631AbeKZWAZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 17:00:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47206 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 17:00:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729543AbeKZWAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 17:00:21 -0500
+        id S1729543AbeKZWAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 17:00:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA47F20672;
-        Mon, 26 Nov 2018 11:06:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9933520672;
+        Mon, 26 Nov 2018 11:06:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230395;
-        bh=6eJsKNhpnieVfLJ73j7MH6likSGUqw/FFeyIg0+Smz4=;
+        s=default; t=1543230398;
+        bh=Lk3F/K+KcQYxK6etlT273oG7F4J8GR9DiXYmJRPxEHI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z4JmYGrVHgGOTWE24w69AiGhaGqwaWzLDJPOVRJSMhI9yY2u29T5T0lG6pYjFwgNz
-         SIdfFDfePAIzvAN3zJwJ3CR6Q/8zENTSX7XO+ZHAvPXoJaW/+qiWs7jPQOgVhhm2bU
-         nhlWT+E/W8VkUrsYTt5l9oxha7Yghdv9N+iBSSEU=
+        b=J8anEaHzpUAqJF23ojK7uqrl9/wsAJz+qvY0sNjKKew9C5cKFeEfTqF6TbmCJgAc+
+         YFcPbrzTNpuqC7zwfBIKkTAx0Xt/M1BAUv7iDy/UAPYSoifw9DgCy+HqKOvM98SNkK
+         4C0DY6NNjH1P7X+zbaBv/vQhq6lh9UFFF2nHAj9A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Kahnert <openproggerfreak@gmail.com>,
-        Marc <suaefar@googlemail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.19 113/118] ACPI / platform: Add SMB0001 HID to forbidden_id_list
-Date:   Mon, 26 Nov 2018 11:51:47 +0100
-Message-Id: <20181126105106.289948551@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com,
+        Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.19 114/118] HID: uhid: forbid UHID_CREATE under KERNEL_DS or elevated privileges
+Date:   Mon, 26 Nov 2018 11:51:48 +0100
+Message-Id: <20181126105106.366228048@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -64,105 +66,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 2bbb5fa37475d7aa5fa62f34db1623f3da2dfdfa upstream.
+commit 8c01db7619f07c85c5cd81ec5eb83608b56c88f5 upstream.
 
-Many HP AMD based laptops contain an SMB0001 device like this:
+When a UHID_CREATE command is written to the uhid char device, a
+copy_from_user() is done from a user pointer embedded in the command.
+When the address limit is KERNEL_DS, e.g. as is the case during
+sys_sendfile(), this can read from kernel memory.  Alternatively,
+information can be leaked from a setuid binary that is tricked to write
+to the file descriptor.  Therefore, forbid UHID_CREATE in these cases.
 
-Device (SMBD)
-{
-    Name (_HID, "SMB0001")  // _HID: Hardware ID
-    Name (_CRS, ResourceTemplate ()  // _CRS: Current Resource Settings
-    {
-        IO (Decode16,
-            0x0B20,             // Range Minimum
-            0x0B20,             // Range Maximum
-            0x20,               // Alignment
-            0x20,               // Length
-            )
-        IRQ (Level, ActiveLow, Shared, )
-            {7}
-    })
-}
+No other commands in uhid_char_write() are affected by this bug and
+UHID_CREATE is marked as "obsolete", so apply the restriction to
+UHID_CREATE only rather than to uhid_char_write() entirely.
 
-The legacy style IRQ resource here causes acpi_dev_get_irqresource() to
-be called with legacy=true and this message to show in dmesg:
-ACPI: IRQ 7 override to edge, high
+Thanks to Dmitry Vyukov for adding uhid definitions to syzkaller and to
+Jann Horn for commit 9da3f2b740544 ("x86/fault: BUG() when uaccess
+helpers fault on kernel addresses"), allowing this bug to be found.
 
-This causes issues when later on the AMD0030 GPIO device gets enumerated:
-
-Device (GPIO)
-{
-    Name (_HID, "AMDI0030")  // _HID: Hardware ID
-    Name (_CID, "AMDI0030")  // _CID: Compatible ID
-    Name (_UID, Zero)  // _UID: Unique ID
-    Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
-    {
-	Name (RBUF, ResourceTemplate ()
-	{
-	    Interrupt (ResourceConsumer, Level, ActiveLow, Shared, ,, )
-	    {
-		0x00000007,
-	    }
-	    Memory32Fixed (ReadWrite,
-		0xFED81500,         // Address Base
-		0x00000400,         // Address Length
-		)
-	})
-	Return (RBUF) /* \_SB_.GPIO._CRS.RBUF */
-    }
-}
-
-Now acpi_dev_get_irqresource() gets called with legacy=false, but because
-of the earlier override of the trigger-type acpi_register_gsi() returns
--EBUSY (because we try to register the same interrupt with a different
-trigger-type) and we end up setting IORESOURCE_DISABLED in the flags.
-
-The setting of IORESOURCE_DISABLED causes platform_get_irq() to call
-acpi_irq_get() which is not implemented on x86 and returns -EINVAL.
-resulting in the following in dmesg:
-
-amd_gpio AMDI0030:00: Failed to get gpio IRQ: -22
-amd_gpio: probe of AMDI0030:00 failed with error -22
-
-The SMB0001 is a "virtual" device in the sense that the only way the OS
-interacts with it is through calling a couple of methods to do SMBus
-transfers. As such it is weird that it has IO and IRQ resources at all,
-because the driver for it is not expected to ever access the hardware
-directly.
-
-The Linux driver for the SMB0001 device directly binds to the acpi_device
-through the acpi_bus, so we do not need to instantiate a platform_device
-for this ACPI device. This commit adds the SMB0001 HID to the
-forbidden_id_list, avoiding the instantiating of a platform_device for it.
-Not instantiating a platform_device means we will no longer call
-acpi_dev_get_irqresource() for the legacy IRQ resource fixing the probe of
-the AMDI0030 device failing.
-
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1644013
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=198715
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=199523
-Reported-by: Lukas Kahnert <openproggerfreak@gmail.com>
-Tested-by: Marc <suaefar@googlemail.com>
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reported-by: syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com
+Fixes: d365c6cfd337 ("HID: uhid: add UHID_CREATE and UHID_DESTROY events")
+Cc: <stable@vger.kernel.org> # v3.6+
+Cc: Jann Horn <jannh@google.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Reviewed-by: Jann Horn <jannh@google.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/acpi_platform.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/hid/uhid.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/drivers/acpi/acpi_platform.c
-+++ b/drivers/acpi/acpi_platform.c
-@@ -30,6 +30,7 @@ static const struct acpi_device_id forbi
- 	{"PNP0200",  0},	/* AT DMA Controller */
- 	{"ACPI0009", 0},	/* IOxAPIC */
- 	{"ACPI000A", 0},	/* IOAPIC */
-+	{"SMB0001",  0},	/* ACPI SMBUS virtual device */
- 	{"", 0},
- };
+--- a/drivers/hid/uhid.c
++++ b/drivers/hid/uhid.c
+@@ -12,6 +12,7 @@
  
+ #include <linux/atomic.h>
+ #include <linux/compat.h>
++#include <linux/cred.h>
+ #include <linux/device.h>
+ #include <linux/fs.h>
+ #include <linux/hid.h>
+@@ -722,6 +723,17 @@ static ssize_t uhid_char_write(struct fi
+ 
+ 	switch (uhid->input_buf.type) {
+ 	case UHID_CREATE:
++		/*
++		 * 'struct uhid_create_req' contains a __user pointer which is
++		 * copied from, so it's unsafe to allow this with elevated
++		 * privileges (e.g. from a setuid binary) or via kernel_write().
++		 */
++		if (file->f_cred != current_cred() || uaccess_kernel()) {
++			pr_err_once("UHID_CREATE from different security context by process %d (%s), this is not allowed.\n",
++				    task_tgid_vnr(current), current->comm);
++			ret = -EACCES;
++			goto unlock;
++		}
+ 		ret = uhid_dev_create(uhid, &uhid->input_buf);
+ 		break;
+ 	case UHID_CREATE2:
 
 
