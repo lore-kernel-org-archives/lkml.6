@@ -2,129 +2,102 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43292C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C9FCC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05C0920663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:54:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24ACC20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:54:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="MV0UOfLZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05C0920663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="oER5F9JD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24ACC20663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbeK0Bsf (ORCPT
+        id S1726966AbeK0Bsz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 20:48:35 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:35743 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbeK0Bsf (ORCPT
+        Mon, 26 Nov 2018 20:48:55 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56326 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbeK0Bsz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 20:48:35 -0500
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id wAQEs7o1021624;
-        Mon, 26 Nov 2018 23:54:07 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com wAQEs7o1021624
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1543244048;
-        bh=F3GmQsado+aP7mYIIudxuKv6hyfoo9G6RoAPe6e82Yg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MV0UOfLZfp79YT+XKrWDyKmwPedPlaHZc5Xrgoz4okbWv0wBNwP2vRLoVpZcY64T/
-         tZ0+L6UnTdq0V8lpt6rZOI57qfhyEBW9S6aof3kM1hFMwYu4YFf1oyZSOpcNlyrwqO
-         kA3n2XUijI4vmPvzVVWse3+X2VdJJwl7XymQ0VWm7sXIi6JbeJRiMAWiMwQLala/DA
-         DcS7KAejzs3bAcgBJaLudxGTjApShi9Gn9tj1fDJ449PtFpbjY5o7FezFHb68FOmKU
-         em+gdp0xBl5oAKYkjeREAeNi+Hlz4i9vHHDWCmuFYbmCoOeTK7OnHRKIJ+P3lrDX+M
-         CFNcUUEuTFBsg==
-X-Nifty-SrcIP: [209.85.217.46]
-Received: by mail-vs1-f46.google.com with SMTP id p74so11490729vsc.0;
-        Mon, 26 Nov 2018 06:54:07 -0800 (PST)
-X-Gm-Message-State: AGRZ1gL1eS4Bq2Y1YJL0copjZCva/bSyP6Ut3hknmsGi1IOX9FV/MJdv
-        kaoXoYkIf3q0IB1R0e0Y1uFj1GuFKycksxlJlU8=
-X-Google-Smtp-Source: AJdET5d9dMakOlFR0YtINR0qbQBfYH2Zq8jIBYQ+r+oJ52E1qxwzObth5ZwMQJw4G0fOMOlGYWRhbKV6jLmGpJgwgFg=
-X-Received: by 2002:a67:a858:: with SMTP id r85mr11474395vse.215.1543244046411;
- Mon, 26 Nov 2018 06:54:06 -0800 (PST)
+        Mon, 26 Nov 2018 20:48:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LyqQIyAR7BK84h4paITub9/jA3XcrZxMnjbpVtTlDf8=; b=oER5F9JDTbkGCnJCKbqC47L33
+        hdVny83H1SGnNGZdIuQSF7oCoIg3wvTwV0c+CZ7ZFf1nrbRjQOooteqetThqDJYomcd1cWdCDB6xf
+        Sr9gF01X8fwPg2buabTN2IYN/t3/YSRLbM+4qzUtkYdlHnXbV9RrFKUlla77iOdJ1eeNE=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gRIHM-0004AC-RU; Mon, 26 Nov 2018 14:54:28 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 841EB112519F; Mon, 26 Nov 2018 14:54:28 +0000 (GMT)
+Date:   Mon, 26 Nov 2018 14:54:28 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com
+Subject: Re: [PATCH 3/3] gpio: Add reference counting for non-exclusive GPIOs
+Message-ID: <20181126145428.GF9715@sirena.org.uk>
+References: <20181122173015.23905-1-ckeepax@opensource.cirrus.com>
+ <20181122173015.23905-3-ckeepax@opensource.cirrus.com>
+ <CACRpkdZEu44WHScd5VibYT5C9RikqcvKsgpVOpkkdrYbLaV8Ng@mail.gmail.com>
+ <20181123105729.GM16508@imbe.wolfsonmicro.main>
+ <20181123132522.GE2089@sirena.org.uk>
+ <20181126130001.GN16508@imbe.wolfsonmicro.main>
+ <20181126140927.GD9715@sirena.org.uk>
+ <20181126143028.GO16508@imbe.wolfsonmicro.main>
 MIME-Version: 1.0
-References: <1542860922-9730-1-git-send-email-yamada.masahiro@socionext.com> <1542860922-9730-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1542860922-9730-2-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 26 Nov 2018 23:53:30 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR7vGAjHbXSeE6yh4u8Dcr+ZZpADmxvBN9Co2=42=gXzg@mail.gmail.com>
-Message-ID: <CAK7LNAR7vGAjHbXSeE6yh4u8Dcr+ZZpADmxvBN9Co2=42=gXzg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] modpost: file2alias: check prototype of handler
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Jessica Yu <jeyu@kernel.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Mathieu Malaterre <malat@debian.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="l+goss899txtYvYf"
+Content-Disposition: inline
+In-Reply-To: <20181126143028.GO16508@imbe.wolfsonmicro.main>
+X-Cookie: Gloffing is a state of mine.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 1:51 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Use specific prototype instead of an opaque pointer so that the
-> compiler can catch incompatible pointer type.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
 
-Applied to linux-kbuild.
+--l+goss899txtYvYf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Mon, Nov 26, 2018 at 02:30:28PM +0000, Charles Keepax wrote:
 
+> Would there perhaps be milage in looking at just making
+> the regulator core request the GPIO, rather than the end
+> drivers? Gives us a single request/free point. We don't need
+> any special flags in the GPIO layer, as its just a single
+> user as far as GPIO is concerned.
 
->  scripts/mod/file2alias.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-> index 7e4aede..a37af7d 100644
-> --- a/scripts/mod/file2alias.c
-> +++ b/scripts/mod/file2alias.c
-> @@ -47,7 +47,7 @@ typedef struct {
->  struct devtable {
->         const char *device_id; /* name of table, __mod_<name>__*_device_table. */
->         unsigned long id_size;
-> -       void *function;
-> +       int (*do_entry)(const char *filename, void *symval, char *alias);
->  };
->
->  /* Define a variable f that holds the value of field f of struct devid
-> @@ -1299,12 +1299,11 @@ static bool sym_is(const char *name, unsigned namelen, const char *symbol)
->  static void do_table(void *symval, unsigned long size,
->                      unsigned long id_size,
->                      const char *device_id,
-> -                    void *function,
-> +                    int (*do_entry)(const char *filename, void *symval, char *alias),
->                      struct module *mod)
->  {
->         unsigned int i;
->         char alias[500];
-> -       int (*do_entry)(const char *, void *entry, char *alias) = function;
->
->         device_id_check(mod->name, device_id, size, id_size, symval);
->         /* Leave last one: it's the terminator. */
-> @@ -1420,7 +1419,7 @@ void handle_moddevtable(struct module *mod, struct elf_info *info,
->
->                         if (sym_is(name, namelen, p->device_id)) {
->                                 do_table(symval, sym->st_size, p->id_size,
-> -                                        p->device_id, p->function, mod);
-> +                                        p->device_id, p->do_entry, mod);
->                                 break;
->                         }
->                 }
-> --
-> 2.7.4
->
+Yes, I did suggest that earlier in the thread :/
 
+--l+goss899txtYvYf
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Best Regards
-Masahiro Yamada
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv8CSMACgkQJNaLcl1U
+h9DuNAf/d+AY4KvIqj5xvScPihPqRzRv8uiTOUlSxKvGEKpN7HLirsHxP8E0RcNO
+qmrfEzunSBOlvPd5hR3ToWdm98A71xpVMSi0n402LP6ST7SIH2VVBv/3Gx1dCXC/
+An5mPArY4tLAh3a3YuxR6haWATAUQ/afvkvT+eCK3aG5w6FPz5Avo1YGptkfHn0o
+UNhSdr5puDg8d9idumG09iCt/xRNTV/TfO4AJYH30qsFBEYu9O+V5CzohhR4hDU0
+Vsr73f9mRrNATwcPrJGTL3nQT6BVtLaomXbAV8dcG046Lk7j1cVznK1VRbRJTBi3
+ZMohpIBgb4BpceqZu8SX2dsaIAAk4w==
+=4NcP
+-----END PGP SIGNATURE-----
+
+--l+goss899txtYvYf--
