@@ -2,55 +2,54 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33430C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FF5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF1412147D
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC1662146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z4mPxNf1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF1412147D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k4rOLw87"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC1662146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729816AbeKZVyH (ORCPT
+        id S1729828AbeKZVyJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:54:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36014 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:54:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728039AbeKZVyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:54:06 -0500
+        id S1728039AbeKZVyJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:54:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 752842089F;
-        Mon, 26 Nov 2018 11:00:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27E90214C4;
+        Mon, 26 Nov 2018 11:00:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230021;
-        bh=tTY+XdjWpUCyJa0PTIk0QwKheIVFCEcauaRTz5ouiqc=;
+        s=default; t=1543230023;
+        bh=2xEgGal1hKWUSJU2Jmyu0vXFwYqU3/nww2yReyi7TtM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z4mPxNf1sGt6JVRkh1VPChWRiA1DoaST3xuLXj/2CxwgGhGaP7I9Slwiklre5Ow5g
-         BvoatYKCyC5SAJF3JZkdHQm5VLNpGw6Wmg32FJvBpKvXaHmwa6XP7U3/M5KqLIZAdv
-         kexKZM+Vd0k3u7n4FIkZjbZrswa64byBXwluGd98=
+        b=k4rOLw87vfKM+fTGSRZIJBgr0RcDv8SYMfEdHp0pyntVHEGmbqib7Ca2lM+/mykRF
+         x30Pxg9cLK1spGLacfpGfNthHy+zZbGf+sPBZrNw30vt0Vz70JRh/S6uBv7B1YE8mw
+         fZtu1R7E4jkZiAXTivxzMJEiZk6ilmwfYd37bu98=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Dietmar.Eggemann@arm.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, morten.rasmussen@arm.com,
-        quentin.perret@arm.com, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Arnold Guy <aurnoldg@gmail.com>,
+        Alois Nespor <nespor@fssp.cz>, Yury Pakin <zxwarior@gmail.com>,
+        Ihor Chyhin <ihorchyhin@ukr.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 33/62] sched/core: Take the hotplug lock in sched_init_smp()
-Date:   Mon, 26 Nov 2018 11:51:14 +0100
-Message-Id: <20181126105053.417495927@linuxfoundation.org>
+Subject: [PATCH 4.14 42/62] ACPI / watchdog: Prefer iTCO_wdt always when WDAT table uses RTC SRAM
+Date:   Mon, 26 Nov 2018 11:51:23 +0100
+Message-Id: <20181126105054.026794176@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -68,86 +67,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 40fa3780bac2b654edf23f6b13f4e2dd550aea10 ]
+[ Upstream commit 5a802a7a285c8877ca872e44eeb0f06afcb5212f ]
 
-When running on linux-next (8c60c36d0b8c ("Add linux-next specific files
-for 20181019")) + CONFIG_PROVE_LOCKING=y on a big.LITTLE system (e.g.
-Juno or HiKey960), we get the following report:
+After we added quirk for Lenovo Z50-70 it turns out there are at least
+two more systems where WDAT table includes instructions accessing RTC
+SRAM. Instead of quirking each system separately, look for such
+instructions in the table and automatically prefer iTCO_wdt if found.
 
- [    0.748225] Call trace:
- [    0.750685]  lockdep_assert_cpus_held+0x30/0x40
- [    0.755236]  static_key_enable_cpuslocked+0x20/0xc8
- [    0.760137]  build_sched_domains+0x1034/0x1108
- [    0.764601]  sched_init_domains+0x68/0x90
- [    0.768628]  sched_init_smp+0x30/0x80
- [    0.772309]  kernel_init_freeable+0x278/0x51c
- [    0.776685]  kernel_init+0x10/0x108
- [    0.780190]  ret_from_fork+0x10/0x18
-
-The static_key in question is 'sched_asym_cpucapacity' introduced by
-commit:
-
-  df054e8445a4 ("sched/topology: Add static_key for asymmetric CPU capacity optimizations")
-
-In this particular case, we enable it because smp_prepare_cpus() will
-end up fetching the capacity-dmips-mhz entry from the devicetree,
-so we already have some asymmetry detected when entering sched_init_smp().
-
-This didn't get detected in tip/sched/core because we were missing:
-
-  commit cb538267ea1e ("jump_label/lockdep: Assert we hold the hotplug lock for _cpuslocked() operations")
-
-Calls to build_sched_domains() post sched_init_smp() will hold the
-hotplug lock, it just so happens that this very first call is a
-special case. As stated by a comment in sched_init_smp(), "There's no
-userspace yet to cause hotplug operations" so this is a harmless
-warning.
-
-However, to both respect the semantics of underlying
-callees and make lockdep happy, take the hotplug lock in
-sched_init_smp(). This also satisfies the comment atop
-sched_init_domains() that says "Callers must hold the hotplug lock".
-
-Reported-by: Sudeep Holla <sudeep.holla@arm.com>
-Tested-by: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Dietmar.Eggemann@arm.com
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: morten.rasmussen@arm.com
-Cc: quentin.perret@arm.com
-Link: http://lkml.kernel.org/r/1540301851-3048-1-git-send-email-valentin.schneider@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199033
+Reported-by: Arnold Guy <aurnoldg@gmail.com>
+Reported-by: Alois Nespor <nespor@fssp.cz>
+Reported-by: Yury Pakin <zxwarior@gmail.com>
+Reported-by: Ihor Chyhin <ihorchyhin@ukr.net>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/acpi/acpi_watchdog.c | 72 ++++++++++++++++++++++--------------
+ 1 file changed, 45 insertions(+), 27 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 4e89ed8a0fb2..3bc664662081 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5733,14 +5733,17 @@ void __init sched_init_smp(void)
- 	/*
- 	 * There's no userspace yet to cause hotplug operations; hence all the
- 	 * CPU masks are stable and all blatant races in the below code cannot
--	 * happen.
-+	 * happen. The hotplug lock is nevertheless taken to satisfy lockdep,
-+	 * but there won't be any contention on it.
- 	 */
-+	cpus_read_lock();
- 	mutex_lock(&sched_domains_mutex);
- 	sched_init_domains(cpu_active_mask);
- 	cpumask_andnot(non_isolated_cpus, cpu_possible_mask, cpu_isolated_map);
- 	if (cpumask_empty(non_isolated_cpus))
- 		cpumask_set_cpu(smp_processor_id(), non_isolated_cpus);
- 	mutex_unlock(&sched_domains_mutex);
-+	cpus_read_unlock();
+diff --git a/drivers/acpi/acpi_watchdog.c b/drivers/acpi/acpi_watchdog.c
+index 4bde16fb97d8..95600309ce42 100644
+--- a/drivers/acpi/acpi_watchdog.c
++++ b/drivers/acpi/acpi_watchdog.c
+@@ -12,35 +12,51 @@
+ #define pr_fmt(fmt) "ACPI: watchdog: " fmt
  
- 	/* Move init over to a non-isolated CPU */
- 	if (set_cpus_allowed_ptr(current, non_isolated_cpus) < 0)
+ #include <linux/acpi.h>
+-#include <linux/dmi.h>
+ #include <linux/ioport.h>
+ #include <linux/platform_device.h>
+ 
+ #include "internal.h"
+ 
+-static const struct dmi_system_id acpi_watchdog_skip[] = {
+-	{
+-		/*
+-		 * On Lenovo Z50-70 there are two issues with the WDAT
+-		 * table. First some of the instructions use RTC SRAM
+-		 * to store persistent information. This does not work well
+-		 * with Linux RTC driver. Second, more important thing is
+-		 * that the instructions do not actually reset the system.
+-		 *
+-		 * On this particular system iTCO_wdt seems to work just
+-		 * fine so we prefer that over WDAT for now.
+-		 *
+-		 * See also https://bugzilla.kernel.org/show_bug.cgi?id=199033.
+-		 */
+-		.ident = "Lenovo Z50-70",
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "20354"),
+-			DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo Z50-70"),
+-		},
+-	},
+-	{}
+-};
++#ifdef CONFIG_RTC_MC146818_LIB
++#include <linux/mc146818rtc.h>
++
++/*
++ * There are several systems where the WDAT table is accessing RTC SRAM to
++ * store persistent information. This does not work well with the Linux RTC
++ * driver so on those systems we skip WDAT driver and prefer iTCO_wdt
++ * instead.
++ *
++ * See also https://bugzilla.kernel.org/show_bug.cgi?id=199033.
++ */
++static bool acpi_watchdog_uses_rtc(const struct acpi_table_wdat *wdat)
++{
++	const struct acpi_wdat_entry *entries;
++	int i;
++
++	entries = (struct acpi_wdat_entry *)(wdat + 1);
++	for (i = 0; i < wdat->entries; i++) {
++		const struct acpi_generic_address *gas;
++
++		gas = &entries[i].register_region;
++		if (gas->space_id == ACPI_ADR_SPACE_SYSTEM_IO) {
++			switch (gas->address) {
++			case RTC_PORT(0):
++			case RTC_PORT(1):
++			case RTC_PORT(2):
++			case RTC_PORT(3):
++				return true;
++			}
++		}
++	}
++
++	return false;
++}
++#else
++static bool acpi_watchdog_uses_rtc(const struct acpi_table_wdat *wdat)
++{
++	return false;
++}
++#endif
+ 
+ static const struct acpi_table_wdat *acpi_watchdog_get_wdat(void)
+ {
+@@ -50,9 +66,6 @@ static const struct acpi_table_wdat *acpi_watchdog_get_wdat(void)
+ 	if (acpi_disabled)
+ 		return NULL;
+ 
+-	if (dmi_check_system(acpi_watchdog_skip))
+-		return NULL;
+-
+ 	status = acpi_get_table(ACPI_SIG_WDAT, 0,
+ 				(struct acpi_table_header **)&wdat);
+ 	if (ACPI_FAILURE(status)) {
+@@ -60,6 +73,11 @@ static const struct acpi_table_wdat *acpi_watchdog_get_wdat(void)
+ 		return NULL;
+ 	}
+ 
++	if (acpi_watchdog_uses_rtc(wdat)) {
++		pr_info("Skipping WDAT on this system because it uses RTC SRAM\n");
++		return NULL;
++	}
++
+ 	return wdat;
+ }
+ 
 -- 
 2.17.1
 
