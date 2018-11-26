@@ -2,150 +2,88 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4767AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44ABCC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 132F520862
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:55:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 132F520862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 142A520663
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:55:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 142A520663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbeK0Bta (ORCPT
+        id S1727209AbeK0Btg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 20:49:30 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39298 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727150AbeK0Bt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 20:49:28 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 93788351D;
-        Mon, 26 Nov 2018 06:55:06 -0800 (PST)
-Received: from localhost (unknown [10.37.6.11])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C7A463F575;
-        Mon, 26 Nov 2018 06:55:05 -0800 (PST)
-Date:   Mon, 26 Nov 2018 14:55:04 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        sparclinux@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        linux-s390@vger.kernel.org, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 03/20] perf/core: add PERF_PMU_CAP_EXCLUDE for
- exclusion capable PMUs
-Message-ID: <20181126145503.GA25271@e119886-lin.cambridge.arm.com>
-References: <1543230756-15319-1-git-send-email-andrew.murray@arm.com>
- <1543230756-15319-4-git-send-email-andrew.murray@arm.com>
- <8c9003c3-ccbf-c342-024f-772d697a911b@arm.com>
+        Mon, 26 Nov 2018 20:49:36 -0500
+Received: from mga03.intel.com ([134.134.136.65]:1210 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726237AbeK0Bt3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 20:49:29 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 06:55:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,282,1539673200"; 
+   d="scan'208";a="103306597"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga003.jf.intel.com with ESMTP; 26 Nov 2018 06:55:05 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gRIHw-0001wT-4v; Mon, 26 Nov 2018 16:55:04 +0200
+Date:   Mon, 26 Nov 2018 16:55:04 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 00/15] i2c-multi-instantiate: Adapt for INT3515 and
+ alike
+Message-ID: <20181126145504.GL10650@smile.fi.intel.com>
+References: <20181120155924.10773-1-andriy.shevchenko@linux.intel.com>
+ <24f96a15-6b57-c19d-b77d-fdc6c11fddc9@redhat.com>
+ <cdb902c7-324c-3f19-6caa-ff78132c593d@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8c9003c3-ccbf-c342-024f-772d697a911b@arm.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <cdb902c7-324c-3f19-6caa-ff78132c593d@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 02:10:24PM +0000, Robin Murphy wrote:
-> Hi Andrew,
-> 
-> On 26/11/2018 11:12, Andrew Murray wrote:
-> > Many PMU drivers do not have the capability to exclude counting events
-> > that occur in specific contexts such as idle, kernel, guest, etc. These
-> > drivers indicate this by returning an error in their event_init upon
-> > testing the events attribute flags. This approach is error prone and
-> > often inconsistent.
-> > 
-> > Let's instead allow PMU drivers to advertise their ability to exclude
-> > based on context via a new capability: PERF_PMU_CAP_EXCLUDE. This
-> > allows the perf core to reject requests for exclusion events where
-> > there is no support in the PMU.
-> > 
-> > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-> > ---
-> >   include/linux/perf_event.h | 1 +
-> >   kernel/events/core.c       | 9 +++++++++
-> >   2 files changed, 10 insertions(+)
-> > 
-> > diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> > index b2e806f..69b3d65 100644
-> > --- a/include/linux/perf_event.h
-> > +++ b/include/linux/perf_event.h
-> > @@ -244,6 +244,7 @@ struct perf_event;
-> >   #define PERF_PMU_CAP_EXCLUSIVE			0x10
-> >   #define PERF_PMU_CAP_ITRACE			0x20
-> >   #define PERF_PMU_CAP_HETEROGENEOUS_CPUS		0x40
-> > +#define PERF_PMU_CAP_EXCLUDE			0x80
-> >   /**
-> >    * struct pmu - generic performance monitoring unit
-> > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > index 5a97f34..9afb33c 100644
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -9743,6 +9743,15 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
-> >   	if (ctx)
-> >   		perf_event_ctx_unlock(event->group_leader, ctx);
-> > +	if (!ret) {
-> > +		if (!(pmu->capabilities & PERF_PMU_CAP_EXCLUDE) &&
-> > +				event_has_any_exclude_flag(event)) {
-> 
-> Technically this is a bisection-breaker, since no driver has this capability
-> yet - ideally, this patch should come after all the ones introducing it to
-> the relevant drivers (with the removal of the now-redundant code from the
-> other drivers at the end).
+On Wed, Nov 21, 2018 at 01:00:07PM +0100, Hans de Goede wrote:
+> On 21-11-18 12:27, Hans de Goede wrote:
 
-Indeed. Thought it is possible to first introduce the capability, update the
-relevant drivers to advertise it, then add the change to core.c and finally
-remove the unnecessary error checks as a result of using the new capability.
-This approach could be bisection-proof.
+> > Patches 1-5, 7-13 and 15 are: >
+> > Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Thanks!
 
 > 
-> Alternatively, since we already have several other negative capabilities,
-> unless there's a strong feeling against adding any more then it might work
-> out simpler to flip it to PERF_PMU_CAP_NO_EXCLUDE, such that we only need to
-> introduce the core check then directly replace the open-coded event checks
-> with the capability in the appropriate drivers, and need not touch the
-> exclusion-supporting ones at all.
-
-This would certaintly be less risky and invasive (e.g. compare the number of
-files touched between this v2 and the previous v1).
-
-I'm happy with either approach.
-
-Thanks,
-
-Andrew Murray
-
+> Correction, I also have some small remarks to patch 9:
 > 
-> Robin.
+> [PATCH v1 09/15] platform/x86: i2c-multi-instantiate: Count I2cSerialBus() resources
 > 
-> > +			if (event->destroy)
-> > +				event->destroy(event);
-> > +			ret = -EINVAL;
-> > +		}
-> > +	}
-> > +
-> >   	if (ret)
-> >   		module_put(pmu->module);
-> > 
+> Which will need to be addressed before you can add my Reviewed-by.
+
+Will be addressed for v2.
+
+Thanks for review!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
