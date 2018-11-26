@@ -2,286 +2,162 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7CFC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B32ACC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A55021104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:37:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="S7vcjb+U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A55021104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	by mail.kernel.org (Postfix) with ESMTP id 76C9520873
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:37:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76C9520873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbeK0Jcv (ORCPT
+        id S1727501AbeK0Jc5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 04:32:51 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42329 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726888AbeK0Jcv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 04:32:51 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 64so7284169pfr.9
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 14:37:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uhf9PmeFp5uR8MyDNViNYXqSE9sP3pshz27LXMLouUY=;
-        b=S7vcjb+U19LY2I8bQTvcI5HOgm6kZsNU+Q6URCPW/sybEbtvvK6srpBFp/F6Z8LHgG
-         23/O9A9kK7tOawhnXjdBfkxsVb9/YtdfzvR9s8S/xhk/tMiXwzxqru0+9kzhjnww3EaQ
-         Yly7Ol/pdTUr06oceR8TgobO7nHADdQW8zluRpEyVjWtNjAHI1XjD9BjTsoPZpH51dTX
-         p/kOfiQQmrYpoNwb1oo64XRcH9xE0+E+n3V95AqxRU4PhVRusygyeHbKToS8Ya4p2Z5F
-         S+UbKpDGXmFVqPWrTkvDU/NGqrVQDa563RfM1mY/DVr+jVX5/lfaV7HQ7HdCdPnY47pK
-         cD4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uhf9PmeFp5uR8MyDNViNYXqSE9sP3pshz27LXMLouUY=;
-        b=pqnPtxYuTBv+rir+HpQRDF+SzIa4pFoP2r6V3CQfWJbP0u6923Fk1GV/S0uCBP6yzR
-         yz1xl8ZoAz1++9qC3XwH1+8n6a5S7UhL4OcTkvXXV2mRvtpgkdR7qqem0MOdD5PV7mIk
-         HJqXeq2QfTDeAAQQVLDiUQy/TUAgC683SARQ5zTYFxLNqVUxvwL++mCuJw78NRhBx1Q8
-         UsyZQeIN+7c4wzg9j3bZSTANxsrXcxde8SFIvPeN0z8hxy4wUZo+QuDRpKhIgls/BSWK
-         AyplMo/oFmE4x9y/9pF954kxjozSy4HdzqIn6ALtzJAy7OMGtq3VVliwUjLG2EbBXcZW
-         4JDw==
-X-Gm-Message-State: AGRZ1gLgyCBpv8ryK7EakfnM4ublQ78kQhjumnM9U/8MBYukpI8LcaUH
-        jhOys08gzYDTJSqnRpZErhXe+w==
-X-Google-Smtp-Source: AJdET5cAwRsDVEEuvzYg9ba/mZpsL0wG01LG0brt2kuGgAFWPJZnVn3PjPLBst3i5b/NFB+TPt4k6g==
-X-Received: by 2002:a62:1c06:: with SMTP id c6mr29538517pfc.157.1543271831916;
-        Mon, 26 Nov 2018 14:37:11 -0800 (PST)
-Received: from vader ([2601:602:8b00:55d3:e6a7:a0ff:fe0b:c9a8])
-        by smtp.gmail.com with ESMTPSA id s184sm1677235pgc.38.2018.11.26.14.37.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 14:37:10 -0800 (PST)
-Date:   Mon, 26 Nov 2018 14:37:09 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V12 09/20] block: use bio_for_each_bvec() to compute
- multi-page bvec count
-Message-ID: <20181126223709.GI30411@vader>
-References: <20181126021720.19471-1-ming.lei@redhat.com>
- <20181126021720.19471-10-ming.lei@redhat.com>
+        Tue, 27 Nov 2018 04:32:57 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:59874 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726627AbeK0Jc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 04:32:56 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wAQMVvpu002166
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Mon, 26 Nov 2018 14:32:07 -0800
+Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Mon, 26 Nov 2018
+ 14:31:46 -0800
+From:   Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     Joerg Roedel <joro@8bytes.org>
+CC:     <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Alexandre Courbot <gnurou@gmail.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Hiroshi Doyu <hdoyu@nvidia.com>,
+        Honghui Zhang <honghui.zhang@mediatek.com>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Nate Watterson <nwatters@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Simon Xue <xxm@rock-chips.com>,
+        Stepan Moskovchenko <stepanm@codeaurora.org>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>, <linux-tegra@vger.kernel.org>
+Subject: [PATCH 0/9] iommu: clean up/remove modular stuff from non-modules.
+Date:   Mon, 26 Nov 2018 17:31:29 -0500
+Message-ID: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181126021720.19471-10-ming.lei@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 10:17:09AM +0800, Ming Lei wrote:
-> First it is more efficient to use bio_for_each_bvec() in both
-> blk_bio_segment_split() and __blk_recalc_rq_segments() to compute how
-> many multi-page bvecs there are in the bio.
-> 
-> Secondly once bio_for_each_bvec() is used, the bvec may need to be
-> splitted because its length can be very longer than max segment size,
-> so we have to split the big bvec into several segments.
-> 
-> Thirdly when splitting multi-page bvec into segments, the max segment
-> limit may be reached, so the bio split need to be considered under
-> this situation too.
+The work here represents a scan over the iommu dir, looking for files/drivers
+that have nothing to do with a modular use case, but are using modular
+infrastructure regardless.
 
-Reviewed-by: Omar Sandoval <osandov@fb.com>
+We are trying to make driver code consistent with the Makefiles/Kconfigs that
+control them.  This means not using modular functions/macros for drivers that
+can never be built as a module.  I've done this in other subsystem dirs
+already, and some of this has already happened in drivers/iommu by others;
+such as 98b72b94def9 ("iommu/rockchip: Prohibit unbind and remove").
 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  block/blk-merge.c | 100 +++++++++++++++++++++++++++++++++++++++++++-----------
->  1 file changed, 80 insertions(+), 20 deletions(-)
-> 
-> diff --git a/block/blk-merge.c b/block/blk-merge.c
-> index 51ec6ca56a0a..2d8f388d43de 100644
-> --- a/block/blk-merge.c
-> +++ b/block/blk-merge.c
-> @@ -161,6 +161,70 @@ static inline unsigned get_max_io_size(struct request_queue *q,
->  	return sectors;
->  }
->  
-> +static unsigned get_max_segment_size(struct request_queue *q,
-> +				     unsigned offset)
-> +{
-> +	unsigned long mask = queue_segment_boundary(q);
-> +
-> +	return min_t(unsigned long, mask - (mask & offset) + 1,
-> +		     queue_max_segment_size(q));
-> +}
-> +
-> +/*
-> + * Split the bvec @bv into segments, and update all kinds of
-> + * variables.
-> + */
-> +static bool bvec_split_segs(struct request_queue *q, struct bio_vec *bv,
-> +		unsigned *nsegs, unsigned *last_seg_size,
-> +		unsigned *front_seg_size, unsigned *sectors)
-> +{
-> +	unsigned len = bv->bv_len;
-> +	unsigned total_len = 0;
-> +	unsigned new_nsegs = 0, seg_size = 0;
-> +
-> +	/*
-> +	 * Multipage bvec may be too big to hold in one segment,
-> +	 * so the current bvec has to be splitted as multiple
-> +	 * segments.
-> +	 */
-> +	while (len && new_nsegs + *nsegs < queue_max_segments(q)) {
-> +		seg_size = get_max_segment_size(q, bv->bv_offset + total_len);
-> +		seg_size = min(seg_size, len);
-> +
-> +		new_nsegs++;
-> +		total_len += seg_size;
-> +		len -= seg_size;
-> +
-> +		if ((bv->bv_offset + total_len) & queue_virt_boundary(q))
-> +			break;
-> +	}
-> +
-> +	if (!new_nsegs)
-> +		return !!len;
-> +
-> +	/* update front segment size */
-> +	if (!*nsegs) {
-> +		unsigned first_seg_size;
-> +
-> +		if (new_nsegs == 1)
-> +			first_seg_size = get_max_segment_size(q, bv->bv_offset);
-> +		else
-> +			first_seg_size = queue_max_segment_size(q);
-> +
-> +		if (*front_seg_size < first_seg_size)
-> +			*front_seg_size = first_seg_size;
-> +	}
-> +
-> +	/* update other varibles */
-> +	*last_seg_size = seg_size;
-> +	*nsegs += new_nsegs;
-> +	if (sectors)
-> +		*sectors += total_len >> 9;
-> +
-> +	/* split in the middle of the bvec if len != 0 */
-> +	return !!len;
-> +}
-> +
->  static struct bio *blk_bio_segment_split(struct request_queue *q,
->  					 struct bio *bio,
->  					 struct bio_set *bs,
-> @@ -174,7 +238,7 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
->  	struct bio *new = NULL;
->  	const unsigned max_sectors = get_max_io_size(q, bio);
->  
-> -	bio_for_each_segment(bv, bio, iter) {
-> +	bio_for_each_bvec(bv, bio, iter) {
->  		/*
->  		 * If the queue doesn't support SG gaps and adding this
->  		 * offset would create a gap, disallow it.
-> @@ -189,8 +253,12 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
->  			 */
->  			if (nsegs < queue_max_segments(q) &&
->  			    sectors < max_sectors) {
-> -				nsegs++;
-> -				sectors = max_sectors;
-> +				/* split in the middle of bvec */
-> +				bv.bv_len = (max_sectors - sectors) << 9;
-> +				bvec_split_segs(q, &bv, &nsegs,
-> +						&seg_size,
-> +						&front_seg_size,
-> +						&sectors);
->  			}
->  			goto split;
->  		}
-> @@ -212,14 +280,12 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
->  		if (nsegs == queue_max_segments(q))
->  			goto split;
->  
-> -		if (nsegs == 1 && seg_size > front_seg_size)
-> -			front_seg_size = seg_size;
-> -
-> -		nsegs++;
->  		bvprv = bv;
->  		bvprvp = &bvprv;
-> -		seg_size = bv.bv_len;
-> -		sectors += bv.bv_len >> 9;
-> +
-> +		if (bvec_split_segs(q, &bv, &nsegs, &seg_size,
-> +				    &front_seg_size, &sectors))
-> +			goto split;
->  
->  	}
->  
-> @@ -233,8 +299,6 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
->  			bio = new;
->  	}
->  
-> -	if (nsegs == 1 && seg_size > front_seg_size)
-> -		front_seg_size = seg_size;
->  	bio->bi_seg_front_size = front_seg_size;
->  	if (seg_size > bio->bi_seg_back_size)
->  		bio->bi_seg_back_size = seg_size;
-> @@ -296,6 +360,7 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
->  {
->  	struct bio_vec bv, bvprv = { NULL };
->  	unsigned int seg_size, nr_phys_segs;
-> +	unsigned front_seg_size = bio->bi_seg_front_size;
->  	struct bio *fbio, *bbio;
->  	struct bvec_iter iter;
->  	bool prev = false;
-> @@ -316,7 +381,7 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
->  	seg_size = 0;
->  	nr_phys_segs = 0;
->  	for_each_bio(bio) {
-> -		bio_for_each_segment(bv, bio, iter) {
-> +		bio_for_each_bvec(bv, bio, iter) {
->  			/*
->  			 * If SG merging is disabled, each bio vector is
->  			 * a segment
-> @@ -336,20 +401,15 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
->  				continue;
->  			}
->  new_segment:
-> -			if (nr_phys_segs == 1 && seg_size >
-> -			    fbio->bi_seg_front_size)
-> -				fbio->bi_seg_front_size = seg_size;
-> -
-> -			nr_phys_segs++;
->  			bvprv = bv;
->  			prev = true;
-> -			seg_size = bv.bv_len;
-> +			bvec_split_segs(q, &bv, &nr_phys_segs, &seg_size,
-> +					&front_seg_size, NULL);
->  		}
->  		bbio = bio;
->  	}
->  
-> -	if (nr_phys_segs == 1 && seg_size > fbio->bi_seg_front_size)
-> -		fbio->bi_seg_front_size = seg_size;
-> +	fbio->bi_seg_front_size = front_seg_size;
->  	if (seg_size > bbio->bi_seg_back_size)
->  		bbio->bi_seg_back_size = seg_size;
->  
-> -- 
-> 2.9.5
-> 
+Using modular infrastructure in non-modules might seem harmless, but some
+of the downfalls this leads to are:
+
+ (1) it is easy to accidentally write unused module_exit and remove code
+ (2) it can be misleading when reading the source, thinking it can be
+     modular when the Makefile and/or Kconfig prohibit it
+ (3) it requires the include of the module.h header file which in turn
+     includes nearly everything else, thus adding to CPP overhead.
+ (4) it gets copied/replicated into other drivers and spreads quickly.
+
+The last two commits (arm-smmu related ones) deserve an extra mention,
+and I put them at the end in case they want to be deferred for later or
+altered.  Normally a "module-ectomy" allows us to delete the ".remove"
+function, as per the rockchip commit above, but ...
+
+A kexec commit (7aa8619a66ae) tried to improve reliability by trying to
+shutdown the iommu in the compromised/crashing kernel, but of course the
+better solution is to have the recovery kernel be able to handle all of
+the possible initial conditions.  It appears this was done later in the
+commit b63b3439b856 - but I don't know if that means relying on an
+orderly shutdown is no longer required - I don't have the platform and
+am only going on what is in git history.
+
+So, as the kexec commit recycled the ".remove" handle to also be the
+".shutdown" handle, in this series the remove function was renamed to
+shutdown, and the ".remove" handle was deleted.  This was IMHO the most
+back compatible way to make this update.  If the reliance on the
+compromised kernel to run ".shutdown" is no longer necessary, then it
+can be removed in a future change.
+
+Patches were build tested on top of next-20181122 for ARM, ARM64, x86-64
+on an allyesconfig.
+
+Paul.
+
+---
+
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: Daniel Kurtz <djkurtz@chromium.org>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Hiroshi Doyu <hdoyu@nvidia.com>
+Cc: Honghui Zhang <honghui.zhang@mediatek.com>
+Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Nate Watterson <nwatters@codeaurora.org>
+Cc: Rob Clark <robdclark@gmail.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Simon Xue <xxm@rock-chips.com>
+Cc: Stepan Moskovchenko <stepanm@codeaurora.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: iommu@lists.linux-foundation.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-mediatek@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org
+
+Paul Gortmaker (9):
+  iommu: audit and remove any unnecessary uses of module.h
+  iommu: rockchip: make it explicitly non-modular
+  iommu: msm_iommu: make it explicitly non-modular
+  iommu: mtk_iommu: make it explicitly non-modular
+  iommu: ipmmu-vmsa: make it explicitly non-modular
+  iommu: qcom_iommu: make it explicitly non-modular
+  iommu: tegra-gart: make it explicitly non-modular
+  iommu: arm-smmu: make it explicitly non-modular
+  iommu: arm-smmu-v3: make it explicitly non-modular
+
+ drivers/iommu/arm-smmu-v3.c    | 25 +++++++++----------------
+ drivers/iommu/arm-smmu.c       | 32 +++++++++++++-------------------
+ drivers/iommu/iommu-sysfs.c    |  2 +-
+ drivers/iommu/iommu.c          |  3 ++-
+ drivers/iommu/ipmmu-vmsa.c     | 16 +++-------------
+ drivers/iommu/msm_iommu.c      | 13 +++----------
+ drivers/iommu/mtk_iommu_v1.c   | 15 +++------------
+ drivers/iommu/qcom_iommu.c     | 16 ++--------------
+ drivers/iommu/rockchip-iommu.c | 13 ++++++-------
+ drivers/iommu/tegra-gart.c     | 37 +++++++------------------------------
+ 10 files changed, 49 insertions(+), 123 deletions(-)
+
+-- 
+2.7.4
+
