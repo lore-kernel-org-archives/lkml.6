@@ -2,52 +2,49 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 961DBC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84FBEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E97421104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F9322146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:00:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U/Y6GSNQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E97421104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+8Bl28E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F9322146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729952AbeKZVyf (ORCPT
+        id S1729965AbeKZVyh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:54:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36790 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:54:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728754AbeKZVye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:54:34 -0500
+        id S1726384AbeKZVyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:54:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 634AF21104;
-        Mon, 26 Nov 2018 11:00:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08F6F2146F;
+        Mon, 26 Nov 2018 11:00:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230048;
-        bh=8muD36xnniW+erm5UE0elZT0S8oBwmT8lvGvA9kPhkU=;
+        s=default; t=1543230051;
+        bh=Wm5W+a2i+LF+HTyV9NMZx3LUXhL58Pb28D8GgBtXWA0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U/Y6GSNQ8LuYfEP4R6sy5kFlSBYtOOIM4t20aep22snjrASRBDTpG1j5dYj5HDrDc
-         sormLCe7l2nvizZMrsYMD+KFgzyYbhJhW5bgAgQxdfQoNFb7upNNMQjyjV12uDSd8I
-         UpVd/nb4GsoxwJK2q8kQYEyUm01AnR2uH+uISy54=
+        b=J+8Bl28Ec3rZfhTyqkcqVh1GcyR+/d/8kWeWMP0hD4Knso4PzP43kLdpstkWXeaCs
+         SdvNgW0OEcUIuXs6LexDAckerqoMWc76UE2qgl7pxxsx0Qn+FqPU3gNxaqAm+nO75g
+         y5gszKVN1j4c+/AzvGQJSATZ8Vx8LXJy8a4IR/Kc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Gustavo Romero <gromero@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 34/62] perf tools: Fix undefined symbol scnprintf in libperf-jvmti.so
-Date:   Mon, 26 Nov 2018 11:51:15 +0100
-Message-Id: <20181126105053.504181964@linuxfoundation.org>
+        stable@vger.kernel.org, Mathias Thore <Mathias.Thore@infinera.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 4.14 52/62] uio: Fix an Oops on load
+Date:   Mon, 26 Nov 2018 11:51:33 +0100
+Message-Id: <20181126105054.603577007@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105050.592727680@linuxfoundation.org>
 References: <20181126105050.592727680@linuxfoundation.org>
@@ -65,135 +62,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6ac2226229d931153331a93d90655a3de05b9290 ]
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-Currently jvmti agent can not be used because function scnprintf is not
-present in the agent libperf-jvmti.so. As a result the JVM when using
-such agent to record JITed code profiling information will fail on
-looking up scnprintf:
+commit 432798195bbce1f8cd33d1c0284d0538835e25fb upstream.
 
-  java: symbol lookup error: lib/libperf-jvmti.so: undefined symbol: scnprintf
+I was trying to solve a double free but I introduced a more serious
+NULL dereference bug.  The problem is that if there is an IRQ which
+triggers immediately, then we need "info->uio_dev" but it's not set yet.
 
-This commit fixes that by reverting to the use of snprintf, that can be
-looked up, instead of scnprintf, adding a proper check for the returned
-value in order to print a better error message when the jitdump file
-pathname is too long. Checking the returned value also helps to comply
-with some recent gcc versions, like gcc8, which will fail due to
-truncated writing checks related to the -Werror=format-truncation= flag.
+This patch puts the original initialization back to how it was and just
+sets info->uio_dev to NULL on the error path so it should solve both
+the Oops and the double free.
 
-Signed-off-by: Gustavo Romero <gromero@linux.vnet.ibm.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-LPU-Reference: 1541117601-18937-2-git-send-email-gromero@linux.vnet.ibm.com
-Link: https://lkml.kernel.org/n/tip-mvpxxxy7wnzaj74cq75muw3f@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: f019f07ecf6a ("uio: potential double frees if __uio_register_device() fails")
+Reported-by: Mathias Thore <Mathias.Thore@infinera.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: stable <stable@vger.kernel.org>
+Tested-by: Mathias Thore <Mathias.Thore@infinera.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- tools/perf/jvmti/jvmti_agent.c | 49 ++++++++++++++++++++++++++--------
- 1 file changed, 38 insertions(+), 11 deletions(-)
+ drivers/uio/uio.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
-index c1d20d951434..4ad9948fe594 100644
---- a/tools/perf/jvmti/jvmti_agent.c
-+++ b/tools/perf/jvmti/jvmti_agent.c
-@@ -125,7 +125,7 @@ perf_get_timestamp(void)
- }
+--- a/drivers/uio/uio.c
++++ b/drivers/uio/uio.c
+@@ -850,6 +850,8 @@ int __uio_register_device(struct module
+ 	if (ret)
+ 		goto err_uio_dev_add_attributes;
  
- static int
--debug_cache_init(void)
-+create_jit_cache_dir(void)
- {
- 	char str[32];
- 	char *base, *p;
-@@ -144,8 +144,13 @@ debug_cache_init(void)
- 
- 	strftime(str, sizeof(str), JIT_LANG"-jit-%Y%m%d", &tm);
- 
--	snprintf(jit_path, PATH_MAX - 1, "%s/.debug/", base);
--
-+	ret = snprintf(jit_path, PATH_MAX, "%s/.debug/", base);
-+	if (ret >= PATH_MAX) {
-+		warnx("jvmti: cannot generate jit cache dir because %s/.debug/"
-+			" is too long, please check the cwd, JITDUMPDIR, and"
-+			" HOME variables", base);
-+		return -1;
-+	}
- 	ret = mkdir(jit_path, 0755);
- 	if (ret == -1) {
- 		if (errno != EEXIST) {
-@@ -154,20 +159,32 @@ debug_cache_init(void)
- 		}
++	info->uio_dev = idev;
++
+ 	if (info->irq && (info->irq != UIO_IRQ_CUSTOM)) {
+ 		/*
+ 		 * Note that we deliberately don't use devm_request_irq
+@@ -861,11 +863,12 @@ int __uio_register_device(struct module
+ 		 */
+ 		ret = request_irq(info->irq, uio_interrupt,
+ 				  info->irq_flags, info->name, idev);
+-		if (ret)
++		if (ret) {
++			info->uio_dev = NULL;
+ 			goto err_request_irq;
++		}
  	}
  
--	snprintf(jit_path, PATH_MAX - 1, "%s/.debug/jit", base);
-+	ret = snprintf(jit_path, PATH_MAX, "%s/.debug/jit", base);
-+	if (ret >= PATH_MAX) {
-+		warnx("jvmti: cannot generate jit cache dir because"
-+			" %s/.debug/jit is too long, please check the cwd,"
-+			" JITDUMPDIR, and HOME variables", base);
-+		return -1;
-+	}
- 	ret = mkdir(jit_path, 0755);
- 	if (ret == -1) {
- 		if (errno != EEXIST) {
--			warn("cannot create jit cache dir %s", jit_path);
-+			warn("jvmti: cannot create jit cache dir %s", jit_path);
- 			return -1;
- 		}
- 	}
+-	info->uio_dev = idev;
+ 	return 0;
  
--	snprintf(jit_path, PATH_MAX - 1, "%s/.debug/jit/%s.XXXXXXXX", base, str);
--
-+	ret = snprintf(jit_path, PATH_MAX, "%s/.debug/jit/%s.XXXXXXXX", base, str);
-+	if (ret >= PATH_MAX) {
-+		warnx("jvmti: cannot generate jit cache dir because"
-+			" %s/.debug/jit/%s.XXXXXXXX is too long, please check"
-+			" the cwd, JITDUMPDIR, and HOME variables",
-+			base, str);
-+		return -1;
-+	}
- 	p = mkdtemp(jit_path);
- 	if (p != jit_path) {
--		warn("cannot create jit cache dir %s", jit_path);
-+		warn("jvmti: cannot create jit cache dir %s", jit_path);
- 		return -1;
- 	}
- 
-@@ -228,7 +245,7 @@ void *jvmti_open(void)
- {
- 	char dump_path[PATH_MAX];
- 	struct jitheader header;
--	int fd;
-+	int fd, ret;
- 	FILE *fp;
- 
- 	init_arch_timestamp();
-@@ -245,12 +262,22 @@ void *jvmti_open(void)
- 
- 	memset(&header, 0, sizeof(header));
- 
--	debug_cache_init();
-+	/*
-+	 * jitdump file dir
-+	 */
-+	if (create_jit_cache_dir() < 0)
-+		return NULL;
- 
- 	/*
- 	 * jitdump file name
- 	 */
--	scnprintf(dump_path, PATH_MAX, "%s/jit-%i.dump", jit_path, getpid());
-+	ret = snprintf(dump_path, PATH_MAX, "%s/jit-%i.dump", jit_path, getpid());
-+	if (ret >= PATH_MAX) {
-+		warnx("jvmti: cannot generate jitdump file full path because"
-+			" %s/jit-%i.dump is too long, please check the cwd,"
-+			" JITDUMPDIR, and HOME variables", jit_path, getpid());
-+		return NULL;
-+	}
- 
- 	fd = open(dump_path, O_CREAT|O_TRUNC|O_RDWR, 0666);
- 	if (fd == -1)
--- 
-2.17.1
-
+ err_request_irq:
 
 
