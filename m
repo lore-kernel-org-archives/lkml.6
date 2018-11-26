@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2956EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E71D7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E515A2146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE3BA21473
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PwrZnFHQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E515A2146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VcPVL3Cj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE3BA21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730572AbeKZV4e (ORCPT
+        id S1730599AbeKZV4h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:56:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39902 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:56:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729290AbeKZV4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:56:33 -0500
+        id S1729290AbeKZV4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:56:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F190021104;
-        Mon, 26 Nov 2018 11:02:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93E5B20817;
+        Mon, 26 Nov 2018 11:02:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230168;
-        bh=EPAxqVIfuKBje7BY4dkySFcOZhqu2H8hK5EANgoRQF8=;
+        s=default; t=1543230171;
+        bh=IWHe9pvVuEm9cpYdygrCQHSWaM/neAWGg8MQbfVL49Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PwrZnFHQvgBa8Io65CyM0EFji6MHbcyNO1bHjVTvPdNczK+/SkkAefhO/2Qj/H2V7
-         Gk8vDMoJypQVfrMnvqeVb0NvZ6DTh9pZTq7oC4dQS/UvFSwrcRdxlYJNqvzQeQJhex
-         f4uNEZeqvYKLrKh3S5GmPcv6Fl0kTtxJCbAojQyQ=
+        b=VcPVL3Cj9pw/iG481zz/x6Bim/wIz5UG/BBjEcs9dmkFz4X7K3uu9IIDNZ4eXVC59
+         vrFu4OLLznm4lNi5zQdZWWQIGxYByl57oCR997x8o9Kmlei00KTpmZjjJdRwAjB/jd
+         I1iTVNBB1PUnICyTgbe3v/miDCyOIbENcY+YufMA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <zenczykowski@gmail.com>,
+        Florian Westphal <fw@strlen.de>,
+        Eric Dumazet <edumazet@google.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 032/118] serial: sh-sci: Fix receive on SCIFA/SCIFB variants with DMA
-Date:   Mon, 26 Nov 2018 11:50:26 +0100
-Message-Id: <20181126105101.174510502@linuxfoundation.org>
+Subject: [PATCH 4.19 033/118] netfilter: ipv6: fix oops when defragmenting locally generated fragments
+Date:   Mon, 26 Nov 2018 11:50:27 +0100
+Message-Id: <20181126105101.307993614@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -65,46 +66,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 202dc3cc10b4d37e5251431acf8d5040a8876c7d ]
+[ Upstream commit 61792b677415b77c8db04991c22966bb8de7603e ]
 
-On SCIFA and SCIFB serial ports with DMA support (i.e. some ports on
-R-Car Gen2 and RZ/G1 SoCs), receive DMA operations are submitted before
-the DMA channel pointer is initialized.  Hence this fails, and the
-driver tries to fall back to PIO.  However, at this early phase in the
-initialization sequence, fallback to PIO does not work, leading to a
-serial port that cannot receive any data.
+Unlike ipv4 and normal ipv6 defrag, netfilter ipv6 defragmentation did
+not save/restore skb->dst.
 
-Fix this by calling sci_submit_rx() after initialization of the DMA
-channel pointer.
+This causes oops when handling locally generated ipv6 fragments, as
+output path needs a valid dst.
 
-Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Fixes: 2c4ee23530ffc022 ("serial: sh-sci: Postpone DMA release when falling back to PIO")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Maciej Żenczykowski <zenczykowski@gmail.com>
+Fixes: 84379c9afe01 ("netfilter: ipv6: nf_defrag: drop skb dst before queueing")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/sh-sci.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ipv6/netfilter/nf_conntrack_reasm.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 3649b83ef863..effba6ce0caa 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1614,10 +1614,10 @@ static void sci_request_dma(struct uart_port *port)
- 		hrtimer_init(&s->rx_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
- 		s->rx_timer.function = rx_timer_fn;
- 
-+		s->chan_rx_saved = s->chan_rx = chan;
+diff --git a/net/ipv6/netfilter/nf_conntrack_reasm.c b/net/ipv6/netfilter/nf_conntrack_reasm.c
+index 8f68a518d9db..f76bd4d15704 100644
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -587,11 +587,16 @@ int nf_ct_frag6_gather(struct net *net, struct sk_buff *skb, u32 user)
+ 	 */
+ 	ret = -EINPROGRESS;
+ 	if (fq->q.flags == (INET_FRAG_FIRST_IN | INET_FRAG_LAST_IN) &&
+-	    fq->q.meat == fq->q.len &&
+-	    nf_ct_frag6_reasm(fq, skb, dev))
+-		ret = 0;
+-	else
++	    fq->q.meat == fq->q.len) {
++		unsigned long orefdst = skb->_skb_refdst;
 +
- 		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
- 			sci_submit_rx(s);
--
--		s->chan_rx_saved = s->chan_rx = chan;
- 	}
- }
++		skb->_skb_refdst = 0UL;
++		if (nf_ct_frag6_reasm(fq, skb, dev))
++			ret = 0;
++		skb->_skb_refdst = orefdst;
++	} else {
+ 		skb_dst_drop(skb);
++	}
  
+ out_unlock:
+ 	spin_unlock_bh(&fq->q.lock);
 -- 
 2.17.1
 
