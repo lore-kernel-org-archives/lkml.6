@@ -2,122 +2,114 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96179C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 108B6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EF8D2148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:13:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA3A920873
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:14:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BkMFx6Sa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EF8D2148E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="bweiKNkv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA3A920873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbeKZVHD (ORCPT
+        id S1726410AbeKZVHl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:07:03 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:44352 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbeKZVHD (ORCPT
+        Mon, 26 Nov 2018 16:07:41 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:14620 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726176AbeKZVHk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:07:03 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAQA4isM015138;
-        Mon, 26 Nov 2018 10:13:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=eKFxNx5fObgx18PX2+VyaPMjtszHipKTBF40Y5nwCQA=;
- b=BkMFx6Sap4R+E6fVx5ouz6EJbpUnVaACfnrrS+iZBXLph6lg9lPaYtTSBPEGRMES8Zc0
- ylKxh7ApnME68BJ4lWOPOsanOYZmOSN+w+FoEODqbUeKYviv6C3T+m8SPmsMmpL+u0Px
- ktw5c9ZwUPIQkputUEf7gVflvAJvmBN0sRohzZ3+7Ya+QupPwHG4lW1ZNO8lMHpaMUE1
- dR/3mARYBSCQNuysxlsl9chv0R/OPCA12HXboJkIcHad+7WfrWgiVf6/QrRXQmFR9fV6
- 47dE2CYMV7qvZ0uZ6SBsxVdIKw4Hw6HTSPQQJnrkZEkb4gBMzLpyLcDfRZG4mfSNf2P2 tA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2nxx2tvumb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 26 Nov 2018 10:13:18 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAQADHhT004374
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 26 Nov 2018 10:13:17 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAQADGlL023338;
-        Mon, 26 Nov 2018 10:13:16 GMT
-Received: from unbuntlaptop (/41.202.241.51)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 26 Nov 2018 02:13:16 -0800
-Date:   Mon, 26 Nov 2018 13:13:08 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Nishad Kamdar <nishadkamdar@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 04/26] Staging: fbtft: flexfb: Switch to the gpio
- descriptor interface
-Message-ID: <20181126101308.GI3088@unbuntlaptop>
-References: <cover.1543142440.git.nishadkamdar@gmail.com>
- <0bc27a5c4f06e50f9cc2d568c6ce5f983dc84925.1543142440.git.nishadkamdar@gmail.com>
+        Mon, 26 Nov 2018 16:07:40 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bfbc76b0004>; Mon, 26 Nov 2018 02:14:04 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 26 Nov 2018 02:14:02 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 26 Nov 2018 02:14:02 -0800
+Received: from [10.26.11.165] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 26 Nov
+ 2018 10:13:59 +0000
+Subject: Re: omap5 fixing palmas IRQ_TYPE_NONE warning leads to gpadc timeouts
+To:     Tony Lindgren <tony@atomide.com>
+CC:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Belisko Marek <marek.belisko@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>
+References: <CAAfyv35bat+t6awL-VRigAoaUTySwOgZkQMs=W9mEKQ6VDW3FA@mail.gmail.com>
+ <20180703084516.GT112168@atomide.com>
+ <CAAfyv37F1s8Cg=pfxiN0dA6YEX7KMB-+uifjRoqAdKGWLeYEwA@mail.gmail.com>
+ <20181113180656.GE53235@atomide.com>
+ <46d271b2-35d3-6353-c530-3292cdac53ab@ti.com>
+ <20181119161906.GP53235@atomide.com> <20181119171406.GQ53235@atomide.com>
+ <725df8e7-4aff-3751-d0b0-809b89e882e5@nvidia.com>
+ <20181123164827.GE53235@atomide.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <7d433094-4797-9bff-ba7b-325a706882c6@nvidia.com>
+Date:   Mon, 26 Nov 2018 10:13:56 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0bc27a5c4f06e50f9cc2d568c6ce5f983dc84925.1543142440.git.nishadkamdar@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9088 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811260094
+In-Reply-To: <20181123164827.GE53235@atomide.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1543227244; bh=4e269GsUd7HKpDB9juxIiM2TtLZaEZ0ZpaBeZtzBYwU=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=bweiKNkvzlxv6SjYR4JySVMukfuRkk0G2cBADiaaKEkxePGJAIe1T2TomMZlwNsR2
+         iOS/nrYgDhYYgmNb0wc4xsW2bCEUIQt8LoVuG2be6PblaTQtDaHViBYXwgLBTfeVzY
+         8Yh/QJaeFciKUYyD0TybUu6moJpDUIb0bgBeO30CFv8UByELgwvtnww3fP4XvjqySn
+         OIwuKy6THPKeJf+TtBUREuB3XzGSimdLEQmjgl73/J5CzJWkYGb4gS4m0t41NpxWCt
+         9UnJ0m2RJhXXzOE1KaRlzQTjm3AIAAdyj+jDsdEmUQ9MP0m+TF1U3xEvtiBnU0mYUe
+         WFjBy1prtQ7kg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 25, 2018 at 04:56:29PM +0530, Nishad Kamdar wrote:
-> This switches the flexfb.c to use GPIO descriptors
-> rather than numerical gpios.
+
+On 23/11/2018 16:48, Tony Lindgren wrote:
+> * Jon Hunter <jonathanh@nvidia.com> [181120 11:14]:
+>> On 19/11/2018 17:14, Tony Lindgren wrote:
+>>> Well so commit 7e9d474954f4 ("ARM: tegra: Correct polarity for
+>>> Tegra114 PMIC interrupt") states that tegra114 inverts the
+>>> polarity of the PMIC interrupt. So adding Jon and Thierry to Cc.
+>>
+>> Yes Tegra can invert the polarity of the PMIC interrupt.
 > 
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> ---
->  drivers/staging/fbtft/flexfb.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> So is there some IP on Tegra called "Tegra PMC" that is
+> inverting the interrupt? Or is the "Tegra PMC" that commit
+> 7e9d474954f4 mentions just the palmas configuration for
+> inverting the interrupt?
 > 
-> diff --git a/drivers/staging/fbtft/flexfb.c b/drivers/staging/fbtft/flexfb.c
-> index 2af474469e7d..c5fa59105a43 100644
-> --- a/drivers/staging/fbtft/flexfb.c
-> +++ b/drivers/staging/fbtft/flexfb.c
-> @@ -9,7 +9,7 @@
->  #include <linux/kernel.h>
->  #include <linux/init.h>
->  #include <linux/vmalloc.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/spi/spi.h>
->  #include <linux/delay.h>
->  
-> @@ -521,7 +521,7 @@ static int flexfb_verify_gpios_dc(struct fbtft_par *par)
->  {
->  	fbtft_par_dbg(DEBUG_VERIFY_GPIOS, par, "%s()\n", __func__);
->  
-> -	if (par->gpio.dc < 0) {
-> +	if (!par->gpio.dc) {
->  		dev_err(par->info->device,
->  			"Missing info about 'dc' gpio. Aborting.\n");
->  		return -EINVAL;
+> The problem I'm having is With omap5 where I can only get the
+> PMIC interrupts working with IRQ_TYPE_LEVEL_HIGH if
+> PALMAS_POLARITY_CTRL_INT_POLARITY is not set unlike for
+> Tegra.
 
-We changed par->gpio.c from an int to a pointer in patch 1 so we have
-to update all the checks as well in the same patch.  Otherwise it breaks
-`git bisect`.
+I see what you are saying and so technically we should not need to
+invert with the Tegra PMC as well. This PMIC is used on the Tegra114
+Dalmore board which was where I saw the original problem. However, I
+have not tested this board for a while (and not part of our current
+nightly testing). Do you know if something has changed recently?
 
-(I don't know this code well.  But it just feels like it has to be
-breaking git bisect just from from glancing at the patches.  Perhaps I
-have misunderstood).
+Cheers
+Jon
 
-regards,
-dan carpenter
-
+-- 
+nvpublic
