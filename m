@@ -2,101 +2,110 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08366C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E95C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA5B820817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:35:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA5B820817
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id 4FA6D20817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 14:35:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FA6D20817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbeK0B3Y (ORCPT
+        id S1726837AbeK0B3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 20:29:24 -0500
-Received: from outbound-smtp25.blacknight.com ([81.17.249.193]:33833 "EHLO
-        outbound-smtp25.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726227AbeK0B3Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 20:29:24 -0500
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp25.blacknight.com (Postfix) with ESMTPS id D749AB88C1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 14:35:04 +0000 (GMT)
-Received: (qmail 25380 invoked from network); 26 Nov 2018 14:35:04 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.69])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 26 Nov 2018 14:35:04 -0000
-Date:   Mon, 26 Nov 2018 14:35:03 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Michal Hocko <mhocko@kernel.org>,
+        Mon, 26 Nov 2018 20:29:53 -0500
+Received: from mga18.intel.com ([134.134.136.126]:38238 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726200AbeK0B3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 20:29:53 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 06:35:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,282,1539673200"; 
+   d="scan'208";a="111623519"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga001.fm.intel.com with ESMTP; 26 Nov 2018 06:35:34 -0800
+Date:   Mon, 26 Nov 2018 06:35:34 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Jethro Beekman <jethro@fortanix.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Subject: [PATCH] mm: Use alloc_flags to record if kswapd can wake -fix
-Message-ID: <20181126143503.GO23260@techsingularity.net>
-References: <20181123114528.28802-1-mgorman@techsingularity.net>
- <20181123114528.28802-4-mgorman@techsingularity.net>
- <39711f99-1a2a-67d3-5cb0-a63ac739a917@suse.cz>
+        Peter Zijlstra <peterz@infradead.org>,
+        Rich Felker <dalias@libc.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181126143534.GA25719@linux.intel.com>
+References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+ <20181118071548.GA4795@linux.intel.com>
+ <CALCETrXSpn7QGzPgO1BjMRQ75r2i0kmACrbUM+8PyT+xi3f3Hw@mail.gmail.com>
+ <20181119160204.GD13298@linux.intel.com>
+ <CALCETrWRVgPjnDd-CknskrXfNbke=rSnr_jezszNNWJUM_YJKQ@mail.gmail.com>
+ <20181120101133.GA7319@linux.intel.com>
+ <CALCETrU2dy7Oh+AHDGZ2omq9p7pNbjFd8ruv5CkfJXCp5nTYBQ@mail.gmail.com>
+ <20181120225518.GE8391@linux.intel.com>
+ <0a78772e-4f42-254b-d91a-f0f80a24ff90@fortanix.com>
+ <20181121151734.GA16564@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <39711f99-1a2a-67d3-5cb0-a63ac739a917@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181121151734.GA16564@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vlastimil Babka correctly pointed out that the ALLOC_KSWAPD flag needs to be
-applied in the !CONFIG_ZONE_DMA32 case. This is a fix for the mmotm path
-mm-use-alloc_flags-to-record-if-kswapd-can-wake.patch
+On Wed, Nov 21, 2018 at 05:17:34PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Nov 21, 2018 at 05:17:32AM +0000, Jethro Beekman wrote:
+> > Jarkko, can you please explain you solution in detail? The CPU receives an
+> > exception. This will be handled by the kernel exception handler. What
+> > information does the kernel exception handler use to determine whether to
+> > deliver the exception as a regular signal to the process, or whether to set
+> > the special registers values for userspace and just continue executing the
+> > process manually?
+> 
+> Now we throw SIGSEGV when PF_SGX set, right? In my solution that would
+> be turned just doing iret to AEP with the extra that three registers get
+> exception data (type, reason, addr). No decoding or RIP adjusting
+> involved.
+> 
+> That would mean that you would actually have to implement AEP handler
+> than just have enclu there.
+> 
+> I've also proposed that perhaps for SGX also #UD should be propagated
+> this way because for some instructions you need outside help to emulate
+> "non-enclave" environment.
 
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- mm/page_alloc.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+And how would you determine the #UD is related to SGX?  Hardware doesn't
+provide any indication that a #UD (or any other fault) is related to SGX
+or occurred in an enclave.  The only fault that is special-cased in a
+non-virtualized environment is #PF signaled by the EPCM, which gets the
+PF_SGX bit set in the error code.
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index e44eb68744ed..a48ebb821360 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3268,7 +3268,6 @@ static bool zone_allows_reclaim(struct zone *local_zone, struct zone *zone)
- }
- #endif	/* CONFIG_NUMA */
- 
--#ifdef CONFIG_ZONE_DMA32
- /*
-  * The restriction on ZONE_DMA32 as being a suitable zone to use to avoid
-  * fragmentation is subtle. If the preferred zone was HIGHMEM then
-@@ -3285,6 +3284,7 @@ alloc_flags_nofragment(struct zone *zone, gfp_t gfp_mask)
- 	if (gfp_mask & __GFP_KSWAPD_RECLAIM)
- 		alloc_flags |= ALLOC_KSWAPD;
- 
-+#ifdef CONFIG_ZONE_DMA32
- 	if (zone_idx(zone) != ZONE_NORMAL)
- 		goto out;
- 
-@@ -3298,15 +3298,9 @@ alloc_flags_nofragment(struct zone *zone, gfp_t gfp_mask)
- 		goto out;
- 
- out:
-+#endif /* CONFIG_ZONE_DMA32 */
- 	return alloc_flags;
- }
--#else
--static inline unsigned int
--alloc_flags_nofragment(struct zone *zone, gfp_t gfp_mask)
--{
--	return 0;
--}
--#endif
- 
- /*
-  * get_page_from_freelist goes through the zonelist trying to allocate
+> That is all I have drafted together so far. I'll try to finish v18 this
+> week with other stuff and refine further next week (unless someone gives
+> obvious reason why this doesn't work, which might well be because I
+> haven't went too deep with my analysis yet because of lack of time).
+> 
+> /Jarkko
