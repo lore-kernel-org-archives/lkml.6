@@ -2,126 +2,156 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25636C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A55A8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0ADE20672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:23:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6862C20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:23:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t0cSNRTb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0ADE20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SS9E6cLD";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="F9d1wR3E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6862C20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728729AbeKZWRK (ORCPT
+        id S1728348AbeKZWRo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 17:17:10 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:34444 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbeKZWRJ (ORCPT
+        Mon, 26 Nov 2018 17:17:44 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:41904 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727144AbeKZVtc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 17:17:09 -0500
-Received: by mail-oi1-f193.google.com with SMTP id h25so15478609oig.1;
-        Mon, 26 Nov 2018 03:23:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wh72EPnqaGyYgk3Gl1t4ySpWdc0RnFKuyA6do15oDBU=;
-        b=t0cSNRTb9Qf1nGwX6gx4h4nrf71b3kRURxcYARpHFDvZ8bMQ3se5ScHTe8PVJCg3Sy
-         017OgVpp1G9B1nBsYUQijPo69XTA5R9ExlGG+xJQsnF5TCL1MTOS/MD303kzoSbS5ZwE
-         vlLtsnbxSYZ9a7G2ehtu1ezyw6Hpi2TYD3bm7G3HJnhm6Z2lpar4J1eSifv/UfZTO19p
-         DF85+mZRHCPX9d6jNgkGkli+iQBVaPD3VQdSLTEDtWfWmTs6xlLSlA+NVVdId9pWGsY1
-         zyDduYBVx2jMpRt0jIhvqhs/1is7NjloyCVmywWhgvg5ZCI0cB5hiwHTQ7kp98n97llu
-         jw6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wh72EPnqaGyYgk3Gl1t4ySpWdc0RnFKuyA6do15oDBU=;
-        b=XHwpVtxod6X6pcom2RHsoL/HcuoEaqU3rrpdLAEo19Igl0+Op8N989oW42fds+l6c9
-         74nyliwc3s3kqFBI4O8OWQHEvjewvn8t1rzrhzPmA3cWqGyYm+zHTWiAY49A7V5tRKa/
-         l0KXLpiF81xehB47kB4J9PAUiVLA+0TpsxhEAZDWyaVmFWxqYQWh18gG9rpMbVomG6My
-         IxuwsjBMBHg0qfqSCoO/rfZpdzgJUpqNkPnrLa6Hx518lUG5PvFvpJobfFujvlAf1AJJ
-         gWiryFJUHNSbH6rGbl630EqwRBEULamHclJ14rFHRbdd5oDMZLnMA6C7+TAZdA8NMsrm
-         c2YA==
-X-Gm-Message-State: AGRZ1gKgsGXJxlKwAFLqdjyHwd/31BPoP+iYVB9hZb8fmRWb/3TC2xRJ
-        67w9fK7thDeqJ85M7L8KiPJQ8eJ81+4O1/7mHz3CCOgd
-X-Google-Smtp-Source: AJdET5fvpi4l0e4i0KMJ/CT50/KxQ8u2EFx2TrY7IgwGpp8mm9/HIi5LPeB7XRzZUibU+rJ5S7dRbrSDzHY0yHknrP0=
-X-Received: by 2002:aca:47c6:: with SMTP id u189mr15437722oia.250.1543231399015;
- Mon, 26 Nov 2018 03:23:19 -0800 (PST)
+        Mon, 26 Nov 2018 16:49:32 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4437760BE8; Mon, 26 Nov 2018 10:55:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543229747;
+        bh=GB/kJloFxJ9BpSF1SfDzU6pafBMfaxJSFy4IsRKHEkU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=SS9E6cLDBZoYhiBpyLRiCTgty5Zf663NqqYiRENbGQah7X83A1Prua9wk1ZapGMNa
+         f9jkWTMqqqWZsi9GQueJJftC0IQp/KOOFuNE6FKvPaFFm6UymvrIB77hqJQ1UAYwLL
+         PAXfIuYpYVz7V4J6oqEuO48lbwY3NJmHdywBu1pw=
+Received: from [10.79.40.201] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 86BB2609A8;
+        Mon, 26 Nov 2018 10:55:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543229743;
+        bh=GB/kJloFxJ9BpSF1SfDzU6pafBMfaxJSFy4IsRKHEkU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=F9d1wR3EVM7evWFMuh/20OftIFj6tdmIYgZ1ndxr1NtIYS889KSPo19iYpbjYoFBF
+         kdAMqGYLFso0NlpceuM4DG+/XPY6H8IP2EQcwZzTjN6PEle80R0frRTunFsQG/+Q+g
+         p+iyEwCDTpxNBR4P/FMEXV0AIOgwcQIv9/LURC5s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 86BB2609A8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [RESEND PATCH v17 5/5] iommu/arm-smmu: Add support for
+ qcom,smmu-v2 variant
+To:     Will Deacon <will.deacon@arm.com>, thor.thayer@linux.intel.com
+Cc:     Tomasz Figa <tfiga@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+        sboyd@kernel.org, linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org, alex.williamson@redhat.com,
+        robh+dt <robh+dt@kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Robin Murphy <robin.murphy@arm.com>
+References: <20181116112430.31248-1-vivek.gautam@codeaurora.org>
+ <20181116112430.31248-6-vivek.gautam@codeaurora.org>
+ <20181121173803.GB9801@arm.com>
+ <CAFp+6iELH7Mw3Ue2ksEyV+Ac8hG8--Ki69xrPCA4F-AcireRow@mail.gmail.com>
+ <CAAFQd5B-bZR8dmjARb8L4oqgET2YAjXhexAO0GKAvU4JoVU=7g@mail.gmail.com>
+ <CAFp+6iFhBRJWGY4Hj30tWedGpEUcnkBJrOvffmbpD2m9QMZB3A@mail.gmail.com>
+ <20181123183428.GD21183@arm.com>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <30fd45b5-50f0-7f2f-aab3-adc4528d21a8@codeaurora.org>
+Date:   Mon, 26 Nov 2018 16:25:35 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <5A23C871-B30F-44C4-898B-C138EFDB4893@holtmann.org> <1542245517-150977-1-git-send-email-zumeng.chen@gmail.com>
-In-Reply-To: <1542245517-150977-1-git-send-email-zumeng.chen@gmail.com>
-From:   Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date:   Mon, 26 Nov 2018 13:23:07 +0200
-Message-ID: <CABBYNZL3Z0qL4F=uC1j5BYfARs2ByRMvc7uudTEPxs8GTuqoag@mail.gmail.com>
-Subject: Re: [PATCH 1/1 v2] Bluetooth: make the balance of judgement condition
- to fix a false report
-To:     zumeng.chen@gmail.com
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181123183428.GD21183@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marcel,
-On Thu, Nov 15, 2018 at 3:37 AM Zumeng Chen <zumeng.chen@gmail.com> wrote:
->
-> This patch is to balance the condition scope between hci_get_cmd_complete and
-> hci_event_packet about orig_skb as follows:
->
->         if (req_complete_skb || event == HCI_EV_CMD_STATUS ||
->             event == HCI_EV_CMD_COMPLETE)
->                 orig_skb = skb_clone(skb, GFP_KERNEL);
->
-> And hci_get_cmd_complete will bt_dev_err out when HCI_EV_CMD_STATUS, so a lot
-> of asymmetric conditions are triggered. Since both of them are the entry into
-> hci_get_cmd_complete, we'd better get STATUS into judge the false out there.
->
-> Signed-off-by: Zumeng Chen <zumeng.chen@gmail.com>
-> ---
->
-> v2: remove redundant braces and adjust the indentation.
->
-> Cheers,
-> Zumeng
->
->  net/bluetooth/hci_event.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-> index 235b5aa..1d2a8fe 100644
-> --- a/net/bluetooth/hci_event.c
-> +++ b/net/bluetooth/hci_event.c
-> @@ -5217,7 +5217,8 @@ static bool hci_get_cmd_complete(struct hci_dev *hdev, u16 opcode,
->                 return true;
->         }
->
-> -       if (hdr->evt != HCI_EV_CMD_COMPLETE) {
-> +       if (!(hdr->evt == HCI_EV_CMD_COMPLETE ||
-> +             hdr->evt == HCI_EV_CMD_STATUS)) {
->                 bt_dev_err(hdev, "last event is not cmd complete (0x%2.2x)",
->                            hdr->evt);
->                 return false;
-> --
-> 2.7.4
 
-It appears we need this also for enabling vendor_diag with intel controllers:
+On 11/24/2018 12:04 AM, Will Deacon wrote:
+> On Fri, Nov 23, 2018 at 03:06:29PM +0530, Vivek Gautam wrote:
+>> On Fri, Nov 23, 2018 at 2:52 PM Tomasz Figa <tfiga@chromium.org> wrote:
+>>> On Fri, Nov 23, 2018 at 6:13 PM Vivek Gautam
+>>> <vivek.gautam@codeaurora.org> wrote:
+>>>> On Wed, Nov 21, 2018 at 11:09 PM Will Deacon <will.deacon@arm.com> wrote:
+>>>>> On Fri, Nov 16, 2018 at 04:54:30PM +0530, Vivek Gautam wrote:
+>>>>>> @@ -2026,6 +2027,17 @@ ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
+>>>>>>   ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
+>>>>>>   ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
+>>>>>>
+>>>>>> +static const char * const qcom_smmuv2_clks[] = {
+>>>>>> +     "bus", "iface",
+>>>>>> +};
+>>>>>> +
+>>>>>> +static const struct arm_smmu_match_data qcom_smmuv2 = {
+>>>>>> +     .version = ARM_SMMU_V2,
+>>>>>> +     .model = QCOM_SMMUV2,
+>>>>>> +     .clks = qcom_smmuv2_clks,
+>>>>>> +     .num_clks = ARRAY_SIZE(qcom_smmuv2_clks),
+>>>>>> +};
+>>>>> These seems redundant if we go down the route proposed by Thor, where we
+>>>>> just pull all of the clocks out of the device-tree. In which case, why
+>>>>> do we need this match_data at all?
+>>>> Which is better? Driver relying solely on the device tree to tell
+>>>> which all clocks
+>>>> are required to be enabled,
+>>>> or, the driver deciding itself based on the platform's match data,
+>>>> that it should
+>>>> have X, Y, & Z clocks that should be supplied from the device tree.
+>>> The former would simplify the driver, but would also make it
+>>> impossible to spot mistakes in DT, which would ultimately surface out
+>>> as very hard to debug bugs (likely complete system lockups).
+>> Thanks.
+>> Yea, this is how I understand things presently. Relying on device tree
+>> puts the things out of driver's control.
+> But it also has the undesirable effect of having to update the driver
+> code whenever we want to add support for a new SMMU implementation. If
+> we do this all in the DT, as Thor is trying to do, then older kernels
+> will work well with new hardware.
+>
+>> Hi Will,
+>> Am I unable to understand the intentions here for Thor's clock-fetch
+>> design change?
+> I'm having trouble parsing your question, sorry. Please work with Thor
+> so that we have a single way to get the clock information. My preference
+> is to take it from the firmware, for the reason I stated above.
+Hi Will,
 
-[399314.236288] hci_cmd_status_evt:3138: hci0 opcode 0xfc43
-[399314.236291] Bluetooth: hci0: last event is not cmd complete (0x0f)
-[399314.236359] Bluetooth: hci0: Changing Intel diagnostic mode failed (-16)
+Sure, thanks. I will work with Thor to get this going.
 
+Hi Thor,
+Does it sound okay to you to squash your patch [1] into my patch [2] with
+your 'Signed-off-by' tag?
+I will update the commit log to include the information about getting
+clock details from device tree.
 
--- 
-Luiz Augusto von Dentz
+[1] https://patchwork.kernel.org/patch/10628725/
+[2] https://patchwork.kernel.org/patch/10686061/
+
+Best regards
+Vivek
+>
+> Will
+
