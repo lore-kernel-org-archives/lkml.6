@@ -2,409 +2,172 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9926EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 03:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB30C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 03:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 439D920865
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 03:27:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E66720865
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 03:29:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jIZqLvuR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439D920865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CCXZBe1L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E66720865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbeKZOUU (ORCPT
+        id S1726263AbeKZOWB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 09:20:20 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:33558 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbeKZOUU (ORCPT
+        Mon, 26 Nov 2018 09:22:01 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:33494 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbeKZOWA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 09:20:20 -0500
-Received: by mail-yw1-f68.google.com with SMTP id q11so6997028ywa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 19:27:36 -0800 (PST)
+        Mon, 26 Nov 2018 09:22:00 -0500
+Received: by mail-oi1-f193.google.com with SMTP id c206so14572181oib.0
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 19:29:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/EOYOURaXeEU+OllLhu0l/g5RtR4OB8dAjKVcJwjLTE=;
-        b=jIZqLvuRcGH3DJ/6dJ4Ie2NLZgS+EyeV8my+2XIsYH/abxA7ttDvv2mLtVNhxRf1kG
-         GwWblN0LcI3AYtITyaCHCTw1gh10Zr3w6EH+dx9HcHuNFCJcIODRfXcv9HRUWXZRrted
-         amSE6F50aYJeLBgTYk7eKcVOWtTyWQH+WZhd4=
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=3tDKGL4UxnGD+fU8NJPD/QcNWt/1qaHGuZR5ac1DIXI=;
+        b=CCXZBe1L7+ULmWTT4WYTvtR6FMiYWAPh7mmC/YQ1edQj6xb+p8Amr/Fe+GmFZgNjxA
+         sl6WzcX753pwjgrxOnwNnw7wAAZOq4g+OVjhxu4Goi53qPyAM3YPY4gJz9wzNnFL1QD4
+         q7QzMBqKqlTLVZLTq+98q+bgxth4KBL+Y7sohL/fXY+diu6bMaMwGcKq7w9ROfHkFClQ
+         JGb1J4vtJ3OODXLQ9A+70QQTRHd6v9WysCz5Eg/B70qN5HWYL5jzCd6Oe7N/VRbDnpom
+         dQfQplmmeX7b3P8ol5SCWBpnBNcTZl4MRCvH1xDV8jF2ocyviDZK3W9IXr8iqZyIFFC1
+         b3+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/EOYOURaXeEU+OllLhu0l/g5RtR4OB8dAjKVcJwjLTE=;
-        b=SNim7qNldybKhS40AwQ6adpw3xH1geS7QznpX161/b5a+bJEvnPbVUw2gEJNlhR9J7
-         Zb6gSB9zBRRUcQECcPrN4QsANzP6bj2srXPckamv8/OwKXGuvM9JGii65T7r17988Bvo
-         CcyZXW9d8nXL56ScEvem4/nksuI45quSEyBCCUtLSeoMxDIvoe6dsLBQMQKtoTjikEVk
-         oa8CLrDzTkbAG4S/fX1iHQ/EsmZFr9DVI4DQJBz9P2hXd+LSRsRjPERLp/nbqwqcEn6D
-         HdZfaAMXEOVgff1FJgud+9Z29DffWzchuzsn+jGVht6JMUl66wqsKhT1TDspgLMYH/2n
-         M2OQ==
-X-Gm-Message-State: AGRZ1gLLGXJjVa+oXFUJzrhZLdx4wvqAHsuDzFAFl7d6yDCFqNR1B9qv
-        uRdFWRC5xN52mXnGM8SGDCYvTUTad8E=
-X-Google-Smtp-Source: AJdET5fAFIK81CFXu2S7M8mpVMOaenGm8EMMSKtYfJLnAzpD/zZr3q+VJZ9lCrXOXBCVQ4SWPGogxw==
-X-Received: by 2002:a0d:c887:: with SMTP id k129-v6mr27097739ywd.485.1543202855491;
-        Sun, 25 Nov 2018 19:27:35 -0800 (PST)
-Received: from mail-yw1-f47.google.com (mail-yw1-f47.google.com. [209.85.161.47])
-        by smtp.gmail.com with ESMTPSA id j65sm2526652ywf.21.2018.11.25.19.27.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 25 Nov 2018 19:27:34 -0800 (PST)
-Received: by mail-yw1-f47.google.com with SMTP id r130so3808484ywg.7
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 19:27:33 -0800 (PST)
-X-Received: by 2002:a81:3dc4:: with SMTP id k187-v6mr27346827ywa.415.1543202853272;
- Sun, 25 Nov 2018 19:27:33 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=3tDKGL4UxnGD+fU8NJPD/QcNWt/1qaHGuZR5ac1DIXI=;
+        b=nqmF261fBPMF7sF48oTlvavOptzu+89DCFo5zRuZwaPMPrgG35iH5hhFt0RnnkcjaY
+         b9YYXC0ySeFBZmNyY/WrhaS4XEzhSfu36dgh65flHCswy+IkU2sF9kH7+onu8BdgHaN5
+         FwI1NHz/czv13N6XbDCCDB8Fh1MSIx6fI0fJs+e2cF47hdomN8cA6+O8WrhogiJaDXdN
+         jP76RvZ0kmXfS3uhytZC5oFsM67sfNIPnjetn+pUcyXhlw2i0w8MlAiYKoZx1LFxiqK+
+         HCTB0XKt7msrhMpDyEyCw3HjZEseKZdezgSzkOa31yv6jRISxIdZDz11mkHCWkaqBB5W
+         qjMg==
+X-Gm-Message-State: AA+aEWaHEuDzS2+QvgGjviNs3J0S/ODKqasXDVhiADjX9P1ydDQrD+Zy
+        lz5DLJJ2M/azyjxJvJ2JMbf7IQ==
+X-Google-Smtp-Source: AFSGD/UEpAsi8VCCwseuiUlDjFcycy/97L5jVEXPIjh/UXGTKSdHqZGH6EvyrwEuqIpGkCClQj5lYQ==
+X-Received: by 2002:aca:3a55:: with SMTP id h82mr12385505oia.86.1543202956380;
+        Sun, 25 Nov 2018 19:29:16 -0800 (PST)
+Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id c9sm19221094otb.38.2018.11.25.19.29.13
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 25 Nov 2018 19:29:15 -0800 (PST)
+Date:   Sun, 25 Nov 2018 19:29:07 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>, bhe@redhat.com,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>, david@redhat.com,
+        mgorman@techsingularity.net, dh.herrmann@gmail.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, kan.liang@intel.com,
+        Andi Kleen <ak@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christoph Lameter <cl@linux.com>,
+        Nick Piggin <npiggin@gmail.com>, pifang@redhat.com,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] mm: put_and_wait_on_page_locked() while page is
+ migrated
+In-Reply-To: <CAHk-=wjeqKYevxGnfCM4UkxX8k8xfArzM6gKkG3BZg1jBYThVQ@mail.gmail.com>
+Message-ID: <alpine.LSU.2.11.1811251900300.1278@eggly.anvils>
+References: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils> <CAHk-=wjeqKYevxGnfCM4UkxX8k8xfArzM6gKkG3BZg1jBYThVQ@mail.gmail.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-References: <20180814142047.93856-1-hverkuil@xs4all.nl> <20180814142047.93856-2-hverkuil@xs4all.nl>
- <alpine.DEB.2.21.1811121048400.14703@nanos.tec.linutronix.de>
- <20181118115215.5ebc681c@coco.lan> <20181123075157.077758c0@coco.lan>
- <alpine.DEB.2.21.1811231134100.2603@nanos.tec.linutronix.de> <20181123102908.2ec61ce4@coco.lan>
-In-Reply-To: <20181123102908.2ec61ce4@coco.lan>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Mon, 26 Nov 2018 12:27:22 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5D7Qss_KrAXER4CTFfKQa-rtu1gZGh016=MKwiagZLuRw@mail.gmail.com>
-Message-ID: <CAAFQd5D7Qss_KrAXER4CTFfKQa-rtu1gZGh016=MKwiagZLuRw@mail.gmail.com>
-Subject: Re: [PATCHv18 01/35] Documentation: v4l: document request API
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        kstewart@linuxfoundation.org, torvalds@linux-foundation.org,
-        ben@decadent.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 23, 2018 at 9:29 PM Mauro Carvalho Chehab
-<mchehab@kernel.org> wrote:
->
-> Em Fri, 23 Nov 2018 11:38:37 +0100 (CET)
-> Thomas Gleixner <tglx@linutronix.de> escreveu:
->
-> > Mauro,
+On Sun, 25 Nov 2018, Linus Torvalds wrote:
+> On Sat, Nov 24, 2018 at 7:21 PM Hugh Dickins <hughd@google.com> wrote:
 > >
-> > On Fri, 23 Nov 2018, Mauro Carvalho Chehab wrote:
-> > > > While we don't have it, we can't really use SPDX identifiers on media.
-> > > > So, replace them by a license text.
-> > > >
-> > > > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> > > >
-> > > > diff --git a/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst b/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
-> > > > index 0f8b31874002..60874a1f3d89 100644
-> > > > --- a/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
-> > > > +++ b/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
-> > > > @@ -1,4 +1,15 @@
-> > > > -.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
-> > > > +.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
-> > > > +..
-> > > > +.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
-> > > > +..
-> > > > +.. For GFDL-1.1-or-later, see:
-> > > > +..
-> > > > +.. Permission is granted to copy, distribute and/or modify this document
-> > > > +.. under the terms of the GNU Free Documentation License, Version 1.1 or
-> > > > +.. any later version published by the Free Software Foundation, with no
-> > > > +.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
-> > > > +.. A copy of the license is included at
-> > > > +.. Documentation/media/uapi/fdl-appendix.rst.
-> >
-> > There is still an issue here.
-> >
-> > The SPDX id for GFDL requires the license text to be in LICENSES/....
-> >
-> > But the plain GFDL-1.1-or-later lacks the invariant/front/back parts which
-> > are an exception to the license and require an exception ID along with the
-> > corresponding file in LICENSES/..... again.
-> >
-> > So no, this won't cut it. Please stay with free form license information
-> > until this is resolved.
->
-> Ok, I'll use then the enclosed patch, replacing them by a free
-> form license info, adding a TODO at the end, as a reminder.
->
-> > Kate, can you have a look into that please on the SPDX side?
->
-> Thanks,
-> Mauro
->
-> [PATCH] media: mediactl docs: Fix licensing message
->
-> Right now, it mentions two SPDX headers that don't exist inside the Kernel:
->         GFDL-1.1-or-later
-> And an exception:
->         no-invariant-sections
->
-> While it would be trivial to add the first one, there's no way,
-> currently, to distinguish, with SPDX, between a free and a non-free
-> document under GFDL.
->
-> Free documents with GFDL should not have invariant sections.
->
-> There's an open issue at SPDX tree waiting for it to be solved.
-> While we don't have this issue closed, let's just replace by a
-> free-text license, and add a TODO note to remind us to revisit it
-> later.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
->
-> diff --git a/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst b/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
-> index 0f8b31874002..de131f00c249 100644
-> --- a/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
-> +++ b/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
-> @@ -1,4 +1,28 @@
-> -.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
-> +.. This file is dual-licensed: you can use it either under the terms
-> +.. of the GPL or the GFDL 1.1+ license, at your option. Note that this
-> +.. dual licensing only applies to this file, and not this project as a
-> +.. whole.
-> +..
-> +.. a) This file is free software; you can redistribute it and/or
-> +..    modify it under the terms of the GNU General Public License as
-> +..    published by the Free Software Foundation; either version 2 of
-> +..    the License, or (at your option) any later version.
-> +..
-> +..    This file is distributed in the hope that it will be useful,
-> +..    but WITHOUT ANY WARRANTY; without even the implied warranty of
-> +..    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> +..    GNU General Public License for more details.
-> +..
-> +.. Or, alternatively,
-> +..
-> +.. b) Permission is granted to copy, distribute and/or modify this
-> +..    document under the terms of the GNU Free Documentation License,
-> +..    Version 1.1 or any later version published by the Free Software
-> +..    Foundation, with no Invariant Sections, no Front-Cover Texts
-> +..    and no Back-Cover Texts. A copy of the license is included at
-> +..    Documentation/media/uapi/fdl-appendix.rst.
-> +..
-> +.. TODO: replace it to GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
->
->  .. _media_ioc_request_alloc:
->
-> diff --git a/Documentation/media/uapi/mediactl/media-request-ioc-queue.rst b/Documentation/media/uapi/mediactl/media-request-ioc-queue.rst
-> index 6dd2d7fea714..5d2604345e19 100644
-> --- a/Documentation/media/uapi/mediactl/media-request-ioc-queue.rst
-> +++ b/Documentation/media/uapi/mediactl/media-request-ioc-queue.rst
-> @@ -1,4 +1,28 @@
-> -.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
-> +.. This file is dual-licensed: you can use it either under the terms
-> +.. of the GPL or the GFDL 1.1+ license, at your option. Note that this
-> +.. dual licensing only applies to this file, and not this project as a
-> +.. whole.
-> +..
-> +.. a) This file is free software; you can redistribute it and/or
-> +..    modify it under the terms of the GNU General Public License as
-> +..    published by the Free Software Foundation; either version 2 of
-> +..    the License, or (at your option) any later version.
-> +..
-> +..    This file is distributed in the hope that it will be useful,
-> +..    but WITHOUT ANY WARRANTY; without even the implied warranty of
-> +..    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> +..    GNU General Public License for more details.
-> +..
-> +.. Or, alternatively,
-> +..
-> +.. b) Permission is granted to copy, distribute and/or modify this
-> +..    document under the terms of the GNU Free Documentation License,
-> +..    Version 1.1 or any later version published by the Free Software
-> +..    Foundation, with no Invariant Sections, no Front-Cover Texts
-> +..    and no Back-Cover Texts. A copy of the license is included at
-> +..    Documentation/media/uapi/fdl-appendix.rst.
-> +..
-> +.. TODO: replace it to GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
->
->  .. _media_request_ioc_queue:
->
-> diff --git a/Documentation/media/uapi/mediactl/media-request-ioc-reinit.rst b/Documentation/media/uapi/mediactl/media-request-ioc-reinit.rst
-> index febe888494c8..ec61960c81ce 100644
-> --- a/Documentation/media/uapi/mediactl/media-request-ioc-reinit.rst
-> +++ b/Documentation/media/uapi/mediactl/media-request-ioc-reinit.rst
-> @@ -1,4 +1,28 @@
-> -.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
-> +.. This file is dual-licensed: you can use it either under the terms
-> +.. of the GPL or the GFDL 1.1+ license, at your option. Note that this
-> +.. dual licensing only applies to this file, and not this project as a
-> +.. whole.
-> +..
-> +.. a) This file is free software; you can redistribute it and/or
-> +..    modify it under the terms of the GNU General Public License as
-> +..    published by the Free Software Foundation; either version 2 of
-> +..    the License, or (at your option) any later version.
-> +..
-> +..    This file is distributed in the hope that it will be useful,
-> +..    but WITHOUT ANY WARRANTY; without even the implied warranty of
-> +..    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> +..    GNU General Public License for more details.
-> +..
-> +.. Or, alternatively,
-> +..
-> +.. b) Permission is granted to copy, distribute and/or modify this
-> +..    document under the terms of the GNU Free Documentation License,
-> +..    Version 1.1 or any later version published by the Free Software
-> +..    Foundation, with no Invariant Sections, no Front-Cover Texts
-> +..    and no Back-Cover Texts. A copy of the license is included at
-> +..    Documentation/media/uapi/fdl-appendix.rst.
-> +..
-> +.. TODO: replace it to GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
->
->  .. _media_request_ioc_reinit:
->
-> diff --git a/Documentation/media/uapi/mediactl/request-api.rst b/Documentation/media/uapi/mediactl/request-api.rst
-> index 5f4a23029c48..945113dcb218 100644
-> --- a/Documentation/media/uapi/mediactl/request-api.rst
-> +++ b/Documentation/media/uapi/mediactl/request-api.rst
-> @@ -1,4 +1,28 @@
-> -.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
-> +.. This file is dual-licensed: you can use it either under the terms
-> +.. of the GPL or the GFDL 1.1+ license, at your option. Note that this
-> +.. dual licensing only applies to this file, and not this project as a
-> +.. whole.
-> +..
-> +.. a) This file is free software; you can redistribute it and/or
-> +..    modify it under the terms of the GNU General Public License as
-> +..    published by the Free Software Foundation; either version 2 of
-> +..    the License, or (at your option) any later version.
-> +..
-> +..    This file is distributed in the hope that it will be useful,
-> +..    but WITHOUT ANY WARRANTY; without even the implied warranty of
-> +..    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> +..    GNU General Public License for more details.
-> +..
-> +.. Or, alternatively,
-> +..
-> +.. b) Permission is granted to copy, distribute and/or modify this
-> +..    document under the terms of the GNU Free Documentation License,
-> +..    Version 1.1 or any later version published by the Free Software
-> +..    Foundation, with no Invariant Sections, no Front-Cover Texts
-> +..    and no Back-Cover Texts. A copy of the license is included at
-> +..    Documentation/media/uapi/fdl-appendix.rst.
-> +..
-> +.. TODO: replace it to GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
->
->  .. _media-request-api:
->
-> diff --git a/Documentation/media/uapi/mediactl/request-func-close.rst b/Documentation/media/uapi/mediactl/request-func-close.rst
-> index 098d7f2b9548..dcf3f35bcf17 100644
-> --- a/Documentation/media/uapi/mediactl/request-func-close.rst
-> +++ b/Documentation/media/uapi/mediactl/request-func-close.rst
-> @@ -1,4 +1,28 @@
-> -.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
-> +.. This file is dual-licensed: you can use it either under the terms
-> +.. of the GPL or the GFDL 1.1+ license, at your option. Note that this
-> +.. dual licensing only applies to this file, and not this project as a
-> +.. whole.
-> +..
-> +.. a) This file is free software; you can redistribute it and/or
-> +..    modify it under the terms of the GNU General Public License as
-> +..    published by the Free Software Foundation; either version 2 of
-> +..    the License, or (at your option) any later version.
-> +..
-> +..    This file is distributed in the hope that it will be useful,
-> +..    but WITHOUT ANY WARRANTY; without even the implied warranty of
-> +..    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> +..    GNU General Public License for more details.
-> +..
-> +.. Or, alternatively,
-> +..
-> +.. b) Permission is granted to copy, distribute and/or modify this
-> +..    document under the terms of the GNU Free Documentation License,
-> +..    Version 1.1 or any later version published by the Free Software
-> +..    Foundation, with no Invariant Sections, no Front-Cover Texts
-> +..    and no Back-Cover Texts. A copy of the license is included at
-> +..    Documentation/media/uapi/fdl-appendix.rst.
-> +..
-> +.. TODO: replace it to GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
->
->  .. _request-func-close:
->
-> diff --git a/Documentation/media/uapi/mediactl/request-func-ioctl.rst b/Documentation/media/uapi/mediactl/request-func-ioctl.rst
-> index ff7b072a6999..11a22f887843 100644
-> --- a/Documentation/media/uapi/mediactl/request-func-ioctl.rst
-> +++ b/Documentation/media/uapi/mediactl/request-func-ioctl.rst
-> @@ -1,4 +1,28 @@
-> -.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
-> +.. This file is dual-licensed: you can use it either under the terms
-> +.. of the GPL or the GFDL 1.1+ license, at your option. Note that this
-> +.. dual licensing only applies to this file, and not this project as a
-> +.. whole.
-> +..
-> +.. a) This file is free software; you can redistribute it and/or
-> +..    modify it under the terms of the GNU General Public License as
-> +..    published by the Free Software Foundation; either version 2 of
-> +..    the License, or (at your option) any later version.
-> +..
-> +..    This file is distributed in the hope that it will be useful,
-> +..    but WITHOUT ANY WARRANTY; without even the implied warranty of
-> +..    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> +..    GNU General Public License for more details.
-> +..
-> +.. Or, alternatively,
-> +..
-> +.. b) Permission is granted to copy, distribute and/or modify this
-> +..    document under the terms of the GNU Free Documentation License,
-> +..    Version 1.1 or any later version published by the Free Software
-> +..    Foundation, with no Invariant Sections, no Front-Cover Texts
-> +..    and no Back-Cover Texts. A copy of the license is included at
-> +..    Documentation/media/uapi/fdl-appendix.rst.
-> +..
-> +.. TODO: replace it to GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
->
->  .. _request-func-ioctl:
->
-> diff --git a/Documentation/media/uapi/mediactl/request-func-poll.rst b/Documentation/media/uapi/mediactl/request-func-poll.rst
-> index 85191254f381..2609fd54d519 100644
-> --- a/Documentation/media/uapi/mediactl/request-func-poll.rst
-> +++ b/Documentation/media/uapi/mediactl/request-func-poll.rst
-> @@ -1,4 +1,28 @@
-> -.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
-> +.. This file is dual-licensed: you can use it either under the terms
-> +.. of the GPL or the GFDL 1.1+ license, at your option. Note that this
-> +.. dual licensing only applies to this file, and not this project as a
-> +.. whole.
-> +..
-> +.. a) This file is free software; you can redistribute it and/or
-> +..    modify it under the terms of the GNU General Public License as
-> +..    published by the Free Software Foundation; either version 2 of
-> +..    the License, or (at your option) any later version.
-> +..
-> +..    This file is distributed in the hope that it will be useful,
-> +..    but WITHOUT ANY WARRANTY; without even the implied warranty of
-> +..    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> +..    GNU General Public License for more details.
-> +..
-> +.. Or, alternatively,
-> +..
-> +.. b) Permission is granted to copy, distribute and/or modify this
-> +..    document under the terms of the GNU Free Documentation License,
-> +..    Version 1.1 or any later version published by the Free Software
-> +..    Foundation, with no Invariant Sections, no Front-Cover Texts
-> +..    and no Back-Cover Texts. A copy of the license is included at
-> +..    Documentation/media/uapi/fdl-appendix.rst.
-> +..
-> +.. TODO: replace it to GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
->
->  .. _request-func-poll:
->
->
->
+> > Linus, I'm addressing this patch to you because I see from Tim Chen's
+> > thread that it would interest you, and you were disappointed not to
+> > root cause the issue back then.  I'm not pushing for you to fast-track
+> > this into 4.20-rc, but I expect Andrew will pick it up for mmotm, and
+> > thence linux-next.  Or you may spot a terrible defect, but I hope not.
+> 
+> The only terrible defect I spot is that I wish the change to the
+> 'lock' argument in wait_on_page_bit_common() came with a comment
+> explaining the new semantics.o
 
-Verified with a grep over Documentation/media that this patch replaces
-all the instances of "GFDL-1.1-or-later WITH" and so:
+Thanks a lot for looking through it.
 
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> 
+> The old semantics were somewhat obvious (even if not documented): if
+> 'lock' was set,  we'd make the wait exclusive, and we'd lock the page
+> before returning. That kind of matches the intuitive meaning for the
+> function prototype, and it's pretty obvious in the callers too.
+> 
+> The new semantics don't have the same kind of really intuitive
+> meaning, I feel. That "-1" doesn't mean "unlock", it means "drop page
+> reference", so there is no longer a fairly intuitive and direct
+> mapping between the argument name and type and the behavior of the
+> function.
+> 
+> So I don't hate the concept of the patch at all, but I do ask to:
+> 
+>  - better documentation.
+> 
+>    This might not be "documentation" at all, maybe that "lock"
+> variable should just be renamed (because it's not about just locking
+> any more), and would be better off as a tristate enum called
+> "behavior" that has "LOCK, DROP, WAIT" values?
 
-Best regards,
-Tomasz
+Agreed, an enum should be best. I'll try it out now, and see what
+naming fits - I'm not all that keen on "LOCK", since (like many of the
+existing comments) it forgets that PG_locked is only one of the flags
+that comes here.  Admittedly, the only other is PG_writeback, and
+nobody wants exclusive behavior on that one, but...
+
+> 
+>  - while it sounds likely that this is indeed the same issue that
+> plagues us with the insanely long wait-queues, it would be *really*
+> nice to have that actually confirmed.
+
+I echo your words: it would be *really* nice.  We do already know
+that this patch is good for many problem loads, but it would be very
+satisfying if it could also wrap that discussion from last year.
+
+> 
+>    Does somebody still have access to the customer load that triggered
+> the horrible scaling issues before?
+
+Kan? Tim?
+
+> 
+> In particular, on that second issue: the "fixes" that went in for the
+> wait-queues didn't really fix any real scalability problem, it really
+> just fixed the excessive irq latency issues due to the long traversal
+> holding a lock.
+> 
+> If this really fixes the fundamental issue, that should show up as an
+> actual performance difference, I'd expect..
+
+I guess so, though it might be more convincing to add a hack to suppress
+the bookmarking (e.g. #define WAITQUEUE_WALK_BREAK_CNT (INT_MAX - 1))
+when trying out the put_and_wait patch - if they can persuade the
+customer to go back in time on this, which is asking a lot.
+
+Not that I have any ambitions to do away with the bookmarking myself;
+though I do have several reservations about the way it works out (that
+I'd rather go into some other time).
+
+> 
+> End result: I like and approve of the patch, but I'd like it a lot
+> more if the code behavior was clarified a bit, and I'd really like to
+> close the loop on that old nasty page wait queue issue...
+
+Thanks!
+Hugh
