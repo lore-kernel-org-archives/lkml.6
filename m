@@ -2,71 +2,99 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F5EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:08:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B50E8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7212220862
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:08:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7212220862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B6D120862
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 16:08:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gpk9Gg04"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B6D120862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbeK0DCu (ORCPT
+        id S1726904AbeK0DDY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 22:02:50 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:47122 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbeK0DCu (ORCPT
+        Mon, 26 Nov 2018 22:03:24 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:59802 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbeK0DDY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:02:50 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gRJQl-0000eE-3v; Mon, 26 Nov 2018 16:08:15 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Ken Hofsass <hofsass@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] kvm: selftests: fix spelling mistake "begining" -> "beginning"
-Date:   Mon, 26 Nov 2018 16:08:14 +0000
-Message-Id: <20181126160814.27473-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Mon, 26 Nov 2018 22:03:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=rVK3OSg+fplJdhi3jagWzpvWC8ZlL1m038W+Id1YYL8=; b=gpk9Gg04pRfCb0cZzDketA/I2
+        g93caYkhr2MkPCcFQyZsWmpSi0YbIpCzqShWlWrOfFYRKW71hITqh3ylqe65j/TkI8FSheWX3sWU9
+        PeiIm+FxW7Z/SUUHC1GNZOlb/ZgmXPFyEjCSzidUa7gmh6qFwQbFwcCdbF7GOI7r9AequcicV7GpL
+        hJYjdEixXeF1amdmT/7VFSJMDlPuwVZBgX65nmSDWIfBVkEzBAwfi9RKFLDDC0EXp2iDCPRRsRnys
+        YoBnvKyDUK9Nv/h1iYNK+49CsCnu9/A4IrMrPMhbRBGxH+mgMMwGtl1Oj92cqArfk0Z5wEbnz9sCf
+        JK/JGCKaQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gRJR9-0008FN-6W; Mon, 26 Nov 2018 16:08:39 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id AEDD42029F87F; Mon, 26 Nov 2018 17:08:37 +0100 (CET)
+Date:   Mon, 26 Nov 2018 17:08:37 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v2 4/4] x86/static_call: Add inline static call
+ implementation for x86-64
+Message-ID: <20181126160837.GS2113@hirez.programming.kicks-ass.net>
+References: <cover.1543200841.git.jpoimboe@redhat.com>
+ <62188c62f6dda49ca2e20629ee8e5a62a6c0b500.1543200841.git.jpoimboe@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62188c62f6dda49ca2e20629ee8e5a62a6c0b500.1543200841.git.jpoimboe@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, Nov 26, 2018 at 07:55:00AM -0600, Josh Poimboeuf wrote:
+> +#ifdef CONFIG_HAVE_STATIC_CALL_INLINE
+> +void arch_static_call_defuse_tramp(void *site, void *tramp)
+> +{
+> +	unsigned short opcode = INSN_UD2;
+> +
+> +	mutex_lock(&text_mutex);
+> +	text_poke((void *)tramp, &opcode, 2);
+> +	mutex_unlock(&text_mutex);
+> +}
+> +#endif
 
-The text in a TEST_ASSERT message contains a spelling mistake, fix it.
+I would rather think that makes the trampoline _more_ dangerous, rather
+than less so.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- tools/testing/selftests/kvm/lib/elf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+My dictionary sayeth:
 
-diff --git a/tools/testing/selftests/kvm/lib/elf.c b/tools/testing/selftests/kvm/lib/elf.c
-index 5eb857584aa3..53c48f7587d3 100644
---- a/tools/testing/selftests/kvm/lib/elf.c
-+++ b/tools/testing/selftests/kvm/lib/elf.c
-@@ -141,7 +141,7 @@ void kvm_vm_elf_load(struct kvm_vm *vm, const char *filename,
- 		offset = hdr.e_phoff + (n1 * hdr.e_phentsize);
- 		offset_rv = lseek(fd, offset, SEEK_SET);
- 		TEST_ASSERT(offset_rv == offset,
--			"Failed to seek to begining of program header %u,\n"
-+			"Failed to seek to beginning of program header %u,\n"
- 			"  filename: %s\n"
- 			"  rv: %jd errno: %i",
- 			n1, filename, (intmax_t) offset_rv, errno);
--- 
-2.19.1
+  defuse: verb
 
+    - remove the fuse from (an explosive device) in order to prevent it
+      from exploding.
+
+    - make (a situation) less tense or dangerous
+
+patching in an UD2 seems to do the exact opposite.
