@@ -2,197 +2,191 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C408BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F028BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BF9020865
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:29:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="liGYW4Am"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BF9020865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
+	by mail.kernel.org (Postfix) with ESMTP id B0F6520865
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:33:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0F6520865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbeK0CX4 (ORCPT
+        id S1726542AbeK0C2N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 21:23:56 -0500
-Received: from plaes.org ([188.166.43.21]:49978 "EHLO plaes.org"
+        Mon, 26 Nov 2018 21:28:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59492 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726542AbeK0CWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 21:22:40 -0500
-Received: from localhost (85.253.196.132.cable.starman.ee [85.253.196.132])
-        by plaes.org (Postfix) with ESMTPSA id AC9484140D;
-        Mon, 26 Nov 2018 15:28:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1543246091; bh=f2mcC9Dpd0QYLyRmz8so1Ckg3Nv64+LbaTC/FIJ10Ik=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=liGYW4AmOE0hbWFFjlGerPgWJ4LeJN2tW0wI3GQ5YAgmZ4t7Gc7oPSWS7Qd8LiRsE
-         TLA9D+xSfxu6HnjEmYKfO3vpY+d/DuZXaOsUbgW4Sd5oILiUzLramsKFYzbWyvdPLh
-         4bywNbV1HcCavC7ES8ViK7e21SYSxmpQSO0QrVHu/YEsgTK1RVK0KNengvR0nYaFo4
-         T9HlWU5Vu/Zvr47zDivQqgY7ZmnGHilUb77LpHg8ctK0mLCX/T1HIVsYJzFcf6Ci8a
-         /PF0/+t4GEylApL9fsJewmAv4CTgy4mdfudZre6oP6zbCqJ77EhyV5V5ak4+Z6ktfS
-         rOzkCZWb1y15w==
-From:   Priit Laes <plaes@plaes.org>
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Cc:     Priit Laes <plaes@plaes.org>, Olliver Schinagl <oliver@schinagl.nl>
-Subject: [PATCH 04/14] regulator: axp20x: add support for set_ramp_delay for AXP209
-Date:   Mon, 26 Nov 2018 17:27:45 +0200
-Message-Id: <314a16a39da769ef411a58f6fad45e5be65ec0e1.1543245984.git-series.plaes@plaes.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <cover.156212c9c5df493e098556cad9793a07dcab5e32.1543245984.git-series.plaes@plaes.org>
-References: <cover.156212c9c5df493e098556cad9793a07dcab5e32.1543245984.git-series.plaes@plaes.org>
+        id S1726291AbeK0C2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 21:28:12 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3A1482BEAE;
+        Mon, 26 Nov 2018 15:33:45 +0000 (UTC)
+Received: from [10.36.116.75] (ovpn-116-75.ams2.redhat.com [10.36.116.75])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7DDA860BE8;
+        Mon, 26 Nov 2018 15:33:42 +0000 (UTC)
+Subject: Re: [PATCH v3 1/2] kvm/x86: Move MSR_K7_HWCR to svm.c
+To:     Borislav Petkov <bp@alien8.de>, KVM <kvm@vger.kernel.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181114181507.6037-1-bp@alien8.de>
+ <20181114181507.6037-2-bp@alien8.de>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <ad5ec3e3-b179-772a-859b-8c1bf23da59f@redhat.com>
+Date:   Mon, 26 Nov 2018 16:33:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181114181507.6037-2-bp@alien8.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 26 Nov 2018 15:33:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olliver Schinagl <oliver@schinagl.nl>
+On 14.11.18 19:15, Borislav Petkov wrote:
+> From: Borislav Petkov <bp@suse.de>
+> 
+> This is an AMD-specific MSR. Put it where it belongs.
+> 
+> Signed-off-by: Borislav Petkov <bp@suse.de>
+> Tested-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> ---
+>  arch/x86/kvm/svm.c | 14 ++++++++++++++
+>  arch/x86/kvm/x86.c | 12 ------------
+>  2 files changed, 14 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index 0e21ccc46792..5c9c26dc7d84 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -4154,6 +4154,9 @@ static int svm_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>  	case MSR_F10H_DECFG:
+>  		msr_info->data = svm->msr_decfg;
+>  		break;
+> +	case MSR_K7_HWCR:
+> +		msr_info->data = 0;
+> +		break;
+>  	default:
+>  		return kvm_get_msr_common(vcpu, msr_info);
+>  	}
+> @@ -4358,6 +4361,17 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
+>  		svm->msr_decfg = data;
+>  		break;
+>  	}
+> +	case MSR_K7_HWCR:
+> +		data &= ~(u64)0x40;	/* ignore flush filter disable */
+> +		data &= ~(u64)0x100;	/* ignore ignne emulation enable */
+> +		data &= ~(u64)0x8;	/* ignore TLB cache disable */
+> +		data &= ~(u64)0x40000;  /* ignore Mc status write enable */
+> +		if (data != 0) {
 
-The AXP209 supports ramping up voltages on several regulators such as
-DCDC2 and LDO3.
+While touching this, I would turn this into "if (data)". Up to you.
 
-This patch adds preliminary support for the regulator-ramp-delay property
-for these 2 regulators. Note that the voltage ramp only works when
-regulator is already enabled. E.g. when going from say 0.7 V to 3.6 V.
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-When turning on the regulator, no voltage ramp is performed in hardware.
+> +			vcpu_unimpl(vcpu, "unimplemented HWCR wrmsr: 0x%llx\n",
+> +				    data);
+> +			return 1;
+> +		}
+> +		break;
+>  	case MSR_IA32_APICBASE:
+>  		if (kvm_vcpu_apicv_active(vcpu))
+>  			avic_update_vapic_bar(to_svm(vcpu), data);
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 5cd5647120f2..d9abbe24deb5 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -2434,17 +2434,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>  		break;
+>  	case MSR_EFER:
+>  		return set_efer(vcpu, data);
+> -	case MSR_K7_HWCR:
+> -		data &= ~(u64)0x40;	/* ignore flush filter disable */
+> -		data &= ~(u64)0x100;	/* ignore ignne emulation enable */
+> -		data &= ~(u64)0x8;	/* ignore TLB cache disable */
+> -		data &= ~(u64)0x40000;  /* ignore Mc status write enable */
+> -		if (data != 0) {
+> -			vcpu_unimpl(vcpu, "unimplemented HWCR wrmsr: 0x%llx\n",
+> -				    data);
+> -			return 1;
+> -		}
+> -		break;
+>  	case MSR_FAM10H_MMIO_CONF_BASE:
+>  		if (data != 0) {
+>  			vcpu_unimpl(vcpu, "unimplemented MMIO_CONF_BASE wrmsr: "
+> @@ -2713,7 +2702,6 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>  	case MSR_K8_SYSCFG:
+>  	case MSR_K8_TSEG_ADDR:
+>  	case MSR_K8_TSEG_MASK:
+> -	case MSR_K7_HWCR:
+>  	case MSR_VM_HSAVE_PA:
+>  	case MSR_K8_INT_PENDING_MSG:
+>  	case MSR_AMD64_NB_CFG:
+> 
 
-What this means, is that if the bootloader brings up the voltage at 0.7 V,
-the ramp delay property is properly applied. If however, the bootloader
-leaves the power off, no ramp delay is applied when the power is
-enabled by the regulator framework.
 
-Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
-Signed-off-by: Priit Laes <plaes@plaes.org>
----
- drivers/regulator/axp20x-regulator.c | 85 +++++++++++++++++++++++++++++-
- 1 file changed, 85 insertions(+)
-
-diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-index 9a2db28..1d9fa62 100644
---- a/drivers/regulator/axp20x-regulator.c
-+++ b/drivers/regulator/axp20x-regulator.c
-@@ -51,6 +51,17 @@
- #define AXP20X_PWR_OUT_DCDC2_MASK	BIT_MASK(4)
- #define AXP20X_PWR_OUT_LDO3_MASK	BIT_MASK(6)
- 
-+#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_RATE_MASK	BIT_MASK(0)
-+#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_RATE(x) \
-+	((x) << 0)
-+#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE_MASK		BIT_MASK(1)
-+#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE(x) \
-+	((x) << 1)
-+#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN_MASK		BIT_MASK(2)
-+#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN		BIT(2)
-+#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN_MASK		BIT_MASK(3)
-+#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN		BIT(3)
-+
- #define AXP20X_LDO4_V_OUT_1250mV_START	0x0
- #define AXP20X_LDO4_V_OUT_1250mV_STEPS	0
- #define AXP20X_LDO4_V_OUT_1250mV_END	\
-@@ -346,6 +357,79 @@
- 		.ops		= &axp20x_ops_range,				\
- 	}
- 
-+static const int axp209_dcdc2_ldo3_slew_rates[] = {
-+	1600,
-+	 800,
-+};
-+
-+static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
-+{
-+	struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
-+	const struct regulator_desc *desc = rdev->desc;
-+	u8 reg, mask, enable, cfg = 0xff;
-+	const int *slew_rates;
-+	int rate_count = 0;
-+
-+	if (!rdev)
-+		return -EINVAL;
-+
-+	switch (axp20x->variant) {
-+	case AXP209_ID:
-+		if (desc->id == AXP20X_DCDC2) {
-+			rate_count = ARRAY_SIZE(axp209_dcdc2_ldo3_slew_rates);
-+			reg = AXP20X_DCDC2_LDO3_V_RAMP;
-+			mask = AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_RATE_MASK |
-+			       AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN_MASK;
-+			enable = (ramp > 0) ?
-+				 AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN :
-+				 !AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN;
-+			break;
-+		}
-+
-+		if (desc->id == AXP20X_LDO3) {
-+			slew_rates = axp209_dcdc2_ldo3_slew_rates;
-+			rate_count = ARRAY_SIZE(axp209_dcdc2_ldo3_slew_rates);
-+			reg = AXP20X_DCDC2_LDO3_V_RAMP;
-+			mask = AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE_MASK |
-+			       AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN_MASK;
-+			enable = (ramp > 0) ?
-+				 AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN :
-+				 !AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN;
-+			break;
-+		}
-+
-+		if (rate_count > 0)
-+			break;
-+
-+		/* fall through */
-+	default:
-+		/* Not supported for this regulator */
-+		return -ENOTSUPP;
-+	}
-+
-+	if (ramp == 0) {
-+		cfg = enable;
-+	} else {
-+		int i;
-+
-+		for (i = 0; i < rate_count; i++) {
-+			if (ramp <= slew_rates[i])
-+				cfg = AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE(i);
-+			else
-+				break;
-+		}
-+
-+		if (cfg == 0xff) {
-+			dev_err(axp20x->dev, "unsupported ramp value %d", ramp);
-+			return -EINVAL;
-+		}
-+
-+		cfg |= enable;
-+	}
-+
-+	return regmap_update_bits(axp20x->regmap, reg, mask, cfg);
-+}
-+
- static const struct regulator_ops axp20x_ops_fixed = {
- 	.list_voltage		= regulator_list_voltage_linear,
- };
-@@ -366,6 +450,7 @@ static const struct regulator_ops axp20x_ops = {
- 	.enable			= regulator_enable_regmap,
- 	.disable		= regulator_disable_regmap,
- 	.is_enabled		= regulator_is_enabled_regmap,
-+	.set_ramp_delay		= axp20x_set_ramp_delay,
- };
- 
- static const struct regulator_ops axp20x_ops_sw = {
 -- 
-git-series 0.9.1
+
+Thanks,
+
+David / dhildenb
