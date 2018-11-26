@@ -2,88 +2,290 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA8ABC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E4DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A540D20664
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:53:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A540D20664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 391D120664
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 19:55:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 391D120664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727040AbeK0Gs7 (ORCPT
+        id S1726665AbeK0Gug (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 01:48:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35484 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726294AbeK0Gs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 01:48:59 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 008D6AFAE;
-        Mon, 26 Nov 2018 19:53:47 +0000 (UTC)
-Date:   Mon, 26 Nov 2018 20:53:45 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Kan Liang <kan.liang@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christoph Lameter <cl@linux.com>,
-        Nick Piggin <npiggin@gmail.com>, pifang@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHi v2] mm: put_and_wait_on_page_locked() while page is
- migrated
-Message-ID: <20181126195345.GI12455@dhcp22.suse.cz>
-References: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils>
- <CAHk-=wjeqKYevxGnfCM4UkxX8k8xfArzM6gKkG3BZg1jBYThVQ@mail.gmail.com>
- <alpine.LSU.2.11.1811251900300.1278@eggly.anvils>
- <alpine.LSU.2.11.1811261121330.1116@eggly.anvils>
+        Tue, 27 Nov 2018 01:50:36 -0500
+Received: from mga04.intel.com ([192.55.52.120]:47581 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726282AbeK0Gug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 01:50:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 11:55:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,283,1539673200"; 
+   d="scan'208";a="252897806"
+Received: from chang-linux-2.sc.intel.com ([10.3.52.165])
+  by orsmga004.jf.intel.com with ESMTP; 26 Nov 2018 11:55:24 -0800
+From:   "Chang S. Bae" <chang.seok.bae@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        "Chang S . Bae" <chang.seok.bae@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6] x86/fsgsbase/64: Fix the base write helper functions
+Date:   Mon, 26 Nov 2018 11:55:24 -0800
+Message-Id: <20181126195524.32179-1-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.11.1811261121330.1116@eggly.anvils>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 26-11-18 11:27:07, Hugh Dickins wrote:
-[...]
-> @@ -1049,25 +1056,44 @@ static void wake_up_page(struct page *page, int bit)
->  	wake_up_page_bit(page, bit);
->  }
->  
-> +/*
-> + * A choice of three behaviors for wait_on_page_bit_common():
-> + */
-> +enum behavior {
-> +	EXCLUSIVE,	/* Hold ref to page and take the bit when woken, like
-> +			 * __lock_page() waiting on then setting PG_locked.
-> +			 */
-> +	SHARED,		/* Hold ref to page and check the bit when woken, like
-> +			 * wait_on_page_writeback() waiting on PG_writeback.
-> +			 */
-> +	DROP,		/* Drop ref to page before wait, no check when woken,
-> +			 * like put_and_wait_on_page_locked() on PG_locked.
-> +			 */
-> +};
+The helper functions that purport to write the base should just write it
+only. It shouldn't have magic optimizations to change the index.
 
-I like this. It makes to semantic much more clear.
+Make the index explicitly changed from the caller, instead of including
+the code in the helpers.
 
-Thanks!
+Subsequently, the task write helpers do not handle for the current task
+anymore. The range check for a base value is also factored out, to
+minimize code redundancy from the caller.
+
+Fixes: b1378a561fd1 ("x86/fsgsbase/64: Introduce FS/GS base helper functions")
+
+v2: Fix further on the task write functions. Revert the changes on the
+task read helpers.
+
+v3: Fix putreg(). Edit the changelog.
+
+v4: Update the task write helper functions and do_arch_prctl_64(). Fix
+the comment in putreg().
+
+v5: Fix preempt_disable() calls in do_arch_prctl_64()
+
+v6: Fix do_arch_prctl_64() to work correctly wrt save_base_legacy()
+(Fixed by Andy Lutomirski)
+
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+---
+ arch/x86/include/asm/fsgsbase.h | 15 +++--
+ arch/x86/kernel/process_64.c    | 99 ++++++++++++++++++---------------
+ arch/x86/kernel/ptrace.c        |  9 +--
+ 3 files changed, 71 insertions(+), 52 deletions(-)
+
+diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
+index eb377b6e9eed..bca4c743de77 100644
+--- a/arch/x86/include/asm/fsgsbase.h
++++ b/arch/x86/include/asm/fsgsbase.h
+@@ -16,8 +16,8 @@
+  */
+ extern unsigned long x86_fsbase_read_task(struct task_struct *task);
+ extern unsigned long x86_gsbase_read_task(struct task_struct *task);
+-extern int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
+-extern int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
++extern void x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
++extern void x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
+ 
+ /* Helper functions for reading/writing FS/GS base */
+ 
+@@ -39,8 +39,15 @@ static inline unsigned long x86_gsbase_read_cpu_inactive(void)
+ 	return gsbase;
+ }
+ 
+-extern void x86_fsbase_write_cpu(unsigned long fsbase);
+-extern void x86_gsbase_write_cpu_inactive(unsigned long gsbase);
++static inline void x86_fsbase_write_cpu(unsigned long fsbase)
++{
++	wrmsrl(MSR_FS_BASE, fsbase);
++}
++
++static inline void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
++{
++	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
++}
+ 
+ #endif /* CONFIG_X86_64 */
+ 
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index 17a6e7d14a22..c5fb429291b1 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -338,24 +338,6 @@ static unsigned long x86_fsgsbase_read_task(struct task_struct *task,
+ 	return base;
+ }
+ 
+-void x86_fsbase_write_cpu(unsigned long fsbase)
+-{
+-	/*
+-	 * Set the selector to 0 as a notion, that the segment base is
+-	 * overwritten, which will be checked for skipping the segment load
+-	 * during context switch.
+-	 */
+-	loadseg(FS, 0);
+-	wrmsrl(MSR_FS_BASE, fsbase);
+-}
+-
+-void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
+-{
+-	/* Set the selector to 0 for the same reason as %fs above. */
+-	loadseg(GS, 0);
+-	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
+-}
+-
+ unsigned long x86_fsbase_read_task(struct task_struct *task)
+ {
+ 	unsigned long fsbase;
+@@ -384,38 +366,18 @@ unsigned long x86_gsbase_read_task(struct task_struct *task)
+ 	return gsbase;
+ }
+ 
+-int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase)
++void x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase)
+ {
+-	/*
+-	 * Not strictly needed for %fs, but do it for symmetry
+-	 * with %gs
+-	 */
+-	if (unlikely(fsbase >= TASK_SIZE_MAX))
+-		return -EPERM;
++	WARN_ON_ONCE(task == current);
+ 
+-	preempt_disable();
+ 	task->thread.fsbase = fsbase;
+-	if (task == current)
+-		x86_fsbase_write_cpu(fsbase);
+-	task->thread.fsindex = 0;
+-	preempt_enable();
+-
+-	return 0;
+ }
+ 
+-int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase)
++void x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase)
+ {
+-	if (unlikely(gsbase >= TASK_SIZE_MAX))
+-		return -EPERM;
++	WARN_ON_ONCE(task == current);
+ 
+-	preempt_disable();
+ 	task->thread.gsbase = gsbase;
+-	if (task == current)
+-		x86_gsbase_write_cpu_inactive(gsbase);
+-	task->thread.gsindex = 0;
+-	preempt_enable();
+-
+-	return 0;
+ }
+ 
+ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
+@@ -753,11 +715,60 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
+ 
+ 	switch (option) {
+ 	case ARCH_SET_GS: {
+-		ret = x86_gsbase_write_task(task, arg2);
++		if (unlikely(arg2 >= TASK_SIZE_MAX))
++			return -EPERM;
++
++		preempt_disable();
++		/*
++		 * ARCH_SET_GS has always overwritten the index
++		 * and the base. Zero is the most sensible value
++		 * to put in the index, and is the only value that
++		 * makes any sense if FSGSBASE is unavailable.
++		 */
++		if (task == current) {
++			loadseg(GS, 0);
++			x86_gsbase_write_cpu_inactive(arg2);
++
++			/*
++			 * On non-FSGSBASE systems, save_base_legacy() expects
++			 * that we also fill in thread.gsbase.
++			 */
++			task->thread.gsbase = arg2;
++
++		} else {
++			task->thread.gsindex = 0;
++			x86_gsbase_write_task(task, arg2);
++		}
++		preempt_enable();
+ 		break;
+ 	}
+ 	case ARCH_SET_FS: {
+-		ret = x86_fsbase_write_task(task, arg2);
++		/*
++		 * Not strictly needed for %fs, but do it for symmetry
++		 * with %gs
++		 */
++		if (unlikely(arg2 >= TASK_SIZE_MAX))
++			return -EPERM;
++
++		preempt_disable();
++		/*
++		 * Set the selector to 0 for the same reason
++		 * as %gs above.
++		 */
++		if (task == current) {
++			loadseg(FS, 0);
++			x86_fsbase_write_cpu(arg2);
++
++			/*
++			 * On non-FSGSBASE systems, save_base_legacy() expects
++			 * that we also fill in thread.fsbase.
++			 */
++			task->thread.fsbase = arg2;
++		} else {
++			task->thread.fsindex = 0;
++			x86_fsbase_write_task(task, arg2);
++		}
++		preempt_enable();
+ 		break;
+ 	}
+ 	case ARCH_GET_FS: {
+diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+index ffae9b9740fd..4b8ee05dd6ad 100644
+--- a/arch/x86/kernel/ptrace.c
++++ b/arch/x86/kernel/ptrace.c
+@@ -397,11 +397,12 @@ static int putreg(struct task_struct *child,
+ 		if (value >= TASK_SIZE_MAX)
+ 			return -EIO;
+ 		/*
+-		 * When changing the FS base, use the same
+-		 * mechanism as for do_arch_prctl_64().
++		 * When changing the FS base, use do_arch_prctl_64()
++		 * to set the index to zero and to set the base
++		 * as requested.
+ 		 */
+ 		if (child->thread.fsbase != value)
+-			return x86_fsbase_write_task(child, value);
++			return do_arch_prctl_64(child, ARCH_SET_FS, value);
+ 		return 0;
+ 	case offsetof(struct user_regs_struct,gs_base):
+ 		/*
+@@ -410,7 +411,7 @@ static int putreg(struct task_struct *child,
+ 		if (value >= TASK_SIZE_MAX)
+ 			return -EIO;
+ 		if (child->thread.gsbase != value)
+-			return x86_gsbase_write_task(child, value);
++			return do_arch_prctl_64(child, ARCH_SET_GS, value);
+ 		return 0;
+ #endif
+ 	}
 -- 
-Michal Hocko
-SUSE Labs
+2.19.1
+
