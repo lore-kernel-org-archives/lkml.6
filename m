@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 125ACC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACBE3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:55:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D543E20850
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:53:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D543E20850
+	by mail.kernel.org (Postfix) with ESMTP id 728AC20850
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:55:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 728AC20850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726336AbeKZUrU (ORCPT
+        id S1726280AbeKZUtP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 15:47:20 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46976 "EHLO mx1.redhat.com"
+        Mon, 26 Nov 2018 15:49:15 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46892 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726177AbeKZUrU (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 15:47:20 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        id S1726177AbeKZUtP (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 15:49:15 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1F465308426A;
-        Mon, 26 Nov 2018 09:53:45 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9DA4330034C6;
+        Mon, 26 Nov 2018 09:55:40 +0000 (UTC)
 Received: from krava (ovpn-204-234.brq.redhat.com [10.40.204.234])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 9F60E5D776;
-        Mon, 26 Nov 2018 09:53:42 +0000 (UTC)
-Date:   Mon, 26 Nov 2018 10:53:41 +0100
+        by smtp.corp.redhat.com (Postfix) with SMTP id 1FF3E600CC;
+        Mon, 26 Nov 2018 09:55:37 +0000 (UTC)
+Date:   Mon, 26 Nov 2018 10:55:37 +0100
 From:   Jiri Olsa <jolsa@redhat.com>
 To:     Jin Yao <yao.jin@linux.intel.com>
 Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
@@ -39,7 +39,7 @@ Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
         kan.liang@intel.com, yao.jin@intel.com
 Subject: Re: [PATCH 2/2] perf report: Display average IPC and IPC coverage
  per symbol
-Message-ID: <20181126095341.GB18780@krava>
+Message-ID: <20181126095537.GC18780@krava>
 References: <1543225254-5858-1-git-send-email-yao.jin@linux.intel.com>
  <1543225254-5858-3-git-send-email-yao.jin@linux.intel.com>
 MIME-Version: 1.0
@@ -47,8 +47,8 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <1543225254-5858-3-git-send-email-yao.jin@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 26 Nov 2018 09:53:45 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 26 Nov 2018 09:55:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -93,23 +93,11 @@ SNIP
 > +			      NULL) < 0) {
 > +		return 0;
 > +	}
-> +
-> +	sym->annotated = true;
 
-I don't like this being set in here.. please move it to
-symbol__annotate2 or symbol__annotate, not sure which
-one of these is the best fit
+this seems to make the sorting extra long, would you
+please consider progress bar update for this?
 
-> +	notes = symbol__annotation(sym);
-> +
-> +	if (notes->hit_cycles)
-> +		ipc = notes->hit_insn / ((double)notes->hit_cycles);
-> +
-> +	if (notes->total_insn)
-> +		coverage = notes->cover_insn * 100.0 /
-> +			((double)notes->total_insn);
-
-missing { } for multiline code in 'if' condition
+should be added somewhere around hists sorting code
 
 thanks,
 jirka
