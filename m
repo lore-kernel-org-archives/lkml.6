@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FCCC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3185C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB18B20C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:34:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB18B20C01
+	by mail.kernel.org (Postfix) with ESMTP id A038921104
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:34:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A038921104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbeK0J3j (ORCPT
+        id S1727486AbeK0J3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 04:29:39 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:59798 "EHLO mail5.wrs.com"
+        Tue, 27 Nov 2018 04:29:53 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:59806 "EHLO mail5.wrs.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726513AbeK0J3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 04:29:38 -0500
+        id S1726513AbeK0J3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 04:29:53 -0500
 Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wAQMVvpw002166
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wAQMVvq1002166
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Mon, 26 Nov 2018 14:33:26 -0800
+        Mon, 26 Nov 2018 14:33:31 -0800
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Mon, 26 Nov 2018
- 14:32:17 -0800
+ 14:33:26 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Joerg Roedel <joro@8bytes.org>
 CC:     <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 1/9] iommu: audit and remove any unnecessary uses of module.h
-Date:   Mon, 26 Nov 2018 17:31:30 -0500
-Message-ID: <1543271498-28966-2-git-send-email-paul.gortmaker@windriver.com>
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Stepan Moskovchenko <stepanm@codeaurora.org>
+Subject: [PATCH 3/9] iommu: msm_iommu: make it explicitly non-modular
+Date:   Mon, 26 Nov 2018 17:31:32 -0500
+Message-ID: <1543271498-28966-4-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
@@ -46,56 +47,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Historically a lot of these existed because we did not have
-a distinction between what was modular code and what was providing
-support to modules via EXPORT_SYMBOL and friends.  That changed
-when we forked out support for the latter into the export.h file.
-This means we should be able to reduce the usage of module.h
-in code that is obj-y Makefile or bool Kconfig.
+The Kconfig currently controlling compilation of this code is:
 
-The advantage in removing such instances is that module.h itself
-sources about 15 other headers; adding significantly to what we feed
-cpp, and it can obscure what headers we are effectively using.
+drivers/iommu/Kconfig:config MSM_IOMMU
+drivers/iommu/Kconfig:  bool "MSM IOMMU Support"
 
-Since module.h might have been the implicit source for init.h
-(for __init) and for export.h (for EXPORT_SYMBOL) we consider each
-instance for the presence of either and replace as needed.
+...meaning that it currently is not being built as a module by anyone.
+
+Lets remove the modular code that is essentially orphaned, so that
+when reading the driver there is no doubt it is builtin-only.
+
+Since module_init was not even used by this driver, the init ordering
+remains unchanged with this commit.
+
+We also delete the MODULE_LICENSE tag etc. since all that information
+was (or is now) contained at the top of the file in the comments.
 
 Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Stepan Moskovchenko <stepanm@codeaurora.org>
 Cc: iommu@lists.linux-foundation.org
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/iommu/iommu-sysfs.c | 2 +-
- drivers/iommu/iommu.c       | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/iommu/msm_iommu.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/iommu/iommu-sysfs.c b/drivers/iommu/iommu-sysfs.c
-index 36d1a7ce7fc4..c298330ba2b7 100644
---- a/drivers/iommu/iommu-sysfs.c
-+++ b/drivers/iommu/iommu-sysfs.c
-@@ -11,7 +11,7 @@
+diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
+index fc5f0b53adaf..fc4270733f11 100644
+--- a/drivers/iommu/msm_iommu.c
++++ b/drivers/iommu/msm_iommu.c
+@@ -1,5 +1,7 @@
+ /* Copyright (c) 2010-2011, Code Aurora Forum. All rights reserved.
+  *
++ * Author: Stepan Moskovchenko <stepanm@codeaurora.org>
++ *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 and
+  * only version 2 as published by the Free Software Foundation.
+@@ -17,7 +19,7 @@
  
- #include <linux/device.h>
- #include <linux/iommu.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/slab.h>
- 
- /*
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index f8ec49e0f6c6..cc25ec6d4c06 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -22,7 +22,8 @@
+ #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
  #include <linux/kernel.h>
- #include <linux/bug.h>
- #include <linux/types.h>
 -#include <linux/module.h>
 +#include <linux/init.h>
-+#include <linux/export.h>
- #include <linux/slab.h>
+ #include <linux/platform_device.h>
  #include <linux/errno.h>
- #include <linux/iommu.h>
+ #include <linux/io.h>
+@@ -861,14 +863,5 @@ static int __init msm_iommu_driver_init(void)
+ 
+ 	return ret;
+ }
+-
+-static void __exit msm_iommu_driver_exit(void)
+-{
+-	platform_driver_unregister(&msm_iommu_driver);
+-}
+-
+ subsys_initcall(msm_iommu_driver_init);
+-module_exit(msm_iommu_driver_exit);
+ 
+-MODULE_LICENSE("GPL v2");
+-MODULE_AUTHOR("Stepan Moskovchenko <stepanm@codeaurora.org>");
 -- 
 2.7.4
 
