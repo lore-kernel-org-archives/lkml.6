@@ -1,149 +1,145 @@
 Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E160C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 305D3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B89120672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:27:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E72BD20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 13:30:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oD+AzEYC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B89120672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YirTg33k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E72BD20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbeK0AV3 (ORCPT
+        id S1726299AbeK0AY5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 19:21:29 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:34934 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725966AbeK0AV3 (ORCPT
+        Mon, 26 Nov 2018 19:24:57 -0500
+Received: from mail-wr1-f51.google.com ([209.85.221.51]:33918 "EHLO
+        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726176AbeK0AY5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 19:21:29 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAQDNW0B170618;
-        Mon, 26 Nov 2018 13:26:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=84AL21H5oIBu7C7QJwmgflKv66+weMV8UjZZJKyxnLo=;
- b=oD+AzEYCuLIXBPqOxDxyU9kp6+FcUsqM75LddFxQfTownD7Btkcn57zIZfF7JN5HWmqE
- bFAn/p4PEwqYSidN/YpvQ7yk6SzRFUFyeTC3azwv9LbgIlYwOd4CTG07S6V8krX+HzIv
- PbXJql6yu5eYDkbuhwHvvMsKcjtXABBcNNY7aVya0xpRbZ7i+axaqNeJML2b6D3a/FGI
- evnITXWHi6ZSEmARdTlmgw3xkcUTHo5GT/0OkxzlGjYtIYjh1wq3YfTcqRbp+ub8zlza
- ORyiAnIMgIEgGLvVHmn+TVb9/TMwFnLWCHUwEzMXCJVoNQU12pJs/ly9Db0BTQk0HaY7 uQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2nxx2twp82-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 26 Nov 2018 13:26:31 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAQDQP1R023723
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 26 Nov 2018 13:26:25 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAQDQOuM008474;
-        Mon, 26 Nov 2018 13:26:24 GMT
-Received: from unbuntlaptop (/41.202.241.51)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 26 Nov 2018 05:26:23 -0800
-Date:   Mon, 26 Nov 2018 16:26:13 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Nicholas Mc Guire <der.herr@hofr.at>
-Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        devel@driverdev.osuosl.org,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        linux-iio@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH] staging: iio: adc: ad7280a: check for devm_kasprint()
- failure
-Message-ID: <20181126132612.GJ2970@unbuntlaptop>
-References: <1543225144-27468-1-git-send-email-hofrat@osadl.org>
- <20181126130032.GJ3088@unbuntlaptop>
- <20181126131009.GA19931@osadl.at>
+        Mon, 26 Nov 2018 19:24:57 -0500
+Received: by mail-wr1-f51.google.com with SMTP id j2so18939416wrw.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 05:30:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=a3pwXUAdXwdR7kd+Opke3gS4I74otyMDz3C1+gtm+9s=;
+        b=YirTg33kSmi5ULNsjIqVGjIi0dtXm6hR6xo50Bm3l1Tk5/mo1ehOyVXAuaVboIVhHL
+         s5VyxC6fqKVUUUxJPzKUfkXCa4vMm7Y0YAHGacG2DuPzwaPJ/vmRlmmSJkbQTHqq1usu
+         AxfVZ0u3kcRKYg/99eDabDzlBZ6rH1Lz17yWWsNzP9FNq5CcXaVwjT1cw1/LXSpCm6CS
+         QACP8dJmoZJTXuaXBdmwp7VL/Hnf2uYoIQaYi/en0MSbU2IaLzl0Zk1rHesoA93YTpCA
+         bW9aeYhHYHU1tfHi/+2mQbNpXclVtXvGna4oOiBDCi9QOPjq4HiIepM9bdMyiWEAoQLO
+         FUYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=a3pwXUAdXwdR7kd+Opke3gS4I74otyMDz3C1+gtm+9s=;
+        b=hBJmIe8yo+4fRg14VcdtuHAyXR70resHnDpmD/BHLBKhxV4Oc9KhSoG87JbPrUxRbJ
+         zgPncCqFp1yhdwCmVe1T1QJ+ZW78M+dbwIo7FbOuafc71Yer3q6iVJ0sGKv74OoJR5yz
+         5OXkb8vn2ty0oDJkr/UIVOOPme6dB5QyWWTVn1/gck3Stbhb1Q53EDYVd6FRdmkvVM1O
+         1P7jHAHj4N9tpUWt5p7NYNuavdvK5SbgN9wen5i2f4BCG+aGwyCDP4PCb25kG6f7QINi
+         UkbmkALYsmTxjYF8YJ9xDgSLLu9NmuSwS9FnkmT7efO1eI01sqj26wpCOY57x817YXz7
+         OEtA==
+X-Gm-Message-State: AA+aEWagJb0FO/+w3fyqaUCcxEMxPz3bX9X2YKIEWn8cNjPae1N8j6NH
+        AX89xYtCUSsWKR/hNWVRrpA=
+X-Google-Smtp-Source: AFSGD/Xr5yvEhC3Wq/9sO4EnkkfdD4h6lZYWyk0GFyUNQYU15M8DNroZnWPOL9GOQ6PYitXjgU9Izg==
+X-Received: by 2002:adf:e08c:: with SMTP id c12mr22370047wri.199.1543239046924;
+        Mon, 26 Nov 2018 05:30:46 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id e16sm354312wrn.72.2018.11.26.05.30.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 05:30:46 -0800 (PST)
+Date:   Mon, 26 Nov 2018 14:30:43 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jiri Kosina <jkosina@suse.cz>, thomas.lendacky@amd.com,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, dave.hansen@intel.com,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        "Mallick, Asit K" <asit.k.mallick@intel.com>,
+        "Van De Ven, Arjan" <arjan@linux.intel.com>, jcm@redhat.com,
+        longman9394@gmail.com, Greg KH <gregkh@linuxfoundation.org>,
+        david.c.stewart@intel.com, Kees Cook <keescook@chromium.org>
+Subject: Re: [patch V2 27/28] x86/speculation: Add seccomp Spectre v2 user
+ space protection mode
+Message-ID: <20181126133043.GA108014@gmail.com>
+References: <20181125183328.318175777@linutronix.de>
+ <20181125185006.051663132@linutronix.de>
+ <CAHk-=whtiX45YPjFPMFuktZ3WB23zqBZR-rL6RewrTyvrFj2Fw@mail.gmail.com>
+ <alpine.DEB.2.21.1811252321300.1684@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181126131009.GA19931@osadl.at>
+In-Reply-To: <alpine.DEB.2.21.1811252321300.1684@nanos.tec.linutronix.de>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9088 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=595
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811260122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 02:10:09PM +0100, Nicholas Mc Guire wrote:
-> On Mon, Nov 26, 2018 at 04:00:32PM +0300, Dan Carpenter wrote:
-> > On Mon, Nov 26, 2018 at 10:39:04AM +0100, Nicholas Mc Guire wrote:
-> > > devm_kasprintf() may return NULL on failure of internal allocation thus
-> > > the assignments to  attr.name  are not safe if not checked. On error
-> > > ad7280_attr_init() returns a negative return so -ENOMEM should be
-> > > OK here (passed on as return value of the probe function).
-> > > 
-> > > Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> > > Fixes: 2051f25d2a26 ("iio: adc: New driver for AD7280A Lithium Ion Battery Monitoring System2")
-> > > ---
-> > > 
-> > > Problem located with an experimental coccinelle script
-> > > 
-> > > As using   if(!st->iio_attr[cnt].dev_attr.attr.name)  seamed quite
-> > > unreadable in this case the  (var  == NULL)  variant was used. Not
-> >                                    ^^
-> > Why two spaces?
+
+* Thomas Gleixner <tglx@linutronix.de> wrote:
+
+> On Sun, 25 Nov 2018, Linus Torvalds wrote:
 > 
-> just a typo 
+> > [ You forgot to fix your quilt setup.. ]
 > 
+> Duh. Should have pinned that package.
+> 
+> > On Sun, 25 Nov 2018, Thomas Gleixner wrote:
+> > >
+> > > The mitigation guide documents how STIPB works:
+> > >
+> > >    Setting bit 1 (STIBP) of the IA32_SPEC_CTRL MSR on a logical processor
+> > >    prevents the predicted targets of indirect branches on any logical
+> > >    processor of that core from being controlled by software that executes
+> > >    (or executed previously) on another logical processor of the same core.
 > > 
-> > > sure if there are objections against this (checkpatch.pl issues
-> > > a CHECK on this).
-> > > 
-> > 
-> > You should just follow checkpatch rules here.  If you don't, someone
-> > else will just send a patch to make it checkpatch compliant.  One thing
-> > you could do is at the start of the loop do:
-> > 
-> > 	struct iio_dev_attr *attr = &st->iio_attr[cnt];
-> > 
-> > Then it becomes:
-> > 
-> > 	if (!attr->dev_attr.attr.name)
-> > 
-> > It's slightly more readable that way.  Keep in mind that we increment
-> > cnt++ in the middle of the loop so you'll have to update attr as well.
-> >
-> My understanding was that CHECK: notes are not strict rules but
-> those that may vary from case to case.
+> > Can we please just fix this stupid lie?
+> 
+> Well, it's not a lie. The above is correct, it just does not tell WHY this
+> works.
 
-Checkpatch is just a script.  It's not a genius or the king of the
-world.  Sometimes checkpatch compliant code is clearly worse than
-breaking the rules.  But fighting against checkpatch is a huge hassle so
-you should avoid it if you can.
+Well, it's a "technically correct but misleading" phrase, which has much 
+more of the effects of an actual "lie" than that of a true description of 
+it.
 
-I actually agree with checkpatch on this one but it's a minor thing.
-Sometimes a maintainer will get obsessed with minor things.  You have to
-be a bit obsessed to be a good kernel maintainer.  Anyway, they have
-their fights with checkpatch and it creates a small thread every time a
-newbie sends a patch.  And everyone on the CC list has to endure it as
-well.
+I.e. in terms of what effects it's likely going to have on readers not 
+aware of the underlying mechanics it's much more correct to call it a 
+"lie" than to call it "truth" - which I think is at the core of Linus's 
+argument.
 
-Btw, when I get annoyed with checkpatch, I feel like it's pretty obvious
-I am correct.  I'm not like other kernel developers who have debatable
-style preferences...  ;)
+> > Yes, Intel calls it "STIBP" and tries to make it out to be about the 
+> > indirect branch predictor being per-SMT thread.
+> > 
+> > But the reason it is unacceptable is apparently because in reality it 
+> > just disables indirect branch prediction entirely. So yes, 
+> > *technically* it's true that that limits indirect branch prediction 
+> > to just a single SMT core, but in reality it is just a "go really 
+> > slow" mode.
+> 
+> Indeed. Just checked the documentation again, it's also not clear 
+> whether IBPB is required if STIPB is in use.
 
-regards,
-dan carpenter
+So I think we should clarify all this.
 
+Thanks,
+
+	Ingo
