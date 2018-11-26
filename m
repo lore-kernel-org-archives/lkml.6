@@ -2,156 +2,148 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D99AC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 12:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F07BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 12:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E280C20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 12:52:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E280C20817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E38E20817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 12:53:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LJ4kBn+l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E38E20817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726651AbeKZXqQ (ORCPT
+        id S1726670AbeKZXrP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 18:46:16 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56524 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726300AbeKZXqP (ORCPT
+        Mon, 26 Nov 2018 18:47:15 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55464 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726300AbeKZXrO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:46:15 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAQChrfJ073832
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 07:52:12 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p0h338ak8-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 07:52:12 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 26 Nov 2018 12:52:09 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 26 Nov 2018 12:52:04 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAQCq3uj56951028
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 26 Nov 2018 12:52:03 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0569DA4065;
-        Mon, 26 Nov 2018 12:52:03 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D525AA405F;
-        Mon, 26 Nov 2018 12:52:00 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.88.39])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 26 Nov 2018 12:52:00 +0000 (GMT)
-Subject: Re: [RFC][PATCH] fs: set xattrs in initramfs from regular files
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        dmitry.kasatkin@huawei.com, takondra@cisco.com, kamensky@cisco.com,
-        hpa@zytor.com, arnd@arndb.de, rob@landley.net,
-        james.w.mcmechan@gmail.com, Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Date:   Mon, 26 Nov 2018 07:51:50 -0500
-In-Reply-To: <6d6f3a60-7c80-4107-6d9b-be3d53cefefc@schaufler-ca.com>
-References: <20181122154942.18262-1-roberto.sassu@huawei.com>
-         <3d1bfbd7-7d45-4cf1-32d6-7f6985b42393@schaufler-ca.com>
-         <1543001453.4298.23.camel@linux.ibm.com>
-         <6d6f3a60-7c80-4107-6d9b-be3d53cefefc@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18112612-0020-0000-0000-000002EDD706
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112612-0021-0000-0000-0000213D242B
-Message-Id: <1543236710.3902.43.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-26_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811260118
+        Mon, 26 Nov 2018 18:47:14 -0500
+Received: by mail-wm1-f65.google.com with SMTP id y139so18047255wmc.5
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 04:53:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LctftIN0IH9KwXOdA6CaBuuSTofypnJVmeb0Ubk74FE=;
+        b=LJ4kBn+lLlRB3uvnPlhtf/NuLNUwObZ+lRsqsw5h48fovgl3102vk/O2xFAWDN9/U1
+         iZEEzvhXiZhFiUEnKSImyui/yAV2828+WHMUKflxxLlrvk7ZWOCwGc1WKPnas93nYFJm
+         kmBLilD5YfBp+LYq+Uzfanv86m5mXVN8lbdnc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LctftIN0IH9KwXOdA6CaBuuSTofypnJVmeb0Ubk74FE=;
+        b=dXxXNK0MebnuiIPAtiT78VSbe0KrxaOmlqOClIrIEEIFleAYXy6K+LVEd/ppzKR1KM
+         Dci21x4CGTDvFl4rFMRXdkM+bvJgufEyj5OplR3Jqgvte2mcgNyZWky7SXpNwj4jkBLf
+         LGPQGAnQFUilo7Zv/1Osw/I+G7ox5/g91yJf5HrNhhP2BtvklDnYLRwXxJzVRvaHovSk
+         EhXcJkHTaym3sb1uYWYTOon1P0dEO207Zke13cs4VkoYzz5tOW2oVMapdvLQYjvE3EUV
+         fHhbFr7+cNXkQiPLomIFKC4RSR4+O8a24x18272ve5GcMpYEsq9wNRBYapw8q/a8Z9ke
+         k/9Q==
+X-Gm-Message-State: AA+aEWbUKTKQnIYGdNCfO6WqS/JXpA0PM6g0ZYWFWi5//5ay4XWMoVUy
+        MmkZx6b4aMOCFLhfCITuoYUmOg==
+X-Google-Smtp-Source: AFSGD/Ww9uRNhT8gH/5gydzwrHor7ICOfBqynwivPB1gvk5YByT720yoezyb1cNVq23pio6/XGq1PQ==
+X-Received: by 2002:a1c:d83:: with SMTP id 125mr16920389wmn.116.1543236790811;
+        Mon, 26 Nov 2018 04:53:10 -0800 (PST)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id o81sm947994wmd.10.2018.11.26.04.53.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 04:53:09 -0800 (PST)
+Subject: Re: [PATCH v3] media: venus: amend buffer size for bitstream plane
+To:     Malathi Gottam <mgottam@codeaurora.org>,
+        stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
+        vgarodia@codeaurora.org
+References: <1543227173-2160-1-git-send-email-mgottam@codeaurora.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <b55f0011-a6b0-7e12-9525-c0a636ed0432@linaro.org>
+Date:   Mon, 26 Nov 2018 14:53:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <1543227173-2160-1-git-send-email-mgottam@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-11-23 at 18:07 -0800, Casey Schaufler wrote:
-> On 11/23/2018 11:30 AM, Mimi Zohar wrote:
-> > On Fri, 2018-11-23 at 11:03 -0800, Casey Schaufler wrote:
-> >> On 11/22/2018 7:49 AM, Roberto Sassu wrote:
-> >>> Although rootfs (tmpfs) supports xattrs, they are not set due to the
-> >>> limitation of the cpio format. A new format called 'newcx' was proposed to
-> >>> overcome this limitation.
-> >>>
-> >>> However, it looks like that adding a new format is not simple: 15 kernel
-> >>> patches; user space tools must support the new format; mistakes made in the
-> >>> past should be avoided; it is unclear whether the kernel should switch from
-> >>> cpio to tar.
-> >>>
-> >>> The aim of this patch is to provide the same functionality without
-> >>> introducing a new format. The value of xattrs is placed in regular files
-> >>> having the same file name as the files xattrs are added to, plus a
-> >>> separator and the xattr name (<filename>.xattr-<xattr name>).
-> >>>
-> >>> Example:
-> >>>
-> >>> '/bin/cat.xattr-security.ima' is the name of a file containing the value of
-> >>> the security.ima xattr to be added to /bin/cat.
-> >>>
-> >>> At kernel initialization time, the kernel iterates over the rootfs
-> >>> filesystem, and if it encounters files with the '.xattr-' separator, it
-> >>> reads the content and adds the xattr to the file without the suffix.
-> >> No.
-> >>
-> >> Really, no.
-> >>
-> >> It would be incredibly easy to use this mechanism to break
-> >> into systems.
+Hi Malathi,
 
-Assuming that the initramfs itself was signed, how?
+Thanks for the patch!
 
-> >>
-> >>> This proposal requires that LSMs and IMA allow the read and setxattr
-> >>> operations. This should not be a concern since: files with xattr values
-> >>> are not parsed by the kernel; user space processes are not yet executed.
-> >>>
-> >>> It would be possible to include all xattrs in the same file, but this
-> >>> increases the risk of the kernel being compromised by parsing the content.
-> >> The kernel mustn't do this.
-> > Mustn't do what?  Store the xattr as separate detached files, 
-> > include all the xattrs in a single or per security/LSM xattr attribute
-> > file(s), or either?
+On 11/26/18 12:12 PM, Malathi Gottam wrote:
+> Accept the buffer size requested by client and compare it
+> against driver calculated size and set the maximum to
+> bitstream plane.
 > 
-> Any and all of the above. The proposed behavior is a kludge
-> around making the installation tools work correctly. Sure, it
-> may be easier to change the kernel than to change the utilities.
-> That's doesn't make it right.
+> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+> ---
+>  drivers/media/platform/qcom/venus/venc.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
 
-Modifying userspace tools, as Rob Landley pointed out in terms of
-toybox, isn't difficult.  The difficulty has been in reviewing and
-upstreaming the kernel CPIO changes.
+Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 
-This patch was posted in order to address the lack of xattr support in
-the initramfs.  Before totally dismissing this or a similar solution,
-is there a safe method for including the xattrs?
+> 
+> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+> index ce85962..e43dd3d 100644
+> --- a/drivers/media/platform/qcom/venus/venc.c
+> +++ b/drivers/media/platform/qcom/venus/venc.c
+> @@ -303,6 +303,7 @@ static int venc_enum_fmt(struct file *file, void *fh, struct v4l2_fmtdesc *f)
+>  	struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
+>  	struct v4l2_plane_pix_format *pfmt = pixmp->plane_fmt;
+>  	const struct venus_format *fmt;
+> +	u32 sizeimage;
+>  
+>  	memset(pfmt[0].reserved, 0, sizeof(pfmt[0].reserved));
+>  	memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
+> @@ -334,9 +335,10 @@ static int venc_enum_fmt(struct file *file, void *fh, struct v4l2_fmtdesc *f)
+>  	pixmp->num_planes = fmt->num_planes;
+>  	pixmp->flags = 0;
+>  
+> -	pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
+> -						     pixmp->width,
+> -						     pixmp->height);
+> +	sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
+> +					     pixmp->width,
+> +					     pixmp->height);
+> +	pfmt[0].sizeimage = max(ALIGN(pfmt[0].sizeimage, SZ_4K), sizeimage);
+>  
+>  	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+>  		pfmt[0].bytesperline = ALIGN(pixmp->width, 128);
+> @@ -408,8 +410,10 @@ static int venc_s_fmt(struct file *file, void *fh, struct v4l2_format *f)
+>  
+>  	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+>  		inst->fmt_out = fmt;
+> -	else if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
+> +	else if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
+>  		inst->fmt_cap = fmt;
+> +		inst->output_buf_size = pixmp->plane_fmt[0].sizeimage;
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -908,6 +912,7 @@ static int venc_queue_setup(struct vb2_queue *q,
+>  		sizes[0] = venus_helper_get_framesz(inst->fmt_cap->pixfmt,
+>  						    inst->width,
+>  						    inst->height);
+> +		sizes[0] = max(sizes[0], inst->output_buf_size);
+>  		inst->output_buf_size = sizes[0];
+>  		break;
+>  	default:
+> 
 
-Would defining an LSM hook here help?  Each LSM would define its own
-method for storing and applying, or restoring, xattr labels.
-
-Mimi
-
+-- 
+regards,
+Stan
