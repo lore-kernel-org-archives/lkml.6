@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14696C04EB8
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:20:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E983C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:20:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3B6320873
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:20:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3B6320873
+	by mail.kernel.org (Postfix) with ESMTP id 5C89E20C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 21:20:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C89E20C01
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbeK0IP0 (ORCPT
+        id S1727552AbeK0IPd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 03:15:26 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:39238 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727382AbeK0IPZ (ORCPT
+        Tue, 27 Nov 2018 03:15:33 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:39798 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727360AbeK0IPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 03:15:25 -0500
-Received: by mail-yw1-f67.google.com with SMTP id j6so1933658ywj.6;
-        Mon, 26 Nov 2018 13:19:59 -0800 (PST)
+        Tue, 27 Nov 2018 03:15:32 -0500
+Received: by mail-yb1-f196.google.com with SMTP id w17-v6so8135345ybl.6;
+        Mon, 26 Nov 2018 13:20:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=MxFDhOHsYdfXQhcVzzfkYemE0CKTyJsvUfaADLg2/fE=;
-        b=riwczLGoxAtPloLMTYjf4jQ6a8wWPgpkwIn9TYCtfns4UD1lJbc4ACVD+77bCNgKoo
-         vKD8F2bi9+aFfWI+mkxh1PreOGJ7d96q3DCUtkibVeHSL87vd3YficHO+1js1sICRgPE
-         fvF9q5VleOEErZ+9TkOKJJtycWJDyZtRq2DYdWEpJbpzNKcPFa35hpuCDUoXYXhLqCGm
-         Vg+wXbUd3H3HIa2r3ZEH37YyWCb2G3imDgLm9sL6/kLG3ahg+OzEpsfJYS1nL9Bb3qN+
-         p/EtjbnzeIMdCXAaFQxXwYDG6G/FwOtejgkyelqyeLjXHNjCB3RjGTSap+e8OExEG8mo
-         G/iA==
-X-Gm-Message-State: AA+aEWakBMiXe4qbXFTF9UqKCMucayyQXeC+z5PME6++DVLXnPxwBl8t
-        AfbuS6IcMVmLGOhNssOe5Lk=
-X-Google-Smtp-Source: AFSGD/XgdYo5g7hq5Z/sKNLfWIDrSpt86azQFy8JmMITOYLMyemxd2QCZVF6XC6x0zCOyYNVV2kBkw==
-X-Received: by 2002:a81:63d4:: with SMTP id x203mr7344340ywb.82.1543267199285;
-        Mon, 26 Nov 2018 13:19:59 -0800 (PST)
+        bh=090PLFd61t5/5kPTjv45shTyidriuC2aK3z6nlYUPsg=;
+        b=clpszmGkdtYfEVVZBHz60glUuOyscqMC3GN6kPn9CIIbfO3ImbfRqTewcSeWYBIwrK
+         d2Ib+W/PA47n8LfkTfZISIkNH7b8MNDn+XFspmY5oUeGmiB4WG+lkWWavJupJPc+nZX+
+         xQlrGsRFFFQ94sot5mK+fWpGwxYWsXcmRBl7x2jXe9TtNh83Zp2wSrXgaQXPZhUXPgHu
+         kCc2t9KRjhjiPj7vCBhdghxgIi8bVCwm+6Lz0bKGHXlKsiRVmZBuIFAhHrM1iT3URklM
+         KDDx/la6NNcJ802lW7Jm0Udrhj2XfgPVX6DKNHbuiEcV+7zDr51yI6s2EoyQs94QMU0V
+         fkiQ==
+X-Gm-Message-State: AA+aEWa5jKNU7iAyMsJOuNSYF7+bAMMKqBV11WQk531WKH+JkP6vLrRt
+        mwk+cBfxHm0mB+0rXtyewNQ=
+X-Google-Smtp-Source: AJdET5ccpucyelJksY4uUxZssZ9PerAX6wsu7qF3ilXTSfPlPDrj3sIi9WGEzXISc1ZkOx9qJCd3Ig==
+X-Received: by 2002:a5b:48a:: with SMTP id n10-v6mr30218632ybp.89.1543267206042;
+        Mon, 26 Nov 2018 13:20:06 -0800 (PST)
 Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
-        by smtp.gmail.com with ESMTPSA id d135-v6sm495462ywh.43.2018.11.26.13.19.58
+        by smtp.gmail.com with ESMTPSA id d135-v6sm495462ywh.43.2018.11.26.13.20.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 26 Nov 2018 13:19:58 -0800 (PST)
+        Mon, 26 Nov 2018 13:20:04 -0800 (PST)
 From:   Dennis Zhou <dennis@kernel.org>
 To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -52,9 +52,9 @@ To:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
 Cc:     kernel-team@fb.com, linux-block@vger.kernel.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH 06/13] blkcg: consolidate bio_issue_init() to be a part of core
-Date:   Mon, 26 Nov 2018 16:19:39 -0500
-Message-Id: <20181126211946.77067-7-dennis@kernel.org>
+Subject: [PATCH 11/13] blkcg: remove bio_disassociate_task()
+Date:   Mon, 26 Nov 2018 16:19:44 -0500
+Message-Id: <20181126211946.77067-12-dennis@kernel.org>
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20181126211946.77067-1-dennis@kernel.org>
 References: <20181126211946.77067-1-dennis@kernel.org>
@@ -63,120 +63,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bio_issue_init among other things initializes the timestamp for an IO.
-Rather than have this logic handled by policies, this consolidates it to
-be on the init paths (normal, clone, bounce clone).
+Now that a bio only holds a blkg reference, so clean up is simply
+putting back that reference. Remove bio_disassociate_task() as it just
+calls bio_disassociate_blkg() and call the latter directly.
 
 Signed-off-by: Dennis Zhou <dennis@kernel.org>
-Acked-by: Tejun Heo <tj@kernel.org>
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
 ---
- block/bio.c                | 2 ++
- block/blk-iolatency.c      | 2 --
- block/blk-throttle.c       | 8 --------
- block/bounce.c             | 2 ++
- include/linux/blk-cgroup.h | 9 +++++++++
- 5 files changed, 13 insertions(+), 10 deletions(-)
+ block/bio.c         | 11 +----------
+ include/linux/bio.h |  2 --
+ 2 files changed, 1 insertion(+), 12 deletions(-)
 
 diff --git a/block/bio.c b/block/bio.c
-index 929fd3692e4a..efca5ae607a4 100644
+index f713aa236ac5..41cc2ead39f5 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -611,6 +611,8 @@ void __bio_clone_fast(struct bio *bio, struct bio *bio_src)
- 	bio->bi_io_vec = bio_src->bi_io_vec;
+@@ -244,7 +244,7 @@ struct bio_vec *bvec_alloc(gfp_t gfp_mask, int nr, unsigned long *idx,
  
- 	bio_clone_blkcg_association(bio, bio_src);
-+
-+	blkcg_bio_issue_init(bio);
+ void bio_uninit(struct bio *bio)
+ {
+-	bio_disassociate_task(bio);
++	bio_disassociate_blkg(bio);
  }
- EXPORT_SYMBOL(__bio_clone_fast);
+ EXPORT_SYMBOL(bio_uninit);
  
-diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
-index e6b47c255521..5a79f06a730d 100644
---- a/block/blk-iolatency.c
-+++ b/block/blk-iolatency.c
-@@ -478,8 +478,6 @@ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio)
- 	if (!blk_iolatency_enabled(blkiolat))
- 		return;
- 
--	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
--
- 	while (blkg && blkg->parent) {
- 		struct iolatency_grp *iolat = blkg_to_lat(blkg);
- 		if (!iolat) {
-diff --git a/block/blk-throttle.c b/block/blk-throttle.c
-index 1c6529df2002..1b97a73d2fb1 100644
---- a/block/blk-throttle.c
-+++ b/block/blk-throttle.c
-@@ -2115,13 +2115,6 @@ static inline void throtl_update_latency_buckets(struct throtl_data *td)
+@@ -2108,15 +2108,6 @@ void bio_associate_blkg(struct bio *bio)
  }
- #endif
+ EXPORT_SYMBOL_GPL(bio_associate_blkg);
  
--static void blk_throtl_assoc_bio(struct bio *bio)
+-/**
+- * bio_disassociate_task - undo bio_associate_current()
+- * @bio: target bio
+- */
+-void bio_disassociate_task(struct bio *bio)
 -{
--#ifdef CONFIG_BLK_DEV_THROTTLING_LOW
--	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
--#endif
+-	bio_disassociate_blkg(bio);
 -}
 -
- bool blk_throtl_bio(struct request_queue *q, struct blkcg_gq *blkg,
- 		    struct bio *bio)
- {
-@@ -2142,7 +2135,6 @@ bool blk_throtl_bio(struct request_queue *q, struct blkcg_gq *blkg,
- 
- 	throtl_update_latency_buckets(td);
- 
--	blk_throtl_assoc_bio(bio);
- 	blk_throtl_update_idletime(tg);
- 
- 	sq = &tg->service_queue;
-diff --git a/block/bounce.c b/block/bounce.c
-index 559c55bda040..e77a44a80ac2 100644
---- a/block/bounce.c
-+++ b/block/bounce.c
-@@ -279,6 +279,8 @@ static struct bio *bounce_clone_bio(struct bio *bio_src, gfp_t gfp_mask,
- 
- 	bio_clone_blkcg_association(bio, bio_src);
- 
-+	blkcg_bio_issue_init(bio);
-+
- 	return bio;
- }
- 
-diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
-index 81b45943ce29..58eb91a9aa8d 100644
---- a/include/linux/blk-cgroup.h
-+++ b/include/linux/blk-cgroup.h
-@@ -799,6 +799,12 @@ static inline bool blk_throtl_bio(struct request_queue *q, struct blkcg_gq *blkg
- 				  struct bio *bio) { return false; }
- #endif
- 
-+
-+static inline void blkcg_bio_issue_init(struct bio *bio)
-+{
-+	bio_issue_init(&bio->bi_issue, bio_sectors(bio));
-+}
-+
- static inline bool blkcg_bio_issue_check(struct request_queue *q,
- 					 struct bio *bio)
- {
-@@ -826,6 +832,8 @@ static inline bool blkcg_bio_issue_check(struct request_queue *q,
- 		blkg_rwstat_add(&blkg->stat_ios, bio->bi_opf, 1);
- 	}
- 
-+	blkcg_bio_issue_init(bio);
-+
- 	rcu_read_unlock();
- 	return !throtl;
- }
-@@ -932,6 +940,7 @@ static inline char *blkg_path(struct blkcg_gq *blkg) { return NULL; }
- static inline void blkg_get(struct blkcg_gq *blkg) { }
- static inline void blkg_put(struct blkcg_gq *blkg) { }
- 
-+static inline void blkcg_bio_issue_init(struct bio *bio) { }
- static inline bool blkcg_bio_issue_check(struct request_queue *q,
- 					 struct bio *bio) { return true; }
- 
+ /**
+  * bio_clone_blkg_association - clone blkg association from src to dst bio
+  * @dst: destination bio
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 7b8bb1365977..419fdf5f8ab6 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -521,7 +521,6 @@ void bio_disassociate_blkg(struct bio *bio);
+ void bio_associate_blkg(struct bio *bio);
+ void bio_associate_blkg_from_css(struct bio *bio,
+ 				 struct cgroup_subsys_state *css);
+-void bio_disassociate_task(struct bio *bio);
+ void bio_clone_blkg_association(struct bio *dst, struct bio *src);
+ #else	/* CONFIG_BLK_CGROUP */
+ static inline void bio_disassociate_blkg(struct bio *bio) { }
+@@ -529,7 +528,6 @@ static inline void bio_associate_blkg(struct bio *bio) { }
+ static inline void bio_associate_blkg_from_css(struct bio *bio,
+ 					       struct cgroup_subsys_state *css)
+ { }
+-static inline void bio_disassociate_task(struct bio *bio) { }
+ static inline void bio_clone_blkg_association(struct bio *dst,
+ 					      struct bio *src) { }
+ #endif	/* CONFIG_BLK_CGROUP */
 -- 
 2.17.1
 
