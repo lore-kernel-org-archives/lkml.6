@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 858C1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B277FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41CD420645
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 796AC20645
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:04:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WraxLHY0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41CD420645
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zYIMLpwU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 796AC20645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730893AbeKZV5m (ORCPT
+        id S1730906AbeKZV5p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:57:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42142 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:57:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729785AbeKZV5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:57:42 -0500
+        id S1729785AbeKZV5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:57:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBA7020645;
-        Mon, 26 Nov 2018 11:03:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64E4220672;
+        Mon, 26 Nov 2018 11:03:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230236;
-        bh=n1au/CjwUXlk0emfMoNtPR6Oqeu1M5+CzBr6I4PYzww=;
+        s=default; t=1543230238;
+        bh=fecaK5DVAzXTRyM+gVar8Bkg/SdXLsKDzl3A9JGp2TY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WraxLHY0BftaFvwWMxIHfH/AELgQEbjzxXK06zJnqkRtJcrkGz/BtXSIPi+zSPhGZ
-         uH8z7iUOoERjWa4p8HJ16MSm4UR3Uob2IQW95PB3n3zmfVliNSrLQe94XcyyBrSaju
-         MuGCZGFkAdZ5cPcPhgPcWQOnZSd3u45E0oaYlCoM=
+        b=zYIMLpwUkREXlq7xVGXrB9DRQoXHXkDE0ZoLDidXB84vQIu0IfcQAseIU7K/td1vO
+         f2KvA/d6EoFrYNv2BKoLcVkw0bD4BMCrB176wgxsILp5aVwcnPmKh/cSEW5j4YdNrY
+         MeLe/O/XUU1P8kUSuo0Lk0wjk5XKop7Fh6pCEnzc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        stable@vger.kernel.org, Ross Philipson <ross.philipson@oracle.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        Mark Kanda <mark.kanda@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 059/118] arm64: dts: renesas: condor: switch from EtherAVB to GEther
-Date:   Mon, 26 Nov 2018 11:50:53 +0100
-Message-Id: <20181126105103.189661372@linuxfoundation.org>
+Subject: [PATCH 4.19 060/118] xen/grant-table: Fix incorrect gnttab_dma_free_pages() pr_debug message
+Date:   Mon, 26 Nov 2018 11:50:54 +0100
+Message-Id: <20181126105103.236735094@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -64,106 +65,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit eab53fdfd60a84b0cc514d4f1f5d79226c76df01 ]
+[ Upstream commit d9cccfa7c4d1d9ef967ec9308df7304a18609b30 ]
 
-The "official" Condor boards have always been wired to mount NFS via
-GEther, not EtherAVB -- the boards resoldered for EtherAVB were local
-to Cogent Embedded, so we've been having an unpleasant situation where
-a "normal" Condor board still can't mount NFS (unless an EtherAVB PHY
-extension board is plugged in). Switch from EtherAVB to GEther at last!
+If a call to xenmem_reservation_increase() in gnttab_dma_free_pages()
+fails it triggers a message "Failed to decrease reservation..." which
+should be "Failed to increase reservation..."
 
-Fixes: 8091788f3d38 ("arm64: dts: renesas: condor: add EtherAVB support")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: 9bdc7304f536 ('xen/grant-table: Allow allocating buffers suitable for DMA')
+Reported-by: Ross Philipson <ross.philipson@oracle.com>
+Signed-off-by: Liam Merwick <liam.merwick@oracle.com>
+Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../boot/dts/renesas/r8a77980-condor.dts      | 47 ++++++++++---------
- 1 file changed, 24 insertions(+), 23 deletions(-)
+ drivers/xen/grant-table.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-index 9f25c407dfd7..e830b6162375 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -15,7 +15,7 @@
+diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
+index 84575baceebc..97341fa75458 100644
+--- a/drivers/xen/grant-table.c
++++ b/drivers/xen/grant-table.c
+@@ -914,7 +914,7 @@ int gnttab_dma_free_pages(struct gnttab_dma_alloc_args *args)
  
- 	aliases {
- 		serial0 = &scif0;
--		ethernet0 = &avb;
-+		ethernet0 = &gether;
- 	};
- 
- 	chosen {
-@@ -47,23 +47,6 @@
- 	};
- };
- 
--&avb {
--	pinctrl-0 = <&avb_pins>;
--	pinctrl-names = "default";
--
--	phy-mode = "rgmii-id";
--	phy-handle = <&phy0>;
--	renesas,no-ether-link;
--	status = "okay";
--
--	phy0: ethernet-phy@0 {
--		rxc-skew-ps = <1500>;
--		reg = <0>;
--		interrupt-parent = <&gpio1>;
--		interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
--	};
--};
--
- &canfd {
- 	pinctrl-0 = <&canfd0_pins>;
- 	pinctrl-names = "default";
-@@ -82,6 +65,23 @@
- 	clock-frequency = <32768>;
- };
- 
-+&gether {
-+	pinctrl-0 = <&gether_pins>;
-+	pinctrl-names = "default";
-+
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&phy0>;
-+	renesas,no-ether-link;
-+	status = "okay";
-+
-+	phy0: ethernet-phy@0 {
-+		rxc-skew-ps = <1500>;
-+		reg = <0>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
- &i2c0 {
- 	pinctrl-0 = <&i2c0_pins>;
- 	pinctrl-names = "default";
-@@ -118,16 +118,17 @@
- };
- 
- &pfc {
--	avb_pins: avb {
--		groups = "avb_mdio", "avb_rgmii";
--		function = "avb";
--	};
--
- 	canfd0_pins: canfd0 {
- 		groups = "canfd0_data_a";
- 		function = "canfd0";
- 	};
- 
-+	gether_pins: gether {
-+		groups = "gether_mdio_a", "gether_rgmii",
-+			 "gether_txcrefclk", "gether_txcrefclk_mega";
-+		function = "gether";
-+	};
-+
- 	i2c0_pins: i2c0 {
- 		groups = "i2c0";
- 		function = "i2c0";
+ 	ret = xenmem_reservation_increase(args->nr_pages, args->frames);
+ 	if (ret != args->nr_pages) {
+-		pr_debug("Failed to decrease reservation for DMA buffer\n");
++		pr_debug("Failed to increase reservation for DMA buffer\n");
+ 		ret = -EFAULT;
+ 	} else {
+ 		ret = 0;
 -- 
 2.17.1
 
