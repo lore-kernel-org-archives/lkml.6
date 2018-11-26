@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF20C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B121BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3324220672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 781A320645
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:03:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugpBfrZ6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3324220672
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2U0Xa6on"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 781A320645
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730786AbeKZV5W (ORCPT
+        id S1730801AbeKZV50 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:57:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41436 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:57:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726729AbeKZV5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:57:21 -0500
+        id S1729290AbeKZV5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:57:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B73920645;
-        Mon, 26 Nov 2018 11:03:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD86A20645;
+        Mon, 26 Nov 2018 11:03:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230215;
-        bh=TG8aDctJoDtVF3vrNzspnwNZ6dCIhXsK8SbmMXGD1jE=;
+        s=default; t=1543230218;
+        bh=3LkfeakymRouNzuWwNh8C6aebfAEEfPI3G1pv581dss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ugpBfrZ69DFPyEgVJPxxqiLxT+HMm4MtNihz5z/9hhTiqcfjZKAvxggFvCqyWC4q3
-         dffmWG5vsySuQ6s+l/EMFONqtuOhS/lWLFC8RpdyRS7LO/NpV3U3Zh6v5VKuoEhPmj
-         f2pS1VqcfdY+ldNQQTP5fJapVLB/hH7CEHSMootk=
+        b=2U0Xa6onETVPbi3+dyCDMuOrs1mHUieero3OOq9HkEkhDW0MI34s/sg7Z3pAl8rxp
+         dqstIbNOJcIXnKz8H6KAqWE93Zm7OzAhA87o/UKBpbn756ofltzXuKO9oPuqT7IXgI
+         0Uh4hXP7qLbQnBEdGsejh816afGW2Z3gjY9ZpntY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Karsten Graul <kgraul@linux.ibm.com>,
-        Julian Wiedmann <jwi@linux.ibm.com>,
+        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 052/118] s390/qeth: unregister netdevice only when registered
-Date:   Mon, 26 Nov 2018 11:50:46 +0100
-Message-Id: <20181126105102.907093016@linuxfoundation.org>
+Subject: [PATCH 4.19 053/118] net: hns3: Fix for out-of-bounds access when setting pfc back pressure
+Date:   Mon, 26 Nov 2018 11:50:47 +0100
+Message-Id: <20181126105102.945220580@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -64,89 +63,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 30356d08159d7899438e94503ae322a8b881e205 ]
+[ Upstream commit e8ccbb7d2f53c62e14b889faaa3f6f809b657278 ]
 
-qeth only registers its netdevice when the qeth device is first set
-online. Thus a device that has never been set online will trigger
-a WARN ("network todo 'hsi%d' but state 0") in unregister_netdev() when
-removed.
+The vport should be initialized to hdev->vport for each bp group,
+otherwise it will cause out-of-bounds access and bp setting not
+correct problem.
 
-Fix this by protecting the unregister step, just like we already protect
-against repeated registering of the netdevice.
+[   35.254124] BUG: KASAN: slab-out-of-bounds in hclge_pause_setup_hw+0x2a0/0x3f8 [hclge]
+[   35.254126] Read of size 2 at addr ffff803b6651581a by task kworker/0:1/14
 
-Fixes: d3d1b205e89f ("s390/qeth: allocate netdevice early")
-Reported-by: Karsten Graul <kgraul@linux.ibm.com>
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+[   35.254132] CPU: 0 PID: 14 Comm: kworker/0:1 Not tainted 4.19.0-rc7-hulk+ #85
+[   35.254133] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 UEFI RC0 - B052 (V0.52) 09/14/2018
+[   35.254141] Workqueue: events work_for_cpu_fn
+[   35.254144] Call trace:
+[   35.254147]  dump_backtrace+0x0/0x2f0
+[   35.254149]  show_stack+0x24/0x30
+[   35.254154]  dump_stack+0x110/0x184
+[   35.254157]  print_address_description+0x168/0x2b0
+[   35.254160]  kasan_report+0x184/0x310
+[   35.254162]  __asan_load2+0x7c/0xa0
+[   35.254170]  hclge_pause_setup_hw+0x2a0/0x3f8 [hclge]
+[   35.254177]  hclge_tm_init_hw+0x794/0x9f0 [hclge]
+[   35.254184]  hclge_tm_schd_init+0x48/0x58 [hclge]
+[   35.254191]  hclge_init_ae_dev+0x778/0x1168 [hclge]
+[   35.254196]  hnae3_register_ae_dev+0x14c/0x298 [hnae3]
+[   35.254206]  hns3_probe+0x88/0xa8 [hns3]
+[   35.254210]  local_pci_probe+0x7c/0xf0
+[   35.254212]  work_for_cpu_fn+0x34/0x50
+[   35.254214]  process_one_work+0x4d4/0xa38
+[   35.254216]  worker_thread+0x55c/0x8d8
+[   35.254219]  kthread+0x1b0/0x1b8
+[   35.254222]  ret_from_fork+0x10/0x1c
+
+[   35.254224] The buggy address belongs to the page:
+[   35.254228] page:ffff7e00ed994400 count:1 mapcount:0 mapping:0000000000000000 index:0x0 compound_mapcount: 0
+[   35.273835] flags: 0xfffff8000008000(head)
+[   35.282007] raw: 0fffff8000008000 dead000000000100 dead000000000200 0000000000000000
+[   35.282010] raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+[   35.282012] page dumped because: kasan: bad access detected
+
+[   35.282014] Memory state around the buggy address:
+[   35.282017]  ffff803b66515700: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+[   35.282019]  ffff803b66515780: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+[   35.282021] >ffff803b66515800: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+[   35.282022]                             ^
+[   35.282024]  ffff803b66515880: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+[   35.282026]  ffff803b66515900: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+[   35.282028] ==================================================================
+[   35.282029] Disabling lock debugging due to kernel taint
+[   35.282747] hclge driver initialization finished.
+
+Fixes: 67bf2541f4b9 ("net: hns3: Fixes the back pressure setting when sriov is enabled")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/net/qeth_core.h    | 5 +++++
- drivers/s390/net/qeth_l2_main.c | 5 +++--
- drivers/s390/net/qeth_l3_main.c | 5 +++--
- 3 files changed, 11 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/s390/net/qeth_core.h b/drivers/s390/net/qeth_core.h
-index 34e0d476c5c6..970654fcc48d 100644
---- a/drivers/s390/net/qeth_core.h
-+++ b/drivers/s390/net/qeth_core.h
-@@ -826,6 +826,11 @@ struct qeth_trap_id {
- /*some helper functions*/
- #define QETH_CARD_IFNAME(card) (((card)->dev)? (card)->dev->name : "")
- 
-+static inline bool qeth_netdev_is_registered(struct net_device *dev)
-+{
-+	return dev->netdev_ops != NULL;
-+}
-+
- static inline void qeth_scrub_qdio_buffer(struct qdio_buffer *buf,
- 					  unsigned int elements)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+index 5db70a1451c5..48235dc2dd56 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+@@ -1167,14 +1167,14 @@ static int hclge_pfc_setup_hw(struct hclge_dev *hdev)
+  */
+ static int hclge_bp_setup_hw(struct hclge_dev *hdev, u8 tc)
  {
-diff --git a/drivers/s390/net/qeth_l2_main.c b/drivers/s390/net/qeth_l2_main.c
-index b5e38531733f..76b2fba5fba2 100644
---- a/drivers/s390/net/qeth_l2_main.c
-+++ b/drivers/s390/net/qeth_l2_main.c
-@@ -854,7 +854,8 @@ static void qeth_l2_remove_device(struct ccwgroup_device *cgdev)
+-	struct hclge_vport *vport = hdev->vport;
+-	u32 i, k, qs_bitmap;
+-	int ret;
++	int i;
  
- 	if (cgdev->state == CCWGROUP_ONLINE)
- 		qeth_l2_set_offline(cgdev);
--	unregister_netdev(card->dev);
-+	if (qeth_netdev_is_registered(card->dev))
-+		unregister_netdev(card->dev);
- }
+ 	for (i = 0; i < HCLGE_BP_GRP_NUM; i++) {
+-		qs_bitmap = 0;
++		u32 qs_bitmap = 0;
++		int k, ret;
  
- static const struct ethtool_ops qeth_l2_ethtool_ops = {
-@@ -894,7 +895,7 @@ static int qeth_l2_setup_netdev(struct qeth_card *card)
- {
- 	int rc;
+ 		for (k = 0; k < hdev->num_alloc_vport; k++) {
++			struct hclge_vport *vport = &hdev->vport[k];
+ 			u16 qs_id = vport->qs_offset + tc;
+ 			u8 grp, sub_grp;
  
--	if (card->dev->netdev_ops)
-+	if (qeth_netdev_is_registered(card->dev))
- 		return 0;
+@@ -1184,8 +1184,6 @@ static int hclge_bp_setup_hw(struct hclge_dev *hdev, u8 tc)
+ 						  HCLGE_BP_SUB_GRP_ID_S);
+ 			if (i == grp)
+ 				qs_bitmap |= (1 << sub_grp);
+-
+-			vport++;
+ 		}
  
- 	card->dev->priv_flags |= IFF_UNICAST_FLT;
-diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_main.c
-index 17e2fd584fbf..b7f6a8384543 100644
---- a/drivers/s390/net/qeth_l3_main.c
-+++ b/drivers/s390/net/qeth_l3_main.c
-@@ -2514,7 +2514,7 @@ static int qeth_l3_setup_netdev(struct qeth_card *card)
- {
- 	int rc;
- 
--	if (card->dev->netdev_ops)
-+	if (qeth_netdev_is_registered(card->dev))
- 		return 0;
- 
- 	if (card->info.type == QETH_CARD_TYPE_OSD ||
-@@ -2611,7 +2611,8 @@ static void qeth_l3_remove_device(struct ccwgroup_device *cgdev)
- 	if (cgdev->state == CCWGROUP_ONLINE)
- 		qeth_l3_set_offline(cgdev);
- 
--	unregister_netdev(card->dev);
-+	if (qeth_netdev_is_registered(card->dev))
-+		unregister_netdev(card->dev);
- 	qeth_l3_clear_ip_htable(card, 0);
- 	qeth_l3_clear_ipato_list(card);
- }
+ 		ret = hclge_tm_qs_bp_cfg(hdev, tc, i, qs_bitmap);
 -- 
 2.17.1
 
