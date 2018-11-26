@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D78E4C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B036AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E06221104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7670D21473
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:02:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bc8eYHeK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E06221104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZDjxZ5+D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7670D21473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730612AbeKZV4j (ORCPT
+        id S1730624AbeKZV4m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:56:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40072 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:56:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729290AbeKZV4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:56:39 -0500
+        id S1729290AbeKZV4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:56:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E46F21104;
-        Mon, 26 Nov 2018 11:02:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8BAD20817;
+        Mon, 26 Nov 2018 11:02:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230173;
-        bh=zunTDiH9rN1gMZqE56D7hrD2cRWVRw/j4WYmX4DqzRU=;
+        s=default; t=1543230176;
+        bh=fKJDLIwFBU+D8ghuxZoEjFxb0xzyJUuYFh6SiGrxpF8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bc8eYHeKCB5HJuqqog+QgeDozr8uS9BFdV6achSW1hYVkpJ3q2mshDg/ZMPWVx8ou
-         0DFvLMSuDk/NY90xXZm/3Pbdgc9dLqXq2oQa5jjOCX0IwvhMC0jsMdalVYpSIAI7hQ
-         J1TSxjqao5jOpxXheGGQhddpVoeksuBbE1Sc08fc=
+        b=ZDjxZ5+DFVO6KWSn7b3cSMWJOzhyqbL9Z0DE4P29c4tqPaigny9fDZxoBAxXtLdqa
+         6cPVvSoI99uewr5+I1T+SGliSjBb/WKlRZuHAN4VKoj/m0cciU1Lf9wwtEmzaFL4Hd
+         2si7OqhUKEGIFwopYr4EDJzfP23cAgUiy6jpL7LA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        =?UTF-8?q?M=C3=A1t=C3=A9=20Eckl?= <ecklm94@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Philipp Rudo <prudo@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 034/118] netfilter: bridge: define INT_MIN & INT_MAX in userspace
-Date:   Mon, 26 Nov 2018 11:50:28 +0100
-Message-Id: <20181126105101.526437622@linuxfoundation.org>
+Subject: [PATCH 4.19 035/118] s390/decompressor: add missing FORCE to build targets
+Date:   Mon, 26 Nov 2018 11:50:29 +0100
+Message-Id: <20181126105101.747136534@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -64,45 +64,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5a8de47b3c250521dd632cdedaac6db88367defa ]
+[ Upstream commit ef5febae1543f35a45f01614123e829d77326d0f ]
 
-With 4.19, programs like ebtables fail to build when they include
-"linux/netfilter_bridge.h". It is caused by commit 94276fa8a2a4 which
-added a use of INT_MIN and INT_MAX to the header:
-: In file included from /usr/include/linux/netfilter_bridge/ebtables.h:18,
-:                  from include/ebtables_u.h:28,
-:                  from communication.c:23:
-: /usr/include/linux/netfilter_bridge.h:30:20: error: 'INT_MIN' undeclared here (not in a function)
-:   NF_BR_PRI_FIRST = INT_MIN,
-:                     ^~~~~~~
+According to Documentation/kbuild/makefiles.txt all build targets
+using if_changed should use FORCE as well. Add missing FORCE to make
+sure vmlinux decompressor targets are rebuild properly when not just
+immediate prerequisites have changed but also when build command differs.
 
-Define these constants by including "limits.h" when !__KERNEL__ (the
-same way as for other netfilter_* headers).
-
-Fixes: 94276fa8a2a4 ("netfilter: bridge: Expose nf_tables bridge hook priorities through uapi")
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Acked-by: Máté Eckl <ecklm94@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Reviewed-by: Philipp Rudo <prudo@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/uapi/linux/netfilter_bridge.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/s390/boot/compressed/Makefile | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/include/uapi/linux/netfilter_bridge.h b/include/uapi/linux/netfilter_bridge.h
-index 156ccd089df1..1610fdbab98d 100644
---- a/include/uapi/linux/netfilter_bridge.h
-+++ b/include/uapi/linux/netfilter_bridge.h
-@@ -11,6 +11,10 @@
- #include <linux/if_vlan.h>
- #include <linux/if_pppox.h>
+diff --git a/arch/s390/boot/compressed/Makefile b/arch/s390/boot/compressed/Makefile
+index 04609478d18b..b375c6c5ae7b 100644
+--- a/arch/s390/boot/compressed/Makefile
++++ b/arch/s390/boot/compressed/Makefile
+@@ -20,7 +20,7 @@ KBUILD_CFLAGS := $(KBUILD_CFLAGS_DECOMPRESSOR)
+ OBJECTS := $(addprefix $(obj)/,$(obj-y))
  
-+#ifndef __KERNEL__
-+#include <limits.h> /* for INT_MIN, INT_MAX */
-+#endif
-+
- /* Bridge Hooks */
- /* After promisc drops, checksum checks. */
- #define NF_BR_PRE_ROUTING	0
+ LDFLAGS_vmlinux := --oformat $(LD_BFD) -e startup -T
+-$(obj)/vmlinux: $(obj)/vmlinux.lds $(objtree)/arch/s390/boot/startup.a $(OBJECTS)
++$(obj)/vmlinux: $(obj)/vmlinux.lds $(objtree)/arch/s390/boot/startup.a $(OBJECTS) FORCE
+ 	$(call if_changed,ld)
+ 
+ # extract required uncompressed vmlinux symbols and adjust them to reflect offsets inside vmlinux.bin
+@@ -51,17 +51,17 @@ suffix-$(CONFIG_KERNEL_LZMA)  := .lzma
+ suffix-$(CONFIG_KERNEL_LZO)  := .lzo
+ suffix-$(CONFIG_KERNEL_XZ)  := .xz
+ 
+-$(obj)/vmlinux.bin.gz: $(vmlinux.bin.all-y)
++$(obj)/vmlinux.bin.gz: $(vmlinux.bin.all-y) FORCE
+ 	$(call if_changed,gzip)
+-$(obj)/vmlinux.bin.bz2: $(vmlinux.bin.all-y)
++$(obj)/vmlinux.bin.bz2: $(vmlinux.bin.all-y) FORCE
+ 	$(call if_changed,bzip2)
+-$(obj)/vmlinux.bin.lz4: $(vmlinux.bin.all-y)
++$(obj)/vmlinux.bin.lz4: $(vmlinux.bin.all-y) FORCE
+ 	$(call if_changed,lz4)
+-$(obj)/vmlinux.bin.lzma: $(vmlinux.bin.all-y)
++$(obj)/vmlinux.bin.lzma: $(vmlinux.bin.all-y) FORCE
+ 	$(call if_changed,lzma)
+-$(obj)/vmlinux.bin.lzo: $(vmlinux.bin.all-y)
++$(obj)/vmlinux.bin.lzo: $(vmlinux.bin.all-y) FORCE
+ 	$(call if_changed,lzo)
+-$(obj)/vmlinux.bin.xz: $(vmlinux.bin.all-y)
++$(obj)/vmlinux.bin.xz: $(vmlinux.bin.all-y) FORCE
+ 	$(call if_changed,xzkern)
+ 
+ LDFLAGS_piggy.o := -r --format binary --oformat $(LD_BFD) -T
 -- 
 2.17.1
 
