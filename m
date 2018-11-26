@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5130C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:55:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 373C5C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:55:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D9402089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:55:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 039712146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:55:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZ6jOrZH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D9402089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dBwKEj6A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 039712146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbeKZVtW (ORCPT
+        id S1728080AbeKZVtY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:49:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58242 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:49:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726561AbeKZVtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:49:21 -0500
+        id S1726561AbeKZVtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:49:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C83762089F;
-        Mon, 26 Nov 2018 10:55:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5716620817;
+        Mon, 26 Nov 2018 10:55:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229737;
-        bh=zgeS0SUH2SftbuEyHFFYkjENRrxQD1n47k+7LXdNr88=;
+        s=default; t=1543229739;
+        bh=3Zr1FXjilrzBsoJcCkhyh78bQNsOVIfsB35rhysjGhY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kZ6jOrZHUbJMGm2s219gx3/ZlLK8Jy9ZdXRu+BKcGm5EBLt7bM/Ckl+ZVZCLoKhok
-         4IFw2bhBS9LSk92NxIsOAtQ73Fie/4iY8y1BtWv3sr/XHztsYUnt7HWhPppKdBOARr
-         sKiSMApW7WwgK4Uspmix/w7MfZ6Le312WEbskKA8=
+        b=dBwKEj6Ad8dkSEKFgXkHvLu63hjaFw0FEQ65ggcJhhIT82SnhBaILlip8by6BguQN
+         +8rMNZ2WskJojJPqVJ1bJg0BOhO39oCi5sxQhpXHgpDWDBvUacvXORfM1TSe7MIkuc
+         ESpnusSilgWvW6iwxGlHyblccx6PNL9k3KRE4XWA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Howard Chen <howardsoc@google.com>,
-        Minchan Kim <minchan@kernel.org>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 54/70] zram: close udev startup race condition as default groups
-Date:   Mon, 26 Nov 2018 11:51:09 +0100
-Message-Id: <20181126105052.059702157@linuxfoundation.org>
+Subject: [PATCH 4.4 55/70] SUNRPC: drop pointless static qualifier in xdr_get_next_encode_buffer()
+Date:   Mon, 26 Nov 2018 11:51:10 +0100
+Message-Id: <20181126105052.110843429@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
 References: <20181126105046.722096341@linuxfoundation.org>
@@ -66,95 +63,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit fef912bf860e upstream.
-commit 98af4d4df889 upstream.
+[ Upstream commit 025911a5f4e36955498ed50806ad1b02f0f76288 ]
 
-I got a report from Howard Chen that he saw zram and sysfs race(ie,
-zram block device file is created but sysfs for it isn't yet)
-when he tried to create new zram devices via hotadd knob.
+There is no need to have the '__be32 *p' variable static since new value
+always be assigned before use it.
 
-v4.20 kernel fixes it by [1, 2] but it's too large size to merge
-into -stable so this patch fixes the problem by registering defualt
-group by Greg KH's approach[3].
-
-This patch should be applied to every stable tree [3.16+] currently
-existing from kernel.org because the problem was introduced at 2.6.37
-by [4].
-
-[1] fef912bf860e, block: genhd: add 'groups' argument to device_add_disk
-[2] 98af4d4df889, zram: register default groups with device_add_disk()
-[3] http://kroah.com/log/blog/2013/06/26/how-to-create-a-sysfs-file-correctly/
-[4] 33863c21e69e9, Staging: zram: Replace ioctls with sysfs interface
-
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Hannes Reinecke <hare@suse.com>
-Tested-by: Howard Chen <howardsoc@google.com>
-Signed-off-by: Minchan Kim <minchan@kernel.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/zram/zram_drv.c | 26 ++++++--------------------
- 1 file changed, 6 insertions(+), 20 deletions(-)
+ net/sunrpc/xdr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 502406c9e6e1..616ee4f9c233 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -1184,6 +1184,11 @@ static struct attribute_group zram_disk_attr_group = {
- 	.attrs = zram_disk_attrs,
- };
+diff --git a/net/sunrpc/xdr.c b/net/sunrpc/xdr.c
+index 9b8d855e4a87..ed9bbd383f7d 100644
+--- a/net/sunrpc/xdr.c
++++ b/net/sunrpc/xdr.c
+@@ -512,7 +512,7 @@ EXPORT_SYMBOL_GPL(xdr_commit_encode);
+ static __be32 *xdr_get_next_encode_buffer(struct xdr_stream *xdr,
+ 		size_t nbytes)
+ {
+-	static __be32 *p;
++	__be32 *p;
+ 	int space_left;
+ 	int frag1bytes, frag2bytes;
  
-+static const struct attribute_group *zram_disk_attr_groups[] = {
-+	&zram_disk_attr_group,
-+	NULL,
-+};
-+
- /*
-  * Allocate and initialize new zram device. the function returns
-  * '>= 0' device_id upon success, and negative value otherwise.
-@@ -1264,15 +1269,9 @@ static int zram_add(void)
- 		zram->disk->queue->limits.discard_zeroes_data = 0;
- 	queue_flag_set_unlocked(QUEUE_FLAG_DISCARD, zram->disk->queue);
- 
-+	disk_to_dev(zram->disk)->groups = zram_disk_attr_groups;
- 	add_disk(zram->disk);
- 
--	ret = sysfs_create_group(&disk_to_dev(zram->disk)->kobj,
--				&zram_disk_attr_group);
--	if (ret < 0) {
--		pr_err("Error creating sysfs group for device %d\n",
--				device_id);
--		goto out_free_disk;
--	}
- 	strlcpy(zram->compressor, default_compressor, sizeof(zram->compressor));
- 	zram->meta = NULL;
- 	zram->max_comp_streams = 1;
-@@ -1280,9 +1279,6 @@ static int zram_add(void)
- 	pr_info("Added device: %s\n", zram->disk->disk_name);
- 	return device_id;
- 
--out_free_disk:
--	del_gendisk(zram->disk);
--	put_disk(zram->disk);
- out_free_queue:
- 	blk_cleanup_queue(queue);
- out_free_idr:
-@@ -1310,16 +1306,6 @@ static int zram_remove(struct zram *zram)
- 	zram->claim = true;
- 	mutex_unlock(&bdev->bd_mutex);
- 
--	/*
--	 * Remove sysfs first, so no one will perform a disksize
--	 * store while we destroy the devices. This also helps during
--	 * hot_remove -- zram_reset_device() is the last holder of
--	 * ->init_lock, no later/concurrent disksize_store() or any
--	 * other sysfs handlers are possible.
--	 */
--	sysfs_remove_group(&disk_to_dev(zram->disk)->kobj,
--			&zram_disk_attr_group);
--
- 	/* Make sure all the pending I/O are finished */
- 	fsync_bdev(bdev);
- 	zram_reset_device(zram);
 -- 
 2.17.1
 
