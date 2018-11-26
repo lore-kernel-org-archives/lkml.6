@@ -2,51 +2,52 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D802C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 302AEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA4972089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC4C32089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:56:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBsmbCI7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA4972089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWW0crkR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC4C32089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbeKZVuI (ORCPT
+        id S1728404AbeKZVuK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:50:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59240 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:50:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726532AbeKZVuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:50:08 -0500
+        id S1726532AbeKZVuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:50:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A5ED2146F;
-        Mon, 26 Nov 2018 10:56:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9072D20817;
+        Mon, 26 Nov 2018 10:56:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229783;
-        bh=tUi/af6knvffPf3TvTEuzrW31vjPRy3y+HP0mlMnvJ8=;
+        s=default; t=1543229786;
+        bh=Tv0K8sKlCM/dtTqSJpNRWxP7+yVNbw+CQFbPHOO7EBE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YBsmbCI7lA0FfWTtj7CGchRx5uN9X03I6nAYD/1Bs1tUHn48Ksk0aTOcLvE4daTn8
-         m7t/jSjv5zdRxyBO8PL0vJ4lQZKuPjNMYFaEjhHgkg5hPH4zgkUgbrSYtAxiVDb5Sm
-         T7YHdfAWmD/JVkvhkw4cye770klNb2624CZUoesw=
+        b=WWW0crkRwZR/4b1wGPCczvCPPYIMZKG5S0ZVEqxvvaZ3u7Rs2gnwSiKlpfB3X5Fw4
+         q8NbHU+HQKJZpUZzYvpU8fEeY2uDoI1sujUkUOr66mi8DetSG5fx/bYwQwI6Kqox1v
+         vhxgInv5oKHgo9rXq7xsGT34C12TEsgWM8m+qb54=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Westbrook <linux@westbrook.io>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org,
+        "Justin M. Forbes" <jforbes@fedoraproject.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 47/70] netfilter: ipset: actually allow allowable CIDR 0 in hash:net,port,net
-Date:   Mon, 26 Nov 2018 11:51:02 +0100
-Message-Id: <20181126105051.549263236@linuxfoundation.org>
+Subject: [PATCH 4.4 48/70] s390/mm: Fix ERROR: "__node_distance" undefined!
+Date:   Mon, 26 Nov 2018 11:51:03 +0100
+Message-Id: <20181126105051.616742677@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
 References: <20181126105046.722096341@linuxfoundation.org>
@@ -64,86 +65,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 886503f34d63e681662057448819edb5b1057a97 ]
+[ Upstream commit a541f0ebcc08ed8bc0cc492eec9a86cb280a9f24 ]
 
-Allow /0 as advertised for hash:net,port,net sets.
+Fixes:
+ERROR: "__node_distance" [drivers/nvme/host/nvme-core.ko] undefined!
+make[1]: *** [scripts/Makefile.modpost:92: __modpost] Error 1
+make: *** [Makefile:1275: modules] Error 2
++ exit 1
 
-For "hash:net,port,net", ipset(8) says that "either subnet
-is permitted to be a /0 should you wish to match port
-between all destinations."
-
-Make that statement true.
-
-Before:
-
-    # ipset create cidrzero hash:net,port,net
-    # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
-    ipset v6.34: The value of the CIDR parameter of the IP address is invalid
-
-    # ipset create cidrzero6 hash:net,port,net family inet6
-    # ipset add cidrzero6 ::/0,12345,::/0
-    ipset v6.34: The value of the CIDR parameter of the IP address is invalid
-
-After:
-
-    # ipset create cidrzero hash:net,port,net
-    # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
-    # ipset test cidrzero 192.168.205.129,12345,172.16.205.129
-    192.168.205.129,tcp:12345,172.16.205.129 is in set cidrzero.
-
-    # ipset create cidrzero6 hash:net,port,net family inet6
-    # ipset add cidrzero6 ::/0,12345,::/0
-    # ipset test cidrzero6 fe80::1,12345,ff00::1
-    fe80::1,tcp:12345,ff00::1 is in set cidrzero6.
-
-See also:
-
-  https://bugzilla.kernel.org/show_bug.cgi?id=200897
-  https://github.com/ewestbrook/linux/commit/df7ff6efb0934ab6acc11f003ff1a7580d6c1d9c
-
-Signed-off-by: Eric Westbrook <linux@westbrook.io>
-Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Justin M. Forbes <jforbes@fedoraproject.org>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/ipset/ip_set_hash_netportnet.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/s390/numa/numa.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/netfilter/ipset/ip_set_hash_netportnet.c b/net/netfilter/ipset/ip_set_hash_netportnet.c
-index 9a14c237830f..b259a5814965 100644
---- a/net/netfilter/ipset/ip_set_hash_netportnet.c
-+++ b/net/netfilter/ipset/ip_set_hash_netportnet.c
-@@ -213,13 +213,13 @@ hash_netportnet4_uadt(struct ip_set *set, struct nlattr *tb[],
+diff --git a/arch/s390/numa/numa.c b/arch/s390/numa/numa.c
+index 43f32ce60aa3..734f56d774bb 100644
+--- a/arch/s390/numa/numa.c
++++ b/arch/s390/numa/numa.c
+@@ -47,6 +47,7 @@ int __node_distance(int a, int b)
+ {
+ 	return mode->distance ? mode->distance(a, b) : 0;
+ }
++EXPORT_SYMBOL(__node_distance);
  
- 	if (tb[IPSET_ATTR_CIDR]) {
- 		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
--		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
-+		if (e.cidr[0] > HOST_MASK)
- 			return -IPSET_ERR_INVALID_CIDR;
- 	}
- 
- 	if (tb[IPSET_ATTR_CIDR2]) {
- 		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
--		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
-+		if (e.cidr[1] > HOST_MASK)
- 			return -IPSET_ERR_INVALID_CIDR;
- 	}
- 
-@@ -492,13 +492,13 @@ hash_netportnet6_uadt(struct ip_set *set, struct nlattr *tb[],
- 
- 	if (tb[IPSET_ATTR_CIDR]) {
- 		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
--		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
-+		if (e.cidr[0] > HOST_MASK)
- 			return -IPSET_ERR_INVALID_CIDR;
- 	}
- 
- 	if (tb[IPSET_ATTR_CIDR2]) {
- 		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
--		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
-+		if (e.cidr[1] > HOST_MASK)
- 			return -IPSET_ERR_INVALID_CIDR;
- 	}
+ int numa_debug_enabled;
  
 -- 
 2.17.1
