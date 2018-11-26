@@ -6,42 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49FFEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B07AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1511320C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:35:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1511320C01
+	by mail.kernel.org (Postfix) with ESMTP id 1C9902133F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:35:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C9902133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbeK0Jak (ORCPT
+        id S1727539AbeK0Jal (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 04:30:40 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:59830 "EHLO mail5.wrs.com"
+        Tue, 27 Nov 2018 04:30:41 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:59834 "EHLO mail5.wrs.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726516AbeK0Jak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 04:30:40 -0500
+        id S1726516AbeK0Jal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 04:30:41 -0500
 Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wAQMVvpx002166
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id wAQMXleK002240
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Mon, 26 Nov 2018 14:33:26 -0800
+        Mon, 26 Nov 2018 14:33:57 -0800
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Mon, 26 Nov 2018
- 14:32:53 -0800
+ 14:33:36 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Joerg Roedel <joro@8bytes.org>
 CC:     <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Simon Xue <xxm@rock-chips.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>
-Subject: [PATCH 2/9] iommu: rockchip: make it explicitly non-modular
-Date:   Mon, 26 Nov 2018 17:31:31 -0500
-Message-ID: <1543271498-28966-3-git-send-email-paul.gortmaker@windriver.com>
+        Rob Clark <robdclark@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: [PATCH 6/9] iommu: qcom_iommu: make it explicitly non-modular
+Date:   Mon, 26 Nov 2018 17:31:35 -0500
+Message-ID: <1543271498-28966-7-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1543271498-28966-1-git-send-email-paul.gortmaker@windriver.com>
@@ -54,78 +50,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/iommu/Kconfig:config ROCKCHIP_IOMMU
-drivers/iommu/Kconfig:  bool "Rockchip IOMMU Support"
+drivers/iommu/Kconfig:config MTK_IOMMU_V1
+drivers/iommu/Kconfig:  bool "MTK IOMMU Version 1 (M4U gen1) Support"
 
 ...meaning that it currently is not being built as a module by anyone.
 
-The bind/unbind/remove was already explicitly disabled in commit
-98b72b94def9 ("iommu/rockchip: Prohibit unbind and remove").
-
-Lets remove the remaining traces of  modular infrastructure, so that
+Lets remove the modular code that is essentially orphaned, so that
 when reading the driver there is no doubt it is builtin-only.
 
-Since module_init was not in use by this code, the init ordering
-remains unchanged with this commit.
+Since module_init just becomes device_initcall for non-modules, the
+init ordering remains unchanged with this commit.
 
 Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
 We also delete the MODULE_LICENSE tag etc. since all that information
 was (or is now) contained at the top of the file in the comments.
 
+Cc: Rob Clark <robdclark@gmail.com>
 Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Simon Xue <xxm@rock-chips.com>
-Cc: Daniel Kurtz <djkurtz@chromium.org>
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
 Cc: iommu@lists.linux-foundation.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org
+Cc: linux-arm-msm@vger.kernel.org
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/iommu/rockchip-iommu.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/iommu/qcom_iommu.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-index ad3e2b97469e..c9ba9f377f63 100644
---- a/drivers/iommu/rockchip-iommu.c
-+++ b/drivers/iommu/rockchip-iommu.c
-@@ -1,4 +1,9 @@
- /*
-+ * IOMMU API for Rockchip
-+ *
-+ * Module Authors:	Simon Xue <xxm@rock-chips.com>
-+ *			Daniel Kurtz <djkurtz@chromium.org>
-+ *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
-@@ -17,7 +22,7 @@
+diff --git a/drivers/iommu/qcom_iommu.c b/drivers/iommu/qcom_iommu.c
+index ee70e9921cf1..4c8f4fc54106 100644
+--- a/drivers/iommu/qcom_iommu.c
++++ b/drivers/iommu/qcom_iommu.c
+@@ -29,7 +29,7 @@
+ #include <linux/iommu.h>
  #include <linux/iopoll.h>
- #include <linux/list.h>
- #include <linux/mm.h>
+ #include <linux/kconfig.h>
 -#include <linux/module.h>
 +#include <linux/init.h>
+ #include <linux/mutex.h>
  #include <linux/of.h>
- #include <linux/of_iommu.h>
- #include <linux/of_platform.h>
-@@ -1281,7 +1286,6 @@ static const struct of_device_id rk_iommu_dt_ids[] = {
- 	{ .compatible = "rockchip,iommu" },
+ #include <linux/of_address.h>
+@@ -908,7 +908,6 @@ static const struct of_device_id qcom_iommu_of_match[] = {
+ 	{ .compatible = "qcom,msm-iommu-v1" },
  	{ /* sentinel */ }
  };
--MODULE_DEVICE_TABLE(of, rk_iommu_dt_ids);
+-MODULE_DEVICE_TABLE(of, qcom_iommu_of_match);
  
- static struct platform_driver rk_iommu_driver = {
- 	.probe = rk_iommu_probe,
-@@ -1299,8 +1303,3 @@ static int __init rk_iommu_init(void)
- 	return platform_driver_register(&rk_iommu_driver);
+ static struct platform_driver qcom_iommu_driver = {
+ 	.driver	= {
+@@ -934,15 +933,4 @@ static int __init qcom_iommu_init(void)
+ 
+ 	return ret;
  }
- subsys_initcall(rk_iommu_init);
 -
--MODULE_DESCRIPTION("IOMMU API for Rockchip");
--MODULE_AUTHOR("Simon Xue <xxm@rock-chips.com> and Daniel Kurtz <djkurtz@chromium.org>");
--MODULE_ALIAS("platform:rockchip-iommu");
+-static void __exit qcom_iommu_exit(void)
+-{
+-	platform_driver_unregister(&qcom_iommu_driver);
+-	platform_driver_unregister(&qcom_iommu_ctx_driver);
+-}
+-
+-module_init(qcom_iommu_init);
+-module_exit(qcom_iommu_exit);
+-
+-MODULE_DESCRIPTION("IOMMU API for QCOM IOMMU v1 implementations");
 -MODULE_LICENSE("GPL v2");
++device_initcall(qcom_iommu_init);
 -- 
 2.7.4
 
