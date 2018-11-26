@@ -2,131 +2,137 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBCE0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A57C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B07720873
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:40:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABE2F21473
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:40:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="i3qnjehB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B07720873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="p5ypRUS/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABE2F21473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727658AbeK0Jfs (ORCPT
+        id S1727693AbeK0JgM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 04:35:48 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41385 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727629AbeK0Jfo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 04:35:44 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u6so14575849plm.8
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 14:40:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7SO7oOEdYQMovzlJck3mc2068mng5do2HhlfyldvWPU=;
-        b=i3qnjehBiyOqrFRjAHBr9Jb6QUj670RxC/4MexyY1O/JiJiZzrjd8nTLEhgSW7RAfc
-         +FVQbE8UyT+he+H1Q/aEJn7aHCBC5DFtZgeBL+uBBaKIAdDIfovyVnEu86oD25w4aMJ3
-         bDQLit7fjyShtnmlwlIKSnMKWauICluAa5y02isaD/gK3jBbk0SVRWiSOASYM62FQd1D
-         E0TxievofnMe9YDLX8FKtJ0j3ToCj7fKJfNyPMY1owCLnWL/ioXt1vjKxzo45yRN8OMG
-         qi64+ePkHIswSk+nzc6tG7YZyrgg/qop0MKatM26GS0yrqjjnl2yv8qFAO7A1OlHW3pX
-         JO3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7SO7oOEdYQMovzlJck3mc2068mng5do2HhlfyldvWPU=;
-        b=ecz5n8+e1AyagGTeN7eoxZuN71EnNUZIBPVaZwI0tmZpl3m09zaaUZ4LYbJRERbhLG
-         f5dzHRi7NyuWdFftZu7vVBA5KK1rQKo4GzZ3+xjiaHwUfqZ7Bxiro1OBswZlB+5f4kvL
-         ZJngLtLWPj5bf/RrRm7k+Y0RnevkSMZJOyz0r5PDpRrTkpBxBCXiAle+tKWlKB02nQFs
-         4Knx5npUx3qFZHmG20eHCKexsKH3KywrrgvgH6BEnH438FWeMqya3nizAz4qAr9YDjee
-         mgvksK9GXtiAHtFr7D/lkdkuym5RSVynBT/cv6ZdKZm+8ofsbpOqtbNixoOPicIpgf7L
-         9SbQ==
-X-Gm-Message-State: AA+aEWYuBqYzhGyU7JDo1Y+KYqDNtvd4NIoqxoeYkzioD2AC3Yi2uPVv
-        gS6swR8zL8BZtqtRMqvA9fFHpA==
-X-Google-Smtp-Source: AFSGD/XiSRQHKl6i4Ud9hpVkTqDz9dHlgDZMIs2FFvUUJM4ork3eboFR7OiJBXZO5SjLcJMPsHmCow==
-X-Received: by 2002:a17:902:aa8c:: with SMTP id d12mr7815591plr.25.1543272005111;
-        Mon, 26 Nov 2018 14:40:05 -0800 (PST)
-Received: from vader ([2601:602:8b00:55d3:e6a7:a0ff:fe0b:c9a8])
-        by smtp.gmail.com with ESMTPSA id t13sm3253245pgr.42.2018.11.26.14.40.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 14:40:04 -0800 (PST)
-Date:   Mon, 26 Nov 2018 14:40:03 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V12 14/20] bcache: avoid to use
- bio_for_each_segment_all() in bch_bio_alloc_pages()
-Message-ID: <20181126224003.GK30411@vader>
-References: <20181126021720.19471-1-ming.lei@redhat.com>
- <20181126021720.19471-15-ming.lei@redhat.com>
+        Tue, 27 Nov 2018 04:36:12 -0500
+Received: from ozlabs.org ([203.11.71.1]:45923 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726914AbeK0JgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 04:36:11 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 433hhF45r1z9s3C;
+        Tue, 27 Nov 2018 09:40:29 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1543272029;
+        bh=OlPyh+hjeqUGXa9K4XSM4K229V5vo2j61Wn3hV97p84=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=p5ypRUS/ti6zegmzkKlj8BimhXY845QR+mWUdASVuuinVwwCT+WUlDHiWMYl7O7IZ
+         LwzYg236U3Qbe+e5d4OWMEVx/G6W/hFeUEb0UdTi1s6ZOJDiKbr0KCTYqN5P0nkbWg
+         mHs3FcpE+HhJoU10+La7ZAixl76BPL5/OMiG+YRjkCaR9DaQi79ipK6zzlYD9viMbu
+         N8gtPhFwJ2fBeGVeH3vBzH6Ld6TQ6OhN1riUmb9SSf4Mo+VlqggTC64RJPFeXyULrc
+         WvwgzD5lioePjimjFflkiXs+1KRXhjDg/4rUPwrALNB+n2nrcgd26wYn3jdh1VKQJh
+         FSm2HFCpH8LMQ==
+Date:   Tue, 27 Nov 2018 09:40:29 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     Kees Cook <keescook@google.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: Re: linux-next: build warning after merge of the f2fs tree
+Message-ID: <20181127094029.68ce2322@canb.auug.org.au>
+In-Reply-To: <20181126222257.GB55960@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20181126111933.1b0fb324@canb.auug.org.au>
+        <20181126215924.GA55960@jaegeuk-macbookpro.roam.corp.google.com>
+        <20181127091747.4830d123@canb.auug.org.au>
+        <20181126222257.GB55960@jaegeuk-macbookpro.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181126021720.19471-15-ming.lei@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Bmqd=dgIjI9Oi56n3LVdm1f"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 10:17:14AM +0800, Ming Lei wrote:
-> bch_bio_alloc_pages() is always called on one new bio, so it is safe
-> to access the bvec table directly. Given it is the only kind of this
-> case, open code the bvec table access since bio_for_each_segment_all()
-> will be changed to support for iterating over multipage bvec.
-> 
-> Acked-by: Coly Li <colyli@suse.de>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+--Sig_/Bmqd=dgIjI9Oi56n3LVdm1f
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Omar Sandoval <osandov@fb.com>
+Hi Jaegeuk,
 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+On Mon, 26 Nov 2018 14:22:57 -0800 Jaegeuk Kim <jaegeuk@kernel.org> wrote:
+>
+> Is this okay?
+
+That looks great, thanks.
+
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Mon, 26 Nov 2018 14:20:32 -0800
+> Subject: [PATCH] f2fs: avoid build warn of fall_through
+>=20
+> After merging the f2fs tree, today's linux-next build
+>  (x86_64_allmodconfig) produced this warning:
+>=20
+>  In file included from fs/f2fs/dir.c:11:
+>  fs/f2fs/f2fs.h: In function '__mark_inode_dirty_flag':
+>  fs/f2fs/f2fs.h:2388:6: warning: this statement may fall through [-Wimpli=
+cit-fallthrough=3D]
+>     if (set)
+>        ^
+>  fs/f2fs/f2fs.h:2390:2: note: here
+>    case FI_DATA_EXIST:
+>    ^~~~
+>=20
+>  Exposed by my use of -Wimplicit-fallthrough
+>=20
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > ---
->  drivers/md/bcache/util.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
-> index 20eddeac1531..62fb917f7a4f 100644
-> --- a/drivers/md/bcache/util.c
-> +++ b/drivers/md/bcache/util.c
-> @@ -270,7 +270,11 @@ int bch_bio_alloc_pages(struct bio *bio, gfp_t gfp_mask)
->  	int i;
->  	struct bio_vec *bv;
->  
-> -	bio_for_each_segment_all(bv, bio, i) {
-> +	/*
-> +	 * This is called on freshly new bio, so it is safe to access the
-> +	 * bvec table directly.
-> +	 */
-> +	for (i = 0, bv = bio->bi_io_vec; i < bio->bi_vcnt; bv++, i++) {
->  		bv->bv_page = alloc_page(gfp_mask);
->  		if (!bv->bv_page) {
->  			while (--bv >= bio->bi_io_vec)
-> -- 
-> 2.9.5
-> 
+>  fs/f2fs/f2fs.h | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 26ad1de8641c..b3fe6803d4c6 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2387,6 +2387,7 @@ static inline void __mark_inode_dirty_flag(struct i=
+node *inode,
+>  	case FI_NEW_INODE:
+>  		if (set)
+>  			return;
+> +		/* fall through */
+>  	case FI_DATA_EXIST:
+>  	case FI_INLINE_DOTS:
+>  	case FI_PIN_FILE:
+> --=20
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Bmqd=dgIjI9Oi56n3LVdm1f
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv8dl0ACgkQAVBC80lX
+0GwTQAf+Pss4gmOFL+eTIo+EH0mGhzGP6Doi4L2gl7kKtG3jBfP1NGpsIXXMBDsj
+igno02FBmI1zgX6MzUp78mEzGeq4dzOjNhpTTGlo9MNoLKjCHgTBZRVvhJ0HE9m6
+hU2Ff19mTVpv88y0AH1KyfaD/OFVs/rDiM+I0JV5aP+sOuorG2FfdKiY936x9hZO
+pOUrylAjwE2yjCVzdlsOeTotVlmV3IfIKcduW2rD/mVhF4krgMOsODXHvGPEW7tM
+5ZLGsoNQQIkthru8hg1NhBa+akJvb9HzTMQarqNVFLbOkMyWskUVWV+e/phCXeZM
+AZxxIzJPkIN64a+jHoFS7ypEbUwH8g==
+=V9lz
+-----END PGP SIGNATURE-----
+
+--Sig_/Bmqd=dgIjI9Oi56n3LVdm1f--
