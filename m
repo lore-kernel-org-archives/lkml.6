@@ -2,103 +2,95 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2775AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8320C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E052420989
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:25:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kresin-me.20150623.gappssmtp.com header.i=@kresin-me.20150623.gappssmtp.com header.b="BxSpZ/2x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E052420989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kresin.me
+	by mail.kernel.org (Postfix) with ESMTP id 7806520989
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:26:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7806520989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbeKZVTa (ORCPT
+        id S1726423AbeKZVTn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:19:30 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46068 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbeKZVT3 (ORCPT
+        Mon, 26 Nov 2018 16:19:43 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:44405 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726105AbeKZVTn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:19:29 -0500
-Received: by mail-wr1-f67.google.com with SMTP id v6so18258026wrr.12
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 02:25:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kresin-me.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=7sW7IaUZ6EGXx0NcQjT3M8wEY0OafP/B4sKeDi8lVrs=;
-        b=BxSpZ/2xXdDbmKuDM8Pk5NVO//G47rpSTmKnaIf80M/uYGzRMjnRSxkKp+qsl7uwnq
-         g3zb9G/PPZi3H/nioOtnP6b4msE66RzP/js7uQSTYSIN5Mp1oWzw9+Z70XCf5AB3Bci8
-         7buCzqT7JhVgf7gdQMxG15ZhRMdhD5mujOkn9AE8NYcKxOvrtITKnZ+azY7Vh9+YKAK8
-         tjcmBe9b1OmsDO5jL5vrypE1U+51t+dL2d8Nsasj2n+KWOijArduvOgrs420rPiG/Tpl
-         spLx0NYOzGLnOUdV8g4C/7FWjHbVmWlhv5X3oYR5uzcdZQK2W9uImQ9pFRtl3DS+mwrv
-         hZAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7sW7IaUZ6EGXx0NcQjT3M8wEY0OafP/B4sKeDi8lVrs=;
-        b=UV1rAP1DciDvq/fH5aZJlyPvh7QWJ42SsvMuKBPjaoby7IklaU8N+8W5nmRYt6oKSU
-         Cb2k0PWhb5ChCMWsf3rged3pb1E7XwXqkjI4QktmEMDg38vODBVUJQBsk+sa6OcpSqTc
-         sy7GPUkF3DYMphz4E/mm2LqncVb6wOz6WCTdzff6Ec4YnjjRzsuetft3nJvoQT2YBlYV
-         Gm6KOFd4rnXSRy0VOFMf+sKQSmPq23ri4BwuAeR282lSm1RxhSsYVGiWpNs05RAadCv/
-         OCjHOesmVjnsuWvGzvxaAzRSRJHoZV3oR7QOXb9pU1I5YGaJQYRJPFhT5THxuBWGzJ1t
-         pyAA==
-X-Gm-Message-State: AA+aEWYz+bQHXbrMcchhrmAglMVujpDC00Wak57AkRAO+p30GZP9rfij
-        qjkYcziweWlK+3SFXEKgxyKyNA==
-X-Google-Smtp-Source: AFSGD/WSSi45/g4+5LjWAfgBnzc1kDiXZ1/IPjzlnIJHR4YrrOH3lbTgl+wiQlo+uFnHSlzsxremSA==
-X-Received: by 2002:adf:ea11:: with SMTP id q17mr22234814wrm.328.1543227947846;
-        Mon, 26 Nov 2018 02:25:47 -0800 (PST)
-Received: from desktop.wvd.kresin.me (p4FED3A99.dip0.t-ipconnect.de. [79.237.58.153])
-        by smtp.gmail.com with ESMTPSA id c3-v6sm366907wmb.46.2018.11.26.02.25.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 02:25:47 -0800 (PST)
-From:   Mathias Kresin <dev@kresin.me>
-To:     John Crispin <john@phrozen.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>
-Cc:     linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: [PATCH] MIPS: ralink: Fix mt7620 nd_sd pinmux
-Date:   Mon, 26 Nov 2018 11:25:40 +0100
-Message-Id: <20181126102540.5304-1-dev@kresin.me>
-X-Mailer: git-send-email 2.17.1
+        Mon, 26 Nov 2018 16:19:43 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-60-4g2VTU3BMqGDiNdLEPZqJw-1; Mon, 26 Nov 2018 10:26:01 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 26 Nov 2018 10:26:08 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 26 Nov 2018 10:26:08 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Linus Torvalds' <torvalds@linux-foundation.org>
+CC:     Andrew Lutomirski <luto@kernel.org>,
+        "dvlasenk@redhat.com" <dvlasenk@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+        Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        "brgerst@gmail.com" <brgerst@gmail.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "pabeni@redhat.com" <pabeni@redhat.com>
+Subject: RE: [PATCH] x86: only use ERMS for user copies for larger sizes
+Thread-Topic: [PATCH] x86: only use ERMS for user copies for larger sizes
+Thread-Index: AQHUgaBY0KBBfG3q00apJLDxEV5GB6VcD8pwgAAXuEiAAPNRcIAAB5wwgABvjYCABE4VAA==
+Date:   Mon, 26 Nov 2018 10:26:08 +0000
+Message-ID: <a3ebeca68de1493f876467f57575be74@AcuMS.aculab.com>
+References: <02bfc577-32a5-66be-64bf-d476b7d447d2@kernel.dk>
+ <20181121063609.GA109082@gmail.com>
+ <48e27a3a-2bb2-ff41-3512-8aeb3fd59e57@kernel.dk>
+ <26eff539-7de7-784c-0c88-f1d30753299d@redhat.com>
+ <7ea44458b90b4d41a08ba9012818d273@AcuMS.aculab.com>
+ <CAHk-=wjLNuNpHRfuVTb6awstC9OOmSb3S8aP51ufep-Th4dXKw@mail.gmail.com>
+ <CALCETrW=hMZLUM_nPEEgUW9x9Bmhm2LZ6ZRDiRRguxVT=-_BWA@mail.gmail.com>
+ <CAHk-=wiEUVpSU-GxpKDvN9wnH2yDxkJgE7Vqh46A+fmnvhubyw@mail.gmail.com>
+ <cd11d9423c8b46ecbf97753f8317c294@AcuMS.aculab.com>
+ <64fd67993af04579b5262c270a7a4694@AcuMS.aculab.com>
+ <CAHk-=wj9DA-mH8jahuEPUWxO4EgbCcPRgdOJAQD58DBtCCrHcQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wj9DA-mH8jahuEPUWxO4EgbCcPRgdOJAQD58DBtCCrHcQ@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: 4g2VTU3BMqGDiNdLEPZqJw-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case the nd_sd group is set to the sd-card function, Pins 45 + 46 are
-configured as GPIOs. If they are blocked by the sd function, they can't
-be used as GPIOs.
-
-Signed-off-by: Mathias Kresin <dev@kresin.me>
-Reported-by: Kristian Evensen <kristian.evensen@gmail.com>
-Fixes: f576fb6a0700 ("MIPS: ralink: cleanup the soc specific pinmux
-data")
-Cc: stable@vger.kernel.org # v3.18+
----
- arch/mips/ralink/mt7620.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/mips/ralink/mt7620.c b/arch/mips/ralink/mt7620.c
-index 41b71c4352c2..c1ce6f43642b 100644
---- a/arch/mips/ralink/mt7620.c
-+++ b/arch/mips/ralink/mt7620.c
-@@ -84,7 +84,7 @@ static struct rt2880_pmx_func pcie_rst_grp[] = {
- };
- static struct rt2880_pmx_func nd_sd_grp[] = {
- 	FUNC("nand", MT7620_GPIO_MODE_NAND, 45, 15),
--	FUNC("sd", MT7620_GPIO_MODE_SD, 45, 15)
-+	FUNC("sd", MT7620_GPIO_MODE_SD, 47, 13)
- };
- 
- static struct rt2880_pmx_group mt7620a_pinmux_data[] = {
--- 
-2.17.1
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMjMgTm92ZW1iZXIgMjAxOCAxNjozNg0KLi4u
+DQo+IEVuZCByZXN1bHQ6IHdlICp1c2VkKiB0byBkbyB0aGlzIHJpZ2h0LiBGb3IgdGhlIGxhc3Qg
+ZWlnaHQgeWVhcnMgb3VyDQo+ICJtZW1jcHlfe3RvLGZyb219aW8oKSIgaGFzIGJlZW4gZW50aXJl
+bHkgYnJva2VuLCBhbmQgYXBwYXJlbnRseSBldmVuDQo+IHRoZSBwZW9wbGUgd2hvIG5vdGljZWQg
+b2RkaXRpZXMgbGlrZSBEYXZpZCwgbmV2ZXIgcmVwb3J0ZWQgaXQgYXMNCj4gYnJlYWthZ2UgYnV0
+IGluc3RlYWQganVzdCB3b3JrZWQgYXJvdW5kIGl0IGluIGRyaXZlcnMuDQoNCkkndmUgbWVudGlv
+bmVkIGl0IHNldmVyYWwgdGltZXMuLi4NCg0KUHJvYmFibHkgbm8gb25lIGVsc2Ugbm90aWNlZCBs
+b3RzIG9mIHNpbmdsZSBieXRlIHRyYW5zZmVycyB3aGlsZQ0KdGVzdGluZyBhIFRMUCBtb25pdG9y
+IGhlIHdhcyB3cml0aW5nIGZvciBhbiBGUEdBIDotKQ0KVGhleSBhcmUgZmFyIHRvbyBleHBlbnNp
+dmUgdG8gYnV5LCBhbmQgd291bGQgbmV2ZXIgYmUgY29ubmVjdGVkDQp0byB0aGUgcmlnaHQgc3lz
+dGVtIGF0IHRoZSByaWdodCB0aW1lIC0gc28gd2UgKEkpIHdyb3RlIG9uZS4NCg0KVW5mb3J0dW5h
+dGVseSB3ZSBkb24ndCByZWFsbHkgZ2V0IHRvIHNlZSB3aGF0IGhhcHBlbnMgd2hlbiB0aGUNCmxp
+bmsgY29tZXMgdXAgKG9yIHJhdGhlciBkb2Vzbid0IGNvbWUgdXApLiBXZSBvbmx5IGdldCB0aGUN
+CkxUU1NNIHN0YXRlIHRyYW5zaXRpb25zLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRy
+ZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1L
+MSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
