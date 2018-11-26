@@ -2,144 +2,119 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CB8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81889C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 396452082F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:16:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="NB5gi8Jc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 396452082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	by mail.kernel.org (Postfix) with ESMTP id 4EE092082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 22:16:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EE092082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbeK0JLo (ORCPT
+        id S1727378AbeK0JMB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 04:11:44 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39367 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726888AbeK0JLn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 04:11:43 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w6so6822806pgl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 14:16:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/6jOHBgej+zantiyYcOwKY1cQOjjygQGOg2a3ZRqxqU=;
-        b=NB5gi8JcdVSjwscW8/Rt4u8b2kMuTzleBvZzAlQZ+T9HKueOpU3AaB85jQTJD4jk3t
-         nHTYYAFFsNSwKzPdlToeAzO0xPvMmuFKi0bYFePZTkTtEzayyQVv/DUusQAIGgNyd0n7
-         vNA30QEY5zc2kZaq31CE2DT2LBjFGbEUJsrbP1okkm3x3hoAzu+oO+9/Wwhqe4srGTzc
-         UV2lq9zpmC7DtrOQXl33VpEk0HtUWmS39A5DnUDRItubhM29fNZdPQk0idKeqtXbfQ8J
-         NS/awNANctdAuCwkiDmLfqZZbRzXoL4a2V2cdsoi6XvOCJC5jJUSx+D/kaPEMe3EIlQn
-         EmeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/6jOHBgej+zantiyYcOwKY1cQOjjygQGOg2a3ZRqxqU=;
-        b=Um50wh/BgvJ2y3rU+KLM9jCbZboUnhhy1MEHCdvEV99m7TmD7VThNL3a7YdPYRFIF9
-         eMROiYVSLNQQFHhC3mVxdJDl55PKT3KH5qhLNZDqySGJXPj1n+oCb+dPqiv6wCGcSkBN
-         YviAMdhOXrNgCJgK2cWz9SaxYf3GwkHgh8MndJReGKrIC+6F43kY5tD+OBFaJYSLqlYW
-         R7UX/IbZEbM6PzWQRvVi+KpN8g5BFZZQi6dM0GQ6UzKuqXZOckSy0oAOd5KA6IG6H6WH
-         5BIGZhpCOlNpZQ3XxUM3zjv/eRk1dxgQtzPxwYNtpOMvMzTAQabp97gk/wxw5G/aysgY
-         aYIg==
-X-Gm-Message-State: AA+aEWYALqcVy9jVK8V2jpg23D6q824O+o9JcPMOC6sU1jGbw9iESU2k
-        cVAin2inxocryvu79RkwjIzmEA==
-X-Google-Smtp-Source: AFSGD/WkD2Jd+TYnAi5lcg29tMSVS++t5Jswlm8qvWgciBvd6QwP4uBQrZNdVEz5RrrM5+19nucgSA==
-X-Received: by 2002:a63:f658:: with SMTP id u24mr26947651pgj.267.1543270568603;
-        Mon, 26 Nov 2018 14:16:08 -0800 (PST)
-Received: from vader ([2601:602:8b00:55d3:e6a7:a0ff:fe0b:c9a8])
-        by smtp.gmail.com with ESMTPSA id o7sm1831055pfb.34.2018.11.26.14.16.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 14:16:07 -0800 (PST)
-Date:   Mon, 26 Nov 2018 14:16:06 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V12 05/20] block: remove bvec_iter_rewind()
-Message-ID: <20181126221606.GF30411@vader>
-References: <20181126021720.19471-1-ming.lei@redhat.com>
- <20181126021720.19471-6-ming.lei@redhat.com>
+        Tue, 27 Nov 2018 04:12:01 -0500
+Received: from mga01.intel.com ([192.55.52.88]:37928 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726634AbeK0JMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 04:12:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 14:16:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,284,1539673200"; 
+   d="scan'208";a="284119183"
+Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.87]) ([10.24.14.87])
+  by fmsmga005.fm.intel.com with ESMTP; 26 Nov 2018 14:16:25 -0800
+Subject: Re: [PATCH v9 10/13] x86/resctrl: Fix the messages in
+ rdt_last_cmd_printf and rdt_last_cmd_puts
+To:     "Moger, Babu" <Babu.Moger@amd.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "corbet@lwn.net" <corbet@lwn.net>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Cc:     "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+References: <20181121202811.4492-1-babu.moger@amd.com>
+ <20181121202811.4492-11-babu.moger@amd.com>
+From:   Reinette Chatre <reinette.chatre@intel.com>
+Message-ID: <fe5c4f4b-e233-875c-1f33-f22c5986b041@intel.com>
+Date:   Mon, 26 Nov 2018 14:16:24 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181126021720.19471-6-ming.lei@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181121202811.4492-11-babu.moger@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 10:17:05AM +0800, Ming Lei wrote:
-> Commit 7759eb23fd980 ("block: remove bio_rewind_iter()") removes
-> bio_rewind_iter(), then no one uses bvec_iter_rewind() any more,
-> so remove it.
+Hi Babu and Borislav,
 
-Reviewed-by: Omar Sandoval <osandov@fb.com>
+Two typos seemed to have slipped through into the merged commit ...
 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  include/linux/bvec.h | 24 ------------------------
->  1 file changed, 24 deletions(-)
-> 
-> diff --git a/include/linux/bvec.h b/include/linux/bvec.h
-> index 02c73c6aa805..ba0ae40e77c9 100644
-> --- a/include/linux/bvec.h
-> +++ b/include/linux/bvec.h
-> @@ -92,30 +92,6 @@ static inline bool bvec_iter_advance(const struct bio_vec *bv,
->  	return true;
->  }
+On 11/21/2018 12:28 PM, Moger, Babu wrote:
+> @@ -163,14 +163,14 @@ int parse_cbm(struct rdt_parse_data *data, struct rdt_resource *r,
+>  	 * either is exclusive.
+>  	 */
+>  	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, true)) {
+> -		rdt_last_cmd_printf("overlaps with exclusive group\n");
+> +		rdt_last_cmd_printf("Overlaps with exclusive group\n");
+>  		return -EINVAL;
+>  	}
 >  
-> -static inline bool bvec_iter_rewind(const struct bio_vec *bv,
-> -				     struct bvec_iter *iter,
-> -				     unsigned int bytes)
-> -{
-> -	while (bytes) {
-> -		unsigned len = min(bytes, iter->bi_bvec_done);
-> -
-> -		if (iter->bi_bvec_done == 0) {
-> -			if (WARN_ONCE(iter->bi_idx == 0,
-> -				      "Attempted to rewind iter beyond "
-> -				      "bvec's boundaries\n")) {
-> -				return false;
-> -			}
-> -			iter->bi_idx--;
-> -			iter->bi_bvec_done = __bvec_iter_bvec(bv, *iter)->bv_len;
-> -			continue;
-> -		}
-> -		bytes -= len;
-> -		iter->bi_size += len;
-> -		iter->bi_bvec_done -= len;
-> -	}
-> -	return true;
-> -}
-> -
->  #define for_each_bvec(bvl, bio_vec, iter, start)			\
->  	for (iter = (start);						\
->  	     (iter).bi_size &&						\
-> -- 
-> 2.9.5
-> 
+>  	if (rdtgroup_cbm_overlaps(r, d, cbm_val, rdtgrp->closid, false)) {
+>  		if (rdtgrp->mode == RDT_MODE_EXCLUSIVE ||
+>  		    rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP) {
+> -			rdt_last_cmd_printf("overlaps with other group\n");
+> +			rdt_last_cmd_printf("0verlaps with other group\n");
+>  			return -EINVAL;
+>  		}
+>  	}
+
+There is a zero instead of O used in second "Overlaps".
+
+> @@ -1235,7 +1235,7 @@ static ssize_t rdtgroup_mode_write(struct kernfs_open_file *of,
+>  			goto out;
+>  		rdtgrp->mode = RDT_MODE_PSEUDO_LOCKSETUP;
+>  	} else {
+> -		rdt_last_cmd_printf("unknown/unsupported mode\n");
+> +		rdt_last_cmd_printf("Unknown orunsupported mode\n");
+>  		ret = -EINVAL;
+>  	}
+
+Missing a space.
+
+Reinette
