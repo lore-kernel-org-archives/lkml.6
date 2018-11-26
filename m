@@ -2,147 +2,329 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FD4C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 287C0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:36:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B46F20862
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:34:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0F392086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 15:36:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQmdsfac"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B46F20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VhOni5tx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0F392086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbeK0C2u (ORCPT
+        id S1726513AbeK0Cas (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 21:28:50 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36735 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbeK0C2u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 21:28:50 -0500
-Received: by mail-ed1-f65.google.com with SMTP id f23so16223745edb.3;
-        Mon, 26 Nov 2018 07:34:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jVvvSlcDW1rccwafybYx7K4mL+Q61eyXYRbJr4hiI0E=;
-        b=iQmdsfacT9ox7RUgyDg3TtMjkgaENUWQREXsl+yOUP6kS50rpu1XiTx9bn3M/Lv4O4
-         2dkeMCyQZzvBPGH32mtyWP0izZTz2S6U1qv5RZgrpeZf0ZYer2TrLvBHwxhOCXI1k9F3
-         grkeXgW1DqPMMNAKmq8iH1u+FzHrI1gcnT1FEKC6YwfVO0RojlvfTJIXkReQ7yI/pQAl
-         tYQPJDmLfGjp6nWTKljUO05A7pDGHjQEdrJWsj+50Wi8qd5v0iKeaYNizt8J98C9lSj1
-         2aWSB0ap5fXf14G5L6OGSAGgX6B0xcGZXUa8vVDO5cE3bC/BZq+2UVpCrBxxdj/gbCyo
-         wLlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jVvvSlcDW1rccwafybYx7K4mL+Q61eyXYRbJr4hiI0E=;
-        b=pACMowCpCz0hsNgaguf9Y+nOAFpIqYXLLfKioG0ykxTzfHaavm7aDt9/NlnvKQToYD
-         BMwrD8z2qBzaIITHvYyyQZ22PqkTd9qjCnOUTBFUORpQXpxWIv2QTgO8BmaFEX7YYpR9
-         f3yAxSIxzUvnBDZJOHX5Ygm2GTpAAdHCdcsy78GXDDnsz9ddZhcuKNUrZeHlaoHDK8wR
-         Pg4O+M3JRRDBQ74VDWA4xwReBr29+2vIZ6utY6gTUHBg45T2IbuyHlefA6xJjNNotXGx
-         WBGUObZoL2wQgT42cQUn7shrUOEVaSlJe4EEeEjYNC3AVcvEjZki+xZcU76E0lH8oHP+
-         J4Kg==
-X-Gm-Message-State: AA+aEWa5irZaZuOyrJgiYRjk9/y9I91sXnughfTRqqbnCaxU9TGmBKeh
-        q4BJzJk0U896rzw3gizLik4eaQ/b
-X-Google-Smtp-Source: AFSGD/VZ+ljIxOtr5OXzqt4aZMe8R+iuF1xCgMuofGsWIq9+yhE5zG4Ug/iABLSbCO5yBORcrlEBOg==
-X-Received: by 2002:aa7:da48:: with SMTP id w8mr14026971eds.54.1543246461315;
-        Mon, 26 Nov 2018 07:34:21 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id c11-v6sm146882ejm.67.2018.11.26.07.34.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 07:34:20 -0800 (PST)
-Date:   Mon, 26 Nov 2018 16:34:19 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jose Abreu <jose.abreu@synopsys.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        netdev@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: stmmac: Move debugfs init/exit to
- ->probe()/->remove()
-Message-ID: <20181126153419.GD19710@ulmo>
-References: <20181123122122.18957-1-thierry.reding@gmail.com>
- <9c8443aa-edaa-2398-bdd8-df49f2529cb6@synopsys.com>
+        Mon, 26 Nov 2018 21:30:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726224AbeK0Car (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 21:30:47 -0500
+Received: from linux-8ccs (ip5f5adbcd.dynamic.kabel-deutschland.de [95.90.219.205])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F10C820672;
+        Mon, 26 Nov 2018 15:36:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543246579;
+        bh=8YyAG/Kl9jVzSXY6K/RkCxJR1kdMq83RwBEICCm0dho=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VhOni5txc2lpK43qGIMfQ3/GqyMXuZ6+q0JC8N07J4LoyT3LDuL7c2mQ7VYbA070s
+         rlo23hfiZcz56FMyLPptmqP/TogJXmbYc9dIlMhdoqfr3S9X+Rmc+ZP7skHYfS8KnQ
+         QJxn8hKnYXYmeSJHzv+fdSpTq4hBdbCNKIZuw0BE=
+Date:   Mon, 26 Nov 2018 16:36:12 +0100
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kernel-hardening@lists.openwall.com, daniel@iogearbox.net,
+        jannh@google.com, keescook@chromium.org, kristen@linux.intel.com,
+        dave.hansen@intel.com, arjan@linux.intel.com
+Subject: Re: [PATCH v9 RESEND 0/4] KASLR feature to randomize each loadable
+ module
+Message-ID: <20181126153611.GA17169@linux-8ccs>
+References: <20181120232312.30037-1-rick.p.edgecombe@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="SFyWQ0h3ruR435lw"
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <9c8443aa-edaa-2398-bdd8-df49f2529cb6@synopsys.com>
+In-Reply-To: <20181120232312.30037-1-rick.p.edgecombe@intel.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.22-default x86_64
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++++ Rick Edgecombe [20/11/18 15:23 -0800]:
+>Resending this because I missed Jessica in the "to" list. Also removing the part
+>of this coverletter that talked about KPTI helping with some local kernel text
+>de-randomizing methods, because I'm not sure I fully understand this.
+>
+>------------------------------------------------------------
+>
+>This is V9 of the "KASLR feature to randomize each loadable module" patchset.
+>The purpose is to increase the randomization for the module space from 10 to 17
+>bits, and also to make the modules randomized in relation to each other instead
+>of just the address where the allocations begin, so that if one module leaks the
+>location of the others can't be inferred.
+>
+>Why its useful
+>==============
+>Randomizing the location of executable code is a defense against control flow
+>attacks, where the kernel is tricked into jumping, or speculatively executing
+>code other than what is intended. By randomizing the location of the code, the
+>attacker doesn't know where to redirect the control flow.
+>
+>Today the RANDOMIZE_BASE feature randomizes the base address where the module
+>allocations begin with 10 bits of entropy for this purpose. From here, a highly
+>deterministic algorithm allocates space for the modules as they are loaded and
+>unloaded. If an attacker can predict the order and identities for modules that
+>will be loaded (either by the system, or controlled by the user with
+>request_module or BPF), then a single text address leak can give the attacker
+>access to the locations of other modules. So in this case this new algorithm can
+>take the entropy of the other modules from ~0 to 17, making it much more robust.
+>
+>Another problem today is that the low 10 bits of entropy makes brute force
+>attacks feasible, especially in the case of speculative execution where a wrong
+>guess won't necessarily cause a crash. In this case, increasing the
+>randomization will force attacks to take longer, and so increase the time an
+>attacker may be detected on a system.
+>
+>There are multiple efforts to apply more randomization to the core kernel text
+>as well, and so this module space piece can be a first step to increasing
+>randomization for all kernel space executable code.
+>
+>Userspace ASLR can get 28 bits of entropy or more, so at least increasing this
+>to 17 for now improves what is currently a pretty low amount of randomization
+>for the higher privileged kernel space.
+>
+>How it works
+>============
+>The algorithm is pretty simple. It just breaks the module space in two, a random
+>area (2/3 of module space) and a backup area (1/3 of module space). It first
+>tries to allocate up to 10000 randomly located starting pages inside the random
+>section. If this fails, it will allocate in the backup area. The backup area
+>base will be offset in the same way as current algorithm does for the base area,
+>which has 10 bits of entropy.
+>
+>The vmalloc allocator can be used to try an allocation at a specific address,
+>however it is usually used to try an allocation over a large address range, and
+>so some behaviors which are non-issues in normal usage can be be sub-optimal
+>when trying the an allocation at 10000 small ranges. So this patch also includes
+>a new vmalloc function __vmalloc_node_try_addr and some other vmalloc tweaks
+>that allow for more efficient trying of addresses.
+>
+>This algorithm targets maintaining high entropy for many 1000's of module
+>allocations. This is because there are other users of the module space besides
+>kernel modules, like eBPF JIT, classic BPF socket filter JIT and kprobes.
 
---SFyWQ0h3ruR435lw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Rick!
 
-On Fri, Nov 23, 2018 at 12:44:02PM +0000, Jose Abreu wrote:
-> On 23-11-2018 12:21, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > Setting up and tearing down debugfs is current unbalanced, as seen by
-> > this error during resume from suspend:
-> >
-> >     [  752.134067] dwc-eth-dwmac 2490000.ethernet eth0: ERROR failed to=
- create debugfs directory
-> >     [  752.134347] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup=
-: failed debugFS registration
-> >
-> > The imbalance happens because the driver creates the debugfs hierarchy
-> > when the device is opened and tears it down when the device is closed.
-> > There's little gain in that, and it could be argued that it is even
-> > surprising because it's not usually done for other devices. Fix the
-> > imbalance by moving the debugfs creation and teardown to the driver's
-> > ->probe() and ->remove() implementations instead.
-> >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >
->=20
-> Did you test trying to dump "descriptors_status" file when
-> interface is not open ? I think that's the main reason why this
-> is not in probe ...
+Sorry for the delay. I'd like to take a step back and ask some broader questions -
 
-Indeed, that seems to cause a hang. Still, it doesn't sound like the
-right things to repeatedly create and remove debugfs files just because
-we can't provide the contents when the device is down.
+- Is the end goal of this patchset to randomize loading kernel modules, or most/all
+   executable kernel memory allocations, including bpf, kprobes, etc?
 
-How about we return an empty file or an error code instead when the
-interface is down?
+- It seems that a lot of complexity and heuristics are introduced just to
+   accommodate the potential fragmentation that can happen when the module vmalloc
+   space starts to get fragmented with bpf filters. I'm partial to the idea of
+   splitting or having bpf own its own vmalloc space, similar to what Ard is already
+   implementing for arm64.
 
-Thierry
+   So a question for the bpf and x86 folks, is having a dedicated vmalloc region
+   (as well as a seperate bpf_alloc api) for bpf feasible or desirable on x86_64?
 
---SFyWQ0h3ruR435lw
-Content-Type: application/pgp-signature; name="signature.asc"
+   If bpf filters need to be within 2 GB of the core kernel, would it make sense
+   to carve out a portion of the current module region for bpf filters?  According
+   to Documentation/x86/x86_64/mm.txt, the module region is ~1.5 GB. I am doubtful
+   that any real system will actually have 1.5 GB worth of kernel modules loaded.
+   Is there a specific reason why that much space is dedicated to kernel modules,
+   and would it be feasible to split that region cleanly with bpf?
 
------BEGIN PGP SIGNATURE-----
+- If bpf gets its own dedicated vmalloc space, and we stick to the single task
+   of randomizing *just* kernel modules, could the vmalloc optimizations and the
+   "backup" area be dropped? The benefits of the vmalloc optimizations seem to
+   only be noticeable when we get to thousands of module_alloc allocations -
+   again, a concern caused by bpf filters sharing the same space with kernel
+   modules.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlv8EnsACgkQ3SOs138+
-s6Fb6A//Z2w00B6tsi06+/dvF5NfOBe1/Qe584yHpemrWRQouopxgAxuzUsQ9DkT
-ctl5xyuWtoGlpgKJiuOsfFC6/NtbvB104tZ/1P1TSrOqoYKOBZu9TO9dD/kkrEZP
-f/Q8qHbqlkbaCz9stdxwzgLQGiUKYq2oOJ9BFmH3Nq73s6VxJtiDc46B5hgNNUwR
-sInUnW6eXZSyXidQoNwOjAukXO5OGvE6ALPlBmd3dcQjRRo0OiqB/8NLYhbflcBc
-/Pac0Lyr8xOm9ZdhFWB9k9TxYjDkHdaMREVkmGPkOjcr7I3GYqP8928fILd0Mell
-pirV6jstA+MiUmELZMyyCnbHPiQ/pj2CY12mmfs6FfYSEF/5vyEpE1rUGKSqhC4r
-GJ7E31zWMlP8aOdUfY042BRwAgBuPCSEZFt5GHzfDVt0GqR9AQZi01flfnRUMmrL
-TdrJOc1MlNOrGasihTd4NSw8SbuwB+R5UYHEmX7rmlDlXQuWGmB0baCGePOpbYjZ
-5uNc4WfA8k7v2gTlW6G+6RuPEAYZHdNtF0W2csZBPm5fJbKPZVOmDwqjwmFwiui6
-O+VRu/NhQq5mqRAtCRXaxYrAKkTejABTKTHhIq1EAr+QzVRNZlofV8k8FSGHpWzg
-uiTiy1+1GmYa1RiFIclPTruwaNEcEkrjUex3tuZVfy93bUrNP1s=
-=T5F5
------END PGP SIGNATURE-----
+   So tldr, it seems to me that the concern of fragmentation, the vmalloc
+   optimizations, and the main purpose of the backup area - basically, the more
+   complex parts of this patchset - stems squarely from the fact that bpf filters
+   share the same space as modules on x86. If we were to focus on randomizing
+   *just* kernel modules, and if bpf and modules had their own dedicated regions,
+   then I *think* the concrete use cases for the backup area and the vmalloc
+   optimizations (if we're strictly considering just kernel modules) would
+   mostly disappear (please correct me if I'm in the wrong here). Then tackling the
+   randomization of bpf allocations could potentially be a separate task on its own.
 
---SFyWQ0h3ruR435lw--
+Thanks!
+
+Jessica
+
+>Performance
+>===========
+>Simulations were run using module sizes derived from the x86_64 modules to
+>measure the allocation performance at various levels of fragmentation and
+>whether the backup area was used.
+>
+>Capacity
+>--------
+>There is a slight reduction in the capacity of modules as simulated by the
+>x86_64 module sizes of <1000. Note this is a worst case, since in practice
+>module allocations in the 1000's will consist of smaller BPF JIT allocations or
+>kprobes which would fit better in the random area.
+>
+>Allocation time
+>---------------
+>Below are three sets of measurements in ns of the allocation time as measured by
+>the included kselftests. The first two columns are this new algorithm with and
+>with out the vmalloc optimizations for trying random addresses quickly. They are
+>included for consideration of whether the changes are worth it. The last column
+>is the performance of the original algorithm.
+>
+>Modules Vmalloc optimization    No Vmalloc Optimization Existing Module KASLR
+>1000    1433                    1993                    3821
+>2000    2295                    3681                    7830
+>3000    4424                    7450                    13012
+>4000    7746                    13824                   18106
+>5000    12721                   21852                   22572
+>6000    19724                   33926                   26443
+>7000    27638                   47427                   30473
+>8000    37745                   64443                   34200
+>
+>These allocations are not taking very long, but it may show up on systems with
+>very high usage of the module space (BPF JITs). If the trade-off of touching
+>vmalloc doesn't seem worth it to people, I can remove the optimizations.
+>
+>Randomness
+>----------
+>Unlike the existing algorithm, the amount of randomness provided has a
+>dependency on the number of modules allocated and the sizes of the modules text
+>sections. The entropy provided for the Nth allocation will come from three
+>sources of randomness, the range of addresses for the random area, the
+>probability the section will be allocated in the backup area and randomness from
+>the number of modules already allocated in the backup area. For computing a
+>lower bound entropy in the following calculations, the randomness of the modules
+>already in the backup area, or overlapping from the random area, is ignored
+>since it is usually small and will only increase the entropy. Below is an
+>attempt to compute a worst case value for entropy to compare to the existing
+>algorithm.
+>
+>For probability of the Nth allocation being in the backup area, p, a lower bound
+>entropy estimate is calculated here as:
+>
+>Random Area Slots = ((2/3)*1073741824)/4096 = 174762
+>
+>Entropy = -( (1-p)*log2((1-p)/174762) + p*log2(p/1024) )
+>
+>For >8000 modules the entropy remains above 17.3. For non-speculative control
+>flow attacks, an attack might crash the system. So the probability of the
+>first guess being right can be more important than the Nth guess. KASLR schemes
+>usually have equal probability for each possible position, but in this scheme
+>that is not the case. So a more conservative comparison to existing schemes is
+>the amount of information that would have to be guessed correctly for the
+>position that has the highest probability for having the Nth module allocated
+>(as that would be the attackers best guess):
+>
+>Min Info = MIN(-log2(p/1024), -log2((1-p)/174762))
+>
+>Allocations     Entropy
+>1000            17.4
+>2000            17.4
+>3000            17.4
+>4000            16.8
+>5000            15.8
+>6000            14.9
+>7000            14.8
+>8000            14.2
+>
+>If anyone is keeping track, these numbers are different than as reported in V2,
+>because they are generated using the more compact allocation size heuristic that
+>is included in the kselftest rather than the real much larger dataset. The
+>heuristic generates randomization benchmarks that are slightly slower than the
+>real dataset. The real dataset also isn't representative of the case of mostly
+>smaller BPF filters, so it represents a worst case lower bound for entropy and
+>in practice 17+ bits should be maintained to much higher number of modules.
+>
+>PTE usage
+>---------
+>Since the allocations are spread out over a wider address space, there is
+>increased PTE usage which should not exceed 1.3MB more than the old algorithm.
+>
+>
+>Changes for V9:
+> - Better explanations in commit messages, instructions in kselftests (Andrew
+>   Morton)
+>
+>Changes for V8:
+> - Simplify code by removing logic for optimum handling of lazy free areas
+>
+>Changes for V7:
+> - More 0-day build fixes, readability improvements (Kees Cook)
+>
+>Changes for V6:
+> - 0-day build fixes by removing un-needed functional testing, more error
+>   handling
+>
+>Changes for V5:
+> - Add module_alloc test module
+>
+>Changes for V4:
+> - Fix issue caused by KASAN, kmemleak being provided different allocation
+>   lengths (padding).
+> - Avoid kmalloc until sure its needed in __vmalloc_node_try_addr.
+> - Fixed issues reported by 0-day.
+>
+>Changes for V3:
+> - Code cleanup based on internal feedback. (thanks to Dave Hansen and Andriy
+>   Shevchenko)
+> - Slight refactor of existing algorithm to more cleanly live along side new
+>   one.
+> - BPF synthetic benchmark
+>
+>Changes for V2:
+> - New implementation of __vmalloc_node_try_addr based on the
+>   __vmalloc_node_range implementation, that only flushes TLB when needed.
+> - Modified module loading algorithm to try to reduce the TLB flushes further.
+> - Increase "random area" tries in order to increase the number of modules that
+>   can get high randomness.
+> - Increase "random area" size to 2/3 of module area in order to increase the
+>   number of modules that can get high randomness.
+> - Fix for 0day failures on other architectures.
+> - Fix for wrong debugfs permissions. (thanks to Jann Horn)
+> - Spelling fix. (thanks to Jann Horn)
+> - Data on module_alloc performance and TLB flushes. (brought up by Kees Cook
+>   and Jann Horn)
+> - Data on memory usage. (suggested by Jann)
+>
+>
+>Rick Edgecombe (4):
+>  vmalloc: Add __vmalloc_node_try_addr function
+>  x86/modules: Increase randomization for modules
+>  vmalloc: Add debugfs modfraginfo
+>  Kselftest for module text allocation benchmarking
+>
+> arch/x86/Kconfig                              |   3 +
+> arch/x86/include/asm/kaslr_modules.h          |  38 ++
+> arch/x86/include/asm/pgtable_64_types.h       |   7 +
+> arch/x86/kernel/module.c                      | 111 ++++--
+> include/linux/vmalloc.h                       |   3 +
+> lib/Kconfig.debug                             |   9 +
+> lib/Makefile                                  |   1 +
+> lib/test_mod_alloc.c                          | 375 ++++++++++++++++++
+> mm/vmalloc.c                                  | 228 +++++++++--
+> tools/testing/selftests/bpf/test_mod_alloc.sh |  29 ++
+> 10 files changed, 743 insertions(+), 61 deletions(-)
+> create mode 100644 arch/x86/include/asm/kaslr_modules.h
+> create mode 100644 lib/test_mod_alloc.c
+> create mode 100755 tools/testing/selftests/bpf/test_mod_alloc.sh
+>
+>-- 
+>2.17.1
+>
