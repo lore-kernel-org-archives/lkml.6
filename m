@@ -2,96 +2,214 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C998C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 04:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE32C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 04:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28A8F20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 04:36:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CF7A20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 04:39:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tsinu95v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28A8F20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VX9Py2N4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CF7A20855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726229AbeKZP3m (ORCPT
+        id S1726248AbeKZPc0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 10:29:42 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43742 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbeKZP3m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 10:29:42 -0500
-Received: by mail-pf1-f196.google.com with SMTP id w73so5924684pfk.10
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Nov 2018 20:36:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FIonHlRVt3NEbmkKbed+eS7OPv0i0CvU1yqVFuaPXxs=;
-        b=tsinu95vujGmz7Dr3g8CnPgdMUVIEaDQCVAiCLnZtBAyii1mmaz1xmN/aoHVGJg1tM
-         wlbxJBV2iX7p+cpjBz5SyGd99cfd9Zz/IjA3yrvg0w9K4losesbPwpRh5T3U94dobzkq
-         RBXEYloR3S9+3b4vym8uOfNVbe5sO4YtZoHodc3isOJFLLoTeeCvwkGRY8IaE7KacNwQ
-         1uwOZRyQ4FGvhwAPCrwCweNSjSs3UCrcadFEh19ZoY/XCz6UPNX8k3Zxn3fweAPBbGXj
-         UOy5PWfowwanTjzo7W/S2cbEMN8P+qYJksbIsDSbRMQ//HHf5bQp4MkJINfxdBOTcveP
-         21Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FIonHlRVt3NEbmkKbed+eS7OPv0i0CvU1yqVFuaPXxs=;
-        b=jtxQlTrzNdhE21HkzCvn7rdIhAKFtSx1kraMHrR4eekGEHVxRrLqQnyp+7ebBiO+Hy
-         6B3ebqM1Ei8KZjHx07e2OZQlVSJuWJNuVcAk8/GF6D4lBhG/rRxrlgw3ODJvUdeDNzzK
-         XR9SIU9MYrQk5/YpGvI2sa7zXxnHU6f5MzJjpEoghWdFnhpr7eQztrW0H1MXocV+NLFf
-         NEEuiQB5GpETLkoGCGwnvV9i92rSTy2l/atLCO9VnL9B+oapQ0pm9ulhqRVn6oMC7kZE
-         0jNr04y6xEmuqkKL1bVRDh8RqSl2lCqxj1IvSLAuF5w2PcvZPAeXHtgc2v6GfPZn4P9U
-         WNuQ==
-X-Gm-Message-State: AA+aEWbCBiB99XkORUPfuCVxEIF6biA55KMD4+EYSx41tbloQDnZaMkx
-        mccz2TxXaj4TqOrTNuu065M=
-X-Google-Smtp-Source: AFSGD/Uwehv8aGQsqMWyafrbup2OfBbw42teXEAtuURCNW6Hk99Wr/vUNuvNVNfNskNu+D85SGI/gA==
-X-Received: by 2002:a63:f241:: with SMTP id d1mr23450646pgk.2.1543207009872;
-        Sun, 25 Nov 2018 20:36:49 -0800 (PST)
-Received: from localhost ([175.223.33.236])
-        by smtp.gmail.com with ESMTPSA id 202sm61319493pfy.87.2018.11.25.20.36.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Nov 2018 20:36:48 -0800 (PST)
-Date:   Mon, 26 Nov 2018 13:36:45 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] printk: Make printk_emit() local function.
-Message-ID: <20181126043645.GC540@jagdpanzerIV>
-References: <1542898768-5732-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181123122405.3iqc6bvdxkngntzl@pathway.suse.cz>
- <d2dd8a02-4e1d-7e9b-4639-fe3a640a2742@i-love.sakura.ne.jp>
- <5cc99d2c-c408-34f7-d1fc-e1cd2a9e31da@i-love.sakura.ne.jp>
+        Mon, 26 Nov 2018 10:32:26 -0500
+Received: from ozlabs.org ([203.11.71.1]:54779 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726144AbeKZPc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 10:32:26 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 433Dht0Pdnz9s3C;
+        Mon, 26 Nov 2018 15:39:26 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1543207170;
+        bh=TGwz4jyk9wheW3vbXF1li0Al3+LVO7MG++/twsmL16w=;
+        h=Date:From:To:Cc:Subject:From;
+        b=VX9Py2N4wI5IOgpnxj0hhoCCPcqn2XcdB0fgBlAm4Jb97gpXToL5k00We0T0SBBcv
+         ZCATYJCmrKOdDGRDrX+B+5XPrMMVSzMaR1BdarNrocAiC+M1jgCHVeC1fLnYkYha7g
+         n92mCqD95V96H7aUTQaQQj4w7x/iKbWMq3VM61ZQ02IzK7Ys+ebE5H+kw0C08KktC1
+         KkcO84OtLzO3fCWjbARaKt3MDZShHg7ows7Hd8Fvr34ljA7tdubtvqHZQgg9hjMUBn
+         HX5Q9Vck1ZOfLaDHi3TvdYxDuOBpr9Z3xhVwftiR8ETrWZeJVJN/1wAqCIosTQ+O1r
+         3tEuVCoVCkv2Q==
+Date:   Mon, 26 Nov 2018 15:39:25 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Babu Moger <Babu.Moger@amd.com>, Borislav Petkov <bp@suse.de>
+Subject: linux-next: manual merge of the tip tree with the vfs tree
+Message-ID: <20181126153925.3ab6b337@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5cc99d2c-c408-34f7-d1fc-e1cd2a9e31da@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/3BX=4/RIDil5BdQBMqHiwwS"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (11/24/18 13:10), Tetsuo Handa wrote:
-> Subject: [PATCH v2] printk: Make printk_emit() local function.
-> 
-> printk_emit() is called from only devkmsg_write() in the same file.
-> Save object size by making it a local function.
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+--Sig_/3BX=4/RIDil5BdQBMqHiwwS
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Looks good to me,
+Hi all,
 
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Today's linux-next merge of the tip tree got a conflict in:
 
-	-ss
+  arch/x86/kernel/cpu/resctrl/rdtgroup.c
+
+between commit:
+
+  16ec1a5d58ea ("kernfs, sysfs, cgroup, intel_rdt: Support fs_context")
+(where the file is arch/x86/kernel/cpu/intel_rdt_rdtgroup.c)
+
+from the vfs tree and commit:
+
+  580ebb66cbb3 ("x86/resctrl: Add vendor check for the MBA software control=
+ler")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 37c0ccb50823,61b102dd51a5..000000000000
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@@ -2032,88 -2065,8 +2032,91 @@@ out
+  	rdt_last_cmd_clear();
+  	mutex_unlock(&rdtgroup_mutex);
+  	cpus_read_unlock();
+ +	return ret;
+ +}
+ +
+ +enum rdt_param {
+ +	Opt_cdp,
+ +	Opt_cdpl2,
+ +	Opt_mba_mpbs,
+ +	nr__rdt_params
+ +};
+ =20
+ -	return dentry;
+ +static const struct fs_parameter_spec rdt_param_specs[nr__rdt_params] =3D=
+ {
+ +	[Opt_cdp]	=3D { fs_param_is_flag },
+ +	[Opt_cdpl2]	=3D { fs_param_is_flag },
+ +	[Opt_mba_mpbs]	=3D { fs_param_is_flag },
+ +};
+ +
+ +static const char *const rdt_param_keys[nr__rdt_params] =3D {
+ +	[Opt_cdp]	=3D "cdp",
+ +	[Opt_cdpl2]	=3D "cdpl2",
+ +	[Opt_mba_mpbs]	=3D "mba_mbps",
+ +};
+ +
+ +static const struct fs_parameter_description rdt_fs_parameters =3D {
+ +	.name		=3D "rdt",
+ +	.nr_params	=3D nr__rdt_params,
+ +	.keys		=3D rdt_param_keys,
+ +	.specs		=3D rdt_param_specs,
+ +	.no_source	=3D true,
+ +};
+ +
+ +static int rdt_parse_param(struct fs_context *fc, struct fs_parameter *pa=
+ram)
+ +{
+ +	struct rdt_fs_context *ctx =3D rdt_fc2context(fc);
+ +	struct fs_parse_result result;
+ +	int opt;
+ +
+ +	opt =3D fs_parse(fc, &rdt_fs_parameters, param, &result);
+ +	if (opt < 0)
+ +		return opt;
+ +
+ +	switch (opt) {
+ +	case Opt_cdp:
+ +		ctx->enable_cdpl3 =3D true;
+ +		return 0;
+ +	case Opt_cdpl2:
+ +		ctx->enable_cdpl2 =3D true;
+ +		return 0;
+ +	case Opt_mba_mpbs:
+- 		ctx->enable_mba_mbps =3D true;
+- 		return 0;
+++		if (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL) {
+++			ctx->enable_mba_mbps =3D true;
+++			return 0;
+++		}
+++		break;
+ +	}
+ +
+ +	return -EINVAL;
+ +}
+ +
+ +static void rdt_fs_context_free(struct fs_context *fc)
+ +{
+ +	struct rdt_fs_context *ctx =3D rdt_fc2context(fc);
+ +
+ +	kernfs_free_fs_context(fc);
+ +	kfree(ctx);
+ +}
+ +
+ +static const struct fs_context_operations rdt_fs_context_ops =3D {
+ +	.free		=3D rdt_fs_context_free,
+ +	.parse_param	=3D rdt_parse_param,
+ +	.get_tree	=3D rdt_get_tree,
+ +};
+ +
+ +static int rdt_init_fs_context(struct fs_context *fc, struct dentry *refe=
+rence)
+ +{
+ +	struct rdt_fs_context *ctx;
+ +
+ +	ctx =3D kzalloc(sizeof(struct rdt_fs_context), GFP_KERNEL);
+ +	if (!ctx)
+ +		return -ENOMEM;
+ +
+ +	ctx->kfc.root =3D rdt_root;
+ +	ctx->kfc.magic =3D RDTGROUP_SUPER_MAGIC;
+ +	fc->fs_private =3D &ctx->kfc;
+ +	fc->ops =3D &rdt_fs_context_ops;
+ +	return 0;
+  }
+ =20
+  static int reset_all_ctrls(struct rdt_resource *r)
+
+--Sig_/3BX=4/RIDil5BdQBMqHiwwS
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv7eP0ACgkQAVBC80lX
+0GwLnAf+NcpW5uzfZwQwU+wzNDzQ7xS2g83eds5fNEXheWwkX2dYegLPDLOpS5V2
+pk6GZ9UvAzlVfl5LG3UNHpI2A33wSyYL1Fg3JBGgQ0FE6/coAACoGtpvd2Lm7qLy
+8zEYVN3YKTOXO9erKgwm//fLhExMIsHgjD5rKs1Bsh1VqW2/plzc3mL/AfRjMzSf
+a9qvTv1vSUmgMHu7jxaWC8ZnpUb4sqztb7S22/LKUIF++4NZTBV1DSVCNaaQEFj2
+/I/QhOXfG95C8BFUA6qXwagcv74DZ1LUlqYQw7MRX0xKlQhxW3DTAMU/W9ZglAIM
+t6PSFi8oht0/d4tvahbsjIKpkBj0yg==
+=dyMm
+-----END PGP SIGNATURE-----
+
+--Sig_/3BX=4/RIDil5BdQBMqHiwwS--
