@@ -2,117 +2,90 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F634C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C253CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:05:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC57320672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:04:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A80C20672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 18:05:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="Lw9f4pae"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC57320672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="lON9v+LK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A80C20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbeK0E7X (ORCPT
+        id S1727195AbeK0E74 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:59:23 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:37866 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726397AbeK0E7U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:59:20 -0500
-Received: by mail-it1-f196.google.com with SMTP id b5so29250158iti.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 10:04:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PqTq+H8+rhmPLG6tqGEachvR9RLFaxATqoCV/phnZGQ=;
-        b=Lw9f4paennw2Q7ERYGYf13QL1FEe8xX+NxItWg7dT86uTIxE6CA6xqC2DagjtU3aqu
-         JtoCrXTbTEym46o184VZvjfSsi0wU0CNg3iX3/UYitIcAo2af000amHmxeLr5hE0rxkT
-         qnJ/CBQfVqFuzNNBlde+2rvGFo64GKbOGA9W0HyceNRKniIaXvsKe9u1X4ESusWJantf
-         M4qMcRJ95em052Z4P8pghjv/XJgQ0afoEqPrfgwKzIIUXnoidlUf9mgZCKFEzoZPlgOc
-         oJ2orvxxl6Qn33jVhfR4FlRRXQUW7fn3pvtRUOInThi1VSI3eBD+7/ublnTh3Ka3fOc2
-         2S/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PqTq+H8+rhmPLG6tqGEachvR9RLFaxATqoCV/phnZGQ=;
-        b=GrVauiR7lYGaOtqpAila3g25tQCzrcQeEAmRle5jE9fo2YJAlJ8/FgNqmmw4ko0uTA
-         qqX1BPcGKPJsRR1Pq/dPF4xBn35q4ZwlVpYb34yKEPbwNit2wg9x9SC+h63mWS3gInRa
-         /NH82Gx/qAPKs0O5ATm7AWHHZZoi6Vv3WxhPtfC7ot1eecJjk3sKxJxHDdPaQkih/uZc
-         LD9uggFG4NfxnTFEjH598pqqmItw+WiBzRfK+xShjk3/0qkzaHmNEfsNiywNW+gGhMTz
-         VXRSAgyMdzuGdtWHDTukDAn6HmndcOcJlE6bmg+3VoCJ/ymPR6kIl+6pXWw8NQoasPka
-         XTig==
-X-Gm-Message-State: AA+aEWa0eIQBVviE+gC0SjSN7CP91AywchGWFV9Za6+uergrNsV8l5wR
-        xOtJaTopoRaPoUrMZibU8f64Uw==
-X-Google-Smtp-Source: AFSGD/VMh/JR2/LSxaV6pJqJ8CN1srsI4trGfHLzd6kdp2ASaAmV/OX8sKXihw4FfTLaqvPSOOMEcg==
-X-Received: by 2002:a02:8cce:: with SMTP id n14mr26118375jal.125.1543255467182;
-        Mon, 26 Nov 2018 10:04:27 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id r133-v6sm566263itb.17.2018.11.26.10.04.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Nov 2018 10:04:26 -0800 (PST)
-Subject: Re: [Intel-wired-lan] [PATCH V2] mm: Replace all open encodings for
- NUMA_NO_NODE
-To:     jeffrey.t.kirsher@intel.com,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     hverkuil@xs4all.nl, linux-fbdev@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-rdma@vger.kernel.org,
-        netdev@vger.kernel.org, vkoul@kernel.org,
-        dri-devel@lists.freedesktop.org, linux-block@vger.kernel.org,
-        sparclinux@vger.kernel.org, iommu@lists.linux-foundation.org,
-        intel-wired-lan@lists.osuosl.org, linux-alpha@vger.kernel.org,
-        dmaengine@vger.kernel.org, jiangqi903@gmail.com,
-        akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
-        ocfs2-devel@oss.oracle.com, linux-media@vger.kernel.org
-References: <1543235202-9075-1-git-send-email-anshuman.khandual@arm.com>
- <c1b8de1a8e9d4d215b56498e2d5b83a02083483a.camel@intel.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <4d0840f2-bd96-e671-8120-56ef33a37816@kernel.dk>
-Date:   Mon, 26 Nov 2018 11:04:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 26 Nov 2018 23:59:56 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:37934 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726260AbeK0E74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 23:59:56 -0500
+Received: from zn.tnic (p200300EC2BDEFE00DCA0409AA15535E1.dip0.t-ipconnect.de [IPv6:2003:ec:2bde:fe00:dca0:409a:a155:35e1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F0D1F1EC0322;
+        Mon, 26 Nov 2018 19:05:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1543255502;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=ChvP+UjJ7prXGEQ3jKDqJr2y9tMZ8xxMzhAsQHE/AzQ=;
+        b=lON9v+LKRr14FAl7ApzmzkGLHJFg/Bp1B+/K7WuJVpVSdH36rMceiqaTPLHCSRN0Dzwy+7
+        akztekR99vEZ58HadsS7Qc1FydMIJVHNieZ2n94hvpyBQxlz7iU3m4qmR4if/otRnJ6ycn
+        Ilz8lYkSmsLQ3rskFTPHDOlc+E+CNdc=
+Date:   Mon, 26 Nov 2018 19:04:55 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Lianbo Jiang <lijiang@redhat.com>, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org, x86@kernel.org,
+        linux-ia64@vger.kernel.org, linux-efi@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        ard.biesheuvel@linaro.org, tony.luck@intel.com,
+        fenghua.yu@intel.com, dyoung@redhat.com, bhe@redhat.com
+Subject: Re: [PATCH 0/2 RESEND v7] add reserved e820 ranges to the kdump
+ kernel e820 table
+Message-ID: <20181126180455.GI4843@zn.tnic>
+References: <20181124051223.19994-1-lijiang@redhat.com>
+ <d457ed46-d983-20b2-ad7f-9eaa6d98f2bf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <c1b8de1a8e9d4d215b56498e2d5b83a02083483a.camel@intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <d457ed46-d983-20b2-ad7f-9eaa6d98f2bf@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/26/18 10:56 AM, Jeff Kirsher wrote:
-> On Mon, 2018-11-26 at 17:56 +0530, Anshuman Khandual wrote:
->> At present there are multiple places where invalid node number is
->> encoded
->> as -1. Even though implicitly understood it is always better to have
->> macros
->> in there. Replace these open encodings for an invalid node number
->> with the
->> global macro NUMA_NO_NODE. This helps remove NUMA related assumptions
->> like
->> 'invalid node' from various places redirecting them to a common
->> definition.
->>
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+On Mon, Nov 26, 2018 at 09:44:46AM -0800, Dave Hansen wrote:
+> On 11/23/18 9:12 PM, Lianbo Jiang wrote:
+> > These patches add the new I/O resource descriptor 'IORES_DESC_RESERVED'
+> > for the iomem resources search interfaces, and in order to make it still
+> > work after the new descriptor is added, these codes originally related
+> > to 'IORES_DESC_NONE' have been updated.
 > 
-> For the 'ixgbe' driver changes.
+> I'm having a really hard time figuring out what problem these patches solve.
 > 
-> Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+> What end-user visible behavior does this set change?
 
-Lost the original, but for mtip32xx:
+Yeah, that was a long process of digging out the "why".
 
-Acked-by: Jens Axboe <axboe@kernel.dk>
+I'd recommend reading the previous threads and, more specifically:
+
+https://lkml.kernel.org/r/CABhMZUUscS3jUZUSM5Y6EYJK6weo7Mjj5-EAKGvbw0qEe%2B38zw@mail.gmail.com
+
+in short: we need to export e820 reserved ranges to the second kernel so
+that it can talk to PCI devices properly. (And I'm wondering how it did
+work until now...)
 
 -- 
-Jens Axboe
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
