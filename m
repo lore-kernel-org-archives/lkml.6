@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC9FC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D82D8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E449920663
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E449920663
+	by mail.kernel.org (Postfix) with ESMTP id A702320672
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 17:52:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A702320672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbeK0Eq6 (ORCPT
+        id S1727072AbeK0ErB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:46:58 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:43808 "EHLO
+        Mon, 26 Nov 2018 23:47:01 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:43826 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbeK0Eq5 (ORCPT
+        with ESMTP id S1726735AbeK0ErA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 23:46:57 -0500
+        Mon, 26 Nov 2018 23:47:00 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id A3E1627DA16
+        with ESMTPSA id DCC6A27AA40
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     lee.jones@linaro.org
 Cc:     gwendal@chromium.org, drinkcat@chromium.org,
         linux-kernel@vger.kernel.org, groeck@chromium.org,
         kernel@collabora.com, bleung@chromium.org,
         Olof Johansson <olof@lixom.net>
-Subject: [PATCH v2 1/8] mfd / platform: cros_ec: use devm_mfd_add_devices.
-Date:   Mon, 26 Nov 2018 18:51:51 +0100
-Message-Id: <20181126175158.5425-2-enric.balletbo@collabora.com>
+Subject: [PATCH v2 4/8] mfd / platform: cros_ec: move debugfs attributes to its own driver.
+Date:   Mon, 26 Nov 2018 18:51:54 +0100
+Message-Id: <20181126175158.5425-5-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181126175158.5425-1-enric.balletbo@collabora.com>
 References: <20181126175158.5425-1-enric.balletbo@collabora.com>
@@ -45,153 +45,273 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_mfd_add_devices() for adding cros-ec core MFD child devices. This
-reduces the need of remove callback from platform/chrome for removing the
-MFD child devices.
+The entire way how cros debugfs attibutes are created is broken.
+cros_ec_debugfs should be its own driver and its attributes should be
+associated with a debugfs driver not the mfd driver.
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
 Changes in v2:
-- Use devm only for the cros-ec core.
+- Add a "default MFD_CROS_EC_CHARDEV" in Kconfig for this.
+- Remove the checks for missing debug_info, are not needed now.
+- Remove a comment that no longer applies.
 
- drivers/mfd/cros_ec.c                 | 14 +++-----------
- drivers/mfd/cros_ec_dev.c             |  1 +
- drivers/platform/chrome/cros_ec_i2c.c | 10 ----------
- drivers/platform/chrome/cros_ec_lpc.c |  4 ----
- drivers/platform/chrome/cros_ec_spi.c | 11 -----------
- 5 files changed, 4 insertions(+), 36 deletions(-)
+ drivers/mfd/cros_ec_dev.c                 | 41 +--------------
+ drivers/platform/chrome/Kconfig           | 11 ++++
+ drivers/platform/chrome/Makefile          |  4 +-
+ drivers/platform/chrome/cros_ec_debugfs.c | 62 +++++++++++++++--------
+ include/linux/mfd/cros_ec.h               |  6 ---
+ 5 files changed, 56 insertions(+), 68 deletions(-)
 
-diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index fe6f83766144..6acfe036d522 100644
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -129,8 +129,8 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 		}
- 	}
- 
--	err = mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO, &ec_cell, 1,
--			      NULL, ec_dev->irq, NULL);
-+	err = devm_mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO, &ec_cell,
-+				   1, NULL, ec_dev->irq, NULL);
- 	if (err) {
- 		dev_err(dev,
- 			"Failed to register Embedded Controller subdevice %d\n",
-@@ -147,7 +147,7 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 		 * - the EC is responsive at init time (it is not true for a
- 		 *   sensor hub.
- 		 */
--		err = mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO,
-+		err = devm_mfd_add_devices(ec_dev->dev, PLATFORM_DEVID_AUTO,
- 				      &ec_pd_cell, 1, NULL, ec_dev->irq, NULL);
- 		if (err) {
- 			dev_err(dev,
-@@ -181,14 +181,6 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- }
- EXPORT_SYMBOL(cros_ec_register);
- 
--int cros_ec_remove(struct cros_ec_device *ec_dev)
--{
--	mfd_remove_devices(ec_dev->dev);
--
--	return 0;
--}
--EXPORT_SYMBOL(cros_ec_remove);
--
- #ifdef CONFIG_PM_SLEEP
- int cros_ec_suspend(struct cros_ec_device *ec_dev)
- {
 diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index 8f9d6964173e..ff788d3e6d5f 100644
+index 3d7edc9ff604..308ec8dc92ba 100644
 --- a/drivers/mfd/cros_ec_dev.c
 +++ b/drivers/mfd/cros_ec_dev.c
-@@ -493,6 +493,7 @@ static int ec_device_remove(struct platform_device *pdev)
+@@ -389,6 +389,7 @@ static const struct mfd_cell cros_usbpd_charger_cells[] = {
+ };
  
- 	cros_ec_debugfs_remove(ec);
+ static const struct mfd_cell cros_ec_platform_cells[] = {
++	{ .name = "cros-ec-debugfs" },
+ 	{ .name = "cros-ec-lightbar" },
+ 	{ .name = "cros-ec-vbc" },
+ };
+@@ -495,9 +496,6 @@ static int ec_device_probe(struct platform_device *pdev)
+ 				 retval);
+ 	}
  
-+	mfd_remove_devices(ec->dev);
+-	if (cros_ec_debugfs_init(ec))
+-		dev_warn(dev, "failed to create debugfs directory\n");
+-
+ 	return 0;
+ 
+ failed:
+@@ -509,62 +507,25 @@ static int ec_device_remove(struct platform_device *pdev)
+ {
+ 	struct cros_ec_dev *ec = dev_get_drvdata(&pdev->dev);
+ 
+-	cros_ec_debugfs_remove(ec);
+-
+ 	mfd_remove_devices(ec->dev);
  	cdev_del(&ec->cdev);
  	device_unregister(&ec->class_dev);
  	return 0;
-diff --git a/drivers/platform/chrome/cros_ec_i2c.c b/drivers/platform/chrome/cros_ec_i2c.c
-index ef9b4763356f..9a009eaa4ada 100644
---- a/drivers/platform/chrome/cros_ec_i2c.c
-+++ b/drivers/platform/chrome/cros_ec_i2c.c
-@@ -317,15 +317,6 @@ static int cros_ec_i2c_probe(struct i2c_client *client,
- 	return 0;
  }
  
--static int cros_ec_i2c_remove(struct i2c_client *client)
+-static void ec_device_shutdown(struct platform_device *pdev)
 -{
--	struct cros_ec_device *ec_dev = i2c_get_clientdata(client);
+-	struct cros_ec_dev *ec = dev_get_drvdata(&pdev->dev);
 -
--	cros_ec_remove(ec_dev);
+-	/* Be sure to clear up debugfs delayed works */
+-	cros_ec_debugfs_remove(ec);
+-}
+-
+ static const struct platform_device_id cros_ec_id[] = {
+ 	{ DRV_NAME, 0 },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(platform, cros_ec_id);
+ 
+-static __maybe_unused int ec_device_suspend(struct device *dev)
+-{
+-	struct cros_ec_dev *ec = dev_get_drvdata(dev);
+-
+-	cros_ec_debugfs_suspend(ec);
 -
 -	return 0;
 -}
 -
- #ifdef CONFIG_PM_SLEEP
- static int cros_ec_i2c_suspend(struct device *dev)
- {
-@@ -376,7 +367,6 @@ static struct i2c_driver cros_ec_driver = {
- 		.pm	= &cros_ec_i2c_pm_ops,
- 	},
- 	.probe		= cros_ec_i2c_probe,
--	.remove		= cros_ec_i2c_remove,
- 	.id_table	= cros_ec_i2c_id,
- };
- 
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index e1b75775cd4a..14684a56e40f 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -327,7 +327,6 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
- 
- static int cros_ec_lpc_remove(struct platform_device *pdev)
- {
--	struct cros_ec_device *ec_dev;
- 	struct acpi_device *adev;
- 
- 	adev = ACPI_COMPANION(&pdev->dev);
-@@ -335,9 +334,6 @@ static int cros_ec_lpc_remove(struct platform_device *pdev)
- 		acpi_remove_notify_handler(adev->handle, ACPI_ALL_NOTIFY,
- 					   cros_ec_lpc_acpi_notify);
- 
--	ec_dev = platform_get_drvdata(pdev);
--	cros_ec_remove(ec_dev);
--
- 	return 0;
- }
- 
-diff --git a/drivers/platform/chrome/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
-index 2060d1483043..6cfbc2835beb 100644
---- a/drivers/platform/chrome/cros_ec_spi.c
-+++ b/drivers/platform/chrome/cros_ec_spi.c
-@@ -685,16 +685,6 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 	return 0;
- }
- 
--static int cros_ec_spi_remove(struct spi_device *spi)
+-static __maybe_unused int ec_device_resume(struct device *dev)
 -{
--	struct cros_ec_device *ec_dev;
+-	struct cros_ec_dev *ec = dev_get_drvdata(dev);
 -
--	ec_dev = spi_get_drvdata(spi);
--	cros_ec_remove(ec_dev);
+-	cros_ec_debugfs_resume(ec);
 -
 -	return 0;
 -}
 -
- #ifdef CONFIG_PM_SLEEP
- static int cros_ec_spi_suspend(struct device *dev)
- {
-@@ -733,7 +723,6 @@ static struct spi_driver cros_ec_driver_spi = {
- 		.pm	= &cros_ec_spi_pm_ops,
+-static const struct dev_pm_ops cros_ec_dev_pm_ops = {
+-#ifdef CONFIG_PM_SLEEP
+-	.suspend = ec_device_suspend,
+-	.resume = ec_device_resume,
+-#endif
+-};
+-
+ static struct platform_driver cros_ec_dev_driver = {
+ 	.driver = {
+ 		.name = DRV_NAME,
+-		.pm = &cros_ec_dev_pm_ops,
  	},
- 	.probe		= cros_ec_spi_probe,
--	.remove		= cros_ec_spi_remove,
- 	.id_table	= cros_ec_spi_id,
+ 	.id_table = cros_ec_id,
+ 	.probe = ec_device_probe,
+ 	.remove = ec_device_remove,
+-	.shutdown = ec_device_shutdown,
  };
  
+ static int __init cros_ec_dev_init(void)
+diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+index 29bd9837d520..4e4232b47764 100644
+--- a/drivers/platform/chrome/Kconfig
++++ b/drivers/platform/chrome/Kconfig
+@@ -131,4 +131,15 @@ config CROS_EC_VBC
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called cros_ec_vbc.
+ 
++config CROS_EC_DEBUGFS
++	tristate "Export ChromeOS EC internals in DebugFS"
++	depends on MFD_CROS_EC_CHARDEV && DEBUG_FS
++	default MFD_CROS_EC_CHARDEV
++	help
++	  This option exposes the ChromeOS EC device internals to
++	  userspace.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called cros_ec_debugfs.
++
+ endif # CHROMEOS_PLATFORMS
+diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+index 4081b7179df7..12a5c4d18c17 100644
+--- a/drivers/platform/chrome/Makefile
++++ b/drivers/platform/chrome/Makefile
+@@ -3,8 +3,7 @@
+ obj-$(CONFIG_CHROMEOS_LAPTOP)		+= chromeos_laptop.o
+ obj-$(CONFIG_CHROMEOS_PSTORE)		+= chromeos_pstore.o
+ obj-$(CONFIG_CHROMEOS_TBMC)		+= chromeos_tbmc.o
+-cros_ec_ctl-objs			:= cros_ec_sysfs.o \
+-					   cros_ec_debugfs.o
++cros_ec_ctl-objs			:= cros_ec_sysfs.o
+ obj-$(CONFIG_CROS_EC_CTL)		+= cros_ec_ctl.o
+ obj-$(CONFIG_CROS_EC_I2C)		+= cros_ec_i2c.o
+ obj-$(CONFIG_CROS_EC_SPI)		+= cros_ec_spi.o
+@@ -15,3 +14,4 @@ obj-$(CONFIG_CROS_EC_PROTO)		+= cros_ec_proto.o
+ obj-$(CONFIG_CROS_KBD_LED_BACKLIGHT)	+= cros_kbd_led_backlight.o
+ obj-$(CONFIG_CROS_EC_LIGHTBAR)		+= cros_ec_lightbar.o
+ obj-$(CONFIG_CROS_EC_VBC)		+= cros_ec_vbc.o
++obj-$(CONFIG_CROS_EC_DEBUGFS)		+= cros_ec_debugfs.o
+diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
+index c62ee8e610a0..6cacac53dfce 100644
+--- a/drivers/platform/chrome/cros_ec_debugfs.c
++++ b/drivers/platform/chrome/cros_ec_debugfs.c
+@@ -23,12 +23,16 @@
+ #include <linux/fs.h>
+ #include <linux/mfd/cros_ec.h>
+ #include <linux/mfd/cros_ec_commands.h>
++#include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/platform_device.h>
+ #include <linux/poll.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/wait.h>
+ 
++#define DRV_NAME "cros-ec-debugfs"
++
+ #define LOG_SHIFT		14
+ #define LOG_SIZE		(1 << LOG_SHIFT)
+ #define LOG_POLL_SEC		10
+@@ -423,8 +427,9 @@ static int cros_ec_create_pdinfo(struct cros_ec_debugfs *debug_info)
+ 	return 0;
+ }
+ 
+-int cros_ec_debugfs_init(struct cros_ec_dev *ec)
++static int cros_ec_debugfs_probe(struct platform_device *pd)
+ {
++	struct cros_ec_dev *ec = dev_get_drvdata(pd->dev.parent);
+ 	struct cros_ec_platform *ec_platform = dev_get_platdata(ec->dev);
+ 	const char *name = ec_platform->ec_name;
+ 	struct cros_ec_debugfs *debug_info;
+@@ -453,40 +458,57 @@ int cros_ec_debugfs_init(struct cros_ec_dev *ec)
+ 
+ 	ec->debug_info = debug_info;
+ 
++	dev_set_drvdata(&pd->dev, ec);
++
+ 	return 0;
+ 
+ remove_debugfs:
+ 	debugfs_remove_recursive(debug_info->dir);
+ 	return ret;
+ }
+-EXPORT_SYMBOL(cros_ec_debugfs_init);
+ 
+-void cros_ec_debugfs_remove(struct cros_ec_dev *ec)
++static int cros_ec_debugfs_remove(struct platform_device *pd)
+ {
+-	if (!ec->debug_info)
+-		return;
++	struct cros_ec_dev *ec = dev_get_drvdata(pd->dev.parent);
+ 
+ 	debugfs_remove_recursive(ec->debug_info->dir);
+ 	cros_ec_cleanup_console_log(ec->debug_info);
++
++	return 0;
+ }
+-EXPORT_SYMBOL(cros_ec_debugfs_remove);
+ 
+-void cros_ec_debugfs_suspend(struct cros_ec_dev *ec)
++static int __maybe_unused cros_ec_debugfs_suspend(struct device *dev)
+ {
+-	/*
+-	 * cros_ec_debugfs_init() failures are non-fatal; it's also possible
+-	 * that we initted things but decided that console log wasn't supported.
+-	 * We'll use the same set of checks that cros_ec_debugfs_remove() +
+-	 * cros_ec_cleanup_console_log() end up using to handle those cases.
+-	 */
+-	if (ec->debug_info && ec->debug_info->log_buffer.buf)
+-		cancel_delayed_work_sync(&ec->debug_info->log_poll_work);
++	struct cros_ec_dev *ec = dev_get_drvdata(dev);
++
++	cancel_delayed_work_sync(&ec->debug_info->log_poll_work);
++
++	return 0;
+ }
+-EXPORT_SYMBOL(cros_ec_debugfs_suspend);
+ 
+-void cros_ec_debugfs_resume(struct cros_ec_dev *ec)
++static int __maybe_unused cros_ec_debugfs_resume(struct device *dev)
+ {
+-	if (ec->debug_info && ec->debug_info->log_buffer.buf)
+-		schedule_delayed_work(&ec->debug_info->log_poll_work, 0);
++	struct cros_ec_dev *ec = dev_get_drvdata(dev);
++
++	schedule_delayed_work(&ec->debug_info->log_poll_work, 0);
++
++	return 0;
+ }
+-EXPORT_SYMBOL(cros_ec_debugfs_resume);
++
++static SIMPLE_DEV_PM_OPS(cros_ec_debugfs_pm_ops,
++			 cros_ec_debugfs_suspend, cros_ec_debugfs_resume);
++
++static struct platform_driver cros_ec_debugfs_driver = {
++	.driver = {
++		.name = DRV_NAME,
++		.pm = &cros_ec_debugfs_pm_ops,
++	},
++	.probe = cros_ec_debugfs_probe,
++	.remove = cros_ec_debugfs_remove,
++};
++
++module_platform_driver(cros_ec_debugfs_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Debug logs for ChromeOS EC");
++MODULE_ALIAS("platform:" DRV_NAME);
+diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+index a8b9f097eeb0..69e90376043e 100644
+--- a/include/linux/mfd/cros_ec.h
++++ b/include/linux/mfd/cros_ec.h
+@@ -336,10 +336,4 @@ u32 cros_ec_get_host_event(struct cros_ec_device *ec_dev);
+ /* sysfs stuff */
+ extern struct attribute_group cros_ec_attr_group;
+ 
+-/* debugfs stuff */
+-int cros_ec_debugfs_init(struct cros_ec_dev *ec);
+-void cros_ec_debugfs_remove(struct cros_ec_dev *ec);
+-void cros_ec_debugfs_suspend(struct cros_ec_dev *ec);
+-void cros_ec_debugfs_resume(struct cros_ec_dev *ec);
+-
+ #endif /* __LINUX_MFD_CROS_EC_H */
 -- 
 2.19.1
 
