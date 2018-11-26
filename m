@@ -2,55 +2,52 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52FEBC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23329C04EB8
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10AB12146F
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E10112089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 11:05:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SsQ4HjAv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10AB12146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7Mx1IA4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E10112089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731284AbeKZV7J (ORCPT
+        id S1731299AbeKZV7L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:59:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44892 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:59:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730303AbeKZV7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:59:08 -0500
+        id S1730303AbeKZV7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:59:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E9C320989;
-        Mon, 26 Nov 2018 11:05:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC0F120645;
+        Mon, 26 Nov 2018 11:05:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543230321;
-        bh=xo8DVLNL1MDifjmNe+9laNtRvnosxSNaa0yrEcyrUGA=;
+        s=default; t=1543230324;
+        bh=ElH9xEJI70Bbb3g5JLWstlUoXcK8xKpLk1OApFmwX0I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SsQ4HjAvIxilLNDeFE7pehtGRmt8uLiJ4NEouq/WGTzNlbI+1sVK6nFWyKzeYoU4i
-         hWhrXFEIPAgRhQcaNXaIo1z62s+oh0wogFKzbwN0G85rMRC9p8VqN5c9vRwZr4P6TN
-         6SRzZgrZxSKuqJaZ0vz5v5I/EOtlkF7aWsA/GR68=
+        b=e7Mx1IA4OuHJKgAPMXY19gIKI7cw1tMOrbCFe/l6qPVOxSfr3sP0QSUJRkPpOvJf8
+         KyxnIM/wrzcpqpLIWp0YSdHyNbZ1n+8Ye5PBzsfrG3fUDZwd0xHlX5J5aDEbBNjPLL
+         UZp/oASQCurl4qjefibhFiaHHTlYmEt/KlMJPiDk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, peterz@infradead.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com, bhe@redhat.com,
-        willy@infradead.org, linux-mm@kvack.org,
+        Gustavo Romero <gromero@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 092/118] x86/mm: Move LDT remap out of KASLR region on 5-level paging
-Date:   Mon, 26 Nov 2018 11:51:26 +0100
-Message-Id: <20181126105105.393471598@linuxfoundation.org>
+Subject: [PATCH 4.19 075/118] perf tools: Fix undefined symbol scnprintf in libperf-jvmti.so
+Date:   Mon, 26 Nov 2018 11:51:09 +0100
+Message-Id: <20181126105104.493028280@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105059.832485122@linuxfoundation.org>
 References: <20181126105059.832485122@linuxfoundation.org>
@@ -68,138 +65,133 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit d52888aa2753e3063a9d3a0c9f72f94aa9809c15 upstream
+[ Upstream commit 6ac2226229d931153331a93d90655a3de05b9290 ]
 
-On 5-level paging the LDT remap area is placed in the middle of the KASLR
-randomization region and it can overlap with the direct mapping, the
-vmalloc or the vmap area.
+Currently jvmti agent can not be used because function scnprintf is not
+present in the agent libperf-jvmti.so. As a result the JVM when using
+such agent to record JITed code profiling information will fail on
+looking up scnprintf:
 
-The LDT mapping is per mm, so it cannot be moved into the P4D page table
-next to the CPU_ENTRY_AREA without complicating PGD table allocation for
-5-level paging.
+  java: symbol lookup error: lib/libperf-jvmti.so: undefined symbol: scnprintf
 
-The 4 PGD slot gap just before the direct mapping is reserved for
-hypervisors, so it cannot be used.
+This commit fixes that by reverting to the use of snprintf, that can be
+looked up, instead of scnprintf, adding a proper check for the returned
+value in order to print a better error message when the jitdump file
+pathname is too long. Checking the returned value also helps to comply
+with some recent gcc versions, like gcc8, which will fail due to
+truncated writing checks related to the -Werror=format-truncation= flag.
 
-Move the direct mapping one slot deeper and use the resulting gap for the
-LDT remap area. The resulting layout is the same for 4 and 5 level paging.
-
-[ tglx: Massaged changelog ]
-
-Fixes: f55f0501cbf6 ("x86/pti: Put the LDT in its own PGD if PTI is on")
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: dave.hansen@linux.intel.com
-Cc: peterz@infradead.org
-Cc: boris.ostrovsky@oracle.com
-Cc: jgross@suse.com
-Cc: bhe@redhat.com
-Cc: willy@infradead.org
-Cc: linux-mm@kvack.org
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181026122856.66224-2-kirill.shutemov@linux.intel.com
+Signed-off-by: Gustavo Romero <gromero@linux.vnet.ibm.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+LPU-Reference: 1541117601-18937-2-git-send-email-gromero@linux.vnet.ibm.com
+Link: https://lkml.kernel.org/n/tip-mvpxxxy7wnzaj74cq75muw3f@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/x86/x86_64/mm.txt         | 10 ++++++----
- arch/x86/include/asm/page_64_types.h    | 12 +++++++-----
- arch/x86/include/asm/pgtable_64_types.h |  4 +---
- arch/x86/xen/mmu_pv.c                   |  6 +++---
- 4 files changed, 17 insertions(+), 15 deletions(-)
+ tools/perf/jvmti/jvmti_agent.c | 49 ++++++++++++++++++++++++++--------
+ 1 file changed, 38 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/x86/x86_64/mm.txt b/Documentation/x86/x86_64/mm.txt
-index 5432a96d31ff..05ef53d83a41 100644
---- a/Documentation/x86/x86_64/mm.txt
-+++ b/Documentation/x86/x86_64/mm.txt
-@@ -4,8 +4,9 @@ Virtual memory map with 4 level page tables:
- 0000000000000000 - 00007fffffffffff (=47 bits) user space, different per mm
- hole caused by [47:63] sign extension
- ffff800000000000 - ffff87ffffffffff (=43 bits) guard hole, reserved for hypervisor
--ffff880000000000 - ffffc7ffffffffff (=64 TB) direct mapping of all phys. memory
--ffffc80000000000 - ffffc8ffffffffff (=40 bits) hole
-+ffff880000000000 - ffff887fffffffff (=39 bits) LDT remap for PTI
-+ffff888000000000 - ffffc87fffffffff (=64 TB) direct mapping of all phys. memory
-+ffffc88000000000 - ffffc8ffffffffff (=39 bits) hole
- ffffc90000000000 - ffffe8ffffffffff (=45 bits) vmalloc/ioremap space
- ffffe90000000000 - ffffe9ffffffffff (=40 bits) hole
- ffffea0000000000 - ffffeaffffffffff (=40 bits) virtual memory map (1TB)
-@@ -30,8 +31,9 @@ Virtual memory map with 5 level page tables:
- 0000000000000000 - 00ffffffffffffff (=56 bits) user space, different per mm
- hole caused by [56:63] sign extension
- ff00000000000000 - ff0fffffffffffff (=52 bits) guard hole, reserved for hypervisor
--ff10000000000000 - ff8fffffffffffff (=55 bits) direct mapping of all phys. memory
--ff90000000000000 - ff9fffffffffffff (=52 bits) LDT remap for PTI
-+ff10000000000000 - ff10ffffffffffff (=48 bits) LDT remap for PTI
-+ff11000000000000 - ff90ffffffffffff (=55 bits) direct mapping of all phys. memory
-+ff91000000000000 - ff9fffffffffffff (=3840 TB) hole
- ffa0000000000000 - ffd1ffffffffffff (=54 bits) vmalloc/ioremap space (12800 TB)
- ffd2000000000000 - ffd3ffffffffffff (=49 bits) hole
- ffd4000000000000 - ffd5ffffffffffff (=49 bits) virtual memory map (512TB)
-diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/page_64_types.h
-index 6afac386a434..b99d497e342d 100644
---- a/arch/x86/include/asm/page_64_types.h
-+++ b/arch/x86/include/asm/page_64_types.h
-@@ -33,12 +33,14 @@
+diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
+index ac1bcdc17dae..f7eb63cbbc65 100644
+--- a/tools/perf/jvmti/jvmti_agent.c
++++ b/tools/perf/jvmti/jvmti_agent.c
+@@ -125,7 +125,7 @@ perf_get_timestamp(void)
+ }
  
- /*
-  * Set __PAGE_OFFSET to the most negative possible address +
-- * PGDIR_SIZE*16 (pgd slot 272).  The gap is to allow a space for a
-- * hypervisor to fit.  Choosing 16 slots here is arbitrary, but it's
-- * what Xen requires.
-+ * PGDIR_SIZE*17 (pgd slot 273).
-+ *
-+ * The gap is to allow a space for LDT remap for PTI (1 pgd slot) and space for
-+ * a hypervisor (16 slots). Choosing 16 slots for a hypervisor is arbitrary,
-+ * but it's what Xen requires.
-  */
--#define __PAGE_OFFSET_BASE_L5	_AC(0xff10000000000000, UL)
--#define __PAGE_OFFSET_BASE_L4	_AC(0xffff880000000000, UL)
-+#define __PAGE_OFFSET_BASE_L5	_AC(0xff11000000000000, UL)
-+#define __PAGE_OFFSET_BASE_L4	_AC(0xffff888000000000, UL)
+ static int
+-debug_cache_init(void)
++create_jit_cache_dir(void)
+ {
+ 	char str[32];
+ 	char *base, *p;
+@@ -144,8 +144,13 @@ debug_cache_init(void)
  
- #ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
- #define __PAGE_OFFSET           page_offset_base
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 04edd2d58211..84bd9bdc1987 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -111,9 +111,7 @@ extern unsigned int ptrs_per_p4d;
-  */
- #define MAXMEM			(1UL << MAX_PHYSMEM_BITS)
+ 	strftime(str, sizeof(str), JIT_LANG"-jit-%Y%m%d", &tm);
  
--#define LDT_PGD_ENTRY_L4	-3UL
--#define LDT_PGD_ENTRY_L5	-112UL
--#define LDT_PGD_ENTRY		(pgtable_l5_enabled() ? LDT_PGD_ENTRY_L5 : LDT_PGD_ENTRY_L4)
-+#define LDT_PGD_ENTRY		-240UL
- #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
- #define LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
+-	snprintf(jit_path, PATH_MAX - 1, "%s/.debug/", base);
+-
++	ret = snprintf(jit_path, PATH_MAX, "%s/.debug/", base);
++	if (ret >= PATH_MAX) {
++		warnx("jvmti: cannot generate jit cache dir because %s/.debug/"
++			" is too long, please check the cwd, JITDUMPDIR, and"
++			" HOME variables", base);
++		return -1;
++	}
+ 	ret = mkdir(jit_path, 0755);
+ 	if (ret == -1) {
+ 		if (errno != EEXIST) {
+@@ -154,20 +159,32 @@ debug_cache_init(void)
+ 		}
+ 	}
  
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index dd461c0167ef..2c84c6ad8b50 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -1897,7 +1897,7 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
- 	init_top_pgt[0] = __pgd(0);
+-	snprintf(jit_path, PATH_MAX - 1, "%s/.debug/jit", base);
++	ret = snprintf(jit_path, PATH_MAX, "%s/.debug/jit", base);
++	if (ret >= PATH_MAX) {
++		warnx("jvmti: cannot generate jit cache dir because"
++			" %s/.debug/jit is too long, please check the cwd,"
++			" JITDUMPDIR, and HOME variables", base);
++		return -1;
++	}
+ 	ret = mkdir(jit_path, 0755);
+ 	if (ret == -1) {
+ 		if (errno != EEXIST) {
+-			warn("cannot create jit cache dir %s", jit_path);
++			warn("jvmti: cannot create jit cache dir %s", jit_path);
+ 			return -1;
+ 		}
+ 	}
  
- 	/* Pre-constructed entries are in pfn, so convert to mfn */
--	/* L4[272] -> level3_ident_pgt  */
-+	/* L4[273] -> level3_ident_pgt  */
- 	/* L4[511] -> level3_kernel_pgt */
- 	convert_pfn_mfn(init_top_pgt);
+-	snprintf(jit_path, PATH_MAX - 1, "%s/.debug/jit/%s.XXXXXXXX", base, str);
+-
++	ret = snprintf(jit_path, PATH_MAX, "%s/.debug/jit/%s.XXXXXXXX", base, str);
++	if (ret >= PATH_MAX) {
++		warnx("jvmti: cannot generate jit cache dir because"
++			" %s/.debug/jit/%s.XXXXXXXX is too long, please check"
++			" the cwd, JITDUMPDIR, and HOME variables",
++			base, str);
++		return -1;
++	}
+ 	p = mkdtemp(jit_path);
+ 	if (p != jit_path) {
+-		warn("cannot create jit cache dir %s", jit_path);
++		warn("jvmti: cannot create jit cache dir %s", jit_path);
+ 		return -1;
+ 	}
  
-@@ -1917,8 +1917,8 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
- 	addr[0] = (unsigned long)pgd;
- 	addr[1] = (unsigned long)l3;
- 	addr[2] = (unsigned long)l2;
--	/* Graft it onto L4[272][0]. Note that we creating an aliasing problem:
--	 * Both L4[272][0] and L4[511][510] have entries that point to the same
-+	/* Graft it onto L4[273][0]. Note that we creating an aliasing problem:
-+	 * Both L4[273][0] and L4[511][510] have entries that point to the same
- 	 * L2 (PMD) tables. Meaning that if you modify it in __va space
- 	 * it will be also modified in the __ka space! (But if you just
- 	 * modify the PMD table to point to other PTE's or none, then you
+@@ -228,7 +245,7 @@ void *jvmti_open(void)
+ {
+ 	char dump_path[PATH_MAX];
+ 	struct jitheader header;
+-	int fd;
++	int fd, ret;
+ 	FILE *fp;
+ 
+ 	init_arch_timestamp();
+@@ -245,12 +262,22 @@ void *jvmti_open(void)
+ 
+ 	memset(&header, 0, sizeof(header));
+ 
+-	debug_cache_init();
++	/*
++	 * jitdump file dir
++	 */
++	if (create_jit_cache_dir() < 0)
++		return NULL;
+ 
+ 	/*
+ 	 * jitdump file name
+ 	 */
+-	scnprintf(dump_path, PATH_MAX, "%s/jit-%i.dump", jit_path, getpid());
++	ret = snprintf(dump_path, PATH_MAX, "%s/jit-%i.dump", jit_path, getpid());
++	if (ret >= PATH_MAX) {
++		warnx("jvmti: cannot generate jitdump file full path because"
++			" %s/jit-%i.dump is too long, please check the cwd,"
++			" JITDUMPDIR, and HOME variables", jit_path, getpid());
++		return NULL;
++	}
+ 
+ 	fd = open(dump_path, O_CREAT|O_TRUNC|O_RDWR, 0666);
+ 	if (fd == -1)
 -- 
 2.17.1
 
