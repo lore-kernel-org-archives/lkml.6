@@ -2,130 +2,100 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C6ACC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 00:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29059C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 00:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2D1E2084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 00:17:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAF412084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 00:19:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eQVq07mc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2D1E2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mIn5okrD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAF412084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726532AbeKZLJd (ORCPT
+        id S1726171AbeKZLL7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 06:09:33 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:51964 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbeKZLIW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 06:08:22 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAQ0FY3P097203;
-        Sun, 25 Nov 2018 18:15:34 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1543191334;
-        bh=2Vit5RiZHib93dEny9PteOYqGtzGPo28jGCpaIBnV+s=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=eQVq07mcs8eAtGrLFSX7ck+kduNiECRMTYEnnm5E9rgm1B72zRiQvS3BAr6DnJoCU
-         xmIQSU9P/nul1A5boFBgyCV5F2FpA3TGFW+8w7xm4jSB0PXWZ2ba6GWy7S811ry0At
-         /ZvMyRiNHmekRDR/V0ZhCTClzgFfr6smrRC7aYEo=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAQ0FYlf039070
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 25 Nov 2018 18:15:34 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sun, 25
- Nov 2018 18:15:34 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Sun, 25 Nov 2018 18:15:34 -0600
-Received: from legion.dal.desgin.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAQ0FYDI005257;
-        Sun, 25 Nov 2018 18:15:34 -0600
-Received: from localhost (uda0226610.dhcp.ti.com [128.247.59.147])
-        by legion.dal.desgin.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id wAQ0FYU04358;
-        Sun, 25 Nov 2018 18:15:34 -0600 (CST)
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Tony Lindgren <tony@atomide.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <netdev@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Andrew Lunn <andrew@lunn.ch>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: [PATCH linux-next 06/10] ARM: dts: dm814x: switch to use phy-gmii-sel
-Date:   Sun, 25 Nov 2018 18:15:27 -0600
-Message-ID: <20181126001531.12974-7-grygorii.strashko@ti.com>
-X-Mailer: git-send-email 2.10.5
-In-Reply-To: <20181126001531.12974-1-grygorii.strashko@ti.com>
-References: <20181126001531.12974-1-grygorii.strashko@ti.com>
+        Mon, 26 Nov 2018 06:11:59 -0500
+Received: from ozlabs.org ([203.11.71.1]:55687 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726027AbeKZLL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 06:11:58 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 4336x22xBhz9s29;
+        Mon, 26 Nov 2018 11:19:34 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1543191574;
+        bh=tRxW+omdH+QqFOjZVCxBvkcvMZa63hyB0pOlEvieRo0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=mIn5okrDYsQyFFen/MylOX9N6PGnVATKBJbX+dckzaaECO2vMD6+K9HBFhBxwoB7b
+         y5cGcx/+DFyGb1rLtsFfKRRGjAcNCSEOGG/A1j5nGSuw/+Iayu+g4SfFEOd8xHMlqZ
+         Sd+Jx1pdnv+eTuVYIRuiIe7vxVyelLvm6Gvi5nbqtm80b/gd0Z6b+XG0oadeY6zXWc
+         fCPDHGbYAlNz0FRTuIDEzjr4SLhxrKdRuAdzqBAzWLx6KFL4BfItzFFWJdLfsJbyL7
+         by5mQp0VsPoZoLevDmTO3ZzTvD7uR387F0+kdr1f7zg/bS+yRPAG3YKrZ3ClNWvb3U
+         9IhDb/Kvsj3CA==
+Date:   Mon, 26 Nov 2018 11:19:33 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Kees Cook <keescook@google.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build warning after merge of the f2fs tree
+Message-ID: <20181126111933.1b0fb324@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/61jSQ85djv1WbQ9/FxPbGSK"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to use phy-gmii-sel PHY instead of cpsw-phy-sel.
+--Sig_/61jSQ85djv1WbQ9/FxPbGSK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
----
- arch/arm/boot/dts/dm814x.dtsi | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+Hi Jaegeuk,
 
-diff --git a/arch/arm/boot/dts/dm814x.dtsi b/arch/arm/boot/dts/dm814x.dtsi
-index 601c57a..413ae19 100644
---- a/arch/arm/boot/dts/dm814x.dtsi
-+++ b/arch/arm/boot/dts/dm814x.dtsi
-@@ -343,6 +343,12 @@
- 					#size-cells = <1>;
- 					ranges = <0 0 0x800>;
- 
-+					phy_gmii_sel: phy-gmii-sel {
-+						compatible = "ti,dm814-phy-gmii-sel";
-+						reg = <0x650 0x4>;
-+						#phy-cells = <1>;
-+					};
-+
- 					scm_clocks: clocks {
- 						#address-cells = <1>;
- 						#size-cells = <0>;
-@@ -549,17 +555,14 @@
- 			cpsw_emac0: slave@4a100200 {
- 				/* Filled in by U-Boot */
- 				mac-address = [ 00 00 00 00 00 00 ];
-+				phys = <&phy_gmii_sel 1>;
-+
- 			};
- 
- 			cpsw_emac1: slave@4a100300 {
- 				/* Filled in by U-Boot */
- 				mac-address = [ 00 00 00 00 00 00 ];
--			};
--
--			phy_sel: cpsw-phy-sel@48140650 {
--				compatible = "ti,am3352-cpsw-phy-sel";
--				reg= <0x48140650 0x4>;
--				reg-names = "gmii-sel";
-+				phys = <&phy_gmii_sel 2>;
- 			};
- 		};
- 
--- 
-2.10.5
+After merging the f2fs tree, today's linux-next build
+(x86_64_allmodconfig) produced this warning:
 
+In file included from fs/f2fs/dir.c:11:
+fs/f2fs/f2fs.h: In function '__mark_inode_dirty_flag':
+fs/f2fs/f2fs.h:2388:6: warning: this statement may fall through [-Wimplicit=
+-fallthrough=3D]
+   if (set)
+      ^
+fs/f2fs/f2fs.h:2390:2: note: here
+  case FI_DATA_EXIST:
+  ^~~~
+
+Exposed by my use of -Wimplicit-fallthrough
+
+I am not sure why this has turned up now (as opposed to earlier today).
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/61jSQ85djv1WbQ9/FxPbGSK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlv7PBUACgkQAVBC80lX
+0GyWZgf/ZkYA1gJUFaIJwm03LPobMPWfJmqvZJQ4gqB1pmtAejp4eyePfiIymtt7
+XpCLqakTpnh0sDIyUd9AUrhO7DNiCyxrs+13mfF6JlolsF5HhCUrrZt+RhFoZcUW
+6in3JNUIwd9KK9vbhuP0XzuKXq0eXubSI4RoPC53wm38nIuPPv7E/IYQ0utmA5oN
+0qA2BFJqbHoYW6PIWy9ArITH6R0+nM7fs3zJYQ5AyeUhZ0L8BWk6lsOFrmNRUCy3
+pkvVWjch7zC699x7AA5OJ7EntKlvXGoCly2tMO0NfkuF1VmUIFPSriebO7txNTAX
+6eVJfGCeaHuc3sqg4cmPzTs8+Xq6/Q==
+=gpQL
+-----END PGP SIGNATURE-----
+
+--Sig_/61jSQ85djv1WbQ9/FxPbGSK--
