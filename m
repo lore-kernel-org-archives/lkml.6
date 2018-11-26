@@ -2,58 +2,64 @@ Return-Path: <SRS0=Hds+=OG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=DATE_IN_PAST_12_24,
-	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DATE_IN_PAST_12_24,
+	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB37CC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF7EC04EBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8079E21104
-	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:35:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36884208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 27 Nov 2018 12:35:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yIoCcBuB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8079E21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkDSc2Wq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36884208E4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729285AbeK0Xdo (ORCPT
+        id S1729415AbeK0Xdp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 27 Nov 2018 18:33:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33984 "EHLO mail.kernel.org"
+        Tue, 27 Nov 2018 18:33:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726407AbeK0Xdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:33:43 -0500
+        id S1726663AbeK0Xdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Nov 2018 18:33:44 -0500
 Received: from quaco.infradead.org (unknown [190.15.121.82])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A73D5208E4;
-        Tue, 27 Nov 2018 12:35:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 133B721104;
+        Tue, 27 Nov 2018 12:35:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543322155;
-        bh=5wfzqkuEgNVo5BjfJWGam44RxPiqvfW5xmVSFOFUrZc=;
+        s=default; t=1543322156;
+        bh=SAqhFFh+ig7tJ2zRM9jio72AcGI0+FeW9BwKg8y/D3Q=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yIoCcBuB/czwz0G1UvuIVKDlur0ewk1MRSSLRkMBxSwuIVxNrYCeCULhYcta2xIgs
-         2Ux2LSGOyinz+u/8A4o69z7nTAt5uEPvCYE1BDmGjN9VjdVrPDxpaSaQi73J32ZIoI
-         RSJOfAKfZvXRqcQ4NxM1Eu84S4CzM2FsUKCgD/Ho=
+        b=YkDSc2WqCrQeMFpQ1xmSA9pF0Kqr5TmV5uD+pHlqyLqwjuJmlT4YFaVBa64aX58CW
+         3ixKcRKK7yhYKaOaLRjq5nnI+tMmwJ3u5Ok09TfpjQ69vIFE7mGENo3iQotEdBMGhR
+         5tj1jHKGJSWzB6GN2n6Vcv9V0PR95LJi67+1nWsE=
 Received: by quaco.infradead.org (Postfix, from userid 1000)
-        id 4778141117; Mon, 26 Nov 2018 15:49:16 -0300 (-03)
-Date:   Mon, 26 Nov 2018 15:49:16 -0300
+        id 467B741116; Mon, 26 Nov 2018 16:02:17 -0300 (-03)
+Date:   Mon, 26 Nov 2018 16:02:17 -0300
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Stephane Eranian <eranian@google.com>,
-        linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@elte.hu
-Subject: Re: [PATCH] perf stat: fix csv mode column output for non-cgroup
- events
-Message-ID: <20181126184916.GD5518@kernel.org>
-References: <1541587845-9150-1-git-send-email-eranian@google.com>
- <20181122035811.GD5468@redhat.com>
- <20181122090835.GB15953@krava>
+To:     "Hunter, Adrian" <adrian.hunter@intel.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "leo.yan@linaro.org" <leo.yan@linaro.org>,
+        David Miller <davem@davemloft.net>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH 1/5] perf tools: Add fallback functions for cases where
+ cpumode is insufficient
+Message-ID: <20181126190217.GC18491@kernel.org>
+References: <20181031091043.23465-1-adrian.hunter@intel.com>
+ <20181031091043.23465-2-adrian.hunter@intel.com>
+ <20181105172946.GH11147@kernel.org>
+ <363DA0ED52042842948283D2FC38E4649C313381@IRSMSX106.ger.corp.intel.com>
+ <20181105193615.GG7077@kernel.org>
+ <363DA0ED52042842948283D2FC38E4649C3133B4@IRSMSX106.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181122090835.GB15953@krava>
+In-Reply-To: <363DA0ED52042842948283D2FC38E4649C3133B4@IRSMSX106.ger.corp.intel.com>
 X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,34 +67,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Nov 22, 2018 at 10:08:35AM +0100, Jiri Olsa escreveu:
-> On Thu, Nov 22, 2018 at 01:58:11AM -0200, Arnaldo Carvalho de Melo wrote:
-> > Em Wed, Nov 07, 2018 at 02:50:45AM -0800, Stephane Eranian escreveu:
-> > > When using the -x option, perf stat prints csv-style output
-> > > with one event per line.  For each event, it prints the count,
-> > > the unit, the event name, the cgroup, and a bunch of other event
-> > > specific fields (such as insn per cycles).
-> > > 
-> > > When you use csv-style mode, you expect a normalized output where
-> > > each event is printed with the same number of fields regardless of
-> > > what it is so it can easily be imported into a spreadsheet or parsed.
-> > > For instance, if an event does not have a unit, then print an empty field
-> > > for it. Although this approach was implemented for the unit, it was not
-> > > for the cgroup.  When mixing cgroup and non-cgroup events, then non-cgroup
-> > > events would not show an empty field, instead the next field was printed,
-> > > make columns not line up correctly.
-> > > 
-> > > This patch fixes the cgroup output issues by forcing an empty field
-> > > for non-cgroup events as soon as one event has cgroup.
+Em Mon, Nov 05, 2018 at 07:53:17PM +0000, Hunter, Adrian escreveu:
+> > -----Original Message-----
+> > From: Arnaldo Carvalho de Melo [mailto:acme@kernel.org]
+> > Sent: Monday, November 5, 2018 9:36 PM
+> > To: Hunter, Adrian <adrian.hunter@intel.com>
+> > Cc: Jiri Olsa <jolsa@redhat.com>; Andi Kleen <ak@linux.intel.com>; linux-
+> > kernel@vger.kernel.org; leo.yan@linaro.org; David Miller
+> > <davem@davemloft.net>; Mathieu Poirier <mathieu.poirier@linaro.org>
+> > Subject: Re: [PATCH 1/5] perf tools: Add fallback functions for cases where
+> > cpumode is insufficient
 > > 
-> > Looks sane, that nr_cgroups global variable at some point has to go to
-> > the evlist, but that is not introduced by this patch, Jiri, are you ok
-> > with it as well?
-> 
-> yep, looks good, sry I missed it
-> 
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
+> > Em Mon, Nov 05, 2018 at 07:21:44PM +0000, Hunter, Adrian escreveu:
+> > > > In Monday, November 5, 2018 7:30 PM, Arnaldo Carvalho de Melo wrote
+> > <SNIP>
+> > > > > +struct map *thread__find_map_fallback(struct thread *thread, u8
+> > > > cpumode,
+> > > > > +				      u64 addr, struct addr_location *al) {
+> > 
+> > > > You named one as _fallback...
+> > 
+> > > > > +	struct map *map = thread__find_map(thread, cpumode, addr, al);
+> > > > > +	struct machine *machine = thread->mg->machine;
+> > > > > +	u8 addr_cpumode = machine__addr_cpumode(machine, cpumode,
+> > > > addr);
+> > > > > +
+> > > > > +	if (map || addr_cpumode == cpumode)
+> > > > > +		return map;
+> > > > > +
+> > > > > +	return thread__find_map(thread, addr_cpumode, addr, al); }
+> > > > > +
+> > > > >  struct symbol *thread__find_symbol(struct thread *thread, u8
+> > cpumode,
+> > > > >  				   u64 addr, struct addr_location *al)  { @@ -
+> > > > 1585,6 +1603,15 @@
+> > > > > struct symbol *thread__find_symbol(struct thread *thread, u8
+> > cpumode,
+> > > > >  	return al->sym;
+> > > > >  }
+> > 
+> > > > > +struct symbol *thread__find_symbol_fb(struct thread *thread, u8
+> > > > cpumode,
+> > > > > +				      u64 addr, struct addr_location *al)
+> > 
+> > > > ... and the other as _fb, make it consistent, please.
+> > 
+> > > ok
+> > 
+> > > > > +{
+> > > > > +	al->sym = NULL;
+> > > > > +	if (thread__find_map_fallback(thread, cpumode, addr, al))
+> > > > > +		al->sym = map__find_symbol(al->map, al->addr);
+> > > > > +	return al->sym;
+> > > > > +}
+> > 
+> > > > >  /*
+> > > > >   * Callers need to drop the reference to al->thread, obtained in
+> > > > >   * machine__findnew_thread()
+> > > > > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> > > > > index 111ae858cbcb..04edc0eac376 100644
+> > > > > --- a/tools/perf/util/machine.c
+> > > > > +++ b/tools/perf/util/machine.c
+> > > > > @@ -2542,6 +2542,46 @@ int machine__get_kernel_start(struct
+> > > > > machine
+> > > > *machine)
+> > > > >  	return err;
+> > > > >  }
+> > 
+> > > > > +/*
+> > > > > + * machine__single_ku_as - Machine has same address space for
+> > > > > +kernel
+> > > > and user.
+> > > > > + * @machine: machine object
+> > > > > + *
+> > > > > + * Some architectures have a single address space for kernel and
+> > > > > +user addresses,
+> > > > > + * which makes it possible to determine if an address is in
+> > > > > +kernel space or user
+> > > > > + * space.
+> > > > > + */
+> > > > > +static bool machine__single_ku_as(struct machine *machine) {
+> > > > > +	return strcmp(perf_env__arch(machine->env), "sparc"); }
+> > 
+> > > > Can we avoid having this strcmp be done repeatedly?
+> > 
+> > > It is only done if there are mapping errors
+> > 
+> > >  > Can we avoid having this strcmp be done repeatedly? I.e. just make
+> > > this a
+> > > > boolean initialized at session start, when machine->env is setup, so
+> > > > we'd
+> > > > have:
+> > 
+> > > >    machine->single_address_space
+> > 
+> > > > Instead of a function?
+> > 
+> > > Sure  thing.
 
-Thanks, applied.
+Have you sent an update to this patch series addressing the concerns? I
+think that renaming that _fb to __fallback and having this
+machine->single_address_space is what is missing, I'll try to take a
+stab at this now and have it in my perf/core branch soon.
+
+But you have this already done, please send it.
 
 - Arnaldo
