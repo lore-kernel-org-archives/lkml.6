@@ -2,289 +2,172 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BAFCC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58391C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C184A20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:02:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uGnqSITq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C184A20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 098B420855
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:02:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 098B420855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726251AbeKZTz0 (ORCPT
+        id S1726290AbeKZTz4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 14:55:26 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52860 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbeKZTzZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 14:55:25 -0500
-Received: by mail-it1-f196.google.com with SMTP id i7so27049697iti.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Nov 2018 01:01:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=USgHcniwKGwN0vxuw7onv9n+9KWObAAEYs5PMvh5CKo=;
-        b=uGnqSITqRzIj6RCz/eI7zl5rNjqFrnm/KO9hdmqnckbKR5uqcPTEBTigyvF3P/20Yj
-         5h6rZxT1xncUCZQpcrOTs28bGHaNZgawgaDutCaHlfldUn++Lj5mUhld/GE4H+aSlwCu
-         dyNMCay4/Vauu+iHSClKv4qIS2aVD0Q2oyWeIk3hdPAQ3xdW80wBPNgXvbbydglsyxyj
-         lHaVkwMt+bc29NVFRxzZiXYV5brCiVXkbacXZRr4hWR3s5mH9L/wHW+ODN5Ex6fnqAL7
-         HXhFeQH9T386nNecWeEfc2OIinF9oQmIB/ZK3MbHDF73/f6tbQu03Llf96580LCHFL99
-         YlQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=USgHcniwKGwN0vxuw7onv9n+9KWObAAEYs5PMvh5CKo=;
-        b=RcgO3NbNrVlGF7X9n3b3Vk73OAQ3TTbGLcONgylydANxNqwsdMGLlOJehCgpYOPUtL
-         S1QVw35Z96GyQUqkeY4muDuR/MAIEqzi90IKERvCwXN6/9/HxyuoicJyo5Kxlbhlqlu7
-         9VXCrfZD7SzArw8+SyENUl4hkIGLPKuZuCdWQv0ojgozcHtluZl+BJwU/tuWNF0ildGb
-         Vpcw8WAYx9Wt9O/qfcDjaXE/pW/zbXtQGV8/qqSGxAUitbTg8/9KSg1w4KPXoFmKaCih
-         ODe/sUtxbNwYn6mQXv82Au6c/SkRBnLobDy4vtpZhrnccu3m7fqMl1K0w4XvjFyhYpRQ
-         Z5Jw==
-X-Gm-Message-State: AA+aEWZC6rKr80bSC5b7+LCjpNCk19E5x7z9OQtjjdwp7eQRo6HprQqN
-        CScLogcMIBWYnhxivm9be066flw8JnaEn4LDW/m26g==
-X-Google-Smtp-Source: AJdET5eqiImxPcTlQPnxSWR2cFDaOym0vsEOHS31yhUt3h7xII2GXp24rULZWEsGa18HU6UJr11+XTZXmAJh+8PskyA=
-X-Received: by 2002:a24:b009:: with SMTP id d9-v6mr20812343itf.166.1543222916463;
- Mon, 26 Nov 2018 01:01:56 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a02:b003:0:0:0:0:0 with HTTP; Mon, 26 Nov 2018 01:01:35
- -0800 (PST)
-In-Reply-To: <20181125230732.GE3065@bombadil.infradead.org>
-References: <000000000000f7cb53057b7ee3cb@google.com> <20181125212708.GD3065@bombadil.infradead.org>
- <20181125230732.GE3065@bombadil.infradead.org>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 26 Nov 2018 10:01:35 +0100
-Message-ID: <CACT4Y+afO-EDmXP_+5rx91i_UVJdYNqm52A-rNUGw7xpN5Ssng@mail.gmail.com>
-Subject: Re: WARNING: bad usercopy in corrupted (2)
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     syzbot <syzbot+d89b30c46434c433dbf8@syzkaller.appspotmail.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>,
+        Mon, 26 Nov 2018 14:55:56 -0500
+Received: from mga01.intel.com ([192.55.52.88]:21449 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726158AbeKZTz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 14:55:56 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Nov 2018 01:02:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,281,1539673200"; 
+   d="scan'208";a="107762323"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga002.fm.intel.com with ESMTP; 26 Nov 2018 01:02:26 -0800
+Received: from [10.125.252.8] (abudanko-mobl.ccr.corp.intel.com [10.125.252.8])
+        by linux.intel.com (Postfix) with ESMTP id 6C28D5803C2;
+        Mon, 26 Nov 2018 01:02:19 -0800 (PST)
+Subject: [PATCH v3 1/2] Documentation/admin-guide: introduce perf-security.rst
+ file
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Jonatan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        netdev <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+References: <6cfb235a-59bc-48f0-3425-59c5b6431b12@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <d4153c24-ba23-6734-4bcf-39525056aef5@linux.intel.com>
+Date:   Mon, 26 Nov 2018 12:02:18 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <6cfb235a-59bc-48f0-3425-59c5b6431b12@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 12:07 AM, Matthew Wilcox <willy@infradead.org> wrot=
-e:
->> > Hello,
->> >
->> > syzbot found the following crash on:
->> >
->> > HEAD commit:    aea0a897af9e ptp: Fix pass zero to ERR_PTR() in ptp_cl=
-ock_..
->> > git tree:       net-next
->>
->> If you found it on net-next, I'd suggets cc'ing linux-net ...
->
-> Uh.  I meant netdev.  Oops.
 
-I've filed https://github.com/google/syzkaller/issues/828 for this. Thanks.
+Implement initial version of perf-security.rst documentation file
+covering security concerns of perf_event_paranoid settings.
 
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+Changes in v3:
+- toning down of the markup for "scope, access and resource"
+- adding definite article for "Linux implementation"
+Changes in v2:
+- reverted patches order in the set to avoid CI issue
+- replaced old PCL referencing by PE (Perf Events)
+- skipped >=3 setting documentation at the moment
+---
+ Documentation/admin-guide/perf-security.rst | 77 +++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+ create mode 100644 Documentation/admin-guide/perf-security.rst
 
->> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D101b91d540=
-0000
->> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc36a72af21=
-23e78a
->> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd89b30c46434=
-c433dbf8
->> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D170f6a47=
-400000
->> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12e1df7b40=
-0000
->> >
->> > IMPORTANT: if you fix the bug, please add the following tag to the com=
-mit:
->> > Reported-by: syzbot+d89b30c46434c433dbf8@syzkaller.appspotmail.com
->> >
->> > ------------[ cut here ]------------
->> > DEBUG_LOCKS_WARN_ON(!hlock->nest_lock)
->> > ------------[ cut here ]------------
->> > Bad or missing usercopy whitelist? Kernel memory overwrite attempt det=
-ected
->> > to SLAB object 'task_struct' (offset 1432, size 2)!
->> > WARNING: CPU: 1 PID: 38 at mm/usercopy.c:83 usercopy_warn+0xee/0x110
->> > mm/usercopy.c:78
->> > Kernel panic - not syncing: panic_on_warn set ...
->> > list_add corruption. next->prev should be prev (ffff8881daf2d798), but=
- was
->> > 0b7e0c8e49cc0400. (next=3Dffff8881d9b4a4f0).
->> > CPU: 1 PID: 38 Comm: =EF=BF=BD=EF=BF=BD=EF=BF=BD=D9=81=EF=BF=BD=EF=BF=
-=BD=EF=BF=BDd =EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD Not ta=
-inted 4.20.0-rc3+ #312
->> > ------------[ cut here ]------------
->> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIO=
-S
->> > Google 01/01/2011
->> > kernel BUG at lib/list_debug.c:25!
->> > ------------[ cut here ]------------
->> > invalid opcode: 0000 [#1] PREEMPT SMP KASAN
->> > kernel BUG at mm/slab.c:4425!
->> > CPU: 0 PID: 8652 Comm: syz-executor607 Not tainted 4.20.0-rc3+ #312
->> > WARNING: CPU: 1 PID: 38 at kernel/rcu/tree_plugin.h:438
->> > __rcu_read_unlock+0x266/0x2e0 kernel/rcu/tree_plugin.h:432
->> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIO=
-S
->> > Google 01/01/2011
->> > Modules linked in:
->> > RIP: 0010:__list_add_valid.cold.2+0xf/0x2a lib/list_debug.c:23
->> > CPU: 1 PID: 38 Comm: =EF=BF=BD=EF=BF=BD=EF=BF=BD=D9=81=EF=BF=BD=EF=BF=
-=BD=EF=BF=BDd =EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD Not ta=
-inted 4.20.0-rc3+ #312
->> > Code: d1 60 88 e8 a1 37 d2 fd 0f 0b 48 89 de 48 c7 c7 60 d1 60 88 e8 9=
-0 37
->> > d2 fd 0f 0b 48 89 d9 48 c7 c7 20 d2 60 88 e8 7f 37 d2 fd <0f> 0b 48 89=
- f1 48
->> > c7 c7 a0 d2 60 88 48 89 de e8 6b 37 d2 fd 0f 0b
->> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIO=
-S
->> > Google 01/01/2011
->> > RSP: 0000:ffff8881dae07588 EFLAGS: 00010082
->> > usercopy: Kernel memory overwrite attempt detected to SLAB object
->> > 'signal_cache' (offset 1328, size 23)!
->> > RAX: 0000000000000075 RBX: ffff8881d9b4a4f0 RCX: 0000000000000000
->> > ------------[ cut here ]------------
->> > RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000005
->> > kernel BUG at mm/usercopy.c:102!
->> > RBP: ffff8881dae075a0 R08: ffff8881d25ce100 R09: ffffed103b5c5020
->> > R10: ffffed103b5c5020 R11: ffff8881dae28107 R12: ffff8881bd890230
->> > R13: dffffc0000000000 R14: ffff8881dae07980 R15: ffff8881daf2d798
->> > FS:  000000000083c880(0000) GS:ffff8881dae00000(0000) knlGS:0000000000=
-000000
->> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> > CR2: 00007fff14476600 CR3: 00000001d2a59000 CR4: 00000000001406f0
->> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> > Call Trace:
->> >  <IRQ>
->> >  __list_add include/linux/list.h:60 [inline]
->> >  list_add include/linux/list.h:79 [inline]
->> >  list_move include/linux/list.h:171 [inline]
->> >  detach_tasks kernel/sched/fair.c:7298 [inline]
->> >  load_balance+0x1b8d/0x39a0 kernel/sched/fair.c:8731
->> >  rebalance_domains+0x845/0xdc0 kernel/sched/fair.c:9109
->> >  run_rebalance_domains+0x38d/0x500 kernel/sched/fair.c:9731
->> >  __do_softirq+0x308/0xb7e kernel/softirq.c:292
->> >  invoke_softirq kernel/softirq.c:373 [inline]
->> >  irq_exit+0x17f/0x1c0 kernel/softirq.c:413
->> >  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
->> >  smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
->> >  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:804
->> >  </IRQ>
->> > RIP: 0033:0x4005dd
->> > Code: c9 00 04 00 66 0f 1f 84 00 00 00 00 00 48 8b 05 f1 2e 2d 00 48 8=
-5 c0
->> > 74 11 bf 3c e8 4b 00 b9 0e 00 00 00 48 89 c6 f3 a6 75 01 <c3> 48 89 c7=
- e9 9a
->> > ec 01 00 66 2e 0f 1f 84 00 00 00 00 00 8b 05 4a
->> > RSP: 002b:00007fff144765a8 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
->> > RAX: 0000000000000000 RBX: 0000000000000002 RCX: 00000000006d2190
->> > RDX: 0000000000402410 RSI: 0000000000000000 RDI: 0000000000000000
->> > RBP: 00000000006cc0a8 R08: 0000000000000000 R09: 0000000000000000
->> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
->> > R13: 00000000006d2180 R14: 0000000000000000 R15: 0000000000000000
->> > Modules linked in:
->> > ---[ end trace eeb5734c13709e17 ]---
->> > invalid opcode: 0000 [#2] PREEMPT SMP KASAN
->> > CPU: 1 PID: 38 Comm: =EF=BF=BD=EF=BF=BD=EF=BF=BD=D9=81=EF=BF=BD=EF=BF=
-=BD=EF=BF=BDd =EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD Tainte=
-d: G      D           4.20.0-rc3+
->> > #312
->> > RIP: 0010:__list_add_valid.cold.2+0xf/0x2a lib/list_debug.c:23
->> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIO=
-S
->> > Google 01/01/2011
->> > Code: d1 60 88 e8 a1 37 d2 fd 0f 0b 48 89 de 48 c7 c7 60 d1 60 88 e8 9=
-0 37
->> > d2 fd 0f 0b 48 89 d9 48 c7 c7 20 d2 60 88 e8 7f 37 d2 fd <0f> 0b 48 89=
- f1 48
->> > c7 c7 a0 d2 60 88 48 89 de e8 6b 37 d2 fd 0f 0b
->> > RIP: 0010:usercopy_abort+0xbb/0xbd mm/usercopy.c:90
->> > RSP: 0000:ffff8881dae07588 EFLAGS: 00010082
->> > Code: c0 e8 f7 dc b1 ff 48 8b 55 c0 49 89 d9 4d 89 f0 ff 75 c8 4c 89 e=
-1 4c
->> > 89 ee 48 c7 c7 80 d5 34 88 ff 75 d0 41 57 e8 e7 28 98 ff <0f> 0b e8 cc=
- dc b1
->> > ff e8 97 13 f5 ff 8b 95 e4 fe ff ff 4c 89 e1 31
->> > RAX: 0000000000000075 RBX: ffff8881d9b4a4f0 RCX: 0000000000000000
->> > RSP: 0018:ffff8881d9b49438 EFLAGS: 00010086
->> > RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000005
->> > RAX: 0000000000000068 RBX: ffffffff88291020 RCX: 0000000000000000
->> > RBP: ffff8881dae075a0 R08: ffff8881d25ce100 R09: ffffed103b5c5020
->> > RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000005
->> > R10: ffffed103b5c5020 R11: ffff8881dae28107 R12: ffff8881bd890230
->> > RBP: ffff8881d9b49490 R08: ffff8881d9b4a440 R09: ffffed103b5e3ef8
->> > R13: dffffc0000000000 R14: ffff8881dae07980 R15: ffff8881daf2d798
->> > R10: ffffed103b5e3ef8 R11: ffff8881daf1f7c7 R12: ffffffff8914da1d
->> > FS:  000000000083c880(0000) GS:ffff8881dae00000(0000) knlGS:0000000000=
-000000
->> > R13: ffffffff8834d3e0 R14: ffffffff8834d320 R15: ffffffff8834d2e0
->> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> > FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000=
-000000
->> > CR2: 00007fff14476600 CR3: 00000001d2a59000 CR4: 00000000001406f0
->> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> > CR2: 0000000000000130 CR3: 00000001d7880000 CR4: 00000000001406e0
->> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> > Call Trace:
->> > Modules linked in:
->> > ---[ end trace eeb5734c13709e18 ]---
->> > RIP: 0010:__list_add_valid.cold.2+0xf/0x2a lib/list_debug.c:23
->> > Code: d1 60 88 e8 a1 37 d2 fd 0f 0b 48 89 de 48 c7 c7 60 d1 60 88 e8 9=
-0 37
->> > d2 fd 0f 0b 48 89 d9 48 c7 c7 20 d2 60 88 e8 7f 37 d2 fd <0f> 0b 48 89=
- f1 48
->> > c7 c7 a0 d2 60 88 48 89 de e8 6b 37 d2 fd 0f 0b
->> > RSP: 0000:ffff8881dae07588 EFLAGS: 00010082
->> > RAX: 0000000000000075 RBX: ffff8881d9b4a4f0 RCX: 0000000000000000
->> > RDX: 0000000000000000 RSI: ffffffff8165eaf5 RDI: 0000000000000005
->> > RBP: ffff8881dae075a0 R08: ffff8881d25ce100 R09: ffffed103b5c5020
->> > R10: ffffed103b5c5020 R11: ffff8881dae28107 R12: ffff8881bd890230
->> > R13: dffffc0000000000 R14: ffff8881dae07980 R15: ffff8881daf2d798
->> > FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000=
-000000
->> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> > CR2: 0000000000000130 CR3: 00000001d7880000 CR4: 00000000001406e0
->> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> >
->> >
->> > ---
->> > This bug is generated by a bot. It may contain errors.
->> > See https://goo.gl/tpsmEJ for more information about syzbot.
->> > syzbot engineers can be reached at syzkaller@googlegroups.com.
->> >
->> > syzbot will keep track of this bug report. See:
->> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
->> > syzbot.
->> > syzbot can test patches for this bug, for details see:
->> > https://goo.gl/tpsmEJ#testing-patches
->>
->
-> --
-> You received this message because you are subscribed to the Google Groups=
- "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an=
- email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgi=
-d/syzkaller-bugs/20181125230732.GE3065%40bombadil.infradead.org.
-> For more options, visit https://groups.google.com/d/optout.
+diff --git a/Documentation/admin-guide/perf-security.rst b/Documentation/admin-guide/perf-security.rst
+new file mode 100644
+index 000000000000..f0fb75cadaed
+--- /dev/null
++++ b/Documentation/admin-guide/perf-security.rst
+@@ -0,0 +1,77 @@
++.. _perf_security:
++
++Perf Events and tool security
++=============================
++
++Overview
++--------
++
++Usage of Performance Counters for Linux (perf_events) [1]_ , [2]_ , [3]_ can
++impose a considerable risk of leaking sensitive data accessed by monitored
++processes. The data leakage is possible both in scenarios of direct usage of
++perf_events system call API [2]_ and over data files generated by Perf tool user
++mode utility (Perf) [3]_ , [4]_ . The risk depends on the nature of data that
++perf_events performance monitoring units (PMU) [2]_ collect and expose for
++performance analysis. Having that said perf_events/Perf performance monitoring
++is the subject for security access control management [5]_ .
++
++perf_events/Perf access control
++-------------------------------
++
++For the purpose of performing security checks the Linux implementation splits
++processes into two categories [6]_ : a) privileged processes (whose effective
++user ID is 0, referred to as superuser or root), and b) unprivileged processes
++(whose effective UID is nonzero). Privileged processes bypass all kernel
++security permission checks so perf_events performance monitoring is fully
++available to privileged processes without access, scope and resource
++restrictions. Unprivileged processes are subject to full security permission
++check based on the process's credentials [5]_ (usually: effective UID, effective
++GID, and supplementary group list).
++
++perf_events/Perf unprivileged users
++-----------------------------------
++
++perf_events/Perf *scope* and *access* control for unprivileged processes is
++governed by perf_event_paranoid [2]_ setting:
++
++-1:
++     Impose no *scope* and *access* restrictions on using perf_events performance
++     monitoring. Per-user per-cpu perf_event_mlock_kb [2]_ locking limit is
++     ignored when allocating memory buffers for storing performance data.
++     This is the least secure mode since allowed monitored *scope* is
++     maximized and no perf_events specific limits are imposed on *resources*
++     allocated for performance monitoring.
++
++>=0:
++     *scope* includes per-process and system wide performance monitoring
++     but excludes raw tracepoints and ftrace function tracepoints monitoring.
++     CPU and system events happened when executing either in user or
++     in kernel space can be monitored and captured for later analysis.
++     Per-user per-cpu perf_event_mlock_kb locking limit is imposed but
++     ignored for unprivileged processes with CAP_IPC_LOCK [6]_ capability.
++
++>=1:
++     *scope* includes per-process performance monitoring only and excludes
++     system wide performance monitoring. CPU and system events happened when
++     executing either in user or in kernel space can be monitored and
++     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
++     locking limit is imposed but ignored for unprivileged processes with
++     CAP_IPC_LOCK capability.
++
++>=2:
++     *scope* includes per-process performance monitoring only. CPU and system
++     events happened when executing in user space only can be monitored and
++     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
++     locking limit is imposed but ignored for unprivileged processes with
++     CAP_IPC_LOCK capability.
++
++Bibliography
++------------
++
++.. [1] `<https://lwn.net/Articles/337493/>`_
++.. [2] `<http://man7.org/linux/man-pages/man2/perf_event_open.2.html>`_
++.. [3] `<http://web.eece.maine.edu/~vweaver/projects/perf_events/>`_
++.. [4] `<https://perf.wiki.kernel.org/index.php/Main_Page>`_
++.. [5] `<https://www.kernel.org/doc/html/latest/security/credentials.html>`_
++.. [6] `<http://man7.org/linux/man-pages/man7/capabilities.7.html>`_
++
