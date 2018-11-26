@@ -2,558 +2,149 @@ Return-Path: <SRS0=Mdfq=OF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B989DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6376AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:52:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 722B120672
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:51:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oL8Z/sto"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 722B120672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 341FD20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 09:52:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 341FD20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbeKZUoo (ORCPT
+        id S1726345AbeKZUpm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 15:44:44 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:43276 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbeKZUoo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 15:44:44 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAQ9p2iQ021741;
-        Mon, 26 Nov 2018 03:51:02 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1543225862;
-        bh=/g8+xSu8zGIeqo7TpxKQDlmCeuryaVp5bRjJX9mA6vw=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=oL8Z/stoF03ceQPKDrEPjkT3qRr927Rj1JBqgBO1SAQubeSRJ1eLeP9UnBG9BIoRN
-         KwOS1mNGxXzAtMeDMj7IUYeLWFaUSjDKg6xYFwt1I9U5ZpvAf3bVZan3Pw16TGbqna
-         X403gBPFnnZ3shq8pf0mH5eRCxmZ+Lq7yjyb9btU=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAQ9p2oG078214
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 26 Nov 2018 03:51:02 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 26
- Nov 2018 03:51:01 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 26 Nov 2018 03:51:01 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAQ9owtX015296;
-        Mon, 26 Nov 2018 03:50:59 -0600
-Subject: Re: [RFC PATCH v2 06/15] usb:cdns3: Adds Host support
-To:     Pawel Laszczak <pawell@cadence.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
- <1542535751-16079-7-git-send-email-pawell@cadence.com>
- <5BF80D44.2050600@ti.com>
- <BYAPR07MB4709593D0B03399E9D35E07BDDD70@BYAPR07MB4709.namprd07.prod.outlook.com>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alan Douglas <adouglas@cadence.com>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        "peter.chen@nxp.com" <peter.chen@nxp.com>,
-        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5BFBC201.4000000@ti.com>
-Date:   Mon, 26 Nov 2018 11:50:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Mon, 26 Nov 2018 15:45:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60300 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726203AbeKZUpl (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 15:45:41 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0584758E22;
+        Mon, 26 Nov 2018 09:52:07 +0000 (UTC)
+Received: from krava (ovpn-204-234.brq.redhat.com [10.40.204.234])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 846D25D776;
+        Mon, 26 Nov 2018 09:52:04 +0000 (UTC)
+Date:   Mon, 26 Nov 2018 10:52:03 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jin Yao <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH 2/2] perf report: Display average IPC and IPC coverage
+ per symbol
+Message-ID: <20181126095203.GA18780@krava>
+References: <1543225254-5858-1-git-send-email-yao.jin@linux.intel.com>
+ <1543225254-5858-3-git-send-email-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <BYAPR07MB4709593D0B03399E9D35E07BDDD70@BYAPR07MB4709.namprd07.prod.outlook.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543225254-5858-3-git-send-email-yao.jin@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 26 Nov 2018 09:52:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 26/11/18 10:24, Pawel Laszczak wrote:
->> EXTERNAL MAIL
->>
->>
->> On 18/11/18 12:09, Pawel Laszczak wrote:
->>> Patch adds host-export.h and host.c file and mplements functions that
->>> allow to initialize, start and stop XHCI host driver.
->>>
->>> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
->>> ---
->>>  drivers/usb/cdns3/Kconfig       |  10 ++
->>>  drivers/usb/cdns3/Makefile      |   1 +
->>>  drivers/usb/cdns3/core.c        |   7 +-
->>>  drivers/usb/cdns3/host-export.h |  30 ++++
->>>  drivers/usb/cdns3/host.c        | 256 ++++++++++++++++++++++++++++++++
->>>  5 files changed, 302 insertions(+), 2 deletions(-)
->>>  create mode 100644 drivers/usb/cdns3/host-export.h
->>>  create mode 100644 drivers/usb/cdns3/host.c
->>>
->>> diff --git a/drivers/usb/cdns3/Kconfig b/drivers/usb/cdns3/Kconfig
->>> index eb22a8692991..d92bc3d68eb0 100644
->>> --- a/drivers/usb/cdns3/Kconfig
->>> +++ b/drivers/usb/cdns3/Kconfig
->>> @@ -10,6 +10,16 @@ config USB_CDNS3
->>>
->>>  if USB_CDNS3
->>>
->>> +config USB_CDNS3_HOST
->>> +        bool "Cadence USB3 host controller"
->>> +        depends on USB_XHCI_HCD
->>> +        help
->>> +          Say Y here to enable host controller functionality of the
->>> +          cadence driver.
->>> +
->>> +          Host controller is compliance with XHCI so it will use
->>> +          standard XHCI driver.
->>> +
->>>  config USB_CDNS3_PCI_WRAP
->>>  	tristate "PCIe-based Platforms"
->>>  	depends on USB_PCI && ACPI
->>> diff --git a/drivers/usb/cdns3/Makefile b/drivers/usb/cdns3/Makefile
->>> index e779b2a2f8eb..976117ba67ff 100644
->>> --- a/drivers/usb/cdns3/Makefile
->>> +++ b/drivers/usb/cdns3/Makefile
->>> @@ -2,4 +2,5 @@ obj-$(CONFIG_USB_CDNS3)			+= cdns3.o
->>>  obj-$(CONFIG_USB_CDNS3_PCI_WRAP)	+= cdns3-pci.o
->>>
->>>  cdns3-y					:= core.o drd.o
->>> +cdns3-$(CONFIG_USB_CDNS3_HOST)          += host.o
->>>  cdns3-pci-y		 		:= cdns3-pci-wrap.o
->>> diff --git a/drivers/usb/cdns3/core.c b/drivers/usb/cdns3/core.c
->>> index dbee4325da7f..4cb820be9ff3 100644
->>> --- a/drivers/usb/cdns3/core.c
->>> +++ b/drivers/usb/cdns3/core.c
->>> @@ -17,6 +17,7 @@
->>>
->>>  #include "gadget.h"
->>>  #include "core.h"
->>> +#include "host-export.h"
->>>  #include "drd.h"
->>>
->>>  static inline struct cdns3_role_driver *cdns3_get_current_role_driver(struct cdns3 *cdns)
->>> @@ -98,7 +99,8 @@ static int cdns3_core_init_role(struct cdns3 *cdns)
->>>  	}
->>>
->>>  	if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_HOST) {
->>> -		//TODO: implements host initialization
->>> +		if (cdns3_host_init(cdns))
->>> +			dev_info(dev, "doesn't support host\n");
->>
->> dev_err()
->>
->> And you need to error out with error code.
+On Mon, Nov 26, 2018 at 05:40:54PM +0800, Jin Yao wrote:
+> Support displaying the average IPC and IPC coverage for symbol
+> in perf report TUI browser. We create a new sort-key 'ipc' for
+> that.
 > 
-> ok, but I assume that even if host returns error then we can use 
-> only device role. Only when both functions return errors, then it's  a critical error 
-> and function return error code. 
-
-But at this point we are in OTG or HOST dr_mode and without host functional
-both will not function correctly. So we must error out so user can debug.
-
->>
->>>  	}
->>>
->>>  	if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_PERIPHERAL) {
->>> @@ -142,7 +144,7 @@ static irqreturn_t cdns3_irq(int irq, void *data)
->>>
->>>  static void cdns3_remove_roles(struct cdns3 *cdns)
->>>  {
->>> -	//TODO: implements this function
->>
->> if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_HOST)
->>
->>> +	cdns3_host_remove(cdns);
->>
->> How about calling it cdns3_host_exit() to complement cdns3_host_init().
->>
->>>  }
->>>
->>>  static int cdns3_do_role_switch(struct cdns3 *cdns, enum cdns3_roles role)
->>> @@ -410,6 +412,7 @@ static struct platform_driver cdns3_driver = {
->>>
->>>  static int __init cdns3_driver_platform_register(void)
->>>  {
->>> +	cdns3_host_driver_init();
->>>  	return platform_driver_register(&cdns3_driver);
->>>  }
->>>  module_init(cdns3_driver_platform_register);
->>> diff --git a/drivers/usb/cdns3/host-export.h b/drivers/usb/cdns3/host-export.h
->>> new file mode 100644
->>> index 000000000000..f8f3b230b472
->>> --- /dev/null
->>> +++ b/drivers/usb/cdns3/host-export.h
->>> @@ -0,0 +1,30 @@
->>> +/* SPDX-License-Identifier: GPL-2.0 */
->>> +/*
->>> + * Cadence USBSS DRD Driver -Host Export APIs
->>> + *
->>> + * Copyright (C) 2017 NXP
->>> + *
->>> + * Authors: Peter Chen <peter.chen@nxp.com>
->>> + */
->>> +#ifndef __LINUX_CDNS3_HOST_EXPORT
->>> +#define __LINUX_CDNS3_HOST_EXPORT
->>> +
->>> +#ifdef CONFIG_USB_CDNS3_HOST
->>> +
->>> +int cdns3_host_init(struct cdns3 *cdns);
->>> +void cdns3_host_remove(struct cdns3 *cdns);
->>> +void cdns3_host_driver_init(void);
->>> +
->>> +#else
->>> +
->>> +static inline int cdns3_host_init(struct cdns3 *cdns)
->>> +{
->>> +	return -ENXIO;
->>> +}
->>> +
->>> +static inline void cdns3_host_remove(struct cdns3 *cdns) { }
->>> +static inline void cdns3_host_driver_init(void) {}
->>> +
->>> +#endif /* CONFIG_USB_CDNS3_HOST */
->>> +
->>> +#endif /* __LINUX_CDNS3_HOST_EXPORT */
->>> diff --git a/drivers/usb/cdns3/host.c b/drivers/usb/cdns3/host.c
->>> new file mode 100644
->>> index 000000000000..0dd47976cb28
->>> --- /dev/null
->>> +++ b/drivers/usb/cdns3/host.c
->>> @@ -0,0 +1,256 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * Cadence USBSS DRD Driver - host side
->>> + *
->>> + * Copyright (C) 2018 Cadence Design Systems.
->>> + * Copyright (C) 2018 NXP
->>> + *
->>> + * Authors: Peter Chen <peter.chen@nxp.com>
->>> + *	    Pawel Laszczak <pawell@cadence.com>
->>> + */
->>> +
->>> +#include <linux/kernel.h>
->>> +#include <linux/device.h>
->>> +#include <linux/io.h>
->>> +#include <linux/slab.h>
->>> +#include <linux/dma-mapping.h>
->>> +#include <linux/usb.h>
->>> +#include <linux/usb/hcd.h>
->>> +#include <linux/pm_runtime.h>
->>> +#include <linux/usb/of.h>
->>> +
->>> +#include "../host/xhci.h"
->>> +#include "core.h"
->>> +#include "host-export.h"
->>> +
->>> +static struct hc_driver __read_mostly xhci_cdns3_hc_driver;
->>> +
->>> +static void xhci_cdns3_quirks(struct device *dev, struct xhci_hcd *xhci)
->>> +{
->>> +	/*
->>> +	 * As of now platform drivers don't provide MSI support so we ensure
->>> +	 * here that the generic code does not try to make a pci_dev from our
->>> +	 * dev struct in order to setup MSI
->>> +	 */
->>> +	xhci->quirks |= XHCI_PLAT;
->>> +}
->>> +
->>> +static int xhci_cdns3_setup(struct usb_hcd *hcd)
->>> +{
->>> +	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
->>> +	u32 command;
->>> +	int ret;
->>> +
->>> +	ret = xhci_gen_setup(hcd, xhci_cdns3_quirks);
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	/* set usbcmd.EU3S */
->>> +	command = readl(&xhci->op_regs->command);
->>> +	command |= CMD_PM_INDEX;
->>> +	writel(command, &xhci->op_regs->command);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static const struct xhci_driver_overrides xhci_cdns3_overrides __initconst = {
->>> +	.extra_priv_size = sizeof(struct xhci_hcd),
->>> +	.reset = xhci_cdns3_setup,
->>> +};
->>> +
->>> +struct cdns3_host {
->>> +	struct device dev;
->>> +	struct usb_hcd *hcd;
->>> +};
->>> +
->>> +static irqreturn_t cdns3_host_irq(struct cdns3 *cdns)
->>> +{
->>> +	struct device *dev = cdns->host_dev;
->>> +	struct usb_hcd	*hcd;
->>> +
->>> +	if (dev)
->>> +		hcd = dev_get_drvdata(dev);
->>> +	else
->>> +		return IRQ_NONE;
->>> +
->>> +	if (hcd)
->>> +		return usb_hcd_irq(cdns->irq, hcd);
->>> +	else
->>> +		return IRQ_NONE;
->>
->> Why can't you just reuse the xhci-platform driver and let it manage the IRQ?
->> Since it is a shared IRQ, different drivers can request the same IRQ and return IRQ_NONE
->> if the IRQ wasn't from their device.
+> For example,
 > 
-> In device role the host part of controller is kept in reset, so driver can't read the host register. 
-> Such solution allows driver to control access to host register. 
-> So if driver has shared separate interrupt for host role then it has to check if controller work in 
-> Host role.  
-
-I understand what you mean. I think the issue here is that you are having the host ISR active
-even when host role is stopped. This is the root cause of the problem.
-
-When you stop host role, the host driver *must* unregister the ISR
-and then place the host in reset.
-
-This will happen correctly if you use platform_unregister_device() to unregister the
-XHCI device in cdns3_host_stop().
-
+> $ perf record -g -b ...
+> $ perf report -s symbol,ipc or
+>   perf report -s ipc
 > 
->>> +}
->>> +
->>> +static void cdns3_host_release(struct device *dev)
->>> +{
->>> +	struct cdns3_host *host = container_of(dev, struct cdns3_host, dev);
->>> +
->>> +	kfree(host);
->>> +}
->>> +
->>> +static int cdns3_host_start(struct cdns3 *cdns)
->>> +{
->>> +	struct cdns3_host *host;
->>> +	struct device *dev;
->>> +	struct device *sysdev;
->>> +	struct xhci_hcd	*xhci;
->>> +	int ret;
->>> +
->>> +	host = kzalloc(sizeof(*host), GFP_KERNEL);
->>> +	if (!host)
->>> +		return -ENOMEM;
->>> +
->>> +	dev = &host->dev;
->>> +	dev->release = cdns3_host_release;
->>> +	dev->parent = cdns->dev;
->>> +	dev_set_name(dev, "xhci-cdns3");
->>> +	cdns->host_dev = dev;
->>> +	ret = device_register(dev);
->>> +	if (ret)
->>> +		goto err1;
->>> +
->>> +	sysdev = cdns->dev;
->>> +	/* Try to set 64-bit DMA first */
->>> +	if (WARN_ON(!sysdev->dma_mask))
->>> +		/* Platform did not initialize dma_mask */
->>> +		ret = dma_coerce_mask_and_coherent(sysdev,
->>> +						   DMA_BIT_MASK(64));
->>> +	else
->>> +		ret = dma_set_mask_and_coherent(sysdev, DMA_BIT_MASK(64));
->>> +
->>> +	/* If setting 64-bit DMA mask fails, fall back to 32-bit DMA mask */
->>> +	if (ret) {
->>> +		ret = dma_set_mask_and_coherent(sysdev, DMA_BIT_MASK(32));
->>> +		if (ret)
->>> +			return ret;
->>> +	}
->>> +
->>> +	pm_runtime_set_active(dev);
->>> +	pm_runtime_no_callbacks(dev);
->>> +	pm_runtime_enable(dev);
->>> +	host->hcd = __usb_create_hcd(&xhci_cdns3_hc_driver, sysdev, dev,
->>> +				     dev_name(dev), NULL);
->>> +	if (!host->hcd) {
->>> +		ret = -ENOMEM;
->>> +		goto err2;
->>> +	}
->>> +
->>> +	host->hcd->regs = cdns->xhci_regs;
->>> +	host->hcd->rsrc_start = cdns->xhci_res->start;
->>> +	host->hcd->rsrc_len = resource_size(cdns->xhci_res);
->>> +
->>> +	device_wakeup_enable(host->hcd->self.controller);
->>> +	xhci = hcd_to_xhci(host->hcd);
->>> +
->>> +	xhci->main_hcd = host->hcd;
->>> +	xhci->shared_hcd = __usb_create_hcd(&xhci_cdns3_hc_driver, sysdev, dev,
->>> +					    dev_name(dev), host->hcd);
->>> +	if (!xhci->shared_hcd) {
->>> +		ret = -ENOMEM;
->>> +		goto err3;
->>> +	}
->>> +
->>> +	host->hcd->tpl_support = of_usb_host_tpl_support(sysdev->of_node);
->>> +	xhci->shared_hcd->tpl_support = host->hcd->tpl_support;
->>> +	ret = usb_add_hcd(host->hcd, 0, IRQF_SHARED);
->>> +	if (ret)
->>> +		goto err4;
->>> +
->>> +	ret = usb_add_hcd(xhci->shared_hcd, 0, IRQF_SHARED);
->>> +	if (ret)
->>> +		goto err5;
->>> +
->>> +	device_set_wakeup_capable(dev, true);
->>
->> All this is being done by the xhci-plat.c
->>
->> You can make use of it by just creating a xhci-hcd platform device.
->>
->> e.g.
->> platform_device_alloc("xhci-hcd", PLATFORM_DEVID_AUTO);
->> platform_device_add_resources() to add IRQ and memory resource.
->> platform_device_add_properties() to add any quirks.
->> platform_device_add()
->>
+> Overhead  Symbol                           IPC   [IPC Coverage]
+>   39.60%  [.] __random                     2.30  [ 54.8%]
+>   18.02%  [.] main                         0.43  [ 54.3%]
+>   14.21%  [.] compute_flag                 2.29  [100.0%]
+>   14.16%  [.] rand                         0.36  [100.0%]
+>    7.06%  [.] __random_r                   2.57  [ 70.5%]
+>    6.85%  [.] rand@plt                     0.00  [  0.0%]
 > 
-> If we do this in this way driver will not control the interrupt. 
+> Note that, stdio mode doesn't support this feature.
 
-Why should this driver control host interrupt when it doesn't
-have access to HOST registers.
+the patch below allowed this for stdio
+please merge it in, and feel free to change it as you see fit
 
-> This code  has written by Peter Chan and I am convinced 
-> that this concept is only correct one.
-> 
->>> +
->>> +	return 0;
->>> +
->>> +err5:
->>> +	usb_remove_hcd(host->hcd);
->>> +err4:
->>> +	usb_put_hcd(xhci->shared_hcd);
->>> +err3:
->>> +	usb_put_hcd(host->hcd);
->>> +err2:
->>> +	device_del(dev);
->>> +err1:
->>> +	put_device(dev);
->>> +	cdns->host_dev = NULL;
->>> +	return ret;
->>> +}
->>> +
->>> +static void cdns3_host_stop(struct cdns3 *cdns)
->>> +{
->>> +	struct device *dev = cdns->host_dev;
->>> +	struct xhci_hcd	*xhci;
->>> +	struct usb_hcd	*hcd;
->>> +
->>> +	if (dev) {
->>> +		hcd = dev_get_drvdata(dev);
->>> +		xhci = hcd_to_xhci(hcd);
->>> +		usb_remove_hcd(xhci->shared_hcd);
->>> +		usb_remove_hcd(hcd);
->>> +		synchronize_irq(cdns->irq);
->>> +		usb_put_hcd(xhci->shared_hcd);
->>> +		usb_put_hcd(hcd);
->>> +		cdns->host_dev = NULL;
->>> +		pm_runtime_set_suspended(dev);
->>> +		pm_runtime_disable(dev);
->>> +		device_del(dev);
->>> +		put_device(dev);
->>> +	}
->>
->> You can replace this with just
->> 	platform_device_unregister(xhci_dev);
->>
->>> +}
->>> +
->>> +#if CONFIG_PM
->>> +static int cdns3_host_suspend(struct cdns3 *cdns, bool do_wakeup)
->>> +{
->>> +	struct device *dev = cdns->host_dev;
->>> +	struct xhci_hcd	*xhci;
->>> +
->>> +	if (!dev)
->>> +		return 0;
->>> +
->>> +	xhci = hcd_to_xhci(dev_get_drvdata(dev));
->>> +	return xhci_suspend(xhci, do_wakeup);
->>> +}
->>> +
->>> +static int cdns3_host_resume(struct cdns3 *cdns, bool hibernated)
->>> +{
->>> +	struct device *dev = cdns->host_dev;
->>> +	struct xhci_hcd	*xhci;
->>> +
->>> +	if (!dev)
->>> +		return 0;
->>> +
->>> +	xhci = hcd_to_xhci(dev_get_drvdata(dev));
->>> +	return xhci_resume(xhci, hibernated);
->>> +}
->>
->> These won't be required any more as xhci-plat is doing this.
->>
->>> +#endif /* CONFIG_PM */
->>> +
->>> +int cdns3_host_init(struct cdns3 *cdns)
->>> +{
->>> +	struct cdns3_role_driver *rdrv;
->>> +
->>> +	rdrv = devm_kzalloc(cdns->dev, sizeof(*rdrv), GFP_KERNEL);
->>> +	if (!rdrv)
->>> +		return -ENOMEM;
->>> +
->>> +	rdrv->start	= cdns3_host_start;
->>> +	rdrv->stop	= cdns3_host_stop;
->>> +	rdrv->irq	= cdns3_host_irq;
->>> +#if CONFIG_PM
->>> +	rdrv->suspend	= cdns3_host_suspend;
->>> +	rdrv->resume	= cdns3_host_resume;
->>> +#endif /* CONFIG_PM */
->>> +	rdrv->name	= "host";
->>> +	cdns->roles[CDNS3_ROLE_HOST] = rdrv;
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +void cdns3_host_remove(struct cdns3 *cdns)
->>> +{
->>> +	cdns3_host_stop(cdns);
->>
->> calling cdns3_host_stop() here can lead to problems as Controller might be in
->> peripheral mode at this point. The core driver needs to ensure that relevant role
->> is stopped before calling cdns3_host_remove().
->>
->> Here you need to unregister the role driver though.
->>
->> cdns->roles[CDNS3_ROLE_HOST] = NULL;
->>
-> This function can be called only in host mode/role. It operate on host registers. 
-> This checking is provided in core.c file. 
->>> +}
->>> +
->>> +void __init cdns3_host_driver_init(void)
->>> +{
->>> +	xhci_init_driver(&xhci_cdns3_hc_driver, &xhci_cdns3_overrides);
->>> +}
->>>
->>
+jirka
 
-cheers,
--roger
 
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+---
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 9b75e118f609..a6756dc13285 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -85,6 +85,7 @@ struct report {
+ 	int			socket_filter;
+ 	DECLARE_BITMAP(cpu_bitmap, MAX_NR_CPUS);
+ 	struct branch_type_stat	brtype_stat;
++	bool			symbol_ipc;
+ };
+ 
+ static int report__config(const char *var, const char *value, void *cb)
+@@ -129,7 +130,7 @@ static int hist_iter__report_callback(struct hist_entry_iter *iter,
+ 	struct mem_info *mi;
+ 	struct branch_info *bi;
+ 
+-	if (!ui__has_annotation())
++	if (!ui__has_annotation() && !rep->symbol_ipc)
+ 		return 0;
+ 
+ 	hist__account_cycles(sample->branch_stack, al, sample,
+@@ -174,7 +175,7 @@ static int hist_iter__branch_callback(struct hist_entry_iter *iter,
+ 	struct perf_evsel *evsel = iter->evsel;
+ 	int err;
+ 
+-	if (!ui__has_annotation())
++	if (!ui__has_annotation() && !rep->symbol_ipc)
+ 		return 0;
+ 
+ 	hist__account_cycles(sample->branch_stack, al, sample,
+@@ -954,7 +955,6 @@ int cmd_report(int argc, const char **argv)
+ 	bool has_br_stack = false;
+ 	int branch_mode = -1;
+ 	bool branch_call_mode = false;
+-	bool symbol_ipc = false;
+ #define CALLCHAIN_DEFAULT_OPT  "graph,0.5,caller,function,percent"
+ 	const char report_callchain_help[] = "Display call graph (stack chain/backtrace):\n\n"
+ 					     CALLCHAIN_REPORT_HELP
+@@ -1289,7 +1289,7 @@ int cmd_report(int argc, const char **argv)
+ 		strstr(sort_order, "ipc")) {
+ 		if (!strstr(sort_order, "symbol"))
+ 			sort_order = "symbol,ipc";
+-		symbol_ipc = true;
++		report.symbol_ipc = true;
+ 	}
+ 
+ 	if (setup_sorting(session->evlist) < 0) {
+@@ -1319,7 +1319,7 @@ int cmd_report(int argc, const char **argv)
+ 	 * so don't allocate extra space that won't be used in the stdio
+ 	 * implementation.
+ 	 */
+-	if (ui__has_annotation()) {
++	if (ui__has_annotation() || report.symbol_ipc) {
+ 		ret = symbol__annotation_init();
+ 		if (ret < 0)
+ 			goto error;
+@@ -1339,9 +1339,6 @@ int cmd_report(int argc, const char **argv)
+ 			symbol_conf.sort_by_name = true;
+ 		}
+ 		annotation_config__init();
+-	} else if (symbol_ipc) {
+-		pr_err("Only TUI mode supports sort-key ipc\n");
+-		goto error;
+ 	}
+ 
+ 	if (symbol__init(&session->header.env) < 0)
