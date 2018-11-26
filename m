@@ -7,45 +7,49 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10707C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0498DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9F8121104
-	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:55:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4A4320817
+	for <linux-kernel@archiver.kernel.org>; Mon, 26 Nov 2018 10:55:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1eId0PA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9F8121104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2mWZXyV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4A4320817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbeKZVtH (ORCPT
+        id S1727980AbeKZVtJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 26 Nov 2018 16:49:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57926 "EHLO mail.kernel.org"
+        Mon, 26 Nov 2018 16:49:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726923AbeKZVtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Nov 2018 16:49:06 -0500
+        id S1726923AbeKZVtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Nov 2018 16:49:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3ABE21104;
-        Mon, 26 Nov 2018 10:55:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CF192089F;
+        Mon, 26 Nov 2018 10:55:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543229722;
-        bh=nOpCmCpjPyf4RTQUMJX8tZj0k9fTiTWoKTB5y6gqEjQ=;
+        s=default; t=1543229724;
+        bh=VlzQdNDX0XuOBPnDpM4SI5xfFn5RC00AAbsrMEjB9FY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W1eId0PAmxERLf9dqIUGxtjufayiV0lOFsYlEkXOTCJMKuwCmeYKAJIgeWAHtkHu/
-         nSHllnPFpus+EG45EWt1HEW23d4zyRLAnlDFxfXXU2z0a2qAMHXsbMandc44i3TzON
-         3iYH6YF21d/WXknxn8g+Nk4GM064wHhsz20wfffE=
+        b=S2mWZXyVIuGXPtNF+z1MzpDEXn+xv3Vt1/fP43334GKwiVIUTt0UORvjbMn9NoN0d
+         Pu0l9pGmksbH8fE/Tt0r03oyhXPjJxzR6PJ9Lvc8lETPDtM7aPDWGWcuS1Ge+ACEkU
+         O9MnL298BxWwDfDjKNoB/PZ8dRNrikdZi9Ji5vMI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Mark Charlebois <charlebm@gmail.com>,
+        Behan Webster <behanw@converseincode.com>,
+        =?UTF-8?q?Jan-Simon=20M=C3=B6ller?= <dl9pf@gmx.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.4 11/70] kbuild: drop -Wno-unknown-warning-option from clang options
-Date:   Mon, 26 Nov 2018 11:50:26 +0100
-Message-Id: <20181126105047.977564621@linuxfoundation.org>
+Subject: [PATCH 4.4 12/70] kbuild, LLVMLinux: Add -Werror to cc-option to support clang
+Date:   Mon, 26 Nov 2018 11:50:27 +0100
+Message-Id: <20181126105048.064487973@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181126105046.722096341@linuxfoundation.org>
 References: <20181126105046.722096341@linuxfoundation.org>
@@ -63,48 +67,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Mark Charlebois <charlebm@gmail.com>
 
-commit a0ae981eba8f07dbc74bce38fd3a462b69a5bc8e upstream.
+commit c3f0d0bc5b01ad90c45276952802455750444b4f upstream.
 
-Since commit c3f0d0bc5b01 ("kbuild, LLVMLinux: Add -Werror to
-cc-option to support clang"), cc-option and friends work nicely
-for clang.
+Clang will warn about unknown warnings but will not return false
+unless -Werror is set. GCC will return false if an unknown
+warning is passed.
 
-However, -Wno-unknown-warning-option makes clang happy with any
-unknown warning options even if -Werror is specified.
+Adding -Werror make both compiler behave the same.
 
-Once -Wno-unknown-warning-option is added, any succeeding call of
-cc-disable-warning is evaluated positive, then unknown warning
-options are accepted.  This should be dropped.
+[arnd: it turns out we need the same patch for testing whether -ffunction-sections
+       works right with gcc. I've build tested extensively with this patch
+       applied, so let's just merge this one now.]
 
+Signed-off-by: Mark Charlebois <charlebm@gmail.com>
+Signed-off-by: Behan Webster <behanw@converseincode.com>
+Reviewed-by: Jan-Simon Möller <dl9pf@gmx.de>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+[nc: Adjust context due to lack of d26e94149276f]
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Makefile                   |    1 -
- scripts/Makefile.extrawarn |    1 -
- 2 files changed, 2 deletions(-)
+ scripts/Kbuild.include |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/Makefile
-+++ b/Makefile
-@@ -708,7 +708,6 @@ endif
- KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
- KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
- KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
--KBUILD_CPPFLAGS += $(call cc-option,-Wno-unknown-warning-option,)
- KBUILD_CFLAGS += $(call cc-disable-warning, unused-variable)
- KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
- KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
---- a/scripts/Makefile.extrawarn
-+++ b/scripts/Makefile.extrawarn
-@@ -61,7 +61,6 @@ ifeq ($(cc-name),clang)
- KBUILD_CFLAGS += $(call cc-disable-warning, initializer-overrides)
- KBUILD_CFLAGS += $(call cc-disable-warning, unused-value)
- KBUILD_CFLAGS += $(call cc-disable-warning, format)
--KBUILD_CFLAGS += $(call cc-disable-warning, unknown-warning-option)
- KBUILD_CFLAGS += $(call cc-disable-warning, sign-compare)
- KBUILD_CFLAGS += $(call cc-disable-warning, format-zero-length)
- KBUILD_CFLAGS += $(call cc-disable-warning, uninitialized)
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -112,12 +112,12 @@ as-instr = $(call try-run,\
+ # Usage: cflags-y += $(call cc-option,-march=winchip-c6,-march=i586)
+ 
+ cc-option = $(call try-run,\
+-	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) $(1) -c -x c /dev/null -o "$$TMP",$(1),$(2))
++	$(CC) -Werror $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) $(1) -c -x c /dev/null -o "$$TMP",$(1),$(2))
+ 
+ # cc-option-yn
+ # Usage: flag := $(call cc-option-yn,-march=winchip-c6)
+ cc-option-yn = $(call try-run,\
+-	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) $(1) -c -x c /dev/null -o "$$TMP",y,n)
++	$(CC) -Werror $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) $(1) -c -x c /dev/null -o "$$TMP",y,n)
+ 
+ # cc-option-align
+ # Prefix align with either -falign or -malign
+@@ -127,7 +127,7 @@ cc-option-align = $(subst -functions=0,,
+ # cc-disable-warning
+ # Usage: cflags-y += $(call cc-disable-warning,unused-but-set-variable)
+ cc-disable-warning = $(call try-run,\
+-	$(CC) $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -W$(strip $(1)) -c -x c /dev/null -o "$$TMP",-Wno-$(strip $(1)))
++	$(CC) -Werror $(KBUILD_CPPFLAGS) $(KBUILD_CFLAGS) -W$(strip $(1)) -c -x c /dev/null -o "$$TMP",-Wno-$(strip $(1)))
+ 
+ # cc-name
+ # Expands to either gcc or clang
 
 
